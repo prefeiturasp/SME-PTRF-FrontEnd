@@ -1,10 +1,16 @@
 import React from "react";
 
-export const TextoDinamicoSuperior = ({dadosAta, retornaDadosAtaFormatado}) => {
+export const TextoDinamicoSuperior = ({retornaDadosAtaFormatado, retornaTituloCorpoAta, ehPrevia}) => {
     
     return(
         <>
-            <p className="titulo-texto-dinamico-superior mb-2">ATA DE PARECER TÉCNICO CONCLUSIVO {retornaDadosAtaFormatado("numero_ata")}</p>
+            <p className="titulo-texto-dinamico-superior mb-2">{retornaTituloCorpoAta()} {retornaDadosAtaFormatado("numero_ata")}</p>
+            {ehPrevia() &&
+                <p className="texto-atencao">
+                    Atenção! Essa é apenas uma prévia da ata. As informações aqui exibidas podem mudar até a publicação do relatório consolidado. A ata final só poderá ser criada após a publicação.
+                </p>
+            }
+            
             <p className="texto-dinamico-superior">
                 {retornaDadosAtaFormatado("data_reuniao")}, às {retornaDadosAtaFormatado("hora_reuniao")}, reuniu-se a Comissão de Prestação de Contas do PTRF da Diretoria Regional de Educação {retornaDadosAtaFormatado("nome_dre")},
                 instituída pela Portaria DRE-{retornaDadosAtaFormatado("nome_dre")} nº {retornaDadosAtaFormatado("numero_portaria")} de {retornaDadosAtaFormatado("data_portaria")}, para análise das prestações de contas dos recursos transferidos pelo

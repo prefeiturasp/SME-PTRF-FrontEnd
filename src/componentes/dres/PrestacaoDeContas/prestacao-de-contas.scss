@@ -322,7 +322,6 @@
 
 .text-wrap-conferencia-de-lancamentos{
   overflow-wrap: break-word;
-  hyphens: manual;
 }
 
 .span-rateio-tag-conferencia-de-lancamentos{
@@ -462,3 +461,47 @@
   font-size: 14px;
   font-weight: bold;
 }
+
+/* trilha status relatorio consolidado */
+
+.container-circulo-relatorio-consolidado {
+  z-index: 1;
+  text-align: center;
+  background-color: #fff;
+
+  .circulo {
+    color: #fff;
+    font-size: 14px;
+    background-color: #A4A4A4;
+    border-radius: 67px;
+    padding: 3px 8px;
+    font-weight: bold;
+  }
+
+  .circulo-duplo {
+    color: #fff;
+    font-size: 14px;
+    border-radius: 67px;
+    font-weight: bold;
+    padding: 12px 4px;
+    border: 2px solid #00585E;
+    background-color: #fff;
+  }
+
+  .circulo-relatorio-consolidado-dois-digitos{
+    padding: 8px 9px;
+  }
+
+  .circulo-relatorio-consolidado-tres-digitos{
+    padding: 9px 6px;
+  }
+
+  .circulo-relatorio-consolidado-simples {
+    background-color: #00585E;
+  }
+
+  .circulo-relatorio-consolidado-simples-vermelho {
+    background-color: #B40C02;
+  }
+}
+

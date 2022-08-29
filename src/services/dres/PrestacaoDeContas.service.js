@@ -187,8 +187,8 @@ export const getDownloadArquivoDeReferencia = async (nome_do_arquivo, uuid, tipo
     )
 };
 
-export const getLancamentosParaConferencia = async (prestacao_de_contas_uuid, analise_atual_uuid, conta_uuid, acao_associacao_uuid=null, tipo_lancamento=null, ordenar_por_imposto=null, filtrar_por_data_inicio=null, filtrar_por_data_fim=null, filtrar_por_numero_de_documento=null, filtrar_por_tipo_de_documento=null, filtrar_por_tipo_de_pagamento=null) => {
-    return (await api.get(`/api/prestacoes-contas/${prestacao_de_contas_uuid}/lancamentos/?analise_prestacao=${analise_atual_uuid}&conta_associacao=${conta_uuid}${acao_associacao_uuid ? '&acao_associacao='+acao_associacao_uuid : ''}${tipo_lancamento ? '&tipo='+tipo_lancamento : ''}${ordenar_por_imposto ? '&ordenar_por_imposto='+ordenar_por_imposto : ''}${filtrar_por_data_inicio ? '&filtrar_por_data_inicio='+filtrar_por_data_inicio : ''}${filtrar_por_data_fim ? '&filtrar_por_data_fim='+filtrar_por_data_fim : ''}${filtrar_por_numero_de_documento ? '&filtrar_por_numero_de_documento='+filtrar_por_numero_de_documento : ''}${filtrar_por_tipo_de_documento ? '&filtrar_por_tipo_de_documento='+filtrar_por_tipo_de_documento : ''}${filtrar_por_tipo_de_pagamento ? '&filtrar_por_tipo_de_pagamento='+filtrar_por_tipo_de_pagamento : ''}`, authHeader)).data
+export const getLancamentosParaConferencia = async (prestacao_de_contas_uuid, analise_atual_uuid, conta_uuid, acao_associacao_uuid=null, tipo_lancamento=null, ordenar_por_imposto=null, filtrar_por_data_inicio=null, filtrar_por_data_fim=null, filtrar_por_nome_fornecedor=null, filtrar_por_numero_de_documento=null, filtrar_por_tipo_de_documento=null, filtrar_por_tipo_de_pagamento=null) => {
+    return (await api.get(`/api/prestacoes-contas/${prestacao_de_contas_uuid}/lancamentos/?analise_prestacao=${analise_atual_uuid}&conta_associacao=${conta_uuid}${acao_associacao_uuid ? '&acao_associacao='+acao_associacao_uuid : ''}${tipo_lancamento ? '&tipo='+tipo_lancamento : ''}${ordenar_por_imposto ? '&ordenar_por_imposto='+ordenar_por_imposto : ''}${filtrar_por_data_inicio ? '&filtrar_por_data_inicio='+filtrar_por_data_inicio : ''}${filtrar_por_data_fim ? '&filtrar_por_data_fim='+filtrar_por_data_fim : ''}${filtrar_por_nome_fornecedor ? '&filtrar_por_nome_fornecedor='+filtrar_por_nome_fornecedor : ''}${filtrar_por_numero_de_documento ? '&filtrar_por_numero_de_documento='+filtrar_por_numero_de_documento : ''}${filtrar_por_tipo_de_documento ? '&filtrar_por_tipo_de_documento='+filtrar_por_tipo_de_documento : ''}${filtrar_por_tipo_de_pagamento ? '&filtrar_por_tipo_de_pagamento='+filtrar_por_tipo_de_pagamento : ''}`, authHeader)).data
 };
 
 export const getUltimaAnalisePc = async (prestacao_de_contas_uuid) => {
@@ -237,14 +237,6 @@ export const getSolicitacaoDeAcertosDocumentos = async (prestacao_de_contas_uuid
 
 export const postSolicitacoesParaAcertosDocumentos = async (prestacao_de_contas_uuid, payload) => {
     return (await api.post(`/api/prestacoes-contas/${prestacao_de_contas_uuid}/solicitacoes-de-acerto-documento/`, payload, authHeader)).data
-};
-
-export const getTemReajustes = async (analise_atual_uuid) => {
-    return (await api.get(`/api/analises-prestacoes-contas/${analise_atual_uuid}/verifica-reajustes/`, authHeader)).data
-};
-
-export const getSaldosIniciasAjustes = async (analise_atual_uuid, conta_uuid) => {
-    return (await api.get(`/api/analises-prestacoes-contas/${analise_atual_uuid}/saldos-iniciais-com-ajustes/?conta_associacao=${conta_uuid}`, authHeader)).data
 };
 
 export const getExtratosBancariosAjustes = async (analise_atual_uuid, conta_uuid) => {
@@ -313,18 +305,6 @@ export const downloadDocumentoPreviaPdf = async (analise_atual_uuid) => {
             }).catch(error => {
                 return error.response;
             });
-};
-
-export const getAnaliseValorReprogramadoPorAcao = async (analise_prestacao_uuid, conta_associacao_uuid, acao_associacao_uuid) => {
-    return (await api.get(`/api/analises-valores-reprogramados/valores-reprogramados-acao/?analise_prestacao_conta=${analise_prestacao_uuid}&conta_associacao=${conta_associacao_uuid}&acao_associacao=${acao_associacao_uuid}`, authHeader)).data
-};
-
-export const patchAnaliseValorReprogramadoPorAcao = async (uuid_analise_de_valor_reprogramado, payload) => {
-    return (await api.patch(`/api/analises-valores-reprogramados/${uuid_analise_de_valor_reprogramado}/`, payload, authHeader)).data
-};
-
-export const postAnaliseValorReprogramadoPorAcao = async (payload) => {
-    return (await api.post(`/api/analises-valores-reprogramados/salvar-valores-reprogramados-acao/`, payload, authHeader)).data
 };
 
 export const postAnaliseAjustesSaldoPorConta = async (payload) => {

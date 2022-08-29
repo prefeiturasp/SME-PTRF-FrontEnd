@@ -35,8 +35,12 @@
   color: #00585e;
 }
 
-.container-box-consultar-dados{
+.container-box-consultar-dados, .container-publicar-cabecalho{
   background-color: #F3F3F3;
+}
+
+.container-publicar-cabecalho{
+  border-color: #DADADA;
 }
 
 .tabela-execucao-financeira, .tabela-devolucoes, .tabela-execucao-fisica{
@@ -123,4 +127,29 @@ body .tabela-associacoes-nao-regularizadas .p-datatable-tbody > tr > td, body .t
 
   padding: 15px !important;
 
+}
+
+.btn-consultar-relatorio, .btn-consultar-relatorio > button{
+  background-color: #fff !important;
+  font-weight: normal !important;
+  border-color: #00585E !important;
+  color: #00585E !important;
+  padding: 0.25rem 0.5rem;
+}
+
+.btn-consultar-relatorio > button span{
+  padding: 0 !important;
+}
+
+.btn-consultar-relatorio button:nth-child(1){
+  cursor: default;
+}
+
+.btn-consultar-relatorio button:nth-child(2){
+  border-left: none !important;
+}
+
+.btn-consultar-relatorio button:nth-child(2):hover{
+  background-color: #00585E !important;
+  color: #fff !important;
 }

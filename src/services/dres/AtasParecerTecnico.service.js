@@ -12,8 +12,8 @@ export const getAtaParecerTecnico = async (uuid_ata) => {
     return (await api.get(`api/ata-parecer-tecnico/${uuid_ata}/`, authHeader)).data
 }
 
-export const getInfoContas = async (dre_uuid, periodo_uuid) => {
-    return (await api.get(`api/ata-parecer-tecnico/info-ata/?dre=${dre_uuid}&periodo=${periodo_uuid}`, authHeader)).data
+export const getInfoContas = async (dre_uuid, periodo_uuid, uuid_ata) => {
+    return (await api.get(`api/ata-parecer-tecnico/info-ata/?dre=${dre_uuid}&periodo=${periodo_uuid}&ata=${uuid_ata}`, authHeader)).data
 }
 
 export const getListaPresentesPadrao = async (dre_uuid, ata_uuid) => {
@@ -24,17 +24,13 @@ export const postEdicaoAtaParecerTecnico = async (ata_uuid, payload) => {
     return (await api.patch(`/api/ata-parecer-tecnico/${ata_uuid}/`, payload, authHeader)).data
 };
 
-export const getGerarAta = async (ata_uuid, dre_uuid, periodo_uuid) => {
-    return (await api.get(`api/ata-parecer-tecnico/gerar-ata-parecer-tecnico/?ata=${ata_uuid}&dre=${dre_uuid}&periodo=${periodo_uuid}`, authHeader)).data
-}
-
 export const getStatusAta = async (dre_uuid, periodo_uuid) => {
     return (await api.get(`api/ata-parecer-tecnico/status-ata/?dre=${dre_uuid}&periodo=${periodo_uuid}`, authHeader)).data
 }
 
 export const getDownloadAtaParecerTecnico = async (ata_uuid) => {
     return api
-    .get(`api/ata-parecer-tecnico/download-ata-parecer-tecnico/?ata=${ata_uuid}`, {
+    .get(`api/consolidados-dre/download-ata-parecer-tecnico/?ata=${ata_uuid}`, {
         responseType: 'blob',
         timeout: 30000,
         headers: {

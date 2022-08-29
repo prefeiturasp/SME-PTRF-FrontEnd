@@ -4,7 +4,6 @@ import {BotoesAvancarRetroceder} from "./BotoesAvancarRetroceder";
 import {TrilhaDeStatus} from "./TrilhaDeStatus";
 import {FormRecebimentoPelaDiretoria} from "./FormRecebimentoPelaDiretoria";
 import {InformacoesPrestacaoDeContas} from "./InformacoesPrestacaoDeContas";
-import {InformacoesDevolucaoAoTesouro} from "./InformacoesDevolucaoAoTesouro";
 import ComentariosDeAnalise from "./ComentariosDeAnalise";
 import {TabsArquivosDeReferencia} from "./ArquivosDeReferencia/TabsArquivosDeReferencia";
 import ConferenciaDeLancamentos from "./ConferenciaDeLancamentos";
@@ -16,8 +15,6 @@ import DevolutivaDaAssociacao from "./DevolutivaDaAssociacao";
 
 export const GetComportamentoPorStatus = (
     {
-        valoresReprogramadosAjustes,
-        setValoresReprogramadosAjustes,
         prestacaoDeContas,
         receberPrestacaoDeContas,
         setShowReabrirPc,
@@ -31,15 +28,7 @@ export const GetComportamentoPorStatus = (
         setShowRecebida,
         handleChangeFormInformacoesPrestacaoDeContas,
         informacoesPrestacaoDeContas,
-        initialFormDevolucaoAoTesouro,
-        formRef,
-        despesas,
-        buscaDespesaPorFiltros,
-        buscaDespesa,
         valorTemplate,
-        despesasTabelas,
-        tiposDevolucao,
-        validateFormDevolucaoAoTesouro,
         infoAta,
         clickBtnEscolheConta,
         toggleBtnEscolheConta,
@@ -52,7 +41,6 @@ export const GetComportamentoPorStatus = (
         clickBtnTabelaAcoes,
         setShowVoltarParaAnalise,
         btnSalvarDisabled,
-        setBtnSalvarDisabled,
         carregaPrestacaoDeContas,
         dataRecebimentoDevolutiva,
         handleChangedataRecebimentoDevolutiva,
@@ -178,22 +166,7 @@ export const GetComportamentoPorStatus = (
                         informacoesPrestacaoDeContas={informacoesPrestacaoDeContas}
                         editavel={true}
                     />
-                    <InformacoesDevolucaoAoTesouro
-                        informacoesPrestacaoDeContas={informacoesPrestacaoDeContas}
-                        initialValues={initialFormDevolucaoAoTesouro}
-                        formRef={formRef}
-                        despesas={despesas}
-                        buscaDespesaPorFiltros={buscaDespesaPorFiltros}
-                        buscaDespesa={buscaDespesa}
-                        valorTemplate={valorTemplate}
-                        despesasTabelas={despesasTabelas}
-                        tiposDevolucao={tiposDevolucao}
-                        validateFormDevolucaoAoTesouro={validateFormDevolucaoAoTesouro}
-                        setBtnSalvarDisabled={setBtnSalvarDisabled}
-                    />
                     <TabsArquivosDeReferencia
-                        setValoresReprogramadosAjustes={setValoresReprogramadosAjustes}
-                        valoresReprogramadosAjustes={valoresReprogramadosAjustes}
                         infoAta={infoAta}
                         toggleBtnEscolheConta={toggleBtnEscolheConta}
                         exibeAtaPorConta={exibeAtaPorConta}
@@ -236,8 +209,6 @@ export const GetComportamentoPorStatus = (
                         editavel={true}
                     />
                     <DevolucaoParaAcertos
-                        valoresReprogramadosAjustes={valoresReprogramadosAjustes}
-                        setValoresReprogramadosAjustes={setValoresReprogramadosAjustes}
                         prestacaoDeContas={prestacaoDeContas}
                         analisesDeContaDaPrestacao={analisesDeContaDaPrestacao}
                         carregaPrestacaoDeContas={carregaPrestacaoDeContas}
@@ -295,8 +266,6 @@ export const GetComportamentoPorStatus = (
                         editavel={false}
                     />
                     <TabsArquivosDeReferencia
-                        setValoresReprogramadosAjustes={setValoresReprogramadosAjustes}
-                        valoresReprogramadosAjustes={valoresReprogramadosAjustes}
                         infoAta={infoAta}
                         toggleBtnEscolheConta={toggleBtnEscolheConta}
                         exibeAtaPorConta={exibeAtaPorConta}
@@ -338,8 +307,6 @@ export const GetComportamentoPorStatus = (
                         editavel={false}
                     />
                     <DevolucaoParaAcertos
-                        valoresReprogramadosAjustes={valoresReprogramadosAjustes}
-                        setValoresReprogramadosAjustes={setValoresReprogramadosAjustes}
                         prestacaoDeContas={prestacaoDeContas}
                         analisesDeContaDaPrestacao={analisesDeContaDaPrestacao}
                         carregaPrestacaoDeContas={carregaPrestacaoDeContas}
@@ -391,8 +358,6 @@ export const GetComportamentoPorStatus = (
                         editavel={false}
                     />
                     <TabsArquivosDeReferencia
-                        setValoresReprogramadosAjustes={setValoresReprogramadosAjustes}
-                        valoresReprogramadosAjustes={valoresReprogramadosAjustes}
                         infoAta={infoAta}
                         toggleBtnEscolheConta={toggleBtnEscolheConta}
                         exibeAtaPorConta={exibeAtaPorConta}
@@ -434,8 +399,6 @@ export const GetComportamentoPorStatus = (
                         editavel={false}
                     />
                     <DevolucaoParaAcertos
-                        valoresReprogramadosAjustes={valoresReprogramadosAjustes}
-                        setValoresReprogramadosAjustes={setValoresReprogramadosAjustes}
                         prestacaoDeContas={prestacaoDeContas}
                         analisesDeContaDaPrestacao={analisesDeContaDaPrestacao}
                         carregaPrestacaoDeContas={carregaPrestacaoDeContas}
@@ -489,8 +452,6 @@ export const GetComportamentoPorStatus = (
                         editavel={false}
                     />
                     <TabsArquivosDeReferencia
-                        setValoresReprogramadosAjustes={setValoresReprogramadosAjustes}
-                        valoresReprogramadosAjustes={valoresReprogramadosAjustes}
                         infoAta={infoAta}
                         toggleBtnEscolheConta={toggleBtnEscolheConta}
                         exibeAtaPorConta={exibeAtaPorConta}
@@ -532,8 +493,6 @@ export const GetComportamentoPorStatus = (
                         editavel={false}
                     />
                     <DevolucaoParaAcertos
-                        valoresReprogramadosAjustes={valoresReprogramadosAjustes}
-                        setValoresReprogramadosAjustes={setValoresReprogramadosAjustes}
                         prestacaoDeContas={prestacaoDeContas}
                         analisesDeContaDaPrestacao={analisesDeContaDaPrestacao}
                         carregaPrestacaoDeContas={carregaPrestacaoDeContas}
@@ -559,7 +518,7 @@ export const GetComportamentoPorStatus = (
                         textoBtnAvancar={"Concluir análise"}
                         textoBtnRetroceder={"Voltar para análise"}
                         metodoAvancar={() => setShowConcluirAnalise(true)}
-                        metodoRetroceder={() => setShowVoltarParaAnalise(true)}
+                        metodoRetroceder={() => setShowVoltarParaAnalise()}
                         disabledBtnAvancar={true}
                         disabledBtnRetroceder={false}
                         esconderBotaoAvancar={true}
@@ -584,8 +543,6 @@ export const GetComportamentoPorStatus = (
                         editavel={false}
                     />
                     <TabsArquivosDeReferencia
-                        setValoresReprogramadosAjustes={setValoresReprogramadosAjustes}
-                        valoresReprogramadosAjustes={valoresReprogramadosAjustes}
                         infoAta={infoAta}
                         toggleBtnEscolheConta={toggleBtnEscolheConta}
                         exibeAtaPorConta={exibeAtaPorConta}
@@ -627,8 +584,6 @@ export const GetComportamentoPorStatus = (
                         editavel={false}
                     />
                     <DevolucaoParaAcertos
-                        valoresReprogramadosAjustes={valoresReprogramadosAjustes}
-                        setValoresReprogramadosAjustes={setValoresReprogramadosAjustes}
                         prestacaoDeContas={prestacaoDeContas}
                         analisesDeContaDaPrestacao={analisesDeContaDaPrestacao}
                         carregaPrestacaoDeContas={carregaPrestacaoDeContas}
@@ -681,8 +636,6 @@ export const GetComportamentoPorStatus = (
                         editavel={false}
                     />
                     <TabsArquivosDeReferencia
-                        setValoresReprogramadosAjustes={setValoresReprogramadosAjustes}
-                        valoresReprogramadosAjustes={valoresReprogramadosAjustes}
                         infoAta={infoAta}
                         toggleBtnEscolheConta={toggleBtnEscolheConta}
                         exibeAtaPorConta={exibeAtaPorConta}
@@ -724,8 +677,6 @@ export const GetComportamentoPorStatus = (
                         editavel={false}
                     />
                     <DevolucaoParaAcertos
-                        valoresReprogramadosAjustes={valoresReprogramadosAjustes}
-                        setValoresReprogramadosAjustes={setValoresReprogramadosAjustes}
                         prestacaoDeContas={prestacaoDeContas}
                         analisesDeContaDaPrestacao={analisesDeContaDaPrestacao}
                         carregaPrestacaoDeContas={carregaPrestacaoDeContas}

@@ -7,7 +7,6 @@ import {useHistory} from 'react-router-dom';
 import '../../../../paginas/escolas/404/pagina-404.scss'
 import moment from 'moment';
 import {getListaReceitas, getTotaisReceitas} from "../../../../services/escolas/Receitas.service";
-import {getBotaoValoresReprogramados} from "../../../../services/escolas/ValoresReprogramados.service";
 import {MsgImgLadoDireito} from "../../../Globais/Mensagens/MsgImgLadoDireito"
 import {MsgImgCentralizada} from "../../../Globais/Mensagens/MsgImgCentralizada";
 import Img404 from "../../../../assets/img/img-404.svg";
@@ -33,12 +32,10 @@ export const ListaDeReceitas = () => {
     const [buscaUtilizandoFiltro, setBuscaUtilizandoFiltro] = useState(false);
     const [btnMaisFiltros, setBtnMaisFiltros] = useState(false);
     const [loading, setLoading] = useState(true);
-    const [btnValoresReprogramados, setBtnValoresReprogramados] = useState(false);
 
     useEffect(() => {
         buscaTotaisReceitas()
         buscaListaReceitas()
-        botaoValoresReprogramados()
     }, []);
 
 
@@ -52,11 +49,6 @@ export const ListaDeReceitas = () => {
     const buscaTotaisReceitas = async (tipo_receita = "", acao_associacao__uuid = "", conta_associacao__uuid = "", data_inicio = "", data_fim = "") => {
         const listaTotais = await getTotaisReceitas(tipo_receita, acao_associacao__uuid, conta_associacao__uuid, data_inicio, data_fim);
         setTotais(listaTotais);
-    };
-
-    const botaoValoresReprogramados = async () => {
-        const botao = await getBotaoValoresReprogramados();
-        setBtnValoresReprogramados(botao.permite_implantacao)
     };
 
     const redirecionaDetalhe = value => {
@@ -150,9 +142,7 @@ export const ListaDeReceitas = () => {
                         </div>
                         <div className={`${btnMaisFiltros ? "col-12" : "col-12 col-md-5 mt-2"}`}>
                             <button disabled={!visoesService.getPermissoes(['add_receita'])} onClick={() => history.push('/cadastro-de-credito')} type="submit" className="btn btn btn-outline-success float-right">Cadastrar crédito</button>
-                            {btnValoresReprogramados &&
-                                <button disabled={!visoesService.getPermissoes(['add_receita'])} onClick={() => history.push('/cadastro-de-valores-reprogramados')} type="submit" className="btn btn btn-outline-success float-right mr-2">Valores reprogramados</button>
-                            }
+                            <button disabled={!visoesService.getPermissoes(['add_receita'])} onClick={() => history.push('/cadastro-de-valores-reprogramados')} type="submit" className="btn btn btn-outline-success float-right mr-2">Valores reprogramados</button>
                         </div>
                     </div>
 

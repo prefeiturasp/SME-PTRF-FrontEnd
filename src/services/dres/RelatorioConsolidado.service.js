@@ -9,6 +9,70 @@ const authHeader = {
     }
 };
 
+// Consolidado DRE
+
+export const getConsolidadoDre = async (dre_uuid, periodo_uuid) => {
+    return (await api.get(`/api/consolidados-dre/?dre=${dre_uuid}&periodo=${periodo_uuid}`, authHeader)).data
+};
+
+export const getConsolidadoDrePorUuidAtaDeParecerTecnico = async (ata_de_parecer_tecnico_uuid) => {
+    return (await api.get(`/api/consolidados-dre/consolidado-dre-por-ata-uuid/?ata=${ata_de_parecer_tecnico_uuid}`, authHeader)).data
+};
+
+
+export const getConsolidadosDreJaPublicadosProximaPublicacao = async (dre_uuid, periodo_uuid) => {
+    return (await api.get(`/api/consolidados-dre/publicados-e-proxima-publicacao/?dre=${dre_uuid}&periodo=${periodo_uuid}`, authHeader)).data
+};
+
+export const getStatusConsolidadoDre = async (dre_uuid, periodo_uuid) => {
+    return (await api.get(`/api/consolidados-dre/status-consolidado-dre/?dre=${dre_uuid}&periodo=${periodo_uuid}`, authHeader)).data
+};
+
+export const postPublicarConsolidadoDre = async (payload) => {
+    return (await api.post(`/api/consolidados-dre/publicar/`, payload, authHeader)).data
+};
+
+export const postPublicarConsolidadoDePublicacoesParciais = async (payload) => {
+    return (await api.post(`/api/consolidados-dre/gerar-consolidado-de-publicacoes-parciais/`, payload, authHeader)).data
+};
+
+export const getStatusRelatorioConsolidadoDePublicacoesParciais = async (dre_uuid, periodo_uuid) => {
+    return (await api.get(`/api/consolidados-dre/retorna-status-relatorio-consolidado-de-publicacoes-parciais/?dre=${dre_uuid}&periodo=${periodo_uuid}`, authHeader)).data
+};
+
+export const postGerarPreviaConsolidadoDre = async (payload) => {
+    return (await api.post(`/api/consolidados-dre/gerar-previa/`, payload, authHeader)).data
+};
+
+export const postCriarAtaAtrelarAoConsolidadoDre = async (payload) => {
+    return (await api.post(`/api/consolidados-dre/criar-ata-e-atelar-ao-consolidado/`, payload, authHeader)).data
+};
+
+export const getDownloadRelatorio = async (relatorio_uuid, versao) => {
+    return api
+        .get(`/api/consolidados-dre/${relatorio_uuid}/download-relatorio-consolidado`, {
+            responseType: 'blob',
+            timeout: 30000,
+            headers: {
+                'Authorization': `JWT ${localStorage.getItem(TOKEN_ALIAS)}`,
+                'Content-Type': 'application/json',
+            }
+        })
+        .then((response) => {
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const filename = (versao === "FINAL" || versao === "CONSOLIDADA") ? 'relatorio_fisico_financeiro_dre.pdf' : 'previa_relatorio_fisico_financeiro_dre.pdf'
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', filename);
+            document.body.appendChild(link);
+            link.click();
+        }).catch(error => {
+            return error.response;
+        });
+};
+
+// FIM Consolidado DRE
+
 export const getFiqueDeOlhoRelatoriosConsolidados = async () => {
     return (await api.get(`/api/relatorios-consolidados-dre/fique-de-olho/`, authHeader)).data
 };
@@ -21,8 +85,8 @@ export const getTiposConta = async () => {
     return (await api.get(`/api/tipos-conta/`, authHeader)).data
 };
 
-export const getExecucaoFinanceira = async (dre_uuid, periodo_uuid, conta_uuid) => {
-    return (await api.get(`/api/relatorios-consolidados-dre/info-execucao-financeira/?dre=${dre_uuid}&periodo=${periodo_uuid}&tipo_conta=${conta_uuid}`, authHeader)).data
+export const getExecucaoFinanceira = async (dre_uuid, periodo_uuid, consolidado_dre_uuid='') => {
+    return (await api.get(`/api/relatorios-consolidados-dre/info-execucao-financeira/?dre=${dre_uuid}&periodo=${periodo_uuid}${consolidado_dre_uuid ? '&consolidado_dre=' + consolidado_dre_uuid : ""}`, authHeader)).data
 };
 
 export const getDevolucoesContaPtrf = async (dre_uuid, periodo_uuid, conta_uuid) => {
@@ -85,29 +149,6 @@ export const postGerarLauda = async (payload) => {
     return (await api.post(`/api/relatorios-consolidados-dre/gerar-lauda/`, payload, authHeader)).data
 };
 
-export const getDownloadRelatorio = async (dre_uuid, periodo_uuid, conta_uuid, versao) => {
-    return api
-    .get(`/api/relatorios-consolidados-dre/download/?dre=${dre_uuid}&periodo=${periodo_uuid}&tipo_conta=${conta_uuid}`, {
-        responseType: 'blob',
-        timeout: 30000,
-        headers: {
-            'Authorization': `JWT ${localStorage.getItem(TOKEN_ALIAS)}`,
-            'Content-Type': 'application/json',
-        }
-    })
-    .then((response) => {
-        const url = window.URL.createObjectURL(new Blob([response.data]));
-        const filename = (versao === "FINAL") ? 'relatorio_dre.pdf' : 'previa_relatorio_dre.pdf'
-        const link = document.createElement('a');
-        link.href = url;
-        link.setAttribute('download', filename);
-        document.body.appendChild(link);
-        link.click();
-    }).catch(error => {
-        return error.response;
-    });
-};
-
 export const getListaAssociacoesNaoRegularizadas = async (dre_uuid) => {
     return (await api.get(`/api/associacoes/?unidade__dre__uuid=${dre_uuid}&status_regularidade=PENDENTE`, authHeader)).data
 };
@@ -115,3 +156,7 @@ export const getListaAssociacoesNaoRegularizadas = async (dre_uuid) => {
 export const getStatusAta = async (dre_uuid, periodo_uuid) => {
     return (await api.get(`/api/ata-parecer-tecnico/status-ata/?dre=${dre_uuid}&periodo=${periodo_uuid}`, authHeader)).data
 }
+
+export const getTrilhaStatus = async (dre_uuid, uuid_periodo) => {
+    return (await api.get(`/api/consolidados-dre/trilha-de-status/?dre=${dre_uuid}&periodo=${uuid_periodo}`, authHeader)).data
+};

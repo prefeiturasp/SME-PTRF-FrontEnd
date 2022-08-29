@@ -1,37 +1,37 @@
 import React, {useCallback, useEffect, useState} from "react";
 import "../geracao-da-ata.scss"
 import {getGerarAtaPdf, getAtas, getDownloadAtaPdf} from "../../../../services/escolas/AtasAssociacao.service";
+import {ModalNaoPodeGerarAta} from "../ModalNaoPodeGerarAta";
 import Spinner from "../../../../assets/img/spinner.gif";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faDownload} from '@fortawesome/free-solid-svg-icons'
 
 export const GeracaoAtaApresentacao = (
     {
-        gerarAta,
         uuidAtaApresentacao,
         uuidPrestacaoConta,
         corBoxAtaApresentacao,
         textoBoxAtaApresentacao,
         dataBoxAtaApresentacao,
         onClickVisualizarAta,
-        uuidAssociacao,
-        uuidPeriodo,
     }
 ) => {
 
     const [dadosAta, setDadosAta] = useState({});
+    const [showNaoPodeGerarAta, setShowNaoPodeGerarAta] = useState(false);
+    const [textoModalAta, setTextoModalAta] = useState('<p>Você não pode gerar o PDF de uma ata incompleta.</p>');
 
     useEffect(() => {
         if (uuidAtaApresentacao && dadosAta && dadosAta.status_geracao_pdf && dadosAta.status_geracao_pdf === 'EM_PROCESSAMENTO'){
             const timer = setInterval(() => {
-                get_dados_ata();
+                getDadosAta();
             }, 5000);
             // clearing interval
             return () => clearInterval(timer);
         }
     });
 
-    const get_dados_ata = useCallback(async ()=>{
+    const getDadosAta = useCallback(async ()=>{
         if (uuidAtaApresentacao){
             let dados_ata = await getAtas(uuidAtaApresentacao);
             setDadosAta(dados_ata)
@@ -39,17 +39,28 @@ export const GeracaoAtaApresentacao = (
     }, [uuidAtaApresentacao])
 
     useEffect(()=>{
-        get_dados_ata()
-    }, [get_dados_ata])
+        getDadosAta()
+    }, [getDadosAta])
 
-    const gerar_ata_pdf = async () =>{
-        await getGerarAtaPdf(uuidPrestacaoConta, uuidAtaApresentacao)
-        await get_dados_ata()
+    const gerarAta = async () =>{
+        try {
+            await getGerarAtaPdf(uuidPrestacaoConta, uuidAtaApresentacao)
+            await getDadosAta()
+        }
+        catch (e) {
+            let mensagem = ''
+            let camposInvalidos = e.response.data.campos_invalidos
+            camposInvalidos.map((element) => {
+                mensagem += typeof(element) === 'object' ? ` ${element['msg_presente']}` : ` ${element}, `
+            })
+            setTextoModalAta(`<p>Você não pode gerar o PDF de uma ata incompleta. Para completa-la ${camposInvalidos[0]['msg_presente'] ? mensagem :  `preencha os campo(s) ${mensagem}`}.</p>`.replace(/,(?=[^,]*$)/, '')) // Regex remove espaço em branco e virgula no final. ⮕ (/,(?=[^,]*$)/,) ''
+            setShowNaoPodeGerarAta(true)
+        }
     }
 
     const download_ata_pdf = async () =>{
         await getDownloadAtaPdf(uuidAtaApresentacao)
-        await get_dados_ata()
+        await getDadosAta()
     }
 
     return (
@@ -81,15 +92,24 @@ export const GeracaoAtaApresentacao = (
                                 }
                             </p>
                         </div>
-
+                        <section>
+                        <ModalNaoPodeGerarAta 
+                            show={showNaoPodeGerarAta}
+                            handleClose={() => { setShowNaoPodeGerarAta(false) }}
+                            setShowNaoPodeGerarAta={setShowNaoPodeGerarAta}
+                            titulo="Campo em ata incompletos"
+                            texto={textoModalAta}
+                            primeiroBotaoTexto="Fechar"
+                            primeiroBotaoCss="outline-success"
+                        />
+                        </section>
                         <div className="col-12 col-md-4 align-self-center">
                             <button onClick={()=>onClickVisualizarAta()}  type="button" className="btn btn-success float-right">{uuidPrestacaoConta ? "Visualizar ata" : "Visualizar prévia da ata"}</button>
                             {uuidPrestacaoConta &&
                             <button
-                                onClick={() => gerar_ata_pdf()}
+                                onClick={() => gerarAta()}
                                 type="button"
                                 className="btn btn-outline-success float-right mr-2"
-                                disabled={!uuidAtaApresentacao || !gerarAta}
                             >
                                 gerar ata
                             </button>

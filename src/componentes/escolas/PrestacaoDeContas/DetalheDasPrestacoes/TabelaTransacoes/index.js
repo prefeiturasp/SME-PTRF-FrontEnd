@@ -94,6 +94,7 @@ const TabelaTransacoes = ({
             )
         }
     };
+
     const valorTemplate = (rowData = null, column = null, valor = null) => {
         let valor_para_formatar;
         if (valor) {
@@ -107,32 +108,27 @@ const TabelaTransacoes = ({
         });
         valor_formatado = valor_formatado.replace(/R/, "").replace(/\$/, "");
 
-        if (rowData && rowData.valor_transacao_na_conta !== rowData.valor_transacao_total) {
-            let texto_exibir = `<div><strong>Valor total de despesa:</strong> ${Number(rowData.valor_transacao_total).toLocaleString('pt-BR', {
-                style: 'currency',
-                currency: 'BRL'
-            })}</div>`;
-            rowData.valores_por_conta.map((item) => (
-                texto_exibir += `<div><strong>Conta ${item.conta_associacao__tipo_conta__nome}:</strong> ${Number(item.valor_rateio__sum).toLocaleString('pt-BR', {
-                    style: 'currency',
-                    currency: 'BRL'
-                })}</div>`
-            ));
+        let texto_exibir = rowData?.informacoes?.map(info => {
+            if (info.tag_nome === 'Parcial'){
+                return info.tag_hint
+            }}).filter((texto) => texto !== undefined).join(', ');
 
-            return (
-                <div data-tip={texto_exibir} data-html={true}>
-                    <span>
-                        {valor_formatado}
-                    </span>
-                    <FontAwesomeIcon
-                        style={{fontSize: '18px', marginLeft: "3px", color: '#C65D00'}}
-                        icon={faInfoCircle}
-                    />
-                    <ReactTooltip/>
-                </div>
-            )
-        } else {
-            return valor_formatado
+            if (!texto_exibir){
+                return (
+                    <div data-tip={texto_exibir} data-html={true}>
+                        <span>
+                            {valor_formatado}
+                        </span>
+                        <FontAwesomeIcon
+                            style={{fontSize: '18px', marginLeft: "3px", color: '#C65D00'}}
+                            icon={faInfoCircle}
+                        />
+                        <ReactTooltip/>
+                    </div>
+                )
+            }
+            else {
+                return valor_formatado
         }
     };
 
