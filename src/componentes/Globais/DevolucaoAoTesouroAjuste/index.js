@@ -41,11 +41,8 @@ export const DevolucaoAoTesouroAjuste = ({}) => {
     }, [])
 
     const validateDate = (value) => {
-        if (!value) {
-            setErrorMessage("é Necessário um campo de data para a ação.")
-        }
         if (!(value instanceof Date)) {
-          setErrorMessage('é Necessário um campo de data para a ação.')
+          setErrorMessage('é necessário um campo de data para a ação.')
         }
     }
 
