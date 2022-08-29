@@ -9,7 +9,6 @@ import {
     getDocumentosAjustes,
     getExtratosBancariosAjustes,
     getInfoAta,
-    getPrestacaoDeContasDetalhe
 } from "../../../../../services/dres/PrestacaoDeContas.service";
 import moment from "moment";
 import {gerarUuid, trataNumericos} from "../../../../../utils/ValidacoesAdicionaisFormularios";
@@ -45,20 +44,22 @@ export const ResumoDosAcertos = () => {
     const [totalDocumentosAjustes, setTotalDocumentosAjustes] = useState(undefined)
     const [forcaVerificaSeExibeMsg, setForcaVerificaSeExibeMsg] = useState('')
     const [pcEmAnalise, setPcEmAnalise] = useState(false)
+    const [analisesDeContaDaPrestacao, setAnalisesDeContaDaPrestacao] = useState([])
+    const [infoAta, setInfoAta] = useState([])
+    const [editavel, setEditavel] = useState(false)
 
-    const carregaInfoAta = async () =>{
+    const carregaInfoAta = useCallback(async () =>{
         if (prestacaoDeContas.uuid){
             let info_ata = await getInfoAta(prestacaoDeContas.uuid);
             return info_ata;
         }
-    };
+    }, [prestacaoDeContas]);
 
-    const getAnalisePrestacao = async ()=>{
-        if (prestacao_conta_uuid) {
-            let prestacao = await getPrestacaoDeContasDetalhe(prestacao_conta_uuid);
-            if (prestacao && prestacao.analises_de_conta_da_prestacao && prestacao.analises_de_conta_da_prestacao.length > 0){
-                let arrayAnalises = [];
-                prestacao.analises_de_conta_da_prestacao.map((conta)=>{
+    const getAnalisePrestacao = useCallback(()=>{
+        if (prestacaoDeContas) {
+            let arrayAnalises = [];
+            if (prestacaoDeContas && prestacaoDeContas.analises_de_conta_da_prestacao && prestacaoDeContas.analises_de_conta_da_prestacao.length > 0){
+                prestacaoDeContas.analises_de_conta_da_prestacao.map((conta)=>{
                         arrayAnalises.push({
                             uuid: conta.uuid,
                             conta_associacao: conta.conta_associacao.uuid,
@@ -68,26 +69,51 @@ export const ResumoDosAcertos = () => {
                     });
                 return arrayAnalises;
             }else {
-                return false
+                return arrayAnalises;
             }
         }else {
             return undefined
         }
-    };
+    }, [prestacaoDeContas])
 
-    const verificaEditavel = () => {
+    const verificaEditavel = useCallback(() => {
         if(prestacaoDeContas.status === 'EM_ANALISE'){
             return true;
         }
         else{
             return false;
         }
-    }
+    }, [prestacaoDeContas]);
 
-    // Variaveis necessarias para para lidar com o redirecionamento para essa pagina
-    const infoAta = props.state && props.state.infoAta ? props.state.infoAta : carregaInfoAta();
-    const editavel = props.state && props.state.editavel ? props.state.editavel : verificaEditavel();
-    const analisesDeContaDaPrestacao = props.state && props.state.analisesDeContaDaPrestacao ? props.state.analisesDeContaDaPrestacao : getAnalisePrestacao();
+    useEffect(() => {
+        if(props && props.state && props.state.analisesDeContaDaPrestacao){
+            setAnalisesDeContaDaPrestacao(props.state.analisesDeContaDaPrestacao)
+        }
+        else if(prestacaoDeContas){
+            setAnalisesDeContaDaPrestacao(getAnalisePrestacao())
+        }
+
+    }, [getAnalisePrestacao, props, prestacaoDeContas])
+
+    useEffect(() => {
+        if(props && props.state && props.state.infoAta){
+            setInfoAta(props.state.infoAta)
+        }
+        else if(prestacaoDeContas){
+            setInfoAta(carregaInfoAta())
+        }
+
+    }, [carregaInfoAta, props, prestacaoDeContas])
+
+    useEffect(() => {
+        if(props && props.state && props.state.editavel){
+            setEditavel(props.state.editavel);
+        }
+        else if(prestacaoDeContas){
+            setEditavel(verificaEditavel())
+        }
+
+    }, [verificaEditavel, props, prestacaoDeContas])
 
     const verificaPcEmAnalise = () => {
         if(prestacaoDeContas && prestacaoDeContas.status === "EM_ANALISE"){
