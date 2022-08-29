@@ -125,7 +125,7 @@ export const CadastroForm = ({verbo_http}) => {
                 resp = await getDespesasTabelas(parametroLocation.state.uuid_associacao);
             }
             else{
-                await getDespesasTabelas();
+                resp = await getDespesasTabelas();
             }
 
             setDespesasTabelas(resp);
