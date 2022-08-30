@@ -33,6 +33,7 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
     const [textoBoxAtaApresentacao, settextoBoxAtaApresentacao] = useState("");
     const [dataBoxAtaApresentacao, setdataBoxAtaApresentacao] = useState("");
     const [uuidAtaApresentacao, setUuidAtaApresentacao] = useState("");
+    const [txtJustificativa, setTxtJustificativa] = useState('');
 
     const associacaoUuid = localStorage.getItem(ASSOCIACAO_UUID)
 
@@ -216,6 +217,10 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
             setShowConcluir(true)
         }
     }
+
+    const handleChangeTxtJustificativa = (event) =>{
+        setTxtJustificativa(event.target.value)
+    };
 
     const setConfBoxAtaApresentacao = async ()=>{
         let uuid_prestacao_de_contas = localStorage.getItem('uuidPrestacaoConta');
@@ -429,8 +434,8 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
                     <section>
                         <ModalConcluirPeriodoComPendencias
                             titulo="Concluir Prestação de Contas com pendências"
-                            txtJustificativa={"teste texto justificativa"}
-                            handleChangeTxtJustificativa={() => {}}
+                            txtJustificativa={txtJustificativa}
+                            handleChangeTxtJustificativa={handleChangeTxtJustificativa}
                             handleClose={onHandleCloseModalConcluirPeriodoComPendencias}
                             onConcluir={() => {}}
                             show={showConcluirComPendencia}
