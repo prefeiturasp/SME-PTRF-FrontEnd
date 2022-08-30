@@ -1,4 +1,5 @@
 import React, {useEffect, useState, useCallback} from "react";
+import { useHistory } from "react-router-dom";
 import {DatePickerField} from "../DatePickerField";
 import {PaginasContainer} from "../../../paginas/PaginasContainer";
 import { getPrestacaoDeContasDetalhe } from "../../../services/dres/PrestacaoDeContas.service"
@@ -6,15 +7,17 @@ import {useLocation} from 'react-router-dom';
 import {Button} from 'react-bootstrap';
 import {toastCustom} from "../../../componentes/Globais/ToastCustom"
 import { marcarDevolucaoTesouro, getSalvarDevoulucoesAoTesouro } from '../../../services/dres/PrestacaoDeContas.service.js'
+import moment from "moment";
 
 import './../../../componentes/escolas/GeracaoDaAta/geracao-da-ata.scss'
 
-export const DevolucaoAoTesouroAjuste = ({}) => {
+export const DevolucaoAoTesouroAjuste = () => {
     const { state } = useLocation();
     const [devolucao, setDevolucao] = useState([]);
     const [despesa, setDespesas] = useState([]);
     const [dateDevolucao, setDateDevolucao] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+    const history = useHistory();
 
     useEffect(() => {
         let mounted = true;
@@ -36,14 +39,11 @@ export const DevolucaoAoTesouroAjuste = ({}) => {
         return () =>{
             mounted = false
         }
-    }, [])
+    }, [state.uuid_pc, state.uuid_despesa])
 
     const validateDate = (value) => {
-        if (!value) {
-            setErrorMessage("é Necessário um campo de data para a ação.")
-        }
         if (!(value instanceof Date)) {
-          setErrorMessage('precisa ser uma data valida.')
+          setErrorMessage('Data é um campo obrigatório')
         }
     }
 
@@ -53,7 +53,7 @@ export const DevolucaoAoTesouroAjuste = ({}) => {
     }, [])
 
     const handleCancelar = () => {
-        window.history.go(-1);
+        history.push(`${state.origem}/${state.uuid_pc}`)
     }
 
     const submitAlteracaoDevolucaoTesouro = async () => {
@@ -74,12 +74,12 @@ export const DevolucaoAoTesouroAjuste = ({}) => {
         await getSalvarDevoulucoesAoTesouro(state.uuid_pc, payload);
         await marcarDevolucaoTesouro(state.uuid_analise_lancamento);
         toastCustom.ToastCustomSuccess('Data de devolução ao tesouro alterada com sucesso.')
-        window.history.go(-1);
+        history.push(`${state.origem}/${state.uuid_pc}`)
     }
 
     return(
         <PaginasContainer>
-            <h1 className="titulo-itens-painel mt-5">Devolução ao tesouro table</h1>
+            <h1 className="titulo-itens-painel mt-5">Devolução ao tesouro</h1>
             <div className="page-content-inner">
                 <table className="table table-bordered tabela-devolucoes-ao-tesouro">
                     <thead>
@@ -98,8 +98,8 @@ export const DevolucaoAoTesouroAjuste = ({}) => {
                             <td>{despesa.cpf_cnpj_fornecedor}</td>
                             <td>{despesa.tipo_documento ? despesa.tipo_documento.nome : ''}</td>
                             <td>{despesa.numero_documento}</td>
-                            <td>{despesa.data_documento}</td>
-                            <td>{despesa.valor_total}</td>
+                            <td>{moment(new Date(despesa.data_documento), "YYYY-MM-DD").format("DD/MM/YYYY")}</td>
+                            <td>{devolucao.valor}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -133,6 +133,7 @@ export const DevolucaoAoTesouroAjuste = ({}) => {
                             variant="success"
                             className="btn btn-sucess pr-4 pl-4"
                             onClick={submitAlteracaoDevolucaoTesouro}
+                            disabled={!state.tem_permissao_de_edicao || !dateDevolucao}
                         >
                             Salvar
                         </Button>
