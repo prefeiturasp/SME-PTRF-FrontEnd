@@ -321,12 +321,9 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
     }
 
     const marcarComoEsclarecido = async (data, tipoModelo) => {
-        console.log('data', data)
-        debugger
         let payload = {
             'esclarecimento': tipoModelo === 'lancamento' ? txtEsclarecimentoLancamento[data.uuid] : txtEsclarecimentoDocumento[data.uuid],
         }
-
         try {
             tipoModelo === 'lancamento' ? postMarcarComoLancamentoEsclarecido(payload, data.uuid) : postMarcarComoDocumentoEsclarecido(payload, data.uuid)
             setShowSalvarEsclarecimento({
@@ -452,7 +449,7 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
                             <button
                                 disabled={salvarDesabilitadosEsclarecimento}
                                 type="button"
-                                className={`btn btn-${salvarDesabilitadosEsclarecimento ? 'secondary' : 'success'} mt-2 mb-0`}
+                                className={`btn btn-${salvarDesabilitadosEsclarecimento ? 'secondary' : 'success'} mb-0 mr-2`}
                                 onClick={() => marcarComoEsclarecido(data.analise_lancamento, 'lancamento')}
                             >
                                 <strong>Salvar esclarecimento</strong>
@@ -560,7 +557,6 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
                                         <div className='titulo-row-expanded-conferencia-de-lancamentos mb-4 '>
                                             <p className='mb-1'><strong>Esclarecimento do documento</strong></p>
                                         </div>
-                                        {console.log('data ->', data)}
                                         <textarea
                                             rows="4"
                                             cols="50"
@@ -588,7 +584,7 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
                                         <button
                                             disabled={salvarDesabilitadosEsclarecimento}
                                             type="button"
-                                            className={`btn btn-${salvarDesabilitadosEsclarecimento ? 'secondary' : 'success'} mt-2`}
+                                            className={`btn btn-${salvarDesabilitadosEsclarecimento ? 'secondary' : 'success'} mr-3`}
                                             onClick={() => marcarComoEsclarecido(data, 'documento')}
                                         >
                                             <strong>Salvar esclarecimento</strong>
