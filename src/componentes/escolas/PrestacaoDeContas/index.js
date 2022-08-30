@@ -15,6 +15,7 @@ import {GeracaoAtaApresentacao} from "../GeracaoDaAta/GeracaoAtaApresentacao";
 import {GeracaoAtaRetificadora} from "../GeracaoAtaRetificadora";
 import {exibeDateTimePT_BR_Ata} from "../../../utils/ValidacoesAdicionaisFormularios";
 import {visoesService} from "../../../services/visoes.service";
+import {ModalConcluirPeriodoComPendencias} from "./ModalConcluirPeriodoComPendencias";
 
 export const PrestacaoDeContas = ({setStatusPC}) => {
 
@@ -26,7 +27,8 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
     const [contaPrestacaoDeContas, setContaPrestacaoDeContas] = useState(false);
     const [clickBtnEscolheConta, setClickBtnEscolheConta] = useState({0: true});
     const [loading, setLoading] = useState(true);
-    const [show, setShow] = useState(false);
+    const [showConcluir, setShowConcluir] = useState(false);
+    const [showConcluirComPendencia, setShowConcluirComPendencia] = useState(false);
     const [corBoxAtaApresentacao, setcorBoxAtaApresentacao] = useState("");
     const [textoBoxAtaApresentacao, settextoBoxAtaApresentacao] = useState("");
     const [dataBoxAtaApresentacao, setdataBoxAtaApresentacao] = useState("");
@@ -202,6 +204,19 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
         await setConfBoxAtaApresentacao();
     };
 
+    const handleConcluirPeriodo = () =>{
+        console.log('Handle Concluir', statusPrestacaoDeConta)
+        if (
+            statusPrestacaoDeConta &&
+            statusPrestacaoDeConta.prestacao_contas_status &&
+            statusPrestacaoDeConta.prestacao_contas_status.tem_acertos_pendentes
+        ) {
+            setShowConcluirComPendencia(true)
+        } else {
+            setShowConcluir(true)
+        }
+    }
+
     const setConfBoxAtaApresentacao = async ()=>{
         let uuid_prestacao_de_contas = localStorage.getItem('uuidPrestacaoConta');
         let data_preenchimento;
@@ -273,12 +288,16 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
     };
 
     const onSalvarTrue = () =>{
-        setShow(false);
+        setShowConcluir(false);
         concluirPeriodo();
     };
 
     const onHandleClose = () => {
-        setShow(false);
+        setShowConcluir(false);
+    };
+
+    const onHandleCloseModalConcluirPeriodoComPendencias = () => {
+        setShowConcluirComPendencia(false);
     };
 
     const podeConcluir = [['concluir_periodo_prestacao_contas']].some(visoesService.getPermissoes)
@@ -331,8 +350,7 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
                                 retornaObjetoPeriodoPrestacaoDeConta={retornaObjetoPeriodoPrestacaoDeConta}
                                 statusPrestacaoDeConta={statusPrestacaoDeConta}
                                 checkCondicaoExibicao={checkCondicaoExibicao}
-                                concluirPeriodo={concluirPeriodo}
-                                setShow={setShow}
+                                concluirPeriodo={handleConcluirPeriodo}
                                 podeConcluir={podeConcluir}
                             />
                             {checkCondicaoExibicao(periodoPrestacaoDeConta)  ? (
@@ -398,7 +416,7 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
                     }
                     <section>
                         <ModalConcluirPeriodo
-                            show={show}
+                            show={showConcluir}
                             handleClose={onHandleClose}
                             onSalvarTrue={onSalvarTrue}
                             titulo="Concluir Prestação de Contas"
@@ -406,6 +424,16 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
                             o cadastro e a edição de qualquer crédito ou despesa nesse período.
                             Para conferir as informações cadastradas, sem bloqueio do sistema nesse período, gere um documento prévio.
                             Você confirma a conclusão dessa Prestação de Contas?</p>"
+                        />
+                    </section>
+                    <section>
+                        <ModalConcluirPeriodoComPendencias
+                            titulo="Concluir Prestação de Contas com pendências"
+                            txtJustificativa={"teste texto justificativa"}
+                            handleChangeTxtJustificativa={() => {}}
+                            handleClose={onHandleCloseModalConcluirPeriodoComPendencias}
+                            onConcluir={() => {}}
+                            show={showConcluirComPendencia}
                         />
                     </section>
                 </>
