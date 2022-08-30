@@ -1,7 +1,7 @@
-import React, {Fragment, memo, useCallback, useEffect, useState} from "react";
-import {useHistory} from "react-router-dom";
-import {faCheck} from '@fortawesome/free-solid-svg-icons'
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import React, { Fragment, memo, useCallback, useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
+import { faCheck } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import useValorTemplate from "../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useValorTemplate";
 import useDataTemplate from "../../../hooks/Globais/useDataTemplate";
 import useNumeroDocumentoTemplate
@@ -12,6 +12,8 @@ import {
     getAnaliseDocumentosPrestacaoConta,
     postJustificarNaoRealizacaoDocumentoPrestacaoConta,
     postMarcarComoRealizadoDocumentoPrestacaoConta,
+    postMarcarComoLancamentoEsclarecido,
+    postMarcarComoDocumentoEsclarecido,
     postLimparStatusDocumentoPrestacaoConta,
     getLancamentosAjustes,
     patchAnaliseDocumentoPrestacaoConta,
@@ -19,7 +21,7 @@ import {
     getExtratosBancariosAjustes,
     getTemAjustesExtratos
 } from "../../../services/dres/PrestacaoDeContas.service";
-import {TabelaAcertosLancamentos} from "./TabelaAcertosLancamentos";
+import { TabelaAcertosLancamentos } from "./TabelaAcertosLancamentos";
 import TabsAcertosEmLancamentosPorConta from "./TabsAcertosEmLancamentosPorConta";
 import Loading from "../../../utils/Loading";
 import {
@@ -28,18 +30,18 @@ import {
     postMarcarComoRealizadoLancamentoPrestacaoConta,
     patchAnaliseLancamentoPrestacaoConta
 } from "../../../services/dres/PrestacaoDeContas.service";
-import {barraMensagemCustom} from "../../Globais/BarraMensagem";
+import { barraMensagemCustom } from "../../Globais/BarraMensagem";
 
 
 // Redux
-import {useDispatch} from "react-redux";
+import { useDispatch } from "react-redux";
 import {
     addDetalharAcertos,
     limparDetalharAcertos
 } from "../../../store/reducers/componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeLancamentos/DetalharAcertos/actions"
 
 import TabelaAcertosDocumentos from "./TabelaAcertosDocumentos";
-import {getAnaliseLancamentosPrestacaoConta} from "../../../services/dres/PrestacaoDeContas.service";
+import { getAnaliseLancamentosPrestacaoConta } from "../../../services/dres/PrestacaoDeContas.service";
 
 
 // Hooks Personalizados
@@ -48,16 +50,16 @@ import {
 } from "../../../hooks/dres/PrestacaoDeContas/useCarregaPrestacaoDeContasPorUuid";
 import TabsAjustesEmExtratosBancarios from "./TabsAjustesEmExtratosBancarios";
 import TabelaAcertosEmExtratosBancarios from "./TabelaAcertosEmExtratosBancarios";
-import {visoesService} from "../../../services/visoes.service";
+import { visoesService } from "../../../services/visoes.service";
 import BotoesDetalhesParaAcertosDeCategorias from "./BotoesDetalhesParaAcertosDeCategorias";
 
 const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
-                                                          exibeBtnIrParaPaginaDeAcertos = true,
-                                                          exibeBtnIrParaPaginaDeReceitaOuDespesa = false,
-                                                          prestacaoDeContasUuid,
-                                                          analiseAtualUuid,
-                                                          editavel
-                                                      }) => {
+    exibeBtnIrParaPaginaDeAcertos = true,
+    exibeBtnIrParaPaginaDeReceitaOuDespesa = false,
+    prestacaoDeContasUuid,
+    analiseAtualUuid,
+    editavel
+}) => {
 
     const prestacaoDeContas = useCarregaPrestacaoDeContasPorUuid(prestacaoDeContasUuid)
 
@@ -94,12 +96,12 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
     const [stateFiltros, setStateFiltros] = useState(initialStateFiltros);
     const [contaUuid, setContaUuid] = useState('')
     const [listaTiposDeAcertoLancamentos, setListaTiposDeAcertoLancamentos] = useState([])
-    const [clickBtnEscolheConta, setClickBtnEscolheConta] = useState({0: true});
-    const [clickBtnEscolheContaExtratosBancarios, setClickBtnEscolheContaExtratosBancarios] = useState({0: true});
+    const [clickBtnEscolheConta, setClickBtnEscolheConta] = useState({ 0: true });
+    const [clickBtnEscolheContaExtratosBancarios, setClickBtnEscolheContaExtratosBancarios] = useState({ 0: true });
     const [textareaJustificativa, setTextareaJustificativa] = useState(() => {
     });
     const [showSalvar, setShowSalvar] = useState({});
-    const [showSalvarEsclarecimento, setShowSalvarEsclarecimento] = useState(false);
+    const [showSalvarEsclarecimento, setShowSalvarEsclarecimento] = useState({});
     const [txtEsclarecimentoLancamento, setTxtEsclarecimentoLancamento] = useState({});
     const [txtEsclarecimentoDocumento, setTxtEsclarecimentoDocumento] = useState({});
 
@@ -160,7 +162,7 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
     const carregaAcertosLancamentos = useCallback(async (conta_uuid, filtrar_por_lancamento = null, filtrar_por_tipo_de_ajuste = null) => {
         setContaUuid(conta_uuid)
         setLoadingLancamentos(true)
-        let {status_realizacao} = await getAnaliseLancamentosPrestacaoConta()
+        let { status_realizacao } = await getAnaliseLancamentosPrestacaoConta()
         let lancamentos_ajustes = await getLancamentosAjustes(analiseAtualUuid, conta_uuid, filtrar_por_lancamento, filtrar_por_tipo_de_ajuste)
 
         setOpcoesJustificativa(status_realizacao)
@@ -170,7 +172,7 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
 
     const carregaAcertosDocumentos = useCallback(async () => {
         setLoadingDocumentos(true)
-        let {status_realizacao} = await getAnaliseDocumentosPrestacaoConta()
+        let { status_realizacao } = await getAnaliseDocumentosPrestacaoConta()
         let documentoAjuste = await getDocumentosAjustes(analiseAtualUuid)
         setDocumentosAjustes(documentoAjuste)
         setOpcoesJustificativa(status_realizacao)
@@ -180,7 +182,7 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
 
     const limparStatus = async (lancamentosSelecionados) => {
         setLoadingLancamentos(true)
-        await postLimparStatusLancamentoPrestacaoConta({"uuids_analises_lancamentos": lancamentosSelecionados.map(lanc => lanc.analise_lancamento.uuid)})
+        await postLimparStatusLancamentoPrestacaoConta({ "uuids_analises_lancamentos": lancamentosSelecionados.map(lanc => lanc.analise_lancamento.uuid) })
         const lancamentoAjuste = await getLancamentosAjustes(lancamentosSelecionados[0].analise_lancamento.analise_prestacao_conta, lancamentosAjustes[0].conta)
         setLancamentosAjustes(lancamentoAjuste)
         setLoadingLancamentos(false)
@@ -188,7 +190,7 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
 
     const limparDocumentoStatus = async (documentosSelecionados) => {
         setLoadingDocumentos(true)
-        await postLimparStatusDocumentoPrestacaoConta({"uuids_analises_documentos": documentosSelecionados.map(doc => doc.uuid)})
+        await postLimparStatusDocumentoPrestacaoConta({ "uuids_analises_documentos": documentosSelecionados.map(doc => doc.uuid) })
         const documentoAjustes = await getDocumentosAjustes(documentosSelecionados[0].analise_prestacao_conta)
         setDocumentosAjustes(documentoAjustes)
         setLoadingDocumentos(false)
@@ -196,7 +198,7 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
 
     const marcarComoRealizado = async (lancamentosSelecionados) => {
         setLoadingLancamentos(true)
-        await postMarcarComoRealizadoLancamentoPrestacaoConta({"uuids_analises_lancamentos": lancamentosSelecionados.map(lanc => lanc.analise_lancamento.uuid)})
+        await postMarcarComoRealizadoLancamentoPrestacaoConta({ "uuids_analises_lancamentos": lancamentosSelecionados.map(lanc => lanc.analise_lancamento.uuid) })
         const lancamentoAjuste = await getLancamentosAjustes(lancamentosSelecionados[0].analise_lancamento.analise_prestacao_conta, lancamentosAjustes[0].conta)
         setLancamentosAjustes(lancamentoAjuste)
         setLoadingLancamentos(false)
@@ -204,7 +206,7 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
 
     const marcarDocumentoComoRealizado = async (documentosSelecionados) => {
         setLoadingDocumentos(true)
-        await postMarcarComoRealizadoDocumentoPrestacaoConta({"uuids_analises_documentos": documentosSelecionados.map(doc => doc.uuid)})
+        await postMarcarComoRealizadoDocumentoPrestacaoConta({ "uuids_analises_documentos": documentosSelecionados.map(doc => doc.uuid) })
         const documentoAjustes = await getDocumentosAjustes(documentosSelecionados[0].analise_prestacao_conta)
         setDocumentosAjustes(documentoAjustes)
         setLoadingDocumentos(false)
@@ -239,7 +241,7 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
             carregarAjustesExtratosBancarios(contasAssociacao[0].uuid);
             carregaAcertosLancamentos(contasAssociacao[0].uuid)
             carregaAcertosDocumentos(contasAssociacao[0].uuid)
-            setClickBtnEscolheConta({0: true})
+            setClickBtnEscolheConta({ 0: true })
         }
     }, [consultaSeTemAjustesExtratos, contasAssociacao, carregaAcertosLancamentos, carregaAcertosDocumentos, carregarAjustesExtratosBancarios])
 
@@ -271,22 +273,21 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
             [id]: event.target.value
         })
     };
-    
+
     const handleChangeTextareaEsclarecimentoLancamento = (event, id) => {
         setShowSalvarEsclarecimento({
-            ...showSalvar,
+            ...showSalvarEsclarecimento,
             [id]: false
         })
         setTxtEsclarecimentoLancamento({
             ...txtEsclarecimentoLancamento,
             [id]: event.target.value
         })
-        console.log('txtEsclarecimentoLancamento', txtEsclarecimentoLancamento)
     }
 
     const handleChangeTextareaEsclarecimentoDocumento = (event, id) => {
         setShowSalvarEsclarecimento({
-            ...showSalvar,
+            ...showSalvarEsclarecimento,
             [id]: false
         })
         setTxtEsclarecimentoDocumento({
@@ -319,20 +320,19 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
         }
     }
 
-    const salvarJustificativaEsclarecimento = async (data, tipoModelo) => {
-        console.log('data', data);
-        console.log('tipoModelo', tipoModelo);
-        console.log('txtEsclarecimentoLancamento', txtEsclarecimentoLancamento)
+    const marcarComoEsclarecido = async (data, tipoModelo) => {
+        console.log('data', data)
+        debugger
         let payload = {
-            'esclarecimento': tipoModelo === 'lancamento' ? txtEsclarecimentoLancamento : txtEsclarecimentoDocumento,
+            'esclarecimento': tipoModelo === 'lancamento' ? txtEsclarecimentoLancamento[data.uuid] : txtEsclarecimentoDocumento[data.uuid],
         }
-        console.log('payload', payload);
 
         try {
-            setShowSalvarEsclarecimento(true);
-            // Liniker Precisa do back-end
-            // tipoModelo === 'lancamento' ? apiLancamento : apiDocumento
-            console.log('campo esclarecido : ', payload['esclarecimento'])
+            tipoModelo === 'lancamento' ? postMarcarComoLancamentoEsclarecido(payload, data.uuid) : postMarcarComoDocumentoEsclarecido(payload, data.uuid)
+            setShowSalvarEsclarecimento({
+                ...showSalvarEsclarecimento,
+                [data.uuid]: true
+            });
         } catch (e) {
             console.log("Erro: ", e.message)
         }
@@ -341,6 +341,7 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
     const rowExpansionTemplateLancamentos = (data) => {
         if (data && data.analise_lancamento && data.analise_lancamento.solicitacoes_de_ajuste_da_analise && data.analise_lancamento.solicitacoes_de_ajuste_da_analise.length > 0) {
             const salvarDesabilitados = !textareaJustificativa?.[data.analise_lancamento.uuid] || textareaJustificativa?.[data.analise_lancamento.uuid] === data.analise_lancamento.justificativa || showSalvar?.[data.analise_lancamento.uuid]
+            const salvarDesabilitadosEsclarecimento = !txtEsclarecimentoLancamento?.[data.analise_lancamento.uuid] || txtEsclarecimentoLancamento?.[data.analise_lancamento.uuid] === data.analise_lancamento.esclarecimentos || showSalvarEsclarecimento?.[data.analise_lancamento.uuid]
             return (
                 <>
                     {data.analise_lancamento.justificativa?.length > 0 && (
@@ -351,7 +352,7 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
                                         <p className='mb-1'><strong>Justificativa</strong></p>
                                     </div>
                                 </div>
-                                <div className="form-group w-100 px-4 py-2" style={{pointerEvents: 'all'}}>
+                                <div className="form-group w-100 px-4 py-2" id="pointer-event-all">
                                     <textarea
                                         defaultValue={data.analise_lancamento.justificativa}
                                         onChange={(event) => handleChangeTextareaJustificativa(event, data.analise_lancamento.uuid)}
@@ -368,19 +369,19 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
                                         {showSalvar?.[data.analise_lancamento.uuid] &&
                                             <div className="">
                                                 <p className="mr-2 mt-3">
-                                                            <span className="mr-1">
-                                                            <FontAwesomeIcon
-                                                                style={{fontSize: '16px', color: '#297805'}}
-                                                                icon={faCheck}
-                                                            />
-                                                            </span>Salvo
+                                                    <span className="mr-1">
+                                                        <FontAwesomeIcon
+                                                            style={{ fontSize: '16px', color: '#297805' }}
+                                                            icon={faCheck}
+                                                        />
+                                                    </span>Salvo
                                                 </p>
                                             </div>
                                         }
                                         <button
                                             disabled={salvarDesabilitados}
                                             type="button"
-                                            className={`btn btn-${salvarDesabilitados ? 'secondary' : 'success'} mt-2`}
+                                            className={`btn btn-${salvarDesabilitados ? 'secondary' : 'success'} mt-2 mb-0`}
                                             onClick={() => handleOnClick(data.analise_lancamento.uuid, 'lancamento')}
                                         >
                                             <strong>Salvar Justificativas</strong>
@@ -390,15 +391,6 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
                             </div>
                         </Fragment>
                     )}
-
-                    {data.analise_lancamento.requer_ajustes_externos &&
-                        <div className='row'>
-                            <div className='col-12 mb-3 px-4 py-2'>
-                                {barraMensagemCustom.BarraMensagemSucessAzul("Favor realizar os ajustes solicitados que são externos ao sistema.")}
-                            </div>
-                        </div>
-                    }
-
                     {data.analise_lancamento.solicitacoes_de_ajuste_da_analise.map((ajuste, index) => (
                         <Fragment key={ajuste.id}>
                             <div className='row'>
@@ -408,54 +400,66 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
                                     </div>
                                     <p className='mb-1'><strong>Tipo de acerto</strong></p>
                                     <p>{ajuste.tipo_acerto.nome}</p>
-                                    <div className='titulo-row-expanded-conferencia-de-esclarecimento mb-2'></div>
-                                        {ajuste.tipo_acerto.categoria === 'SOLICITACAO_ESCLARECIMENTO' &&
-                                        <div className="form-group w-100 " style={{pointerEvents: 'all', resize: false}}>
-                                            <label className='mb-1'>Esclarecimento do lançamento</label>
-                                            <textarea
-                                                rows="4"
-                                                cols="50"
-                                                name='esclarecimento'
-                                                defaultValue={data.esclarecimento}
-                                                onChange={(event) => handleChangeTextareaEsclarecimentoLancamento(event, data.analise_lancamento.uuid)}
-                                                className="form-control"
-                                                placeholder="Digite aqui o esclarecimento"
-                                                disabled={![['change_analise_dre']].some(visoesService.getPermissoes) || visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'DRE' || prestacaoDeContas.status !== 'DEVOLVIDA'}
-                                            />
-                                        </div>
-                                        }
-                                        <div className="bd-highlight d-flex justify-content-end align-items-center" style={{pointerEvents: 'all'}}>
-                                            {showSalvarEsclarecimento?.[data.analise_lancamento.uuid] && <div className="">
-                                                <p className="mr-2 mt-3">
-                                                    <span className="mr-1">
-                                                    <FontAwesomeIcon
-                                                        style={{fontSize: '16px', color:'#297805'}}
-                                                        icon={faCheck}
-                                                    />
-                                                    </span>Salvo
-                                                </p>
-                                            </div>}
-                                            {ajuste.tipo_acerto.categoria === 'SOLICITACAO_ESCLARECIMENTO' &&
-                                            <button 
-                                                disabled={!txtEsclarecimentoLancamento[data.analise_lancamento.uuid]}
-                                                type="button" 
-                                                className={`btn btn-success mt-2`}
-                                                onClick={() => salvarJustificativaEsclarecimento(ajuste.uuid, 'lancamento')}
-                                                >
-                                                <strong>Salvar</strong>
-                                            </button>
-                                            }
-                                        </div>
                                     {ajuste.detalhamento &&
                                         <span>
-                                        <p className='mb-1'><strong>Detalhamento</strong></p>
-                                        <p className='mb-0'>{ajuste.detalhamento}</p>
-                                    </span>
+                                            <p className='mb-1'><strong>Detalhamento</strong></p>
+                                            <p className='mb-4'>{ajuste.detalhamento}</p>
+                                        </span>
                                     }
                                 </div>
                             </div>
                         </Fragment>
                     ))}
+
+                    {data.analise_lancamento.requer_ajustes_externos &&
+                        <div className='row'>
+                            <div className='col-12 mb-1 px-4 py-1'>
+                                {barraMensagemCustom.BarraMensagemSucessAzul("Favor realizar os ajustes solicitados que são externos ao sistema.")}
+                            </div>
+                        </div>
+                    }
+                    {data.analise_lancamento.solicitacoes_de_ajuste_da_analise[0].tipo_acerto.categoria === 'SOLICITACAO_ESCLARECIMENTO' &&
+                        <div className="row">
+                        <div className="col-12 px-4 py-2" id="pointer-event-all">
+                            <div className='titulo-row-expanded-conferencia-de-lancamentos mb-4'>
+                                <p className='mb-1'><strong>Esclarecimento de lançamento</strong></p>
+                            </div>
+                            <textarea
+                                rows="4"
+                                cols="50"
+                                name='esclarecimento'
+                                defaultValue={data.analise_lancamento.esclarecimentos}
+                                onChange={(event) => handleChangeTextareaEsclarecimentoLancamento(event, data.analise_lancamento.uuid)}
+                                className="form-control"
+                                placeholder="Digite aqui o esclarecimento"
+                                disabled={![['change_analise_dre']].some(visoesService.getPermissoes) || visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'DRE' || prestacaoDeContas.status !== 'DEVOLVIDA'}
+                            />
+                        </div>
+                    </div>
+                    }
+                    <div className="bd-highlight d-flex justify-content-end align-items-center" id="pointer-event-all">
+                        {showSalvarEsclarecimento?.[data.analise_lancamento.uuid] && <div className="">
+                            <p className="mr-2 mt-3">
+                                <span className="mr-1">
+                                    <FontAwesomeIcon
+                                        style={{ fontSize: '16px', color: '#297805' }}
+                                        icon={faCheck}
+                                    />
+                                </span>Salvo
+                            </p>
+                        </div>}
+                        {data.analise_lancamento.solicitacoes_de_ajuste_da_analise[0].tipo_acerto.categoria === 'SOLICITACAO_ESCLARECIMENTO' &&
+                            <button
+                                disabled={salvarDesabilitadosEsclarecimento}
+                                type="button"
+                                className={`btn btn-${salvarDesabilitadosEsclarecimento ? 'secondary' : 'success'} mt-2 mb-0`}
+                                onClick={() => marcarComoEsclarecido(data.analise_lancamento, 'lancamento')}
+                            >
+                                <strong>Salvar esclarecimento</strong>
+                            </button>
+                        }
+                    </div>
+                
                     {exibeBtnIrParaPaginaDeAcertos &&
                         redirecionaDetalheAcerto(data)
                     }
@@ -478,6 +482,8 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
     const rowExpansionTemplateDocumentos = (data) => {
         if (data && data.solicitacoes_de_ajuste_da_analise && data.solicitacoes_de_ajuste_da_analise.length > 0) {
             const salvarDesabilitados = !textareaJustificativa?.[data.uuid] || textareaJustificativa?.[data.uuid] === data.justificativa || showSalvar?.[data.uuid]
+            const salvarDesabilitadosEsclarecimento = !txtEsclarecimentoDocumento?.[data.uuid] || txtEsclarecimentoDocumento?.[data.uuid] === data.esclarecimentos || showSalvarEsclarecimento?.[data.uuid]
+
             return (
                 <>
                     {data.justificativa?.length > 0 && (
@@ -487,7 +493,7 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
                                     <p className='mb-1'><strong>Justificativa</strong></p>
                                 </div>
                             </div>
-                            <div className="form-group w-100 px-4 py-2" style={{pointerEvents: 'all'}}>
+                            <div className="form-group w-100 px-4 py-2" id="pointer-event-all">
                                 <textarea
                                     defaultValue={data.justificativa}
                                     onChange={(event) => handleChangeTextareaJustificativa(event, data.uuid)}
@@ -504,12 +510,12 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
                                     {showSalvar?.[data.uuid] &&
                                         <div className="">
                                             <p className="mr-2 mt-3">
-                                                        <span className="mr-1">
-                                                        <FontAwesomeIcon
-                                                            style={{fontSize: '16px', color: '#297805'}}
-                                                            icon={faCheck}
-                                                        />
-                                                        </span>Salvo
+                                                <span className="mr-1">
+                                                    <FontAwesomeIcon
+                                                        style={{ fontSize: '16px', color: '#297805' }}
+                                                        icon={faCheck}
+                                                    />
+                                                </span>Salvo
                                             </p>
                                         </div>
                                     }
@@ -532,60 +538,63 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
                         </div>
                     }
                     {data.solicitacoes_de_ajuste_da_analise.map((ajuste, index) => (
-                    <Fragment key={ajuste.id}>
-                        <div className='col-12'>
-                            <div className='titulo-row-expanded-conferencia-de-lancamentos mb-3'>
-                                <p className='mb-1'><strong>Item {index + 1}</strong></p>
-                            </div>
-                            <p className='mb-1'><strong>Tipo de acerto</strong></p>
-                            <p>{ajuste.tipo_acerto.nome}</p>
-                            <div className='titulo-row-expanded-conferencia-de-esclarecimento mb-2'></div>
-                                {ajuste.tipo_acerto.categoria === 'SOLICITACAO_ESCLARECIMENTO' &&
-                                <div className="form-group w-100 " style={{pointerEvents: 'all', resize: false}}>
-                                    <label className='mb-1'>Esclarecimento do documento</label>
-                                    <textarea
-                                        rows="4"
-                                        cols="50"
-                                        name='esclarecimento'
-                                        defaultValue={data.esclarecimento}
-                                        onChange={(event) => handleChangeTextareaEsclarecimentoDocumento(event, data.uuid)}
-                                        className="form-control"
-                                        placeholder="Digite aqui o esclarecimento"
-                                        disabled={![['change_analise_dre']].some(visoesService.getPermissoes) || visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'DRE' || prestacaoDeContas.status !== 'DEVOLVIDA'}
-                                    />
+                        <Fragment key={ajuste.id}>
+                            <div className='col-12'>
+                                <div className='titulo-row-expanded-conferencia-de-lancamentos mb-3'>
+                                    <p className='mb-1'><strong>Item {index + 1}</strong></p>
                                 </div>
-                                }
-                                <div className="bd-highlight d-flex justify-content-end align-items-center" style={{pointerEvents: 'all'}}>
-                                    {showSalvarEsclarecimento && <div className="">
-                                        <p className="mr-2 mt-3">
-                                            <span className="mr-1">
-                                            <FontAwesomeIcon
-                                                style={{fontSize: '16px', color:'#297805'}}
-                                                icon={faCheck}
-                                            />
-                                            </span>Salvo
-                                        </p>
-                                    </div>}
-                                    {ajuste.tipo_acerto.categoria === 'SOLICITACAO_ESCLARECIMENTO' &&
-                                    <button
-                                        disabled={txtEsclarecimentoDocumento && !showSalvarEsclarecimento ? false : true}
-                                        type="button" 
-                                        className={`btn btn-success mt-2`}
-                                        onClick={() => salvarJustificativaEsclarecimento(ajuste.uuid, 'documento')}
-                                        >
-                                        <strong>Salvar</strong>
-                                    </button>
-                                    }
-                    </div>
-                            {ajuste.detalhamento &&
-                            <span>
-                                <p className='mb-1'><strong>Detalhamento</strong></p>
-                                <p className='mb-0'>{ajuste.detalhamento}</p>
-                            </span>
+                                <p className='mb-1'><strong>Tipo de acerto</strong></p>
+                                <p>{ajuste.tipo_acerto.nome}</p>
+                                {ajuste.detalhamento &&
+                                    <span>
+                                        <p className='mb-1'><strong>Detalhamento</strong></p>
+                                        <p className='mb-0'>{ajuste.detalhamento}</p>
+                                    </span>
                                 }
                             </div>
                         </Fragment>
                     ))}
+                    <div className='titulo-row-expanded-conferencia-de-esclarecimento m-2'></div>
+                                {data.solicitacoes_de_ajuste_da_analise[0].tipo_acerto.categoria === 'SOLICITACAO_ESCLARECIMENTO' &&
+                                    <div className="form-group w-100 col-12 px-3" id="pointer-event-all">
+                                        <div className='titulo-row-expanded-conferencia-de-lancamentos mb-4 '>
+                                            <p className='mb-1'><strong>Esclarecimento do documento</strong></p>
+                                        </div>
+                                        {console.log('data ->', data)}
+                                        <textarea
+                                            rows="4"
+                                            cols="50"
+                                            name='esclarecimento'
+                                            defaultValue={data.esclarecimentos}
+                                            onChange={(event) => handleChangeTextareaEsclarecimentoDocumento(event, data.uuid)}
+                                            className="form-control"
+                                            placeholder="Digite aqui o esclarecimento"
+                                            disabled={![['change_analise_dre']].some(visoesService.getPermissoes) || visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'DRE' || prestacaoDeContas.status !== 'DEVOLVIDA'}
+                                        />
+                                    </div>
+                                }
+                                <div className="bd-highlight d-flex justify-content-end align-items-center" id="pointer-event-all">
+                                    {showSalvarEsclarecimento?.[data.uuid] && <div className="">
+                                        <p className="mr-2 mt-3">
+                                            <span className="mr-1">
+                                                <FontAwesomeIcon
+                                                    style={{ fontSize: '16px', color: '#297805' }}
+                                                    icon={faCheck}
+                                                />
+                                            </span>Salvo
+                                        </p>
+                                    </div>}
+                                    {data.solicitacoes_de_ajuste_da_analise[0].tipo_acerto.categoria === 'SOLICITACAO_ESCLARECIMENTO' &&
+                                        <button
+                                            disabled={salvarDesabilitadosEsclarecimento}
+                                            type="button"
+                                            className={`btn btn-${salvarDesabilitadosEsclarecimento ? 'secondary' : 'success'} mt-2`}
+                                            onClick={() => marcarComoEsclarecido(data, 'documento')}
+                                        >
+                                            <strong>Salvar esclarecimento</strong>
+                                        </button>
+                                    }
+                                </div>
                 </>
             )
         }
@@ -657,13 +666,13 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
                         clickBtnEscolheContaExtratoBancario={clickBtnEscolheContaExtratosBancarios}
                     >
                         {loadingExtratosBancarios ? (
-                                <Loading
-                                    corGrafico="black"
-                                    corFonte="dark"
-                                    marginTop="0"
-                                    marginBottom="0"
-                                />
-                            ) :
+                            <Loading
+                                corGrafico="black"
+                                corFonte="dark"
+                                marginTop="0"
+                                marginBottom="0"
+                            />
+                        ) :
                             <>
                                 <TabelaAcertosEmExtratosBancarios
                                     extratosBancariosAjustes={extratosBancariosAjustes}
@@ -672,7 +681,7 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
                         }
 
                     </TabsAjustesEmExtratosBancarios>
-                    <hr className="mt-4 mb-3"/>
+                    <hr className="mt-4 mb-3" />
                 </>
             }
 
@@ -691,13 +700,13 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
                 >
 
                     {loadingLancamentos ? (
-                            <Loading
-                                corGrafico="black"
-                                corFonte="dark"
-                                marginTop="0"
-                                marginBottom="0"
-                            />
-                        ) :
+                        <Loading
+                            corGrafico="black"
+                            corFonte="dark"
+                            marginTop="0"
+                            marginBottom="0"
+                        />
+                    ) :
                         <>
                             <TabelaAcertosLancamentos
                                 lancamentosAjustes={lancamentosAjustes}
@@ -718,16 +727,16 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
                     }
                 </TabsAcertosEmLancamentosPorConta>
 
-                <hr className="mt-4 mb-3"/>
+                <hr className="mt-4 mb-3" />
                 <h5 className="mb-4 mt-4"><strong>Acertos nos documentos</strong></h5>
                 {loadingDocumentos ? (
-                        <Loading
-                            corGrafico="black"
-                            corFonte="dark"
-                            marginTop="0"
-                            marginBottom="0"
-                        />
-                    ) :
+                    <Loading
+                        corGrafico="black"
+                        corFonte="dark"
+                        marginTop="0"
+                        marginBottom="0"
+                    />
+                ) :
                     <TabelaAcertosDocumentos
                         documentosAjustes={documentosAjustes}
                         prestacaoDeContas={prestacaoDeContas}
