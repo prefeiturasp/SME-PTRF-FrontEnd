@@ -326,6 +326,14 @@ export const postMarcarComoRealizadoDocumentoPrestacaoConta = async (payload) =>
     return (await api.post(`/api/analises-documento-prestacao-conta/marcar-como-realizado/`, payload, authHeader)).data
 }
 
+export const postMarcarComoLancamentoEsclarecido = async (payload, analise_uuid) => {
+    return (await api.post(`/api/analises-lancamento-prestacao-conta/${analise_uuid}/marcar-como-esclarecido/`, payload, authHeader)).data
+}
+
+export const postMarcarComoDocumentoEsclarecido = async (payload, analise_uuid) => {
+    return (await api.post(`/api/analises-documento-prestacao-conta/${analise_uuid}/marcar-como-esclarecido/`, payload, authHeader)).data
+}
+
 export const patchAnaliseLancamentoPrestacaoConta = async (payload, analise_prestacao_uuid) => {
     return (await api.patch(`/api/analises-lancamento-prestacao-conta/${analise_prestacao_uuid}/`, payload, authHeader)).data
 }
