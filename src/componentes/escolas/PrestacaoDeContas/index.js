@@ -1,7 +1,7 @@
 import React, {useEffect, useState, Fragment, useCallback} from "react";
 import {TopoSelectPeriodoBotaoConcluir} from "./TopoSelectPeriodoBotaoConcluir";
 import {getPeriodosDePrestacaoDeContasDaAssociacao, getDataPreenchimentoPreviaAta} from "../../../services/escolas/Associacao.service"
-import {getStatusPeriodoPorData, getConcluirPeriodo, getDataPreenchimentoAta, getIniciarAta, getIniciarPreviaAta} from "../../../services/escolas/PrestacaoDeContas.service";
+import {getStatusPeriodoPorData, postConcluirPeriodo, getDataPreenchimentoAta, getIniciarAta, getIniciarPreviaAta} from "../../../services/escolas/PrestacaoDeContas.service";
 import {getTabelasReceita} from "../../../services/escolas/Receitas.service";
 import {BarraDeStatusPrestacaoDeContas} from "./BarraDeStatusPrestacaoDeContas";
 import DemonstrativoFinanceiroPorConta from "./DemonstrativoFinanceiroPorConta";
@@ -15,6 +15,7 @@ import {GeracaoAtaApresentacao} from "../GeracaoDaAta/GeracaoAtaApresentacao";
 import {GeracaoAtaRetificadora} from "../GeracaoAtaRetificadora";
 import {exibeDateTimePT_BR_Ata} from "../../../utils/ValidacoesAdicionaisFormularios";
 import {visoesService} from "../../../services/visoes.service";
+import {ModalConcluirPeriodoComPendencias} from "./ModalConcluirPeriodoComPendencias";
 
 export const PrestacaoDeContas = ({setStatusPC}) => {
 
@@ -26,11 +27,13 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
     const [contaPrestacaoDeContas, setContaPrestacaoDeContas] = useState(false);
     const [clickBtnEscolheConta, setClickBtnEscolheConta] = useState({0: true});
     const [loading, setLoading] = useState(true);
-    const [show, setShow] = useState(false);
+    const [showConcluir, setShowConcluir] = useState(false);
+    const [showConcluirComPendencia, setShowConcluirComPendencia] = useState(false);
     const [corBoxAtaApresentacao, setcorBoxAtaApresentacao] = useState("");
     const [textoBoxAtaApresentacao, settextoBoxAtaApresentacao] = useState("");
     const [dataBoxAtaApresentacao, setdataBoxAtaApresentacao] = useState("");
     const [uuidAtaApresentacao, setUuidAtaApresentacao] = useState("");
+    const [txtJustificativa, setTxtJustificativa] = useState('');
 
     const associacaoUuid = localStorage.getItem(ASSOCIACAO_UUID)
 
@@ -192,14 +195,30 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
         return obj && Object.entries(obj).length > 0
     };
 
-    const concluirPeriodo = async () =>{
-        let status_concluir_periodo = await getConcluirPeriodo(periodoPrestacaoDeConta.periodo_uuid);
+    const concluirPeriodo = async (justificativaPendencia='') =>{
+        let status_concluir_periodo = await postConcluirPeriodo(periodoPrestacaoDeConta.periodo_uuid, justificativaPendencia);
         setUuidPrestacaoConta(status_concluir_periodo.uuid);
         let status = await getStatusPeriodoPorData(localStorage.getItem(ASSOCIACAO_UUID), periodoPrestacaoDeConta.data_inicial);
         setStatusPrestacaoDeConta(status);
         setStatusPC(status)
         await carregaPeriodos();
         await setConfBoxAtaApresentacao();
+    };
+
+    const handleConcluirPeriodo = () =>{
+        if (
+            statusPrestacaoDeConta &&
+            statusPrestacaoDeConta.prestacao_contas_status &&
+            statusPrestacaoDeConta.prestacao_contas_status.tem_acertos_pendentes
+        ) {
+            setShowConcluirComPendencia(true)
+        } else {
+            setShowConcluir(true)
+        }
+    }
+
+    const handleChangeTxtJustificativa = (event) =>{
+        setTxtJustificativa(event.target.value)
     };
 
     const setConfBoxAtaApresentacao = async ()=>{
@@ -272,13 +291,22 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
         window.location.assign(`/visualizacao-da-ata/${uuid_ata}`)
     };
 
-    const onSalvarTrue = () =>{
-        setShow(false);
+    const onConcluirSemPendencias = () =>{
+        setShowConcluir(false);
         concluirPeriodo();
     };
 
+    const onConcluirComPendencias = () =>{
+        setShowConcluirComPendencia(false);
+        concluirPeriodo(txtJustificativa);
+    };
+
     const onHandleClose = () => {
-        setShow(false);
+        setShowConcluir(false);
+    };
+
+    const onHandleCloseModalConcluirPeriodoComPendencias = () => {
+        setShowConcluirComPendencia(false);
     };
 
     const podeConcluir = [['concluir_periodo_prestacao_contas']].some(visoesService.getPermissoes)
@@ -331,8 +359,7 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
                                 retornaObjetoPeriodoPrestacaoDeConta={retornaObjetoPeriodoPrestacaoDeConta}
                                 statusPrestacaoDeConta={statusPrestacaoDeConta}
                                 checkCondicaoExibicao={checkCondicaoExibicao}
-                                concluirPeriodo={concluirPeriodo}
-                                setShow={setShow}
+                                concluirPeriodo={handleConcluirPeriodo}
                                 podeConcluir={podeConcluir}
                             />
                             {checkCondicaoExibicao(periodoPrestacaoDeConta)  ? (
@@ -398,14 +425,24 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
                     }
                     <section>
                         <ModalConcluirPeriodo
-                            show={show}
+                            show={showConcluir}
                             handleClose={onHandleClose}
-                            onSalvarTrue={onSalvarTrue}
+                            onConcluir={onConcluirSemPendencias}
                             titulo="Concluir Prestação de Contas"
                             texto="<p>Ao concluir a Prestação de Contas, o sistema <strong>bloqueará</strong> 
                             o cadastro e a edição de qualquer crédito ou despesa nesse período.
                             Para conferir as informações cadastradas, sem bloqueio do sistema nesse período, gere um documento prévio.
                             Você confirma a conclusão dessa Prestação de Contas?</p>"
+                        />
+                    </section>
+                    <section>
+                        <ModalConcluirPeriodoComPendencias
+                            titulo="Concluir Prestação de Contas com pendências"
+                            txtJustificativa={txtJustificativa}
+                            handleChangeTxtJustificativa={handleChangeTxtJustificativa}
+                            handleClose={onHandleCloseModalConcluirPeriodoComPendencias}
+                            onConcluir={onConcluirComPendencias}
+                            show={showConcluirComPendencia}
                         />
                     </section>
                 </>
