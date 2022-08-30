@@ -388,6 +388,13 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
                             </div>
                         </Fragment>
                     )}
+                    {data.analise_lancamento.requer_ajustes_externos &&
+                        <div className='row'>
+                            <div className='col-12 mb-1 px-4 py-1'>
+                                {barraMensagemCustom.BarraMensagemSucessAzul("Favor realizar os ajustes solicitados que são externos ao sistema.")}
+                            </div>
+                        </div>
+                    }
                     {data.analise_lancamento.solicitacoes_de_ajuste_da_analise.map((ajuste, index) => (
                         <Fragment key={ajuste.id}>
                             <div className='row'>
@@ -407,14 +414,6 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
                             </div>
                         </Fragment>
                     ))}
-
-                    {data.analise_lancamento.requer_ajustes_externos &&
-                        <div className='row'>
-                            <div className='col-12 mb-1 px-4 py-1'>
-                                {barraMensagemCustom.BarraMensagemSucessAzul("Favor realizar os ajustes solicitados que são externos ao sistema.")}
-                            </div>
-                        </div>
-                    }
                     {data.analise_lancamento.solicitacoes_de_ajuste_da_analise[0].tipo_acerto.categoria === 'SOLICITACAO_ESCLARECIMENTO' &&
                         <div className="row">
                         <div className="col-12 px-4 py-2" id="pointer-event-all">
