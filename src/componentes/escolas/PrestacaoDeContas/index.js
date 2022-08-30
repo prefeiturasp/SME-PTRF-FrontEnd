@@ -1,7 +1,7 @@
 import React, {useEffect, useState, Fragment, useCallback} from "react";
 import {TopoSelectPeriodoBotaoConcluir} from "./TopoSelectPeriodoBotaoConcluir";
 import {getPeriodosDePrestacaoDeContasDaAssociacao, getDataPreenchimentoPreviaAta} from "../../../services/escolas/Associacao.service"
-import {getStatusPeriodoPorData, getConcluirPeriodo, getDataPreenchimentoAta, getIniciarAta, getIniciarPreviaAta} from "../../../services/escolas/PrestacaoDeContas.service";
+import {getStatusPeriodoPorData, postConcluirPeriodo, getDataPreenchimentoAta, getIniciarAta, getIniciarPreviaAta} from "../../../services/escolas/PrestacaoDeContas.service";
 import {getTabelasReceita} from "../../../services/escolas/Receitas.service";
 import {BarraDeStatusPrestacaoDeContas} from "./BarraDeStatusPrestacaoDeContas";
 import DemonstrativoFinanceiroPorConta from "./DemonstrativoFinanceiroPorConta";
@@ -195,8 +195,8 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
         return obj && Object.entries(obj).length > 0
     };
 
-    const concluirPeriodo = async () =>{
-        let status_concluir_periodo = await getConcluirPeriodo(periodoPrestacaoDeConta.periodo_uuid);
+    const concluirPeriodo = async (justificativaPendencia='') =>{
+        let status_concluir_periodo = await postConcluirPeriodo(periodoPrestacaoDeConta.periodo_uuid, justificativaPendencia);
         setUuidPrestacaoConta(status_concluir_periodo.uuid);
         let status = await getStatusPeriodoPorData(localStorage.getItem(ASSOCIACAO_UUID), periodoPrestacaoDeConta.data_inicial);
         setStatusPrestacaoDeConta(status);
@@ -206,7 +206,6 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
     };
 
     const handleConcluirPeriodo = () =>{
-        console.log('Handle Concluir', statusPrestacaoDeConta)
         if (
             statusPrestacaoDeConta &&
             statusPrestacaoDeConta.prestacao_contas_status &&
@@ -292,9 +291,14 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
         window.location.assign(`/visualizacao-da-ata/${uuid_ata}`)
     };
 
-    const onSalvarTrue = () =>{
+    const onConcluirSemPendencias = () =>{
         setShowConcluir(false);
         concluirPeriodo();
+    };
+
+    const onConcluirComPendencias = () =>{
+        setShowConcluirComPendencia(false);
+        concluirPeriodo(txtJustificativa);
     };
 
     const onHandleClose = () => {
@@ -423,7 +427,7 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
                         <ModalConcluirPeriodo
                             show={showConcluir}
                             handleClose={onHandleClose}
-                            onSalvarTrue={onSalvarTrue}
+                            onConcluir={onConcluirSemPendencias}
                             titulo="Concluir Prestação de Contas"
                             texto="<p>Ao concluir a Prestação de Contas, o sistema <strong>bloqueará</strong> 
                             o cadastro e a edição de qualquer crédito ou despesa nesse período.
@@ -437,7 +441,7 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
                             txtJustificativa={txtJustificativa}
                             handleChangeTxtJustificativa={handleChangeTxtJustificativa}
                             handleClose={onHandleCloseModalConcluirPeriodoComPendencias}
-                            onConcluir={() => {}}
+                            onConcluir={onConcluirComPendencias}
                             show={showConcluirComPendencia}
                         />
                     </section>
