@@ -1,6 +1,5 @@
 import React from "react";
 import {exibeDataPT_BR} from "../../../utils/ValidacoesAdicionaisFormularios";
-import {visoesService} from "../../../services/visoes.service";
 
 export const TopoSelectPeriodoBotaoConcluir = ({
                                                    periodoPrestacaoDeConta,
@@ -9,9 +8,8 @@ export const TopoSelectPeriodoBotaoConcluir = ({
                                                    retornaObjetoPeriodoPrestacaoDeConta,
                                                    statusPrestacaoDeConta,
                                                    checkCondicaoExibicao,
-                                                   setShow,
-                                                   podeConcluir
-
+                                                   podeConcluir,
+                                                   concluirPeriodo,
                                                }) => {
 
     return (
@@ -62,7 +60,7 @@ export const TopoSelectPeriodoBotaoConcluir = ({
                         }
                     >
                         {checkCondicaoExibicao(periodoPrestacaoDeConta) && statusPrestacaoDeConta && statusPrestacaoDeConta.prestacao_contas_status && !statusPrestacaoDeConta.prestacao_contas_status.documentos_gerados &&
-                        <button onClick={() => setShow(true)}
+                        <button onClick={concluirPeriodo}
                                 disabled={statusPrestacaoDeConta && statusPrestacaoDeConta.prestacao_contas_status && statusPrestacaoDeConta.prestacao_contas_status.documentos_gerados}
                                 className='btn btn-success' type="button">Concluir período</button>
                             /*<button onClick={handleClickBtnConcluirPeriodo} disabled={statusPrestacaoDeConta && statusPrestacaoDeConta.prestacao_contas_status && statusPrestacaoDeConta.prestacao_contas_status.documentos_gerados} className='btn btn-success' type="button">Concluir período</button>*/
