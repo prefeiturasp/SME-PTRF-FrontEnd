@@ -13,6 +13,17 @@ const LinkCustom = ({url, analise_lancamento, prestacaoDeContasUuid, prestacaoDe
 
     const TEMPERMISSAO = RetornaSeTemPermissaoEdicaoAjustesLancamentos(prestacaoDeContas)
 
+    const checaSeTemPermissao = () =>{
+        let tem_permissao = TEMPERMISSAO
+        if (tem_permissao){
+            if (operacao === 'requer_exclusao_lancamento_gasto' || operacao === 'requer_exclusao_lancamento_credito'){
+                tem_permissao = false
+            }
+        }
+
+        return tem_permissao
+    }
+
     return(
         <Link
             to={{
@@ -25,7 +36,7 @@ const LinkCustom = ({url, analise_lancamento, prestacaoDeContasUuid, prestacaoDe
                     uuid_associacao: prestacaoDeContas.associacao.uuid,
                     origem: getCurrentPathWithoutLastPart(),
                     origem_visao: visoesService.getItemUsuarioLogado('visao_selecionada.nome'),
-                    tem_permissao_de_edicao: TEMPERMISSAO,
+                    tem_permissao_de_edicao: checaSeTemPermissao(),
                     operacao: operacao,
                     tipo_transacao: tipo_transacao,
                 }
