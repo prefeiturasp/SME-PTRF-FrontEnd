@@ -13,7 +13,8 @@ import {
     getEspecificacoesCusteio,
     getDespesaCadastrada, deleteDespesa,
     getMotivosPagamentoAntecipado,
-    marcarLancamentoAtualizado
+    marcarLancamentoAtualizado,
+    marcarLancamentoExcluido
 } from "../../../../services/escolas/Despesas.service";
 import {useParams, useLocation} from 'react-router-dom';
 import {DespesaContext} from "../../../../context/Despesa";
@@ -82,30 +83,21 @@ export const CadastroForm = ({verbo_http}) => {
             aux.exibeDocumentoTransacaoImpostoUseEffect(despesaContext.initialValues.despesas_impostos, setLabelDocumentoTransacaoImposto, labelDocumentoTransacaoImposto, setCssEscondeDocumentoTransacaoImposto, cssEscondeDocumentoTransacaoImposto, despesasTabelas);
         }
         if (despesaContext.initialValues.data_transacao && verbo_http === "PUT") {
-            if(aux.origemAnaliseDre(parametroLocation)){
+            if(aux.origemAnaliseLancamento(parametroLocation)){
                 validateFormDespesas(initialValues());
-
-                if(!parametroLocation.state.tem_permissao_de_edicao){
-                    setReadOnlyCampos(true);
-                    setReadOnlyBtnAcao(true);
-                }
+                aux.bloqueiaCamposDespesaPrincipal(parametroLocation, setReadOnlyCampos, setReadOnlyBtnAcao)
             }
             else{
                 periodoFechado(despesaContext.initialValues.data_transacao, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral);
             }
 
             if (despesaContext && despesaContext.initialValues && despesaContext.initialValues.despesas_impostos){
-                let despesas_impostos = despesaContext.initialValues.despesas_impostos;
-                
-                if(aux.origemAnaliseDre(parametroLocation)){
+                if(aux.origemAnaliseLancamento(parametroLocation)){
                     validateFormDespesas(initialValues());
-
-                    if(!parametroLocation.state.tem_permissao_de_edicao){
-                        for(let i=0; i<=despesas_impostos.length-1; i++){
-                            setReadOnlyCamposImposto(prevState => ({...prevState, [i]: true}));
-                            setDisableBtnAdicionarImposto(true);
-                        }
-                    }
+                    aux.bloqueiaCamposDespesaImposto(
+                        parametroLocation, setReadOnlyCamposImposto,
+                        setDisableBtnAdicionarImposto, despesaContext
+                    )
                 }
                 else{
                     periodoFechadoImposto(despesaContext.initialValues.despesas_impostos, setReadOnlyBtnAcao, setShowPeriodoFechadoImposto, setReadOnlyCamposImposto, setDisableBtnAdicionarImposto, onShowErroGeral);
@@ -121,7 +113,7 @@ export const CadastroForm = ({verbo_http}) => {
         const carregaTabelasDespesas = async () => {
             let resp;
 
-            if(aux.origemAnaliseDre(parametroLocation)){
+            if(aux.origemAnaliseLancamento(parametroLocation)){
                 resp = await getDespesasTabelas(parametroLocation.state.uuid_associacao);
             }
             else{
@@ -199,7 +191,7 @@ export const CadastroForm = ({verbo_http}) => {
         }
 
         // Verifica se deve utilizar logica de periodo fechado
-        if(!aux.origemAnaliseDre(parametroLocation)){
+        if(!aux.origemAnaliseLancamento(parametroLocation)){
             // Verifica período fechado para a receita
             if (values.data_transacao && origem==="despesa_principal") {
                 let data = moment(values.data_transacao, "YYYY-MM-DD").format("YYYY-MM-DD");
@@ -258,7 +250,7 @@ export const CadastroForm = ({verbo_http}) => {
                     setEnviarFormulario(true)
                     setBtnSubmitDisable(false)
 
-                    if(!aux.origemAnaliseDre(parametroLocation)){
+                    if(!aux.origemAnaliseLancamento(parametroLocation)){
                         try{
                             let data = moment(values.despesas_impostos[index].data_transacao, "YYYY-MM-DD").format("YYYY-MM-DD");
                             let periodo_fechado = await getPeriodoFechado(data);
@@ -422,7 +414,7 @@ export const CadastroForm = ({verbo_http}) => {
                     if (response.status === 200) {
                         console.log("Operação realizada com sucesso!");
 
-                        if(aux.origemAnaliseDre(parametroLocation)){
+                        if(aux.origemAnaliseLancamento(parametroLocation)){
                             let uuid_analise_lancamento = parametroLocation.state.uuid_analise_lancamento;
                             let response_atualiza_lancamento = await marcarLancamentoAtualizado(uuid_analise_lancamento);
                             
@@ -542,9 +534,18 @@ export const CadastroForm = ({verbo_http}) => {
         setLoading(true);
 
         try {
+            if(aux.origemAnaliseLancamento(parametroLocation)){
+                let uuid_analise_lancamento = parametroLocation.state.uuid_analise_lancamento;
+                let response_exclui_lancamento = await marcarLancamentoExcluido(uuid_analise_lancamento);
+                
+                if (response_exclui_lancamento.status === 200) {
+                    console.log("Exclusão de lancamento realizada com sucesso!");
+                }
+            }
+
             await deleteDespesa(despesaContext.idDespesa)
             console.log("Despesa deletada com sucesso.");
-            aux.getPath(origem);
+            aux.getPath(origem, parametroLocation);
         }catch (error){
             console.log(error.response);
             let texto_erro = ''
@@ -695,7 +696,7 @@ export const CadastroForm = ({verbo_http}) => {
             bloqueia_link = false;
         }
 
-        if(aux.origemAnaliseDre(parametroLocation)){
+        if(aux.origemAnaliseLancamento(parametroLocation)){
             if(!aux.temPermissaoEdicao(parametroLocation)){
                 bloqueia_link = true;
             }
@@ -707,7 +708,7 @@ export const CadastroForm = ({verbo_http}) => {
     const bloqueiaCamposDespesa = () => {
         let bloqueia_link = false;
 
-        if(aux.origemAnaliseDre(parametroLocation)){
+        if(aux.origemAnaliseLancamento(parametroLocation)){
             if(!aux.temPermissaoEdicao(parametroLocation)){
                 bloqueia_link = true;
             }
@@ -768,7 +769,7 @@ export const CadastroForm = ({verbo_http}) => {
     const verificaSeDespesaJaDemonstrada = async (values, errors, setFieldValue) =>{
         validaPayloadDespesas(values);
 
-        if(aux.origemAnaliseDre(parametroLocation)){
+        if(aux.origemAnaliseLancamento(parametroLocation)){
             aux.mantemConciliacaoAtual(values);
             await serviceSubmitModais(values, setFieldValue, errors, 'despesa_ja_demonstrada_validado')
         }
@@ -1002,7 +1003,7 @@ export const CadastroForm = ({verbo_http}) => {
                 <CancelarModal
                     show={show}
                     handleClose={() => setShow(false)}
-                    onCancelarTrue={() => aux.onCancelarTrue(setShow, setLoading, origem)}
+                    onCancelarTrue={() => aux.onCancelarTrue(setShow, setLoading, origem, parametroLocation)}
                 />
             </section>
             <section>
