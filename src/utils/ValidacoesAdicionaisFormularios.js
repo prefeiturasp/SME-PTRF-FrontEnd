@@ -356,7 +356,7 @@ export const validaPayloadDespesas = (values, despesasTabelas=null, parametroLoc
         });
 
         if(parametroLocation){
-          if(metodosAuxiliares.origemAnaliseDre(parametroLocation)){
+          if(metodosAuxiliares.origemAnaliseLancamento(parametroLocation)){
             metodosAuxiliares.mantemConciliacaoAtualImposto(despesa_imposto);
           }
         }
