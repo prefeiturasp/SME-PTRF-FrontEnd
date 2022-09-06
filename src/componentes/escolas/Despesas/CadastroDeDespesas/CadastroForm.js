@@ -12,9 +12,11 @@ import {
     getEspecificacoesCapital,
     getEspecificacoesCusteio,
     getDespesaCadastrada, deleteDespesa,
-    getMotivosPagamentoAntecipado
+    getMotivosPagamentoAntecipado,
+    marcarLancamentoAtualizado,
+    marcarLancamentoExcluido
 } from "../../../../services/escolas/Despesas.service";
-import {useParams} from 'react-router-dom';
+import {useParams, useLocation} from 'react-router-dom';
 import {DespesaContext} from "../../../../context/Despesa";
 import HTTP_STATUS from "http-status-codes";
 import {
@@ -38,6 +40,7 @@ export const CadastroForm = ({verbo_http}) => {
 
     let {origem} = useParams();
     const aux = metodosAuxiliares;
+    const parametroLocation = useLocation();
 
     const despesaContext = useContext(DespesaContext);
 
@@ -80,9 +83,25 @@ export const CadastroForm = ({verbo_http}) => {
             aux.exibeDocumentoTransacaoImpostoUseEffect(despesaContext.initialValues.despesas_impostos, setLabelDocumentoTransacaoImposto, labelDocumentoTransacaoImposto, setCssEscondeDocumentoTransacaoImposto, cssEscondeDocumentoTransacaoImposto, despesasTabelas);
         }
         if (despesaContext.initialValues.data_transacao && verbo_http === "PUT") {
-            periodoFechado(despesaContext.initialValues.data_transacao, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral);
+            if(aux.origemAnaliseLancamento(parametroLocation)){
+                validateFormDespesas(initialValues());
+                aux.bloqueiaCamposDespesaPrincipal(parametroLocation, setReadOnlyCampos, setReadOnlyBtnAcao)
+            }
+            else{
+                periodoFechado(despesaContext.initialValues.data_transacao, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral);
+            }
+
             if (despesaContext && despesaContext.initialValues && despesaContext.initialValues.despesas_impostos){
-                periodoFechadoImposto(despesaContext.initialValues.despesas_impostos, setReadOnlyBtnAcao, setShowPeriodoFechadoImposto, setReadOnlyCamposImposto, setDisableBtnAdicionarImposto, onShowErroGeral)
+                if(aux.origemAnaliseLancamento(parametroLocation)){
+                    validateFormDespesas(initialValues());
+                    aux.bloqueiaCamposDespesaImposto(
+                        parametroLocation, setReadOnlyCamposImposto,
+                        setDisableBtnAdicionarImposto, despesaContext
+                    )
+                }
+                else{
+                    periodoFechadoImposto(despesaContext.initialValues.despesas_impostos, setReadOnlyBtnAcao, setShowPeriodoFechadoImposto, setReadOnlyCamposImposto, setDisableBtnAdicionarImposto, onShowErroGeral);
+                }
             }
         }
         if (verbo_http === "PUT") {
@@ -92,7 +111,15 @@ export const CadastroForm = ({verbo_http}) => {
 
     useEffect(() => {
         const carregaTabelasDespesas = async () => {
-            const resp = await getDespesasTabelas();
+            let resp;
+
+            if(aux.origemAnaliseLancamento(parametroLocation)){
+                resp = await getDespesasTabelas(parametroLocation.state.uuid_associacao);
+            }
+            else{
+                resp = await getDespesasTabelas();
+            }
+
             setDespesasTabelas(resp);
 
             const array_tipos_custeio = resp.tipos_custeio;
@@ -163,39 +190,42 @@ export const CadastroForm = ({verbo_http}) => {
             setBtnSubmitDisable(false)
         }
 
-        // Verifica período fechado para a receita
-        if (values.data_transacao && origem==="despesa_principal") {
-            let data = moment(values.data_transacao, "YYYY-MM-DD").format("YYYY-MM-DD");
-            try {
-                let periodo_fechado = await getPeriodoFechado(data);
+        // Verifica se deve utilizar logica de periodo fechado
+        if(!aux.origemAnaliseLancamento(parametroLocation)){
+            // Verifica período fechado para a receita
+            if (values.data_transacao && origem==="despesa_principal") {
+                let data = moment(values.data_transacao, "YYYY-MM-DD").format("YYYY-MM-DD");
+                try {
+                    let periodo_fechado = await getPeriodoFechado(data);
 
-                if (!periodo_fechado.aceita_alteracoes) {
-                    erros = {
-                        data_transacao: "Período Fechado"
-                    }
+                    if (!periodo_fechado.aceita_alteracoes) {
+                        erros = {
+                            data_transacao: "Período Fechado"
+                        }
 
-                    if(values.retem_imposto){
+                        if(values.retem_imposto){
+                            setEnviarFormulario(true)
+                        }
+                        else{
+                            setEnviarFormulario(false)
+                        }
+
+                        setReadOnlyBtnAcao(true);
+                        setShowPeriodoFechado(true);
+                        setReadOnlyCampos(true);
+                    } else {
                         setEnviarFormulario(true)
+                        setReadOnlyBtnAcao(false);
+                        setShowPeriodoFechado(false);
+                        setReadOnlyCampos(false);
                     }
-                    else{
-                        setEnviarFormulario(false)
-                    }
-
+                } catch (e) {
                     setReadOnlyBtnAcao(true);
                     setShowPeriodoFechado(true);
                     setReadOnlyCampos(true);
-                } else {
-                    setEnviarFormulario(true)
-                    setReadOnlyBtnAcao(false);
-                    setShowPeriodoFechado(false);
-                    setReadOnlyCampos(false);
+                    onShowErroGeral();
+                    console.log("Erro ao buscar perído ", e)
                 }
-            } catch (e) {
-                setReadOnlyBtnAcao(true);
-                setShowPeriodoFechado(true);
-                setReadOnlyCampos(true);
-                onShowErroGeral();
-                console.log("Erro ao buscar perído ", e)
             }
         }
 
@@ -220,33 +250,35 @@ export const CadastroForm = ({verbo_http}) => {
                     setEnviarFormulario(true)
                     setBtnSubmitDisable(false)
 
-                    try{
-                        let data = moment(values.despesas_impostos[index].data_transacao, "YYYY-MM-DD").format("YYYY-MM-DD");
-                        let periodo_fechado = await getPeriodoFechado(data);
-                        if (!periodo_fechado.aceita_alteracoes) {
-                            erros = {
-                                despesa_imposto_data_transacao: null
+                    if(!aux.origemAnaliseLancamento(parametroLocation)){
+                        try{
+                            let data = moment(values.despesas_impostos[index].data_transacao, "YYYY-MM-DD").format("YYYY-MM-DD");
+                            let periodo_fechado = await getPeriodoFechado(data);
+                            if (!periodo_fechado.aceita_alteracoes) {
+                                erros = {
+                                    despesa_imposto_data_transacao: null
+                                }
+                                setEnviarFormulario(false)
+                                setReadOnlyBtnAcao(true);
+                                setShowPeriodoFechadoImposto(true);
+                                setDisableBtnAdicionarImposto(true);
+                                setReadOnlyCamposImposto(prevState => ({...prevState, [index]: true}));
+                            } else {
+                                setEnviarFormulario(true)
+                                setReadOnlyBtnAcao(false);
+                                setShowPeriodoFechadoImposto(false);
+                                setDisableBtnAdicionarImposto(false);
+                                setReadOnlyCamposImposto(prevState => ({...prevState, [index]: false}));
                             }
-                            setEnviarFormulario(false)
+                        }
+                        catch (e) {
                             setReadOnlyBtnAcao(true);
                             setShowPeriodoFechadoImposto(true);
                             setDisableBtnAdicionarImposto(true);
                             setReadOnlyCamposImposto(prevState => ({...prevState, [index]: true}));
-                        } else {
-                            setEnviarFormulario(true)
-                            setReadOnlyBtnAcao(false);
-                            setShowPeriodoFechadoImposto(false);
-                            setDisableBtnAdicionarImposto(false);
-                            setReadOnlyCamposImposto(prevState => ({...prevState, [index]: false}));
+                            onShowErroGeral();
+                            console.log("Erro ao buscar perído ", e)
                         }
-                    }
-                    catch (e) {
-                        setReadOnlyBtnAcao(true);
-                        setShowPeriodoFechadoImposto(true);
-                        setDisableBtnAdicionarImposto(true);
-                        setReadOnlyCamposImposto(prevState => ({...prevState, [index]: true}));
-                        onShowErroGeral();
-                        console.log("Erro ao buscar perído ", e)
                     }
                 }
                 
@@ -358,7 +390,7 @@ export const CadastroForm = ({verbo_http}) => {
 
             setBtnSubmitDisable(true);
 
-            validaPayloadDespesas(values, despesasTabelas);
+            validaPayloadDespesas(values, despesasTabelas, parametroLocation);
 
             values.motivos_pagamento_antecipado = montaPayloadMotivosPagamentoAntecipado()
             values.outros_motivos_pagamento_antecipado = txtOutrosMotivosPagamentoAntecipado.trim() && checkBoxOutrosMotivosPagamentoAntecipado ? txtOutrosMotivosPagamentoAntecipado : ""
@@ -377,12 +409,24 @@ export const CadastroForm = ({verbo_http}) => {
                     setLoading(false);
                 }
             } else if (despesaContext.verboHttp === "PUT") {
-
                 try {
                     const response = await alterarDespesa(values, despesaContext.idDespesa);
                     if (response.status === 200) {
                         console.log("Operação realizada com sucesso!");
-                        aux.getPath(origem);
+
+                        if(aux.origemAnaliseLancamento(parametroLocation)){
+                            let uuid_analise_lancamento = parametroLocation.state.uuid_analise_lancamento;
+                            let response_atualiza_lancamento = await marcarLancamentoAtualizado(uuid_analise_lancamento);
+                            
+                            if (response_atualiza_lancamento.status === 200) {
+                                console.log("Atualizacao de lancamento realizada com sucesso!");
+                            }
+                            else{
+                                setLoading(false);
+                            }
+                        }
+
+                        aux.getPath(origem, parametroLocation);
                     } else {
                         setLoading(false);
                     }
@@ -470,7 +514,7 @@ export const CadastroForm = ({verbo_http}) => {
 
     const onCancelarTrue = () => {
         setShow(false);
-        aux.getPath(origem);
+        aux.getPath(origem, parametroLocation);
     };
 
     const onShowModal = () => {
@@ -490,9 +534,18 @@ export const CadastroForm = ({verbo_http}) => {
         setLoading(true);
 
         try {
+            if(aux.origemAnaliseLancamento(parametroLocation)){
+                let uuid_analise_lancamento = parametroLocation.state.uuid_analise_lancamento;
+                let response_exclui_lancamento = await marcarLancamentoExcluido(uuid_analise_lancamento);
+                
+                if (response_exclui_lancamento.status === 200) {
+                    console.log("Exclusão de lancamento realizada com sucesso!");
+                }
+            }
+
             await deleteDespesa(despesaContext.idDespesa)
             console.log("Despesa deletada com sucesso.");
-            aux.getPath(origem);
+            aux.getPath(origem, parametroLocation);
         }catch (error){
             console.log(error.response);
             let texto_erro = ''
@@ -643,6 +696,24 @@ export const CadastroForm = ({verbo_http}) => {
             bloqueia_link = false;
         }
 
+        if(aux.origemAnaliseLancamento(parametroLocation)){
+            if(!aux.temPermissaoEdicao(parametroLocation)){
+                bloqueia_link = true;
+            }
+        }
+
+        return bloqueia_link;
+    }
+
+    const bloqueiaCamposDespesa = () => {
+        let bloqueia_link = false;
+
+        if(aux.origemAnaliseLancamento(parametroLocation)){
+            if(!aux.temPermissaoEdicao(parametroLocation)){
+                bloqueia_link = true;
+            }
+        }
+
         return bloqueia_link;
     }
 
@@ -697,10 +768,17 @@ export const CadastroForm = ({verbo_http}) => {
 
     const verificaSeDespesaJaDemonstrada = async (values, errors, setFieldValue) =>{
         validaPayloadDespesas(values);
-        if (values.rateios.find(element => element.conferido)) {
-            setModalState("despesa-ja-demonstrada")
-        }else{
+
+        if(aux.origemAnaliseLancamento(parametroLocation)){
+            aux.mantemConciliacaoAtual(values);
             await serviceSubmitModais(values, setFieldValue, errors, 'despesa_ja_demonstrada_validado')
+        }
+        else{
+            if (values.rateios.find(element => element.conferido)) {
+                setModalState("despesa-ja-demonstrada")
+            }else{
+                await serviceSubmitModais(values, setFieldValue, errors, 'despesa_ja_demonstrada_validado')
+            }
         }
     }
 
@@ -916,6 +994,8 @@ export const CadastroForm = ({verbo_http}) => {
                         disableBtnAdicionarImposto={disableBtnAdicionarImposto}
                         onCalendarCloseDataPagamento={onCalendarCloseDataPagamento}
                         onCalendarCloseDataPagamentoImposto={onCalendarCloseDataPagamentoImposto}
+                        parametroLocation={parametroLocation}
+                        bloqueiaCamposDespesa={bloqueiaCamposDespesa}
                     />
             </>
             }
@@ -923,7 +1003,7 @@ export const CadastroForm = ({verbo_http}) => {
                 <CancelarModal
                     show={show}
                     handleClose={() => setShow(false)}
-                    onCancelarTrue={() => aux.onCancelarTrue(setShow, setLoading, origem)}
+                    onCancelarTrue={() => aux.onCancelarTrue(setShow, setLoading, origem, parametroLocation)}
                 />
             </section>
             <section>

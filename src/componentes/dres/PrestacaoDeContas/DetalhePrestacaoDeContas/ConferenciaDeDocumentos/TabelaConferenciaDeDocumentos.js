@@ -289,6 +289,7 @@ const TabelaConferenciaDeDocumentos = ({carregaListaDeDocumentosParaConferencia,
             </div>
         )
     }
+    
     const marcarComoCorreto = async () => {
         let documentos_marcados_como_corretos = getDocumentosSelecionados()
         if (documentos_marcados_como_corretos && documentos_marcados_como_corretos.length > 0) {

@@ -6,6 +6,7 @@ import {getDespesa} from "../../../../services/escolas/Despesas.service";
 import {CadastroDeDespesas} from "../../../../componentes/escolas/Despesas/CadastroDeDespesas";
 import {ASSOCIACAO_UUID} from "../../../../services/auth.service";
 import moment from "moment";
+import {visoesService} from "../../../../services/visoes.service";
 
 
 
@@ -14,6 +15,8 @@ export const EdicaoDeDespesa = ()=>{
     const despesaContext = useContext(DespesaContext)
 
     let {associacao} = useParams();
+
+    let visao_selecionada = visoesService.getItemUsuarioLogado('visao_selecionada.nome')
 
     useEffect(() => {
         (async function setValoresIniciais() {
@@ -129,7 +132,7 @@ export const EdicaoDeDespesa = ()=>{
 
     return(
         <PaginasContainer>
-            <h1 className="titulo-itens-painel mt-5">Edição de Despesa</h1>
+            <h1 className="titulo-itens-painel mt-5">{visao_selecionada === "DRE" ? "Visualização de Despesa" : "Edição de Despesa"}</h1>
             <div className="page-content-inner ">
                 <h2 className="subtitulo-itens-painel mb-4">Dados do documento</h2>
                 <CadastroDeDespesas
