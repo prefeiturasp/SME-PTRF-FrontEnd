@@ -44,18 +44,8 @@ export const ResumoDosAcertos = () => {
     const [forcaVerificaSeExibeMsg, setForcaVerificaSeExibeMsg] = useState('')
     const [pcEmAnalise, setPcEmAnalise] = useState(false)
 
-    const verificaPcEmAnalise = () => {
-        if(prestacaoDeContas && prestacaoDeContas.status === "EM_ANALISE"){
-            setPcEmAnalise(true);
-        }
-        else{
-            setPcEmAnalise(false)
-            setPrimeiraAnalisePcDevolvida()
-        }
-    }
-
     // Necessario para quando voltar da aba Histórico para Conferencia atual
-    const setAnaliseAtualUuidComPCAnaliseAtualUuid = useCallback(async () => {
+    const setAnaliseAtualUuidComPCAnaliseAtualUuid = async () => {
         let analise_atual_uuid = '';
         if (props.state.editavel) {
             if (prestacaoDeContas && prestacaoDeContas.analise_atual && prestacaoDeContas.analise_atual.uuid) {
@@ -76,15 +66,7 @@ export const ResumoDosAcertos = () => {
         setTotalLancamentosAjustes(undefined)
         setTotalDocumentosAjustes(undefined)
         setForcaVerificaSeExibeMsg(gerarUuid())
-    }, [prestacaoDeContas, props])
-
-    useEffect(() => {
-        setAnaliseAtualUuidComPCAnaliseAtualUuid()
-    }, [setAnaliseAtualUuidComPCAnaliseAtualUuid])
-
-    useEffect(() => {
-        verificaPcEmAnalise()
-    }, [prestacaoDeContas])
+    }
 
     // Necessario para exibir ou não o botão Histórico da Tabs
     const totalAnalisesDePcDevolvidas = useMemo(() => analisesDePcDevolvidas.length, [analisesDePcDevolvidas]);
@@ -113,6 +95,20 @@ export const ResumoDosAcertos = () => {
         setTotalLancamentosAjustes('')
         setTotalDocumentosAjustes('')
     }, [analisesDePcDevolvidas])
+
+    const verificaPcEmAnalise = useCallback(() => {
+        if(prestacaoDeContas && prestacaoDeContas.status === "EM_ANALISE"){
+            setPcEmAnalise(true);
+        }
+        else{
+            setPcEmAnalise(false)
+            setPrimeiraAnalisePcDevolvida()
+        }
+    }, [prestacaoDeContas, setPrimeiraAnalisePcDevolvida])
+
+    useEffect(() => {
+        verificaPcEmAnalise()
+    }, [verificaPcEmAnalise])
 
     const verificaQtdeLancamentosDocumentosAjustes = useCallback(async () => {
         setLoading(true)
