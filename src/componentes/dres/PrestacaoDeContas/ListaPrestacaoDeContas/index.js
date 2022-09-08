@@ -186,7 +186,6 @@ export const ListaPrestacaoDeContas = () => {
     };
 
     const devolucaoTemplate = (rowData, column) => {
-        console.log('row', rowData)
         return (
             <div>
                 {rowData[column.field] ? rowData[column.field] : '-'}
