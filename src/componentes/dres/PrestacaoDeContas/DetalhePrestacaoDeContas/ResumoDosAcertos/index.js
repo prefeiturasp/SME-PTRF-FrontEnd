@@ -116,7 +116,7 @@ export const ResumoDosAcertos = () => {
     }, [verificaEditavel, props, prestacaoDeContas])
 
     // Necessario para quando voltar da aba Histórico para Conferencia atual
-    const setAnaliseAtualUuidComPCAnaliseAtualUuid = async () => {
+    const setAnaliseAtualUuidComPCAnaliseAtualUuid = useCallback(async () => {
         let analise_atual_uuid = '';
         if (editavel) {
             if (prestacaoDeContas && prestacaoDeContas.analise_atual && prestacaoDeContas.analise_atual.uuid) {
@@ -137,7 +137,11 @@ export const ResumoDosAcertos = () => {
         setTotalLancamentosAjustes(undefined)
         setTotalDocumentosAjustes(undefined)
         setForcaVerificaSeExibeMsg(gerarUuid())
-    }
+    }, [prestacaoDeContas, props])
+
+    useEffect(() => {
+        setAnaliseAtualUuidComPCAnaliseAtualUuid()
+    }, [setAnaliseAtualUuidComPCAnaliseAtualUuid])
 
     // Necessario para exibir ou não o botão Histórico da Tabs
     const totalAnalisesDePcDevolvidas = useMemo(() => analisesDePcDevolvidas.length, [analisesDePcDevolvidas]);
@@ -166,6 +170,10 @@ export const ResumoDosAcertos = () => {
         setTotalLancamentosAjustes('')
         setTotalDocumentosAjustes('')
     }, [analisesDePcDevolvidas])
+
+    useEffect(() => {
+        setPrimeiraAnalisePcDevolvida()
+    }, [setPrimeiraAnalisePcDevolvida])
 
     const verificaPcEmAnalise = useCallback(() => {
         if(prestacaoDeContas && prestacaoDeContas.status === "EM_ANALISE"){

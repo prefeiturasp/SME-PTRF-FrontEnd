@@ -6,7 +6,7 @@ import CardsInfoDevolucaoSelecionada from "./CardsInfoDevolucaoSelecionada";
 import './cards-devolucoes-para-acerto-dre.scss'
 import Loading from "../../../utils/Loading";
 
-const CardsDevolucoesParaAcertoDaDre = ({prestacao_conta_uuid, analiseAtualUuid=false, setAnaliseAtualUuid}) =>{
+const CardsDevolucoesParaAcertoDaDre = ({prestacao_conta_uuid, analiseAtualUuid=false, setAnaliseAtualUuid, setPermitirTriggerOnclick=null}) =>{
     const [analisesDePcDevolvidas, setAnalisesDePcDevolvidas] = useState([])
     const [uuidAnalisePcDevolvida, setUuidAnalisePcDevolvida] = useState({})
     const [objetoConteudoCard, setObjetoConteudoCard] = useState({})
@@ -68,6 +68,11 @@ const CardsDevolucoesParaAcertoDaDre = ({prestacao_conta_uuid, analiseAtualUuid=
     }, [setPrimeiraAnalisePcDevolvida])
 
     const handleChangeSelectAnalisesDePcDevolvidas = useCallback((value, e)=>{
+        // Necessário para controlar quando o ref_click_historico.current.click() é disparado
+        if (setPermitirTriggerOnclick){
+            setPermitirTriggerOnclick(false)
+        }
+
         setUuidAnalisePcDevolvida(value)
         setAnaliseAtualUuid(value)
         let data_objeto = JSON.parse(e.target.options[e.target.selectedIndex].getAttribute('data-objeto'));
