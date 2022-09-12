@@ -7,7 +7,7 @@ export const colunasNaoRecebidas = [
     {field: 'tecnico_responsavel', header: 'Técnico responsável'},
     {field: 'devolucao_ao_tesouro', header: 'Devolução ao tesouro'},
     {field: 'status', header: 'Status'},
-    {field: 'acoes', header: ''},
+    {field: 'acoes', header: 'Ações'},
 ];
 
 export const colunasTodosOsStatus = [
@@ -19,7 +19,7 @@ export const colunasTodosOsStatus = [
     {field: 'tecnico_responsavel', header: 'Técnico responsável'},
     {field: 'devolucao_ao_tesouro', header: 'Devolução ao tesouro'},
     {field: 'status', header: 'Status'},
-    {field: 'acoes', header: ''},
+    {field: 'acoes', header: 'Ações'},
 ];
 
 export const colunasEmAnalise = [
@@ -31,7 +31,7 @@ export const colunasEmAnalise = [
     {field: 'tecnico_responsavel', header: 'Técnico responsável'},
     {field: 'devolucao_ao_tesouro', header: 'Devolução ao tesouro'},
     {field: 'status', header: 'Status'},
-    {field: 'acoes', header: ''},
+    {field: 'acoes', header: 'Ações'},
 ];
 
 export const colunasAprovada = [
@@ -43,5 +43,5 @@ export const colunasAprovada = [
     {field: 'tecnico_responsavel', header: 'Técnico responsável'},
     {field: 'devolucao_ao_tesouro', header: 'Devolução ao tesouro'},
     {field: 'status', header: 'Status'},
-    {field: 'acoes', header: ''},
+    {field: 'acoes', header: 'Ações'},
 ];
