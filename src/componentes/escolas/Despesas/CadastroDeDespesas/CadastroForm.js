@@ -709,6 +709,10 @@ export const CadastroForm = ({verbo_http}) => {
     const bloqueiaCamposDespesa = () => {
         let bloqueia_link = false;
 
+        if(readOnlyCampos){
+            bloqueia_link = true;
+        }
+
         if(aux.origemAnaliseLancamento(parametroLocation)){
             if(!aux.temPermissaoEdicao(parametroLocation)){
                 bloqueia_link = true;
