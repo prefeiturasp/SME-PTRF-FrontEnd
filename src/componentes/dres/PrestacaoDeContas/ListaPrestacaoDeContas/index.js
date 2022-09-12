@@ -240,6 +240,7 @@ export const ListaPrestacaoDeContas = () => {
                 case 'APROVADA':
                 case 'APROVADA_RESSALVA':
                 case 'REPROVADA':
+                case 'DEVOLVIDA':
                     return faEye
                 default:
                     return faEdit
@@ -248,7 +249,7 @@ export const ListaPrestacaoDeContas = () => {
 
         return (
             <div>
-                {!['NAO_RECEBIDA', 'NAO_APRESENTADA', 'DEVOLVIDA'].includes(rowData.status) ? (
+                { rowData.status !== 'NAO_APRESENTADA' ? (
                         <Link
                             to={{
                                 pathname: `/dre-detalhe-prestacao-de-contas/${rowData['uuid']}`,
