@@ -110,9 +110,19 @@ export const ListaPrestacaoDeContas = () => {
 
     const populaColunas = useCallback(() => {
         if (selectedStatusPc.length === 1){
+            if (selectedStatusPc.includes('EM_ANALISE') || selectedStatusPc.includes('REPROVADA')) {
+                setColumns(colunasTodosStatus)
+            } else if (selectedStatusPc.includes('APROVADA') || selectedStatusPc.includes('APROVADA_RESSALVA')) {
+                setColumns(colunasTodosStatus)
+            } else if (selectedStatusPc.includes('TODOS')) {
+                setColumns(colunasTodosStatus)
+            } else {
                 setColumns(colunasTodosStatus)
             }
-    }, [selectedStatusPc, colunasTodosStatus]) ;
+        }else {
+            setColumns(colunasTodosStatus)
+        }
+    }, [selectedStatusPc]) ;
 
     useEffect(() => {
         populaColunas();
@@ -127,11 +137,6 @@ export const ListaPrestacaoDeContas = () => {
     useEffect(() => {
         carregaTecnicos();
     }, [carregaTecnicos]);
-
-
-    useEffect(() => {
-        carregaPrestacoesDeContas();
-    }, [periodoEscolhido, forcarLimpezaFiltros]);
 
     const carregaPrestacoesDeContas = async () => {
 
@@ -159,7 +164,11 @@ export const ListaPrestacaoDeContas = () => {
             setPrestacaoDeContas(prestacoes_de_contas)
         }
         setLoading(false);
-    };
+    }
+
+    useEffect(() => {
+        carregaPrestacoesDeContas();
+    }, [periodoEscolhido, forcarLimpezaFiltros]);
 
     const statusTemplate = (rowData) => {
         return (
