@@ -258,15 +258,17 @@ export const ListaPrestacaoDeContas = () => {
                             />
                         </Link>
                     ):
-                    <button
-                        onClick={()=>gravaPcNaoApresentada(rowData)}
-                        className="btn btn-link"
-                    >
+                    <Link
+                            to={{
+                                pathname: `/dre-detalhe-prestacao-de-contas/${rowData['uuid']}`,
+                            }}
+                            className="btn btn-link"
+                        >
                         <FontAwesomeIcon
                             style={{marginRight: "0", color: '#00585E'}}
                             icon={faEdit}
                         />
-                    </button>
+                    </Link>
                 }
             </div>
         )
