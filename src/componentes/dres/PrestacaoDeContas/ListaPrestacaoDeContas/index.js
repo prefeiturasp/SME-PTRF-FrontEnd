@@ -12,7 +12,7 @@ import moment from "moment";
 import {TabelaDinamica} from "./TabelaDinamica";
 import {getTecnicosDre} from "../../../../services/dres/TecnicosDre.service";
 import {ASSOCIACAO_UUID} from "../../../../services/auth.service";
-import {colunasTodosStatus} from "./objetoColunasDinamicas";
+import {colunasAprovada, colunasEmAnalise, colunasNaoRecebidas, colunasTodosOsStatus} from "./objetoColunasDinamicas";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEye, faEdit} from "@fortawesome/free-solid-svg-icons";
 import Loading from "../../../../utils/Loading";
@@ -111,16 +111,16 @@ export const ListaPrestacaoDeContas = () => {
     const populaColunas = useCallback(() => {
         if (selectedStatusPc.length === 1){
             if (selectedStatusPc.includes('EM_ANALISE') || selectedStatusPc.includes('REPROVADA')) {
-                setColumns(colunasTodosStatus)
+                setColumns(colunasEmAnalise)
             } else if (selectedStatusPc.includes('APROVADA') || selectedStatusPc.includes('APROVADA_RESSALVA')) {
-                setColumns(colunasTodosStatus)
+                setColumns(colunasAprovada)
             } else if (selectedStatusPc.includes('TODOS')) {
-                setColumns(colunasTodosStatus)
+                setColumns(colunasTodosOsStatus)
             } else {
-                setColumns(colunasTodosStatus)
+                setColumns(colunasNaoRecebidas)
             }
         }else {
-            setColumns(colunasTodosStatus)
+            setColumns(colunasTodosOsStatus)
         }
     }, [selectedStatusPc]) ;
 
@@ -137,6 +137,11 @@ export const ListaPrestacaoDeContas = () => {
     useEffect(() => {
         carregaTecnicos();
     }, [carregaTecnicos]);
+
+
+    useEffect(() => {
+        carregaPrestacoesDeContas();
+    }, [periodoEscolhido, forcarLimpezaFiltros]);
 
     const carregaPrestacoesDeContas = async () => {
 
@@ -164,11 +169,7 @@ export const ListaPrestacaoDeContas = () => {
             setPrestacaoDeContas(prestacoes_de_contas)
         }
         setLoading(false);
-    }
-
-    useEffect(() => {
-        carregaPrestacoesDeContas();
-    }, [periodoEscolhido, forcarLimpezaFiltros]);
+    };
 
     const statusTemplate = (rowData) => {
         return (
@@ -177,30 +178,6 @@ export const ListaPrestacaoDeContas = () => {
             </div>
         )
     };
-
-    const seiTemplate = (rowData, column) => {
-        return (
-            <div>
-                {rowData[column.field] ? rowData[column.field] : '-'}
-            </div>
-        )
-    };
-
-    const tecnicoTemplate = (rowData, column) => {
-        return (
-            <div>
-                {rowData[column.field] ? rowData[column.field] : '-'}
-            </div>
-        )
-    };
-
-    const devolucaoTemplate = (rowData, column) => {
-        return (
-            <div>
-                {rowData[column.field] ? rowData[column.field] : '-'}
-            </div>
-        )
-    }
 
     const dataTemplate = (rowData, column) => {
         return (
@@ -241,11 +218,37 @@ export const ListaPrestacaoDeContas = () => {
         setRedirectPcNaoApresentada(true)
     };
 
-    const acoesTemplate = (rowData) => {
+    const seiTemplate = (rowData) => {
         return (
             <div>
+                {rowData['processo_sei'] ? <span>{rowData['processo_sei']}</span> : '-'}
+            </div>
+        )
+    }
 
-                {['NAO_APRESENTADA', 'DEVOLVIDA', 'APROVADA', 'APROVADA_RESSALVA', 'REPROVADA'].includes(rowData.status)  ? (
+    const tecnicoTemplate = (rowData, column) => {
+        return (
+            <div>
+                {rowData[column.field] ? rowData[column.field] : '-'}
+            </div>
+        )
+    };
+
+    const acoesTemplate = (rowData) => {
+        const getIcone = (status) => {
+            switch (status) {
+                case 'APROVADA':
+                case 'APROVADA_RESSALVA':
+                case 'REPROVADA':
+                    return faEye
+                default:
+                    return faEdit
+            }
+        }
+
+        return (
+            <div>
+                {!['NAO_RECEBIDA', 'NAO_APRESENTADA', 'DEVOLVIDA'].includes(rowData.status) ? (
                         <Link
                             to={{
                                 pathname: `/dre-detalhe-prestacao-de-contas/${rowData['uuid']}`,
@@ -254,21 +257,19 @@ export const ListaPrestacaoDeContas = () => {
                         >
                             <FontAwesomeIcon
                                 style={{marginRight: "0", color: '#00585E'}}
-                                icon={faEye}
+                                icon={getIcone(rowData.status)}
                             />
                         </Link>
                     ):
-                    <Link
-                            to={{
-                                pathname: `/dre-detalhe-prestacao-de-contas/${rowData['uuid']}`,
-                            }}
-                            className="btn btn-link"
-                        >
+                    <button
+                        onClick={()=>gravaPcNaoApresentada(rowData)}
+                        className="btn btn-link"
+                    >
                         <FontAwesomeIcon
                             style={{marginRight: "0", color: '#00585E'}}
-                            icon={faEdit}
+                            icon={faEye}
                         />
-                    </Link>
+                    </button>
                 }
             </div>
         )
@@ -442,10 +443,9 @@ export const ListaPrestacaoDeContas = () => {
                                 statusTemplate={statusTemplate}
                                 dataTemplate={dataTemplate}
                                 seiTemplate={seiTemplate}
+                                tecnicoTemplate={tecnicoTemplate}
                                 acoesTemplate={acoesTemplate}
                                 nomeTemplate={nomeTemplate}
-                                devolucaoTemplate={devolucaoTemplate}
-                                tecnicoTemplate={tecnicoTemplate}
                             />
                         ) :
                         <MsgImgLadoDireito
