@@ -1,401 +1,405 @@
-import React, {useEffect, useState} from "react";
-import {getFiqueDeOlhoRelatoriosConsolidados, getConsultarStatus, getTiposConta, getDownloadRelatorio, postGerarPreviaRelatorio, postGerarLauda, getStatusAta} from "../../../services/dres/RelatorioConsolidado.service";
-import {getItensDashboard, getPeriodos} from "../../../services/dres/Dashboard.service";
-import {SelectPeriodo} from "./SelectPeriodo";
-import {SelectConta} from "./SelectConta";
-import {MsgImgCentralizada} from "../../Globais/Mensagens/MsgImgCentralizada";
-import Img404 from "../../../assets/img/img-404.svg";
-import {TrilhaDeStatus} from "./TrilhaDeStatus";
+import React, {useCallback, useEffect, useState, memo} from "react";
 import {visoesService} from "../../../services/visoes.service";
+import {
+    getFiqueDeOlhoRelatoriosConsolidados,
+    getStatusConsolidadoDre,
+    postPublicarConsolidadoDre,
+    getTrilhaStatus,
+    postGerarPreviaConsolidadoDre,
+    getConsolidadosDreJaPublicadosProximaPublicacao,
+    postPublicarConsolidadoDePublicacoesParciais,
+    getStatusRelatorioConsolidadoDePublicacoesParciais,
+} from "../../../services/dres/RelatorioConsolidado.service";
+import {getPeriodos} from "../../../services/dres/Dashboard.service";
+import {SelectPeriodo} from "./SelectPeriodo";
+import {PaginasContainer} from "../../../paginas/PaginasContainer";
 import {BarraDeStatus} from "./BarraDeStatus";
-import {ExecucaoFinanceira} from "./ExecucaoFinanceira";
-import { AtaParecerTecnico } from "./AtaParecerTecnico";
 import './relatorio-consolidado.scss'
+import Img404 from "../../../assets/img/img-404.svg";
+import {MsgImgCentralizada} from "../../Globais/Mensagens/MsgImgCentralizada";
+import {TrilhaDeStatus} from "./TrilhaDeStatus";
 import Loading from "../../../utils/Loading";
-import { ModalMsgGeracaoRelatorio, ModalMsgGeracaoLauda } from "./ModalMsgGeracaoRelatorio";
-import { getDownloadAtaParecerTecnico, getGerarAta } from "../../../services/dres/AtasParecerTecnico.service";
-import {toastCustom} from "../../Globais/ToastCustom";
+import PublicarDocumentos from "./PublicarDocumentos";
+import DemonstrativoDaExecucaoFisicoFinanceira from "./DemonstrativoDaExecucaoFisicoFinanceira";
+import {AtaParecerTecnico} from "./AtaParecerTecnico";
+import Lauda from "./Lauda";
+import {ModalAtaNaoPreenchida} from "../../../utils/Modais";
+import PreviaDocumentos from "./PreviaDocumento";
+import {PERIODO_RELATORIO_CONSOLIDADO_DRE} from "../../../services/auth.service";
 
-export const RelatorioConsolidado = () => {
+const RelatorioConsolidado = () => {
 
     const dre_uuid = visoesService.getItemUsuarioLogado('associacao_selecionada.uuid');
+    const periodo_relatorio_consolidado_localstorage = localStorage.getItem(PERIODO_RELATORIO_CONSOLIDADO_DRE)
 
     const [fiqueDeOlho, setFiqueDeOlho] = useState("");
+
+    // Consolidado DRE
+    const [consolidadosDreJaPublicados, setConsolidadosDreJaPublicados] = useState(false);
+    const [consolidadoDreProximaPublicacao, setConsolidadoDreProximaPublicacao] = useState(false);
+    const [statusBarraDeStatus, setStatusBarraDeStatus] = useState('');
+    const [statusProcessamentoConsolidadoDre, setStatusProcessamentoConsolidadoDre] = useState('');
+    const [statusProcessamentoRelatorioConsolidadoDePublicacoesParciais, setStatusProcessamentoRelatorioConsolidadoDePublicacoesParciais] = useState('');
     const [periodos, setPeriodos] = useState(false);
     const [periodoEscolhido, setPeriodoEsolhido] = useState(false);
-    const [itensDashboard, setItensDashboard] = useState(false);
-    const [contas, setContas] = useState(false);
-    const [contaEscolhida, setContaEscolhida] = useState(false);
-    const [statusRelatorio, setStatusRelatorio] = useState(false);
-    const [totalEmAnalise, setTotalEmAnalise] = useState(0);
+    const [showPublicarRelatorioConsolidado, setShowPublicarRelatorioConsolidado] = useState(false);
+
+    // Ata
+    const [showAtaNaoPreenchida, setShowAtaNaoPreenchida] = useState(false);
+
+    const [trilhaStatus, setTrilhaStatus] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [showModalMsgGeracaoRelatorio, setShowModalMsgGeracaoRelatorio] = useState(false);
-    const [showModalMsgGeracaoLauda, setShowModalMsgGeracaoLauda] = useState(false);
-    const [msgGeracaoRelatorio, setMsgGeracaoRelatorio] = useState('');
-    const [msgGeracaoLauda, setMsgGeracaoLauda] = useState('');
-    const [ataParecerTecnico, setAtaParecerTecnico] = useState({});
-    const [disablebtnVisualizarAta, setDisablebtnVisualizarAta] = useState(true);
-    const [disablebtnGerarAta, setDisablebtnGerarAta] = useState(true);
-    const [disablebtnGerarLauda, setDisablebtnGerarLauda] = useState(true);
 
-    useEffect(() => {
-        if (statusRelatorio && statusRelatorio.status_geracao && statusRelatorio.status_geracao === "EM_PROCESSAMENTO") {
-            const timer = setInterval(() => {
-                consultarStatus();
-            }, 5000);
-            // clearing interval
-            return () => clearInterval(timer);
-        }
-    });
-
-    useEffect(() => {
-        if (ataParecerTecnico && ataParecerTecnico.status_geracao_pdf && ataParecerTecnico.status_geracao_pdf === "EM_PROCESSAMENTO") {
-            const timer = setInterval(() => {
-                consultarStatusAta();
-            }, 5000);
-            // clearing interval
-            return () => clearInterval(timer);
-        }
-    });
-
-    useEffect(() => {
-        buscaFiqueDeOlho();
-    }, []);
-
-    useEffect(() => {
-        carregaPeriodos();
-    }, []);
-
-    useEffect(() => {
-        carregaContas();
-    }, []);
-
-    useEffect(() => {
-        carregaItensDashboard();
-    }, [periodoEscolhido]);
-
-    useEffect(() => {
-        consultarStatus();
-    }, [periodoEscolhido, contaEscolhida]);
-
-    useEffect(() => {
-        retornaQtdeEmAnalise();
-    }, [itensDashboard]);
-
-    useEffect(() => {
-        consultarStatusAta();
-    }, [periodoEscolhido, statusRelatorio]);
-
-    const carregaPeriodos = async () => {
-        let periodos = await getPeriodos();
-        setPeriodos(periodos);
-        if (periodos && periodos.length > 0){
-            setPeriodoEsolhido(periodos[0].uuid)
-        }
-    };
-
-    const setaStatusComoProcessando = () => {
-        const statusProcessando = {
-            pcs_em_analise: false,
-            status_geracao: "EM_PROCESSAMENTO",
-            status_txt: "Análise de prestações de contas das associações completa. Relatório em processamento.",
-            cor_idx: 3,
-            status_arquivo: "Previa do relatório sendo gerada. Aguarde."
-        }
-        setStatusRelatorio(statusProcessando);
-    };
-
-    const carregaContas = async () => {
+    const carregaPeriodos = useCallback(async () => {
         try {
-            let tipo_contas = await getTiposConta();
-            setContas(tipo_contas);
-            if (tipo_contas && tipo_contas.length > 0){
-                setContaEscolhida(tipo_contas[0].uuid)
+            let periodos = await getPeriodos();
+            setPeriodos(periodos);
+            if (periodos && periodos.length > 0){
+                //Caso exista mais de um período seleciona por default o anterior ao corrente.
+                const periodoIndex = periodos.length > 1 ? 1 : 0;
+                if (periodo_relatorio_consolidado_localstorage){
+                    setPeriodoEsolhido(periodo_relatorio_consolidado_localstorage)
+                }else {
+                    setPeriodoEsolhido(periodos[periodoIndex].uuid)
+                }
+
             }
-        }catch (e) {
-            console.log("Erro ao trazer os tipos de contas ", e);
+        } catch (e) {
+            console.log("Erro ao buscar períodos ", e)
         }
-    };
+    }, [periodo_relatorio_consolidado_localstorage]);
 
-    const carregaItensDashboard = async () =>{
-        if (periodoEscolhido){
-            let itens = await getItensDashboard(periodoEscolhido);
-            setItensDashboard(itens)
+    useEffect(() => {
+        carregaPeriodos()
+    }, [carregaPeriodos])
+
+
+    const carregaConsolidadosDreJaPublicadosProximaPublicacao = useCallback(async () => {
+        if  ( (dre_uuid && periodoEscolhido && statusProcessamentoConsolidadoDre) || statusProcessamentoRelatorioConsolidadoDePublicacoesParciais ) {
+            try {
+                let consolidados_dre = await getConsolidadosDreJaPublicadosProximaPublicacao(dre_uuid, periodoEscolhido)
+                setConsolidadosDreJaPublicados(consolidados_dre.publicacoes_anteriores)
+                setConsolidadoDreProximaPublicacao(consolidados_dre.proxima_publicacao)
+            } catch (e) {
+                console.log("Erro ao buscar Consolidado Dre ", e)
+            }
         }
-    };
+    }, [dre_uuid, periodoEscolhido, statusProcessamentoConsolidadoDre, statusProcessamentoRelatorioConsolidadoDePublicacoesParciais])
 
-    const buscaFiqueDeOlho = async () => {
-        let fique_de_olho = await getFiqueDeOlhoRelatoriosConsolidados();
-        setFiqueDeOlho(fique_de_olho.detail);
-    };
+    useEffect(() => {
+        carregaConsolidadosDreJaPublicadosProximaPublicacao()
+    }, [carregaConsolidadosDreJaPublicadosProximaPublicacao])
+
+    const retornaStatusConsolidadosDre = useCallback(async () => {
+        if (dre_uuid && periodoEscolhido) {
+            try {
+                let status = await getStatusConsolidadoDre(dre_uuid, periodoEscolhido)
+
+                if (status && status.length > 0) {
+                    setStatusBarraDeStatus(status[0])
+                    setStatusProcessamentoConsolidadoDre(status[0].status_geracao)
+                }
+            } catch (e) {
+                console.log("Erro ao buscar status Consolidado Dre ", e)
+            }
+        }
+    }, [dre_uuid, periodoEscolhido])
+
+
+    useEffect(() => {
+        retornaStatusConsolidadosDre()
+    }, [retornaStatusConsolidadosDre])
+
+    const retornaStatusProcessamentoRelatorioConsolidadoDePublicacoesParciais = useCallback(async () => {
+        if (dre_uuid && periodoEscolhido) {
+            try {
+                let status = await getStatusRelatorioConsolidadoDePublicacoesParciais(dre_uuid, periodoEscolhido)
+                setStatusProcessamentoRelatorioConsolidadoDePublicacoesParciais(status.status)
+            } catch (e) {
+                console.log("Erro ao buscar status Consolidado Dre ", e)
+            }
+        }
+    }, [dre_uuid, periodoEscolhido])
+
+
+    useEffect(() => {
+        retornaStatusProcessamentoRelatorioConsolidadoDePublicacoesParciais()
+    }, [retornaStatusProcessamentoRelatorioConsolidadoDePublicacoesParciais])
+
+    const buscaTrilhaStatus = useCallback(async () => {
+        if (dre_uuid && periodoEscolhido) {
+            let trilha_status = await getTrilhaStatus(dre_uuid, periodoEscolhido)
+            setTrilhaStatus(trilha_status)
+        }
+    }, [dre_uuid, periodoEscolhido])
+
+    useEffect(() => {
+        buscaTrilhaStatus()
+    }, [buscaTrilhaStatus])
+
+    useEffect(() => {
+        if (statusProcessamentoConsolidadoDre && statusProcessamentoConsolidadoDre === "EM_PROCESSAMENTO") {
+            setLoading(true)
+            const timer = setInterval(() => {
+                retornaStatusConsolidadosDre();
+            }, 5000);
+            // clearing interval
+            return () => clearInterval(timer);
+        } else {
+            buscaTrilhaStatus();
+            setLoading(false);
+        }
+    }, [statusProcessamentoConsolidadoDre, retornaStatusConsolidadosDre, buscaTrilhaStatus]);
+
+    useEffect(() => {
+        if (statusProcessamentoRelatorioConsolidadoDePublicacoesParciais && statusProcessamentoRelatorioConsolidadoDePublicacoesParciais === "EM_PROCESSAMENTO") {
+            setLoading(true)
+            const timer = setInterval(() => {
+                retornaStatusProcessamentoRelatorioConsolidadoDePublicacoesParciais();
+            }, 5000);
+            // clearing interval
+            return () => clearInterval(timer);
+        } else {
+            setLoading(false);
+        }
+    }, [statusProcessamentoRelatorioConsolidadoDePublicacoesParciais, retornaStatusProcessamentoRelatorioConsolidadoDePublicacoesParciais]);
+
+    const buscaFiqueDeOlho = useCallback(async () => {
+        try {
+            let fique_de_olho = await getFiqueDeOlhoRelatoriosConsolidados();
+            setFiqueDeOlho(fique_de_olho.detail);
+        } catch (e) {
+            console.log("Erro ao buscar Fique de Olho ", e)
+        }
+    }, [])
+
+    useEffect(() => {
+        buscaFiqueDeOlho()
+    }, [buscaFiqueDeOlho])
 
     const handleChangePeriodos = async (uuid_periodo) => {
         setPeriodoEsolhido(uuid_periodo)
+        localStorage.setItem(PERIODO_RELATORIO_CONSOLIDADO_DRE, uuid_periodo);
     };
 
-    const handleChangeContas = async (uuid_conta) => {
-        setContaEscolhida(uuid_conta)
-    };
-
-    const retornaQtdeStatus = (status) => {
-        let item = itensDashboard.cards.find(element => element.status === status);
+    const formataNumero = (status) => {
+        let item = trilhaStatus.cards.find(element => element.status === status);
         let qtde_itens = item.quantidade_prestacoes;
-        if (qtde_itens <= 9){
+
+        if (qtde_itens <= 9) {
             return '0' + qtde_itens;
-        }else {
+        } else {
             return qtde_itens.toString();
         }
     };
 
-    const retornaQtdeStatusTotal = () =>{
-        if (itensDashboard) {
-            let total = itensDashboard.cards.filter(elemtent => elemtent.status === 'APROVADA' || elemtent.status === 'REPROVADA').reduce((total, valor) => total + valor.quantidade_prestacoes, 0);
-            if (total <= 9){
-                return '0' + total;
-            }else {
-                return total.toString();
-            }
+    const retornaClasseCirculoTrilhaStatus = (status) => {
+        let qtde_formatado = formataNumero(status);
+
+        if (qtde_formatado && qtde_formatado.length < 3) {
+            return "circulo-relatorio-consolidado-dois-digitos"
+        } else {
+            return "circulo-relatorio-consolidado-tres-digitos"
         }
     };
 
-    const retornaQtdeEmAnalise = () => {
-        if (itensDashboard) {
-            let total = itensDashboard.cards.filter(elemtent => elemtent.status === 'RECEBIDA' || elemtent.status === 'DEVOLVIDA' || elemtent.status === 'EM_ANALISE').reduce((total, valor) => total + valor.quantidade_prestacoes, 0);
-            setTotalEmAnalise(total)
+    const retornaCorCirculoTrilhaStatus = (estilo) => {
+        if (estilo === 2) {
+            return "circulo-relatorio-consolidado-simples-vermelho"
         }
+        return "circulo-relatorio-consolidado-simples"
     };
 
-    const consultarStatus = async () =>{
-        if (dre_uuid && periodoEscolhido && contaEscolhida){
-            let status = await getConsultarStatus(dre_uuid, periodoEscolhido, contaEscolhida);
-            setStatusRelatorio(status);
-        }
-    };
+    const eh_circulo_duplo = (estilo) => {
+        return estilo === 1;
+    }
 
-    const consultarStatusAta = async() => {
-        if(dre_uuid && periodoEscolhido && statusRelatorio.versao === "FINAL"){
-            try{
-                let ata = await getStatusAta(dre_uuid, periodoEscolhido);
-                setAtaParecerTecnico(ata)
-                setDisablebtnVisualizarAta(false);
-                setDisablebtnGerarAta(false);
+    const filtraStatus = () => {
+        return trilhaStatus.cards.filter((item) => item.status !== "APROVADA" && item.status !== "REPROVADA")
+    }
 
-                if(ata.alterado_em && statusRelatorio.status_geracao !== "EM_PROCESSAMENTO"){
-                    setDisablebtnGerarLauda(false);
-                }
-                else{
-                    setDisablebtnGerarLauda(true);
-                }
-                
-            }
-            catch{
-                setAtaParecerTecnico({})
-                console.log("Ata não encontrada")
-                setDisablebtnVisualizarAta(true);
-                setDisablebtnGerarAta(true);
-                setDisablebtnGerarLauda(true);
-            }
-
-            
+    const podeGerarPrevia = () => {
+        if (trilhaStatus && trilhaStatus.cards && trilhaStatus.cards.length > 0){
+            let card_concluido = trilhaStatus.cards.find((element) => element.status === 'CONCLUIDO' )
+            let qtde_prestacoes = card_concluido.quantidade_prestacoes
+            return qtde_prestacoes > 0
         }
     }
 
-    const onClickVerRelatorio = () =>{
-        window.location.assign(`/dre-relatorio-consolidado-apuracao/${periodoEscolhido}/${contaEscolhida}/`)
-    };
+    const podeExibirProximaPublicacao = () =>{
+        return (consolidadoDreProximaPublicacao && podeGerarPrevia()) || consolidadoDreProximaPublicacao.eh_consolidado_de_publicacoes_parciais
+    }
 
-    const onClickVerAta = (uuid_ata) =>{
-        window.location.assign(`/visualizacao-da-ata-parecer-tecnico/${uuid_ata}/`)
-    };
-
-    const textoBtnRelatorio = () =>{
-        if(statusRelatorio.versao === "FINAL"){
-            if (statusRelatorio.status_geracao === 'GERADO_TOTAL'){
-                return 'Documento gerado'
-            }else if (statusRelatorio.status_geracao === 'GERADO_PARCIAL'){
-                return 'Documento parcial gerado'
-            }else if (statusRelatorio.status_geracao === 'NAO_GERADO'){
-                return 'Documento não gerado'
-            }else if (statusRelatorio.status_geracao === "EM_PROCESSAMENTO"){
-                return 'Relatório sendo gerado...'
-            }
-        }
-
-        return 'Documento não gerado'        
-    };
-
-    const gerarPrevia = async () => {
-        let parcial = totalEmAnalise > 0;
-        const payload = {
+    const publicarConsolidadoDre = async (consolidado_dre) => {
+        setShowPublicarRelatorioConsolidado(false)
+        let payload = {
             dre_uuid: dre_uuid,
-            periodo_uuid: periodoEscolhido,
-            tipo_conta_uuid: contaEscolhida,
-            parcial: parcial
-        };
-
-        try{
-            await postGerarPreviaRelatorio(payload);
-            console.log('Solicitação de previa do relatório enviada com sucesso.');
-            setMsgGeracaoRelatorio('O relatório está sendo gerado, enquanto isso você pode continuar a usar o sistema. Quando a geração for concluída um botão para download ficará disponível.');
-            setShowModalMsgGeracaoRelatorio(true);
-            setaStatusComoProcessando();
-        }catch(e){
-            setMsgGeracaoRelatorio('Erro ao gerar relatório');
-            setShowModalMsgGeracaoRelatorio(true);
-            console.log('Erro ao gerar relatório ', e.response.data);
+            periodo_uuid: periodoEscolhido
         }
-
-    }
-
-    const gerarLauda = async () => {
-        let parcial = totalEmAnalise > 0;
-        const payload = {
-            dre_uuid: dre_uuid,
-            periodo_uuid: periodoEscolhido,
-            tipo_conta_uuid: contaEscolhida,
-            parcial: parcial
-        };
-
-        try{
-            await postGerarLauda(payload);
-            console.log('Solicitação de lauda enviada com sucesso.');
-            setMsgGeracaoLauda('A lauda está sendo gerada e será enviada para a central de downloads.')
-            setShowModalMsgGeracaoLauda(true);
-        }catch(e){
-            setMsgGeracaoLauda('Erro ao gerar lauda.')
-            setShowModalMsgGeracaoLauda(true);
-            console.log('Erro ao gerar lauda ', e.response.data);
-        }
-    }
-
-    const downloadRelatorio = async () =>{
-        await getDownloadRelatorio(dre_uuid, periodoEscolhido, contaEscolhida, statusRelatorio.versao);
-    };
-
-    const downloadPreviaRelatorio = async () =>{
-        await getDownloadRelatorio(dre_uuid, periodoEscolhido, contaEscolhida, statusRelatorio.versao);
-    };
-
-    const downloadAtaParecerTecnico = async () =>{
-        await getDownloadAtaParecerTecnico(ataParecerTecnico.uuid);
-    };
-
-    const onHandleClose = () => {
-        setShowModalMsgGeracaoRelatorio(false);
-    };
-
-    const onHandleCloseModalMsgLauda = () => {
-        setShowModalMsgGeracaoLauda(false);
-    };
-
-    const handleClickGerarAta = async () => {
         try {
-            await getGerarAta(ataParecerTecnico.uuid, dre_uuid, periodoEscolhido);
-            let mensagem_parte_1 = "Quando a geração for concluída um botão para download ficará"
-            let mensagem_parte_2 = "disponível na área da Ata."
-            toastCustom.ToastCustomInfo('Ata sendo gerada', <span>{mensagem_parte_1} <br/> {mensagem_parte_2}</span>)
-            setAtaParecerTecnico({
-                ...ataParecerTecnico,
-                status_geracao_pdf: "EM_PROCESSAMENTO"
-            })
+            if (!consolidado_dre.ata_de_parecer_tecnico || !consolidado_dre.ata_de_parecer_tecnico.alterado_em) {
+                setShowAtaNaoPreenchida(true);
+            } else {
+                let publicar = await postPublicarConsolidadoDre(payload);
+                setStatusProcessamentoConsolidadoDre(publicar.status);
+            }
+            await carregaConsolidadosDreJaPublicadosProximaPublicacao()
+        } catch (e) {
+            console.log("Erro ao publicar Consolidado Dre ", e)
         }
-        catch (e) {
-            console.log('Erro ao gerar ata ', e.response.data);
+    }
+
+    const publicarConsolidadoDePublicacoesParciais = async () => {
+
+        let payload = {
+            dre_uuid: dre_uuid,
+            periodo_uuid: periodoEscolhido
+        }
+        try {
+            await postPublicarConsolidadoDePublicacoesParciais(payload);
+
+            let status = await getStatusRelatorioConsolidadoDePublicacoesParciais(dre_uuid, periodoEscolhido)
+
+            setStatusProcessamentoRelatorioConsolidadoDePublicacoesParciais(status.status);
+
+        } catch (e) {
+            console.log("Erro ao publicar Consolidado de Publicações Parciais ", e)
+        }
+        await carregaConsolidadosDreJaPublicadosProximaPublicacao()
+    }
+
+    const gerarPreviaConsolidadoDre = async () => {
+        let payload = {
+            dre_uuid: dre_uuid,
+            periodo_uuid: periodoEscolhido
+        }
+
+        try {
+            let previa = await postGerarPreviaConsolidadoDre(payload);
+            setStatusProcessamentoConsolidadoDre(previa.status);
+            await carregaConsolidadosDreJaPublicadosProximaPublicacao()
+        } catch (e) {
+            console.log("Erro ao publicar Prévia Consolidado Dre ", e)
         }
     }
 
     return (
-        <>
-            {loading ? (
-                    <div className="mt-5">
-                        <Loading
-                            corGrafico="black"
-                            corFonte="dark"
-                            marginTop="0"
-                            marginBottom="0"
-                        />
-                    </div>
-                ) :
-                <>
-                    <div className="col-12 container-texto-introdutorio mb-4 mt-3">
-                        <div dangerouslySetInnerHTML={{__html: fiqueDeOlho}}/>
-                    </div>
-                    <div className="page-content-inner pt-0">
-                        {statusRelatorio &&
+        <PaginasContainer>
+            <h1 className="titulo-itens-painel mt-5">Relatório consolidado</h1>
+            <>
+                <div className="col-12 container-texto-introdutorio mb-4 mt-3">
+                    <div dangerouslySetInnerHTML={{__html: fiqueDeOlho}}/>
+                </div>
+                <div className="page-content-inner pt-0">
+                    {statusBarraDeStatus &&
                         <BarraDeStatus
-                            statusRelatorio={statusRelatorio}
+                            statusBarraDeStatus={statusBarraDeStatus}
                         />
-                        }
-                        <SelectPeriodo
-                            periodos={periodos}
-                            periodoEscolhido={periodoEscolhido}
-                            handleChangePeriodos={handleChangePeriodos}
+                    }
+                    <SelectPeriodo
+                        periodos={periodos}
+                        periodoEscolhido={periodoEscolhido}
+                        handleChangePeriodos={handleChangePeriodos}
+                    />
+                    {periodoEscolhido && dre_uuid && trilhaStatus ? (
+                            <>
+                                <TrilhaDeStatus
+                                    trilhaStatus={trilhaStatus}
+                                    filtraStatus={filtraStatus}
+                                    retornaClasseCirculoTrilhaStatus={retornaClasseCirculoTrilhaStatus}
+                                    formataNumero={formataNumero}
+                                    retornaCorCirculoTrilhaStatus={retornaCorCirculoTrilhaStatus}
+                                    eh_circulo_duplo={eh_circulo_duplo}
+                                />
+                                {loading ? (
+                                        <div className="mt-5">
+                                            <Loading
+                                                corGrafico="black"
+                                                corFonte="dark"
+                                                marginTop="0"
+                                                marginBottom="0"
+                                            />
+                                            <p className='text-center'>Os documentos estão sendo gerados. Enquanto isso, você
+                                                pode realizar outras atividades no sistema.</p>
+                                        </div>
+                                    ) :
+                                    <>
+                                        {/*{consolidadoDreProximaPublicacao && podeGerarPrevia() &&*/}
+                                        {podeExibirProximaPublicacao() &&
+
+                                            <div className='mt-3'>
+                                                <PublicarDocumentos
+                                                    publicarConsolidadoDre={publicarConsolidadoDre}
+                                                    publicarConsolidadoDePublicacoesParciais={publicarConsolidadoDePublicacoesParciais}
+                                                    podeGerarPrevia={podeGerarPrevia}
+                                                    consolidadoDre={consolidadoDreProximaPublicacao}
+                                                    showPublicarRelatorioConsolidado={showPublicarRelatorioConsolidado}
+                                                    setShowPublicarRelatorioConsolidado={setShowPublicarRelatorioConsolidado}
+                                                >
+                                                    <PreviaDocumentos
+                                                        gerarPreviaConsolidadoDre={gerarPreviaConsolidadoDre}
+                                                    />
+                                                </PublicarDocumentos>
+                                                <DemonstrativoDaExecucaoFisicoFinanceira
+                                                    consolidadoDre={consolidadoDreProximaPublicacao}
+                                                    periodoEscolhido={periodoEscolhido}
+                                                />
+                                                {!consolidadoDreProximaPublicacao.eh_consolidado_de_publicacoes_parciais &&
+                                                    <AtaParecerTecnico
+                                                    consolidadoDre={consolidadoDreProximaPublicacao}
+                                                    />
+                                                }
+
+                                                {!consolidadoDreProximaPublicacao.eh_consolidado_de_publicacoes_parciais &&
+                                                    <Lauda
+                                                        consolidadoDre={consolidadoDreProximaPublicacao}
+                                                    />
+                                                }
+                                            </div>
+                                        }
+
+                                        {consolidadosDreJaPublicados && consolidadosDreJaPublicados.map((consolidadoDre) =>
+                                            <div key={consolidadoDre.uuid} className='mt-3'>
+                                                <PublicarDocumentos
+                                                    publicarConsolidadoDre={publicarConsolidadoDre}
+                                                    podeGerarPrevia={podeGerarPrevia}
+                                                    consolidadoDre={consolidadoDre}
+                                                >
+                                                    <PreviaDocumentos
+                                                        gerarPreviaConsolidadoDre={gerarPreviaConsolidadoDre}
+                                                    />
+                                                </PublicarDocumentos>
+                                                <DemonstrativoDaExecucaoFisicoFinanceira
+                                                    consolidadoDre={consolidadoDre}
+                                                    periodoEscolhido={periodoEscolhido}
+                                                />
+                                                <AtaParecerTecnico
+                                                    consolidadoDre={consolidadoDre}
+                                                />
+                                                <Lauda
+                                                    consolidadoDre={consolidadoDre}
+                                                />
+                                            </div>
+                                        )}
+                                    </>
+                                }
+                            </>
+                        ) :
+                        <MsgImgCentralizada
+                            texto='Selecione um período acima para visualizar as ações'
+                            img={Img404}
                         />
-                        {periodoEscolhido &&
-                        <SelectConta
-                            contas={contas}
-                            contaEscolhida={contaEscolhida}
-                            handleChangeContas={handleChangeContas}
-                            onClickVerRelatorio={onClickVerRelatorio}
-                            gerarLauda={gerarLauda}
-                            disablebtnGerarLauda={disablebtnGerarLauda}
-                        />
-                        }
-                        {periodoEscolhido && itensDashboard ? (
-                                <>
-                                    <TrilhaDeStatus
-                                        retornaQtdeStatus={retornaQtdeStatus}
-                                        retornaQtdeStatusTotal={retornaQtdeStatusTotal}
-                                    />
-                                    <ExecucaoFinanceira
-                                        statusRelatorio={statusRelatorio}
-                                        textoBtnRelatorio={textoBtnRelatorio}
-                                        downloadRelatorio={downloadRelatorio}
-                                        gerarPrevia={gerarPrevia}
-                                        downloadPreviaRelatorio={downloadPreviaRelatorio}
-                                    />
-                                    
-                                    {statusRelatorio.versao === "FINAL" && statusRelatorio.status_geracao === "GERADO_TOTAL" && ataParecerTecnico &&
-                                        <AtaParecerTecnico
-                                            statusRelatorio={statusRelatorio}
-                                            ataParecerTecnico={ataParecerTecnico}
-                                            onClickVerAta={onClickVerAta}
-                                            disablebtnVisualizarAta={disablebtnVisualizarAta}
-                                            downloadAtaParecerTecnico={downloadAtaParecerTecnico}
-                                            handleClickGerarAta={handleClickGerarAta}
-                                            disablebtnGerarAta={disablebtnGerarAta}
-                                        />
-                                    }
-                                </>
-
-                            ) :
-                            <MsgImgCentralizada
-                                texto='Selecione um período acima para visualizar as ações'
-                                img={Img404}
-                            />
-                        }
-
-                        <section>
-                            <ModalMsgGeracaoRelatorio
-                                show={showModalMsgGeracaoRelatorio}
-                                handleClose={onHandleClose}
-                                titulo='Geração do relatório'
-                                texto={msgGeracaoRelatorio}
-                            />
-                        </section>
-
-                        <section>
-                            <ModalMsgGeracaoLauda
-                                show={showModalMsgGeracaoLauda}
-                                handleClose={onHandleCloseModalMsgLauda}
-                                titulo='Geração da lauda'
-                                texto={msgGeracaoLauda}
-                            />
-                        </section>
-
-                    </div>
-                </>
-            }
-        </>
+                    }
+                </div>
+            </>
+            <section>
+                <ModalAtaNaoPreenchida
+                    show={showAtaNaoPreenchida}
+                    handleClose={() => setShowAtaNaoPreenchida(false)}
+                />
+            </section>
+        </PaginasContainer>
     )
-};
+}
+
+export default memo(RelatorioConsolidado)

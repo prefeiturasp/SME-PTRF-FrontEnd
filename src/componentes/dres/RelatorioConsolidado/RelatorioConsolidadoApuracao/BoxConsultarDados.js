@@ -2,10 +2,10 @@ import React from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faArrowRight} from "@fortawesome/free-solid-svg-icons";
 
-export const BoxConsultarDados = ({periodo_uuid, conta_uuid}) =>{
+export const BoxConsultarDados = ({periodo_uuid, conta_uuid, jaPublicado}) =>{
 
     const onClickConsultar = ()=>{
-        window.location.assign(`/dre-relatorio-consolidado-dados-das-ues/${periodo_uuid}/${conta_uuid}/`)
+        window.location.assign(`/dre-relatorio-consolidado-dados-das-ues/${periodo_uuid}/${conta_uuid}/${jaPublicado}`)
     };
 
     return(

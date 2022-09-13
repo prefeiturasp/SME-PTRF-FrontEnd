@@ -1,13 +1,13 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useCallback} from "react";
 import {useParams} from "react-router-dom";
 import { TopoComBotoes } from "./TopoComBotoes";
 import { TextoDinamicoSuperior } from "./TextoDinamicoSuperior";
 import { TabelaAprovadas } from "./TabelaAprovadas";
 import { Assinaturas } from "./Assinaturas";
-import {getAtaParecerTecnico, getInfoContas, getGerarAta, getStatusAta, getDownloadAtaParecerTecnico} from "../../../../../services/dres/AtasParecerTecnico.service";
+import {getAtaParecerTecnico, getInfoContas, getDownloadAtaParecerTecnico} from "../../../../../services/dres/AtasParecerTecnico.service";
 import moment from "moment";
 import Loading from "../../../../../utils/Loading"
-import {toastCustom} from "../../../../Globais/ToastCustom";
+import {getConsolidadoDrePorUuidAtaDeParecerTecnico} from "../../../../../services/dres/RelatorioConsolidado.service"
 
 moment.updateLocale('pt', {
     months: [
@@ -19,55 +19,52 @@ moment.updateLocale('pt', {
 const numero = require('numero-por-extenso');
 
 export const VisualizacaoDaAtaParecerTecnico = () => {
-    let {uuid_ata} = useParams();
+    let {uuid_ata, ja_publicado} = useParams();
+
+    // Para bloquear as edições quando for de um Consolidado DRE incremental publicacoes_anteriores
+    // eslint-disable-next-line no-eval
+    const jaPublicado = eval(ja_publicado)
 
     const [dadosAta, setDadosAta] = useState({});
     const [infoContas, setInfoContas] = useState([])
     const [loading, setLoading] = useState(true);
-    const [statusAta, setStatusAta] = useState(false);
+
+    // Consolidado DRE
+    const [consolidadoDre, setConsolidadoDre] = useState(false);
+
+    const carregaConsolidadoDrePorUuidDaAtaDeParecerTecnico = useCallback(async () => {
+        if (uuid_ata){
+            let consolidado_dre = await getConsolidadoDrePorUuidAtaDeParecerTecnico(uuid_ata)
+            setConsolidadoDre(consolidado_dre)
+        }
+    }, [uuid_ata])
 
     useEffect(() => {
-        if (statusAta && statusAta.status_geracao_pdf && statusAta.status_geracao_pdf === "EM_PROCESSAMENTO") {
-            const timer = setInterval(() => {
-                consultarStatus();
-            }, 5000);
-            // clearing interval
-            return () => clearInterval(timer);
-        }
-    }, [statusAta]);
+        carregaConsolidadoDrePorUuidDaAtaDeParecerTecnico()
+    }, [carregaConsolidadoDrePorUuidDaAtaDeParecerTecnico])
+
+
+    const getDadosAta = useCallback(async () => {
+        let dados_ata = await getAtaParecerTecnico(uuid_ata);
+        setDadosAta(dados_ata);
+    }, [uuid_ata])
 
     useEffect(() => {
         getDadosAta();
-    }, []);
+    }, [getDadosAta]);
 
-    useEffect(() => {
-        consultaInfoContas();
-    }, [dadosAta]);
-
-    useEffect(() => {
-        consultarStatus();
-    },[dadosAta]);
-
-    const getDadosAta = async () => {
-        let dados_ata = await getAtaParecerTecnico(uuid_ata);
-        setDadosAta(dados_ata);
-    }
-
-    const consultaInfoContas = async () => {
+    const consultaInfoContas = useCallback( async () => {
         if(dadosAta && Object.entries(dadosAta).length > 0){
-            let info = await getInfoContas(dadosAta.dre.uuid, dadosAta.periodo.uuid)
+            let info = await getInfoContas(dadosAta.dre.uuid, dadosAta.periodo.uuid, uuid_ata)
+
             setInfoContas(info)
             setLoading(false);
         }
-        
-    }
+    }, [dadosAta, uuid_ata])
 
-    const consultarStatus = async () => {
-        if (dadosAta && dadosAta.uuid && dadosAta.dre.uuid && dadosAta.periodo.uuid) {
-            let status = await getStatusAta(dadosAta.dre.uuid, dadosAta.periodo.uuid);
-            setStatusAta(status);
-        }
-    };
+    useEffect(() => {
+        consultaInfoContas();
+    }, [consultaInfoContas]);
 
     const dataPorExtenso = (data) => {
         if (!data) {
@@ -107,8 +104,6 @@ export const VisualizacaoDaAtaParecerTecnico = () => {
         else{
             texto_minuto = "minutos"
         }
-        
-
         // Corrigindo o genero de hora
         let hora_genero = numero.porExtenso(hora).replace("um", "uma").replace("dois", "duas")
 
@@ -120,7 +115,7 @@ export const VisualizacaoDaAtaParecerTecnico = () => {
         }
 
         return hora_extenso;
-        
+
     }
 
     const retornaDadosAtaFormatado = (campo) => {
@@ -148,7 +143,7 @@ export const VisualizacaoDaAtaParecerTecnico = () => {
             }
             else{
                 return "_______"
-            } 
+            }
         }
         else if(campo === "data_portaria") {
             if(dadosAta.data_portaria){
@@ -168,10 +163,35 @@ export const VisualizacaoDaAtaParecerTecnico = () => {
                 nome_dre = nome_dre.replace("DIRETORIA REGIONAL DE EDUCACAO", "")
                 nome_dre = nome_dre.trim();
             }
-            
+
             return nome_dre;
         }
     };
+
+    const retornaTituloCabecalhoAta = () => {
+        if(ehPrevia()){
+            return "Visualização da prévia da ata"
+        }
+
+        return "Visualização da ata"
+    }
+
+    const retornaTituloCorpoAta = () => {
+        if(ehPrevia()){
+            return "PRÉVIA DA ATA DE PARECER TÉCNICO CONCLUSIVO"
+        }
+        return "ATA DE PARECER TÉCNICO CONCLUSIVO"
+    }
+
+    const ehPrevia = () => {
+        if(!consolidadoDre.uuid){
+            return true;
+        }
+        else if(consolidadoDre.uuid && consolidadoDre.versao === "PREVIA"){
+            return true;
+        }
+        return false;
+    }
 
     const handleClickFecharAtaParecerTecnico = () => {
         window.location.assign("/dre-relatorio-consolidado")
@@ -182,31 +202,6 @@ export const VisualizacaoDaAtaParecerTecnico = () => {
         window.location.assign(path)
     }
 
-    const handleClickGerarAta = async () => {
-        try {
-            await getGerarAta(dadosAta.uuid, dadosAta.dre.uuid, dadosAta.periodo.uuid);
-            let mensagem_parte_1 = "Quando a geração for concluída um botão para download ficará"
-            let mensagem_parte_2 = "disponível na área da Ata na página anterior de Relatórios."
-            toastCustom.ToastCustomInfo('Ata sendo gerada', <span>{mensagem_parte_1} <br/> {mensagem_parte_2}</span>)
-            setStatusAta({
-                ...statusAta,
-                status_geracao_pdf: "EM_PROCESSAMENTO"
-            })
-        }
-        catch (e) {
-            console.log('Erro ao gerar ata ', e.response.data);
-        }
-    }
-
-    const textoBtnGerar = () =>{
-        if (statusAta.status_geracao_pdf === 'EM_PROCESSAMENTO'){
-            return 'Ata sendo gerada...'
-        } else{
-            return 'Gerar Ata'
-        }
-    };
-
-
     const downloadAtaParecerTecnico = async () =>{
         await getDownloadAtaParecerTecnico(dadosAta.uuid);
     };
@@ -214,71 +209,83 @@ export const VisualizacaoDaAtaParecerTecnico = () => {
     return (
         <div className="col-12 container-visualizacao-da-ata-parecer-tecnico mb-5">
             {loading ? (
-                <div className="mt-5">
-                    <Loading
-                        corGrafico="black"
-                        corFonte="dark"
-                        marginTop="0"
-                        marginBottom="0"
-                    />
-                </div>
-            ) :
-            
-            <>
-                <div className="col-12 mt-4">
-                    {dadosAta && Object.entries(dadosAta).length > 0 &&
-                        <TopoComBotoes
-                            dadosAta={dadosAta}
-                            retornaDadosAtaFormatado={retornaDadosAtaFormatado}
-                            handleClickFecharAtaParecerTecnico={handleClickFecharAtaParecerTecnico}
-                            handleClickEditarAta={handleClickEditarAta}
-                            handleClickGerarAta={handleClickGerarAta}
-                            textoBtnGerar={textoBtnGerar}
-                            downloadAtaParecerTecnico={downloadAtaParecerTecnico}
+                    <div className="mt-5">
+                        <Loading
+                            corGrafico="black"
+                            corFonte="dark"
+                            marginTop="0"
+                            marginBottom="0"
                         />
-                    }
-                </div>
+                    </div>
+                ) :
 
-                <div className="col-12">
-                    {dadosAta && Object.entries(dadosAta).length > 0 &&
-                        <TextoDinamicoSuperior
-                            dadosAta={dadosAta}
-                            retornaDadosAtaFormatado={retornaDadosAtaFormatado}
-                        />
-                    }
+                <>
+                    <div className="col-12 mt-4">
+                        {dadosAta && Object.entries(dadosAta).length > 0 &&
+                            <TopoComBotoes
+                                dadosAta={dadosAta}
+                                retornaDadosAtaFormatado={retornaDadosAtaFormatado}
+                                handleClickFecharAtaParecerTecnico={handleClickFecharAtaParecerTecnico}
+                                handleClickEditarAta={handleClickEditarAta}
+                                downloadAtaParecerTecnico={downloadAtaParecerTecnico}
+                                retornaTituloCabecalhoAta={retornaTituloCabecalhoAta}
+                                jaPublicado={jaPublicado}
+                            />
+                        }
+                    </div>
 
-                    {dadosAta && Object.entries(dadosAta).length > 0 && infoContas && infoContas.aprovadas &&
-                        <TabelaAprovadas
-                            infoContas={infoContas.aprovadas}
-                            status="aprovadas"
-                            exibirUltimoItem={false}
-                        />
-                    }
+                    <div className="col-12">
+                        {dadosAta && Object.entries(dadosAta).length > 0 &&
+                            <TextoDinamicoSuperior
+                                retornaDadosAtaFormatado={retornaDadosAtaFormatado}
+                                retornaTituloCorpoAta={retornaTituloCorpoAta}
+                                ehPrevia={ehPrevia}
+                            />
+                        }
 
-                    {dadosAta && Object.entries(dadosAta).length > 0 && infoContas && infoContas.aprovadas_ressalva &&
-                        <TabelaAprovadas
-                            infoContas={infoContas.aprovadas_ressalva}
-                            status="aprovadas_ressalva"
-                            exibirUltimoItem={false}
-                        />
-                    }
+                        {dadosAta && Object.entries(dadosAta).length > 0 && infoContas && infoContas.aprovadas &&
+                            <TabelaAprovadas
+                                infoContas={infoContas.aprovadas}
+                                status="aprovadas"
+                                exibirUltimoItem={false}
+                            />
+                        }
 
-                    {dadosAta && Object.entries(dadosAta).length > 0 && infoContas && infoContas.reprovadas &&
-                        <TabelaAprovadas
-                            infoContas={infoContas.reprovadas}
-                            status="reprovadas"
-                            exibirUltimoItem={true}
-                        />
-                    }
+                        {dadosAta && Object.entries(dadosAta).length > 0 && infoContas && infoContas.aprovadas_ressalva &&
+                            <TabelaAprovadas
+                                infoContas={infoContas.aprovadas_ressalva}
+                                status="aprovadas_ressalva"
+                                exibirUltimoItem={false}
+                            />
+                        }
 
-                    {dadosAta && Object.entries(dadosAta).length > 0 && dadosAta.presentes_na_ata &&
-                        <Assinaturas
-                            presentes_na_ata={dadosAta.presentes_na_ata}
-                        />
-                    }  
-                </div>
-            </>
-        }  
+                        {dadosAta && Object.entries(dadosAta).length > 0 && infoContas && infoContas.reprovadas &&
+                            <TabelaAprovadas
+                                infoContas={infoContas.reprovadas}
+                                status="reprovadas"
+                                exibirUltimoItem={true}
+                            />
+                        }
+
+                        {dadosAta && dadosAta.comentarios &&
+                            <>
+                                <p className="titulo-tabelas mb-1">Comentários</p>
+                                <div className="row">
+                                    <div className="col-12">
+                                        <p>{dadosAta.comentarios}</p>
+                                    </div>
+                                </div>
+                            </>
+                        }
+                        {dadosAta && Object.entries(dadosAta).length > 0 && dadosAta.presentes_na_ata &&
+                            <Assinaturas
+                                presentes_na_ata={dadosAta.presentes_na_ata}
+                            />
+                        }
+
+                    </div>
+                </>
+            }
         </div>
     )
 }

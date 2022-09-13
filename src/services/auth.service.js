@@ -16,6 +16,7 @@ export const USUARIO_EMAIL = "EMAIL";
 export const USUARIO_CPF = "CPF";
 export const USUARIO_LOGIN = "LOGIN";
 export const DADOS_DA_ASSOCIACAO = "DADOS_DA_ASSOCIACAO";
+export const PERIODO_RELATORIO_CONSOLIDADO_DRE = "PERIODO_RELATORIO_CONSOLIDADO_DRE";
 
 const authHeader = {
     'Content-Type': 'application/json'
@@ -39,6 +40,7 @@ const setDataLogin = async ()=>{
         if (days >= 1){
             localStorage.removeItem('DADOS_USUARIO_LOGADO');
             localStorage.removeItem(ACOMPANHAMENTO_DE_PC);
+            localStorage.removeItem(PERIODO_RELATORIO_CONSOLIDADO_DRE);
             localStorage.setItem(DATA_LOGIN, moment(new Date(), "YYYY-MM-DD").format("YYYY-MM-DD"));
             localStorage.setItem(DATA_HORA_USUARIO_LOGADO, data_hora_atual);
             await logout();
@@ -131,6 +133,7 @@ const logout = () => {
     localStorage.removeItem(USUARIO_LOGIN);
     localStorage.removeItem(USUARIO_CPF);
     localStorage.removeItem(DADOS_DA_ASSOCIACAO);
+    localStorage.removeItem(PERIODO_RELATORIO_CONSOLIDADO_DRE);
     window.location.assign("/login")
 };
 
@@ -156,4 +159,23 @@ export const authService = {
     getToken,
     isLoggedIn,
     esqueciMinhaSenha,
+};
+
+
+export const getUsuarioLogado = () => {
+    return {
+        login: localStorage.getItem(USUARIO_LOGIN),
+        nome: localStorage.getItem(USUARIO_NOME)
+    }
+}
+
+export const viabilizarAcessoSuporte = async (usuario, payload) => {
+    return (await api.post(`api/usuarios/${usuario}/viabilizar-acesso-suporte/`, payload, authHeaderAuthorization))
+};
+
+export const encerrarAcessoSuporte = async (usuario, unidade_suporte_uuid) => {
+    const payload = {
+        unidade_suporte_uuid: unidade_suporte_uuid
+    }
+    return (await api.post(`api/usuarios/${usuario}/encerrar-acesso-suporte/`, payload, authHeaderAuthorization))
 };

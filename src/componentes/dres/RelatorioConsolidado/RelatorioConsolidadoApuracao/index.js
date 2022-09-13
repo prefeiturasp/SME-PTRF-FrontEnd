@@ -1,4 +1,5 @@
-import React, {useEffect, useState} from "react";
+// TODO Remover o componente RelatorioConsolidadoApuracao.
+import React, {useEffect, useState, useCallback} from "react";
 import {useParams} from "react-router-dom";
 import {InfoAssociacoesEmAnalise} from "./InfoAssociacoesEmAnalise";
 import {
@@ -11,7 +12,7 @@ import {
     getDevolucoesAoTesouro,
     putCriarEditarDeletarObservacaoDevolucaoContaPtrf,
     putCriarEditarDeletarObservacaoDevolucaoTesouro,
-    postGerarRelatorio, getConsultarStatus,
+    getConsolidadoDre
 } from "../../../../services/dres/RelatorioConsolidado.service";
 import {TopoComBotoes} from "./TopoComBotoes";
 import {BoxConsultarDados} from "./BoxConsultarDados";
@@ -23,14 +24,16 @@ import {TabelaDevolucoesAoTesouro} from "./TabelaDevolucoesAoTesouro";
 import {TabelaExecucaoFisica} from "./TabelaExecucaoFisica";
 import {auxGetNomes} from "../auxGetNomes";
 import {ModalObservacoesRelatorioConsolidadoApuracao} from "../ModalObservacoesRelatorioConsolidadoApuracao";
-import {ModalAssociacoesEmAnalise} from "../ModalAssociacoesEmAnalise";
-import {ModalMsgGeracaoRelatorio} from "../ModalMsgGeracaoRelatorio";
 import {ModalSalvarJustificativa} from "../ModalSalvarJustificativa";
 import Loading from "../../../../utils/Loading";
 
 export const RelatorioConsolidadoApuracao = () => {
 
-    let {periodo_uuid, conta_uuid} = useParams();
+    let {periodo_uuid, conta_uuid, ja_publicado, consolidado_dre_uuid} = useParams();
+
+    // Para bloquear as edições quando for de um Consolidado DRE incremental publicacoes_anteriores
+    // eslint-disable-next-line no-eval
+    const jaPublicado = eval(ja_publicado)
 
     const dre_uuid = visoesService.getItemUsuarioLogado('associacao_selecionada.uuid');
 
@@ -55,26 +58,10 @@ export const RelatorioConsolidadoApuracao = () => {
 
     const [observacao, setObservacao] = useState(false);
     const [showModalObservacao, setShowModalObservacao] = useState(false);
-    const [showModalAssociacoesEmAnalise, setShowModalAssociacoesEmAnalise] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [showModalMsgGeracaoRelatorio, setShowModalMsgGeracaoRelatorio] = useState(false);
-    const [msgGeracaoRelatorio, setMsgGeracaoRelatorio] = useState('');
 
-    const [statusRelatorio, setStatusRelatorio] = useState(false);
-
-    useEffect(() => {
-        if (statusRelatorio && statusRelatorio.status_geracao && statusRelatorio.status_geracao === "EM_PROCESSAMENTO") {
-            const timer = setInterval(() => {
-                consultarStatus();
-            }, 5000);
-            // clearing interval
-            return () => clearInterval(timer);
-        }
-    });
-
-    useEffect(() => {
-        consultarStatus();
-    }, [periodo_uuid, conta_uuid]);
+    // Consolidado DRE
+    const [consolidadoDre, setConsolidadoDre] = useState(false);
 
     useEffect(() => {
         carregaItensDashboard();
@@ -84,38 +71,30 @@ export const RelatorioConsolidadoApuracao = () => {
         carregaNomePeriodo();
         carregaNomeConta();
         retornaQtdeEmAnalise();
-        carregaExecucaoFinanceira();
         carregaDevolucoesContaPtrf();
         carregaJustificativa();
         carregaDevolucoesAoTesouro();
     }, [itensDashboard]);
 
-    const consultarStatus = async () => {
-        console.log("Consultar status...")
-        if (dre_uuid && periodo_uuid && conta_uuid) {
-            let status = await getConsultarStatus(dre_uuid, periodo_uuid, conta_uuid);
-            setStatusRelatorio(status);
+    // Consolidado DRE
+    const carregaConsolidadoDre = useCallback(async () => {
+        if (dre_uuid && periodo_uuid){
+            try {
+                let consolidado_dre = await getConsolidadoDre(dre_uuid, periodo_uuid)
+                if (consolidado_dre && consolidado_dre.length > 0){
+                    setConsolidadoDre(consolidado_dre[0])
+                }else {
+                    setConsolidadoDre(false)
+                }
+            }catch (e) {
+                console.log("Erro ao buscar Consolidado Dre ", e)
+            }
         }
-    };
+    }, [dre_uuid, periodo_uuid])
 
-    const setaStatusComoProcessando = () => {
-        const statusProcessando = {
-            pcs_em_analise: false,
-            status_geracao: "EM_PROCESSAMENTO",
-            status_txt: "Análise de prestações de contas das associações completa. Relatório em processamento.",
-            cor_idx: 3,
-            status_arquivo: "Relatório sendo gerado. Aguarde."
-        }
-        setStatusRelatorio(statusProcessando);
-    };
-
-    const textoBtnRelatorio = () =>{
-        if (statusRelatorio.status_geracao === 'EM_PROCESSAMENTO'){
-            return 'Relatório sendo gerado...'
-        } else{
-            return 'Gerar relatório'
-        }
-    };
+    useEffect(() => {
+        carregaConsolidadoDre()
+    }, [carregaConsolidadoDre])
 
     const carregaItensDashboard = async () => {
         if (periodo_uuid) {
@@ -136,14 +115,19 @@ export const RelatorioConsolidadoApuracao = () => {
         setContaNome(conta_nome);
     };
 
-    const carregaExecucaoFinanceira = async () => {
+    const carregaExecucaoFinanceira = useCallback( async () => {
         try {
-            let execucao = await getExecucaoFinanceira(dre_uuid, periodo_uuid, conta_uuid);
+            let execucao = await getExecucaoFinanceira(dre_uuid, periodo_uuid,  consolidado_dre_uuid !== 'null' ? consolidado_dre_uuid : '');
+            console.log("XXXXXXXXXXXXXXX getExecucaoFinanceira ", execucao)
             setExecucaoFinanceira(execucao);
         } catch (e) {
             console.log("Erro ao carregar execução financeira ", e)
         }
-    };
+    }, [dre_uuid, periodo_uuid, consolidado_dre_uuid]);
+
+    useEffect(() => {
+        carregaExecucaoFinanceira();
+    }, [carregaExecucaoFinanceira]);
 
     const carregaDevolucoesContaPtrf = async () => {
         try {
@@ -235,8 +219,6 @@ export const RelatorioConsolidadoApuracao = () => {
 
     const onHandleClose = () => {
         setShowModalObservacao(false);
-        setShowModalAssociacoesEmAnalise(false);
-        setShowModalMsgGeracaoRelatorio(false);
     };
 
     const onHandleCloseSalvarJustificativa = () => {
@@ -295,41 +277,19 @@ export const RelatorioConsolidadoApuracao = () => {
         setLoading(false);
     };
 
-    const onClickGerarRelatorio = async () => {
-        if (totalEmAnalise > 0) {
-            setShowModalAssociacoesEmAnalise(true)
-        } else {
-            await onGerarRelatorio();
+    const publicado = () => {
+        if(!consolidadoDre){
+            return false;
         }
-    };
-
-    const onGerarRelatorio = async () => {
-
-        let parcial = totalEmAnalise > 0;
-
-        const payload = {
-            dre_uuid: dre_uuid,
-            periodo_uuid: periodo_uuid,
-            tipo_conta_uuid: conta_uuid,
-            parcial: parcial
-        };
-        try {
-            setLoading(true);
-            await postGerarRelatorio(payload);
-            console.log('Solicitação de relatório enviada com sucesso.');
-            setShowModalAssociacoesEmAnalise(false);
-            setLoading(false);
-            setMsgGeracaoRelatorio('O relatório está sendo gerado, enquanto isso você pode continuar a usar o sistema. Consulte na tela anterior o status de geração do relatório.');
-            setShowModalMsgGeracaoRelatorio(true)
-            setaStatusComoProcessando()
-        } catch (e) {
-            setShowModalAssociacoesEmAnalise(false);
-            setLoading(false);
-            setMsgGeracaoRelatorio('Erro ao gerar relatório');
-            setShowModalMsgGeracaoRelatorio(true);
-            console.log('Erro ao gerar relatório ', e.response.data);
+        else if(consolidadoDre && consolidadoDre.versao === "PREVIA"){
+            return false;
         }
-    };
+        else if(consolidadoDre && consolidadoDre.versao === "FINAL"){
+            return true;
+        }
+
+        return false;
+    }
 
     return (
         <>
@@ -350,8 +310,6 @@ export const RelatorioConsolidadoApuracao = () => {
                             <TopoComBotoes
                                 periodoNome={periodoNome}
                                 contaNome={contaNome}
-                                onClickGerarRelatorio={onClickGerarRelatorio}
-                                textoBtnRelatorio={textoBtnRelatorio}
                             />
                             <InfoAssociacoesEmAnalise
                                 totalEmAnalise={totalEmAnalise}
@@ -360,6 +318,7 @@ export const RelatorioConsolidadoApuracao = () => {
                             <BoxConsultarDados
                                 periodo_uuid={periodo_uuid}
                                 conta_uuid={conta_uuid}
+                                jaPublicado={jaPublicado}
                             />
                             <TabelaExecucaoFinanceira
                                 execucaoFinanceira={execucaoFinanceira}
@@ -374,6 +333,7 @@ export const RelatorioConsolidadoApuracao = () => {
                                 onSubmitJustificativaDiferenca={onSubmitJustificativaDiferenca}
                                 btnSalvarJustificativaDisable={btnSalvarJustificativaDisable}
                                 setBtnSalvarJustificativaDisable={setBtnSalvarJustificativaDisable}
+                                jaPublicado={jaPublicado}
                             />
                             <TabelaDevolucoesContaPtrf
                                 devolucoesContaPtrf={devolucoesContaPtrf}
@@ -401,15 +361,6 @@ export const RelatorioConsolidadoApuracao = () => {
                                 titulo="Observação sobre devolução"
                             />
                         </section>
-                        <section>
-                            <ModalAssociacoesEmAnalise
-                                show={showModalAssociacoesEmAnalise}
-                                handleClose={onHandleClose}
-                                titulo='Associações em análise'
-                                texto={`Ainda constam ${totalEmAnalise} Associações com prestação de contas "Em análise". Deseja ainda assim gerar um relatório parcial?`}
-                                onGerarRelatorio={onGerarRelatorio}
-                            />
-                        </section>
 
                         <section>
                             <ModalSalvarJustificativa
@@ -417,19 +368,6 @@ export const RelatorioConsolidadoApuracao = () => {
                                 handleClose={onHandleCloseSalvarJustificativa}
                             />
                         </section>
-
-                        {msgGeracaoRelatorio &&
-                            <section>
-                                <ModalMsgGeracaoRelatorio
-                                    show={showModalMsgGeracaoRelatorio}
-                                    handleClose={onHandleClose}
-                                    titulo='Geração do relatório'
-                                    texto={msgGeracaoRelatorio}
-                                    onGerarRelatorio={onGerarRelatorio}
-                                />
-                            </section>
-                        }
-
                     </>
 
                 }

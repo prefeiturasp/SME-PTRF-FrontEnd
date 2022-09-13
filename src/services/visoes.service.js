@@ -4,7 +4,7 @@ import {
     ASSOCIACAO_TIPO_ESCOLA,
     ASSOCIACAO_NOME_ESCOLA,
     ASSOCIACAO_NOME,
-    authService, DATA_LOGIN
+    authService, DATA_LOGIN, PERIODO_RELATORIO_CONSOLIDADO_DRE
 } from "./auth.service";
 import {redirect} from "../utils/redirect";
 import moment from "moment";
@@ -22,6 +22,7 @@ const forcarNovoLogin = ()=>{
             localStorage.setItem(DATA_HORA_USUARIO_LOGADO, data_hora_atual);
             localStorage.removeItem('DADOS_USUARIO_LOGADO');
             localStorage.removeItem(ACOMPANHAMENTO_DE_PC);
+            localStorage.removeItem(PERIODO_RELATORIO_CONSOLIDADO_DRE);
             localStorage.setItem(DATA_LOGIN, moment(new Date(), "YYYY-MM-DD").format("YYYY-MM-DD"));
             authService.logout();
         }else if (diferenca >= 600 && diferenca <= 1339){ // Equivale a 10 horas e menos que 24 horas
@@ -246,12 +247,46 @@ const alternaVisoes = (visao, uuid_unidade, uuid_associacao, nome_associacao, un
         localStorage.removeItem('uuidPrestacaoConta');
         localStorage.removeItem('uuidAta');
         localStorage.removeItem('prestacao_de_contas_nao_apresentada');
+        localStorage.removeItem(PERIODO_RELATORIO_CONSOLIDADO_DRE);
 
         localStorage.setItem("NOTIFICAR_DEVOLUCAO_REFERENCIA", notificar_devolucao_referencia)
 
         redirectVisao(visao)
     }
 };
+
+
+export const setarUnidadeProximoLoginAcessoSuporte = (visao, uuid_unidade, uuid_associacao, nome_associacao, unidade_tipo, unidade_nome) => {
+    let todos_os_dados_usuario_logado = localStorage.getItem(DADOS_USUARIO_LOGADO) ? JSON.parse(localStorage.getItem(DADOS_USUARIO_LOGADO)) : null;
+    let dados_usuario_logado = getDadosDoUsuarioLogado();
+
+    if (dados_usuario_logado) {
+        let novos_dados_usuario_logado = {
+            ...todos_os_dados_usuario_logado,
+            [`usuario_${getUsuarioLogin()}`]: {
+                ...dados_usuario_logado,
+                visao_selecionada: {
+                    nome: converteNomeVisao(visao)
+                },
+                unidade_selecionada: {
+                    uuid: uuid_unidade,
+                    tipo_unidade:unidade_tipo,
+                    nome:unidade_nome,
+                    notificar_devolucao_referencia:null,
+                    notificar_devolucao_pc_uuid:null,
+                    notificacao_uuid: null,
+                },
+
+                associacao_selecionada: {
+                    uuid: unidade_tipo === "DRE" ? uuid_unidade: uuid_associacao,
+                    nome: unidade_tipo === "DRE" ? unidade_nome: nome_associacao,
+                },
+            }
+        };
+        localStorage.setItem(DADOS_USUARIO_LOGADO, JSON.stringify(novos_dados_usuario_logado));
+    }
+};
+
 
 const redirectVisao = (visao = null) => {
     let dados_usuario_logado = visoesService.getDadosDoUsuarioLogado();
@@ -294,4 +329,3 @@ export const visoesService = {
     getItemUsuarioLogado,
     getUsuarioLogin,
 };
-

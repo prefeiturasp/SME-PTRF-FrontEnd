@@ -17,7 +17,9 @@ import Loading from "../../../../utils/Loading";
 
 export const RelatorioConsolidadoDadosDasUes = () => {
 
-    let {periodo_uuid, conta_uuid} = useParams();
+    let {periodo_uuid, conta_uuid, ja_publicado} = useParams();
+
+    console.log("XXXXXXXXXXXXX RelatorioConsolidadoDadosDasUes ", ja_publicado)
 
     const dre_uuid = visoesService.getItemUsuarioLogado('associacao_selecionada.uuid');
 
@@ -196,6 +198,7 @@ export const RelatorioConsolidadoDadosDasUes = () => {
                             contaNome={contaNome}
                             periodo_uuid={periodo_uuid}
                             conta_uuid={conta_uuid}
+                            jaPublicado={ja_publicado}
                         />
                         <AssociacoesNaoRegularizadas
                             listaAssociacoesNaoRegularizadas={listaAssociacoesNaoRegularizadas}

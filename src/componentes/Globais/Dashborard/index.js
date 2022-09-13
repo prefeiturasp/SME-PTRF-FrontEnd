@@ -40,8 +40,7 @@ export const Dashboard = () => {
     }, [uuid_associacao]);
 
     const buscaPeriodos = useCallback(async () => {
-        // let periodos = await getPeriodosAteAgoraForaImplantacaoDaAssociacao(uuid_associacao);
-        let periodos = await getPeriodosDePrestacaoDeContasDaAssociacao();
+        let periodos = await getPeriodosAteAgoraForaImplantacaoDaAssociacao(uuid_associacao);
         setSelectPeriodo(periodos[0].uuid)
         setPeriodosAssociacao(periodos);
     }, []);

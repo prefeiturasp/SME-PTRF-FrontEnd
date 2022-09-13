@@ -8,6 +8,8 @@ import {exibeDataPT_BR} from "../../../../utils/ValidacoesAdicionaisFormularios"
 const Cabecalho = ({prestacaoDeContas, exibeSalvar, metodoSalvarAnalise, btnSalvarDisabled}) => {
 
     const [periodoTexto, setPeriodoTexto] = useState('')
+    const [publicacaoTexto, setPublicacaoTexto] = useState('')
+    const [pcPublicada, setPcPublicada] = useState(false)
 
     const carregaPeriodo = useCallback(async ()=>{
         if (prestacaoDeContas && prestacaoDeContas.periodo_uuid){
@@ -19,8 +21,17 @@ const Cabecalho = ({prestacaoDeContas, exibeSalvar, metodoSalvarAnalise, btnSalv
         }
     }, [prestacaoDeContas])
 
+    const verificaPublicacao = useCallback( () => {
+     if (prestacaoDeContas.publicada){
+         setPcPublicada(true)
+         let textoPublicacao = `Essa PC consta da Publicação ${prestacaoDeContas.referencia_consolidado_dre}`
+         setPublicacaoTexto(textoPublicacao)
+     }
+    }, [prestacaoDeContas])
+
     useEffect(()=>{
         carregaPeriodo()
+        verificaPublicacao()
     }, [carregaPeriodo])
 
     return (
@@ -32,6 +43,9 @@ const Cabecalho = ({prestacaoDeContas, exibeSalvar, metodoSalvarAnalise, btnSalv
                         <p className='titulo-explicativo mb-0'>{prestacaoDeContas.associacao.nome}</p>
                         {periodoTexto &&
                             <p className='fonte-16'><strong>Período: {periodoTexto}</strong></p>
+                        }
+                        {publicacaoTexto &&
+                            <p className='fonte-16'><strong>{publicacaoTexto}</strong></p>
                         }
                     </div>
                     <div className="p-2 bd-highlight">

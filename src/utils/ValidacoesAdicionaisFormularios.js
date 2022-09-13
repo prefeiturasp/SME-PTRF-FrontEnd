@@ -865,3 +865,19 @@ export const apenasNumero = (valor) => {
 	}
 	return false;
 }
+
+export const formataNomeDRE = (nome_dre) => {
+  if(nome_dre !== ""){
+    nome_dre = nome_dre.toUpperCase();
+    
+    if(nome_dre.indexOf("DIRETORIA REGIONAL DE EDUCACAO") !== -1){
+      nome_dre = nome_dre.replace("DIRETORIA REGIONAL DE EDUCACAO", "");
+      nome_dre = nome_dre.trim();
+      
+      return nome_dre;
+    }
+  }
+  
+
+  return nome_dre;
+}
