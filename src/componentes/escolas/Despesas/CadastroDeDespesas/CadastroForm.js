@@ -534,6 +534,9 @@ export const CadastroForm = ({verbo_http}) => {
         setLoading(true);
 
         try {
+            await deleteDespesa(despesaContext.idDespesa)
+            console.log("Despesa deletada com sucesso.");
+
             if(aux.origemAnaliseLancamento(parametroLocation)){
                 let uuid_analise_lancamento = parametroLocation.state.uuid_analise_lancamento;
                 let response_exclui_lancamento = await marcarLancamentoExcluido(uuid_analise_lancamento);
@@ -543,8 +546,6 @@ export const CadastroForm = ({verbo_http}) => {
                 }
             }
 
-            await deleteDespesa(despesaContext.idDespesa)
-            console.log("Despesa deletada com sucesso.");
             aux.getPath(origem, parametroLocation);
         }catch (error){
             console.log(error.response);
@@ -707,6 +708,10 @@ export const CadastroForm = ({verbo_http}) => {
 
     const bloqueiaCamposDespesa = () => {
         let bloqueia_link = false;
+
+        if(readOnlyCampos){
+            bloqueia_link = true;
+        }
 
         if(aux.origemAnaliseLancamento(parametroLocation)){
             if(!aux.temPermissaoEdicao(parametroLocation)){
