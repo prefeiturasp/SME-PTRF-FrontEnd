@@ -1,3 +1,7 @@
+### 1.33.1 - 14/09/2022 - Hotfix - Soluções de bugs urgentes durante a sprint 49
+* (72442) Altera as colunas da consulta do acompanhamento de PC
+* (72730) Corrige bug de loading perpetuo em Acompanhamento PC: Resumo de acertos 
+
 ### 1.32.1 - 29/06/2022 - Hotfix - Soluções de bugs urgentes durante a sprint 44
 * (67882) -  Acompanhamento de PC: A data de documento exibe a data de pagamento
 * (65722) -  Acompanhamento de PC: A data do documento do tipo crédito não é exibida

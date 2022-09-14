@@ -232,11 +232,40 @@ export const ListaPrestacaoDeContas = () => {
         setRedirectPcNaoApresentada(true)
     };
 
+    const seiTemplate = (rowData) => {
+        return (
+            <div>
+                {rowData['processo_sei'] ? <span>{rowData['processo_sei']}</span> : '-'}
+            </div>
+        )
+    }
+
+    const tecnicoTemplate = (rowData, column) => {
+        return (
+            <div>
+                {rowData[column.field] ? rowData[column.field] : '-'}
+            </div>
+        )
+    };
+
     const acoesTemplate = (rowData) => {
+        const getIcone = (status) => {
+            switch (status) {
+                case 'APROVADA':
+                case 'APROVADA_RESSALVA':
+                case 'REPROVADA':
+                case 'DEVOLVIDA':
+                    return faEye
+                default:
+                    return faEdit
+            }
+        }
+
         return (
             <div>
 
-                {['NAO_APRESENTADA', 'DEVOLVIDA', 'APROVADA', 'APROVADA_RESSALVA', 'REPROVADA'].includes(rowData.status)  ? (
+                { rowData.status !== 'NAO_APRESENTADA' ? (
+
                         <Link
                             to={{
                                 pathname: `/dre-detalhe-prestacao-de-contas/${rowData['uuid']}`,
@@ -245,7 +274,7 @@ export const ListaPrestacaoDeContas = () => {
                         >
                             <FontAwesomeIcon
                                 style={{marginRight: "0", color: '#00585E'}}
-                                icon={faEye}
+                                icon={getIcone(rowData.status)}
                             />
                         </Link>
                     ):
@@ -431,6 +460,7 @@ export const ListaPrestacaoDeContas = () => {
                                 statusTemplate={statusTemplate}
                                 dataTemplate={dataTemplate}
                                 seiTemplate={seiTemplate}
+                                tecnicoTemplate={tecnicoTemplate}
                                 acoesTemplate={acoesTemplate}
                                 nomeTemplate={nomeTemplate}
                                 devolucaoTemplate={devolucaoTemplate}
