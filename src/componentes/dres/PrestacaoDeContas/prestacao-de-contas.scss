@@ -467,7 +467,12 @@
 .container-circulo-relatorio-consolidado {
   z-index: 1;
   text-align: center;
-  background-color: #fff;
+
+  .aumenta-timeline{
+    background-color: #fff;
+    width: 70px;
+    margin: 0 auto;
+  }
 
   .circulo {
     color: #fff;
