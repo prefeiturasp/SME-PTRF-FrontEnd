@@ -6,7 +6,7 @@ export const CancelarModalReceitas = (propriedades) =>{
         <ModalBootstrap
             show={propriedades.show}
             onHide={propriedades.handleClose}
-            titulo={propriedades.uuid ? 'Deseja cancelar as alterações feitas no crédito?' :'Deseja cancelar a inclusão de crédito?'}
+            titulo={propriedades.titulo}
             bodyText=""
             primeiroBotaoOnclick={propriedades.onCancelarTrue}
             primeiroBotaoTexto="OK"

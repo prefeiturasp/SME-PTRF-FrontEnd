@@ -243,7 +243,9 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
             carregaAcertosDocumentos(contasAssociacao[0].uuid)
             setClickBtnEscolheConta({ 0: true })
         }
-    }, [consultaSeTemAjustesExtratos, contasAssociacao, carregaAcertosLancamentos, carregaAcertosDocumentos, carregarAjustesExtratosBancarios])
+
+    }, [contasAssociacao, carregaAcertosLancamentos, carregaAcertosDocumentos, carregarAjustesExtratosBancarios, consultaSeTemAjustesExtratos])
+
 
     useEffect(() => {
 
