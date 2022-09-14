@@ -1,13 +1,13 @@
 import React from "react";
 
 export const TrilhaDeStatus = ({
-    trilhaStatus,
-    filtraStatus,
-    retornaClasseCirculoTrilhaStatus,
-    formataNumero,
-    retornaCorCirculoTrilhaStatus,
-    eh_circulo_duplo
-}) => {
+                                   trilhaStatus,
+                                   filtraStatus,
+                                   retornaClasseCirculoTrilhaStatus,
+                                   formataNumero,
+                                   retornaCorCirculoTrilhaStatus,
+                                   eh_circulo_duplo
+                               }) => {
 
     return (
         <>
@@ -21,25 +21,28 @@ export const TrilhaDeStatus = ({
                 <div className="col-12">
                     <div id="timeline">&nbsp;</div>
                     <div className="d-flex justify-content-between mb-3">
-                        {filtraStatus().map((item, index) => 
+                        {filtraStatus().map((item, index) =>
                             <div className='container-circulo-relatorio-consolidado' key={`circulo-${index}`}>
-                                {eh_circulo_duplo(item.estilo_css)
-                                    ?
-                                        <>
+                                {eh_circulo_duplo(item.estilo_css) ?
+                                    <>
+                                        <div className='aumenta-timeline'>
                                             <span className="circulo-duplo">
                                                 <span className={`circulo ${retornaClasseCirculoTrilhaStatus(item.status)} ${retornaCorCirculoTrilhaStatus(item.estilo_css)}`}>
                                                     {formataNumero(item.status)}
                                                 </span>
                                             </span>
-                                            <p className='mt-3'><strong dangerouslySetInnerHTML={{__html: item.titulo}}></strong></p>
-                                        </>
+                                        </div>
+                                        <p className='mt-3'><strong dangerouslySetInnerHTML={{__html: item.titulo}}></strong></p>
+                                    </>
                                     :
-                                        <>
+                                    <>
+                                        <div className='aumenta-timeline'>
                                             <span className={`circulo ${retornaClasseCirculoTrilhaStatus(item.status)} ${retornaCorCirculoTrilhaStatus(item.estilo_css)}`}>
                                                 {formataNumero(item.status)}
                                             </span>
-                                            <p className='mt-3'><strong dangerouslySetInnerHTML={{__html: item.titulo}}></strong></p>
-                                        </>
+                                        </div>
+                                        <p className='mt-3'><strong dangerouslySetInnerHTML={{__html: item.titulo}}></strong></p>
+                                    </>
                                 }
                             </div>
                         )}
