@@ -100,3 +100,7 @@ export const getListaMotivosEstorno = async () => {
 export const marcarLancamentoExcluido = async (uuid_analise_lancamento) => {
     return (await api.post(`/api/analises-lancamento-prestacao-conta/${uuid_analise_lancamento}/marcar-lancamento-excluido/`, {}, authHeader)).data
 };
+
+export const marcarLancamentoAtualizado = async (uuid_analise_lancamento) => {
+    return (await api.post(`/api/analises-lancamento-prestacao-conta/${uuid_analise_lancamento}/marcar-lancamento-atualizado/`, {}, authHeader)).data
+};
