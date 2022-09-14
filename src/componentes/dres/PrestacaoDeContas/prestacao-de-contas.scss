@@ -320,6 +320,13 @@
   color: #00585e;
 }
 
+.titulo-row-expanded-conferencia-de-esclarecimento{
+  border-bottom-color: #DADADA;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  color: #DADADA
+}
+
 .text-wrap-conferencia-de-lancamentos{
   overflow-wrap: break-word;
 }
@@ -467,7 +474,12 @@
 .container-circulo-relatorio-consolidado {
   z-index: 1;
   text-align: center;
-  background-color: #fff;
+
+  .aumenta-timeline{
+    background-color: #fff;
+    width: 70px;
+    margin: 0 auto;
+  }
 
   .circulo {
     color: #fff;
@@ -505,3 +517,23 @@
   }
 }
 
+
+.texto-categoria-verde {
+  color: #297805;
+  font-weight: 900;
+}
+
+.texto-categoria-vermelho {
+  color: #B40C02;
+  font-weight: 900;
+}
+
+.texto-categoria-documento-verde {
+  color: #297805;
+  font-weight: 900;
+}
+
+.texto-categoria-documento-vermelho {
+  color: #B40C02;
+  font-weight: 900;
+}

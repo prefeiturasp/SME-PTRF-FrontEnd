@@ -10,10 +10,10 @@ const onShowModal = (setShow) => {
     setShow(true);
 };
 
-const onCancelarTrue = (setShow, setLoading, origem) => {
+const onCancelarTrue = (setShow, setLoading, origem, parametroLocation=null) => {
     setShow(false);
     setLoading(true);
-    getPath(origem);
+    getPath(origem, parametroLocation);
 };
 
 const onHandleClose = (setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta, setShowPeriodoFechadoImposto) => {
@@ -85,13 +85,22 @@ const verificarSaldo = async (payload, despesaContext) => {
     return await getVerificarSaldo(payload, despesaContext.idDespesa);
 };
 
-const getPath = (origem) => {
+const getPath = (origem, parametroLocation=null) => {
     let path;
     if (origem === undefined){
         path = `/lista-de-despesas`;
     }else {
         path = `/detalhe-das-prestacoes`;
     }
+
+    if(parametroLocation){
+        if(origemAnaliseLancamento(parametroLocation)){
+            if(parametroLocation.state.uuid_pc){
+                path = `${parametroLocation.state.origem}/${parametroLocation.state.uuid_pc}`;
+            }
+        }
+    }
+
     window.location.assign(path)
 };
 
@@ -271,6 +280,108 @@ const onHandleChangeApenasNumero = (e, setFieldValue, campo) => {
      }
 }
 
+const origemAnaliseLancamento = (parametroLocation) => {
+    if(parametroLocation){
+        if(!parametroLocation.state){
+            return false;
+        }
+        
+        if(parametroLocation.state && parametroLocation.state.origem_visao === "UE"){
+            if(parametroLocation.state && parametroLocation.state.origem === "/consulta-detalhamento-analise-da-dre"){
+                return true;
+            }
+            else{
+                return false;
+            }
+        }
+        else if(parametroLocation.state && parametroLocation.state.origem_visao === "DRE"){
+            if(parametroLocation.state && parametroLocation.state.origem === "/dre-detalhe-prestacao-de-contas-resumo-acertos"){
+                return true;
+            }
+            else{
+                return false;
+            }
+        }
+        else{
+            return false;
+        }
+    }
+    else{
+        return false;
+    }
+}
+
+const mantemConciliacaoAtual = (values) => {
+    values.rateios.map((rateio) => {
+        rateio.update_conferido = true;
+    });
+}
+
+const mantemConciliacaoAtualImposto = (despesa_imposto) => {
+    despesa_imposto.rateios.map((rateio) => {
+        rateio.update_conferido = true;
+    });
+}
+
+const temPermissaoEdicao = (parametroLocation) => {
+    if(parametroLocation && parametroLocation.state){
+        if(parametroLocation.state.tem_permissao_de_edicao){
+            return true;
+        }
+    }
+
+    return false;
+}
+
+const ehOperacaoAtualizacao = (parametroLocation) => {
+    if(parametroLocation && parametroLocation.state){
+        if(parametroLocation.state.operacao === "requer_atualizacao_lancamento_gasto"){
+            return true;
+        }
+    }
+
+    return false;
+}
+
+const ehOperacaoExclusao = (parametroLocation) => {
+    if(parametroLocation && parametroLocation.state){
+        if(parametroLocation.state.operacao === "requer_exclusao_lancamento_gasto"){
+            return true;
+        }
+    }
+
+    return false;
+}
+
+const bloqueiaCamposDespesaPrincipal = (parametroLocation, setReadOnlyCampos, setReadOnlyBtnAcao) => {
+    if(!parametroLocation.state.tem_permissao_de_edicao){
+        setReadOnlyCampos(true);
+
+        let bloqueia_btn_acao = false;
+
+        if(parametroLocation.state.origem_visao === "DRE"){
+            bloqueia_btn_acao = true;
+        }
+        else if(parametroLocation.state.operacao !== "requer_exclusao_lancamento_gasto"){
+            bloqueia_btn_acao = true;
+        }
+
+        setReadOnlyBtnAcao(bloqueia_btn_acao);
+    }
+}
+
+const bloqueiaCamposDespesaImposto = (parametroLocation, setReadOnlyCamposImposto, setDisableBtnAdicionarImposto, despesaContext) => {
+    let despesas_impostos = despesaContext.initialValues.despesas_impostos;
+    
+    if(!parametroLocation.state.tem_permissao_de_edicao){
+        for(let i=0; i<=despesas_impostos.length-1; i++){
+            setReadOnlyCamposImposto(prevState => ({...prevState, [i]: true}));
+            setDisableBtnAdicionarImposto(true);
+        }
+    }
+}
+
+
 
 export const metodosAuxiliares = {
     onShowModal,
@@ -292,5 +403,13 @@ export const metodosAuxiliares = {
     getErroValorRealizadoRateios,
     onHandleChangeApenasNumero,
     exibeDocumentoTransacaoImposto,
-    exibeDocumentoTransacaoImpostoUseEffect
+    exibeDocumentoTransacaoImpostoUseEffect,
+    origemAnaliseLancamento,
+    mantemConciliacaoAtual,
+    mantemConciliacaoAtualImposto,
+    temPermissaoEdicao,
+    ehOperacaoAtualizacao,
+    ehOperacaoExclusao,
+    bloqueiaCamposDespesaPrincipal,
+    bloqueiaCamposDespesaImposto
 };

@@ -9,6 +9,8 @@ import {getAnalisesDePcDevolvidas} from "../../../../services/dres/PrestacaoDeCo
 import TextoSuperior from "./TextoSuperior";
 import CardsDevolucoesParaAcertoDaDre from "../../../Globais/CardsDevolucoesParaAcertoDaDre";
 import ExibeAcertosEmLancamentosEDocumentosPorConta from "../../../Globais/ExibeAcertosEmLancamentosEDocumentosPorConta";
+import {getPeriodoPorUuid} from "../../../../services/sme/Parametrizacoes.service";
+import {exibeDataPT_BR} from "../../../../utils/ValidacoesAdicionaisFormularios";
 
 const ConsultaDetalhamentoAnaliseDaDre = () => {
 
@@ -20,6 +22,7 @@ const ConsultaDetalhamentoAnaliseDaDre = () => {
     const prestacaoDeContas = useCarregaPrestacaoDeContasPorUuid(prestacao_conta_uuid)
     const [analisesDePcDevolvidas, setAnalisesDePcDevolvidas] = useState([])
     const [analiseAtualUuid, setAnaliseAtualUuid] = useState('')
+    const [periodoFormatado, setPeriodoFormatado] = useState(null)
 
     const totalAnalisesDePcDevolvidas = useMemo(() => analisesDePcDevolvidas.length, [analisesDePcDevolvidas]);
 
@@ -36,6 +39,31 @@ const ConsultaDetalhamentoAnaliseDaDre = () => {
             mounted = false;
         }
     }, [prestacao_conta_uuid])
+
+    useEffect(() => {
+        let mounted = true;
+
+        const periodoFormatado = async () => {
+            if(mounted){
+                if(parametros && parametros.state && parametros.state.periodoFormatado){
+                    setPeriodoFormatado(parametros.state.periodoFormatado);
+                }
+                else if(prestacaoDeContas && prestacaoDeContas.periodo_uuid){
+                    let periodo = await getPeriodoPorUuid(prestacaoDeContas.periodo_uuid);
+                    setPeriodoFormatado(retornaObjetoPeriodo(periodo));
+                }
+                else{
+                    setPeriodoFormatado(null);
+                }
+            }
+        }
+
+        periodoFormatado();
+        return () => {
+            mounted = false;
+        }
+        
+    }, [parametros, prestacaoDeContas]);
 
     const onClickVoltar = useCallback(() => {
         history.push('/analise-dre')
@@ -86,13 +114,21 @@ const ConsultaDetalhamentoAnaliseDaDre = () => {
         )
     }
 
+    const retornaObjetoPeriodo = (periodo) => {
+        return {
+            referencia: periodo.referencia ? periodo.referencia : '',
+            data_inicio_realizacao_despesas: periodo.data_inicio_realizacao_despesas ? exibeDataPT_BR(periodo.data_inicio_realizacao_despesas) : '',
+            data_fim_realizacao_despesas: periodo.data_fim_realizacao_despesas ? exibeDataPT_BR(periodo.data_fim_realizacao_despesas) : '',
+        }
+    }
+
     return (
         <PaginasContainer>
             <h1 className="titulo-itens-painel mt-5">Análise DRE</h1>
             <div className="page-content-inner">
                 <TopoComBotaoVoltar
                     onClickVoltar={onClickVoltar}
-                    periodoFormatado={parametros && parametros.state && parametros.state.periodoFormatado ? parametros.state.periodoFormatado : null}
+                    periodoFormatado={periodoFormatado}
                 />
                 <TextoSuperior
                     retornaTextoSuperior={retornaTextoSuperior}

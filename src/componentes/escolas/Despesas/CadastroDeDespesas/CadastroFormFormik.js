@@ -103,7 +103,9 @@ export const CadastroFormFormik = ({
                                        formErrorsImposto,
                                        disableBtnAdicionarImposto,
                                        onCalendarCloseDataPagamento,
-                                       onCalendarCloseDataPagamentoImposto
+                                       onCalendarCloseDataPagamentoImposto,
+                                       parametroLocation,
+                                       bloqueiaCamposDespesa
                                    }) => {
 
     // Corrigi Cálculo validação dos valores
@@ -603,7 +605,8 @@ export const CadastroFormFormik = ({
 
                                                                                     }
                                                                                 }
-                                                                                className="btn btn-link btn-remover-despesa mr-2 d-flex align-items-center"
+                                                                                className={`btn btn-link btn-remover-despesa mr-2 d-flex align-items-center ${bloqueiaLinkCadastrarEstorno(rateio) ? 'desabilita-link-estorno' : ''}`}
+                                                                                disabled={bloqueiaLinkCadastrarEstorno(rateio)}
                                                                             >
                                                                                 Acessar estorno
                                                                             </Link>
@@ -627,9 +630,9 @@ export const CadastroFormFormik = ({
                                                                     {index >= 1 && values.rateios.length > 1 && (
                                                                         <button
                                                                             type="button"
-                                                                            className="btn btn-link btn-remover-despesa mr-2 d-flex align-items-center"
+                                                                            className={`btn btn-link btn-remover-despesa mr-2 d-flex align-items-center ${bloqueiaCamposDespesa() ? 'desabilita-link-remover-despesa' : ''}`}
                                                                             onClick={() => removeRateio(remove, index, rateio)}
-                                                                            disabled={!visoesService.getPermissoes(['delete_despesa'])}
+                                                                            disabled={!visoesService.getPermissoes(['delete_despesa']) || bloqueiaCamposDespesa()}
                                                                         >
                                                                             <FontAwesomeIcon
                                                                                 style={{
@@ -766,7 +769,7 @@ export const CadastroFormFormik = ({
                                                     <button
                                                         type="button"
                                                         className="btn btn btn-outline-success mt-2 mr-2"
-                                                        disabled={![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
+                                                        disabled={![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes) || bloqueiaCamposDespesa()}
                                                         onChange={(e) => {
                                                             props.handleChange(e);
                                                             aux.handleAvisoCapital(e.target.value, setShowAvisoCapital);
@@ -805,29 +808,38 @@ export const CadastroFormFormik = ({
                                             onClick={houveAlteracoes(values) ? onShowModal : onCancelarTrue}
                                             className="btn btn btn-outline-success mt-2 mr-2">Voltar
                                     </button>
-                                    {despesaContext.idDespesa
-                                        ? <button
-                                            disabled={readOnlyBtnAcao || !visoesService.getPermissoes(["delete_despesa"])}
-                                            type="reset"
-                                            onClick={() => aux.onShowDeleteModal(setShowDelete, setShowTextoModalDelete, values)}
-                                            className="btn btn btn-danger mt-2 mr-2"
-                                        >Deletar
+
+                                    {despesaContext.idDespesa && !aux.ehOperacaoAtualizacao(parametroLocation)
+                                        ? 
+                                            <button
+                                                disabled={readOnlyBtnAcao || !visoesService.getPermissoes(["delete_despesa"])}
+                                                type="reset"
+                                                onClick={() => aux.onShowDeleteModal(setShowDelete, setShowTextoModalDelete, values)}
+                                                className="btn btn btn-danger mt-2 mr-2"
+                                            >
+                                                Deletar
+                                            </button>
+                                        : 
+                                            null
+                                    }
+                                    
+                                    {!aux.ehOperacaoExclusao(parametroLocation) &&
+                                        <button
+                                            disabled={
+                                                eh_despesa_reconhecida(props.values)
+                                                    ? btnSubmitDisable || readOnlyBtnAcao || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)
+                                                    : !props.values.numero_boletim_de_ocorrencia || btnSubmitDisable || readOnlyBtnAcao || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)
+                                            }
+                                            type="button"
+                                            onClick={async (e) => {
+                                                serviceIniciaEncadeamentoDosModais(values, errors, setFieldValue, {resetForm})
+                                            }}
+                                            className="btn btn-success mt-2"
+                                        >
+                                            Salvar
                                         </button>
-                                        : null}
-                                    <button
-                                        disabled={
-                                            eh_despesa_reconhecida(props.values)
-                                                ? btnSubmitDisable || readOnlyBtnAcao || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)
-                                                : !props.values.numero_boletim_de_ocorrencia || btnSubmitDisable || readOnlyBtnAcao || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)
-                                        }
-                                        type="button"
-                                        onClick={async (e) => {
-                                            serviceIniciaEncadeamentoDosModais(values, errors, setFieldValue, {resetForm})
-                                        }}
-                                        className="btn btn-success mt-2"
-                                    >
-                                        Salvar
-                                    </button>
+                                    }
+                                    
                                 </div>
                                 <div className="d-flex justify-content-end">
                                     <p>{errors.valor_recusos_acoes && exibeMsgErroValorRecursos && <span

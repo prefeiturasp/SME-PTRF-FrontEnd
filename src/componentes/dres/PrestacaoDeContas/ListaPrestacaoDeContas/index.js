@@ -12,7 +12,7 @@ import moment from "moment";
 import {TabelaDinamica} from "./TabelaDinamica";
 import {getTecnicosDre} from "../../../../services/dres/TecnicosDre.service";
 import {ASSOCIACAO_UUID} from "../../../../services/auth.service";
-import {colunasAprovada, colunasEmAnalise, colunasNaoRecebidas, colunasTodosOsStatus} from "./objetoColunasDinamicas";
+import {colunasTodosStatus} from "./objetoColunasDinamicas";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEye, faEdit} from "@fortawesome/free-solid-svg-icons";
 import Loading from "../../../../utils/Loading";
@@ -110,19 +110,9 @@ export const ListaPrestacaoDeContas = () => {
 
     const populaColunas = useCallback(() => {
         if (selectedStatusPc.length === 1){
-            if (selectedStatusPc.includes('EM_ANALISE') || selectedStatusPc.includes('REPROVADA')) {
-                setColumns(colunasEmAnalise)
-            } else if (selectedStatusPc.includes('APROVADA') || selectedStatusPc.includes('APROVADA_RESSALVA')) {
-                setColumns(colunasAprovada)
-            } else if (selectedStatusPc.includes('TODOS')) {
-                setColumns(colunasTodosOsStatus)
-            } else {
-                setColumns(colunasNaoRecebidas)
+                setColumns(colunasTodosStatus)
             }
-        }else {
-            setColumns(colunasTodosOsStatus)
-        }
-    }, [selectedStatusPc]) ;
+    }, [selectedStatusPc, colunasTodosStatus]) ;
 
     useEffect(() => {
         populaColunas();
@@ -178,6 +168,30 @@ export const ListaPrestacaoDeContas = () => {
             </div>
         )
     };
+
+    const seiTemplate = (rowData, column) => {
+        return (
+            <div>
+                {rowData[column.field] ? rowData[column.field] : '-'}
+            </div>
+        )
+    };
+
+    const tecnicoTemplate = (rowData, column) => {
+        return (
+            <div>
+                {rowData[column.field] ? rowData[column.field] : '-'}
+            </div>
+        )
+    };
+
+    const devolucaoTemplate = (rowData, column) => {
+        return (
+            <div>
+                {rowData[column.field] ? rowData[column.field] : '-'}
+            </div>
+        )
+    }
 
     const dataTemplate = (rowData, column) => {
         return (
@@ -249,7 +263,9 @@ export const ListaPrestacaoDeContas = () => {
 
         return (
             <div>
+
                 { rowData.status !== 'NAO_APRESENTADA' ? (
+
                         <Link
                             to={{
                                 pathname: `/dre-detalhe-prestacao-de-contas/${rowData['uuid']}`,
@@ -268,7 +284,7 @@ export const ListaPrestacaoDeContas = () => {
                     >
                         <FontAwesomeIcon
                             style={{marginRight: "0", color: '#00585E'}}
-                            icon={faEye}
+                            icon={faEdit}
                         />
                     </button>
                 }
@@ -447,6 +463,8 @@ export const ListaPrestacaoDeContas = () => {
                                 tecnicoTemplate={tecnicoTemplate}
                                 acoesTemplate={acoesTemplate}
                                 nomeTemplate={nomeTemplate}
+                                devolucaoTemplate={devolucaoTemplate}
+                                tecnicoTemplate={tecnicoTemplate}
                             />
                         ) :
                         <MsgImgLadoDireito

@@ -55,27 +55,29 @@ import {RelatorioConsolidadoEmTela} from "../componentes/dres/RelatorioConsolida
 import {RelatorioConsolidadoDadosDasUes} from "../componentes/dres/RelatorioConsolidado/RelatorioConsolidadoDadosDasUes";
 import {PainelParametrizacoesPage} from "../paginas/SME/Parametrizacoes/PainelParametrizacoes";
 import {AcompanhamentoPcsSmePage} from "../paginas/SME/AcompanhamentoPcsSme";
-import {AcoesDasAssociacoes} from "../componentes/sme/Parametrizacoees/Estrutura/AcoesDasAssociacoes";
-import {Acoes} from "../componentes/sme/Parametrizacoees/Estrutura/Acoes";
-import {AssociacoesDaAcao} from "../componentes/sme/Parametrizacoees/Estrutura/Acoes/AssociacoesDaAcao";
-import {VinculaAssociacoesAAcao} from "../componentes/sme/Parametrizacoees/Estrutura/Acoes/VinculaAssociacoesAAcao";
-import {Periodos} from "../componentes/sme/Parametrizacoees/Estrutura/Periodos";
-import {Associacoes} from "../componentes/sme/Parametrizacoees/Estrutura/Associacoes";
-import {Tags} from "../componentes/sme/Parametrizacoees/Estrutura/Tags";
-import {FiqueDeOlho} from "../componentes/sme/Parametrizacoees/EdicaoDeTextos/FiqueDeOlho";
+import {AcoesDasAssociacoes} from "../componentes/sme/Parametrizacoes/Estrutura/AcoesDasAssociacoes";
+import {Acoes} from "../componentes/sme/Parametrizacoes/Estrutura/Acoes";
+import {AssociacoesDaAcao} from "../componentes/sme/Parametrizacoes/Estrutura/Acoes/AssociacoesDaAcao";
+import {VinculaAssociacoesAAcao} from "../componentes/sme/Parametrizacoes/Estrutura/Acoes/VinculaAssociacoesAAcao";
+import {Periodos} from "../componentes/sme/Parametrizacoes/Estrutura/Periodos";
+import {Associacoes} from "../componentes/sme/Parametrizacoes/Estrutura/Associacoes";
+import {Tags} from "../componentes/sme/Parametrizacoes/Estrutura/Tags";
+import {FiqueDeOlho} from "../componentes/sme/Parametrizacoes/EdicaoDeTextos/FiqueDeOlho";
 import ArquivosDeCarga from "../componentes/Globais/ArquivosDeCarga";
-import {TiposDeCusteio} from "../componentes/sme/Parametrizacoees/Despesas/TiposDeCusteio"
-import {Fornecedores} from "../componentes/sme/Parametrizacoees/Despesas/Fornecedores";
+import {TiposDeCusteio} from "../componentes/sme/Parametrizacoes/Despesas/TiposDeCusteio"
+import {Fornecedores} from "../componentes/sme/Parametrizacoes/Despesas/Fornecedores";
 import {AnaliseDre} from "../componentes/escolas/AnaliseDre";
 import {DetalharAcertos} from "../componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeLancamentos/DetalharAcertos";
 import DetalharAcertosDocumentos from "../componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeDocumentos/DetalharAcertosDocumentos";
 import {ResumoDosAcertos} from "../componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ResumoDosAcertos";
 import ConsultaDetalhamentoAnaliseDaDre from "../componentes/escolas/AnaliseDre/ConsultaDetalhamentoAnaliseDaDre";
 import CadastroDeMembrosDaAssociacao from "../componentes/escolas/Associacao/Membros/CadastroDeMembrosDaAssociacao";
-import {AnalisesRegularidadePage} from "../componentes/dres/RegularidadeAssociacoes/AnalisesRegularidade";
 import { VisualizacaoDaAtaParecerTecnico } from "../componentes/dres/RelatorioConsolidado/AtaParecerTecnico/VisualizacaoAtaParecerTecnico";
 import { EdicaoAtaParecerTecnico } from "../componentes/dres/RelatorioConsolidado/AtaParecerTecnico/VisualizacaoAtaParecerTecnico/EdicaoAta";
-import { ParametrizacoesMotivosDeEstorno } from "../componentes/sme/Parametrizacoees/Receitas/ParametrizacoesMotivosEstorno";
+import { ParametrizacoesMotivosDeEstorno } from "../componentes/sme/Parametrizacoes/Receitas/ParametrizacoesMotivosEstorno";
+import { ParametrizacoesTiposAcertosLancamentos } from "../componentes/sme/Parametrizacoes/PrestacaoContas/TiposAcertosLancamentos";
+import { ParametrizacoesTiposAcertosDocumentos } from "../componentes/sme/Parametrizacoes/PrestacaoContas/TiposAcertosDocumentos";
+import { DevolucaoAoTesouroAjuste } from "../componentes/Globais/DevolucaoAoTesouroAjuste"
 import {ExtracaoDadosPage} from '../paginas/SME/ExtracaoDados'
 
 const routesConfig = [
@@ -173,6 +175,12 @@ const routesConfig = [
         exact: true,
         path: "/visualizacao-da-ata/:uuid_ata",
         component: VisualizacaoDaAta,
+        permissoes: ['access_prestacao_contas'],
+    },
+    {
+        exact: true,
+        path: "/devolucao-ao-tesouro-ajuste/",
+        component: DevolucaoAoTesouroAjuste,
         permissoes: ['access_prestacao_contas'],
     },
     {
@@ -282,6 +290,12 @@ const routesConfig = [
         exact: true,
         path: "/dre-detalhe-prestacao-de-contas-detalhar-acertos-documentos/:prestacao_conta_uuid",
         component: DetalharAcertosDocumentos,
+        permissoes: ['access_acompanhamento_pcs_dre'],
+    },
+    {
+        exact: true,
+        path: "/dre-detalhe-prestacao-de-contas-resumo-acertos/:prestacao_conta_uuid",
+        component: ResumoDosAcertos,
         permissoes: ['access_acompanhamento_pcs_dre'],
     },
     {
@@ -436,6 +450,18 @@ const routesConfig = [
         path: "/parametro-Fornecedores",
         component: Fornecedores,
         permissoes: ['access_fornecedores'],
+    },
+    {
+        exact: true,
+        path: "/parametro-tipos-acertos-lancamentos",
+        component: ParametrizacoesTiposAcertosLancamentos,
+        permissoes: ['access_painel_parametrizacoes'],
+    },
+    {
+        exact: true,
+        path: "/parametro-tipos-acertos-documentos",
+        component: ParametrizacoesTiposAcertosDocumentos,
+        permissoes: ['access_painel_parametrizacoes'],
     },
     {
         exact: true,
