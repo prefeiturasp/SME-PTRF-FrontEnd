@@ -112,6 +112,19 @@ export const AvisoTipoReceita = (propriedades) => {
     )
 };
 
+export const AvisoTipoReceitaEstorno = (propriedades) => {
+    return (
+        <ModalBootstrap
+            show={propriedades.show}
+            onHide={propriedades.handleClose}
+            titulo="Exclusão não permitida"
+            bodyText={`<p>${propriedades.texto}</p>`}
+            primeiroBotaoOnclick={propriedades.handleClose}
+            primeiroBotaoTexto="Ok"
+        />
+    )
+};
+
 export const RedirectModalTabelaLancamentos = (propriedades) => {
     return (
         <ModalBootstrap

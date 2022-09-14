@@ -595,7 +595,7 @@ export const CadastroFormFormik = ({
                                                             </div>
                                                             <div className="bd-highlight">
                                                                 <div className="d-flex justify-content-start">
-                                                                    {rateio && rateio.uuid && (
+                                                                    {rateio && rateio.uuid && !aux.origemAnaliseLancamento(parametroLocation) && (
                                                                         rateio.estorno && rateio.estorno.uuid
                                                                             ?
                                                                             <Link
