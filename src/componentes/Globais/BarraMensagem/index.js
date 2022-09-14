@@ -1,21 +1,21 @@
 import React from "react";
 import "./barraMensagem.scss"
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faExclamationCircle} from "@fortawesome/free-solid-svg-icons";
+import {faExclamationCircle, faInfoCircle} from "@fortawesome/free-solid-svg-icons";
 
 
 const BarraMensagemCustom = (mensagem, textoBotao, handleClickBotao, mostraBotao, tipo, icone) => {
     
     return (
         <>
-            <div className={`col-12 mt-3 barra-mensagem d-flex`}>
+            <div className={`col-12 mt-3 barra-mensagem d-flex ${tipo === 'info-branco' ? 'barra-mensagem-info-inativa' : ''}`}>
                 <div className='col-auto align-self-center'>
                     <FontAwesomeIcon className={`icone-alert-barra-mensagem ${tipo}`}
                         icon={icone}
                     />
                 </div>
                 <div className="flex-grow-1 bd-highlight align-self-center">
-                    <p className="mb-0">{mensagem}</p>
+                    <p className="mb-0">{tipo === 'info-branco' ? <strong> {mensagem}</strong> : mensagem}</p>
                 </div>
                 <div className="bd-highlight">
                     { mostraBotao
@@ -45,8 +45,14 @@ const BarraMensagemSucessLaranja = (mensagem, textoBotao, handleClickBotao, most
     return BarraMensagemCustom(mensagem, textoBotao, handleClickBotao, mostraBotao, tipo, icone)
 }
 
+const BarraMensagemSucessVermelho = (mensagem, textoBotao, handleClickBotao, mostraBotao, tipo='info-branco', icone=faInfoCircle) =>{
+    return BarraMensagemCustom(mensagem, textoBotao, handleClickBotao, mostraBotao, tipo, icone)
+}
+
+
 export const barraMensagemCustom = {
     BarraMensagemSucessAzul,
-    BarraMensagemSucessLaranja
+    BarraMensagemSucessLaranja,
+    BarraMensagemSucessVermelho
 }
 
