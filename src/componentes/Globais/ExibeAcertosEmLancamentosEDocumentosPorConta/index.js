@@ -136,7 +136,7 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
             carregaAcertosDocumentos(contasAssociacao[0].uuid)
             setClickBtnEscolheConta({0: true})
         }
-    }, [contasAssociacao, carregaAcertosLancamentos, carregaAcertosDocumentos, carregarAjustesExtratosBancarios])
+    }, [contasAssociacao, carregaAcertosLancamentos, carregaAcertosDocumentos, carregarAjustesExtratosBancarios, consultaSeTemAjustesExtratos])
 
     useEffect(() => {
 

@@ -14,7 +14,7 @@ import {getTecnicosDre} from "../../../../services/dres/TecnicosDre.service";
 import {ASSOCIACAO_UUID} from "../../../../services/auth.service";
 import {colunasAprovada, colunasEmAnalise, colunasNaoRecebidas, colunasTodosOsStatus} from "./objetoColunasDinamicas";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faEye} from "@fortawesome/free-solid-svg-icons";
+import {faEye, faEdit} from "@fortawesome/free-solid-svg-icons";
 import Loading from "../../../../utils/Loading";
 import {MsgImgLadoDireito} from "../../../Globais/Mensagens/MsgImgLadoDireito";
 import Img404 from "../../../../assets/img/img-404.svg";
@@ -218,10 +218,38 @@ export const ListaPrestacaoDeContas = () => {
         setRedirectPcNaoApresentada(true)
     };
 
-    const acoesTemplate = (rowData) => {
+    const seiTemplate = (rowData) => {
         return (
             <div>
-                {rowData.status !== 'NAO_APRESENTADA' ? (
+                {rowData['processo_sei'] ? <span>{rowData['processo_sei']}</span> : '-'}
+            </div>
+        )
+    }
+
+    const tecnicoTemplate = (rowData, column) => {
+        return (
+            <div>
+                {rowData[column.field] ? rowData[column.field] : '-'}
+            </div>
+        )
+    };
+
+    const acoesTemplate = (rowData) => {
+        const getIcone = (status) => {
+            switch (status) {
+                case 'APROVADA':
+                case 'APROVADA_RESSALVA':
+                case 'REPROVADA':
+                case 'DEVOLVIDA':
+                    return faEye
+                default:
+                    return faEdit
+            }
+        }
+
+        return (
+            <div>
+                { rowData.status !== 'NAO_APRESENTADA' ? (
                         <Link
                             to={{
                                 pathname: `/dre-detalhe-prestacao-de-contas/${rowData['uuid']}`,
@@ -230,7 +258,7 @@ export const ListaPrestacaoDeContas = () => {
                         >
                             <FontAwesomeIcon
                                 style={{marginRight: "0", color: '#00585E'}}
-                                icon={faEye}
+                                icon={getIcone(rowData.status)}
                             />
                         </Link>
                     ):
@@ -415,6 +443,8 @@ export const ListaPrestacaoDeContas = () => {
                                 columns={columns}
                                 statusTemplate={statusTemplate}
                                 dataTemplate={dataTemplate}
+                                seiTemplate={seiTemplate}
+                                tecnicoTemplate={tecnicoTemplate}
                                 acoesTemplate={acoesTemplate}
                                 nomeTemplate={nomeTemplate}
                             />

@@ -1,4 +1,4 @@
-import React, {memo} from "react";
+import React, {memo, useEffect, useRef, useState} from "react";
 import DevolverParaAcertos from "./DevolverParaAcertos";
 import { RelatorioDosAcertos } from "./RelatorioDosAcertos";
 import ExibeAcertosEmLancamentosEDocumentosPorConta from "../../../../Globais/ExibeAcertosEmLancamentosEDocumentosPorConta";
@@ -7,6 +7,22 @@ import Img404 from "../../../../../assets/img/img-404.svg";
 import CardsDevolucoesParaAcertoDaDre from "../../../../Globais/CardsDevolucoesParaAcertoDaDre";
 
 const TabsConferenciaAtualHistorico = ({dataLimiteDevolucao, handleChangeDataLimiteDevolucao, prestacao_conta_uuid, analiseAtualUuid, exibeMsg, textoMsg, totalAnalisesDePcDevolvidas, setAnaliseAtualUuidComPCAnaliseAtualUuid, setPrimeiraAnalisePcDevolvida, setAnaliseAtualUuid, editavel, pcEmAnalise}) =>{
+
+    const ref_click_historico = useRef(null);
+
+    // Necessário para controlar quando o ref_click_historico.current.click() é disparado
+    const [permitirTriggerOnclick, setPermitirTriggerOnclick] = useState(true)
+
+    useEffect(()=>{
+        // Necessário para forçar o re-render quando analiseAtualUuid for alterado
+        if (analiseAtualUuid){}
+
+        if (totalAnalisesDePcDevolvidas > 0 && !pcEmAnalise && permitirTriggerOnclick){
+            if (ref_click_historico){
+                ref_click_historico.current.click();
+            }
+        }
+    }, [totalAnalisesDePcDevolvidas, analiseAtualUuid, pcEmAnalise, permitirTriggerOnclick])
 
     return(
         <>
@@ -35,6 +51,7 @@ const TabsConferenciaAtualHistorico = ({dataLimiteDevolucao, handleChangeDataLim
                             role="tab"
                             aria-controls="nav-historico"
                             aria-selected={pcEmAnalise === false ? 'true' : 'false'}
+                            ref={ref_click_historico}
                         >
                             Histórico
                         </a>
@@ -75,6 +92,7 @@ const TabsConferenciaAtualHistorico = ({dataLimiteDevolucao, handleChangeDataLim
                             prestacao_conta_uuid={prestacao_conta_uuid}
                             setAnaliseAtualUuid={setAnaliseAtualUuid}
                             analiseAtualUuid={analiseAtualUuid}
+                            setPermitirTriggerOnclick={setPermitirTriggerOnclick}
                         />
 
                         <ExibeAcertosEmLancamentosEDocumentosPorConta
