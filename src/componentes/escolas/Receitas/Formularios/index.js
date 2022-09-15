@@ -506,18 +506,27 @@ export const ReceitaForm = () => {
 
         if (receita && receita.saida_do_recurso && receita.saida_do_recurso.uuid){
             setmsgDeletarReceita('<p>Ao excluir este crédito você excluirá também a saída do recurso vinculada. Tem certeza que deseja excluir ambos? A ação não poderá ser desfeita.</p>')
-            setShowDelete(true);
+            //Manter comentario caso mensagem de não permitir exclusao do estorno for continuar
+            /* setShowDelete(true); */
         }else if (initialValue.tipo_receita === idTipoReceitaEstorno){
             // TO DO
             // Analisar se será necessario manter a mensagem comentada abaixo, caso não seja, remover a mensagem e o comentario
-            //setmsgDeletarReceita('<p>Tem certeza que deseja excluir esse estorno? Essa ação irá desfazer o estorno da despesa relacionada.</p>')
+            setmsgDeletarReceita('<p>Tem certeza que deseja excluir esse estorno? Essa ação irá desfazer o estorno da despesa relacionada.</p>')
 
-            setShowAvisoTipoReceitaEstorno(true);
-            setMsgTipoReceitaEstorno("Não é possivel excluir uma receita do tipo estorno. Deve ser feito a partir da despesa.");
+            //Manter comentario caso mensagem de não permitir exclusao do estorno for continuar
+            /* setShowAvisoTipoReceitaEstorno(true);
+            setMsgTipoReceitaEstorno("Não é possivel excluir uma receita do tipo estorno. Deve ser feito a partir da despesa."); */
         }
-        else{
+        //Manter comentario caso mensagem de não permitir exclusao do estorno for continuar
+        /* else{
             setShowDelete(true);
-        }
+        } */
+
+        //Remover caso mensagem de não permitir exclusao do estorno for continuar
+        setShowDelete(true);
+
+        // Caso a mensagem de não pemitir exclusao do estorno não for continuar, remover tambem o modal criado para a mensagem
+        // modal -> AvisoTipoReceitaEstorno
     };
 
     const onDeletarTrue = async () => {
