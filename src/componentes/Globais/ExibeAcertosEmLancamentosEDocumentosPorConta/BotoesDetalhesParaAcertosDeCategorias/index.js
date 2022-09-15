@@ -4,6 +4,7 @@ import "./BotoesDetalhesParaAcertosDeCategorias.scss"
 import BotaoAcertosLancamentosEdicaoGasto from "./BotaoAcertosLancamentosEdicaoGasto";
 import BotaoAcertosLancamentosEdicaoCredito from "./BotaoAcertosLancamentosEdicaoCredito";
 import BotaoAcertosLancamentosExclusaoGasto from "./BotaoAcertosLancamentosExclusaoGasto";
+import BotaoAcertosLancamentosExclusaoCredito from "./BotaoAcertosLancamentosExclusaoCredito";
 
 const BotoesDetalhesParaAcertosDeCategorias = ({analise_lancamento, prestacaoDeContasUuid, prestacaoDeContas, tipo_transacao}) => {
     return (
@@ -40,6 +41,14 @@ const BotoesDetalhesParaAcertosDeCategorias = ({analise_lancamento, prestacaoDeC
                             prestacaoDeContasUuid={prestacaoDeContasUuid}
                             prestacaoDeContas={prestacaoDeContas}
                             tipo_transacao='Gasto'
+                        />
+                    }
+                    {analise_lancamento && analise_lancamento.requer_exclusao_lancamento && tipo_transacao === "Crédito" &&
+                        <BotaoAcertosLancamentosExclusaoCredito
+                            analise_lancamento={analise_lancamento}
+                            prestacaoDeContasUuid={prestacaoDeContasUuid}
+                            prestacaoDeContas={prestacaoDeContas}
+                            tipo_transacao='Crédito'
                         />
                     }
                 </div>
