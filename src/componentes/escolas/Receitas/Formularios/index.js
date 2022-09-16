@@ -8,7 +8,8 @@ import {
     getTabelasReceitaReceita,
     getRepasses,
     getListaMotivosEstorno,
-    marcarLancamentoExcluido
+    marcarLancamentoExcluido,
+    marcarLancamentoAtualizado
 } from '../../../../services/escolas/Receitas.service';
 import {getRateioPorUuid} from "../../../../services/escolas/RateiosDespesas.service";
 import {deleteDespesa, getDespesa} from "../../../../services/escolas/Despesas.service";
@@ -298,6 +299,9 @@ export const ReceitaForm = () => {
                 setSelectMotivosEstorno(resp.motivos_estorno)
                 setCheckBoxOutrosMotivosEstorno(resp.outros_motivos_estorno)
                 setTxtOutrosMotivosEstorno(resp.outros_motivos_estorno)
+                
+                getClassificacaoReceitaInicial(resp.tipo_receita.id);
+
                 if (resp && resp.acao_associacao && resp.acao_associacao.uuid){
                     setUuidReceita(uuid)
                     showBotaoCadastrarSaida(resp.acao_associacao.uuid, init)
@@ -310,6 +314,9 @@ export const ReceitaForm = () => {
                     else{
                         if(ehOperacaoExclusaoReaberturaSeletiva()){
                             setTituloModalCancelar("Deseja cancelar a exclusão do crédito?")
+                        }
+                        else if(ehOperacaoAtualizacaoReaberturaSeletiva()){
+                            setTituloModalCancelar("Deseja cancelar a edição do crédito?")
                         }
                     }
 
@@ -451,16 +458,29 @@ export const ReceitaForm = () => {
                 console.log("Operação realizada com sucesso!");
             } else {
                 console.log('UPDATE ==========>>>>>>', response)
+
+                if(origemAnaliseLancamento()){
+                    await atualizaLancamento()
+                }
             }
         } catch (error) {
             console.log(error)
         }
     };
 
+    const atualizaLancamento = async () => {
+        let uuid_analise_lancamento = parametros.state.uuid_analise_lancamento;
+        let response_atualiza_lancamento = await marcarLancamentoAtualizado(uuid_analise_lancamento);
+
+        if (response_atualiza_lancamento.status === 200) {
+            console.log("Atualizacao de lancamento realizada com sucesso!");
+        }
+    }
+
     const onCancelarTrue = () => {
         setShow(false);
         setRedirectTo('');
-        getPath('', parametros);
+        getPath('');
 
     };
 
@@ -486,18 +506,27 @@ export const ReceitaForm = () => {
 
         if (receita && receita.saida_do_recurso && receita.saida_do_recurso.uuid){
             setmsgDeletarReceita('<p>Ao excluir este crédito você excluirá também a saída do recurso vinculada. Tem certeza que deseja excluir ambos? A ação não poderá ser desfeita.</p>')
-            setShowDelete(true);
+            //Manter comentario caso mensagem de não permitir exclusao do estorno for continuar
+            /* setShowDelete(true); */
         }else if (initialValue.tipo_receita === idTipoReceitaEstorno){
             // TO DO
             // Analisar se será necessario manter a mensagem comentada abaixo, caso não seja, remover a mensagem e o comentario
-            //setmsgDeletarReceita('<p>Tem certeza que deseja excluir esse estorno? Essa ação irá desfazer o estorno da despesa relacionada.</p>')
+            setmsgDeletarReceita('<p>Tem certeza que deseja excluir esse estorno? Essa ação irá desfazer o estorno da despesa relacionada.</p>')
 
-            setShowAvisoTipoReceitaEstorno(true);
-            setMsgTipoReceitaEstorno("Não é possivel excluir uma receita do tipo estorno. Deve ser feito a partir da despesa.");
+            //Manter comentario caso mensagem de não permitir exclusao do estorno for continuar
+            /* setShowAvisoTipoReceitaEstorno(true);
+            setMsgTipoReceitaEstorno("Não é possivel excluir uma receita do tipo estorno. Deve ser feito a partir da despesa."); */
         }
-        else{
+        //Manter comentario caso mensagem de não permitir exclusao do estorno for continuar
+        /* else{
             setShowDelete(true);
-        }
+        } */
+
+        //Remover caso mensagem de não permitir exclusao do estorno for continuar
+        setShowDelete(true);
+
+        // Caso a mensagem de não pemitir exclusao do estorno não for continuar, remover tambem o modal criado para a mensagem
+        // modal -> AvisoTipoReceitaEstorno
     };
 
     const onDeletarTrue = async () => {
@@ -524,7 +553,7 @@ export const ReceitaForm = () => {
                 }
             }
 
-            getPath('', parametros);
+            getPath();
         }catch (e) {
             console.log("Erro ao excluir receita ", e);
             alert("Um Problema Ocorreu. Entre em contato com a equipe para reportar o problema, obrigado.");
@@ -535,7 +564,7 @@ export const ReceitaForm = () => {
         setShowErroGeral(true);
     };
 
-    const getPath = (uuid_receita_passado='', parametro=null) => {
+    const getPath = (uuid_receita_passado='') => {
         let path;
         if (redirectTo !== '') {
             path = `${redirectTo}/${uuid_receita_passado ? uuid_receita_passado : uuid_receita}${uuid_despesa ? '/'+uuid_despesa : ''}`;
@@ -545,14 +574,12 @@ export const ReceitaForm = () => {
             path = `/detalhe-das-prestacoes`;
         }
 
-        if(parametro){
-            if(origemAnaliseLancamento()){
-                if(parametro.state.uuid_pc){
-                    path = `${parametro.state.origem}/${parametro.state.uuid_pc}`;
-                }
+        if(origemAnaliseLancamento()){
+            if(parametros && parametros.state && parametros.state.uuid_pc && parametros.state.origem){
+                path = `${parametros.state.origem}/${parametros.state.uuid_pc}`;
             }
         }
-
+        
         window.location.assign(path);
     };
 
@@ -585,6 +612,35 @@ export const ReceitaForm = () => {
         }
     };
 
+    const getClassificacaoReceitaInicial = (id_tipo_receita) => {
+        // Essa funcao é utilizada para carregar as classificacoes quando o formulario é carregado
+
+        let lista = [];
+        let qtdeAceitaClassificacao = [];
+
+        if (id_tipo_receita && tabelas && tabelas.categorias_receita && tabelas.categorias_receita.length > 0) {
+            tabelas.categorias_receita.map((item, index) => {
+                let id_categoria_receita_lower = item.id.toLowerCase();
+                let aceitaClassificacao = eval('tabelas.tipos_receita.find(element => element.id === Number(id_tipo_receita)).aceita_' + id_categoria_receita_lower);
+                
+                qtdeAceitaClassificacao.push(aceitaClassificacao);
+                if (aceitaClassificacao) {
+                    lista.push(id_categoria_receita_lower)
+                    setreadOnlyClassificacaoReceita(true);
+                }
+            });
+
+            let resultado = qtdeAceitaClassificacao.filter((value) => {
+                return value === true;
+            }).length;
+
+            if (resultado > 1) {
+                setreadOnlyClassificacaoReceita(false);
+            }
+            setClassificacoesAceitas(lista);
+        }
+    }
+
     const getClassificacaoReceita = (id_tipo_receita, setFieldValue) => {
         let lista = [];
         let qtdeAceitaClassificacao = [];
@@ -609,7 +665,6 @@ export const ReceitaForm = () => {
                 setFieldValue("categoria_receita", "");
                 setreadOnlyClassificacaoReceita(false);
             }
-
             setClassificacoesAceitas(lista);
         }
     }
@@ -674,7 +729,6 @@ export const ReceitaForm = () => {
         let id_categoria_receita_lower = id_categoria_receita.toLowerCase();
 
         let aceitaClassificacao  = eval('tabelas.acoes_associacao.find(element => element.uuid === uuid_acao).acao.aceita_' + id_categoria_receita_lower);
-
 
         if(classificacoesAceitas.includes(id_categoria_receita_lower) && aceitaClassificacao){
 
@@ -831,7 +885,9 @@ export const ReceitaForm = () => {
         
         // Verifica período fechado para a receita
         if (values.data) {
-            await periodoFechado(values.data, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral)
+            if(!origemAnaliseLancamento()){
+                await periodoFechado(values.data, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral)
+            }
         }
 
         let e_repasse_tipo_receita = false;

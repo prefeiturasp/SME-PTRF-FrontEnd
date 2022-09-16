@@ -343,6 +343,13 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
             const salvarDesabilitadosEsclarecimento = !txtEsclarecimentoLancamento?.[data.analise_lancamento.uuid] || txtEsclarecimentoLancamento?.[data.analise_lancamento.uuid] === data.analise_lancamento.esclarecimentos || showSalvarEsclarecimento?.[data.analise_lancamento.uuid]
             return (
                 <>
+                    {data.documento_mestre.mensagem_inativa &&
+                    <div className='row'>
+                            <div className='col-12 p-1 px-4 py-1'>
+                            {barraMensagemCustom.BarraMensagemSucessVermelho(data.documento_mestre.mensagem_inativa)}
+                            </div>
+                    </div>
+                    }
                     {data.analise_lancamento.justificativa?.length > 0 && (
                         <Fragment>
                             <div className="row">

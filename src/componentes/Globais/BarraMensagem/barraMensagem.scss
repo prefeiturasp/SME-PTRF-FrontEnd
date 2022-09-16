@@ -7,7 +7,15 @@
   line-height: 24px;
   color: #FFFFFF;
   border-radius: 4px;
-  margin-top: 32px !important;
+  @if 'barra-mensagem-info-inativa' {
+    margin-top: 16px !important;
+  }@else {
+    margin-top: 32px !important;
+  }
+}
+
+.barra-mensagem-info-inativa {
+  background-color: #B40C02;
 }
 
 .btn-barra-mensagem{
@@ -31,4 +39,8 @@
 
 .sucess-laranja {
   color: #EAAA5E !important
+}
+
+.info-branco {
+  color: #FFFFFF !important
 }
