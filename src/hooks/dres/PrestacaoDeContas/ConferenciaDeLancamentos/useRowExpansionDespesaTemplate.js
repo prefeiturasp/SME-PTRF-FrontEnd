@@ -7,6 +7,7 @@ import useConferidoRateioTemplate from "./useConferidoRateioTemplate";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
 import ReactTooltip from "react-tooltip";
+import { barraMensagemCustom } from "./../../../../componentes/Globais/BarraMensagem";
 import './scss/rowExpansionTable.scss';
 
 
@@ -37,6 +38,13 @@ const useRowExpansionDespesaTemplate = (prestacaoDeContas) =>{
     return (data) => {
         return (
             <div className='col-12 px-4 py-2'>
+                {data.documento_mestre.mensagem_inativa &&
+                    <div className='row'>
+                            <div className='col-12 p-1 px-1'>
+                            {barraMensagemCustom.BarraMensagemSucessVermelho(data.documento_mestre.mensagem_inativa)}
+                            </div>
+                    </div>
+                    }
                 <div className='row'>
                     <div className='col border'>
                         <p className='mt-2 mb-0'><strong>CNPJ / CPF</strong></p>

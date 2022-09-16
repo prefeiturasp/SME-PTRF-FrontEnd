@@ -636,7 +636,7 @@ const TabelaConferenciaDeLancamentos = ({
                             header='Informações'
                             className="align-middle text-left borda-coluna"
                             body={tagInformacao}
-                            style={{width: '12%'}}/>
+                            style={{width: '15%'}}/>
                         <Column
                             field='valor_transacao_total'
                             header='Valor (R$)'

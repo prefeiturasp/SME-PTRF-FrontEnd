@@ -1,15 +1,22 @@
 import React from "react";
 import {useCarregaTabelaReceita} from "../../../Globais/useCarregaTabelaReceita";
+import { barraMensagemCustom } from "./../../../../componentes/Globais/BarraMensagem";
 import './scss/rowExpansionTable.scss';
 
 
 const useRowExpansionDespesaTemplate = (prestacaoDeContas) =>{
 
     const tabelaReceita = useCarregaTabelaReceita()
-
     return (data) => {
         return (
             <div className='col-12 px-4 py-2'>
+                {data.documento_mestre.mensagem_inativa &&
+                    <div className='row'>
+                            <div className='col-12 p-1 px-1'>
+                            {barraMensagemCustom.BarraMensagemSucessVermelho(data.documento_mestre.mensagem_inativa)}
+                            </div>
+                    </div>
+                    }
                 <div className='row'>
                     <div className='col-4 border'>
                         <p className='mt-2 mb-0'><strong>Detalhamento do crédito</strong></p>
