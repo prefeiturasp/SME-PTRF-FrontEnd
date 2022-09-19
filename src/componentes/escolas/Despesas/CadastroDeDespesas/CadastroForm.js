@@ -14,7 +14,8 @@ import {
     getDespesaCadastrada, deleteDespesa,
     getMotivosPagamentoAntecipado,
     marcarLancamentoAtualizado,
-    marcarLancamentoExcluido
+    marcarLancamentoExcluido,
+    marcarGastoIncluido
 } from "../../../../services/escolas/Despesas.service";
 import {useParams, useLocation} from 'react-router-dom';
 import {DespesaContext} from "../../../../context/Despesa";
@@ -25,7 +26,8 @@ import {
     DeletarModal,
     ErroGeral,
     PeriodoFechado,
-    PeriodoFechadoImposto
+    PeriodoFechadoImposto,
+    DespesaIncompletaNaoPermitida
 } from "../../../../utils/Modais"
 import "./cadastro-de-despesas.scss"
 import {trataNumericos} from "../../../../utils/ValidacoesAdicionaisFormularios";
@@ -35,6 +37,7 @@ import moment from "moment";
 import {getPeriodoFechado} from "../../../../services/escolas/Associacao.service";
 import {ModalErroDeletarCadastroDespesa} from "./ModalErroDeletarCadastroDespesa";
 import { CadastroFormFormik } from "./CadastroFormFormik";
+import { getPeriodoPorUuid } from "../../../../services/sme/Parametrizacoes.service";
 
 export const CadastroForm = ({verbo_http}) => {
 
@@ -76,6 +79,14 @@ export const CadastroForm = ({verbo_http}) => {
     const [formErrorsImposto, setFormErrorsImposto] = useState([])
     const [disableBtnAdicionarImposto, setDisableBtnAdicionarImposto] = useState(false);
     const [objetoParaComparacao, setObjetoParaComparacao] = useState({});
+    const [despesaIncompleta, setDespesaIncompleta] = useState(false);
+    const [showDespesaIncompletaNaoPermitida, setShowDespesaIncompletaNaoPermitida] = useState(false);
+
+    const retornaPeriodo = async (periodo_uuid) => {
+        let periodo = await getPeriodoPorUuid(periodo_uuid);
+        return periodo;
+    }
+
 
     useEffect(() => {
         if (despesaContext.initialValues.tipo_transacao && verbo_http === "PUT") {
@@ -188,6 +199,33 @@ export const CadastroForm = ({verbo_http}) => {
             aux.get_nome_razao_social(values.cpf_cnpj_fornecedor, setFieldValue, values.nome_fornecedor);
             setEnviarFormulario(true)
             setBtnSubmitDisable(false)
+        }
+
+        if(aux.origemAnaliseLancamento(parametroLocation)){
+            if (values.data_transacao && origem==="despesa_principal"){
+                let data = moment(values.data_transacao, "YYYY-MM-DD").format("YYYY-MM-DD");
+
+                try {
+                    let periodo_da_data = await getPeriodoFechado(data);
+                    let periodo_da_analise = await retornaPeriodo(parametroLocation.state.periodo_uuid);
+
+                    if(periodo_da_data && periodo_da_analise && periodo_da_data.periodo_referencia === periodo_da_analise.referencia){
+                        setReadOnlyBtnAcao(false);
+                        erros = {
+                            data_transacao: null
+                        }
+                    }
+                    else{
+                        setReadOnlyBtnAcao(true);
+                        erros = {
+                            data_transacao: "Permitido apenas datas dentro do período referente à devolução"
+                        }
+                    }
+                }
+                catch (e) {
+                    console.log("Erro ao buscar perído ", e)
+                }
+            }
         }
 
         // Verifica se deve utilizar logica de periodo fechado
@@ -395,44 +433,107 @@ export const CadastroForm = ({verbo_http}) => {
             values.motivos_pagamento_antecipado = montaPayloadMotivosPagamentoAntecipado()
             values.outros_motivos_pagamento_antecipado = txtOutrosMotivosPagamentoAntecipado.trim() && checkBoxOutrosMotivosPagamentoAntecipado ? txtOutrosMotivosPagamentoAntecipado : ""
 
-            if (despesaContext.verboHttp === "POST") {
-                try {
-                    const response = await criarDespesa(values);
-                    if (response.status === HTTP_STATUS.CREATED) {
-                        console.log("Operação realizada com sucesso!");
-                        aux.getPath(origem);
-                    } else {
-                        setLoading(false);
-                    }
-                } catch (error) {
-                    console.log(error);
+            if(aux.origemAnaliseLancamento(parametroLocation)){
+                if(despesaIncompleta){
                     setLoading(false);
+                    setBtnSubmitDisable(false);
+                    setShowDespesaIncompletaNaoPermitida(true);
                 }
-            } else if (despesaContext.verboHttp === "PUT") {
-                try {
-                    const response = await alterarDespesa(values, despesaContext.idDespesa);
-                    if (response.status === 200) {
-                        console.log("Operação realizada com sucesso!");
+                else{
+                    if (despesaContext.verboHttp === "POST"){
+                        try {
+                            const response = await criarDespesa(values);
+                            if (response.status === HTTP_STATUS.CREATED){
+                                console.log("Operação realizada com sucesso!");
 
-                        if(aux.origemAnaliseLancamento(parametroLocation)){
-                            let uuid_analise_lancamento = parametroLocation.state.uuid_analise_lancamento;
-                            let response_atualiza_lancamento = await marcarLancamentoAtualizado(uuid_analise_lancamento);
-                            
-                            if (response_atualiza_lancamento.status === 200) {
-                                console.log("Atualizacao de lancamento realizada com sucesso!");
+                                let uuid_despesa = response.data.uuid;
+                                let payload = {
+                                    uuid_gasto_incluido: uuid_despesa
+                                }
+
+                                let uuid_analise_documento = parametroLocation.state.uuid_analise_documento;
+                                let response_gasto_incluido = await marcarGastoIncluido(uuid_analise_documento, payload);
+                                
+                                if (response_gasto_incluido.status === 200) {
+                                    console.log("Gasto incluido com sucesso!");
+                                }
+                                else{
+                                    setLoading(false);
+                                }
+
+                                aux.getPath(origem, parametroLocation);
                             }
-                            else{
+                            else {
                                 setLoading(false);
                             }
+                        } catch (error) {
+                            console.log(error);
+                            setLoading(false);
                         }
+                    }
+                    else if (despesaContext.verboHttp === "PUT"){
+                        try {
+                            const response = await alterarDespesa(values, despesaContext.idDespesa);
 
-                        aux.getPath(origem, parametroLocation);
-                    } else {
+                            if (response.status === 200){
+                                console.log("Operação realizada com sucesso!");
+
+                                // verificar se é atualizacao lancamento
+                                if(aux.ehOperacaoAtualizacao(parametroLocation)){
+                                    let uuid_analise_lancamento = parametroLocation.state.uuid_analise_lancamento;
+                                    let response_atualiza_lancamento = await marcarLancamentoAtualizado(uuid_analise_lancamento);
+                                    
+                                    if (response_atualiza_lancamento.status === 200) {
+                                        console.log("Atualizacao de lancamento realizada com sucesso!");
+                                    }
+                                    else{
+                                        setLoading(false);
+                                    }
+                                }
+
+                                aux.getPath(origem, parametroLocation);
+                                
+                            }
+                            else {
+                                setLoading(false);
+                            }
+                        } catch (error) {
+                            console.log(error);
+                            setLoading(false);
+                        }
+                    }
+                }
+            }
+            else{
+                // Caso não seja origem de analise lancamento (reabertura seletiva), deve seguir o fluxo normal
+
+                if (despesaContext.verboHttp === "POST") {
+                    try {
+                        const response = await criarDespesa(values);
+                        if (response.status === HTTP_STATUS.CREATED) {
+                            console.log("Operação realizada com sucesso!");
+                            aux.getPath(origem);
+                        } else {
+                            setLoading(false);
+                        }
+                    } catch (error) {
+                        console.log(error);
                         setLoading(false);
                     }
-                } catch (error) {
-                    console.log(error);
-                    setLoading(false);
+                }
+                else if (despesaContext.verboHttp === "PUT") {
+                    try {
+                        const response = await alterarDespesa(values, despesaContext.idDespesa);
+                        if (response.status === 200) {
+                            console.log("Operação realizada com sucesso!");
+                            aux.getPath(origem);
+                        } else {
+                            setLoading(false);
+                        }
+                    } catch (error) {
+                        console.log(error);
+                        setLoading(false);
+                    }
                 }
             }
         }
@@ -825,7 +926,9 @@ export const CadastroForm = ({verbo_http}) => {
         validaPayloadDespesas(values);
         if (values.despesa_incompleta > 0 ) {
             setModalState('despesa-imcompleta')
+            setDespesaIncompleta(true);
         }else {
+            setDespesaIncompleta(false);
             await serviceSubmitModais(values, setFieldValue, errors, 'despesa_incompleta_validado')
         }
     }
@@ -1051,6 +1154,12 @@ export const CadastroForm = ({verbo_http}) => {
                     handleClose={() => setShowModalErroDeletarDespesa(false)}
                     titulo="Exclusão de Despesa"
                     texto={textoModalErroDeletarDespesa}
+                />
+            </section>
+            <section>
+                <DespesaIncompletaNaoPermitida
+                    show={showDespesaIncompletaNaoPermitida}
+                    handleClose={()=>setShowDespesaIncompletaNaoPermitida(false)}
                 />
             </section>
         </>

@@ -308,6 +308,9 @@ export const CadastroFormFormik = ({
                                         {props.errors.data_transacao &&
                                             <span
                                                 className="span_erro text-danger mt-1"> {props.errors.data_transacao}</span>}
+                                        {formErrors.data_transacao &&
+                                            <span
+                                                className="span_erro text-danger mt-1"> {formErrors.data_transacao}</span>}
                                     </div>
 
                                     <div className="col-12 col-md-3 mt-4">
@@ -809,7 +812,7 @@ export const CadastroFormFormik = ({
                                             className="btn btn btn-outline-success mt-2 mr-2">Voltar
                                     </button>
 
-                                    {despesaContext.idDespesa && !aux.ehOperacaoAtualizacao(parametroLocation)
+                                    {aux.mostraBotaoDeletar(despesaContext.idDespesa, parametroLocation)
                                         ? 
                                             <button
                                                 disabled={readOnlyBtnAcao || !visoesService.getPermissoes(["delete_despesa"])}
