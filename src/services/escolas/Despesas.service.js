@@ -112,3 +112,7 @@ export const marcarLancamentoAtualizado = async (uuid_analise_lancamento) => {
 export const marcarLancamentoExcluido = async (uuid_analise_lancamento) => {
     return (await api.post(`/api/analises-lancamento-prestacao-conta/${uuid_analise_lancamento}/marcar-lancamento-excluido/`, {}, authHeader)).data
 };
+
+export const marcarGastoIncluido = async (uuid_analise_documento, payload) => {
+    return (await api.post(`/api/analises-documento-prestacao-conta/${uuid_analise_documento}/marcar-como-gasto-incluido/`, payload, authHeader)).data
+};

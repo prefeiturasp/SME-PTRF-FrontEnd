@@ -423,7 +423,8 @@ export const ModalBootstrapLegendaInformacao = (propriedades) => {
         2: 'tag-darkblue',
         3: 'tag-orange',
         4: 'tag-green',
-        5: 'tag-blank'
+        5: 'tag-blank',
+        6: 'tag-red-white'
     }
 
     const handleTagInformacao = useCallback(async () => {
