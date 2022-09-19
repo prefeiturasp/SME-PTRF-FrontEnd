@@ -425,6 +425,20 @@ export const PeriodoFechadoImposto = (propriedades) => {
     )
 };
 
+export const DespesaIncompletaNaoPermitida = (propriedades) => {
+    return (
+        <ModalBootstrap
+            show={propriedades.show}
+            onHide={propriedades.handleClose}
+            titulo="Despesa incompleta"
+            bodyText="Não é possível cadastrar uma despesa incompleta através de uma solicitação de inclusão ou ajuste da DRE."
+            primeiroBotaoOnclick={propriedades.handleClose}
+            primeiroBotaoTexto="Fechar"
+            primeiroBotaoCss="success"
+        />
+    )
+};
+
 export const ExcluirImposto = (propriedades) => {
     return (
         <ModalBootstrap

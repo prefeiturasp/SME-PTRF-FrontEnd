@@ -381,6 +381,26 @@ const bloqueiaCamposDespesaImposto = (parametroLocation, setReadOnlyCamposImpost
     }
 }
 
+const mostraBotaoDeletar = (idDespesa, parametroLocation) => {
+    if(origemAnaliseLancamento(parametroLocation)){
+        if(ehOperacaoExclusao(parametroLocation)){
+            return true;
+        }
+        else{
+            return false;
+        }
+
+    }
+    else{
+        if(idDespesa){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+}
+
 
 
 export const metodosAuxiliares = {
@@ -411,5 +431,6 @@ export const metodosAuxiliares = {
     ehOperacaoAtualizacao,
     ehOperacaoExclusao,
     bloqueiaCamposDespesaPrincipal,
-    bloqueiaCamposDespesaImposto
+    bloqueiaCamposDespesaImposto,
+    mostraBotaoDeletar
 };
