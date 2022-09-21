@@ -30,7 +30,7 @@ export const InformacoesDevolucaoAoTesouro = ({formRef, informacoesPrestacaoDeCo
                         <tr key="xxx">
                             <td>{despesa.nome_fornecedor}</td>
                             <td>{despesa.cpf_cnpj_fornecedor}</td>
-                            <td>{despesa.tipo_documento.nome}</td>
+                            <td>{despesa.tipo_documento?.nome}</td>
                             <td>{despesa.numero_documento}</td>
                             <td>{despesa.data_documento ? exibeDataPT_BR(despesa.data_documento) : ''}</td>
                             <td>{valor_devolucao ? valor_devolucao : ''}</td>
