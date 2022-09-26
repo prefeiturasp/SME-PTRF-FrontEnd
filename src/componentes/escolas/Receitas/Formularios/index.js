@@ -455,6 +455,7 @@ export const ReceitaForm = () => {
         try {
             const response = await criarReceita(payload);
             if (response.status === HTTP_STATUS.CREATED) {
+                console.log("Operação realizada com sucesso!");
                 return response.data.uuid;
             } else {
                 console.log(response)
