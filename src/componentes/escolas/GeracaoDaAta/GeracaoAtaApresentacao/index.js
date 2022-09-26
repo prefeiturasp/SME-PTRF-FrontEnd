@@ -5,6 +5,7 @@ import {ModalNaoPodeGerarAta} from "../ModalNaoPodeGerarAta";
 import Spinner from "../../../../assets/img/spinner.gif";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faDownload} from '@fortawesome/free-solid-svg-icons'
+import {getPeriodoFechado} from "../../../../services/escolas/Associacao.service";
 
 export const GeracaoAtaApresentacao = (
     {
@@ -19,6 +20,7 @@ export const GeracaoAtaApresentacao = (
 
     const [dadosAta, setDadosAta] = useState({});
     const [showNaoPodeGerarAta, setShowNaoPodeGerarAta] = useState(false);
+    const [docPrestacaoConta, setDocPrestacaoConta] = useState({});
     const [textoModalAta, setTextoModalAta] = useState('<p>Você não pode gerar o PDF de uma ata incompleta.</p>');
 
     useEffect(() => {
@@ -32,9 +34,12 @@ export const GeracaoAtaApresentacao = (
     });
 
     const getDadosAta = useCallback(async ()=>{
+        let periodo_prestacao_de_contas = JSON.parse(localStorage.getItem("periodoPrestacaoDeConta"));
         if (uuidAtaApresentacao){
             let dados_ata = await getAtas(uuidAtaApresentacao);
+            let doc_pc = periodo_prestacao_de_contas.data_inicial ? await getPeriodoFechado(periodo_prestacao_de_contas.data_inicial) : null;
             setDadosAta(dados_ata)
+            setDocPrestacaoConta(doc_pc)
         }
     }, [uuidAtaApresentacao])
 
@@ -105,11 +110,13 @@ export const GeracaoAtaApresentacao = (
                         </section>
                         <div className="col-12 col-md-4 align-self-center">
                             <button onClick={()=>onClickVisualizarAta()}  type="button" className="btn btn-success float-right">{uuidPrestacaoConta ? "Visualizar ata" : "Visualizar prévia da ata"}</button>
-                            {uuidPrestacaoConta &&
+                            {uuidPrestacaoConta && 
                             <button
                                 onClick={() => gerarAta()}
                                 type="button"
                                 className="btn btn-outline-success float-right mr-2"
+                                disabled={!docPrestacaoConta?.gerar_ou_editar_ata_apresentacao}
+                                title={!(docPrestacaoConta?.gerar_ou_editar_ata_apresentacao) ? 'A ata de apresentação só pode ser gerada enquanto o status da PC for "Não apresentada" ou "Não recebi da"': ''}
                             >
                                 gerar ata
                             </button>

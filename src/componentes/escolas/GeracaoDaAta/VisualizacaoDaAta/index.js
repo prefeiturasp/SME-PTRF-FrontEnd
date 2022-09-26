@@ -19,6 +19,7 @@ import {
     getTiposDevolucao,
     getPreviaPrestacaoDeContasDetalhe
 } from "../../../../services/dres/PrestacaoDeContas.service";
+import {getPeriodoFechado} from "../../../../services/escolas/Associacao.service";
 import {getListaPresentesAgrupados} from "../../../../services/escolas/PresentesAta.service";
 import moment from "moment";
 import {exibeDataPT_BR, trataNumericos} from "../../../../utils/ValidacoesAdicionaisFormularios";
@@ -67,6 +68,7 @@ export const VisualizacaoDaAta = () => {
     const [infoAta, setInfoAta] = useState({});
     const [tabelas, setTabelas] = useState({});
     const [dadosAta, setDadosAta] = useState({});
+    const [docPrestacaoConta, setDocPrestacaoConta] = useState({});
     const [prestacaoDeContasDetalhe, setPrestacaoDeContasDetalhe] = useState({});
     const [listaPresentes, setListaPresentes] = useState([]);
     const [despesasComPagamentoAntecipadoNoPeriodo, setDespesasComPagamentoAntecipadoNoPeriodo] = useState([]);
@@ -124,6 +126,7 @@ export const VisualizacaoDaAta = () => {
 
     const getDadosAta = async () => {
         let dados_ata = await getAtas(uuid_ata);
+        let doc_pc = periodo_prestacao_de_contas.data_inicial ? await getPeriodoFechado(periodo_prestacao_de_contas.data_inicial) : null;
 
         let prestacao = null
         if (dados_ata.prestacao_conta) {
@@ -148,6 +151,7 @@ export const VisualizacaoDaAta = () => {
             retificacoes: dados_ata.retificacoes,
         });
         setDadosAta(dados_ata);
+        setDocPrestacaoConta(doc_pc);
 
         // InformacoesDvolucaoAoTesrouro
         if (prestacao && prestacao.devolucoes_ao_tesouro_da_prestacao && prestacao.devolucoes_ao_tesouro_da_prestacao.length > 0) {
@@ -459,6 +463,7 @@ export const VisualizacaoDaAta = () => {
                 {dadosAta && Object.entries(dadosAta).length > 0 &&
                     <TopoComBotoes
                         dadosAta={dadosAta}
+                        docPrestacaoConta={docPrestacaoConta}
                         prestacaoDeContasDetalhe={prestacaoDeContasDetalhe}
                         handleClickEditarAta={handleClickEditarAta}
                         handleClickFecharAta={handleClickFecharAta}
