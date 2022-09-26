@@ -348,6 +348,22 @@ export const ModalFormParametrizacoesAcoes = (propriedades) =>{
     )
 };
 
+export const ModalFormParametrizacoesAcertos = (propriedades) =>{
+
+    return (
+        <Fragment>
+            <Modal centered show={propriedades.show} onHide={propriedades.onHide} size='lg'>
+                <Modal.Header>
+                    <Modal.Title>{propriedades.titulo}</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {propriedades.bodyText}
+                </Modal.Body>
+            </Modal>
+        </Fragment>
+    )
+};
+
 export const ModalBootstrapTipoRecursoNaoAceito = (propriedades) =>{
     return (
         <Fragment>
@@ -407,7 +423,8 @@ export const ModalBootstrapLegendaInformacao = (propriedades) => {
         2: 'tag-darkblue',
         3: 'tag-orange',
         4: 'tag-green',
-        5: 'tag-blank'
+        5: 'tag-blank',
+        6: 'tag-red-white'
     }
 
     const handleTagInformacao = useCallback(async () => {
@@ -460,3 +477,20 @@ export const ModalBootstrapLegendaInformacao = (propriedades) => {
     )
  
 }
+
+export const ModalBootstrapFormConcluirPeriodo = (propriedades) =>{
+
+    // Os botões de Confirmar e Cancelar estão dentro do próprio form, pois utilizei Formik para validações
+    return (
+        <Fragment>
+            <Modal centered show={propriedades.show} onHide={propriedades.onHide} size='lg'>
+                <Modal.Header>
+                    <Modal.Title>{propriedades.titulo}</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {propriedades.bodyText}
+                </Modal.Body>
+            </Modal>
+        </Fragment>
+    )
+};

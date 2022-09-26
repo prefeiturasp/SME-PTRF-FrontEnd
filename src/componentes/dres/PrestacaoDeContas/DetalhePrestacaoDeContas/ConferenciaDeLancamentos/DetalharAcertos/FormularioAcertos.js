@@ -5,8 +5,9 @@ import {faTimesCircle} from "@fortawesome/free-solid-svg-icons";
 import {FormularioAcertosBasico} from "./FormularioAcertosBasico";
 import {FormularioAcertosDevolucaoAoTesouro} from "./FormularioAcertosDevolucaoAoTesouro";
 import {YupSignupSchemaDetalharAcertos} from './YupSignupSchemaDetalharAcertos'
+import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 
-export const FormularioAcertos = ({solicitacoes_acerto, listaTiposDeAcertoLancamentos, onSubmitFormAcertos, formRef, handleChangeTipoDeAcertoLancamento, exibeCamposCategoriaDevolucao, tiposDevolucao, bloqueiaSelectTipoDeAcerto, removeBloqueiaSelectTipoDeAcertoJaCadastrado}) => {
+export const FormularioAcertos = ({solicitacoes_acerto, listaTiposDeAcertoLancamentosAgrupado, onSubmitFormAcertos, formRef, handleChangeTipoDeAcertoLancamento, exibeCamposCategoriaDevolucao, tiposDevolucao, bloqueiaSelectTipoDeAcerto, removeBloqueiaSelectTipoDeAcertoJaCadastrado, textoCategoria, corTextoCategoria, removeTextoECorCategoriaTipoDeAcertoJaCadastrado, adicionaTextoECorCategoriaVazio}) => {
 
     return (
         <div className='mt-3'>
@@ -44,6 +45,7 @@ export const FormularioAcertos = ({solicitacoes_acerto, listaTiposDeAcertoLancam
                                                             onClick={() => {
                                                                 remove(index)
                                                                 removeBloqueiaSelectTipoDeAcertoJaCadastrado(index)
+                                                                removeTextoECorCategoriaTipoDeAcertoJaCadastrado(index)
                                                             }}
                                                         >
                                                             <FontAwesomeIcon
@@ -73,11 +75,27 @@ export const FormularioAcertos = ({solicitacoes_acerto, listaTiposDeAcertoLancam
                                                                 disabled={bloqueiaSelectTipoDeAcerto[index]}
                                                             >
                                                                 <option key='' value="">Selecione a especificação do acerto</option>
-                                                                {listaTiposDeAcertoLancamentos && listaTiposDeAcertoLancamentos.length > 0 && listaTiposDeAcertoLancamentos.map(item => (
-                                                                    <option key={item.uuid} value={item.uuid} data-objeto={JSON.stringify({...item})}>{item.nome}</option>
+                                                                
+                                                                {listaTiposDeAcertoLancamentosAgrupado && listaTiposDeAcertoLancamentosAgrupado.length > 0 && listaTiposDeAcertoLancamentosAgrupado.map(item => (
+                                                                    <optgroup key={item.id} label={item.nome}>
+                                                                        {item.tipos_acerto_lancamento && item.tipos_acerto_lancamento.length > 0 && item.tipos_acerto_lancamento.map(tipo_acerto => (
+                                                                            <option key={tipo_acerto.uuid} value={tipo_acerto.uuid} data-categoria={item.id} data-objeto={JSON.stringify({...tipo_acerto})}>{tipo_acerto.nome}</option>
+                                                                        ))}
+                                                                    </optgroup>
                                                                 ))}
                                                             </select>
                                                             <p className='mt-1 mb-0'><span className="text-danger">{errors && errors.solicitacoes_acerto && errors.solicitacoes_acerto[index] && errors.solicitacoes_acerto[index].tipo_acerto ? errors.solicitacoes_acerto[index].tipo_acerto : ''}</span></p>
+                                                            {textoCategoria[index] &&
+                                                                <p className='mt-2 mb-0'>
+                                                                    <FontAwesomeIcon
+                                                                        style={{fontSize: '17px', marginRight:'4px'}}
+                                                                        icon={faExclamationCircle}
+                                                                        className={corTextoCategoria[index]}
+                                                                    />
+
+                                                                    <span className={corTextoCategoria[index]}>{textoCategoria[index]}</span>
+                                                                </p>
+                                                            }
                                                         </div>
                                                         {exibeCamposCategoriaDevolucao[acerto.tipo_acerto] || acerto.devolucao_tesouro.uuid ? (
                                                                 <>
@@ -125,6 +143,7 @@ export const FormularioAcertos = ({solicitacoes_acerto, listaTiposDeAcertoLancam
                                                             valor: '',
                                                         }
                                                     });
+                                                    adicionaTextoECorCategoriaVazio();
                                                 }}
                                             >
                                                 + Adicionar novo item

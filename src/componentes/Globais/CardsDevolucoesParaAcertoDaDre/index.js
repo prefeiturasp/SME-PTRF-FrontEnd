@@ -21,9 +21,10 @@ const CardsDevolucoesParaAcertoDaDre = ({prestacao_conta_uuid, analiseAtualUuid=
 
                 if (analises_pc_devolvidas && analises_pc_devolvidas.length > 0) {
                     let unis = analises_pc_devolvidas.map((analise, index) => {
+                        let data_formatada = analise && analise.devolucao_prestacao_conta && analise.devolucao_prestacao_conta.data ? exibeDataPT_BR(analise.devolucao_prestacao_conta.data) : ""
                         return {
                             ...analise,
-                            label_formatada: retornaNumeroOrdinal(index) + ' devolução ' + exibeDataPT_BR(analise.devolucao_prestacao_conta.data),
+                            label_formatada: retornaNumeroOrdinal(index) + ' devolução ' + data_formatada,
                             versao_da_devolucao: retornaNumeroOrdinal(index)
                         }
                     })

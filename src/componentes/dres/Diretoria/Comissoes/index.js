@@ -11,6 +11,7 @@ import { getMembrosComissao, getComissoes, getMembrosComissaoFiltro, postMembroC
 import { ModalAdicionarMembroComissao, ModalEditarMembroComissao, ModalConfirmaExclusaoMembroComissao } from "./Modais";
 import { consultarRF } from "../../../../services/escolas/Associacao.service";
 import { apenasNumero } from "../../../../utils/ValidacoesAdicionaisFormularios";
+import { ModalInfoNaoPodeGravar } from "../../../sme/Parametrizacoes/Estrutura/Acoes/ModalInfoNaoPodeGravar";
 
 export const Comissoes = () => {
     const estadoInicialFiltros = {
@@ -42,6 +43,8 @@ export const Comissoes = () => {
     const [showModalExclusao, setShowModalExclusao] = useState(false);
     const [estadoModal, setEstadoModal] = useState(estadoInicialModal)
     const [errosModal, setErrosModal] = useState(estadoInicialErrosModal)
+    const [showModalInfoNaoPodeGravar, setShowModalInfoNaoPodeGravar] = useState(false);
+    const [mensagemModalInfoNaoPodeGravar, setMensagemModalInfoNaoPodeGravar] = useState("");
     
 
     useEffect(() => {
@@ -264,7 +267,13 @@ export const Comissoes = () => {
                     
                 }
                 catch (e){
-                    console.log("ocorreu um erro ", e)
+                    if(e.response.data && e.response.data.detail){
+                        setShowModalInfoNaoPodeGravar(true);
+                        setMensagemModalInfoNaoPodeGravar(e.response.data.detail);
+                    }
+                    else{
+                        console.log("ocorreu um erro ", e)
+                    }
                 }
             }
             else{
@@ -275,7 +284,7 @@ export const Comissoes = () => {
                     email: estadoModal.email_modal,
                     comissoes: estadoModal.comissoes_modal
                 }
-
+                
                 try{
                     await postMembroComissao(payload);
                     setLoadingMembrosComissao(true);
@@ -284,7 +293,13 @@ export const Comissoes = () => {
                     
                 }
                 catch (e){
-                    console.log("ocorreu um erro ", e)
+                    if(e.response.data && e.response.data.detail){
+                        setShowModalInfoNaoPodeGravar(true);
+                        setMensagemModalInfoNaoPodeGravar(e.response.data.detail);
+                    }
+                    else{
+                        console.log("ocorreu um erro ", e)
+                    }
                 }
             }
         }
@@ -314,6 +329,11 @@ export const Comissoes = () => {
     const handleConfirmaExclusao = async() => {
         handleDeleteMembro();
     }
+
+    const handleCloseInfoNaoPodeGravar = () => {
+        setShowModalInfoNaoPodeGravar(false);
+        setMensagemModalInfoNaoPodeGravar("");
+      };
 
     return(
         <>
@@ -394,6 +414,17 @@ export const Comissoes = () => {
                             titulo="Excluir membro de comissão"
                             handleConfirmaExclusao={handleConfirmaExclusao}
                         />
+
+
+                        <ModalInfoNaoPodeGravar
+                            show={showModalInfoNaoPodeGravar}
+                            handleClose={handleCloseInfoNaoPodeGravar}
+                            titulo="Atualização não permitida"
+                            texto={mensagemModalInfoNaoPodeGravar}
+                            primeiroBotaoTexto="Fechar"
+                            primeiroBotaoCss="success"
+                        />
+        
 
                     </div>
                 </>

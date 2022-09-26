@@ -13,8 +13,11 @@ export const getStatusPeriodoPorData = async (uuid_associacao, data_incial_perio
   return(await api.get(`/api/associacoes/${uuid_associacao}/status-periodo/?data=${data_incial_periodo}`, authHeader)).data
 };
 
-export const getConcluirPeriodo = async (periodo_uuid) => {
-  return(await api.post(`/api/prestacoes-contas/concluir/?associacao_uuid=${localStorage.getItem(ASSOCIACAO_UUID)}&periodo_uuid=${periodo_uuid}`, {}, authHeader)).data
+export const postConcluirPeriodo = async (periodo_uuid, justificativaPendencia='') => {
+  const payLoad = {
+      justificativa_acertos_pendentes: justificativaPendencia,
+  }
+  return(await api.post(`/api/prestacoes-contas/concluir/?associacao_uuid=${localStorage.getItem(ASSOCIACAO_UUID)}&periodo_uuid=${periodo_uuid}`, payLoad, authHeader)).data
 };
 
 

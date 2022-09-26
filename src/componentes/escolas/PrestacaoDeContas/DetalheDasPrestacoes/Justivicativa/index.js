@@ -7,7 +7,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 export const Justificativa = ({
     textareaJustificativa, handleChangeTextareaJustificativa, periodoFechado, 
     btnSalvarJustificativaDisable, setBtnJustificativaSalvarDisable, checkSalvarJustificativa,
-    setCheckSalvarJustificativa, salvarJustificativa, classBtnSalvarJustificativa,
+    setCheckSalvarJustificativa, salvarJustificativa, classBtnSalvarJustificativa, lancamentosSelecionados,
     setClassBtnSalvarJustificativa}) => {
 
 
@@ -15,7 +15,7 @@ export const Justificativa = ({
         setBtnJustificativaSalvarDisable(true);
         setCheckSalvarJustificativa(true);
         setClassBtnSalvarJustificativa("secondary");
-        salvarJustificativa();
+        salvarJustificativa(lancamentosSelecionados);
     }
 
 
@@ -66,3 +66,4 @@ export const Justificativa = ({
         </div>
     );
 };
+

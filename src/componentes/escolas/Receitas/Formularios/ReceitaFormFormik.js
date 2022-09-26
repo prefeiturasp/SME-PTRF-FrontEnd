@@ -68,6 +68,10 @@ export const ReceitaFormFormik = ({
                                       txtOutrosMotivosEstorno,
                                       handleChangeCheckBoxOutrosMotivosEstorno,
                                       handleChangeTxtOutrosMotivosEstorno,
+                                      readOnlyReaberturaSeletiva,
+                                      ehOperacaoExclusaoReaberturaSeletiva,
+                                      ehOperacaoAtualizacaoReaberturaSeletiva,
+                                      origemAnaliseLancamento
                                   }) => {
 
     return (
@@ -141,7 +145,7 @@ export const ReceitaFormFormik = ({
                                                 <select
                                                     id="detalhe_tipo_receita"
                                                     name="detalhe_tipo_receita"
-                                                    //disabled={readOnlyEstorno || readOnlyCampos || ![['add_receita'], ['change_receita']].some(visoesService.getPermissoes)}
+                                                    disabled={readOnlyReaberturaSeletiva}
                                                     value={props.values.detalhe_tipo_receita ? props.values.detalhe_tipo_receita.id : ""}
                                                     onChange={(e) => {
                                                         props.handleChange(e);
@@ -219,7 +223,7 @@ export const ReceitaFormFormik = ({
                                         value={values.data}
                                         onChange={setFieldValue}
                                         onBlur={props.handleBlur}
-                                        disabled={![['add_receita'], ['change_receita']].some(visoesService.getPermissoes)}
+                                        disabled={readOnlyReaberturaSeletiva || ![['add_receita'], ['change_receita']].some(visoesService.getPermissoes)}
                                         maxDate={new Date()}
                                     />
                                     {props.touched.data && props.errors.data &&
@@ -331,7 +335,7 @@ export const ReceitaFormFormik = ({
 
                             {/*Botões*/}
                             <div className="d-flex justify-content-end pb-3" style={{marginTop: '60px'}}>
-                                {showEditarSaida &&
+                                {showEditarSaida && !origemAnaliseLancamento() &&
                                     <button
                                         type="submit"
                                         onClick={() => {
@@ -343,7 +347,7 @@ export const ReceitaFormFormik = ({
                                         Editar saída
                                     </button>
                                 }
-                                {showCadastrarSaida && !showEditarSaida ?
+                                {showCadastrarSaida && !showEditarSaida && !origemAnaliseLancamento() ?
                                     <button
                                         type="submit"
                                         onClick={() => {
@@ -362,7 +366,7 @@ export const ReceitaFormFormik = ({
                                 >
                                     Voltar
                                 </button>
-                                {uuid && despesa && despesa.uuid &&
+                                {uuid && despesa && despesa.uuid && !origemAnaliseLancamento() &&
                                     <Link
                                         to={`/edicao-de-despesa/${despesa.uuid}`}
                                         className="btn btn btn-outline-success mt-2 mr-2"
@@ -371,7 +375,7 @@ export const ReceitaFormFormik = ({
                                     </Link>
 
                                 }
-                                {uuid && exibirDeleteDespesa ?
+                                {uuid && exibirDeleteDespesa && !ehOperacaoAtualizacaoReaberturaSeletiva() ?
                                     <button
                                         disabled={readOnlyBtnAcao || !visoesService.getPermissoes(['delete_receita'])}
                                         type="reset"
@@ -382,14 +386,17 @@ export const ReceitaFormFormik = ({
                                     </button> :
                                     null
                                 }
-                                <button
-                                    onClick={(e) => servicoDeVerificacoes(e, values, errors)}
-                                    disabled={readOnlyBtnAcao || ![['add_receita'], ['change_receita']].some(visoesService.getPermissoes)}
-                                    type="submit"
-                                    className="btn btn-success mt-2"
-                                >
-                                    Salvar
-                                </button>
+
+                                {!ehOperacaoExclusaoReaberturaSeletiva() &&
+                                    <button
+                                        onClick={(e) => servicoDeVerificacoes(e, values, errors)}
+                                        disabled={readOnlyBtnAcao || ![['add_receita'], ['change_receita']].some(visoesService.getPermissoes)}
+                                        type="submit"
+                                        className="btn btn-success mt-2"
+                                    >
+                                        Salvar
+                                    </button>
+                                }
 
                             </div>
                             {/*Fim Botões*/}

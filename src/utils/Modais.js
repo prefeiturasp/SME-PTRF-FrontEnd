@@ -112,6 +112,19 @@ export const AvisoTipoReceita = (propriedades) => {
     )
 };
 
+export const AvisoTipoReceitaEstorno = (propriedades) => {
+    return (
+        <ModalBootstrap
+            show={propriedades.show}
+            onHide={propriedades.handleClose}
+            titulo="Exclusão não permitida"
+            bodyText={`<p>${propriedades.texto}</p>`}
+            primeiroBotaoOnclick={propriedades.handleClose}
+            primeiroBotaoTexto="Ok"
+        />
+    )
+};
+
 export const RedirectModalTabelaLancamentos = (propriedades) => {
     return (
         <ModalBootstrap
@@ -408,6 +421,20 @@ export const PeriodoFechadoImposto = (propriedades) => {
             // segundoBotaoOnclick={() => {window.location.assign("/prestacao-de-contas")}}
             // segundoBotaoTexto="Sim"
             // segundoBotaoCss="success"
+        />
+    )
+};
+
+export const DespesaIncompletaNaoPermitida = (propriedades) => {
+    return (
+        <ModalBootstrap
+            show={propriedades.show}
+            onHide={propriedades.handleClose}
+            titulo="Despesa incompleta"
+            bodyText="Não é possível cadastrar uma despesa incompleta através de uma solicitação de inclusão ou ajuste da DRE."
+            primeiroBotaoOnclick={propriedades.handleClose}
+            primeiroBotaoTexto="Fechar"
+            primeiroBotaoCss="success"
         />
     )
 };
