@@ -71,7 +71,9 @@ export const ReceitaFormFormik = ({
                                       readOnlyReaberturaSeletiva,
                                       ehOperacaoExclusaoReaberturaSeletiva,
                                       ehOperacaoAtualizacaoReaberturaSeletiva,
-                                      origemAnaliseLancamento
+                                      origemAnaliseLancamento,
+                                      validacoesPersonalizadasCredito,
+                                      formDateErrors
                                   }) => {
 
     return (
@@ -222,10 +224,15 @@ export const ReceitaFormFormik = ({
                                         id="data"
                                         value={values.data}
                                         onChange={setFieldValue}
+                                        onCalendarClose={async () => {
+                                            validacoesPersonalizadasCredito(values, setFieldValue, "credito_principal")
+                                        }}
                                         onBlur={props.handleBlur}
                                         disabled={readOnlyReaberturaSeletiva || ![['add_receita'], ['change_receita']].some(visoesService.getPermissoes)}
                                         maxDate={new Date()}
                                     />
+                                    {formDateErrors && 
+                                    <span className="span_erro text-danger mt-1"> {formDateErrors}</span>}
                                     {props.touched.data && props.errors.data &&
                                         <span className="span_erro text-danger mt-1"> {props.errors.data}</span>}
                                 </div>

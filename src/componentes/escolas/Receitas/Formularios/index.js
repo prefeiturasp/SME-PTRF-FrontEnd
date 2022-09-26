@@ -9,10 +9,12 @@ import {
     getRepasses,
     getListaMotivosEstorno,
     marcarLancamentoExcluido,
-    marcarLancamentoAtualizado
+    marcarLancamentoAtualizado,
+    marcarCreditoIncluido
 } from '../../../../services/escolas/Receitas.service';
 import {getRateioPorUuid} from "../../../../services/escolas/RateiosDespesas.service";
 import {deleteDespesa, getDespesa} from "../../../../services/escolas/Despesas.service";
+import {getPeriodoFechado} from "../../../../services/escolas/Associacao.service";
 import {round, trataNumericos, periodoFechado} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import moment from "moment";
 import {useLocation, useParams} from 'react-router-dom';
@@ -26,6 +28,7 @@ import ReferenciaDaDespesaEstorno from "../ReferenciaDaDespesaEstorno";
 import {PaginasContainer} from "../../../../paginas/PaginasContainer";
 import {toastCustom} from "../../../Globais/ToastCustom";
 import { visoesService } from "../../../../services/visoes.service";
+import { getPeriodoPorUuid } from "../../../../services/sme/Parametrizacoes.service";
 
 
 export const ReceitaForm = () => {
@@ -103,6 +106,12 @@ export const ReceitaForm = () => {
     const [tituloPagina, setTituloPagina] = useState('')
     const [despesa, setDespesa] = useState({})
     const [idTipoReceitaEstorno, setIdTipoReceitaEstorno] = useState("")
+    const [formDateErrors, setFormDateErrors] = useState('');
+
+    const retornaPeriodo = async (periodo_uuid) => {
+        let periodo = await getPeriodoPorUuid(periodo_uuid);
+        return periodo;
+    }
 
     const carregaTabelas = useCallback(async ()=>{
         let tabelas_receitas;
@@ -401,6 +410,7 @@ export const ReceitaForm = () => {
         values.motivos_estorno = montaPayloadMotivosEstorno()
         values.outros_motivos_estorno = txtOutrosMotivosEstorno.trim() && checkBoxOutrosMotivosEstorno ? txtOutrosMotivosEstorno : ""
 
+        
         const payload = {
             ...values,
             associacao: localStorage.getItem(ASSOCIACAO_UUID),
@@ -412,7 +422,6 @@ export const ReceitaForm = () => {
         }
 
         setLoading(true);
-
         if (uuid) {
             await atualizar(uuid, payload).then(response => {
                 if (exibeModalSalvoComSucesso){
@@ -422,17 +431,22 @@ export const ReceitaForm = () => {
                 }
             });
         } else {
-            cadastrar(payload).then(response => {
-                if (exibeModalSalvoComSucesso){
-                    //setShowSalvarReceita(true);
-                    setUuidReceita(response);
-                    exibeMsgSalvoComSucesso(payload)
-                }else {
-                    setUuidReceita(response);
-                    getPath(response)
+            const resultCadastrar = await cadastrar(payload)
+            if (exibeModalSalvoComSucesso){
+                setShowSalvarReceita(true);
+                setUuidReceita(resultCadastrar);
+                let uuidAnaliseDocumento = parametros.state.uuid_analise_documento;
+                let payloadReceita = {"uuid_credito_incluido": resultCadastrar}
+                let responseCreditoIncluido = await marcarCreditoIncluido(uuidAnaliseDocumento, payloadReceita);
+                if (responseCreditoIncluido.status === 200) {
+                    console.log("Crédito salvo com sucesso!");
                 }
-            });
-        }
+                exibeMsgSalvoComSucesso(payload)
+            }else {
+                setUuidReceita(resultCadastrar);
+                getPath(resultCadastrar)
+                }
+            };
         setLoading(false);
 
     };
@@ -441,7 +455,6 @@ export const ReceitaForm = () => {
         try {
             const response = await criarReceita(payload);
             if (response.status === HTTP_STATUS.CREATED) {
-                console.log("Operação realizada com sucesso!");
                 return response.data.uuid;
             } else {
                 console.log(response)
@@ -1031,6 +1044,29 @@ export const ReceitaForm = () => {
         return false;
     }
 
+    const validacoesPersonalizadasCredito = useCallback(async (values, setFieldValue, origem=null, index=null) => {
+        if (values.data && origem==="credito_principal"){
+            let data = moment(values.data, "YYYY-MM-DD").format("YYYY-MM-DD");
+            try {
+                let periodo_da_data = await getPeriodoFechado(data);
+                let periodo_da_analise = await retornaPeriodo(parametros.state.periodo_uuid);
+            
+                if(periodo_da_data && periodo_da_analise && periodo_da_data.periodo_referencia === periodo_da_analise.referencia){
+                    setReadOnlyBtnAcao(false);
+                    setFormDateErrors("")
+                }
+                else{
+                    setReadOnlyBtnAcao(true);
+                    setFormDateErrors("Permitido apenas datas dentro do período referente à devolução.")
+                }
+            } 
+            catch (e) {
+
+            }
+        }
+
+    },[]);
+
     const ehOperacaoExclusaoReaberturaSeletiva = () => {
         if(parametros && parametros.state){
             if(parametros.state.operacao === "requer_exclusao_lancamento_credito"){
@@ -1175,6 +1211,8 @@ export const ReceitaForm = () => {
                         ehOperacaoExclusaoReaberturaSeletiva={ehOperacaoExclusaoReaberturaSeletiva}
                         ehOperacaoAtualizacaoReaberturaSeletiva={ehOperacaoAtualizacaoReaberturaSeletiva}
                         origemAnaliseLancamento={origemAnaliseLancamento}
+                        validacoesPersonalizadasCredito={validacoesPersonalizadasCredito}
+                        formDateErrors={formDateErrors}
                     />
                     <section>
                         <CancelarModalReceitas
