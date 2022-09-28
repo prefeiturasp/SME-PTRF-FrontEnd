@@ -8,7 +8,7 @@ import { useCallback } from "react";
 export const ModalBootstrap = (propriedades) =>{
     return (
         <Fragment>
-            <Modal centered show={propriedades.show} onHide={propriedades.onHide}>
+            <Modal centered show={propriedades.show} onHide={propriedades.onHide} size={propriedades.size}>
                 <Modal.Header>
                     <Modal.Title>{propriedades.titulo}</Modal.Title>
                 </Modal.Header>
@@ -484,6 +484,24 @@ export const ModalBootstrapFormConcluirPeriodo = (propriedades) =>{
     return (
         <Fragment>
             <Modal centered show={propriedades.show} onHide={propriedades.onHide} size='lg'>
+                <Modal.Header>
+                    <Modal.Title>{propriedades.titulo}</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {propriedades.bodyText}
+                </Modal.Body>
+            </Modal>
+        </Fragment>
+    )
+};
+
+
+export const ModalBootstrapFormMarcarPublicacaoNoDiarioOficial = (propriedades) =>{
+
+    // Os botões de Confirmar e Cancelar estão dentro do próprio form, pois utilizei Formik para validações
+    return (
+        <Fragment>
+            <Modal centered show={propriedades.show} onHide={propriedades.onHide}>
                 <Modal.Header>
                     <Modal.Title>{propriedades.titulo}</Modal.Title>
                 </Modal.Header>
