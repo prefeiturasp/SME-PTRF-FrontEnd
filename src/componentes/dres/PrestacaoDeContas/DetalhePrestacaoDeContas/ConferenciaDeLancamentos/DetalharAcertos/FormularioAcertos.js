@@ -1,13 +1,13 @@
 import React from 'react';
 import {Formik, FieldArray} from 'formik';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faTimesCircle} from "@fortawesome/free-solid-svg-icons";
+import {faTimesCircle, faCheckCircle} from "@fortawesome/free-solid-svg-icons";
 import {FormularioAcertosBasico} from "./FormularioAcertosBasico";
 import {FormularioAcertosDevolucaoAoTesouro} from "./FormularioAcertosDevolucaoAoTesouro";
 import {YupSignupSchemaDetalharAcertos} from './YupSignupSchemaDetalharAcertos'
 import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 
-export const FormularioAcertos = ({solicitacoes_acerto, listaTiposDeAcertoLancamentosAgrupado, onSubmitFormAcertos, formRef, handleChangeTipoDeAcertoLancamento, exibeCamposCategoriaDevolucao, tiposDevolucao, bloqueiaSelectTipoDeAcerto, removeBloqueiaSelectTipoDeAcertoJaCadastrado, textoCategoria, corTextoCategoria, removeTextoECorCategoriaTipoDeAcertoJaCadastrado, adicionaTextoECorCategoriaVazio}) => {
+export const FormularioAcertos = ({solicitacoes_acerto, listaTiposDeAcertoLancamentosAgrupado, onSubmitFormAcertos, formRef, handleChangeTipoDeAcertoLancamento, exibeCamposCategoriaDevolucao, tiposDevolucao, bloqueiaSelectTipoDeAcerto, removeBloqueiaSelectTipoDeAcertoJaCadastrado, textoCategoria, corTextoCategoria, removeTextoECorCategoriaTipoDeAcertoJaCadastrado, adicionaTextoECorCategoriaVazio, ehSolicitacaoCopiada}) => {
 
     return (
         <div className='mt-3'>
@@ -41,7 +41,7 @@ export const FormularioAcertos = ({solicitacoes_acerto, listaTiposDeAcertoLancam
                                                             <strong>Item {index + 1}</strong></p>
                                                         <button
                                                             type="button"
-                                                            className="btn btn-link btn-remover-despesa mr-2 p-0 d-flex align-items-center"
+                                                            className={`btn btn-link ${ehSolicitacaoCopiada(acerto) ? 'btn-remover-ajuste-lancamento-copia' : 'btn-remover-ajuste-lancamento'} mr-2 p-0 d-flex align-items-center`}
                                                             onClick={() => {
                                                                 remove(index)
                                                                 removeBloqueiaSelectTipoDeAcertoJaCadastrado(index)
@@ -52,11 +52,11 @@ export const FormularioAcertos = ({solicitacoes_acerto, listaTiposDeAcertoLancam
                                                                 style={{
                                                                     fontSize: '17px',
                                                                     marginRight: "4px",
-                                                                    color: "#B40C02"
+                                                                    color: ehSolicitacaoCopiada(acerto) ? "#297805" : "#B40C02"
                                                                 }}
-                                                                icon={faTimesCircle}
+                                                                icon={ ehSolicitacaoCopiada(acerto) ? faCheckCircle : faTimesCircle }
                                                             />
-                                                            Remover item
+                                                            { ehSolicitacaoCopiada(acerto) ? "Considerar correto" : "Remover item" }
                                                         </button>
                                                     </div>
 
@@ -134,6 +134,8 @@ export const FormularioAcertos = ({solicitacoes_acerto, listaTiposDeAcertoLancam
                                                 className="btn btn btn-outline-success mt-2 mr-2"
                                                 onClick={() => {
                                                     push({
+                                                        uuid: null,
+                                                        copiado: false,
                                                         tipo_acerto: '',
                                                         detalhamento: '',
                                                         devolucao_tesouro: {
