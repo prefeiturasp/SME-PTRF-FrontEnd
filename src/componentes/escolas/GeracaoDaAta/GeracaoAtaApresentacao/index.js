@@ -116,7 +116,7 @@ export const GeracaoAtaApresentacao = (
                                 type="button"
                                 className="btn btn-outline-success float-right mr-2"
                                 disabled={!docPrestacaoConta?.gerar_ou_editar_ata_apresentacao}
-                                title={!(docPrestacaoConta?.gerar_ou_editar_ata_apresentacao) ? 'A ata de apresentação só pode ser gerada enquanto o status da PC for "Não apresentada" ou "Não recebi da"': ''}
+                                title={!(docPrestacaoConta?.gerar_ou_editar_ata_apresentacao) ? 'A ata de apresentação só pode ser gerada enquanto o status da PC for "Não recebida".': ''}
                             >
                                 gerar ata
                             </button>

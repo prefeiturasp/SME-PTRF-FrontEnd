@@ -28,11 +28,11 @@ export const TopoComBotoes = ({dadosAta, docPrestacaoConta, prestacaoDeContasDet
                             <button onClick={()=>setShowModalDevolucoesAoTesouro(true)} type="button" className="btn btn-success mr-2 mt-2"> <strong>Devoluções ao Tesouro</strong></button>
                         }
 
-                        <button onClick={handleClickEditarAta} type="button" className="btn btn-success mr-2 mt-2" disabled={!(docPrestacaoConta?.gerar_ou_editar_ata_retificacao)} title={!(docPrestacaoConta.gerar_ou_editar_ata_retificacao) ? 'A ata de retificação só pode ser editada enquanto o status da PC for "Devolvida" ou "Retornada após acertos".': ''}> <strong>Editar ata de retificação</strong></button>
+                        <button onClick={handleClickEditarAta} type="button" className="btn btn-success mr-2 mt-2" disabled={!(docPrestacaoConta?.gerar_ou_editar_ata_retificacao)} title={!(docPrestacaoConta.gerar_ou_editar_ata_retificacao) ? 'A ata de retificação só pode ser editada enquanto o status da PC for "Retornada após acertos".': ''}> <strong>Editar ata de retificação</strong></button>
                     </>
                     : ( dadosAta.tipo_ata !== 'RETIFICACAO' ?
                             <>
-                                <button onClick={handleClickEditarAta} type="button" className="btn btn-success mr-2 mt-2" disabled={!docPrestacaoConta?.gerar_ou_editar_ata_apresentacao} title={!docPrestacaoConta.gerar_ou_editar_ata_apresentacao ? 'A ata de apresentação só pode ser editada enquanto o status da PC for "Não apresentada" ou "Não recebi da"': ''}><strong>Editar ata</strong></button>
+                                <button onClick={handleClickEditarAta} type="button" className="btn btn-success mr-2 mt-2" disabled={!docPrestacaoConta?.gerar_ou_editar_ata_apresentacao} title={!docPrestacaoConta.gerar_ou_editar_ata_apresentacao ? 'A ata de apresentação só pode ser editada enquanto o status da PC for "Não recebida".': ''}><strong>Editar ata</strong></button>
                             </>
                         : null
                     )
