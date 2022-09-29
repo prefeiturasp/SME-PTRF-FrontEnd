@@ -2,9 +2,9 @@ import React, {memo} from "react";
 import {FieldArray, Formik} from "formik";
 import {YupSignupSchemaDetalharAcertosDocumentos} from './YupSignupSchemaDetalharAcertosDocumentos'
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faTimesCircle, faExclamationCircle} from "@fortawesome/free-solid-svg-icons";
+import {faTimesCircle, faExclamationCircle, faCheckCircle} from "@fortawesome/free-solid-svg-icons";
 
-const FormularioAcertos = ({solicitacoes_acerto, onSubmitFormAcertos, formRef, tiposDeAcertoDocumentosAgrupados, handleChangeTipoDeAcertoDocumento, textoCategoria, corTextoCategoria, adicionaTextoECorCategoriaVazio, removeTextoECorCategoriaTipoDeAcertoJaCadastrado}) =>{
+const FormularioAcertos = ({solicitacoes_acerto, onSubmitFormAcertos, formRef, tiposDeAcertoDocumentosAgrupados, handleChangeTipoDeAcertoDocumento, textoCategoria, corTextoCategoria, adicionaTextoECorCategoriaVazio, removeTextoECorCategoriaTipoDeAcertoJaCadastrado, ehSolicitacaoCopiada}) =>{
     return(
         <div className='mt-3'>
             <Formik
@@ -37,7 +37,7 @@ const FormularioAcertos = ({solicitacoes_acerto, onSubmitFormAcertos, formRef, t
                                                                 <strong>Item {index + 1}</strong></p>
                                                             <button
                                                                 type="button"
-                                                                className="btn btn-link btn-remover-despesa mr-2 p-0 d-flex align-items-center"
+                                                                className={`btn btn-link ${ehSolicitacaoCopiada(acerto) ? 'btn-remover-ajuste-documento-copia' : 'btn-remover-ajuste-documento'} mr-2 p-0 d-flex align-items-center`}
                                                                 onClick={() => {
                                                                     remove(index)
                                                                     removeTextoECorCategoriaTipoDeAcertoJaCadastrado(index)
@@ -47,11 +47,11 @@ const FormularioAcertos = ({solicitacoes_acerto, onSubmitFormAcertos, formRef, t
                                                                     style={{
                                                                         fontSize: '17px',
                                                                         marginRight: "4px",
-                                                                        color: "#B40C02"
+                                                                        color: ehSolicitacaoCopiada(acerto) ? "#297805" : "#B40C02"
                                                                     }}
-                                                                    icon={faTimesCircle}
+                                                                    icon={ ehSolicitacaoCopiada(acerto) ? faCheckCircle : faTimesCircle }
                                                                 />
-                                                                Remover item
+                                                                { ehSolicitacaoCopiada(acerto) ? "Considerar correto" : "Remover item" }
                                                             </button>
                                                         </div>
 
@@ -67,6 +67,7 @@ const FormularioAcertos = ({solicitacoes_acerto, onSubmitFormAcertos, formRef, t
                                                                         props.handleChange(e);
                                                                         handleChangeTipoDeAcertoDocumento(e, index);
                                                                     }}
+                                                                    disabled={acerto.uuid ? true : false}
                                                                 >
                                                                     <option key='' value="">Selecione a especificação do acerto</option>
                                                                     {tiposDeAcertoDocumentosAgrupados && tiposDeAcertoDocumentosAgrupados.length > 0 && tiposDeAcertoDocumentosAgrupados.map(item => (
@@ -116,6 +117,8 @@ const FormularioAcertos = ({solicitacoes_acerto, onSubmitFormAcertos, formRef, t
                                                     className="btn btn btn-outline-success mt-2 mr-2"
                                                     onClick={() => {
                                                         push({
+                                                            uuid: null,
+                                                            copiado: false,
                                                             tipo_acerto: '',
                                                             detalhamento: '',
                                                         });
