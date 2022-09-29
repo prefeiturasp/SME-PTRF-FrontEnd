@@ -192,6 +192,10 @@ export const getPreviaInfoAta = async (associacaoUuid, periodoUuid) => {
     return (await api.get(`/api/prestacoes-contas/previa-info-para-ata/?associacao=${associacaoUuid}&periodo=${periodoUuid}`,authHeader)).data
 };
 
+export const gerarPreviaRelatorioAposAcertos = async (uuid) => {
+  return (await api.get(`/api/analises-prestacoes-contas/previa-relatorio-apos-acertos/?analise_prestacao_uuid=${uuid}`,authHeader)).data
+}
+
 
 export const getConcluirPrestacaoDeConta = async (
   uuidPrestacaoDeContas,

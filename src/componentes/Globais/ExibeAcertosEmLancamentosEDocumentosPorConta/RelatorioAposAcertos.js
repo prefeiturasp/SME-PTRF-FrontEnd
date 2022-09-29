@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from "react";
 import Spinner from "../../../assets/img/spinner.gif"
+import {gerarPreviaRelatorioAposAcertos} from '../../../services/escolas/PrestacaoDeContas.service'
 import { getRelatorioAcertosInfo, gerarPreviaRelatorioAcertos, downloadDocumentoPreviaPdf, getAnalisePrestacaoConta } from "../../../services/dres/PrestacaoDeContas.service";
 import {getAnalisesDePcDevolvidas}  from "../../../services/dres/PrestacaoDeContas.service"
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -22,7 +23,7 @@ export const RelatorioAposAcertos = ({prestacaoDeContasUuid, analiseAtualUuid, p
     }, []);
 
     useEffect(() => {
-         getAnalise();
+        getAnalise();
     }, [analiseAtualUuid]);
 
     useEffect(() => {
@@ -68,13 +69,14 @@ export const RelatorioAposAcertos = ({prestacaoDeContasUuid, analiseAtualUuid, p
     }
 
     const gerarPrevia = async () => {
-         setStatus("EM_PROCESSAMENTO");
-         setMensagem("Relatório sendo gerado...");
-         setPreviaEmAndamento(true);
-         setDisableBtnPrevia(true);
-         setDisableBtnDownload(true);
+        setStatus("EM_PROCESSAMENTO");
+        setMensagem("Relatório sendo gerado...");
+        setPreviaEmAndamento(true);
+        setDisableBtnPrevia(true);
+        setDisableBtnDownload(true);
 
-         await gerarPreviaRelatorioAcertos(analiseAtualUuid);
+        let teste = await gerarPreviaRelatorioAposAcertos(analiseAtualUuid);
+        console.log("teste", teste)
     }
 
     const downloadDocumentoPrevia = async () => {
@@ -154,7 +156,7 @@ export const RelatorioAposAcertos = ({prestacaoDeContasUuid, analiseAtualUuid, p
                     <div className="actions">
                         {podeGerarPrevia && versaoRascunho
                             ? 
-                                <button onClick={(e) => console.log('gerarPrevia')} type="button" disabled={disableBtnPrevia} className="btn btn-outline-success mr-2">Gerar prévia</button>
+                                <button onClick={(e) => gerarPrevia()} type="button" disabled={disableBtnPrevia} className="btn btn-outline-success mr-2">Gerar prévia</button>
                             : 
                                 null
                         }
