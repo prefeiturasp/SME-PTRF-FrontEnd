@@ -313,8 +313,6 @@ export const DetalharAcertos = () => {
     }
 
     const ehSolicitacaoCopiada = (acerto) => {
-        console.log("acerto", acerto)
-
         if(acerto.copiado){
             return true;
         }
