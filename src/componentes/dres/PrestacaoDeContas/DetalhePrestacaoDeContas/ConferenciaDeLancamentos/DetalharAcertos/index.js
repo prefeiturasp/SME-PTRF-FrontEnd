@@ -138,6 +138,8 @@ export const DetalharAcertos = () => {
                         if (acertos && acertos.solicitacoes_de_ajuste_da_analise && acertos.solicitacoes_de_ajuste_da_analise.length > 0) {
                             acertos.solicitacoes_de_ajuste_da_analise.map((acerto) =>
                                 _acertos.push({
+                                    uuid: acerto.uuid,
+                                    copiado: acerto.copiado,
                                     tipo_acerto: acerto.tipo_acerto.uuid,
                                     detalhamento: acerto.detalhamento,
                                     devolucao_tesouro: acerto.devolucao_ao_tesouro && acerto.devolucao_ao_tesouro.uuid ? {
@@ -274,6 +276,8 @@ export const DetalharAcertos = () => {
             if (solicitacoes_acerto.solicitacoes_acerto && solicitacoes_acerto.solicitacoes_acerto.length > 0) {
                 solicitacoes_acerto.solicitacoes_acerto.map((solicitacao) =>
                     _solicitacoes_acerto.push({
+                        uuid: solicitacao.uuid,
+                        copiado: solicitacao.copiado,
                         tipo_acerto: solicitacao.tipo_acerto,
                         detalhamento: solicitacao.detalhamento,
                         devolucao_tesouro: solicitacao.devolucao_tesouro && solicitacao.devolucao_tesouro.tipo ? {
@@ -306,6 +310,16 @@ export const DetalharAcertos = () => {
         if (rowData && rowData.analise_lancamento && rowData.analise_lancamento.resultado) {
             return {'linha-conferencia-de-lancamentos-correto': true}
         }
+    }
+
+    const ehSolicitacaoCopiada = (acerto) => {
+        console.log("acerto", acerto)
+
+        if(acerto.copiado){
+            return true;
+        }
+        
+        return false;
     }
 
     return (
@@ -350,6 +364,7 @@ export const DetalharAcertos = () => {
                             corTextoCategoria={corTextoCategoria}
                             removeTextoECorCategoriaTipoDeAcertoJaCadastrado={removeTextoECorCategoriaTipoDeAcertoJaCadastrado}
                             adicionaTextoECorCategoriaVazio={adicionaTextoECorCategoriaVazio}
+                            ehSolicitacaoCopiada={ehSolicitacaoCopiada}
                         />
                     </>
                 }

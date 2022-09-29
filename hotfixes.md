@@ -1,3 +1,6 @@
+### 1.33.3 - 22/09/2022 - Hotfix - Soluções de bugs urgentes durante a sprint 50
+* (74773) Resolve problema de visualização de devolução ao tesouro de despesa sem tipo definido
+
 ### 1.33.2 - 15/09/2022 - Hotfix - Soluções de bugs urgentes durante a sprint 49
 * (72907) Melhorias diversas no relatório consolidado DRE
 

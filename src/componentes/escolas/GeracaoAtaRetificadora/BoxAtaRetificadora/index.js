@@ -4,6 +4,7 @@ import {ModalNaoPodeGerarAta} from "../../GeracaoDaAta/ModalNaoPodeGerarAta";
 import Spinner from "../../../../assets/img/spinner.gif";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faDownload} from "@fortawesome/free-solid-svg-icons";
+import {getPeriodoFechado} from "../../../../services/escolas/Associacao.service";
 
 export const BoxAtaRetificadora = ({
                                        corBoxAtaRetificadora,
@@ -15,6 +16,7 @@ export const BoxAtaRetificadora = ({
                                        statusPc
 }) => {
     const [dadosAtaRetificadora, setDadosAtaRetificadora] = useState({});
+    const [docPrestacaoConta, setDocPrestacaoConta] = useState({});
     const [showNaoPodeGerarAta, setShowNaoPodeGerarAta] = useState(false);
     const [textoModalAta, setTextoModalAta] = useState('<p>Você não pode gerar o PDF de uma ata incompleta.</p>');
 
@@ -29,9 +31,12 @@ export const BoxAtaRetificadora = ({
     });
 
     const getDadosAta = useCallback(async ()=>{
+        let periodo_prestacao_de_contas = JSON.parse(localStorage.getItem("periodoPrestacaoDeConta"));
         if (uuidAtaRetificacao){
             let dados_ata = await getAtas(uuidAtaRetificacao);
+            let doc_pc = periodo_prestacao_de_contas.data_inicial ? await getPeriodoFechado(periodo_prestacao_de_contas.data_inicial) : null;
             setDadosAtaRetificadora(dados_ata)
+            setDocPrestacaoConta(doc_pc)
         }
     }, [uuidAtaRetificacao])
 
@@ -100,7 +105,7 @@ export const BoxAtaRetificadora = ({
                         </section>
                         <div className="col-12 col-md-4 align-self-center">
                             <button onClick={()=>onClickVisualizarAta()}  type="button" className="btn btn-success float-right">{statusPc !== 'DEVOLVIDA' ? "Visualizar ata" : "Visualizar prévia da ata"}</button>
-                            { statusPc !== 'DEVOLVIDA' &&
+                            { statusPc !== 'DEVOLVIDA' && docPrestacaoConta.gerar_ou_editar_ata_retificacao &&
                                 <button
                                     onClick={() => gerarAtaPDF()}
                                     type="button"
