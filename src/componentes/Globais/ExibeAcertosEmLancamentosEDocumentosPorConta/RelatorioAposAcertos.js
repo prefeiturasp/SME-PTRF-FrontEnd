@@ -6,7 +6,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faDownload} from "@fortawesome/free-solid-svg-icons";
 import Loading from "../../../utils/Loading";
 
-export const RelatorioAposAcertos = ({prestacaoDeContasUuid, analiseAtualUuid, podeGerarPrevia}) => {
+export const RelatorioAposAcertos = ({prestacaoDeContasUuid, prestacaoDeContas, analiseAtualUuid, podeGerarPrevia}) => {
     const [mensagem, setMensagem] = useState("");
     const [status, setStatus] = useState("")
     const [previaEmAndamento, setPreviaEmAndamento] = useState(false)
@@ -166,7 +166,8 @@ export const RelatorioAposAcertos = ({prestacaoDeContasUuid, analiseAtualUuid, p
                     </div>
 
                     <div className="actions">
-                        {podeGerarPrevia 
+
+                        {podeGerarPrevia && prestacaoDeContas.status === 'DEVOLVIDA'
                             ? 
                                 <button onClick={(e) => gerarPrevia()} type="button" disabled={disableBtnPrevia} className="btn btn-outline-success mr-2">Gerar prévia</button>
                             : 

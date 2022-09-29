@@ -766,12 +766,13 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
                             rowExpansionTemplateDocumentos={rowExpansionTemplateDocumentos}
                         />
                 }
-                <hr className="mt-4 mb-3"/>
+                {visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'UE' ?
                 <RelatorioAposAcertos
                     prestacaoDeContasUuid={prestacaoDeContasUuid}
+                    prestacaoDeContas={prestacaoDeContas}
                     analiseAtualUuid={analiseAtualUuid}
                     podeGerarPrevia={true}
-                />
+                /> : null}
 
             </>
         </>
