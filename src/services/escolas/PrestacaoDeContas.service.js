@@ -193,9 +193,36 @@ export const getPreviaInfoAta = async (associacaoUuid, periodoUuid) => {
 };
 
 export const gerarPreviaRelatorioAposAcertos = async (uuid) => {
-  return (await api.get(`/api/analises-prestacoes-contas/previa-relatorio-apos-acertos/?analise_prestacao_uuid=${uuid}`,authHeader)).data
+  if(uuid){
+    return (await api.get(`/api/analises-prestacoes-contas/previa-relatorio-apos-acertos/?analise_prestacao_uuid=${uuid}`,authHeader)).data
+  }
 }
 
+export const verificarStatusGeracaoAposAcertos = async (uuid) => {
+  return (await api.get(`/api/analises-prestacoes-contas/status-info_relatorio_apos_acertos/?analise_prestacao_uuid=${uuid}`,authHeader)).data
+}
+
+export const downloadDocumentPdfAposAcertos = async (analise_atual_uuid) => {
+  return api
+            .get(`/api/analises-prestacoes-contas/download-documento-pdf_apos_acertos/?analise_prestacao_uuid=${analise_atual_uuid}`, {
+                responseType: 'blob',
+                timeout: 30000,
+                headers: {
+                    'Authorization': `JWT ${localStorage.getItem(TOKEN_ALIAS)}`,
+                    'Content-Type': 'application/json',
+                }
+              })
+            .then((response) => {
+                const url = window.URL.createObjectURL(new Blob([response.data]));
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', `relatorio_apos_acertos.pdf`);
+                document.body.appendChild(link);
+                link.click();
+            }).catch(error => {
+                return error.response;
+            });
+}
 
 export const getConcluirPrestacaoDeConta = async (
   uuidPrestacaoDeContas,

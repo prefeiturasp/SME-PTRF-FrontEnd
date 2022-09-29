@@ -768,7 +768,7 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
                 }
                 <hr className="mt-4 mb-3"/>
                 <RelatorioAposAcertos
-                    prestacaoDeContasUuid={''}
+                    prestacaoDeContasUuid={prestacaoDeContasUuid}
                     analiseAtualUuid={analiseAtualUuid}
                     podeGerarPrevia={true}
                 />

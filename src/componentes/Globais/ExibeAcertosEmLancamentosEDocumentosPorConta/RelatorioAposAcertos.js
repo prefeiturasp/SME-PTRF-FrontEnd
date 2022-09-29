@@ -1,8 +1,7 @@
 import React, {useState, useEffect} from "react";
 import Spinner from "../../../assets/img/spinner.gif"
-import {gerarPreviaRelatorioAposAcertos} from '../../../services/escolas/PrestacaoDeContas.service'
-import { getRelatorioAcertosInfo, gerarPreviaRelatorioAcertos, downloadDocumentoPreviaPdf, getAnalisePrestacaoConta } from "../../../services/dres/PrestacaoDeContas.service";
-import {getAnalisesDePcDevolvidas}  from "../../../services/dres/PrestacaoDeContas.service"
+import {gerarPreviaRelatorioAposAcertos, verificarStatusGeracaoAposAcertos, downloadDocumentPdfAposAcertos} from '../../../services/escolas/PrestacaoDeContas.service'
+import { getAnalisePrestacaoConta, getAnalisesDePcDevolvidas } from "../../../services/dres/PrestacaoDeContas.service";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faDownload} from "@fortawesome/free-solid-svg-icons";
 import Loading from "../../../utils/Loading";
@@ -27,44 +26,45 @@ export const RelatorioAposAcertos = ({prestacaoDeContasUuid, analiseAtualUuid, p
     }, [analiseAtualUuid]);
 
     useEffect(() => {
-         if (status && status  === 'EM_PROCESSAMENTO' ){
-             const timer = setInterval(() => {
+        if (status && status  === 'EM_PROCESSAMENTO' ){
+            const timer = setInterval(() => {
                 relatorioAposAcertosInfo();               
-             }, 5000);
+            }, 5000);
              // clearing interval
-             return () => clearInterval(timer);
-         }
+            return () => clearInterval(timer);
+        }
 
-         relatorioAposAcertosInfo();
+        relatorioAposAcertosInfo();
 
-     }, [status, analiseAtualUuid]);
+    }, [status, analiseAtualUuid]);
 
     useEffect(() => {
         getNumeroDaDevolucao();
-     }, [analiseAtualUuid, analisesDevolvidas]);
+    }, [analiseAtualUuid, analisesDevolvidas]);
 
 
     const relatorioAposAcertosInfo = async () => {
-        let statusInfo = await getRelatorioAcertosInfo(analiseAtualUuid)
-        setMensagem(statusInfo);
+        if(analiseAtualUuid){
+            let statusInfo = await verificarStatusGeracaoAposAcertos(analiseAtualUuid)
+            setMensagem(statusInfo);
 
-        if(statusInfo.includes('Relatório sendo gerado...')){
-            setStatus("EM_PROCESSAMENTO")
-            setPreviaEmAndamento(true);
-            setDisableBtnPrevia(true);
-            setDisableBtnDownload(true);
-
-        }
-        else if (statusInfo.includes('Nenhuma') || statusInfo.includes('Nenhum')) {
-            setStatus("PENDENTE");
-            setDisableBtnDownload(true);
-            setDisableBtnPrevia(false);
-        }
-        else if(statusInfo.includes('gerada em') || statusInfo.includes('gerado em')) {
-            setStatus("CONCLUIDO");
-            setPreviaEmAndamento(false);
-            setDisableBtnDownload(false);
-            setDisableBtnPrevia(false);
+            if(statusInfo.includes('Relatório sendo gerado...')){
+                setStatus("EM_PROCESSAMENTO")
+                setPreviaEmAndamento(true);
+                setDisableBtnPrevia(true);
+                setDisableBtnDownload(true);
+            }
+            else if (statusInfo.includes('Nenhuma') || statusInfo.includes('Nenhum')) {
+                setStatus("PENDENTE");
+                setDisableBtnDownload(true);
+                setDisableBtnPrevia(false);
+            }
+            else if(statusInfo.includes('gerada em') || statusInfo.includes('gerado em')) {
+                setStatus("CONCLUIDO");
+                setPreviaEmAndamento(false);
+                setDisableBtnDownload(false);
+                setDisableBtnPrevia(false);
+            }   
         }
     }
 
@@ -75,12 +75,11 @@ export const RelatorioAposAcertos = ({prestacaoDeContasUuid, analiseAtualUuid, p
         setDisableBtnPrevia(true);
         setDisableBtnDownload(true);
 
-        let teste = await gerarPreviaRelatorioAposAcertos(analiseAtualUuid);
-        console.log("teste", teste)
+        await gerarPreviaRelatorioAposAcertos(analiseAtualUuid);
     }
 
     const downloadDocumentoPrevia = async () => {
-        await downloadDocumentoPreviaPdf(analiseAtualUuid);
+        await downloadDocumentPdfAposAcertos(analiseAtualUuid);
         await relatorioAposAcertosInfo();
     };
 
@@ -103,28 +102,30 @@ export const RelatorioAposAcertos = ({prestacaoDeContasUuid, analiseAtualUuid, p
 
     const getAnalise = async () => {
         setLoadingRelatorioAposAcertos(true);
-        let analises_pc = await getAnalisePrestacaoConta(analiseAtualUuid);
-        if(analises_pc){
-            if(analises_pc.versao === "FINAL" || analises_pc.status === "DEVOLVIDA"){
-                setVersaoRascunho(false);
+        if(analiseAtualUuid){
+            let analises_pc = await getAnalisePrestacaoConta(analiseAtualUuid);
+            if(analises_pc){
+                if(analises_pc.versao === "FINAL" || analises_pc.status === "DEVOLVIDA"){
+                    setVersaoRascunho(false);
+                }
+                else if(analises_pc.versao === "RASCUNHO"){
+                    setVersaoRascunho(true);
+                }
             }
-            else if(analises_pc.versao === "RASCUNHO"){
-                setVersaoRascunho(true);
-            }
+            setLoadingRelatorioAposAcertos(false);
         }
-        setLoadingRelatorioAposAcertos(false);
-     }
+    }
 
     
-    // const exibeLoading = status === 'EM_PROCESSAMENTO' || previaEmAndamento;
+    const exibeLoading = status === 'EM_PROCESSAMENTO' || previaEmAndamento;
 
-    // let classeMensagem = "documento-gerado";
-    // if (mensagem.includes('Nenhuma') || mensagem.includes('Nenhum')) {
-    //     classeMensagem = "documento-pendente"
-    // }
-    // if (mensagem.includes('Relatório sendo gerado...')) {
-    //     classeMensagem = "documento-processando"
-    // }
+    let classeMensagem = "documento-gerado";
+    if (mensagem.includes('Nenhuma') || mensagem.includes('Nenhum')) {
+        classeMensagem = "documento-pendente"
+    }
+    if (mensagem.includes('Relatório sendo gerado...')) {
+        classeMensagem = "documento-processando"
+    }
 
     return (
         loadingRelatorioAposAcertos ? (
@@ -136,38 +137,41 @@ export const RelatorioAposAcertos = ({prestacaoDeContasUuid, analiseAtualUuid, p
             />
         ) :
             <div className="relacao-bens-container mt-5">
-                <p className="relacao-bens-title">Relatório de apresentação após acertos {podeGerarPrevia ? `(Prévia)` : null}</p>
+                <p className="relacao-bens-title">Relatório de apresentação após acertos</p>
 
                 <article>
                     <div className="info">
                         {podeGerarPrevia
                             ?
-                                <p className="fonte-14 mb-1"><strong>Relatório de devoluções para acertos - Rascunho</strong></p>
+                                <p className="fonte-14 mb-1"><strong>Relatório de devoluções para acertos</strong></p>
                             :
-                                <p className="fonte-14 mb-1"><strong>{1}º Relatório de devoluções para acertos</strong></p>
+                                <p className="fonte-14 mb-1"><strong>{numeroDevolucao}º Relatório de devoluções para acertos</strong></p>
                         }
 
-                        <p className={`fonte-12 mb-1 ${1}`}>
-                            {/* {mensagem} */}
-                            <img alt="" src={Spinner} style={{height: "22px"}}/>
+                        <p className={`fonte-12 mb-1 ${classeMensagem}`}>
+                            {mensagem}
+                            {!disableBtnDownload &&
+                            <button onClick={() => downloadDocumentoPrevia()} 
+                            disabled={disableBtnDownload} type="button"
+                            className="btn-editar-membro">
+                                <FontAwesomeIcon
+                                    style={{fontSize: '15px', marginRight: "0", color: "#00585E"}}
+                                    icon={faDownload}
+                                />
+                            </button>
+                            }
+                            
+                            {exibeLoading ? <img alt="" src={Spinner} style={{height: "22px"}}/> : ''}
                         </p>
                     </div>
 
                     <div className="actions">
-                        {podeGerarPrevia && versaoRascunho
+                        {podeGerarPrevia 
                             ? 
                                 <button onClick={(e) => gerarPrevia()} type="button" disabled={disableBtnPrevia} className="btn btn-outline-success mr-2">Gerar prévia</button>
                             : 
                                 null
                         }
-
-                        <button onClick={(e) => console.log('downloadDocumentoPrevia')} disabled={disableBtnDownload} type="button" className="btn btn-success mr-2">
-                            <FontAwesomeIcon
-                                style={{color: "#FFFFFF", fontSize: '15px', marginRight: "5px"}}
-                                icon={faDownload}
-                            />
-                            baixar PDF 
-                        </button>
                     </div>
                     
                 </article>
