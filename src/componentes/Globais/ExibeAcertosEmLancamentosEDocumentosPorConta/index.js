@@ -753,18 +753,18 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
                             marginBottom="0"
                         />
                     ) :
-                        <TabelaAcertosDocumentos
-                            documentosAjustes={documentosAjustes}
-                            prestacaoDeContas={prestacaoDeContas}
-                            marcarDocumentoComoRealizado={marcarDocumentoComoRealizado}
-                            limparDocumentoStatus={limparDocumentoStatus}
-                            rowsPerPageAcertosDocumentos={rowsPerPageAcertosDocumentos}
-                            justificarNaoRealizacaoDocumentos={justificarNaoRealizacaoDocumentos}
-                            expandedRowsDocumentos={expandedRowsDocumentos}
-                            setExpandedRowsDocumentos={setExpandedRowsDocumentos}
-                            opcoesJustificativa={opcoesJustificativa}
-                            rowExpansionTemplateDocumentos={rowExpansionTemplateDocumentos}
-                        />
+                    <TabelaAcertosDocumentos
+                        documentosAjustes={documentosAjustes}
+                        prestacaoDeContas={prestacaoDeContas}
+                        marcarDocumentoComoRealizado={marcarDocumentoComoRealizado}
+                        limparDocumentoStatus={limparDocumentoStatus}
+                        rowsPerPageAcertosDocumentos={rowsPerPageAcertosDocumentos}
+                        justificarNaoRealizacaoDocumentos={justificarNaoRealizacaoDocumentos}
+                        expandedRowsDocumentos={expandedRowsDocumentos}
+                        setExpandedRowsDocumentos={setExpandedRowsDocumentos}
+                        opcoesJustificativa={opcoesJustificativa}
+                        rowExpansionTemplateDocumentos={rowExpansionTemplateDocumentos}
+                    />
                 }
                 {visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'UE' ?
                 <RelatorioAposAcertos
