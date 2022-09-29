@@ -66,6 +66,8 @@ const DetalharAcertosDocumentos = () =>{
             if (acertos && acertos.solicitacoes_de_ajuste_da_analise && acertos.solicitacoes_de_ajuste_da_analise.length > 0) {
                 acertos.solicitacoes_de_ajuste_da_analise.map((acerto) =>
                     _acertos.push({
+                        uuid: acerto.uuid,
+                        copiado: acerto.copiado,
                         tipo_acerto: acerto.tipo_acerto.uuid,
                         detalhamento: acerto.detalhamento,
                     })
@@ -178,6 +180,14 @@ const DetalharAcertosDocumentos = () =>{
         changeTextoECorCategoria(info_categoria, index);
     }
 
+    const ehSolicitacaoCopiada = (acerto) => {
+        if(acerto.copiado){
+            return true;
+        }
+        
+        return false;
+    }
+
     return(
         <PaginasContainer>
             <h1 className="titulo-itens-painel mt-5">Acompanhamento das Prestações de Contas</h1>
@@ -200,6 +210,7 @@ const DetalharAcertosDocumentos = () =>{
                         corTextoCategoria={corTextoCategoria}
                         adicionaTextoECorCategoriaVazio={adicionaTextoECorCategoriaVazio}
                         removeTextoECorCategoriaTipoDeAcertoJaCadastrado={removeTextoECorCategoriaTipoDeAcertoJaCadastrado}
+                        ehSolicitacaoCopiada={ehSolicitacaoCopiada}
                     />
                 </div>
             ):
