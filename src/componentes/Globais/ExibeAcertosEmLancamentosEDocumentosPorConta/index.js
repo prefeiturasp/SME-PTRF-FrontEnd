@@ -53,6 +53,7 @@ import TabelaAcertosEmExtratosBancarios from "./TabelaAcertosEmExtratosBancarios
 import {visoesService} from "../../../services/visoes.service";
 import BotoesDetalhesParaAcertosDeCategorias from "./BotoesDetalhesParaAcertosDeCategorias";
 import BotoesDetalhesParaAcertosDeCategoriasDocumentos from "./BotoesDetalhesParaAcertosDeCategoriasDocumentos";
+import {RelatorioAposAcertos} from './RelatorioAposAcertos'
 
 const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
                                                           exibeBtnIrParaPaginaDeAcertos = true,
@@ -752,19 +753,26 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
                             marginBottom="0"
                         />
                     ) :
-                    <TabelaAcertosDocumentos
-                        documentosAjustes={documentosAjustes}
-                        prestacaoDeContas={prestacaoDeContas}
-                        marcarDocumentoComoRealizado={marcarDocumentoComoRealizado}
-                        limparDocumentoStatus={limparDocumentoStatus}
-                        rowsPerPageAcertosDocumentos={rowsPerPageAcertosDocumentos}
-                        justificarNaoRealizacaoDocumentos={justificarNaoRealizacaoDocumentos}
-                        expandedRowsDocumentos={expandedRowsDocumentos}
-                        setExpandedRowsDocumentos={setExpandedRowsDocumentos}
-                        opcoesJustificativa={opcoesJustificativa}
-                        rowExpansionTemplateDocumentos={rowExpansionTemplateDocumentos}
-                    />
+                        <TabelaAcertosDocumentos
+                            documentosAjustes={documentosAjustes}
+                            prestacaoDeContas={prestacaoDeContas}
+                            marcarDocumentoComoRealizado={marcarDocumentoComoRealizado}
+                            limparDocumentoStatus={limparDocumentoStatus}
+                            rowsPerPageAcertosDocumentos={rowsPerPageAcertosDocumentos}
+                            justificarNaoRealizacaoDocumentos={justificarNaoRealizacaoDocumentos}
+                            expandedRowsDocumentos={expandedRowsDocumentos}
+                            setExpandedRowsDocumentos={setExpandedRowsDocumentos}
+                            opcoesJustificativa={opcoesJustificativa}
+                            rowExpansionTemplateDocumentos={rowExpansionTemplateDocumentos}
+                        />
                 }
+                <hr className="mt-4 mb-3"/>
+                <RelatorioAposAcertos
+                    prestacaoDeContasUuid={''}
+                    analiseAtualUuid={analiseAtualUuid}
+                    podeGerarPrevia={true}
+                />
+
             </>
         </>
     )
