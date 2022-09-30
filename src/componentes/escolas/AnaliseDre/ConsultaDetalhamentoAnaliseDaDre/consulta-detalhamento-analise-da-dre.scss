@@ -4,15 +4,15 @@
   font-size: 20px;
 }
 
-.texto-legenda-cor-EM_ANDAMENTO {
-  color: #DE9524;
+.texto-legenda-cor-EM_ANDAMENTO, .texto-legenda-cor-DEVOLVIDA{
+  color: #D06D12;
 }
 
-.texto-legenda-cor-NAO_RECEBIDA {
+.texto-legenda-cor-NAO_RECEBIDA{
   color: #086397;
 }
 
-.texto-legenda-cor-NAO_APRESENTADA, .texto-legenda-cor-DEVOLVIDA, .texto-legenda-cor-REPROVADA {
+.texto-legenda-cor-NAO_APRESENTADA, .texto-legenda-cor-REPROVADA{
   color: #B40C02;
 }
 
@@ -20,6 +20,6 @@
   color: #2B7D83;
 }
 
-.texto-legenda-cor-APROVADA, .texto-legenda-cor-APROVADA_RESSALVA {
+.texto-legenda-cor-APROVADA, .texto-legenda-cor-APROVADA_RESSALVA{
   color: #289B00;
 }
