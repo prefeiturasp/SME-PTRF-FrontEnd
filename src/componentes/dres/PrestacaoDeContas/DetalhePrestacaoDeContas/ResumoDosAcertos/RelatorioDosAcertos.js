@@ -135,19 +135,31 @@ export const RelatorioDosAcertos = ({prestacaoDeContasUuid, analiseAtualUuid, po
             />
         ) :
             <div className="relacao-bens-container mt-5">
-                <p className="relacao-bens-title">Relatório dos acertos {podeGerarPrevia ? `(Prévia)` : null}</p>
+                <p className="relacao-bens-title">DRE - Relatório dos acertos</p>
 
                 <article>
                     <div className="info">
                         {podeGerarPrevia
                             ?
-                                <p className="fonte-14 mb-1"><strong>Relatório de devoluções para acertos - Rascunho</strong></p>
+                                <p className="fonte-14 mb-1"><strong>Relatório de devoluções para acertos</strong></p>
                             :
                                 <p className="fonte-14 mb-1"><strong>{numeroDevolucao}º Relatório de devoluções para acertos</strong></p>
                         }
 
                         <p className={`fonte-12 mb-1 ${classeMensagem}`}>
                             {mensagem}
+                            {!disableBtnDownload &&
+                                <button 
+                                    onClick={() => downloadDocumentoPrevia()} 
+                                    disabled={disableBtnDownload} type="button" title="Download"
+                                    className="btn-editar-membro"
+                                >
+                                    <FontAwesomeIcon
+                                        style={{fontSize: '15px', marginRight: "0", color: "#00585E"}}
+                                        icon={faDownload}
+                                    />
+                                </button>
+                            }
                             {exibeLoading ? <img alt="" src={Spinner} style={{height: "22px"}}/> : ''}
                         </p>
                     </div>
@@ -159,14 +171,6 @@ export const RelatorioDosAcertos = ({prestacaoDeContasUuid, analiseAtualUuid, po
                             : 
                                 null
                         }
-
-                        <button onClick={(e) => downloadDocumentoPrevia()} disabled={disableBtnDownload} type="button" className="btn btn-success mr-2">
-                            <FontAwesomeIcon
-                                style={{color: "#FFFFFF", fontSize: '15px', marginRight: "5px"}}
-                                icon={faDownload}
-                            />
-                            baixar PDF 
-                        </button>
                     </div>
                     
                 </article>
