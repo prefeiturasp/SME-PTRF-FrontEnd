@@ -327,6 +327,7 @@ export const ResumoDosAcertos = () => {
                                 setPrimeiraAnalisePcDevolvida={setPrimeiraAnalisePcDevolvida} // Para TabsConferenciaAtualHistorico
                                 editavel={editavel}
                                 pcEmAnalise={pcEmAnalise}
+                                prestacaoDeContas={prestacaoDeContas}
                             />
                         ) :
                             <Loading
