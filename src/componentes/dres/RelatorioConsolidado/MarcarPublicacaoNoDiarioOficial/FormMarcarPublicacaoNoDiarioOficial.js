@@ -80,7 +80,6 @@ const FormMarcarPublicacaoNoDiarioOficial = ({consolidadoDre, carregaConsolidado
                   return (
                       <form onSubmit={props.handleSubmit}>
                           <p>Selecione a data e a página da publicação no Diário Oficial da Cidade.</p>
-
                           <div className="mt-2">
                               <label htmlFor="data">Data</label>
                               <DatePickerField
@@ -106,15 +105,14 @@ const FormMarcarPublicacaoNoDiarioOficial = ({consolidadoDre, carregaConsolidado
 
                           <div className="d-flex bd-highlight align-items-center">
                               <div className="py-2 flex-grow-1 bd-highlight">
-                                  {verificaSeHabilitaBotaoExclusao() &&
-                                      <button
-                                          onClick={()=>setShowModalConfirmDesmarcarPublicacaoNoDiarioOficial(true)}
-                                          type='button'
-                                          className='btn btn-danger'
-                                      >
-                                          Remover
-                                      </button>
-                                  }
+                                  <button
+                                      onClick={()=>setShowModalConfirmDesmarcarPublicacaoNoDiarioOficial(true)}
+                                      type='button'
+                                      className='btn btn-danger'
+                                      disabled={!verificaSeHabilitaBotaoExclusao()}
+                                  >
+                                      Remover
+                                  </button>
                               </div>
                               <div className="py-2 bd-highlight">
                                   <button onClick={handleClose} type="button" className="btn btn-outline-success mt-2 mr-2">Cancelar</button>
