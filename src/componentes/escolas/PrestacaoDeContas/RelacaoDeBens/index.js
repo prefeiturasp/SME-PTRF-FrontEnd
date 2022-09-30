@@ -154,21 +154,17 @@ export default class RelacaoDeBens extends Component {
     };
 
     downloadDocumentoFinal = async (formato) => {
-        // this.props.setLoading(true);
         const periodo = this.props.periodoPrestacaoDeConta.periodo_uuid;
         const conta = this.props.contaPrestacaoDeContas.conta_uuid;
         await documentoFinal(conta, periodo, formato);
         await this.relacaoBensInfo();
-        // this.props.setLoading(false);
     };
 
     downloadDocumentoPrevia = async (formato) => {
-        // this.props.setLoading(true);
         const periodo = this.props.periodoPrestacaoDeConta.periodo_uuid;
         const conta = this.props.contaPrestacaoDeContas.conta_uuid;
         await documentoPrevia(conta, periodo, formato);
         await this.relacaoBensInfo();
-        // this.props.setLoading(false);
     };
 
 
@@ -189,11 +185,6 @@ export default class RelacaoDeBens extends Component {
                 label: 'Baixar em .PDF',
                 command: () => {this.downloadDocumentoFinal("PDF")}
             },
-            // TODO Remover Excel
-            // {
-            //     label: 'Baixar em .XLSX',
-            //     command: () => {this.downloadDocumentoFinal("XLSX")}
-            // }
         ];
 
         return (
@@ -208,18 +199,6 @@ export default class RelacaoDeBens extends Component {
 
                         {status === 'CONCLUIDO' && documentoPrevio &&
                         <>
-                            {/* TODO Remover Excel*/}
-                            {/*<button*/}
-                            {/*    className='btn-editar-membro'*/}
-                            {/*    type='button'*/}
-                            {/*    onClick={() => {this.downloadDocumentoPrevia("XLSX")}}*/}
-                            {/*>*/}
-                            {/*    <FontAwesomeIcon*/}
-                            {/*        style={{fontSize: '18px',}}*/}
-                            {/*        icon={faDownload}*/}
-                            {/*    />*/}
-                            {/*    &nbsp;XLSX*/}
-                            {/*</button>*/}
                             <button className='btn-editar-membro'
                                     type='button'
                                     onClick={() => {this.downloadDocumentoPrevia("PDF")}}

@@ -4,6 +4,7 @@ import InfoPublicacaoNoDiarioOficial from "./MarcarPublicacaoNoDiarioOficial/Inf
 import BotaoMarcarPublicacaoNoDiarioOficial
     from "./MarcarPublicacaoNoDiarioOficial/BotaoMarcarPublicacaoNoDiarioOficial";
 import {Retificar} from "./Retificar";
+import ReactTooltip from "react-tooltip";
 
 const PublicarDocumentos = ({publicarConsolidadoDre, podeGerarPrevia, children, consolidadoDre, publicarConsolidadoDePublicacoesParciais, showPublicarRelatorioConsolidado, setShowPublicarRelatorioConsolidado, carregaConsolidadosDreJaPublicadosProximaPublicacao}) => {
 
@@ -26,14 +27,29 @@ const PublicarDocumentos = ({publicarConsolidadoDre, podeGerarPrevia, children, 
                             </div>
                         }
 
-                        <div className="p-2 bd-highlight">
-                            <button
-                                onClick={!consolidadoDre.eh_consolidado_de_publicacoes_parciais ? () => setShowPublicarRelatorioConsolidado(true) : ()=>publicarConsolidadoDePublicacoesParciais()}
-                                className="btn btn btn btn-success"
-                            >
-                                Gerar
-                            </button>
-                        </div>
+                        {consolidadoDre.habilita_botao_gerar ? (
+                            <div className="p-2 bd-highlight">
+                                <button
+                                    onClick={!consolidadoDre.eh_consolidado_de_publicacoes_parciais ? () => setShowPublicarRelatorioConsolidado(true) : ()=>publicarConsolidadoDePublicacoesParciais()}
+                                    className="btn btn btn btn-success"
+                                >
+                                    Gerar
+                                </button>
+                            </div>
+                        ):
+
+                            <div className="p-2 bd-highlight font-weight-normal" data-html={true} data-tip={consolidadoDre.texto_tool_tip_botao_gerar}>
+                                <button
+                                    onClick={!consolidadoDre.eh_consolidado_de_publicacoes_parciais ? () => setShowPublicarRelatorioConsolidado(true) : ()=>publicarConsolidadoDePublicacoesParciais()}
+                                    className="btn btn btn btn-success"
+                                    disabled={true}
+                                >
+                                    Gerar
+                                </button>
+                                <ReactTooltip html={true}/>
+                            </div>
+                        }
+
 
                     </>
                 }
