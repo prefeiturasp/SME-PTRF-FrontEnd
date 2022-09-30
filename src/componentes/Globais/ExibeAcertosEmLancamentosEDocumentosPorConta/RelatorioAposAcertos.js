@@ -127,6 +127,14 @@ export const RelatorioAposAcertos = ({prestacaoDeContasUuid, prestacaoDeContas, 
         classeMensagem = "documento-processando"
     }
 
+    const documentoFinalGerado = () => {
+        if(mensagem.includes('Documento gerado')){
+            return true;
+        }
+
+        return false;
+    }
+
     return (
         loadingRelatorioAposAcertos ? (
             <Loading
@@ -137,22 +145,27 @@ export const RelatorioAposAcertos = ({prestacaoDeContasUuid, prestacaoDeContas, 
             />
         ) :
             <div className="relacao-bens-container mt-5">
-                <p className="relacao-bens-title">Relatório de apresentação após acertos</p>
+                {podeGerarPrevia 
+                    ?
+                        <p className="relacao-bens-title">Relatório de apresentação após acertos</p>
+                    :
+                        <p className="relacao-bens-title">Associação - Relatório de apresentação após acertos</p>
+                }
 
                 <article>
                     <div className="info">
                         {podeGerarPrevia
                             ?
-                                <p className="fonte-14 mb-1"><strong>Relatório de devoluções para acertos</strong></p>
+                                <p className="fonte-14 mb-1"><strong>Relatório de apresentação após acertos</strong></p>
                             :
-                                <p className="fonte-14 mb-1"><strong>{numeroDevolucao}º Relatório de devoluções para acertos</strong></p>
+                                <p className="fonte-14 mb-1"><strong>{numeroDevolucao}º Relatório de apresentação após acertos</strong></p>
                         }
 
                         <p className={`fonte-12 mb-1 ${classeMensagem}`}>
                             {mensagem}
                             {!disableBtnDownload &&
                             <button onClick={() => downloadDocumentoPrevia()} 
-                            disabled={disableBtnDownload} type="button"
+                            disabled={disableBtnDownload} type="button" title="Download"
                             className="btn-editar-membro">
                                 <FontAwesomeIcon
                                     style={{fontSize: '15px', marginRight: "0", color: "#00585E"}}
@@ -166,8 +179,7 @@ export const RelatorioAposAcertos = ({prestacaoDeContasUuid, prestacaoDeContas, 
                     </div>
 
                     <div className="actions">
-
-                        {podeGerarPrevia && prestacaoDeContas.status === 'DEVOLVIDA'
+                        {podeGerarPrevia && prestacaoDeContas.status === 'DEVOLVIDA' && !documentoFinalGerado()
                             ? 
                                 <button onClick={(e) => gerarPrevia()} type="button" disabled={disableBtnPrevia} className="btn btn-outline-success mr-2">Gerar prévia</button>
                             : 
