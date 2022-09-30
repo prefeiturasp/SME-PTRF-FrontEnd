@@ -62,7 +62,7 @@ const ConsultaDetalhamentoAnaliseDaDre = () => {
         return () => {
             mounted = false;
         }
-        
+
     }, [parametros, prestacaoDeContas]);
 
     const onClickVoltar = useCallback(() => {
@@ -86,7 +86,7 @@ const ConsultaDetalhamentoAnaliseDaDre = () => {
             return (<span className={`texto-legenda-cor-EM_ANALISE`}><strong>em análise</strong></span>)
 
         } else if (status === 'DEVOLVIDA') {
-            return (<span className={`texto-legenda-cor-DEVOLVIDA`}><strong>devolvida para acerto</strong></span>)
+            return (<span className={`texto-legenda-cor-DEVOLVIDA`}><strong>devolvida pela DRE</strong></span>)
 
         } else if (status === 'APROVADA') {
             return (<span className={`texto-legenda-cor-APROVADA`}><strong>aprovada</strong></span>)
@@ -100,18 +100,30 @@ const ConsultaDetalhamentoAnaliseDaDre = () => {
         }
     };
 
-
     const retornaTextoSuperior = () => {
-        return (
-            <p className='fonte-16 mt-3'>
-                Nesse período a
-                Associação <strong> {prestacaoDeContas && prestacaoDeContas.associacao && prestacaoDeContas.associacao.unidade && prestacaoDeContas.associacao.unidade.tipo_unidade ? prestacaoDeContas.associacao.unidade.tipo_unidade : ""} {prestacaoDeContas && prestacaoDeContas.associacao && prestacaoDeContas.associacao.unidade && prestacaoDeContas.associacao.unidade.nome ? prestacaoDeContas.associacao.unidade.nome : ""}</strong>
-                &nbsp; teve sua prestação de contas {exibeLabelStatus(prestacaoDeContas.status)}
-                &nbsp; pela {prestacaoDeContas && prestacaoDeContas.associacao && prestacaoDeContas.associacao.unidade && prestacaoDeContas.associacao.unidade.dre && prestacaoDeContas.associacao.unidade.dre.nome ? prestacaoDeContas.associacao.unidade.dre.nome : ""}
-                &nbsp; e contou com <span
-                className='texto-legenda-cor-EM_ANDAMENTO'><strong>{totalAnalisesDePcDevolvidas}</strong></span> {totalAnalisesDePcDevolvidas > 0 ? " devoluções para acertos. " : " devolução para acertos."}
-            </p>
-        )
+        if (totalAnalisesDePcDevolvidas > 0){
+
+            if (prestacaoDeContas.status === 'DEVOLVIDA'){
+                return (
+                    <p className='fonte-16 mt-1'>
+                        Sua prestação de contas foi {exibeLabelStatus(prestacaoDeContas.status)} para os seguintes acertos.
+                    </p>
+                )
+            }
+
+            return (
+                <p className='fonte-16 mt-1'>
+                    Sua prestação de contas foi {exibeLabelStatus(prestacaoDeContas.status)} pela DRE, contando com os seguintes acertos.
+                </p>
+            )
+        }else{
+            return(
+                <p className='fonte-16 mt-1'>
+                    Sua prestação de contas foi {exibeLabelStatus(prestacaoDeContas.status)} pela DRE, sem devolução para acertos.
+                </p>
+            )
+        }
+
     }
 
     const retornaObjetoPeriodo = (periodo) => {
@@ -133,23 +145,21 @@ const ConsultaDetalhamentoAnaliseDaDre = () => {
                 <TextoSuperior
                     retornaTextoSuperior={retornaTextoSuperior}
                 />
-                <h1 className="titulo-itens-painel mt-5">Devoluções para acertos da DRE</h1>
+
                 <hr className="mt-0 mb-0"/>
-                {totalAnalisesDePcDevolvidas > 0 ? (
-                        <>
-                            <CardsDevolucoesParaAcertoDaDre
-                                prestacao_conta_uuid={prestacao_conta_uuid}
-                                setAnaliseAtualUuid={setAnaliseAtualUuid}
-                            />
-                            <ExibeAcertosEmLancamentosEDocumentosPorConta
-                                prestacaoDeContasUuid={prestacao_conta_uuid}
-                                analiseAtualUuid={analiseAtualUuid}
-                                exibeBtnIrParaPaginaDeAcertos={false}
-                                exibeBtnIrParaPaginaDeReceitaOuDespesa={true}
-                            />
-                        </>
-                    ) :
-                    <p><strong>Não existem devoluções para serem exibidas</strong></p>
+                {totalAnalisesDePcDevolvidas > 0 &&
+                    <>
+                        <CardsDevolucoesParaAcertoDaDre
+                            prestacao_conta_uuid={prestacao_conta_uuid}
+                            setAnaliseAtualUuid={setAnaliseAtualUuid}
+                        />
+                        <ExibeAcertosEmLancamentosEDocumentosPorConta
+                            prestacaoDeContasUuid={prestacao_conta_uuid}
+                            analiseAtualUuid={analiseAtualUuid}
+                            exibeBtnIrParaPaginaDeAcertos={false}
+                            exibeBtnIrParaPaginaDeReceitaOuDespesa={true}
+                        />
+                    </>
                 }
             </div>
         </PaginasContainer>
