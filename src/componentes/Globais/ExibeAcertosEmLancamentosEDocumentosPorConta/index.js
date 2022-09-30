@@ -53,6 +53,7 @@ import TabelaAcertosEmExtratosBancarios from "./TabelaAcertosEmExtratosBancarios
 import {visoesService} from "../../../services/visoes.service";
 import BotoesDetalhesParaAcertosDeCategorias from "./BotoesDetalhesParaAcertosDeCategorias";
 import BotoesDetalhesParaAcertosDeCategoriasDocumentos from "./BotoesDetalhesParaAcertosDeCategoriasDocumentos";
+import {RelatorioAposAcertos} from './RelatorioAposAcertos'
 
 const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
                                                           exibeBtnIrParaPaginaDeAcertos = true,
@@ -765,6 +766,14 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
                         rowExpansionTemplateDocumentos={rowExpansionTemplateDocumentos}
                     />
                 }
+                {visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'UE' ?
+                <RelatorioAposAcertos
+                    prestacaoDeContasUuid={prestacaoDeContasUuid}
+                    prestacaoDeContas={prestacaoDeContas}
+                    analiseAtualUuid={analiseAtualUuid}
+                    podeGerarPrevia={true}
+                /> : null}
+
             </>
         </>
     )
