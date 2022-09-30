@@ -48,6 +48,15 @@ export const postCriarAtaAtrelarAoConsolidadoDre = async (payload) => {
     return (await api.post(`/api/consolidados-dre/criar-ata-e-atelar-ao-consolidado/`, payload, authHeader)).data
 };
 
+export const postMarcarComoPublicadoNoDiarioOficial = async (payload) => {
+    return (await api.post(`/api/consolidados-dre/marcar-como-publicado-no-diario-oficial/`, payload, authHeader)).data
+};
+
+export const postDesmarcarComoPublicadoNoDiarioOficial = async (payload) => {
+    return (await api.post(`/api/consolidados-dre/marcar-como-nao-publicado-no-diario-oficial/`, payload, authHeader)).data
+};
+
+
 export const getDownloadRelatorio = async (relatorio_uuid, versao) => {
     return api
         .get(`/api/consolidados-dre/${relatorio_uuid}/download-relatorio-consolidado`, {

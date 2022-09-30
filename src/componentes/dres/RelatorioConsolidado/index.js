@@ -334,6 +334,7 @@ const RelatorioConsolidado = () => {
                                                     consolidadoDre={consolidadoDreProximaPublicacao}
                                                     showPublicarRelatorioConsolidado={showPublicarRelatorioConsolidado}
                                                     setShowPublicarRelatorioConsolidado={setShowPublicarRelatorioConsolidado}
+                                                    carregaConsolidadosDreJaPublicadosProximaPublicacao={carregaConsolidadosDreJaPublicadosProximaPublicacao}
                                                 >
                                                     <PreviaDocumentos
                                                         gerarPreviaConsolidadoDre={gerarPreviaConsolidadoDre}
@@ -363,6 +364,7 @@ const RelatorioConsolidado = () => {
                                                     publicarConsolidadoDre={publicarConsolidadoDre}
                                                     podeGerarPrevia={podeGerarPrevia}
                                                     consolidadoDre={consolidadoDre}
+                                                    carregaConsolidadosDreJaPublicadosProximaPublicacao={carregaConsolidadosDreJaPublicadosProximaPublicacao}
                                                 >
                                                     <PreviaDocumentos
                                                         gerarPreviaConsolidadoDre={gerarPreviaConsolidadoDre}
