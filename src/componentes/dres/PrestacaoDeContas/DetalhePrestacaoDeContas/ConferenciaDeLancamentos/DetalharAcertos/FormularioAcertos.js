@@ -92,10 +92,19 @@ export const FormularioAcertos = ({solicitacoes_acerto, listaTiposDeAcertoLancam
                                                                         icon={faExclamationCircle}
                                                                         className={corTextoCategoria[index]}
                                                                     />
-
                                                                     <span className={corTextoCategoria[index]}>{textoCategoria[index]}</span>
                                                                 </p>
                                                             }
+                                                            {textoCategoria[index] == 'Esse tipo de acerto reabre o lançamento para exclusão.' && (
+                                                                <p className='mt-2 mb-0'>
+                                                                <FontAwesomeIcon
+                                                                    style={{fontSize: '17px', marginRight:'4px'}}
+                                                                    icon={faExclamationCircle}
+                                                                    className={'texto-categoria-laranja'}
+                                                                />
+                                                                <span className={'texto-categoria-laranja'}>Ao ser apagado, o estorno do gasto será desfeito.</span>
+                                                            </p>
+                                                            )}
                                                         </div>
                                                         {exibeCamposCategoriaDevolucao[acerto.tipo_acerto] || acerto.devolucao_tesouro.uuid ? (
                                                                 <>
