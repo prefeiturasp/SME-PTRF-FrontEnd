@@ -1,9 +1,28 @@
-import React from "react";
+import React, { useRef, useState, useContext } from "react";
 import {DatePickerField} from "../../../../../Globais/DatePickerField";
 import {visoesService} from "../../../../../../services/visoes.service";
 import CurrencyInput from "react-currency-input";
+import {ValidarParcialTesouro} from "../../../../../../context/DetalharAcertos"
 
-export const FormularioAcertosDevolucaoAoTesouro = ({formikProps, acerto, index, tiposDevolucao}) => {
+export const FormularioAcertosDevolucaoAoTesouro = ({formikProps, acerto, index, tiposDevolucao, valorDocumento}) => {
+    const selectRef = useRef(null)
+    const [showParcialError, setShowParcialError] = useState(null)
+    const [isTotal, setIsTotal] = useState(true)
+    const {setIsValorParcialValido} = useContext(ValidarParcialTesouro)
+
+    const verificaParcialError = (valorParcial) => {
+        let valorParcialConvertido = valorParcial.slice(2).replace(',', '')
+        valorParcialConvertido = Number(`${valorParcialConvertido.slice(0, -2).replace('.', '')}.${valorParcialConvertido.slice(-2)}`)
+        if(valorParcialConvertido > valorDocumento){
+            setShowParcialError('O valor parcial não pode ser maior que o valor do documento')
+            setIsValorParcialValido(true)
+        }else{
+            setShowParcialError('')
+            setIsValorParcialValido(false)
+        }
+    }
+
+    let valorTesouro = selectRef.current?.value === "true" ? valorDocumento : acerto.devolucao_tesouro.valor;
 
     return (
         <>
@@ -44,11 +63,15 @@ export const FormularioAcertosDevolucaoAoTesouro = ({formikProps, acerto, index,
             <div className='col-12 col-md-6 mt-3'>
                 <label htmlFor={`devolucao_tesouro[${index}.devolucao_total]`}>Valor total ou parcial da despesa</label>
                 <select
+                    ref={selectRef}
                     value={acerto.devolucao_tesouro.devolucao_total}
                     name={`solicitacoes_acerto[${index}].devolucao_tesouro.devolucao_total`}
                     id={`devolucao_tesouro[${index}.devolucao_total]`}
                     onChange={(e) => {
+                        const valorTesouro = e.target.value === 'true' ? valorDocumento : acerto.devolucao_tesouro.valor;
                         formikProps.handleChange(e);
+                        verificaParcialError(valorTesouro.toString())
+                        setIsTotal(e.target.value === 'true')
                     }}
                     className='form-control'
                 >
@@ -60,10 +83,11 @@ export const FormularioAcertosDevolucaoAoTesouro = ({formikProps, acerto, index,
             <div className='col-12 col-md-6 mt-3'>
                 <label className='labels-filtros' htmlFor={`devolucao_tesouro[${index}.valor]`}>Valor</label>
                 <CurrencyInput
-                    value={acerto.devolucao_tesouro.valor}
+                    value={valorTesouro}
                     name={`solicitacoes_acerto[${index}].devolucao_tesouro.valor`}
                     onChangeEvent={(e) => {
                         formikProps.handleChange(e);
+                        verificaParcialError(e.target.value)
                     }}
                     id={`devolucao_tesouro[${index}.valor]`}
                     allowNegative={false}
@@ -73,7 +97,9 @@ export const FormularioAcertosDevolucaoAoTesouro = ({formikProps, acerto, index,
                     className={`form-control`}
                     selectAllOnFocus={true}
                     placeholder='Digite o valor'
+                    disabled={isTotal && selectRef.current?.value === "true"}
                 />
+                {showParcialError && !isTotal && <span className="span_erro text-danger mt-1">{showParcialError}</span>}
             </div>
         </>
     )
