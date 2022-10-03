@@ -320,6 +320,9 @@ export const ReceitaForm = () => {
                     if(visao_selecionada === "DRE"){
                         setTituloModalCancelar("Deseja realmente voltar?"); 
                     }
+                    else if(parametros.state.operaca ='requer_inclusao_documento_credito'){
+                        setTituloModalCancelar("Deseja cancelar a edição do crédito?")
+                    }
                     else{
                         if(ehOperacaoExclusaoReaberturaSeletiva()){
                             setTituloModalCancelar("Deseja cancelar a exclusão do crédito?")
@@ -1058,7 +1061,7 @@ export const ReceitaForm = () => {
                 }
                 else{
                     setReadOnlyBtnAcao(true);
-                    setFormDateErrors("Permitido apenas datas dentro do período referente à devolução.")
+                    setFormDateErrors("Permitido apenas datas dentro do período referente a prestação de conta.")
                 }
             } 
             catch (e) {
