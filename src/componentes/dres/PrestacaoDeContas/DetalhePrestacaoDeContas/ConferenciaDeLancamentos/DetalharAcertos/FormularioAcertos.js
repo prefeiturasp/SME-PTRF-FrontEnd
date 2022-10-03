@@ -7,7 +7,7 @@ import {FormularioAcertosDevolucaoAoTesouro} from "./FormularioAcertosDevolucaoA
 import {YupSignupSchemaDetalharAcertos} from './YupSignupSchemaDetalharAcertos'
 import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 
-export const FormularioAcertos = ({solicitacoes_acerto, listaTiposDeAcertoLancamentosAgrupado, onSubmitFormAcertos, formRef, handleChangeTipoDeAcertoLancamento, exibeCamposCategoriaDevolucao, tiposDevolucao, bloqueiaSelectTipoDeAcerto, removeBloqueiaSelectTipoDeAcertoJaCadastrado, textoCategoria, corTextoCategoria, removeTextoECorCategoriaTipoDeAcertoJaCadastrado, adicionaTextoECorCategoriaVazio, ehSolicitacaoCopiada}) => {
+export const FormularioAcertos = ({solicitacoes_acerto, listaTiposDeAcertoLancamentosAgrupado, onSubmitFormAcertos, formRef, handleChangeTipoDeAcertoLancamento, exibeCamposCategoriaDevolucao, tiposDevolucao, bloqueiaSelectTipoDeAcerto, removeBloqueiaSelectTipoDeAcertoJaCadastrado, textoCategoria, corTextoCategoria, removeTextoECorCategoriaTipoDeAcertoJaCadastrado, adicionaTextoECorCategoriaVazio, ehSolicitacaoCopiada, lancamentosParaAcertos}) => {
 
     return (
         <div className='mt-3'>
@@ -95,7 +95,7 @@ export const FormularioAcertos = ({solicitacoes_acerto, listaTiposDeAcertoLancam
                                                                     <span className={corTextoCategoria[index]}>{textoCategoria[index]}</span>
                                                                 </p>
                                                             }
-                                                            {textoCategoria[index] == 'Esse tipo de acerto reabre o lançamento para exclusão.' && (
+                                                            {lancamentosParaAcertos.filter((lanc) => lanc.tipo_transacao == "Crédito" && lanc.descricao == 'Estorno').length >= 1 && textoCategoria[index] == 'Esse tipo de acerto reabre o lançamento para exclusão.' && (
                                                                 <p className='mt-2 mb-0'>
                                                                 <FontAwesomeIcon
                                                                     style={{fontSize: '17px', marginRight:'4px'}}
