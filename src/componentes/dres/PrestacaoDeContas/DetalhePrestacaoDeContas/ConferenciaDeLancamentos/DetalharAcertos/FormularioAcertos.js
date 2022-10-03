@@ -92,7 +92,6 @@ export const FormularioAcertos = ({solicitacoes_acerto, listaTiposDeAcertoLancam
                                                                         icon={faExclamationCircle}
                                                                         className={corTextoCategoria[index]}
                                                                     />
-
                                                                     <span className={corTextoCategoria[index]}>{textoCategoria[index]}</span>
                                                                 </p>
                                                             }
