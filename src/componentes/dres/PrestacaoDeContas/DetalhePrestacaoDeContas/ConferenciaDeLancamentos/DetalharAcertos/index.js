@@ -363,7 +363,6 @@ export const DetalharAcertos = () => {
                             removeTextoECorCategoriaTipoDeAcertoJaCadastrado={removeTextoECorCategoriaTipoDeAcertoJaCadastrado}
                             adicionaTextoECorCategoriaVazio={adicionaTextoECorCategoriaVazio}
                             ehSolicitacaoCopiada={ehSolicitacaoCopiada}
-                            lancamentosParaAcertos={lancamentos_para_acertos}
                         />
                     </>
                 }
