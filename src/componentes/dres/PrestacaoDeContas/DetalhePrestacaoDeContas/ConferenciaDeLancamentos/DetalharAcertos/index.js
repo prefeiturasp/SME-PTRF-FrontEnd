@@ -367,6 +367,8 @@ export const DetalharAcertos = () => {
                             adicionaTextoECorCategoriaVazio={adicionaTextoECorCategoriaVazio}
                             ehSolicitacaoCopiada={ehSolicitacaoCopiada}
                             valorDocumento={valorDocumento}
+                            lancamentosParaAcertos={lancamentos_para_acertos}
+                            
                         />
                     </>
                 }
