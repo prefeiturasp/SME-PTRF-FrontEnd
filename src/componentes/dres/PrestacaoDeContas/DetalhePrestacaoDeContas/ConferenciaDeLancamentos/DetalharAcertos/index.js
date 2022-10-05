@@ -258,7 +258,6 @@ export const DetalharAcertos = () => {
     }
 
     const onSubmitFormAcertos = async () => {
-
         if (!formRef.current.errors.solicitacoes_acerto && formRef.current.values && formRef.current.values.solicitacoes_acerto) {
 
             let _lancamentos = []
@@ -368,7 +367,6 @@ export const DetalharAcertos = () => {
                             ehSolicitacaoCopiada={ehSolicitacaoCopiada}
                             valorDocumento={valorDocumento}
                             lancamentosParaAcertos={lancamentos_para_acertos}
-                            
                         />
                     </>
                 }

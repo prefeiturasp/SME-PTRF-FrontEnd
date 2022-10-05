@@ -1,6 +1,6 @@
 import React from "react";
 
-export const FormularioAcertosBasico = ({formikProps, acerto, index, label, placeholder}) => {
+export const FormularioAcertosBasico = ({formikProps, acerto, index, label, placeholder, required}) => {
     return (
         <>
             <div className="col-12 mt-3">
@@ -16,6 +16,9 @@ export const FormularioAcertosBasico = ({formikProps, acerto, index, label, plac
                     placeholder={placeholder}
                 />
             </div>
+            {required &&
+            <p className='mt-1 mb-0'><span className="text-danger">{formikProps?.errors?.['solicitacoes_acerto']?.[index]?.detalhamento}</span></p>
+            }
         </>
     )
 }
