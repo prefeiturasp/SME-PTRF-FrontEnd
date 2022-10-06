@@ -6,7 +6,6 @@ import {ValidarParcialTesouro} from "../../../../../../context/DetalharAcertos"
 
 export const FormularioAcertosDevolucaoAoTesouro = ({formikProps, acerto, index, tiposDevolucao, valorDocumento}) => {
     const selectRef = useRef(null)
-    const currentInputRef = useRef(null)
     const [showParcialError, setShowParcialError] = useState(null)
     const [isTotal, setIsTotal] = useState(acerto.devolucao_tesouro.devolucao_total === 'true')
     const {setIsValorParcialValido} = useContext(ValidarParcialTesouro)
@@ -14,7 +13,6 @@ export const FormularioAcertosDevolucaoAoTesouro = ({formikProps, acerto, index,
     const verificaParcialError = (valorParcial) => {
         let valorParcialConvertido = valorParcial.slice(2).replace(/[\,\.]/g, '')
         valorParcialConvertido = Number(`${valorParcialConvertido.slice(0, -2).replace('.', '')}.${valorParcialConvertido.slice(-2)}`)
-        console.log('valorParcialConvertido', valorParcialConvertido)
         if(valorParcialConvertido > valorDocumento){
             setShowParcialError('O valor parcial não pode ser maior que o valor do documento')
             setIsValorParcialValido(true)
@@ -90,7 +88,6 @@ export const FormularioAcertosDevolucaoAoTesouro = ({formikProps, acerto, index,
             <div className='col-12 col-md-6 mt-3'>
                 <label className='labels-filtros' htmlFor={`devolucao_tesouro[${index}.valor]`}>Valor</label>
                 <CurrencyInput
-                    ref={currentInputRef}
                     value={valorTesouro}
                     name={`solicitacoes_acerto[${index}].devolucao_tesouro.valor`}
                     onChangeEvent={(e) => {
