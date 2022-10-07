@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {Redirect} from 'react-router-dom'
 import {getPeriodos} from "../../../services/dres/Dashboard.service";
-import {getItensDashboardSme} from "../../../services/sme/DashboardSme.service"
+import {getCardRelatorios} from "../../../services/sme/DashboardSme.service"
 import {SelectPeriodo} from "./SelectPeriodo";
 import "./dashboard.scss"
 import {BarraDeStatus} from "./BarraDeStatus";
@@ -21,43 +21,7 @@ export const SmeDashboard = () => {
     }, []);
 
     useEffect(() => {
-        // carregaItensDashboard();
-        const dashboard = {
-            "cards": [
-                {
-                    "titulo": "DREs sem relatório gerado",
-                    "quantidade_de_relatorios": 14,
-                    "status": "NAO_GERADO"
-                },
-                {
-                    "titulo": "Relatórios não publicados",
-                    "quantidade_de_relatorios": 0,
-                    "status": "NAO_PUBLICADO"
-                },
-                {
-                    "titulo": "Relatórios publicados",
-                    "quantidade_de_relatorios": 2,
-                    "status": "PUBLICADO"
-                },
-                {
-                    "titulo": "Relatórios em análise",
-                    "quantidade_de_relatorios": 0,
-                    "status": "EM_ANALISE"
-                },
-                {
-                    "titulo": "Relatórios devolvidos para acertos",
-                    "quantidade_de_relatorios": 0,
-                    "status": "DEVOLVIDO"
-                },
-                {
-                    "titulo": "Relatórios analisados",
-                    "quantidade_de_relatorios": 0,
-                    "status": "ANALISADO"
-                }
-            ],
-            "total_de_relatorios": 2
-        }
-        setItensDashboard(dashboard)
+        carregaItensDashboard();
     }, [periodoEscolhido]);
 
     const carregaPeriodos = async () => {
@@ -71,14 +35,14 @@ export const SmeDashboard = () => {
         setLoading(false);
     };
 
-    // const carregaItensDashboard = async () =>{
-    //     setLoading(true);
-    //     if (periodoEscolhido){
-    //         let itens = await getItensDashboard(periodoEscolhido);
-    //         setItensDashboard(itens)
-    //     }
-    //     setLoading(false);
-    // };
+    const carregaItensDashboard = async () =>{
+        setLoading(true);
+        if (periodoEscolhido){
+            let itens = await getCardRelatorios(periodoEscolhido);
+            setItensDashboard(itens)
+        }
+        setLoading(false);
+    };
 
     const handleChangePeriodos = async (uuid_periodo) => {
         setPeriodoEsolhido(uuid_periodo)
