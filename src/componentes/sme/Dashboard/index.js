@@ -11,7 +11,7 @@ import Loading from "../../../utils/Loading";
 export const SmeDashboard = () => {
 
     const [periodos, setPeriodos] = useState(false);
-    const [periodoEscolhido, setPeriodoEsolhido] = useState(false);
+    const [periodoEscolhido, setPeriodoEscolhido] = useState(false);
     const [itensDashboard, setItensDashboard] = useState(false);
     const [statusRelatorio, setStatusRelatorio] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -30,10 +30,10 @@ export const SmeDashboard = () => {
         setPeriodos(periodos);
         if (periodos && periodos.length > 0){
             const periodoIndex = periodos.length > 1 ? 1 : 0;
-            setPeriodoEsolhido(periodos[periodoIndex].uuid)
+            setPeriodoEscolhido(periodos[periodoIndex].uuid)
         }
         setLoading(false);
-    };
+    }
 
     const carregaItensDashboard = async () =>{
         setLoading(true);
@@ -45,7 +45,7 @@ export const SmeDashboard = () => {
     };
 
     const handleChangePeriodos = async (uuid_periodo) => {
-        setPeriodoEsolhido(uuid_periodo)
+        setPeriodoEscolhido(uuid_periodo)
     };
 
     const handleClickVerRelatorios = (status) =>{
