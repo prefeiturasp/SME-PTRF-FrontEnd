@@ -1,9 +1,21 @@
 import * as yup from "yup";
 
-export const YupSignupSchemaDetalharAcertos = yup.object().shape({
+export const YupSignupSchemaDetalharAcertos = (idDevolucaoTesouro) => yup.object().shape({
     solicitacoes_acerto: yup.array()
         .of(yup.object().shape({
-            tipo_acerto: yup.string().required('Tipo de acerto é obrigatorio')
+            tipo_acerto: yup.string().required('Tipo de acerto é obrigatório'),
+            detalhamento: yup.string().notRequired().when('tipo_acerto', {
+                is: idDevolucaoTesouro,
+                then: yup.string().required('Motivo é obrigatório')
+            }),
+            devolucao_tesouro: yup.object({}).notRequired().when('tipo_acerto', {
+                is: idDevolucaoTesouro,
+                then: yup.object().shape({
+                    tipo: yup.string().required('Tipo de devolução é obrigatório'),
+                    devolucao_total: yup.string().required('Valor total ou parcial é obrigatório'),
+                    valor: yup.string().required('Valor é obrigatório')
+                })
+            })
         }))
 })
 

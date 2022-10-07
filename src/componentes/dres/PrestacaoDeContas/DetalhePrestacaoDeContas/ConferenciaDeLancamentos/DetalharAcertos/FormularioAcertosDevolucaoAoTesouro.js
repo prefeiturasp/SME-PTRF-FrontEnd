@@ -7,11 +7,11 @@ import {ValidarParcialTesouro} from "../../../../../../context/DetalharAcertos"
 export const FormularioAcertosDevolucaoAoTesouro = ({formikProps, acerto, index, tiposDevolucao, valorDocumento}) => {
     const selectRef = useRef(null)
     const [showParcialError, setShowParcialError] = useState(null)
-    const [isTotal, setIsTotal] = useState(true)
+    const [isTotal, setIsTotal] = useState(acerto.devolucao_tesouro.devolucao_total === 'true')
     const {setIsValorParcialValido} = useContext(ValidarParcialTesouro)
 
     const verificaParcialError = (valorParcial) => {
-        let valorParcialConvertido = valorParcial.slice(2).replace(',', '')
+        let valorParcialConvertido = valorParcial.slice(2).replace(/[\,\.]/g, '')
         valorParcialConvertido = Number(`${valorParcialConvertido.slice(0, -2).replace('.', '')}.${valorParcialConvertido.slice(-2)}`)
         if(valorParcialConvertido > valorDocumento){
             setShowParcialError('O valor parcial não pode ser maior que o valor do documento')
@@ -37,14 +37,15 @@ export const FormularioAcertosDevolucaoAoTesouro = ({formikProps, acerto, index,
                         formikProps.handleChange(e);
                     }}
                     className='form-control'
+                    required
                 >
                     <option value="">Selecione o tipo de devolução</option>
                     {tiposDevolucao && tiposDevolucao.map(item =>
                         <option key={item.id} value={item.uuid}>{item.nome}</option>
                     )}
                 </select>
+                <p className='mt-1 mb-0'><span className="text-danger">{formikProps?.errors?.['solicitacoes_acerto']?.[index]?.devolucao_tesouro?.tipo}</span></p>
                 {formikProps.errors.tipo && <span className="text-danger mt-1">{formikProps.errors.tipo}</span>}
-
             </div>
             <div className='col-12 col-md-3 mt-3'>
 
@@ -56,6 +57,7 @@ export const FormularioAcertosDevolucaoAoTesouro = ({formikProps, acerto, index,
                     placeholderText='Preenchimento pela UE.'
                     onChange={formikProps.setFieldValue}
                     disabled={visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'DRE'}
+                    required
                 />
                 {formikProps.errors.data && <span className="text-danger mt-1">{formikProps.errors.data}</span>}
 
@@ -69,16 +71,19 @@ export const FormularioAcertosDevolucaoAoTesouro = ({formikProps, acerto, index,
                     id={`devolucao_tesouro[${index}.devolucao_total]`}
                     onChange={(e) => {
                         const valorTesouro = e.target.value === 'true' ? valorDocumento : acerto.devolucao_tesouro.valor;
+                        acerto.devolucao_tesouro.valor = valorDocumento ? e.target.value === 'true' : acerto.devolucao_tesouro.valor
                         formikProps.handleChange(e);
                         verificaParcialError(valorTesouro.toString())
                         setIsTotal(e.target.value === 'true')
                     }}
                     className='form-control'
+                    required
                 >
                     <option value="">Selecione o tipo</option>
                     <option value='true'>Valor total</option>
                     <option value='false'>Valor parcial</option>
                 </select>
+                <p className='mt-1 mb-0'><span className="text-danger">{formikProps?.errors?.['solicitacoes_acerto']?.[index]?.devolucao_tesouro?.devolucao_total}</span></p>
             </div>
             <div className='col-12 col-md-6 mt-3'>
                 <label className='labels-filtros' htmlFor={`devolucao_tesouro[${index}.valor]`}>Valor</label>
@@ -98,7 +103,9 @@ export const FormularioAcertosDevolucaoAoTesouro = ({formikProps, acerto, index,
                     selectAllOnFocus={true}
                     placeholder='Digite o valor'
                     disabled={isTotal && selectRef.current?.value === "true"}
+                    required
                 />
+                <p className='mt-1 mb-0'><span className="text-danger">{formikProps?.errors?.['solicitacoes_acerto']?.[index]?.devolucao_tesouro?.valor}</span></p>
                 {showParcialError && !isTotal && <span className="span_erro text-danger mt-1">{showParcialError}</span>}
             </div>
         </>
