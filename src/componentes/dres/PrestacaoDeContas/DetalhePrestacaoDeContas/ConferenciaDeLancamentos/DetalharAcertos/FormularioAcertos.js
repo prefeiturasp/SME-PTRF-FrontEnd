@@ -7,7 +7,9 @@ import {FormularioAcertosDevolucaoAoTesouro} from "./FormularioAcertosDevolucaoA
 import {YupSignupSchemaDetalharAcertos} from './YupSignupSchemaDetalharAcertos'
 import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 
-export const FormularioAcertos = ({solicitacoes_acerto, listaTiposDeAcertoLancamentosAgrupado, onSubmitFormAcertos, formRef, handleChangeTipoDeAcertoLancamento, exibeCamposCategoriaDevolucao, tiposDevolucao, bloqueiaSelectTipoDeAcerto, removeBloqueiaSelectTipoDeAcertoJaCadastrado, textoCategoria, corTextoCategoria, removeTextoECorCategoriaTipoDeAcertoJaCadastrado, adicionaTextoECorCategoriaVazio, ehSolicitacaoCopiada}) => {
+export const FormularioAcertos = ({solicitacoes_acerto, listaTiposDeAcertoLancamentosAgrupado, onSubmitFormAcertos, formRef, handleChangeTipoDeAcertoLancamento, exibeCamposCategoriaDevolucao, tiposDevolucao, bloqueiaSelectTipoDeAcerto, removeBloqueiaSelectTipoDeAcertoJaCadastrado, textoCategoria, corTextoCategoria, removeTextoECorCategoriaTipoDeAcertoJaCadastrado, adicionaTextoECorCategoriaVazio, ehSolicitacaoCopiada, valorDocumento, lancamentosParaAcertos}) => {
+
+    const uuidDevolucaoTesouro = listaTiposDeAcertoLancamentosAgrupado.find(item => item.id === "DEVOLUCAO")?.tipos_acerto_lancamento[0].uuid
 
     return (
         <div className='mt-3'>
@@ -16,7 +18,7 @@ export const FormularioAcertos = ({solicitacoes_acerto, listaTiposDeAcertoLancam
                 enableReinitialize={true}
                 validateOnBlur={true}
                 validateOnChange={true}
-                validationSchema={YupSignupSchemaDetalharAcertos}
+                validationSchema={YupSignupSchemaDetalharAcertos(uuidDevolucaoTesouro)}
                 onSubmit={onSubmitFormAcertos}
                 innerRef={formRef}
             >
@@ -32,7 +34,9 @@ export const FormularioAcertos = ({solicitacoes_acerto, listaTiposDeAcertoLancam
                                 name="solicitacoes_acerto"
                                 render={({remove, push}) => (
                                     <>
-                                        {values.solicitacoes_acerto && values.solicitacoes_acerto.length > 0 && values.solicitacoes_acerto.map((acerto, index) => {
+                                        {values.solicitacoes_acerto && values.solicitacoes_acerto.length > 0 && values.solicitacoes_acerto.map((acerto, index, acertos) => {
+                                            const acertosSemDevolucao = acertos.some(acerto => acerto.tipo_acerto === uuidDevolucaoTesouro) ? (item) => item.filter((option) => option.id !== "DEVOLUCAO") : (item) => item
+
                                             return (
                                                 <div key={index}>
                                                     <div
@@ -76,13 +80,15 @@ export const FormularioAcertos = ({solicitacoes_acerto, listaTiposDeAcertoLancam
                                                             >
                                                                 <option key='' value="">Selecione a especificação do acerto</option>
                                                                 
-                                                                {listaTiposDeAcertoLancamentosAgrupado && listaTiposDeAcertoLancamentosAgrupado.length > 0 && listaTiposDeAcertoLancamentosAgrupado.map(item => (
-                                                                    <optgroup key={item.id} label={item.nome}>
-                                                                        {item.tipos_acerto_lancamento && item.tipos_acerto_lancamento.length > 0 && item.tipos_acerto_lancamento.map(tipo_acerto => (
-                                                                            <option key={tipo_acerto.uuid} value={tipo_acerto.uuid} data-categoria={item.id} data-objeto={JSON.stringify({...tipo_acerto})}>{tipo_acerto.nome}</option>
-                                                                        ))}
-                                                                    </optgroup>
-                                                                ))}
+                                                                {listaTiposDeAcertoLancamentosAgrupado && listaTiposDeAcertoLancamentosAgrupado.length > 0 && acertosSemDevolucao(listaTiposDeAcertoLancamentosAgrupado).map(item => {
+                                                                    return (
+                                                                        <optgroup key={item.id} label={item.nome}>
+                                                                            {item.tipos_acerto_lancamento && item.tipos_acerto_lancamento.length > 0 && item.tipos_acerto_lancamento.map(tipo_acerto => (
+                                                                                <option key={tipo_acerto.uuid} value={tipo_acerto.uuid} data-categoria={item.id} data-objeto={JSON.stringify({ ...tipo_acerto })}>{tipo_acerto.nome}</option>
+                                                                            ))}
+                                                                        </optgroup>
+                                                                    );
+                                                                })}
                                                             </select>
                                                             <p className='mt-1 mb-0'><span className="text-danger">{errors && errors.solicitacoes_acerto && errors.solicitacoes_acerto[index] && errors.solicitacoes_acerto[index].tipo_acerto ? errors.solicitacoes_acerto[index].tipo_acerto : ''}</span></p>
                                                             {textoCategoria[index] &&
@@ -92,10 +98,19 @@ export const FormularioAcertos = ({solicitacoes_acerto, listaTiposDeAcertoLancam
                                                                         icon={faExclamationCircle}
                                                                         className={corTextoCategoria[index]}
                                                                     />
-
                                                                     <span className={corTextoCategoria[index]}>{textoCategoria[index]}</span>
                                                                 </p>
                                                             }
+                                                            {lancamentosParaAcertos.filter((lanc) => lanc.tipo_transacao == "Crédito" && lanc.descricao == 'Estorno').length >= 1 && textoCategoria[index] == 'Esse tipo de acerto reabre o lançamento para exclusão.' && (
+                                                                <p className='mt-2 mb-0'>
+                                                                <FontAwesomeIcon
+                                                                    style={{fontSize: '17px', marginRight:'4px'}}
+                                                                    icon={faExclamationCircle}
+                                                                    className={'texto-categoria-laranja'}
+                                                                />
+                                                                <span className={'texto-categoria-laranja'}>Ao ser apagado, o estorno do gasto será desfeito.</span>
+                                                            </p>
+                                                            )}
                                                         </div>
                                                         {exibeCamposCategoriaDevolucao[acerto.tipo_acerto] || acerto.devolucao_tesouro.uuid ? (
                                                                 <>
@@ -104,6 +119,7 @@ export const FormularioAcertos = ({solicitacoes_acerto, listaTiposDeAcertoLancam
                                                                         acerto={acerto}
                                                                         index={index}
                                                                         tiposDevolucao={tiposDevolucao}
+                                                                        valorDocumento={valorDocumento}
                                                                     />
                                                                     <FormularioAcertosBasico
                                                                         formikProps={props}
@@ -112,6 +128,7 @@ export const FormularioAcertos = ({solicitacoes_acerto, listaTiposDeAcertoLancam
                                                                         index={index}
                                                                         label='Motivo:'
                                                                         placeholder='Utilize esse campo para detalhar o motivo'
+                                                                        required={true}
                                                                     />
                                                                 </>
                                                             ) :

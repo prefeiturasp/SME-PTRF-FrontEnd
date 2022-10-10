@@ -10,6 +10,7 @@ import {trataNumericos} from "../../../../../../utils/ValidacoesAdicionaisFormul
 import Loading from "../../../../../../utils/Loading";
 // Hooks Personalizados
 import useDataTemplate from "../../../../../../hooks/Globais/useDataTemplate";
+import {ProviderValidaParcial} from "../../../../../../context/DetalharAcertos";
 import {useCarregaPrestacaoDeContasPorUuid} from "../../../../../../hooks/dres/PrestacaoDeContas/useCarregaPrestacaoDeContasPorUuid";
 
 export const DetalharAcertos = () => {
@@ -17,6 +18,7 @@ export const DetalharAcertos = () => {
     const {prestacao_conta_uuid} = useParams();
     const formRef = useRef();
     const {lancamentos_para_acertos} = useSelector(state => state.DetalharAcertos)
+    const valorDocumento = lancamentos_para_acertos[0]?.valor_transacao_total ?? 0;
     const history = useHistory();
 
     // Hooks Personalizados
@@ -256,7 +258,6 @@ export const DetalharAcertos = () => {
     }
 
     const onSubmitFormAcertos = async () => {
-
         if (!formRef.current.errors.solicitacoes_acerto && formRef.current.values && formRef.current.values.solicitacoes_acerto) {
 
             let _lancamentos = []
@@ -327,6 +328,7 @@ export const DetalharAcertos = () => {
                 {lancamentos_para_acertos && lancamentos_para_acertos.length <= 0 &&
                     onClickBtnVoltar()
                 }
+                <ProviderValidaParcial>
                 <>
                 <TopoComBotoes
                     onSubmitFormAcertos={onSubmitFormAcertos}
@@ -363,9 +365,12 @@ export const DetalharAcertos = () => {
                             removeTextoECorCategoriaTipoDeAcertoJaCadastrado={removeTextoECorCategoriaTipoDeAcertoJaCadastrado}
                             adicionaTextoECorCategoriaVazio={adicionaTextoECorCategoriaVazio}
                             ehSolicitacaoCopiada={ehSolicitacaoCopiada}
+                            valorDocumento={valorDocumento}
+                            lancamentosParaAcertos={lancamentos_para_acertos}
                         />
                     </>
                 }
+                </ProviderValidaParcial>
             </div>
         </PaginasContainer>
     )
