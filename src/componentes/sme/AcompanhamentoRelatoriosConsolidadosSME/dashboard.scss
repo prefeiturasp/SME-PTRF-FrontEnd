@@ -1,0 +1,42 @@
+.barra-de-status{
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    background-color: #2B7D83;
+    color: #fff;
+  }
+  
+  .container-cards-dre-dashboard{
+    .card-header{
+      height: 48%;
+      font-weight: bold;
+      font-size: 16px;
+      background-color: transparent;
+      border-bottom: none;
+      line-height: 19px;
+  
+      .borda-bottom{
+        border-bottom: 1px solid #DADADA;
+        display: block;
+      }
+    }
+    .card-body{
+  
+      .card-qtde-associacoes{
+        font-weight: bold;
+        font-size: 28px;
+        color: #2B7D83;
+      }
+    }
+  
+    .btn-ver-prestacoes:hover svg path {
+      //filter: invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%);
+     fill: #fff;
+    }
+  }
+  
+  .btn-ver-todas-as-prestacoes{
+    border-color: #fff !important;
+    color: #fff !important;
+  }
+  
+  

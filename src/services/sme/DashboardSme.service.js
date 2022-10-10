@@ -15,3 +15,8 @@ export const getPeriodos = async () => {
 export const getItensDashboard = async (uuid_periodo) => {
     return (await api.get(`/api/prestacoes-contas/dashboard-sme/?periodo=${uuid_periodo}`, authHeader)).data
 };
+
+
+export const getCardRelatorios = async (uuid_periodo) => {
+    return (await api.get(`/api/consolidados-dre/acompanhamento-de-relatorios-consolidados-sme/?periodo=${uuid_periodo}`, authHeader)).data
+}

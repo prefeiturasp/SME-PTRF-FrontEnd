@@ -54,7 +54,8 @@ import {RelatorioConsolidadoApuracao} from "../componentes/dres/RelatorioConsoli
 import {RelatorioConsolidadoEmTela} from "../componentes/dres/RelatorioConsolidado/RelatorioConsolidadoEmTela";
 import {RelatorioConsolidadoDadosDasUes} from "../componentes/dres/RelatorioConsolidado/RelatorioConsolidadoDadosDasUes";
 import {PainelParametrizacoesPage} from "../paginas/SME/Parametrizacoes/PainelParametrizacoes";
-import {AcompanhamentoPcsSmePage} from "../paginas/SME/AcompanhamentoPcsSme";
+import {AcompanhamentoPcsSmePage} from "../paginas/SME/PrestacaoDeContas/AcompanhamentoPcsSme";
+import {RelatorioConsolidadoPage} from "../paginas/SME/PrestacaoDeContas/RelatorioConsolidado";
 import {AcoesDasAssociacoes} from "../componentes/sme/Parametrizacoes/Estrutura/AcoesDasAssociacoes";
 import {Acoes} from "../componentes/sme/Parametrizacoes/Estrutura/Acoes";
 import {AssociacoesDaAcao} from "../componentes/sme/Parametrizacoes/Estrutura/Acoes/AssociacoesDaAcao";
@@ -414,6 +415,12 @@ const routesConfig = [
         path: "/acompanhamento-pcs-sme",
         component: AcompanhamentoPcsSmePage,
         permissoes: ['access_acompanhamento_pc_sme'],
+    },
+    {
+        exact: true,
+        path: "/analises-relatorios-consolidados-dre",
+        component: RelatorioConsolidadoPage,
+        permissoes: ['access_analise_relatorios_consolidados_sme'],
     },
     {
         exact: true,
