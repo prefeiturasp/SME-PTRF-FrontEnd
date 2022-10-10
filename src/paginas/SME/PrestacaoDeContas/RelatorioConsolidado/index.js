@@ -1,6 +1,6 @@
 import React from "react";
 import {PaginasContainer} from '../../../PaginasContainer'
-import {SmeDashboard} from "../../../../componentes/sme/Dashboard";
+import {SmeDashboard} from "../../../../componentes/sme/AcompanhamentoRelatoriosConsolidadosSME";
 
 export const RelatorioConsolidadoPage = () => {
     return (
