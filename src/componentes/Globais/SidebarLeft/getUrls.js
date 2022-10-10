@@ -100,8 +100,7 @@ const UrlsMenuSME ={
                     label: "Acompanhamento de PCs", url: "acompanhamento-pcs-sme", dataFor:"acompanhamento_pcs_sme", icone:IconeAcompanhamento, permissoes: ['access_acompanhamento_pc_sme']
                 },
                 {
-                    label: "Relatórios consolidados das DREs", url: "analises-relatorios-consolidados-dre", dataFor:"analises_relatorios_consolidados_dre", icone:"", permissoes: ['access_acompanhamento_pc_sme',]
-                    // access_analise_relatorios_consolidados_sme
+                    label: "Relatórios consolidados das DREs", url: "analises-relatorios-consolidados-dre", dataFor:"analises_relatorios_consolidados_dre", icone:"", permissoes: ['access_analise_relatorios_consolidados_sme',]
                 },
             ]
         },
