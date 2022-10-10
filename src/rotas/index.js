@@ -420,8 +420,7 @@ const routesConfig = [
         exact: true,
         path: "/analises-relatorios-consolidados-dre",
         component: RelatorioConsolidadoPage,
-        permissoes: ['access_acompanhamento_pc_sme'],
-        // access_analise_relatorios_consolidados_sme
+        permissoes: ['access_analise_relatorios_consolidados_sme'],
     },
     {
         exact: true,
