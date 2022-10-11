@@ -79,6 +79,7 @@ import { ParametrizacoesMotivosDeEstorno } from "../componentes/sme/Parametrizac
 import { ParametrizacoesTiposAcertosLancamentos } from "../componentes/sme/Parametrizacoes/PrestacaoContas/TiposAcertosLancamentos";
 import { ParametrizacoesTiposAcertosDocumentos } from "../componentes/sme/Parametrizacoes/PrestacaoContas/TiposAcertosDocumentos";
 import { DevolucaoAoTesouroAjuste } from "../componentes/Globais/DevolucaoAoTesouroAjuste"
+import {AcompanhamentoDeRelatorioConsolidadoSMEDetalhe} from "../componentes/sme/AcompanhamentoRelatoriosConsolidadosSME/AcompanhamentoDeRelatorioConsolidadoSMEDetalhe"
 import {ExtracaoDadosPage} from '../paginas/SME/ExtracaoDados'
 
 const routesConfig = [
@@ -420,6 +421,12 @@ const routesConfig = [
         exact: true,
         path: "/analises-relatorios-consolidados-dre",
         component: RelatorioConsolidadoPage,
+        permissoes: ['access_analise_relatorios_consolidados_sme'],
+    },
+    {
+        exact: true,
+        path: "/analises-relatorios-consolidados-dre/:consolidado_dre_uuid/",
+        component: AcompanhamentoDeRelatorioConsolidadoSMEDetalhe,
         permissoes: ['access_analise_relatorios_consolidados_sme'],
     },
     {

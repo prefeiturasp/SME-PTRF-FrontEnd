@@ -17,7 +17,7 @@ export const BarraDeStatus = ({itensDashboard, handleClickVerRelatorios}) => {
                             style={{marginRight: "3px", color: '#fff'}}
                             icon={faEye}
                         />
-                       Ver todas os relatórios
+                    Ver todos os relatórios
                     </button>
                 </div>
             </div>
