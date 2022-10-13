@@ -1,6 +1,6 @@
 import React from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCheck, faExclamation} from "@fortawesome/free-solid-svg-icons";
+import {faCheck} from "@fortawesome/free-solid-svg-icons";
 
 export const TrilhaDeStatusConcluida = () => {
     return (
@@ -19,15 +19,25 @@ export const TrilhaDeStatusConcluida = () => {
                             <p className='mt-2'><strong>Não publicada no <br/> Diário Oficial</strong></p>
                         </div>
                         <div className='container-circulo'>
-                            <span className='circulo'>2</span>
+                            <span className='circulo circulo-ativo-passado'>
+                                    <FontAwesomeIcon
+                                        style={{color: '#fff'}}
+                                        icon={faCheck}
+                                    />
+                            </span>
                             <p className='mt-2 texto-inativo'><strong>Publicada no <br/> Diário Oficial</strong></p>
                         </div>
                         <div className='container-circulo'>
-                            <span className='circulo'>3</span>
+                            <span className='circulo circulo-ativo-passado'>
+                                    <FontAwesomeIcon
+                                        style={{color: '#fff'}}
+                                        icon={faCheck}
+                                    />
+                            </span>
                             <p className='mt-2 texto-inativo'><strong>Em análise</strong></p>
                         </div>
                         <div className='container-circulo'>
-                            <span className='circulo'>4</span>
+                            <span className='circulo circulo-ativo'>4</span>
                             <p className='mt-2 texto-inativo'><strong>Concluída</strong></p>
                         </div>
                     </div>

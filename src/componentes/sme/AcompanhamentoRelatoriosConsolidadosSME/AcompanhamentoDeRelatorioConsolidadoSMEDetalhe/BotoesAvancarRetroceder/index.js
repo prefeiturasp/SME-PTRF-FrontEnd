@@ -8,7 +8,7 @@ export const BotoesAvancarRetroceder = ({relatorios, textoBtnAvancar, textoBtnRe
             {Object.entries(relatorios).length > 0 &&
             <>
                 <div className="d-flex bd-highlightcontainer-cabecalho">
-                    <div className="flex-grow-1 mt-2 bd-highlight">
+                    <div className="flex-grow-1 mt-3 mb-3 bd-highlight">
                         {!esconderBotaoRetroceder &&
                             <button
                                 onClick={metodoRetroceder}

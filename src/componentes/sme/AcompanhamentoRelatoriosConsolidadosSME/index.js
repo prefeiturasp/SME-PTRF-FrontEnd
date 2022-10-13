@@ -7,7 +7,7 @@ import "./dashboard.scss"
 import {BarraDeStatus} from "./BarraDeStatus";
 import {DashboardCard} from "./DashboardCard";
 import Loading from "../../../utils/Loading";
-import {visoesService} from "../../../services/visoes.service";
+import {detalhamentoConsolidadoDRE} from "../../../services/sme/PrestacaoDeConta.service"
 
 export const SmeDashboard = () => {
 
@@ -30,8 +30,8 @@ export const SmeDashboard = () => {
     }, [periodoEscolhido]);
 
     const getConsolidadoDREUuid = async () => {
-        const dre_uuid = visoesService.getItemUsuarioLogado('associacao_selecionada.uuid');
-        setConsolidadoUuid(dre_uuid)
+        const relatorioConsolidado = await detalhamentoConsolidadoDRE()
+        setConsolidadoUuid('536c15db-fc00-479a-8179-8892a536bd2e')
     }
 
     const carregaPeriodos = async () => {

@@ -15,7 +15,7 @@ export const Cabecalho = () => {
 
             <div className="p-2 bd-highlight">
                 <Link
-                    to={`/dre-lista-prestacao-de-contas/`}
+                    to={`/analises-relatorios-consolidados-dre/`}
                     className="btn btn-outline-success btn-ir-para-listagem ml-2"
                     >
                     <FontAwesomeIcon
@@ -25,22 +25,13 @@ export const Cabecalho = () => {
                     Ir para a listagem
                 </Link>
             </div>
-            <div className="p-2 bd-highlight">
-                <button
-                    onClick={() => console.log("clicou")}
-                    className="btn btn-success"
-                    disabled={true}
-                >
-                    Salvar
-                </button>
-            </div>
         </div>
         <div className="info-cabecalho">
             <div className='periodo-info-cabecalho'>
-                <p><strong>Périodo: </strong> 2020.1 - 20/06/2020  até 20/05/2020</p>
+                <p>Périodo: <strong>2020.1 - 20/06/2020  até 20/05/2020</strong></p>
             </div>
             <div className='tipo-relatorio-info-cabecalho'>
-                <p><strong>Tipo Relatório: </strong> Parcial #1</p>
+                <p>Tipo Relatório: <strong>Parcial #1</strong></p>
             </div>
         </div>
         <div className='col-12'>

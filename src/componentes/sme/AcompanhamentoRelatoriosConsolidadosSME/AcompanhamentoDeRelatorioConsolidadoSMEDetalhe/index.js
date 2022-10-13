@@ -1,14 +1,21 @@
 import React, {useState} from 'react'
 
 import {Cabecalho} from './Cabecalho'
-// import Loading from "../../../../utils/Loading";
-// import {useParams, Redirect, useLocation} from "react-router-dom";
 import {BotoesAvancarRetroceder} from "../AcompanhamentoDeRelatorioConsolidadoSMEDetalhe/BotoesAvancarRetroceder"
 import {TrilhaDeStatus} from "../../AcompanhamentoRelatoriosConsolidadosSME/AcompanhamentoDeRelatorioConsolidadoSMEDetalhe/TrilhaDeStatus"
+import {ResponsavelAnalise} from "../../AcompanhamentoRelatoriosConsolidadosSME/AcompanhamentoDeRelatorioConsolidadoSMEDetalhe/ResponsavelAnalise"
+import ConferenciaDeDocumentos from "../../AcompanhamentoRelatoriosConsolidadosSME/AcompanhamentoDeRelatorioConsolidadoSMEDetalhe/ConferenciaDeDocumentos"
 import {PaginasContainer} from "../../../../paginas/PaginasContainer";
+import {ModalBootstrapReabreDREDiarioOficial} from "../../../Globais/ModalBootstrap"
+import {deleteReabreConsolidadoDRE} from "../../../../services/sme/PrestacaoDeConta.service"
+
+import "./../../../dres/PrestacaoDeContas/prestacao-de-contas.scss"
+import { useParams } from 'react-router-dom'
 
 export const AcompanhamentoDeRelatorioConsolidadoSMEDetalhe = () => {
+    const params = useParams()
     const [relatorioConsolidado, setRelatorioConsolidado] = useState({});
+    const [isShowModal, setIsShowModal] = useState(false);
     const [loading, setLoading] = useState(false)
 
     const relatorioMocked = {
@@ -39,6 +46,15 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEDetalhe = () => {
         "permite_edicao": false
         }
 
+    const handleRetroceder = (status_sme) => {
+        setIsShowModal(true)
+    }
+
+    const handleReabreConsolidado =  async () => {
+        const {consolidado_dre_uuid} = params
+        await deleteReabreConsolidadoDRE(consolidado_dre_uuid)
+    }
+
     return(
         <PaginasContainer>
             <h1 className="titulo-itens-painel mt-5">Acompanhamento da documentação da DRE</h1>
@@ -46,11 +62,26 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEDetalhe = () => {
                 <Cabecalho />
                 <BotoesAvancarRetroceder
                     relatorios={relatorioMocked}
+                    metodoRetroceder={handleRetroceder}
                     textoBtnAvancar={"Analisar"}
                     textoBtnRetroceder={"Reabrir para DRE"}
                 />
                 <TrilhaDeStatus relatorioConsolidado={relatorioMocked}/>
+                <ResponsavelAnalise responsavei={''}/>
+                <ConferenciaDeDocumentos
+                    relatorioConsolidado={relatorioConsolidado}
+                />
             </div>
+            <ModalBootstrapReabreDREDiarioOficial
+                show={isShowModal}
+                titulo={'Reabrir relatório consolidado para DRE'}
+                bodyText={'Atenção, o relatório consolidado será reaberto para a DRE que poderá fazer alteração e precisará gerá-lo novamente.'}
+                primeiroBotaoTexto={'Cancelar'}
+                segundoBotaoTexto={'Confirmar'}
+                segundoBotaoOnclick={handleReabreConsolidado}
+                primeiroBotaoOnclick={(e) => setIsShowModal(false)}
+            />
+
         </PaginasContainer>
     )
 }

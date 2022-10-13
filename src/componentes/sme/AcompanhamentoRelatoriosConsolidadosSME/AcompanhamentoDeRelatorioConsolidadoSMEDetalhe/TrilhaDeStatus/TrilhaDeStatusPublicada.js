@@ -1,4 +1,6 @@
 import React from "react";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faCheck} from "@fortawesome/free-solid-svg-icons";
 
 export const TrilhaDeStatusPublicada = () => {
     return (
@@ -7,8 +9,13 @@ export const TrilhaDeStatusPublicada = () => {
                 <div className="col-12">
                     <div id="timeline">&nbsp;</div>
                     <div className="d-flex justify-content-between mb-3">
-                        <div className='container-circulo'>
-                            <span className='circulo'>1</span>
+                        <div className='container-circulo-passado'>
+                            <span className='circulo circulo-ativo-passado'>
+                                        <FontAwesomeIcon
+                                            style={{color: '#fff'}}
+                                            icon={faCheck}
+                                        />
+                            </span>
                             <p className='mt-2'><strong>Não publicada no <br/> Diário Oficial</strong></p>
                         </div>
                         <div className='container-circulo'>
