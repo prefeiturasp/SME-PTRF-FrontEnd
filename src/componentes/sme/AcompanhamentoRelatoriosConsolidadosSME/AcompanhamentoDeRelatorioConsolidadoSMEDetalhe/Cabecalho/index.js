@@ -4,13 +4,12 @@ import {faArrowLeft} from "@fortawesome/free-solid-svg-icons";
 import {Link} from "react-router-dom";
 import './Cabecalho.scss'
 
-export const Cabecalho = () => {
-
+export const Cabecalho = ({relatorioConsolidado}) => {
     return (
         <>
         <div className="d-flex bd-highlight mt-3 mb-0 container-cabecalho">
             <div className="flex-grow-1 bd-highlight">
-                <p className='titulo-explicativo mb-0'>AGUA AZUL</p>
+                <p className='titulo-explicativo mb-0'>{relatorioConsolidado?.dre?.nome}</p>
             </div>
 
             <div className="p-2 bd-highlight">
@@ -26,14 +25,16 @@ export const Cabecalho = () => {
                 </Link>
             </div>
         </div>
-        <div className="info-cabecalho">
-            <div className='periodo-info-cabecalho'>
-                <p>Périodo: <strong>2020.1 - 20/06/2020  até 20/05/2020</strong></p>
+        { relatorioConsolidado.periodo && 
+            <div className="info-cabecalho">
+                <div className='periodo-info-cabecalho'>
+                    <p>Périodo: <strong>{relatorioConsolidado?.periodo?.referencia} - {relatorioConsolidado?.periodo?.data_inicio_realizacao_despesas} até {relatorioConsolidado?.periodo?.data_fim_realizacao_despesas}</strong></p>
+                </div>
+                <div className='tipo-relatorio-info-cabecalho'>
+                    <p>Tipo Relatório: <strong>{relatorioConsolidado?.tipo_relatorio}</strong></p>
+                </div>
             </div>
-            <div className='tipo-relatorio-info-cabecalho'>
-                <p>Tipo Relatório: <strong>Parcial #1</strong></p>
-            </div>
-        </div>
+        }
         <div className='col-12'>
             <hr className='mt-2 mb-2'/>
         </div>

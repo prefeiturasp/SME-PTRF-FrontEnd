@@ -9,11 +9,11 @@ const authHeader = {
 }
 
 export const detalhamentoConsolidadoDRE = async (uuid_consolidado) => {
-    return api.get(`/api/consolidados-dre/detalhamento/?uuid=${uuid_consolidado}`)
+    return api.get(`/api/consolidados-dre/detalhamento/?uuid=${uuid_consolidado}`, authHeader)
 }
 
 export const detalhamentoConferenciaDocumentos = async (uuid_consolidado) => {
-    return api.get(`/api/consolidados-dre/detalhamento-conferencia-documentos/?uuid=${uuid_consolidado}`)
+    return api.get(`/api/consolidados-dre/detalhamento-conferencia-documentos/?uuid=${uuid_consolidado}`, authHeader)
 }
 
 export const deleteReabreConsolidadoDRE = async (uuid_consolidado) => {

@@ -7,7 +7,6 @@ import "./dashboard.scss"
 import {BarraDeStatus} from "./BarraDeStatus";
 import {DashboardCard} from "./DashboardCard";
 import Loading from "../../../utils/Loading";
-import {detalhamentoConsolidadoDRE} from "../../../services/sme/PrestacaoDeConta.service"
 
 export const SmeDashboard = () => {
 
@@ -15,7 +14,6 @@ export const SmeDashboard = () => {
     const [periodoEscolhido, setPeriodoEscolhido] = useState();
     const [itensDashboard, setItensDashboard] = useState(false);
     const [statusRelatorio, setStatusRelatorio] = useState(false);
-    const [consolidadoUuid, setConsolidadoUuid] = useState({});
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -25,14 +23,8 @@ export const SmeDashboard = () => {
     useEffect(() => {
         if(periodoEscolhido) {
             carregaItensDashboard();
-            getConsolidadoDREUuid()
         }
     }, [periodoEscolhido]);
-
-    const getConsolidadoDREUuid = async () => {
-        const relatorioConsolidado = await detalhamentoConsolidadoDRE()
-        setConsolidadoUuid('536c15db-fc00-479a-8179-8892a536bd2e')
-    }
 
     const carregaPeriodos = async () => {
         setLoading(true);
@@ -95,7 +87,7 @@ export const SmeDashboard = () => {
                     {statusRelatorio &&
                     <Redirect
                         to={{
-                            pathname: `/analises-relatorios-consolidados-dre/${consolidadoUuid}`,
+                            pathname: `/analises-relatorios-consolidados-dre-detalhe/f631ecc1-190b-4c85-b3bf-6ebcee38b601`,
                         }}
                     />
                     }

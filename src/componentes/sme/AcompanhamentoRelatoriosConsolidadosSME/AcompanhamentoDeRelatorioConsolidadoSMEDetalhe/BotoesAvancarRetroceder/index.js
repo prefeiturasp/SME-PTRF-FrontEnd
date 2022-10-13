@@ -2,10 +2,10 @@ import React from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faAngleDoubleLeft, faAngleDoubleRight} from "@fortawesome/free-solid-svg-icons";
 
-export const BotoesAvancarRetroceder = ({relatorios, textoBtnAvancar, textoBtnRetroceder, metodoAvancar, metodoRetroceder, disabledBtnAvancar, disabledBtnRetroceder, esconderBotaoRetroceder=false, esconderBotaoAvancar}) =>{
+export const BotoesAvancarRetroceder = ({relatorioConsolidado, textoBtnAvancar, textoBtnRetroceder, metodoAvancar, metodoRetroceder, disabledBtnAvancar, disabledBtnRetroceder, esconderBotaoRetroceder=false, esconderBotaoAvancar}) =>{
     return(
         <>
-            {Object.entries(relatorios).length > 0 &&
+            {Object.entries(relatorioConsolidado).length > 0 &&
             <>
                 <div className="d-flex bd-highlightcontainer-cabecalho">
                     <div className="flex-grow-1 mt-3 mb-3 bd-highlight">

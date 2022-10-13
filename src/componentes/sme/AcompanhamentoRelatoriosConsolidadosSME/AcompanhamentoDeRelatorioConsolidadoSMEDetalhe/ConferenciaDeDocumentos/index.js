@@ -1,37 +1,20 @@
 import React, {memo, useCallback, useEffect, useState} from "react";
+import { useParams } from 'react-router-dom'
+import {detalhamentoConferenciaDocumentos} from "../../../../../services/sme/PrestacaoDeConta.service"
 
 import TabelaConferenciaDeDocumentosRelatorios from "./TabelaConferenciaDeDocumentosRelatorios";
 
 const ConferenciaDeDocumentos = ({}) =>{
-
+    const params = useParams()
     const rowsPerPage = 10
 
     const [listaDeDocumentosRelatorio, setListaDeDocumentosRelatorio] = useState([])
     const [loadingDocumentosRelatorio, setLoadingDocumentosRelatorio] = useState(true)
 
     const carregaListaDeDocumentosRelatorio = useCallback(async () =>{
-        setListaDeDocumentosRelatorio([
-                {
-                    "uuid": "d8d4f49e-dbbc-4f4a-a226-8838089be7b2",
-                    "nome": "Demonstrativo da Execução Físico-Financeira",
-                    "exibe_acoes": true
-                },
-                {
-                    "uuid": "90cb2f54-7582-41a0-bcc3-03ad83d88702",
-                    "nome": "Parecer Técnico Conclusivo",
-                    "exibe_acoes": true
-                },
-                {
-                    "uuid": "28383d53-c123-4d02-b850-3d15e40a0c23",
-                    "nome": "Ata de retificação",
-                    "exibe_acoes": false
-                },
-                {
-                    "uuid": "d9ccd885-b755-4058-b179-fca1339837f8",
-                    "nome": "Poder executivo em prática",
-                    "exibe_acoes": false
-                }
-            ])
+        let {consolidado_dre_uuid} = params
+        const response = await detalhamentoConferenciaDocumentos(consolidado_dre_uuid)
+        setListaDeDocumentosRelatorio(Object.values(response.data['lista_documentos']))
     }, [])
 
     useEffect(()=>{

@@ -2,7 +2,7 @@ import React from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCheck} from "@fortawesome/free-solid-svg-icons";
 
-export const TrilhaDeStatusPublicada = () => {
+export const TrilhaDeStatusDevolvido = () => {
     return (
         <>
             <div className='row'>
@@ -10,7 +10,7 @@ export const TrilhaDeStatusPublicada = () => {
                     <div id="timeline">&nbsp;</div>
                     <div className="d-flex justify-content-between mb-3">
                         <div className='container-circulo'>
-                        <span className='circulo circulo-ativo-passado'>
+                            <span className='circulo circulo-ativo-passado'>
                                 <FontAwesomeIcon
                                     style={{color: '#fff'}}
                                     icon={faCheck}
@@ -19,15 +19,29 @@ export const TrilhaDeStatusPublicada = () => {
                             <p className='mt-2'><strong>Não publicada no <br/> Diário Oficial</strong></p>
                         </div>
                         <div className='container-circulo'>
-                            <span className='circulo circulo-ativo'>2</span>
+                            <span className='circulo circulo-ativo-passado'>
+                                <FontAwesomeIcon
+                                    style={{color: '#fff'}}
+                                    icon={faCheck}
+                                />
+                            </span>
                             <p className='mt-2'><strong>Publicada no <br/> Diário Oficial</strong></p>
                         </div>
                         <div className='container-circulo'>
-                            <span className='circulo'>3</span>
-                            <p className='mt-2 texto-inativo'><strong>Em análise</strong></p>
+                            <span className='circulo circulo-ativo-passado'>
+                                <FontAwesomeIcon
+                                    style={{color: '#fff'}}
+                                    icon={faCheck}
+                                />
+                            </span>
+                            <p className='mt-2'><strong>Em análise</strong></p>
                         </div>
                         <div className='container-circulo'>
-                            <span className='circulo'>4</span>
+                            <span className='circulo circulo-ativo'>4</span>
+                            <p className='mt-2'><strong>Devolvido</strong></p>
+                        </div>
+                        <div className='container-circulo'>
+                            <span className='circulo'>5</span>
                             <p className='mt-2 texto-inativo'><strong>Concluída</strong></p>
                         </div>
                     </div>

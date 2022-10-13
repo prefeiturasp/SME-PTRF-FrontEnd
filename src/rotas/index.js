@@ -425,7 +425,7 @@ const routesConfig = [
     },
     {
         exact: true,
-        path: "/analises-relatorios-consolidados-dre/:consolidado_dre_uuid/",
+        path: "/analises-relatorios-consolidados-dre-detalhe/:consolidado_dre_uuid/",
         component: AcompanhamentoDeRelatorioConsolidadoSMEDetalhe,
         permissoes: ['access_analise_relatorios_consolidados_sme'],
     },
