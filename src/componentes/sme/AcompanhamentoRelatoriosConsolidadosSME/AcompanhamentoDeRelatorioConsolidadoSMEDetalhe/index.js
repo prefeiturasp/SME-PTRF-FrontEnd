@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useHistory } from 'react-router-dom'
 
 import {Cabecalho} from './Cabecalho'
 import {BotoesAvancarRetroceder} from "../AcompanhamentoDeRelatorioConsolidadoSMEDetalhe/BotoesAvancarRetroceder"
@@ -15,8 +15,11 @@ import "./../../../dres/PrestacaoDeContas/prestacao-de-contas.scss"
 
 export const AcompanhamentoDeRelatorioConsolidadoSMEDetalhe = () => {
     const params = useParams()
+    const history = useHistory()
     const [relatorioConsolidado, setRelatorioConsolidado] = useState({});
     const [isShowModal, setIsShowModal] = useState(false);
+    const [disabledBtnAvancar, setDisabledBtnAvancar] = useState(false);
+    const [disabledBtnRetroceder, setdisabledBtnRetroceder] = useState(false);
     const [loading, setLoading] = useState(false)
     
     useEffect(() => {
@@ -26,6 +29,8 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEDetalhe = () => {
     const getConsolidadoDREUuid = async () => {
         let {consolidado_dre_uuid} = params
         const response = await detalhamentoConsolidadoDRE(consolidado_dre_uuid)
+        setDisabledBtnAvancar(response.data.exibe_analisar)
+        setdisabledBtnRetroceder(response.data.exibe_reabrir_relatorio)
         setRelatorioConsolidado(response.data);
     }
 
@@ -36,6 +41,8 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEDetalhe = () => {
     const handleReabreConsolidado =  async () => {
         const {consolidado_dre_uuid} = params
         await deleteReabreConsolidadoDRE(consolidado_dre_uuid)
+        setIsShowModal(false)
+        history.push('/analises-relatorios-consolidados-dre/')
     }
 
     return(
@@ -45,6 +52,8 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEDetalhe = () => {
                 <Cabecalho relatorioConsolidado={relatorioConsolidado}/>
                 <BotoesAvancarRetroceder
                     relatorioConsolidado={relatorioConsolidado}
+                    disabledBtnAvancar={disabledBtnAvancar}
+                    disabledBtnRetroceder={disabledBtnRetroceder}
                     metodoRetroceder={handleRetroceder}
                     textoBtnAvancar={"Analisar"}
                     textoBtnRetroceder={"Reabrir para DRE"}

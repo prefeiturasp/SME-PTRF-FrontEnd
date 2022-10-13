@@ -12,7 +12,7 @@ export const BotoesAvancarRetroceder = ({relatorioConsolidado, textoBtnAvancar, 
                         {!esconderBotaoRetroceder &&
                             <button
                                 onClick={metodoRetroceder}
-                                disabled={disabledBtnRetroceder}
+                                disabled={!disabledBtnRetroceder}
                                 className="btn btn-success ml-2"
                             >
                                 <FontAwesomeIcon
@@ -27,7 +27,7 @@ export const BotoesAvancarRetroceder = ({relatorioConsolidado, textoBtnAvancar, 
                         <div className="p-2 bd-highlight">
                             <button
                                 onClick={metodoAvancar}
-                                disabled={true}
+                                disabled={!disabledBtnAvancar}
                                 className="btn btn-success ml-2"
                             >
                                 {textoBtnAvancar}

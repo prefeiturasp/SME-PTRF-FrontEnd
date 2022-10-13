@@ -61,13 +61,13 @@ const TabelaConferenciaDeDocumentosRelatorios = ({carregaListaDeDocumentosRelato
         }
         return (
             <>
-            <button disabled={false} className="btn btn-link fonte-14" type="button">
+            <button disabled={true} className="btn btn-link fonte-14" type="button">
                 <FontAwesomeIcon
                     style={{fontSize: '18px', marginRight: "5px", color: "#00585E"}}
                     icon={faEye}
                 />
             </button>
-            <button disabled={false} className="btn btn-link fonte-14" type="button">
+            <button disabled={true} className="btn btn-link fonte-14" type="button">
                 <FontAwesomeIcon
                     style={{fontSize: '18px', marginRight: "5px", color: "#00585E"}}
                     icon={faDownload}/>
@@ -83,7 +83,7 @@ const TabelaConferenciaDeDocumentosRelatorios = ({carregaListaDeDocumentosRelato
 
     const adicionarAcertos = (rowData) => {
         return (
-            <button disabled={false} className="btn btn-link fonte-14" type="button">
+            <button disabled={true} className="btn btn-link fonte-14" type="button">
                 <FontAwesomeIcon
                     style={{fontSize: '18px', marginRight: "5px", color: "#00585E"}}
                     icon={faEdit}

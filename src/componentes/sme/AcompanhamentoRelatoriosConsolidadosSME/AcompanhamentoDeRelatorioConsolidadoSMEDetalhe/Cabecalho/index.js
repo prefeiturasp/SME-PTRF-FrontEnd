@@ -1,6 +1,7 @@
 import React  from "react"
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faArrowLeft} from "@fortawesome/free-solid-svg-icons";
+import {exibeDataPT_BR} from "../../../../../utils/ValidacoesAdicionaisFormularios";
 import {Link} from "react-router-dom";
 import './Cabecalho.scss'
 
@@ -28,7 +29,7 @@ export const Cabecalho = ({relatorioConsolidado}) => {
         { relatorioConsolidado.periodo && 
             <div className="info-cabecalho">
                 <div className='periodo-info-cabecalho'>
-                    <p>Périodo: <strong>{relatorioConsolidado?.periodo?.referencia} - {relatorioConsolidado?.periodo?.data_inicio_realizacao_despesas} até {relatorioConsolidado?.periodo?.data_fim_realizacao_despesas}</strong></p>
+                    <p>Périodo: <strong>{relatorioConsolidado?.periodo?.referencia} - {exibeDataPT_BR(relatorioConsolidado?.periodo?.data_inicio_realizacao_despesas)} até {exibeDataPT_BR(relatorioConsolidado?.periodo?.data_fim_realizacao_despesas)}</strong></p>
                 </div>
                 <div className='tipo-relatorio-info-cabecalho'>
                     <p>Tipo Relatório: <strong>{relatorioConsolidado?.tipo_relatorio}</strong></p>

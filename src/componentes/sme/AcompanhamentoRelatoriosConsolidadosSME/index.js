@@ -3,10 +3,10 @@ import {Redirect} from 'react-router-dom'
 import {getPeriodos} from "../../../services/dres/Dashboard.service";
 import {getCardRelatorios} from "../../../services/sme/DashboardSme.service"
 import {SelectPeriodo} from "./SelectPeriodo";
-import "./dashboard.scss"
 import {BarraDeStatus} from "./BarraDeStatus";
 import {DashboardCard} from "./DashboardCard";
 import Loading from "../../../utils/Loading";
+import "./dashboard.scss"
 
 export const SmeDashboard = () => {
 
@@ -87,7 +87,7 @@ export const SmeDashboard = () => {
                     {statusRelatorio &&
                     <Redirect
                         to={{
-                            pathname: `/analises-relatorios-consolidados-dre-detalhe/f631ecc1-190b-4c85-b3bf-6ebcee38b601`,
+                            pathname: `/analises-relatorios-consolidados-dre-detalhe/bb634128-d489-4314-9529-394d94d3934e`,
                         }}
                     />
                     }
