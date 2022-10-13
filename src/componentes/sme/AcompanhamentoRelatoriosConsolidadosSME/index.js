@@ -87,7 +87,7 @@ export const SmeDashboard = () => {
                     {statusRelatorio &&
                     <Redirect
                         to={{
-                            pathname: `/analises-relatorios-consolidados-dre-detalhe/bb634128-d489-4314-9529-394d94d3934e`,
+                            pathname: `/analise-relatorio-consolidado-dre-detalhe/e4464481-ea7a-4d8a-b7e2-6fc90b9a33d0`,
                         }}
                     />
                     }
