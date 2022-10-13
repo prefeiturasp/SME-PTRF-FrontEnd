@@ -3,15 +3,15 @@ import {Redirect} from 'react-router-dom'
 import {getPeriodos} from "../../../services/dres/Dashboard.service";
 import {getCardRelatorios} from "../../../services/sme/DashboardSme.service"
 import {SelectPeriodo} from "./SelectPeriodo";
-import "./dashboard.scss"
 import {BarraDeStatus} from "./BarraDeStatus";
 import {DashboardCard} from "./DashboardCard";
 import Loading from "../../../utils/Loading";
+import "./dashboard.scss"
 
 export const SmeDashboard = () => {
 
-    const [periodos, setPeriodos] = useState(false);
-    const [periodoEscolhido, setPeriodoEscolhido] = useState(false);
+    const [periodos, setPeriodos] = useState();
+    const [periodoEscolhido, setPeriodoEscolhido] = useState();
     const [itensDashboard, setItensDashboard] = useState(false);
     const [statusRelatorio, setStatusRelatorio] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -19,18 +19,20 @@ export const SmeDashboard = () => {
     useEffect(() => {
         carregaPeriodos();
     }, []);
-
+    
     useEffect(() => {
-        carregaItensDashboard();
+        if(periodoEscolhido) {
+            carregaItensDashboard();
+        }
     }, [periodoEscolhido]);
 
     const carregaPeriodos = async () => {
         setLoading(true);
-        let periodos = await getPeriodos();
-        setPeriodos(periodos);
-        if (periodos && periodos.length > 0){
-            const periodoIndex = periodos.length > 1 ? 1 : 0;
-            setPeriodoEscolhido(periodos[periodoIndex].uuid)
+        let periodoEncontrados = await getPeriodos();
+        setPeriodos(periodoEncontrados);
+        if (periodoEncontrados && periodoEncontrados.length > 0){
+            const periodoIndex = periodoEncontrados.length > 1 ? 1 : 0;
+            setPeriodoEscolhido(periodoEncontrados[periodoIndex].uuid)
         }
         setLoading(false);
     }
@@ -62,7 +64,7 @@ export const SmeDashboard = () => {
                 periodos={periodos}
                 periodoEscolhido={periodoEscolhido}
                 handleChangePeriodos={handleChangePeriodos}
-           />
+        />
 
             {loading ? (
                     <Loading
@@ -85,7 +87,7 @@ export const SmeDashboard = () => {
                     {statusRelatorio &&
                     <Redirect
                         to={{
-                            pathname: `/dre-lista-prestacao-de-contas/${periodoEscolhido}/${statusRelatorio}`,
+                            pathname: `/analise-relatorio-consolidado-dre-detalhe/e4464481-ea7a-4d8a-b7e2-6fc90b9a33d0`,
                         }}
                     />
                     }
