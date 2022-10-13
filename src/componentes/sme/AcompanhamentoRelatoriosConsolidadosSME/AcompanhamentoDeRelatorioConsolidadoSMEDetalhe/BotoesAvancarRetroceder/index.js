@@ -27,7 +27,7 @@ export const BotoesAvancarRetroceder = ({relatorioConsolidado, textoBtnAvancar, 
                         <div className="p-2 bd-highlight">
                             <button
                                 onClick={metodoAvancar}
-                                disabled={disabledBtnAvancar}
+                                disabled={true}
                                 className="btn btn-success ml-2"
                             >
                                 {textoBtnAvancar}

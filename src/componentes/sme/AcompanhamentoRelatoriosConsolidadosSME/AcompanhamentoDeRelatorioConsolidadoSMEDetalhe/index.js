@@ -29,7 +29,7 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEDetalhe = () => {
         setRelatorioConsolidado(response.data);
     }
 
-    const handleRetroceder = (status_sme) => {
+    const handleRetroceder = () => {
         setIsShowModal(true)
     }
 
