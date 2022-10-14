@@ -56,6 +56,7 @@ import {RelatorioConsolidadoDadosDasUes} from "../componentes/dres/RelatorioCons
 import {PainelParametrizacoesPage} from "../paginas/SME/Parametrizacoes/PainelParametrizacoes";
 import {AcompanhamentoPcsSmePage} from "../paginas/SME/PrestacaoDeContas/AcompanhamentoPcsSme";
 import {RelatorioConsolidadoPage} from "../paginas/SME/PrestacaoDeContas/RelatorioConsolidado";
+import { AcompanhamentoRelatorioConsolidadosSmeListagem } from "../componentes/sme/AcompanhamentoRelatoriosConsolidadosSME/AcompanhamentoRelatoriosConsolidadosSmeListagem";
 import {AcoesDasAssociacoes} from "../componentes/sme/Parametrizacoes/Estrutura/AcoesDasAssociacoes";
 import {Acoes} from "../componentes/sme/Parametrizacoes/Estrutura/Acoes";
 import {AssociacoesDaAcao} from "../componentes/sme/Parametrizacoes/Estrutura/Acoes/AssociacoesDaAcao";
@@ -427,6 +428,12 @@ const routesConfig = [
         exact: true,
         path: "/analise-relatorio-consolidado-dre-detalhe/:consolidado_dre_uuid/",
         component: AcompanhamentoDeRelatorioConsolidadoSMEDetalhe,
+        permissoes: ['access_analise_relatorios_consolidados_sme'],
+    },
+    {
+        exact: true,
+        path: "/listagem-relatorios-consolidados-dre/:periodo_uuid?/:status_sme?",
+        component: AcompanhamentoRelatorioConsolidadosSmeListagem,
         permissoes: ['access_analise_relatorios_consolidados_sme'],
     },
     {
