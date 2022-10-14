@@ -41,7 +41,7 @@ export const DashboardCard = ({itensDashboard, handleClickVerRelatorios, handleC
                                     {
                                     card.status === 'NAO_GERADO' ?
                                     <button
-                                    onClick={() => handleClickVerDRE()}
+                                    onClick={() => handleClickVerDRE(card.status)}
                                     className="btn btn-outline-success btn-ver-prestacoes">
                                     <FontAwesomeIcon
                                         style={{marginRight: "3px", color: '#2B7D83'}}

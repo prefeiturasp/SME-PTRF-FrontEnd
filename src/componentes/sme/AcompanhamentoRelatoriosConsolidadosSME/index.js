@@ -54,8 +54,8 @@ export const SmeDashboard = () => {
         setStatusRelatorio(status);
     };
 
-    const handleClickVerDRE = () => {
-        return ''
+    const handleClickVerDRE = (status) => {
+        setStatusRelatorio(status);
     }
 
     return (
@@ -84,10 +84,10 @@ export const SmeDashboard = () => {
                         handleClickVerRelatorios={handleClickVerRelatorios}
                         handleClickVerDRE={handleClickVerDRE}
                     />
-                    {statusRelatorio &&
+                   {statusRelatorio &&
                     <Redirect
                         to={{
-                            pathname: `/analise-relatorio-consolidado-dre-detalhe/e4464481-ea7a-4d8a-b7e2-6fc90b9a33d0`,
+                            pathname: `/listagem-relatorios-consolidados-dre/${periodoEscolhido}/${statusRelatorio}`,
                         }}
                     />
                     }
