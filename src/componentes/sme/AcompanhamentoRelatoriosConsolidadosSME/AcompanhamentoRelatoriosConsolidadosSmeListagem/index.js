@@ -179,13 +179,20 @@ export const AcompanhamentoRelatorioConsolidadosSmeListagem = () => {
         setStateFiltros({
             ...initialStateFiltros,
         });
-        setSelectedStatusPc([status_sme]) // deve ficar com o status inicial da pagina ou com TODOS?
-        await carregaRelatoriosConsolidados()
+        setSelectedStatusPc([])
+        let filtro_status = null
+        let relatorios = await getListaRelatoriosConsolidados(
+            periodoEscolhido,
+            filtro_status,
+        )
+        setRelatoriosConsolidados(relatorios)
+        setLoading(false);
     };
 
     const handleSubmitFiltros = async () => {
         setLoading(true);
         let filtro_status = !selectedStatusPc.includes("TODOS") ? selectedStatusPc : null
+        filtro_status = filtro_status && filtro_status.length > 0 ? filtro_status : null
         let relatorios = await getListaRelatoriosConsolidados(
             periodoEscolhido,
             filtro_status,
