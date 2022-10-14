@@ -154,7 +154,7 @@ export const DevolucaoAoTesouroAjuste = () => {
                             variant="danger"
                             className="btn btn-danger ml-1"
                             onClick={() => setModalDevolucaoAoTesouro(true)}
-                            disabled={temDataDevolucao() === null}
+                            disabled={!state.tem_permissao_de_edicao || temDataDevolucao() === null}
                         >
                             Desfazer dev. tesouro
                         </Button>
