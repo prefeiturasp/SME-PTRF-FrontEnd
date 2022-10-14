@@ -15,7 +15,7 @@ export const Cabecalho = ({relatorioConsolidado}) => {
 
             <div className="p-2 bd-highlight">
                 <Link
-                    to={`/analises-relatorios-consolidados-dre/`}
+                    to={`/listagem-relatorios-consolidados-dre/${relatorioConsolidado?.periodo?.uuid}/TODOS`}
                     className="btn btn-outline-success btn-ir-para-listagem ml-2"
                     >
                     <FontAwesomeIcon

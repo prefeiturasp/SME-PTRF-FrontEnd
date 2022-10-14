@@ -129,7 +129,7 @@ const TabelaConferenciaDeDocumentosRelatorios = ({carregaListaDeDocumentosRelato
                         />
                         <Column
                             field='acoes'
-                            header='Açoẽs'
+                            header='Ações'
                             body={acoesTemplate}
                             style={{borderRight: 'none', width: '12%'}}
                         />
