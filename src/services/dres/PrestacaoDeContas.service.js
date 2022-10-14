@@ -115,7 +115,6 @@ export const getSalvarDevoulucoesAoTesouro = async (prestacao_conta_uuid, payloa
 };
 
 export const deleteDevolucaoAoTesouro = async (uuid_pc, payload) => {
-    console.log({...authHeader, data: payload})
     return (await api.delete(`/api/prestacoes-contas/${uuid_pc}/apagar-devolucoes-ao-tesouro/`, {...authHeader, data: payload}))
 }
 
