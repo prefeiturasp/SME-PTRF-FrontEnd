@@ -2,48 +2,40 @@ import React, {useEffect, useState, useCallback} from "react";
 import { useHistory } from "react-router-dom";
 import {DatePickerField} from "../DatePickerField";
 import {PaginasContainer} from "../../../paginas/PaginasContainer";
-import { getPrestacaoDeContasDetalhe } from "../../../services/dres/PrestacaoDeContas.service"
 import {useLocation} from 'react-router-dom';
 import {Button} from 'react-bootstrap';
 import {toastCustom} from "../../../componentes/Globais/ToastCustom"
-import { marcarDevolucaoTesouro, getSalvarDevoulucoesAoTesouro } from '../../../services/dres/PrestacaoDeContas.service.js'
+import { marcarDevolucaoTesouro, desmarcarDevolucaoTesouro, getSalvarDevoulucoesAoTesouro, deleteDevolucaoAoTesouro } from '../../../services/dres/PrestacaoDeContas.service.js'
+import {ModalBootstrapDeleteDevolucaoAoTesouro} from "../../Globais/ModalBootstrap"
 import moment from "moment";
 
 import './../../../componentes/escolas/GeracaoDaAta/geracao-da-ata.scss'
 
 export const DevolucaoAoTesouroAjuste = () => {
     const { state } = useLocation();
+    const history = useHistory();
     const [devolucao, setDevolucao] = useState([]);
     const [despesa, setDespesas] = useState([]);
     const [dateDevolucao, setDateDevolucao] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
-    const history = useHistory();
+    const [ModalDevolucaoAoTesouro, setModalDevolucaoAoTesouro] = useState(false)
 
     useEffect(() => {
         let mounted = true;
-        getPrestacaoDeContasDetalhe(state.uuid_pc).then(prestacao => {
-            prestacao.devolucoes_ao_tesouro_da_prestacao.forEach(devolucao => {
-                if (devolucao.despesa.uuid === state.uuid_despesa) {
-                    if (mounted) {
-                      setDevolucao(devolucao)
-                      setDespesas(devolucao.despesa)
-                      if (devolucao.data) {
-                          setDateDevolucao(devolucao.data)
-                      }
-                    }
-                }
-            });
-        }).catch(error => {
-            console.log("Erro: ", error);
-        });
+
+        if (mounted) {
+            setDespesas(state.analise_lancamento.solicitacoes_de_ajuste_da_analise[0].devolucao_ao_tesouro.despesa);
+            setDevolucao(state.analise_lancamento.solicitacoes_de_ajuste_da_analise[0].devolucao_ao_tesouro)
+            setDateDevolucao(state.analise_lancamento.solicitacoes_de_ajuste_da_analise[0].devolucao_ao_tesouro.data)
+        }
         return () =>{
             mounted = false
         }
-    }, [state.uuid_pc, state.uuid_despesa])
+    }, [])
 
     const validateDate = (value) => {
         if (!(value instanceof Date)) {
-          setErrorMessage('Data é um campo obrigatório')
+        setErrorMessage('Data é um campo obrigatório')
         }
     }
 
@@ -56,10 +48,33 @@ export const DevolucaoAoTesouroAjuste = () => {
         history.push(`${state.origem}/${state.uuid_pc}`)
     }
 
+    const handleModalDevolucaoAoTesouro = () => {
+        setModalDevolucaoAoTesouro(false)
+    }
+
+    const temDataDevolucao = () => {
+        return state.analise_lancamento.solicitacoes_de_ajuste_da_analise[0].devolucao_ao_tesouro.data
+    }
+
+    const deleteDevolucaoTesouro = async () => {
+        const payload = {
+            'devolucoes_ao_tesouro_a_apagar': [
+                {
+                    'uuid': devolucao.uuid_registro_devolucao,
+                }
+            ]
+        }
+        await deleteDevolucaoAoTesouro(state.uuid_pc, payload)
+        await desmarcarDevolucaoTesouro(state.uuid_analise_lancamento)
+        toastCustom.ToastCustomSuccess('Devolução ao tesouro removida com sucesso.')
+        history.push(`${state.origem}/${state.uuid_pc}`)
+    }
+
     const submitAlteracaoDevolucaoTesouro = async () => {
         let payload = {
             devolucoes_ao_tesouro_da_prestacao: [
                 {
+                    uuid: devolucao.uuid_registro_devolucao,
                     data: new Date(dateDevolucao).toISOString().slice(0, 10),
                     devolucao_total: devolucao.devolucao_total,
                     motivo: devolucao.motivo,
@@ -67,7 +82,6 @@ export const DevolucaoAoTesouroAjuste = () => {
                     tipo: devolucao.tipo.uuid,
                     despesa: despesa.uuid,
                     visao_criacao: devolucao.visao_criacao,
-                    uuid: devolucao.uuid,
                 }
             ]
         }
@@ -123,24 +137,44 @@ export const DevolucaoAoTesouroAjuste = () => {
                         </div>
                     </div>
                     <div
-                        className="col-md-3 col-sm-2 w-100">
+                        className="col-md-6 col-sm-6 w-100">
                         <button 
-                            className="btn btn-outline-success mr-4"
+                            className="btn btn-outline-success mr-1"
                             onClick={handleCancelar}>
                             Cancelar
                         </button>
-                        <Button
+                        <Button 
                             variant="success"
-                            className="btn btn-sucess pr-4 pl-4"
+                            className="btn btn-sucess ml-1"
                             onClick={submitAlteracaoDevolucaoTesouro}
                             disabled={!state.tem_permissao_de_edicao || !dateDevolucao}
                         >
                             Salvar
                         </Button>
+                        <Button
+                            variant="danger"
+                            className="btn btn-danger ml-1"
+                            onClick={() => setModalDevolucaoAoTesouro(true)}
+                            disabled={!state.tem_permissao_de_edicao && state.operacao === 'requer_atualizacao_devolucao_ao_tesouro'}
+                        >
+                            Desfazer dev. tesouro
+                        </Button>
                     </div>
                 </div>
                 }
             </div>
+            <ModalBootstrapDeleteDevolucaoAoTesouro
+                show={ModalDevolucaoAoTesouro}
+                onHide={handleModalDevolucaoAoTesouro}
+                titulo="Deseja desfazer o registro de depósito da devolução ao tesouro? "
+                bodyText={"Isso significará que essa devolução não foi realizada. Você poderá fazer um novo registro se desejar."}
+                primeiroBotaoOnclick={() => setModalDevolucaoAoTesouro(false)}
+                primeiroBotaoTexto="Cancelar"
+                primeiroBotaoCss="outline-success"
+                segundoBotaoOnclick={deleteDevolucaoTesouro}
+                segundoBotaoTexto="Confirmar"
+                segundoBotaoCss="success"
+            />
             
         </PaginasContainer>
     )

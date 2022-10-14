@@ -86,6 +86,10 @@ export const marcarDevolucaoTesouro = async (uuid_analise_lancamento) => {
     return (await api.post(`/api/analises-lancamento-prestacao-conta/${uuid_analise_lancamento}/marcar-devolucao-tesouro-atualizada/`, {}, authHeader)).data
 }
 
+export const desmarcarDevolucaoTesouro = async (uuid_analise_lancamento) => {
+    return (await api.post(`/api/analises-lancamento-prestacao-conta/${uuid_analise_lancamento}/marcar-devolucao-tesouro-nao-atualizada/`, {}, authHeader)).data
+}
+
 export const getComentariosDeAnalise = async (prestacao_uuid) => {
     return (await api.get(`/api/comentarios-de-analises/comentarios/?prestacao_conta__uuid=${prestacao_uuid}`, authHeader)).data
 };
@@ -109,6 +113,11 @@ export const getReordenarComentarios = async (payload) => {
 export const getSalvarDevoulucoesAoTesouro = async (prestacao_conta_uuid, payload) => {
     return (await api.patch(`/api/prestacoes-contas/${prestacao_conta_uuid}/salvar-devolucoes-ao-tesouro/`, payload, authHeader)).data
 };
+
+export const deleteDevolucaoAoTesouro = async (uuid_pc, payload) => {
+    console.log({...authHeader, data: payload})
+    return (await api.delete(`/api/prestacoes-contas/${uuid_pc}/apagar-devolucoes-ao-tesouro/`, {...authHeader, data: payload}))
+}
 
 export const postNotificarComentarios = async (payload) => {
     return (await api.post(`/api/notificacoes/notificar/`, payload, authHeader)).data
