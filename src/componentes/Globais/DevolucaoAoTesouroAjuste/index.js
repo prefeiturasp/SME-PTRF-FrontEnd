@@ -22,7 +22,6 @@ export const DevolucaoAoTesouroAjuste = () => {
 
     useEffect(() => {
         let mounted = true;
-
         if (mounted) {
             setDespesas(state.analise_lancamento.solicitacoes_de_ajuste_da_analise[0].devolucao_ao_tesouro.despesa);
             setDevolucao(state.analise_lancamento.solicitacoes_de_ajuste_da_analise[0].devolucao_ao_tesouro)
@@ -31,7 +30,7 @@ export const DevolucaoAoTesouroAjuste = () => {
         return () =>{
             mounted = false
         }
-    }, [])
+    }, [state.uuid_pc, state.uuid_despesa])
 
     const validateDate = (value) => {
         if (!(value instanceof Date)) {
@@ -53,7 +52,8 @@ export const DevolucaoAoTesouroAjuste = () => {
     }
 
     const temDataDevolucao = () => {
-        return state.analise_lancamento.solicitacoes_de_ajuste_da_analise[0].devolucao_ao_tesouro.data
+        const data = state.analise_lancamento.solicitacoes_de_ajuste_da_analise[0].devolucao_ao_tesouro.data
+        return data
     }
 
     const deleteDevolucaoTesouro = async () => {
@@ -117,7 +117,6 @@ export const DevolucaoAoTesouroAjuste = () => {
                         </tr>
                     </tbody>
                 </table>
-
                 {<div className="row">
                     <div
                         className="col-md-3 mt-2 pr-0 mr-xl-n3 mr-lg-n2">
@@ -155,7 +154,7 @@ export const DevolucaoAoTesouroAjuste = () => {
                             variant="danger"
                             className="btn btn-danger ml-1"
                             onClick={() => setModalDevolucaoAoTesouro(true)}
-                            disabled={!state.tem_permissao_de_edicao && state.operacao === 'requer_atualizacao_devolucao_ao_tesouro'}
+                            disabled={temDataDevolucao() === null}
                         >
                             Desfazer dev. tesouro
                         </Button>
