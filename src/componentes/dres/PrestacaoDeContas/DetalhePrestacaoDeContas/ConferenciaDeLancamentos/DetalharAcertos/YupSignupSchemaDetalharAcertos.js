@@ -4,10 +4,6 @@ export const YupSignupSchemaDetalharAcertos = (idDevolucaoTesouro) => yup.object
     solicitacoes_acerto: yup.array()
         .of(yup.object().shape({
             tipo_acerto: yup.string().required('Tipo de acerto é obrigatório'),
-            detalhamento: yup.string().notRequired().when('tipo_acerto', {
-                is: idDevolucaoTesouro,
-                then: yup.string().required('Motivo é obrigatório')
-            }),
             devolucao_tesouro: yup.object({}).notRequired().when('tipo_acerto', {
                 is: idDevolucaoTesouro,
                 then: yup.object().shape({

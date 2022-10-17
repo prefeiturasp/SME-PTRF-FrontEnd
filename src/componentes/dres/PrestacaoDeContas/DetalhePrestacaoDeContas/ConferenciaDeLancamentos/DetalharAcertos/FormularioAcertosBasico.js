@@ -16,9 +16,6 @@ export const FormularioAcertosBasico = ({formikProps, acerto, index, label, plac
                     placeholder={placeholder}
                 />
             </div>
-            {required &&
-            <p className='mt-1 mb-0'><span className="text-danger">{formikProps?.errors?.['solicitacoes_acerto']?.[index]?.detalhamento}</span></p>
-            }
         </>
     )
 }
