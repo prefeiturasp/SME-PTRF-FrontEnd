@@ -13,7 +13,7 @@ export const FormularioAcertosDevolucaoAoTesouro = ({formikProps, acerto, index,
     const verificaParcialError = (valorParcial) => {
         let valorParcialConvertido = valorParcial.slice(2).replace(/[\,\.]/g, '')
         valorParcialConvertido = Number(`${valorParcialConvertido.slice(0, -2).replace('.', '')}.${valorParcialConvertido.slice(-2)}`)
-        if(valorParcialConvertido > valorDocumento){
+        if(valorParcialConvertido >= valorDocumento){
             setShowParcialError('O valor parcial não pode ser maior que o valor do documento')
             setIsValorParcialValido(true)
         }else{
