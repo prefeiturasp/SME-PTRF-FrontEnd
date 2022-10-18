@@ -101,7 +101,7 @@ export const AnaliseDre = () =>{
     const acoesTemplate = (rowData) =>{
         return (
             <>
-                {rowData.status_pc === 'APROVADA' || rowData.status_pc === 'APROVADA_RESSALVA' || rowData.status_pc === 'REPROVADA' || rowData.status_pc === 'DEVOLVIDA' ? (
+                {rowData.pode_habilitar_botao_ver_acertos_em_analise_da_dre ? (
                     <Link to={{pathname: `consulta-detalhamento-analise-da-dre/${rowData.prestacao_de_contas_uuid}`,
                             state: {
                                 periodoFormatado: retornaObjetoPeriodo(rowData),

@@ -29,6 +29,7 @@ const LinkCustom = ({url, analise_lancamento, prestacaoDeContasUuid, prestacaoDe
             to={{
                 pathname: `${url}`,
                 state: {
+                    analise_lancamento: analise_lancamento,
                     uuid_analise_lancamento: analise_lancamento.uuid,
                     uuid_pc: prestacaoDeContasUuid,
                     uuid_despesa: analise_lancamento.despesa,

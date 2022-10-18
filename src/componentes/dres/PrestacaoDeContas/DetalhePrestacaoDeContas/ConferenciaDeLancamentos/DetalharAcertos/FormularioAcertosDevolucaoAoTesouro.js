@@ -1,4 +1,4 @@
-import React, { useRef, useState, useContext } from "react";
+import React, { useRef, useState, useContext, useMemo } from "react";
 import {DatePickerField} from "../../../../../Globais/DatePickerField";
 import {visoesService} from "../../../../../../services/visoes.service";
 import CurrencyInput from "react-currency-input";
@@ -15,6 +15,9 @@ export const FormularioAcertosDevolucaoAoTesouro = ({formikProps, acerto, index,
         valorParcialConvertido = Number(`${valorParcialConvertido.slice(0, -2).replace('.', '')}.${valorParcialConvertido.slice(-2)}`)
         if(valorParcialConvertido > valorDocumento){
             setShowParcialError('O valor parcial não pode ser maior que o valor do documento')
+            setIsValorParcialValido(true)
+        }else if (valorParcialConvertido == valorDocumento) {
+            setShowParcialError('O valor parcial não pode ser igual ao valor do documento')
             setIsValorParcialValido(true)
         }else{
             setShowParcialError('')
@@ -71,7 +74,7 @@ export const FormularioAcertosDevolucaoAoTesouro = ({formikProps, acerto, index,
                     id={`devolucao_tesouro[${index}.devolucao_total]`}
                     onChange={(e) => {
                         const valorTesouro = e.target.value === 'true' ? valorDocumento : acerto.devolucao_tesouro.valor;
-                        acerto.devolucao_tesouro.valor = valorDocumento ? e.target.value === 'true' : acerto.devolucao_tesouro.valor
+                        acerto.devolucao_tesouro.valor =  e.target.value === 'true' ? valorDocumento : acerto.devolucao_tesouro.valor
                         formikProps.handleChange(e);
                         verificaParcialError(valorTesouro.toString())
                         setIsTotal(e.target.value === 'true')
