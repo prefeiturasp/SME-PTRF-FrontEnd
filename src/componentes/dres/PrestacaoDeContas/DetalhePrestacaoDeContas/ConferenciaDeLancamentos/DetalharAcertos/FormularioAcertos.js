@@ -35,7 +35,12 @@ export const FormularioAcertos = ({solicitacoes_acerto, listaTiposDeAcertoLancam
                                 render={({remove, push}) => (
                                     <>
                                         {values.solicitacoes_acerto && values.solicitacoes_acerto.length > 0 && values.solicitacoes_acerto.map((acerto, index, acertos) => {
-                                            const acertosSemDevolucao = acertos.some(acerto => acerto.tipo_acerto === uuidDevolucaoTesouro) ? (item) => item.filter((option) => option.id !== "DEVOLUCAO") : (item) => item
+                                            const indexDevolucaoTesouro = acertos.findIndex(acerto => acerto.tipo_acerto === uuidDevolucaoTesouro)
+                                            let acertosSemDevolucao = (item) => item
+
+                                            if (indexDevolucaoTesouro !== -1) {
+                                                acertosSemDevolucao = indexDevolucaoTesouro !== index ? (item) => item.filter((option) => option.id !== "DEVOLUCAO") : (item) => item
+                                            }
 
                                             return (
                                                 <div key={index}>

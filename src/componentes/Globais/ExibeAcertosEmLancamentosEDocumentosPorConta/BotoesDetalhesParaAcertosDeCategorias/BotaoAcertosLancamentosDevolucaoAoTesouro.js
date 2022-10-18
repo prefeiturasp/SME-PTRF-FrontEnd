@@ -12,7 +12,6 @@ const BotaoAcertosLancamentosDevolucaoAoTesouro = ({analise_lancamento, prestaca
     return (
         <>
             {analise_lancamento && !analise_lancamento.devolucao_tesouro_atualizada ? (
-
                 <LinkCustom
                     url={URL}
                     analise_lancamento={analise_lancamento}
@@ -22,7 +21,7 @@ const BotaoAcertosLancamentosDevolucaoAoTesouro = ({analise_lancamento, prestaca
                     operacao='requer_atualizacao_devolucao_ao_tesouro'
                     tipo_transacao={tipo_transacao}
                 >
-                    { TEMPERMISSAO ? 'Ajustar dev. tesouro' : "Ver dev. tesouro"}
+                    { TEMPERMISSAO ? 'Informar dev. tesouro' : "Ver dev. tesouro"}
                 </LinkCustom>
             ):
 
