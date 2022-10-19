@@ -1,5 +1,9 @@
 import React, {useEffect, useState, memo, useCallback} from "react";
-import {getLancamentosParaConferencia, getUltimaAnalisePc, getContasDaAssociacao} from "../../../../../services/dres/PrestacaoDeContas.service";
+import {
+    getLancamentosParaConferencia,
+    getUltimaAnalisePc,
+    getContasComMovimentoNaPc
+} from "../../../../../services/dres/PrestacaoDeContas.service";
 import {TabsConferenciaDeLancamentos} from "./TabsConferenciaDeLancamentos";
 import {visoesService} from "../../../../../services/visoes.service";
 import {mantemEstadoAcompanhamentoDePc as meapcservice} from "../../../../../services/mantemEstadoAcompanhamentoDePc.service";
@@ -28,7 +32,7 @@ const ConferenciaDeLancamentos = ({prestacaoDeContas, editavel=true}) =>{
         if (prestacaoDeContas && prestacaoDeContas.associacao && prestacaoDeContas.associacao.uuid){
             try {
                 const buscaContasDaAssociacao = async ()=>{
-                    let contas = await getContasDaAssociacao(prestacaoDeContas.associacao.uuid)
+                    let contas = await getContasComMovimentoNaPc(prestacaoDeContas.uuid)
                     setContasAssociacao(contas)
                 }
                 buscaContasDaAssociacao()
