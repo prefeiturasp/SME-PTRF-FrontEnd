@@ -228,7 +228,7 @@ export const ReceitaFormFormik = ({
                                             validacoesPersonalizadasCredito(values, setFieldValue, "credito_principal")
                                         }}
                                         onBlur={props.handleBlur}
-                                        disabled={readOnlyReaberturaSeletiva || ![['add_receita'], ['change_receita']].some(visoesService.getPermissoes)}
+                                        disabled={readOnlyEstorno || readOnlyCampos || readOnlyAcaoAssociacaoReceita || readOnlyReaberturaSeletiva || ![['add_receita'], ['change_receita']].some(visoesService.getPermissoes)}
                                         maxDate={new Date()}
                                     />
                                     {formDateErrors && 
