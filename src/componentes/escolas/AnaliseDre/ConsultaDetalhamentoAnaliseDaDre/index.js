@@ -22,7 +22,7 @@ const ConsultaDetalhamentoAnaliseDaDre = () => {
     const prestacaoDeContas = useCarregaPrestacaoDeContasPorUuid(prestacao_conta_uuid)
     const [analisesDePcDevolvidas, setAnalisesDePcDevolvidas] = useState([])
     const [analiseAtualUuid, setAnaliseAtualUuid] = useState('')
-    const [periodoFormatado, setPeriodoFormatado] = useState(null)
+     const [periodoFormatado, setPeriodoFormatado] = useState(null)
 
     const totalAnalisesDePcDevolvidas = useMemo(() => analisesDePcDevolvidas.length, [analisesDePcDevolvidas]);
 
