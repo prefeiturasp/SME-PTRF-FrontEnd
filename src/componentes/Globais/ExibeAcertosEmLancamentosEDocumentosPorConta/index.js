@@ -348,7 +348,7 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
                     {data.documento_mestre.mensagem_inativa &&
                         <div className='row'>
                             <div className='col-12 p-1 px-4 py-1'>
-                                {barraMensagemCustom.BarraMensagemSucessVermelho(data.documento_mestre.mensagem_inativa)}
+                                {barraMensagemCustom.BarraMensagemInativa(data.documento_mestre.mensagem_inativa)}
                             </div>
                         </div>
                     }
