@@ -161,6 +161,9 @@ const ConferenciaDeLancamentos = ({prestacaoDeContas, editavel=true}) =>{
                     setStateCheckBoxOrdenarPorImposto={setStateCheckBoxOrdenarPorImposto}
                 />
             }
+            {!contasAssociacao || contasAssociacao.length === 0 &&
+                <span>Não houve lançamentos realizados no período.</span>
+            }
         </>
     )
 }
