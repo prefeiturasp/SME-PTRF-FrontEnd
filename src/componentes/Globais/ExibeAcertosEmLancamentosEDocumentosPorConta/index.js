@@ -402,7 +402,7 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
                     {data.analise_lancamento.requer_ajustes_externos &&
                         <div className='row'>
                             <div className='col-12 mb-1 px-4 py-1'>
-                                {barraMensagemCustom.BarraMensagemSucessAzul("Favor realizar os ajustes solicitados que são externos ao sistema.")}
+                                {barraMensagemCustom.BarraMensagemSucessAzul("Acerto externo ao sistema.")}
                             </div>
                         </div>
                     }
@@ -541,7 +541,7 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
 
                     {data.requer_ajuste_externo &&
                         <div className='col-12 mb-3'>
-                            {barraMensagemCustom.BarraMensagemSucessAzul("Favor realizar os ajustes solicitados que são externos ao sistema.")}
+                            {barraMensagemCustom.BarraMensagemSucessAzul("Acerto externo ao sistema.")}
                         </div>
                     }
                     {data.solicitacoes_de_ajuste_da_analise.map((ajuste, index) => (
@@ -627,7 +627,7 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
             return (
                 <div className='text-right border-top pt-3 pb-2 container-botoes-ajustes'>
                     <button onClick={() => addDispatchRedireciona(lancamento)} className='btn btn-outline-success'>
-                        <strong>Ir para página de acertos</strong>
+                        <strong>Editar acertos solicitados</strong>
                     </button>
                 </div>
             )
