@@ -1,3 +1,5 @@
+$cor_inativa: #EF4C61;
+
 .barra-mensagem {
   padding-top: 1rem;
   padding-bottom: 1rem;
@@ -15,7 +17,32 @@
 }
 
 .barra-mensagem-info-inativa {
-  background-color: #B40C02;
+  outline: $cor_inativa solid 1px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  background-color: #FDEDEE;
+  border: 1px solid;
+  border-radius: 4px;
+}
+
+.barra-mensagem-info-inativa > div {
+  font-family: 'Roboto';
+  padding-left: 8px;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  color: $cor_inativa;
+}
+
+.barra-mensagem-info-inativa .align-self-center{
+  width: 35px;
+}
+
+.barra-mensagem-info-inativa path {
+  fill: $cor_inativa;
+  margin-top: 3px;
+  transform: scale(0.7) translateY(120px);
 }
 
 .btn-barra-mensagem{
