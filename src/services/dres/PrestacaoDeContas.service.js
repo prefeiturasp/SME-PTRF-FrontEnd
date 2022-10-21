@@ -384,3 +384,7 @@ export const deleteAnaliseAjustesSaldoPorConta = async (analise_uuid) => {
 export const getAnaliseAjustesSaldoPorConta = async (conta_associacao_uuid, prestacao_conta_uuid, analise_prestacao_uuid) => {
     return (await api.get(`/api/analises-conta-prestacao-conta/get-ajustes-saldo-conta/?conta_associacao=${conta_associacao_uuid}&prestacao_conta=${prestacao_conta_uuid}&analise_prestacao_conta=${analise_prestacao_uuid}`, authHeader)).data
 };
+
+export const getContasComMovimentoNaPc = async (prestacao_de_contas_uuid) => {
+    return (await api.get(`/api/prestacoes-contas/${prestacao_de_contas_uuid}/contas-com-movimento/`, authHeader)).data
+};
