@@ -13,7 +13,7 @@ const TabelaAcertosEmExtratosBancarios = ({extratosBancariosAjustes, contaUuid})
     useEffect(() => {
         async function getPeriodoPorUuid(){
             let periodos = await getPeriodos();
-            const uuidPeriodo = await periodos.find(periodo => periodo.referencia === parametros.state.periodoFormatado.referencia).uuid
+            const uuidPeriodo = await periodos.find(periodo => periodo.referencia === parametros.state?.periodoFormatado.referencia)?.uuid
             setUuidPeriodo(uuidPeriodo)
         }
         getPeriodoPorUuid()
