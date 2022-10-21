@@ -691,7 +691,9 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
                             ) :
                             <>
                                 <TabelaAcertosEmExtratosBancarios
+                                    contasAssociacao={contasAssociacao}
                                     extratosBancariosAjustes={extratosBancariosAjustes}
+                                    contaUuid={contaUuid}
                                 />
                             </>
                         }
