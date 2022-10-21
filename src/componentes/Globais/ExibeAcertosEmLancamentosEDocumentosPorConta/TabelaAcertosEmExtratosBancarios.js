@@ -2,7 +2,6 @@ import React, {useEffect, useState} from "react";
 import moment from "moment";
 import {Link, useLocation} from "react-router-dom";
 import {getPeriodos} from "../../../services/dres/Dashboard.service";
-import { getPeriodoPorUuid } from "../../../services/sme/Parametrizacoes.service";
 
 
 const TabelaAcertosEmExtratosBancarios = ({extratosBancariosAjustes, contaUuid}) => {
@@ -13,7 +12,7 @@ const TabelaAcertosEmExtratosBancarios = ({extratosBancariosAjustes, contaUuid})
     useEffect(() => {
         async function getPeriodoPorUuid(){
             let periodos = await getPeriodos();
-            const uuidPeriodo = await periodos.find(periodo => periodo.referencia === parametros.state?.periodoFormatado.referencia)?.uuid
+            const uuidPeriodo = await periodos.find(periodo => periodo.referencia === parametros.state?.periodoFormatado?.referencia)?.uuid
             setUuidPeriodo(uuidPeriodo)
         }
         getPeriodoPorUuid()
