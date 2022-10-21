@@ -21,7 +21,7 @@ const TabelaAcertosEmExtratosBancarios = ({extratosBancariosAjustes, contaUuid})
 
     useEffect(() => {
         localStorage.setItem('periodoConta', JSON.stringify({'periodo': uuidPeriodo, 'conta': contaUuid}))
-     }, [uuidPeriodo, contaUuid])
+    }, [uuidPeriodo, contaUuid])
 
     const formataValor = (valor) => {
         let valor_formatado = Number(valor).toLocaleString('pt-BR', {
