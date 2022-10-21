@@ -103,7 +103,7 @@ export const DevolucaoAoTesouroAjuste = () => {
                         <th scope="col">Tipo de Doc.</th>
                         <th scope="col">Nº do Doc.</th>
                         <th scope="col">Data Doc.</th>
-                        <th scope="col">Vr. Devolução</th>
+                        <th scope="col">Valor da Devolução</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -113,7 +113,7 @@ export const DevolucaoAoTesouroAjuste = () => {
                             <td>{despesa.tipo_documento ? despesa.tipo_documento.nome : ''}</td>
                             <td>{despesa.numero_documento}</td>
                             <td>{moment(new Date(despesa.data_documento), "YYYY-MM-DD").format("DD/MM/YYYY")}</td>
-                            <td>{devolucao.valor}</td>
+                            <td>{typeof(devolucao.valor) === 'string' ? devolucao.valor.replace('.', ',') : ''}</td>
                         </tr>
                     </tbody>
                 </table>
