@@ -18,7 +18,21 @@
   background-color: #B40C02;
 }
 
-.btn-barra-mensagem{
+.barra-mensagem-info-acerto {
+  background-color: #E6F7FF;
+  outline: #0A6DDF solid 1px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  border: 1px solid;
+  border-radius: 4px;
+  color: #0A6DDF;
+}
+
+.barra-mensagem-info-acerto
+
+
+
+.btn-barra-mensagem {
   border-color: #fff !important;
   font-weight: 700 !important;
   font-size: 14px !important;
@@ -35,6 +49,10 @@
 
 .sucess-azul {
   color: #5BBCF2 !important
+}
+
+.info-acerto {
+  color: #0A6DDF !important
 }
 
 .sucess-laranja {

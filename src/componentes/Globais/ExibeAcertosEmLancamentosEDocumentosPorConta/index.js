@@ -402,7 +402,7 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
                     {data.analise_lancamento.requer_ajustes_externos &&
                         <div className='row'>
                             <div className='col-12 mb-1 px-4 py-1'>
-                                {barraMensagemCustom.BarraMensagemSucessAzul("Acerto externo ao sistema.")}
+                                {barraMensagemCustom.BarraMensagemAcertoExterno("Acerto externo ao sistema.")}
                             </div>
                         </div>
                     }
@@ -541,7 +541,7 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
 
                     {data.requer_ajuste_externo &&
                         <div className='col-12 mb-3'>
-                            {barraMensagemCustom.BarraMensagemSucessAzul("Acerto externo ao sistema.")}
+                            {barraMensagemCustom.BarraMensagemAcertoExterno("Acerto externo ao sistema.")}
                         </div>
                     }
                     {data.solicitacoes_de_ajuste_da_analise.map((ajuste, index) => (

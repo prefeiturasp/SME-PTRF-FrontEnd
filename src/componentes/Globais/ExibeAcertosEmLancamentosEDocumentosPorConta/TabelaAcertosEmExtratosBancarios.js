@@ -48,7 +48,7 @@ const TabelaAcertosEmExtratosBancarios = ({extratosBancariosAjustes, contaUuid})
                     }
                 </div>
             ):
-                <p className='text-center fonte-18 mt-4'><strong>Não existem ajustes para serem exibidos</strong></p>
+                <p className='text-center fonte-18 mt-4'><strong>Não existem acertos para serem exibidos</strong></p>
             }
         <Link
             to={{
