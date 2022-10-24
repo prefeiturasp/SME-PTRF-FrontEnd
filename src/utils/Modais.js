@@ -644,7 +644,7 @@ export const ModalPublicarRelatorioConsolidado = (propriedades) => {
         return (
             <>
                 <p>
-                    Ao confirmar a publicação, o sistema bloqueará as alterações dos relatórios e da ata.
+                    Ao confirmar a geração do relatório, o sistema bloqueará as alterações dos relatórios e da ata.
                 </p>
 
                 <p className="mt-3">
@@ -655,7 +655,7 @@ export const ModalPublicarRelatorioConsolidado = (propriedades) => {
                     Caso queira conferir as informações cadastradas, antes de concluir, volte e gere uma prévia dos documentos.
                 </p>
 
-                <p className="mt-3">Deseja concluir a publicação?</p>
+                <p className="mt-3">Deseja concluir a geração?</p>
             </>
         )
 
@@ -665,13 +665,13 @@ export const ModalPublicarRelatorioConsolidado = (propriedades) => {
         <ModalBootstrapConfirmarPublicacao
             show={propriedades.show}
             onHide={propriedades.handleClose}
-            titulo="Confirmar Publicação"
+            titulo="Confirmar Geração"
             bodyText={bodyTextarea()}
             primeiroBotaoOnclick={propriedades.handleClose}
             primeiroBotaoTexto="Cancelar"
             primeiroBotaoCss="outline-success"
             segundoBotaoOnclick={propriedades.publicarConsolidadoDre}
-            segundoBotaoTexto="Confirmar Publicação"
+            segundoBotaoTexto="Confirmar Geração"
             segundoBotaoCss="success"
         />
     )
