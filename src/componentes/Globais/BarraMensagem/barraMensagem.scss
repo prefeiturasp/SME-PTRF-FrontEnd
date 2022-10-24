@@ -1,3 +1,5 @@
+$cor_info_acertos: #0A6DDF;
+
 .barra-mensagem {
   padding-top: 1rem;
   padding-bottom: 1rem;
@@ -20,17 +22,33 @@
 
 .barra-mensagem-info-acerto {
   background-color: #E6F7FF;
-  outline: #0A6DDF solid 1px;
+  outline: $cor_info_acertos solid 1px;
   padding-top: 5px;
   padding-bottom: 5px;
   border: 1px solid;
   border-radius: 4px;
-  color: #0A6DDF;
+  color: $cor_info_acertos;
 }
 
-.barra-mensagem-info-acerto
+.barra-mensagem-info-acerto > div {
+  font-family: 'Roboto';
+  padding-left: 8px;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  color: $cor_info_acertos;
+}
 
+.barra-mensagem-info-acerto .align-self-center{
+  width: 35px;
+}
 
+.barra-mensagem-info-acerto path {
+  fill: $cor_info_acertos;
+  margin-top: 3px;
+  transform: scale(0.7) translateY(120px);
+}
 
 .btn-barra-mensagem {
   border-color: #fff !important;
@@ -52,7 +70,7 @@
 }
 
 .info-acerto {
-  color: #0A6DDF !important
+  color: $cor_info_acertos !important
 }
 
 .sucess-laranja {
