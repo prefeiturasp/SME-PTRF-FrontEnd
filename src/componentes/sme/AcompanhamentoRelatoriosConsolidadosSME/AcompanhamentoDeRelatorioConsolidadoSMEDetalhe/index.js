@@ -6,6 +6,7 @@ import {BotoesAvancarRetroceder} from "../AcompanhamentoDeRelatorioConsolidadoSM
 import {TrilhaDeStatus} from "../../AcompanhamentoRelatoriosConsolidadosSME/AcompanhamentoDeRelatorioConsolidadoSMEDetalhe/TrilhaDeStatus"
 import {ResponsavelAnalise} from "../../AcompanhamentoRelatoriosConsolidadosSME/AcompanhamentoDeRelatorioConsolidadoSMEDetalhe/ResponsavelAnalise"
 import ConferenciaDeDocumentos from "../../AcompanhamentoRelatoriosConsolidadosSME/AcompanhamentoDeRelatorioConsolidadoSMEDetalhe/ConferenciaDeDocumentos"
+import Comentarios from './Comentarios'
 import {PaginasContainer} from "../../../../paginas/PaginasContainer";
 import {ModalBootstrapReabreDREDiarioOficial} from "../../../Globais/ModalBootstrap"
 import {deleteReabreConsolidadoDRE} from "../../../../services/sme/PrestacaoDeConta.service"
@@ -61,6 +62,9 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEDetalhe = () => {
                 <TrilhaDeStatus relatorioConsolidado={relatorioConsolidado}/>
                 <ResponsavelAnalise responsavei={''}/>
                 <ConferenciaDeDocumentos
+                    relatorioConsolidado={relatorioConsolidado}
+                />
+                <Comentarios
                     relatorioConsolidado={relatorioConsolidado}
                 />
             </div>
