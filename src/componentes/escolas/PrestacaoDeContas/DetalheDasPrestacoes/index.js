@@ -14,7 +14,8 @@ import {
     patchDesconciliarDespesa,
     getDownloadExtratoBancario,
     pathSalvarJustificativaPrestacaoDeConta,
-    pathExtratoBancarioPrestacaoDeConta
+    pathExtratoBancarioPrestacaoDeConta,
+    getPodeEditarCamposExtrato
 } from "../../../../services/escolas/PrestacaoDeContas.service";
 import {getContas, getPeriodosDePrestacaoDeContasDaAssociacao} from "../../../../services/escolas/Associacao.service";
 import Loading from "../../../../utils/Loading";
@@ -39,6 +40,7 @@ export const DetalheDasPrestacoes = () => {
     const [observacaoUuid, setObservacaoUuid] = useState("");
     const [periodoConta, setPeriodoConta] = useState("");
     const [periodoFechado, setPeriodoFechado] = useState(true);
+    const [permiteEditarCamposExtrato, setPermiteEditarCamposExtrato] = useState(false);
     const [contasAssociacao, setContasAssociacao] = useState(false);
     const [periodosAssociacao, setPeriodosAssociacao] = useState(false);
     const [contaConciliacao, setContaConciliacao] = useState("");
@@ -138,6 +140,7 @@ export const DetalheDasPrestacoes = () => {
     const handleChangePeriodoConta = (name, value) => {
         setCheckSalvarJustificativa(false);
         setCheckSalvarExtratoBancario(false);
+        setBtnSalvarExtratoBancarioDisable(true);
         setPeriodoConta({
             ...periodoConta,
             [name]: value
@@ -171,6 +174,9 @@ export const DetalheDasPrestacoes = () => {
             setDataAtualizacaoComprovanteExtratoView(moment(observacao.data_atualizacao_comprovante_extrato).format("DD/MM/YYYY HH:mm:ss"))
             if (observacao.comprovante_extrato && observacao.data_extrato){
                 setExibeBtnDownload(true)
+            }
+            else if(!observacao.comprovante_extrato){
+                setExibeBtnDownload(false)
             }
         }
     };
@@ -236,6 +242,24 @@ export const DetalheDasPrestacoes = () => {
             }
         }
     };
+
+    const verificaSePodeEditarCamposExtrato = useCallback(async (periodoUuid) => {
+        if (periodosAssociacao) {
+            const periodo = periodosAssociacao.find(o => o.uuid === periodoUuid);
+            if (periodo && periodoConta && periodoConta.conta) {
+                const associacaoUuid = localStorage.getItem(ASSOCIACAO_UUID)
+                await getPodeEditarCamposExtrato(associacaoUuid, periodoUuid, periodoConta.conta).then(response => {
+                    setPermiteEditarCamposExtrato(response.permite_editar_campos_extrato)
+                }).catch(error => {
+                    console.log(error);
+                });
+            }
+        }
+    }, [periodosAssociacao, periodoConta]);
+
+    useEffect(() => {
+        verificaSePodeEditarCamposExtrato(periodoConta.periodo);
+    }, [verificaSePodeEditarCamposExtrato, periodoConta]);
 
     // Tabela Valores Pendentes por Ação
     const [valoresPendentes, setValoresPendentes] = useState({});
@@ -480,6 +504,7 @@ export const DetalheDasPrestacoes = () => {
                                 setShowSalvar={setShowSalvar}
                                 onHandleClose={onHandleClose}
                                 contaConciliacao={contaConciliacao}
+                                periodoFechado={periodoFechado}
                             />
 
                             <TabelaValoresPendentesPorAcao
@@ -507,6 +532,7 @@ export const DetalheDasPrestacoes = () => {
                                 checkSalvarExtratoBancario={checkSalvarExtratoBancario}
                                 setCheckSalvarExtratoBancario={setCheckSalvarExtratoBancario}
                                 erroDataSaldo={erroDataSaldo}
+                                permiteEditarCamposExtrato={permiteEditarCamposExtrato}
                             />
 
                             <p className="detalhe-das-prestacoes-titulo-lancamentos mt-3 mb-3">Gastos pendentes de conciliação</p>
