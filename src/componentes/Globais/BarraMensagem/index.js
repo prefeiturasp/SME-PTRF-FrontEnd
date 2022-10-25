@@ -8,7 +8,6 @@ const BarraMensagemCustom = (mensagem, textoBotao, handleClickBotao, mostraBotao
     
     return (
         <>
-            {}
             <div className={`col-12 mt-3 barra-mensagem d-flex ${tipo === 'info-branco' ? 'barra-mensagem-info-inativa' : '' || tipo === 'info-acerto' ? 'barra-mensagem-info-acerto' : ''}`}>
                 <div className='col-auto align-self-center'>
                     <FontAwesomeIcon className={`icone-alert-barra-mensagem ${tipo}`}
