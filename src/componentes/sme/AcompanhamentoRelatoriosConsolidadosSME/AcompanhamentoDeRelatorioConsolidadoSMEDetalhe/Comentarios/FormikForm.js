@@ -14,7 +14,8 @@ export const FormikForm = ({
     setDisabledBtnAddComentario, 
     disabledBtnAddComentario,
     setShowModalNotificarComentarios,
-    onSubmit
+    onSubmit,
+    comentariosReadOnly
 }) => {
     return(
         <Formik
@@ -53,6 +54,7 @@ export const FormikForm = ({
                                                                     }
                                                                     }
                                                                     placeholder='Escreva o comentário aqui...'
+                                                                    disabled={comentariosReadOnly}
                                                                 />
                                                                 {props.touched.comentario && props.errors.comentario &&
                                                                     <span className="text-danger mt-1"> {props.errors.comentario}</span>
@@ -96,6 +98,7 @@ export const FormikForm = ({
                                                                 setToggleExibeBtnAddComentario(!toggleExibeBtnAddComentario)
                                                                 setDisabledBtnAddComentario(true);
                                                             }}
+                                                            disabled={comentariosReadOnly}
                                                         >
                                                             + Adicionar novo comentário
                                                         </button>

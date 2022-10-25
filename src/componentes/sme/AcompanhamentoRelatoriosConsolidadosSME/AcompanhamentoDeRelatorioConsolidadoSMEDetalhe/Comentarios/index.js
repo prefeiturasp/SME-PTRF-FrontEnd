@@ -36,6 +36,7 @@ const Comentarios = ({relatorioConsolidado}) => {
     const [comentarioEdicao, setComentarioEdicao] = useState(false);
     const [disabledBtnAddComentario, setDisabledBtnAddComentario] = useState(true);
     const [comentarioChecked, setComentarioChecked] = useState([]); // notificar comentários
+    const [comentariosReadOnly, setComentariosReadOnly] = useState(true);
 
     const carregaComentarios = useCallback(async () => {
         if(relatorioConsolidado && relatorioConsolidado.uuid){
@@ -52,6 +53,15 @@ const Comentarios = ({relatorioConsolidado}) => {
     useEffect(() => {
         carregaComentarios();
     }, [carregaComentarios]);
+
+    useEffect(() => {
+        if(relatorioConsolidado.status_sme === "ANALISADO"){
+            setComentariosReadOnly(true);
+        }
+        else{
+            setComentariosReadOnly(false);
+        }
+    }, [relatorioConsolidado]);
 
     const onSubmit = async (values) => {
         const payload = {
@@ -191,11 +201,12 @@ const Comentarios = ({relatorioConsolidado}) => {
                     onChange={(event)=>handleChangeCheckboxNotificarComentarios(event, comentario.uuid)}
                     checked={verificaSeChecado(comentario.uuid)}
                     className="checkbox-comentario-de-analise"
+                    disabled={comentariosReadOnly}
                 />
                 {comentario.comentario}
             </div>
-            <div className="p-2 bd-highlight" >
-                <button onClick={()=>{setComentarioParaEdicao(comentario)}} type="button" className="btn-cancelar-comentario ml-2">
+            <div className="p-2 bd-highlight">
+                <button onClick={()=>{setComentarioParaEdicao(comentario)}} type="button" className={`btn-cancelar-comentario ml-2 ${comentariosReadOnly ? 'btn-cancelar-comentario-disabled': ''}`} disabled={comentariosReadOnly}>
                     <FontAwesomeIcon
                         style={{fontSize: '18px', marginRight: "5px", color: "#00585E"}}
                         icon={faEdit}
@@ -240,6 +251,7 @@ const Comentarios = ({relatorioConsolidado}) => {
                     disabledBtnAddComentario={disabledBtnAddComentario}
                     setShowModalNotificarComentarios={setShowModalNotificarComentarios}
                     onSubmit={onSubmit}
+                    comentariosReadOnly={comentariosReadOnly}
                 />
 
                 <section>
