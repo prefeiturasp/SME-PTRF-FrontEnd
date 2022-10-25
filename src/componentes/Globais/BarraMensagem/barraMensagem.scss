@@ -1,3 +1,4 @@
+$cor_info_acertos: #0A6DDF;
 $cor_inativa: #EF4C61;
 
 .barra-mensagem {
@@ -45,7 +46,37 @@ $cor_inativa: #EF4C61;
   transform: scale(0.7) translateY(120px);
 }
 
-.btn-barra-mensagem{
+.barra-mensagem-info-acerto {
+  background-color: #E6F7FF;
+  outline: $cor_info_acertos solid 1px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  border: 1px solid;
+  border-radius: 4px;
+  color: $cor_info_acertos;
+}
+
+.barra-mensagem-info-acerto > div {
+  font-family: 'Roboto';
+  padding-left: 8px;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  color: $cor_info_acertos;
+}
+
+.barra-mensagem-info-acerto .align-self-center{
+  width: 35px;
+}
+
+.barra-mensagem-info-acerto path {
+  fill: $cor_info_acertos;
+  margin-top: 3px;
+  transform: scale(0.7) translateY(120px);
+}
+
+.btn-barra-mensagem {
   border-color: #fff !important;
   font-weight: 700 !important;
   font-size: 14px !important;
@@ -62,6 +93,10 @@ $cor_inativa: #EF4C61;
 
 .sucess-azul {
   color: #5BBCF2 !important
+}
+
+.info-acerto {
+  color: $cor_info_acertos !important
 }
 
 .sucess-laranja {

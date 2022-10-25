@@ -2,7 +2,6 @@ import React, {useEffect, useState} from "react";
 import moment from "moment";
 import {Link, useLocation} from "react-router-dom";
 import {getPeriodos} from "../../../services/dres/Dashboard.service";
-import { getPeriodoPorUuid } from "../../../services/sme/Parametrizacoes.service";
 
 
 const TabelaAcertosEmExtratosBancarios = ({extratosBancariosAjustes, contaUuid}) => {
@@ -13,7 +12,7 @@ const TabelaAcertosEmExtratosBancarios = ({extratosBancariosAjustes, contaUuid})
     useEffect(() => {
         async function getPeriodoPorUuid(){
             let periodos = await getPeriodos();
-            const uuidPeriodo = await periodos.find(periodo => periodo.referencia === parametros.state?.periodoFormatado.referencia)?.uuid
+            const uuidPeriodo = await periodos.find(periodo => periodo.referencia === parametros.state?.periodoFormatado?.referencia)?.uuid
             setUuidPeriodo(uuidPeriodo)
         }
         getPeriodoPorUuid()
@@ -49,7 +48,7 @@ const TabelaAcertosEmExtratosBancarios = ({extratosBancariosAjustes, contaUuid})
                     }
                 </div>
             ):
-                <p className='text-center fonte-18 mt-4'><strong>Não existem ajustes para serem exibidos</strong></p>
+                <p className='text-center fonte-18 mt-4'><strong>Não existem acertos para serem exibidos</strong></p>
             }
         <Link
             to={{
