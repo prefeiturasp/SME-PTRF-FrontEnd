@@ -6,7 +6,6 @@ import {TrilhaDeStatusDevolvido} from "./TrilhaDeStatusDevolvido";
 import {TrilhaDeStatusConcluida} from "./TrilhaDeStatusConcluida";
 
 export const TrilhaDeStatus = ({relatorioConsolidado}) => {
-    console.log(relatorioConsolidado)
 
     const getTrilhaDeStatusPeloStatus = (status_sme)=>{
         if (status_sme === 'NAO_PUBLICADO'){
