@@ -17,6 +17,7 @@ import {toastCustom} from "../../../Globais/ToastCustom";
 
 
 import "./../../../dres/PrestacaoDeContas/prestacao-de-contas.scss"
+import DevolucaoParaAcertos from "./DevolucaoParaAcertos";
 
 export const AcompanhamentoDeRelatorioConsolidadoSMEDetalhe = () => {
     const params = useParams()
@@ -151,6 +152,7 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEDetalhe = () => {
                 <ConferenciaDeDocumentos
                     relatorioConsolidado={relatorioConsolidado}
                 />
+                <DevolucaoParaAcertos relatorioConsolidado={relatorioConsolidado} refreshConsolidado={getConsolidadoDREUuid} />
                 <Comentarios
                     relatorioConsolidado={relatorioConsolidado}
                 />
