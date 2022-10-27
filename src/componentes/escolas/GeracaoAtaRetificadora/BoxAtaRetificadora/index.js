@@ -105,11 +105,13 @@ export const BoxAtaRetificadora = ({
                         </section>
                         <div className="col-12 col-md-4 align-self-center">
                             <button onClick={()=>onClickVisualizarAta()}  type="button" className="btn btn-success float-right">{statusPc !== 'DEVOLVIDA' ? "Visualizar ata" : "Visualizar prévia da ata"}</button>
-                            { statusPc !== 'DEVOLVIDA' && docPrestacaoConta.gerar_ou_editar_ata_retificacao &&
+                            { statusPc !== 'DEVOLVIDA' &&
                                 <button
                                     onClick={() => gerarAtaPDF()}
                                     type="button"
                                     className="btn btn-outline-success float-right mr-2"
+                                    disabled={!docPrestacaoConta?.gerar_ou_editar_ata_retificacao}
+                                    title={!(docPrestacaoConta?.gerar_ou_editar_ata_retificacao) ? 'A ata de retificação só pode ser gerada enquanto o status da PC for "Retornada após acertos".': ''}
                                 >
                                     gerar ata
                                 </button>
