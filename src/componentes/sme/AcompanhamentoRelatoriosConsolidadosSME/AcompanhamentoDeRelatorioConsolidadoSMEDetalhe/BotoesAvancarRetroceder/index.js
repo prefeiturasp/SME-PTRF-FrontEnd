@@ -2,7 +2,7 @@ import React from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faAngleDoubleLeft, faAngleDoubleRight} from "@fortawesome/free-solid-svg-icons";
 
-export const BotoesAvancarRetroceder = ({relatorioConsolidado, textoBtnAvancar, textoBtnRetroceder, metodoAvancar, metodoRetroceder, disabledBtnAvancar, disabledBtnRetroceder, esconderBotaoRetroceder=false, esconderBotaoAvancar}) =>{
+export const BotoesAvancarRetroceder = ({relatorioConsolidado, textoBtnAvancar, textoBtnRetroceder, metodoAvancar, metodoRetroceder, disabledBtnAvancar, disabledBtnRetroceder, esconderBotaoRetroceder=false, esconderBotaoAvancar, responsavelAutocomplete}) =>{
     return(
         <>
             {Object.entries(relatorioConsolidado).length > 0 &&
@@ -26,8 +26,8 @@ export const BotoesAvancarRetroceder = ({relatorioConsolidado, textoBtnAvancar, 
                     {!esconderBotaoAvancar &&
                         <div className="p-2 bd-highlight">
                             <button
-                                onClick={metodoAvancar}
-                                disabled={!disabledBtnAvancar}
+                                onClick={() => metodoAvancar(relatorioConsolidado)}
+                                disabled={!disabledBtnAvancar || !responsavelAutocomplete}
                                 className="btn btn-success ml-2"
                             >
                                 {textoBtnAvancar}

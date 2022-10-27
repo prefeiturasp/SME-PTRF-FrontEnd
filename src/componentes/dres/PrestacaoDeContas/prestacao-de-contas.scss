@@ -285,6 +285,10 @@
   font-weight: 500;
 }
 
+.btn-cancelar-comentario-disabled{
+  opacity: .65 !important;
+}
+
 .container-item-comentario:hover{
   cursor: move;
 }

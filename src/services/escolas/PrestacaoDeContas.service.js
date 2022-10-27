@@ -93,6 +93,10 @@ export const getObservacoes = async (periodo_uuid, conta_uuid) => {
   return (await api.get(`/api/conciliacoes/observacoes/?periodo=${periodo_uuid}&conta_associacao=${conta_uuid}`,authHeader)).data
 };
 
+export const getPodeEditarCamposExtrato = async (associacao_uuid, periodo_uuid, conta_uuid, ) => {
+  return (await api.get(`/api/conciliacoes/tem_ajuste_bancario/?associacao=${associacao_uuid}&periodo=${periodo_uuid}&conta_associacao=${conta_uuid}`,authHeader)).data
+};
+
 export const getVisualizarExtratoBancario = async (observacao_uuid) => {
     return (await api
             .get(`/api/conciliacoes/download-extrato-bancario/?observacao_uuid=${observacao_uuid}`, {
