@@ -147,7 +147,7 @@ export const ReceitaFormFormik = ({
                                                 <select
                                                     id="detalhe_tipo_receita"
                                                     name="detalhe_tipo_receita"
-                                                    disabled={readOnlyReaberturaSeletiva}
+                                                    disabled={readOnlyCampos || readOnlyAcaoAssociacaoReceita || readOnlyReaberturaSeletiva}
                                                     value={props.values.detalhe_tipo_receita ? props.values.detalhe_tipo_receita.id : ""}
                                                     onChange={(e) => {
                                                         props.handleChange(e);
