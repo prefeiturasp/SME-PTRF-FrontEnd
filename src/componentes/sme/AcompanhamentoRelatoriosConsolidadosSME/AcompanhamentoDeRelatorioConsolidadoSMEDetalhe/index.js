@@ -12,6 +12,7 @@ import {deleteReabreConsolidadoDRE} from "../../../../services/sme/PrestacaoDeCo
 import {detalhamentoConsolidadoDRE} from "../../../../services/sme/PrestacaoDeConta.service"
 
 import "./../../../dres/PrestacaoDeContas/prestacao-de-contas.scss"
+import DevolucaoParaAcertos from "./DevolucaoParaAcertos";
 
 export const AcompanhamentoDeRelatorioConsolidadoSMEDetalhe = () => {
     const params = useParams()
@@ -63,6 +64,7 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEDetalhe = () => {
                 <ConferenciaDeDocumentos
                     relatorioConsolidado={relatorioConsolidado}
                 />
+                <DevolucaoParaAcertos relatorioConsolidado={relatorioConsolidado} refreshConsolidado={getConsolidadoDREUuid} />
             </div>
             <ModalBootstrapReabreDREDiarioOficial
                 show={isShowModal}

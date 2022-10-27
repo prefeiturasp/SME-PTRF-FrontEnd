@@ -80,6 +80,13 @@ export const getDownloadRelatorio = async (relatorio_uuid, versao) => {
         });
 };
 
+export const devolverConsolidado = async (consolidado_uuid) => {
+    return (await api.patch(
+        `/api/consolidados-dre/${consolidado_uuid}/devolver-consolidado/`,
+        {},
+        authHeader)).data
+};
+
 // FIM Consolidado DRE
 
 export const getFiqueDeOlhoRelatoriosConsolidados = async () => {
