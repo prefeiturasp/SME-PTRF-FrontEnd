@@ -557,7 +557,7 @@ export const ModalBootstrapFormMarcarPublicacaoNoDiarioOficial = (propriedades) 
     )
 };
 
-export const ModalBootstrapReabreDREDiarioOficial = (propriedades) =>{
+export const ModalBootstrapDetalhamentoDREDiarioOficial = (propriedades) =>{
 
     return (
         <Fragment>

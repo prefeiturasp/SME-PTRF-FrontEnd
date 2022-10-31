@@ -27,3 +27,11 @@ export const getTodosOsResponsaveis = async (visao='SME') => {
 export const postAnalisarRelatorio = async (payload) => {
     return await api.post(`/api/consolidados-dre/analisar/`, payload , authHeader)
 }
+
+export const postMarcarComoPublicadoNoDiarioOficial = async (payload) => {
+    return await api.post(`/api/consolidados-dre/marcar-como-publicado-no-diario-oficial/`, payload , authHeader)
+}
+
+export const postMarcarComoAnalisado= async (payload) => {
+    return await api.post(`/api/consolidados-dre/marcar-como-analisado/`, payload , authHeader)
+}

@@ -2,17 +2,17 @@ import React from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faAngleDoubleLeft, faAngleDoubleRight} from "@fortawesome/free-solid-svg-icons";
 
-export const BotoesAvancarRetroceder = ({relatorioConsolidado, textoBtnAvancar, textoBtnRetroceder, metodoAvancar, metodoRetroceder, disabledBtnAvancar, disabledBtnRetroceder, esconderBotaoRetroceder=false, esconderBotaoAvancar, responsavelAutocomplete}) =>{
+export const BotoesAvancarRetroceder = ({relatorioConsolidado, textoBtnAvancar, textoBtnRetroceder, metodoAvancar, metodoRetroceder, disabledBtnAvancar, disabledBtnRetroceder, mostrarBotaoRetroceder, mostrarBotaoAvancar}) =>{
     return(
         <>
             {Object.entries(relatorioConsolidado).length > 0 &&
             <>
                 <div className="d-flex bd-highlightcontainer-cabecalho">
                     <div className="flex-grow-1 mt-3 mb-3 bd-highlight">
-                        {!esconderBotaoRetroceder &&
+                        {mostrarBotaoRetroceder &&
                             <button
-                                onClick={metodoRetroceder}
-                                disabled={!disabledBtnRetroceder}
+                                onClick={() => metodoRetroceder(relatorioConsolidado)}
+                                disabled={disabledBtnRetroceder}
                                 className="btn btn-success ml-2"
                             >
                                 <FontAwesomeIcon
@@ -23,11 +23,11 @@ export const BotoesAvancarRetroceder = ({relatorioConsolidado, textoBtnAvancar, 
                             </button>
                         }
                     </div>
-                    {!esconderBotaoAvancar &&
+                    {mostrarBotaoAvancar &&
                         <div className="p-2 bd-highlight">
                             <button
                                 onClick={() => metodoAvancar(relatorioConsolidado)}
-                                disabled={!disabledBtnAvancar || !responsavelAutocomplete}
+                                disabled={disabledBtnAvancar}
                                 className="btn btn-success ml-2"
                             >
                                 {textoBtnAvancar}
