@@ -6,7 +6,7 @@ import moment from "moment";
 import {devolverConsolidado} from '../../../../../services/dres/RelatorioConsolidado.service'
 import {toastCustom} from "../../../../Globais/ToastCustom";
 
-const DevolucaoParaAcertos = ({relatorioConsolidado, refreshConsolidado}) => {
+const DevolucaoParaAcertos = ({relatorioConsolidado, refreshConsolidado, disableBtnVerResumo}) => {
     const [dataLimiteDevolucao, setDataLimiteDevolucao] = useState('')
     const [showModalConfirmaDevolverParaAcerto, setShowModalConfirmaDevolverParaAcerto] = useState(false)
     const [botaoDevolverParaAcertoDisabled, setBotaoDevolverParaAcertoDisabled] = useState(false)
@@ -48,8 +48,8 @@ const DevolucaoParaAcertos = ({relatorioConsolidado, refreshConsolidado}) => {
                         onClick={ null }
                         to={{}}
                         className="btn btn-outline-success mr-2"
-                        disabled={false}
-                        readOnly={false}
+                        disabled={disableBtnVerResumo()}
+                        readOnly={disableBtnVerResumo()}
                     >
                         Ver resumo
                     </Link>

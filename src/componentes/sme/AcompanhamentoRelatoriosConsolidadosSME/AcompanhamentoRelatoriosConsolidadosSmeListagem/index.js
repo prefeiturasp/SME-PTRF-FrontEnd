@@ -62,7 +62,7 @@ export const AcompanhamentoRelatorioConsolidadosSmeListagem = () => {
         let tipos_disponiveis = [
             {
                 id: "UNICO",
-                nome: "Único"
+                nome: "Única"
             },
             {
                 id: "PARCIAL",
@@ -207,19 +207,24 @@ export const AcompanhamentoRelatorioConsolidadosSmeListagem = () => {
         
         return (
             <div>
-                {rowData.pode_visualizar &&
-                    <Link
-                        to={{
-                            pathname: `/analise-relatorio-consolidado-dre-detalhe/${rowData.uuid_consolidado_dre}`,
-                        }}
-                        className="btn btn-link"
-                    >
-                        <FontAwesomeIcon
-                            style={{marginRight: "0", color: '#00585E'}}
-                            icon={faEye}
-                            title="Visualizar"
-                        />
-                    </Link>
+                {rowData.pode_visualizar 
+                
+                    ?
+                        <Link
+                            to={{
+                                pathname: `/analise-relatorio-consolidado-dre-detalhe/${rowData.uuid_consolidado_dre}`,
+                            }}
+                            className="btn btn-link"
+                        >
+                            <FontAwesomeIcon
+                                style={{marginRight: "0", color: '#00585E'}}
+                                icon={faEye}
+                                title="Visualizar"
+                            />
+                        </Link>
+
+                    :
+                        <span className="btn remove-pointer">&nbsp;</span>
                 }
             </div>
         )

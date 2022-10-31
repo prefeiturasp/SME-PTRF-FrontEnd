@@ -32,7 +32,7 @@ export const Cabecalho = ({relatorioConsolidado}) => {
                     <p>Périodo: <strong>{relatorioConsolidado?.periodo?.referencia} - {exibeDataPT_BR(relatorioConsolidado?.periodo?.data_inicio_realizacao_despesas)} até {exibeDataPT_BR(relatorioConsolidado?.periodo?.data_fim_realizacao_despesas)}</strong></p>
                 </div>
                 <div className='tipo-relatorio-info-cabecalho'>
-                    <p>Tipo Relatório: <strong>{relatorioConsolidado?.tipo_relatorio}</strong></p>
+                    <p>Tipo de Publicação: <strong>{relatorioConsolidado?.tipo_relatorio}</strong></p>
                 </div>
             </div>
         }

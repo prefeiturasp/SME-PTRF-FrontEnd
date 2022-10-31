@@ -3,8 +3,7 @@ import {AutoComplete} from 'primereact/autocomplete';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faSearch} from "@fortawesome/free-solid-svg-icons";
 
-export const ResponsavelAnalise = ({todosOsResponsaveisAutoComplete, recebeResponsavelAutoComplete, relatorioConsolidado, formataDataInicioAnalise, disableResponsavelAnalise}) => {
-    const [selectedResponsavel, setSelectedResponsavel] = useState(null);
+export const ResponsavelAnalise = ({selectedResponsavel, todosOsResponsaveisAutoComplete, recebeResponsavelAutoComplete, relatorioConsolidado, formataDataInicioAnalise, disableResponsavelAnalise, handleOnChangeResponsavelAnalise}) => {
     const [filteredResponsaveis, setFilteredResponsaveis] = useState(null);
 
     const searchResponsavel = (event) => {
@@ -14,10 +13,10 @@ export const ResponsavelAnalise = ({todosOsResponsaveisAutoComplete, recebeRespo
                 filteredResponsaveis = [...todosOsResponsaveisAutoComplete];
             } else {
                 filteredResponsaveis = todosOsResponsaveisAutoComplete.filter((responsavel) => {
-                    return responsavel.usuario
+                    return responsavel.usuario.toLowerCase().includes(event.query.toLowerCase());
                 })
             }
-            setFilteredResponsaveis(filteredResponsaveis)
+            setFilteredResponsaveis(filteredResponsaveis);
         }, 250);
     };
 
@@ -27,45 +26,30 @@ export const ResponsavelAnalise = ({todosOsResponsaveisAutoComplete, recebeRespo
             <div className="col-md-6">
                 <label htmlFor='responsavel'><strong>Responsável pela análise:</strong></label>
 
-                {relatorioConsolidado && relatorioConsolidado.responsavel_pela_analise 
-                    ?
-                        <input
-                            value={`${relatorioConsolidado.responsavel_pela_analise.username} - ${relatorioConsolidado.responsavel_pela_analise.name}`}
-                            name={`selectedResponsavel`}
-                            id={`selectedAcao`}
-                            className="form-control"
-                            onChange={(e) => {}}
-                            placeholder='Escolha um responsável'
-                            disabled={true}
+                <div className="d-flex bd-highlight">
+                    <div className="flex-grow-1 bd-highlight">
+                        <AutoComplete
+                            value={selectedResponsavel}
+                            name='selectedResponsavel'
+                            inputId='selectedAcao'
+                            suggestions={filteredResponsaveis}
+                            completeMethod={searchResponsavel}
+                            field="usuario"
+                            onChange={(e) => {handleOnChangeResponsavelAnalise(e.value)}}
+                            inputClassName="form-control"
+                            onSelect={(e) => recebeResponsavelAutoComplete(e.value)}
+                            style={{width: "100%", borderLeft:'none'}}
+                            minLength={3}
+                            disabled={disableResponsavelAnalise(relatorioConsolidado)}
                         />
-                    :
-                        <div className="d-flex bd-highlight">
-                            <div className="flex-grow-1 bd-highlight">
-                                <AutoComplete
-                                    value={selectedResponsavel}
-                                    name='selectedResponsavel'
-                                    inputId='selectedAcao'
-                                    suggestions={filteredResponsaveis}
-                                    completeMethod={searchResponsavel}
-                                    field="usuario"
-                                    onChange={(e) => setSelectedResponsavel(e.value)}
-                                    inputClassName="form-control"
-                                    onSelect={(e) => recebeResponsavelAutoComplete(e.value)}
-                                    style={{width: "100%", borderLeft:'none'}}
-                                    minLength={3}
-                                    disabled={disableResponsavelAnalise(relatorioConsolidado)}
-                                />
-                            </div>
-                            <div className={`bd-highlight ml-0 py-1 px-3 ml-n3 border-top border-right border-bottom ${disableResponsavelAnalise(relatorioConsolidado) ? 'disable-lupa-auto-complete' : ''}`}>
-                                <FontAwesomeIcon
-                                    style={{fontSize: '18px', marginRight: "0", color: "#42474A"}}
-                                    icon={faSearch}
-                                />
-                            </div>
-                        </div>
-                }
-
-                
+                    </div>
+                    <div className={`bd-highlight ml-0 py-1 px-3 ml-n3 border-top border-right border-bottom ${disableResponsavelAnalise(relatorioConsolidado) ? 'disable-lupa-auto-complete' : ''}`}>
+                        <FontAwesomeIcon
+                            style={{fontSize: '18px', marginRight: "0", color: "#42474A"}}
+                            icon={faSearch}
+                        />
+                    </div>
+                </div>
             </div>
             {relatorioConsolidado && relatorioConsolidado.data_de_inicio_da_analise &&
                 <div className="col-md-3">

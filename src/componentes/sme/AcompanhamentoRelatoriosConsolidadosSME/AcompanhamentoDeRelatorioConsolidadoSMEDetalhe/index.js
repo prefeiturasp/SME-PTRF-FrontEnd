@@ -8,13 +8,13 @@ import {ResponsavelAnalise} from "../../AcompanhamentoRelatoriosConsolidadosSME/
 import ConferenciaDeDocumentos from "../../AcompanhamentoRelatoriosConsolidadosSME/AcompanhamentoDeRelatorioConsolidadoSMEDetalhe/ConferenciaDeDocumentos"
 import Comentarios from './Comentarios'
 import {PaginasContainer} from "../../../../paginas/PaginasContainer";
-import {ModalBootstrapReabreDREDiarioOficial} from "../../../Globais/ModalBootstrap"
-import {deleteReabreConsolidadoDRE} from "../../../../services/sme/PrestacaoDeConta.service"
+import {ModalBootstrapDetalhamentoDREDiarioOficial} from "../../../Globais/ModalBootstrap"
+import {deleteReabreConsolidadoDRE, postMarcarComoPublicadoNoDiarioOficial, postMarcarComoAnalisado} from "../../../../services/sme/PrestacaoDeConta.service"
 import {detalhamentoConsolidadoDRE} from "../../../../services/sme/PrestacaoDeConta.service"
 import { getTodosOsResponsaveis, postAnalisarRelatorio } from '../../../../services/sme/PrestacaoDeConta.service'
 import moment from "moment";
 import {toastCustom} from "../../../Globais/ToastCustom";
-
+import Loading from "../../../../utils/Loading";
 
 import "./../../../dres/PrestacaoDeContas/prestacao-de-contas.scss"
 import DevolucaoParaAcertos from "./DevolucaoParaAcertos";
@@ -23,64 +23,119 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEDetalhe = () => {
     const params = useParams()
     const history = useHistory()
     const [relatorioConsolidado, setRelatorioConsolidado] = useState({});
-    const [isShowModal, setIsShowModal] = useState(false);
-    const [disabledBtnAvancar, setDisabledBtnAvancar] = useState(false);
-    const [disabledBtnRetroceder, setdisabledBtnRetroceder] = useState(false);
-    const [loading, setLoading] = useState(false)
+    const [isShowModalReabrirParaDre, setIsShowModalReabrirParaDre] = useState(false);
+    const [isShowModalVoltarParaPublicado, setIsShowModalVoltarParaPublicado] = useState(false);
+    const [isShowModalConcluirAnalise, setIsShowModalConcluirAnalise] = useState(false);
+    const [isShowModalVoltarParaAnalise, setIsShowModalVoltarParaAnalise] = useState(false);
+    const [disabledBtnAvancar, setDisabledBtnAvancar] = useState(true);
+    const [disabledBtnRetroceder, setDisabledBtnRetroceder] = useState(true);
+    const [loading, setLoading] = useState(true);
     const [todosOsResponsaveisAutoComplete, setTodosOsResponsaveisAutoComplete] = useState([]);
-    const [responsavelAutocomplete, setResponsavelAutocomplete] = useState(null);
     const [textoBotaoAvancar, setTextoBotaoAvancar] = useState("")
     const [textoBotaoRetroceder, setTextoBotaoRetroceder] = useState("")
-    
+    const [mostrarBotaoAvancar, setMostrarBotaoAvancar] = useState(false);
+    const [mostrarBotaoRetroceder, setMostrarBotaoRetroceder] = useState(false);
+    const [selectedResponsavel, setSelectedResponsavel] = useState(null);
+    const [habilitaVerResumoComentariosNotificados, setHabilitaVerResumoComentariosNotificados] = useState(false);
+    const [habilitaVerResumoAcertoEmDocumento, setHabilitaVerResumoAcertoEmDocumento] = useState(false);
+
     const getConsolidadoDREUuid = useCallback(async () => {
         let {consolidado_dre_uuid} = params
         const response = await detalhamentoConsolidadoDRE(consolidado_dre_uuid)
-        setDisabledBtnAvancar(response.data.exibe_analisar)
-        setdisabledBtnRetroceder(response.data.exibe_reabrir_relatorio)
         setRelatorioConsolidado(response.data);
-
-        if(response.data.responsavel_pela_analise){
-            let username = response.data.responsavel_pela_analise.username;
-            let name = response.data.responsavel_pela_analise.name;
-            let responsavel = `${username} - ${name}`;
-            setResponsavelAutocomplete(responsavel)
-        }
-
+        setLoading(false);
     }, [params]);
     
     useEffect(() => {
         getConsolidadoDREUuid()
     }, [getConsolidadoDREUuid])
 
+    // UseEffect para controlar botoes
     useEffect(() => {
-        if(relatorioConsolidado.status_sme === "NAO_PUBLICADO" || relatorioConsolidado.status_sme === "PUBLICADO"){
-            setTextoBotaoAvancar("Analisar");
-            setTextoBotaoRetroceder("Reabrir para DRE");
+        if(relatorioConsolidado && relatorioConsolidado.uuid){
+            setMostrarBotaoAvancar(relatorioConsolidado.botoes_avancar_e_retroceder.habilita_botao_avancar);
+            setMostrarBotaoRetroceder(relatorioConsolidado.botoes_avancar_e_retroceder.habilita_botao_retroceder);
+    
+            setTextoBotaoAvancar(relatorioConsolidado.botoes_avancar_e_retroceder.texto_botao_avancar);
+            setTextoBotaoRetroceder(relatorioConsolidado.botoes_avancar_e_retroceder.texto_botao_retroceder);
+
+            if(relatorioConsolidado.status_sme === "NAO_PUBLICADO"){
+                setDisabledBtnRetroceder(false);
+            }
+            else if(relatorioConsolidado.status_sme === "PUBLICADO"){
+                setDisabledBtnAvancar(true);
+            }
+            if(relatorioConsolidado.status_sme === "EM_ANALISE"){
+                setDisabledBtnAvancar(false);
+                setDisabledBtnRetroceder(false);
+            }
+            if(relatorioConsolidado.status_sme === "ANALISADO"){
+                setDisabledBtnRetroceder(false);
+            }
         }
-        else if(relatorioConsolidado.status_sme === "EM_ANALISE"){
-            setTextoBotaoAvancar("Concluir");
-            setTextoBotaoRetroceder("Publicada no D.O");
+        
+    }, [relatorioConsolidado])
+
+    // useEffect para lidar com o campo responsavel (autocomplete)
+    useEffect(() => {
+        if(relatorioConsolidado && relatorioConsolidado.uuid){
+            if(relatorioConsolidado.responsavel_pela_analise){
+                let username = relatorioConsolidado.responsavel_pela_analise.username;
+                let name = relatorioConsolidado.responsavel_pela_analise.name;
+                let usuario = `${username} - ${name}`;
+    
+                let objeto_auto_complete = {
+                    nome: name,
+                    username: username,
+                    usuario: usuario
+                }
+    
+                setSelectedResponsavel(objeto_auto_complete);
+            }
+            else{
+                setSelectedResponsavel(null);
+            }
         }
     }, [relatorioConsolidado])
 
-    const handleRetroceder = () => {
-        setIsShowModal(true)
-    }
+    const handleRetroceder = (relatorioConsolidado) => {
+        if(relatorioConsolidado && relatorioConsolidado.status_sme === 'NAO_PUBLICADO'){
+            setIsShowModalReabrirParaDre(true);
+        }
 
-    const handleAvancar = (relatorioConsolidado) => {
-        if(relatorioConsolidado && (relatorioConsolidado.status_sme === 'PUBLICADO')){
-            analisarRelatorio(relatorioConsolidado);
+        // O status "Publicado no diario oficial" não possui botão de retroceder
+
+        if(relatorioConsolidado && relatorioConsolidado.status_sme === 'EM_ANALISE'){
+            setIsShowModalVoltarParaPublicado(true);
+        }
+
+        if(relatorioConsolidado && relatorioConsolidado.status_sme === 'ANALISADO'){
+            setIsShowModalVoltarParaAnalise(true);
         }
     }
 
-    const analisarRelatorio = async(relatorioConsolidado) => {
+    const handleAvancar = (relatorioConsolidado) => {
+        // O status "Não publicado no diario oficial" não possui botão de avançar
+
+        if(relatorioConsolidado && (relatorioConsolidado.status_sme === 'PUBLICADO')){
+            handleAnalisarRelatorio();
+        }
+
+        if(relatorioConsolidado && (relatorioConsolidado.status_sme === 'EM_ANALISE')){
+            setIsShowModalConcluirAnalise(true);
+        }
+    }
+
+    const handleAnalisarRelatorio = async() => {
+        setLoading(true);
         let payload = {
             consolidado_dre: relatorioConsolidado.uuid,
-            usuario: responsavelAutocomplete.username
+            usuario: selectedResponsavel.username
         }
 
         let response = await postAnalisarRelatorio(payload);
         if(response.status === 200){
+            setIsShowModalVoltarParaAnalise(false);
             toastCustom.ToastCustomSuccess('Status alterado com sucesso', 'O relatório consolidado foi alterado para “Em análise”.');
         }
         await getConsolidadoDREUuid();
@@ -89,8 +144,38 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEDetalhe = () => {
     const handleReabreConsolidado =  async () => {
         const {consolidado_dre_uuid} = params
         await deleteReabreConsolidadoDRE(consolidado_dre_uuid)
-        setIsShowModal(false)
+        setIsShowModalReabrirParaDre(false)
         history.push('/analises-relatorios-consolidados-dre/')
+    }
+
+    const handleVoltarParaPublicado =  async () => {
+        setLoading(true);
+        let payload = {
+            consolidado_dre: relatorioConsolidado.uuid,
+            data_publicacao: relatorioConsolidado.data_publicacao,
+            pagina_publicacao: relatorioConsolidado.pagina_publicacao
+        }
+
+        let response = await postMarcarComoPublicadoNoDiarioOficial(payload);
+        if(response.status === 200){
+            setIsShowModalVoltarParaPublicado(false);
+            toastCustom.ToastCustomSuccess('Status alterado com sucesso', 'O relatório consolidado foi alterado para “Publicado no Diário Oficial”.');
+        }
+        await getConsolidadoDREUuid();
+    }
+
+    const handleConcluirAnalise =  async () => {
+        setLoading(true);
+        let payload = {
+            consolidado_dre: relatorioConsolidado.uuid,
+        }
+
+        let response = await postMarcarComoAnalisado(payload);
+        if(response.status === 200){
+            setIsShowModalConcluirAnalise(false);
+            toastCustom.ToastCustomSuccess('Status alterado com sucesso', 'A análise do relatório foi concluída.');
+        }
+        await getConsolidadoDREUuid();
     }
 
     const carregaTodosOsResponsaveis = useCallback(async () => {
@@ -103,12 +188,12 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEDetalhe = () => {
         carregaTodosOsResponsaveis();
     }, [carregaTodosOsResponsaveis]);
 
-    const recebeResponsavelAutoComplete = (selectResponsavel) => {
-        if(selectResponsavel){
-            setResponsavelAutocomplete(selectResponsavel);
+    const recebeResponsavelAutoComplete = (value) => {
+        if(value){
+            setSelectedResponsavel(value);
         }
         else{
-            setResponsavelAutocomplete(null);
+            setSelectedResponsavel(null);
         }
     }
 
@@ -117,8 +202,29 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEDetalhe = () => {
         return data;
     }
 
+    const handleOnChangeResponsavelAnalise = (value) => {
+        setSelectedResponsavel(value);
+
+        if(value && value.username){
+            setDisabledBtnAvancar(false);
+        }
+        else{
+            setDisabledBtnAvancar(true);
+        }
+    }   
+
     const disableResponsavelAnalise = (relatorioConsolidado) => {
-        if(relatorioConsolidado && relatorioConsolidado.status_sme === "PUBLICADO"){
+        if(relatorioConsolidado){
+            if(relatorioConsolidado.status_sme === "NAO_PUBLICADO" || relatorioConsolidado.status_sme === "ANALISADO"){
+                return true;
+            }    
+        }
+
+        return false;
+    }
+
+    const disableBtnVerResumo = () => {
+        if(habilitaVerResumoComentariosNotificados || habilitaVerResumoAcertoEmDocumento){
             return false;
         }
 
@@ -128,44 +234,100 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEDetalhe = () => {
     return(
         <PaginasContainer>
             <h1 className="titulo-itens-painel mt-5">Acompanhamento da documentação da DRE</h1>
-            <div className="page-content-inner">
-                <Cabecalho relatorioConsolidado={relatorioConsolidado}/>
-                <BotoesAvancarRetroceder
-                    relatorioConsolidado={relatorioConsolidado}
-                    disabledBtnAvancar={disabledBtnAvancar}
-                    disabledBtnRetroceder={disabledBtnRetroceder}
-                    metodoRetroceder={handleRetroceder}
-                    metodoAvancar={handleAvancar}
-                    textoBtnAvancar={textoBotaoAvancar}
-                    textoBtnRetroceder={textoBotaoRetroceder}
-                    responsavelAutocomplete={responsavelAutocomplete}
+            {loading 
+            ?
+                (
+                    <Loading
+                        corGrafico="black"
+                        corFonte="dark"
+                        marginTop="0"
+                        marginBottom="0"
+                    />
+                ) 
+            :
+                <>
+                    <div className="page-content-inner">
+                        <Cabecalho relatorioConsolidado={relatorioConsolidado}/>
+                        <BotoesAvancarRetroceder
+                            relatorioConsolidado={relatorioConsolidado}
+                            textoBtnAvancar={textoBotaoAvancar}
+                            textoBtnRetroceder={textoBotaoRetroceder}
+                            metodoAvancar={handleAvancar}
+                            metodoRetroceder={handleRetroceder}
+                            disabledBtnAvancar={disabledBtnAvancar}
+                            disabledBtnRetroceder={disabledBtnRetroceder}
+                            mostrarBotaoRetroceder={mostrarBotaoRetroceder}
+                            mostrarBotaoAvancar={mostrarBotaoAvancar}
+                        />
+                        <TrilhaDeStatus relatorioConsolidado={relatorioConsolidado}/>
+                        <ResponsavelAnalise
+                            selectedResponsavel={selectedResponsavel}
+                            todosOsResponsaveisAutoComplete={todosOsResponsaveisAutoComplete}
+                            recebeResponsavelAutoComplete={recebeResponsavelAutoComplete}
+                            relatorioConsolidado={relatorioConsolidado}
+                            formataDataInicioAnalise={formataDataInicioAnalise}
+                            disableResponsavelAnalise={disableResponsavelAnalise}
+                            handleOnChangeResponsavelAnalise={handleOnChangeResponsavelAnalise}
+                        />
+                        <ConferenciaDeDocumentos
+                            relatorioConsolidado={relatorioConsolidado}
+                        />
+                        <DevolucaoParaAcertos relatorioConsolidado={relatorioConsolidado} refreshConsolidado={getConsolidadoDREUuid} disableBtnVerResumo={disableBtnVerResumo}/>
+                        <Comentarios
+                            relatorioConsolidado={relatorioConsolidado}
+                            setHabilitaVerResumoComentariosNotificados={setHabilitaVerResumoComentariosNotificados}
+                        />
+                    </div>
                     
-                />
-                <TrilhaDeStatus relatorioConsolidado={relatorioConsolidado}/>
-                <ResponsavelAnalise 
-                    todosOsResponsaveisAutoComplete={todosOsResponsaveisAutoComplete}
-                    recebeResponsavelAutoComplete={recebeResponsavelAutoComplete}
-                    relatorioConsolidado={relatorioConsolidado}
-                    formataDataInicioAnalise={formataDataInicioAnalise}
-                    disableResponsavelAnalise={disableResponsavelAnalise}
-                />
-                <ConferenciaDeDocumentos
-                    relatorioConsolidado={relatorioConsolidado}
-                />
-                <DevolucaoParaAcertos relatorioConsolidado={relatorioConsolidado} refreshConsolidado={getConsolidadoDREUuid} />
-                <Comentarios
-                    relatorioConsolidado={relatorioConsolidado}
-                />
-            </div>
-            <ModalBootstrapReabreDREDiarioOficial
-                show={isShowModal}
-                titulo={'Reabrir relatório consolidado para DRE'}
-                bodyText={'Atenção, o relatório consolidado será reaberto para a DRE que poderá fazer alteração e precisará gerá-lo novamente.'}
-                primeiroBotaoTexto={'Cancelar'}
-                segundoBotaoTexto={'Confirmar'}
-                segundoBotaoOnclick={handleReabreConsolidado}
-                primeiroBotaoOnclick={(e) => setIsShowModal(false)}
-            />
+                    <section>
+                        <ModalBootstrapDetalhamentoDREDiarioOficial
+                            show={isShowModalReabrirParaDre}
+                            titulo={'Reabrir relatório consolidado para DRE'}
+                            bodyText={'Atenção, o relatório consolidado será reaberto para a DRE que poderá fazer alteração e precisará gerá-lo novamente.'}
+                            primeiroBotaoTexto={'Cancelar'}
+                            segundoBotaoTexto={'Confirmar'}
+                            segundoBotaoOnclick={handleReabreConsolidado}
+                            primeiroBotaoOnclick={(e) => setIsShowModalReabrirParaDre(false)}
+                        />
+                    </section>
+
+                    <section>
+                        <ModalBootstrapDetalhamentoDREDiarioOficial
+                            show={isShowModalVoltarParaPublicado}
+                            titulo={'Voltar para publicado no D.O'}
+                            bodyText={'Deseja retornar o relatório consolidado para o status de Publicado no D.O?'}
+                            primeiroBotaoTexto={'Cancelar'}
+                            segundoBotaoTexto={'Confirmar'}
+                            segundoBotaoOnclick={handleVoltarParaPublicado}
+                            primeiroBotaoOnclick={(e) => setIsShowModalVoltarParaPublicado(false)}
+                        />
+                    </section>
+
+                    <section>
+                        <ModalBootstrapDetalhamentoDREDiarioOficial
+                            show={isShowModalConcluirAnalise}
+                            titulo={'Concluir análise'}
+                            bodyText={'Você tem certeza que deseja concluir essa análise?'}
+                            primeiroBotaoTexto={'Cancelar'}
+                            segundoBotaoTexto={'Confirmar'}
+                            segundoBotaoOnclick={handleConcluirAnalise}
+                            primeiroBotaoOnclick={(e) => setIsShowModalConcluirAnalise(false)}
+                        />
+                    </section>
+
+                    <section>
+                        <ModalBootstrapDetalhamentoDREDiarioOficial
+                            show={isShowModalVoltarParaAnalise}
+                            titulo={'Voltar para em análise'}
+                            bodyText={'Deseja retornar o relatório consolidado para o status de Em análise?'}
+                            primeiroBotaoTexto={'Cancelar'}
+                            segundoBotaoTexto={'Confirmar'}
+                            segundoBotaoOnclick={handleAnalisarRelatorio}
+                            primeiroBotaoOnclick={(e) => setIsShowModalVoltarParaAnalise(false)}
+                        />
+                    </section>
+                </>
+            }
 
         </PaginasContainer>
     )
