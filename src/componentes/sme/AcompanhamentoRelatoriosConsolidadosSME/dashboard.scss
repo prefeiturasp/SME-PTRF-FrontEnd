@@ -65,4 +65,16 @@
   }
 
 
-  
+  .data-inicio-analise {
+    font-size: 1rem;
+    font-weight: 400;
+  }
+
+  .disable-lupa-auto-complete{
+    opacity: .65 !important;
+    background-color: #f5f6f8;
+  }
+
+  .remove-pointer {
+    pointer-events: none;
+  }
