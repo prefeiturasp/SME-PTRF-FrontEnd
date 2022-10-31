@@ -147,7 +147,7 @@ export const ReceitaFormFormik = ({
                                                 <select
                                                     id="detalhe_tipo_receita"
                                                     name="detalhe_tipo_receita"
-                                                    disabled={readOnlyReaberturaSeletiva}
+                                                    disabled={readOnlyCampos || readOnlyAcaoAssociacaoReceita || readOnlyReaberturaSeletiva}
                                                     value={props.values.detalhe_tipo_receita ? props.values.detalhe_tipo_receita.id : ""}
                                                     onChange={(e) => {
                                                         props.handleChange(e);
@@ -228,7 +228,7 @@ export const ReceitaFormFormik = ({
                                             validacoesPersonalizadasCredito(values, setFieldValue, "credito_principal")
                                         }}
                                         onBlur={props.handleBlur}
-                                        disabled={readOnlyReaberturaSeletiva || ![['add_receita'], ['change_receita']].some(visoesService.getPermissoes)}
+                                        disabled={readOnlyCampos || readOnlyAcaoAssociacaoReceita || readOnlyReaberturaSeletiva || ![['add_receita'], ['change_receita']].some(visoesService.getPermissoes)}
                                         maxDate={new Date()}
                                     />
                                     {formDateErrors && 
