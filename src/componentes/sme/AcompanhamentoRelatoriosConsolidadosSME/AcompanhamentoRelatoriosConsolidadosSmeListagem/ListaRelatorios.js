@@ -13,7 +13,7 @@ export const ListaRelatorios = ({relatoriosConsolidados, rowsPerPage, acoesTempl
                     paginatorTemplate="PrevPageLink PageLinks NextPageLink"
                 >
                     <Column field='nome_da_dre' header='Nome da DRE' className="nome-dre-tabela" style={{width: '35%'}}/>
-                    <Column field='tipo_relatorio' header='Tipo de Relatório' style={{width: '12%'}}/>
+                    <Column field='tipo_relatorio' header='Tipo de Publicação' style={{width: '12%'}}/>
                     <Column field='total_unidades_no_relatorio' header='Total de unidades no relatório' style={{width: '13%'}}/>
                     <Column field='data_recebimento' header='Data de recebimento' style={{width: '13%'}}/>
                     <Column header='Status' body={statusSmeTemplate}  style={{width: '20%'}}/>

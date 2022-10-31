@@ -16,7 +16,7 @@ import {SortableContainer, SortableElement} from 'react-sortable-hoc';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEdit} from "@fortawesome/free-solid-svg-icons";
 
-const Comentarios = ({relatorioConsolidado}) => {
+const Comentarios = ({relatorioConsolidado, setHabilitaVerResumoComentariosNotificados}) => {
 
     const initialComentarios = {
         uuid: '',
@@ -44,7 +44,7 @@ const Comentarios = ({relatorioConsolidado}) => {
             // Comentários que NÃO foram notificados ainda e que podem ser alterados ou excluídos
             setComentarios(comentarios.comentarios_nao_notificados);
             // Comentários que JÁ foram notificados e que NÃO podem ser alterados ou excluídos
-            setComentariosNotificados(comentarios.comentarios_notificados)
+            setComentariosNotificados(comentarios.comentarios_notificados) 
         }
 
         
@@ -62,6 +62,12 @@ const Comentarios = ({relatorioConsolidado}) => {
             setComentariosReadOnly(false);
         }
     }, [relatorioConsolidado]);
+
+    useEffect(() => {
+        if(comentariosNotificados.length > 0){
+            setHabilitaVerResumoComentariosNotificados(true);
+        }
+    }, [comentariosNotificados, setHabilitaVerResumoComentariosNotificados]);
 
     const onSubmit = async (values) => {
         const payload = {
@@ -92,7 +98,6 @@ const Comentarios = ({relatorioConsolidado}) => {
     };
 
     const setComentarioParaEdicao = (comentario)=>{
-        console.log("eu entrei aqui")
         setComentarioEdicao(comentario);
         setShowModalComentario(true);
     };

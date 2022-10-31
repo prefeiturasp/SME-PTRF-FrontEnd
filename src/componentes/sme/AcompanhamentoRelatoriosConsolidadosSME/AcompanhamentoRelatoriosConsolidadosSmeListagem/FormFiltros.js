@@ -28,7 +28,7 @@ export const FormFiltros = ({stateFiltros, selectedStatusPc, listaFiltroDre, lis
                     </div>
 
                     <div className="col">
-                        <label htmlFor="filtrar_por_tipo_de_relatorio">Filtrar por Tipo de Relatório</label>
+                        <label htmlFor="filtrar_por_tipo_de_relatorio">Filtrar por Publicação</label>
                         <select
                             value={stateFiltros.filtrar_por_tipo_de_relatorio}
                             onChange={(e) => handleChangeFiltros(e.target.name, e.target.value)}

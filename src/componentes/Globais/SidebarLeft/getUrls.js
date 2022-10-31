@@ -70,7 +70,7 @@ const UrlsMenuDres ={
         {label: "Valores reprogramados", url: "dre-valores-reprogramados", dataFor: "dre-valores-reprogramados", icone: IconeMenuValoresReprogramados, permissoes: ['access_valores_reprogramados_dre']},
         {label: "Regularidade", url: "regularidade-associacoes", dataFor:"regularidade_associacoes", icone:IconeMenuGastosDaEscola, permissoes: ['access_regularidade_dre'],},
         {label: "Acompanhamento de PC", url: "dre-dashboard", dataFor:"dre_dashboard", icone:IconeAcompanhamento, permissoes: ['access_dados_diretoria'],},
-        {label: "Relatório consolidado", url: "dre-relatorio-consolidado", dataFor:"dre_relatorio_consolidado", icone:IconeRelatorio, permissoes: ['access_relatorio_consolidado_dre']},
+        {label: "Consolidado das PCs", url: "dre-relatorio-consolidado", dataFor:"dre_relatorio_consolidado", icone:IconeRelatorio, permissoes: ['access_relatorio_consolidado_dre']},
         {label: "Dados da Diretoria", url: "dre-dados-da-diretoria", dataFor:"dre_dados_da_diretoria", icone:IconeDadosDaDiretoria, permissoes: ['access_dados_diretoria']},
         {label: "Apoio à Diretoria", url: "apoio-a-diretoria", dataFor:"apoio_a_diretoria", icone:IconeApoioDiretoria, permissoes: ['access_dados_diretoria'],
             subItens: [
