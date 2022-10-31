@@ -18,7 +18,7 @@ const DevolucaoParaAcertos = ({relatorioConsolidado, refreshConsolidado}) => {
     const devolverParaAcertos = useCallback(async () =>{
         setBotaoDevolverParaAcertoDisabled(true)
         setShowModalConfirmaDevolverParaAcerto(false)
-        await devolverConsolidado(relatorioConsolidado.uuid)
+        await devolverConsolidado(relatorioConsolidado.uuid, dataLimiteDevolucao)
         setBotaoDevolverParaAcertoDisabled(false)
         toastCustom.ToastCustomSuccess('Status alterado com sucesso', 'O relatório foi alterado para "devolvido para acertos".')
         refreshConsolidado()
@@ -31,7 +31,7 @@ const DevolucaoParaAcertos = ({relatorioConsolidado, refreshConsolidado}) => {
             <p className='mt-4'>Para enviar os apontamentos à DRE, selecione o prazo e clique em "Devolver para a DRE".</p>
             <div className="d-flex mt-4">
                 <div className="flex-grow-1">
-                    <span className='mr-2'>Prazo para reenvio:</span>
+                    <span className='mr-2'>Prazo para acerto:</span>
                     <DatePickerField
                         value={dataLimiteDevolucao}
                         onChange={handleChangeDataLimiteDevolucao}
