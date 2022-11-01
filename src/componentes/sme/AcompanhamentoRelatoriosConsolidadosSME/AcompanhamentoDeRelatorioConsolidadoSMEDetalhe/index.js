@@ -175,6 +175,7 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEDetalhe = () => {
         setLoading(true);
         let payload = {
             consolidado_dre: relatorioConsolidado.uuid,
+            usuario: selectedResponsavel.username
         }
 
         let response = await postMarcarComoAnalisado(payload);
