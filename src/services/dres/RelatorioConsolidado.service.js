@@ -1,6 +1,7 @@
 import api from '../api'
 import { TOKEN_ALIAS } from '../auth.service.js';
 import {ASSOCIACAO_UUID} from "../auth.service";
+import moment from "moment/moment";
 
 const authHeader = {
     headers: {
@@ -83,7 +84,7 @@ export const getDownloadRelatorio = async (relatorio_uuid, versao) => {
 export const devolverConsolidado = async (consolidado_uuid, dataLimiteDevolucao) => {
     return (await api.patch(
         `/api/consolidados-dre/${consolidado_uuid}/devolver-consolidado/`,
-        {data_limite: dataLimiteDevolucao},
+        {data_limite: moment(dataLimiteDevolucao).format("YYYY-MM-DD")},
         authHeader)).data
 };
 
