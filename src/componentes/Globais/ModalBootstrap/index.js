@@ -539,6 +539,23 @@ export const ModalBootstrapFormConcluirPeriodo = (propriedades) =>{
     )
 };
 
+export const ModalBootstrapFormAdicionarDocumentos = (propriedades) =>{
+
+    // Os botões de Confirmar e Cancelar estão dentro do próprio form, pois utilizei Formik para validações
+    return (
+        <Fragment>
+            <Modal centered show={propriedades.show} onHide={propriedades.onHide} size='lg'>
+                <Modal.Header style={{padding: '15px', margin: '1px', borderColor: 'rgba(0, 0, 0, 0.12)', borderWidth: '2px'}}>
+                    <Modal.Title>{propriedades.titulo}</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {propriedades.bodyText}
+                </Modal.Body>
+            </Modal>
+        </Fragment>
+    )
+};
+
 
 export const ModalBootstrapFormMarcarPublicacaoNoDiarioOficial = (propriedades) =>{
 

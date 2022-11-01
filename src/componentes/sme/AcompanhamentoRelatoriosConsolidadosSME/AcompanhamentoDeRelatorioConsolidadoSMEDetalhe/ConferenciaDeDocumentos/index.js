@@ -1,10 +1,10 @@
 import React, {memo, useCallback, useEffect, useState} from "react";
 import { useParams } from 'react-router-dom'
-import {detalhamentoConferenciaDocumentos} from "../../../../../services/sme/PrestacaoDeConta.service"
+import {detalhamentoConferenciaDocumentos} from "../../../../../services/sme/AcompanhamentoSME.service"
 
 import TabelaConferenciaDeDocumentosRelatorios from "./TabelaConferenciaDeDocumentosRelatorios";
 
-const ConferenciaDeDocumentos = ({}) =>{
+const ConferenciaDeDocumentos = ({relatorioConsolidado, editavel=true}) =>{
     const params = useParams()
     const rowsPerPage = 10
 
@@ -12,8 +12,11 @@ const ConferenciaDeDocumentos = ({}) =>{
     const [loadingDocumentosRelatorio, setLoadingDocumentosRelatorio] = useState(true)
 
     const carregaListaDeDocumentosRelatorio = useCallback(async () =>{
+        setLoadingDocumentosRelatorio(true)
         let {consolidado_dre_uuid} = params
-        const response = await detalhamentoConferenciaDocumentos(consolidado_dre_uuid)
+        let uuid_analise_atual = relatorioConsolidado && relatorioConsolidado.analise_atual && relatorioConsolidado.analise_atual.uuid ? relatorioConsolidado.analise_atual.uuid : null
+
+        const response = await detalhamentoConferenciaDocumentos(consolidado_dre_uuid, uuid_analise_atual)
         setListaDeDocumentosRelatorio(Object.values(response.data['lista_documentos']))
     }, [])
 
@@ -31,7 +34,7 @@ const ConferenciaDeDocumentos = ({}) =>{
                 setListaDeDocumentosRelatorio={setListaDeDocumentosRelatorio}
                 rowsPerPage={rowsPerPage}
                 loadingDocumentosRelatorio={loadingDocumentosRelatorio}
-                editavel={true}
+                editavel={editavel}
             />
         </>
     )
