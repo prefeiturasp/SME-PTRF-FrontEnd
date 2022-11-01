@@ -72,6 +72,9 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEDetalhe = () => {
             if(relatorioConsolidado.status_sme === "ANALISADO"){
                 setDisabledBtnRetroceder(false);
             }
+            if(relatorioConsolidado.status_sme === "DEVOLVIDO"){
+                setDisabledBtnAvancar(false);
+            }
         }
         
     }, [relatorioConsolidado])
@@ -121,6 +124,10 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEDetalhe = () => {
             handleAnalisarRelatorio();
         }
 
+        if(relatorioConsolidado && (relatorioConsolidado.status_sme === 'DEVOLVIDO')){
+            setIsShowModalVoltarParaAnalise(true);
+        }
+
         if(relatorioConsolidado && (relatorioConsolidado.status_sme === 'EM_ANALISE')){
             setIsShowModalConcluirAnalise(true);
         }
@@ -168,6 +175,7 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEDetalhe = () => {
         setLoading(true);
         let payload = {
             consolidado_dre: relatorioConsolidado.uuid,
+            usuario: selectedResponsavel.username
         }
 
         let response = await postMarcarComoAnalisado(payload);
@@ -272,7 +280,7 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEDetalhe = () => {
                         <ConferenciaDeDocumentos
                             relatorioConsolidado={relatorioConsolidado}
                         />
-                        <DevolucaoParaAcertos relatorioConsolidado={relatorioConsolidado} refreshConsolidado={getConsolidadoDREUuid} disableBtnVerResumo={disableBtnVerResumo}/>
+                        <DevolucaoParaAcertos relatorioConsolidado={relatorioConsolidado} refreshConsolidado={getConsolidadoDREUuid} disableBtnVerResumo={disableBtnVerResumo} setLoading={setLoading}/>
                         <Comentarios
                             relatorioConsolidado={relatorioConsolidado}
                             setHabilitaVerResumoComentariosNotificados={setHabilitaVerResumoComentariosNotificados}
