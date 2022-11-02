@@ -150,7 +150,11 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
         if (rowData.analise_documento_consolidado_dre.resultado === 'CORRETO') {
             setExibirBtnMarcarComoCorreto(false)
             setExibirBtnMarcarComoNaoConferido(true)
-        } else {
+        } else if (rowData.analise_documento_consolidado_dre.resultado === 'AJUSTE'){
+            setExibirBtnMarcarComoNaoConferido(true)
+            setExibirBtnMarcarComoCorreto(true)
+        }
+        else {
             setExibirBtnMarcarComoCorreto(true)
             setExibirBtnMarcarComoNaoConferido(false)
         }
@@ -213,13 +217,6 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
             setShowModalCheckNaoPermitido(true)
             e.target.checked = false
             return false
-        }
-
-        if (e.target.checked && rowData.analise_documento_consolidado_dre.resultado === "AJUSTE") {
-            setTextoModalCheckNaoPermitido('<p>Documentos com status de ajuste solicitado não podem ser selecionados!</p>')
-            setShowModalCheckNaoPermitido(true)
-            e.target.checked = false
-            return false;
         }
 
         return true;

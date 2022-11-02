@@ -70,7 +70,7 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEDetalhe = () => {
                 setDisabledBtnRetroceder(false);
             }
             if(relatorioConsolidado.status_sme === "ANALISADO"){
-                setDisabledBtnRetroceder(false);    
+                setDisabledBtnRetroceder(false);
             }
         }
         
