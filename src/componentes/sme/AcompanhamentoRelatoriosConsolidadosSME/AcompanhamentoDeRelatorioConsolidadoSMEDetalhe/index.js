@@ -9,9 +9,9 @@ import ConferenciaDeDocumentos from "../../AcompanhamentoRelatoriosConsolidadosS
 import Comentarios from './Comentarios'
 import {PaginasContainer} from "../../../../paginas/PaginasContainer";
 import {ModalBootstrapDetalhamentoDREDiarioOficial} from "../../../Globais/ModalBootstrap"
-import {deleteReabreConsolidadoDRE, postMarcarComoPublicadoNoDiarioOficial, postMarcarComoAnalisado} from "../../../../services/sme/PrestacaoDeConta.service"
-import {detalhamentoConsolidadoDRE} from "../../../../services/sme/PrestacaoDeConta.service"
-import { getTodosOsResponsaveis, postAnalisarRelatorio } from '../../../../services/sme/PrestacaoDeConta.service'
+import {deleteReabreConsolidadoDRE, postMarcarComoPublicadoNoDiarioOficial, postMarcarComoAnalisado} from "../../../../services/sme/AcompanhamentoSME.service"
+import {detalhamentoConsolidadoDRE} from "../../../../services/sme/AcompanhamentoSME.service"
+import { getTodosOsResponsaveis, postAnalisarRelatorio } from '../../../../services/sme/AcompanhamentoSME.service'
 import moment from "moment";
 import {toastCustom} from "../../../Globais/ToastCustom";
 import Loading from "../../../../utils/Loading";
@@ -66,7 +66,7 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEDetalhe = () => {
                 setDisabledBtnAvancar(true);
             }
             if(relatorioConsolidado.status_sme === "EM_ANALISE"){
-                setDisabledBtnAvancar(false);
+                setDisabledBtnAvancar(true);
                 setDisabledBtnRetroceder(false);
             }
             if(relatorioConsolidado.status_sme === "ANALISADO"){
