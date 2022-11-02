@@ -47,3 +47,11 @@ export const marcarAcertosDocumentosComoCorreto = (payload) => {
 export const marcarAcertosDocumentosComoNaoCorreto = (payload) => {
     return api.patch(`/api/analises-documentos-consolidados-dre/marcar-como-nao-conferido/`, payload, authHeader)
 }
+
+export const downloadDocumentoRelatorio = (documento) => {
+    return api.get(`/api/analises-documentos-consolidados-dre/download-documento/?tipo_documento=${documento.tipo_documento}&documento_uuid=${documento.uuid}`, {
+        responseType: 'blob',
+        timeout: 30000,
+        ...authHeader
+    })
+}

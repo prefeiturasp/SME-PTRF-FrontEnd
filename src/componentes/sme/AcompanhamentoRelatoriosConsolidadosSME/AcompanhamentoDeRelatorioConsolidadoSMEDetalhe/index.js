@@ -42,7 +42,6 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEDetalhe = () => {
     const getConsolidadoDREUuid = useCallback(async () => {
         let {consolidado_dre_uuid} = params
         const response = await detalhamentoConsolidadoDRE(consolidado_dre_uuid)
-        localStorage.setItem('analise_atual', response.data.analise_atual.uuid)
         setRelatorioConsolidado(response.data);
         setLoading(false);
     }, [params]);
