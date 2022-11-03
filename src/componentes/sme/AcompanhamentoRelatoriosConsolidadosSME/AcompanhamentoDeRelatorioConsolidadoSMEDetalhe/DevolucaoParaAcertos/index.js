@@ -6,7 +6,7 @@ import moment from "moment";
 import {devolverConsolidado} from '../../../../../services/dres/RelatorioConsolidado.service'
 import {toastCustom} from "../../../../Globais/ToastCustom";
 
-const DevolucaoParaAcertos = ({relatorioConsolidado, refreshConsolidado, disableBtnVerResumo}) => {
+const DevolucaoParaAcertos = ({relatorioConsolidado, refreshConsolidado, disableBtnVerResumo, setLoading}) => {
     const [dataLimiteDevolucao, setDataLimiteDevolucao] = useState('')
     const [showModalConfirmaDevolverParaAcerto, setShowModalConfirmaDevolverParaAcerto] = useState(false)
     const [botaoDevolverParaAcertoDisabled, setBotaoDevolverParaAcertoDisabled] = useState(false)
@@ -16,13 +16,14 @@ const DevolucaoParaAcertos = ({relatorioConsolidado, refreshConsolidado, disable
     }
 
     const devolverParaAcertos = useCallback(async () =>{
+        setLoading(true);
         setBotaoDevolverParaAcertoDisabled(true)
         setShowModalConfirmaDevolverParaAcerto(false)
         await devolverConsolidado(relatorioConsolidado.uuid, dataLimiteDevolucao)
         setBotaoDevolverParaAcertoDisabled(false)
         toastCustom.ToastCustomSuccess('Status alterado com sucesso', 'O relatório foi alterado para "devolvido para acertos".')
         refreshConsolidado()
-    }, [dataLimiteDevolucao, relatorioConsolidado])
+    }, [dataLimiteDevolucao, relatorioConsolidado, refreshConsolidado, setLoading])
 
     return (
         <>
