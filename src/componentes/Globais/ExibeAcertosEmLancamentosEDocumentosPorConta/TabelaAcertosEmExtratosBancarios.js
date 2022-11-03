@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 import moment from "moment";
 import {Link, useLocation} from "react-router-dom";
+import {visoesService} from "../../../services/visoes.service";
 import {getPeriodos} from "../../../services/dres/Dashboard.service";
 
 
@@ -33,6 +34,7 @@ const TabelaAcertosEmExtratosBancarios = ({extratosBancariosAjustes, contaUuid})
     return(
         <>
             {extratosBancariosAjustes ? (
+                <>
                 <div className="row mt-2">
                     {extratosBancariosAjustes.data_extrato &&
                     <div className="col-lg-4">
@@ -47,17 +49,20 @@ const TabelaAcertosEmExtratosBancarios = ({extratosBancariosAjustes, contaUuid})
                     </div>
                     }
                 </div>
+                {visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'UE' &&
+                <Link
+                    to={{
+                        pathname: `/detalhe-das-prestacoes`,
+                    }}
+                    className="btn btn-outline-success"
+                >
+                    Ir para conciliação bancária
+                </Link>
+                }
+            </>
             ):
                 <p className='text-center fonte-18 mt-4'><strong>Não existem acertos para serem exibidos</strong></p>
             }
-        <Link
-            to={{
-                pathname: `/detalhe-das-prestacoes`,
-            }}
-            className="btn btn-outline-success"
-        >
-            Ir para conciliação bancária
-        </Link>
         </>
     )
 }
