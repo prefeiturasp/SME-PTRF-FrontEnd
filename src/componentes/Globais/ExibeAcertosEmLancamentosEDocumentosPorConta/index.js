@@ -425,7 +425,7 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
                             </div>
                         </Fragment>
                     ))}
-                    {data.analise_lancamento.solicitacoes_de_ajuste_da_analise[0].tipo_acerto.categoria === 'SOLICITACAO_ESCLARECIMENTO' &&
+                    {possuiSolicitacaoEsclarecimento(data.analise_lancamento.solicitacoes_de_ajuste_da_analise) &&
                         <div className="row">
                             <div className="col-12 px-4 py-2" id="pointer-event-all">
                                 <div className='titulo-row-expanded-conferencia-de-lancamentos mb-4'>
@@ -455,7 +455,7 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
                                 </span>Salvo
                             </p>
                         </div>}
-                        {data.analise_lancamento.solicitacoes_de_ajuste_da_analise[0].tipo_acerto.categoria === 'SOLICITACAO_ESCLARECIMENTO' &&
+                        {possuiSolicitacaoEsclarecimento(data.analise_lancamento.solicitacoes_de_ajuste_da_analise) &&
                             <button
                                 disabled={salvarDesabilitadosEsclarecimento}
                                 type="button"
@@ -562,7 +562,7 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
                         </Fragment>
                     ))}
                     <div className='titulo-row-expanded-conferencia-de-esclarecimento m-2'></div>
-                    {data.solicitacoes_de_ajuste_da_analise[0].tipo_acerto.categoria === 'SOLICITACAO_ESCLARECIMENTO' &&
+                    {possuiSolicitacaoEsclarecimento(data.solicitacoes_de_ajuste_da_analise) &&
                         <div className="form-group w-100 col-12 px-3" id="pointer-event-all">
                             <div className='titulo-row-expanded-conferencia-de-lancamentos mb-4 '>
                                 <p className='mb-1'><strong>Esclarecimento do documento</strong></p>
@@ -593,7 +593,7 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
                                 </p>
                             </div>
                         }
-                        {data.solicitacoes_de_ajuste_da_analise[0].tipo_acerto.categoria === 'SOLICITACAO_ESCLARECIMENTO' &&
+                        {possuiSolicitacaoEsclarecimento(data.solicitacoes_de_ajuste_da_analise) &&
                             <button
                                 disabled={salvarDesabilitadosEsclarecimento}
                                 type="button"
@@ -666,6 +666,14 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
                 </div>
             )
         }
+    }
+
+    const possuiSolicitacaoEsclarecimento = (value) => {
+        if(value){
+            let solicitacoes = value.filter(element=> element.tipo_acerto.categoria === 'SOLICITACAO_ESCLARECIMENTO');
+            return solicitacoes.length > 0 ? true : false;
+        }
+        return false;
     }
 
     return (
