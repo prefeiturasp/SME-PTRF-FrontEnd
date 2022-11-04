@@ -2,9 +2,9 @@ import React, {useEffect, useState, useCallback} from 'react'
 import { useParams, useHistory } from 'react-router-dom'
 
 import {Cabecalho} from './Cabecalho'
-import {BotoesAvancarRetroceder} from "../AcompanhamentoDeRelatorioConsolidadoSMEDetalhe/BotoesAvancarRetroceder"
-import {TrilhaDeStatus} from "../../AcompanhamentoRelatoriosConsolidadosSME/AcompanhamentoDeRelatorioConsolidadoSMEDetalhe/TrilhaDeStatus"
-import {ResponsavelAnalise} from "../../AcompanhamentoRelatoriosConsolidadosSME/AcompanhamentoDeRelatorioConsolidadoSMEDetalhe/ResponsavelAnalise"
+import {BotoesAvancarRetroceder} from "./BotoesAvancarRetroceder"
+import {TrilhaDeStatus} from "./TrilhaDeStatus"
+import ResponsavelAnalise from "../../AcompanhamentoRelatoriosConsolidadosSME/AcompanhamentoDeRelatorioConsolidadoSMEDetalhe/ResponsavelAnalise"
 import ConferenciaDeDocumentos from "../../AcompanhamentoRelatoriosConsolidadosSME/AcompanhamentoDeRelatorioConsolidadoSMEDetalhe/ConferenciaDeDocumentos"
 import Comentarios from './Comentarios'
 import {PaginasContainer} from "../../../../paginas/PaginasContainer";
@@ -31,10 +31,6 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEDetalhe = () => {
     const [disabledBtnRetroceder, setDisabledBtnRetroceder] = useState(true);
     const [loading, setLoading] = useState(true);
     const [todosOsResponsaveisAutoComplete, setTodosOsResponsaveisAutoComplete] = useState([]);
-    const [textoBotaoAvancar, setTextoBotaoAvancar] = useState("")
-    const [textoBotaoRetroceder, setTextoBotaoRetroceder] = useState("")
-    const [mostrarBotaoAvancar, setMostrarBotaoAvancar] = useState(false);
-    const [mostrarBotaoRetroceder, setMostrarBotaoRetroceder] = useState(false);
     const [selectedResponsavel, setSelectedResponsavel] = useState(null);
     const [habilitaVerResumoComentariosNotificados, setHabilitaVerResumoComentariosNotificados] = useState(false);
     const [habilitaVerResumoAcertoEmDocumento, setHabilitaVerResumoAcertoEmDocumento] = useState(false);
@@ -53,12 +49,6 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEDetalhe = () => {
     // UseEffect para controlar botoes
     useEffect(() => {
         if(relatorioConsolidado && relatorioConsolidado.uuid){
-            setMostrarBotaoAvancar(relatorioConsolidado.botoes_avancar_e_retroceder.habilita_botao_avancar);
-            setMostrarBotaoRetroceder(relatorioConsolidado.botoes_avancar_e_retroceder.habilita_botao_retroceder);
-    
-            setTextoBotaoAvancar(relatorioConsolidado.botoes_avancar_e_retroceder.texto_botao_avancar);
-            setTextoBotaoRetroceder(relatorioConsolidado.botoes_avancar_e_retroceder.texto_botao_retroceder);
-
             if(relatorioConsolidado.status_sme === "NAO_PUBLICADO"){
                 setDisabledBtnRetroceder(false);
             }
@@ -70,6 +60,7 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEDetalhe = () => {
                 setDisabledBtnRetroceder(false);
             }
             if(relatorioConsolidado.status_sme === "ANALISADO"){
+                setDisabledBtnAvancar(false);
                 setDisabledBtnRetroceder(false);
             }
             if(relatorioConsolidado.status_sme === "DEVOLVIDO"){
@@ -94,9 +85,11 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEDetalhe = () => {
                 }
     
                 setSelectedResponsavel(objeto_auto_complete);
+                setDisabledBtnAvancar(false)
             }
             else{
                 setSelectedResponsavel(null);
+                setDisabledBtnAvancar(true)
             }
         }
     }, [relatorioConsolidado])
@@ -149,9 +142,10 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEDetalhe = () => {
     }
 
     const handleReabreConsolidado =  async () => {
+        setIsShowModalReabrirParaDre(false)
+        setDisabledBtnRetroceder(true);
         const {consolidado_dre_uuid} = params
         await deleteReabreConsolidadoDRE(consolidado_dre_uuid)
-        setIsShowModalReabrirParaDre(false)
         history.push('/analises-relatorios-consolidados-dre/')
     }
 
@@ -258,14 +252,10 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEDetalhe = () => {
                         <Cabecalho relatorioConsolidado={relatorioConsolidado}/>
                         <BotoesAvancarRetroceder
                             relatorioConsolidado={relatorioConsolidado}
-                            textoBtnAvancar={textoBotaoAvancar}
-                            textoBtnRetroceder={textoBotaoRetroceder}
                             metodoAvancar={handleAvancar}
                             metodoRetroceder={handleRetroceder}
                             disabledBtnAvancar={disabledBtnAvancar}
                             disabledBtnRetroceder={disabledBtnRetroceder}
-                            mostrarBotaoRetroceder={mostrarBotaoRetroceder}
-                            mostrarBotaoAvancar={mostrarBotaoAvancar}
                         />
                         <TrilhaDeStatus relatorioConsolidado={relatorioConsolidado}/>
                         <ResponsavelAnalise
@@ -279,6 +269,8 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEDetalhe = () => {
                         />
                         <ConferenciaDeDocumentos
                             relatorioConsolidado={relatorioConsolidado}
+                            getConsolidadoDREUuid={getConsolidadoDREUuid}
+                            refreshConsolidado={getConsolidadoDREUuid}
                         />
                         <DevolucaoParaAcertos relatorioConsolidado={relatorioConsolidado} refreshConsolidado={getConsolidadoDREUuid} disableBtnVerResumo={disableBtnVerResumo} setLoading={setLoading}/>
                         <Comentarios
@@ -295,7 +287,7 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEDetalhe = () => {
                             primeiroBotaoTexto={'Cancelar'}
                             segundoBotaoTexto={'Confirmar'}
                             segundoBotaoOnclick={handleReabreConsolidado}
-                            primeiroBotaoOnclick={(e) => setIsShowModalReabrirParaDre(false)}
+                            primeiroBotaoOnclick={() => setIsShowModalReabrirParaDre(false)}
                         />
                     </section>
 
@@ -307,7 +299,7 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEDetalhe = () => {
                             primeiroBotaoTexto={'Cancelar'}
                             segundoBotaoTexto={'Confirmar'}
                             segundoBotaoOnclick={handleVoltarParaPublicado}
-                            primeiroBotaoOnclick={(e) => setIsShowModalVoltarParaPublicado(false)}
+                            primeiroBotaoOnclick={() => setIsShowModalVoltarParaPublicado(false)}
                         />
                     </section>
 
@@ -319,7 +311,7 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEDetalhe = () => {
                             primeiroBotaoTexto={'Cancelar'}
                             segundoBotaoTexto={'Confirmar'}
                             segundoBotaoOnclick={handleConcluirAnalise}
-                            primeiroBotaoOnclick={(e) => setIsShowModalConcluirAnalise(false)}
+                            primeiroBotaoOnclick={() => setIsShowModalConcluirAnalise(false)}
                         />
                     </section>
 
@@ -331,7 +323,7 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEDetalhe = () => {
                             primeiroBotaoTexto={'Cancelar'}
                             segundoBotaoTexto={'Confirmar'}
                             segundoBotaoOnclick={handleAnalisarRelatorio}
-                            primeiroBotaoOnclick={(e) => setIsShowModalVoltarParaAnalise(false)}
+                            primeiroBotaoOnclick={() => setIsShowModalVoltarParaAnalise(false)}
                         />
                     </section>
                 </>

@@ -6,7 +6,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEye, faDownload, faCheckCircle, faEdit} from "@fortawesome/free-solid-svg-icons";
 import {gravarAcertosDocumentos, detalhamentoConferenciaDocumentos, marcarAcertosDocumentosComoNaoCorreto, marcarAcertosDocumentosComoCorreto, downloadDocumentoRelatorio} from "../../../../../services/sme/AcompanhamentoSME.service";
 import {ModalAdicionarAcertosDocumentos} from "./ModalAdicionarAcertosDocumentos";
-import {ModalCheckNaoPermitidoConfererenciaDeDocumentos} from "./../../../../dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeDocumentos/ModalCheckNaoPermitidoConfererenciaDeDocumentos";
+import {ModalCheckNaoPermitidoConfererenciaDeDocumentos} from "../../../../dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeDocumentos/ModalCheckNaoPermitidoConfererenciaDeDocumentos";
 import {toastCustom} from "../../../../Globais/ToastCustom";
 import {ModalFormBodyPdf} from "../../../../Globais/ModalBootstrap"
 import Dropdown from "react-bootstrap/Dropdown";
@@ -558,7 +558,7 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
                         stripedRows
                         className=""
                         autoLayout={true}>
-                        <Column 
+                        <Column
                             header={selecionarHeader()}
                             className="align-middle text-left borda-coluna"
                             body={selecionarTemplate}
