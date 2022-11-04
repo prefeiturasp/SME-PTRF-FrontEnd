@@ -4,7 +4,7 @@ import {detalhamentoConferenciaDocumentos} from "../../../../../services/sme/Aco
 
 import TabelaConferenciaDeDocumentosRelatorios from "./TabelaConferenciaDeDocumentosRelatorios";
 
-const ConferenciaDeDocumentos = ({relatorioConsolidado}) => {
+const ConferenciaDeDocumentos = ({relatorioConsolidado, getConsolidadoDREUuid}) => {
     const params = useParams()
     const rowsPerPage = 10
 
@@ -12,16 +12,18 @@ const ConferenciaDeDocumentos = ({relatorioConsolidado}) => {
     const [loadingDocumentosRelatorio, setLoadingDocumentosRelatorio] = useState(true)
 
     const editavel = relatorioConsolidado.status_sme === 'EM_ANALISE' ? true : false
+    const uuid_analise_atual = relatorioConsolidado && relatorioConsolidado.analise_atual && relatorioConsolidado.analise_atual.uuid ? relatorioConsolidado.analise_atual.uuid : null
 
     const carregaListaDeDocumentosRelatorio = useCallback(async () => {
         setLoadingDocumentosRelatorio(true)
         let {consolidado_dre_uuid} = params
-        let uuid_analise_atual = relatorioConsolidado && relatorioConsolidado.analise_atual && relatorioConsolidado.analise_atual.uuid ? relatorioConsolidado.analise_atual.uuid : null
 
         const response = await detalhamentoConferenciaDocumentos(consolidado_dre_uuid, uuid_analise_atual)
         setListaDeDocumentosRelatorio(Object.values(response.data['lista_documentos']))
         setLoadingDocumentosRelatorio(false)
-    }, [params, relatorioConsolidado])
+        getConsolidadoDREUuid()
+
+    }, [params, getConsolidadoDREUuid, uuid_analise_atual])
 
     useEffect(() => {
         carregaListaDeDocumentosRelatorio()
