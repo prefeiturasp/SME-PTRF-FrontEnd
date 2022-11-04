@@ -1,9 +1,9 @@
-import React, {useState} from 'react'
+import React, {useState, memo} from 'react'
 import {AutoComplete} from 'primereact/autocomplete';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faSearch} from "@fortawesome/free-solid-svg-icons";
 
-export const ResponsavelAnalise = ({selectedResponsavel, todosOsResponsaveisAutoComplete, recebeResponsavelAutoComplete, relatorioConsolidado, formataDataInicioAnalise, disableResponsavelAnalise, handleOnChangeResponsavelAnalise}) => {
+const ResponsavelAnalise = ({selectedResponsavel, todosOsResponsaveisAutoComplete, recebeResponsavelAutoComplete, relatorioConsolidado, formataDataInicioAnalise, disableResponsavelAnalise, handleOnChangeResponsavelAnalise}) => {
     const [filteredResponsaveis, setFilteredResponsaveis] = useState(null);
 
     const searchResponsavel = (event) => {
@@ -61,3 +61,5 @@ export const ResponsavelAnalise = ({selectedResponsavel, todosOsResponsaveisAuto
         </>
     )
 };
+
+export default memo(ResponsavelAnalise)
