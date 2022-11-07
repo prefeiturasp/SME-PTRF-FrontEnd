@@ -5,7 +5,7 @@ import {visoesService} from "../../../services/visoes.service";
 import {getPeriodos} from "../../../services/dres/Dashboard.service";
 
 
-const TabelaAcertosEmExtratosBancarios = ({extratosBancariosAjustes, contaUuid}) => {
+const TabelaAcertosEmExtratosBancarios = ({extratosBancariosAjustes, contaUuidAjustesExtratosBancarios, prestacaoDeContasUuid}) => {
     const parametros = useLocation();
     const [uuidPeriodo, setUuidPeriodo] = useState('')
     const [expandedRows, setExpandedRows] = useState(null);
@@ -20,8 +20,8 @@ const TabelaAcertosEmExtratosBancarios = ({extratosBancariosAjustes, contaUuid})
     }, [])
 
     useEffect(() => {
-        localStorage.setItem('periodoConta', JSON.stringify({'periodo': uuidPeriodo, 'conta': contaUuid}))
-    }, [uuidPeriodo, contaUuid])
+        localStorage.setItem('periodoContaAcertosEmExtratosBancarios', JSON.stringify({'periodo': uuidPeriodo, 'conta': contaUuidAjustesExtratosBancarios}))
+    }, [uuidPeriodo, contaUuidAjustesExtratosBancarios])
 
     const formataValor = (valor) => {
         let valor_formatado = Number(valor).toLocaleString('pt-BR', {
@@ -50,14 +50,18 @@ const TabelaAcertosEmExtratosBancarios = ({extratosBancariosAjustes, contaUuid})
                     }
                 </div>
                 {visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'UE' &&
-                <Link
-                    to={{
-                        pathname: `/detalhe-das-prestacoes`,
-                    }}
-                    className="btn btn-outline-success"
-                >
-                    Ir para conciliação bancária
-                </Link>
+                    <Link
+                        to={{pathname: `/detalhe-das-prestacoes`,
+                        state: {
+                            origem: 'ir_para_conciliacao_bancaria',
+                            periodoFormatado: parametros && parametros.state && parametros.state.periodoFormatado ? parametros.state.periodoFormatado : "",
+                            prestacaoDeContasUuid: prestacaoDeContasUuid
+                        }
+                        }}
+                    className="btn btn-outline-success mr-2"
+                    >
+                        Ir para conciliação bancária
+                    </Link>
                 }
             </>
             ):
