@@ -30,6 +30,11 @@ export const JustificativaDiferenca = ({execucaoFinanceira, comparaValores, just
                         >
                         </textarea>
                     </div>
+                    {justificativaDiferenca.texto < 1 && 
+                    <span className="span_erro text-danger mt-1">
+                        O campo justificativa da diferença é obrigatório para a geração do consolidado
+                    </span>
+                    }
                     <div className="d-flex  justify-content-end pb-3">
                         <button
                             onClick={onClickBtnLimpar}
@@ -48,6 +53,7 @@ export const JustificativaDiferenca = ({execucaoFinanceira, comparaValores, just
                                 jaPublicado ||
                                 btnSalvarJustificativaDisable ||
                                 !justificativaDiferenca ||
+                                justificativaDiferenca.texto < 1 ||
                                 !visoesService.getPermissoes(['change_relatorio_consolidado_dre'])
                         }
                             type="submit"
