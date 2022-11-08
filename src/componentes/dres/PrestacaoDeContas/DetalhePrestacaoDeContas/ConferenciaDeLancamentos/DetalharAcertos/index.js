@@ -147,7 +147,7 @@ export const DetalharAcertos = () => {
                                     devolucao_tesouro: acerto.devolucao_ao_tesouro && acerto.devolucao_ao_tesouro.uuid ? {
                                         uuid: acerto.devolucao_ao_tesouro.uuid,
                                         tipo: acerto.devolucao_ao_tesouro.tipo && acerto.devolucao_ao_tesouro.tipo.uuid ? acerto.devolucao_ao_tesouro.tipo.uuid : acerto.devolucao_ao_tesouro.tipo,
-                                        data: acerto.devolucao_ao_tesouro.data ? dataTemplate(acerto.devolucao_ao_tesouro.data) : null,
+                                        data: acerto.devolucao_ao_tesouro.data ? dataTemplate(null, null, acerto.devolucao_ao_tesouro.data) : null,
                                         devolucao_total: acerto.devolucao_ao_tesouro.devolucao_total,
                                         valor: acerto.devolucao_ao_tesouro.valor ? Number(acerto.devolucao_ao_tesouro.valor).toLocaleString('pt-BR', {
                                             style: 'currency',
