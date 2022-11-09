@@ -74,8 +74,7 @@ export const AcompanhamentoPcsSme = () => {
                 periodos={periodos}
                 periodoEscolhido={periodoEscolhido}
                 handleChangePeriodos={handleChangePeriodos}
-           />
-
+            />
             {loading ? (
                     <Loading
                         corGrafico="black"
