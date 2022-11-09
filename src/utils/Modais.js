@@ -691,7 +691,7 @@ export const ModalPublicarRelatorioConsolidadoPendente = (propriedades) => {
                 </p>
 
                 <p className="mt-3">
-                    Preencha o campo <strong>"Justificativa da diferença entre o valor previsto pela SME e o transferido pela DRE no período"</strong> do Demonstrativo da Execução Físico-Financeira.
+                    Preencha o campo "Justificativa da diferença entre o valor previsto pela SME e o transferido pela DRE no período" do Demonstrativo da Execução Físico-Financeira.
                 </p>
 
                 <p className="mt-3">
