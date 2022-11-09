@@ -11,6 +11,7 @@ import {TabelaExecucaoFinanceira} from "./TabelaExecucaoFinanceira";
 import {JustificativaDiferenca} from "./JustificativaDiferenca";
 import {auxGetNomes} from "../auxGetNomes";
 import {ModalSalvarJustificativa} from "../ModalSalvarJustificativa";
+import { haDiferencaPrevisaoExecucaoRepasse } from "../haDiferencaPrevisaoExecucaoRepasse";
 import Loading from "../../../../utils/Loading";
 
 export const RelatorioConsolidadoEmTela = () => {
@@ -171,12 +172,12 @@ export const RelatorioConsolidadoEmTela = () => {
                                     <TabelaExecucaoFinanceira
                                         execucaoFinanceira={execucaoFinanceiraConta.valores}
                                         valorTemplate={valorTemplate}
-                                        comparaValores={comparaValores}
+                                        haDiferencaPrevisaoExecucaoRepasse={haDiferencaPrevisaoExecucaoRepasse}
                                         tipoConta={execucaoFinanceiraConta.tipo_conta}
                                     />
                                     <JustificativaDiferenca
                                         execucaoFinanceira={execucaoFinanceiraConta}
-                                        comparaValores={comparaValores}
+                                        haDiferencaPrevisaoExecucaoRepasse={haDiferencaPrevisaoExecucaoRepasse}
                                         justificativaDiferenca={execucaoFinanceiraConta.tipo_conta === 'Cheque' ? justificativaDiferencaCheque : justificativaDiferencaCartao}
                                         setJustificativaDiferenca={execucaoFinanceiraConta.tipo_conta === 'Cheque' ? setJustificativaDiferencaCheque : setJustificativaDiferencaCartao}
                                         onChangeJustificativaDiferenca={onChangeJustificativaDiferenca}

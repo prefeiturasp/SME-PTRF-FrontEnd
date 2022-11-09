@@ -2,7 +2,7 @@ import React from "react";
 import {visoesService} from "../../../../services/visoes.service";
 
 
-export const JustificativaDiferenca = ({execucaoFinanceira, comparaValores, justificativaDiferenca, setJustificativaDiferenca, onChangeJustificativaDiferenca, onSubmitJustificativaDiferenca, btnSalvarJustificativaDisable, setBtnSalvarJustificativaDisable, jaPublicado}) => {
+export const JustificativaDiferenca = ({execucaoFinanceira, haDiferencaPrevisaoExecucaoRepasse, justificativaDiferenca, setJustificativaDiferenca, onChangeJustificativaDiferenca, onSubmitJustificativaDiferenca, btnSalvarJustificativaDisable, setBtnSalvarJustificativaDisable, jaPublicado}) => {
     
     const onClickBtnLimpar = () => {
         setJustificativaDiferenca({
@@ -13,7 +13,7 @@ export const JustificativaDiferenca = ({execucaoFinanceira, comparaValores, just
     }
     return(
         <>
-            {comparaValores(execucaoFinanceira.valores) &&
+            {haDiferencaPrevisaoExecucaoRepasse(execucaoFinanceira.valores) &&
                 <>
                     <p className='texto-aviso-associacoes-em-analise'><strong>Justificativa da diferença entre o valor previsto pela SME e o transferido pela DRE no período</strong></p>
                     <div className="form-group">

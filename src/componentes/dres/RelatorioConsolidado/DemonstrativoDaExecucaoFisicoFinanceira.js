@@ -3,6 +3,7 @@ import {
     getDownloadRelatorio,
     getTiposConta
 } from "../../../services/dres/RelatorioConsolidado.service";
+import {haDiferencaPrevisaoExecucaoRepasse} from "./haDiferencaPrevisaoExecucaoRepasse"
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faDownload} from "@fortawesome/free-solid-svg-icons";
 
@@ -47,19 +48,9 @@ const DemonstrativoDaExecucaoFisicoFinanceira = ({consolidadoDre, periodoEscolhi
         window.location.assign(`/dre-relatorio-consolidado-em-tela/${periodoEscolhido}/${consolidadoDre.ja_publicado}/${consolidado_dre_uuid}`)
     };
 
-    const comparaValores = (execucaoFinanceiraConta) => {
-        if (execucaoFinanceiraConta) {
-            return execucaoFinanceiraConta.repasses_previstos_sme_custeio !== execucaoFinanceiraConta.repasses_no_periodo_custeio ||
-            execucaoFinanceiraConta.repasses_previstos_sme_capital !== execucaoFinanceiraConta.repasses_no_periodo_capital ||
-            execucaoFinanceiraConta.repasses_previstos_sme_livre !== execucaoFinanceiraConta.repasses_no_periodo_livre ||
-            execucaoFinanceiraConta.repasses_previstos_sme_total !== execucaoFinanceiraConta.repasses_no_periodo_total
-        }
-        return false
-    }
-
     const isDiferencaValores = useMemo(() => {
         return execucaoFinanceira?.por_tipo_de_conta?.some((execucaoFinanceiraConta) => {
-            return comparaValores(execucaoFinanceiraConta.valores)
+            return haDiferencaPrevisaoExecucaoRepasse(execucaoFinanceiraConta.valores)
         })
     }, [execucaoFinanceira])
 
