@@ -74,9 +74,13 @@ export const FormularioAcertosDevolucaoAoTesouro = ({formikProps, acerto, index,
                     id={`devolucao_tesouro[${index}.devolucao_total]`}
                     onChange={(e) => {
                         const valorTesouro = e.target.value === 'true' ? valorDocumento : acerto.devolucao_tesouro.valor;
-                        acerto.devolucao_tesouro.valor =  e.target.value === 'true' ? valorDocumento : acerto.devolucao_tesouro.valor
+                        acerto.devolucao_tesouro.valor = e.target.value === 'true' ? valorDocumento : acerto.devolucao_tesouro.valor
                         formikProps.handleChange(e);
-                        verificaParcialError(valorTesouro.toString())
+                        //verificaParcialError espera um valor formatado no formato R$40,00.
+                        verificaParcialError(valorTesouro.toLocaleString('pt-br', {
+                            style: 'currency',
+                            currency: 'BRL'
+                        }).replace(/\s/g, ''))
                         setIsTotal(e.target.value === 'true')
                     }}
                     className='form-control'
