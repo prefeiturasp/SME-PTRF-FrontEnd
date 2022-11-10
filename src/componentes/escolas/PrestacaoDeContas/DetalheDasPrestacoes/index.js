@@ -31,6 +31,7 @@ import {trataNumericos} from "../../../../utils/ValidacoesAdicionaisFormularios"
 import TabelaTransacoes from "./TabelaTransacoes";
 import {getDespesasTabelas} from "../../../../services/escolas/Despesas.service";
 import {FiltrosTransacoes} from "./FiltrosTransacoes";
+import {Link, useLocation} from "react-router-dom";
 
 export const DetalheDasPrestacoes = () => {
 
@@ -56,7 +57,7 @@ export const DetalheDasPrestacoes = () => {
     const [classBtnSalvarExtratoBancario, setClassBtnSalvarExtratoBancario] = useState("secondary");
     const [checkSalvarExtratoBancario, setCheckSalvarExtratoBancario] = useState(false);
 
-    
+    const parametros = useLocation();
 
     useEffect(()=>{
         getPeriodoConta();
@@ -474,12 +475,27 @@ export const DetalheDasPrestacoes = () => {
     }, [dataSaldoBancario]);
 
     return (
+        <>
         <div className="detalhe-das-prestacoes-container mb-5 mt-5">
             <div className="row">
-                <div className="col-12">
-                    <div className="detalhe-das-prestacoes-texto-cabecalho mb-4">
-                        <h1 className="mt-4">Conciliação Bancária</h1>
-                    </div>
+                <div className="col-12 d-flex bd-highlight mt-4">
+                    <div className="flex-grow-1 bd-highlight align-self-center detalhe-das-prestacoes-texto-cabecalho pl-0"><h3>Conciliação Bancária</h3></div>
+
+                    {parametros && parametros.state && parametros.state && parametros.state && parametros.state.origem === 'ir_para_conciliacao_bancaria' &&
+                        <div className="bd-highlight detalhe-das-prestacoes-texto-cabecalho">
+                            <Link
+                                to={{pathname: `/consulta-detalhamento-analise-da-dre/${parametros.state.prestacaoDeContasUuid}/`,
+                                    state: {
+                                        origem: 'ir_para_conciliacao_bancaria',
+                                        periodoFormatado: parametros && parametros.state && parametros.state.periodoFormatado ? parametros.state.periodoFormatado : ""
+                                    }
+                                }}
+                                className="btn btn-outline-success"
+                            >
+                                Voltar para Análise DRE
+                            </Link>
+                        </div>
+                    }
                 </div>
             </div>
             {loading ? (
@@ -614,5 +630,7 @@ export const DetalheDasPrestacoes = () => {
                 </>
             }
         </div>
+
+        </>
     )
 };

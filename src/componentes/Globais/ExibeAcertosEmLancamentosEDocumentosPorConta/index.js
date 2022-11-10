@@ -97,6 +97,7 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
     const [expandedRowsDocumentos, setExpandedRowsDocumentos] = useState(null);
     const [stateFiltros, setStateFiltros] = useState(initialStateFiltros);
     const [contaUuid, setContaUuid] = useState('')
+    const [contaUuidAjustesExtratosBancarios, setContaUuidAjustesExtratosBancarios] = useState('')
     const [listaTiposDeAcertoLancamentos, setListaTiposDeAcertoLancamentos] = useState([])
     const [clickBtnEscolheConta, setClickBtnEscolheConta] = useState({0: true});
     const [clickBtnEscolheContaExtratosBancarios, setClickBtnEscolheContaExtratosBancarios] = useState({0: true});
@@ -154,7 +155,7 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
     }, [analiseAtualUuid])
 
     const carregarAjustesExtratosBancarios = useCallback(async (conta_uuid) => {
-        setContaUuid(conta_uuid);
+        setContaUuidAjustesExtratosBancarios(conta_uuid);
         setLoadingExtratosBancarios(true);
         let extratos_bancarios_ajustes = await getExtratosBancariosAjustes(analiseAtualUuid, conta_uuid);
         setExtratosBancariosAjustes(extratos_bancarios_ajustes)
@@ -240,7 +241,16 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
         if (contasAssociacao && contasAssociacao.length > 0) {
             // TODO Rever os métodos consultaSeTemAjustesExtratos. Repete a consulta da API feira por carregarAjustesExtratosBancarios
             consultaSeTemAjustesExtratos();
-            carregarAjustesExtratosBancarios(contasAssociacao[0].uuid);
+
+           // Historia 77618 - Sprint 53
+           let periodo_conta_ajustes_extratos_bancarios = JSON.parse(localStorage.getItem('periodoContaAcertosEmExtratosBancarios'));
+           if (periodo_conta_ajustes_extratos_bancarios && periodo_conta_ajustes_extratos_bancarios.conta){
+                carregarAjustesExtratosBancarios(periodo_conta_ajustes_extratos_bancarios.conta);
+                toggleBtnEscolheContaExtratosBancarios(periodo_conta_ajustes_extratos_bancarios.conta)
+            }else {
+                carregarAjustesExtratosBancarios(contasAssociacao[0].uuid);
+                toggleBtnEscolheContaExtratosBancarios(contasAssociacao[0].uuid)
+            }
             carregaAcertosLancamentos(contasAssociacao[0].uuid)
             carregaAcertosDocumentos(contasAssociacao[0].uuid)
             setClickBtnEscolheConta({0: true})
@@ -701,7 +711,8 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
                                 <TabelaAcertosEmExtratosBancarios
                                     contasAssociacao={contasAssociacao}
                                     extratosBancariosAjustes={extratosBancariosAjustes}
-                                    contaUuid={contaUuid}
+                                    contaUuidAjustesExtratosBancarios={contaUuidAjustesExtratosBancarios}
+                                    prestacaoDeContasUuid={prestacaoDeContasUuid}
                                 />
                             </>
                         }
