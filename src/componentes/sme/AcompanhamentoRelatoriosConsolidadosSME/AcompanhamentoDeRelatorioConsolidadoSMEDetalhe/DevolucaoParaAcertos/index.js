@@ -47,7 +47,9 @@ const DevolucaoParaAcertos = ({relatorioConsolidado, refreshConsolidado, disable
                 <div>
                     <Link
                         onClick={ null }
-                        to={{}}
+                        to={{
+                            pathname: `/analise-relatorio-consolidado-dre-detalhe-acertos-resumo/${relatorioConsolidado.analise_atual.uuid}`
+                        }}
                         className="btn btn-outline-success mr-2"
                         disabled={disableBtnVerResumo()}
                         readOnly={disableBtnVerResumo()}
