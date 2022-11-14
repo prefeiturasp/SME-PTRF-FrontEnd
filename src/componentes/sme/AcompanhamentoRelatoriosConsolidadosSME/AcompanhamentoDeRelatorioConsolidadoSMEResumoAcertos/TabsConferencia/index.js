@@ -2,6 +2,7 @@ import React from 'react';
 import './styles.scss'
 
 export const TabsConferencia = ({}) => {
+    // #LINIKER: So exibir a tabe coferencia atual quando for status em_analise
     return <div className="nav nav-tabs mb-3 tabs-resumo-dos-acertos" id="nav-tab-conferencia-de-lancamentos" role="tablist">      
         <a
             // onClick={}

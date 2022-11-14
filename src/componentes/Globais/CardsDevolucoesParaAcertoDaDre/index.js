@@ -76,7 +76,6 @@ const CardsDevolucoesParaAcertoDaDre = ({prestacao_conta_uuid, analiseAtualUuid=
         setUuidAnalisePcDevolvida(value)
         setAnaliseAtualUuid(value)
         let data_objeto = JSON.parse(e.target.options[e.target.selectedIndex].getAttribute('data-objeto'));
-        console.log("🚀 ~ file: index.js ~ line 79 ~ handleChangeSelectAnalisesDePcDevolvidas ~ data_objeto", data_objeto)
         
         setObjetoConteudoCard(data_objeto)
     }, [setAnaliseAtualUuid])

@@ -9,6 +9,7 @@ const mockData = Array.from({length: 9}, () => ({
 }))
 
 export const VisualizaDevolucoes = ({}) => {
+    // #TODO: Adicionar span com prazo para envio quando for em conferencia atual
     return (
         <div className='visualizacao-container d-flex mt-5' >
             <div className='col-md-3'>
@@ -16,7 +17,7 @@ export const VisualizaDevolucoes = ({}) => {
                     Visualize as devoluções pelas datas : 
                 </span>
             </div>
-            <div className='col-md-6'>
+            <div className='col-md-9'>
                 <select name="escolhe-data-devolucao" id="escolhe-data-devolucao" className='form-control'>
                     {mockData.map( (item, index) => {
                         return <option key={index} value="">{Ordinais(index)} devolução {new Intl.DateTimeFormat('pt-BR', {year: 'numeric', month: '2-digit', day: '2-digit'},).format(new Date(item.data_devolucao))}</option>
