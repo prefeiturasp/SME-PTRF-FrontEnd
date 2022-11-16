@@ -185,7 +185,6 @@ const setValoresRateiosOriginal = (mais_de_um_tipo_de_despesa = null, values, se
 };
 
 const getErroValorOriginalRateios = (values) =>{
-
     let valor_ptfr_original;
 
     valor_ptfr_original = calculaValorOriginal(values);
@@ -207,7 +206,7 @@ const getErroValorOriginalRateios = (values) =>{
         values.despesas_impostos.map((despesa_imposto) => {
             if(despesa_imposto.rateios.length > 0){
                 despesa_imposto.rateios.map((rateio) => {
-                    valor_imposto = valor_imposto + trataNumericos(rateio.valor_rateio);
+                    valor_imposto = valor_imposto + trataNumericos(rateio.valor_original);
                 });
             }
         });
