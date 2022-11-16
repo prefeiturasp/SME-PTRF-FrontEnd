@@ -53,7 +53,7 @@ export const RelatorioDosAcertos = ({relatorioConsolidado, resumoConsolidado, po
                     <div className="actions">
                         {podeGerarPrevia && versaoRascunho
                             ? 
-                                <button onClick={(e) => () => console.log('gerarPrevia()')} type="button" disabled={relatorioConsolidado?.status_sme === "DEVOLVIDO" && disableBtnPrevia} className="btn btn-outline-success mr-2">Gerar prévia</button>
+                                <button onClick={(e) => () => console.log('gerarPrevia()')} type="button" disabled={disableBtnPrevia} className="btn btn-outline-success mr-2">Gerar prévia</button>
                             : 
                                 null
                         }

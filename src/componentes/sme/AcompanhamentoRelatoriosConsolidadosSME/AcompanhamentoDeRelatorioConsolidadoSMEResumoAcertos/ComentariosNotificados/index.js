@@ -17,8 +17,6 @@ export const ComentariosNotificados = ({comentarios}) => {
                         </Fragment>
                     )
                 }
-                
-                return  <input className="form-control form-control-md mb-2" type="text"  defaultValue={value.comentario}/>
             })}
         </>
         )

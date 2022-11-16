@@ -1,6 +1,7 @@
 import React from 'react';
 // import { Ordinais } from '../../../../../utils/ValidacoesNumeros.js'
 import {DatePickerField} from "../../../../Globais/DatePickerField";
+import moment from "moment";
 import './styles.scss'
 
 export const VisualizaDevolucoes = ({relatorioConsolidado, dataLimiteDevolucao, handleChangeDataLimiteDevolucao}) => {
@@ -9,7 +10,7 @@ export const VisualizaDevolucoes = ({relatorioConsolidado, dataLimiteDevolucao, 
         <div className='visualizacao-container d-flex mt-5' >
             <div className='texto-reenvio'>
                 <span>
-                    Prazo para acertos : 
+                    Prazo para acerto : 
                 </span>
             </div>
             <div className='data-limite-field'>
@@ -19,6 +20,7 @@ export const VisualizaDevolucoes = ({relatorioConsolidado, dataLimiteDevolucao, 
                         placeholderText='dd/mm/aaaa'
                         value={dataLimiteDevolucao}
                         disabled={relatorioConsolidado?.status_sme != "EM_ANALISE"}
+                        minDate={new Date(moment())}
                     />
                 {/* <select name="escolhe-data-devolucao" id="escolhe-data-devolucao" className='form-control'>
                     {mockData.map( (item, index) => {

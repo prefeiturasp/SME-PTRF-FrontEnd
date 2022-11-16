@@ -74,6 +74,7 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEResumoAcertos = () => {
         <PaginasContainer>
             <h1 className="titulo-itens-painel mt-5">Acompanhamento da documentação da DRE</h1>
             <TopoComBotoes
+                resumoConsolidado={resumoConsolidado}
                 dataLimiteDevolucao={dataLimiteDevolucao}
                 relatorioConsolidado={relatorioConsolidado}
             />
@@ -94,19 +95,9 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEResumoAcertos = () => {
                 relatorioConsolidado={relatorioConsolidado}
             />
             {!loading ? (
+                relatorioConsolidado?.status_sme === 'DEVOLVIDO' && 
                 <CardsInfoDevolucaoSelecionada
                     cardDataDevolucao={cardDataDevolucao}
-                />
-            ) : <Loading
-                corGrafico="black"
-                corFonte="dark"
-                marginTop="0"
-                marginBottom="0"
-            />
-            }
-            {comentarios && !loading ? (
-                <ComentariosNotificados
-                    comentarios={comentarios}
                 />
             ) : <Loading
                 corGrafico="black"
@@ -129,6 +120,17 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEResumoAcertos = () => {
                     rowsPerPage={rowsPerPage}
                     loadingDocumentosRelatorio={loading}
                     editavel={''} />
+            }
+            {comentarios && !loading ? (
+                <ComentariosNotificados
+                    comentarios={comentarios}
+                />
+            ) : <Loading
+                corGrafico="black"
+                corFonte="dark"
+                marginTop="0"
+                marginBottom="0"
+            />
             }
             <RelatorioDosAcertos
                     relatorioConsolidado={relatorioConsolidado}

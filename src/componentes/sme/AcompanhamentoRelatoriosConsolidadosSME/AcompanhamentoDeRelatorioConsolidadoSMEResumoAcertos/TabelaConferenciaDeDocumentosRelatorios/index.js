@@ -15,7 +15,7 @@ export const TabelaConferenciaDeDocumentosRelatorios = ({ resumoConsolidado, rel
             return
         }
         const response = await detalhamentoConferenciaDocumentos(relatorioConsolidado?.analise_atual?.consolidado_dre, relatorioConsolidado?.analise_atual?.uuid)
-        const documentosComAcertos = Object.values(response.data['lista_documentos']).filter((doc) => doc.analise_documento_consolidado_dre.resultado )
+        const documentosComAcertos = Object.values(response.data['lista_documentos']).filter((doc) => doc.analise_documento_consolidado_dre.resultado === "AJUSTE" )
         setListaDeDocumentosRelatorio(documentosComAcertos)
     }, [relatorioConsolidado])
 
@@ -26,7 +26,7 @@ export const TabelaConferenciaDeDocumentosRelatorios = ({ resumoConsolidado, rel
     const rowExpansionTemplateDocumentos = (data) => {
         return (
             <div>
-                <p className='pr-1'><strong> Comentários : </strong></p>
+                <p className='pr-1'><strong> Detalhamento para acertos : </strong></p>
                 <p className='pr-1 text-sm'>{data.analise_documento_consolidado_dre.detalhamento}</p>
             </div>
         )

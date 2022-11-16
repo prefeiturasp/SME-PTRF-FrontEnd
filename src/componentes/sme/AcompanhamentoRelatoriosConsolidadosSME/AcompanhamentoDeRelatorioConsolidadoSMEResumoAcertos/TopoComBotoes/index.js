@@ -30,7 +30,7 @@ export const TopoComBotoes = ({relatorioConsolidado, dataLimiteDevolucao}) => {
                 <div className="container-botoes">
                     <Button variant="outline-success"
                         onClick={
-                            () => history.push('/analises-relatorios-consolidados-dre/')
+                            () => history.push('/analise-relatorio-consolidado-dre-detalhe/'+ relatorioConsolidado.analise_atual.consolidado_dre + '/')
                     }>
                         Voltar
                     </Button>
