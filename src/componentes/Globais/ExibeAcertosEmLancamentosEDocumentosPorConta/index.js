@@ -2,10 +2,6 @@ import React, {Fragment, memo, useCallback, useEffect, useState} from "react";
 import {useHistory} from "react-router-dom";
 import {faCheck} from '@fortawesome/free-solid-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import useValorTemplate from "../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useValorTemplate";
-import useDataTemplate from "../../../hooks/Globais/useDataTemplate";
-import useNumeroDocumentoTemplate
-    from "../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useNumeroDocumentoTemplate";
 import {
     getContasDaAssociacao,
     getDocumentosAjustes,
@@ -15,22 +11,15 @@ import {
     postMarcarComoLancamentoEsclarecido,
     postMarcarComoDocumentoEsclarecido,
     postLimparStatusDocumentoPrestacaoConta,
-    getLancamentosAjustes,
     patchAnaliseDocumentoPrestacaoConta,
-    getTiposDeAcertoLancamentos,
     getExtratosBancariosAjustes,
     getTemAjustesExtratos
 } from "../../../services/dres/PrestacaoDeContas.service";
-import {TabelaAcertosLancamentos} from "./TabelaAcertosLancamentos";
-import TabsAcertosEmLancamentosPorConta from "./TabsAcertosEmLancamentosPorConta";
 import Loading from "../../../utils/Loading";
 import {
-    postLimparStatusLancamentoPrestacaoConta,
-    postJustificarNaoRealizacaoLancamentoPrestacaoConta,
-    postMarcarComoRealizadoLancamentoPrestacaoConta,
     patchAnaliseLancamentoPrestacaoConta
 } from "../../../services/dres/PrestacaoDeContas.service";
-import {barraMensagemCustom} from "../../Globais/BarraMensagem";
+import {barraMensagemCustom} from "../BarraMensagem";
 
 
 // Redux
@@ -41,7 +30,6 @@ import {
 } from "../../../store/reducers/componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeLancamentos/DetalharAcertos/actions"
 
 import TabelaAcertosDocumentos from "./TabelaAcertosDocumentos";
-import {getAnaliseLancamentosPrestacaoConta} from "../../../services/dres/PrestacaoDeContas.service";
 
 
 // Hooks Personalizados
@@ -51,9 +39,9 @@ import {
 import TabsAjustesEmExtratosBancarios from "./TabsAjustesEmExtratosBancarios";
 import TabelaAcertosEmExtratosBancarios from "./TabelaAcertosEmExtratosBancarios";
 import {visoesService} from "../../../services/visoes.service";
-import BotoesDetalhesParaAcertosDeCategorias from "./BotoesDetalhesParaAcertosDeCategorias";
 import BotoesDetalhesParaAcertosDeCategoriasDocumentos from "./BotoesDetalhesParaAcertosDeCategoriasDocumentos";
 import {RelatorioAposAcertos} from './RelatorioAposAcertos'
+import AcertosLancamentos from "./AcertosLancamentos";
 
 const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
                                                           exibeBtnIrParaPaginaDeAcertos = true,
@@ -67,38 +55,20 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
 
     const history = useHistory();
 
-    const rowsPerPageAcertosLancamentos = 5;
     const rowsPerPageAcertosDocumentos = 5;
-
-    // Hooks Personalizados
-    const valor_template = useValorTemplate()
-    const dataTemplate = useDataTemplate()
-    const numeroDocumentoTemplate = useNumeroDocumentoTemplate()
 
     // Redux
     const dispatch = useDispatch()
 
-    // Filtros Lancamentos
-    const initialStateFiltros = {
-        filtrar_por_lancamento: '',
-        filtrar_por_tipo_de_ajuste: '',
-    }
-
     const [exibeAcertosNosExtratos, setExibeAcertosNosExtratos] = useState(true);
     const [extratosBancariosAjustes, setExtratosBancariosAjustes] = useState(null);
-    const [lancamentosAjustes, setLancamentosAjustes] = useState([])
     const [documentosAjustes, setDocumentosAjustes] = useState([])
     const [contasAssociacao, setContasAssociacao] = useState([])
     const [loadingExtratosBancarios, setLoadingExtratosBancarios] = useState(true)
-    const [loadingLancamentos, setLoadingLancamentos] = useState(true)
     const [loadingDocumentos, setLoadingDocumentos] = useState(true)
     const [opcoesJustificativa, setOpcoesJustificativa] = useState([])
-    const [expandedRowsLancamentos, setExpandedRowsLancamentos] = useState(null);
     const [expandedRowsDocumentos, setExpandedRowsDocumentos] = useState(null);
-    const [stateFiltros, setStateFiltros] = useState(initialStateFiltros);
-    const [contaUuid, setContaUuid] = useState('')
     const [contaUuidAjustesExtratosBancarios, setContaUuidAjustesExtratosBancarios] = useState('')
-    const [listaTiposDeAcertoLancamentos, setListaTiposDeAcertoLancamentos] = useState([])
     const [clickBtnEscolheConta, setClickBtnEscolheConta] = useState({0: true});
     const [clickBtnEscolheContaExtratosBancarios, setClickBtnEscolheContaExtratosBancarios] = useState({0: true});
     const [textareaJustificativa, setTextareaJustificativa] = useState(() => {
@@ -107,15 +77,6 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
     const [showSalvarEsclarecimento, setShowSalvarEsclarecimento] = useState({});
     const [txtEsclarecimentoLancamento, setTxtEsclarecimentoLancamento] = useState({});
     const [txtEsclarecimentoDocumento, setTxtEsclarecimentoDocumento] = useState({});
-
-
-    const toggleBtnEscolheConta = (id) => {
-        if (id !== Object.keys(clickBtnEscolheConta)[0]) {
-            setClickBtnEscolheConta({
-                [id]: !clickBtnEscolheConta[id]
-            });
-        }
-    };
 
     const toggleBtnEscolheContaExtratosBancarios = (id) => {
         if (id !== Object.keys(clickBtnEscolheContaExtratosBancarios)[0]) {
@@ -162,16 +123,6 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
         setLoadingExtratosBancarios(false);
     }, [analiseAtualUuid])
 
-    const carregaAcertosLancamentos = useCallback(async (conta_uuid, filtrar_por_lancamento = null, filtrar_por_tipo_de_ajuste = null) => {
-        setContaUuid(conta_uuid)
-        setLoadingLancamentos(true)
-        let {status_realizacao} = await getAnaliseLancamentosPrestacaoConta()
-        let lancamentos_ajustes = await getLancamentosAjustes(analiseAtualUuid, conta_uuid, filtrar_por_lancamento, filtrar_por_tipo_de_ajuste)
-
-        setOpcoesJustificativa(status_realizacao)
-        setLancamentosAjustes(lancamentos_ajustes)
-        setLoadingLancamentos(false)
-    }, [analiseAtualUuid])
 
     const carregaAcertosDocumentos = useCallback(async () => {
         setLoadingDocumentos(true)
@@ -182,15 +133,6 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
         setLoadingDocumentos(false)
     }, [analiseAtualUuid])
 
-
-    const limparStatus = async (lancamentosSelecionados) => {
-        setLoadingLancamentos(true)
-        await postLimparStatusLancamentoPrestacaoConta({"uuids_analises_lancamentos": lancamentosSelecionados.map(lanc => lanc.analise_lancamento.uuid)})
-        const lancamentoAjuste = await getLancamentosAjustes(lancamentosSelecionados[0].analise_lancamento.analise_prestacao_conta, lancamentosAjustes[0].conta)
-        setLancamentosAjustes(lancamentoAjuste)
-        setLoadingLancamentos(false)
-    }
-
     const limparDocumentoStatus = async (documentosSelecionados) => {
         setLoadingDocumentos(true)
         await postLimparStatusDocumentoPrestacaoConta({"uuids_analises_documentos": documentosSelecionados.map(doc => doc.uuid)})
@@ -199,31 +141,12 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
         setLoadingDocumentos(false)
     }
 
-    const marcarComoRealizado = async (lancamentosSelecionados) => {
-        setLoadingLancamentos(true)
-        await postMarcarComoRealizadoLancamentoPrestacaoConta({"uuids_analises_lancamentos": lancamentosSelecionados.map(lanc => lanc.analise_lancamento.uuid)})
-        const lancamentoAjuste = await getLancamentosAjustes(lancamentosSelecionados[0].analise_lancamento.analise_prestacao_conta, lancamentosAjustes[0].conta)
-        setLancamentosAjustes(lancamentoAjuste)
-        setLoadingLancamentos(false)
-    }
-
     const marcarDocumentoComoRealizado = async (documentosSelecionados) => {
         setLoadingDocumentos(true)
         await postMarcarComoRealizadoDocumentoPrestacaoConta({"uuids_analises_documentos": documentosSelecionados.map(doc => doc.uuid)})
         const documentoAjustes = await getDocumentosAjustes(documentosSelecionados[0].analise_prestacao_conta)
         setDocumentosAjustes(documentoAjustes)
         setLoadingDocumentos(false)
-    }
-
-    const justificarNaoRealizacao = async (lancamentosSelecionados, textoConfirmadoJustificado) => {
-        setLoadingLancamentos(true)
-        await postJustificarNaoRealizacaoLancamentoPrestacaoConta({
-            "uuids_analises_lancamentos": lancamentosSelecionados.map(lanc => lanc.analise_lancamento.uuid),
-            "justificativa": textoConfirmadoJustificado
-        })
-        const lancamentoAjuste = await getLancamentosAjustes(lancamentosSelecionados[0].analise_lancamento.analise_prestacao_conta, lancamentosAjustes[0].conta)
-        setLancamentosAjustes(lancamentoAjuste)
-        setLoadingLancamentos(false)
     }
 
     const justificarNaoRealizacaoDocumentos = async (documentosSelecionados, textoConfirmadoJustificado) => {
@@ -251,31 +174,11 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
                 carregarAjustesExtratosBancarios(contasAssociacao[0].uuid);
                 toggleBtnEscolheContaExtratosBancarios(contasAssociacao[0].uuid)
             }
-            carregaAcertosLancamentos(contasAssociacao[0].uuid)
             carregaAcertosDocumentos(contasAssociacao[0].uuid)
             setClickBtnEscolheConta({0: true})
         }
 
-    }, [contasAssociacao, carregaAcertosLancamentos, carregaAcertosDocumentos, carregarAjustesExtratosBancarios, consultaSeTemAjustesExtratos])
-
-
-    useEffect(() => {
-
-        let mounted = true;
-
-        const carregaTiposDeAcertoLancamentos = async () => {
-            if (mounted) {
-                let tipos_de_acerto_lancamentos = await getTiposDeAcertoLancamentos()
-                setListaTiposDeAcertoLancamentos(tipos_de_acerto_lancamentos)
-            }
-        }
-        carregaTiposDeAcertoLancamentos()
-
-        return () => {
-            mounted = false;
-        }
-
-    }, [])
+    }, [contasAssociacao, carregaAcertosDocumentos, carregarAjustesExtratosBancarios, consultaSeTemAjustesExtratos])
 
     const handleChangeTextareaJustificativa = (event, id) => {
         setShowSalvar({
@@ -287,17 +190,6 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
             [id]: event.target.value
         })
     };
-
-    const handleChangeTextareaEsclarecimentoLancamento = (event, id) => {
-        setShowSalvarEsclarecimento({
-            ...showSalvarEsclarecimento,
-            [id]: false
-        })
-        setTxtEsclarecimentoLancamento({
-            ...txtEsclarecimentoLancamento,
-            [id]: event.target.value
-        })
-    }
 
     const handleChangeTextareaEsclarecimentoDocumento = (event, id) => {
         setShowSalvarEsclarecimento({
@@ -349,152 +241,6 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
         }
     }
 
-    const rowExpansionTemplateLancamentos = (data) => {
-        if (data && data.analise_lancamento && data.analise_lancamento.solicitacoes_de_ajuste_da_analise && data.analise_lancamento.solicitacoes_de_ajuste_da_analise.length > 0) {
-            const salvarDesabilitados = !textareaJustificativa?.[data.analise_lancamento.uuid] || textareaJustificativa?.[data.analise_lancamento.uuid] === data.analise_lancamento.justificativa || showSalvar?.[data.analise_lancamento.uuid]
-            const salvarDesabilitadosEsclarecimento = !txtEsclarecimentoLancamento?.[data.analise_lancamento.uuid] || txtEsclarecimentoLancamento?.[data.analise_lancamento.uuid] === data.analise_lancamento.esclarecimentos || showSalvarEsclarecimento?.[data.analise_lancamento.uuid]
-            return (
-                <>
-                    {data.documento_mestre.mensagem_inativa &&
-                        <div className='row'>
-                            <div className='col-12 p-1 px-4 py-1'>
-                                {barraMensagemCustom.BarraMensagemInativa(data.documento_mestre.mensagem_inativa)}
-                            </div>
-                        </div>
-                    }
-                    {data.analise_lancamento.justificativa?.length > 0 && (
-                        <Fragment>
-                            <div className="row">
-                                <div className="col-12 px-4 py-2">
-                                    <div className='titulo-row-expanded-conferencia-de-lancamentos mb-3'>
-                                        <p className='mb-1'><strong>Justificativa</strong></p>
-                                    </div>
-                                </div>
-                                <div className="form-group w-100 px-4 py-2" id="pointer-event-all">
-                                    <textarea
-                                        defaultValue={data.analise_lancamento.justificativa}
-                                        onChange={(event) => handleChangeTextareaJustificativa(event, data.analise_lancamento.uuid)}
-                                        className="form-control"
-                                        rows="3"
-                                        id="justificativa"
-                                        name="justificativa"
-                                        placeholder="Escreva o comentário"
-                                        disabled={![['change_analise_dre']].some(visoesService.getPermissoes) || visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'DRE' || prestacaoDeContas.status !== 'DEVOLVIDA'}
-                                    >
-                                    </textarea>
-                                    <div className="bd-highlight d-flex justify-content-end align-items-center">
-
-                                        {showSalvar?.[data.analise_lancamento.uuid] &&
-                                            <div className="">
-                                                <p className="mr-2 mt-3">
-                                                    <span className="mr-1">
-                                                        <FontAwesomeIcon
-                                                            style={{fontSize: '16px', color: '#297805'}}
-                                                            icon={faCheck}
-                                                        />
-                                                    </span>Salvo
-                                                </p>
-                                            </div>
-                                        }
-                                        <button
-                                            disabled={salvarDesabilitados}
-                                            type="button"
-                                            className={`btn btn-${salvarDesabilitados ? 'secondary' : 'success'} mt-2 mb-0`}
-                                            onClick={() => handleOnClick(data.analise_lancamento.uuid, 'lancamento')}
-                                        >
-                                            <strong>Salvar Justificativas</strong>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </Fragment>
-                    )}
-                    {data.analise_lancamento.requer_ajustes_externos &&
-                        <div className='row'>
-                            <div className='col-12 mb-1 px-4 py-1'>
-                                {barraMensagemCustom.BarraMensagemAcertoExterno("Acerto externo ao sistema.")}
-                            </div>
-                        </div>
-                    }
-                    {data.analise_lancamento.solicitacoes_de_ajuste_da_analise.map((ajuste, index) => (
-                        <Fragment key={ajuste.id}>
-                            <div className='row'>
-                                <div className='col-12 px-4 py-2'>
-                                    <div className='titulo-row-expanded-conferencia-de-lancamentos mb-3'>
-                                        <p className='mb-1'><strong>Item {index + 1}</strong></p>
-                                    </div>
-                                    <p className='mb-1'><strong>Tipo de acerto</strong></p>
-                                    <p>{ajuste.tipo_acerto.nome}</p>
-                                    {ajuste.detalhamento &&
-                                        <span>
-                                            <p className='mb-1'><strong>Detalhamento</strong></p>
-                                            <p className='mb-4'>{ajuste.detalhamento}</p>
-                                        </span>
-                                    }
-                                </div>
-                            </div>
-                        </Fragment>
-                    ))}
-                    {possuiSolicitacaoEsclarecimento(data.analise_lancamento.solicitacoes_de_ajuste_da_analise) &&
-                        <div className="row">
-                            <div className="col-12 px-4 py-2" id="pointer-event-all">
-                                <div className='titulo-row-expanded-conferencia-de-lancamentos mb-4'>
-                                    <p className='mb-1'><strong>Esclarecimento de lançamento</strong></p>
-                                </div>
-                                <textarea
-                                    rows="4"
-                                    cols="50"
-                                    name='esclarecimento'
-                                    defaultValue={data.analise_lancamento.esclarecimentos}
-                                    onChange={(event) => handleChangeTextareaEsclarecimentoLancamento(event, data.analise_lancamento.uuid)}
-                                    className="form-control"
-                                    placeholder="Digite aqui o esclarecimento"
-                                    disabled={![['change_analise_dre']].some(visoesService.getPermissoes) || visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'DRE' || prestacaoDeContas.status !== 'DEVOLVIDA'}
-                                />
-                            </div>
-                        </div>
-                    }
-                    <div className="bd-highlight d-flex justify-content-end align-items-center" id="pointer-event-all">
-                        {showSalvarEsclarecimento?.[data.analise_lancamento.uuid] && <div className="">
-                            <p className="mr-2 mt-3">
-                                <span className="mr-1">
-                                    <FontAwesomeIcon
-                                        style={{fontSize: '16px', color: '#297805'}}
-                                        icon={faCheck}
-                                    />
-                                </span>Salvo
-                            </p>
-                        </div>}
-                        {possuiSolicitacaoEsclarecimento(data.analise_lancamento.solicitacoes_de_ajuste_da_analise) &&
-                            <button
-                                disabled={salvarDesabilitadosEsclarecimento}
-                                type="button"
-                                className={`btn btn-${salvarDesabilitadosEsclarecimento ? 'secondary' : 'success'} mb-0 mr-2`}
-                                onClick={() => marcarComoEsclarecido(data.analise_lancamento, 'lancamento')}
-                            >
-                                <strong>Salvar esclarecimento</strong>
-                            </button>
-                        }
-                    </div>
-
-                    {exibeBtnIrParaPaginaDeAcertos &&
-                        redirecionaDetalheAcerto(data)
-                    }
-                    {exibeBtnIrParaPaginaDeReceitaOuDespesa &&
-                        redirecionaDetalheReceitaOuDespesa(data)
-                    }
-                    {data && data.analise_lancamento &&
-                        <BotoesDetalhesParaAcertosDeCategorias
-                            analise_lancamento={data.analise_lancamento}
-                            prestacaoDeContasUuid={prestacaoDeContasUuid}
-                            prestacaoDeContas={prestacaoDeContas}
-                            tipo_transacao={data.tipo_transacao}
-                        />
-                    }
-                </>
-            )
-        }
-    };
 
     const rowExpansionTemplateDocumentos = (data) => {
         if (data && data.solicitacoes_de_ajuste_da_analise && data.solicitacoes_de_ajuste_da_analise.length > 0) {
@@ -726,43 +472,17 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
 
             <h5 className="mb-4 mt-4"><strong>Acertos nos lançamentos</strong></h5>
             <>
-                <TabsAcertosEmLancamentosPorConta
-                    contasAssociacao={contasAssociacao}
-                    carregaAcertosLancamentos={carregaAcertosLancamentos}
-                    setStateFiltros={setStateFiltros}
-                    initialStateFiltros={initialStateFiltros}
-                    analiseAtualUuid={analiseAtualUuid}
-                    toggleBtnEscolheConta={toggleBtnEscolheConta}
-                    clickBtnEscolheConta={clickBtnEscolheConta}
-                >
 
-                    {loadingLancamentos ? (
-                            <Loading
-                                corGrafico="black"
-                                corFonte="dark"
-                                marginTop="0"
-                                marginBottom="0"
-                            />
-                        ) :
-                        <>
-                            <TabelaAcertosLancamentos
-                                lancamentosAjustes={lancamentosAjustes}
-                                limparStatus={limparStatus}
-                                prestacaoDeContas={prestacaoDeContas}
-                                marcarComoRealizado={marcarComoRealizado}
-                                justificarNaoRealizacao={justificarNaoRealizacao}
-                                opcoesJustificativa={opcoesJustificativa}
-                                expandedRowsLancamentos={expandedRowsLancamentos}
-                                setExpandedRowsLancamentos={setExpandedRowsLancamentos}
-                                rowExpansionTemplateLancamentos={rowExpansionTemplateLancamentos}
-                                rowsPerPageAcertosLancamentos={rowsPerPageAcertosLancamentos}
-                                valor_template={valor_template}
-                                dataTemplate={dataTemplate}
-                                numeroDocumentoTemplate={numeroDocumentoTemplate}
-                            />
-                        </>
-                    }
-                </TabsAcertosEmLancamentosPorConta>
+                <AcertosLancamentos
+                    analiseAtualUuid={analiseAtualUuid}
+                    prestacaoDeContas={prestacaoDeContas}
+                    exibeBtnIrParaPaginaDeAcertos={exibeBtnIrParaPaginaDeAcertos}
+                    exibeBtnIrParaPaginaDeReceitaOuDespesa={exibeBtnIrParaPaginaDeReceitaOuDespesa}
+                    editavel={editavel}
+                    prestacaoDeContasUuid={prestacaoDeContasUuid}
+                />
+
+
 
                 <hr className="mt-4 mb-3"/>
                 <h5 className="mb-4 mt-4"><strong>Acertos nos documentos</strong></h5>

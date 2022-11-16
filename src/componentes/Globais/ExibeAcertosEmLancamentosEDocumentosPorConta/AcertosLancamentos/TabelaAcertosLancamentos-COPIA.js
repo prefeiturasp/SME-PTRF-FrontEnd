@@ -3,13 +3,13 @@ import {Column} from "primereact/column";
 import {DataTable} from "primereact/datatable";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCheckCircle} from "@fortawesome/free-solid-svg-icons";
-import {ModalCheckNaoPermitidoConfererenciaDeLancamentos,} from "../../dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeLancamentos/Modais/ModalCheckNaoPermitidoConfererenciaDeLancamentos";
-import {ModalJustificarNaoRealizacao} from "../../dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeLancamentos/Modais/ModalJustificarNaoRealizacao";
-import {ModalJustificadaApagada} from "../../dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeLancamentos/Modais/ModalJustificadaApagada";
+import {ModalCheckNaoPermitidoConfererenciaDeLancamentos,} from "../../../dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeLancamentos/Modais/ModalCheckNaoPermitidoConfererenciaDeLancamentos";
+import {ModalJustificarNaoRealizacao} from "../../../dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeLancamentos/Modais/ModalJustificarNaoRealizacao";
+import {ModalJustificadaApagada} from "../../../dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeLancamentos/Modais/ModalJustificadaApagada";
 import Dropdown from "react-bootstrap/Dropdown";
-import {visoesService} from "../../../services/visoes.service";
+import {visoesService} from "../../../../services/visoes.service";
 
-import './scss/tagJustificativaLancamentos.scss';
+import '../scss/tagJustificativaLancamentos.scss';
 
 const tagColors = {
     'JUSTIFICADO':  '#5C4EF8',
@@ -121,17 +121,134 @@ export const TabelaAcertosLancamentos = ({lancamentosAjustes, limparStatus, marc
                             />
                         </Dropdown.Toggle>
 
-                        <Dropdown.Menu>
-                            <Dropdown.Item onClick={(e) => selecionarPorStatus(e, 'REALIZADO')}>Selecionar todos
-                                realizados</Dropdown.Item>
-                            <Dropdown.Item onClick={(e) => selecionarPorStatus(e, 'JUSTIFICADO')}>Selecionar todos
-                                justificados</Dropdown.Item>
+                        <Dropdown.Menu className="super-colors" id='dropdown-menu-tabela-acertos-lancamentos'>
+                            <Dropdown.Item onClick={(e) => selecionarPorStatus(e, 'REALIZADO')}>Selecionar todos realizados</Dropdown.Item>
+                            <Dropdown.Item onClick={(e) => selecionarPorStatus(e, 'JUSTIFICADO')}>Selecionar todos justificados</Dropdown.Item>
                             <Dropdown.Item onClick={(e) => selecionarPorStatus(e, 'PENDENTE')}>Selecionar todos sem status </Dropdown.Item>
                             <Dropdown.Item onClick={limparLancamentos}>Desmarcar todos</Dropdown.Item>
                         </Dropdown.Menu>
 
                     </Dropdown>
             </div>
+        )
+    }
+
+    const montagemSelecionarBotaoStatusRealizado = () => {
+        return(
+            <>
+                <button
+                    className="float-right btn btn-link btn-montagem-selecionar"
+                    onClick={(e) => limparLancamentos(e)}
+                    style={{textDecoration: "underline", cursor: "pointer"}}>
+                    <FontAwesomeIcon
+                        style={{color: "white", fontSize: '15px', marginRight: "3px"}}
+                        icon={faCheckCircle}
+                    />
+                    <strong>Cancelar</strong>
+                </button>
+                <div className="float-right" style={{padding: "0px 10px"}}>|</div>
+                <button
+                    className="float-right btn btn-link btn-montagem-selecionar"
+                    onClick={() => {
+                        setShowModalJustificarNaoRealizacao(true)
+                    }}
+                    style={{textDecoration: "underline", cursor: "pointer"}}>
+                    <FontAwesomeIcon
+                        style={{color: "white", fontSize: '15px', marginRight: "3px"}}
+                        icon={faCheckCircle}
+                    />
+                    <strong>Justificar não realização</strong>
+                </button>
+                <div className="float-right" style={{padding: "0px 10px"}}>|</div>
+                <button
+                    className="float-right btn btn-link btn-montagem-selecionar"
+                    onClick={() => limparStatus(lancamentosSelecionados)}
+                    style={{textDecoration: "underline", cursor: "pointer"}}>
+                    <FontAwesomeIcon
+                        style={{color: "white", fontSize: '15px', marginRight: "3px"}}
+                        icon={faCheckCircle}
+                    />
+                    <strong>Limpar Status</strong>
+                </button>
+            </>
+        )
+    }
+
+    const montagemSelecionarBotoaoStatusJustificado = () => {
+        return(
+            <>
+                <button
+                    className="float-right btn btn-link btn-montagem-selecionar"
+                    onClick={(e) => limparLancamentos(e)}
+                    style={{textDecoration: "underline", cursor: "pointer"}}>
+                    <FontAwesomeIcon
+                        style={{color: "white", fontSize: '15px', marginRight: "3px"}}
+                        icon={faCheckCircle}
+                    />
+                    <strong>Cancelar</strong>
+                </button>
+                <div className="float-right" style={{padding: "0px 10px"}}>|</div>
+                <button
+                    className="float-right btn btn-link btn-montagem-selecionar"
+                    onClick={(e) => verificaApagadaJustificada(lancamentosSelecionados, 'marcar_como_realizado')}
+                    style={{textDecoration: "underline", cursor: "pointer"}}>
+                    <FontAwesomeIcon
+                        style={{color: "white", fontSize: '15px', marginRight: "3px"}}
+                        icon={faCheckCircle}
+                    />
+                    <strong>Marcar como realizado</strong>
+                </button>
+                <div className="float-right" style={{padding: "0px 10px"}}>|</div>
+                <button
+                    className="float-right btn btn-link btn-montagem-selecionar"
+                    onClick={() => verificaApagadaJustificada(lancamentosSelecionados, 'limpar_status')}
+                    style={{textDecoration: "underline", cursor: "pointer"}}>
+                    <FontAwesomeIcon
+                        style={{color: "white", fontSize: '15px', marginRight: "3px"}}
+                        icon={faCheckCircle}
+                    />
+                    <strong>Limpar Status</strong>
+                </button>
+            </>
+        )
+    }
+
+    const montagemSelecionarBotoaoStatusPendente = () => {
+        return(
+            <>
+                <button
+                    className="float-right btn btn-link btn-montagem-selecionar"
+                    onClick={(e) => limparLancamentos(e)}
+                    style={{textDecoration: "underline", cursor: "pointer"}}>
+                    <FontAwesomeIcon
+                        style={{color: "white", fontSize: '15px', marginRight: "3px"}}
+                        icon={faCheckCircle}
+                    />
+                    <strong>Cancelar</strong>
+                </button>
+                <div className="float-right" style={{padding: "0px 10px"}}>|</div>
+                <button
+                    className="float-right btn btn-link btn-montagem-selecionar"
+                    onClick={(e) => marcarComoRealizado(lancamentosSelecionados)}
+                    style={{textDecoration: "underline", cursor: "pointer"}}>
+                    <FontAwesomeIcon
+                        style={{color: "white", fontSize: '15px', marginRight: "3px"}}
+                        icon={faCheckCircle}
+                    />
+                    <strong>Marca como realizado</strong>
+                </button>
+                <div className="float-right" style={{padding: "0px 10px"}}>|</div>
+                <button
+                    className="float-right btn btn-link btn-montagem-selecionar"
+                    onClick={() => setShowModalJustificarNaoRealizacao(true)}
+                    style={{textDecoration: "underline", cursor: "pointer"}}>
+                    <FontAwesomeIcon
+                        style={{color: "white", fontSize: '15px', marginRight: "3px"}}
+                        icon={faCheckCircle}
+                    />
+                    <strong>Justificar não realizado</strong>
+                </button>
+            </>
         )
     }
 
@@ -147,116 +264,15 @@ export const TabelaAcertosLancamentos = ({lancamentosAjustes, limparStatus, marc
                             {quantidadeSelecionada} {quantidadeSelecionada === 1 ? "lançamento selecionado" : "lançamentos selecionados"} / {totalDeAcertosLancamentos} totais
                         </div>
                         <div className="col-7">
-                        {status === "REALIZADO" &&
-                                <>
-                                <button
-                                    className="float-right btn btn-link btn-montagem-selecionar"
-                                    onClick={(e) => limparLancamentos(e)}
-                                    style={{textDecoration: "underline", cursor: "pointer"}}>
-                                    <FontAwesomeIcon
-                                        style={{color: "white", fontSize: '15px', marginRight: "3px"}}
-                                        icon={faCheckCircle}
-                                    />
-                                    <strong>Cancelar</strong>
-                                </button>
-                                <div className="float-right" style={{padding: "0px 10px"}}>|</div>
-                                <button
-                                    className="float-right btn btn-link btn-montagem-selecionar"
-                                    onClick={() => {
-                                        setShowModalJustificarNaoRealizacao(true)
-                                    }}
-                                    style={{textDecoration: "underline", cursor: "pointer"}}>
-                                    <FontAwesomeIcon
-                                        style={{color: "white", fontSize: '15px', marginRight: "3px"}}
-                                        icon={faCheckCircle}
-                                    />
-                                    <strong>Justificar não realização</strong>
-                                </button>
-                                <div className="float-right" style={{padding: "0px 10px"}}>|</div>
-                                <button
-                                    className="float-right btn btn-link btn-montagem-selecionar"
-                                    onClick={() => limparStatus(lancamentosSelecionados)}
-                                    style={{textDecoration: "underline", cursor: "pointer"}}>
-                                    <FontAwesomeIcon
-                                        style={{color: "white", fontSize: '15px', marginRight: "3px"}}
-                                        icon={faCheckCircle}
-                                    />
-                                    <strong>Limpar Status</strong>
-                                </button>
-                                </>
-                                }
-                        {status === "JUSTIFICADO" &&
-                                <>
-                                <button
-                                        className="float-right btn btn-link btn-montagem-selecionar"
-                                        onClick={(e) => limparLancamentos(e)}
-                                        style={{textDecoration: "underline", cursor: "pointer"}}>
-                                        <FontAwesomeIcon
-                                            style={{color: "white", fontSize: '15px', marginRight: "3px"}}
-                                            icon={faCheckCircle}
-                                        />
-                                        <strong>Cancelar</strong>
-                                </button>
-                                <div className="float-right" style={{padding: "0px 10px"}}>|</div>
-                                    <button
-                                        className="float-right btn btn-link btn-montagem-selecionar"
-                                        onClick={(e) => verificaApagadaJustificada(lancamentosSelecionados, 'marcar_como_realizado')}
-                                        style={{textDecoration: "underline", cursor: "pointer"}}>
-                                        <FontAwesomeIcon
-                                            style={{color: "white", fontSize: '15px', marginRight: "3px"}}
-                                            icon={faCheckCircle}
-                                        />
-                                        <strong>Marcar como realizado</strong>
-                                    </button>
-                                <div className="float-right" style={{padding: "0px 10px"}}>|</div>
-                                    <button
-                                        className="float-right btn btn-link btn-montagem-selecionar"
-                                        onClick={() => verificaApagadaJustificada(lancamentosSelecionados, 'limpar_status')}
-                                        style={{textDecoration: "underline", cursor: "pointer"}}>
-                                        <FontAwesomeIcon
-                                            style={{color: "white", fontSize: '15px', marginRight: "3px"}}
-                                            icon={faCheckCircle}
-                                        />
-                                        <strong>Limpar Status</strong>
-                                    </button>
-                                </>
-                                }
-                        { status === "PENDENTE" &&
-                                <>
-                                <button
-                                    className="float-right btn btn-link btn-montagem-selecionar"
-                                    onClick={(e) => limparLancamentos(e)}
-                                    style={{textDecoration: "underline", cursor: "pointer"}}>
-                                    <FontAwesomeIcon
-                                        style={{color: "white", fontSize: '15px', marginRight: "3px"}}
-                                        icon={faCheckCircle}
-                                    />
-                                    <strong>Cancelar</strong>
-                            </button>
-                            <div className="float-right" style={{padding: "0px 10px"}}>|</div>
-                                <button
-                                    className="float-right btn btn-link btn-montagem-selecionar"
-                                    onClick={(e) => marcarComoRealizado(lancamentosSelecionados)}
-                                    style={{textDecoration: "underline", cursor: "pointer"}}>
-                                    <FontAwesomeIcon
-                                        style={{color: "white", fontSize: '15px', marginRight: "3px"}}
-                                        icon={faCheckCircle}
-                                    />
-                                    <strong>Marca como realizado</strong>
-                                </button>
-                            <div className="float-right" style={{padding: "0px 10px"}}>|</div>
-                                <button
-                                    className="float-right btn btn-link btn-montagem-selecionar"
-                                    onClick={() => setShowModalJustificarNaoRealizacao(true)}
-                                    style={{textDecoration: "underline", cursor: "pointer"}}>
-                                    <FontAwesomeIcon
-                                        style={{color: "white", fontSize: '15px', marginRight: "3px"}}
-                                        icon={faCheckCircle}
-                                    />
-                                    <strong>Justificar não realizado</strong>
-                                </button>
-                            </>
-                                }
+                            {status === "REALIZADO" &&
+                                montagemSelecionarBotaoStatusRealizado()
+                            }
+                            {status === "JUSTIFICADO" &&
+                                montagemSelecionarBotoaoStatusJustificado()
+                            }
+                            {status === "PENDENTE" &&
+                                montagemSelecionarBotoaoStatusPendente()
+                            }
                         </div>
                     </div>
                 </div>
@@ -326,6 +342,7 @@ export const TabelaAcertosLancamentos = ({lancamentosAjustes, limparStatus, marc
                     paginatorTemplate="PrevPageLink PageLinks NextPageLink"
                     stripedRows
                     autoLayout={true}
+                    id='tabela-acertos-lancamentos'
                 >
                     <Column 
                         header='Ver Acertos'
