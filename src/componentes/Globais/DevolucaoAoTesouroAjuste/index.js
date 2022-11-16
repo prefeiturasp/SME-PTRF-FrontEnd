@@ -4,15 +4,16 @@ import {DatePickerField} from "../DatePickerField";
 import {PaginasContainer} from "../../../paginas/PaginasContainer";
 import {useLocation} from 'react-router-dom';
 import {Button} from 'react-bootstrap';
-import {toastCustom} from "../../../componentes/Globais/ToastCustom"
+import {toastCustom} from "../ToastCustom"
 import { marcarDevolucaoTesouro, desmarcarDevolucaoTesouro, getSalvarDevoulucoesAoTesouro, deleteDevolucaoAoTesouro } from '../../../services/dres/PrestacaoDeContas.service.js'
-import {ModalBootstrapDeleteDevolucaoAoTesouro} from "../../Globais/ModalBootstrap"
+import {ModalBootstrapDeleteDevolucaoAoTesouro} from "../ModalBootstrap"
 import moment from "moment";
 
 import './../../../componentes/escolas/GeracaoDaAta/geracao-da-ata.scss'
 
 export const DevolucaoAoTesouroAjuste = () => {
     const { state } = useLocation();
+
     const history = useHistory();
     const [devolucao, setDevolucao] = useState([]);
     const [despesa, setDespesas] = useState([]);
@@ -23,9 +24,9 @@ export const DevolucaoAoTesouroAjuste = () => {
     useEffect(() => {
         let mounted = true;
         if (mounted) {
-            setDespesas(state.analise_lancamento.solicitacoes_de_ajuste_da_analise[0].devolucao_ao_tesouro.despesa);
-            setDevolucao(state.analise_lancamento.solicitacoes_de_ajuste_da_analise[0].devolucao_ao_tesouro)
-            setDateDevolucao(state.analise_lancamento.solicitacoes_de_ajuste_da_analise[0].devolucao_ao_tesouro.data)
+            setDespesas(state.analise_lancamento.acertos[0].devolucao_ao_tesouro.despesa);
+            setDevolucao(state.analise_lancamento.acertos[0].devolucao_ao_tesouro)
+            setDateDevolucao(state.analise_lancamento.acertos[0].devolucao_ao_tesouro.data)
         }
         return () =>{
             mounted = false
@@ -52,7 +53,7 @@ export const DevolucaoAoTesouroAjuste = () => {
     }
 
     const temDataDevolucao = () => {
-        const data = state.analise_lancamento.solicitacoes_de_ajuste_da_analise[0].devolucao_ao_tesouro.data
+        const data = state.analise_lancamento.acertos[0].devolucao_ao_tesouro.data
         return data
     }
 
