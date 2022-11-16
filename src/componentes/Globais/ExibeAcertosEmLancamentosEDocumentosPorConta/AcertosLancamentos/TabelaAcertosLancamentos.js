@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Column} from "primereact/column";
 import {DataTable} from "primereact/datatable";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -20,7 +20,7 @@ const tagColors = {
     'JUSTIFICADO': '#086397',
     'JUSTIFICADO_PARCIALMENTE': '#C65D00',
     'REALIZADO': '#447801',
-    'REALIZADO_JUSTIFICADO': 'yellow',
+    'REALIZADO_JUSTIFICADO': '#C65D00',
     'REALIZADO_PARCIALMENTE': '#198459',
     'REALIZADO_JUSTIFICADO_PARCIALMENTE': '#C65D00',
 }
@@ -48,6 +48,7 @@ export const TabelaAcertosLancamentos = ({
                                              textoModalCheckNaoPermitido,
                                              showModalCheckNaoPermitido,
                                              setShowModalCheckNaoPermitido,
+                                             totalDeAcertosDosLancamentos,
                                          }) => {
 
 
@@ -222,7 +223,7 @@ export const TabelaAcertosLancamentos = ({
                 <div className="col-12" style={{background: "#00585E", color: 'white', padding: "15px", margin: "0px 15px", flex: "100%"}}>
                     <div className="row">
                         <div className="col-5">
-                            {quantidadeSelecionada} {quantidadeSelecionada === 1 ? "lançamento selecionado" : "lançamentos selecionados"} / {totalDeAcertosLancamentos} totais
+                            {quantidadeSelecionada} {quantidadeSelecionada === 1 ? "lançamento selecionado" : "lançamentos selecionados"} / {totalDeAcertosDosLancamentos} totais
                         </div>
                         <div className="col-7">
                             {status === "REALIZADO" &&
@@ -289,13 +290,11 @@ export const TabelaAcertosLancamentos = ({
         )
     }
 
-    const totalDeAcertosLancamentos = useMemo(() => lancamentosAjustes.length, [lancamentosAjustes]);
-
     const mensagemQuantidadeExibida = () => {
         return (
             <div className="row">
                 <div className="col-12" style={{padding: "15px 0px", margin: "0px 15px", flex: "100%"}}>
-                    Exibindo <span style={{color: "#00585E", fontWeight: "bold"}}>{totalDeAcertosLancamentos}</span> lançamentos
+                    Exibindo <span style={{color: "#00585E", fontWeight: "bold"}}>{totalDeAcertosDosLancamentos}</span> lançamentos
                 </div>
             </div>
         )

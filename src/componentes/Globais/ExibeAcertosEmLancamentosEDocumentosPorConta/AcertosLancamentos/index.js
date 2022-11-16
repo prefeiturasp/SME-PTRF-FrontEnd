@@ -39,9 +39,6 @@ const AcertosLancamentos = ({
 
     const rowsPerPageAcertosLancamentos = 5;
 
-    console.log("YYYYYYYYYYYYYYYYY prestacaoDeContas ", prestacaoDeContas)
-    console.log("YYYYYYYYYYYYYYYYY analiseAtualUuid ", analiseAtualUuid)
-
     // Hooks Personalizados
     const valor_template = useValorTemplate()
     const dataTemplate = useDataTemplate()
@@ -63,6 +60,25 @@ const AcertosLancamentos = ({
     const [showSalvar, setShowSalvar] = useState({});
     const [txtEsclarecimentoLancamento, setTxtEsclarecimentoLancamento] = useState({});
     const [showSalvarEsclarecimento, setShowSalvarEsclarecimento] = useState({});
+    const [totalDeAcertosDosLancamentos, setTotalDeAcertosDosLancamentos] = useState(0)
+
+    const getTotalDeAcertosDosLancamentos = useCallback(()=>{
+
+        if (lancamentosAjustes && lancamentosAjustes.length > 0){
+            let qtde = 0
+            lancamentosAjustes.map((lancamento) =>
+                qtde += lancamento.analise_lancamento.solicitacoes_de_ajuste_da_analise_total
+            )
+            setTotalDeAcertosDosLancamentos(qtde)
+        }else {
+            setTotalDeAcertosDosLancamentos(0)
+        }
+
+    }, [lancamentosAjustes])
+
+    useEffect(()=>{
+        getTotalDeAcertosDosLancamentos()
+    }, [getTotalDeAcertosDosLancamentos])
 
 
     const carregaDadosDasContasDaAssociacao = useCallback(async () => {
@@ -90,8 +106,7 @@ const AcertosLancamentos = ({
         setLancamentosAjustes(lancamentos_ajustes)
         setLancamentosSelecionados([])
         setIdentificadorCheckboxClicado([{
-            uuid: '',
-            qtde: 0
+            uuid: ''
         }])
         setLoadingLancamentos(false)
 
@@ -304,10 +319,8 @@ const AcertosLancamentos = ({
 
                                         {categoria && categoria.acertos.length > 1 &&
                                             <div className='mb-0 text-right border-bottom'>
-                                                <strong>Categoria: {categoria.categoria}</strong>
-
                                                 {visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'UE' && visoesService.getPermissoes(["change_analise_dre"]) && prestacaoDeContas.status === "DEVOLVIDA" &&
-                                                    null
+                                                    selecionarTodosItensDaCategoriaDoLancamento(categoria)
                                                 }
                                             </div>
                                         }
@@ -499,7 +512,6 @@ const AcertosLancamentos = ({
 
     const [identificadorCheckboxClicado, setIdentificadorCheckboxClicado] = useState([{
             uuid: '',
-            qtde: 0
         }])
 
     const [status, setStatus] = useState()
@@ -512,7 +524,8 @@ const AcertosLancamentos = ({
                     setLancamentosSelecionados((current) => current.filter((item) => item !== acerto));
                 }
             )
-            setIdentificadorCheckboxClicado((current) => current.filter((item) => item.uuid !== categoria.uuid));
+            setIdentificadorCheckboxClicado((current) => current.filter((item) => item.uuid !== categoria.categoria));
+
         }else if (rowData){
             rowData.analise_lancamento.solicitacoes_de_ajuste_da_analise.solicitacoes_acerto_por_categoria.map((categoria) =>
                 // eslint-disable-next-line array-callback-return
@@ -522,11 +535,11 @@ const AcertosLancamentos = ({
                 )
             )
             setIdentificadorCheckboxClicado((current) => current.filter((item) => item.uuid !== rowData.analise_lancamento.uuid))
+
         }else {
             setLancamentosSelecionados([])
             setIdentificadorCheckboxClicado([{
                 uuid: '',
-                qtde: 0
             }])
         }
     }
@@ -548,7 +561,6 @@ const AcertosLancamentos = ({
 
     const selecionarPorStatusTodosItensDosLancamentos = (event, statusId) => {
         event.preventDefault()
-        let qtde = 0
 
         lancamentosAjustes.map((lancamento) =>
             lancamento.analise_lancamento.solicitacoes_de_ajuste_da_analise.solicitacoes_acerto_por_categoria.map((categoria) =>
@@ -562,17 +574,17 @@ const AcertosLancamentos = ({
                         if (acerto.status_realizacao === statusId) {
                             if (!lancamentosSelecionados.includes(acerto)) {
                                 setLancamentosSelecionados((array) => [...array, acerto]);
-                                qtde += 1
                             }
                         } else {
                             setLancamentosSelecionados((current) => current.filter((item) => item !== acerto));
-                            qtde -= 1
                         }
                     }
                 })
             )
         )
-        setIdentificadorCheckboxClicado((array) => [...array, {uuid: 'TODOS',  qtde: qtde}]);
+        if (verificaSePodeSerSelecionado(statusId)) {
+            setIdentificadorCheckboxClicado((array) => [...array, {uuid: 'TODOS'}]);
+        }
     }
 
     const selecionarTodosItensDosLancamentos = () => {
@@ -581,10 +593,7 @@ const AcertosLancamentos = ({
                 <Dropdown>
                     <Dropdown.Toggle id="dropdown-basic" className="p-0">
                         <input
-                            checked={identificadorCheckboxClicado.some(uuid => uuid.uuid === 'TODOS') && lancamentosSelecionados.length > 0
-                                // ( identificadorCheckboxClicado.some(uuid => uuid.uuid === 'TODOS') && lancamentosSelecionados.length > 0 ) ||
-                                // (lancamentosSelecionados.length === identificadorCheckboxClicado.qtde)
-                            }
+                            checked={identificadorCheckboxClicado.some(uuid => uuid.uuid === 'TODOS') && lancamentosSelecionados.length > 0}
                             type="checkbox"
                             value=""
                             onChange={(e) => e}
@@ -608,7 +617,6 @@ const AcertosLancamentos = ({
 
     const selecionarPorStatusTodosItensDoLancamento = (event, statusId, rowData) => {
         event.preventDefault()
-        let qtde = 0
 
         rowData.analise_lancamento.solicitacoes_de_ajuste_da_analise.solicitacoes_acerto_por_categoria.map((categoria) =>
             // eslint-disable-next-line array-callback-return
@@ -621,16 +629,16 @@ const AcertosLancamentos = ({
                     if (acerto.status_realizacao === statusId) {
                         if (!lancamentosSelecionados.includes(acerto)) {
                             setLancamentosSelecionados((array) => [...array, acerto]);
-                            qtde += 1
                         }
                     } else {
                         setLancamentosSelecionados((current) => current.filter((item) => item !== acerto));
-                        qtde -= 1
                     }
                 }
             })
         )
-        setIdentificadorCheckboxClicado((array) => [...array, {uuid: rowData.analise_lancamento.uuid,  qtde: qtde}]);
+        if (verificaSePodeSerSelecionado(statusId)) {
+            setIdentificadorCheckboxClicado((array) => [...array, {uuid: rowData.analise_lancamento.uuid}]);
+        }
     }
 
     const selecionarTodosItensDoLancamento = (rowData) => {
@@ -659,6 +667,28 @@ const AcertosLancamentos = ({
         );
     }
 
+    const selecionarPorStatusTodosItensDaCategoriaDoLancamento = (event, statusId, categoria) => {
+        event.preventDefault()
+
+        // eslint-disable-next-line array-callback-return
+        categoria.acertos.map((acerto) => {
+            if (verificaSePodeSerSelecionado(statusId)){
+                setStatus(statusId)
+                if (acerto.status_realizacao === statusId) {
+                    if (!lancamentosSelecionados.includes(acerto)) {
+                        setLancamentosSelecionados((array) => [...array, acerto]);
+                    }
+                }else {
+                    setLancamentosSelecionados((current) => current.filter((item) => item !== acerto));
+                }
+            }
+        }
+    )
+        if (verificaSePodeSerSelecionado(statusId)) {
+            setIdentificadorCheckboxClicado((array) => [...array, {uuid: categoria.categoria}]);
+        }
+}
+
     const selecionarTodosItensDaCategoriaDoLancamento = (categoria) => {
 
         return (
@@ -666,8 +696,8 @@ const AcertosLancamentos = ({
                 <Dropdown.Toggle id="dropdown-basic">
                     <span>Selecionar todos </span>
                     <input
-                        checked={ (identificadorCheckboxClicado.some(uuid => uuid.uuid === 'TODOS') && lancamentosSelecionados.length > 0 ) || (identificadorCheckboxClicado.some(uuid => uuid.uuid === categoria.uuid) && lancamentosSelecionados.length > 0) }
-                        // checked={identificadorCheckboxClicado.some(uuid => uuid.uuid === categoria.uuid)}
+                        //checked={ (identificadorCheckboxClicado.some(uuid => uuid.uuid === 'TODOS') && lancamentosSelecionados.length > 0 ) || (identificadorCheckboxClicado.some(uuid => uuid.uuid === categoria.uuid) && lancamentosSelecionados.length > 0) }
+                        checked={identificadorCheckboxClicado.some(uuid => uuid.uuid === categoria.categoria) && lancamentosSelecionados.length > 0 }
                         type="checkbox"
                         value=""
                         onChange={(e) => e}
@@ -686,27 +716,6 @@ const AcertosLancamentos = ({
             </Dropdown>
         );
     }
-
-    const selecionarPorStatusTodosItensDaCategoriaDoLancamento = (event, statusId, categoria) => {
-        event.preventDefault()
-        let qtde = 0
-
-        // eslint-disable-next-line array-callback-return
-        categoria.acertos.map((acerto) => {
-            if (verificaSePodeSerSelecionado(statusId)){
-                setStatus(statusId)
-                if (acerto.status_realizacao === statusId) {
-                    if (!lancamentosSelecionados.includes(acerto)) {
-                        setLancamentosSelecionados((array) => [...array, acerto]);
-                    }
-                }else {
-                    setLancamentosSelecionados((current) => current.filter((item) => item !== acerto));
-                }
-            }
-        }
-    )
-        setIdentificadorCheckboxClicado((array) => [...array, {uuid: categoria.uuid,  qtde: qtde}]);
-}
 
     const selecionarItemIndividual = (event, acerto, statusId) => {
 
@@ -783,6 +792,7 @@ const AcertosLancamentos = ({
                             textoModalCheckNaoPermitido={textoModalCheckNaoPermitido}
                             showModalCheckNaoPermitido={showModalCheckNaoPermitido}
                             setShowModalCheckNaoPermitido={setShowModalCheckNaoPermitido}
+                            totalDeAcertosDosLancamentos={totalDeAcertosDosLancamentos}
                         />
                     </div>
                 </div>
