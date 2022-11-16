@@ -79,6 +79,8 @@ import { ParametrizacoesTiposAcertosLancamentos } from "../componentes/sme/Param
 import { ParametrizacoesTiposAcertosDocumentos } from "../componentes/sme/Parametrizacoes/PrestacaoContas/TiposAcertosDocumentos";
 import { DevolucaoAoTesouroAjuste } from "../componentes/Globais/DevolucaoAoTesouroAjuste"
 import {ExtracaoDadosPage} from '../paginas/SME/ExtracaoDados'
+import TesteDataTableAnt
+    from "../componentes/Globais/ExibeAcertosEmLancamentosEDocumentosPorConta/AcertosLancamentos/TesteDataTableAnt";
 
 const routesConfig = [
     {
@@ -516,6 +518,14 @@ const routesConfig = [
         path: "/suporte-unidades-sme",
         component: SuporteAsUnidadesSme,
         permissoes: ['access_suporte_unidades_sme'],
+    },
+
+
+    {
+        exact: true,
+        path: "/teste-datatable-ant",
+        component: TesteDataTableAnt,
+        permissoes: ['access_regularidade_dre'],
     },
 
 ];
