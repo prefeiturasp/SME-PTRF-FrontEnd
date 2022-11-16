@@ -361,7 +361,7 @@ const CadastroDeMembrosDaAssociacao = () => {
     const onSubmitEditarMembro = async () => {
         let enviar_formulario = true
         let erros = {};
-        const regex_email = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
+        const regex_email = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
 
         let values = {...formRef.current.values}
 
