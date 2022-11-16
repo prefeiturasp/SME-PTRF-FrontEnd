@@ -80,9 +80,16 @@ input[data-state="invalid"] {
 
 .desabilita-link-estorno {
   pointer-events: none;
+  color: #B40C02 !important;
+  opacity: .65;
 }
 
 .texto-rateio-estornado-bloqueado {
   color: #B40C02;
+  font-weight: bold;
+}
+
+.desabilita-link-remover-despesa{
+  color: #B40C02 !important;
   font-weight: bold;
 }

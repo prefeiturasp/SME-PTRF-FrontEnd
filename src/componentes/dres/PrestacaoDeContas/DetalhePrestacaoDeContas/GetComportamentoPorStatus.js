@@ -11,6 +11,7 @@ import DevolucaoParaAcertos from "./DevolucaoParaAcertos";
 import {BotaoSalvarRodape} from "./BotaoSalvarRodape";
 import ConferenciaDeDocumentos from "./ConferenciaDeDocumentos";
 import DevolutivaDaAssociacao from "./DevolutivaDaAssociacao";
+import JustificativaDeFaltaDeAjustes from "./JustificativaDeFaltaDeAjustes";
 
 
 export const GetComportamentoPorStatus = (
@@ -351,7 +352,9 @@ export const GetComportamentoPorStatus = (
                         dataRecebimentoDevolutiva={dataRecebimentoDevolutiva}
                         handleChangedataRecebimentoDevolutiva={handleChangedataRecebimentoDevolutiva}
                     />
-
+                    <JustificativaDeFaltaDeAjustes
+                        prestacaoDeContas={prestacaoDeContas}
+                    />
                     <InformacoesPrestacaoDeContas
                         handleChangeFormInformacoesPrestacaoDeContas={handleChangeFormInformacoesPrestacaoDeContas}
                         informacoesPrestacaoDeContas={informacoesPrestacaoDeContas}

@@ -1,8 +1,11 @@
-import React from "react";
+import React, { useContext } from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faArrowLeft} from "@fortawesome/free-solid-svg-icons";
+import {ValidarParcialTesouro} from '../../../../../../context/DetalharAcertos'
 
 export const TopoComBotoes = ({onSubmitFormAcertos, onClickBtnVoltar}) =>{
+    const {isValorParcialValido} = useContext(ValidarParcialTesouro)
+
     return(
         <div className="d-flex bd-highlight align-items-center">
             <div className="p-2 flex-grow-1 bd-highlight">
@@ -16,7 +19,7 @@ export const TopoComBotoes = ({onSubmitFormAcertos, onClickBtnVoltar}) =>{
                     />
                     Voltar
                 </button>
-                <button onClick={onSubmitFormAcertos} className="btn btn btn-success">Salvar</button>
+                <button onClick={onSubmitFormAcertos} disabled={isValorParcialValido} className="btn btn btn-success">Salvar</button>
             </div>
         </div>
     )

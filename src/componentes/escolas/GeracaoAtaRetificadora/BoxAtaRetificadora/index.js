@@ -4,6 +4,7 @@ import {ModalNaoPodeGerarAta} from "../../GeracaoDaAta/ModalNaoPodeGerarAta";
 import Spinner from "../../../../assets/img/spinner.gif";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faDownload} from "@fortawesome/free-solid-svg-icons";
+import {getPeriodoFechado} from "../../../../services/escolas/Associacao.service";
 
 export const BoxAtaRetificadora = ({
                                        corBoxAtaRetificadora,
@@ -15,6 +16,7 @@ export const BoxAtaRetificadora = ({
                                        statusPc
 }) => {
     const [dadosAtaRetificadora, setDadosAtaRetificadora] = useState({});
+    const [docPrestacaoConta, setDocPrestacaoConta] = useState({});
     const [showNaoPodeGerarAta, setShowNaoPodeGerarAta] = useState(false);
     const [textoModalAta, setTextoModalAta] = useState('<p>Você não pode gerar o PDF de uma ata incompleta.</p>');
 
@@ -29,9 +31,12 @@ export const BoxAtaRetificadora = ({
     });
 
     const getDadosAta = useCallback(async ()=>{
+        let periodo_prestacao_de_contas = JSON.parse(localStorage.getItem("periodoPrestacaoDeConta"));
         if (uuidAtaRetificacao){
             let dados_ata = await getAtas(uuidAtaRetificacao);
+            let doc_pc = periodo_prestacao_de_contas.data_inicial ? await getPeriodoFechado(periodo_prestacao_de_contas.data_inicial) : null;
             setDadosAtaRetificadora(dados_ata)
+            setDocPrestacaoConta(doc_pc)
         }
     }, [uuidAtaRetificacao])
 
@@ -105,6 +110,8 @@ export const BoxAtaRetificadora = ({
                                     onClick={() => gerarAtaPDF()}
                                     type="button"
                                     className="btn btn-outline-success float-right mr-2"
+                                    disabled={!docPrestacaoConta?.gerar_ou_editar_ata_retificacao}
+                                    title={!(docPrestacaoConta?.gerar_ou_editar_ata_retificacao) ? 'A ata de retificação só pode ser gerada enquanto o status da PC for "Retornada após acertos".': ''}
                                 >
                                     gerar ata
                                 </button>

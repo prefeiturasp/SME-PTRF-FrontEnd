@@ -23,6 +23,7 @@ import {TabelaDevolucoesContaPtrf} from "./TabelaDevolucoesContaPtrf";
 import {TabelaDevolucoesAoTesouro} from "./TabelaDevolucoesAoTesouro";
 import {TabelaExecucaoFisica} from "./TabelaExecucaoFisica";
 import {auxGetNomes} from "../auxGetNomes";
+import {haDiferencaPrevisaoExecucaoRepasse} from "../haDiferencaPrevisaoExecucaoRepasse"
 import {ModalObservacoesRelatorioConsolidadoApuracao} from "../ModalObservacoesRelatorioConsolidadoApuracao";
 import {ModalSalvarJustificativa} from "../ModalSalvarJustificativa";
 import Loading from "../../../../utils/Loading";
@@ -176,13 +177,8 @@ export const RelatorioConsolidadoApuracao = () => {
     };
 
     const comparaValores = () => {
-        if (execucaoFinanceira) {
-            return execucaoFinanceira.repasses_previstos_sme_custeio !== execucaoFinanceira.repasses_no_periodo_custeio ||
-                execucaoFinanceira.repasses_previstos_sme_capital !== execucaoFinanceira.repasses_no_periodo_capital ||
-                execucaoFinanceira.repasses_previstos_sme_livre !== execucaoFinanceira.repasses_no_periodo_livre ||
-                execucaoFinanceira.repasses_previstos_sme_total !== execucaoFinanceira.repasses_no_periodo_total;
-        }
-    };
+        return haDiferencaPrevisaoExecucaoRepasse(execucaoFinanceira)
+    }
 
     const onChangeJustificativaDiferenca = (justificativa_texto) => {
         setBtnSalvarJustificativaDisable(false);

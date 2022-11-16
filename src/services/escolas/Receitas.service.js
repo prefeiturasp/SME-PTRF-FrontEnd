@@ -20,8 +20,9 @@ export const getTabelasReceita = async () => {
         });
 };
 
-export const getTabelasReceitaReceita = async () => {
-    return (await api.get(`api/receitas/tabelas/?associacao_uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader)).data
+export const getTabelasReceitaReceita = async (associacao=null) => {
+    let associacao_uuid = associacao ? associacao : localStorage.getItem(ASSOCIACAO_UUID);
+    return (await api.get(`api/receitas/tabelas/?associacao_uuid=${associacao_uuid}`, authHeader)).data
 };
 
 
@@ -36,9 +37,11 @@ export const criarReceita = async payload => {
         });
 };
 
-export const getReceita = async (uuid) => {
+export const getReceita = async (uuid, associacao=null) => {
+    let associacao_uuid = associacao ? associacao : localStorage.getItem(ASSOCIACAO_UUID)
+
     return api
-        .get(`api/receitas/${uuid}/?associacao_uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader)
+        .get(`api/receitas/${uuid}/?associacao_uuid=${associacao_uuid}`, authHeader)
         .then(response => {
             return response;
         })
@@ -92,4 +95,16 @@ export const getPeriodoFechadoReceita = async (palavra, aplicacao_recurso, acao_
 
 export const getListaMotivosEstorno = async () => {
     return (await api.get(`/api/motivos-estorno/`, authHeader)).data
+};
+
+export const marcarLancamentoExcluido = async (uuid_analise_lancamento) => {
+    return (await api.post(`/api/analises-lancamento-prestacao-conta/${uuid_analise_lancamento}/marcar-lancamento-excluido/`, {}, authHeader)).data
+};
+
+export const marcarLancamentoAtualizado = async (uuid_analise_lancamento) => {
+    return (await api.post(`/api/analises-lancamento-prestacao-conta/${uuid_analise_lancamento}/marcar-lancamento-atualizado/`, {}, authHeader)).data
+};
+
+export const marcarCreditoIncluido = async (uuid_analise_documento, payload) => {
+    return (await api.post(`/api/analises-documento-prestacao-conta/${uuid_analise_documento}/marcar-como-credito-incluido/`, payload, authHeader)).data
 };
