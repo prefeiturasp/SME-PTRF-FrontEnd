@@ -38,6 +38,7 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEDetalhe = () => {
     const getConsolidadoDREUuid = useCallback(async () => {
         let {consolidado_dre_uuid} = params
         const response = await detalhamentoConsolidadoDRE(consolidado_dre_uuid)
+        
         setRelatorioConsolidado(response.data);
         setLoading(false);
     }, [params]);

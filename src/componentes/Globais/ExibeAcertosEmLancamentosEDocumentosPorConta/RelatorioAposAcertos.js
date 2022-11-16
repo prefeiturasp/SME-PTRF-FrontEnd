@@ -84,11 +84,13 @@ export const RelatorioAposAcertos = ({prestacaoDeContasUuid, prestacaoDeContas, 
     };
 
     const analisesDePcDevolvidas = async () => {
-        let analises_pc_devolvidas = await getAnalisesDePcDevolvidas(prestacaoDeContasUuid);
-        setAnalisesDevolvidas(analises_pc_devolvidas);
+        if(prestacaoDeContasUuid){
+            let analises_pc_devolvidas = await getAnalisesDePcDevolvidas(prestacaoDeContasUuid);
+            setAnalisesDevolvidas(analises_pc_devolvidas);
+        }
     }
 
-    const getNumeroDaDevolucao = async () => {
+    const getNumeroDaDevolucao = () => {
         if(analisesDevolvidas.length > 0){
             for(let i=0; i<=analisesDevolvidas.length-1; i++){
                 if(analisesDevolvidas[i].uuid === analiseAtualUuid){
@@ -179,7 +181,7 @@ export const RelatorioAposAcertos = ({prestacaoDeContasUuid, prestacaoDeContas, 
                     </div>
 
                     <div className="actions">
-                        {podeGerarPrevia && prestacaoDeContas.status === 'DEVOLVIDA' && !documentoFinalGerado()
+                        {podeGerarPrevia && !documentoFinalGerado()
                             ? 
                                 <button onClick={(e) => gerarPrevia()} type="button" disabled={disableBtnPrevia} className="btn btn-outline-success mr-2">Gerar prévia</button>
                             : 
