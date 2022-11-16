@@ -1,3 +1,6 @@
+### 1.33.4 - 16/11/2022 - Hotfix - Soluções de bugs urgentes durante a sprint 53
+* (78755) O sistema não salva o cadastro de um Membro da Associação (Conselheiro do Conselho Fiscal)
+
 ### 1.33.3 - 22/09/2022 - Hotfix - Soluções de bugs urgentes durante a sprint 50
 * (74773) Resolve problema de visualização de devolução ao tesouro de despesa sem tipo definido
 
