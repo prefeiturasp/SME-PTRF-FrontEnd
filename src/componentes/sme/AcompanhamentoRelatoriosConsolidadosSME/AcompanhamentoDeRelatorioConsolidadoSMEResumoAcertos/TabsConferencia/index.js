@@ -1,10 +1,10 @@
 import React from 'react';
 import './styles.scss'
 
-export const TabsConferencia = ({relatorioConsolidado}) => { // #LINIKER: So exibir a tabe coferencia atual quando for status em_analise
+export const TabsConferencia = ({relatorioConsolidado}) => {
     return <div className="nav nav-tabs mb-3 tabs-resumo-dos-acertos" id="nav-tab-conferencia-de-lancamentos" role="tablist">
         {
-        relatorioConsolidado ?.status_sme === 'EM_ANALISE' ? <a // onClick={}
+        relatorioConsolidado ?.status_sme === 'EM_ANALISE' ? <a
             className={`nav-link btn-escolhe-acao active`}
             id="nav-conferencia-atual-tab"
             data-toggle="tab"
@@ -14,7 +14,7 @@ export const TabsConferencia = ({relatorioConsolidado}) => { // #LINIKER: So exi
             aria-selected="true"
         >
             Conferência atual
-        </a> : <a // onClick={}
+        </a> : <a
             className={`nav-link btn-escolhe-acao active`}
             id="nav-historico-tab"
             data-toggle="tab"

@@ -181,7 +181,7 @@ export const RelatorioAposAcertos = ({prestacaoDeContasUuid, prestacaoDeContas, 
                     </div>
 
                     <div className="actions">
-                        {podeGerarPrevia && !documentoFinalGerado()
+                        {podeGerarPrevia && prestacaoDeContas.status === 'DEVOLVIDA' && !documentoFinalGerado()
                             ? 
                                 <button onClick={(e) => gerarPrevia()} type="button" disabled={disableBtnPrevia} className="btn btn-outline-success mr-2">Gerar prévia</button>
                             : 
