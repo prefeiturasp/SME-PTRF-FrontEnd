@@ -11,6 +11,56 @@ export const FormularioAcertos = ({solicitacoes_acerto, listaTiposDeAcertoLancam
 
     const uuidDevolucaoTesouro = listaTiposDeAcertoLancamentosAgrupado.find(item => item.id === "DEVOLUCAO")?.tipos_acerto_lancamento[0].uuid
 
+
+    const categoriaNaoPodeRepetir = (categoria) => {
+        if(categoria.id === 'DEVOLUCAO'){
+            return true;
+        }
+        else if(categoria.id === 'EXCLUSAO_LANCAMENTO'){
+            return true;
+        }
+        else if(categoria.id === 'SOLICITACAO_ESCLARECIMENTO'){
+            return true;
+        }
+
+        return false;
+    }
+
+    const categoriaNaoTemItensParaExibir = (categoria) => {
+        let itens_a_exibir = categoria.tipos_acerto_lancamento.filter((item) => (item.deve_exibir === true));
+
+        if(itens_a_exibir.length === 0){
+            return true;
+        }
+
+        return false;
+    }
+
+    const opcoesSelect = (acertos) => {
+        for(let index_categoria=0; index_categoria <= listaTiposDeAcertoLancamentosAgrupado.length -1; index_categoria ++){
+            let categoria = listaTiposDeAcertoLancamentosAgrupado[index_categoria]
+            categoria.deve_exibir_categoria = true;
+
+            for(let index_tipo_acerto=0; index_tipo_acerto <= categoria.tipos_acerto_lancamento.length -1; index_tipo_acerto++){
+                let acerto = categoria.tipos_acerto_lancamento[index_tipo_acerto];
+                let uuid = acerto.uuid
+                acerto.deve_exibir = true
+
+                let ja_selecionado = acertos.filter((item) => (item.tipo_acerto === uuid))
+
+                if(ja_selecionado.length > 0){
+                    acerto.deve_exibir = false
+
+                    if(categoriaNaoPodeRepetir(categoria) || categoriaNaoTemItensParaExibir(categoria)){
+                        categoria.deve_exibir_categoria = false;
+                    } 
+                }
+            }
+        }
+
+        return listaTiposDeAcertoLancamentosAgrupado
+    }
+
     return (
         <div className='mt-3'>
             <Formik
@@ -35,13 +85,6 @@ export const FormularioAcertos = ({solicitacoes_acerto, listaTiposDeAcertoLancam
                                 render={({remove, push}) => (
                                     <>
                                         {values.solicitacoes_acerto && values.solicitacoes_acerto.length > 0 && values.solicitacoes_acerto.map((acerto, index, acertos) => {
-                                            const indexDevolucaoTesouro = acertos.findIndex(acerto => acerto.tipo_acerto === uuidDevolucaoTesouro)
-                                            let acertosSemDevolucao = (item) => item
-
-                                            if (indexDevolucaoTesouro !== -1) {
-                                                acertosSemDevolucao = indexDevolucaoTesouro !== index ? (item) => item.filter((option) => option.id !== "DEVOLUCAO") : (item) => item
-                                            }
-
                                             return (
                                                 <div key={index}>
                                                     <div
@@ -85,11 +128,11 @@ export const FormularioAcertos = ({solicitacoes_acerto, listaTiposDeAcertoLancam
                                                             >
                                                                 <option key='' value="">Selecione a especificação do acerto</option>
                                                                 
-                                                                {listaTiposDeAcertoLancamentosAgrupado && listaTiposDeAcertoLancamentosAgrupado.length > 0 && acertosSemDevolucao(listaTiposDeAcertoLancamentosAgrupado).map(item => {
+                                                                {listaTiposDeAcertoLancamentosAgrupado && listaTiposDeAcertoLancamentosAgrupado.length > 0 && opcoesSelect(acertos).map(item => {
                                                                     return (
-                                                                        <optgroup key={item.id} label={item.nome}>
+                                                                        <optgroup key={item.id} label={item.nome} className={!item.deve_exibir_categoria ? 'esconde-categoria' : ''}>
                                                                             {item.tipos_acerto_lancamento && item.tipos_acerto_lancamento.length > 0 && item.tipos_acerto_lancamento.map(tipo_acerto => (
-                                                                                <option key={tipo_acerto.uuid} value={tipo_acerto.uuid} data-categoria={item.id} data-objeto={JSON.stringify({ ...tipo_acerto })}>{tipo_acerto.nome}</option>
+                                                                                <option className={!tipo_acerto.deve_exibir ? 'esconde-tipo-acerto' : ''} key={tipo_acerto.uuid} value={tipo_acerto.uuid} data-categoria={item.id} data-objeto={JSON.stringify({ ...tipo_acerto })}>{tipo_acerto.nome}</option>
                                                                             ))}
                                                                         </optgroup>
                                                                     );
