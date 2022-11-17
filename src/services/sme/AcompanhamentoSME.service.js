@@ -55,3 +55,7 @@ export const downloadDocumentoRelatorio = (documento) => {
         ...authHeader
     })
 }
+
+export const getResumoConsolidado = (analise_uuid) => {
+    return api.get(`/api/analises-consolidados-dre/${analise_uuid}/`, authHeader)
+}

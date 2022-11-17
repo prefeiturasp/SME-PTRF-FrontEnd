@@ -1,18 +1,22 @@
-import React, {useCallback, useState} from "react"
+import React, {useCallback, useState, useContext, useEffect} from "react"
 import {DatePickerField} from "../../../../Globais/DatePickerField";
 import {Link} from "react-router-dom";
 import {ModalConfirmaDevolverParaAcerto} from "./ModalConfirmaDevolverParaAcerto";
-import moment from "moment";
 import {devolverConsolidado} from '../../../../../services/dres/RelatorioConsolidado.service'
 import {toastCustom} from "../../../../Globais/ToastCustom";
+import { DataLimiteDevolucao } from "../../../../../context/DataLimiteDevolucao";
+import moment from "moment";
 
 const DevolucaoParaAcertos = ({relatorioConsolidado, refreshConsolidado, disableBtnVerResumo, setLoading}) => {
     const [dataLimiteDevolucao, setDataLimiteDevolucao] = useState('')
     const [showModalConfirmaDevolverParaAcerto, setShowModalConfirmaDevolverParaAcerto] = useState(false)
     const [botaoDevolverParaAcertoDisabled, setBotaoDevolverParaAcertoDisabled] = useState(false)
 
+    const {setDataLimite} = useContext(DataLimiteDevolucao)
+
     const handleChangeDataLimiteDevolucao = (name, value) => {
         setDataLimiteDevolucao(value)
+        setDataLimite(value)
     }
 
     const devolverParaAcertos = useCallback(async () =>{
@@ -47,7 +51,9 @@ const DevolucaoParaAcertos = ({relatorioConsolidado, refreshConsolidado, disable
                 <div>
                     <Link
                         onClick={ null }
-                        to={{}}
+                        to={{
+                            pathname: `/analise-relatorio-consolidado-dre-detalhe-acertos-resumo/${relatorioConsolidado.analise_atual.uuid}`,
+                        }}
                         className="btn btn-outline-success mr-2"
                         disabled={disableBtnVerResumo()}
                         readOnly={disableBtnVerResumo()}

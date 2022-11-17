@@ -81,7 +81,10 @@ import { ParametrizacoesTiposAcertosLancamentos } from "../componentes/sme/Param
 import { ParametrizacoesTiposAcertosDocumentos } from "../componentes/sme/Parametrizacoes/PrestacaoContas/TiposAcertosDocumentos";
 import { DevolucaoAoTesouroAjuste } from "../componentes/Globais/DevolucaoAoTesouroAjuste"
 import {AcompanhamentoDeRelatorioConsolidadoSMEDetalhe} from "../componentes/sme/AcompanhamentoRelatoriosConsolidadosSME/AcompanhamentoDeRelatorioConsolidadoSMEDetalhe"
+import {AcompanhamentoDeRelatorioConsolidadoSMEResumoAcertos} from "../componentes/sme/AcompanhamentoRelatoriosConsolidadosSME/AcompanhamentoDeRelatorioConsolidadoSMEResumoAcertos"
 import {ExtracaoDadosPage} from '../paginas/SME/ExtracaoDados'
+import TesteDataTableAnt
+    from "../componentes/Globais/ExibeAcertosEmLancamentosEDocumentosPorConta/AcertosLancamentos/TesteDataTableAnt";
 
 const routesConfig = [
     {
@@ -303,12 +306,6 @@ const routesConfig = [
     },
     {
         exact: true,
-        path: "/dre-detalhe-prestacao-de-contas-resumo-acertos/:prestacao_conta_uuid",
-        component: ResumoDosAcertos,
-        permissoes: ['access_acompanhamento_pcs_dre'],
-    },
-    {
-        exact: true,
         path: "/suporte-unidades-dre",
         component: SuporteAsUnidadesDre,
         permissoes: ['access_suporte_unidades_dre'],
@@ -432,6 +429,12 @@ const routesConfig = [
     },
     {
         exact: true,
+        path: "/analise-relatorio-consolidado-dre-detalhe-acertos-resumo/:consolidado_dre_uuid/",
+        component: AcompanhamentoDeRelatorioConsolidadoSMEResumoAcertos,
+        permissoes: ['access_analise_relatorios_consolidados_sme'],
+    },
+    {
+        exact: true,
         path: "/listagem-relatorios-consolidados-dre/:periodo_uuid?/:status_sme?",
         component: AcompanhamentoRelatorioConsolidadosSmeListagem,
         permissoes: ['access_analise_relatorios_consolidados_sme'],
@@ -537,6 +540,14 @@ const routesConfig = [
         path: "/suporte-unidades-sme",
         component: SuporteAsUnidadesSme,
         permissoes: ['access_suporte_unidades_sme'],
+    },
+
+
+    {
+        exact: true,
+        path: "/teste-datatable-ant",
+        component: TesteDataTableAnt,
+        permissoes: ['access_regularidade_dre'],
     },
 
 ];

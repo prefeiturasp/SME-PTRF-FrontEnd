@@ -6,6 +6,7 @@ import {BrowserRouter} from "react-router-dom";
 import {SidebarContextProvider} from "./context/Sidebar";
 import {DespesaContextProvider} from "./context/Despesa";
 import {NotificacaoContextProvider} from "./context/Notificacoes";
+import {DataLimiteProvider} from './context/DataLimiteDevolucao';
 import {CentralDeDownloadContextProvider} from "./context/CentralDeDownloads";
 import * as serviceWorker from './serviceWorker';
 import {Provider} from "react-redux";
@@ -22,9 +23,11 @@ ReactDOM.render(
             <CentralDeDownloadContextProvider>
                 <DespesaContextProvider>
                     <SidebarContextProvider>
-                        <BrowserRouter>
-                            <App/>
-                        </BrowserRouter>
+                        <DataLimiteProvider>
+                            <BrowserRouter>
+                                <App/>
+                            </BrowserRouter>
+                        </DataLimiteProvider>
                     </SidebarContextProvider>
                 </DespesaContextProvider>
             </CentralDeDownloadContextProvider>
