@@ -9,7 +9,7 @@ export const TabelaConferenciaDeDocumentosRelatorios = ({ resumoConsolidado, rel
     const rowsPerPage = 5
     const [listaDeDocumentosRelatorio, setListaDeDocumentosRelatorio] = useState(null)
     const [expandedRowsDocumentos, setExpandedRowsDocumentos] = useState(null);
-
+    
     const carregaListaDeDocumentosRelatorio = useCallback(async () => {
         if(!relatorioConsolidado?.analise_atual){
             return
@@ -18,11 +18,11 @@ export const TabelaConferenciaDeDocumentosRelatorios = ({ resumoConsolidado, rel
         const documentosComAcertos = Object.values(response.data['lista_documentos']).filter((doc) => doc.analise_documento_consolidado_dre.resultado === "AJUSTE" )
         setListaDeDocumentosRelatorio(documentosComAcertos)
     }, [relatorioConsolidado])
-
+    
     useEffect(() => {
         carregaListaDeDocumentosRelatorio()
     }, [carregaListaDeDocumentosRelatorio])
-
+    
     const rowExpansionTemplateDocumentos = (data) => {
         return (
             <div>
@@ -35,7 +35,7 @@ export const TabelaConferenciaDeDocumentosRelatorios = ({ resumoConsolidado, rel
     return (
         <>
             <h5 className="mb-4 mt-4"><strong>Acertos nos documentos</strong></h5>
-            <DataTable
+            { listaDeDocumentosRelatorio?.length ? <DataTable
                 value={listaDeDocumentosRelatorio}
                 paginator={
                     0 > rowsPerPage
@@ -58,12 +58,14 @@ export const TabelaConferenciaDeDocumentosRelatorios = ({ resumoConsolidado, rel
                             width: '200px'
                         }
                     } />
-                <Column 
+                    <Column 
                     header=''
                     expander
                     style={{width: '4%'}}
-                />
-            </DataTable>
+                /> 
+            </DataTable>: 
+                <p>Exibindo <strong>0</strong> documentos</p>
+                }
         </>
     )
 }

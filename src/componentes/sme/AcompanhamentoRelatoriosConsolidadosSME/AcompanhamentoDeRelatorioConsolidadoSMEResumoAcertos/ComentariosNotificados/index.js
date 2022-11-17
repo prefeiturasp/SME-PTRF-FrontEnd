@@ -4,10 +4,12 @@ import useDataTemplate from "../../../../../hooks/Globais/useDataTemplate";
 
 export const ComentariosNotificados = ({comentarios}) => {
     const dataTemplate = useDataTemplate()
+
     return (
         <>
             <h5 className="mb-4 mt-5"><strong>Comentários Notificados</strong></h5>
 
+            {comentarios.length ? '' : <p> Exibindo <strong>0</strong> comentários</p>}
             {comentarios.map((value, index) => {
                 if (value.notificado) {
                     return (
@@ -18,6 +20,7 @@ export const ComentariosNotificados = ({comentarios}) => {
                     )
                 }
             })}
+            
         </>
         )
 }
