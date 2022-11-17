@@ -1,3 +1,6 @@
+### 1.33.5 - 17/11/2022 - Hotfix - Soluções de bugs urgentes durante a sprint 53
+* (79016) Cadastro de despesa: o cálculo não considera os valores realizados corretamente e não salva a despesa
+
 ### 1.33.4 - 16/11/2022 - Hotfix - Soluções de bugs urgentes durante a sprint 53
 * (78755) O sistema não salva o cadastro de um Membro da Associação (Conselheiro do Conselho Fiscal)
 
