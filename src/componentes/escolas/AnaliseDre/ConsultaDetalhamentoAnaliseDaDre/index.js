@@ -1,4 +1,4 @@
-import React, {memo, useCallback, useEffect, useMemo, useState} from "react";
+import React, {memo, useCallback, useContext, useEffect, useMemo, useState} from "react";
 import {useParams, useLocation, useHistory} from "react-router-dom";
 import {PaginasContainer} from "../../../../paginas/PaginasContainer";
 // Hooks Personalizados
@@ -11,6 +11,8 @@ import CardsDevolucoesParaAcertoDaDre from "../../../Globais/CardsDevolucoesPara
 import ExibeAcertosEmLancamentosEDocumentosPorConta from "../../../Globais/ExibeAcertosEmLancamentosEDocumentosPorConta";
 import {getPeriodoPorUuid} from "../../../../services/sme/Parametrizacoes.service";
 import {exibeDataPT_BR} from "../../../../utils/ValidacoesAdicionaisFormularios";
+import {ModalConcluirAcertoPC} from "./../../../dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ResumoDosAcertos/ModalConcluirAcertoPC"
+import { AnaliseDREProvider } from "../../../../context/AnaliseDRE";
 
 const ConsultaDetalhamentoAnaliseDaDre = () => {
 
@@ -21,6 +23,7 @@ const ConsultaDetalhamentoAnaliseDaDre = () => {
     // Hooks Personalizados
     const prestacaoDeContas = useCarregaPrestacaoDeContasPorUuid(prestacao_conta_uuid)
     const [analisesDePcDevolvidas, setAnalisesDePcDevolvidas] = useState([])
+    const [openModalAcertos, setOpenModalAcertos] = useState(false)
     const [analiseAtualUuid, setAnaliseAtualUuid] = useState('')
     const [periodoFormatado, setPeriodoFormatado] = useState(null)
 
@@ -134,33 +137,51 @@ const ConsultaDetalhamentoAnaliseDaDre = () => {
         }
     }
 
+    const podeAbrirModalAcertos = () => {
+        setOpenModalAcertos(true)
+    }
+
     return (
         <PaginasContainer>
             <h1 className="titulo-itens-painel mt-5">Análise DRE</h1>
             <div className="page-content-inner">
-                <TopoComBotaoVoltar
-                    onClickVoltar={onClickVoltar}
-                    periodoFormatado={periodoFormatado}
-                />
-                <TextoSuperior
-                    retornaTextoSuperior={retornaTextoSuperior}
-                />
+                <AnaliseDREProvider>
+                    <TopoComBotaoVoltar
+                        onClickVoltar={onClickVoltar}
+                        periodoUuid={prestacaoDeContas.periodo_uuid}
+                        podeAbrirModalAcertos={podeAbrirModalAcertos}
+                        prestacaoContaUuid={prestacao_conta_uuid}
+                    />
+                    <TextoSuperior
+                        retornaTextoSuperior={retornaTextoSuperior}
+                        />
 
-                <hr className="mt-0 mb-0"/>
-                {totalAnalisesDePcDevolvidas > 0 &&
-                    <>
-                        <CardsDevolucoesParaAcertoDaDre
-                            prestacao_conta_uuid={prestacao_conta_uuid}
-                            setAnaliseAtualUuid={setAnaliseAtualUuid}
-                        />
-                        <ExibeAcertosEmLancamentosEDocumentosPorConta
-                            prestacaoDeContasUuid={prestacao_conta_uuid}
-                            analiseAtualUuid={analiseAtualUuid}
-                            exibeBtnIrParaPaginaDeAcertos={false}
-                            exibeBtnIrParaPaginaDeReceitaOuDespesa={true}
-                        />
-                    </>
-                }
+                    <hr className="mt-0 mb-0"/>
+                    {totalAnalisesDePcDevolvidas > 0 &&
+                        <>
+                            <CardsDevolucoesParaAcertoDaDre
+                                prestacao_conta_uuid={prestacao_conta_uuid}
+                                setAnaliseAtualUuid={setAnaliseAtualUuid}
+                                />
+                            <ExibeAcertosEmLancamentosEDocumentosPorConta
+                                prestacaoDeContasUuid={prestacao_conta_uuid}
+                                analiseAtualUuid={analiseAtualUuid}
+                                exibeBtnIrParaPaginaDeAcertos={false}
+                                exibeBtnIrParaPaginaDeReceitaOuDespesa={true}
+                            />
+                        </>
+                    }
+                    <section>
+                    <ModalConcluirAcertoPC
+                        show={openModalAcertos}
+                        handleClose={(e) => setOpenModalAcertos(false)}
+                        titulo='Concluir acerto da Prestação de Contas'
+                        texto={'Não é possível concluir o acerto da prestação de contas pois nem todos os acertos solicitados pela DRE foram realizados ou justificados. É necessário que você verifique os itens de acerto nos lançamentos/documentos não conferidos ou que estão conferidos parcialmente.'}
+                        primeiroBotaoTexto="Fechar"
+                        primeiroBotaoCss="success"
+                    />
+                    </section>
+                </AnaliseDREProvider>
             </div>
         </PaginasContainer>
     )
