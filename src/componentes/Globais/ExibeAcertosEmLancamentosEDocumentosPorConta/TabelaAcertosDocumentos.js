@@ -147,7 +147,7 @@ const TabelaAcertosDocumentos = ({documentosAjustes, limparDocumentoStatus, pres
         return (
             <div className="row">
                 <div className="col-12"
-                     style={{background: "#00585E", color: 'white', padding: "15px", margin: "0px 15px", flex: "100%"}}>
+                    style={{background: "#00585E", color: 'white', padding: "15px", margin: "0px 15px", flex: "100%"}}>
                     <div className="row">
                         <div className="col-5">
                             {quantidadeSelecionada} {quantidadeSelecionada === 1 ? "documento selecionado" : "documentos selecionados"} / {totalDeAcertosDocumentos} totais
@@ -193,7 +193,7 @@ const TabelaAcertosDocumentos = ({documentosAjustes, limparDocumentoStatus, pres
                                 }
                         {status === "JUSTIFICADO" &&
                                 <>
-                                 <button
+                                <button
                                         className="float-right btn btn-link btn-montagem-selecionar"
                                         onClick={(e) => limparDocumentos(e)}
                                         style={{textDecoration: "underline", cursor: "pointer"}}>
@@ -230,38 +230,38 @@ const TabelaAcertosDocumentos = ({documentosAjustes, limparDocumentoStatus, pres
                         { status === "PENDENTE" &&
                                 <>
                                 <button
-                                       className="float-right btn btn-link btn-montagem-selecionar"
-                                       onClick={(e) => limparDocumentos(e)}
-                                       style={{textDecoration: "underline", cursor: "pointer"}}>
-                                       <FontAwesomeIcon
-                                           style={{color: "white", fontSize: '15px', marginRight: "3px"}}
-                                           icon={faCheckCircle}
-                                       />
-                                       <strong>Cancelar</strong>
-                               </button>
-                               <div className="float-right" style={{padding: "0px 10px"}}>|</div>
-                                   <button
-                                       className="float-right btn btn-link btn-montagem-selecionar"
-                                       onClick={(e) => marcarDocumentoComoRealizado(documentosSelecionados)}
-                                       style={{textDecoration: "underline", cursor: "pointer"}}>
-                                       <FontAwesomeIcon
-                                           style={{color: "white", fontSize: '15px', marginRight: "3px"}}
-                                           icon={faCheckCircle}
-                                       />
-                                       <strong>Marca como realizado</strong>
-                                   </button>
-                               <div className="float-right" style={{padding: "0px 10px"}}>|</div>
-                                   <button
-                                       className="float-right btn btn-link btn-montagem-selecionar"
-                                       onClick={() => setShowModalJustificarNaoRealizacao(true)}
-                                       style={{textDecoration: "underline", cursor: "pointer"}}>
-                                       <FontAwesomeIcon
-                                           style={{color: "white", fontSize: '15px', marginRight: "3px"}}
-                                           icon={faCheckCircle}
-                                       />
-                                       <strong>Justificar não realizado</strong>
-                                   </button>
-                               </>
+                                    className="float-right btn btn-link btn-montagem-selecionar"
+                                    onClick={(e) => limparDocumentos(e)}
+                                    style={{textDecoration: "underline", cursor: "pointer"}}>
+                                    <FontAwesomeIcon
+                                        style={{color: "white", fontSize: '15px', marginRight: "3px"}}
+                                        icon={faCheckCircle}
+                                    />
+                                    <strong>Cancelar</strong>
+                            </button>
+                            <div className="float-right" style={{padding: "0px 10px"}}>|</div>
+                                <button
+                                    className="float-right btn btn-link btn-montagem-selecionar"
+                                    onClick={(e) => marcarDocumentoComoRealizado(documentosSelecionados)}
+                                    style={{textDecoration: "underline", cursor: "pointer"}}>
+                                    <FontAwesomeIcon
+                                        style={{color: "white", fontSize: '15px', marginRight: "3px"}}
+                                        icon={faCheckCircle}
+                                    />
+                                    <strong>Marca como realizado</strong>
+                                </button>
+                            <div className="float-right" style={{padding: "0px 10px"}}>|</div>
+                                <button
+                                    className="float-right btn btn-link btn-montagem-selecionar"
+                                    onClick={() => setShowModalJustificarNaoRealizacao(true)}
+                                    style={{textDecoration: "underline", cursor: "pointer"}}>
+                                    <FontAwesomeIcon
+                                        style={{color: "white", fontSize: '15px', marginRight: "3px"}}
+                                        icon={faCheckCircle}
+                                    />
+                                    <strong>Justificar não realizado</strong>
+                                </button>
+                            </>
                                 }
                         </div>
                     </div>
