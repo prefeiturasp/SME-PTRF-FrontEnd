@@ -5,6 +5,65 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTimesCircle, faExclamationCircle, faCheckCircle} from "@fortawesome/free-solid-svg-icons";
 
 const FormularioAcertos = ({solicitacoes_acerto, onSubmitFormAcertos, formRef, tiposDeAcertoDocumentosAgrupados, handleChangeTipoDeAcertoDocumento, textoCategoria, corTextoCategoria, adicionaTextoECorCategoriaVazio, removeTextoECorCategoriaTipoDeAcertoJaCadastrado, ehSolicitacaoCopiada}) =>{
+
+    const categoriaNaoPodeRepetir = (categoria) => {
+        if(categoria.id === 'SOLICITACAO_ESCLARECIMENTO'){
+            return true;
+        }
+
+        return false;
+    }
+
+    const itemDaCategoriaPodeRepetir = (categoria) => {
+        if(categoria.id === 'INCLUSAO_CREDITO'){
+            return true;
+        }
+        else if(categoria.id === 'INCLUSAO_GASTO'){
+            return true;
+        }
+
+        return false;
+    }
+
+    const categoriaNaoTemItensParaExibir = (categoria) => {
+        let itens_a_exibir = categoria.tipos_acerto_documento.filter((item) => (item.deve_exibir === true));
+
+        if(itens_a_exibir.length === 0){
+            return true;
+        }
+
+        return false;
+    }
+
+    const opcoesSelect = (acertos) => {
+        for(let index_categoria=0; index_categoria <= tiposDeAcertoDocumentosAgrupados.length -1; index_categoria ++){
+            let categoria = tiposDeAcertoDocumentosAgrupados[index_categoria]
+            categoria.deve_exibir_categoria = true;
+
+            for(let index_tipo_acerto=0; index_tipo_acerto <= categoria.tipos_acerto_documento.length -1; index_tipo_acerto++){
+                let acerto = categoria.tipos_acerto_documento[index_tipo_acerto];
+                let uuid = acerto.uuid
+                acerto.deve_exibir = true
+
+                let ja_selecionado = acertos.filter((item) => (item.tipo_acerto === uuid))
+
+                if(ja_selecionado.length > 0){
+
+                    if(!itemDaCategoriaPodeRepetir(categoria)){
+                        acerto.deve_exibir = false
+                    }
+
+                    if(categoriaNaoPodeRepetir(categoria) || categoriaNaoTemItensParaExibir(categoria)){
+                        categoria.deve_exibir_categoria = false;
+                    }  
+                }
+            }
+        }
+
+        return tiposDeAcertoDocumentosAgrupados
+    }
+
+
     return(
         <div className='mt-3'>
             <Formik
@@ -28,7 +87,7 @@ const FormularioAcertos = ({solicitacoes_acerto, onSubmitFormAcertos, formRef, t
                                     name="solicitacoes_acerto"
                                     render={({remove, push}) => (
                                         <>
-                                            {values.solicitacoes_acerto && values.solicitacoes_acerto.length > 0 && values.solicitacoes_acerto.map((acerto, index) => {
+                                            {values.solicitacoes_acerto && values.solicitacoes_acerto.length > 0 && values.solicitacoes_acerto.map((acerto, index, acertos) => {
                                                 return (
                                                     <div key={index}>
                                                         <div
@@ -70,10 +129,10 @@ const FormularioAcertos = ({solicitacoes_acerto, onSubmitFormAcertos, formRef, t
                                                                     disabled={acerto.uuid ? true : false}
                                                                 >
                                                                     <option key='' value="">Selecione a especificação do acerto</option>
-                                                                    {tiposDeAcertoDocumentosAgrupados && tiposDeAcertoDocumentosAgrupados.length > 0 && tiposDeAcertoDocumentosAgrupados.map(item => (
-                                                                        <optgroup key={item.id} label={item.nome}>
+                                                                    {tiposDeAcertoDocumentosAgrupados && tiposDeAcertoDocumentosAgrupados.length > 0 && opcoesSelect(acertos).map(item => (
+                                                                        <optgroup key={item.id} label={item.nome} className={!item.deve_exibir_categoria ? 'esconde-categoria' : ''}>
                                                                             {item.tipos_acerto_documento && item.tipos_acerto_documento.length > 0 && item.tipos_acerto_documento.map(tipo_acerto => (
-                                                                                <option key={tipo_acerto.uuid} value={tipo_acerto.uuid} data-categoria={item.id}>{tipo_acerto.nome}</option>
+                                                                                <option className={!tipo_acerto.deve_exibir ? 'esconde-tipo-acerto' : ''} key={tipo_acerto.uuid} value={tipo_acerto.uuid} data-categoria={item.id}>{tipo_acerto.nome}</option>
                                                                             ))}
                                                                         </optgroup>
                                                                     ))}
