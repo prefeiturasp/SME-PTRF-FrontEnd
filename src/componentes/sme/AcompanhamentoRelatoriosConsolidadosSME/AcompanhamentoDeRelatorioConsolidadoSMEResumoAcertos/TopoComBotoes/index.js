@@ -23,7 +23,7 @@ export const TopoComBotoes = ({relatorioConsolidado, dataLimiteDevolucao}) => {
 
     return (
         <>
-            <div className='d-flex justify-content-between'>
+            <div className='d-flex justify-content-between mt-3'>
                 <h2 className='text-resumo'>
                     Resumo de acertos
                 </h2>
