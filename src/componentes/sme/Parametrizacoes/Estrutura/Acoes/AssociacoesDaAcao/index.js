@@ -15,7 +15,7 @@ import {ModalDesvincularLote} from "./Modais";
 import "./associacoes.scss";
 import {Link, useParams} from 'react-router-dom';
 import {PaginasContainer} from "../../../../../../paginas/PaginasContainer";
-import {getUnidadesPorAcao, getAcao, deleteAcaoAssociacao, deleteAcoesAssociacoesEmLote} from "../../../../../../services/sme/Parametrizacoes.service"
+import {getUnidadesPorAcao, getAcao, deleteAcoesAssociacoesEmLote, deleteAcao} from "../../../../../../services/sme/Parametrizacoes.service"
 import {ModalConfirmDesvincularAcaoAssociacao} from "./ModalConfirmDesvincularAcaoAssociacao"
 import {ModalInfoNaoPodeExcluir} from "../ModalInfoNaoPodeExcluir";
 
@@ -303,7 +303,7 @@ export const AssociacoesDaAcao = () => {
     const onDesvinculaAssociacaoTrue = async () => {
         setShowConfirmaDesvinculo(false);
         try {
-            const result = await deleteAcaoAssociacao(acaoAssociacaoUuid);
+            const result = await deleteAcao(acaoAssociacaoUuid);
             console.log('Associação desvinculada com sucesso', acaoAssociacaoUuid);
         } catch (e) {
             if (e.response && e.response.data && e.response.data.mensagem){

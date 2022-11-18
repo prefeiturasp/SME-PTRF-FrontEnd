@@ -5,7 +5,7 @@ import {DataTable} from "primereact/datatable";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCheckCircle, faInfoCircle, faListUl} from "@fortawesome/free-solid-svg-icons";
 import Dropdown from "react-bootstrap/Dropdown";
-import {ModalCheckNaoPermitidoConfererenciaDeLancamentos} from "./ModalCheckNaoPermitidoConfererenciaDeLancamentos";
+import {ModalCheckNaoPermitidoConfererenciaDeLancamentos} from "./Modais/ModalCheckNaoPermitidoConfererenciaDeLancamentos";
 import {FiltrosConferenciaDeLancamentos} from "./FiltrosConferenciaDeLancamentos";
 import {
     postLancamentosParaConferenciaMarcarComoCorreto,
@@ -38,7 +38,6 @@ import {
     limparDetalharAcertos
 } from "../../../../../store/reducers/componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeLancamentos/DetalharAcertos/actions";
 import {visoesService} from "../../../../../services/visoes.service";
-import moment from "moment";
 import {ModalBootstrapLegendaInformacao} from "../../../../../componentes/Globais/ModalBootstrap";
 
 const TabelaConferenciaDeLancamentos = ({
@@ -119,8 +118,15 @@ const TabelaConferenciaDeLancamentos = ({
         let cont = 0;
         let result
         if (status) {
-            setExibirBtnMarcarComoCorreto(false)
-            setExibirBtnMarcarComoNaoConferido(true)
+            if(status === "CORRETO"){
+                setExibirBtnMarcarComoCorreto(false)
+                setExibirBtnMarcarComoNaoConferido(true)
+            }
+            else if(status === "AJUSTE"){
+                setExibirBtnMarcarComoCorreto(true)
+                setExibirBtnMarcarComoNaoConferido(false)
+            }
+
             result = lancamentosParaConferencia.reduce((acc, o) => {
                 let obj = o.analise_lancamento && o.analise_lancamento.resultado && o.analise_lancamento.resultado === status ? Object.assign(o, {selecionado: true}) : o;
                 if (obj.selecionado) {
@@ -193,6 +199,8 @@ const TabelaConferenciaDeLancamentos = ({
                         <Dropdown.Menu>
                             <Dropdown.Item onClick={(e) => selecionarPorStatus(e, "CORRETO")}>Selecionar todos
                                 corretos</Dropdown.Item>
+                            <Dropdown.Item onClick={(e) => selecionarPorStatus(e, "AJUSTE")}>
+                                Selecionar todos com solicitação de ajuste</Dropdown.Item>
                             <Dropdown.Item onClick={(e) => selecionarPorStatus(e, null)}>Selecionar todos não
                                 conferidos</Dropdown.Item>
                             <Dropdown.Item onClick={(e) => desmarcarTodos(e)}>Desmarcar todos</Dropdown.Item>
@@ -324,8 +332,9 @@ const TabelaConferenciaDeLancamentos = ({
             if (tem_lancamento_status_de_ajuste === undefined) {
                 setExibirBtnMarcarComoCorreto(true)
                 setExibirBtnMarcarComoNaoConferido(false)
-            } else {
-                setExibirBtnMarcarComoCorreto(false)
+            }
+            else {
+                setExibirBtnMarcarComoCorreto(true)
                 setExibirBtnMarcarComoNaoConferido(false)
             }
         }
@@ -637,7 +646,7 @@ const TabelaConferenciaDeLancamentos = ({
                             header='Informações'
                             className="align-middle text-left borda-coluna"
                             body={tagInformacao}
-                            style={{width: '12%'}}/>
+                            style={{width: '15%'}}/>
                         <Column
                             field='valor_transacao_total'
                             header='Valor (R$)'

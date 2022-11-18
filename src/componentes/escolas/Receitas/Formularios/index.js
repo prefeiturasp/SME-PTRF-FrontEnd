@@ -7,15 +7,19 @@ import {
     getReceita,
     getTabelasReceitaReceita,
     getRepasses,
-    getListaMotivosEstorno
+    getListaMotivosEstorno,
+    marcarLancamentoExcluido,
+    marcarLancamentoAtualizado,
+    marcarCreditoIncluido
 } from '../../../../services/escolas/Receitas.service';
 import {getRateioPorUuid} from "../../../../services/escolas/RateiosDespesas.service";
 import {deleteDespesa, getDespesa} from "../../../../services/escolas/Despesas.service";
+import {getPeriodoFechado} from "../../../../services/escolas/Associacao.service";
 import {round, trataNumericos, periodoFechado} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import moment from "moment";
 import {useLocation, useParams} from 'react-router-dom';
 import {ASSOCIACAO_UUID} from '../../../../services/auth.service';
-import {PeriodoFechado, ErroGeral, SalvarReceita, AvisoTipoReceita} from "../../../../utils/Modais";
+import {PeriodoFechado, ErroGeral, SalvarReceita, AvisoTipoReceita, AvisoTipoReceitaEstorno} from "../../../../utils/Modais";
 import {ModalDeletarReceita} from "../ModalDeletarReceita";
 import {CancelarModalReceitas} from "../CancelarModalReceitas";
 import "../receitas.scss"
@@ -23,6 +27,8 @@ import {ReceitaFormFormik} from "./ReceitaFormFormik";
 import ReferenciaDaDespesaEstorno from "../ReferenciaDaDespesaEstorno";
 import {PaginasContainer} from "../../../../paginas/PaginasContainer";
 import {toastCustom} from "../../../Globais/ToastCustom";
+import { visoesService } from "../../../../services/visoes.service";
+import { getPeriodoPorUuid } from "../../../../services/sme/Parametrizacoes.service";
 
 
 export const ReceitaForm = () => {
@@ -30,6 +36,7 @@ export const ReceitaForm = () => {
     let {origem} = useParams();
     let {uuid} = useParams();
     const parametros = useLocation();
+    const visao_selecionada = visoesService.getItemUsuarioLogado('visao_selecionada.nome')
 
     const [loading, setLoading] = useState(true);
     const [redirectTo, setRedirectTo] = useState('');
@@ -66,6 +73,7 @@ export const ReceitaForm = () => {
     const [showCadastrarSaida, setShowCadastrarSaida] = useState(false);
     const [showEditarSaida, setShowEditarSaida] = useState(false);
     const [showAvisoTipoReceita, setShowAvisoTipoReceita] = useState(false);
+    const [showAvisoTipoReceitaEstorno, setShowAvisoTipoReceitaEstorno] = useState(false);
     const [showSalvarReceita, setShowSalvarReceita] = useState(false);
     const [initialValue, setInitialValue] = useState(initial);
     const [objetoParaComparacao, setObjetoParaComparacao] = useState({});
@@ -77,6 +85,7 @@ export const ReceitaForm = () => {
     const [readOnlyTipoReceita, setreadOnlyTipoReceita] = useState(false);
     const [readOnlyBtnAcao, setReadOnlyBtnAcao] = useState(false);
     const [readOnlyCampos, setReadOnlyCampos] = useState(false);
+    const [readOnlyReaberturaSeletiva, setReadOnlyReaberturaSeletiva] = useState(false);
     const [repasse, setRepasse] = useState({});
     const [idxTipoDespesa, setIdxTipoDespesa] = useState(0);
     const [showReceitaRepasse, setShowReceitaRepasse] = useState(false);
@@ -84,10 +93,12 @@ export const ReceitaForm = () => {
     const [showSelecionaRepasse, setShowSelecionaRepasse] = useState(false);
     const [msgDeletarReceita, setmsgDeletarReceita] = useState('<p>Tem certeza que deseja excluir este crédito? A ação não poderá ser refeita.</p>')
     const [msgAvisoTipoReceita, setMsgAvisoTipoReceita] = useState('');
+    const [msgAvisoTipoReceitaEstorno, setMsgTipoReceitaEstorno] = useState('');
     const [exibeModalSalvoComSucesso, setExibeModalSalvoComSucesso] = useState(true)
     const [uuid_despesa, setUuidDespesa] = useState('')
     const [exibirDeleteDespesa, setExibirDeleteDespesa] = useState(true);
     const [classificacoesAceitas, setClassificacoesAceitas] = useState([])
+    const [tituloModalCancelar, setTituloModalCancelar] = useState("Deseja cancelar a inclusão de crédito?")
 
     // ************* Modo Estorno
     const [readOnlyEstorno, setReadOnlyEstorno] = useState(false);
@@ -95,11 +106,25 @@ export const ReceitaForm = () => {
     const [tituloPagina, setTituloPagina] = useState('')
     const [despesa, setDespesa] = useState({})
     const [idTipoReceitaEstorno, setIdTipoReceitaEstorno] = useState("")
+    const [formDateErrors, setFormDateErrors] = useState('');
+
+    const retornaPeriodo = async (periodo_uuid) => {
+        let periodo = await getPeriodoPorUuid(periodo_uuid);
+        return periodo;
+    }
 
     const carregaTabelas = useCallback(async ()=>{
-        let tabelas_receitas = await getTabelasReceitaReceita()
+        let tabelas_receitas;
+
+        if(parametros && parametros.state && parametros.state.uuid_associacao){
+            tabelas_receitas = await getTabelasReceitaReceita(parametros.state.uuid_associacao)
+        }
+        else{
+            tabelas_receitas = await getTabelasReceitaReceita()
+        }
+
         setTabelas(tabelas_receitas)
-    }, [])
+    }, [parametros])
 
     useEffect(()=>{
         carregaTabelas()
@@ -239,8 +264,9 @@ export const ReceitaForm = () => {
 
     const buscaReceita = useCallback(async ()=>{
         if (uuid) {
+            let uuid_associacao = origemAnaliseLancamento() ? parametros.state.uuid_associacao : null;
 
-            getReceita(uuid).then(async response => {
+            getReceita(uuid, uuid_associacao).then(async response => {
                 const resp = response.data;
 
                 if (resp && resp.saida_do_recurso && resp.saida_do_recurso.uuid){
@@ -251,11 +277,11 @@ export const ReceitaForm = () => {
 
                 // Verificar se existe um rateio atrelado a receita
                 if (resp && resp.rateio_estornado && resp.rateio_estornado.uuid){
-                    setTituloPagina('Edição do Estorno')
+                    setTituloPagina(defineTituloPagina(true))
                     setRateioEstorno(resp.rateio_estornado)
                     setreadOnlyTipoReceita(true)
                 }else {
-                    setTituloPagina('Edição do Crédito')
+                    setTituloPagina(defineTituloPagina())
                 }
 
                 const init = {
@@ -282,11 +308,37 @@ export const ReceitaForm = () => {
                 setSelectMotivosEstorno(resp.motivos_estorno)
                 setCheckBoxOutrosMotivosEstorno(resp.outros_motivos_estorno)
                 setTxtOutrosMotivosEstorno(resp.outros_motivos_estorno)
+                
+                getClassificacaoReceitaInicial(resp.tipo_receita.id);
+
                 if (resp && resp.acao_associacao && resp.acao_associacao.uuid){
                     setUuidReceita(uuid)
                     showBotaoCadastrarSaida(resp.acao_associacao.uuid, init)
                 }
-                periodoFechado(resp.data, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral)
+
+                if(origemAnaliseLancamento()){
+                    if(visao_selecionada === "DRE"){
+                        setTituloModalCancelar("Deseja realmente voltar?"); 
+                    }
+                    else if(parametros.state.operaca ='requer_inclusao_documento_credito'){
+                        setTituloModalCancelar("Deseja cancelar a edição do crédito?")
+                    }
+                    else{
+                        if(ehOperacaoExclusaoReaberturaSeletiva()){
+                            setTituloModalCancelar("Deseja cancelar a exclusão do crédito?")
+                        }
+                        else if(ehOperacaoAtualizacaoReaberturaSeletiva()){
+                            setTituloModalCancelar("Deseja cancelar a edição do crédito?")
+                        }
+                    }
+
+                    bloqueiaCamposReceitaReaberturaSeletiva();   
+                }
+                else{
+                    periodoFechado(resp.data, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral)
+                    setTituloModalCancelar("Deseja cancelar as alterações feitas no crédito?")
+                }
+
                 getAvisoTipoReceita(resp.tipo_receita.id);
                 if (resp.repasse !== null) {
                     setRepasse(resp.repasse);
@@ -361,6 +413,7 @@ export const ReceitaForm = () => {
         values.motivos_estorno = montaPayloadMotivosEstorno()
         values.outros_motivos_estorno = txtOutrosMotivosEstorno.trim() && checkBoxOutrosMotivosEstorno ? txtOutrosMotivosEstorno : ""
 
+        
         const payload = {
             ...values,
             associacao: localStorage.getItem(ASSOCIACAO_UUID),
@@ -372,7 +425,6 @@ export const ReceitaForm = () => {
         }
 
         setLoading(true);
-
         if (uuid) {
             await atualizar(uuid, payload).then(response => {
                 if (exibeModalSalvoComSucesso){
@@ -382,17 +434,22 @@ export const ReceitaForm = () => {
                 }
             });
         } else {
-            cadastrar(payload).then(response => {
-                if (exibeModalSalvoComSucesso){
-                    //setShowSalvarReceita(true);
-                    setUuidReceita(response);
-                    exibeMsgSalvoComSucesso(payload)
-                }else {
-                    setUuidReceita(response);
-                    getPath(response)
+            const resultCadastrar = await cadastrar(payload)
+            if (exibeModalSalvoComSucesso){
+                setShowSalvarReceita(true);
+                setUuidReceita(resultCadastrar);
+                let uuidAnaliseDocumento = parametros.state.uuid_analise_documento;
+                let payloadReceita = {"uuid_credito_incluido": resultCadastrar}
+                let responseCreditoIncluido = await marcarCreditoIncluido(uuidAnaliseDocumento, payloadReceita);
+                if (responseCreditoIncluido.status === 200) {
+                    console.log("Crédito salvo com sucesso!");
                 }
-            });
-        }
+                exibeMsgSalvoComSucesso(payload)
+            }else {
+                setUuidReceita(resultCadastrar);
+                getPath(resultCadastrar)
+                }
+            };
         setLoading(false);
 
     };
@@ -418,16 +475,30 @@ export const ReceitaForm = () => {
                 console.log("Operação realizada com sucesso!");
             } else {
                 console.log('UPDATE ==========>>>>>>', response)
+
+                if(origemAnaliseLancamento()){
+                    await atualizaLancamento()
+                }
             }
         } catch (error) {
             console.log(error)
         }
     };
 
+    const atualizaLancamento = async () => {
+        let uuid_analise_lancamento = parametros.state.uuid_analise_lancamento;
+        let response_atualiza_lancamento = await marcarLancamentoAtualizado(uuid_analise_lancamento);
+
+        if (response_atualiza_lancamento.status === 200) {
+            console.log("Atualizacao de lancamento realizada com sucesso!");
+        }
+    }
+
     const onCancelarTrue = () => {
         setShow(false);
         setRedirectTo('');
-        getPath();
+        getPath('');
+
     };
 
     const onHandleClose = () => {
@@ -436,7 +507,7 @@ export const ReceitaForm = () => {
         setShowPeriodoFechado(false);
         setShowErroGeral(false);
         setShowAvisoTipoReceita(false);
-        
+        setShowAvisoTipoReceitaEstorno(false);
     };
 
     const fecharSalvarCredito = () => {
@@ -452,10 +523,27 @@ export const ReceitaForm = () => {
 
         if (receita && receita.saida_do_recurso && receita.saida_do_recurso.uuid){
             setmsgDeletarReceita('<p>Ao excluir este crédito você excluirá também a saída do recurso vinculada. Tem certeza que deseja excluir ambos? A ação não poderá ser desfeita.</p>')
+            //Manter comentario caso mensagem de não permitir exclusao do estorno for continuar
+            /* setShowDelete(true); */
         }else if (initialValue.tipo_receita === idTipoReceitaEstorno){
+            // TO DO
+            // Analisar se será necessario manter a mensagem comentada abaixo, caso não seja, remover a mensagem e o comentario
             setmsgDeletarReceita('<p>Tem certeza que deseja excluir esse estorno? Essa ação irá desfazer o estorno da despesa relacionada.</p>')
+
+            //Manter comentario caso mensagem de não permitir exclusao do estorno for continuar
+            /* setShowAvisoTipoReceitaEstorno(true);
+            setMsgTipoReceitaEstorno("Não é possivel excluir uma receita do tipo estorno. Deve ser feito a partir da despesa."); */
         }
+        //Manter comentario caso mensagem de não permitir exclusao do estorno for continuar
+        /* else{
+            setShowDelete(true);
+        } */
+
+        //Remover caso mensagem de não permitir exclusao do estorno for continuar
         setShowDelete(true);
+
+        // Caso a mensagem de não pemitir exclusao do estorno não for continuar, remover tambem o modal criado para a mensagem
+        // modal -> AvisoTipoReceitaEstorno
     };
 
     const onDeletarTrue = async () => {
@@ -473,6 +561,15 @@ export const ReceitaForm = () => {
             await deletarReceita(uuid)
             console.log("Receita deletada com sucesso.");
             setShowDelete(false);
+
+            if(origemAnaliseLancamento()){
+                let uuid_analise_lancamento = parametros.state.uuid_analise_lancamento;
+                let response_exclui_lancamento = await marcarLancamentoExcluido(uuid_analise_lancamento);
+                if (response_exclui_lancamento.status === 200) {
+                    console.log("Exclusão de lancamento realizada com sucesso!");
+                }
+            }
+
             getPath();
         }catch (e) {
             console.log("Erro ao excluir receita ", e);
@@ -493,6 +590,13 @@ export const ReceitaForm = () => {
         } else {
             path = `/detalhe-das-prestacoes`;
         }
+
+        if(origemAnaliseLancamento()){
+            if(parametros && parametros.state && parametros.state.uuid_pc && parametros.state.origem){
+                path = `${parametros.state.origem}/${parametros.state.uuid_pc}`;
+            }
+        }
+        
         window.location.assign(path);
     };
 
@@ -525,6 +629,35 @@ export const ReceitaForm = () => {
         }
     };
 
+    const getClassificacaoReceitaInicial = (id_tipo_receita) => {
+        // Essa funcao é utilizada para carregar as classificacoes quando o formulario é carregado
+
+        let lista = [];
+        let qtdeAceitaClassificacao = [];
+
+        if (id_tipo_receita && tabelas && tabelas.categorias_receita && tabelas.categorias_receita.length > 0) {
+            tabelas.categorias_receita.map((item, index) => {
+                let id_categoria_receita_lower = item.id.toLowerCase();
+                let aceitaClassificacao = eval('tabelas.tipos_receita.find(element => element.id === Number(id_tipo_receita)).aceita_' + id_categoria_receita_lower);
+                
+                qtdeAceitaClassificacao.push(aceitaClassificacao);
+                if (aceitaClassificacao) {
+                    lista.push(id_categoria_receita_lower)
+                    setreadOnlyClassificacaoReceita(true);
+                }
+            });
+
+            let resultado = qtdeAceitaClassificacao.filter((value) => {
+                return value === true;
+            }).length;
+
+            if (resultado > 1) {
+                setreadOnlyClassificacaoReceita(false);
+            }
+            setClassificacoesAceitas(lista);
+        }
+    }
+
     const getClassificacaoReceita = (id_tipo_receita, setFieldValue) => {
         let lista = [];
         let qtdeAceitaClassificacao = [];
@@ -549,7 +682,6 @@ export const ReceitaForm = () => {
                 setFieldValue("categoria_receita", "");
                 setreadOnlyClassificacaoReceita(false);
             }
-
             setClassificacoesAceitas(lista);
         }
     }
@@ -614,7 +746,6 @@ export const ReceitaForm = () => {
         let id_categoria_receita_lower = id_categoria_receita.toLowerCase();
 
         let aceitaClassificacao  = eval('tabelas.acoes_associacao.find(element => element.uuid === uuid_acao).acao.aceita_' + id_categoria_receita_lower);
-
 
         if(classificacoesAceitas.includes(id_categoria_receita_lower) && aceitaClassificacao){
 
@@ -771,7 +902,9 @@ export const ReceitaForm = () => {
         
         // Verifica período fechado para a receita
         if (values.data) {
-            await periodoFechado(values.data, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral)
+            if(!origemAnaliseLancamento()){
+                await periodoFechado(values.data, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral)
+            }
         }
 
         let e_repasse_tipo_receita = false;
@@ -875,6 +1008,139 @@ export const ReceitaForm = () => {
     }
 
 
+    const origemAnaliseLancamento = () => {
+        if(parametros){
+            if(!parametros.state){
+                return false;
+            }
+
+            if(parametros.state && parametros.state.origem_visao === "UE"){
+                if(parametros.state.origem === "/consulta-detalhamento-analise-da-dre"){
+                    return true;
+                }
+                else{
+                    return false;
+                }
+            }
+            else if(parametros.state && parametros.state.origem_visao === "DRE"){
+                if(parametros.state.origem === "/dre-detalhe-prestacao-de-contas-resumo-acertos"){
+                    return true;
+                }
+                else{
+                    return false;
+                }
+            }
+            else{
+                return false;
+            }
+        }
+
+        return false;
+    }
+
+    const temPermissaoEdicaoReaberturaSeletiva = () => {
+        if(parametros && parametros.state){
+            if(parametros.state.tem_permissao_de_edicao){
+                return true;
+            }
+        }
+    
+        return false;
+    }
+
+    const validacoesPersonalizadasCredito = useCallback(async (values, setFieldValue, origem=null, index=null) => {
+        if (values.data && origem==="credito_principal"){
+            let data = moment(values.data, "YYYY-MM-DD").format("YYYY-MM-DD");
+            try {
+                let periodo_da_data = await getPeriodoFechado(data);
+                let periodo_da_analise = await retornaPeriodo(parametros.state.periodo_uuid);
+            
+                if(periodo_da_data && periodo_da_analise && periodo_da_data.periodo_referencia === periodo_da_analise.referencia){
+                    setReadOnlyBtnAcao(false);
+                    setFormDateErrors("")
+                }
+                else{
+                    setReadOnlyBtnAcao(true);
+                    setFormDateErrors("Permitido apenas datas dentro do período referente a prestação de conta.")
+                }
+            } 
+            catch (e) {
+
+            }
+        }
+
+    },[]);
+
+    const ehOperacaoExclusaoReaberturaSeletiva = () => {
+        if(parametros && parametros.state){
+            if(parametros.state.operacao === "requer_exclusao_lancamento_credito"){
+                return true;
+            }
+        }
+    
+        return false;
+    }
+
+    const ehOperacaoAtualizacaoReaberturaSeletiva = () => {
+        if(parametros && parametros.state){
+            if(parametros.state.operacao === "requer_atualizacao_lancamento_credito"){
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    const bloqueiaCamposReceitaReaberturaSeletiva = () => {
+        if(!temPermissaoEdicaoReaberturaSeletiva()){
+            setReadOnlyCampos(true);
+            setReadOnlyReaberturaSeletiva(true);
+
+            let bloqueia_btn_acao = false;
+    
+            if(parametros.state.origem_visao === "DRE"){
+                bloqueia_btn_acao = true;
+            }
+            else if(parametros.state.operacao !== "requer_exclusao_lancamento_credito"){
+                bloqueia_btn_acao = true;
+            }
+
+            setReadOnlyBtnAcao(bloqueia_btn_acao);
+        }
+    }
+
+    const defineTituloPagina = (eh_estorno=false) => {
+        if(eh_estorno){
+            if(visao_selecionada === "DRE"){
+                return "Visualização do estorno";
+            }
+            else{
+                if(origemAnaliseLancamento()){
+                    let operacao = parametros.state.operacao;
+                    let texto = operacao === "requer_exclusao_lancamento_credito" ? "Exclusão do estorno" : "Edição do estorno";
+                    return texto;
+                }
+                else{
+                    return "Edição do estorno";
+                }
+            } 
+        }
+        else{
+            if(visao_selecionada === "DRE"){
+                return "Visualização do crédito";
+            }
+            else{
+                if(origemAnaliseLancamento()){
+                    let operacao = parametros.state.operacao;
+                    let texto = operacao === "requer_exclusao_lancamento_credito" ? "Exclusão do crédito" : "Edição do crédito";
+                    return texto;
+                }
+                else{
+                    return "Edição do crédito";
+                }
+            }
+        }
+    }
 
     return (
         <>
@@ -945,13 +1211,19 @@ export const ReceitaForm = () => {
                         txtOutrosMotivosEstorno={txtOutrosMotivosEstorno}
                         handleChangeCheckBoxOutrosMotivosEstorno={handleChangeCheckBoxOutrosMotivosEstorno}
                         handleChangeTxtOutrosMotivosEstorno={handleChangeTxtOutrosMotivosEstorno}
+                        readOnlyReaberturaSeletiva={readOnlyReaberturaSeletiva}
+                        ehOperacaoExclusaoReaberturaSeletiva={ehOperacaoExclusaoReaberturaSeletiva}
+                        ehOperacaoAtualizacaoReaberturaSeletiva={ehOperacaoAtualizacaoReaberturaSeletiva}
+                        origemAnaliseLancamento={origemAnaliseLancamento}
+                        validacoesPersonalizadasCredito={validacoesPersonalizadasCredito}
+                        formDateErrors={formDateErrors}
                     />
                     <section>
                         <CancelarModalReceitas
                             show={show}
                             handleClose={onHandleClose}
                             onCancelarTrue={onCancelarTrue}
-                            uuid={uuid}
+                            titulo={tituloModalCancelar}
                         />
                     </section>
                     {uuid
@@ -975,6 +1247,13 @@ export const ReceitaForm = () => {
                             show={showAvisoTipoReceita}
                             handleClose={onHandleClose}
                             texto={msgAvisoTipoReceita}
+                        />
+                    </section>
+                    <section>
+                        <AvisoTipoReceitaEstorno
+                            show={showAvisoTipoReceitaEstorno}
+                            handleClose={onHandleClose}
+                            texto={msgAvisoTipoReceitaEstorno}
                         />
                     </section>
                     <section>

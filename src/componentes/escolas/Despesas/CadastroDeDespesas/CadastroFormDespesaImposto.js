@@ -49,9 +49,9 @@ export const CadastroFormDespesaImposto = ({
 								{index >= 1 && (
 									<button
 										type="button"
-										className="btn btn-link btn-remover-despesa mr-2 d-flex align-items-center"
+										className={`btn btn-link btn-remover-despesa mr-2 d-flex align-items-center ${readOnlyCamposImposto[index] ? 'desabilita-link-remover-despesa' : ''}`}
 										onClick={() => remove(index)}
-										disabled={!visoesService.getPermissoes(['delete_despesa'])}
+										disabled={!visoesService.getPermissoes(['delete_despesa']) || readOnlyCamposImposto[index]}
 									>
 										<FontAwesomeIcon
 											style={{

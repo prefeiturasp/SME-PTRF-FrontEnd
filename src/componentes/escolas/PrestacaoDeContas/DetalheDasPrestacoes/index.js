@@ -14,7 +14,8 @@ import {
     patchDesconciliarDespesa,
     getDownloadExtratoBancario,
     pathSalvarJustificativaPrestacaoDeConta,
-    pathExtratoBancarioPrestacaoDeConta
+    pathExtratoBancarioPrestacaoDeConta,
+    getPodeEditarCamposExtrato
 } from "../../../../services/escolas/PrestacaoDeContas.service";
 import {getContas, getPeriodosDePrestacaoDeContasDaAssociacao} from "../../../../services/escolas/Associacao.service";
 import Loading from "../../../../utils/Loading";
@@ -30,6 +31,7 @@ import {trataNumericos} from "../../../../utils/ValidacoesAdicionaisFormularios"
 import TabelaTransacoes from "./TabelaTransacoes";
 import {getDespesasTabelas} from "../../../../services/escolas/Despesas.service";
 import {FiltrosTransacoes} from "./FiltrosTransacoes";
+import {Link, useLocation} from "react-router-dom";
 
 export const DetalheDasPrestacoes = () => {
 
@@ -39,6 +41,7 @@ export const DetalheDasPrestacoes = () => {
     const [observacaoUuid, setObservacaoUuid] = useState("");
     const [periodoConta, setPeriodoConta] = useState("");
     const [periodoFechado, setPeriodoFechado] = useState(true);
+    const [permiteEditarCamposExtrato, setPermiteEditarCamposExtrato] = useState(false);
     const [contasAssociacao, setContasAssociacao] = useState(false);
     const [periodosAssociacao, setPeriodosAssociacao] = useState(false);
     const [contaConciliacao, setContaConciliacao] = useState("");
@@ -53,7 +56,8 @@ export const DetalheDasPrestacoes = () => {
     const [btnSalvarExtratoBancarioDisable, setBtnSalvarExtratoBancarioDisable] = useState(true);
     const [classBtnSalvarExtratoBancario, setClassBtnSalvarExtratoBancario] = useState("secondary");
     const [checkSalvarExtratoBancario, setCheckSalvarExtratoBancario] = useState(false);
-    
+
+    const parametros = useLocation();
 
     useEffect(()=>{
         getPeriodoConta();
@@ -137,6 +141,7 @@ export const DetalheDasPrestacoes = () => {
     const handleChangePeriodoConta = (name, value) => {
         setCheckSalvarJustificativa(false);
         setCheckSalvarExtratoBancario(false);
+        setBtnSalvarExtratoBancarioDisable(true);
         setPeriodoConta({
             ...periodoConta,
             [name]: value
@@ -170,6 +175,9 @@ export const DetalheDasPrestacoes = () => {
             setDataAtualizacaoComprovanteExtratoView(moment(observacao.data_atualizacao_comprovante_extrato).format("DD/MM/YYYY HH:mm:ss"))
             if (observacao.comprovante_extrato && observacao.data_extrato){
                 setExibeBtnDownload(true)
+            }
+            else if(!observacao.comprovante_extrato){
+                setExibeBtnDownload(false)
             }
         }
     };
@@ -235,6 +243,24 @@ export const DetalheDasPrestacoes = () => {
             }
         }
     };
+
+    const verificaSePodeEditarCamposExtrato = useCallback(async (periodoUuid) => {
+        if (periodosAssociacao) {
+            const periodo = periodosAssociacao.find(o => o.uuid === periodoUuid);
+            if (periodo && periodoConta && periodoConta.conta) {
+                const associacaoUuid = localStorage.getItem(ASSOCIACAO_UUID)
+                await getPodeEditarCamposExtrato(associacaoUuid, periodoUuid, periodoConta.conta).then(response => {
+                    setPermiteEditarCamposExtrato(response.permite_editar_campos_extrato)
+                }).catch(error => {
+                    console.log(error);
+                });
+            }
+        }
+    }, [periodosAssociacao, periodoConta]);
+
+    useEffect(() => {
+        verificaSePodeEditarCamposExtrato(periodoConta.periodo);
+    }, [verificaSePodeEditarCamposExtrato, periodoConta]);
 
     // Tabela Valores Pendentes por Ação
     const [valoresPendentes, setValoresPendentes] = useState({});
@@ -449,12 +475,27 @@ export const DetalheDasPrestacoes = () => {
     }, [dataSaldoBancario]);
 
     return (
+        <>
         <div className="detalhe-das-prestacoes-container mb-5 mt-5">
             <div className="row">
-                <div className="col-12">
-                    <div className="detalhe-das-prestacoes-texto-cabecalho mb-4">
-                        <h1 className="mt-4">Conciliação Bancária</h1>
-                    </div>
+                <div className="col-12 d-flex bd-highlight mt-4">
+                    <div className="flex-grow-1 bd-highlight align-self-center detalhe-das-prestacoes-texto-cabecalho pl-0"><h3>Conciliação Bancária</h3></div>
+
+                    {parametros && parametros.state && parametros.state && parametros.state && parametros.state.origem === 'ir_para_conciliacao_bancaria' &&
+                        <div className="bd-highlight detalhe-das-prestacoes-texto-cabecalho">
+                            <Link
+                                to={{pathname: `/consulta-detalhamento-analise-da-dre/${parametros.state.prestacaoDeContasUuid}/`,
+                                    state: {
+                                        origem: 'ir_para_conciliacao_bancaria',
+                                        periodoFormatado: parametros && parametros.state && parametros.state.periodoFormatado ? parametros.state.periodoFormatado : ""
+                                    }
+                                }}
+                                className="btn btn-outline-success"
+                            >
+                                Voltar para Análise DRE
+                            </Link>
+                        </div>
+                    }
                 </div>
             </div>
             {loading ? (
@@ -479,6 +520,7 @@ export const DetalheDasPrestacoes = () => {
                                 setShowSalvar={setShowSalvar}
                                 onHandleClose={onHandleClose}
                                 contaConciliacao={contaConciliacao}
+                                periodoFechado={periodoFechado}
                             />
 
                             <TabelaValoresPendentesPorAcao
@@ -506,6 +548,7 @@ export const DetalheDasPrestacoes = () => {
                                 checkSalvarExtratoBancario={checkSalvarExtratoBancario}
                                 setCheckSalvarExtratoBancario={setCheckSalvarExtratoBancario}
                                 erroDataSaldo={erroDataSaldo}
+                                permiteEditarCamposExtrato={permiteEditarCamposExtrato}
                             />
 
                             <p className="detalhe-das-prestacoes-titulo-lancamentos mt-3 mb-3">Gastos pendentes de conciliação</p>
@@ -587,5 +630,7 @@ export const DetalheDasPrestacoes = () => {
                 </>
             }
         </div>
+
+        </>
     )
 };

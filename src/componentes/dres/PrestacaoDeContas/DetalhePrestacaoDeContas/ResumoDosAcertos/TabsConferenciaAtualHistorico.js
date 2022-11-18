@@ -1,17 +1,20 @@
-import React, {memo, useEffect, useRef, useState} from "react";
+import React, {memo, useEffect, useRef, useState, useCallback} from "react";
 import DevolverParaAcertos from "./DevolverParaAcertos";
 import { RelatorioDosAcertos } from "./RelatorioDosAcertos";
 import ExibeAcertosEmLancamentosEDocumentosPorConta from "../../../../Globais/ExibeAcertosEmLancamentosEDocumentosPorConta";
 import {MsgImgCentralizada} from "../../../../Globais/Mensagens/MsgImgCentralizada";
 import Img404 from "../../../../../assets/img/img-404.svg";
 import CardsDevolucoesParaAcertoDaDre from "../../../../Globais/CardsDevolucoesParaAcertoDaDre";
+import { RelatorioAposAcertos } from "../../../../Globais/ExibeAcertosEmLancamentosEDocumentosPorConta/RelatorioAposAcertos";
+import { getAnalisePrestacaoConta } from "../../../../../services/dres/PrestacaoDeContas.service";
 
-const TabsConferenciaAtualHistorico = ({dataLimiteDevolucao, handleChangeDataLimiteDevolucao, prestacao_conta_uuid, analiseAtualUuid, exibeMsg, textoMsg, totalAnalisesDePcDevolvidas, setAnaliseAtualUuidComPCAnaliseAtualUuid, setPrimeiraAnalisePcDevolvida, setAnaliseAtualUuid, editavel, pcEmAnalise}) =>{
+const TabsConferenciaAtualHistorico = ({dataLimiteDevolucao, handleChangeDataLimiteDevolucao, prestacao_conta_uuid, analiseAtualUuid, exibeMsg, textoMsg, totalAnalisesDePcDevolvidas, setAnaliseAtualUuidComPCAnaliseAtualUuid, setPrimeiraAnalisePcDevolvida, setAnaliseAtualUuid, editavel, pcEmAnalise, prestacaoDeContas}) =>{
 
     const ref_click_historico = useRef(null);
 
     // Necessário para controlar quando o ref_click_historico.current.click() é disparado
     const [permitirTriggerOnclick, setPermitirTriggerOnclick] = useState(true)
+    const [analisePC, setAnalisePC] = useState(false);
 
     useEffect(()=>{
         // Necessário para forçar o re-render quando analiseAtualUuid for alterado
@@ -23,6 +26,20 @@ const TabsConferenciaAtualHistorico = ({dataLimiteDevolucao, handleChangeDataLim
             }
         }
     }, [totalAnalisesDePcDevolvidas, analiseAtualUuid, pcEmAnalise, permitirTriggerOnclick])
+
+    const carregaAnalisePC = useCallback(async () =>{
+        if (analiseAtualUuid){
+            let analise_encontrada = await getAnalisePrestacaoConta(analiseAtualUuid);
+            setAnalisePC(analise_encontrada);
+            return analise_encontrada;
+        }
+
+    }, [analiseAtualUuid]);
+
+    useEffect(() => {
+        carregaAnalisePC();
+
+    }, [carregaAnalisePC])
 
     return(
         <>
@@ -106,6 +123,15 @@ const TabsConferenciaAtualHistorico = ({dataLimiteDevolucao, handleChangeDataLim
                             analiseAtualUuid={analiseAtualUuid}
                             podeGerarPrevia={false}
                         />
+                        
+                        {analisePC && analisePC.versao_pdf_apresentacao_apos_acertos === 'FINAL' &&
+                            <RelatorioAposAcertos
+                                prestacaoDeContasUuid={prestacao_conta_uuid}
+                                prestacaoDeContas={prestacaoDeContas}
+                                analiseAtualUuid={analiseAtualUuid}
+                                podeGerarPrevia={false}
+                            />
+                        }
                     </>
 
                 </div>

@@ -8,10 +8,7 @@ export const ModalFormAcoes = (props) => {
         return (
             <>
                 <form onSubmit={props.handleSubmitModalFormAcoes}>
-
-
                     <div className='row mt-3'>
-
                         <div className='col'>
                             <label htmlFor="nome">Nome da ação</label>
                             <input
@@ -80,7 +77,7 @@ export const ModalFormAcoes = (props) => {
                                 disabled={props.readOnly || !props.stateFormModal.nome}
                                 onClick={()=>props.handleSubmitModalFormAcoes(props.stateFormModal)}
                                 type="button"
-                                className="btn btn btn-success mt-2"
+                                className="btn btn btn-outline-success mt-2"
                             >
                                 Salvar
                             </button>
@@ -94,7 +91,7 @@ export const ModalFormAcoes = (props) => {
     return (
         <ModalFormParametrizacoesAcoes
             show={props.show}
-            titulo={props.stateFormModal && props.stateFormModal.operacao === 'edit' ? 'Editar ação' : 'Adicionar ação'}
+             titulo={props.stateFormModal && props.stateFormModal.operacao === 'edit' ? 'Editar ação' : 'Adicionar ação'}
             onHide={props.handleClose}
             bodyText={bodyTextarea()}
             primeiroBotaoOnclick={props.handleClose}
