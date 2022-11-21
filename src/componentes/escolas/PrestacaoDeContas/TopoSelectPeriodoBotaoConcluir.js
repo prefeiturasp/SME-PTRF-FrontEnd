@@ -11,7 +11,6 @@ export const TopoSelectPeriodoBotaoConcluir = ({
                                                    podeConcluir,
                                                    concluirPeriodo,
                                                }) => {
-
     return (
         <>
             <form id="periodo_conta">

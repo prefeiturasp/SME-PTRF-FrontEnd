@@ -169,7 +169,7 @@ const routesConfig = [
     },
     {
         exact: true,
-        path: "/detalhe-das-prestacoes",
+        path: "/detalhe-das-prestacoes/",
         component: DetalhedasPrestacoesPage,
         permissoes: ['access_prestacao_contas'],
     },
