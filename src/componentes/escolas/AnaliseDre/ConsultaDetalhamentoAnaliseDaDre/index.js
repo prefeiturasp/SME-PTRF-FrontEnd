@@ -149,6 +149,7 @@ const ConsultaDetalhamentoAnaliseDaDre = () => {
                     <TopoComBotaoVoltar
                         onClickVoltar={onClickVoltar}
                         periodoUuid={prestacaoDeContas.periodo_uuid}
+                        periodoFormatado={periodoFormatado}
                         podeAbrirModalAcertos={podeAbrirModalAcertos}
                         prestacaoContaUuid={prestacao_conta_uuid}
                     />
