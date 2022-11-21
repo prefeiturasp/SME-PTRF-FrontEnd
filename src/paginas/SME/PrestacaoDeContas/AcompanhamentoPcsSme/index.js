@@ -1,6 +1,6 @@
 import React from "react";
-import {PaginasContainer} from '../../PaginasContainer'
-import {AcompanhamentoPcsSme} from "../../../componentes/sme/AcompanhamentoPcsSme";
+import {PaginasContainer} from '../../../PaginasContainer'
+import {AcompanhamentoPcsSme} from "../../../../componentes/sme/AcompanhamentoPcsSme";
 
 export const AcompanhamentoPcsSmePage = () => {
     return (
