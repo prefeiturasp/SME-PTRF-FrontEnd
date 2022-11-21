@@ -208,7 +208,7 @@ export const DetalhePrestacaoDeContas = () =>{
                 if(prestacaoDeContas?.periodo_uuid){
                     try {
                         let consolidados_dre = await getConsolidadosDreJaPublicadosProximaPublicacao(dre_uuid, prestacaoDeContas?.periodo_uuid)
-                        setTituloRelatorio(consolidados_dre.publicacoes_anteriores[consolidados_dre.publicacoes_anteriores.length].titulo_relatorio)
+                        setTituloRelatorio(consolidados_dre.publicacoes_anteriores[consolidados_dre.publicacoes_anteriores.length - 1].titulo_relatorio)
                     } catch (e) {
                         console.log("Erro ao buscar Consolidado Dre ", e)
                     }
@@ -1213,7 +1213,7 @@ export const DetalhePrestacaoDeContas = () =>{
                     <ModalNaoPodeVoltarParaAnalise
                         show={showNaoPodeVoltarParaAnalise}
                         handleClose={onHandleClose}
-                        texto={`<p>Não é possível reabrir essa PC para análise, pois esta consta na Publicação Única do período ${periodoReferencia}.</p>`}
+                        texto={`<p>Não é possível reabrir essa PC para análise, pois esta consta na ${tituloRelatorio} do período ${periodoReferencia}.</p>`}
                         primeiroBotaoTexto="Fechar"
                         primeiroBotaoCss="success"
                     />
