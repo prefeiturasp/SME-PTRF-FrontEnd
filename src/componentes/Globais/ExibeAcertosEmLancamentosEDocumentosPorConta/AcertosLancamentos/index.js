@@ -27,6 +27,9 @@ import {useHistory} from "react-router-dom";
 import Loading from "../../../../utils/Loading";
 import './acertos-lancamentos.scss'
 import Dropdown from "react-bootstrap/Dropdown";
+import { ModalAdicionarMembroComissao } from "../../../dres/Diretoria/Comissoes/Modais";
+import { useContext } from "react";
+import { AnaliseDREContext } from "../../../../context/AnaliseDRE";
 
 const AcertosLancamentos = ({
                                 analiseAtualUuid,
@@ -43,6 +46,7 @@ const AcertosLancamentos = ({
     const valor_template = useValorTemplate()
     const dataTemplate = useDataTemplate()
     const numeroDocumentoTemplate = useNumeroDocumentoTemplate()
+    const {lancamentosAjustes, setLancamentosAjustes} = useContext(AnaliseDREContext)
 
     const dispatch = useDispatch()
 
@@ -52,7 +56,6 @@ const AcertosLancamentos = ({
     const [contaSelecionada, setContaSelecionada] = useState([])
     const [loadingLancamentos, setLoadingLancamentos] = useState(true)
     const [opcoesJustificativa, setOpcoesJustificativa] = useState([])
-    const [lancamentosAjustes, setLancamentosAjustes] = useState([])
     const [clickBtnEscolheConta, setClickBtnEscolheConta] = useState({0: true});
     const [expandedRowsLancamentos, setExpandedRowsLancamentos] = useState(null);
     const [textareaJustificativa, setTextareaJustificativa] = useState(() => {
@@ -104,6 +107,8 @@ const AcertosLancamentos = ({
 
         setOpcoesJustificativa(status_de_realizacao)
         setLancamentosAjustes(lancamentos_ajustes)
+
+        
         setLancamentosSelecionados([])
         setIdentificadorCheckboxClicado([{
             uuid: ''
@@ -797,7 +802,6 @@ const AcertosLancamentos = ({
                     </div>
                 </div>
             }
-
         </>
     )
 }
