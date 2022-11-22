@@ -4,9 +4,9 @@ import {faCheckCircle} from "@fortawesome/free-solid-svg-icons";
 import LinkCustom from "./LinkCustom";
 import {RetornaSeTemPermissaoEdicaoAjustesLancamentos} from "../RetornaSeTemPermissaoEdicaoAjustesLancamentos";
 
-const BotaoAcertosLancamentosEdicaoCredito = ({analise_lancamento, prestacaoDeContasUuid, prestacaoDeContas, tipo_transacao}) => {
+const BotaoAcertosLancamentosEdicaoCredito = ({analise_lancamento, prestacaoDeContasUuid, prestacaoDeContas, tipo_transacao, analisePermiteEdicao}) => {
 
-    const TEMPERMISSAO = RetornaSeTemPermissaoEdicaoAjustesLancamentos(prestacaoDeContas)
+    const TEMPERMISSAO = RetornaSeTemPermissaoEdicaoAjustesLancamentos(prestacaoDeContas, analisePermiteEdicao)
     const URL = `/edicao-de-receita/${analise_lancamento.receita}/`
 
     return (
@@ -21,6 +21,7 @@ const BotaoAcertosLancamentosEdicaoCredito = ({analise_lancamento, prestacaoDeCo
                     classeCssBotao='btn btn-outline-success mr-2'
                     operacao='requer_atualizacao_lancamento_credito'
                     tipo_transacao={tipo_transacao}
+                    analisePermiteEdicao={analisePermiteEdicao}
                 >
                     { TEMPERMISSAO ? 'Ajustar crédito' : "Ver crédito"}
                 </LinkCustom>
@@ -34,6 +35,7 @@ const BotaoAcertosLancamentosEdicaoCredito = ({analise_lancamento, prestacaoDeCo
                     classeCssBotao='link-green text-center'
                     operacao='requer_atualizacao_lancamento_credito'
                     tipo_transacao={tipo_transacao}
+                    analisePermiteEdicao={analisePermiteEdicao}
                 >
                     <>
                         <FontAwesomeIcon

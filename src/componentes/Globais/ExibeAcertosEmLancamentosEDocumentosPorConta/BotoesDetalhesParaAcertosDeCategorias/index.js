@@ -6,7 +6,7 @@ import BotaoAcertosLancamentosEdicaoCredito from "./BotaoAcertosLancamentosEdica
 import BotaoAcertosLancamentosExclusaoGasto from "./BotaoAcertosLancamentosExclusaoGasto";
 import BotaoAcertosLancamentosExclusaoCredito from "./BotaoAcertosLancamentosExclusaoCredito";
 
-const BotoesDetalhesParaAcertosDeCategorias = ({analise_lancamento, prestacaoDeContasUuid, prestacaoDeContas, tipo_transacao}) => {
+const BotoesDetalhesParaAcertosDeCategorias = ({analise_lancamento, prestacaoDeContasUuid, prestacaoDeContas, tipo_transacao, analisePermiteEdicao}) => {
     return (
         <>
             <div className='row'>
@@ -17,6 +17,7 @@ const BotoesDetalhesParaAcertosDeCategorias = ({analise_lancamento, prestacaoDeC
                             prestacaoDeContasUuid={prestacaoDeContasUuid}
                             prestacaoDeContas={prestacaoDeContas}
                             tipo_transacao='Gasto'
+                            analisePermiteEdicao={analisePermiteEdicao}
                         />
                     }
                     {analise_lancamento && analise_lancamento.requer_atualizacao_lancamento && tipo_transacao === "Gasto" &&
@@ -25,6 +26,7 @@ const BotoesDetalhesParaAcertosDeCategorias = ({analise_lancamento, prestacaoDeC
                             prestacaoDeContasUuid={prestacaoDeContasUuid}
                             prestacaoDeContas={prestacaoDeContas}
                             tipo_transacao='Gasto'
+                            analisePermiteEdicao={analisePermiteEdicao}
                         />
                     }
                     {analise_lancamento && analise_lancamento.requer_atualizacao_lancamento && tipo_transacao === "Crédito" &&
@@ -33,6 +35,7 @@ const BotoesDetalhesParaAcertosDeCategorias = ({analise_lancamento, prestacaoDeC
                             prestacaoDeContasUuid={prestacaoDeContasUuid}
                             prestacaoDeContas={prestacaoDeContas}
                             tipo_transacao='Crédito'
+                            analisePermiteEdicao={analisePermiteEdicao}
                         />
                     }
                     {analise_lancamento && analise_lancamento.requer_exclusao_lancamento && tipo_transacao === "Gasto" &&
@@ -41,6 +44,7 @@ const BotoesDetalhesParaAcertosDeCategorias = ({analise_lancamento, prestacaoDeC
                             prestacaoDeContasUuid={prestacaoDeContasUuid}
                             prestacaoDeContas={prestacaoDeContas}
                             tipo_transacao='Gasto'
+                            analisePermiteEdicao={analisePermiteEdicao}
                         />
                     }
                     {analise_lancamento && analise_lancamento.requer_exclusao_lancamento && tipo_transacao === "Crédito" &&
@@ -49,6 +53,7 @@ const BotoesDetalhesParaAcertosDeCategorias = ({analise_lancamento, prestacaoDeC
                             prestacaoDeContasUuid={prestacaoDeContasUuid}
                             prestacaoDeContas={prestacaoDeContas}
                             tipo_transacao='Crédito'
+                            analisePermiteEdicao={analisePermiteEdicao}
                         />
                     }
                 </div>
