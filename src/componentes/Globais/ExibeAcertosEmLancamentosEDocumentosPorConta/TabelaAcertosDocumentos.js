@@ -259,7 +259,7 @@ const TabelaAcertosDocumentos = ({documentosAjustes, limparDocumentoStatus, pres
                                            style={{color: "white", fontSize: '15px', marginRight: "3px"}}
                                            icon={faCheckCircle}
                                        />
-                                       <strong>Justificar não realizado</strong>
+                                       <strong>Justificar não realização</strong>
                                    </button>
                                </>
                                 }

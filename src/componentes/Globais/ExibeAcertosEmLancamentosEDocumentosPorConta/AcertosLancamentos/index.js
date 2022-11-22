@@ -27,7 +27,6 @@ import {useHistory} from "react-router-dom";
 import Loading from "../../../../utils/Loading";
 import './acertos-lancamentos.scss'
 import Dropdown from "react-bootstrap/Dropdown";
-import { ModalAdicionarMembroComissao } from "../../../dres/Diretoria/Comissoes/Modais";
 import { useContext } from "react";
 import { AnaliseDREContext } from "../../../../context/AnaliseDRE";
 
@@ -46,7 +45,8 @@ const AcertosLancamentos = ({
     const valor_template = useValorTemplate()
     const dataTemplate = useDataTemplate()
     const numeroDocumentoTemplate = useNumeroDocumentoTemplate()
-    const {lancamentosAjustes, setLancamentosAjustes} = useContext(AnaliseDREContext)
+    //const {lancamentosAjustes, setLancamentosAjustes} = useContext(AnaliseDREContext)
+    const [lancamentosAjustes, setLancamentosAjustes] = useState([])
 
     const dispatch = useDispatch()
 
@@ -58,12 +58,12 @@ const AcertosLancamentos = ({
     const [opcoesJustificativa, setOpcoesJustificativa] = useState([])
     const [clickBtnEscolheConta, setClickBtnEscolheConta] = useState({0: true});
     const [expandedRowsLancamentos, setExpandedRowsLancamentos] = useState(null);
-    const [textareaJustificativa, setTextareaJustificativa] = useState(() => {
-    });
+    const [textareaJustificativa, setTextareaJustificativa] = useState(() => {});
     const [showSalvar, setShowSalvar] = useState({});
     const [txtEsclarecimentoLancamento, setTxtEsclarecimentoLancamento] = useState({});
     const [showSalvarEsclarecimento, setShowSalvarEsclarecimento] = useState({});
     const [totalDeAcertosDosLancamentos, setTotalDeAcertosDosLancamentos] = useState(0)
+    const [analisePermiteEdicao, setAnalisePermiteEdicao] = useState()
 
     const getTotalDeAcertosDosLancamentos = useCallback(()=>{
 
@@ -99,11 +99,12 @@ const AcertosLancamentos = ({
         setLoadingLancamentos(true)
 
         // Aqui TABELA
-        let status_de_realizacao = await getAnaliseLancamentosPrestacaoConta()
+        const visao = visoesService.getItemUsuarioLogado('visao_selecionada.nome')
+        let status_de_realizacao = await getAnaliseLancamentosPrestacaoConta(analiseAtualUuid, visao)
+
+        setAnalisePermiteEdicao(status_de_realizacao.editavel)
 
        let lancamentos_ajustes = await getLancamentosAjustes(analiseAtualUuid, conta_uuid, filtrar_por_lancamento, filtrar_por_tipo_de_ajuste)
-
-        console.log("XXXXXXXXXXXXXXXx carregaAcertosLancamentos ", lancamentos_ajustes)
 
         setOpcoesJustificativa(status_de_realizacao)
         setLancamentosAjustes(lancamentos_ajustes)
@@ -115,7 +116,7 @@ const AcertosLancamentos = ({
         }])
         setLoadingLancamentos(false)
 
-    }, [analiseAtualUuid])
+    }, [analiseAtualUuid, setLancamentosAjustes])
 
     useEffect(() => {
         if (contasAssociacao && contasAssociacao.length > 0) {
@@ -284,11 +285,11 @@ const AcertosLancamentos = ({
     };
 
     const salvarDesabilitadosEsclarecimento = (acerto) => {
-        return !txtEsclarecimentoLancamento?.[acerto.uuid] || txtEsclarecimentoLancamento?.[acerto.uuid] === acerto.esclarecimentos || showSalvarEsclarecimento?.[acerto.uuid]
+        return !txtEsclarecimentoLancamento?.[acerto.uuid] || txtEsclarecimentoLancamento?.[acerto.uuid] === acerto.esclarecimentos || showSalvarEsclarecimento?.[acerto.uuid] || !analisePermiteEdicao
     }
 
     const salvarDesabilitadosJustificativa = (acerto) => {
-        return !textareaJustificativa?.[acerto.uuid] || textareaJustificativa?.[acerto.uuid] === acerto.justificativa || showSalvar?.[acerto.uuid]
+        return !textareaJustificativa?.[acerto.uuid] || textareaJustificativa?.[acerto.uuid] === acerto.justificativa || showSalvar?.[acerto.uuid] || !analisePermiteEdicao
     }
 
     const tagColors = {
@@ -324,7 +325,7 @@ const AcertosLancamentos = ({
 
                                         {categoria && categoria.acertos.length > 1 &&
                                             <div className='mb-0 text-right border-bottom'>
-                                                {visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'UE' && visoesService.getPermissoes(["change_analise_dre"]) && prestacaoDeContas.status === "DEVOLVIDA" &&
+                                                {visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'UE' && visoesService.getPermissoes(["change_analise_dre"]) && prestacaoDeContas.status === "DEVOLVIDA" && analisePermiteEdicao &&
                                                     selecionarTodosItensDaCategoriaDoLancamento(categoria)
                                                 }
                                             </div>
@@ -359,18 +360,24 @@ const AcertosLancamentos = ({
                                                         <p className='mb-0'>{acerto.tipo_acerto.nome}</p>
                                                     </div>
 
-                                                    {acerto.detalhamento &&
+                                                    {acerto.detalhamento ? (
+                                                            <div className='col'>
+                                                                <p className='mb-0'><strong>Detalhamento:</strong></p>
+                                                                <p className='mb-0'>{acerto.detalhamento}</p>
+                                                            </div>
+                                                        ) :
+
                                                         <div className='col'>
-                                                            <p className='mb-0'><strong>Detalhamento:</strong></p>
-                                                            <p className='mb-0'>{acerto.detalhamento}</p>
+                                                            <p className='mb-0' style={{color:"#fff"}}><strong>Detalhamento:</strong></p>
                                                         </div>
+
                                                     }
 
                                                     <div className='col'>
                                                         <p className='mb-0'><strong>Status:</strong></p>
                                                         {tagJustificativa(acerto)}
                                                     </div>
-                                                    {visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'UE' && visoesService.getPermissoes(["change_analise_dre"]) && prestacaoDeContas.status === "DEVOLVIDA" &&
+                                                    {visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'UE' && visoesService.getPermissoes(["change_analise_dre"]) && prestacaoDeContas.status === "DEVOLVIDA" && analisePermiteEdicao &&
                                                         <div className='col-auto'>
                                                             <input
                                                                 type="checkbox"
@@ -396,7 +403,7 @@ const AcertosLancamentos = ({
                                                                 id="justificativa"
                                                                 name="justificativa"
                                                                 placeholder="Escreva o comentário"
-                                                                disabled={![['change_analise_dre']].some(visoesService.getPermissoes) || visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'DRE' || prestacaoDeContas.status !== 'DEVOLVIDA'}
+                                                                disabled={![['change_analise_dre']].some(visoesService.getPermissoes) || visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'DRE' || prestacaoDeContas.status !== 'DEVOLVIDA' || !analisePermiteEdicao}
                                                             >
                                                             </textarea>
                                                             <div className="bd-highlight d-flex justify-content-end align-items-center">
@@ -441,7 +448,7 @@ const AcertosLancamentos = ({
                                                                 onChange={(event) => handleChangeTextareaEsclarecimentoLancamento(event, acerto.uuid)}
                                                                 className="form-control"
                                                                 placeholder="Digite aqui o esclarecimento"
-                                                                disabled={![['change_analise_dre']].some(visoesService.getPermissoes) || visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'DRE' || prestacaoDeContas.status !== 'DEVOLVIDA'}
+                                                                disabled={![['change_analise_dre']].some(visoesService.getPermissoes) || visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'DRE' || prestacaoDeContas.status !== 'DEVOLVIDA' || !analisePermiteEdicao}
                                                             />
                                                         </div>
                                                     </div>
@@ -483,6 +490,7 @@ const AcertosLancamentos = ({
                                             prestacaoDeContasUuid={prestacaoDeContasUuid}
                                             prestacaoDeContas={prestacaoDeContas}
                                             tipo_transacao={data.tipo_transacao}
+                                            analisePermiteEdicao={analisePermiteEdicao}
                                         />
 
                                     </div>
@@ -798,6 +806,7 @@ const AcertosLancamentos = ({
                             showModalCheckNaoPermitido={showModalCheckNaoPermitido}
                             setShowModalCheckNaoPermitido={setShowModalCheckNaoPermitido}
                             totalDeAcertosDosLancamentos={totalDeAcertosDosLancamentos}
+                            analisePermiteEdicao={analisePermiteEdicao}
                         />
                     </div>
                 </div>
