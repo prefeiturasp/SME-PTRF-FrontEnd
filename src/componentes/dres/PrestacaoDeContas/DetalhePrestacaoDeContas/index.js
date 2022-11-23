@@ -145,7 +145,6 @@ export const DetalhePrestacaoDeContas = () =>{
     const [ajusteSaldoSalvoComSucesso, setAjusteSaldoSalvoComSucesso] = useState([]);
     const [showDeleteAjusteSaldoPC, setShowDeleteAjusteSaldoPC] = useState(false);
     const [periodoReferencia, setPeriodoReferencia] = useState('');
-    const [tituloRelatorio, setTituloRelatorio] = useState('');
 
     useEffect(()=>{
         carregaPrestacaoDeContas();
@@ -202,23 +201,6 @@ export const DetalhePrestacaoDeContas = () =>{
         }
         retornaPeriodo();
     }, [prestacaoDeContas?.periodo_uuid])
-
-    // useEffect(() => {
-    //     const dre_uuid = visoesService.getItemUsuarioLogado('associacao_selecionada.uuid');
-    //     const carregaConsolidadosDreJaPublicadosProximaPublicacao = async () => {
-    //             if(prestacaoDeContas?.periodo_uuid){
-    //                 try {
-    //                     let consolidados_dre = await getConsolidadosDreJaPublicadosProximaPublicacao(dre_uuid, prestacaoDeContas?.periodo_uuid)
-    //                     setTituloRelatorio(consolidados_dre.publicacoes_anteriores[consolidados_dre.publicacoes_anteriores.length - 1].titulo_relatorio)
-    //                 } catch (e) {
-    //                     console.log("Erro ao buscar Consolidado Dre ", e)
-    //                 }
-    //             }
-    //     }
-    //     carregaConsolidadosDreJaPublicadosProximaPublicacao()
-    // }, [prestacaoDeContas.periodo_uuid])
-
-
 
     const getAnalisePrestacao = async ()=>{
         if (prestacao_conta_uuid) {
@@ -1214,7 +1196,7 @@ export const DetalhePrestacaoDeContas = () =>{
                     <ModalNaoPodeVoltarParaAnalise
                         show={showNaoPodeVoltarParaAnalise}
                         handleClose={onHandleClose}
-                        texto={`<p>Não é possível reabrir essa PC para análise, pois esta consta na Publicação ${prestacaoDeContas.referencia_consolidado_dre} do período ${periodoReferencia}.</p>`}
+                        texto={`<p>Não é possível reabrir essa PC para análise, pois esta consta na Publicação ${prestacaoDeContas?.referencia_consolidado_dre} do período ${periodoReferencia}.</p>`}
                         primeiroBotaoTexto="Fechar"
                         primeiroBotaoCss="success"
                     />
