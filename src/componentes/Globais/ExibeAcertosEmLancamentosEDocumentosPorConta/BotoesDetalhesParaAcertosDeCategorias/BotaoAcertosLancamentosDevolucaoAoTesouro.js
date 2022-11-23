@@ -4,9 +4,9 @@ import {faCheckCircle} from "@fortawesome/free-solid-svg-icons";
 import LinkCustom from "./LinkCustom";
 import {RetornaSeTemPermissaoEdicaoAjustesLancamentos} from "../RetornaSeTemPermissaoEdicaoAjustesLancamentos";
 
-const BotaoAcertosLancamentosDevolucaoAoTesouro = ({analise_lancamento, prestacaoDeContasUuid, prestacaoDeContas, tipo_transacao}) => {
+const BotaoAcertosLancamentosDevolucaoAoTesouro = ({analise_lancamento, prestacaoDeContasUuid, prestacaoDeContas, tipo_transacao, analisePermiteEdicao}) => {
 
-    const TEMPERMISSAO = RetornaSeTemPermissaoEdicaoAjustesLancamentos(prestacaoDeContas)
+    const TEMPERMISSAO = RetornaSeTemPermissaoEdicaoAjustesLancamentos(prestacaoDeContas, analisePermiteEdicao)
     const URL = '/devolucao-ao-tesouro-ajuste/'
 
     return (
@@ -20,6 +20,7 @@ const BotaoAcertosLancamentosDevolucaoAoTesouro = ({analise_lancamento, prestaca
                     classeCssBotao='btn btn-outline-success mr-2'
                     operacao='requer_atualizacao_devolucao_ao_tesouro'
                     tipo_transacao={tipo_transacao}
+                    analisePermiteEdicao={analisePermiteEdicao}
                 >
                     { TEMPERMISSAO ? 'Informar dev. tesouro' : "Ver dev. tesouro"}
                 </LinkCustom>
@@ -33,6 +34,7 @@ const BotaoAcertosLancamentosDevolucaoAoTesouro = ({analise_lancamento, prestaca
                     classeCssBotao='link-green text-center'
                     operacao='requer_atualizacao_devolucao_ao_tesouro'
                     tipo_transacao={tipo_transacao}
+                    analisePermiteEdicao={analisePermiteEdicao}
                 >
                     <>
                         <FontAwesomeIcon

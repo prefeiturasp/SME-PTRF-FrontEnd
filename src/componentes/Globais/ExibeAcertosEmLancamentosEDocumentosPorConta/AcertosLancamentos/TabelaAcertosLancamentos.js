@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {Column} from "primereact/column";
 import {DataTable} from "primereact/datatable";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -17,11 +17,10 @@ import {visoesService} from "../../../../services/visoes.service";
 import '../scss/tagJustificativaLancamentos.scss';
 
 const tagColors = {
-    'JUSTIFICADO': '#086397',
-    'JUSTIFICADO_PARCIALMENTE': '#C65D00',
-    'REALIZADO': '#447801',
+    'REALIZADO': '#198459',
+    'JUSTIFICADO': '#5C4EF8',
     'REALIZADO_JUSTIFICADO': '#C65D00',
-    'REALIZADO_PARCIALMENTE': '#198459',
+    'REALIZADO_PARCIALMENTE': '#C65D00',
     'REALIZADO_JUSTIFICADO_PARCIALMENTE': '#C65D00',
 }
 
@@ -49,12 +48,12 @@ export const TabelaAcertosLancamentos = ({
                                              showModalCheckNaoPermitido,
                                              setShowModalCheckNaoPermitido,
                                              totalDeAcertosDosLancamentos,
+                                             analisePermiteEdicao,
                                          }) => {
 
 
     const [showModalJustificarNaoRealizacao, setShowModalJustificarNaoRealizacao] = useState(false)
     const [showModalJustificadaApagada, setShowModalJustificadaApagada] = useState(false)
-    const [isConfirmadoJustificado, setIsConfirmadoJustificado] = useState(false)
     const [textoConfirmadoJustificado, setTextoConfirmadoJustificado] = useState('')
 
     const [tipoAcao, setTipoAcao] = useState('')
@@ -81,11 +80,6 @@ export const TabelaAcertosLancamentos = ({
             </div>
         )
     }
-
-    useEffect(() => {
-        console.log("lancamentosSelecionados: ", lancamentosSelecionados);
-    }, [lancamentosSelecionados]);
-
 
     const montagemSelecionarBotaoStatusRealizado = () => {
         return (
@@ -197,7 +191,7 @@ export const TabelaAcertosLancamentos = ({
                         style={{color: "white", fontSize: '15px', marginRight: "3px"}}
                         icon={faCheckCircle}
                     />
-                    <strong>Marca como realizado</strong>
+                    <strong>Marcar como realizado</strong>
                 </button>
                 <div className="float-right" style={{padding: "0px 10px"}}>|</div>
                 <button
@@ -209,7 +203,7 @@ export const TabelaAcertosLancamentos = ({
                         style={{color: "white", fontSize: '15px', marginRight: "3px"}}
                         icon={faCheckCircle}
                     />
-                    <strong>Justificar não realizado</strong>
+                    <strong>Justificar não realização</strong>
                 </button>
             </>
         )
@@ -245,47 +239,20 @@ export const TabelaAcertosLancamentos = ({
     const modalBodyHTML = () => {
         return (
             <div className="modal-body">
-                <p>Você confirma que deseja marcar o lançamento como não realizado? Em caso afirmativo será necessário adicionar uma justificativa para tal evento.</p>
-                <div className="form-check form-check-inline">
-                    <input
-                        className="form-check-input"
-                        type="radio"
-                        name="confirmacao-justificativa"
-                        id="confirmacao-justificativa1"
-                        onChange={() => {
-                            setIsConfirmadoJustificado(true)
-                        }}
-                    />
-                    <label className="form-check-label" htmlFor="confirmacao-justificativa1">Sim</label>
-                </div>
-                <div className="form-check form-check-inline">
-                    <input
-                        className="form-check-input"
-                        type="radio"
-                        name="confirmacao-justificativa"
-                        id="confirmacao-justificativa2"
-                        onChange={() => {
-                            setIsConfirmadoJustificado(false);
-                        }}
-                        defaultChecked
-                    />
-                    <label className="form-check-label" htmlFor="confirmacao-justificativa2">Não</label>
-                </div>
-                {isConfirmadoJustificado &&
-                    (
-                        <form>
-                            <label htmlFor="justifique-textarea">Justifique</label>
-                            <textarea
-                                className="form-check form-check-inline w-100 pl-1"
-                                style={{'resize': 'none'}}
-                                onChange={(e) => setTextoConfirmadoJustificado(e.target.value)}
-                                id="justifique-textarea"
-                                value={textoConfirmadoJustificado} rows="7"
-                            >
-                            </textarea>
-                        </form>
-                    )
-                }
+
+                <form>
+                    <label htmlFor="justifique-textarea">Justifique</label>
+                    <textarea
+                        className="form-check form-check-inline w-100 pl-1"
+                        style={{'resize': 'none'}}
+                        onChange={(e) => setTextoConfirmadoJustificado(e.target.value)}
+                        id="justifique-textarea"
+                        value={textoConfirmadoJustificado}
+                        rows="7"
+                    >
+                    </textarea>
+                </form>
+
             </div>
         )
     }
@@ -360,7 +327,7 @@ export const TabelaAcertosLancamentos = ({
                             className="align-middle text-left borda-coluna"
                             body={tagJustificativa}
                             style={{width: '10%'}}/>
-                        {visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'UE' && visoesService.getPermissoes(["change_analise_dre"]) && prestacaoDeContas.status === "DEVOLVIDA" ?
+                        {visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'UE' && visoesService.getPermissoes(["change_analise_dre"]) && prestacaoDeContas.status === "DEVOLVIDA" && analisePermiteEdicao ?
                             <Column
                                 header={selecionarTodosItensDosLancamentos()}
                                 body={selecionarTodosItensDoLancamento}
@@ -384,9 +351,9 @@ export const TabelaAcertosLancamentos = ({
             <section>
                 <ModalJustificarNaoRealizacao
                     show={showModalJustificarNaoRealizacao}
-                    titulo='Marcar como não realizado'
+                    titulo='Justificar não realização'
                     bodyText={modalBodyHTML()}
-                    primeiroBotaoTexto="Fechar"
+                    primeiroBotaoTexto="Cancelar"
                     primeiroBotaoCss="danger"
                     primeiroBotaoOnClick={() => setShowModalJustificarNaoRealizacao(false)}
                     segundoBotaoTexto="Confirmar"
@@ -394,7 +361,7 @@ export const TabelaAcertosLancamentos = ({
                     segundoBotaoOnclick={() => {
                         justificarNaoRealizacao(textoConfirmadoJustificado)
                     }}
-                    segundoBotaoDisable={(textoConfirmadoJustificado.length === 0 && isConfirmadoJustificado) || !isConfirmadoJustificado}
+                    segundoBotaoDisable={ textoConfirmadoJustificado.length === 0}
                 />
             </section>
             <section>

@@ -302,8 +302,8 @@ export const getAnalisePrestacaoConta = async (analise_prestacao_uuid) => {
     return (await api.get(`/api/analises-prestacoes-contas/${analise_prestacao_uuid}`, authHeader)).data
 };
 
-export const getAnaliseLancamentosPrestacaoConta = async () => {
-    return (await api.get(`/api/analises-lancamento-prestacao-conta/tabelas/`, authHeader)).data
+export const getAnaliseLancamentosPrestacaoConta = async (uuid_analise_prestacao, visao) => {
+    return (await api.get(`/api/analises-lancamento-prestacao-conta/tabelas/${uuid_analise_prestacao ? "?uuid_analise_prestacao="+uuid_analise_prestacao : ""}${visao ? "&visao="+visao : ""}`, authHeader)).data
 };
 
 export const getAnaliseDocumentosPrestacaoConta = async () => {

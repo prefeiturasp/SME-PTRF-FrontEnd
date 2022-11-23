@@ -10,22 +10,22 @@ export const TopoComBotaoVoltar = ({prestacaoContaUuid, onClickVoltar, periodoFo
     const [periodo, setPeriodo] = useState({});
     const history = useHistory()
 
-    const verificarComStatusRealizadoJustificado = useCallback(() => {
-        setPodeConcluir(
-            lancamentosAjustes.every((analise) => {
-            return !(analise.analise_lancamento.status_realizacao.includes('PARCIALMENTE') || analise.analise_lancamento.status_realizacao.includes('PENDENTE'))
-        }))
-        
-    }, [lancamentosAjustes])
+    // const verificarComStatusRealizadoJustificado = useCallback(() => {
+    //     setPodeConcluir(
+    //         lancamentosAjustes.every((analise) => {
+    //         return !(analise.analise_lancamento.status_realizacao.includes('PARCIALMENTE') || analise.analise_lancamento.status_realizacao.includes('PENDENTE'))
+    //     }))
+    //
+    // }, [lancamentosAjustes])
 
 
-    useEffect( () => {
-        (async() => {
-            let periodo = await getPeriodoPorUuid(periodoUuid);
-            setPeriodo(periodo)
-        })()
-        verificarComStatusRealizadoJustificado()
-    }, [verificarComStatusRealizadoJustificado])
+    // useEffect( () => {
+    //     (async() => {
+    //         let periodo = await getPeriodoPorUuid(periodoUuid);
+    //         setPeriodo(periodo)
+    //     })()
+    //     verificarComStatusRealizadoJustificado()
+    // }, [verificarComStatusRealizadoJustificado])
 
     const handleVerificaAcertos = () => {
         if(podeConcluir){
@@ -51,14 +51,14 @@ export const TopoComBotaoVoltar = ({prestacaoContaUuid, onClickVoltar, periodoFo
                     Voltar
                 </button>
             </div>
-            <div className="p-3 bd-highlight">
-                <button 
+            {/*            <div className="p-3 bd-highlight">
+                <button
                     className="btn btn-success mr-2"
                     onClick={handleVerificaAcertos}
                 >
                     Ir para concluir acerto
                 </button>
-            </div>
+            </div>*/}
         </div>
     )
 }
