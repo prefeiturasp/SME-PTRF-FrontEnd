@@ -193,7 +193,6 @@ export const DetalhePrestacaoDeContas = () =>{
 
     useEffect(() => {
         const retornaPeriodo = async () => {
-            console.dir(prestacaoDeContas)
             if (prestacaoDeContas?.periodo_uuid){
                 let periodo = await getPeriodoPorUuid(prestacaoDeContas?.periodo_uuid);
                 setPeriodoReferencia(periodo.referencia)
