@@ -76,6 +76,7 @@ const CardsDevolucoesParaAcertoDaDre = ({prestacao_conta_uuid, analiseAtualUuid=
         setUuidAnalisePcDevolvida(value)
         setAnaliseAtualUuid(value)
         let data_objeto = JSON.parse(e.target.options[e.target.selectedIndex].getAttribute('data-objeto'));
+        
         setObjetoConteudoCard(data_objeto)
     }, [setAnaliseAtualUuid])
 
