@@ -12,6 +12,8 @@ import {
     deleteAnaliseAjustesSaldoPorConta,
     getAnaliseAjustesSaldoPorConta
 } from "../../../../services/dres/PrestacaoDeContas.service";
+import { getConsolidadosDreJaPublicadosProximaPublicacao } from "../../../../services/dres/RelatorioConsolidado.service";
+import {visoesService} from "../../../../services/visoes.service";
 import {getTabelasPrestacoesDeContas, getReceberPrestacaoDeContas, getReabrirPrestacaoDeContas, getDesfazerRecebimento, getAnalisarPrestacaoDeContas, getDesfazerAnalise, getSalvarAnalise, getInfoAta, getConcluirAnalise, getDespesasPorFiltros, getTiposDevolucao} from "../../../../services/dres/PrestacaoDeContas.service";
 import {patchReceberAposAcertos} from "../../../../services/dres/PrestacaoDeContas.service";
 import {getDespesa} from "../../../../services/escolas/Despesas.service";
@@ -30,6 +32,7 @@ import {ModalSalvarPrestacaoDeContasAnalise} from "../../../../utils/Modais";
 import Loading from "../../../../utils/Loading";
 import {toastCustom} from "../../../Globais/ToastCustom";
 import {ModalNaoPodeVoltarParaAnalise} from "../ModalNaoPodeVoltarParaAnalise";
+import { getPeriodoPorUuid } from "../../../../services/sme/Parametrizacoes.service";
 
 
 require("ordinal-pt-br");
@@ -141,6 +144,7 @@ export const DetalhePrestacaoDeContas = () =>{
     const [formErrosAjusteSaldo, setFormErrosAjusteSaldo] = useState([])
     const [ajusteSaldoSalvoComSucesso, setAjusteSaldoSalvoComSucesso] = useState([]);
     const [showDeleteAjusteSaldoPC, setShowDeleteAjusteSaldoPC] = useState(false);
+    const [periodoReferencia, setPeriodoReferencia] = useState('');
 
     useEffect(()=>{
         carregaPrestacaoDeContas();
@@ -186,6 +190,16 @@ export const DetalhePrestacaoDeContas = () =>{
         };
         carregaMotivosReprovacao();
     }, []);
+
+    useEffect(() => {
+        const retornaPeriodo = async () => {
+            if (prestacaoDeContas?.periodo_uuid){
+                let periodo = await getPeriodoPorUuid(prestacaoDeContas?.periodo_uuid);
+                setPeriodoReferencia(periodo.referencia)
+            }
+        }
+        retornaPeriodo();
+    }, [prestacaoDeContas?.periodo_uuid])
 
     const getAnalisePrestacao = async ()=>{
         if (prestacao_conta_uuid) {
@@ -1181,7 +1195,7 @@ export const DetalhePrestacaoDeContas = () =>{
                     <ModalNaoPodeVoltarParaAnalise
                         show={showNaoPodeVoltarParaAnalise}
                         handleClose={onHandleClose}
-                        texto={`<p>Não é possível reabrir essa PC para análise, pois ela já foi publicada no Relatório Consolidado ${prestacaoDeContas.referencia_consolidado_dre}.</p>`}
+                        texto={`<p>Não é possível reabrir essa PC para análise, pois esta consta na Publicação ${prestacaoDeContas?.referencia_consolidado_dre} do período ${periodoReferencia}.</p>`}
                         primeiroBotaoTexto="Fechar"
                         primeiroBotaoCss="success"
                     />
