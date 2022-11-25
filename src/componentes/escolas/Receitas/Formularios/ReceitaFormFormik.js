@@ -73,7 +73,8 @@ export const ReceitaFormFormik = ({
                                       ehOperacaoAtualizacaoReaberturaSeletiva,
                                       origemAnaliseLancamento,
                                       validacoesPersonalizadasCredito,
-                                      formDateErrors
+                                      formDateErrors,
+                                      escondeBotaoDeletar,
                                   }) => {
 
     return (
@@ -382,7 +383,7 @@ export const ReceitaFormFormik = ({
                                     </Link>
 
                                 }
-                                {uuid && exibirDeleteDespesa && !ehOperacaoAtualizacaoReaberturaSeletiva() ?
+                                {uuid && exibirDeleteDespesa && !ehOperacaoAtualizacaoReaberturaSeletiva() && !escondeBotaoDeletar ?
                                     <button
                                         disabled={readOnlyBtnAcao || !visoesService.getPermissoes(['delete_receita'])}
                                         type="reset"
