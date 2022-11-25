@@ -3,7 +3,7 @@ import {Link} from "react-router-dom";
 import {visoesService} from "../../../../services/visoes.service";
 import {RetornaSeTemPermissaoEdicaoAjustesLancamentos} from "../RetornaSeTemPermissaoEdicaoAjustesLancamentos";
 
-const LinkCustom = ({url, analise_lancamento, prestacaoDeContasUuid, prestacaoDeContas, classeCssBotao, children, operacao, tipo_transacao}) => {
+const LinkCustom = ({url, analise_lancamento, prestacaoDeContasUuid, prestacaoDeContas, classeCssBotao, children, operacao, tipo_transacao, analisePermiteEdicao}) => {
 
     const getCurrentPathWithoutLastPart = () => {
         const pathRgx = /\//g;
@@ -11,7 +11,7 @@ const LinkCustom = ({url, analise_lancamento, prestacaoDeContasUuid, prestacaoDe
         return childroutecount > 1 ? window.location.pathname.slice(0, window.location.pathname.lastIndexOf('/')) : window.location.pathname;
     }
 
-    const TEMPERMISSAO = RetornaSeTemPermissaoEdicaoAjustesLancamentos(prestacaoDeContas)
+    const TEMPERMISSAO = RetornaSeTemPermissaoEdicaoAjustesLancamentos(prestacaoDeContas, analisePermiteEdicao)
 
     const checaSeTemPermissao = () =>{
         let tem_permissao = TEMPERMISSAO
