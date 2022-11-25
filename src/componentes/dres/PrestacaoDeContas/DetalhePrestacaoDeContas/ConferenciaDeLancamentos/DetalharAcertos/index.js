@@ -12,6 +12,7 @@ import Loading from "../../../../../../utils/Loading";
 import useDataTemplate from "../../../../../../hooks/Globais/useDataTemplate";
 import {ProviderValidaParcial} from "../../../../../../context/DetalharAcertos";
 import {useCarregaPrestacaoDeContasPorUuid} from "../../../../../../hooks/dres/PrestacaoDeContas/useCarregaPrestacaoDeContasPorUuid";
+import moment from "moment/moment";
 
 export const DetalharAcertos = () => {
 
@@ -135,7 +136,6 @@ export const DetalharAcertos = () => {
                     if (analise_lancamento_uuid) {
                         let acertos = await getListaDeSolicitacaoDeAcertos(prestacao_conta_uuid, analise_lancamento_uuid)
                         let tipos_de_acerto_lancamentos_agrupado = await getTiposDeAcertoLancamentosAgrupadoCategoria();
-
                         let _acertos = []
                         if (acertos && acertos.solicitacoes_de_ajuste_da_analise && acertos.solicitacoes_de_ajuste_da_analise.length > 0) {
                             acertos.solicitacoes_de_ajuste_da_analise.map((acerto) =>
@@ -147,7 +147,7 @@ export const DetalharAcertos = () => {
                                     devolucao_tesouro: acerto.devolucao_ao_tesouro && acerto.devolucao_ao_tesouro.uuid ? {
                                         uuid: acerto.devolucao_ao_tesouro.uuid,
                                         tipo: acerto.devolucao_ao_tesouro.tipo && acerto.devolucao_ao_tesouro.tipo.uuid ? acerto.devolucao_ao_tesouro.tipo.uuid : acerto.devolucao_ao_tesouro.tipo,
-                                        data: acerto.devolucao_ao_tesouro.data ? dataTemplate(null, null, acerto.devolucao_ao_tesouro.data) : null,
+                                        data: acerto && acerto.devolucao_ao_tesouro && acerto.devolucao_ao_tesouro.data ? acerto.devolucao_ao_tesouro.data : "",
                                         devolucao_total: acerto.devolucao_ao_tesouro.devolucao_total,
                                         valor: acerto.devolucao_ao_tesouro.valor ? Number(acerto.devolucao_ao_tesouro.valor).toLocaleString('pt-BR', {
                                             style: 'currency',
