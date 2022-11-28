@@ -4,33 +4,37 @@ import {faCheckCircle} from "@fortawesome/free-solid-svg-icons";
 import LinkCustom from "./LinkCustom";
 import {RetornaSeTemPermissaoEdicaoAjustesLancamentos} from "../RetornaSeTemPermissaoEdicaoAjustesLancamentos";
 
-const BotaoAcertosDocumentosInclusaoGasto = ({analise_documento, prestacaoDeContasUuid, prestacaoDeContas}) => {
+const BotaoAcertosDocumentosInclusaoGasto = ({analise_documento, prestacaoDeContasUuid, prestacaoDeContas, analisePermiteEdicao, uuid_acerto_documento, acerto}) => {
 
-    const TEMPERMISSAO = RetornaSeTemPermissaoEdicaoAjustesLancamentos(prestacaoDeContas)
-    const URL = analise_documento.despesa_incluida ? `/edicao-de-despesa/${analise_documento.despesa_incluida}` : `/cadastro-de-despesa/`;
+    const TEMPERMISSAO = RetornaSeTemPermissaoEdicaoAjustesLancamentos(prestacaoDeContas, analisePermiteEdicao)
+    const URL = acerto.despesa_incluida ? `/edicao-de-despesa/${acerto.despesa_incluida}` : `/cadastro-de-despesa/`;
 
     return (
         <>
-            {analise_documento && !analise_documento.despesa_incluida && TEMPERMISSAO ? (
+            {acerto && !acerto.despesa_incluida && TEMPERMISSAO ? (
                 <LinkCustom
                     url={URL}
                     analise_documento={analise_documento}
+                    uuid_acerto_documento={uuid_acerto_documento}
                     prestacaoDeContasUuid={prestacaoDeContasUuid}
                     prestacaoDeContas={prestacaoDeContas}
                     classeCssBotao='btn btn-outline-success mr-2'
                     operacao='requer_inclusao_documento_gasto'
+                    analisePermiteEdicao={analisePermiteEdicao}
                 >
                     Incluir novo gasto
                 </LinkCustom>
                 ) :
-            analise_documento && analise_documento.despesa_incluida && TEMPERMISSAO ? (
+                acerto && acerto.despesa_incluida && TEMPERMISSAO ? (
                 <LinkCustom
                     url={URL}
                     analise_documento={analise_documento}
+                    uuid_acerto_documento={uuid_acerto_documento}
                     prestacaoDeContasUuid={prestacaoDeContasUuid}
                     prestacaoDeContas={prestacaoDeContas}
                     classeCssBotao='link-green text-center'
                     operacao='requer_inclusao_documento_gasto'
+                    analisePermiteEdicao={analisePermiteEdicao}
                 >
                     <>
                         <FontAwesomeIcon
@@ -41,14 +45,16 @@ const BotaoAcertosDocumentosInclusaoGasto = ({analise_documento, prestacaoDeCont
                     </>
                 </LinkCustom>
             ):
-            analise_documento && analise_documento.despesa_incluida && !TEMPERMISSAO &&
+                    acerto && acerto.despesa_incluida && !TEMPERMISSAO &&
                 <LinkCustom
                     url={URL}
                     analise_documento={analise_documento}
+                    uuid_acerto_documento={uuid_acerto_documento}
                     prestacaoDeContasUuid={prestacaoDeContasUuid}
                     prestacaoDeContas={prestacaoDeContas}
                     classeCssBotao='link-green text-center'
                     operacao='requer_inclusao_documento_gasto'
+                    analisePermiteEdicao={analisePermiteEdicao}
                 >
                     <>
                         <FontAwesomeIcon

@@ -3,7 +3,7 @@ import {Link} from "react-router-dom";
 import {visoesService} from "../../../../services/visoes.service";
 import {RetornaSeTemPermissaoEdicaoAjustesLancamentos} from "../RetornaSeTemPermissaoEdicaoAjustesLancamentos";
 
-const LinkCustom = ({url, analise_documento, prestacaoDeContasUuid, prestacaoDeContas, classeCssBotao, children, operacao}) => {
+const LinkCustom = ({url, analise_documento, prestacaoDeContasUuid, prestacaoDeContas, classeCssBotao, children, operacao, analisePermiteEdicao, uuid_acerto_documento}) => {
 
     const getCurrentPathWithoutLastPart = () => {
         const pathRgx = /\//g;
@@ -11,7 +11,7 @@ const LinkCustom = ({url, analise_documento, prestacaoDeContasUuid, prestacaoDeC
         return childroutecount > 1 ? window.location.pathname.slice(0, window.location.pathname.lastIndexOf('/')) : window.location.pathname;
     }
 
-    const TEMPERMISSAO = RetornaSeTemPermissaoEdicaoAjustesLancamentos(prestacaoDeContas)
+    const TEMPERMISSAO = RetornaSeTemPermissaoEdicaoAjustesLancamentos(prestacaoDeContas, analisePermiteEdicao)
 
     const checaSeTemPermissao = () =>{
         let tem_permissao = TEMPERMISSAO
@@ -29,7 +29,7 @@ const LinkCustom = ({url, analise_documento, prestacaoDeContasUuid, prestacaoDeC
             to={{
                 pathname: `${url}`,
                 state: {
-                    uuid_analise_documento: analise_documento.uuid,
+                    uuid_acerto_documento: uuid_acerto_documento,
                     uuid_pc: prestacaoDeContasUuid,
                     uuid_despesa: analise_documento.despesa,
                     uuid_receita: analise_documento.receita,

@@ -186,7 +186,6 @@ export default class DemonstrativoFinanceiroPorConta extends Component {
             },
 
         ];
-        console.log('Status Prestacao:', this.props?.statusPrestacaoDeConta)
         return (
             <div className="relacao-bens-container mt-5">
                 <p className="relacao-bens-title">Demonstrativo financeiro</p>
