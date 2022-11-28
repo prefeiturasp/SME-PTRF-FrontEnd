@@ -51,7 +51,7 @@ export const TopoComBotaoVoltar = ({prestacaoContaUuid, onClickVoltar, periodoFo
                     Voltar
                 </button>
             </div>
-{/*            <div className="p-3 bd-highlight">
+            {/*            <div className="p-3 bd-highlight">
                 <button
                     className="btn btn-success mr-2"
                     onClick={handleVerificaAcertos}

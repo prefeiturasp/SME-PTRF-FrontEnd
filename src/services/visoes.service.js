@@ -291,14 +291,14 @@ export const setarUnidadeProximoLoginAcessoSuporte = (visao, uuid_unidade, uuid_
 const redirectVisao = (visao = null) => {
     let dados_usuario_logado = visoesService.getDadosDoUsuarioLogado();
     if (visao === 'SME') {
-        redirect('/acompanhamento-pcs-sme')
+        redirect('/painel-parametrizacoes')
     } else if (visao === 'DRE') {
         redirect('/dre-dashboard')
     } else if (visao === 'UE') {
         redirect('/dados-da-associacao')
     } else {
         if (dados_usuario_logado.visoes.find(visao => visao.tipo === 'SME')) {
-            redirect('/acompanhamento-pcs-sme')
+            redirect('/painel-parametrizacoes')
         } else if (dados_usuario_logado.visoes.find(visao => visao.tipo === 'DRE')) {
             redirect('/dre-dashboard')
         } else if (dados_usuario_logado.visoes.find(visao => visao.tipo === 'UE')) {
