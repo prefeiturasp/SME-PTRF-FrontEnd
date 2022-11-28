@@ -447,12 +447,15 @@ export const CadastroForm = ({verbo_http}) => {
                                 console.log("Operação realizada com sucesso!");
 
                                 let uuid_despesa = response.data.uuid;
+
+                                let uuid_acerto_documento = parametroLocation.state.uuid_acerto_documento;
+
                                 let payload = {
-                                    uuid_gasto_incluido: uuid_despesa
+                                    uuid_gasto_incluido: uuid_despesa,
+                                    uuid_solicitacao_acerto: uuid_acerto_documento,
                                 }
 
-                                let uuid_analise_documento = parametroLocation.state.uuid_analise_documento;
-                                let response_gasto_incluido = await marcarGastoIncluido(uuid_analise_documento, payload);
+                                let response_gasto_incluido = await marcarGastoIncluido(payload);
                                 
                                 if (response_gasto_incluido.status === 200) {
                                     console.log("Gasto incluido com sucesso!");

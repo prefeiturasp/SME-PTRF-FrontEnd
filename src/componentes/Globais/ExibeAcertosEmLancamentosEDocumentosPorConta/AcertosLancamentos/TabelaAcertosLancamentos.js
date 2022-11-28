@@ -241,7 +241,7 @@ export const TabelaAcertosLancamentos = ({
             <div className="modal-body">
 
                 <form>
-                    <label htmlFor="justifique-textarea">Justifique</label>
+                    <label htmlFor="justifique-textarea">Você confirma que deseja justificar a não realização do acerto no lançamento?</label>
                     <textarea
                         className="form-check form-check-inline w-100 pl-1"
                         style={{'resize': 'none'}}
