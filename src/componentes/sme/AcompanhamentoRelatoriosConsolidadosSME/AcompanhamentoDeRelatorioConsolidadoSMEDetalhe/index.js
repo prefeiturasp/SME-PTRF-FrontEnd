@@ -227,11 +227,17 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEDetalhe = () => {
     }
 
     const disableBtnVerResumo = () => {
-        if(habilitaVerResumoComentariosNotificados || habilitaVerResumoAcertoEmDocumento){
-            return false;
+        if(habilitaVerResumoComentariosNotificados.lenght == 0 || habilitaVerResumoAcertoEmDocumento){
+            return true;
+        }
+        if(!relatorioConsolidado.analise_atual){
+            return true;
         }
 
-        return true;
+        if (["NAO_PUBLICADO", "PUBLICADO"].includes(relatorioConsolidado.status_sme)){
+            return true;
+        }
+        return false;
     }
 
     return(

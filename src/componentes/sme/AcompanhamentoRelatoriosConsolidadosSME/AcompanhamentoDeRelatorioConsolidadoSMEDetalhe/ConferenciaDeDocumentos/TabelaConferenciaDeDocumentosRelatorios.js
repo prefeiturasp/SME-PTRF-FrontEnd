@@ -75,6 +75,9 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
                             (e) => selecionarPorStatus(e, null)
                         }>Selecionar todos não conferidos</Dropdown.Item>
                         <Dropdown.Item onClick={
+                            (e) => selecionarPorStatus(e, "AJUSTE")
+                        }>Selecionar todos com solicitação de acertos</Dropdown.Item>
+                        <Dropdown.Item onClick={
                             (e) => desmarcarTodos(e)
                         }>Desmarcar todos</Dropdown.Item>
                     </Dropdown.Menu>
