@@ -709,7 +709,6 @@ const AcertosLancamentos = ({
                 <Dropdown.Toggle id="dropdown-basic">
                     <span>Selecionar todos </span>
                     <input
-                        //checked={ (identificadorCheckboxClicado.some(uuid => uuid.uuid === 'TODOS') && lancamentosSelecionados.length > 0 ) || (identificadorCheckboxClicado.some(uuid => uuid.uuid === categoria.uuid) && lancamentosSelecionados.length > 0) }
                         checked={identificadorCheckboxClicado.some(uuid => uuid.uuid === categoria.categoria) && lancamentosSelecionados.length > 0 }
                         type="checkbox"
                         value=""
@@ -746,6 +745,7 @@ const AcertosLancamentos = ({
 
     return (
         <>
+            <h5 className="mb-4 mt-4"><strong>Acertos nos lançamentos</strong></h5>
             <nav>
                 <div className="nav nav-tabs mb-3 tabs-resumo-dos-acertos" id="nav-tab-conferencia-de-lancamentos"
                      role="tablist">
