@@ -105,6 +105,6 @@ export const marcarLancamentoAtualizado = async (uuid_analise_lancamento) => {
     return (await api.post(`/api/analises-lancamento-prestacao-conta/${uuid_analise_lancamento}/marcar-lancamento-atualizado/`, {}, authHeader)).data
 };
 
-export const marcarCreditoIncluido = async (uuid_analise_documento, payload) => {
-    return (await api.post(`/api/analises-documento-prestacao-conta/${uuid_analise_documento}/marcar-como-credito-incluido/`, payload, authHeader)).data
+export const marcarCreditoIncluido = async (payload) => {
+    return (await api.post(`/api/analises-documento-prestacao-conta/marcar-como-credito-incluido/`, payload, authHeader)).data
 };
