@@ -65,15 +65,8 @@ export const VisualizaDevolucoes = ({relatorioConsolidado, dataLimiteDevolucao, 
                                             </option>
                                     })
                     }
-                     </select>
+                    </select>
                 </div>
-            // {
-            //     new Intl.DateTimeFormat('pt-BR', {
-            //         year: 'numeric',
-            //         month: '2-digit',
-            //         day: '2-digit'
-            //     },).format(new Date('01/01/01'))
-            // }
             )
         } </div>
     )

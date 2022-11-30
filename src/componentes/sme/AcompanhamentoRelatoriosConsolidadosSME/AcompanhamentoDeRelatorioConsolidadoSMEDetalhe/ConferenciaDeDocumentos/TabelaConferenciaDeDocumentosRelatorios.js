@@ -1,4 +1,4 @@
-import React, {useEffect, memo, useState, useCallback, useMemo, useReducer} from "react";
+import React, {useEffect, memo, useState, useCallback, useReducer} from "react";
 import {useParams} from "react-router-dom";
 import {Column} from "primereact/column";
 import {DataTable} from "primereact/datatable";
@@ -12,7 +12,6 @@ import {ModalFormBodyPdf} from "../../../../Globais/ModalBootstrap"
 import Dropdown from "react-bootstrap/Dropdown";
 import Loading from "../../../../../utils/Loading";
 import {AxiosError} from "axios";
-import { getTemAjustesExtratos } from "../../../../../services/dres/PrestacaoDeContas.service";
 
 const TabelaConferenciaDeDocumentosRelatorios = ({
     relatorioConsolidado,
