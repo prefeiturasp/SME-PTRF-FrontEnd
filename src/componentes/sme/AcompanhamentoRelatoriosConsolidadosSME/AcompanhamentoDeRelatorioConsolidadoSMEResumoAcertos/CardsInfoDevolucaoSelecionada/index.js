@@ -6,8 +6,12 @@ import { Ordinais } from '../../../../../utils/ValidacoesNumeros'
 import useDataTemplate from "../../../../../hooks/Globais/useDataTemplate";
 import './styles.scss'
 
-export const CardsInfoDevolucaoSelecionada = ({cardDataDevolucao}) => {
+export const CardsInfoDevolucaoSelecionada = ({cardDataDevolucao, tabAtual}) => {
     const dataTemplate = useDataTemplate()
+
+    if (tabAtual !== 'historico'){
+        return null
+    }
 
     return (
             <div className="card-deck mt-4">

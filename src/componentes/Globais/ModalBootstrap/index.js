@@ -943,6 +943,129 @@ export const ModalBootstrapFormAdicionarDocumentos = (propriedades) => { // Os b
     )
 };
 
+export const ModalBootstrapConsideraComoCorreto = (props) => { // Os botões de Cancelar e Salvar estão dentro do próprio form, pois utilizei Formik para validações
+    return (
+        <Fragment>
+            <Modal centered
+                show={
+                    props.show
+                }
+                onHide={
+                    props.onHide
+                }
+                size='lg'>
+                <Modal.Header style={
+                    {
+                        padding: '15px',
+                        margin: '1px',
+                        borderColor: 'rgba(0, 0, 0, 0.12)',
+                        borderWidth: '2px'
+                    }
+                }>
+                    <Modal.Title>{
+                        props.titulo
+                    }</Modal.Title>
+                </Modal.Header>
+                <Modal.Body style={
+                    {
+                        padding: '15px',
+                        margin: '31px',
+                        borderColor: 'rgba(0, 0, 0, 0.12)',
+                        borderWidth: '2px'
+                    }
+                } > {
+                    props.bodyText
+                } </Modal.Body>
+                <Modal.Footer>
+                    <Button variant={
+                            props.primeiroBotaoCss ? props.primeiroBotaoCss : "primary"
+                        }
+                        onClick={
+                            props.primeiroBotaoOnclick
+                    }>
+                        {
+                        props.primeiroBotaoTexto
+                    } </Button>
+                    {
+                    props.segundoBotaoOnclick && props.segundoBotaoTexto ? (
+                        <Button variant={
+                                props.segundoBotaoCss ? props.segundoBotaoCss : "primary"
+                            }
+                            onClick={
+                                props.segundoBotaoOnclick
+                        }>
+                            {
+                            props.segundoBotaoTexto
+                        } </Button>
+                    ) : null
+                } </Modal.Footer>
+            </Modal>
+        </Fragment>
+    )
+};
+
+
+export const ModalBootstrapRemoveAcerto= (props) => { // Os botões de Cancelar e Salvar estão dentro do próprio form, pois utilizei Formik para validações
+    return (
+        <Fragment>
+            <Modal centered
+                show={
+                    props.show
+                }
+                onHide={
+                    props.onHide
+                }
+                size='lg'>
+                <Modal.Header style={
+                    {
+                        padding: '12px',
+                        margin: '20px',
+                        borderColor: 'rgba(0, 0, 0, 0.12)',
+                        borderWidth: '2px'
+                    }
+                }>
+                    <Modal.Title>{
+                        props.titulo
+                    }</Modal.Title>
+                </Modal.Header>
+                <Modal.Body style={
+                    {
+                        padding: '40px',
+                        margin: '1px',
+                        borderColor: 'rgba(0, 0, 0, 0.12)',
+                        borderWidth: '2px'
+                    }
+                } > {
+                    props.bodyText
+                } </Modal.Body>
+                <Modal.Footer>
+                    <Button variant={
+                            props.primeiroBotaoCss ? props.primeiroBotaoCss : "primary"
+                        }
+                        onClick={
+                            props.primeiroBotaoOnclick
+                    }>
+                        {
+                        props.primeiroBotaoTexto
+                    } </Button>
+                    {
+                    props.segundoBotaoOnclick && props.segundoBotaoTexto ? (
+                        <Button variant={
+                                props.segundoBotaoCss ? props.segundoBotaoCss : "primary"
+                            }
+                            onClick={
+                                props.segundoBotaoOnclick
+                        }>
+                            {
+                            props.segundoBotaoTexto
+                        } </Button>
+                    ) : null
+                } </Modal.Footer>
+            </Modal>
+        </Fragment>
+    )
+};
+
 
 export const ModalBootstrapFormMarcarPublicacaoNoDiarioOficial = (propriedades) => { // Os botões de Confirmar e Cancelar estão dentro do próprio form, pois utilizei Formik para validações
     return (

@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback, useContext } from 'react'
 import { useParams } from 'react-router-dom';
+import {detalhamentoConferenciaDocumentos} from "../../../../services/sme/AcompanhamentoSME.service"
 import { PaginasContainer } from "../../../../paginas/PaginasContainer";
 import { getResumoConsolidado } from "../../../../services/sme/AcompanhamentoSME.service"
 import { TopoComBotoes } from './TopoComBotoes'
@@ -23,12 +24,14 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEResumoAcertos = () => {
 
     const [relatorioConsolidado, setRelatorioConsolidado] = useState(null);
     const [dataLimiteDevolucao, setDataLimiteDevolucao] = useState(dataLimite);
+    const [tabAtual, setTabAtual] = useState('conferencia-atual');
     const [cardDataDevolucao, setCardDataDevolucao] = useState({
         data_devolucao: "",
         data_retorno_analise: "",
         data_limite: dataLimiteDevolucao,
     })
     const [resumoConsolidado, setResumoConsolidado] = useState(null);
+    const [listaDocumentoHistorico, setListaDocumentoHistorico] = useState(null)
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
@@ -62,12 +65,31 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEResumoAcertos = () => {
         getConsolidadoDREUuid()
     }, [getConsolidadoDREUuid])
 
+    useEffect(() => {
+        getDetalhamentoConferenciaDocumentosHistorico(relatorioConsolidado?.analises_do_consolidado_dre[0].uuid)
+    }, [relatorioConsolidado])
+
     const handleChangeTab = (key, event) => {
         return ''
     }
 
     const handleChangeDataLimiteDevolucao = (name, value) => {
         setDataLimiteDevolucao(value)
+    }
+
+    const getDetalhamentoConferenciaDocumentosHistorico = async (analise_atual_uuid) => {
+        if (!relatorioConsolidado?.analise_atual?.uuid){
+            return false
+        }
+        let response = ''
+        if (!analise_atual_uuid) {
+            response = detalhamentoConferenciaDocumentos(relatorioConsolidado?.uuid, relatorioConsolidado?.analise_atual?.uuid)
+        }
+        else {
+            response = await detalhamentoConferenciaDocumentos(relatorioConsolidado?.uuid, analise_atual_uuid)
+        }
+        const documento = response?.data?.lista_documentos
+        setListaDocumentoHistorico(documento?.filter((item) => item.analise_documento_consolidado_dre.resultado === "AJUSTE"))
     }
 
     return (
@@ -82,6 +104,8 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEResumoAcertos = () => {
             {!loading ?
                 <TabsConferencia
                     relatorioConsolidado={relatorioConsolidado}
+                    setTabAtual={setTabAtual}
+                    tabAtual={tabAtual}
                 /> :
                 <Loading
                     corGrafico="black"
@@ -90,15 +114,19 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEResumoAcertos = () => {
                     marginBottom="0"
                 />
             }
+            {relatorioConsolidado?.analise}
             <VisualizaDevolucoes
                 dataLimiteDevolucao={dataLimiteDevolucao}
                 handleChangeDataLimiteDevolucao={handleChangeDataLimiteDevolucao}
                 relatorioConsolidado={relatorioConsolidado}
+                tabAtual={tabAtual}
+                getDetalhamentoConferenciaDocumentosHistorico={getDetalhamentoConferenciaDocumentosHistorico}
             />
             {!loading ? (
                 relatorioConsolidado?.status_sme === 'DEVOLVIDO' && 
                 <CardsInfoDevolucaoSelecionada
                     cardDataDevolucao={cardDataDevolucao}
+                    tabAtual={tabAtual}
                 />
             ) : <Loading
                 corGrafico="black"
@@ -118,8 +146,10 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEResumoAcertos = () => {
                 <TabelaConferenciaDeDocumentosRelatorios
                     resumoConsolidado={resumoConsolidado}
                     relatorioConsolidado={relatorioConsolidado}
+                    listaDocumentoHistorico={listaDocumentoHistorico}
                     rowsPerPage={rowsPerPage}
                     loadingDocumentosRelatorio={loading}
+                    tabAtual={tabAtual}
                     editavel={''} />
             }
             {comentarios && !loading ? (

@@ -50,9 +50,9 @@ const DevolucaoParaAcertos = ({relatorioConsolidado, refreshConsolidado, disable
                 </div>
                 <div>
                     <Link
-                        onClick={ null }
+                        onClick={ (event) => {return disableBtnVerResumo() ? event.preventDefault(): event}}
                         to={{
-                            pathname: `/analise-relatorio-consolidado-dre-detalhe-acertos-resumo/${relatorioConsolidado.analise_atual.uuid}`,
+                            pathname: `/analise-relatorio-consolidado-dre-detalhe-acertos-resumo/${relatorioConsolidado?.analise_atual?.uuid}`,
                         }}
                         className="btn btn-outline-success mr-2"
                         disabled={disableBtnVerResumo()}
