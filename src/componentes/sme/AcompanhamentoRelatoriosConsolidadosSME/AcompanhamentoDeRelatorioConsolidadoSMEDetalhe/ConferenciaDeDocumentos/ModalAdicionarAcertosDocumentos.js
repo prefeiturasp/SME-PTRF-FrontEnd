@@ -14,7 +14,8 @@ export const ModalAdicionarAcertosDocumentos = (props) => {
             let documentoAjuste = props.listaDeDocumentosRelatorio?.filter((documento) => {
                 return props.documentoAcertoInfo.documento === documento.uuid
             })
-            return true ? documentoAjuste[0]?.analise_documento_consolidado_dre?.resultado === 'AJUSTE' : false
+            let resultado = documentoAjuste[0]?.analise_documento_consolidado_dre?.resultado
+            return true ? resultado === 'AJUSTE' : false
         }
 
     const bodyTextarea = (modalProps) => {
@@ -35,18 +36,18 @@ export const ModalAdicionarAcertosDocumentos = (props) => {
                             {verificaSeTemAjuste() &&
                                 <button
                                 type="button"
-                                className={`btn btn-link ${modalProps.precisaConsiderarCorreto ? 'btn-remover-ajuste-lancamento-copia' : 'btn-remover-ajuste-lancamento'} sme-considera-correto`}
-                                onClick={(e) => {modalProps.precisaConsiderarCorreto ? setShowModalConsideraCorreto(true) : setShowModalRemoveAcerto(true)}}
+                                className={`btn btn-link ${modalProps.precisaConsiderarCorreto && !modalProps.isModificado  ? 'btn-remover-ajuste-lancamento-copia' : 'btn-remover-ajuste-lancamento'} sme-considera-correto`}
+                                onClick={(e) => {modalProps.precisaConsiderarCorreto && !modalProps.isModificado  ? setShowModalConsideraCorreto(true) : setShowModalRemoveAcerto(true)}}
                             >
                                 <FontAwesomeIcon
                                     style={{
                                         fontSize: '17px',
                                         marginRight: "4px",
-                                        color: modalProps.precisaConsiderarCorreto ? "#297805" : "#B40C02"
+                                        color: modalProps.precisaConsiderarCorreto && !modalProps.isModificado ? "#297805" : "#B40C02"
                                     }}
-                                    icon={modalProps.precisaConsiderarCorreto ? faCheckCircle : faTimesCircle }
+                                    icon={modalProps.precisaConsiderarCorreto && !modalProps.isModificado ? faCheckCircle : faTimesCircle }
                                 />
-                                {modalProps.precisaConsiderarCorreto ? "Considerar correto" : "Remover acerto" }
+                                {modalProps.precisaConsiderarCorreto && !modalProps.isModificado ? "Considerar correto" : "Remover acerto" }
                                 </button>}
                                 <p>
                                     <span className="span_erro text-danger">
