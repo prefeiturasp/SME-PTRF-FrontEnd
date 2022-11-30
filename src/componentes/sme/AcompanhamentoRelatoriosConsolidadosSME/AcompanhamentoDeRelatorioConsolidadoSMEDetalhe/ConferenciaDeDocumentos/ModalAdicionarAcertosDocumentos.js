@@ -1,12 +1,21 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Formik} from "formik";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCheckCircle, faTimesCircle} from "@fortawesome/free-solid-svg-icons";
 import {YupSubmitDocumentosAcertos} from './YupSubmitDocumentosAcertos'
-import {ModalBootstrapFormAdicionarDocumentos, ModalBootstrapConsideraComoCorreto} from "../../../../Globais/ModalBootstrap";
+import {ModalBootstrapFormAdicionarDocumentos, ModalBootstrapConsideraComoCorreto, ModalBootstrapRemoveAcerto} from "../../../../Globais/ModalBootstrap";
 
 export const ModalAdicionarAcertosDocumentos = (props) => {
     const [showModalConsideraCorreto, setShowModalConsideraCorreto] = useState(false)
+    const [showModalRemoveAcerto, setShowModalRemoveAcerto] = useState(false)
+
+
+    const verificaSeTemAjuste = () => {
+            let documentoAjuste = props.listaDeDocumentosRelatorio?.filter((documento) => {
+                return props.documentoAcertoInfo.documento === documento.uuid
+            })
+            return true ? documentoAjuste[0]?.analise_documento_consolidado_dre?.resultado === 'AJUSTE' : false
+        }
 
     const bodyTextarea = (modalProps) => {
         return (
@@ -23,11 +32,11 @@ export const ModalAdicionarAcertosDocumentos = (props) => {
                     <form onSubmit={props.handleSubmit}>
                         <div className='row'>
                             <div className="col-12">
-                            {modalProps.precisaConsiderarCorreto &&
+                            {verificaSeTemAjuste() &&
                                 <button
                                 type="button"
                                 className={`btn btn-link ${modalProps.precisaConsiderarCorreto ? 'btn-remover-ajuste-lancamento-copia' : 'btn-remover-ajuste-lancamento'} sme-considera-correto`}
-                                onClick={(e) => {modalProps.precisaConsiderarCorreto ? setShowModalConsideraCorreto(true) : console.log('shoryuken')}}
+                                onClick={(e) => {modalProps.precisaConsiderarCorreto ? setShowModalConsideraCorreto(true) : setShowModalRemoveAcerto(true)}}
                             >
                                 <FontAwesomeIcon
                                     style={{
@@ -37,7 +46,7 @@ export const ModalAdicionarAcertosDocumentos = (props) => {
                                     }}
                                     icon={modalProps.precisaConsiderarCorreto ? faCheckCircle : faTimesCircle }
                                 />
-                                {modalProps.precisaConsiderarCorreto ? "Considerar correto" : "Remover item" }
+                                {modalProps.precisaConsiderarCorreto ? "Considerar correto" : "Remover acerto" }
                                 </button>}
                                 <p>
                                     <span className="span_erro text-danger">
@@ -90,7 +99,7 @@ export const ModalAdicionarAcertosDocumentos = (props) => {
         <section>
             <ModalBootstrapConsideraComoCorreto 
                 show={showModalConsideraCorreto}
-                titulo={'Marcar como correto.'}
+                titulo={'Marcar como correto'}
                 primeiroBotaoOnclick={(e) => {
                     props.handleClose()
                     setShowModalConsideraCorreto(false)
@@ -102,6 +111,23 @@ export const ModalAdicionarAcertosDocumentos = (props) => {
                 segundoBotaoCss={'outline-success'}
                 segundoBotaoOnclick={(e) => setShowModalConsideraCorreto(false)}
                 bodyText={'A solicitação de acerto será apagada na referida análise e ficará disponível para visualização no histórico de análise. Após confirmação da mensagem, o documento passa a ter o status de "Correto".'}
+            />
+        </section>
+        <section>
+            <ModalBootstrapRemoveAcerto
+                show={showModalRemoveAcerto}
+                titulo={'Remover acerto'}
+                primeiroBotaoOnclick={(e) => {
+                    props.marcarComoNaoConferido()
+                    props.handleClose()
+                    setShowModalRemoveAcerto(false)
+                }}
+                primeiroBotaoTexto={"Confirmar"}
+                primeiroBotaoCss={"success"}
+                segundoBotaoTexto={"Cancelar"}
+                segundoBotaoCss={'outline-success'}
+                segundoBotaoOnclick={(e) => setShowModalRemoveAcerto(false)}
+                bodyText={'Deseja excluir o acerto?'}
             />
         </section>
     </>

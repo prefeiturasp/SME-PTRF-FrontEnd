@@ -166,6 +166,7 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
     }
 
     const marcarComoNaoConferido = async () => {
+        console.log('teste')
         let documentos_marcados_como_nao_conferidos = getDocumentosSelecionados()
         if (documentos_marcados_como_nao_conferidos.length > 0) {
             let payload = {
@@ -383,10 +384,10 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
         )
     }
 
-    const temAjusteconsideraCorreto = (data) => {
+    const temAjusteConsideraCorreto = (data) => {
+        data.selecionado = true
         if (relatorioConsolidado?.analise_atual?.copiado){
             let documentoAjuste = listaDeDocumentosRelatorio?.filter((documento) => {
-                data.selecionado = true
                 return (documento.uuid === data.uuid)
             })
             documentoAjuste[0].analise_documento_consolidado_dre.resultado === 'AJUSTE' ? setPrecisaConsiderarCorreto(true) : setPrecisaConsiderarCorreto(false)
@@ -396,7 +397,7 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
     const openModalAcertos = (data) => {
         setDocumentoAcertoInfo({documento: data.uuid, tipo_documento: data.tipo_documento, uuids_analises_documento: data.analise_documento_consolidado_dre.uuid})
         setShowModalAdicionarAcertos(true)
-        temAjusteconsideraCorreto(data)
+        temAjusteConsideraCorreto(data)
     }
 
     const conferidoTemplate = (rowData) => {
@@ -632,6 +633,7 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
                     precisaConsiderarCorreto={precisaConsiderarCorreto}
                     marcarComoCorreto={marcarComoCorreto}
                     marcarComoNaoConferido={marcarComoNaoConferido}
+                    listaDeDocumentosRelatorio={listaDeDocumentosRelatorio}
                     show={showModalAdicionarAcertos}/>
             </section>
             <section>
