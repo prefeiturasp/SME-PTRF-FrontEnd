@@ -166,7 +166,6 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
     }
 
     const marcarComoNaoConferido = async () => {
-        console.log('teste')
         let documentos_marcados_como_nao_conferidos = getDocumentosSelecionados()
         if (documentos_marcados_como_nao_conferidos.length > 0) {
             let payload = {
