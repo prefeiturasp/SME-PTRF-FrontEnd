@@ -3,11 +3,11 @@ import {Ordinais} from '../../../../../utils/ValidacoesNumeros.js'
 import {DatePickerField} from "../../../../Globais/DatePickerField";
 import moment from "moment";
 import './styles.scss'
-import { es } from 'date-fns/locale';
 
 export const VisualizaDevolucoes = ({relatorioConsolidado, dataLimiteDevolucao, handleChangeDataLimiteDevolucao, tabAtual, getDetalhamentoConferenciaDocumentosHistorico}) => {
-    
+
     return (
+
         <div className='visualizacao-container d-flex mt-5'>
             {
             tabAtual !== 'historico' ? (
@@ -31,6 +31,7 @@ export const VisualizaDevolucoes = ({relatorioConsolidado, dataLimiteDevolucao, 
                     </div>
                 </>
             ) : (
+
                 <div className='d-flex align-items-center w-100 pb-2'>
                     <p className='pr-5'>
                         Visualize as devoluções pelas datas:
@@ -42,17 +43,29 @@ export const VisualizaDevolucoes = ({relatorioConsolidado, dataLimiteDevolucao, 
                         onChange={ (e) => {
                             getDetalhamentoConferenciaDocumentosHistorico(e.target.value) 
                         }}>
+
                         {
-                        relatorioConsolidado?.analises_do_consolidado_dre.slice(0, (relatorioConsolidado?.analises_do_consolidado_dre.length - 1)).map((item, index) => {
-                            return <option key={index}
-                                value={item.uuid}>
-                                {
-                                Ordinais(index)
-                            }
-                                {" "}devolução
-                            </option>
-                    })
-                    } </select>
+                        relatorioConsolidado?.analises_do_consolidado_dre.length && relatorioConsolidado.status_sme === 'DEVOLVIDO' ?
+                        relatorioConsolidado?.analises_do_consolidado_dre.map((item, index) => {
+                                        return <option key={index}
+                                            value={item.uuid}>
+                                            {
+                                            Ordinais(index)
+                                        }
+                                            {" "}devolução
+                                        </option>
+                                }):
+                                relatorioConsolidado?.analises_do_consolidado_dre.slice(0, (relatorioConsolidado?.analises_do_consolidado_dre.length - 1)).map((item, index) => {
+                                            return <option key={index}
+                                                value={item.uuid}>
+                                                {
+                                                Ordinais(index)
+                                            }
+                                                {" "}devolução
+                                            </option>
+                                    })
+                    }
+                     </select>
                 </div>
             // {
             //     new Intl.DateTimeFormat('pt-BR', {

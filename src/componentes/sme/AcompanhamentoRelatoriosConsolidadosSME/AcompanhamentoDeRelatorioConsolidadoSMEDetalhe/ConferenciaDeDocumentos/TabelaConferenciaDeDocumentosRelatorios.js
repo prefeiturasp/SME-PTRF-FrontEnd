@@ -12,6 +12,7 @@ import {ModalFormBodyPdf} from "../../../../Globais/ModalBootstrap"
 import Dropdown from "react-bootstrap/Dropdown";
 import Loading from "../../../../../utils/Loading";
 import {AxiosError} from "axios";
+import { getTemAjustesExtratos } from "../../../../../services/dres/PrestacaoDeContas.service";
 
 const TabelaConferenciaDeDocumentosRelatorios = ({
     relatorioConsolidado,
@@ -33,6 +34,7 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
     const [textoModalCheckNaoPermitido, setTextoModalCheckNaoPermitido] = useState('')
     const [showModalCheckNaoPermitido, setShowModalCheckNaoPermitido] = useState(false)
     const [pdfVisualizacao, setPdfVisualizacao] = useState('')
+    const [precisaConsiderarCorreto, setPrecisaConsiderarCorreto] = useState(false)
     const [showModalPdfDownload, setShowModalPdfDownload] = useState(false)
 
     useEffect(() => {
@@ -381,9 +383,20 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
         )
     }
 
+    const temAjusteconsideraCorreto = (data) => {
+        if (relatorioConsolidado?.analise_atual?.copiado){
+            let documentoAjuste = listaDeDocumentosRelatorio?.filter((documento) => {
+                data.selecionado = true
+                return (documento.uuid === data.uuid)
+            })
+            documentoAjuste[0].analise_documento_consolidado_dre.resultado === 'AJUSTE' ? setPrecisaConsiderarCorreto(true) : setPrecisaConsiderarCorreto(false)
+        }
+    }
+
     const openModalAcertos = (data) => {
         setDocumentoAcertoInfo({documento: data.uuid, tipo_documento: data.tipo_documento, uuids_analises_documento: data.analise_documento_consolidado_dre.uuid})
         setShowModalAdicionarAcertos(true)
+        temAjusteconsideraCorreto(data)
     }
 
     const conferidoTemplate = (rowData) => {
@@ -614,7 +627,11 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
                     handleClose={
                         () => setShowModalAdicionarAcertos(false)
                     }
+                    documentoAcertoInfo={documentoAcertoInfo}
                     initialValues={detalhamentoTxt}
+                    precisaConsiderarCorreto={precisaConsiderarCorreto}
+                    marcarComoCorreto={marcarComoCorreto}
+                    marcarComoNaoConferido={marcarComoNaoConferido}
                     show={showModalAdicionarAcertos}/>
             </section>
             <section>

@@ -6,6 +6,7 @@ import { detalhamentoConferenciaDocumentos } from "../../../../../services/sme/A
 import './styles.scss'
 
 export const TabelaConferenciaDeDocumentosRelatorios = ({ relatorioConsolidado, listaDocumentoHistorico, tabAtual }) => {
+    
     const rowsPerPage = 5
     const [listaDeDocumentosRelatorio, setListaDeDocumentosRelatorio] = useState(null)
     const [expandedRowsDocumentos, setExpandedRowsDocumentos] = useState(null);
@@ -36,7 +37,7 @@ export const TabelaConferenciaDeDocumentosRelatorios = ({ relatorioConsolidado, 
     return (
         <>
             <h5 className="mb-4 mt-4"><strong>Acertos nos documentos</strong></h5>
-            { listaDeDocumentosRelatorio?.length || listaDocumentoHistorico?.lenght ? <DataTable
+            {listaDeDocumentosRelatorio?.length || listaDocumentoHistorico?.lenght ? <DataTable
                 value={tabAtual === 'historico' ? listaDocumentoHistorico : listaDeDocumentosRelatorio}
                 paginator={
                     0 > rowsPerPage

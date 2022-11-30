@@ -78,9 +78,18 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEResumoAcertos = () => {
     }
 
     const getDetalhamentoConferenciaDocumentosHistorico = async (analise_atual_uuid) => {
-        const response = await detalhamentoConferenciaDocumentos(relatorioConsolidado?.uuid, analise_atual_uuid)
+        if (!relatorioConsolidado?.analise_atual?.uuid){
+            return false
+        }
+        let response = ''
+        if (!analise_atual_uuid) {
+            response = detalhamentoConferenciaDocumentos(relatorioConsolidado?.uuid, relatorioConsolidado?.analise_atual?.uuid)
+        }
+        else {
+            response = await detalhamentoConferenciaDocumentos(relatorioConsolidado?.uuid, analise_atual_uuid)
+        }
         const documento = response?.data?.lista_documentos
-        setListaDocumentoHistorico(documento.filter((item) => item.analise_documento_consolidado_dre.resultado === "AJUSTE"))
+        setListaDocumentoHistorico(documento?.filter((item) => item.analise_documento_consolidado_dre.resultado === "AJUSTE"))
     }
 
     return (
@@ -95,8 +104,8 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEResumoAcertos = () => {
             {!loading ?
                 <TabsConferencia
                     relatorioConsolidado={relatorioConsolidado}
-                    tabAtual={tabAtual}
                     setTabAtual={setTabAtual}
+                    tabAtual={tabAtual}
                 /> :
                 <Loading
                     corGrafico="black"
