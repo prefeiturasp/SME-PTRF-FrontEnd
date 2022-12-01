@@ -8,7 +8,7 @@ import CardsDevolucoesParaAcertoDaDre from "../../../../Globais/CardsDevolucoesP
 import { RelatorioAposAcertos } from "../../../../Globais/ExibeAcertosEmLancamentosEDocumentosPorConta/RelatorioAposAcertos";
 import { getAnalisePrestacaoConta } from "../../../../../services/dres/PrestacaoDeContas.service";
 
-const TabsConferenciaAtualHistorico = ({dataLimiteDevolucao, handleChangeDataLimiteDevolucao, prestacao_conta_uuid, analiseAtualUuid, exibeMsg, textoMsg, totalAnalisesDePcDevolvidas, setAnaliseAtualUuidComPCAnaliseAtualUuid, setPrimeiraAnalisePcDevolvida, setAnaliseAtualUuid, editavel, pcEmAnalise, prestacaoDeContas}) =>{
+const TabsConferenciaAtualHistorico = ({dataLimiteDevolucao, handleChangeDataLimiteDevolucao, prestacao_conta_uuid, analiseAtualUuid, exibeMsg, textoMsg, totalAnalisesDePcDevolvidas, setAnaliseAtualUuidComPCAnaliseAtualUuid, setPrimeiraAnalisePcDevolvida, setAnaliseAtualUuid, editavel, pcEmAnalise, prestacaoDeContas, limpaStorage}) =>{
 
     const ref_click_historico = useRef(null);
 
@@ -60,7 +60,10 @@ const TabsConferenciaAtualHistorico = ({dataLimiteDevolucao, handleChangeDataLim
                     }
                     {totalAnalisesDePcDevolvidas > 0 &&
                         <a
-                            onClick={setPrimeiraAnalisePcDevolvida}
+                            onClick={() => {
+                                setPrimeiraAnalisePcDevolvida();
+                                limpaStorage()
+                            }}
                             className={`nav-link btn-escolhe-acao ${pcEmAnalise === false ? 'active' : ''}`}
                             id="nav-historico-tab"
                             data-toggle="tab"
