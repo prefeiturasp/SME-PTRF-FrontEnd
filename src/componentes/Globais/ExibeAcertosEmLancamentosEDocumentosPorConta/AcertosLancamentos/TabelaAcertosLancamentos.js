@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useCallback, useState} from "react";
 import {Column} from "primereact/column";
 import {DataTable} from "primereact/datatable";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -13,7 +13,7 @@ import {
     ModalJustificadaApagada
 } from "../../../dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeLancamentos/Modais/ModalJustificadaApagada";
 import {visoesService} from "../../../../services/visoes.service";
-
+import { mantemEstadoAnaliseDre as meapcservice } from "../../../../services/mantemEstadoAnaliseDre.service";
 import '../scss/tagJustificativaLancamentos.scss';
 
 const tagColors = {
@@ -57,6 +57,11 @@ export const TabelaAcertosLancamentos = ({
     const [textoConfirmadoJustificado, setTextoConfirmadoJustificado] = useState('')
 
     const [tipoAcao, setTipoAcao] = useState('')
+
+    let dados_analise_dre_usuario_logado = meapcservice.getAnaliseDreUsuarioLogado()
+
+    // Paginação
+    const [primeiroRegistroASerExibido, setPrimeiroRegistroASerExibido] = useState(dados_analise_dre_usuario_logado.conferencia_de_lancamentos.paginacao_atual ? dados_analise_dre_usuario_logado.conferencia_de_lancamentos.paginacao_atual : 0);
 
     const tagJustificativa = (rowData) => {
         let status = '-'
@@ -273,6 +278,17 @@ export const TabelaAcertosLancamentos = ({
         setTipoAcao(tipoAcao)
     }
 
+    const onPaginationClick = (event) => {
+        setPrimeiroRegistroASerExibido(event.first);
+        salvaEstadoPaginacaoLancamentosLocalStorage(event)
+    }
+
+    const salvaEstadoPaginacaoLancamentosLocalStorage = (event) => {
+        dados_analise_dre_usuario_logado.conferencia_de_lancamentos.paginacao_atual = event.rows * event.page
+        dados_analise_dre_usuario_logado.conferencia_de_lancamentos.expanded = expandedRowsLancamentos
+        meapcservice.setAnaliseDrePorUsuario(visoesService.getUsuarioLogin(), dados_analise_dre_usuario_logado)
+    }
+
     return (
         <>
             {lancamentosSelecionados.length > 0 ?
@@ -291,6 +307,10 @@ export const TabelaAcertosLancamentos = ({
                         stripedRows
                         autoLayout={true}
                         id='tabela-acertos-lancamentos'
+
+                        // Usado para salvar no localStorage a página atual após os calculos ** ver função onPaginationClick
+                        first={primeiroRegistroASerExibido}
+                        onPage={onPaginationClick}
                     >
                         <Column
                             header='Ver Acertos'

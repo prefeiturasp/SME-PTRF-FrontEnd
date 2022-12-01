@@ -20,6 +20,8 @@ import {ModalConfirmaDevolverParaAcerto} from "../DevolucaoParaAcertos/ModalConf
 import Loading from "../../../../../utils/Loading";
 import {isNaN} from "formik";
 import { toastCustom } from "../../../../Globais/ToastCustom";
+import { mantemEstadoAnaliseDre as meapcservice } from "../../../../../services/mantemEstadoAnaliseDre.service";
+import { visoesService } from "../../../../../services/visoes.service";
 
 export const ResumoDosAcertos = () => {
 
@@ -132,6 +134,16 @@ export const ResumoDosAcertos = () => {
             }
         }
         setAnaliseAtualUuid(analise_atual_uuid)
+
+        // Necessário para o local storage funcionar em conjunto com as abas
+        let objetoAnaliseDrePorUsuario = meapcservice.getAnaliseDreUsuarioLogado();
+        if(objetoAnaliseDrePorUsuario.analise_pc_uuid && analise_atual_uuid){
+            if(objetoAnaliseDrePorUsuario.analise_pc_uuid !== analise_atual_uuid){
+                meapcservice.limpaAnaliseDreUsuarioLogado(visoesService.getUsuarioLogin())
+            }
+        }
+        salvaAnaliseAtualLocalStorage(analise_atual_uuid)
+
         // Necessario alterar os estados dos totais para chamar novamente o método verificaSeExibeMsg setado com undefined
         setTotalExtratosAjustes(undefined)
         setTotalLancamentosAjustes(undefined)
@@ -294,6 +306,27 @@ export const ResumoDosAcertos = () => {
         return valor_formatado
     };
 
+    const limpaStorage = () => {
+        let conferencia_atual = document.getElementById('nav-conferencia-atual-tab')
+
+        // Necessário para a função de limpar storage ser executada corretamente em conjunto com
+        // ref_click_historico, na pagina das abas
+        if(conferencia_atual !== null){
+            meapcservice.limpaAnaliseDreUsuarioLogado(visoesService.getUsuarioLogin())
+
+            if(analisesDePcDevolvidas && analisesDePcDevolvidas.length > 0){
+                let ultimo_indice_array = analisesDePcDevolvidas.length - 1
+                salvaAnaliseAtualLocalStorage(analisesDePcDevolvidas[ultimo_indice_array].uuid)
+            }
+        }       
+    }
+
+    const salvaAnaliseAtualLocalStorage = (analise_uuid) => {
+        let objetoAnaliseDrePorUsuario = meapcservice.getAnaliseDreUsuarioLogado();
+        objetoAnaliseDrePorUsuario.analise_pc_uuid = analise_uuid
+        meapcservice.setAnaliseDrePorUsuario(visoesService.getUsuarioLogin(), objetoAnaliseDrePorUsuario)
+    }
+
     return (
         <>
             <PaginasContainer>
@@ -328,6 +361,7 @@ export const ResumoDosAcertos = () => {
                                 editavel={editavel}
                                 pcEmAnalise={pcEmAnalise}
                                 prestacaoDeContas={prestacaoDeContas}
+                                limpaStorage={limpaStorage}
                             />
                         ) :
                             <Loading
