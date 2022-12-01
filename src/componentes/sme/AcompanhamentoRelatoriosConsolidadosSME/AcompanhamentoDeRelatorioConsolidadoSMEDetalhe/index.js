@@ -227,11 +227,19 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEDetalhe = () => {
     }
 
     const disableBtnVerResumo = () => {
-        if(habilitaVerResumoComentariosNotificados || habilitaVerResumoAcertoEmDocumento){
-            return false;
+        let disabled = true
+        if(habilitaVerResumoAcertoEmDocumento){
+            disabled = false;
+        }
+        if(habilitaVerResumoComentariosNotificados){
+            disabled = false;
         }
 
-        return true;
+        if (["NAO_PUBLICADO", "PUBLICADO"].includes(relatorioConsolidado.status_sme)){
+            disabled =  true;
+        }
+
+        return disabled
     }
 
     return(
@@ -270,6 +278,7 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEDetalhe = () => {
                         />
                         <ConferenciaDeDocumentos
                             relatorioConsolidado={relatorioConsolidado}
+                            setHabilitaVerResumoAcertoEmDocumento={setHabilitaVerResumoAcertoEmDocumento}
                             getConsolidadoDREUuid={getConsolidadoDREUuid}
                             refreshConsolidado={getConsolidadoDREUuid}
                         />

@@ -1,4 +1,4 @@
-import React, {useEffect, memo, useState, useCallback} from "react";
+import React, {useEffect, memo, useState, useCallback, useReducer} from "react";
 import {useParams} from "react-router-dom";
 import {Column} from "primereact/column";
 import {DataTable} from "primereact/datatable";
@@ -33,7 +33,25 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
     const [textoModalCheckNaoPermitido, setTextoModalCheckNaoPermitido] = useState('')
     const [showModalCheckNaoPermitido, setShowModalCheckNaoPermitido] = useState(false)
     const [pdfVisualizacao, setPdfVisualizacao] = useState('')
+    const [precisaConsiderarCorreto, setPrecisaConsiderarCorreto] = useState(false)
     const [showModalPdfDownload, setShowModalPdfDownload] = useState(false)
+    const [documentosMemorizados, dispatch] = useReducer((state, action) => {
+        if (action.type === 'atualizar') {
+            if (state.documentos.length === 0) {
+                return {
+                    documentos: action.payload
+                };
+            } 
+            return state;
+        }
+    }, {
+        documentos: []
+    })
+    const [isModificado, setIsModificado] = useState(false);
+
+    useEffect(() => {
+        dispatch({ type: 'atualizar', payload: listaDeDocumentosRelatorio })
+    }, [listaDeDocumentosRelatorio])
 
     useEffect(() => {
         let {consolidado_dre_uuid} = params
@@ -74,6 +92,9 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
                         <Dropdown.Item onClick={
                             (e) => selecionarPorStatus(e, null)
                         }>Selecionar todos não conferidos</Dropdown.Item>
+                        <Dropdown.Item onClick={
+                            (e) => selecionarPorStatus(e, "AJUSTE")
+                        }>Selecionar todos com solicitação de acertos</Dropdown.Item>
                         <Dropdown.Item onClick={
                             (e) => desmarcarTodos(e)
                         }>Desmarcar todos</Dropdown.Item>
@@ -378,9 +399,25 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
         )
     }
 
+    const temAjusteConsideraCorreto = (data) => {
+        setIsModificado(documentosMemorizados.documentos.find(documento => documento.uuid === data.uuid).analise_documento_consolidado_dre.resultado !== data.analise_documento_consolidado_dre.resultado)
+        data.selecionado = true
+        if (relatorioConsolidado?.analise_atual?.copiado){
+            let documentoAjuste = listaDeDocumentosRelatorio?.find((documento) => documento.uuid === data.uuid)
+            if (documentoAjuste.analise_documento_consolidado_dre.resultado === 'AJUSTE') {
+                setPrecisaConsiderarCorreto(true)
+            } else {
+                setPrecisaConsiderarCorreto(false)
+            }
+        }else {
+            setPrecisaConsiderarCorreto(false)
+        }
+    }
+
     const openModalAcertos = (data) => {
         setDocumentoAcertoInfo({documento: data.uuid, tipo_documento: data.tipo_documento, uuids_analises_documento: data.analise_documento_consolidado_dre.uuid})
         setShowModalAdicionarAcertos(true)
+        temAjusteConsideraCorreto(data)
     }
 
     const conferidoTemplate = (rowData) => {
@@ -611,8 +648,15 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
                     handleClose={
                         () => setShowModalAdicionarAcertos(false)
                     }
+                    documentoAcertoInfo={documentoAcertoInfo}
                     initialValues={detalhamentoTxt}
-                    show={showModalAdicionarAcertos}/>
+                    precisaConsiderarCorreto={precisaConsiderarCorreto}
+                    marcarComoCorreto={marcarComoCorreto}
+                    marcarComoNaoConferido={marcarComoNaoConferido}
+                    listaDeDocumentosRelatorio={listaDeDocumentosRelatorio}
+                    show={showModalAdicionarAcertos}
+                    isModificado={isModificado}
+                />
             </section>
             <section>
                 <ModalCheckNaoPermitidoConfererenciaDeDocumentos show={showModalCheckNaoPermitido}
