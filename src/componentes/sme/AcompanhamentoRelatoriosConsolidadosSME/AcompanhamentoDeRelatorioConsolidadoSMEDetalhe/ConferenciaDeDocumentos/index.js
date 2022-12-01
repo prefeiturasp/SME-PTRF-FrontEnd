@@ -4,7 +4,7 @@ import {detalhamentoConferenciaDocumentos} from "../../../../../services/sme/Aco
 
 import TabelaConferenciaDeDocumentosRelatorios from "./TabelaConferenciaDeDocumentosRelatorios";
 
-const ConferenciaDeDocumentos = ({relatorioConsolidado, getConsolidadoDREUuid}) => {
+const ConferenciaDeDocumentos = ({relatorioConsolidado, getConsolidadoDREUuid, setHabilitaVerResumoAcertoEmDocumento}) => {
     const params = useParams()
     const rowsPerPage = 10
 
@@ -19,6 +19,10 @@ const ConferenciaDeDocumentos = ({relatorioConsolidado, getConsolidadoDREUuid}) 
         let {consolidado_dre_uuid} = params
 
         const response = await detalhamentoConferenciaDocumentos(consolidado_dre_uuid, uuid_analise_atual)
+        let tem_ajuste = Object.values(response.data['lista_documentos']).some(
+            (item) => item?.analise_documento_consolidado_dre?.resultado !== null
+        )
+        setHabilitaVerResumoAcertoEmDocumento(tem_ajuste)
         setListaDeDocumentosRelatorio(Object.values(response.data['lista_documentos']))
         setLoadingDocumentosRelatorio(false)
         getConsolidadoDREUuid()
