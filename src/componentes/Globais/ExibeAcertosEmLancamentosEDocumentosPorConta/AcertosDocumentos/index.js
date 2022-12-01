@@ -15,6 +15,8 @@ import {barraMensagemCustom} from "../../BarraMensagem";
 import BotoesDetalhesParaAcertosDeCategoriasDocumentos from "../BotoesDetalhesParaAcertosDeCategoriasDocumentos";
 import Loading from "../../../../utils/Loading";
 import Dropdown from "react-bootstrap/Dropdown";
+import { mantemEstadoAnaliseDre as meapcservice } from "../../../../services/mantemEstadoAnaliseDre.service";
+
 
 const tagColors = {
     'JUSTIFICADO':  '#5C4EF8',
@@ -75,6 +77,11 @@ const AcertosDocumentos = ({analiseAtualUuid, prestacaoDeContas, prestacaoDeCont
             uuid: ''
         }])
 
+        let dados_analise_dre_usuario_logado = meapcservice.getAnaliseDreUsuarioLogado();
+
+        if(dados_analise_dre_usuario_logado && dados_analise_dre_usuario_logado.conferencia_de_documentos && dados_analise_dre_usuario_logado.conferencia_de_documentos){
+            setExpandedRowsDocumentos(dados_analise_dre_usuario_logado.conferencia_de_documentos.expanded)
+        }
 
         setLoadingDocumentos(false)
     }, [analiseAtualUuid])
@@ -82,6 +89,16 @@ const AcertosDocumentos = ({analiseAtualUuid, prestacaoDeContas, prestacaoDeCont
     useEffect(()=>{
         carregaAcertosDocumentos()
     }, [carregaAcertosDocumentos])
+
+    const guardaEstadoExpandedRowsDocumentos = useCallback(() => {
+        if(expandedRowsDocumentos){
+            salvaEstadoExpandedRowsDocumentosLocalStorage(expandedRowsDocumentos)
+        }
+    }, [expandedRowsDocumentos])
+
+    useEffect(() => {
+        guardaEstadoExpandedRowsDocumentos()
+    }, [guardaEstadoExpandedRowsDocumentos])
 
     const tagJustificativa = useCallback( (rowData) => {
 
@@ -630,6 +647,12 @@ const AcertosDocumentos = ({analiseAtualUuid, prestacaoDeContas, prestacaoDeCont
                 setDocumentosSelecionados((current) => current.filter((item) => item !== acerto));
             }
         }
+    }
+
+    const salvaEstadoExpandedRowsDocumentosLocalStorage = (expandedRowsDocumentos) => {
+        let dados_analise_dre_usuario_logado = meapcservice.getAnaliseDreUsuarioLogado();
+        dados_analise_dre_usuario_logado.conferencia_de_documentos.expanded = expandedRowsDocumentos
+        meapcservice.setAnaliseDrePorUsuario(visoesService.getUsuarioLogin(), dados_analise_dre_usuario_logado)
     }
 
     return(

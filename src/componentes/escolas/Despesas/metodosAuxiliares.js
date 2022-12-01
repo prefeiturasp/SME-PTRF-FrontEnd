@@ -96,7 +96,15 @@ const getPath = (origem, parametroLocation=null) => {
     if(parametroLocation){
         if(origemAnaliseLancamento(parametroLocation)){
             if(parametroLocation.state.uuid_pc){
-                path = `${parametroLocation.state.origem}/${parametroLocation.state.uuid_pc}`;
+                let ancora = ""
+                if(parametroLocation.state.operacao === "requer_inclusao_documento_gasto"){
+                    ancora = "tabela-acertos-documentos"
+                }
+                else if(parametroLocation.state.operacao === "requer_atualizacao_lancamento_gasto" || parametroLocation.state.operacao === "requer_exclusao_lancamento_gasto"){
+                    ancora = "tabela-acertos-lancamentos"
+                }
+
+                path = `${parametroLocation.state.origem}/${parametroLocation.state.uuid_pc}#${ancora}`;
             }
         }
     }

@@ -29,6 +29,7 @@ import './acertos-lancamentos.scss'
 import Dropdown from "react-bootstrap/Dropdown";
 import { useContext } from "react";
 import { AnaliseDREContext } from "../../../../context/AnaliseDRE";
+import { mantemEstadoAnaliseDre as meapcservice } from "../../../../services/mantemEstadoAnaliseDre.service";
 
 const AcertosLancamentos = ({
                                 analiseAtualUuid,
@@ -56,7 +57,7 @@ const AcertosLancamentos = ({
     const [contaSelecionada, setContaSelecionada] = useState([])
     const [loadingLancamentos, setLoadingLancamentos] = useState(true)
     const [opcoesJustificativa, setOpcoesJustificativa] = useState([])
-    const [clickBtnEscolheConta, setClickBtnEscolheConta] = useState({0: true});
+    const [clickBtnEscolheConta, setClickBtnEscolheConta] = useState({});
     const [expandedRowsLancamentos, setExpandedRowsLancamentos] = useState(null);
     const [textareaJustificativa, setTextareaJustificativa] = useState(() => {});
     const [showSalvar, setShowSalvar] = useState({});
@@ -96,6 +97,9 @@ const AcertosLancamentos = ({
     }, [carregaDadosDasContasDaAssociacao, analiseAtualUuid])
 
     const carregaAcertosLancamentos = useCallback(async (conta_uuid, filtrar_por_lancamento = null, filtrar_por_tipo_de_ajuste = null) => {
+        salvaObjetoAnaliseDrePorUsuarioLocalStorage(conta_uuid)
+
+
         setLoadingLancamentos(true)
 
         // Aqui TABELA
@@ -120,10 +124,51 @@ const AcertosLancamentos = ({
 
     useEffect(() => {
         if (contasAssociacao && contasAssociacao.length > 0) {
-            carregaAcertosLancamentos(contasAssociacao[0].uuid)
-            setContaSelecionada(contasAssociacao[0].uuid)
+            let dados_analise_dre_usuario_logado = meapcservice.getAnaliseDreUsuarioLogado()
+
+            if(dados_analise_dre_usuario_logado && dados_analise_dre_usuario_logado.conferencia_de_lancamentos && dados_analise_dre_usuario_logado.conferencia_de_lancamentos.conta_uuid){
+                carregaAcertosLancamentos(dados_analise_dre_usuario_logado.conferencia_de_lancamentos.conta_uuid)
+                setContaSelecionada(dados_analise_dre_usuario_logado.conferencia_de_lancamentos.conta_uuid)
+
+                // necessário para selecionar a aba de conta corretamente
+                let index_encontrado = null;
+                for(let i=0; i<=contasAssociacao.length-1; i++){
+                    if(contasAssociacao[i].uuid === dados_analise_dre_usuario_logado.conferencia_de_lancamentos.conta_uuid){
+                        index_encontrado = i;
+                        break;
+                    }
+                }
+                
+                if(index_encontrado !== null){
+                    setClickBtnEscolheConta({
+                        [index_encontrado]: true
+                    });
+                }
+
+                setExpandedRowsLancamentos(dados_analise_dre_usuario_logado.conferencia_de_lancamentos.expanded)
+            }
+            else{
+                let index = 0;
+
+                carregaAcertosLancamentos(contasAssociacao[index].uuid)
+                setContaSelecionada(contasAssociacao[index].uuid)
+                setClickBtnEscolheConta({
+                    [index]: true
+                });
+            }
         }
     }, [contasAssociacao, carregaAcertosLancamentos])
+
+    const guardaEstadoExpandedRowsLancamentos = useCallback(() => {
+        if(expandedRowsLancamentos){
+            salvaEstadoExpandedRowsLancamentosLocalStorage(expandedRowsLancamentos)
+        }
+    }, [expandedRowsLancamentos])
+
+    useEffect(() => {
+        guardaEstadoExpandedRowsLancamentos()
+    }, [guardaEstadoExpandedRowsLancamentos])
+
 
     const toggleBtnEscolheConta = (id) => {
         if (id !== Object.keys(clickBtnEscolheConta)[0]) {
@@ -131,6 +176,11 @@ const AcertosLancamentos = ({
                 [id]: !clickBtnEscolheConta[id]
             });
         }
+
+        // Zera paginação ao trocar de conta
+        let dados_analise_dre_usuario_logado = meapcservice.getAnaliseDreUsuarioLogado();
+        dados_analise_dre_usuario_logado.conferencia_de_lancamentos.paginacao_atual = 0
+        meapcservice.setAnaliseDrePorUsuario(visoesService.getUsuarioLogin(), dados_analise_dre_usuario_logado)
     };
 
     const limparStatus = async () => {
@@ -742,6 +792,19 @@ const AcertosLancamentos = ({
     }
 
     // ################# FIM Vieram da Tabela
+
+    const salvaObjetoAnaliseDrePorUsuarioLocalStorage = (conta_uuid_lancamentos) =>{
+        let objetoAnaliseDrePorUsuario = meapcservice.getAnaliseDreUsuarioLogado();
+
+        objetoAnaliseDrePorUsuario.conferencia_de_lancamentos.conta_uuid = conta_uuid_lancamentos
+        meapcservice.setAnaliseDrePorUsuario(visoesService.getUsuarioLogin(), objetoAnaliseDrePorUsuario)
+    }
+
+    const salvaEstadoExpandedRowsLancamentosLocalStorage = (expandedRowsLancamentos) => {
+        let dados_analise_dre_usuario_logado = meapcservice.getAnaliseDreUsuarioLogado();
+        dados_analise_dre_usuario_logado.conferencia_de_lancamentos.expanded = expandedRowsLancamentos
+        meapcservice.setAnaliseDrePorUsuario(visoesService.getUsuarioLogin(), dados_analise_dre_usuario_logado)
+    }
 
     return (
         <>
