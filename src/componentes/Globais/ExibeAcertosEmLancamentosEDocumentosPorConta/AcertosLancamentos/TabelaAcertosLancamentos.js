@@ -263,13 +263,16 @@ export const TabelaAcertosLancamentos = ({
     }
 
     const mensagemQuantidadeExibida = () => {
-        return (
-            <div className="row">
-                <div className="col-12" style={{padding: "15px 0px", margin: "0px 15px", flex: "100%"}}>
-                    Exibindo <span style={{color: "#00585E", fontWeight: "bold"}}>{totalDeAcertosDosLancamentos}</span> lançamentos
+        if (lancamentosAjustes.length > 0){
+            return (
+                <div className="row">
+                    <div className="col-12" style={{padding: "15px 0px", margin: "0px 15px", flex: "100%"}}>
+                        Exibindo <span style={{color: "#00585E", fontWeight: "bold"}}>{totalDeAcertosDosLancamentos}</span> lançamentos
+                    </div>
                 </div>
-            </div>
-        )
+            )
+        }
+
     }
 
     // Dispara modal de Confirmação
@@ -356,7 +359,7 @@ export const TabelaAcertosLancamentos = ({
                         }
                     </DataTable>
                 ) :
-                <p className='text-center fonte-18 mt-4'><strong>Não existem acertos para serem exibidos</strong></p>
+                <p className='text-center fonte-18 mt-4'><strong>Não foram solicitados acertos nos lançamentos nessa análise da PC.</strong></p>
             }
             <section>
                 <ModalCheckNaoPermitidoConfererenciaDeLancamentos
