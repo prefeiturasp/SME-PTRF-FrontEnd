@@ -390,9 +390,6 @@ const bloqueiaCamposDespesaImposto = (parametroLocation, setReadOnlyCamposImpost
 }
 
 const mostraBotaoDeletar = (idDespesa, parametroLocation) => {
-
-    console.log("XXXXXXXXXXXXXXx mostraBotaoDeletar", parametroLocation)
-
     if (parametroLocation && parametroLocation.state && !parametroLocation.state.tem_permissao_de_edicao){
         return false
     }
