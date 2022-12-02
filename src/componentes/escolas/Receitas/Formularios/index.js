@@ -607,7 +607,15 @@ export const ReceitaForm = () => {
 
         if(origemAnaliseLancamento()){
             if(parametros && parametros.state && parametros.state.uuid_pc && parametros.state.origem){
-                path = `${parametros.state.origem}/${parametros.state.uuid_pc}`;
+                let ancora = ""
+                if(parametros.state.operacao === "requer_inclusao_documento_credito"){
+                    ancora = "tabela-acertos-documentos"
+                }
+                else if(parametros.state.operacao === "requer_atualizacao_lancamento_credito" || parametros.state.operacao === "requer_exclusao_lancamento_credito"){
+                    ancora = "tabela-acertos-lancamentos"
+                }
+
+                path = `${parametros.state.origem}/${parametros.state.uuid_pc}#${ancora}`;
             }
         }
         

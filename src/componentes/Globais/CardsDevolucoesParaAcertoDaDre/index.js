@@ -5,12 +5,17 @@ import SelectAnalisesDePcDevolvidas from "./SelectAnalisesDePcDevolvidas";
 import CardsInfoDevolucaoSelecionada from "./CardsInfoDevolucaoSelecionada";
 import './cards-devolucoes-para-acerto-dre.scss'
 import Loading from "../../../utils/Loading";
+import { mantemEstadoAnaliseDre as meapcservice } from "../../../services/mantemEstadoAnaliseDre.service";
+import { visoesService } from "../../../services/visoes.service";
 
 const CardsDevolucoesParaAcertoDaDre = ({prestacao_conta_uuid, analiseAtualUuid=false, setAnaliseAtualUuid, setPermitirTriggerOnclick=null}) =>{
     const [analisesDePcDevolvidas, setAnalisesDePcDevolvidas] = useState([])
     const [uuidAnalisePcDevolvida, setUuidAnalisePcDevolvida] = useState({})
     const [objetoConteudoCard, setObjetoConteudoCard] = useState({})
     const [loading, setLoading] = useState(true)
+
+    // Manter o estado do Acompanhamento de PC
+    let dados_analise_dre_usuario_logado = meapcservice.getAnaliseDreUsuarioLogado()
 
     useEffect(()=>{
         let mounted = true;
@@ -56,12 +61,20 @@ const CardsDevolucoesParaAcertoDaDre = ({prestacao_conta_uuid, analiseAtualUuid=
             montaObjetoConteudoCard(analiseAtualUuid)
         }else {
             if (analisesDePcDevolvidas && analisesDePcDevolvidas.length > 0){
-                setAnaliseAtualUuid(analisesDePcDevolvidas[0].uuid)
-                setUuidAnalisePcDevolvida(analisesDePcDevolvidas[0].uuid)
-                montaObjetoConteudoCard(analisesDePcDevolvidas[0].uuid)
+                if(dados_analise_dre_usuario_logado && dados_analise_dre_usuario_logado.analise_pc_uuid){
+                    setAnaliseAtualUuid(dados_analise_dre_usuario_logado.analise_pc_uuid)
+                    setUuidAnalisePcDevolvida(dados_analise_dre_usuario_logado.analise_pc_uuid)
+                    montaObjetoConteudoCard(dados_analise_dre_usuario_logado.analise_pc_uuid)
+                }
+                else{
+                    setAnaliseAtualUuid(analisesDePcDevolvidas[0].uuid)
+                    setUuidAnalisePcDevolvida(analisesDePcDevolvidas[0].uuid)
+                    montaObjetoConteudoCard(analisesDePcDevolvidas[0].uuid)
+                    salvaObjetoAnaliseDrePorUsuarioLocalStorage(analisesDePcDevolvidas[0].uuid)
+                }
             }
         }
-    }, [analisesDePcDevolvidas, setAnaliseAtualUuid, analiseAtualUuid, montaObjetoConteudoCard])
+    }, [analisesDePcDevolvidas, setAnaliseAtualUuid, analiseAtualUuid, montaObjetoConteudoCard, dados_analise_dre_usuario_logado])
 
     useEffect(()=>{
         setPrimeiraAnalisePcDevolvida()
@@ -78,6 +91,10 @@ const CardsDevolucoesParaAcertoDaDre = ({prestacao_conta_uuid, analiseAtualUuid=
         let data_objeto = JSON.parse(e.target.options[e.target.selectedIndex].getAttribute('data-objeto'));
         
         setObjetoConteudoCard(data_objeto)
+        
+        meapcservice.limpaAnaliseDreUsuarioLogado(visoesService.getUsuarioLogin())
+        salvaObjetoAnaliseDrePorUsuarioLocalStorage(data_objeto.uuid)
+
     }, [setAnaliseAtualUuid])
 
     const retornaNumeroOrdinal = (index) =>{
@@ -102,6 +119,13 @@ const CardsDevolucoesParaAcertoDaDre = ({prestacao_conta_uuid, analiseAtualUuid=
             }
         }
     };
+
+    const salvaObjetoAnaliseDrePorUsuarioLocalStorage = (analise_pc_uuid) =>{
+        let objetoAnaliseDrePorUsuario = meapcservice.getAnaliseDreUsuarioLogado();
+        
+        objetoAnaliseDrePorUsuario.analise_pc_uuid = analise_pc_uuid
+        meapcservice.setAnaliseDrePorUsuario(visoesService.getUsuarioLogin(), objetoAnaliseDrePorUsuario)
+    }
 
     return(
         <>

@@ -12,6 +12,8 @@ import {Filtros} from "./Filtros";
 import {getPeriodosAteAgoraForaImplantacaoDaAssociacao} from "../../../services/escolas/PrestacaoDeContas.service";
 import {getTabelasPrestacoesDeContas} from "../../../services/dres/PrestacaoDeContas.service";
 import Loading from "../../../utils/Loading";
+import { mantemEstadoAnaliseDre as meapcservice } from "../../../services/mantemEstadoAnaliseDre.service";
+import { visoesService } from "../../../services/visoes.service";
 
 export const AnaliseDre = () =>{
 
@@ -111,6 +113,7 @@ export const AnaliseDre = () =>{
                         <FontAwesomeIcon
                             style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
                             icon={faEye}
+                            onClick={() => limpaStorageAnaliseDre()}
                         />
                     </Link>
                 ):
@@ -126,6 +129,10 @@ export const AnaliseDre = () =>{
             </div>
         )
     };
+
+    const limpaStorageAnaliseDre = () => {
+        meapcservice.limpaAnaliseDreUsuarioLogado(visoesService.getUsuarioLogin())
+    }
 
     return(
         <PaginasContainer>
