@@ -1,39 +1,44 @@
-import React, {useContext, useCallback, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import { useHistory } from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faArrowLeft} from "@fortawesome/free-solid-svg-icons";
 import {getPeriodoPorUuid} from "../../../../services/sme/Parametrizacoes.service";
-import { AnaliseDREContext } from "../../../../context/AnaliseDRE";
+import {getStatusPeriodoPorData} from "../../../../services/escolas/PrestacaoDeContas.service";
+import {ASSOCIACAO_UUID} from "../../../../services/auth.service";
 
 export const TopoComBotaoVoltar = ({prestacaoContaUuid, onClickVoltar, periodoFormatado, periodoUuid, podeAbrirModalAcertos}) =>{
-    const {lancamentosAjustes, podeConcluir, setPodeConcluir} = useContext(AnaliseDREContext)
-    const [periodo, setPeriodo] = useState({});
+    const [periodo, setPeriodo] = useState(null);
     const history = useHistory()
 
-    // const verificarComStatusRealizadoJustificado = useCallback(() => {
-    //     setPodeConcluir(
-    //         lancamentosAjustes.every((analise) => {
-    //         return !(analise.analise_lancamento.status_realizacao.includes('PARCIALMENTE') || analise.analise_lancamento.status_realizacao.includes('PENDENTE'))
-    //     }))
-    //
-    // }, [lancamentosAjustes])
+    const getStatusPrestacaoDeConta = async (periodo) => {
+        if (periodo){
+            let data_inicial = periodo.data_inicio_realizacao_despesas;
+            return await getStatusPeriodoPorData(localStorage.getItem(ASSOCIACAO_UUID), data_inicial);
+        }
+    };
 
+    useEffect( () => {
+        (async() => {
+            if (periodoUuid){
+                const periodo = await getPeriodoPorUuid(periodoUuid);
+                setPeriodo(periodo)
+            }
+        })()
+    }, [periodoUuid])
 
-    // useEffect( () => {
-    //     (async() => {
-    //         let periodo = await getPeriodoPorUuid(periodoUuid);
-    //         setPeriodo(periodo)
-    //     })()
-    //     verificarComStatusRealizadoJustificado()
-    // }, [verificarComStatusRealizadoJustificado])
+    const temAcertosPendententes = async () => {
+        const statusPc = await getStatusPrestacaoDeConta(periodo);
+        return statusPc?.prestacao_contas_status?.tem_acertos_pendentes
+    }
 
-    const handleVerificaAcertos = () => {
-        if(podeConcluir){
+    const handleVerificaAcertos = async () => {
+        if (await temAcertosPendententes()){
+            podeAbrirModalAcertos()
+        }
+        else {
             localStorage.setItem('uuidPrestacaoConta', prestacaoContaUuid);
             localStorage.setItem('periodoPrestacaoDeConta', JSON.stringify({data_final: periodo.data_fim_realizacao_despesas , data_inicial: periodo.data_inicio_realizacao_despesas  , periodo_uuid: periodo.uuid}));
             history.push(`/prestacao-de-contas/`)
-        }else {
-            podeAbrirModalAcertos()
         }
     }
 
@@ -51,14 +56,14 @@ export const TopoComBotaoVoltar = ({prestacaoContaUuid, onClickVoltar, periodoFo
                     Voltar
                 </button>
             </div>
-            {/*            <div className="p-3 bd-highlight">
+            <div className="p-3 bd-highlight">
                 <button
                     className="btn btn-success mr-2"
                     onClick={handleVerificaAcertos}
                 >
                     Ir para concluir acerto
                 </button>
-            </div>*/}
+            </div>
         </div>
     )
 }
