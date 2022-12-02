@@ -45,7 +45,7 @@ export const DevolucaoAoTesouroAjuste = () => {
     }, [])
 
     const handleCancelar = () => {
-        history.push(`${state.origem}/${state.uuid_pc}`)
+        history.push(`${state.origem}/${state.uuid_pc}#tabela-acertos-lancamentos`)
     }
 
     const handleModalDevolucaoAoTesouro = () => {

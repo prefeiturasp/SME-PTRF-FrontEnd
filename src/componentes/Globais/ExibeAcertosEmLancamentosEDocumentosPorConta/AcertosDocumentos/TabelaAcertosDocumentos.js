@@ -7,6 +7,7 @@ import {ModalCheckNaoPermitidoConfererenciaDeLancamentos } from "../../../dres/P
 import {ModalJustificadaApagada} from "../../../dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeLancamentos/Modais/ModalJustificadaApagada";
 import {ModalJustificarNaoRealizacao} from "../../../dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeLancamentos/Modais/ModalJustificarNaoRealizacao";
 import {visoesService} from "../../../../services/visoes.service";
+import { mantemEstadoAnaliseDre as meapcservice } from "../../../../services/mantemEstadoAnaliseDre.service";
 import '../scss/tagJustificativaLancamentos.scss';
 
 const tagColors = {
@@ -48,6 +49,9 @@ const TabelaAcertosDocumentos = ({
     const [textoConfirmadoJustificado, setTextoConfirmadoJustificado] = useState('')
     const [tipoAcao, setTipoAcao] = useState('')
 
+    let dados_analise_dre_usuario_logado = meapcservice.getAnaliseDreUsuarioLogado()
+
+    const [primeiroRegistroASerExibido, setPrimeiroRegistroASerExibido] = useState(dados_analise_dre_usuario_logado.conferencia_de_documentos.paginacao_atual ? dados_analise_dre_usuario_logado.conferencia_de_documentos.paginacao_atual : 0);
 
     const tagJustificativa = (rowData) => {
         let status = '-'
@@ -267,6 +271,17 @@ const TabelaAcertosDocumentos = ({
             </div>
         )
     }
+
+    const onPaginationClick = (event) => {
+        setPrimeiroRegistroASerExibido(event.first);
+        salvaEstadoPaginacaoDocumentosLocalStorage(event)
+    }
+
+    const salvaEstadoPaginacaoDocumentosLocalStorage = (event) => {
+        dados_analise_dre_usuario_logado.conferencia_de_documentos.paginacao_atual = event.rows * event.page
+        dados_analise_dre_usuario_logado.conferencia_de_documentos.expanded = expandedRowsDocumentos
+        meapcservice.setAnaliseDrePorUsuario(visoesService.getUsuarioLogin(), dados_analise_dre_usuario_logado)
+    }
     
     return(
         <>
@@ -284,6 +299,11 @@ const TabelaAcertosDocumentos = ({
                 rowExpansionTemplate={rowExpansionTemplateDocumentos}
                 paginatorTemplate="PrevPageLink PageLinks NextPageLink"
                 stripedRows
+                id="tabela-acertos-documentos"
+
+                // Usado para salvar no localStorage a página atual após os calculos ** ver função onPaginationClick
+                first={primeiroRegistroASerExibido}
+                onPage={onPaginationClick}
             >
                 <Column 
                     header='Ver Acertos'

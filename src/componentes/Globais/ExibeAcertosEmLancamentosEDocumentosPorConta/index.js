@@ -5,6 +5,7 @@ import {
     getTemAjustesExtratos
 } from "../../../services/dres/PrestacaoDeContas.service";
 import Loading from "../../../utils/Loading";
+import { mantemEstadoAnaliseDre as meapcservice } from "../../../services/mantemEstadoAnaliseDre.service";
 
 // Hooks Personalizados
 import {
@@ -86,19 +87,42 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
             // TODO Rever os métodos consultaSeTemAjustesExtratos. Repete a consulta da API feira por carregarAjustesExtratosBancarios
             consultaSeTemAjustesExtratos();
 
-           // Historia 77618 - Sprint 53
-           let periodo_conta_ajustes_extratos_bancarios = JSON.parse(localStorage.getItem('periodoContaAcertosEmExtratosBancarios'));
-           if (periodo_conta_ajustes_extratos_bancarios && periodo_conta_ajustes_extratos_bancarios.conta){
+            // Historia 77618 - Sprint 53
+            let periodo_conta_ajustes_extratos_bancarios = JSON.parse(localStorage.getItem('periodoContaAcertosEmExtratosBancarios'));
+
+            let dados_analise_dre_user_logado = meapcservice.getAnaliseDreUsuarioLogado()
+
+            if (periodo_conta_ajustes_extratos_bancarios && periodo_conta_ajustes_extratos_bancarios.conta){
                 carregarAjustesExtratosBancarios(periodo_conta_ajustes_extratos_bancarios.conta);
                 toggleBtnEscolheContaExtratosBancarios(periodo_conta_ajustes_extratos_bancarios.conta)
-            }else {
+            }
+            else if(dados_analise_dre_user_logado && dados_analise_dre_user_logado.conferencia_extrato_bancario && dados_analise_dre_user_logado.conferencia_extrato_bancario.conta_uuid){
+                carregarAjustesExtratosBancarios(dados_analise_dre_user_logado.conferencia_extrato_bancario.conta_uuid);
+                toggleBtnEscolheContaExtratosBancarios(dados_analise_dre_user_logado.conferencia_extrato_bancario.conta_uuid)
+            }
+            else {
                 carregarAjustesExtratosBancarios(contasAssociacao[0].uuid);
                 toggleBtnEscolheContaExtratosBancarios(contasAssociacao[0].uuid)
+                salvaObjetoAnaliseDrePorUsuarioLocalStorage(contasAssociacao[0].uuid)
             }
             setClickBtnEscolheConta({0: true})
         }
 
     }, [contasAssociacao, carregarAjustesExtratosBancarios, consultaSeTemAjustesExtratos])
+
+    useEffect(() => {
+        if(contaUuidAjustesExtratosBancarios){
+            salvaObjetoAnaliseDrePorUsuarioLocalStorage(contaUuidAjustesExtratosBancarios)
+        }
+    }, [contaUuidAjustesExtratosBancarios])
+
+
+    const salvaObjetoAnaliseDrePorUsuarioLocalStorage = (conta_uuid) =>{
+        let objetoAnaliseDrePorUsuario = meapcservice.getAnaliseDreUsuarioLogado();
+
+        objetoAnaliseDrePorUsuario.conferencia_extrato_bancario.conta_uuid = conta_uuid
+        meapcservice.setAnaliseDrePorUsuario(visoesService.getUsuarioLogin(), objetoAnaliseDrePorUsuario)
+    }
 
 
     return (
