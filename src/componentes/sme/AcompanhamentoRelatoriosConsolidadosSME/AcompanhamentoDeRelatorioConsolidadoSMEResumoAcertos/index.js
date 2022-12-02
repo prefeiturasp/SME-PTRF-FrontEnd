@@ -91,7 +91,6 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEResumoAcertos = () => {
         const documento = response?.data?.lista_documentos
         setListaDocumentoHistorico(documento?.filter((item) => item.analise_documento_consolidado_dre.resultado === "AJUSTE"))
     }
-
     return (
         <PaginasContainer>
             <h1 className="titulo-itens-painel mt-5">Acompanhamento da documentação da DRE</h1>
@@ -102,6 +101,7 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEResumoAcertos = () => {
                 relatorioConsolidado={relatorioConsolidado}
             />
             {!loading ?
+
                 <TabsConferencia
                     relatorioConsolidado={relatorioConsolidado}
                     setTabAtual={setTabAtual}

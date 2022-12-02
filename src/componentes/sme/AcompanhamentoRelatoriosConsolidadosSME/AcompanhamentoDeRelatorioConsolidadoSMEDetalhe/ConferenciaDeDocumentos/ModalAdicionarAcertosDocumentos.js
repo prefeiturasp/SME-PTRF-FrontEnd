@@ -127,7 +127,9 @@ export const ModalAdicionarAcertosDocumentos = (props) => {
                 primeiroBotaoCss={"success"}
                 segundoBotaoTexto={"Cancelar"}
                 segundoBotaoCss={'outline-success'}
-                segundoBotaoOnclick={(e) => setShowModalRemoveAcerto(false)}
+                segundoBotaoOnclick={(e) => {
+                    setShowModalRemoveAcerto(false)
+                }}
                 bodyText={'Deseja excluir o acerto?'}
             />
         </section>
