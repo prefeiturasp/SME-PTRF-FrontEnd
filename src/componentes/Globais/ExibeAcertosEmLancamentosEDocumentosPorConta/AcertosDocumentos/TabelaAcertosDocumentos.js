@@ -258,18 +258,20 @@ const TabelaAcertosDocumentos = ({
         }
 
     const mensagemQuantidadeExibida = () => {
-        return (
-            <div className="row">
-                <div className="col-12" style={{padding: "15px 0px", margin: "0px 15px", flex: "100%"}}>
-                    Exibindo <span style={{
-                    color: "#00585E",
-                    fontWeight: "bold"
-                }}
-                >
+        if (documentosAjustes.length > 0){
+            return (
+                <div className="row">
+                    <div className="col-12" style={{padding: "15px 0px", margin: "0px 15px", flex: "100%"}}>
+                        Exibindo <span style={{
+                        color: "#00585E",
+                        fontWeight: "bold"
+                    }}
+                    >
                     {totalDeAcertosDosDocumentos}</span> documentos
+                    </div>
                 </div>
-            </div>
-        )
+            )
+        }
     }
 
     const onPaginationClick = (event) => {
@@ -308,12 +310,13 @@ const TabelaAcertosDocumentos = ({
                 <Column 
                     header='Ver Acertos'
                     expander
-                    style={{width: '8%'}}
+                    style={{width: '6%'}}
                 />
                 <Column 
                     field='tipo_documento_prestacao_conta.nome'
                     header='Nome do Documento'
                     className="align-middle text-left borda-coluna"
+                    style={{width: '45%'}}
                 />
                 <Column 
                         field='status_realizacao'
@@ -326,10 +329,12 @@ const TabelaAcertosDocumentos = ({
                 <Column
                     header={selecionarTodosItensDosDocumentos()}
                     body={selecionarTodosItensDoDocumento}
-                    style={{width: '4%', borderLeft: 'none'}}
+                    style={{width: '6%', borderLeft: 'none'}}
                 /> : null }
             </DataTable>
-            ): null }
+            ):
+            <p className='text-center fonte-18 mt-4'><strong>Não foram solicitados acertos nos documentos nessa análise da PC.</strong></p>
+        }
         <section>
             <ModalCheckNaoPermitidoConfererenciaDeLancamentos
                 show={showModalCheckNaoPermitido}
