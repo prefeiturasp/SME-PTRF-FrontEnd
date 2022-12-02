@@ -359,6 +359,7 @@ const RelatorioConsolidado = () => {
                                                     setShowPublicarRelatorioConsolidado={setShowPublicarRelatorioConsolidado}
                                                     execucaoFinanceira={execucaoFinanceira}
                                                     disableGerar={disableGerar}
+                                                    carregaConsolidadosDreJaPublicadosProximaPublicacao={carregaConsolidadosDreJaPublicadosProximaPublicacao}
                                                 >
                                                     <PreviaDocumentos
                                                         gerarPreviaConsolidadoDre={gerarPreviaConsolidadoDre}
@@ -389,6 +390,7 @@ const RelatorioConsolidado = () => {
                                                     publicarConsolidadoDre={publicarConsolidadoDre}
                                                     podeGerarPrevia={podeGerarPrevia}
                                                     consolidadoDre={consolidadoDre}
+                                                    carregaConsolidadosDreJaPublicadosProximaPublicacao={carregaConsolidadosDreJaPublicadosProximaPublicacao}
                                                 >
                                                     <PreviaDocumentos
                                                         gerarPreviaConsolidadoDre={gerarPreviaConsolidadoDre}

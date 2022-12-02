@@ -1,6 +1,7 @@
 import api from '../api'
 import { TOKEN_ALIAS } from '../auth.service.js';
 import {ASSOCIACAO_UUID} from "../auth.service";
+import moment from "moment/moment";
 
 const authHeader = {
     headers: {
@@ -48,6 +49,15 @@ export const postCriarAtaAtrelarAoConsolidadoDre = async (payload) => {
     return (await api.post(`/api/consolidados-dre/criar-ata-e-atelar-ao-consolidado/`, payload, authHeader)).data
 };
 
+export const postMarcarComoPublicadoNoDiarioOficial = async (payload) => {
+    return (await api.post(`/api/consolidados-dre/marcar-como-publicado-no-diario-oficial/`, payload, authHeader)).data
+};
+
+export const postDesmarcarComoPublicadoNoDiarioOficial = async (payload) => {
+    return (await api.post(`/api/consolidados-dre/marcar-como-nao-publicado-no-diario-oficial/`, payload, authHeader)).data
+};
+
+
 export const getDownloadRelatorio = async (relatorio_uuid, versao) => {
     return api
         .get(`/api/consolidados-dre/${relatorio_uuid}/download-relatorio-consolidado`, {
@@ -69,6 +79,13 @@ export const getDownloadRelatorio = async (relatorio_uuid, versao) => {
         }).catch(error => {
             return error.response;
         });
+};
+
+export const devolverConsolidado = async (consolidado_uuid, dataLimiteDevolucao) => {
+    return (await api.patch(
+        `/api/consolidados-dre/${consolidado_uuid}/devolver-consolidado/`,
+        {data_limite: moment(dataLimiteDevolucao).format("YYYY-MM-DD")},
+        authHeader)).data
 };
 
 // FIM Consolidado DRE
