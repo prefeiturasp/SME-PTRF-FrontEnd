@@ -66,6 +66,22 @@ const AcertosLancamentos = ({
     const [totalDeAcertosDosLancamentos, setTotalDeAcertosDosLancamentos] = useState(0)
     const [analisePermiteEdicao, setAnalisePermiteEdicao] = useState()
 
+    useEffect(() => {
+        let dados_analise_dre_usuario_logado = meapcservice.getAnaliseDreUsuarioLogado()
+        let expanded_uuids = dados_analise_dre_usuario_logado.conferencia_de_lancamentos.expanded
+        let lista_objetos_expanded = []
+
+        for(let i=0; i<=expanded_uuids.length-1; i++){
+            let uuid = expanded_uuids[i]
+            let analise_encontrada = lancamentosAjustes.filter((item) => item.analise_lancamento.uuid === uuid)
+            lista_objetos_expanded.push(...analise_encontrada)
+        }
+
+        if(lista_objetos_expanded.length > 0){
+            setExpandedRowsLancamentos(lista_objetos_expanded)
+        }
+
+    }, [lancamentosAjustes])
 
     const carregaDadosDasContasDaAssociacao = useCallback(async () => {
         setLoadingLancamentos(true)
@@ -156,8 +172,6 @@ const AcertosLancamentos = ({
                         [index_encontrado]: true
                     });
                 }
-
-                setExpandedRowsLancamentos(dados_analise_dre_usuario_logado.conferencia_de_lancamentos.expanded)
             }
             else{
                 let index = 0;
@@ -173,8 +187,13 @@ const AcertosLancamentos = ({
 
     const guardaEstadoExpandedRowsLancamentos = useCallback(() => {
         if(expandedRowsLancamentos){
-            salvaEstadoExpandedRowsLancamentosLocalStorage(expandedRowsLancamentos)
+            let lista = []
+            for(let i=0; i<=expandedRowsLancamentos.length-1; i++){
+                lista.push(expandedRowsLancamentos[i].analise_lancamento.uuid)
+            }
+            salvaEstadoExpandedRowsLancamentosLocalStorage(lista)
         }
+        
     }, [expandedRowsLancamentos])
 
     useEffect(() => {
@@ -192,7 +211,9 @@ const AcertosLancamentos = ({
         // Zera paginação ao trocar de conta
         let dados_analise_dre_usuario_logado = meapcservice.getAnaliseDreUsuarioLogado();
         dados_analise_dre_usuario_logado.conferencia_de_lancamentos.paginacao_atual = 0
+        dados_analise_dre_usuario_logado.conferencia_de_lancamentos.expanded = []
         meapcservice.setAnaliseDrePorUsuario(visoesService.getUsuarioLogin(), dados_analise_dre_usuario_logado)
+        setExpandedRowsLancamentos(null)
     };
 
     const limparStatus = async () => {
@@ -812,9 +833,9 @@ const AcertosLancamentos = ({
         meapcservice.setAnaliseDrePorUsuario(visoesService.getUsuarioLogin(), objetoAnaliseDrePorUsuario)
     }
 
-    const salvaEstadoExpandedRowsLancamentosLocalStorage = (expandedRowsLancamentos) => {
+    const salvaEstadoExpandedRowsLancamentosLocalStorage = (lista) => {
         let dados_analise_dre_usuario_logado = meapcservice.getAnaliseDreUsuarioLogado();
-        dados_analise_dre_usuario_logado.conferencia_de_lancamentos.expanded = expandedRowsLancamentos
+        dados_analise_dre_usuario_logado.conferencia_de_lancamentos.expanded = lista
         meapcservice.setAnaliseDrePorUsuario(visoesService.getUsuarioLogin(), dados_analise_dre_usuario_logado)
     }
 
