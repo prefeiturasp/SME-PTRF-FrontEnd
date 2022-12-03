@@ -38,6 +38,23 @@ const AcertosDocumentos = ({analiseAtualUuid, prestacaoDeContas, prestacaoDeCont
     const [analisePermiteEdicao, setAnalisePermiteEdicao] = useState()
     const [totalDeAcertosDosDocumentos, setTotalDeAcertosDosDocumentos] = useState(0)
 
+    useEffect(() => {
+        let dados_analise_dre_usuario_logado = meapcservice.getAnaliseDreUsuarioLogado()
+        let expanded_uuids = dados_analise_dre_usuario_logado.conferencia_de_documentos.expanded
+        let lista_objetos_expanded = []
+
+        for(let i=0; i<=expanded_uuids.length-1; i++){
+            let uuid = expanded_uuids[i]
+            let analise_encontrada = documentosAjustes.filter((item) => item.uuid === uuid)
+            lista_objetos_expanded.push(...analise_encontrada)
+        }
+
+        if(lista_objetos_expanded.length > 0){
+            setExpandedRowsDocumentos(lista_objetos_expanded)
+        }
+
+    }, [documentosAjustes])
+
     const getTotalDeAcertosDosDocumentos = useCallback(()=>{
 
         if (documentosAjustes && documentosAjustes.length > 0){
@@ -77,12 +94,6 @@ const AcertosDocumentos = ({analiseAtualUuid, prestacaoDeContas, prestacaoDeCont
             uuid: ''
         }])
 
-        let dados_analise_dre_usuario_logado = meapcservice.getAnaliseDreUsuarioLogado();
-
-        if(dados_analise_dre_usuario_logado && dados_analise_dre_usuario_logado.conferencia_de_documentos && dados_analise_dre_usuario_logado.conferencia_de_documentos){
-            setExpandedRowsDocumentos(dados_analise_dre_usuario_logado.conferencia_de_documentos.expanded)
-        }
-
         setLoadingDocumentos(false)
     }, [analiseAtualUuid])
 
@@ -92,7 +103,12 @@ const AcertosDocumentos = ({analiseAtualUuid, prestacaoDeContas, prestacaoDeCont
 
     const guardaEstadoExpandedRowsDocumentos = useCallback(() => {
         if(expandedRowsDocumentos){
-            salvaEstadoExpandedRowsDocumentosLocalStorage(expandedRowsDocumentos)
+            let lista = []
+            for(let i=0; i<=expandedRowsDocumentos.length-1; i++){
+                lista.push(expandedRowsDocumentos[i].uuid)
+            }
+
+            salvaEstadoExpandedRowsDocumentosLocalStorage(lista)
         }
     }, [expandedRowsDocumentos])
 
@@ -649,9 +665,9 @@ const AcertosDocumentos = ({analiseAtualUuid, prestacaoDeContas, prestacaoDeCont
         }
     }
 
-    const salvaEstadoExpandedRowsDocumentosLocalStorage = (expandedRowsDocumentos) => {
+    const salvaEstadoExpandedRowsDocumentosLocalStorage = (lista) => {
         let dados_analise_dre_usuario_logado = meapcservice.getAnaliseDreUsuarioLogado();
-        dados_analise_dre_usuario_logado.conferencia_de_documentos.expanded = expandedRowsDocumentos
+        dados_analise_dre_usuario_logado.conferencia_de_documentos.expanded = lista
         meapcservice.setAnaliseDrePorUsuario(visoesService.getUsuarioLogin(), dados_analise_dre_usuario_logado)
     }
 
