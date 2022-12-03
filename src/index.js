@@ -24,9 +24,9 @@ ReactDOM.render(
                 <DespesaContextProvider>
                     <SidebarContextProvider>
                         <DataLimiteProvider>
-                            <BrowserRouter>
-                                <App/>
-                            </BrowserRouter>
+                                <BrowserRouter>
+                                    <App/>
+                                </BrowserRouter>
                         </DataLimiteProvider>
                     </SidebarContextProvider>
                 </DespesaContextProvider>

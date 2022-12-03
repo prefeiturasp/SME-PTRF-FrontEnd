@@ -120,6 +120,7 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEResumoAcertos = () => {
                 handleChangeDataLimiteDevolucao={handleChangeDataLimiteDevolucao}
                 relatorioConsolidado={relatorioConsolidado}
                 tabAtual={tabAtual}
+                setTabAtual={setTabAtual}
                 getDetalhamentoConferenciaDocumentosHistorico={getDetalhamentoConferenciaDocumentosHistorico}
             />
             {!loading ? (
