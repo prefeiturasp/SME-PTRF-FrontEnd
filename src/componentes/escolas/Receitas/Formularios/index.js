@@ -36,6 +36,7 @@ export const ReceitaForm = () => {
     let {origem} = useParams();
     let {uuid} = useParams();
     const parametros = useLocation();
+
     const visao_selecionada = visoesService.getItemUsuarioLogado('visao_selecionada.nome')
 
     const [loading, setLoading] = useState(true);
@@ -107,6 +108,16 @@ export const ReceitaForm = () => {
     const [despesa, setDespesa] = useState({})
     const [idTipoReceitaEstorno, setIdTipoReceitaEstorno] = useState("")
     const [formDateErrors, setFormDateErrors] = useState('');
+
+    const [escondeBotaoDeletar, setEscondeBotaoDeletar] = useState(false)
+
+    useEffect(()=>{
+        if ((parametros && parametros.state && parametros.state.uuid_acerto_documento) || (parametros && parametros.state && !parametros.state.tem_permissao_de_edicao)){
+            setEscondeBotaoDeletar(true)
+        }else {
+            setEscondeBotaoDeletar(false)
+        }
+    }, [parametros])
 
     const retornaPeriodo = async (periodo_uuid) => {
         let periodo = await getPeriodoPorUuid(periodo_uuid);
@@ -320,7 +331,7 @@ export const ReceitaForm = () => {
                     if(visao_selecionada === "DRE"){
                         setTituloModalCancelar("Deseja realmente voltar?"); 
                     }
-                    else if(parametros.state.operaca ='requer_inclusao_documento_credito'){
+                    else if(parametros.state.operacao === 'requer_inclusao_documento_credito'){
                         setTituloModalCancelar("Deseja cancelar a edição do crédito?")
                     }
                     else{
@@ -438,9 +449,9 @@ export const ReceitaForm = () => {
             if (exibeModalSalvoComSucesso){
                 setShowSalvarReceita(true);
                 setUuidReceita(resultCadastrar);
-                let uuidAnaliseDocumento = parametros.state.uuid_analise_documento;
-                let payloadReceita = {"uuid_credito_incluido": resultCadastrar}
-                let responseCreditoIncluido = await marcarCreditoIncluido(uuidAnaliseDocumento, payloadReceita);
+                let uuidAcertoDocumento = parametros.state.uuid_acerto_documento;
+                let payloadReceita = {"uuid_credito_incluido": resultCadastrar, 'uuid_solicitacao_acerto': uuidAcertoDocumento}
+                let responseCreditoIncluido = await marcarCreditoIncluido(payloadReceita);
                 if (responseCreditoIncluido.status === 200) {
                     console.log("Crédito salvo com sucesso!");
                 }
@@ -449,7 +460,7 @@ export const ReceitaForm = () => {
                 setUuidReceita(resultCadastrar);
                 getPath(resultCadastrar)
                 }
-            };
+            }
         setLoading(false);
 
     };
@@ -487,11 +498,14 @@ export const ReceitaForm = () => {
 
     const atualizaLancamento = async () => {
         let uuid_analise_lancamento = parametros.state.uuid_analise_lancamento;
-        let response_atualiza_lancamento = await marcarLancamentoAtualizado(uuid_analise_lancamento);
+        if (uuid_analise_lancamento){
+            let response_atualiza_lancamento = await marcarLancamentoAtualizado(uuid_analise_lancamento);
 
-        if (response_atualiza_lancamento.status === 200) {
-            console.log("Atualizacao de lancamento realizada com sucesso!");
+            if (response_atualiza_lancamento.status === 200) {
+                console.log("Atualizacao de lancamento realizada com sucesso!");
+            }
         }
+
     }
 
     const onCancelarTrue = () => {
@@ -593,7 +607,15 @@ export const ReceitaForm = () => {
 
         if(origemAnaliseLancamento()){
             if(parametros && parametros.state && parametros.state.uuid_pc && parametros.state.origem){
-                path = `${parametros.state.origem}/${parametros.state.uuid_pc}`;
+                let ancora = ""
+                if(parametros.state.operacao === "requer_inclusao_documento_credito"){
+                    ancora = "tabela-acertos-documentos"
+                }
+                else if(parametros.state.operacao === "requer_atualizacao_lancamento_credito" || parametros.state.operacao === "requer_exclusao_lancamento_credito"){
+                    ancora = "tabela-acertos-lancamentos"
+                }
+
+                path = `${parametros.state.origem}/${parametros.state.uuid_pc}#${ancora}`;
             }
         }
         
@@ -1217,6 +1239,7 @@ export const ReceitaForm = () => {
                         origemAnaliseLancamento={origemAnaliseLancamento}
                         validacoesPersonalizadasCredito={validacoesPersonalizadasCredito}
                         formDateErrors={formDateErrors}
+                        escondeBotaoDeletar={escondeBotaoDeletar}
                     />
                     <section>
                         <CancelarModalReceitas

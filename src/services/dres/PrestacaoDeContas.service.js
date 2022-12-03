@@ -278,6 +278,10 @@ export const getContasDaAssociacao = async (associacao_uuid) => {
     return (await api.get(`/api/associacoes/${associacao_uuid}/contas/`, authHeader)).data
 };
 
+export const getContasDaAssociacaoComAcertosEmLancamentos = async (associacao_uuid, analise_prestacao_uuid) => {
+    return (await api.get(`/api/associacoes/contas-com-acertos-em-lancamentos/?associacao_uuid=${associacao_uuid}&analise_prestacao_uuid=${analise_prestacao_uuid}`, authHeader)).data
+};
+
 export const getAnalisesDePcDevolvidas = async (prestacao_de_contas_uuid) => {
     return (await api.get(`/api/prestacoes-contas/${prestacao_de_contas_uuid}/devolucoes/`, authHeader)).data
 };
@@ -306,8 +310,8 @@ export const getAnaliseLancamentosPrestacaoConta = async (uuid_analise_prestacao
     return (await api.get(`/api/analises-lancamento-prestacao-conta/tabelas/${uuid_analise_prestacao ? "?uuid_analise_prestacao="+uuid_analise_prestacao : ""}${visao ? "&visao="+visao : ""}`, authHeader)).data
 };
 
-export const getAnaliseDocumentosPrestacaoConta = async () => {
-    return (await api.get(`/api/analises-documento-prestacao-conta/tabelas/`, authHeader)).data
+export const getAnaliseDocumentosPrestacaoConta = async (uuid_analise_prestacao, visao) => {
+    return (await api.get(`/api/analises-documento-prestacao-conta/tabelas/${uuid_analise_prestacao ? "?uuid_analise_prestacao="+uuid_analise_prestacao : ""}${visao ? "&visao="+visao : ""}`, authHeader)).data
 };
 
 export const postLimparStatusLancamentoPrestacaoConta = async (payload) => {
@@ -338,16 +342,12 @@ export const postMarcarComoLancamentoEsclarecido = async (payload) => {
     return (await api.post(`/api/analises-lancamento-prestacao-conta/marcar-como-esclarecido/`, payload, authHeader)).data
 }
 
-export const postMarcarComoDocumentoEsclarecido = async (payload, analise_uuid) => {
-    return (await api.post(`/api/analises-documento-prestacao-conta/${analise_uuid}/marcar-como-esclarecido/`, payload, authHeader)).data
+export const postMarcarComoDocumentoEsclarecido = async (payload) => {
+    return (await api.post(`/api/analises-documento-prestacao-conta/marcar-como-esclarecido/`, payload, authHeader)).data
 }
 
 export const patchAnaliseLancamentoPrestacaoConta = async (payload) => {
     return (await api.patch(`/api/analises-lancamento-prestacao-conta/`, payload, authHeader)).data
-}
-
-export const patchAnaliseDocumentoPrestacaoConta = async (payload, analise_prestacao_uuid) => {
-    return (await api.patch(`/api/analises-documento-prestacao-conta/${analise_prestacao_uuid}/`, payload, authHeader)).data
 }
 
 export const downloadDocumentoPreviaPdf = async (analise_atual_uuid) => {

@@ -11,6 +11,7 @@ import {ModalNotificaDevolucao} from "./ModalNotificaDevolucao";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faBell, faChevronDown, faTrash, faUser, faFileDownload} from "@fortawesome/free-solid-svg-icons";
 import {notificaDevolucaoPCService} from "../../../services/NotificacaDevolucaoPC.service";
+import { mantemEstadoAnaliseDre as meapcservice } from "../../../services/mantemEstadoAnaliseDre.service";
 
 export const Cabecalho = () => {
 
@@ -56,6 +57,7 @@ export const Cabecalho = () => {
             obj.notificar_devolucao_pc_uuid,
             obj.notificacao_uuid,
         );
+        meapcservice.limpaAnaliseDreUsuarioLogado(visoesService.getUsuarioLogin());
     };
 
     const retornaVisaoConvertida = (visao, uuid_unidade, uuid_associacao, nome_associacao, unidade_tipo, unidade_nome, notificar_devolucao_referencia, notificar_devolucao_pc_uuid, notificacao_uuid) =>{

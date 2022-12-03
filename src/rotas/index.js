@@ -513,7 +513,7 @@ const routesConfig = [
     },
     {
         exact: true,
-        path: "/consulta-detalhamento-analise-da-dre/:prestacao_conta_uuid/",
+        path: "/consulta-detalhamento-analise-da-dre/:prestacao_conta_uuid?",
         component: ConsultaDetalhamentoAnaliseDaDre,
         permissoes: ['access_analise_dre'],
     },

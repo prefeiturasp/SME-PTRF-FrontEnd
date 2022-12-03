@@ -1,7 +1,7 @@
 import React, {Fragment, memo, useCallback, useEffect, useState} from "react";
 import {
     getAnaliseLancamentosPrestacaoConta,
-    getContasDaAssociacao,
+    getContasDaAssociacaoComAcertosEmLancamentos,
     getLancamentosAjustes,
     postJustificarNaoRealizacaoLancamentoPrestacaoConta,
     postLimparStatusLancamentoPrestacaoConta,
@@ -29,6 +29,7 @@ import './acertos-lancamentos.scss'
 import Dropdown from "react-bootstrap/Dropdown";
 import { useContext } from "react";
 import { AnaliseDREContext } from "../../../../context/AnaliseDRE";
+import { mantemEstadoAnaliseDre as meapcservice } from "../../../../services/mantemEstadoAnaliseDre.service";
 
 const AcertosLancamentos = ({
                                 analiseAtualUuid,
@@ -56,7 +57,7 @@ const AcertosLancamentos = ({
     const [contaSelecionada, setContaSelecionada] = useState([])
     const [loadingLancamentos, setLoadingLancamentos] = useState(true)
     const [opcoesJustificativa, setOpcoesJustificativa] = useState([])
-    const [clickBtnEscolheConta, setClickBtnEscolheConta] = useState({0: true});
+    const [clickBtnEscolheConta, setClickBtnEscolheConta] = useState({});
     const [expandedRowsLancamentos, setExpandedRowsLancamentos] = useState(null);
     const [textareaJustificativa, setTextareaJustificativa] = useState(() => {});
     const [showSalvar, setShowSalvar] = useState({});
@@ -64,6 +65,44 @@ const AcertosLancamentos = ({
     const [showSalvarEsclarecimento, setShowSalvarEsclarecimento] = useState({});
     const [totalDeAcertosDosLancamentos, setTotalDeAcertosDosLancamentos] = useState(0)
     const [analisePermiteEdicao, setAnalisePermiteEdicao] = useState()
+
+    useEffect(() => {
+        let dados_analise_dre_usuario_logado = meapcservice.getAnaliseDreUsuarioLogado()
+        let expanded_uuids = dados_analise_dre_usuario_logado.conferencia_de_lancamentos.expanded
+        let lista_objetos_expanded = []
+
+        for(let i=0; i<=expanded_uuids.length-1; i++){
+            let uuid = expanded_uuids[i]
+            let analise_encontrada = lancamentosAjustes.filter((item) => item.analise_lancamento.uuid === uuid)
+            lista_objetos_expanded.push(...analise_encontrada)
+        }
+
+        if(lista_objetos_expanded.length > 0){
+            setExpandedRowsLancamentos(lista_objetos_expanded)
+        }
+
+    }, [lancamentosAjustes])
+
+    const carregaDadosDasContasDaAssociacao = useCallback(async () => {
+        setLoadingLancamentos(true)
+        if (prestacaoDeContas && prestacaoDeContas.associacao && prestacaoDeContas.associacao.uuid) {
+            let contas = await getContasDaAssociacaoComAcertosEmLancamentos(prestacaoDeContas.associacao.uuid, analiseAtualUuid);
+            setContasAssociacao(contas);
+
+            // Para Manter o Estado
+            if (contas.length === 1){
+                let dados_analise_dre_usuario_logado = meapcservice.getAnaliseDreUsuarioLogado()
+                dados_analise_dre_usuario_logado.conferencia_de_lancamentos.conta_uuid = contas[0].uuid
+                meapcservice.setAnaliseDrePorUsuario(visoesService.getUsuarioLogin(), dados_analise_dre_usuario_logado)
+            }
+
+            setLoadingLancamentos(false)
+        }
+    }, [prestacaoDeContas, analiseAtualUuid]);
+
+    useEffect(() => {
+        carregaDadosDasContasDaAssociacao()
+    }, [carregaDadosDasContasDaAssociacao])
 
     const getTotalDeAcertosDosLancamentos = useCallback(()=>{
 
@@ -84,18 +123,11 @@ const AcertosLancamentos = ({
     }, [getTotalDeAcertosDosLancamentos])
 
 
-    const carregaDadosDasContasDaAssociacao = useCallback(async () => {
-        if (prestacaoDeContas && prestacaoDeContas.associacao && prestacaoDeContas.associacao.uuid) {
-            let contas = await getContasDaAssociacao(prestacaoDeContas.associacao.uuid);
-            setContasAssociacao(contas);
-        }
-    }, [prestacaoDeContas]);
-
-    useEffect(() => {
-        carregaDadosDasContasDaAssociacao()
-    }, [carregaDadosDasContasDaAssociacao, analiseAtualUuid])
 
     const carregaAcertosLancamentos = useCallback(async (conta_uuid, filtrar_por_lancamento = null, filtrar_por_tipo_de_ajuste = null) => {
+        salvaObjetoAnaliseDrePorUsuarioLocalStorage(conta_uuid)
+
+
         setLoadingLancamentos(true)
 
         // Aqui TABELA
@@ -120,10 +152,54 @@ const AcertosLancamentos = ({
 
     useEffect(() => {
         if (contasAssociacao && contasAssociacao.length > 0) {
-            carregaAcertosLancamentos(contasAssociacao[0].uuid)
-            setContaSelecionada(contasAssociacao[0].uuid)
+            let dados_analise_dre_usuario_logado = meapcservice.getAnaliseDreUsuarioLogado()
+
+            if(dados_analise_dre_usuario_logado && dados_analise_dre_usuario_logado.conferencia_de_lancamentos && dados_analise_dre_usuario_logado.conferencia_de_lancamentos.conta_uuid){
+                carregaAcertosLancamentos(dados_analise_dre_usuario_logado.conferencia_de_lancamentos.conta_uuid)
+                setContaSelecionada(dados_analise_dre_usuario_logado.conferencia_de_lancamentos.conta_uuid)
+
+                // necessário para selecionar a aba de conta corretamente
+                let index_encontrado = null;
+                for(let i=0; i<=contasAssociacao.length-1; i++){
+                    if(contasAssociacao[i].uuid === dados_analise_dre_usuario_logado.conferencia_de_lancamentos.conta_uuid){
+                        index_encontrado = i;
+                        break;
+                    }
+                }
+                
+                if(index_encontrado !== null){
+                    setClickBtnEscolheConta({
+                        [index_encontrado]: true
+                    });
+                }
+            }
+            else{
+                let index = 0;
+
+                carregaAcertosLancamentos(contasAssociacao[index].uuid)
+                setContaSelecionada(contasAssociacao[index].uuid)
+                setClickBtnEscolheConta({
+                    [index]: true
+                });
+            }
         }
     }, [contasAssociacao, carregaAcertosLancamentos])
+
+    const guardaEstadoExpandedRowsLancamentos = useCallback(() => {
+        if(expandedRowsLancamentos){
+            let lista = []
+            for(let i=0; i<=expandedRowsLancamentos.length-1; i++){
+                lista.push(expandedRowsLancamentos[i].analise_lancamento.uuid)
+            }
+            salvaEstadoExpandedRowsLancamentosLocalStorage(lista)
+        }
+        
+    }, [expandedRowsLancamentos])
+
+    useEffect(() => {
+        guardaEstadoExpandedRowsLancamentos()
+    }, [guardaEstadoExpandedRowsLancamentos])
+
 
     const toggleBtnEscolheConta = (id) => {
         if (id !== Object.keys(clickBtnEscolheConta)[0]) {
@@ -131,6 +207,13 @@ const AcertosLancamentos = ({
                 [id]: !clickBtnEscolheConta[id]
             });
         }
+
+        // Zera paginação ao trocar de conta
+        let dados_analise_dre_usuario_logado = meapcservice.getAnaliseDreUsuarioLogado();
+        dados_analise_dre_usuario_logado.conferencia_de_lancamentos.paginacao_atual = 0
+        dados_analise_dre_usuario_logado.conferencia_de_lancamentos.expanded = []
+        meapcservice.setAnaliseDrePorUsuario(visoesService.getUsuarioLogin(), dados_analise_dre_usuario_logado)
+        setExpandedRowsLancamentos(null)
     };
 
     const limparStatus = async () => {
@@ -709,7 +792,6 @@ const AcertosLancamentos = ({
                 <Dropdown.Toggle id="dropdown-basic">
                     <span>Selecionar todos </span>
                     <input
-                        //checked={ (identificadorCheckboxClicado.some(uuid => uuid.uuid === 'TODOS') && lancamentosSelecionados.length > 0 ) || (identificadorCheckboxClicado.some(uuid => uuid.uuid === categoria.uuid) && lancamentosSelecionados.length > 0) }
                         checked={identificadorCheckboxClicado.some(uuid => uuid.uuid === categoria.categoria) && lancamentosSelecionados.length > 0 }
                         type="checkbox"
                         value=""
@@ -744,33 +826,22 @@ const AcertosLancamentos = ({
 
     // ################# FIM Vieram da Tabela
 
+    const salvaObjetoAnaliseDrePorUsuarioLocalStorage = (conta_uuid_lancamentos) =>{
+        let objetoAnaliseDrePorUsuario = meapcservice.getAnaliseDreUsuarioLogado();
+
+        objetoAnaliseDrePorUsuario.conferencia_de_lancamentos.conta_uuid = conta_uuid_lancamentos
+        meapcservice.setAnaliseDrePorUsuario(visoesService.getUsuarioLogin(), objetoAnaliseDrePorUsuario)
+    }
+
+    const salvaEstadoExpandedRowsLancamentosLocalStorage = (lista) => {
+        let dados_analise_dre_usuario_logado = meapcservice.getAnaliseDreUsuarioLogado();
+        dados_analise_dre_usuario_logado.conferencia_de_lancamentos.expanded = lista
+        meapcservice.setAnaliseDrePorUsuario(visoesService.getUsuarioLogin(), dados_analise_dre_usuario_logado)
+    }
+
     return (
         <>
-            <nav>
-                <div className="nav nav-tabs mb-3 tabs-resumo-dos-acertos" id="nav-tab-conferencia-de-lancamentos"
-                     role="tablist">
-                    {contasAssociacao && contasAssociacao && contasAssociacao.length > 0 && contasAssociacao.map((conta, indexTabs) =>
-                        <Fragment key={`key_${conta.uuid}`}>
-                            <a
-                                onClick={() => {
-                                    setContaSelecionada(conta.uuid)
-                                    carregaAcertosLancamentos(conta.uuid)
-                                    toggleBtnEscolheConta(`${indexTabs}`);
-                                }}
-                                className={`nav-link btn-escolhe-acao ${clickBtnEscolheConta[`${indexTabs}`] ? "active" : ""}`}
-                                id={`nav-conferencia-de-lancamentos-${conta.uuid}-tab`}
-                                data-toggle="tab"
-                                href={`#nav-conferencia-de-lancamentos-${conta.uuid}`}
-                                role="tab"
-                                aria-controls={`nav-conferencia-de-lancamentos-${conta.uuid}`}
-                                aria-selected="true"
-                            >
-                                Conta {conta.tipo_conta.nome}
-                            </a>
-                        </Fragment>
-                    )}
-                </div>
-            </nav>
+            <h5 className="mb-4 mt-4"><strong>Acertos nos lançamentos</strong></h5>
             {loadingLancamentos ? (
                     <Loading
                         corGrafico="black"
@@ -779,6 +850,32 @@ const AcertosLancamentos = ({
                         marginBottom="0"
                     />
                 ) :
+                <>
+                <nav>
+                    <div className="nav nav-tabs mb-3 tabs-resumo-dos-acertos" id="nav-tab-conferencia-de-lancamentos" role="tablist">
+                        {contasAssociacao && contasAssociacao && contasAssociacao.length > 0 && contasAssociacao.map((conta, indexTabs) =>
+                            <Fragment key={`key_${conta.uuid}`}>
+                                <a
+                                    onClick={() => {
+                                        setContaSelecionada(conta.uuid)
+                                        carregaAcertosLancamentos(conta.uuid)
+                                        toggleBtnEscolheConta(`${indexTabs}`);
+                                    }}
+                                    className={`nav-link btn-escolhe-acao ${clickBtnEscolheConta[`${indexTabs}`] ? "active" : ""}`}
+                                    id={`nav-conferencia-de-lancamentos-${conta.uuid}-tab`}
+                                    data-toggle="tab"
+                                    href={`#nav-conferencia-de-lancamentos-${conta.uuid}`}
+                                    role="tab"
+                                    aria-controls={`nav-conferencia-de-lancamentos-${conta.uuid}`}
+                                    aria-selected="true"
+                                >
+                                    Conta {conta.tipo_conta.nome}
+                                </a>
+                            </Fragment>
+                        )}
+                    </div>
+                </nav>
+
                 <div className="tab-content" id="nav-conferencia-de-lancamentos-tabContent">
                     <div className="tab-pane fade show active" role="tabpanel">
                         <TabelaAcertosLancamentos
@@ -810,6 +907,7 @@ const AcertosLancamentos = ({
                         />
                     </div>
                 </div>
+                </>
             }
         </>
     )
