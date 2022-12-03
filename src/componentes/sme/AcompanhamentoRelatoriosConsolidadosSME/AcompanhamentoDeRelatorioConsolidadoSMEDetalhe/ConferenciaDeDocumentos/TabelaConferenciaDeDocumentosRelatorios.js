@@ -383,7 +383,6 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
     }
 
     const temAjusteConsideraCorreto = (data) => {
-        setIsModificado(documentosMemorizados.documentos.find(documento => documento.uuid === data.uuid).analise_documento_consolidado_dre.resultado !== data.analise_documento_consolidado_dre.resultado)
         
         data.selecionado = true
         if (relatorioConsolidado?.analise_atual?.copiado){
@@ -642,7 +641,6 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
                     marcarComoNaoConferido={marcarComoNaoConferido}
                     listaDeDocumentosRelatorio={listaDeDocumentosRelatorio}
                     show={showModalAdicionarAcertos}
-                    isModificado={isModificado}
                 />
             </section>
             <section>
