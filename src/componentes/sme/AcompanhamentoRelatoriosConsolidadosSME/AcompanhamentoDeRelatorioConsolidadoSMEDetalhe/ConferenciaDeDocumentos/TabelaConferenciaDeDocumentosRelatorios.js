@@ -392,7 +392,7 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
                             fontWeight: "bold"
                         }
                     }>
-                        {totalDeDocumentosParaConferencia} </span>
+                        {totalDeDocumentosParaConferencia}</span>
                     documentos
                 </div>
             </div>
@@ -400,7 +400,7 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
     }
 
     const temAjusteConsideraCorreto = (data) => {
-        setIsModificado(documentosMemorizados.documentos.find(documento => documento.uuid === data.uuid).analise_documento_consolidado_dre.resultado !== data.analise_documento_consolidado_dre.resultado)
+        
         data.selecionado = true
         if (relatorioConsolidado?.analise_atual?.copiado){
             let documentoAjuste = listaDeDocumentosRelatorio?.find((documento) => documento.uuid === data.uuid)
@@ -646,7 +646,10 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
                 <ModalAdicionarAcertosDocumentos titulo="Detalhamento do acerto"
                     handleSubmitModal={handleSubmitModal}
                     handleClose={
-                        () => setShowModalAdicionarAcertos(false)
+                        () => {
+                            setShowModalAdicionarAcertos(false)
+                            desmarcarTodos()
+                        }
                     }
                     documentoAcertoInfo={documentoAcertoInfo}
                     initialValues={detalhamentoTxt}
@@ -655,7 +658,6 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
                     marcarComoNaoConferido={marcarComoNaoConferido}
                     listaDeDocumentosRelatorio={listaDeDocumentosRelatorio}
                     show={showModalAdicionarAcertos}
-                    isModificado={isModificado}
                 />
             </section>
             <section>

@@ -307,7 +307,7 @@ const RelatorioConsolidado = () => {
 
     return (
         <PaginasContainer>
-            <h1 className="titulo-itens-painel mt-5">Consolidado da PCs</h1>
+            <h1 className="titulo-itens-painel mt-5">Consolidado das PCs</h1>
             <>
                 <div className="col-12 container-texto-introdutorio mb-4 mt-3">
                     <div dangerouslySetInnerHTML={{__html: fiqueDeOlho}}/>
