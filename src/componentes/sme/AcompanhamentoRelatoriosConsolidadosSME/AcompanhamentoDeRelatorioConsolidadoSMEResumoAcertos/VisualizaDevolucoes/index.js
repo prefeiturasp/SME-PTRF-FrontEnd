@@ -1,11 +1,16 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {Ordinais} from '../../../../../utils/ValidacoesNumeros.js'
 import {DatePickerField} from "../../../../Globais/DatePickerField";
 import moment from "moment";
 import './styles.scss'
 
-export const VisualizaDevolucoes = ({relatorioConsolidado, dataLimiteDevolucao, handleChangeDataLimiteDevolucao, tabAtual, getDetalhamentoConferenciaDocumentosHistorico}) => {
+export const VisualizaDevolucoes = ({relatorioConsolidado, dataLimiteDevolucao, handleChangeDataLimiteDevolucao, tabAtual, setTabAtual, getDetalhamentoConferenciaDocumentosHistorico}) => {
 
+    useEffect(() => {
+        if(relatorioConsolidado?.status_sme === "DEVOLVIDO"){
+            setTabAtual('historico')
+        }
+    }, [relatorioConsolidado])
     return (
 
         <div className='visualizacao-container d-flex mt-5'>

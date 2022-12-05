@@ -1,4 +1,5 @@
 import React, {useEffect, useState, Fragment, useCallback} from "react";
+import {useHistory} from "react-router-dom";
 import {TopoSelectPeriodoBotaoConcluir} from "./TopoSelectPeriodoBotaoConcluir";
 import {getPeriodosDePrestacaoDeContasDaAssociacao, getDataPreenchimentoPreviaAta} from "../../../services/escolas/Associacao.service"
 import {getStatusPeriodoPorData, postConcluirPeriodo, getDataPreenchimentoAta, getIniciarAta, getIniciarPreviaAta} from "../../../services/escolas/PrestacaoDeContas.service";
@@ -10,14 +11,16 @@ import {MsgImgCentralizada} from "../../Globais/Mensagens/MsgImgCentralizada";
 import Img404 from "../../../assets/img/img-404.svg";
 import Loading from "../../../utils/Loading";
 import {ModalConcluirPeriodo} from "./ModalConcluirPeriodo";
+import { ModalConcluirAcertoSemPendencias } from "./ModalConcluirAcertoSemPendencias";
 import {ASSOCIACAO_UUID} from "../../../services/auth.service";
 import {GeracaoAtaApresentacao} from "../GeracaoDaAta/GeracaoAtaApresentacao";
 import {GeracaoAtaRetificadora} from "../GeracaoAtaRetificadora";
 import {exibeDateTimePT_BR_Ata} from "../../../utils/ValidacoesAdicionaisFormularios";
 import {visoesService} from "../../../services/visoes.service";
-import {ModalConcluirPeriodoComPendencias} from "./ModalConcluirPeriodoComPendencias";
+import {ModalConcluirAcertoComPendencias} from "./ModalConcluirAcertoComPendencias";
 
 export const PrestacaoDeContas = ({setStatusPC}) => {
+    const history = useHistory();
 
     const [periodoPrestacaoDeConta, setPeriodoPrestacaoDeConta] = useState(false);
     const [periodosAssociacao, setPeriodosAssociacao] = useState(false);
@@ -28,12 +31,12 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
     const [clickBtnEscolheConta, setClickBtnEscolheConta] = useState({0: true});
     const [loading, setLoading] = useState(true);
     const [showConcluir, setShowConcluir] = useState(false);
-    const [showConcluirComPendencia, setShowConcluirComPendencia] = useState(false);
+    const [showConcluirAcertoComPendencia, setShowConcluirAcertoComPendencia] = useState(false);
     const [corBoxAtaApresentacao, setcorBoxAtaApresentacao] = useState("");
     const [textoBoxAtaApresentacao, settextoBoxAtaApresentacao] = useState("");
     const [dataBoxAtaApresentacao, setdataBoxAtaApresentacao] = useState("");
     const [uuidAtaApresentacao, setUuidAtaApresentacao] = useState("");
-    const [txtJustificativa, setTxtJustificativa] = useState('');
+    const [showConcluirAcertosSemPendencias, setShowConcluirAcertosSemPendencias] = useState(false);
 
     const associacaoUuid = localStorage.getItem(ASSOCIACAO_UUID)
 
@@ -206,20 +209,20 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
     };
 
     const handleConcluirPeriodo = () =>{
-        if (
-            statusPrestacaoDeConta &&
-            statusPrestacaoDeConta.prestacao_contas_status &&
-            statusPrestacaoDeConta.prestacao_contas_status.tem_acertos_pendentes
-        ) {
-            setShowConcluirComPendencia(true)
-        } else {
-            setShowConcluir(true)
+        if(statusPrestacaoDeConta && statusPrestacaoDeConta.prestacao_contas_status){
+            if(statusPrestacaoDeConta.prestacao_contas_status.status_prestacao !== "DEVOLVIDA"){
+                setShowConcluir(true)
+            }
+            else if(statusPrestacaoDeConta.prestacao_contas_status.status_prestacao === "DEVOLVIDA"){
+                if(statusPrestacaoDeConta.prestacao_contas_status.tem_acertos_pendentes){
+                    setShowConcluirAcertoComPendencia(true);
+                }
+                else{
+                    setShowConcluirAcertosSemPendencias(true);
+                }
+            }
         }
     }
-
-    const handleChangeTxtJustificativa = (event) =>{
-        setTxtJustificativa(event.target.value)
-    };
 
     const setConfBoxAtaApresentacao = async ()=>{
         let uuid_prestacao_de_contas = localStorage.getItem('uuidPrestacaoConta');
@@ -293,20 +296,26 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
 
     const onConcluirSemPendencias = () =>{
         setShowConcluir(false);
+        setShowConcluirAcertosSemPendencias(false);
         concluirPeriodo();
     };
 
-    const onConcluirComPendencias = () =>{
-        setShowConcluirComPendencia(false);
-        concluirPeriodo(txtJustificativa);
-    };
+    const onIrParaAnaliseDre = async() => {
+        setShowConcluirAcertoComPendencia(false);
+        let uuid_prestacao_de_contas = localStorage.getItem('uuidPrestacaoConta');
+        history.push(`/consulta-detalhamento-analise-da-dre/${uuid_prestacao_de_contas}`)
+    }
 
     const onHandleClose = () => {
         setShowConcluir(false);
     };
 
+    const onHandleCloseSemPendencias = () => {
+        setShowConcluirAcertosSemPendencias(false);
+    };
+
     const onHandleCloseModalConcluirPeriodoComPendencias = () => {
-        setShowConcluirComPendencia(false);
+        setShowConcluirAcertoComPendencia(false);
     };
 
     const podeConcluir = [['concluir_periodo_prestacao_contas']].some(visoesService.getPermissoes)
@@ -321,6 +330,19 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
     useEffect(()=>{
         exibeBoxAtaRetificadora()
     }, [exibeBoxAtaRetificadora])
+
+    const textoBotaoConcluir = (status_prestacao) => {
+        if(status_prestacao && status_prestacao.prestacao_contas_status){
+            if(status_prestacao.prestacao_contas_status.status_prestacao === "DEVOLVIDA"){
+                return "Concluir acerto"
+            }
+            else{
+                return "Concluir período"
+            }
+        }
+
+        return ""
+    }
 
     return (
         <>
@@ -361,6 +383,7 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
                                 checkCondicaoExibicao={checkCondicaoExibicao}
                                 concluirPeriodo={handleConcluirPeriodo}
                                 podeConcluir={podeConcluir}
+                                textoBotaoConcluir={textoBotaoConcluir}
                             />
                             {checkCondicaoExibicao(periodoPrestacaoDeConta)  ? (
                                     <>
@@ -436,13 +459,23 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
                         />
                     </section>
                     <section>
-                        <ModalConcluirPeriodoComPendencias
-                            titulo="Concluir Prestação de Contas com pendências"
-                            txtJustificativa={txtJustificativa}
-                            handleChangeTxtJustificativa={handleChangeTxtJustificativa}
+                        <ModalConcluirAcertoComPendencias
+                            titulo="Concluir acerto da Prestação de Contas"
                             handleClose={onHandleCloseModalConcluirPeriodoComPendencias}
-                            onConcluir={onConcluirComPendencias}
-                            show={showConcluirComPendencia}
+                            onIrParaAnaliseDre={onIrParaAnaliseDre}
+                            show={showConcluirAcertoComPendencia}
+                        />
+                    </section>
+                    <section>
+                        <ModalConcluirAcertoSemPendencias
+                            show={showConcluirAcertosSemPendencias}
+                            handleClose={onHandleCloseSemPendencias}
+                            onConcluir={onConcluirSemPendencias}
+                            titulo="Concluir acerto da Prestação de Contas"
+                            texto="<p>Ao concluir a Prestação de Contas, o sistema <strong>bloqueará</strong> 
+                            o cadastro e a edição de qualquer crédito ou despesa nesse período.
+                            Para conferir as informações cadastradas, sem bloqueio do sistema nesse período, gere um documento prévio.
+                            Você confirma a conclusão do acerto da Prestação de Contas?</p>"
                         />
                     </section>
                 </>

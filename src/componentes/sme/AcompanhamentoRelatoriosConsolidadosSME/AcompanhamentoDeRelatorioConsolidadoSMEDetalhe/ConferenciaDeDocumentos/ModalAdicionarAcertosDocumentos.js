@@ -15,8 +15,15 @@ export const ModalAdicionarAcertosDocumentos = (props) => {
                 return props.documentoAcertoInfo.documento === documento.uuid
             })
             let resultado = documentoAjuste[0]?.analise_documento_consolidado_dre?.resultado
-            return true ? resultado === 'AJUSTE' : false
+            return resultado === 'AJUSTE'
         }
+    
+    const verificaDevolvida = () => {
+        let documentoAjuste = props.listaDeDocumentosRelatorio?.filter((documento) => {
+            return props.documentoAcertoInfo.documento === documento.uuid
+        })
+        return documentoAjuste[0]?.analise_documento_consolidado_dre?.documento_ja_foi_devolvido
+    }
 
     const bodyTextarea = (modalProps) => {
         return (
@@ -36,18 +43,18 @@ export const ModalAdicionarAcertosDocumentos = (props) => {
                             {verificaSeTemAjuste() &&
                                 <button
                                 type="button"
-                                className={`btn btn-link ${modalProps.precisaConsiderarCorreto && !modalProps.isModificado  ? 'btn-remover-ajuste-lancamento-copia' : 'btn-remover-ajuste-lancamento'} sme-considera-correto`}
-                                onClick={(e) => {modalProps.precisaConsiderarCorreto && !modalProps.isModificado  ? setShowModalConsideraCorreto(true) : setShowModalRemoveAcerto(true)}}
+                                className={`btn btn-link ${modalProps.precisaConsiderarCorreto && verificaDevolvida() ? 'btn-remover-ajuste-lancamento-copia' : 'btn-remover-ajuste-lancamento'} sme-considera-correto`}
+                                onClick={(e) => {modalProps.precisaConsiderarCorreto && verificaDevolvida() ? setShowModalConsideraCorreto(true) : setShowModalRemoveAcerto(true)}}
                             >
                                 <FontAwesomeIcon
                                     style={{
                                         fontSize: '17px',
                                         marginRight: "4px",
-                                        color: modalProps.precisaConsiderarCorreto && !modalProps.isModificado ? "#297805" : "#B40C02"
+                                        color: modalProps.precisaConsiderarCorreto && verificaDevolvida() ? "#297805" : "#B40C02"
                                     }}
-                                    icon={modalProps.precisaConsiderarCorreto && !modalProps.isModificado ? faCheckCircle : faTimesCircle }
+                                    icon={modalProps.precisaConsiderarCorreto && verificaDevolvida() ? faCheckCircle : faTimesCircle }
                                 />
-                                {modalProps.precisaConsiderarCorreto && !modalProps.isModificado ? "Considerar correto" : "Remover acerto" }
+                                {modalProps.precisaConsiderarCorreto && verificaDevolvida()  ? "Considerar correto" : "Remover acerto" }
                                 </button>}
                                 <p>
                                     <span className="span_erro text-danger">
@@ -102,9 +109,9 @@ export const ModalAdicionarAcertosDocumentos = (props) => {
                 show={showModalConsideraCorreto}
                 titulo={'Marcar como correto'}
                 primeiroBotaoOnclick={(e) => {
-                    props.handleClose()
                     setShowModalConsideraCorreto(false)
                     props.marcarComoCorreto()
+                    props.handleClose()
                 }}
                 primeiroBotaoTexto={"Confirmar"}
                 primeiroBotaoCss={"success"}
@@ -127,7 +134,9 @@ export const ModalAdicionarAcertosDocumentos = (props) => {
                 primeiroBotaoCss={"success"}
                 segundoBotaoTexto={"Cancelar"}
                 segundoBotaoCss={'outline-success'}
-                segundoBotaoOnclick={(e) => setShowModalRemoveAcerto(false)}
+                segundoBotaoOnclick={(e) => {
+                    setShowModalRemoveAcerto(false)
+                }}
                 bodyText={'Deseja excluir o acerto?'}
             />
         </section>

@@ -112,7 +112,7 @@ export const ReceitaForm = () => {
     const [escondeBotaoDeletar, setEscondeBotaoDeletar] = useState(false)
 
     useEffect(()=>{
-        if (parametros && parametros.state && parametros.state.uuid_acerto_documento){
+        if ((parametros && parametros.state && parametros.state.uuid_acerto_documento) || (parametros && parametros.state && !parametros.state.tem_permissao_de_edicao)){
             setEscondeBotaoDeletar(true)
         }else {
             setEscondeBotaoDeletar(false)
