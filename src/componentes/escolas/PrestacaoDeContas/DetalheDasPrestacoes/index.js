@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState, useContext} from "react";
 import {TopoComBotoes} from "./TopoComBotoes";
 import TabelaValoresPendentesPorAcao from "./TabelaValoresPendentesPorAcao";
 import {Justificativa} from "./Justivicativa";
@@ -32,8 +32,11 @@ import TabelaTransacoes from "./TabelaTransacoes";
 import {getDespesasTabelas} from "../../../../services/escolas/Despesas.service";
 import {FiltrosTransacoes} from "./FiltrosTransacoes";
 import {Link, useLocation} from "react-router-dom";
+import { SidebarLeftService } from "../../../../services/SideBarLeft.service";
+import { SidebarContext } from "../../../../context/Sidebar";
 
 export const DetalheDasPrestacoes = () => {
+    const contextSideBar = useContext(SidebarContext);
 
     // Alteracoes
     const [loading, setLoading] = useState(true);
@@ -474,6 +477,17 @@ export const DetalheDasPrestacoes = () => {
         });
     }, [dataSaldoBancario]);
 
+    const irParaAnaliseDre = async() => {
+        // Ao setar para false, quando a função a seguir setar o click do item do menu
+        // a pagina não ira automaticamente para a url do item
+
+        await contextSideBar.setIrParaUrl(false)
+        SidebarLeftService.setItemActive("analise_dre")
+
+        // Necessário voltar o estado para true, para clicks nos itens do menu continuarem funcionando corretamente
+        contextSideBar.setIrParaUrl(true)
+    }
+
     return (
         <>
         <div className="detalhe-das-prestacoes-container mb-5 mt-5">
@@ -491,6 +505,7 @@ export const DetalheDasPrestacoes = () => {
                                     }
                                 }}
                                 className="btn btn-outline-success"
+                                onClick={irParaAnaliseDre}
                             >
                                 Voltar para Análise DRE
                             </Link>
