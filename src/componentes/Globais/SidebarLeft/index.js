@@ -109,7 +109,9 @@ export const SidebarLeft = () => {
                     visoesService.forcarNovoLogin();
                     const to = '/' + selected;
                     if (history.location.pathname !== to) {
-                        history.push(to)
+                        if(sidebarStatus.irParaUrl){
+                            history.push(to)
+                        }
                     }
                 }}
                 onToggle={onToggle}
@@ -138,6 +140,7 @@ export const SidebarLeft = () => {
                                                 key={index}
                                                 navitemClassName="sub-menu-item"
                                                 eventKey={subItem.url}
+                                                id={subItem.id}
                                             >
                                                 <NavText>
                                                     {subItem.label}
