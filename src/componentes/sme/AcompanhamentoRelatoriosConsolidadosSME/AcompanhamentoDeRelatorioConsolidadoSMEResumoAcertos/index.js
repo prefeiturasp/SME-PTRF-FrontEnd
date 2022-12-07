@@ -66,7 +66,7 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEResumoAcertos = () => {
     }, [getConsolidadoDREUuid])
 
     useEffect(() => {
-        getDetalhamentoConferenciaDocumentosHistorico(relatorioConsolidado?.analises_do_consolidado_dre[0].uuid)
+        getDetalhamentoConferenciaDocumentosHistorico(relatorioConsolidado?.analises_do_consolidado_dre[relatorioConsolidado?.analises_do_consolidado_dre.length - 1].uuid)
     }, [relatorioConsolidado])
 
     const handleChangeTab = (key, event) => {

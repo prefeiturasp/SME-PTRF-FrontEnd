@@ -51,7 +51,7 @@ export const VisualizaDevolucoes = ({relatorioConsolidado, dataLimiteDevolucao, 
 
                         {
                         relatorioConsolidado?.analises_do_consolidado_dre.length && relatorioConsolidado.status_sme === 'DEVOLVIDO' ?
-                        relatorioConsolidado?.analises_do_consolidado_dre.map((item, index) => {
+                        relatorioConsolidado?.analises_do_consolidado_dre.sort().map((item, index) => {
                                         return <option key={index}
                                             value={item.uuid}>
                                             {
@@ -59,7 +59,7 @@ export const VisualizaDevolucoes = ({relatorioConsolidado, dataLimiteDevolucao, 
                                         }
                                             {" "}devolução
                                         </option>
-                                }):
+                                }).reverse():
                                 relatorioConsolidado?.analises_do_consolidado_dre.slice(0, (relatorioConsolidado?.analises_do_consolidado_dre.length - 1)).map((item, index) => {
                                             return <option key={index}
                                                 value={item.uuid}>
