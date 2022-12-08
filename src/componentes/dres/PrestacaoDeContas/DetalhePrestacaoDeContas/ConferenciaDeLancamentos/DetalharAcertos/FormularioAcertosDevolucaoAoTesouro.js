@@ -10,16 +10,22 @@ export const FormularioAcertosDevolucaoAoTesouro = ({formikProps, acerto, index,
     const [isTotal, setIsTotal] = useState(acerto.devolucao_tesouro.devolucao_total === 'true')
     const {setIsValorParcialValido} = useContext(ValidarParcialTesouro)
 
-    const verificaParcialError = (valorParcial) => {
-        let valorParcialConvertido = valorParcial.slice(2).replace(/[\,\.]/g, '')
-        valorParcialConvertido = Number(`${valorParcialConvertido.slice(0, -2).replace('.', '')}.${valorParcialConvertido.slice(-2)}`)
-        if(valorParcialConvertido > valorDocumento){
-            setShowParcialError('O valor parcial não pode ser maior que o valor do documento')
-            setIsValorParcialValido(true)
-        }else if (valorParcialConvertido == valorDocumento) {
-            setShowParcialError('O valor parcial não pode ser igual ao valor do documento')
-            setIsValorParcialValido(true)
-        }else{
+    const verificaParcialError = (valorParcial, ehTotal) => {
+        if(ehTotal === "false"){
+            let valorParcialConvertido = valorParcial.slice(2).replace(/[\,\.]/g, '')
+            valorParcialConvertido = Number(`${valorParcialConvertido.slice(0, -2).replace('.', '')}.${valorParcialConvertido.slice(-2)}`)
+            if(valorParcialConvertido > valorDocumento){
+                setShowParcialError('O valor parcial não pode ser maior que o valor do documento')
+                setIsValorParcialValido(true)
+            }else if (valorParcialConvertido === valorDocumento) {
+                setShowParcialError('O valor parcial não pode ser igual ao valor do documento')
+                setIsValorParcialValido(true)
+            }else{
+                setShowParcialError('')
+                setIsValorParcialValido(false)
+            }
+        }
+        else if(ehTotal === "true"){
             setShowParcialError('')
             setIsValorParcialValido(false)
         }
@@ -80,7 +86,7 @@ export const FormularioAcertosDevolucaoAoTesouro = ({formikProps, acerto, index,
                         verificaParcialError(valorTesouro.toLocaleString('pt-br', {
                             style: 'currency',
                             currency: 'BRL'
-                        }).replace(/\s/g, ''))
+                        }).replace(/\s/g, ''), e.target.value)
                         setIsTotal(e.target.value === 'true')
                     }}
                     className='form-control'
@@ -99,7 +105,7 @@ export const FormularioAcertosDevolucaoAoTesouro = ({formikProps, acerto, index,
                     name={`solicitacoes_acerto[${index}].devolucao_tesouro.valor`}
                     onChangeEvent={(e) => {
                         formikProps.handleChange(e);
-                        verificaParcialError(e.target.value)
+                        verificaParcialError(e.target.value, acerto.devolucao_tesouro.devolucao_total)
                     }}
                     id={`devolucao_tesouro[${index}.valor]`}
                     allowNegative={false}

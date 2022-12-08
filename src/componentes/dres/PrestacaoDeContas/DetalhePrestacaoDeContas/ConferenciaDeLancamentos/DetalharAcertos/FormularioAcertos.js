@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {Formik, FieldArray} from 'formik';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTimesCircle, faCheckCircle} from "@fortawesome/free-solid-svg-icons";
@@ -6,11 +6,12 @@ import {FormularioAcertosBasico} from "./FormularioAcertosBasico";
 import {FormularioAcertosDevolucaoAoTesouro} from "./FormularioAcertosDevolucaoAoTesouro";
 import {YupSignupSchemaDetalharAcertos} from './YupSignupSchemaDetalharAcertos'
 import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
+import { ValidarParcialTesouro } from '../../../../../../context/DetalharAcertos';
 
 export const FormularioAcertos = ({solicitacoes_acerto, listaTiposDeAcertoLancamentosAgrupado, onSubmitFormAcertos, formRef, handleChangeTipoDeAcertoLancamento, exibeCamposCategoriaDevolucao, tiposDevolucao, bloqueiaSelectTipoDeAcerto, removeBloqueiaSelectTipoDeAcertoJaCadastrado, textoCategoria, corTextoCategoria, removeTextoECorCategoriaTipoDeAcertoJaCadastrado, adicionaTextoECorCategoriaVazio, ehSolicitacaoCopiada, valorDocumento, lancamentosParaAcertos}) => {
 
     const uuidDevolucaoTesouro = listaTiposDeAcertoLancamentosAgrupado.find(item => item.id === "DEVOLUCAO")?.tipos_acerto_lancamento[0].uuid
-
+    const {setIsValorParcialValido} = useContext(ValidarParcialTesouro)
 
     const categoriaNaoPodeRepetir = (categoria) => {
         if(categoria.id === 'DEVOLUCAO'){
@@ -61,6 +62,14 @@ export const FormularioAcertos = ({solicitacoes_acerto, listaTiposDeAcertoLancam
         return listaTiposDeAcertoLancamentosAgrupado
     }
 
+    const removeValidacaoDevolucaoBtnSalvar = (acerto) => {
+        let eh_devolucao = acerto.devolucao_tesouro.tipo ? true : false;
+
+        if(eh_devolucao){
+            setIsValorParcialValido(false)
+        }
+    }
+
     return (
         <div className='mt-3'>
             <Formik
@@ -98,6 +107,7 @@ export const FormularioAcertos = ({solicitacoes_acerto, listaTiposDeAcertoLancam
                                                                 remove(index)
                                                                 removeBloqueiaSelectTipoDeAcertoJaCadastrado(index)
                                                                 removeTextoECorCategoriaTipoDeAcertoJaCadastrado(index)
+                                                                removeValidacaoDevolucaoBtnSalvar(acerto)
                                                             }}
                                                         >
                                                             <FontAwesomeIcon
