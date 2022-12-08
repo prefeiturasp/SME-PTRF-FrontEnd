@@ -12,6 +12,7 @@ import { DataLimiteDevolucao } from '../../../../context/DataLimiteDevolucao';
 import { TabelaConferenciaDeDocumentosRelatorios } from './TabelaConferenciaDeDocumentosRelatorios'
 import { detalhamentoConsolidadoDRE } from "../../../../services/sme/AcompanhamentoSME.service"
 import { RelatorioDosAcertos } from './RelatorioDosAcertos';
+import { RelatorioAposAcertos } from './RelatorioAposAcertos';
 import Loading from "../../../../utils/Loading";
 
 
@@ -23,6 +24,7 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEResumoAcertos = () => {
     const [comentarios, setComentarios] = useState({})
 
     const [relatorioConsolidado, setRelatorioConsolidado] = useState(null);
+    const [analiseSequenciaVisualizacao, setAnaliseSequenciaVisualizacao] = useState({})
     const [dataLimiteDevolucao, setDataLimiteDevolucao] = useState(dataLimite);
     const [tabAtual, setTabAtual] = useState('conferencia-atual');
     const [cardDataDevolucao, setCardDataDevolucao] = useState({
@@ -48,8 +50,7 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEResumoAcertos = () => {
             setLoading(false)
         }
         pegaDadosResumoConsolidado()
-        
-    }, [])
+    }, [params])
 
     const getConsolidadoDREUuid = useCallback(async () => {
         if (!resumoConsolidado) {
@@ -58,7 +59,6 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEResumoAcertos = () => {
         let response = await detalhamentoConsolidadoDRE(resumoConsolidado?.data.consolidado_dre)
         setRelatorioConsolidado(response.data);
         setLoading(false);
-        
     }, [resumoConsolidado]);
 
     useEffect(() => {
@@ -122,13 +122,22 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEResumoAcertos = () => {
                 tabAtual={tabAtual}
                 setTabAtual={setTabAtual}
                 getDetalhamentoConferenciaDocumentosHistorico={getDetalhamentoConferenciaDocumentosHistorico}
+                listaDocumentoHistorico={listaDocumentoHistorico}
+                setAnaliseSequenciaVisualizacao={setAnaliseSequenciaVisualizacao}
+                analiseSequenciaVisualizacao={analiseSequenciaVisualizacao}
+                
             />
             {!loading ? (
-                relatorioConsolidado?.status_sme === 'DEVOLVIDO' && 
+                typeof relatorioConsolidado?.status_sme === 'DEVOLVIDO' || (relatorioConsolidado?.status_sme == 'EM_ANALISE' || relatorioConsolidado?.analises_do_consolidado_dre.length) !== 'undefined' &&
+                <>
                 <CardsInfoDevolucaoSelecionada
                     cardDataDevolucao={cardDataDevolucao}
+                    relatorioConsolidado={relatorioConsolidado}
+                    listaDocumentoHistorico={listaDocumentoHistorico}
+                    analiseSequenciaVisualizacao={analiseSequenciaVisualizacao}
                     tabAtual={tabAtual}
                 />
+                </>
             ) : <Loading
                 corGrafico="black"
                 corFonte="dark"
@@ -169,6 +178,14 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEResumoAcertos = () => {
                     resumoConsolidado={resumoConsolidado}
                     podeGerarPrevia={true}
                 />
+            {relatorioConsolidado && relatorioConsolidado.relatorio_acertos_versao == 'FINAL' &&
+            <RelatorioAposAcertos
+                    relatorioConsolidado={relatorioConsolidado}
+                    resumoConsolidado={resumoConsolidado}
+                    analiseAtualUuid={relatorioConsolidado.analise_atual}
+                    podeGerarPrevia={false}
+                />
+            }
 </div>
         </PaginasContainer>
     )

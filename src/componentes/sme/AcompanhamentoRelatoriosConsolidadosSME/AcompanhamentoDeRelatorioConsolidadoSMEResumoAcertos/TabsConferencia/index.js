@@ -5,7 +5,7 @@ export const TabsConferencia = ({relatorioConsolidado, tabAtual, setTabAtual}) =
 
     return <div className="nav nav-tabs mb-3 tabs-resumo-dos-acertos mt-3" id="nav-tab-conferencia-de-lancamentos" role="tablist">
         {
-        relatorioConsolidado?.status_sme === "EM_ANALISE" && relatorioConsolidado?.analises_do_consolidado_dre.some((item) => item.copiado) ?
+        relatorioConsolidado?.status_sme === "EM_ANALISE" && relatorioConsolidado?.analises_do_consolidado_dre.length >= 2 ?
             <>
             <a className={`nav-link btn-escolhe-acao ${tabAtual === 'conferencia-atual' ? 'active' : ''}`}
                 id="nav-conferencia-atual-tab"

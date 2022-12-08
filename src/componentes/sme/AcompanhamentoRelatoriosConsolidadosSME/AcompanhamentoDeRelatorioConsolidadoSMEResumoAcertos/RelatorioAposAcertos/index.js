@@ -5,7 +5,7 @@ import {faDownload} from "@fortawesome/free-solid-svg-icons";
 import Loading from "../../../../../utils/Loading";
 
 
-export const RelatorioDosAcertos = ({relatorioConsolidado, resumoConsolidado, podeGerarPrevia}) => {
+export const RelatorioAposAcertos = ({relatorioConsolidado, resumoConsolidado, podeGerarPrevia}) => {
     const [mensagem, setMensagem] = useState("");
     const [disableBtnPrevia, setDisableBtnPrevia] = useState(true)
     const [disableBtnDownload, setDisableBtnDownload] = useState(true);
