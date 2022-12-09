@@ -112,10 +112,21 @@ export const ReceitaForm = () => {
     const [escondeBotaoDeletar, setEscondeBotaoDeletar] = useState(false)
 
     useEffect(()=>{
-        if ((parametros && parametros.state && parametros.state.uuid_acerto_documento) || (parametros && parametros.state && !parametros.state.tem_permissao_de_edicao)){
-            setEscondeBotaoDeletar(true)
-        }else {
-            setEscondeBotaoDeletar(false)
+        if(parametros && parametros.state){
+            if(!parametros.state.tem_permissao_de_edicao){
+                setEscondeBotaoDeletar(true);
+            }
+            else{
+                if(parametros.state.operacao === "requer_atualizacao_lancamento_credito"){
+                    setEscondeBotaoDeletar(true);
+                }
+                else if(parametros.state.operacao === "requer_exclusao_lancamento_credito"){
+                    setEscondeBotaoDeletar(false);
+                }
+                else if(parametros.state.operacao === "requer_inclusao_documento_credito"){
+                    setEscondeBotaoDeletar(true);
+                }
+            }
         }
     }, [parametros])
 
@@ -1114,7 +1125,7 @@ export const ReceitaForm = () => {
     }
 
     const bloqueiaCamposReceitaReaberturaSeletiva = () => {
-        if(!temPermissaoEdicaoReaberturaSeletiva()){
+        if(!temPermissaoEdicaoReaberturaSeletiva() || ehOperacaoExclusaoReaberturaSeletiva()){
             setReadOnlyCampos(true);
             setReadOnlyReaberturaSeletiva(true);
 

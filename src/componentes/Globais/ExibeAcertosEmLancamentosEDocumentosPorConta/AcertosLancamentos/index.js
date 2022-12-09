@@ -85,7 +85,7 @@ const AcertosLancamentos = ({
 
     const carregaDadosDasContasDaAssociacao = useCallback(async () => {
         setLoadingLancamentos(true)
-        if (prestacaoDeContas && prestacaoDeContas.associacao && prestacaoDeContas.associacao.uuid) {
+        if (prestacaoDeContas && prestacaoDeContas.associacao && prestacaoDeContas.associacao.uuid && analiseAtualUuid) {
             let contas = await getContasDaAssociacaoComAcertosEmLancamentos(prestacaoDeContas.associacao.uuid, analiseAtualUuid);
             setContasAssociacao(contas);
 
