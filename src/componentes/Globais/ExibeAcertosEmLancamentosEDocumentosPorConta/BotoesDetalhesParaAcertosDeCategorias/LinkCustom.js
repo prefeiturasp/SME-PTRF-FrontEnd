@@ -37,7 +37,7 @@ const LinkCustom = ({url, analise_lancamento, prestacaoDeContasUuid, prestacaoDe
                     uuid_associacao: prestacaoDeContas.associacao.uuid,
                     origem: getCurrentPathWithoutLastPart(),
                     origem_visao: visoesService.getItemUsuarioLogado('visao_selecionada.nome'),
-                    tem_permissao_de_edicao: checaSeTemPermissao(),
+                    tem_permissao_de_edicao: TEMPERMISSAO,
                     operacao: operacao,
                     tipo_transacao: tipo_transacao,
                     periodo_uuid: prestacaoDeContas.periodo_uuid
