@@ -802,7 +802,7 @@ export const CadastroForm = ({verbo_http}) => {
         }
 
         if(aux.origemAnaliseLancamento(parametroLocation)){
-            if(!aux.temPermissaoEdicao(parametroLocation)){
+            if(!aux.temPermissaoEdicao(parametroLocation) || aux.ehOperacaoExclusao(parametroLocation)){
                 bloqueia_link = true;
             }
         }
@@ -818,7 +818,7 @@ export const CadastroForm = ({verbo_http}) => {
         }
 
         if(aux.origemAnaliseLancamento(parametroLocation)){
-            if(!aux.temPermissaoEdicao(parametroLocation)){
+            if(!aux.temPermissaoEdicao(parametroLocation) || aux.ehOperacaoExclusao(parametroLocation)){
                 bloqueia_link = true;
             }
         }
