@@ -69,10 +69,6 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEResumoAcertos = () => {
         getDetalhamentoConferenciaDocumentosHistorico(relatorioConsolidado?.analises_do_consolidado_dre[relatorioConsolidado?.analises_do_consolidado_dre.length - 1].uuid)
     }, [relatorioConsolidado])
 
-    const handleChangeTab = (key, event) => {
-        return ''
-    }
-
     const handleChangeDataLimiteDevolucao = (name, value) => {
         setDataLimiteDevolucao(value)
     }
@@ -99,6 +95,7 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEResumoAcertos = () => {
                 resumoConsolidado={resumoConsolidado}
                 dataLimiteDevolucao={dataLimiteDevolucao}
                 relatorioConsolidado={relatorioConsolidado}
+                tabAtual={tabAtual}
             />
             {!loading ?
 
@@ -173,8 +170,9 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEResumoAcertos = () => {
                 marginBottom="0"
             />
             }
-            {relatorioConsolidado && relatorioConsolidado.status_sme == 'DEVOLVIDO' ?
+            {tabAtual === 'historico' ?
             <RelatorioAposAcertos
+                    analiseSequenciaVisualizacao={analiseSequenciaVisualizacao}
                     relatorioConsolidado={relatorioConsolidado}
                     resumoConsolidado={resumoConsolidado}
                     analiseAtualUuid={relatorioConsolidado.analise_atual}
