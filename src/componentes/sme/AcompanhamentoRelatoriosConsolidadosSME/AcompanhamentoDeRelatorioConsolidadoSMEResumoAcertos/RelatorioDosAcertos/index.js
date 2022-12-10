@@ -29,7 +29,7 @@ export const RelatorioDosAcertos = ({relatorioConsolidado, resumoConsolidado, po
                             ?
                                 <p className="fonte-14 mb-1"><strong>Relatório de devoluções para acertos</strong></p>
                             :
-                                <p className="fonte-14 mb-1"><strong>{relatorioConsolidado.analises_dos_consolidados_dre.length - 1}º Relatório de devoluções para acertos</strong></p>
+                                <p className="fonte-14 mb-1"><strong>{relatorioConsolidado.analises_dos_consolidados_dre.length} Relatório de devoluções para acertos</strong></p>
                         }
 
                         <p className={`fonte-12 mb-1 ${'documento-pendente'}`}>

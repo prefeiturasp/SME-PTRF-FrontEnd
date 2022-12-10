@@ -5,7 +5,7 @@ import IconeDevolucaoPrazoReenvio from "../../../../../assets/img/icone-devoluca
 import useDataTemplate from "../../../../../hooks/Globais/useDataTemplate";
 import './styles.scss'
 
-export const CardsInfoDevolucaoSelecionada = ({cardDataDevolucao, tabAtual, analiseSequenciaVisualizacao}) => {
+export const CardsInfoDevolucaoSelecionada = ({tabAtual, analiseSequenciaVisualizacao}) => {
     const dataTemplate = useDataTemplate()
 
     if (tabAtual !== 'historico'){

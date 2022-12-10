@@ -13,13 +13,15 @@ export const VisualizaDevolucoes = ({relatorioConsolidado, dataLimiteDevolucao, 
             setTabAtual('historico')
         }
         if(typeof relatorioConsolidado?.analises_do_consolidado_dre !== 'undefined'){
+
             let sequenciaConferencia = relatorioConsolidado?.analises_do_consolidado_dre[relatorioConsolidado?.analises_do_consolidado_dre.length - 1]
             let newAnaliseSequencia = {sequenciaConferencia, 'versao': Ordinais(relatorioConsolidado?.analises_do_consolidado_dre.indexOf(sequenciaConferencia))}
 
-            if(sequenciaConferencia.analise_atual === relatorioConsolidado.analises_do_consolidado_dre.analise_atual){
+            if(relatorioConsolidado?.analises_do_consolidado_dre.lengt === 1 || relatorioConsolidado?.status_sme === "EM_ANALISE") {
                 sequenciaConferencia = relatorioConsolidado?.analises_do_consolidado_dre[relatorioConsolidado?.analises_do_consolidado_dre.length - 2]
                 newAnaliseSequencia = {sequenciaConferencia, 'versao': Ordinais(relatorioConsolidado?.analises_do_consolidado_dre.indexOf(sequenciaConferencia))}
             }
+
             setAnaliseSequenciaVisualizacao(newAnaliseSequencia)
         }
     }, [relatorioConsolidado])

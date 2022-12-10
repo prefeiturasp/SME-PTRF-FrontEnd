@@ -173,20 +173,21 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEResumoAcertos = () => {
                 marginBottom="0"
             />
             }
-            <RelatorioDosAcertos
-                    relatorioConsolidado={relatorioConsolidado}
-                    resumoConsolidado={resumoConsolidado}
-                    podeGerarPrevia={true}
-                />
-            {relatorioConsolidado && relatorioConsolidado.relatorio_acertos_versao == 'FINAL' &&
+            {relatorioConsolidado && relatorioConsolidado.status_sme == 'DEVOLVIDO' ?
             <RelatorioAposAcertos
                     relatorioConsolidado={relatorioConsolidado}
                     resumoConsolidado={resumoConsolidado}
                     analiseAtualUuid={relatorioConsolidado.analise_atual}
                     podeGerarPrevia={false}
                 />
+            :
+            <RelatorioDosAcertos
+                    relatorioConsolidado={relatorioConsolidado}
+                    resumoConsolidado={resumoConsolidado}
+                    podeGerarPrevia={true}
+                />
             }
-</div>
+        </div>
         </PaginasContainer>
     )
 }
