@@ -62,7 +62,6 @@ export const VisualizaDevolucoes = ({relatorioConsolidado, dataLimiteDevolucao, 
                         className='form-control w-75'
                         onChange={ (e) => {
                             const valor = e.target.value
-                            console.log('valor', valor)
                             const sequenciaConferencia = relatorioConsolidado?.analises_do_consolidado_dre.find(e => e.uuid === valor)
                             setAnaliseSequenciaVisualizacao({sequenciaConferencia, 'versao': Ordinais(relatorioConsolidado?.analises_do_consolidado_dre.indexOf(sequenciaConferencia)), 'versao_numero':  relatorioConsolidado?.analises_do_consolidado_dre.map(object => object.uuid).indexOf(valor) + 1})
                             getDetalhamentoConferenciaDocumentosHistorico(valor) 

@@ -4,7 +4,7 @@ const SelectAnalisesDePcDevolvidas = ({uuidAnalisePcDevolvida, handleChangeSelec
     return(
         <div className='row mt-5'>
             <div className='col-auto'>
-                <p className='pb-0 mt-2'>Visualize as devoluções pelas datas: </p>
+                <p className='pb-0 mt-2'>Visualize as devoluções pelas datas:</p>
             </div>
             <div className='col'>
                 <select

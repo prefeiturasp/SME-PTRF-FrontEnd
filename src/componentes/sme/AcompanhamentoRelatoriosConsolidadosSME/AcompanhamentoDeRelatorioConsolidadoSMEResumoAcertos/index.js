@@ -180,6 +180,7 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEResumoAcertos = () => {
                 />
             :
             <RelatorioDosAcertos
+                    analiseSequenciaVisualizacao={analiseSequenciaVisualizacao}
                     relatorioConsolidado={relatorioConsolidado}
                     resumoConsolidado={resumoConsolidado}
                     podeGerarPrevia={true}
