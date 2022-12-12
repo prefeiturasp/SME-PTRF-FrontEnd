@@ -83,7 +83,6 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEResumoAcertos = () => {
             response = await detalhamentoConferenciaDocumentos(relatorioConsolidado?.uuid, relatorioConsolidado?.analise_atual?.uuid)
         }
         else {
-            console.log('else?')
             response = await detalhamentoConferenciaDocumentos(relatorioConsolidado?.uuid, analise_atual_uuid)
         }
         const documento = response?.data?.lista_documentos
