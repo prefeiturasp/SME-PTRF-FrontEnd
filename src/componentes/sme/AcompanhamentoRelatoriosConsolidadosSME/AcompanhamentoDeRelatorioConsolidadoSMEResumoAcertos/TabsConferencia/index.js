@@ -1,23 +1,10 @@
 import React, { useEffect, useCallback } from 'react';
 import {Ordinais} from '../../../../../utils/ValidacoesNumeros.js'
-import { detalhamentoConferenciaDocumentos } from "../../../../../services/sme/AcompanhamentoSME.service"
+// import { detalhamentoConferenciaDocumentos } from "../../../../../services/sme/AcompanhamentoSME.service"
 import './styles.scss'
 
-export const TabsConferencia = ({relatorioConsolidado, tabAtual, setTabAtual, setAnaliseSequenciaVisualizacao, setListaDocumentoHistorico}) => {
 
-    const carregaListaDeDocumentosRelatorio = useCallback(async () => {
-        if(!relatorioConsolidado?.analise_atual){
-            return
-        }
-        const response = await detalhamentoConferenciaDocumentos(relatorioConsolidado?.analise_atual?.consolidado_dre, relatorioConsolidado?.analises_do_consolidado_dre[relatorioConsolidado?.analises_do_consolidado_dre.length - 2]?.uuid)
-        const documentosComAcertos = Object.values(response.data['lista_documentos']).filter((doc) => doc.analise_documento_consolidado_dre.resultado === "AJUSTE")
-        console.log('documentosComAcertos', documentosComAcertos)
-        setListaDocumentoHistorico(documentosComAcertos)
-    }, [relatorioConsolidado])
-    
-    useEffect(() => {
-        carregaListaDeDocumentosRelatorio()
-    }, [carregaListaDeDocumentosRelatorio, tabAtual])
+export const TabsConferencia = ({relatorioConsolidado, tabAtual, setTabAtual, setAnaliseSequenciaVisualizacao}) => {
 
     useEffect(() => {
         if (relatorioConsolidado?.analises_do_consolidado_dre && tabAtual !== 'historico'){

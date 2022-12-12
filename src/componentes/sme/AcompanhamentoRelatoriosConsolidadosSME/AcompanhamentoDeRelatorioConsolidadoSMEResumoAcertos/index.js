@@ -67,7 +67,7 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEResumoAcertos = () => {
     }, [getConsolidadoDREUuid])
 
     useEffect(() => {
-        getDetalhamentoConferenciaDocumentosHistorico(relatorioConsolidado?.analises_do_consolidado_dre[relatorioConsolidado?.analises_do_consolidado_dre.length - 1].uuid)
+        getDetalhamentoConferenciaDocumentosHistorico(relatorioConsolidado?.analises_do_consolidado_dre[relatorioConsolidado?.analises_do_consolidado_dre.length - 2]?.uuid)
     }, [relatorioConsolidado, tabAtual])
 
     const handleChangeDataLimiteDevolucao = (name, value) => {
@@ -80,13 +80,14 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEResumoAcertos = () => {
         }
         let response = ''
         if (!analise_atual_uuid) {
-            response = detalhamentoConferenciaDocumentos(relatorioConsolidado?.uuid, relatorioConsolidado?.analise_atual?.uuid)
+            response = await detalhamentoConferenciaDocumentos(relatorioConsolidado?.uuid, relatorioConsolidado?.analise_atual?.uuid)
         }
         else {
+            console.log('else?')
             response = await detalhamentoConferenciaDocumentos(relatorioConsolidado?.uuid, analise_atual_uuid)
         }
         const documento = response?.data?.lista_documentos
-        setListaDocumentoHistorico(documento?.filter((item) => item.analise_documento_consolidado_dre.resultado === "AJUSTE" && item.analise_documento_consolidado_dre.copiado))
+        setListaDocumentoHistorico(documento?.filter((item) => item.analise_documento_consolidado_dre.resultado === "AJUSTE"))
     }
 
     return (
@@ -105,7 +106,6 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEResumoAcertos = () => {
                     relatorioConsolidado={relatorioConsolidado}
                     setTabAtual={setTabAtual}
                     tabAtual={tabAtual}
-                    setListaDocumentoHistorico={setListaDocumentoHistorico}
                     setAnaliseSequenciaVisualizacao={setAnaliseSequenciaVisualizacao}
                 /> :
                 <Loading
@@ -159,9 +159,9 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEResumoAcertos = () => {
                     relatorioConsolidado={relatorioConsolidado}
                     listaDocumentoHistorico={listaDocumentoHistorico}
                     setListaDeDocumentosRelatorio={setListaDeDocumentosRelatorio}
+                    getDetalhamentoConferenciaDocumentosHistorico={getDetalhamentoConferenciaDocumentosHistorico}
                     listaDeDocumentosRelatorio={listaDeDocumentosRelatorio}
                     rowsPerPage={rowsPerPage}
-                    loadingDocumentosRelatorio={loading}
                     tabAtual={tabAtual}
                     editavel={''} />
             }

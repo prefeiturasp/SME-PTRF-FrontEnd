@@ -5,7 +5,7 @@ import { detalhamentoConferenciaDocumentos } from "../../../../../services/sme/A
 
 import './styles.scss'
 
-export const TabelaConferenciaDeDocumentosRelatorios = ({ relatorioConsolidado, listaDocumentoHistorico, listaDeDocumentosRelatorio, setListaDeDocumentosRelatorio, tabAtual }) => {
+export const TabelaConferenciaDeDocumentosRelatorios = ({ relatorioConsolidado, listaDocumentoHistorico, listaDeDocumentosRelatorio, setListaDeDocumentosRelatorio, tabAtual, getDetalhamentoConferenciaDocumentosHistorico }) => {
     
     const rowsPerPage = 5
     const [expandedRowsDocumentos, setExpandedRowsDocumentos] = useState(null);
@@ -19,8 +19,10 @@ export const TabelaConferenciaDeDocumentosRelatorios = ({ relatorioConsolidado, 
         setListaDeDocumentosRelatorio(documentosComAcertos)
     }, [relatorioConsolidado])
     
+
     useEffect(() => {
         carregaListaDeDocumentosRelatorio()
+        getDetalhamentoConferenciaDocumentosHistorico()
     }, [carregaListaDeDocumentosRelatorio])
     
     const rowExpansionTemplateDocumentos = (data) => {
@@ -35,7 +37,7 @@ export const TabelaConferenciaDeDocumentosRelatorios = ({ relatorioConsolidado, 
     return (
         <>
             <h5 className="mb-4 mt-4"><strong>Acertos nos documentos</strong></h5>
-            {listaDeDocumentosRelatorio?.length || listaDocumentoHistorico?.lenght ? <DataTable
+            {listaDocumentoHistorico?.length ? <DataTable
                 value={tabAtual === 'historico' ? listaDocumentoHistorico : listaDeDocumentosRelatorio}
                 paginator={
                     0 > rowsPerPage
