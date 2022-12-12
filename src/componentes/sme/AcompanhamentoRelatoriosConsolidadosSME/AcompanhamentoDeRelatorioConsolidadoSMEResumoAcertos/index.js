@@ -103,6 +103,7 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEResumoAcertos = () => {
                     relatorioConsolidado={relatorioConsolidado}
                     setTabAtual={setTabAtual}
                     tabAtual={tabAtual}
+                    setAnaliseSequenciaVisualizacao={setAnaliseSequenciaVisualizacao}
                 /> :
                 <Loading
                     corGrafico="black"

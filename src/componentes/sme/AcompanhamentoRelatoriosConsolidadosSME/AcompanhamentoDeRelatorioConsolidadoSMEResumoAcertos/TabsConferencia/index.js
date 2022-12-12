@@ -1,7 +1,20 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import {Ordinais} from '../../../../../utils/ValidacoesNumeros.js'
 import './styles.scss'
 
-export const TabsConferencia = ({relatorioConsolidado, tabAtual, setTabAtual}) => {
+export const TabsConferencia = ({relatorioConsolidado, tabAtual, setTabAtual, setAnaliseSequenciaVisualizacao}) => {
+    
+    useEffect(() => {
+        if (tabAtual === 'conferencia-atual' && relatorioConsolidado?.analises_do_consolidado_dre){
+            let sequenciaConferencia = relatorioConsolidado?.analises_do_consolidado_dre[relatorioConsolidado?.analises_do_consolidado_dre.length - 2] 
+            let newAnaliseSequencia = {
+                sequenciaConferencia,
+                'versao': Ordinais(relatorioConsolidado?.analises_do_consolidado_dre.indexOf(sequenciaConferencia)),
+                'versao_numero':  relatorioConsolidado?.analises_do_consolidado_dre.length - 1
+            }
+            setAnaliseSequenciaVisualizacao(newAnaliseSequencia)
+        }
+        }, [tabAtual])
 
     return <div className="nav nav-tabs mb-3 tabs-resumo-dos-acertos mt-3" id="nav-tab-conferencia-de-lancamentos" role="tablist">
         {
