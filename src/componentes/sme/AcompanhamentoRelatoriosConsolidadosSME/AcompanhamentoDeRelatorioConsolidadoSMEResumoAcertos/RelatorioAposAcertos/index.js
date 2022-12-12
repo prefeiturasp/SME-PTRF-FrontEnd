@@ -33,7 +33,7 @@ export const RelatorioAposAcertos = ({analiseSequenciaVisualizacao, podeGerarPre
                         }
 
                         <p className={`fonte-12 mb-1 ${'documento-gerado'}`}>
-                            {`Documento gerado em ${dataTemplate(null, null, analiseSequenciaVisualizacao?.sequenciaConferencia.data_limite)} às 00:00`}
+                            {`Documento gerado em ${dataTemplate(null, null, analiseSequenciaVisualizacao?.sequenciaConferencia?.data_limite)} às 00:00`}
                                 <button 
                                     onClick={() => console.log('downloadDocumentoPrevia()')} 
                                     disabled={true} type="button" title="Download"

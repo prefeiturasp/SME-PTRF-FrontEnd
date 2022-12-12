@@ -25,6 +25,7 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEResumoAcertos = () => {
 
     const [relatorioConsolidado, setRelatorioConsolidado] = useState(null);
     const [analiseSequenciaVisualizacao, setAnaliseSequenciaVisualizacao] = useState({})
+    const [listaDeDocumentosRelatorio, setListaDeDocumentosRelatorio] = useState(null)
     const [dataLimiteDevolucao, setDataLimiteDevolucao] = useState(dataLimite);
     const [tabAtual, setTabAtual] = useState('conferencia-atual');
     const [cardDataDevolucao, setCardDataDevolucao] = useState({
@@ -67,7 +68,7 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEResumoAcertos = () => {
 
     useEffect(() => {
         getDetalhamentoConferenciaDocumentosHistorico(relatorioConsolidado?.analises_do_consolidado_dre[relatorioConsolidado?.analises_do_consolidado_dre.length - 1].uuid)
-    }, [relatorioConsolidado])
+    }, [relatorioConsolidado, tabAtual])
 
     const handleChangeDataLimiteDevolucao = (name, value) => {
         setDataLimiteDevolucao(value)
@@ -85,8 +86,9 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEResumoAcertos = () => {
             response = await detalhamentoConferenciaDocumentos(relatorioConsolidado?.uuid, analise_atual_uuid)
         }
         const documento = response?.data?.lista_documentos
-        setListaDocumentoHistorico(documento?.filter((item) => item.analise_documento_consolidado_dre.resultado === "AJUSTE"))
+        setListaDocumentoHistorico(documento?.filter((item) => item.analise_documento_consolidado_dre.resultado === "AJUSTE" && item.analise_documento_consolidado_dre.copiado))
     }
+
     return (
         <PaginasContainer>
             <h1 className="titulo-itens-painel mt-5">Acompanhamento da documentação da DRE</h1>
@@ -103,6 +105,7 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEResumoAcertos = () => {
                     relatorioConsolidado={relatorioConsolidado}
                     setTabAtual={setTabAtual}
                     tabAtual={tabAtual}
+                    setListaDocumentoHistorico={setListaDocumentoHistorico}
                     setAnaliseSequenciaVisualizacao={setAnaliseSequenciaVisualizacao}
                 /> :
                 <Loading
@@ -155,6 +158,8 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEResumoAcertos = () => {
                     resumoConsolidado={resumoConsolidado}
                     relatorioConsolidado={relatorioConsolidado}
                     listaDocumentoHistorico={listaDocumentoHistorico}
+                    setListaDeDocumentosRelatorio={setListaDeDocumentosRelatorio}
+                    listaDeDocumentosRelatorio={listaDeDocumentosRelatorio}
                     rowsPerPage={rowsPerPage}
                     loadingDocumentosRelatorio={loading}
                     tabAtual={tabAtual}
