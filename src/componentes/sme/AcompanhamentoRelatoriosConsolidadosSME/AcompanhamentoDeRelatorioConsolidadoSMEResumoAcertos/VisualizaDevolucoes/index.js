@@ -1,16 +1,31 @@
 import React, { useEffect } from 'react';
 import {Ordinais} from '../../../../../utils/ValidacoesNumeros.js'
 import {DatePickerField} from "../../../../Globais/DatePickerField";
+import useDataTemplate from "../../../../../hooks/Globais/useDataTemplate";
 import moment from "moment";
 import './styles.scss'
 
-export const VisualizaDevolucoes = ({relatorioConsolidado, dataLimiteDevolucao, handleChangeDataLimiteDevolucao, tabAtual, setTabAtual, getDetalhamentoConferenciaDocumentosHistorico}) => {
+export const VisualizaDevolucoes = ({relatorioConsolidado, dataLimiteDevolucao, handleChangeDataLimiteDevolucao, tabAtual, setTabAtual, getDetalhamentoConferenciaDocumentosHistorico, setAnaliseSequenciaVisualizacao}) => {
+    const dataTemplate = useDataTemplate()
 
     useEffect(() => {
         if(relatorioConsolidado?.status_sme === "DEVOLVIDO"){
             setTabAtual('historico')
         }
+        if(typeof relatorioConsolidado?.analises_do_consolidado_dre !== 'undefined'){
+
+            let sequenciaConferencia = relatorioConsolidado?.analises_do_consolidado_dre[relatorioConsolidado?.analises_do_consolidado_dre.length - 1]
+            let newAnaliseSequencia = {sequenciaConferencia, 'versao': Ordinais(relatorioConsolidado?.analises_do_consolidado_dre.indexOf(sequenciaConferencia)), 'versao_numero': relatorioConsolidado?.analises_do_consolidado_dre.length}
+
+            if(relatorioConsolidado?.analises_do_consolidado_dre.lengt === 1 || relatorioConsolidado?.status_sme === "EM_ANALISE") {
+                sequenciaConferencia = relatorioConsolidado?.analises_do_consolidado_dre[relatorioConsolidado?.analises_do_consolidado_dre.length - 2]
+                newAnaliseSequencia = {sequenciaConferencia, 'versao': Ordinais(relatorioConsolidado?.analises_do_consolidado_dre.indexOf(sequenciaConferencia)), 'versao_numero':  relatorioConsolidado?.analises_do_consolidado_dre.length - 1}
+            }
+
+            setAnaliseSequenciaVisualizacao(newAnaliseSequencia)
+        }
     }, [relatorioConsolidado])
+    
     return (
 
         <div className='visualizacao-container d-flex mt-5'>
@@ -46,29 +61,32 @@ export const VisualizaDevolucoes = ({relatorioConsolidado, dataLimiteDevolucao, 
                         id="escolhe-data-devolucao" 
                         className='form-control w-75'
                         onChange={ (e) => {
-                            getDetalhamentoConferenciaDocumentosHistorico(e.target.value) 
+                            const valor = e.target.value
+                            const sequenciaConferencia = relatorioConsolidado?.analises_do_consolidado_dre.find(e => e.uuid === valor)
+                            setAnaliseSequenciaVisualizacao({sequenciaConferencia, 'versao': Ordinais(relatorioConsolidado?.analises_do_consolidado_dre.indexOf(sequenciaConferencia)), 'versao_numero':  relatorioConsolidado?.analises_do_consolidado_dre.map(object => object.uuid).indexOf(valor) + 1})
+                            getDetalhamentoConferenciaDocumentosHistorico(valor) 
                         }}>
 
                         {
                         relatorioConsolidado?.analises_do_consolidado_dre.length && relatorioConsolidado.status_sme === 'DEVOLVIDO' ?
-                        relatorioConsolidado?.analises_do_consolidado_dre.map((item, index) => {
+                        relatorioConsolidado?.analises_do_consolidado_dre.sort().map((item, index) => {
                                         return <option key={index}
                                             value={item.uuid}>
                                             {
                                             Ordinais(index)
                                         }
-                                            {" "}devolução
+                                            {" "} devolução {dataTemplate(null, null, item.data_devolucao)}
                                         </option>
-                                }):
+                                }).reverse():
                                 relatorioConsolidado?.analises_do_consolidado_dre.slice(0, (relatorioConsolidado?.analises_do_consolidado_dre.length - 1)).map((item, index) => {
                                             return <option key={index}
                                                 value={item.uuid}>
                                                 {
                                                 Ordinais(index)
                                             }
-                                                {" "}devolução
+                                                {" "} devolução {dataTemplate(null, null, item.data_devolucao)}
                                             </option>
-                                    })
+                                    }).reverse()
                     }
                     </select>
                 </div>

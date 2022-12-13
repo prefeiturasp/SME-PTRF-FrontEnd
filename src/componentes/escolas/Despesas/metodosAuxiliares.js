@@ -361,8 +361,18 @@ const ehOperacaoExclusao = (parametroLocation) => {
     return false;
 }
 
+const ehOperacaoInclusao = (parametroLocation) => {
+    if(parametroLocation && parametroLocation.state){
+        if(parametroLocation.state.operacao === "requer_inclusao_documento_gasto"){
+            return true;
+        }
+    }
+
+    return false;
+}
+
 const bloqueiaCamposDespesaPrincipal = (parametroLocation, setReadOnlyCampos, setReadOnlyBtnAcao) => {
-    if(!parametroLocation.state.tem_permissao_de_edicao){
+    if(!parametroLocation.state.tem_permissao_de_edicao || ehOperacaoExclusao(parametroLocation)){
         setReadOnlyCampos(true);
 
         let bloqueia_btn_acao = false;
@@ -381,7 +391,7 @@ const bloqueiaCamposDespesaPrincipal = (parametroLocation, setReadOnlyCampos, se
 const bloqueiaCamposDespesaImposto = (parametroLocation, setReadOnlyCamposImposto, setDisableBtnAdicionarImposto, despesaContext) => {
     let despesas_impostos = despesaContext.initialValues.despesas_impostos;
     
-    if(!parametroLocation.state.tem_permissao_de_edicao){
+    if(!parametroLocation.state.tem_permissao_de_edicao || ehOperacaoExclusao(parametroLocation)){
         for(let i=0; i<=despesas_impostos.length-1; i++){
             setReadOnlyCamposImposto(prevState => ({...prevState, [i]: true}));
             setDisableBtnAdicionarImposto(true);
@@ -395,13 +405,20 @@ const mostraBotaoDeletar = (idDespesa, parametroLocation) => {
     }
 
     if(origemAnaliseLancamento(parametroLocation)){
-        if(ehOperacaoExclusao(parametroLocation)){
-            return true;
-        }
-        else{
+        if(!temPermissaoEdicao(parametroLocation)){
             return false;
         }
-
+        else{
+            if(ehOperacaoExclusao(parametroLocation)){
+                return true;
+            }
+            else if(ehOperacaoAtualizacao(parametroLocation)){
+                return false;
+            }
+            else if(ehOperacaoInclusao(parametroLocation)){
+                return false;
+            }
+        }
     }
     else{
         if(idDespesa){

@@ -402,7 +402,7 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
     const temAjusteConsideraCorreto = (data) => {
         
         data.selecionado = true
-        if (relatorioConsolidado?.analise_atual?.copiado){
+        if (relatorioConsolidado?.analise_atual){
             let documentoAjuste = listaDeDocumentosRelatorio?.find((documento) => documento.uuid === data.uuid)
             if (documentoAjuste.analise_documento_consolidado_dre.resultado === 'AJUSTE') {
                 setPrecisaConsiderarCorreto(true)

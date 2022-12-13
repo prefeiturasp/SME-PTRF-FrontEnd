@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {Formik, FieldArray} from 'formik';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTimesCircle, faCheckCircle} from "@fortawesome/free-solid-svg-icons";
@@ -6,10 +6,69 @@ import {FormularioAcertosBasico} from "./FormularioAcertosBasico";
 import {FormularioAcertosDevolucaoAoTesouro} from "./FormularioAcertosDevolucaoAoTesouro";
 import {YupSignupSchemaDetalharAcertos} from './YupSignupSchemaDetalharAcertos'
 import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
+import { ValidarParcialTesouro } from '../../../../../../context/DetalharAcertos';
 
 export const FormularioAcertos = ({solicitacoes_acerto, listaTiposDeAcertoLancamentosAgrupado, onSubmitFormAcertos, formRef, handleChangeTipoDeAcertoLancamento, exibeCamposCategoriaDevolucao, tiposDevolucao, bloqueiaSelectTipoDeAcerto, removeBloqueiaSelectTipoDeAcertoJaCadastrado, textoCategoria, corTextoCategoria, removeTextoECorCategoriaTipoDeAcertoJaCadastrado, adicionaTextoECorCategoriaVazio, ehSolicitacaoCopiada, valorDocumento, lancamentosParaAcertos}) => {
 
     const uuidDevolucaoTesouro = listaTiposDeAcertoLancamentosAgrupado.find(item => item.id === "DEVOLUCAO")?.tipos_acerto_lancamento[0].uuid
+    const {setIsValorParcialValido} = useContext(ValidarParcialTesouro)
+
+    const categoriaNaoPodeRepetir = (categoria) => {
+        if(categoria.id === 'DEVOLUCAO'){
+            return true;
+        }
+        else if(categoria.id === 'EXCLUSAO_LANCAMENTO'){
+            return true;
+        }
+        else if(categoria.id === 'SOLICITACAO_ESCLARECIMENTO'){
+            return true;
+        }
+
+        return false;
+    }
+
+    const categoriaNaoTemItensParaExibir = (categoria) => {
+        let itens_a_exibir = categoria.tipos_acerto_lancamento.filter((item) => (item.deve_exibir === true));
+
+        if(itens_a_exibir.length === 0){
+            return true;
+        }
+
+        return false;
+    }
+
+    const opcoesSelect = (acertos) => {
+        for(let index_categoria=0; index_categoria <= listaTiposDeAcertoLancamentosAgrupado.length -1; index_categoria ++){
+            let categoria = listaTiposDeAcertoLancamentosAgrupado[index_categoria]
+            categoria.deve_exibir_categoria = true;
+
+            for(let index_tipo_acerto=0; index_tipo_acerto <= categoria.tipos_acerto_lancamento.length -1; index_tipo_acerto++){
+                let acerto = categoria.tipos_acerto_lancamento[index_tipo_acerto];
+                let uuid = acerto.uuid
+                acerto.deve_exibir = true
+
+                let ja_selecionado = acertos.filter((item) => (item.tipo_acerto === uuid))
+
+                if(ja_selecionado.length > 0){
+                    acerto.deve_exibir = false
+
+                    if(categoriaNaoPodeRepetir(categoria) || categoriaNaoTemItensParaExibir(categoria)){
+                        categoria.deve_exibir_categoria = false;
+                    } 
+                }
+            }
+        }
+
+        return listaTiposDeAcertoLancamentosAgrupado
+    }
+
+    const removeValidacaoDevolucaoBtnSalvar = (acerto) => {
+        let eh_devolucao = acerto.devolucao_tesouro.tipo ? true : false;
+
+        if(eh_devolucao){
+            setIsValorParcialValido(false)
+        }
+    }
 
 
     const categoriaNaoPodeRepetir = (categoria) => {
@@ -98,6 +157,7 @@ export const FormularioAcertos = ({solicitacoes_acerto, listaTiposDeAcertoLancam
                                                                 remove(index)
                                                                 removeBloqueiaSelectTipoDeAcertoJaCadastrado(index)
                                                                 removeTextoECorCategoriaTipoDeAcertoJaCadastrado(index)
+                                                                removeValidacaoDevolucaoBtnSalvar(acerto)
                                                             }}
                                                         >
                                                             <FontAwesomeIcon

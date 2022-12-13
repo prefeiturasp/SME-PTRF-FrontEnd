@@ -1,14 +1,17 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useContext} from "react";
 import { useHistory } from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faArrowLeft} from "@fortawesome/free-solid-svg-icons";
 import {getPeriodoPorUuid} from "../../../../services/sme/Parametrizacoes.service";
 import {getStatusPeriodoPorData} from "../../../../services/escolas/PrestacaoDeContas.service";
 import {ASSOCIACAO_UUID} from "../../../../services/auth.service";
+import { SidebarLeftService } from "../../../../services/SideBarLeft.service";
+import { SidebarContext } from "../../../../context/Sidebar";
 
 export const TopoComBotaoVoltar = ({prestacaoContaUuid, onClickVoltar, periodoFormatado, periodoUuid, podeAbrirModalAcertos}) =>{
     const [periodo, setPeriodo] = useState(null);
     const history = useHistory()
+    const contextSideBar = useContext(SidebarContext);
 
     const getStatusPrestacaoDeConta = async (periodo) => {
         if (periodo){
@@ -38,8 +41,20 @@ export const TopoComBotaoVoltar = ({prestacaoContaUuid, onClickVoltar, periodoFo
         else {
             localStorage.setItem('uuidPrestacaoConta', prestacaoContaUuid);
             localStorage.setItem('periodoPrestacaoDeConta', JSON.stringify({data_final: periodo.data_fim_realizacao_despesas , data_inicial: periodo.data_inicio_realizacao_despesas  , periodo_uuid: periodo.uuid}));
-            history.push(`/prestacao-de-contas/`)
+            irParaGeracaoDocumento();
         }
+    }
+
+    const irParaGeracaoDocumento = () => {
+        // Ao setar para false, quando a função a seguir setar o click do item do menu
+        // a pagina não ira automaticamente para a url do item
+
+        contextSideBar.setIrParaUrl(false)
+        SidebarLeftService.setItemActive("geracao_documento")
+
+        // Necessário voltar o estado para true, para clicks nos itens do menu continuarem funcionando corretamente
+        contextSideBar.setIrParaUrl(true)
+        history.push(`/prestacao-de-contas/`)
     }
 
     return(

@@ -44,13 +44,13 @@ const UrlsMenuEscolas ={
         {label: "Prestação de contas", url: "prestacao-de-contas", dataFor:"prestacao_de_contas", icone:IconeMenuPrestacaoDeContas, permissoes: ['access_prestacao_contas', 'access_conciliacao_bancaria'],
             subItens: [
                 {
-                    label: "Conciliação Bancária", url: "detalhe-das-prestacoes", dataFor:"detalhe_das_prestacoes", icone:"", permissoes: ['access_conciliacao_bancaria', ]
+                    label: "Conciliação Bancária", url: "detalhe-das-prestacoes", dataFor:"detalhe_das_prestacoes", icone:"", permissoes: ['access_conciliacao_bancaria', ], id: 'detalhe_das_prestacoes',
                 },
                 {
-                    label: "Geração de documentos", url: "prestacao-de-contas", dataFor:"prestacao_de_contas", icone:"", permissoes: ['access_prestacao_contas']
+                    label: "Geração de documentos", url: "prestacao-de-contas", dataFor:"prestacao_de_contas", icone:"", permissoes: ['access_prestacao_contas'], id: "geracao_documento"
                 },
                 {
-                    label: "Análise DRE", url: "analise-dre", dataFor:"analise_dre", icone:"", permissoes: ['access_analise_dre']
+                    label: "Análise DRE", url: "analise-dre", dataFor:"analise_dre", icone:"", permissoes: ['access_analise_dre'], id: "analise_dre"
                 },
             ]
         },
