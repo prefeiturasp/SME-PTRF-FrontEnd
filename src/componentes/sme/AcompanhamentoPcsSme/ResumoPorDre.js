@@ -60,6 +60,7 @@ export const ResumoPorDre = ({resumoPorDre, statusPeriodo, periodoEscolhido}) =>
                 <Link
                     to={{
                         pathname: `${url}`,
+                        state: {nome_dre: rowData.dre.nome}
                     }}
                     className={`btn btn-link`}
                 >

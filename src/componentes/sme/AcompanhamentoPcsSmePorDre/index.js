@@ -3,7 +3,6 @@ import {Redirect, Link} from 'react-router-dom'
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faArrowLeft} from "@fortawesome/free-solid-svg-icons";
 import {getPeriodos, getItensDashboard} from "../../../services/sme/DashboardSme.service";
-import {detalhamentoConsolidadoDRE} from "../../../services/sme/AcompanhamentoSME.service";
 import {SelectPeriodo} from "../AcompanhamentoPcsSme/SelectPeriodo";
 import {BarraDeStatus} from "../AcompanhamentoPcsSme/./BarraDeStatus";
 import {BarraTotalAssociacoes} from "./BarraTotalAssociacoes";
@@ -20,19 +19,13 @@ export const AcompanhamentoPcsSmePorDre = (params) => {
     const [resumoPorDre, setResumoPorDre] = useState([]);
     const [loading, setLoading] = useState(false);
     const [statusPeriodo, setStatusPeriodo] = useState(false);
-    const [totalAssociacoes, setTotalAssociacoes] = useState(0);
+    const [cardTotalUnidade, setCardTotalUnidade] = useState(0)
 
-    
-    useEffect(() => {
-        const getNomeDaDre = async () =>{
-            let response = await detalhamentoConsolidadoDRE(params.consolidado_dre_uuid)
-            console.log('teste', response)
-        }
-        getNomeDaDre()
-    }, [params])
+    const totalUnidades = cardTotalUnidade ? cardTotalUnidade.quantidade_prestacoes : 0;
+
     useEffect(() => {
         carregaPeriodos();
-    }, [periodos]);
+    }, []);
 
     useEffect(() => {
         carregaItensDashboard();
@@ -45,9 +38,6 @@ export const AcompanhamentoPcsSmePorDre = (params) => {
         if (params.periodo_uuid){
             setPeriodoEsolhido(params.periodo_uuid)
         }
-        else if (periodos && periodos.length > 0){
-            setPeriodoEsolhido(periodos[0].uuid)
-        }
         setLoading(false);
     };
 
@@ -55,14 +45,13 @@ export const AcompanhamentoPcsSmePorDre = (params) => {
         setLoading(true);
         if (periodoEscolhido){
             let itens = await getItensDashboard(periodoEscolhido);
-            console.log("🚀 ~ file: index.js:49 ~ carregaItensDashboard ~ itens", itens)
+            
             let cards = itens.cards;
-            let totalCard = cards.shift();
-            let totalUnidades = totalCard ? totalCard.quantidade_prestacoes : 0;
+            const totalCard = cards.shift();
             let resumoPorDre = itens && itens.resumo_por_dre ? itens.resumo_por_dre : [];
             setItensDashboard(cards);
             setStatusPeriodo(itens.status);
-            setTotalAssociacoes(totalUnidades);
+            setCardTotalUnidade(totalCard)
             setResumoPorDre(resumoPorDre);
         }
         setLoading(false);
@@ -105,7 +94,7 @@ export const AcompanhamentoPcsSmePorDre = (params) => {
                         statusRelatorio={statusPeriodo}
                         />
                         <div className="titulo-voltar">
-                                <h4 className="titulo-pagina-perstacao-por-dre">Diretoria Freguesia/Brasilândia</h4>
+                                <h4 className="titulo-pagina-perstacao-por-dre">{params.nomeDre}</h4>
                                 <Link
                                     to='/acompanhamento-pcs-sme'
                                     className="btn btn-out-success"
@@ -117,15 +106,16 @@ export const AcompanhamentoPcsSmePorDre = (params) => {
                                     Voltar
                                 </Link>
                         </div>
-                        <hr style={{bottom: 20, position: 'relative'}}/>
+                        <hr style={{marginTop: -10}}/>
                     </>
                     }
                     <BarraTotalAssociacoes
-                        totalAssociacoes={100}
+                        totalUnidades={totalUnidades}
                     />
                     <DashboardCard
                         itensDashboard={itensDashboard}
                         statusPeriodo={statusPeriodo}
+                        cardTotalUnidade={cardTotalUnidade}
                     />
                     <h4 style={TituloStyle}>Resumo por diretoria regional</h4>
                     <ResumoPorDre resumoPorDre={resumoPorDre} statusPeriodo={statusPeriodo}/>

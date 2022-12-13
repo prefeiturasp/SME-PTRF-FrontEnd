@@ -1,6 +1,6 @@
 import React from "react";
 
-export const DashboardCard = ({itensDashboard, statusPeriodo}) => {
+export const DashboardCard = ({itensDashboard, statusPeriodo, cardTotalUnidade}) => {
 
     const cardQuantidadeStyleByStatus = {
         1: {
@@ -48,6 +48,20 @@ export const DashboardCard = ({itensDashboard, statusPeriodo}) => {
     return (
         <>
             <div className="row mt-4">
+                {cardTotalUnidade &&
+                <div className="col-sm-12 col-md-4 col-xl-3 mb-4 ">
+                    <div className="card h-100 container-cards-dre-dashboard" style={cardTotalStyle}>
+                        <div className="card-header">
+                            {cardTotalUnidade.titulo}
+                        </div>
+                        <hr className="mt-0 mb-0 ml-3 mr-3"/>
+                        <div className="card-body">
+                            <p className="card-text card-qtde-associacoes  mb-0 pb-3"
+                            style={cardQuantidadeStyleByStatus['TOTAL']}>{cardTotalUnidade.quantidade_prestacoes}</p>
+                        </div>
+                    </div>
+                </div>
+                }
                 {itensDashboard && itensDashboard && itensDashboard.length > 0 && itensDashboard.map((card, index) =>
                     <div key={index} className="col-sm-12 col-md-4 col-xl-3 mb-4 ">
                         <div className="card h-100 container-cards-dre-dashboard" style={card.status === 'TOTAL_UNIDADES' ? cardTotalStyle : {}}>
@@ -57,7 +71,7 @@ export const DashboardCard = ({itensDashboard, statusPeriodo}) => {
                             <hr className="mt-0 mb-0 ml-3 mr-3"/>
                             <div className="card-body">
                                 <p className="card-text card-qtde-associacoes  mb-0 pb-3"
-                                   style={card.status !== 'TOTAL_UNIDADES' ? cardQuantidadeStyleByStatus[idxStyle] : cardQuantidadeStyleByStatus['TOTAL']}>{card.quantidade_prestacoes}</p>
+                                style={card.status !== 'TOTAL_UNIDADES' ? cardQuantidadeStyleByStatus[idxStyle] : cardQuantidadeStyleByStatus['TOTAL']}>{card.quantidade_prestacoes}</p>
                             </div>
                         </div>
                     </div>
