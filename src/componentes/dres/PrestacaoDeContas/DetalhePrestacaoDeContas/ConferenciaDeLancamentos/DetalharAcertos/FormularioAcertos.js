@@ -70,56 +70,6 @@ export const FormularioAcertos = ({solicitacoes_acerto, listaTiposDeAcertoLancam
         }
     }
 
-
-    const categoriaNaoPodeRepetir = (categoria) => {
-        if(categoria.id === 'DEVOLUCAO'){
-            return true;
-        }
-        else if(categoria.id === 'EXCLUSAO_LANCAMENTO'){
-            return true;
-        }
-        else if(categoria.id === 'SOLICITACAO_ESCLARECIMENTO'){
-            return true;
-        }
-
-        return false;
-    }
-
-    const categoriaNaoTemItensParaExibir = (categoria) => {
-        let itens_a_exibir = categoria.tipos_acerto_lancamento.filter((item) => (item.deve_exibir === true));
-
-        if(itens_a_exibir.length === 0){
-            return true;
-        }
-
-        return false;
-    }
-
-    const opcoesSelect = (acertos) => {
-        for(let index_categoria=0; index_categoria <= listaTiposDeAcertoLancamentosAgrupado.length -1; index_categoria ++){
-            let categoria = listaTiposDeAcertoLancamentosAgrupado[index_categoria]
-            categoria.deve_exibir_categoria = true;
-
-            for(let index_tipo_acerto=0; index_tipo_acerto <= categoria.tipos_acerto_lancamento.length -1; index_tipo_acerto++){
-                let acerto = categoria.tipos_acerto_lancamento[index_tipo_acerto];
-                let uuid = acerto.uuid
-                acerto.deve_exibir = true
-
-                let ja_selecionado = acertos.filter((item) => (item.tipo_acerto === uuid))
-
-                if(ja_selecionado.length > 0){
-                    acerto.deve_exibir = false
-
-                    if(categoriaNaoPodeRepetir(categoria) || categoriaNaoTemItensParaExibir(categoria)){
-                        categoria.deve_exibir_categoria = false;
-                    } 
-                }
-            }
-        }
-
-        return listaTiposDeAcertoLancamentosAgrupado
-    }
-
     return (
         <div className='mt-3'>
             <Formik
