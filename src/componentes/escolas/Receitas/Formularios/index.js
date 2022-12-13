@@ -460,7 +460,7 @@ export const ReceitaForm = () => {
             if (exibeModalSalvoComSucesso){
                 setShowSalvarReceita(true);
                 setUuidReceita(resultCadastrar);
-                let uuidAcertoDocumento = parametros.state.uuid_acerto_documento;
+                let uuidAcertoDocumento = parametros?.state?.uuid_acerto_documento;
                 let payloadReceita = {"uuid_credito_incluido": resultCadastrar, 'uuid_solicitacao_acerto': uuidAcertoDocumento}
                 let responseCreditoIncluido = await marcarCreditoIncluido(payloadReceita);
                 if (responseCreditoIncluido.status === 200) {
