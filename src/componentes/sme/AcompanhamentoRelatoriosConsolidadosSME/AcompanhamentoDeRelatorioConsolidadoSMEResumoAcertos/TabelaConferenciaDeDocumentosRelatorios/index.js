@@ -37,7 +37,7 @@ export const TabelaConferenciaDeDocumentosRelatorios = ({ relatorioConsolidado, 
     return (
         <>
             <h5 className="mb-4 mt-4"><strong>Acertos nos documentos</strong></h5>
-            {listaDocumentoHistorico?.length || listaDeDocumentosRelatorio.length ? <DataTable
+            {listaDocumentoHistorico?.length || listaDeDocumentosRelatorio?.length ? <DataTable
                 value={tabAtual === 'historico' ? listaDocumentoHistorico : listaDeDocumentosRelatorio}
                 paginator={
                     0 > rowsPerPage
