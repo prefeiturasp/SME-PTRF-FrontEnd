@@ -1,4 +1,4 @@
-import React, {useEffect, useState, Fragment, useCallback} from "react";
+import React, {useEffect, useState, Fragment, useCallback, useContext} from "react";
 import {useHistory} from "react-router-dom";
 import {TopoSelectPeriodoBotaoConcluir} from "./TopoSelectPeriodoBotaoConcluir";
 import {getPeriodosDePrestacaoDeContasDaAssociacao, getDataPreenchimentoPreviaAta} from "../../../services/escolas/Associacao.service"
@@ -18,9 +18,12 @@ import {GeracaoAtaRetificadora} from "../GeracaoAtaRetificadora";
 import {exibeDateTimePT_BR_Ata} from "../../../utils/ValidacoesAdicionaisFormularios";
 import {visoesService} from "../../../services/visoes.service";
 import {ModalConcluirAcertoComPendencias} from "./ModalConcluirAcertoComPendencias";
+import { SidebarLeftService } from "../../../services/SideBarLeft.service";
+import { SidebarContext } from "../../../context/Sidebar";
 
 export const PrestacaoDeContas = ({setStatusPC}) => {
     const history = useHistory();
+    const contextSideBar = useContext(SidebarContext);
 
     const [periodoPrestacaoDeConta, setPeriodoPrestacaoDeConta] = useState(false);
     const [periodosAssociacao, setPeriodosAssociacao] = useState(false);
@@ -302,6 +305,19 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
 
     const onIrParaAnaliseDre = async() => {
         setShowConcluirAcertoComPendencia(false);
+        irParaAnaliseDre();
+    }
+
+    const irParaAnaliseDre = async() => {
+        // Ao setar para false, quando a função a seguir setar o click do item do menu
+        // a pagina não ira automaticamente para a url do item
+
+        await contextSideBar.setIrParaUrl(false)
+        SidebarLeftService.setItemActive("analise_dre")
+
+        // Necessário voltar o estado para true, para clicks nos itens do menu continuarem funcionando corretamente
+        contextSideBar.setIrParaUrl(true)
+        
         let uuid_prestacao_de_contas = localStorage.getItem('uuidPrestacaoConta');
         history.push(`/consulta-detalhamento-analise-da-dre/${uuid_prestacao_de_contas}`)
     }
