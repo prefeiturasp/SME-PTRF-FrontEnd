@@ -22,7 +22,7 @@ export const ModalAdicionarAcertosDocumentos = (props) => {
         let documentoAjuste = props.listaDeDocumentosRelatorio?.filter((documento) => {
             return props.documentoAcertoInfo.documento === documento.uuid
         })
-        return documentoAjuste[0]?.analise_documento_consolidado_dre?.documento_ja_foi_devolvido
+        return documentoAjuste[0]?.analise_documento_consolidado_dre?.copiado
     }
 
     const bodyTextarea = (modalProps) => {

@@ -5,24 +5,24 @@ import { detalhamentoConferenciaDocumentos } from "../../../../../services/sme/A
 
 import './styles.scss'
 
-export const TabelaConferenciaDeDocumentosRelatorios = ({ relatorioConsolidado, listaDocumentoHistorico, tabAtual }) => {
+export const TabelaConferenciaDeDocumentosRelatorios = ({ relatorioConsolidado, listaDocumentoHistorico, listaDeDocumentosRelatorio, setListaDeDocumentosRelatorio, tabAtual, getDetalhamentoConferenciaDocumentosHistorico }) => {
     
     const rowsPerPage = 5
-    const [listaDeDocumentosRelatorio, setListaDeDocumentosRelatorio] = useState(null)
     const [expandedRowsDocumentos, setExpandedRowsDocumentos] = useState(null);
-    const [loadingDocumento, setLoadingDocumento] = useState(null)
     
     const carregaListaDeDocumentosRelatorio = useCallback(async () => {
         if(!relatorioConsolidado?.analise_atual){
             return
         }
         const response = await detalhamentoConferenciaDocumentos(relatorioConsolidado?.analise_atual?.consolidado_dre, relatorioConsolidado?.analise_atual?.uuid)
-        const documentosComAcertos = Object.values(response.data['lista_documentos']).filter((doc) => doc.analise_documento_consolidado_dre.resultado === "AJUSTE" )
+        const documentosComAcertos = Object.values(response.data['lista_documentos']).filter((doc) => doc.analise_documento_consolidado_dre.resultado === "AJUSTE")
         setListaDeDocumentosRelatorio(documentosComAcertos)
     }, [relatorioConsolidado])
     
+
     useEffect(() => {
         carregaListaDeDocumentosRelatorio()
+        getDetalhamentoConferenciaDocumentosHistorico()
     }, [carregaListaDeDocumentosRelatorio])
     
     const rowExpansionTemplateDocumentos = (data) => {
@@ -37,7 +37,7 @@ export const TabelaConferenciaDeDocumentosRelatorios = ({ relatorioConsolidado, 
     return (
         <>
             <h5 className="mb-4 mt-4"><strong>Acertos nos documentos</strong></h5>
-            {listaDeDocumentosRelatorio?.length || listaDocumentoHistorico?.lenght ? <DataTable
+            {listaDocumentoHistorico?.length || listaDeDocumentosRelatorio?.length ? <DataTable
                 value={tabAtual === 'historico' ? listaDocumentoHistorico : listaDeDocumentosRelatorio}
                 paginator={
                     0 > rowsPerPage

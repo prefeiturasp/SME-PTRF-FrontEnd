@@ -6,7 +6,7 @@ import {devolverConsolidado} from '../../../../../services/dres/RelatorioConsoli
 import { toastCustom } from "../../../../Globais/ToastCustom";
 import './styles.scss'
 
-export const TopoComBotoes = ({relatorioConsolidado, dataLimiteDevolucao}) => {
+export const TopoComBotoes = ({relatorioConsolidado, dataLimiteDevolucao, tabAtual}) => {
     const [showModalConfirmaDevolverParaAcerto, setShowModalConfirmaDevolverParaAcerto] = useState(false)
     const [loading, setLoading] = useState(null);
 
@@ -34,15 +34,17 @@ export const TopoComBotoes = ({relatorioConsolidado, dataLimiteDevolucao}) => {
                     }>
                         Voltar
                     </Button>
+                    {tabAtual === 'conferencia-atual' &&              
                     <Button variant="success"
                         onClick={
                             e => setShowModalConfirmaDevolverParaAcerto(true)
                         }
                         disabled={
-                            relatorioConsolidado ?. status_sme !== 'EM_ANALISE' || !dataLimiteDevolucao
+                            relatorioConsolidado?.status_sme !== 'EM_ANALISE' || !dataLimiteDevolucao
                     }>
                         Devolver para DRE
                     </Button>
+    }
                 </div>
             </div>
             <section>
