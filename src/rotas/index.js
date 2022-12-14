@@ -296,13 +296,13 @@ const routesConfig = [
     },
     {
         exact: true,
-        path: "/dre-detalhe-prestacao-de-contas-resumo-acertos/:prestacao_conta_uuid",
+        path: "/dre-detalhe-prestacao-de-contas-resumo-acertos/:prestacao_conta_uuid?",
         component: ResumoDosAcertos,
         permissoes: ['access_acompanhamento_pcs_dre'],
     },
     {
         exact: true,
-        path: "/dre-detalhe-prestacao-de-contas-resumo-acertos/:prestacao_conta_uuid",
+        path: "/dre-detalhe-prestacao-de-contas-resumo-acertos/:prestacao_conta_uuid?",
         component: ResumoDosAcertos,
         permissoes: ['access_acompanhamento_pcs_dre'],
     },
