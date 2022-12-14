@@ -18,7 +18,7 @@ export const DetalharAcertos = () => {
 
     const {prestacao_conta_uuid} = useParams();
     const formRef = useRef();
-    const {lancamentos_para_acertos} = useSelector(state => state.DetalharAcertos)
+    const {lancamentos_para_acertos, origem} = useSelector(state => state.DetalharAcertos)
     const valorDocumento = lancamentos_para_acertos[0]?.valor_transacao_total ?? 0;
     const history = useHistory();
 
@@ -176,7 +176,13 @@ export const DetalharAcertos = () => {
     }, [lancamentos_para_acertos, prestacao_conta_uuid, totalDelancamentosParaConferencia])
 
     const onClickBtnVoltar = () => {
-        history.push(`/dre-detalhe-prestacao-de-contas/${prestacao_conta_uuid}#conferencia_de_lancamentos`)
+        if(origem && origem === "dre-detalhe-prestacao-de-contas-resumo-acertos"){
+            history.push(`/dre-detalhe-prestacao-de-contas-resumo-acertos/${prestacao_conta_uuid}#tabela-acertos-lancamentos`)
+        }
+        else{
+            history.push(`/dre-detalhe-prestacao-de-contas/${prestacao_conta_uuid}#conferencia_de_lancamentos`)
+        }
+        
     }
 
     const adicionaTextoECorCategoriaVazio = () => {
