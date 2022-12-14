@@ -1,7 +1,6 @@
 import React from "react";
 
-export const DashboardCard = ({itensDashboard, statusPeriodo}) => {
-
+export const DashboardCardPorDiretoria = ({itensDashboard, statusPeriodo}) => {
     const cardQuantidadeStyleByStatus = {
         1: {
             fontFamily: "Roboto",
@@ -48,7 +47,7 @@ export const DashboardCard = ({itensDashboard, statusPeriodo}) => {
     return (
         <>
             <div className="row mt-4">
-                {itensDashboard && itensDashboard && itensDashboard.length > 0 && itensDashboard.map((card, index) =>
+                {itensDashboard && itensDashboard?.cards?.map((card, index) => 
                     <div key={index} className="col-sm-12 col-md-4 col-xl-3 mb-4 ">
                         <div className="card h-100 container-cards-dre-dashboard" style={card.status === 'TOTAL_UNIDADES' ? cardTotalStyle : {}}>
                             <div className="card-header">

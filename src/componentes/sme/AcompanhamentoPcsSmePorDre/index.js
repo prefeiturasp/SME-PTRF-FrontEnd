@@ -1,12 +1,14 @@
 import React, {useState, useEffect} from "react";
-import {Redirect, Link} from 'react-router-dom'
+import {Link} from 'react-router-dom'
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faArrowLeft} from "@fortawesome/free-solid-svg-icons";
-import {getPeriodos, getItensDashboard} from "../../../services/sme/DashboardSme.service";
+import {getPeriodos} from "../../../services/sme/DashboardSme.service";
+import {getItensDashboard} from "../../../services/sme/DashboardSme.service";
+import {getItensDashboardComDreUuid} from "../../../services/dres/RelatorioConsolidado.service"
 import {SelectPeriodo} from "../AcompanhamentoPcsSme/SelectPeriodo";
 import {BarraDeStatus} from "../AcompanhamentoPcsSme/./BarraDeStatus";
 import {BarraTotalAssociacoes} from "./BarraTotalAssociacoes";
-import {DashboardCard} from "../AcompanhamentoPcsSme/./DashboardCard";
+import {DashboardCardPorDiretoria} from "./DashboardCardPorDiretoria";
 import {ResumoPorDre} from "../AcompanhamentoPcsSme/./ResumoPorDre";
 import Loading from "../../../utils/Loading";
 import './style.scss'
@@ -15,13 +17,10 @@ export const AcompanhamentoPcsSmePorDre = (params) => {
 
     const [periodos, setPeriodos] = useState(false);
     const [periodoEscolhido, setPeriodoEsolhido] = useState(false);
-    const [itensDashboard, setItensDashboard] = useState(false);
+    const [itensDashboard, setItensDashboard] = useState(null);
     const [resumoPorDre, setResumoPorDre] = useState([]);
     const [loading, setLoading] = useState(false);
     const [statusPeriodo, setStatusPeriodo] = useState(false);
-    const [cardTotalUnidade, setCardTotalUnidade] = useState(0)
-
-    const totalUnidades = cardTotalUnidade ? cardTotalUnidade.quantidade_prestacoes : 0;
 
     useEffect(() => {
         carregaPeriodos();
@@ -44,14 +43,12 @@ export const AcompanhamentoPcsSmePorDre = (params) => {
     const carregaItensDashboard = async () =>{
         setLoading(true);
         if (periodoEscolhido){
-            let itens = await getItensDashboard(periodoEscolhido);
-            
-            let cards = itens.cards;
-            const totalCard = cards.shift();
+            let itensPorCard = await getItensDashboardComDreUuid(params.periodo_uuid, params.dre_uuid);
+            let itens = await getItensDashboard(periodoEscolhido)
+
             let resumoPorDre = itens && itens.resumo_por_dre ? itens.resumo_por_dre : [];
-            setItensDashboard(cards);
+            setItensDashboard(itensPorCard);
             setStatusPeriodo(itens.status);
-            setCardTotalUnidade(totalCard)
             setResumoPorDre(resumoPorDre);
         }
         setLoading(false);
@@ -60,7 +57,6 @@ export const AcompanhamentoPcsSmePorDre = (params) => {
     const handleChangePeriodos = async (uuid_periodo) => {
         setPeriodoEsolhido(uuid_periodo)
     };
-
 
     const TituloStyle = {
         fontFamily: "Roboto",
@@ -110,12 +106,11 @@ export const AcompanhamentoPcsSmePorDre = (params) => {
                     </>
                     }
                     <BarraTotalAssociacoes
-                        totalUnidades={totalUnidades}
+                        itensDashboard={itensDashboard}
                     />
-                    <DashboardCard
+                    <DashboardCardPorDiretoria
                         itensDashboard={itensDashboard}
                         statusPeriodo={statusPeriodo}
-                        cardTotalUnidade={cardTotalUnidade}
                     />
                     <h4 style={TituloStyle}>Resumo por diretoria regional</h4>
                     <ResumoPorDre resumoPorDre={resumoPorDre} statusPeriodo={statusPeriodo}/>

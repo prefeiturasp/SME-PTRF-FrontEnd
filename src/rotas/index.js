@@ -418,7 +418,7 @@ const routesConfig = [
     },
     {
         exact: true,
-        path: "/acompanhamento-pcs-sme/:consolidado_dre_uuid?/:periodo_uuid?",
+        path: "/acompanhamento-pcs-sme/:dre_uuid?/:periodo_uuid?",
         component: AcompanhamentoPcsPorDre,
         permissoes: ['access_acompanhamento_pc_sme'],
     },
