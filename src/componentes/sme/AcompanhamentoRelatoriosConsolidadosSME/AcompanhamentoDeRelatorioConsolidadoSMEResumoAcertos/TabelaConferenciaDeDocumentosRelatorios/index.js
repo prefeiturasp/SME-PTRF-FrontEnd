@@ -22,7 +22,6 @@ export const TabelaConferenciaDeDocumentosRelatorios = ({ relatorioConsolidado, 
 
     useEffect(() => {
         carregaListaDeDocumentosRelatorio()
-        getDetalhamentoConferenciaDocumentosHistorico()
     }, [carregaListaDeDocumentosRelatorio])
     
     const rowExpansionTemplateDocumentos = (data) => {
