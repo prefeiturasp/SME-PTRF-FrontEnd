@@ -48,7 +48,7 @@ export const DashboardCardPorDiretoria = ({itensDashboard, statusPeriodo}) => {
         <>
         <div className="row mt-4">
             {
-            statusPeriodo.status_txt === "Período concluído." ?
+            statusPeriodo.status === "CONCLUIDO" ?
             itensDashboard && itensDashboard?.cards?.slice(-3)?.map((card, index) =>
                 <div key={index} className="col-sm-12 col-md-4 col-xl-3 mb-4 ">
                     <div className="card h-100 container-cards-dre-dashboard" style={card.status === 'TOTAL_UNIDADES' ? cardTotalStyle : {}}>
