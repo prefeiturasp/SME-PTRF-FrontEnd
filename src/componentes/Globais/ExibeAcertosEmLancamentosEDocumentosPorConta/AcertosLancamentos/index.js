@@ -20,7 +20,8 @@ import useNumeroDocumentoTemplate
     from "../../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useNumeroDocumentoTemplate";
 import {
     addDetalharAcertos,
-    limparDetalharAcertos
+    limparDetalharAcertos,
+    origemPagina
 } from "../../../../store/reducers/componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeLancamentos/DetalharAcertos/actions";
 import {useDispatch} from "react-redux";
 import {useHistory} from "react-router-dom";
@@ -318,6 +319,7 @@ const AcertosLancamentos = ({
     const addDispatchRedireciona = (lancamentos) => {
         dispatch(limparDetalharAcertos())
         dispatch(addDetalharAcertos(lancamentos))
+        dispatch(origemPagina("dre-detalhe-prestacao-de-contas-resumo-acertos"))
         history.push(`/dre-detalhe-prestacao-de-contas-detalhar-acertos/${prestacaoDeContas.uuid}`)
     }
 
