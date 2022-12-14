@@ -55,6 +55,7 @@ import {RelatorioConsolidadoEmTela} from "../componentes/dres/RelatorioConsolida
 import {RelatorioConsolidadoDadosDasUes} from "../componentes/dres/RelatorioConsolidado/RelatorioConsolidadoDadosDasUes";
 import {PainelParametrizacoesPage} from "../paginas/SME/Parametrizacoes/PainelParametrizacoes";
 import {AcompanhamentoPcsSmePage} from "../paginas/SME/PrestacaoDeContas/AcompanhamentoPcsSme";
+import {AcompanhamentoPcsPorDre} from "../paginas/SME/PrestacaoDeContas/AcompanhamentoPcsSmePorDre";
 import {RelatorioConsolidadoPage} from "../paginas/SME/PrestacaoDeContas/RelatorioConsolidado";
 import { AcompanhamentoRelatorioConsolidadosSmeListagem } from "../componentes/sme/AcompanhamentoRelatoriosConsolidadosSME/AcompanhamentoRelatoriosConsolidadosSmeListagem";
 import {AcoesDasAssociacoes} from "../componentes/sme/Parametrizacoes/Estrutura/AcoesDasAssociacoes";
@@ -419,6 +420,12 @@ const routesConfig = [
         exact: true,
         path: "/acompanhamento-pcs-sme",
         component: AcompanhamentoPcsSmePage,
+        permissoes: ['access_acompanhamento_pc_sme'],
+    },
+    {
+        exact: true,
+        path: "/acompanhamento-pcs-sme/:dre_uuid?/:periodo_uuid?",
+        component: AcompanhamentoPcsPorDre,
         permissoes: ['access_acompanhamento_pc_sme'],
     },
     {

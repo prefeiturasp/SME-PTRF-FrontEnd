@@ -1,14 +1,14 @@
 import React from "react";
+import {Link} from "react-router-dom";
 
 import {DataTable} from 'primereact/datatable';
-
 import {Column} from 'primereact/column';
 
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEye, faCheckCircle, faTimesCircle} from "@fortawesome/free-solid-svg-icons";
 
 
-export const ResumoPorDre = ({resumoPorDre, statusPeriodo}) => {
+export const ResumoPorDre = ({resumoPorDre, statusPeriodo, periodoEscolhido}) => {
 
     const periodoEmAndamento = statusPeriodo ? statusPeriodo.cor_idx  == 1 : true;
 
@@ -53,18 +53,22 @@ export const ResumoPorDre = ({resumoPorDre, statusPeriodo}) => {
     };
 
     const acoesTemplate = (rowData) => {
+        let url = `/acompanhamento-pcs-sme/${rowData.dre.uuid}/${periodoEscolhido}`;
 
         return (
             <div>
-                <button
-                    onClick={() => ({})}
-                    className="btn btn-link"
+                <Link
+                    to={{
+                        pathname: `${url}`,
+                        state: {nome_dre: rowData.dre.nome}
+                    }}
+                    className={`btn btn-link`}
                 >
                     <FontAwesomeIcon
                         style={{marginRight: "0", color: '#00585E'}}
                         icon={faEye}
                     />
-                </button>
+                </Link>
             </div>
         )
     };

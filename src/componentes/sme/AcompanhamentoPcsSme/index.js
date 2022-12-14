@@ -98,7 +98,7 @@ export const AcompanhamentoPcsSme = () => {
                         statusPeriodo={statusPeriodo}
                     />
                     <h4 style={TituloStyle}>Resumo por diretoria regional</h4>
-                    <ResumoPorDre resumoPorDre={resumoPorDre} statusPeriodo={statusPeriodo}/>
+                    <ResumoPorDre resumoPorDre={resumoPorDre} statusPeriodo={statusPeriodo} periodoEscolhido={periodoEscolhido}/>
                 </>
             }
         </>
