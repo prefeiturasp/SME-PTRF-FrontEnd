@@ -21,8 +21,20 @@ export const NotificacaoContextProvider = ({children}) => {
 
     const [qtdeNotificacoesNaoLidas, setQtdeNotificacoesNaoLidas] = useState(true);
     const [temNotificacaoDevolucaoNaoLida, setTemNotificacaoDevolucaoNaoLida] = useState(true);
-    const [exibeModalTemDevolucao, setExibeModalTemDevolucao] = useState(localStorage.getItem("NOTIFICAR_DEVOLUCAO_REFERENCIA") !== 'null');
     const [exibeMensagemFixaTemDevolucao, setExibeMensagemFixaTemDevolucao] = useState(false);
+
+    const deveExibirModalDevolucao = () => {
+        let storage = localStorage.getItem("NOTIFICAR_DEVOLUCAO_REFERENCIA");
+
+        if(storage === null || storage === "null"){
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+
+    const [exibeModalTemDevolucao, setExibeModalTemDevolucao] = useState(deveExibirModalDevolucao());
 
     const getQtdeNotificacoesNaoLidas = async () =>{
         let qtde = await getQuantidadeNaoLidas();
