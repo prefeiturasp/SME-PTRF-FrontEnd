@@ -46,8 +46,24 @@ export const DashboardCardPorDiretoria = ({itensDashboard, statusPeriodo}) => {
 
     return (
         <>
-            <div className="row mt-4">
-                {itensDashboard && itensDashboard?.cards?.map((card, index) => 
+        <div className="row mt-4">
+            {
+            statusPeriodo.status_txt === "Período concluído." ?
+            itensDashboard && itensDashboard?.cards?.slice(-3)?.map((card, index) =>
+                <div key={index} className="col-sm-12 col-md-4 col-xl-3 mb-4 ">
+                    <div className="card h-100 container-cards-dre-dashboard" style={card.status === 'TOTAL_UNIDADES' ? cardTotalStyle : {}}>
+                        <div className="card-header">
+                            {card.titulo}
+                        </div>
+                        <hr className="mt-0 mb-0 ml-3 mr-3"/>
+                        <div className="card-body">
+                            <p className="card-text card-qtde-associacoes  mb-0 pb-3"
+                            style={card.status !== 'TOTAL_UNIDADES' ? cardQuantidadeStyleByStatus[idxStyle] : cardQuantidadeStyleByStatus['TOTAL']}>{card.quantidade_prestacoes}</p>
+                        </div>
+                    </div>
+                </div>
+            ) :
+                itensDashboard && itensDashboard?.cards?.map((card, index) => 
                     <div key={index} className="col-sm-12 col-md-4 col-xl-3 mb-4 ">
                         <div className="card h-100 container-cards-dre-dashboard" style={card.status === 'TOTAL_UNIDADES' ? cardTotalStyle : {}}>
                             <div className="card-header">
@@ -61,7 +77,7 @@ export const DashboardCardPorDiretoria = ({itensDashboard, statusPeriodo}) => {
                         </div>
                     </div>
                 )}
-            </div>
+        </div>
         </>
     )
 };

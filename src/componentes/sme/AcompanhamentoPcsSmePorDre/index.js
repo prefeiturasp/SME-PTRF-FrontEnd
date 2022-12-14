@@ -6,7 +6,7 @@ import {getPeriodos} from "../../../services/sme/DashboardSme.service";
 import {getItensDashboard} from "../../../services/sme/DashboardSme.service";
 import {getItensDashboardComDreUuid} from "../../../services/dres/RelatorioConsolidado.service"
 import {SelectPeriodo} from "../AcompanhamentoPcsSme/SelectPeriodo";
-import {BarraDeStatus} from "../AcompanhamentoPcsSme/./BarraDeStatus";
+import {BarraDeStatusPorDiretoria} from "./BarraDeStatusPorDiretoria";
 import {BarraTotalAssociacoes} from "./BarraTotalAssociacoes";
 import {DashboardCardPorDiretoria} from "./DashboardCardPorDiretoria";
 import {ResumoPorDre} from "../AcompanhamentoPcsSme/./ResumoPorDre";
@@ -86,8 +86,8 @@ export const AcompanhamentoPcsSmePorDre = (params) => {
                 <>
                     {statusPeriodo &&
                     <>
-                        <BarraDeStatus
-                        statusRelatorio={statusPeriodo}
+                        <BarraDeStatusPorDiretoria
+                            statusRelatorio={statusPeriodo}
                         />
                         <div className="titulo-voltar">
                                 <h4 className="titulo-pagina-perstacao-por-dre">{params.nomeDre}</h4>
