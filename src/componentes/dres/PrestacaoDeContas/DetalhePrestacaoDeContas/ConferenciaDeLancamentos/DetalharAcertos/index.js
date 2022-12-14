@@ -177,7 +177,7 @@ export const DetalharAcertos = () => {
 
     const onClickBtnVoltar = () => {
         if(origem && origem === "dre-detalhe-prestacao-de-contas-resumo-acertos"){
-            history.push(`/dre-detalhe-prestacao-de-contas-resumo-acertos/${prestacao_conta_uuid}`)
+            history.push(`/dre-detalhe-prestacao-de-contas-resumo-acertos/${prestacao_conta_uuid}#tabela-acertos-lancamentos`)
         }
         else{
             history.push(`/dre-detalhe-prestacao-de-contas/${prestacao_conta_uuid}#conferencia_de_lancamentos`)
