@@ -9,7 +9,6 @@ import {SelectPeriodo} from "../AcompanhamentoPcsSme/SelectPeriodo";
 import {BarraDeStatusPorDiretoria} from "./BarraDeStatusPorDiretoria";
 import {BarraTotalAssociacoes} from "./BarraTotalAssociacoes";
 import {DashboardCardPorDiretoria} from "./DashboardCardPorDiretoria";
-import {ResumoPorDre} from "../AcompanhamentoPcsSme/./ResumoPorDre";
 import Loading from "../../../utils/Loading";
 import './style.scss'
 
@@ -112,8 +111,6 @@ export const AcompanhamentoPcsSmePorDre = (params) => {
                         itensDashboard={itensDashboard}
                         statusPeriodo={statusPeriodo}
                     />
-                    <h4 style={TituloStyle}>Resumo por diretoria regional</h4>
-                    <ResumoPorDre resumoPorDre={resumoPorDre} statusPeriodo={statusPeriodo}/>
                 </>
             }
         </>
