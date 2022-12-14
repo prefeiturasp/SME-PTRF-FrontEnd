@@ -67,7 +67,8 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEResumoAcertos = () => {
     }, [getConsolidadoDREUuid])
 
     useEffect(() => {
-        getDetalhamentoConferenciaDocumentosHistorico(relatorioConsolidado?.analises_do_consolidado_dre[relatorioConsolidado?.analises_do_consolidado_dre.length - 2]?.uuid)
+        let indexConsolidado = tabAtual === 'conferencia-atual' ? relatorioConsolidado?.analises_do_consolidado_dre.length - 1 : relatorioConsolidado?.analises_do_consolidado_dre.length - 2
+        getDetalhamentoConferenciaDocumentosHistorico(relatorioConsolidado?.analises_do_consolidado_dre[indexConsolidado]?.uuid)
     }, [relatorioConsolidado, tabAtual])
 
     const handleChangeDataLimiteDevolucao = (name, value) => {
