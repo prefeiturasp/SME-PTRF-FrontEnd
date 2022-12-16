@@ -348,7 +348,7 @@ const TabelaAcertosDocumentos = ({
         <section>
             <ModalJustificarNaoRealizacao
                 show={showModalJustificarNaoRealizacao}
-                titulo='Justificar não realização'
+                titulo='Justifique abaixo a não realização do acerto no documento.'
                 bodyText={modalBodyHTML()}
                 primeiroBotaoTexto="Cancelar"
                 primeiroBotaoCss="danger"
