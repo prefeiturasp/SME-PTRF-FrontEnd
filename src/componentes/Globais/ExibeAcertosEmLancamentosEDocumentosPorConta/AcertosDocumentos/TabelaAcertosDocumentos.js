@@ -240,7 +240,7 @@ const TabelaAcertosDocumentos = ({
                 <div className="modal-body">
 
                     <form>
-                        <label htmlFor="justifique-textarea">Você confirma que deseja justificar a não realização do acerto no documento?</label>
+                        <label htmlFor="justifique-textarea">Justifique abaixo a não realização do acerto no documento.</label>
                         <textarea
                             className="form-check form-check-inline w-100 pl-1"
                             style={{'resize': 'none'}}
@@ -348,7 +348,7 @@ const TabelaAcertosDocumentos = ({
         <section>
             <ModalJustificarNaoRealizacao
                 show={showModalJustificarNaoRealizacao}
-                titulo='Justifique abaixo a não realização do acerto no documento.'
+                titulo='Justificar não realização'
                 bodyText={modalBodyHTML()}
                 primeiroBotaoTexto="Cancelar"
                 primeiroBotaoCss="danger"

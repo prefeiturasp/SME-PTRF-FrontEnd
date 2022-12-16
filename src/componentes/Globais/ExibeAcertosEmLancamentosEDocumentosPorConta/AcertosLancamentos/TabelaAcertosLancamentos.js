@@ -246,7 +246,7 @@ export const TabelaAcertosLancamentos = ({
             <div className="modal-body">
 
                 <form>
-                    <label htmlFor="justifique-textarea">Você confirma que deseja justificar a não realização do acerto no lançamento?</label>
+                    <label htmlFor="justifique-textarea">Justifique abaixo a não realização do acerto no lançamento.</label>
                     <textarea
                         className="form-check form-check-inline w-100 pl-1"
                         style={{'resize': 'none'}}
@@ -374,7 +374,7 @@ export const TabelaAcertosLancamentos = ({
             <section>
                 <ModalJustificarNaoRealizacao
                     show={showModalJustificarNaoRealizacao}
-                    titulo='Justifique abaixo a não realização do acerto no lançamento.'
+                    titulo='Justificar não realização'
                     bodyText={modalBodyHTML()}
                     primeiroBotaoTexto="Cancelar"
                     primeiroBotaoCss="danger"
