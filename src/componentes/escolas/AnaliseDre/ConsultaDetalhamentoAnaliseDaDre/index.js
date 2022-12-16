@@ -145,9 +145,17 @@ const ConsultaDetalhamentoAnaliseDaDre = () => {
                 )
             }
 
+            else if(prestacaoDeContas.status === 'EM_ANALISE'){
+                return (
+                    <p className='fonte-16 mt-1'>
+                        Sua prestação de contas está {exibeLabelStatus(prestacaoDeContas.status)} pela DRE, contando com os seguintes acertos.
+                    </p>
+                )
+            }
+
             return (
                 <p className='fonte-16 mt-1'>
-                    Sua prestação de contas está {exibeLabelStatus(prestacaoDeContas.status)} pela DRE, contando com os seguintes acertos.
+                    Sua prestação de contas foi {exibeLabelStatus(prestacaoDeContas.status)} pela DRE, contando com os seguintes acertos.
                 </p>
             )
         }else{
