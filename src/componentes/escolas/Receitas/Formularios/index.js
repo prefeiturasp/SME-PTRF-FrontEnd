@@ -1094,7 +1094,7 @@ export const ReceitaForm = () => {
                 }
                 else{
                     setReadOnlyBtnAcao(true);
-                    setFormDateErrors("Permitido apenas datas dentro do período referente a prestação de contas em análise.")
+                    setFormDateErrors("Permitido apenas datas dentro do período referente à prestação de contas em análise.")
                 }
             } 
             catch (e) {
