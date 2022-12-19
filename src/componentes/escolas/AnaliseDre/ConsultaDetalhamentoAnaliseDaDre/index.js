@@ -199,6 +199,7 @@ const ConsultaDetalhamentoAnaliseDaDre = () => {
                         periodoFormatado={periodoFormatado}
                         podeAbrirModalAcertos={podeAbrirModalAcertos}
                         prestacaoContaUuid={prestacao_conta_uuid}
+                        statusPc={prestacaoDeContas.status}
                     />
                     <TextoSuperior
                         retornaTextoSuperior={retornaTextoSuperior}
