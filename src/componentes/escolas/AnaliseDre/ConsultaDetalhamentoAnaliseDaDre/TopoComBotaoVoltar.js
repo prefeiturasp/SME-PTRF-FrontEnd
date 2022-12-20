@@ -8,7 +8,7 @@ import {ASSOCIACAO_UUID} from "../../../../services/auth.service";
 import { SidebarLeftService } from "../../../../services/SideBarLeft.service";
 import { SidebarContext } from "../../../../context/Sidebar";
 
-export const TopoComBotaoVoltar = ({statusPc, prestacaoContaUuid, onClickVoltar, periodoFormatado, periodoUuid, podeAbrirModalAcertos}) => {
+export const TopoComBotaoVoltar = ({prestacaoContaUuid, onClickVoltar, periodoFormatado, periodoUuid, podeAbrirModalAcertos}) =>{
     const [periodo, setPeriodo] = useState(null);
     const history = useHistory()
     const contextSideBar = useContext(SidebarContext);
@@ -19,17 +19,6 @@ export const TopoComBotaoVoltar = ({statusPc, prestacaoContaUuid, onClickVoltar,
             return await getStatusPeriodoPorData(localStorage.getItem(ASSOCIACAO_UUID), data_inicial);
         }
     };
-
-    useEffect( () => {
-        verificaSePodeIrParaConcluidas()
-    }, [statusPc])
-
-    const verificaSePodeIrParaConcluidas = () => {
-        if (statusPc === 'DEVOLVIDA') {
-            return true
-        }
-        return false
-    }
 
     useEffect( () => {
         (async() => {
@@ -83,15 +72,12 @@ export const TopoComBotaoVoltar = ({statusPc, prestacaoContaUuid, onClickVoltar,
                 </button>
             </div>
             <div className="p-3 bd-highlight">
-                {verificaSePodeIrParaConcluidas() ?
-                    <button
-                        className="btn btn-success mr-2"
-                        onClick={handleVerificaAcertos}
-                    >
-                        Ir para concluir acerto 
-                    </button>
-                    : null
-                }
+                <button
+                    className="btn btn-success mr-2"
+                    onClick={handleVerificaAcertos}
+                >
+                    Ir para concluir acerto
+                </button>
             </div>
         </div>
     )
