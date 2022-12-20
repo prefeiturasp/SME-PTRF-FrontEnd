@@ -25,7 +25,6 @@ export const TopoComBotaoVoltar = ({statusPc, prestacaoContaUuid, onClickVoltar,
     }, [statusPc])
 
     const verificaSePodeIrParaConcluidas = () => {
-        console.log('statusPc', statusPc)
         if (statusPc === 'DEVOLVIDA') {
             return true
         }
