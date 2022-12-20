@@ -229,7 +229,7 @@ const AcertosLancamentos = ({
         let response = await postMarcarComoRealizadoLancamentoPrestacaoConta({"uuids_solicitacoes_acertos_lancamentos": lancamentosSelecionados.map(lanc => lanc.uuid)})
         if (response && !response.todas_as_solicitacoes_marcadas_como_realizado){
             // Reaproveitando o modal CheckNaoPermitido
-            setTituloModalCheckNaoPermitido('Solicitações marcadas como realizado')
+            setTituloModalCheckNaoPermitido('Não é possível marcar a solicitação como realizada')
             setTextoModalCheckNaoPermitido(`<p>${response.mensagem}</p>`)
             setShowModalCheckNaoPermitido(true)
         }
