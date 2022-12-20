@@ -156,7 +156,7 @@ const AcertosDocumentos = ({analiseAtualUuid, prestacaoDeContas, prestacaoDeCont
             let response = await postMarcarComoRealizadoDocumentoPrestacaoConta({"uuids_solicitacoes_acertos_documentos": documentosSelecionados.map(doc => doc.uuid)})
             if (response && !response.todas_as_solicitacoes_marcadas_como_realizado){
                 // Reaproveitando o modal CheckNaoPermitido
-                setTituloModalCheckNaoPermitido('Não é possível marcar a solicitação como realizada')
+                setTituloModalCheckNaoPermitido('Solicitações marcadas como realizado')
                 setTextoModalCheckNaoPermitido(`<p>${response.mensagem}</p>`)
                 setShowModalCheckNaoPermitido(true)
             }
