@@ -12,7 +12,6 @@ export const TopoComBotaoVoltar = ({statusPc, prestacaoContaUuid, onClickVoltar,
     const [periodo, setPeriodo] = useState(null);
     const history = useHistory()
     const contextSideBar = useContext(SidebarContext);
-    const valoresPcConcluida = ['APROVADA', 'APROVADA_RESSALVA', 'REPROVADA']
 
     const getStatusPrestacaoDeConta = async (periodo) => {
         if (periodo){
@@ -26,10 +25,11 @@ export const TopoComBotaoVoltar = ({statusPc, prestacaoContaUuid, onClickVoltar,
     }, [statusPc])
 
     const verificaSePodeIrParaConcluidas = () => {
-        if (valoresPcConcluida.includes(statusPc)) {
-            return false
+        console.log('statusPc', statusPc)
+        if (statusPc === 'DEVOLVIDA') {
+            return true
         }
-        return true
+        return false
     }
 
     useEffect( () => {
