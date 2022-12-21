@@ -1,0 +1,21 @@
+.ant-modal-footer{
+    text-align: center !important;
+}
+
+.modal-ant-design{
+    .ant-modal-footer{
+        .ant-btn-default{
+            color: #00585E;
+            background-color: #FFFFFF;
+            border: 1px solid #00585E;
+            border-radius: 3px;
+        }
+
+        .ant-btn-primary{
+            color: #FFFFFF;
+            background-color: #00585E;
+            border: 1px solid #00585E;
+            border-radius: 3px;
+        }
+    }
+}

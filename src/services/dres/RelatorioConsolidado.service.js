@@ -16,6 +16,10 @@ export const getConsolidadoDre = async (dre_uuid, periodo_uuid) => {
     return (await api.get(`/api/consolidados-dre/?dre=${dre_uuid}&periodo=${periodo_uuid}`, authHeader)).data
 };
 
+export const getConsolidadoDrePorUuid = async (consolidado_uuid) => {
+    return (await api.get(`/api/consolidados-dre/${consolidado_uuid}`, authHeader)).data
+};
+
 export const getConsolidadoDrePorUuidAtaDeParecerTecnico = async (ata_de_parecer_tecnico_uuid) => {
     return (await api.get(`/api/consolidados-dre/consolidado-dre-por-ata-uuid/?ata=${ata_de_parecer_tecnico_uuid}`, authHeader)).data
 };
@@ -176,4 +180,12 @@ export const getStatusAta = async (dre_uuid, periodo_uuid) => {
 
 export const getTrilhaStatus = async (dre_uuid, uuid_periodo) => {
     return (await api.get(`/api/consolidados-dre/trilha-de-status/?dre=${dre_uuid}&periodo=${uuid_periodo}`, authHeader)).data
+};
+
+export const getPcsRetificaveis = async (consolidado_uuid) => {
+    return (await api.get(`/api/consolidados-dre/${consolidado_uuid}/pcs-retificaveis/`, authHeader)).data
+};
+
+export const postRetificarPcs = async (consolidado_uuid, payload) => {
+    return (await api.post(`/api/consolidados-dre/${consolidado_uuid}/retificar/`, payload, authHeader)).data
 };

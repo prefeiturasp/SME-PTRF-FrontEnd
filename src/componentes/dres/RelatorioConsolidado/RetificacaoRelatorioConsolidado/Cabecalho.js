@@ -2,13 +2,13 @@ import React from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faArrowLeft} from "@fortawesome/free-solid-svg-icons";
 
-export const Cabecalho = ({relatorioConsolidado, onClickVoltar, formataPeriodo}) => {
+export const Cabecalho = ({referencia_publicacao, onClickVoltar, formataPeriodo}) => {
     return (
-        <div className="row p-2">
+        <div className="row pt-2">
             <div className="col-5">
-                <span className="referencia-e-periodo-relatorio">Referência do relatório:</span>
+                <span className="referencia-e-periodo-relatorio">Referência da publicação:</span>
                 <br/>
-                <span className="texto.referencia-e-periodo-relatorio">Publicação {relatorioConsolidado.tipo_relatorio}</span>
+                <span className="texto.referencia-e-periodo-relatorio">{referencia_publicacao}</span>
             </div>
 
             <div className="col-5">
