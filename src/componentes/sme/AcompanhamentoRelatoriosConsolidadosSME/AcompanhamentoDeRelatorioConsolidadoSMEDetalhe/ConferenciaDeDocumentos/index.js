@@ -12,7 +12,7 @@ const ConferenciaDeDocumentos = ({relatorioConsolidado, getConsolidadoDREUuid, s
     const [loadingDocumentosRelatorio, setLoadingDocumentosRelatorio] = useState(true)
 
     const editavel = relatorioConsolidado.status_sme === 'EM_ANALISE' ? true : false
-    const uuid_analise_atual = relatorioConsolidado && relatorioConsolidado.analise_atual && relatorioConsolidado.analise_atual.uuid ? relatorioConsolidado.analise_atual.uuid : null
+    const uuid_analise_atual = relatorioConsolidado && relatorioConsolidado.analise_atual && relatorioConsolidado.analise_atual.uuid ? relatorioConsolidado.analise_atual.uuid : relatorioConsolidado?.analises_do_consolidado_dre[relatorioConsolidado?.analises_do_consolidado_dre.length - 1]?.uuid
 
     const carregaListaDeDocumentosRelatorio = useCallback(async () => {
         setLoadingDocumentosRelatorio(true)

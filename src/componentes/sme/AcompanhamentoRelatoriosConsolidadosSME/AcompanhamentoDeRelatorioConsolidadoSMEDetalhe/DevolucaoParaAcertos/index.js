@@ -19,6 +19,18 @@ const DevolucaoParaAcertos = ({relatorioConsolidado, refreshConsolidado, disable
         setDataLimite(value)
     }
 
+
+    const verificaAnaliseAtual = () => {
+        if (!relatorioConsolidado || !relatorioConsolidado.analises_do_consolidado_dre) {
+            return null;
+        }
+        if (relatorioConsolidado.status_sme !== 'ANALISADO') {
+            return relatorioConsolidado.analise_atual?.uuid;
+        } else {
+            return relatorioConsolidado.analises_do_consolidado_dre[relatorioConsolidado.analises_do_consolidado_dre.length - 1]?.uuid;
+        }
+    }
+
     const devolverParaAcertos = useCallback(async () =>{
         setLoading(true);
         setBotaoDevolverParaAcertoDisabled(true)
@@ -52,7 +64,7 @@ const DevolucaoParaAcertos = ({relatorioConsolidado, refreshConsolidado, disable
                     <Link
                         onClick={ (event) => {return disableBtnVerResumo() ? event.preventDefault(): event}}
                         to={{
-                            pathname: `/analise-relatorio-consolidado-dre-detalhe-acertos-resumo/${relatorioConsolidado?.analise_atual?.uuid}`,
+                            pathname: `/analise-relatorio-consolidado-dre-detalhe-acertos-resumo/${verificaAnaliseAtual()}`,
                         }}
                         className="btn btn-outline-success mr-2"
                         disabled={disableBtnVerResumo()}

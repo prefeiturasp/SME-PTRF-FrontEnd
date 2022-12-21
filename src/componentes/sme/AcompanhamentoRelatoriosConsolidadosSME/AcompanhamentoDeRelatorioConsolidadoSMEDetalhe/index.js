@@ -18,6 +18,7 @@ import Loading from "../../../../utils/Loading";
 
 import "./../../../dres/PrestacaoDeContas/prestacao-de-contas.scss"
 import DevolucaoParaAcertos from "./DevolucaoParaAcertos";
+import { BarraDeStatus } from './BarraDeStatus'
 
 export const AcompanhamentoDeRelatorioConsolidadoSMEDetalhe = () => {
     const params = useParams()
@@ -34,6 +35,7 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEDetalhe = () => {
     const [selectedResponsavel, setSelectedResponsavel] = useState(null);
     const [habilitaVerResumoComentariosNotificados, setHabilitaVerResumoComentariosNotificados] = useState(false);
     const [habilitaVerResumoAcertoEmDocumento, setHabilitaVerResumoAcertoEmDocumento] = useState(false);
+    const [statusRelatorio, setStatusRelatorio] = useState({'cor_idx': 1, 'status_txt': 'Análise de prestação de contas concluída em '});
 
     const getConsolidadoDREUuid = useCallback(async () => {
         let {consolidado_dre_uuid} = params
@@ -227,7 +229,7 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEDetalhe = () => {
     }
 
     const disableBtnVerResumo = () => {
-        let disabled = true
+        let disabled = false
         if(habilitaVerResumoAcertoEmDocumento){
             disabled = false;
         }
@@ -258,6 +260,11 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEDetalhe = () => {
             :
                 <>
                     <div className="page-content-inner">
+                        {relatorioConsolidado.status_sme === "ANALISADO" ?
+                        <BarraDeStatus
+                            statusRelatorio={statusRelatorio}
+                            relatorioConsolidado={relatorioConsolidado}
+                        /> : null }
                         <Cabecalho relatorioConsolidado={relatorioConsolidado}/>
                         <BotoesAvancarRetroceder
                             relatorioConsolidado={relatorioConsolidado}
