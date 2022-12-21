@@ -28,8 +28,6 @@ const ConferenciaDeDocumentos = ({relatorioConsolidado, getConsolidadoDREUuid, s
         getConsolidadoDREUuid()
 
     }, [params, getConsolidadoDREUuid, uuid_analise_atual])
-        console.log("🚀 ~ file: index.js:33 ~ carregaListaDeDocumentosRelatorio ~ uuid_analise_atual", uuid_analise_atual)
-        console.log("🚀 ~ file: index.js:33 ~ carregaListaDeDocumentosRelatorio ~ uuid_analise_atual", uuid_analise_atual)
 
     useEffect(() => {
         carregaListaDeDocumentosRelatorio()
