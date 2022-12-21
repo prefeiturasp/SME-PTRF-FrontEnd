@@ -19,6 +19,17 @@ export const TopoComBotoes = ({relatorioConsolidado, dataLimiteDevolucao, tabAtu
         document.location.reload()
     }, [dataLimiteDevolucao, relatorioConsolidado, setLoading])
 
+    const obterUuid = () => {
+        if (relatorioConsolidado?.analise_atual) {
+            return relatorioConsolidado.analise_atual.consolidado_dre;
+        } else if (relatorioConsolidado?.analises_do_consolidado_dre) {
+            return relatorioConsolidado.analises_do_consolidado_dre[relatorioConsolidado.analises_do_consolidado_dre.length - 1]?.consolidado_dre;
+        } else {
+            return null;
+        }
+    }
+    
+
     let history = useHistory();
 
     return (
@@ -29,9 +40,7 @@ export const TopoComBotoes = ({relatorioConsolidado, dataLimiteDevolucao, tabAtu
                 </h2>
                 <div className="container-botoes">
                     <Button variant="outline-success"
-                        onClick={
-                            () => history.push('/analise-relatorio-consolidado-dre-detalhe/'+ relatorioConsolidado.analise_atual.consolidado_dre + '/')
-                    }>
+                        onClick={() => history.push(`/analise-relatorio-consolidado-dre-detalhe/${obterUuid()}/`)}>
                         Voltar
                     </Button>
                     {tabAtual === 'conferencia-atual' &&              

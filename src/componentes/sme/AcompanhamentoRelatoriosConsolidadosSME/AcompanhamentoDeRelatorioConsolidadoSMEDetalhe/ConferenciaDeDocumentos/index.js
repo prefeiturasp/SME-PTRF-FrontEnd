@@ -12,7 +12,7 @@ const ConferenciaDeDocumentos = ({relatorioConsolidado, getConsolidadoDREUuid, s
     const [loadingDocumentosRelatorio, setLoadingDocumentosRelatorio] = useState(true)
 
     const editavel = relatorioConsolidado.status_sme === 'EM_ANALISE' ? true : false
-    const uuid_analise_atual = relatorioConsolidado && relatorioConsolidado.analise_atual && relatorioConsolidado.analise_atual.uuid ? relatorioConsolidado.analise_atual.uuid : null
+    const uuid_analise_atual = relatorioConsolidado && relatorioConsolidado.analise_atual && relatorioConsolidado.analise_atual.uuid ? relatorioConsolidado.analise_atual.uuid : relatorioConsolidado?.analises_do_consolidado_dre[relatorioConsolidado?.analises_do_consolidado_dre.length - 1]?.uuid
 
     const carregaListaDeDocumentosRelatorio = useCallback(async () => {
         setLoadingDocumentosRelatorio(true)
@@ -28,6 +28,8 @@ const ConferenciaDeDocumentos = ({relatorioConsolidado, getConsolidadoDREUuid, s
         getConsolidadoDREUuid()
 
     }, [params, getConsolidadoDREUuid, uuid_analise_atual])
+        console.log("🚀 ~ file: index.js:33 ~ carregaListaDeDocumentosRelatorio ~ uuid_analise_atual", uuid_analise_atual)
+        console.log("🚀 ~ file: index.js:33 ~ carregaListaDeDocumentosRelatorio ~ uuid_analise_atual", uuid_analise_atual)
 
     useEffect(() => {
         carregaListaDeDocumentosRelatorio()
