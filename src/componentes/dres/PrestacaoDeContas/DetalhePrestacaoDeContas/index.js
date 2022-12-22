@@ -1017,6 +1017,20 @@ export const DetalhePrestacaoDeContas = () =>{
         return lista_uuid;
     }
 
+    const pcEmRetificacao = () => {
+        if(prestacaoDeContas){
+            return prestacaoDeContas.em_retificacao;
+        }
+    }
+
+    const bloqueiaBtnRetroceder = () => {
+        if(prestacaoDeContas && prestacaoDeContas.status === "EM_ANALISE" && pcEmRetificacao()){
+            return true;
+        }
+        
+        return false;
+    }
+
     return(
         <PaginasContainer>
             <h1 className="titulo-itens-painel mt-5">Acompanhamento das Prestações de Contas</h1>
@@ -1092,6 +1106,7 @@ export const DetalhePrestacaoDeContas = () =>{
                                     ajusteSaldoSalvoComSucesso={ajusteSaldoSalvoComSucesso}
                                     onClickDeletarAcertoSaldo={onClickDeletarAcertoSaldo}
                                     setAnalisesDeContaDaPrestacao={setAnalisesDeContaDaPrestacao}
+                                    bloqueiaBtnRetroceder={bloqueiaBtnRetroceder}
                                 />
                         }
                     </>
