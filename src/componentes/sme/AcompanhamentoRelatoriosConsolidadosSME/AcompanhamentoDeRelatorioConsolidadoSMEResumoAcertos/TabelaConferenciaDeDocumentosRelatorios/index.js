@@ -5,7 +5,7 @@ import { detalhamentoConferenciaDocumentos } from "../../../../../services/sme/A
 
 import './styles.scss'
 
-export const TabelaConferenciaDeDocumentosRelatorios = ({ relatorioConsolidado, listaDocumentoHistorico, listaDeDocumentosRelatorio, setListaDeDocumentosRelatorio, tabAtual, getDetalhamentoConferenciaDocumentosHistorico }) => {
+export const TabelaConferenciaDeDocumentosRelatorios = ({ relatorioConsolidado, listaDocumentoHistorico, listaDeDocumentosRelatorio, setListaDeDocumentosRelatorio, tabAtual }) => {
     
     const rowsPerPage = 5
     const [expandedRowsDocumentos, setExpandedRowsDocumentos] = useState(null);
