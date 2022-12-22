@@ -53,6 +53,7 @@ import RelatorioConsolidado from "../componentes/dres/RelatorioConsolidado";
 import {RelatorioConsolidadoApuracao} from "../componentes/dres/RelatorioConsolidado/RelatorioConsolidadoApuracao";
 import {RelatorioConsolidadoEmTela} from "../componentes/dres/RelatorioConsolidado/RelatorioConsolidadoEmTela";
 import {RelatorioConsolidadoDadosDasUes} from "../componentes/dres/RelatorioConsolidado/RelatorioConsolidadoDadosDasUes";
+import RetificacaoRelatorioConsolidado from "../componentes/dres/RelatorioConsolidado/RetificacaoRelatorioConsolidado";
 import {PainelParametrizacoesPage} from "../paginas/SME/Parametrizacoes/PainelParametrizacoes";
 import {AcompanhamentoPcsSmePage} from "../paginas/SME/PrestacaoDeContas/AcompanhamentoPcsSme";
 import {AcompanhamentoPcsPorDre} from "../paginas/SME/PrestacaoDeContas/AcompanhamentoPcsSmePorDre";
@@ -378,6 +379,12 @@ const routesConfig = [
         exact: true,
         path: "/dre-relatorio-consolidado-dados-das-ues/:periodo_uuid/:conta_uuid/:ja_publicado?",
         component: RelatorioConsolidadoDadosDasUes,
+        permissoes: ['access_relatorio_consolidado_dre'],
+    },
+    {
+        exact: true,
+        path: "/dre-relatorio-consolidado-retificacao/:relatorio_consolidado_uuid/",
+        component: RetificacaoRelatorioConsolidado,
         permissoes: ['access_relatorio_consolidado_dre'],
     },
     {

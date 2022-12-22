@@ -8,10 +8,22 @@ import {ASSOCIACAO_UUID} from "../../../../services/auth.service";
 import { SidebarLeftService } from "../../../../services/SideBarLeft.service";
 import { SidebarContext } from "../../../../context/Sidebar";
 
-export const TopoComBotaoVoltar = ({prestacaoContaUuid, onClickVoltar, periodoFormatado, periodoUuid, podeAbrirModalAcertos}) =>{
+export const TopoComBotaoVoltar = ({statusPc, prestacaoContaUuid, onClickVoltar, periodoFormatado, periodoUuid, podeAbrirModalAcertos}) => {
+
     const [periodo, setPeriodo] = useState(null);
     const history = useHistory()
     const contextSideBar = useContext(SidebarContext);
+
+    useEffect( () => {
+        verificaSePodeIrParaConcluidas()
+    }, [statusPc])
+
+    const verificaSePodeIrParaConcluidas = () => {
+        if (statusPc === 'DEVOLVIDA') {
+            return true
+        }
+        return false
+    }
 
     const getStatusPrestacaoDeConta = async (periodo) => {
         if (periodo){
@@ -72,12 +84,15 @@ export const TopoComBotaoVoltar = ({prestacaoContaUuid, onClickVoltar, periodoFo
                 </button>
             </div>
             <div className="p-3 bd-highlight">
-                <button
-                    className="btn btn-success mr-2"
-                    onClick={handleVerificaAcertos}
-                >
-                    Ir para concluir acerto
-                </button>
+                {verificaSePodeIrParaConcluidas() ?
+                    <button
+                        className="btn btn-success mr-2"
+                        onClick={handleVerificaAcertos}
+                    >
+                        Ir para concluir acerto 
+                    </button>
+                    : null
+                }
             </div>
         </div>
     )
