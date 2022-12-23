@@ -9,6 +9,7 @@ const Cabecalho = ({prestacaoDeContas, exibeSalvar, metodoSalvarAnalise, btnSalv
 
     const [periodoTexto, setPeriodoTexto] = useState('')
     const [publicacaoTexto, setPublicacaoTexto] = useState('')
+    const [retificacaoTexto, setRetificacaoTexto] = useState('')
     const [pcPublicada, setPcPublicada] = useState(false)
 
     const carregaPeriodo = useCallback(async ()=>{
@@ -29,10 +30,21 @@ const Cabecalho = ({prestacaoDeContas, exibeSalvar, metodoSalvarAnalise, btnSalv
      }
     }, [prestacaoDeContas])
 
+    const verificaRetificacao = useCallback( () => {
+        if (prestacaoDeContas.em_retificacao){
+            let textoRetificacao = `Essa PC consta da ${prestacaoDeContas.referencia_consolidado_dre}`
+            setRetificacaoTexto(textoRetificacao);
+        }
+    }, [prestacaoDeContas])
+
     useEffect(()=>{
         carregaPeriodo()
         verificaPublicacao()
     }, [carregaPeriodo])
+
+    useEffect(()=>{
+        verificaRetificacao()
+    }, [verificaRetificacao])
 
     return (
         <>
@@ -46,6 +58,9 @@ const Cabecalho = ({prestacaoDeContas, exibeSalvar, metodoSalvarAnalise, btnSalv
                         }
                         {publicacaoTexto &&
                             <p className='fonte-16'><strong>{publicacaoTexto}</strong></p>
+                        }
+                        {retificacaoTexto &&
+                            <p className='fonte-16'><strong>{retificacaoTexto}</strong></p>
                         }
                     </div>
                     <div className="p-2 bd-highlight">
