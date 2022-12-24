@@ -3,12 +3,15 @@ import {Link} from 'react-router-dom'
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faArrowLeft} from "@fortawesome/free-solid-svg-icons";
 import {getPeriodos} from "../../../services/sme/DashboardSme.service";
+import {getResumoDRE} from "../../../services/sme/AcompanhamentoSME.service"
 import {getItensDashboard} from "../../../services/sme/DashboardSme.service";
 import {getItensDashboardComDreUuid} from "../../../services/dres/RelatorioConsolidado.service"
 import {SelectPeriodo} from "../AcompanhamentoPcsSme/SelectPeriodo";
 import {BarraDeStatusPorDiretoria} from "./BarraDeStatusPorDiretoria";
 import {BarraTotalAssociacoes} from "./BarraTotalAssociacoes";
 import {DashboardCardPorDiretoria} from "./DashboardCardPorDiretoria";
+import {ResumoPorUnidadeEducacional} from "./ResumoPorUnidadeEducacional";
+import {FiltroUnidadeEducacional} from "./FiltroUnidadeEducacional";
 import Loading from "../../../utils/Loading";
 import './style.scss'
 
@@ -17,7 +20,7 @@ export const AcompanhamentoPcsSmePorDre = (params) => {
     const [periodos, setPeriodos] = useState(false);
     const [periodoEscolhido, setPeriodoEsolhido] = useState(false);
     const [itensDashboard, setItensDashboard] = useState(null);
-    const [resumoPorDre, setResumoPorDre] = useState([]);
+    const [unidadesEducacionais, setUnidadeseducacionais] = useState([])
     const [loading, setLoading] = useState(false);
     const [statusPeriodo, setStatusPeriodo] = useState(false);
 
@@ -43,28 +46,17 @@ export const AcompanhamentoPcsSmePorDre = (params) => {
         setLoading(true);
         if (periodoEscolhido){
             let itensPorCard = await getItensDashboardComDreUuid(params.periodo_uuid, params.dre_uuid);
+            let unidadesEducacionaisResumo = await getResumoDRE(params.dre_uuid, params.periodo_uuid)
             let itens = await getItensDashboard(periodoEscolhido)
-
-            let resumoPorDre = itens && itens.resumo_por_dre ? itens.resumo_por_dre : [];
             setItensDashboard(itensPorCard);
-            setStatusPeriodo(itens.status);
-            setResumoPorDre(resumoPorDre);
+            setStatusPeriodo(itens.status)
+            setUnidadeseducacionais(unidadesEducacionaisResumo);
         }
         setLoading(false);
     };
 
     const handleChangePeriodos = async (uuid_periodo) => {
         setPeriodoEsolhido(uuid_periodo)
-    };
-
-    const TituloStyle = {
-        fontFamily: "Roboto",
-        fontStyle: "normal",
-        fontWeight: "700",
-        fontSize: "18px",
-        lineHeight: "32px",
-        color: "#42474A",
-        paddingTop: "16px",
     };
 
     return (
@@ -110,6 +102,14 @@ export const AcompanhamentoPcsSmePorDre = (params) => {
                     <DashboardCardPorDiretoria
                         itensDashboard={itensDashboard}
                         statusPeriodo={statusPeriodo}
+                    />
+                    <h4> Resumo por Unidade Educacional </h4>
+                    <FiltroUnidadeEducacional
+                        periodoUuid={params.periodo_uuid}
+                        dreUuid={params.dre_uuid}
+                    />
+                    <ResumoPorUnidadeEducacional 
+                        unidadesEducacionais={unidadesEducacionais}
                     />
                 </>
             }

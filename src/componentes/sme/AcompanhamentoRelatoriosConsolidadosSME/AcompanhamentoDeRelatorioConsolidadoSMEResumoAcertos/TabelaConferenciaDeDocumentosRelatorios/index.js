@@ -19,6 +19,9 @@ export const TabelaConferenciaDeDocumentosRelatorios = ({ relatorioConsolidado, 
         setListaDeDocumentosRelatorio(documentosComAcertos)
     }, [relatorioConsolidado])
     
+    useEffect(() => {
+        
+    }, [listaDocumentoHistorico])
 
     useEffect(() => {
         carregaListaDeDocumentosRelatorio()

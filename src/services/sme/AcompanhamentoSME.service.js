@@ -8,6 +8,11 @@ const authHeader = {
     }
 }
 
+export const getResumoDRE = async (dre__uuid="", periodo_uuid="",  nome="", tipo_unidade='', devolucao_tesouro='', status='') => {
+    console.log("🚀 ~ file: AcompanhamentoSME.service.js:12 ~ getResumoDRE ~ status", status)
+    return (await api.get(`/api/prestacoes-contas/todos-os-status/?associacao__unidade__dre__uuid=${dre__uuid}&periodo__uuid=${periodo_uuid}${nome ? '&nome=' + nome : ''}${tipo_unidade ? '&tipo_unidade=' + tipo_unidade : ''}${devolucao_tesouro ? '&devolucao_tesouro=' + devolucao_tesouro : ''}${status ? '&status=' + status : ''}`, authHeader)).data
+};
+
 export const detalhamentoConsolidadoDRE = (uuid_consolidado) => {
     return api.get(`/api/consolidados-dre/detalhamento/?uuid=${uuid_consolidado}`, authHeader)
 }

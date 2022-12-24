@@ -12,6 +12,9 @@ export const VisualizaDevolucoes = ({relatorioConsolidado, dataLimiteDevolucao, 
         if(relatorioConsolidado?.status_sme === "DEVOLVIDO" || relatorioConsolidado?.status_sme === "ANALISADO"){
             setTabAtual('historico')
         }
+    }, [relatorioConsolidado?.status_sme])
+
+    useEffect(() => {
         if(typeof relatorioConsolidado?.analises_do_consolidado_dre !== 'undefined'){
 
             let sequenciaConferencia = relatorioConsolidado?.analises_do_consolidado_dre[relatorioConsolidado?.analises_do_consolidado_dre.length - 1]
@@ -27,7 +30,7 @@ export const VisualizaDevolucoes = ({relatorioConsolidado, dataLimiteDevolucao, 
 
             setAnaliseSequenciaVisualizacao(newAnaliseSequencia)
         }
-    }, [relatorioConsolidado])
+    }, [relatorioConsolidado, relatorioConsolidado?.status_sme])
     
     return (
 

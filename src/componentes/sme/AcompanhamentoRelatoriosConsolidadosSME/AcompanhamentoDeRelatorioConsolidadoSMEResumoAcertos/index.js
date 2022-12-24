@@ -116,7 +116,6 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEResumoAcertos = () => {
                     marginBottom="0"
                 />
             }
-            {relatorioConsolidado?.analises_do_consolidado_dre?.length !== 1 && !(relatorioConsolidado?.analises_do_consolidado_dre[relatorioConsolidado?.analises_do_consolidado_dre.length - 1].data_devolucao) ?
             <VisualizaDevolucoes
                 dataLimiteDevolucao={dataLimiteDevolucao}
                 handleChangeDataLimiteDevolucao={handleChangeDataLimiteDevolucao}
@@ -127,9 +126,7 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEResumoAcertos = () => {
                 listaDocumentoHistorico={listaDocumentoHistorico}
                 setAnaliseSequenciaVisualizacao={setAnaliseSequenciaVisualizacao}
                 analiseSequenciaVisualizacao={analiseSequenciaVisualizacao}
-                
             />
-            : null }
             {!loading ? (
                 typeof relatorioConsolidado?.status_sme === 'DEVOLVIDO' || (relatorioConsolidado?.status_sme == 'EM_ANALISE' || relatorioConsolidado?.analises_do_consolidado_dre.length) !== 'undefined' &&
                 <>
