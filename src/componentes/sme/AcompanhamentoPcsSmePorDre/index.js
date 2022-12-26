@@ -20,7 +20,7 @@ export const AcompanhamentoPcsSmePorDre = (params) => {
     const [periodos, setPeriodos] = useState(false);
     const [periodoEscolhido, setPeriodoEsolhido] = useState(false);
     const [itensDashboard, setItensDashboard] = useState(null);
-    const [unidadesEducacionais, setUnidadeseducacionais] = useState([])
+    const [unidadesEducacionais, setUnidadesEducacionais] = useState([])
     const [loading, setLoading] = useState(false);
     const [statusPeriodo, setStatusPeriodo] = useState(false);
 
@@ -50,7 +50,7 @@ export const AcompanhamentoPcsSmePorDre = (params) => {
             let itens = await getItensDashboard(periodoEscolhido)
             setItensDashboard(itensPorCard);
             setStatusPeriodo(itens.status)
-            setUnidadeseducacionais(unidadesEducacionaisResumo);
+            setUnidadesEducacionais(unidadesEducacionaisResumo);
         }
         setLoading(false);
     };
@@ -107,6 +107,7 @@ export const AcompanhamentoPcsSmePorDre = (params) => {
                     <FiltroUnidadeEducacional
                         periodoUuid={params.periodo_uuid}
                         dreUuid={params.dre_uuid}
+                        setUnidadesEducacionais={setUnidadesEducacionais}
                     />
                     <ResumoPorUnidadeEducacional 
                         unidadesEducacionais={unidadesEducacionais}

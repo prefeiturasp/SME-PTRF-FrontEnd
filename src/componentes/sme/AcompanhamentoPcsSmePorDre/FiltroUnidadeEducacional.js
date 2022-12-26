@@ -6,19 +6,18 @@ import {getTabelaAssociacoes} from "../../../services/dres/Associacoes.service";
 import { Select } from 'antd';
 
 export const FiltroUnidadeEducacional = (props) => {
-
     const { Option } = Select;
     const [termo, setTermo] = useState('');
     const [tipoUnidade, setTipoUnidade] = useState('');
     const [tabelaAssociacoes, setTabelaAssociacoes] = useState({});
     const [devolucaoAoTesouro, setDevolucaoAoTesouro] = useState(false);
     const [status, setStatus] = useState([]);
-    const [unidadesEducacionais, setUnidadesEducacionais] = useState({});
+    const [tabelaStatusUnidade, setTabelaStatusUnidade] = useState({});
 
     const carregaTabelaPrestacaoDeContas = useCallback(async () => {
         let tabela_prestacoes = await getTabelasPrestacoesDeContas();
-        setUnidadesEducacionais(tabela_prestacoes);
-    }, [unidadesEducacionais]);
+        setTabelaStatusUnidade(tabela_prestacoes);
+    }, [getTabelasPrestacoesDeContas]);
 
     const buscaTabelaAssociacoes = async ()=>{
         let tabela_associacoes = await getTabelaAssociacoes();
@@ -31,7 +30,7 @@ export const FiltroUnidadeEducacional = (props) => {
 
     useEffect(() => {
         buscaTabelaAssociacoes();
-    }, [buscaTabelaAssociacoes]);
+    }, []);
 
     const handleOnChangeMultipleSelectStatus =  async (value) => {
         let name = "status"
@@ -71,13 +70,12 @@ export const FiltroUnidadeEducacional = (props) => {
         params.devolucao_ao_tesouro = devolucaoAoTesouro;
     }
     
-    if (status) {
-        const queryString = new URLSearchParams(status).toString();
-        params.status = decodeURIComponent(queryString)
+    if (status.status) {
+        params.status = status.status.join(',');
     }
     
-    let unidadesEducacionais = await getResumoDRE(params.dre_uuid, params.periodo_uuid, termo, tipoUnidade, devolucaoAoTesouro, params.status);
-    setUnidadesEducacionais(unidadesEducacionais);
+    let unidadesEducacionais = await getResumoDRE(params.dre_uuid, params.periodo_uuid, params.nome, params.tipo_unidade, devolucaoAoTesouro, params.status);
+    props.setUnidadesEducacionais(unidadesEducacionais)
     }
 
 
@@ -141,7 +139,7 @@ return (
             className='multiselect-lista-valores-reprogramados'
         >
             <Option value=''>Selecione um status</Option>
-                {unidadesEducacionais.status && unidadesEducacionais.status.length >  0 && unidadesEducacionais.status.map(item => (
+                {tabelaStatusUnidade.status && tabelaStatusUnidade.status.length >  0 && tabelaStatusUnidade.status.map(item => (
             <Option key={item.id} value={item.id}>{item.nome}</Option>
         ))}
         </Select>

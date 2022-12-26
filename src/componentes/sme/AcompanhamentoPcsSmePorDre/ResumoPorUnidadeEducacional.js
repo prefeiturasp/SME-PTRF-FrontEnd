@@ -1,5 +1,7 @@
 import React from "react";
 import useDataTemplate from "../../../hooks/Globais/useDataTemplate";
+import {MsgImgLadoDireito} from "../../Globais/Mensagens/MsgImgLadoDireito";
+import Img404 from "../../../assets/img/img-404.svg";
 import {DataTable} from 'primereact/datatable';
 import {Column} from 'primereact/column';
 
@@ -106,6 +108,8 @@ export const ResumoPorUnidadeEducacional = ({unidadesEducacionais}) => {
 
     return (
         <>
+        {
+            unidadesEducacionais.length ?
             <DataTable
                 value={unidadesEducacionais}
                 className="mt-3 datatable-footer-coad"
@@ -121,8 +125,12 @@ export const ResumoPorUnidadeEducacional = ({unidadesEducacionais}) => {
                 <Column field='' header='Técnico responsável' body={tecnicoResponsavelTemplate}/>
                 <Column field='' header='Devolução ao tesouro' body={devolucaoTesouroTemplate}/>
                 <Column field='' body={statusTemplate}/>
-            </DataTable>
-
+            </DataTable> : 
+                <MsgImgLadoDireito
+                texto='Nenhuma prestação retornada. Tente novamente com outros filtros'
+                img={Img404}
+            />
+        }   
         </>
     )
 }
