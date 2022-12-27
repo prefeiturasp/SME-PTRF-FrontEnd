@@ -2,22 +2,47 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Form, FormGroup, Label, Input, Button } from 'reactstrap';
 import {getTabelasPrestacoesDeContas} from "../../../services/dres/PrestacaoDeContas.service"
 import {getResumoDRE} from "../../../services/sme/AcompanhamentoSME.service"
+import {visoesService} from "../../../services/visoes.service";
 import {getTabelaAssociacoes} from "../../../services/dres/Associacoes.service";
+import {mantemEstadoAcompanhamentoDePcUnidade as meapcservice} from "../../../services/mantemEstadoAcompanhamentoDePcUnidadeEducacional.service";
 import { Select } from 'antd';
 
 export const FiltroUnidadeEducacional = (props) => {
+
     const { Option } = Select;
-    const [termo, setTermo] = useState('');
-    const [tipoUnidade, setTipoUnidade] = useState('');
+    const [termo, setTermo] = useState();
+    const [tipoUnidade, setTipoUnidade] = useState("");
     const [tabelaAssociacoes, setTabelaAssociacoes] = useState({});
     const [devolucaoAoTesouro, setDevolucaoAoTesouro] = useState(false);
-    const [status, setStatus] = useState([]);
+    const [status, setStatus] = useState({'status': []});
     const [tabelaStatusUnidade, setTabelaStatusUnidade] = useState({});
+
 
     const carregaTabelaPrestacaoDeContas = useCallback(async () => {
         let tabela_prestacoes = await getTabelasPrestacoesDeContas();
         setTabelaStatusUnidade(tabela_prestacoes);
     }, [getTabelasPrestacoesDeContas]);
+
+    useEffect(() => {
+        const acompanhamento = meapcservice.getAcompanhamentoDePcUnidadeUsuarioLogado(props.dreUuid);
+        if (acompanhamento) {
+        setTermo(acompanhamento.filtra_por_termo);
+        setTipoUnidade(acompanhamento.filtra_por_tipo_unidade);
+        setDevolucaoAoTesouro(acompanhamento.filtra_por_devolucao_tesouro);
+        setStatus({status:acompanhamento?.filtra_por_status ? acompanhamento.filtra_por_status?.split(',') : []});
+        }
+    }, []);
+
+    const salvaAcompanhamentoDePcUnidadeLocalStorage = (filtra_por_termo, filtra_por_tipo_unidade, filtra_por_devolucao_tesouro, filtra_por_status) => {
+    let objetoAcompanhamentoDePcUnidade = {
+        filtra_por_termo: filtra_por_termo,
+        filtra_por_tipo_unidade: filtra_por_tipo_unidade,
+        filtra_por_devolucao_tesouro: filtra_por_devolucao_tesouro,
+        filtra_por_status: filtra_por_status,
+    }
+        meapcservice.setAcompanhamentoPcUnidadePorUsuario(visoesService.getUsuarioLogin(), {[props.dreUuid]: objetoAcompanhamentoDePcUnidade})
+    }
+    
 
     const buscaTabelaAssociacoes = async ()=>{
         let tabela_associacoes = await getTabelaAssociacoes();
@@ -48,12 +73,16 @@ export const FiltroUnidadeEducacional = (props) => {
 
         if (name === 'nome') {
             setTermo(value);
+            salvaAcompanhamentoDePcUnidadeLocalStorage(value, tipoUnidade, devolucaoAoTesouro, status);
         } else if (name === 'tipo_unidade') {
             setTipoUnidade(value);
+            salvaAcompanhamentoDePcUnidadeLocalStorage(termo, value, devolucaoAoTesouro, status);
         } else if (name === 'devolucaoAoTesouro') {
             setDevolucaoAoTesouro(value);
+            salvaAcompanhamentoDePcUnidadeLocalStorage(termo, tipoUnidade, value, status);
         } else if (name === 'status') {
             setStatus(value);
+            salvaAcompanhamentoDePcUnidadeLocalStorage(termo, tipoUnidade, devolucaoAoTesouro, value);
         }
     }
 
@@ -76,6 +105,7 @@ export const FiltroUnidadeEducacional = (props) => {
     
     let unidadesEducacionais = await getResumoDRE(params.dre_uuid, params.periodo_uuid, params.nome, params.tipo_unidade, devolucaoAoTesouro, params.status);
     props.setUnidadesEducacionais(unidadesEducacionais)
+    salvaAcompanhamentoDePcUnidadeLocalStorage(params.nome, params.tipo_unidade, params.devolucao_ao_tesouro, params.status);
     }
 
 
@@ -88,7 +118,7 @@ return (
                 type="text"
                 name="nome"
                 id="nome"
-                defaultValue={termo}
+                value={termo}
                 placeholder="Filtrar por termo"
                 onChange={handleChange}
             />
@@ -99,7 +129,7 @@ return (
                 type="select"
                 name="tipo_unidade"
                 id="tipo_unidade"
-                defaultValue={tipoUnidade}
+                value={tipoUnidade}
                 onChange={handleChange}
                 placeholder="Filtrar por tipo de unidade"
             >
@@ -126,15 +156,15 @@ return (
         </select>
     </FormGroup>
         <FormGroup className="col-md-5">
-        <Label for="status_pc" className="mr-sm-2">Filtrar por status</Label>
+        <Label for="status" className="mr-sm-2">Filtrar por status</Label>
         <Select
             mode="multiple"
             allowClear
             style={{ width: '100%' }}
             placeholder="Selecione o status"
-            name="status_pc"
-            id="status_pc"
-            defaultValue={status}
+            name="status"
+            id="status"
+            value={status.status}
             onChange={handleOnChangeMultipleSelectStatus}
             className='multiselect-lista-valores-reprogramados'
         >
