@@ -19,14 +19,14 @@ const setAcompanhamentoPcUnidadePorUsuario = (usuario, objeto) => {
 }
 
 const getAcompanhamentoDePcUnidadeUsuarioLogado = (dre__uuid) => {
-    let acompanhamento_de_pc_unidade_usuario_logado = localStorage.getItem(ACOMPANHAMENTO_PC_UNIDADE) ? JSON.parse(localStorage.getItem(ACOMPANHAMENTO_PC_UNIDADE)) : null;
+    let acompanhamento_de_pc_unidade_usuario_logado = localStorage.getItem(ACOMPANHAMENTO_PC_UNIDADE) && localStorage.getItem(ACOMPANHAMENTO_PC_UNIDADE) !== undefined ? JSON.parse(localStorage.getItem(ACOMPANHAMENTO_PC_UNIDADE)) : null;
     // eslint-disable-next-line no-eval
     const filtro_de_usuario_logado = acompanhamento_de_pc_unidade_usuario_logado ? eval('acompanhamento_de_pc_unidade_usuario_logado.usuario_' + visoesService.getUsuarioLogin()) : null
     return filtro_de_usuario_logado?.[dre__uuid] ?? null
 };
 
 const getTodosAcompanhamentosPcUnidade = () =>{
-    let todos_acompanhamentos_de_pc_unidade = localStorage.getItem(ACOMPANHAMENTO_PC_UNIDADE) ? JSON.parse(localStorage.getItem(ACOMPANHAMENTO_PC_UNIDADE)) : null;
+    let todos_acompanhamentos_de_pc_unidade = localStorage.getItem(ACOMPANHAMENTO_PC_UNIDADE) && localStorage.getItem(ACOMPANHAMENTO_PC_UNIDADE) !== undefined  ? JSON.parse(localStorage.getItem(ACOMPANHAMENTO_PC_UNIDADE)) : null;
     return todos_acompanhamentos_de_pc_unidade
 }
 

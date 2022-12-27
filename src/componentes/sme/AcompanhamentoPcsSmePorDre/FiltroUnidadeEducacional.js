@@ -26,10 +26,10 @@ export const FiltroUnidadeEducacional = (props) => {
     useEffect(() => {
         const acompanhamento = meapcservice.getAcompanhamentoDePcUnidadeUsuarioLogado(props.dreUuid);
         if (acompanhamento) {
-        setTermo(acompanhamento.filtra_por_termo);
-        setTipoUnidade(acompanhamento.filtra_por_tipo_unidade);
-        setDevolucaoAoTesouro(acompanhamento.filtra_por_devolucao_tesouro);
-        setStatus({status:acompanhamento?.filtra_por_status ? acompanhamento.filtra_por_status?.split(',') : []});
+            setTermo(acompanhamento.filtra_por_termo);
+            setTipoUnidade(acompanhamento.filtra_por_tipo_unidade);
+            setDevolucaoAoTesouro(acompanhamento.filtra_por_devolucao_tesouro);
+            setStatus({status:acompanhamento?.filtra_por_status ? acompanhamento.filtra_por_status?.split(',') : []});
         }
     }, []);
 
@@ -87,6 +87,7 @@ export const FiltroUnidadeEducacional = (props) => {
     }
 
     const handleSubmit = async (event) => {
+        props.setLoadingDataTable(true);
         event.preventDefault();
     
     let params = {
@@ -106,6 +107,7 @@ export const FiltroUnidadeEducacional = (props) => {
     let unidadesEducacionais = await getResumoDRE(params.dre_uuid, params.periodo_uuid, params.nome, params.tipo_unidade, devolucaoAoTesouro, params.status);
     props.setUnidadesEducacionais(unidadesEducacionais)
     salvaAcompanhamentoDePcUnidadeLocalStorage(params.nome, params.tipo_unidade, params.devolucao_ao_tesouro, params.status);
+    props.setLoadingDataTable(false);
     }
 
 

@@ -22,6 +22,7 @@ export const AcompanhamentoPcsSmePorDre = (params) => {
     const [itensDashboard, setItensDashboard] = useState(null);
     const [unidadesEducacionais, setUnidadesEducacionais] = useState([])
     const [loading, setLoading] = useState(false);
+    const [loadingDataTable, setLoadingDataTable] = useState(false);
     const [statusPeriodo, setStatusPeriodo] = useState(false);
 
     useEffect(() => {
@@ -105,11 +106,13 @@ export const AcompanhamentoPcsSmePorDre = (params) => {
                     />
                     <h4> Resumo por Unidade Educacional </h4>
                     <FiltroUnidadeEducacional
+                        setLoadingDataTable={setLoadingDataTable}
                         periodoUuid={params.periodo_uuid}
                         dreUuid={params.dre_uuid}
                         setUnidadesEducacionais={setUnidadesEducacionais}
                     />
                     <ResumoPorUnidadeEducacional 
+                        loadingDataTable={loadingDataTable}
                         unidadesEducacionais={unidadesEducacionais}
                     />
                 </>
