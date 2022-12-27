@@ -89,6 +89,7 @@ export const FiltroUnidadeEducacional = (props) => {
     const handleSubmit = async (event) => {
         props.setLoadingDataTable(true);
         event.preventDefault();
+        props.resetPageDataTable();
     
     let params = {
         dre_uuid: props.dreUuid,
@@ -105,9 +106,10 @@ export const FiltroUnidadeEducacional = (props) => {
     }
     
     let unidadesEducacionais = await getResumoDRE(params.dre_uuid, params.periodo_uuid, params.nome, params.tipo_unidade, devolucaoAoTesouro, params.status);
-    props.setUnidadesEducacionais(unidadesEducacionais)
-    salvaAcompanhamentoDePcUnidadeLocalStorage(params.nome, params.tipo_unidade, params.devolucao_ao_tesouro, params.status);
-    props.setLoadingDataTable(false);
+        props.setUnidadesEducacionais(unidadesEducacionais)
+        salvaAcompanhamentoDePcUnidadeLocalStorage(params.nome, params.tipo_unidade, params.devolucao_ao_tesouro, params.status);
+        props.setLoadingDataTable(false);
+
     }
 
 
@@ -135,7 +137,7 @@ return (
                 onChange={handleChange}
                 placeholder="Filtrar por tipo de unidade"
             >
-            <option disabled value="">Selecione o tipo de unidade</option>
+            <option value="">Selecione o tipo de unidade</option>
             {tabelaAssociacoes.tipos_unidade && tabelaAssociacoes.tipos_unidade.length > 0 && tabelaAssociacoes.tipos_unidade.filter(element=> element.id !== 'ADM' && element.id !== 'DRE' && element.id !== 'IFSP' && element.id !== 'CMCT').map(item => (
                 <option key={item.id} value={item.id}>{item.nome}</option>
             ))}
@@ -152,7 +154,7 @@ return (
             id="devolucao_tesouro"
             className="form-control"
         >
-            <option disabled value="false">Selecione um tipo</option>
+            <option value="false">Selecione um tipo</option>
             <option value="1">Sim</option>
             <option value="0">Não</option>
         </select>

@@ -8,13 +8,34 @@ const limpaAcompanhamentoPcUnidadeUsuarioLogado = (usuario) => {
 
 const setAcompanhamentoPcUnidadePorUsuario = (usuario, objeto) => {
     let todos_acompanhamentos_pc_unidade = getTodosAcompanhamentosPcUnidade();
-    let dados_acompanhamentos_pc_unidade_update = {
-        ...todos_acompanhamentos_pc_unidade ?? {},
-        [`usuario_${usuario}`]: {
-        ...todos_acompanhamentos_pc_unidade?.[`usuario_${usuario}`] ?? {},    
-        ...objeto
-        }
-    };
+    let dados_acompanhamentos_pc_unidade_update = null;
+
+    const uuidsDocumentos = Object.keys(todos_acompanhamentos_pc_unidade[`usuario_${usuario}`] ?? {});
+    if (uuidsDocumentos.includes(Object.keys(objeto)[0])) {
+        const updateDocuments = Object.entries(todos_acompanhamentos_pc_unidade[`usuario_${usuario}`]).reduce((acumulador, [uuid, valor]) => {
+            if (uuid === Object.keys(objeto)[0]) {
+                acumulador[uuid] = {...valor, ...objeto[uuid]};
+            } else {
+                acumulador[uuid] = valor;
+            }
+            return acumulador;
+        }, {})
+        dados_acompanhamentos_pc_unidade_update = {
+            ...todos_acompanhamentos_pc_unidade ?? {},
+            [`usuario_${usuario}`]: {
+                ...todos_acompanhamentos_pc_unidade?.[`usuario_${usuario}`] ?? {},
+                ...updateDocuments
+            }
+        };
+    } else {
+        dados_acompanhamentos_pc_unidade_update = {
+            ...todos_acompanhamentos_pc_unidade ?? {},
+            [`usuario_${usuario}`]: {
+                ...todos_acompanhamentos_pc_unidade?.[`usuario_${usuario}`] ?? {},
+                ...objeto
+            }
+        };
+    }
     localStorage.setItem(ACOMPANHAMENTO_PC_UNIDADE, JSON.stringify(dados_acompanhamentos_pc_unidade_update));
 }
 

@@ -12,8 +12,10 @@ import {BarraTotalAssociacoes} from "./BarraTotalAssociacoes";
 import {DashboardCardPorDiretoria} from "./DashboardCardPorDiretoria";
 import {ResumoPorUnidadeEducacional} from "./ResumoPorUnidadeEducacional";
 import {FiltroUnidadeEducacional} from "./FiltroUnidadeEducacional";
+import {mantemEstadoAcompanhamentoDePcUnidade as meapcservice} from "../../../services/mantemEstadoAcompanhamentoDePcUnidadeEducacional.service"
 import Loading from "../../../utils/Loading";
 import './style.scss'
+import { visoesService } from "../../../services/visoes.service";
 
 export const AcompanhamentoPcsSmePorDre = (params) => {
 
@@ -24,6 +26,7 @@ export const AcompanhamentoPcsSmePorDre = (params) => {
     const [loading, setLoading] = useState(false);
     const [loadingDataTable, setLoadingDataTable] = useState(false);
     const [statusPeriodo, setStatusPeriodo] = useState(false);
+    const [paginaAtual, setPaginaAtual] = useState(meapcservice.getAcompanhamentoDePcUnidadeUsuarioLogado(params.dreUuid)?.paginacao_atual ?? 0);
 
     useEffect(() => {
         carregaPeriodos();
@@ -43,11 +46,27 @@ export const AcompanhamentoPcsSmePorDre = (params) => {
         setLoading(false);
     };
 
+    const resetPageDataTable = () => {
+        setPaginaAtual(0);
+        meapcservice.setAcompanhamentoPcUnidadePorUsuario(visoesService.getUsuarioLogin(), {[params.dre_uuid]: {paginacao_atual: 0}})
+    }
+
     const carregaItensDashboard = async () =>{
         setLoading(true);
         if (periodoEscolhido){
             let itensPorCard = await getItensDashboardComDreUuid(params.periodo_uuid, params.dre_uuid);
             let unidadesEducacionaisResumo = await getResumoDRE(params.dre_uuid, params.periodo_uuid)
+            if (localStorage.getItem('ACOMPANHAMENTO_PC_UNIDADE')) {
+                let newParms = meapcservice.getAcompanhamentoDePcUnidadeUsuarioLogado(params.dre_uuid)
+                unidadesEducacionaisResumo = await getResumoDRE(
+                    params.dre_uuid,
+                    params.periodo_uuid,
+                    newParms.filtra_por_termo,
+                    newParms.filtra_por_tipo_unidade,
+                    newParms.filtra_por_devolucao_tesouro,
+                    newParms.filtra_por_status,
+                )
+            }
             let itens = await getItensDashboard(periodoEscolhido)
             setItensDashboard(itensPorCard);
             setStatusPeriodo(itens.status)
@@ -110,10 +129,14 @@ export const AcompanhamentoPcsSmePorDre = (params) => {
                         periodoUuid={params.periodo_uuid}
                         dreUuid={params.dre_uuid}
                         setUnidadesEducacionais={setUnidadesEducacionais}
+                        resetPageDataTable={resetPageDataTable}
                     />
                     <ResumoPorUnidadeEducacional 
                         loadingDataTable={loadingDataTable}
+                        dreUuid={params.dre_uuid}
                         unidadesEducacionais={unidadesEducacionais}
+                        setPaginaAtual={setPaginaAtual}
+                        paginaAtual={paginaAtual}
                     />
                 </>
             }

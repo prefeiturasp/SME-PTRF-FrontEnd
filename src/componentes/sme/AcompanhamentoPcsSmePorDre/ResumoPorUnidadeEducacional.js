@@ -1,14 +1,15 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 import useDataTemplate from "../../../hooks/Globais/useDataTemplate";
 import {MsgImgLadoDireito} from "../../Globais/Mensagens/MsgImgLadoDireito";
 import Img404 from "../../../assets/img/img-404.svg";
 import {DataTable} from 'primereact/datatable';
+import {visoesService} from "../../../services/visoes.service";
+import {mantemEstadoAcompanhamentoDePcUnidade as meapcservice} from "../../../services/mantemEstadoAcompanhamentoDePcUnidadeEducacional.service";
 import Loading from "../../../utils/Loading";
 
 import {Column} from 'primereact/column';
 
-export const ResumoPorUnidadeEducacional = ({unidadesEducacionais, loadingDataTable}) => {
-
+export const ResumoPorUnidadeEducacional = ({unidadesEducacionais, loadingDataTable, dreUuid, setPaginaAtual, paginaAtual}) => {
     const dataTemplate = useDataTemplate()
     const rowsPerPage = 10
 
@@ -32,6 +33,11 @@ export const ResumoPorUnidadeEducacional = ({unidadesEducacionais, loadingDataTa
         alignItems: 'center',
         letterSpacing: '0.01em'
     };
+
+    const onPaginationClick = (event) => {
+        setPaginaAtual(event.first);
+        meapcservice.setAcompanhamentoPcUnidadePorUsuario(visoesService.getUsuarioLogin(), {[dreUuid]: {paginacao_atual: event.first}})
+    }
 
     const getStyles = (color) => ({
         ... commonStyles,
@@ -81,27 +87,27 @@ export const ResumoPorUnidadeEducacional = ({unidadesEducacionais, loadingDataTa
     }
 
     const nomeDaUnidadeTemplate = (rowData) => {
-        return rowData.unidade_nome ? rowData.unidade_nome : '-'
+        return rowData?.unidade_nome ? rowData.unidade_tipo_unidade + " " + rowData.unidade_nome : '-'
     }
 
     const processoSeiTemplate = (rowData) => {
-        return rowData.processo_sei ? rowData.processo_sei : '-'
+        return rowData?.processo_sei ? rowData.processo_sei : '-'
     }
 
     const dataDeRecebimentoTemplate = (rowData) => {
-        return rowData.data_recebimento ? dataTemplate(null, null, rowData.data_recebimento) : '-'
+        return rowData?.data_recebimento ? dataTemplate(null, null, rowData.data_recebimento) : '-'
     }
 
     const ultimaAnaliseTemplate = (rowData) => {
-        return rowData.data_ultima_analise ? dataTemplate(null, null, rowData.data_ultima_analise) : '-'
+        return rowData?.data_ultima_analise ? dataTemplate(null, null, rowData.data_ultima_analise) : '-'
     }
 
     const tecnicoResponsavelTemplate = (rowData) => {
-        return rowData.tecnico_responsavel ? rowData.tecnico_responsavel : '-'
+        return rowData?.tecnico_responsavel ? rowData.tecnico_responsavel : '-'
     }
 
     const devolucaoTesouroTemplate = (rowData) => {
-        return rowData.devolucao_ao_tesouro ? rowData.devolucao_ao_tesouro : '-'
+        return rowData?.devolucao_ao_tesouro ? rowData.devolucao_ao_tesouro : '-'
     }
 
     const statusTemplate = (rowData) => {
@@ -118,18 +124,22 @@ export const ResumoPorUnidadeEducacional = ({unidadesEducacionais, loadingDataTa
             loadingDataTable ? (
                 <Loading corGrafico="black" corFonte="dark" marginTop="0" marginBottom="0"/>
             ) : <> {
-                    unidadesEducacionais.length ? <DataTable value={unidadesEducacionais}
+                    unidadesEducacionais.length ? 
+                    <DataTable value={unidadesEducacionais}
                         className="mt-3 datatable-footer-coad"
                         paginator={true}
                         rows={rowsPerPage}
-                        paginatorTemplate="PrevPageLink PageLinks NextPageLink">
+                        paginatorTemplate="PrevPageLink PageLinks NextPageLink"
+                        first={paginaAtual}
+                        onPage={onPaginationClick}
+                        >
                         <Column field='' header='Código EOL'
                             body={codigoEOLTemplate}/>
                         <Column field='' header='Nome da unidade'
                             style={style}
                             body={nomeDaUnidadeTemplate}/>
                         <Column field='' header='Processo SEI'
-                            body={processoSeiTemplate}/>
+                            body={processoSeiTemplate}/> 
                         <Column field='' header='Data de recebimento'
                             body={dataDeRecebimentoTemplate}/>
                         <Column field='' header='Última análise'
