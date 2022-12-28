@@ -5,7 +5,7 @@ import { detalhamentoConferenciaDocumentos } from "../../../../../services/sme/A
 
 import './styles.scss'
 
-export const TabelaConferenciaDeDocumentosRelatorios = ({ relatorioConsolidado, listaDocumentoHistorico, listaDeDocumentosRelatorio, setListaDeDocumentosRelatorio, tabAtual, getDetalhamentoConferenciaDocumentosHistorico }) => {
+export const TabelaConferenciaDeDocumentosRelatorios = ({ relatorioConsolidado, listaDocumentoHistorico, listaDeDocumentosRelatorio, setListaDeDocumentosRelatorio, tabAtual }) => {
     
     const rowsPerPage = 5
     const [expandedRowsDocumentos, setExpandedRowsDocumentos] = useState(null);
@@ -18,7 +18,6 @@ export const TabelaConferenciaDeDocumentosRelatorios = ({ relatorioConsolidado, 
         const documentosComAcertos = Object.values(response.data['lista_documentos']).filter((doc) => doc.analise_documento_consolidado_dre.resultado === "AJUSTE")
         setListaDeDocumentosRelatorio(documentosComAcertos)
     }, [relatorioConsolidado])
-    
 
     useEffect(() => {
         carregaListaDeDocumentosRelatorio()

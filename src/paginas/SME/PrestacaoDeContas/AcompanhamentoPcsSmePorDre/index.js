@@ -14,7 +14,7 @@ export const AcompanhamentoPcsPorDre = () => {
                 <AcompanhamentoPcsSmePorDre
                     dre_uuid={dre_uuid}
                     periodo_uuid={periodo_uuid}
-                    nomeDre={state.nome_dre}
+                    nomeDre={state?.nome_dre}
                 />
             </div>
         </PaginasContainer>

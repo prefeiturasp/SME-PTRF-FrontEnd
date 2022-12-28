@@ -76,16 +76,17 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEResumoAcertos = () => {
     }
 
     const getDetalhamentoConferenciaDocumentosHistorico = async (analise_atual_uuid) => {
-        if (!relatorioConsolidado?.analise_atual?.uuid){
+        if (!relatorioConsolidado?.analise_atual?.uuid && relatorioConsolidado?.status_sme !== "ANALISADO"){
             return false
         }
         let response = ''
-        if (!analise_atual_uuid) {
+        if (!analise_atual_uuid && relatorioConsolidado?.status_sme !== "ANALISADO") {
             response = await detalhamentoConferenciaDocumentos(relatorioConsolidado?.uuid, relatorioConsolidado?.analise_atual?.uuid)
         }
         else {
             response = await detalhamentoConferenciaDocumentos(relatorioConsolidado?.uuid, analise_atual_uuid)
         }
+        
         const documento = response?.data?.lista_documentos
         setListaDocumentoHistorico(documento?.filter((item) => item.analise_documento_consolidado_dre.resultado === "AJUSTE"))
     }
@@ -115,7 +116,6 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEResumoAcertos = () => {
                     marginBottom="0"
                 />
             }
-            {relatorioConsolidado?.analise}
             <VisualizaDevolucoes
                 dataLimiteDevolucao={dataLimiteDevolucao}
                 handleChangeDataLimiteDevolucao={handleChangeDataLimiteDevolucao}
@@ -126,7 +126,6 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEResumoAcertos = () => {
                 listaDocumentoHistorico={listaDocumentoHistorico}
                 setAnaliseSequenciaVisualizacao={setAnaliseSequenciaVisualizacao}
                 analiseSequenciaVisualizacao={analiseSequenciaVisualizacao}
-                
             />
             {!loading ? (
                 typeof relatorioConsolidado?.status_sme === 'DEVOLVIDO' || (relatorioConsolidado?.status_sme == 'EM_ANALISE' || relatorioConsolidado?.analises_do_consolidado_dre.length) !== 'undefined' &&

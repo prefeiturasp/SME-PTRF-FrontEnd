@@ -2,8 +2,10 @@ import api from './api';
 import HTTP_STATUS from "http-status-codes";
 import {DATA_HORA_USUARIO_LOGADO, visoesService} from "./visoes.service";
 import {mantemEstadoAcompanhamentoDePc as meapcservice} from "./mantemEstadoAcompanhamentoDePc.service";
+import {mantemEstadoAcompanhamentoDePcUnidade as meapcserviceUnidadeEducacional} from "./mantemEstadoAcompanhamentoDePcUnidadeEducacional.service";
 import { mantemEstadoAnaliseDre as meapcserviceAnaliseDre} from './mantemEstadoAnaliseDre.service';
 import {ACOMPANHAMENTO_DE_PC} from "./mantemEstadoAcompanhamentoDePc.service";
+import {ACOMPANHAMENTO_PC_UNIDADE} from "./mantemEstadoAcompanhamentoDePcUnidadeEducacional.service";
 import { ANALISE_DRE } from './mantemEstadoAnaliseDre.service';
 import moment from "moment";
 
@@ -42,6 +44,7 @@ const setDataLogin = async ()=>{
         if (days >= 1){
             localStorage.removeItem('DADOS_USUARIO_LOGADO');
             localStorage.removeItem(ACOMPANHAMENTO_DE_PC);
+            localStorage.removeItem(ACOMPANHAMENTO_PC_UNIDADE);
             localStorage.removeItem(ANALISE_DRE);
             localStorage.removeItem(PERIODO_RELATORIO_CONSOLIDADO_DRE);
             localStorage.setItem(DATA_LOGIN, moment(new Date(), "YYYY-MM-DD").format("YYYY-MM-DD"));
@@ -90,6 +93,8 @@ const login = async (login, senha) => {
             localStorage.removeItem('medidorSenha');
 
             await meapcservice.setAcompanhamentoDePc()
+
+            await meapcserviceUnidadeEducacional.setAcompanhamentoPcUnidadePorUsuario()
 
             await meapcserviceAnaliseDre.setAnaliseDre()
 
