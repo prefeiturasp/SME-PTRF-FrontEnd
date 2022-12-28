@@ -1,4 +1,4 @@
-import React, {useEffect, memo, useState, useCallback} from "react";
+import React, {useEffect, memo, useState, useCallback, useReducer} from "react";
 import {useParams} from "react-router-dom";
 import {Column} from "primereact/column";
 import {DataTable} from "primereact/datatable";
@@ -35,6 +35,23 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
     const [pdfVisualizacao, setPdfVisualizacao] = useState('')
     const [precisaConsiderarCorreto, setPrecisaConsiderarCorreto] = useState(false)
     const [showModalPdfDownload, setShowModalPdfDownload] = useState(false)
+    const [documentosMemorizados, dispatch] = useReducer((state, action) => {
+        if (action.type === 'atualizar') {
+            if (state.documentos.length === 0) {
+                return {
+                    documentos: action.payload
+                };
+            } 
+            return state;
+        }
+    }, {
+        documentos: []
+    })
+    const [isModificado, setIsModificado] = useState(false);
+
+    useEffect(() => {
+        dispatch({ type: 'atualizar', payload: listaDeDocumentosRelatorio })
+    }, [listaDeDocumentosRelatorio])
 
     useEffect(() => {
         let {consolidado_dre_uuid} = params

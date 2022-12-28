@@ -67,6 +67,10 @@ export const AcompanhamentoRelatorioConsolidadosSmeListagem = () => {
             {
                 id: "PARCIAL",
                 nome: "Parcial"
+            },
+            {
+                id: "RETIFICACAO",
+                nome: "Retificação"
             }
         ]
 

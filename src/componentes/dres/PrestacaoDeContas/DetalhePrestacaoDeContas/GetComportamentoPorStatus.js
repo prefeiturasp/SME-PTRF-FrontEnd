@@ -58,7 +58,8 @@ export const GetComportamentoPorStatus = (
         onClickSalvarAcertoSaldo,
         ajusteSaldoSalvoComSucesso,
         onClickDeletarAcertoSaldo,
-        setAnalisesDeContaDaPrestacao
+        setAnalisesDeContaDaPrestacao,
+        bloqueiaBtnRetroceder,
     }) => {
 
     if (prestacaoDeContas && prestacaoDeContas.status) {
@@ -147,7 +148,7 @@ export const GetComportamentoPorStatus = (
                         metodoAvancar={() => setShowConcluirAnalise(true)}
                         metodoRetroceder={() => setShowRecebida(true)}
                         disabledBtnAvancar={false}
-                        disabledBtnRetroceder={false}
+                        disabledBtnRetroceder={bloqueiaBtnRetroceder()}
                     />
                     <TrilhaDeStatus
                         prestacaoDeContas={prestacaoDeContas}

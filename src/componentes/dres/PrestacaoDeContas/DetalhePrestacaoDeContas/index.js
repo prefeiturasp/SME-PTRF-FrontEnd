@@ -12,8 +12,6 @@ import {
     deleteAnaliseAjustesSaldoPorConta,
     getAnaliseAjustesSaldoPorConta
 } from "../../../../services/dres/PrestacaoDeContas.service";
-import { getConsolidadosDreJaPublicadosProximaPublicacao } from "../../../../services/dres/RelatorioConsolidado.service";
-import {visoesService} from "../../../../services/visoes.service";
 import {getTabelasPrestacoesDeContas, getReceberPrestacaoDeContas, getReabrirPrestacaoDeContas, getDesfazerRecebimento, getAnalisarPrestacaoDeContas, getDesfazerAnalise, getSalvarAnalise, getInfoAta, getConcluirAnalise, getDespesasPorFiltros, getTiposDevolucao} from "../../../../services/dres/PrestacaoDeContas.service";
 import {patchReceberAposAcertos} from "../../../../services/dres/PrestacaoDeContas.service";
 import {getDespesa} from "../../../../services/escolas/Despesas.service";
@@ -1017,6 +1015,20 @@ export const DetalhePrestacaoDeContas = () =>{
         return lista_uuid;
     }
 
+    const pcEmRetificacao = () => {
+        if(prestacaoDeContas){
+            return prestacaoDeContas.em_retificacao;
+        }
+    }
+
+    const bloqueiaBtnRetroceder = () => {
+        if(prestacaoDeContas && prestacaoDeContas.status === "EM_ANALISE" && pcEmRetificacao()){
+            return true;
+        }
+        
+        return false;
+    }
+
     return(
         <PaginasContainer>
             <h1 className="titulo-itens-painel mt-5">Acompanhamento das Prestações de Contas</h1>
@@ -1092,6 +1104,7 @@ export const DetalhePrestacaoDeContas = () =>{
                                     ajusteSaldoSalvoComSucesso={ajusteSaldoSalvoComSucesso}
                                     onClickDeletarAcertoSaldo={onClickDeletarAcertoSaldo}
                                     setAnalisesDeContaDaPrestacao={setAnalisesDeContaDaPrestacao}
+                                    bloqueiaBtnRetroceder={bloqueiaBtnRetroceder}
                                 />
                         }
                     </>
