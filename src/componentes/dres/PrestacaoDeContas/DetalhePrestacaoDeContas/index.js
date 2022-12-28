@@ -12,8 +12,6 @@ import {
     deleteAnaliseAjustesSaldoPorConta,
     getAnaliseAjustesSaldoPorConta
 } from "../../../../services/dres/PrestacaoDeContas.service";
-import { getConsolidadosDreJaPublicadosProximaPublicacao } from "../../../../services/dres/RelatorioConsolidado.service";
-import {visoesService} from "../../../../services/visoes.service";
 import {getTabelasPrestacoesDeContas, getReceberPrestacaoDeContas, getReabrirPrestacaoDeContas, getDesfazerRecebimento, getAnalisarPrestacaoDeContas, getDesfazerAnalise, getSalvarAnalise, getInfoAta, getConcluirAnalise, getDespesasPorFiltros, getTiposDevolucao} from "../../../../services/dres/PrestacaoDeContas.service";
 import {patchReceberAposAcertos} from "../../../../services/dres/PrestacaoDeContas.service";
 import {getDespesa} from "../../../../services/escolas/Despesas.service";
