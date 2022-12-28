@@ -82,7 +82,6 @@ export const ResumoPorUnidadeEducacional = ({unidadesEducacionais, loadingDataTa
     }
 
     const codigoEOLTemplate = (rowData) => {
-        if (rowData.unidade_eol === '200237') {}
         return rowData.unidade_eol ? rowData.unidade_eol : '-'
     }
 
