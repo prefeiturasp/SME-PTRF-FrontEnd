@@ -2,6 +2,7 @@ import api from './api';
 import HTTP_STATUS from "http-status-codes";
 import {DATA_HORA_USUARIO_LOGADO, visoesService} from "./visoes.service";
 import {mantemEstadoAcompanhamentoDePc as meapcservice} from "./mantemEstadoAcompanhamentoDePc.service";
+import {mantemEstadoAcompanhamentoDePcUnidade as meapcserviceUnidadeEducacional} from "./mantemEstadoAcompanhamentoDePcUnidadeEducacional.service";
 import { mantemEstadoAnaliseDre as meapcserviceAnaliseDre} from './mantemEstadoAnaliseDre.service';
 import {ACOMPANHAMENTO_DE_PC} from "./mantemEstadoAcompanhamentoDePc.service";
 import { ANALISE_DRE } from './mantemEstadoAnaliseDre.service';
@@ -90,6 +91,8 @@ const login = async (login, senha) => {
             localStorage.removeItem('medidorSenha');
 
             await meapcservice.setAcompanhamentoDePc()
+
+            await meapcserviceUnidadeEducacional.setAcompanhamentoPcUnidadePorUsuario()
 
             await meapcserviceAnaliseDre.setAnaliseDre()
 

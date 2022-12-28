@@ -26,7 +26,7 @@ export const AcompanhamentoPcsSmePorDre = (params) => {
     const [loading, setLoading] = useState(false);
     const [loadingDataTable, setLoadingDataTable] = useState(false);
     const [statusPeriodo, setStatusPeriodo] = useState(false);
-    const [paginaAtual, setPaginaAtual] = useState(meapcservice.getAcompanhamentoDePcUnidadeUsuarioLogado(params.dreUuid)?.paginacao_atual ?? 0);
+    const [paginaAtual, setPaginaAtual] = useState(meapcservice.getAcompanhamentoDePcUnidadeUsuarioLogado(params.dre_uuid)?.paginacao_atual ?? 0);
 
     useEffect(() => {
         carregaPeriodos();
@@ -59,12 +59,12 @@ export const AcompanhamentoPcsSmePorDre = (params) => {
             if (localStorage.getItem('ACOMPANHAMENTO_PC_UNIDADE')) {
                 let newParms = meapcservice.getAcompanhamentoDePcUnidadeUsuarioLogado(params.dre_uuid)
                 unidadesEducacionaisResumo = await getResumoDRE(
-                    params.dre_uuid,
-                    params.periodo_uuid,
-                    newParms.filtra_por_termo,
-                    newParms.filtra_por_tipo_unidade,
-                    newParms.filtra_por_devolucao_tesouro,
-                    newParms.filtra_por_status,
+                    params?.dre_uuid,
+                    params?.periodo_uuid,
+                    newParms?.filtra_por_termo,
+                    newParms?.filtra_por_tipo_unidade,
+                    newParms?.filtra_por_devolucao_tesouro,
+                    newParms?.filtra_por_status,
                 )
             }
             let itens = await getItensDashboard(periodoEscolhido)
