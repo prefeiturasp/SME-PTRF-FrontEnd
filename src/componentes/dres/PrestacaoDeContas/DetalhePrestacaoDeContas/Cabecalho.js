@@ -56,6 +56,7 @@ const Cabecalho = ({prestacaoDeContas, exibeSalvar, metodoSalvarAnalise, btnSalv
             case 'DEVOLVIDA_RETORNADA':
             case 'APROVADA':
             case 'APROVADA_RESSALVA':
+            case 'REPROVADA':
                 return true;
             default:
                 return false;
