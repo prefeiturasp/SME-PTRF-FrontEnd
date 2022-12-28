@@ -59,7 +59,7 @@ export const GetComportamentoPorStatus = (
         ajusteSaldoSalvoComSucesso,
         onClickDeletarAcertoSaldo,
         setAnalisesDeContaDaPrestacao,
-        bloqueiaBtnRetroceder
+        bloqueiaBtnRetroceder,
     }) => {
 
     if (prestacaoDeContas && prestacaoDeContas.status) {
