@@ -18,10 +18,6 @@ export const TabelaConferenciaDeDocumentosRelatorios = ({ relatorioConsolidado, 
         const documentosComAcertos = Object.values(response.data['lista_documentos']).filter((doc) => doc.analise_documento_consolidado_dre.resultado === "AJUSTE")
         setListaDeDocumentosRelatorio(documentosComAcertos)
     }, [relatorioConsolidado])
-    
-    useEffect(() => {
-        
-    }, [listaDocumentoHistorico])
 
     useEffect(() => {
         carregaListaDeDocumentosRelatorio()
