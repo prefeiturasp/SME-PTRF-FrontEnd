@@ -400,6 +400,10 @@ const bloqueiaCamposDespesaImposto = (parametroLocation, setReadOnlyCamposImpost
 }
 
 const mostraBotaoDeletar = (idDespesa, parametroLocation) => {
+    if (parametroLocation && parametroLocation.state && !parametroLocation.state.tem_permissao_de_edicao){
+        return false
+    }
+
     if(origemAnaliseLancamento(parametroLocation)){
         if(!temPermissaoEdicao(parametroLocation)){
             return false;

@@ -9,6 +9,7 @@ export const TabelaConferenciaDeDocumentosRelatorios = ({ relatorioConsolidado, 
     
     const rowsPerPage = 5
     const [expandedRowsDocumentos, setExpandedRowsDocumentos] = useState(null);
+    const [loadingDocumento, setLoadingDocumento] = useState(null)
     
     const carregaListaDeDocumentosRelatorio = useCallback(async () => {
         if(!relatorioConsolidado?.analise_atual){
