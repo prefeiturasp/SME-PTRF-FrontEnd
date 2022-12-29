@@ -10,7 +10,7 @@ const setAcompanhamentoPcUnidadePorUsuario = async (usuario, objeto) => {
     let todos_acompanhamentos_pc_unidade = getTodosAcompanhamentosPcUnidade();
     let dados_acompanhamentos_pc_unidade_update = null;
 
-    if (!localStorage.getItem(ACOMPANHAMENTO_PC_UNIDADE)) {
+    if (!localStorage.getItem(ACOMPANHAMENTO_PC_UNIDADE) || objeto === undefined) {
         dados_acompanhamentos_pc_unidade_update = {
             [`usuario_${
                     visoesService.getUsuarioLogin()
