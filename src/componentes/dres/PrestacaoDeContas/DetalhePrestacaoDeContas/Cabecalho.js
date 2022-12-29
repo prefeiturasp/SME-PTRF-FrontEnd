@@ -52,6 +52,8 @@ const Cabecalho = ({prestacaoDeContas, exibeSalvar, metodoSalvarAnalise, btnSalv
         switch (prestacaoDeContas.status) {
             case 'RECEBIDA':
             case 'EM_ANALISE':
+            case 'EM_PROCESSAMENTO':
+            case 'DEVOLVIDA':
             case 'DEVOLVIDA_RECEBIDA':
             case 'DEVOLVIDA_RETORNADA':
             case 'APROVADA':
