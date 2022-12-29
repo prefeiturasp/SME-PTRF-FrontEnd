@@ -20,11 +20,11 @@ export const RelatorioDosAcertos = ({analiseSequenciaVisualizacao, relatorioCons
     useEffect(() => {
         if(relatorioConsolidado){
             if(podeGerarPrevia){
-                let analise_atual = relatorioConsolidado.analise_atual.uuid
+                let analise_atual = relatorioConsolidado?.analise_atual?.uuid
                 setAnaliseAtual(analise_atual);
             }
             else{
-                let analise_atual = analiseSequenciaVisualizacao.sequenciaConferencia.uuid;
+                let analise_atual = analiseSequenciaVisualizacao?.sequenciaConferencia?.uuid;
                 setAnaliseAtual(analise_atual);
             }
         }
