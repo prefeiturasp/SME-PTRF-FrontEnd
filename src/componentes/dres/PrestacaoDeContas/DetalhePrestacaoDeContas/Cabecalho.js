@@ -42,6 +42,28 @@ const Cabecalho = ({prestacaoDeContas, exibeSalvar, metodoSalvarAnalise, btnSalv
         carregaPeriodo()
         verificaPublicacao()
     }, [carregaPeriodo])
+    
+    useEffect(()=>{
+        verificaRetificacao()
+    }, [verificaRetificacao])
+
+    const verificaStatusPc = () => {
+        if (prestacaoDeContas && prestacaoDeContas.status) {
+        switch (prestacaoDeContas.status) {
+            case 'RECEBIDA':
+            case 'EM_ANALISE':
+            case 'DEVOLVIDA_RECEBIDA':
+            case 'DEVOLVIDA_RETORNADA':
+            case 'APROVADA':
+            case 'APROVADA_RESSALVA':
+            case 'REPROVADA':
+                return true;
+            default:
+                return false;
+            }
+        }
+        return false;
+    }
 
     useEffect(()=>{
         verificaRetificacao()
