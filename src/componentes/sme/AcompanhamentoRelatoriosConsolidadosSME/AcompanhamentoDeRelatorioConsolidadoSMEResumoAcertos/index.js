@@ -176,18 +176,15 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEResumoAcertos = () => {
             />
             }
             {tabAtual === 'historico' ?
-            <RelatorioAposAcertos
+                <RelatorioDosAcertos
                     analiseSequenciaVisualizacao={analiseSequenciaVisualizacao}
                     relatorioConsolidado={relatorioConsolidado}
-                    resumoConsolidado={resumoConsolidado}
-                    analiseAtualUuid={relatorioConsolidado.analise_atual}
                     podeGerarPrevia={false}
                 />
             :
-            <RelatorioDosAcertos
+                <RelatorioDosAcertos
                     analiseSequenciaVisualizacao={analiseSequenciaVisualizacao}
                     relatorioConsolidado={relatorioConsolidado}
-                    resumoConsolidado={resumoConsolidado}
                     podeGerarPrevia={true}
                 />
             }
