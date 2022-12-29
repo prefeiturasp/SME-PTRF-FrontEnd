@@ -64,7 +64,11 @@ const Cabecalho = ({prestacaoDeContas, exibeSalvar, metodoSalvarAnalise, btnSalv
         }
         return false;
     }
-    
+
+    useEffect(()=>{
+        verificaRetificacao()
+    }, [verificaRetificacao])
+
     return (
         <>
             {Object.entries(prestacaoDeContas).length > 0 &&
