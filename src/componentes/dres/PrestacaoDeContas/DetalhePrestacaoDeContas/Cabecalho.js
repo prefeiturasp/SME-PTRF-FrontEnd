@@ -42,7 +42,7 @@ const Cabecalho = ({prestacaoDeContas, exibeSalvar, metodoSalvarAnalise, btnSalv
         carregaPeriodo()
         verificaPublicacao()
     }, [carregaPeriodo])
-
+    
     useEffect(()=>{
         verificaRetificacao()
     }, [verificaRetificacao])
@@ -60,10 +60,14 @@ const Cabecalho = ({prestacaoDeContas, exibeSalvar, metodoSalvarAnalise, btnSalv
                 return true;
             default:
                 return false;
-        }
+            }
         }
         return false;
     }
+
+    useEffect(()=>{
+        verificaRetificacao()
+    }, [verificaRetificacao])
 
     return (
         <>
