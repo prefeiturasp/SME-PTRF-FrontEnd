@@ -9,42 +9,53 @@ import {
     downloadDocumentPdfDevolucaoAcertos
 } from "../../../../../services/sme/AcompanhamentoSME.service";
 
-export const RelatorioDosAcertos = ({analiseSequenciaVisualizacao, relatorioConsolidado, resumoConsolidado, podeGerarPrevia}) => {
+export const RelatorioDosAcertos = ({analiseSequenciaVisualizacao, relatorioConsolidado, podeGerarPrevia}) => {
     const [mensagem, setMensagem] = useState("");
     const [status, setStatus] = useState("");
     const [previaEmAndamento, setPreviaEmAndamento] = useState(false);
     const [disableBtnPrevia, setDisableBtnPrevia] = useState(false);
     const [disableBtnDownload, setDisableBtnDownload] = useState(false);
-    const [versaoRascunho, setVersaoRascunho] = useState(true);
+    const [analiseAtual, setAnaliseAtual] = useState(null);
 
-    const relatorioDevolucaoAcertosInfo = useCallback(async () => {
+    useEffect(() => {
         if(relatorioConsolidado){
-            let analise_atual_uuid = relatorioConsolidado.analise_atual.uuid;
-
-            if(analise_atual_uuid){
-                let statusInfo = await verificarStatusGeracaoDevolucaoAcertosSme(analise_atual_uuid);
-                setMensagem(statusInfo);
-
-                if(statusInfo.includes('Relatório sendo gerado...')){
-                    setStatus("EM_PROCESSAMENTO")
-                    setPreviaEmAndamento(true);
-                    setDisableBtnPrevia(true);
-                    setDisableBtnDownload(true);
-                }
-                else if (statusInfo.includes('Nenhuma') || statusInfo.includes('Nenhum')) {
-                    setStatus("PENDENTE");
-                    setDisableBtnDownload(true);
-                    setDisableBtnPrevia(false);
-                }
-                else if(statusInfo.includes('gerada em') || statusInfo.includes('gerado em')) {
-                    setStatus("CONCLUIDO");
-                    setPreviaEmAndamento(false);
-                    setDisableBtnDownload(false);
-                    setDisableBtnPrevia(false);
-                }   
+            if(podeGerarPrevia){
+                let analise_atual = relatorioConsolidado.analise_atual.uuid
+                setAnaliseAtual(analise_atual);
+            }
+            else{
+                let analise_atual = analiseSequenciaVisualizacao.sequenciaConferencia.uuid;
+                setAnaliseAtual(analise_atual);
             }
         }
-    }, [relatorioConsolidado])
+        
+    }, [podeGerarPrevia, relatorioConsolidado, analiseSequenciaVisualizacao]);
+
+    const relatorioDevolucaoAcertosInfo = useCallback(async () => {
+        if(analiseAtual){
+            let statusInfo = await verificarStatusGeracaoDevolucaoAcertosSme(analiseAtual);
+            setMensagem(statusInfo);
+
+            if(statusInfo.includes('Relatório sendo gerado...')){
+                setStatus("EM_PROCESSAMENTO")
+                setPreviaEmAndamento(true);
+                setDisableBtnPrevia(true);
+                setDisableBtnDownload(true);
+            }
+            else if (statusInfo.includes('Nenhuma') || statusInfo.includes('Nenhum')) {
+                setStatus("PENDENTE");
+                setDisableBtnDownload(true);
+                setDisableBtnPrevia(false);
+            }
+            else if(statusInfo.includes('gerada em') || statusInfo.includes('gerado em')) {
+                setStatus("CONCLUIDO");
+                setPreviaEmAndamento(false);
+                setDisableBtnDownload(false);
+                setDisableBtnPrevia(false);
+            }   
+        }
+        
+    }, [analiseAtual])
 
     const gerarPrevia = async () => {
         setStatus("EM_PROCESSAMENTO");
@@ -54,16 +65,14 @@ export const RelatorioDosAcertos = ({analiseSequenciaVisualizacao, relatorioCons
         setDisableBtnPrevia(true);
         setDisableBtnDownload(true);
 
-        if(relatorioConsolidado && relatorioConsolidado.analise_atual){
-            let analiseAtualUuid = relatorioConsolidado.analise_atual.uuid;
-            await gerarPreviaRelatorioDevolucaoAcertosSme(analiseAtualUuid);
+        if(analiseAtual){
+            await gerarPreviaRelatorioDevolucaoAcertosSme(analiseAtual);
         }
     }
 
     const downloadDocumentoPrevia = async () => {
-        if(relatorioConsolidado && relatorioConsolidado.analise_atual){
-            let analiseAtualUuid = relatorioConsolidado.analise_atual.uuid;
-            await downloadDocumentPdfDevolucaoAcertos(analiseAtualUuid);
+        if(analiseAtual){
+            await downloadDocumentPdfDevolucaoAcertos(analiseAtual);
             await relatorioDevolucaoAcertosInfo();
         }
     };
