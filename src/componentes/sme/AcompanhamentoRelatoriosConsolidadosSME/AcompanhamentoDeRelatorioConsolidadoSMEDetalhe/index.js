@@ -237,8 +237,11 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEDetalhe = () => {
             disabled = false;
         }
 
-        if (["NAO_PUBLICADO", "PUBLICADO"].includes(relatorioConsolidado.status_sme)){
+        if (["NAO_PUBLICADO"].includes(relatorioConsolidado.status_sme)){
             disabled =  true;
+        }
+        if (relatorioConsolidado?.analises_do_consolidado_dre?.length === 1 && relatorioConsolidado?.analises_do_consolidado_dre[relatorioConsolidado?.analises_do_consolidado_dre.length - 1]?.data_devolucao === null){
+            disabled = true;
         }
 
         return disabled
