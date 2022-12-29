@@ -63,7 +63,7 @@ const Cabecalho = ({prestacaoDeContas, exibeSalvar, metodoSalvarAnalise, btnSalv
             }
         }
         return false;
-        }
+    }
 
     return (
         <>
