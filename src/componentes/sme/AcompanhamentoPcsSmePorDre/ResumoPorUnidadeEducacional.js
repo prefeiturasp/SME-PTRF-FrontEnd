@@ -149,7 +149,7 @@ export const ResumoPorUnidadeEducacional = ({unidadesEducacionais, loadingDataTa
                             body={tecnicoResponsavelTemplate}/>
                         <Column field='' header='Devolução ao tesouro'
                             body={devolucaoTesouroTemplate}/>
-                        <Column field='status'
+                        <Column field='status' header='status'
                             body={statusTemplate}/>
                     </DataTable> : <MsgImgLadoDireito texto='Nenhuma prestação retornada. Tente novamente com outros filtros'
                         img={Img404}/>
