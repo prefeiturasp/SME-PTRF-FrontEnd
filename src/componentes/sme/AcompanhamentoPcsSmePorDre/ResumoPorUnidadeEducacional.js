@@ -19,6 +19,7 @@ export const ResumoPorUnidadeEducacional = ({unidadesEducacionais, loadingDataTa
         fontWeight: '700',
         lineHeight: '20px',
         letterSpacing: '0em',
+        width: '23%',
         textAlign: 'left',
         color: '#42474A'
     };
@@ -133,6 +134,7 @@ export const ResumoPorUnidadeEducacional = ({unidadesEducacionais, loadingDataTa
                         onPage={onPaginationClick}
                         >
                         <Column field='' header='Código EOL'
+                            style={{width: '7%'}}
                             body={codigoEOLTemplate}/>
                         <Column field='' header='Nome da unidade'
                             style={style}
@@ -147,7 +149,7 @@ export const ResumoPorUnidadeEducacional = ({unidadesEducacionais, loadingDataTa
                             body={tecnicoResponsavelTemplate}/>
                         <Column field='' header='Devolução ao tesouro'
                             body={devolucaoTesouroTemplate}/>
-                        <Column field=''
+                        <Column field='status'
                             body={statusTemplate}/>
                     </DataTable> : <MsgImgLadoDireito texto='Nenhuma prestação retornada. Tente novamente com outros filtros'
                         img={Img404}/>
