@@ -27,9 +27,6 @@ import {useDispatch} from "react-redux";
 import {useHistory} from "react-router-dom";
 import Loading from "../../../../utils/Loading";
 import './acertos-lancamentos.scss'
-import Dropdown from "react-bootstrap/Dropdown";
-import { useContext } from "react";
-import { AnaliseDREContext } from "../../../../context/AnaliseDRE";
 import { mantemEstadoAnaliseDre as meapcservice } from "../../../../services/mantemEstadoAnaliseDre.service";
 
 const AcertosLancamentos = ({
@@ -47,7 +44,6 @@ const AcertosLancamentos = ({
     const valor_template = useValorTemplate()
     const dataTemplate = useDataTemplate()
     const numeroDocumentoTemplate = useNumeroDocumentoTemplate()
-    //const {lancamentosAjustes, setLancamentosAjustes} = useContext(AnaliseDREContext)
     const [lancamentosAjustes, setLancamentosAjustes] = useState([])
 
     const dispatch = useDispatch()
@@ -66,6 +62,8 @@ const AcertosLancamentos = ({
     const [showSalvarEsclarecimento, setShowSalvarEsclarecimento] = useState({});
     const [totalDeAcertosDosLancamentos, setTotalDeAcertosDosLancamentos] = useState(0)
     const [analisePermiteEdicao, setAnalisePermiteEdicao] = useState()
+    const [identificadorCheckboxClicado, setIdentificadorCheckboxClicado] = useState(false);
+    const [quantidadeSelecionada, setQuantidadeSelecionada] = useState(0);
 
     useEffect(() => {
         let dados_analise_dre_usuario_logado = meapcservice.getAnaliseDreUsuarioLogado()
@@ -138,18 +136,26 @@ const AcertosLancamentos = ({
         setAnalisePermiteEdicao(status_de_realizacao.editavel)
 
         let lancamentos_ajustes = await getLancamentosAjustes(analiseAtualUuid, conta_uuid, filtrar_por_lancamento, filtrar_por_tipo_de_ajuste)
-
-        setOpcoesJustificativa(status_de_realizacao)
-        setLancamentosAjustes(lancamentos_ajustes)
-
         
-        setLancamentosSelecionados([])
-        setIdentificadorCheckboxClicado([{
-            uuid: ''
-        }])
+        // Necessário para iniciar check box dos lancamentos nao selecionadas
+        let lancamentos_com_flag_selecionado = [];
+        for(let lancamento=0; lancamento<=lancamentos_ajustes.length-1; lancamento++){
+            // Referente a row da tabela
+            lancamentos_ajustes[lancamento].analise_lancamento.selecionado = false;
+
+            // Referente aos acertos dentro da row da tabela
+            setaCheckBoxSolicitacoes(lancamentos_ajustes[lancamento].analise_lancamento, false)
+
+            lancamentos_com_flag_selecionado.push(lancamentos_ajustes[lancamento])
+        }
+        
+        setOpcoesJustificativa(status_de_realizacao)
+        setLancamentosAjustes(lancamentos_com_flag_selecionado)
+        setIdentificadorCheckboxClicado(false);
+        setQuantidadeSelecionada(0);
         setLoadingLancamentos(false)
 
-    }, [analiseAtualUuid, setLancamentosAjustes])
+    }, [analiseAtualUuid])
 
     useEffect(() => {
         if (contasAssociacao && contasAssociacao.length > 0) {
@@ -219,14 +225,16 @@ const AcertosLancamentos = ({
 
     const limparStatus = async () => {
         setLoadingLancamentos(true)
-        await postLimparStatusLancamentoPrestacaoConta({"uuids_solicitacoes_acertos_lancamentos": lancamentosSelecionados.map(lanc => lanc.uuid)})
+        let selecionados = getSolicitacoesSelecionadas();
+        await postLimparStatusLancamentoPrestacaoConta({"uuids_solicitacoes_acertos_lancamentos": selecionados.map(lanc => lanc.uuid)})
         await carregaAcertosLancamentos(contaSelecionada)
         setLoadingLancamentos(false)
     }
 
     const marcarComoRealizado = async () => {
         setLoadingLancamentos(true)
-        let response = await postMarcarComoRealizadoLancamentoPrestacaoConta({"uuids_solicitacoes_acertos_lancamentos": lancamentosSelecionados.map(lanc => lanc.uuid)})
+        let selecionados = getSolicitacoesSelecionadas();
+        let response = await postMarcarComoRealizadoLancamentoPrestacaoConta({"uuids_solicitacoes_acertos_lancamentos": selecionados.map(lanc => lanc.uuid)})
         if (response && !response.todas_as_solicitacoes_marcadas_como_realizado){
             // Reaproveitando o modal CheckNaoPermitido
             setTituloModalCheckNaoPermitido('Não é possível marcar a solicitação como realizada')
@@ -240,8 +248,9 @@ const AcertosLancamentos = ({
 
     const justificarNaoRealizacao = async (textoConfirmadoJustificado) => {
         setLoadingLancamentos(true)
+        let selecionados = getSolicitacoesSelecionadas();
         await postJustificarNaoRealizacaoLancamentoPrestacaoConta({
-            "uuids_solicitacoes_acertos_lancamentos": lancamentosSelecionados.map(lanc => lanc.uuid),
+            "uuids_solicitacoes_acertos_lancamentos": selecionados.map(lanc => lanc.uuid),
             "justificativa": textoConfirmadoJustificado
         })
         await carregaAcertosLancamentos(contaSelecionada)
@@ -408,14 +417,6 @@ const AcertosLancamentos = ({
 
                                     <div className="p-3 mb-2 bg-white text-dark container-categorias-acertos">
 
-                                        {categoria && categoria.acertos.length > 1 &&
-                                            <div className='mb-0 text-right border-bottom'>
-                                                {visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'UE' && visoesService.getPermissoes(["change_analise_dre"]) && prestacaoDeContas.status === "DEVOLVIDA" && analisePermiteEdicao &&
-                                                    selecionarTodosItensDaCategoriaDoLancamento(categoria)
-                                                }
-                                            </div>
-                                        }
-
                                         {categoria.mensagem_inativa &&
                                             <div className='row mb-2'>
                                                 <div className='col-12'>
@@ -469,8 +470,8 @@ const AcertosLancamentos = ({
                                                                 id={`acerto_${acerto}`}
                                                                 name="topping"
                                                                 value={acerto.uuid}
-                                                                checked={lancamentosSelecionados.includes(acerto)}
-                                                                onChange={(event) => selecionarItemIndividual(event, acerto, acerto.status_realizacao)}
+                                                                checked={acerto.selecionado}
+                                                                onChange={(event) => tratarSelecionadoIndividual(event, data.analise_lancamento, acerto)}
                                                             />
                                                         </div>
                                                     }
@@ -603,227 +604,308 @@ const AcertosLancamentos = ({
 
     // ################# Vieram da Tabela #################
 
-    const [lancamentosSelecionados, setLancamentosSelecionados] = useState([])
     const [tituloModalCheckNaoPermitido, setTituloModalCheckNaoPermitido] = useState('Seleção não permitida')
     const [textoModalCheckNaoPermitido, setTextoModalCheckNaoPermitido] = useState('')
     const [showModalCheckNaoPermitido, setShowModalCheckNaoPermitido] = useState(false)
 
-    const [identificadorCheckboxClicado, setIdentificadorCheckboxClicado] = useState([{
-            uuid: '',
-        }])
+    const selecionarTodosGlobal = (e) => {
+        if(identificadorCheckboxClicado){
+            let result = lancamentosAjustes.reduce((acc, o) => {
+                let obj_completo = o;
+                obj_completo.analise_lancamento.selecionado = false;
 
-    const [status, setStatus] = useState()
+                setaCheckBoxSolicitacoes(obj_completo.analise_lancamento, false);
 
-    const limparLancamentos = ({rowData, categoria}) => {
+                acc.push(obj_completo);
+                return acc;
+            }, [])
+    
+            setLancamentosAjustes(result);
+            setIdentificadorCheckboxClicado(false);
+            
+            let qtde = getQuantidadeAcertosSelecionados();
+            setQuantidadeSelecionada(qtde);
+        }
+        else{
+            let result = lancamentosAjustes.reduce((acc, o) => {
+                let obj_completo = o;
+                obj_completo.analise_lancamento.selecionado = true;
 
-        if (categoria){
-            // eslint-disable-next-line array-callback-return
-            categoria.acertos.map((acerto) => {
-                    setLancamentosSelecionados((current) => current.filter((item) => item !== acerto));
+                setaCheckBoxSolicitacoes(obj_completo.analise_lancamento, true);
+            
+                acc.push(obj_completo);
+                return acc;
+            }, [])
+    
+            setLancamentosAjustes(result);
+            setIdentificadorCheckboxClicado(true);
+            
+            let qtde = getQuantidadeAcertosSelecionados();
+            setQuantidadeSelecionada(qtde)
+        }
+    }
+
+    const tratarSelecionado = (e, analiseLancamentoUuid) => {
+        let result2 = lancamentosAjustes.reduce((acc, o) => {
+            let obj_completo = o;
+
+            if(obj_completo.analise_lancamento.uuid === analiseLancamentoUuid){
+                obj_completo.analise_lancamento.selecionado = e.target.checked;
+
+                setaCheckBoxSolicitacoes(obj_completo.analise_lancamento, e.target.checked)
+
+                if(todosLancamentosCheckados()){
+                    setIdentificadorCheckboxClicado(true);
                 }
-            )
-            setIdentificadorCheckboxClicado((current) => current.filter((item) => item.uuid !== categoria.categoria));
-
-        }else if (rowData){
-            rowData.analise_lancamento.solicitacoes_de_ajuste_da_analise.solicitacoes_acerto_por_categoria.map((categoria) =>
-                // eslint-disable-next-line array-callback-return
-                categoria.acertos.map((acerto) => {
-                        setLancamentosSelecionados((current) => current.filter((item) => item !== acerto));
-                    }
-                )
-            )
-            setIdentificadorCheckboxClicado((current) => current.filter((item) => item.uuid !== rowData.analise_lancamento.uuid))
-
-        }else {
-            setLancamentosSelecionados([])
-            setIdentificadorCheckboxClicado([{
-                uuid: '',
-            }])
-        }
-    }
-
-    const verificaSePodeSerSelecionado = (statusId) => {
-        if (lancamentosSelecionados && lancamentosSelecionados.length > 0){
-            if (lancamentosSelecionados[0].status_realizacao !== statusId){
-                setTituloModalCheckNaoPermitido('Seleção não permitida')
-                setTextoModalCheckNaoPermitido('<p>Esse lançamento tem um status de conferência que não pode ser selecionado em conjunto com os demais status já selecionados.</p>')
-                setShowModalCheckNaoPermitido(true)
-                return false
-            }else {
-                return true
+                else{
+                    setIdentificadorCheckboxClicado(false);
+                }
             }
-        }else {
-            return true
-        }
+        
+            acc.push(obj_completo);
+            return acc;
+        }, []);
+        setLancamentosAjustes(result2);
+        
+        let qtde = getQuantidadeAcertosSelecionados();
+        setQuantidadeSelecionada(qtde);
     }
 
-    const selecionarPorStatusTodosItensDosLancamentos = (event, statusId) => {
-        event.preventDefault()
-
-        lancamentosAjustes.map((lancamento) =>
-            lancamento.analise_lancamento.solicitacoes_de_ajuste_da_analise.solicitacoes_acerto_por_categoria.map((categoria) =>
-                // eslint-disable-next-line array-callback-return
-                categoria.acertos.map((acerto) => {
-
-                    if (verificaSePodeSerSelecionado(statusId)) {
-
-                        setStatus(statusId)
-
-                        if (acerto.status_realizacao === statusId) {
-                            if (!lancamentosSelecionados.includes(acerto)) {
-                                setLancamentosSelecionados((array) => [...array, acerto]);
-                            }
-                        } else {
-                            setLancamentosSelecionados((current) => current.filter((item) => item !== acerto));
-                        }
-                    }
-                })
-            )
-        )
-        if (verificaSePodeSerSelecionado(statusId)) {
-            setIdentificadorCheckboxClicado((array) => [...array, {uuid: 'TODOS'}]);
+    const todosLancamentosCheckados = () => {
+        let total_lancamentos = lancamentosAjustes.length;
+        let total_lancamentos_selecionados = 0;
+        
+        let lancamentos_selecionados = lancamentosAjustes.filter(element => element.analise_lancamento.selecionado === true);
+        
+        if(lancamentos_selecionados){
+            total_lancamentos_selecionados = lancamentos_selecionados.length;
         }
+
+        
+        if(total_lancamentos === total_lancamentos_selecionados){
+            return true;
+        }
+
+        return false;
     }
 
-    const selecionarTodosItensDosLancamentos = () => {
+    const todosAcertosCheckados = (analiseLancamento) => {
+        let solicitacoes_acerto_por_categoria = analiseLancamento.solicitacoes_de_ajuste_da_analise.solicitacoes_acerto_por_categoria;
+        let total_acertos = analiseLancamento.solicitacoes_de_ajuste_da_analise_total;
+        let total_selecionados = 0;
+
+        for(let i=0; i<=solicitacoes_acerto_por_categoria.length-1; i++){
+            let solicitacao = solicitacoes_acerto_por_categoria[i];
+
+            let acertos_selecionados = solicitacao.acertos.filter(element => element.selecionado === true)
+            if(acertos_selecionados){
+                total_selecionados = total_selecionados + acertos_selecionados.length
+            }
+        }
+
+        if(total_acertos === total_selecionados){
+            return true;
+        }
+
+        return false;
+    }
+
+    const selecionarTodosItensDosLancamentosGlobal = () => {
         return (
             <div className="align-middle">
-                <Dropdown>
-                    <Dropdown.Toggle id="dropdown-basic" className="p-0">
-                        <input
-                            checked={identificadorCheckboxClicado.some(uuid => uuid.uuid === 'TODOS') && lancamentosSelecionados.length > 0}
-                            type="checkbox"
-                            value=""
-                            onChange={(e) => e}
-                            name="checkHeader"
-                            id="checkHeader"
-                            disabled={false}
-                        />
-                    </Dropdown.Toggle>
-
-                    <Dropdown.Menu className="super-colors" id='dropdown-menu-tabela-acertos-lancamentos'>
-                        <Dropdown.Item onClick={(e) => selecionarPorStatusTodosItensDosLancamentos(e, 'REALIZADO')}>Selecionar todos realizados</Dropdown.Item>
-                        <Dropdown.Item onClick={(e) => selecionarPorStatusTodosItensDosLancamentos(e, 'JUSTIFICADO')}>Selecionar todos justificados</Dropdown.Item>
-                        <Dropdown.Item onClick={(e) => selecionarPorStatusTodosItensDosLancamentos(e, 'PENDENTE')}>Selecionar todos sem status </Dropdown.Item>
-                        <Dropdown.Item onClick={()=>limparLancamentos({rowData: null, categoria: null}) }>Desmarcar todos</Dropdown.Item>
-                    </Dropdown.Menu>
-
-                </Dropdown>
+                <input
+                    checked={identificadorCheckboxClicado}
+                    type="checkbox"
+                    value=""
+                    onChange={(e) => selecionarTodosGlobal(e.target)}
+                    name="checkHeader"
+                    id="checkHeader"
+                    disabled={false}
+                />
             </div>
         )
     }
 
-    const selecionarPorStatusTodosItensDoLancamento = (event, statusId, rowData) => {
-        event.preventDefault()
+    const selecionarTodosItensDoLancamentoRow = (rowData) => {
+        return (
+            <input
+                checked={lancamentosAjustes.filter(element => element.analise_lancamento.uuid === rowData.analise_lancamento.uuid)[0].analise_lancamento.selecionado}
+                type="checkbox"
+                value=""
+                onChange={(e) => tratarSelecionado(e, rowData.analise_lancamento.uuid)}
+                name="checkHeader"
+                id="checkHeader"
+                disabled={false}
+            />
+        );
+    }
 
-        rowData.analise_lancamento.solicitacoes_de_ajuste_da_analise.solicitacoes_acerto_por_categoria.map((categoria) =>
-            // eslint-disable-next-line array-callback-return
-            categoria.acertos.map((acerto) => {
+    const tratarSelecionadoIndividual = (e, analiseLancamento, acerto) => {
+        
+        let result2 = lancamentosAjustes.reduce((acc, o) => {
+            let obj_completo = o;
 
-                if (verificaSePodeSerSelecionado(statusId)) {
+            if(obj_completo.analise_lancamento.uuid === analiseLancamento.uuid){
+                let solicitacoes_acerto_por_categoria = obj_completo.analise_lancamento.solicitacoes_de_ajuste_da_analise.solicitacoes_acerto_por_categoria; 
+                
+                for(let i=0; i<=solicitacoes_acerto_por_categoria.length-1; i++){
+                    let acertos = solicitacoes_acerto_por_categoria[i].acertos;
 
-                    setStatus(statusId)
+                    for(let x=0; x<=acertos.length-1; x++){
+                        if(acertos[x].uuid === acerto.uuid){
+                            acertos[x].selecionado = e.target.checked;
 
-                    if (acerto.status_realizacao === statusId) {
-                        if (!lancamentosSelecionados.includes(acerto)) {
-                            setLancamentosSelecionados((array) => [...array, acerto]);
+                            if(todosAcertosCheckados(analiseLancamento)){
+                                obj_completo.analise_lancamento.selecionado = true;
+
+                                if(todosLancamentosCheckados()){
+                                    setIdentificadorCheckboxClicado(true);
+                                }
+                                else{
+                                    setIdentificadorCheckboxClicado(false);
+                                }
+                            }
+                            else{
+                                obj_completo.analise_lancamento.selecionado = false;
+                                
+                                if(todosLancamentosCheckados()){
+                                    setIdentificadorCheckboxClicado(true);
+                                }
+                                else{
+                                    setIdentificadorCheckboxClicado(false);
+                                }
+                            }
                         }
-                    } else {
-                        setLancamentosSelecionados((current) => current.filter((item) => item !== acerto));
                     }
                 }
-            })
-        )
-        if (verificaSePodeSerSelecionado(statusId)) {
-            setIdentificadorCheckboxClicado((array) => [...array, {uuid: rowData.analise_lancamento.uuid}]);
+                
+            }
+        
+            acc.push(obj_completo);
+            return acc;
+        }, []);
+
+        setLancamentosAjustes(result2);
+        
+        let qtde = getQuantidadeAcertosSelecionados();
+        setQuantidadeSelecionada(qtde);
+    }
+
+    const setaCheckBoxSolicitacoes = (analise_lancamento, flag) => {
+        let solicitacoes_acerto_por_categoria = analise_lancamento.solicitacoes_de_ajuste_da_analise.solicitacoes_acerto_por_categoria;
+
+        for(let solicitacao=0; solicitacao<=solicitacoes_acerto_por_categoria.length-1; solicitacao++){
+            let acertos = solicitacoes_acerto_por_categoria[solicitacao].acertos;
+
+            for(let acerto=0; acerto<=acertos.length-1; acerto++){
+                acertos[acerto].selecionado = flag;
+            }
         }
     }
 
-    const selecionarTodosItensDoLancamento = (rowData) => {
+    const getQuantidadeAcertosSelecionados = () => {
+        let quantidade = 0;
 
-        return (
-            <Dropdown>
-                <Dropdown.Toggle id="dropdown-basic">
-                    <input
-                        checked={ (identificadorCheckboxClicado.some(uuid => uuid.uuid === 'TODOS') && lancamentosSelecionados.length > 0 ) || (identificadorCheckboxClicado.some(uuid => uuid.uuid === rowData.analise_lancamento.uuid) && lancamentosSelecionados.length > 0) }
-                        type="checkbox"
-                        value=""
-                        onChange={(e) => e}
-                        name="checkHeader"
-                        id="checkHeader"
-                        disabled={false}
-                    />
-                </Dropdown.Toggle>
+        for(let i=0; i<=lancamentosAjustes.length-1; i++){
+            let analise_lancamento = lancamentosAjustes[i].analise_lancamento;
 
-                <Dropdown.Menu className="super-colors" id='dropdown-menu-tabela-acertos-lancamentos'>
-                    <Dropdown.Item onClick={(e) => selecionarPorStatusTodosItensDoLancamento(e, 'REALIZADO', rowData)}>Selecionar todos realizados</Dropdown.Item>
-                    <Dropdown.Item onClick={(e) => selecionarPorStatusTodosItensDoLancamento(e, 'JUSTIFICADO', rowData)}>Selecionar todos justificados</Dropdown.Item>
-                    <Dropdown.Item onClick={(e) => selecionarPorStatusTodosItensDoLancamento(e, 'PENDENTE', rowData)}>Selecionar todos sem status </Dropdown.Item>
-                    <Dropdown.Item onClick={()=>limparLancamentos({rowData: rowData, categoria: null})}>Desmarcar todos</Dropdown.Item>
-                </Dropdown.Menu>
-            </Dropdown>
-        );
+            let solicitacoes_acerto_por_categoria = analise_lancamento.solicitacoes_de_ajuste_da_analise.solicitacoes_acerto_por_categoria;
+        
+            for(let x=0; x<=solicitacoes_acerto_por_categoria.length-1; x++){
+                let solicitacao = solicitacoes_acerto_por_categoria[x];
+                let acertos_selecionados = solicitacao.acertos.filter(element => element.selecionado === true)
+    
+                if(acertos_selecionados){
+                    quantidade = quantidade + acertos_selecionados.length;
+                }
+            }
+        
+        }
+
+        return quantidade;
     }
 
-    const selecionarPorStatusTodosItensDaCategoriaDoLancamento = (event, statusId, categoria) => {
-        event.preventDefault()
+    const acoesDisponiveis = () => {
+        let selecionados = getSolicitacoesSelecionadas();
+        
+        let status_selecionados = {
+            JUSTIFICADO_E_REALIZADO: false,
+            REALIZADO_E_PENDENTE: false,
+            JUSTIFICADO_E_REALIZADO_E_PENDENTE: false,
+            JUSTIFICADO_E_PENDENTE: false,
+            
+            REALIZADO: false,
+            JUSTIFICADO: false,
+            PENDENTE: false
+        }
 
-        // eslint-disable-next-line array-callback-return
-        categoria.acertos.map((acerto) => {
-            if (verificaSePodeSerSelecionado(statusId)){
-                setStatus(statusId)
-                if (acerto.status_realizacao === statusId) {
-                    if (!lancamentosSelecionados.includes(acerto)) {
-                        setLancamentosSelecionados((array) => [...array, acerto]);
-                    }
-                }else {
-                    setLancamentosSelecionados((current) => current.filter((item) => item !== acerto));
+        let selecionados_status_pendente = selecionados.filter(element => element.status_realizacao === "PENDENTE");
+        let selecionados_status_justificado = selecionados.filter(element => element.status_realizacao === "JUSTIFICADO");
+        let selecionados_status_realizado = selecionados.filter(element => element.status_realizacao === "REALIZADO");
+        
+        // Logica status conjuntos
+        if(selecionados_status_justificado.length > 0 && selecionados_status_realizado.length > 0 && selecionados_status_pendente.length === 0){
+            status_selecionados.JUSTIFICADO_E_REALIZADO = true;
+        }
+        else if(selecionados_status_realizado.length > 0 && selecionados_status_pendente.length > 0 && selecionados_status_justificado.length === 0){
+            status_selecionados.REALIZADO_E_PENDENTE = true;
+        }
+        else if(selecionados_status_justificado.length > 0 && selecionados_status_realizado.length > 0 && selecionados_status_pendente.length > 0){
+            status_selecionados.JUSTIFICADO_E_REALIZADO_E_PENDENTE = true;
+        }
+        else if(selecionados_status_justificado.length > 0 && selecionados_status_pendente.length > 0 && selecionados_status_realizado.length === 0){
+            status_selecionados.JUSTIFICADO_E_PENDENTE = true;
+        }
+        // Logica status individuais
+        else if(selecionados_status_realizado.length > 0 && selecionados_status_justificado.length === 0 && selecionados_status_pendente.length === 0){
+            status_selecionados.REALIZADO = true;
+        }
+        else if(selecionados_status_justificado.length > 0 && selecionados_status_realizado.length === 0 && selecionados_status_pendente.length === 0){
+            status_selecionados.JUSTIFICADO = true;
+        }
+        else if(selecionados_status_pendente.length > 0 && selecionados_status_realizado.length === 0 && selecionados_status_justificado.length === 0){
+            status_selecionados.PENDENTE = true;
+        }
+        
+        return status_selecionados;
+    }
+
+    const getSolicitacoesSelecionadas = () => {
+        let selecionados = [];
+
+        for(let i=0; i<=lancamentosAjustes.length-1; i++){
+            let analise_lancamento = lancamentosAjustes[i].analise_lancamento;
+
+            let solicitacoes_acerto_por_categoria = analise_lancamento.solicitacoes_de_ajuste_da_analise.solicitacoes_acerto_por_categoria;
+        
+            for(let x=0; x<=solicitacoes_acerto_por_categoria.length-1; x++){
+                let solicitacao = solicitacoes_acerto_por_categoria[x];
+                let acertos_selecionados = solicitacao.acertos.filter(element => element.selecionado === true)
+    
+                if(acertos_selecionados){
+                    selecionados.push(...acertos_selecionados)
                 }
             }
         }
-    )
-        if (verificaSePodeSerSelecionado(statusId)) {
-            setIdentificadorCheckboxClicado((array) => [...array, {uuid: categoria.categoria}]);
-        }
-}
 
-    const selecionarTodosItensDaCategoriaDoLancamento = (categoria) => {
-
-        return (
-            <Dropdown>
-                <Dropdown.Toggle id="dropdown-basic">
-                    <span>Selecionar todos </span>
-                    <input
-                        checked={identificadorCheckboxClicado.some(uuid => uuid.uuid === categoria.categoria) && lancamentosSelecionados.length > 0 }
-                        type="checkbox"
-                        value=""
-                        onChange={(e) => e}
-                        name="checkHeader"
-                        id="checkHeader"
-                        disabled={false}
-                    />
-                </Dropdown.Toggle>
-
-                <Dropdown.Menu className="super-colors" id='dropdown-menu-tabela-acertos-lancamentos'>
-                    <Dropdown.Item onClick={(e) => selecionarPorStatusTodosItensDaCategoriaDoLancamento(e, 'REALIZADO', categoria)}>Selecionar todos realizados</Dropdown.Item>
-                    <Dropdown.Item onClick={(e) => selecionarPorStatusTodosItensDaCategoriaDoLancamento(e, 'JUSTIFICADO', categoria)}>Selecionar todos justificados</Dropdown.Item>
-                    <Dropdown.Item onClick={(e) => selecionarPorStatusTodosItensDaCategoriaDoLancamento(e, 'PENDENTE', categoria)}>Selecionar todos sem status </Dropdown.Item>
-                    <Dropdown.Item onClick={() => limparLancamentos({rowData: null, categoria: categoria})}>Desmarcar todos</Dropdown.Item>
-                </Dropdown.Menu>
-            </Dropdown>
-        );
+        return selecionados;
     }
 
-    const selecionarItemIndividual = (event, acerto, statusId) => {
+    const acaoCancelar = () => {
+        let lancamentos_com_flag_selecionado = [];
+        let lancamentos_ajustes = lancamentosAjustes;
 
-        if (verificaSePodeSerSelecionado(statusId)){
-            setStatus(statusId)
-            if (!lancamentosSelecionados.includes(acerto)) {
-                setLancamentosSelecionados((array) => [...array, acerto]);
-            }else {
-                setLancamentosSelecionados((current) => current.filter((item) => item !== acerto));
-            }
+        for(let lancamento=0; lancamento<=lancamentos_ajustes.length-1; lancamento++){
+            lancamentos_ajustes[lancamento].analise_lancamento.selecionado = false;
+            
+            setaCheckBoxSolicitacoes(lancamentos_ajustes[lancamento].analise_lancamento, false)
+            lancamentos_com_flag_selecionado.push(lancamentos_ajustes[lancamento])
         }
+
+        setLancamentosAjustes(lancamentos_com_flag_selecionado);
+        setIdentificadorCheckboxClicado(false);
+        setQuantidadeSelecionada(0);
+
     }
 
     // ################# FIM Vieram da Tabela
@@ -894,18 +976,17 @@ const AcertosLancamentos = ({
                             valor_template={valor_template}
                             dataTemplate={dataTemplate}
                             numeroDocumentoTemplate={numeroDocumentoTemplate}
-                            lancamentosSelecionados={lancamentosSelecionados}
-                            status={status}
-                            setLancamentosSelecionados={setLancamentosSelecionados}
-                            selecionarTodosItensDosLancamentos={selecionarTodosItensDosLancamentos}
-                            selecionarTodosItensDoLancamento={selecionarTodosItensDoLancamento}
-                            limparLancamentos={limparLancamentos}
+                            selecionarTodosItensDosLancamentosGlobal={selecionarTodosItensDosLancamentosGlobal}
+                            selecionarTodosItensDoLancamentoRow={selecionarTodosItensDoLancamentoRow}
                             tituloModalCheckNaoPermitido={tituloModalCheckNaoPermitido}
                             textoModalCheckNaoPermitido={textoModalCheckNaoPermitido}
                             showModalCheckNaoPermitido={showModalCheckNaoPermitido}
                             setShowModalCheckNaoPermitido={setShowModalCheckNaoPermitido}
                             totalDeAcertosDosLancamentos={totalDeAcertosDosLancamentos}
                             analisePermiteEdicao={analisePermiteEdicao}
+                            quantidadeSelecionada={quantidadeSelecionada}
+                            acoesDisponiveis={acoesDisponiveis}
+                            acaoCancelar={acaoCancelar}
                         />
                     </div>
                 </div>

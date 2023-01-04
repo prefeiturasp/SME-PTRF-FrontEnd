@@ -38,17 +38,17 @@ export const TabelaAcertosLancamentos = ({
                                              dataTemplate,
                                              numeroDocumentoTemplate,
                                              valor_template,
-                                             lancamentosSelecionados,
-                                             status,
-                                             selecionarTodosItensDosLancamentos,
-                                             selecionarTodosItensDoLancamento,
-                                             limparLancamentos,
+                                             selecionarTodosItensDosLancamentosGlobal,
+                                             selecionarTodosItensDoLancamentoRow,
                                              tituloModalCheckNaoPermitido,
                                              textoModalCheckNaoPermitido,
                                              showModalCheckNaoPermitido,
                                              setShowModalCheckNaoPermitido,
                                              totalDeAcertosDosLancamentos,
                                              analisePermiteEdicao,
+                                             quantidadeSelecionada,
+                                             acoesDisponiveis,
+                                             acaoCancelar
                                          }) => {
 
 
@@ -86,12 +86,12 @@ export const TabelaAcertosLancamentos = ({
         )
     }
 
-    const montagemSelecionarBotaoStatusRealizado = () => {
+    const montagemSelecionarBotaoStatusJustificadoEhRealizado = () => {
         return (
             <>
                 <button
                     className="float-right btn btn-link btn-montagem-selecionar"
-                    onClick={() => limparLancamentos({rowData: null, categoria: null})}
+                    onClick={() => acaoCancelar()}
                     style={{textDecoration: "underline", cursor: "pointer"}}
                 >
                     <FontAwesomeIcon
@@ -100,21 +100,9 @@ export const TabelaAcertosLancamentos = ({
                     />
                     <strong>Cancelar</strong>
                 </button>
+
                 <div className="float-right" style={{padding: "0px 10px"}}>|</div>
-                <button
-                    className="float-right btn btn-link btn-montagem-selecionar"
-                    onClick={() => {
-                        setShowModalJustificarNaoRealizacao(true)
-                    }}
-                    style={{textDecoration: "underline", cursor: "pointer"}}
-                >
-                    <FontAwesomeIcon
-                        style={{color: "white", fontSize: '15px', marginRight: "3px"}}
-                        icon={faCheckCircle}
-                    />
-                    <strong>Justificar não realização</strong>
-                </button>
-                <div className="float-right" style={{padding: "0px 10px"}}>|</div>
+                
                 <button
                     className="float-right btn btn-link btn-montagem-selecionar"
                     onClick={() => limparStatus()}
@@ -130,12 +118,12 @@ export const TabelaAcertosLancamentos = ({
         )
     }
 
-    const montagemSelecionarBotoaoStatusJustificado = () => {
+    const montagemSelecionarBotaoStatusRealizadoEhPendente = () => {
         return (
             <>
                 <button
                     className="float-right btn btn-link btn-montagem-selecionar"
-                    onClick={() => limparLancamentos({rowData: null, categoria: null})}
+                    onClick={() => acaoCancelar()}
                     style={{textDecoration: "underline", cursor: "pointer"}}
                 >
                     <FontAwesomeIcon
@@ -144,22 +132,60 @@ export const TabelaAcertosLancamentos = ({
                     />
                     <strong>Cancelar</strong>
                 </button>
+
                 <div className="float-right" style={{padding: "0px 10px"}}>|</div>
+                
                 <button
                     className="float-right btn btn-link btn-montagem-selecionar"
-                    onClick={() => verificaApagadaJustificada( 'marcar_como_realizado')}
+                    onClick={() => limparStatus()}
                     style={{textDecoration: "underline", cursor: "pointer"}}
                 >
                     <FontAwesomeIcon
                         style={{color: "white", fontSize: '15px', marginRight: "3px"}}
                         icon={faCheckCircle}
                     />
-                    <strong>Marcar como realizado</strong>
+                    <strong>Limpar Status</strong>
                 </button>
+
                 <div className="float-right" style={{padding: "0px 10px"}}>|</div>
+
                 <button
                     className="float-right btn btn-link btn-montagem-selecionar"
-                    onClick={() => verificaApagadaJustificada( 'limpar_status')}
+                    onClick={() => {
+                        setShowModalJustificarNaoRealizacao(true)
+                    }}
+                    style={{textDecoration: "underline", cursor: "pointer"}}
+                >
+                    <FontAwesomeIcon
+                        style={{color: "white", fontSize: '15px', marginRight: "3px"}}
+                        icon={faCheckCircle}
+                    />
+                    <strong>Justificar não realização</strong>
+                </button>
+            </>
+        )
+    }
+
+    const montagemSelecionarBotaoStatusJustificadoEhRealizadoEhPendente = () => {
+        return (
+            <>
+                <button
+                    className="float-right btn btn-link btn-montagem-selecionar"
+                    onClick={() => acaoCancelar()}
+                    style={{textDecoration: "underline", cursor: "pointer"}}
+                >
+                    <FontAwesomeIcon
+                        style={{color: "white", fontSize: '15px', marginRight: "3px"}}
+                        icon={faCheckCircle}
+                    />
+                    <strong>Cancelar</strong>
+                </button>
+
+                <div className="float-right" style={{padding: "0px 10px"}}>|</div>
+                
+                <button
+                    className="float-right btn btn-link btn-montagem-selecionar"
+                    onClick={() => limparStatus()}
                     style={{textDecoration: "underline", cursor: "pointer"}}
                 >
                     <FontAwesomeIcon
@@ -172,12 +198,12 @@ export const TabelaAcertosLancamentos = ({
         )
     }
 
-    const montagemSelecionarBotoaoStatusPendente = () => {
+    const montagemSelecionarBotoaoStatusJustificadoEhPendente = () => {
         return (
             <>
                 <button
                     className="float-right btn btn-link btn-montagem-selecionar"
-                    onClick={() => limparLancamentos({rowData: null, categoria: null})}
+                    onClick={() => acaoCancelar()}
                     style={{textDecoration: "underline", cursor: "pointer"}}
                 >
                     <FontAwesomeIcon
@@ -186,7 +212,149 @@ export const TabelaAcertosLancamentos = ({
                     />
                     <strong>Cancelar</strong>
                 </button>
+
                 <div className="float-right" style={{padding: "0px 10px"}}>|</div>
+                
+                <button
+                    className="float-right btn btn-link btn-montagem-selecionar"
+                    onClick={() => verificaApagadaJustificada( 'limpar_status')}
+                    style={{textDecoration: "underline", cursor: "pointer"}}
+                >
+                    <FontAwesomeIcon
+                        style={{color: "white", fontSize: '15px', marginRight: "3px"}}
+                        icon={faCheckCircle}
+                    />
+                    <strong>Limpar Status</strong>
+                </button>
+                
+                <div className="float-right" style={{padding: "0px 10px"}}>|</div>
+                
+                <button
+                    className="float-right btn btn-link btn-montagem-selecionar"
+                    onClick={() => verificaApagadaJustificada( 'marcar_como_realizado')}
+                    style={{textDecoration: "underline", cursor: "pointer"}}
+                >
+                    <FontAwesomeIcon
+                        style={{color: "white", fontSize: '15px', marginRight: "3px"}}
+                        icon={faCheckCircle}
+                    />
+                    <strong>Marcar como realizado</strong>
+                </button>
+            </>
+        )
+    }
+
+    const montagemSelecionarBotaoStatusRealizado = () => {
+        return (
+            <>
+                <button
+                    className="float-right btn btn-link btn-montagem-selecionar"
+                    onClick={() => acaoCancelar()}
+                    style={{textDecoration: "underline", cursor: "pointer"}}
+                >
+                    <FontAwesomeIcon
+                        style={{color: "white", fontSize: '15px', marginRight: "3px"}}
+                        icon={faCheckCircle}
+                    />
+                    <strong>Cancelar</strong>
+                </button>
+
+                <div className="float-right" style={{padding: "0px 10px"}}>|</div>
+
+                <button
+                    className="float-right btn btn-link btn-montagem-selecionar"
+                    onClick={() => limparStatus()}
+                    style={{textDecoration: "underline", cursor: "pointer"}}
+                >
+                    <FontAwesomeIcon
+                        style={{color: "white", fontSize: '15px', marginRight: "3px"}}
+                        icon={faCheckCircle}
+                    />
+                    <strong>Limpar Status</strong>
+                </button>
+
+                <div className="float-right" style={{padding: "0px 10px"}}>|</div>
+                
+                <button
+                    className="float-right btn btn-link btn-montagem-selecionar"
+                    onClick={() => {
+                        setShowModalJustificarNaoRealizacao(true)
+                    }}
+                    style={{textDecoration: "underline", cursor: "pointer"}}
+                >
+                    <FontAwesomeIcon
+                        style={{color: "white", fontSize: '15px', marginRight: "3px"}}
+                        icon={faCheckCircle}
+                    />
+                    <strong>Justificar não realização</strong>
+                </button>
+            </>
+        )
+    }
+
+    const montagemSelecionarBotoaoStatusJustificado = () => {
+        return (
+            <>
+                <button
+                    className="float-right btn btn-link btn-montagem-selecionar"
+                    onClick={() => acaoCancelar()}
+                    style={{textDecoration: "underline", cursor: "pointer"}}
+                >
+                    <FontAwesomeIcon
+                        style={{color: "white", fontSize: '15px', marginRight: "3px"}}
+                        icon={faCheckCircle}
+                    />
+                    <strong>Cancelar</strong>
+                </button>
+
+                <div className="float-right" style={{padding: "0px 10px"}}>|</div>
+
+                <button
+                    className="float-right btn btn-link btn-montagem-selecionar"
+                    onClick={() => verificaApagadaJustificada( 'limpar_status')}
+                    style={{textDecoration: "underline", cursor: "pointer"}}
+                >
+                    <FontAwesomeIcon
+                        style={{color: "white", fontSize: '15px', marginRight: "3px"}}
+                        icon={faCheckCircle}
+                    />
+                    <strong>Limpar Status</strong>
+                </button>
+
+                <div className="float-right" style={{padding: "0px 10px"}}>|</div>
+
+                <button
+                    className="float-right btn btn-link btn-montagem-selecionar"
+                    onClick={() => verificaApagadaJustificada( 'marcar_como_realizado')}
+                    style={{textDecoration: "underline", cursor: "pointer"}}
+                >
+                    <FontAwesomeIcon
+                        style={{color: "white", fontSize: '15px', marginRight: "3px"}}
+                        icon={faCheckCircle}
+                    />
+                    <strong>Marcar como realizado</strong>
+                </button>
+            </>
+        )
+    }
+
+    const montagemSelecionarBotoaoStatusPendente = () => {
+        return (
+            <>
+                <button
+                    className="float-right btn btn-link btn-montagem-selecionar"
+                    onClick={() => acaoCancelar()}
+                    style={{textDecoration: "underline", cursor: "pointer"}}
+                >
+                    <FontAwesomeIcon
+                        style={{color: "white", fontSize: '15px', marginRight: "3px"}}
+                        icon={faCheckCircle}
+                    />
+                    <strong>Cancelar</strong>
+                </button>
+
+                <div className="float-right" style={{padding: "0px 10px"}}>|</div>
+                
                 <button
                     className="float-right btn btn-link btn-montagem-selecionar"
                     onClick={() => marcarComoRealizado()}
@@ -198,7 +366,9 @@ export const TabelaAcertosLancamentos = ({
                     />
                     <strong>Marcar como realizado</strong>
                 </button>
+                
                 <div className="float-right" style={{padding: "0px 10px"}}>|</div>
+                
                 <button
                     className="float-right btn btn-link btn-montagem-selecionar"
                     onClick={() => setShowModalJustificarNaoRealizacao(true)}
@@ -215,8 +385,6 @@ export const TabelaAcertosLancamentos = ({
     }
 
     const montagemSelecionar = () => {
-        const quantidadeSelecionada = lancamentosSelecionados.length
-
         return (
             <div className="row">
                 <div className="col-12" style={{background: "#00585E", color: 'white', padding: "15px", margin: "0px 15px", flex: "100%"}}>
@@ -224,16 +392,36 @@ export const TabelaAcertosLancamentos = ({
                         <div className="col-5">
                             {quantidadeSelecionada} {quantidadeSelecionada === 1 ? "lançamento selecionado" : "lançamentos selecionados"} / {totalDeAcertosDosLancamentos} totais
                         </div>
+
                         <div className="col-7">
-                            {status === "REALIZADO" &&
+                            {acoesDisponiveis().JUSTIFICADO_E_REALIZADO &&
+                                montagemSelecionarBotaoStatusJustificadoEhRealizado()
+                            }
+
+                            {acoesDisponiveis().REALIZADO_E_PENDENTE &&
+                                montagemSelecionarBotaoStatusRealizadoEhPendente()
+                            }
+
+                            {acoesDisponiveis().JUSTIFICADO_E_REALIZADO_E_PENDENTE &&
+                                montagemSelecionarBotaoStatusJustificadoEhRealizadoEhPendente()
+                            }
+
+                            {acoesDisponiveis().JUSTIFICADO_E_PENDENTE &&
+                                montagemSelecionarBotoaoStatusJustificadoEhPendente()
+                            }
+
+                            {acoesDisponiveis().REALIZADO &&
                                 montagemSelecionarBotaoStatusRealizado()
                             }
-                            {status === "JUSTIFICADO" &&
+
+                            {acoesDisponiveis().JUSTIFICADO &&
                                 montagemSelecionarBotoaoStatusJustificado()
                             }
-                            {status === "PENDENTE" &&
+
+                            {acoesDisponiveis().PENDENTE &&
                                 montagemSelecionarBotoaoStatusPendente()
                             }
+
                         </div>
                     </div>
                 </div>
@@ -294,10 +482,13 @@ export const TabelaAcertosLancamentos = ({
 
     return (
         <>
-            {lancamentosSelecionados.length > 0 ?
-                montagemSelecionar() :
-                mensagemQuantidadeExibida()
+            {quantidadeSelecionada > 0 
+                ?
+                    montagemSelecionar() 
+                :
+                    mensagemQuantidadeExibida()
             }
+            
             {lancamentosAjustes && lancamentosAjustes.length > 0 ? (
                     <DataTable
                         value={lancamentosAjustes}
@@ -352,8 +543,8 @@ export const TabelaAcertosLancamentos = ({
                             style={{width: '10%'}}/>
                         {visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'UE' && visoesService.getPermissoes(["change_analise_dre"]) && prestacaoDeContas.status === "DEVOLVIDA" && analisePermiteEdicao ?
                             <Column
-                                header={selecionarTodosItensDosLancamentos()}
-                                body={selecionarTodosItensDoLancamento}
+                                header={selecionarTodosItensDosLancamentosGlobal()}
+                                body={selecionarTodosItensDoLancamentoRow}
                                 style={{width: '4%', borderLeft: 'none'}}
                             /> : null
                         }
