@@ -20,10 +20,13 @@ import {visoesService} from "../../../services/visoes.service";
 import {ModalConcluirAcertoComPendencias} from "./ModalConcluirAcertoComPendencias";
 import { SidebarLeftService } from "../../../services/SideBarLeft.service";
 import { SidebarContext } from "../../../context/Sidebar";
+import {NotificacaoContext} from "../../../context/Notificacoes";
 
 export const PrestacaoDeContas = ({setStatusPC}) => {
     const history = useHistory();
     const contextSideBar = useContext(SidebarContext);
+
+    const notificacaoContext = useContext(NotificacaoContext);
 
     const [periodoPrestacaoDeConta, setPeriodoPrestacaoDeConta] = useState(false);
     const [periodosAssociacao, setPeriodosAssociacao] = useState(false);
@@ -297,10 +300,15 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
         window.location.assign(`/visualizacao-da-ata/${uuid_ata}`)
     };
 
-    const onConcluirSemPendencias = () =>{
+    const onConcluirSemPendencias = () => {
         setShowConcluir(false);
         setShowConcluirAcertosSemPendencias(false);
         concluirPeriodo();
+        if (statusPrestacaoDeConta.prestacao_contas_status.status_prestacao === "DEVOLVIDA") {
+            localStorage.removeItem("NOTIFICAR_DEVOLUCAO_REFERENCIA")
+            notificacaoContext.setExibeModalTemDevolucao(false)
+            notificacaoContext.setExibeMensagemFixaTemDevolucao(false)
+        }
     };
 
     const onIrParaAnaliseDre = async() => {
