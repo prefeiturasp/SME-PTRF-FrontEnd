@@ -1,7 +1,7 @@
 import React from "react";
 import {visoesService} from "../../../../../services/visoes.service";
 
-export const TopoComBotoes = ({dadosAta, docPrestacaoConta, prestacaoDeContasDetalhe, handleClickEditarAta, handleClickFecharAta, handleClickCopiarAta, setShowModalDevolucoesAoTesouro, exibeBotaoDevolucaoTesouro}) =>{
+export const TopoComBotoes = ({dadosAta, docPrestacaoConta, prestacaoDeContasDetalhe, handleClickEditarAta, handleClickFecharAta}) =>{
     const podeEditarAta = [['change_ata_prestacao_contas']].some(visoesService.getPermissoes)
     return(
         <div className="row">
@@ -25,9 +25,6 @@ export const TopoComBotoes = ({dadosAta, docPrestacaoConta, prestacaoDeContasDet
                 { prestacaoDeContasDetalhe && prestacaoDeContasDetalhe.status && dadosAta && dadosAta.uuid && dadosAta.tipo_ata === 'RETIFICACAO' 
                 ?
                     <>
-                        {podeEditarAta && exibeBotaoDevolucaoTesouro &&
-                            <button onClick={()=>setShowModalDevolucoesAoTesouro(true)} type="button" className="btn btn-success mr-2 mt-2"> <strong>Devoluções ao Tesouro</strong></button>
-                        }
 
                         <button onClick={handleClickEditarAta} type="button" className="btn btn-success mr-2 mt-2" disabled={!(docPrestacaoConta?.gerar_ou_editar_ata_retificacao)} title={!(docPrestacaoConta.gerar_ou_editar_ata_retificacao) ? 'A ata de retificação só pode ser editada enquanto o status da PC for "Devolvida para ajustes" ou "Retornada após acertos".': ''}> <strong>Editar ata de retificação</strong></button>
                     </>
