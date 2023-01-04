@@ -147,7 +147,9 @@ export const FormularioAcertos = ({solicitacoes_acerto, listaTiposDeAcertoLancam
                                                                 }}
                                                                 disabled={bloqueiaSelectTipoDeAcerto[index]}
                                                             >
-                                                                <option key='' value="">Selecione a especificação do acerto</option>
+                                                                {!(acerto.tipo_acerto) &&
+                                                                    <option key='' value="" selected>Selecione a especificação do acerto</option>
+                                                                }
                                                                 
                                                                 {listaTiposDeAcertoLancamentosAgrupado && listaTiposDeAcertoLancamentosAgrupado.length > 0 && opcoesSelect(acertos).map(item => {
                                                                     return (
