@@ -677,7 +677,7 @@ const AcertosLancamentos = ({
         
         let lancamentos_selecionados = lancamentosAjustes.filter(element => element.analise_lancamento.selecionado === true);
         
-        if(lancamentos_selecionados){
+        if(lancamentos_selecionados.length > 0){
             total_lancamentos_selecionados = lancamentos_selecionados.length;
         }
 
@@ -698,7 +698,7 @@ const AcertosLancamentos = ({
             let solicitacao = solicitacoes_acerto_por_categoria[i];
 
             let acertos_selecionados = solicitacao.acertos.filter(element => element.selecionado === true)
-            if(acertos_selecionados){
+            if(acertos_selecionados.length > 0){
                 total_selecionados = total_selecionados + acertos_selecionados.length
             }
         }
@@ -815,7 +815,7 @@ const AcertosLancamentos = ({
                 let solicitacao = solicitacoes_acerto_por_categoria[x];
                 let acertos_selecionados = solicitacao.acertos.filter(element => element.selecionado === true)
     
-                if(acertos_selecionados){
+                if(acertos_selecionados.length > 0){
                     quantidade = quantidade + acertos_selecionados.length;
                 }
             }
@@ -882,7 +882,7 @@ const AcertosLancamentos = ({
                 let solicitacao = solicitacoes_acerto_por_categoria[x];
                 let acertos_selecionados = solicitacao.acertos.filter(element => element.selecionado === true)
     
-                if(acertos_selecionados){
+                if(acertos_selecionados.length > 0){
                     selecionados.push(...acertos_selecionados)
                 }
             }

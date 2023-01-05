@@ -105,7 +105,7 @@ export const TabelaAcertosLancamentos = ({
                 
                 <button
                     className="float-right btn btn-link btn-montagem-selecionar"
-                    onClick={() => limparStatus()}
+                    onClick={() => verificaApagadaJustificada( 'limpar_status')}
                     style={{textDecoration: "underline", cursor: "pointer"}}
                 >
                     <FontAwesomeIcon
@@ -185,7 +185,7 @@ export const TabelaAcertosLancamentos = ({
                 
                 <button
                     className="float-right btn btn-link btn-montagem-selecionar"
-                    onClick={() => limparStatus()}
+                    onClick={() => verificaApagadaJustificada( 'limpar_status')}
                     style={{textDecoration: "underline", cursor: "pointer"}}
                 >
                     <FontAwesomeIcon
