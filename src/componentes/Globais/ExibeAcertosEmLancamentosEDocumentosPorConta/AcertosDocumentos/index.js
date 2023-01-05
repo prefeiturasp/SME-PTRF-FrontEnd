@@ -14,7 +14,6 @@ import {faCheck} from "@fortawesome/free-solid-svg-icons";
 import {barraMensagemCustom} from "../../BarraMensagem";
 import BotoesDetalhesParaAcertosDeCategoriasDocumentos from "../BotoesDetalhesParaAcertosDeCategoriasDocumentos";
 import Loading from "../../../../utils/Loading";
-import Dropdown from "react-bootstrap/Dropdown";
 import { mantemEstadoAnaliseDre as meapcservice } from "../../../../services/mantemEstadoAnaliseDre.service";
 
 
@@ -36,7 +35,9 @@ const AcertosDocumentos = ({analiseAtualUuid, prestacaoDeContas, prestacaoDeCont
     const [showSalvarEsclarecimento, setShowSalvarEsclarecimento] = useState({});
     const [txtEsclarecimentoDocumento, setTxtEsclarecimentoDocumento] = useState({});
     const [analisePermiteEdicao, setAnalisePermiteEdicao] = useState()
-    const [totalDeAcertosDosDocumentos, setTotalDeAcertosDosDocumentos] = useState(0)
+    const [totalDeAcertosDosDocumentos, setTotalDeAcertosDosDocumentos] = useState(0);
+    const [identificadorCheckboxClicado, setIdentificadorCheckboxClicado] = useState(false);
+    const [quantidadeSelecionada, setQuantidadeSelecionada] = useState(0);
 
     useEffect(() => {
         let dados_analise_dre_usuario_logado = meapcservice.getAnaliseDreUsuarioLogado()
@@ -85,14 +86,25 @@ const AcertosDocumentos = ({analiseAtualUuid, prestacaoDeContas, prestacaoDeCont
 
         let documentosAjustes = await getDocumentosAjustes(analiseAtualUuid)
 
-        setDocumentosAjustes(documentosAjustes)
+        // Necessário para iniciar check box dos documentos nao selecionadas
+        let documentos_com_flag_selecionado = [];
+        for(let documento=0; documento<=documentosAjustes.length-1; documento++){
+            // Referente a row da tabela
+            documentosAjustes[documento].selecionado = false;
+
+            // Referente aos acertos dentro da row da tabela
+            setaCheckBoxSolicitacoes(documentosAjustes[documento], false)
+
+            documentos_com_flag_selecionado.push(documentosAjustes[documento])
+        }
+
+
+        setDocumentosAjustes(documentos_com_flag_selecionado)
 
         setOpcoesJustificativa(status_realizacao)
 
-        setDocumentosSelecionados([])
-        setIdentificadorCheckboxClicado([{
-            uuid: ''
-        }])
+        setIdentificadorCheckboxClicado(false);
+        setQuantidadeSelecionada(0);
 
         setLoadingDocumentos(false)
     }, [analiseAtualUuid])
@@ -139,10 +151,11 @@ const AcertosDocumentos = ({analiseAtualUuid, prestacaoDeContas, prestacaoDeCont
 
     }, [opcoesJustificativa])
 
-    const limparDocumentoStatus = async (documentosSelecionados) => {
+    const limparDocumentoStatus = async () => {
         try {
             setLoadingDocumentos(true)
-            await postLimparStatusDocumentoPrestacaoConta({"uuids_solicitacoes_acertos_documentos": documentosSelecionados.map(doc => doc.uuid)})
+            let selecionados = getSolicitacoesSelecionadas();
+            await postLimparStatusDocumentoPrestacaoConta({"uuids_solicitacoes_acertos_documentos": selecionados.map(doc => doc.uuid)})
             await carregaAcertosDocumentos()
             setLoadingDocumentos(false)
         }catch (e) {
@@ -151,9 +164,10 @@ const AcertosDocumentos = ({analiseAtualUuid, prestacaoDeContas, prestacaoDeCont
 
     }
 
-    const marcarDocumentoComoRealizado = async (documentosSelecionados) => {
+    const marcarDocumentoComoRealizado = async () => {
         try {
-            let response = await postMarcarComoRealizadoDocumentoPrestacaoConta({"uuids_solicitacoes_acertos_documentos": documentosSelecionados.map(doc => doc.uuid)})
+            let selecionados = getSolicitacoesSelecionadas();
+            let response = await postMarcarComoRealizadoDocumentoPrestacaoConta({"uuids_solicitacoes_acertos_documentos": selecionados.map(doc => doc.uuid)})
             if (response && !response.todas_as_solicitacoes_marcadas_como_realizado){
                 // Reaproveitando o modal CheckNaoPermitido
                 setTituloModalCheckNaoPermitido('Não é possível marcar a solicitação como realizada')
@@ -167,10 +181,11 @@ const AcertosDocumentos = ({analiseAtualUuid, prestacaoDeContas, prestacaoDeCont
 
     }
 
-    const justificarNaoRealizacaoDocumentos = async (documentosSelecionados, textoConfirmadoJustificado) => {
+    const justificarNaoRealizacaoDocumentos = async (textoConfirmadoJustificado) => {
         try {
+            let selecionados = getSolicitacoesSelecionadas();
             await postJustificarNaoRealizacaoDocumentoPrestacaoConta({
-                "uuids_solicitacoes_acertos_documentos": documentosSelecionados.map(doc => doc.uuid),
+                "uuids_solicitacoes_acertos_documentos": selecionados.map(doc => doc.uuid),
                 "justificativa": textoConfirmadoJustificado
             })
             await carregaAcertosDocumentos()
@@ -266,14 +281,6 @@ const AcertosDocumentos = ({analiseAtualUuid, prestacaoDeContas, prestacaoDeCont
 
                                 <div className="p-3 mb-2 bg-white text-dark container-categorias-acertos">
 
-                                    {categoria && categoria.acertos.length > 1 &&
-                                        <div className='mb-0 text-right border-bottom'>
-                                            {visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'UE' && visoesService.getPermissoes(["change_analise_dre"]) && prestacaoDeContas.status === "DEVOLVIDA" && analisePermiteEdicao &&
-                                                selecionarTodosItensDaCategoriaDoLancamento(categoria)
-                                            }
-                                        </div>
-                                    }
-
                                     {categoria.requer_ajustes_externos &&
                                         <div className='row mb-2'>
                                             <div className='col-12'>
@@ -318,8 +325,8 @@ const AcertosDocumentos = ({analiseAtualUuid, prestacaoDeContas, prestacaoDeCont
                                                             id={`acerto_${acerto}`}
                                                             name="topping"
                                                             value={acerto.uuid}
-                                                            checked={documentosSelecionados.includes(acerto)}
-                                                            onChange={(event) => selecionarItemIndividual(event, acerto, acerto.status_realizacao)}
+                                                            checked={acerto.selecionado}
+                                                            onChange={(event) => tratarSelecionadoIndividual(event, data, acerto)}
                                                         />
                                                     </div>
                                                 }
@@ -369,8 +376,6 @@ const AcertosDocumentos = ({analiseAtualUuid, prestacaoDeContas, prestacaoDeCont
                                                             </button>
                                                         </div>
                                                     </div>
-
-
 
                                                 </div>
                                             )}
@@ -443,232 +448,311 @@ const AcertosDocumentos = ({analiseAtualUuid, prestacaoDeContas, prestacaoDeCont
     };
 
     // ############# Métodos para Seleção
-    const [documentosSelecionados, setDocumentosSelecionados] = useState([])
-    const [status, setStatus] = useState()
     const [tituloModalCheckNaoPermitido, setTituloModalCheckNaoPermitido] = useState('Seleção não permitida')
     const [textoModalCheckNaoPermitido, setTextoModalCheckNaoPermitido] = useState('')
     const [showModalCheckNaoPermitido, setShowModalCheckNaoPermitido] = useState(false)
 
-    const [identificadorCheckboxClicado, setIdentificadorCheckboxClicado] = useState([{
-        uuid: '',
-    }])
-
-
-    const verificaSePodeSerSelecionado = (statusId) => {
-        if (documentosSelecionados && documentosSelecionados.length > 0){
-            if (documentosSelecionados[0].status_realizacao !== statusId){
-                setTituloModalCheckNaoPermitido('Seleção não permitida')
-                setTextoModalCheckNaoPermitido('<p>Esse documento tem um status de conferência que não pode ser selecionado em conjunto com os demais status já selecionados.</p>')
-                setShowModalCheckNaoPermitido(true)
-                return false
-            }else {
-                return true
-            }
-        }else {
-            return true
-        }
-    }
-
-    const limparDocumentos = ({rowData, categoria}) => {
-
-        if (categoria){
-            // eslint-disable-next-line array-callback-return
-            categoria.acertos.map((acerto) => {
-                    setDocumentosSelecionados((current) => current.filter((item) => item !== acerto));
-                }
-            )
-            setIdentificadorCheckboxClicado((current) => current.filter((item) => item.uuid !== categoria.categoria));
-
-        }else if (rowData){
-            rowData.solicitacoes_de_ajuste_da_analise.solicitacoes_acerto_por_categoria.map((categoria) =>
-                // eslint-disable-next-line array-callback-return
-                categoria.acertos.map((acerto) => {
-                    setDocumentosSelecionados((current) => current.filter((item) => item !== acerto));
-                    }
-                )
-            )
-            setIdentificadorCheckboxClicado((current) => current.filter((item) => item.uuid !== rowData.uuid))
-
-        }else {
-            setDocumentosSelecionados([])
-            setIdentificadorCheckboxClicado([{
-                uuid: '',
-            }])
-        }
-    }
-
-    const selecionarPorStatusTodosItensDosDocumentos = (event, statusId) => {
-        event.preventDefault()
-
-        documentosAjustes.map((lancamento) =>
-            lancamento.solicitacoes_de_ajuste_da_analise.solicitacoes_acerto_por_categoria.map((categoria) =>
-                // eslint-disable-next-line array-callback-return
-                categoria.acertos.map((acerto) => {
-
-                    if (verificaSePodeSerSelecionado(statusId)) {
-
-                        setStatus(statusId)
-
-                        if (acerto.status_realizacao === statusId) {
-                            if (!documentosSelecionados.includes(acerto)) {
-                                setDocumentosSelecionados((array) => [...array, acerto]);
-                            }
-                        } else {
-                            setDocumentosSelecionados((current) => current.filter((item) => item !== acerto));
-                        }
-                    }
-                })
-            )
-        )
-        if (verificaSePodeSerSelecionado(statusId)) {
-            setIdentificadorCheckboxClicado((array) => [...array, {uuid: 'TODOS'}]);
-        }
-    }
-
-    const selecionarTodosItensDosDocumentos = () => {
+    const selecionarTodosItensDosDocumentosGlobal = () => {
         return (
             <div className="align-middle">
-                <Dropdown>
-                    <Dropdown.Toggle id="dropdown-basic" className="p-0">
-                        <input
-                            checked={identificadorCheckboxClicado.some(uuid => uuid.uuid === 'TODOS') && documentosSelecionados.length > 0}
-                            type="checkbox"
-                            value=""
-                            onChange={(e) => e}
-                            name="checkHeader"
-                            id="checkHeader"
-                            disabled={false}
-                        />
-                    </Dropdown.Toggle>
-
-                    <Dropdown.Menu className="super-colors" id='dropdown-menu-tabela-acertos-lancamentos'>
-                        <Dropdown.Item onClick={(e) => selecionarPorStatusTodosItensDosDocumentos(e, 'REALIZADO')}>Selecionar todos realizados</Dropdown.Item>
-                        <Dropdown.Item onClick={(e) => selecionarPorStatusTodosItensDosDocumentos(e, 'JUSTIFICADO')}>Selecionar todos justificados</Dropdown.Item>
-                        <Dropdown.Item onClick={(e) => selecionarPorStatusTodosItensDosDocumentos(e, 'PENDENTE')}>Selecionar todos sem status </Dropdown.Item>
-                        <Dropdown.Item onClick={()=>limparDocumentos({rowData: null, categoria: null}) }>Desmarcar todos</Dropdown.Item>
-                    </Dropdown.Menu>
-
-                </Dropdown>
+                <input
+                    checked={identificadorCheckboxClicado}
+                    type="checkbox"
+                    value=""
+                    onChange={(e) => selecionarTodosGlobal(e.target)}
+                    name="checkHeader"
+                    id="checkHeader"
+                    disabled={false}
+                />
             </div>
         )
     }
 
-    const selecionarPorStatusTodosItensDoDocumento = (event, statusId, rowData) => {
-        event.preventDefault()
-
-        rowData.solicitacoes_de_ajuste_da_analise.solicitacoes_acerto_por_categoria.map((categoria) =>
-            // eslint-disable-next-line array-callback-return
-            categoria.acertos.map((acerto) => {
-
-                if (verificaSePodeSerSelecionado(statusId)) {
-
-                    setStatus(statusId)
-
-                    if (acerto.status_realizacao === statusId) {
-                        if (!documentosSelecionados.includes(acerto)) {
-                            setDocumentosSelecionados((array) => [...array, acerto]);
-                        }
-                    } else {
-                        setDocumentosSelecionados((current) => current.filter((item) => item !== acerto));
-                    }
-                }
-            })
-        )
-        if (verificaSePodeSerSelecionado(statusId)) {
-            setIdentificadorCheckboxClicado((array) => [...array, {uuid: rowData.uuid}]);
-        }
-    }
-
-    const selecionarTodosItensDoDocumento = (rowData) => {
+    const selecionarTodosItensDoDocumentoRow = (rowData) => {
         return (
-            <Dropdown>
-                <Dropdown.Toggle id="dropdown-basic">
-                    <input
-                        checked={ (identificadorCheckboxClicado.some(uuid => uuid.uuid === 'TODOS') && documentosSelecionados.length > 0 ) || (identificadorCheckboxClicado.some(uuid => uuid.uuid === rowData.uuid) && documentosSelecionados.length > 0) }
-                        type="checkbox"
-                        value=""
-                        onChange={(e) => e}
-                        name="checkHeader"
-                        id="checkHeader"
-                        disabled={false}
-                    />
-                </Dropdown.Toggle>
-
-                <Dropdown.Menu className="super-colors" id='dropdown-menu-tabela-acertos-lancamentos'>
-                    <Dropdown.Item onClick={(e) => selecionarPorStatusTodosItensDoDocumento(e, 'REALIZADO', rowData)}>Selecionar todos realizados</Dropdown.Item>
-                    <Dropdown.Item onClick={(e) => selecionarPorStatusTodosItensDoDocumento(e, 'JUSTIFICADO', rowData)}>Selecionar todos justificados</Dropdown.Item>
-                    <Dropdown.Item onClick={(e) => selecionarPorStatusTodosItensDoDocumento(e, 'PENDENTE', rowData)}>Selecionar todos sem status </Dropdown.Item>
-                    <Dropdown.Item onClick={()=>limparDocumentos({rowData: rowData, categoria: null})}>Desmarcar todos</Dropdown.Item>
-                </Dropdown.Menu>
-            </Dropdown>
+            <input
+                checked={documentosAjustes.filter(element => element.uuid === rowData.uuid)[0].selecionado}
+                type="checkbox"
+                value=""
+                onChange={(e) => tratarSelecionado(e, rowData.uuid)}
+                name="checkHeader"
+                id="checkHeader"
+                disabled={false}
+            />
         );
-    }
-
-    const selecionarPorStatusTodosItensDaCategoriaDoDocumento = (event, statusId, categoria) => {
-        event.preventDefault()
-
-        // eslint-disable-next-line array-callback-return
-        categoria.acertos.map((acerto) => {
-                if (verificaSePodeSerSelecionado(statusId)){
-                    setStatus(statusId)
-                    if (acerto.status_realizacao === statusId) {
-                        if (!documentosSelecionados.includes(acerto)) {
-                            setDocumentosSelecionados((array) => [...array, acerto]);
-                        }
-                    }else {
-                        setDocumentosSelecionados((current) => current.filter((item) => item !== acerto));
-                    }
-                }
-            }
-        )
-        if (verificaSePodeSerSelecionado(statusId)) {
-            setIdentificadorCheckboxClicado((array) => [...array, {uuid: categoria.categoria}]);
-        }
-    }
-
-    const selecionarTodosItensDaCategoriaDoLancamento = (categoria) => {
-
-        return (
-            <Dropdown>
-                <Dropdown.Toggle id="dropdown-basic">
-                    <span>Selecionar todos </span>
-                    <input
-                        checked={identificadorCheckboxClicado.some(uuid => uuid.uuid === categoria.categoria) && documentosSelecionados.length > 0 }
-                        type="checkbox"
-                        value=""
-                        onChange={(e) => e}
-                        name="checkHeader"
-                        id="checkHeader"
-                        disabled={false}
-                    />
-                </Dropdown.Toggle>
-
-                <Dropdown.Menu className="super-colors" id='dropdown-menu-tabela-acertos-lancamentos'>
-                    <Dropdown.Item onClick={(e) => selecionarPorStatusTodosItensDaCategoriaDoDocumento(e, 'REALIZADO', categoria)}>Selecionar todos realizados</Dropdown.Item>
-                    <Dropdown.Item onClick={(e) => selecionarPorStatusTodosItensDaCategoriaDoDocumento(e, 'JUSTIFICADO', categoria)}>Selecionar todos justificados</Dropdown.Item>
-                    <Dropdown.Item onClick={(e) => selecionarPorStatusTodosItensDaCategoriaDoDocumento(e, 'PENDENTE', categoria)}>Selecionar todos sem status </Dropdown.Item>
-                    <Dropdown.Item onClick={() => limparDocumentos({rowData: null, categoria: categoria})}>Desmarcar todos</Dropdown.Item>
-                </Dropdown.Menu>
-            </Dropdown>
-        );
-    }
-
-    const selecionarItemIndividual = (event, acerto, statusId) => {
-
-        if (verificaSePodeSerSelecionado(statusId)){
-            setStatus(statusId)
-            if (!documentosSelecionados.includes(acerto)) {
-                setDocumentosSelecionados((array) => [...array, acerto]);
-            }else {
-                setDocumentosSelecionados((current) => current.filter((item) => item !== acerto));
-            }
-        }
     }
 
     const salvaEstadoExpandedRowsDocumentosLocalStorage = (lista) => {
         let dados_analise_dre_usuario_logado = meapcservice.getAnaliseDreUsuarioLogado();
         dados_analise_dre_usuario_logado.conferencia_de_documentos.expanded = lista
         meapcservice.setAnaliseDrePorUsuario(visoesService.getUsuarioLogin(), dados_analise_dre_usuario_logado)
+    }
+
+    const setaCheckBoxSolicitacoes = (obj, flag) => {
+        let solicitacoes_acerto_por_categoria = obj.solicitacoes_de_ajuste_da_analise.solicitacoes_acerto_por_categoria;
+
+        for(let solicitacao=0; solicitacao<=solicitacoes_acerto_por_categoria.length-1; solicitacao++){
+            let acertos = solicitacoes_acerto_por_categoria[solicitacao].acertos;
+
+            for(let acerto=0; acerto<=acertos.length-1; acerto++){
+                acertos[acerto].selecionado = flag;
+            }
+        }
+    }
+
+    const selecionarTodosGlobal = (e) => {
+        if(identificadorCheckboxClicado){
+            let result = documentosAjustes.reduce((acc, o) => {
+                let obj_completo = o;
+                obj_completo.selecionado = false;
+
+                setaCheckBoxSolicitacoes(obj_completo, false);
+
+                acc.push(obj_completo);
+                return acc;
+            }, [])
+    
+            setDocumentosAjustes(result);
+            setIdentificadorCheckboxClicado(false);
+            
+            let qtde = getQuantidadeAcertosSelecionados();
+            setQuantidadeSelecionada(qtde);
+        }
+        else{
+            let result = documentosAjustes.reduce((acc, o) => {
+                let obj_completo = o;
+                obj_completo.selecionado = true;
+
+                setaCheckBoxSolicitacoes(obj_completo, true);
+            
+                acc.push(obj_completo);
+                return acc;
+            }, [])
+    
+            setDocumentosAjustes(result);
+            setIdentificadorCheckboxClicado(true);
+            
+            let qtde = getQuantidadeAcertosSelecionados();
+            setQuantidadeSelecionada(qtde);
+        }
+    }
+
+    const getQuantidadeAcertosSelecionados = () => {
+        let quantidade = 0;
+
+        for(let i=0; i<=documentosAjustes.length-1; i++){
+            let solicitacoes_acerto_por_categoria = documentosAjustes[i].solicitacoes_de_ajuste_da_analise.solicitacoes_acerto_por_categoria;
+        
+            for(let x=0; x<=solicitacoes_acerto_por_categoria.length-1; x++){
+                let solicitacao = solicitacoes_acerto_por_categoria[x];
+                let acertos_selecionados = solicitacao.acertos.filter(element => element.selecionado === true)
+    
+                if(acertos_selecionados.length > 0){
+                    quantidade = quantidade + acertos_selecionados.length;
+                }
+            }
+        
+        }
+
+        return quantidade;
+    }
+
+    const tratarSelecionado = (e, uuid) => {
+        let result2 = documentosAjustes.reduce((acc, o) => {
+            let obj_completo = o;
+
+            if(obj_completo.uuid === uuid){
+                obj_completo.selecionado = e.target.checked;
+
+                setaCheckBoxSolicitacoes(obj_completo, e.target.checked)
+
+                if(todosDocumentosCheckados()){
+                    setIdentificadorCheckboxClicado(true);
+                }
+                else{
+                    setIdentificadorCheckboxClicado(false);
+                }
+            }
+        
+            acc.push(obj_completo);
+            return acc;
+        }, []);
+        setDocumentosAjustes(result2);
+        
+        let qtde = getQuantidadeAcertosSelecionados();
+        setQuantidadeSelecionada(qtde);
+    }
+
+    const todosDocumentosCheckados = () => {
+        let total_documentos = documentosAjustes.length;
+        let total_documentos_selecionados = 0;
+        
+        let documentos_selecionados = documentosAjustes.filter(element => element.selecionado === true);
+        
+        if(documentos_selecionados.length > 0){
+            total_documentos_selecionados = documentos_selecionados.length;
+        }
+
+        
+        if(total_documentos === total_documentos_selecionados){
+            return true;
+        }
+
+        return false;
+    }
+
+    const tratarSelecionadoIndividual = (e, data, acerto) => {
+        let result2 = documentosAjustes.reduce((acc, o) => {
+            let obj_completo = o;
+
+            if(obj_completo.uuid === data.uuid){
+                let solicitacoes_acerto_por_categoria = obj_completo.solicitacoes_de_ajuste_da_analise.solicitacoes_acerto_por_categoria; 
+
+                for(let i=0; i<=solicitacoes_acerto_por_categoria.length-1; i++){
+                    let acertos = solicitacoes_acerto_por_categoria[i].acertos;
+                    
+                    for(let x=0; x<=acertos.length-1; x++){
+                        
+                        if(acertos[x].uuid === acerto.uuid){
+                            acertos[x].selecionado = e.target.checked;
+                            
+                            if(todosAcertosCheckados(data)){
+                                obj_completo.selecionado = true;
+
+                                if(todosDocumentosCheckados()){
+                                    setIdentificadorCheckboxClicado(true);
+                                }
+                                else{
+                                    setIdentificadorCheckboxClicado(false);
+                                }
+                            }
+                            else{
+                                obj_completo.selecionado = false;
+                                
+                                if(todosDocumentosCheckados()){
+                                    setIdentificadorCheckboxClicado(true);
+                                }
+                                else{
+                                    setIdentificadorCheckboxClicado(false);
+                                }
+                            }
+                        }
+                    }
+                }
+                
+            }
+        
+            acc.push(obj_completo);
+            return acc;
+        }, []);
+
+        setDocumentosAjustes(result2);
+        
+        let qtde = getQuantidadeAcertosSelecionados();
+        setQuantidadeSelecionada(qtde);
+    }
+
+    const todosAcertosCheckados = (data) => {
+        let solicitacoes_acerto_por_categoria = data.solicitacoes_de_ajuste_da_analise.solicitacoes_acerto_por_categoria;
+        let total_acertos = data.solicitacoes_de_ajuste_da_analise_total;
+        let total_selecionados = 0;
+
+        for(let i=0; i<=solicitacoes_acerto_por_categoria.length-1; i++){
+            let solicitacao = solicitacoes_acerto_por_categoria[i];
+
+            let acertos_selecionados = solicitacao.acertos.filter(element => element.selecionado === true)
+            if(acertos_selecionados.length > 0){
+                total_selecionados = total_selecionados + acertos_selecionados.length
+            }
+        }
+
+        if(total_acertos === total_selecionados){
+            return true;
+        }
+
+        return false;
+    }
+
+    const acoesDisponiveis = () => {
+        let selecionados = getSolicitacoesSelecionadas();
+
+        let status_selecionados = {
+            JUSTIFICADO_E_REALIZADO: false,
+            REALIZADO_E_PENDENTE: false,
+            JUSTIFICADO_E_REALIZADO_E_PENDENTE: false,
+            JUSTIFICADO_E_PENDENTE: false,
+
+            REALIZADO: false,
+            JUSTIFICADO: false,
+            PENDENTE: false
+        }
+
+        let selecionados_status_pendente = selecionados.filter(element => element.status_realizacao === "PENDENTE");
+        let selecionados_status_justificado = selecionados.filter(element => element.status_realizacao === "JUSTIFICADO");
+        let selecionados_status_realizado = selecionados.filter(element => element.status_realizacao === "REALIZADO");
+
+        // Logica status conjunto
+        if(selecionados_status_justificado.length > 0 && selecionados_status_realizado.length > 0 && selecionados_status_pendente.length === 0){
+            status_selecionados.JUSTIFICADO_E_REALIZADO = true;
+        }
+        else if(selecionados_status_realizado.length > 0 && selecionados_status_pendente.length > 0 && selecionados_status_justificado.length === 0){
+            status_selecionados.REALIZADO_E_PENDENTE = true;
+        }
+        else if(selecionados_status_justificado.length > 0 && selecionados_status_realizado.length > 0 && selecionados_status_pendente.length > 0){
+            status_selecionados.JUSTIFICADO_E_REALIZADO_E_PENDENTE = true;
+        }
+        else if(selecionados_status_justificado.length > 0 && selecionados_status_pendente.length > 0 && selecionados_status_realizado.length === 0){
+            status_selecionados.JUSTIFICADO_E_PENDENTE = true;
+        }
+
+        // Logica status individuais
+        else if(selecionados_status_realizado.length > 0 && selecionados_status_justificado.length === 0 && selecionados_status_pendente.length === 0){
+            status_selecionados.REALIZADO = true;
+        }
+        else if(selecionados_status_justificado.length > 0 && selecionados_status_realizado.length === 0 && selecionados_status_pendente.length === 0){
+            status_selecionados.JUSTIFICADO = true;
+        }
+        else if(selecionados_status_pendente.length > 0 && selecionados_status_realizado.length === 0 && selecionados_status_justificado.length === 0){
+            status_selecionados.PENDENTE = true;
+        }
+
+        return status_selecionados;
+
+    }
+
+    const getSolicitacoesSelecionadas = () => {
+        let selecionados = [];
+
+        for(let i=0; i<=documentosAjustes.length-1; i++){
+            let solicitacoes_acerto_por_categoria = documentosAjustes[i].solicitacoes_de_ajuste_da_analise.solicitacoes_acerto_por_categoria;
+        
+            for(let x=0; x<=solicitacoes_acerto_por_categoria.length-1; x++){
+                let solicitacao = solicitacoes_acerto_por_categoria[x];
+                let acertos_selecionados = solicitacao.acertos.filter(element => element.selecionado === true)
+    
+                if(acertos_selecionados.length > 0){
+                    selecionados.push(...acertos_selecionados)
+                }
+            }
+        }
+
+        return selecionados;
+    }
+
+    const acaoCancelar = () => {
+        let documentos_com_flag_selecionado = [];
+        let documentos_ajustes = documentosAjustes;
+
+        for(let documento=0; documento<=documentos_ajustes.length-1; documento++){
+            documentos_ajustes[documento].selecionado = false;
+            
+            setaCheckBoxSolicitacoes(documentos_ajustes[documento], false)
+            documentos_com_flag_selecionado.push(documentos_ajustes[documento])
+        }
+
+        setDocumentosAjustes(documentos_com_flag_selecionado);
+        setIdentificadorCheckboxClicado(false);
+        setQuantidadeSelecionada(0);
     }
 
     return(
@@ -695,20 +779,18 @@ const AcertosDocumentos = ({analiseAtualUuid, prestacaoDeContas, prestacaoDeCont
                     expandedRowsDocumentos={expandedRowsDocumentos}
                     setExpandedRowsDocumentos={setExpandedRowsDocumentos}
                     rowExpansionTemplateDocumentos={rowExpansionTemplateDocumentos}
-                    documentosSelecionados={documentosSelecionados}
-                    setDocumentosSelecionados={setDocumentosSelecionados}
-                    status={status}
-                    setStatus={setStatus}
                     tituloModalCheckNaoPermitido={tituloModalCheckNaoPermitido}
                     textoModalCheckNaoPermitido={textoModalCheckNaoPermitido}
                     showModalCheckNaoPermitido={showModalCheckNaoPermitido}
                     setShowModalCheckNaoPermitido={setShowModalCheckNaoPermitido}
-                    selecionarTodosItensDosDocumentos={selecionarTodosItensDosDocumentos}
+                    selecionarTodosItensDosDocumentosGlobal={selecionarTodosItensDosDocumentosGlobal}
                     totalDeAcertosDosDocumentos={totalDeAcertosDosDocumentos}
-                    selecionarTodosItensDoDocumento={selecionarTodosItensDoDocumento}
+                    selecionarTodosItensDoDocumentoRow={selecionarTodosItensDoDocumentoRow}
                     opcoesJustificativa={opcoesJustificativa}
-                    limparDocumentos={limparDocumentos}
                     analisePermiteEdicao={analisePermiteEdicao}
+                    quantidadeSelecionada={quantidadeSelecionada}
+                    acoesDisponiveis={acoesDisponiveis}
+                    acaoCancelar={acaoCancelar}
                 />
             }
         </>
