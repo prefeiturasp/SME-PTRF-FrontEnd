@@ -15,7 +15,7 @@ export const FormularioAcertos = ({solicitacoes_acerto, listaTiposDeAcertoLancam
         if(statusAcerto === 'INATIVO'){
             setListaTiposDeAcertoLancamentosAgrupado(listaTiposDeAcertoLancamentosAgrupado.filter(
                 item => {
-                    return item.id === "DEVOLUCAO" || item.id === "AJUSTES_EXTERNOS"
+                    return item.id === "SOLICITACAO_ESCLARECIMENTO" || item.id === "AJUSTES_EXTERNOS"
                 }
             ));
         }
