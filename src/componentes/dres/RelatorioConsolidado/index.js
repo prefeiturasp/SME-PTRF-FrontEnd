@@ -21,6 +21,7 @@ import {MsgImgCentralizada} from "../../Globais/Mensagens/MsgImgCentralizada";
 import {TrilhaDeStatus} from "./TrilhaDeStatus";
 import Loading from "../../../utils/Loading";
 import PublicarDocumentos from "./PublicarDocumentos";
+import GerarRelatorioRetificacao from "./GerarRelatorioRetificacao";
 import DemonstrativoDaExecucaoFisicoFinanceira from "./DemonstrativoDaExecucaoFisicoFinanceira";
 import {AtaParecerTecnico} from "./AtaParecerTecnico";
 import Lauda from "./Lauda";
@@ -305,6 +306,17 @@ const RelatorioConsolidado = () => {
         setLoading(false)
     };
 
+    const exibeBlocoRetificacao = () => {        
+        console.log("🚀 ~ file: index.js:311 ~ exibeBlocoRetificacao ~ consolidadoDreProximaPublicacao", consolidadoDreProximaPublicacao)
+        if (!consolidadoDreProximaPublicacao) {
+        return false;
+        }
+        
+        consolidadoRetificados = consolidadosDreJaPublicados?.some(pc => pc.eh_retificacao === true);
+        console.log(consolidadoRetificados)
+
+    }
+
     return (
         <PaginasContainer>
             <h1 className="titulo-itens-painel mt-5">Consolidado das PCs</h1>
@@ -347,8 +359,42 @@ const RelatorioConsolidado = () => {
                                     ) :
                                     <>
                                         {/*{consolidadoDreProximaPublicacao && podeGerarPrevia() &&*/}
-                                        {podeExibirProximaPublicacao() &&
+                                        {exibeBlocoRetificacao() && 
+                                        <div className='mt-3'>
+                                                <GerarRelatorioRetificacao
+                                                    publicarConsolidadoDre={publicarConsolidadoDre}
+                                                    setShowPublicarRelatorioConsolidado={setShowPublicarRelatorioConsolidado}
+                                                    publicarConsolidadoDePublicacoesParciais={publicarConsolidadoDePublicacoesParciais}
+                                                    podeGerarPrevia={podeGerarPrevia}
+                                                    consolidadoDre={consolidadoDreProximaPublicacao}
+                                                    carregaConsolidadosDreJaPublicadosProximaPublicacao={carregaConsolidadosDreJaPublicadosProximaPublicacao}
+                                                    execucaoFinanceira={execucaoFinanceira}
+                                                    disableGerar={disableGerar}
+                                                >
+                                                    <PreviaDocumentos
+                                                        gerarPreviaConsolidadoDre={gerarPreviaConsolidadoDre}
+                                                    />
+                                                </GerarRelatorioRetificacao>
+                                                <DemonstrativoDaExecucaoFisicoFinanceira
+                                                    consolidadoDre={consolidadoDreProximaPublicacao}
+                                                    periodoEscolhido={periodoEscolhido}
+                                                    execucaoFinanceira={execucaoFinanceira}
+                                                />
+                                                {!consolidadoDreProximaPublicacao.eh_consolidado_de_publicacoes_parciais &&
+                                                    <AtaParecerTecnico
+                                                    consolidadoDre={consolidadoDreProximaPublicacao}
+                                                    />
+                                                }
 
+                                                {!consolidadoDreProximaPublicacao.eh_consolidado_de_publicacoes_parciais &&
+                                                    <Lauda
+                                                        consolidadoDre={consolidadoDreProximaPublicacao}
+                                                    />
+                                                }
+                                            </div>
+                                        }
+                                        {podeExibirProximaPublicacao() &&
+                                            <>
                                             <div className='mt-3'>
                                                 <PublicarDocumentos
                                                     publicarConsolidadoDre={publicarConsolidadoDre}
@@ -382,6 +428,7 @@ const RelatorioConsolidado = () => {
                                                     />
                                                 }
                                             </div>
+                                            </>
                                         }
 
                                         {consolidadosDreJaPublicados && consolidadosDreJaPublicados.map((consolidadoDre) =>
