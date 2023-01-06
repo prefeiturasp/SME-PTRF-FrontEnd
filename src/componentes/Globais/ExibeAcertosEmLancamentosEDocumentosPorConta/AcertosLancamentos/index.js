@@ -28,6 +28,9 @@ import {useHistory} from "react-router-dom";
 import Loading from "../../../../utils/Loading";
 import './acertos-lancamentos.scss'
 import { mantemEstadoAnaliseDre as meapcservice } from "../../../../services/mantemEstadoAnaliseDre.service";
+import {
+    RetornaSeTemPermissaoEdicaoAcompanhamentoDePc
+} from "../../../dres/PrestacaoDeContas/RetornaSeTemPermissaoEdicaoAcompanhamentoDePc";
 
 const AcertosLancamentos = ({
                                 analiseAtualUuid,
@@ -37,6 +40,8 @@ const AcertosLancamentos = ({
                                 editavel,
                                 prestacaoDeContasUuid
                             }) => {
+
+    const TEMPERMISSAOEDICAOACOMPANHAMENTOPC = RetornaSeTemPermissaoEdicaoAcompanhamentoDePc()
 
     const rowsPerPageAcertosLancamentos = 5;
 
@@ -333,7 +338,7 @@ const AcertosLancamentos = ({
     }
 
     const redirecionaDetalheAcerto = (lancamento) => {
-        if (editavel) {
+        if (editavel && TEMPERMISSAOEDICAOACOMPANHAMENTOPC) {
             return (
                 <div className='text-right border-top pt-3 pb-2 container-botoes-ajustes'>
                     <button onClick={() => addDispatchRedireciona(lancamento)} className='btn btn-outline-success'>
@@ -347,7 +352,7 @@ const AcertosLancamentos = ({
 
     const redirecionaDetalheReceitaOuDespesa = (data) => {
 
-        if (editavel) {
+        if (editavel && TEMPERMISSAOEDICAOACOMPANHAMENTOPC) {
             let tipo_de_transacao;
             if (data.tipo_transacao === 'Gasto') {
                 tipo_de_transacao = 'despesa'

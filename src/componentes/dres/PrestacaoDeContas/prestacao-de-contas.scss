@@ -273,7 +273,7 @@
   }
 }
 
-.btn-editar-comentario, .btn-cancelar-comentario{
+.btn-editar-comentario, .btn-editar-comentario-disabled, .btn-cancelar-comentario{
   outline: 0 !important;
   background: none !important;
   border: none !important;
@@ -282,6 +282,12 @@
 .btn-cancelar-comentario{
   color: #00585e;
   text-decoration: underline;
+  font-weight: 500;
+}
+
+.btn-editar-comentario-disabled{
+  color: #4c4c4c;
+  text-decoration: none;
   font-weight: 500;
 }
 
