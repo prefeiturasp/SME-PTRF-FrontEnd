@@ -404,19 +404,11 @@ const RetificacaoRelatorioConsolidado = () => {
                                     mensagemQuantidadeExibida={mensagemQuantidadeExibida}
                                 />
                             }
-<<<<<<< HEAD
-=======
-
->>>>>>> homolog
                             <ModalAntDesignConfirmacao
                                 handleShow={showModal}
                                 titulo={"Confirmar Retificação"}
                                 bodyText="Lembre-se que apenas as prestações de contas selecionadas serão reabertas para edição e gerarão novos documentos e nova lauda a ser publicada."
-<<<<<<< HEAD
                                 handleOk={(e) => handleRetificar()}
-=======
-                                handleOk={(e) => handleRetificar()} 
->>>>>>> homolog
                                 okText="Continuar"
                                 handleCancel={(e) => setShowModal(false)}
                                 cancelText="Cancelar"
