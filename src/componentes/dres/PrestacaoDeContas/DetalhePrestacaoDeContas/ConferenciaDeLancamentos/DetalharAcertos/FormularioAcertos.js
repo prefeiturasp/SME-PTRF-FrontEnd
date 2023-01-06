@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useContext, useEffect} from 'react';
 import {Formik, FieldArray} from 'formik';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTimesCircle, faCheckCircle} from "@fortawesome/free-solid-svg-icons";
@@ -8,7 +8,18 @@ import {YupSignupSchemaDetalharAcertos} from './YupSignupSchemaDetalharAcertos'
 import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 import { ValidarParcialTesouro } from '../../../../../../context/DetalharAcertos';
 
-export const FormularioAcertos = ({solicitacoes_acerto, listaTiposDeAcertoLancamentosAgrupado, onSubmitFormAcertos, formRef, handleChangeTipoDeAcertoLancamento, exibeCamposCategoriaDevolucao, tiposDevolucao, bloqueiaSelectTipoDeAcerto, removeBloqueiaSelectTipoDeAcertoJaCadastrado, textoCategoria, corTextoCategoria, removeTextoECorCategoriaTipoDeAcertoJaCadastrado, adicionaTextoECorCategoriaVazio, ehSolicitacaoCopiada, valorDocumento, lancamentosParaAcertos}) => {
+export const FormularioAcertos = ({solicitacoes_acerto, listaTiposDeAcertoLancamentosAgrupado, setListaTiposDeAcertoLancamentosAgrupado, onSubmitFormAcertos, formRef, handleChangeTipoDeAcertoLancamento, exibeCamposCategoriaDevolucao, tiposDevolucao, bloqueiaSelectTipoDeAcerto, removeBloqueiaSelectTipoDeAcertoJaCadastrado, textoCategoria, corTextoCategoria, removeTextoECorCategoriaTipoDeAcertoJaCadastrado, adicionaTextoECorCategoriaVazio, ehSolicitacaoCopiada, valorDocumento, lancamentosParaAcertos}) => {
+
+    useEffect(() => {
+        let statusAcerto = lancamentosParaAcertos[0].documento_mestre.status
+        if(statusAcerto === 'INATIVO'){
+            setListaTiposDeAcertoLancamentosAgrupado(listaTiposDeAcertoLancamentosAgrupado.filter(
+                item => {
+                    return item.id === "SOLICITACAO_ESCLARECIMENTO" || item.id === "AJUSTES_EXTERNOS"
+                }
+            ));
+        }
+    }, [lancamentosParaAcertos])
 
     const uuidDevolucaoTesouro = listaTiposDeAcertoLancamentosAgrupado.find(item => item.id === "DEVOLUCAO")?.tipos_acerto_lancamento[0].uuid
     const {setIsValorParcialValido} = useContext(ValidarParcialTesouro)
@@ -136,7 +147,9 @@ export const FormularioAcertos = ({solicitacoes_acerto, listaTiposDeAcertoLancam
                                                                 }}
                                                                 disabled={bloqueiaSelectTipoDeAcerto[index]}
                                                             >
-                                                                <option key='' value="">Selecione a especificação do acerto</option>
+                                                                {!(acerto.tipo_acerto) &&
+                                                                    <option key='' value="" selected>Selecione a especificação do acerto</option>
+                                                                }
                                                                 
                                                                 {listaTiposDeAcertoLancamentosAgrupado && listaTiposDeAcertoLancamentosAgrupado.length > 0 && opcoesSelect(acertos).map(item => {
                                                                     return (

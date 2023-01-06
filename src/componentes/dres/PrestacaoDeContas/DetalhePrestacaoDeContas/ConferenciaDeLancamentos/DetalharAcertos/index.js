@@ -358,6 +358,7 @@ export const DetalharAcertos = () => {
                         <FormularioAcertos
                             solicitacoes_acerto={acertos}
                             listaTiposDeAcertoLancamentosAgrupado={listaTiposDeAcertoLancamentosAgrupado}
+                            setListaTiposDeAcertoLancamentosAgrupado={setListaTiposDeAcertoLancamentosAgrupado}
                             onSubmitFormAcertos={onSubmitFormAcertos}
                             formRef={formRef}
                             handleChangeTipoDeAcertoLancamento={handleChangeTipoDeAcertoLancamento}
