@@ -1,7 +1,11 @@
 import React, {memo, useState} from "react";
 import { ModalPublicarRelatorioConsolidado, ModalPublicarRelatorioConsolidadoPendente } from "../../../utils/Modais";
+import InfoPublicacaoNoDiarioOficial from "./MarcarPublicacaoNoDiarioOficial/InfoPublicacaoNoDiarioOficial";
+import BotaoMarcarPublicacaoNoDiarioOficial from "./MarcarPublicacaoNoDiarioOficial/BotaoMarcarPublicacaoNoDiarioOficial";
+import {Retificar} from "./Retificar";
+import ReactTooltip from "react-tooltip";
 
-const PublicarDocumentos = ({publicarConsolidadoDre, podeGerarPrevia, children, consolidadoDre, publicarConsolidadoDePublicacoesParciais, showPublicarRelatorioConsolidado, setShowPublicarRelatorioConsolidado, execucaoFinanceira, disableGerar}) => {
+const PublicarDocumentos = ({publicarConsolidadoDre, podeGerarPrevia, children, consolidadoDre, publicarConsolidadoDePublicacoesParciais, showPublicarRelatorioConsolidado, setShowPublicarRelatorioConsolidado, carregaConsolidadosDreJaPublicadosProximaPublicacao, execucaoFinanceira, disableGerar}) => {
     const [showPublicarRelatorioConsolidadoPendente, setShowPublicarRelatorioConsolidadoPendente] = useState(false)
     const [alertaJustificativa, setAlertaJustificativa] = useState(true)
 
@@ -36,44 +40,71 @@ const PublicarDocumentos = ({publicarConsolidadoDre, podeGerarPrevia, children, 
     
     return(
         <>
-        <div className="d-flex bd-highlight align-items-center container-publicar-cabecalho text-dark rounded-top border font-weight-bold">
-            <div className="p-2 flex-grow-1 bd-highlight fonte-16">{consolidadoDre.titulo_relatorio}</div>
+            <div className="d-flex bd-highlight align-items-center container-publicar-cabecalho text-dark rounded-top border font-weight-bold">
+                <div className="p-2 flex-grow-1 bd-highlight fonte-16">
+                    {consolidadoDre.titulo_relatorio}
+                    <InfoPublicacaoNoDiarioOficial
+                        consolidadoDre={consolidadoDre}
+                        carregaConsolidadosDreJaPublicadosProximaPublicacao={carregaConsolidadosDreJaPublicadosProximaPublicacao}
+                    />
+                </div>
 
-            {!consolidadoDre.ja_publicado &&
-                <>
-                    {podeGerarPrevia() &&
-                        <div className="p-2 bd-highlight">
-                            {children}
-                        </div>
-                    }
+                {!consolidadoDre.ja_publicado &&
+                    <>
+                        {podeGerarPrevia() &&
+                            <div className="p-2 bd-highlight">
+                                {children}
+                            </div>
+                        }
 
-                    <div className="p-2 bd-highlight">
-                        <button
-                            onClick={handleClick}
-                            className="btn btn btn btn-success"
-                            disabled={disableGerar}
-                        >
-                            Gerar
-                        </button>
-                    </div>
+                        {consolidadoDre.habilita_botao_gerar ? (
+                            <div className="p-2 bd-highlight">
+                                <button
+                                    onClick={handleClick}
+                                    className="btn btn btn btn-success"
+                                    disabled={disableGerar}
+                                >
+                                    Gerar
+                                </button>
+                            </div>
+                        ):
 
-                </>
-            }
-        </div>
+                            <div className="p-2 bd-highlight font-weight-normal" data-html={true} data-tip={consolidadoDre.texto_tool_tip_botao_gerar}>
+                                <button
+                                    onClick={!consolidadoDre.eh_consolidado_de_publicacoes_parciais ? () => setShowPublicarRelatorioConsolidado(true) : ()=>publicarConsolidadoDePublicacoesParciais()}
+                                    className="btn btn btn btn-success"
+                                    disabled={true}
+                                >
+                                    Gerar
+                                </button>
+                                <ReactTooltip html={true}/>
+                            </div>
+                        }
 
-        <section>
-            <ModalPublicarRelatorioConsolidado
-                show={showPublicarRelatorioConsolidado}
-                handleClose={()=>setShowPublicarRelatorioConsolidado(false)}
-                alertaJustificativa={alertaJustificativa}
-                publicarConsolidadoDre={() => publicarConsolidadoDre(consolidadoDre)}
-            />
-            <ModalPublicarRelatorioConsolidadoPendente
-                show={showPublicarRelatorioConsolidadoPendente}
-                handleClose={()=>setShowPublicarRelatorioConsolidadoPendente(false)}
-            />
-        </section>
-</>
+                    </>
+                }
+                <BotaoMarcarPublicacaoNoDiarioOficial
+                    consolidadoDre={consolidadoDre}
+                    carregaConsolidadosDreJaPublicadosProximaPublicacao={carregaConsolidadosDreJaPublicadosProximaPublicacao}
+                />
+                <Retificar
+                    consolidadoDre={consolidadoDre}
+                />
+            </div>
+
+            <section>
+                <ModalPublicarRelatorioConsolidado
+                    show={showPublicarRelatorioConsolidado}
+                    handleClose={()=>setShowPublicarRelatorioConsolidado(false)}
+                    alertaJustificativa={alertaJustificativa}
+                    publicarConsolidadoDre={() => publicarConsolidadoDre(consolidadoDre)}
+                />
+                <ModalPublicarRelatorioConsolidadoPendente
+                    show={showPublicarRelatorioConsolidadoPendente}
+                    handleClose={()=>setShowPublicarRelatorioConsolidadoPendente(false)}
+                />
+            </section>
+        </>
     )
 }
 export default memo(PublicarDocumentos)

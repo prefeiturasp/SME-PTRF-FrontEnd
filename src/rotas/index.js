@@ -53,8 +53,12 @@ import RelatorioConsolidado from "../componentes/dres/RelatorioConsolidado";
 import {RelatorioConsolidadoApuracao} from "../componentes/dres/RelatorioConsolidado/RelatorioConsolidadoApuracao";
 import {RelatorioConsolidadoEmTela} from "../componentes/dres/RelatorioConsolidado/RelatorioConsolidadoEmTela";
 import {RelatorioConsolidadoDadosDasUes} from "../componentes/dres/RelatorioConsolidado/RelatorioConsolidadoDadosDasUes";
+import RetificacaoRelatorioConsolidado from "../componentes/dres/RelatorioConsolidado/RetificacaoRelatorioConsolidado";
 import {PainelParametrizacoesPage} from "../paginas/SME/Parametrizacoes/PainelParametrizacoes";
-import {AcompanhamentoPcsSmePage} from "../paginas/SME/AcompanhamentoPcsSme";
+import {AcompanhamentoPcsSmePage} from "../paginas/SME/PrestacaoDeContas/AcompanhamentoPcsSme";
+import {AcompanhamentoPcsPorDre} from "../paginas/SME/PrestacaoDeContas/AcompanhamentoPcsSmePorDre";
+import {RelatorioConsolidadoPage} from "../paginas/SME/PrestacaoDeContas/RelatorioConsolidado";
+import { AcompanhamentoRelatorioConsolidadosSmeListagem } from "../componentes/sme/AcompanhamentoRelatoriosConsolidadosSME/AcompanhamentoRelatoriosConsolidadosSmeListagem";
 import {AcoesDasAssociacoes} from "../componentes/sme/Parametrizacoes/Estrutura/AcoesDasAssociacoes";
 import {Acoes} from "../componentes/sme/Parametrizacoes/Estrutura/Acoes";
 import {AssociacoesDaAcao} from "../componentes/sme/Parametrizacoes/Estrutura/Acoes/AssociacoesDaAcao";
@@ -78,6 +82,8 @@ import { ParametrizacoesMotivosDeEstorno } from "../componentes/sme/Parametrizac
 import { ParametrizacoesTiposAcertosLancamentos } from "../componentes/sme/Parametrizacoes/PrestacaoContas/TiposAcertosLancamentos";
 import { ParametrizacoesTiposAcertosDocumentos } from "../componentes/sme/Parametrizacoes/PrestacaoContas/TiposAcertosDocumentos";
 import { DevolucaoAoTesouroAjuste } from "../componentes/Globais/DevolucaoAoTesouroAjuste"
+import {AcompanhamentoDeRelatorioConsolidadoSMEDetalhe} from "../componentes/sme/AcompanhamentoRelatoriosConsolidadosSME/AcompanhamentoDeRelatorioConsolidadoSMEDetalhe"
+import {AcompanhamentoDeRelatorioConsolidadoSMEResumoAcertos} from "../componentes/sme/AcompanhamentoRelatoriosConsolidadosSME/AcompanhamentoDeRelatorioConsolidadoSMEResumoAcertos"
 import {ExtracaoDadosPage} from '../paginas/SME/ExtracaoDados'
 import TesteDataTableAnt
     from "../componentes/Globais/ExibeAcertosEmLancamentosEDocumentosPorConta/AcertosLancamentos/TesteDataTableAnt";
@@ -377,6 +383,12 @@ const routesConfig = [
     },
     {
         exact: true,
+        path: "/dre-relatorio-consolidado-retificacao/:relatorio_consolidado_uuid/",
+        component: RetificacaoRelatorioConsolidado,
+        permissoes: ['access_relatorio_consolidado_dre'],
+    },
+    {
+        exact: true,
         path: "/parametro-arquivos-de-carga/:tipo_de_carga/",
         component: ArquivosDeCarga,
         permissoes: ['access_arquivos_carga'],
@@ -416,6 +428,36 @@ const routesConfig = [
         path: "/acompanhamento-pcs-sme",
         component: AcompanhamentoPcsSmePage,
         permissoes: ['access_acompanhamento_pc_sme'],
+    },
+    {
+        exact: true,
+        path: "/acompanhamento-pcs-sme/:dre_uuid?/:periodo_uuid?",
+        component: AcompanhamentoPcsPorDre,
+        permissoes: ['access_acompanhamento_pc_sme'],
+    },
+    {
+        exact: true,
+        path: "/analises-relatorios-consolidados-dre",
+        component: RelatorioConsolidadoPage,
+        permissoes: ['access_analise_relatorios_consolidados_sme'],
+    },
+    {
+        exact: true,
+        path: "/analise-relatorio-consolidado-dre-detalhe/:consolidado_dre_uuid/",
+        component: AcompanhamentoDeRelatorioConsolidadoSMEDetalhe,
+        permissoes: ['access_analise_relatorios_consolidados_sme'],
+    },
+    {
+        exact: true,
+        path: "/analise-relatorio-consolidado-dre-detalhe-acertos-resumo/:consolidado_dre_uuid/",
+        component: AcompanhamentoDeRelatorioConsolidadoSMEResumoAcertos,
+        permissoes: ['access_analise_relatorios_consolidados_sme'],
+    },
+    {
+        exact: true,
+        path: "/listagem-relatorios-consolidados-dre/:periodo_uuid?/:status_sme?",
+        component: AcompanhamentoRelatorioConsolidadosSmeListagem,
+        permissoes: ['access_analise_relatorios_consolidados_sme'],
     },
     {
         exact: true,

@@ -142,7 +142,7 @@ const AcertosLancamentos = ({
         setOpcoesJustificativa(status_de_realizacao)
         setLancamentosAjustes(lancamentos_ajustes)
 
-        
+
         setLancamentosSelecionados([])
         setIdentificadorCheckboxClicado([{
             uuid: ''
@@ -609,8 +609,8 @@ const AcertosLancamentos = ({
     const [showModalCheckNaoPermitido, setShowModalCheckNaoPermitido] = useState(false)
 
     const [identificadorCheckboxClicado, setIdentificadorCheckboxClicado] = useState([{
-            uuid: '',
-        }])
+        uuid: '',
+    }])
 
     const [status, setStatus] = useState()
 
@@ -770,22 +770,22 @@ const AcertosLancamentos = ({
 
         // eslint-disable-next-line array-callback-return
         categoria.acertos.map((acerto) => {
-            if (verificaSePodeSerSelecionado(statusId)){
-                setStatus(statusId)
-                if (acerto.status_realizacao === statusId) {
-                    if (!lancamentosSelecionados.includes(acerto)) {
-                        setLancamentosSelecionados((array) => [...array, acerto]);
+                if (verificaSePodeSerSelecionado(statusId)){
+                    setStatus(statusId)
+                    if (acerto.status_realizacao === statusId) {
+                        if (!lancamentosSelecionados.includes(acerto)) {
+                            setLancamentosSelecionados((array) => [...array, acerto]);
+                        }
+                    }else {
+                        setLancamentosSelecionados((current) => current.filter((item) => item !== acerto));
                     }
-                }else {
-                    setLancamentosSelecionados((current) => current.filter((item) => item !== acerto));
                 }
             }
-        }
-    )
+        )
         if (verificaSePodeSerSelecionado(statusId)) {
             setIdentificadorCheckboxClicado((array) => [...array, {uuid: categoria.categoria}]);
         }
-}
+    }
 
     const selecionarTodosItensDaCategoriaDoLancamento = (categoria) => {
 

@@ -92,7 +92,6 @@ export const VinculaAssociacoesAAcao = () => {
     };
 
     const aplicaFiltrosUnidades = async (event)=>{
-        console.log("Aplicar filtro", estadoFiltros)
         setLoading(true);
         setBuscaUtilizandoFiltros(true);
         if (event) {

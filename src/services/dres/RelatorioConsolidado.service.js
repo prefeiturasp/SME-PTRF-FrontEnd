@@ -1,6 +1,7 @@
 import api from '../api'
 import { TOKEN_ALIAS } from '../auth.service.js';
 import {ASSOCIACAO_UUID} from "../auth.service";
+import moment from "moment/moment";
 
 const authHeader = {
     headers: {
@@ -13,6 +14,10 @@ const authHeader = {
 
 export const getConsolidadoDre = async (dre_uuid, periodo_uuid) => {
     return (await api.get(`/api/consolidados-dre/?dre=${dre_uuid}&periodo=${periodo_uuid}`, authHeader)).data
+};
+
+export const getConsolidadoDrePorUuid = async (consolidado_uuid) => {
+    return (await api.get(`/api/consolidados-dre/${consolidado_uuid}`, authHeader)).data
 };
 
 export const getConsolidadoDrePorUuidAtaDeParecerTecnico = async (ata_de_parecer_tecnico_uuid) => {
@@ -48,6 +53,15 @@ export const postCriarAtaAtrelarAoConsolidadoDre = async (payload) => {
     return (await api.post(`/api/consolidados-dre/criar-ata-e-atelar-ao-consolidado/`, payload, authHeader)).data
 };
 
+export const postMarcarComoPublicadoNoDiarioOficial = async (payload) => {
+    return (await api.post(`/api/consolidados-dre/marcar-como-publicado-no-diario-oficial/`, payload, authHeader)).data
+};
+
+export const postDesmarcarComoPublicadoNoDiarioOficial = async (payload) => {
+    return (await api.post(`/api/consolidados-dre/marcar-como-nao-publicado-no-diario-oficial/`, payload, authHeader)).data
+};
+
+
 export const getDownloadRelatorio = async (relatorio_uuid, versao) => {
     return api
         .get(`/api/consolidados-dre/${relatorio_uuid}/download-relatorio-consolidado`, {
@@ -69,6 +83,13 @@ export const getDownloadRelatorio = async (relatorio_uuid, versao) => {
         }).catch(error => {
             return error.response;
         });
+};
+
+export const devolverConsolidado = async (consolidado_uuid, dataLimiteDevolucao) => {
+    return (await api.patch(
+        `/api/consolidados-dre/${consolidado_uuid}/devolver-consolidado/`,
+        {data_limite: moment(dataLimiteDevolucao).format("YYYY-MM-DD")},
+        authHeader)).data
 };
 
 // FIM Consolidado DRE
@@ -111,6 +132,10 @@ export const getDevolucoesAoTesouro = async (dre_uuid, periodo_uuid, conta_uuid)
 
 export const getItensDashboard = async (uuid_periodo) => {
     return (await api.get(`/api/prestacoes-contas/dashboard/?periodo=${uuid_periodo}&dre_uuid=${localStorage.getItem(ASSOCIACAO_UUID)}&add_aprovadas_ressalva=SIM`, authHeader)).data
+};
+
+export const getItensDashboardComDreUuid = async (uuid_periodo, dre_uuid) => {
+    return (await api.get(`/api/prestacoes-contas/dashboard/?periodo=${uuid_periodo}&dre_uuid=${dre_uuid}&add_aprovadas_ressalva=SIM`, authHeader)).data
 };
 
 export const getListaPrestacaoDeContasDaDre = async (dre_uuid, periodo_uuid, conta_uuid) => {
@@ -159,4 +184,12 @@ export const getStatusAta = async (dre_uuid, periodo_uuid) => {
 
 export const getTrilhaStatus = async (dre_uuid, uuid_periodo) => {
     return (await api.get(`/api/consolidados-dre/trilha-de-status/?dre=${dre_uuid}&periodo=${uuid_periodo}`, authHeader)).data
+};
+
+export const getPcsRetificaveis = async (consolidado_uuid) => {
+    return (await api.get(`/api/consolidados-dre/${consolidado_uuid}/pcs-retificaveis/`, authHeader)).data
+};
+
+export const postRetificarPcs = async (consolidado_uuid, payload) => {
+    return (await api.post(`/api/consolidados-dre/${consolidado_uuid}/retificar/`, payload, authHeader)).data
 };

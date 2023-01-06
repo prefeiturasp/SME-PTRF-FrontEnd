@@ -161,17 +161,18 @@ const DevolucaoParaAcertos = ({prestacaoDeContas, analisesDeContaDaPrestacao, ca
                             </div>
                             <div>
                                 <Link onClick={ (totalLancamentosAjustes > 0 || totalDocumentosAjustes > 0 || totalAnalisesDeContaDaPrestacao > 0) || (prestacaoDeContas && prestacaoDeContas.devolucoes_da_prestacao && prestacaoDeContas.devolucoes_da_prestacao.length > 0) ? null : (event) => event.preventDefault() }
-                                      to={{
-                                          pathname: `/dre-detalhe-prestacao-de-contas-resumo-acertos/${prestacaoDeContas.uuid}`,
-                                          state: {
-                                              analisesDeContaDaPrestacao: analisesDeContaDaPrestacao,
-                                              editavel: editavel,
-                                              infoAta: infoAta,
-                                          }
-                                      }}
-                                      className="btn btn-outline-success mr-2"
-                                      disabled={ !((totalLancamentosAjustes > 0 || totalDocumentosAjustes > 0 || totalAnalisesDeContaDaPrestacao > 0) || (prestacaoDeContas && prestacaoDeContas.devolucoes_da_prestacao && prestacaoDeContas.devolucoes_da_prestacao.length > 0)) }
-                                      readOnly={ !((totalLancamentosAjustes > 0 || totalDocumentosAjustes > 0 || totalAnalisesDeContaDaPrestacao > 0) || (prestacaoDeContas && prestacaoDeContas.devolucoes_da_prestacao && prestacaoDeContas.devolucoes_da_prestacao.length > 0)) }
+                                        to={{
+                                            pathname: `/dre-detalhe-prestacao-de-contas-resumo-acertos/${prestacaoDeContas.uuid}`,
+                                            state: {
+                                                analisesDeContaDaPrestacao: analisesDeContaDaPrestacao,
+                                                editavel: editavel,
+                                                infoAta: infoAta,
+                                            }
+                                        }}
+                                        className="btn btn-outline-success mr-2"
+                                        disabled={ !((totalLancamentosAjustes > 0 || totalDocumentosAjustes > 0 || totalAnalisesDeContaDaPrestacao > 0) || (prestacaoDeContas && prestacaoDeContas.devolucoes_da_prestacao && prestacaoDeContas.devolucoes_da_prestacao.length > 0)) }
+                                        readOnly={ !((totalLancamentosAjustes > 0 || totalDocumentosAjustes > 0 || totalAnalisesDeContaDaPrestacao > 0) || (prestacaoDeContas && prestacaoDeContas.devolucoes_da_prestacao && prestacaoDeContas.devolucoes_da_prestacao.length > 0)) }
+                                        title={(prestacaoDeContas && prestacaoDeContas.devolucoes_da_prestacao && prestacaoDeContas.devolucoes_da_prestacao.length > 0) ? null: `Esta PC não possui histórico de devoluções.` }
                                 >
                                     Ver resumo
                                 </Link>
