@@ -7,7 +7,7 @@ import {haDiferencaPrevisaoExecucaoRepasse} from "./haDiferencaPrevisaoExecucaoR
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faDownload} from "@fortawesome/free-solid-svg-icons";
 
-const DemonstrativoDaExecucaoFisicoFinanceira = ({consolidadoDre, periodoEscolhido, execucaoFinanceira}) => {
+const DemonstrativoDaExecucaoFisicoFinanceira = ({consolidadoDre, periodoEscolhido, podeGerarPreviaRetificacao, execucaoFinanceira}) => {
     const [contas, setContas] = useState(false);
 
     useEffect(()=>{
@@ -101,13 +101,16 @@ const DemonstrativoDaExecucaoFisicoFinanceira = ({consolidadoDre, periodoEscolhi
                     </div>
                     {!consolidadoDre.eh_consolidado_de_publicacoes_parciais &&
                     <div className="col-12 col-md-4 align-self-center text-right">
-                        <button
-                            onClick={() => onClickPreencherRelatorio()}
-                            type="button"
-                            className="btn btn-outline-success btn-sm"
-                        >
-                            {isDiferencaValores ? 'Preencher resumo' : 'Consultar resumo'}
-                        </button>
+                        <span data-html={true} data-tip={podeGerarPreviaRetificacao ? "Não é possível consultar/preencher o resumo. A análise da(s) prestação(ões) de contas em retificação ainda não foi concluída." : ""}>
+                            <button
+                                onClick={() => onClickPreencherRelatorio()}
+                                type="button"
+                                className="btn btn-outline-success btn-sm"
+                                disabled={podeGerarPreviaRetificacao}
+                            >
+                                {isDiferencaValores ? 'Preencher resumo' : 'Consultar resumo'}
+                            </button>
+                        </span>
                     </div>
                     }
                 </div>

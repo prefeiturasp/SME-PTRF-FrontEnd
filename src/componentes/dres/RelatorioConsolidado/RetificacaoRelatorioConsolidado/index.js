@@ -240,8 +240,6 @@ const RetificacaoRelatorioConsolidado = () => {
                             {quantidadeSelecionada} {quantidadeSelecionada === 1 ? "unidade selecionada" : "unidades selecionadas"}  / {pcsRetificaveis.length} totais
                         </div>
                         <div className="col-7">
-                            
-                               
                                 <button
                                     className="float-right btn btn-link btn-montagem-selecionar"
                                     onClick={(e) => desmarcarTodos(e)} style={{textDecoration:"underline", cursor:"pointer"}}
@@ -408,7 +406,7 @@ const RetificacaoRelatorioConsolidado = () => {
                                 handleShow={showModal}
                                 titulo={"Confirmar Retificação"}
                                 bodyText="Lembre-se que apenas as prestações de contas selecionadas serão reabertas para edição e gerarão novos documentos e nova lauda a ser publicada."
-                                handleOk={(e) => handleRetificar()}
+                                handleOk={(e) => handleRetificar()} 
                                 okText="Continuar"
                                 handleCancel={(e) => setShowModal(false)}
                                 cancelText="Cancelar"
