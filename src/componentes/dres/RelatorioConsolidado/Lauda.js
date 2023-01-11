@@ -5,7 +5,6 @@ import {getDownloadLauda} from "../../../services/dres/Laudas.service";
 import {formataNomeDRE} from "../../../utils/ValidacoesAdicionaisFormularios";
 
 const Lauda = ({consolidadoDre}) => {
-console.log("🚀 ~ file: Lauda.js:8 ~ Lauda ~ consolidadoDre", consolidadoDre?.gerou_uma_retificacao)
 
     const retornaClasseMensagem = (texto) => {
         let classeMensagem = "documento-gerado";
@@ -52,15 +51,6 @@ console.log("🚀 ~ file: Lauda.js:8 ~ Lauda ~ consolidadoDre", consolidadoDre?.
                             <span style={{'color': '#B40C02'}}>{
                                 'Documento pedente de geração'
                             }</span>
-                            {/* <button className='btn-editar-membro' type='button'>
-                                <FontAwesomeIcon onClick={
-                                        () => console.log('incluir lauda')
-                                    }
-                                    style={
-                                        {fontSize: '18px'}
-                                    }
-                                    icon={faDownload}/>
-                            </button> */}
                         </p>
                     </div>
                 </div>

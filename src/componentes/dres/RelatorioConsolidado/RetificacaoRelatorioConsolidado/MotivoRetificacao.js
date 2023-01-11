@@ -2,7 +2,6 @@ import React from "react";
 import {Formik} from "formik";
 
 export const MotivoRetificacao = ({relatorioConsolidado, validateFormRetificacao, formErrors, onChangeMotivoRetificacao, formRef}) => {
-    console.log("🚀 ~ file: MotivoRetificacao.js:5 ~ MotivoRetificacao ~ relatorioConsolidado", relatorioConsolidado)
     return (
         <div className="row pt-2">
             <Formik
