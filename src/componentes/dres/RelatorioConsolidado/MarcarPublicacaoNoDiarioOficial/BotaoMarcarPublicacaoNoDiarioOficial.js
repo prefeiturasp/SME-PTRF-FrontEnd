@@ -5,7 +5,7 @@ const BotaoMarcarPublicacaoNoDiarioOficial = ({consolidadoDre, carregaConsolidad
     const [showModalMarcarPublicacaoNoDiarioOficial, setShowModalMarcarPublicacaoNoDiarioOficial] = useState(false)
     return (
         <>
-            {consolidadoDre && consolidadoDre.ja_publicado && !consolidadoDre.data_publicacao &&
+            {consolidadoDre && consolidadoDre.ja_publicado && !consolidadoDre.data_publicacao && !consolidadoDre?.eh_retificacao &&
                 <div className="p-2 bd-highlight">
                     <button
                         onClick={() => setShowModalMarcarPublicacaoNoDiarioOficial(true)}

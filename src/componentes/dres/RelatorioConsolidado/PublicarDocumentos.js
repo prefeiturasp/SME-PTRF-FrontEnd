@@ -3,9 +3,11 @@ import { ModalPublicarRelatorioConsolidado, ModalPublicarRelatorioConsolidadoPen
 import InfoPublicacaoNoDiarioOficial from "./MarcarPublicacaoNoDiarioOficial/InfoPublicacaoNoDiarioOficial";
 import BotaoMarcarPublicacaoNoDiarioOficial from "./MarcarPublicacaoNoDiarioOficial/BotaoMarcarPublicacaoNoDiarioOficial";
 import {Retificar} from "./Retificar";
+import PreviaDocumentoRetificado from "./PreviaDocumentoRetificado";
 import ReactTooltip from "react-tooltip";
 
-const PublicarDocumentos = ({publicarConsolidadoDre, podeGerarPrevia, children, consolidadoDre, publicarConsolidadoDePublicacoesParciais, showPublicarRelatorioConsolidado, setShowPublicarRelatorioConsolidado, carregaConsolidadosDreJaPublicadosProximaPublicacao, execucaoFinanceira, disableGerar}) => {
+const PublicarDocumentos = ({publicarConsolidadoDre, podeGerarPreviaRetificacao, podeGerarPrevia, children, consolidadoDre, publicarConsolidadoDePublicacoesParciais, showPublicarRelatorioConsolidado, setShowPublicarRelatorioConsolidado, carregaConsolidadosDreJaPublicadosProximaPublicacao, execucaoFinanceira, disableGerar}) => {
+    console.log("🚀 ~ file: PublicarDocumentos.js:10 ~ PublicarDocumentos ~ podeGerarPreviaRetificacao", podeGerarPreviaRetificacao)
     const [showPublicarRelatorioConsolidadoPendente, setShowPublicarRelatorioConsolidadoPendente] = useState(false)
     const [alertaJustificativa, setAlertaJustificativa] = useState(true)
 
@@ -87,6 +89,7 @@ const PublicarDocumentos = ({publicarConsolidadoDre, podeGerarPrevia, children, 
                     consolidadoDre={consolidadoDre}
                     carregaConsolidadosDreJaPublicadosProximaPublicacao={carregaConsolidadosDreJaPublicadosProximaPublicacao}
                 />
+                <PreviaDocumentoRetificado consolidadoDre={consolidadoDre} podeGerarPreviaRetificacao={podeGerarPreviaRetificacao}/>
                 <Retificar
                     consolidadoDre={consolidadoDre}
                 />

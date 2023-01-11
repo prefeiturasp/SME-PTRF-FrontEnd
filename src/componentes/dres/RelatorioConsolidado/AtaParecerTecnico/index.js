@@ -6,7 +6,7 @@ import {faDownload} from '@fortawesome/free-solid-svg-icons'
 import {getDownloadAtaParecerTecnico} from "../../../../services/dres/AtasParecerTecnico.service";
 import {postCriarAtaAtrelarAoConsolidadoDre} from "../../../../services/dres/RelatorioConsolidado.service";
 
-export const AtaParecerTecnico = ({consolidadoDre}) => {
+export const AtaParecerTecnico = ({consolidadoDre, podeGerarPreviaRetificacao}) => {
 
     const onClickVerAta = (uuid_ata) =>{
         window.location.assign(`/visualizacao-da-ata-parecer-tecnico/${uuid_ata}/${consolidadoDre.ja_publicado}`)
@@ -87,12 +87,12 @@ export const AtaParecerTecnico = ({consolidadoDre}) => {
                                 onClick={() => criarAtaAtrelarAoConsolidado(consolidadoDre.dre_uuid, consolidadoDre.periodo_uuid, consolidadoDre.uuid ? consolidadoDre.uuid : null)}
                                 type="button"
                                 className="btn btn-outline-success btn-sm"
+                                disabled={podeGerarPreviaRetificacao}
+                                title={podeGerarPreviaRetificacao ? "Não é possível preencher a ata. A análise da(s) prestação(ões) de contas em retificação ainda não foi concluída." : ""} 
                             >
                                 Preencher ata
                             </button>
-
                         }
-
                     </div>
                 </div>
             </div>

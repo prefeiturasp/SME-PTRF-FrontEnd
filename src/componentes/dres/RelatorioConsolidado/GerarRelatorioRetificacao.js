@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import ReactTooltip from "react-tooltip"
 import { ModalPublicarRelatorioConsolidado, ModalPublicarRelatorioConsolidadoPendente } from "../../../utils/Modais";
 import BotaoMarcarPublicacaoNoDiarioOficial from './MarcarPublicacaoNoDiarioOficial/BotaoMarcarPublicacaoNoDiarioOficial';
-import InfoPublicacaoNoDiarioOficial from "./MarcarPublicacaoNoDiarioOficial/InfoPublicacaoNoDiarioOficial";
+import InfoRefiticacaoRelatorio from "./BlocoRetificacao/InfoRefiticacaoRelatorio";
 import {Retificar} from './Retificar';
 
 const GerarRelatorioRetificado = (publicarConsolidadoDre, podeGerarPrevia, children, consolidadoDre, execucaoFinanceira, disableGerar, setShowPublicarRelatorioConsolidado, publicarConsolidadoDePublicacoesParciais, carregaConsolidadosDreJaPublicadosProximaPublicacao, showPublicarRelatorioConsolidado) => {
@@ -42,9 +42,8 @@ const GerarRelatorioRetificado = (publicarConsolidadoDre, podeGerarPrevia, child
             <div className="d-flex bd-highlight align-items-center container-publicar-cabecalho text-dark rounded-top border font-weight-bold">
                 <div className="p-2 flex-grow-1 bd-highlight fonte-16">
                     {consolidadoDre?.titulo_relatorio}
-                    <InfoPublicacaoNoDiarioOficial
+                    <InfoRefiticacaoRelatorio
                         consolidadoDre={consolidadoDre}
-                        carregaConsolidadosDreJaPublicadosProximaPublicacao={carregaConsolidadosDreJaPublicadosProximaPublicacao}
                     />
                 </div>
 
