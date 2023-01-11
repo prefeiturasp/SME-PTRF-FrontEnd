@@ -240,8 +240,6 @@ const RetificacaoRelatorioConsolidado = () => {
                             {quantidadeSelecionada} {quantidadeSelecionada === 1 ? "unidade selecionada" : "unidades selecionadas"}  / {pcsRetificaveis.length} totais
                         </div>
                         <div className="col-7">
-                            
-                               
                                 <button
                                     className="float-right btn btn-link btn-montagem-selecionar"
                                     onClick={(e) => desmarcarTodos(e)} style={{textDecoration:"underline", cursor:"pointer"}}

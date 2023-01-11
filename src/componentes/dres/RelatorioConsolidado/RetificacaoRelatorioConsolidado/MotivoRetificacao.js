@@ -23,7 +23,7 @@ export const MotivoRetificacao = ({relatorioConsolidado, validateFormRetificacao
                             <label className="referencia-e-periodo-relatorio" htmlFor="motivo_retificacao">Motivo da retificação:</label>
                             <textarea
                                 name='motivo_retificacao'
-                                value={relatorioConsolidado.motivo_retificacao ? relatorioConsolidado.motivo_retificacao : undefined}
+                                value={relatorioConsolidado.motivo_retificacao && !relatorioConsolidado.consolidado_retificado ? relatorioConsolidado.motivo_retificacao : undefined}
                                 onChange={(e) => {
                                     props.handleChange(e);
                                     onChangeMotivoRetificacao(e.target.value);

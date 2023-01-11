@@ -238,6 +238,13 @@ const RelatorioConsolidado = () => {
         }
     }
 
+    const podeGerarPreviaRetificacao = (consolidadoDre) => {
+        if (trilhaStatus && trilhaStatus.cards && trilhaStatus.cards.length > 0){
+            let filteredCards = trilhaStatus.cards.filter((element) => ["RECEBIDA", "DEVOLVIDA", "EM_ANALISE"].includes(element.status))
+            return !filteredCards.every((element) => element.quantidade_prestacoes === 0)
+        }
+    }
+
     const podeExibirProximaPublicacao = () =>{
         return (consolidadoDreProximaPublicacao && podeGerarPrevia()) || consolidadoDreProximaPublicacao.eh_consolidado_de_publicacoes_parciais
     }
@@ -346,9 +353,8 @@ const RelatorioConsolidado = () => {
                                         </div>
                                     ) :
                                     <>
-                                        {/*{consolidadoDreProximaPublicacao && podeGerarPrevia() &&*/}
                                         {podeExibirProximaPublicacao() &&
-
+                                            <>
                                             <div className='mt-3'>
                                                 <PublicarDocumentos
                                                     publicarConsolidadoDre={publicarConsolidadoDre}
@@ -375,33 +381,40 @@ const RelatorioConsolidado = () => {
                                                     consolidadoDre={consolidadoDreProximaPublicacao}
                                                     />
                                                 }
-
                                                 {!consolidadoDreProximaPublicacao.eh_consolidado_de_publicacoes_parciais &&
                                                     <Lauda
                                                         consolidadoDre={consolidadoDreProximaPublicacao}
                                                     />
                                                 }
                                             </div>
+                                            </>
                                         }
 
                                         {consolidadosDreJaPublicados && consolidadosDreJaPublicados.map((consolidadoDre) =>
+                                            
                                             <div key={consolidadoDre.uuid} className='mt-3'>
                                                 <PublicarDocumentos
                                                     publicarConsolidadoDre={publicarConsolidadoDre}
                                                     podeGerarPrevia={podeGerarPrevia}
+                                                    podeGerarPreviaRetificacao={podeGerarPreviaRetificacao(consolidadoDre)}
                                                     consolidadoDre={consolidadoDre}
+                                                    showPublicarRelatorioConsolidado={showPublicarRelatorioConsolidado}
+                                                    setShowPublicarRelatorioConsolidado={setShowPublicarRelatorioConsolidado}
                                                     carregaConsolidadosDreJaPublicadosProximaPublicacao={carregaConsolidadosDreJaPublicadosProximaPublicacao}
                                                 >
                                                     <PreviaDocumentos
                                                         gerarPreviaConsolidadoDre={gerarPreviaConsolidadoDre}
                                                     />
+                                                    
                                                 </PublicarDocumentos>
                                                 <DemonstrativoDaExecucaoFisicoFinanceira
                                                     consolidadoDre={consolidadoDre}
                                                     periodoEscolhido={periodoEscolhido}
+                                                    podeGerarPreviaRetificacao={podeGerarPreviaRetificacao(consolidadoDre)}
                                                 />
                                                 <AtaParecerTecnico
                                                     consolidadoDre={consolidadoDre}
+                                                    podeGerarPreviaRetificacao={podeGerarPreviaRetificacao(consolidadoDre)}
                                                 />
                                                 <Lauda
                                                     consolidadoDre={consolidadoDre}
