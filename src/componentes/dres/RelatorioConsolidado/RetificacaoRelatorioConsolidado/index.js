@@ -402,7 +402,6 @@ const RetificacaoRelatorioConsolidado = () => {
                                     mensagemQuantidadeExibida={mensagemQuantidadeExibida}
                                 />
                             }
-
                             <ModalAntDesignConfirmacao
                                 handleShow={showModal}
                                 titulo={"Confirmar Retificação"}
