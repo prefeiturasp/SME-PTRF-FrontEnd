@@ -8,9 +8,11 @@ const PreviaDocumentoRetificado = ({consolidadoDre, podeGerarPreviaRetificacao})
             <>
             {consolidadoDre && consolidadoDre.eh_retificacao &&
             <>
-                <button onClick={() => console.log('previas')} className="btn btn-outline-success" title={podeGerarPreviaRetificacao ? "A análise da(s) prestação(ões) de contas em retificação ainda não foi concluída." : ""} disabled={podeGerarPreviaRetificacao}>
+                <span data-html={true} data-tip={podeGerarPreviaRetificacao ? "A análise da(s) prestação(ões) de contas em retificação ainda não foi concluída." : ""}>
+                <button onClick={() => console.log('previas')} className="btn btn-outline-success" disabled={podeGerarPreviaRetificacao}>
                     Prévias
                 </button>
+                </span>
             <div className="p-2 bd-highlight font-weight-normal" data-html={true}>
                 <button
                     onClick={console.log('gerar')}

@@ -3,6 +3,7 @@ import './ata-parecer-tecnico.scss';
 import { exibeDateTimePT_BR_Ata } from "../../../../utils/ValidacoesAdicionaisFormularios";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faDownload} from '@fortawesome/free-solid-svg-icons'
+import ReactTooltip from "react-tooltip";
 import {getDownloadAtaParecerTecnico} from "../../../../services/dres/AtasParecerTecnico.service";
 import {postCriarAtaAtrelarAoConsolidadoDre} from "../../../../services/dres/RelatorioConsolidado.service";
 
@@ -75,23 +76,27 @@ export const AtaParecerTecnico = ({consolidadoDre, podeGerarPreviaRetificacao}) 
                     </div>
                     <div className="col-12 col-md-4 align-self-center text-right">
                         {consolidadoDre.ata_de_parecer_tecnico && consolidadoDre.ata_de_parecer_tecnico.uuid ? (
-                                <button
-                                    onClick={() => onClickVerAta(consolidadoDre.ata_de_parecer_tecnico.uuid)}
-                                    type="button"
-                                    className="btn btn-outline-success btn-sm"
-                                >
-                                    {consolidadoDre.ja_publicado ? "Consultar" : "Preencher"} ata
-                                </button>
-                            ):
                             <button
-                                onClick={() => criarAtaAtrelarAoConsolidado(consolidadoDre.dre_uuid, consolidadoDre.periodo_uuid, consolidadoDre.uuid ? consolidadoDre.uuid : null)}
+                                onClick={() => onClickVerAta(consolidadoDre.ata_de_parecer_tecnico.uuid)}
                                 type="button"
                                 className="btn btn-outline-success btn-sm"
-                                disabled={podeGerarPreviaRetificacao}
-                                title={podeGerarPreviaRetificacao ? "Não é possível preencher a ata. A análise da(s) prestação(ões) de contas em retificação ainda não foi concluída." : ""} 
                             >
-                                Preencher ata
+                                {consolidadoDre.ja_publicado ? "Consultar" : "Preencher"} ata
                             </button>
+                            ):
+                            <>
+                                <span data-html={true} data-tip={podeGerarPreviaRetificacao ? "Não é possível preencher a ata. A análise da(s) prestação(ões) de contas em retificação ainda não foi concluída." : ""}>
+                                <button
+                                    onClick={() => criarAtaAtrelarAoConsolidado(consolidadoDre.dre_uuid, consolidadoDre.periodo_uuid, consolidadoDre.uuid ? consolidadoDre.uuid : null)}
+                                    type="button"
+                                    className="btn btn-outline-success btn-sm"
+                                    disabled={podeGerarPreviaRetificacao}
+                                >
+                                    Preencher ata
+                                </button>
+                                </span>
+                                <ReactTooltip html={true}/>
+                            </>
                         }
                     </div>
                 </div>

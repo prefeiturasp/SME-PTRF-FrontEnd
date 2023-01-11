@@ -18,7 +18,7 @@ const InfoPublicacaoNoDiarioOficial = ({consolidadoDre, carregaConsolidadosDreJa
                     />
                 </div>
             }
-            {consolidadoDre && consolidadoDre?.gerou_uma_retificacao && consolidadoDre?.eh_retificacao &&
+            {consolidadoDre && consolidadoDre?.eh_retificacao &&
             <div className='mb-0 fonte-12 fonte-normal'>
                 <strong style={{color: '#00585E', fontWeight: '600', fontSize: '14px', marginRight: '5px'}}>
                     Editar Retificação
