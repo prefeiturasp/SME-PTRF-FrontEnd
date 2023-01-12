@@ -406,7 +406,7 @@ const RetificacaoRelatorioConsolidado = () => {
                                 handleShow={showModal}
                                 titulo={"Confirmar Retificação"}
                                 bodyText="Lembre-se que apenas as prestações de contas selecionadas serão reabertas para edição e gerarão novos documentos e nova lauda a ser publicada."
-                                handleOk={(e) => handleRetificar()} 
+                                handleOk={(e) => handleRetificar()}
                                 okText="Continuar"
                                 handleCancel={(e) => setShowModal(false)}
                                 cancelText="Cancelar"
