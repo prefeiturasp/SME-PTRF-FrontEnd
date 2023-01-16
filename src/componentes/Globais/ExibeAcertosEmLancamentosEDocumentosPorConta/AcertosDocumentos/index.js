@@ -184,10 +184,17 @@ const AcertosDocumentos = ({analiseAtualUuid, prestacaoDeContas, prestacaoDeCont
     const justificarNaoRealizacaoDocumentos = async (textoConfirmadoJustificado) => {
         try {
             let selecionados = getSolicitacoesSelecionadas();
-            await postJustificarNaoRealizacaoDocumentoPrestacaoConta({
+            let response = await postJustificarNaoRealizacaoDocumentoPrestacaoConta({
                 "uuids_solicitacoes_acertos_documentos": selecionados.map(doc => doc.uuid),
                 "justificativa": textoConfirmadoJustificado
             })
+
+            if (response && !response.todas_as_solicitacoes_marcadas_como_justificado){
+                // Reaproveitando o modal CheckNaoPermitido
+                setTituloModalCheckNaoPermitido('Não é possível marcar a solicitação como justificada')
+                setTextoModalCheckNaoPermitido(`<p>${response.mensagem}</p>`)
+                setShowModalCheckNaoPermitido(true)
+            }
             await carregaAcertosDocumentos()
         }catch (e) {
             console.log("Erro ao justificarNaoRealizacaoDocumentos")
@@ -394,7 +401,7 @@ const AcertosDocumentos = ({analiseAtualUuid, prestacaoDeContas, prestacaoDeCont
                                                         onChange={(event) => handleChangeTextareaEsclarecimentoDocumento(event, acerto.uuid)}
                                                         className="form-control"
                                                         placeholder="Digite aqui o esclarecimento"
-                                                        disabled={![['change_analise_dre']].some(visoesService.getPermissoes) || visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'DRE' || prestacaoDeContas.status !== 'DEVOLVIDA' || !analisePermiteEdicao}
+                                                        disabled={![['change_analise_dre']].some(visoesService.getPermissoes) || visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'DRE' || prestacaoDeContas.status !== 'DEVOLVIDA' || !analisePermiteEdicao || acerto.status_realizacao === "JUSTIFICADO"}
                                                     />
                                                 </div>
                                             }
