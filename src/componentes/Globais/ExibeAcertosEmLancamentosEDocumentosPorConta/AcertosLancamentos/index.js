@@ -254,10 +254,16 @@ const AcertosLancamentos = ({
     const justificarNaoRealizacao = async (textoConfirmadoJustificado) => {
         setLoadingLancamentos(true)
         let selecionados = getSolicitacoesSelecionadas();
-        await postJustificarNaoRealizacaoLancamentoPrestacaoConta({
+        let response = await postJustificarNaoRealizacaoLancamentoPrestacaoConta({
             "uuids_solicitacoes_acertos_lancamentos": selecionados.map(lanc => lanc.uuid),
             "justificativa": textoConfirmadoJustificado
-        })
+        });
+        if (response && !response.todas_as_solicitacoes_marcadas_como_justificado){
+            // Reaproveitando o modal CheckNaoPermitido
+            setTituloModalCheckNaoPermitido('Não é possível marcar a solicitação como justificada')
+            setTextoModalCheckNaoPermitido(`<p>${response.mensagem}</p>`)
+            setShowModalCheckNaoPermitido(true)
+        }
         await carregaAcertosLancamentos(contaSelecionada)
         setLoadingLancamentos(false)
     }
@@ -539,7 +545,7 @@ const AcertosLancamentos = ({
                                                                 onChange={(event) => handleChangeTextareaEsclarecimentoLancamento(event, acerto.uuid)}
                                                                 className="form-control"
                                                                 placeholder="Digite aqui o esclarecimento"
-                                                                disabled={![['change_analise_dre']].some(visoesService.getPermissoes) || visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'DRE' || prestacaoDeContas.status !== 'DEVOLVIDA' || !analisePermiteEdicao}
+                                                                disabled={![['change_analise_dre']].some(visoesService.getPermissoes) || visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'DRE' || prestacaoDeContas.status !== 'DEVOLVIDA' || !analisePermiteEdicao || acerto.status_realizacao === "JUSTIFICADO"}
                                                             />
                                                         </div>
                                                     </div>
