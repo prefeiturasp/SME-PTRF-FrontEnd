@@ -1,19 +1,43 @@
 import React, {useContext, useEffect} from "react";
 import {PaginasContainer} from "../../../PaginasContainer";
-import {useParams} from 'react-router-dom'
+import {useParams, useLocation} from 'react-router-dom'
 import {DespesaContext} from "../../../../context/Despesa";
 import {getDespesa} from "../../../../services/escolas/Despesas.service";
 import {CadastroDeDespesas} from "../../../../componentes/escolas/Despesas/CadastroDeDespesas";
 import {ASSOCIACAO_UUID} from "../../../../services/auth.service";
 import moment from "moment";
+import {visoesService} from "../../../../services/visoes.service";
+import { metodosAuxiliares } from "../../../../componentes/escolas/Despesas/metodosAuxiliares";
 
+const tituloPagina = (parametroLocation) => {
+    const aux = metodosAuxiliares;
+    const visao_selecionada = visoesService.getItemUsuarioLogado('visao_selecionada.nome')
+
+    if(visao_selecionada === "DRE"){
+        return "Visualização de Despesa"
+    }
+
+    if(visao_selecionada === "UE"){
+        if(aux.origemAnaliseLancamento(parametroLocation)){
+            let operacao = parametroLocation.state.operacao;
+            let texto = operacao === "requer_exclusao_lancamento_gasto" ? "Exclusão de Despesa" : "Edição de Despesa";
+            return texto;
+        }
+        else{
+            return "Edição de Despesa"
+        }
+    }
+
+    return "";
+}
 
 
 export const EdicaoDeDespesa = ()=>{
 
     const despesaContext = useContext(DespesaContext)
 
-    let {associacao} = useParams();
+    let {associacao} = useParams();    
+    const parametroLocation = useLocation();
 
     useEffect(() => {
         (async function setValoresIniciais() {
@@ -129,7 +153,7 @@ export const EdicaoDeDespesa = ()=>{
 
     return(
         <PaginasContainer>
-            <h1 className="titulo-itens-painel mt-5">Edição de Despesa</h1>
+            <h1 className="titulo-itens-painel mt-5">{tituloPagina(parametroLocation)}</h1>
             <div className="page-content-inner ">
                 <h2 className="subtitulo-itens-painel mb-4">Dados do documento</h2>
                 <CadastroDeDespesas

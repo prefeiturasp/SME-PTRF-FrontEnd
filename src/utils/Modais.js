@@ -112,6 +112,19 @@ export const AvisoTipoReceita = (propriedades) => {
     )
 };
 
+export const AvisoTipoReceitaEstorno = (propriedades) => {
+    return (
+        <ModalBootstrap
+            show={propriedades.show}
+            onHide={propriedades.handleClose}
+            titulo="Exclusão não permitida"
+            bodyText={`<p>${propriedades.texto}</p>`}
+            primeiroBotaoOnclick={propriedades.handleClose}
+            primeiroBotaoTexto="Ok"
+        />
+    )
+};
+
 export const RedirectModalTabelaLancamentos = (propriedades) => {
     return (
         <ModalBootstrap
@@ -412,6 +425,20 @@ export const PeriodoFechadoImposto = (propriedades) => {
     )
 };
 
+export const DespesaIncompletaNaoPermitida = (propriedades) => {
+    return (
+        <ModalBootstrap
+            show={propriedades.show}
+            onHide={propriedades.handleClose}
+            titulo="Despesa incompleta"
+            bodyText="Não é possível cadastrar uma despesa incompleta através de uma solicitação de inclusão ou ajuste da DRE."
+            primeiroBotaoOnclick={propriedades.handleClose}
+            primeiroBotaoTexto="Fechar"
+            primeiroBotaoCss="success"
+        />
+    )
+};
+
 export const ExcluirImposto = (propriedades) => {
     return (
         <ModalBootstrap
@@ -617,7 +644,7 @@ export const ModalPublicarRelatorioConsolidado = (propriedades) => {
         return (
             <>
                 <p>
-                    Ao confirmar a publicação, o sistema bloqueará as alterações dos relatórios e da ata.
+                    Ao confirmar a geração do relatório, o sistema bloqueará as alterações dos relatórios e da ata.
                 </p>
 
                 <p className="mt-3">
@@ -627,8 +654,13 @@ export const ModalPublicarRelatorioConsolidado = (propriedades) => {
                 <p className="mt-3">
                     Caso queira conferir as informações cadastradas, antes de concluir, volte e gere uma prévia dos documentos.
                 </p>
+                {propriedades.alertaJustificativa &&
+                    <p className="mt-3">
+                        Não esqueça de conferir a "Justificativa da diferença entre o valor previsto pela SME e o transferido pela DRE no período" apresentada no Demonstrativo da Execução Físico-Financeira.
+                    </p>
+                }
 
-                <p className="mt-3">Deseja concluir a publicação?</p>
+                <p className="mt-3">Deseja concluir a geração?</p>
             </>
         )
 
@@ -638,14 +670,47 @@ export const ModalPublicarRelatorioConsolidado = (propriedades) => {
         <ModalBootstrapConfirmarPublicacao
             show={propriedades.show}
             onHide={propriedades.handleClose}
-            titulo="Confirmar Publicação"
+            titulo="Confirmar Geração"
             bodyText={bodyTextarea()}
             primeiroBotaoOnclick={propriedades.handleClose}
             primeiroBotaoTexto="Cancelar"
             primeiroBotaoCss="outline-success"
             segundoBotaoOnclick={propriedades.publicarConsolidadoDre}
-            segundoBotaoTexto="Confirmar Publicação"
+            segundoBotaoTexto="Confirmar Geração"
             segundoBotaoCss="success"
+        />
+    )
+};
+
+export const ModalPublicarRelatorioConsolidadoPendente = (propriedades) => {
+    const bodyTextarea = () => {
+        return (
+            <>
+                <p>
+                    O consolidado não pode ser gerado. 
+                </p>
+
+                <p className="mt-3">
+                    Preencha o campo "Justificativa da diferença entre o valor previsto pela SME e o transferido pela DRE no período" do Demonstrativo da Execução Físico-Financeira.
+                </p>
+
+                <p className="mt-3">
+                Após o preenchimento desse campo, o consolidado estará disponível para geração. 
+                </p>
+            </>
+        )
+
+    };
+
+    return (
+        <ModalBootstrapConfirmarPublicacao
+            show={propriedades.show}
+            onHide={propriedades.handleClose}
+            titulo="Pendência para a Geração do Consolidado"
+            bodyText={bodyTextarea()}
+            primeiroBotaoOnclick={propriedades.handleClose}
+            primeiroBotaoTexto="Cancelar"
+            primeiroBotaoCss="outline-success"
         />
     )
 };

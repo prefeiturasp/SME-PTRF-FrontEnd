@@ -2,7 +2,7 @@ import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {useHistory, useParams} from "react-router-dom";
 import {PaginasContainer} from "../../../../../../paginas/PaginasContainer";
 import {useSelector} from "react-redux";
-import {getTiposDeAcertoLancamentos, getTiposDevolucao, getListaDeSolicitacaoDeAcertos, postSolicitacoesParaAcertos} from "../../../../../../services/dres/PrestacaoDeContas.service";
+import {getTiposDevolucao, getListaDeSolicitacaoDeAcertos, postSolicitacoesParaAcertos, getTiposDeAcertoLancamentosAgrupadoCategoria} from "../../../../../../services/dres/PrestacaoDeContas.service";
 import {TopoComBotoes} from "./TopoComBotoes";
 import {TabelaDetalharAcertos} from "./TabelaDetalharAcertos";
 import {FormularioAcertos} from "./FormularioAcertos";
@@ -10,20 +10,25 @@ import {trataNumericos} from "../../../../../../utils/ValidacoesAdicionaisFormul
 import Loading from "../../../../../../utils/Loading";
 // Hooks Personalizados
 import useDataTemplate from "../../../../../../hooks/Globais/useDataTemplate";
+import {ProviderValidaParcial} from "../../../../../../context/DetalharAcertos";
 import {useCarregaPrestacaoDeContasPorUuid} from "../../../../../../hooks/dres/PrestacaoDeContas/useCarregaPrestacaoDeContasPorUuid";
+import moment from "moment/moment";
 
 export const DetalharAcertos = () => {
 
     const {prestacao_conta_uuid} = useParams();
     const formRef = useRef();
-    const {lancamentos_para_acertos} = useSelector(state => state.DetalharAcertos)
+    const {lancamentos_para_acertos, origem} = useSelector(state => state.DetalharAcertos)
+    const valorDocumento = lancamentos_para_acertos[0]?.valor_transacao_total ?? 0;
     const history = useHistory();
 
     // Hooks Personalizados
     const dataTemplate = useDataTemplate()
     const prestacaoDeContas = useCarregaPrestacaoDeContasPorUuid(prestacao_conta_uuid)
 
-    const [listaTiposDeAcertoLancamentos, setListaTiposDeAcertoLancamentos] = useState([])
+    const [listaTiposDeAcertoLancamentosAgrupado, setListaTiposDeAcertoLancamentosAgrupado] = useState([])
+    const [textoCategoria, setTextoCategoria] = useState([])
+    const [corTextoCategoria, setCorTextoCategoria] = useState([])
     const [acertos, setInitialAcertos] = useState({});
     const [exibeCamposCategoriaDevolucao, setExibeCamposCategoriaDevolucao] = useState({})
     const [tiposDevolucao, setTiposDevolucao] = useState([])
@@ -40,17 +45,6 @@ export const DetalharAcertos = () => {
         return tem_gasto
     }, [lancamentos_para_acertos])
 
-    const carregaTiposDeAcertoLancamentos = useCallback(async () => {
-        setLoading(true)
-        let tipos_de_acerto_lancamentos = await getTiposDeAcertoLancamentos()
-        let tem_gasto = verificaSeTemLancamentosDoTipoGasto()
-        if (!tem_gasto) {
-            tipos_de_acerto_lancamentos = tipos_de_acerto_lancamentos.filter(elemento => elemento.categoria !== 'DEVOLUCAO')
-        }
-        setListaTiposDeAcertoLancamentos(tipos_de_acerto_lancamentos)
-        setLoading(false)
-    }, [verificaSeTemLancamentosDoTipoGasto])
-
     useEffect(() => {
 
         let mounted = true;
@@ -58,12 +52,15 @@ export const DetalharAcertos = () => {
         const carregaTiposDeAcertoLancamentos = async () => {
             if (mounted){
                 setLoading(true)
-                let tipos_de_acerto_lancamentos = await getTiposDeAcertoLancamentos()
+                let tipos_de_acerto_lancamentos_agrupado = await getTiposDeAcertoLancamentosAgrupadoCategoria()
+                tipos_de_acerto_lancamentos_agrupado = tipos_de_acerto_lancamentos_agrupado.agrupado_por_categorias
+                
                 let tem_gasto = verificaSeTemLancamentosDoTipoGasto()
                 if (!tem_gasto) {
-                    tipos_de_acerto_lancamentos = tipos_de_acerto_lancamentos.filter(elemento => elemento.categoria !== 'DEVOLUCAO')
+                    tipos_de_acerto_lancamentos_agrupado = tipos_de_acerto_lancamentos_agrupado.filter(elemento => elemento.id !== 'DEVOLUCAO')
                 }
-                setListaTiposDeAcertoLancamentos(tipos_de_acerto_lancamentos)
+
+                setListaTiposDeAcertoLancamentosAgrupado(tipos_de_acerto_lancamentos_agrupado)
                 setLoading(false)
             }
         }
@@ -100,8 +97,31 @@ export const DetalharAcertos = () => {
         setLoading(false)
     }
 
+    const addTextoECorCategoriaTipoDeAcertoJaCadastrado = (acertos, tipos_de_acerto_lancamentos_agrupado) => {
+        tipos_de_acerto_lancamentos_agrupado = tipos_de_acerto_lancamentos_agrupado.agrupado_por_categorias
+    
+        acertos.solicitacoes_de_ajuste_da_analise.map((acerto, index_array_acertos)=>{
+            let id_categoria = acerto.tipo_acerto.categoria;
+            let info_categoria = tipos_de_acerto_lancamentos_agrupado.find(element => element.id === id_categoria);
+            if(info_categoria){
+                let classe = info_categoria.cor === 1 ? 'texto-categoria-verde' : 'texto-categoria-vermelho';
+                setTextoCategoria(prevState => [...prevState, [index_array_acertos] = info_categoria.texto]);
+                setCorTextoCategoria(prevState => [...prevState, [index_array_acertos] = classe]);       
+            }
+            else{
+                setTextoCategoria(prevState => [...prevState, [index_array_acertos] = ""]);
+                setCorTextoCategoria(prevState => [...prevState, [index_array_acertos] = ""]);
+            }
+        })
+    }
+
     const removeBloqueiaSelectTipoDeAcertoJaCadastrado = (index_array_acertos) => {
         setBloqueiaSelectTipoDeAcerto(prevState => prevState.filter((acerto, i) => i !== index_array_acertos));
+    }
+
+    const removeTextoECorCategoriaTipoDeAcertoJaCadastrado = (index_array_acertos) => {
+        setTextoCategoria(prevState => prevState.filter((acerto, i) => i !== index_array_acertos));
+        setCorTextoCategoria(prevState => prevState.filter((acerto, i) => i !== index_array_acertos));
     }
 
     useEffect(() => {
@@ -115,17 +135,19 @@ export const DetalharAcertos = () => {
                     let analise_lancamento_uuid = lancamentos_para_acertos[0] && lancamentos_para_acertos[0].analise_lancamento && lancamentos_para_acertos[0].analise_lancamento.uuid ? lancamentos_para_acertos[0].analise_lancamento.uuid : null
                     if (analise_lancamento_uuid) {
                         let acertos = await getListaDeSolicitacaoDeAcertos(prestacao_conta_uuid, analise_lancamento_uuid)
-
+                        let tipos_de_acerto_lancamentos_agrupado = await getTiposDeAcertoLancamentosAgrupadoCategoria();
                         let _acertos = []
                         if (acertos && acertos.solicitacoes_de_ajuste_da_analise && acertos.solicitacoes_de_ajuste_da_analise.length > 0) {
                             acertos.solicitacoes_de_ajuste_da_analise.map((acerto) =>
                                 _acertos.push({
+                                    uuid: acerto.uuid,
+                                    copiado: acerto.copiado,
                                     tipo_acerto: acerto.tipo_acerto.uuid,
                                     detalhamento: acerto.detalhamento,
                                     devolucao_tesouro: acerto.devolucao_ao_tesouro && acerto.devolucao_ao_tesouro.uuid ? {
                                         uuid: acerto.devolucao_ao_tesouro.uuid,
                                         tipo: acerto.devolucao_ao_tesouro.tipo && acerto.devolucao_ao_tesouro.tipo.uuid ? acerto.devolucao_ao_tesouro.tipo.uuid : acerto.devolucao_ao_tesouro.tipo,
-                                        data: acerto.devolucao_ao_tesouro.data ? dataTemplate(acerto.devolucao_ao_tesouro.data) : null,
+                                        data: acerto && acerto.devolucao_ao_tesouro && acerto.devolucao_ao_tesouro.data ? acerto.devolucao_ao_tesouro.data : "",
                                         devolucao_total: acerto.devolucao_ao_tesouro.devolucao_total,
                                         valor: acerto.devolucao_ao_tesouro.valor ? Number(acerto.devolucao_ao_tesouro.valor).toLocaleString('pt-BR', {
                                             style: 'currency',
@@ -134,7 +156,9 @@ export const DetalharAcertos = () => {
                                     } : {...acerto.devolucao_ao_tesouro}
                                 })
                             )
+                            addTextoECorCategoriaTipoDeAcertoJaCadastrado(acertos, tipos_de_acerto_lancamentos_agrupado)
                             addBloqueiaSelectTipoDeAcertoJaCadastrado(acertos)
+                            
                         }
                         setInitialAcertos({solicitacoes_acerto: [..._acertos]})
                     }
@@ -152,11 +176,77 @@ export const DetalharAcertos = () => {
     }, [lancamentos_para_acertos, prestacao_conta_uuid, totalDelancamentosParaConferencia])
 
     const onClickBtnVoltar = () => {
-        history.push(`/dre-detalhe-prestacao-de-contas/${prestacao_conta_uuid}#conferencia_de_lancamentos`)
+        if(origem && origem === "dre-detalhe-prestacao-de-contas-resumo-acertos"){
+            history.push(`/dre-detalhe-prestacao-de-contas-resumo-acertos/${prestacao_conta_uuid}#tabela-acertos-lancamentos`)
+        }
+        else{
+            history.push(`/dre-detalhe-prestacao-de-contas/${prestacao_conta_uuid}#conferencia_de_lancamentos`)
+        }
+        
     }
 
-    const handleChangeTipoDeAcertoLancamento = (e) => {
+    const adicionaTextoECorCategoriaVazio = () => {
+        let lista_texto = textoCategoria;
+        lista_texto.push("")
+        setTextoCategoria(lista_texto)
+
+        let lista_cor = corTextoCategoria;
+        lista_cor.push("");
+        setCorTextoCategoria(lista_cor)
+    }
+
+    const changeTextoECorCategoria = (info_categoria, index) => {
+        if(info_categoria){
+            let classe = info_categoria.cor === 1 ? 'texto-categoria-verde' : 'texto-categoria-vermelho';
+            let lista_texto = textoCategoria
+            let lista_cor = corTextoCategoria
+
+            if(lista_texto[index] || lista_texto[index] === ""){
+                lista_texto[index] = info_categoria.texto
+            }
+            else{
+                lista_texto.push(info_categoria.texto)
+            }
+
+            if(lista_cor[index] || lista_cor[index] === ""){
+                lista_cor[index] = classe
+            }
+            else{
+                lista_cor.push(classe)
+            }
+
+            setTextoCategoria(lista_texto)
+            setCorTextoCategoria(lista_cor)
+        }
+        else{
+            let lista_texto = textoCategoria
+            let lista_cor = corTextoCategoria
+
+            if(lista_texto[index] || lista_texto[index] === ""){
+                lista_texto[index] = ""
+            }
+            else{
+                lista_texto.push("")
+            }
+
+            if(lista_cor[index] || lista_cor[index] === ""){
+                lista_cor[index] = ""
+            }
+            else{
+                lista_cor.push("")
+            }
+
+            setTextoCategoria(lista_texto)
+            setCorTextoCategoria(lista_cor)
+        }
+    }
+
+    const handleChangeTipoDeAcertoLancamento = (e, index) => {
+        let id_categoria = e.target.options[e.target.selectedIndex].getAttribute('data-categoria')
+        let info_categoria = listaTiposDeAcertoLancamentosAgrupado.find(element => element.id === id_categoria)
         let data_objeto = JSON.parse(e.target.options[e.target.selectedIndex].getAttribute('data-objeto'));
+
+        changeTextoECorCategoria(info_categoria, index);
 
         if (data_objeto && data_objeto.uuid) {
             if (data_objeto && data_objeto.categoria === 'DEVOLUCAO') {
@@ -174,7 +264,6 @@ export const DetalharAcertos = () => {
     }
 
     const onSubmitFormAcertos = async () => {
-
         if (!formRef.current.errors.solicitacoes_acerto && formRef.current.values && formRef.current.values.solicitacoes_acerto) {
 
             let _lancamentos = []
@@ -194,6 +283,8 @@ export const DetalharAcertos = () => {
             if (solicitacoes_acerto.solicitacoes_acerto && solicitacoes_acerto.solicitacoes_acerto.length > 0) {
                 solicitacoes_acerto.solicitacoes_acerto.map((solicitacao) =>
                     _solicitacoes_acerto.push({
+                        uuid: solicitacao.uuid,
+                        copiado: solicitacao.copiado,
                         tipo_acerto: solicitacao.tipo_acerto,
                         detalhamento: solicitacao.detalhamento,
                         devolucao_tesouro: solicitacao.devolucao_tesouro && solicitacao.devolucao_tesouro.tipo ? {
@@ -228,6 +319,14 @@ export const DetalharAcertos = () => {
         }
     }
 
+    const ehSolicitacaoCopiada = (acerto) => {
+        if(acerto.copiado){
+            return true;
+        }
+        
+        return false;
+    }
+
     return (
         <PaginasContainer>
             <h1 className="titulo-itens-painel mt-5">Acompanhamento das Prestações de Contas</h1>
@@ -235,6 +334,7 @@ export const DetalharAcertos = () => {
                 {lancamentos_para_acertos && lancamentos_para_acertos.length <= 0 &&
                     onClickBtnVoltar()
                 }
+                <ProviderValidaParcial>
                 <>
                 <TopoComBotoes
                     onSubmitFormAcertos={onSubmitFormAcertos}
@@ -257,7 +357,7 @@ export const DetalharAcertos = () => {
                     <>
                         <FormularioAcertos
                             solicitacoes_acerto={acertos}
-                            listaTiposDeAcertoLancamentos={listaTiposDeAcertoLancamentos}
+                            listaTiposDeAcertoLancamentosAgrupado={listaTiposDeAcertoLancamentosAgrupado}
                             onSubmitFormAcertos={onSubmitFormAcertos}
                             formRef={formRef}
                             handleChangeTipoDeAcertoLancamento={handleChangeTipoDeAcertoLancamento}
@@ -266,9 +366,17 @@ export const DetalharAcertos = () => {
                             setBloqueiaSelectTipoDeAcerto={setBloqueiaSelectTipoDeAcerto}
                             bloqueiaSelectTipoDeAcerto={bloqueiaSelectTipoDeAcerto}
                             removeBloqueiaSelectTipoDeAcertoJaCadastrado={removeBloqueiaSelectTipoDeAcertoJaCadastrado}
+                            textoCategoria={textoCategoria}
+                            corTextoCategoria={corTextoCategoria}
+                            removeTextoECorCategoriaTipoDeAcertoJaCadastrado={removeTextoECorCategoriaTipoDeAcertoJaCadastrado}
+                            adicionaTextoECorCategoriaVazio={adicionaTextoECorCategoriaVazio}
+                            ehSolicitacaoCopiada={ehSolicitacaoCopiada}
+                            valorDocumento={valorDocumento}
+                            lancamentosParaAcertos={lancamentos_para_acertos}
                         />
                     </>
                 }
+                </ProviderValidaParcial>
             </div>
         </PaginasContainer>
     )

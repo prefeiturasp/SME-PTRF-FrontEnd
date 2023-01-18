@@ -12,6 +12,8 @@ import {Filtros} from "./Filtros";
 import {getPeriodosAteAgoraForaImplantacaoDaAssociacao} from "../../../services/escolas/PrestacaoDeContas.service";
 import {getTabelasPrestacoesDeContas} from "../../../services/dres/PrestacaoDeContas.service";
 import Loading from "../../../utils/Loading";
+import { mantemEstadoAnaliseDre as meapcservice } from "../../../services/mantemEstadoAnaliseDre.service";
+import { visoesService } from "../../../services/visoes.service";
 
 export const AnaliseDre = () =>{
 
@@ -101,7 +103,7 @@ export const AnaliseDre = () =>{
     const acoesTemplate = (rowData) =>{
         return (
             <>
-                {rowData.status_pc === 'APROVADA' || rowData.status_pc === 'APROVADA_RESSALVA' || rowData.status_pc === 'REPROVADA' || rowData.status_pc === 'DEVOLVIDA' ? (
+                {rowData.pode_habilitar_botao_ver_acertos_em_analise_da_dre ? (
                     <Link to={{pathname: `consulta-detalhamento-analise-da-dre/${rowData.prestacao_de_contas_uuid}`,
                             state: {
                                 periodoFormatado: retornaObjetoPeriodo(rowData),
@@ -111,6 +113,7 @@ export const AnaliseDre = () =>{
                         <FontAwesomeIcon
                             style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
                             icon={faEye}
+                            onClick={() => limpaStorageAnaliseDre()}
                         />
                     </Link>
                 ):
@@ -126,6 +129,10 @@ export const AnaliseDre = () =>{
             </div>
         )
     };
+
+    const limpaStorageAnaliseDre = () => {
+        meapcservice.limpaAnaliseDreUsuarioLogado(visoesService.getUsuarioLogin())
+    }
 
     return(
         <PaginasContainer>

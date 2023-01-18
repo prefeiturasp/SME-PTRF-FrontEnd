@@ -1,6 +1,5 @@
 import React from "react";
 import {exibeDataPT_BR} from "../../../utils/ValidacoesAdicionaisFormularios";
-import {visoesService} from "../../../services/visoes.service";
 
 export const TopoSelectPeriodoBotaoConcluir = ({
                                                    periodoPrestacaoDeConta,
@@ -9,11 +8,10 @@ export const TopoSelectPeriodoBotaoConcluir = ({
                                                    retornaObjetoPeriodoPrestacaoDeConta,
                                                    statusPrestacaoDeConta,
                                                    checkCondicaoExibicao,
-                                                   setShow,
-                                                   podeConcluir
-
+                                                   podeConcluir,
+                                                   concluirPeriodo,
+                                                   textoBotaoConcluir
                                                }) => {
-
     return (
         <>
             <form id="periodo_conta">
@@ -61,10 +59,10 @@ export const TopoSelectPeriodoBotaoConcluir = ({
                             {visibility: podeConcluir ? "visible" : "hidden"}
                         }
                     >
-                        {checkCondicaoExibicao(periodoPrestacaoDeConta) && statusPrestacaoDeConta && statusPrestacaoDeConta.prestacao_contas_status && !statusPrestacaoDeConta.prestacao_contas_status.documentos_gerados &&
-                        <button onClick={() => setShow(true)}
-                                disabled={statusPrestacaoDeConta && statusPrestacaoDeConta.prestacao_contas_status && statusPrestacaoDeConta.prestacao_contas_status.documentos_gerados}
-                                className='btn btn-success' type="button">Concluir período</button>
+                        {checkCondicaoExibicao(periodoPrestacaoDeConta) && statusPrestacaoDeConta && statusPrestacaoDeConta.prestacao_contas_status && statusPrestacaoDeConta.prestacao_contas_status.pc_requer_conclusao &&
+                        <button onClick={concluirPeriodo}
+                                // disabled={statusPrestacaoDeConta && statusPrestacaoDeConta.prestacao_contas_status && statusPrestacaoDeConta.prestacao_contas_status.documentos_gerados}
+                                className='btn btn-success' type="button">{textoBotaoConcluir(statusPrestacaoDeConta)}</button>
                             /*<button onClick={handleClickBtnConcluirPeriodo} disabled={statusPrestacaoDeConta && statusPrestacaoDeConta.prestacao_contas_status && statusPrestacaoDeConta.prestacao_contas_status.documentos_gerados} className='btn btn-success' type="button">Concluir período</button>*/
                         }
                     </div>
