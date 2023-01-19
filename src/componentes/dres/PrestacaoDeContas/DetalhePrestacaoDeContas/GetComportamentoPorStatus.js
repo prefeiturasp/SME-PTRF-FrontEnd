@@ -11,6 +11,8 @@ import DevolucaoParaAcertos from "./DevolucaoParaAcertos";
 import {BotaoSalvarRodape} from "./BotaoSalvarRodape";
 import ConferenciaDeDocumentos from "./ConferenciaDeDocumentos";
 import DevolutivaDaAssociacao from "./DevolutivaDaAssociacao";
+import JustificativaDeFaltaDeAjustes from "./JustificativaDeFaltaDeAjustes";
+import {RetornaSeTemPermissaoEdicaoAcompanhamentoDePc} from "../RetornaSeTemPermissaoEdicaoAcompanhamentoDePc";
 
 
 export const GetComportamentoPorStatus = (
@@ -60,6 +62,8 @@ export const GetComportamentoPorStatus = (
         setAnalisesDeContaDaPrestacao
     }) => {
 
+        const TEMPERMISSAO = RetornaSeTemPermissaoEdicaoAcompanhamentoDePc()
+
     if (prestacaoDeContas && prestacaoDeContas.status) {
         if (prestacaoDeContas.status === 'NAO_RECEBIDA') {
             return (
@@ -74,8 +78,8 @@ export const GetComportamentoPorStatus = (
                         textoBtnRetroceder={"Reabrir PC"}
                         metodoAvancar={receberPrestacaoDeContas}
                         metodoRetroceder={() => setShowReabrirPc(true)}
-                        disabledBtnAvancar={!stateFormRecebimentoPelaDiretoria.data_recebimento}
-                        disabledBtnRetroceder={false}
+                        disabledBtnAvancar={!stateFormRecebimentoPelaDiretoria.data_recebimento || !TEMPERMISSAO}
+                        disabledBtnRetroceder={!TEMPERMISSAO}
                     />
                     <TrilhaDeStatus
                         prestacaoDeContas={prestacaoDeContas}
@@ -85,13 +89,14 @@ export const GetComportamentoPorStatus = (
                         stateFormRecebimentoPelaDiretoria={stateFormRecebimentoPelaDiretoria}
                         tabelaPrestacoes={tabelaPrestacoes}
                         disabledNome={true}
-                        disabledData={false}
+                        disabledData={!TEMPERMISSAO}
                         disabledStatus={true}
                         exibeMotivo={false}
                         exibeRecomendacoes={false}
                     />
                     <ComentariosDeAnalise
                         prestacaoDeContas={prestacaoDeContas}
+                        editavel={TEMPERMISSAO}
                     />
                 </>
             )
@@ -108,8 +113,8 @@ export const GetComportamentoPorStatus = (
                         textoBtnRetroceder={"Não recebida"}
                         metodoAvancar={analisarPrestacaoDeContas}
                         metodoRetroceder={() => setShowNaoRecebida(true)}
-                        disabledBtnAvancar={false}
-                        disabledBtnRetroceder={false}
+                        disabledBtnAvancar={!TEMPERMISSAO}
+                        disabledBtnRetroceder={!TEMPERMISSAO}
                     />
                     <TrilhaDeStatus
                         prestacaoDeContas={prestacaoDeContas}
@@ -126,6 +131,7 @@ export const GetComportamentoPorStatus = (
                     />
                     <ComentariosDeAnalise
                         prestacaoDeContas={prestacaoDeContas}
+                        editavel={TEMPERMISSAO}
                     />
                 </>
             )
@@ -135,7 +141,7 @@ export const GetComportamentoPorStatus = (
                 <>
                     <Cabecalho
                         prestacaoDeContas={prestacaoDeContas}
-                        exibeSalvar={true}
+                        exibeSalvar={TEMPERMISSAO}
                         metodoSalvarAnalise={salvarAnalise}
                         btnSalvarDisabled={btnSalvarDisabled}
                     />
@@ -145,8 +151,8 @@ export const GetComportamentoPorStatus = (
                         textoBtnRetroceder={"Recebida"}
                         metodoAvancar={() => setShowConcluirAnalise(true)}
                         metodoRetroceder={() => setShowRecebida(true)}
-                        disabledBtnAvancar={false}
-                        disabledBtnRetroceder={false}
+                        disabledBtnAvancar={!TEMPERMISSAO}
+                        disabledBtnRetroceder={!TEMPERMISSAO}
                     />
                     <TrilhaDeStatus
                         prestacaoDeContas={prestacaoDeContas}
@@ -164,7 +170,7 @@ export const GetComportamentoPorStatus = (
                     <InformacoesPrestacaoDeContas
                         handleChangeFormInformacoesPrestacaoDeContas={handleChangeFormInformacoesPrestacaoDeContas}
                         informacoesPrestacaoDeContas={informacoesPrestacaoDeContas}
-                        editavel={true}
+                        editavel={TEMPERMISSAO}
                     />
                     <TabsArquivosDeReferencia
                         infoAta={infoAta}
@@ -177,7 +183,7 @@ export const GetComportamentoPorStatus = (
                         analisesDeContaDaPrestacao={analisesDeContaDaPrestacao}
                         handleChangeAnalisesDeContaDaPrestacao={handleChangeAnalisesDeContaDaPrestacao}
                         getObjetoIndexAnalise={getObjetoIndexAnalise}
-                        editavel={true}
+                        editavel={TEMPERMISSAO}
 
                         // Props ResumoFinanceiroTabelaTotais
                         valorTemplate={valorTemplate}
@@ -202,27 +208,28 @@ export const GetComportamentoPorStatus = (
 
                     <ConferenciaDeLancamentos
                         prestacaoDeContas={prestacaoDeContas}
-                        editavel={true}
+                        editavel={TEMPERMISSAO}
                     />
                     <ConferenciaDeDocumentos
                         prestacaoDeContas={prestacaoDeContas}
-                        editavel={true}
+                        editavel={TEMPERMISSAO}
                     />
                     <DevolucaoParaAcertos
                         prestacaoDeContas={prestacaoDeContas}
                         analisesDeContaDaPrestacao={analisesDeContaDaPrestacao}
                         carregaPrestacaoDeContas={carregaPrestacaoDeContas}
                         infoAta={infoAta}
-                        editavel={true}
+                        editavel={TEMPERMISSAO}
                         setLoadingAcompanhamentoPC={setLoading}
                         setAnalisesDeContaDaPrestacao={setAnalisesDeContaDaPrestacao}
                     />
                     <ComentariosDeAnalise
                         prestacaoDeContas={prestacaoDeContas}
+                        editavel={TEMPERMISSAO}
                     />
                     <div className='d-flex flex-row-reverse bd-highlight'>
                         <BotaoSalvarRodape
-                            exibeSalvar={true}
+                            exibeSalvar={TEMPERMISSAO}
                             textoBtn={'Salvar'}
                             metodoSalvarAnalise={salvarAnalise}
                             btnSalvarDisabled={btnSalvarDisabled}
@@ -316,6 +323,7 @@ export const GetComportamentoPorStatus = (
                     />
                     <ComentariosDeAnalise
                         prestacaoDeContas={prestacaoDeContas}
+                        editavel={TEMPERMISSAO}
                     />
                 </>
             )
@@ -331,7 +339,9 @@ export const GetComportamentoPorStatus = (
                         esconderBotaoRetroceder={true}
                         textoBtnAvancar={"Receber após acertos"}
                         metodoAvancar={() => receberAposAcertos(prestacaoDeContas)}
-                        disabledBtnAvancar={!dataRecebimentoDevolutiva}
+
+                        // disabledBtnAvancar={!dataRecebimentoDevolutiva}
+                        disabledBtnAvancar={!dataRecebimentoDevolutiva || !TEMPERMISSAO}
                     />
                     <TrilhaDeStatus
                         prestacaoDeContas={prestacaoDeContas}
@@ -350,8 +360,11 @@ export const GetComportamentoPorStatus = (
                         prestacaoDeContas={prestacaoDeContas}
                         dataRecebimentoDevolutiva={dataRecebimentoDevolutiva}
                         handleChangedataRecebimentoDevolutiva={handleChangedataRecebimentoDevolutiva}
+                        editavel={TEMPERMISSAO}
                     />
-
+                    <JustificativaDeFaltaDeAjustes
+                        prestacaoDeContas={prestacaoDeContas}
+                    />
                     <InformacoesPrestacaoDeContas
                         handleChangeFormInformacoesPrestacaoDeContas={handleChangeFormInformacoesPrestacaoDeContas}
                         informacoesPrestacaoDeContas={informacoesPrestacaoDeContas}
@@ -408,6 +421,7 @@ export const GetComportamentoPorStatus = (
                     />
                     <ComentariosDeAnalise
                         prestacaoDeContas={prestacaoDeContas}
+                        editavel={TEMPERMISSAO}
                     />
                 </>
             )
@@ -424,8 +438,8 @@ export const GetComportamentoPorStatus = (
                         textoBtnRetroceder={"Apresentada após acertos"}
                         metodoAvancar={analisarPrestacaoDeContas}
                         metodoRetroceder={() => desfazerReceberAposAcertos(prestacaoDeContas)}
-                        disabledBtnAvancar={false}
-                        disabledBtnRetroceder={false}
+                        disabledBtnAvancar={!TEMPERMISSAO}
+                        disabledBtnRetroceder={!TEMPERMISSAO}
                     />
                     <TrilhaDeStatus
                         prestacaoDeContas={prestacaoDeContas}
@@ -502,6 +516,7 @@ export const GetComportamentoPorStatus = (
                     />
                     <ComentariosDeAnalise
                         prestacaoDeContas={prestacaoDeContas}
+                        editavel={TEMPERMISSAO}
                     />
                 </>
             )
@@ -520,7 +535,7 @@ export const GetComportamentoPorStatus = (
                         metodoAvancar={() => setShowConcluirAnalise(true)}
                         metodoRetroceder={() => setShowVoltarParaAnalise()}
                         disabledBtnAvancar={true}
-                        disabledBtnRetroceder={false}
+                        disabledBtnRetroceder={!TEMPERMISSAO}
                         esconderBotaoAvancar={true}
                     />
                     <TrilhaDeStatus
@@ -593,6 +608,7 @@ export const GetComportamentoPorStatus = (
                     />
                     <ComentariosDeAnalise
                         prestacaoDeContas={prestacaoDeContas}
+                        editavel={TEMPERMISSAO}
                     />
                 </>
             )
@@ -611,7 +627,7 @@ export const GetComportamentoPorStatus = (
                         metodoAvancar={() => setShowConcluirAnalise(true)}
                         metodoRetroceder={() => setShowVoltarParaAnalise(true)}
                         disabledBtnAvancar={true}
-                        disabledBtnRetroceder={false}
+                        disabledBtnRetroceder={!TEMPERMISSAO}
                         esconderBotaoAvancar={true}
                     />
                     <TrilhaDeStatus
@@ -686,6 +702,7 @@ export const GetComportamentoPorStatus = (
                     />
                     <ComentariosDeAnalise
                         prestacaoDeContas={prestacaoDeContas}
+                        editavel={TEMPERMISSAO}
                     />
                 </>
             )

@@ -16,7 +16,7 @@ const DataSaldoBancario = ({
     changeUploadExtrato, reiniciaUploadExtrato, downloadComprovanteExtrato, salvarExtratoBancario,
     btnSalvarExtratoBancarioDisable, setBtnSalvarExtratoBancarioDisable, classBtnSalvarExtratoBancario,
     setClassBtnSalvarExtratoBancario, checkSalvarExtratoBancario, setCheckSalvarExtratoBancario, erroDataSaldo,
-    dataAtualizacaoComprovanteExtrato
+    dataAtualizacaoComprovanteExtrato, permiteEditarCamposExtrato
 }) => {
 
     const handleOnClick = () => {
@@ -45,7 +45,7 @@ const DataSaldoBancario = ({
                                                     name='data_extrato'
                                                     type="date"
                                                     className="form-control"
-                                                    disabled={periodoFechado || !visoesService.getPermissoes(['change_conciliacao_bancaria'])}
+                                                    disabled={!permiteEditarCamposExtrato || !visoesService.getPermissoes(['change_conciliacao_bancaria'])}
                                                     maxDate={new Date()}
                                                 />
                                                 {erroDataSaldo && <span className="span_erro text-danger mt-1"> {erroDataSaldo}</span>}
@@ -65,7 +65,7 @@ const DataSaldoBancario = ({
                                                     name="saldo_extrato"
                                                     className="form-control"
                                                     onChangeEvent={(e) => handleChangaDataSaldo(e.target.name, e.target.value)}
-                                                    disabled={periodoFechado || !visoesService.getPermissoes(['change_conciliacao_bancaria'])}
+                                                    disabled={!permiteEditarCamposExtrato || !visoesService.getPermissoes(['change_conciliacao_bancaria'])}
                                                 />
                                             </div>
                                         </div>
@@ -78,8 +78,8 @@ const DataSaldoBancario = ({
                                             <div className='container-upload-extrato'>
                                                 <Upload
                                                     beforeUpload={() => false}
-                                                    disabled={periodoFechado || !visoesService.getPermissoes(['change_conciliacao_bancaria'])}
-                                                    className={`${periodoFechado || !visoesService.getPermissoes(['change_conciliacao_bancaria']) ? 'disabled_upload' : ''}`}
+                                                    disabled={!permiteEditarCamposExtrato || !visoesService.getPermissoes(['change_conciliacao_bancaria'])}
+                                                    className={`${!permiteEditarCamposExtrato || !visoesService.getPermissoes(['change_conciliacao_bancaria']) ? 'disabled_upload' : ''}`}
                                                     {...{
 
                                                         name: 'file',
@@ -120,7 +120,7 @@ const DataSaldoBancario = ({
                                                         </div>
 
                                                         <div className="col-lg-4 mt-2 text-right">
-                                                            <button disabled={periodoFechado || !visoesService.getPermissoes(['change_conciliacao_bancaria'])} className='btn-editar-membro btn-apagar-comprovante-extrato ml-2' type='button' onClick={reiniciaUploadExtrato}>
+                                                            <button disabled={!permiteEditarCamposExtrato || !visoesService.getPermissoes(['change_conciliacao_bancaria'])} className='btn-editar-membro btn-apagar-comprovante-extrato ml-2' type='button' onClick={reiniciaUploadExtrato}>
                                                                 <FontAwesomeIcon
                                                                 style={{fontSize: '18px', marginRight: "3px", color: "#B40C02"}}
                                                                 icon={faTrashAlt}

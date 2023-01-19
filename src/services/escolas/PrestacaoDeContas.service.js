@@ -13,8 +13,11 @@ export const getStatusPeriodoPorData = async (uuid_associacao, data_incial_perio
   return(await api.get(`/api/associacoes/${uuid_associacao}/status-periodo/?data=${data_incial_periodo}`, authHeader)).data
 };
 
-export const getConcluirPeriodo = async (periodo_uuid) => {
-  return(await api.post(`/api/prestacoes-contas/concluir/?associacao_uuid=${localStorage.getItem(ASSOCIACAO_UUID)}&periodo_uuid=${periodo_uuid}`, {}, authHeader)).data
+export const postConcluirPeriodo = async (periodo_uuid, justificativaPendencia='') => {
+  const payLoad = {
+      justificativa_acertos_pendentes: justificativaPendencia,
+  }
+  return(await api.post(`/api/prestacoes-contas/concluir/?associacao_uuid=${localStorage.getItem(ASSOCIACAO_UUID)}&periodo_uuid=${periodo_uuid}`, payLoad, authHeader)).data
 };
 
 
@@ -88,6 +91,10 @@ export const getDesconciliarReceita = async (receita_uuid, periodo_uuid) => {
 
 export const getObservacoes = async (periodo_uuid, conta_uuid) => {
   return (await api.get(`/api/conciliacoes/observacoes/?periodo=${periodo_uuid}&conta_associacao=${conta_uuid}`,authHeader)).data
+};
+
+export const getPodeEditarCamposExtrato = async (associacao_uuid, periodo_uuid, conta_uuid, ) => {
+  return (await api.get(`/api/conciliacoes/tem_ajuste_bancario/?associacao=${associacao_uuid}&periodo=${periodo_uuid}&conta_associacao=${conta_uuid}`,authHeader)).data
 };
 
 export const getVisualizarExtratoBancario = async (observacao_uuid) => {
@@ -189,6 +196,37 @@ export const getPreviaInfoAta = async (associacaoUuid, periodoUuid) => {
     return (await api.get(`/api/prestacoes-contas/previa-info-para-ata/?associacao=${associacaoUuid}&periodo=${periodoUuid}`,authHeader)).data
 };
 
+export const gerarPreviaRelatorioAposAcertos = async (uuid) => {
+  if(uuid){
+    return (await api.get(`/api/analises-prestacoes-contas/previa-relatorio-apos-acertos/?analise_prestacao_uuid=${uuid}`,authHeader)).data
+  }
+}
+
+export const verificarStatusGeracaoAposAcertos = async (uuid) => {
+  return (await api.get(`/api/analises-prestacoes-contas/status-info_relatorio_apos_acertos/?analise_prestacao_uuid=${uuid}`,authHeader)).data
+}
+
+export const downloadDocumentPdfAposAcertos = async (analise_atual_uuid) => {
+  return api
+            .get(`/api/analises-prestacoes-contas/download-documento-pdf_apos_acertos/?analise_prestacao_uuid=${analise_atual_uuid}`, {
+                responseType: 'blob',
+                timeout: 30000,
+                headers: {
+                    'Authorization': `JWT ${localStorage.getItem(TOKEN_ALIAS)}`,
+                    'Content-Type': 'application/json',
+                }
+              })
+            .then((response) => {
+                const url = window.URL.createObjectURL(new Blob([response.data]));
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', `relatorio_apos_acertos.pdf`);
+                document.body.appendChild(link);
+                link.click();
+            }).catch(error => {
+                return error.response;
+            });
+}
 
 export const getConcluirPrestacaoDeConta = async (
   uuidPrestacaoDeContas,

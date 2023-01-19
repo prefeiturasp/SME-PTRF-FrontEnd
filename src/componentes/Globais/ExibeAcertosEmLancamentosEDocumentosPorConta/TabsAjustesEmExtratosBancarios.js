@@ -11,9 +11,9 @@ const TabsAjustesEmExtratosBancarios = ({contasAssociacao, carregarAjustesExtrat
                             <a
                                 onClick={() => {
                                     carregarAjustesExtratosBancarios(conta.uuid)
-                                    toggleBtnEscolheContaExtratoBancario(`${index}`);
+                                    toggleBtnEscolheContaExtratoBancario(`${conta.uuid}`);
                                 }}
-                                className={`nav-link btn-escolhe-acao ${clickBtnEscolheContaExtratoBancario[`${index}`] ? "active" : ""}`}
+                                className={`nav-link btn-escolhe-acao ${clickBtnEscolheContaExtratoBancario[`${conta.uuid}`] ? "active" : ""}`}
                                 id={`nav-conferencia-de-extratos-bancarios-${conta.uuid}-tab`}
                                 data-toggle="tab"
                                 href={`#nav-conferencia-de-extratos-bancarios-${conta.uuid}`}

@@ -1,6 +1,6 @@
 import React from "react";
 
-export const TabelaExecucaoFinanceira = ({execucaoFinanceira, valorTemplate, comparaValores, tipoConta}) =>{
+export const TabelaExecucaoFinanceira = ({execucaoFinanceira, valorTemplate, haDiferencaPrevisaoExecucaoRepasse, tipoConta}) =>{
 
     return(
         <>
@@ -25,14 +25,14 @@ export const TabelaExecucaoFinanceira = ({execucaoFinanceira, valorTemplate, com
                             <td>{execucaoFinanceira.saldo_reprogramado_periodo_anterior_total ? valorTemplate(execucaoFinanceira.saldo_reprogramado_periodo_anterior_total) :'-'}</td>
                         </tr>
                         <tr>
-                            <td><span className={comparaValores(execucaoFinanceira) ? "texto-aviso-associacoes-em-analise" : ""}><strong>Previsto Secretaria Municipal de Educação</strong></span></td>
+                            <td><span className={haDiferencaPrevisaoExecucaoRepasse(execucaoFinanceira) ? "texto-aviso-associacoes-em-analise" : ""}><strong>Previsto Secretaria Municipal de Educação</strong></span></td>
                             <td>{execucaoFinanceira.repasses_previstos_sme_custeio ? valorTemplate(execucaoFinanceira.repasses_previstos_sme_custeio) :'-'}</td>
                             <td>{execucaoFinanceira.repasses_previstos_sme_capital ? valorTemplate(execucaoFinanceira.repasses_previstos_sme_capital) :'-'}</td>
                             <td>{execucaoFinanceira.repasses_previstos_sme_livre ? valorTemplate(execucaoFinanceira.repasses_previstos_sme_livre) :'-'}</td>
                             <td>{execucaoFinanceira.repasses_previstos_sme_total ? valorTemplate(execucaoFinanceira.repasses_previstos_sme_total) :'-'}</td>
                         </tr>
                         <tr>
-                            <td><span className={comparaValores(execucaoFinanceira) ? "texto-aviso-associacoes-em-analise" : ""}><strong>Transferido pela Diretoria Regional de Ensino no período</strong></span></td>
+                            <td><span className={haDiferencaPrevisaoExecucaoRepasse(execucaoFinanceira) ? "texto-aviso-associacoes-em-analise" : ""}><strong>Transferido pela Diretoria Regional de Ensino no período</strong></span></td>
                             <td>{execucaoFinanceira.repasses_no_periodo_custeio ? valorTemplate(execucaoFinanceira.repasses_no_periodo_custeio) :'-'}</td>
                             <td>{execucaoFinanceira.repasses_no_periodo_capital ? valorTemplate(execucaoFinanceira.repasses_no_periodo_capital) :'-'}</td>
                             <td>{execucaoFinanceira.repasses_no_periodo_livre ? valorTemplate(execucaoFinanceira.repasses_no_periodo_livre) :'-'}</td>
