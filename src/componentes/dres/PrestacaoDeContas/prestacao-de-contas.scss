@@ -273,7 +273,7 @@
   }
 }
 
-.btn-editar-comentario, .btn-cancelar-comentario{
+.btn-editar-comentario, .btn-editar-comentario-disabled, .btn-cancelar-comentario{
   outline: 0 !important;
   background: none !important;
   border: none !important;
@@ -285,8 +285,14 @@
   font-weight: 500;
 }
 
-.btn-cancelar-comentario-disabled{
+.btn-cancelar-comentario-disabled {
   opacity: .65 !important;
+}
+
+.btn-editar-comentario-disabled{
+  color: #4c4c4c;
+  text-decoration: none;
+  font-weight: 500;
 }
 
 .container-item-comentario:hover{
