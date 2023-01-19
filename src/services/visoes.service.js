@@ -9,6 +9,7 @@ import {
 import {redirect} from "../utils/redirect";
 import moment from "moment";
 import {ACOMPANHAMENTO_DE_PC} from "./mantemEstadoAcompanhamentoDePc.service";
+import { ANALISE_DRE } from './mantemEstadoAnaliseDre.service';
 
 export const DADOS_USUARIO_LOGADO = "DADOS_USUARIO_LOGADO";
 export const DATA_HORA_USUARIO_LOGADO = "DATA_HORA_USUARIO_LOGADO";
@@ -22,6 +23,7 @@ const forcarNovoLogin = ()=>{
             localStorage.setItem(DATA_HORA_USUARIO_LOGADO, data_hora_atual);
             localStorage.removeItem('DADOS_USUARIO_LOGADO');
             localStorage.removeItem(ACOMPANHAMENTO_DE_PC);
+            localStorage.removeItem(ANALISE_DRE);
             localStorage.removeItem(PERIODO_RELATORIO_CONSOLIDADO_DRE);
             localStorage.setItem(DATA_LOGIN, moment(new Date(), "YYYY-MM-DD").format("YYYY-MM-DD"));
             authService.logout();

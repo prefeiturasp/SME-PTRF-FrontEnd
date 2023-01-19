@@ -10,8 +10,11 @@ import {YupSignupSchemaDadosDaAssociacao} from "../../../../utils/ValidacoesAdic
 import MaskedInput from "react-text-mask";
 import {ExportaDadosDaAsssociacao} from "../ExportaDadosAssociacao"
 import {visoesService} from "../../../../services/visoes.service";
+import {useLocation} from "react-router-dom";
 
 export const DadosDaAsssociacao = () => {
+
+    const parametros = useLocation();
 
     const [stateAssociacao, setStateAssociacao] = useState({
         nome: "",

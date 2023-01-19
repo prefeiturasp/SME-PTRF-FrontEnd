@@ -1,12 +1,13 @@
-import React, {memo, useEffect, useState} from "react";
+import React, {memo, useEffect, useMemo, useState} from "react";
 import {
     getDownloadRelatorio,
     getTiposConta
 } from "../../../services/dres/RelatorioConsolidado.service";
+import {haDiferencaPrevisaoExecucaoRepasse} from "./haDiferencaPrevisaoExecucaoRepasse"
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faDownload} from "@fortawesome/free-solid-svg-icons";
 
-const DemonstrativoDaExecucaoFisicoFinanceira = ({consolidadoDre, periodoEscolhido}) => {
+const DemonstrativoDaExecucaoFisicoFinanceira = ({consolidadoDre, periodoEscolhido, execucaoFinanceira}) => {
     const [contas, setContas] = useState(false);
 
     useEffect(()=>{
@@ -46,6 +47,13 @@ const DemonstrativoDaExecucaoFisicoFinanceira = ({consolidadoDre, periodoEscolhi
         let consolidado_dre_uuid = consolidadoDre.uuid
         window.location.assign(`/dre-relatorio-consolidado-em-tela/${periodoEscolhido}/${consolidadoDre.ja_publicado}/${consolidado_dre_uuid}`)
     };
+
+    const isDiferencaValores = useMemo(() => {
+        return execucaoFinanceira?.por_tipo_de_conta?.some((execucaoFinanceiraConta) => {
+            return haDiferencaPrevisaoExecucaoRepasse(execucaoFinanceiraConta.valores)
+        })
+    }, [execucaoFinanceira])
+
     return (
         <div className="border">
             {consolidadoDre.relatorios_fisico_financeiros && consolidadoDre.relatorios_fisico_financeiros.length > 0 ? (
@@ -74,7 +82,7 @@ const DemonstrativoDaExecucaoFisicoFinanceira = ({consolidadoDre, periodoEscolhi
                                     type="button"
                                     className="btn btn-outline-success btn-sm"
                                 >
-                                    {consolidadoDre.ja_publicado ? "Consultar" : "Preencher"} relatório
+                                    {isDiferencaValores ? 'Preencher resumo' : 'Consultar resumo'}
                                 </button>
                             </div>
                             }
@@ -98,7 +106,7 @@ const DemonstrativoDaExecucaoFisicoFinanceira = ({consolidadoDre, periodoEscolhi
                             type="button"
                             className="btn btn-outline-success btn-sm"
                         >
-                            {consolidadoDre.ja_publicado ? "Consultar" : "Preencher"} relatório
+                            {isDiferencaValores ? 'Preencher resumo' : 'Consultar resumo'}
                         </button>
                     </div>
                     }

@@ -7,6 +7,7 @@ import Spinner from "../../../../assets/img/spinner.gif"
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faDownload} from '@fortawesome/free-solid-svg-icons'
 import { SplitButton } from 'primereact/splitbutton';
+import {logDOM} from "@testing-library/react";
 
 export default class DemonstrativoFinanceiroPorConta extends Component {
     _isMounted = false;
@@ -183,11 +184,7 @@ export default class DemonstrativoFinanceiroPorConta extends Component {
                 label: 'Baixar em .PDF',
                 command: () => {this.downloadDocumentoFinal("PDF")}
             },
-            // TODO Remover Excel
-            // {
-            //     label: 'Baixar em .XLSX',
-            //     command: () => {this.downloadDocumentoFinal("XLSX")}
-            // }
+
         ];
         return (
             <div className="relacao-bens-container mt-5">
@@ -201,20 +198,6 @@ export default class DemonstrativoFinanceiroPorConta extends Component {
 
                         {status === 'CONCLUIDO' && documentoPrevio &&
                         <>
-
-                            {/* TODO Remover Excel*/}
-                            {/*<button*/}
-                            {/*    className='btn-editar-membro'*/}
-                            {/*    type='button'*/}
-                            {/*    onClick={() => {this.downloadDocumentoPrevia("XLSX")}}*/}
-                            {/*>*/}
-                            {/*    <FontAwesomeIcon*/}
-                            {/*        style={{fontSize: '18px',}}*/}
-                            {/*        icon={faDownload}*/}
-                            {/*    />*/}
-                            {/*    &nbsp;XLSX*/}
-                            {/*</button>*/}
-
                             <button className='btn-editar-membro'
                                     type='button'
                                     onClick={() => {this.downloadDocumentoPrevia("PDF")}}
@@ -231,7 +214,7 @@ export default class DemonstrativoFinanceiroPorConta extends Component {
 
                     </div>
                     <div className="actions">
-                        {this.props.podeGerarPrevias && !mensagem.includes('Não houve') && this.props.statusPrestacaoDeConta && this.props.statusPrestacaoDeConta.prestacao_contas_status && !this.props.statusPrestacaoDeConta.prestacao_contas_status.documentos_gerados &&
+                        {this.props.podeGerarPrevias && !mensagem.includes('Não houve') && this.props.statusPrestacaoDeConta && this.props.statusPrestacaoDeConta.gerar_previas && this.props.statusPrestacaoDeConta.prestacao_contas_status && !this.props.statusPrestacaoDeConta.prestacao_contas_status.documentos_gerados &&
                             <button onClick={(e) => this.showPrevia()} type="button" disabled={this.props.statusPrestacaoDeConta && this.props.statusPrestacaoDeConta.prestacao_contas_status && this.props.statusPrestacaoDeConta.prestacao_contas_status.documentos_gerados} className="btn btn-outline-success mr-2">prévia </button>
                         }
                         {this.props.podeBaixarDocumentos &&
@@ -240,8 +223,6 @@ export default class DemonstrativoFinanceiroPorConta extends Component {
                                 label="documento final"
                                 onClick={
                                     () => {
-                                        // TODO Remover Excel
-                                        // this.downloadDocumentoFinal("XLSX");
                                         this.downloadDocumentoFinal("PDF");
                                     }
                                 }

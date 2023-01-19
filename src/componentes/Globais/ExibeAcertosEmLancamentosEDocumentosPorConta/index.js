@@ -1,88 +1,57 @@
-import React, {Fragment, memo, useCallback, useEffect, useState} from "react";
-import {useHistory} from "react-router-dom";
-import useValorTemplate from "../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useValorTemplate";
-import useDataTemplate from "../../../hooks/Globais/useDataTemplate";
-import useNumeroDocumentoTemplate from "../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useNumeroDocumentoTemplate";
-import {getContasDaAssociacao, getDocumentosAjustes, getLancamentosAjustes, getTiposDeAcertoLancamentos, getExtratosBancariosAjustes, getTemAjustesExtratos} from "../../../services/dres/PrestacaoDeContas.service";
-import {TabelaAcertosLancamentos} from "./TabelaAcertosLancamentos";
-import TabsAcertosEmLancamentosPorConta from "./TabsAcertosEmLancamentosPorConta";
+import React, {memo, useCallback, useEffect, useState} from "react";
+import {
+    getContasDaAssociacao,
+    getExtratosBancariosAjustes,
+    getTemAjustesExtratos
+} from "../../../services/dres/PrestacaoDeContas.service";
 import Loading from "../../../utils/Loading";
-
-// Redux
-import {useDispatch} from "react-redux";
-import {addDetalharAcertos, limparDetalharAcertos} from "../../../store/reducers/componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeLancamentos/DetalharAcertos/actions"
-
-import TabelaAcertosDocumentos from "./TabelaAcertosDocumentos";
-import {FiltrosAcertosDeLancamentos} from "./FiltrosAcertosDeLancamentos";
+import { mantemEstadoAnaliseDre as meapcservice } from "../../../services/mantemEstadoAnaliseDre.service";
 
 // Hooks Personalizados
-import {useCarregaPrestacaoDeContasPorUuid} from "../../../hooks/dres/PrestacaoDeContas/useCarregaPrestacaoDeContasPorUuid";
+import {
+    useCarregaPrestacaoDeContasPorUuid
+} from "../../../hooks/dres/PrestacaoDeContas/useCarregaPrestacaoDeContasPorUuid";
 import TabsAjustesEmExtratosBancarios from "./TabsAjustesEmExtratosBancarios";
 import TabelaAcertosEmExtratosBancarios from "./TabelaAcertosEmExtratosBancarios";
+import {visoesService} from "../../../services/visoes.service";
+import {RelatorioAposAcertos} from './RelatorioAposAcertos'
+import AcertosLancamentos from "./AcertosLancamentos";
+import AcertosDocumentos from "./AcertosDocumentos";
 
-const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAcertos=true, exibeBtnIrParaPaginaDeReceitaOuDespesa=false, prestacaoDeContasUuid, analiseAtualUuid, editavel}) => {
+const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
+                                                          exibeBtnIrParaPaginaDeAcertos = true,
+                                                          exibeBtnIrParaPaginaDeReceitaOuDespesa = false,
+                                                          prestacaoDeContasUuid,
+                                                          analiseAtualUuid,
+                                                          editavel
+                                                      }) => {
 
     const prestacaoDeContas = useCarregaPrestacaoDeContasPorUuid(prestacaoDeContasUuid)
 
-    const history = useHistory();
-
-    const rowsPerPageAcertosLancamentos = 5;
-    const rowsPerPageAcertosDocumentos = 5;
-
-    // Hooks Personalizados
-    const valor_template = useValorTemplate()
-    const dataTemplate = useDataTemplate()
-    const numeroDocumentoTemplate = useNumeroDocumentoTemplate()
-
-    // Redux
-    const dispatch = useDispatch()
-
-    // Filtros Lancamentos
-    const initialStateFiltros = {
-        filtrar_por_lancamento: '',
-        filtrar_por_tipo_de_ajuste: '',
-    }
-
     const [exibeAcertosNosExtratos, setExibeAcertosNosExtratos] = useState(true);
     const [extratosBancariosAjustes, setExtratosBancariosAjustes] = useState(null);
-    const [lancamentosAjustes, setLancamentosAjustes] = useState([])
-    const [lancamentosDocumentos, setLancamentosDocumentos] = useState([])
     const [contasAssociacao, setContasAssociacao] = useState([])
     const [loadingExtratosBancarios, setLoadingExtratosBancarios] = useState(true)
-    const [loadingLancamentos, setLoadingLancamentos] = useState(true)
-    const [loadingDocumentos, setLoadingDocumentos] = useState(true)
-    const [expandedRowsLancamentos, setExpandedRowsLancamentos] = useState(null);
-    const [expandedRowsDocumentos, setExpandedRowsDocumentos] = useState(null);
-    const [stateFiltros, setStateFiltros] = useState(initialStateFiltros);
-    const [contaUuid, setContaUuid] = useState('')
-    const [listaTiposDeAcertoLancamentos, setListaTiposDeAcertoLancamentos] = useState([])
-    const [clickBtnEscolheConta, setClickBtnEscolheConta] = useState({0:true});
-    const [clickBtnEscolheContaExtratosBancarios, setClickBtnEscolheContaExtratosBancarios] = useState({0:true});
-
-    const toggleBtnEscolheConta = (id) => {
-        if (id !== Object.keys(clickBtnEscolheConta)[0]){
-            setClickBtnEscolheConta({
-                [id]: !clickBtnEscolheConta[id]
-            });
-        }
-    };
+    const [contaUuidAjustesExtratosBancarios, setContaUuidAjustesExtratosBancarios] = useState('')
+    const [clickBtnEscolheConta, setClickBtnEscolheConta] = useState({0: true});
+    const [clickBtnEscolheContaExtratosBancarios, setClickBtnEscolheContaExtratosBancarios] = useState({0: true});
 
     const toggleBtnEscolheContaExtratosBancarios = (id) => {
-        if (id !== Object.keys(clickBtnEscolheContaExtratosBancarios)[0]){
+        if (id !== Object.keys(clickBtnEscolheContaExtratosBancarios)[0]) {
             setClickBtnEscolheContaExtratosBancarios({
                 [id]: !clickBtnEscolheContaExtratosBancarios[id]
             });
         }
     };
 
-    const carregaDadosDasContasDaAssociacao = useCallback(async () =>{
-        if (prestacaoDeContas && prestacaoDeContas.associacao && prestacaoDeContas.associacao.uuid){
+    const carregaDadosDasContasDaAssociacao = useCallback(async () => {
+        if (prestacaoDeContas && prestacaoDeContas.associacao && prestacaoDeContas.associacao.uuid) {
             let contas = await getContasDaAssociacao(prestacaoDeContas.associacao.uuid);
             setContasAssociacao(contas);
         }
     }, [prestacaoDeContas]);
 
-    useEffect(()=>{
+    useEffect(() => {
         carregaDadosDasContasDaAssociacao()
     }, [carregaDadosDasContasDaAssociacao, analiseAtualUuid])
 
@@ -96,180 +65,71 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
         setExibeAcertosNosExtratos(false);
         let tem_ajustes_extratos = await getTemAjustesExtratos(analiseAtualUuid);
 
-        if(tem_ajustes_extratos && tem_ajustes_extratos.length > 0){
+        if (tem_ajustes_extratos && tem_ajustes_extratos.length > 0) {
             setExibeAcertosNosExtratos(true);
-        }
-        else{
+        } else {
             setExibeAcertosNosExtratos(false);
         }
 
     }, [analiseAtualUuid])
 
     const carregarAjustesExtratosBancarios = useCallback(async (conta_uuid) => {
-        setContaUuid(conta_uuid);
+        setContaUuidAjustesExtratosBancarios(conta_uuid);
         setLoadingExtratosBancarios(true);
         let extratos_bancarios_ajustes = await getExtratosBancariosAjustes(analiseAtualUuid, conta_uuid);
         setExtratosBancariosAjustes(extratos_bancarios_ajustes)
         setLoadingExtratosBancarios(false);
     }, [analiseAtualUuid])
 
-    const carregaAcertosLancamentos = useCallback(async (conta_uuid, filtrar_por_lancamento=null, filtrar_por_tipo_de_ajuste=null) => {
-        setContaUuid(conta_uuid)
-        setLoadingLancamentos(true)
-        let lancamentos_ajustes = await getLancamentosAjustes(analiseAtualUuid, conta_uuid, filtrar_por_lancamento, filtrar_por_tipo_de_ajuste)
-        setLancamentosAjustes(lancamentos_ajustes)
-        setLoadingLancamentos(false)
-    }, [analiseAtualUuid])
-
-    const carregaAcertosDocumentos = useCallback(async () => {
-        let documentos_ajustes = await getDocumentosAjustes(analiseAtualUuid)
-        setLancamentosDocumentos(documentos_ajustes)
-        setLoadingDocumentos(false)
-    }, [analiseAtualUuid])
 
     useEffect(() => {
-        if (contasAssociacao && contasAssociacao.length > 0){
+        if (contasAssociacao && contasAssociacao.length > 0) {
             // TODO Rever os métodos consultaSeTemAjustesExtratos. Repete a consulta da API feira por carregarAjustesExtratosBancarios
             consultaSeTemAjustesExtratos();
-            carregarAjustesExtratosBancarios(contasAssociacao[0].uuid);
-            carregaAcertosLancamentos(contasAssociacao[0].uuid)
-            carregaAcertosDocumentos(contasAssociacao[0].uuid)
+
+            // Historia 77618 - Sprint 53
+            let periodo_conta_ajustes_extratos_bancarios = JSON.parse(localStorage.getItem('periodoContaAcertosEmExtratosBancarios'));
+
+            let dados_analise_dre_user_logado = meapcservice.getAnaliseDreUsuarioLogado()
+
+            if (periodo_conta_ajustes_extratos_bancarios && periodo_conta_ajustes_extratos_bancarios.conta){
+                carregarAjustesExtratosBancarios(periodo_conta_ajustes_extratos_bancarios.conta);
+                toggleBtnEscolheContaExtratosBancarios(periodo_conta_ajustes_extratos_bancarios.conta)
+            }
+            else if(dados_analise_dre_user_logado && dados_analise_dre_user_logado.conferencia_extrato_bancario && dados_analise_dre_user_logado.conferencia_extrato_bancario.conta_uuid){
+                carregarAjustesExtratosBancarios(dados_analise_dre_user_logado.conferencia_extrato_bancario.conta_uuid);
+                toggleBtnEscolheContaExtratosBancarios(dados_analise_dre_user_logado.conferencia_extrato_bancario.conta_uuid)
+            }
+            else {
+                carregarAjustesExtratosBancarios(contasAssociacao[0].uuid);
+                toggleBtnEscolheContaExtratosBancarios(contasAssociacao[0].uuid)
+                salvaObjetoAnaliseDrePorUsuarioLocalStorage(contasAssociacao[0].uuid)
+            }
             setClickBtnEscolheConta({0: true})
         }
-    }, [contasAssociacao, carregaAcertosLancamentos, carregaAcertosDocumentos, carregarAjustesExtratosBancarios, consultaSeTemAjustesExtratos])
+
+    }, [contasAssociacao, carregarAjustesExtratosBancarios, consultaSeTemAjustesExtratos])
 
     useEffect(() => {
-
-        let mounted = true;
-
-        const carregaTiposDeAcertoLancamentos = async () => {
-            if (mounted){
-                let tipos_de_acerto_lancamentos = await getTiposDeAcertoLancamentos()
-                setListaTiposDeAcertoLancamentos(tipos_de_acerto_lancamentos)
-            }
+        if(contaUuidAjustesExtratosBancarios){
+            salvaObjetoAnaliseDrePorUsuarioLocalStorage(contaUuidAjustesExtratosBancarios)
         }
-        carregaTiposDeAcertoLancamentos()
+    }, [contaUuidAjustesExtratosBancarios])
 
-        return () =>{
-            mounted = false;
-        }
 
-    }, [])
+    const salvaObjetoAnaliseDrePorUsuarioLocalStorage = (conta_uuid) =>{
+        let objetoAnaliseDrePorUsuario = meapcservice.getAnaliseDreUsuarioLogado();
 
-    const handleChangeFiltros = (name, value) => {
-        setStateFiltros({
-            ...stateFiltros,
-            [name]: value
-        });
-    };
-
-    const handleSubmitFiltros = async () => {
-        await carregaAcertosLancamentos(contaUuid, stateFiltros.filtrar_por_lancamento, stateFiltros.filtrar_por_tipo_de_ajuste)
-    };
-
-    const limpaFiltros = async () => {
-        setStateFiltros(initialStateFiltros);
-        await carregaAcertosLancamentos(contaUuid)
-    };
-
-    const rowExpansionTemplateLancamentos = (data) => {
-        if (data && data.analise_lancamento && data.analise_lancamento.solicitacoes_de_ajuste_da_analise && data.analise_lancamento.solicitacoes_de_ajuste_da_analise.length > 0) {
-            return (
-                <>
-                    {data.analise_lancamento.solicitacoes_de_ajuste_da_analise.map((ajuste, index) => (
-                        <Fragment key={ajuste.id}>
-                            <div className='row'>
-                                <div className='col-12 px-4 py-2'>
-                                    <div className='titulo-row-expanded-conferencia-de-lancamentos mb-3'>
-                                        <p className='mb-1'><strong>Item {index + 1}</strong></p>
-                                    </div>
-                                    <p className='mb-1'><strong>Tipo de acerto</strong></p>
-                                    <p>{ajuste.tipo_acerto.nome}</p>
-                                    <p className='mb-1'><strong>Detalhamento</strong></p>
-                                    <p className='mb-0'>{ajuste.detalhamento}</p>
-                                </div>
-                            </div>
-                        </Fragment>
-                    ))}
-                    {exibeBtnIrParaPaginaDeAcertos &&
-                        redirecionaDetalheAcerto(data)
-                    }
-                    {exibeBtnIrParaPaginaDeReceitaOuDespesa &&
-                        redirecionaDetalheReceitaOuDespesa(data)
-                    }
-                </>
-            )
-        }
-    };
-
-    const rowExpansionTemplateDocumentos = (data) => {
-        if (data && data.solicitacoes_de_ajuste_da_analise && data.solicitacoes_de_ajuste_da_analise.length > 0) {
-            return (
-                data.solicitacoes_de_ajuste_da_analise.map((ajuste, index) => (
-                    <div className='row p-2' style={{overflow: 'hidden'}} key={ajuste.id}>
-                        <div className='col-12'>
-                            <div className='titulo-row-expanded-conferencia-de-lancamentos mb-3'>
-                                <p className='mb-1'><strong>Item {index + 1}</strong></p>
-                            </div>
-                            <p className='mb-1'><strong>Tipo de acerto</strong></p>
-                            <p>{ajuste.tipo_acerto.nome}</p>
-                            <p className='mb-1'><strong>Detalhamento</strong></p>
-                            <p className='mb-0'>{ajuste.detalhamento}</p>
-                        </div>
-                    </div>
-                ))
-            )
-        }
-    };
-
-    const addDispatchRedireciona = (lancamentos) => {
-        dispatch(limparDetalharAcertos())
-        dispatch(addDetalharAcertos(lancamentos))
-        history.push(`/dre-detalhe-prestacao-de-contas-detalhar-acertos/${prestacaoDeContas.uuid}`)
+        objetoAnaliseDrePorUsuario.conferencia_extrato_bancario.conta_uuid = conta_uuid
+        meapcservice.setAnaliseDrePorUsuario(visoesService.getUsuarioLogin(), objetoAnaliseDrePorUsuario)
     }
 
-    const redirecionaDetalheAcerto = (lancamento) => {
-        if (editavel){
-            return(
-                <p className='text-right border-top pt-3'><button onClick={()=>addDispatchRedireciona(lancamento)} className='btn btn-outline-success'><strong>Ir para página de acertos</strong></button></p>
-            )
-        }
 
-    }
-
-    const redirecionaPaginaDespesaOuReceita = (data) => {
-        let url;
-        if (data && data.tipo_transacao === 'Gasto' && data.documento_mestre){
-            if (data.documento_mestre.receitas_saida_do_recurso) {
-                url = `/cadastro-de-despesa-recurso-proprio/${data.documento_mestre.receitas_saida_do_recurso}/${data.documento_mestre.uuid}`
-            } else {
-                url = '/edicao-de-despesa/' + data.documento_mestre.uuid;
-            }
-        }else if (data.tipo_transacao === 'Crédito' && data.documento_mestre){
-            url = `/edicao-de-receita/${data.documento_mestre.uuid}`
-        }
-        history.push(url)
-    };
-
-    const redirecionaDetalheReceitaOuDespesa = (data) =>{
-        if (editavel){
-            let tipo_de_transacao;
-            if (data.tipo_transacao === 'Gasto'){
-                tipo_de_transacao = 'despesa'
-            }else if (data.tipo_transacao === 'Crédito'){
-                tipo_de_transacao = 'receita'
-            }
-            return(
-                <p className='text-right border-top pt-3'><button onClick={()=>redirecionaPaginaDespesaOuReceita(data)} className='btn btn-outline-success'><strong>Ir para {tipo_de_transacao}</strong></button></p>
-            )
-        }
-    }
-
-    return(
+    return (
         <>
             {/*INICIO*/}
 
-            { exibeAcertosNosExtratos &&
+            {exibeAcertosNosExtratos &&
                 <>
                     <h5 className="mb-4 mt-4"><strong>Acertos nas informações de extratos bancários</strong></h5>
                     <TabsAjustesEmExtratosBancarios
@@ -288,7 +148,10 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
                             ) :
                             <>
                                 <TabelaAcertosEmExtratosBancarios
+                                    contasAssociacao={contasAssociacao}
                                     extratosBancariosAjustes={extratosBancariosAjustes}
+                                    contaUuidAjustesExtratosBancarios={contaUuidAjustesExtratosBancarios}
+                                    prestacaoDeContasUuid={prestacaoDeContasUuid}
                                 />
                             </>
                         }
@@ -300,68 +163,34 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
 
             {/*FIM*/}
 
-            <h5 className="mb-4 mt-4"><strong>Acertos nos lançamentos</strong></h5>
-            <>
-                <TabsAcertosEmLancamentosPorConta
-                    contasAssociacao={contasAssociacao}
-                    carregaAcertosLancamentos={carregaAcertosLancamentos}
-                    setStateFiltros={setStateFiltros}
-                    initialStateFiltros={initialStateFiltros}
-                    analiseAtualUuid={analiseAtualUuid}
-                    toggleBtnEscolheConta={toggleBtnEscolheConta}
-                    clickBtnEscolheConta={clickBtnEscolheConta}
-                >
-                    <FiltrosAcertosDeLancamentos
-                        stateFiltros={stateFiltros}
-                        listaTiposDeAcertoLancamentos={listaTiposDeAcertoLancamentos}
-                        handleChangeFiltros={handleChangeFiltros}
-                        handleSubmitFiltros={handleSubmitFiltros}
-                        limpaFiltros={limpaFiltros}
-                    />
-                    {loadingLancamentos ? (
-                            <Loading
-                                corGrafico="black"
-                                corFonte="dark"
-                                marginTop="0"
-                                marginBottom="0"
-                            />
-                        ) :
-                        <>
-                            <TabelaAcertosLancamentos
-                                lancamentosAjustes={lancamentosAjustes}
-                                expandedRowsLancamentos={expandedRowsLancamentos}
-                                setExpandedRowsLancamentos={setExpandedRowsLancamentos}
-                                rowExpansionTemplateLancamentos={rowExpansionTemplateLancamentos}
-                                rowsPerPageAcertosLancamentos={rowsPerPageAcertosLancamentos}
-                                valor_template={valor_template}
-                                dataTemplate={dataTemplate}
-                                numeroDocumentoTemplate={numeroDocumentoTemplate}
-                            />
-                        </>
-                    }
-                </TabsAcertosEmLancamentosPorConta>
 
-                <hr className="mt-4 mb-3"/>
-                <h5 className="mb-4 mt-4"><strong>Acertos nos documentos</strong></h5>
-                {loadingDocumentos ? (
-                        <Loading
-                            corGrafico="black"
-                            corFonte="dark"
-                            marginTop="0"
-                            marginBottom="0"
-                        />
-                    ) :
-                    lancamentosDocumentos && lancamentosDocumentos.length > 0 ? (
-                            <TabelaAcertosDocumentos
-                                lancamentosDocumentos={lancamentosDocumentos}
-                                rowsPerPageAcertosDocumentos={rowsPerPageAcertosDocumentos}
-                                expandedRowsDocumentos={expandedRowsDocumentos}
-                                setExpandedRowsDocumentos={setExpandedRowsDocumentos}
-                                rowExpansionTemplateDocumentos={rowExpansionTemplateDocumentos}
-                            />
-                        ):
-                        <p className='text-center fonte-18 mt-4'><strong>Não existem documentos para serem exibidos</strong></p>
+            <>
+                <AcertosLancamentos
+                    analiseAtualUuid={analiseAtualUuid}
+                    prestacaoDeContas={prestacaoDeContas}
+                    exibeBtnIrParaPaginaDeAcertos={exibeBtnIrParaPaginaDeAcertos}
+                    exibeBtnIrParaPaginaDeReceitaOuDespesa={exibeBtnIrParaPaginaDeReceitaOuDespesa}
+                    editavel={editavel}
+                    prestacaoDeContasUuid={prestacaoDeContasUuid}
+                />
+
+                {analiseAtualUuid &&
+                    <AcertosDocumentos
+                        analiseAtualUuid={analiseAtualUuid}
+                        prestacaoDeContas={prestacaoDeContas}
+                        prestacaoDeContasUuid={prestacaoDeContasUuid}
+                    />
                 }
+
+
+                {visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'UE' ?
+                <RelatorioAposAcertos
+                    prestacaoDeContasUuid={prestacaoDeContasUuid}
+                    prestacaoDeContas={prestacaoDeContas}
+                    analiseAtualUuid={analiseAtualUuid}
+                    podeGerarPrevia={true}
+                /> : null}
+
             </>
         </>
     )

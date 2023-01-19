@@ -77,6 +77,7 @@ const TabelaConferenciaDeDocumentos = ({carregaListaDeDocumentosParaConferencia,
 
                     <Dropdown.Menu>
                         <Dropdown.Item onClick={(e) => selecionarPorStatus(e, "CORRETO")}>Selecionar todos corretos</Dropdown.Item>
+                        <Dropdown.Item onClick={(e) => selecionarPorStatus(e, "AJUSTE")}>Selecionar todos com solicitação de ajuste</Dropdown.Item>
                         <Dropdown.Item onClick={(e) => selecionarPorStatus(e, null)}>Selecionar todos não conferidos</Dropdown.Item>
                         <Dropdown.Item onClick={(e) => desmarcarTodos(e)}>Desmarcar todos</Dropdown.Item>
                     </Dropdown.Menu>
@@ -108,8 +109,15 @@ const TabelaConferenciaDeDocumentos = ({carregaListaDeDocumentosParaConferencia,
         let cont = 0;
         let result
         if (status) {
-            setExibirBtnMarcarComoCorreto(false)
-            setExibirBtnMarcarComoNaoConferido(true)
+            if(status === "CORRETO"){
+                setExibirBtnMarcarComoCorreto(false)
+                setExibirBtnMarcarComoNaoConferido(true)
+            }
+            else if(status === "AJUSTE"){
+                setExibirBtnMarcarComoCorreto(true)
+                setExibirBtnMarcarComoNaoConferido(false)
+            }
+
             result = listaDeDocumentosParaConferencia.reduce((acc, o) => {
                 let obj = o.analise_documento && o.analise_documento.resultado && o.analise_documento.resultado === status ? Object.assign(o, {selecionado: true}) : o;
                 if (obj.selecionado) {
@@ -157,37 +165,30 @@ const TabelaConferenciaDeDocumentos = ({carregaListaDeDocumentosParaConferencia,
     }
 
     const verificaSePodeSerCheckado = (e, rowData) => {
-
         let selecionados = getDocumentosSelecionados()
         let status_permitido = []
-
         if (selecionados.length > 0) {
             if (!selecionados[0].analise_documento || (selecionados[0].analise_documento && selecionados[0].analise_documento.resultado && selecionados[0].analise_documento.resultado === "AJUSTE")) {
-                status_permitido = [null]
+                status_permitido = [null, 'AJUSTE']
             } else {
                 status_permitido = ['CORRETO']
             }
         }
 
-        if (e.target.checked && rowData.analise_documento && rowData.analise_documento.resultado && rowData.analise_documento.resultado === "AJUSTE") {
-            setTextoModalCheckNaoPermitido('<p>Documentos com status de ajuste solicitado não podem ser selecionados!</p>')
-            setShowModalCheckNaoPermitido(true)
-            return false
-        }else {
-            if (e.target.checked && status_permitido.length > 0) {
-                if (status_permitido.includes(rowData.analise_documento) || (rowData.analise_documento && rowData.analise_documento.resultado && status_permitido.includes(rowData.analise_documento.resultado))) {
-                    setTextoModalCheckNaoPermitido('')
-                    return true
-                } else {
-                    setTextoModalCheckNaoPermitido('<p>Esse documento tem um status de conferência que não pode ser selecionado em conjunto com os demais status já selecionados.</p>')
-                    setShowModalCheckNaoPermitido(true)
-                    return false
-                }
-            } else {
+        if (e.target.checked && status_permitido.length > 0) {
+            if (status_permitido.includes(rowData.analise_documento) || (rowData.analise_documento && rowData.analise_documento.resultado && status_permitido.includes(rowData.analise_documento.resultado))) {
                 setTextoModalCheckNaoPermitido('')
                 return true
+            } else {
+                setTextoModalCheckNaoPermitido('<p>Esse documento tem um status de conferência que não pode ser selecionado em conjunto com os demais status já selecionados.</p>')
+                setShowModalCheckNaoPermitido(true)
+                return false
             }
+        } else {
+            setTextoModalCheckNaoPermitido('')
+            return true
         }
+
     }
 
     const tratarSelecionado = (e, lancamentosParaConferenciaUuid, rowData) => {
@@ -289,6 +290,7 @@ const TabelaConferenciaDeDocumentos = ({carregaListaDeDocumentosParaConferencia,
             </div>
         )
     }
+    
     const marcarComoCorreto = async () => {
         let documentos_marcados_como_corretos = getDocumentosSelecionados()
         if (documentos_marcados_como_corretos && documentos_marcados_como_corretos.length > 0) {

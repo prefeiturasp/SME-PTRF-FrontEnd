@@ -1,5 +1,6 @@
 import React, {useCallback, useEffect, useState, memo} from "react";
 import {visoesService} from "../../../services/visoes.service";
+import { getExecucaoFinanceira } from "../../../services/dres/RelatorioConsolidado.service";
 import {
     getFiqueDeOlhoRelatoriosConsolidados,
     getStatusConsolidadoDre,
@@ -37,6 +38,7 @@ const RelatorioConsolidado = () => {
     // Consolidado DRE
     const [consolidadosDreJaPublicados, setConsolidadosDreJaPublicados] = useState(false);
     const [consolidadoDreProximaPublicacao, setConsolidadoDreProximaPublicacao] = useState(false);
+    const [execucaoFinanceira, setExecucaoFinanceira] = useState({})
     const [statusBarraDeStatus, setStatusBarraDeStatus] = useState('');
     const [statusProcessamentoConsolidadoDre, setStatusProcessamentoConsolidadoDre] = useState('');
     const [statusProcessamentoRelatorioConsolidadoDePublicacoesParciais, setStatusProcessamentoRelatorioConsolidadoDePublicacoesParciais] = useState('');
@@ -49,6 +51,7 @@ const RelatorioConsolidado = () => {
 
     const [trilhaStatus, setTrilhaStatus] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [disableGerar, setDisableGerar] = useState(true);
 
     const carregaPeriodos = useCallback(async () => {
         try {
@@ -109,6 +112,15 @@ const RelatorioConsolidado = () => {
     useEffect(() => {
         retornaStatusConsolidadosDre()
     }, [retornaStatusConsolidadosDre])
+
+    useEffect(() => {
+        (async () => {
+            if(periodoEscolhido) {
+                await carregaExecucaoFinanceira()
+                setDisableGerar(false)
+            }
+        })()
+    }, [periodoEscolhido])
 
     const retornaStatusProcessamentoRelatorioConsolidadoDePublicacoesParciais = useCallback(async () => {
         if (dre_uuid && periodoEscolhido) {
@@ -250,7 +262,6 @@ const RelatorioConsolidado = () => {
     }
 
     const publicarConsolidadoDePublicacoesParciais = async () => {
-
         let payload = {
             dre_uuid: dre_uuid,
             periodo_uuid: periodoEscolhido
@@ -283,9 +294,20 @@ const RelatorioConsolidado = () => {
         }
     }
 
+    const carregaExecucaoFinanceira = async () => {
+        const dre_uuid = visoesService.getItemUsuarioLogado('associacao_selecionada.uuid');
+        try {
+            let execucao = await getExecucaoFinanceira(dre_uuid, periodoEscolhido,  consolidadoDreProximaPublicacao?.uuid !== 'null' ? consolidadoDreProximaPublicacao?.uuid : '');
+            setExecucaoFinanceira(execucao);
+        } catch (e) {
+            console.log("Erro ao carregar execução financeira ", e)
+        }
+        setLoading(false)
+    };
+
     return (
         <PaginasContainer>
-            <h1 className="titulo-itens-painel mt-5">Relatório consolidado</h1>
+            <h1 className="titulo-itens-painel mt-5">Consolidado das PCs</h1>
             <>
                 <div className="col-12 container-texto-introdutorio mb-4 mt-3">
                     <div dangerouslySetInnerHTML={{__html: fiqueDeOlho}}/>
@@ -335,6 +357,8 @@ const RelatorioConsolidado = () => {
                                                     consolidadoDre={consolidadoDreProximaPublicacao}
                                                     showPublicarRelatorioConsolidado={showPublicarRelatorioConsolidado}
                                                     setShowPublicarRelatorioConsolidado={setShowPublicarRelatorioConsolidado}
+                                                    execucaoFinanceira={execucaoFinanceira}
+                                                    disableGerar={disableGerar}
                                                 >
                                                     <PreviaDocumentos
                                                         gerarPreviaConsolidadoDre={gerarPreviaConsolidadoDre}
@@ -343,6 +367,7 @@ const RelatorioConsolidado = () => {
                                                 <DemonstrativoDaExecucaoFisicoFinanceira
                                                     consolidadoDre={consolidadoDreProximaPublicacao}
                                                     periodoEscolhido={periodoEscolhido}
+                                                    execucaoFinanceira={execucaoFinanceira}
                                                 />
                                                 {!consolidadoDreProximaPublicacao.eh_consolidado_de_publicacoes_parciais &&
                                                     <AtaParecerTecnico

@@ -1,4 +1,4 @@
-import React, {memo, useCallback, useEffect, useMemo, useState} from "react";
+import React, {memo, useCallback, useContext, useEffect, useMemo, useState} from "react";
 import {useParams, useLocation, useHistory} from "react-router-dom";
 import {PaginasContainer} from "../../../../paginas/PaginasContainer";
 // Hooks Personalizados
@@ -9,6 +9,10 @@ import {getAnalisesDePcDevolvidas} from "../../../../services/dres/PrestacaoDeCo
 import TextoSuperior from "./TextoSuperior";
 import CardsDevolucoesParaAcertoDaDre from "../../../Globais/CardsDevolucoesParaAcertoDaDre";
 import ExibeAcertosEmLancamentosEDocumentosPorConta from "../../../Globais/ExibeAcertosEmLancamentosEDocumentosPorConta";
+import {getPeriodoPorUuid} from "../../../../services/sme/Parametrizacoes.service";
+import {exibeDataPT_BR} from "../../../../utils/ValidacoesAdicionaisFormularios";
+import {ModalConcluirAcertoPC} from "./../../../dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ResumoDosAcertos/ModalConcluirAcertoPC"
+import { AnaliseDREProvider } from "../../../../context/AnaliseDRE";
 
 const ConsultaDetalhamentoAnaliseDaDre = () => {
 
@@ -19,9 +23,42 @@ const ConsultaDetalhamentoAnaliseDaDre = () => {
     // Hooks Personalizados
     const prestacaoDeContas = useCarregaPrestacaoDeContasPorUuid(prestacao_conta_uuid)
     const [analisesDePcDevolvidas, setAnalisesDePcDevolvidas] = useState([])
+    const [openModalAcertos, setOpenModalAcertos] = useState(false)
     const [analiseAtualUuid, setAnaliseAtualUuid] = useState('')
+    const [periodoFormatado, setPeriodoFormatado] = useState(null)
 
     const totalAnalisesDePcDevolvidas = useMemo(() => analisesDePcDevolvidas.length, [analisesDePcDevolvidas]);
+
+    const scrollToLocation = useCallback(() => {
+        const { hash } = window.location;
+        if (hash !== '') {
+            let retries = 0;
+            const id = hash.replace('#', '');
+            const scroll = () => {
+                retries += 0;
+                if (retries > 50) return;
+                const element = document.getElementById(id);
+                if (element) {
+                    setTimeout(() => element.scrollIntoView(), 0);
+                } else {
+                    setTimeout(scroll, 100);
+                }
+            };
+            scroll();
+        }
+    }, [])
+
+    useEffect(() => {
+        // if not a hash link, scroll to top
+        if (parametros.hash === '') {
+            window.scrollTo(0, 0);
+        }
+        // else scroll to id
+        else {
+            scrollToLocation()
+        }
+    }, [scrollToLocation, parametros]); // do this on route change
+
 
     useEffect(() => {
         let mounted = true;
@@ -36,6 +73,31 @@ const ConsultaDetalhamentoAnaliseDaDre = () => {
             mounted = false;
         }
     }, [prestacao_conta_uuid])
+
+    useEffect(() => {
+        let mounted = true;
+
+        const periodoFormatado = async () => {
+            if(mounted){
+                if(parametros && parametros.state && parametros.state.periodoFormatado){
+                    setPeriodoFormatado(parametros.state.periodoFormatado);
+                }
+                else if(prestacaoDeContas && prestacaoDeContas.periodo_uuid){
+                    let periodo = await getPeriodoPorUuid(prestacaoDeContas.periodo_uuid);
+                    setPeriodoFormatado(retornaObjetoPeriodo(periodo));
+                }
+                else{
+                    setPeriodoFormatado(null);
+                }
+            }
+        }
+
+        periodoFormatado();
+        return () => {
+            mounted = false;
+        }
+
+    }, [parametros, prestacaoDeContas]);
 
     const onClickVoltar = useCallback(() => {
         history.push('/analise-dre')
@@ -58,7 +120,7 @@ const ConsultaDetalhamentoAnaliseDaDre = () => {
             return (<span className={`texto-legenda-cor-EM_ANALISE`}><strong>em análise</strong></span>)
 
         } else if (status === 'DEVOLVIDA') {
-            return (<span className={`texto-legenda-cor-DEVOLVIDA`}><strong>devolvida para acerto</strong></span>)
+            return (<span className={`texto-legenda-cor-DEVOLVIDA`}><strong>devolvida pela DRE</strong></span>)
 
         } else if (status === 'APROVADA') {
             return (<span className={`texto-legenda-cor-APROVADA`}><strong>aprovada</strong></span>)
@@ -72,39 +134,84 @@ const ConsultaDetalhamentoAnaliseDaDre = () => {
         }
     };
 
-
     const retornaTextoSuperior = () => {
-        return (
-            <p className='fonte-16 mt-3'>
-                Nesse período a
-                Associação <strong> {prestacaoDeContas && prestacaoDeContas.associacao && prestacaoDeContas.associacao.unidade && prestacaoDeContas.associacao.unidade.tipo_unidade ? prestacaoDeContas.associacao.unidade.tipo_unidade : ""} {prestacaoDeContas && prestacaoDeContas.associacao && prestacaoDeContas.associacao.unidade && prestacaoDeContas.associacao.unidade.nome ? prestacaoDeContas.associacao.unidade.nome : ""}</strong>
-                &nbsp; teve sua prestação de contas {exibeLabelStatus(prestacaoDeContas.status)}
-                &nbsp; pela {prestacaoDeContas && prestacaoDeContas.associacao && prestacaoDeContas.associacao.unidade && prestacaoDeContas.associacao.unidade.dre && prestacaoDeContas.associacao.unidade.dre.nome ? prestacaoDeContas.associacao.unidade.dre.nome : ""}
-                &nbsp; e contou com <span
-                className='texto-legenda-cor-EM_ANDAMENTO'><strong>{totalAnalisesDePcDevolvidas}</strong></span> {totalAnalisesDePcDevolvidas > 0 ? " devoluções para acertos. " : " devolução para acertos."}
-            </p>
-        )
+        if (totalAnalisesDePcDevolvidas > 0){
+
+            if (prestacaoDeContas.status === 'DEVOLVIDA'){
+                return (
+                    <p className='fonte-16 mt-1'>
+                        Sua prestação de contas foi {exibeLabelStatus(prestacaoDeContas.status)} para os seguintes acertos:
+                    </p>
+                )
+            }
+
+            else if(prestacaoDeContas.status === 'EM_ANALISE'){
+                return (
+                    <p className='fonte-16 mt-1'>
+                        Sua prestação de contas está {exibeLabelStatus(prestacaoDeContas.status)} pela DRE, contando com os seguintes acertos:
+                    </p>
+                )
+            }
+
+            else if(prestacaoDeContas.status === 'DEVOLVIDA_RETORNADA' || prestacaoDeContas.status === 'DEVOLVIDA_RECEBIDA'){
+                return (
+                    <p className='fonte-16 mt-1'>
+                        Sua prestação de contas foi apresentada pela Associação, contando com os seguintes acertos:
+                    </p>
+                )
+            }
+
+            return (
+                <p className='fonte-16 mt-1'>
+                    Sua prestação de contas foi {exibeLabelStatus(prestacaoDeContas.status)} pela DRE, contando com os seguintes acertos:
+                </p>
+            )
+        }else{
+            return(
+                <p className='fonte-16 mt-1'>
+                    Sua prestação de contas foi {exibeLabelStatus(prestacaoDeContas.status)} pela DRE, sem devolução para acertos.
+                </p>
+            )
+        }
+
+    }
+
+    const retornaObjetoPeriodo = (periodo) => {
+        return {
+            referencia: periodo.referencia ? periodo.referencia : '',
+            data_inicio_realizacao_despesas: periodo.data_inicio_realizacao_despesas ? exibeDataPT_BR(periodo.data_inicio_realizacao_despesas) : '',
+            data_fim_realizacao_despesas: periodo.data_fim_realizacao_despesas ? exibeDataPT_BR(periodo.data_fim_realizacao_despesas) : '',
+        }
+    }
+
+    const podeAbrirModalAcertos = () => {
+        setOpenModalAcertos(true)
     }
 
     return (
         <PaginasContainer>
             <h1 className="titulo-itens-painel mt-5">Análise DRE</h1>
             <div className="page-content-inner">
-                <TopoComBotaoVoltar
-                    onClickVoltar={onClickVoltar}
-                    periodoFormatado={parametros && parametros.state && parametros.state.periodoFormatado ? parametros.state.periodoFormatado : null}
-                />
-                <TextoSuperior
-                    retornaTextoSuperior={retornaTextoSuperior}
-                />
-                <h1 className="titulo-itens-painel mt-5">Devoluções para acertos da DRE</h1>
-                <hr className="mt-0 mb-0"/>
-                {totalAnalisesDePcDevolvidas > 0 ? (
+                <AnaliseDREProvider>
+                    <TopoComBotaoVoltar
+                        onClickVoltar={onClickVoltar}
+                        periodoUuid={prestacaoDeContas.periodo_uuid}
+                        periodoFormatado={periodoFormatado}
+                        podeAbrirModalAcertos={podeAbrirModalAcertos}
+                        prestacaoContaUuid={prestacao_conta_uuid}
+                        statusPc={prestacaoDeContas.status}
+                    />
+                    <TextoSuperior
+                        retornaTextoSuperior={retornaTextoSuperior}
+                        />
+
+                    <hr className="mt-0 mb-0"/>
+                    {totalAnalisesDePcDevolvidas > 0 &&
                         <>
                             <CardsDevolucoesParaAcertoDaDre
                                 prestacao_conta_uuid={prestacao_conta_uuid}
                                 setAnaliseAtualUuid={setAnaliseAtualUuid}
-                            />
+                                />
                             <ExibeAcertosEmLancamentosEDocumentosPorConta
                                 prestacaoDeContasUuid={prestacao_conta_uuid}
                                 analiseAtualUuid={analiseAtualUuid}
@@ -112,9 +219,18 @@ const ConsultaDetalhamentoAnaliseDaDre = () => {
                                 exibeBtnIrParaPaginaDeReceitaOuDespesa={true}
                             />
                         </>
-                    ) :
-                    <p><strong>Não existem devoluções para serem exibidas</strong></p>
-                }
+                    }
+                    <section>
+                    <ModalConcluirAcertoPC
+                        show={openModalAcertos}
+                        handleClose={(e) => setOpenModalAcertos(false)}
+                        titulo='Concluir acerto da Prestação de Contas'
+                        texto={'Não é possível concluir o acerto da prestação de contas pois nem todos os acertos solicitados pela DRE foram realizados ou justificados. É necessário que você verifique os itens de acerto nos lançamentos/documentos não conferidos ou que estão conferidos parcialmente.'}
+                        primeiroBotaoTexto="Fechar"
+                        primeiroBotaoCss="success"
+                    />
+                    </section>
+                </AnaliseDREProvider>
             </div>
         </PaginasContainer>
     )

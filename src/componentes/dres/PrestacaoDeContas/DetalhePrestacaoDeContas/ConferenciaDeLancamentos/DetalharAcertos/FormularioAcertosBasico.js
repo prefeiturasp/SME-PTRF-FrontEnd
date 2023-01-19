@@ -1,6 +1,6 @@
 import React from "react";
 
-export const FormularioAcertosBasico = ({formikProps, acerto, index, label, placeholder}) => {
+export const FormularioAcertosBasico = ({formikProps, acerto, index, label, placeholder, required}) => {
     return (
         <>
             <div className="col-12 mt-3">
