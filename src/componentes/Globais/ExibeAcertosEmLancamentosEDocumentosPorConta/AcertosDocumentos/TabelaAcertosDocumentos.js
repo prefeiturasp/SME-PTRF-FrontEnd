@@ -28,18 +28,18 @@ const TabelaAcertosDocumentos = ({
                                      setExpandedRowsDocumentos,
                                      expandedRowsDocumentos,
                                      rowExpansionTemplateDocumentos,
-                                     documentosSelecionados,
-                                     status,
                                      tituloModalCheckNaoPermitido,
                                      textoModalCheckNaoPermitido,
                                      showModalCheckNaoPermitido,
                                      setShowModalCheckNaoPermitido,
-                                     selecionarTodosItensDosDocumentos,
+                                     selecionarTodosItensDosDocumentosGlobal,
                                      totalDeAcertosDosDocumentos,
-                                     selecionarTodosItensDoDocumento,
+                                     selecionarTodosItensDoDocumentoRow,
                                      opcoesJustificativa,
-                                     limparDocumentos,
                                      analisePermiteEdicao,
+                                     quantidadeSelecionada,
+                                     acoesDisponiveis,
+                                     acaoCancelar
 }) => {
 
 
@@ -80,13 +80,12 @@ const TabelaAcertosDocumentos = ({
         setTipoAcao(tipoAcao)
     }
 
-
-    const montagemSelecionarBotaoStatusRealizado = () => {
+    const montagemSelecionarBotaoStatusJustificadoEhRealizado = () => {
         return (
             <>
                 <button
                     className="float-right btn btn-link btn-montagem-selecionar"
-                    onClick={() => limparDocumentos({rowData: null, categoria: null})}
+                    onClick={() => acaoCancelar()}
                     style={{textDecoration: "underline", cursor: "pointer"}}
                 >
                     <FontAwesomeIcon
@@ -95,7 +94,55 @@ const TabelaAcertosDocumentos = ({
                     />
                     <strong>Cancelar</strong>
                 </button>
+
                 <div className="float-right" style={{padding: "0px 10px"}}>|</div>
+                
+                <button
+                    className="float-right btn btn-link btn-montagem-selecionar"
+                    onClick={() => verificaApagadaJustificada( 'limpar_status')}
+                    style={{textDecoration: "underline", cursor: "pointer"}}
+                >
+                    <FontAwesomeIcon
+                        style={{color: "white", fontSize: '15px', marginRight: "3px"}}
+                        icon={faCheckCircle}
+                    />
+                    <strong>Limpar Status</strong>
+                </button>
+            </>
+        )
+    }
+
+    const montagemSelecionarBotaoStatusRealizadoEhPendente = () => {
+        return (
+            <>
+                <button
+                    className="float-right btn btn-link btn-montagem-selecionar"
+                    onClick={() => acaoCancelar()}
+                    style={{textDecoration: "underline", cursor: "pointer"}}
+                >
+                    <FontAwesomeIcon
+                        style={{color: "white", fontSize: '15px', marginRight: "3px"}}
+                        icon={faCheckCircle}
+                    />
+                    <strong>Cancelar</strong>
+                </button>
+
+                <div className="float-right" style={{padding: "0px 10px"}}>|</div>
+                
+                <button
+                    className="float-right btn btn-link btn-montagem-selecionar"
+                    onClick={() => limparDocumentoStatus()}
+                    style={{textDecoration: "underline", cursor: "pointer"}}
+                >
+                    <FontAwesomeIcon
+                        style={{color: "white", fontSize: '15px', marginRight: "3px"}}
+                        icon={faCheckCircle}
+                    />
+                    <strong>Limpar Status</strong>
+                </button>
+
+                <div className="float-right" style={{padding: "0px 10px"}}>|</div>
+
                 <button
                     className="float-right btn btn-link btn-montagem-selecionar"
                     onClick={() => {
@@ -109,10 +156,30 @@ const TabelaAcertosDocumentos = ({
                     />
                     <strong>Justificar não realização</strong>
                 </button>
-                <div className="float-right" style={{padding: "0px 10px"}}>|</div>
+            </>
+        )
+    }
+
+    const montagemSelecionarBotaoStatusJustificadoEhRealizadoEhPendente = () => {
+        return (
+            <>
                 <button
                     className="float-right btn btn-link btn-montagem-selecionar"
-                    onClick={() => limparDocumentoStatus(documentosSelecionados)}
+                    onClick={() => acaoCancelar()}
+                    style={{textDecoration: "underline", cursor: "pointer"}}
+                >
+                    <FontAwesomeIcon
+                        style={{color: "white", fontSize: '15px', marginRight: "3px"}}
+                        icon={faCheckCircle}
+                    />
+                    <strong>Cancelar</strong>
+                </button>
+
+                <div className="float-right" style={{padding: "0px 10px"}}>|</div>
+                
+                <button
+                    className="float-right btn btn-link btn-montagem-selecionar"
+                    onClick={() => verificaApagadaJustificada( 'limpar_status')}
                     style={{textDecoration: "underline", cursor: "pointer"}}
                 >
                     <FontAwesomeIcon
@@ -125,12 +192,12 @@ const TabelaAcertosDocumentos = ({
         )
     }
 
-    const montagemSelecionarBotoaoStatusJustificado = () => {
+    const montagemSelecionarBotoaoStatusJustificadoEhPendente = () => {
         return (
             <>
                 <button
                     className="float-right btn btn-link btn-montagem-selecionar"
-                    onClick={() => limparDocumentos({rowData: null, categoria: null})}
+                    onClick={() => acaoCancelar()}
                     style={{textDecoration: "underline", cursor: "pointer"}}
                 >
                     <FontAwesomeIcon
@@ -139,19 +206,9 @@ const TabelaAcertosDocumentos = ({
                     />
                     <strong>Cancelar</strong>
                 </button>
+
                 <div className="float-right" style={{padding: "0px 10px"}}>|</div>
-                <button
-                    className="float-right btn btn-link btn-montagem-selecionar"
-                    onClick={() => verificaApagadaJustificada('marcar_como_realizado')}
-                    style={{textDecoration: "underline", cursor: "pointer"}}
-                >
-                    <FontAwesomeIcon
-                        style={{color: "white", fontSize: '15px', marginRight: "3px"}}
-                        icon={faCheckCircle}
-                    />
-                    <strong>Marcar como realizado</strong>
-                </button>
-                <div className="float-right" style={{padding: "0px 10px"}}>|</div>
+
                 <button
                     className="float-right btn btn-link btn-montagem-selecionar"
                     onClick={() => verificaApagadaJustificada('limpar_status')}
@@ -163,6 +220,114 @@ const TabelaAcertosDocumentos = ({
                     />
                     <strong>Limpar Status</strong>
                 </button>
+
+                <div className="float-right" style={{padding: "0px 10px"}}>|</div>
+
+                <button
+                    className="float-right btn btn-link btn-montagem-selecionar"
+                    onClick={() => verificaApagadaJustificada('marcar_como_realizado')}
+                    style={{textDecoration: "underline", cursor: "pointer"}}
+                >
+                    <FontAwesomeIcon
+                        style={{color: "white", fontSize: '15px', marginRight: "3px"}}
+                        icon={faCheckCircle}
+                    />
+                    <strong>Marcar como realizado</strong>
+                </button>
+            </>
+        )
+    }
+
+    const montagemSelecionarBotaoStatusRealizado = () => {
+        return (
+            <>
+                <button
+                    className="float-right btn btn-link btn-montagem-selecionar"
+                    onClick={() => acaoCancelar()}
+                    style={{textDecoration: "underline", cursor: "pointer"}}
+                >
+                    <FontAwesomeIcon
+                        style={{color: "white", fontSize: '15px', marginRight: "3px"}}
+                        icon={faCheckCircle}
+                    />
+                    <strong>Cancelar</strong>
+                </button>
+
+                <div className="float-right" style={{padding: "0px 10px"}}>|</div>
+
+                <button
+                    className="float-right btn btn-link btn-montagem-selecionar"
+                    onClick={() => limparDocumentoStatus()}
+                    style={{textDecoration: "underline", cursor: "pointer"}}
+                >
+                    <FontAwesomeIcon
+                        style={{color: "white", fontSize: '15px', marginRight: "3px"}}
+                        icon={faCheckCircle}
+                    />
+                    <strong>Limpar Status</strong>
+                </button>
+                
+                <div className="float-right" style={{padding: "0px 10px"}}>|</div>
+                
+                <button
+                    className="float-right btn btn-link btn-montagem-selecionar"
+                    onClick={() => {
+                        setShowModalJustificarNaoRealizacao(true)
+                    }}
+                    style={{textDecoration: "underline", cursor: "pointer"}}
+                >
+                    <FontAwesomeIcon
+                        style={{color: "white", fontSize: '15px', marginRight: "3px"}}
+                        icon={faCheckCircle}
+                    />
+                    <strong>Justificar não realização</strong>
+                </button>
+            </>
+        )
+    }
+
+    const montagemSelecionarBotoaoStatusJustificado = () => {
+        return (
+            <>
+                <button
+                    className="float-right btn btn-link btn-montagem-selecionar"
+                    onClick={() => acaoCancelar()}
+                    style={{textDecoration: "underline", cursor: "pointer"}}
+                >
+                    <FontAwesomeIcon
+                        style={{color: "white", fontSize: '15px', marginRight: "3px"}}
+                        icon={faCheckCircle}
+                    />
+                    <strong>Cancelar</strong>
+                </button>
+
+                <div className="float-right" style={{padding: "0px 10px"}}>|</div>
+
+                <button
+                    className="float-right btn btn-link btn-montagem-selecionar"
+                    onClick={() => verificaApagadaJustificada('limpar_status')}
+                    style={{textDecoration: "underline", cursor: "pointer"}}
+                >
+                    <FontAwesomeIcon
+                        style={{color: "white", fontSize: '15px', marginRight: "3px"}}
+                        icon={faCheckCircle}
+                    />
+                    <strong>Limpar Status</strong>
+                </button>
+                
+                <div className="float-right" style={{padding: "0px 10px"}}>|</div>
+                
+                <button
+                    className="float-right btn btn-link btn-montagem-selecionar"
+                    onClick={() => verificaApagadaJustificada('marcar_como_realizado')}
+                    style={{textDecoration: "underline", cursor: "pointer"}}
+                >
+                    <FontAwesomeIcon
+                        style={{color: "white", fontSize: '15px', marginRight: "3px"}}
+                        icon={faCheckCircle}
+                    />
+                    <strong>Marcar como realizado</strong>
+                </button>
             </>
         )
     }
@@ -172,7 +337,7 @@ const TabelaAcertosDocumentos = ({
             <>
                 <button
                     className="float-right btn btn-link btn-montagem-selecionar"
-                    onClick={() => limparDocumentos({rowData: null, categoria: null})}
+                    onClick={() => acaoCancelar()}
                     style={{textDecoration: "underline", cursor: "pointer"}}
                 >
                     <FontAwesomeIcon
@@ -181,10 +346,12 @@ const TabelaAcertosDocumentos = ({
                     />
                     <strong>Cancelar</strong>
                 </button>
+                
                 <div className="float-right" style={{padding: "0px 10px"}}>|</div>
+                
                 <button
                     className="float-right btn btn-link btn-montagem-selecionar"
-                    onClick={() => marcarDocumentoComoRealizado(documentosSelecionados)}
+                    onClick={() => marcarDocumentoComoRealizado()}
                     style={{textDecoration: "underline", cursor: "pointer"}}
                 >
                     <FontAwesomeIcon
@@ -193,7 +360,9 @@ const TabelaAcertosDocumentos = ({
                     />
                     <strong>Marcar como realizado</strong>
                 </button>
+
                 <div className="float-right" style={{padding: "0px 10px"}}>|</div>
+                
                 <button
                     className="float-right btn btn-link btn-montagem-selecionar"
                     onClick={() => setShowModalJustificarNaoRealizacao(true)}
@@ -210,8 +379,6 @@ const TabelaAcertosDocumentos = ({
     }
 
     const montagemSelecionar = () => {
-        const quantidadeSelecionada = documentosSelecionados.length
-
         return (
             <div className="row">
                 <div className="col-12" style={{background: "#00585E", color: 'white', padding: "15px", margin: "0px 15px", flex: "100%"}}>
@@ -220,15 +387,33 @@ const TabelaAcertosDocumentos = ({
                             {quantidadeSelecionada} {quantidadeSelecionada === 1 ? "documento selecionado" : "documentos selecionados"} / {totalDeAcertosDosDocumentos} totais
                         </div>
                         <div className="col-7">
-                        {status === "REALIZADO" &&
-                            montagemSelecionarBotaoStatusRealizado()
-                        }
-                        {status === "JUSTIFICADO" &&
-                            montagemSelecionarBotoaoStatusJustificado()
-                        }
-                        { status === "PENDENTE" &&
-                            montagemSelecionarBotoaoStatusPendente()
-                        }
+                            {acoesDisponiveis().JUSTIFICADO_E_REALIZADO &&
+                                montagemSelecionarBotaoStatusJustificadoEhRealizado()
+                            }
+
+                            {acoesDisponiveis().REALIZADO_E_PENDENTE &&
+                                montagemSelecionarBotaoStatusRealizadoEhPendente()
+                            }
+
+                            {acoesDisponiveis().JUSTIFICADO_E_REALIZADO_E_PENDENTE &&
+                                montagemSelecionarBotaoStatusJustificadoEhRealizadoEhPendente()
+                            }
+
+                            {acoesDisponiveis().JUSTIFICADO_E_PENDENTE &&
+                                montagemSelecionarBotoaoStatusJustificadoEhPendente()
+                            }
+
+                            {acoesDisponiveis().REALIZADO &&
+                                montagemSelecionarBotaoStatusRealizado()
+                            }
+
+                            {acoesDisponiveis().JUSTIFICADO &&
+                                montagemSelecionarBotoaoStatusJustificado()
+                            }
+
+                            {acoesDisponiveis().PENDENTE &&
+                                montagemSelecionarBotoaoStatusPendente()
+                            }
                         </div>
                     </div>
                 </div>
@@ -287,8 +472,10 @@ const TabelaAcertosDocumentos = ({
     
     return(
         <>
-        {documentosSelecionados.length > 0 ?
-                montagemSelecionar() :
+        {quantidadeSelecionada > 0 
+            ?
+                montagemSelecionar() 
+            :
                 mensagemQuantidadeExibida()
         }
         {documentosAjustes && documentosAjustes.length > 0 ? (
@@ -327,9 +514,9 @@ const TabelaAcertosDocumentos = ({
                 />
                 {visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'UE' && visoesService.getPermissoes(["change_analise_dre"]) && prestacaoDeContas.status === "DEVOLVIDA" && analisePermiteEdicao ?
                 <Column
-                    header={selecionarTodosItensDosDocumentos()}
-                    body={selecionarTodosItensDoDocumento}
-                    style={{width: '6%', borderLeft: 'none'}}
+                    header={selecionarTodosItensDosDocumentosGlobal()}
+                    body={selecionarTodosItensDoDocumentoRow}
+                    style={{width: '3%', borderLeft: 'none'}}
                 /> : null }
             </DataTable>
             ):
@@ -355,7 +542,7 @@ const TabelaAcertosDocumentos = ({
                 primeiroBotaoOnClick={() => setShowModalJustificarNaoRealizacao(false)}
                 segundoBotaoTexto="Confirmar"
                 segundoBotaoCss="success"
-                segundoBotaoOnclick={() => { justificarNaoRealizacaoDocumentos(documentosSelecionados, textoConfirmadoJustificado) }}
+                segundoBotaoOnclick={() => { justificarNaoRealizacaoDocumentos(textoConfirmadoJustificado) }}
                 segundoBotaoDisable={textoConfirmadoJustificado.length === 0}
             />
         </section>
@@ -366,7 +553,7 @@ const TabelaAcertosDocumentos = ({
                 texto={'Atenção. Essa ação irá apagar as justificativas digitadas. Confirma ação?'}
                 primeiroBotaoTexto="Confirmar"
                 primeiroBotaoCss="success"
-                primeiroBotaoOnclick={() => tipoAcao === 'limpar_status' ? limparDocumentoStatus(documentosSelecionados) : marcarDocumentoComoRealizado(documentosSelecionados) }
+                primeiroBotaoOnclick={() => tipoAcao === 'limpar_status' ? limparDocumentoStatus() : marcarDocumentoComoRealizado() }
                 segundoBotaoTexto="Cancelar"
                 segundoBotaoCss="danger"
                 handleClose={() => setShowModalJustificadaApagada(false)}
