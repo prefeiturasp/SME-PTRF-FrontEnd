@@ -8,7 +8,7 @@ import {SortableContainer, SortableElement} from 'react-sortable-hoc';
 import arrayMove from 'array-move';
 import ComentariosDeAnaliseNotificados from "./ComentariosDeAnaliseNotificados";
 
-const ComentariosDeAnalise = ({prestacaoDeContas}) => {
+const ComentariosDeAnalise = ({prestacaoDeContas, editavel=true}) => {
 
     const initialComentarios = {
         prestacao_conta: '',
@@ -178,11 +178,18 @@ const ComentariosDeAnalise = ({prestacaoDeContas}) => {
                     onChange={(event)=>handleChangeCheckboxNotificarComentarios(event, comentario.uuid)}
                     checked={verificaSeChecado(comentario.uuid)}
                     className="checkbox-comentario-de-analise"
+                    disabled={!editavel}
                 />
                 {comentario.comentario}
             </div>
             <div className="p-2 bd-highlight" >
-                <button onClick={()=>setComentarioParaEdicao(comentario)} type='button' className="btn-cancelar-comentario ml-2">
+                <button
+                    onClick={()=>setComentarioParaEdicao(comentario)}
+                    type='button'
+                    //className="btn-cancelar-comentario ml-2"
+                    className={!editavel ? "btn-editar-comentario-disabled ml-2" : "btn-cancelar-comentario ml-2"}
+                    disabled={!editavel}
+                >
                     Editar
                 </button>
             </div>
@@ -193,7 +200,7 @@ const ComentariosDeAnalise = ({prestacaoDeContas}) => {
             <>
                 <ul className='p-0'>
                     {comentarios && comentarios.length > 0 && comentarios.map((comentario, index) => (
-                        <SortableItem comentario={comentario} key={`item-${index}`} index={index} />
+                        <SortableItem comentario={comentario} key={`item-${index}`} index={index} disabled={!editavel} />
                     ))}
                 </ul>
             </>
@@ -240,9 +247,9 @@ const ComentariosDeAnalise = ({prestacaoDeContas}) => {
                                                                     onChange={(e) => {
                                                                         props.handleChange(e);
                                                                         validaConteudoComentario(e.target.value)
-                                                                    }
-                                                                    }
+                                                                    }}
                                                                     placeholder='Escreva o comentário aqui...'
+                                                                    disabled={!editavel}
                                                                 />
                                                                 {props.touched.comentario && props.errors.comentario &&
                                                                     <span className="text-danger mt-1"> {props.errors.comentario}</span>
@@ -257,8 +264,9 @@ const ComentariosDeAnalise = ({prestacaoDeContas}) => {
                                                                         onClick={() => {
                                                                             remove(index);
                                                                             setToggleExibeBtnAddComentario(!toggleExibeBtnAddComentario)
-                                                                        }
-                                                                        }>
+                                                                        }}
+                                                                        disabled={!editavel}
+                                                                    >
                                                                         Cancelar
                                                                     </button>
                                                                 </div>
@@ -285,6 +293,7 @@ const ComentariosDeAnalise = ({prestacaoDeContas}) => {
                                                             );
                                                                 setToggleExibeBtnAddComentario(!toggleExibeBtnAddComentario)
                                                             }}
+                                                            disabled={!editavel}
                                                         >
                                                             + Adicionar novo comentário
                                                         </button>
@@ -302,7 +311,7 @@ const ComentariosDeAnalise = ({prestacaoDeContas}) => {
                                                 <button
                                                     className="btn btn btn-outline-success mt-2 mr-2"
                                                     type="button"
-                                                    disabled={comentarioChecked.length <=0}
+                                                    disabled={comentarioChecked.length <=0 || !editavel}
                                                     onClick={()=>setShowModalNotificarComentarios(true)}
                                                     >
                                                     Notificar a Associação
