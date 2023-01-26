@@ -11,7 +11,8 @@ export const Retificar = ({consolidadoDre}) => {
                             {
                                 pathname: `/dre-relatorio-consolidado-retificacao/${consolidadoDre.uuid}`,
                                 state: {
-                                    referencia_publicacao: consolidadoDre.titulo_relatorio
+                                    referencia_publicacao: consolidadoDre.titulo_relatorio,
+                                    eh_edicao_retificacao: false
                                 }
                             }
                         }

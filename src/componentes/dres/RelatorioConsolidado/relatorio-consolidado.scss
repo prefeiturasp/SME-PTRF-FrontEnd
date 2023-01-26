@@ -170,7 +170,24 @@ body .tabela-associacoes-nao-regularizadas .p-datatable-tbody > tr > td, body .t
 
 .titulo-filtros-retificacao{
   font-weight: 700;
-  font-size: 18px;
+  font-size: 14px;
   line-height: 32px;
   color: #42474A
+}
+
+.titulo-tabelas{
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 32px;
+  color: #42474A
+}
+
+.linha-desabilitada {
+  background-color: #E2E2E2 !important;
+  border: 1px solid #CED4DA !important;
+  cursor: not-allowed !important;
+}
+
+.cursor-desabilitado {
+  cursor: not-allowed !important;
 }
