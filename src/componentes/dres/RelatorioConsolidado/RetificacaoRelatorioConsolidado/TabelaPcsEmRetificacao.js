@@ -4,30 +4,31 @@ import Img404 from "../../../../assets/img/img-404.svg";
 import {DataTable} from "primereact/datatable";
 import {Column} from "primereact/column";
 
-export const TabelaPcsRetificaveis = ({pcsRetificaveis, rowsPerPage, nomeComTipoTemplate, selecionarHeader, selecionarTemplate, quantidadeSelecionada, montagemRetificar, mensagemQuantidadeExibida}) => {
+export const TabelaPcsEmRetificacao = ({pcsEmRetificacao, rowsPerPage, nomeComTipoTemplate, selecionarHeader, selecionarTemplatePcsEmRetificacao, quantidadeSelecionadaEmRetificacao, montagemDesfazerRetificacao, mensagemQuantidadeExibida, rowClassName}) => {
     return(
         <>
-            {quantidadeSelecionada > 0 
+            {quantidadeSelecionadaEmRetificacao > 0 
                 ?
-                    (montagemRetificar())
+                    (montagemDesfazerRetificacao())
                 :
-                    (mensagemQuantidadeExibida())
+                    (mensagemQuantidadeExibida(true)) // Rever no teste
             }
 
             <div className="row">
                 <div className="col-12">
-                    {pcsRetificaveis && pcsRetificaveis.length > 0
+                    {pcsEmRetificacao && pcsEmRetificacao.length > 0
                         ?
                             <DataTable
-                                value={pcsRetificaveis}
-                                paginator={pcsRetificaveis.length > rowsPerPage}
+                                value={pcsEmRetificacao}
+                                paginator={pcsEmRetificacao.length > rowsPerPage}
                                 rows={rowsPerPage}
                                 paginatorTemplate="PrevPageLink PageLinks NextPageLink"
                                 autoLayout={true}
+                                rowClassName={rowClassName}
                                 stripedRows
-                                id="tabela-retificaveis"
+                                id="tabela-em-retificacao"
                             >
-                                <Column header={selecionarHeader()} body={selecionarTemplate} style={{width: '4%', borderRight: 'none'}}/>
+                                <Column header={selecionarHeader(true)} body={selecionarTemplatePcsEmRetificacao} style={{width: '4%', borderRight: 'none'}}/>
                                 <Column body={nomeComTipoTemplate} header='Nome da Unidade'/>
                                 
                             </DataTable>
@@ -39,6 +40,7 @@ export const TabelaPcsRetificaveis = ({pcsRetificaveis, rowsPerPage, nomeComTipo
                     }
                 </div>
             </div>
+
         </>
     )
 }

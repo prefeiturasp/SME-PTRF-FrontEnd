@@ -193,3 +193,15 @@ export const getPcsRetificaveis = async (consolidado_uuid) => {
 export const postRetificarPcs = async (consolidado_uuid, payload) => {
     return (await api.post(`/api/consolidados-dre/${consolidado_uuid}/retificar/`, payload, authHeader)).data
 };
+
+export const getPcsEmRetificacao = async (consolidado_uuid) => {
+    return (await api.get(`/api/consolidados-dre/${consolidado_uuid}/pcs_em_retificacao/`, authHeader)).data
+};
+
+export const postDesfazerRetificacaoPcs = async (consolidado_uuid, payload) => {
+    return (await api.post(`/api/consolidados-dre/${consolidado_uuid}/desfazer_retificacao/`, payload, authHeader)).data
+};
+
+export const updateRetificarPcs = async (consolidado_uuid, payload) => {
+    return (await api.post(`/api/consolidados-dre/${consolidado_uuid}/update_retificacao/`, payload, authHeader)).data
+};

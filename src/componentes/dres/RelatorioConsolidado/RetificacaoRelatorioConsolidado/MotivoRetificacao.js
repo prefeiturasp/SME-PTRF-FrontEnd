@@ -1,7 +1,7 @@
 import React from "react";
 import {Formik} from "formik";
 
-export const MotivoRetificacao = ({relatorioConsolidado, validateFormRetificacao, formErrors, onChangeMotivoRetificacao, formRef}) => {
+export const MotivoRetificacao = ({relatorioConsolidado, validateFormRetificacao, formErrors, formRef}) => {
     return (
         <div className="row pt-2">
             <Formik
@@ -23,12 +23,11 @@ export const MotivoRetificacao = ({relatorioConsolidado, validateFormRetificacao
                             <label className="referencia-e-periodo-relatorio" htmlFor="motivo_retificacao">Motivo da retificação:</label>
                             <textarea
                                 name='motivo_retificacao'
-                                value={relatorioConsolidado.motivo_retificacao && !relatorioConsolidado.consolidado_retificado ? relatorioConsolidado.motivo_retificacao : undefined}
+                                value={values.motivo_retificacao ? values.motivo_retificacao : undefined}
                                 onChange={(e) => {
                                     props.handleChange(e);
-                                    onChangeMotivoRetificacao(e.target.value);
                                 }}
-                                className="form-control"
+                                className={`form-control ${formErrors && formErrors.motivo_retificacao && 'is-invalid'}`}
                                 rows="4"
                             
                             />

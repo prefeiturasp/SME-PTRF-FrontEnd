@@ -18,9 +18,9 @@ export const Filtros = ({tabelaAssociacoes, handleSubmitFiltros, handleLimparFil
                     } = props;
                     return(
                         <form method="POST" onSubmit={props.handleSubmit}>
-                            <div className="row mt-3">
+                            <div className="row">
                                 <div className="col-12">
-                                    <p className="titulo-filtros-retificacao">Unidades</p>
+                                    <p className="titulo-filtros-retificacao">Filtrar unidades</p>
                                 </div>
                             </div>
 
@@ -56,7 +56,7 @@ export const Filtros = ({tabelaAssociacoes, handleSubmitFiltros, handleLimparFil
 
                             <div className="d-flex justify-content-end pb-4 mt-3">
                                 <button onClick={(e) => {handleLimparFiltros(setFieldValue)}} className="btn btn-outline-success" type="button">Limpar</button>
-                                <button className="btn btn-outline-success btn-ir-para-listagem ml-2">Filtrar</button>
+                                <button className="btn btn-outline-success btn-ir-para-listagem ml-2" type="submit">Filtrar</button>
                             </div>
                         </form>
                     )
