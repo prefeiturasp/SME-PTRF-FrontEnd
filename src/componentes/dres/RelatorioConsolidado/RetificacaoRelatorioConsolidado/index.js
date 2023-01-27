@@ -465,7 +465,7 @@ const RetificacaoRelatorioConsolidado = () => {
     const validateFormRetificacao = async(values) => {
         const errors = {};
 
-        if(values.motivo_retificacao === undefined || values.motivo_retificacao === ""){
+        if(values.motivo_retificacao === undefined || values.motivo_retificacao === "" || values.motivo_retificacao === null){
             errors.motivo_retificacao = "Campo motivo da retificação é obrigatório";
         }
 
