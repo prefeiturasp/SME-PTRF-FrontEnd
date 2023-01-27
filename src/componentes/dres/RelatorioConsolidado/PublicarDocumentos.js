@@ -50,7 +50,7 @@ const PublicarDocumentos = ({publicarConsolidadoDre, podeGerarPreviaRetificacao,
                     />
                 </div>
 
-                {!consolidadoDre.ja_publicado &&
+                {!consolidadoDre.ja_publicado && !consolidadoDre.eh_retificacao &&
                     <>
                         {podeGerarPrevia() &&
                             <div className="p-2 bd-highlight">
