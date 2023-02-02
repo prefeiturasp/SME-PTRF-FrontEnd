@@ -1,4 +1,4 @@
-import React, {memo, useEffect, useMemo, useState} from "react";
+import React, {memo, useEffect, useMemo, useState, useCallback} from "react";
 import {
     getDownloadRelatorio,
     getTiposConta
@@ -6,9 +6,12 @@ import {
 import {haDiferencaPrevisaoExecucaoRepasse} from "./haDiferencaPrevisaoExecucaoRepasse"
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faDownload} from "@fortawesome/free-solid-svg-icons";
+import {visoesService} from "../../../services/visoes.service";
+import { getExecucaoFinanceira } from "../../../services/dres/RelatorioConsolidado.service";
 
 const DemonstrativoDaExecucaoFisicoFinanceira = ({consolidadoDre, periodoEscolhido, podeGerarPreviaRetificacao, execucaoFinanceira}) => {
     const [contas, setContas] = useState(false);
+    const [execucaoFinanceiraRetificacao, setExecucaoFinanceiraRetificacao] = useState({});
 
     useEffect(()=>{
         let mounted = true
@@ -27,6 +30,24 @@ const DemonstrativoDaExecucaoFisicoFinanceira = ({consolidadoDre, periodoEscolhi
             mounted = false
         }
     }, [])
+
+    const carregaExecucaoFinanceiraRetificacao = useCallback(async () => {
+        const dre_uuid = visoesService.getItemUsuarioLogado('associacao_selecionada.uuid');
+
+        if(periodoEscolhido && consolidadoDre && consolidadoDre.eh_retificacao){
+            try {
+                let execucao = await getExecucaoFinanceira(dre_uuid, periodoEscolhido, consolidadoDre.uuid);
+                setExecucaoFinanceiraRetificacao(execucao)
+            } catch (e) {
+                console.log("Erro ao carregar execução financeira ", e)
+            }
+        }
+
+    }, [periodoEscolhido, consolidadoDre])
+
+    useEffect(() => {
+        carregaExecucaoFinanceiraRetificacao()
+    }, [carregaExecucaoFinanceiraRetificacao])
 
     const retornaClasseMensagem = (texto) => {
         let classeMensagem = "documento-gerado";
@@ -49,10 +70,18 @@ const DemonstrativoDaExecucaoFisicoFinanceira = ({consolidadoDre, periodoEscolhi
     };
 
     const isDiferencaValores = useMemo(() => {
-        return execucaoFinanceira?.por_tipo_de_conta?.some((execucaoFinanceiraConta) => {
-            return haDiferencaPrevisaoExecucaoRepasse(execucaoFinanceiraConta.valores)
-        })
-    }, [execucaoFinanceira])
+        if(execucaoFinanceira){
+            return execucaoFinanceira?.por_tipo_de_conta?.some((execucaoFinanceiraConta) => {
+                return haDiferencaPrevisaoExecucaoRepasse(execucaoFinanceiraConta.valores)
+            })
+        }
+        else if(execucaoFinanceiraRetificacao){
+            return execucaoFinanceiraRetificacao?.por_tipo_de_conta?.some((execucaoFinanceiraConta) => {
+                return haDiferencaPrevisaoExecucaoRepasse(execucaoFinanceiraConta.valores)
+            })
+        }
+
+    }, [execucaoFinanceira, execucaoFinanceiraRetificacao])
 
     return (
         <div className="border">
