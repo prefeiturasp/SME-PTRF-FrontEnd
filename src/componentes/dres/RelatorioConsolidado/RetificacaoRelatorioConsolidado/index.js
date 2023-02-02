@@ -7,7 +7,7 @@ import { Filtros } from "./Filtros";
 import { TabelaPcsRetificaveis } from "./TabelaPcsRetificaveis";
 import { TabelaPcsEmRetificacao } from "./TabelaPcsEmRetificacao";
 import {useHistory, useParams, useLocation} from "react-router-dom";
-import { getConsolidadoDrePorUuid, getPcsRetificaveis, postRetificarPcs, getPcsEmRetificacao, postDesfazerRetificacaoPcs, updateRetificarPcs } from "../../../../services/dres/RelatorioConsolidado.service";
+import { getConsolidadoDrePorUuid, getPcsRetificaveis, postRetificarPcs, getPcsEmRetificacao, postDesfazerRetificacaoPcs, patchMotivoRetificaoPcs, updateRetificarPcs } from "../../../../services/dres/RelatorioConsolidado.service";
 import { getTabelaAssociacoes } from "../../../../services/sme/Parametrizacoes.service";
 import Loading from "../../../../utils/Loading";
 import { PERIODO_RELATORIO_CONSOLIDADO_DRE } from "../../../../services/auth.service";
@@ -49,6 +49,7 @@ const RetificacaoRelatorioConsolidado = () => {
     const [loading, setLoading] = useState(true);
     const [loadingPcsRetificaveis, setLoadingPcsRetificaveis] = useState(true);
     const [loadingPcsEmRetificacao, setLoadingPcsEmRetificacao] = useState(true);
+    const [estadoBotaoSalvarMotivo, setEstadoBotaoSalvarMotivo] = useState(false);
 
     const {relatorio_consolidado_uuid} = useParams();
     const parametros = useLocation();
@@ -467,6 +468,7 @@ const RetificacaoRelatorioConsolidado = () => {
 
         if(values.motivo_retificacao === undefined || values.motivo_retificacao === "" || values.motivo_retificacao === null){
             errors.motivo_retificacao = "Campo motivo da retificação é obrigatório";
+            setEstadoBotaoSalvarMotivo(false);
         }
 
         setFormErrors(errors);
@@ -632,6 +634,18 @@ const RetificacaoRelatorioConsolidado = () => {
             await carregaConsolidado();
         }
     }
+
+    const handleEditarMotivoRetificacao = async() => {
+        let payload = {
+            motivo: formRef.current.values.motivo_retificacao,
+        }
+
+        await patchMotivoRetificaoPcs(relatorio_consolidado_uuid, payload)
+    }
+
+    const mudarEstadoBotaoSalvarMotivo = (state) => {
+        setEstadoBotaoSalvarMotivo(state)
+    }
     
     const rowClassName = (rowData) => {
         if (rowData && rowData.pode_desfazer_retificacao === false) {
@@ -688,6 +702,10 @@ const RetificacaoRelatorioConsolidado = () => {
                             <MotivoRetificacao
                                 relatorioConsolidado={relatorioConsolidado}
                                 validateFormRetificacao={validateFormRetificacao}
+                                handleEditarMotivoRetificacao={handleEditarMotivoRetificacao}
+                                estadoBotaoSalvarMotivo={estadoBotaoSalvarMotivo}
+                                mudarEstadoBotaoSalvarMotivo={mudarEstadoBotaoSalvarMotivo}
+                                ehEdicaoRetificacao={ehEdicaoRetificacao}
                                 formErrors={formErrors}
                                 formRef={formRef}
                             />
