@@ -205,3 +205,7 @@ export const postDesfazerRetificacaoPcs = async (consolidado_uuid, payload) => {
 export const updateRetificarPcs = async (consolidado_uuid, payload) => {
     return (await api.post(`/api/consolidados-dre/${consolidado_uuid}/update_retificacao/`, payload, authHeader)).data
 };
+
+export const patchMotivoRetificaoPcs = async (consolidado_uuid, payload) => {
+    return (await api.patch(`/api/consolidados-dre/${consolidado_uuid}/update_motivo_retificacao/`, payload, authHeader)).data
+};
