@@ -246,7 +246,7 @@ const RelatorioConsolidado = () => {
     }
 
     const podeExibirProximaPublicacao = () =>{
-        return (consolidadoDreProximaPublicacao && podeGerarPrevia()) || consolidadoDreProximaPublicacao.eh_consolidado_de_publicacoes_parciais
+        return (consolidadoDreProximaPublicacao && podeGerarPrevia()) || (consolidadoDreProximaPublicacao && consolidadoDreProximaPublicacao.eh_consolidado_de_publicacoes_parciais)
     }
 
     const publicarConsolidadoDre = async (consolidado_dre) => {
