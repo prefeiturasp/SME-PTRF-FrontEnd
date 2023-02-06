@@ -5,6 +5,7 @@ import {ModalConfirmaDevolverParaAcerto} from "../../.././../../componentes/dres
 import {devolverConsolidado} from '../../../../../services/dres/RelatorioConsolidado.service'
 import { toastCustom } from "../../../../Globais/ToastCustom";
 import './styles.scss'
+import {exibeDataPT_BR} from "../../../../../utils/ValidacoesAdicionaisFormularios";
 
 export const TopoComBotoes = ({relatorioConsolidado, dataLimiteDevolucao, tabAtual}) => {
     const [showModalConfirmaDevolverParaAcerto, setShowModalConfirmaDevolverParaAcerto] = useState(false)
@@ -34,6 +35,19 @@ export const TopoComBotoes = ({relatorioConsolidado, dataLimiteDevolucao, tabAtu
 
     return (
         <>
+        <div className="d-flex bd-highlight mt-3 mb-0 container-cabecalho">
+            <div className="flex-grow-1 bd-highlight">
+                <p className='titulo-explicativo mb-0'>{relatorioConsolidado?.dre?.nome}</p>
+            </div>
+        </div>
+            { 
+                relatorioConsolidado && relatorioConsolidado.periodo && 
+                <div className="info-cabecalho pt-3">
+                    <div className='periodo-info-cabecalho'>
+                        <p>Período: <strong>{relatorioConsolidado?.periodo?.referencia} - {exibeDataPT_BR(relatorioConsolidado?.periodo?.data_inicio_realizacao_despesas)} até {exibeDataPT_BR(relatorioConsolidado?.periodo?.data_fim_realizacao_despesas)}</strong></p>
+                    </div>
+                </div>
+            }
             <div className='d-flex justify-content-between mt-3'>
                 <h2 className='text-resumo'>
                     Resumo de acertos
