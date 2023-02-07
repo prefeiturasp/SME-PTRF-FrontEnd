@@ -115,7 +115,7 @@ export const GetComportamentoPorStatus = (
                         metodoAvancar={analisarPrestacaoDeContas}
                         metodoRetroceder={() => setShowNaoRecebida(true)}
                         disabledBtnAvancar={!TEMPERMISSAO}
-                        disabledBtnRetroceder={!TEMPERMISSAO}
+                        disabledBtnRetroceder={bloqueiaBtnRetroceder() || !TEMPERMISSAO}
                     />
                     <TrilhaDeStatus
                         prestacaoDeContas={prestacaoDeContas}

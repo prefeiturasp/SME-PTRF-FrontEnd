@@ -184,13 +184,7 @@ export const VisualizacaoDaAtaParecerTecnico = () => {
     }
 
     const ehPrevia = () => {
-        if(!consolidadoDre.uuid){
-            return true;
-        }
-        else if(consolidadoDre.uuid && consolidadoDre.versao === "PREVIA"){
-            return true;
-        }
-        return false;
+        return dadosAta && dadosAta.versao === "PREVIA";
     }
 
     const handleClickFecharAtaParecerTecnico = () => {
@@ -240,6 +234,8 @@ export const VisualizacaoDaAtaParecerTecnico = () => {
                                 retornaDadosAtaFormatado={retornaDadosAtaFormatado}
                                 retornaTituloCorpoAta={retornaTituloCorpoAta}
                                 ehPrevia={ehPrevia}
+                                ehRetificacao={dadosAta.eh_retificacao}
+                                motivoRetificacao={dadosAta.motivo_retificacao}
                             />
                         }
 
