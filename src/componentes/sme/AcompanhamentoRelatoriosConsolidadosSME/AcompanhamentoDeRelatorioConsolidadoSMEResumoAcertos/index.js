@@ -94,7 +94,7 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEResumoAcertos = () => {
     return (
         <PaginasContainer>
             <h1 className="titulo-itens-painel mt-5">Acompanhamento da documentação da DRE</h1>
-            <div className="page-content-inner pt-5">
+            <div className="page-content-inner">
             <TopoComBotoes
                 resumoConsolidado={resumoConsolidado}
                 dataLimiteDevolucao={dataLimiteDevolucao}

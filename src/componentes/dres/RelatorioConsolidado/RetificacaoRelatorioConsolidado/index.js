@@ -111,8 +111,6 @@ const RetificacaoRelatorioConsolidado = () => {
 
     const carregaPcsEmRetificacao = useCallback(async () => {
         if(relatorio_consolidado_uuid && ehEdicaoRetificacao){
-            console.log("eu vou começar a carregar")
-
             let prestacoes_de_contas = await getPcsEmRetificacao(relatorio_consolidado_uuid);
             let pcs = prestacoes_de_contas.map(obj => {
                 return {
@@ -580,7 +578,7 @@ const RetificacaoRelatorioConsolidado = () => {
 
         if(ehEdicaoRetificacao){
             await updateRetificarPcs(relatorio_consolidado_uuid, payload);
-            toastCustom.ToastCustomSuccess('Retificar', 'A retificação da publicação foi criada com sucesso.')
+            toastCustom.ToastCustomSuccess('Sucesso!', 'As PCs selecionadas foram adicionadas para retificação.')
 
             setShowModal(false);
             setQuantidadeSelecionada(0);
@@ -594,7 +592,7 @@ const RetificacaoRelatorioConsolidado = () => {
         }
         else{
             await postRetificarPcs(relatorio_consolidado_uuid, payload)
-            toastCustom.ToastCustomSuccess('Retificar', 'A retificação da publicação foi criada com sucesso.')
+            toastCustom.ToastCustomSuccess('Sucesso!', 'A retificação da publicação foi criada com sucesso.')
             onClickVoltar();
         }    
     }
@@ -617,7 +615,7 @@ const RetificacaoRelatorioConsolidado = () => {
         await postDesfazerRetificacaoPcs(relatorio_consolidado_uuid, payload)
 
         if(deve_apagar_retificacao){
-            toastCustom.ToastCustomSuccess('Excluir retificação', 'A retificação da publicação foi excluída com sucesso.')
+            toastCustom.ToastCustomSuccess('Sucesso!', 'A retificação da publicação foi excluída com sucesso.')
             onClickVoltar();
         }
         else{
@@ -627,7 +625,7 @@ const RetificacaoRelatorioConsolidado = () => {
             setLoadingPcsRetificaveis(true);
             setLoadingPcsEmRetificacao(true);
 
-            toastCustom.ToastCustomSuccess('Desfazer retificação', 'PCs removidas da retificação com sucesso.')  
+            toastCustom.ToastCustomSuccess('Sucesso!', 'PCs removidas da retificação com sucesso.')  
             
             await carregaPcsRetificaveis();
             await carregaPcsEmRetificacao();
@@ -749,39 +747,43 @@ const RetificacaoRelatorioConsolidado = () => {
                                 </>
                             }
 
-
-                            <TituloTabela
-                                titulo={"Unidades com PCs não retificadas"}
-                            />
-
-                            <Filtros
-                                tabelaAssociacoes={tabelaAssociacoes}
-                                handleSubmitFiltros={handleSubmitFiltros}
-                                handleLimparFiltros={handleLimparFiltros}
-                                initialValuesFiltros={initialValuesFiltros}
-                            />
-
-                            {loadingPcsRetificaveis ? (
-                                <div className="mt-5">
-                                    <Loading
-                                        corGrafico="black"
-                                        corFonte="dark"
-                                        marginTop="0"
-                                        marginBottom="0"
+                            {pcsRetificaveis.length > 0 &&
+                                <>
+                                    <TituloTabela
+                                    titulo={"Unidades com PCs não retificadas"}
                                     />
-                                </div>
-                            ) :
 
-                                <TabelaPcsRetificaveis
-                                    pcsRetificaveis={pcsRetificaveis}
-                                    rowsPerPage={rowsPerPage}
-                                    nomeComTipoTemplate={nomeComTipoTemplate}
-                                    selecionarHeader={selecionarHeader}
-                                    selecionarTemplate={selecionarTemplate}
-                                    quantidadeSelecionada={quantidadeSelecionada}
-                                    montagemRetificar={montagemRetificar}
-                                    mensagemQuantidadeExibida={mensagemQuantidadeExibida}
-                                />
+                                    <Filtros
+                                        tabelaAssociacoes={tabelaAssociacoes}
+                                        handleSubmitFiltros={handleSubmitFiltros}
+                                        handleLimparFiltros={handleLimparFiltros}
+                                        initialValuesFiltros={initialValuesFiltros}
+                                    />
+
+                                    {loadingPcsRetificaveis ? (
+                                        <div className="mt-5">
+                                            <Loading
+                                                corGrafico="black"
+                                                corFonte="dark"
+                                                marginTop="0"
+                                                marginBottom="0"
+                                            />
+                                        </div>
+                                    ) :
+
+                                        <TabelaPcsRetificaveis
+                                            pcsRetificaveis={pcsRetificaveis}
+                                            rowsPerPage={rowsPerPage}
+                                            nomeComTipoTemplate={nomeComTipoTemplate}
+                                            selecionarHeader={selecionarHeader}
+                                            selecionarTemplate={selecionarTemplate}
+                                            quantidadeSelecionada={quantidadeSelecionada}
+                                            montagemRetificar={montagemRetificar}
+                                            mensagemQuantidadeExibida={mensagemQuantidadeExibida}
+                                        />
+                                    }
+                                </>   
+                                    
                             }
                             <ModalAntDesignConfirmacao
                                 handleShow={showModal}
@@ -811,7 +813,7 @@ const RetificacaoRelatorioConsolidado = () => {
                                 okText="Confirmar"
                                 handleCancel={(e) => setShowModalDeveApagarRetificacao(false)}
                                 cancelText="Cancelar"
-                            />
+                            />              
                             
                         </>
                     }
