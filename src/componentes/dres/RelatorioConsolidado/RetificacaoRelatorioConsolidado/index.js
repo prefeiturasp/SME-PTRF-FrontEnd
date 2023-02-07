@@ -578,7 +578,7 @@ const RetificacaoRelatorioConsolidado = () => {
 
         if(ehEdicaoRetificacao){
             await updateRetificarPcs(relatorio_consolidado_uuid, payload);
-            toastCustom.ToastCustomSuccess('Retificar', 'A retificação da publicação foi criada com sucesso.')
+            toastCustom.ToastCustomSuccess('Sucesso!', 'As PCs selecionadas foram adicionadas para retificação.')
 
             setShowModal(false);
             setQuantidadeSelecionada(0);
@@ -592,7 +592,7 @@ const RetificacaoRelatorioConsolidado = () => {
         }
         else{
             await postRetificarPcs(relatorio_consolidado_uuid, payload)
-            toastCustom.ToastCustomSuccess('Retificar', 'A retificação da publicação foi criada com sucesso.')
+            toastCustom.ToastCustomSuccess('Sucesso!', 'A retificação da publicação foi criada com sucesso.')
             onClickVoltar();
         }    
     }
