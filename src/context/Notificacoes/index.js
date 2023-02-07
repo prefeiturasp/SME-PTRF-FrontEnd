@@ -128,7 +128,7 @@ export const NotificacaoContextProvider = ({children}) => {
                     handleClose={()=>setShow(false)}
                     irParaConcluirPc={irParaConcluirPc}
                     titulo="Atenção"
-                    texto={`<p>A geração da prestação de contas ${periodoErroConcluirPc} não foi finalizada corretamente, favor efetuar a geração novamente.`}
+                    texto={`<p>Houve um problema na conclusão do período/acerto ${periodoErroConcluirPc}. Favor concluir novamente.`}
                 />
             </section>
         </>
