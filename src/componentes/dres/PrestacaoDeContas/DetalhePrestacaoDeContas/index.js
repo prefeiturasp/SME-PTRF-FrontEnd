@@ -1022,7 +1022,7 @@ export const DetalhePrestacaoDeContas = () =>{
     }
 
     const bloqueiaBtnRetroceder = () => {
-        if(prestacaoDeContas && prestacaoDeContas.status === "EM_ANALISE" && pcEmRetificacao()){
+        if((prestacaoDeContas && (prestacaoDeContas.status === "EM_ANALISE" || prestacaoDeContas.status === "RECEBIDA") && pcEmRetificacao())){
             return true;
         }
         
