@@ -13,7 +13,7 @@ export const ModalNotificaErroConcluirPC = (props) =>{
             primeiroBotaoCss="outline-success"
             segundoBotaoOnclick={props.irParaConcluirPc}
             segundoBotaoCss="success"
-            segundoBotaoTexto="Ir para Geração e Fechar"
+            segundoBotaoTexto="Ir para concluir"
         />
     )
 };
