@@ -1029,6 +1029,14 @@ export const DetalhePrestacaoDeContas = () =>{
         return false;
     }
 
+    const adicionaTooltipBtnRetroceder = () => {
+        if(prestacaoDeContas && prestacaoDeContas.status === "RECEBIDA" && pcEmRetificacao()) {
+            return "Esta PC não pode retornar para o status de não recebida pois já foi recebida anteriormente."
+        }
+    
+        return null;
+    }
+
     return(
         <PaginasContainer>
             <h1 className="titulo-itens-painel mt-5">Acompanhamento das Prestações de Contas</h1>
@@ -1105,6 +1113,7 @@ export const DetalhePrestacaoDeContas = () =>{
                                     onClickDeletarAcertoSaldo={onClickDeletarAcertoSaldo}
                                     setAnalisesDeContaDaPrestacao={setAnalisesDeContaDaPrestacao}
                                     bloqueiaBtnRetroceder={bloqueiaBtnRetroceder}
+                                    tooltipRetroceder={adicionaTooltipBtnRetroceder}
                                 />
                         }
                     </>
