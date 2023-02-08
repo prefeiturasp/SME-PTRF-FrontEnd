@@ -715,6 +715,82 @@ export const ModalPublicarRelatorioConsolidadoPendente = (propriedades) => {
     )
 };
 
+export const ModalPublicarRetificacao = (propriedades) => {
+    const bodyTextarea = () => {
+        return (
+            <>
+                <p>
+                    Ao confirmar a geração do relatório, o sistema bloqueará as alterações dos relatórios e da ata.
+                </p>
+
+                <p className="mt-3">
+                    <strong>Essa operação, não poderá ser revertida.</strong>
+                </p>
+
+                <p className="mt-3">
+                    Caso queira conferir as informações cadastradas, antes de concluir, volte e gere uma prévia dos documentos.
+                </p>
+                {propriedades.alertaJustificativa &&
+                    <p className="mt-3">
+                        Não esqueça de conferir a "Justificativa da diferença entre o valor previsto pela SME e o transferido pela DRE no período" apresentada no Demonstrativo da Execução Físico-Financeira.
+                    </p>
+                }
+
+                <p className="mt-3">Deseja concluir a geração?</p>
+            </>
+        )
+
+    };
+
+    return (
+        <ModalBootstrapConfirmarPublicacao
+            show={propriedades.show}
+            onHide={propriedades.handleClose}
+            titulo="Confirmar Geração"
+            bodyText={bodyTextarea()}
+            primeiroBotaoOnclick={propriedades.handleClose}
+            primeiroBotaoTexto="Cancelar"
+            primeiroBotaoCss="outline-success"
+            segundoBotaoOnclick={propriedades.publicarRetificacao}
+            segundoBotaoTexto="Confirmar Geração"
+            segundoBotaoCss="success"
+        />
+    )
+};
+
+export const ModalPublicarRetificacaoPendente = (propriedades) => {
+    const bodyTextarea = () => {
+        return (
+            <>
+                <p>
+                    O consolidado não pode ser gerado. 
+                </p>
+
+                <p className="mt-3">
+                    Preencha o campo "Justificativa da diferença entre o valor previsto pela SME e o transferido pela DRE no período" do Demonstrativo da Execução Físico-Financeira.
+                </p>
+
+                <p className="mt-3">
+                Após o preenchimento desse campo, o consolidado estará disponível para geração. 
+                </p>
+            </>
+        )
+
+    };
+
+    return (
+        <ModalBootstrapConfirmarPublicacao
+            show={propriedades.show}
+            onHide={propriedades.handleClose}
+            titulo="Pendência para a Geração do Consolidado"
+            bodyText={bodyTextarea()}
+            primeiroBotaoOnclick={propriedades.handleClose}
+            primeiroBotaoTexto="Cancelar"
+            primeiroBotaoCss="outline-success"
+        />
+    )
+};
+
 export const ModalConclusaoValoresReprogramadosNaoPermitido = (propriedades) => {
     return (
         <ModalBootstrap

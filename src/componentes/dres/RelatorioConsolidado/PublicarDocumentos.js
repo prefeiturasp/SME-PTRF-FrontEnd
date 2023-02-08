@@ -6,7 +6,7 @@ import {Retificar} from "./Retificar";
 import PreviaDocumentoRetificado from "./PreviaDocumentoRetificado";
 import ReactTooltip from "react-tooltip";
 
-const PublicarDocumentos = ({publicarConsolidadoDre, podeGerarPreviaRetificacao, podeGerarPrevia, children, consolidadoDre, publicarConsolidadoDePublicacoesParciais, showPublicarRelatorioConsolidado, setShowPublicarRelatorioConsolidado, carregaConsolidadosDreJaPublicadosProximaPublicacao, execucaoFinanceira, disableGerar}) => {
+const PublicarDocumentos = ({publicarConsolidadoDre, podeGerarPrevia, children, consolidadoDre, publicarConsolidadoDePublicacoesParciais, showPublicarRelatorioConsolidado, setShowPublicarRelatorioConsolidado, carregaConsolidadosDreJaPublicadosProximaPublicacao, execucaoFinanceira, disableGerar, todasAsPcsDaRetificacaoConcluidas, publicarRetificacao, showPublicarRetificacao, setShowPublicarRetificacao, periodoEscolhido}) => {
     const [showPublicarRelatorioConsolidadoPendente, setShowPublicarRelatorioConsolidadoPendente] = useState(false)
     const [alertaJustificativa, setAlertaJustificativa] = useState(true)
 
@@ -88,7 +88,14 @@ const PublicarDocumentos = ({publicarConsolidadoDre, podeGerarPreviaRetificacao,
                     consolidadoDre={consolidadoDre}
                     carregaConsolidadosDreJaPublicadosProximaPublicacao={carregaConsolidadosDreJaPublicadosProximaPublicacao}
                 />
-                <PreviaDocumentoRetificado consolidadoDre={consolidadoDre} podeGerarPreviaRetificacao={podeGerarPreviaRetificacao}/>
+                <PreviaDocumentoRetificado 
+                    consolidadoDre={consolidadoDre} 
+                    todasAsPcsDaRetificacaoConcluidas={todasAsPcsDaRetificacaoConcluidas} 
+                    setShowPublicarRetificacao={setShowPublicarRetificacao}
+                    showPublicarRetificacao={showPublicarRetificacao}  
+                    publicarRetificacao={publicarRetificacao} 
+                    periodoEscolhido={periodoEscolhido}
+                />
                 <Retificar
                     consolidadoDre={consolidadoDre}
                 />
