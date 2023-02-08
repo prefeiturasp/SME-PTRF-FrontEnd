@@ -9,7 +9,7 @@ import {faDownload} from "@fortawesome/free-solid-svg-icons";
 import {visoesService} from "../../../services/visoes.service";
 import { getExecucaoFinanceira } from "../../../services/dres/RelatorioConsolidado.service";
 
-const DemonstrativoDaExecucaoFisicoFinanceira = ({consolidadoDre, periodoEscolhido, podeGerarPreviaRetificacao, execucaoFinanceira}) => {
+const DemonstrativoDaExecucaoFisicoFinanceira = ({consolidadoDre, periodoEscolhido, execucaoFinanceira, podeAcessarInfoConsolidado}) => {
     const [contas, setContas] = useState(false);
     const [execucaoFinanceiraRetificacao, setExecucaoFinanceiraRetificacao] = useState({});
 
@@ -34,7 +34,7 @@ const DemonstrativoDaExecucaoFisicoFinanceira = ({consolidadoDre, periodoEscolhi
     const carregaExecucaoFinanceiraRetificacao = useCallback(async () => {
         const dre_uuid = visoesService.getItemUsuarioLogado('associacao_selecionada.uuid');
 
-        if(periodoEscolhido && consolidadoDre && consolidadoDre.eh_retificacao){
+        if(periodoEscolhido && consolidadoDre && consolidadoDre.eh_retificacao && consolidadoDre.habilita_botao_gerar){
             try {
                 let execucao = await getExecucaoFinanceira(dre_uuid, periodoEscolhido, consolidadoDre.uuid);
                 setExecucaoFinanceiraRetificacao(execucao)
@@ -130,12 +130,12 @@ const DemonstrativoDaExecucaoFisicoFinanceira = ({consolidadoDre, periodoEscolhi
                     </div>
                     {!consolidadoDre.eh_consolidado_de_publicacoes_parciais &&
                     <div className="col-12 col-md-4 align-self-center text-right">
-                        <span data-html={true} data-tip={podeGerarPreviaRetificacao ? "Não é possível consultar/preencher o resumo. A análise da(s) prestação(ões) de contas em retificação ainda não foi concluída." : ""}>
+                        <span data-html={true} data-tip={!podeAcessarInfoConsolidado(consolidadoDre) ? "Não é possível consultar/preencher o resumo. A análise da(s) prestação(ões) de contas em retificação ainda não foi concluída." : ""}>
                             <button
                                 onClick={() => onClickPreencherRelatorio()}
                                 type="button"
                                 className="btn btn-outline-success btn-sm"
-                                disabled={podeGerarPreviaRetificacao}
+                                disabled={!podeAcessarInfoConsolidado(consolidadoDre)}
                             >
                                 {isDiferencaValores ? 'Preencher resumo' : 'Consultar resumo'}
                             </button>

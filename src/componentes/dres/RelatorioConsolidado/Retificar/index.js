@@ -4,7 +4,7 @@ import {Link} from 'react-router-dom';
 export const Retificar = ({consolidadoDre}) => {
   return(
       <>
-          {consolidadoDre && consolidadoDre?.permite_retificacao && !consolidadoDre?.gerou_uma_retificacao &&
+          {consolidadoDre && consolidadoDre?.permite_retificacao &&
               <div className="p-2 bd-highlight">
                     <Link
                         to={
