@@ -33,39 +33,40 @@ export const TabelaConferenciaDeDocumentosRelatorios = ({ relatorioConsolidado, 
     }
 
     return (
-        <>
-            <h5 className="mb-4 mt-4"><strong>Acertos nos documentos</strong></h5>
-            {listaDocumentoHistorico?.length || listaDeDocumentosRelatorio?.length ? <DataTable
-                value={tabAtual === 'historico' ? listaDocumentoHistorico : listaDeDocumentosRelatorio}
-                paginator={
-                    0 > rowsPerPage
-                }
-                rows={rowsPerPage}
-                expandedRows={expandedRowsDocumentos}
-                onRowToggle={(e) => setExpandedRowsDocumentos(e.data)}
-                rowExpansionTemplate={rowExpansionTemplateDocumentos}
-                paginatorTemplate="PrevPageLink PageLinks NextPageLink"
-                stripedRows
-                className=""
-                autoLayout={true}>
+         listaDocumentoHistorico && listaDeDocumentosRelatorio && (listaDocumentoHistorico?.length || listaDeDocumentosRelatorio?.length) ?
+            (
+                <>
+                <h5 className="mb-4 mt-4"><strong>Acertos nos documentos</strong></h5>
+                <DataTable
+                    value={tabAtual === 'historico' ? listaDocumentoHistorico : listaDeDocumentosRelatorio}
+                    paginator={
+                        0 > rowsPerPage
+                    }
+                    rows={rowsPerPage}
+                    expandedRows={expandedRowsDocumentos}
+                    onRowToggle={(e) => setExpandedRowsDocumentos(e.data)}
+                    rowExpansionTemplate={rowExpansionTemplateDocumentos}
+                    paginatorTemplate="PrevPageLink PageLinks NextPageLink"
+                    stripedRows
+                    className=""
+                    autoLayout={true}>
 
-                <Column header={'Nome do Documento'}
-                    field='nome'
-                    className="align-middle text-left borda-coluna"
-                    style={
-                        {
-                            borderLeft: 'none',
-                            width: '200px'
-                        }
-                    } />
-                    <Column 
-                    header=''
-                    expander
-                    style={{width: '4%'}}
-                /> 
-            </DataTable>: 
-                <p>Exibindo <strong>0</strong> documentos</p>
-                }
-        </>
+                    <Column header={'Nome do Documento'}
+                        field='nome'
+                        className="align-middle text-left borda-coluna"
+                        style={
+                            {
+                                borderLeft: 'none',
+                                width: '200px'
+                            }
+                        } />
+                        <Column 
+                        header=''
+                        expander
+                        style={{width: '4%'}}
+                    /> 
+                </DataTable>
+                </>
+            ) : <></>
     )
 }
