@@ -37,6 +37,7 @@ const RetificacaoRelatorioConsolidado = () => {
     const [ehEdicaoRetificacao, setEhEdicaoRetificacao] = useState(null);
     const [tabelaAssociacoes, setTabelaAssociacoes] = useState({});
     const [pcsRetificaveis, setPcsRetificaveis] = useState(false);
+    const [todasAsPcsRetificaveis, setTodasAsPcsRetificaveis] = useState(false);
     const [pcsEmRetificacao, setPcsEmRetificacao] = useState(false);
     const [quantidadeSelecionada, setQuantidadeSelecionada] = useState(0);
     const [quantidadeSelecionadaEmRetificacao, setQuantidadeSelecionadaEmRetificacao] = useState(0);
@@ -63,7 +64,7 @@ const RetificacaoRelatorioConsolidado = () => {
             setRelatorioConsolidado(consolidado);
             setLoading(false);
         }
-
+        
     }, [relatorio_consolidado_uuid])
 
     useEffect(() => {
@@ -100,6 +101,7 @@ const RetificacaoRelatorioConsolidado = () => {
                 });
 
             setPcsRetificaveis(pcs)
+            setTodasAsPcsRetificaveis(pcs)
             setLoadingPcsRetificaveis(false);
         }
 
@@ -747,7 +749,7 @@ const RetificacaoRelatorioConsolidado = () => {
                                 </>
                             }
 
-                            {pcsRetificaveis.length > 0 &&
+                            {todasAsPcsRetificaveis.length > 0 &&
                                 <>
                                     <TituloTabela
                                     titulo={"Unidades com PCs não retificadas"}
