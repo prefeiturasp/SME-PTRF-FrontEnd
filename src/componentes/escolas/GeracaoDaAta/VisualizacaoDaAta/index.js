@@ -25,7 +25,6 @@ import moment from "moment";
 import {exibeDataPT_BR, trataNumericos} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import {getDespesa, getDespesasTabelas} from "../../../../services/escolas/Despesas.service";
 import {ModalDevolucaoAoTesouro} from "../ModalDevolucaoAoTesouro";
-import {ModalReverDevolucoesAoTesouro} from "../ModalReverDevolucoesAoTesouro";
 import {getSalvarDevoulucoesAoTesouro} from "../../../../services/dres/PrestacaoDeContas.service";
 import {ASSOCIACAO_UUID} from "../../../../services/auth.service";
 import TabelaRepassesPendentes from "./TabelaRepassesPendentes";
@@ -50,7 +49,6 @@ export const VisualizacaoDaAta = () => {
 
     const [showModalDevolucoesAoTesouro, setShowModalDevolucoesAoTesouro] = useState(false);
     const [showTextoCopiado, setShowTextoCopiado] = useState(false);
-    const [showReverDevolucoesAoTesouro, setShowReverDevolucoesAoTesouro] = useState(false);
     const [stateFormEditarAta, setStateFormEditarAta] = useState({
         comentarios: "",
         parecer_conselho: "",
@@ -179,15 +177,10 @@ export const VisualizacaoDaAta = () => {
     const onHandleClose = () => {
         setShowTextoCopiado(false);
         setShowModalDevolucoesAoTesouro(false);
-        setShowReverDevolucoesAoTesouro(false);
     };
 
     const handleClickEditarAta = () => {
-        if (dadosAta.tipo_ata === 'RETIFICACAO' && prestacaoDeContasDetalhe && prestacaoDeContasDetalhe.devolucoes_ao_tesouro_da_prestacao && prestacaoDeContasDetalhe.devolucoes_ao_tesouro_da_prestacao.length > 0) {
-            setShowReverDevolucoesAoTesouro(true);
-        } else {
-            irParaEdicaoAta();
-        }
+         irParaEdicaoAta();
     };
 
     const irParaEdicaoAta = () => {
@@ -443,7 +436,6 @@ export const VisualizacaoDaAta = () => {
                 await getSalvarDevoulucoesAoTesouro(prestacaoDeContasDetalhe.uuid, payload);
                 await getDadosAta();
                 setShowModalDevolucoesAoTesouro(false);
-                setShowReverDevolucoesAoTesouro(false);
             } else {
                 return formRef.current.setErrors(validar)
             }
@@ -589,20 +581,6 @@ export const VisualizacaoDaAta = () => {
                     tiposDevolucao={tiposDevolucao}
                     validateFormDevolucaoAoTesouro={validateFormDevolucaoAoTesouro}
                     camposObrigatorios={camposObrigatorios}
-                />
-            </section>
-            <section>
-                <ModalReverDevolucoesAoTesouro
-                    show={showReverDevolucoesAoTesouro}
-                    handleClose={onHandleClose}
-                    setShowModalDevolucoesAoTesouro={setShowModalDevolucoesAoTesouro}
-                    titulo="Rever Devoluções ao Tesouro"
-                    texto="<p>Você ja conferiu as devoluções ao tesouro registradas nessa prestação de contas?</p>"
-                    primeiroBotaoTexto="Não, leve-me para lá"
-                    primeiroBotaoCss="outline-success"
-                    segundoBotaoCss="success"
-                    segundoBotaoTexto="Sim, ja está tudo certo"
-                    irParaEdicaoAta={irParaEdicaoAta}
                 />
             </section>
             <section>
