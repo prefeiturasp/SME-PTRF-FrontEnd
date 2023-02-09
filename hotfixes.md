@@ -1,5 +1,6 @@
 ### 6.0.1 - 09/02/2023 - Hotfix - Soluções de bugs urgentes durante a sprint 59
 * (84852) - Remove edição de devoluções ao tesouro da ata de retificação em tela
+* (85660) Implemnta monitoramenmto de processomentos de PCs
 
 ### 1.33.5 - 17/11/2022 - Hotfix - Soluções de bugs urgentes durante a sprint 53
 * (79016) Cadastro de despesa: o cálculo não considera os valores realizados corretamente e não salva a despesa
