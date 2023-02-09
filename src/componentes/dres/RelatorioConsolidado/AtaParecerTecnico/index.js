@@ -7,7 +7,7 @@ import ReactTooltip from "react-tooltip";
 import {getDownloadAtaParecerTecnico} from "../../../../services/dres/AtasParecerTecnico.service";
 import {postCriarAtaAtrelarAoConsolidadoDre} from "../../../../services/dres/RelatorioConsolidado.service";
 
-export const AtaParecerTecnico = ({consolidadoDre, podeGerarPreviaRetificacao}) => {
+export const AtaParecerTecnico = ({consolidadoDre, podeAcessarInfoConsolidado}) => {
 
     const onClickVerAta = (uuid_ata) =>{
         window.location.assign(`/visualizacao-da-ata-parecer-tecnico/${uuid_ata}/${consolidadoDre.ja_publicado}`)
@@ -85,12 +85,12 @@ export const AtaParecerTecnico = ({consolidadoDre, podeGerarPreviaRetificacao}) 
                             </button>
                             ):
                             <>
-                                <span data-html={true} data-tip={podeGerarPreviaRetificacao ? "Não é possível preencher a ata. A análise da(s) prestação(ões) de contas em retificação ainda não foi concluída." : ""}>
+                                <span data-html={true} data-tip={!podeAcessarInfoConsolidado(consolidadoDre) ? "Não é possível preencher a ata. A análise da(s) prestação(ões) de contas em retificação ainda não foi concluída." : ""}>
                                 <button
                                     onClick={() => criarAtaAtrelarAoConsolidado(consolidadoDre.dre_uuid, consolidadoDre.periodo_uuid, consolidadoDre.uuid ? consolidadoDre.uuid : null)}
                                     type="button"
                                     className="btn btn-outline-success btn-sm"
-                                    disabled={podeGerarPreviaRetificacao}
+                                    disabled={!podeAcessarInfoConsolidado(consolidadoDre)}
                                 >
                                     Preencher ata
                                 </button>

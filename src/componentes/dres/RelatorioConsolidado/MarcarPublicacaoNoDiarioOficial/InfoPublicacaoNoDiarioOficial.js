@@ -10,7 +10,7 @@ const dataTemplate = useDataTemplate()
 const InfoPublicacaoNoDiarioOficial = ({consolidadoDre, carregaConsolidadosDreJaPublicadosProximaPublicacao}) => {
     return(
         <>
-            {consolidadoDre && consolidadoDre.data_publicacao && !consolidadoDre?.eh_retificacao &&
+            {consolidadoDre && consolidadoDre.data_publicacao &&
                 <div className='mb-0 fonte-12 fonte-normal'>
                     <strong>Data da publicação:</strong> {dataTemplate(null, null, consolidadoDre.data_publicacao)}
                     <IconeMarcarPublicacaoNoDiarioOficial
@@ -19,7 +19,7 @@ const InfoPublicacaoNoDiarioOficial = ({consolidadoDre, carregaConsolidadosDreJa
                     />
                 </div>
             }
-            {consolidadoDre && consolidadoDre?.eh_retificacao &&
+            {consolidadoDre && consolidadoDre?.eh_retificacao && !consolidadoDre.ja_publicado &&
             <div className='mb-0 fonte-12 fonte-normal'>
                     <strong style={{color: '#00585E', fontWeight: '600', fontSize: '14px', marginRight: '5px'}}>
                         Editar Retificação

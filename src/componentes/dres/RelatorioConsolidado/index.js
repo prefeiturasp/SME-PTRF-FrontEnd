@@ -45,6 +45,7 @@ const RelatorioConsolidado = () => {
     const [periodos, setPeriodos] = useState(false);
     const [periodoEscolhido, setPeriodoEsolhido] = useState(false);
     const [showPublicarRelatorioConsolidado, setShowPublicarRelatorioConsolidado] = useState(false);
+    const [showPublicarRetificacao, setShowPublicarRetificacao] = useState(false);
 
     // Ata
     const [showAtaNaoPreenchida, setShowAtaNaoPreenchida] = useState(false);
@@ -245,15 +246,36 @@ const RelatorioConsolidado = () => {
         }
     }
 
+    const todasAsPcsDaRetificacaoConcluidas = (consolidadoDre) => {
+        if(consolidadoDre && consolidadoDre.eh_retificacao){
+            return consolidadoDre.todas_pcs_da_retificacao_concluidas
+        }
+    }
+
+    const podeAcessarInfoConsolidado = (consolidadoDre) => {
+        if(consolidadoDre && consolidadoDre.eh_retificacao){
+            return consolidadoDre.todas_pcs_da_retificacao_concluidas;
+        }
+        else{
+            if (trilhaStatus && trilhaStatus.cards && trilhaStatus.cards.length > 0){
+                let card_concluido = trilhaStatus.cards.find((element) => element.status === 'CONCLUIDO' )
+                let qtde_prestacoes = card_concluido.quantidade_prestacoes
+                return qtde_prestacoes > 0
+            }
+        }
+    }
+
     const podeExibirProximaPublicacao = () =>{
         return (consolidadoDreProximaPublicacao && podeGerarPrevia()) || (consolidadoDreProximaPublicacao && consolidadoDreProximaPublicacao.eh_consolidado_de_publicacoes_parciais)
     }
 
     const publicarConsolidadoDre = async (consolidado_dre) => {
         setShowPublicarRelatorioConsolidado(false)
+
         let payload = {
             dre_uuid: dre_uuid,
-            periodo_uuid: periodoEscolhido
+            periodo_uuid: periodoEscolhido,
+            uuid_retificacao: null
         }
         try {
             if (!consolidado_dre.ata_de_parecer_tecnico || !consolidado_dre.ata_de_parecer_tecnico.alterado_em) {
@@ -284,6 +306,28 @@ const RelatorioConsolidado = () => {
             console.log("Erro ao publicar Consolidado de Publicações Parciais ", e)
         }
         await carregaConsolidadosDreJaPublicadosProximaPublicacao()
+    }
+
+    const publicarRetificacao = async (consolidado_dre) => {
+        setShowPublicarRetificacao(false)
+
+        let payload = {
+            dre_uuid: dre_uuid,
+            periodo_uuid: periodoEscolhido,
+            uuid_retificacao: consolidado_dre.uuid
+        }
+
+        try {
+            if (!consolidado_dre.ata_de_parecer_tecnico || !consolidado_dre.ata_de_parecer_tecnico.alterado_em) {
+                setShowAtaNaoPreenchida(true);
+            } else {
+                let publicar = await postPublicarConsolidadoDre(payload);
+                setStatusProcessamentoConsolidadoDre(publicar.status);
+            }
+            await carregaConsolidadosDreJaPublicadosProximaPublicacao()
+        } catch (e) {
+            console.log("Erro ao publicar Consolidado Dre ", e)
+        }
     }
 
     const gerarPreviaConsolidadoDre = async () => {
@@ -366,6 +410,11 @@ const RelatorioConsolidado = () => {
                                                     execucaoFinanceira={execucaoFinanceira}
                                                     disableGerar={disableGerar}
                                                     carregaConsolidadosDreJaPublicadosProximaPublicacao={carregaConsolidadosDreJaPublicadosProximaPublicacao}
+                                                    todasAsPcsDaRetificacaoConcluidas={todasAsPcsDaRetificacaoConcluidas}
+                                                    publicarRetificacao={publicarRetificacao}
+                                                    showPublicarRetificacao={showPublicarRetificacao}
+                                                    setShowPublicarRetificacao={setShowPublicarRetificacao}
+                                                    periodoEscolhido={periodoEscolhido}
                                                 >
                                                     <PreviaDocumentos
                                                         gerarPreviaConsolidadoDre={gerarPreviaConsolidadoDre}
@@ -374,11 +423,13 @@ const RelatorioConsolidado = () => {
                                                 <DemonstrativoDaExecucaoFisicoFinanceira
                                                     consolidadoDre={consolidadoDreProximaPublicacao}
                                                     periodoEscolhido={periodoEscolhido}
+                                                    podeAcessarInfoConsolidado={podeAcessarInfoConsolidado}
                                                     execucaoFinanceira={execucaoFinanceira}
                                                 />
                                                 {!consolidadoDreProximaPublicacao.eh_consolidado_de_publicacoes_parciais &&
                                                     <AtaParecerTecnico
                                                     consolidadoDre={consolidadoDreProximaPublicacao}
+                                                    podeAcessarInfoConsolidado={podeAcessarInfoConsolidado}
                                                     />
                                                 }
                                                 {!consolidadoDreProximaPublicacao.eh_consolidado_de_publicacoes_parciais &&
@@ -396,11 +447,15 @@ const RelatorioConsolidado = () => {
                                                 <PublicarDocumentos
                                                     publicarConsolidadoDre={publicarConsolidadoDre}
                                                     podeGerarPrevia={podeGerarPrevia}
-                                                    podeGerarPreviaRetificacao={podeGerarPreviaRetificacao(consolidadoDre)}
                                                     consolidadoDre={consolidadoDre}
                                                     showPublicarRelatorioConsolidado={showPublicarRelatorioConsolidado}
                                                     setShowPublicarRelatorioConsolidado={setShowPublicarRelatorioConsolidado}
                                                     carregaConsolidadosDreJaPublicadosProximaPublicacao={carregaConsolidadosDreJaPublicadosProximaPublicacao}
+                                                    todasAsPcsDaRetificacaoConcluidas={todasAsPcsDaRetificacaoConcluidas}
+                                                    publicarRetificacao={publicarRetificacao}
+                                                    showPublicarRetificacao={showPublicarRetificacao}
+                                                    setShowPublicarRetificacao={setShowPublicarRetificacao}
+                                                    periodoEscolhido={periodoEscolhido}
                                                 >
                                                     <PreviaDocumentos
                                                         gerarPreviaConsolidadoDre={gerarPreviaConsolidadoDre}
@@ -410,11 +465,12 @@ const RelatorioConsolidado = () => {
                                                 <DemonstrativoDaExecucaoFisicoFinanceira
                                                     consolidadoDre={consolidadoDre}
                                                     periodoEscolhido={periodoEscolhido}
-                                                    podeGerarPreviaRetificacao={podeGerarPreviaRetificacao(consolidadoDre)}
+                                                    podeAcessarInfoConsolidado={podeAcessarInfoConsolidado}
                                                 />
                                                 <AtaParecerTecnico
                                                     consolidadoDre={consolidadoDre}
                                                     podeGerarPreviaRetificacao={podeGerarPreviaRetificacao(consolidadoDre)}
+                                                    podeAcessarInfoConsolidado={podeAcessarInfoConsolidado}
                                                 />
                                                 <Lauda
                                                     consolidadoDre={consolidadoDre}
