@@ -6,7 +6,7 @@ import { visoesService } from "../../../services/visoes.service";
 import { getExecucaoFinanceira } from "../../../services/dres/RelatorioConsolidado.service";
 
 
-const PreviaDocumentoRetificado = ({consolidadoDre, todasAsPcsDaRetificacaoConcluidas, publicarRetificacao, showPublicarRetificacao, setShowPublicarRetificacao, periodoEscolhido}) => {
+const PreviaDocumentoRetificado = ({consolidadoDre, todasAsPcsDaRetificacaoConcluidas, publicarRetificacao, showPublicarRetificacao, setShowPublicarRetificacao, periodoEscolhido, gerarPreviaRetificacao}) => {
     const [showPublicarRetificacaoPendente, setShowPublicarRetificacaoPendente] = useState(false)
     const [execucaoFinanceiraRetificacao, setExecucaoFinanceiraRetificacao] = useState({});
     const [alertaJustificativaRetificacao, setAlertaJustificativaRetificacao] = useState(true)
@@ -61,7 +61,7 @@ const PreviaDocumentoRetificado = ({consolidadoDre, todasAsPcsDaRetificacaoConcl
                 <>
                     {!consolidadoDre.ja_publicado &&
                         <span data-html={true} data-tip={!todasAsPcsDaRetificacaoConcluidas(consolidadoDre) ? "A análise da(s) prestação(ões) de contas em retificação ainda não foi concluída." : ""}>
-                            <button onClick={() => console.log('previas')} className="btn btn-outline-success" disabled={!todasAsPcsDaRetificacaoConcluidas(consolidadoDre)}>
+                            <button onClick={() => gerarPreviaRetificacao(consolidadoDre)} className="btn btn-outline-success" disabled={!todasAsPcsDaRetificacaoConcluidas(consolidadoDre)}>
                                 Prévias
                             </button>
                         </span>

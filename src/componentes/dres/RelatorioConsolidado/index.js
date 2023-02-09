@@ -333,7 +333,24 @@ const RelatorioConsolidado = () => {
     const gerarPreviaConsolidadoDre = async () => {
         let payload = {
             dre_uuid: dre_uuid,
-            periodo_uuid: periodoEscolhido
+            periodo_uuid: periodoEscolhido,
+            uuid_retificacao: null
+        }
+
+        try {
+            let previa = await postGerarPreviaConsolidadoDre(payload);
+            setStatusProcessamentoConsolidadoDre(previa.status);
+            await carregaConsolidadosDreJaPublicadosProximaPublicacao()
+        } catch (e) {
+            console.log("Erro ao publicar Prévia Consolidado Dre ", e)
+        }
+    }
+
+    const gerarPreviaRetificacao = async (consolidado_dre) => {
+        let payload = {
+            dre_uuid: dre_uuid,
+            periodo_uuid: periodoEscolhido,
+            uuid_retificacao: consolidado_dre.uuid
         }
 
         try {
@@ -415,6 +432,7 @@ const RelatorioConsolidado = () => {
                                                     showPublicarRetificacao={showPublicarRetificacao}
                                                     setShowPublicarRetificacao={setShowPublicarRetificacao}
                                                     periodoEscolhido={periodoEscolhido}
+                                                    gerarPreviaRetificacao={gerarPreviaRetificacao}
                                                 >
                                                     <PreviaDocumentos
                                                         gerarPreviaConsolidadoDre={gerarPreviaConsolidadoDre}
@@ -456,6 +474,7 @@ const RelatorioConsolidado = () => {
                                                     showPublicarRetificacao={showPublicarRetificacao}
                                                     setShowPublicarRetificacao={setShowPublicarRetificacao}
                                                     periodoEscolhido={periodoEscolhido}
+                                                    gerarPreviaRetificacao={gerarPreviaRetificacao}
                                                 >
                                                     <PreviaDocumentos
                                                         gerarPreviaConsolidadoDre={gerarPreviaConsolidadoDre}

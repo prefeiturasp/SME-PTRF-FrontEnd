@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useCallback} from "react";
 import {useParams} from "react-router-dom";
 import {
     getExecucaoFinanceira,
@@ -13,6 +13,7 @@ import {auxGetNomes} from "../auxGetNomes";
 import {ModalSalvarJustificativa} from "../ModalSalvarJustificativa";
 import { haDiferencaPrevisaoExecucaoRepasse } from "../haDiferencaPrevisaoExecucaoRepasse";
 import Loading from "../../../../utils/Loading";
+import { getConsolidadoDrePorUuid } from "../../../../services/dres/RelatorioConsolidado.service";
 
 export const RelatorioConsolidadoEmTela = () => {
 
@@ -40,6 +41,19 @@ export const RelatorioConsolidadoEmTela = () => {
     const [btnSalvarJustificativaDisableCartao, setBtnSalvarJustificativaDisableCartao] = useState(true);
     const [showSalvarJustificativa, setShowSalvarJustificativa] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [consolidadoDre, setConsolidadoDre] = useState({})
+
+    const getConsolidadoDREUuid = useCallback(async () => {
+        if(consolidado_dre_uuid !== "null"){
+            let response = await getConsolidadoDrePorUuid(consolidado_dre_uuid);
+            setConsolidadoDre(response)
+        }
+
+    }, [consolidado_dre_uuid]);
+    
+    useEffect(() => {
+        getConsolidadoDREUuid()
+    }, [getConsolidadoDREUuid])
 
     useEffect( () => {
         async function carregaInformacoes(){
@@ -77,6 +91,7 @@ export const RelatorioConsolidadoEmTela = () => {
                     periodo: periodo_uuid,
                     tipo_conta: conta.tipo_conta_uuid,
                     texto: conta.justificativa_texto,
+                    eh_retificacao: conta.eh_retificacao
                 }
                 if (conta.tipo_conta === 'Cheque'){
                     setJustificativaDiferencaCheque(justificativa)
@@ -131,7 +146,8 @@ export const RelatorioConsolidadoEmTela = () => {
     const atualizaJustificativaDiferenca = async (justificativaDiferenca) => {
         if (justificativaDiferenca && justificativaDiferenca.uuid) {
             let payload = {
-                texto: justificativaDiferenca.texto
+                texto: justificativaDiferenca.texto,
+                eh_retificacao: consolidadoDre ? consolidadoDre.eh_retificacao : false
             };
             await patchJustificativa(justificativaDiferenca.uuid, payload)
             setShowSalvarJustificativa(true);
