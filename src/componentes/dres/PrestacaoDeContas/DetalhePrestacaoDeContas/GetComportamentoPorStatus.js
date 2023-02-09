@@ -61,6 +61,7 @@ export const GetComportamentoPorStatus = (
         onClickDeletarAcertoSaldo,
         setAnalisesDeContaDaPrestacao,
         bloqueiaBtnRetroceder,
+        tooltipRetroceder
     }) => {
 
     const TEMPERMISSAO = RetornaSeTemPermissaoEdicaoAcompanhamentoDePc()
@@ -116,6 +117,7 @@ export const GetComportamentoPorStatus = (
                         metodoRetroceder={() => setShowNaoRecebida(true)}
                         disabledBtnAvancar={!TEMPERMISSAO}
                         disabledBtnRetroceder={bloqueiaBtnRetroceder() || !TEMPERMISSAO}
+                        tooltipRetroceder={tooltipRetroceder()}
                     />
                     <TrilhaDeStatus
                         prestacaoDeContas={prestacaoDeContas}
