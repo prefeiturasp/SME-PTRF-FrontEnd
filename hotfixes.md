@@ -1,7 +1,8 @@
 ### 6.0.1 - 09/02/2023 - Hotfix - Soluções de bugs urgentes durante a sprint 59
-* (84852) - Remove edição de devoluções ao tesouro da ata de retificação em tela
-* (85660) - Implementa monitoramenmto de processamentos de PCs
-* (85204) - Despesas criadas/alteradas na reabertura seletiva são automaticamente conciliadas
+* (84852) Remove edição de devoluções ao tesouro da ata de retificação em tela
+* (85660) Implementa monitoramenmto de processamentos de PCs
+* (85204) Despesas criadas/alteradas na reabertura seletiva são automaticamente conciliadas
+* (84513) Corrige tempo de resposta em pesquisa associação
 
 ### 1.33.5 - 17/11/2022 - Hotfix - Soluções de bugs urgentes durante a sprint 53
 * (79016) Cadastro de despesa: o cálculo não considera os valores realizados corretamente e não salva a despesa
