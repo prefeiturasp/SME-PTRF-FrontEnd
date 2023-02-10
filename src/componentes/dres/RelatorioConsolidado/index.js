@@ -44,7 +44,6 @@ const RelatorioConsolidado = () => {
     const [statusProcessamentoRelatorioConsolidadoDePublicacoesParciais, setStatusProcessamentoRelatorioConsolidadoDePublicacoesParciais] = useState('');
     const [periodos, setPeriodos] = useState(false);
     const [periodoEscolhido, setPeriodoEsolhido] = useState(false);
-    const [showPublicarRelatorioConsolidado, setShowPublicarRelatorioConsolidado] = useState(false);
     const [showPublicarRetificacao, setShowPublicarRetificacao] = useState(false);
 
     // Ata
@@ -269,7 +268,8 @@ const RelatorioConsolidado = () => {
         return (consolidadoDreProximaPublicacao && podeGerarPrevia()) || (consolidadoDreProximaPublicacao && consolidadoDreProximaPublicacao.eh_consolidado_de_publicacoes_parciais)
     }
 
-    const publicarConsolidadoDre = async (consolidado_dre) => {
+    const publicarConsolidadoDre = async (consolidado_dre, setShowPublicarRelatorioConsolidado) => {
+        // Necessario passar o estado por parametro, pois o estado estava disparando mais de uma vez
         setShowPublicarRelatorioConsolidado(false)
 
         let payload = {
@@ -333,7 +333,24 @@ const RelatorioConsolidado = () => {
     const gerarPreviaConsolidadoDre = async () => {
         let payload = {
             dre_uuid: dre_uuid,
-            periodo_uuid: periodoEscolhido
+            periodo_uuid: periodoEscolhido,
+            uuid_retificacao: null
+        }
+
+        try {
+            let previa = await postGerarPreviaConsolidadoDre(payload);
+            setStatusProcessamentoConsolidadoDre(previa.status);
+            await carregaConsolidadosDreJaPublicadosProximaPublicacao()
+        } catch (e) {
+            console.log("Erro ao publicar Prévia Consolidado Dre ", e)
+        }
+    }
+
+    const gerarPreviaRetificacao = async (consolidado_dre) => {
+        let payload = {
+            dre_uuid: dre_uuid,
+            periodo_uuid: periodoEscolhido,
+            uuid_retificacao: consolidado_dre.uuid
         }
 
         try {
@@ -405,8 +422,6 @@ const RelatorioConsolidado = () => {
                                                     publicarConsolidadoDePublicacoesParciais={publicarConsolidadoDePublicacoesParciais}
                                                     podeGerarPrevia={podeGerarPrevia}
                                                     consolidadoDre={consolidadoDreProximaPublicacao}
-                                                    showPublicarRelatorioConsolidado={showPublicarRelatorioConsolidado}
-                                                    setShowPublicarRelatorioConsolidado={setShowPublicarRelatorioConsolidado}
                                                     execucaoFinanceira={execucaoFinanceira}
                                                     disableGerar={disableGerar}
                                                     carregaConsolidadosDreJaPublicadosProximaPublicacao={carregaConsolidadosDreJaPublicadosProximaPublicacao}
@@ -415,6 +430,7 @@ const RelatorioConsolidado = () => {
                                                     showPublicarRetificacao={showPublicarRetificacao}
                                                     setShowPublicarRetificacao={setShowPublicarRetificacao}
                                                     periodoEscolhido={periodoEscolhido}
+                                                    gerarPreviaRetificacao={gerarPreviaRetificacao}
                                                 >
                                                     <PreviaDocumentos
                                                         gerarPreviaConsolidadoDre={gerarPreviaConsolidadoDre}
@@ -448,14 +464,13 @@ const RelatorioConsolidado = () => {
                                                     publicarConsolidadoDre={publicarConsolidadoDre}
                                                     podeGerarPrevia={podeGerarPrevia}
                                                     consolidadoDre={consolidadoDre}
-                                                    showPublicarRelatorioConsolidado={showPublicarRelatorioConsolidado}
-                                                    setShowPublicarRelatorioConsolidado={setShowPublicarRelatorioConsolidado}
                                                     carregaConsolidadosDreJaPublicadosProximaPublicacao={carregaConsolidadosDreJaPublicadosProximaPublicacao}
                                                     todasAsPcsDaRetificacaoConcluidas={todasAsPcsDaRetificacaoConcluidas}
                                                     publicarRetificacao={publicarRetificacao}
                                                     showPublicarRetificacao={showPublicarRetificacao}
                                                     setShowPublicarRetificacao={setShowPublicarRetificacao}
                                                     periodoEscolhido={periodoEscolhido}
+                                                    gerarPreviaRetificacao={gerarPreviaRetificacao}
                                                 >
                                                     <PreviaDocumentos
                                                         gerarPreviaConsolidadoDre={gerarPreviaConsolidadoDre}
