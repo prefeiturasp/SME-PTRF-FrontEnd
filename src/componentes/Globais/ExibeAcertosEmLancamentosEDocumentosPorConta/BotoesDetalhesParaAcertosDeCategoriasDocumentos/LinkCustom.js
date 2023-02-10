@@ -33,12 +33,12 @@ const LinkCustom = ({url, analise_documento, prestacaoDeContasUuid, prestacaoDeC
                     uuid_pc: prestacaoDeContasUuid,
                     uuid_despesa: analise_documento.despesa,
                     uuid_receita: analise_documento.receita,
-                    uuid_associacao: prestacaoDeContas.associacao.uuid,
+                    uuid_associacao: prestacaoDeContas?.associacao?.uuid,
                     origem: getCurrentPathWithoutLastPart(),
                     origem_visao: visoesService.getItemUsuarioLogado('visao_selecionada.nome'),
                     tem_permissao_de_edicao: checaSeTemPermissao(),
                     operacao: operacao,
-                    periodo_uuid: prestacaoDeContas.periodo_uuid
+                    periodo_uuid: prestacaoDeContas?.periodo_uuid
                 }
             }}
             className={classeCssBotao}

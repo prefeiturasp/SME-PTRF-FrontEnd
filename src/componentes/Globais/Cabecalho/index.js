@@ -9,7 +9,7 @@ import {CentralDeDownloadContext} from "../../../context/CentralDeDownloads"
 import {ModalConfirmaLogout} from "./ModalConfirmaLogout";
 import {ModalNotificaDevolucao} from "./ModalNotificaDevolucao";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faBell, faChevronDown, faTrash, faUser, faFileDownload} from "@fortawesome/free-solid-svg-icons";
+import {faBell, faChevronDown, faUser, faFileDownload} from "@fortawesome/free-solid-svg-icons";
 import {notificaDevolucaoPCService} from "../../../services/NotificacaDevolucaoPC.service";
 import { mantemEstadoAnaliseDre as meapcservice } from "../../../services/mantemEstadoAnaliseDre.service";
 
@@ -165,7 +165,10 @@ export const Cabecalho = () => {
                                                         dados_usuario_logado.unidade_selecionada.notificar_devolucao_pc_uuid,
                                                         dados_usuario_logado.unidade_selecionada.notificacao_uuid,
                                                     )}
-                                                onChange={(e)=>onChangeVisao(e)}
+                                                onChange={(e)=> {
+                                                    onChangeVisao(e);
+                                                    notificacaoContext.getExibeModalErroConcluirPc();
+                                                }}
                                                 className="form-control"
                                             >
                                                 {dados_usuario_logado.unidades.map((unidade, index)=>
@@ -249,7 +252,7 @@ export const Cabecalho = () => {
                                             </button>
                                         </a>
 
-                                        <div className={`dropdown-menu dropdown-menu-opcoes`}aria-labelledby="linkDropdownAcoes">
+                                        <div className={`dropdown-menu dropdown-menu-opcoes`} aria-labelledby="linkDropdownAcoes">
                                             <button className="btn-sair" onClick={()=>history.push(`/meus-dados`)}>Meus dados</button><br />
                                             <button className="btn-sair" onClick={()=>onShow()}>Sair</button>
                                         </div>
@@ -280,9 +283,7 @@ export const Cabecalho = () => {
                         />
                     </section>
                 </>
-
             }
-
         </>
     );
 };

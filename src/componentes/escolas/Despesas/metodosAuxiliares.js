@@ -431,6 +431,44 @@ const mostraBotaoDeletar = (idDespesa, parametroLocation) => {
 }
 
 
+const validaConciliacao = (values, periodo_da_analise) => {
+    // Esse metodo é utilizado apenas para reabertura seletiva
+    // Novos rateios adicionados a despesa devem ser validados para definir se irão ser automaticamente conciliados
+
+    let rateios = values.rateios;
+
+    let rateios_existentes = rateios.filter((item) => (item.uuid !== undefined));
+    let novos_rateios = rateios.filter((item) => (item.uuid === undefined));
+
+    if(novos_rateios.length > 0){
+        let rateios_existentes_nao_conciliados = rateios_existentes.filter((item) => (item.conferido === false));
+        
+        if(rateios_existentes_nao_conciliados.length === 0){
+            if(periodo_da_analise && periodo_da_analise.id){
+                novos_rateios.map((rateio) => {
+                    rateio.update_conferido = true;
+                    rateio.conferido = true;
+                    rateio.periodo_conciliacao = periodo_da_analise.id
+                });
+            }  
+        }
+    }    
+}
+
+const conciliaRateios = (values, periodo_da_analise) => {
+    // Esse metodo é utilizado apenas para reabertura seletiva
+    // Todos os rateios da despesa criada devem ser automaticamente conciliados
+    
+    let rateios = values.rateios;
+
+    if(periodo_da_analise && periodo_da_analise.id){
+        rateios.map((rateio) => {
+            rateio.update_conferido = true;
+            rateio.conferido = true;
+            rateio.periodo_conciliacao = periodo_da_analise.id
+        });
+    }  
+}
 
 export const metodosAuxiliares = {
     onShowModal,
@@ -461,5 +499,7 @@ export const metodosAuxiliares = {
     ehOperacaoExclusao,
     bloqueiaCamposDespesaPrincipal,
     bloqueiaCamposDespesaImposto,
-    mostraBotaoDeletar
+    mostraBotaoDeletar,
+    validaConciliacao,
+    conciliaRateios
 };
