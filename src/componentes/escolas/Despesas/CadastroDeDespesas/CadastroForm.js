@@ -442,6 +442,11 @@ export const CadastroForm = ({verbo_http}) => {
                 else{
                     if (despesaContext.verboHttp === "POST"){
                         try {
+
+                            // Despesas criadas a partir da reabertura seletiva devem ser automaticamente conciliadas
+                            let periodo_da_analise = await retornaPeriodo(parametroLocation.state.periodo_uuid);
+                            aux.conciliaRateios(values, periodo_da_analise)
+                            
                             const response = await criarDespesa(values);
                             if (response.status === HTTP_STATUS.CREATED){
                                 console.log("Operação realizada com sucesso!");
@@ -476,6 +481,10 @@ export const CadastroForm = ({verbo_http}) => {
                     }
                     else if (despesaContext.verboHttp === "PUT"){
                         try {
+                            // Despesas editadas a partir da reabertura seletiva devem validar a conciliacao dos rateios
+                            let periodo_da_analise = await retornaPeriodo(parametroLocation.state.periodo_uuid);
+                            aux.validaConciliacao(values, periodo_da_analise);
+
                             const response = await alterarDespesa(values, despesaContext.idDespesa);
 
                             if (response.status === 200){

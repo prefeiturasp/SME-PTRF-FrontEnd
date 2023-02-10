@@ -122,7 +122,7 @@ export const Associacoes = () =>{
         setLoading(true);
         setBuscaUtilizandoFiltros(true);
         event.preventDefault();
-        let resultado_filtros = await filtrosAssociacoes(stateFiltros.unidade_escolar_ou_associacao, stateFiltros.tipo_de_unidade);
+        let resultado_filtros = await filtrosAssociacoes(stateFiltros.unidade_escolar_ou_associacao, null, stateFiltros.tipo_de_unidade);
         setAssociacoes(resultado_filtros);
         setLoading(false)
     };
