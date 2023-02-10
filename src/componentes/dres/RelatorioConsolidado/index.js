@@ -44,7 +44,6 @@ const RelatorioConsolidado = () => {
     const [statusProcessamentoRelatorioConsolidadoDePublicacoesParciais, setStatusProcessamentoRelatorioConsolidadoDePublicacoesParciais] = useState('');
     const [periodos, setPeriodos] = useState(false);
     const [periodoEscolhido, setPeriodoEsolhido] = useState(false);
-    const [showPublicarRelatorioConsolidado, setShowPublicarRelatorioConsolidado] = useState(false);
     const [showPublicarRetificacao, setShowPublicarRetificacao] = useState(false);
 
     // Ata
@@ -269,7 +268,8 @@ const RelatorioConsolidado = () => {
         return (consolidadoDreProximaPublicacao && podeGerarPrevia()) || (consolidadoDreProximaPublicacao && consolidadoDreProximaPublicacao.eh_consolidado_de_publicacoes_parciais)
     }
 
-    const publicarConsolidadoDre = async (consolidado_dre) => {
+    const publicarConsolidadoDre = async (consolidado_dre, setShowPublicarRelatorioConsolidado) => {
+        // Necessario passar o estado por parametro, pois o estado estava disparando mais de uma vez
         setShowPublicarRelatorioConsolidado(false)
 
         let payload = {
@@ -422,8 +422,6 @@ const RelatorioConsolidado = () => {
                                                     publicarConsolidadoDePublicacoesParciais={publicarConsolidadoDePublicacoesParciais}
                                                     podeGerarPrevia={podeGerarPrevia}
                                                     consolidadoDre={consolidadoDreProximaPublicacao}
-                                                    showPublicarRelatorioConsolidado={showPublicarRelatorioConsolidado}
-                                                    setShowPublicarRelatorioConsolidado={setShowPublicarRelatorioConsolidado}
                                                     execucaoFinanceira={execucaoFinanceira}
                                                     disableGerar={disableGerar}
                                                     carregaConsolidadosDreJaPublicadosProximaPublicacao={carregaConsolidadosDreJaPublicadosProximaPublicacao}
@@ -466,8 +464,6 @@ const RelatorioConsolidado = () => {
                                                     publicarConsolidadoDre={publicarConsolidadoDre}
                                                     podeGerarPrevia={podeGerarPrevia}
                                                     consolidadoDre={consolidadoDre}
-                                                    showPublicarRelatorioConsolidado={showPublicarRelatorioConsolidado}
-                                                    setShowPublicarRelatorioConsolidado={setShowPublicarRelatorioConsolidado}
                                                     carregaConsolidadosDreJaPublicadosProximaPublicacao={carregaConsolidadosDreJaPublicadosProximaPublicacao}
                                                     todasAsPcsDaRetificacaoConcluidas={todasAsPcsDaRetificacaoConcluidas}
                                                     publicarRetificacao={publicarRetificacao}
