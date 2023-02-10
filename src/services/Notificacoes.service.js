@@ -44,3 +44,11 @@ export const getNotificacoesFiltrosPaginacao = async (tipo=null, remetente=null,
     return (await api.get(`/api/notificacoes/?${tipo ? 'tipo=' + tipo : ""}${remetente ? '&remetente='+remetente: ""}${categoria ? '&categoria='+categoria : ""}${lido ? '&lido='+lido : ""}${data_inicio ? '&data_inicio='+data_inicio : ""}${data_fim ? '&data_fim='+data_fim : ""}&page=${page}`, authHeader)).data
 };
 
+export const getNotificacoesErroConcluirPc = async () =>{
+    return (await api.get(`/api/notificacoes/erro-concluir-pc/`, authHeader)).data
+};
+
+export const deleteNotificacaoPorUuid = async (notificacao_uuid) =>{
+    return (await api.delete(`/api/notificacoes/${notificacao_uuid}`, authHeader)).data
+};
+

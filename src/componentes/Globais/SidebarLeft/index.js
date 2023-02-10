@@ -105,6 +105,9 @@ export const SidebarLeft = () => {
                 onSelect={(selected) => {
                     qtdeNotificacoesNaoLidas();
                     qdteCentralDeDownloadsNaoLidas();
+                    if ('/' + selected !== '/prestacao-de-contas'){
+                        notificacaoContext.getExibeModalErroConcluirPc();
+                    }
                     visoesService.forcarNovoLogin();
                     const to = '/' + selected;
                     if (history.location.pathname !== to) {
