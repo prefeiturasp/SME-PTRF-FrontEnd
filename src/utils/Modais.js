@@ -7,7 +7,7 @@ import {
     ModalBootstrapSaldoInsuficienteDaconta,
     ModalBootstrapFormMeusDadosSenha,
     ModalBootstrapFormMeusDadosEmail,
-    ModalBootstrapConfirmarPublicacao
+    ModalBootstrapConfirmarPublicacao, ModalBootstrapConfirmarPublicacaoRetificacao
 } from "../componentes/Globais/ModalBootstrap";
 import {FormAlterarSenha} from "../componentes/Globais/EdicaoDeSenha/FormAlterarSenha";
 import {TextoValidacaoSenha} from "../componentes/Globais/MedidorForcaSenha/textoValidacaoSenha";
@@ -743,7 +743,7 @@ export const ModalPublicarRetificacao = (propriedades) => {
     };
 
     return (
-        <ModalBootstrapConfirmarPublicacao
+        <ModalBootstrapConfirmarPublicacaoRetificacao
             show={propriedades.show}
             onHide={propriedades.handleClose}
             titulo="Confirmar Geração"
