@@ -355,8 +355,8 @@ const RelatorioConsolidado = () => {
 
         try {
             let previa = await postGerarPreviaConsolidadoDre(payload);
-            setStatusProcessamentoConsolidadoDre(previa.status);
             await carregaConsolidadosDreJaPublicadosProximaPublicacao()
+            setStatusProcessamentoConsolidadoDre(previa.status);
         } catch (e) {
             console.log("Erro ao publicar Prévia Consolidado Dre ", e)
         }
