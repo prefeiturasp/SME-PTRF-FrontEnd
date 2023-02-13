@@ -1,4 +1,4 @@
-import React, {useState, useCallback, useEffect} from "react";
+import React, {useState, useCallback, useEffect, memo} from "react";
 import ReactTooltip from "react-tooltip";
 import { ModalPublicarRetificacao } from "../../../utils/Modais";
 import { ModalPublicarRetificacaoPendente } from "../../../utils/Modais";
@@ -6,8 +6,9 @@ import { visoesService } from "../../../services/visoes.service";
 import { getExecucaoFinanceira } from "../../../services/dres/RelatorioConsolidado.service";
 
 
-const PreviaDocumentoRetificado = ({consolidadoDre, todasAsPcsDaRetificacaoConcluidas, publicarRetificacao, showPublicarRetificacao, setShowPublicarRetificacao, periodoEscolhido, gerarPreviaRetificacao}) => {
+const PreviaDocumentoRetificado = ({consolidadoDre, todasAsPcsDaRetificacaoConcluidas, publicarRetificacao, periodoEscolhido, gerarPreviaRetificacao}) => {
     const [showPublicarRetificacaoPendente, setShowPublicarRetificacaoPendente] = useState(false)
+    const [showPublicarRetificacao, setShowPublicarRetificacao] = useState(false)
     const [execucaoFinanceiraRetificacao, setExecucaoFinanceiraRetificacao] = useState({});
     const [alertaJustificativaRetificacao, setAlertaJustificativaRetificacao] = useState(true)
 
@@ -101,4 +102,4 @@ const PreviaDocumentoRetificado = ({consolidadoDre, todasAsPcsDaRetificacaoConcl
         </>
     )
 }
-export default PreviaDocumentoRetificado
+export default memo(PreviaDocumentoRetificado)
