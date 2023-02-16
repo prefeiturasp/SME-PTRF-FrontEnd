@@ -51,6 +51,7 @@ const RelatorioConsolidado = () => {
 
     const [trilhaStatus, setTrilhaStatus] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [loadingPublicacoesParciais, setLoadingPublicacoesParciais] = useState(false);
     const [disableGerar, setDisableGerar] = useState(true);
 
     const carregaPeriodos = useCallback(async () => {
@@ -97,7 +98,6 @@ const RelatorioConsolidado = () => {
         if (dre_uuid && periodoEscolhido) {
             try {
                 let status = await getStatusConsolidadoDre(dre_uuid, periodoEscolhido)
-
                 if (status && status.length > 0) {
                     setStatusBarraDeStatus(status[0])
                     setStatusProcessamentoConsolidadoDre(status[0].status_geracao)
@@ -126,7 +126,10 @@ const RelatorioConsolidado = () => {
         if (dre_uuid && periodoEscolhido) {
             try {
                 let status = await getStatusRelatorioConsolidadoDePublicacoesParciais(dre_uuid, periodoEscolhido)
-                setStatusProcessamentoRelatorioConsolidadoDePublicacoesParciais(status.status)
+                if (status && status.status) {
+                    setStatusProcessamentoRelatorioConsolidadoDePublicacoesParciais(status.status)
+                }
+
             } catch (e) {
                 console.log("Erro ao buscar status Consolidado Dre ", e)
             }
@@ -165,14 +168,14 @@ const RelatorioConsolidado = () => {
 
     useEffect(() => {
         if (statusProcessamentoRelatorioConsolidadoDePublicacoesParciais && statusProcessamentoRelatorioConsolidadoDePublicacoesParciais === "EM_PROCESSAMENTO") {
-            setLoading(true)
+            setLoadingPublicacoesParciais(true)
             const timer = setInterval(() => {
                 retornaStatusProcessamentoRelatorioConsolidadoDePublicacoesParciais();
             }, 5000);
             // clearing interval
             return () => clearInterval(timer);
         } else {
-            setLoading(false);
+            setLoadingPublicacoesParciais(false);
         }
     }, [statusProcessamentoRelatorioConsolidadoDePublicacoesParciais, retornaStatusProcessamentoRelatorioConsolidadoDePublicacoesParciais]);
 
@@ -302,7 +305,6 @@ const RelatorioConsolidado = () => {
         } catch (e) {
             console.log("Erro ao carregar execução financeira ", e)
         }
-        setLoading(false)
     };
 
     return (
@@ -333,7 +335,7 @@ const RelatorioConsolidado = () => {
                                     retornaCorCirculoTrilhaStatus={retornaCorCirculoTrilhaStatus}
                                     eh_circulo_duplo={eh_circulo_duplo}
                                 />
-                                {loading ? (
+                                {loading || loadingPublicacoesParciais ? (
                                         <div className="mt-5">
                                             <Loading
                                                 corGrafico="black"
