@@ -1,10 +1,11 @@
 import React from "react";
 import {Link} from 'react-router-dom';
+import ReactTooltip from "react-tooltip";
 
 export const Retificar = ({consolidadoDre}) => {
   return(
       <>
-          {consolidadoDre && consolidadoDre?.permite_retificacao &&
+          {consolidadoDre && consolidadoDre?.exibe_botao_retificar &&
               <div className="p-2 bd-highlight">
                     <Link
                         to={
@@ -16,9 +17,16 @@ export const Retificar = ({consolidadoDre}) => {
                                 }
                             }
                         }
-                        className="btn btn-success"
                     >
-                        Retificar
+                        <button 
+                            className="btn btn-success"
+                            disabled={consolidadoDre && !consolidadoDre?.habilita_retificar}
+                        >
+                            <span data-tip={consolidadoDre?.tooltip_habilita_retificar}>
+                                Retificar
+                            </span>
+                            {consolidadoDre?.tooltip_habilita_retificar && <ReactTooltip place="right"/>}
+                        </button>
                     </Link>
 
               </div>

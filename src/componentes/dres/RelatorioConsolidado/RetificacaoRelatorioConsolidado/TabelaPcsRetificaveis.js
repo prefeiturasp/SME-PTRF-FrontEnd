@@ -4,7 +4,7 @@ import Img404 from "../../../../assets/img/img-404.svg";
 import {DataTable} from "primereact/datatable";
 import {Column} from "primereact/column";
 
-export const TabelaPcsRetificaveis = ({pcsRetificaveis, rowsPerPage, nomeComTipoTemplate, selecionarHeader, selecionarTemplate, quantidadeSelecionada, montagemRetificar, mensagemQuantidadeExibida}) => {
+export const TabelaPcsRetificaveis = ({pcsDoConsolidado, rowsPerPage, nomeComTipoTemplate, selecionarHeader, selecionarTemplate, quantidadeSelecionada, montagemRetificar, mensagemQuantidadeExibida, rowClassName}) => {
     return(
         <>
             {quantidadeSelecionada > 0 
@@ -16,14 +16,15 @@ export const TabelaPcsRetificaveis = ({pcsRetificaveis, rowsPerPage, nomeComTipo
 
             <div className="row">
                 <div className="col-12">
-                    {pcsRetificaveis && pcsRetificaveis.length > 0
+                    {pcsDoConsolidado && pcsDoConsolidado.length > 0
                         ?
                             <DataTable
-                                value={pcsRetificaveis}
-                                paginator={pcsRetificaveis.length > rowsPerPage}
+                                value={pcsDoConsolidado}
+                                paginator={pcsDoConsolidado.length > rowsPerPage}
                                 rows={rowsPerPage}
                                 paginatorTemplate="PrevPageLink PageLinks NextPageLink"
                                 autoLayout={true}
+                                rowClassName={rowClassName}
                                 stripedRows
                                 id="tabela-retificaveis"
                             >
