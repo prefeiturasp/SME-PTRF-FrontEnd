@@ -7,7 +7,7 @@ import { Filtros } from "./Filtros";
 import { TabelaPcsRetificaveis } from "./TabelaPcsRetificaveis";
 import { TabelaPcsEmRetificacao } from "./TabelaPcsEmRetificacao";
 import {useHistory, useParams, useLocation} from "react-router-dom";
-import { getConsolidadoDrePorUuid, getPcsRetificaveis, postRetificarPcs, getPcsEmRetificacao, postDesfazerRetificacaoPcs, patchMotivoRetificaoPcs, updateRetificarPcs } from "../../../../services/dres/RelatorioConsolidado.service";
+import { getConsolidadoDrePorUuid, getPcsRetificaveis, postRetificarPcs, getPcsEmRetificacao, postDesfazerRetificacaoPcs, patchMotivoRetificaoPcs, updateRetificarPcs, getPcsDoConsolidado } from "../../../../services/dres/RelatorioConsolidado.service";
 import { getTabelaAssociacoes } from "../../../../services/sme/Parametrizacoes.service";
 import Loading from "../../../../utils/Loading";
 import { PERIODO_RELATORIO_CONSOLIDADO_DRE } from "../../../../services/auth.service";
@@ -36,8 +36,8 @@ const RetificacaoRelatorioConsolidado = () => {
     const [referenciaPublicacao, setReferenciaPublicacao] = useState("");
     const [ehEdicaoRetificacao, setEhEdicaoRetificacao] = useState(null);
     const [tabelaAssociacoes, setTabelaAssociacoes] = useState({});
-    const [pcsRetificaveis, setPcsRetificaveis] = useState(false);
-    const [todasAsPcsRetificaveis, setTodasAsPcsRetificaveis] = useState(false);
+    const [pcsDoConsolidado, setPcsDoConsolidado] = useState(false);
+    const [todasAsPcsDoConsolidado, setTodasAsPcsDoConsolidado] = useState(false);
     const [pcsEmRetificacao, setPcsEmRetificacao] = useState(false);
     const [quantidadeSelecionada, setQuantidadeSelecionada] = useState(0);
     const [quantidadeSelecionadaEmRetificacao, setQuantidadeSelecionadaEmRetificacao] = useState(0);
@@ -48,7 +48,7 @@ const RetificacaoRelatorioConsolidado = () => {
     const [identificadorCheckboxClicado, setIdentificadorCheckboxClicado] = useState(false);
     const [identificadorCheckboxClicadoPcsEmRetificacao, setIdentificadorCheckboxClicadoPcsEmRetificacao] = useState(false);
     const [loading, setLoading] = useState(true);
-    const [loadingPcsRetificaveis, setLoadingPcsRetificaveis] = useState(true);
+    const [loadingPcsDoConsolidado, setLoadingPcsDoConsolidado] = useState(true);
     const [loadingPcsEmRetificacao, setLoadingPcsEmRetificacao] = useState(true);
     const [estadoBotaoSalvarMotivo, setEstadoBotaoSalvarMotivo] = useState(false);
 
@@ -76,7 +76,7 @@ const RetificacaoRelatorioConsolidado = () => {
             setReferenciaPublicacao(parametros.state.referencia_publicacao)
         }
 
-        if(parametros && parametros.state && parametros.state.eh_edicao_retificacao){
+        if(parametros && parametros.state && (parametros.state.eh_edicao_retificacao === true || parametros.state.eh_edicao_retificacao === false)){
             setEhEdicaoRetificacao(parametros.state.eh_edicao_retificacao)
         }
     }, [parametros])
@@ -90,9 +90,19 @@ const RetificacaoRelatorioConsolidado = () => {
         buscaTabelaAssociacoes();
     }, []);
 
-    const carregaPcsRetificaveis = useCallback(async () => {
-        if(relatorio_consolidado_uuid){
-            let prestacoes_de_contas = await getPcsRetificaveis(relatorio_consolidado_uuid);
+    const carregaPcsDoConsolidado = useCallback(async () => {
+        if(relatorio_consolidado_uuid && ehEdicaoRetificacao !== null){
+            let prestacoes_de_contas = null;
+
+            if(ehEdicaoRetificacao){
+                // Em caso de edição, serão retornadas apenas as pcs que ainda podem ser retificadas
+                prestacoes_de_contas = await getPcsRetificaveis(relatorio_consolidado_uuid);
+            }
+            else{
+                // Em caso de adição, serão retornadas todas as Pcs que estavam relacionadas ao consolidado original
+                prestacoes_de_contas = await getPcsDoConsolidado(relatorio_consolidado_uuid);
+            }
+
             let pcs = prestacoes_de_contas.map(obj => {
                 return {
                     ...obj,
@@ -100,16 +110,16 @@ const RetificacaoRelatorioConsolidado = () => {
                     }
                 });
 
-            setPcsRetificaveis(pcs)
-            setTodasAsPcsRetificaveis(pcs)
-            setLoadingPcsRetificaveis(false);
+            setPcsDoConsolidado(pcs)
+            setTodasAsPcsDoConsolidado(pcs)
+            setLoadingPcsDoConsolidado(false);
         }
 
-    }, [relatorio_consolidado_uuid])
+    }, [relatorio_consolidado_uuid, ehEdicaoRetificacao])
 
     useEffect(() => {
-        carregaPcsRetificaveis()
-    }, [carregaPcsRetificaveis])
+        carregaPcsDoConsolidado()
+    }, [carregaPcsDoConsolidado])
 
     const carregaPcsEmRetificacao = useCallback(async () => {
         if(relatorio_consolidado_uuid && ehEdicaoRetificacao){
@@ -151,6 +161,18 @@ const RetificacaoRelatorioConsolidado = () => {
     const nomeComTipoTemplate = (rowData) => {
         return(
             <>
+                <span data-tip={rowData.tooltip_nao_pode_retificar}>{`${rowData.unidade_tipo_unidade} ${rowData.unidade_nome}`}</span>
+                
+                {rowData.tooltip_nao_pode_retificar &&
+                    <ReactTooltip/>
+                }     
+            </>
+        )
+    }
+
+    const nomeComTipoTemplateRetificacao = (rowData) => {
+        return(
+            <>
                 <span data-tip={rowData.tooltip_nao_pode_desfazer_retificacao}>{`${rowData.unidade_tipo_unidade} ${rowData.unidade_nome}`}</span>
                 
                 {rowData.tooltip_nao_pode_desfazer_retificacao &&
@@ -185,16 +207,23 @@ const RetificacaoRelatorioConsolidado = () => {
             setIdentificadorCheckboxClicadoPcsEmRetificacao(true);
         }
         else{
-            let result = pcsRetificaveis.reduce((acc, o) => {
-                let obj = Object.assign(o, { selecionado: true }) ;
-                acc.push(obj);
-    
+            let quantidade = 0;
+            let result = pcsDoConsolidado.reduce((acc, o) => {
+                if(!o.pc_em_retificacao){
+                    let obj = Object.assign(o, { selecionado: true }) ;
+                    acc.push(obj);
+                    quantidade += 1;
+                }
+                else{
+                    acc.push(o)
+                }
+
                 return acc;
             
             }, []);
 
-            setPcsRetificaveis(result);
-            setQuantidadeSelecionada(pcsRetificaveis.length);
+            setPcsDoConsolidado(result);
+            setQuantidadeSelecionada(quantidade);
             setIdentificadorCheckboxClicado(true);
         }
     }
@@ -218,7 +247,7 @@ const RetificacaoRelatorioConsolidado = () => {
             setIdentificadorCheckboxClicadoPcsEmRetificacao(false);
         }
         else{
-            let result = pcsRetificaveis.reduce((acc, o) => {
+            let result = pcsDoConsolidado.reduce((acc, o) => {
 
                 let obj = Object.assign(o, { selecionado: false }) ;
             
@@ -227,7 +256,7 @@ const RetificacaoRelatorioConsolidado = () => {
                 return acc;
             
             }, []);
-            setPcsRetificaveis(result);
+            setPcsDoConsolidado(result);
             setQuantidadeSelecionada(0);
             setIdentificadorCheckboxClicado(false);
         }
@@ -261,12 +290,14 @@ const RetificacaoRelatorioConsolidado = () => {
         return (
             <div className="align-middle text-center">
                 <input
-                    checked={pcsRetificaveis.filter(u => u.uuid === rowData.uuid)[0].selecionado}
+                    checked={pcsDoConsolidado.filter(u => u.uuid === rowData.uuid)[0].selecionado}
                     type="checkbox"
                     value=""
                     onChange={(e) => tratarSelecionado(e, rowData.uuid)}
                     name="checkAtribuido"
                     id="checkAtribuido"
+                    disabled={rowData.pc_em_retificacao}
+                    className={`${rowData.pc_em_retificacao && 'cursor-desabilitado'}`}
                 />
             </div>
         )
@@ -331,21 +362,21 @@ const RetificacaoRelatorioConsolidado = () => {
 
             setQuantidadeSelecionada(cont);
 
-            let result2 = pcsRetificaveis.reduce((acc, o) => {
+            let result2 = pcsDoConsolidado.reduce((acc, o) => {
                 let obj = unidadeUuid === o.uuid ? Object.assign(o, { selecionado: e.target.checked }) : o;
                 acc.push(obj);
                 return acc;
             
             }, []);
 
-            if(cont === pcsRetificaveis.length){
+            if(cont === pcsDoConsolidado.length){
                 setIdentificadorCheckboxClicado(true);
             }
             else{
                 setIdentificadorCheckboxClicado(false);
             }
 
-            setPcsRetificaveis(result2)
+            setPcsDoConsolidado(result2)
         }
     }
 
@@ -372,20 +403,20 @@ const RetificacaoRelatorioConsolidado = () => {
             }
         }
         else{
-            if(pcsRetificaveis && pcsRetificaveis.length === 1){
+            if(pcsDoConsolidado && pcsDoConsolidado.length === 1){
                 return (
                     <div className="row">
                         <div className="col-12" style={{padding:"15px 0px", margin:"0px 15px", flex:"100%"}}>
-                            Exibindo <span style={{color: "#00585E", fontWeight:"bold"}}>{pcsRetificaveis.length}</span> unidade
+                            Exibindo <span style={{color: "#00585E", fontWeight:"bold"}}>{pcsDoConsolidado.length}</span> unidade
                         </div>
                     </div>
                 )
             }
-            else if(pcsRetificaveis && pcsRetificaveis.length > 1){
+            else if(pcsDoConsolidado && pcsDoConsolidado.length > 1){
                 return (
                     <div className="row">
                         <div className="col-12" style={{padding:"15px 0px", margin:"0px 15px", flex:"100%"}}>
-                            Exibindo <span style={{color: "#00585E", fontWeight:"bold"}}>{pcsRetificaveis.length}</span> unidades
+                            Exibindo <span style={{color: "#00585E", fontWeight:"bold"}}>{pcsDoConsolidado.length}</span> unidades
                         </div>
                     </div>
                 )
@@ -399,7 +430,7 @@ const RetificacaoRelatorioConsolidado = () => {
                 <div className="col-12" style={{background: "#00585E", color: 'white', padding:"15px", margin:"0px 15px", flex:"100%"}}>
                     <div className="row">
                         <div className="col-5">
-                            {quantidadeSelecionada} {quantidadeSelecionada === 1 ? "unidade selecionada" : "unidades selecionadas"}  / {pcsRetificaveis.length} totais
+                            {quantidadeSelecionada} {quantidadeSelecionada === 1 ? "unidade selecionada" : "unidades selecionadas"}  / {pcsDoConsolidado.length} totais
                         </div>
                         <div className="col-7">
                                 <button
@@ -477,8 +508,16 @@ const RetificacaoRelatorioConsolidado = () => {
     }
 
     const handleSubmitFiltros = async(values) => {
-        setLoadingPcsRetificaveis(true);
-        let prestacoes_de_contas = await getPcsRetificaveis(relatorio_consolidado_uuid);
+        setLoadingPcsDoConsolidado(true);
+        let prestacoes_de_contas = null;
+
+        if(ehEdicaoRetificacao){
+            prestacoes_de_contas = await getPcsRetificaveis(relatorio_consolidado_uuid);
+        }
+        else{
+            prestacoes_de_contas = await getPcsDoConsolidado(relatorio_consolidado_uuid);
+        }
+
         let pcs = prestacoes_de_contas.map(obj => {
             return {
                 ...obj,
@@ -498,9 +537,9 @@ const RetificacaoRelatorioConsolidado = () => {
             pcs = pcs.filter((item) => (item.unidade_tipo_unidade === filtro_por_tipo))
         }
 
-        setPcsRetificaveis(pcs);
+        setPcsDoConsolidado(pcs);
         setQuantidadeSelecionada(0);
-        setLoadingPcsRetificaveis(false);
+        setLoadingPcsDoConsolidado(false);
     }
 
     const handleSubmitFiltrosPcsEmRetificacao = async(values) => {
@@ -531,8 +570,17 @@ const RetificacaoRelatorioConsolidado = () => {
     }
 
     const handleLimparFiltros = async(setFieldValue) => {
-        setLoadingPcsRetificaveis(true);
-        let prestacoes_de_contas = await getPcsRetificaveis(relatorio_consolidado_uuid);
+        setLoadingPcsDoConsolidado(true);
+
+        let prestacoes_de_contas = null;
+
+        if(ehEdicaoRetificacao){
+            prestacoes_de_contas = await getPcsRetificaveis(relatorio_consolidado_uuid);
+        }
+        else{
+            prestacoes_de_contas = await getPcsDoConsolidado(relatorio_consolidado_uuid);
+        }
+
         let pcs = prestacoes_de_contas.map(obj => {
             return {
                 ...obj,
@@ -542,9 +590,9 @@ const RetificacaoRelatorioConsolidado = () => {
         
         setFieldValue("filtro_por_nome", "")
         setFieldValue("filtro_por_tipo", "")
-        setPcsRetificaveis(pcs);
+        setPcsDoConsolidado(pcs);
         setQuantidadeSelecionada(0);
-        setLoadingPcsRetificaveis(false);
+        setLoadingPcsDoConsolidado(false);
     }
 
     const handleLimparFiltrosPcsEmRetificacao = async(setFieldValue) => {
@@ -565,7 +613,7 @@ const RetificacaoRelatorioConsolidado = () => {
     }
 
     const handleRetificar = async() => {
-        let pcs_selecionadas = pcsRetificaveis.filter((item) => (item.selecionado === true));
+        let pcs_selecionadas = pcsDoConsolidado.filter((item) => (item.selecionado === true));
         let lista_uuids = [];
 
         for(let i=0; i<=pcs_selecionadas.length-1; i++){
@@ -585,10 +633,10 @@ const RetificacaoRelatorioConsolidado = () => {
             setShowModal(false);
             setQuantidadeSelecionada(0);
             setIdentificadorCheckboxClicado(false);
-            setLoadingPcsRetificaveis(true);
+            setLoadingPcsDoConsolidado(true);
             setLoadingPcsEmRetificacao(true);
 
-            await carregaPcsRetificaveis();
+            await carregaPcsDoConsolidado();
             await carregaPcsEmRetificacao();
             await carregaConsolidado();
         }
@@ -624,12 +672,12 @@ const RetificacaoRelatorioConsolidado = () => {
             setShowModalDesfazerRetificacao(false);
             setIdentificadorCheckboxClicadoPcsEmRetificacao(false);
             setQuantidadeSelecionadaEmRetificacao(0);
-            setLoadingPcsRetificaveis(true);
+            setLoadingPcsDoConsolidado(true);
             setLoadingPcsEmRetificacao(true);
 
             toastCustom.ToastCustomSuccess('Sucesso!', 'PCs removidas da retificação com sucesso.')  
             
-            await carregaPcsRetificaveis();
+            await carregaPcsDoConsolidado();
             await carregaPcsEmRetificacao();
             await carregaConsolidado();
         }
@@ -647,8 +695,14 @@ const RetificacaoRelatorioConsolidado = () => {
         setEstadoBotaoSalvarMotivo(state)
     }
     
-    const rowClassName = (rowData) => {
+    const rowClassNamePcsEmRetificacao = (rowData) => {
         if (rowData && rowData.pode_desfazer_retificacao === false) {
+            return {'linha-desabilitada': true}
+        }
+    }
+
+    const rowClassName = (rowData) => {
+        if (rowData && rowData.pc_em_retificacao && rowData.pc_em_retificacao === true) {
             return {'linha-desabilitada': true}
         }
     }
@@ -736,23 +790,23 @@ const RetificacaoRelatorioConsolidado = () => {
                                         <TabelaPcsEmRetificacao
                                             pcsEmRetificacao={pcsEmRetificacao}
                                             rowsPerPage={rowsPerPage}
-                                            nomeComTipoTemplate={nomeComTipoTemplate}
+                                            nomeComTipoTemplateRetificacao={nomeComTipoTemplateRetificacao}
                                             selecionarHeader={selecionarHeader}
                                             selecionarTemplatePcsEmRetificacao={selecionarTemplatePcsEmRetificacao}
                                             quantidadeSelecionadaEmRetificacao={quantidadeSelecionadaEmRetificacao}
                                             montagemDesfazerRetificacao={montagemDesfazerRetificacao}
                                             mensagemQuantidadeExibida={mensagemQuantidadeExibida}
-                                            rowClassName={rowClassName}
+                                            rowClassNamePcsEmRetificacao={rowClassNamePcsEmRetificacao}
                                         />
                                         
                                     }
                                 </>
                             }
 
-                            {todasAsPcsRetificaveis.length > 0 &&
+                            {todasAsPcsDoConsolidado.length > 0 &&
                                 <>
                                     <TituloTabela
-                                    titulo={"Unidades com PCs não retificadas"}
+                                        titulo={"Unidades com PCs não retificadas"}
                                     />
 
                                     <Filtros
@@ -762,7 +816,7 @@ const RetificacaoRelatorioConsolidado = () => {
                                         initialValuesFiltros={initialValuesFiltros}
                                     />
 
-                                    {loadingPcsRetificaveis ? (
+                                    {loadingPcsDoConsolidado ? (
                                         <div className="mt-5">
                                             <Loading
                                                 corGrafico="black"
@@ -774,7 +828,7 @@ const RetificacaoRelatorioConsolidado = () => {
                                     ) :
 
                                         <TabelaPcsRetificaveis
-                                            pcsRetificaveis={pcsRetificaveis}
+                                            pcsDoConsolidado={pcsDoConsolidado}
                                             rowsPerPage={rowsPerPage}
                                             nomeComTipoTemplate={nomeComTipoTemplate}
                                             selecionarHeader={selecionarHeader}
@@ -782,6 +836,7 @@ const RetificacaoRelatorioConsolidado = () => {
                                             quantidadeSelecionada={quantidadeSelecionada}
                                             montagemRetificar={montagemRetificar}
                                             mensagemQuantidadeExibida={mensagemQuantidadeExibida}
+                                            rowClassName={rowClassName}
                                         />
                                     }
                                 </>   
