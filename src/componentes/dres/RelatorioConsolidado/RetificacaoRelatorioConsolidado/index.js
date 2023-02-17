@@ -485,7 +485,7 @@ const RetificacaoRelatorioConsolidado = () => {
                                         style={{color: "white", fontSize: '15px', marginRight: "2px"}}
                                         icon={faTimesCircle}
                                     />
-                                    <strong>Desfazer Retificação</strong>
+                                    <strong>Cancelar retificação</strong>
                                 </button>
                         </div>
                     </div>
@@ -854,8 +854,8 @@ const RetificacaoRelatorioConsolidado = () => {
 
                             <ModalAntDesignConfirmacao
                                 handleShow={showModalDesfazerRetificacao}
-                                titulo={"Desfazer Retificação"}
-                                bodyText="Você confirma que deseja desfazer a retificação das PCs selecionadas?"
+                                titulo={"Cancelar retificação"}
+                                bodyText="Você confirma que deseja cancelar a retificação das PCs selecionadas?"
                                 handleOk={(e) => handleDesfazerRetificao()}
                                 okText="Confirmar"
                                 handleCancel={(e) => setShowModalDesfazerRetificacao(false)}
@@ -864,8 +864,8 @@ const RetificacaoRelatorioConsolidado = () => {
 
                             <ModalAntDesignConfirmacao
                                 handleShow={showModalDeveApagarRetificacao}
-                                titulo={"Desfazer Retificação"}
-                                bodyText="Você confirma que deseja desfazer a retificação de todas as PCs retificadas? Esta ação apagará a retificação da publicação."
+                                titulo={"Cancelar retificação"}
+                                bodyText="Você confirma que deseja cancelar a retificação de todas as PCs retificadas? Esta ação apagará a retificação da publicação."
                                 handleOk={(e) => handleDesfazerRetificao(true)}
                                 okText="Confirmar"
                                 handleCancel={(e) => setShowModalDeveApagarRetificacao(false)}
