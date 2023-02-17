@@ -8,7 +8,6 @@ import {
     getTrilhaStatus,
     postGerarPreviaConsolidadoDre,
     getConsolidadosDreJaPublicadosProximaPublicacao,
-    postPublicarConsolidadoDePublicacoesParciais,
     getStatusRelatorioConsolidadoDePublicacoesParciais,
 } from "../../../services/dres/RelatorioConsolidado.service";
 import {getPeriodos} from "../../../services/dres/Dashboard.service";
@@ -290,24 +289,6 @@ const RelatorioConsolidado = () => {
         }
     }
 
-    const publicarConsolidadoDePublicacoesParciais = async () => {
-        let payload = {
-            dre_uuid: dre_uuid,
-            periodo_uuid: periodoEscolhido
-        }
-        try {
-            await postPublicarConsolidadoDePublicacoesParciais(payload);
-
-            let status = await getStatusRelatorioConsolidadoDePublicacoesParciais(dre_uuid, periodoEscolhido)
-
-            setStatusProcessamentoRelatorioConsolidadoDePublicacoesParciais(status.status);
-
-        } catch (e) {
-            console.log("Erro ao publicar Consolidado de Publicações Parciais ", e)
-        }
-        await carregaConsolidadosDreJaPublicadosProximaPublicacao()
-    }
-
     const publicarRetificacao = async (consolidado_dre) => {
         setShowPublicarRetificacao(false)
 
@@ -419,7 +400,6 @@ const RelatorioConsolidado = () => {
                                             <div className='mt-3'>
                                                 <PublicarDocumentos
                                                     publicarConsolidadoDre={publicarConsolidadoDre}
-                                                    publicarConsolidadoDePublicacoesParciais={publicarConsolidadoDePublicacoesParciais}
                                                     podeGerarPrevia={podeGerarPrevia}
                                                     consolidadoDre={consolidadoDreProximaPublicacao}
                                                     execucaoFinanceira={execucaoFinanceira}
