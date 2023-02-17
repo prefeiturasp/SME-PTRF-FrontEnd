@@ -4,7 +4,7 @@ import Img404 from "../../../../assets/img/img-404.svg";
 import {DataTable} from "primereact/datatable";
 import {Column} from "primereact/column";
 
-export const TabelaPcsEmRetificacao = ({pcsEmRetificacao, rowsPerPage, nomeComTipoTemplate, selecionarHeader, selecionarTemplatePcsEmRetificacao, quantidadeSelecionadaEmRetificacao, montagemDesfazerRetificacao, mensagemQuantidadeExibida, rowClassName}) => {
+export const TabelaPcsEmRetificacao = ({pcsEmRetificacao, rowsPerPage, nomeComTipoTemplateRetificacao, selecionarHeader, selecionarTemplatePcsEmRetificacao, quantidadeSelecionadaEmRetificacao, montagemDesfazerRetificacao, mensagemQuantidadeExibida, rowClassNamePcsEmRetificacao}) => {
     return(
         <>
             {quantidadeSelecionadaEmRetificacao > 0 
@@ -24,12 +24,12 @@ export const TabelaPcsEmRetificacao = ({pcsEmRetificacao, rowsPerPage, nomeComTi
                                 rows={rowsPerPage}
                                 paginatorTemplate="PrevPageLink PageLinks NextPageLink"
                                 autoLayout={true}
-                                rowClassName={rowClassName}
+                                rowClassName={rowClassNamePcsEmRetificacao}
                                 stripedRows
                                 id="tabela-em-retificacao"
                             >
                                 <Column header={selecionarHeader(true)} body={selecionarTemplatePcsEmRetificacao} style={{width: '4%', borderRight: 'none'}}/>
-                                <Column body={nomeComTipoTemplate} header='Nome da Unidade'/>
+                                <Column body={nomeComTipoTemplateRetificacao} header='Nome da Unidade'/>
                                 
                             </DataTable>
                         :
