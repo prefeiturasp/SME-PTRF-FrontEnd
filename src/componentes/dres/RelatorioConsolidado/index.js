@@ -431,6 +431,7 @@ const RelatorioConsolidado = () => {
                                                     setShowPublicarRetificacao={setShowPublicarRetificacao}
                                                     periodoEscolhido={periodoEscolhido}
                                                     gerarPreviaRetificacao={gerarPreviaRetificacao}
+                                                    removerBtnGerar={consolidadoDreProximaPublicacao.eh_consolidado_de_publicacoes_parciais}
                                                 >
                                                     <PreviaDocumentos
                                                         gerarPreviaConsolidadoDre={gerarPreviaConsolidadoDre}

@@ -6,7 +6,7 @@ import {Retificar} from "./Retificar";
 import PreviaDocumentoRetificado from "./PreviaDocumentoRetificado";
 import ReactTooltip from "react-tooltip";
 
-const PublicarDocumentos = ({publicarConsolidadoDre, podeGerarPrevia, children, consolidadoDre, publicarConsolidadoDePublicacoesParciais, carregaConsolidadosDreJaPublicadosProximaPublicacao, execucaoFinanceira, disableGerar, todasAsPcsDaRetificacaoConcluidas, publicarRetificacao, showPublicarRetificacao, setShowPublicarRetificacao, periodoEscolhido, gerarPreviaRetificacao}) => {
+const PublicarDocumentos = ({publicarConsolidadoDre, podeGerarPrevia, children, consolidadoDre, publicarConsolidadoDePublicacoesParciais, carregaConsolidadosDreJaPublicadosProximaPublicacao, execucaoFinanceira, disableGerar, todasAsPcsDaRetificacaoConcluidas, publicarRetificacao, showPublicarRetificacao, setShowPublicarRetificacao, periodoEscolhido, gerarPreviaRetificacao, removerBtnGerar=false}) => {
     const [showPublicarRelatorioConsolidadoPendente, setShowPublicarRelatorioConsolidadoPendente] = useState(false)
     const [alertaJustificativa, setAlertaJustificativa] = useState(true)
     const [showPublicarRelatorioConsolidado, setShowPublicarRelatorioConsolidado] = useState(false)
@@ -52,8 +52,8 @@ const PublicarDocumentos = ({publicarConsolidadoDre, podeGerarPrevia, children, 
                     />
                 </div>
 
-                {!consolidadoDre.ja_publicado && !consolidadoDre.eh_retificacao &&
-                    <>
+                {!consolidadoDre.ja_publicado && !consolidadoDre.eh_retificacao && !removerBtnGerar &&
+                    (<>
                         {podeGerarPrevia() &&
                             <div className="p-2 bd-highlight">
                                 {children}
@@ -84,7 +84,7 @@ const PublicarDocumentos = ({publicarConsolidadoDre, podeGerarPrevia, children, 
                             </div>
                         }
 
-                    </>
+                    </>)
                 }
                 <BotaoMarcarPublicacaoNoDiarioOficial
                     consolidadoDre={consolidadoDre}
