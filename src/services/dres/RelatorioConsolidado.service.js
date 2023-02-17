@@ -186,6 +186,10 @@ export const getTrilhaStatus = async (dre_uuid, uuid_periodo) => {
     return (await api.get(`/api/consolidados-dre/trilha-de-status/?dre=${dre_uuid}&periodo=${uuid_periodo}`, authHeader)).data
 };
 
+export const getPcsDoConsolidado = async (consolidado_uuid) => {
+    return (await api.get(`/api/consolidados-dre/${consolidado_uuid}/pcs-do-consolidado/`, authHeader)).data
+};
+
 export const getPcsRetificaveis = async (consolidado_uuid) => {
     return (await api.get(`/api/consolidados-dre/${consolidado_uuid}/pcs-retificaveis/`, authHeader)).data
 };
@@ -195,7 +199,7 @@ export const postRetificarPcs = async (consolidado_uuid, payload) => {
 };
 
 export const getPcsEmRetificacao = async (consolidado_uuid) => {
-    return (await api.get(`/api/consolidados-dre/${consolidado_uuid}/pcs_em_retificacao/`, authHeader)).data
+    return (await api.get(`/api/consolidados-dre/${consolidado_uuid}/pcs-em-retificacao/`, authHeader)).data
 };
 
 export const postDesfazerRetificacaoPcs = async (consolidado_uuid, payload) => {
