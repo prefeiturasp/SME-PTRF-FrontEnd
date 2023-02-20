@@ -283,6 +283,8 @@ const RelatorioConsolidado = () => {
                 let publicar = await postPublicarConsolidadoDre(payload);
                 setStatusProcessamentoConsolidadoDre(publicar.status);
             }
+            verificarStatusRelatorioConsolidado()
+
             await carregaConsolidadosDreJaPublicadosProximaPublicacao()
         } catch (e) {
             console.log("Erro ao publicar Consolidado Dre ", e)
@@ -305,9 +307,23 @@ const RelatorioConsolidado = () => {
                 let publicar = await postPublicarConsolidadoDre(payload);
                 setStatusProcessamentoConsolidadoDre(publicar.status);
             }
+            verificarStatusRelatorioConsolidado()
+
             await carregaConsolidadosDreJaPublicadosProximaPublicacao()
         } catch (e) {
             console.log("Erro ao publicar Consolidado Dre ", e)
+        }
+    }
+
+    const verificarStatusRelatorioConsolidado = async () => {
+        try {
+            let statusRelatorioConsolidado = await getStatusRelatorioConsolidadoDePublicacoesParciais(dre_uuid, periodoEscolhido)
+
+            if(statusRelatorioConsolidado && statusRelatorioConsolidado.status) {
+                setStatusProcessamentoRelatorioConsolidadoDePublicacoesParciais(statusRelatorioConsolidado.status);
+            }
+        } catch (e) {
+            console.log("Erro ao verificar status do Relatório Consolidado ", e)
         }
     }
 
