@@ -244,6 +244,22 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEDetalhe = () => {
         return disabled
     }
 
+    const adicionaTooltipBtnAvancar = () => {
+        if(!relatorioConsolidado.botoes_avancar_e_retroceder.habilita_botao_avancar && relatorioConsolidado.status_sme === "EM_ANALISE") {
+            return 'Para concluir a análise da publicação é necessário realizar a conferência de todos os documentos.'
+        }
+
+        if(!selectedResponsavel && relatorioConsolidado.status_sme === "EM_ANALISE") {
+            return 'Para concluir a análise da publicação é necessário selecionar o responsável.'
+        }
+
+        if(!selectedResponsavel && relatorioConsolidado.status_sme === "PUBLICADO") {
+            return 'Para iniciar a análise da publicação é necessário selecionar o responsável.'
+        }
+
+        return null;
+    }
+
     return(
         <PaginasContainer>
             <h1 className="titulo-itens-painel mt-5">Acompanhamento da documentação da DRE</h1>
@@ -272,6 +288,7 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEDetalhe = () => {
                             metodoRetroceder={handleRetroceder}
                             disabledBtnAvancar={disabledBtnAvancar}
                             disabledBtnRetroceder={disabledBtnRetroceder}
+                            tooltipAvançar={adicionaTooltipBtnAvancar()}
                         />
                         <TrilhaDeStatus relatorioConsolidado={relatorioConsolidado}/>
                         <ResponsavelAnalise
