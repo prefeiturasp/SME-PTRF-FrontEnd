@@ -50,6 +50,7 @@ const RelatorioConsolidado = () => {
 
     const [trilhaStatus, setTrilhaStatus] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [loadingRelatorioConsolidado, setLoadingRelatorioConsolidado] = useState(false);
     const [disableGerar, setDisableGerar] = useState(true);
 
     const carregaPeriodos = useCallback(async () => {
@@ -164,14 +165,14 @@ const RelatorioConsolidado = () => {
 
     useEffect(() => {
         if (statusProcessamentoRelatorioConsolidadoDePublicacoesParciais && statusProcessamentoRelatorioConsolidadoDePublicacoesParciais === "EM_PROCESSAMENTO") {
-            setLoading(true)
+            setLoadingRelatorioConsolidado(true)
             const timer = setInterval(() => {
                 retornaStatusProcessamentoRelatorioConsolidadoDePublicacoesParciais();
-            }, 5000);
+            }, 6000);
             // clearing interval
             return () => clearInterval(timer);
         } else {
-            setLoading(false);
+            setLoadingRelatorioConsolidado(false);
         }
     }, [statusProcessamentoRelatorioConsolidadoDePublicacoesParciais, retornaStatusProcessamentoRelatorioConsolidadoDePublicacoesParciais]);
 
@@ -282,10 +283,9 @@ const RelatorioConsolidado = () => {
             } else {
                 let publicar = await postPublicarConsolidadoDre(payload);
                 setStatusProcessamentoConsolidadoDre(publicar.status);
+                setStatusProcessamentoRelatorioConsolidadoDePublicacoesParciais('EM_PROCESSAMENTO');
+                await carregaConsolidadosDreJaPublicadosProximaPublicacao()
             }
-            verificarStatusRelatorioConsolidado()
-
-            await carregaConsolidadosDreJaPublicadosProximaPublicacao()
         } catch (e) {
             console.log("Erro ao publicar Consolidado Dre ", e)
         }
@@ -306,24 +306,11 @@ const RelatorioConsolidado = () => {
             } else {
                 let publicar = await postPublicarConsolidadoDre(payload);
                 setStatusProcessamentoConsolidadoDre(publicar.status);
+                setStatusProcessamentoRelatorioConsolidadoDePublicacoesParciais('EM_PROCESSAMENTO');
+                await carregaConsolidadosDreJaPublicadosProximaPublicacao()
             }
-            verificarStatusRelatorioConsolidado()
-
-            await carregaConsolidadosDreJaPublicadosProximaPublicacao()
         } catch (e) {
             console.log("Erro ao publicar Consolidado Dre ", e)
-        }
-    }
-
-    const verificarStatusRelatorioConsolidado = async () => {
-        try {
-            let statusRelatorioConsolidado = await getStatusRelatorioConsolidadoDePublicacoesParciais(dre_uuid, periodoEscolhido)
-
-            if(statusRelatorioConsolidado && statusRelatorioConsolidado.status) {
-                setStatusProcessamentoRelatorioConsolidadoDePublicacoesParciais(statusRelatorioConsolidado.status);
-            }
-        } catch (e) {
-            console.log("Erro ao verificar status do Relatório Consolidado ", e)
         }
     }
 
@@ -398,7 +385,7 @@ const RelatorioConsolidado = () => {
                                     retornaCorCirculoTrilhaStatus={retornaCorCirculoTrilhaStatus}
                                     eh_circulo_duplo={eh_circulo_duplo}
                                 />
-                                {loading ? (
+                                {loading || loadingRelatorioConsolidado ? (
                                         <div className="mt-5">
                                             <Loading
                                                 corGrafico="black"
