@@ -1033,6 +1033,10 @@ export const DetalhePrestacaoDeContas = () =>{
         if(prestacaoDeContas && prestacaoDeContas.status === "RECEBIDA" && pcEmRetificacao()) {
             return "Esta PC não pode retornar para o status de não recebida pois já foi recebida anteriormente."
         }
+
+        if(prestacaoDeContas && prestacaoDeContas.status === "EM_ANALISE" && pcEmRetificacao()) {
+            return "Não é possível retornar o status da PC em retificação."
+        }
     
         return null;
     }
