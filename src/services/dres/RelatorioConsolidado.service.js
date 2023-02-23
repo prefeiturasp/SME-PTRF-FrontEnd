@@ -37,10 +37,6 @@ export const postPublicarConsolidadoDre = async (payload) => {
     return (await api.post(`/api/consolidados-dre/publicar/`, payload, authHeader)).data
 };
 
-export const postPublicarConsolidadoDePublicacoesParciais = async (payload) => {
-    return (await api.post(`/api/consolidados-dre/gerar-consolidado-de-publicacoes-parciais/`, payload, authHeader)).data
-};
-
 export const getStatusRelatorioConsolidadoDePublicacoesParciais = async (dre_uuid, periodo_uuid) => {
     return (await api.get(`/api/consolidados-dre/retorna-status-relatorio-consolidado-de-publicacoes-parciais/?dre=${dre_uuid}&periodo=${periodo_uuid}`, authHeader)).data
 };

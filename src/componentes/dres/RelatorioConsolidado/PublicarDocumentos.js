@@ -6,7 +6,7 @@ import {Retificar} from "./Retificar";
 import PreviaDocumentoRetificado from "./PreviaDocumentoRetificado";
 import ReactTooltip from "react-tooltip";
 
-const PublicarDocumentos = ({publicarConsolidadoDre, podeGerarPrevia, children, consolidadoDre, publicarConsolidadoDePublicacoesParciais, carregaConsolidadosDreJaPublicadosProximaPublicacao, execucaoFinanceira, disableGerar, todasAsPcsDaRetificacaoConcluidas, publicarRetificacao, showPublicarRetificacao, setShowPublicarRetificacao, periodoEscolhido, gerarPreviaRetificacao}) => {
+const PublicarDocumentos = ({publicarConsolidadoDre, podeGerarPrevia, children, consolidadoDre, carregaConsolidadosDreJaPublicadosProximaPublicacao, execucaoFinanceira, disableGerar, todasAsPcsDaRetificacaoConcluidas, publicarRetificacao, showPublicarRetificacao, setShowPublicarRetificacao, periodoEscolhido, gerarPreviaRetificacao, removerBtnGerar=false}) => {
     const [showPublicarRelatorioConsolidadoPendente, setShowPublicarRelatorioConsolidadoPendente] = useState(false)
     const [alertaJustificativa, setAlertaJustificativa] = useState(true)
     const [showPublicarRelatorioConsolidado, setShowPublicarRelatorioConsolidado] = useState(false)
@@ -34,9 +34,6 @@ const PublicarDocumentos = ({publicarConsolidadoDre, podeGerarPrevia, children, 
                 setShowPublicarRelatorioConsolidadoPendente(true)
             } 
         }
-        else {
-            publicarConsolidadoDePublicacoesParciais()
-        }
     }
 
 
@@ -52,39 +49,42 @@ const PublicarDocumentos = ({publicarConsolidadoDre, podeGerarPrevia, children, 
                     />
                 </div>
 
-                {!consolidadoDre.ja_publicado && !consolidadoDre.eh_retificacao &&
-                    <>
+                {!consolidadoDre.ja_publicado && !consolidadoDre.eh_retificacao && !removerBtnGerar &&
+                    (<>
                         {podeGerarPrevia() &&
                             <div className="p-2 bd-highlight">
                                 {children}
                             </div>
                         }
 
-                        {consolidadoDre.habilita_botao_gerar ? (
-                            <div className="p-2 bd-highlight">
-                                <button
-                                    onClick={() => handleClick()}
-                                    className="btn btn btn btn-success"
-                                    disabled={disableGerar}
-                                >
-                                    Gerar
-                                </button>
-                            </div>
-                        ):
+                        {
+                            consolidadoDre.habilita_botao_gerar ? (
+                                <div className="p-2 bd-highlight">
+                                    <button
+                                        onClick={() => handleClick()}
+                                        className="btn btn btn btn-success"
+                                        disabled={disableGerar}
+                                    >
+                                        Gerar
+                                    </button>
+                                </div>
+                            ):
 
-                            <div className="p-2 bd-highlight font-weight-normal" data-html={true} data-tip={consolidadoDre.texto_tool_tip_botao_gerar}>
-                                <button
-                                    onClick={!consolidadoDre.eh_consolidado_de_publicacoes_parciais ? () => setShowPublicarRelatorioConsolidado(true) : ()=>publicarConsolidadoDePublicacoesParciais()}
-                                    className="btn btn btn btn-success"
-                                    disabled={true}
-                                >
-                                    Gerar
-                                </button>
-                                <ReactTooltip html={true}/>
-                            </div>
+                            (!consolidadoDre.eh_consolidado_de_publicacoes_parciais &&
+                                (<div className="p-2 bd-highlight font-weight-normal" data-html={true} data-tip={consolidadoDre.texto_tool_tip_botao_gerar}>
+                                    <button
+                                        onClick={() => setShowPublicarRelatorioConsolidado(true)}
+                                        className="btn btn btn btn-success"
+                                        disabled={true}
+                                    >
+                                        Gerar
+                                    </button>
+                                    <ReactTooltip html={true}/>
+                                </div>)
+                            )
                         }
 
-                    </>
+                    </>)
                 }
                 <BotaoMarcarPublicacaoNoDiarioOficial
                     consolidadoDre={consolidadoDre}

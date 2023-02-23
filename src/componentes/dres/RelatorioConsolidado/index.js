@@ -8,7 +8,6 @@ import {
     getTrilhaStatus,
     postGerarPreviaConsolidadoDre,
     getConsolidadosDreJaPublicadosProximaPublicacao,
-    postPublicarConsolidadoDePublicacoesParciais,
     getStatusRelatorioConsolidadoDePublicacoesParciais,
 } from "../../../services/dres/RelatorioConsolidado.service";
 import {getPeriodos} from "../../../services/dres/Dashboard.service";
@@ -51,6 +50,7 @@ const RelatorioConsolidado = () => {
 
     const [trilhaStatus, setTrilhaStatus] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [loadingRelatorioConsolidado, setLoadingRelatorioConsolidado] = useState(false);
     const [disableGerar, setDisableGerar] = useState(true);
 
     const carregaPeriodos = useCallback(async () => {
@@ -165,14 +165,14 @@ const RelatorioConsolidado = () => {
 
     useEffect(() => {
         if (statusProcessamentoRelatorioConsolidadoDePublicacoesParciais && statusProcessamentoRelatorioConsolidadoDePublicacoesParciais === "EM_PROCESSAMENTO") {
-            setLoading(true)
+            setLoadingRelatorioConsolidado(true)
             const timer = setInterval(() => {
                 retornaStatusProcessamentoRelatorioConsolidadoDePublicacoesParciais();
-            }, 5000);
+            }, 6000);
             // clearing interval
             return () => clearInterval(timer);
         } else {
-            setLoading(false);
+            setLoadingRelatorioConsolidado(false);
         }
     }, [statusProcessamentoRelatorioConsolidadoDePublicacoesParciais, retornaStatusProcessamentoRelatorioConsolidadoDePublicacoesParciais]);
 
@@ -283,29 +283,12 @@ const RelatorioConsolidado = () => {
             } else {
                 let publicar = await postPublicarConsolidadoDre(payload);
                 setStatusProcessamentoConsolidadoDre(publicar.status);
+                setStatusProcessamentoRelatorioConsolidadoDePublicacoesParciais('EM_PROCESSAMENTO');
+                await carregaConsolidadosDreJaPublicadosProximaPublicacao()
             }
-            await carregaConsolidadosDreJaPublicadosProximaPublicacao()
         } catch (e) {
             console.log("Erro ao publicar Consolidado Dre ", e)
         }
-    }
-
-    const publicarConsolidadoDePublicacoesParciais = async () => {
-        let payload = {
-            dre_uuid: dre_uuid,
-            periodo_uuid: periodoEscolhido
-        }
-        try {
-            await postPublicarConsolidadoDePublicacoesParciais(payload);
-
-            let status = await getStatusRelatorioConsolidadoDePublicacoesParciais(dre_uuid, periodoEscolhido)
-
-            setStatusProcessamentoRelatorioConsolidadoDePublicacoesParciais(status.status);
-
-        } catch (e) {
-            console.log("Erro ao publicar Consolidado de Publicações Parciais ", e)
-        }
-        await carregaConsolidadosDreJaPublicadosProximaPublicacao()
     }
 
     const publicarRetificacao = async (consolidado_dre) => {
@@ -323,8 +306,9 @@ const RelatorioConsolidado = () => {
             } else {
                 let publicar = await postPublicarConsolidadoDre(payload);
                 setStatusProcessamentoConsolidadoDre(publicar.status);
+                setStatusProcessamentoRelatorioConsolidadoDePublicacoesParciais('EM_PROCESSAMENTO');
+                await carregaConsolidadosDreJaPublicadosProximaPublicacao()
             }
-            await carregaConsolidadosDreJaPublicadosProximaPublicacao()
         } catch (e) {
             console.log("Erro ao publicar Consolidado Dre ", e)
         }
@@ -401,7 +385,7 @@ const RelatorioConsolidado = () => {
                                     retornaCorCirculoTrilhaStatus={retornaCorCirculoTrilhaStatus}
                                     eh_circulo_duplo={eh_circulo_duplo}
                                 />
-                                {loading ? (
+                                {loading || loadingRelatorioConsolidado ? (
                                         <div className="mt-5">
                                             <Loading
                                                 corGrafico="black"
@@ -419,7 +403,6 @@ const RelatorioConsolidado = () => {
                                             <div className='mt-3'>
                                                 <PublicarDocumentos
                                                     publicarConsolidadoDre={publicarConsolidadoDre}
-                                                    publicarConsolidadoDePublicacoesParciais={publicarConsolidadoDePublicacoesParciais}
                                                     podeGerarPrevia={podeGerarPrevia}
                                                     consolidadoDre={consolidadoDreProximaPublicacao}
                                                     execucaoFinanceira={execucaoFinanceira}
@@ -431,6 +414,7 @@ const RelatorioConsolidado = () => {
                                                     setShowPublicarRetificacao={setShowPublicarRetificacao}
                                                     periodoEscolhido={periodoEscolhido}
                                                     gerarPreviaRetificacao={gerarPreviaRetificacao}
+                                                    removerBtnGerar={consolidadoDreProximaPublicacao.eh_consolidado_de_publicacoes_parciais}
                                                 >
                                                     <PreviaDocumentos
                                                         gerarPreviaConsolidadoDre={gerarPreviaConsolidadoDre}
