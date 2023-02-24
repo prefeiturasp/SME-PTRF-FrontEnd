@@ -340,22 +340,6 @@ export const FormularioEditaAta = ({listaPresentesPadrao, listaPresentes, stateF
 
                                     </FieldArray>
 
-                                    <p className="titulo-comentarios mt-5">Comentários <span className="titulo-comentarios-opcional">(opcional)</span></p>
-                                    <div className="form-row">
-                                        <div className="col-12">
-                                            <label htmlFor="stateFormEditarAta.comentarios" className="mb-0">Utilize esse campo para registrar possíveis dúvidas, discussões, esclarecimentos aparecidos durante a reunião</label>
-                                            <textarea
-                                                rows="3"
-                                                placeholder="Escreva seu texto aqui"
-                                                value={values.stateFormEditarAta.comentarios ? values.stateFormEditarAta.comentarios : ''}
-                                                onChange={props.handleChange}
-                                                name="stateFormEditarAta.comentarios"
-                                                className="form-control mt-2"
-                                                disabled={!podeEditarAta}
-                                            />
-                                        </div>
-                                    </div>
-
                                     {values.stateFormEditarAta.eh_retificacao &&
                                         <div className="form-row">
                                             <div className="col-12">
@@ -377,6 +361,22 @@ export const FormularioEditaAta = ({listaPresentesPadrao, listaPresentes, stateF
                                             </div>
                                         </div>
                                     }
+
+                                    <p className="titulo-comentarios mt-5">Comentários <span className="titulo-comentarios-opcional">(opcional)</span></p>
+                                    <div className="form-row">
+                                        <div className="col-12">
+                                            <label htmlFor="stateFormEditarAta.comentarios" className="mb-0">Utilize esse campo para registrar possíveis dúvidas, discussões, esclarecimentos aparecidos durante a reunião</label>
+                                            <textarea
+                                                rows="3"
+                                                placeholder="Escreva seu texto aqui"
+                                                value={values.stateFormEditarAta.comentarios ? values.stateFormEditarAta.comentarios : ''}
+                                                onChange={props.handleChange}
+                                                name="stateFormEditarAta.comentarios"
+                                                className="form-control mt-2"
+                                                disabled={!podeEditarAta}
+                                            />
+                                        </div>
+                                    </div>
 
                                 </form>
                             </>
