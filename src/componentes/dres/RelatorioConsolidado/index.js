@@ -126,6 +126,7 @@ const RelatorioConsolidado = () => {
         if (dre_uuid && periodoEscolhido) {
             try {
                 let status = await getStatusRelatorioConsolidadoDePublicacoesParciais(dre_uuid, periodoEscolhido)
+
                 if (status && status.status) {
                     setStatusProcessamentoRelatorioConsolidadoDePublicacoesParciais(status.status)
                 }
@@ -263,23 +264,22 @@ const RelatorioConsolidado = () => {
             console.log("Erro ao publicar Consolidado Dre ", e)
         }
     }
-
     const publicarConsolidadoDePublicacoesParciais = async () => {
         let payload = {
             dre_uuid: dre_uuid,
             periodo_uuid: periodoEscolhido
         }
         try {
-            await postPublicarConsolidadoDePublicacoesParciais(payload);
+            let publicar = await postPublicarConsolidadoDePublicacoesParciais(payload);
 
-            let status = await getStatusRelatorioConsolidadoDePublicacoesParciais(dre_uuid, periodoEscolhido)
+            setStatusProcessamentoRelatorioConsolidadoDePublicacoesParciais(publicar.status);
 
-            setStatusProcessamentoRelatorioConsolidadoDePublicacoesParciais(status.status);
+            await carregaConsolidadosDreJaPublicadosProximaPublicacao()
 
         } catch (e) {
             console.log("Erro ao publicar Consolidado de Publicações Parciais ", e)
         }
-        await carregaConsolidadosDreJaPublicadosProximaPublicacao()
+
     }
 
     const gerarPreviaConsolidadoDre = async () => {
