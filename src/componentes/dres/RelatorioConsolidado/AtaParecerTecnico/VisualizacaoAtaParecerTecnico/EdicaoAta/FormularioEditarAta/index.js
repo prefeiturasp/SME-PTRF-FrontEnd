@@ -350,14 +350,9 @@ export const FormularioEditaAta = ({listaPresentesPadrao, listaPresentes, stateF
                                                     value={values.stateFormEditarAta.motivo_retificacao ? values.stateFormEditarAta.motivo_retificacao : ''}
                                                     onChange={props.handleChange}
                                                     name="stateFormEditarAta.motivo_retificacao"
-                                                    className={`form-control mt-2 ${values.stateFormEditarAta.motivo_retificacao === "" && 'is-invalid'}`}
+                                                    className={`form-control mt-2`}
                                                     disabled={!podeEditarAta}
                                                 />
-
-                                                {values.stateFormEditarAta.motivo_retificacao === "" &&
-                                                    <p className='mt-1 mb-0'><span className="text-danger">Motivo da retificação é obrigatório</span></p>
-                                                }
-
                                             </div>
                                         </div>
                                     }
