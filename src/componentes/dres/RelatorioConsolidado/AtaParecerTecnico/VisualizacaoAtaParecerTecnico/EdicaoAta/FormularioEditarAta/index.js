@@ -340,6 +340,23 @@ export const FormularioEditaAta = ({listaPresentesPadrao, listaPresentes, stateF
 
                                     </FieldArray>
 
+                                    {values.stateFormEditarAta.eh_retificacao &&
+                                        <div className="form-row">
+                                            <div className="col-12">
+                                                <label htmlFor="stateFormEditarAta.motivo_retificacao" className="mb-0 mt-4">Motivo da retificação</label>
+                                                <textarea
+                                                    rows="3"
+                                                    placeholder="Escreva seu texto aqui"
+                                                    value={values.stateFormEditarAta.motivo_retificacao ? values.stateFormEditarAta.motivo_retificacao : ''}
+                                                    onChange={props.handleChange}
+                                                    name="stateFormEditarAta.motivo_retificacao"
+                                                    className={`form-control mt-2`}
+                                                    disabled={!podeEditarAta}
+                                                />
+                                            </div>
+                                        </div>
+                                    }
+
                                     <p className="titulo-comentarios mt-5">Comentários <span className="titulo-comentarios-opcional">(opcional)</span></p>
                                     <div className="form-row">
                                         <div className="col-12">
@@ -355,28 +372,6 @@ export const FormularioEditaAta = ({listaPresentesPadrao, listaPresentes, stateF
                                             />
                                         </div>
                                     </div>
-
-                                    {values.stateFormEditarAta.eh_retificacao &&
-                                        <div className="form-row">
-                                            <div className="col-12">
-                                                <label htmlFor="stateFormEditarAta.motivo_retificacao" className="mb-0 mt-4">Motivo da retificação</label>
-                                                <textarea
-                                                    rows="3"
-                                                    placeholder="Escreva seu texto aqui"
-                                                    value={values.stateFormEditarAta.motivo_retificacao ? values.stateFormEditarAta.motivo_retificacao : ''}
-                                                    onChange={props.handleChange}
-                                                    name="stateFormEditarAta.motivo_retificacao"
-                                                    className={`form-control mt-2 ${values.stateFormEditarAta.motivo_retificacao === "" && 'is-invalid'}`}
-                                                    disabled={!podeEditarAta}
-                                                />
-
-                                                {values.stateFormEditarAta.motivo_retificacao === "" &&
-                                                    <p className='mt-1 mb-0'><span className="text-danger">Motivo da retificação é obrigatório</span></p>
-                                                }
-
-                                            </div>
-                                        </div>
-                                    }
 
                                 </form>
                             </>
