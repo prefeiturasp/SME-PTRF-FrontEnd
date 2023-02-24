@@ -90,12 +90,7 @@ export const EdicaoAtaParecerTecnico = () => {
         }
 
         if(dadosForm.stateFormEditarAta.eh_retificacao){
-            if(dadosForm.stateFormEditarAta.motivo_retificacao === ""){
-                pode_salvar = false;
-            }
-            else{
-                payload.motivo_retificacao = dadosForm.stateFormEditarAta.motivo_retificacao;
-            }
+            payload.motivo_retificacao = dadosForm.stateFormEditarAta.motivo_retificacao;
         }
 
         if(pode_salvar){
