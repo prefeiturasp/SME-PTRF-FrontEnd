@@ -24,7 +24,7 @@ const Cabecalho = ({prestacaoDeContas, exibeSalvar, metodoSalvarAnalise, btnSalv
     }, [prestacaoDeContas])
 
     const verificaPublicacao = useCallback( () => {
-    if (prestacaoDeContas.publicada){
+    if (prestacaoDeContas && prestacaoDeContas.publicada && !prestacaoDeContas.em_retificacao){
         setPcPublicada(true)
         let textoPublicacao = `Essa PC consta da Publicação ${prestacaoDeContas.referencia_consolidado_dre}`
         setPublicacaoTexto(textoPublicacao)
@@ -32,8 +32,15 @@ const Cabecalho = ({prestacaoDeContas, exibeSalvar, metodoSalvarAnalise, btnSalv
     }, [prestacaoDeContas])
 
     const verificaRetificacao = useCallback( () => {
-        if (prestacaoDeContas.em_retificacao){
-            let textoRetificacao = `Essa PC consta da ${prestacaoDeContas.referencia_consolidado_dre}`
+        if (prestacaoDeContas && prestacaoDeContas.em_retificacao && prestacaoDeContas.status){
+            let textoRetificacao = ""
+            if(prestacaoDeContas.status === "RECEBIDA" || prestacaoDeContas.status === "EM_ANALISE") {
+                textoRetificacao = `Essa PC consta da Publicação ${prestacaoDeContas.referencia_consolidado_dre_original}`
+            } else if ((prestacaoDeContas.status === "APROVADA" || prestacaoDeContas.status === "REPROVADA" || prestacaoDeContas.status === "APROVADA_RESSALVA") && !prestacaoDeContas.publicada) {
+                textoRetificacao = `Essa PC constará da ${prestacaoDeContas.referencia_consolidado_dre}`
+            } else if (prestacaoDeContas.publicada){
+                textoRetificacao = `Essa PC consta da ${prestacaoDeContas.referencia_consolidado_dre}`
+            }
             setRetificacaoTexto(textoRetificacao);
         }
     }, [prestacaoDeContas])
