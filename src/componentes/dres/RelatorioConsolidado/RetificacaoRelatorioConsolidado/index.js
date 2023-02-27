@@ -41,7 +41,6 @@ const RetificacaoRelatorioConsolidado = () => {
     const [pcsEmRetificacao, setPcsEmRetificacao] = useState(false);
     const [quantidadeSelecionada, setQuantidadeSelecionada] = useState(0);
     const [quantidadeSelecionadaEmRetificacao, setQuantidadeSelecionadaEmRetificacao] = useState(0);
-    const [formErrors, setFormErrors] = useState({})
     const [showModal, setShowModal] = useState(false);
     const [showModalDesfazerRetificacao, setShowModalDesfazerRetificacao] = useState(false);
     const [showModalDeveApagarRetificacao, setShowModalDeveApagarRetificacao] = useState(false);
@@ -494,19 +493,6 @@ const RetificacaoRelatorioConsolidado = () => {
         )
     }
 
-    const validateFormRetificacao = async(values) => {
-        const errors = {};
-
-        if(values.motivo_retificacao === undefined || values.motivo_retificacao === "" || values.motivo_retificacao === null){
-            errors.motivo_retificacao = "Campo motivo da retificação é obrigatório";
-            setEstadoBotaoSalvarMotivo(false);
-        }
-
-        setFormErrors(errors);
-
-        return errors;
-    }
-
     const handleSubmitFiltros = async(values) => {
         setLoadingPcsDoConsolidado(true);
         let prestacoes_de_contas = null;
@@ -708,27 +694,19 @@ const RetificacaoRelatorioConsolidado = () => {
     }
 
     const disparaModalDesfazerRetificacao = async() => {
-        let erros = await validateFormRetificacao(formRef.current.values);
+        let pcs_selecionadas = pcsEmRetificacao.filter((item) => (item.selecionado === true));
+        let deve_apagar = pcs_selecionadas.length === pcsEmRetificacao.length;
 
-        if(erros && !erros.motivo_retificacao){
-            let pcs_selecionadas = pcsEmRetificacao.filter((item) => (item.selecionado === true));
-            let deve_apagar = pcs_selecionadas.length === pcsEmRetificacao.length;
-    
-            if(deve_apagar){
-                setShowModalDeveApagarRetificacao(true);
-            }
-            else{
-                setShowModalDesfazerRetificacao(true);
-            }
-        }  
+        if(deve_apagar){
+            setShowModalDeveApagarRetificacao(true);
+        }
+        else{
+            setShowModalDesfazerRetificacao(true);
+        }
     }
 
     const disparaModalRetificar = async() => {
-        let erros = await validateFormRetificacao(formRef.current.values);
-
-        if(erros && !erros.motivo_retificacao){
-            setShowModal(true);
-        } 
+        setShowModal(true);
     }
 
     return (
@@ -755,12 +733,10 @@ const RetificacaoRelatorioConsolidado = () => {
 
                             <MotivoRetificacao
                                 relatorioConsolidado={relatorioConsolidado}
-                                validateFormRetificacao={validateFormRetificacao}
                                 handleEditarMotivoRetificacao={handleEditarMotivoRetificacao}
                                 estadoBotaoSalvarMotivo={estadoBotaoSalvarMotivo}
                                 mudarEstadoBotaoSalvarMotivo={mudarEstadoBotaoSalvarMotivo}
                                 ehEdicaoRetificacao={ehEdicaoRetificacao}
-                                formErrors={formErrors}
                                 formRef={formRef}
                             />
                             
