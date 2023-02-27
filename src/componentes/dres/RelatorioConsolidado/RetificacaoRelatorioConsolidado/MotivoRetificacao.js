@@ -3,7 +3,7 @@ import {Formik} from "formik";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCheck} from "@fortawesome/free-solid-svg-icons";
 
-export const MotivoRetificacao = ({relatorioConsolidado, validateFormRetificacao, handleEditarMotivoRetificacao, estadoBotaoSalvarMotivo, mudarEstadoBotaoSalvarMotivo, ehEdicaoRetificacao, formErrors, formRef}) => {
+export const MotivoRetificacao = ({relatorioConsolidado, handleEditarMotivoRetificacao, estadoBotaoSalvarMotivo, mudarEstadoBotaoSalvarMotivo, ehEdicaoRetificacao, formRef}) => {
     const [mostrarCheckSalvo, setMostrarCheckSalvo] = useState(false)
 
     const handleChangeTextareaMotivoRetificacao = (props, motivo, event) => {
@@ -22,13 +22,11 @@ export const MotivoRetificacao = ({relatorioConsolidado, validateFormRetificacao
                 enableReinitialize={true}
                 validateOnBlur={true}
                 validateOnChange={true}
-                validate={validateFormRetificacao}
                 innerRef={formRef}
             >
                 {props => {
                     const {
                         values,
-                        errors
                     } = props;
                     return(
                         <>
@@ -36,15 +34,12 @@ export const MotivoRetificacao = ({relatorioConsolidado, validateFormRetificacao
                                 <label className="referencia-e-periodo-relatorio" htmlFor="motivo_retificacao">Motivo da retificação:</label>
                                 <textarea
                                     name='motivo_retificacao'
-                                    value={values.motivo_retificacao ? values.motivo_retificacao : undefined}
+                                    value={values.motivo_retificacao ? values.motivo_retificacao : ''}
                                     onChange={(event) => handleChangeTextareaMotivoRetificacao(props, values.motivo_retificacao, event)}
-                                    className={`form-control ${formErrors && formErrors.motivo_retificacao && 'is-invalid'}`}
+                                    className={`form-control`}
                                     rows="4"
                                 
                                 />
-                                {formErrors && formErrors.motivo_retificacao &&
-                                    <span className="span_erro text-danger mt-1"> {formErrors.motivo_retificacao}</span>
-                                }
                             </div>
                             <div className="col-12 align-items-end mt-2">
                                 <div className="bd-highlight d-flex justify-content-end align-items-center" id="pointer-event-all">
