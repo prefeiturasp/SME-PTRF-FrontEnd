@@ -50,6 +50,11 @@ export const DetalharAcertos = () => {
         let mounted = true;
 
         const carregaTiposDeAcertoLancamentos = async () => {
+            const categoriasQueSoAceitamGatos = [
+                'DEVOLUCAO',
+                'CONCILIACAO_LANCAMENTO',
+                'DESCONCILIACAO_LANCAMENTO'
+            ];
             if (mounted){
                 setLoading(true)
                 let tipos_de_acerto_lancamentos_agrupado = await getTiposDeAcertoLancamentosAgrupadoCategoria()
@@ -57,7 +62,7 @@ export const DetalharAcertos = () => {
                 
                 let tem_gasto = verificaSeTemLancamentosDoTipoGasto()
                 if (!tem_gasto) {
-                    tipos_de_acerto_lancamentos_agrupado = tipos_de_acerto_lancamentos_agrupado.filter(elemento => elemento.id !== 'DEVOLUCAO')
+                    tipos_de_acerto_lancamentos_agrupado = tipos_de_acerto_lancamentos_agrupado.filter(elemento => !categoriasQueSoAceitamGatos.includes(elemento.id))
                 }
 
                 setListaTiposDeAcertoLancamentosAgrupado(tipos_de_acerto_lancamentos_agrupado)
