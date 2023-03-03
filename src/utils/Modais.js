@@ -12,6 +12,7 @@ import {
 import {FormAlterarSenha} from "../componentes/Globais/EdicaoDeSenha/FormAlterarSenha";
 import {TextoValidacaoSenha} from "../componentes/Globais/MedidorForcaSenha/textoValidacaoSenha";
 import {FormAlterarEmail} from "../componentes/Globais/FormAlterarEmail";
+import {Button} from "react-bootstrap";
 
 
 export const AvisoCapitalModal = (propriedades) => {
@@ -758,25 +759,78 @@ export const ModalPublicarRetificacao = (propriedades) => {
     )
 };
 
+
 export const ModalPublicarRetificacaoPendente = (propriedades) => {
-    const bodyTextarea = () => {
+    let bodyTextarea = () => {
         return (
             <>
                 <p>
-                    O consolidado não pode ser gerado. 
+                    <strong>O consolidado não pode ser gerado.</strong>
+                </p>
+                <p className="mt-3">
+                    Para gera-lo preencha o campo "Justificativa da diferença entre o valor previsto pela SME e o transferido pela DRE no período" do Demonstrativo da Execução Físico-Financeira.
                 </p>
 
-                <p className="mt-3">
-                    Preencha o campo "Justificativa da diferença entre o valor previsto pela SME e o transferido pela DRE no período" do Demonstrativo da Execução Físico-Financeira.
-                </p>
-
-                <p className="mt-3">
-                Após o preenchimento desse campo, o consolidado estará disponível para geração. 
-                </p>
+                <p className="mt-3">Aṕos o preenchimento desse campo, o consolidado estará disponível para geração.</p>
             </>
         )
+    }
 
-    };
+    if(propriedades.secaoMotivoRetificacao && propriedades.secaoJustificativa) {
+        bodyTextarea = () => {
+            return (
+                <>
+                    <p>
+                        <strong>Existem pendências para a geração do consolidado.</strong>
+                    </p>
+                    <p className="mt-3">
+                        Preencha o campo "Justificativa da diferença entre o valor previsto pela SME e o transferido pela DRE no período" do Demonstrativo da Execução Físico-Financeira.
+                    </p>
+                    <div className="d-flex justify-content-end">
+                        <Button variant="outline-success" onClick={() => {
+                        propriedades.redirecionaJustifica()
+                        }}>Editar Justificativa</Button>
+                    </div>
+                    
+
+                    <p className="mt-3">
+                        Preencha o campo "Motivo da retificação" (disponível nas opções Editar Retificação ou Editar ata).
+                    </p>
+
+                    <div className="d-flex justify-content-end">
+                        <Button variant="outline-success" onClick={() => {
+                            propriedades.redirecionaMotivo()
+                        }}>Editar Motivo</Button>
+                    </div>
+                </>
+            )
+        }
+    
+        return (
+            <ModalBootstrapConfirmarPublicacao
+                show={propriedades.show}
+                onHide={propriedades.handleClose}
+                titulo="Pendências para a Geração do Consolidado"
+                bodyText={bodyTextarea()}
+                primeiroBotaoOnclick={propriedades.handleClose}
+                primeiroBotaoTexto="Cancelar"
+                primeiroBotaoCss="outline-success"
+            />
+        )
+    } else if (propriedades.secaoMotivoRetificacao) {
+        bodyTextarea = () => {
+            return (
+                <>
+                    <p>
+                        <strong>O consolidado não pode ser gerado.</strong>
+                    </p>
+                    <p className="mt-3">
+                        Para gera-lo preencha o campo "Motivo da retificação" (disponível nas opções Retificação ou Editar ata).
+                    </p>
+                </>
+            )
+        }
+    }
 
     return (
         <ModalBootstrapConfirmarPublicacao
@@ -785,8 +839,11 @@ export const ModalPublicarRetificacaoPendente = (propriedades) => {
             titulo="Pendência para a Geração do Consolidado"
             bodyText={bodyTextarea()}
             primeiroBotaoOnclick={propriedades.handleClose}
-            primeiroBotaoTexto="Cancelar"
+            primeiroBotaoTexto="Fechar"
             primeiroBotaoCss="outline-success"
+            segundoBotaoOnclick={() => {propriedades.secaoMotivoRetificacao ? propriedades.redirecionaMotivo() : propriedades.redirecionaJustifica()}}
+            segundoBotaoTexto={`${propriedades.secaoMotivoRetificacao ? 'Editar Motivo' : 'Editar Justificativa'}`}
+            segundoBotaoCss="success"
         />
     )
 };
