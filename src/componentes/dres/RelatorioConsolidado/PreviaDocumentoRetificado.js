@@ -4,6 +4,7 @@ import { ModalPublicarRetificacao } from "../../../utils/Modais";
 import { ModalPublicarRetificacaoPendente } from "../../../utils/Modais";
 import { visoesService } from "../../../services/visoes.service";
 import { getExecucaoFinanceira } from "../../../services/dres/RelatorioConsolidado.service";
+import {postCriarAtaAtrelarAoConsolidadoDre} from "../../../services/dres/RelatorioConsolidado.service";
 
 
 const PreviaDocumentoRetificado = ({consolidadoDre, todasAsPcsDaRetificacaoConcluidas, publicarRetificacao, periodoEscolhido, gerarPreviaRetificacao}) => {
@@ -11,6 +12,9 @@ const PreviaDocumentoRetificado = ({consolidadoDre, todasAsPcsDaRetificacaoConcl
     const [showPublicarRetificacao, setShowPublicarRetificacao] = useState(false)
     const [execucaoFinanceiraRetificacao, setExecucaoFinanceiraRetificacao] = useState({});
     const [alertaJustificativaRetificacao, setAlertaJustificativaRetificacao] = useState(true)
+
+    const [adicionarSecaoJustificativaNoModal, setAdicionaSecaoJustificativaNoModal] = useState(false);
+    const [adicionarSecaoMotivoRetificacaoNoModal, setAdicionaSecaoMotivoRetificacaoNoModal] = useState(false);
 
     const carregaExecucaoFinanceiraRetificacao = useCallback(async () => {
         const dre_uuid = visoesService.getItemUsuarioLogado('associacao_selecionada.uuid');
@@ -40,19 +44,55 @@ const PreviaDocumentoRetificado = ({consolidadoDre, todasAsPcsDaRetificacaoConcl
     };
 
     const handleClick = () => {
-        if(!consolidadoDre.eh_consolidado_de_publicacoes_parciais) {
-            const isJustificativaTexto = execucaoFinanceiraRetificacao?.por_tipo_de_conta?.some((fisicoFinanceiro) => fisicoFinanceiro.justificativa_texto)
+        let carregamentoExecucaoFinanceiraTerminou = !(Object.keys(execucaoFinanceiraRetificacao).length === 0 && execucaoFinanceiraRetificacao.constructor === Object)
+        
+        if(!consolidadoDre.eh_consolidado_de_publicacoes_parciais && carregamentoExecucaoFinanceiraTerminou) {
+            const temDiferencaDeValores = execucaoFinanceiraRetificacao?.por_tipo_de_conta?.some((fisicoFinanceiro) => comparaValores(fisicoFinanceiro.valores));
 
-            if(isJustificativaTexto){
+            const justificativaPreenchida = execucaoFinanceiraRetificacao?.por_tipo_de_conta?.some((fisicoFinanceiro) => fisicoFinanceiro.justificativa_texto);
+
+            const motivoRetificacaoPreenchido = consolidadoDre.motivo_retificacao;
+
+            if((!temDiferencaDeValores || justificativaPreenchida) && motivoRetificacaoPreenchido) {
                 setAlertaJustificativaRetificacao(false);
-                setShowPublicarRetificacao(true);
-            } else if (!execucaoFinanceiraRetificacao?.por_tipo_de_conta?.some((fisicoFinanceiro) => comparaValores(fisicoFinanceiro.valores))){
-                setAlertaJustificativaRetificacao(false);
-                setShowPublicarRetificacao(true);
+                return setShowPublicarRetificacao(true);
             }
-            else{
-                setShowPublicarRetificacaoPendente(true)
-            } 
+
+            if(!motivoRetificacaoPreenchido) {
+                setAdicionaSecaoMotivoRetificacaoNoModal(true);
+            }
+
+            if(temDiferencaDeValores && !justificativaPreenchida) {
+                setAdicionaSecaoJustificativaNoModal(true); 
+            }
+
+            return setShowPublicarRetificacaoPendente(true);
+        }
+    }
+
+    const criarAtaAtrelarAoConsolidado = async() => {
+        let payload = {
+            dre: consolidadoDre.dre_uuid,
+            periodo: consolidadoDre.periodo_uuid,
+            consolidado: consolidadoDre.uuid,
+        }
+        try {
+            let ata = await postCriarAtaAtrelarAoConsolidadoDre(payload)
+            return window.location.assign(`/edicao-da-ata-parecer-tecnico/${ata.uuid}`)
+        }catch (e) {
+            console.log("Erro ao criar a Ata - criarAtaAtrelarAoConsolidado", e)
+        }
+    }
+
+    const redirecionaPreenchimentoPendencias = (pendenciaSelecionada) => {
+        if(pendenciaSelecionada === 'justificacao') {
+            return window.location.assign(`/dre-relatorio-consolidado-em-tela/${consolidadoDre.periodo_uuid}/${consolidadoDre.ja_publicado}/${consolidadoDre.uuid}`)
+        }
+
+        if(pendenciaSelecionada === 'motivo' && consolidadoDre.ata_de_parecer_tecnico && consolidadoDre.ata_de_parecer_tecnico.uuid) {
+            return window.location.assign(`/edicao-da-ata-parecer-tecnico/${consolidadoDre.ata_de_parecer_tecnico.uuid}/`)
+        } else if(pendenciaSelecionada === 'motivo') {
+            return criarAtaAtrelarAoConsolidado();
         }
     }
 
@@ -95,6 +135,10 @@ const PreviaDocumentoRetificado = ({consolidadoDre, todasAsPcsDaRetificacaoConcl
                         <ModalPublicarRetificacaoPendente
                             show={showPublicarRetificacaoPendente}
                             handleClose={()=>setShowPublicarRetificacaoPendente(false)}
+                            secaoMotivoRetificacao={adicionarSecaoMotivoRetificacaoNoModal}
+                            secaoJustificativa={adicionarSecaoJustificativaNoModal}
+                            redirecionaMotivo={()=>redirecionaPreenchimentoPendencias('motivo')}
+                            redirecionaJustifica={()=>redirecionaPreenchimentoPendencias('justificacao')}
                         />
                     </section>
                 </>
