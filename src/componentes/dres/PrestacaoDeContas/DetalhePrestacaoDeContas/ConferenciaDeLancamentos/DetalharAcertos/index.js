@@ -38,11 +38,13 @@ export const DetalharAcertos = () => {
     const totalDelancamentosParaConferencia = useMemo(() => lancamentos_para_acertos.length, [lancamentos_para_acertos]);
 
     const verificaSeTemLancamentosDoTipoGasto = useCallback(() => {
-        let tem_gasto
+        let tem_gasto, tem_gasto_conferido, tem_gasto_nao_conferido
         if (lancamentos_para_acertos) {
-            tem_gasto = lancamentos_para_acertos.find(elemento => elemento.tipo_transacao === 'Gasto')
+            tem_gasto_conferido = lancamentos_para_acertos.find(elemento => elemento.tipo_transacao === 'Gasto' && elemento.documento_mestre.conferido === true) !== undefined;
+            tem_gasto_nao_conferido = lancamentos_para_acertos.find(elemento => elemento.tipo_transacao === 'Gasto' && elemento.documento_mestre.conferido === false) !== undefined;
+            tem_gasto = tem_gasto_conferido || tem_gasto_nao_conferido
         }
-        return tem_gasto
+        return [tem_gasto, tem_gasto_conferido, tem_gasto_nao_conferido]
     }, [lancamentos_para_acertos])
 
     useEffect(() => {
@@ -50,25 +52,46 @@ export const DetalharAcertos = () => {
         let mounted = true;
 
         const carregaTiposDeAcertoLancamentos = async () => {
+            if (!mounted) {
+                return;
+            }
+
             const categoriasQueSoAceitamGatos = [
                 'DEVOLUCAO',
                 'CONCILIACAO_LANCAMENTO',
                 'DESCONCILIACAO_LANCAMENTO'
             ];
-            if (mounted){
-                setLoading(true)
-                let tipos_de_acerto_lancamentos_agrupado = await getTiposDeAcertoLancamentosAgrupadoCategoria()
-                tipos_de_acerto_lancamentos_agrupado = tipos_de_acerto_lancamentos_agrupado.agrupado_por_categorias
-                
-                let tem_gasto = verificaSeTemLancamentosDoTipoGasto()
-                if (!tem_gasto) {
-                    tipos_de_acerto_lancamentos_agrupado = tipos_de_acerto_lancamentos_agrupado.filter(elemento => !categoriasQueSoAceitamGatos.includes(elemento.id))
-                }
 
-                setListaTiposDeAcertoLancamentosAgrupado(tipos_de_acerto_lancamentos_agrupado)
-                setLoading(false)
+            const categoriasQueSoAceitamConferidos= [
+                'DESCONCILIACAO_LANCAMENTO'
+            ];
+
+            const categoriasQueSoAceitamNaoConferidos = [
+                'CONCILIACAO_LANCAMENTO'
+            ];
+
+            setLoading(true)
+            let tipos_de_acerto_lancamentos_agrupado = await getTiposDeAcertoLancamentosAgrupadoCategoria()
+            tipos_de_acerto_lancamentos_agrupado = tipos_de_acerto_lancamentos_agrupado.agrupado_por_categorias
+
+            let [tem_gasto, tem_gasto_conferido, tem_gasto_nao_conferido] = verificaSeTemLancamentosDoTipoGasto()
+            if (!tem_gasto) {
+                tipos_de_acerto_lancamentos_agrupado = tipos_de_acerto_lancamentos_agrupado.filter(elemento => !categoriasQueSoAceitamGatos.includes(elemento.id))
             }
+
+            if (tem_gasto && !tem_gasto_conferido) {
+                tipos_de_acerto_lancamentos_agrupado = tipos_de_acerto_lancamentos_agrupado.filter(elemento => !categoriasQueSoAceitamConferidos.includes(elemento.id))
+            }
+
+            if (tem_gasto && !tem_gasto_nao_conferido) {
+                tipos_de_acerto_lancamentos_agrupado = tipos_de_acerto_lancamentos_agrupado.filter(elemento => !categoriasQueSoAceitamNaoConferidos.includes(elemento.id))
+            }
+
+            setListaTiposDeAcertoLancamentosAgrupado(tipos_de_acerto_lancamentos_agrupado)
+            setLoading(false)
+
         }
+
         carregaTiposDeAcertoLancamentos()
 
         return () =>{
