@@ -25,17 +25,14 @@ export const FormularioAcertos = ({solicitacoes_acerto, listaTiposDeAcertoLancam
     const {setIsValorParcialValido} = useContext(ValidarParcialTesouro)
 
     const categoriaNaoPodeRepetir = (categoria) => {
-        if(categoria.id === 'DEVOLUCAO'){
-            return true;
-        }
-        else if(categoria.id === 'EXCLUSAO_LANCAMENTO'){
-            return true;
-        }
-        else if(categoria.id === 'SOLICITACAO_ESCLARECIMENTO'){
-            return true;
-        }
-
-        return false;
+        const categoriasQueNaoPodemRepetir = [
+            'DEVOLUCAO',
+            'EXCLUSAO_LANCAMENTO',
+            'SOLICITACAO_ESCLARECIMENTO',
+            'CONCILIACAO_LANCAMENTO',
+            'DESCONCILIACAO_LANCAMENTO'
+        ];
+        return categoriasQueNaoPodemRepetir.includes(categoria.id);
     }
 
     const categoriaNaoTemItensParaExibir = (categoria) => {
