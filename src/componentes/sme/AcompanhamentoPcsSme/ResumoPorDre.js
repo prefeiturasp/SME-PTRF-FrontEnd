@@ -5,8 +5,9 @@ import {DataTable} from 'primereact/datatable';
 import {Column} from 'primereact/column';
 
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faEye, faCheckCircle, faTimesCircle} from "@fortawesome/free-solid-svg-icons";
+import {faEye} from "@fortawesome/free-solid-svg-icons";
 
+import ReactTooltip from "react-tooltip";
 
 export const ResumoPorDre = ({resumoPorDre, statusPeriodo, periodoEscolhido}) => {
 
@@ -27,27 +28,9 @@ export const ResumoPorDre = ({resumoPorDre, statusPeriodo, periodoEscolhido}) =>
     };
 
     const siglaDreTemplate = (rowData) => {
-        const estiloIconeCompleto = {
-            marginRight: "0",
-            color: '#297805',
-            size: '14px'
-        };
-
-        const estiloIconeIncompleto = {
-            marginRight: "0",
-            color: '#B40C02',
-            size: '14px'
-        };
-
-
         return (
             <div>
-                <FontAwesomeIcon
-                    style={rowData.periodo_completo ? estiloIconeCompleto : estiloIconeIncompleto}
-                    icon={rowData.periodo_completo ? faCheckCircle : faTimesCircle}
-                />
                 <span style={rowData.periodo_completo ? estiloLinhaCompleta : estiloLinhaIcompleta}> {rowData.dre.sigla}</span>
-
             </div>
         )
     };
@@ -83,24 +66,12 @@ export const ResumoPorDre = ({resumoPorDre, statusPeriodo, periodoEscolhido}) =>
         return colunaTemplate(rowData.periodo_completo, rowData.cards.TOTAL_UNIDADES)
     };
 
-    const naoRecebidaTemplate = (rowData) => {
-        return colunaTemplate(rowData.periodo_completo, rowData.cards.NAO_RECEBIDA)
-    };
-
     const naoApresentadaTemplate = (rowData) => {
         return colunaTemplate(rowData.periodo_completo, rowData.cards.NAO_APRESENTADA)
     };
 
     const recebidaTemplate = (rowData) => {
         return colunaTemplate(rowData.periodo_completo, rowData.cards.RECEBIDA)
-    };
-
-    const emAnaliseTemplate = (rowData) => {
-        return colunaTemplate(rowData.periodo_completo, rowData.cards.EM_ANALISE)
-    };
-
-    const devolvidaTemplate = (rowData) => {
-        return colunaTemplate(rowData.periodo_completo, rowData.cards.DEVOLVIDA)
     };
 
     const aprovadaTemplate = (rowData) => {
@@ -115,6 +86,27 @@ export const ResumoPorDre = ({resumoPorDre, statusPeriodo, periodoEscolhido}) =>
         return colunaTemplate(rowData.periodo_completo, rowData.cards.REPROVADA)
     };
 
+    const emAnaliseHeaderTemplate = () => {
+        return (
+            <span data-html={true} data-tip={"Soma das PCs Não recebidas, Em análise e Devolvidas para acertos."} data-for="em-analise-header-id">
+                <span>Em análise</span>
+                <ReactTooltip id="em-analise-header-id" html={true}/>
+            </span>
+        )
+    }
+
+    const emAnaliseBodyTemplate = (rowData) => {
+        const quantidadeCardsEmAnalise = rowData.cards.EM_ANALISE + rowData.cards.NAO_RECEBIDA + rowData.cards.DEVOLVIDA;
+
+        const completo = rowData.periodo_completo
+
+        return (
+            <span data-html={true} data-tip={"Soma das PCs Não recebidas, Em análise e Devolvidas para acertos."} data-for="em-analise-body-id">
+                <span style={completo ? estiloLinhaCompleta : estiloLinhaIcompleta}> {quantidadeCardsEmAnalise}</span>
+                <ReactTooltip html={true} id="em-analise-body-id"/>
+            </span>
+        )
+    }
 
     return (
         <>
@@ -126,11 +118,9 @@ export const ResumoPorDre = ({resumoPorDre, statusPeriodo, periodoEscolhido}) =>
                 <Column field='dre.sigla' header='DRE' body={siglaDreTemplate}/>
                 <Column field='cards.TOTAL_UNIDADES' header='Total de Associações' body={totalUnidadesTemplate}/>
 
-                {periodoEmAndamento && <Column field='cards.NAO_RECEBIDA' header='Não recebidas' body={naoRecebidaTemplate}/>}
                 {!periodoEmAndamento && <Column field='cards.NAO_APRESENTADA' header='Não apresentadas'  body={naoApresentadaTemplate}/>}
                 {periodoEmAndamento && <Column field='cards.RECEBIDA' header='Recebidas e aguardando análise' body={recebidaTemplate}/>}
-                {periodoEmAndamento && <Column field='cards.EM_ANALISE' header='Em análise' body={emAnaliseTemplate}/>}
-                {periodoEmAndamento && <Column field='cards.DEVOLVIDA' header='Devolvidas para acerto' body={devolvidaTemplate}/>}
+                {periodoEmAndamento && <Column field='cards.EM_ANALISE' header={emAnaliseHeaderTemplate()} body={emAnaliseBodyTemplate}/>}
 
                 <Column field='cards.APROVADA' header='Aprovadas' body={aprovadaTemplate}/>
                 <Column field='cards.APROVADA_RESSALVA' header='Aprovadas com ressalvas' body={aprovadaRessalvaTemplate}/>
