@@ -100,18 +100,18 @@ export const AcompanhamentoPcsSmePorDre = (params) => {
                         <BarraDeStatusPorDiretoria
                             statusRelatorio={statusPeriodo}
                         />
-                        <div className="titulo-voltar">
-                                <h4 className="titulo-pagina-perstacao-por-dre">{params.nomeDre}</h4>
-                                <Link
-                                    to='/acompanhamento-pcs-sme'
-                                    className="btn btn-out-success"
-                                >
-                                <FontAwesomeIcon
-                                    style={{marginRight: "5px", color: '#000'}}
-                                    icon={faArrowLeft}
-                                />
-                                    Voltar
-                                </Link>
+                        <div className="titulo-voltar d-flex justify-content-between mb-3 mt-2">
+                            <h4 className="titulo-pagina-perstacao-por-dre">{params.nomeDre}</h4>
+                            
+                            <div className="d-flex align-items-center">
+                                <button onClick={()=>window.location.assign('/acompanhamento-pcs-sme')} className="btn btn-success">
+                                    <FontAwesomeIcon
+                                        style={{marginRight: "5px", color: '#fff'}}
+                                        icon={faArrowLeft}
+                                    />
+                                    <span>Voltar para painel geral</span>
+                                </button>
+                            </div>
                         </div>
                         <hr style={{marginTop: -10}}/>
                     </>

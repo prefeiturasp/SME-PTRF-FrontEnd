@@ -145,40 +145,48 @@ return (
         </FormGroup>
     </div>
     <div className="row">
-    <FormGroup className="col-md-6">
-        <label htmlFor="devolucao_tesouro">Filtrar por devolução ao tesouro</label>
-        <select
-            value={devolucaoAoTesouro}
-            onChange={(event) => setDevolucaoAoTesouro(event.target.value)}
-            name="devolucao_tesouro"
-            id="devolucao_tesouro"
-            className="form-control"
-        >
-            <option value="false">Selecione um tipo</option>
-            <option value="1">Sim</option>
-            <option value="0">Não</option>
-        </select>
-    </FormGroup>
-        <FormGroup className="col-md-5">
-        <Label for="status" className="mr-sm-2">Filtrar por status</Label>
-        <Select
-            mode="multiple"
-            allowClear
-            style={{ width: '100%' }}
-            placeholder="Selecione o status"
-            name="status"
-            id="status"
-            value={status.status}
-            onChange={handleOnChangeMultipleSelectStatus}
-            className='multiselect-lista-valores-reprogramados'
-        >
-            <Option value=''>Selecione um status</Option>
-                {tabelaStatusUnidade.status && tabelaStatusUnidade.status.length >  0 && tabelaStatusUnidade.status.map(item => (
-            <Option key={item.id} value={item.id}>{item.nome}</Option>
-        ))}
-        </Select>
+        <FormGroup className="col-md-6">
+            <label htmlFor="devolucao_tesouro">Filtrar por devolução ao tesouro</label>
+            <select
+                value={devolucaoAoTesouro}
+                onChange={(event) => setDevolucaoAoTesouro(event.target.value)}
+                name="devolucao_tesouro"
+                id="devolucao_tesouro"
+                className="form-control"
+            >
+                <option value="false">Selecione um tipo</option>
+                <option value="1">Sim</option>
+                <option value="0">Não</option>
+            </select>
         </FormGroup>
-        <Button type="submit" className="col-md-1 h-50 mr-0" style={{marginTop: '30px', background: '#00585D'}}>Filtrar</Button>
+        <div className="col-md-5">
+            <div className="d-flex flex-column">
+                <FormGroup>
+                    <Label for="status">Filtrar por status</Label>
+                    <Select
+                        mode="multiple"
+                        allowClear
+                        style={{ width: '100%' }}
+                        placeholder="Selecione o status"
+                        name="status"
+                        id="status"
+                        value={status.status}
+                        onChange={handleOnChangeMultipleSelectStatus}
+                        className='multiselect-lista-valores-reprogramados'
+                    >
+                        <Option value=''>Selecione um status</Option>
+                            {tabelaStatusUnidade.status && tabelaStatusUnidade.status.length >  0 && tabelaStatusUnidade.status.map(item => (
+                        <Option key={item.id} value={item.id}>{item.nome}</Option>
+                    ))}
+                    </Select>
+                </FormGroup>
+            </div>
+        </div>
+        <div className="col-md-1 pl-0">
+            <div className="d-flex flex-column">
+                <Button type="submit" className="h-50" style={{marginTop: '30px', background: '#00585D'}}>Filtrar</Button>
+            </div>
+        </div>
     </div>
     </Form>
 )
