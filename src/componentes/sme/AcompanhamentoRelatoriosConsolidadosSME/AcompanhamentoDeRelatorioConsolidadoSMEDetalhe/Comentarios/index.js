@@ -3,6 +3,7 @@ import { FormikForm } from "./FormikForm";
 import { ModalEditarDeletarComentario } from "./ModalEditarDeletarComentario";
 import { ModalDeleteComentarioSme } from "./ModalDeletarComentario";
 import { ModalNotificarComentarios } from "./ModalNotificarComentario";
+import { ModalNotificacaoNaoEntregue } from "./ModalNotificacaoNaoEntregue";
 import { 
     getComentariosDeAnaliseConsolidadoDre, 
     getReordenarComentariosConsolidadoDre,
@@ -37,6 +38,7 @@ const Comentarios = ({relatorioConsolidado, setHabilitaVerResumoComentariosNotif
     const [disabledBtnAddComentario, setDisabledBtnAddComentario] = useState(true);
     const [comentarioChecked, setComentarioChecked] = useState([]); // notificar comentários
     const [comentariosReadOnly, setComentariosReadOnly] = useState(true);
+    const [showModalNotificacaoNaoEntregue, setShowModalNotificacaoNaoEntregue] = useState(false);
 
     const carregaComentarios = useCallback(async () => {
         if(relatorioConsolidado && relatorioConsolidado.uuid){
@@ -91,6 +93,10 @@ const Comentarios = ({relatorioConsolidado, setHabilitaVerResumoComentariosNotif
     const onHandleCloseDeletarComentario = () => {
         setShowModalDeleteComentario(false);
     };
+
+    const onHandleCloseNotificacaoNaoEntregue = () => {
+        setShowModalNotificacaoNaoEntregue(false);
+    }
 
     const onDeleteComentarioTrue = () => {
         setShowModalDeleteComentario(false);
@@ -161,7 +167,9 @@ const Comentarios = ({relatorioConsolidado, setHabilitaVerResumoComentariosNotif
         };
         try {
             let notificar = await postNotificarComentariosDre(payload);
-            console.log(notificar.mensagem)
+            if(!notificar.enviada) {
+                setShowModalNotificacaoNaoEntregue(true)
+            }
         }catch (e) {
             console.log("Erro ao enviar notificações ", e)
         }
@@ -300,6 +308,17 @@ const Comentarios = ({relatorioConsolidado, setHabilitaVerResumoComentariosNotif
                         primeiroBotaoCss="outline-success"
                         segundoBotaoCss="success"
                         segundoBotaoTexto="Não"
+                    />
+                </section>
+
+                <section>
+                    <ModalNotificacaoNaoEntregue
+                        show={showModalNotificacaoNaoEntregue}
+                        handleClose={onHandleCloseNotificacaoNaoEntregue}
+                        titulo="Não é possível notificar a DRE."
+                        texto="<p>Não é possível notificar a DRE pois esta não tem usuários cadastrados na Comissão de Prestação de Contas.</p>"
+                        primeiroBotaoTexto="Fechar"
+                        primeiroBotaoCss="success"
                     />
                 </section>
             </>
