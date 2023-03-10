@@ -60,10 +60,11 @@ export const TopoSelectPeriodoBotaoConcluir = ({
                         }
                     >
                         {checkCondicaoExibicao(periodoPrestacaoDeConta) && statusPrestacaoDeConta && statusPrestacaoDeConta.prestacao_contas_status && statusPrestacaoDeConta.prestacao_contas_status.pc_requer_conclusao &&
-                        <button onClick={concluirPeriodo}
-                                // disabled={statusPrestacaoDeConta && statusPrestacaoDeConta.prestacao_contas_status && statusPrestacaoDeConta.prestacao_contas_status.documentos_gerados}
-                                className='btn btn-success' type="button">{textoBotaoConcluir(statusPrestacaoDeConta)}</button>
-                            /*<button onClick={handleClickBtnConcluirPeriodo} disabled={statusPrestacaoDeConta && statusPrestacaoDeConta.prestacao_contas_status && statusPrestacaoDeConta.prestacao_contas_status.documentos_gerados} className='btn btn-success' type="button">Concluir período</button>*/
+                            <button
+                                onClick={concluirPeriodo}
+                                className='btn btn-success'
+                                type="button">{textoBotaoConcluir(statusPrestacaoDeConta)}
+                            </button>
                         }
                     </div>
                 </div>

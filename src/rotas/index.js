@@ -169,7 +169,7 @@ const routesConfig = [
     },
     {
         exact: true,
-        path: "/prestacao-de-contas",
+        path: "/prestacao-de-contas/:monitoramento?",
         component: PrestacaoDeContasPage,
         permissoes: ['access_prestacao_contas'],
     },

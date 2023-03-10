@@ -52,3 +52,7 @@ export const deleteNotificacaoPorUuid = async (notificacao_uuid) =>{
     return (await api.delete(`/api/notificacoes/${notificacao_uuid}`, authHeader)).data
 };
 
+export const getRegistrosFalhaGeracaoPc = async (associacao_uuid) =>{
+    return (await api.get(`/api/falhas-geracao-pc/info-registro-falha-geracao-pc/?associacao=${associacao_uuid}`, authHeader)).data
+};
+

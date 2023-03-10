@@ -1,5 +1,5 @@
 import React from "react";
-import {ModalBootstrap} from "../ModalBootstrap";
+import {ModalBootstrap} from "../../Globais/ModalBootstrap";
 
 export const ModalNotificaErroConcluirPC = (props) =>{
     return (
