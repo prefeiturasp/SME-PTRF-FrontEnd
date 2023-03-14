@@ -352,7 +352,18 @@ export const DetalhePrestacaoDeContas = () =>{
     };
 
     const getPrimeiraAtaPorConta = async ()=>{
-        if (infoAta && infoAta.contas && infoAta.contas.length > 0){
+        if(clickBtnEscolheConta && Object.keys(clickBtnEscolheConta).length > 0){
+            let conta_escolhida = Object.keys(clickBtnEscolheConta)[0]
+            if (infoAta && infoAta.contas && infoAta.contas.length > 0){
+                if(infoAta.contas[conta_escolhida]){
+                    let conta = infoAta.contas[conta_escolhida]
+                    setInfoAtaPorConta(conta);
+
+                    let get_analise = await getAnalisePrestacao();
+                }
+            }
+        }
+        else if (infoAta && infoAta.contas && infoAta.contas.length > 0){
             let conta = infoAta.contas[0];
             setInfoAtaPorConta(conta);
 
