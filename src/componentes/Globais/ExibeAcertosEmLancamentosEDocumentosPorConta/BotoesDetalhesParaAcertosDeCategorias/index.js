@@ -5,8 +5,11 @@ import BotaoAcertosLancamentosEdicaoGasto from "./BotaoAcertosLancamentosEdicaoG
 import BotaoAcertosLancamentosEdicaoCredito from "./BotaoAcertosLancamentosEdicaoCredito";
 import BotaoAcertosLancamentosExclusaoGasto from "./BotaoAcertosLancamentosExclusaoGasto";
 import BotaoAcertosLancamentosExclusaoCredito from "./BotaoAcertosLancamentosExclusaoCredito";
+import BotaoAcertosLancamentosConciliacaoGasto from "./BotaoAcertosLancamentosConciliacaoGasto";
+import BotaoAcertosLancamentosDesconciliacaoGasto from "./BotaoAcertosLancamentosDesconciliacaoGasto";
 
-const BotoesDetalhesParaAcertosDeCategorias = ({analise_lancamento, prestacaoDeContasUuid, prestacaoDeContas, tipo_transacao, analisePermiteEdicao}) => {
+const BotoesDetalhesParaAcertosDeCategorias = ({carregaAcertosLancamentos, conta, analise_lancamento, prestacaoDeContasUuid, prestacaoDeContas, tipo_transacao, analisePermiteEdicao}) => {
+
     return (
         <>
             <div className='row'>
@@ -27,6 +30,24 @@ const BotoesDetalhesParaAcertosDeCategorias = ({analise_lancamento, prestacaoDeC
                             prestacaoDeContas={prestacaoDeContas}
                             tipo_transacao='Gasto'
                             analisePermiteEdicao={analisePermiteEdicao}
+                        />
+                    }
+                    {analise_lancamento && analise_lancamento.requer_conciliacao_lancamento && tipo_transacao === "Gasto" && analise_lancamento.categoria === 'CONCILIACAO_LANCAMENTO' &&
+                        <BotaoAcertosLancamentosConciliacaoGasto
+                            analise_lancamento={analise_lancamento}
+                            prestacaoDeContas={prestacaoDeContas}
+                            analisePermiteEdicao={analisePermiteEdicao}
+                            carregaAcertosLancamentos={carregaAcertosLancamentos}
+                            conta={conta}
+                        />
+                    }
+                    {analise_lancamento && analise_lancamento.requer_conciliacao_lancamento && tipo_transacao === "Gasto" && analise_lancamento.categoria === 'DESCONCILIACAO_LANCAMENTO' &&
+                        <BotaoAcertosLancamentosDesconciliacaoGasto
+                            analise_lancamento={analise_lancamento}
+                            prestacaoDeContas={prestacaoDeContas}
+                            analisePermiteEdicao={analisePermiteEdicao}
+                            carregaAcertosLancamentos={carregaAcertosLancamentos}
+                            conta={conta}
                         />
                     }
                     {analise_lancamento && analise_lancamento.requer_atualizacao_lancamento && tipo_transacao === "Crédito" &&

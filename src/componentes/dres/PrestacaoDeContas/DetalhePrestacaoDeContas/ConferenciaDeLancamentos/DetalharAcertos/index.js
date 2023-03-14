@@ -47,6 +47,10 @@ export const DetalharAcertos = () => {
         return [tem_gasto, tem_gasto_conferido, tem_gasto_nao_conferido]
     }, [lancamentos_para_acertos])
 
+    useEffect(()=>{
+        verificaSeTemLancamentosDoTipoGasto()
+    }, [verificaSeTemLancamentosDoTipoGasto])
+
     useEffect(() => {
 
         let mounted = true;
@@ -79,6 +83,7 @@ export const DetalharAcertos = () => {
                 tipos_de_acerto_lancamentos_agrupado = tipos_de_acerto_lancamentos_agrupado.filter(elemento => !categoriasQueSoAceitamGatos.includes(elemento.id))
             }
 
+            // TODO comentado pois no FormularioAcertos não setava o item correto no select
             if (tem_gasto && !tem_gasto_conferido) {
                 tipos_de_acerto_lancamentos_agrupado = tipos_de_acerto_lancamentos_agrupado.filter(elemento => !categoriasQueSoAceitamConferidos.includes(elemento.id))
             }
@@ -172,6 +177,7 @@ export const DetalharAcertos = () => {
                                     copiado: acerto.copiado,
                                     tipo_acerto: acerto.tipo_acerto.uuid,
                                     detalhamento: acerto.detalhamento,
+                                    categoria: acerto.tipo_acerto.categoria,
                                     devolucao_tesouro: acerto.devolucao_ao_tesouro && acerto.devolucao_ao_tesouro.uuid ? {
                                         uuid: acerto.devolucao_ao_tesouro.uuid,
                                         tipo: acerto.devolucao_ao_tesouro.tipo && acerto.devolucao_ao_tesouro.tipo.uuid ? acerto.devolucao_ao_tesouro.tipo.uuid : acerto.devolucao_ao_tesouro.tipo,

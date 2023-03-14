@@ -388,3 +388,12 @@ export const getAnaliseAjustesSaldoPorConta = async (conta_associacao_uuid, pres
 export const getContasComMovimentoNaPc = async (prestacao_de_contas_uuid) => {
     return (await api.get(`/api/prestacoes-contas/${prestacao_de_contas_uuid}/contas-com-movimento/`, authHeader)).data
 };
+
+export const postMarcarGastoComoConciliado = async (payload) => {
+    return (await api.post(`/api/analises-lancamento-prestacao-conta/marcar-como-conciliado/`, payload, authHeader)).data
+};
+
+export const postMarcarGastoDesconciliado = async (payload) => {
+    return (await api.post(`/api/analises-lancamento-prestacao-conta/marcar-como-desconciliado/`, payload, authHeader)).data
+};
+
