@@ -583,6 +583,8 @@ const AcertosLancamentos = ({
                                         }
 
                                         <BotoesDetalhesParaAcertosDeCategorias
+                                            carregaAcertosLancamentos={carregaAcertosLancamentos}
+                                            conta={contaSelecionada}
                                             analise_lancamento={categoria}
                                             prestacaoDeContasUuid={prestacaoDeContasUuid}
                                             prestacaoDeContas={prestacaoDeContas}

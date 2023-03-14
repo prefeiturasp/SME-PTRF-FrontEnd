@@ -47,6 +47,9 @@ export const FormularioAcertos = ({solicitacoes_acerto, listaTiposDeAcertoLancam
 
     const opcoesSelect = (acertos) => {
         for(let index_categoria=0; index_categoria <= listaTiposDeAcertoLancamentosAgrupado.length -1; index_categoria ++){
+
+            //listaTiposDeAcertoLancamentosAgrupado = controlaExibicaoCategoriaConciliadoDesconciliado(acertos)
+
             let categoria = listaTiposDeAcertoLancamentosAgrupado[index_categoria]
             categoria.deve_exibir_categoria = true;
 
@@ -62,7 +65,7 @@ export const FormularioAcertos = ({solicitacoes_acerto, listaTiposDeAcertoLancam
 
                     if(categoriaNaoPodeRepetir(categoria) || categoriaNaoTemItensParaExibir(categoria)){
                         categoria.deve_exibir_categoria = false;
-                    } 
+                    }
                 }
             }
         }
@@ -76,6 +79,29 @@ export const FormularioAcertos = ({solicitacoes_acerto, listaTiposDeAcertoLancam
         if(eh_devolucao){
             setIsValorParcialValido(false)
         }
+    }
+
+    // TODO para evitar conciliacao e desconciliacao no mesmo registro
+    const controlaExibicaoCategoriaConciliadoDesconciliado = (acertos) =>{
+
+        let existe_acerto_do_tipo_desconciliacao_em_acertos = acertos.find(item => item.categoria === "DESCONCILIACAO_LANCAMENTO")
+        let existe_acerto_do_tipo_conciliacao_em_acertos = acertos.find(item => item.categoria === "CONCILIACAO_LANCAMENTO")
+
+        if (existe_acerto_do_tipo_desconciliacao_em_acertos){
+            let categoria = listaTiposDeAcertoLancamentosAgrupado.find((acerto) => acerto.id === "CONCILIACAO_LANCAMENTO")
+            if (categoria){
+                categoria.deve_exibir_categoria = false;
+            }
+        }
+
+        if (existe_acerto_do_tipo_conciliacao_em_acertos){
+            let categoria = listaTiposDeAcertoLancamentosAgrupado.find((acerto) => acerto.id === "DESCONCILIACAO_LANCAMENTO")
+            if (categoria) {
+                categoria.deve_exibir_categoria = false;
+            }
+        }
+
+        return listaTiposDeAcertoLancamentosAgrupado
     }
 
     return (
@@ -147,7 +173,7 @@ export const FormularioAcertos = ({solicitacoes_acerto, listaTiposDeAcertoLancam
                                                                 {!(acerto.tipo_acerto) &&
                                                                     <option key='' value="" selected>Selecione a especificação do acerto</option>
                                                                 }
-                                                                
+
                                                                 {listaTiposDeAcertoLancamentosAgrupado && listaTiposDeAcertoLancamentosAgrupado.length > 0 && opcoesSelect(acertos).map(item => {
                                                                     return (
                                                                         <optgroup key={item.id} label={item.nome} className={!item.deve_exibir_categoria ? 'esconde-categoria' : ''}>
@@ -231,6 +257,8 @@ export const FormularioAcertos = ({solicitacoes_acerto, listaTiposDeAcertoLancam
                                                         }
                                                     });
                                                     adicionaTextoECorCategoriaVazio();
+                                                    // TODO para evitar conciliacao e desconciliacao no mesmo registro
+                                                    // controlaExibicaoCategoriaConciliadoDesconciliado(values.solicitacoes_acerto)
                                                 }}
                                             >
                                                 + Adicionar novo item
