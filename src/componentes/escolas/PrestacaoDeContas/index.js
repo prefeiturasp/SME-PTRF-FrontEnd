@@ -222,11 +222,14 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
 
     const concluirPeriodo = useCallback( async (justificativaPendencia='') =>{
         if (periodoPrestacaoDeConta && periodoPrestacaoDeConta.periodo_uuid){
+
+            console.log("ÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇ ENTREI concluirPeriodo ")
             let status_concluir_periodo = await postConcluirPeriodo(periodoPrestacaoDeConta.periodo_uuid, justificativaPendencia);
             setUuidPrestacaoConta(status_concluir_periodo.uuid);
             let status = await getStatusPeriodoPorData(localStorage.getItem(ASSOCIACAO_UUID), periodoPrestacaoDeConta.data_inicial);
             setStatusPrestacaoDeConta(status);
             setStatusPC(status)
+            setLoadingMonitoramentoPc(false)
             await carregaPeriodos();
             await setConfBoxAtaApresentacao();
         }
@@ -390,49 +393,63 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
     // Trata a exibição quando vem de fora da Prestação de Contas
     useEffect(() => {
         const onPageLoad = async () => {
+
             if (monitoramento && periodoPrestacaoDeConta && periodoPrestacaoDeConta.periodo_uuid ){
+
+                console.log("XXXXXXXXXXX ENTREI DE FORA onPageLoad")
+
                 setLoadingMonitoramentoPc(true)
 
+                window.history.replaceState({}, document.title, "/prestacao-de-contas/");
+                setStringMonitoramento(undefined)
                 await concluirPeriodo()
 
                 // Removendo o parâmetro /monitoramento-de-pc, que veio na url para evitar disparar novamente o concluirPeriodo() no caso de um Refresh.
                 // Não foi possível utilizar useHistory.push() dentro do NotificacaoContext.
                 // Por isso, ao clicar no modal de Monitoramento de PC (Concluir geração) o redirecionamento foi feito com  window.location.assign('/prestacao-de-contas/monitoramento-de-pc')
-                window.history.replaceState({}, document.title, "/prestacao-de-contas/");
-                setStringMonitoramento(undefined)
+
                 setLoadingMonitoramentoPc(false)
             }
         };
 
+        onPageLoad();
+
         // Check if the page has already loaded
-        if (document.readyState === 'complete') {
-            onPageLoad();
-        } else {
-            window.addEventListener('load', onPageLoad);
-            // Remove the event listener when component unmounts
-            return () => window.removeEventListener('load', onPageLoad);
-        }
-    }, [monitoramento, periodoPrestacaoDeConta]);
+        // if (document.readyState === 'complete') {
+        //     onPageLoad();
+        // } else {
+        //     window.addEventListener('load', onPageLoad);
+        //     // Remove the event listener when component unmounts
+        //     return () => window.removeEventListener('load', onPageLoad);
+        // }
+    }, [monitoramento, periodoPrestacaoDeConta, concluirPeriodo]);
 
 
     // Trata a exibição quando vem da Prestação de Contas, a chave é a stringMonitoramento que identifica que veio da NotificacaoContext
     const buscarRegistrosFalhaGeracaoPc = useCallback( async () => {
-        if (!stringMonitoramento && !loading && statusPrestacaoDeConta && statusPrestacaoDeConta.prestacao_contas_status && statusPrestacaoDeConta.prestacao_contas_status.status_prestacao !== 'EM_PROCESSAMENTO') {
+        if (!stringMonitoramento && !loading && !loadingMonitoramentoPc && statusPrestacaoDeConta && statusPrestacaoDeConta.prestacao_contas_status && statusPrestacaoDeConta.prestacao_contas_status.status_prestacao !== 'EM_PROCESSAMENTO') {
+
+            console.log("XXXXXXXXXXX ENTREI DE DENTRO buscarRegistrosFalhaGeracaoPc")
+
             let associacao_uuid = visoesService.getItemUsuarioLogado('associacao_selecionada.uuid')
             let registros_de_falha = await getRegistrosFalhaGeracaoPc(associacao_uuid)
             if (registros_de_falha && registros_de_falha.length > 0) {
                 setRegistroFalhaGeracaoPc(registros_de_falha[0])
                 setShowExibeModalErroConcluirPc(true)
-                return true
             }else {
                 setShowExibeModalErroConcluirPc(false)
             }
         }
-    }, [stringMonitoramento, loading, statusPrestacaoDeConta])
+    }, [stringMonitoramento, loading, statusPrestacaoDeConta, loadingMonitoramentoPc])
 
     useEffect(() => {
         buscarRegistrosFalhaGeracaoPc()
     }, [buscarRegistrosFalhaGeracaoPc]);
+
+    console.log("MMMMMMMMMMMMM Monitoramento ", monitoramento)
+    console.log("MMMMMMMMMMMMM stringMonitoramento ", stringMonitoramento)
+    console.log("LLLLLLLLLLLLL Loading ", loading)
+    console.log("LLLLLLLLLLLLL LoadingMonitoramentoPc ", loadingMonitoramentoPc)
 
     return (
         <>
@@ -540,7 +557,7 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
                             show={showExibeModalErroConcluirPc}
                             handleClose={()=>setShowExibeModalErroConcluirPc(false)}
                             titulo="Atenção"
-                            texto={registroFalhaGeracaoPc.texto}
+                            texto={`${registroFalhaGeracaoPc.excede_tentativas ? '<p><strong>Por favor, entre em contato com a DRE.</strong></p>' : ''}<p>${registroFalhaGeracaoPc.texto}</p>`}
                             primeiroBotaoTexto="Fechar"
                             primeiroBotaoCss="outline-success"
                             segundoBotaoCss="success"

@@ -126,7 +126,7 @@ export const NotificacaoContextProvider = ({children}) => {
                     show={show}
                     handleClose={()=>setShow(false)}
                     titulo="Atenção"
-                    texto={registroFalhaGeracaoPc.texto}
+                    texto={`${registroFalhaGeracaoPc.excede_tentativas ? '<p><strong>Por favor, entre em contato com a DRE.</strong></p>' : ''}<p>${registroFalhaGeracaoPc.texto}</p>`}
                     primeiroBotaoTexto="Fechar"
                     primeiroBotaoCss="outline-success"
                     segundoBotaoCss="success"
