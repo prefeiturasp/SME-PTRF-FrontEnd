@@ -223,7 +223,6 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
     const concluirPeriodo = useCallback( async (justificativaPendencia='') =>{
         if (periodoPrestacaoDeConta && periodoPrestacaoDeConta.periodo_uuid){
 
-            console.log("ÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇÇ ENTREI concluirPeriodo ")
             let status_concluir_periodo = await postConcluirPeriodo(periodoPrestacaoDeConta.periodo_uuid, justificativaPendencia);
             setUuidPrestacaoConta(status_concluir_periodo.uuid);
             let status = await getStatusPeriodoPorData(localStorage.getItem(ASSOCIACAO_UUID), periodoPrestacaoDeConta.data_inicial);
@@ -396,17 +395,15 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
 
             if (monitoramento && periodoPrestacaoDeConta && periodoPrestacaoDeConta.periodo_uuid ){
 
-                console.log("XXXXXXXXXXX ENTREI DE FORA onPageLoad")
-
                 setLoadingMonitoramentoPc(true)
-
-                window.history.replaceState({}, document.title, "/prestacao-de-contas/");
-                setStringMonitoramento(undefined)
-                await concluirPeriodo()
 
                 // Removendo o parâmetro /monitoramento-de-pc, que veio na url para evitar disparar novamente o concluirPeriodo() no caso de um Refresh.
                 // Não foi possível utilizar useHistory.push() dentro do NotificacaoContext.
                 // Por isso, ao clicar no modal de Monitoramento de PC (Concluir geração) o redirecionamento foi feito com  window.location.assign('/prestacao-de-contas/monitoramento-de-pc')
+                window.history.replaceState({}, document.title, "/prestacao-de-contas/");
+                setStringMonitoramento(undefined)
+
+                await concluirPeriodo()
 
                 setLoadingMonitoramentoPc(false)
             }
@@ -414,23 +411,12 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
 
         onPageLoad();
 
-        // Check if the page has already loaded
-        // if (document.readyState === 'complete') {
-        //     onPageLoad();
-        // } else {
-        //     window.addEventListener('load', onPageLoad);
-        //     // Remove the event listener when component unmounts
-        //     return () => window.removeEventListener('load', onPageLoad);
-        // }
     }, [monitoramento, periodoPrestacaoDeConta, concluirPeriodo]);
 
 
     // Trata a exibição quando vem da Prestação de Contas, a chave é a stringMonitoramento que identifica que veio da NotificacaoContext
     const buscarRegistrosFalhaGeracaoPc = useCallback( async () => {
         if (!stringMonitoramento && !loading && !loadingMonitoramentoPc && statusPrestacaoDeConta && statusPrestacaoDeConta.prestacao_contas_status && statusPrestacaoDeConta.prestacao_contas_status.status_prestacao !== 'EM_PROCESSAMENTO') {
-
-            console.log("XXXXXXXXXXX ENTREI DE DENTRO buscarRegistrosFalhaGeracaoPc")
-
             let associacao_uuid = visoesService.getItemUsuarioLogado('associacao_selecionada.uuid')
             let registros_de_falha = await getRegistrosFalhaGeracaoPc(associacao_uuid)
             if (registros_de_falha && registros_de_falha.length > 0) {
@@ -445,11 +431,6 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
     useEffect(() => {
         buscarRegistrosFalhaGeracaoPc()
     }, [buscarRegistrosFalhaGeracaoPc]);
-
-    console.log("MMMMMMMMMMMMM Monitoramento ", monitoramento)
-    console.log("MMMMMMMMMMMMM stringMonitoramento ", stringMonitoramento)
-    console.log("LLLLLLLLLLLLL Loading ", loading)
-    console.log("LLLLLLLLLLLLL LoadingMonitoramentoPc ", loadingMonitoramentoPc)
 
     return (
         <>
