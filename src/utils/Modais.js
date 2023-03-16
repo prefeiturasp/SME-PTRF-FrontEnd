@@ -787,7 +787,7 @@ export const ModalPublicarRetificacaoPendente = (propriedades) => {
                         Preencha o campo "Justificativa da diferença entre o valor previsto pela SME e o transferido pela DRE no período" do Demonstrativo da Execução Físico-Financeira.
                     </p>
                     <div className="d-flex justify-content-end">
-                        <Button variant="outline-success" onClick={() => {
+                        <Button variant="success" onClick={() => {
                         propriedades.redirecionaJustifica()
                         }}>Editar Justificativa</Button>
                     </div>
@@ -798,7 +798,7 @@ export const ModalPublicarRetificacaoPendente = (propriedades) => {
                     </p>
 
                     <div className="d-flex justify-content-end">
-                        <Button variant="outline-success" onClick={() => {
+                        <Button variant="success" onClick={() => {
                             propriedades.redirecionaMotivo()
                         }}>Editar Motivo</Button>
                     </div>
@@ -813,7 +813,7 @@ export const ModalPublicarRetificacaoPendente = (propriedades) => {
                 titulo="Pendências para a Geração do Consolidado"
                 bodyText={bodyTextarea()}
                 primeiroBotaoOnclick={propriedades.handleClose}
-                primeiroBotaoTexto="Cancelar"
+                primeiroBotaoTexto="Fechar"
                 primeiroBotaoCss="outline-success"
             />
         )
