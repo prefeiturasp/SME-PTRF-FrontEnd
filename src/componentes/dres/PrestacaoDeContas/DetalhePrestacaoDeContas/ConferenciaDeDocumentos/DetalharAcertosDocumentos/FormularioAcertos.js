@@ -7,22 +7,21 @@ import {faTimesCircle, faExclamationCircle, faCheckCircle} from "@fortawesome/fr
 const FormularioAcertos = ({solicitacoes_acerto, onSubmitFormAcertos, formRef, tiposDeAcertoDocumentosAgrupados, handleChangeTipoDeAcertoDocumento, textoCategoria, corTextoCategoria, adicionaTextoECorCategoriaVazio, removeTextoECorCategoriaTipoDeAcertoJaCadastrado, ehSolicitacaoCopiada}) =>{
 
     const categoriaNaoPodeRepetir = (categoria) => {
-        if(categoria.id === 'SOLICITACAO_ESCLARECIMENTO'){
-            return true;
-        }
+        const categoriasQueNaoPodemRepetir = [
+            'SOLICITACAO_ESCLARECIMENTO',
+            'EDICAO_INFORMACAO',
+        ];
 
-        return false;
+        return categoriasQueNaoPodemRepetir.includes(categoria.id);
     }
 
     const itemDaCategoriaPodeRepetir = (categoria) => {
-        if(categoria.id === 'INCLUSAO_CREDITO'){
-            return true;
-        }
-        else if(categoria.id === 'INCLUSAO_GASTO'){
-            return true;
-        }
+        const categoriasQuePodemRepetirOsItens = [
+            'INCLUSAO_CREDITO',
+            'INCLUSAO_GASTO',
+        ];
 
-        return false;
+        return categoriasQuePodemRepetirOsItens.includes(categoria.id);
     }
 
     const categoriaNaoTemItensParaExibir = (categoria) => {
