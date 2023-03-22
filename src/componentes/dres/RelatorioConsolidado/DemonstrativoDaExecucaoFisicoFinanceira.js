@@ -1,54 +1,12 @@
-import React, {memo, useEffect, useMemo, useState, useCallback} from "react";
+import React, {memo, useMemo} from "react";
 import {
     getDownloadRelatorio,
-    getTiposConta
 } from "../../../services/dres/RelatorioConsolidado.service";
 import {haDiferencaPrevisaoExecucaoRepasse} from "./haDiferencaPrevisaoExecucaoRepasse"
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faDownload} from "@fortawesome/free-solid-svg-icons";
-import {visoesService} from "../../../services/visoes.service";
-import { getExecucaoFinanceira } from "../../../services/dres/RelatorioConsolidado.service";
 
 const DemonstrativoDaExecucaoFisicoFinanceira = ({consolidadoDre, periodoEscolhido, execucaoFinanceira, podeAcessarInfoConsolidado}) => {
-    const [contas, setContas] = useState(false);
-    const [execucaoFinanceiraRetificacao, setExecucaoFinanceiraRetificacao] = useState({});
-
-    useEffect(()=>{
-        let mounted = true
-        const carregaContas = async () => {
-            try {
-                let tipo_contas = await getTiposConta();
-                if (mounted){
-                    setContas(tipo_contas);
-                }
-            }catch (e) {
-                console.log("Erro ao trazer os tipos de contas ", e);
-            }
-        };
-        carregaContas()
-        return () =>{
-            mounted = false
-        }
-    }, [])
-
-    const carregaExecucaoFinanceiraRetificacao = useCallback(async () => {
-        const dre_uuid = visoesService.getItemUsuarioLogado('associacao_selecionada.uuid');
-
-        if(periodoEscolhido && consolidadoDre && consolidadoDre.eh_retificacao && consolidadoDre.habilita_botao_gerar){
-            try {
-                let execucao = await getExecucaoFinanceira(dre_uuid, periodoEscolhido, consolidadoDre.uuid);
-                setExecucaoFinanceiraRetificacao(execucao)
-            } catch (e) {
-                console.log("Erro ao carregar execução financeira ", e)
-            }
-        }
-
-    }, [periodoEscolhido, consolidadoDre])
-
-    useEffect(() => {
-        carregaExecucaoFinanceiraRetificacao()
-    }, [carregaExecucaoFinanceiraRetificacao])
-
     const retornaClasseMensagem = (texto) => {
         let classeMensagem = "documento-gerado";
         if (texto === 'NAO_GERADOS') {
@@ -69,19 +27,16 @@ const DemonstrativoDaExecucaoFisicoFinanceira = ({consolidadoDre, periodoEscolhi
         window.location.assign(`/dre-relatorio-consolidado-em-tela/${periodoEscolhido}/${consolidadoDre.ja_publicado}/${consolidado_dre_uuid}`)
     };
 
-    const isDiferencaValores = useMemo(() => {
+    const isDiferencaValores = (relatorio) => {
         if(execucaoFinanceira){
             return execucaoFinanceira?.por_tipo_de_conta?.some((execucaoFinanceiraConta) => {
-                return haDiferencaPrevisaoExecucaoRepasse(execucaoFinanceiraConta.valores)
+                if(relatorio && relatorio.status_geracao === 'GERADO_TOTAL') {
+                    return false;
+                }
+                return haDiferencaPrevisaoExecucaoRepasse(execucaoFinanceiraConta.valores);
             })
         }
-        else if(execucaoFinanceiraRetificacao){
-            return execucaoFinanceiraRetificacao?.por_tipo_de_conta?.some((execucaoFinanceiraConta) => {
-                return haDiferencaPrevisaoExecucaoRepasse(execucaoFinanceiraConta.valores)
-            })
-        }
-
-    }, [execucaoFinanceira, execucaoFinanceiraRetificacao])
+    }
 
     return (
         <div className="border">
@@ -111,7 +66,7 @@ const DemonstrativoDaExecucaoFisicoFinanceira = ({consolidadoDre, periodoEscolhi
                                     type="button"
                                     className="btn btn-outline-success btn-sm"
                                 >
-                                    {isDiferencaValores ? 'Preencher resumo' : 'Consultar resumo'}
+                                    {'Consultar resumo'}
                                 </button>
                             </div>
                             }
@@ -137,7 +92,7 @@ const DemonstrativoDaExecucaoFisicoFinanceira = ({consolidadoDre, periodoEscolhi
                                 className="btn btn-outline-success btn-sm"
                                 disabled={!podeAcessarInfoConsolidado(consolidadoDre)}
                             >
-                                {isDiferencaValores ? 'Preencher resumo' : 'Consultar resumo'}
+                                {isDiferencaValores() ? 'Preencher resumo' : 'Consultar resumo'}
                             </button>
                         </span>
                     </div>
