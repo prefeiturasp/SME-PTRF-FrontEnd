@@ -28,6 +28,7 @@ export const NotificacaoContextProvider = ({children}) => {
     const [qtdeNotificacoesNaoLidas, setQtdeNotificacoesNaoLidas] = useState(true);
     const [temNotificacaoDevolucaoNaoLida, setTemNotificacaoDevolucaoNaoLida] = useState(true);
     const [exibeMensagemFixaTemDevolucao, setExibeMensagemFixaTemDevolucao] = useState(false);
+    const [periodoErroConcluirPc, setPeriodoErroConcluirPc] = useState('');
 
     // FalhaGeracaoPC
     const [registroFalhaGeracaoPc, setRegistroFalhaGeracaoPc] = useState([]);

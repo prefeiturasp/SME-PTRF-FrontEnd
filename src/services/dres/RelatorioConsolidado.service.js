@@ -33,6 +33,7 @@ export const getStatusConsolidadoDre = async (dre_uuid, periodo_uuid) => {
     return (await api.get(`/api/consolidados-dre/status-consolidado-dre/?dre=${dre_uuid}&periodo=${periodo_uuid}`, authHeader)).data
 };
 
+
 export const postPublicarConsolidadoDre = async (payload) => {
     return (await api.post(`/api/consolidados-dre/publicar/`, payload, authHeader)).data
 };
