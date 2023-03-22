@@ -26,6 +26,7 @@ import Lauda from "./Lauda";
 import {ModalAtaNaoPreenchida} from "../../../utils/Modais";
 import PreviaDocumentos from "./PreviaDocumento";
 import {PERIODO_RELATORIO_CONSOLIDADO_DRE} from "../../../services/auth.service";
+import BlocoPublicacaoParcial from "./BlocoPublicacaoParcial"
 
 const RelatorioConsolidado = () => {
 
@@ -412,7 +413,6 @@ const RelatorioConsolidado = () => {
                                                     publicarRetificacao={publicarRetificacao}
                                                     showPublicarRetificacao={showPublicarRetificacao}
                                                     setShowPublicarRetificacao={setShowPublicarRetificacao}
-                                                    periodoEscolhido={periodoEscolhido}
                                                     gerarPreviaRetificacao={gerarPreviaRetificacao}
                                                     removerBtnGerar={consolidadoDreProximaPublicacao.eh_consolidado_de_publicacoes_parciais}
                                                 >
@@ -441,40 +441,23 @@ const RelatorioConsolidado = () => {
                                             </>
                                         }
 
-                                        {consolidadosDreJaPublicados && consolidadosDreJaPublicados.map((consolidadoDre) =>
-                                            
-                                            <div key={consolidadoDre.uuid} className='mt-3'>
-                                                <PublicarDocumentos
-                                                    publicarConsolidadoDre={publicarConsolidadoDre}
-                                                    podeGerarPrevia={podeGerarPrevia}
-                                                    consolidadoDre={consolidadoDre}
-                                                    carregaConsolidadosDreJaPublicadosProximaPublicacao={carregaConsolidadosDreJaPublicadosProximaPublicacao}
-                                                    todasAsPcsDaRetificacaoConcluidas={todasAsPcsDaRetificacaoConcluidas}
-                                                    publicarRetificacao={publicarRetificacao}
-                                                    showPublicarRetificacao={showPublicarRetificacao}
-                                                    setShowPublicarRetificacao={setShowPublicarRetificacao}
-                                                    periodoEscolhido={periodoEscolhido}
-                                                    gerarPreviaRetificacao={gerarPreviaRetificacao}
-                                                >
-                                                    <PreviaDocumentos
-                                                        gerarPreviaConsolidadoDre={gerarPreviaConsolidadoDre}
-                                                    />
-                                                    
-                                                </PublicarDocumentos>
-                                                <DemonstrativoDaExecucaoFisicoFinanceira
-                                                    consolidadoDre={consolidadoDre}
-                                                    periodoEscolhido={periodoEscolhido}
-                                                    podeAcessarInfoConsolidado={podeAcessarInfoConsolidado}
-                                                />
-                                                <AtaParecerTecnico
-                                                    consolidadoDre={consolidadoDre}
-                                                    podeGerarPreviaRetificacao={podeGerarPreviaRetificacao(consolidadoDre)}
-                                                    podeAcessarInfoConsolidado={podeAcessarInfoConsolidado}
-                                                />
-                                                <Lauda
-                                                    consolidadoDre={consolidadoDre}
-                                                />
-                                            </div>
+                                        {consolidadosDreJaPublicados && consolidadosDreJaPublicados.map((consolidadoDre) => 
+                                            <BlocoPublicacaoParcial
+                                                key={consolidadoDre.uuid}
+                                                consolidadoDre={consolidadoDre}
+                                                publicarConsolidadoDre={publicarConsolidadoDre}
+                                                podeGerarPrevia={podeGerarPrevia}
+                                                carregaConsolidadosDreJaPublicadosProximaPublicacao={carregaConsolidadosDreJaPublicadosProximaPublicacao}
+                                                todasAsPcsDaRetificacaoConcluidas={todasAsPcsDaRetificacaoConcluidas}
+                                                publicarRetificacao={publicarRetificacao}
+                                                showPublicarRetificacao={showPublicarRetificacao}
+                                                setShowPublicarRetificacao={setShowPublicarRetificacao}
+                                                periodoEscolhido={periodoEscolhido}
+                                                gerarPreviaRetificacao={gerarPreviaRetificacao}
+                                                gerarPreviaConsolidadoDre={gerarPreviaConsolidadoDre}
+                                                podeAcessarInfoConsolidado={podeAcessarInfoConsolidado}
+                                                podeGerarPreviaRetificacao={podeGerarPreviaRetificacao}
+                                            />
                                         )}
                                     </>
                                 }

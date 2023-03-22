@@ -1,38 +1,18 @@
-import React, {useState, useCallback, useEffect, memo} from "react";
+import React, {useState,  memo} from "react";
 import ReactTooltip from "react-tooltip";
 import { ModalPublicarRetificacao } from "../../../utils/Modais";
 import { ModalPublicarRetificacaoPendente } from "../../../utils/Modais";
-import { visoesService } from "../../../services/visoes.service";
-import { getExecucaoFinanceira } from "../../../services/dres/RelatorioConsolidado.service";
 import {postCriarAtaAtrelarAoConsolidadoDre} from "../../../services/dres/RelatorioConsolidado.service";
+import { Button } from 'antd';
 
 
-const PreviaDocumentoRetificado = ({consolidadoDre, todasAsPcsDaRetificacaoConcluidas, publicarRetificacao, periodoEscolhido, gerarPreviaRetificacao}) => {
+const PreviaDocumentoRetificado = ({consolidadoDre, todasAsPcsDaRetificacaoConcluidas, publicarRetificacao, gerarPreviaRetificacao, execucaoFinanceira, execucaoFinanceiraCarregando}) => {
     const [showPublicarRetificacaoPendente, setShowPublicarRetificacaoPendente] = useState(false)
     const [showPublicarRetificacao, setShowPublicarRetificacao] = useState(false)
-    const [execucaoFinanceiraRetificacao, setExecucaoFinanceiraRetificacao] = useState({});
     const [alertaJustificativaRetificacao, setAlertaJustificativaRetificacao] = useState(true)
 
     const [adicionarSecaoJustificativaNoModal, setAdicionaSecaoJustificativaNoModal] = useState(false);
     const [adicionarSecaoMotivoRetificacaoNoModal, setAdicionaSecaoMotivoRetificacaoNoModal] = useState(false);
-
-    const carregaExecucaoFinanceiraRetificacao = useCallback(async () => {
-        const dre_uuid = visoesService.getItemUsuarioLogado('associacao_selecionada.uuid');
-
-        if(periodoEscolhido && consolidadoDre && consolidadoDre.eh_retificacao){
-            try {
-                let execucao = await getExecucaoFinanceira(dre_uuid, periodoEscolhido, consolidadoDre.uuid);
-                setExecucaoFinanceiraRetificacao(execucao)
-            } catch (e) {
-                console.log("Erro ao carregar execução financeira ", e)
-            }
-        }
-
-    }, [periodoEscolhido, consolidadoDre])
-
-    useEffect(() => {
-        carregaExecucaoFinanceiraRetificacao()
-    }, [carregaExecucaoFinanceiraRetificacao])
 
     const comparaValores = (execucaoFinanceiraConta) => {
         if (execucaoFinanceiraConta) {
@@ -43,13 +23,11 @@ const PreviaDocumentoRetificado = ({consolidadoDre, todasAsPcsDaRetificacaoConcl
         }
     };
 
-    const handleClick = () => {
-        let carregamentoExecucaoFinanceiraTerminou = !(Object.keys(execucaoFinanceiraRetificacao).length === 0 && execucaoFinanceiraRetificacao.constructor === Object)
-        
-        if(!consolidadoDre.eh_consolidado_de_publicacoes_parciais && carregamentoExecucaoFinanceiraTerminou) {
-            const temDiferencaDeValores = execucaoFinanceiraRetificacao?.por_tipo_de_conta?.some((fisicoFinanceiro) => comparaValores(fisicoFinanceiro.valores));
+    const handleClick = () => { 
+        if(!consolidadoDre.eh_consolidado_de_publicacoes_parciais && !execucaoFinanceiraCarregando) {
+            const temDiferencaDeValores = execucaoFinanceira?.por_tipo_de_conta?.some((fisicoFinanceiro) => comparaValores(fisicoFinanceiro.valores));
 
-            const justificativaPreenchida = execucaoFinanceiraRetificacao?.por_tipo_de_conta?.some((fisicoFinanceiro) => fisicoFinanceiro.justificativa_texto);
+            const justificativaPreenchida = execucaoFinanceira?.por_tipo_de_conta?.some((fisicoFinanceiro) => fisicoFinanceiro.justificativa_texto);
 
             const motivoRetificacaoPreenchido = consolidadoDre.motivo_retificacao;
 
@@ -112,13 +90,9 @@ const PreviaDocumentoRetificado = ({consolidadoDre, todasAsPcsDaRetificacaoConcl
 
                         <div className="p-2 bd-highlight font-weight-normal" data-html={true}>
                             <span data-html={true} data-tip={!todasAsPcsDaRetificacaoConcluidas(consolidadoDre) ? "Os documentos ainda não podem ser gerados, pois se encontra em análise prestação(ões) de contas a ser(em) retificada(s)." : ""}>
-                                <button
-                                    onClick={() => handleClick()}
-                                    className="btn btn btn btn-success"
-                                    disabled={!todasAsPcsDaRetificacaoConcluidas(consolidadoDre)}
-                                >
+                                <Button className="btn btn btn btn-success botao-carregar" type="primary" size="large" loading={execucaoFinanceiraCarregando} disabled={!todasAsPcsDaRetificacaoConcluidas(consolidadoDre)} onClick={() => handleClick()}>
                                     Gerar
-                                </button>
+                                </Button>
                                 <ReactTooltip html={true}/>
                             </span>
                         </div>

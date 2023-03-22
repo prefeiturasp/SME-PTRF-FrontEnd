@@ -6,7 +6,7 @@ import {Retificar} from "./Retificar";
 import PreviaDocumentoRetificado from "./PreviaDocumentoRetificado";
 import ReactTooltip from "react-tooltip";
 
-const PublicarDocumentos = ({publicarConsolidadoDre, podeGerarPrevia, children, consolidadoDre, carregaConsolidadosDreJaPublicadosProximaPublicacao, execucaoFinanceira, disableGerar, todasAsPcsDaRetificacaoConcluidas, publicarRetificacao, showPublicarRetificacao, setShowPublicarRetificacao, periodoEscolhido, gerarPreviaRetificacao, removerBtnGerar=false}) => {
+const PublicarDocumentos = ({publicarConsolidadoDre, podeGerarPrevia, children, consolidadoDre, carregaConsolidadosDreJaPublicadosProximaPublicacao, execucaoFinanceira, disableGerar, todasAsPcsDaRetificacaoConcluidas, publicarRetificacao, showPublicarRetificacao, setShowPublicarRetificacao, gerarPreviaRetificacao, removerBtnGerar=false, execucaoFinanceiraCarregando}) => {
     const [showPublicarRelatorioConsolidadoPendente, setShowPublicarRelatorioConsolidadoPendente] = useState(false)
     const [alertaJustificativa, setAlertaJustificativa] = useState(true)
     const [showPublicarRelatorioConsolidado, setShowPublicarRelatorioConsolidado] = useState(false)
@@ -36,8 +36,6 @@ const PublicarDocumentos = ({publicarConsolidadoDre, podeGerarPrevia, children, 
         }
     }
 
-
-    
     return(
         <>
             <div className="d-flex bd-highlight align-items-center container-publicar-cabecalho text-dark rounded-top border font-weight-bold">
@@ -96,8 +94,9 @@ const PublicarDocumentos = ({publicarConsolidadoDre, podeGerarPrevia, children, 
                     setShowPublicarRetificacao={setShowPublicarRetificacao}
                     showPublicarRetificacao={showPublicarRetificacao}  
                     publicarRetificacao={publicarRetificacao} 
-                    periodoEscolhido={periodoEscolhido}
                     gerarPreviaRetificacao={gerarPreviaRetificacao}
+                    execucaoFinanceira={execucaoFinanceira}
+                    execucaoFinanceiraCarregando={execucaoFinanceiraCarregando}
                 />
                 <Retificar
                     consolidadoDre={consolidadoDre}
