@@ -127,7 +127,7 @@ const Cabecalho = ({prestacaoDeContas, exibeSalvar, metodoSalvarAnalise, btnSalv
                         <p><strong>Presidente do Conselho Fiscal: </strong> {prestacaoDeContas.associacao.presidente_conselho_fiscal.nome}</p>
                     </div>
 
-                    {verificaStatusPc() && prestacaoDeContas?.em_retificacao && visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'DRE' ? <div className="tag-justificativa"
+                    {verificaStatusPc() && prestacaoDeContas?.em_retificacao && !prestacaoDeContas?.publicada && visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'DRE' ? <div className="tag-justificativa"
                         style={{ backgroundColor: '#D06D12', marginLeft: '15px' }}
                     >
                         Em retificação
