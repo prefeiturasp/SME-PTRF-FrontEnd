@@ -133,7 +133,6 @@ const RelatorioConsolidado = () => {
         }
     }, [dre_uuid, periodoEscolhido])
 
-
     useEffect(() => {
         retornaStatusProcessamentoRelatorioConsolidadoDePublicacoesParciais()
     }, [retornaStatusProcessamentoRelatorioConsolidadoDePublicacoesParciais])
