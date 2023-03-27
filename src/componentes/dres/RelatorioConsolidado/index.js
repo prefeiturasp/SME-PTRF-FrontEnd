@@ -52,7 +52,6 @@ const RelatorioConsolidado = () => {
     const [trilhaStatus, setTrilhaStatus] = useState(false);
     const [loading, setLoading] = useState(false);
     const [loadingRelatorioConsolidado, setLoadingRelatorioConsolidado] = useState(false);
-    const [loadingPublicacoesParciais, setLoadingPublicacoesParciais] = useState(false);
     const [disableGerar, setDisableGerar] = useState(true);
 
     const carregaPeriodos = useCallback(async () => {
@@ -173,27 +172,13 @@ const RelatorioConsolidado = () => {
             setLoadingRelatorioConsolidado(true)
             const timer = setInterval(() => {
                 retornaStatusProcessamentoRelatorioConsolidadoDePublicacoesParciais();
-            }, 6000);
+            }, 5000);
             // clearing interval
             return () => clearInterval(timer);
         } else {
             setLoadingRelatorioConsolidado(false);
         }
     }, [statusProcessamentoRelatorioConsolidadoDePublicacoesParciais, retornaStatusProcessamentoRelatorioConsolidadoDePublicacoesParciais]);
-
-    useEffect(() => {
-        if (statusProcessamentoRelatorioConsolidadoDePublicacoesParciais && statusProcessamentoRelatorioConsolidadoDePublicacoesParciais === "EM_PROCESSAMENTO") {
-            setLoadingPublicacoesParciais(true)
-            const timer = setInterval(() => {
-                retornaStatusProcessamentoRelatorioConsolidadoDePublicacoesParciais();
-            }, 5000);
-            // clearing interval
-            return () => clearInterval(timer);
-        } else {
-            setLoadingPublicacoesParciais(false);
-        }
-    }, [statusProcessamentoRelatorioConsolidadoDePublicacoesParciais, retornaStatusProcessamentoRelatorioConsolidadoDePublicacoesParciais]);
-
 
     const buscaFiqueDeOlho = useCallback(async () => {
         try {
@@ -404,8 +389,7 @@ const RelatorioConsolidado = () => {
                                     eh_circulo_duplo={eh_circulo_duplo}
                                 />
 
-                                {loading || loadingRelatorioConsolidado || loadingPublicacoesParciais  ? (
-
+                                {loading || loadingRelatorioConsolidado  ? (
                                         <div className="mt-5">
                                             <Loading
                                                 corGrafico="black"
