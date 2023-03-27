@@ -126,10 +126,7 @@ const RelatorioConsolidado = () => {
         if (dre_uuid && periodoEscolhido) {
             try {
                 let status = await getStatusRelatorioConsolidadoDePublicacoesParciais(dre_uuid, periodoEscolhido)
-
-                if (status && status.status) {
-                    setStatusProcessamentoRelatorioConsolidadoDePublicacoesParciais(status.status)
-                }
+                setStatusProcessamentoRelatorioConsolidadoDePublicacoesParciais(status.status)
 
             } catch (e) {
                 console.log("Erro ao buscar status Consolidado Dre ", e)
