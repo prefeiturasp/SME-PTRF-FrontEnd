@@ -49,13 +49,15 @@ const DemonstrativoDaExecucaoFisicoFinanceira = ({consolidadoDre, periodoEscolhi
                                     <p className='fonte-14 mb-1'><strong>Demonstrativo da Execução Físico-Financeira {relatorio.tipo_conta ? "- Conta " + relatorio.tipo_conta : ""}</strong></p>
                                     <p className={`fonte-12 mb-0 ${retornaClasseMensagem(relatorio.status_geracao)}`}>
                                         <span>{relatorio.status_geracao_arquivo}</span>
-                                        <button className='btn-editar-membro' type='button'>
-                                            <FontAwesomeIcon
-                                                onClick={() => downloadRelatorio(relatorio.uuid, relatorio.versao)}
-                                                style={{fontSize: '18px'}}
-                                                icon={faDownload}
-                                            />
-                                        </button>
+                                        {(relatorio.status_geracao === 'GERADO_PARCIAL' || relatorio.status_geracao === 'GERADO_TOTAL') &&
+                                            <button className='btn-editar-membro' type='button'>
+                                                <FontAwesomeIcon
+                                                    onClick={() => downloadRelatorio(relatorio.uuid, relatorio.versao)}
+                                                    style={{fontSize: '18px'}}
+                                                    icon={faDownload}
+                                                />
+                                            </button>
+                                        }
                                     </p>
                                 </div>
                             </div>
