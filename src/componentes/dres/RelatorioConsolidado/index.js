@@ -52,7 +52,6 @@ const RelatorioConsolidado = () => {
     const [trilhaStatus, setTrilhaStatus] = useState(false);
     const [loading, setLoading] = useState(false);
     const [loadingRelatorioConsolidado, setLoadingRelatorioConsolidado] = useState(false);
-    const [loadingPublicacoesParciais, setLoadingPublicacoesParciais] = useState(false);
     const [disableGerar, setDisableGerar] = useState(true);
 
     const carregaPeriodos = useCallback(async () => {
@@ -127,11 +126,7 @@ const RelatorioConsolidado = () => {
         if (dre_uuid && periodoEscolhido) {
             try {
                 let status = await getStatusRelatorioConsolidadoDePublicacoesParciais(dre_uuid, periodoEscolhido)
-
-                if (status && status.status) {
-                    setStatusProcessamentoRelatorioConsolidadoDePublicacoesParciais(status.status)
-                }
-
+                setStatusProcessamentoRelatorioConsolidadoDePublicacoesParciais(status.status)
             } catch (e) {
                 console.log("Erro ao buscar status Consolidado Dre ", e)
             }
@@ -173,24 +168,11 @@ const RelatorioConsolidado = () => {
             setLoadingRelatorioConsolidado(true)
             const timer = setInterval(() => {
                 retornaStatusProcessamentoRelatorioConsolidadoDePublicacoesParciais();
-            }, 6000);
-            // clearing interval
-            return () => clearInterval(timer);
-        } else {
-            setLoadingRelatorioConsolidado(false);
-        }
-    }, [statusProcessamentoRelatorioConsolidadoDePublicacoesParciais, retornaStatusProcessamentoRelatorioConsolidadoDePublicacoesParciais]);
-
-    useEffect(() => {
-        if (statusProcessamentoRelatorioConsolidadoDePublicacoesParciais && statusProcessamentoRelatorioConsolidadoDePublicacoesParciais === "EM_PROCESSAMENTO") {
-            setLoadingPublicacoesParciais(true)
-            const timer = setInterval(() => {
-                retornaStatusProcessamentoRelatorioConsolidadoDePublicacoesParciais();
             }, 5000);
             // clearing interval
             return () => clearInterval(timer);
         } else {
-            setLoadingPublicacoesParciais(false);
+            setLoadingRelatorioConsolidado(false);
         }
     }, [statusProcessamentoRelatorioConsolidadoDePublicacoesParciais, retornaStatusProcessamentoRelatorioConsolidadoDePublicacoesParciais]);
 
@@ -404,7 +386,7 @@ const RelatorioConsolidado = () => {
                                     eh_circulo_duplo={eh_circulo_duplo}
                                 />
 
-                                {loading || loadingRelatorioConsolidado || loadingPublicacoesParciais  ? (
+                                {loading || loadingRelatorioConsolidado  ? (
 
                                         <div className="mt-5">
                                             <Loading
