@@ -64,7 +64,7 @@ export const GetComportamentoPorStatus = (
         tooltipRetroceder
     }) => {
 
-        const TEMPERMISSAO = RetornaSeTemPermissaoEdicaoAcompanhamentoDePc()
+    const TEMPERMISSAO = RetornaSeTemPermissaoEdicaoAcompanhamentoDePc()
 
     if (prestacaoDeContas && prestacaoDeContas.status) {
         if (prestacaoDeContas.status === 'NAO_RECEBIDA') {

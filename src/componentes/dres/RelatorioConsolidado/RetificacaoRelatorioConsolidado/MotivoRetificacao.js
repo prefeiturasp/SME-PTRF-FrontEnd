@@ -38,7 +38,7 @@ export const MotivoRetificacao = ({relatorioConsolidado, handleEditarMotivoRetif
                                     onChange={(event) => handleChangeTextareaMotivoRetificacao(props, values.motivo_retificacao, event)}
                                     className={`form-control`}
                                     rows="4"
-                                
+
                                 />
                             </div>
                             <div className="col-12 align-items-end mt-2">

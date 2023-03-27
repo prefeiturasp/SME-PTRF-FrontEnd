@@ -126,7 +126,11 @@ const RelatorioConsolidado = () => {
         if (dre_uuid && periodoEscolhido) {
             try {
                 let status = await getStatusRelatorioConsolidadoDePublicacoesParciais(dre_uuid, periodoEscolhido)
-                setStatusProcessamentoRelatorioConsolidadoDePublicacoesParciais(status.status)
+
+                if (status && status.status) {
+                    setStatusProcessamentoRelatorioConsolidadoDePublicacoesParciais(status.status)
+                }
+
             } catch (e) {
                 console.log("Erro ao buscar status Consolidado Dre ", e)
             }
@@ -174,7 +178,6 @@ const RelatorioConsolidado = () => {
             setLoadingRelatorioConsolidado(false);
         }
     }, [statusProcessamentoRelatorioConsolidadoDePublicacoesParciais, retornaStatusProcessamentoRelatorioConsolidadoDePublicacoesParciais]);
-
 
     const buscaFiqueDeOlho = useCallback(async () => {
         try {
@@ -386,7 +389,6 @@ const RelatorioConsolidado = () => {
                                 />
 
                                 {loading || loadingRelatorioConsolidado  ? (
-
                                         <div className="mt-5">
                                             <Loading
                                                 corGrafico="black"
