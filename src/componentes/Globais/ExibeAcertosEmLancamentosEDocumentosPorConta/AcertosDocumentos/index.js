@@ -559,7 +559,7 @@ const AcertosDocumentos = ({analiseAtualUuid, prestacaoDeContas, prestacaoDeCont
                                                         <p className='mb-1'><strong>Justificativas e informações adicionais</strong></p>
                                                     </div>
 
-                                                    {acerto.justificativa_conciliacao_original !== null && visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'UE' && analisePermiteEdicao && prestacaoDeContas.status === 'DEVOLVIDA' &&
+                                                    {acerto.justificativa_conciliacao_original !== null && acerto.justificativa_conciliacao_original !== "" && visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'UE' && analisePermiteEdicao && prestacaoDeContas.status === 'DEVOLVIDA' &&
                                                         <div className="d-flex justify-content-end mb-2">
                                                             <button
                                                                 className='btn btn-link link-restaurar-justificativa text-center restaurar-justificativa'
