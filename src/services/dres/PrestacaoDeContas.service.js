@@ -397,3 +397,10 @@ export const postMarcarGastoDesconciliado = async (payload) => {
     return (await api.post(`/api/analises-lancamento-prestacao-conta/marcar-como-desconciliado/`, payload, authHeader)).data
 };
 
+export const postSalvarJustificativasAdicionais = async (payload) => {
+    return (await api.post(`/api/analises-documento-prestacao-conta/editar-informacao-conciliacao/`, payload, authHeader)).data
+}
+
+export const postRestaurarJustificativasAdicionais = async (payload) => {
+    return (await api.post(`/api/analises-documento-prestacao-conta/restaurar-justificativa-original/`, payload, authHeader)).data
+}

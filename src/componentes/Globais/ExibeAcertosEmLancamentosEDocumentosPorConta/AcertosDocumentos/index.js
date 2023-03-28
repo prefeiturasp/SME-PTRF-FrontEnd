@@ -5,7 +5,9 @@ import {
     postJustificarNaoRealizacaoDocumentoPrestacaoConta,
     postLimparStatusDocumentoPrestacaoConta,
     postMarcarComoDocumentoEsclarecido,
-    postMarcarComoRealizadoDocumentoPrestacaoConta
+    postMarcarComoRealizadoDocumentoPrestacaoConta,
+    postSalvarJustificativasAdicionais,
+    postRestaurarJustificativasAdicionais
 } from "../../../../services/dres/PrestacaoDeContas.service";
 import TabelaAcertosDocumentos from "./TabelaAcertosDocumentos";
 import {visoesService} from "../../../../services/visoes.service";
@@ -15,7 +17,7 @@ import {barraMensagemCustom} from "../../BarraMensagem";
 import BotoesDetalhesParaAcertosDeCategoriasDocumentos from "../BotoesDetalhesParaAcertosDeCategoriasDocumentos";
 import Loading from "../../../../utils/Loading";
 import { mantemEstadoAnaliseDre as meapcservice } from "../../../../services/mantemEstadoAnaliseDre.service";
-
+import { ModalRestaurarJustificativa } from "../../../dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeDocumentos/Modais/ModalRestaurarJustificativa";
 
 const tagColors = {
     'JUSTIFICADO':  '#5C4EF8',
@@ -33,11 +35,16 @@ const AcertosDocumentos = ({analiseAtualUuid, prestacaoDeContas, prestacaoDeCont
     const [textareaJustificativa, setTextareaJustificativa] = useState(() => {});
     const [showSalvar, setShowSalvar] = useState({});
     const [showSalvarEsclarecimento, setShowSalvarEsclarecimento] = useState({});
+    const [showSalvarJustificativaAdicionais, setShowSalvarJustificativaAdicionais] = useState({});
     const [txtEsclarecimentoDocumento, setTxtEsclarecimentoDocumento] = useState({});
+    const [txtJustificativasAdicionais, setTxtJustificativasAdicionais] = useState({});
+    const [disableRestaurarJustificativa, setDisableRestaurarJustificativa] = useState({});
     const [analisePermiteEdicao, setAnalisePermiteEdicao] = useState()
     const [totalDeAcertosDosDocumentos, setTotalDeAcertosDosDocumentos] = useState(0);
     const [identificadorCheckboxClicado, setIdentificadorCheckboxClicado] = useState(false);
     const [quantidadeSelecionada, setQuantidadeSelecionada] = useState(0);
+    const [showModalRestaurarJustificativa, setShowModalRestaurarJustificativa] = useState(false)
+    const [acertoParaRestaurarJustificativa, setAcertoParaRestaurarJustificativa] = useState(null)
 
     useEffect(() => {
         let dados_analise_dre_usuario_logado = meapcservice.getAnaliseDreUsuarioLogado()
@@ -241,6 +248,17 @@ const AcertosDocumentos = ({analiseAtualUuid, prestacaoDeContas, prestacaoDeCont
         })
     }
 
+    const handleChangeTextareaJustificativaAdicionais = (event, id) => {
+        setShowSalvarJustificativaAdicionais({
+            ...showSalvarJustificativaAdicionais,
+            [id]: false
+        })
+        setTxtJustificativasAdicionais({
+            ...txtJustificativasAdicionais,
+            [id]: event.target.value
+        })
+    }
+
     const handleOnClickSalvarJustificativa = (acerto_uuid) => {
         salvarJustificativa(acerto_uuid);
     }
@@ -260,6 +278,7 @@ const AcertosDocumentos = ({analiseAtualUuid, prestacaoDeContas, prestacaoDeCont
             console.log("Erro: ", e.message)
         }
     }
+
     const possuiSolicitacaoEsclarecimento = (value) => {
         if(value){
             return value.tipo_acerto.categoria === 'SOLICITACAO_ESCLARECIMENTO';
@@ -273,6 +292,108 @@ const AcertosDocumentos = ({analiseAtualUuid, prestacaoDeContas, prestacaoDeCont
 
     const salvarDesabilitadosJustificativa = (acerto) => {
         return !textareaJustificativa?.[acerto.uuid] || textareaJustificativa?.[acerto.uuid] === acerto.justificativa || showSalvar?.[acerto.uuid] || !analisePermiteEdicao
+    }
+
+    const possuiSolicitacaoEdicaoInformacao = (value) => {
+        if(value){
+            return value.tipo_acerto.categoria === 'EDICAO_INFORMACAO';
+        }
+        return false;
+    }
+
+    const salvarDesabilitadosJustificativasAdicionais = (acerto) => {
+        return !txtJustificativasAdicionais?.[acerto.uuid] || txtJustificativasAdicionais?.[acerto.uuid] === acerto.justificativa_conciliacao || showSalvarJustificativaAdicionais?.[acerto.uuid] || !analisePermiteEdicao
+    }
+
+    const salvarJustificativasAdicionais = async (data, acerto) => {
+
+        let payload = {
+            'justificativa_conciliacao': txtJustificativasAdicionais[acerto.uuid],
+            'uuid_analise_documento': data.uuid,
+        }
+
+        try {
+
+            await postSalvarJustificativasAdicionais(payload)
+
+            setShowSalvarJustificativaAdicionais({
+                ...showSalvarJustificativaAdicionais,
+                [acerto.uuid]: true
+            });
+
+            setDisableRestaurarJustificativa({
+                ...disableRestaurarJustificativa,
+                [acerto.uuid]: false
+            });
+
+            await carregaAcertosDocumentos()
+        } catch (e) {
+            console.log("Erro: ", e.message)
+        }
+    }
+
+    const verificaDisableRestaurarJustificativa = (acerto) => {
+        if(disableRestaurarJustificativa){
+            let justificativa = acerto.justificativa_conciliacao
+            let justificativa_original = acerto.justificativa_conciliacao_original
+
+            if(justificativa !== justificativa_original){
+                return false;
+            }
+
+            if(Object.keys(disableRestaurarJustificativa).length === 0){
+                return true;
+            }
+
+            if(disableRestaurarJustificativa[acerto.uuid] === undefined){
+                return true;
+            }
+            
+            return disableRestaurarJustificativa[acerto.uuid];
+        }
+
+        return true;
+    }
+
+    const onClickRestaurarJustificativa = (acerto) => {
+        setAcertoParaRestaurarJustificativa(acerto);
+        setShowModalRestaurarJustificativa(true);
+    }
+
+    const acaoRestaurarJustificativa = async() => {
+        let uuid_acerto = acertoParaRestaurarJustificativa.uuid;
+        let justificativa_original = acertoParaRestaurarJustificativa.justificativa_conciliacao_original
+
+        let payload = {
+            "uuid_solicitacao_acerto": uuid_acerto
+        }
+
+        try {
+
+            await postRestaurarJustificativasAdicionais(payload)
+
+            setAcertoParaRestaurarJustificativa(null);
+            setShowModalRestaurarJustificativa(false);
+
+            setShowSalvarJustificativaAdicionais({
+                ...showSalvarJustificativaAdicionais,
+                [uuid_acerto]: false
+            });
+
+            setTxtJustificativasAdicionais({
+                ...txtJustificativasAdicionais,
+                [uuid_acerto]: justificativa_original
+            })
+
+            setDisableRestaurarJustificativa({
+                ...disableRestaurarJustificativa,
+                [uuid_acerto]: true
+            });
+
+            await carregaAcertosDocumentos()
+        } catch (e) {
+            console.log("Erro: ", e.message)
+        } 
     }
 
     const rowExpansionTemplateDocumentos = (data) => {
@@ -428,6 +549,64 @@ const AcertosDocumentos = ({analiseAtualUuid, prestacaoDeContas, prestacaoDeCont
                                                         onClick={() => marcarComoEsclarecido(acerto)}
                                                     >
                                                         <strong>Salvar esclarecimento</strong>
+                                                    </button>
+                                                }
+                                            </div>
+
+                                            {possuiSolicitacaoEdicaoInformacao(acerto) &&
+                                                <div className="form-group w-100 col-12 px-3" id="pointer-event-all">
+                                                    <div className='titulo-row-expanded-conferencia-de-lancamentos mb-4 '>
+                                                        <p className='mb-1'><strong>Justificativas e informações adicionais</strong></p>
+                                                    </div>
+
+                                                    {acerto.justificativa_conciliacao_original !== null && visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'UE' && analisePermiteEdicao && prestacaoDeContas.status === 'DEVOLVIDA' &&
+                                                        <div className="d-flex justify-content-end mb-2">
+                                                            <button
+                                                                className='btn btn-link link-restaurar-justificativa text-center restaurar-justificativa'
+                                                                disabled={verificaDisableRestaurarJustificativa(acerto) || ![['change_analise_dre']].some(visoesService.getPermissoes)}
+                                                                onClick={() => onClickRestaurarJustificativa(acerto)}
+                                                                title="A opção Restaurar justificativas permite retornar ao texto original da justificativa informado no Demonstrativo Financeiro da Conta."
+                                                            >
+                                                                <strong>Restaurar Justificativas</strong>
+                                                            </button>
+                                                        </div>
+                                                    }
+                                                    
+                                                    <textarea
+                                                        rows="4"
+                                                        cols="50"
+                                                        name='justificativas_informacoes_adicionais'
+                                                        defaultValue={acerto.justificativa_conciliacao}
+                                                        onChange={(event) => handleChangeTextareaJustificativaAdicionais(event, acerto.uuid)}
+                                                        className="form-control"
+                                                        placeholder="Digite a justificativa"
+                                                        disabled={![['change_analise_dre']].some(visoesService.getPermissoes) || visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'DRE' || prestacaoDeContas.status !== 'DEVOLVIDA' || !analisePermiteEdicao}
+                                                    />
+                                                </div>
+                                            }
+
+                                            <div className="bd-highlight d-flex justify-content-end align-items-center" id="pointer-event-all">
+                                                {showSalvarJustificativaAdicionais?.[acerto.uuid] &&
+                                                    <div className="">
+                                                        <p className="mr-2 mt-3">
+                                                            <span className="mr-1">
+                                                                <FontAwesomeIcon
+                                                                    style={{fontSize: '16px', color: '#297805'}}
+                                                                    icon={faCheck}
+                                                                />
+                                                            </span>
+                                                            Salvo
+                                                        </p>
+                                                    </div>
+                                                }
+                                                {possuiSolicitacaoEdicaoInformacao(acerto) &&
+                                                    <button
+                                                        disabled={salvarDesabilitadosJustificativasAdicionais(acerto) || !analisePermiteEdicao}
+                                                        type="button"
+                                                        className={`btn btn-${salvarDesabilitadosJustificativasAdicionais(acerto) ? 'secondary' : 'success'} mr-3`}
+                                                        onClick={() => salvarJustificativasAdicionais(data, acerto)}
+                                                    >
+                                                        <strong>Salvar justificativas</strong>
                                                     </button>
                                                 }
                                             </div>
@@ -775,7 +954,7 @@ const AcertosDocumentos = ({analiseAtualUuid, prestacaoDeContas, prestacaoDeCont
                         marginBottom="0"
                     />
                 ) :
-
+                <>
                 <TabelaAcertosDocumentos
                     documentosAjustes={documentosAjustes}
                     prestacaoDeContas={prestacaoDeContas}
@@ -799,10 +978,24 @@ const AcertosDocumentos = ({analiseAtualUuid, prestacaoDeContas, prestacaoDeCont
                     acoesDisponiveis={acoesDisponiveis}
                     acaoCancelar={acaoCancelar}
                 />
+
+                    <section>
+                        <ModalRestaurarJustificativa
+                            show={showModalRestaurarJustificativa}
+                            titulo='Restaurar justificativa'
+                            texto={'Deseja restaurar o texto original da justificativa?'}
+                            primeiroBotaoTexto="Confirmar"
+                            primeiroBotaoCss="success"
+                            primeiroBotaoOnclick={() => acaoRestaurarJustificativa() }
+                            segundoBotaoTexto="Cancelar"
+                            segundoBotaoCss="danger"
+                            handleClose={() => setShowModalRestaurarJustificativa(false)}
+                        />
+                    </section>
+                </>
             }
         </>
     )
 }
 
 export default memo(AcertosDocumentos)
-
