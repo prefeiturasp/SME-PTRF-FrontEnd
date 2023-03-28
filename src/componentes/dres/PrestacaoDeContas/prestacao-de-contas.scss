@@ -585,3 +585,18 @@
 .esconde-tipo-acerto{
   display: none !important;
 }
+
+.restaurar-justificativa{
+  padding: 0px;
+  border-bottom-color: #48505b;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+}
+
+.link-restaurar-justificativa{
+  color: #48505b !important;
+}
+
+.link-restaurar-justificativ:hover{
+  cursor: pointer;
+}
