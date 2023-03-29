@@ -1,9 +1,9 @@
 # just to create `build` directory
 FROM node:10.15.3-alpine as builder
 WORKDIR /app
+USER root
 COPY . ./
-RUN chown -R node:node /app \ 
-    && export NODE_PATH=src/ \
+RUN export NODE_PATH=src/ \
     && npm install \
     && npm run-script build
 
