@@ -3,6 +3,8 @@ import {ModalFormBodyText} from "../../../../Globais/ModalBootstrap";
 import {Formik} from "formik";
 import {YupSignupSchemaAssociacoes, exibeDataPT_BR} from "../../../../../utils/ValidacoesAdicionaisFormularios";
 import MaskedInput from "react-text-mask";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faExclamationCircle} from '@fortawesome/free-solid-svg-icons'
 
 const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitModalFormAssociacoes, listaDePeriodos, tabelaAssociacoes, carregaUnidadePeloCodigoEol, errosCodigoEol, onDeleteAssocicacaoTratamento}) => {
 
@@ -171,7 +173,13 @@ const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitMo
                                                 className="form-control"
                                                 onChange={props.handleChange}
                                             />
-                                            <small class="form-text text-muted">Preencha este campo, se necessário, com informações relacionadas a unidade educacional.</small>
+                                                <small className="form-text text-muted">
+                                                    <FontAwesomeIcon
+                                                        style={{fontSize: '12px', marginRight:'4px'}}
+                                                        icon={faExclamationCircle}
+                                                    /> 
+                                                    <span>Preencha este campo, se necessário, com informações relacionadas a unidade educacional.</span>
+                                                </small>
                                         </div>
                                     </div>
                                 </div>
