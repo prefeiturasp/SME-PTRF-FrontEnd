@@ -60,7 +60,6 @@ export const checkDuplicateInObject = (propertyName, inputArray) => {
 export const YupSignupSchemaAssociacoes  = yup.object().shape({
   nome: yup.string().required("Nome é obrigatório"),
   codigo_eol_unidade: yup.string().required("Código EOL da unidade é obrigatório"),
-  status_regularidade: yup.string().required("Status de regularidade é obrigatório"),
   cnpj: yup.string()
   .test('test-name', 'Digite um CNPJ Válido',
       function (value) {
