@@ -614,7 +614,7 @@ const RetificacaoRelatorioConsolidado = () => {
 
         if(ehEdicaoRetificacao){
             await updateRetificarPcs(relatorio_consolidado_uuid, payload);
-            toastCustom.ToastCustomSuccess('Inclusão de PCs efetuada com sucesso.', 'As PCs selecionadas foram adicionadas para a retificação. com sucesso.')
+            toastCustom.ToastCustomSuccess('Inclusão de PCs efetuada com sucesso.', 'As PCs selecionadas foram adicionadas para a retificação com sucesso.')
 
             setShowModal(false);
             setQuantidadeSelecionada(0);
