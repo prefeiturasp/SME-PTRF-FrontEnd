@@ -192,7 +192,7 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
                 const {status, data} = await marcarAcertosDocumentosComoNaoCorreto(payload);
 
                 if (status === 200) {
-                    toastCustom.ToastCustomSuccess(data.mensagem, "")
+                    toastCustom.ToastCustomSuccess('Conferência adicionada com sucesso.', data.mensagem)
                     carregaListaDeDocumentosRelatorio()
                 }
             } catch (err) {
@@ -216,7 +216,7 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
                 const {status, data} = await marcarAcertosDocumentosComoCorreto(payload);
 
                 if (status === 200) {
-                    toastCustom.ToastCustomSuccess(data.mensagem, "")
+                    toastCustom.ToastCustomSuccess('Conferência adicionada com sucesso.', data.mensagem)
                     carregaListaDeDocumentosRelatorio()
                 }
             } catch (err) {

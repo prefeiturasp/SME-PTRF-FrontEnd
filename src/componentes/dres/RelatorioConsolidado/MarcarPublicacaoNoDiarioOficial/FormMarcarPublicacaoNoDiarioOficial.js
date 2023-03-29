@@ -28,7 +28,7 @@ const FormMarcarPublicacaoNoDiarioOficial = ({consolidadoDre, carregaConsolidado
         try {
             let marcado = await postMarcarComoPublicadoNoDiarioOficial(payload)
             handleClose()
-            toastCustom.ToastCustomSuccess('Sucesso', `${textoMsg}`)
+            toastCustom.ToastCustomSuccess('Data e página da publicação aplicadas com sucesso.', `${textoMsg}`)
             console.log("Relatório marcado como publicado no Diário Oficial com sucesso! ", marcado)
             await carregaConsolidadosDreJaPublicadosProximaPublicacao()
         }catch (e) {
@@ -45,7 +45,7 @@ const FormMarcarPublicacaoNoDiarioOficial = ({consolidadoDre, carregaConsolidado
             let desmarcado = await postDesmarcarComoPublicadoNoDiarioOficial(payload)
             handleClose()
             setShowModalConfirmDesmarcarPublicacaoNoDiarioOficial(false)
-            toastCustom.ToastCustomSuccess('Sucesso', `Data e página da publicação removida com sucesso.`)
+            toastCustom.ToastCustomSuccess('Informação da publicação removida com sucesso.', `Data e página da publicação removidas com sucesso.`)
             console.log("Relatório desmarcado como publicado no Diário Oficial com sucesso! ", desmarcado)
             await carregaConsolidadosDreJaPublicadosProximaPublicacao()
         }catch (e) {
