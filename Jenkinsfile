@@ -6,11 +6,11 @@ pipeline {
     }
   
     agent {
-      node { label 'python-36-sigpae' }
+      node { label 'python-36-ptrf' }
     }
 
     options {
-      buildDiscarder(logRotator(numToKeepStr: '15', artifactNumToKeepStr: '15'))
+      buildDiscarder(logRotator(numToKeepStr: '20', artifactNumToKeepStr: '5'))
       disableConcurrentBuilds()
       skipDefaultCheckout()
     }
@@ -37,7 +37,7 @@ pipeline {
         
 
         stage('Build') {
-          when { anyOf { branch 'master'; branch 'main'; branch "story/*"; branch 'development'; branch 'develop'; branch 'release'; branch 'homolog';  } } 
+          when { anyOf { branch 'master'; branch 'main'; branch "story/*"; branch 'development'; branch 'develop'; branch 'release'; branch 'homolog'; branch 'homolog-r2';  } } 
           steps {
             script {
               imagename1 = "registry.sme.prefeitura.sp.gov.br/${env.branchname}/ptrf-frontend"
@@ -55,7 +55,7 @@ pipeline {
         }
 	    
         stage('Deploy'){
-            when { anyOf {  branch 'master'; branch 'main'; branch 'develop'; branch 'development'; branch 'release'; branch 'homolog';  } }        
+            when { anyOf {  branch 'master'; branch 'main'; branch 'develop'; branch 'development'; branch 'release'; branch 'homolog'; branch 'homolog-r2';  } }        
             steps {
                 script{
                     if ( env.branchname == 'main' ||  env.branchname == 'master' || env.branchname == 'homolog' || env.branchname == 'release' ) {
@@ -63,19 +63,18 @@ pipeline {
                         timeout(time: 24, unit: "HOURS") {
                             input message: 'Deseja realizar o deploy?', ok: 'SIM', submitter: 'alessandro_fernandes, kelwy_oliveira, anderson_morais, luis_zimmermann, rodolpho_azeredo, ollyver_ottoboni'
                         }
-                        withCredentials([file(credentialsId: "${kubeconfig}", variable: 'config')]){
-                            sh('cp $config '+"$home"+'/.kube/config')
-                            sh 'kubectl rollout restart deployment/ptrf-frontend -n sme-ptrf'
-                            
-                        }
                     }
-                    else{
-                        withCredentials([file(credentialsId: "${kubeconfig}", variable: 'config')]){
-                            sh('cp $config '+"$home"+'/.kube/config')
-                            sh 'kubectl rollout restart deployment/ptrf-frontend -n sme-ptrf'
-                            
+                      withCredentials([file(credentialsId: "${kubeconfig}", variable: 'config')]){
+
+                        if ( env.branchname == 'homolog-r2' ) {
+                          sh('cp $config '+"$home"+'/.kube/config')
+                          sh 'kubectl rollout restart deployment/ptrf-frontend -n sme-ptrf-hom2'
                         }
-                    }
+                        else {
+                          sh('cp $config '+"$home"+'/.kube/config')
+                          sh 'kubectl rollout restart deployment/ptrf-frontend -n sme-ptrf'  
+                        }                           
+                      }
                 }
             }           
         } 
@@ -89,9 +88,9 @@ pipeline {
               }
             }
 
-            stage('Pre-Prod'){          
+            stage('Treinamento2'){          
               steps {
-                  sh 'kubectl rollout restart deployment/sigescolapre-frontend -n sme-sigescola-pre'
+                  sh 'kubectl rollout restart deployment/sigescolapre-frontend -n sigescola-treinamento2'
               }
             }
 
@@ -124,6 +123,7 @@ def getKubeconf(branchName) {
     if("main".equals(branchName)) { return "config_prd"; }
     else if ("master".equals(branchName)) { return "config_prd"; }
     else if ("homolog".equals(branchName)) { return "config_hom"; }
+    else if ("homolog-r2".equals(branchName)) { return "config_hom"; }
     else if ("release".equals(branchName)) { return "config_hom"; }
     else if ("development".equals(branchName)) { return "config_dev"; }
     else if ("develop".equals(branchName)) { return "config_dev"; }
