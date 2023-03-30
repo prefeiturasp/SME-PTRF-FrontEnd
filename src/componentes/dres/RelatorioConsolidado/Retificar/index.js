@@ -1,11 +1,12 @@
 import React from "react";
 import {Link} from 'react-router-dom';
 import ReactTooltip from "react-tooltip";
+import { visoesService } from "../../../../services/visoes.service";
 
 export const Retificar = ({consolidadoDre}) => {
   return(
       <>
-          {consolidadoDre && consolidadoDre?.exibe_botao_retificar &&
+          {consolidadoDre && consolidadoDre?.exibe_botao_retificar && [['access_retificacao_dre']].some(visoesService.getPermissoes) &&
               <div className="p-2 bd-highlight">
                     <Link
                         to={

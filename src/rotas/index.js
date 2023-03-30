@@ -385,7 +385,7 @@ const routesConfig = [
         exact: true,
         path: "/dre-relatorio-consolidado-retificacao/:relatorio_consolidado_uuid/",
         component: RetificacaoRelatorioConsolidado,
-        permissoes: ['access_relatorio_consolidado_dre'],
+        permissoes: ['access_retificacao_dre'],
     },
     {
         exact: true,
