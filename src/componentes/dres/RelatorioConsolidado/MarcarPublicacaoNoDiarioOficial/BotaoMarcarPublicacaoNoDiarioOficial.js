@@ -22,7 +22,7 @@ const BotaoMarcarPublicacaoNoDiarioOficial = ({consolidadoDre, carregaConsolidad
                     handleClose={() => setShowModalMarcarPublicacaoNoDiarioOficial(false)}
                     consolidadoDre={consolidadoDre}
                     carregaConsolidadosDreJaPublicadosProximaPublicacao={carregaConsolidadosDreJaPublicadosProximaPublicacao}
-                    textoMsg='Data e página da publicação incluída com sucesso.'
+                    textoMsg='Data e página da publicação informada com sucesso.'
                     textoBotaoSalvar='Informar'
                 />
             </section>

@@ -614,7 +614,7 @@ const RetificacaoRelatorioConsolidado = () => {
 
         if(ehEdicaoRetificacao){
             await updateRetificarPcs(relatorio_consolidado_uuid, payload);
-            toastCustom.ToastCustomSuccess('Sucesso!', 'As PCs selecionadas foram adicionadas para retificação.')
+            toastCustom.ToastCustomSuccess('Inclusão de PCs efetuada com sucesso.', 'As PCs selecionadas foram adicionadas para a retificação com sucesso.')
 
             setShowModal(false);
             setQuantidadeSelecionada(0);
@@ -628,7 +628,7 @@ const RetificacaoRelatorioConsolidado = () => {
         }
         else{
             await postRetificarPcs(relatorio_consolidado_uuid, payload)
-            toastCustom.ToastCustomSuccess('Sucesso!', 'A retificação da publicação foi criada com sucesso.')
+            toastCustom.ToastCustomSuccess('Retificação criada com sucesso.', 'A retificação da publicação foi criada com sucesso.')
             onClickVoltar();
         }    
     }
@@ -651,7 +651,7 @@ const RetificacaoRelatorioConsolidado = () => {
         await postDesfazerRetificacaoPcs(relatorio_consolidado_uuid, payload)
 
         if(deve_apagar_retificacao){
-            toastCustom.ToastCustomSuccess('Sucesso!', 'A retificação da publicação foi excluída com sucesso.')
+            toastCustom.ToastCustomSuccess('Retificação removida com sucesso.', 'A retificação da publicação foi removida com sucesso.')
             onClickVoltar();
         }
         else{
@@ -661,7 +661,7 @@ const RetificacaoRelatorioConsolidado = () => {
             setLoadingPcsDoConsolidado(true);
             setLoadingPcsEmRetificacao(true);
 
-            toastCustom.ToastCustomSuccess('Sucesso!', 'PCs removidas da retificação com sucesso.')  
+            toastCustom.ToastCustomSuccess('Remoção de PCs efetuada com sucesso.', 'PCs removidas da retificação com sucesso.')
             
             await carregaPcsDoConsolidado();
             await carregaPcsEmRetificacao();
