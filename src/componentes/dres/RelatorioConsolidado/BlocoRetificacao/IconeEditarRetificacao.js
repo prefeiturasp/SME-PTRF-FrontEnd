@@ -20,7 +20,7 @@ const IconeEditarRetificacao = ({consolidadoDre}) => {
     return (
         <>
             {consolidadoDre && consolidadoDre?.ja_publicado && consolidadoDre?.data_publicacao && consolidadoDre?.eh_retificacao && 
-                <div data-tip={retornaMsgToolTip()} data-html={true} style={{display:'inline'}}>
+                    <div data-tip={retornaMsgToolTip()} data-html={true} style={{display:'inline'}} data-for={`tooltip-id-${consolidadoDre.uuid}`}>
                     <button
                         onClick={(e) => console.log(e)}
                         className="btn btn-link pt-1 pb-1 pl-2 pr-0"
@@ -30,7 +30,7 @@ const IconeEditarRetificacao = ({consolidadoDre}) => {
                             style={{marginRight: "0", color: '#00585E', fontSize: '18px'}}
                             icon={faEdit}
                         />
-                        <ReactTooltip html={true}/>
+                        <ReactTooltip id={`tooltip-id-${consolidadoDre.uuid}`} html={true}/>
 
                     </button>
                 </div>
