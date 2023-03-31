@@ -1,3 +1,7 @@
+### 6.0.2 - 21/03/2023 - Hotfix - Soluções de bugs urgentes durante a sprint 61
+* (85715) Corrige no relatório consolidado o problema de loading que não é exibido corretamente na solicitação de geração do demonstrativo
+* (88561) Corrige exibição dos dados de saldo bancário
+
 ### 6.0.1 - 09/02/2023 - Hotfix - Soluções de bugs urgentes durante a sprint 59
 * (84852) Remove edição de devoluções ao tesouro da ata de retificação em tela
 * (85660) Implementa monitoramenmto de processamentos de PCs
