@@ -1,10 +1,11 @@
-import React, {memo, useMemo} from "react";
+import React, {memo} from "react";
 import {
     getDownloadRelatorio,
 } from "../../../services/dres/RelatorioConsolidado.service";
 import {haDiferencaPrevisaoExecucaoRepasse} from "./haDiferencaPrevisaoExecucaoRepasse"
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faDownload} from "@fortawesome/free-solid-svg-icons";
+import Spinner from "../../../assets/img/spinner.gif"
 
 const DemonstrativoDaExecucaoFisicoFinanceira = ({consolidadoDre, periodoEscolhido, execucaoFinanceira, podeAcessarInfoConsolidado}) => {
     const retornaClasseMensagem = (texto) => {
@@ -48,8 +49,8 @@ const DemonstrativoDaExecucaoFisicoFinanceira = ({consolidadoDre, periodoEscolhi
                                 <div className='mt-2 mb-3' >
                                     <p className='fonte-14 mb-1'><strong>Demonstrativo da Execução Físico-Financeira {relatorio.tipo_conta ? "- Conta " + relatorio.tipo_conta : ""}</strong></p>
                                     <p className={`fonte-12 mb-0 ${retornaClasseMensagem(relatorio.status_geracao)}`}>
-                                        <span>{relatorio.status_geracao_arquivo}</span>
-                                        {(relatorio.status_geracao === 'GERADO_PARCIAL' || relatorio.status_geracao === 'GERADO_TOTAL') &&
+                                        <span>{relatorio.status_geracao_arquivo} </span>
+                                        {(relatorio.status_geracao === 'GERADO_PARCIAL' || relatorio.status_geracao === 'GERADO_TOTAL') ?
                                             <button className='btn-editar-membro' type='button'>
                                                 <FontAwesomeIcon
                                                     onClick={() => downloadRelatorio(relatorio.uuid, relatorio.versao)}
@@ -57,6 +58,8 @@ const DemonstrativoDaExecucaoFisicoFinanceira = ({consolidadoDre, periodoEscolhi
                                                     icon={faDownload}
                                                 />
                                             </button>
+                                        :
+                                            <img src={Spinner} style={{height: "22px"}} alt=''/>
                                         }
                                     </p>
                                 </div>
