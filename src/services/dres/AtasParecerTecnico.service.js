@@ -24,10 +24,6 @@ export const postEdicaoAtaParecerTecnico = async (ata_uuid, payload) => {
     return (await api.patch(`/api/ata-parecer-tecnico/${ata_uuid}/`, payload, authHeader)).data
 };
 
-export const getStatusAta = async (dre_uuid, periodo_uuid) => {
-    return (await api.get(`api/ata-parecer-tecnico/status-ata/?dre=${dre_uuid}&periodo=${periodo_uuid}`, authHeader)).data
-}
-
 export const getDownloadAtaParecerTecnico = async (ata_uuid) => {
     return api
     .get(`api/consolidados-dre/download-ata-parecer-tecnico/?ata=${ata_uuid}`, {
