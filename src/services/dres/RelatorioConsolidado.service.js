@@ -175,10 +175,6 @@ export const getListaAssociacoesNaoRegularizadas = async (dre_uuid) => {
     return (await api.get(`/api/associacoes/?unidade__dre__uuid=${dre_uuid}&status_regularidade=PENDENTE`, authHeader)).data
 };
 
-export const getStatusAta = async (dre_uuid, periodo_uuid) => {
-    return (await api.get(`/api/ata-parecer-tecnico/status-ata/?dre=${dre_uuid}&periodo=${periodo_uuid}`, authHeader)).data
-}
-
 export const getTrilhaStatus = async (dre_uuid, uuid_periodo) => {
     return (await api.get(`/api/consolidados-dre/trilha-de-status/?dre=${dre_uuid}&periodo=${uuid_periodo}`, authHeader)).data
 };

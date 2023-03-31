@@ -93,6 +93,21 @@ const RelatorioConsolidado = () => {
     useEffect(() => {
         carregaConsolidadosDreJaPublicadosProximaPublicacao()
     }, [carregaConsolidadosDreJaPublicadosProximaPublicacao])
+    
+    
+    const verificaSeExisteAlgumRelatorioConsolidadoEmProcessamento = useCallback(async () => {
+
+        if (consolidadoDreProximaPublicacao && consolidadoDreProximaPublicacao.relatorios_fisico_financeiros){
+            let relatorio_em_processamento = consolidadoDreProximaPublicacao.relatorios_fisico_financeiros.find((relatorio)=> relatorio.versao === 'CONSOLIDADA' && relatorio.status_geracao === 'EM_PROCESSAMENTO')
+            if (relatorio_em_processamento){
+                await carregaConsolidadosDreJaPublicadosProximaPublicacao()
+            }
+        }
+    }, [consolidadoDreProximaPublicacao, carregaConsolidadosDreJaPublicadosProximaPublicacao])
+    
+    useEffect(()=>{
+        verificaSeExisteAlgumRelatorioConsolidadoEmProcessamento()
+    }, [verificaSeExisteAlgumRelatorioConsolidadoEmProcessamento])
 
     const retornaStatusConsolidadosDre = useCallback(async () => {
         if (dre_uuid && periodoEscolhido) {
