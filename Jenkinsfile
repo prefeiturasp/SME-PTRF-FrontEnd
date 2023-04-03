@@ -70,7 +70,7 @@ pipeline {
                           sh('cp $config '+"$home"+'/.kube/config')
                           sh 'kubectl rollout restart deployment/ptrf-frontend -n sme-ptrf-hom2'
                         }
-                        else id ( env.branchname == 'pre-release' ) {
+                        else if ( env.branchname == 'pre-release' ) {
                           sh('cp $config '+"$home"+'/.kube/config')
 			  sh 'kubectl rollout restart deployment/sigescolapre-frontend -n sme-sigescola-pre'
                         }
