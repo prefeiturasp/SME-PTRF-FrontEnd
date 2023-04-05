@@ -113,9 +113,9 @@ const DevolucaoParaAcertos = ({prestacaoDeContas, analisesDeContaDaPrestacao, ca
             devolucoes_ao_tesouro_da_prestacao:[]
         }
 
-        if(prestacaoDeContas.pode_reabrir === false){
+        if(prestacaoDeContas.pode_devolver === false){
             setShowModalErroDevolverParaAcerto(true);
-            setTextoErroDevolverParaAcerto("Essa prestação de contas não pode ser devolvida, ou reaberta porque há prestação de contas dessa associação de um período posterior. Se necessário, reabra ou devolva primeiro a prestação de contas mais recente.")
+            setTextoErroDevolverParaAcerto("Foram solicitados acertos que demandam exclusão dos documentos e fechamentos na conclusão do acerto. Para fazer a devolução dessa prestação de contas é necessário reabrir ou devolver primeiro a prestação de contas mais recente para que sejam gerados novos documentos.")
             setBtnDevolverParaAcertoDisabled(false)
         }
         else{
@@ -161,17 +161,18 @@ const DevolucaoParaAcertos = ({prestacaoDeContas, analisesDeContaDaPrestacao, ca
                             </div>
                             <div>
                                 <Link onClick={ (totalLancamentosAjustes > 0 || totalDocumentosAjustes > 0 || totalAnalisesDeContaDaPrestacao > 0) || (prestacaoDeContas && prestacaoDeContas.devolucoes_da_prestacao && prestacaoDeContas.devolucoes_da_prestacao.length > 0) ? null : (event) => event.preventDefault() }
-                                      to={{
-                                          pathname: `/dre-detalhe-prestacao-de-contas-resumo-acertos/${prestacaoDeContas.uuid}`,
-                                          state: {
-                                              analisesDeContaDaPrestacao: analisesDeContaDaPrestacao,
-                                              editavel: editavel,
-                                              infoAta: infoAta,
-                                          }
-                                      }}
-                                      className="btn btn-outline-success mr-2"
-                                      disabled={ !((totalLancamentosAjustes > 0 || totalDocumentosAjustes > 0 || totalAnalisesDeContaDaPrestacao > 0) || (prestacaoDeContas && prestacaoDeContas.devolucoes_da_prestacao && prestacaoDeContas.devolucoes_da_prestacao.length > 0)) }
-                                      readOnly={ !((totalLancamentosAjustes > 0 || totalDocumentosAjustes > 0 || totalAnalisesDeContaDaPrestacao > 0) || (prestacaoDeContas && prestacaoDeContas.devolucoes_da_prestacao && prestacaoDeContas.devolucoes_da_prestacao.length > 0)) }
+                                        to={{
+                                            pathname: `/dre-detalhe-prestacao-de-contas-resumo-acertos/${prestacaoDeContas.uuid}`,
+                                            state: {
+                                                analisesDeContaDaPrestacao: analisesDeContaDaPrestacao,
+                                                editavel: editavel,
+                                                infoAta: infoAta,
+                                            }
+                                        }}
+                                        className="btn btn-outline-success mr-2"
+                                        disabled={ !((totalLancamentosAjustes > 0 || totalDocumentosAjustes > 0 || totalAnalisesDeContaDaPrestacao > 0) || (prestacaoDeContas && prestacaoDeContas.devolucoes_da_prestacao && prestacaoDeContas.devolucoes_da_prestacao.length > 0)) }
+                                        readOnly={ !((totalLancamentosAjustes > 0 || totalDocumentosAjustes > 0 || totalAnalisesDeContaDaPrestacao > 0) || (prestacaoDeContas && prestacaoDeContas.devolucoes_da_prestacao && prestacaoDeContas.devolucoes_da_prestacao.length > 0)) }
+                                        title={(prestacaoDeContas && prestacaoDeContas.devolucoes_da_prestacao && prestacaoDeContas.devolucoes_da_prestacao.length > 0) ? null: `Esta PC não possui histórico de devoluções.` }
                                 >
                                     Ver resumo
                                 </Link>

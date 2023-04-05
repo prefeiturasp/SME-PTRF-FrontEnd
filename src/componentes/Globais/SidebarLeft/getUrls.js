@@ -10,6 +10,7 @@ import IconeRelatorio from "../../../assets/img/icone-menu-dre-relatorio.svg"
 import IconeApoioDiretoria from "../../../assets/img/icone-apoio-a-diretoria.svg"
 import IconeGestaoDePerfis from "../../../assets/img/icone-menu-gestao-de-perfis.svg"
 import IconeMenuParametrizacoes from "../../../assets/img/icone-menu-parametrizacoes.svg"
+import IconeMenuPrestacaoContas from "../../../assets/img/icone-menu-pestracao-conta.svg"
 import IconeMenuSaldosBancarios from "../../../assets/img/icone-menu-sme-saldos-bancarios.svg"
 import IconeMenuFornecedores from "../../../assets/img/icone-menu-fornecedores.svg"
 import IconeMenuValoresReprogramados from "../../../assets/img/icone-menu-valores-reprogramados.svg"
@@ -86,21 +87,29 @@ const UrlsMenuDres ={
 
 const UrlsMenuSME ={
     dados_iniciais: {
-        default_selected: "acompanhamento-pcs-sme",
+        default_selected: "painel-parametrizacoes",
         usuario: getDadosUsuario(),
         associacao_tipo_escola: getDadosUnidade().tipo_escola,
         associacao_nome_escola: getDadosUnidade().nome_escola
     },
     lista_de_urls:[
         {label: "Parametrizações", url: "painel-parametrizacoes", dataFor:"sme_painel_parametrizacoes", icone:IconeMenuParametrizacoes, permissoes: ['access_painel_parametrizacoes'],},
-        {label: "Acompanhamento de PCs", url: "acompanhamento-pcs-sme", dataFor:"acompanhamento_pcs_sme", icone:IconeAcompanhamento, permissoes: ['access_acompanhamento_pc_sme'],},
+        {label: "Prestação de Contas", url: "prestacao-contas-sme", dataFor:"prestacao_contas_sme", icone:IconeMenuPrestacaoContas, permissoes: ['access_suporte_unidades_sme'],
+            subItens: [
+                {
+                    label: "Acompanhamento de PCs", url: "acompanhamento-pcs-sme", dataFor:"acompanhamento_pcs_sme", icone:IconeAcompanhamento, permissoes: ['access_acompanhamento_pc_sme']
+                },
+                {
+                    label: "Relatórios consolidados das DREs", url: "analises-relatorios-consolidados-dre", dataFor:"analises_relatorios_consolidados_dre", icone:"", permissoes: ['access_analise_relatorios_consolidados_sme',]
+                },
+            ]
+        },
         {label: "Consulta de saldos bancários", url: "consulta-de-saldos-bancarios", dataFor:"consulta_de_saldos_bancarios", icone:IconeMenuSaldosBancarios, permissoes: ['access_consulta_saldo_bancario'],},
         {label: "Suporte às Unidades", url: "suporte-unidades-sme", dataFor:"suporte_unidades_sme", icone:IconeMenuSuporteUnidades, permissoes: ['access_suporte_unidades_sme'],},
         {label: "Extração de dados", url: "extracoes-dados", dataFor:"extracao_de_dados", icone:IconeMenuExtracaoDados, permissoes: ['access_extracao_de_dados_sme'],},
         {label: "Gestão de perfis", url: "gestao-de-perfis", dataFor:"gestao_de_perfis", icone:IconeGestaoDePerfis, permissoes: ['access_gestao_perfis_sme'],},
     ]
 };
-
 
 const GetUrls = () =>{
 

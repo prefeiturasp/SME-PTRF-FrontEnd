@@ -1,5 +1,5 @@
 import React, {useEffect, useState, Fragment, useCallback, useContext} from "react";
-import {useHistory} from "react-router-dom";
+import {useHistory, useParams} from "react-router-dom";
 import {TopoSelectPeriodoBotaoConcluir} from "./TopoSelectPeriodoBotaoConcluir";
 import {getPeriodosDePrestacaoDeContasDaAssociacao, getDataPreenchimentoPreviaAta} from "../../../services/escolas/Associacao.service"
 import {getStatusPeriodoPorData, postConcluirPeriodo, getDataPreenchimentoAta, getIniciarAta, getIniciarPreviaAta} from "../../../services/escolas/PrestacaoDeContas.service";
@@ -21,9 +21,14 @@ import {ModalConcluirAcertoComPendencias} from "./ModalConcluirAcertoComPendenci
 import { SidebarLeftService } from "../../../services/SideBarLeft.service";
 import { SidebarContext } from "../../../context/Sidebar";
 import {NotificacaoContext} from "../../../context/Notificacoes";
+import {getRegistrosFalhaGeracaoPc} from "../../../services/Notificacoes.service";
+import {ModalNotificaErroConcluirPC} from "./ModalNotificaErroConcluirPC";
 
 export const PrestacaoDeContas = ({setStatusPC}) => {
     const history = useHistory();
+
+    let {monitoramento} = useParams();
+
     const contextSideBar = useContext(SidebarContext);
 
     const notificacaoContext = useContext(NotificacaoContext);
@@ -36,6 +41,7 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
     const [contaPrestacaoDeContas, setContaPrestacaoDeContas] = useState(false);
     const [clickBtnEscolheConta, setClickBtnEscolheConta] = useState({0: true});
     const [loading, setLoading] = useState(true);
+    const [loadingMonitoramentoPc, setLoadingMonitoramentoPc] = useState(false);
     const [showConcluir, setShowConcluir] = useState(false);
     const [showConcluirAcertoComPendencia, setShowConcluirAcertoComPendencia] = useState(false);
     const [corBoxAtaApresentacao, setcorBoxAtaApresentacao] = useState("");
@@ -43,8 +49,18 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
     const [dataBoxAtaApresentacao, setdataBoxAtaApresentacao] = useState("");
     const [uuidAtaApresentacao, setUuidAtaApresentacao] = useState("");
     const [showConcluirAcertosSemPendencias, setShowConcluirAcertosSemPendencias] = useState(false);
+    const [stringMonitoramento, setStringMonitoramento] = useState(monitoramento)
 
     const associacaoUuid = localStorage.getItem(ASSOCIACAO_UUID)
+
+    // Falha Geracao PC
+    // Força o fechamento do Modal de Falha ao Gerar PC, que é exibido em todas as outras páginas
+    const [registroFalhaGeracaoPc, setRegistroFalhaGeracaoPc] = useState([]);
+    const [showExibeModalErroConcluirPc, setShowExibeModalErroConcluirPc] = useState(false);
+
+    useEffect(()=>{
+        notificacaoContext.setShow(false)
+    }, [notificacaoContext])
 
     useEffect(() => {
         if (statusPrestacaoDeConta && statusPrestacaoDeConta.prestacao_contas_status && statusPrestacaoDeConta.prestacao_contas_status.status_prestacao === 'EM_PROCESSAMENTO'){
@@ -101,7 +117,7 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
         });
     };
 
-    const getPeriodoPrestacaoDeConta = () => {
+    const getPeriodoPrestacaoDeConta = async () => {
         if (localStorage.getItem('periodoPrestacaoDeConta')) {
             const periodo_prestacao_de_contas = JSON.parse(localStorage.getItem('periodoPrestacaoDeConta'));
             setPeriodoPrestacaoDeConta(periodo_prestacao_de_contas)
@@ -204,15 +220,19 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
         return obj && Object.entries(obj).length > 0
     };
 
-    const concluirPeriodo = async (justificativaPendencia='') =>{
-        let status_concluir_periodo = await postConcluirPeriodo(periodoPrestacaoDeConta.periodo_uuid, justificativaPendencia);
-        setUuidPrestacaoConta(status_concluir_periodo.uuid);
-        let status = await getStatusPeriodoPorData(localStorage.getItem(ASSOCIACAO_UUID), periodoPrestacaoDeConta.data_inicial);
-        setStatusPrestacaoDeConta(status);
-        setStatusPC(status)
-        await carregaPeriodos();
-        await setConfBoxAtaApresentacao();
-    };
+    const concluirPeriodo = useCallback( async (justificativaPendencia='') =>{
+        if (periodoPrestacaoDeConta && periodoPrestacaoDeConta.periodo_uuid){
+
+            let status_concluir_periodo = await postConcluirPeriodo(periodoPrestacaoDeConta.periodo_uuid, justificativaPendencia);
+            setUuidPrestacaoConta(status_concluir_periodo.uuid);
+            let status = await getStatusPeriodoPorData(localStorage.getItem(ASSOCIACAO_UUID), periodoPrestacaoDeConta.data_inicial);
+            setStatusPrestacaoDeConta(status);
+            setStatusPC(status)
+            setLoadingMonitoramentoPc(false)
+            await carregaPeriodos();
+            await setConfBoxAtaApresentacao();
+        }
+    }, [periodoPrestacaoDeConta]);
 
     const handleConcluirPeriodo = () =>{
         if(statusPrestacaoDeConta && statusPrestacaoDeConta.prestacao_contas_status){
@@ -368,9 +388,53 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
         return ""
     }
 
+    // Falha Geraçao PC
+    // Trata a exibição quando vem de fora da Prestação de Contas
+    useEffect(() => {
+        const onPageLoad = async () => {
+
+            if (monitoramento && periodoPrestacaoDeConta && periodoPrestacaoDeConta.periodo_uuid ){
+
+                setLoadingMonitoramentoPc(true)
+
+                // Removendo o parâmetro /monitoramento-de-pc, que veio na url para evitar disparar novamente o concluirPeriodo() no caso de um Refresh.
+                // Não foi possível utilizar useHistory.push() dentro do NotificacaoContext.
+                // Por isso, ao clicar no modal de Monitoramento de PC (Concluir geração) o redirecionamento foi feito com  window.location.assign('/prestacao-de-contas/monitoramento-de-pc')
+                window.history.replaceState({}, document.title, "/prestacao-de-contas/");
+                setStringMonitoramento(undefined)
+
+                await concluirPeriodo()
+
+                setLoadingMonitoramentoPc(false)
+            }
+        };
+
+        onPageLoad();
+
+    }, [monitoramento, periodoPrestacaoDeConta, concluirPeriodo]);
+
+
+    // Trata a exibição quando vem da Prestação de Contas, a chave é a stringMonitoramento que identifica que veio da NotificacaoContext
+    const buscarRegistrosFalhaGeracaoPc = useCallback( async () => {
+        if (!stringMonitoramento && !loading && !loadingMonitoramentoPc && statusPrestacaoDeConta && statusPrestacaoDeConta.prestacao_contas_status && statusPrestacaoDeConta.prestacao_contas_status.status_prestacao !== 'EM_PROCESSAMENTO') {
+            let associacao_uuid = visoesService.getItemUsuarioLogado('associacao_selecionada.uuid')
+            let registros_de_falha = await getRegistrosFalhaGeracaoPc(associacao_uuid)
+            if (registros_de_falha && registros_de_falha.length > 0) {
+                setRegistroFalhaGeracaoPc(registros_de_falha[0])
+                setShowExibeModalErroConcluirPc(true)
+            }else {
+                setShowExibeModalErroConcluirPc(false)
+            }
+        }
+    }, [stringMonitoramento, loading, statusPrestacaoDeConta, loadingMonitoramentoPc])
+
+    useEffect(() => {
+        buscarRegistrosFalhaGeracaoPc()
+    }, [buscarRegistrosFalhaGeracaoPc]);
+
     return (
         <>
-            {loading ? (
+            {loading || loadingMonitoramentoPc ? (
                 <Loading
                     corGrafico="black"
                     corFonte="dark"
@@ -444,7 +508,6 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
                                             podeGerarPrevias={podeGerarPrevias}
                                             podeBaixarDocumentos={podeBaixarDocumentos}
                                         />
-                                        {/*{localStorage.getItem('uuidPrestacaoConta') &&*/}
                                         <GeracaoAtaApresentacao
                                             onClickVisualizarAta={()=>onClickVisualizarAta(uuidAtaApresentacao)}
                                             setLoading={setLoading}
@@ -470,6 +533,23 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
                             }
                         </>
                     }
+                    <section>
+                        <ModalNotificaErroConcluirPC
+                            show={showExibeModalErroConcluirPc}
+                            handleClose={()=>setShowExibeModalErroConcluirPc(false)}
+                            titulo="Atenção"
+                            texto={`${registroFalhaGeracaoPc.excede_tentativas ? '<p><strong>Por favor, entre em contato com a DRE.</strong></p>' : ''}<p>${registroFalhaGeracaoPc.texto}</p>`}
+                            primeiroBotaoTexto="Fechar"
+                            primeiroBotaoCss="outline-success"
+                            segundoBotaoCss="success"
+                            segundoBotaoTexto={registroFalhaGeracaoPc && !registroFalhaGeracaoPc.excede_tentativas ? "Concluir geração" : null}
+                            segundoBotaoOnclick={
+                            registroFalhaGeracaoPc && !registroFalhaGeracaoPc.excede_tentativas ? ()=> {
+                                setShowExibeModalErroConcluirPc(false)
+                                concluirPeriodo()
+                            } : null }
+                        />
+                    </section>
                     <section>
                         <ModalConcluirPeriodo
                             show={showConcluir}
