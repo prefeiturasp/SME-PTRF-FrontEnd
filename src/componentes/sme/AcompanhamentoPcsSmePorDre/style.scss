@@ -1,0 +1,28 @@
+.titulo-pagina-perstacao-por-dre{
+    color: #2B7D83;
+    margin-top: 20px;
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.titulo-voltar {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    & > a {
+        font-size: 16px;
+        color: #42474A;
+        font-weight: bold;
+        display: flex;
+        text-decoration: underline;
+        align-items: center;
+        margin-top: 15px;
+        column-gap: 0.5rem;
+        height: 35px;
+        & > svg {
+            font-size: 1rem;
+            color: #42474A;
+        }
+    }
+}
+

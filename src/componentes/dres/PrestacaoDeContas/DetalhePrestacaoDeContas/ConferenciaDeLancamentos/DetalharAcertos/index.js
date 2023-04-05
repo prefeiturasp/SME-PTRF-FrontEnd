@@ -38,32 +38,65 @@ export const DetalharAcertos = () => {
     const totalDelancamentosParaConferencia = useMemo(() => lancamentos_para_acertos.length, [lancamentos_para_acertos]);
 
     const verificaSeTemLancamentosDoTipoGasto = useCallback(() => {
-        let tem_gasto
+        let tem_gasto, tem_gasto_conferido, tem_gasto_nao_conferido
         if (lancamentos_para_acertos) {
-            tem_gasto = lancamentos_para_acertos.find(elemento => elemento.tipo_transacao === 'Gasto')
+            tem_gasto_conferido = lancamentos_para_acertos.find(elemento => elemento.tipo_transacao === 'Gasto' && elemento.documento_mestre.conferido === true) !== undefined;
+            tem_gasto_nao_conferido = lancamentos_para_acertos.find(elemento => elemento.tipo_transacao === 'Gasto' && elemento.documento_mestre.conferido === false) !== undefined;
+            tem_gasto = tem_gasto_conferido || tem_gasto_nao_conferido
         }
-        return tem_gasto
+        return [tem_gasto, tem_gasto_conferido, tem_gasto_nao_conferido]
     }, [lancamentos_para_acertos])
+
+    useEffect(()=>{
+        verificaSeTemLancamentosDoTipoGasto()
+    }, [verificaSeTemLancamentosDoTipoGasto])
 
     useEffect(() => {
 
         let mounted = true;
 
         const carregaTiposDeAcertoLancamentos = async () => {
-            if (mounted){
-                setLoading(true)
-                let tipos_de_acerto_lancamentos_agrupado = await getTiposDeAcertoLancamentosAgrupadoCategoria()
-                tipos_de_acerto_lancamentos_agrupado = tipos_de_acerto_lancamentos_agrupado.agrupado_por_categorias
-                
-                let tem_gasto = verificaSeTemLancamentosDoTipoGasto()
-                if (!tem_gasto) {
-                    tipos_de_acerto_lancamentos_agrupado = tipos_de_acerto_lancamentos_agrupado.filter(elemento => elemento.id !== 'DEVOLUCAO')
-                }
-
-                setListaTiposDeAcertoLancamentosAgrupado(tipos_de_acerto_lancamentos_agrupado)
-                setLoading(false)
+            if (!mounted) {
+                return;
             }
+
+            const categoriasQueSoAceitamGatos = [
+                'DEVOLUCAO',
+                'CONCILIACAO_LANCAMENTO',
+                'DESCONCILIACAO_LANCAMENTO'
+            ];
+
+            const categoriasQueSoAceitamConferidos= [
+                'DESCONCILIACAO_LANCAMENTO'
+            ];
+
+            const categoriasQueSoAceitamNaoConferidos = [
+                'CONCILIACAO_LANCAMENTO'
+            ];
+
+            setLoading(true)
+            let tipos_de_acerto_lancamentos_agrupado = await getTiposDeAcertoLancamentosAgrupadoCategoria()
+            tipos_de_acerto_lancamentos_agrupado = tipos_de_acerto_lancamentos_agrupado.agrupado_por_categorias
+
+            let [tem_gasto, tem_gasto_conferido, tem_gasto_nao_conferido] = verificaSeTemLancamentosDoTipoGasto()
+            if (!tem_gasto) {
+                tipos_de_acerto_lancamentos_agrupado = tipos_de_acerto_lancamentos_agrupado.filter(elemento => !categoriasQueSoAceitamGatos.includes(elemento.id))
+            }
+
+            // TODO comentado pois no FormularioAcertos não setava o item correto no select
+            if (tem_gasto && !tem_gasto_conferido) {
+                tipos_de_acerto_lancamentos_agrupado = tipos_de_acerto_lancamentos_agrupado.filter(elemento => !categoriasQueSoAceitamConferidos.includes(elemento.id))
+            }
+
+            if (tem_gasto && !tem_gasto_nao_conferido) {
+                tipos_de_acerto_lancamentos_agrupado = tipos_de_acerto_lancamentos_agrupado.filter(elemento => !categoriasQueSoAceitamNaoConferidos.includes(elemento.id))
+            }
+
+            setListaTiposDeAcertoLancamentosAgrupado(tipos_de_acerto_lancamentos_agrupado)
+            setLoading(false)
+
         }
+
         carregaTiposDeAcertoLancamentos()
 
         return () =>{
@@ -144,6 +177,7 @@ export const DetalharAcertos = () => {
                                     copiado: acerto.copiado,
                                     tipo_acerto: acerto.tipo_acerto.uuid,
                                     detalhamento: acerto.detalhamento,
+                                    categoria: acerto.tipo_acerto.categoria,
                                     devolucao_tesouro: acerto.devolucao_ao_tesouro && acerto.devolucao_ao_tesouro.uuid ? {
                                         uuid: acerto.devolucao_ao_tesouro.uuid,
                                         tipo: acerto.devolucao_ao_tesouro.tipo && acerto.devolucao_ao_tesouro.tipo.uuid ? acerto.devolucao_ao_tesouro.tipo.uuid : acerto.devolucao_ao_tesouro.tipo,
@@ -358,6 +392,7 @@ export const DetalharAcertos = () => {
                         <FormularioAcertos
                             solicitacoes_acerto={acertos}
                             listaTiposDeAcertoLancamentosAgrupado={listaTiposDeAcertoLancamentosAgrupado}
+                            setListaTiposDeAcertoLancamentosAgrupado={setListaTiposDeAcertoLancamentosAgrupado}
                             onSubmitFormAcertos={onSubmitFormAcertos}
                             formRef={formRef}
                             handleChangeTipoDeAcertoLancamento={handleChangeTipoDeAcertoLancamento}

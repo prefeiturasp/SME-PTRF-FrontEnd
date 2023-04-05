@@ -51,7 +51,6 @@ export const TabelaAcertosLancamentos = ({
                                              acaoCancelar
                                          }) => {
 
-
     const [showModalJustificarNaoRealizacao, setShowModalJustificarNaoRealizacao] = useState(false)
     const [showModalJustificadaApagada, setShowModalJustificadaApagada] = useState(false)
     const [textoConfirmadoJustificado, setTextoConfirmadoJustificado] = useState('')
@@ -62,6 +61,26 @@ export const TabelaAcertosLancamentos = ({
 
     // Paginação
     const [primeiroRegistroASerExibido, setPrimeiroRegistroASerExibido] = useState(dados_analise_dre_usuario_logado.conferencia_de_lancamentos.paginacao_atual ? dados_analise_dre_usuario_logado.conferencia_de_lancamentos.paginacao_atual : 0);
+
+    const demonstradoTemplate = (rowData) =>{
+        let conciliado = rowData.conferido
+        let tipo_transacao = rowData.tipo_transacao
+
+        if (tipo_transacao === 'Gasto'){
+            return(
+                <input
+                    type="checkbox"
+                    name="acerto_lancamento_demonstrado"
+                    id="acerto_lancamento_demonstrado"
+                    defaultChecked={conciliado}
+                    disabled={true}
+                />
+            )
+        }else {
+            return '-'
+        }
+
+    }
 
     const tagJustificativa = (rowData) => {
         let status = '-'
@@ -509,7 +528,8 @@ export const TabelaAcertosLancamentos = ({
                         <Column
                             header='Ver Acertos'
                             expander
-                            style={{width: '6%'}}/>
+                            style={{width: '6%'}}
+                        />
                         <Column
                             field='data'
                             header='Data'
@@ -517,8 +537,11 @@ export const TabelaAcertosLancamentos = ({
                             className="align-middle text-left borda-coluna"
                             style={{width: '6%'}}
                         />
-                        <Column field='tipo_transacao' header='Tipo de lançamento' style={{width: '10%'}}
-                                className="align-middle text-left borda-coluna"/>
+                        <Column
+                            field='tipo_transacao'
+                            header='Tipo de lançamento' style={{width: '10%'}}
+                            className="align-middle text-left borda-coluna"
+                        />
                         <Column
                             field='numero_documento'
                             header='N.º do documento'
@@ -526,8 +549,12 @@ export const TabelaAcertosLancamentos = ({
                             className="align-middle text-left borda-coluna"
                             style={{width: '12%'}}
                         />
-                        <Column field='descricao' header='Descrição' style={{width: '40%'}}
-                                className="align-middle text-left borda-coluna"/>
+                        <Column
+                            field='descricao'
+                            header='Descrição'
+                            style={{width: '40%'}}
+                            className="align-middle text-left borda-coluna"
+                        />
                         <Column
                             field='valor_transacao_total'
                             header='Valor (R$)'
@@ -540,7 +567,14 @@ export const TabelaAcertosLancamentos = ({
                             header='Status'
                             className="align-middle text-left borda-coluna"
                             body={tagJustificativa}
-                            style={{width: '10%'}}/>
+                            style={{width: '10%'}}
+                        />
+                        <Column
+                            field='status_realizacao'
+                            header='Demonstrado'
+                            className="align-middle text-left borda-coluna"
+                            body={demonstradoTemplate}
+                        />
                         {visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'UE' && visoesService.getPermissoes(["change_analise_dre"]) && prestacaoDeContas.status === "DEVOLVIDA" && analisePermiteEdicao ?
                             <Column
                                 header={selecionarTodosItensDosLancamentosGlobal()}

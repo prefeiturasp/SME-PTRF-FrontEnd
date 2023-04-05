@@ -270,9 +270,9 @@ export const ResumoDosAcertos = () => {
             devolucoes_ao_tesouro_da_prestacao: []
         }
 
-        if(prestacaoDeContas.pode_reabrir === false){
+        if(prestacaoDeContas.pode_devolver === false){
             setShowModalErroDevolverParaAcerto(true);
-            setTextoErroDevolverParaAcerto("Essa prestação de contas não pode ser devolvida, ou reaberta porque há prestação de contas dessa associação de um período posterior. Se necessário, reabra ou devolva primeiro a prestação de contas mais recente.")
+            setTextoErroDevolverParaAcerto("Foram solicitados acertos que demandam exclusão dos documentos e fechamentos na conclusão do acerto. Para fazer a devolução dessa prestação de contas é necessário reabrir ou devolver primeiro a prestação de contas mais recente para que sejam gerados novos documentos.")
             setBtnDevolverParaAcertoDisabled(false)
         }
         else{

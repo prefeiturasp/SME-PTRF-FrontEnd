@@ -17,9 +17,9 @@ export const TabelaDinamica = ({prestacaoDeContas, rowsPerPage, columns, statusT
         }else if(col.field === 'acoes') {
             return <Column key={col.field} field={col.field} header={col.header} body={acoesTemplate} />;
         }else if(col.field === 'unidade_nome') {
-            return <Column key={col.field} field={col.field} header={col.header} body={nomeTemplate} />;
+            return <Column key={col.field} style={{width: '23%'}} field={col.field} header={col.header} body={nomeTemplate} />;
         }else {
-            return <Column key={col.field} field={col.field} header={col.header} />;
+            return <Column key={col.field} style={{width: '7%'}} field={col.field} header={col.header} />;
         }
     });
 

@@ -1,6 +1,7 @@
 import React, {memo} from "react";
 import BotaoAcertoDocumentoInclusaoGasto from "./BotaoAcertoDocumentoInclusaoGasto";
 import BotaoAcertosDocumentosInclusaoCredito from "./BotaoAcertoDocumentoInclusaoCredito";
+import InfoAcertoDocumentoEdicaoInformacao from "./InfoAcertoDocumentoEdicaoInformacao";
 
 const BotoesDetalhesParaAcertosDeCategorias = ({analise_documento, prestacaoDeContasUuid, prestacaoDeContas, analisePermiteEdicao, uuid_acerto_documento, acerto}) =>{
     return(
@@ -25,6 +26,11 @@ const BotoesDetalhesParaAcertosDeCategorias = ({analise_documento, prestacaoDeCo
                             prestacaoDeContasUuid={prestacaoDeContasUuid}
                             prestacaoDeContas={prestacaoDeContas}
                             analisePermiteEdicao={analisePermiteEdicao}
+                        />
+                    }
+                    {analise_documento && analise_documento.requer_edicao_informacao_conciliacao &&
+                        <InfoAcertoDocumentoEdicaoInformacao
+                            analise_documento={analise_documento}
                         />
                     }
                 </div>

@@ -27,7 +27,9 @@ export const EdicaoAtaParecerTecnico = () => {
         local_reuniao: "",
         comentarios: "",
         numero_portaria: "",
-        data_portaria: ""
+        data_portaria: "",
+        motivo_retificacao: null,
+        eh_retificacao: false
     });
     const [disableBtnSalvar, setDisableBtnSalvar] = useState(false)
     const [dadosAta, setDadosAta] = useState({});
@@ -37,15 +39,23 @@ export const EdicaoAtaParecerTecnico = () => {
         let dados_ata = await getAtaParecerTecnico(uuid_ata);
         let data_da_reuniao = dados_ata.data_reuniao ? dados_ata.data_reuniao : "";
         let data_da_portaria = dados_ata.data_portaria ? dados_ata.data_portaria : "";
-        setStateFormEditarAta({
+
+        let stateForm = {
             numero_ata: dados_ata.numero_ata,
             data_reuniao: data_da_reuniao,
             hora_reuniao: dados_ata.hora_reuniao,
             local_reuniao: dados_ata.local_reuniao,
             comentarios: dados_ata.comentarios,
             numero_portaria: dados_ata.numero_portaria,
-            data_portaria: data_da_portaria
-        });
+            data_portaria: data_da_portaria,
+        }
+
+        if(dados_ata.eh_retificacao){
+            stateForm.motivo_retificacao = dados_ata.motivo_retificacao
+            stateForm.eh_retificacao = dados_ata.eh_retificacao
+        }
+
+        setStateFormEditarAta(stateForm);
         setDadosAta(dados_ata);
         setListaPresentes(dados_ata.presentes_na_ata)
     };
@@ -59,6 +69,8 @@ export const EdicaoAtaParecerTecnico = () => {
     }
 
     const onSubmitFormEdicaoAta = async () => {
+        let pode_salvar = true;
+
         let dadosForm = formRef.current.values
 
         let data_da_reuniao = dadosForm.stateFormEditarAta.data_reuniao ? moment(dadosForm.stateFormEditarAta.data_reuniao).format("YYYY-MM-DD") : null;
@@ -77,12 +89,20 @@ export const EdicaoAtaParecerTecnico = () => {
             data_portaria: data_da_portaria
         }
 
-        try {
-            await postEdicaoAtaParecerTecnico(uuid_ata, payload)
-            toastCustom.ToastCustomSuccess('Ata salva com sucesso', `As edições da ata de parecer técnico foram salvas com sucesso.`)
-        } catch (e) {
-            console.log("Erro ao fazer edição da Ata ", e.response)
+        if(dadosForm.stateFormEditarAta.eh_retificacao){
+            payload.motivo_retificacao = dadosForm.stateFormEditarAta.motivo_retificacao;
         }
+
+        if(pode_salvar){
+            try {
+                await postEdicaoAtaParecerTecnico(uuid_ata, payload)
+                toastCustom.ToastCustomSuccess('Ata salva com sucesso', `As edições da ata de parecer técnico foram salvas com sucesso.`)
+            } catch (e) {
+                console.log("Erro ao fazer edição da Ata ", e.response)
+            }
+        }
+
+        
     }
 
     const handleClickFecharAta = () => {
