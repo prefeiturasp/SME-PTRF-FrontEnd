@@ -57,7 +57,7 @@ export const DashboardCard = ({itensDashboard, statusPeriodo}) => {
                             <hr className="mt-0 mb-0 ml-3 mr-3"/>
                             <div className="card-body">
                                 <p className="card-text card-qtde-associacoes  mb-0 pb-3"
-                                   style={card.status !== 'TOTAL_UNIDADES' ? cardQuantidadeStyleByStatus[idxStyle] : cardQuantidadeStyleByStatus['TOTAL']}>{card.quantidade_prestacoes}</p>
+                                style={card.status !== 'TOTAL_UNIDADES' ? cardQuantidadeStyleByStatus[idxStyle] : cardQuantidadeStyleByStatus['TOTAL']}>{card.quantidade_prestacoes}</p>
                             </div>
                         </div>
                     </div>

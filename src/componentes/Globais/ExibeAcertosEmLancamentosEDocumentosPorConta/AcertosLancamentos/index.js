@@ -141,7 +141,7 @@ const AcertosLancamentos = ({
         setAnalisePermiteEdicao(status_de_realizacao.editavel)
 
         let lancamentos_ajustes = await getLancamentosAjustes(analiseAtualUuid, conta_uuid, filtrar_por_lancamento, filtrar_por_tipo_de_ajuste)
-        
+
         // Necessário para iniciar check box dos lancamentos nao selecionadas
         let lancamentos_com_flag_selecionado = [];
         for(let lancamento=0; lancamento<=lancamentos_ajustes.length-1; lancamento++){
@@ -153,7 +153,7 @@ const AcertosLancamentos = ({
 
             lancamentos_com_flag_selecionado.push(lancamentos_ajustes[lancamento])
         }
-        
+
         setOpcoesJustificativa(status_de_realizacao)
         setLancamentosAjustes(lancamentos_com_flag_selecionado)
         setIdentificadorCheckboxClicado(false);
@@ -178,7 +178,7 @@ const AcertosLancamentos = ({
                         break;
                     }
                 }
-                
+
                 if(index_encontrado !== null){
                     setClickBtnEscolheConta({
                         [index_encontrado]: true
@@ -205,7 +205,7 @@ const AcertosLancamentos = ({
             }
             salvaEstadoExpandedRowsLancamentosLocalStorage(lista)
         }
-        
+
     }, [expandedRowsLancamentos])
 
     useEffect(() => {
@@ -583,6 +583,8 @@ const AcertosLancamentos = ({
                                         }
 
                                         <BotoesDetalhesParaAcertosDeCategorias
+                                            carregaAcertosLancamentos={carregaAcertosLancamentos}
+                                            conta={contaSelecionada}
                                             analise_lancamento={categoria}
                                             prestacaoDeContasUuid={prestacaoDeContasUuid}
                                             prestacaoDeContas={prestacaoDeContas}
@@ -630,10 +632,10 @@ const AcertosLancamentos = ({
                 acc.push(obj_completo);
                 return acc;
             }, [])
-    
+
             setLancamentosAjustes(result);
             setIdentificadorCheckboxClicado(false);
-            
+
             let qtde = getQuantidadeAcertosSelecionados();
             setQuantidadeSelecionada(qtde);
         }
@@ -643,14 +645,14 @@ const AcertosLancamentos = ({
                 obj_completo.analise_lancamento.selecionado = true;
 
                 setaCheckBoxSolicitacoes(obj_completo.analise_lancamento, true);
-            
+
                 acc.push(obj_completo);
                 return acc;
             }, [])
-    
+
             setLancamentosAjustes(result);
             setIdentificadorCheckboxClicado(true);
-            
+
             let qtde = getQuantidadeAcertosSelecionados();
             setQuantidadeSelecionada(qtde)
         }
@@ -672,12 +674,12 @@ const AcertosLancamentos = ({
                     setIdentificadorCheckboxClicado(false);
                 }
             }
-        
+
             acc.push(obj_completo);
             return acc;
         }, []);
         setLancamentosAjustes(result2);
-        
+
         let qtde = getQuantidadeAcertosSelecionados();
         setQuantidadeSelecionada(qtde);
     }
@@ -685,14 +687,14 @@ const AcertosLancamentos = ({
     const todosLancamentosCheckados = () => {
         let total_lancamentos = lancamentosAjustes.length;
         let total_lancamentos_selecionados = 0;
-        
+
         let lancamentos_selecionados = lancamentosAjustes.filter(element => element.analise_lancamento.selecionado === true);
-        
+
         if(lancamentos_selecionados.length > 0){
             total_lancamentos_selecionados = lancamentos_selecionados.length;
         }
 
-        
+
         if(total_lancamentos === total_lancamentos_selecionados){
             return true;
         }
@@ -752,13 +754,13 @@ const AcertosLancamentos = ({
     }
 
     const tratarSelecionadoIndividual = (e, analiseLancamento, acerto) => {
-        
+
         let result2 = lancamentosAjustes.reduce((acc, o) => {
             let obj_completo = o;
 
             if(obj_completo.analise_lancamento.uuid === analiseLancamento.uuid){
-                let solicitacoes_acerto_por_categoria = obj_completo.analise_lancamento.solicitacoes_de_ajuste_da_analise.solicitacoes_acerto_por_categoria; 
-                
+                let solicitacoes_acerto_por_categoria = obj_completo.analise_lancamento.solicitacoes_de_ajuste_da_analise.solicitacoes_acerto_por_categoria;
+
                 for(let i=0; i<=solicitacoes_acerto_por_categoria.length-1; i++){
                     let acertos = solicitacoes_acerto_por_categoria[i].acertos;
 
@@ -778,7 +780,7 @@ const AcertosLancamentos = ({
                             }
                             else{
                                 obj_completo.analise_lancamento.selecionado = false;
-                                
+
                                 if(todosLancamentosCheckados()){
                                     setIdentificadorCheckboxClicado(true);
                                 }
@@ -789,15 +791,15 @@ const AcertosLancamentos = ({
                         }
                     }
                 }
-                
+
             }
-        
+
             acc.push(obj_completo);
             return acc;
         }, []);
 
         setLancamentosAjustes(result2);
-        
+
         let qtde = getQuantidadeAcertosSelecionados();
         setQuantidadeSelecionada(qtde);
     }
@@ -821,16 +823,16 @@ const AcertosLancamentos = ({
             let analise_lancamento = lancamentosAjustes[i].analise_lancamento;
 
             let solicitacoes_acerto_por_categoria = analise_lancamento.solicitacoes_de_ajuste_da_analise.solicitacoes_acerto_por_categoria;
-        
+
             for(let x=0; x<=solicitacoes_acerto_por_categoria.length-1; x++){
                 let solicitacao = solicitacoes_acerto_por_categoria[x];
                 let acertos_selecionados = solicitacao.acertos.filter(element => element.selecionado === true)
-    
+
                 if(acertos_selecionados.length > 0){
                     quantidade = quantidade + acertos_selecionados.length;
                 }
             }
-        
+
         }
 
         return quantidade;
@@ -838,13 +840,13 @@ const AcertosLancamentos = ({
 
     const acoesDisponiveis = () => {
         let selecionados = getSolicitacoesSelecionadas();
-        
+
         let status_selecionados = {
             JUSTIFICADO_E_REALIZADO: false,
             REALIZADO_E_PENDENTE: false,
             JUSTIFICADO_E_REALIZADO_E_PENDENTE: false,
             JUSTIFICADO_E_PENDENTE: false,
-            
+
             REALIZADO: false,
             JUSTIFICADO: false,
             PENDENTE: false
@@ -853,7 +855,7 @@ const AcertosLancamentos = ({
         let selecionados_status_pendente = selecionados.filter(element => element.status_realizacao === "PENDENTE");
         let selecionados_status_justificado = selecionados.filter(element => element.status_realizacao === "JUSTIFICADO");
         let selecionados_status_realizado = selecionados.filter(element => element.status_realizacao === "REALIZADO");
-        
+
         // Logica status conjuntos
         if(selecionados_status_justificado.length > 0 && selecionados_status_realizado.length > 0 && selecionados_status_pendente.length === 0){
             status_selecionados.JUSTIFICADO_E_REALIZADO = true;
@@ -877,7 +879,7 @@ const AcertosLancamentos = ({
         else if(selecionados_status_pendente.length > 0 && selecionados_status_realizado.length === 0 && selecionados_status_justificado.length === 0){
             status_selecionados.PENDENTE = true;
         }
-        
+
         return status_selecionados;
     }
 
@@ -888,11 +890,11 @@ const AcertosLancamentos = ({
             let analise_lancamento = lancamentosAjustes[i].analise_lancamento;
 
             let solicitacoes_acerto_por_categoria = analise_lancamento.solicitacoes_de_ajuste_da_analise.solicitacoes_acerto_por_categoria;
-        
+
             for(let x=0; x<=solicitacoes_acerto_por_categoria.length-1; x++){
                 let solicitacao = solicitacoes_acerto_por_categoria[x];
                 let acertos_selecionados = solicitacao.acertos.filter(element => element.selecionado === true)
-    
+
                 if(acertos_selecionados.length > 0){
                     selecionados.push(...acertos_selecionados)
                 }
@@ -908,7 +910,7 @@ const AcertosLancamentos = ({
 
         for(let lancamento=0; lancamento<=lancamentos_ajustes.length-1; lancamento++){
             lancamentos_ajustes[lancamento].analise_lancamento.selecionado = false;
-            
+
             setaCheckBoxSolicitacoes(lancamentos_ajustes[lancamento].analise_lancamento, false)
             lancamentos_com_flag_selecionado.push(lancamentos_ajustes[lancamento])
         }
@@ -946,61 +948,61 @@ const AcertosLancamentos = ({
                     />
                 ) :
                 <>
-                <nav>
-                    <div className="nav nav-tabs mb-3 tabs-resumo-dos-acertos" id="nav-tab-conferencia-de-lancamentos" role="tablist">
-                        {contasAssociacao && contasAssociacao && contasAssociacao.length > 0 && contasAssociacao.map((conta, indexTabs) =>
-                            <Fragment key={`key_${conta.uuid}`}>
-                                <a
-                                    onClick={() => {
-                                        setContaSelecionada(conta.uuid)
-                                        carregaAcertosLancamentos(conta.uuid)
-                                        toggleBtnEscolheConta(`${indexTabs}`);
-                                    }}
-                                    className={`nav-link btn-escolhe-acao ${clickBtnEscolheConta[`${indexTabs}`] ? "active" : ""}`}
-                                    id={`nav-conferencia-de-lancamentos-${conta.uuid}-tab`}
-                                    data-toggle="tab"
-                                    href={`#nav-conferencia-de-lancamentos-${conta.uuid}`}
-                                    role="tab"
-                                    aria-controls={`nav-conferencia-de-lancamentos-${conta.uuid}`}
-                                    aria-selected="true"
-                                >
-                                    Conta {conta.tipo_conta.nome}
-                                </a>
-                            </Fragment>
-                        )}
-                    </div>
-                </nav>
+                    <nav>
+                        <div className="nav nav-tabs mb-3 tabs-resumo-dos-acertos" id="nav-tab-conferencia-de-lancamentos" role="tablist">
+                            {contasAssociacao && contasAssociacao && contasAssociacao.length > 0 && contasAssociacao.map((conta, indexTabs) =>
+                                <Fragment key={`key_${conta.uuid}`}>
+                                    <a
+                                        onClick={() => {
+                                            setContaSelecionada(conta.uuid)
+                                            carregaAcertosLancamentos(conta.uuid)
+                                            toggleBtnEscolheConta(`${indexTabs}`);
+                                        }}
+                                        className={`nav-link btn-escolhe-acao ${clickBtnEscolheConta[`${indexTabs}`] ? "active" : ""}`}
+                                        id={`nav-conferencia-de-lancamentos-${conta.uuid}-tab`}
+                                        data-toggle="tab"
+                                        href={`#nav-conferencia-de-lancamentos-${conta.uuid}`}
+                                        role="tab"
+                                        aria-controls={`nav-conferencia-de-lancamentos-${conta.uuid}`}
+                                        aria-selected="true"
+                                    >
+                                        Conta {conta.tipo_conta.nome}
+                                    </a>
+                                </Fragment>
+                            )}
+                        </div>
+                    </nav>
 
-                <div className="tab-content" id="nav-conferencia-de-lancamentos-tabContent">
-                    <div className="tab-pane fade show active" role="tabpanel">
-                        <TabelaAcertosLancamentos
-                            lancamentosAjustes={lancamentosAjustes}
-                            limparStatus={limparStatus}
-                            prestacaoDeContas={prestacaoDeContas}
-                            marcarComoRealizado={marcarComoRealizado}
-                            justificarNaoRealizacao={justificarNaoRealizacao}
-                            opcoesJustificativa={opcoesJustificativa}
-                            expandedRowsLancamentos={expandedRowsLancamentos}
-                            setExpandedRowsLancamentos={setExpandedRowsLancamentos}
-                            rowExpansionTemplateLancamentos={rowExpansionTemplateLancamentos}
-                            rowsPerPageAcertosLancamentos={rowsPerPageAcertosLancamentos}
-                            valor_template={valor_template}
-                            dataTemplate={dataTemplate}
-                            numeroDocumentoTemplate={numeroDocumentoTemplate}
-                            selecionarTodosItensDosLancamentosGlobal={selecionarTodosItensDosLancamentosGlobal}
-                            selecionarTodosItensDoLancamentoRow={selecionarTodosItensDoLancamentoRow}
-                            tituloModalCheckNaoPermitido={tituloModalCheckNaoPermitido}
-                            textoModalCheckNaoPermitido={textoModalCheckNaoPermitido}
-                            showModalCheckNaoPermitido={showModalCheckNaoPermitido}
-                            setShowModalCheckNaoPermitido={setShowModalCheckNaoPermitido}
-                            totalDeAcertosDosLancamentos={totalDeAcertosDosLancamentos}
-                            analisePermiteEdicao={analisePermiteEdicao}
-                            quantidadeSelecionada={quantidadeSelecionada}
-                            acoesDisponiveis={acoesDisponiveis}
-                            acaoCancelar={acaoCancelar}
-                        />
+                    <div className="tab-content" id="nav-conferencia-de-lancamentos-tabContent">
+                        <div className="tab-pane fade show active" role="tabpanel">
+                            <TabelaAcertosLancamentos
+                                lancamentosAjustes={lancamentosAjustes}
+                                limparStatus={limparStatus}
+                                prestacaoDeContas={prestacaoDeContas}
+                                marcarComoRealizado={marcarComoRealizado}
+                                justificarNaoRealizacao={justificarNaoRealizacao}
+                                opcoesJustificativa={opcoesJustificativa}
+                                expandedRowsLancamentos={expandedRowsLancamentos}
+                                setExpandedRowsLancamentos={setExpandedRowsLancamentos}
+                                rowExpansionTemplateLancamentos={rowExpansionTemplateLancamentos}
+                                rowsPerPageAcertosLancamentos={rowsPerPageAcertosLancamentos}
+                                valor_template={valor_template}
+                                dataTemplate={dataTemplate}
+                                numeroDocumentoTemplate={numeroDocumentoTemplate}
+                                selecionarTodosItensDosLancamentosGlobal={selecionarTodosItensDosLancamentosGlobal}
+                                selecionarTodosItensDoLancamentoRow={selecionarTodosItensDoLancamentoRow}
+                                tituloModalCheckNaoPermitido={tituloModalCheckNaoPermitido}
+                                textoModalCheckNaoPermitido={textoModalCheckNaoPermitido}
+                                showModalCheckNaoPermitido={showModalCheckNaoPermitido}
+                                setShowModalCheckNaoPermitido={setShowModalCheckNaoPermitido}
+                                totalDeAcertosDosLancamentos={totalDeAcertosDosLancamentos}
+                                analisePermiteEdicao={analisePermiteEdicao}
+                                quantidadeSelecionada={quantidadeSelecionada}
+                                acoesDisponiveis={acoesDisponiveis}
+                                acaoCancelar={acaoCancelar}
+                            />
+                        </div>
                     </div>
-                </div>
                 </>
             }
         </>

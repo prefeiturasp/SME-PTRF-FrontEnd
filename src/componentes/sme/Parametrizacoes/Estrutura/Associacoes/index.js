@@ -91,6 +91,7 @@ export const Associacoes = () => {
         nome: '',
         uuid_unidade: '',
         codigo_eol_unidade: '',
+        observacao: '',
         tipo_unidade: '',
         nome_unidade: '',
         cnpj: '',
@@ -144,6 +145,7 @@ export const Associacoes = () => {
             nome: associacao_por_uuid.nome,
             uuid_unidade: associacao_por_uuid.unidade.uuid,
             codigo_eol_unidade: associacao_por_uuid.unidade.codigo_eol,
+            observacao: associacao_por_uuid.unidade.observacao,
             tipo_unidade: associacao_por_uuid.unidade.tipo_unidade,
             nome_unidade: associacao_por_uuid.unidade.nome,
             cnpj: associacao_por_uuid.cnpj,
@@ -211,7 +213,8 @@ export const Associacoes = () => {
                             logradouro: '',
                             bairro: '',
                             cep: ''
-                        }
+                        },
+                        observacao: values.observacao
                     };
                     try {
                         await postCriarAssociacao(payload);
@@ -233,7 +236,7 @@ export const Associacoes = () => {
                         status_regularidade: values.status_regularidade,
                         processo_regularidade: values.processo_regularidade,
                         unidade: values.uuid_unidade,
-
+                        observacao: values.observacao,
                     };
                     try {
                         await patchUpdateAssociacao(values.uuid, payload);
