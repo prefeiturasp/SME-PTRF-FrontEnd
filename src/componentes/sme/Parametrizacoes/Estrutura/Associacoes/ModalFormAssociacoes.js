@@ -3,6 +3,8 @@ import {ModalFormBodyText} from "../../../../Globais/ModalBootstrap";
 import {Formik} from "formik";
 import {YupSignupSchemaAssociacoes, exibeDataPT_BR} from "../../../../../utils/ValidacoesAdicionaisFormularios";
 import MaskedInput from "react-text-mask";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faExclamationCircle} from '@fortawesome/free-solid-svg-icons'
 
 const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitModalFormAssociacoes, listaDePeriodos, tabelaAssociacoes, carregaUnidadePeloCodigoEol, errosCodigoEol, onDeleteAssocicacaoTratamento}) => {
 
@@ -143,23 +145,7 @@ const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitMo
                                     </div>
                                 </div>
                                 <div className='row'>
-                                    <div className='col'>
-                                        <label htmlFor="status_regularidade">Status de regularidade</label>
-                                        <select
-                                            value={props.values.status_regularidade}
-                                            onChange={props.handleChange}
-                                            name="status_regularidade"
-                                            id="status_regularidade"
-                                            className="form-control"
-                                        >
-                                            <option value=''>Selecione um status</option>
-                                            {tabelaAssociacoes && tabelaAssociacoes.status_regularidade && tabelaAssociacoes.status_regularidade.length > 0 && tabelaAssociacoes.status_regularidade.map((status) =>
-                                                <option key={status.id} value={status.id}>{status.nome}</option>
-                                            )}
-                                        </select>
-                                        {props.touched.status_regularidade && props.errors.status_regularidade && <span className="span_erro text-danger mt-1"> {props.errors.status_regularidade} </span>}
-                                    </div>
-                                    <div className='col'>
+                                    <div className='col-6'>
                                         <div className="form-group">
                                             <label htmlFor="processo_regularidade">Nº processo regularidade</label>
                                             <MaskedInput
@@ -174,6 +160,32 @@ const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitMo
                                             {props.touched.processo_regularidade && props.errors.processo_regularidade && <span className="span_erro text-danger mt-1"> {props.errors.processo_regularidade} </span>}
                                         </div>
                                     </div>
+                                </div>
+                                <div className='row mb-0'>
+                                    <div className='col-12'>
+                                        <div className="form-group">
+                                            <label htmlFor="observacao">Observação</label>
+                                            <input
+                                                type="text"
+                                                value={props.values.observacao}
+                                                name="observacao"
+                                                id="observacao"
+                                                className="form-control"
+                                                onChange={props.handleChange}
+                                            />
+                                                <small className="form-text text-muted">
+                                                    <FontAwesomeIcon
+                                                        style={{fontSize: '12px', marginRight:'4px'}}
+                                                        icon={faExclamationCircle}
+                                                    /> 
+                                                    <span>Preencha este campo, se necessário, com informações relacionadas a unidade educacional.</span>
+                                                </small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="row">
+                                    <div className="col">
+                                                                            </div>
                                 </div>
                                 <div className='row mt-3'>
                                     <div className='col'>

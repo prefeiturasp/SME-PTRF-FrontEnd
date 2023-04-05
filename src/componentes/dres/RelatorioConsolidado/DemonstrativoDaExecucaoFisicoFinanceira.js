@@ -1,33 +1,13 @@
-import React, {memo, useEffect, useMemo, useState} from "react";
+import React, {memo} from "react";
 import {
     getDownloadRelatorio,
-    getTiposConta
 } from "../../../services/dres/RelatorioConsolidado.service";
 import {haDiferencaPrevisaoExecucaoRepasse} from "./haDiferencaPrevisaoExecucaoRepasse"
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faDownload} from "@fortawesome/free-solid-svg-icons";
+import Spinner from "../../../assets/img/spinner.gif"
 
-const DemonstrativoDaExecucaoFisicoFinanceira = ({consolidadoDre, periodoEscolhido, execucaoFinanceira}) => {
-    const [contas, setContas] = useState(false);
-
-    useEffect(()=>{
-        let mounted = true
-        const carregaContas = async () => {
-            try {
-                let tipo_contas = await getTiposConta();
-                if (mounted){
-                    setContas(tipo_contas);
-                }
-            }catch (e) {
-                console.log("Erro ao trazer os tipos de contas ", e);
-            }
-        };
-        carregaContas()
-        return () =>{
-            mounted = false
-        }
-    }, [])
-
+const DemonstrativoDaExecucaoFisicoFinanceira = ({consolidadoDre, periodoEscolhido, execucaoFinanceira, podeAcessarInfoConsolidado}) => {
     const retornaClasseMensagem = (texto) => {
         let classeMensagem = "documento-gerado";
         if (texto === 'NAO_GERADOS') {
@@ -48,11 +28,16 @@ const DemonstrativoDaExecucaoFisicoFinanceira = ({consolidadoDre, periodoEscolhi
         window.location.assign(`/dre-relatorio-consolidado-em-tela/${periodoEscolhido}/${consolidadoDre.ja_publicado}/${consolidado_dre_uuid}`)
     };
 
-    const isDiferencaValores = useMemo(() => {
-        return execucaoFinanceira?.por_tipo_de_conta?.some((execucaoFinanceiraConta) => {
-            return haDiferencaPrevisaoExecucaoRepasse(execucaoFinanceiraConta.valores)
-        })
-    }, [execucaoFinanceira])
+    const isDiferencaValores = (relatorio) => {
+        if(execucaoFinanceira){
+            return execucaoFinanceira?.por_tipo_de_conta?.some((execucaoFinanceiraConta) => {
+                if(relatorio && relatorio.status_geracao === 'GERADO_TOTAL') {
+                    return false;
+                }
+                return haDiferencaPrevisaoExecucaoRepasse(execucaoFinanceiraConta.valores);
+            })
+        }
+    }
 
     return (
         <div className="border">
@@ -64,14 +49,18 @@ const DemonstrativoDaExecucaoFisicoFinanceira = ({consolidadoDre, periodoEscolhi
                                 <div className='mt-2 mb-3' >
                                     <p className='fonte-14 mb-1'><strong>Demonstrativo da Execução Físico-Financeira {relatorio.tipo_conta ? "- Conta " + relatorio.tipo_conta : ""}</strong></p>
                                     <p className={`fonte-12 mb-0 ${retornaClasseMensagem(relatorio.status_geracao)}`}>
-                                        <span>{relatorio.status_geracao_arquivo}</span>
-                                        <button className='btn-editar-membro' type='button'>
-                                            <FontAwesomeIcon
-                                                onClick={() => downloadRelatorio(relatorio.uuid, relatorio.versao)}
-                                                style={{fontSize: '18px'}}
-                                                icon={faDownload}
-                                            />
-                                        </button>
+                                        <span>{relatorio.status_geracao_arquivo} </span>
+                                        {(relatorio.status_geracao === 'GERADO_PARCIAL' || relatorio.status_geracao === 'GERADO_TOTAL') ?
+                                            <button className='btn-editar-membro' type='button'>
+                                                <FontAwesomeIcon
+                                                    onClick={() => downloadRelatorio(relatorio.uuid, relatorio.versao)}
+                                                    style={{fontSize: '18px'}}
+                                                    icon={faDownload}
+                                                />
+                                            </button>
+                                        :
+                                            <img src={Spinner} style={{height: "22px"}} alt=''/>
+                                        }
                                     </p>
                                 </div>
                             </div>
@@ -82,7 +71,7 @@ const DemonstrativoDaExecucaoFisicoFinanceira = ({consolidadoDre, periodoEscolhi
                                     type="button"
                                     className="btn btn-outline-success btn-sm"
                                 >
-                                    {isDiferencaValores ? 'Preencher resumo' : 'Consultar resumo'}
+                                    {'Consultar resumo'}
                                 </button>
                             </div>
                             }
@@ -101,13 +90,16 @@ const DemonstrativoDaExecucaoFisicoFinanceira = ({consolidadoDre, periodoEscolhi
                     </div>
                     {!consolidadoDre.eh_consolidado_de_publicacoes_parciais &&
                     <div className="col-12 col-md-4 align-self-center text-right">
-                        <button
-                            onClick={() => onClickPreencherRelatorio()}
-                            type="button"
-                            className="btn btn-outline-success btn-sm"
-                        >
-                            {isDiferencaValores ? 'Preencher resumo' : 'Consultar resumo'}
-                        </button>
+                        <span data-html={true} data-tip={!podeAcessarInfoConsolidado(consolidadoDre) ? "Não é possível consultar/preencher o resumo. A análise da(s) prestação(ões) de contas em retificação ainda não foi concluída." : ""}>
+                            <button
+                                onClick={() => onClickPreencherRelatorio()}
+                                type="button"
+                                className="btn btn-outline-success btn-sm"
+                                disabled={!podeAcessarInfoConsolidado(consolidadoDre)}
+                            >
+                                {isDiferencaValores() ? 'Preencher resumo' : 'Consultar resumo'}
+                            </button>
+                        </span>
                     </div>
                     }
                 </div>

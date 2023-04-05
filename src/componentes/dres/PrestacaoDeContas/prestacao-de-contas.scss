@@ -285,6 +285,10 @@
   font-weight: 500;
 }
 
+.btn-cancelar-comentario-disabled {
+  opacity: .65 !important;
+}
+
 .btn-editar-comentario-disabled{
   color: #4c4c4c;
   text-decoration: none;
@@ -558,6 +562,11 @@
   color: #297805;
   font-weight: bold;
 }
+.sme-considera-correto{
+  position: absolute;
+  left: 605px;
+  top: -20px;
+}
 
 .btn-remover-ajuste-documento, .btn-remover-ajuste-documento:hover, .btn-remover-ajuste-documento:active, .btn-remover-ajuste-documento:focus, .btn-remover-ajuste-documento:visited{
   color: #B40C02;
@@ -575,4 +584,19 @@
 
 .esconde-tipo-acerto{
   display: none !important;
+}
+
+.restaurar-justificativa{
+  padding: 0px;
+  border-bottom-color: #48505b;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+}
+
+.link-restaurar-justificativa{
+  color: #48505b !important;
+}
+
+.link-restaurar-justificativ:hover{
+  cursor: pointer;
 }

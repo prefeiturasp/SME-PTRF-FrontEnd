@@ -196,19 +196,20 @@ export const ListaPrestacaoDeContas = () => {
     };
 
     const gravaPcNaoApresentada = (rowData) =>{
+        console.log('rowData', rowData)
         let obj_prestacao = {
             associacao: {
                 uuid: rowData.associacao_uuid,
                 nome: rowData.unidade_nome,
-                cnpj: '',
+                cnpj: rowData.associacao.cnpj,
                 unidade: {
-                    codigo_eol:'',
+                    codigo_eol:rowData.associacao.unidade.codigo_eol,
                 },
                 presidente_associacao:{
-                    nome:'',
+                    nome:rowData.associacao.presidente_associacao.nome,
                 },
                 presidente_conselho_fiscal:{
-                    nome:'',
+                    nome:rowData.associacao.presidente_conselho_fiscal.nome,
                 }
             },
             periodo_uuid: rowData.periodo_uuid,
