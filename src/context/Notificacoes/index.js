@@ -1,11 +1,8 @@
 import React, {useState, createContext, useCallback, useEffect} from "react";
-import {
-    deleteNotificacaoPorUuid,
-    getNotificacoesErroConcluirPc,
-    getQuantidadeNaoLidas
-} from "../../services/Notificacoes.service";
+import {getQuantidadeNaoLidas, getRegistrosFalhaGeracaoPc} from "../../services/Notificacoes.service";
 import {visoesService} from "../../services/visoes.service";
 import {ModalNotificaErroConcluirPC} from "../../componentes/Globais/Cabecalho/ModalNotificaErroConcluirPC";
+import {authService} from "../../services/auth.service";
 
 export const NotificacaoContext = createContext( {
     qtdeNotificacoesNaoLidas: '',
@@ -33,6 +30,9 @@ export const NotificacaoContextProvider = ({children}) => {
     const [exibeMensagemFixaTemDevolucao, setExibeMensagemFixaTemDevolucao] = useState(false);
     const [periodoErroConcluirPc, setPeriodoErroConcluirPc] = useState('');
 
+    // FalhaGeracaoPC
+    const [registroFalhaGeracaoPc, setRegistroFalhaGeracaoPc] = useState([]);
+
     const deveExibirModalDevolucao = () => {
         let storage = localStorage.getItem("NOTIFICAR_DEVOLUCAO_REFERENCIA");
 
@@ -44,28 +44,27 @@ export const NotificacaoContextProvider = ({children}) => {
         }
     }
 
-    const getExibeModalErroConcluirPc = useCallback(async () =>{
+    const getExibeModalErroConcluirPc = useCallback(async () => {
 
-        let notificacoes = await getNotificacoesErroConcluirPc();
+        if (authService.isLoggedIn()){
 
-        // Verifica se estamos na visao de UE
-        let visao_selecionada = visoesService.getItemUsuarioLogado('visao_selecionada.nome')
+            // Verifica se estamos na visao de UE
+            let visao_selecionada = visoesService.getItemUsuarioLogado('visao_selecionada.nome')
 
-        let unidade_selecionada = visoesService.getItemUsuarioLogado('unidade_selecionada.uuid')
+            if (visao_selecionada === 'UE') {
 
-        // Verifica se existe notificações para a Unidade Selecionada
-        let primeiro_registro = notificacoes.find(element=> element.unidade === unidade_selecionada)
-
-        // Não dispara o modal quando estamos em visão de UE em /prestacao-de-contas para corrigir uma PC de cada vez
-        let current_url = window.location.pathname
-
-        if (visao_selecionada === 'UE' && primeiro_registro && current_url !== '/prestacao-de-contas'){
-            setPeriodoErroConcluirPc(primeiro_registro.periodo.referencia)
-            setShow(true)
-            return true
-        }else {
-            setShow(false)
-            return false
+                // FalhaGeracaoPC
+                let associacao_uuid = visoesService.getItemUsuarioLogado('associacao_selecionada.uuid')
+                let registros_de_falha = await getRegistrosFalhaGeracaoPc(associacao_uuid)
+                if (registros_de_falha && registros_de_falha.length > 0) {
+                    setRegistroFalhaGeracaoPc(registros_de_falha[0])
+                    setShow(true)
+                    return true
+                } else {
+                    setShow(false)
+                    return false
+                }
+            }
         }
     }, []);
 
@@ -73,27 +72,21 @@ export const NotificacaoContextProvider = ({children}) => {
         getExibeModalErroConcluirPc()
     }, [getExibeModalErroConcluirPc])
 
-    const irParaConcluirPc = async () =>{
-        let notificacoes = await getNotificacoesErroConcluirPc();
-        let unidade_selecionada = visoesService.getItemUsuarioLogado('unidade_selecionada.uuid')
-        let primeiro_registro = notificacoes.find(element=> element.unidade === unidade_selecionada)
 
-        if (primeiro_registro){
+    const irParaConcluirPc = async () =>{
+        if (registroFalhaGeracaoPc && registroFalhaGeracaoPc.periodo_uuid){
             try {
                 localStorage.setItem('periodoPrestacaoDeConta', JSON.stringify(
                     {
-                        data_final: primeiro_registro.periodo.data_final ,
-                        data_inicial: primeiro_registro.periodo.data_inicial,
-                        periodo_uuid: primeiro_registro.periodo.periodo_uuid
+                        data_final: registroFalhaGeracaoPc.periodo_data_final ,
+                        data_inicial: registroFalhaGeracaoPc.periodo_data_inicio,
+                        periodo_uuid: registroFalhaGeracaoPc.periodo_uuid
                     })
                 );
-                await deleteNotificacaoPorUuid(primeiro_registro.uuid)
-                console.log("Notificação apagada com sucesso: ", primeiro_registro.uuid)
-
                 await getExibeModalErroConcluirPc()
-                window.location.assign('/prestacao-de-contas')
+                window.location.assign('/prestacao-de-contas/monitoramento-de-pc')
             }catch (e) {
-                console.log("Erro ao apagar notificacao: ", primeiro_registro.uuid)
+                console.log("Erro ao apagar notificacao: ", e)
             }
         }
 
@@ -113,11 +106,18 @@ export const NotificacaoContextProvider = ({children}) => {
         <>
         <NotificacaoContext.Provider value={
             {
-                qtdeNotificacoesNaoLidas, setQtdeNotificacoesNaoLidas, getQtdeNotificacoesNaoLidas,
-                temNotificacaoDevolucaoNaoLida, setTemNotificacaoDevolucaoNaoLida,
-                exibeModalTemDevolucao, setExibeModalTemDevolucao,
-                exibeMensagemFixaTemDevolucao, setExibeMensagemFixaTemDevolucao,
-                getExibeModalErroConcluirPc
+                qtdeNotificacoesNaoLidas,
+                setQtdeNotificacoesNaoLidas,
+                getQtdeNotificacoesNaoLidas,
+                temNotificacaoDevolucaoNaoLida,
+                setTemNotificacaoDevolucaoNaoLida,
+                exibeModalTemDevolucao,
+                setExibeModalTemDevolucao,
+                exibeMensagemFixaTemDevolucao,
+                setExibeMensagemFixaTemDevolucao,
+                getExibeModalErroConcluirPc,
+                setRegistroFalhaGeracaoPc,
+                setShow,
             }
         }>
             {children}
@@ -126,9 +126,13 @@ export const NotificacaoContextProvider = ({children}) => {
                 <ModalNotificaErroConcluirPC
                     show={show}
                     handleClose={()=>setShow(false)}
-                    irParaConcluirPc={irParaConcluirPc}
                     titulo="Atenção"
-                    texto={`<p>Houve um problema na conclusão do período/acerto ${periodoErroConcluirPc}. Favor concluir novamente.`}
+                    texto={`${registroFalhaGeracaoPc.excede_tentativas ? '<p><strong>Por favor, entre em contato com a DRE.</strong></p>' : ''}<p>${registroFalhaGeracaoPc.texto}</p>`}
+                    primeiroBotaoTexto="Fechar"
+                    primeiroBotaoCss="outline-success"
+                    segundoBotaoCss="success"
+                    segundoBotaoTexto={registroFalhaGeracaoPc && !registroFalhaGeracaoPc.excede_tentativas ? "Concluir geração" : null}
+                    segundoBotaoOnclick={registroFalhaGeracaoPc && !registroFalhaGeracaoPc.excede_tentativas ? irParaConcluirPc : null}
                 />
             </section>
         </>

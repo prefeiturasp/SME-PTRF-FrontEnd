@@ -9,11 +9,11 @@ export const ModalNotificaErroConcluirPC = (props) =>{
             titulo={props.titulo}
             bodyText={props.texto}
             primeiroBotaoOnclick={props.handleClose}
-            primeiroBotaoTexto="Fechar"
-            primeiroBotaoCss="outline-success"
-            segundoBotaoOnclick={props.irParaConcluirPc}
-            segundoBotaoCss="success"
-            segundoBotaoTexto="Ir para concluir"
+            primeiroBotaoTexto={props.primeiroBotaoTexto}
+            primeiroBotaoCss={props.primeiroBotaoCss}
+            segundoBotaoOnclick={props.segundoBotaoOnclick}
+            segundoBotaoCss={props.segundoBotaoCss}
+            segundoBotaoTexto={props.segundoBotaoTexto}
         />
     )
 };

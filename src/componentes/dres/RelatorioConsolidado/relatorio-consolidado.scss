@@ -153,3 +153,58 @@ body .tabela-associacoes-nao-regularizadas .p-datatable-tbody > tr > td, body .t
   background-color: #00585E !important;
   color: #fff !important;
 }
+
+.referencia-e-periodo-relatorio{
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 22px;
+  color: #42474A;
+}
+
+.texto.referencia-e-periodo-relatorio {
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 22px;
+  color: #000000;
+}
+
+.titulo-filtros-retificacao{
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 32px;
+  color: #42474A
+}
+
+.titulo-tabelas{
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 32px;
+  color: #42474A
+}
+
+.linha-desabilitada {
+  background-color: #E2E2E2 !important;
+  border: 1px solid #CED4DA !important;
+  cursor: not-allowed !important;
+}
+
+.cursor-desabilitado {
+  cursor: not-allowed !important;
+}
+
+.botao-carregar {
+  border-radius: 0.25rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  padding: .375rem .75rem;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.botao-carregar:disabled {
+  color: white;
+}
+
+.botao-carregar:hover {
+  color: white;
+}
