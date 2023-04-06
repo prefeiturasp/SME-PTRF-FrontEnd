@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useContext, useEffect} from 'react';
 import {Formik, FieldArray} from 'formik';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTimesCircle, faCheckCircle} from "@fortawesome/free-solid-svg-icons";
@@ -8,23 +8,31 @@ import {YupSignupSchemaDetalharAcertos} from './YupSignupSchemaDetalharAcertos'
 import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 import { ValidarParcialTesouro } from '../../../../../../context/DetalharAcertos';
 
-export const FormularioAcertos = ({solicitacoes_acerto, listaTiposDeAcertoLancamentosAgrupado, onSubmitFormAcertos, formRef, handleChangeTipoDeAcertoLancamento, exibeCamposCategoriaDevolucao, tiposDevolucao, bloqueiaSelectTipoDeAcerto, removeBloqueiaSelectTipoDeAcertoJaCadastrado, textoCategoria, corTextoCategoria, removeTextoECorCategoriaTipoDeAcertoJaCadastrado, adicionaTextoECorCategoriaVazio, ehSolicitacaoCopiada, valorDocumento, lancamentosParaAcertos}) => {
+export const FormularioAcertos = ({solicitacoes_acerto, listaTiposDeAcertoLancamentosAgrupado, setListaTiposDeAcertoLancamentosAgrupado, onSubmitFormAcertos, formRef, handleChangeTipoDeAcertoLancamento, exibeCamposCategoriaDevolucao, tiposDevolucao, bloqueiaSelectTipoDeAcerto, removeBloqueiaSelectTipoDeAcertoJaCadastrado, textoCategoria, corTextoCategoria, removeTextoECorCategoriaTipoDeAcertoJaCadastrado, adicionaTextoECorCategoriaVazio, ehSolicitacaoCopiada, valorDocumento, lancamentosParaAcertos}) => {
+
+    useEffect(() => {
+        let statusAcerto = lancamentosParaAcertos[0].documento_mestre.status
+        if(statusAcerto === 'INATIVO'){
+            setListaTiposDeAcertoLancamentosAgrupado(listaTiposDeAcertoLancamentosAgrupado.filter(
+                item => {
+                    return item.id === "SOLICITACAO_ESCLARECIMENTO" || item.id === "AJUSTES_EXTERNOS"
+                }
+            ));
+        }
+    }, [lancamentosParaAcertos])
 
     const uuidDevolucaoTesouro = listaTiposDeAcertoLancamentosAgrupado.find(item => item.id === "DEVOLUCAO")?.tipos_acerto_lancamento[0].uuid
     const {setIsValorParcialValido} = useContext(ValidarParcialTesouro)
 
     const categoriaNaoPodeRepetir = (categoria) => {
-        if(categoria.id === 'DEVOLUCAO'){
-            return true;
-        }
-        else if(categoria.id === 'EXCLUSAO_LANCAMENTO'){
-            return true;
-        }
-        else if(categoria.id === 'SOLICITACAO_ESCLARECIMENTO'){
-            return true;
-        }
-
-        return false;
+        const categoriasQueNaoPodemRepetir = [
+            'DEVOLUCAO',
+            'EXCLUSAO_LANCAMENTO',
+            'SOLICITACAO_ESCLARECIMENTO',
+            'CONCILIACAO_LANCAMENTO',
+            'DESCONCILIACAO_LANCAMENTO'
+        ];
+        return categoriasQueNaoPodemRepetir.includes(categoria.id);
     }
 
     const categoriaNaoTemItensParaExibir = (categoria) => {
@@ -39,6 +47,9 @@ export const FormularioAcertos = ({solicitacoes_acerto, listaTiposDeAcertoLancam
 
     const opcoesSelect = (acertos) => {
         for(let index_categoria=0; index_categoria <= listaTiposDeAcertoLancamentosAgrupado.length -1; index_categoria ++){
+
+            //listaTiposDeAcertoLancamentosAgrupado = controlaExibicaoCategoriaConciliadoDesconciliado(acertos)
+
             let categoria = listaTiposDeAcertoLancamentosAgrupado[index_categoria]
             categoria.deve_exibir_categoria = true;
 
@@ -54,7 +65,7 @@ export const FormularioAcertos = ({solicitacoes_acerto, listaTiposDeAcertoLancam
 
                     if(categoriaNaoPodeRepetir(categoria) || categoriaNaoTemItensParaExibir(categoria)){
                         categoria.deve_exibir_categoria = false;
-                    } 
+                    }
                 }
             }
         }
@@ -68,6 +79,29 @@ export const FormularioAcertos = ({solicitacoes_acerto, listaTiposDeAcertoLancam
         if(eh_devolucao){
             setIsValorParcialValido(false)
         }
+    }
+
+    // TODO para evitar conciliacao e desconciliacao no mesmo registro
+    const controlaExibicaoCategoriaConciliadoDesconciliado = (acertos) =>{
+
+        let existe_acerto_do_tipo_desconciliacao_em_acertos = acertos.find(item => item.categoria === "DESCONCILIACAO_LANCAMENTO")
+        let existe_acerto_do_tipo_conciliacao_em_acertos = acertos.find(item => item.categoria === "CONCILIACAO_LANCAMENTO")
+
+        if (existe_acerto_do_tipo_desconciliacao_em_acertos){
+            let categoria = listaTiposDeAcertoLancamentosAgrupado.find((acerto) => acerto.id === "CONCILIACAO_LANCAMENTO")
+            if (categoria){
+                categoria.deve_exibir_categoria = false;
+            }
+        }
+
+        if (existe_acerto_do_tipo_conciliacao_em_acertos){
+            let categoria = listaTiposDeAcertoLancamentosAgrupado.find((acerto) => acerto.id === "DESCONCILIACAO_LANCAMENTO")
+            if (categoria) {
+                categoria.deve_exibir_categoria = false;
+            }
+        }
+
+        return listaTiposDeAcertoLancamentosAgrupado
     }
 
     return (
@@ -136,8 +170,10 @@ export const FormularioAcertos = ({solicitacoes_acerto, listaTiposDeAcertoLancam
                                                                 }}
                                                                 disabled={bloqueiaSelectTipoDeAcerto[index]}
                                                             >
-                                                                <option key='' value="">Selecione a especificação do acerto</option>
-                                                                
+                                                                {!(acerto.tipo_acerto) &&
+                                                                    <option key='' value="" selected>Selecione a especificação do acerto</option>
+                                                                }
+
                                                                 {listaTiposDeAcertoLancamentosAgrupado && listaTiposDeAcertoLancamentosAgrupado.length > 0 && opcoesSelect(acertos).map(item => {
                                                                     return (
                                                                         <optgroup key={item.id} label={item.nome} className={!item.deve_exibir_categoria ? 'esconde-categoria' : ''}>
@@ -221,6 +257,8 @@ export const FormularioAcertos = ({solicitacoes_acerto, listaTiposDeAcertoLancam
                                                         }
                                                     });
                                                     adicionaTextoECorCategoriaVazio();
+                                                    // TODO para evitar conciliacao e desconciliacao no mesmo registro
+                                                    // controlaExibicaoCategoriaConciliadoDesconciliado(values.solicitacoes_acerto)
                                                 }}
                                             >
                                                 + Adicionar novo item

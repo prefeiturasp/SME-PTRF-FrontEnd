@@ -4,9 +4,29 @@ Front da aplicação _SIG.Escola_ da Secretaria de Educação da cidade de São 
 
 License: MIT
 
-Versão: 6.0.0
+Versão: 7.0.0
 
 ## Release Notes
+
+### 7.0.0 - 19/01/2023 - Entregas da Release 7 - (Sprints 59 a 62)
+* UE > Análises DRE: Relatório após acertos: Melhorias no layout
+* UE > Melhorias no monitoramento de geração de prestações de contas: Agora controla o número de tentativas de geração de PC e solicita contato com a DRE se o número de tentativas for excedido.
+* DRE > Consolidados das PCs: Agora o técnico deve informar publicação no diário oficial.
+* DRE > Consolidados das PCs: O relatório consolidado geral agora é gerado automaticamente.
+* DRE > Consolidados das PCs: O relatório consolidado agora exibe as contas zeradas, mas com informação de "sem movimentação financeira".
+* DRE > Consolidados das PCs: Alterada a geração da Lauda para não exibir mais contas zeradas.
+* DRE > Consolidados das PCs: Retificação após publicação no DO: Agora é possível retificar um relatório consolidado após a publicação no DO.
+* DRE > Envio de notificações antes do vencimento do prazo de acerto das publicações devolvidas para acertos.
+* DRE > Envio de notificações após o vencimento do prazo de acerto das publicações devolvidas para acertos.
+* DRE > Acompanhamento das PCs: PCs em retificação exibem uma etiqueta "Em retificação", enquanto a retificação não for finalizada.
+* DRE > Acompanhamento das PCs: Criadas categorias de ajustes de lançamento para alteração do status de conciliação de uma despesa.
+* DRE > Acompanhamento das PCs: Criada categoria de ajustes de documentos para alteração de informações de conciliação.
+* SME > Exportação de dados: Especificações de materiais e serviços.
+* SME > Novo processo de análise dos relatórios consolidados das DREs.
+* SME > Acompanhamento Prestação de Contas: Resumo por DRE: Agora é possível detalhar a consulta por DRE.
+* SME > Acompanhamento Prestação de Contas: Resumo por UE: Agora é possível detalhar a consulta por UE.
+* ADM > Nova carga de Especificações de materiais e serviços.
+* GLO > 🐞 Correção de bugs.
 
 ### 6.0.0 - 19/01/2023 - Entregas da Release 6 - (Sprints 48 a 58)
 * UE > Análise da DRE: Acertos: Detalhes de realização para acertos conforme a categoria
@@ -34,12 +54,12 @@ Versão: 6.0.0
 * DRE > Acompanhamento de PC: Conferência de Documentos: Nova opção de marcar como corretos para documentos com solicitações de ajuste
 * DRE > Acompanhamento de PC: Ver resumo: Alterações de nomenclatura das opções
 * DRE > Relatório Consolidado: Agora é gerada Lauda Única com todas as contas
-* DRE > Relatório Consolidado: Alterações na exibição do valor de Devolução ao Tesouro no Demonstrativo
+* DRE > Relatório Consolidado: Alterações na exibição do valor de Devolução ao Tesouro no Demonstrativo 
 * SME > Parametrizações: Tipos de acertos em lançamentos: Novo card e Cadastro
 * SME > Parametrizações: Tipos de acertos em Documentos: Novo Card e Cadastro
 * GLO > 🐞 Correção de bugs.
 
-### 1.33.0 - 24/08/2022 - Entregas da Release 5 - (Sprints 43 a 47)
+### 5.0.0 (antiga 1.33.0) - 24/08/2022 - Entregas da Release 5 - (Sprints 43 a 47)
 * UE  > Na emissão da ata, agora a aplicação informa quais campos estão incompletos.
 * UE  > Novo fluxo de informação de valores reprogramados iniciais. 
 * DRE > Novo fluxo de aprovação de valores reprogramados iniciais.
@@ -64,7 +84,7 @@ Versão: 6.0.0
 * GLO > Incluída a informação de hora de criação no rodapé de vários relatórios.
 * GLO > 🐞 Correção de bugs.
 
-### 1.32.0 - 01/06/2022 - Entregas da Release 4c - Sprint 42
+### 4.2.0 (antiga 1.32.0) - 01/06/2022 - Entregas da Release 4c - Sprint 42
 * DRE > Exibição do período e remoção do histórico de devoluções em análise de PC
 * DRE > Remoção do bloco "Cobrança da PC" e revisão do bloco "Comentários" em análise de PC
 * DRE > Substituição do formato do relatório de Demonstrativo da execução físico-financeira de Excel para PDF
@@ -74,7 +94,7 @@ Versão: 6.0.0
 * Melhorias na área de administração do sistema
 * 🐞 Correção de bugs
 
-### 1.31.0 - 16/05/2022 - Entregas da Release 4b - Sprint 41
+### 4.1.0 (antiga 1.31.0) - 16/05/2022 - Entregas da Release 4b - Sprint 41
 * DRE > Novos filtros na confêrencia de lançamentos na análise de PC
 * DRE > Solicitação de ajustes de saldo bancário em análise de PC
 * DRE > Exibição de data da transação no estorno em análise de PC 
@@ -83,7 +103,7 @@ Versão: 6.0.0
 * DRE > Melhorias na ata de parecer técnico em PDF
 * 🐞 Correção de bugs
 
-### 1.30.0 - 02/05/2022 - Entregas da Release 4 - Sprint 40
+### 4.0.0 (antiga 1.30.0) - 02/05/2022 - Entregas da Release 4 - Sprint 40
 * UE > Melhorias no cadastro e edição de presentes da ata de prestação de contas
 * UE > Melhorias no demonstrativo financeiro
 * UE > No cadastro de membros, agora é possível selecionar o cargo quando o servidor tiver mais de um
@@ -91,7 +111,7 @@ Versão: 6.0.0
 * DRE > Exibição de informações de retenção de imposto na análise de PC
 * 🐞 Correção de bugs 
 
-### 1.29.0 - 25/04/2022 - Entregas da Release 3 - Sprints 37 a 39
+### 3.0.0 (antiga 1.29.0) - 25/04/2022 - Entregas da Release 3 - Sprints 37 a 39
 * UE > Implementado o registro de justificativas de pagamentos antecipados
 * UE > Implementado o recurso de retenção de impostos nas despesas
 * UE > Aprimorado o cadastro de despesas sem comprovação fiscal
@@ -100,14 +120,14 @@ Versão: 6.0.0
 * Melhorias visuais diversas
 * 🐞 Correção de bugs 
 
-### 1.28.0 - 03/03/2022 - Entregas da Sprint 36
+### 2.28.0 (antiga 1.28.0) - 03/03/2022 - Entregas da Release 2 - Sprint 36
 * UE > Implementada funcionalidade de estorno de gastos
 * UE > O demonstrativo financeiro passa a exibir informações de estornos
 * DRE > O Acompanhamento de PC passa a exibir informações de estorno
 * DRE > O status de PC "Retornada após acertos" passa a chamar "Apresentada após acertos"
 * 🐞 Correção de bugs
 
-### 1.27.0 - 22/02/2022 - Entregas da Sprint 35
+### 2.27.0 (antiga 1.27.0) - 22/02/2022 - Entregas da Release 2 - Sprint 35
 * UE > Notificações de reprovação agora informam ou não os motivos dependendo das permissões do destinatário
 * UE > Ata de apresentação passa a pedir e exibir justificativa para a existência de repasses pendentes
 * UE e DRE > Consulta de resumo de acertos passa a exibir informação de data de retorno de devolução
@@ -115,7 +135,7 @@ Versão: 6.0.0
 * DRE > Inclusão de campo para informação de recomendações ao aprovar uma PC com ressalvas
 * 🐞 Correção de bugs
 
-### 1.26.0 - 07/02/2022 - Entregas da Sprint 34
+### 2.26.0 (antiga 1.26.0) - 07/02/2022 - Entregas da Release 2 - Sprint 34
 * UE > A conciliação bancária agora só trada de gastos; créditos são conciliados automaticamente 
 * UE > Várias mudanças na forma que a conciliação bancária trata transações de períodos anteriores
 * UE > Algumas mudanças de layout na conciliação bancária
@@ -134,7 +154,7 @@ Versão: 6.0.0
 * Ajustes de textos diversos
 * 🐞 Correção de bugs
 
-### 1.25.0 - 29/12/2021 - Entregas da Sprint 33
+### 2.25.0 (antiga 1.25.0) - 29/12/2021 - Entregas da Release 2 - Sprint 33
 * UE > Atas de apresentação e retificação agora incluem o horário da reunião
 * DRE > Resumo de acertos em tela agora exibe as solicitações de ajustes de valores reprogramados
 * DRE > Resumo de acertos em PDF agora exibe as solicitações de ajustes de valores reprogramados
@@ -144,7 +164,7 @@ Versão: 6.0.0
 * ADM > Implementado parametrização de quais aplicações são aceitas por cada ação
 * 🐞 Correção de bugs
 
-### 1.24.0 - 02/12/2021 - Entregas da Sprint 32 (Complemento)
+### 2.24.0 (antiga 1.24.0) - 02/12/2021 - Entregas da Release 2 - Sprint 32 (Complemento)
 * UE > Atas de apresentação e retificação agora trazem a lista de presença de membros em ordem de cargo
 * UE > Atas de apresentação e retificação agora trazem a lista de presença de não membros em ordem alfabética
 * UE > Agora o campo número de documento em Despesas só aceita dígitos.
@@ -156,13 +176,13 @@ Versão: 6.0.0
 * Agora sub-menus sem itens visíveis são ocultados do menu
 * 🐞 Correção de bugs
 
-### 1.23.0 - 24/11/2021 - Entregas da Sprint 32 (Urgências)
+### 2.23.0 (antiga 1.23.0) - 24/11/2021 - Entregas da Release 2 - Sprint 32 (Urgências)
 * UE > Foram feitas alterações de texto na Relação de Bens
 * UE > Foram feitas alterações de texto no Demonstrativo Financeiro
 * UE > O relatório de devolução para acertos em PDF agora inclui novo campo de detalhamento de ajustes em documento 
 * UE > Foram feitas alterações de texto e cálculo nas atas de apresentação e retificação de PCs. 
 
-### 1.22.0 - 18/11/2021 - Entregas da Sprint 31
+### 2.22.0 (antiga 1.22.0) - 18/11/2021 - Entregas da Release 2 - Sprint 31
 * UE > Demonstrativos Financeiros agora são gerados apenas em PDF e não mais em Excel
 * UE > Relações de Bens agora são gerados apenas em PDF e não mais em Excel
 * UE > Agora é possível editar a implantação de valores reprogramados quando a PC inicial for devolvida para ajustes
@@ -173,7 +193,7 @@ Versão: 6.0.0
 * UE > Alterações menores em textos diversos
 * 🐞 Correção de bugs
 
-### 1.21.0 - 01/11/2021 - Entregas da Sprint 30
+### 2.21.0 (antiga 1.21.0) - 01/11/2021 - Entregas da Release 2 - Sprint 30
 * UE > Melhorias diversas no layout do Demonstrativo Financeiro (PDF)
 * UE > Novas notificações de devolução de PC até que usuário veja os ajustes solicitados
 * DRE > Acompanhamento de PC agora exibe detalhes da última análise, quando nos status posteriores à análise
@@ -182,7 +202,7 @@ Versão: 6.0.0
 * DRE > Solicitação de acertos em documentos de PC agora inclui campo de detalhamento
 * 🐞 Correção de bugs
 
-### 1.20.0 - 18/10/2021 - Entregas da Sprint 29
+### 2.20.0 (antiga 1.20.0) - 18/10/2021 - Entregas da Release 2 - Sprint 29
 * UE > Novo rodapé no relatório de Relação de Bens 
 * UE > Filtro por vínculo de atividades em Gastos da Escola
 * DRE > Relatório de acertos solicitados em análise de prestação de contas
@@ -191,7 +211,7 @@ Versão: 6.0.0
 * ADM > Carga de repasses (previstos e realizados) agora permite reprocessamento sem duplicação
 * 🐞 Correção de bugs
 
-### 1.19.0 - 29/09/2021 - Entregas da Sprint 28
+### 2.19.0 (antiga 1.19.0) - 29/09/2021 - Entregas da Release 2 - Sprint 28
 * UE > Consulta de detalhes de análises da DRE
 * UE > Agora não é mais permitida a exclusão de créditos do tipo repasse
 * UE > Melhoria na visualização de detalhes de uma Associação
@@ -201,7 +221,7 @@ Versão: 6.0.0
 * ADM > Desativação de especificações de material ou serviço
 * 🐞 Correção de bugs
 
-### 1.18.0 - 08/09/2021 - Entregas da Sprint 27
+### 2.18.0 (antiga 1.18.0) - 08/09/2021 - Entregas da Release 2 - Sprint 27
 * ADM > Registro de movimentações (Audit Logs) relacionadas à Prestação de Contas
 * ADM > Registro de movimentações (Audit Logs) complementares de despesas e receitas
 * ADM > Registro de movimentações (Audit Logs) relacionadas à visão DRE
@@ -211,7 +231,7 @@ Versão: 6.0.0
 * SME > Exportação de informações de extrato das Associações
 * 🐞 Correção de bugs
 
-### 1.17.0 - 26/08/2021 - Entregas da Sprint 26
+### 2.17.0 (antiga 1.17.0) - 26/08/2021 - Entregas da Release 2 - Sprint 26
 * UE > Nova consulta Análises da DRE
 * UE > Créditos da Escola agora não permite o lançamento de documentos em datas futuras
 * UE > Gastos da Escola agora não permite o lançamento de documentos em datas futuras
@@ -225,11 +245,11 @@ Versão: 6.0.0
 * Nova Central de Downloads 
 * 🐞 Correção de bugs
 
-### 1.16.0 - 09/08/2021 - Entregas da Sprint 25
+### 2.16.0 (antiga 1.16.0) - 09/08/2021 - Entregas da Release 2 - Sprint 25
 * UE > Agora é possível lançar despesas sem comprovação fiscal
 * UE > Ficha cadastral atualizada automaticamente com informações do Eol
 * UE > Novo bloco justificativas no demonstrativo financeiro em XLSX e PDF
-* UE > Melhorias na usabilidade da Conciliação Bancária
+* UE > Melhorias na usabilidade da Conciliação Bancária 
 * DRE > Relatório consolidado agora é gerado assincronamente
 * DRE > Melhorias na usabilidade do Acompanhamento de Prestação de Contas
 * DRE > Melhorias na usabilidade do Relatório Consolidado
@@ -239,7 +259,7 @@ Versão: 6.0.0
 * Ajustes em textos diversos
 * 🐞 Correção de bugs
 
-### 1.15.0 - 23/07/2021 - Entregas da Sprint 24
+### 2.15.0 (antiga 1.15.0) - 23/07/2021 - Entregas da Release 2 - Sprint 24
 * UE > Exibição de totais de créditos no cadastramento de receitas
 * UE > Exibição de mensagem parametrizavel ao usar determinados tipos de crédito
 * UE > No cadastro de créditos, agora o campo detalhamento só é pedido para determinados tipos de crédito 
@@ -256,7 +276,7 @@ Versão: 6.0.0
 * Notificações agora também são enviadas por e-mail para os usuários
 * 🐞 Correção de bugs
 
-### 1.14.0 - 08/07/2021 - Entregas da Sprint 23
+### 2.14.0 (antiga 1.14.0) - 08/07/2021 - Entregas da Release 2 - Sprint 23
 * UE > Créditos de recursos externos agora permitem editar/excluir uma saída vinculada
 * UE > Agora se um crédito de recurso externo é excluido a saída vinculada também é
 * UE > Melhorias no formulário de lançamento de recursos externos
@@ -266,7 +286,7 @@ Versão: 6.0.0
 * DRE > Ajustes em textos diversos
 * 🐞 Correção de bugs
 
-### 1.13.0 - 23/06/2021 - Entregas da Sprint 22
+### 2.13.0 (antiga 1.13.0) - 23/06/2021 - Entregas da Release 2 - Sprint 22
 * UE > Notificações sobre a proximidade do inicio do período de prestação de contas
 * UE > Notificações sobre inicio do período de prestação de contas
 * UE > Notificações sobre a proximidade do fim do período de prestação de contas
@@ -277,8 +297,7 @@ Versão: 6.0.0
 * ADM > Cargas de repasse agora não criam mais tipos de conta e ações não existentes
 * 🐞 Correção de bugs
 
-### 1.12.0 - 08/06/2021 - Entregas da Sprint 21
-
+### 2.12.0 (antiga 2.12.0 - 08/06/2021 - Entregas da Release 2 - Sprint 21
 * UE > Créditos não relativos ao PTRF agora permite Lançar saída do recurso na edição 
 * UE > Melhorias na validação de campos no lançamento de despesas
 * DRE > dados da diretoria não obriga mais a digitação do RF do diretor
@@ -289,7 +308,7 @@ Versão: 6.0.0
 * SME > Carga de  usuários a partir da gestão de perfis de acesso
 * 🐞 Correção de bugs
 
-### 1.11.0 - 21/05/2021 - Entregas da Sprint 20
+### 2.11.0 (antiga 1.11.0) - 21/05/2021 - Entregas da Release 2 - Sprint 20
 * UE > Status "Incompleto" em despesas agora chama-se "Rascunho"
 * UE > Despesas de status "Rascunho" agora são ignorados nos cálculos e relatórios
 * UE > Tipo das unidades agora são atualizados automaticamente conforme EOL
@@ -300,7 +319,7 @@ Versão: 6.0.0
 * SME > Secretaria agora pode cadastrar usuários para qualquer unidade
 * 🐞 Correção de bugs
 
-### 1.10.0 - 06/05/2021 - Entregas da Sprint 19
+### 2.10.0 (antiga 1.10.0) - 06/05/2021 - Entregas da Release 2 - Sprint 19
 * UE > Exportação de Atas em PDF
 * ADM > Criação de usuários com atualização do CoreSSO
 * ADM > Pesquisa por associação em Despesas 
@@ -309,7 +328,7 @@ Versão: 6.0.0
 * Melhorias diversas de usabilidade
 * 🐞 Correção de bugs
 
-### 1.9.0 - 20/04/2021 - Entregas da Sprint 18
+### 2.9.0 (antiga 1.9.0) - 20/04/2021 - Entregas da Release 2 - Sprint 18
 * ADM > Carga de usuários atualizando CoreSSO
 * UE > Atualização de informações das escolas a partir do EOL agora inclui os CEUs
 * UE > No lançamento de repasses agora é possível selecionar uma destinação específica
@@ -317,7 +336,7 @@ Versão: 6.0.0
 * UE > Relação de Bens em PDF
 * 🐞 Correção de alguns bugs
 
-### 1.8.0 - 06/04/2021 - Entregas da Sprint 17
+### 2.8.0 (antiga 1.8.0) - 06/04/2021 - Entregas da Release 2 - Sprint 17
 * UE > Upload de extrato bancário na conciliação
 * UE > Geração de prévias de documento de forma assíncrona
 * UE > Lançamento de gastos não demonstrados anteriores ao período de implantação
@@ -333,12 +352,15 @@ Versão: 6.0.0
 * ADM > Exibição do nome do ambiente (Produção, Homologação, etc.)
 * 🐞 Correção de bugs
 
-### 1.7.0 - 05/03/2021 - Entregas da Sprint 16
+### 2.7.0 (antiga 1.7.0) - 05/03/2021 - Entregas da Release 2 - Sprint 16
 * UE > Ficha cadastral da associação e de seu presidente (PDF)
 * UE > Várias melhorias no processo de conciliação bancária 
+* ADM > Registro de movimentações nos arquivos de carga para fins de auditoria
+* ADM > Carga de usuários agora atualiza o e-mail do usuário no CoreSSO
+* ADM > Carga de usuários agora permite a atualização dos grupos de acesso do usuário
 * 🐞 Correção de bugs
 
-### 1.6.0 - 16/02/2021 - Entregas da Sprint 15
+### 2.6.0 (antiga 1.6.0) - 16/02/2021 - Entregas da Release 2 - Sprint 15
 * Informações do usuário agora no topo da tela
 * UE > Campos para telefone e endereço no cadastro do presidente da associação
 * SME > Cadastro de Tipos de Custeio
@@ -348,7 +370,7 @@ Versão: 6.0.0
 * Ajustes em textos diversos
 * 🐞 Correção de bugs
 
-### 1.5.0 - 02/02/2021 - Entregas da Sprint 14
+### 2.5.0 (antiga 1.5.0) - 02/02/2021 - Entregas da Release 2 - Sprint 14
 * DRE > Melhorias no relatório consolidado
 * DRE > Motivos de aprovação com ressalvas no acompanhamento de PCs
 * DRE > Seleção de período do acompanhamento de PCs agora inicia com o período anterior e não o corrente
@@ -357,23 +379,25 @@ Versão: 6.0.0
 * SME > Cadastro de Ações
 * SME > Cadastro de vínculos de ações e associações
 * SME > Cadastro de Períodos
-* Nova imagem na tela de login do sistema
 * UE > Melhorias na geração de prestações de contas
 * UE > Cadastro de membros agora vincula automaticamente o membro ao seu usuário do sistema 
+* ADM > Agora é possivel fazer carga de associações sem CNPJ
+* ADM > Pesquisa por nome nas tabelas de ações da associação e contas da associação
 
-### 1.4.0 - 07/01/2021 - Entregas da Sprint 13
+### 2.4.0 (antiga 1.4.0) - 07/01/2021 - Entregas da Release 2 - Sprint 13
 * Visão SME
-* SME > Painel de parâmetros do sistema
+* DRE > Painel de parâmetros do sistema
 * SME > Acompanhamento de prestações de conta > Resumo Geral
 * SME > Acompanhamento de prestações de conta > Resumo por DRE (lista)
 * Lançamento de Créditos não relativos ao PTRF
+* Melhorias na área de administração do sistema
 * Melhorias na Ata de Retificação
 * Seleção de repasses ao cadastrar créditos
 * Recurso de exclusão de membros da associação
 * Melhorias no acompanhamento de prestações de contas da DRE
 * 🐞 Correção de alguns poucos bugs ;-)
 
-### 1.3.0 - 08/12/2020 - Entregas da Sprint 12
+### 2.3.0 (antiga 1.3.0) - 08/12/2020 - Entregas da Release 2 - Sprint 12
 * Carga de previsões de repasse da SME;
 * Carga de quantidade de alunos do último celso;
 * Vínculo de membros da associação a seus usuários no sistema;
@@ -397,10 +421,7 @@ Versão: 6.0.0
 * Ajustes menores em textos e labels;
 * 🐞 Correção de alguns bugs.
 
-### 1.2.1 - 19/11/2020 - Hotfix
-* 🐞28206 - Erro de autenticação ao baixar relações de bens de prestações de contas
-
-### 1.2.0 - 10/11/2020 - Entregas da Sprint 11
+### 2.2.0 (antiga 1.2.0) - 10/11/2020 - Entregas da Release 2 - Sprint 11
 * Gestão de perfis de acesso às funcionalidades do sistema
 * Cadastro de Devoluções ao Tesouro na análise de prestações de conta pela DRE
 * Inclusão de comentários na análise de prestações de conta pela DRE
@@ -408,13 +429,14 @@ Versão: 6.0.0
 * Relatório Consolidado DRE (Parte 1)
 * Permitir a parametrização de um tipo de conta para apenas leitura
 * Saldos negativos agora são exibidos em vermelho no painel financeiro da Associação
+* Melhorias diversas no processo de cargas de dados da aplicação
 * Recuperação de senha ("esqueci minha senha") agora usa o e-mail cadastrado no CoreSSO
 * Inclusão de campos para telefone e e-mail no cadastro de técnicos da DRE
 * Mudanças nos filtros do cadastro de créditos da Associação
 * Mudança na forma de exibição da visão do usuário, agora ao lado do seletor de unidade
 * 🐞 Correção de alguns bugs.
 
-### 1.1.0 - 09/10/2020 - Entregas da Sprint 10
+### 2.1.0 (antiga 1.1.0) - 09/10/2020 - Entregas da Release 2 - Sprint 10
 * Parametrização de tipos de crédito por conta
 * Ata consolidada por prestação de contas (todos as contas)
 * Excluida opção de aprovação com ressalva de uma ata
@@ -428,7 +450,7 @@ Versão: 6.0.0
 * Workflow de acompanhamento de prestações de contas pela DRE
 * 🐞 Correção de alguns bugs.
 
-### 1.0.0 - 15/09/2020 - Entregas da Sprint 9
+### 2.0.0 (antiga 1.0.0) - 15/09/2020 - Entregas da Release 2 - Sprint 9
 * Entrada em produção (Piloto com algumas Associações)
 * Desacoplamento dos processos de conciliação e prestação de contas;
 * Transações já conciliadas, quando modificadas, voltam ao estado de não conciliadas;
@@ -444,15 +466,14 @@ Versão: 6.0.0
 * Possibilidade de copiar atribuições de técnicos de um outro período;
 * Transferência de atribuições de um técnico para outro no momento de uma exclusão de técnico;
 * Aprimoramentos no relatório de demonstrativo financeiro;
-* Melhoria nos icones dos menus;
-* Melhoria na posição das tags no formulário de despesa;
 * 🐞 Correção de alguns erros.
 
-### 0.7.0 - 20/08/2020 - Entregas da Sprint 8
+### 1.6.0 (antiga 0.7.0( - 20/08/2020 - Entregas da Release 1 - Sprint 8
 * Exportação de dados da Associação;
 * Gestão de valor realizado nas despesas da Associação;
 * Notificação de transações não demonstradas a mais de certo tempo;
 * Prestação de contas: Permitir selecionar apenas períodos até o próximo período pendente;
+* Atualiza carga de usuários para incluir a visão (UE, DRE ou SME);
 * Menus sensíveis às visões UE e DRE;
 * Permite ao usuário alternar entre visões e unidades (UEs ou DREs);
 * Lista de associações da DRE;
@@ -463,13 +484,12 @@ Versão: 6.0.0
 * Consulta de dados da DRE;
 * Cadastro de técnicos da DRE.
 
-### 0.6.0 - 28/07/2020 - Entregas da Sprint 7
-* Melhoria nas mensagens de consistência de valores no lançamento de despesas;
+### 1.5.0 (antiga 0.6.0) - 28/07/2020 - Entregas da Release 1 - Sprint 7
+* Carga de valores reprogramados (implantação de saldos);
 * Novos campos (e-mail e CCM) no cadastro da Associação;
 * Processo de recuperação de senha ("Esqueci minha senha");
 * Perfil do usuário com possibilidade de troca de e-mail e senha;
 * Permitir parametrizar tipos de documento de despesas para pedirem ou não o número do documento;
-* Melhorias visuais no menu do sistema;
 * Edição via Admin do texto exibido no "Fique de Olho" em prestações de contas;
 * Em prestações de contas exibir demonstrativos financeiros apenas par ações com saldo ou movimentação;
 * Na Ata exibir apenas ações que tenham saldos ou movimentação no período;
@@ -478,82 +498,80 @@ Versão: 6.0.0
 * Ajustes na formatação de valores do demonstrativo financeiro;
 * Desconsiderar acentuações no filtro de despesas;
 * Desconsiderar acentuações no filtro de receitas;
-* Ajustes no layout da ata;
-* Ajuste no brasão PMSP;
 * Pedir período de referência em créditos do tipo devolução;
 * Apresentar na Ata os créditos de devolução;
 * Permitir criar tags e associa-las a uma despesa.  
 * 🐞 Correção de erros diversos.
 
+### 1.4.0 (antiga 0.5.0) - 07/07/2020 - Entregas da Release 1 - Sprint 6
+* Confirmação de repasses na entrada de créditos agora considera a classificação da receita em capital ou custeio;
+* Alterada a estrutura do Demonstrativo Financeiro;
+* Lançamento de saldos reprogramados (implantação de saldos);
+* Cadastramento de todos os cargos da Associação;
+* Cadastramento de dados das contas da Associação;
+* Verificação de duplicidade no lançamento de uma despesa;
+* CNPJ/CPF do fornecedor agora é brigatório no lançamento de uma despesa;
+* Períodos futuros não são mais exibidos no painel de ações;
+* Implementadas buscas por data e fornecedor na consulta de despesas;
+* Implementada busca por data na consulta de créditos;
+* Parametrização por tipo de documento para aceitar apenas dígitos no lançamento de despesas;
+* Criado campo para detalhamento de créditos parametrizavel por tipo de crédito;
+* O campo de observação da prestação de contas agora é vinculado à ação da associação;
+* Exibição de valores de créditos futuros na ata da prestação de contas;
+* Exibição do nome da escola abaixo do usuário em vez do nome da associação; 
+  
+### 1.3.0 (antiga 0.4.0) - 16/06/2020 - Entregas da Release 1 - Sprint 5
+* Geração do documento Relação de Bens na prestação de contas
+* Adicionado campo "Nº do cheque" no lançamento de despesas
+* Geração da Ata na prestação de contas
+* Adicionada a verificação de suficiência de saldo por conta no lançamento de despesas
+* Exibição de tabela de valores pendentes no processo de conciliação
+* Melhoria na mensagem de validação de consistência de valores no lançamento de despesas
+* Adicionada rotina de carga de dados para valores realizados por associação
+* Seleção de período na prestação de contas não exibe mais períodos futuros
+* Lista de especificações de materiais serviços agora é exibida em ordem alfabética
+* Agora é possível determinar a ordem que as ações serão exibidas no painel de ações e em outras partes da aplicação
+* Adicionado feedback visual (loading) para processos demorados no módulo de receitas
+* Agora a conciliação exibe transações não conciliadas mesmo de períodos anteriores
+* 🐞 Correção de erros
 
-### 0.5.0 - 07/07/2020 - Entregas da Sprint 6
-- Confirmação de repasses na entrada de créditos agora considera a classificação da receita em capital ou custeio;
-- Lançamento de saldos reprogramados (implantação de saldos);
-- Cadastramento de todos os cargos da Associação;
-- Cadastramento de dados das contas da Associação;
-- Verificação de duplicidade no lançamento de uma despesa;
-- CNPJ/CPF do fornecedor agora é brigatório no lançamento de uma despesa;
-- Períodos futuros não são mais exibidos no painel de ações;
-- Implementadas buscas por data e fornecedor na consulta de despesas;
-- Implementada busca por data na consulta de créditos;
-- Parametrização por tipo de documento para aceitar apenas dígitos no lançamento de despesas;
-- Exibição de "Carregando" nos módulos de despesas, prestações de contas e dados da associação;
-- Implementado botão para limpar filtros na consulta de créditos;
-- Implementado botão para limpar filtros na consulta de despesas;
-- O número do processo de incorporação recebeu uma máscara 0000.0000/0000000-0;
-- Criado campo para detalhamento de créditos parametrizavel por tipo de crédito;
-- O campo de observação da prestação de contas agora é vinculado à ação da associação;
-- Exibição de valores de créditos futuros na ata da prestação de contas;
-- Exibição do nome da escola abaixo do usuário em vez do nome da associação; 
-- Várias melhorias visuais no front (Ex: cor do logo, icones do menu, etc.);
+### 1.2.0 (antiga 0.3.0) - 28/05/2020 - Entregas da Release 1 - Sprint 4
+* Exibição de referência e status do período no painel de ações
+* Alteração automática do status do período na associação
+* Exibição de outras receitas no painel de ações
+* Navegação entre períodos no painel de ações
+* Alerta no lançamento de despesas acima do saldo por ação
+* Exibição de totais de despesas em Gastos da Escola
+* Categorização de receitas em Custeio e Capital
+* Destacar campos incompletos no cadastro de despesa
+* Inicio do processo de prestação de contas
+* Conciliação de lançamentos na prestação de contas
+* Bloqueio de alterações em receitas de períodos fechados
+* Bloqueio de alterações em despesas de períodos fechados
+* Geração de demonstrativo financeiro
 
-### 0.4.0 - 16/06/2020 - Entregas da Sprint 5
+### 1.1.0 (antiga 0.2.0) - 28/04/2020 - Entregas da Release 1 - Sprint 3
+* Carga de Associações
+* Carga de Usuários
+* Carga de Repasses
+* Cadastro de Períodos de realização de despesas
+* Registro de alterações (Audit Logs) de Despesas
+* Registro de alterações (Audit Logs) de Receitas
+* Consulta de despesas no Admin
+* Consulta de receitas no Admin
+* Confirmação de repasses pela Associação
+* Alerta na despesa sobre o uso de especificações do Sistema de Bens Patrimoniais Móveis do PMSP
+* Filtros diversos para consulta de despesas
+* Filtros diversos para consulta de receitas
+* Cadastro de Associações
+* Registro de fornecedores usados
+* Consulta de informações para o Painel de Ações da Associação
 
-- Geração do documento Relação de Bens na prestação de contas
-- Adicionado campo "Nº do cheque" no lançamento de despesas
-- Geração da Ata na prestação de contas
-- Adicionada a verificação de suficiência de saldo por conta no lançamento de despesas
-- Exibição de tabela de valores pendentes no processo de conciliação
-- Melhoria na mensagem de validação de consistência de valores no lançamento de despesas
-- Seleção de período na prestação de contas não exibe mais períodos futuros
-- Lista de especificações de materiais serviços agora é exibida em ordem alfabética
-- Agora é possível determinar a ordem que as ações serão exibidas no painel de ações e em outras partes da aplicação
-- Adicionado feedback visual (loading) para processos demorados no módulo de receitas
-- Agora a conciliação exibe transações não conciliadas mesmo de períodos anteriores
-- 🐞 Correção de erros
-
-
-### 0.3.0 - 28/05/2020 - Entregas da Sprint 4
-
-- Exibição de referência e status do período no painel de ações
-- Alteração automática do status do período na associação
-- Exibição de outras receitas no painel de ações
-- Navegação entre períodos no painel de ações
-- Alerta no lançamento de despesas acima do saldo por ação
-- Exibição de totais de despesas em Gastos da Escola
-- Categorização de receitas em Custeio e Capital
-- Destacar campos incompletos no cadastro de despesa
-- Inicio do processo de prestação de contas
-- Conciliação de lançamentos na prestação de contas
-- Bloqueio de alterações em receitas de períodos fechados
-- Bloqueio de alterações em despesas de períodos fechados
-- Geração de demonstrativo financeiro
-
-### 0.2.0 - 28/04/2020 - Entregas da Sprint 3
-
-- Confirmação de repasses pela Associação
-- Alerta na despesa sobre o uso de especificações do Sistema de Bens Patrimoniais Móveis do PMSP
-- Filtros diversos para consulta de despesas
-- Filtros diversos para consulta de receitas
-- Cadastro de Associações
-- Registro de fornecedores usados
-- Painel de Ações da Associação
-
-### 0.1.0 - 07/04/2020 - Entregas da Sprint 2
-
-- Autenticação de usuário
-- Cadastro de despesas
-- Cadastro de receitas
+### 1.0.0 (antiga 0.1.0) - 07/04/2020 - Entregas da Release 1 - Sprint 2
+* Autenticação de usuário
+* Cadastro de despesas
+* Cadastro de receitas
+* Carga da tabela de especificações
 
 ### Para desenvolver
 

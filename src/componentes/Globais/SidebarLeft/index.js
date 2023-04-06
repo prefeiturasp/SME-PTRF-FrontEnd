@@ -39,7 +39,6 @@ export const SidebarLeft = () => {
     };
 
     const getPathnameExcecoes = (url) =>{
-
         if(url.match(/parametro-/)){
             return 'painel-parametrizacoes'
         }else {
@@ -106,9 +105,7 @@ export const SidebarLeft = () => {
                 onSelect={(selected) => {
                     qtdeNotificacoesNaoLidas();
                     qdteCentralDeDownloadsNaoLidas();
-                    if ('/' + selected !== '/prestacao-de-contas'){
-                        notificacaoContext.getExibeModalErroConcluirPc();
-                    }
+                    notificacaoContext.getExibeModalErroConcluirPc();
                     visoesService.forcarNovoLogin();
                     const to = '/' + selected;
                     if (history.location.pathname !== to) {
@@ -120,7 +117,7 @@ export const SidebarLeft = () => {
                 onToggle={onToggle}
             >
                 <SideNav.Toggle/>
-                {/*<SideNav.Nav defaultSelected={urls.dados_iniciais.default_selected}>*/}
+                {/* <SideNav.Nav defaultSelected={urls.dados_iniciais.default_selected}> */}
                 <SideNav.Nav defaultSelected={getPathname()}>
                     {urls && urls.lista_de_urls.length > 0 && urls.lista_de_urls.map((url, index) => {
                             return (

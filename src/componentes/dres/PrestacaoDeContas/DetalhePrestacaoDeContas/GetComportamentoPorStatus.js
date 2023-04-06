@@ -59,7 +59,9 @@ export const GetComportamentoPorStatus = (
         onClickSalvarAcertoSaldo,
         ajusteSaldoSalvoComSucesso,
         onClickDeletarAcertoSaldo,
-        setAnalisesDeContaDaPrestacao
+        setAnalisesDeContaDaPrestacao,
+        bloqueiaBtnRetroceder,
+        tooltipRetroceder
     }) => {
 
         const TEMPERMISSAO = RetornaSeTemPermissaoEdicaoAcompanhamentoDePc()
@@ -114,7 +116,8 @@ export const GetComportamentoPorStatus = (
                         metodoAvancar={analisarPrestacaoDeContas}
                         metodoRetroceder={() => setShowNaoRecebida(true)}
                         disabledBtnAvancar={!TEMPERMISSAO}
-                        disabledBtnRetroceder={!TEMPERMISSAO}
+                        disabledBtnRetroceder={bloqueiaBtnRetroceder() || !TEMPERMISSAO}
+                        tooltipRetroceder={tooltipRetroceder()}
                     />
                     <TrilhaDeStatus
                         prestacaoDeContas={prestacaoDeContas}
@@ -152,7 +155,8 @@ export const GetComportamentoPorStatus = (
                         metodoAvancar={() => setShowConcluirAnalise(true)}
                         metodoRetroceder={() => setShowRecebida(true)}
                         disabledBtnAvancar={!TEMPERMISSAO}
-                        disabledBtnRetroceder={!TEMPERMISSAO}
+                        disabledBtnRetroceder={bloqueiaBtnRetroceder() || !TEMPERMISSAO}
+                        tooltipRetroceder={tooltipRetroceder()}
                     />
                     <TrilhaDeStatus
                         prestacaoDeContas={prestacaoDeContas}
