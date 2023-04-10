@@ -22,5 +22,11 @@ export const cards = [
         descricao: 'Arquivo com valores do saldo final por período e unidade.',
         tags: ['CSV'],
         endpoint: '/api/exportacoes-dados/saldos-finais-periodos/'
+    },
+    {
+        titulo: 'Prestações de contas: Relação de bens',
+        descricao: 'Arquivo com informações da relação de bens das prestações de contas por conta, período e unidade. ',
+        tags: ['CSV'],
+        endpoint: '/api/exportacoes-dados/relacao-bens/'
     }
 ]
