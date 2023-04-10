@@ -16,5 +16,11 @@ export const cards = [
         descricao: 'Arquivo com as especificações de materiais e serviços para cadastro de despesas nas unidades educacionais. Arquivos: especificacoes_materiais_servicos.csv e tipos_de_custeio.csv.',
         tags: ['CSV'],
         endpoint: '/api/exportacoes-dados/materiais-e-servicos/'
+    },
+    {
+        titulo: 'Saldo final do período',
+        descricao: 'Arquivo com valores do saldo final por período e unidade.',
+        tags: ['CSV'],
+        endpoint: '/api/exportacoes-dados/saldos-finais-periodos/'
     }
 ]
