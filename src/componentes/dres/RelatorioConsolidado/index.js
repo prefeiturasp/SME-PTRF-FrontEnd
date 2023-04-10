@@ -93,8 +93,8 @@ const RelatorioConsolidado = () => {
     useEffect(() => {
         carregaConsolidadosDreJaPublicadosProximaPublicacao()
     }, [carregaConsolidadosDreJaPublicadosProximaPublicacao])
-    
-    
+
+
     const verificaSeExisteAlgumRelatorioConsolidadoEmProcessamento = useCallback(async () => {
 
         if (consolidadoDreProximaPublicacao && consolidadoDreProximaPublicacao.relatorios_fisico_financeiros){
@@ -104,7 +104,7 @@ const RelatorioConsolidado = () => {
             }
         }
     }, [consolidadoDreProximaPublicacao, carregaConsolidadosDreJaPublicadosProximaPublicacao])
-    
+
     useEffect(()=>{
         verificaSeExisteAlgumRelatorioConsolidadoEmProcessamento()
     }, [verificaSeExisteAlgumRelatorioConsolidadoEmProcessamento])
@@ -141,17 +141,13 @@ const RelatorioConsolidado = () => {
         if (dre_uuid && periodoEscolhido) {
             try {
                 let status = await getStatusRelatorioConsolidadoDePublicacoesParciais(dre_uuid, periodoEscolhido)
-
-                if (status && status.status) {
-                    setStatusProcessamentoRelatorioConsolidadoDePublicacoesParciais(status.status)
-                }
+                setStatusProcessamentoRelatorioConsolidadoDePublicacoesParciais(status.status)
 
             } catch (e) {
                 console.log("Erro ao buscar status Consolidado Dre ", e)
             }
         }
     }, [dre_uuid, periodoEscolhido])
-
 
     useEffect(() => {
         retornaStatusProcessamentoRelatorioConsolidadoDePublicacoesParciais()
@@ -194,7 +190,6 @@ const RelatorioConsolidado = () => {
             setLoadingRelatorioConsolidado(false);
         }
     }, [statusProcessamentoRelatorioConsolidadoDePublicacoesParciais, retornaStatusProcessamentoRelatorioConsolidadoDePublicacoesParciais]);
-
 
     const buscaFiqueDeOlho = useCallback(async () => {
         try {
@@ -406,7 +401,6 @@ const RelatorioConsolidado = () => {
                                 />
 
                                 {loading || loadingRelatorioConsolidado  ? (
-
                                         <div className="mt-5">
                                             <Loading
                                                 corGrafico="black"
@@ -421,47 +415,47 @@ const RelatorioConsolidado = () => {
                                     <>
                                         {podeExibirProximaPublicacao() &&
                                             <>
-                                            <div className='mt-3'>
-                                                <PublicarDocumentos
-                                                    publicarConsolidadoDre={publicarConsolidadoDre}
-                                                    podeGerarPrevia={podeGerarPrevia}
-                                                    consolidadoDre={consolidadoDreProximaPublicacao}
-                                                    execucaoFinanceira={execucaoFinanceira}
-                                                    disableGerar={disableGerar}
-                                                    carregaConsolidadosDreJaPublicadosProximaPublicacao={carregaConsolidadosDreJaPublicadosProximaPublicacao}
-                                                    todasAsPcsDaRetificacaoConcluidas={todasAsPcsDaRetificacaoConcluidas}
-                                                    publicarRetificacao={publicarRetificacao}
-                                                    showPublicarRetificacao={showPublicarRetificacao}
-                                                    setShowPublicarRetificacao={setShowPublicarRetificacao}
-                                                    gerarPreviaRetificacao={gerarPreviaRetificacao}
-                                                    removerBtnGerar={consolidadoDreProximaPublicacao.eh_consolidado_de_publicacoes_parciais}
-                                                >
-                                                    <PreviaDocumentos
-                                                        gerarPreviaConsolidadoDre={gerarPreviaConsolidadoDre}
-                                                    />
-                                                </PublicarDocumentos>
-                                                <DemonstrativoDaExecucaoFisicoFinanceira
-                                                    consolidadoDre={consolidadoDreProximaPublicacao}
-                                                    periodoEscolhido={periodoEscolhido}
-                                                    podeAcessarInfoConsolidado={podeAcessarInfoConsolidado}
-                                                    execucaoFinanceira={execucaoFinanceira}
-                                                />
-                                                {!consolidadoDreProximaPublicacao.eh_consolidado_de_publicacoes_parciais &&
-                                                    <AtaParecerTecnico
-                                                    consolidadoDre={consolidadoDreProximaPublicacao}
-                                                    podeAcessarInfoConsolidado={podeAcessarInfoConsolidado}
-                                                    />
-                                                }
-                                                {!consolidadoDreProximaPublicacao.eh_consolidado_de_publicacoes_parciais &&
-                                                    <Lauda
+                                                <div className='mt-3'>
+                                                    <PublicarDocumentos
+                                                        publicarConsolidadoDre={publicarConsolidadoDre}
+                                                        podeGerarPrevia={podeGerarPrevia}
                                                         consolidadoDre={consolidadoDreProximaPublicacao}
+                                                        execucaoFinanceira={execucaoFinanceira}
+                                                        disableGerar={disableGerar}
+                                                        carregaConsolidadosDreJaPublicadosProximaPublicacao={carregaConsolidadosDreJaPublicadosProximaPublicacao}
+                                                        todasAsPcsDaRetificacaoConcluidas={todasAsPcsDaRetificacaoConcluidas}
+                                                        publicarRetificacao={publicarRetificacao}
+                                                        showPublicarRetificacao={showPublicarRetificacao}
+                                                        setShowPublicarRetificacao={setShowPublicarRetificacao}
+                                                        gerarPreviaRetificacao={gerarPreviaRetificacao}
+                                                        removerBtnGerar={consolidadoDreProximaPublicacao.eh_consolidado_de_publicacoes_parciais}
+                                                    >
+                                                        <PreviaDocumentos
+                                                            gerarPreviaConsolidadoDre={gerarPreviaConsolidadoDre}
+                                                        />
+                                                    </PublicarDocumentos>
+                                                    <DemonstrativoDaExecucaoFisicoFinanceira
+                                                        consolidadoDre={consolidadoDreProximaPublicacao}
+                                                        periodoEscolhido={periodoEscolhido}
+                                                        podeAcessarInfoConsolidado={podeAcessarInfoConsolidado}
+                                                        execucaoFinanceira={execucaoFinanceira}
                                                     />
-                                                }
-                                            </div>
+                                                    {!consolidadoDreProximaPublicacao.eh_consolidado_de_publicacoes_parciais &&
+                                                        <AtaParecerTecnico
+                                                            consolidadoDre={consolidadoDreProximaPublicacao}
+                                                            podeAcessarInfoConsolidado={podeAcessarInfoConsolidado}
+                                                        />
+                                                    }
+                                                    {!consolidadoDreProximaPublicacao.eh_consolidado_de_publicacoes_parciais &&
+                                                        <Lauda
+                                                            consolidadoDre={consolidadoDreProximaPublicacao}
+                                                        />
+                                                    }
+                                                </div>
                                             </>
                                         }
 
-                                        {consolidadosDreJaPublicados && consolidadosDreJaPublicados.map((consolidadoDre) => 
+                                        {consolidadosDreJaPublicados && consolidadosDreJaPublicados.map((consolidadoDre) =>
                                             <BlocoPublicacaoParcial
                                                 key={consolidadoDre.uuid}
                                                 consolidadoDre={consolidadoDre}

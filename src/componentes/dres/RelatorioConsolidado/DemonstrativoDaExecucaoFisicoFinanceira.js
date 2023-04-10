@@ -42,42 +42,42 @@ const DemonstrativoDaExecucaoFisicoFinanceira = ({consolidadoDre, periodoEscolhi
     return (
         <div className="border">
             {consolidadoDre.relatorios_fisico_financeiros && consolidadoDre.relatorios_fisico_financeiros.length > 0 ? (
-                <>
-                    {consolidadoDre.relatorios_fisico_financeiros.map((relatorio) =>
-                        <div className='row px-2' key={relatorio.uuid}>
-                            <div className="col-12 col-md-8">
-                                <div className='mt-2 mb-3' >
-                                    <p className='fonte-14 mb-1'><strong>Demonstrativo da Execução Físico-Financeira {relatorio.tipo_conta ? "- Conta " + relatorio.tipo_conta : ""}</strong></p>
-                                    <p className={`fonte-12 mb-0 ${retornaClasseMensagem(relatorio.status_geracao)}`}>
-                                        <span>{relatorio.status_geracao_arquivo} </span>
-                                        {(relatorio.status_geracao === 'GERADO_PARCIAL' || relatorio.status_geracao === 'GERADO_TOTAL') ?
-                                            <button className='btn-editar-membro' type='button'>
-                                                <FontAwesomeIcon
-                                                    onClick={() => downloadRelatorio(relatorio.uuid, relatorio.versao)}
-                                                    style={{fontSize: '18px'}}
-                                                    icon={faDownload}
-                                                />
-                                            </button>
-                                        :
-                                            <img src={Spinner} style={{height: "22px"}} alt=''/>
-                                        }
-                                    </p>
+                    <>
+                        {consolidadoDre.relatorios_fisico_financeiros.map((relatorio) =>
+                            <div className='row px-2' key={relatorio.uuid}>
+                                <div className="col-12 col-md-8">
+                                    <div className='mt-2 mb-3' >
+                                        <p className='fonte-14 mb-1'><strong>Demonstrativo da Execução Físico-Financeira {relatorio.tipo_conta ? "- Conta " + relatorio.tipo_conta : ""}</strong></p>
+                                        <p className={`fonte-12 mb-0 ${retornaClasseMensagem(relatorio.status_geracao)}`}>
+                                            <span>{relatorio.status_geracao_arquivo} </span>
+                                            {(relatorio.status_geracao === 'GERADO_PARCIAL' || relatorio.status_geracao === 'GERADO_TOTAL') ?
+                                                <button className='btn-editar-membro' type='button'>
+                                                    <FontAwesomeIcon
+                                                        onClick={() => downloadRelatorio(relatorio.uuid, relatorio.versao)}
+                                                        style={{fontSize: '18px'}}
+                                                        icon={faDownload}
+                                                    />
+                                                </button>
+                                                :
+                                                <img src={Spinner} style={{height: "22px"}} alt=''/>
+                                            }
+                                        </p>
+                                    </div>
                                 </div>
+                                {!consolidadoDre.eh_consolidado_de_publicacoes_parciais &&
+                                    <div className="col-12 col-md-4 align-self-center text-right">
+                                        <button
+                                            onClick={() => onClickPreencherRelatorio()}
+                                            type="button"
+                                            className="btn btn-outline-success btn-sm"
+                                        >
+                                            {'Consultar resumo'}
+                                        </button>
+                                    </div>
+                                }
                             </div>
-                            {!consolidadoDre.eh_consolidado_de_publicacoes_parciais &&
-                            <div className="col-12 col-md-4 align-self-center text-right">
-                                <button
-                                    onClick={() => onClickPreencherRelatorio()}
-                                    type="button"
-                                    className="btn btn-outline-success btn-sm"
-                                >
-                                    {'Consultar resumo'}
-                                </button>
-                            </div>
-                            }
-                        </div>
-                    )}
-                </>
+                        )}
+                    </>
                 ) :
                 <div className='row px-2'>
                     <div className="col-12 col-md-8">
@@ -89,7 +89,7 @@ const DemonstrativoDaExecucaoFisicoFinanceira = ({consolidadoDre, periodoEscolhi
                         </div>
                     </div>
                     {!consolidadoDre.eh_consolidado_de_publicacoes_parciais &&
-                    <div className="col-12 col-md-4 align-self-center text-right">
+                        <div className="col-12 col-md-4 align-self-center text-right">
                         <span data-html={true} data-tip={!podeAcessarInfoConsolidado(consolidadoDre) ? "Não é possível consultar/preencher o resumo. A análise da(s) prestação(ões) de contas em retificação ainda não foi concluída." : ""}>
                             <button
                                 onClick={() => onClickPreencherRelatorio()}
@@ -100,7 +100,7 @@ const DemonstrativoDaExecucaoFisicoFinanceira = ({consolidadoDre, periodoEscolhi
                                 {isDiferencaValores() ? 'Preencher resumo' : 'Consultar resumo'}
                             </button>
                         </span>
-                    </div>
+                        </div>
                     }
                 </div>
             }
