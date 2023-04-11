@@ -1,3 +1,6 @@
+### 7.0.1 - 10/04/2023 - Hotfix - Soluções de bugs urgentes durante a sprint 63
+* (91116) Corrige Geração do consolidado DRE está apresentando loanding perpertuo até atualizar a página
+
 ### 6.0.3 - 04/04/2023 - Hotfix - Soluções de bugs urgentes durante a sprint 62
 * (90066) Corrige data de documento vazia na conferência de lançamentos
 
