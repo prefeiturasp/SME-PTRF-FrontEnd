@@ -38,7 +38,7 @@ import {
     limparDetalharAcertos
 } from "../../../../../store/reducers/componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeLancamentos/DetalharAcertos/actions";
 import {visoesService} from "../../../../../services/visoes.service";
-import {ModalBootstrapLegendaInformacao} from "../../../../../componentes/Globais/ModalBootstrap";
+import {ModalLegendaInformacao} from "./Modais/ModalLegendaInformacao"
 
 const TabelaConferenciaDeLancamentos = ({
                                             setLancamentosParaConferencia,
@@ -683,13 +683,12 @@ const TabelaConferenciaDeLancamentos = ({
                     primeiroBotaoCss="success"
                 />
             </section>
-            <ModalBootstrapLegendaInformacao
+            <ModalLegendaInformacao
                 show={showModalLegendaInformacao}
                 primeiroBotaoOnclick={() => setShowModalLegendaInformacao(false)}
                 titulo="Legenda Informação"
                 primeiroBotaoTexto="Fechar"
                 primeiroBotaoCss="outline-success"
-                texto='<p>Esse lançamento tem um status de conferência que não pode ser selecionado em conjunto com os demais status já selecionados.</p>'
             />
         </>
     )
