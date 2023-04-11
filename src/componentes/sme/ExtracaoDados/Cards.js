@@ -28,5 +28,11 @@ export const cards = [
         descricao: 'Arquivo com informações da relação de bens das prestações de contas por conta, período e unidade. ',
         tags: ['CSV'],
         endpoint: '/api/exportacoes-dados/relacao-bens/'
+    },
+    {
+        titulo: 'Prestações de contas: Status',
+        descricao: 'Arquivo com informações do status das prestações de contas por período e unidade.',
+        tags: ['CSV'],
+        endpoint: '/api/exportacoes-dados/status-prestacoes-contas/'
     }
 ]
