@@ -34,5 +34,11 @@ export const cards = [
         descricao: 'Arquivo com informações do status das prestações de contas por período e unidade.',
         tags: ['CSV'],
         endpoint: '/api/exportacoes-dados/status-prestacoes-contas/'
-    }
+    },
+    {
+        titulo: 'Prestações de contas: Devolução ao tesouro',
+        descricao: 'Arquivo com informações de devolução ao tesouro das prestações de contas por período e unidade',
+        tags: ['CSV'],
+        endpoint: '/api/exportacoes-dados/devolucao-ao-tesouro-prestacoes-contas/'
+    },
 ]
