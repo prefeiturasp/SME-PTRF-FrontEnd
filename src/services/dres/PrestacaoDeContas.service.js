@@ -408,3 +408,7 @@ export const postRestaurarJustificativasAdicionais = async (payload) => {
 export const getTagsConferenciaLancamento = async () => {
     return (await api.get(`/api/analises-lancamento-prestacao-conta/tags-informacoes-conferencia/`, authHeader)).data
 }
+
+export const getTagsConferenciaDocumento = async () => {
+    return (await api.get(`/api/analises-documento-prestacao-conta/tags-informacoes-conferencia/`, authHeader)).data
+}
