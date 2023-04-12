@@ -39,6 +39,7 @@ import {
 } from "../../../../../store/reducers/componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeLancamentos/DetalharAcertos/actions";
 import {visoesService} from "../../../../../services/visoes.service";
 import {ModalLegendaInformacao} from "./Modais/ModalLegendaInformacao"
+import {ModalLegendaConferenciaLancamentos} from "./Modais/ModalLegendaConferenciaLancamentos"
 
 const TabelaConferenciaDeLancamentos = ({
                                             setLancamentosParaConferencia,
@@ -61,6 +62,7 @@ const TabelaConferenciaDeLancamentos = ({
     const [exibirBtnMarcarComoNaoConferido, setExibirBtnMarcarComoNaoConferido] = useState(false)
     const [showModalCheckNaoPermitido, setShowModalCheckNaoPermitido] = useState(false)
     const [showModalLegendaInformacao, setShowModalLegendaInformacao] = useState(false)
+    const [showModalLegendaConferenciaLancamento, setShowModalLegendaConferenciaLancamento] = useState(false)
 
     // Hooks Personalizados
     const valor_template = useValorTemplate()
@@ -309,8 +311,16 @@ const TabelaConferenciaDeLancamentos = ({
                         style={{fontSize: '18px', marginRight: "8px", color: '#00585D'}}
                         icon={faInfoCircle}
                     />
-                        <button className='legendas-table text-md-start' onClick={() => setShowModalLegendaInformacao(true)} style={{color: '#00585D', outline: 'none', border: 0, background: 'inherit', padding: '4px'}} >Legenda Informação</button>
-                    </span> 
+                        <button className='legendas-table text-md-start' onClick={() => setShowModalLegendaInformacao(true)} style={{color: '#00585D', outline: 'none', border: 0, background: 'inherit', padding: '4px'}} >Legenda informação</button>
+                    </span>
+                    <span>
+                    <FontAwesomeIcon
+                        style={{fontSize: '18px', marginRight: "8px", marginLeft: "8px", color: '#00585D'}}
+                        icon={faInfoCircle}
+                    />
+                        <button className='legendas-table text-md-start' onClick={() => setShowModalLegendaConferenciaLancamento(true)} style={{color: '#00585D', outline: 'none', border: 0, background: 'inherit', padding: '4px'}} >Legenda conferência</button>
+                    </span>
+
                 </div>
             </div>
         )
@@ -687,6 +697,13 @@ const TabelaConferenciaDeLancamentos = ({
                 show={showModalLegendaInformacao}
                 primeiroBotaoOnclick={() => setShowModalLegendaInformacao(false)}
                 titulo="Legenda Informação"
+                primeiroBotaoTexto="Fechar"
+                primeiroBotaoCss="outline-success"
+            />
+            <ModalLegendaConferenciaLancamentos
+                show={showModalLegendaConferenciaLancamento}
+                primeiroBotaoOnclick={() => setShowModalLegendaConferenciaLancamento(false)}
+                titulo="Legenda da Conferência de Lançamentos"
                 primeiroBotaoTexto="Fechar"
                 primeiroBotaoCss="outline-success"
             />

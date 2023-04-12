@@ -1,6 +1,6 @@
 import React from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCheckCircle, faClipboardCheck} from "@fortawesome/free-solid-svg-icons";
+import {faCheckCircle} from "@fortawesome/free-solid-svg-icons";
 import IconeConferidoAutomaticamente from "../../../../assets/img/icone-conferido-automaticame.svg";
 
 const iconeConferidoAutomaticamente = <img

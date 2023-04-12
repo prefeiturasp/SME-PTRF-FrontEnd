@@ -404,3 +404,7 @@ export const postSalvarJustificativasAdicionais = async (payload) => {
 export const postRestaurarJustificativasAdicionais = async (payload) => {
     return (await api.post(`/api/analises-documento-prestacao-conta/restaurar-justificativa-original/`, payload, authHeader)).data
 }
+
+export const getTagsConferenciaLancamento = async () => {
+    return (await api.get(`/api/analises-lancamento-prestacao-conta/tags-informacoes-conferencia/`, authHeader)).data
+}
