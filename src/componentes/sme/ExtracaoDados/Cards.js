@@ -41,4 +41,10 @@ export const cards = [
         tags: ['CSV'],
         endpoint: '/api/exportacoes-dados/devolucao-ao-tesouro-prestacoes-contas/'
     },
+    {
+        titulo: 'Despesas: Classificação das despesas',
+        descricao: 'Arquivo com informações de despesas (item de despesa classificado) por conta, período e unidade. ',
+        tags: ['CSV'],
+        endpoint: '/api/exportacoes-dados/rateios/'
+    },
 ]
