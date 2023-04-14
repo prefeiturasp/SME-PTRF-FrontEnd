@@ -42,6 +42,12 @@ export const cards = [
         endpoint: '/api/exportacoes-dados/devolucao-ao-tesouro-prestacoes-contas/'
     },
     {
+        titulo: 'Prestações de contas: Atas',
+        descricao: 'Arquivo com informações das atas de reuniões relativas às prestações de contas, por período e unidade.',
+        tags: ['CSV'],
+        endpoint: '/api/exportacoes-dados/atas-prestacoes-contas/'
+    },
+    {
         titulo: 'Despesas: Classificação das despesas',
         descricao: 'Arquivo com informações de despesas (item de despesa classificado) por conta, período e unidade. ',
         tags: ['CSV'],
