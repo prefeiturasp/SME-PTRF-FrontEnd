@@ -53,4 +53,10 @@ export const cards = [
         tags: ['CSV'],
         endpoint: '/api/exportacoes-dados/rateios/'
     },
+    {
+        titulo: 'Prestações de contas: Demonstrativos',
+        descricao: 'Arquivo com informações dos demonstrativos financeiros das prestações de contas por conta, período e unidade. ',
+        tags: ['CSV'],
+        endpoint: '/api/exportacoes-dados/demonstrativos-financeiros/'
+    },
 ]
