@@ -53,4 +53,10 @@ export const cards = [
         tags: ['CSV'],
         endpoint: '/api/exportacoes-dados/rateios/'
     },
+    {
+        titulo: 'Despesas: Documentos',
+        descricao: 'Arquivo com informações de despesas por período e unidade.',
+        tags: ['CSV'],
+        endpoint: '/api/exportacoes-dados/documentos-despesas/'
+    },
 ]
