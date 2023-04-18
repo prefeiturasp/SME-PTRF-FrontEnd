@@ -8,29 +8,24 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEye} from "@fortawesome/free-solid-svg-icons";
 
 import ReactTooltip from "react-tooltip";
+import { formataNomeDreParaTabelas } from "../../../utils/FormataNomeDreParaTabelas";
 
 export const ResumoPorDre = ({resumoPorDre, statusPeriodo, periodoEscolhido}) => {
 
     const periodoEmAndamento = statusPeriodo ? statusPeriodo.cor_idx  == 1 : true;
 
-    const estiloLinhaCompleta = {
-        font: 'Roboto',
-        fontWeight: 'bold',
-        fontSize: '14px',
-        lineHeight: '22px',
-    };
-
-    const estiloLinhaIcompleta = {
+    const estiloLinha = {
         font: 'Roboto',
         fontWeight: 'normal',
         fontSize: '14px',
         lineHeight: '22px',
     };
 
-    const siglaDreTemplate = (rowData) => {
+    const nomeDreColunaTemplate = (rowData) => {
+        let nomeSemPrefixo = formataNomeDreParaTabelas(rowData.dre.nome)
         return (
             <div>
-                <span style={rowData.periodo_completo ? estiloLinhaCompleta : estiloLinhaIcompleta}> {rowData.dre.sigla}</span>
+                <span style={estiloLinha}> {nomeSemPrefixo}</span>
             </div>
         )
     };
@@ -56,34 +51,34 @@ export const ResumoPorDre = ({resumoPorDre, statusPeriodo, periodoEscolhido}) =>
         )
     };
 
-    const colunaTemplate = (completo, valor) => {
+    const colunaTemplate = (valor) => {
         return (
-            <span style={completo ? estiloLinhaCompleta : estiloLinhaIcompleta}> {valor}</span>
+            <span style={estiloLinha}> {valor}</span>
         )
     };
 
     const totalUnidadesTemplate = (rowData) => {
-        return colunaTemplate(rowData.periodo_completo, rowData.cards.TOTAL_UNIDADES)
+        return colunaTemplate(rowData.cards.TOTAL_UNIDADES)
     };
 
     const naoApresentadaTemplate = (rowData) => {
-        return colunaTemplate(rowData.periodo_completo, rowData.cards.NAO_APRESENTADA)
+        return colunaTemplate(rowData.cards.NAO_APRESENTADA)
     };
 
     const recebidaTemplate = (rowData) => {
-        return colunaTemplate(rowData.periodo_completo, rowData.cards.RECEBIDA)
+        return colunaTemplate(rowData.cards.RECEBIDA)
     };
 
     const aprovadaTemplate = (rowData) => {
-        return colunaTemplate(rowData.periodo_completo, rowData.cards.APROVADA)
+        return colunaTemplate(rowData.cards.APROVADA)
     };
 
     const aprovadaRessalvaTemplate = (rowData) => {
-        return colunaTemplate(rowData.periodo_completo, rowData.cards.APROVADA_RESSALVA)
+        return colunaTemplate(rowData.cards.APROVADA_RESSALVA)
     };
 
     const reprovadaTemplate = (rowData) => {
-        return colunaTemplate(rowData.periodo_completo, rowData.cards.REPROVADA)
+        return colunaTemplate(rowData.cards.REPROVADA)
     };
 
     const emAnaliseHeaderTemplate = () => {
@@ -98,11 +93,9 @@ export const ResumoPorDre = ({resumoPorDre, statusPeriodo, periodoEscolhido}) =>
     const emAnaliseBodyTemplate = (rowData) => {
         const quantidadeCardsEmAnalise = rowData.cards.EM_ANALISE + rowData.cards.NAO_RECEBIDA + rowData.cards.DEVOLVIDA;
 
-        const completo = rowData.periodo_completo
-
         return (
             <span data-html={true} data-tip={"Soma das PCs Não recebidas, Em análise e Devolvidas para acertos."} data-for="em-analise-body-id">
-                <span style={completo ? estiloLinhaCompleta : estiloLinhaIcompleta}> {quantidadeCardsEmAnalise}</span>
+                <span style={estiloLinha}> {quantidadeCardsEmAnalise}</span>
                 <ReactTooltip html={true} id="em-analise-body-id"/>
             </span>
         )
@@ -115,7 +108,7 @@ export const ResumoPorDre = ({resumoPorDre, statusPeriodo, periodoEscolhido}) =>
                 className="mt-3 datatable-footer-coad"
                 paginator={false}
             >
-                <Column field='dre.sigla' header='DRE' body={siglaDreTemplate}/>
+                <Column field='dre.sigla' header='DRE' body={nomeDreColunaTemplate} style={{width: '20%'}}/>
                 <Column field='cards.TOTAL_UNIDADES' header='Total de Associações' body={totalUnidadesTemplate}/>
 
                 {!periodoEmAndamento && <Column field='cards.NAO_APRESENTADA' header='Não apresentadas'  body={naoApresentadaTemplate}/>}
