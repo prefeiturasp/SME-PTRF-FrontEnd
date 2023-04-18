@@ -13,12 +13,12 @@ export const ModalLegendaConferenciaLancamentos = (propriedades) => {
     const types = {
         1: <FontAwesomeIcon
                 className="align-middle mr-2"
-                style={{color: '#297805', fontSize: '1.2rem'}}
+                style={{color: '#B40C02', fontSize: '1.2rem'}}
                 icon={faCheckCircle}
             />,
         2: <FontAwesomeIcon
                 className="align-middle mr-2"
-                style={{color: '#B40C02', fontSize: '1.2rem'}}
+                style={{color: '#297805', fontSize: '1.2rem'}}
                 icon={faCheckCircle}
             />,
         3: <img
@@ -73,7 +73,7 @@ export const ModalLegendaConferenciaLancamentos = (propriedades) => {
                         <Loading corGrafico="black" corFonte="dark" marginTop="0" marginBottom="0"/>
                     ) : listaTagsConferencia?.length > 0 ? listaTagsConferencia.map((tag) => {
                         return (
-                            <div className="row ml-2 pb-4 align-items-center" key={tag.id}>
+                            <div className="row ml-2 align-items-center" key={tag.id}>
 
                                 <p className="ml-0">
                                     <span className="icon-container">{types[tag.id]}</span>
