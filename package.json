@@ -1,6 +1,6 @@
 {
   "name": "ptrf",
-  "version": "7.0.1",
+  "version": "7.1.0",
   "private": true,
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.27",
@@ -12,12 +12,12 @@
     "@testing-library/user-event": "^7.2.1",
     "@tinymce/tinymce-react": "^3.10.1",
     "@trendmicro/react-sidenav": "^0.5.0",
-    "antd": "^4.16.9",
+    "antd": "^4.24.8",
     "array-find-duplicates": "^2.0.1",
     "array-move": "^3.0.1",
     "axios": "^0.19.2",
-    "date-fns": "^2.11.0",
-    "formik": "^2.1.4",
+    "date-fns": "^2.11.1",
+    "formik": "^2.1.7",
     "http-status-codes": "^1.4.0",
     "jwt-decode": "^2.2.0",
     "moment": "^2.24.0",
@@ -42,7 +42,7 @@
     "react-tooltip": "^4.2.7",
     "react-ultimate-pagination-bootstrap-4": "^1.1.0",
     "reactstrap": "^8.4.1",
-    "redux": "^4.1.1",
+    "redux": "^4.2.1",
     "yup": "^0.28.3"
   },
   "scripts": {
@@ -67,6 +67,6 @@
     ]
   },
   "devDependencies": {
-    "react-intl-currency-input": "^0.2.3"
+    "react-intl-currency-input": "^0.2.6"
   }
 }
