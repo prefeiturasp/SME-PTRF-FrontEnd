@@ -1,3 +1,3 @@
 export const formataNomeDreParaTabelas = (nomeDre) => {
-    return nomeDre.replace('DIRETORIA REGIONAL DE ', '').replace('/', '/ ')
+    return nomeDre.replace('DIRETORIA REGIONAL DE EDUCACAO ', '').replace('/', '/ ')
   };
