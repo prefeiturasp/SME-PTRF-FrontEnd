@@ -142,6 +142,9 @@ export const getAcoesAssociacao = async (associacao_uuid) => {
 export const getContasAssociacao = async (associacao_uuid) => {
     return (await api.get(`api/associacoes/${associacao_uuid}/contas/`, authHeader)).data
 };
+export const validarDataDeEncerramento = async (associacao_uuid, data_de_encerramento, periodo_inicial) => {
+    return (await api.get(`api/associacoes/${associacao_uuid}/validar-data-de-encerramento/?data_de_encerramento=${data_de_encerramento}&periodo_inicial=${periodo_inicial}`, authHeader)).data
+};
 
 
 
