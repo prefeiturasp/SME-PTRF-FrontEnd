@@ -187,7 +187,7 @@ const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitMo
                                                 style={{fontSize: '12px', marginRight:'4px'}}
                                                 icon={faExclamationCircle}
                                             /> 
-                                            <span>{values.retorna_se_pode_editar_periodo_inicial ? values.retorna_se_pode_editar_periodo_inicial.help_text : ''}</span>
+                                            <span>O período inicial informado é uma referência e indica que o período a ser habilitado para a associação será o período posterior ao período informado.</span>
                                         </small>
                                     </div>
                                     <div className="col-6">
@@ -215,7 +215,7 @@ const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitMo
                                                     style={{fontSize: '12px', marginRight:'4px'}}
                                                     icon={faExclamationCircle}
                                                 /> 
-                                                <span>{values.data_de_encerramento_help_text ? values.data_de_encerramento_help_text : ''}</span>
+                                                <span>A associação deixará de ser exibida nos períodos posteriores à data de encerramento informada.</span>
                                             </small>
                                         </div>
                                     </div>
