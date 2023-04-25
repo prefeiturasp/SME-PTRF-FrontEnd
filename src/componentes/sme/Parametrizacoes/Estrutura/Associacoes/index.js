@@ -159,7 +159,6 @@ export const Associacoes = () => {
             id: associacao_por_uuid.id,
             operacao: 'edit',
             data_de_encerramento: associacao_por_uuid.data_de_encerramento.data,
-            data_de_encerramento_help_text: associacao_por_uuid.data_de_encerramento.help_text,
             retorna_se_pode_editar_periodo_inicial: associacao_por_uuid.retorna_se_pode_editar_periodo_inicial
         });
         setShowModalForm(true)
@@ -196,7 +195,6 @@ export const Associacoes = () => {
         }else {
             let payload;
             if (!errosCodigoEol){
-                setLoading(true);
                 if (values.operacao === 'create'){
                     payload = {
                         nome: values.nome,
@@ -232,9 +230,7 @@ export const Associacoes = () => {
                     }catch (e) {
                         console.log('Erro ao criar associação ', e.response.data)
                     }
-                    setLoading(false);
                 }else {
-                    setLoading(true);
                     payload = {
                         nome: values.nome,
                         cnpj: values.cnpj,
@@ -256,9 +252,11 @@ export const Associacoes = () => {
                         setShowModalForm(false);
                         await carregaTodasAsAssociacoes();
                     }catch (e) {
+                        if(e.response.data && e.response.data.erro === 'data_invalida') {
+                            setErrors({ data_de_encerramento: e.response.data.mensagem.replace('data_fim_realizacao_despesas', 'a data do fim da realização das despesas') });
+                        } 
                         console.log('Erro ao editar associação ', e.response.data)
                     }
-                    setLoading(false);
                 }
             }
         }
