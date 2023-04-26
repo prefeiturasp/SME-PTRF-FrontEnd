@@ -14,6 +14,7 @@ import {
     deleteAssociacao,
     getAcoesAssociacao,
     getContasAssociacao,
+    validarDataDeEncerramento
 } from "../../../../../services/sme/Parametrizacoes.service";
 import {TabelaAssociacoes} from "./TabelaAssociacoes";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -157,6 +158,8 @@ export const Associacoes = () => {
             uuid: associacao_por_uuid.uuid,
             id: associacao_por_uuid.id,
             operacao: 'edit',
+            data_de_encerramento: associacao_por_uuid.data_de_encerramento.data,
+            retorna_se_pode_editar_periodo_inicial: associacao_por_uuid.retorna_se_pode_editar_periodo_inicial
         });
         setShowModalForm(true)
     }, [stateFormModal]);
@@ -192,7 +195,6 @@ export const Associacoes = () => {
         }else {
             let payload;
             if (!errosCodigoEol){
-                setLoading(true);
                 if (values.operacao === 'create'){
                     payload = {
                         nome: values.nome,
@@ -214,9 +216,13 @@ export const Associacoes = () => {
                             bairro: '',
                             cep: ''
                         },
-                        observacao: values.observacao
+                        observacao: values.observacao,
+                        data_de_encerramento: values.data_de_encerramento
                     };
                     try {
+                        if(values.data_de_encerramento) {
+                            await validarDataDeEncerramento(values.uuid, values.data_de_encerramento, values.periodo_inicial)
+                        }
                         await postCriarAssociacao(payload);
                         console.log('Associação criada com sucesso.');
                         setShowModalForm(false);
@@ -224,9 +230,7 @@ export const Associacoes = () => {
                     }catch (e) {
                         console.log('Erro ao criar associação ', e.response.data)
                     }
-                    setLoading(false);
                 }else {
-                    setLoading(true);
                     payload = {
                         nome: values.nome,
                         cnpj: values.cnpj,
@@ -237,16 +241,22 @@ export const Associacoes = () => {
                         processo_regularidade: values.processo_regularidade,
                         unidade: values.uuid_unidade,
                         observacao: values.observacao,
+                        data_de_encerramento: values.data_de_encerramento
                     };
                     try {
+                        if(values.data_de_encerramento) {
+                            await validarDataDeEncerramento(values.uuid, values.data_de_encerramento, values.periodo_inicial)
+                        }
                         await patchUpdateAssociacao(values.uuid, payload);
                         console.log('Associação editada com sucesso.');
                         setShowModalForm(false);
                         await carregaTodasAsAssociacoes();
                     }catch (e) {
+                        if(e.response.data && e.response.data.erro === 'data_invalida') {
+                            setErrors({ data_de_encerramento: e.response.data.mensagem.replace('data_fim_realizacao_despesas', 'a data do fim da realização das despesas') });
+                        } 
                         console.log('Erro ao editar associação ', e.response.data)
                     }
-                    setLoading(false);
                 }
             }
         }
