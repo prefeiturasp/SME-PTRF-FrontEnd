@@ -7,7 +7,7 @@ import {DataTable} from "primereact/datatable";
 import useConferidoTemplate from "../../../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useConferidoTemplate";
 
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCheckCircle, faEdit} from "@fortawesome/free-solid-svg-icons";
+import {faCheckCircle, faEdit, faInfoCircle} from "@fortawesome/free-solid-svg-icons";
 import Dropdown from "react-bootstrap/Dropdown";
 import {ModalCheckNaoPermitidoConfererenciaDeDocumentos} from "./ModalCheckNaoPermitidoConfererenciaDeDocumentos";
 import {postDocumentosParaConferenciaMarcarComoCorreto, postDocumentosParaConferenciaMarcarNaoConferido} from "../../../../../services/dres/PrestacaoDeContas.service";
@@ -16,6 +16,7 @@ import Loading from "../../../../../utils/Loading";
 // Redux
 import {useDispatch} from "react-redux";
 import {addDetalharAcertosDocumentos, limparDetalharAcertosDocumentos} from "../../../../../store/reducers/componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeDocumentos/DetalharAcertosDocumentos/actions";
+import {ModalLegendaConferenciaDocumentos} from "./Modais/ModalLegendaConferenciaDocumentos";
 
 const TabelaConferenciaDeDocumentos = ({carregaListaDeDocumentosParaConferencia, setListaDeDocumentosParaConferencia, listaDeDocumentosParaConferencia, rowsPerPage, prestacaoDeContas, loadingDocumentosParaConferencia, editavel}) =>{
 
@@ -32,6 +33,7 @@ const TabelaConferenciaDeDocumentos = ({carregaListaDeDocumentosParaConferencia,
     const [exibirBtnMarcarComoNaoConferido, setExibirBtnMarcarComoNaoConferido] = useState(false)
     const [textoModalCheckNaoPermitido, setTextoModalCheckNaoPermitido] = useState('')
     const [showModalCheckNaoPermitido, setShowModalCheckNaoPermitido] = useState(false)
+    const [showModalLegendaConferenciaDocumento, setShowModalLegendaConferenciaDocumento] = useState(false)
 
     const addDispatchRedireciona = (documento) => {
         if (editavel){
@@ -280,12 +282,22 @@ const TabelaConferenciaDeDocumentos = ({carregaListaDeDocumentosParaConferencia,
 
     const mensagemQuantidadeExibida = () => {
         return (
-            <div className="row">
-                <div className="col-12" style={{padding: "15px 0px", margin: "0px 15px", flex: "100%"}}>
+            <div className="d-flex justify-content-between align-middle">
+                <div>
                     Exibindo <span style={{
                     color: "#00585E",
                     fontWeight: "bold"
                 }}>{totalDeDocumentosParaConferencia}</span> documentos
+                </div>
+                <div>
+                    <span>
+                    <FontAwesomeIcon
+                        style={{fontSize: '18px', marginRight: "8px", marginLeft: "8px", color: '#00585D'}}
+                        icon={faInfoCircle}
+                    />
+                        <button className='legendas-table text-md-start' onClick={() => setShowModalLegendaConferenciaDocumento(true)} style={{color: '#00585D', outline: 'none', border: 0, background: 'inherit', padding: '4px'}} >Legenda conferência</button>
+                    </span>
+
                 </div>
             </div>
         )
@@ -400,6 +412,13 @@ const TabelaConferenciaDeDocumentos = ({carregaListaDeDocumentosParaConferencia,
                             primeiroBotaoCss="success"
                         />
                     </section>
+                    <ModalLegendaConferenciaDocumentos
+                        show={showModalLegendaConferenciaDocumento}
+                        primeiroBotaoOnclick={() => setShowModalLegendaConferenciaDocumento(false)}
+                        titulo="Legenda da Conferência de Documentos"
+                        primeiroBotaoTexto="Fechar"
+                        primeiroBotaoCss="outline-success"
+                    />
                 </>
             }
         </>
