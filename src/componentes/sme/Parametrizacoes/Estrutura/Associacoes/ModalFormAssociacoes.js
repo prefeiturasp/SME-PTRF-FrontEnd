@@ -207,9 +207,9 @@ const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitMo
                                                 minDate={converteDataLocalParaUTC(data_fim_periodo)}
                                                 maxDate={new Date()}
                                             />
-                                            {props.errors.data_de_encerramento && <span
-                                                className="span_erro text-danger mt-1"> {props.errors.data_de_encerramento}
-                                            </span>}
+                                            {props.errors.data_de_encerramento && <small
+                                                className="span_erro text-danger mt-1"> *{props.errors.data_de_encerramento}
+                                            </small>}
                                             <small className="form-text text-muted">
                                                 <FontAwesomeIcon
                                                     style={{fontSize: '12px', marginRight:'4px'}}
