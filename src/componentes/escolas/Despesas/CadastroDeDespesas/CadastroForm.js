@@ -15,7 +15,8 @@ import {
     getMotivosPagamentoAntecipado,
     marcarLancamentoAtualizado,
     marcarLancamentoExcluido,
-    marcarGastoIncluido
+    marcarGastoIncluido,
+    getValidarDataDaDespesa
 } from "../../../../services/escolas/Despesas.service";
 import {useParams, useLocation} from 'react-router-dom';
 import {DespesaContext} from "../../../../context/Despesa";
@@ -1013,8 +1014,20 @@ export const CadastroForm = ({verbo_http}) => {
     }
 
     const onCalendarCloseDataPagamento = async (values, setFieldValue) => {
+        try {
+            const {data_transacao, associacao} = values
+
+            if (data_transacao) {
+                await getValidarDataDaDespesa(associacao, data_transacao.toISOString().substring(0, 10))
+            }
+                       
+        } catch (error) {
+            setFieldValue("data_transacao", null)
+            setFormErrors(prevState => ({...prevState, data_transacao: error.response.data.mensagem}))
+        }
+
         for(let despesa_imposto = 0; despesa_imposto <= values.despesas_impostos.length -1; despesa_imposto ++){
-                                                    
+
             let erro = await validacoesPersonalizadas(values, setFieldValue, "despesa_imposto", despesa_imposto)
             
             setFormErrorsImposto(prevState => ({...prevState, [despesa_imposto] : erro}))
@@ -1028,6 +1041,19 @@ export const CadastroForm = ({verbo_http}) => {
             [index]: erro
         })
         liberaBtnSalvar(values);
+    }
+
+    const onCalendarCloseDataDoDocumento = async(values, setFieldValue) => {
+        try {
+            const {data_documento, associacao} = values
+
+            await getValidarDataDaDespesa(associacao, data_documento.toISOString().substring(0, 10))
+            setFormErrors(prevState => ({...prevState, data_documento: ''}))
+                       
+        } catch (error) {
+            setFieldValue("data_documento", null)
+            setFormErrors(prevState => ({...prevState, data_documento: error.response.data.mensagem}))
+        }
     }
 
     return (
@@ -1116,6 +1142,7 @@ export const CadastroForm = ({verbo_http}) => {
                         onCalendarCloseDataPagamentoImposto={onCalendarCloseDataPagamentoImposto}
                         parametroLocation={parametroLocation}
                         bloqueiaCamposDespesa={bloqueiaCamposDespesa}
+                        onCalendarCloseDataDoDocumento={onCalendarCloseDataDoDocumento}
                     />
             </>
             }
