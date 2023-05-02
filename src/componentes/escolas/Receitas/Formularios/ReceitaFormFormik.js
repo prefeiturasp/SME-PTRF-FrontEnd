@@ -22,6 +22,7 @@ export const ReceitaFormFormik = ({
                                       getAvisoTipoReceita,
                                       setShowCadastrarSaida,
                                       tabelas,
+                                      periodosValidosAssociacaoencerrada,
                                       receita,
                                       verificaSeExibeDetalhamento,
                                       temOpcoesDetalhesTipoReceita,
@@ -205,9 +206,8 @@ export const ReceitaFormFormik = ({
                                             {receita.referencia_devolucao
                                                 ? null
                                                 : <option value="">Selecione um período</option>}
-                                            {tabelas.periodos !== undefined && tabelas.periodos.length > 0 ? (tabelas.periodos.map((item, key) => (
-                                                <option key={key}
-                                                        value={item.uuid}>{item.referencia_por_extenso}</option>
+                                            {periodosValidosAssociacaoencerrada && periodosValidosAssociacaoencerrada.length > 0 ? (periodosValidosAssociacaoencerrada.map((item, key) => (
+                                                <option key={key} value={item.uuid}>{item.referencia_por_extenso}</option>
                                             ))) : null}
                                         </select>
                                         {props.touched.referencia_devolucao && props.errors.referencia_devolucao &&
@@ -398,7 +398,7 @@ export const ReceitaFormFormik = ({
                                 {!ehOperacaoExclusaoReaberturaSeletiva() &&
                                     <button
                                         onClick={(e) => servicoDeVerificacoes(e, values, errors)}
-                                        disabled={readOnlyBtnAcao || ![['add_receita'], ['change_receita']].some(visoesService.getPermissoes)}
+                                        disabled={formDateErrors || readOnlyBtnAcao || ![['add_receita'], ['change_receita']].some(visoesService.getPermissoes)}
                                         type="submit"
                                         className="btn btn-success mt-2"
                                     >
