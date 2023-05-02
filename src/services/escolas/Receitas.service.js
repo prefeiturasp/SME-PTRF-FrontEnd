@@ -26,15 +26,8 @@ export const getTabelasReceitaReceita = async (associacao=null) => {
 };
 
 
-export const criarReceita = async payload => {
-    return api
-        .post(`api/receitas/?associacao_uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, payload, authHeader)
-        .then(response => {
-            return response;
-        })
-        .catch(error => {
-            return error.response;
-        });
+export const criarReceita = async (payload) => {
+    return (await api.post(`api/receitas/?associacao_uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, payload, authHeader))
 };
 
 export const getReceita = async (uuid, associacao=null) => {
@@ -50,15 +43,9 @@ export const getReceita = async (uuid, associacao=null) => {
         });
 };
 
+
 export const atualizaReceita = async (uuid, payload) => {
-    return api
-        .put(`api/receitas/${uuid}/?associacao_uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, payload, authHeader)
-        .then(response => {
-            return response;
-        })
-        .catch(error => {
-            return error.response;
-        });
+    return (await api.put(`api/receitas/${uuid}/?associacao_uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, payload, authHeader))
 };
 
 export const deletarReceita = async uuid => {
@@ -107,4 +94,12 @@ export const marcarLancamentoAtualizado = async (uuid_analise_lancamento) => {
 
 export const marcarCreditoIncluido = async (payload) => {
     return (await api.post(`/api/analises-documento-prestacao-conta/marcar-como-credito-incluido/`, payload, authHeader)).data
+};
+
+export const getValidarDataDaReceita = async (associacao_uuid, data_da_receita) => {
+    return (await api.get(`/api/receitas/validar-data-da-receita-associacao-encerrada/?associacao_uuid=${associacao_uuid}&data_da_receita=${data_da_receita}`, authHeader)).data
+};
+
+export const getPeriodosValidosAssociacaoEncerrada = async (associacao_uuid) => {
+    return (await api.get(`/api/receitas/periodos-validos-associacao-encerrada/?associacao_uuid=${associacao_uuid}`, authHeader)).data
 };
