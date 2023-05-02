@@ -82,9 +82,9 @@ export const ListaPrestacaoDeContas = () => {
     }, [carregaStatus])
 
     const carregaQtdeUnidadesDre = useCallback(async () => {
-        let qtde_unidades = await getQtdeUnidadesDre();
+        let qtde_unidades = await getQtdeUnidadesDre(periodoEscolhido);
         setQtdeUnidadesDre(qtde_unidades.qtd_unidades)
-    }, []);
+    }, [periodoEscolhido]);
 
     useEffect(()=>{
         carregaQtdeUnidadesDre();

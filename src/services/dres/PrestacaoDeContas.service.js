@@ -21,8 +21,12 @@ export const getPrestacoesDeContasTodosOsStatus = async (periodo_uuid="",  nome=
     return (await api.get(`/api/prestacoes-contas/todos-os-status/?associacao__unidade__dre__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}&periodo__uuid=${periodo_uuid}${nome ? '&nome=' + nome : ''}${tipo_unidade ? '&tipo_unidade=' + tipo_unidade : ''}`, authHeader)).data
 };
 
-export const getQtdeUnidadesDre = async () => {
-    return (await api.get(`/api/dres/${localStorage.getItem(ASSOCIACAO_UUID)}/qtd-unidades/`, authHeader)).data
+export const getQtdeUnidadesDre = async (periodoUuid) => {
+    let url = `/api/dres/${localStorage.getItem(ASSOCIACAO_UUID)}/qtd-unidades/`;
+    if (periodoUuid) {
+        url += `?periodo__uuid=${periodoUuid}`
+    }
+    return (await api.get(url, authHeader)).data
 };
 
 export const getTabelasPrestacoesDeContas = async () => {
