@@ -54,13 +54,13 @@ export const AcompanhamentoPcsSmePorDre = (params) => {
     const carregaItensDashboard = async () =>{
         setLoading(true);
         if (periodoEscolhido){
-            let itensPorCard = await getItensDashboardComDreUuid(params.periodo_uuid, params.dre_uuid);
-            let unidadesEducacionaisResumo = await getResumoDRE(params.dre_uuid, params.periodo_uuid)
+            let itensPorCard = await getItensDashboardComDreUuid(periodoEscolhido, params.dre_uuid);
+            let unidadesEducacionaisResumo = await getResumoDRE(params.dre_uuid, periodoEscolhido)
             if (localStorage.getItem('ACOMPANHAMENTO_PC_UNIDADE')) {
                 let newParms = meapcservice.getAcompanhamentoDePcUnidadeUsuarioLogado(params.dre_uuid)
                 unidadesEducacionaisResumo = await getResumoDRE(
                     params?.dre_uuid,
-                    params?.periodo_uuid,
+                    periodoEscolhido,
                     newParms?.filtra_por_termo,
                     newParms?.filtra_por_tipo_unidade,
                     newParms?.filtra_por_devolucao_tesouro,
