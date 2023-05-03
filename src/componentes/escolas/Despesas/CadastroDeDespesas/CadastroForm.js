@@ -1023,7 +1023,10 @@ export const CadastroForm = ({verbo_http}) => {
                        
         } catch (error) {
             setFieldValue("data_transacao", null)
-            setFormErrors(prevState => ({...prevState, data_transacao: error.response.data.mensagem}))
+
+            if(error.response && error.response.data) {
+                setFormErrors(prevState => ({...prevState, data_transacao: error.response.data.mensagem}))
+            }
         }
 
         for(let despesa_imposto = 0; despesa_imposto <= values.despesas_impostos.length -1; despesa_imposto ++){
@@ -1052,7 +1055,10 @@ export const CadastroForm = ({verbo_http}) => {
                        
         } catch (error) {
             setFieldValue("data_documento", null)
-            setFormErrors(prevState => ({...prevState, data_documento: error.response.data.mensagem}))
+
+            if(error.response && error.response.data) {
+                setFormErrors(prevState => ({...prevState, data_documento: error.response.data.mensagem}))
+            }
         }
     }
 
