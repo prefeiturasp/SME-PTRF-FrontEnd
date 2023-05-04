@@ -105,7 +105,8 @@ export const CadastroFormFormik = ({
                                        onCalendarCloseDataPagamento,
                                        onCalendarCloseDataPagamentoImposto,
                                        parametroLocation,
-                                       bloqueiaCamposDespesa
+                                       bloqueiaCamposDespesa,
+                                       onCalendarCloseDataDoDocumento
                                    }) => {
 
     // Corrigi Cálculo validação dos valores
@@ -229,6 +230,10 @@ export const CadastroFormFormik = ({
                                             id="data_documento"
                                             value={values.data_documento !== null ? values.data_documento : ""}
                                             onChange={setFieldValue}
+                                            onCalendarClose={async () => {
+                                                onCalendarCloseDataDoDocumento(values, setFieldValue, "data_documento")
+                                                setFieldValue('')
+                                            }}
                                             className={
                                                 !eh_despesa_com_comprovacao_fiscal(props.values)
                                                     ? "form-control"
@@ -240,7 +245,9 @@ export const CadastroFormFormik = ({
                                         />
                                         {props.errors.data_documento && <span
                                             className="span_erro text-danger mt-1"> {props.errors.data_documento}</span>}
-                                    </div>
+                                        {formErrors.data_documento && <span
+                                            className="span_erro text-danger mt-1"> {formErrors.data_documento}</span>}
+                                    </div>     
 
                                     <div className="col-12 col-md-6 mt-4">
                                         <label htmlFor="numero_documento">Número do documento</label>
