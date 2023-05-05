@@ -116,3 +116,7 @@ export const marcarLancamentoExcluido = async (uuid_analise_lancamento) => {
 export const marcarGastoIncluido = async (payload) => {
     return (await api.post(`/api/analises-documento-prestacao-conta/marcar-como-gasto-incluido/`, payload, authHeader)).data
 };
+
+export const getValidarDataDaDespesa = async (associacao_uuid, data_da_depesa) => {
+    return (await api.get(`/api/despesas/validar-data-da-despesa?associacao_uuid=${associacao_uuid}&data=${data_da_depesa}`, authHeader)).data
+}
