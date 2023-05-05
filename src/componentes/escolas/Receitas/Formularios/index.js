@@ -1,5 +1,4 @@
 import React, {useCallback, useEffect, useState} from "react";
-import HTTP_STATUS from "http-status-codes";
 import {
     criarReceita,
     atualizaReceita,
@@ -10,7 +9,7 @@ import {
     getListaMotivosEstorno,
     marcarLancamentoExcluido,
     marcarLancamentoAtualizado,
-    marcarCreditoIncluido
+    marcarCreditoIncluido, getValidarDataDaReceita, getPeriodosValidosAssociacaoEncerrada
 } from '../../../../services/escolas/Receitas.service';
 import {getRateioPorUuid} from "../../../../services/escolas/RateiosDespesas.service";
 import {deleteDespesa, getDespesa} from "../../../../services/escolas/Despesas.service";
@@ -100,6 +99,7 @@ export const ReceitaForm = () => {
     const [exibirDeleteDespesa, setExibirDeleteDespesa] = useState(true);
     const [classificacoesAceitas, setClassificacoesAceitas] = useState([])
     const [tituloModalCancelar, setTituloModalCancelar] = useState("Deseja cancelar a inclusão de crédito?")
+    const [periodosValidosAssociacaoencerrada, setPeriodosValidosAssociacaoencerrada] = useState([])
 
     // ************* Modo Estorno
     const [readOnlyEstorno, setReadOnlyEstorno] = useState(false);
@@ -144,13 +144,29 @@ export const ReceitaForm = () => {
         else{
             tabelas_receitas = await getTabelasReceitaReceita()
         }
-
         setTabelas(tabelas_receitas)
     }, [parametros])
 
     useEffect(()=>{
         carregaTabelas()
     }, [carregaTabelas]);
+
+    const carregaPeriodosValidosAssociacaoEncerrada = useCallback(async ()=>{
+        let periodos
+
+        if(parametros && parametros.state && parametros.state.uuid_associacao){
+            periodos = await getPeriodosValidosAssociacaoEncerrada(parametros.state.uuid_associacao)
+        }
+        else{
+            let associacao_uuid =  localStorage.getItem(ASSOCIACAO_UUID)
+            periodos = await getPeriodosValidosAssociacaoEncerrada(associacao_uuid)
+        }
+        setPeriodosValidosAssociacaoencerrada(periodos)
+    }, [parametros])
+
+    useEffect(() =>{
+        carregaPeriodosValidosAssociacaoEncerrada()
+    }, [carregaPeriodosValidosAssociacaoEncerrada])
 
 
     const getTipoReceitaEstorno = useCallback(()=>{
@@ -330,7 +346,7 @@ export const ReceitaForm = () => {
                 setSelectMotivosEstorno(resp.motivos_estorno)
                 setCheckBoxOutrosMotivosEstorno(resp.outros_motivos_estorno)
                 setTxtOutrosMotivosEstorno(resp.outros_motivos_estorno)
-                
+
                 getClassificacaoReceitaInicial(resp.tipo_receita.id);
 
                 if (resp && resp.acao_associacao && resp.acao_associacao.uuid){
@@ -340,7 +356,7 @@ export const ReceitaForm = () => {
 
                 if(origemAnaliseLancamento()){
                     if(visao_selecionada === "DRE"){
-                        setTituloModalCancelar("Deseja realmente voltar?"); 
+                        setTituloModalCancelar("Deseja realmente voltar?");
                     }
                     else if(parametros.state.operacao === 'requer_inclusao_documento_credito'){
                         setTituloModalCancelar("Deseja cancelar a edição do crédito?")
@@ -354,7 +370,7 @@ export const ReceitaForm = () => {
                         }
                     }
 
-                    bloqueiaCamposReceitaReaberturaSeletiva();   
+                    bloqueiaCamposReceitaReaberturaSeletiva();
                 }
                 else{
                     periodoFechado(resp.data, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral)
@@ -435,7 +451,6 @@ export const ReceitaForm = () => {
         values.motivos_estorno = montaPayloadMotivosEstorno()
         values.outros_motivos_estorno = txtOutrosMotivosEstorno.trim() && checkBoxOutrosMotivosEstorno ? txtOutrosMotivosEstorno : ""
 
-        
         const payload = {
             ...values,
             associacao: localStorage.getItem(ASSOCIACAO_UUID),
@@ -448,63 +463,47 @@ export const ReceitaForm = () => {
 
         setLoading(true);
         if (uuid) {
-            await atualizar(uuid, payload).then(response => {
+            // Editar Receita
+            try {
+                let response = await atualizaReceita(uuid, payload)
+                console.log('UPDATE ==========>>>>>>', response)
+                if(origemAnaliseLancamento()){
+                    await atualizaLancamento()
+                }
                 if (exibeModalSalvoComSucesso){
                     exibeMsgSalvoComSucesso(payload)
                 }else {
                     getPath()
                 }
-            });
+            }catch (e) {
+                console.log("Erro ao editar receita em atualizaReceita ", e)
+            }
         } else {
-            const resultCadastrar = await cadastrar(payload)
-            if (exibeModalSalvoComSucesso){
-                setShowSalvarReceita(true);
-                setUuidReceita(resultCadastrar);
-                let uuidAcertoDocumento = parametros?.state?.uuid_acerto_documento;
-                let payloadReceita = {"uuid_credito_incluido": resultCadastrar, 'uuid_solicitacao_acerto': uuidAcertoDocumento}
-                let responseCreditoIncluido = await marcarCreditoIncluido(payloadReceita);
-                if (responseCreditoIncluido.status === 200) {
-                    console.log("Crédito salvo com sucesso!");
+            // Criar Receita
+            try {
+                let resultCadastrar = await criarReceita(payload)
+                console.log('CREATE ==========>>>>>>', resultCadastrar)
+                if (exibeModalSalvoComSucesso){
+                    setShowSalvarReceita(true);
+                    setUuidReceita(resultCadastrar);
+                    let uuidAcertoDocumento = parametros?.state?.uuid_acerto_documento;
+                    if (uuidAcertoDocumento){
+                        let payloadReceita = {"uuid_credito_incluido": resultCadastrar.data.uuid, 'uuid_solicitacao_acerto': uuidAcertoDocumento}
+                        let responseCreditoIncluido = await marcarCreditoIncluido(payloadReceita);
+                        if (responseCreditoIncluido.status === 200) {
+                            console.log("Crédito marcado como incluído com sucesso!");
+                        }
+                    }
+                    exibeMsgSalvoComSucesso(payload)
+                }else {
+                    setUuidReceita(resultCadastrar);
+                    getPath(resultCadastrar)
                 }
-                exibeMsgSalvoComSucesso(payload)
-            }else {
-                setUuidReceita(resultCadastrar);
-                getPath(resultCadastrar)
-                }
+            }catch (e) {
+                console.log("Erro ao criar receita em criarReceita ", e)
             }
+        }
         setLoading(false);
-
-    };
-
-    const cadastrar = async (payload) => {
-        try {
-            const response = await criarReceita(payload);
-            if (response.status === HTTP_STATUS.CREATED) {
-                console.log("Operação realizada com sucesso!");
-                return response.data.uuid;
-            } else {
-                console.log(response)
-            }
-        } catch (error) {
-            console.log(error)
-        }
-    };
-
-    const atualizar = async (uuid, payload) => {
-        try {
-            const response = await atualizaReceita(uuid, payload);
-            if (response.status === HTTP_STATUS.CREATED) {
-                console.log("Operação realizada com sucesso!");
-            } else {
-                console.log('UPDATE ==========>>>>>>', response)
-
-                if(origemAnaliseLancamento()){
-                    await atualizaLancamento()
-                }
-            }
-        } catch (error) {
-            console.log(error)
-        }
     };
 
     const atualizaLancamento = async () => {
@@ -516,7 +515,6 @@ export const ReceitaForm = () => {
                 console.log("Atualizacao de lancamento realizada com sucesso!");
             }
         }
-
     }
 
     const onCancelarTrue = () => {
@@ -629,7 +627,7 @@ export const ReceitaForm = () => {
                 path = `${parametros.state.origem}/${parametros.state.uuid_pc}#${ancora}`;
             }
         }
-        
+
         window.location.assign(path);
     };
 
@@ -651,7 +649,7 @@ export const ReceitaForm = () => {
                 } catch (e) {
                     console.log("Erro ao obter a listagem de repasses", e);
                 }
-                
+
             } else {
                 setExibirDeleteDespesa(true)
                 setaRepasse({});
@@ -672,7 +670,7 @@ export const ReceitaForm = () => {
             tabelas.categorias_receita.map((item, index) => {
                 let id_categoria_receita_lower = item.id.toLowerCase();
                 let aceitaClassificacao = eval('tabelas.tipos_receita.find(element => element.id === Number(id_tipo_receita)).aceita_' + id_categoria_receita_lower);
-                
+
                 qtdeAceitaClassificacao.push(aceitaClassificacao);
                 if (aceitaClassificacao) {
                     lista.push(id_categoria_receita_lower)
@@ -698,7 +696,7 @@ export const ReceitaForm = () => {
             tabelas.categorias_receita.map((item, index) => {
                 let id_categoria_receita_lower = item.id.toLowerCase();
                 let aceitaClassificacao = eval('tabelas.tipos_receita.find(element => element.id === Number(id_tipo_receita)).aceita_' + id_categoria_receita_lower);
-                
+
                 qtdeAceitaClassificacao.push(aceitaClassificacao);
                 if (aceitaClassificacao) {
                     lista.push(id_categoria_receita_lower)
@@ -722,14 +720,14 @@ export const ReceitaForm = () => {
     const getClasificacaoAcao = (uuid_acao, setFieldValue) => {
         let lista = classificacoesAceitas
         let qtdeAceitaClassificacao = [];
-        
+
 
         if(uuid_acao){
             setFieldValue("categoria_receita", "");
             tabelas.categorias_receita.map((item, index) => {
                 let id_categoria_receita_lower = item.id.toLowerCase();
                 let aceita  = eval('tabelas.acoes_associacao.find(element => element.uuid === uuid_acao).acao.aceita_' + id_categoria_receita_lower);
-                
+
                 if(lista.includes(id_categoria_receita_lower) && aceita){
                     qtdeAceitaClassificacao.push(aceita);
                     setFieldValue("categoria_receita", item.id);
@@ -770,7 +768,7 @@ export const ReceitaForm = () => {
                         setShowAvisoTipoReceita(true);
                     }
                 }
-            }) 
+            })
         }
     }
 
@@ -856,7 +854,7 @@ export const ReceitaForm = () => {
                     }
 
                 }else{
-                    if ( tabelas.tipos_receita && tabelas.tipos_receita.find(element => element.id === Number(values.tipo_receita))){ 
+                    if ( tabelas.tipos_receita && tabelas.tipos_receita.find(element => element.id === Number(values.tipo_receita))){
                         return (
                             <option
                                 style={{display: getDisplayOptionClassificacaoReceita(item.id, values.acao_associacao)}}
@@ -892,12 +890,12 @@ export const ReceitaForm = () => {
             let conta_associacao = tabelas.contas_associacao.find(conta => (repasse.conta_associacao.nome.includes(conta.nome)));
             setreadOnlyContaAssociacaoReceita(true);
             return (
-                    <option key={conta_associacao.uuid} value={conta_associacao.uuid}>{conta_associacao.nome}</option>
+                <option key={conta_associacao.uuid} value={conta_associacao.uuid}>{conta_associacao.nome}</option>
             )
         } else if (tabelas.contas_associacao !== undefined && tabelas.contas_associacao.length > 0  && values.tipo_receita) {
-            
+
             const tipoReceita = tabelas.tipos_receita.find(element => element.id === Number(values.tipo_receita));
-            
+
             // Lista dos nomes dos tipos de conta que são aceitos pelo tipo de receita selecionado.
             const tipos_conta = tipoReceita.tipos_conta.map(item => item.nome);
 
@@ -905,13 +903,13 @@ export const ReceitaForm = () => {
             return (
                 tabelas.contas_associacao.filter(conta => (tipos_conta.includes(conta.nome))).map((item, key) => (
                     <option key={item.uuid} value={item.uuid}>{item.nome}</option>)
-            ))
+                ))
         }
     };
 
     const validateFormReceitas = async (values) => {
         const errors = {};
-        
+
         // Verifica se é devolucao e setando erro caso referencia devolucao vazio
         if (verificaSeDevolucao(values.tipo_receita)  && !values.referencia_devolucao){
             errors.referencia_devolucao = "Campo período é obrigatório"
@@ -930,9 +928,9 @@ export const ReceitaForm = () => {
         if(verificaSeExibeDetalhamento(values.tipo_receita) && !values.detalhe_outros){
             if(temOpcoesDetalhesTipoReceita(values) === false){
                 errors.detalhe_outros = "Detalhamento do crédito é obrigatório";
-            } 
+            }
         }
-        
+
         // Verifica período fechado para a receita
         if (values.data) {
             if(!origemAnaliseLancamento()){
@@ -1077,17 +1075,31 @@ export const ReceitaForm = () => {
                 return true;
             }
         }
-    
+
         return false;
     }
 
     const validacoesPersonalizadasCredito = useCallback(async (values, setFieldValue, origem=null, index=null) => {
+        if (values.data){
+            let associacao_uuid = localStorage.getItem(ASSOCIACAO_UUID)
+            let data_da_receita = moment(values.data).format("YYYY-MM-DD");
+            try {
+                await getValidarDataDaReceita(associacao_uuid, data_da_receita)
+                setReadOnlyBtnAcao(false);
+                setFormDateErrors("")
+            }catch (e) {
+                setReadOnlyBtnAcao(true);
+                setFormDateErrors(e.response.data.mensagem)
+                return
+            }
+        }
+
         if (values.data && origem==="credito_principal"){
             let data = moment(values.data, "YYYY-MM-DD").format("YYYY-MM-DD");
             try {
                 let periodo_da_data = await getPeriodoFechado(data);
                 let periodo_da_analise = await retornaPeriodo(parametros.state.periodo_uuid);
-            
+
                 if(periodo_da_data && periodo_da_analise && periodo_da_data.periodo_referencia === periodo_da_analise.referencia){
                     setReadOnlyBtnAcao(false);
                     setFormDateErrors("")
@@ -1096,7 +1108,7 @@ export const ReceitaForm = () => {
                     setReadOnlyBtnAcao(true);
                     setFormDateErrors("Permitido apenas datas dentro do período referente à prestação de contas em análise.")
                 }
-            } 
+            }
             catch (e) {
 
             }
@@ -1110,7 +1122,7 @@ export const ReceitaForm = () => {
                 return true;
             }
         }
-    
+
         return false;
     }
 
@@ -1130,7 +1142,7 @@ export const ReceitaForm = () => {
             setReadOnlyReaberturaSeletiva(true);
 
             let bloqueia_btn_acao = false;
-    
+
             if(parametros.state.origem_visao === "DRE"){
                 bloqueia_btn_acao = true;
             }
@@ -1156,7 +1168,7 @@ export const ReceitaForm = () => {
                 else{
                     return "Edição do estorno";
                 }
-            } 
+            }
         }
         else{
             if(visao_selecionada === "DRE"){
@@ -1198,6 +1210,7 @@ export const ReceitaForm = () => {
                         getAvisoTipoReceita={getAvisoTipoReceita}
                         setShowCadastrarSaida={setShowCadastrarSaida}
                         tabelas={tabelas}
+                        periodosValidosAssociacaoencerrada={periodosValidosAssociacaoencerrada}
                         receita={receita}
                         verificaSeExibeDetalhamento={verificaSeExibeDetalhamento}
                         temOpcoesDetalhesTipoReceita={temOpcoesDetalhesTipoReceita}
