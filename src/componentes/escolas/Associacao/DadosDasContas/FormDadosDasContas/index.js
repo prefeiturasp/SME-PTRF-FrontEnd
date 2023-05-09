@@ -1,11 +1,11 @@
 import React from "react";
 import {Formik, FieldArray} from "formik";
-import {visoesService} from "../../../../../services/visoes.service";
 
-export const FormDadosDasContas = ({intialValues, setaCampoReadonly, onSubmit, errors}) => {
+export const FormDadosDasContas = ({intialValues, setaCampoReadonly, onSubmit, errors, podeEditarDadosMembros}) => {
     const valores_inciais = {
         contas: intialValues
     };
+
     return (
         <>
             <Formik
@@ -38,7 +38,7 @@ export const FormDadosDasContas = ({intialValues, setaCampoReadonly, onSubmit, e
                                                         <div className="form-group">
                                                             <label htmlFor="banco_nome">Banco</label>
                                                             <input
-                                                                disabled={!visoesService.getPermissoes(['change_associacao'])}
+                                                                disabled={!podeEditarDadosMembros()}
                                                                 readOnly={setaCampoReadonly(conta)}
                                                                 name={`contas[${index}].banco_nome`}
                                                                 value={conta.banco_nome}
@@ -56,7 +56,7 @@ export const FormDadosDasContas = ({intialValues, setaCampoReadonly, onSubmit, e
                                                         <div className="form-group">
                                                             <label htmlFor="tipo_conta">Tipo de Conta</label>
                                                             <input
-                                                                disabled={!visoesService.getPermissoes(['change_associacao'])}
+                                                                disabled={!podeEditarDadosMembros()}
                                                                 readOnly={true}
                                                                 name={`contas[${index}].tipo_conta`}
                                                                 value={conta.tipo_conta && conta.tipo_conta.nome ? conta.tipo_conta.nome : ""}
@@ -74,7 +74,7 @@ export const FormDadosDasContas = ({intialValues, setaCampoReadonly, onSubmit, e
                                                         <div className="form-group">
                                                             <label htmlFor="agencia">Agência {setaCampoReadonly(conta) ? 'do Programa' : ""}</label>
                                                             <input
-                                                                disabled={!visoesService.getPermissoes(['change_associacao'])}
+                                                                disabled={!podeEditarDadosMembros()}
                                                                 readOnly={setaCampoReadonly(conta)}
                                                                 name={`contas[${index}].agencia`}
                                                                 value={conta.agencia}
@@ -92,7 +92,7 @@ export const FormDadosDasContas = ({intialValues, setaCampoReadonly, onSubmit, e
                                                         <div className="form-group">
                                                             <label className='mt-md-n5' htmlFor="numero_conta">Nº da conta {setaCampoReadonly(conta) ? 'do Programa' : ""} com o dígito</label>
                                                             <input
-                                                                disabled={!visoesService.getPermissoes(['change_associacao'])}
+                                                                disabled={!podeEditarDadosMembros()}
                                                                 readOnly={setaCampoReadonly(conta)}
                                                                 name={`contas[${index}].numero_conta`}
                                                                 value={conta.numero_conta}
@@ -118,7 +118,7 @@ export const FormDadosDasContas = ({intialValues, setaCampoReadonly, onSubmit, e
                                 )}
                             >
                             </FieldArray>
-                            { visoesService.getPermissoes(['change_associacao']) &&
+                            {podeEditarDadosMembros() &&
                                 <div className="d-flex  justify-content-end pb-3 mt-3">
                                     <button onClick={props.handleReset} type="button"
                                             className="btn btn btn-outline-success mt-2 mr-2">Cancelar

@@ -88,6 +88,14 @@ export const DadosDaAsssociacao = () => {
     const onShowModalSalvar = () => {
         setShowModalDadosAssociacaoSalvar(true);
     };
+
+    const podeEditarDadosAssociacao = () => {
+        if(visoesService.getPermissoes(['change_associacao']) && stateAssociacao && stateAssociacao.data_de_encerramento && stateAssociacao.data_de_encerramento.pode_editar_dados_associacao_encerrada){
+            return true;
+        }
+        return false;
+    }
+
     return (
         <>
             {loading ? (
@@ -123,6 +131,7 @@ export const DadosDaAsssociacao = () => {
                                         errors,
                                     } = props;
                                     return(
+                                        
                                         <form onSubmit={props.handleSubmit}>
                                             <div className="form-row">
                                                 <div className="form-group col-md-6">
@@ -135,7 +144,7 @@ export const DadosDaAsssociacao = () => {
                                                         className="form-control"
                                                         onChange={props.handleChange}
                                                         onBlur={props.handleBlur}
-                                                        disabled={!visoesService.getPermissoes(['change_associacao'])}
+                                                        disabled={!podeEditarDadosAssociacao()}
                                                     />
                                                     {props.touched.nome && props.errors.nome && <span
                                                         className="span_erro text-danger mt-1"> {props.errors.nome} </span>}
@@ -203,7 +212,7 @@ export const DadosDaAsssociacao = () => {
                                                         className="form-control"
                                                         onChange={props.handleChange}
                                                         onBlur={props.handleBlur}
-                                                        disabled={!visoesService.getPermissoes(['change_associacao'])}
+                                                        disabled={!podeEditarDadosAssociacao()}
                                                     />
                                                     {props.touched.ccm && props.errors.ccm && <span
                                                         className="span_erro text-danger mt-1"> {props.errors.ccm} </span>}
@@ -224,14 +233,14 @@ export const DadosDaAsssociacao = () => {
                                                                 email:"",
                                                             }
                                                         )}
-                                                        disabled={!visoesService.getPermissoes(['change_associacao'])}
+                                                        disabled={!podeEditarDadosAssociacao()}
                                                     />
                                                     {props.touched.email && props.errors.email &&
                                                         <span className="span_erro text-danger mt-1"> {props.errors.email} </span>
                                                     }
                                                 </div>
                                             </div>
-                                            { visoesService.getPermissoes(['change_associacao']) &&
+                                            { podeEditarDadosAssociacao() &&
                                                 <div className="d-flex  justify-content-end pb-3">
                                                     <button onClick={() => setShowModalDadosAssociacaoCancelar(true)}
                                                             type="reset"
