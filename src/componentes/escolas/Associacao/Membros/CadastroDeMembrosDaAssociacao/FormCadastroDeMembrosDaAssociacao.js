@@ -4,7 +4,7 @@ import MaskedInput from "react-text-mask";
 import {Formik} from "formik";
 import { Switch } from 'antd';
 
-export const FormCadastroDeMembrosDaAssociacao = ({stateFormEditarMembro, validateFormMembros, handleChangeEditarMembro, onSubmitEditarMembro, visoesService, ePresidente, formRef, telefoneMaskContitional, switchStatusPresidente, handleChangeSwitchStatusPresidente, cargosDaDiretoriaExecutiva, responsavelPelasAtribuicoes, handleChangeResponsavelPelaAtribuicao, possuiMaisDeUmCargoEducacao}) =>{
+export const FormCadastroDeMembrosDaAssociacao = ({stateFormEditarMembro, validateFormMembros, handleChangeEditarMembro, onSubmitEditarMembro, visoesService, ePresidente, formRef, telefoneMaskContitional, switchStatusPresidente, handleChangeSwitchStatusPresidente, cargosDaDiretoriaExecutiva, responsavelPelasAtribuicoes, handleChangeResponsavelPelaAtribuicao, possuiMaisDeUmCargoEducacao, podeEditarDadosMembros}) =>{
 
     return(
         <>
@@ -48,7 +48,7 @@ export const FormCadastroDeMembrosDaAssociacao = ({stateFormEditarMembro, valida
                                     <div className="form-group">
                                         <label htmlFor="representacao">Representação na associação</label>
                                         <select
-                                            disabled={!visoesService.getPermissoes(['change_associacao']) }
+                                            disabled={!podeEditarDadosMembros(props.values)}
                                             value={props.values.representacao ? props.values.representacao : ""}
                                             onChange={(e) => {
                                                 props.handleChange(e);
@@ -70,7 +70,7 @@ export const FormCadastroDeMembrosDaAssociacao = ({stateFormEditarMembro, valida
                                     <div className="form-group">
                                         <label htmlFor="codigo_identificacao">{props.values.representacao === 'SERVIDOR' ? "Registro Funcional" : "Código EOL"}</label>
                                         <input
-                                            disabled={!visoesService.getPermissoes(['change_associacao']) }
+                                            disabled={!podeEditarDadosMembros(props.values)}
                                             type="text"
                                             value={props.values.codigo_identificacao ? props.values.codigo_identificacao : ""}
                                             onChange={(e) => {
@@ -106,7 +106,7 @@ export const FormCadastroDeMembrosDaAssociacao = ({stateFormEditarMembro, valida
                                         <label htmlFor="nome">Nome Completo</label>
                                         <input
                                             readOnly={props.values.representacao !== 'PAI_RESPONSAVEL'}
-                                            disabled={!visoesService.getPermissoes(['change_associacao']) }
+                                            disabled={!podeEditarDadosMembros(props.values)}
                                             type="text"
                                             value={props.values.nome ? props.values.nome : ""}
                                             onChange={(e) => {
@@ -128,7 +128,7 @@ export const FormCadastroDeMembrosDaAssociacao = ({stateFormEditarMembro, valida
                                             <div className="form-group">
                                                 <label htmlFor="cargo_educacao">Cargo na educação</label>
                                                 <select
-                                                    disabled={!visoesService.getPermissoes(['change_associacao'])}
+                                                    disabled={!podeEditarDadosMembros(props.values)}
                                                     value={props.values.cargo_educacao ? props.values.cargo_educacao : ""}
                                                     onChange={(e) => {
                                                         props.handleChange(e);
@@ -158,7 +158,7 @@ export const FormCadastroDeMembrosDaAssociacao = ({stateFormEditarMembro, valida
                                                 <label htmlFor="cargo_educacao">Cargo na educação</label>
                                                 <input
                                                     readOnly={props.values.representacao !== 'PAI_RESPONSAVEL'}
-                                                    disabled={!visoesService.getPermissoes(['change_associacao'])}
+                                                    disabled={!podeEditarDadosMembros(props.values)}
                                                     type="text"
                                                     value={props.values.cargo_educacao ? props.values.cargo_educacao : ""}
                                                     onChange={(e) => {
@@ -184,7 +184,7 @@ export const FormCadastroDeMembrosDaAssociacao = ({stateFormEditarMembro, valida
                                             <MaskedInput
                                                 mask={[/\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '-', /\d/, /\d/]}
                                                 readOnly={props.values.representacao !== 'PAI_RESPONSAVEL' && props.values.representacao !== 'ESTUDANTE'}
-                                                disabled={!visoesService.getPermissoes(['change_associacao'])}
+                                                disabled={!podeEditarDadosMembros(props.values)}
                                                 type="text"
                                                 value={props.values.cpf ? props.values.cpf : ""}
                                                 onChange={(e) => {
@@ -212,7 +212,7 @@ export const FormCadastroDeMembrosDaAssociacao = ({stateFormEditarMembro, valida
                                             <div className="form-group">
                                                 <label htmlFor="telefone">Telefone</label>
                                                 <MaskedInput
-                                                    disabled={!visoesService.getPermissoes(['change_associacao'])}
+                                                    disabled={!podeEditarDadosMembros(props.values)}
                                                     mask={(valor) => telefoneMaskContitional(valor)}
                                                     value={props.values.telefone ? props.values.telefone : ""}
                                                     onChange={(e) => {
@@ -231,7 +231,7 @@ export const FormCadastroDeMembrosDaAssociacao = ({stateFormEditarMembro, valida
                                             <div className="form-group">
                                                 <label htmlFor="cep">CEP</label>
                                                 <MaskedInput
-                                                    disabled={!visoesService.getPermissoes(['change_associacao'])}
+                                                    disabled={!podeEditarDadosMembros(props.values)}
                                                     mask={[/\d/, /\d/, /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/]}
                                                     value={props.values.cep ? props.values.cep : ""}
                                                     onChange={(e) => {
@@ -251,7 +251,7 @@ export const FormCadastroDeMembrosDaAssociacao = ({stateFormEditarMembro, valida
                                                 <label htmlFor="bairro">Bairro</label>
                                                 <input
                                                     readOnly={false}
-                                                    disabled={!visoesService.getPermissoes(['change_associacao'])}
+                                                    disabled={!podeEditarDadosMembros(props.values)}
                                                     type="text"
                                                     value={props.values.bairro ? props.values.bairro : ""}
                                                     onChange={(e) => {
@@ -270,7 +270,7 @@ export const FormCadastroDeMembrosDaAssociacao = ({stateFormEditarMembro, valida
                                             <div className="form-group">
                                                 <label htmlFor="endereco">Endereço</label>
                                                 <input
-                                                    disabled={!visoesService.getPermissoes(['change_associacao'])}
+                                                    disabled={!podeEditarDadosMembros(props.values)}
                                                     type="text"
                                                     value={props.values.endereco ? props.values.endereco : ""}
                                                     onChange={(e) => {
@@ -292,7 +292,7 @@ export const FormCadastroDeMembrosDaAssociacao = ({stateFormEditarMembro, valida
                                     <div className="form-group">
                                         <label htmlFor="email">Email</label>
                                         <input
-                                            disabled={!visoesService.getPermissoes(['change_associacao'])}
+                                            disabled={!podeEditarDadosMembros(props.values)}
                                             type="text"
                                             value={props.values.email ? props.values.email : ""}
                                             onChange={(e) => {
@@ -326,7 +326,7 @@ export const FormCadastroDeMembrosDaAssociacao = ({stateFormEditarMembro, valida
                                             name="statusPresidenteSwitch"
                                             checkedChildren="Presente"
                                             unCheckedChildren="Ausente"
-                                            disabled={!visoesService.getPermissoes(['change_associacao']) }
+                                            disabled={!podeEditarDadosMembros(props.values)}
                                             className={`switch-status-presidente ${switchStatusPresidente ? "switch-status-presidente-checked" : ""}`}
                                         />
                                     </div>
@@ -341,7 +341,7 @@ export const FormCadastroDeMembrosDaAssociacao = ({stateFormEditarMembro, valida
 
                                                 <div className='col-auto'>
                                                     <select
-                                                        disabled={!visoesService.getPermissoes(['change_associacao']) }
+                                                        disabled={!podeEditarDadosMembros(props.values)}
                                                         value={responsavelPelasAtribuicoes}
                                                         onChange={(e) => {
                                                             handleChangeResponsavelPelaAtribuicao(e.target.value);

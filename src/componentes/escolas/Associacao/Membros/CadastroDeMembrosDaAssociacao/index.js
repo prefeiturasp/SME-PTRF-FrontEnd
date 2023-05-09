@@ -12,6 +12,7 @@ import {
     getUsuarioPeloUsername,
     getCargosDaDiretoriaExecutiva,
     patchStatusPresidenteAssociacao,
+    getAssociacao
 } from "../../../../../services/escolas/Associacao.service";
 import {valida_cpf_cnpj} from "../../../../../utils/ValidacoesAdicionaisFormularios";
 import Loading from "../../../../../utils/Loading";
@@ -50,6 +51,7 @@ const CadastroDeMembrosDaAssociacao = () => {
     const [cpfJaUsado, setCpfJaUsado] = useState(false)
 
     const [cargosDaDiretoriaExecutiva, setCargosDaDiretoriaExecutiva] = useState([])
+    const [stateAssociacao, setStateAssociacao] = useState({})
     const [loading, setLoading] = useState(true);
 
     const carregaDadosMembro = useCallback(async () => {
@@ -84,6 +86,7 @@ const CadastroDeMembrosDaAssociacao = () => {
                 cep: infoMembroSelecionado.infos.cep ? infoMembroSelecionado.infos.cep : "",
                 bairro: infoMembroSelecionado.infos.bairro ? infoMembroSelecionado.infos.bairro : "",
                 endereco: infoMembroSelecionado.infos.endereco ? infoMembroSelecionado.infos.endereco : "",
+                pode_editar_dados_associacao_encerrada: infoMembroSelecionado.infos.associacao.data_de_encerramento.pode_editar_dados_associacao_encerrada ? infoMembroSelecionado.infos.associacao.data_de_encerramento : false
             };
         } else {
             init = {
@@ -152,6 +155,15 @@ const CadastroDeMembrosDaAssociacao = () => {
     useEffect(() => {
         carregaCargosDaDiretoriaExecutiva()
     }, [carregaCargosDaDiretoriaExecutiva])
+
+    useEffect(() => {
+        buscaAssociacao();
+    }, []);
+
+    const buscaAssociacao = async () => {
+        const associacao = await getAssociacao();
+        setStateAssociacao(associacao)
+    };
 
     const telefoneMaskContitional = (value) => {
         let telefone = value.replace(/[^\d]+/g, "");
@@ -523,6 +535,20 @@ const CadastroDeMembrosDaAssociacao = () => {
         }
     }
 
+    const podeEditarDadosMembros = (membro) => {
+        if(visoesService.getPermissoes(['change_associacao']) && membro && membro.infos && membro.infos.associacao && membro.infos.associacao.data_de_encerramento && membro.infos.associacao.data_de_encerramento.pode_editar_dados_associacao_encerrada){
+            return true;
+        }
+        return false;
+    }
+
+    const podeSalvarDadosMembros = () => {
+        if(visoesService.getPermissoes(['change_associacao']) && stateAssociacao && stateAssociacao.data_de_encerramento && stateAssociacao.data_de_encerramento.pode_editar_dados_associacao_encerrada){
+            return true;
+        }
+        return false;
+    }
+
     return (
         <PaginasContainer>
             <h1 className="titulo-itens-painel mt-5">Dados da Associação</h1>
@@ -542,6 +568,7 @@ const CadastroDeMembrosDaAssociacao = () => {
                             visoesService={visoesService}
                             btnSalvarReadOnly={btnSalvarReadOnly}
                             cpfJaUsado={cpfJaUsado}
+                            podeSalvarDadosMembros={podeSalvarDadosMembros}
                         />
                         <FormCadastroDeMembrosDaAssociacao
                             visoesService={visoesService}
@@ -558,6 +585,7 @@ const CadastroDeMembrosDaAssociacao = () => {
                             handleChangeResponsavelPelaAtribuicao={handleChangeResponsavelPelaAtribuicao}
                             cargosDaDiretoriaExecutiva={cargosDaDiretoriaExecutiva}
                             possuiMaisDeUmCargoEducacao={possuiMaisDeUmCargoEducacao}
+                            podeEditarDadosMembros={podeEditarDadosMembros}
                         />
                     </>
                 }
