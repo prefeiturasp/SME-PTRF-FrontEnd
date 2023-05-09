@@ -415,7 +415,9 @@ export const CadastroForm = ({verbo_http}) => {
         return mensagens;
     }
 
-
+    const desabilitaBtnSalvar = () => {
+        setBtnSubmitDisable(true)
+    }
 
     const onSubmit = async (values, setFieldValue) => {
         // Inclusão de validações personalizadas para reduzir o numero de requisições a API Campo: cpf_cnpj_fornecedor
@@ -965,6 +967,7 @@ export const CadastroForm = ({verbo_http}) => {
         if (Object.entries(errors).length === 0) {
             await verificaSaldoInsuficienteConta(values, errors, setFieldValue)
         }
+        setBtnSubmitDisable(false)
     }
 
     const serviceSubmitModais = async (values, setFieldValue, errors, msg) =>{
@@ -1105,6 +1108,7 @@ export const CadastroForm = ({verbo_http}) => {
                         setShowDelete={setShowDelete}
                         setShowTextoModalDelete={setShowTextoModalDelete}
                         btnSubmitDisable={btnSubmitDisable}
+                        desabilitaBtnSalvar={desabilitaBtnSalvar}
                         saldosInsuficientesDaAcao={saldosInsuficientesDaAcao}
                         setShow={setShow}
                         saldosInsuficientesDaConta={saldosInsuficientesDaConta}
