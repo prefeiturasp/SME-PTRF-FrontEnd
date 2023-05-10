@@ -224,14 +224,16 @@ const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitMo
                                     <div className='col-12'>
                                         <div className="form-group">
                                             <label htmlFor="observacao">Observação</label>
-                                            <input
-                                                type="text"
-                                                value={props.values.observacao}
-                                                name="observacao"
-                                                id="observacao"
-                                                className="form-control"
-                                                onChange={props.handleChange}
-                                            />
+                                                <textarea
+                                                    value={props.values.observacao}
+                                                    onChange={props.handleChange}
+                                                    className="form-control"
+                                                    rows="3"
+                                                    id="observacao"
+                                                    name="observacao"
+                                                    placeholder="Escreva o comentário"
+                                                >
+                                                </textarea>
                                                 <small className="form-text text-muted">
                                                     <FontAwesomeIcon
                                                         style={{fontSize: '12px', marginRight:'4px'}}
