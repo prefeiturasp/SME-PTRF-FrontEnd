@@ -5,6 +5,7 @@ import Loading from "../../../utils/Loading";
 import {FiltroDeUnidades} from "./FiltroDeUnidades";
 import Img404 from "../../../assets/img/img-404.svg";
 import {MsgImgCentralizada} from "../Mensagens/MsgImgCentralizada";
+import { ModalLegendaInformacaoAssociacao } from "../LegendaInformaçãoAssociacao/ModalLegendaInformacaoAssociacao";
 
 export const EscolheUnidade = (props) =>{
 
@@ -22,6 +23,7 @@ export const EscolheUnidade = (props) =>{
     const [listaUnidades, setListaUnidades] = useState([]);
     const [stateFiltros, setStateFiltros] = useState(initialStateFiltros);
     const [mensagemListaVazia, setMensagemListaVazia] = useState(mensagemListaVaziaSemFiltroAplicado)
+    const [showModalLegendaInformacao, setShowModalLegendaInformacao] = useState(false)
 
     useEffect(()=>{
         carregaListaUnidades();
@@ -82,6 +84,7 @@ export const EscolheUnidade = (props) =>{
                     rowsPerPage={10}
                     acaoAoEscolherUnidade={escolherUnidade}
                     textoAcaoEscolher={"Viabilizar acesso"}
+                    setShowModalLegendaInformacao={setShowModalLegendaInformacao}
                 />
             }
 
@@ -91,6 +94,16 @@ export const EscolheUnidade = (props) =>{
                     img={Img404}
                 />
             }
+
+            <section>
+                <ModalLegendaInformacaoAssociacao
+                    show={showModalLegendaInformacao}
+                    primeiroBotaoOnclick={() => setShowModalLegendaInformacao(false)}
+                    titulo="Legenda Informação"
+                    primeiroBotaoTexto="Fechar"
+                    primeiroBotaoCss="outline-success"
+                />
+            </section>
 
         </div>
     )
