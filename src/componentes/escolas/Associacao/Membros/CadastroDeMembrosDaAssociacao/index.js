@@ -86,7 +86,7 @@ const CadastroDeMembrosDaAssociacao = () => {
                 cep: infoMembroSelecionado.infos.cep ? infoMembroSelecionado.infos.cep : "",
                 bairro: infoMembroSelecionado.infos.bairro ? infoMembroSelecionado.infos.bairro : "",
                 endereco: infoMembroSelecionado.infos.endereco ? infoMembroSelecionado.infos.endereco : "",
-                pode_editar_dados_associacao_encerrada: infoMembroSelecionado.infos.associacao.data_de_encerramento.pode_editar_dados_associacao_encerrada ? infoMembroSelecionado.infos.associacao.data_de_encerramento : false
+                pode_editar_dados_associacao_encerrada: infoMembroSelecionado.infos.associacao.data_de_encerramento.pode_editar_dados_associacao_encerrada ? infoMembroSelecionado.infos.associacao.data_de_encerramento.pode_editar_dados_associacao_encerrada : false
             };
         } else {
             init = {
@@ -536,7 +536,7 @@ const CadastroDeMembrosDaAssociacao = () => {
     }
 
     const podeEditarDadosMembros = (membro) => {
-        if(visoesService.getPermissoes(['change_associacao']) && membro && membro.infos && membro.infos.associacao && membro.infos.associacao.data_de_encerramento && membro.infos.associacao.data_de_encerramento.pode_editar_dados_associacao_encerrada){
+        if(visoesService.getPermissoes(['change_associacao']) && membro && membro.pode_editar_dados_associacao_encerrada){
             return true;
         }
         return false;
