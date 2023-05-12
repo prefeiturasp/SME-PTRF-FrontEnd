@@ -10,4 +10,4 @@ Esse é o repositório de código da aplicação web Sig-Escola, um sistema inte
 
 Você pode encontrar mais informações sobre o projeto e instruções detalhadas sobre como colaborar com a documentação 
 na própria 
-[documentação do SigEscola](https://sigescoladocs.readthedocs.io/pt/latest/). 
+[documentação do SigEscola](https://sig-escola.sme.prefeitura.sp.gov.br/docs/). 
