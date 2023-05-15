@@ -105,7 +105,8 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
     }, [contaPrestacaoDeContas]);
 
     const carregaPeriodos = async () => {
-        let periodos = await getPeriodosDePrestacaoDeContasDaAssociacao();
+        let ignorar_devolvidas = true
+        let periodos = await getPeriodosDePrestacaoDeContasDaAssociacao(ignorar_devolvidas);
         setPeriodosAssociacao(periodos);
     };
 
