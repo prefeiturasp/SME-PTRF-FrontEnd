@@ -4,23 +4,17 @@ import '../../../componentes/Globais/LegendaInformaçãoAssociacao/legendaInform
 
 function useTagInformacaoAssociacaoEncerradaTemplate(){
     function retornaTagInformacaoAssociacaoEncerradaTemplate (rowData) {
-        let dataTip = ""
+        // Essa validação dos campos é necessária pois o hook é usado para associação e unidade
+        // E dependendo de quem está invocando o hook, o nome do campo pode ser diferente
 
-        if(rowData.data_de_encerramento_associacao !== null && rowData.data_de_encerramento_associacao !== undefined) {
-            dataTip = rowData.tooltip_associacao_encerrada
-        }
-
-        if(rowData.data_de_encerramento !== null && rowData.data_de_encerramento !== undefined) {
-            dataTip = rowData.tooltip_data_encerramento
-        }
+        let data_de_encerramento = rowData && rowData.data_de_encerramento_associacao ? rowData.data_de_encerramento_associacao : rowData.data_de_encerramento;
+        let tooltip_data_encerramento = rowData && rowData.tooltip_associacao_encerrada ? rowData.tooltip_associacao_encerrada : rowData.tooltip_data_encerramento;
+        let associacao_uuid = rowData && rowData.associacao_uuid ? rowData.associacao_uuid : rowData.uuid;
 
         return (
-            ((rowData.data_de_encerramento_associacao !== null && 
-                rowData.data_de_encerramento_associacao !== undefined) || 
-                (rowData.data_de_encerramento !== null &&
-                rowData.data_de_encerramento !== undefined)) &&
+            data_de_encerramento !== undefined && data_de_encerramento !== null &&
                 <>
-                    <div data-tip={dataTip} data-html={true} className="tag-informacoes-associacao-encerrada fundo-cor-cinza-neutral-03 texto-cor-branco" key={rowData.associacao_uuid}>
+                    <div data-tip={tooltip_data_encerramento} data-html={true} className="tag-informacoes-associacao-encerrada fundo-cor-cinza-neutral-03 texto-cor-branco" key={associacao_uuid}>
                         <span>Associação encerrada</span>
                     </div>
                     <ReactTooltip/>
