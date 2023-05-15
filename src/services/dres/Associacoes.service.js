@@ -35,8 +35,8 @@ export const filtrosRegularidadeAssociacoes = async (nome=null, status_regularid
     return (await api.get(url, authHeader)).data
 };
 
-export const filtrosAssociacoes = async (nome=null, status_regularidade=null, unidade__tipo_unidade=null) => {
-    return (await api.get(`api/associacoes/?unidade__dre__uuid=${visoesService.getItemUsuarioLogado('associacao_selecionada.uuid')}${nome ? `&nome=${nome}` : ''}${status_regularidade ? `&status_regularidade=${status_regularidade}` : ''}${unidade__tipo_unidade ? `&unidade__tipo_unidade=${unidade__tipo_unidade}` : ''}`, authHeader)).data // DEV
+export const filtrosAssociacoes = async (nome=null, status_regularidade=null, unidade__tipo_unidade=null, filtro_informacoes=null) => {
+    return (await api.get(`api/associacoes/?unidade__dre__uuid=${visoesService.getItemUsuarioLogado('associacao_selecionada.uuid')}${nome ? `&nome=${nome}` : ''}${status_regularidade ? `&status_regularidade=${status_regularidade}` : ''}${unidade__tipo_unidade ? `&unidade__tipo_unidade=${unidade__tipo_unidade}` : ''}${filtro_informacoes ? `&filtro_informacoes=${filtro_informacoes}` : ''}`, authHeader)).data // DEV
 };
 
 export const getAssociacao = async (uuid_associacao) => {
