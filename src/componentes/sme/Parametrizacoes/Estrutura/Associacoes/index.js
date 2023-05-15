@@ -18,12 +18,14 @@ import {
 } from "../../../../../services/sme/Parametrizacoes.service";
 import {TabelaAssociacoes} from "./TabelaAssociacoes";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faEdit, faPlus} from "@fortawesome/free-solid-svg-icons";
+import {faEdit, faPlus, faInfoCircle} from "@fortawesome/free-solid-svg-icons";
 import {Filtros} from "./Filtros";
 import ModalFormAssociacoes from "./ModalFormAssociacoes";
 import {BtnAddAssociacoes} from "./BtnAddAssociacoes";
 import {ModalConfirmDeleteAssociacao} from "./ModalConfirmDeleteAssociacao";
 import {ModalInfoExclusaoNaoPermitida} from "./ModalInfoExclusaoNaoPermitida";
+import { ModalConfirmUpdateObservacao } from "./ModalConfirmUpdateObservacao";
+import { ModalLegendaInformacaoAssociacao } from "../../../../Globais/LegendaInformaçãoAssociacao/ModalLegendaInformacaoAssociacao";
 import Loading from "../../../../../utils/Loading";
 
 export const Associacoes = () => {
@@ -63,6 +65,7 @@ export const Associacoes = () => {
         filtrar_por_associacao: "",
         filtrar_por_dre: "",
         filtrar_por_tipo_ue: "",
+        filtrar_por_informacao: []
     };
     const [stateFiltros, setStateFiltros] = useState(initialStateFiltros);
 
@@ -73,9 +76,18 @@ export const Associacoes = () => {
         });
     }, [stateFiltros]);
 
+    const handleOnChangeMultipleSelectStatus =  async (value) => {
+        let name = "filtrar_por_informacao"
+
+        setStateFiltros({
+            ...stateFiltros,
+            [name]: value
+        });
+    }
+
     const handleSubmitFiltros = async () => {
         setLoading(true);
-        let associacoes_filtradas = await getFiltrosAssociacoes(stateFiltros.filtrar_por_tipo_ue, stateFiltros.filtrar_por_dre, stateFiltros.filtrar_por_associacao);
+        let associacoes_filtradas = await getFiltrosAssociacoes(stateFiltros.filtrar_por_tipo_ue, stateFiltros.filtrar_por_dre, stateFiltros.filtrar_por_associacao, stateFiltros.filtrar_por_informacao);
         setListaDeAssociacoes(associacoes_filtradas);
         setLoading(false);
     };
@@ -108,6 +120,8 @@ export const Associacoes = () => {
 
     const [showModalForm, setShowModalForm] = useState(false);
     const [showModalConfirmDeleteAssociacao, setShowModalConfirmDeleteAssociacao] = useState(false);
+    const [showModalConfirmUpdateObservacao, setShowModalConfirmUpdateObservacao] = useState(false);
+    const [showModalLegendaInformacao, setShowModalLegendaInformacao] = useState(false)
     const [stateFormModal, setStateFormModal] = useState(initialStateFormModal);
     const [showModalInfoExclusaoNaoPermitida, setShowModalInfoExclusaoNaoPermitida] = useState(false);
     const [listaDePeriodos, setListaDePeriodos] = useState([]);
@@ -131,6 +145,11 @@ export const Associacoes = () => {
 
     const handleCloseConfirmDeleteAssociacao = useCallback(()=>{
         setShowModalConfirmDeleteAssociacao(false);
+    }, []);
+
+    const handleCloseConfirmUpdateObservacao = useCallback(()=>{
+        setShowModalConfirmUpdateObservacao(false);
+        setShowModalForm(false);
     }, []);
 
     const handleCloseModalInfoExclusaoNaoPermitida = useCallback(()=>{
@@ -159,7 +178,8 @@ export const Associacoes = () => {
             id: associacao_por_uuid.id,
             operacao: 'edit',
             data_de_encerramento: associacao_por_uuid.data_de_encerramento.data,
-            retorna_se_pode_editar_periodo_inicial: associacao_por_uuid.retorna_se_pode_editar_periodo_inicial
+            retorna_se_pode_editar_periodo_inicial: associacao_por_uuid.retorna_se_pode_editar_periodo_inicial,
+            pode_editar_dados_associacao_encerrada: associacao_por_uuid.data_de_encerramento.pode_editar_dados_associacao_encerrada ? associacao_por_uuid.data_de_encerramento.pode_editar_dados_associacao_encerrada : false
         });
         setShowModalForm(true)
     }, [stateFormModal]);
@@ -247,10 +267,17 @@ export const Associacoes = () => {
                         if(values.data_de_encerramento) {
                             await validarDataDeEncerramento(values.uuid, values.data_de_encerramento, values.periodo_inicial)
                         }
-                        await patchUpdateAssociacao(values.uuid, payload);
-                        console.log('Associação editada com sucesso.');
-                        setShowModalForm(false);
-                        await carregaTodasAsAssociacoes();
+
+                        if(values.pode_editar_dados_associacao_encerrada){
+                            await patchUpdateAssociacao(values.uuid, payload);
+                            console.log('Associação editada com sucesso.');
+                            setShowModalForm(false);
+                            await carregaTodasAsAssociacoes();
+                        }
+                        else{
+                            setStateFormModal(values)
+                            setShowModalConfirmUpdateObservacao(true);
+                        }
                     }catch (e) {
                         if(e.response.data && e.response.data.erro === 'data_invalida') {
                             setErrors({ data_de_encerramento: e.response.data.mensagem.replace('data_fim_realizacao_despesas', 'a data do fim da realização das despesas') });
@@ -314,6 +341,20 @@ export const Associacoes = () => {
         )
     }, [handleEditFormModalAssociacoes]);
     
+    const onUpdateObservacao = useCallback(async ()=>{
+        setStateFiltros(initialStateFiltros);
+
+        let payload = {
+            observacao: stateFormModal.observacao,
+        };
+
+        await patchUpdateAssociacao(stateFormModal.uuid, payload);
+        console.log('Observação Associação editada com sucesso.');
+        setShowModalConfirmUpdateObservacao(false);
+        setShowModalForm(false);
+        await carregaTodasAsAssociacoes();
+        
+    }, [stateFormModal, carregaTodasAsAssociacoes, initialStateFiltros]);
 
     return(
         <PaginasContainer>
@@ -345,8 +386,25 @@ export const Associacoes = () => {
                         handleSubmitFiltros={handleSubmitFiltros}
                         limpaFiltros={limpaFiltros}
                         tabelaAssociacoes={tabelaAssociacoes}
+                        handleOnChangeMultipleSelectStatus={handleOnChangeMultipleSelectStatus}
                     />
-                    <p>Exibindo <span className='total-acoes'>{totalDeAssociacoes}</span> associações</p>
+                    
+                    <div className="d-flex justify-content-between mt-2">
+                        <p>Exibindo <span className='total-acoes'>{totalDeAssociacoes}</span> associações</p>
+
+                        <button
+                            onClick={()=> setShowModalLegendaInformacao(true)}
+                            className="btn btn-link link-green"
+                            style={{padding: '0px', textDecoration: 'none'}}
+                        >
+                            <FontAwesomeIcon
+                                style={{fontSize: '18px', marginRight: "4px", paddingTop: "2px"}}
+                                icon={faInfoCircle}
+                            />
+                            <span>Legenda informação</span>
+                        </button>
+                    </div>
+
                     <TabelaAssociacoes
                         rowsPerPage={rowsPerPage}
                         listaDeAssociacoes={listaDeAssociacoes}
@@ -386,6 +444,29 @@ export const Associacoes = () => {
                             texto={`<p class="mb-0"> ${erroExclusaoNaoPermitida}</p>`}
                             primeiroBotaoTexto="Fechar"
                             primeiroBotaoCss="success"
+                        />
+                    </section>
+                    <section>
+                        <ModalConfirmUpdateObservacao
+                            show={showModalConfirmUpdateObservacao}
+                            handleClose={handleCloseConfirmUpdateObservacao}
+                            onUpdateObservacaoTrue={onUpdateObservacao}
+                            titulo="Atualizar observação"
+                            texto={"Esta associação está encerrada. Deseja realmente alterar o campo Observação?"}
+                            primeiroBotaoTexto="Confirmar"
+                            primeiroBotaoCss="success"
+                            segundoBotaoCss="outline-success"
+                            segundoBotaoTexto="Cancelar"
+                        />
+                    </section>
+
+                    <section>
+                        <ModalLegendaInformacaoAssociacao
+                            show={showModalLegendaInformacao}
+                            primeiroBotaoOnclick={() => setShowModalLegendaInformacao(false)}
+                            titulo="Legenda Informação"
+                            primeiroBotaoTexto="Fechar"
+                            primeiroBotaoCss="outline-success"
                         />
                     </section>
                 </div>
