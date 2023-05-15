@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {Redirect} from "react-router-dom";
 import {getTabelaAssociacoes, getAssociacoesPorUnidade, filtrosAssociacoes, getAssociacao, getContasAssociacao} from "../../../services/dres/Associacoes.service";
+import { ModalLegendaInformacaoAssociacao } from "../../Globais/LegendaInformaçãoAssociacao/ModalLegendaInformacaoAssociacao";
 import "./associacoes.scss"
 import {TabelaAssociacoes} from "./TabelaAssociacoes";
 import {FiltrosAssociacoes} from "./FiltrosAssociacoes";
@@ -20,6 +21,7 @@ export const Associacoes = () =>{
     const initialStateFiltros = {
         unidade_escolar_ou_associacao: "",
         tipo_de_unidade: "",
+        filtro_status: []
     };
 
     const [loading, setLoading] = useState(true);
@@ -28,6 +30,7 @@ export const Associacoes = () =>{
     const [stateFiltros, setStateFiltros] = useState(initialStateFiltros);
     const [buscaUtilizandoFiltros, setBuscaUtilizandoFiltros] = useState(false);
     const [urlRedirect, setRrlRedirect] = useState('');
+    const [showModalLegendaInformacao, setShowModalLegendaInformacao] = useState(false);
 
     useEffect(()=>{
         buscaTabelaAssociacoes();
@@ -55,7 +58,7 @@ export const Associacoes = () =>{
     const buscaAssociacao = async (uuid_associacao, url_redirect)=>{
         setLoading(true);
         try {
-            let associacao = await getAssociacao(uuid_associacao);
+            let associacao = await getAssociacao(uuid_associacao, stateFiltros.filtro_status);
             let contas = await getContasAssociacao(uuid_associacao);
 
             let dados_da_associacao = {
@@ -122,7 +125,7 @@ export const Associacoes = () =>{
         setLoading(true);
         setBuscaUtilizandoFiltros(true);
         event.preventDefault();
-        let resultado_filtros = await filtrosAssociacoes(stateFiltros.unidade_escolar_ou_associacao, null, stateFiltros.tipo_de_unidade);
+        let resultado_filtros = await filtrosAssociacoes(stateFiltros.unidade_escolar_ou_associacao, null, stateFiltros.tipo_de_unidade, stateFiltros.filtro_status);
         setAssociacoes(resultado_filtros);
         setLoading(false)
     };
@@ -134,6 +137,15 @@ export const Associacoes = () =>{
         setLoading(false)
     };
 
+    const handleOnChangeMultipleSelectStatus =  async (value) => {
+        let name = "filtro_status"
+
+        setStateFiltros({
+            ...stateFiltros,
+            [name]: value
+        });
+    }
+
     return(
         <>
             <FiltrosAssociacoes
@@ -141,6 +153,7 @@ export const Associacoes = () =>{
                 stateFiltros={stateFiltros}
                 handleChangeFiltrosAssociacao={handleChangeFiltrosAssociacao}
                 handleSubmitFiltrosAssociacao={handleSubmitFiltrosAssociacao}
+                handleOnChangeMultipleSelectStatus={handleOnChangeMultipleSelectStatus}
                 limpaFiltros={limpaFiltros}
             />
             {loading ? (
@@ -158,7 +171,18 @@ export const Associacoes = () =>{
                         rowsPerPage={rowsPerPage}
                         unidadeEscolarTemplate={unidadeEscolarTemplate}
                         acoesTemplate={acoesTemplate}
+                        setShowModalLegendaInformacao={setShowModalLegendaInformacao}
                     />
+
+                    <section>
+                        <ModalLegendaInformacaoAssociacao
+                            show={showModalLegendaInformacao}
+                            primeiroBotaoOnclick={() => setShowModalLegendaInformacao(false)}
+                            titulo="Legenda Informação"
+                            primeiroBotaoTexto="Fechar"
+                            primeiroBotaoCss="outline-success"
+                        />
+                    </section>
                 </>
                 ) :
                 buscaUtilizandoFiltros ?
