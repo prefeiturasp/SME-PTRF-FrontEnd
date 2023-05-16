@@ -41,7 +41,7 @@ export const FiltrosAssociacoes = ({tabelaAssociacoes, stateFiltros, handleChang
 
                     </div>
                     <div className="col-4 col-md-4">
-                    <label htmlFor="filtro_status">Informações</label>
+                    <label htmlFor="filtro_status">Filtrar por informações</label>
                         <Select
                             mode="multiple"
                             allowClear

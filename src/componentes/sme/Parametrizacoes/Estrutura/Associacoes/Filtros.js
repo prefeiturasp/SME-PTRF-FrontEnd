@@ -60,7 +60,7 @@ export const Filtros = ({stateFiltros, handleChangeFiltros, handleSubmitFiltros,
                             mode="multiple"
                             allowClear
                             style={{ width: '100%' }}
-                            placeholder="Selecione o status"
+                            placeholder="Selecione as informações"
                             name="filtrar_por_informacao"
                             id="filtrar_por_informacao"
                             value={stateFiltros.filtrar_por_informacao}
