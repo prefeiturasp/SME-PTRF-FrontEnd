@@ -161,7 +161,7 @@ export const ListaDeDespesas = () => {
         await buscaDespesasOrdenadaPorImposto(checked)
     }
 
-    const reusltadoSomaDosTotais = useCallback(async (palavra = "", aplicacao_recurso = "", acao_associacao__uuid = "", despesa__status = "", fornecedor = "", data_inicio = "", data_fim = "", conta_associacao__uuid = '') => {
+    const reusltadoSomaDosTotais = useCallback(async (palavra = "", aplicacao_recurso = "", acao_associacao__uuid = "", despesa__status = "", fornecedor = "", data_inicio = "", data_fim = "", conta_associacao__uuid = '', filtro_vinculo_atividades = [], filtro_informacoes = []) => {
         const somaDosTotais = await getSomaDosTotais(palavra, aplicacao_recurso, acao_associacao__uuid, despesa__status, fornecedor, data_inicio, data_fim, conta_associacao__uuid, filtro_vinculo_atividades, filtro_informacoes);
         setSomaDosTotais(somaDosTotais)
     }, []);
