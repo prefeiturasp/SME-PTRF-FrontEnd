@@ -53,12 +53,12 @@ export const filtroPorPalavraDespesasPaginacao = async (palavra, page) => {
     return (await api.get(`api/despesas/?search=${palavra}&associacao__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}&page=${page}`, authHeader)).data
 };
 
-export const filtrosAvancadosDespesas = async (palavra, aplicacao_recurso, acao_associacao__uuid, despesa__status, fornecedor, data_inicio, data_fim, conta_associacao__uuid, vinculo_atividade__uuid) => {
-    return (await api.get(`api/despesas/?search=${palavra}&aplicacao_recurso=${aplicacao_recurso}&rateios__acao_associacao__uuid=${acao_associacao__uuid}&status=${despesa__status}&fornecedor=${fornecedor}${data_inicio ? '&data_inicio='+data_inicio : ""}${data_fim ? '&data_fim='+data_fim : ""}&rateios__conta_associacao__uuid=${conta_associacao__uuid}&rateios__tag__uuid=${vinculo_atividade__uuid}&associacao__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader)).data
+export const filtrosAvancadosDespesas = async (palavra, aplicacao_recurso, acao_associacao__uuid, despesa__status, fornecedor, data_inicio, data_fim, conta_associacao__uuid, filtro_vinculo_atividades, filtro_informacoes) => {
+    return (await api.get(`api/despesas/?search=${palavra}&aplicacao_recurso=${aplicacao_recurso}&rateios__acao_associacao__uuid=${acao_associacao__uuid}&status=${despesa__status}&fornecedor=${fornecedor}${data_inicio ? '&data_inicio='+data_inicio : ""}${data_fim ? '&data_fim='+data_fim : ""}&rateios__conta_associacao__uuid=${conta_associacao__uuid}&filtro_vinculo_atividades=${filtro_vinculo_atividades}&filtro_informacoes=${filtro_informacoes}&associacao__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader)).data
 };
 
-export const filtrosAvancadosDespesasPaginacao = async (palavra, aplicacao_recurso, acao_associacao__uuid, despesa__status, fornecedor, data_inicio, data_fim, conta_associacao__uuid, vinculo_atividade__uuid, page) => {
-    return (await api.get(`api/despesas/?search=${palavra}&aplicacao_recurso=${aplicacao_recurso}&rateios__acao_associacao__uuid=${acao_associacao__uuid}&status=${despesa__status}&fornecedor=${fornecedor}${data_inicio ? '&data_inicio='+data_inicio : ""}${data_fim ? '&data_fim='+data_fim : ""}&rateios__conta_associacao__uuid=${conta_associacao__uuid}&rateios__tag__uuid=${vinculo_atividade__uuid}&associacao__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}&page=${page}`, authHeader)).data
+export const filtrosAvancadosDespesasPaginacao = async (palavra, aplicacao_recurso, acao_associacao__uuid, despesa__status, fornecedor, data_inicio, data_fim, conta_associacao__uuid, filtro_vinculo_atividades, filtro_informacoes, page) => {
+    return (await api.get(`api/despesas/?search=${palavra}&aplicacao_recurso=${aplicacao_recurso}&rateios__acao_associacao__uuid=${acao_associacao__uuid}&status=${despesa__status}&fornecedor=${fornecedor}${data_inicio ? '&data_inicio='+data_inicio : ""}${data_fim ? '&data_fim='+data_fim : ""}&rateios__conta_associacao__uuid=${conta_associacao__uuid}&filtro_vinculo_atividades=${filtro_vinculo_atividades}&filtro_informacoes=${filtro_informacoes}&associacao__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}&page=${page}`, authHeader)).data
 };
 
 export const criarDespesa = async (payload) => {

@@ -1,10 +1,14 @@
-import React, {useEffect, useState} from "react";
-import {getDespesasTabelas} from "../../../../services/escolas/Despesas.service";
+import React, {useCallback, useEffect, useState} from "react";
+import {getDespesasTabelas, getTagInformacao} from "../../../../services/escolas/Despesas.service";
 import {DatePickerField} from '../../../Globais/DatePickerField'
 import moment from "moment";
-import { gerarUuid } from "../../../../utils/ValidacoesAdicionaisFormularios";
+import {gerarUuid} from "../../../../utils/ValidacoesAdicionaisFormularios";
+import './multiselect.scss'
+import {Select} from 'antd';
 
 export const FormFiltrosAvancados = (props) => {
+
+    const {Option} = Select;
 
     const initialState = {
         filtrar_por_termo: "",
@@ -15,11 +19,28 @@ export const FormFiltrosAvancados = (props) => {
         data_inicio: "",
         data_fim: "",
         conta_associacao: "",
-        vinculo_atividade: "",
     };
 
-    const {btnMaisFiltros, onClickBtnMaisFiltros, iniciaLista, reusltadoSomaDosTotais, filtrosAvancados, setFiltrosAvancados, buscaDespesasFiltrosAvancados, setBuscaUtilizandoFiltroAvancado, setBuscaUtilizandoFiltroPalavra, forcarPrimeiraPagina, setBuscaUtilizandoFiltro, setLoading} = props;
+    const {
+        btnMaisFiltros,
+        onClickBtnMaisFiltros,
+        iniciaLista,
+        reusltadoSomaDosTotais,
+        filtrosAvancados,
+        setFiltrosAvancados,
+        buscaDespesasFiltrosAvancados,
+        setBuscaUtilizandoFiltroAvancado,
+        setBuscaUtilizandoFiltroPalavra,
+        forcarPrimeiraPagina,
+        setBuscaUtilizandoFiltro,
+        setLoading,
+        filtro_informacoes,
+        filtro_vinculo_atividades,
+        handleChangeFiltroInformacoes,
+        handleChangeFiltroVinculoAtividades
+    } = props;
     const [despesasTabelas, setDespesasTabelas] = useState([]);
+    const [listaTagInformacao, setListaTagInformacao] = useState([])
 
     useEffect(() => {
         const carregaTabelasDespesas = async () => {
@@ -30,6 +51,19 @@ export const FormFiltrosAvancados = (props) => {
 
     }, []);
 
+    const handleTagInformacao = useCallback(async () => {
+        try {
+            const response = await getTagInformacao()
+            setListaTagInformacao(response)
+        } catch (e) {
+            console.error('Erro ao carregar tag informação', e)
+        }
+    }, [])
+
+    useEffect(() => {
+        handleTagInformacao()
+    }, [handleTagInformacao])
+
     const handleChange = (name, value) => {
         setFiltrosAvancados({
             ...filtrosAvancados,
@@ -37,13 +71,14 @@ export const FormFiltrosAvancados = (props) => {
         });
     };
 
+
     const handleSubmit = async (event) => {
         event.preventDefault();
         setLoading(true);
         let data_inicio = filtrosAvancados.data_inicio ? moment(new Date(filtrosAvancados.data_inicio), "YYYY-MM-DD").format("YYYY-MM-DD") : null;
         let data_fim = filtrosAvancados.data_fim ? moment(new Date(filtrosAvancados.data_fim), "YYYY-MM-DD").format("YYYY-MM-DD") : null;
-        reusltadoSomaDosTotais(filtrosAvancados.filtrar_por_termo, filtrosAvancados.aplicacao_recurso, filtrosAvancados.acao_associacao, filtrosAvancados.despesa_status, filtrosAvancados.fornecedor, data_inicio, data_fim, filtrosAvancados.conta_associacao, filtrosAvancados.vinculo_atividade);
-        
+        reusltadoSomaDosTotais(filtrosAvancados.filtrar_por_termo, filtrosAvancados.aplicacao_recurso, filtrosAvancados.acao_associacao, filtrosAvancados.despesa_status, filtrosAvancados.fornecedor, data_inicio, data_fim, filtrosAvancados.conta_associacao);
+
         buscaDespesasFiltrosAvancados();
         setBuscaUtilizandoFiltroAvancado(true);
         setBuscaUtilizandoFiltroPalavra(false);
@@ -61,29 +96,15 @@ export const FormFiltrosAvancados = (props) => {
                 <form onSubmit={handleSubmit}>
                     <div className="form-row">
                         <div className="form-group col-md-6">
-                            <label htmlFor="filtrar_por_termo">Filtrar por especificação do material ou serviço</label>
+                            <label htmlFor="filtrar_por_termo">Especificação do material ou serviço</label>
                             <input value={filtrosAvancados.filtrar_por_termo}
-                               onChange={(e) => handleChange(e.target.name, e.target.value)}
-                               name="filtrar_por_termo" id="filtrar_por_termo" type="text" className="form-control"
-                               placeholder="Escreva o termo que deseja filtrar"
+                                   onChange={(e) => handleChange(e.target.name, e.target.value)}
+                                   name="filtrar_por_termo" id="filtrar_por_termo" type="text" className="form-control"
+                                   placeholder="Escreva o termo que deseja filtrar"
                             />
                         </div>
                         <div className="form-group col-md-6">
-                            <label htmlFor="acao_associacao">Filtrar por ação</label>
-                            <select value={filtrosAvancados.acao_associacao}
-                                    onChange={(e) => handleChange(e.target.name, e.target.value)}
-                                    name="acao_associacao"
-                                    id="acao_associacao_form_filtros_avancados_despesas"
-                                    className="form-control"
-                            >
-                                <option key={0} value="">Selecione uma ação</option>
-                                {despesasTabelas.acoes_associacao && despesasTabelas.acoes_associacao.map(item => (
-                                    <option key={item.uuid} value={item.uuid}>{item.nome}</option>
-                                ))}
-                            </select>
-                        </div>
-                        <div className="form-group col-md-4">
-                            <label htmlFor="aplicacao_recurso">Filtrar por tipo de aplicação</label>
+                            <label htmlFor="aplicacao_recurso">Aplicação</label>
                             <select value={filtrosAvancados.aplicacao_recurso}
                                     onChange={(e) => handleChange(e.target.name, e.target.value)}
                                     name="aplicacao_recurso"
@@ -96,8 +117,55 @@ export const FormFiltrosAvancados = (props) => {
                                 ))}
                             </select>
                         </div>
+                        <div className="form-group col-md-6">
+                            <label htmlFor="acao_associacao">Ação</label>
+                            <select value={filtrosAvancados.acao_associacao}
+                                    onChange={(e) => handleChange(e.target.name, e.target.value)}
+                                    name="acao_associacao"
+                                    id="acao_associacao_form_filtros_avancados_despesas"
+                                    className="form-control"
+                            >
+                                <option key={0} value="">Selecione uma ação</option>
+                                {despesasTabelas.acoes_associacao && despesasTabelas.acoes_associacao.map(item => (
+                                    <option key={item.uuid} value={item.uuid}>{item.nome}</option>
+                                ))}
+                            </select>
+                        </div>
+
+                        <div className="form-group col-md-6">
+                            <label htmlFor="informacao">Informação</label>
+
+                            <Select
+                                mode="multiple"
+                                allowClear
+                                style={{width: '100%'}}
+                                placeholder="Selecione os status"
+                                value={filtro_informacoes}
+                                onChange={handleChangeFiltroInformacoes}
+                                className='multiselect-filtrar-por-status'
+                            >
+                                {listaTagInformacao && listaTagInformacao.length > 0 && listaTagInformacao.map(item => (
+                                    <Option key={item.id} value={item.id}>{item.nome}</Option>
+                                ))}
+                            </Select>
+                        </div>
+
                         <div className="form-group col-md-4">
-                            <label htmlFor="despesa_status">Filtrar por status</label>
+                            <label htmlFor="conta_associacao">Conta</label>
+                            <select id="conta_associacao" name="conta_associacao"
+                                    value={filtrosAvancados.conta_associacao}
+                                    onChange={(e) => handleChange(e.target.name, e.target.value)}
+                                    className="form-control"
+                            >
+                                <option key={0} value="">Selecione um tipo</option>
+                                {despesasTabelas.contas_associacao !== undefined && despesasTabelas.contas_associacao.length > 0 ? (despesasTabelas.contas_associacao.map((item, key) => (
+                                    <option key={key} value={item.uuid}>{item.nome}</option>
+                                ))) : null}
+                            </select>
+                        </div>
+
+                        <div className="form-group col-md-4">
+                            <label htmlFor="despesa_status">Status</label>
                             <select value={filtrosAvancados.despesa_status}
                                     onChange={(e) => handleChange(e.target.name, e.target.value)} name="despesa_status"
                                     id="despesa_status" className="form-control">
@@ -107,24 +175,26 @@ export const FormFiltrosAvancados = (props) => {
                             </select>
                         </div>
                         <div className="form-group col-md-4">
-                            <label htmlFor="vinculo_atividade">Filtrar por vínculo a atividade</label>
-                            <select value={filtrosAvancados.vinculo_atividade}
-                                    onChange={(e) => handleChange(e.target.name, e.target.value)}
-                                    name="vinculo_atividade"
-                                    id="vinculo_atividade_form_filtros_avancados_despesas"
-                                    className="form-control"
+                            <label htmlFor="filtro_vinculo_atividades">Esse gasto possui vínculo com alguma atividade específica?</label>
+                            <Select
+                                mode="multiple"
+                                allowClear
+                                style={{ width: '100%' }}
+                                placeholder="Selecione a atividade"
+                                value={filtro_vinculo_atividades}
+                                onChange={handleChangeFiltroVinculoAtividades}
+                                className='multiselect-filtrar-por-status'
                             >
-                                <option key={0} value="">Selecione um vínculo</option>
-                                {despesasTabelas.tags && despesasTabelas.tags.map(item => (
-                                    <option key={item.uuid} value={item.uuid}>{item.nome}</option>
+                                {despesasTabelas.tags && despesasTabelas.tags.length > 0 && despesasTabelas.tags.map(item => (
+                                    <Option key={item.id} value={item.id}>{item.nome}</Option>
                                 ))}
-                            </select>
+                            </Select>
                         </div>
 
                         <div className="col-12">
                             <div className="row">
-                                <div className="form-group col-md-5">
-                                    <label htmlFor="fornecedor">Filtrar por fornecedor</label>
+                                <div className="form-group col-md-7">
+                                    <label htmlFor="fornecedor">Fornecedor</label>
                                     <input
                                         value={filtrosAvancados.fornecedor}
                                         onChange={(e) => handleChange(e.target.name, e.target.value)}
@@ -135,23 +205,8 @@ export const FormFiltrosAvancados = (props) => {
                                         placeholder="Escreva a razão social"
                                     />
                                 </div>
-
-                                <div className="form-group col-md-3">
-                                    <label htmlFor="conta_associacao">Filtrar por tipo de conta</label>
-                                    <select id="conta_associacao" name="conta_associacao" value={filtrosAvancados.conta_associacao}
-                                            onChange={(e) => handleChange(e.target.name, e.target.value)}
-                                            className="form-control"
-                                    >
-                                        <option key={0} value="">Selecione um tipo</option>
-                                        {despesasTabelas.contas_associacao !== undefined && despesasTabelas.contas_associacao.length > 0 ? (despesasTabelas.contas_associacao.map((item, key) => (
-                                            <option key={key} value={item.uuid}>{item.nome}</option>
-                                        ))) : null}
-                                    </select>
-                                </div>
-
-
-                                <div className="form-group col-md-4">
-                                    <label htmlFor="data_inicio">Filtrar por período</label>
+                                <div className="form-group col-md-5">
+                                    <label htmlFor="data_inicio">Período</label>
                                     <div className="row align-items-center">
                                         <div className="col-12 col-md-5 pr-0">
                                             <DatePickerField
