@@ -116,7 +116,8 @@ export const DetalheDasPrestacoes = () => {
     };
 
     const carregaPeriodos = async () => {
-        let periodos = await getPeriodosDePrestacaoDeContasDaAssociacao();
+        let ignorar_devolvidas = false
+        let periodos = await getPeriodosDePrestacaoDeContasDaAssociacao(ignorar_devolvidas);
         setPeriodosAssociacao(periodos);
     };
 
