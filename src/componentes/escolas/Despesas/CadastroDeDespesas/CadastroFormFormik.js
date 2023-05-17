@@ -65,6 +65,7 @@ export const CadastroFormFormik = ({
                                        setShowDelete,
                                        setShowTextoModalDelete,
                                        btnSubmitDisable,
+                                       desabilitaBtnSalvar,
                                        saldosInsuficientesDaAcao,
                                        saldosInsuficientesDaConta,
                                        mensagensAceitaCusteioCapital,
@@ -842,7 +843,8 @@ export const CadastroFormFormik = ({
                                             }
                                             type="button"
                                             onClick={async (e) => {
-                                                serviceIniciaEncadeamentoDosModais(values, errors, setFieldValue, {resetForm})
+                                                desabilitaBtnSalvar();
+                                                serviceIniciaEncadeamentoDosModais(values, errors, setFieldValue, {resetForm});
                                             }}
                                             className="btn btn-success mt-2"
                                         >

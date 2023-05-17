@@ -133,8 +133,8 @@ export const exportarDadosAssociacaoPdf = async () => {
             });
 };
 
-export const getPeriodosDePrestacaoDeContasDaAssociacao = async () => {
-    return (await api.get(`/api/associacoes/${localStorage.getItem(ASSOCIACAO_UUID)}/periodos-para-prestacao-de-contas/`, authHeader)).data
+export const getPeriodosDePrestacaoDeContasDaAssociacao = async (ignorar_devolvidas) => {
+    return (await api.get(`/api/associacoes/${localStorage.getItem(ASSOCIACAO_UUID)}/periodos-para-prestacao-de-contas/?ignorar_devolvidas=${ignorar_devolvidas}`, authHeader)).data
 };
 
 export const getUsuarios = async () => {
