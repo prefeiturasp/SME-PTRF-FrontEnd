@@ -8,7 +8,7 @@ import {ASSOCIACAO_UUID} from "../../../../services/auth.service";
 import { SidebarLeftService } from "../../../../services/SideBarLeft.service";
 import { SidebarContext } from "../../../../context/Sidebar";
 
-export const TopoComBotaoVoltar = ({statusPc, prestacaoContaUuid, onClickVoltar, periodoFormatado, periodoUuid, podeAbrirModalAcertos}) => {
+export const TopoComBotaoVoltar = ({statusPc, prestacaoContaUuid, onClickVoltar, periodoFormatado, periodoUuid, podeAbrirModalAcertos, habilitarConcluirAcerto}) => {
 
     const [periodo, setPeriodo] = useState(null);
     const history = useHistory()
@@ -16,10 +16,10 @@ export const TopoComBotaoVoltar = ({statusPc, prestacaoContaUuid, onClickVoltar,
 
     useEffect( () => {
         verificaSePodeIrParaConcluidas()
-    }, [statusPc])
+    }, [statusPc, habilitarConcluirAcerto])
 
     const verificaSePodeIrParaConcluidas = () => {
-        if (statusPc === 'DEVOLVIDA') {
+        if (statusPc === 'DEVOLVIDA' && habilitarConcluirAcerto) {
             return true
         }
         return false
