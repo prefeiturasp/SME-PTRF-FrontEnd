@@ -35,7 +35,9 @@ export const FormFiltrosAvancados = (props) => {
         setBuscaUtilizandoFiltro,
         setLoading,
         filtro_informacoes,
+        set_filtro_informacoes,
         filtro_vinculo_atividades,
+        set_filtro_vinculo_atividades,
         handleChangeFiltroInformacoes,
         handleChangeFiltroVinculoAtividades
     } = props;
@@ -88,6 +90,8 @@ export const FormFiltrosAvancados = (props) => {
     const limpaFormulario = () => {
         forcarPrimeiraPagina(gerarUuid());
         setFiltrosAvancados(initialState);
+        set_filtro_informacoes([])
+        set_filtro_vinculo_atividades([])
     };
 
     return (
