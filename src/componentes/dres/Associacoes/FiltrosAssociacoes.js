@@ -1,11 +1,15 @@
 import React from "react";
+import { Select } from 'antd';
 
-export const FiltrosAssociacoes = ({tabelaAssociacoes, stateFiltros, handleChangeFiltrosAssociacao, handleSubmitFiltrosAssociacao, limpaFiltros}) =>{
+export const FiltrosAssociacoes = ({tabelaAssociacoes, stateFiltros, handleChangeFiltrosAssociacao, handleSubmitFiltrosAssociacao, limpaFiltros, handleOnChangeMultipleSelectStatus}) =>{
+    
+    const { Option } = Select;
+
     return(
         <>
             <form onSubmit={handleSubmitFiltrosAssociacao}>
                 <div className="row">
-                    <div className="col-12 col-md-6">
+                    <div className="col-4 col-md-4">
                         <label htmlFor="unidade_escolar_ou_associacao">Filtrar por Unidade Escolar ou Associação</label>
                         <input
                             value={stateFiltros.unidade_escolar_ou_associacao}
@@ -16,7 +20,7 @@ export const FiltrosAssociacoes = ({tabelaAssociacoes, stateFiltros, handleChang
                             placeholder="Escreva o termo que deseja filtrar"
                         />
                     </div>
-                    <div className="col-12 col-md-6">
+                    <div className="col-4 col-md-4">
                         <div className="row">
                             <div className="col-md-12">
                                 <label htmlFor="tipo_de_unidade">Filtrar por tipo de unidade</label>
@@ -35,6 +39,24 @@ export const FiltrosAssociacoes = ({tabelaAssociacoes, stateFiltros, handleChang
                             </div>
                         </div>
 
+                    </div>
+                    <div className="col-4 col-md-4">
+                    <label htmlFor="filtro_status">Filtrar por informações</label>
+                        <Select
+                            mode="multiple"
+                            allowClear
+                            style={{ width: '100%' }}
+                            placeholder="Selecione as informações"
+                            name="filtro_status"
+                            id="filtro_status"
+                            value={stateFiltros.filtro_status}
+                            onChange={handleOnChangeMultipleSelectStatus}
+                            className='multiselect-lista-valores-reprogramados'
+                        >
+                            {tabelaAssociacoes.filtro_informacoes && tabelaAssociacoes.filtro_informacoes.length > 0 && tabelaAssociacoes.filtro_informacoes.map(item => (
+                                <Option key={item.id} value={item.id}>{item.nome}</Option>
+                            ))}
+                        </Select>
                     </div>
                 </div>
                 <div className="d-flex  justify-content-end pb-3 mt-3">

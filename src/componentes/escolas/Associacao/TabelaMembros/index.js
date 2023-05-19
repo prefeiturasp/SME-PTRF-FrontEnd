@@ -4,6 +4,13 @@ import {faAngleDown, faAngleUp, faEdit, faTimesCircle} from '@fortawesome/free-s
 import {Link} from "react-router-dom";
 
 export const TabelaMembros = ({titulo, clickIconeToogle, toggleIcon, cargos, converteNomeRepresentacao, retornaDadosAdicionaisTabela, onDeleteMembro, verificaSeExibeToolTip=null, visoesService}) => {
+    const podeEditarDadosMembros = (item) => {
+        if(visoesService.getPermissoes(['change_associacao']) && item && item.infos && item.infos.associacao && item.infos.associacao.data_de_encerramento && item.infos.associacao.data_de_encerramento.pode_editar_dados_associacao_encerrada){
+            return true;
+        }
+        return false;
+    }
+    
     return(
         <>
             <p><strong>{titulo}</strong></p>
@@ -50,9 +57,9 @@ export const TabelaMembros = ({titulo, clickIconeToogle, toggleIcon, cargos, con
                                             />
                                         </Link>
 
-                                        {visoesService.getPermissoes(['change_associacao']) &&
+                                        {podeEditarDadosMembros(item) &&
                                             <button
-                                                disabled={!visoesService.getPermissoes(['change_associacao'])}
+                                                disabled={!podeEditarDadosMembros(item)}
                                                 className="btn-editar-membro"
                                                 onClick={() => onDeleteMembro(item)}
                                             >

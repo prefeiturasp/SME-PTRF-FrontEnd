@@ -18,6 +18,14 @@ const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitMo
         return utcDataObj;
     }
 
+    const podeEditarDadosAssociacao = (values) => {
+        if(values && values.pode_editar_dados_associacao_encerrada){
+            return true;
+        }
+
+        return false;
+    }
+
     const bodyTextarea = () => {
         return (
             <>
@@ -53,6 +61,7 @@ const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitMo
                                                 id="nome"
                                                 className="form-control"
                                                 onChange={props.handleChange}
+                                                disabled={!podeEditarDadosAssociacao(props.values)}
                                             />
                                             {props.touched.nome && props.errors.nome && <span className="span_erro text-danger mt-1"> {props.errors.nome} </span>}
                                         </div>
@@ -72,7 +81,7 @@ const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitMo
                                                     props.handleChange(e);
                                                     carregaUnidadePeloCodigoEol(e.target.value, setFieldValue)
                                                 }}
-                                                disabled={props.values.operacao === 'edit'}
+                                                disabled={props.values.operacao === 'edit' || !podeEditarDadosAssociacao(props.values)}
                                             />
                                             {errosCodigoEol &&
                                             <div className='row mt-2'>
@@ -110,6 +119,7 @@ const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitMo
                                                 id="cnpj"
                                                 className="form-control"
                                                 onChange={props.handleChange}
+                                                disabled={!podeEditarDadosAssociacao(props.values)}
                                             />
                                             {props.touched.cnpj && props.errors.cnpj && <span className="span_erro text-danger mt-1"> {props.errors.cnpj} </span>}
                                         </div>
@@ -125,6 +135,7 @@ const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitMo
                                                 id="processo_regularidade"
                                                 className="form-control"
                                                 onChange={props.handleChange}
+                                                disabled={!podeEditarDadosAssociacao(props.values)}
                                             />
                                             {props.touched.processo_regularidade && props.errors.processo_regularidade && <span className="span_erro text-danger mt-1"> {props.errors.processo_regularidade} </span>}
                                         </div>
@@ -142,6 +153,7 @@ const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitMo
                                                 id="ccm"
                                                 className="form-control"
                                                 onChange={props.handleChange}
+                                                disabled={!podeEditarDadosAssociacao(props.values)}
                                             />
                                             {props.touched.ccm && props.errors.ccm && <span className="span_erro text-danger mt-1"> {props.errors.ccm} </span>}
                                         </div>
@@ -156,6 +168,7 @@ const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitMo
                                                 id="email"
                                                 className="form-control"
                                                 onChange={props.handleChange}
+                                                disabled={!podeEditarDadosAssociacao(props.values)}
                                             />
                                             {props.touched.email && props.errors.email && <span className="span_erro text-danger mt-1"> {props.errors.email} </span>}
                                         </div>
@@ -173,7 +186,7 @@ const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitMo
                                             name="periodo_inicial"
                                             id="periodo_inicial"
                                             className="form-control"
-                                            disabled={values.retorna_se_pode_editar_periodo_inicial ? !values.retorna_se_pode_editar_periodo_inicial.pode_editar_periodo_inicial : ''}
+                                            disabled={values.retorna_se_pode_editar_periodo_inicial ? !values.retorna_se_pode_editar_periodo_inicial.pode_editar_periodo_inicial : '' || !podeEditarDadosAssociacao(props.values)}
                                         >
                                             <option value=''>Selecione um período</option>
                                             {listaDePeriodos && listaDePeriodos.map((periodo) =>
@@ -202,7 +215,7 @@ const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitMo
                                                 onChange={visoesService.getPermissoes(['change_encerrar_associacoes']) ? (name, val) => {
                                                     setFieldValue(name, val ? val.toISOString().substr(0, 10) : null)
                                                     }: null}
-                                                disabled={!visoesService.getPermissoes(['change_encerrar_associacoes'])}
+                                                disabled={!visoesService.getPermissoes(['change_encerrar_associacoes']) || !podeEditarDadosAssociacao(props.values)}
                                                 className="form-control"
                                                 minDate={converteDataLocalParaUTC(data_fim_periodo)}
                                                 maxDate={new Date()}
@@ -224,14 +237,16 @@ const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitMo
                                     <div className='col-12'>
                                         <div className="form-group">
                                             <label htmlFor="observacao">Observação</label>
-                                            <input
-                                                type="text"
-                                                value={props.values.observacao}
-                                                name="observacao"
-                                                id="observacao"
-                                                className="form-control"
-                                                onChange={props.handleChange}
-                                            />
+                                                <textarea
+                                                    value={props.values.observacao}
+                                                    onChange={props.handleChange}
+                                                    className="form-control"
+                                                    rows="3"
+                                                    id="observacao"
+                                                    name="observacao"
+                                                    placeholder="Escreva o comentário"
+                                                >
+                                                </textarea>
                                                 <small className="form-text text-muted">
                                                     <FontAwesomeIcon
                                                         style={{fontSize: '12px', marginRight:'4px'}}
