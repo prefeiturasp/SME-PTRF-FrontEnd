@@ -344,7 +344,9 @@ export const ListaDeDespesas = () => {
                         setBuscaUtilizandoFiltroPalavra={setBuscaUtilizandoFiltroPalavra}
                         forcarPrimeiraPagina={setForcarPrimeiraPagina}
                         filtro_informacoes={filtro_informacoes}
+                        set_filtro_informacoes={set_filtro_informacoes}
                         filtro_vinculo_atividades={filtro_vinculo_atividades}
+                        set_filtro_vinculo_atividades={set_filtro_vinculo_atividades}
                         handleChangeFiltroVinculoAtividades={handleChangeFiltroVinculoAtividades}
                         handleChangeFiltroInformacoes={handleChangeFiltroInformacoes}
                     />
