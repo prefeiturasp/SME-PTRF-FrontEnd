@@ -2,10 +2,11 @@ import React, {useEffect, useState} from "react";
 import {UrlsMenuInterno} from "../UrlsMenuInterno";
 import Loading from "../../../../utils/Loading";
 import {MenuInterno} from "../../../Globais/MenuInterno";
-import {getContas, salvarContas} from "../../../../services/escolas/Associacao.service";
+import {getContas, salvarContas, getAssociacao} from "../../../../services/escolas/Associacao.service";
 import {FormDadosDasContas} from "./FormDadosDasContas";
 import {ModalConfirmaSalvar} from "../../../../utils/Modais";
 import {ExportaDadosDaAsssociacao} from "../ExportaDadosAssociacao";
+import { visoesService } from "../../../../services/visoes.service";
 
 export const DadosDasContas = () => {
 
@@ -21,6 +22,7 @@ export const DadosDasContas = () => {
     const [intialValues, setIntialValues] = useState(initial);
     const [showSalvar, setShowSalvar] = useState(false);
     const [errors, setErrors] = useState({});
+    const [stateAssociacao, setStateAssociacao] = useState({})
 
     useEffect(() =>{
         buscaContas();
@@ -33,6 +35,15 @@ export const DadosDasContas = () => {
     const buscaContas = async ()=>{
         let contas = await getContas();
         setIntialValues(contas)
+    };
+
+    useEffect(() => {
+        buscaAssociacao();
+    }, []);
+
+    const buscaAssociacao = async () => {
+        const associacao = await getAssociacao();
+        setStateAssociacao(associacao)
     };
 
     const setaCampoReadonly=(conta) =>{
@@ -84,6 +95,13 @@ export const DadosDasContas = () => {
         }
     };
 
+    const podeEditarDadosMembros = () => {
+        if(visoesService.getPermissoes(['change_associacao']) && stateAssociacao && stateAssociacao.data_de_encerramento && stateAssociacao.data_de_encerramento.pode_editar_dados_associacao_encerrada){
+            return true;
+        }
+        return false;
+    }
+
     return (
         <>
             {loading ? (
@@ -105,6 +123,7 @@ export const DadosDasContas = () => {
                             onSubmit={onSubmit}
                             setaCampoReadonly={setaCampoReadonly}
                             errors={errors}
+                            podeEditarDadosMembros={podeEditarDadosMembros}
                         />
                     </div>
 
