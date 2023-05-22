@@ -8,7 +8,14 @@ import Loading from "../../../utils/Loading";
 import { mantemEstadoAnaliseDre as meapcservice } from "../../../services/mantemEstadoAnaliseDre.service";
 import { visoesService } from "../../../services/visoes.service";
 
-const CardsDevolucoesParaAcertoDaDre = ({prestacao_conta_uuid, analiseAtualUuid=false, setAnaliseAtualUuid, setUltimaAnalise, setPermitirTriggerOnclick=null}) =>{
+const CardsDevolucoesParaAcertoDaDre = ({
+    prestacao_conta_uuid, 
+    analiseAtualUuid=false, 
+    setAnaliseAtualUuid, 
+    setPermitirTriggerOnclick=null,
+    devolucao_atual=null,
+    setDevolucaoAtualSelecionada=null
+}) => {
     const [analisesDePcDevolvidas, setAnalisesDePcDevolvidas] = useState([])
     const [uuidAnalisePcDevolvida, setUuidAnalisePcDevolvida] = useState({})
     const [objetoConteudoCard, setObjetoConteudoCard] = useState({})
@@ -54,30 +61,26 @@ const CardsDevolucoesParaAcertoDaDre = ({prestacao_conta_uuid, analiseAtualUuid=
         setObjetoConteudoCard(obj)
     }, [analisesDePcDevolvidas])
 
-    const handleChecaUltimaAnalise = useCallback((uuid) => {
-        setUltimaAnalise(uuid === retornaUuiUltimaAnalise());
-    }, [analisesDePcDevolvidas]);
-
     const setPrimeiraAnalisePcDevolvida = useCallback(() => {
         if (analiseAtualUuid){
             setAnaliseAtualUuid(analiseAtualUuid)
             setUuidAnalisePcDevolvida(analiseAtualUuid)
             montaObjetoConteudoCard(analiseAtualUuid)
-            handleChecaUltimaAnalise(analiseAtualUuid)
+            verificaSeDevolucaoAtualSelecionada(analiseAtualUuid)
         }else {
             if (analisesDePcDevolvidas && analisesDePcDevolvidas.length > 0){
                 if(dados_analise_dre_usuario_logado && dados_analise_dre_usuario_logado.analise_pc_uuid){
                     setAnaliseAtualUuid(dados_analise_dre_usuario_logado.analise_pc_uuid)
                     setUuidAnalisePcDevolvida(dados_analise_dre_usuario_logado.analise_pc_uuid)
                     montaObjetoConteudoCard(dados_analise_dre_usuario_logado.analise_pc_uuid)
-                    handleChecaUltimaAnalise(dados_analise_dre_usuario_logado.analise_pc_uuid)
+                    verificaSeDevolucaoAtualSelecionada(dados_analise_dre_usuario_logado.analise_pc_uuid)
                 }
                 else{
                     setAnaliseAtualUuid(analisesDePcDevolvidas[0].uuid)
                     setUuidAnalisePcDevolvida(analisesDePcDevolvidas[0].uuid)
                     montaObjetoConteudoCard(analisesDePcDevolvidas[0].uuid)
                     salvaObjetoAnaliseDrePorUsuarioLocalStorage(analisesDePcDevolvidas[0].uuid)
-                    handleChecaUltimaAnalise(analisesDePcDevolvidas[0].uuid)
+                    verificaSeDevolucaoAtualSelecionada(analisesDePcDevolvidas[0].uuid)
                 }
             }
         }
@@ -87,6 +90,17 @@ const CardsDevolucoesParaAcertoDaDre = ({prestacao_conta_uuid, analiseAtualUuid=
     useEffect(()=>{
         setPrimeiraAnalisePcDevolvida()
     }, [setPrimeiraAnalisePcDevolvida])
+
+    const verificaSeDevolucaoAtualSelecionada = useCallback((uuid)=>{
+        if(setDevolucaoAtualSelecionada && devolucao_atual){
+            let analise = analisesDePcDevolvidas.find((elem => elem.uuid === uuid))
+            if(devolucao_atual.uuid === (analise && analise.devolucao_prestacao_conta.uuid)){
+                setDevolucaoAtualSelecionada(true);
+            } else {
+                setDevolucaoAtualSelecionada(false);
+            }
+        }
+    }, [analisesDePcDevolvidas, devolucao_atual]);
 
     const handleChangeSelectAnalisesDePcDevolvidas = useCallback((value, e)=>{
         // Necessário para controlar quando o ref_click_historico.current.click() é disparado
@@ -133,20 +147,6 @@ const CardsDevolucoesParaAcertoDaDre = ({prestacao_conta_uuid, analiseAtualUuid=
         objetoAnaliseDrePorUsuario.analise_pc_uuid = analise_pc_uuid
         meapcservice.setAnaliseDrePorUsuario(visoesService.getUsuarioLogin(), objetoAnaliseDrePorUsuario)
     }
-
-    const retornaUuiUltimaAnalise = useCallback(() => {
-        if (analisesDePcDevolvidas.length === 0) {
-            return null;
-        };
-
-        const analiseRecente = analisesDePcDevolvidas.reduce((a, b) => {
-            const dataAtual = new Date(a.criado_em);
-            const dataSeguinte = new Date(b.criado_em);
-            return dataSeguinte > dataAtual ? b : a;
-        });
-
-        return analiseRecente.uuid;
-    }, [analisesDePcDevolvidas]);
 
     return(
         <>
