@@ -2,9 +2,11 @@ import React from "react";
 import {Column} from "primereact/column";
 import {DataTable} from "primereact/datatable";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faKey} from "@fortawesome/free-solid-svg-icons";
+import {faKey, faInfoCircle} from "@fortawesome/free-solid-svg-icons";
+import useTagInformacaoAssociacaoEncerradaTemplate from "../../../hooks/Globais/TagsInformacoesAssociacoes/useTagInformacaoAssociacaoEncerradaTemplate";
 
-export const ListaDeUnidades = ({listaUnidades, rowsPerPage, acaoAoEscolherUnidade, textoAcaoEscolher}) => {
+export const ListaDeUnidades = ({listaUnidades, rowsPerPage, acaoAoEscolherUnidade, textoAcaoEscolher, setShowModalLegendaInformacao}) => {
+    const tagInformacaoAssociacaoEncerrada = useTagInformacaoAssociacaoEncerradaTemplate()
 
     const unidadeEscolarTemplate = (rowData) => {
         return (
@@ -48,6 +50,21 @@ export const ListaDeUnidades = ({listaUnidades, rowsPerPage, acaoAoEscolherUnida
     };
 
     return (
+        <>
+        <div className="d-flex justify-content-end">
+            <button
+                onClick={()=> setShowModalLegendaInformacao(true)}
+                className="btn btn-link link-green"
+                style={{padding: '0px', textDecoration: 'none'}}
+            >
+                <FontAwesomeIcon
+                    style={{fontSize: '18px', marginRight: "4px", paddingTop: "2px"}}
+                    icon={faInfoCircle}
+                />
+                <span>Legenda informação</span>
+            </button>
+        </div>
+
         <DataTable
             value={listaUnidades}
             className="mt-3"
@@ -64,8 +81,15 @@ export const ListaDeUnidades = ({listaUnidades, rowsPerPage, acaoAoEscolherUnida
             />
             <Column
                 field="nome_com_tipo"
-                header="Unidade escolar"
+                header="Unidade educacional"
                 body={unidadeEscolarTemplate}
+            />
+            <Column
+                field="informacao"
+                header="Informações"
+                className="align-middle text-center"
+                body={tagInformacaoAssociacaoEncerrada}
+                style={{width: '15%'}}
             />
             <Column
                 field="uuid"
@@ -75,5 +99,6 @@ export const ListaDeUnidades = ({listaUnidades, rowsPerPage, acaoAoEscolherUnida
                 style={{width: '20%'}}
             />
         </DataTable>
+        </>
     );
 };
