@@ -139,6 +139,23 @@ const DevolucaoParaAcertos = ({prestacaoDeContas, analisesDeContaDaPrestacao, ca
 
     }, [dataLimiteDevolucao, carregaPrestacaoDeContas, prestacaoDeContas, trataAnalisesDeContaDaPrestacao])
 
+    const handleDevolverParaAssociacao = () => {
+        if(!(possuiHistoricoDeDevolucoes() || possuiAcertosSelecionados())){
+            setShowModalErroDevolverParaAcerto(true);
+            setTextoErroDevolverParaAcerto("Não é permitido devolver PC sem acertos indicados.");
+        } else {
+            setShowModalConfirmaDevolverParaAcerto(true);
+        }
+    };
+
+    const possuiHistoricoDeDevolucoes = () => {
+        return (prestacaoDeContas && prestacaoDeContas.devolucoes_da_prestacao && prestacaoDeContas.devolucoes_da_prestacao.length > 0);
+    };
+    
+    const possuiAcertosSelecionados = useCallback( () => {
+        return totalLancamentosAjustes > 0 || totalDocumentosAjustes > 0 || totalAnalisesDeContaDaPrestacao > 0
+    }, [totalLancamentosAjustes, totalDocumentosAjustes, totalAnalisesDeContaDaPrestacao]);
+
     return(
         <>
             <hr className='mt-4 mb-3'/>
@@ -160,7 +177,7 @@ const DevolucaoParaAcertos = ({prestacaoDeContas, analisesDeContaDaPrestacao, ca
                                 />
                             </div>
                             <div>
-                                <Link onClick={ (totalLancamentosAjustes > 0 || totalDocumentosAjustes > 0 || totalAnalisesDeContaDaPrestacao > 0) || (prestacaoDeContas && prestacaoDeContas.devolucoes_da_prestacao && prestacaoDeContas.devolucoes_da_prestacao.length > 0) ? null : (event) => event.preventDefault() }
+                                <Link onClick={(possuiHistoricoDeDevolucoes() || possuiAcertosSelecionados()) ? null : (event) => event.preventDefault()}
                                         to={{
                                             pathname: `/dre-detalhe-prestacao-de-contas-resumo-acertos/${prestacaoDeContas.uuid}`,
                                             state: {
@@ -170,9 +187,9 @@ const DevolucaoParaAcertos = ({prestacaoDeContas, analisesDeContaDaPrestacao, ca
                                             }
                                         }}
                                         className="btn btn-outline-success mr-2"
-                                        disabled={ !((totalLancamentosAjustes > 0 || totalDocumentosAjustes > 0 || totalAnalisesDeContaDaPrestacao > 0) || (prestacaoDeContas && prestacaoDeContas.devolucoes_da_prestacao && prestacaoDeContas.devolucoes_da_prestacao.length > 0)) }
-                                        readOnly={ !((totalLancamentosAjustes > 0 || totalDocumentosAjustes > 0 || totalAnalisesDeContaDaPrestacao > 0) || (prestacaoDeContas && prestacaoDeContas.devolucoes_da_prestacao && prestacaoDeContas.devolucoes_da_prestacao.length > 0)) }
-                                        title={(prestacaoDeContas && prestacaoDeContas.devolucoes_da_prestacao && prestacaoDeContas.devolucoes_da_prestacao.length > 0) ? null: `Esta PC não possui histórico de devoluções.` }
+                                        disabled={!(possuiHistoricoDeDevolucoes() || possuiAcertosSelecionados())}
+                                        readOnly={!(possuiHistoricoDeDevolucoes() || possuiAcertosSelecionados())}
+                                        title={possuiHistoricoDeDevolucoes() ? null: `Esta PC não possui histórico de devoluções.` }
                                 >
                                     Ver resumo
                                 </Link>
@@ -180,7 +197,7 @@ const DevolucaoParaAcertos = ({prestacaoDeContas, analisesDeContaDaPrestacao, ca
                             <div>
                                 <button
                                     disabled={!dataLimiteDevolucao || btnDevolverParaAcertoDisabled || !editavel}
-                                    onClick={()=>setShowModalConfirmaDevolverParaAcerto(true)}
+                                    onClick={handleDevolverParaAssociacao}
                                     className="btn btn-success"
                                 >
                                     Devolver para Associação
