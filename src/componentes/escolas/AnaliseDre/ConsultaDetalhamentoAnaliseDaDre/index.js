@@ -25,6 +25,7 @@ const ConsultaDetalhamentoAnaliseDaDre = () => {
     const [analisesDePcDevolvidas, setAnalisesDePcDevolvidas] = useState([])
     const [openModalAcertos, setOpenModalAcertos] = useState(false)
     const [analiseAtualUuid, setAnaliseAtualUuid] = useState('')
+    const [devolucaoAtualSelecionada, setDevolucaoAtualSelecionada] = useState(false)
     const [periodoFormatado, setPeriodoFormatado] = useState(null)
 
     const totalAnalisesDePcDevolvidas = useMemo(() => analisesDePcDevolvidas.length, [analisesDePcDevolvidas]);
@@ -200,6 +201,7 @@ const ConsultaDetalhamentoAnaliseDaDre = () => {
                         podeAbrirModalAcertos={podeAbrirModalAcertos}
                         prestacaoContaUuid={prestacao_conta_uuid}
                         statusPc={prestacaoDeContas.status}
+                        devolucaoAtualSelecionada={devolucaoAtualSelecionada}
                     />
                     <TextoSuperior
                         retornaTextoSuperior={retornaTextoSuperior}
@@ -211,7 +213,9 @@ const ConsultaDetalhamentoAnaliseDaDre = () => {
                             <CardsDevolucoesParaAcertoDaDre
                                 prestacao_conta_uuid={prestacao_conta_uuid}
                                 setAnaliseAtualUuid={setAnaliseAtualUuid}
-                                />
+                                devolucao_atual={prestacaoDeContas.devolucao_atual}
+                                setDevolucaoAtualSelecionada={setDevolucaoAtualSelecionada}
+                            />
                             <ExibeAcertosEmLancamentosEDocumentosPorConta
                                 prestacaoDeContasUuid={prestacao_conta_uuid}
                                 analiseAtualUuid={analiseAtualUuid}
