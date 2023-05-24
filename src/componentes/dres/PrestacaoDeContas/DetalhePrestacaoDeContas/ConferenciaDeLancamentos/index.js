@@ -8,7 +8,7 @@ import {TabsConferenciaDeLancamentos} from "./TabsConferenciaDeLancamentos";
 import {visoesService} from "../../../../../services/visoes.service";
 import {mantemEstadoAcompanhamentoDePc as meapcservice} from "../../../../../services/mantemEstadoAcompanhamentoDePc.service";
 
-const ConferenciaDeLancamentos = ({prestacaoDeContas, editavel=true}) =>{
+const ConferenciaDeLancamentos = ({prestacaoDeContas, onCarregaLancamentosParaConferencia=null, editavel=true}) =>{
     const [lancamentosParaConferencia, setLancamentosParaConferencia] = useState([])
     const [loadingLancamentosParaConferencia, setLoadingLancamentosParaConferencia] = useState(true)
     const [contaUuid, setContaUuid] = useState('')
@@ -129,6 +129,7 @@ const ConferenciaDeLancamentos = ({prestacaoDeContas, editavel=true}) =>{
         }else {
             setLancamentosParaConferencia([])
         }
+        onCarregaLancamentosParaConferencia && onCarregaLancamentosParaConferencia();
         setLoadingLancamentosParaConferencia(false)
     }
 
