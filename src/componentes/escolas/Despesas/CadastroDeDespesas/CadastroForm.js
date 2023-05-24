@@ -1019,7 +1019,7 @@ export const CadastroForm = ({verbo_http}) => {
     const onCalendarCloseDataPagamento = async (values, setFieldValue) => {
         try {
             let {data_transacao, associacao} = values
-            associacao = associacao && associacao.uuid ? associacao.uuid : null
+            associacao = associacao && associacao.uuid ? associacao.uuid : associacao
             if (data_transacao) {
                 await getValidarDataDaDespesa(associacao, data_transacao.toISOString().substring(0, 10))
             }
@@ -1052,7 +1052,7 @@ export const CadastroForm = ({verbo_http}) => {
     const onCalendarCloseDataDoDocumento = async(values, setFieldValue) => {
         try {
             let {data_documento, associacao} = values
-            associacao = associacao && associacao.uuid ? associacao.uuid : null
+            associacao = associacao && associacao.uuid ? associacao.uuid : associacao
             await getValidarDataDaDespesa(associacao, data_documento.toISOString().substring(0, 10))
             setFormErrors(prevState => ({...prevState, data_documento: ''}))
                        
