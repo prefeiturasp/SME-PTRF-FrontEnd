@@ -201,8 +201,8 @@ export const getTabelaCategoriaDocumentos = async () => {
     return (await api.get(`api/tipos-acerto-documento/tabelas/`, authHeader)).data
 };
 
-export const getFiltros = async (nome='', acao__uuid, status) => {
-    return (await api.get(`/api/acoes-associacoes/?nome=${nome}${acao__uuid ? '&acao__uuid='+acao__uuid : ''}${status ? '&status='+status : ''}`, authHeader)).data
+export const getFiltros = async (nome='', acao__uuid, status, filtro_informacoes) => {
+    return (await api.get(`/api/acoes-associacoes/?nome=${nome}${acao__uuid ? '&acao__uuid='+acao__uuid : ''}${status ? '&status='+status : ''}${filtro_informacoes ? `&filtro_informacoes=${filtro_informacoes}` : ''}`, authHeader)).data
 };
 
 export const postAddAcaoAssociacao = async (payload) => {
