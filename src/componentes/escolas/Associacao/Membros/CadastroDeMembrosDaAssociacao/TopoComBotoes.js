@@ -1,6 +1,6 @@
 import React from "react";
 
-export const TopoComBotoes = ({onSubmitEditarMembro, visoesService, btnSalvarReadOnly, cpfJaUsado, redirectListaDeMembrosDaAssociacao, podeSalvarDadosMembros}) => {
+export const TopoComBotoes = ({onSubmitEditarMembro, btnSalvarReadOnly, cpfJaUsado, redirectListaDeMembrosDaAssociacao, podeEditarDadosMembros}) => {
 
     return (
         <>
@@ -18,7 +18,7 @@ export const TopoComBotoes = ({onSubmitEditarMembro, visoesService, btnSalvarRea
                 </div>
                 <div className="p-2 bd-highlight">
                     <button
-                        disabled={cpfJaUsado || btnSalvarReadOnly || !podeSalvarDadosMembros()}
+                        disabled={cpfJaUsado || btnSalvarReadOnly || !podeEditarDadosMembros()}
                         onClick={onSubmitEditarMembro}
                         className="btn btn btn-success"
                     >
