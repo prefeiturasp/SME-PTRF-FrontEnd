@@ -22,6 +22,7 @@ import Loading from "../../../../../utils/Loading";
 import {ModalFormAcoesDaAssociacao} from "./ModalFormAcoesDasAssociacoes";
 import {ModalConfirmDeleteAcaoAssociacao} from "./ModalConfirmDeleteAcaoAssociacao";
 import {ModalInfoQtdeRateiosReceitasAcao} from "./ModalInfoQtdeRateiosReceitasAcao";
+import { ModalLegendaInformacaoAssociacao } from "../../../../Globais/LegendaInformaçãoAssociacao/ModalLegendaInformacaoAssociacao";
 
 export const AcoesDasAssociacoes = () => {
 
@@ -36,6 +37,7 @@ export const AcoesDasAssociacoes = () => {
     const [stateFiltros, setStateFiltros] = useState(initialStateFiltros);
     const [listaTiposDeAcao, setListaTiposDeAcao] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [showModalLegendaInformacao, setShowModalLegendaInformacao] = useState(false);
 
     const carregaTodasAsAcoes = useCallback(async () => {
         setLoading(true);
@@ -251,7 +253,17 @@ export const AcoesDasAssociacoes = () => {
                             statusTemplate={statusTemplate}
                             dataTemplate={dataTemplate}
                             acoesTemplate={acoesTemplate}
+                            setShowModalLegendaInformacao={setShowModalLegendaInformacao}
                         />
+                        <section>
+                            <ModalLegendaInformacaoAssociacao
+                                show={showModalLegendaInformacao}
+                                primeiroBotaoOnclick={() => setShowModalLegendaInformacao(false)}
+                                titulo="Legenda Informação"
+                                primeiroBotaoTexto="Fechar"
+                                primeiroBotaoCss="outline-success"                            
+                            />
+                        </section>
                     </>
                 }
                 <section>
