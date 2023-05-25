@@ -1,11 +1,13 @@
 import React from "react";
+import { Select } from 'antd';
+const { Option } = Select;
 
-export const Filtros = ({stateFiltros, handleChangeFiltros, handleSubmitFiltros, limpaFiltros, listaTiposDeAcao}) =>{
+export const Filtros = ({stateFiltros, handleChangeFiltros, handleSubmitFiltros, limpaFiltros, listaTiposDeAcao, handleOnChangeMultipleSelectStatus, tabelaAssociacoes}) =>{
     return(
         <>
             <form>
                 <div className="form-row">
-                    <div className="form-group col-md-6">
+                    <div className="form-group col-md-3">
                         <label htmlFor="filtrar_por_nome_cod_eol">Filtrar por nome ou código EOL</label>
                         <input
                             value={stateFiltros.filtrar_por_nome_cod_eol}
@@ -45,6 +47,24 @@ export const Filtros = ({stateFiltros, handleChangeFiltros, handleSubmitFiltros,
                             <option value='INATIVA'>Inativa</option>
                         </select>
                     </div>
+                    <div className="form-group col-md-3">
+                        <label htmlFor="filtro_informacoes">Filtrar por informações</label>
+                        <Select
+                            mode="multiple"
+                            allowClear
+                            style={{ width: '100%' }}
+                            placeholder="Selecione as informações"
+                            name="filtro_informacoes"
+                            id="filtro_informacoes"
+                            value={stateFiltros.filtro_informacoes}
+                            onChange={handleOnChangeMultipleSelectStatus}
+                            className='multiselect-lista-valores-reprogramados'
+                        >
+                            {tabelaAssociacoes.filtro_informacoes && tabelaAssociacoes.filtro_informacoes.length > 0 && tabelaAssociacoes.filtro_informacoes.map(item => (
+                                <Option key={item.id} value={item.id}>{item.nome}</Option>
+                            ))}
+                        </Select>
+                    </div>                    
                 </div>
                 <div className="d-flex  justify-content-end mt-n2">
                     <button onClick={()=>limpaFiltros()} type="button" className="btn btn btn-outline-success mt-2 mr-2">Limpar</button>
