@@ -29,36 +29,20 @@ export const getDespesa = async (idDespesa) => {
     return (await api.get(`api/despesas/${idDespesa}`, authHeader)).data
 };
 
-export const getListaDespesas = async uuid => {
+export const getListaDespesas = async () => {
     return (await api.get( `api/despesas/?associacao__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader)).data
-};
-
-export const getListaDespesasOrdenadaPorImposto = async (ordenar_por_imposto) => {
-    return (await api.get( `api/despesas/ordenar-por-imposto/?associacao__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}&ordenar_por_imposto=${ordenar_por_imposto}`, authHeader)).data
 };
 
 export const getListaDespesasPaginacao = async (page) => {
     return (await api.get( `api/despesas/?associacao__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}&page=${page}`, authHeader)).data
 };
 
-export const getListaDespesasOrdenadaPorImpostoPaginacao = async (ordenar_por_imposto, page) => {
-    return (await api.get( `api/despesas/ordenar-por-imposto/?associacao__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}&ordenar_por_imposto=${ordenar_por_imposto}&page=${page}`, authHeader)).data
+export const ordenacaoDespesas = async (palavra, aplicacao_recurso, acao_associacao__uuid, despesa__status, fornecedor, data_inicio, data_fim, conta_associacao__uuid, filtro_vinculo_atividades, filtro_informacoes, ordenar_por_numero_do_documento='', ordenar_por_data_especificacao='', ordenar_por_valor='', ordenarPorImposto=false) => {
+    return (await api.get(`api/despesas/?search=${palavra}&aplicacao_recurso=${aplicacao_recurso}&rateios__acao_associacao__uuid=${acao_associacao__uuid}&status=${despesa__status}&fornecedor=${fornecedor}${data_inicio ? '&data_inicio='+data_inicio : ""}${data_fim ? '&data_fim='+data_fim : ""}&rateios__conta_associacao__uuid=${conta_associacao__uuid}&filtro_vinculo_atividades=${filtro_vinculo_atividades}&filtro_informacoes=${filtro_informacoes}&associacao__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}${ordenar_por_numero_do_documento ? "&ordenar_por_numero_do_documento="+ordenar_por_numero_do_documento : ""}${ordenar_por_data_especificacao ? "&ordenar_por_data_especificacao="+ordenar_por_data_especificacao : ""}${ordenar_por_valor ? "&ordenar_por_valor="+ordenar_por_valor : ""}${ordenarPorImposto ? "&ordenar_por_imposto="+ordenarPorImposto : ""}`, authHeader)).data
 };
 
-export const filtroPorPalavraDespesas = async (palavra) => {
-    return (await api.get(`api/despesas/?search=${palavra}&associacao__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader)).data
-};
-
-export const filtroPorPalavraDespesasPaginacao = async (palavra, page) => {
-    return (await api.get(`api/despesas/?search=${palavra}&associacao__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}&page=${page}`, authHeader)).data
-};
-
-export const filtrosAvancadosDespesas = async (palavra, aplicacao_recurso, acao_associacao__uuid, despesa__status, fornecedor, data_inicio, data_fim, conta_associacao__uuid, filtro_vinculo_atividades, filtro_informacoes) => {
-    return (await api.get(`api/despesas/?search=${palavra}&aplicacao_recurso=${aplicacao_recurso}&rateios__acao_associacao__uuid=${acao_associacao__uuid}&status=${despesa__status}&fornecedor=${fornecedor}${data_inicio ? '&data_inicio='+data_inicio : ""}${data_fim ? '&data_fim='+data_fim : ""}&rateios__conta_associacao__uuid=${conta_associacao__uuid}&filtro_vinculo_atividades=${filtro_vinculo_atividades}&filtro_informacoes=${filtro_informacoes}&associacao__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader)).data
-};
-
-export const filtrosAvancadosDespesasPaginacao = async (palavra, aplicacao_recurso, acao_associacao__uuid, despesa__status, fornecedor, data_inicio, data_fim, conta_associacao__uuid, filtro_vinculo_atividades, filtro_informacoes, page) => {
-    return (await api.get(`api/despesas/?search=${palavra}&aplicacao_recurso=${aplicacao_recurso}&rateios__acao_associacao__uuid=${acao_associacao__uuid}&status=${despesa__status}&fornecedor=${fornecedor}${data_inicio ? '&data_inicio='+data_inicio : ""}${data_fim ? '&data_fim='+data_fim : ""}&rateios__conta_associacao__uuid=${conta_associacao__uuid}&filtro_vinculo_atividades=${filtro_vinculo_atividades}&filtro_informacoes=${filtro_informacoes}&associacao__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}&page=${page}`, authHeader)).data
+export const ordenacaoDespesasPaginacao = async (palavra, aplicacao_recurso, acao_associacao__uuid, despesa__status, fornecedor, data_inicio, data_fim, conta_associacao__uuid, filtro_vinculo_atividades, filtro_informacoes, ordenar_por_numero_do_documento= '', ordenar_por_data_especificacao='', ordenar_por_valor='', ordenarPorImposto=false, page) => {
+    return (await api.get(`api/despesas/?search=${palavra}&aplicacao_recurso=${aplicacao_recurso}&rateios__acao_associacao__uuid=${acao_associacao__uuid}&status=${despesa__status}&fornecedor=${fornecedor}${data_inicio ? '&data_inicio='+data_inicio : ""}${data_fim ? '&data_fim='+data_fim : ""}&rateios__conta_associacao__uuid=${conta_associacao__uuid}&filtro_vinculo_atividades=${filtro_vinculo_atividades}&filtro_informacoes=${filtro_informacoes}&associacao__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}${ordenar_por_numero_do_documento ? "&ordenar_por_numero_do_documento="+ordenar_por_numero_do_documento : ""}${ordenar_por_data_especificacao ? "&ordenar_por_data_especificacao="+ordenar_por_data_especificacao : ""}${ordenar_por_valor ? "&ordenar_por_valor="+ordenar_por_valor : ""}${ordenarPorImposto ? "&ordenar_por_imposto="+ordenarPorImposto : ""}&page=${page}`, authHeader)).data
 };
 
 export const criarDespesa = async (payload) => {
@@ -83,10 +67,6 @@ export const getNomeRazaoSocial = async (cpf_cnpj) => {
     }else {
         return ""
     }
-};
-
-export const getPeriodoFechadoDespesa = async (palavra, aplicacao_recurso, acao_associacao__uuid, despesa__status) => {
-    return (await api.get(`api/rateios-despesas/totais/?search=${palavra}&aplicacao_recurso=${aplicacao_recurso}&acao_associacao__uuid=${acao_associacao__uuid}&despesa__status=${despesa__status}&associacao__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader)).data
 };
 
 export const getDespesaCadastrada = async (tipo_documento, numero_documento, cpf_cnpj_fornecedor, despesa_uuid=null) => {
