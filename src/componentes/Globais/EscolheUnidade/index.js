@@ -5,7 +5,7 @@ import Loading from "../../../utils/Loading";
 import {FiltroDeUnidades} from "./FiltroDeUnidades";
 import Img404 from "../../../assets/img/img-404.svg";
 import {MsgImgCentralizada} from "../Mensagens/MsgImgCentralizada";
-import { ModalLegendaInformacaoAssociacao } from "../LegendaInformaçãoAssociacao/ModalLegendaInformacaoAssociacao";
+import { ModalLegendaInformacaoAssociacao } from "../../Globais/ModalLegendaInformacao/ModalLegendaInformacaoAssociacao";
 
 export const EscolheUnidade = (props) =>{
 

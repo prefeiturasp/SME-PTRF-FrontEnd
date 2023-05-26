@@ -23,15 +23,12 @@ import Loading from "../../../../utils/Loading";
 import {MsgImgCentralizada} from "../../../Globais/Mensagens/MsgImgCentralizada";
 import Img404 from "../../../../assets/img/img-404.svg";
 import {MsgImgLadoDireito} from "../../../Globais/Mensagens/MsgImgLadoDireito";
-import useTagInformacaoTemplate
-    from "../../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useTagInformacaoTemplate";
 import {LegendaInformacao} from "./LegendaInformacao";
+import { TagInformacao } from "../../../Globais/TagInformacao";
 
 export const ListaDeDespesas = () => {
 
     const divisorPaginas = 10
-    const tagInformacao = useTagInformacaoTemplate()
-
 
     const initFiltrosAvancados = {
         filtrar_por_termo: "",
@@ -392,7 +389,8 @@ export const ListaDeDespesas = () => {
                                                 rowSpan={despesa.rateios.length > 0 ? despesa.rateios.length + 1 : 2}>
                                                 {tipoLancamentoTemplate(despesa)}
                                             </td>
-                                            <td rowSpan={despesa.rateios.length > 0 ? despesa.rateios.length + 1 : 2}>{tagInformacao(despesa)}</td>
+                                        
+                                            <td rowSpan={despesa.rateios.length > 0 ? despesa.rateios.length + 1 : 2}>{TagInformacao(despesa)}</td>
                                         </tr>
 
 
