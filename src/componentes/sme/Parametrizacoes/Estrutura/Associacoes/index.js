@@ -25,7 +25,7 @@ import {BtnAddAssociacoes} from "./BtnAddAssociacoes";
 import {ModalConfirmDeleteAssociacao} from "./ModalConfirmDeleteAssociacao";
 import {ModalInfoExclusaoNaoPermitida} from "./ModalInfoExclusaoNaoPermitida";
 import { ModalConfirmUpdateObservacao } from "./ModalConfirmUpdateObservacao";
-import { ModalLegendaInformacaoAssociacao } from "../../../../Globais/LegendaInformaçãoAssociacao/ModalLegendaInformacaoAssociacao";
+import { ModalLegendaInformacaoAssociacao } from "../../../../Globais/ModalLegendaInformacao/ModalLegendaInformacaoAssociacao";
 import Loading from "../../../../../utils/Loading";
 
 export const Associacoes = () => {

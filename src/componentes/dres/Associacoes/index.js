@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {Redirect} from "react-router-dom";
 import {getTabelaAssociacoes, getAssociacoesPorUnidade, filtrosAssociacoes, getAssociacao, getContasAssociacao} from "../../../services/dres/Associacoes.service";
-import { ModalLegendaInformacaoAssociacao } from "../../Globais/LegendaInformaçãoAssociacao/ModalLegendaInformacaoAssociacao";
+import { ModalLegendaInformacaoAssociacao } from "../../Globais/ModalLegendaInformacao/ModalLegendaInformacaoAssociacao";
 import "./associacoes.scss"
 import {TabelaAssociacoes} from "./TabelaAssociacoes";
 import {FiltrosAssociacoes} from "./FiltrosAssociacoes";

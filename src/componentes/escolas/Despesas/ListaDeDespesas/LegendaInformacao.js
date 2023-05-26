@@ -3,14 +3,18 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
 import {
     ModalLegendaInformacao
-} from "../../../dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeLancamentos/Modais/ModalLegendaInformacao";
+} from "../../../Globais/ModalLegendaInformacao/ModalLegendaInformacaoDespesa"
 
 export const LegendaInformacao = ({showModalLegendaInformacao, setShowModalLegendaInformacao}) => {
     return (
-        <div className='text-right'>
+        <>
 
             <FontAwesomeIcon
-                style={{fontSize: '18px', marginRight: "8px", color: '#00585D'}}
+                style={{
+                    fontSize: '18px',
+                    marginRight: "2px",
+                    color: '#00585D'
+            }}
                 icon={faInfoCircle}
             />
             <button
@@ -21,7 +25,9 @@ export const LegendaInformacao = ({showModalLegendaInformacao, setShowModalLegen
                     outline: 'none',
                     border: 0,
                     background: 'inherit',
-                    padding: '4px'
+                    padding: '4px',
+                    marginRight: '5px'
+
                 }}
             >
                 Legenda informação
@@ -34,7 +40,7 @@ export const LegendaInformacao = ({showModalLegendaInformacao, setShowModalLegen
                 primeiroBotaoTexto="Fechar"
                 primeiroBotaoCss="outline-success"
             />
-        </div>
+        </>
     )
 
 }

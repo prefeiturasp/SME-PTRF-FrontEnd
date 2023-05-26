@@ -1,12 +1,44 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {Column} from "primereact/column";
 import {DataTable} from "primereact/datatable";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
-import useTagInformacaoAssociacaoEncerradaTemplate from "../../../hooks/Globais/TagsInformacoesAssociacoes/useTagInformacaoAssociacaoEncerradaTemplate";
+import { TagInformacao } from "../../Globais/TagInformacao";
 
 export const TabelaAssociacoes = ({associacoes, rowsPerPage, unidadeEscolarTemplate, acoesTemplate, setShowModalLegendaInformacao}) =>{
-    const tagInformacaoAssociacaoEncerrada = useTagInformacaoAssociacaoEncerradaTemplate()
+    const [associacaoComTag, setAssociacaoComTag] = useState([]);
+
+    const adicionaTagsNasAssociacoes = (associacoesSemTags) => {
+        let tagsTabelaAssociacao = ["Encerrada"]
+
+        if(associacoesSemTags.length > 0) {
+            let assComTag = associacoesSemTags.map((ass) => {
+                ass.informacoes = []
+
+                tagsTabelaAssociacao.forEach(tag => {
+                    if(tag === "Encerrada" && ass.data_de_encerramento && ass.tooltip_data_encerramento) {
+                        ass.informacoes.push({
+                            tag_id: 7,
+                            tag_nome: "Associação encerrada",
+                            tag_hint: ass.tooltip_data_encerramento
+                        })
+                    }
+                    
+                });
+
+                return ass;
+            })
+
+            return assComTag;
+        }
+        return []
+    }
+
+    useEffect(() => {
+        let associacoesTags = adicionaTagsNasAssociacoes(associacoes);
+        setAssociacaoComTag(associacoesTags)
+    }, [associacoes])
+
 
   return(
     <>
@@ -25,9 +57,9 @@ export const TabelaAssociacoes = ({associacoes, rowsPerPage, unidadeEscolarTempl
         </div>
 
         <DataTable
-            value={associacoes}
+            value={associacaoComTag}
             className="mt-3 container-tabela-associacoes"
-            paginator={associacoes.length > rowsPerPage}
+            paginator={associacaoComTag.length > rowsPerPage}
             rows={rowsPerPage}
             paginatorTemplate="PrevPageLink PageLinks NextPageLink"
             autoLayout={true}
@@ -44,7 +76,7 @@ export const TabelaAssociacoes = ({associacoes, rowsPerPage, unidadeEscolarTempl
                 header="Informações"
                 style={{width: '15%'}}
                 className="align-middle text-center"
-                body={tagInformacaoAssociacaoEncerrada}
+                body={(rowData) => TagInformacao(rowData)}
             />
             <Column
                 field="uuid"
