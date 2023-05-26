@@ -85,8 +85,7 @@ const CadastroDeMembrosDaAssociacao = () => {
                 telefone: infoMembroSelecionado.infos.telefone ? infoMembroSelecionado.infos.telefone : "",
                 cep: infoMembroSelecionado.infos.cep ? infoMembroSelecionado.infos.cep : "",
                 bairro: infoMembroSelecionado.infos.bairro ? infoMembroSelecionado.infos.bairro : "",
-                endereco: infoMembroSelecionado.infos.endereco ? infoMembroSelecionado.infos.endereco : "",
-                pode_editar_dados_associacao_encerrada: infoMembroSelecionado.infos.associacao.data_de_encerramento.pode_editar_dados_associacao_encerrada ? infoMembroSelecionado.infos.associacao.data_de_encerramento.pode_editar_dados_associacao_encerrada : false
+                endereco: infoMembroSelecionado.infos.endereco ? infoMembroSelecionado.infos.endereco : ""
             };
         } else {
             init = {
@@ -535,14 +534,7 @@ const CadastroDeMembrosDaAssociacao = () => {
         }
     }
 
-    const podeEditarDadosMembros = (membro) => {
-        if(visoesService.getPermissoes(['change_associacao']) && membro && membro.pode_editar_dados_associacao_encerrada){
-            return true;
-        }
-        return false;
-    }
-
-    const podeSalvarDadosMembros = () => {
+    const podeEditarDadosMembros = () => {
         if(visoesService.getPermissoes(['change_associacao']) && stateAssociacao && stateAssociacao.data_de_encerramento && stateAssociacao.data_de_encerramento.pode_editar_dados_associacao_encerrada){
             return true;
         }
@@ -568,7 +560,7 @@ const CadastroDeMembrosDaAssociacao = () => {
                             visoesService={visoesService}
                             btnSalvarReadOnly={btnSalvarReadOnly}
                             cpfJaUsado={cpfJaUsado}
-                            podeSalvarDadosMembros={podeSalvarDadosMembros}
+                            podeEditarDadosMembros={podeEditarDadosMembros}
                         />
                         <FormCadastroDeMembrosDaAssociacao
                             visoesService={visoesService}
