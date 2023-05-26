@@ -1,11 +1,7 @@
 import React, {useCallback, useEffect, useState} from "react";
 import {
-    filtroPorPalavraDespesas,
-    filtroPorPalavraDespesasPaginacao,
-    filtrosAvancadosDespesas,
-    filtrosAvancadosDespesasPaginacao,
-    getListaDespesas, getListaDespesasOrdenadaPorImposto, getListaDespesasOrdenadaPorImpostoPaginacao,
-    getListaDespesasPaginacao
+    getListaDespesas,
+    getListaDespesasPaginacao, ordenacaoDespesas, ordenacaoDespesasPaginacao
 } from "../../../../services/escolas/Despesas.service";
 import {getSomaDosTotais} from "../../../../services/escolas/RateiosDespesas.service";
 import {SomaDasDespesas} from "../SomaDasDespesas";
@@ -14,7 +10,6 @@ import {Route} from "react-router-dom";
 import {visoesService} from "../../../../services/visoes.service";
 import {redirect} from "../../../../utils/redirect";
 import {Col, Row} from "reactstrap";
-import {FormFiltroPorPalavra} from "../../../Globais/FormFiltroPorPalavra";
 import {gerarUuid} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import {Paginacao} from "./Paginacao";
 import {FormFiltrosAvancados} from "../FormFiltrosAvancados";
@@ -26,6 +21,10 @@ import {MsgImgLadoDireito} from "../../../Globais/Mensagens/MsgImgLadoDireito";
 import useTagInformacaoTemplate
     from "../../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useTagInformacaoTemplate";
 import {LegendaInformacao} from "./LegendaInformacao";
+import {Ordenacao} from "./Ordenacao";
+import {tr} from "date-fns/locale";
+import {LimparArgumentosOrdenacao} from "./LimparOrdenacao";
+import {FormFiltroPorEspecificacaoMaterialServico} from "../FormFiltroPorEspecificacaoMaterialServico";
 
 export const ListaDeDespesas = () => {
 
@@ -45,29 +44,33 @@ export const ListaDeDespesas = () => {
         vinculo_atividade: "",
     }
 
+    const initOrdenacao = {
+        ordenar_por_numero_do_documento: '',
+        ordenar_por_data_especificacao: '',
+        ordenar_por_valor: '',
+        ordenar_por_imposto: false,
+    }
+
     const [despesas, setDespesas] = useState([])
     const [totalDePaginas, setTotalDePaginas] = useState(0)
     const [somaDosTotais, setSomaDosTotais] = useState({})
-    const [inputPesquisa, setInputPesquisa] = useState('')
     const [btnMaisFiltros, setBtnMaisFiltros] = useState(false)
-    const [buscaUtilizandoFiltro, setBuscaUtilizandoFiltro] = useState(false)
-    const [buscaUtilizandoFiltroAvancado, setBuscaUtilizandoFiltroAvancado] = useState(false)
-    const [buscaUtilizandoFiltroPalavra, setBuscaUtilizandoFiltroPalavra] = useState(false)
-    const [buscaUtilizandoOrdenacaoPorImposto, setBuscaUtilizandoOrdenacaoPorImposto] = useState(false)
     const [paginacaoAtual, setPaginacaoAtual] = useState(1)
     const [forcarPrimeiraPagina, setForcarPrimeiraPagina] = useState('')
     const [filtrosAvancados, setFiltrosAvancados] = useState(initFiltrosAvancados)
-    const [ordenarPorImposto, setOrdenarPorImposto] = useState(false)
     const [loading, setLoading] = useState(true)
     const [filtro_informacoes, set_filtro_informacoes] = useState([])
     const [filtro_vinculo_atividades, set_filtro_vinculo_atividades] = useState([])
     const [showModalLegendaInformacao, setShowModalLegendaInformacao] = useState(false)
+    const [showModalOrdenar, setShowModalOrdenar] = useState(false)
+    const [camposOrdenacao, setCamposOrdenacao] = useState(initOrdenacao)
+    const [buscaUtilizandoOrdenacao, setBuscaUtilizandoOrdenacao] = useState(false)
 
-    const handleChangeFiltroInformacoes = (value) =>{
+    const handleChangeFiltroInformacoes = (value) => {
         set_filtro_informacoes([...value]);
     }
 
-    const handleChangeFiltroVinculoAtividades = (value) =>{
+    const handleChangeFiltroVinculoAtividades = (value) => {
         set_filtro_vinculo_atividades([...value]);
     }
 
@@ -94,73 +97,6 @@ export const ListaDeDespesas = () => {
         setTotalDePaginas(Math.ceil((numeroDePaginas) / divisorPaginas))
     }
 
-    const buscaDespesasFiltrosPorPalavra = async () => {
-        setForcarPrimeiraPagina(gerarUuid)
-        let lista_retorno_api = await filtroPorPalavraDespesas(inputPesquisa)
-        let results = lista_retorno_api.results
-        setDespesas(results)
-        let numeroDePaginas = lista_retorno_api.count;
-        setTotalDePaginas(Math.ceil((numeroDePaginas) / divisorPaginas))
-        setLoading(false)
-    }
-
-    const buscaDespesasFiltrosPorPalavraPaginacao = async (page) => {
-        setPaginacaoAtual(page)
-        let lista_retorno_api = await filtroPorPalavraDespesasPaginacao(this.state.inputPesquisa, page)
-        let results = lista_retorno_api.results
-        setDespesas(results)
-        let numeroDePaginas = lista_retorno_api.count;
-        setTotalDePaginas(Math.ceil((numeroDePaginas) / divisorPaginas))
-    }
-
-    const buscaDespesasFiltrosAvancados = async () => {
-        setForcarPrimeiraPagina(gerarUuid)
-        let data_inicio = filtrosAvancados.data_inicio ? moment(new Date(filtrosAvancados.data_inicio), "YYYY-MM-DD").format("YYYY-MM-DD") : null;
-        let data_fim = filtrosAvancados.data_fim ? moment(new Date(filtrosAvancados.data_fim), "YYYY-MM-DD").format("YYYY-MM-DD") : null;
-        let lista_retorno_api = await filtrosAvancadosDespesas(filtrosAvancados.filtrar_por_termo, filtrosAvancados.aplicacao_recurso, filtrosAvancados.acao_associacao, filtrosAvancados.despesa_status, filtrosAvancados.fornecedor, data_inicio, data_fim, filtrosAvancados.conta_associacao, filtro_vinculo_atividades, filtro_informacoes);
-        let results = lista_retorno_api.results
-        setDespesas(results)
-        let numeroDePaginas = lista_retorno_api.count;
-        setTotalDePaginas(Math.ceil((numeroDePaginas) / divisorPaginas))
-        setLoading(false)
-    }
-
-    const buscaDespesasFiltrosAvancadosPaginacao = async (page) => {
-        setPaginacaoAtual(page)
-        let data_inicio = filtrosAvancados.data_inicio ? moment(new Date(this.state.filtrosAvancados.data_inicio), "YYYY-MM-DD").format("YYYY-MM-DD") : null;
-        let data_fim = filtrosAvancados.data_fim ? moment(new Date(this.state.filtrosAvancados.data_fim), "YYYY-MM-DD").format("YYYY-MM-DD") : null;
-        let lista_retorno_api = await filtrosAvancadosDespesasPaginacao(filtrosAvancados.filtrar_por_termo, filtrosAvancados.aplicacao_recurso, filtrosAvancados.acao_associacao, filtrosAvancados.despesa_status, filtrosAvancados.fornecedor, data_inicio, data_fim, filtrosAvancados.conta_associacao, filtro_vinculo_atividades, filtro_informacoes, page);
-        let results = lista_retorno_api.results
-        setDespesas(results)
-        let numeroDePaginas = lista_retorno_api.count;
-        setTotalDePaginas(Math.ceil((numeroDePaginas) / divisorPaginas))
-    }
-
-    const buscaDespesasOrdenadaPorImposto = async (ordenarPorImposto) => {
-        setForcarPrimeiraPagina(gerarUuid)
-        const despesas = await getListaDespesasOrdenadaPorImposto(ordenarPorImposto);
-        setBuscaUtilizandoOrdenacaoPorImposto(true)
-        const results = despesas.results
-        let numeroDePaginas = despesas.count;
-        setDespesas(results)
-        setTotalDePaginas(Math.ceil((numeroDePaginas) / divisorPaginas))
-        setLoading(false)
-    };
-
-    const buscaDespesasOrdenadaPorImpostoPaginacao = async (page) => {
-        setPaginacaoAtual(page)
-        let despesas = await getListaDespesasOrdenadaPorImpostoPaginacao(ordenarPorImposto, page);
-        let results = despesas.results
-        setDespesas(results)
-        let numeroDePaginas = despesas.count;
-        setTotalDePaginas(Math.ceil((numeroDePaginas) / divisorPaginas))
-    }
-
-    const handleChangeCheckBoxOrdenarPorImposto = async (checked) => {
-        setOrdenarPorImposto(checked)
-        await buscaDespesasOrdenadaPorImposto(checked)
-    }
-
     const reusltadoSomaDosTotais = useCallback(async (palavra = "", aplicacao_recurso = "", acao_associacao__uuid = "", despesa__status = "", fornecedor = "", data_inicio = "", data_fim = "", conta_associacao__uuid = '', filtro_vinculo_atividades = [], filtro_informacoes = []) => {
         const somaDosTotais = await getSomaDosTotais(palavra, aplicacao_recurso, acao_associacao__uuid, despesa__status, fornecedor, data_inicio, data_fim, conta_associacao__uuid, filtro_vinculo_atividades, filtro_informacoes);
         setSomaDosTotais(somaDosTotais)
@@ -175,12 +111,12 @@ export const ListaDeDespesas = () => {
         return (
             <div>
                 <span>
-                    {rateio.especificacao_material_servico ? rateio.especificacao_material_servico.descricao : '' }
+                    {rateio.especificacao_material_servico ? rateio.especificacao_material_servico.descricao : ''}
                 </span>
                 <br/>
                 <span>
                     Data:{' '}
-                    {despesa.data_documento ? moment(despesa.data_documento).format('DD/MM/YYYY') : '' }
+                    {despesa.data_documento ? moment(despesa.data_documento).format('DD/MM/YYYY') : ''}
                 </span>
             </div>
         )
@@ -230,7 +166,6 @@ export const ListaDeDespesas = () => {
     };
 
     const onClickBtnMaisFiltros = () => {
-        setInputPesquisa('')
         setBtnMaisFiltros(!btnMaisFiltros)
     };
 
@@ -279,6 +214,101 @@ export const ListaDeDespesas = () => {
         }
     }
 
+    // Ordenacao
+    const handleChangeOrdenacao = (name, value) => {
+        setCamposOrdenacao({
+            ...camposOrdenacao,
+            [name]: value
+        });
+    };
+
+    const limparOrdenacao = async () =>{
+        setCamposOrdenacao(initOrdenacao)
+        let _limpar_ordenacao = 'SIM'
+        await onSubmitOrdenar(_limpar_ordenacao)
+    }
+
+    const onSubmitOrdenar = async (_limpar_ordenacao) => {
+        setShowModalOrdenar(false)
+        setLoading(true)
+        setBuscaUtilizandoOrdenacao(true)
+        await buscaDespesasOrdenacao(_limpar_ordenacao);
+    }
+
+    const buscaDespesasOrdenacao = async (_limpar_ordenacao= 'NAO') => {
+        setForcarPrimeiraPagina(gerarUuid)
+        let data_inicio = filtrosAvancados.data_inicio ? moment(new Date(filtrosAvancados.data_inicio), "YYYY-MM-DD").format("YYYY-MM-DD") : null;
+        let data_fim = filtrosAvancados.data_fim ? moment(new Date(filtrosAvancados.data_fim), "YYYY-MM-DD").format("YYYY-MM-DD") : null;
+
+        let lista_retorno_api
+
+        if (_limpar_ordenacao === 'SIM'){
+            lista_retorno_api = await ordenacaoDespesas(
+                filtrosAvancados.filtrar_por_termo,
+                filtrosAvancados.aplicacao_recurso,
+                filtrosAvancados.acao_associacao,
+                filtrosAvancados.despesa_status,
+                filtrosAvancados.fornecedor,
+                data_inicio,
+                data_fim,
+                filtrosAvancados.conta_associacao,
+                filtro_vinculo_atividades,
+                filtro_informacoes,
+            );
+        }else {
+            lista_retorno_api = await ordenacaoDespesas(
+                filtrosAvancados.filtrar_por_termo,
+                filtrosAvancados.aplicacao_recurso,
+                filtrosAvancados.acao_associacao,
+                filtrosAvancados.despesa_status,
+                filtrosAvancados.fornecedor,
+                data_inicio,
+                data_fim,
+                filtrosAvancados.conta_associacao,
+                filtro_vinculo_atividades,
+                filtro_informacoes,
+                camposOrdenacao.ordenar_por_numero_do_documento,
+                camposOrdenacao.ordenar_por_data_especificacao,
+                camposOrdenacao.ordenar_por_valor,
+                camposOrdenacao.ordenar_por_imposto,
+            );
+        }
+
+
+        let results = lista_retorno_api.results
+        setDespesas(results)
+        let numeroDePaginas = lista_retorno_api.count;
+        setTotalDePaginas(Math.ceil((numeroDePaginas) / divisorPaginas))
+        setLoading(false)
+    }
+
+    const buscaDespesasOrdenacaoPaginacao = async (page) => {
+        setPaginacaoAtual(page)
+        let data_inicio = filtrosAvancados.data_inicio ? moment(new Date(filtrosAvancados.data_inicio), "YYYY-MM-DD").format("YYYY-MM-DD") : null;
+        let data_fim = filtrosAvancados.data_fim ? moment(new Date(filtrosAvancados.data_fim), "YYYY-MM-DD").format("YYYY-MM-DD") : null;
+        let lista_retorno_api = await ordenacaoDespesasPaginacao(
+            filtrosAvancados.filtrar_por_termo,
+            filtrosAvancados.aplicacao_recurso,
+            filtrosAvancados.acao_associacao,
+            filtrosAvancados.despesa_status,
+            filtrosAvancados.fornecedor,
+            data_inicio, data_fim,
+            filtrosAvancados.conta_associacao,
+            filtro_vinculo_atividades,
+            filtro_informacoes,
+            camposOrdenacao.ordenar_por_numero_do_documento,
+            camposOrdenacao.ordenar_por_data_especificacao,
+            camposOrdenacao.ordenar_por_valor,
+            camposOrdenacao.ordenar_por_imposto,
+            page
+        );
+        let results = lista_retorno_api.results
+        setDespesas(results)
+        let numeroDePaginas = lista_retorno_api.count;
+        setTotalDePaginas(Math.ceil((numeroDePaginas) / divisorPaginas))
+    }
+
+
     return (
         <div>
             {loading ? (
@@ -299,20 +329,14 @@ export const ListaDeDespesas = () => {
                             <i className="float-left fas fa-file-signature"
                                style={{marginRight: '5px', color: '#42474A'}}>
                             </i>
-
-                            <FormFiltroPorPalavra
-                                inputPesquisa={inputPesquisa}
-                                setInputPesquisa={setInputPesquisa}
-                                buscaUtilizandoFiltro={buscaUtilizandoFiltro}
-                                setBuscaUtilizandoFiltro={setBuscaUtilizandoFiltro}
-                                setLista={setDespesas}
+                            <FormFiltroPorEspecificacaoMaterialServico
                                 reusltadoSomaDosTotais={reusltadoSomaDosTotais}
-                                origem="Despesas"
+                                filtrosAvancados={filtrosAvancados}
+                                setFiltrosAvancados={setFiltrosAvancados}
+                                buscaDespesasOrdenacao={buscaDespesasOrdenacao}
+                                setBuscaUtilizandoOrdenacao={setBuscaUtilizandoOrdenacao}
+                                limparOrdenacao={limparOrdenacao}
                                 setLoading={setLoading}
-                                buscaDespesasFiltrosPorPalavra={buscaDespesasFiltrosPorPalavra}
-                                setBuscaUtilizandoFiltroPalavra={setBuscaUtilizandoFiltroPalavra}
-                                setBuscaUtilizandoFiltroAvancado={setBuscaUtilizandoFiltroAvancado}
-                                forcarPrimeiraPagina={setForcarPrimeiraPagina}
                             />
                         </Col>
                         <Col lg={2} xl={2}
@@ -333,15 +357,13 @@ export const ListaDeDespesas = () => {
                     <FormFiltrosAvancados
                         btnMaisFiltros={btnMaisFiltros}
                         onClickBtnMaisFiltros={onClickBtnMaisFiltros}
-                        setBuscaUtilizandoFiltro={setBuscaUtilizandoFiltro}
                         reusltadoSomaDosTotais={reusltadoSomaDosTotais}
                         iniciaLista={buscaDespesas}
                         setLoading={setLoading}
                         filtrosAvancados={filtrosAvancados}
                         setFiltrosAvancados={setFiltrosAvancados}
-                        buscaDespesasFiltrosAvancados={buscaDespesasFiltrosAvancados}
-                        setBuscaUtilizandoFiltroAvancado={setBuscaUtilizandoFiltroAvancado}
-                        setBuscaUtilizandoFiltroPalavra={setBuscaUtilizandoFiltroPalavra}
+                        buscaDespesasOrdenacao={buscaDespesasOrdenacao}
+                        setBuscaUtilizandoOrdenacao={setBuscaUtilizandoOrdenacao}
                         forcarPrimeiraPagina={setForcarPrimeiraPagina}
                         filtro_informacoes={filtro_informacoes}
                         set_filtro_informacoes={set_filtro_informacoes}
@@ -349,6 +371,7 @@ export const ListaDeDespesas = () => {
                         set_filtro_vinculo_atividades={set_filtro_vinculo_atividades}
                         handleChangeFiltroVinculoAtividades={handleChangeFiltroVinculoAtividades}
                         handleChangeFiltroInformacoes={handleChangeFiltroInformacoes}
+                        limparOrdenacao={limparOrdenacao}
                     />
 
                     {despesas && despesas.length > 0 && Object.entries(somaDosTotais).length > 0 ? (
@@ -357,22 +380,27 @@ export const ListaDeDespesas = () => {
                                     somaDosTotais={somaDosTotais}
                                 />
 
-                                <div className="form-group form-check">
-                                    <input
-                                        onChange={(e) => handleChangeCheckBoxOrdenarPorImposto(e.target.checked)}
-                                        name={`checkOerdenarPorImposto`}
-                                        id={`checkOerdenarPorImposto`}
-                                        type="checkbox"
-                                        className="form-check-input"
+                                <div className='text-right'>
+                                    <LegendaInformacao
+                                        showModalLegendaInformacao={showModalLegendaInformacao}
+                                        setShowModalLegendaInformacao={setShowModalLegendaInformacao}
                                     />
-                                    <label className="form-check-label" htmlFor={`checkOerdenarPorImposto`}>Ordenar com
-                                        imposto vinculados às despesas</label>
+                                    {despesas && despesas.length > 0 &&
+                                        <>
+                                            <Ordenacao
+                                                showModalOrdenar={showModalOrdenar}
+                                                setShowModalOrdenar={setShowModalOrdenar}
+                                                camposOrdenacao={camposOrdenacao}
+                                                handleChangeOrdenacao={handleChangeOrdenacao}
+                                                onSubmitOrdenar={onSubmitOrdenar}
+                                            />
+                                            <LimparArgumentosOrdenacao
+                                                limparOrdenacao={limparOrdenacao}
+                                                camposOrdenacao={camposOrdenacao}
+                                            />
+                                        </>
+                                    }
                                 </div>
-
-                                <LegendaInformacao
-                                    showModalLegendaInformacao={showModalLegendaInformacao}
-                                    setShowModalLegendaInformacao={setShowModalLegendaInformacao}
-                                />
 
                                 <table id="tabela-lista-despesas" className="table table-bordered">
                                     <thead>
@@ -396,7 +424,6 @@ export const ListaDeDespesas = () => {
                                         </tr>
 
 
-
                                         {despesa.rateios.length > 0 ?
                                             despesa.rateios.map((rateio, index) =>
                                                 <tr key={`tr-rateio-${index}`}>
@@ -404,11 +431,13 @@ export const ListaDeDespesas = () => {
                                                     <td key={`td-rateio-especificacao-${index}`}>{especificacaoDataTemplate(despesa, rateio)}</td>
                                                     <td className="centraliza-conteudo-tabela text-center">{rateio.aplicacao_recurso}</td>
                                                     {rateio.acao_associacao ?
-                                                        <td className="centraliza-conteudo-tabela text-center" key={`td-rateio-acao-${index}`}>{rateio.acao_associacao.acao.nome}</td>
+                                                        <td className="centraliza-conteudo-tabela text-center"
+                                                            key={`td-rateio-acao-${index}`}>{rateio.acao_associacao.acao.nome}</td>
                                                         :
                                                         <td className="centraliza-conteudo-tabela text-center">-</td>
                                                     }
-                                                    <td className="centraliza-conteudo-tabela text-center" key={`td-rateio-valor-${index}`}>{valorTotalTemplate(rateio)}</td>
+                                                    <td className="centraliza-conteudo-tabela text-center"
+                                                        key={`td-rateio-valor-${index}`}>{valorTotalTemplate(rateio)}</td>
                                                 </tr>
                                             )
                                             :
@@ -428,20 +457,17 @@ export const ListaDeDespesas = () => {
                                     <Paginacao
                                         paginacaoPaginasTotal={totalDePaginas}
                                         buscaDespesasPaginacao={buscaDespesasPaginacao}
-                                        buscaDespesasFiltrosPorPalavraPaginacao={buscaDespesasFiltrosPorPalavraPaginacao}
-                                        buscaDespesasFiltrosAvancadosPaginacao={buscaDespesasFiltrosAvancadosPaginacao}
-                                        buscaDespesasOrdenadaPorImpostoPaginacao={buscaDespesasOrdenadaPorImpostoPaginacao}
-                                        buscaUtilizandoFiltroPalavra={buscaUtilizandoFiltroPalavra}
-                                        buscaUtilizandoFiltroAvancado={buscaUtilizandoFiltroAvancado}
-                                        buscaUtilizandoFiltro={buscaUtilizandoFiltro}
-                                        buscaUtilizandoOrdenacaoPorImposto={buscaUtilizandoOrdenacaoPorImposto}
+                                        buscaDespesasFiltrosAvancadosPaginacao={buscaDespesasOrdenacaoPaginacao}
                                         forcarPrimeiraPagina={forcarPrimeiraPagina}
+                                        buscaUtilizandoOrdenacao={buscaUtilizandoOrdenacao}
+                                        buscaDespesasOrdenacaoPaginacao={buscaDespesasOrdenacaoPaginacao}
+
                                     />
                                 }
 
                             </>
                         ) :
-                        buscaUtilizandoFiltro ? (
+                        buscaUtilizandoOrdenacao ? (
                                 <MsgImgCentralizada
                                     texto='Não encontramos resultados, verifique os filtros e tente novamente.'
                                     img={Img404}
