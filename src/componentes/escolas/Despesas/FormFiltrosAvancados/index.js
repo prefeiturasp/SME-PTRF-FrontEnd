@@ -28,18 +28,17 @@ export const FormFiltrosAvancados = (props) => {
         reusltadoSomaDosTotais,
         filtrosAvancados,
         setFiltrosAvancados,
-        buscaDespesasFiltrosAvancados,
-        setBuscaUtilizandoFiltroAvancado,
-        setBuscaUtilizandoFiltroPalavra,
+        buscaDespesasOrdenacao,
+        setBuscaUtilizandoOrdenacao,
         forcarPrimeiraPagina,
-        setBuscaUtilizandoFiltro,
         setLoading,
         filtro_informacoes,
         set_filtro_informacoes,
         filtro_vinculo_atividades,
         set_filtro_vinculo_atividades,
         handleChangeFiltroInformacoes,
-        handleChangeFiltroVinculoAtividades
+        handleChangeFiltroVinculoAtividades,
+        limparOrdenacao,
     } = props;
     const [despesasTabelas, setDespesasTabelas] = useState([]);
     const [listaTagInformacao, setListaTagInformacao] = useState([])
@@ -81,10 +80,9 @@ export const FormFiltrosAvancados = (props) => {
         let data_fim = filtrosAvancados.data_fim ? moment(new Date(filtrosAvancados.data_fim), "YYYY-MM-DD").format("YYYY-MM-DD") : null;
         reusltadoSomaDosTotais(filtrosAvancados.filtrar_por_termo, filtrosAvancados.aplicacao_recurso, filtrosAvancados.acao_associacao, filtrosAvancados.despesa_status, filtrosAvancados.fornecedor, data_inicio, data_fim, filtrosAvancados.conta_associacao, filtro_vinculo_atividades, filtro_informacoes);
 
-        buscaDespesasFiltrosAvancados();
-        setBuscaUtilizandoFiltroAvancado(true);
-        setBuscaUtilizandoFiltroPalavra(false);
-        setBuscaUtilizandoFiltro(true);
+        buscaDespesasOrdenacao();
+        setBuscaUtilizandoOrdenacao(true);
+        limparOrdenacao()
     };
 
     const limpaFormulario = () => {
@@ -92,6 +90,7 @@ export const FormFiltrosAvancados = (props) => {
         setFiltrosAvancados(initialState);
         set_filtro_informacoes([])
         set_filtro_vinculo_atividades([])
+        limparOrdenacao()
     };
 
     return (
@@ -238,7 +237,7 @@ export const FormFiltrosAvancados = (props) => {
                     </div>
                     <div className="d-flex justify-content-end pb-3 mt-3">
                         <button
-                            onClick={(e) => {
+                            onClick={() => {
                                 onClickBtnMaisFiltros();
                                 iniciaLista();
                                 reusltadoSomaDosTotais();
@@ -251,7 +250,7 @@ export const FormFiltrosAvancados = (props) => {
                             Cancelar
                         </button>
                         <button
-                            onClick={(e) => {
+                            onClick={() => {
                                 iniciaLista();
                                 reusltadoSomaDosTotais();
                                 limpaFormulario();
