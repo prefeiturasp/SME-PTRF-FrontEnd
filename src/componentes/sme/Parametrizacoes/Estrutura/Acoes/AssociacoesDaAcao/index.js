@@ -16,8 +16,7 @@ import {PaginasContainer} from "../../../../../../paginas/PaginasContainer";
 import {getUnidadesPorAcao, getAcao, deleteAcoesAssociacoesEmLote, deleteAcao} from "../../../../../../services/sme/Parametrizacoes.service"
 import {ModalConfirmDesvincularAcaoAssociacao} from "./ModalConfirmDesvincularAcaoAssociacao"
 import {ModalInfoNaoPodeExcluir} from "../ModalInfoNaoPodeExcluir";
-import { TabelaAcoes } from "./TabelaAcoes";
-import { ModalLegendaInformacaoAssociacao } from "../../../../../Globais/LegendaInformaçãoAssociacao/ModalLegendaInformacaoAssociacao";
+import { TabelaAssociacaoAcao } from "../TabelaAssociacaoAcao";
 import { getTabelaAssociacoes } from "../../../../../../services/dres/Associacoes.service";
 import "./associacoes.scss";
 
@@ -69,7 +68,6 @@ export const AssociacoesDaAcao = () => {
     const [showModalInfoNaoPodeExcluir, setShowModalInfoNaoPodeExcluir] = useState(false);
     const [mensagemModalInfoNaoPodeExcluir, setMensagemModalInfoNaoPodeExcluir] = useState("");
     const [mensagemToast, setMensagemToast] = useState("");
-    const [showModalLegendaInformacao, setShowModalLegendaInformacao] = useState(false);
     const [tabelaAssociacoes, setTabelaAssociacoes] = useState({});
 
     useEffect(() => {
@@ -450,23 +448,14 @@ export const AssociacoesDaAcao = () => {
                                     <div className="col-12">
                                         {unidades.length > 0 ? (
                                             <>
-                                            <TabelaAcoes
+                                            <TabelaAssociacaoAcao
                                                 unidades={unidades}
                                                 rowsPerPage={rowsPerPage}
                                                 selecionarHeader={selecionarHeader}
                                                 selecionarTemplate={selecionarTemplate}
                                                 acoesTemplate={acoesTemplate}
-                                                setShowModalLegendaInformacao={setShowModalLegendaInformacao}
+                                                caminhoUnidade="associacao.unidade"
                                             />                                            
-                                            <section>
-                                                <ModalLegendaInformacaoAssociacao
-                                                    show={showModalLegendaInformacao}
-                                                    primeiroBotaoOnclick={() => setShowModalLegendaInformacao(false)}
-                                                    titulo="Legenda Informação"
-                                                    primeiroBotaoTexto="Fechar"
-                                                    primeiroBotaoCss="outline-success"                            
-                                                />
-                                            </section>
                                             </>
                                         ) : buscaUtilizandoFiltros ?
                                             <MsgImgCentralizada

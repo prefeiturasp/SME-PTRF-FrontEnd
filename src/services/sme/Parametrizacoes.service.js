@@ -277,12 +277,12 @@ export const deleteAcoesAssociacoesEmLote = async (payload) => {
     return (await api.post(`/api/acoes-associacoes/excluir-lote/`, payload, authHeader)).data
 };
 
-export const getAssociacoesNaoVinculadasAAcao = async (acao_uuid, nome="") => {
+export const getAssociacoesNaoVinculadasAAcao = async (acao_uuid, nome="", filtro_informacoes=[]) => {
     if (nome === ""){
-        return (await api.get(`api/acoes/${acao_uuid}/associacoes-nao-vinculadas/`, authHeader)).data
+        return (await api.get(`api/acoes/${acao_uuid}/associacoes-nao-vinculadas/?filtro_informacoes=${filtro_informacoes}`, authHeader)).data
     }
     else {
-        return (await api.get(`api/acoes/${acao_uuid}/associacoes-nao-vinculadas-por-nome/${nome}/`, authHeader)).data
+        return (await api.get(`api/acoes/${acao_uuid}/associacoes-nao-vinculadas-por-nome/${nome}/?filtro_informacoes=${filtro_informacoes}`, authHeader)).data
     }
 
 };
