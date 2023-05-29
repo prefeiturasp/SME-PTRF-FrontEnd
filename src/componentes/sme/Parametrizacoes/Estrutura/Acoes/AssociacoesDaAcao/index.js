@@ -18,6 +18,7 @@ import {ModalConfirmDesvincularAcaoAssociacao} from "./ModalConfirmDesvincularAc
 import {ModalInfoNaoPodeExcluir} from "../ModalInfoNaoPodeExcluir";
 import { TabelaAssociacaoAcao } from "../TabelaAssociacaoAcao";
 import { getTabelaAssociacoes } from "../../../../../../services/dres/Associacoes.service";
+import {ModalInfoNaoPodeDesvincular} from "./ModalInfoNaoPodeDesvincular";
 import "./associacoes.scss";
 
 const CustomToast = (propriedades) => {
@@ -65,8 +66,13 @@ export const AssociacoesDaAcao = () => {
     const [showModalDesvincular, setShowModalDesvincular] = useState(false);
     const [showToast, setShowToast] = useState(false);
     const [showConfirmaDesvinculo, setShowConfirmaDesvinculo] = useState(false);
+    
     const [showModalInfoNaoPodeExcluir, setShowModalInfoNaoPodeExcluir] = useState(false);
     const [mensagemModalInfoNaoPodeExcluir, setMensagemModalInfoNaoPodeExcluir] = useState("");
+
+    const [showModalInfoNaoPodeDesvincular, setShowModalInfoNaoPodeDesvincular] = useState(false);
+    const [mensagemModalInfoNaoPodeDesvincular, setMensagemModalInfoNaoPodeDesvincular] = useState({titulo: "", mensagem: ""});
+
     const [mensagemToast, setMensagemToast] = useState("");
     const [tabelaAssociacoes, setTabelaAssociacoes] = useState({});
 
@@ -253,7 +259,7 @@ export const AssociacoesDaAcao = () => {
                                         <strong>Cancelar</strong>
                                     </a>
                                     <div className="float-right" style={{padding: "0px 10px"}}>|</div>
-                                    <a className="float-right" onClick={(e) => modalDesvincular()} style={{textDecoration:"underline", cursor:"pointer"}}>
+                                    <a className="float-right" onClick={(e) => handleDesvincularAssociacoesEmLote()} style={{textDecoration:"underline", cursor:"pointer"}}>
                                         <FontAwesomeIcon
                                             style={{color: "white", fontSize: '15px', marginRight: "2px"}}
                                             icon={faTimesCircle}
@@ -334,6 +340,16 @@ export const AssociacoesDaAcao = () => {
         setAcaoAssociacaoUuid(null);
     };
 
+    const handleDesvincularAssociacoesEmLote = () => {
+        let associacoesEncerradasSelecionadas = unidades.filter(u => u.selecionado === true && u.associacao.encerrada);
+        if(associacoesEncerradasSelecionadas.length > 0) {
+            setShowModalInfoNaoPodeDesvincular(true);
+            setMensagemModalInfoNaoPodeDesvincular({titulo: "Ação não permitida", mensagem: "Existem uma ou mais associações encerradas selecionadas."})
+        } else {
+            modalDesvincular();
+        }
+    };
+
     const desvincularAssociacoesEmLote = async () => {
         setShowModalDesvincular(false);
         setLoading(true);
@@ -364,6 +380,11 @@ export const AssociacoesDaAcao = () => {
     const handleCloseInfoNaoPodeExcluir = () => {
         setShowModalInfoNaoPodeExcluir(false);
         setMensagemModalInfoNaoPodeExcluir("");
+    };
+
+    const handleCloseInfoNaoPodeDesvincular = () => {
+        setShowModalInfoNaoPodeDesvincular(false);
+        setMensagemModalInfoNaoPodeDesvincular("");
     };
 
     const handleOnChangeMultipleSelectStatus =  async (value) => {
@@ -485,6 +506,16 @@ export const AssociacoesDaAcao = () => {
                         segundoBotaoTexto="Desvincular"
                     />
                 </section>
+                <section>
+                    <ModalInfoNaoPodeDesvincular
+                        show={showModalInfoNaoPodeDesvincular}
+                        handleClose={handleCloseInfoNaoPodeDesvincular}
+                        titulo={mensagemModalInfoNaoPodeDesvincular.titulo}
+                        texto={mensagemModalInfoNaoPodeDesvincular.mensagem}
+                        primeiroBotaoTexto="Fechar"
+                        primeiroBotaoCss="success"
+                    />
+                </section>                
                 <section>
                     <ModalInfoNaoPodeExcluir
                         show={showModalInfoNaoPodeExcluir}
