@@ -265,8 +265,8 @@ export const deleteAcertosDocumentos = async (documento_uuid) => {
     return (await api.delete(`/api/tipos-acerto-documento/${documento_uuid}/`, authHeader))
 };
 
-export const getUnidadesPorAcao = async (acao_uuid, nome="") => {
-    return (await api.get(`api/acoes-associacoes/?acao__uuid=${acao_uuid}&nome=${nome}`, authHeader)).data
+export const getUnidadesPorAcao = async (acao_uuid, nome="", informacoes=[]) => {
+    return (await api.get(`api/acoes-associacoes/?acao__uuid=${acao_uuid}&nome=${nome}&filtro_informacoes=${informacoes}`, authHeader)).data
 };
 
 export const getAcao = async (uuid='') => {
