@@ -49,11 +49,15 @@ const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitMo
                         }
 
                         return(
-                            <form onSubmit={props.handleSubmit}>
+                            <>
+                                <div style={{textAlign: "right"}}>
+                                    <span>* Preenchimento obrigatório</span>
+                                </div>
+                                <form onSubmit={props.handleSubmit}>
                                 <div className='row'>
                                     <div className='col'>
                                         <div className="form-group">
-                                            <label htmlFor="nome">Nome</label>
+                                            <label htmlFor="nome">Nome*</label>
                                             <input
                                                 type="text"
                                                 value={props.values.nome}
@@ -70,7 +74,7 @@ const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitMo
                                 <div className='row'>
                                     <div className='col'>
                                         <div className="form-group">
-                                            <label htmlFor="codigo_eol_unidade">Código EOL</label>
+                                            <label htmlFor="codigo_eol_unidade">Código EOL*</label>
                                             <input
                                                 type="text"
                                                 value={props.values.codigo_eol_unidade}
@@ -284,6 +288,7 @@ const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitMo
                                     </div>
                                 </div>
                             </form>
+                            </>
                         );
                     }}
                 </Formik>
