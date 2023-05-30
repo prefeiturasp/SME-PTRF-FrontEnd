@@ -36,7 +36,7 @@ import {
     limparDetalharAcertos
 } from "../../../../../store/reducers/componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeLancamentos/DetalharAcertos/actions";
 import {visoesService} from "../../../../../services/visoes.service";
-import {ModalLegendaInformacao} from "../../../../Globais/ModalLegendaInformacao/ModalLegendaInformacaoDespesa"
+import {ModalLegendaInformacao} from "../../../../Globais/ModalLegendaInformacao/ModalLegendaInformacao"
 import {ModalLegendaConferenciaLancamentos} from "./Modais/ModalLegendaConferenciaLancamentos"
 import { TagInformacao } from "../../../../Globais/TagInformacao/index";
 

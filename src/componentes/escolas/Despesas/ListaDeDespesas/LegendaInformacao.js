@@ -3,7 +3,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
 import {
     ModalLegendaInformacao
-} from "../../../Globais/ModalLegendaInformacao/ModalLegendaInformacaoDespesa"
+} from "../../../Globais/ModalLegendaInformacao/ModalLegendaInformacao"
 
 export const LegendaInformacao = ({showModalLegendaInformacao, setShowModalLegendaInformacao}) => {
     return (
