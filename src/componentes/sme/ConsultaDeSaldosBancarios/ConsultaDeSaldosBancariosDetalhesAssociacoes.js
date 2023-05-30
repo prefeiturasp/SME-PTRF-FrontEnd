@@ -81,7 +81,7 @@ export const ConsultaDeSaldosBancariosDetalhesAssociacoes = () =>{
 
     const exibeNomeDre = useCallback((dre_uuid)=> {
         if (dres && dres.length > 0 && dre_uuid){
-            return 'Diretoria ' + dres.find(elemento => elemento.uuid === dre_uuid).nome
+            return dres.find(elemento => elemento.uuid === dre_uuid).nome
         }
     }, [dres])
 
@@ -227,18 +227,21 @@ export const ConsultaDeSaldosBancariosDetalhesAssociacoes = () =>{
                     <div className="flex-grow-1 bd-highlight">
                         <p className='nome-dre'>{exibeNomeDre(dre_uuid)}</p>
                     </div>
-                    <div className="p-2 bd-highlight">
-                        <Link
-                            to={`/consulta-de-saldos-bancarios/${selectPeriodo}/${selectTipoDeConta}/`}
-                            className='link-voltar'
-                        >
-                            <FontAwesomeIcon
-                                style={{fontSize: '15px', marginRight: "3px", color: "#00585E"}}
-                                icon={faArrowLeft}
-                            />
-                            Voltar
-                        </Link>
+                    <div className="row">
+                        <div className="bd-highlight">
+                            <Link
+                                to={`/consulta-de-saldos-bancarios/${selectPeriodo}/${selectTipoDeConta}/`}
+                                className='btn btn-outline-success ml-2'
+                            >
+                                <FontAwesomeIcon
+                                    style={{fontSize: '15px', marginRight: "3px", color: "#00585E"}}
+                                    icon={faArrowLeft}
+                                />
+                                Voltar
+                            </Link>
+                        </div>
                     </div>
+                    
                 </div>
                 {selectPeriodo && selectTipoDeConta ? (
                 <>    
