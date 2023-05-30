@@ -25,7 +25,7 @@ import {BtnAddAssociacoes} from "./BtnAddAssociacoes";
 import {ModalConfirmDeleteAssociacao} from "./ModalConfirmDeleteAssociacao";
 import {ModalInfoExclusaoNaoPermitida} from "./ModalInfoExclusaoNaoPermitida";
 import { ModalConfirmUpdateObservacao } from "./ModalConfirmUpdateObservacao";
-import { ModalLegendaInformacaoAssociacao } from "../../../../Globais/ModalLegendaInformacao/ModalLegendaInformacaoAssociacao";
+import { ModalLegendaInformacao } from "../../../../Globais/ModalLegendaInformacao/ModalLegendaInformacao";
 import Loading from "../../../../../utils/Loading";
 
 export const Associacoes = () => {
@@ -461,12 +461,13 @@ export const Associacoes = () => {
                     </section>
 
                     <section>
-                        <ModalLegendaInformacaoAssociacao
+                        <ModalLegendaInformacao
                             show={showModalLegendaInformacao}
                             primeiroBotaoOnclick={() => setShowModalLegendaInformacao(false)}
                             titulo="Legenda Informação"
                             primeiroBotaoTexto="Fechar"
                             primeiroBotaoCss="outline-success"
+                            entidadeDasTags="associacao"
                         />
                     </section>
                 </div>

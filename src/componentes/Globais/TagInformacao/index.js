@@ -11,7 +11,8 @@ const types = {
     6: 'tag-red-white',
     7: 'tag-neutral-3',
     8: 'tag-light-purple',
-    9: 'tag-verde'
+    9: 'tag-blue',
+    10: 'tag-blue-white',
 }
 
 

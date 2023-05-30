@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {Redirect} from "react-router-dom";
 import {getTabelaAssociacoes, getAssociacoesPorUnidade, filtrosAssociacoes, getAssociacao, getContasAssociacao} from "../../../services/dres/Associacoes.service";
-import { ModalLegendaInformacaoAssociacao } from "../../Globais/ModalLegendaInformacao/ModalLegendaInformacaoAssociacao";
+import { ModalLegendaInformacao } from "../../Globais/ModalLegendaInformacao/ModalLegendaInformacao";
 import "./associacoes.scss"
 import {TabelaAssociacoes} from "./TabelaAssociacoes";
 import {FiltrosAssociacoes} from "./FiltrosAssociacoes";
@@ -175,12 +175,13 @@ export const Associacoes = () =>{
                     />
 
                     <section>
-                        <ModalLegendaInformacaoAssociacao
+                        <ModalLegendaInformacao
                             show={showModalLegendaInformacao}
                             primeiroBotaoOnclick={() => setShowModalLegendaInformacao(false)}
                             titulo="Legenda Informação"
                             primeiroBotaoTexto="Fechar"
                             primeiroBotaoCss="outline-success"
+                            entidadeDasTags="associacao"
                         />
                     </section>
                 </>
