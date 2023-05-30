@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {Column} from "primereact/column";
 import {DataTable} from "primereact/datatable";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -6,7 +6,6 @@ import {faKey, faInfoCircle} from "@fortawesome/free-solid-svg-icons";
 import { TagInformacao } from "../TagInformacao";
 
 export const ListaDeUnidades = ({listaUnidades, rowsPerPage, acaoAoEscolherUnidade, textoAcaoEscolher, setShowModalLegendaInformacao}) => {
-    const [unidadesComTag, setUnidadesComTag] = useState([]);
 
     const unidadeEscolarTemplate = (rowData) => {
         return (
@@ -49,41 +48,6 @@ export const ListaDeUnidades = ({listaUnidades, rowsPerPage, acaoAoEscolherUnida
         )
     };
 
-    const adicionaTagsNasUnidades = (unidadesSemTags) => {
-        let tagsTabelaUnidade = ["Encerrada"]
-
-        if(unidadesSemTags.length > 0) {
-            let assComTag = unidadesSemTags.map((ass) => {
-                ass.informacoes = []
-
-                tagsTabelaUnidade.forEach(tag => {
-                    if(tag === "Encerrada" && ass.data_de_encerramento_associacao && ass.tooltip_associacao_encerrada) {
-                        ass.informacoes.push({
-                            tag_id: 7,
-                            tag_nome: "Associação encerrada",
-                            tag_hint: ass.tooltip_associacao_encerrada
-                        })
-                    }
-                    
-                });
-
-                return ass;
-            })
-
-            return assComTag;
-        }
-        return []
-    }
-
-    useEffect(() => {
-        let unidadesTags = adicionaTagsNasUnidades(listaUnidades);
-        setUnidadesComTag(unidadesTags)
-    }, [listaUnidades])
-
-    useEffect(() => {
-
-    }, [listaUnidades])
-
     return (
         <>
         <div className="d-flex justify-content-end">
@@ -101,9 +65,9 @@ export const ListaDeUnidades = ({listaUnidades, rowsPerPage, acaoAoEscolherUnida
         </div>
 
         <DataTable
-            value={unidadesComTag}
+            value={listaUnidades}
             className="mt-3"
-            paginator={unidadesComTag.length > rowsPerPage}
+            paginator={listaUnidades.length > rowsPerPage}
             rows={rowsPerPage}
             paginatorTemplate="PrevPageLink PageLinks NextPageLink"
             autoLayout={true}
