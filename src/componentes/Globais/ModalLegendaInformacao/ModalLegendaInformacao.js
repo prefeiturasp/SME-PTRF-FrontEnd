@@ -1,5 +1,6 @@
 import React, {Fragment, useCallback, useEffect, useState} from "react";
 import { getTagInformacao } from "../../../services/escolas/Despesas.service";
+import { getTagInformacaoAssociacao } from "../../../services/escolas/Associacao.service"
 import {Button, Modal} from "react-bootstrap";
 import Loading from "../../../utils/Loading";
 import { TagInformacao } from "../TagInformacao"
@@ -11,14 +12,23 @@ export const ModalLegendaInformacao = (propriedades) => {
     const handleTagInformacao = useCallback(async () => {
         setLoading(true)
         try {
-            const response = await getTagInformacao()
-            setListaTagInformacao(response)
+            let tagsInformacao = []
+
+            if(propriedades.entidadeDasTags === "associacao") {
+               tagsInformacao = await getTagInformacaoAssociacao()
+               console.log("TAGS INFORMACAO", tagsInformacao)
+            } else {
+               tagsInformacao = await getTagInformacao()
+            }
+
+
+            setListaTagInformacao(tagsInformacao)
         } catch (e) {
             console.error('Erro ao carregar tag informação', e)
         }
         setLoading(false)
 
-    }, [])
+    }, [propriedades.entidadeDasTags])
 
     useEffect(() => {
         handleTagInformacao()
@@ -44,9 +54,9 @@ export const ModalLegendaInformacao = (propriedades) => {
                 <Modal.Body> {
                     loading ? (
                         <Loading corGrafico="black" corFonte="dark" marginTop="0" marginBottom="0"/>
-                    ) : listaTagInformacao?.length > 0 ? listaTagInformacao.map((tag) => {
+                    ) : listaTagInformacao?.length > 0 ? listaTagInformacao.map((tag, index) => {
                         tag.texto = tag.nome
-                        return (TagInformacao(tag, "modal-legenda-informacao"))
+                        return <React.Fragment key={index}>{(TagInformacao(tag, "modal-legenda-informacao"))}</React.Fragment>
                     }) : <span>Nenhuma informação encontrada</span>
                 } </Modal.Body>
                 <Modal.Footer>
