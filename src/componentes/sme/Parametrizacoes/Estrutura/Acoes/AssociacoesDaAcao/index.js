@@ -5,19 +5,21 @@ import "../../../../../Globais/ModalBootstrap/modal-bootstrap.scss"
 import Img404 from "../../../../../../assets/img/img-404.svg";
 import Loading from "../../../../../../utils/Loading";
 import {Filtros} from "./FormFiltros";
-import {DataTable} from "primereact/datatable";
-import {Column} from "primereact/column";
+import {Button} from "antd";
 import {MsgImgCentralizada} from  "../../../../../Globais/Mensagens/MsgImgCentralizada";
 import {MsgImgLadoDireito} from "../../../../../Globais/Mensagens/MsgImgLadoDireito";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faArrowLeft, faPlus, faTimesCircle} from "@fortawesome/free-solid-svg-icons";
 import {ModalDesvincularLote} from "./Modais";
-import "./associacoes.scss";
 import {Link, useParams} from 'react-router-dom';
 import {PaginasContainer} from "../../../../../../paginas/PaginasContainer";
 import {getUnidadesPorAcao, getAcao, deleteAcoesAssociacoesEmLote, deleteAcao} from "../../../../../../services/sme/Parametrizacoes.service"
 import {ModalConfirmDesvincularAcaoAssociacao} from "./ModalConfirmDesvincularAcaoAssociacao"
 import {ModalInfoNaoPodeExcluir} from "../ModalInfoNaoPodeExcluir";
+import { TabelaAssociacaoAcao } from "../TabelaAssociacaoAcao";
+import { getTabelaAssociacoes } from "../../../../../../services/dres/Associacoes.service";
+import {ModalInfoNaoPodeDesvincular} from "./ModalInfoNaoPodeDesvincular";
+import "./associacoes.scss";
 
 const CustomToast = (propriedades) => {
     return (
@@ -51,6 +53,7 @@ export const AssociacoesDaAcao = () => {
 
     const estadoInicialFiltros = {
         filtrar_por_nome: "",
+        filtro_informacoes: []
     };
 
     const [loading, setLoading] = useState(true);
@@ -63,9 +66,15 @@ export const AssociacoesDaAcao = () => {
     const [showModalDesvincular, setShowModalDesvincular] = useState(false);
     const [showToast, setShowToast] = useState(false);
     const [showConfirmaDesvinculo, setShowConfirmaDesvinculo] = useState(false);
+    
     const [showModalInfoNaoPodeExcluir, setShowModalInfoNaoPodeExcluir] = useState(false);
     const [mensagemModalInfoNaoPodeExcluir, setMensagemModalInfoNaoPodeExcluir] = useState("");
+
+    const [showModalInfoNaoPodeDesvincular, setShowModalInfoNaoPodeDesvincular] = useState(false);
+    const [mensagemModalInfoNaoPodeDesvincular, setMensagemModalInfoNaoPodeDesvincular] = useState({titulo: "", mensagem: ""});
+
     const [mensagemToast, setMensagemToast] = useState("");
+    const [tabelaAssociacoes, setTabelaAssociacoes] = useState({});
 
     useEffect(() => {
         buscaUnidadesDaAcao(acao_uuid).then(() => setLoading(false));
@@ -75,6 +84,9 @@ export const AssociacoesDaAcao = () => {
         if (acaoUuid){
             let acao = await getAcao(acaoUuid)
             setAcao(acao);
+
+            let _tabelaAssociacoes = await getTabelaAssociacoes();
+            setTabelaAssociacoes(_tabelaAssociacoes);
 
             let acoesAssociacoes = await getUnidadesPorAcao(acaoUuid);
             setUnidades(acoesAssociacoes);
@@ -97,7 +109,7 @@ export const AssociacoesDaAcao = () => {
         if (event) {
             event.preventDefault();
         }
-        let resultado_filtros = await getUnidadesPorAcao(acao_uuid, estadoFiltros.filtrar_por_nome);
+        let resultado_filtros = await getUnidadesPorAcao(acao_uuid, estadoFiltros.filtrar_por_nome, estadoFiltros.filtro_informacoes);
     
         let unis = resultado_filtros.map(obj => {
             return {
@@ -247,7 +259,7 @@ export const AssociacoesDaAcao = () => {
                                         <strong>Cancelar</strong>
                                     </a>
                                     <div className="float-right" style={{padding: "0px 10px"}}>|</div>
-                                    <a className="float-right" onClick={(e) => modalDesvincular()} style={{textDecoration:"underline", cursor:"pointer"}}>
+                                    <a className="float-right" onClick={(e) => handleDesvincularAssociacoesEmLote()} style={{textDecoration:"underline", cursor:"pointer"}}>
                                         <FontAwesomeIcon
                                             style={{color: "white", fontSize: '15px', marginRight: "2px"}}
                                             icon={faTimesCircle}
@@ -280,13 +292,24 @@ export const AssociacoesDaAcao = () => {
     const acoesTemplate = (rowData) => {
         return (
             <div>
-                <Link className="link-red" onClick={() => {handleDesvinculaUE(rowData['uuid'])}}>
-                    <FontAwesomeIcon
-                        style={{fontSize: '20px', marginRight: "0", color: "#B40C02"}}
-                        icon={faTimesCircle}
-                    />
-                    <span> Desvincular</span>
-                </Link>
+                <Button 
+                    type="text" 
+                    className={`${rowData.associacao.encerrada ? '': 'link-red'}`}
+                    onClick={() => rowData.associacao.encerrada ? null : handleDesvinculaUE(rowData['uuid'])}
+                    icon={
+                        <FontAwesomeIcon
+                            style={{
+                                fontSize: '20px', 
+                                marginRight: 3, 
+                                color: rowData.associacao.encerrada ? "grey" : "#B40C02"
+                            }}
+                            icon={faTimesCircle}
+                        />
+                    }
+                    disabled={rowData.associacao.encerrada} 
+                >
+                    Desvincular                
+                </Button>
             </div>
         )
     };
@@ -315,6 +338,16 @@ export const AssociacoesDaAcao = () => {
         }
         await atualizaListaUnidades()
         setAcaoAssociacaoUuid(null);
+    };
+
+    const handleDesvincularAssociacoesEmLote = () => {
+        let associacoesEncerradasSelecionadas = unidades.filter(u => u.selecionado === true && u.associacao.encerrada);
+        if(associacoesEncerradasSelecionadas.length > 0) {
+            setShowModalInfoNaoPodeDesvincular(true);
+            setMensagemModalInfoNaoPodeDesvincular({titulo: "Ação não permitida", mensagem: "Existem uma ou mais associações encerradas selecionadas."})
+        } else {
+            modalDesvincular();
+        }
     };
 
     const desvincularAssociacoesEmLote = async () => {
@@ -349,12 +382,24 @@ export const AssociacoesDaAcao = () => {
         setMensagemModalInfoNaoPodeExcluir("");
     };
 
+    const handleCloseInfoNaoPodeDesvincular = () => {
+        setShowModalInfoNaoPodeDesvincular(false);
+        setMensagemModalInfoNaoPodeDesvincular("");
+    };
+
+    const handleOnChangeMultipleSelectStatus =  async (value) => {
+        let name = "filtro_informacoes"
+
+        setEstadoFiltros({
+            ...estadoFiltros,
+            [name]: value
+        });
+    };
+
     return (
         <PaginasContainer>
             <h1 className="titulo-itens-painel mt-5">Unidades vinculadas à ação {acao ? acao.nome : ""}</h1>
             <div className="page-content-inner">
-
-
                 {loading ? (
                         <div className="mt-5">
                             <Loading
@@ -364,9 +409,7 @@ export const AssociacoesDaAcao = () => {
                                 marginBottom="0"
                             />
                         </div>
-                    ) :
-
-                    (
+                    ) : (
                         <>
                             <div className="d-flex  justify-content-end mt-n2">
                                 <div className="p-2 bd-highlight pt-3 justify-content-end d-flex">
@@ -394,15 +437,14 @@ export const AssociacoesDaAcao = () => {
                                     </Link>
                                 </div>
                             </div>
-
-
-
                             <div className="page-content-inner">
                                 <Filtros
                                     estadoFiltros={estadoFiltros}
+                                    tabelaAssociacoes={tabelaAssociacoes}
                                     mudancasFiltros={mudancasFiltros}
                                     enviarFiltrosAssociacao={aplicaFiltrosUnidades}
                                     limparFiltros={limparFiltros}
+                                    handleOnChangeMultipleSelectStatus={handleOnChangeMultipleSelectStatus}
                                 />
                                 <ModalDesvincularLote
                                     show={showModalDesvincular}
@@ -413,13 +455,11 @@ export const AssociacoesDaAcao = () => {
                                     primeiroBotaoTexto="OK"
                                 />
 
-
                                 <CustomToast
                                     show={showToast}
                                     fecharToast={fecharToast}
                                     mensagem={mensagemToast}
                                 />
-
 
                                 {quantidadeSelecionada > 0 ?
                                     (montagemDesvincularLote()) :
@@ -428,24 +468,16 @@ export const AssociacoesDaAcao = () => {
                                 <div className="row">
                                     <div className="col-12">
                                         {unidades.length > 0 ? (
-                                            <DataTable
-                                                value={unidades}
-                                                className="datatable-footer-coad"
-                                                paginator={unidades.length > rowsPerPage}
-                                                rows={rowsPerPage}
-                                                paginatorTemplate="PrevPageLink PageLinks NextPageLink"
-                                                autoLayout={true}
-                                                selectionMode="single"
-                                            >
-                                                <Column header={selecionarHeader()} body={selecionarTemplate}/>
-                                                <Column field='associacao.unidade.codigo_eol' header='Código Eol'/>
-                                                <Column field='associacao.unidade.nome_com_tipo' header='Nome UE'/>
-                                                <Column
-                                                    field="acoes"
-                                                    header="Ações"
-                                                    body={acoesTemplate}
-                                                />
-                                            </DataTable>
+                                            <>
+                                            <TabelaAssociacaoAcao
+                                                unidades={unidades}
+                                                rowsPerPage={rowsPerPage}
+                                                selecionarHeader={selecionarHeader}
+                                                selecionarTemplate={selecionarTemplate}
+                                                acoesTemplate={acoesTemplate}
+                                                caminhoUnidade="associacao.unidade"
+                                            />                                            
+                                            </>
                                         ) : buscaUtilizandoFiltros ?
                                             <MsgImgCentralizada
                                                 texto='Não encontramos unidades que atendam aos filtros informados.'
@@ -474,6 +506,16 @@ export const AssociacoesDaAcao = () => {
                         segundoBotaoTexto="Desvincular"
                     />
                 </section>
+                <section>
+                    <ModalInfoNaoPodeDesvincular
+                        show={showModalInfoNaoPodeDesvincular}
+                        handleClose={handleCloseInfoNaoPodeDesvincular}
+                        titulo={mensagemModalInfoNaoPodeDesvincular.titulo}
+                        texto={mensagemModalInfoNaoPodeDesvincular.mensagem}
+                        primeiroBotaoTexto="Fechar"
+                        primeiroBotaoCss="success"
+                    />
+                </section>                
                 <section>
                     <ModalInfoNaoPodeExcluir
                         show={showModalInfoNaoPodeExcluir}
