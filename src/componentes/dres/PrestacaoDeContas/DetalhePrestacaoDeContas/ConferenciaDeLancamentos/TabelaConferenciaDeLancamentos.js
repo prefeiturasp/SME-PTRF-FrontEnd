@@ -661,7 +661,7 @@ const TabelaConferenciaDeLancamentos = ({
                             field='informacao'
                             header='Informações'
                             className="align-middle text-left borda-coluna"
-                            body={(rowData) => TagInformacao(rowData)}
+                            body={(rowData) => <TagInformacao data={rowData}/>}
                             style={{width: '15%'}}/>
                         <Column
                             field='valor_transacao_total'

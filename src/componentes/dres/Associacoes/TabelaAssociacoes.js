@@ -42,7 +42,7 @@ export const TabelaAssociacoes = ({associacoes, rowsPerPage, unidadeEscolarTempl
                 header="Informações"
                 style={{width: '15%'}}
                 className="align-middle text-center"
-                body={(rowData) => TagInformacao(rowData)}
+                body={(rowData) => <TagInformacao data={rowData}/>}
             />
             <Column
                 field="uuid"

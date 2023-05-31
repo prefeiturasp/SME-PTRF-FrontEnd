@@ -43,7 +43,6 @@ export const EscolheUnidade = (props) =>{
             setLoading(true)
             try {
                 let listaUnidades = await getUnidades(dre_uuid, stateFiltros.nome_ou_codigo);
-                console.log(listaUnidades)
                 setListaUnidades(listaUnidades);
             }catch (e) {
                 console.log("Erro ao carregar lista de unidades.", e)

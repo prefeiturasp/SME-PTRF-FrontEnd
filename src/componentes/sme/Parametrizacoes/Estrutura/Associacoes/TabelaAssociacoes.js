@@ -17,7 +17,7 @@ export const TabelaAssociacoes = ({listaDeAssociacoes, rowsPerPage, acoesTemplat
                 field="informacao"
                 header="Informações"
                 className="align-middle text-center"
-                body={(rowData) => TagInformacao(rowData)}
+                body={(rowData) => <TagInformacao data={rowData}/>}
                 style={{width: '15%'}}
             />
             <Column field="unidade.nome_dre" header="DRE"/>
