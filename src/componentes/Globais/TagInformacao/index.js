@@ -16,18 +16,18 @@ const types = {
 }
 
 
-export const TagInformacao = (data, localDaTag) => {
-    if(localDaTag === "modal-legenda-informacao") {
+export const TagInformacao = (props) => {
+    if(props.localDaTag === "modal-legenda-informacao") {
         return (
-            <div className="row ml-2 pb-4" key={data.index}>
+            <div className="row ml-2 pb-4" key={props.data.index}>
                 <div className="col-3">
-                    <span className={`${types[data.id]} tag-modal-legenda-informacoes`}>
-                        {data.texto}
+                    <span className={`${types[props.data.id]} tag-modal-legenda-informacoes`}>
+                        {props.data.texto}
                     </span>
                 </div>
 
                 <div className="col">
-                    <p>{data.descricao}</p>
+                    <p>{props.data.descricao}</p>
                 </div>
             </div>
         )
@@ -36,13 +36,22 @@ export const TagInformacao = (data, localDaTag) => {
 
     return (
         <>
-            {data.informacoes ? data.informacoes?.map((tag, index) => {
+            {props.data.informacoes ? props.data.informacoes?.map((tag, index) => {
                 let toolTip = ""
 
                 if (typeof (tag.tag_hint) === 'string') {
                     toolTip = `<p style="max-width: 200px;">${tag.tag_hint}</p>`
                 } else {
                     toolTip = tag.tag_hint.reduce((acc, info) => (acc + `${info}<br/>`), '<p>') + '</p>'
+                }
+
+                
+                if(props.tooltipsPersonalizadas && props.tooltipsPersonalizadas.length > 0) {
+                    props.tooltipsPersonalizadas.forEach(tooltipPersonalizada => {
+                        if(tooltipPersonalizada.nomeTooltip === tag.tag_nome) {
+                            toolTip = `${toolTip} ${tooltipPersonalizada.textoPersonalizado}`
+                        }
+                    });
                 }
 
                 return (

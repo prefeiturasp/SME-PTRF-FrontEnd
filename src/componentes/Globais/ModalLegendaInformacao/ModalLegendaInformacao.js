@@ -1,4 +1,4 @@
-import React, {Fragment, useCallback, useEffect, useState} from "react";
+import React, {Fragment, useEffect, useState} from "react";
 import { getTagInformacao } from "../../../services/escolas/Despesas.service";
 import { getTagInformacaoAssociacao } from "../../../services/escolas/Associacao.service"
 import {Button, Modal} from "react-bootstrap";
@@ -9,30 +9,39 @@ export const ModalLegendaInformacao = (propriedades) => {
     const [listaTagInformacao, setListaTagInformacao] = useState([])
     const [loading, setLoading] = useState(true)
 
-    const handleTagInformacao = useCallback(async () => {
-        setLoading(true)
-        try {
-            let tagsInformacao = []
-
-            if(propriedades.entidadeDasTags === "associacao") {
-               tagsInformacao = await getTagInformacaoAssociacao()
-               console.log("TAGS INFORMACAO", tagsInformacao)
-            } else {
-               tagsInformacao = await getTagInformacao()
-            }
-
-
-            setListaTagInformacao(tagsInformacao)
-        } catch (e) {
-            console.error('Erro ao carregar tag informação', e)
-        }
-        setLoading(false)
-
-    }, [propriedades.entidadeDasTags])
-
     useEffect(() => {
-        handleTagInformacao()
-    }, [handleTagInformacao])
+        let isMounted = true;
+      
+        const handleTagInformacao = async () => {
+          setLoading(true);
+      
+          try {
+            let tagsInformacao = [];
+      
+            if (propriedades.entidadeDasTags === "associacao") {
+              tagsInformacao = await getTagInformacaoAssociacao();
+            } else {
+              tagsInformacao = await getTagInformacao();
+            }
+      
+            if (isMounted) {
+              setListaTagInformacao(tagsInformacao);
+            }
+          } catch (e) {
+            console.error('Erro ao carregar tag informação', e);
+          }
+      
+          if (isMounted) {
+            setLoading(false);
+          }
+        };
+      
+        handleTagInformacao();
+      
+        return () => {
+          isMounted = false;
+        };
+      }, [propriedades.entidadeDasTags]);
 
     return (
         <Fragment>
@@ -56,7 +65,7 @@ export const ModalLegendaInformacao = (propriedades) => {
                         <Loading corGrafico="black" corFonte="dark" marginTop="0" marginBottom="0"/>
                     ) : listaTagInformacao?.length > 0 ? listaTagInformacao.map((tag, index) => {
                         tag.texto = tag.nome
-                        return <React.Fragment key={index}>{(TagInformacao(tag, "modal-legenda-informacao"))}</React.Fragment>
+                        return <React.Fragment key={index}>{<TagInformacao data={tag} localDaTag="modal-legenda-informacao"/>}</React.Fragment>
                     }) : <span>Nenhuma informação encontrada</span>
                 } </Modal.Body>
                 <Modal.Footer>

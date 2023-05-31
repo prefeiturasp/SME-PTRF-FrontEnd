@@ -33,6 +33,7 @@ import {FiltrosTransacoes} from "./FiltrosTransacoes";
 import {Link, useLocation} from "react-router-dom";
 import { SidebarLeftService } from "../../../../services/SideBarLeft.service";
 import { SidebarContext } from "../../../../context/Sidebar";
+import { ModalLegendaInformacao } from "../../../Globais/ModalLegendaInformacao/ModalLegendaInformacao";
 
 export const DetalheDasPrestacoes = () => {
     const contextSideBar = useContext(SidebarContext);
@@ -62,6 +63,7 @@ export const DetalheDasPrestacoes = () => {
     const [classBtnSalvarExtratoBancario, setClassBtnSalvarExtratoBancario] = useState("secondary");
     const [checkSalvarExtratoBancario, setCheckSalvarExtratoBancario] = useState(false);
 
+    const [showModalLegendaInformacao, setShowModalLegendaInformacao] = useState(false);
     const parametros = useLocation();
 
     useEffect(()=>{
@@ -573,12 +575,14 @@ export const DetalheDasPrestacoes = () => {
                                 handleChangeFiltros={handleChangeFiltros}
                                 handleSubmitFiltros={handleTransacoesNaoConciliadas}
                             />
+
                             <TabelaTransacoes
                                 transacoes={transacoesNaoConciliadas}
                                 checkboxTransacoes={checkboxTransacoes}
                                 periodoFechado={periodoFechado}
                                 handleChangeCheckboxTransacoes={handleChangeCheckboxTransacoes}
                                 tabelasDespesa={tabelasDespesa}
+                                setShowModalLegendaInformacao={setShowModalLegendaInformacao}
                                 handleCallbackOrdernar={handleTransacoesNaoConciliadas}
                                 loading={loadingNaoConciliadas}
                                 emptyListComponent={<p className="mt-2"><strong>Não existem gastos não conciliados...</strong></p>}
@@ -592,16 +596,19 @@ export const DetalheDasPrestacoes = () => {
                                 handleChangeFiltros={handleChangeFiltros}
                                 handleSubmitFiltros={handleTransacoesConciliadas}
                             />
+
                             <TabelaTransacoes
                                 transacoes={transacoesConciliadas}
                                 checkboxTransacoes={checkboxTransacoes}
                                 periodoFechado={periodoFechado}
                                 handleChangeCheckboxTransacoes={handleChangeCheckboxTransacoes}
                                 tabelasDespesa={tabelasDespesa}
+                                setShowModalLegendaInformacao={setShowModalLegendaInformacao}
                                 handleCallbackOrdernar={handleTransacoesConciliadas}
                                 loading={loadingConciliadas}
                                 emptyListComponent={<p className="mt-2"><strong>Não existem gastos conciliados...</strong></p>}
                             />                            
+
                             <Justificativa
                                 textareaJustificativa={textareaJustificativa}
                                 handleChangeTextareaJustificativa={handleChangeTextareaJustificativa}
@@ -615,6 +622,16 @@ export const DetalheDasPrestacoes = () => {
                                 setClassBtnSalvarJustificativa={setClassBtnSalvarJustificativa}
 
                             />
+
+                            <section>
+                                <ModalLegendaInformacao
+                                    show={showModalLegendaInformacao}
+                                    primeiroBotaoOnclick={() => setShowModalLegendaInformacao(false)}
+                                    titulo="Legenda Informação"
+                                    primeiroBotaoTexto="Fechar"
+                                    primeiroBotaoCss="outline-success"
+                                />
+                            </section>
                         </>
                     ):
                         <MsgImgCentralizada
