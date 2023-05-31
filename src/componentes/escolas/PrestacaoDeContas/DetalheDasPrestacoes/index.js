@@ -34,6 +34,7 @@ import {FiltrosTransacoes} from "./FiltrosTransacoes";
 import {Link, useLocation} from "react-router-dom";
 import { SidebarLeftService } from "../../../../services/SideBarLeft.service";
 import { SidebarContext } from "../../../../context/Sidebar";
+import { ModalLegendaInformacao } from "../../../Globais/ModalLegendaInformacao/ModalLegendaInformacao";
 
 export const DetalheDasPrestacoes = () => {
     const contextSideBar = useContext(SidebarContext);
@@ -60,6 +61,7 @@ export const DetalheDasPrestacoes = () => {
     const [classBtnSalvarExtratoBancario, setClassBtnSalvarExtratoBancario] = useState("secondary");
     const [checkSalvarExtratoBancario, setCheckSalvarExtratoBancario] = useState(false);
 
+    const [showModalLegendaInformacao, setShowModalLegendaInformacao] = useState(false);
     const parametros = useLocation();
 
     useEffect(()=>{
@@ -585,6 +587,7 @@ export const DetalheDasPrestacoes = () => {
                                     periodoFechado={periodoFechado}
                                     handleChangeCheckboxTransacoes={handleChangeCheckboxTransacoes}
                                     tabelasDespesa={tabelasDespesa}
+                                    setShowModalLegendaInformacao={setShowModalLegendaInformacao}
                                 />
                             ):
                                 <p className="mt-2"><strong>Não existem gastos não conciliados...</strong></p>
@@ -609,6 +612,7 @@ export const DetalheDasPrestacoes = () => {
                                     periodoFechado={periodoFechado}
                                     handleChangeCheckboxTransacoes={handleChangeCheckboxTransacoes}
                                     tabelasDespesa={tabelasDespesa}
+                                    setShowModalLegendaInformacao={setShowModalLegendaInformacao}
                                 />
                             ):
                                 <p className="mt-2"><strong>Não existem gastos conciliados...</strong></p>
@@ -626,6 +630,16 @@ export const DetalheDasPrestacoes = () => {
                                 setClassBtnSalvarJustificativa={setClassBtnSalvarJustificativa}
 
                             />
+
+                            <section>
+                                <ModalLegendaInformacao
+                                    show={showModalLegendaInformacao}
+                                    primeiroBotaoOnclick={() => setShowModalLegendaInformacao(false)}
+                                    titulo="Legenda Informação"
+                                    primeiroBotaoTexto="Fechar"
+                                    primeiroBotaoCss="outline-success"
+                                />
+                            </section>
                         </>
                     ):
                         <MsgImgCentralizada

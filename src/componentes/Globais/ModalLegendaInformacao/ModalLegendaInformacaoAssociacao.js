@@ -34,7 +34,7 @@ export const ModalLegendaInformacaoAssociacao = (propriedades) => {
                     opcoes.map((tag, index) => {
                         tag.index = index;
                         return (
-                            TagInformacao(tag, "modal-legenda-informacao")
+                            <TagInformacao data={tag} localDaTag="modal-legenda-informacao"/>
                         )
                     })
                 } </Modal.Body>
