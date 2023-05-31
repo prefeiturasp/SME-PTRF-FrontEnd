@@ -52,11 +52,27 @@ export const getIniciarPrestacaoDeContas = async (conta_uuid, periodo_uuid) => {
 // Detalhe Prestação de Contas
 // *** Novas implementações História 34038 - Sprint 16 ***
 // *** Créditos não serão mais exibidos, nem conciliados/desconciliados História 52339 - Sprint - 34***
-export const getTransacoes = async (periodo_uuid, conta_uuid, conferido) => {
-  return (await api.get(`/api/conciliacoes/transacoes-despesa/?periodo=${periodo_uuid}&conta_associacao=${conta_uuid}&conferido=${conferido}`, authHeader)).data
-};
-export const getTransacoesFiltros = async (periodo_uuid, conta_uuid, conferido, acao_associacao_uuid, ordenar_por_imposto) => {
-  return (await api.get(`/api/conciliacoes/transacoes-despesa/?periodo=${periodo_uuid}&conta_associacao=${conta_uuid}&conferido=${conferido}${acao_associacao_uuid ? '&acao_associacao='+acao_associacao_uuid : ''}${ordenar_por_imposto ? '&ordenar_por_imposto='+ordenar_por_imposto : ''}`, authHeader)).data
+export const getTransacoes = async (periodo_uuid, conta_uuid, conferido, acao_associacao_uuid, ordenar_por_numero_do_documento, ordenar_por_data_especificacao, ordenar_por_valor, ordenar_por_imposto) => {
+
+  const apiUrl = '/api/conciliacoes/transacoes-despesa/';
+  const params = {
+    periodo: periodo_uuid,
+    conta_associacao: conta_uuid,
+    conferido: conferido,
+    acao_associacao: acao_associacao_uuid,
+    ordenar_por_numero_do_documento: ordenar_por_numero_do_documento,
+    ordenar_por_data_especificacao: ordenar_por_data_especificacao,
+    ordenar_por_valor: ordenar_por_valor,
+    ordenar_por_imposto: ordenar_por_imposto
+  };
+
+const queryString = Object.keys(params)
+  .filter((key) => params[key] !== undefined && params[key] !== null) 
+  .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
+  .join('&');
+
+const apiUrlWithParams = `${apiUrl}?${queryString}`;
+  return (await api.get(apiUrlWithParams, authHeader)).data
 };
 export const patchConciliarDespesa = async (periodo_uuid, conta_uuid, transacao_uuid) => {
   return (await api.patch(`/api/conciliacoes/conciliar-despesa/?periodo=${periodo_uuid}&conta_associacao=${conta_uuid}&transacao=${transacao_uuid}`, {}, authHeader)).data

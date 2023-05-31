@@ -9,7 +9,6 @@ import {
     getObservacoes,
     getStatusPeriodoPorData,
     getTransacoes,
-    getTransacoesFiltros,
     patchConciliarDespesa,
     patchDesconciliarDespesa,
     getDownloadExtratoBancario,
@@ -40,6 +39,9 @@ export const DetalheDasPrestacoes = () => {
 
     // Alteracoes
     const [loading, setLoading] = useState(true);
+    const [loadingConciliadas, setLoadingConciliadas] = useState(true);
+    const [loadingNaoConciliadas, setLoadingNaoConciliadas] = useState(true);
+
     const [showSalvar, setShowSalvar] = useState(false);
     const [observacaoUuid, setObservacaoUuid] = useState("");
     const [periodoConta, setPeriodoConta] = useState("");
@@ -299,10 +301,8 @@ export const DetalheDasPrestacoes = () => {
     const carregaTransacoes = useCallback(async ()=>{
         setLoading(true)
         if (periodoConta.periodo && periodoConta.conta){
-            let transacoes_conciliadas = await getTransacoes(periodoConta.periodo, periodoConta.conta, 'True');
-            setTransacoesConciliadas(transacoes_conciliadas);
-            let transacoes_nao_conciliadas = await getTransacoes(periodoConta.periodo, periodoConta.conta, 'False');
-            setTransacoesNaoConciliadas(transacoes_nao_conciliadas);
+            handleTransacoesConciliadas();
+            handleTransacoesNaoConciliadas();
         }
         setLoading(false)
     }, [periodoConta]);
@@ -343,7 +343,6 @@ export const DetalheDasPrestacoes = () => {
 
     // Filtros Transacoes
     const [stateFiltros, setStateFiltros] = useState({});
-    const [stateCheckBoxOrdenarPorImposto, setStateCheckBoxOrdenarPorImposto] = useState({});
 
     const handleChangeFiltros = useCallback((name, value) => {
         setStateFiltros({
@@ -351,39 +350,6 @@ export const DetalheDasPrestacoes = () => {
             [name]: value
         });
     }, [stateFiltros]);
-
-    const handleChangeCheckBoxOrdenarPorImposto = (checked, name) =>{
-        setStateCheckBoxOrdenarPorImposto(
-            {
-                ...stateCheckBoxOrdenarPorImposto,
-                [name]: checked
-            });
-    }
-
-    const handleSubmitFiltros = useCallback(async (conciliado) => {
-        if (conciliado=== 'CONCILIADO'){
-            try {
-                let transacoes = await getTransacoesFiltros(periodoConta.periodo, periodoConta.conta, 'True', stateFiltros.filtrar_por_acao_CONCILIADO, stateCheckBoxOrdenarPorImposto.checkOerdenarPorImposto_CONCILIADO);
-                setTransacoesConciliadas(transacoes)
-            }catch (e) {
-                console.log("Erro ao filtrar conciliados")
-            }
-        }else {
-            try {
-                let transacoes = await getTransacoesFiltros(periodoConta.periodo, periodoConta.conta, 'False', stateFiltros.filtrar_por_acao_NAO_CONCILIADO, stateCheckBoxOrdenarPorImposto.checkOerdenarPorImposto_NAO_CONCILIADO);
-                setTransacoesNaoConciliadas(transacoes);
-            }catch (e) {
-                console.log("Erro ao filtrar não conciliados")
-            }
-        }
-    }, [periodoConta, stateFiltros, stateCheckBoxOrdenarPorImposto]);
-
-    const limpaFiltros = async () => {
-        setLoading(true);
-        setStateFiltros({});
-        await carregaTransacoes();
-        setLoading(false);
-    };
 
     // Data Saldo Bancário
     const [dataSaldoBancario, setDataSaldoBancario]= useState({});
@@ -488,6 +454,38 @@ export const DetalheDasPrestacoes = () => {
         // Necessário voltar o estado para true, para clicks nos itens do menu continuarem funcionando corretamente
         contextSideBar.setIrParaUrl(true)
     }
+    
+    const handleTransacoesConciliadas = async (ordenacao) => {
+        setLoadingConciliadas(true);
+        let transacoes_conciliadas = await getTransacoes(
+            periodoConta.periodo, 
+            periodoConta.conta, 
+            'True',
+            stateFiltros.filtrar_por_acao_CONCILIADO, 
+            ordenacao && ordenacao.ordenar_por_numero_do_documento ? ordenacao.ordenar_por_numero_do_documento : '',
+            ordenacao && ordenacao.ordenar_por_data_especificacao ? ordenacao.ordenar_por_data_especificacao : '',
+            ordenacao && ordenacao.ordenar_por_valor ? ordenacao.ordenar_por_valor : '',
+            ordenacao && ordenacao.ordenar_por_imposto ? ordenacao.ordenar_por_imposto : '',
+        );
+        setTransacoesConciliadas(transacoes_conciliadas);
+        setLoadingConciliadas(false);
+    };
+
+    const handleTransacoesNaoConciliadas = async (ordenacao) => {
+        setLoadingNaoConciliadas(true);
+        let transacoes_nao_conciliadas = await getTransacoes(
+            periodoConta.periodo, 
+            periodoConta.conta, 
+            'False',
+            stateFiltros.filtrar_por_acao_NAO_CONCILIADO, 
+            ordenacao && ordenacao.ordenar_por_numero_do_documento ? ordenacao.ordenar_por_numero_do_documento : '',
+            ordenacao && ordenacao.ordenar_por_data_especificacao ? ordenacao.ordenar_por_data_especificacao : '',
+            ordenacao && ordenacao.ordenar_por_valor ? ordenacao.ordenar_por_valor : '',
+            ordenacao && ordenacao.ordenar_por_imposto ? ordenacao.ordenar_por_imposto : '',
+        );
+        setTransacoesNaoConciliadas(transacoes_nao_conciliadas);
+        setLoadingNaoConciliadas(false);
+    };
 
     return (
         <>
@@ -573,22 +571,18 @@ export const DetalheDasPrestacoes = () => {
                                 stateFiltros={stateFiltros}
                                 tabelasDespesa={tabelasDespesa}
                                 handleChangeFiltros={handleChangeFiltros}
-                                handleSubmitFiltros={handleSubmitFiltros}
-                                limpaFiltros={limpaFiltros}
-                                handleChangeCheckBoxOrdenarPorImposto={handleChangeCheckBoxOrdenarPorImposto}
-                                stateCheckBoxOrdenarPorImposto={stateCheckBoxOrdenarPorImposto}
+                                handleSubmitFiltros={handleTransacoesNaoConciliadas}
                             />
-                            {transacoesNaoConciliadas && transacoesNaoConciliadas.length > 0 ?(
-                                <TabelaTransacoes
-                                    transacoes={transacoesNaoConciliadas}
-                                    checkboxTransacoes={checkboxTransacoes}
-                                    periodoFechado={periodoFechado}
-                                    handleChangeCheckboxTransacoes={handleChangeCheckboxTransacoes}
-                                    tabelasDespesa={tabelasDespesa}
-                                />
-                            ):
-                                <p className="mt-2"><strong>Não existem gastos não conciliados...</strong></p>
-                            }
+                            <TabelaTransacoes
+                                transacoes={transacoesNaoConciliadas}
+                                checkboxTransacoes={checkboxTransacoes}
+                                periodoFechado={periodoFechado}
+                                handleChangeCheckboxTransacoes={handleChangeCheckboxTransacoes}
+                                tabelasDespesa={tabelasDespesa}
+                                handleCallbackOrdernar={handleTransacoesNaoConciliadas}
+                                loading={loadingNaoConciliadas}
+                                emptyListComponent={<p className="mt-2"><strong>Não existem gastos não conciliados...</strong></p>}
+                            />                            
 
                             <p className="detalhe-das-prestacoes-titulo-lancamentos mt-5 mb-3">Gastos conciliados</p>
                             <FiltrosTransacoes
@@ -596,23 +590,18 @@ export const DetalheDasPrestacoes = () => {
                                 stateFiltros={stateFiltros}
                                 tabelasDespesa={tabelasDespesa}
                                 handleChangeFiltros={handleChangeFiltros}
-                                handleSubmitFiltros={handleSubmitFiltros}
-                                limpaFiltros={limpaFiltros}
-                                handleChangeCheckBoxOrdenarPorImposto={handleChangeCheckBoxOrdenarPorImposto}
-                                stateCheckBoxOrdenarPorImposto={stateCheckBoxOrdenarPorImposto}
+                                handleSubmitFiltros={handleTransacoesConciliadas}
                             />
-
-                            {transacoesConciliadas && transacoesConciliadas.length > 0 ?(
-                                <TabelaTransacoes
-                                    transacoes={transacoesConciliadas}
-                                    checkboxTransacoes={checkboxTransacoes}
-                                    periodoFechado={periodoFechado}
-                                    handleChangeCheckboxTransacoes={handleChangeCheckboxTransacoes}
-                                    tabelasDespesa={tabelasDespesa}
-                                />
-                            ):
-                                <p className="mt-2"><strong>Não existem gastos conciliados...</strong></p>
-                            }
+                            <TabelaTransacoes
+                                transacoes={transacoesConciliadas}
+                                checkboxTransacoes={checkboxTransacoes}
+                                periodoFechado={periodoFechado}
+                                handleChangeCheckboxTransacoes={handleChangeCheckboxTransacoes}
+                                tabelasDespesa={tabelasDespesa}
+                                handleCallbackOrdernar={handleTransacoesConciliadas}
+                                loading={loadingConciliadas}
+                                emptyListComponent={<p className="mt-2"><strong>Não existem gastos conciliados...</strong></p>}
+                            />                            
                             <Justificativa
                                 textareaJustificativa={textareaJustificativa}
                                 handleChangeTextareaJustificativa={handleChangeTextareaJustificativa}
