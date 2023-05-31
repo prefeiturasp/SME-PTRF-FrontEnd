@@ -87,7 +87,7 @@ export const ListaDeUnidades = ({listaUnidades, rowsPerPage, acaoAoEscolherUnida
                 field="informacao"
                 header="Informações"
                 className="align-middle text-center"
-                body={(rowData) => TagInformacao(rowData)}
+                body={(rowData) => <TagInformacao data={rowData} />}
                 style={{width: '15%'}}
             />
             <Column

@@ -418,7 +418,7 @@ export const ListaDeDespesas = () => {
                                                 {tipoLancamentoTemplate(despesa)}
                                             </td>
                                         
-                                            <td rowSpan={despesa.rateios.length > 0 ? despesa.rateios.length + 1 : 2}>{TagInformacao(despesa)}</td>
+                                            <td rowSpan={despesa.rateios.length > 0 ? despesa.rateios.length + 1 : 2}>{<TagInformacao data={despesa}/>}</td>
                                         </tr>
 
 
