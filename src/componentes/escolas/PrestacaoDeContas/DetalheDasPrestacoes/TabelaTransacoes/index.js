@@ -1,4 +1,4 @@
-import React, {memo, useState} from "react";
+import React, {memo, useState, Fragment} from "react";
 import {useHistory} from 'react-router-dom';
 import {DataTable} from "primereact/datatable";
 import {Column} from "primereact/column";
@@ -7,17 +7,22 @@ import { TagInformacao } from "../../../../Globais/TagInformacao";
 import { Button } from "react-bootstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
-
+import Loading from "../../../../../utils/Loading";
 import {RedirectModalTabelaLancamentos} from "../../../../../utils/Modais";
+import { Ordenacao } from "./Ordenacao/Ordenacao";
+import { LimparArgumentosOrdenacao } from "./Ordenacao/LimparOrdenacao";
 
 const TabelaTransacoes = ({
-                              transacoes,
-                              checkboxTransacoes,
-                              handleChangeCheckboxTransacoes,
-                              periodoFechado,
-                              tabelasDespesa,
-                              setShowModalLegendaInformacao
-                          }) => {
+    transacoes,
+    checkboxTransacoes,
+    handleChangeCheckboxTransacoes,
+    periodoFechado,
+    tabelasDespesa,
+    setShowModalLegendaInformacao,
+    handleCallbackOrdernar = null,
+    loading = true,
+    emptyListComponent = <></>
+}) => {
 
     let history = useHistory();
     const rowsPerPage = 10;
@@ -26,6 +31,15 @@ const TabelaTransacoes = ({
     const [showModal, setShowModal] = useState(false);
     const [urlRedirect, setUrlRedirect] = useState('');
     const [uuid, setUuid] = useState('');
+
+    const initOrdenacao = {
+        ordenar_por_numero_do_documento: '',
+        ordenar_por_data_especificacao: '',
+        ordenar_por_valor: '',
+        ordenar_por_imposto: false,
+    }
+    const [showModalOrdenar, setShowModalOrdenar] = useState(false);
+    const [camposOrdenacao, setCamposOrdenacao] = useState(initOrdenacao);
 
     const onShowModal = () => {
         setShowModal(true);
@@ -263,79 +277,126 @@ const TabelaTransacoes = ({
         )
     }
 
-    return (
-        <div className="row mt-4">
-            <div className="col-12">
-                <div className="datatable-responsive-demo">
-                <div className="d-flex justify-content-end">
-                    <button
-                        onClick={()=> setShowModalLegendaInformacao(true)}
-                        className="btn btn-link link-green"
-                        style={{padding: '0px', textDecoration: 'none'}}
-                    >
-                            <FontAwesomeIcon
-                                style={{fontSize: '18px', marginRight: "4px", paddingTop: "2px"}}
-                                icon={faInfoCircle}
-                            />
-                            <span>Legenda informação</span>
-                        </button>
-                    </div>
+    // Ordenacao
+    const handleChangeOrdenacao = (name, value) => {
+        setCamposOrdenacao({
+            ...camposOrdenacao,
+            [name]: value
+        });
+    };
 
-                    <DataTable
-                        value={transacoes}
-                        expandedRows={expandedRows}
-                        onRowToggle={(e) => setExpandedRows(e.data)}
-                        rowExpansionTemplate={rowExpansionTemplate}
-                        dataKey="documento_mestre.uuid"
-                        className='tabela-transacoes tabela-transacoes tabela-lancamentos-despesas p-datatable-responsive-demo'
-                        paginator={transacoes.length > rowsPerPage}
-                        rows={rowsPerPage}
-                        paginatorTemplate="PrevPageLink PageLinks NextPageLink"
-                    >
-                        <Column expander style={{width: '3em', borderRight: 'none'}}/>
-                        <Column
-                            field="data"
-                            header="Data"
-                            style={{borderLeft: 'none'}}
-                            body={dataTemplate}
-                        />
-                        <Column
-                            field="tipo_transacao"
-                            header="Tipo de lançamento"
-                            body={tipoLancamentoTemplate}
-                        />
-                        <Column className='quebra-palavra' field="numero_documento" header="N.º do documento"
-                                style={{width: '160px'}}/>
-                        <Column field="descricao" header="Descrição"/>
-                        <Column 
-                            field='informacao'
-                            header='Informações'
-                            className="align-middle text-left borda-coluna"
-                            body={(rowData) => <TagInformacao data={rowData} tooltipsPersonalizadas={
-                                [
-                                    {nomeTooltip: "Não conciliada", 
-                                    textoPersonalizado: dataTip(rowData.notificar_dias_nao_conferido)}
-                                ]
-                            } />}
-                            style={{width: '15%'}}/>
-                        <Column
-                            field="valor_transacao_na_conta"
-                            header="Valor (R$)"
-                            body={valorTemplate}
-                        />
-                        <Column
-                            field="conferido"
-                            header="Demonstrado"
-                            className='align-middle text-center'
-                            body={conferidoTemplate}
-                        />
-                    </DataTable>
-                </div>
+    const limparOrdenacao = async () =>{
+        setCamposOrdenacao(initOrdenacao);
+        handleCallbackOrdernar && handleCallbackOrdernar(initOrdenacao);
+    }
+
+    const onSubmitOrdenar = async () => {
+        setShowModalOrdenar(false);
+        handleCallbackOrdernar && handleCallbackOrdernar(camposOrdenacao);
+    }
+
+    return (
+        loading ? (
+            <Loading
+                corGrafico="black"
+                corFonte="dark"
+                marginTop="0"
+                marginBottom="0"
+            />
+        ) : transacoes && transacoes.length > 0 ? (
+            <>
+            <div className='text-right'>
+                <button
+                    onClick={()=> setShowModalLegendaInformacao(true)}
+                    className="btn btn-link link-green mr-3"
+                    style={{padding: '0px', textDecoration: 'none'}}
+                >
+                    <FontAwesomeIcon
+                        style={{fontSize: '18px', marginRight: "4px", paddingTop: "2px"}}
+                        icon={faInfoCircle}
+                    />
+                    <span>Legenda informação</span>
+                </button>
+                <Ordenacao
+                    showModalOrdenar={showModalOrdenar}
+                    setShowModalOrdenar={setShowModalOrdenar}
+                    camposOrdenacao={camposOrdenacao}
+                    handleChangeOrdenacao={handleChangeOrdenacao}
+                    onSubmitOrdenar={onSubmitOrdenar}
+                />
+                <LimparArgumentosOrdenacao
+                    limparOrdenacao={limparOrdenacao}
+                    camposOrdenacao={camposOrdenacao}
+                />
             </div>
-            <section>
-                <RedirectModalTabelaLancamentos show={showModal} handleClose={onHandleClose} onCancelarTrue={onCancelarTrue}/>
-            </section>
-        </div>
+            <div className="row mt-4">
+                <div className="col-12">
+                    <div className="datatable-responsive-demo">
+                        <div className="d-flex justify-content-end">
+                            
+                        </div>
+
+                        <DataTable
+                            value={transacoes}
+                            expandedRows={expandedRows}
+                            onRowToggle={(e) => setExpandedRows(e.data)}
+                            rowExpansionTemplate={rowExpansionTemplate}
+                            dataKey="documento_mestre.uuid"
+                            className='tabela-transacoes tabela-transacoes tabela-lancamentos-despesas p-datatable-responsive-demo'
+                            paginator={transacoes.length > rowsPerPage}
+                            rows={rowsPerPage}
+                            paginatorTemplate="PrevPageLink PageLinks NextPageLink"
+                        >
+                            <Column expander style={{width: '3em', borderRight: 'none'}}/>
+                            <Column
+                                field="data"
+                                header="Data"
+                                style={{borderLeft: 'none'}}
+                                body={dataTemplate}
+                            />
+                            <Column
+                                field="tipo_transacao"
+                                header="Tipo de lançamento"
+                                body={tipoLancamentoTemplate}
+                            />
+                            <Column className='quebra-palavra' field="numero_documento" header="N.º do documento"
+                                    style={{width: '160px'}}/>
+                            <Column field="descricao" header="Descrição"/>
+                            <Column 
+                                field='informacao'
+                                header='Informações'
+                                className="align-middle text-left borda-coluna"
+                                body={(rowData) => <TagInformacao data={rowData} tooltipsPersonalizadas={
+                                    [
+                                        {nomeTooltip: "Não conciliada", 
+                                        textoPersonalizado: dataTip(rowData.notificar_dias_nao_conferido)}
+                                    ]
+                                } />}
+                                style={{width: '15%'}}/>
+                            <Column
+                                field="valor_transacao_na_conta"
+                                header="Valor (R$)"
+                                body={valorTemplate}
+                            />
+                            <Column
+                                field="conferido"
+                                header="Demonstrado"
+                                className='align-middle text-center'
+                                body={conferidoTemplate}
+                            />
+                        </DataTable>
+                    </div>
+                </div>
+                <section>
+                    <RedirectModalTabelaLancamentos show={showModal} handleClose={onHandleClose} onCancelarTrue={onCancelarTrue}/>
+                </section>
+            </div>
+            </>
+        ) : (
+            <Fragment>
+                {emptyListComponent}
+            </Fragment>
+        )
     )
 };
 
