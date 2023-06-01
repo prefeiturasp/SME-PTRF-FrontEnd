@@ -9,8 +9,8 @@ const types = {
     4: 'tag-green',
     5: 'tag-blank',
     6: 'tag-red-white',
-    7: 'tag-neutral-3',
-    8: 'tag-light-purple',
+    7: 'tag-red',
+    8: 'tag-dark-grey',
     9: 'tag-blue',
     10: 'tag-blue-white',
 }
