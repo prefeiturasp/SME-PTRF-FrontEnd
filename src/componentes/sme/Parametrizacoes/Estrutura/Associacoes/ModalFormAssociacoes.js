@@ -181,7 +181,7 @@ const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitMo
                                 <div className='row'>
                                     <div className='col-6'>
                                     <label htmlFor="periodo_inicial">
-                                        Período inicial
+                                        Período inicial*
                                     </label>
                                        <div
                                            data-tip={
@@ -212,6 +212,7 @@ const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitMo
                                             /> 
                                             <span>O período inicial informado é uma referência e indica que o período a ser habilitado para a associação será o período posterior ao período informado.</span>
                                         </small>
+                                        {props.touched.periodo_inicial && props.errors.periodo_inicial && <span className="span_erro text-danger mt-1"> {props.errors.periodo_inicial} </span>}
                                     </div>
                                     <div className="col-6">
                                         <div className="form-group">
