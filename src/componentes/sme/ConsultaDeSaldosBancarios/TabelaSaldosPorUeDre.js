@@ -15,7 +15,7 @@ export const TabelaSaldosPorUeDre = ({saldosPorUeDre, valorTemplate, retornaTitu
                         <tbody>
                         {saldosPorUeDre && saldosPorUeDre.length > 0 && saldosPorUeDre.map((item, index)=>(
                             <tr key={index}>
-                                <td><strong>{item.sigla_dre}</strong></td>
+                                <td><strong>{item.nome_dre}</strong></td>
                                 {item.associacoes.map((associacao)=>(
                                     <td key={associacao.associacao}>{associacao.saldo_total ? valorTemplate(associacao.saldo_total) : '-'}</td>
                                 ))}

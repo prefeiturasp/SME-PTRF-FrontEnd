@@ -22,6 +22,8 @@ import Loading from "../../../../../utils/Loading";
 import {ModalFormAcoesDaAssociacao} from "./ModalFormAcoesDasAssociacoes";
 import {ModalConfirmDeleteAcaoAssociacao} from "./ModalConfirmDeleteAcaoAssociacao";
 import {ModalInfoQtdeRateiosReceitasAcao} from "./ModalInfoQtdeRateiosReceitasAcao";
+import { ModalLegendaInformacaoAssociacao } from "../../../../Globais/LegendaInformaçãoAssociacao/ModalLegendaInformacaoAssociacao";
+import { getTabelaAssociacoes } from "../../../../../services/dres/Associacoes.service";
 
 export const AcoesDasAssociacoes = () => {
 
@@ -29,6 +31,7 @@ export const AcoesDasAssociacoes = () => {
         filtrar_por_nome_cod_eol: "",
         filtrar_por_acao: "",
         filtrar_por_status: "",
+        filtro_informacoes: []
     };
 
     const [todasAsAcoes, setTodasAsAcoes] = useState([]);
@@ -36,6 +39,8 @@ export const AcoesDasAssociacoes = () => {
     const [stateFiltros, setStateFiltros] = useState(initialStateFiltros);
     const [listaTiposDeAcao, setListaTiposDeAcao] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [showModalLegendaInformacao, setShowModalLegendaInformacao] = useState(false);
+    const [tabelaAssociacoes, setTabelaAssociacoes] = useState({});
 
     const carregaTodasAsAcoes = useCallback(async () => {
         setLoading(true);
@@ -44,6 +49,9 @@ export const AcoesDasAssociacoes = () => {
 
         let todas_associacoes = await getAssociacoes();
         setTodasAsAcoesAutoComplete(todas_associacoes);
+
+        let tabela_associacoes = await getTabelaAssociacoes();
+        setTabelaAssociacoes(tabela_associacoes);
 
         setLoading(false);
     }, []);
@@ -73,7 +81,10 @@ export const AcoesDasAssociacoes = () => {
     };
     const handleSubmitFiltros = async () => {
         setLoading(true);
-        let acoes_filtradas = await getFiltros(stateFiltros.filtrar_por_nome_cod_eol, stateFiltros.filtrar_por_acao, stateFiltros.filtrar_por_status);
+        let acoes_filtradas = await getFiltros(stateFiltros.filtrar_por_nome_cod_eol, 
+                                               stateFiltros.filtrar_por_acao, 
+                                               stateFiltros.filtrar_por_status, 
+                                               stateFiltros.filtro_informacoes);
         setTodasAsAcoes(acoes_filtradas);
         setLoading(false)
     };
@@ -152,7 +163,11 @@ export const AcoesDasAssociacoes = () => {
         });
     };
     const handleEditarAcoes = (rowData) => {
-        setReadOnly(false);
+        if(rowData.data_de_encerramento_associacao) {
+            setReadOnly(true);
+        } else {
+            setReadOnly(false);
+        }
         setStateFormModal({
             associacao: rowData.associacao.uuid,
             acao: rowData.acao.uuid,
@@ -212,6 +227,15 @@ export const AcoesDasAssociacoes = () => {
         }
     };
 
+    const handleOnChangeMultipleSelectStatus =  async (value) => {
+        let name = "filtro_informacoes"
+
+        setStateFiltros({
+            ...stateFiltros,
+            [name]: value
+        });
+    };
+
     return (
         <PaginasContainer>
             <h1 className="titulo-itens-painel mt-5">Ações das Associações</h1>
@@ -243,6 +267,8 @@ export const AcoesDasAssociacoes = () => {
                             handleSubmitFiltros={handleSubmitFiltros}
                             limpaFiltros={limpaFiltros}
                             listaTiposDeAcao={listaTiposDeAcao}
+                            handleOnChangeMultipleSelectStatus={handleOnChangeMultipleSelectStatus}
+                            tabelaAssociacoes={tabelaAssociacoes}
                         />
                         <p>Exibindo <span className='total-acoes'>{totalDeAcoes}</span> ações de associações</p>
                         <TabelaAcoesDasAssociacoes
@@ -251,7 +277,17 @@ export const AcoesDasAssociacoes = () => {
                             statusTemplate={statusTemplate}
                             dataTemplate={dataTemplate}
                             acoesTemplate={acoesTemplate}
+                            setShowModalLegendaInformacao={setShowModalLegendaInformacao}
                         />
+                        <section>
+                            <ModalLegendaInformacaoAssociacao
+                                show={showModalLegendaInformacao}
+                                primeiroBotaoOnclick={() => setShowModalLegendaInformacao(false)}
+                                titulo="Legenda Informação"
+                                primeiroBotaoTexto="Fechar"
+                                primeiroBotaoCss="outline-success"                            
+                            />
+                        </section>
                     </>
                 }
                 <section>

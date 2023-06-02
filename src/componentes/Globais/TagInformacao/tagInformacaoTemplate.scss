@@ -1,0 +1,93 @@
+.text-wrap-tag {
+    overflow-wrap: break-word;
+}
+
+.tag-tabelas {
+    display: flex;
+    flex: 1;
+    max-width: 200px;
+    justify-content: center;
+    padding-left: 2px;
+    padding-right: 2px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    color: #fff;
+}
+
+.tag-modal-legenda-informacoes {
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    padding-left: 2px;
+    padding-right: 2px;
+    border-radius: 5px;
+    align-items: center;
+}
+
+.tag-purple {
+    color: #fff;
+    background-color: #9C33AD;
+}
+
+.tag-darkblue {
+    color: #fff;
+    background-color: #5F55A1;
+}
+
+.tag-orange {
+    color: #fff;
+    background-color: #F28A0D
+}
+
+.tag-green {
+    color: #fff;
+    background-color: #03543F
+}
+
+.tag-blank {
+    border: 2px solid #03543F;
+    color: #03543F;
+    background: inherit;
+}
+
+.tag-red-white{
+    border: 2px solid #D8DBDB;
+    color: #424848;
+    background: #D8DBDB;
+}
+
+.tag-neutral-3 {
+    color: #fff;
+    background-color: #9B9C9C;
+}
+
+.tag-verde {
+    color: #fff;
+    background-color: #03543F;
+}
+
+.tag-light-purple {
+    color: #fff;
+    background-color: #5F55A1;
+}
+
+.tag-blue {
+    color: #fff;
+    background-color: #1130AF;
+}
+
+.tag-blue-white {
+    border: 2px solid #1130AF;
+    color: #1130AF;
+    background: inherit;
+}
+
+.tag-red {
+    color: #fff;
+    background-color: #C2255C;
+}
+
+.tag-dark-grey {
+    color: #fff;
+    background-color: #424848;
+}

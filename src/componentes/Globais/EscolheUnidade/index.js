@@ -5,7 +5,7 @@ import Loading from "../../../utils/Loading";
 import {FiltroDeUnidades} from "./FiltroDeUnidades";
 import Img404 from "../../../assets/img/img-404.svg";
 import {MsgImgCentralizada} from "../Mensagens/MsgImgCentralizada";
-import { ModalLegendaInformacaoAssociacao } from "../LegendaInformaçãoAssociacao/ModalLegendaInformacaoAssociacao";
+import { ModalLegendaInformacao } from "../../Globais/ModalLegendaInformacao/ModalLegendaInformacao";
 
 export const EscolheUnidade = (props) =>{
 
@@ -96,12 +96,13 @@ export const EscolheUnidade = (props) =>{
             }
 
             <section>
-                <ModalLegendaInformacaoAssociacao
+                <ModalLegendaInformacao
                     show={showModalLegendaInformacao}
                     primeiroBotaoOnclick={() => setShowModalLegendaInformacao(false)}
                     titulo="Legenda Informação"
                     primeiroBotaoTexto="Fechar"
                     primeiroBotaoCss="outline-success"
+                    entidadeDasTags="associacao"
                 />
             </section>
 

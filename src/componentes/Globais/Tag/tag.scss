@@ -1,0 +1,15 @@
+@import 'src/assets/css/variaveis.scss';
+
+.custom-tag {
+    display: flex;
+    justify-content: center;
+    padding-left: 5px;
+    padding-right: 5px;
+    border-radius: 5px;
+    align-items: center;
+}
+
+.custom-tag-default {
+    background-color: $corCinza;  
+    color: $corBranco;
+}

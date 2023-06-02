@@ -5,8 +5,7 @@ import "../../../../../Globais/ModalBootstrap/modal-bootstrap.scss"
 import Img404 from "../../../../../../assets/img/img-404.svg";
 import Loading from "../../../../../../utils/Loading";
 import {Filtros} from "./FormFiltros";
-import {DataTable} from "primereact/datatable";
-import {Column} from "primereact/column";
+import {Button} from "antd";
 import {MsgImgCentralizada} from  "../../../../../Globais/Mensagens/MsgImgCentralizada";
 import {MsgImgLadoDireito} from "../../../../../Globais/Mensagens/MsgImgLadoDireito";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -18,6 +17,8 @@ import {PaginasContainer} from "../../../../../../paginas/PaginasContainer";
 import {getAssociacoesNaoVinculadasAAcao, getAcao, postAddAcaoAssociacao, addAcoesAssociacoesEmLote} from "../../../../../../services/sme/Parametrizacoes.service"
 import {ModalConfirmVincularAcaoAssociacao} from "./ModalConfirmVincularAcaoAssociacao"
 import {ModalInfoNaoPodeVincular} from "./ModalInfoNaoPodeVincular";
+import { TabelaAssociacaoAcao } from "../TabelaAssociacaoAcao";
+import { getTabelaAssociacoes } from "../../../../../../services/dres/Associacoes.service";
 
 const CustomToast = (propriedades) => {
     return (
@@ -51,6 +52,7 @@ export const VinculaAssociacoesAAcao = () => {
 
     const estadoInicialFiltros = {
         filtrar_por_nome: "",
+        filtro_informacoes: []
     };
 
     const [loading, setLoading] = useState(true);
@@ -64,8 +66,9 @@ export const VinculaAssociacoesAAcao = () => {
     const [showToast, setShowToast] = useState(false);
     const [showConfirmaVinculo, setShowConfirmaVinculo] = useState(false);
     const [showModalInfoNaoPodeVincular, setShowModalInfoNaoPodeVincular] = useState(false);
-    const [mensagemModalInfoNaoPodeVincular, setMensagemModalInfoNaoPodeVincular] = useState("");
+    const [mensagemModalInfoNaoPodeVincular, setMensagemModalInfoNaoPodeVincular] = useState({titulo: "", mensagem: ""});
     const [mensagemToast, setMensagemToast] = useState("");
+    const [tabelaAssociacoes, setTabelaAssociacoes] = useState({});
 
     useEffect(() => {
         buscaUnidadesNaoVinculadasAAcao(acao_uuid).then(() => setLoading(false));
@@ -75,6 +78,9 @@ export const VinculaAssociacoesAAcao = () => {
         if (acaoUuid){
             let acao = await getAcao(acaoUuid)
             setAcao(acao);
+
+            let _tabelaAssociacoes = await getTabelaAssociacoes();
+            setTabelaAssociacoes(_tabelaAssociacoes);
 
             let associacoes = await getAssociacoesNaoVinculadasAAcao(acaoUuid);
             setUnidades(associacoes);
@@ -98,7 +104,7 @@ export const VinculaAssociacoesAAcao = () => {
             event.preventDefault();
         }
 
-        let resultado_filtros = await getAssociacoesNaoVinculadasAAcao(acao_uuid, estadoFiltros.filtrar_por_nome);
+        let resultado_filtros = await getAssociacoesNaoVinculadasAAcao(acao_uuid, estadoFiltros.filtrar_por_nome, estadoFiltros.filtro_informacoes);
 
         let unis = resultado_filtros.map(obj => {
             return {
@@ -248,7 +254,7 @@ export const VinculaAssociacoesAAcao = () => {
                                         <strong>Cancelar</strong>
                                     </a>
                                     <div className="float-right" style={{padding: "0px 10px"}}>|</div>
-                                    <a className="float-right" onClick={(e) => modalVincular()} style={{textDecoration:"underline", cursor:"pointer"}}>
+                                    <a className="float-right" onClick={() => handleValidaAssociacoesEmLote()} style={{textDecoration:"underline", cursor:"pointer"}}>
                                         <FontAwesomeIcon
                                             style={{color: "white", fontSize: '15px', marginRight: "2px"}}
                                             icon={faPlusCircle}
@@ -281,13 +287,24 @@ export const VinculaAssociacoesAAcao = () => {
     const acoesTemplate = (rowData) => {
         return (
             <div>
-                <Link className="link-green" onClick={() => {handleVinculaUE(rowData['uuid'])}}>
-                    <FontAwesomeIcon
-                        style={{fontSize: '20px', marginRight: "0"}}
-                        icon={faPlusCircle}
-                    />
-                    <span> Vincular</span>
-                </Link>
+                <Button 
+                    type="text" 
+                    className={`${rowData.encerrada ? '': 'link-green'}`}
+                    onClick={() => rowData.encerrada ? null : handleVinculaUE(rowData['uuid'])}
+                    icon={
+                        <FontAwesomeIcon
+                            style={{
+                                fontSize: '20px', 
+                                marginRight: 3, 
+                                color: rowData.encerrada ? "grey" : ""
+                            }}
+                            icon={faPlusCircle}
+                        />
+                    }
+                    disabled={rowData.encerrada} 
+                >
+                    Vincular                
+                </Button>                
             </div>
         )
     };
@@ -316,6 +333,16 @@ export const VinculaAssociacoesAAcao = () => {
         }
         await atualizaListaUnidades()
         setAssociacaoUuid(null);
+    };
+
+    const handleValidaAssociacoesEmLote = () => {
+        let associacoesEncerradasSelecionadas = unidades.filter(u => u.selecionado === true && u.encerrada);
+        if(associacoesEncerradasSelecionadas.length > 0) {
+            setShowModalInfoNaoPodeVincular(true);
+            setMensagemModalInfoNaoPodeVincular({titulo: "Ação não permitida", mensagem: "Existem uma ou mais associações encerradas selecionadas."})
+        } else {
+            modalVincular();
+        }
     };
 
     const vincularAssociacoesEmLote = async () => {
@@ -350,7 +377,16 @@ export const VinculaAssociacoesAAcao = () => {
 
     const handleCloseInfoNaoPodeVincular = () => {
         setShowModalInfoNaoPodeVincular(false);
-        setMensagemModalInfoNaoPodeVincular("");
+        setMensagemModalInfoNaoPodeVincular({titulo: "", mensagem: ""});
+    };
+
+    const handleOnChangeMultipleSelectStatus =  async (value) => {
+        let name = "filtro_informacoes"
+
+        setEstadoFiltros({
+            ...estadoFiltros,
+            [name]: value
+        });
     };
 
     return (
@@ -387,9 +423,11 @@ export const VinculaAssociacoesAAcao = () => {
                             <div className="page-content-inner">
                                 <Filtros
                                     estadoFiltros={estadoFiltros}
+                                    tabelaAssociacoes={tabelaAssociacoes}
                                     mudancasFiltros={mudancasFiltros}
                                     enviarFiltrosAssociacao={aplicaFiltrosUnidades}
                                     limparFiltros={limparFiltros}
+                                    handleOnChangeMultipleSelectStatus={handleOnChangeMultipleSelectStatus}
                                 />
                                 <ModalVincularLote
                                     show={showModalVincular}
@@ -415,24 +453,15 @@ export const VinculaAssociacoesAAcao = () => {
                                 <div className="row">
                                     <div className="col-12">
                                         {unidades.length > 0 ? (
-                                            <DataTable
-                                                value={unidades}
-                                                className="datatable-footer-coad"
-                                                paginator={unidades.length > rowsPerPage}
-                                                rows={rowsPerPage}
-                                                paginatorTemplate="PrevPageLink PageLinks NextPageLink"
+                                            <TabelaAssociacaoAcao
+                                                unidades={unidades}
+                                                rowsPerPage={rowsPerPage}
                                                 autoLayout={true}
-                                                selectionMode="single"
-                                            >
-                                                <Column header={selecionarHeader()} body={selecionarTemplate}/>
-                                                <Column field='unidade.codigo_eol' header='Código Eol'/>
-                                                <Column field='unidade.nome_com_tipo' header='Nome UE'/>
-                                                <Column
-                                                    field="acoes"
-                                                    header="Ações"
-                                                    body={acoesTemplate}
-                                                />
-                                            </DataTable>
+                                                selecionarHeader={selecionarHeader}
+                                                selecionarTemplate={selecionarTemplate}
+                                                acoesTemplate={acoesTemplate}
+                                                caminhoUnidade="unidade"
+                                            />                                             
                                         ) : buscaUtilizandoFiltros ?
                                             <MsgImgCentralizada
                                                 texto='Não encontramos unidades que atendam aos filtros informados.'
@@ -465,8 +494,8 @@ export const VinculaAssociacoesAAcao = () => {
                     <ModalInfoNaoPodeVincular
                         show={showModalInfoNaoPodeVincular}
                         handleClose={handleCloseInfoNaoPodeVincular}
-                        titulo="Exclusão não permitida"
-                        texto={mensagemModalInfoNaoPodeVincular}
+                        titulo={mensagemModalInfoNaoPodeVincular.titulo}
+                        texto={mensagemModalInfoNaoPodeVincular.mensagem}
                         primeiroBotaoTexto="Fechar"
                         primeiroBotaoCss="success"
                     />
