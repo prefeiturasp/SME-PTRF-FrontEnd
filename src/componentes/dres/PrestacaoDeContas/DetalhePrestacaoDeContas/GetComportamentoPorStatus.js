@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Cabecalho from "./Cabecalho";
 import {BotoesAvancarRetroceder} from "./BotoesAvancarRetroceder";
 import {TrilhaDeStatus} from "./TrilhaDeStatus";
@@ -65,6 +65,16 @@ export const GetComportamentoPorStatus = (
     }) => {
 
         const TEMPERMISSAO = RetornaSeTemPermissaoEdicaoAcompanhamentoDePc()
+    const [updateListaDeDocumentosParaConferencia, setUpdateListaDeDocumentosParaConferencia] = useState(0);
+    const [carregaLancamentosParaConferencia, setCarregaLancamentosParaConferencia] = useState(0);
+
+    const onUpdateListaDeDocumentosParaConferencia = () => {
+        setUpdateListaDeDocumentosParaConferencia(prev => prev + 1);
+    };
+
+    const onCarregaLancamentosParaConferencia = () => {
+        setCarregaLancamentosParaConferencia(prev => prev + 1);
+    };
 
     if (prestacaoDeContas && prestacaoDeContas.status) {
         if (prestacaoDeContas.status === 'NAO_RECEBIDA') {
@@ -213,10 +223,12 @@ export const GetComportamentoPorStatus = (
                     <ConferenciaDeLancamentos
                         prestacaoDeContas={prestacaoDeContas}
                         editavel={TEMPERMISSAO}
+                        onCarregaLancamentosParaConferencia={onCarregaLancamentosParaConferencia}
                     />
                     <ConferenciaDeDocumentos
                         prestacaoDeContas={prestacaoDeContas}
                         editavel={TEMPERMISSAO}
+                        onUpdateListaDeDocumentosParaConferencia={onUpdateListaDeDocumentosParaConferencia}
                     />
                     <DevolucaoParaAcertos
                         prestacaoDeContas={prestacaoDeContas}
@@ -226,6 +238,8 @@ export const GetComportamentoPorStatus = (
                         editavel={TEMPERMISSAO}
                         setLoadingAcompanhamentoPC={setLoading}
                         setAnalisesDeContaDaPrestacao={setAnalisesDeContaDaPrestacao}
+                        updateListaDeDocumentosParaConferencia={updateListaDeDocumentosParaConferencia}
+                        carregaLancamentosParaConferencia={carregaLancamentosParaConferencia}
                     />
                     <ComentariosDeAnalise
                         prestacaoDeContas={prestacaoDeContas}

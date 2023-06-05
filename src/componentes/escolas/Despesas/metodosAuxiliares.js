@@ -470,6 +470,20 @@ const conciliaRateios = (values, periodo_da_analise) => {
     }  
 }
 
+const documentoTransacaoObrigatorio = (value, despesasTabelas) => {
+    // Valida se o documento transação deve ser considerado para o calculo de despesa rascunho
+
+    if (value && despesasTabelas && despesasTabelas.tipos_transacao){
+        let id_transacao = value.id ? value.id : value;
+        let exibe_documento_transacao =  despesasTabelas.tipos_transacao.find(element => element.id === Number(id_transacao));
+        
+        if(exibe_documento_transacao && exibe_documento_transacao.tem_documento){
+            return true;
+        }
+    }
+    return false;
+}
+
 export const metodosAuxiliares = {
     onShowModal,
     onCancelarTrue,
@@ -501,5 +515,6 @@ export const metodosAuxiliares = {
     bloqueiaCamposDespesaImposto,
     mostraBotaoDeletar,
     validaConciliacao,
-    conciliaRateios
+    conciliaRateios,
+    documentoTransacaoObrigatorio
 };

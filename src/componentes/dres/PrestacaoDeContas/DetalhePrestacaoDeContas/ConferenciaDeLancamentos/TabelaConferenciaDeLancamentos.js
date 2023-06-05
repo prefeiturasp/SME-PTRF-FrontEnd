@@ -28,8 +28,6 @@ import useRowExpansionReceitaTemplate
     from "../../../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useRowExpansionReceitaTemplate";
 import useNumeroDocumentoTemplate
     from "../../../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useNumeroDocumentoTemplate";
-import useTagInformacaoTemplate 
-    from "../../../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useTagInformacaoTemplate";
 
 // Redux
 import {useDispatch} from "react-redux";
@@ -38,8 +36,9 @@ import {
     limparDetalharAcertos
 } from "../../../../../store/reducers/componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeLancamentos/DetalharAcertos/actions";
 import {visoesService} from "../../../../../services/visoes.service";
-import {ModalLegendaInformacao} from "./Modais/ModalLegendaInformacao"
+import {ModalLegendaInformacao} from "../../../../Globais/ModalLegendaInformacao/ModalLegendaInformacao"
 import {ModalLegendaConferenciaLancamentos} from "./Modais/ModalLegendaConferenciaLancamentos"
+import { TagInformacao } from "../../../../Globais/TagInformacao/index";
 
 const TabelaConferenciaDeLancamentos = ({
                                             setLancamentosParaConferencia,
@@ -72,7 +71,6 @@ const TabelaConferenciaDeLancamentos = ({
     const rowExpansionDespesaTemplate = useRowExpansionDespesaTemplate(prestacaoDeContas)
     const rowExpansionReceitaTemplate = useRowExpansionReceitaTemplate()
     const numeroDocumentoTemplate = useNumeroDocumentoTemplate()
-    const tagInformacao = useTagInformacaoTemplate()
 
     // Redux
     const dispatch = useDispatch()
@@ -663,7 +661,7 @@ const TabelaConferenciaDeLancamentos = ({
                             field='informacao'
                             header='Informações'
                             className="align-middle text-left borda-coluna"
-                            body={tagInformacao}
+                            body={(rowData) => <TagInformacao data={rowData}/>}
                             style={{width: '15%'}}/>
                         <Column
                             field='valor_transacao_total'

@@ -25,7 +25,7 @@ import {BtnAddAssociacoes} from "./BtnAddAssociacoes";
 import {ModalConfirmDeleteAssociacao} from "./ModalConfirmDeleteAssociacao";
 import {ModalInfoExclusaoNaoPermitida} from "./ModalInfoExclusaoNaoPermitida";
 import { ModalConfirmUpdateObservacao } from "./ModalConfirmUpdateObservacao";
-import { ModalLegendaInformacaoAssociacao } from "../../../../Globais/LegendaInformaçãoAssociacao/ModalLegendaInformacaoAssociacao";
+import { ModalLegendaInformacao } from "../../../../Globais/ModalLegendaInformacao/ModalLegendaInformacao";
 import Loading from "../../../../../utils/Loading";
 
 export const Associacoes = () => {
@@ -178,7 +178,7 @@ export const Associacoes = () => {
             id: associacao_por_uuid.id,
             operacao: 'edit',
             data_de_encerramento: associacao_por_uuid.data_de_encerramento.data,
-            retorna_se_pode_editar_periodo_inicial: associacao_por_uuid.retorna_se_pode_editar_periodo_inicial,
+            pode_editar_periodo_inicial: associacao_por_uuid.pode_editar_periodo_inicial,
             pode_editar_dados_associacao_encerrada: associacao_por_uuid.data_de_encerramento.pode_editar_dados_associacao_encerrada ? associacao_por_uuid.data_de_encerramento.pode_editar_dados_associacao_encerrada : false
         });
         setShowModalForm(true)
@@ -461,12 +461,13 @@ export const Associacoes = () => {
                     </section>
 
                     <section>
-                        <ModalLegendaInformacaoAssociacao
+                        <ModalLegendaInformacao
                             show={showModalLegendaInformacao}
                             primeiroBotaoOnclick={() => setShowModalLegendaInformacao(false)}
                             titulo="Legenda Informação"
                             primeiroBotaoTexto="Fechar"
                             primeiroBotaoCss="outline-success"
+                            entidadeDasTags="associacao"
                         />
                     </section>
                 </div>
