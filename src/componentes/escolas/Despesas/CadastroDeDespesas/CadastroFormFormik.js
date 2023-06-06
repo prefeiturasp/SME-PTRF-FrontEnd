@@ -332,7 +332,7 @@ export const CadastroFormFormik = ({
                                                 name="documento_transacao"
                                                 id="documento_transacao"
                                                 type="text"
-                                                className="form-control"
+                                                className={`${aux.documentoTransacaoObrigatorio(values.tipo_transacao, despesasTabelas) && !values.documento_transacao && verbo_http === "PUT" ? 'is_invalid' : ""} ${!values.documento_transacao && "despesa_incompleta"} form-control`}
                                                 placeholder="Digite o número do documento"
                                                 disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                                             />
