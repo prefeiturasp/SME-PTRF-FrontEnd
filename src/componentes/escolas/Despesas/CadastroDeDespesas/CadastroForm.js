@@ -80,7 +80,6 @@ export const CadastroForm = ({verbo_http}) => {
     const [formErrorsImposto, setFormErrorsImposto] = useState([])
     const [disableBtnAdicionarImposto, setDisableBtnAdicionarImposto] = useState(false);
     const [objetoParaComparacao, setObjetoParaComparacao] = useState({});
-    const [despesaIncompleta, setDespesaIncompleta] = useState(false);
     const [showDespesaIncompletaNaoPermitida, setShowDespesaIncompletaNaoPermitida] = useState(false);
 
     const retornaPeriodo = async (periodo_uuid) => {
@@ -437,7 +436,7 @@ export const CadastroForm = ({verbo_http}) => {
             values.outros_motivos_pagamento_antecipado = txtOutrosMotivosPagamentoAntecipado.trim() && checkBoxOutrosMotivosPagamentoAntecipado ? txtOutrosMotivosPagamentoAntecipado : ""
 
             if(aux.origemAnaliseLancamento(parametroLocation)){
-                if(despesaIncompleta){
+                if(values.despesa_incompleta > 0){
                     setLoading(false);
                     setBtnSubmitDisable(false);
                     setShowDespesaIncompletaNaoPermitida(true);
@@ -941,9 +940,7 @@ export const CadastroForm = ({verbo_http}) => {
         validaPayloadDespesas(values);
         if (values.despesa_incompleta > 0 ) {
             setModalState('despesa-imcompleta')
-            setDespesaIncompleta(true);
         }else {
-            setDespesaIncompleta(false);
             await serviceSubmitModais(values, setFieldValue, errors, 'despesa_incompleta_validado')
         }
     }
