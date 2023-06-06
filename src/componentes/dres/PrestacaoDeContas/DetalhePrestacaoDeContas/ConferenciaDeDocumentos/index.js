@@ -6,7 +6,7 @@ import {
 import TabelaConferenciaDeDocumentos from "./TabelaConferenciaDeDocumentos";
 import {gerarUuid} from "../../../../../utils/ValidacoesAdicionaisFormularios";
 
-const ConferenciaDeDocumentos = ({prestacaoDeContas, editavel=true}) =>{
+const ConferenciaDeDocumentos = ({prestacaoDeContas, onUpdateListaDeDocumentosParaConferencia=null, editavel=true}) =>{
 
     const rowsPerPage =10
 
@@ -45,7 +45,7 @@ const ConferenciaDeDocumentos = ({prestacaoDeContas, editavel=true}) =>{
         }else {
             setListaDeDocumentosParaConferencia([])
         }
-
+        onUpdateListaDeDocumentosParaConferencia && onUpdateListaDeDocumentosParaConferencia()
         setLoadingDocumentosParaConferencia(false)
     }, [prestacaoDeContas, editavel])
 

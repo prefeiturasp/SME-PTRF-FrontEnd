@@ -49,11 +49,15 @@ const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitMo
                         }
 
                         return(
-                            <form onSubmit={props.handleSubmit}>
+                            <>
+                                <div style={{textAlign: "right"}}>
+                                    <span>* Preenchimento obrigatório</span>
+                                </div>
+                                <form onSubmit={props.handleSubmit}>
                                 <div className='row'>
                                     <div className='col'>
                                         <div className="form-group">
-                                            <label htmlFor="nome">Nome</label>
+                                            <label htmlFor="nome">Nome*</label>
                                             <input
                                                 type="text"
                                                 value={props.values.nome}
@@ -70,7 +74,7 @@ const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitMo
                                 <div className='row'>
                                     <div className='col'>
                                         <div className="form-group">
-                                            <label htmlFor="codigo_eol_unidade">Código EOL</label>
+                                            <label htmlFor="codigo_eol_unidade">Código EOL*</label>
                                             <input
                                                 type="text"
                                                 value={props.values.codigo_eol_unidade}
@@ -177,16 +181,22 @@ const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitMo
                                 <div className='row'>
                                     <div className='col-6'>
                                     <label htmlFor="periodo_inicial">
-                                        Período inicial
+                                        Período inicial*
                                     </label>
-                                       <div data-tip={values.retorna_se_pode_editar_periodo_inicial ? values.retorna_se_pode_editar_periodo_inicial.mensagem_pode_editar_periodo_inicial : ''} data-html={true} style={{display:'inline'}} data-for={`tooltip-id-${values.uuid}`}>
+                                       <div
+                                           data-tip={
+                                            values.pode_editar_periodo_inicial && !values.pode_editar_periodo_inicial?.pode_editar_periodo_inicial
+                                                ? values.pode_editar_periodo_inicial?.mensagem_pode_editar_periodo_inicial?.reduce((hint, text) => (hint + `${text}<br/>`), '<p>') + '</p>'
+                                                : ''
+                                           } data-html={true} style={{display:'inline'}} data-for={`tooltip-id-${values.uuid}`}
+                                       >
                                        <select
                                             value={values.periodo_inicial && values.periodo_inicial ? values.periodo_inicial : ""}
                                             onChange={props.handleChange}
                                             name="periodo_inicial"
                                             id="periodo_inicial"
                                             className="form-control"
-                                            disabled={values.retorna_se_pode_editar_periodo_inicial ? !values.retorna_se_pode_editar_periodo_inicial.pode_editar_periodo_inicial : '' || !podeEditarDadosAssociacao(props.values)}
+                                            disabled={values.pode_editar_periodo_inicial ? !values.pode_editar_periodo_inicial.pode_editar_periodo_inicial : '' || !podeEditarDadosAssociacao(props.values)}
                                         >
                                             <option value=''>Selecione um período</option>
                                             {listaDePeriodos && listaDePeriodos.map((periodo) =>
@@ -202,6 +212,7 @@ const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitMo
                                             /> 
                                             <span>O período inicial informado é uma referência e indica que o período a ser habilitado para a associação será o período posterior ao período informado.</span>
                                         </small>
+                                        {props.touched.periodo_inicial && props.errors.periodo_inicial && <span className="span_erro text-danger mt-1"> {props.errors.periodo_inicial} </span>}
                                     </div>
                                     <div className="col-6">
                                         <div className="form-group">
@@ -284,6 +295,7 @@ const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitMo
                                     </div>
                                 </div>
                             </form>
+                            </>
                         );
                     }}
                 </Formik>

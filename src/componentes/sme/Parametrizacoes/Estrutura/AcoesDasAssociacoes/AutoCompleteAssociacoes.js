@@ -2,6 +2,7 @@ import React, {useState, memo} from 'react';
 import {AutoComplete} from 'primereact/autocomplete';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faSearch} from "@fortawesome/free-solid-svg-icons";
+import { Tag } from '../../../../Globais/Tag';
 
 const AutoCompleteAssociacoes = ({todasAsAcoesAutoComplete, recebeAcaoAutoComplete}) => {
     const [selectedAcao, setSelectedAcao] = useState(null);
@@ -21,6 +22,35 @@ const AutoCompleteAssociacoes = ({todasAsAcoesAutoComplete, recebeAcaoAutoComple
         }, 250);
     };
 
+    const itemTemplate = (item) => {
+        if(item.encerrada) {
+            return (
+                <div className='d-flex' style={{opacity: 0.6}}>
+                    <span className='mr-3'>{item.unidade.nome_com_tipo}</span>
+                    <Tag label='Associação encerrada'/>
+                </div>
+            )
+        } else {
+            return item.unidade.nome_com_tipo;
+        }
+    };
+    
+    const handleChange = (e) => {
+        if(e.value.encerrada){
+            setSelectedAcao(null)
+        } else {
+            setSelectedAcao(e.value)
+        }
+    };
+
+    const handleSelect = (e) => {
+        if(e.value.encerrada){
+            recebeAcaoAutoComplete(null)
+        } else {
+            recebeAcaoAutoComplete(e.value)
+        }        
+    };
+
     return (
         <div className="d-flex bd-highlight">
             <div className="flex-grow-1 bd-highlight">
@@ -31,10 +61,11 @@ const AutoCompleteAssociacoes = ({todasAsAcoesAutoComplete, recebeAcaoAutoComple
                     suggestions={filteredAcoes}
                     completeMethod={searchAcao}
                     field="unidade.nome_com_tipo"
-                    onChange={(e) => setSelectedAcao(e.value)}
+                    onChange={handleChange}
                     inputClassName="form-control"
-                    onSelect={(e) => recebeAcaoAutoComplete(e.value)}
+                    onSelect={handleSelect}
                     style={{width: "100%", borderLeft:'none'}}
+                    itemTemplate={itemTemplate}
                 />
             </div>
             <div className="bd-highlight ml-0 py-1 px-3 ml-n3 border-top border-right border-bottom">

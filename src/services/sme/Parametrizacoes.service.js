@@ -201,8 +201,8 @@ export const getTabelaCategoriaDocumentos = async () => {
     return (await api.get(`api/tipos-acerto-documento/tabelas/`, authHeader)).data
 };
 
-export const getFiltros = async (nome='', acao__uuid, status) => {
-    return (await api.get(`/api/acoes-associacoes/?nome=${nome}${acao__uuid ? '&acao__uuid='+acao__uuid : ''}${status ? '&status='+status : ''}`, authHeader)).data
+export const getFiltros = async (nome='', acao__uuid, status, filtro_informacoes) => {
+    return (await api.get(`/api/acoes-associacoes/?nome=${nome}${acao__uuid ? '&acao__uuid='+acao__uuid : ''}${status ? '&status='+status : ''}${filtro_informacoes ? `&filtro_informacoes=${filtro_informacoes}` : ''}`, authHeader)).data
 };
 
 export const postAddAcaoAssociacao = async (payload) => {
@@ -265,8 +265,8 @@ export const deleteAcertosDocumentos = async (documento_uuid) => {
     return (await api.delete(`/api/tipos-acerto-documento/${documento_uuid}/`, authHeader))
 };
 
-export const getUnidadesPorAcao = async (acao_uuid, nome="") => {
-    return (await api.get(`api/acoes-associacoes/?acao__uuid=${acao_uuid}&nome=${nome}`, authHeader)).data
+export const getUnidadesPorAcao = async (acao_uuid, nome="", informacoes=[]) => {
+    return (await api.get(`api/acoes-associacoes/?acao__uuid=${acao_uuid}&nome=${nome}&filtro_informacoes=${informacoes}`, authHeader)).data
 };
 
 export const getAcao = async (uuid='') => {
@@ -277,12 +277,12 @@ export const deleteAcoesAssociacoesEmLote = async (payload) => {
     return (await api.post(`/api/acoes-associacoes/excluir-lote/`, payload, authHeader)).data
 };
 
-export const getAssociacoesNaoVinculadasAAcao = async (acao_uuid, nome="") => {
+export const getAssociacoesNaoVinculadasAAcao = async (acao_uuid, nome="", filtro_informacoes=[]) => {
     if (nome === ""){
-        return (await api.get(`api/acoes/${acao_uuid}/associacoes-nao-vinculadas/`, authHeader)).data
+        return (await api.get(`api/acoes/${acao_uuid}/associacoes-nao-vinculadas/?filtro_informacoes=${filtro_informacoes}`, authHeader)).data
     }
     else {
-        return (await api.get(`api/acoes/${acao_uuid}/associacoes-nao-vinculadas-por-nome/${nome}/`, authHeader)).data
+        return (await api.get(`api/acoes/${acao_uuid}/associacoes-nao-vinculadas-por-nome/${nome}/?filtro_informacoes=${filtro_informacoes}`, authHeader)).data
     }
 
 };

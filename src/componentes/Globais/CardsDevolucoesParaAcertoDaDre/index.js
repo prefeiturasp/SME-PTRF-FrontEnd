@@ -8,7 +8,14 @@ import Loading from "../../../utils/Loading";
 import { mantemEstadoAnaliseDre as meapcservice } from "../../../services/mantemEstadoAnaliseDre.service";
 import { visoesService } from "../../../services/visoes.service";
 
-const CardsDevolucoesParaAcertoDaDre = ({prestacao_conta_uuid, analiseAtualUuid=false, setAnaliseAtualUuid, setPermitirTriggerOnclick=null}) =>{
+const CardsDevolucoesParaAcertoDaDre = ({
+    prestacao_conta_uuid, 
+    analiseAtualUuid=false, 
+    setAnaliseAtualUuid, 
+    setPermitirTriggerOnclick=null,
+    devolucao_atual=null,
+    setDevolucaoAtualSelecionada=null
+}) => {
     const [analisesDePcDevolvidas, setAnalisesDePcDevolvidas] = useState([])
     const [uuidAnalisePcDevolvida, setUuidAnalisePcDevolvida] = useState({})
     const [objetoConteudoCard, setObjetoConteudoCard] = useState({})
@@ -59,33 +66,47 @@ const CardsDevolucoesParaAcertoDaDre = ({prestacao_conta_uuid, analiseAtualUuid=
             setAnaliseAtualUuid(analiseAtualUuid)
             setUuidAnalisePcDevolvida(analiseAtualUuid)
             montaObjetoConteudoCard(analiseAtualUuid)
+            verificaSeDevolucaoAtualSelecionada(analiseAtualUuid)
         }else {
             if (analisesDePcDevolvidas && analisesDePcDevolvidas.length > 0){
                 if(dados_analise_dre_usuario_logado && dados_analise_dre_usuario_logado.analise_pc_uuid){
                     setAnaliseAtualUuid(dados_analise_dre_usuario_logado.analise_pc_uuid)
                     setUuidAnalisePcDevolvida(dados_analise_dre_usuario_logado.analise_pc_uuid)
                     montaObjetoConteudoCard(dados_analise_dre_usuario_logado.analise_pc_uuid)
+                    verificaSeDevolucaoAtualSelecionada(dados_analise_dre_usuario_logado.analise_pc_uuid)
                 }
                 else{
                     setAnaliseAtualUuid(analisesDePcDevolvidas[0].uuid)
                     setUuidAnalisePcDevolvida(analisesDePcDevolvidas[0].uuid)
                     montaObjetoConteudoCard(analisesDePcDevolvidas[0].uuid)
                     salvaObjetoAnaliseDrePorUsuarioLocalStorage(analisesDePcDevolvidas[0].uuid)
+                    verificaSeDevolucaoAtualSelecionada(analisesDePcDevolvidas[0].uuid)
                 }
             }
         }
     }, [analisesDePcDevolvidas, setAnaliseAtualUuid, analiseAtualUuid, montaObjetoConteudoCard, dados_analise_dre_usuario_logado])
 
+    
     useEffect(()=>{
         setPrimeiraAnalisePcDevolvida()
     }, [setPrimeiraAnalisePcDevolvida])
+
+    const verificaSeDevolucaoAtualSelecionada = useCallback((uuid)=>{
+        if(setDevolucaoAtualSelecionada && devolucao_atual){
+            let analise = analisesDePcDevolvidas.find((elem => elem.uuid === uuid))
+            if(devolucao_atual.uuid === (analise && analise.devolucao_prestacao_conta.uuid)){
+                setDevolucaoAtualSelecionada(true);
+            } else {
+                setDevolucaoAtualSelecionada(false);
+            }
+        }
+    }, [analisesDePcDevolvidas, devolucao_atual]);
 
     const handleChangeSelectAnalisesDePcDevolvidas = useCallback((value, e)=>{
         // Necessário para controlar quando o ref_click_historico.current.click() é disparado
         if (setPermitirTriggerOnclick){
             setPermitirTriggerOnclick(false)
         }
-
         setUuidAnalisePcDevolvida(value)
         setAnaliseAtualUuid(value)
         let data_objeto = JSON.parse(e.target.options[e.target.selectedIndex].getAttribute('data-objeto'));

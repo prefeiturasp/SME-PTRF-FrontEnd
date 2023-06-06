@@ -3,10 +3,9 @@ import {Column} from "primereact/column";
 import {DataTable} from "primereact/datatable";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faKey, faInfoCircle} from "@fortawesome/free-solid-svg-icons";
-import useTagInformacaoAssociacaoEncerradaTemplate from "../../../hooks/Globais/TagsInformacoesAssociacoes/useTagInformacaoAssociacaoEncerradaTemplate";
+import { TagInformacao } from "../TagInformacao";
 
 export const ListaDeUnidades = ({listaUnidades, rowsPerPage, acaoAoEscolherUnidade, textoAcaoEscolher, setShowModalLegendaInformacao}) => {
-    const tagInformacaoAssociacaoEncerrada = useTagInformacaoAssociacaoEncerradaTemplate()
 
     const unidadeEscolarTemplate = (rowData) => {
         return (
@@ -88,7 +87,7 @@ export const ListaDeUnidades = ({listaUnidades, rowsPerPage, acaoAoEscolherUnida
                 field="informacao"
                 header="Informações"
                 className="align-middle text-center"
-                body={tagInformacaoAssociacaoEncerrada}
+                body={(rowData) => <TagInformacao data={rowData} />}
                 style={{width: '15%'}}
             />
             <Column

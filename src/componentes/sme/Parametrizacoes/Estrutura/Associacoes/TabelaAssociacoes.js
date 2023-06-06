@@ -1,11 +1,9 @@
 import React from "react";
 import {DataTable} from 'primereact/datatable'
 import {Column} from 'primereact/column'
-import useTagInformacaoAssociacaoEncerradaTemplate from "../../../../../hooks/Globais/TagsInformacoesAssociacoes/useTagInformacaoAssociacaoEncerradaTemplate";
+import { TagInformacao } from "../../../../Globais/TagInformacao";
 
 export const TabelaAssociacoes = ({listaDeAssociacoes, rowsPerPage, acoesTemplate}) => {
-    const tagInformacaoAssociacaoEncerrada = useTagInformacaoAssociacaoEncerradaTemplate()
-
     return(
         <DataTable
             value={listaDeAssociacoes}
@@ -19,7 +17,7 @@ export const TabelaAssociacoes = ({listaDeAssociacoes, rowsPerPage, acoesTemplat
                 field="informacao"
                 header="Informações"
                 className="align-middle text-center"
-                body={tagInformacaoAssociacaoEncerrada}
+                body={(rowData) => <TagInformacao data={rowData}/>}
                 style={{width: '15%'}}
             />
             <Column field="unidade.nome_dre" header="DRE"/>
