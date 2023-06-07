@@ -11,13 +11,13 @@ import moment from "moment";
 export const TabelaDownloads = ({listaArquivos, downloadArquivo, excluirArquivo, marcarDesmarcarLido}) => {
 
     const opcoesStatus = (status) => {
-        if(status == "ERRO"){
+        if(status === "ERRO"){
             return "Erro"
         }
-        else if(status == "EM_PROCESSAMENTO"){
+        else if(status === "EM_PROCESSAMENTO"){
             return "Em processamento"
         }
-        else if(status == "CONCLUIDO"){
+        else if(status === "CONCLUIDO"){
             return "Concluído"
         }
     }
@@ -25,7 +25,7 @@ export const TabelaDownloads = ({listaArquivos, downloadArquivo, excluirArquivo,
     const vistoTemplate = (rowData) => {
         return (
             <div className="align-middle text-center">
-                {rowData.status == 'EM_PROCESSAMENTO' ? (
+                {rowData.status === 'EM_PROCESSAMENTO' ? (
                     
                     <span style={{fontSize: "16pt"}}>-</span>
 
@@ -47,12 +47,12 @@ export const TabelaDownloads = ({listaArquivos, downloadArquivo, excluirArquivo,
     const acoesTemplate = (rowData) => {
         return (
             <div className="align-middle text-center">
-                {rowData.status == 'EM_PROCESSAMENTO' ? (
+                {rowData.status === 'EM_PROCESSAMENTO' ? (
                      <span style={{fontSize: "16pt"}}>-</span>
                 ):
                     <>
 
-                        {rowData.status != 'ERRO' ? (
+                        {rowData.status !== 'ERRO' ? (
                             <button className="btn btn-link" onClick={(e)=> {downloadArquivo(rowData.identificador, rowData.uuid)}}>
                                 <FontAwesomeIcon
                                     style={{marginRight: "0", color: '#00585E'}}
@@ -80,7 +80,7 @@ export const TabelaDownloads = ({listaArquivos, downloadArquivo, excluirArquivo,
     const ultimaAtualizacaoTemplate = (rowData) => {
         return (
             <div className="align-middle text-center">
-                {rowData.status == 'EM_PROCESSAMENTO' ? (
+                {rowData.status === 'EM_PROCESSAMENTO' ? (
                      <span style={{fontSize: "16pt"}}>-</span>
                 ):
                     
@@ -97,7 +97,7 @@ export const TabelaDownloads = ({listaArquivos, downloadArquivo, excluirArquivo,
         return (
             <div className="align-middle text-center">
                 
-                {rowData.status == 'ERRO' ? (
+                {rowData.status === 'ERRO' ? (
                     
                     <div data-tip={rowData.msg_erro} data-html={true}>
                         <span>
@@ -131,7 +131,7 @@ export const TabelaDownloads = ({listaArquivos, downloadArquivo, excluirArquivo,
     return (
         <div className="row mt-4">
             <div className="col-12">
-                <p className="quantidade-arquivos">Exibindo <strong>{listaArquivos.length}</strong> cargas de arquivos</p>
+                <p className="quantidade-arquivos">Exibindo <strong>{listaArquivos.length}</strong> arquivos</p>
             </div>
             <div className="col-12">
                 <div className="datatable-responsive-demo">

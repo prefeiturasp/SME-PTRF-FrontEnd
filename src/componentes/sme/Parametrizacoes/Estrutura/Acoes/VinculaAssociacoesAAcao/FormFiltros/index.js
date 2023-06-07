@@ -1,7 +1,14 @@
-import React, {useEffect, useState} from "react";
+import React from "react";
+import { Select } from 'antd';
+const { Option } = Select;
 
-
-export const Filtros = ({estadoFiltros, mudancasFiltros, enviarFiltrosAssociacao, limparFiltros}) => {
+export const Filtros = ({
+    estadoFiltros,
+    mudancasFiltros,
+    enviarFiltrosAssociacao,
+    limparFiltros, 
+    handleOnChangeMultipleSelectStatus, 
+    tabelaAssociacoes}) => {
     return (
         <div className="row lista-de-despesas-visible">
             <div className="col-12">
@@ -18,6 +25,24 @@ export const Filtros = ({estadoFiltros, mudancasFiltros, enviarFiltrosAssociacao
                                value={estadoFiltros.filtrar_por_termo}
                             />
                         </div>
+                        <div className="form-group col-md-3">
+                            <label htmlFor="filtro_informacoes">Filtrar por informações</label>
+                            <Select
+                                mode="multiple"
+                                allowClear
+                                style={{ width: '100%' }}
+                                placeholder="Selecione as informações"
+                                name="filtro_informacoes"
+                                id="filtro_informacoes"
+                                value={estadoFiltros.filtro_informacoes}
+                                onChange={handleOnChangeMultipleSelectStatus}
+                                className='multiselect-lista-valores-reprogramados'
+                            >
+                                {tabelaAssociacoes.filtro_informacoes && tabelaAssociacoes.filtro_informacoes.length > 0 && tabelaAssociacoes.filtro_informacoes.map(item => (
+                                    <Option key={item.id} value={item.id}>{item.nome}</Option>
+                                ))}
+                            </Select>
+                        </div>                         
                     </div>
                     <div className="d-flex justify-content-end pb-3 mt-3">
                         <button

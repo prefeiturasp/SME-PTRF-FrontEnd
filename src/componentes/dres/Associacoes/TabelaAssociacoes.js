@@ -3,11 +3,9 @@ import {Column} from "primereact/column";
 import {DataTable} from "primereact/datatable";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
-import useTagInformacaoAssociacaoEncerradaTemplate from "../../../hooks/Globais/TagsInformacoesAssociacoes/useTagInformacaoAssociacaoEncerradaTemplate";
+import { TagInformacao } from "../../Globais/TagInformacao";
 
 export const TabelaAssociacoes = ({associacoes, rowsPerPage, unidadeEscolarTemplate, acoesTemplate, setShowModalLegendaInformacao}) =>{
-    const tagInformacaoAssociacaoEncerrada = useTagInformacaoAssociacaoEncerradaTemplate()
-
   return(
     <>
         <div className="d-flex justify-content-end">
@@ -44,7 +42,7 @@ export const TabelaAssociacoes = ({associacoes, rowsPerPage, unidadeEscolarTempl
                 header="Informações"
                 style={{width: '15%'}}
                 className="align-middle text-center"
-                body={tagInformacaoAssociacaoEncerrada}
+                body={(rowData) => <TagInformacao data={rowData}/>}
             />
             <Column
                 field="uuid"

@@ -15,8 +15,19 @@ import Loading from "../../../../../utils/Loading";
 import {ModalErroDevolverParaAcerto} from "./ModalErroDevolverParaAcerto";
 import {ModalConfirmaDevolverParaAcerto} from "./ModalConfirmaDevolverParaAcerto";
 import { toastCustom } from "../../../../Globais/ToastCustom";
+import ReactTooltip from "react-tooltip";
 
-const DevolucaoParaAcertos = ({prestacaoDeContas, analisesDeContaDaPrestacao, carregaPrestacaoDeContas, infoAta, editavel=true, setLoadingAcompanhamentoPC, setAnalisesDeContaDaPrestacao}) => {
+const DevolucaoParaAcertos = ({
+    prestacaoDeContas, 
+    analisesDeContaDaPrestacao, 
+    carregaPrestacaoDeContas, 
+    infoAta, 
+    editavel=true, 
+    setLoadingAcompanhamentoPC, 
+    setAnalisesDeContaDaPrestacao,
+    updateListaDeDocumentosParaConferencia=null,
+    carregaLancamentosParaConferencia=null,
+}) => {
 
     const [dataLimiteDevolucao, setDataLimiteDevolucao] = useState('')
     const [showModalErroDevolverParaAcerto, setShowModalErroDevolverParaAcerto] = useState(false)
@@ -52,6 +63,7 @@ const DevolucaoParaAcertos = ({prestacaoDeContas, analisesDeContaDaPrestacao, ca
         let mounted = true;
 
         const verificaSeTemSolicitacaoAcertos = async () =>{
+            setLoading(true);
             let analise_atual_uuid;
             if (editavel) {
                 if (prestacaoDeContas && prestacaoDeContas.analise_atual && prestacaoDeContas.analise_atual.uuid && infoAta && infoAta.contas && infoAta.contas.length > 0) {
@@ -66,25 +78,26 @@ const DevolucaoParaAcertos = ({prestacaoDeContas, analisesDeContaDaPrestacao, ca
                 }
             }
             if (mounted) {
-                if (infoAta && infoAta.contas && infoAta.contas.length > 0) {
+                if (infoAta && infoAta.contas && infoAta.contas.length > 0) {    
                     return await infoAta.contas.map(async (conta) => {
                         let analise_prestacao_contas_ajustes = await getAnaliseAjustesSaldoPorConta(conta.conta_associacao.uuid, prestacaoDeContas.uuid, analise_atual_uuid);
                         setAnalisesDeContaDaPrestacao([...analise_prestacao_contas_ajustes])
                         let lancamentos_ajustes = await getLancamentosAjustes(analise_atual_uuid, conta.conta_associacao.uuid)
-                        setLancamentosAjustes(prevState => ([...prevState, ...lancamentos_ajustes]))
+                        setLancamentosAjustes([...lancamentos_ajustes])
                         let documentos_ajustes = await getDocumentosAjustes(analise_atual_uuid, conta.conta_associacao.uuid)
                         setDocumentosAjustes([...documentos_ajustes])
+                        setLoading(false);
                     })
                 }
             }
         }
         verificaSeTemSolicitacaoAcertos()
-        setLoading(false)
+        
         return () =>{
             mounted = false;
         }
 
-    }, [infoAta, prestacaoDeContas, editavel])
+    }, [infoAta, prestacaoDeContas, editavel, updateListaDeDocumentosParaConferencia, carregaLancamentosParaConferencia])
 
     const handleChangeDataLimiteDevolucao = useCallback((name, value) => {
         setDataLimiteDevolucao(value)
@@ -139,6 +152,22 @@ const DevolucaoParaAcertos = ({prestacaoDeContas, analisesDeContaDaPrestacao, ca
 
     }, [dataLimiteDevolucao, carregaPrestacaoDeContas, prestacaoDeContas, trataAnalisesDeContaDaPrestacao])
 
+    const handleDevolverParaAssociacao = () => {
+        setShowModalConfirmaDevolverParaAcerto(true);
+    };
+
+    const possuiHistoricoDeDevolucoes = () => {
+        return (prestacaoDeContas && prestacaoDeContas.devolucoes_da_prestacao && prestacaoDeContas.devolucoes_da_prestacao.length > 0);
+    };
+    
+    const possuiAcertosSelecionados = useCallback( () => {
+        return totalLancamentosAjustes > 0 || totalDocumentosAjustes > 0 || totalAnalisesDeContaDaPrestacao > 0
+    }, [totalLancamentosAjustes, totalDocumentosAjustes, totalAnalisesDeContaDaPrestacao]);
+
+    const podeDevolverParaAssociacao = () => {
+        return dataLimiteDevolucao && !btnDevolverParaAcertoDisabled && editavel && possuiAcertosSelecionados()
+    };
+
     return(
         <>
             <hr className='mt-4 mb-3'/>
@@ -160,7 +189,7 @@ const DevolucaoParaAcertos = ({prestacaoDeContas, analisesDeContaDaPrestacao, ca
                                 />
                             </div>
                             <div>
-                                <Link onClick={ (totalLancamentosAjustes > 0 || totalDocumentosAjustes > 0 || totalAnalisesDeContaDaPrestacao > 0) || (prestacaoDeContas && prestacaoDeContas.devolucoes_da_prestacao && prestacaoDeContas.devolucoes_da_prestacao.length > 0) ? null : (event) => event.preventDefault() }
+                                <Link onClick={(possuiHistoricoDeDevolucoes() || possuiAcertosSelecionados()) ? null : (event) => event.preventDefault()}
                                         to={{
                                             pathname: `/dre-detalhe-prestacao-de-contas-resumo-acertos/${prestacaoDeContas.uuid}`,
                                             state: {
@@ -170,22 +199,25 @@ const DevolucaoParaAcertos = ({prestacaoDeContas, analisesDeContaDaPrestacao, ca
                                             }
                                         }}
                                         className="btn btn-outline-success mr-2"
-                                        disabled={ !((totalLancamentosAjustes > 0 || totalDocumentosAjustes > 0 || totalAnalisesDeContaDaPrestacao > 0) || (prestacaoDeContas && prestacaoDeContas.devolucoes_da_prestacao && prestacaoDeContas.devolucoes_da_prestacao.length > 0)) }
-                                        readOnly={ !((totalLancamentosAjustes > 0 || totalDocumentosAjustes > 0 || totalAnalisesDeContaDaPrestacao > 0) || (prestacaoDeContas && prestacaoDeContas.devolucoes_da_prestacao && prestacaoDeContas.devolucoes_da_prestacao.length > 0)) }
-                                        title={(prestacaoDeContas && prestacaoDeContas.devolucoes_da_prestacao && prestacaoDeContas.devolucoes_da_prestacao.length > 0) ? null: `Esta PC não possui histórico de devoluções.` }
+                                        disabled={!(possuiHistoricoDeDevolucoes() || possuiAcertosSelecionados())}
+                                        readOnly={!(possuiHistoricoDeDevolucoes() || possuiAcertosSelecionados())}
+                                        title={possuiHistoricoDeDevolucoes() ? null: `Esta PC não possui histórico de devoluções.` }
                                 >
                                     Ver resumo
                                 </Link>
                             </div>
                             <div>
                                 <button
-                                    disabled={!dataLimiteDevolucao || btnDevolverParaAcertoDisabled || !editavel}
-                                    onClick={()=>setShowModalConfirmaDevolverParaAcerto(true)}
+                                    disabled={!podeDevolverParaAssociacao()}
+                                    onClick={handleDevolverParaAssociacao}
                                     className="btn btn-success"
                                 >
-                                    Devolver para Associação
+                                    <span data-tip={!possuiAcertosSelecionados() ? 'Não é permitido devolver PC sem acertos indicados.' : ''}>
+                                        Devolver para Associação
+                                    </span>                                         
+                                    <ReactTooltip/>
                                 </button>
-                            </div>
+                            </div>                            
                         </div>
                         <section>
                             <ModalErroDevolverParaAcerto
