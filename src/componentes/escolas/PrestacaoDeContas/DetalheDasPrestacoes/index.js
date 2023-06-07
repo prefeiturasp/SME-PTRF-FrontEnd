@@ -1,4 +1,6 @@
 import React, {useCallback, useEffect, useState, useContext} from "react";
+import {Link, useLocation, useParams} from "react-router-dom";
+import moment from "moment";
 import {TopoComBotoes} from "./TopoComBotoes";
 import TabelaValoresPendentesPorAcao from "./TabelaValoresPendentesPorAcao";
 import {Justificativa} from "./Justivicativa";
@@ -25,17 +27,16 @@ import {ModalConfirmaSalvar} from "../../../../utils/Modais";
 import {ASSOCIACAO_UUID} from "../../../../services/auth.service";
 import {tabelaValoresPendentes} from "../../../../services/escolas/TabelaValoresPendentesPorAcao.service";
 import DataSaldoBancario from "./DataSaldoBancario";
-import moment from "moment";
 import {trataNumericos} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import TabelaTransacoes from "./TabelaTransacoes";
 import {getDespesasTabelas} from "../../../../services/escolas/Despesas.service";
 import {FiltrosTransacoes} from "./FiltrosTransacoes";
-import {Link, useLocation} from "react-router-dom";
 import { SidebarLeftService } from "../../../../services/SideBarLeft.service";
 import { SidebarContext } from "../../../../context/Sidebar";
 import { ModalLegendaInformacao } from "../../../Globais/ModalLegendaInformacao/ModalLegendaInformacao";
 
 export const DetalheDasPrestacoes = () => {
+    let {periodo_uuid, conta_uuid} = useParams();
     const contextSideBar = useContext(SidebarContext);
 
     // Alteracoes
@@ -92,7 +93,9 @@ export const DetalheDasPrestacoes = () => {
     );
 
     const getPeriodoConta = () => {
-        if (localStorage.getItem('periodoConta')) {
+        if(periodo_uuid){
+            setPeriodoConta({periodo: periodo_uuid, conta: conta_uuid ? conta_uuid : ""});
+        } else if (localStorage.getItem('periodoConta')) {
             const periodoConta = JSON.parse(localStorage.getItem('periodoConta'));
             setPeriodoConta(periodoConta)
         } else {

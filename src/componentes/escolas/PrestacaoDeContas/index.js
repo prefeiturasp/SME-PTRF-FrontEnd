@@ -23,6 +23,7 @@ import { SidebarContext } from "../../../context/Sidebar";
 import {NotificacaoContext} from "../../../context/Notificacoes";
 import {getRegistrosFalhaGeracaoPc} from "../../../services/Notificacoes.service";
 import {ModalNotificaErroConcluirPC} from "./ModalNotificaErroConcluirPC";
+import { ModalPendenciasCadastrais } from "./ModalPendenciasCadastrais";
 
 export const PrestacaoDeContas = ({setStatusPC}) => {
     const history = useHistory();
@@ -50,6 +51,7 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
     const [uuidAtaApresentacao, setUuidAtaApresentacao] = useState("");
     const [showConcluirAcertosSemPendencias, setShowConcluirAcertosSemPendencias] = useState(false);
     const [stringMonitoramento, setStringMonitoramento] = useState(monitoramento)
+    const [modalPendenciasCadastrais, setModalPendenciasCadastrais] = useState({show: false, title: '', message: '', actions: []});
 
     const associacaoUuid = localStorage.getItem(ASSOCIACAO_UUID)
 
@@ -235,17 +237,72 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
         }
     }, [periodoPrestacaoDeConta]);
 
+    const handleCloseModalPendenciasCadastrais = () => {
+        setModalPendenciasCadastrais({show: false, title: '', message: '', actions: []});
+    };
+
+    function goToAssociacoes() {
+        history.push(`/dados-da-associacao/`)
+    };
+
+    function goToConciliacaoBancaria(pendencias) {
+        if (pendencias.contas_pendentes.length > 1){
+            history.push(`/detalhe-das-prestacoes/${periodoPrestacaoDeConta.periodo_uuid}/`)
+        } else {
+            history.push(`/detalhe-das-prestacoes/${periodoPrestacaoDeConta.periodo_uuid}/${pendencias.contas_pendentes[0]}`)
+        }
+    };
+    
+    function checkPendenciasCadastrais() {     
+        if(statusPrestacaoDeConta && statusPrestacaoDeConta.pendencias_cadastrais){
+              let pendencias = statusPrestacaoDeConta.pendencias_cadastrais;
+              if (pendencias.dados_associacao && pendencias.conciliacao_bancaria){
+                  setModalPendenciasCadastrais({
+                    show: true,
+                    title: 'Há campos não preenchidos na funcionalidade',
+                    message: "<ul><li>Dados da Associação</li><li>Conciliação Bancária</li></ul>",
+                    actions:[
+                        {title: 'Ir para dados da Associação', callback: () => goToAssociacoes()},
+                        {title: 'Ir para Conciliação Bancária', callback: () => goToConciliacaoBancaria(pendencias.conciliacao_bancaria)},
+                    ]  
+                  })
+              } else if(pendencias.dados_associacao) {
+                  setModalPendenciasCadastrais({
+                      show: true,
+                      title: 'Há campos não preenchidos na funcionalidade',
+                      message:"<ul><li>Dados da Associação</li></ul>",
+                      actions:[
+                        {title: 'Ir para dados da Associação', callback: () => goToAssociacoes()},
+                    ]  
+                  })
+              } else if(pendencias.conciliacao_bancaria){
+                  setModalPendenciasCadastrais({
+                      show: true,
+                      title: 'Há campos não preenchidos na funcionalidade',
+                      message: "<ul><li>Conciliação Bancária</li></ul>",
+                      actions:[
+                        {title: 'Ir para Conciliação Bancária', callback: () => goToConciliacaoBancaria(pendencias.conciliacao_bancaria)},
+                    ]  
+                  })                
+              }
+          }
+    };
+
     const handleConcluirPeriodo = () =>{
-        if(statusPrestacaoDeConta && statusPrestacaoDeConta.prestacao_contas_status){
-            if(statusPrestacaoDeConta.prestacao_contas_status.status_prestacao !== "DEVOLVIDA"){
-                setShowConcluir(true)
-            }
-            else if(statusPrestacaoDeConta.prestacao_contas_status.status_prestacao === "DEVOLVIDA"){
-                if(statusPrestacaoDeConta.prestacao_contas_status.tem_acertos_pendentes){
-                    setShowConcluirAcertoComPendencia(true);
+        if(statusPrestacaoDeConta && statusPrestacaoDeConta.pendencias_cadastrais){
+            checkPendenciasCadastrais();
+        } else {
+            if(statusPrestacaoDeConta && statusPrestacaoDeConta.prestacao_contas_status){
+                if(statusPrestacaoDeConta.prestacao_contas_status.status_prestacao !== "DEVOLVIDA"){
+                    setShowConcluir(true)
                 }
-                else{
-                    setShowConcluirAcertosSemPendencias(true);
+                else if(statusPrestacaoDeConta.prestacao_contas_status.status_prestacao === "DEVOLVIDA"){
+                    if(statusPrestacaoDeConta.prestacao_contas_status.tem_acertos_pendentes){
+                        setShowConcluirAcertoComPendencia(true);
+                    }
+                    else{
+                        setShowConcluirAcertosSemPendencias(true);
+                    }
                 }
             }
         }
@@ -581,6 +638,18 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
                             o cadastro e a edição de qualquer crédito ou despesa nesse período.
                             Para conferir as informações cadastradas, sem bloqueio do sistema nesse período, gere um documento prévio.
                             Você confirma a conclusão do acerto da Prestação de Contas?</p>"
+                        />
+                    </section>
+                    <section>
+                        <ModalPendenciasCadastrais
+                            show={modalPendenciasCadastrais.show}
+                            titulo={modalPendenciasCadastrais.title}
+                            texto={modalPendenciasCadastrais.message}  
+                            bodyActions={modalPendenciasCadastrais.actions}                            
+                            size='md'                          
+                            primeiroBotaoTexto="Fechar"
+                            primeiroBotaoCss="outline-success"         
+                            handleClose={handleCloseModalPendenciasCadastrais}                   
                         />
                     </section>
                 </>
