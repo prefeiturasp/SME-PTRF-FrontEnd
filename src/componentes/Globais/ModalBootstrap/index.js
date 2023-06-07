@@ -29,6 +29,22 @@ export const ModalBootstrap = (propriedades) => {
                     <div dangerouslySetInnerHTML={
                         {__html: propriedades.bodyText}
                     }/>
+                    {propriedades.bodyActions && propriedades.bodyActions.length ? (
+                        <div className="d-flex justify-content-center mt-3">
+                            {propriedades.bodyActions.map((_action, index) => {
+                                return (
+                                    <Button 
+                                        key={index}
+                                        variant='success' 
+                                        onClick={() => _action.callback()}
+                                        className="mx-3 btn-sm"
+                                    >
+                                        {_action.title}
+                                    </Button>                            
+                                )
+                            })}
+                        </div>
+                    ) : null }
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant={
