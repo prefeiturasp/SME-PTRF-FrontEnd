@@ -1,14 +1,20 @@
 import React, {useEffect, useState} from "react";
-import {UrlsMenuInterno} from "../UrlsMenuInterno";
+import {useSelector, useDispatch} from "react-redux";
+import {UrlsMenuInterno, retornaMenuAtualizadoPorStatusCadastro} from "../UrlsMenuInterno";
 import Loading from "../../../../utils/Loading";
 import {MenuInterno} from "../../../Globais/MenuInterno";
-import {getContas, salvarContas, getAssociacao} from "../../../../services/escolas/Associacao.service";
+import {getContas, salvarContas, getAssociacao, getStatusCadastroAssociacao} from "../../../../services/escolas/Associacao.service";
 import {FormDadosDasContas} from "./FormDadosDasContas";
 import {ModalConfirmaSalvar} from "../../../../utils/Modais";
 import {ExportaDadosDaAsssociacao} from "../ExportaDadosAssociacao";
 import { visoesService } from "../../../../services/visoes.service";
+import { setStatusCadastro, resetStatusCadastro } from "../../../../store/reducers/componentes/escolas/Associacao/DadosAssociacao/StatusCadastro/actions";
 
 export const DadosDasContas = () => {
+
+    // Redux
+    const dispatch = useDispatch(); 
+    const statusCadastro = useSelector(state => state.DadosAssociacao);
 
     const initial = [{
         tipo_conta: "",
@@ -23,6 +29,7 @@ export const DadosDasContas = () => {
     const [showSalvar, setShowSalvar] = useState(false);
     const [errors, setErrors] = useState({});
     const [stateAssociacao, setStateAssociacao] = useState({})
+    const [menuUrls, setMenuUrls] = useState(UrlsMenuInterno);
 
     useEffect(() =>{
         buscaContas();
@@ -41,9 +48,31 @@ export const DadosDasContas = () => {
         buscaAssociacao();
     }, []);
 
+    useEffect(() => {
+        buscaStatusCadastro();
+    }, [intialValues]);
+
+    useEffect(() => {
+        atualizaMenu();
+    }, [statusCadastro]);
+
     const buscaAssociacao = async () => {
         const associacao = await getAssociacao();
         setStateAssociacao(associacao)
+    };
+
+    const buscaStatusCadastro = async () => {
+        const responseStatusCadastro = await getStatusCadastroAssociacao();
+        if(responseStatusCadastro){
+            dispatch(setStatusCadastro(responseStatusCadastro));
+        } else {
+            dispatch(resetStatusCadastro());
+        }
+    };
+    
+    const atualizaMenu = () => {
+        let urls = retornaMenuAtualizadoPorStatusCadastro(statusCadastro);
+        setMenuUrls(urls);
     };
 
     const setaCampoReadonly=(conta) =>{
@@ -115,7 +144,7 @@ export const DadosDasContas = () => {
                 <div className="row">
                     <div className="col-12">
                         <MenuInterno
-                            caminhos_menu_interno = {UrlsMenuInterno}
+                            caminhos_menu_interno = {menuUrls}
                         />
                         <ExportaDadosDaAsssociacao/>
                         <FormDadosDasContas

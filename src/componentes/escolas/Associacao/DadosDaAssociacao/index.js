@@ -1,21 +1,26 @@
 import React, {useEffect, useState} from "react";
-import {getAssociacao, alterarAssociacao} from "../../../../services/escolas/Associacao.service";
+import {useSelector, useDispatch} from "react-redux";
+import {useLocation} from "react-router-dom";
+import {getAssociacao, alterarAssociacao, getStatusCadastroAssociacao} from "../../../../services/escolas/Associacao.service";
 import {CancelarModalAssociacao, SalvarModalAssociacao} from "../../../../utils/Modais";
 import {MenuInterno} from "../../../Globais/MenuInterno";
-import "../associacao.scss"
 import Loading from "../../../../utils/Loading";
-import {UrlsMenuInterno} from "../UrlsMenuInterno";
+import {UrlsMenuInterno, retornaMenuAtualizadoPorStatusCadastro} from "../UrlsMenuInterno";
 import {Formik} from "formik";
 import {YupSignupSchemaDadosDaAssociacao} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import MaskedInput from "react-text-mask";
 import {ExportaDadosDaAsssociacao} from "../ExportaDadosAssociacao"
 import {visoesService} from "../../../../services/visoes.service";
-import {useLocation} from "react-router-dom";
+import { setStatusCadastro, resetStatusCadastro } from "../../../../store/reducers/componentes/escolas/Associacao/DadosAssociacao/StatusCadastro/actions";
+import "../associacao.scss"
 
 export const DadosDaAsssociacao = () => {
-
+    
     const parametros = useLocation();
-
+    // Redux
+    const dispatch = useDispatch(); 
+    const statusCadastro = useSelector(state => state.DadosAssociacao);
+    
     const [stateAssociacao, setStateAssociacao] = useState({
         nome: "",
         codigo_eol: "",
@@ -31,15 +36,38 @@ export const DadosDaAsssociacao = () => {
     const [showModalReceitasCancelar, setShowModalDadosAssociacaoCancelar] = useState(false);
     const [showModalReceitasSalvar, setShowModalDadosAssociacaoSalvar] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [menuUrls, setMenuUrls] = useState(UrlsMenuInterno);
 
     useEffect(() => {
         buscaAssociacao();
         setLoading(false)
     }, []);
 
+    useEffect(() => {
+        buscaStatusCadastro();
+    }, [stateAssociacao]);
+
+    useEffect(() => {
+        atualizaMenu();
+    }, [statusCadastro]);
+
     const buscaAssociacao = async () => {
         const associacao = await getAssociacao();
         setStateAssociacao(associacao)
+    };
+    
+    const buscaStatusCadastro = async () => {
+        const responseStatusCadastro = await getStatusCadastroAssociacao();
+        if(responseStatusCadastro){
+            dispatch(setStatusCadastro(responseStatusCadastro));
+        } else {
+            dispatch(resetStatusCadastro());
+        }
+    };
+    
+    const atualizaMenu = () => {
+        let urls = retornaMenuAtualizadoPorStatusCadastro(statusCadastro);
+        setMenuUrls(urls);
     };
 
     const handleSubmit = async (values) => {
@@ -112,7 +140,7 @@ export const DadosDaAsssociacao = () => {
                         <div className="col-12">
 
                             <MenuInterno
-                                caminhos_menu_interno={UrlsMenuInterno}
+                                caminhos_menu_interno={menuUrls}
                             />
 
                             <ExportaDadosDaAsssociacao/>
