@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {useSelector, useDispatch} from "react-redux";
 import {useLocation} from "react-router-dom";
 import {getAssociacao, alterarAssociacao, getStatusCadastroAssociacao} from "../../../../services/escolas/Associacao.service";
-import {CancelarModalAssociacao, SalvarModalAssociacao} from "../../../../utils/Modais";
+import {CancelarModalAssociacao} from "../../../../utils/Modais";
 import {MenuInterno} from "../../../Globais/MenuInterno";
 import Loading from "../../../../utils/Loading";
 import {UrlsMenuInterno, retornaMenuAtualizadoPorStatusCadastro} from "../UrlsMenuInterno";
@@ -12,6 +12,7 @@ import MaskedInput from "react-text-mask";
 import {ExportaDadosDaAsssociacao} from "../ExportaDadosAssociacao"
 import {visoesService} from "../../../../services/visoes.service";
 import { setStatusCadastro, resetStatusCadastro } from "../../../../store/reducers/componentes/escolas/Associacao/DadosAssociacao/StatusCadastro/actions";
+import {toastCustom} from "../../../Globais/ToastCustom";
 import "../associacao.scss"
 
 export const DadosDaAsssociacao = () => {
@@ -88,7 +89,7 @@ export const DadosDaAsssociacao = () => {
             if (response.status === 200) {
                 console.log("Operação realizada com sucesso!");
                 await buscaAssociacao();
-                onShowModalSalvar()
+                toastCustom.ToastCustomSuccess('Edição salva', 'A edição foi salva com sucesso!')
             } else {
                 console.log(response);
                 return
@@ -106,15 +107,6 @@ export const DadosDaAsssociacao = () => {
     const onCancelarAssociacaoTrue = async (props) => {
         props.handleReset();
         setShowModalDadosAssociacaoCancelar(false);
-    };
-
-    const onSalvarAssociacaoTrue = async () => {
-        await buscaAssociacao();
-        setShowModalDadosAssociacaoSalvar(false);
-    };
-
-    const onShowModalSalvar = () => {
-        setShowModalDadosAssociacaoSalvar(true);
     };
 
     const podeEditarDadosAssociacao = () => {
@@ -284,9 +276,6 @@ export const DadosDaAsssociacao = () => {
                                                 <CancelarModalAssociacao show={showModalReceitasCancelar}
                                                                          handleClose={onHandleClose}
                                                                          onCancelarTrue={() => onCancelarAssociacaoTrue(props)}/>
-                                                <SalvarModalAssociacao show={showModalReceitasSalvar}
-                                                                       handleClose={onHandleClose}
-                                                                       onCancelarTrue={onSalvarAssociacaoTrue}/>
                                             </section>
                                         </form>
                                     );
