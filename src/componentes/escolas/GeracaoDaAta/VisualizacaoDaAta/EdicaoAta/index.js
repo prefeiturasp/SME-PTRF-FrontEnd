@@ -116,6 +116,18 @@ export const EdicaoAta = () => {
         setListaPresentesPadrao(lista_presentes_padrao);
     }
 
+    const editaStatusDePresencaMembro = (identificacao) => {
+        const copiaListaPresentes = [...listaPresentes];
+
+        const membroListaPresentesSelecionado = copiaListaPresentes.find(membro => membro.identificacao === identificacao);
+
+        if (membroListaPresentesSelecionado) {
+            membroListaPresentesSelecionado.presente = !membroListaPresentesSelecionado.presente;
+        }
+
+        return setListaPresentes(copiaListaPresentes);
+    }
+
     const getListaPresentesAta = async () => {
         let lista_presentes = await getListaPresentes(uuid_ata);
         setListaPresentes(lista_presentes);
@@ -197,6 +209,7 @@ export const EdicaoAta = () => {
                         setDisableBtnSalvar={setDisableBtnSalvar}
                         repassesPendentes={repassesPendentes}
                         erros={erros}
+                        editaStatusDePresencaMembro={editaStatusDePresencaMembro}
                     >
                     </FormularioEditaAta>
                 </div>
