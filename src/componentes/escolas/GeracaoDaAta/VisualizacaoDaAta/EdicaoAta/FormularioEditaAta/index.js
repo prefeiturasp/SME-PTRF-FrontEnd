@@ -868,12 +868,10 @@ export const FormularioEditaAta = ({
                                         </div>
                                     }
 
-                                    <p className="titulo mt-4"><strong>Utilize o campo abaixo para registro de manifestações, comentários e justificativas que eventualmente ocorram durante a reunião.</strong></p>
+                                    <p className="titulo mt-4"><strong>Manifestações, Comentários e Justificativas</strong></p>
                                     <div className="form-row">
                                         <div className="col-12">
-                                            <label htmlFor="stateFormEditarAta.comentarios" className="mb-0">Utilize
-                                                esse campo para registrar possíveis dúvidas, discussões, esclarecimentos
-                                                aparecidos durante a reunião</label>
+                                            <label htmlFor="stateFormEditarAta.comentarios" className="mb-0">Utilize o campo abaixo para registro de manifestações, comentários e justificativas que eventualmente ocorram durante a reunião</label>
                                             <textarea
                                                 rows="3"
                                                 placeholder="Escreva seu texto aqui"
