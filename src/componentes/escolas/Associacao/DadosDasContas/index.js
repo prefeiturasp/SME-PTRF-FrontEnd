@@ -5,10 +5,10 @@ import Loading from "../../../../utils/Loading";
 import {MenuInterno} from "../../../Globais/MenuInterno";
 import {getContas, salvarContas, getAssociacao, getStatusCadastroAssociacao} from "../../../../services/escolas/Associacao.service";
 import {FormDadosDasContas} from "./FormDadosDasContas";
-import {ModalConfirmaSalvar} from "../../../../utils/Modais";
 import {ExportaDadosDaAsssociacao} from "../ExportaDadosAssociacao";
 import { visoesService } from "../../../../services/visoes.service";
 import { setStatusCadastro, resetStatusCadastro } from "../../../../store/reducers/componentes/escolas/Associacao/DadosAssociacao/StatusCadastro/actions";
+import { toastCustom } from "../../../Globais/ToastCustom";
 
 export const DadosDasContas = () => {
 
@@ -26,7 +26,6 @@ export const DadosDasContas = () => {
 
     const [loading, setLoading] = useState(true);
     const [intialValues, setIntialValues] = useState(initial);
-    const [showSalvar, setShowSalvar] = useState(false);
     const [errors, setErrors] = useState({});
     const [stateAssociacao, setStateAssociacao] = useState({})
     const [menuUrls, setMenuUrls] = useState(UrlsMenuInterno);
@@ -116,7 +115,7 @@ export const DadosDasContas = () => {
             try {
                 await salvarContas(payload);
                 await buscaContas();
-                setShowSalvar(true)
+                toastCustom.ToastCustomSuccess('Edição salva', 'A edição foi salva com sucesso!')
             }catch (e) {
                 console.log("Erro ao salvar conta", e)
             }
@@ -155,14 +154,6 @@ export const DadosDasContas = () => {
                             podeEditarDadosMembros={podeEditarDadosMembros}
                         />
                     </div>
-
-                    <ModalConfirmaSalvar
-                        show={showSalvar}
-                        handleClose={()=>setShowSalvar(false)}
-                        titulo="Contas salvas"
-                        texto="A edição foi salva com sucesso"
-                        primeiroBotaoCss="success"
-                    />
                 </div>
             }
         </>
