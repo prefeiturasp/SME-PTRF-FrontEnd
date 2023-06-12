@@ -1,5 +1,6 @@
 import React, {useEffect, useState, Fragment, useCallback, useContext} from "react";
 import {useHistory, useParams} from "react-router-dom";
+import {useDispatch} from "react-redux";
 import {TopoSelectPeriodoBotaoConcluir} from "./TopoSelectPeriodoBotaoConcluir";
 import {getPeriodosDePrestacaoDeContasDaAssociacao, getDataPreenchimentoPreviaAta} from "../../../services/escolas/Associacao.service"
 import {getStatusPeriodoPorData, postConcluirPeriodo, getDataPreenchimentoAta, getIniciarAta, getIniciarPreviaAta} from "../../../services/escolas/PrestacaoDeContas.service";
@@ -24,10 +25,11 @@ import {NotificacaoContext} from "../../../context/Notificacoes";
 import {getRegistrosFalhaGeracaoPc} from "../../../services/Notificacoes.service";
 import {ModalNotificaErroConcluirPC} from "./ModalNotificaErroConcluirPC";
 import { ModalPendenciasCadastrais } from "./ModalPendenciasCadastrais";
+import { setPersistenteUrlVoltar } from "../../../store/reducers/componentes/escolas/PrestacaoDeContas/PendenciaCadastro/actions";
 
 export const PrestacaoDeContas = ({setStatusPC}) => {
     const history = useHistory();
-
+    const dispatch = useDispatch();
     let {monitoramento} = useParams();
 
     const contextSideBar = useContext(SidebarContext);
@@ -242,6 +244,7 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
     };
 
     function goToAssociacoes() {
+        dispatch(setPersistenteUrlVoltar('/prestacao-de-contas/'));
         history.push(`/dados-da-associacao/`)
     };
 

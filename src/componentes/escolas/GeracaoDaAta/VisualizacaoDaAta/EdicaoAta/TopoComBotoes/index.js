@@ -4,7 +4,7 @@ export const TopoComBotoes = ({dadosAta, onSubmitFormEdicaoAta, handleClickFecha
     return(
         <div className="row">
             <div className='col-12 col-md-5 mt-2'>
-                <p className='titulo-visualizacao-da-ata'>{dadosAta.tipo_ata === 'RETIFICACAO' ? 'Visualização da ata de retificação' : 'Visualização da ata'}</p>
+                <p className='titulo-visualizacao-da-ata'>{dadosAta.tipo_ata === 'RETIFICACAO' ? 'Edição da Ata de Retificação da Prestação de Contas' : 'Edição da Ata de Apresentação da Prestação de Contas'}</p>
             </div>
 
             <div className='col-12 col-md-7 text-right'>
