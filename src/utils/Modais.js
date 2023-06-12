@@ -74,19 +74,6 @@ export const CancelarModalAssociacao = (propriedades) => {
     )
 };
 
-export const SalvarModalAssociacao = (propriedades) => {
-    return (
-        <ModalBootstrap
-            show={propriedades.show}
-            onHide={propriedades.handleClose}
-            titulo="Edição salva"
-            bodyText="<p>A edição foi salva com sucesso!</p>"
-            primeiroBotaoOnclick={propriedades.onCancelarTrue}
-            primeiroBotaoTexto="OK"
-        />
-    )
-};
-
 export const SalvarReceita = (propriedades) => {
     return (
         <ModalBootstrap
