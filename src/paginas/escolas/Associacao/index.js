@@ -1,12 +1,13 @@
 import React from "react";
 import {PaginasContainer} from "../../PaginasContainer";
 import {DadosDaAsssociacao} from "../../../componentes/escolas/Associacao/DadosDaAssociacao";
+import { TopoComBotoes } from "../../../componentes/escolas/Associacao/TopoComBotoes";
 
 
 export const DadosDaAssociacaoPage = () =>{
     return (
         <PaginasContainer>
-            <h1 className="titulo-itens-painel mt-5">Dados da Associação</h1>
+            <TopoComBotoes tituloPagina="Dados da Associação"/>
             <div className="page-content-inner">
                 <DadosDaAsssociacao/>
             </div>
