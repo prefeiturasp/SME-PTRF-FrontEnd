@@ -66,7 +66,11 @@ const setDadosPrimeiroAcesso = async (resp) =>{
     let visao, uuid_unidade, uuid_associacao, nome_associacao, unidade_tipo, unidade_nome, notificar_devolucao_referencia, notificar_devolucao_pc_uuid, notificacao_uuid;
     let usuario_logado = getDadosDoUsuarioLogado();
 
-    if (usuario_logado && usuario_logado.associacao_selecionada.uuid){
+    const temAcessoAUnidadeSelecionada = () => {
+        return !!usuario_logado.unidades.find(unidade => unidade.uuid === usuario_logado.unidade_selecionada.uuid)
+    };
+
+    if (usuario_logado && usuario_logado.associacao_selecionada.uuid && temAcessoAUnidadeSelecionada() ){
         visao=usuario_logado.visao_selecionada.nome;
         uuid_unidade = usuario_logado.unidade_selecionada.uuid;
         uuid_associacao = usuario_logado.associacao_selecionada.uuid;
@@ -115,7 +119,7 @@ const setDadosPrimeiroAcesso = async (resp) =>{
         }
     }
 
-    if (usuario_logado && usuario_logado.unidade_selecionada.nome){
+    if (usuario_logado && usuario_logado.unidade_selecionada.nome && temAcessoAUnidadeSelecionada()){
         unidade_nome = usuario_logado.unidade_selecionada.nome;
     }else{
         if (resp.visoes.find(visao=> visao === 'SME') && resp.unidades.find(unidade => unidade.tipo_unidade === "SME")){
@@ -130,7 +134,7 @@ const setDadosPrimeiroAcesso = async (resp) =>{
         }
     }
 
-    if (usuario_logado && usuario_logado.unidade_selecionada.tipo_unidade){
+    if (usuario_logado && usuario_logado.unidade_selecionada.tipo_unidade && temAcessoAUnidadeSelecionada()){
         unidade_tipo = usuario_logado.unidade_selecionada.tipo_unidade;
     }else {
         if (resp.visoes.find(visao=> visao === 'SME') && resp.unidades.find(unidade => unidade.tipo_unidade === "SME")){
