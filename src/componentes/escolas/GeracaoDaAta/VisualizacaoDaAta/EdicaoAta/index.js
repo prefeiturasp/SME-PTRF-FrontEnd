@@ -117,7 +117,13 @@ export const EdicaoAta = () => {
     }
 
     const editaStatusDePresencaMembro = (identificacao) => {
-        const copiaListaPresentes = [...listaPresentes];
+        let copiaListaPresentes = []
+
+        if (listaPresentes.length > 0) {
+            copiaListaPresentes = [...listaPresentes];
+        } else {
+            copiaListaPresentes = [...listaPresentesPadrao];
+        }
 
         const membroListaPresentesSelecionado = copiaListaPresentes.find(membro => membro.identificacao === identificacao);
 
