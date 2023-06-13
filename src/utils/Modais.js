@@ -543,22 +543,6 @@ export const AlterarEmailMeusDados = ({show, handleClose}) => {
     )
 };
 
-export const ModalConfirmaSalvar = (propriedades) => {
-    return (
-        <ModalBootstrap
-            show={propriedades.show}
-            onHide={propriedades.handleClose}
-            titulo={propriedades.titulo}
-            bodyText={`<p>${propriedades.texto}</p>`}
-            primeiroBotaoOnclick={propriedades.handleClose}
-            primeiroBotaoCss={propriedades.primeiroBotaoCss}
-            primeiroBotaoTexto={propriedades.primeiroBotaoTexto ? propriedades.primeiroBotaoTexto : "OK"}
-        />
-    )
-};
-
-
-
 export const CancelarModalDiretoria = (propriedades) => {
     return (
         <ModalBootstrap
