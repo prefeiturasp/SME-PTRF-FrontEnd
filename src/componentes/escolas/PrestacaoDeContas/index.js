@@ -250,9 +250,9 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
 
     function goToConciliacaoBancaria(pendencias) {
         if (pendencias.contas_pendentes.length > 1){
-            history.push(`/detalhe-das-prestacoes/${periodoPrestacaoDeConta.periodo_uuid}/`)
+            history.push(`/detalhe-das-prestacoes/${periodoPrestacaoDeConta.periodo_uuid}/?origem=concluir-periodo`)
         } else {
-            history.push(`/detalhe-das-prestacoes/${periodoPrestacaoDeConta.periodo_uuid}/${pendencias.contas_pendentes[0]}`)
+            history.push(`/detalhe-das-prestacoes/${periodoPrestacaoDeConta.periodo_uuid}/${pendencias.contas_pendentes[0]}/?origem=concluir-periodo`)
         }
     };
     
