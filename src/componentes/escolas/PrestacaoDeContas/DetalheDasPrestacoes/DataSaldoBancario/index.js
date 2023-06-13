@@ -1,4 +1,4 @@
-import React, {memo} from "react";
+import React, {memo, useEffect, useCallback} from "react";
 import {DatePickerField} from "../../../../Globais/DatePickerField";
 import CurrencyInput from "react-currency-input";
 import {trataNumericos} from "../../../../../utils/ValidacoesAdicionaisFormularios";
@@ -6,9 +6,10 @@ import './data-saldo-bancario.scss'
 import {visoesService} from "../../../../../services/visoes.service";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faTrashAlt, faDownload, faUpload, faPaperclip, faCheck} from '@fortawesome/free-solid-svg-icons'
-
 import 'antd/dist/antd.css';
 import { Upload, Button } from 'antd';
+
+import {IconeDataSaldoBancarioPendentes} from "./IconeDataSaldoBancarioPendentes";
 
 const DataSaldoBancario = ({
     valoresPendentes, dataSaldoBancario, handleChangaDataSaldo, periodoFechado,
@@ -26,6 +27,22 @@ const DataSaldoBancario = ({
         salvarExtratoBancario();
     }
 
+    const exibeIconeIncompleto = useCallback( () => {
+        if (!dataSaldoBancario || !dataSaldoBancario.data_extrato || (!dataSaldoBancario.saldo_extrato === 0 && dataSaldoBancario.saldo_extrato !== "R$0,00") ) {
+            return(
+                IconeDataSaldoBancarioPendentes()
+            )
+        }else if ( (dataSaldoBancario.saldo_extrato !== 0 && dataSaldoBancario.saldo_extrato !== "R$0,00") && !nomeComprovanteExtrato){
+            return(
+                IconeDataSaldoBancarioPendentes()
+            )
+        }
+    }, [dataSaldoBancario, nomeComprovanteExtrato])
+
+    useEffect(()=>{
+        exibeIconeIncompleto()
+    }, [exibeIconeIncompleto])
+
     return(
         <>
             <form method="post" encType="multipart/form-data">
@@ -33,12 +50,13 @@ const DataSaldoBancario = ({
                     <div className="col-12">
                         <div className="card container-extrato">
                             <div className="card-body">
-                                <h5 className="card-title titulo">Saldo bancário da conta</h5>
+                                <h5 className="card-title titulo">Saldo bancário da conta {exibeIconeIncompleto()}</h5>
+                                <p className='text-right'><span className='font-weight-bold'>* Preenchimento obrigatório</span></p>
                                 <div className='row'>
                                     <div className='col-6'>
                                         <div className='row'>
                                             <div className="col">
-                                                <label htmlFor="data_extrato">Data</label>
+                                                <label htmlFor="data_extrato">Data *</label>
                                                 <DatePickerField
                                                     value={dataSaldoBancario.data_extrato ? dataSaldoBancario.data_extrato : ''}
                                                     onChange={handleChangaDataSaldo}
@@ -54,7 +72,7 @@ const DataSaldoBancario = ({
 
                                         <div className='row'>
                                             <div className="col">
-                                                <label htmlFor="saldo_extrato">Saldo</label>
+                                                <label htmlFor="saldo_extrato">Saldo *</label>
                                                 <CurrencyInput
                                                     allowNegative={false}
                                                     prefix='R$'
@@ -74,7 +92,7 @@ const DataSaldoBancario = ({
                                     </div>
                                     <div className="col-6">
                                         <div className="form-group">
-                                            <label htmlFor="upload_extrato" className="ml-1">Comprovante do saldo da conta</label>
+                                            <label htmlFor="upload_extrato" className="ml-1">Comprovante do saldo da conta {dataSaldoBancario.saldo_extrato !== 0 && dataSaldoBancario.saldo_extrato !== "R$0,00" ? "*" : ""}</label>
                                             <div className='container-upload-extrato'>
                                                 <Upload
                                                     beforeUpload={() => false}
@@ -139,13 +157,8 @@ const DataSaldoBancario = ({
                                                     }
                                                         </div>
                                                     </div>
-
-
-
                                                 </div>
                                             </div>
-
-
                                         </div>
                                     </div>
                                 </div>
