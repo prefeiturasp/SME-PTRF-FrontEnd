@@ -5,7 +5,7 @@ import {
     ModalLegendaInformacao
 } from "../../../Globais/ModalLegendaInformacao/ModalLegendaInformacao"
 
-export const LegendaInformacao = ({showModalLegendaInformacao, setShowModalLegendaInformacao}) => {
+export const LegendaInformacao = ({showModalLegendaInformacao, setShowModalLegendaInformacao, excludedTags = []}) => {
     return (
         <>
 
@@ -39,6 +39,7 @@ export const LegendaInformacao = ({showModalLegendaInformacao, setShowModalLegen
                 titulo="Legenda Informação"
                 primeiroBotaoTexto="Fechar"
                 primeiroBotaoCss="outline-success"
+                excludedTags={excludedTags}
             />
         </>
     )

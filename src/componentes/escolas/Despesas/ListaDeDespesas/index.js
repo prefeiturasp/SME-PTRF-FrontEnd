@@ -381,6 +381,7 @@ export const ListaDeDespesas = () => {
                                     <LegendaInformacao
                                         showModalLegendaInformacao={showModalLegendaInformacao}
                                         setShowModalLegendaInformacao={setShowModalLegendaInformacao}
+                                        excludedTags={['Excluído']}
                                     />
                                     {despesas && despesas.length > 0 &&
                                         <>
