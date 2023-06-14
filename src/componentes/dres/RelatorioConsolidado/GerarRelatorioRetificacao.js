@@ -4,6 +4,7 @@ import { ModalPublicarRelatorioConsolidado, ModalPublicarRelatorioConsolidadoPen
 import BotaoMarcarPublicacaoNoDiarioOficial from './MarcarPublicacaoNoDiarioOficial/BotaoMarcarPublicacaoNoDiarioOficial';
 import InfoRefiticacaoRelatorio from "./BlocoRetificacao/InfoRefiticacaoRelatorio";
 import {Retificar} from './Retificar';
+import {visoesService} from "../../../services/visoes.service";
 
 const GerarRelatorioRetificado = (publicarConsolidadoDre, podeGerarPrevia, children, consolidadoDre, execucaoFinanceira, disableGerar, setShowPublicarRelatorioConsolidado, publicarConsolidadoDePublicacoesParciais, carregaConsolidadosDreJaPublicadosProximaPublicacao, showPublicarRelatorioConsolidado) => {
     const [showPublicarRelatorioConsolidadoPendente, setShowPublicarRelatorioConsolidadoPendente] = useState(false)
@@ -60,9 +61,9 @@ const GerarRelatorioRetificado = (publicarConsolidadoDre, podeGerarPrevia, child
                                 <button
                                     onClick={handleClick}
                                     className="btn btn btn btn-success"
-                                    disabled={disableGerar}
+                                    disabled={disableGerar || !visoesService.getPermissoes(['gerar_relatorio_consolidado_dre'])}
                                 >
-                                    Gerar
+                                    Gerar aa
                                 </button>
                             </div>
                         ):

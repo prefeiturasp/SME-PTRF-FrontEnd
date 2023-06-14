@@ -4,6 +4,7 @@ import { ModalPublicarRetificacao } from "../../../utils/Modais";
 import { ModalPublicarRetificacaoPendente } from "../../../utils/Modais";
 import {postCriarAtaAtrelarAoConsolidadoDre} from "../../../services/dres/RelatorioConsolidado.service";
 import { Button } from 'antd';
+import {visoesService} from "../../../services/visoes.service";
 
 
 const PreviaDocumentoRetificado = ({consolidadoDre, todasAsPcsDaRetificacaoConcluidas, publicarRetificacao, gerarPreviaRetificacao, execucaoFinanceira, execucaoFinanceiraCarregando}) => {
@@ -80,7 +81,11 @@ const PreviaDocumentoRetificado = ({consolidadoDre, todasAsPcsDaRetificacaoConcl
                 <>
                     {!consolidadoDre.ja_publicado &&
                         <span data-html={true} data-tip={!todasAsPcsDaRetificacaoConcluidas(consolidadoDre) ? "A análise da(s) prestação(ões) de contas em retificação ainda não foi concluída." : ""}>
-                            <button onClick={() => gerarPreviaRetificacao(consolidadoDre)} className="btn btn-outline-success" disabled={!todasAsPcsDaRetificacaoConcluidas(consolidadoDre)}>
+                            <button
+                                onClick={() => gerarPreviaRetificacao(consolidadoDre)}
+                                className="btn btn-outline-success"
+                                disabled={!todasAsPcsDaRetificacaoConcluidas(consolidadoDre) || !visoesService.getPermissoes(['gerar_relatorio_consolidado_dre'])}
+                            >
                                 Prévias
                             </button>
                         </span>
@@ -90,7 +95,14 @@ const PreviaDocumentoRetificado = ({consolidadoDre, todasAsPcsDaRetificacaoConcl
 
                         <div className="p-2 bd-highlight font-weight-normal" data-html={true}>
                             <span data-html={true} data-tip={!todasAsPcsDaRetificacaoConcluidas(consolidadoDre) ? "Os documentos ainda não podem ser gerados, pois se encontra em análise prestação(ões) de contas a ser(em) retificada(s)." : ""}>
-                                <Button className="btn btn btn btn-success botao-carregar" type="primary" size="large" loading={execucaoFinanceiraCarregando} disabled={!todasAsPcsDaRetificacaoConcluidas(consolidadoDre)} onClick={() => handleClick()}>
+                                <Button
+                                    className="btn btn btn btn-success botao-carregar"
+                                    type="primary"
+                                    size="large"
+                                    loading={execucaoFinanceiraCarregando}
+                                    disabled={!todasAsPcsDaRetificacaoConcluidas(consolidadoDre) || !visoesService.getPermissoes(['gerar_relatorio_consolidado_dre'])}
+                                    onClick={() => handleClick()}
+                                >
                                     Gerar
                                 </Button>
                                 <ReactTooltip html={true}/>
