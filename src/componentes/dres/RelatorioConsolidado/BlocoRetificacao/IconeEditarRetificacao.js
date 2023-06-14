@@ -3,6 +3,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEdit} from '@fortawesome/free-solid-svg-icons'
 import ReactTooltip from "react-tooltip";
 import moment from "moment";
+import {visoesService} from "../../../../services/visoes.service";
 
 const IconeEditarRetificacao = ({consolidadoDre}) => {
     const retornaMsgToolTip = () => {
@@ -24,6 +25,7 @@ const IconeEditarRetificacao = ({consolidadoDre}) => {
                     <button
                         onClick={(e) => console.log(e)}
                         className="btn btn-link pt-1 pb-1 pl-2 pr-0"
+                        disabled={!visoesService.getPermissoes(['change_relatorio_consolidado_dre'])}
                     >
 
                         <FontAwesomeIcon
