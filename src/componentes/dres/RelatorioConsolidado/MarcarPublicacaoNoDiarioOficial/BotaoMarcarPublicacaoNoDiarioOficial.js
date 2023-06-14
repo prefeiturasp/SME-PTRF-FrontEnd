@@ -1,5 +1,6 @@
 import React, {memo, useState} from "react";
 import {ModalMarcarPublicacaoNoDiarioOficial} from "../ModalMarcarPublicacaoNoDiarioOficial";
+import {visoesService} from "../../../../services/visoes.service";
 
 const BotaoMarcarPublicacaoNoDiarioOficial = ({consolidadoDre, carregaConsolidadosDreJaPublicadosProximaPublicacao}) => {
     const [showModalMarcarPublicacaoNoDiarioOficial, setShowModalMarcarPublicacaoNoDiarioOficial] = useState(false)
@@ -10,6 +11,7 @@ const BotaoMarcarPublicacaoNoDiarioOficial = ({consolidadoDre, carregaConsolidad
                     <button
                         onClick={() => setShowModalMarcarPublicacaoNoDiarioOficial(true)}
                         className="btn btn-outline-success"
+                        disabled={!visoesService.getPermissoes(['change_relatorio_consolidado_dre'])}
                     >
                         Informar publicação
                     </button>
