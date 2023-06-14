@@ -5,12 +5,11 @@ import {Column} from "primereact/column";
 import moment from "moment";
 import { TagInformacao } from "../../../../Globais/TagInformacao";
 import { Button } from "react-bootstrap";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
 import Loading from "../../../../../utils/Loading";
 import {RedirectModalTabelaLancamentos} from "../../../../../utils/Modais";
 import { Ordenacao } from "./Ordenacao/Ordenacao";
 import { LimparArgumentosOrdenacao } from "./Ordenacao/LimparOrdenacao";
+import { LegendaInformacao } from "../../../../Globais/ModalLegendaInformacao/LegendaInformacao";
 
 const TabelaTransacoes = ({
     transacoes,
@@ -18,6 +17,7 @@ const TabelaTransacoes = ({
     handleChangeCheckboxTransacoes,
     periodoFechado,
     tabelasDespesa,
+    showModalLegendaInformacao,
     setShowModalLegendaInformacao,
     handleCallbackOrdernar = null,
     loading = true,
@@ -305,18 +305,11 @@ const TabelaTransacoes = ({
             />
         ) : transacoes && transacoes.length > 0 ? (
             <>
-            <div className='text-right'>
-                <button
-                    onClick={()=> setShowModalLegendaInformacao(true)}
-                    className="btn btn-link link-green mr-3"
-                    style={{padding: '0px', textDecoration: 'none'}}
-                >
-                    <FontAwesomeIcon
-                        style={{fontSize: '18px', marginRight: "4px", paddingTop: "2px"}}
-                        icon={faInfoCircle}
-                    />
-                    <span>Legenda informação</span>
-                </button>
+            <div className='text-right'>                
+                <LegendaInformacao
+                    showModalLegendaInformacao={showModalLegendaInformacao}
+                    setShowModalLegendaInformacao={setShowModalLegendaInformacao}
+                />
                 <Ordenacao
                     showModalOrdenar={showModalOrdenar}
                     setShowModalOrdenar={setShowModalOrdenar}

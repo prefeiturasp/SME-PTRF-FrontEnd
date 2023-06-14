@@ -32,7 +32,6 @@ import {getDespesasTabelas} from "../../../../services/escolas/Despesas.service"
 import {FiltrosTransacoes} from "./FiltrosTransacoes";
 import { SidebarLeftService } from "../../../../services/SideBarLeft.service";
 import { SidebarContext } from "../../../../context/Sidebar";
-import { ModalLegendaInformacao } from "../../../Globais/ModalLegendaInformacao/ModalLegendaInformacao";
 import {toastCustom} from "../../../Globais/ToastCustom";
 
 export const DetalheDasPrestacoes = () => {
@@ -580,6 +579,7 @@ export const DetalheDasPrestacoes = () => {
                                 periodoFechado={periodoFechado}
                                 handleChangeCheckboxTransacoes={handleChangeCheckboxTransacoes}
                                 tabelasDespesa={tabelasDespesa}
+                                showModalLegendaInformacao={showModalLegendaInformacao}
                                 setShowModalLegendaInformacao={setShowModalLegendaInformacao}
                                 handleCallbackOrdernar={handleTransacoesNaoConciliadas}
                                 loading={loadingNaoConciliadas}
@@ -601,6 +601,7 @@ export const DetalheDasPrestacoes = () => {
                                 periodoFechado={periodoFechado}
                                 handleChangeCheckboxTransacoes={handleChangeCheckboxTransacoes}
                                 tabelasDespesa={tabelasDespesa}
+                                showModalLegendaInformacao={showModalLegendaInformacao}
                                 setShowModalLegendaInformacao={setShowModalLegendaInformacao}
                                 handleCallbackOrdernar={handleTransacoesConciliadas}
                                 loading={loadingConciliadas}
@@ -620,16 +621,6 @@ export const DetalheDasPrestacoes = () => {
                                 setClassBtnSalvarJustificativa={setClassBtnSalvarJustificativa}
 
                             />
-
-                            <section>
-                                <ModalLegendaInformacao
-                                    show={showModalLegendaInformacao}
-                                    primeiroBotaoOnclick={() => setShowModalLegendaInformacao(false)}
-                                    titulo="Legenda Informação"
-                                    primeiroBotaoTexto="Fechar"
-                                    primeiroBotaoCss="outline-success"
-                                />
-                            </section>
                         </>
                     ):
                         <MsgImgCentralizada
