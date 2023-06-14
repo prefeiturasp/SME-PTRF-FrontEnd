@@ -5,6 +5,7 @@ import {faEdit} from '@fortawesome/free-solid-svg-icons'
 import ReactTooltip from "react-tooltip";
 import {Link} from 'react-router-dom';
 import IconeMarcarPublicacaoNoDiarioOficial from "./IconeMarcarPublicacaoNoDiarioOficial";
+import {visoesService} from "../../../../services/visoes.service";
 const dataTemplate = useDataTemplate()
 
 const InfoPublicacaoNoDiarioOficial = ({consolidadoDre, carregaConsolidadosDreJaPublicadosProximaPublicacao}) => {
@@ -21,10 +22,11 @@ const InfoPublicacaoNoDiarioOficial = ({consolidadoDre, carregaConsolidadosDreJa
             }
             {consolidadoDre && consolidadoDre?.eh_retificacao && !consolidadoDre.ja_publicado &&
             <div className='mb-0 fonte-12 fonte-normal'>
-                    <strong style={{color: '#00585E', fontWeight: '600', fontSize: '14px', marginRight: '5px'}}>
+                    <strong style={{color: '#00585E', fontWeight: '600', fontSize: '14px', marginRight: '8px'}}>
                         Editar Retificação
                     </strong>
                     <Link
+                        onClick={e => !visoesService.getPermissoes(['change_relatorio_consolidado_dre']) && e.preventDefault()}
                         to={
                             {
                                 pathname: `/dre-relatorio-consolidado-retificacao/${consolidadoDre.uuid}`,
@@ -35,10 +37,18 @@ const InfoPublicacaoNoDiarioOficial = ({consolidadoDre, carregaConsolidadosDreJa
                             }
                         }
                     >
-                        <FontAwesomeIcon
-                            style={{marginRight: "0", color: '#00585E', fontSize: '18px'}}
-                            icon={faEdit}
-                        />
+
+
+                        <button
+                            className="btn btn-link p-0"
+                            disabled={!visoesService.getPermissoes(['change_relatorio_consolidado_dre'])}
+                        >
+                            <FontAwesomeIcon
+                                style={{marginRight: "0", color: '#00585E', fontSize: '18px'}}
+                                icon={faEdit}
+                            />
+                        </button>
+
                     </Link>
             </div>
             }

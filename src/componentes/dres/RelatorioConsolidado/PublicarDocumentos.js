@@ -5,6 +5,7 @@ import BotaoMarcarPublicacaoNoDiarioOficial from "./MarcarPublicacaoNoDiarioOfic
 import {Retificar} from "./Retificar";
 import PreviaDocumentoRetificado from "./PreviaDocumentoRetificado";
 import ReactTooltip from "react-tooltip";
+import {visoesService} from "../../../services/visoes.service";
 
 const PublicarDocumentos = ({publicarConsolidadoDre, podeGerarPrevia, children, consolidadoDre, carregaConsolidadosDreJaPublicadosProximaPublicacao, execucaoFinanceira, disableGerar, todasAsPcsDaRetificacaoConcluidas, publicarRetificacao, showPublicarRetificacao, setShowPublicarRetificacao, gerarPreviaRetificacao, removerBtnGerar=false, execucaoFinanceiraCarregando}) => {
     const [showPublicarRelatorioConsolidadoPendente, setShowPublicarRelatorioConsolidadoPendente] = useState(false)
@@ -61,7 +62,7 @@ const PublicarDocumentos = ({publicarConsolidadoDre, podeGerarPrevia, children, 
                                     <button
                                         onClick={() => handleClick()}
                                         className="btn btn btn btn-success"
-                                        disabled={disableGerar}
+                                        disabled={disableGerar || !visoesService.getPermissoes(['gerar_relatorio_consolidado_dre'])}
                                     >
                                         Gerar
                                     </button>

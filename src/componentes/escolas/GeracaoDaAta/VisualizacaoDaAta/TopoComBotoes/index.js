@@ -10,7 +10,7 @@ export const TopoComBotoes = ({dadosAta, docPrestacaoConta, prestacaoDeContasDet
                 {/*Para as atas de apresentação (Não retificação)*/}
                 {/*Se não tem Prestação de Conta trata-se de uma prévia*/}
                 {dadosAta && dadosAta.tipo_ata !== 'RETIFICACAO' &&
-                <p className='titulo-visualizacao-da-ata'>{dadosAta.prestacao_conta ? 'Visualização da ata' : 'Visualização da prévia da ata'}</p>
+                <p className='titulo-visualizacao-da-ata'>{dadosAta.prestacao_conta ? 'Visualização da Ata de Apresentação da PC' : 'Visualização da prévia da Ata de Apresentação da PC'}</p>
                 }
 
                 {/*Para as atas de retificação*/}
