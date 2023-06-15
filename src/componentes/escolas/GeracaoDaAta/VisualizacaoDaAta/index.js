@@ -559,7 +559,7 @@ export const VisualizacaoDaAta = () => {
                         <p>{retornaDadosAtaFormatado("parecer_conselho")}</p>
                         <p className="mt-5">{retornaDadosAtaFormatado("data_reuniao_texto_inferior")}</p>
                         <TabelaPresentes
-                            titulo="Presentes"
+                            titulo="Membros do Conselho Fiscal"
                             listaPresentes={listaPresentes.presentes_ata_conselho_fiscal}
                         />
                     </div>
