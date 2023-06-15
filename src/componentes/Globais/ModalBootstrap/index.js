@@ -1,11 +1,8 @@
-import React, {Children, Fragment, useEffect, useState} from "react";
-import Loading from "../../../utils/Loading";
-import {getTagInformacao} from "../../../services/escolas/Despesas.service";
+import React, {Fragment} from "react";
 import {Button, Modal} from "react-bootstrap";
 import {faTimes} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import "./modal-bootstrap.scss"
-import {useCallback} from "react";
 
 export const ModalBootstrap = (propriedades) => {
     return (
@@ -29,15 +26,66 @@ export const ModalBootstrap = (propriedades) => {
                     <div dangerouslySetInnerHTML={
                         {__html: propriedades.bodyText}
                     }/>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant={
+                            propriedades.primeiroBotaoCss ? propriedades.primeiroBotaoCss : "primary"
+                        }
+                        onClick={
+                            propriedades.primeiroBotaoOnclick
+                    }>
+                        {
+                        propriedades.primeiroBotaoTexto
+                    } </Button>
+                    {
+                    propriedades.segundoBotaoOnclick && propriedades.segundoBotaoTexto ? (
+                        <Button variant={
+                                propriedades.segundoBotaoCss ? propriedades.segundoBotaoCss : "primary"
+                            }
+                            onClick={
+                                propriedades.segundoBotaoOnclick
+                        }>
+                            {
+                            propriedades.segundoBotaoTexto
+                        } </Button>
+                    ) : null
+                } </Modal.Footer>
+            </Modal>
+        </Fragment>
+    )
+};
+
+export const ModalBootstrapAcoesExtras = (propriedades) => {
+    return (
+        <Fragment>
+            <Modal centered
+                show={
+                    propriedades.show
+                }
+                onHide={
+                    propriedades.onHide
+                }
+                size={
+                    propriedades.size
+            }>
+                <Modal.Header>
+                    <Modal.Title>{
+                        propriedades.titulo
+                    }</Modal.Title>
+                </Modal.Header>
+                <Modal.Body className="p-0">
+                    <div className="p-3" dangerouslySetInnerHTML={
+                        {__html: propriedades.bodyText}
+                    }/>
                     {propriedades.bodyActions && propriedades.bodyActions.length ? (
-                        <div className="d-flex justify-content-center mt-3">
+                        <div className="d-flex justify-content-center mt-1 mb-3">
                             {propriedades.bodyActions.map((_action, index) => {
                                 return (
                                     <Button 
                                         key={index}
                                         variant='success' 
                                         onClick={() => _action.callback()}
-                                        className="mx-3 btn-sm"
+                                        style={{margin: '0 0.2rem'}}
                                     >
                                         {_action.title}
                                     </Button>                            

@@ -1,9 +1,9 @@
 import React from "react";
-import {ModalBootstrap} from "../../Globais/ModalBootstrap";
+import {ModalBootstrapAcoesExtras} from "../../Globais/ModalBootstrap";
 
 export const ModalPendenciasCadastrais = (props) =>{
     return (
-        <ModalBootstrap
+        <ModalBootstrapAcoesExtras
             show={props.show}
             size={props.size}
             onHide={props.handleClose}
