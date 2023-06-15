@@ -15,7 +15,10 @@ export const TopoComBotoes = ({tituloPagina = ''}) =>{
         history.push(popTo);
     }
     return(
-        <div className="d-flex bd-highlight align-items-center mt-5">
+        <div className="d-flex bd-highlight justify-content-between align-items-center mt-5">
+            <div className="flex-grow-1 bd-highlight">
+                <h1 className="titulo-itens-painel m-0">{tituloPagina}</h1>
+            </div>            
             {
                 popTo ? (
                     <div className="bd-highlight">
@@ -28,10 +31,7 @@ export const TopoComBotoes = ({tituloPagina = ''}) =>{
                         </button>
                     </div>
                 ) : null
-            }
-            <div className="flex-grow-1 bd-highlight">
-                <h1 className="titulo-itens-painel m-0">{tituloPagina}</h1>
-            </div>            
+            }            
         </div>
     )
 }
