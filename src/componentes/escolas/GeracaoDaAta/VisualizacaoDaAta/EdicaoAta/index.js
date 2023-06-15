@@ -37,7 +37,6 @@ export const EdicaoAta = () => {
     const repassesPendentes = useCarregaRepassesPendentesPorPeriodoAteAgora(uuid_associacao, periodoUuid)
 
     const [listaPresentesPadrao, setListaPresentesPadrao] = useState([]);
-    const [listaPresentes, setListaPresentes] = useState([]);
     const [stateFormEditarAta, setStateFormEditarAta] = useState({
         comentarios: "",
         parecer_conselho: "",
@@ -61,8 +60,27 @@ export const EdicaoAta = () => {
 
 
     useEffect(() => {
-        getListaPresentesAta();
-        getListaPresentesPadraoAta();
+        const fetchData = async () => {
+            let listaPresentesAta = await getListaPresentesAta();
+            let listaPresentesPadraoAta = await getListaPresentesPadraoAta();
+
+            for (let i = 0; i < listaPresentesAta.length; i++) {
+                const presenteAta = listaPresentesAta[i];
+                
+                for (let j = 0; j < listaPresentesPadraoAta.length; j++) {
+                  const presentePadraoAta = listaPresentesPadraoAta[j];
+                  
+                  if (presenteAta.identificacao === presentePadraoAta.identificacao) {
+                    listaPresentesPadraoAta[j].presente = listaPresentesAta[i].presente;
+                  }
+                }
+              }
+
+            let participantesNaoMembros = listaPresentesAta.filter(participante => participante.membro === false);
+
+            setListaPresentesPadrao(listaPresentesPadraoAta.concat(participantesNaoMembros))
+        };
+        fetchData();
     }, []);
 
     const exibeMembrosCargos = useCallback(async () => {
@@ -113,30 +131,27 @@ export const EdicaoAta = () => {
 
     const getListaPresentesPadraoAta = async () => {
         let lista_presentes_padrao = await getListaPresentesPadrao(uuid_ata);
-        setListaPresentesPadrao(lista_presentes_padrao);
+        return lista_presentes_padrao;
     }
 
     const editaStatusDePresencaMembro = (identificacao) => {
-        let copiaListaPresentes = []
+        let copiaListaPresentesPadrao = []
 
-        if (listaPresentes.length > 0) {
-            copiaListaPresentes = [...listaPresentes];
-        } else {
-            copiaListaPresentes = [...listaPresentesPadrao];
-        }
 
-        const membroListaPresentesSelecionado = copiaListaPresentes.find(membro => membro.identificacao === identificacao);
+        copiaListaPresentesPadrao = [...listaPresentesPadrao];
+
+        const membroListaPresentesSelecionado = copiaListaPresentesPadrao.find(membro => membro.identificacao === identificacao);
 
         if (membroListaPresentesSelecionado) {
             membroListaPresentesSelecionado.presente = !membroListaPresentesSelecionado.presente;
         }
 
-        return setListaPresentes(copiaListaPresentes);
+        return setListaPresentesPadrao(copiaListaPresentesPadrao);
     }
 
     const getListaPresentesAta = async () => {
         let lista_presentes = await getListaPresentes(uuid_ata);
-        setListaPresentes(lista_presentes);
+        return lista_presentes;
     }
 
     const handleClickFecharAta = () => {
@@ -211,7 +226,6 @@ export const EdicaoAta = () => {
                         formRef={formRef}
                         onSubmitFormEdicaoAta={onSubmitFormEdicaoAta}
                         uuid_ata={uuid_ata}
-                        listaPresentes={listaPresentes}
                         setDisableBtnSalvar={setDisableBtnSalvar}
                         repassesPendentes={repassesPendentes}
                         erros={erros}

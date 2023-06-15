@@ -18,7 +18,6 @@ export const FormularioEditaAta = ({
                                        formRef,
                                        onSubmitFormEdicaoAta,
                                        uuid_ata,
-                                       listaPresentes,
                                        setDisableBtnSalvar,
                                        repassesPendentes,
                                        erros,
@@ -39,12 +38,12 @@ export const FormularioEditaAta = ({
 
     useEffect(() => {
         getDados();
-    }, [stateFormEditarAta, listaPresentes, listaPresentesPadrao]);
+    }, [stateFormEditarAta, listaPresentesPadrao]);
 
     const getDados = () => {
 
         let obj = {
-            listaPresentesPadrao: listaPresentes.length === 0 ? listaPresentesPadrao : listaPresentes,
+            listaPresentesPadrao: listaPresentesPadrao,
             stateFormEditarAta: stateFormEditarAta
         }
 
@@ -723,7 +722,7 @@ export const FormularioEditaAta = ({
 
                                                                     {((ehEdicaoPresente[index] === undefined || ehEdicaoPresente[index] === false) && membro.membro === true &&
                                                                         <>
-                                                                            <div className='col mt-4 ml-4'>
+                                                                            <div className='col mt-4 ml-4' style={{ opacity: `${ehAdicaoPresente ? "30%" : '100%'}` }}>
                                                                                 <div className="row">
                                                                                     <span className='mr-2'>Membro estava: </span>
                                                                                 </div>
@@ -738,6 +737,7 @@ export const FormularioEditaAta = ({
                                                                                         style={{
                                                                                             maxWidth: '30%',
                                                                                         }}
+                                                                                        disabled={ehAdicaoPresente}
                                                                                     />
                                                                                 </div>
                                                                             </div>
