@@ -37,7 +37,6 @@ export const EdicaoAta = () => {
     const repassesPendentes = useCarregaRepassesPendentesPorPeriodoAteAgora(uuid_associacao, periodoUuid)
 
     const [listaPresentesPadrao, setListaPresentesPadrao] = useState([]);
-    const [listaPresentes, setListaPresentes] = useState([]);
     const [stateFormEditarAta, setStateFormEditarAta] = useState({
         comentarios: "",
         parecer_conselho: "",
@@ -227,7 +226,6 @@ export const EdicaoAta = () => {
                         formRef={formRef}
                         onSubmitFormEdicaoAta={onSubmitFormEdicaoAta}
                         uuid_ata={uuid_ata}
-                        listaPresentes={listaPresentes}
                         setDisableBtnSalvar={setDisableBtnSalvar}
                         repassesPendentes={repassesPendentes}
                         erros={erros}

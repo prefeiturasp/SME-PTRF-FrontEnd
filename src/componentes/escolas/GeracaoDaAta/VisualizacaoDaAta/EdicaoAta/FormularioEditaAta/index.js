@@ -18,7 +18,6 @@ export const FormularioEditaAta = ({
                                        formRef,
                                        onSubmitFormEdicaoAta,
                                        uuid_ata,
-                                       listaPresentes,
                                        setDisableBtnSalvar,
                                        repassesPendentes,
                                        erros,
@@ -39,12 +38,12 @@ export const FormularioEditaAta = ({
 
     useEffect(() => {
         getDados();
-    }, [stateFormEditarAta, listaPresentes, listaPresentesPadrao]);
+    }, [stateFormEditarAta, listaPresentesPadrao]);
 
     const getDados = () => {
 
         let obj = {
-            listaPresentesPadrao: listaPresentes.length === 0 ? listaPresentesPadrao : listaPresentes,
+            listaPresentesPadrao: listaPresentesPadrao,
             stateFormEditarAta: stateFormEditarAta
         }
 
