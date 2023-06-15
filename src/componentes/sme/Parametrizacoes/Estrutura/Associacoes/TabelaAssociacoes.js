@@ -2,9 +2,22 @@ import React from "react";
 import {DataTable} from 'primereact/datatable'
 import {Column} from 'primereact/column'
 import { TagInformacao } from "../../../../Globais/TagInformacao";
+import { LegendaInformacao } from "../../../../Globais/ModalLegendaInformacao/LegendaInformacao";
 
-export const TabelaAssociacoes = ({listaDeAssociacoes, rowsPerPage, acoesTemplate}) => {
+export const TabelaAssociacoes = ({
+    listaDeAssociacoes, 
+    rowsPerPage, 
+    acoesTemplate,
+    showModalLegendaInformacao, 
+    setShowModalLegendaInformacao
+}) => {
     return(
+        <>
+        <LegendaInformacao
+            showModalLegendaInformacao={showModalLegendaInformacao}
+            setShowModalLegendaInformacao={setShowModalLegendaInformacao}  
+            entidadeDasTags="associacao"  
+        />
         <DataTable
             value={listaDeAssociacoes}
             paginator={listaDeAssociacoes.length > rowsPerPage}
@@ -27,5 +40,6 @@ export const TabelaAssociacoes = ({listaDeAssociacoes, rowsPerPage, acoesTemplat
                 body={acoesTemplate}
             />
         </DataTable>
+        </>
     )
 };

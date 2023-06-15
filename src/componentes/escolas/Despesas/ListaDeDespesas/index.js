@@ -18,7 +18,7 @@ import Loading from "../../../../utils/Loading";
 import {MsgImgCentralizada} from "../../../Globais/Mensagens/MsgImgCentralizada";
 import Img404 from "../../../../assets/img/img-404.svg";
 import {MsgImgLadoDireito} from "../../../Globais/Mensagens/MsgImgLadoDireito";
-import {LegendaInformacao} from "./LegendaInformacao";
+import {LegendaInformacao} from "../../../Globais/ModalLegendaInformacao/LegendaInformacao";
 import { TagInformacao } from "../../../Globais/TagInformacao";
 import {Ordenacao} from "./Ordenacao";
 import {tr} from "date-fns/locale";
@@ -381,6 +381,7 @@ export const ListaDeDespesas = () => {
                                     <LegendaInformacao
                                         showModalLegendaInformacao={showModalLegendaInformacao}
                                         setShowModalLegendaInformacao={setShowModalLegendaInformacao}
+                                        excludedTags={['Excluído']}
                                     />
                                     {despesas && despesas.length > 0 &&
                                         <>
