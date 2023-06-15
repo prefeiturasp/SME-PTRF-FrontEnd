@@ -1,6 +1,8 @@
 import React from "react";
 import {visoesService} from "../../../../../services/visoes.service";
 import {Link} from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {faArrowLeft} from "@fortawesome/free-solid-svg-icons";
 
 export const TopoComBotoes = ({contaConciliacao, periodoFechado, origem}) => {
     return (
@@ -25,6 +27,10 @@ export const TopoComBotoes = ({contaConciliacao, periodoFechado, origem}) => {
                             to={'/prestacao-de-contas'}
                             className="btn btn-outline-success mr-2 mt-2"
                         >
+                            <FontAwesomeIcon
+                                style={{color: "#00585E", fontSize: '15px', marginRight: "3px"}}
+                                icon={faArrowLeft}
+                            />                            
                             <strong>Voltar</strong>
                         </Link>
                     </div>
