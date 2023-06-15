@@ -8,6 +8,7 @@ import { TagInformacao } from "../TagInformacao"
 export const ModalLegendaInformacao = (propriedades) => {
     const [listaTagInformacao, setListaTagInformacao] = useState([])
     const [loading, setLoading] = useState(true)
+    const { excludedTags = [] } = propriedades;
 
     useEffect(() => {
         let isMounted = true;
@@ -25,7 +26,7 @@ export const ModalLegendaInformacao = (propriedades) => {
             }
       
             if (isMounted) {
-              setListaTagInformacao(tagsInformacao);
+              setListaTagInformacao(tagsInformacao.filter((tag) => !excludedTags.includes(tag.nome)));
             }
           } catch (e) {
             console.error('Erro ao carregar tag informação', e);

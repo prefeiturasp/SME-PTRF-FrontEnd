@@ -5,7 +5,6 @@ import Loading from "../../../utils/Loading";
 import {FiltroDeUnidades} from "./FiltroDeUnidades";
 import Img404 from "../../../assets/img/img-404.svg";
 import {MsgImgCentralizada} from "../Mensagens/MsgImgCentralizada";
-import { ModalLegendaInformacao } from "../../Globais/ModalLegendaInformacao/ModalLegendaInformacao";
 
 export const EscolheUnidade = (props) =>{
 
@@ -84,6 +83,7 @@ export const EscolheUnidade = (props) =>{
                     rowsPerPage={10}
                     acaoAoEscolherUnidade={escolherUnidade}
                     textoAcaoEscolher={"Viabilizar acesso"}
+                    showModalLegendaInformacao={showModalLegendaInformacao}
                     setShowModalLegendaInformacao={setShowModalLegendaInformacao}
                 />
             }
@@ -94,18 +94,6 @@ export const EscolheUnidade = (props) =>{
                     img={Img404}
                 />
             }
-
-            <section>
-                <ModalLegendaInformacao
-                    show={showModalLegendaInformacao}
-                    primeiroBotaoOnclick={() => setShowModalLegendaInformacao(false)}
-                    titulo="Legenda Informação"
-                    primeiroBotaoTexto="Fechar"
-                    primeiroBotaoCss="outline-success"
-                    entidadeDasTags="associacao"
-                />
-            </section>
-
         </div>
     )
 }
