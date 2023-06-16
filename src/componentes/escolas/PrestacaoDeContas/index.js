@@ -262,7 +262,7 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
               if (pendencias.dados_associacao && pendencias.conciliacao_bancaria){
                   setModalPendenciasCadastrais({
                     show: true,
-                    title: 'Há campos não preenchidos na funcionalidade',
+                    title: 'Há campos não preenchidos na(s) funcionalidade(s)',
                     message: "<ul><li>Dados da Associação</li><li>Conciliação Bancária</li></ul>",
                     actions:[
                         {title: 'Ir para dados da Associação', callback: () => goToAssociacoes()},
@@ -272,7 +272,7 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
               } else if(pendencias.dados_associacao) {
                   setModalPendenciasCadastrais({
                       show: true,
-                      title: 'Há campos não preenchidos na funcionalidade',
+                      title: 'Há campos não preenchidos na(s) funcionalidade(s)',
                       message:"<ul><li>Dados da Associação</li></ul>",
                       actions:[
                         {title: 'Ir para dados da Associação', callback: () => goToAssociacoes()},
@@ -281,7 +281,7 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
               } else if(pendencias.conciliacao_bancaria){
                   setModalPendenciasCadastrais({
                       show: true,
-                      title: 'Há campos não preenchidos na funcionalidade',
+                      title: 'Há campos não preenchidos na(s) funcionalidade(s)',
                       message: "<ul><li>Conciliação Bancária</li></ul>",
                       actions:[
                         {title: 'Ir para Conciliação Bancária', callback: () => goToConciliacaoBancaria(pendencias.conciliacao_bancaria)},
