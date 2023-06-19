@@ -1,8 +1,9 @@
 import React from "react";
 import {DataTable} from 'primereact/datatable'
 import {Column} from 'primereact/column'
-import { TagInformacao } from "../../../../Globais/TagInformacao";
+import { TableTags } from "../../../../Globais/TableTags";
 import { LegendaInformacao } from "../../../../Globais/ModalLegendaInformacao/LegendaInformacao";
+import { coresTagsAssociacoes } from "../../../../../utils/CoresTags";
 
 export const TabelaAssociacoes = ({
     listaDeAssociacoes, 
@@ -30,7 +31,7 @@ export const TabelaAssociacoes = ({
                 field="informacao"
                 header="Informações"
                 className="align-middle text-center"
-                body={(rowData) => <TagInformacao data={rowData}/>}
+                body={(rowData) => <TableTags data={rowData} coresTags={coresTagsAssociacoes}/>}
                 style={{width: '15%'}}
             />
             <Column field="unidade.nome_dre" header="DRE"/>

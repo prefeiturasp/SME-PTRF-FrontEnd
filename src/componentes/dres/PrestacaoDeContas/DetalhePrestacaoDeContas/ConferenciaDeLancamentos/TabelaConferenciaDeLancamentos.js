@@ -37,8 +37,9 @@ import {
 } from "../../../../../store/reducers/componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeLancamentos/DetalharAcertos/actions";
 import {visoesService} from "../../../../../services/visoes.service";
 import {ModalLegendaConferenciaLancamentos} from "./Modais/ModalLegendaConferenciaLancamentos"
-import { TagInformacao } from "../../../../Globais/TagInformacao/index";
+import { TableTags } from "../../../../Globais/TableTags";
 import { LegendaInformacao } from "../../../../Globais/ModalLegendaInformacao/LegendaInformacao";
+import { coresTagsDespesas } from "../../../../../utils/CoresTags";
 
 const TabelaConferenciaDeLancamentos = ({
                                             setLancamentosParaConferencia,
@@ -658,7 +659,7 @@ const TabelaConferenciaDeLancamentos = ({
                             field='informacao'
                             header='Informações'
                             className="align-middle text-left borda-coluna"
-                            body={(rowData) => <TagInformacao data={rowData}/>}
+                            body={(rowData) => <TableTags data={rowData} coresTags={coresTagsDespesas}/>}
                             style={{width: '15%'}}/>
                         <Column
                             field='valor_transacao_total'
