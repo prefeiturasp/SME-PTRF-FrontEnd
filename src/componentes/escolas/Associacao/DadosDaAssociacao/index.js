@@ -1,21 +1,28 @@
-import React, {useEffect, useState} from "react";
-import {getAssociacao, alterarAssociacao} from "../../../../services/escolas/Associacao.service";
-import {CancelarModalAssociacao, SalvarModalAssociacao} from "../../../../utils/Modais";
+import React, {useEffect, useState, useRef} from "react";
+import {useSelector, useDispatch} from "react-redux";
+import {useLocation} from "react-router-dom";
+import {getAssociacao, alterarAssociacao, getStatusCadastroAssociacao} from "../../../../services/escolas/Associacao.service";
+import {CancelarModalAssociacao} from "../../../../utils/Modais";
 import {MenuInterno} from "../../../Globais/MenuInterno";
-import "../associacao.scss"
 import Loading from "../../../../utils/Loading";
-import {UrlsMenuInterno} from "../UrlsMenuInterno";
+import {UrlsMenuInterno, retornaMenuAtualizadoPorStatusCadastro} from "../UrlsMenuInterno";
 import {Formik} from "formik";
 import {YupSignupSchemaDadosDaAssociacao} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import MaskedInput from "react-text-mask";
 import {ExportaDadosDaAsssociacao} from "../ExportaDadosAssociacao"
 import {visoesService} from "../../../../services/visoes.service";
-import {useLocation} from "react-router-dom";
+import { setStatusCadastro, resetStatusCadastro } from "../../../../store/reducers/componentes/escolas/Associacao/DadosAssociacao/StatusCadastro/actions";
+import {toastCustom} from "../../../Globais/ToastCustom";
+import "../associacao.scss"
 
 export const DadosDaAsssociacao = () => {
-
+    
     const parametros = useLocation();
-
+    const formRef = useRef();
+    // Redux
+    const dispatch = useDispatch(); 
+    const statusCadastro = useSelector(state => state.DadosAssociacao);
+    
     const [stateAssociacao, setStateAssociacao] = useState({
         nome: "",
         codigo_eol: "",
@@ -29,47 +36,81 @@ export const DadosDaAsssociacao = () => {
     });
 
     const [showModalReceitasCancelar, setShowModalDadosAssociacaoCancelar] = useState(false);
-    const [showModalReceitasSalvar, setShowModalDadosAssociacaoSalvar] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [menuUrls, setMenuUrls] = useState(UrlsMenuInterno);
 
     useEffect(() => {
         buscaAssociacao();
         setLoading(false)
     }, []);
 
+    useEffect(() => {
+        buscaStatusCadastro();
+    }, [stateAssociacao]);
+
+    useEffect(() => {
+        atualizaMenu();
+    }, [statusCadastro]);
+
     const buscaAssociacao = async () => {
         const associacao = await getAssociacao();
         setStateAssociacao(associacao)
     };
+    
+    const buscaStatusCadastro = async () => {
+        const responseStatusCadastro = await getStatusCadastroAssociacao();
+        if(responseStatusCadastro){
+            dispatch(setStatusCadastro(responseStatusCadastro));
+        } else {
+            dispatch(resetStatusCadastro());
+        }
+    };
+    
+    const atualizaMenu = () => {
+        let urls = retornaMenuAtualizadoPorStatusCadastro(statusCadastro);
+        setMenuUrls(urls);
+    };
+    
+    const validForm = (values) => {
+        let erros = {};
+        if (!values.nome.trim()){
+            erros = {
+                nome: 'Nome é obrigatório'
+            }
+            formRef.current.setErrors({...erros});
+        }
+        return !Object.keys(erros).length;
+    };
 
     const handleSubmit = async (values) => {
-        setLoading(true);
-
-        const payload = {
-            "nome": values.nome,
-            "presidente_associacao_nome": values.presidente_associacao_nome,
-            "presidente_associacao_rf": "",
-            "presidente_conselho_fiscal_nome": values.presidente_conselho_fiscal_nome,
-            "presidente_conselho_fiscal_rf": "",
-            "ccm": values.ccm,
-            "email": values.email,
-        };
-
-        try {
-            const response = await alterarAssociacao(payload);
-            if (response.status === 200) {
-                console.log("Operação realizada com sucesso!");
-                await buscaAssociacao();
-                onShowModalSalvar()
-            } else {
-                console.log(response);
+        if(validForm(values)){
+            setLoading(true);
+            const payload = {
+                "nome": values.nome,
+                "presidente_associacao_nome": values.presidente_associacao_nome,
+                "presidente_associacao_rf": "",
+                "presidente_conselho_fiscal_nome": values.presidente_conselho_fiscal_nome,
+                "presidente_conselho_fiscal_rf": "",
+                "ccm": values.ccm,
+                "email": values.email,
+            };
+    
+            try {
+                const response = await alterarAssociacao(payload);
+                if (response.status === 200) {
+                    console.log("Operação realizada com sucesso!");
+                    await buscaAssociacao();
+                    toastCustom.ToastCustomSuccess('Edição salva', 'A edição foi salva com sucesso!')
+                } else {
+                    console.log(response);
+                    return
+                }
+            } catch (error) {
+                console.log(error);
                 return
             }
-        } catch (error) {
-            console.log(error);
-            return
+            setLoading(false);
         }
-        setLoading(false)
     };
     const onHandleClose = () => {
         setShowModalDadosAssociacaoCancelar(false);
@@ -78,15 +119,6 @@ export const DadosDaAsssociacao = () => {
     const onCancelarAssociacaoTrue = async (props) => {
         props.handleReset();
         setShowModalDadosAssociacaoCancelar(false);
-    };
-
-    const onSalvarAssociacaoTrue = async () => {
-        await buscaAssociacao();
-        setShowModalDadosAssociacaoSalvar(false);
-    };
-
-    const onShowModalSalvar = () => {
-        setShowModalDadosAssociacaoSalvar(true);
     };
 
     const podeEditarDadosAssociacao = () => {
@@ -112,10 +144,16 @@ export const DadosDaAsssociacao = () => {
                         <div className="col-12">
 
                             <MenuInterno
-                                caminhos_menu_interno={UrlsMenuInterno}
+                                caminhos_menu_interno={menuUrls}
                             />
 
                             <ExportaDadosDaAsssociacao/>
+
+                            <div className="d-flex justify-content-end my-2">
+                                <span className="font-weight-bold">
+                                    * Preenchimento obrigatório
+                                </span>
+                            </div>
 
                             <Formik
                                 initialValues={stateAssociacao}
@@ -124,18 +162,21 @@ export const DadosDaAsssociacao = () => {
                                 validateOnChange={false}
                                 validateOnBlur={false}
                                 validationSchema={YupSignupSchemaDadosDaAssociacao}
+                                innerRef={formRef}
                             >
                                 {props => {
                                     const {
                                         setErrors,
                                         errors,
                                     } = props;
+
+
                                     return(
                                         
                                         <form onSubmit={props.handleSubmit}>
                                             <div className="form-row">
                                                 <div className="form-group col-md-6">
-                                                    <label htmlFor="nome"><strong>Nome da Associação</strong></label>
+                                                    <label htmlFor="nome"><strong>Nome da Associação *</strong></label>
                                                     <input
                                                         type="text"
                                                         value={props.values.nome}
@@ -256,9 +297,6 @@ export const DadosDaAsssociacao = () => {
                                                 <CancelarModalAssociacao show={showModalReceitasCancelar}
                                                                          handleClose={onHandleClose}
                                                                          onCancelarTrue={() => onCancelarAssociacaoTrue(props)}/>
-                                                <SalvarModalAssociacao show={showModalReceitasSalvar}
-                                                                       handleClose={onHandleClose}
-                                                                       onCancelarTrue={onSalvarAssociacaoTrue}/>
                                             </section>
                                         </form>
                                     );

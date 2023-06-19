@@ -1,15 +1,17 @@
 import React, {useEffect, useState, useCallback} from "react";
+import {useSelector, useDispatch} from "react-redux";
 import {MenuInterno} from "../../../Globais/MenuInterno";
 import {TabelaMembros} from "../TabelaMembros";
-import {getMembrosAssociacao, deleteMembroAssociacao, getStatusPresidenteAssociacao} from "../../../../services/escolas/Associacao.service";
+import {getMembrosAssociacao, deleteMembroAssociacao, getStatusPresidenteAssociacao, getStatusCadastroAssociacao} from "../../../../services/escolas/Associacao.service";
 import Loading from "../../../../utils/Loading";
-import {UrlsMenuInterno} from "../UrlsMenuInterno";
+import {UrlsMenuInterno, retornaMenuAtualizadoPorStatusCadastro} from "../UrlsMenuInterno";
 import {ExportaDadosDaAsssociacao} from "../ExportaDadosAssociacao";
 import {visoesService} from "../../../../services/visoes.service";
 import {ConfirmaDeleteMembro} from "./ConfirmaDeleteMembroDialog";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
 import ReactTooltip from "react-tooltip";
+import { setStatusCadastro, resetStatusCadastro } from "../../../../store/reducers/componentes/escolas/Associacao/DadosAssociacao/StatusCadastro/actions";
 
 export const MembrosDaAssociacao = () => {
 
@@ -46,6 +48,10 @@ export const MembrosDaAssociacao = () => {
         status_presidente: null
     }
 
+    // Redux
+    const dispatch = useDispatch(); 
+    const statusCadastro = useSelector(state => state.DadosAssociacao);
+
     const [clickIconeToogle, setClickIconeToogle] = useState({});
     const [membros, setMembros] = useState({});
     const [initialValuesMembrosDiretoria, setInitialValuesMembrosDiretoria] = useState(initDiretoria);
@@ -54,7 +60,7 @@ export const MembrosDaAssociacao = () => {
     const [loading, setLoading] = useState(true);
     const [showConfirmDelete, setShowConfirmDelete] = useState(false);
     const [statusPresidenteAssociacao, setStatusPresidenteAssociacao] = useState(initStatusPresidenteAssociacao)
-
+    const [menuUrls, setMenuUrls] = useState(UrlsMenuInterno);
 
     const carregaStatusPresidenteAssociacao = useCallback(async () => {
         let status = await getStatusPresidenteAssociacao()
@@ -77,6 +83,14 @@ export const MembrosDaAssociacao = () => {
         setLoading(false)
     }, []);
 
+    useEffect(() => {
+        buscaStatusCadastro();
+    }, [membros]);
+
+    useEffect(() => {
+        atualizaMenu();
+    }, [statusCadastro]);
+
     const carregaMembros = async () => {
         let membros = await getMembrosAssociacao();
         setMembros(membros)
@@ -84,6 +98,20 @@ export const MembrosDaAssociacao = () => {
 
     const buscaDadosMembros = (id_cargo) => {
         return membros.find(element => element.cargo_associacao === id_cargo);
+    };
+
+    const buscaStatusCadastro = async () => {
+        const responseStatusCadastro = await getStatusCadastroAssociacao();
+        if(responseStatusCadastro){
+            dispatch(setStatusCadastro(responseStatusCadastro));
+        } else {
+            dispatch(resetStatusCadastro());
+        }
+    };
+    
+    const atualizaMenu = () => {
+        let urls = retornaMenuAtualizadoPorStatusCadastro(statusCadastro);
+        setMenuUrls(urls);
     };
 
     const mesclaMembros = async () => {
@@ -307,7 +335,7 @@ export const MembrosDaAssociacao = () => {
                     ) :
                     <>
                         <MenuInterno
-                            caminhos_menu_interno={UrlsMenuInterno}
+                            caminhos_menu_interno={menuUrls}
                         />
                         <ExportaDadosDaAsssociacao/>
                         <TabelaMembros

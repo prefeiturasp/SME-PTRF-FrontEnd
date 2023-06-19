@@ -1,27 +1,25 @@
 import React from "react";
 import {Column} from "primereact/column";
 import {DataTable} from "primereact/datatable";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
-import { TagInformacao } from "../../Globais/TagInformacao";
+import { TableTags } from "../../Globais/TableTags";
+import { LegendaInformacao } from "../../Globais/ModalLegendaInformacao/LegendaInformacao";
+import { coresTagsAssociacoes } from "../../../utils/CoresTags";
 
-export const TabelaAssociacoes = ({associacoes, rowsPerPage, unidadeEscolarTemplate, acoesTemplate, setShowModalLegendaInformacao}) =>{
+export const TabelaAssociacoes = ({
+    associacoes, 
+    rowsPerPage, 
+    unidadeEscolarTemplate, 
+    acoesTemplate, 
+    showModalLegendaInformacao, 
+    setShowModalLegendaInformacao
+}) =>{
   return(
     <>
-        <div className="d-flex justify-content-end">
-            <button
-                onClick={()=> setShowModalLegendaInformacao(true)}
-                className="btn btn-link link-green"
-                style={{padding: '0px', textDecoration: 'none'}}
-            >
-                <FontAwesomeIcon
-                    style={{fontSize: '18px', marginRight: "4px", paddingTop: "2px"}}
-                    icon={faInfoCircle}
-                />
-                <span>Legenda informação</span>
-            </button>
-        </div>
-
+        <LegendaInformacao
+            showModalLegendaInformacao={showModalLegendaInformacao}
+            setShowModalLegendaInformacao={setShowModalLegendaInformacao}  
+            entidadeDasTags="associacao"      
+        />
         <DataTable
             value={associacoes}
             className="mt-3 container-tabela-associacoes"
@@ -42,7 +40,7 @@ export const TabelaAssociacoes = ({associacoes, rowsPerPage, unidadeEscolarTempl
                 header="Informações"
                 style={{width: '15%'}}
                 className="align-middle text-center"
-                body={(rowData) => <TagInformacao data={rowData}/>}
+                body={(rowData) => <TableTags data={rowData} coresTags={coresTagsAssociacoes}/>}
             />
             <Column
                 field="uuid"

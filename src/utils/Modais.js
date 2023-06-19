@@ -74,19 +74,6 @@ export const CancelarModalAssociacao = (propriedades) => {
     )
 };
 
-export const SalvarModalAssociacao = (propriedades) => {
-    return (
-        <ModalBootstrap
-            show={propriedades.show}
-            onHide={propriedades.handleClose}
-            titulo="Edição salva"
-            bodyText="<p>A edição foi salva com sucesso!</p>"
-            primeiroBotaoOnclick={propriedades.onCancelarTrue}
-            primeiroBotaoTexto="OK"
-        />
-    )
-};
-
 export const SalvarReceita = (propriedades) => {
     return (
         <ModalBootstrap
@@ -555,22 +542,6 @@ export const AlterarEmailMeusDados = ({show, handleClose}) => {
         />
     )
 };
-
-export const ModalConfirmaSalvar = (propriedades) => {
-    return (
-        <ModalBootstrap
-            show={propriedades.show}
-            onHide={propriedades.handleClose}
-            titulo={propriedades.titulo}
-            bodyText={`<p>${propriedades.texto}</p>`}
-            primeiroBotaoOnclick={propriedades.handleClose}
-            primeiroBotaoCss={propriedades.primeiroBotaoCss}
-            primeiroBotaoTexto={propriedades.primeiroBotaoTexto ? propriedades.primeiroBotaoTexto : "OK"}
-        />
-    )
-};
-
-
 
 export const CancelarModalDiretoria = (propriedades) => {
     return (

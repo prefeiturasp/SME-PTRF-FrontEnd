@@ -1,28 +1,27 @@
 import React from "react";
 import {DataTable} from 'primereact/datatable'
 import {Column} from 'primereact/column'
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
 import useTagInformacaoAssociacaoEncerradaTemplate from "../../../../../hooks/Globais/TagsInformacoesAssociacoes/useTagInformacaoAssociacaoEncerradaTemplate";
+import { LegendaInformacao } from "../../../../Globais/ModalLegendaInformacao/LegendaInformacao";
 
-export const TabelaAcoesDasAssociacoes = ({todasAsAcoes, rowsPerPage, statusTemplate, dataTemplate, acoesTemplate, setShowModalLegendaInformacao}) => {
+export const TabelaAcoesDasAssociacoes = ({
+    todasAsAcoes, 
+    rowsPerPage, 
+    statusTemplate, 
+    dataTemplate, 
+    acoesTemplate, 
+    showModalLegendaInformacao,
+    setShowModalLegendaInformacao
+}) => {
     const tagInformacaoAssociacaoEncerrada = useTagInformacaoAssociacaoEncerradaTemplate();
 
     return(
         <>
-            <div className="d-flex justify-content-end">
-                <button
-                    onClick={()=> setShowModalLegendaInformacao(true)}
-                    className="btn btn-link link-green"
-                    style={{padding: '0px', textDecoration: 'none'}}
-                >
-                    <FontAwesomeIcon
-                        style={{fontSize: '18px', marginRight: "4px", paddingTop: "2px"}}
-                        icon={faInfoCircle}
-                    />
-                    <span>Legenda informação</span>
-                </button>
-            </div>
+            <LegendaInformacao
+                showModalLegendaInformacao={showModalLegendaInformacao}
+                setShowModalLegendaInformacao={setShowModalLegendaInformacao}  
+                entidadeDasTags="associacao"            
+            />
             <DataTable
                 value={todasAsAcoes}
                 paginator={todasAsAcoes.length > rowsPerPage}

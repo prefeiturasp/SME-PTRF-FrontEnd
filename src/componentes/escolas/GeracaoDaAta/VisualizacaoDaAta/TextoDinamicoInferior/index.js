@@ -5,7 +5,13 @@ export const TextoDinamicoInferior = ({dadosAta, retornaDadosAtaFormatado})=>{
         <div className="row">
             <div className="col-12">
 
-                <p>{dadosAta.comentarios ? dadosAta.comentarios : ""}</p>
+                { dadosAta.comentarios ? 
+                    <div className="mb-4">
+                        <p className='titulo-tabela-acoes mt-3'>Manifestações, Comentários e Justificativas</p>
+
+                        <p>{dadosAta.comentarios}</p>
+                    </div> : ""
+                }
 
                 {/*Texto quando existem comentários na ata*/}
                 {!dadosAta.comentarios &&

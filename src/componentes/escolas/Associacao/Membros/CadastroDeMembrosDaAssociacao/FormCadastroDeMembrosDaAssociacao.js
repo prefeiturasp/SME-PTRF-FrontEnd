@@ -8,6 +8,12 @@ export const FormCadastroDeMembrosDaAssociacao = ({stateFormEditarMembro, valida
 
     return(
         <>
+            <div className="d-flex justify-content-end my-2">
+                <span className="font-weight-bold">
+                    * Preenchimento obrigatório
+                </span>
+            </div>
+
             <Formik
                 initialValues={stateFormEditarMembro}
                 validationSchema={YupSignupSchemaMembros}
@@ -46,7 +52,7 @@ export const FormCadastroDeMembrosDaAssociacao = ({stateFormEditarMembro, valida
                             <div className='row'>
                                 <div className="col">
                                     <div className="form-group">
-                                        <label htmlFor="representacao">Representação na associação</label>
+                                        <label htmlFor="representacao">Representação na associação *</label>
                                         <select
                                             disabled={!podeEditarDadosMembros(props.values)}
                                             value={props.values.representacao ? props.values.representacao : ""}
@@ -103,7 +109,7 @@ export const FormCadastroDeMembrosDaAssociacao = ({stateFormEditarMembro, valida
                             <div className="row">
                                 <div className="col">
                                     <div className="form-group">
-                                        <label htmlFor="nome">Nome Completo</label>
+                                        <label htmlFor="nome">Nome Completo *</label>
                                         <input
                                             readOnly={props.values.representacao !== 'PAI_RESPONSAVEL'}
                                             disabled={!podeEditarDadosMembros(props.values)}
@@ -180,7 +186,7 @@ export const FormCadastroDeMembrosDaAssociacao = ({stateFormEditarMembro, valida
                                 {props.values.representacao === 'PAI_RESPONSAVEL' || props.values.representacao === 'ESTUDANTE' ? (
                                     <div className="col-12 col-md-6">
                                         <div className="form-group">
-                                            <label htmlFor="cpf">{props.values.representacao === 'PAI_RESPONSAVEL' ? "CPF do pai ou responsável" : "CPF"}</label>
+                                            <label htmlFor="cpf">{props.values.representacao === 'PAI_RESPONSAVEL' ? "CPF do pai ou responsável" : "CPF"} *</label>
                                             <MaskedInput
                                                 mask={[/\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '-', /\d/, /\d/]}
                                                 readOnly={props.values.representacao !== 'PAI_RESPONSAVEL' && props.values.representacao !== 'ESTUDANTE'}

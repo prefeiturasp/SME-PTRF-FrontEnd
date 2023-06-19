@@ -1,7 +1,10 @@
 import React from "react";
 import {visoesService} from "../../../../../services/visoes.service";
+import {Link} from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {faArrowLeft} from "@fortawesome/free-solid-svg-icons";
 
-export const TopoComBotoes = ({contaConciliacao, periodoFechado}) => {
+export const TopoComBotoes = ({contaConciliacao, periodoFechado, origem}) => {
     return (
         <>
             <div className="d-flex bd-highlight mt-3 mb-3">
@@ -16,6 +19,20 @@ export const TopoComBotoes = ({contaConciliacao, periodoFechado}) => {
                 {visoesService.getPermissoes(['add_receita']) &&
                     <div className="bd-highlight">
                         <button type="button" onClick={()=>window.location.assign('/cadastro-de-credito/tabela-de-lancamentos-receitas')} className="btn btn-outline-success mr-2 mt-2" disabled={periodoFechado}><strong>Cadastrar receita</strong></button>
+                    </div>
+                }
+                {origem && origem === 'concluir-periodo' &&
+                    <div className="bd-highlight">
+                        <Link
+                            to={'/prestacao-de-contas'}
+                            className="btn btn-outline-success mr-2 mt-2"
+                        >
+                            <FontAwesomeIcon
+                                style={{color: "#00585E", fontSize: '15px', marginRight: "3px"}}
+                                icon={faArrowLeft}
+                            />                            
+                            <strong>Voltar</strong>
+                        </Link>
                     </div>
                 }
             </div>

@@ -2,10 +2,19 @@ import React from "react";
 import {Column} from "primereact/column";
 import {DataTable} from "primereact/datatable";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faKey, faInfoCircle} from "@fortawesome/free-solid-svg-icons";
-import { TagInformacao } from "../TagInformacao";
+import {faKey} from "@fortawesome/free-solid-svg-icons";
+import { TableTags } from "../../Globais/TableTags";
+import { LegendaInformacao } from "../ModalLegendaInformacao/LegendaInformacao";
+import { coresTagsAssociacoes } from "../../../utils/CoresTags";
 
-export const ListaDeUnidades = ({listaUnidades, rowsPerPage, acaoAoEscolherUnidade, textoAcaoEscolher, setShowModalLegendaInformacao}) => {
+export const ListaDeUnidades = ({
+    listaUnidades, 
+    rowsPerPage, 
+    acaoAoEscolherUnidade, 
+    textoAcaoEscolher, 
+    showModalLegendaInformacao,
+    setShowModalLegendaInformacao
+}) => {
 
     const unidadeEscolarTemplate = (rowData) => {
         return (
@@ -50,19 +59,11 @@ export const ListaDeUnidades = ({listaUnidades, rowsPerPage, acaoAoEscolherUnida
 
     return (
         <>
-        <div className="d-flex justify-content-end">
-            <button
-                onClick={()=> setShowModalLegendaInformacao(true)}
-                className="btn btn-link link-green"
-                style={{padding: '0px', textDecoration: 'none'}}
-            >
-                <FontAwesomeIcon
-                    style={{fontSize: '18px', marginRight: "4px", paddingTop: "2px"}}
-                    icon={faInfoCircle}
-                />
-                <span>Legenda informação</span>
-            </button>
-        </div>
+        <LegendaInformacao
+            showModalLegendaInformacao={showModalLegendaInformacao}
+            setShowModalLegendaInformacao={setShowModalLegendaInformacao}
+            entidadeDasTags="associacao"
+        />
 
         <DataTable
             value={listaUnidades}
@@ -87,7 +88,7 @@ export const ListaDeUnidades = ({listaUnidades, rowsPerPage, acaoAoEscolherUnida
                 field="informacao"
                 header="Informações"
                 className="align-middle text-center"
-                body={(rowData) => <TagInformacao data={rowData} />}
+                body={(rowData) => <TableTags data={rowData} coresTags={coresTagsAssociacoes}/>}
                 style={{width: '15%'}}
             />
             <Column
