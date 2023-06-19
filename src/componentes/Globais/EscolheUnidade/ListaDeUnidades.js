@@ -3,8 +3,9 @@ import {Column} from "primereact/column";
 import {DataTable} from "primereact/datatable";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faKey} from "@fortawesome/free-solid-svg-icons";
-import { TagInformacao } from "../TagInformacao";
+import { TableTags } from "../../Globais/TableTags";
 import { LegendaInformacao } from "../ModalLegendaInformacao/LegendaInformacao";
+import { coresTagsAssociacoes } from "../../../utils/CoresTags";
 
 export const ListaDeUnidades = ({
     listaUnidades, 
@@ -87,7 +88,7 @@ export const ListaDeUnidades = ({
                 field="informacao"
                 header="Informações"
                 className="align-middle text-center"
-                body={(rowData) => <TagInformacao data={rowData} />}
+                body={(rowData) => <TableTags data={rowData} coresTags={coresTagsAssociacoes}/>}
                 style={{width: '15%'}}
             />
             <Column
