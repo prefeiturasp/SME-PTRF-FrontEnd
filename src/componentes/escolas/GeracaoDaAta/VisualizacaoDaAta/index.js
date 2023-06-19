@@ -535,7 +535,7 @@ export const VisualizacaoDaAta = () => {
                 {dadosAta && Object.entries(dadosAta).length > 0 &&
                     <div className="mt-4">
                         <TabelaPresentes
-                            titulo="Presentes"
+                            titulo="Membros da Diretoria Executiva e do Conselho Fiscal"
                             listaPresentes={listaPresentes.presentes_membros}
                         />
                     </div>
@@ -547,7 +547,7 @@ export const VisualizacaoDaAta = () => {
                     listaPresentes.presentes_nao_membros.length > 0 &&
                     <div className="mt-4">
                         <TabelaPresentes
-                            titulo="Demais membros"
+                            titulo="Demais presentes"
                             listaPresentes={listaPresentes.presentes_nao_membros}
                         />
                     </div>
@@ -559,7 +559,7 @@ export const VisualizacaoDaAta = () => {
                         <p>{retornaDadosAtaFormatado("parecer_conselho")}</p>
                         <p className="mt-5">{retornaDadosAtaFormatado("data_reuniao_texto_inferior")}</p>
                         <TabelaPresentes
-                            titulo=""
+                            titulo="Membros do Conselho Fiscal"
                             listaPresentes={listaPresentes.presentes_ata_conselho_fiscal}
                         />
                     </div>
