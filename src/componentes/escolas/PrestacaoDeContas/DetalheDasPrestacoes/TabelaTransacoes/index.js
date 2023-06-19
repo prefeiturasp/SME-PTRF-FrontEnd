@@ -3,14 +3,14 @@ import {useHistory} from 'react-router-dom';
 import {DataTable} from "primereact/datatable";
 import {Column} from "primereact/column";
 import moment from "moment";
-import { TagInformacao } from "../../../../Globais/TagInformacao";
+import { TableTags } from "../../../../Globais/TableTags";
 import { Button } from "react-bootstrap";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
 import Loading from "../../../../../utils/Loading";
 import {RedirectModalTabelaLancamentos} from "../../../../../utils/Modais";
 import { Ordenacao } from "./Ordenacao/Ordenacao";
 import { LimparArgumentosOrdenacao } from "./Ordenacao/LimparOrdenacao";
+import { LegendaInformacao } from "../../../../Globais/ModalLegendaInformacao/LegendaInformacao";
+import { coresTagsDespesas } from "../../../../../utils/CoresTags";
 
 const TabelaTransacoes = ({
     transacoes,
@@ -18,6 +18,7 @@ const TabelaTransacoes = ({
     handleChangeCheckboxTransacoes,
     periodoFechado,
     tabelasDespesa,
+    showModalLegendaInformacao,
     setShowModalLegendaInformacao,
     handleCallbackOrdernar = null,
     loading = true,
@@ -65,13 +66,6 @@ const TabelaTransacoes = ({
         }
         setUrlRedirect(url)
         onShowModal();
-    };
-
-    const dataTip = (notificar_dias_nao_conferido) => {
-        let meses = Math.trunc(notificar_dias_nao_conferido / 30);
-        let msg = (notificar_dias_nao_conferido <= 59) ? `1 mês.` : `${meses} meses.`;
-
-        return `Não demonstrado por ${msg}`;
     };
 
     const dataTemplate = (rowData = null, column = null, data = null) => {
@@ -305,18 +299,11 @@ const TabelaTransacoes = ({
             />
         ) : transacoes && transacoes.length > 0 ? (
             <>
-            <div className='text-right'>
-                <button
-                    onClick={()=> setShowModalLegendaInformacao(true)}
-                    className="btn btn-link link-green mr-3"
-                    style={{padding: '0px', textDecoration: 'none'}}
-                >
-                    <FontAwesomeIcon
-                        style={{fontSize: '18px', marginRight: "4px", paddingTop: "2px"}}
-                        icon={faInfoCircle}
-                    />
-                    <span>Legenda informação</span>
-                </button>
+            <div className='text-right'>                
+                <LegendaInformacao
+                    showModalLegendaInformacao={showModalLegendaInformacao}
+                    setShowModalLegendaInformacao={setShowModalLegendaInformacao}
+                />
                 <Ordenacao
                     showModalOrdenar={showModalOrdenar}
                     setShowModalOrdenar={setShowModalOrdenar}
@@ -366,12 +353,7 @@ const TabelaTransacoes = ({
                                 field='informacao'
                                 header='Informações'
                                 className="align-middle text-left borda-coluna"
-                                body={(rowData) => <TagInformacao data={rowData} tooltipsPersonalizadas={
-                                    [
-                                        {nomeTooltip: "Não conciliada", 
-                                        textoPersonalizado: dataTip(rowData.notificar_dias_nao_conferido)}
-                                    ]
-                                } />}
+                                body={(rowData) => <TableTags data={rowData} coresTags={coresTagsDespesas}/>}
                                 style={{width: '15%'}}/>
                             <Column
                                 field="valor_transacao_na_conta"

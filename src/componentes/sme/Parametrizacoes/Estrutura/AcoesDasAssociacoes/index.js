@@ -22,7 +22,6 @@ import Loading from "../../../../../utils/Loading";
 import {ModalFormAcoesDaAssociacao} from "./ModalFormAcoesDasAssociacoes";
 import {ModalConfirmDeleteAcaoAssociacao} from "./ModalConfirmDeleteAcaoAssociacao";
 import {ModalInfoQtdeRateiosReceitasAcao} from "./ModalInfoQtdeRateiosReceitasAcao";
-import { ModalLegendaInformacaoAssociacao } from "../../../../Globais/LegendaInformaçãoAssociacao/ModalLegendaInformacaoAssociacao";
 import { getTabelaAssociacoes } from "../../../../../services/dres/Associacoes.service";
 
 export const AcoesDasAssociacoes = () => {
@@ -277,17 +276,9 @@ export const AcoesDasAssociacoes = () => {
                             statusTemplate={statusTemplate}
                             dataTemplate={dataTemplate}
                             acoesTemplate={acoesTemplate}
+                            showModalLegendaInformacao={showModalLegendaInformacao}
                             setShowModalLegendaInformacao={setShowModalLegendaInformacao}
                         />
-                        <section>
-                            <ModalLegendaInformacaoAssociacao
-                                show={showModalLegendaInformacao}
-                                primeiroBotaoOnclick={() => setShowModalLegendaInformacao(false)}
-                                titulo="Legenda Informação"
-                                primeiroBotaoTexto="Fechar"
-                                primeiroBotaoCss="outline-success"                            
-                            />
-                        </section>
                     </>
                 }
                 <section>

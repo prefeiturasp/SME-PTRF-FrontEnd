@@ -36,9 +36,10 @@ import {
     limparDetalharAcertos
 } from "../../../../../store/reducers/componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeLancamentos/DetalharAcertos/actions";
 import {visoesService} from "../../../../../services/visoes.service";
-import {ModalLegendaInformacao} from "../../../../Globais/ModalLegendaInformacao/ModalLegendaInformacao"
 import {ModalLegendaConferenciaLancamentos} from "./Modais/ModalLegendaConferenciaLancamentos"
-import { TagInformacao } from "../../../../Globais/TagInformacao/index";
+import { TableTags } from "../../../../Globais/TableTags";
+import { LegendaInformacao } from "../../../../Globais/ModalLegendaInformacao/LegendaInformacao";
+import { coresTagsDespesas } from "../../../../../utils/CoresTags";
 
 const TabelaConferenciaDeLancamentos = ({
                                             setLancamentosParaConferencia,
@@ -305,13 +306,10 @@ const TabelaConferenciaDeLancamentos = ({
                 </div>
                 <div>
                     <span>
-                    <FontAwesomeIcon
-                        style={{fontSize: '18px', marginRight: "8px", color: '#00585D'}}
-                        icon={faInfoCircle}
+                    <LegendaInformacao
+                        showModalLegendaInformacao={showModalLegendaInformacao}
+                        setShowModalLegendaInformacao={setShowModalLegendaInformacao}
                     />
-                        <button className='legendas-table text-md-start' onClick={() => setShowModalLegendaInformacao(true)} style={{color: '#00585D', outline: 'none', border: 0, background: 'inherit', padding: '4px'}} >Legenda informação</button>
-                    </span>
-                    <span>
                     <FontAwesomeIcon
                         style={{fontSize: '18px', marginRight: "8px", marginLeft: "8px", color: '#00585D'}}
                         icon={faInfoCircle}
@@ -661,7 +659,7 @@ const TabelaConferenciaDeLancamentos = ({
                             field='informacao'
                             header='Informações'
                             className="align-middle text-left borda-coluna"
-                            body={(rowData) => <TagInformacao data={rowData}/>}
+                            body={(rowData) => <TableTags data={rowData} coresTags={coresTagsDespesas}/>}
                             style={{width: '15%'}}/>
                         <Column
                             field='valor_transacao_total'
@@ -691,13 +689,6 @@ const TabelaConferenciaDeLancamentos = ({
                     primeiroBotaoCss="success"
                 />
             </section>
-            <ModalLegendaInformacao
-                show={showModalLegendaInformacao}
-                primeiroBotaoOnclick={() => setShowModalLegendaInformacao(false)}
-                titulo="Legenda Informação"
-                primeiroBotaoTexto="Fechar"
-                primeiroBotaoCss="outline-success"
-            />
             <ModalLegendaConferenciaLancamentos
                 show={showModalLegendaConferenciaLancamento}
                 primeiroBotaoOnclick={() => setShowModalLegendaConferenciaLancamento(false)}

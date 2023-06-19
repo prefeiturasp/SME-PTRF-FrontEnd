@@ -1,10 +1,24 @@
 import React from "react";
 import {DataTable} from 'primereact/datatable'
 import {Column} from 'primereact/column'
-import { TagInformacao } from "../../../../Globais/TagInformacao";
+import { TableTags } from "../../../../Globais/TableTags";
+import { LegendaInformacao } from "../../../../Globais/ModalLegendaInformacao/LegendaInformacao";
+import { coresTagsAssociacoes } from "../../../../../utils/CoresTags";
 
-export const TabelaAssociacoes = ({listaDeAssociacoes, rowsPerPage, acoesTemplate}) => {
+export const TabelaAssociacoes = ({
+    listaDeAssociacoes, 
+    rowsPerPage, 
+    acoesTemplate,
+    showModalLegendaInformacao, 
+    setShowModalLegendaInformacao
+}) => {
     return(
+        <>
+        <LegendaInformacao
+            showModalLegendaInformacao={showModalLegendaInformacao}
+            setShowModalLegendaInformacao={setShowModalLegendaInformacao}  
+            entidadeDasTags="associacao"  
+        />
         <DataTable
             value={listaDeAssociacoes}
             paginator={listaDeAssociacoes.length > rowsPerPage}
@@ -17,7 +31,7 @@ export const TabelaAssociacoes = ({listaDeAssociacoes, rowsPerPage, acoesTemplat
                 field="informacao"
                 header="Informações"
                 className="align-middle text-center"
-                body={(rowData) => <TagInformacao data={rowData}/>}
+                body={(rowData) => <TableTags data={rowData} coresTags={coresTagsAssociacoes}/>}
                 style={{width: '15%'}}
             />
             <Column field="unidade.nome_dre" header="DRE"/>
@@ -27,5 +41,6 @@ export const TabelaAssociacoes = ({listaDeAssociacoes, rowsPerPage, acoesTemplat
                 body={acoesTemplate}
             />
         </DataTable>
+        </>
     )
 };
