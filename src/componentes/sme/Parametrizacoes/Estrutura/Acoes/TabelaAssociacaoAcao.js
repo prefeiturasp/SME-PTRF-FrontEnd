@@ -1,10 +1,8 @@
 import React, {useState} from "react";
 import {DataTable} from 'primereact/datatable'
 import {Column} from 'primereact/column'
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
 import useTagInformacaoAssociacaoEncerradaTemplate from "../../../../../hooks/Globais/TagsInformacoesAssociacoes/useTagInformacaoAssociacaoEncerradaTemplate";
-import { ModalLegendaInformacaoAssociacao } from "../../../../Globais/LegendaInformaçãoAssociacao/ModalLegendaInformacaoAssociacao";
+import { LegendaInformacao } from "../../../../Globais/ModalLegendaInformacao/LegendaInformacao";
 
 export const TabelaAssociacaoAcao = ({
     unidades, 
@@ -19,28 +17,11 @@ export const TabelaAssociacaoAcao = ({
     const [showModalLegendaInformacao, setShowModalLegendaInformacao] = useState(false);
     return(
         <>
-            <section>
-                <ModalLegendaInformacaoAssociacao
-                    show={showModalLegendaInformacao}
-                    primeiroBotaoOnclick={() => setShowModalLegendaInformacao(false)}
-                    titulo="Legenda Informação"
-                    primeiroBotaoTexto="Fechar"
-                    primeiroBotaoCss="outline-success"                            
-                />
-            </section>        
-            <div className="d-flex justify-content-end">
-                <button
-                    onClick={()=> setShowModalLegendaInformacao(true)}
-                    className="btn btn-link link-green"
-                    style={{padding: '0px', textDecoration: 'none'}}
-                >
-                    <FontAwesomeIcon
-                        style={{fontSize: '18px', marginRight: "4px", paddingTop: "2px"}}
-                        icon={faInfoCircle}
-                    />
-                    <span>Legenda informação</span>
-                </button>
-            </div>
+            <LegendaInformacao
+                showModalLegendaInformacao={showModalLegendaInformacao}
+                setShowModalLegendaInformacao={setShowModalLegendaInformacao}
+                entidadeDasTags="associacao"
+            />
             <DataTable
                 value={unidades}
                 className="datatable-footer-coad"

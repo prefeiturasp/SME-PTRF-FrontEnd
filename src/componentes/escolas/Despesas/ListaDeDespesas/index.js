@@ -9,6 +9,7 @@ import moment from "moment/moment";
 import {Route} from "react-router-dom";
 import {visoesService} from "../../../../services/visoes.service";
 import {redirect} from "../../../../utils/redirect";
+import {coresTagsDespesas} from "../../../../utils/CoresTags";
 import {Col, Row} from "reactstrap";
 import {gerarUuid} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import {Paginacao} from "./Paginacao";
@@ -18,8 +19,8 @@ import Loading from "../../../../utils/Loading";
 import {MsgImgCentralizada} from "../../../Globais/Mensagens/MsgImgCentralizada";
 import Img404 from "../../../../assets/img/img-404.svg";
 import {MsgImgLadoDireito} from "../../../Globais/Mensagens/MsgImgLadoDireito";
-import {LegendaInformacao} from "./LegendaInformacao";
-import { TagInformacao } from "../../../Globais/TagInformacao";
+import {LegendaInformacao} from "../../../Globais/ModalLegendaInformacao/LegendaInformacao";
+import { TableTags } from "../../../Globais/TableTags";
 import {Ordenacao} from "./Ordenacao";
 import {tr} from "date-fns/locale";
 import {LimparArgumentosOrdenacao} from "./LimparOrdenacao";
@@ -381,6 +382,7 @@ export const ListaDeDespesas = () => {
                                     <LegendaInformacao
                                         showModalLegendaInformacao={showModalLegendaInformacao}
                                         setShowModalLegendaInformacao={setShowModalLegendaInformacao}
+                                        excludedTags={['Excluído']}
                                     />
                                     {despesas && despesas.length > 0 &&
                                         <>
@@ -418,7 +420,7 @@ export const ListaDeDespesas = () => {
                                                 {tipoLancamentoTemplate(despesa)}
                                             </td>
                                         
-                                            <td rowSpan={despesa.rateios.length > 0 ? despesa.rateios.length + 1 : 2}>{<TagInformacao data={despesa}/>}</td>
+                                            <td rowSpan={despesa.rateios.length > 0 ? despesa.rateios.length + 1 : 2}>{<TableTags data={despesa} coresTags={coresTagsDespesas} />}</td>
                                         </tr>
 
 

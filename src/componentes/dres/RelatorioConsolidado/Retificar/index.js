@@ -21,7 +21,7 @@ export const Retificar = ({consolidadoDre}) => {
                     >
                         <button 
                             className="btn btn-success"
-                            disabled={consolidadoDre && !consolidadoDre?.habilita_retificar}
+                            disabled={(consolidadoDre && !consolidadoDre?.habilita_retificar) || !visoesService.getPermissoes(['change_relatorio_consolidado_dre'])}
                         >
                             <span data-tip={consolidadoDre?.tooltip_habilita_retificar}>
                                 Retificar

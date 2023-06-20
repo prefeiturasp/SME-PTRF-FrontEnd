@@ -15,6 +15,7 @@ export const MenuInterno = ({caminhos_menu_interno}) => {
                                     to={`/${item.origem ? item.url + '/' + item.origem + '/' : item.url}`}
                                 >
                                     {item.label}
+                                    {item.iconRight ? item.iconRight :  null}
                                 </NavLink>
                             </li>
                         </Fragment>

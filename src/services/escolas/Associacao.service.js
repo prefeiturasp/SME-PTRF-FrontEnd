@@ -152,3 +152,7 @@ export const getDataPreenchimentoPreviaAta = async (uuidPeriodo) => {
 export const getTagInformacaoAssociacao = async () => {
     return (await api.get(`api/associacoes/tags-informacoes/`, authHeader)).data
 }
+
+export const getStatusCadastroAssociacao = async () => {
+    return (await api.get(`api/associacoes/${localStorage.getItem(ASSOCIACAO_UUID)}/status-cadastro/`, authHeader)).data
+};

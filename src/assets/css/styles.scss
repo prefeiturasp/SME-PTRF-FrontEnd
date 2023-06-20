@@ -196,3 +196,77 @@ body {
   outline: none !important;
   border: none !important;
 }
+
+.btn-base-vermelho-outline {
+  border-color: $corBtnErrorPrimaria;
+  color: $corBtnErrorPrimaria;
+  transition: 0s background-color;
+  background-color: transparent !important;
+
+  .icon-btn-base-vermelho-outline {
+    color: $corBtnErrorPrimaria;
+    margin-right: 7px;
+    font-size: 14px;
+    transition: 0s color;
+  }
+
+  .text-btn-base-vermelho-outline {
+    font-size: 14px;
+  }
+
+  &:hover {
+    border-color: $corBtnErrorSecundaria !important;
+    color: $corBtnErrorSecundaria !important;
+
+    .icon-btn-base-vermelho-outline {
+      color: $corBtnErrorSecundaria;
+    }
+  }
+
+  &:disabled {
+    border-color: $corBtnDisabled !important;
+    color: $corBtnDisabled !important;
+    cursor: default;
+
+    .icon-btn-base-vermelho-outline {
+      color: $corBtnDisabled;
+    }
+  }
+}
+
+.btn-base-verde-outline {
+  border-color: $mainColor;
+  color: $mainColor;
+  transition: 0s background-color;
+  background-color: transparent !important;
+
+  .icon-btn-base-verde-outline {
+    color: $mainColor;
+    margin-right: 7px;
+    font-size: 14px;
+    transition: 0s color;
+  }
+
+  .text-btn-base-verde-outline {
+    font-size: 14px;
+  }
+
+  &:hover {
+    border-color: $hoverBackgroundColor !important;
+    color: $hoverBackgroundColor !important;
+
+    .icon-btn-base-verde-outline {
+      color: $hoverBackgroundColor;
+    }
+  }
+
+  &:disabled {
+    border-color: $corBtnDisabled !important;
+    color: $corBtnDisabled !important;
+    cursor: default;
+
+    .icon-btn-base-verde-outline {
+      color: $corBtnDisabled;
+    }
+  }
+}
