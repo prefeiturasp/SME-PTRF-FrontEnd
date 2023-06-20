@@ -8,6 +8,7 @@ import {getMembroPorIdentificador} from "../../../../../../services/escolas/Pres
 import {YupSignupSchemaAta} from "./YupSignupSchemaAta";
 import {valida_cpf_exportado} from "../../../../../../utils/ValidacoesAdicionaisFormularios";
 import TabelaRepassesPendentes from "../../TabelaRepassesPendentes";
+import { Switch } from 'antd';
 
 export const FormularioEditaAta = ({
                                        listaPresentesPadrao,
@@ -17,10 +18,10 @@ export const FormularioEditaAta = ({
                                        formRef,
                                        onSubmitFormEdicaoAta,
                                        uuid_ata,
-                                       listaPresentes,
                                        setDisableBtnSalvar,
                                        repassesPendentes,
-                                        erros
+                                       erros,
+                                       editaStatusDePresencaMembro
                                    }) => {
 
     const podeEditarAta = [['change_ata_prestacao_contas']].some(visoesService.getPermissoes)
@@ -37,12 +38,12 @@ export const FormularioEditaAta = ({
 
     useEffect(() => {
         getDados();
-    }, [stateFormEditarAta, listaPresentes, listaPresentesPadrao]);
+    }, [stateFormEditarAta, listaPresentesPadrao]);
 
     const getDados = () => {
 
         let obj = {
-            listaPresentesPadrao: listaPresentes.length === 0 ? listaPresentesPadrao : listaPresentes,
+            listaPresentesPadrao: listaPresentesPadrao,
             stateFormEditarAta: stateFormEditarAta
         }
 
@@ -396,7 +397,7 @@ export const FormularioEditaAta = ({
                         return (
                             <>
                                 <form onSubmit={props.handleSubmit}>
-                                    <p className="titulo"><strong>Informações principais</strong></p>
+                                    <p className="titulo"><strong>Informações da reunião</strong></p>
                                     <div className="form-row mt-4">
                                         <div className="col ">
                                             <label htmlFor="stateFormEditarAta.tipo_reuniao">Tipo de Reunião</label>
@@ -579,7 +580,7 @@ export const FormularioEditaAta = ({
                                         </>
                                     }
 
-                                    <p className="titulo mt-4"><strong>Presentes</strong></p>
+                                    <p className="titulo mt-4"><strong>Participantes</strong></p>
                                     <FieldArray
                                         name="listaPresentesPadrao"
                                         render={({remove, push}) => (
@@ -631,7 +632,7 @@ export const FormularioEditaAta = ({
 
                                                                 </div>
 
-                                                                <div className="col-4">
+                                                                <div className="col-3">
                                                                     <label
                                                                         htmlFor={`listaPresentesPadrao.cargo_[${index}]`}
                                                                         className="mt-3">{nomeCampoCargo(membro.identificacao)}</label>
@@ -647,7 +648,7 @@ export const FormularioEditaAta = ({
                                                                     />
                                                                 </div>
 
-                                                                <div className="col-1">
+                                                                <div className="col-2">
                                                                     {ehAdicaoPresente && membro.editavel &&
                                                                         <button
                                                                             id={`listaPresentesPadrao.btn_[${index}]`}
@@ -674,54 +675,74 @@ export const FormularioEditaAta = ({
                                                                         </button>
                                                                     }
 
-                                                                    {(ehEdicaoPresente[index] === undefined || ehEdicaoPresente[index] === false) && membro.editavel === false &&
-                                                                        <>
-                                                                            <button
-                                                                                id={`listaPresentesPadrao.btn_[${index}]`}
-                                                                                type="button"
-                                                                                className="link-btn-ata btn-remover-presente pb-0 mb-0"
-                                                                                disabled={(errors && errors.listaPresentesPadrao && errors.listaPresentesPadrao[index] && errors.listaPresentesPadrao[index].nome ? errors.listaPresentesPadrao[index].nome : '') || disableBtnApagarPresente}
-                                                                                onClick={() => {
-                                                                                    onClickRemoverAdicionar(remove, index, membro.editavel, values, setFieldValue)
-                                                                                }}
-                                                                            >
-                                                                                <strong>
-                                                                                    <FontAwesomeIcon
-                                                                                        style={{
-                                                                                            fontSize: '12px',
-                                                                                            marginRight: "4px",
-                                                                                            color: "#B40C02"
+                                                                    {(ehEdicaoPresente[index] === undefined || ehEdicaoPresente[index] === false) && membro.editavel === false && membro.membro === false &&
+                                                                        <>     
+                                                                            <div className="row">
+                                                                                <div className="col-6 mt-5 d-flex justify-content-end">
+                                                                                    <button
+                                                                                        id={`listaPresentesPadrao.btn_[${index}]`}
+                                                                                        type="button"
+                                                                                        className="btn btn-outline-danger btn-base-vermelho-outline"
+                                                                                        disabled={(errors && errors.listaPresentesPadrao && errors.listaPresentesPadrao[index] && errors.listaPresentesPadrao[index].nome ? errors.listaPresentesPadrao[index].nome : '') || disableBtnApagarPresente}
+                                                                                        onClick={() => {
+                                                                                            onClickRemoverAdicionar(remove, index, membro.editavel, values, setFieldValue)
                                                                                         }}
-                                                                                        icon={faTimesCircle}
-                                                                                    />
-                                                                                    Remover
-                                                                                </strong>
-                                                                            </button>
-                                                                            <br/>
-                                                                            <button
-                                                                                id={`listaPresentesPadrao.btn_[${index}]`}
-                                                                                type="button"
-                                                                                className="link-btn-ata btn-editar-presente mt-0 pt-0"
-                                                                                disabled={(errors && errors.listaPresentesPadrao && errors.listaPresentesPadrao[index] && errors.listaPresentesPadrao[index].nome ? errors.listaPresentesPadrao[index].nome : '') || disableBtnEditarPresente}
-                                                                                onClick={() => {
-                                                                                    
-                                                                                    onClickEditar(index, values, membro.membro, membro)
-                                                                                }}
-                                                                            >
-                                                                                <strong>
-                                                                                    <FontAwesomeIcon
-                                                                                        style={{
-                                                                                            fontSize: '12px',
-                                                                                            marginRight: "4px",
-                                                                                            color: "#00585E"
+                                                                                    >
+                                                                                        <FontAwesomeIcon
+                                                                                            className="icon-btn-base-vermelho-outline"
+                                                                                            icon={faTimesCircle}
+                                                                                        />
+                                                                                        <strong className="text-btn-base-vermelho-outline">
+                                                                                        Remover
+                                                                                        </strong>
+                                                                                    </button>
+                                                                                </div>
+                                                                                <div className="col-6 mt-5 d-flex justify-content-start">
+                                                                                    <button
+                                                                                        id={`listaPresentesPadrao.btn_[${index}]`}
+                                                                                        type="button"
+                                                                                        className="btn btn-outline-success btn-base-verde-outline"
+                                                                                        disabled={(errors && errors.listaPresentesPadrao && errors.listaPresentesPadrao[index] && errors.listaPresentesPadrao[index].nome ? errors.listaPresentesPadrao[index].nome : '') || disableBtnEditarPresente}
+                                                                                        onClick={() => {
+                                                                                            onClickEditar(index, values, membro.membro, membro)
                                                                                         }}
-                                                                                        icon={faEdit}
-                                                                                    />
-                                                                                    Editar
-                                                                                </strong>
-                                                                            </button>
+                                                                                    >
+                                                                                        <FontAwesomeIcon
+                                                                                            className="icon-btn-base-verde-outline"
+                                                                                            icon={faEdit}
+                                                                                        />
+                                                                                        <strong className="text-btn-base-verde-outline">
+                                                                                        Editar
+                                                                                        </strong>
+                                                                                    </button>
+                                                                                </div>    
+                                                                            </div>                                                                   
                                                                         </>
                                                                     }
+
+                                                                    {((ehEdicaoPresente[index] === undefined || ehEdicaoPresente[index] === false) && membro.membro === true &&
+                                                                        <>
+                                                                            <div className='col mt-4 ml-4' style={{ opacity: `${ehAdicaoPresente ? "30%" : '100%'}` }}>
+                                                                                <div className="row">
+                                                                                    <span className='mr-2'>Membro estava: </span>
+                                                                                </div>
+                                                                                <div className="row">
+                                                                                    <Switch
+                                                                                        onChange={() => editaStatusDePresencaMembro(membro.identificacao)}
+                                                                                        checked={membro.presente}
+                                                                                        name="statusPresidenteSwitch"
+                                                                                        checkedChildren="Presente"
+                                                                                        unCheckedChildren="Ausente"
+                                                                                        className={`mt-2 switch-status-presidente form-control ${membro.presente ? "switch-status-presidente-checked" : ""}`}
+                                                                                        style={{
+                                                                                            maxWidth: '30%',
+                                                                                        }}
+                                                                                        disabled={ehAdicaoPresente}
+                                                                                    />
+                                                                                </div>
+                                                                            </div>
+                                                                        </>
+                                                                    )}
 
                                                                     {ehEdicaoPresente[index] &&
                                                                         <>
@@ -847,13 +868,10 @@ export const FormularioEditaAta = ({
                                         </div>
                                     }
 
-                                    <p className="titulo mt-4"><strong>Manifestações, Comentários e
-                                        Justificativas</strong></p>
+                                    <p className="titulo mt-4"><strong>Manifestações, Comentários e Justificativas</strong></p>
                                     <div className="form-row">
                                         <div className="col-12">
-                                            <label htmlFor="stateFormEditarAta.comentarios" className="mb-0">Utilize
-                                                esse campo para registrar possíveis dúvidas, discussões, esclarecimentos
-                                                aparecidos durante a reunião</label>
+                                            <label htmlFor="stateFormEditarAta.comentarios" className="mb-0">Utilize o campo abaixo para registro de manifestações, comentários e justificativas que eventualmente ocorram durante a reunião</label>
                                             <textarea
                                                 rows="3"
                                                 placeholder="Escreva seu texto aqui"

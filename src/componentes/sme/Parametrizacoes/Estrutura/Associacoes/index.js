@@ -18,14 +18,13 @@ import {
 } from "../../../../../services/sme/Parametrizacoes.service";
 import {TabelaAssociacoes} from "./TabelaAssociacoes";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faEdit, faPlus, faInfoCircle} from "@fortawesome/free-solid-svg-icons";
+import {faEdit, faPlus} from "@fortawesome/free-solid-svg-icons";
 import {Filtros} from "./Filtros";
 import ModalFormAssociacoes from "./ModalFormAssociacoes";
 import {BtnAddAssociacoes} from "./BtnAddAssociacoes";
 import {ModalConfirmDeleteAssociacao} from "./ModalConfirmDeleteAssociacao";
 import {ModalInfoExclusaoNaoPermitida} from "./ModalInfoExclusaoNaoPermitida";
 import { ModalConfirmUpdateObservacao } from "./ModalConfirmUpdateObservacao";
-import { ModalLegendaInformacao } from "../../../../Globais/ModalLegendaInformacao/ModalLegendaInformacao";
 import Loading from "../../../../../utils/Loading";
 
 export const Associacoes = () => {
@@ -391,24 +390,14 @@ export const Associacoes = () => {
                     
                     <div className="d-flex justify-content-between mt-2">
                         <p>Exibindo <span className='total-acoes'>{totalDeAssociacoes}</span> associações</p>
-
-                        <button
-                            onClick={()=> setShowModalLegendaInformacao(true)}
-                            className="btn btn-link link-green"
-                            style={{padding: '0px', textDecoration: 'none'}}
-                        >
-                            <FontAwesomeIcon
-                                style={{fontSize: '18px', marginRight: "4px", paddingTop: "2px"}}
-                                icon={faInfoCircle}
-                            />
-                            <span>Legenda informação</span>
-                        </button>
                     </div>
 
                     <TabelaAssociacoes
                         rowsPerPage={rowsPerPage}
                         listaDeAssociacoes={listaDeAssociacoes}
                         acoesTemplate={acoesTemplate}
+                        showModalLegendaInformacao={showModalLegendaInformacao}
+                        setShowModalLegendaInformacao={setShowModalLegendaInformacao}
                     />
                     <section>
                         <ModalFormAssociacoes
@@ -457,17 +446,6 @@ export const Associacoes = () => {
                             primeiroBotaoCss="success"
                             segundoBotaoCss="outline-success"
                             segundoBotaoTexto="Cancelar"
-                        />
-                    </section>
-
-                    <section>
-                        <ModalLegendaInformacao
-                            show={showModalLegendaInformacao}
-                            primeiroBotaoOnclick={() => setShowModalLegendaInformacao(false)}
-                            titulo="Legenda Informação"
-                            primeiroBotaoTexto="Fechar"
-                            primeiroBotaoCss="outline-success"
-                            entidadeDasTags="associacao"
                         />
                     </section>
                 </div>

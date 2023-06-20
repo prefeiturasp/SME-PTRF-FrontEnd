@@ -175,7 +175,7 @@ const routesConfig = [
     },
     {
         exact: true,
-        path: "/detalhe-das-prestacoes/",
+        path: "/detalhe-das-prestacoes/:periodo_uuid?/:conta_uuid?/:origem?",
         component: DetalhedasPrestacoesPage,
         permissoes: ['access_prestacao_contas'],
     },

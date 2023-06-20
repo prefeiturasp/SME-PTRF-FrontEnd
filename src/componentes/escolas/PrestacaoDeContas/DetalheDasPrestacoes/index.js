@@ -1,4 +1,6 @@
 import React, {useCallback, useEffect, useState, useContext} from "react";
+import {Link, useLocation, useParams} from "react-router-dom";
+import moment from "moment";
 import {TopoComBotoes} from "./TopoComBotoes";
 import TabelaValoresPendentesPorAcao from "./TabelaValoresPendentesPorAcao";
 import {Justificativa} from "./Justivicativa";
@@ -21,29 +23,27 @@ import Loading from "../../../../utils/Loading";
 import {SelectPeriodoConta} from "../SelectPeriodoConta";
 import {MsgImgCentralizada} from "../../../Globais/Mensagens/MsgImgCentralizada";
 import Img404 from "../../../../assets/img/img-404.svg";
-import {ModalConfirmaSalvar} from "../../../../utils/Modais";
 import {ASSOCIACAO_UUID} from "../../../../services/auth.service";
 import {tabelaValoresPendentes} from "../../../../services/escolas/TabelaValoresPendentesPorAcao.service";
 import DataSaldoBancario from "./DataSaldoBancario";
-import moment from "moment";
 import {trataNumericos} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import TabelaTransacoes from "./TabelaTransacoes";
 import {getDespesasTabelas} from "../../../../services/escolas/Despesas.service";
 import {FiltrosTransacoes} from "./FiltrosTransacoes";
-import {Link, useLocation} from "react-router-dom";
 import { SidebarLeftService } from "../../../../services/SideBarLeft.service";
 import { SidebarContext } from "../../../../context/Sidebar";
-import { ModalLegendaInformacao } from "../../../Globais/ModalLegendaInformacao/ModalLegendaInformacao";
+import {toastCustom} from "../../../Globais/ToastCustom";
 
 export const DetalheDasPrestacoes = () => {
+    let {periodo_uuid, conta_uuid} = useParams();
     const contextSideBar = useContext(SidebarContext);
+    const origem = (new URLSearchParams(window.location.search)).get("origem")
 
     // Alteracoes
     const [loading, setLoading] = useState(true);
     const [loadingConciliadas, setLoadingConciliadas] = useState(true);
     const [loadingNaoConciliadas, setLoadingNaoConciliadas] = useState(true);
 
-    const [showSalvar, setShowSalvar] = useState(false);
     const [observacaoUuid, setObservacaoUuid] = useState("");
     const [periodoConta, setPeriodoConta] = useState("");
     const [periodoFechado, setPeriodoFechado] = useState(true);
@@ -92,7 +92,9 @@ export const DetalheDasPrestacoes = () => {
     );
 
     const getPeriodoConta = () => {
-        if (localStorage.getItem('periodoConta')) {
+        if(periodo_uuid){
+            setPeriodoConta({periodo: periodo_uuid, conta: conta_uuid ? conta_uuid : ""});
+        } else if (localStorage.getItem('periodoConta')) {
             const periodoConta = JSON.parse(localStorage.getItem('periodoConta'));
             setPeriodoConta(periodoConta)
         } else {
@@ -176,7 +178,7 @@ export const DetalheDasPrestacoes = () => {
             setTextareaJustificativa(observacao.observacao ? observacao.observacao : '');
             setDataSaldoBancario({
                 data_extrato: observacao.data_extrato ? observacao.data_extrato : '',
-                saldo_extrato: observacao.saldo_extrato ? observacao.saldo_extrato : '',
+                saldo_extrato: observacao.saldo_extrato ? observacao.saldo_extrato : 0,
             })
             setNomeComprovanteExtrato(observacao.comprovante_extrato ? observacao.comprovante_extrato : '')
             setDataAtualizacaoComprovanteExtrato(moment(observacao.data_atualizacao_comprovante_extrato).format("YYYY-MM-DD HH:mm:ss"))
@@ -201,7 +203,7 @@ export const DetalheDasPrestacoes = () => {
 
         try {
             await pathSalvarJustificativaPrestacaoDeConta(payload);
-            setShowSalvar(true);
+            toastCustom.ToastCustomSuccess('Edição salva', 'A edição foi salva com sucesso!')
             await carregaObservacoes();
         } catch (e) {
             console.log("Erro: ", e.message)
@@ -222,7 +224,7 @@ export const DetalheDasPrestacoes = () => {
 
         try {
             await pathExtratoBancarioPrestacaoDeConta(payload);
-            setShowSalvar(true);
+            toastCustom.ToastCustomSuccess('Edição salva', 'A edição foi salva com sucesso!')
             setDataAtualizacaoComprovanteExtrato('')
             setDataAtualizacaoComprovanteExtratoView('')
             setSelectedFile(null)
@@ -232,10 +234,6 @@ export const DetalheDasPrestacoes = () => {
             console.log("Erro: ", e.message)
         }
     }
-
-    const onHandleClose = () => {
-        setShowSalvar(false);
-    };
 
     const verificaSePeriodoEstaAberto = async (periodoUuid) => {
         if (periodosAssociacao) {
@@ -533,10 +531,9 @@ export const DetalheDasPrestacoes = () => {
                     {periodoConta.periodo && periodoConta.conta ? (
                         <>
                             <TopoComBotoes
-                                setShowSalvar={setShowSalvar}
-                                onHandleClose={onHandleClose}
                                 contaConciliacao={contaConciliacao}
                                 periodoFechado={periodoFechado}
+                                origem={origem}
                             />
 
                             <TabelaValoresPendentesPorAcao
@@ -582,6 +579,7 @@ export const DetalheDasPrestacoes = () => {
                                 periodoFechado={periodoFechado}
                                 handleChangeCheckboxTransacoes={handleChangeCheckboxTransacoes}
                                 tabelasDespesa={tabelasDespesa}
+                                showModalLegendaInformacao={showModalLegendaInformacao}
                                 setShowModalLegendaInformacao={setShowModalLegendaInformacao}
                                 handleCallbackOrdernar={handleTransacoesNaoConciliadas}
                                 loading={loadingNaoConciliadas}
@@ -603,6 +601,7 @@ export const DetalheDasPrestacoes = () => {
                                 periodoFechado={periodoFechado}
                                 handleChangeCheckboxTransacoes={handleChangeCheckboxTransacoes}
                                 tabelasDespesa={tabelasDespesa}
+                                showModalLegendaInformacao={showModalLegendaInformacao}
                                 setShowModalLegendaInformacao={setShowModalLegendaInformacao}
                                 handleCallbackOrdernar={handleTransacoesConciliadas}
                                 loading={loadingConciliadas}
@@ -622,16 +621,6 @@ export const DetalheDasPrestacoes = () => {
                                 setClassBtnSalvarJustificativa={setClassBtnSalvarJustificativa}
 
                             />
-
-                            <section>
-                                <ModalLegendaInformacao
-                                    show={showModalLegendaInformacao}
-                                    primeiroBotaoOnclick={() => setShowModalLegendaInformacao(false)}
-                                    titulo="Legenda Informação"
-                                    primeiroBotaoTexto="Fechar"
-                                    primeiroBotaoCss="outline-success"
-                                />
-                            </section>
                         </>
                     ):
                         <MsgImgCentralizada
@@ -639,16 +628,6 @@ export const DetalheDasPrestacoes = () => {
                             img={Img404}
                         />
                     }
-                    <section>
-                        <ModalConfirmaSalvar
-                            show={showSalvar}
-                            handleClose={()=>setShowSalvar(false)}
-                            titulo="Salvar informações"
-                            texto="Informações da conciliação bancária salvas com sucesso"
-                            primeiroBotaoCss="success"
-                            primeiroBotaoTexto="Fechar"
-                        />
-                    </section>
                 </>
             }
         </div>
