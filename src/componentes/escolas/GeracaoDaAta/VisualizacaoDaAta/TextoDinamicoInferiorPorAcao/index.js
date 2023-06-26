@@ -36,11 +36,11 @@ export const TextoDinamicoInferiorPorAcao = ({dadosAta, retornaDadosAtaFormatado
                             valores
                             de R$
                             R${infoAta.totais && infoAta.totais.saldo_atual_custeio ? valorTemplate(infoAta.totais.saldo_atual_custeio) : " 0,00"} para
-                            despesas de custeio,
+                            saldo de custeio,
                             R${infoAta.totais && infoAta.totais.saldo_atual_capital ? valorTemplate(infoAta.totais.saldo_atual_capital) : " 0,00"} para
-                            despesas de capital e
+                            saldo de capital e
                             R${infoAta.totais && infoAta.totais.saldo_atual_livre ? valorTemplate(infoAta.totais.saldo_atual_livre) : " 0,00"} para
-                            despesas de livre aplicação, valores estes que foram reprogramados, além de
+                            saldo de livre aplicação, valores estes que foram reprogramados, além de
                             R${retornaSomaTotaisDeDespesas()} relativo a despesas pendentes de compensação bancária,
                             totalizando
                             R${infoAta.totais && infoAta.totais.saldo_bancario_total ? valorTemplate(infoAta.totais.saldo_bancario_total) : "0,00"}.</p>
@@ -59,11 +59,11 @@ export const TextoDinamicoInferiorPorAcao = ({dadosAta, retornaDadosAtaFormatado
                             valores
                             de R$
                             R${infoAta.totais && infoAta.totais.saldo_atual_custeio ? valorTemplate(infoAta.totais.saldo_atual_custeio) : " 0,00"} para
-                            despesas de custeio,
+                            saldo de custeio,
                             R${infoAta.totais && infoAta.totais.saldo_atual_capital ? valorTemplate(infoAta.totais.saldo_atual_capital) : " 0,00"} para
-                            despesas de capital e
+                            saldo de capital e
                             R${infoAta.totais && infoAta.totais.saldo_atual_livre ? valorTemplate(infoAta.totais.saldo_atual_livre) : " 0,00"} para
-                            despesas de livre aplicação, totalizando
+                            saldo de livre aplicação, totalizando
                             R${infoAta.totais && infoAta.totais.saldo_bancario_total ? valorTemplate(infoAta.totais.saldo_bancario_total) : "0,00"},
                             valores estes que foram reprogramados.
                         </p>
