@@ -1,12 +1,16 @@
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {PaginasContainer} from "../../../../paginas/PaginasContainer";
 import Cabecalho from "../DetalhePrestacaoDeContas/Cabecalho";
 import {BotoesAvancarRetroceder} from "../DetalhePrestacaoDeContas/BotoesAvancarRetroceder";
 import {TrilhaDeStatus} from "../DetalhePrestacaoDeContas/TrilhaDeStatus";
 import {getTabelasPrestacoesDeContas} from "../../../../services/dres/PrestacaoDeContas.service";
 import {FormRecebimentoPelaDiretoria} from "../DetalhePrestacaoDeContas/FormRecebimentoPelaDiretoria";
+import {RetornaSeTemPermissaoEdicaoAcompanhamentoDePc} from "../RetornaSeTemPermissaoEdicaoAcompanhamentoDePc";
+import ComentariosDeAnalise from "../DetalhePrestacaoDeContas/ComentariosDeAnalise";
 
 export const DetalhePrestacaoDeContasNaoApresentada = () =>{
+
+    const TEMPERMISSAO = RetornaSeTemPermissaoEdicaoAcompanhamentoDePc()
 
     const prestacaoDeContas = JSON.parse(localStorage.getItem('prestacao_de_contas_nao_apresentada'));
 
@@ -18,6 +22,8 @@ export const DetalhePrestacaoDeContasNaoApresentada = () =>{
 
     const [stateFormRecebimentoPelaDiretoria] = useState(initialFormRecebimentoPelaDiretoria);
     const [tabelaPrestacoes, setTabelaPrestacoes] = useState({});
+    const [associacaoUuid, setAssociacaoUuid] = useState('');
+    const [periodoUuid, setPeriodoUuid] = useState('');
 
     useEffect(()=>{
         carregaTabelaPrestacaoDeContas();
@@ -27,6 +33,26 @@ export const DetalhePrestacaoDeContasNaoApresentada = () =>{
         let tabela_prestacoes = await getTabelasPrestacoesDeContas();
         setTabelaPrestacoes(tabela_prestacoes);
     };
+
+    const getAssociacaoUuid = useCallback(()=>{
+        if (prestacaoDeContas && prestacaoDeContas.associacao && prestacaoDeContas.associacao.uuid){
+            setAssociacaoUuid(prestacaoDeContas.associacao.uuid)
+        }
+    }, [prestacaoDeContas])
+
+    useEffect(()=>{
+        getAssociacaoUuid()
+    }, [getAssociacaoUuid])
+
+    const getPeriodoUuid = useCallback(()=>{
+        if (prestacaoDeContas && prestacaoDeContas.periodo_uuid ){
+            setPeriodoUuid(prestacaoDeContas.periodo_uuid)
+        }
+    }, [prestacaoDeContas])
+
+    useEffect(()=>{
+        getPeriodoUuid()
+    }, [getPeriodoUuid])
 
     return(
         <PaginasContainer>
@@ -61,6 +87,13 @@ export const DetalhePrestacaoDeContasNaoApresentada = () =>{
                                     exibeMotivo={false}
                                     exibeRecomendacoes={false}
                                 />
+                                {associacaoUuid && periodoUuid &&
+                                    <ComentariosDeAnalise
+                                        associacaoUuid={associacaoUuid}
+                                        periodoUuid={periodoUuid}
+                                        editavel={TEMPERMISSAO}
+                                    />
+                                }
                             </>
                         }
                     </>
