@@ -18,12 +18,26 @@ const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitMo
         return utcDataObj;
     }
 
-    const podeEditarDadosAssociacao = (values) => {
-        if(values && values.pode_editar_dados_associacao_encerrada){
-            return true;
+    const podeEditarDadosAssociacao = (values, field = '') => {
+        const isEditing = values.operacao === 'edit';
+
+        if(isEditing) {
+            const podeEditarAssociacaoEncerrada = values.pode_editar_dados_associacao_encerrada;
+            const podeEncerrarAssociacao = visoesService.getPermissoes(['change_encerrar_associacoes']);
+            const podeEditarPeriodoInicial = values.pode_editar_periodo_inicial;
+
+            if(field === 'codigo_eol_unidade'){
+                return false;
+            } else if(field === 'periodo_inicial'){
+                return podeEditarAssociacaoEncerrada && podeEditarPeriodoInicial;
+            } else if(field === 'data_de_encerramento'){
+                return podeEditarAssociacaoEncerrada && podeEncerrarAssociacao;
+            }
+
+            return podeEditarAssociacaoEncerrada;
         }
 
-        return false;
+        return true;
     }
 
     const bodyTextarea = () => {
@@ -85,7 +99,7 @@ const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitMo
                                                     props.handleChange(e);
                                                     carregaUnidadePeloCodigoEol(e.target.value, setFieldValue)
                                                 }}
-                                                disabled={props.values.operacao === 'edit' || !podeEditarDadosAssociacao(props.values)}
+                                                disabled={!podeEditarDadosAssociacao(props.values, 'codigo_eol_unidade')}
                                             />
                                             {errosCodigoEol &&
                                             <div className='row mt-2'>
@@ -196,7 +210,7 @@ const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitMo
                                             name="periodo_inicial"
                                             id="periodo_inicial"
                                             className="form-control"
-                                            disabled={values.pode_editar_periodo_inicial ? !values.pode_editar_periodo_inicial.pode_editar_periodo_inicial : '' || !podeEditarDadosAssociacao(props.values)}
+                                            disabled={!podeEditarDadosAssociacao(props.values, 'periodo_inicial')}
                                         >
                                             <option value=''>Selecione um período</option>
                                             {listaDePeriodos && listaDePeriodos.map((periodo) =>
@@ -226,7 +240,7 @@ const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitMo
                                                 onChange={visoesService.getPermissoes(['change_encerrar_associacoes']) ? (name, val) => {
                                                     setFieldValue(name, val ? val.toISOString().substr(0, 10) : null)
                                                     }: null}
-                                                disabled={!visoesService.getPermissoes(['change_encerrar_associacoes']) || !podeEditarDadosAssociacao(props.values)}
+                                                disabled={!podeEditarDadosAssociacao(props.values, 'data_de_encerramento')}
                                                 className="form-control"
                                                 minDate={converteDataLocalParaUTC(data_fim_periodo)}
                                                 maxDate={new Date()}
