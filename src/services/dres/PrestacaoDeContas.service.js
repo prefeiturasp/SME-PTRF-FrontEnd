@@ -94,8 +94,8 @@ export const desmarcarDevolucaoTesouro = async (uuid_analise_lancamento) => {
     return (await api.post(`/api/analises-lancamento-prestacao-conta/${uuid_analise_lancamento}/marcar-devolucao-tesouro-nao-atualizada/`, {}, authHeader)).data
 }
 
-export const getComentariosDeAnalise = async (prestacao_uuid) => {
-    return (await api.get(`/api/comentarios-de-analises/comentarios/?prestacao_conta__uuid=${prestacao_uuid}`, authHeader)).data
+export const getComentariosDeAnalise = async (prestacao_uuid="", associacao_uuid="", periodo_uuid="") => {
+    return (await api.get(`/api/comentarios-de-analises/comentarios/${prestacao_uuid ?  "?prestacao_conta__uuid="+prestacao_uuid : "?associacao_uuid="+associacao_uuid+"&periodo_uuid="+periodo_uuid}`, authHeader)).data
 };
 
 export const criarComentarioDeAnalise = async (payload) => {
