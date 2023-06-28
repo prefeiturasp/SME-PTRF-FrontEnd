@@ -177,7 +177,7 @@ export const Associacoes = () => {
             id: associacao_por_uuid.id,
             operacao: 'edit',
             data_de_encerramento: associacao_por_uuid.data_de_encerramento.data,
-            pode_editar_periodo_inicial: associacao_por_uuid.pode_editar_periodo_inicial,
+            pode_editar_periodo_inicial: associacao_por_uuid.pode_editar_periodo_inicial ? associacao_por_uuid.pode_editar_periodo_inicial.pode_editar_periodo_inicial : false,
             pode_editar_dados_associacao_encerrada: associacao_por_uuid.data_de_encerramento.pode_editar_dados_associacao_encerrada ? associacao_por_uuid.data_de_encerramento.pode_editar_dados_associacao_encerrada : false
         });
         setShowModalForm(true)
