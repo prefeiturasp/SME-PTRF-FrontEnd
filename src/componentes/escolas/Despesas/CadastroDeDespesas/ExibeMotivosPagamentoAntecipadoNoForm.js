@@ -3,8 +3,8 @@ import React, {memo} from "react";
 const ExibeMotivosPagamentoAntecipadoNoForm = ({values}) => {
 
     const exibeMotivos = () =>{
-        let data_transacao = values.data_transacao
-        let data_documento = values.data_documento
+        let data_transacao = values.data_transacao ? values && values.data_transacao : null
+        let data_documento = values.data_documento ? values && values.data_documento : null
 
         if (data_transacao && data_documento) {
             if (data_transacao < data_documento && (values.motivos_pagamento_antecipado.length > 0 || values.outros_motivos_pagamento_antecipado)) {
@@ -23,13 +23,21 @@ const ExibeMotivosPagamentoAntecipadoNoForm = ({values}) => {
                         </div>
                     </div>
                 )
+            }else {
+                return (
+                    <></>
+                )
             }
+        }else {
+            return (
+                <></>
+            )
         }
     }
 
-  return(
-      exibeMotivos()
-  )
+    return(
+        exibeMotivos()
+    )
 }
 
 export default memo(ExibeMotivosPagamentoAntecipadoNoForm)
