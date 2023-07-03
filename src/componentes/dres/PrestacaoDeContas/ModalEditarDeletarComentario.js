@@ -23,7 +23,7 @@ export const ModalEditarDeletarComentario = (props) => {
                         <button onClick={props.handleClose} type="reset" className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>
                     </div>
                     <div className="p-Y bd-highlight">
-                        <button onClick={props.onEditarComentario} type="button" className="btn btn-success mt-2">Confirmar</button>
+                        <button onClick={props.onEditarComentario} type="button" className="btn btn-success mt-2">Salvar</button>
                     </div>
                 </div>
             </>

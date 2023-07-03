@@ -33,6 +33,7 @@ import TabelaRepassesPendentes from "./TabelaRepassesPendentes";
 import {
     useCarregaRepassesPendentesPorPeriodoAteAgora
 } from "../../../../hooks/Globais/useCarregaRepassesPendentesPorPeriodoAteAgora";
+import WatermarkPrevia from "../../../Globais/WatermarkPrevia/WatermarkPrevia";
 
 moment.updateLocale('pt', {
     months: [
@@ -46,6 +47,13 @@ const numero = require('numero-por-extenso');
 export const VisualizacaoDaAta = () => {
 
     let {uuid_ata} = useParams();
+
+    const referenciaDocumento = useRef(null);
+    const [alturaDocumento, setAlturaDocumento] = useState(0);
+
+    useEffect(() => {
+       setAlturaDocumento(referenciaDocumento.current.clientHeight)
+      });
 
     const [showModalDevolucoesAoTesouro, setShowModalDevolucoesAoTesouro] = useState(false);
     const [showTextoCopiado, setShowTextoCopiado] = useState(false);
@@ -70,6 +78,7 @@ export const VisualizacaoDaAta = () => {
     const [prestacaoDeContasDetalhe, setPrestacaoDeContasDetalhe] = useState({});
     const [listaPresentes, setListaPresentes] = useState([]);
     const [despesasComPagamentoAntecipadoNoPeriodo, setDespesasComPagamentoAntecipadoNoPeriodo] = useState([]);
+    const [watermarkPrevia, setWatermarkPrevia] = useState(false);
 
     const periodo_prestacao_de_contas = JSON.parse(localStorage.getItem('periodoPrestacaoDeConta'));
     const periodoUuid = periodo_prestacao_de_contas ? periodo_prestacao_de_contas.periodo_uuid : ""
@@ -122,8 +131,15 @@ export const VisualizacaoDaAta = () => {
         setListaPresentes(lista_presentes);
     }
 
+    const aprensentaWatermarkPrevia = (dados_da_ata) => {
+        if(dados_da_ata && ((dados_da_ata.tipo_ata !== 'RETIFICACAO' && !dados_da_ata.prestacao_conta) || (dados_da_ata.tipo_ata === 'RETIFICACAO' && prestacaoDeContasDetalhe && prestacaoDeContasDetalhe.status && prestacaoDeContasDetalhe.status === 'DEVOLVIDA'))) {
+            setWatermarkPrevia(true)
+        }
+    }
+
     const getDadosAta = async () => {
         let dados_ata = await getAtas(uuid_ata);
+        aprensentaWatermarkPrevia(dados_ata)
         let doc_pc = periodo_prestacao_de_contas.data_inicial ? await getPeriodoFechado(periodo_prestacao_de_contas.data_inicial) : null;
 
         let prestacao = null
@@ -450,7 +466,8 @@ export const VisualizacaoDaAta = () => {
     )
 
     return (
-        <div className="col-12 container-visualizacao-da-ata mb-5">
+        <div className="col-12 container-visualizacao-da-ata mb-5" ref={referenciaDocumento}>
+            {watermarkPrevia && <WatermarkPrevia alturaDocumento={alturaDocumento}/>}
             <div className="col-12 mt-4">
                 {dadosAta && Object.entries(dadosAta).length > 0 &&
                     <TopoComBotoes

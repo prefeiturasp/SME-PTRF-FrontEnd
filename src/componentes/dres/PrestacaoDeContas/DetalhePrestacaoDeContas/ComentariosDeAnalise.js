@@ -8,7 +8,7 @@ import {SortableContainer, SortableElement} from 'react-sortable-hoc';
 import arrayMove from 'array-move';
 import ComentariosDeAnaliseNotificados from "./ComentariosDeAnaliseNotificados";
 
-const ComentariosDeAnalise = ({prestacaoDeContas, editavel=true}) => {
+const ComentariosDeAnalise = ({prestacaoDeContas="", associacaoUuid="", periodoUuid="", editavel=true}) => {
 
     const initialComentarios = {
         prestacao_conta: '',
@@ -30,14 +30,20 @@ const ComentariosDeAnalise = ({prestacaoDeContas, editavel=true}) => {
     const [comentarioChecked, setComentarioChecked] = useState([]); // notificar comentários
 
     const carregaComentarios = useCallback(async () => {
-        let comentarios = await getComentariosDeAnalise(prestacaoDeContas.uuid);
+        let comentarios;
+        if (prestacaoDeContas && prestacaoDeContas.uuid){
+            comentarios = await getComentariosDeAnalise(prestacaoDeContas.uuid);
+        }else {
+            comentarios = await getComentariosDeAnalise('', associacaoUuid, periodoUuid);
+        }
+
 
         // Comentários que NÃO foram notificados ainda e que podem ser alterados ou excluídos
         setComentarios(comentarios.comentarios_nao_notificados);
 
         // Comentários que JÁ foram notificados e que NÃO podem ser alterados ou excluídos
         setComentariosNotificados(comentarios.comentarios_notificados)
-    }, [prestacaoDeContas]);
+    }, [prestacaoDeContas, associacaoUuid, periodoUuid]);
 
 
     useEffect(() => {
@@ -46,12 +52,25 @@ const ComentariosDeAnalise = ({prestacaoDeContas, editavel=true}) => {
 
 
     const onSubmit = async (values) => {
-        const payload = {
-            prestacao_conta: prestacaoDeContas.uuid,
-            ordem: comentarios.length + 1,
-            comentario: values.comentarios[0].comentario,
-            uuid: values.comentarios[0].uuid
-        };
+
+        let payload;
+
+        if (prestacaoDeContas && prestacaoDeContas.uuid) {
+            payload = {
+                prestacao_conta: prestacaoDeContas.uuid,
+                ordem: comentarios.length + 1,
+                comentario: values.comentarios[0].comentario,
+                uuid: values.comentarios[0].uuid
+            };
+        }else {
+            payload = {
+                associacao: associacaoUuid,
+                periodo: periodoUuid,
+                ordem: comentarios.length + 1,
+                comentario: values.comentarios[0].comentario,
+                uuid: values.comentarios[0].uuid
+            };
+        }
 
         await criarComentarioDeAnalise(payload);
         setToggleExibeBtnAddComentario(true);
@@ -79,13 +98,27 @@ const ComentariosDeAnalise = ({prestacaoDeContas, editavel=true}) => {
     };
 
     const onChangeComentario = (comentario, objComentario) =>{
-        setComentarioEdicao({
-            ...comentarioEdicao,
-            prestacao_conta: prestacaoDeContas.uuid,
-            comentario: comentario,
-            ordem: objComentario.ordem,
-            uuid: objComentario.uuid
-        });
+
+        if (prestacaoDeContas && prestacaoDeContas.uuid) {
+            setComentarioEdicao({
+                ...comentarioEdicao,
+                prestacao_conta: prestacaoDeContas.uuid,
+                comentario: comentario,
+                ordem: objComentario.ordem,
+                uuid: objComentario.uuid
+            });
+        }else {
+            setComentarioEdicao({
+                ...comentarioEdicao,
+                associacao_uuid: associacaoUuid,
+                periodo_uuid: periodoUuid,
+                comentario: comentario,
+                ordem: objComentario.ordem,
+                uuid: objComentario.uuid
+            });
+        }
+
+
     };
 
     const onEditarComentario = async () => {
@@ -117,14 +150,28 @@ const ComentariosDeAnalise = ({prestacaoDeContas, editavel=true}) => {
         let novoArrayComentarios = arrayMove(comentarios, oldIndex, newIndex);
         if (novoArrayComentarios && novoArrayComentarios.length > 0 ){
             let arrayAnalises = [];
-            novoArrayComentarios.map((comentario, index)=>{
-                arrayAnalises.push({
-                    prestacao_conta: prestacaoDeContas.uuid,
-                    ordem: index+1,
-                    comentario: comentario.comentario,
-                    uuid: comentario.uuid,
-                })
-            });
+
+            if (prestacaoDeContas && prestacaoDeContas.uuid) {
+                novoArrayComentarios.map((comentario, index)=>{
+                    arrayAnalises.push({
+                        prestacao_conta: prestacaoDeContas.uuid,
+                        ordem: index+1,
+                        comentario: comentario.comentario,
+                        uuid: comentario.uuid,
+                    })
+                });
+            }else {
+                novoArrayComentarios.map((comentario, index)=>{
+                    arrayAnalises.push({
+                        associacao_uuid: associacaoUuid,
+                        periodo_uuid: periodoUuid,
+                        ordem: index+1,
+                        comentario: comentario.comentario,
+                        uuid: comentario.uuid,
+                    })
+                });
+            }
+
             setComentarios(arrayAnalises);
             const payload = {
                 comentarios_de_analise: [
@@ -154,11 +201,21 @@ const ComentariosDeAnalise = ({prestacaoDeContas, editavel=true}) => {
     };
 
     const notificarComentarios = async () =>{
-        const payload = {
-            associacao: prestacaoDeContas.associacao.uuid,
-            periodo: prestacaoDeContas.periodo_uuid,
-            comentarios: comentarioChecked
-        };
+        let payload
+
+        if (prestacaoDeContas && prestacaoDeContas.uuid) {
+            payload = {
+                associacao: prestacaoDeContas.associacao.uuid,
+                periodo: prestacaoDeContas.periodo_uuid,
+                comentarios: comentarioChecked
+            };
+        }else {
+            payload = {
+                associacao: associacaoUuid,
+                periodo: periodoUuid,
+                comentarios: comentarioChecked
+            };
+        }
         try {
             let notificar = await postNotificarComentarios(payload);
             console.log(notificar.mensagem)
@@ -186,7 +243,6 @@ const ComentariosDeAnalise = ({prestacaoDeContas, editavel=true}) => {
                 <button
                     onClick={()=>setComentarioParaEdicao(comentario)}
                     type='button'
-                    //className="btn-cancelar-comentario ml-2"
                     className={!editavel ? "btn-editar-comentario-disabled ml-2" : "btn-cancelar-comentario ml-2"}
                     disabled={!editavel}
                 >

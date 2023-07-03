@@ -1,5 +1,5 @@
 # just to create `build` directory
-FROM node:13.14-alpine as builder
+FROM node:14.21-alpine as builder
 WORKDIR /app
 
 COPY . ./
