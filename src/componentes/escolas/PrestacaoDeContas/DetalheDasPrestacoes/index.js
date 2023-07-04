@@ -64,6 +64,7 @@ export const DetalheDasPrestacoes = () => {
     const [checkSalvarExtratoBancario, setCheckSalvarExtratoBancario] = useState(false);
 
     const [showModalLegendaInformacao, setShowModalLegendaInformacao] = useState(false);
+    const [pendenciaSaldoBancario, setPendenciaSaldoBancario] = useState(false);
     const parametros = useLocation();
 
     useEffect(()=>{
@@ -87,9 +88,8 @@ export const DetalheDasPrestacoes = () => {
     }, []);
 
     useEffect(() => {
-            verificaSePeriodoEstaAberto(periodoConta.periodo)
-        }, [periodoConta, periodosAssociacao]
-    );
+        verificaSePeriodoEstaAberto(periodoConta.periodo);
+    }, [periodoConta, periodosAssociacao]);
 
     const getPeriodoConta = () => {
         if(periodo_uuid){
@@ -224,6 +224,7 @@ export const DetalheDasPrestacoes = () => {
 
         try {
             await pathExtratoBancarioPrestacaoDeConta(payload);
+            verificaSePeriodoEstaAberto(periodoConta.periodo);
             toastCustom.ToastCustomSuccess('Edição salva', 'A edição foi salva com sucesso!')
             setDataAtualizacaoComprovanteExtrato('')
             setDataAtualizacaoComprovanteExtratoView('')
@@ -234,6 +235,12 @@ export const DetalheDasPrestacoes = () => {
             console.log("Erro: ", e.message)
         }
     }
+    const checaPendenciaSaldoBancario =  (statusPeriodo) => {
+        const pendenciaCadastral = statusPeriodo.pendencias_cadastrais;
+        const contaPendente = pendenciaCadastral?.conciliacao_bancaria?.contas_pendentes?.includes(periodoConta.conta);
+
+        setPendenciaSaldoBancario(contaPendente ? true : false);
+    };
 
     const verificaSePeriodoEstaAberto = async (periodoUuid) => {
         if (periodosAssociacao) {
@@ -241,6 +248,7 @@ export const DetalheDasPrestacoes = () => {
             if (periodo) {
                 const associacaoUuid = localStorage.getItem(ASSOCIACAO_UUID)
                 await getStatusPeriodoPorData(associacaoUuid, periodo.data_inicio_realizacao_despesas).then(response => {
+                    checaPendenciaSaldoBancario(response);
                     const periodoBloqueado = response.prestacao_contas_status ? response.prestacao_contas_status.periodo_bloqueado : true
                     setPeriodoFechado(periodoBloqueado)
                 }).catch(error => {
@@ -562,6 +570,7 @@ export const DetalheDasPrestacoes = () => {
                                 setCheckSalvarExtratoBancario={setCheckSalvarExtratoBancario}
                                 erroDataSaldo={erroDataSaldo}
                                 permiteEditarCamposExtrato={permiteEditarCamposExtrato}
+                                pendenciaSaldoBancario={pendenciaSaldoBancario}
                             />
 
                             <p className="detalhe-das-prestacoes-titulo-lancamentos mt-3 mb-3">Gastos pendentes de conciliação</p>

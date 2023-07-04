@@ -1,4 +1,4 @@
-import React, {memo, useEffect, useCallback} from "react";
+import React, {memo} from "react";
 import {DatePickerField} from "../../../../Globais/DatePickerField";
 import CurrencyInput from "react-currency-input";
 import {trataNumericos} from "../../../../../utils/ValidacoesAdicionaisFormularios";
@@ -17,31 +17,15 @@ const DataSaldoBancario = ({
     changeUploadExtrato, reiniciaUploadExtrato, downloadComprovanteExtrato, salvarExtratoBancario,
     btnSalvarExtratoBancarioDisable, setBtnSalvarExtratoBancarioDisable, classBtnSalvarExtratoBancario,
     setClassBtnSalvarExtratoBancario, checkSalvarExtratoBancario, setCheckSalvarExtratoBancario, erroDataSaldo,
-    dataAtualizacaoComprovanteExtrato, permiteEditarCamposExtrato
+    dataAtualizacaoComprovanteExtrato, permiteEditarCamposExtrato,
+    pendenciaSaldoBancario
 }) => {
-
     const handleOnClick = () => {
         setBtnSalvarExtratoBancarioDisable(true);
         setCheckSalvarExtratoBancario(true);
         setClassBtnSalvarExtratoBancario("secondary");
         salvarExtratoBancario();
     }
-
-    const exibeIconeIncompleto = useCallback( () => {
-        if (!dataSaldoBancario || !dataSaldoBancario.data_extrato || (!dataSaldoBancario.saldo_extrato === 0 && dataSaldoBancario.saldo_extrato !== "R$0,00") ) {
-            return(
-                IconeDataSaldoBancarioPendentes()
-            )
-        }else if ( (dataSaldoBancario.saldo_extrato !== 0 && dataSaldoBancario.saldo_extrato !== "R$0,00") && !nomeComprovanteExtrato){
-            return(
-                IconeDataSaldoBancarioPendentes()
-            )
-        }
-    }, [dataSaldoBancario, nomeComprovanteExtrato])
-
-    useEffect(()=>{
-        exibeIconeIncompleto()
-    }, [exibeIconeIncompleto])
 
     return(
         <>
@@ -50,7 +34,7 @@ const DataSaldoBancario = ({
                     <div className="col-12">
                         <div className="card container-extrato">
                             <div className="card-body">
-                                <h5 className="card-title titulo">Saldo bancário da conta {exibeIconeIncompleto()}</h5>
+                                <h5 className="card-title titulo">Saldo bancário da conta {pendenciaSaldoBancario ? IconeDataSaldoBancarioPendentes() :  null}</h5>
                                 <p className='text-right'><span className='font-weight-bold'>* Preenchimento obrigatório</span></p>
                                 <div className='row'>
                                     <div className='col-6'>
