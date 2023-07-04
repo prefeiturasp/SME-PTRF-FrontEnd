@@ -623,7 +623,7 @@ const TabelaConferenciaDeLancamentos = ({
                         selectionMode="single"
                         onRowClick={e => redirecionaDetalhe(e.data)}
                         stripedRows
-
+                        sortMode="multiple"
                         // Usado para salvar no localStorage a página atual após os calculos ** ver função onPaginationClick
                         first={primeiroRegistroASerExibido}
                         onPage={onPaginationClick}
@@ -639,6 +639,7 @@ const TabelaConferenciaDeLancamentos = ({
                             body={dataTemplate}
                             className="align-middle text-left borda-coluna"
                             style={{width: '10%'}}
+                            sortable
                         />
                         <Column
                             field='tipo_transacao'
@@ -660,13 +661,16 @@ const TabelaConferenciaDeLancamentos = ({
                             header='Informações'
                             className="align-middle text-left borda-coluna"
                             body={(rowData) => <TableTags data={rowData} coresTags={coresTagsDespesas}/>}
-                            style={{width: '15%'}}/>
+                            style={{width: '15%'}}
+                            sortable    
+                        />
                         <Column
                             field='valor_transacao_total'
                             header='Valor (R$)'
                             body={valor_template}
                             className="align-middle text-left borda-coluna"
                             style={{width: '10%'}}
+                            sortable
                         />
                         <Column
                             field='analise_lancamento'
