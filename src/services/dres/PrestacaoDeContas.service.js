@@ -143,6 +143,8 @@ export const getVisualizarArquivoDeReferencia = async (nome_do_arquivo, uuid, ti
         url = `/api/relacao-bens/${uuid}/pdf`
     }else if(tipo === "EB"){
         url = `/api/conciliacoes/${uuid}/extrato-bancario`
+    } else if(tipo === "AP" || tipo === "APR"){
+        url = `api/atas-associacao/download-arquivo-ata/?ata-uuid=${uuid}`
     }
 
     return (await api
@@ -175,6 +177,8 @@ export const getDownloadArquivoDeReferencia = async (nome_do_arquivo, uuid, tipo
         url = `/api/relacao-bens/${uuid}/pdf`
     }else if(tipo === "EB"){
         url = `/api/conciliacoes/${uuid}/extrato-bancario`
+    }else if(tipo === "AP" || tipo === "APR"){
+        url = `api/atas-associacao/download-arquivo-ata/?ata-uuid=${uuid}`
     }
 
     return (await api
