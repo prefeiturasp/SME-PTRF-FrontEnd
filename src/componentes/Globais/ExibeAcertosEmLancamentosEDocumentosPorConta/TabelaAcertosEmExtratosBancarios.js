@@ -6,13 +6,13 @@ import {getPeriodos} from "../../../services/dres/Dashboard.service";
 import { SidebarLeftService } from "../../../services/SideBarLeft.service";
 import { SidebarContext } from "../../../context/Sidebar";
 import { useCarregaPrestacaoDeContasPorUuid } from "../../../hooks/dres/PrestacaoDeContas/useCarregaPrestacaoDeContasPorUuid";
+import {AcertoComprovanteSaldoDaConta} from "./AcertoComprovanteSaldoDaConta";
 
 
 const TabelaAcertosEmExtratosBancarios = ({extratosBancariosAjustes, contaUuidAjustesExtratosBancarios, prestacaoDeContasUuid}) => {
     const contextSideBar = useContext(SidebarContext);
     const parametros = useLocation();
     const [uuidPeriodo, setUuidPeriodo] = useState('')
-    const [expandedRows, setExpandedRows] = useState(null);
     const prestacaoDeContas = useCarregaPrestacaoDeContasPorUuid(prestacaoDeContasUuid)
 
     useEffect(() => {
@@ -60,18 +60,21 @@ const TabelaAcertosEmExtratosBancarios = ({extratosBancariosAjustes, contaUuidAj
                 <>
                 <div className="row mt-2">
                     {extratosBancariosAjustes.data_extrato &&
-                    <div className="col-lg-4">
-                        <strong><p className="text-saldo-reprogramado">Ajuste da data do extrato</p></strong>
-                        <p>{moment(extratosBancariosAjustes.data_extrato).format('DD/MM/YYYY')}</p>
-                    </div>
+                        <div className="col-lg-4">
+                            <strong><p className="text-saldo-reprogramado">Ajuste da data do extrato</p></strong>
+                            <p>{moment(extratosBancariosAjustes.data_extrato).format('DD/MM/YYYY')}</p>
+                        </div>
                     }
                     {extratosBancariosAjustes.saldo_extrato &&
-                    <div className="col-lg-4">
-                        <strong><p className="text-saldo-reprogramado">Ajuste no saldo do extrato</p></strong>
-                        <p>{formataValor(extratosBancariosAjustes.saldo_extrato)}</p>
-                    </div>
+                        <div className="col-lg-4">
+                            <strong><p className="text-saldo-reprogramado">Ajuste no saldo do extrato</p></strong>
+                            <p>{formataValor(extratosBancariosAjustes.saldo_extrato)}</p>
+                        </div>
                     }
                 </div>
+                <AcertoComprovanteSaldoDaConta
+                    extratosBancariosAjustes={extratosBancariosAjustes}
+                />
                 {visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'UE' &&
                     <Link
                         to={{pathname: `/detalhe-das-prestacoes`,
