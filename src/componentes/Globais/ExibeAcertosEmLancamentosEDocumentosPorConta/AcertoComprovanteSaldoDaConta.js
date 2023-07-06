@@ -17,6 +17,7 @@ export const AcertoComprovanteSaldoDaConta = ({extratosBancariosAjustes}) => {
                                         className="form-control mb-3"
                                         disabled={true}
                                         id='texto_enviar_arquivo_do_comprovante'
+                                        style={{backgroundColor: "#fff"}}
                                     />
                                 </>
                             }
