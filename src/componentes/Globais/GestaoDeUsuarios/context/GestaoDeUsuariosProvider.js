@@ -8,8 +8,8 @@ const initialFilter = {
 };
 
 export const GestaoDeUsuariosContext = createContext({
+  visaoBase: '',
   uuidUnidadeBase: '',
-  setUuidUnidadeBase: () => {},
   initialFilter: initialFilter,
   filter: initialFilter,
   setFilter: () => {},
@@ -18,12 +18,14 @@ export const GestaoDeUsuariosContext = createContext({
 export function GestaoDeUsuariosProvider({ children }) {
   const visao_selecionada = visoesService.getItemUsuarioLogado('visao_selecionada.nome');
   const unidade_selecionada = visoesService.getItemUsuarioLogado('unidade_selecionada.uuid');
+
+  const [visaoBase, setVisaoBase] = useState(visao_selecionada);
   const [uuidUnidadeBase, setUuidUnidadeBase] = useState(visao_selecionada === 'SME' ? 'SME' : unidade_selecionada);
   const [filter, setFilter] = useState(initialFilter);
 
   const contextValue = useMemo(() => {
-    return { uuidUnidadeBase, setUuidUnidadeBase, initialFilter, filter, setFilter };
-  }, [uuidUnidadeBase, filter]);
+    return { visaoBase, uuidUnidadeBase, initialFilter, filter, setFilter };
+  }, [visaoBase, uuidUnidadeBase, filter]);
 
   return (
     <GestaoDeUsuariosContext.Provider value={contextValue}>

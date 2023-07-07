@@ -8,8 +8,13 @@ const authHeader = {
     }
 };
 
-export const getGrupos = async () =>{
-    return (await api.get(`/api/grupos/`, authHeader)).data
+export const getGrupos = async (visaoBase) => {
+    return (await api.get(`/api/grupos/`, {
+        ...authHeader,
+        params: {
+            visao_base: visaoBase,
+        }
+    })).data
 };
 
 
