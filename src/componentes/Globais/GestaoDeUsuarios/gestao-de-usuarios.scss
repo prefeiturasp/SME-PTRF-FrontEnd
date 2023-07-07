@@ -1,0 +1,23 @@
+.barra-topo-lista-usuarios{
+
+  h2 {
+    font-size: 20px;
+    color: #2B7D83;
+    font-weight: 700;
+    line-height: 22px;
+  }
+
+  padding: 16px 0;
+
+}
+
+.tabela-lista-usuarios{
+  //th, td{
+  //  width: calc(100% / 4) !important;
+  //}
+
+  .coluna-editar{
+    width: 60px !important;
+    text-align: center;
+  }
+}
