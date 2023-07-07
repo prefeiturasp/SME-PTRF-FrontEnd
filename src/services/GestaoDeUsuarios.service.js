@@ -13,11 +13,12 @@ export const getGrupos = async () =>{
 };
 
 
-export const getUsuarios = async (filter) => {
+export const getUsuarios = async (uuidUnidadeBase, filter) => {
     const {search, grupo, tipoUsuario} = filter;
     const result = (await api.get(`/api/usuarios-v2/`, {
         ...authHeader,
         params: {
+            uuid_unidade_base: uuidUnidadeBase,
             search,
             groups__id: grupo,
             e_servidor: tipoUsuario === 'servidor' ? true : tipoUsuario === 'nao-servidor' ? false : null,

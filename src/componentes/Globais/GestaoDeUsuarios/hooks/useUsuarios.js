@@ -4,16 +4,16 @@ import {useContext} from "react";
 import {GestaoDeUsuariosContext} from "../context/GestaoDeUsuariosProvider";
 
 export const useUsuarios = ()  => {
-  const {filter} = useContext(GestaoDeUsuariosContext);
+  const {uuidUnidadeBase, filter} = useContext(GestaoDeUsuariosContext);
   async function getUsuariosList() {
     try {
-      return await getUsuarios(filter)
+      return await getUsuarios(uuidUnidadeBase, filter)
     } catch (error) {
       throw new Error(String(error));
     }
   }
 
-  return useQuery(['usuarios-list', filter], getUsuariosList, {
+  return useQuery(['usuarios-list', uuidUnidadeBase, filter], getUsuariosList, {
     keepPreviousData: true,
   });
 };
