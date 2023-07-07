@@ -1,4 +1,5 @@
 import React from "react";
+import "./gestao-de-usuarios.scss"
 import {PaginasContainer} from "../../../paginas/PaginasContainer";
 import {GestaoDeUsuariosMain} from "./GestaoDeUsuariosMain";
 

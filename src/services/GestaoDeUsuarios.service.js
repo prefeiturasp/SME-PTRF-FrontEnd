@@ -8,6 +8,14 @@ const authHeader = {
     }
 };
 
-export const getGrupos = async (id_usuario) =>{
+export const getGrupos = async () =>{
     return (await api.get(`/api/grupos/`, authHeader)).data
+};
+
+
+export const getUsuarios = async () =>{
+    const result = (await api.get(`/api/usuarios-v2/`, authHeader))
+    console.log('getUsuarios', result)
+    return result.data
+    // return (await api.get(`/api/usuarios-v2/`, authHeader)).data
 };
