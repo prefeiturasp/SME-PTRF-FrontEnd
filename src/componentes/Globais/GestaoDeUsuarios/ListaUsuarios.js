@@ -4,7 +4,7 @@ import Loading from "../../../utils/Loading";
 import {DataTable} from "primereact/datatable";
 import {Column} from "primereact/column";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faEdit, faKey} from "@fortawesome/free-solid-svg-icons";
+import {faEdit, faKey, faTimesCircle} from "@fortawesome/free-solid-svg-icons";
 import ReactTooltip from "react-tooltip";
 import {Link} from "react-router-dom";
 
@@ -49,17 +49,31 @@ export const ListaUsuarios = ({usuarios}) => {
     };
     const acoesTemplate = (rowData) =>{
         return (
-            <Link
-                className="link-green text-center"
-                to={{
-                    pathname: `/gestao-de-perfis-form/${rowData.id}`,
-                }}
-            >
-                <FontAwesomeIcon
-                    style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
-                    icon={faEdit}
-                />
-            </Link>
+            <div>
+                <Link
+                    className="botao-acao-lista"
+                    to={{
+                        pathname: `/gestao-de-perfis-form/${rowData.id}`,
+                    }}
+                >
+                    <FontAwesomeIcon
+                        style={{fontSize: '20px', marginRight: "0", color: "#B40C02"}}
+                        icon={faTimesCircle}
+                    />
+                </Link>
+                <Link
+                    className="botao-acao-lista"
+                    to={{
+                        pathname: `/gestao-de-perfis-form/${rowData.id}`,
+                    }}
+                >
+                    <FontAwesomeIcon
+                        style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
+                        icon={faEdit}
+                    />
+                </Link>
+            </div>
+
         )
     };
 
@@ -77,24 +91,31 @@ export const ListaUsuarios = ({usuarios}) => {
                 <div className="card">
                     <DataTable value={usuarios} className='tabela-lista-usuarios'>
 
-                        <Column field="name" header="Nome completo" body={nomeUsuarioComIconeDeAcessoSuporteTemplate}/>
+                        <Column
+                            field="name"
+                            header="Nome completo"
+                            body={nomeUsuarioComIconeDeAcessoSuporteTemplate}
+                            style={{width: '45%'}}
+                        />
 
                         <Column
                             field="e_servidor"
                             header="Tipo de usuário"
                             body={tipoUsuarioTemplate}
+                            style={{width: '20%'}}
                         />
                         <Column
                             field="groups"
                             header="Grupo de acesso"
                             body={grupoTemplate}
+                            style={{width: '20%'}}
                         />
                         <Column
                             field="id"
                             header="Editar"
                             body={acoesTemplate}
                             className='coluna-editar'
-                            style={{width: '10%', borderLeft: 'none'}}
+                            style={{width: '15%'}}
                         />
                     </DataTable>
                 </div>
