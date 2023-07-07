@@ -2,14 +2,17 @@ import React from "react";
 import "./gestao-de-usuarios.scss"
 import {PaginasContainer} from "../../../paginas/PaginasContainer";
 import {GestaoDeUsuariosMain} from "./GestaoDeUsuariosMain";
+import {GestaoDeUsuariosProvider} from "./context/GestaoDeUsuariosProvider";
 
 export const GestaoDeUsuarios = () =>{
     return (
-        <PaginasContainer>
-            <h1 className="titulo-itens-painel mt-5">Gestão de usuários</h1>
-            <div className="page-content-inner">
-                <GestaoDeUsuariosMain/>
-            </div>
-        </PaginasContainer>
+        <GestaoDeUsuariosProvider>
+            <PaginasContainer>
+                <h1 className="titulo-itens-painel mt-5">Gestão de usuários</h1>
+                <div className="page-content-inner">
+                    <GestaoDeUsuariosMain/>
+                </div>
+            </PaginasContainer>
+        </GestaoDeUsuariosProvider>
     )
 };

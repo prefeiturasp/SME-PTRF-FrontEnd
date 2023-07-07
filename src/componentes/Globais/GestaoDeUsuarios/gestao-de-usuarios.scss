@@ -12,12 +12,12 @@
 }
 
 .tabela-lista-usuarios{
-  //th, td{
-  //  width: calc(100% / 4) !important;
-  //}
-
   .coluna-editar{
     width: 60px !important;
     text-align: center;
   }
+}
+
+.barra-botoes-filtro{
+  padding: 16px 0;
 }

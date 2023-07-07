@@ -10,7 +10,6 @@ import {Link} from "react-router-dom";
 
 
 export const ListaUsuarios = ({usuarios}) => {
-    console.log(usuarios)
     const loading = false;
 
     const nomeUsuarioComIconeDeAcessoSuporteTemplate = (rowData) => {
