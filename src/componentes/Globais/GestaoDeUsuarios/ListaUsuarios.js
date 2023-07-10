@@ -51,9 +51,10 @@ export const ListaUsuarios = ({usuarios}) => {
         return (
             <div>
                 <Link
+                    style={{pointerEvents: 'none'}}  //TODO: remover quando estiver pronto
                     className="botao-acao-lista"
                     to={{
-                        pathname: `/gestao-de-perfis-form/${rowData.id}`,
+                        pathname: `/gestao-de-usuarios-form/${rowData.id}`,
                     }}
                 >
                     <FontAwesomeIcon
@@ -62,9 +63,10 @@ export const ListaUsuarios = ({usuarios}) => {
                     />
                 </Link>
                 <Link
+                    style={{pointerEvents: 'none'}}  //TODO: remover quando estiver pronto
                     className="botao-acao-lista"
                     to={{
-                        pathname: `/gestao-de-perfis-form/${rowData.id}`,
+                        pathname: `/gestao-de-usuarios-form/${rowData.id}`,
                     }}
                 >
                     <FontAwesomeIcon
