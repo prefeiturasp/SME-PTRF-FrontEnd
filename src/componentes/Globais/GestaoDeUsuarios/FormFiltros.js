@@ -2,7 +2,7 @@ import React, {useContext, useState} from "react";
 import {GestaoDeUsuariosContext} from "./context/GestaoDeUsuariosProvider";
 
 export const FormFiltros = ({grupos}) => {
-    const {setFilter, initialFilter} = useContext(GestaoDeUsuariosContext);
+    const {setFilter, initialFilter, visaoBase} = useContext(GestaoDeUsuariosContext);
     const [formFilter, setFormFilter] = useState(initialFilter);
 
     const handleChangeFormFilter = (name, value) => {
@@ -66,6 +66,23 @@ export const FormFiltros = ({grupos}) => {
                     </select>
                 </div>
             </div>
+
+            {(visaoBase === 'DRE' || visaoBase === 'SME') &&
+            <div className='row mt-3'>
+                <div className="col">
+                    <label htmlFor="filtrar_por_termo">Filtrar por unidade educacional</label>
+                    <input
+                        value={formFilter.nomeUnidade}
+                        onChange={(e) => handleChangeFormFilter(e.target.name, e.target.value)}
+                        name='nomeUnidade'
+                        type="text"
+                        className="form-control"
+                        placeholder="Escreva qualquer parte do nome da unidade"
+                    />
+                </div>
+            </div>
+            }
+
             <div className={"barra-botoes-filtro d-flex justify-content-end mt-n2"}>
                 <button onClick={() => clearFilter()} type="reset"
                         className="btn btn btn-outline-success mt-2 mr-2">Limpar

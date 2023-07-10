@@ -5,6 +5,7 @@ const initialFilter = {
   search: '',
   grupo: '',
   tipoUsuario: '',
+  nomeUnidade: '',
 };
 
 export const GestaoDeUsuariosContext = createContext({
