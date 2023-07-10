@@ -4,16 +4,26 @@ import {useContext} from "react";
 import {GestaoDeUsuariosContext} from "../context/GestaoDeUsuariosProvider";
 
 export const useUsuarios = ()  => {
-  const {uuidUnidadeBase, filter} = useContext(GestaoDeUsuariosContext);
+  const {
+    uuidUnidadeBase,
+    filter,
+    currentPage,
+    setTotalPages,
+    setCount
+  } = useContext(GestaoDeUsuariosContext);
   async function getUsuariosList() {
     try {
-      return await getUsuarios(uuidUnidadeBase, filter)
+      const result = await getUsuarios(uuidUnidadeBase, filter, currentPage)
+      setTotalPages(result?.total_pages)
+      setCount(result?.count)
+      return result;
     } catch (error) {
       throw new Error(String(error));
     }
   }
 
-  return useQuery(['usuarios-list', uuidUnidadeBase, filter], getUsuariosList, {
+  return useQuery(['usuarios-list', uuidUnidadeBase, filter, currentPage], getUsuariosList, {
     keepPreviousData: true,
+    staleTime: 5000, // 5 segundos
   });
 };

@@ -5,6 +5,7 @@ import {ListaUsuarios} from "./ListaUsuarios";
 import {useUsuarios} from "./hooks/useUsuarios";
 import {BarraTopoLista} from "./BarraTopoLista";
 import {FormFiltros} from "./FormFiltros";
+import {Paginacao} from "./Paginacao";
 
 export const GestaoDeUsuariosMain = () => {
     const { data: grupos } = useGruposAcesso();
@@ -16,6 +17,7 @@ export const GestaoDeUsuariosMain = () => {
             <BarraTopoLista/>
             <FormFiltros grupos={grupos}/>
             <ListaUsuarios usuarios={usuarios?.results}/>
+            <Paginacao/>
         </>
     )
 }

@@ -18,7 +18,7 @@ export const getGrupos = async (visaoBase) => {
 };
 
 
-export const getUsuarios = async (uuidUnidadeBase, filter) => {
+export const getUsuarios = async (uuidUnidadeBase, filter, currentPage) => {
     const {search, grupo, tipoUsuario} = filter;
     const result = (await api.get(`/api/usuarios-v2/`, {
         ...authHeader,
@@ -27,6 +27,7 @@ export const getUsuarios = async (uuidUnidadeBase, filter) => {
             search,
             groups__id: grupo,
             e_servidor: tipoUsuario === 'servidor' ? true : tipoUsuario === 'nao-servidor' ? false : null,
+            page: currentPage,
         }
     }))
     return result.data
