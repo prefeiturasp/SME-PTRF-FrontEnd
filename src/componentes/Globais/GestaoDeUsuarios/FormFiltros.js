@@ -83,6 +83,22 @@ export const FormFiltros = ({grupos}) => {
             </div>
             }
 
+            {(visaoBase === 'DRE' || visaoBase === 'SME') &&
+            <div className='row mt-3'>
+                <div className="form-check check-apenas-usuarios-da-unidade">
+                    <input
+                        onChange={(e) => handleChangeFormFilter(e.target.name, e.target.checked)}
+                        checked={formFilter.apenasUsuariosDaUnidade}
+                        name={`apenasUsuariosDaUnidade`}
+                        id={`apenasUsuariosDaUnidade`}
+                        type="checkbox"
+                        className="form-check-input"
+                    />
+                    <label className="form-check-label" htmlFor={`apenasUsuariosDaUnidade`}>Selecionar usuários da própria unidade.</label>
+                </div>
+            </div>
+            }
+
             <div className={"barra-botoes-filtro d-flex justify-content-end mt-n2"}>
                 <button onClick={() => clearFilter()} type="reset"
                         className="btn btn btn-outline-success mt-2 mr-2">Limpar

@@ -19,7 +19,17 @@ export const getGrupos = async (visaoBase) => {
 
 
 export const getUsuarios = async (uuidUnidadeBase, filter, currentPage) => {
-    const {search, grupo, tipoUsuario, nomeUnidade} = filter;
+    const {search, grupo, tipoUsuario, nomeUnidade, apenasUsuariosDaUnidade} = filter;
+
+    let unidades__uuid = null;
+    if (apenasUsuariosDaUnidade && uuidUnidadeBase !== 'SME') {
+        unidades__uuid = uuidUnidadeBase;
+    }
+
+    let visoes__nome = null;
+    if (apenasUsuariosDaUnidade && uuidUnidadeBase === 'SME') {
+        visoes__nome = 'SME';
+    }
     const result = (await api.get(`/api/usuarios-v2/`, {
         ...authHeader,
         params: {
@@ -29,6 +39,8 @@ export const getUsuarios = async (uuidUnidadeBase, filter, currentPage) => {
             groups__id: grupo,
             e_servidor: tipoUsuario === 'servidor' ? true : tipoUsuario === 'nao-servidor' ? false : null,
             unidades__nome: nomeUnidade,
+            unidades__uuid,
+            visoes__nome
         }
     }))
     return result.data
