@@ -80,8 +80,6 @@ const DevolucaoParaAcertos = ({
             if (mounted) {
                 if (infoAta && infoAta.contas && infoAta.contas.length > 0) {    
                     return await infoAta.contas.map(async (conta) => {
-                        let analise_prestacao_contas_ajustes = await getAnaliseAjustesSaldoPorConta(conta.conta_associacao.uuid, prestacaoDeContas.uuid, analise_atual_uuid);
-                        setAnalisesDeContaDaPrestacao([...analise_prestacao_contas_ajustes])
                         let lancamentos_ajustes = await getLancamentosAjustes(analise_atual_uuid, conta.conta_associacao.uuid)
                         setLancamentosAjustes([...lancamentos_ajustes])
                         let documentos_ajustes = await getDocumentosAjustes(analise_atual_uuid, conta.conta_associacao.uuid)
