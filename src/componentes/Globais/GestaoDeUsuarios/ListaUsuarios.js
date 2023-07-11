@@ -11,7 +11,7 @@ import {TableTags} from "../TableTags";
 
 
 export const ListaUsuarios = ({usuarios}) => {
-    const {uuidUnidadeBase} = useContext(GestaoDeUsuariosContext);
+    const {uuidUnidadeBase, visaoBase} = useContext(GestaoDeUsuariosContext);
     const [expandedRows, setExpandedRows] = useState(null);
 
     const loading = false;
@@ -91,16 +91,33 @@ export const ListaUsuarios = ({usuarios}) => {
             <>
                 <div className="pb-2">
                     <div className="row pl-3 pr-3">
-                        <div className="col p-2">
+                        <div className="col-6 p-2">
                             <p className='mb-0 font-weight-bold'>E-mail</p>
                             {data.email}
                         </div>
-                        <div className="col p-2">
+                        <div className="col-6 p-2">
                             <p className='mb-0 font-weight-bold'>ID do usuário</p>
                             {data.username}
                         </div>
                     </div>
                 </div>
+
+                {(visaoBase === 'DRE' || visaoBase === 'SME') && data?.unidades.length > 0 &&
+                <div className="pb-2">
+                    <div className="row pl-3 pr-3">
+                        <div className="col p-2">
+                            <p className='mb-0 font-weight-bold'>Unidades com acesso</p>
+                        </div>
+                    </div>
+                    <div className="row pl-3 pr-3">
+                        {data.unidades
+                            .filter(unidade => unidade.acesso_de_suporte === false)
+                            .map((unidade, index) => (
+                        <div className="col-6 px-2">
+                            <span key={index}>{unidade.nome}</span>
+                        </div>))}
+                    </div>
+                </div>}
 
             </>
         )
