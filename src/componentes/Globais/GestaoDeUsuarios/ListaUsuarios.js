@@ -1,4 +1,4 @@
-import React, {useContext} from "react";
+import React, {useContext, useState} from "react";
 
 import Loading from "../../../utils/Loading";
 import {DataTable} from "primereact/datatable";
@@ -12,6 +12,7 @@ import {TableTags} from "../TableTags";
 
 export const ListaUsuarios = ({usuarios}) => {
     const {uuidUnidadeBase} = useContext(GestaoDeUsuariosContext);
+    const [expandedRows, setExpandedRows] = useState(null);
 
     const loading = false;
 
@@ -44,7 +45,6 @@ export const ListaUsuarios = ({usuarios}) => {
     const tipoUsuarioTemplate = (rowData) =>{
         return rowData['e_servidor'] ? "Servidor" : "Não Servidor"
     };
-
     const grupoTemplate = (rowData) =>{
         if (rowData['groups'] && rowData['groups'].length > 0){
             return(
@@ -85,7 +85,26 @@ export const ListaUsuarios = ({usuarios}) => {
 
         )
     };
+    const rowExpansionTemplate = (data) => {
+        console.log(data)
+        return (
+            <>
+                <div className="pb-2">
+                    <div className="row pl-3 pr-3">
+                        <div className="col p-2">
+                            <p className='mb-0 font-weight-bold'>E-mail</p>
+                            {data.email}
+                        </div>
+                        <div className="col p-2">
+                            <p className='mb-0 font-weight-bold'>ID do usuário</p>
+                            {data.username}
+                        </div>
+                    </div>
+                </div>
 
+            </>
+        )
+    };
     return (
         <>
             {loading ? (
@@ -98,7 +117,15 @@ export const ListaUsuarios = ({usuarios}) => {
             ) :
                 usuarios && Object.entries(usuarios).length > 0 &&
                 <div className="card">
-                    <DataTable value={usuarios} className='tabela-lista-usuarios'>
+                    <DataTable
+                        value={usuarios}
+                        className='tabela-lista-usuarios'
+                        expandedRows={expandedRows}
+                        rowExpansionTemplate={rowExpansionTemplate}
+                        onRowToggle={(e) => setExpandedRows(e.data)}
+                    >
+
+                        <Column expander style={{width: '3em', borderRight: 'none'}}/>
 
                         <Column
                             field="name"
