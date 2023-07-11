@@ -74,6 +74,7 @@ const ArquivosDeReferenciaVisualizacaoDownload = ({prestacaoDeContas, infoAta}) 
 
         if (arquivos_referencia && arquivos_referencia.length > 0 && infoAta && infoAta.conta_associacao && infoAta.conta_associacao.uuid) {
             let arquivos = arquivos_referencia.filter(element => element.conta_uuid === infoAta.conta_associacao.uuid)
+            arquivos = arquivos.filter(element => element.tipo !== "EB")
 
             arquivos = arquivos.concat(arquivos_apresentados_em_todas_as_contas);
             setArquivoReferenciaPorConta(arquivos)

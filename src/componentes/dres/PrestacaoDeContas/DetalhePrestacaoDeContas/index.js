@@ -210,6 +210,9 @@ export const DetalhePrestacaoDeContas = () =>{
                             conta_associacao: conta.conta_associacao.uuid,
                             data_extrato: conta.data_extrato,
                             saldo_extrato: conta.saldo_extrato !== null ? valorTemplate(conta.saldo_extrato) : null,
+                            solicitar_envio_do_comprovante_do_saldo_da_conta: conta.solicitar_envio_do_comprovante_do_saldo_da_conta,
+                            observacao_solicitar_envio_do_comprovante_do_saldo_da_conta: conta.observacao_solicitar_envio_do_comprovante_do_saldo_da_conta ? conta.observacao_solicitar_envio_do_comprovante_do_saldo_da_conta : "",
+                            
                         })
                     });
                 setAnalisesDeContaDaPrestacao(arrayAnalises);
@@ -381,6 +384,8 @@ export const DetalhePrestacaoDeContas = () =>{
                 conta_associacao: conta.uuid,
                 data_extrato: '',
                 saldo_extrato: null,
+                solicitar_envio_do_comprovante_do_saldo_da_conta: false,
+                observacao_solicitar_envio_do_comprovante_do_saldo_da_conta: ""
             })
 
             setAnalisesDeContaDaPrestacao(lista)
@@ -401,18 +406,22 @@ export const DetalhePrestacaoDeContas = () =>{
             uuid: analise.uuid,
             conta_associacao: analise.conta_associacao.uuid,
             data_extrato: analise.data_extrato,
-            saldo_extrato: analise.saldo_extrato !== null ? valorTemplate(analise.saldo_extrato) : null
+            saldo_extrato: analise.saldo_extrato !== null ? valorTemplate(analise.saldo_extrato) : null,
+            solicitar_envio_do_comprovante_do_saldo_da_conta: analise.solicitar_envio_do_comprovante_do_saldo_da_conta,
+            observacao_solicitar_envio_do_comprovante_do_saldo_da_conta: analise.observacao_solicitar_envio_do_comprovante_do_saldo_da_conta !== null ? analise.observacao_solicitar_envio_do_comprovante_do_saldo_da_conta : "",
         })
 
         setAnalisesDeContaDaPrestacao(()=>[
             ...arrayAnalise
-        ])  
+        ])     
     }
 
     const onClickSalvarAcertoSaldo = async (conta, analise_de_conta, index) => {
         let uuid_analise;
         let data_extrato = null;
         let saldo_extato = null;
+        let solicitar_envio_do_comprovante_do_saldo_da_conta = null;
+        let observacao_solicitar_envio_do_comprovante_do_saldo_da_conta = null;
 
         if(prestacaoDeContas && prestacaoDeContas.analise_atual && prestacaoDeContas.analise_atual.uuid){
             uuid_analise = prestacaoDeContas.analise_atual.uuid
@@ -430,6 +439,19 @@ export const DetalhePrestacaoDeContas = () =>{
             if(analise_de_conta.saldo_extrato){
                 saldo_extato = trataNumericos(analise_de_conta.saldo_extrato)
             }
+
+            if(analise_de_conta.solicitar_envio_do_comprovante_do_saldo_da_conta !== null){
+                solicitar_envio_do_comprovante_do_saldo_da_conta = analise_de_conta.solicitar_envio_do_comprovante_do_saldo_da_conta
+            }
+
+            if(analise_de_conta.observacao_solicitar_envio_do_comprovante_do_saldo_da_conta){
+                if(solicitar_envio_do_comprovante_do_saldo_da_conta === false){
+                    observacao_solicitar_envio_do_comprovante_do_saldo_da_conta = null;
+                }
+                else{
+                    observacao_solicitar_envio_do_comprovante_do_saldo_da_conta = analise_de_conta.observacao_solicitar_envio_do_comprovante_do_saldo_da_conta;
+                }
+            }
         }
 
         let payload = {
@@ -437,7 +459,9 @@ export const DetalhePrestacaoDeContas = () =>{
             conta_associacao: conta.uuid,
             prestacao_conta: prestacaoDeContas.uuid,
             data_extrato: data_extrato,
-            saldo_extrato: saldo_extato
+            saldo_extrato: saldo_extato,
+            solicitar_envio_do_comprovante_do_saldo_da_conta: solicitar_envio_do_comprovante_do_saldo_da_conta,
+            observacao_solicitar_envio_do_comprovante_do_saldo_da_conta: observacao_solicitar_envio_do_comprovante_do_saldo_da_conta,
         }
 
         try {
@@ -594,23 +618,22 @@ export const DetalhePrestacaoDeContas = () =>{
                 uuid_analise = ultima_analise.uuid
             }
 
-            let analise_teste = await getAnaliseAjustesSaldoPorConta(info_ata_por_conta.conta_associacao.uuid, prestacaoDeContas.uuid, uuid_analise);
-            analise_teste = analise_teste[0]
+            let analise_encontrada = await getAnaliseAjustesSaldoPorConta(info_ata_por_conta.conta_associacao.uuid, prestacaoDeContas.uuid, uuid_analise);
+            analise_encontrada = analise_encontrada[0]
 
-
-            if(analise_teste){
+            if(analise_encontrada){
                 setAnalisesDeContaDaPrestacao(analise=>[
                     ...analise,
                     {
-                        uuid: analise_teste.uuid,
-                        conta_associacao: analise_teste.conta_associacao.uuid,
-                        data_extrato: analise_teste.data_extrato,
-                        saldo_extrato: analise_teste.saldo_extrato !== null ? valorTemplate(analise_teste.saldo_extrato) : null
+                        uuid: analise_encontrada.uuid,
+                        conta_associacao: analise_encontrada.conta_associacao.uuid,
+                        data_extrato: analise_encontrada.data_extrato,
+                        saldo_extrato: analise_encontrada.saldo_extrato !== null ? valorTemplate(analise_encontrada.saldo_extrato) : null,
+                        solicitar_envio_do_comprovante_do_saldo_da_conta: analise_encontrada.solicitar_envio_do_comprovante_do_saldo_da_conta,
+                        observacao_solicitar_envio_do_comprovante_do_saldo_da_conta: analise_encontrada.observacao_solicitar_envio_do_comprovante_do_saldo_da_conta ? analise_encontrada.observacao_solicitar_envio_do_comprovante_do_saldo_da_conta : "",
                     }
                 ])
             }
-
-            
         }
 
     };
