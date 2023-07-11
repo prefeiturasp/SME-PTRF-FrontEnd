@@ -66,6 +66,7 @@ import {VinculaAssociacoesAAcao} from "../componentes/sme/Parametrizacoes/Estrut
 import {Periodos} from "../componentes/sme/Parametrizacoes/Estrutura/Periodos";
 import {Associacoes} from "../componentes/sme/Parametrizacoes/Estrutura/Associacoes";
 import {Tags} from "../componentes/sme/Parametrizacoes/Estrutura/Tags";
+import {TiposConta} from "../componentes/sme/Parametrizacoes/Estrutura/TiposConta";
 import {FiqueDeOlho} from "../componentes/sme/Parametrizacoes/EdicaoDeTextos/FiqueDeOlho";
 import ArquivosDeCarga from "../componentes/Globais/ArquivosDeCarga";
 import {TiposDeCusteio} from "../componentes/sme/Parametrizacoes/Despesas/TiposDeCusteio"
@@ -421,6 +422,12 @@ const routesConfig = [
         exact: true,
         path: "/parametro-tags",
         component: Tags,
+        permissoes: ['access_painel_parametrizacoes'],
+    },
+    {
+        exact: true,
+        path: "/parametro-tipos-conta",
+        component: TiposConta,
         permissoes: ['access_painel_parametrizacoes'],
     },
     {
