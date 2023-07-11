@@ -1,36 +1,43 @@
-import React from "react";
+import React, {useContext} from "react";
 
 import Loading from "../../../utils/Loading";
 import {DataTable} from "primereact/datatable";
 import {Column} from "primereact/column";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEdit, faKey, faTimesCircle} from "@fortawesome/free-solid-svg-icons";
-import ReactTooltip from "react-tooltip";
 import {Link} from "react-router-dom";
+import {GestaoDeUsuariosContext} from "./context/GestaoDeUsuariosProvider";
+import {TableTags} from "../TableTags";
 
 
 export const ListaUsuarios = ({usuarios}) => {
+    const {uuidUnidadeBase} = useContext(GestaoDeUsuariosContext);
+
     const loading = false;
 
-    const nomeUsuarioComIconeDeAcessoSuporteTemplate = (rowData) => {
-        const unidade_selecionada = null
+    const nomeUsuarioTemplate = (rowData) => {
+        const corTagSuporte = {
+          1: 'tag-blue-support',
+        }
+
+        const dataTag = {
+            informacoes: [{
+                tag_id: 1,
+                tag_nome: "Visão de suporte",
+                tag_hint: "Usuário com acesso de suporte"
+            }]
+        }
         const unidadeLogada = rowData["unidades"].find(obj => {
-                return obj.uuid === unidade_selecionada
+                return obj.uuid === uuidUnidadeBase
             })
         return (
             <div>
-                {unidadeLogada?.acesso_de_suporte &&
-                <>
-                    <span data-html={true} data-tip='Acesso de suporte'>
-                        <FontAwesomeIcon
-                            style={{marginLeft: "3px", marginRight: "3px", color: '#086397'}}
-                            icon={faKey}
-                        />
-                    </span>
-                    <ReactTooltip html={true}/>
-                </>
-                }
                 {rowData["name"]}
+                {unidadeLogada?.acesso_de_suporte &&
+                <div style={{marginLeft: -10, width:'50%'}}>
+                    <TableTags data={dataTag} coresTags={corTagSuporte}/>
+                </div>
+                }
             </div>
         )
     }
@@ -95,8 +102,8 @@ export const ListaUsuarios = ({usuarios}) => {
 
                         <Column
                             field="name"
-                            header="Nome completo"
-                            body={nomeUsuarioComIconeDeAcessoSuporteTemplate}
+                            header="Nome"
+                            body={nomeUsuarioTemplate}
                             style={{width: '45%'}}
                         />
 
@@ -114,10 +121,10 @@ export const ListaUsuarios = ({usuarios}) => {
                         />
                         <Column
                             field="id"
-                            header="Editar"
+                            header="Ação"
                             body={acoesTemplate}
-                            className='coluna-editar'
-                            style={{width: '15%'}}
+                            className='coluna-acao'
+                            style={{width: '15%', textAlign: 'center'}}
                         />
                     </DataTable>
                 </div>
