@@ -94,6 +94,24 @@ export const patchAlterarFiqueDeOlhoRelatoriosConsolidadosDre = async (payload) 
 };
 
 // ***** Estrutura *****
+
+// Tipos de conta
+export const getTiposContas = async () => {
+    return (await api.get(`/api/tipos-conta`, authHeader)).data;
+};
+export const getFiltroTiposContas = async (nome) => {
+    return (await api.get(`/api/tipos-conta/?nome=${nome}`, authHeader)).data;
+};
+export const postTipoConta = async (payload) => {
+    return (await api.post(`/api/tipos-conta/`, payload, authHeader)).data
+};
+export const patchTipoConta = async (tipo_conta_uuid, payload) => {
+    return (await api.patch(`/api/tipos-conta/${tipo_conta_uuid}/`, payload, authHeader)).data
+};
+export const deleteTipoConta = async (tipo_conta_uuid) => {
+    return (await api.delete(`/api/tipos-conta/${tipo_conta_uuid}/`, authHeader))
+};
+
 // Tags
 export const getTodasTags = async () => {
     return (await api.get(`/api/tags/`, authHeader)).data
