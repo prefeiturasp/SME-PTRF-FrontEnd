@@ -1,4 +1,4 @@
-import React, {useContext, useState} from "react";
+import React, {Fragment, useContext, useState} from "react";
 
 import Loading from "../../../utils/Loading";
 import {DataTable} from "primereact/datatable";
@@ -135,8 +135,8 @@ export const ListaUsuarios = ({usuarios, isLoading}) => {
                     <div className="row pl-3 pr-3">
                         {unidadesComAcesso
                             .map((unidade, index) => (
-                        <div className="col-6 px-2">
-                            <span key={index}>{unidade.nome}</span>
+                        <div key={index} className="col-6 px-2">
+                            <span>{unidade.nome}</span>
                         </div>))}
                     </div>
                 </div>}
@@ -151,14 +151,14 @@ export const ListaUsuarios = ({usuarios, isLoading}) => {
                     <div className="row pl-3 pr-3">
                         {unidadesComAcessoSuporte
                             .map((unidade, index) => (
-                                <>
+                                <Fragment key={index} >
                                     <div className="col-6 px-2">
-                                        <span key={index}>{unidade.nome}</span>
+                                        <span>{unidade.nome}</span>
                                     </div>
                                     <div className="col-6" style={{marginLeft: -10, width:'30%'}}>
                                         <TableTags data={dataVisaoSuporteTag} coresTags={corTagSuporte}/>
                                     </div>
-                                </>
+                                </Fragment>
                             ))}
 
                     </div>
