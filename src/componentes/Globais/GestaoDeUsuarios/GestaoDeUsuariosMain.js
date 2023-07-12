@@ -17,7 +17,9 @@ export const GestaoDeUsuariosMain = () => {
             <BarraTopoLista/>
             <FormFiltros grupos={grupos}/>
             <ListaUsuarios usuarios={usuarios?.results} isLoading={isLoading}/>
-            <Paginacao/>
+            {! isLoading &&
+             <Paginacao/>
+            }
         </>
     )
 }
