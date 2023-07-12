@@ -8,7 +8,19 @@ import {faEdit, faKey, faTimesCircle} from "@fortawesome/free-solid-svg-icons";
 import {Link} from "react-router-dom";
 import {GestaoDeUsuariosContext} from "./context/GestaoDeUsuariosProvider";
 import {TableTags} from "../TableTags";
+import {Tag} from "../Tag";
 
+const corTagSuporte = {
+          1: 'tag-blue-support',
+        }
+
+const dataVisaoSuporteTag = {
+            informacoes: [{
+                tag_id: 1,
+                tag_nome: "Visão de suporte",
+                tag_hint: "Usuário com acesso de suporte"
+            }]
+        }
 
 export const ListaUsuarios = ({usuarios}) => {
     const {uuidUnidadeBase, visaoBase} = useContext(GestaoDeUsuariosContext);
@@ -17,17 +29,7 @@ export const ListaUsuarios = ({usuarios}) => {
     const loading = false;
 
     const nomeUsuarioTemplate = (rowData) => {
-        const corTagSuporte = {
-          1: 'tag-blue-support',
-        }
 
-        const dataTag = {
-            informacoes: [{
-                tag_id: 1,
-                tag_nome: "Visão de suporte",
-                tag_hint: "Usuário com acesso de suporte"
-            }]
-        }
         const unidadeLogada = rowData["unidades"].find(obj => {
                 return obj.uuid === uuidUnidadeBase
             })
@@ -35,8 +37,8 @@ export const ListaUsuarios = ({usuarios}) => {
             <div>
                 {rowData["name"]}
                 {unidadeLogada?.acesso_de_suporte &&
-                <div style={{marginLeft: -10, width:'50%'}}>
-                    <TableTags data={dataTag} coresTags={corTagSuporte}/>
+                <div style={{marginLeft: -10, width:'30%'}}>
+                    <TableTags data={dataVisaoSuporteTag} coresTags={corTagSuporte}/>
                 </div>
                 }
             </div>
@@ -86,8 +88,12 @@ export const ListaUsuarios = ({usuarios}) => {
         )
     };
     const rowExpansionTemplate = (data) => {
-        console.log(data)
         const unidadesComAcesso = data?.unidades.filter(unidade => unidade.acesso_de_suporte === false)
+        const temUnidadesComAcesso = unidadesComAcesso?.length > 0
+
+        const unidadesComAcessoSuporte = data?.unidades.filter(unidade => unidade.acesso_de_suporte === true)
+        const temUnidadesComAcessoSuporte = unidadesComAcessoSuporte?.length > 0
+
         return (
             <>
                 <div className="pb-2">
@@ -103,7 +109,11 @@ export const ListaUsuarios = ({usuarios}) => {
                     </div>
                 </div>
 
-                {(visaoBase === 'DRE' || visaoBase === 'SME') && unidadesComAcesso?.length > 0 &&
+                {(visaoBase === 'DRE' || visaoBase === 'SME') && (temUnidadesComAcesso || temUnidadesComAcessoSuporte) &&
+                <hr style={{margin: 0, padding: 0}}/>
+                }
+
+                {(visaoBase === 'DRE' || visaoBase === 'SME') && temUnidadesComAcesso &&
                 <div className="pb-2">
                     <div className="row pl-3 pr-3">
                         <div className="col p-2">
@@ -111,12 +121,34 @@ export const ListaUsuarios = ({usuarios}) => {
                         </div>
                     </div>
                     <div className="row pl-3 pr-3">
-                        {data.unidades
-                            .filter(unidade => unidade.acesso_de_suporte === false)
+                        {unidadesComAcesso
                             .map((unidade, index) => (
                         <div className="col-6 px-2">
                             <span key={index}>{unidade.nome}</span>
                         </div>))}
+                    </div>
+                </div>}
+
+                {(visaoBase === 'DRE' || visaoBase === 'SME') && temUnidadesComAcessoSuporte &&
+                <div className="pb-2">
+                    <div className="row pl-3 pr-3">
+                        <div className="col p-2">
+                            <p className='mb-0 font-weight-bold'>Em suporte</p>
+                        </div>
+                    </div>
+                    <div className="row pl-3 pr-3">
+                        {unidadesComAcessoSuporte
+                            .map((unidade, index) => (
+                                <>
+                                    <div className="col-6 px-2">
+                                        <span key={index}>{unidade.nome}</span>
+                                    </div>
+                                    <div className="col-6" style={{marginLeft: -10, width:'30%'}}>
+                                        <TableTags data={dataVisaoSuporteTag} coresTags={corTagSuporte}/>
+                                    </div>
+                                </>
+                            ))}
+
                     </div>
                 </div>}
 
