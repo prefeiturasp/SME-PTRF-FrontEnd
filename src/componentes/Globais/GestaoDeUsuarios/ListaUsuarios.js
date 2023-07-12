@@ -10,6 +10,7 @@ import {GestaoDeUsuariosContext} from "./context/GestaoDeUsuariosProvider";
 import {TableTags} from "../TableTags";
 import Img404 from "../../../assets/img/img-404.svg";
 import {MsgImgCentralizada} from "../Mensagens/MsgImgCentralizada";
+import ReactTooltip from "react-tooltip";
 
 const corTagSuporte = {
           1: 'tag-blue-support',
@@ -58,30 +59,36 @@ export const ListaUsuarios = ({usuarios, isLoading}) => {
     const acoesTemplate = (rowData) =>{
         return (
             <div>
-                <Link
-                    style={{pointerEvents: 'none'}}  //TODO: remover quando estiver pronto
-                    className="botao-acao-lista"
-                    to={{
-                        pathname: `/gestao-de-usuarios-form/${rowData.id}`,
-                    }}
-                >
-                    <FontAwesomeIcon
-                        style={{fontSize: '20px', marginRight: "0", color: "#B40C02"}}
-                        icon={faTimesCircle}
-                    />
-                </Link>
-                <Link
-                    style={{pointerEvents: 'none'}}  //TODO: remover quando estiver pronto
-                    className="botao-acao-lista"
-                    to={{
-                        pathname: `/gestao-de-usuarios-form/${rowData.id}`,
-                    }}
-                >
-                    <FontAwesomeIcon
-                        style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
-                        icon={faEdit}
-                    />
-                </Link>
+                <span data-tip="Excluir/Desvincular usuário" data-html={true}>
+                    <Link
+                        style={{pointerEvents: 'none'}}  //TODO: remover quando estiver pronto
+                        className="botao-acao-lista"
+                        to={{
+                            pathname: `/gestao-de-usuarios-form/${rowData.id}`,
+                        }}
+                    >
+                            <FontAwesomeIcon
+                                style={{fontSize: '20px', marginRight: "0", color: "#B40C02"}}
+                                icon={faTimesCircle}
+                            />
+                    </Link>
+                    <ReactTooltip/>
+                </span>
+                <span data-tip="Editar usuário" data-html={true}>
+                    <Link
+                        style={{pointerEvents: 'none'}}  //TODO: remover quando estiver pronto
+                        className="botao-acao-lista"
+                        to={{
+                            pathname: `/gestao-de-usuarios-form/${rowData.id}`,
+                        }}
+                    >
+                        <FontAwesomeIcon
+                            style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
+                            icon={faEdit}
+                        />
+                    </Link>
+                    <ReactTooltip/>
+                </span>
             </div>
 
         )
