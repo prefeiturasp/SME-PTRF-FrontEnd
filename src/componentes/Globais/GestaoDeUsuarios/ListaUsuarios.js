@@ -87,6 +87,7 @@ export const ListaUsuarios = ({usuarios}) => {
     };
     const rowExpansionTemplate = (data) => {
         console.log(data)
+        const unidadesComAcesso = data?.unidades.filter(unidade => unidade.acesso_de_suporte === false)
         return (
             <>
                 <div className="pb-2">
@@ -102,7 +103,7 @@ export const ListaUsuarios = ({usuarios}) => {
                     </div>
                 </div>
 
-                {(visaoBase === 'DRE' || visaoBase === 'SME') && data?.unidades.length > 0 &&
+                {(visaoBase === 'DRE' || visaoBase === 'SME') && unidadesComAcesso?.length > 0 &&
                 <div className="pb-2">
                     <div className="row pl-3 pr-3">
                         <div className="col p-2">
