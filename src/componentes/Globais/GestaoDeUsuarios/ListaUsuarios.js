@@ -11,6 +11,7 @@ import {TableTags} from "../TableTags";
 import Img404 from "../../../assets/img/img-404.svg";
 import {MsgImgCentralizada} from "../Mensagens/MsgImgCentralizada";
 import ReactTooltip from "react-tooltip";
+import {useAcessoEmSuporteInfo} from "../../../hooks/Globais/useAcessoEmSuporteInfo";
 
 const corTagSuporte = {
           1: 'tag-blue-support',
@@ -27,6 +28,7 @@ const dataVisaoSuporteTag = {
 export const ListaUsuarios = ({usuarios, isLoading}) => {
     const {uuidUnidadeBase, visaoBase} = useContext(GestaoDeUsuariosContext);
     const [expandedRows, setExpandedRows] = useState(null);
+    const {unidadeEstaEmSuporte} = useAcessoEmSuporteInfo()
 
     const nomeUsuarioTemplate = (rowData) => {
 
@@ -74,6 +76,8 @@ export const ListaUsuarios = ({usuarios, isLoading}) => {
                     </Link>
                     <ReactTooltip/>
                 </span>
+
+                { ! unidadeEstaEmSuporte &&
                 <span data-tip="Editar usuário" data-html={true}>
                     <Link
                         style={{pointerEvents: 'none'}}  //TODO: remover quando estiver pronto
@@ -89,6 +93,8 @@ export const ListaUsuarios = ({usuarios, isLoading}) => {
                     </Link>
                     <ReactTooltip/>
                 </span>
+                }
+
             </div>
 
         )
