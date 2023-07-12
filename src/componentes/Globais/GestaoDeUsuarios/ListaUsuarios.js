@@ -8,6 +8,8 @@ import {faEdit, faTimesCircle} from "@fortawesome/free-solid-svg-icons";
 import {Link} from "react-router-dom";
 import {GestaoDeUsuariosContext} from "./context/GestaoDeUsuariosProvider";
 import {TableTags} from "../TableTags";
+import Img404 from "../../../assets/img/img-404.svg";
+import {MsgImgCentralizada} from "../Mensagens/MsgImgCentralizada";
 
 const corTagSuporte = {
           1: 'tag-blue-support',
@@ -154,15 +156,23 @@ export const ListaUsuarios = ({usuarios, isLoading}) => {
     };
     return (
         <>
-            {isLoading ? (
+            {isLoading &&
                 <Loading
                     corGrafico="black"
                     corFonte="dark"
                     marginTop="0"
                     marginBottom="0"
                 />
-            ) :
-                usuarios && Object.entries(usuarios).length > 0 &&
+            }
+
+            {!isLoading && usuarios && Object.entries(usuarios).length === 0 &&
+                <MsgImgCentralizada
+                    texto='Não há usuários que atendam aos filtros especificados.'
+                    img={Img404}
+                />
+            }
+
+            {!isLoading && usuarios && Object.entries(usuarios).length > 0 &&
                 <div className="card">
                     <DataTable
                         value={usuarios}
