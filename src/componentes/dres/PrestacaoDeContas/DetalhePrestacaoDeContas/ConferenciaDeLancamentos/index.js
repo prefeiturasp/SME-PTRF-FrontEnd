@@ -95,7 +95,7 @@ const ConferenciaDeLancamentos = ({prestacaoDeContas, onCarregaLancamentosParaCo
         meapcservice.setAcompanhamentoDePcPorUsuario(visoesService.getUsuarioLogin(), objetoAcompanhamentoDePcPorUsuario)
     }
 
-    const carregaLancamentosParaConferencia = async (prestacao_de_contas, conta_uuid, filtrar_por_acao=null, filtrar_por_lancamento=null, paginacao_atual, ordenar_por_imposto=null, filtrar_por_data_inicio=null, filtrar_por_data_fim=null, filtrar_por_nome_fornecedor=null, filtrar_por_numero_de_documento=null, filtrar_por_tipo_de_documento=null, filtrar_por_tipo_de_pagamento=null) =>{
+    const carregaLancamentosParaConferencia = async (prestacao_de_contas, conta_uuid, filtrar_por_acao=null, filtrar_por_lancamento=null, paginacao_atual, ordenar_por_imposto=null, filtrar_por_data_inicio=null, filtrar_por_data_fim=null, filtrar_por_nome_fornecedor=null, filtrar_por_numero_de_documento=null, filtrar_por_tipo_de_documento=null, filtrar_por_tipo_de_pagamento=null, filtrar_por_informacoes=[], filtrar_por_conferencia = []) =>{
         salvaObjetoAcompanhamentoDePcPorUsuarioLocalStorage(prestacao_de_contas, conta_uuid, filtrar_por_acao, filtrar_por_lancamento, paginacao_atual, filtrar_por_data_inicio, filtrar_por_data_fim, filtrar_por_nome_fornecedor, filtrar_por_numero_de_documento, filtrar_por_tipo_de_documento, filtrar_por_tipo_de_pagamento)
 
         setContaUuid(conta_uuid)
@@ -105,14 +105,14 @@ const ConferenciaDeLancamentos = ({prestacaoDeContas, onCarregaLancamentosParaCo
 
         if (editavel){
             if (prestacao_de_contas && prestacao_de_contas.uuid && prestacao_de_contas.analise_atual && prestacao_de_contas.analise_atual.uuid && conta_uuid){
-                lancamentos =  await getLancamentosParaConferencia(prestacao_de_contas.uuid, prestacao_de_contas.analise_atual.uuid, conta_uuid, filtrar_por_acao, filtrar_por_lancamento, ordenar_por_imposto, filtrar_por_data_inicio, filtrar_por_data_fim, filtrar_por_nome_fornecedor, filtrar_por_numero_de_documento, filtrar_por_tipo_de_documento, filtrar_por_tipo_de_pagamento)
+                lancamentos =  await getLancamentosParaConferencia(prestacao_de_contas.uuid, prestacao_de_contas.analise_atual.uuid, conta_uuid, filtrar_por_acao, filtrar_por_lancamento, ordenar_por_imposto, filtrar_por_data_inicio, filtrar_por_data_fim, filtrar_por_nome_fornecedor, filtrar_por_numero_de_documento, filtrar_por_tipo_de_documento, filtrar_por_tipo_de_pagamento, filtrar_por_informacoes, filtrar_por_conferencia)
             }
         }else {
             if (prestacao_de_contas && prestacao_de_contas.uuid){
                 let ultima_analise =  await getUltimaAnalisePc(prestacao_de_contas.uuid)
 
                 if (ultima_analise && ultima_analise.uuid){
-                    lancamentos =  await getLancamentosParaConferencia(prestacao_de_contas.uuid, ultima_analise.uuid, conta_uuid, filtrar_por_acao, filtrar_por_lancamento, ordenar_por_imposto, filtrar_por_data_inicio, filtrar_por_data_fim, filtrar_por_nome_fornecedor, filtrar_por_numero_de_documento, filtrar_por_tipo_de_documento, filtrar_por_tipo_de_pagamento)
+                    lancamentos =  await getLancamentosParaConferencia(prestacao_de_contas.uuid, ultima_analise.uuid, conta_uuid, filtrar_por_acao, filtrar_por_lancamento, ordenar_por_imposto, filtrar_por_data_inicio, filtrar_por_data_fim, filtrar_por_nome_fornecedor, filtrar_por_numero_de_documento, filtrar_por_tipo_de_documento, filtrar_por_tipo_de_pagamento, filtrar_por_informacoes, filtrar_por_conferencia)
                 }
             }
         }
