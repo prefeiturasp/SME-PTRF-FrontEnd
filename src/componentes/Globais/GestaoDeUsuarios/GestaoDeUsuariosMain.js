@@ -9,14 +9,14 @@ import {Paginacao} from "./Paginacao";
 
 export const GestaoDeUsuariosMain = () => {
     const { data: grupos } = useGruposAcesso();
-    const { data: usuarios } = useUsuarios();
+    const { data: usuarios, isLoading } = useUsuarios();
     return (
         <>
             <p>Faça a gestão dos seus usuários e determine seus perfis atrelando-os aos grupos de acesso.</p>
             <GruposAcessoInfo grupos={grupos}/>
             <BarraTopoLista/>
             <FormFiltros grupos={grupos}/>
-            <ListaUsuarios usuarios={usuarios?.results}/>
+            <ListaUsuarios usuarios={usuarios?.results} isLoading={isLoading}/>
             <Paginacao/>
         </>
     )

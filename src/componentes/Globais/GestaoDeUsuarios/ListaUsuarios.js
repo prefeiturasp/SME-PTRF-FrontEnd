@@ -4,11 +4,10 @@ import Loading from "../../../utils/Loading";
 import {DataTable} from "primereact/datatable";
 import {Column} from "primereact/column";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faEdit, faKey, faTimesCircle} from "@fortawesome/free-solid-svg-icons";
+import {faEdit, faTimesCircle} from "@fortawesome/free-solid-svg-icons";
 import {Link} from "react-router-dom";
 import {GestaoDeUsuariosContext} from "./context/GestaoDeUsuariosProvider";
 import {TableTags} from "../TableTags";
-import {Tag} from "../Tag";
 
 const corTagSuporte = {
           1: 'tag-blue-support',
@@ -22,11 +21,9 @@ const dataVisaoSuporteTag = {
             }]
         }
 
-export const ListaUsuarios = ({usuarios}) => {
+export const ListaUsuarios = ({usuarios, isLoading}) => {
     const {uuidUnidadeBase, visaoBase} = useContext(GestaoDeUsuariosContext);
     const [expandedRows, setExpandedRows] = useState(null);
-
-    const loading = false;
 
     const nomeUsuarioTemplate = (rowData) => {
 
@@ -157,7 +154,7 @@ export const ListaUsuarios = ({usuarios}) => {
     };
     return (
         <>
-            {loading ? (
+            {isLoading ? (
                 <Loading
                     corGrafico="black"
                     corFonte="dark"
