@@ -37,6 +37,7 @@ import { ValoresReprogramadosDrePage } from "../paginas/dres/ValoresReprogramado
 import {AnalisesRegularidadeAssociacaoPage} from "../paginas/dres/RegularidadeAssociacoes/AnalisesRegularidadeDaAssociacao";
 import {SuporteAsUnidadesDre} from "../paginas/dres/SuporteAsUnidades"
 import {SuporteAsUnidadesSme} from "../paginas/SME/SuporteAsUnidades"
+import {GestaoDeUsuarios} from "../componentes/Globais/GestaoDeUsuarios"
 // Faz o redirect de acordo com a Visao Selecionada
 import {RedirectLoginVisaoUe} from "../utils/RedirectLoginVisaoUe";
 import {DadosDaDiretoriaDrePage} from "../paginas/dres/Diretoria/DadosDaDiretoria";
@@ -331,6 +332,12 @@ const routesConfig = [
         path: "/gestao-de-perfis",
         component: GestaoDePerfisPage,
         permissoes: ['access_gestao_perfis_ue', 'access_gestao_perfis_dre', 'access_gestao_perfis_sme'],
+    },
+    {
+        exact: true,
+        path: "/gestao-de-usuarios",
+        component: GestaoDeUsuarios,
+        permissoes: ['access_gestao_usuarios_ue', 'access_gestao_usuarios_dre', 'access_gestao_usuarios_sme'],
     },
     {
         exact: true,
