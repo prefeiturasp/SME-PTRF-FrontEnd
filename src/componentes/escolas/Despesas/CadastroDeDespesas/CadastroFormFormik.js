@@ -683,7 +683,7 @@ export const CadastroFormFormik = ({
                                                                     }}
                                                                     name={`rateios[${index}].aplicacao_recurso`}
                                                                     id={`aplicacao_recurso_${index}`}
-                                                                    className={`${!rateio.aplicacao_recurso && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
+                                                                    className={`${!rateio.aplicacao_recurso && despesaContext.verboHttp === "PUT" && "is_invalid "} ${!rateio.aplicacao_recurso && "despesa_incompleta"} form-control`}
                                                                     disabled={readOnlyCampos || bloqueiaRateioEstornado(rateio) || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                                                                 >
                                                                     <option key={0} value="">Escolha uma opção
