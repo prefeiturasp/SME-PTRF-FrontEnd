@@ -673,12 +673,13 @@ const TabelaConferenciaDeLancamentos = ({
                         <Column field='descricao' header='Descrição' className="align-middle text-left borda-coluna"
                                 style={{width: '24%'}}/>
                         <Column 
-                            field='informacao'
+                            field='informacoes'
                             header='Informações'
                             className="align-middle text-left borda-coluna"
                             body={(rowData) => <TableTags data={rowData} coresTags={coresTagsDespesas}/>}
                             style={{width: '15%'}}
-                            sortable    
+                            sortField="informacoes_ordenamento"  
+                            sortable  
                         />
                         <Column
                             field='valor_transacao_total'
