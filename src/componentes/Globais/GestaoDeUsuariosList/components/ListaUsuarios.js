@@ -80,7 +80,6 @@ export const ListaUsuarios = ({usuarios, isLoading}) => {
                 { ! unidadeEstaEmSuporte &&
                 <span data-tip="Editar usuário" data-html={true}>
                     <Link
-                        style={{pointerEvents: 'none'}}  //TODO: remover quando estiver pronto
                         className="botao-acao-lista"
                         to={{
                             pathname: `/gestao-de-usuarios-form/${rowData.id}`,
