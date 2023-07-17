@@ -7,7 +7,7 @@ import {BarraTopoLista} from "./BarraTopoLista";
 import {FormFiltros} from "./FormFiltros";
 import {Paginacao} from "./Paginacao";
 
-export const GestaoDeUsuariosMain = () => {
+export const GestaoDeUsuariosListMain = () => {
     const { data: grupos } = useGruposAcesso();
     const { data: usuarios, isLoading } = useUsuarios();
     return (

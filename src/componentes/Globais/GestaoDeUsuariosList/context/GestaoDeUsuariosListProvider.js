@@ -9,7 +9,7 @@ const initialFilter = {
   apenasUsuariosDaUnidade: false,
 };
 
-export const GestaoDeUsuariosContext = createContext({
+export const GestaoDeUsuariosListContext = createContext({
   visaoBase: '',
   uuidUnidadeBase: '',
   initialFilter: initialFilter,
@@ -23,7 +23,7 @@ export const GestaoDeUsuariosContext = createContext({
   setCount: () => {},
 });
 
-export function GestaoDeUsuariosProvider({ children }) {
+export function GestaoDeUsuariosListProvider({ children }) {
   const visao_selecionada = visoesService.getItemUsuarioLogado('visao_selecionada.nome');
   const unidade_selecionada = visoesService.getItemUsuarioLogado('unidade_selecionada.uuid');
 
@@ -53,8 +53,8 @@ export function GestaoDeUsuariosProvider({ children }) {
   ]);
 
   return (
-    <GestaoDeUsuariosContext.Provider value={contextValue}>
+    <GestaoDeUsuariosListContext.Provider value={contextValue}>
       {children}
-    </GestaoDeUsuariosContext.Provider>
+    </GestaoDeUsuariosListContext.Provider>
   );
 }

@@ -1,8 +1,8 @@
 import React, {useContext, useState} from "react";
 import {Paginator} from 'primereact/paginator';
-import {GestaoDeUsuariosContext} from "../context/GestaoDeUsuariosProvider";
+import {GestaoDeUsuariosListContext} from "../context/GestaoDeUsuariosListProvider";
 export const Paginacao = () => {
-    const {count, setCurrentPage} = useContext(GestaoDeUsuariosContext);
+    const {count, setCurrentPage} = useContext(GestaoDeUsuariosListContext);
     const [first, setFirst] = useState(0);
     const onPageChange = (event) => {
         setCurrentPage(event.page+1)

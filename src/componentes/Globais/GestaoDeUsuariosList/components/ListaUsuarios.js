@@ -6,7 +6,7 @@ import {Column} from "primereact/column";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEdit, faTimesCircle} from "@fortawesome/free-solid-svg-icons";
 import {Link} from "react-router-dom";
-import {GestaoDeUsuariosContext} from "../context/GestaoDeUsuariosProvider";
+import {GestaoDeUsuariosListContext} from "../context/GestaoDeUsuariosListProvider";
 import {TableTags} from "../../TableTags";
 import Img404 from "../../../../assets/img/img-404.svg";
 import {MsgImgCentralizada} from "../../Mensagens/MsgImgCentralizada";
@@ -26,7 +26,7 @@ const dataVisaoSuporteTag = {
         }
 
 export const ListaUsuarios = ({usuarios, isLoading}) => {
-    const {uuidUnidadeBase, visaoBase} = useContext(GestaoDeUsuariosContext);
+    const {uuidUnidadeBase, visaoBase} = useContext(GestaoDeUsuariosListContext);
     const [expandedRows, setExpandedRows] = useState(null);
     const {unidadeEstaEmSuporte} = useAcessoEmSuporteInfo()
 
