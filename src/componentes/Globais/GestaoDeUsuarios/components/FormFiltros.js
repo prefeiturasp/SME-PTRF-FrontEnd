@@ -1,5 +1,5 @@
 import React, {useContext, useState} from "react";
-import {GestaoDeUsuariosContext} from "./context/GestaoDeUsuariosProvider";
+import {GestaoDeUsuariosContext} from "../context/GestaoDeUsuariosProvider";
 
 export const FormFiltros = ({grupos}) => {
     const {setFilter, initialFilter, visaoBase} = useContext(GestaoDeUsuariosContext);

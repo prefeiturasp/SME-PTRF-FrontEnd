@@ -1,7 +1,7 @@
 import React from "react";
-import "./gestao-de-usuarios.scss"
+import "./style/gestao-de-usuarios.scss"
 import {PaginasContainer} from "../../../paginas/PaginasContainer";
-import {GestaoDeUsuariosMain} from "./GestaoDeUsuariosMain";
+import {GestaoDeUsuariosMain} from "./components/GestaoDeUsuariosMain";
 import {GestaoDeUsuariosProvider} from "./context/GestaoDeUsuariosProvider";
 
 export const GestaoDeUsuarios = () =>{

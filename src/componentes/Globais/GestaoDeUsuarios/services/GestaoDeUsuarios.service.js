@@ -1,5 +1,8 @@
-import api from './api';
-import {TOKEN_ALIAS} from "./auth.service";
+import api from '../../../../services/api';
+import {TOKEN_ALIAS} from "../../../../services/auth.service";
+
+const URL_GRUPOS = '/api/grupos/';
+const URL_USUARIOS = '/api/usuarios-v2/';
 
 const authHeader = {
     headers: {
@@ -9,7 +12,7 @@ const authHeader = {
 };
 
 export const getGrupos = async (visaoBase) => {
-    return (await api.get(`/api/grupos/`, {
+    return (await api.get(URL_GRUPOS, {
         ...authHeader,
         params: {
             visao_base: visaoBase,
@@ -30,7 +33,7 @@ export const getUsuarios = async (uuidUnidadeBase, filter, currentPage) => {
     if (apenasUsuariosDaUnidade && uuidUnidadeBase === 'SME') {
         visoes__nome = 'SME';
     }
-    const result = (await api.get(`/api/usuarios-v2/`, {
+    const result = (await api.get(URL_USUARIOS, {
         ...authHeader,
         params: {
             uuid_unidade_base: uuidUnidadeBase,

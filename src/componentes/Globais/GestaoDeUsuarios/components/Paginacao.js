@@ -1,6 +1,6 @@
 import React, {useContext, useState} from "react";
 import {Paginator} from 'primereact/paginator';
-import {GestaoDeUsuariosContext} from "./context/GestaoDeUsuariosProvider";
+import {GestaoDeUsuariosContext} from "../context/GestaoDeUsuariosProvider";
 export const Paginacao = () => {
     const {count, setCurrentPage} = useContext(GestaoDeUsuariosContext);
     const [first, setFirst] = useState(0);

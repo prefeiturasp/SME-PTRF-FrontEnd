@@ -1,17 +1,17 @@
 import React, {Fragment, useContext, useState} from "react";
 
-import Loading from "../../../utils/Loading";
+import Loading from "../../../../utils/Loading";
 import {DataTable} from "primereact/datatable";
 import {Column} from "primereact/column";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEdit, faTimesCircle} from "@fortawesome/free-solid-svg-icons";
 import {Link} from "react-router-dom";
-import {GestaoDeUsuariosContext} from "./context/GestaoDeUsuariosProvider";
-import {TableTags} from "../TableTags";
-import Img404 from "../../../assets/img/img-404.svg";
-import {MsgImgCentralizada} from "../Mensagens/MsgImgCentralizada";
+import {GestaoDeUsuariosContext} from "../context/GestaoDeUsuariosProvider";
+import {TableTags} from "../../TableTags";
+import Img404 from "../../../../assets/img/img-404.svg";
+import {MsgImgCentralizada} from "../../Mensagens/MsgImgCentralizada";
 import ReactTooltip from "react-tooltip";
-import {useAcessoEmSuporteInfo} from "../../../hooks/Globais/useAcessoEmSuporteInfo";
+import {useAcessoEmSuporteInfo} from "../../../../hooks/Globais/useAcessoEmSuporteInfo";
 
 const corTagSuporte = {
           1: 'tag-blue-support',
