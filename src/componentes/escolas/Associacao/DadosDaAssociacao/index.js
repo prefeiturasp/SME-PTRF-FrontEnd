@@ -262,23 +262,13 @@ export const DadosDaAsssociacao = () => {
                                                 <div className="form-group col-md-6">
                                                     <label htmlFor="email"><strong>E-mail da Unidade Educacional</strong></label>
                                                     <input
+                                                        readOnly={true}
                                                         type="text"
-                                                        value={props.values.email ? props.values.email : ""}
+                                                        value={props.values.unidade ? props.values.unidade.email : ""}
                                                         name="email"
                                                         id="email"
                                                         className="form-control"
-                                                        onChange={props.handleChange}
-                                                        onClick={() => setErrors(
-                                                            {
-                                                                ...errors,
-                                                                email:"",
-                                                            }
-                                                        )}
-                                                        disabled={!podeEditarDadosAssociacao()}
                                                     />
-                                                    {props.touched.email && props.errors.email &&
-                                                        <span className="span_erro text-danger mt-1"> {props.errors.email} </span>
-                                                    }
                                                 </div>
                                             </div>
                                             { podeEditarDadosAssociacao() &&
