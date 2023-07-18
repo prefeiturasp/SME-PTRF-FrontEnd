@@ -37,6 +37,7 @@ import { ValoresReprogramadosDrePage } from "../paginas/dres/ValoresReprogramado
 import {AnalisesRegularidadeAssociacaoPage} from "../paginas/dres/RegularidadeAssociacoes/AnalisesRegularidadeDaAssociacao";
 import {SuporteAsUnidadesDre} from "../paginas/dres/SuporteAsUnidades"
 import {SuporteAsUnidadesSme} from "../paginas/SME/SuporteAsUnidades"
+import {GestaoDeUsuarios} from "../componentes/Globais/GestaoDeUsuarios"
 // Faz o redirect de acordo com a Visao Selecionada
 import {RedirectLoginVisaoUe} from "../utils/RedirectLoginVisaoUe";
 import {DadosDaDiretoriaDrePage} from "../paginas/dres/Diretoria/DadosDaDiretoria";
@@ -66,6 +67,7 @@ import {VinculaAssociacoesAAcao} from "../componentes/sme/Parametrizacoes/Estrut
 import {Periodos} from "../componentes/sme/Parametrizacoes/Estrutura/Periodos";
 import {Associacoes} from "../componentes/sme/Parametrizacoes/Estrutura/Associacoes";
 import {Tags} from "../componentes/sme/Parametrizacoes/Estrutura/Tags";
+import {TiposConta} from "../componentes/sme/Parametrizacoes/Estrutura/TiposConta";
 import {FiqueDeOlho} from "../componentes/sme/Parametrizacoes/EdicaoDeTextos/FiqueDeOlho";
 import ArquivosDeCarga from "../componentes/Globais/ArquivosDeCarga";
 import {TiposDeCusteio} from "../componentes/sme/Parametrizacoes/Despesas/TiposDeCusteio"
@@ -333,6 +335,12 @@ const routesConfig = [
     },
     {
         exact: true,
+        path: "/gestao-de-usuarios",
+        component: GestaoDeUsuarios,
+        permissoes: ['access_gestao_usuarios_ue', 'access_gestao_usuarios_dre', 'access_gestao_usuarios_sme'],
+    },
+    {
+        exact: true,
         path: "/extracoes-dados",
         component: ExtracaoDadosPage,
         permissoes: ['access_extracao_de_dados_sme'],
@@ -421,6 +429,12 @@ const routesConfig = [
         exact: true,
         path: "/parametro-tags",
         component: Tags,
+        permissoes: ['access_painel_parametrizacoes'],
+    },
+    {
+        exact: true,
+        path: "/parametro-tipos-conta",
+        component: TiposConta,
         permissoes: ['access_painel_parametrizacoes'],
     },
     {

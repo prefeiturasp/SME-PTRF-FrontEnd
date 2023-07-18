@@ -131,15 +131,14 @@ export const VisualizacaoDaAta = () => {
         setListaPresentes(lista_presentes);
     }
 
-    const aprensentaWatermarkPrevia = (dados_da_ata) => {
-        if(dados_da_ata && ((dados_da_ata.tipo_ata !== 'RETIFICACAO' && !dados_da_ata.prestacao_conta) || (dados_da_ata.tipo_ata === 'RETIFICACAO' && prestacaoDeContasDetalhe && prestacaoDeContasDetalhe.status && prestacaoDeContasDetalhe.status === 'DEVOLVIDA'))) {
+    const aprensentaWatermarkPrevia = (dados_da_ata, prestacaoDetalhes) => {
+        if(dados_da_ata && ((dados_da_ata.tipo_ata !== 'RETIFICACAO' && !dados_da_ata.prestacao_conta) || (dados_da_ata.tipo_ata === 'RETIFICACAO' && prestacaoDetalhes && prestacaoDetalhes.status && prestacaoDetalhes.status === 'DEVOLVIDA'))) {
             setWatermarkPrevia(true)
         }
     }
 
     const getDadosAta = async () => {
         let dados_ata = await getAtas(uuid_ata);
-        aprensentaWatermarkPrevia(dados_ata)
         let doc_pc = periodo_prestacao_de_contas.data_inicial ? await getPeriodoFechado(periodo_prestacao_de_contas.data_inicial) : null;
 
         let prestacao = null
@@ -148,6 +147,8 @@ export const VisualizacaoDaAta = () => {
         } else if (periodoUuid) {
             prestacao = await getPreviaPrestacaoDeContasDetalhe(periodoUuid);
         }
+
+        aprensentaWatermarkPrevia(dados_ata, prestacao)
 
         setPrestacaoDeContasDetalhe(prestacao);
         let data_da_reuniao = dados_ata.data_reuniao ? dados_ata.data_reuniao : "";
