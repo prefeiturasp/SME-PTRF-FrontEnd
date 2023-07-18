@@ -10,10 +10,10 @@ import {visoesService} from "../../../../services/visoes.service";
 import {TabelaExecucaoFinanceira} from "./TabelaExecucaoFinanceira";
 import {JustificativaDiferenca} from "./JustificativaDiferenca";
 import {auxGetNomes} from "../auxGetNomes";
-import {ModalSalvarJustificativa} from "../ModalSalvarJustificativa";
 import { haDiferencaPrevisaoExecucaoRepasse } from "../haDiferencaPrevisaoExecucaoRepasse";
 import Loading from "../../../../utils/Loading";
 import { getConsolidadoDrePorUuid } from "../../../../services/dres/RelatorioConsolidado.service";
+import {toastCustom} from "../../../Globais/ToastCustom";
 
 export const RelatorioConsolidadoEmTela = () => {
 
@@ -39,7 +39,6 @@ export const RelatorioConsolidadoEmTela = () => {
     const [justificativaDiferencaCartao, setJustificativaDiferencaCartao] = useState(initJustificativa);
     const [btnSalvarJustificativaDisableCheque, setBtnSalvarJustificativaDisableCheque] = useState(true);
     const [btnSalvarJustificativaDisableCartao, setBtnSalvarJustificativaDisableCartao] = useState(true);
-    const [showSalvarJustificativa, setShowSalvarJustificativa] = useState(false);
     const [loading, setLoading] = useState(false);
     const [consolidadoDre, setConsolidadoDre] = useState({})
 
@@ -150,17 +149,13 @@ export const RelatorioConsolidadoEmTela = () => {
                 eh_retificacao: consolidadoDre ? consolidadoDre.eh_retificacao : false
             };
             await patchJustificativa(justificativaDiferenca.uuid, payload)
-            setShowSalvarJustificativa(true);
+            toastCustom.ToastCustomSuccess('Demonstrativo da Execução Físico-Financeira alterado com sucesso', 'Justificativa da diferença entre o valor previsto pela SME e o transferido pela DRE no período registrada com sucesso.')
         } else {
             delete justificativaDiferenca.uuid;
             await postJustificativa(justificativaDiferenca)
-            setShowSalvarJustificativa(true);
+            toastCustom.ToastCustomSuccess('Demonstrativo da Execução Físico-Financeira alterado com sucesso', 'Justificativa da diferença entre o valor previsto pela SME e o transferido pela DRE no período registrada com sucesso.')
         }
     };
-
-    const onHandleCloseSalvarJustificativa = () => {
-        setShowSalvarJustificativa(false);
-    }
 
     return (
         <>
@@ -206,12 +201,6 @@ export const RelatorioConsolidadoEmTela = () => {
                             })}
 
                         </div>
-                        <section>
-                            <ModalSalvarJustificativa
-                                show={showSalvarJustificativa}
-                                handleClose={onHandleCloseSalvarJustificativa}
-                            />
-                        </section>
                     </>
 
                 }

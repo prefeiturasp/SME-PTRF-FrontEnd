@@ -28,9 +28,9 @@ const ExibeMotivosPagamentoAntecipadoNoForm = ({values}) => {
         }
     }
 
-  return(
-      exibeMotivos()
-  )
+    return(
+        exibeMotivos()
+    )
 }
 
 export default memo(ExibeMotivosPagamentoAntecipadoNoForm)
