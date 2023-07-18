@@ -1,5 +1,5 @@
-import api from '../../../../services/api';
-import {TOKEN_ALIAS} from "../../../../services/auth.service";
+import api from './api';
+import {TOKEN_ALIAS} from "./auth.service";
 
 const URL_GRUPOS = '/api/grupos/';
 const URL_USUARIOS = '/api/usuarios-v2/';

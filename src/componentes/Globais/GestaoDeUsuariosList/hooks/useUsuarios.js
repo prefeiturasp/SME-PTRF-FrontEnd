@@ -1,4 +1,4 @@
-import {getUsuarios} from '../services/GestaoDeUsuarios.service';
+import {getUsuarios} from '../../../../services/GestaoDeUsuarios.service';
 import {useQuery} from '@tanstack/react-query';
 import {useContext} from "react";
 import {GestaoDeUsuariosListContext} from "../context/GestaoDeUsuariosListProvider";
