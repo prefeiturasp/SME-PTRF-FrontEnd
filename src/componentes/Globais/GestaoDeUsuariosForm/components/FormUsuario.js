@@ -1,15 +1,38 @@
-import React, {useCallback, useContext, useState} from "react";
+import React, {useCallback, useContext, useEffect, useState} from "react";
 import {GestaoDeUsuariosFormContext} from "../context/GestaoDeUsuariosFormProvider";
 import MaskedInput from "react-text-mask";
 import {Formik} from "formik";
 import * as yup from "yup";
 
 export const FormUsuario = ({usuario}) => {
-    const { formValues, modo, Modos, visaoBase} = useContext(GestaoDeUsuariosFormContext)
-    console.log('Usuario: ', usuario)
-
+    const { modo, Modos, visaoBase} = useContext(GestaoDeUsuariosFormContext)
     const [formErrors, setFormErrors] = useState({});
     const [bloquearCampoName, setBloquearCampoName] = useState(true)
+
+    const emptyValues = {
+      e_servidor: '',
+      username: '',
+      name: '',
+      email: '',
+    };
+    const [formValues, setFormValues] = useState(emptyValues);
+
+    useEffect(()=>{
+        const usuarioToFormValues = (usuario) => {
+            if (!usuario) return;
+
+            const usuarioValues = {
+                id: usuario.id,
+                e_servidor: usuario.e_servidor ? "True" : "False",
+                username: usuario.username,
+                name: usuario.name,
+                email: usuario.email,
+            };
+            setFormValues(usuarioValues)
+        };
+        usuarioToFormValues(usuario)
+    }, [usuario])
+
     const handleSubmitUsuarioForm = async (values, {setSubmitting}) => {
         console.log('handleSubmitPerfisForm: ', values)
         setSubmitting(false)
@@ -25,12 +48,6 @@ export const FormUsuario = ({usuario}) => {
         return mask
     }, [])
 
-    const validationSchema = yup.object().shape({
-        e_servidor: yup.string().required("Tipo de usuário é obrigatório"),
-        name: yup.string().required("Nome de usuário é obrigatório"),
-        email: yup.string().email("Digite um email válido").nullable(),
-    });
-
     return (
         <Formik
             initialValues={formValues}
@@ -41,7 +58,6 @@ export const FormUsuario = ({usuario}) => {
             onSubmit={handleSubmitUsuarioForm}
         >
             {props => {
-
                 return (
                     <form onSubmit={props.handleSubmit}>
                         <div className="row">
@@ -131,3 +147,11 @@ export const FormUsuario = ({usuario}) => {
         </Formik>
     )
 }
+
+const validationSchema = yup.object().shape(
+    {
+        e_servidor: yup.string().required("Tipo de usuário é obrigatório"),
+        name: yup.string().required("Nome de usuário é obrigatório"),
+        email: yup.string().email("Digite um email válido").nullable(),
+    }
+);

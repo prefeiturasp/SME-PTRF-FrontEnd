@@ -48,3 +48,10 @@ export const getUsuarios = async (uuidUnidadeBase, filter, currentPage) => {
     }))
     return result.data
 };
+
+export const getUsuarioById = async (usuarioId) => {
+    const result = (await api.get(`${URL_USUARIOS}${usuarioId}/`, {
+        ...authHeader,
+    }))
+    return result.data
+};
