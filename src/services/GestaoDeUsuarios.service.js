@@ -55,3 +55,15 @@ export const getUsuarioById = async (usuarioId) => {
     }))
     return result.data
 };
+
+export const getUsuarioStatus = async (username, e_servidor, uuid_unidade) =>{
+        const result = (await api.get(`${URL_USUARIOS}status/`, {
+        ...authHeader,
+        params: {
+            username,
+            e_servidor,
+            uuid_unidade,
+        }
+    }))
+    return result.data
+};

@@ -15,7 +15,7 @@ export const GestaoDeUsuariosFormContext = createContext({
   setModo: () => {},
   Modos: Modos,
   usuarioId: '',
-  setUsuarioId: () => {}
+  setUsuarioId: () => {},
 });
 
 export function GestaoDeUsuariosFormProvider({children}) {
@@ -34,7 +34,7 @@ export function GestaoDeUsuariosFormProvider({children}) {
       visaoBase,
       uuidUnidadeBase,
       modo, setModo, Modos,
-      usuarioId, setUsuarioId
+      usuarioId, setUsuarioId,
     };
   }, [
     visaoBase,
