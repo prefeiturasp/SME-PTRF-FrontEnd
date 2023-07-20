@@ -7,9 +7,14 @@ import {GestaoDeUsuariosFormContext} from "../context/GestaoDeUsuariosFormProvid
 import {valida_cpf_cnpj} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import {getUsuarioStatus} from "../../../../services/GestaoDeUsuarios.service";
 import {ModalConfirmacao} from "./ModalConfirmacao";
+import {useCreateUsuario} from "../hooks/useCreateUsuario";
+import {useHistory} from "react-router-dom";
+
 
 export const FormUsuario = ({usuario}) => {
-    const { modo, Modos, uuidUnidadeBase} = useContext(GestaoDeUsuariosFormContext)
+    const { modo, Modos, uuidUnidadeBase, visaoBase} = useContext(GestaoDeUsuariosFormContext)
+    const { mutate: postUsuario, isLoading, error, data: resultPost } = useCreateUsuario();
+    const history = useHistory();
     const [formErrors, setFormErrors] = useState({});
     const [bloquearCampoName, setBloquearCampoName] = useState(true)
 
@@ -45,11 +50,30 @@ export const FormUsuario = ({usuario}) => {
         usuarioToFormValues(usuario)
     }, [usuario])
 
+    useEffect(() => {
+        if (modo === Modos.INSERT && resultPost?.id){
+            history.push(`/gestao-de-usuarios-form/${resultPost.id}`)
+        }
+    }, [resultPost, modo, Modos, history])
+
     const handleSubmitUsuarioForm = async (values, {setSubmitting}) => {
         if (!enviarFormulario) return;
 
         console.log('handleSubmitPerfisForm: ', values)
+
+        const payload = {
+            e_servidor: values.e_servidor,
+            username: values.username,
+            name: values.name,
+            email: values.email ? values.email : "",
+            unidade: uuidUnidadeBase,
+            visao: visaoBase
+        };
+
+        postUsuario(payload)
+
         setSubmitting(false)
+
     }
 
     const idUsuarioCondicionalMask = (e_servidor) => {
@@ -264,8 +288,13 @@ export const FormUsuario = ({usuario}) => {
                                 botaoConfirmarHandle={() => handleConfirmaCadastramentoNoCoreSSo()}
                             />
                         </section>
-
+                        <section>
+                            <p>
+                                {JSON.stringify(resultPost)}
+                            </p>
+                        </section>
                     </form>
+
                 );
             }}
         </Formik>

@@ -67,3 +67,11 @@ export const getUsuarioStatus = async (username, e_servidor, uuid_unidade) =>{
     }))
     return result.data
 };
+
+export const postUsuario = async (payload) => {
+    return (await api.post(URL_USUARIOS, payload, authHeader)).data
+};
+
+export const putUsuario = async (usuarioId, payload) => {
+    return (await api.put(`${URL_USUARIOS}${usuarioId}/`, payload, authHeader)).data
+};
