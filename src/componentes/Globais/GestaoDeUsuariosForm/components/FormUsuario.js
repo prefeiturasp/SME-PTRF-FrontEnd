@@ -5,10 +5,10 @@ import * as yup from "yup";
 
 import {GestaoDeUsuariosFormContext} from "../context/GestaoDeUsuariosFormProvider";
 import {valida_cpf_cnpj} from "../../../../utils/ValidacoesAdicionaisFormularios";
-import {getUsuarioStatus} from "../../../../services/GestaoDeUsuarios.service";
 import {ModalConfirmacao} from "./ModalConfirmacao";
 import {useCreateUsuario} from "../hooks/useCreateUsuario";
 import {useHistory} from "react-router-dom";
+import {useUsuarioStatus} from "../hooks/useUsuarioStatus";
 
 
 export const FormUsuario = ({usuario}) => {
@@ -17,6 +17,10 @@ export const FormUsuario = ({usuario}) => {
     const history = useHistory();
     const [formErrors, setFormErrors] = useState({});
     const [bloquearCampoName, setBloquearCampoName] = useState(true)
+
+    const [username, setUsername] = useState('');
+    const [e_servidor, setE_servidor] = useState('');
+    const { data: usuarioStatus } = useUsuarioStatus(username, e_servidor, uuidUnidadeBase);
 
     const emptyValues = {
       e_servidor: '',
@@ -28,7 +32,6 @@ export const FormUsuario = ({usuario}) => {
     const [formValues, setFormValues] = useState(emptyValues);
     const [enviarFormulario, setEnviarFormulario] = useState(true);
 
-    const [ usuarioStatus, setUsuarioStatus ] = useState({});
     const [ podeAcessarUnidade, setPodeAcessarUnidade ] = useState(false);
 
     const [showModalUsuarioNaoCadastradoCoreSso, setShowModalUsuarioNaoCadastradoCoreSso] = useState(false)
@@ -55,6 +58,28 @@ export const FormUsuario = ({usuario}) => {
             history.push(`/gestao-de-usuarios-form/${resultPost.id}`)
         }
     }, [resultPost, modo, Modos, history])
+
+    useEffect(() => {
+        if (usuarioStatus) {
+            if (!usuarioStatus.usuario_core_sso?.info_core_sso?.nome) {
+                if (!cadastramentoNoCoreSsoConfirmado) {
+                    setShowModalUsuarioNaoCadastradoCoreSso(!cadastramentoNoCoreSsoConfirmado);
+                }
+            } else {
+                setShowModalUsuarioNaoCadastradoCoreSso(false);
+                setFormValues(prevFormValues => ({
+                    ...prevFormValues,
+                    username: username,
+                    e_servidor: e_servidor,
+                    name: usuarioStatus.usuario_core_sso.info_core_sso.nome,
+                    email: usuarioStatus.usuario_core_sso.info_core_sso.email
+                }));
+                console.log("Altera formValues: ")
+            }
+        }
+
+    }, [usuarioStatus, cadastramentoNoCoreSsoConfirmado]);
+
 
     const handleSubmitUsuarioForm = async (values, {setSubmitting}) => {
         if (!enviarFormulario) return;
@@ -89,6 +114,9 @@ export const FormUsuario = ({usuario}) => {
     const validacoesPersonalizadas = async (values, {setFieldValue, resetForm}) => {
         let erros = {};
 
+        setUsername(values.username)
+        setE_servidor(values.e_servidor)
+
         if (!values.username){
             erros = {
                 ...erros,
@@ -115,34 +143,12 @@ export const FormUsuario = ({usuario}) => {
             setEnviarFormulario(true)
         }
 
-        if (Object.keys(erros).length === 0){
-            try {
-                const usuarioStatus = await getUsuarioStatus(values.username, values.e_servidor, uuidUnidadeBase);
-                setUsuarioStatus(usuarioStatus)
-                console.log("usuario_status: ", usuarioStatus)
-                if (usuarioStatus?.usuario_core_sso?.info_core_sso?.nome){
-                    setFieldValue('name', usuarioStatus.usuario_core_sso.info_core_sso.nome)
-                    setFieldValue('email', usuarioStatus.usuario_core_sso.info_core_sso.email)
-                }
-                else {
-                    setShowModalUsuarioNaoCadastradoCoreSso(!cadastramentoNoCoreSsoConfirmado)
-                }
-            }catch (e){
-                console.log("Erro ao buscar status do usuário ", e)
-                setEnviarFormulario(false)
-                erros = {
-                    username: "Houve um erro ao buscar o status do usuário"
-                }
-                setFormErrors({...erros})
-            }
-        }
         return erros;
     }
 
     const handleCloseUsuarioNaoCadastradoCoreSSo = ({resetForm}) => {
         resetForm()
         setShowModalUsuarioNaoCadastradoCoreSso(false);
-        // setStatePerfisForm(initPerfisForm)
     };
 
     const handleConfirmaCadastramentoNoCoreSSo = () => {
@@ -167,6 +173,7 @@ export const FormUsuario = ({usuario}) => {
                     values,
                     errors
                 } = props;
+
                 return (
                     <form onSubmit={props.handleSubmit}>
                         <div className="row">
@@ -289,6 +296,13 @@ export const FormUsuario = ({usuario}) => {
                             />
                         </section>
                         <section>
+                            <h2>Usuário Status</h2>
+                            <p>
+                                {JSON.stringify(usuarioStatus)}
+                            </p>
+                        </section>
+                        <section>
+                            <h2>Result post</h2>
                             <p>
                                 {JSON.stringify(resultPost)}
                             </p>
