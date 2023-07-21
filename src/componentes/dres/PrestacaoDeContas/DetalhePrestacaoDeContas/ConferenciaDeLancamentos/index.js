@@ -56,9 +56,11 @@ const ConferenciaDeLancamentos = ({prestacaoDeContas, onCarregaLancamentosParaCo
         let filtrar_por_nome_fornecedor = dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_nome_fornecedor
         let filtrar_por_tipo_de_documento = dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_tipo_de_documento
         let filtrar_por_tipo_de_pagamento = dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_tipo_de_pagamento
+        let filtrar_por_conferencia = dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_conferencia
+        let filtrar_por_informacao = dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_informacao
 
         if (dados_acompanhamento_de_pc_usuario_logado && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.conta_uuid){
-            carregaLancamentosParaConferencia(prestacaoDeContas, dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.conta_uuid, filtrar_por_acao, filtrar_por_lancamento, paginacao_atual, false, filtrar_por_data_inicio, filtrar_por_data_fim, filtrar_por_nome_fornecedor, filtrar_por_numero_de_documento, filtrar_por_tipo_de_documento, filtrar_por_tipo_de_pagamento)
+            carregaLancamentosParaConferencia(prestacaoDeContas, dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.conta_uuid, filtrar_por_acao, filtrar_por_lancamento, paginacao_atual, false, filtrar_por_data_inicio, filtrar_por_data_fim, filtrar_por_nome_fornecedor, filtrar_por_numero_de_documento, filtrar_por_tipo_de_documento, filtrar_por_tipo_de_pagamento, filtrar_por_conferencia, filtrar_por_informacao)
             toggleBtnEscolheConta(dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.conta_uuid)
         }else if (contasAssociacao.length > 0){
             carregaLancamentosParaConferencia(prestacaoDeContas, contasAssociacao[0].uuid)
@@ -75,7 +77,7 @@ const ConferenciaDeLancamentos = ({prestacaoDeContas, onCarregaLancamentosParaCo
         setClickBtnEscolheConta(conta_uuid);
     };
 
-    const salvaObjetoAcompanhamentoDePcPorUsuarioLocalStorage = (prestacao_de_contas, conta_uuid, filtrar_por_acao, filtrar_por_lancamento, paginacao_atual, filtrar_por_data_inicio, filtrar_por_data_fim, filtrar_por_nome_fornecedor, filtrar_por_numero_de_documento, filtrar_por_tipo_de_documento, filtrar_por_tipo_de_pagamento) =>{
+    const salvaObjetoAcompanhamentoDePcPorUsuarioLocalStorage = (prestacao_de_contas, conta_uuid, filtrar_por_acao, filtrar_por_lancamento, paginacao_atual, filtrar_por_data_inicio, filtrar_por_data_fim, filtrar_por_nome_fornecedor, filtrar_por_numero_de_documento, filtrar_por_tipo_de_documento, filtrar_por_tipo_de_pagamento, filtrar_por_informacoes, filtrar_por_conferencia) =>{
         let objetoAcompanhamentoDePcPorUsuario = {
             prestacao_de_conta_uuid: prestacaoDeContas.uuid,
             conferencia_de_lancamentos: {
@@ -90,13 +92,15 @@ const ConferenciaDeLancamentos = ({prestacaoDeContas, onCarregaLancamentosParaCo
                 filtrar_por_numero_de_documento: filtrar_por_numero_de_documento,
                 filtrar_por_tipo_de_documento: filtrar_por_tipo_de_documento,
                 filtrar_por_tipo_de_pagamento: filtrar_por_tipo_de_pagamento,
+                filtrar_por_informacao: filtrar_por_informacoes,
+                filtrar_por_conferencia: filtrar_por_conferencia
             },
         }
         meapcservice.setAcompanhamentoDePcPorUsuario(visoesService.getUsuarioLogin(), objetoAcompanhamentoDePcPorUsuario)
     }
 
     const carregaLancamentosParaConferencia = async (prestacao_de_contas, conta_uuid, filtrar_por_acao=null, filtrar_por_lancamento=null, paginacao_atual, ordenar_por_imposto=null, filtrar_por_data_inicio=null, filtrar_por_data_fim=null, filtrar_por_nome_fornecedor=null, filtrar_por_numero_de_documento=null, filtrar_por_tipo_de_documento=null, filtrar_por_tipo_de_pagamento=null, filtrar_por_informacoes=[], filtrar_por_conferencia = []) =>{
-        salvaObjetoAcompanhamentoDePcPorUsuarioLocalStorage(prestacao_de_contas, conta_uuid, filtrar_por_acao, filtrar_por_lancamento, paginacao_atual, filtrar_por_data_inicio, filtrar_por_data_fim, filtrar_por_nome_fornecedor, filtrar_por_numero_de_documento, filtrar_por_tipo_de_documento, filtrar_por_tipo_de_pagamento)
+        salvaObjetoAcompanhamentoDePcPorUsuarioLocalStorage(prestacao_de_contas, conta_uuid, filtrar_por_acao, filtrar_por_lancamento, paginacao_atual, filtrar_por_data_inicio, filtrar_por_data_fim, filtrar_por_nome_fornecedor, filtrar_por_numero_de_documento, filtrar_por_tipo_de_documento, filtrar_por_tipo_de_pagamento, filtrar_por_informacoes, filtrar_por_conferencia)
 
         setContaUuid(conta_uuid)
         setLoadingLancamentosParaConferencia(true)
