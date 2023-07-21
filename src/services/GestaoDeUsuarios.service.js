@@ -72,6 +72,6 @@ export const postUsuario = async (payload) => {
     return (await api.post(URL_USUARIOS, payload, authHeader)).data
 };
 
-export const putUsuario = async (usuarioId, payload) => {
-    return (await api.put(`${URL_USUARIOS}${usuarioId}/`, payload, authHeader)).data
+export const putUsuario = async (id, payload) => {
+    return (await api.put(`${URL_USUARIOS}${id}/`, payload, authHeader)).data
 };

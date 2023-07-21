@@ -6,14 +6,16 @@ import * as yup from "yup";
 import {GestaoDeUsuariosFormContext} from "../context/GestaoDeUsuariosFormProvider";
 import {valida_cpf_cnpj} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import {ModalConfirmacao} from "./ModalConfirmacao";
-import {useCreateUsuario} from "../hooks/useCreateUsuario";
 import {useHistory} from "react-router-dom";
 import {useUsuarioStatus} from "../hooks/useUsuarioStatus";
+import {useCreateUsuario} from "../hooks/useCreateUsuario";
+import {useUpdateUsuario} from "../hooks/useUpdateUsuario";
 
 
 export const FormUsuario = ({usuario}) => {
     const { modo, Modos, uuidUnidadeBase, visaoBase} = useContext(GestaoDeUsuariosFormContext)
-    const { mutate: postUsuario, isLoading, error, data: resultPost } = useCreateUsuario();
+    const { mutate: createUsuario, isLoading: isLoadingCreate, error: errorOnCreate, data: resultPost } = useCreateUsuario();
+    const { mutate: updateUsuario, isLoading: isLoadingUpdate, error: errorOnUpdate, data: resultPut } = useUpdateUsuario();
     const history = useHistory();
     const [formErrors, setFormErrors] = useState({});
     const [bloquearCampoName, setBloquearCampoName] = useState(true)
@@ -95,7 +97,15 @@ export const FormUsuario = ({usuario}) => {
             visao: visaoBase
         };
 
-        postUsuario(payload)
+        if (modo === Modos.INSERT) {
+            console.log('Incluindo usuario: ', payload)
+            createUsuario(payload)
+        }
+
+        if (modo === Modos.EDIT){
+            console.log('Alterando usuario: ', payload)
+            updateUsuario({id:usuario.id, payload})
+        }
 
         setSubmitting(false)
 
@@ -296,15 +306,20 @@ export const FormUsuario = ({usuario}) => {
                             />
                         </section>
                         <section>
-                            <h2>Usuário Status</h2>
+                            <span>{`Modo: ${modo}`}</span>
+                            <h3>Usuário Status</h3>
                             <p>
                                 {JSON.stringify(usuarioStatus)}
                             </p>
                         </section>
                         <section>
-                            <h2>Result post</h2>
+                            <h3>Result Post (INC)</h3>
                             <p>
                                 {JSON.stringify(resultPost)}
+                            </p>
+                            <h3>Result Put (UPDT)</h3>
+                            <p>
+                                {JSON.stringify(resultPut)}
                             </p>
                         </section>
                     </form>
