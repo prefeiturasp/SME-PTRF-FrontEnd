@@ -19,7 +19,6 @@ export const GestaoDeUsuariosFormMain = () => {
         <>
             <BarraTopoForm/>
             <FormUsuario usuario={usuario}/>
-            <p>Id do usuário: {id_usuario}</p>
         </>
     )
 }

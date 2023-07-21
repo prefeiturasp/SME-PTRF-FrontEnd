@@ -10,6 +10,7 @@ import {useHistory} from "react-router-dom";
 import {useUsuarioStatus} from "../hooks/useUsuarioStatus";
 import {useCreateUsuario} from "../hooks/useCreateUsuario";
 import {useUpdateUsuario} from "../hooks/useUpdateUsuario";
+import {ModalValidacao} from "./ModalValidacao";
 
 
 export const FormUsuario = ({usuario}) => {
@@ -34,10 +35,17 @@ export const FormUsuario = ({usuario}) => {
     const [formValues, setFormValues] = useState(emptyValues);
     const [enviarFormulario, setEnviarFormulario] = useState(true);
 
-    const [ podeAcessarUnidade, setPodeAcessarUnidade ] = useState(false);
-
     const [showModalUsuarioNaoCadastradoCoreSso, setShowModalUsuarioNaoCadastradoCoreSso] = useState(false)
     const [cadastramentoNoCoreSsoConfirmado, setCadastramentoNoCoreSsoConfirmado] = useState(false)
+
+    // Modal de validação de acesso
+    const [showModalValidacaoAcesso, setShowModalValidacaoAcesso] = useState(false)
+    const [mensagemModalValidacaoAcesso, setMensagemModalValidacaoAcesso] = useState('')
+    const handleFecharModalValidacaoAcesso = ({resetForm}) => {
+        setFormValues(emptyValues)
+        resetForm()
+        setShowModalValidacaoAcesso(false);
+    };
 
     useEffect(()=>{
         const usuarioToFormValues = (usuario) => {
@@ -61,26 +69,51 @@ export const FormUsuario = ({usuario}) => {
         }
     }, [resultPost, modo, Modos, history])
 
+    // Ações executadas quando a API retorna as informações de status do usuário
     useEffect(() => {
+        const usuarioPodeAcessarUnidade = () => {
+            return !!usuarioStatus?.pode_acessar_unidade?.pode_acessar
+        }
+        const abreModalDeAvisoSeNaoPuderAcessarUnidade = () => {
+            setMensagemModalValidacaoAcesso(usuarioStatus.pode_acessar_unidade?.mensagem)
+            setShowModalValidacaoAcesso(!usuarioPodeAcessarUnidade())
+        }
+
         if (usuarioStatus) {
-            if (!usuarioStatus.usuario_core_sso?.info_core_sso?.nome) {
+            const usuarioCadastradoNoCoreSSO = !!usuarioStatus.usuario_core_sso?.info_core_sso?.nome
+
+            if (!usuarioCadastradoNoCoreSSO) {
+
+                // Mensagens de validação de acesso tem prioridade sobre o cadastramento no CoreSSO
+                if (!usuarioPodeAcessarUnidade()){
+                    abreModalDeAvisoSeNaoPuderAcessarUnidade()
+                    return
+                }
+
                 if (!cadastramentoNoCoreSsoConfirmado) {
                     setShowModalUsuarioNaoCadastradoCoreSso(!cadastramentoNoCoreSsoConfirmado);
                 }
-            } else {
-                setShowModalUsuarioNaoCadastradoCoreSso(false);
-                if (!usuarioStatus.usuario_sig_escola?.info_sig_escola?.user_id) {
-                    setFormValues(prevFormValues => ({
-                        ...prevFormValues,
-                        username: username,
-                        e_servidor: e_servidor,
-                        name: usuarioStatus.usuario_core_sso.info_core_sso.nome,
-                        email: usuarioStatus.usuario_core_sso.info_core_sso.email
-                    }));
-                } else {
-                    history.push(`/gestao-de-usuarios-form/${usuarioStatus.usuario_sig_escola.info_sig_escola.user_id}`)
-                }
+                return
             }
+
+            setShowModalUsuarioNaoCadastradoCoreSso(false);
+
+            const usuarioCadastradoNoSigEscola = !!usuarioStatus.usuario_sig_escola?.info_sig_escola?.user_id
+            if (!usuarioCadastradoNoSigEscola) {
+                setFormValues(prevFormValues => ({
+                    ...prevFormValues,
+                    username: username,
+                    e_servidor: e_servidor,
+                    name: usuarioStatus.usuario_core_sso.info_core_sso.nome,
+                    email: usuarioStatus.usuario_core_sso.info_core_sso.email
+                }));
+
+                abreModalDeAvisoSeNaoPuderAcessarUnidade()
+
+            } else {
+                history.push(`/gestao-de-usuarios-form/${usuarioStatus.usuario_sig_escola.info_sig_escola.user_id}`)
+            }
+
         }
 
     }, [usuarioStatus, cadastramentoNoCoreSsoConfirmado]);
@@ -309,21 +342,12 @@ export const FormUsuario = ({usuario}) => {
                             />
                         </section>
                         <section>
-                            <span>{`Modo: ${modo}`}</span>
-                            <h3>Usuário Status</h3>
-                            <p>
-                                {JSON.stringify(usuarioStatus)}
-                            </p>
-                        </section>
-                        <section>
-                            <h3>Result Post (INC)</h3>
-                            <p>
-                                {JSON.stringify(resultPost)}
-                            </p>
-                            <h3>Result Put (UPDT)</h3>
-                            <p>
-                                {JSON.stringify(resultPut)}
-                            </p>
+                            <ModalValidacao
+                                show={showModalValidacaoAcesso}
+                                titulo="Usuário não autorizado na unidade"
+                                texto={mensagemModalValidacaoAcesso}
+                                botaoFecharHandle={() => handleFecharModalValidacaoAcesso({resetForm})}
+                            />
                         </section>
                     </form>
 
