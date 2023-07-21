@@ -11,6 +11,7 @@ import {useUsuarioStatus} from "../hooks/useUsuarioStatus";
 import {useCreateUsuario} from "../hooks/useCreateUsuario";
 import {useUpdateUsuario} from "../hooks/useUpdateUsuario";
 import {ModalValidacao} from "./ModalValidacao";
+import {toastCustom} from "../../ToastCustom";
 
 
 export const FormUsuario = ({usuario}) => {
@@ -118,7 +119,6 @@ export const FormUsuario = ({usuario}) => {
 
     }, [usuarioStatus, cadastramentoNoCoreSsoConfirmado]);
 
-
     const handleSubmitUsuarioForm = async (values, {setSubmitting}) => {
         if (!enviarFormulario) return;
 
@@ -142,6 +142,8 @@ export const FormUsuario = ({usuario}) => {
             console.log('Alterando usuario: ', payload)
             updateUsuario({id:usuario.id, payload})
         }
+
+        exibeMsgSalvoComSucesso()
 
         setSubmitting(false)
 
@@ -202,6 +204,22 @@ export const FormUsuario = ({usuario}) => {
         setShowModalUsuarioNaoCadastradoCoreSso(false)
         setCadastramentoNoCoreSsoConfirmado(true)
     };
+
+    const exibeMsgSalvoComSucesso = () =>{
+
+        const msg_salvo_com_sucesso = {
+            titulo: modo === Modos.INSERT ? "Inclusão efetuada com sucesso." : "Alteração efetuada com sucesso.",
+            mensagem: modo === Modos.INSERT ? "Usuário adicionado com sucesso" : "Usuário alterado com sucesso"
+        }
+
+        toastCustom.ToastCustomSuccess(
+            msg_salvo_com_sucesso.titulo,
+            msg_salvo_com_sucesso.mensagem,
+            'success',
+            'top-right',
+            true)
+    }
+
 
     return (
         <Formik
