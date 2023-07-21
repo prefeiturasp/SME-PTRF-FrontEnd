@@ -69,14 +69,17 @@ export const FormUsuario = ({usuario}) => {
                 }
             } else {
                 setShowModalUsuarioNaoCadastradoCoreSso(false);
-                setFormValues(prevFormValues => ({
-                    ...prevFormValues,
-                    username: username,
-                    e_servidor: e_servidor,
-                    name: usuarioStatus.usuario_core_sso.info_core_sso.nome,
-                    email: usuarioStatus.usuario_core_sso.info_core_sso.email
-                }));
-                console.log("Altera formValues: ")
+                if (!usuarioStatus.usuario_sig_escola?.info_sig_escola?.user_id) {
+                    setFormValues(prevFormValues => ({
+                        ...prevFormValues,
+                        username: username,
+                        e_servidor: e_servidor,
+                        name: usuarioStatus.usuario_core_sso.info_core_sso.nome,
+                        email: usuarioStatus.usuario_core_sso.info_core_sso.email
+                    }));
+                } else {
+                    history.push(`/gestao-de-usuarios-form/${usuarioStatus.usuario_sig_escola.info_sig_escola.user_id}`)
+                }
             }
         }
 
