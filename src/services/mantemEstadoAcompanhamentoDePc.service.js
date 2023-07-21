@@ -20,7 +20,8 @@ const limpaAcompanhamentoDePcUsuarioLogado = (usuario) =>{
                 filtrar_por_numero_de_documento: '',
                 filtrar_por_tipo_de_documento: '',
                 filtrar_por_tipo_de_pagamento: '',
-
+                filtrar_por_conferencia: [],
+                filtrar_por_informacao: []
             },
         }
     };
@@ -57,6 +58,8 @@ const setAcompanhamentoDePc = async () =>{
                filtrar_por_numero_de_documento: acompanhamento_de_pc_usuario_logado && acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos && acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_numero_de_documento ? acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_numero_de_documento : '',
                filtrar_por_tipo_de_documento: acompanhamento_de_pc_usuario_logado && acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos && acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_tipo_de_documento ? acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_tipo_de_documento : '',
                filtrar_por_tipo_de_pagamento: acompanhamento_de_pc_usuario_logado && acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos && acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_tipo_de_pagamento ? acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_tipo_de_pagamento : '',
+               filtrar_por_informacoes: acompanhamento_de_pc_usuario_logado && acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos && acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_informacao ? acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_informacao : [],
+               filtrar_por_conferencia: acompanhamento_de_pc_usuario_logado && acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos && acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_conferencia ? acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_conferencia : [],
             },
         }
     };
