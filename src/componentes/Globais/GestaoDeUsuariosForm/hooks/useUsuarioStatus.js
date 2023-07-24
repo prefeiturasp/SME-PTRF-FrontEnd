@@ -15,7 +15,6 @@ export const useUsuarioStatus = (username, e_servidor, uuid_unidade)  => {
   }
 
   return useQuery(['usuario-status', username, e_servidor, uuid_unidade], getUsuarioStatusFromApi, {
-    keepPreviousData: true,
     staleTime: 5000, // 5 segundos
   });
 };

@@ -12,6 +12,7 @@ import {useCreateUsuario} from "../hooks/useCreateUsuario";
 import {useUpdateUsuario} from "../hooks/useUpdateUsuario";
 import {ModalValidacao} from "./ModalValidacao";
 import {toastCustom} from "../../ToastCustom";
+import Loading from "../../../../utils/Loading";
 
 
 export const FormUsuario = ({usuario}) => {
@@ -24,7 +25,7 @@ export const FormUsuario = ({usuario}) => {
 
     const [username, setUsername] = useState('');
     const [e_servidor, setE_servidor] = useState('');
-    const { data: usuarioStatus } = useUsuarioStatus(username, e_servidor, uuidUnidadeBase);
+    const { data: usuarioStatus, isLoading } = useUsuarioStatus(username, e_servidor, uuidUnidadeBase);
 
     const emptyValues = {
       e_servidor: '',
@@ -299,6 +300,18 @@ export const FormUsuario = ({usuario}) => {
                                 </div>
                             </div>
 
+                            {isLoading &&
+                                <div className="col-12" style={{ alignItems: "center"  }}>
+                                <Loading
+                                    corGrafico="black"
+                                    corFonte="dark"
+                                    marginTop="0"
+                                    marginBottom="0"
+                                />
+                                </div>
+                            }
+
+                            {!isLoading &&
                             <div className="col-12 col-md-6">
                                 <div className="form-group">
                                     <label htmlFor="name">Nome Completo</label>
@@ -325,7 +338,9 @@ export const FormUsuario = ({usuario}) => {
                                     {props.errors.name && <span className="span_erro text-danger mt-1"> {props.errors.name}</span>}
                                 </div>
                             </div>
+                            }
 
+                            {!isLoading &&
                             <div className="col-12 col-md-6">
                                 <div className="form-group">
                                     <label htmlFor="email">E-mail</label>
@@ -339,14 +354,20 @@ export const FormUsuario = ({usuario}) => {
                                         className="form-control"
                                         placeholder='Insira o email'
                                         maxLength='254'
+                                        disabled={!values.e_servidor || !values.username}
                                     />
                                     {props.errors.email && <span className="span_erro text-danger mt-1"> {props.errors.email}</span>}
                                 </div>
                             </div>
+                            }
+
                         </div>
+
+                        {!isLoading &&
                         <div className={"barra-botoes-form-user d-flex justify-content-end mt-n2"}>
                             <button type="submit" className="btn btn-success mt-2 ml-2">Salvar</button>
                         </div>
+                        }
 
                         <section>
                             <ModalConfirmacao
