@@ -86,6 +86,16 @@ export const FormUsuario = ({usuario}) => {
 
             if (!usuarioCadastradoNoCoreSSO) {
 
+                if (usuarioStatus?.info_membro_nao_servidor?.nome){
+                    setFormValues(prevFormValues => ({
+                        ...prevFormValues,
+                        username: username,
+                        e_servidor: e_servidor,
+                        name: usuarioStatus?.info_membro_nao_servidor?.nome,
+                        email: usuarioStatus?.info_membro_nao_servidor?.email
+                    }));
+                }
+
                 // Mensagens de validação de acesso tem prioridade sobre o cadastramento no CoreSSO
                 if (!usuarioPodeAcessarUnidade()){
                     abreModalDeAvisoSeNaoPuderAcessarUnidade()
@@ -96,6 +106,8 @@ export const FormUsuario = ({usuario}) => {
                     setShowModalUsuarioNaoCadastradoCoreSso(!cadastramentoNoCoreSsoConfirmado);
                 }
                 return
+            } else {
+                setBloquearCampoName(true)
             }
 
             setShowModalUsuarioNaoCadastradoCoreSso(false);
