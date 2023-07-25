@@ -37,7 +37,7 @@ import { ValoresReprogramadosDrePage } from "../paginas/dres/ValoresReprogramado
 import {AnalisesRegularidadeAssociacaoPage} from "../paginas/dres/RegularidadeAssociacoes/AnalisesRegularidadeDaAssociacao";
 import {SuporteAsUnidadesDre} from "../paginas/dres/SuporteAsUnidades"
 import {SuporteAsUnidadesSme} from "../paginas/SME/SuporteAsUnidades"
-import {GestaoDeUsuarios} from "../componentes/Globais/GestaoDeUsuarios"
+import {GestaoDeUsuariosListPage} from "../componentes/Globais/GestaoDeUsuariosList"
 // Faz o redirect de acordo com a Visao Selecionada
 import {RedirectLoginVisaoUe} from "../utils/RedirectLoginVisaoUe";
 import {DadosDaDiretoriaDrePage} from "../paginas/dres/Diretoria/DadosDaDiretoria";
@@ -89,6 +89,7 @@ import {AcompanhamentoDeRelatorioConsolidadoSMEResumoAcertos} from "../component
 import {ExtracaoDadosPage} from '../paginas/SME/ExtracaoDados'
 import TesteDataTableAnt
     from "../componentes/Globais/ExibeAcertosEmLancamentosEDocumentosPorConta/AcertosLancamentos/TesteDataTableAnt";
+import {GestaoDeUsuariosFormPage} from "../componentes/Globais/GestaoDeUsuariosForm";
 
 const routesConfig = [
     {
@@ -335,8 +336,14 @@ const routesConfig = [
     },
     {
         exact: true,
-        path: "/gestao-de-usuarios",
-        component: GestaoDeUsuarios,
+        path: "/gestao-de-usuarios-list",
+        component: GestaoDeUsuariosListPage,
+        permissoes: ['access_gestao_usuarios_ue', 'access_gestao_usuarios_dre', 'access_gestao_usuarios_sme'],
+    },
+    {
+        exact: true,
+        path: "/gestao-de-usuarios-form/:id_usuario?",
+        component: GestaoDeUsuariosFormPage,
         permissoes: ['access_gestao_usuarios_ue', 'access_gestao_usuarios_dre', 'access_gestao_usuarios_sme'],
     },
     {
