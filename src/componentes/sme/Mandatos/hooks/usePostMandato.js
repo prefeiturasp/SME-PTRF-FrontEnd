@@ -7,7 +7,7 @@ import {toastCustom} from "../../../Globais/ToastCustom";
 export const usePostMandato = () => {
 
     const queryClient = useQueryClient()
-    const {setShowModalForm, setShowModalInfo, setTextoModalInfo, setTituloModalInfo} = useContext(MandatosContext)
+    const {setShowModalForm, setShowModalInfo, setTextoModalInfo, setTituloModalInfo, setBloquearBtnSalvarForm} = useContext(MandatosContext)
 
     const mutationPost = useMutation({
         mutationFn: ({payload}) => {
@@ -28,7 +28,10 @@ export const usePostMandato = () => {
             setShowModalInfo(true)
             setTituloModalInfo('Erro ao cadastrar período de mandado')
             setTextoModalInfo(error.response.data.detail)
-        }
+        },
+        onSettled: () => {
+            setBloquearBtnSalvarForm(false)
+        },
     })
     return {mutationPost}
 }

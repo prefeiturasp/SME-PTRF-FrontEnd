@@ -7,7 +7,7 @@ import {toastCustom} from "../../../Globais/ToastCustom";
 export const usePatchMandato = () => {
 
     const queryClient = useQueryClient()
-    const {setShowModalForm, setShowModalInfo, setTextoModalInfo, setTituloModalInfo} = useContext(MandatosContext)
+    const {setShowModalForm, setShowModalInfo, setTextoModalInfo, setTituloModalInfo, setBloquearBtnSalvarForm} = useContext(MandatosContext)
 
     const mutationPatch = useMutation({
         mutationFn: ({uuidMandato, payload}) => {
@@ -30,7 +30,10 @@ export const usePatchMandato = () => {
             setShowModalInfo(true)
             setTituloModalInfo('Erro ao editar período de mandado')
             setTextoModalInfo(error.response.data.detail)
-        }
+        },
+        onSettled: () => {
+            setBloquearBtnSalvarForm(false)
+        },
     })
     return {mutationPatch}
 }
