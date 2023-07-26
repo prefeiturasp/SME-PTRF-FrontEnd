@@ -89,6 +89,7 @@ import {AcompanhamentoDeRelatorioConsolidadoSMEResumoAcertos} from "../component
 import {ExtracaoDadosPage} from '../paginas/SME/ExtracaoDados'
 import TesteDataTableAnt
     from "../componentes/Globais/ExibeAcertosEmLancamentosEDocumentosPorConta/AcertosLancamentos/TesteDataTableAnt";
+import {Mandatos} from "../componentes/sme/Mandatos";
 
 const routesConfig = [
     {
@@ -435,6 +436,12 @@ const routesConfig = [
         exact: true,
         path: "/parametro-tipos-conta",
         component: TiposConta,
+        permissoes: ['access_painel_parametrizacoes'],
+    },
+    {
+        exact: true,
+        path: "/parametro-mandato",
+        component: Mandatos,
         permissoes: ['access_painel_parametrizacoes'],
     },
     {
