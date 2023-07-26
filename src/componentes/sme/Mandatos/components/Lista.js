@@ -16,7 +16,7 @@ import {usePatchMandato} from "../hooks/usePatchMandato";
 
 export const Lista = () => {
 
-    const {setShowModalForm, stateFormModal, setStateFormModal} = useContext(MandatosContext)
+    const {setShowModalForm, stateFormModal, setStateFormModal, setBloquearBtnSalvarForm} = useContext(MandatosContext)
     const {isLoading, data} = useGetMandatos()
     const {mutationPost} = usePostMandato()
     const {mutationPatch} = usePatchMandato()
@@ -27,7 +27,7 @@ export const Lista = () => {
     const acoesTemplate = (rowData) => {
         return (
             <div>
-                <button className="btn-editar-membro" onClick={()=>handleEditFormModal(rowData)}>
+                <button className="btn-editar-membro" onClick={() => handleEditFormModal(rowData)}>
                     <span data-tip="Editar mandato" data-html={true}>
                         <FontAwesomeIcon
                             style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
@@ -40,7 +40,7 @@ export const Lista = () => {
         )
     };
 
-    const handleEditFormModal = (rowData) =>{
+    const handleEditFormModal = (rowData) => {
         setStateFormModal({
             ...stateFormModal,
             referencia: rowData.referencia_mandato,
@@ -52,17 +52,19 @@ export const Lista = () => {
         setShowModalForm(true)
     };
 
-    const handleSubmitFormModal = async (values)=>{
+    const handleSubmitFormModal = async (values) => {
+        // Libera o botão somente após ter resolvido a mutation em usePostMandato e usePatchMandato
+        setBloquearBtnSalvarForm(true)
         let payload = {
             referencia_mandato: values.referencia,
             data_inicial: moment(values.data_inicial).format('YYYY-MM-DD'),
             data_final: moment(values.data_final).format('YYYY-MM-DD'),
         };
 
-        if (!values.uuid){
+        if (!values.uuid) {
             mutationPost.mutate({payload: payload})
-        }else {
-            mutationPatch.mutate({uuidMandato: values.uuid, payload:payload})
+        } else {
+            mutationPatch.mutate({uuidMandato: values.uuid, payload: payload})
         }
     };
 
@@ -76,50 +78,47 @@ export const Lista = () => {
             />
         );
     }
-
-    if (results && results.length > 0) {
-        return (
-            <>
+    return (
+        <>
+            {results && results.length > 0 ? (
+                    <div className="p-2">
+                        <DataTable
+                            value={results}
+                            className='tabela-lista-usuarios'
+                        >
+                            <Column
+                                field="referencia_mandato"
+                                header="Referencia Mandato"
+                            />
+                            <Column
+                                field="data_inicial"
+                                header="Data inicial"
+                                body={dataTemplate}
+                            />
+                            <Column
+                                field="data_final"
+                                header="Data Final"
+                                body={dataTemplate}
+                            />
+                            <Column
+                                field="acao"
+                                header="Ação"
+                                body={acoesTemplate}
+                                style={{width: '10%', textAlign: "center",}}
+                            />
+                        </DataTable>
+                    </div>
+                ) :
                 <div className="p-2">
-                    <DataTable
-                        value={results}
-                        className='tabela-lista-usuarios'
-                    >
-                        <Column
-                            field="referencia_mandato"
-                            header="Referencia Mandato"
-                        />
-                        <Column
-                            field="data_inicial"
-                            header="Data inicial"
-                            body={dataTemplate}
-                        />
-                        <Column
-                            field="data_final"
-                            header="Data Final"
-                            body={dataTemplate}
-                        />
-                        <Column
-                            field="acao"
-                            header="Ação"
-                            body={acoesTemplate}
-                            style={{width: '10%', textAlign: "center",}}
-                        />
-                    </DataTable>
+                    <p><strong>Nenhum resultado encontrado.</strong></p>
                 </div>
-                <section>
-                    <ModalForm
-                        handleSubmitFormModal={handleSubmitFormModal}
-                    />
-                    <ModalInfo/>
-                </section>
-            </>
-        )
-    }else {
-        return (
-            <div className="p-2">
-                <p><strong>Nenhum resultado encontrado.</strong></p>
-            </div>
-        )
-    }
+            }
+            <section>
+                <ModalForm
+                    handleSubmitFormModal={handleSubmitFormModal}
+                />
+                <ModalInfo/>
+            </section>
+        </>
+    )
 }

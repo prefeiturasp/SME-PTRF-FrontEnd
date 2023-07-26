@@ -9,7 +9,7 @@ import moment from "moment";
 
 export const ModalForm = ({handleSubmitFormModal}) => {
 
-    const {showModalForm, setShowModalForm, stateFormModal} = useContext(MandatosContext)
+    const {showModalForm, setShowModalForm, stateFormModal, bloquearBtnSalvarForm} = useContext(MandatosContext)
 
     const bodyTextarea = () => {
         return (
@@ -114,6 +114,7 @@ export const ModalForm = ({handleSubmitFormModal}) => {
                                         <button
                                             type="submit"
                                             className="btn btn btn-success mt-2"
+                                            disabled={bloquearBtnSalvarForm}
                                         >
                                             {stateFormModal.uuid ? "Salvar" : "Adicionar" }
                                         </button>
