@@ -125,6 +125,18 @@ export const FormUsuario = ({usuario}) => {
                 abreModalDeAvisoSeNaoPuderAcessarUnidade()
 
             } else {
+                if (!usuarioPodeAcessarUnidade()){
+                    setFormValues(prevFormValues => ({
+                        ...prevFormValues,
+                        username: username,
+                        e_servidor: e_servidor,
+                        name: usuarioStatus.usuario_core_sso.info_core_sso.nome,
+                        email: usuarioStatus.usuario_core_sso.info_core_sso.email
+                    }));
+
+                    abreModalDeAvisoSeNaoPuderAcessarUnidade()
+                    return
+                }
                 history.push(`/gestao-de-usuarios-form/${usuarioStatus.usuario_sig_escola.info_sig_escola.user_id}`)
             }
 
