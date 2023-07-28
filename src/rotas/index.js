@@ -91,6 +91,7 @@ import TesteDataTableAnt
     from "../componentes/Globais/ExibeAcertosEmLancamentosEDocumentosPorConta/AcertosLancamentos/TesteDataTableAnt";
 import {GestaoDeUsuariosFormPage} from "../componentes/Globais/GestaoDeUsuariosForm";
 import {Mandatos} from "../componentes/sme/Mandatos";
+import {MotivosRejeicaoEncerramentoConta} from "../componentes/sme/Parametrizacoes/Estrutura/MotivosRejeicaoEncerramentoConta";
 
 const routesConfig = [
     {
@@ -449,6 +450,12 @@ const routesConfig = [
         exact: true,
         path: "/parametro-mandato",
         component: Mandatos,
+        permissoes: ['access_painel_parametrizacoes'],
+    },
+    {
+        exact: true,
+        path: "/motivos-rejeicao",
+        component: MotivosRejeicaoEncerramentoConta,
         permissoes: ['access_painel_parametrizacoes'],
     },
     {
