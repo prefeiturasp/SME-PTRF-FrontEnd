@@ -69,6 +69,12 @@ export const PainelParametrizacoes = () => {
             url: 'parametro-mandato',
             icone: IconeMandato,
             permissoes: ['access_painel_parametrizacoes'],
+        },
+        {
+            parametro: 'Motivos Rejeição (encerramento conta)',
+            url: 'motivos-rejeicao',
+            icone: IconeTiposAcertos,
+            permissoes: ['access_painel_parametrizacoes'],
         }
     ];
 
