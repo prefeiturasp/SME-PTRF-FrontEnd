@@ -3,7 +3,7 @@ import {useSelector, useDispatch} from "react-redux";
 import {UrlsMenuInterno, retornaMenuAtualizadoPorStatusCadastro} from "../UrlsMenuInterno";
 import Loading from "../../../../utils/Loading";
 import {MenuInterno} from "../../../Globais/MenuInterno";
-import {getContas, salvarContas, getAssociacao, getStatusCadastroAssociacao, encerrarConta} from "../../../../services/escolas/Associacao.service";
+import {getContas, salvarContas, getAssociacao, getStatusCadastroAssociacao, encerrarConta, alterarSolicitacaoEncerramentoConta} from "../../../../services/escolas/Associacao.service";
 import {FormDadosDasContas} from "./FormDadosDasContas";
 import {ExportaDadosDaAsssociacao} from "../ExportaDadosAssociacao";
 import { visoesService } from "../../../../services/visoes.service";
@@ -161,14 +161,24 @@ export const DadosDasContas = () => {
 
     const handleEncerrarTipoConta = async () => {
         let payload = {
-            "conta_associacao": modalEncerramentoData.conta_associacao,
+            "conta_associacao": modalEncerramentoData.conta_associacao.uuid,
             "data_de_encerramento_na_agencia": modalEncerramentoData.data_de_encerramento_na_agencia
         }
     
         setLoading(true);
         try {
-            await encerrarConta(payload);
-            toastCustom.ToastCustomSuccess('Solicitação de encerramento realizada com sucesso', 'A encerramento de conta foi enviado para a Dre e está no estado de pendente de aprovação.')
+            if(modalEncerramentoData.conta_associacao.solicitacao_encerramento !== null) {
+                const idSolicitacaoJaExistente = modalEncerramentoData.conta_associacao.solicitacao_encerramento.uuid;
+
+                payload.status = "PENDENTE";
+
+                await alterarSolicitacaoEncerramentoConta(payload, idSolicitacaoJaExistente);
+                toastCustom.ToastCustomSuccess('Nova solicitação de encerramento realizada com sucesso', 'A solicitação de encerramento de conta foi enviado para a Dre e está no estado de pendente de aprovação.')
+            } else {
+                await encerrarConta(payload);
+                toastCustom.ToastCustomSuccess('Solicitação de encerramento realizada com sucesso', 'A solicitação de encerramento de conta foi enviado para a Dre e está no estado de pendente de aprovação.')
+            }
+
             buscaContas();
         } catch (error) {
             toastCustom.ToastCustomError('Erro ao tentar enviar a solicitação', 'Ocorreu um erro e a solicitação de encerramento não foi enviada para a Dre.')
@@ -199,9 +209,9 @@ export const DadosDasContas = () => {
 
         const modalData = {
             "show": true,
-            "conta_associacao": conta.uuid,
+            "conta_associacao": conta,
             "data_de_encerramento_na_agencia": dataFormatada,
-            "index": index
+            "index": index,
         }
 
         return setModalEncerramentoData(modalData);

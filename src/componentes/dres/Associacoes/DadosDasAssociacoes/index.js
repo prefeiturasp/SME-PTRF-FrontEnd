@@ -12,9 +12,13 @@ import {visoesService} from "../../../../services/visoes.service"
 import "../associacoes.scss"
 
 export const DetalhesDaAssociacao = () => {
+    const [showModalConfirmarEncerramentoConta, setShowModalConfirmarEncerramentoConta] = useState(false);
+    const [showModalRejeitarEncerramentoConta, setShowModalRejeitarEncerramentoConta] = useState(false);
+
     const [clickBtnEscolheOpcao, setClickBtnEscolheOpcao] = useState({
         dados_unidade: true,
         dados_associacao: false,
+        contas_associacao: false,
         processos_sei: false,
         situacao_financeira: false
     });
@@ -22,6 +26,7 @@ export const DetalhesDaAssociacao = () => {
     const [activeTab, setActiveTab] = useState({
         dados_unidade: true,
         dados_associacao: false,
+        contas_associacao: false,
         processos_sei: false,
         situacao_financeira: false
     });
@@ -37,6 +42,11 @@ export const DetalhesDaAssociacao = () => {
         {
             id: "dados_associacao",
             nome: "Dados da associação",
+            permissao: visoesService.getPermissoes(["access_dados_unidade_dre"])
+        },
+        {
+            id: "contas_associacao",
+            nome: "Contas da associação",
             permissao: visoesService.getPermissoes(["access_dados_unidade_dre"])
         },
         {
@@ -60,12 +70,16 @@ export const DetalhesDaAssociacao = () => {
             id: tabs[1].id,
             permissao: visoesService.getPermissoes(["access_dados_unidade_dre"])
         },
-        processos_sei : {
+        contas_associacao : {
             id: tabs[2].id,
+            permissao: visoesService.getPermissoes(["access_dados_unidade_dre"])
+        },
+        processos_sei : {
+            id: tabs[3].id,
             permissao: visoesService.getPermissoes(['access_processo_sei'])
         },
         situacao_financeira : {
-            id: tabs[3].id,
+            id: tabs[4].id,
             permissao: visoesService.getPermissoes(["access_situacao_financeira_dre"])
         },
     }
@@ -80,6 +94,7 @@ export const DetalhesDaAssociacao = () => {
         let novoEstadoConteudo = {
             dados_unidade: false,
             dados_associacao: false,
+            contas_associacao: false,
             processos_sei: false,
             situacao_financeira: false
         }
@@ -87,6 +102,7 @@ export const DetalhesDaAssociacao = () => {
         let novoEstadoAba = {
             dados_unidade: false,
             dados_associacao: false,
+            contas_associacao: false,
             processos_sei: false,
             situacao_financeira: false
         }
@@ -120,6 +136,7 @@ export const DetalhesDaAssociacao = () => {
             let novoEstadoAba = {
                 dados_unidade: false,
                 dados_associacao: false,
+                contas_associacao: false,
                 processos_sei: false,
                 situacao_financeira: false
             }
@@ -127,6 +144,7 @@ export const DetalhesDaAssociacao = () => {
             let novoEstadoConteudo = {
                 dados_unidade: false,
                 dados_associacao: false,
+                contas_associacao: false,
                 processos_sei: false,
                 situacao_financeira: false
             }
@@ -141,13 +159,29 @@ export const DetalhesDaAssociacao = () => {
         
     }
 
-
     const toggleBtnEscolheOpcao= (id) => {
         setClickBtnEscolheOpcao({
             [id]: !clickBtnEscolheOpcao[id]
         });
     };
 
+    const handleOpenModalConfirmarEncerramentoConta = (conta) => {
+        console.log("CONTA CONFIRMAR: ", conta)
+        return setShowModalConfirmarEncerramentoConta(true);
+    };
+
+    const handleCloseModalConfirmarEncerramentoConta = () => {
+        return setShowModalConfirmarEncerramentoConta(false);
+    };
+
+    const handleOpenModalRejeitarEncerramentoConta = (conta) => {
+        console.log("CONTA REJEITAR: ", conta)
+        return setShowModalRejeitarEncerramentoConta(true);
+    };
+
+    const handleCloseModalRejeitarEncerramentoConta = () => {
+        return setShowModalRejeitarEncerramentoConta(false);
+    };
 
     return (
         <>
@@ -218,9 +252,25 @@ export const DetalhesDaAssociacao = () => {
                                             <InfosAssociacao
                                                 dadosDaAssociacao={dadosDaAssociacao}
                                             />
-                                            <hr/>
+                                        </div>
+                                    </div>
+                                :
+                                    null
+                            }
+
+                            {conteudo_tab.contas_associacao.permissao 
+                                ?
+                                    <div
+                                        className={`tab-pane fade show ${activeTab.contas_associacao ? "active" : ""}`}
+                                        id={`nav-${conteudo_tab.contas_associacao.id}`}
+                                        role="tabpanel"
+                                        aria-labelledby={`nav-${conteudo_tab.contas_associacao.id}-tab`}
+                                    >
+                                        <div className="page-content-inner">
                                             <InfosContas
                                                 dadosDaAssociacao={dadosDaAssociacao}
+                                                handleOpenModalConfirmarEncerramentoConta={handleOpenModalConfirmarEncerramentoConta}
+                                                handleOpenModalRejeitarEncerramentoConta={handleOpenModalRejeitarEncerramentoConta}
                                             />
                                         </div>
                                     </div>
