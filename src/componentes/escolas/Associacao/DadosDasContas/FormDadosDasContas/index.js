@@ -5,7 +5,7 @@ import {Formik, FieldArray} from "formik";
 import { BarraStatusEncerramentoConta } from "./BarraStatusEncerramentoConta";
 import { CardSaldoEncerramentoConta } from "./CardSaldoEncerramentoConta";
 
-export const FormDadosDasContas = ({intialValues, setaCampoReadonly, onSubmit, errors, podeEditarDadosMembros, handleOpenModalConfirmEncerramentoConta, handleOpenModalMotivoRejeicaoEncerramento, errosDataEncerramentoConta}) => {
+export const FormDadosDasContas = ({intialValues, setaCampoReadonly, onSubmit, errors, podeEditarDadosMembros, handleOpenModalConfirmEncerramentoConta, handleOpenModalMotivoRejeicaoEncerramento, errosDataEncerramentoConta, inicioPeriodo}) => {
     const valores_inciais = {
         contas: intialValues
     };
@@ -117,7 +117,7 @@ export const FormDadosDasContas = ({intialValues, setaCampoReadonly, onSubmit, e
                                                         </div>
                                                     </div>
                                                     <CardSaldoEncerramentoConta index={index} conta={conta} handleOpenModalConfirmEncerramentoConta={handleOpenModalConfirmEncerramentoConta}
-                                                    handleOpenModalMotivoRejeicaoEncerramento={handleOpenModalMotivoRejeicaoEncerramento} errosDataEncerramentoConta={errosDataEncerramentoConta} />
+                                                    handleOpenModalMotivoRejeicaoEncerramento={handleOpenModalMotivoRejeicaoEncerramento} errosDataEncerramentoConta={errosDataEncerramentoConta} inicioPeriodo={inicioPeriodo} />
                                                 </div>
                                             )
                                         })}
