@@ -181,7 +181,11 @@ export const DadosDasContas = () => {
 
             buscaContas();
         } catch (error) {
-            toastCustom.ToastCustomError('Erro ao tentar enviar a solicitação', 'Ocorreu um erro e a solicitação de encerramento não foi enviada para a Dre.')
+            if(error.response.data && error.response.data.mensagem) {
+                toastCustom.ToastCustomError('Erro ao enviar a solicitação de encerramento', error.response.data.mensagem)
+            } else {
+                toastCustom.ToastCustomError('Erro ao enviar a solicitação de encerramento', 'Ocorreu um erro e a solicitação de encerramento não foi enviada para a Dre.')
+            }
         }
 
         const modalData = {
@@ -268,7 +272,7 @@ export const DadosDasContas = () => {
                             primeiroBotaoTexto="Cancelar"
                             primeiroBotaoCss="base-verde-outline"
                             segundoBotaoCss="base-verde"
-                            segundoBotaoTexto="confirmar"
+                            segundoBotaoTexto="Confirmar"
                         />
                     </section>
                     <section>

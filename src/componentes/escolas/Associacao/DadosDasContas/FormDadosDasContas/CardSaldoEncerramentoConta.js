@@ -49,7 +49,7 @@ export const CardSaldoEncerramentoConta = ({index, conta, handleOpenModalConfirm
                                 <div className="form-group">
                                     <label htmlFor="data_encerramento">
                                         Data de encerramento
-                                        <span data-html={true} data-tip="Essa é a data de encerramento na agência.">
+                                        <span data-html={true} data-tip="Informar a data de encerramento da conta na agência.">
                                             <FontAwesomeIcon
                                                 style={{marginLeft: "10px", color: '#2B7D83'}}
                                                 icon={faExclamationCircle}
