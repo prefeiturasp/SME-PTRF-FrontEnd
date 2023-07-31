@@ -54,7 +54,7 @@ export const  InfosContas = ({dadosDaAssociacao, handleOpenModalConfirmarEncerra
                             <div className="col-12 col-md-3 form-group">
                                 <label>
                                     <strong>Data do encerramento</strong> 
-                                    <span data-html={true} data-tip="Essa é a data de encerramento na agência.">
+                                    <span data-html={true} data-tip="Informar a data de encerramento da conta na agência.">
                                         <FontAwesomeIcon
                                             style={{marginLeft: "10px", color: '#2B7D83'}}
                                             icon={faExclamationCircle}

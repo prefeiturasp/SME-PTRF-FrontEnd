@@ -9,6 +9,7 @@ import {faEye} from "@fortawesome/free-solid-svg-icons";
 
 import ReactTooltip from "react-tooltip";
 import { formataNomeDreParaTabelas } from "../../../utils/FormataNomeDreParaTabelas";
+import {faExclamationCircle} from "@fortawesome/free-solid-svg-icons";
 
 export const ResumoPorDre = ({resumoPorDre, statusPeriodo, periodoEscolhido}) => {
 
@@ -85,6 +86,10 @@ export const ResumoPorDre = ({resumoPorDre, statusPeriodo, periodoEscolhido}) =>
         return (
             <span data-html={true} data-tip={"Soma das PCs Não recebidas, Em análise e Devolvidas para acertos."} data-for="em-analise-header-id">
                 <span>Em análise</span>
+                <FontAwesomeIcon
+                    style={{ marginLeft: "4px", color: '#2B7D83' }}
+                    icon={faExclamationCircle}
+                />
                 <ReactTooltip id="em-analise-header-id" html={true}/>
             </span>
         )
@@ -111,8 +116,8 @@ export const ResumoPorDre = ({resumoPorDre, statusPeriodo, periodoEscolhido}) =>
                 <Column field='dre.sigla' header='DRE' body={nomeDreColunaTemplate} style={{width: '20%'}}/>
                 <Column field='cards.TOTAL_UNIDADES' header='Total de Associações' body={totalUnidadesTemplate}/>
 
-                {!periodoEmAndamento && <Column field='cards.NAO_APRESENTADA' header='Não apresentadas'  body={naoApresentadaTemplate}/>}
-                {periodoEmAndamento && <Column field='cards.RECEBIDA' header='Recebidas e aguardando análise' body={recebidaTemplate}/>}
+                <Column field='cards.NAO_APRESENTADA' header='Não apresentadas'  body={naoApresentadaTemplate}/>
+                {periodoEmAndamento && <Column field='cards.RECEBIDA' header='Aguardando análise' body={recebidaTemplate}/>}
                 {periodoEmAndamento && <Column field='cards.EM_ANALISE' header={emAnaliseHeaderTemplate()} body={emAnaliseBodyTemplate}/>}
 
                 <Column field='cards.APROVADA' header='Aprovadas' body={aprovadaTemplate}/>

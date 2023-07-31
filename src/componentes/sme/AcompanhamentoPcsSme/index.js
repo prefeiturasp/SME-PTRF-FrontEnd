@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Redirect} from 'react-router-dom'
-import {getPeriodos, getItensDashboard} from "../../../services/sme/DashboardSme.service";
+import {getPeriodos, getItensDashboardSme} from "../../../services/sme/DashboardSme.service";
 import {SelectPeriodo} from "./SelectPeriodo";
 import "./dashboard.scss"
 import {BarraDeStatus} from "./BarraDeStatus";
@@ -40,7 +39,7 @@ export const AcompanhamentoPcsSme = () => {
     const carregaItensDashboard = async () =>{
         setLoading(true);
         if (periodoEscolhido){
-            let itens = await getItensDashboard(periodoEscolhido);
+            let itens = await getItensDashboardSme(periodoEscolhido, true);
             let cards = itens.cards;
             let totalCard = cards.shift();
             let totalUnidades = totalCard ? totalCard.quantidade_prestacoes : 0;
