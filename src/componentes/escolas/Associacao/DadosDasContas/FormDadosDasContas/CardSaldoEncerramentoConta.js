@@ -4,7 +4,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faExclamationCircle, faTimesCircle} from "@fortawesome/free-solid-svg-icons";
 import ReactTooltip from "react-tooltip";
 
-export const CardSaldoEncerramentoConta = ({index, conta, handleOpenModalConfirmEncerramentoConta, handleOpenModalMotivoRejeicaoEncerramento, errosDataEncerramentoConta}) => {
+export const CardSaldoEncerramentoConta = ({index, conta, handleOpenModalConfirmEncerramentoConta, handleOpenModalMotivoRejeicaoEncerramento, errosDataEncerramentoConta, inicioPeriodo}) => {
 
     const [dataEncerramento, setDataEncerramento] = useState("");
     const [erroData, setErroData] = useState(null);
@@ -49,7 +49,7 @@ export const CardSaldoEncerramentoConta = ({index, conta, handleOpenModalConfirm
                                 <div className="form-group">
                                     <label htmlFor="data_encerramento">
                                         Data de encerramento
-                                        <span data-html={true} data-tip="Essa é a data de encerramento na agência.">
+                                        <span data-html={true} data-tip="Informar a data de encerramento da conta na agência.">
                                             <FontAwesomeIcon
                                                 style={{marginLeft: "10px", color: '#2B7D83'}}
                                                 icon={faExclamationCircle}
@@ -57,7 +57,6 @@ export const CardSaldoEncerramentoConta = ({index, conta, handleOpenModalConfirm
                                         </span>
                                         <ReactTooltip html={true}/>
                                     </label>
-                                    
                                     
                                     <DatePickerField
                                         disabled={habilitaEncerramentoConta(conta)}
@@ -67,6 +66,7 @@ export const CardSaldoEncerramentoConta = ({index, conta, handleOpenModalConfirm
                                         type="date"
                                         className="form-control"
                                         maxDate={new Date()}
+                                        minDate={new Date(inicioPeriodo)}
                                     />
                                     {erroData && erroData.mensagem && (
                                     <span className="span_erro text-danger mt-1">
