@@ -259,6 +259,7 @@ export const DadosDasContas = () => {
                                 handleOpenModalConfirmEncerramentoConta={handleOpenModalConfirmEncerramentoConta}
                                 handleOpenModalMotivoRejeicaoEncerramento={handleOpenModalMotivoRejeicaoEncerramento}
                                 errosDataEncerramentoConta={errosDataEncerramentoConta}
+                                inicioPeriodo={stateAssociacao.periodo_inicial ? stateAssociacao.periodo_inicial.data_inicio_realizacao_despesas : null}
                             />
                         </div>
                     </div>

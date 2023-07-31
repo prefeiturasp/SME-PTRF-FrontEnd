@@ -4,7 +4,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faExclamationCircle, faTimesCircle} from "@fortawesome/free-solid-svg-icons";
 import ReactTooltip from "react-tooltip";
 
-export const CardSaldoEncerramentoConta = ({index, conta, handleOpenModalConfirmEncerramentoConta, handleOpenModalMotivoRejeicaoEncerramento, errosDataEncerramentoConta}) => {
+export const CardSaldoEncerramentoConta = ({index, conta, handleOpenModalConfirmEncerramentoConta, handleOpenModalMotivoRejeicaoEncerramento, errosDataEncerramentoConta, inicioPeriodo}) => {
 
     const [dataEncerramento, setDataEncerramento] = useState("");
     const [erroData, setErroData] = useState(null);
@@ -58,7 +58,6 @@ export const CardSaldoEncerramentoConta = ({index, conta, handleOpenModalConfirm
                                         <ReactTooltip html={true}/>
                                     </label>
                                     
-                                    
                                     <DatePickerField
                                         disabled={habilitaEncerramentoConta(conta)}
                                         value={dataEncerramento}
@@ -67,6 +66,7 @@ export const CardSaldoEncerramentoConta = ({index, conta, handleOpenModalConfirm
                                         type="date"
                                         className="form-control"
                                         maxDate={new Date()}
+                                        minDate={new Date(inicioPeriodo)}
                                     />
                                     {erroData && erroData.mensagem && (
                                     <span className="span_erro text-danger mt-1">
