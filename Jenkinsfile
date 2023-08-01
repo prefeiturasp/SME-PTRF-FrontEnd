@@ -37,7 +37,7 @@ pipeline {
         
 
         stage('Build') {
-          when { anyOf { branch 'master'; branch 'main'; branch "story/*"; branch 'development'; branch 'develop'; branch 'release'; branch 'homolog'; branch 'homolog-r2';  } } 
+          when { anyOf { branch 'master'; branch 'main'; branch "story/*"; branch 'development'; branch 'develop'; branch 'release'; branch 'homolog'; branch 'homolog-r2'; branch 'atualizarpython';  } } 
           steps {
             script {
               imagename1 = "registry.sme.prefeitura.sp.gov.br/${env.branchname}/ptrf-frontend"
@@ -55,7 +55,7 @@ pipeline {
         }
 	    
         stage('Deploy'){
-            when { anyOf {  branch 'master'; branch 'main'; branch 'develop'; branch 'development'; branch 'release'; branch 'homolog'; branch 'homolog-r2';  } }        
+            when { anyOf {  branch 'master'; branch 'main'; branch 'develop'; branch 'development'; branch 'release'; branch 'homolog'; branch 'homolog-r2'; branch 'atualizarpython';  } }        
             steps {
                 script{
                     if ( env.branchname == 'main' ||  env.branchname == 'master' || env.branchname == 'homolog' || env.branchname == 'release' ) {
@@ -66,9 +66,9 @@ pipeline {
                     }
                       withCredentials([file(credentialsId: "${kubeconfig}", variable: 'config')]){
 		        sh('if [ -f '+"$home"+'/.kube/config ]; then rm -f '+"$home"+'/.kube/config; fi')
-                        if ( env.branchname == 'homolog-r2' ) {
+                        if ( env.branchname == 'atualizarpython' ) {
                           sh('cp $config '+"$home"+'/.kube/config')
-                          sh 'kubectl rollout restart deployment/ptrf-frontend -n sme-ptrf-hom2'
+                          sh 'kubectl rollout restart deployment/ptrf-frontend -n sme-sigescola-pre'
                         }
                         else {
                           sh('cp $config '+"$home"+'/.kube/config')
@@ -121,4 +121,5 @@ def getKubeconf(branchName) {
     else if ("release".equals(branchName)) { return "config_hom"; }
     else if ("development".equals(branchName)) { return "config_dev"; }
     else if ("develop".equals(branchName)) { return "config_dev"; }
+    else if ("atualizarpython".equals(branchName)) { return "config_prd"; }
 }
