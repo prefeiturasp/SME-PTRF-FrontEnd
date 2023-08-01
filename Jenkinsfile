@@ -68,7 +68,7 @@ pipeline {
 		        sh('if [ -f '+"$home"+'/.kube/config ]; then rm -f '+"$home"+'/.kube/config; fi')
                         if ( env.branchname == 'atualizarpython' ) {
                           sh('cp $config '+"$home"+'/.kube/config')
-                          sh 'kubectl rollout restart deployment/ptrf-frontend -n sme-sigescola-pre'
+                          sh 'kubectl rollout restart deployment/sigescolapre-frontend -n sme-sigescola-pre'
                         }
                         else {
                           sh('cp $config '+"$home"+'/.kube/config')
