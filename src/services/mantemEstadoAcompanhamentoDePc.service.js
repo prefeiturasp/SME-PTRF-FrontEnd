@@ -21,7 +21,8 @@ const limpaAcompanhamentoDePcUsuarioLogado = (usuario) =>{
                 filtrar_por_tipo_de_documento: '',
                 filtrar_por_tipo_de_pagamento: '',
                 filtrar_por_conferencia: [],
-                filtrar_por_informacao: []
+                filtrar_por_informacao: [],
+                ordenamento_tabela_lancamentos: []
             },
         }
     };
@@ -36,6 +37,14 @@ const setAcompanhamentoDePcPorUsuario = (usuario, objeto) =>{
     };
     localStorage.setItem(ACOMPANHAMENTO_DE_PC, JSON.stringify(dados_acompanhamentos_de_pc_update));
 }
+
+const setOrdenamentoTabelaLancamentos = (usuario, ordenamento) => {
+    let acompanhamento_de_pc_usuario_logado = getAcompanhamentoDePcUsuarioLogado();
+    if (acompanhamento_de_pc_usuario_logado) {
+        acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.ordenamento_tabela_lancamentos = ordenamento;
+        setAcompanhamentoDePcPorUsuario(usuario, acompanhamento_de_pc_usuario_logado);
+    }
+};
 
 const setAcompanhamentoDePc = async () =>{
     let todos_acompanhamentos_de_pc = getTodosAcompanhamentosDePc()
@@ -60,6 +69,7 @@ const setAcompanhamentoDePc = async () =>{
                filtrar_por_tipo_de_pagamento: acompanhamento_de_pc_usuario_logado && acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos && acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_tipo_de_pagamento ? acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_tipo_de_pagamento : '',
                filtrar_por_informacoes: acompanhamento_de_pc_usuario_logado && acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos && acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_informacao ? acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_informacao : [],
                filtrar_por_conferencia: acompanhamento_de_pc_usuario_logado && acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos && acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_conferencia ? acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_conferencia : [],
+               ordenamento_tabela_lancamentos: acompanhamento_de_pc_usuario_logado && acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos && acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos ? acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.ordenamento_tabela_lancamentos : [],
             },
         }
     };
@@ -83,4 +93,5 @@ export const mantemEstadoAcompanhamentoDePc = {
     setAcompanhamentoDePcPorUsuario,
     getTodosAcompanhamentosDePc,
     getAcompanhamentoDePcUsuarioLogado,
+    setOrdenamentoTabelaLancamentos
 }
