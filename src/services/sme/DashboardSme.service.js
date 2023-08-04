@@ -16,6 +16,9 @@ export const getItensDashboard = async (uuid_periodo) => {
     return (await api.get(`/api/prestacoes-contas/dashboard-sme/?periodo=${uuid_periodo}`, authHeader)).data
 };
 
+export const getItensDashboardSme = async (uuid_periodo, unificar_apresentados_nao_recebidos) => {
+    return (await api.get(`/api/prestacoes-contas/dashboard-sme/?periodo=${uuid_periodo}&unificar_pcs_apresentadas_nao_recebidas=${unificar_apresentados_nao_recebidos}`, authHeader)).data
+};
 
 export const getCardRelatorios = async (uuid_periodo) => {
     return (await api.get(`/api/consolidados-dre/acompanhamento-de-relatorios-consolidados-sme/?periodo=${uuid_periodo}`, authHeader)).data

@@ -1,8 +1,8 @@
 import React, {useContext, useState} from "react";
-import {GestaoDeUsuariosContext} from "./context/GestaoDeUsuariosProvider";
+import {GestaoDeUsuariosListContext} from "../context/GestaoDeUsuariosListProvider";
 
 export const FormFiltros = ({grupos}) => {
-    const {setFilter, initialFilter, visaoBase} = useContext(GestaoDeUsuariosContext);
+    const {setFilter, initialFilter, visaoBase} = useContext(GestaoDeUsuariosListContext);
     const [formFilter, setFormFilter] = useState(initialFilter);
 
     const handleChangeFormFilter = (name, value) => {
