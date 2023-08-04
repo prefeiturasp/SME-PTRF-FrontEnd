@@ -89,6 +89,14 @@ export const salvarContas = async (payload) => {
     return (await api.post(`/api/associacoes/${localStorage.getItem(ASSOCIACAO_UUID)}/contas-update/`, payload, authHeader))
 };
 
+export const encerrarConta = async (payload) => {
+    return (await api.post(`/api/solicitacoes-encerramento-conta/`, payload, authHeader))
+};
+
+export const alterarSolicitacaoEncerramentoConta = async (payload, idSolicitacao) => {
+    return (await api.patch(`/api/solicitacoes-encerramento-conta/${idSolicitacao}/`, payload, authHeader))
+};
+
 export const exportarDadosAssociacao = async () => {
     return api
             .get(`/api/associacoes/${localStorage.getItem(ASSOCIACAO_UUID)}/exportar`, {

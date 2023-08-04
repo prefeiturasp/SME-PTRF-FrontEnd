@@ -1,7 +1,7 @@
 import {getUsuarios} from '../../../../services/GestaoDeUsuarios.service';
 import {useQuery} from '@tanstack/react-query';
 import {useContext} from "react";
-import {GestaoDeUsuariosContext} from "../context/GestaoDeUsuariosProvider";
+import {GestaoDeUsuariosListContext} from "../context/GestaoDeUsuariosListProvider";
 
 export const useUsuarios = ()  => {
   const {
@@ -10,7 +10,7 @@ export const useUsuarios = ()  => {
     currentPage,
     setTotalPages,
     setCount
-  } = useContext(GestaoDeUsuariosContext);
+  } = useContext(GestaoDeUsuariosListContext);
   async function getUsuariosList() {
     try {
       const result = await getUsuarios(uuidUnidadeBase, filter, currentPage)

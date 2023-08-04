@@ -3,12 +3,15 @@ import {useSelector, useDispatch} from "react-redux";
 import {UrlsMenuInterno, retornaMenuAtualizadoPorStatusCadastro} from "../UrlsMenuInterno";
 import Loading from "../../../../utils/Loading";
 import {MenuInterno} from "../../../Globais/MenuInterno";
-import {getContas, salvarContas, getAssociacao, getStatusCadastroAssociacao} from "../../../../services/escolas/Associacao.service";
+import {getContas, salvarContas, getAssociacao, getStatusCadastroAssociacao, encerrarConta, alterarSolicitacaoEncerramentoConta} from "../../../../services/escolas/Associacao.service";
 import {FormDadosDasContas} from "./FormDadosDasContas";
 import {ExportaDadosDaAsssociacao} from "../ExportaDadosAssociacao";
 import { visoesService } from "../../../../services/visoes.service";
 import { setStatusCadastro, resetStatusCadastro } from "../../../../store/reducers/componentes/escolas/Associacao/DadosAssociacao/StatusCadastro/actions";
 import { toastCustom } from "../../../Globais/ToastCustom";
+import { ModalConfirmEncerramentoConta } from "./FormDadosDasContas/ModalConfirmEncerramentoConta";
+import { formataDataParaPadraoYYYYMMDD } from "../../../../utils/FormataData";
+import { ModalMotivoRejeicaoEncerramento } from "./FormDadosDasContas/ModalMotivoRejeicaoEncerramento";
 
 export const DadosDasContas = () => {
 
@@ -24,11 +27,23 @@ export const DadosDasContas = () => {
         numero_conta: "",
     }];
 
+    const initialStateModalEncerramento = {
+        show: false,
+        conta_associacao: "",
+        data_de_encerramento_na_agencia: "",
+        index: ""
+    }
+
     const [loading, setLoading] = useState(true);
     const [intialValues, setIntialValues] = useState(initial);
     const [errors, setErrors] = useState({});
     const [stateAssociacao, setStateAssociacao] = useState({})
     const [menuUrls, setMenuUrls] = useState(UrlsMenuInterno);
+    const [errosDataEncerramentoConta, setErrosDataEncerramentoConta] = useState([]);
+    const [modalEncerramentoData, setModalEncerramentoData] = useState(initialStateModalEncerramento);
+    const [showModalMotivoRejeicaoEncerramento, setShowModalMotivoRejeicaoEncerramento] = useState(false);
+    const [textoModalEncerramentoConta, setTextoModalEncerramentoConta] = useState("");
+
 
     useEffect(() =>{
         buscaContas();
@@ -55,9 +70,23 @@ export const DadosDasContas = () => {
         atualizaMenu();
     }, [statusCadastro]);
 
+    const geraTextoModalEncerramentoConta = (associacao) => {
+        let textoModal = "Dre"
+
+        if(associacao && associacao.unidade) {
+            let nomeDre = associacao.unidade.dre.nome;
+            nomeDre = nomeDre.toLowerCase().replace(/\b\w/g, (match) => match.toUpperCase());
+
+            textoModal = `<p>Ao confirmar essa ação, sua solicitação de encerramento de conta será encaminhada para validação da ${nomeDre}. Deseja continuar?</p>`;
+        }
+
+        setTextoModalEncerramentoConta(textoModal)
+    }
+
     const buscaAssociacao = async () => {
         const associacao = await getAssociacao();
-        setStateAssociacao(associacao)
+        setStateAssociacao(associacao);
+        geraTextoModalEncerramentoConta(associacao);
     };
 
     const buscaStatusCadastro = async () => {
@@ -130,6 +159,80 @@ export const DadosDasContas = () => {
         return false;
     }
 
+    const handleEncerrarTipoConta = async () => {
+        let payload = {
+            "conta_associacao": modalEncerramentoData.conta_associacao.uuid,
+            "data_de_encerramento_na_agencia": modalEncerramentoData.data_de_encerramento_na_agencia
+        }
+    
+        setLoading(true);
+        try {
+            if(modalEncerramentoData.conta_associacao.solicitacao_encerramento !== null) {
+                const idSolicitacaoJaExistente = modalEncerramentoData.conta_associacao.solicitacao_encerramento.uuid;
+
+                payload.status = "PENDENTE";
+
+                await alterarSolicitacaoEncerramentoConta(payload, idSolicitacaoJaExistente);
+                toastCustom.ToastCustomSuccess('Nova solicitação de encerramento realizada com sucesso', 'A solicitação de encerramento de conta foi enviado para a Dre e está no estado de pendente de aprovação.')
+            } else {
+                await encerrarConta(payload);
+                toastCustom.ToastCustomSuccess('Solicitação de encerramento realizada com sucesso', 'A solicitação de encerramento de conta foi enviado para a Dre e está no estado de pendente de aprovação.')
+            }
+
+            buscaContas();
+        } catch (error) {
+            if(error.response.data && error.response.data.mensagem) {
+                toastCustom.ToastCustomError('Erro ao enviar a solicitação de encerramento', error.response.data.mensagem)
+            } else {
+                toastCustom.ToastCustomError('Erro ao enviar a solicitação de encerramento', 'Ocorreu um erro e a solicitação de encerramento não foi enviada para a Dre.')
+            }
+        }
+
+        const modalData = {
+            "show": false,
+            "conta_associacao": "",
+            "data_de_encerramento_na_agencia": "",
+            "index": ""
+        }
+
+        setModalEncerramentoData(modalData);
+
+        setLoading(false);
+    }
+
+    const handleOpenModalConfirmEncerramentoConta = (conta, data, index) => {
+        if(!data) {
+            let erroPreenchimentoData = "* É obrigatório preencher a data de encerramento."
+            return setErrosDataEncerramentoConta([...errosDataEncerramentoConta, { index: index, mensagem: erroPreenchimentoData }]);
+        }
+
+        let errosFiltrados = errosDataEncerramentoConta.filter((erro) => erro.index !== index);
+        setErrosDataEncerramentoConta(errosFiltrados);
+
+        const dataFormatada = formataDataParaPadraoYYYYMMDD(data)
+
+        const modalData = {
+            "show": true,
+            "conta_associacao": conta,
+            "data_de_encerramento_na_agencia": dataFormatada,
+            "index": index,
+        }
+
+        return setModalEncerramentoData(modalData);
+    };
+
+    const handleCloseModalConfirmEncerramentoConta = () => {
+        return setModalEncerramentoData(initialStateModalEncerramento); 
+    }
+
+    const handleOpenModalMotivoRejeicaoEncerramento = () => {
+        return setShowModalMotivoRejeicaoEncerramento(true);
+    }
+
+    const handleCloseModalMotivoRejeicaoEncerramento = () => {
+        return setShowModalMotivoRejeicaoEncerramento(false); 
+    }
+
     return (
         <>
             {loading ? (
@@ -140,21 +243,50 @@ export const DadosDasContas = () => {
                         marginBottom="0"
                     />
                 ) :
-                <div className="row">
-                    <div className="col-12">
-                        <MenuInterno
-                            caminhos_menu_interno = {menuUrls}
-                        />
-                        <ExportaDadosDaAsssociacao/>
-                        <FormDadosDasContas
-                            intialValues={intialValues}
-                            onSubmit={onSubmit}
-                            setaCampoReadonly={setaCampoReadonly}
-                            errors={errors}
-                            podeEditarDadosMembros={podeEditarDadosMembros}
-                        />
+                <>
+                    <div className="row">
+                        <div className="col-12">
+                            <MenuInterno
+                                caminhos_menu_interno = {menuUrls}
+                            />
+                            <ExportaDadosDaAsssociacao/>
+                            <FormDadosDasContas
+                                intialValues={intialValues}
+                                onSubmit={onSubmit}
+                                setaCampoReadonly={setaCampoReadonly}
+                                errors={errors}
+                                podeEditarDadosMembros={podeEditarDadosMembros}
+                                handleOpenModalConfirmEncerramentoConta={handleOpenModalConfirmEncerramentoConta}
+                                handleOpenModalMotivoRejeicaoEncerramento={handleOpenModalMotivoRejeicaoEncerramento}
+                                errosDataEncerramentoConta={errosDataEncerramentoConta}
+                                inicioPeriodo={stateAssociacao.periodo_inicial ? stateAssociacao.periodo_inicial.data_inicio_realizacao_despesas : null}
+                            />
+                        </div>
                     </div>
-                </div>
+                    <section>
+                        <ModalConfirmEncerramentoConta
+                            show={modalEncerramentoData.show}
+                            handleClose={handleCloseModalConfirmEncerramentoConta}
+                            handleEncerrarTipoConta={handleEncerrarTipoConta}
+                            titulo="Solicitar o encerramento da conta"
+                            texto={textoModalEncerramentoConta}
+                            primeiroBotaoTexto="Cancelar"
+                            primeiroBotaoCss="base-verde-outline"
+                            segundoBotaoCss="base-verde"
+                            segundoBotaoTexto="Confirmar"
+                        />
+                    </section>
+                    <section>
+                        <ModalMotivoRejeicaoEncerramento
+                            show={showModalMotivoRejeicaoEncerramento}
+                            handleClose={handleCloseModalMotivoRejeicaoEncerramento}
+                            titulo="Solicitação de encerramento da conta negada"
+                            texto={"Texto de motivo"}
+                            primeiroBotaoTexto="Fechar"
+                            primeiroBotaoCss="base-verde"
+                        />
+                    </section>
+                </>
             }
         </>
     )
