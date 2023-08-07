@@ -3,7 +3,7 @@ import {useSelector, useDispatch} from "react-redux";
 import {UrlsMenuInterno, retornaMenuAtualizadoPorStatusCadastro} from "../UrlsMenuInterno";
 import Loading from "../../../../utils/Loading";
 import {MenuInterno} from "../../../Globais/MenuInterno";
-import {getContas, salvarContas, getAssociacao, getStatusCadastroAssociacao, encerrarConta, alterarSolicitacaoEncerramentoConta} from "../../../../services/escolas/Associacao.service";
+import {getContas, salvarContas, getAssociacao, getStatusCadastroAssociacao, encerrarConta, alterarSolicitacaoEncerramentoConta, getContasEncerradas} from "../../../../services/escolas/Associacao.service";
 import {FormDadosDasContas} from "./FormDadosDasContas";
 import {ExportaDadosDaAsssociacao} from "../ExportaDadosAssociacao";
 import { visoesService } from "../../../../services/visoes.service";
@@ -12,6 +12,7 @@ import { toastCustom } from "../../../Globais/ToastCustom";
 import { ModalConfirmEncerramentoConta } from "./FormDadosDasContas/ModalConfirmEncerramentoConta";
 import { formataDataParaPadraoYYYYMMDD } from "../../../../utils/FormataData";
 import { ModalMotivoRejeicaoEncerramento } from "./FormDadosDasContas/ModalMotivoRejeicaoEncerramento";
+import { TabelaContasEncerradas } from "./TabelaContasEncerradas";
 
 export const DadosDasContas = () => {
 
@@ -40,6 +41,7 @@ export const DadosDasContas = () => {
     const [stateAssociacao, setStateAssociacao] = useState({})
     const [menuUrls, setMenuUrls] = useState(UrlsMenuInterno);
     const [errosDataEncerramentoConta, setErrosDataEncerramentoConta] = useState([]);
+    const [contasEncerradas, setContasEncerradas] = useState([]);
     const [modalEncerramentoData, setModalEncerramentoData] = useState(initialStateModalEncerramento);
     const [showModalMotivoRejeicaoEncerramento, setShowModalMotivoRejeicaoEncerramento] = useState(false);
     const [textoModalEncerramentoConta, setTextoModalEncerramentoConta] = useState("");
@@ -55,6 +57,8 @@ export const DadosDasContas = () => {
 
     const buscaContas = async ()=>{
         let contas = await getContas();
+        let contasEncerradas = await getContasEncerradas();
+        setContasEncerradas(contasEncerradas);
         setIntialValues(contas)
     };
 
@@ -284,6 +288,12 @@ export const DadosDasContas = () => {
                             texto={"Texto de motivo"}
                             primeiroBotaoTexto="Fechar"
                             primeiroBotaoCss="base-verde"
+                        />
+                    </section>
+                    <section className="mt-5">
+                        <TabelaContasEncerradas 
+                            contas={contasEncerradas}
+                            rowsPerPage={10}
                         />
                     </section>
                 </>

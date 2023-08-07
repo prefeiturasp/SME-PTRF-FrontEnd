@@ -47,6 +47,10 @@ export const getContasAssociacao = async (uuid_associacao) => {
     return (await api.get(`api/associacoes/${uuid_associacao}/contas`, authHeader)).data
 };
 
+export const getContasAssociacaoEncerradas = async (uuid_associacao) => {
+    return (await api.get(`api/associacoes/${uuid_associacao}/contas/encerradas`, authHeader)).data
+};
+
 export const updateAssociacao = async (uuid_associacao, payload) => {
     return api.patch(`api/associacoes/${uuid_associacao}/`, payload, authHeader).then(response => {
         return response;
