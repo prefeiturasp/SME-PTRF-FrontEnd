@@ -85,6 +85,10 @@ export const getContas = async () => {
     return (await api.get(`/api/associacoes/${localStorage.getItem(ASSOCIACAO_UUID)}/contas/`, authHeader)).data
 };
 
+export const getContasEncerradas = async () => {
+    return (await api.get(`/api/associacoes/${localStorage.getItem(ASSOCIACAO_UUID)}/contas/encerradas/`, authHeader)).data
+};
+
 export const salvarContas = async (payload) => {
     return (await api.post(`/api/associacoes/${localStorage.getItem(ASSOCIACAO_UUID)}/contas-update/`, payload, authHeader))
 };

@@ -5,6 +5,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faExclamationCircle} from "@fortawesome/free-solid-svg-icons";
 import ReactTooltip from "react-tooltip";
 import {formataDataYYYYMMDDParaApresentacao} from "../../../../../utils/FormataData"
+import { TabelaContasEncerradas } from "./TabelaContasEncerradas";
 
 export const  InfosContas = ({dadosDaAssociacao, handleOpenModalConfirmarEncerramentoConta, handleOpenModalRejeitarEncerramentoConta}) =>{
 
@@ -106,6 +107,13 @@ export const  InfosContas = ({dadosDaAssociacao, handleOpenModalConfirmarEncerra
                     />
                 }
             </div>
+
+            <section className="mt-5">
+                <TabelaContasEncerradas
+                    contas={dadosDaAssociacao.dados_da_associacao.contasEncerradas}
+                    rowsPerPage={10}
+                />
+            </section>
         </>
     );
 };
