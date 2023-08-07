@@ -3,13 +3,14 @@ import {useSelector, useDispatch} from "react-redux";
 import {UrlsMenuInterno, retornaMenuAtualizadoPorStatusCadastro} from "../UrlsMenuInterno";
 import Loading from "../../../../utils/Loading";
 import {MenuInterno} from "../../../Globais/MenuInterno";
-import {getContas, salvarContas, getAssociacao, getStatusCadastroAssociacao, encerrarConta, alterarSolicitacaoEncerramentoConta, getContasEncerradas} from "../../../../services/escolas/Associacao.service";
+import {getContas, salvarContas, getAssociacao, getStatusCadastroAssociacao, encerrarConta, alterarSolicitacaoEncerramentoConta, getContasEncerradas, cancelarSolicitacaoEncerramentoConta} from "../../../../services/escolas/Associacao.service";
 import {FormDadosDasContas} from "./FormDadosDasContas";
 import {ExportaDadosDaAsssociacao} from "../ExportaDadosAssociacao";
 import { visoesService } from "../../../../services/visoes.service";
 import { setStatusCadastro, resetStatusCadastro } from "../../../../store/reducers/componentes/escolas/Associacao/DadosAssociacao/StatusCadastro/actions";
 import { toastCustom } from "../../../Globais/ToastCustom";
 import { ModalConfirmEncerramentoConta } from "./FormDadosDasContas/ModalConfirmEncerramentoConta";
+import { ModalCancelarSolicitacaoEncerramentoConta } from "./FormDadosDasContas/ModalCancelarSolicitacaoEncerramentoConta";
 import { formataDataParaPadraoYYYYMMDD } from "../../../../utils/FormataData";
 import { ModalMotivoRejeicaoEncerramento } from "./FormDadosDasContas/ModalMotivoRejeicaoEncerramento";
 import { TabelaContasEncerradas } from "./TabelaContasEncerradas";
@@ -43,7 +44,8 @@ export const DadosDasContas = () => {
     const [errosDataEncerramentoConta, setErrosDataEncerramentoConta] = useState([]);
     const [contasEncerradas, setContasEncerradas] = useState([]);
     const [modalEncerramentoData, setModalEncerramentoData] = useState(initialStateModalEncerramento);
-    const [showModalMotivoRejeicaoEncerramento, setShowModalMotivoRejeicaoEncerramento] = useState(false);
+    const [showModalMotivoRejeicaoEncerramento, setShowModalMotivoRejeicaoEncerramento] = useState({open: false, motivos: ''});
+    const [modalCancelarEncerramento, setShowModalCancelarEncerramento] = useState({open: false, solicitacao: null});
     const [textoModalEncerramentoConta, setTextoModalEncerramentoConta] = useState("");
 
 
@@ -229,13 +231,40 @@ export const DadosDasContas = () => {
         return setModalEncerramentoData(initialStateModalEncerramento); 
     }
 
-    const handleOpenModalMotivoRejeicaoEncerramento = () => {
-        return setShowModalMotivoRejeicaoEncerramento(true);
+    const handleOpenModalMotivoRejeicaoEncerramento = (solicitacao) => {
+        const motivos = solicitacao.motivos_rejeicao.map(_motivo => _motivo.nome).join(', ');
+        setShowModalMotivoRejeicaoEncerramento({open: true, motivos: motivos});
     }
 
     const handleCloseModalMotivoRejeicaoEncerramento = () => {
         return setShowModalMotivoRejeicaoEncerramento(false); 
     }
+
+    const handleOpenModalCancelarEncerramento = (solicitacao) => {
+        setShowModalCancelarEncerramento({open: true, solicitacao: solicitacao})
+    }
+
+    const handleCloseModalCancelarEncerramento = () => {
+        return setShowModalCancelarEncerramento({open: false, solicitacao: null}); 
+    }
+
+    const handleCancelarEncerramento = async () => {
+        setLoading(true);
+        try {
+            await cancelarSolicitacaoEncerramentoConta(modalCancelarEncerramento.solicitacao.uuid);   
+            toastCustom.ToastCustomSuccess('Solicitação de encerramento cancelada com sucesso.')
+            buscaContas();
+        } catch (error) {
+            if(error.response.data && error.response.data.mensagem) {
+                toastCustom.ToastCustomError('Erro ao enviar a solicitação de encerramento', error.response.data.mensagem)
+            } else {
+                toastCustom.ToastCustomError('Erro ao enviar a solicitação de encerramento', 'Ocorreu um erro e a solicitação de encerramento não foi enviada para a Dre.')
+            }           
+        } finally {
+            handleCloseModalCancelarEncerramento();
+            setLoading(false);
+        }
+    };
 
     return (
         <>
@@ -262,6 +291,7 @@ export const DadosDasContas = () => {
                                 podeEditarDadosMembros={podeEditarDadosMembros}
                                 handleOpenModalConfirmEncerramentoConta={handleOpenModalConfirmEncerramentoConta}
                                 handleOpenModalMotivoRejeicaoEncerramento={handleOpenModalMotivoRejeicaoEncerramento}
+                                handleCancelarEncerramento={handleOpenModalCancelarEncerramento}
                                 errosDataEncerramentoConta={errosDataEncerramentoConta}
                                 inicioPeriodo={stateAssociacao.periodo_inicial ? stateAssociacao.periodo_inicial.data_inicio_realizacao_despesas : null}
                             />
@@ -282,14 +312,27 @@ export const DadosDasContas = () => {
                     </section>
                     <section>
                         <ModalMotivoRejeicaoEncerramento
-                            show={showModalMotivoRejeicaoEncerramento}
+                            show={showModalMotivoRejeicaoEncerramento.open}
                             handleClose={handleCloseModalMotivoRejeicaoEncerramento}
                             titulo="Solicitação de encerramento da conta negada"
-                            texto={"Texto de motivo"}
+                            bodyText={showModalMotivoRejeicaoEncerramento.motivos}
                             primeiroBotaoTexto="Fechar"
                             primeiroBotaoCss="base-verde"
                         />
                     </section>
+                    <section>
+                        <ModalCancelarSolicitacaoEncerramentoConta
+                            show={modalCancelarEncerramento.open}
+                            titulo="Cancelar solicitação de encerramento."
+                            texto="Tem certeza que deseja cancelar solicitação? Essa ação não poderá ser desfeita."
+                            segundoBotaoTexto="Confirmar"
+                            segundoBotaoOnclick={handleCancelarEncerramento}
+                            segundoBotaoCss="success"
+                            primeiroBotaoCss="outline-success"
+                            primeiroBotaoTexto="Cancelar"
+                            handleClose={handleCloseModalCancelarEncerramento}
+                        />
+                    </section>                    
                     <section className="mt-5">
                         <TabelaContasEncerradas 
                             contas={contasEncerradas}
