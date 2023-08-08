@@ -5,7 +5,18 @@ import {Formik, FieldArray} from "formik";
 import { BarraStatusEncerramentoConta } from "./BarraStatusEncerramentoConta";
 import { CardSaldoEncerramentoConta } from "./CardSaldoEncerramentoConta";
 
-export const FormDadosDasContas = ({intialValues, setaCampoReadonly, onSubmit, errors, podeEditarDadosMembros, handleOpenModalConfirmEncerramentoConta, handleOpenModalMotivoRejeicaoEncerramento, errosDataEncerramentoConta, inicioPeriodo}) => {
+export const FormDadosDasContas = ({
+    intialValues, 
+    setaCampoReadonly, 
+    onSubmit, 
+    errors, 
+    podeEditarDadosMembros, 
+    handleOpenModalConfirmEncerramentoConta, 
+    handleOpenModalMotivoRejeicaoEncerramento, 
+    errosDataEncerramentoConta, 
+    inicioPeriodo,
+    handleCancelarEncerramento
+}) => {
     const valores_inciais = {
         contas: intialValues
     };
@@ -116,8 +127,15 @@ export const FormDadosDasContas = ({intialValues, setaCampoReadonly, onSubmit, e
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <CardSaldoEncerramentoConta index={index} conta={conta} handleOpenModalConfirmEncerramentoConta={handleOpenModalConfirmEncerramentoConta}
-                                                    handleOpenModalMotivoRejeicaoEncerramento={handleOpenModalMotivoRejeicaoEncerramento} errosDataEncerramentoConta={errosDataEncerramentoConta} inicioPeriodo={inicioPeriodo} />
+                                                    <CardSaldoEncerramentoConta 
+                                                        index={index} 
+                                                        conta={conta} 
+                                                        handleOpenModalConfirmEncerramentoConta={handleOpenModalConfirmEncerramentoConta}
+                                                        handleOpenModalMotivoRejeicaoEncerramento={handleOpenModalMotivoRejeicaoEncerramento} 
+                                                        errosDataEncerramentoConta={errosDataEncerramentoConta} 
+                                                        inicioPeriodo={inicioPeriodo}
+                                                        handleCancelarEncerramento={handleCancelarEncerramento} 
+                                                    />
                                                 </div>
                                             )
                                         })}
