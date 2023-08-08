@@ -4,8 +4,20 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faExclamationCircle, faTimesCircle} from "@fortawesome/free-solid-svg-icons";
 import ReactTooltip from "react-tooltip";
 
-export const CardSaldoEncerramentoConta = ({index, conta, handleOpenModalConfirmEncerramentoConta, handleOpenModalMotivoRejeicaoEncerramento, errosDataEncerramentoConta, inicioPeriodo}) => {
-
+export const CardSaldoEncerramentoConta = ({
+    index, 
+    conta, 
+    handleOpenModalConfirmEncerramentoConta, 
+    handleOpenModalMotivoRejeicaoEncerramento, 
+    errosDataEncerramentoConta, 
+    inicioPeriodo, 
+    handleCancelarEncerramento
+}) => {
+    const statusSolicitacao = {
+        PENDENTE: 'PENDENTE',
+        REJEITADA: 'REJEITADA',
+        APROVADA: 'APROVADA'        
+    }
     const [dataEncerramento, setDataEncerramento] = useState("");
     const [erroData, setErroData] = useState(null);
 
@@ -21,15 +33,6 @@ export const CardSaldoEncerramentoConta = ({index, conta, handleOpenModalConfirm
             setDataEncerramento(conta.solicitacao_encerramento.data_de_encerramento_na_agencia)
         }
     }, [conta]);
-
-    const habilitaEncerramentoConta = (conta) => {
-        if(conta.solicitacao_encerramento === null) {
-            return false;
-        } else if (conta.solicitacao_encerramento.status === "PENDENTE" || conta.solicitacao_encerramento.status === "APROVADA"){
-            return true;
-        }
-        return false;
-    }
 
     return (
         <div className="card h-100">
@@ -59,7 +62,7 @@ export const CardSaldoEncerramentoConta = ({index, conta, handleOpenModalConfirm
                                     </label>
                                     
                                     <DatePickerField
-                                        disabled={habilitaEncerramentoConta(conta)}
+                                        disabled={!conta.habilitar_solicitar_encerramento}
                                         value={dataEncerramento}
                                         onChange={(name, value) => setDataEncerramento(value)}
                                         name='data_extrato'
@@ -75,33 +78,50 @@ export const CardSaldoEncerramentoConta = ({index, conta, handleOpenModalConfirm
                                     )}
                                 </div>                                                             
                             </div>
-                            <div className="col-6 d-flex justify-content-end" style={{marginTop: "30px"}}>
-                                <div data-html={true} data-tip="Essa solicitação deve ser feita à DRE, após o encerramento da conta no banco e, caso validada, inativará a referida conta para eventos futuros no sistema.">
+
+                            <div className="col-6 d-flex flex-wrap justify-content-end mt-5">
+                                {conta.habilitar_solicitar_encerramento && (
+                                    <div data-html={true} data-tip="Essa solicitação deve ser feita à DRE, após o encerramento da conta no banco e, caso validada, inativará a referida conta para eventos futuros no sistema."
+                                        className="mb-3">
+                                        <button 
+                                            type="button"
+                                            className="btn btn-base-verde-outline"
+                                            onClick={() => handleOpenModalConfirmEncerramentoConta(conta, dataEncerramento, index)}
+                                        >
+                                            <FontAwesomeIcon
+                                                className="icon-btn-base-verde-outline"
+                                                icon={faTimesCircle}
+                                            />
+                                            Solicitar encerramento da conta
+                                        </button>
+                                    </div>
+                                )}
+                                
+                                {conta.solicitacao_encerramento && conta.solicitacao_encerramento.status === statusSolicitacao.PENDENTE  && (
                                     <button 
                                         type="button"
-                                        disabled={habilitaEncerramentoConta(conta)}
-                                        className="btn btn-base-verde-outline"
-                                        onClick={() => handleOpenModalConfirmEncerramentoConta(conta, dataEncerramento, index)}
+                                        className="btn btn-base-vermelho-outline"
+                                        onClick={() => handleCancelarEncerramento(conta.solicitacao_encerramento)}
                                     >
                                         <FontAwesomeIcon
-                                            className="icon-btn-base-verde-outline"
+                                            className="icon-btn-base-vermelho-outline"
                                             icon={faTimesCircle}
                                         />
-                                        Solicitar encerramento da conta
+                                        Cancelar solicitação de encerramento
                                     </button>
-                                </div>
-                                {/* {conta.solicitacao_encerramento && conta.solicitacao_encerramento.status === "REJEITADA" 
-                                && (
-                                    <div className="ml-2">
-                                    <button 
-                                        type="button"
-                                        className="btn btn-base-verde"
-                                        onClick={() => handleOpenModalMotivoRejeicaoEncerramento()}
-                                    >
-                                        Ver motivo da negativa
-                                    </button>
-                                </div>
-                                )} */}
+                                )}                                   
+
+                                {conta.solicitacao_encerramento && conta.solicitacao_encerramento.status === statusSolicitacao.REJEITADA  && (
+                                    <div className="ml-3">
+                                        <button 
+                                            type="button"
+                                            className="btn btn-base-verde"
+                                            onClick={() => handleOpenModalMotivoRejeicaoEncerramento(conta.solicitacao_encerramento)}
+                                        >
+                                            Ver motivo da negativa
+                                        </button>
+                                    </div>
+                                )}                                
                             </div>
                         </>
                     }

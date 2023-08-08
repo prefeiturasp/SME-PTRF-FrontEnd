@@ -97,8 +97,12 @@ export const encerrarConta = async (payload) => {
     return (await api.post(`/api/solicitacoes-encerramento-conta/`, payload, authHeader))
 };
 
-export const alterarSolicitacaoEncerramentoConta = async (payload, idSolicitacao) => {
-    return (await api.patch(`/api/solicitacoes-encerramento-conta/${idSolicitacao}/`, payload, authHeader))
+export const reenviarSolicitacaoEncerramentoConta = async (payload, idSolicitacao) => {
+    return (await api.patch(`/api/solicitacoes-encerramento-conta/${idSolicitacao}/reenviar/`, payload, authHeader))
+};
+
+export const cancelarSolicitacaoEncerramentoConta = async (solicitacaoUUID) => {
+    return (await api.delete(`/api/solicitacoes-encerramento-conta/${solicitacaoUUID}/`, authHeader))
 };
 
 export const exportarDadosAssociacao = async () => {
