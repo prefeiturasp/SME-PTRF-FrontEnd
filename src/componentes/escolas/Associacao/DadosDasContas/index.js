@@ -3,7 +3,7 @@ import {useSelector, useDispatch} from "react-redux";
 import {UrlsMenuInterno, retornaMenuAtualizadoPorStatusCadastro} from "../UrlsMenuInterno";
 import Loading from "../../../../utils/Loading";
 import {MenuInterno} from "../../../Globais/MenuInterno";
-import {getContas, salvarContas, getAssociacao, getStatusCadastroAssociacao, encerrarConta, alterarSolicitacaoEncerramentoConta, getContasEncerradas, cancelarSolicitacaoEncerramentoConta} from "../../../../services/escolas/Associacao.service";
+import {getContas, salvarContas, getAssociacao, getStatusCadastroAssociacao, encerrarConta, reenviarSolicitacaoEncerramentoConta, getContasEncerradas, cancelarSolicitacaoEncerramentoConta} from "../../../../services/escolas/Associacao.service";
 import {FormDadosDasContas} from "./FormDadosDasContas";
 import {ExportaDadosDaAsssociacao} from "../ExportaDadosAssociacao";
 import { visoesService } from "../../../../services/visoes.service";
@@ -172,13 +172,15 @@ export const DadosDasContas = () => {
         }
     
         setLoading(true);
+        
         try {
             if(modalEncerramentoData.conta_associacao.solicitacao_encerramento !== null) {
                 const idSolicitacaoJaExistente = modalEncerramentoData.conta_associacao.solicitacao_encerramento.uuid;
 
                 payload.status = "PENDENTE";
 
-                await alterarSolicitacaoEncerramentoConta(payload, idSolicitacaoJaExistente);
+                await reenviarSolicitacaoEncerramentoConta(payload, idSolicitacaoJaExistente);
+                await buscaContas();
                 toastCustom.ToastCustomSuccess('Nova solicitação de encerramento realizada com sucesso', 'A solicitação de encerramento de conta foi enviado para a Dre e está no estado de pendente de aprovação.')
             } else {
                 await encerrarConta(payload);
