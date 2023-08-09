@@ -34,3 +34,21 @@ export const patchMandato = async (uuidMandato, payload) => {
         authHeader,
     ))
 };
+
+export const getMandatoVigente = async (associacao_uuid, currentPage) => {
+    return (await api.get(`/api/mandatos/mandato-vigente/`,{
+        ...authHeader,
+        params: {
+            associacao_uuid: associacao_uuid,
+        }
+    })).data
+}
+
+export const getCargosDaComposicao = async (composicao_uuid) => {
+    return (await api.get(`/api/cargos-composicao/cargos-da-composicao/`,{
+        ...authHeader,
+        params: {
+            composicao_uuid: composicao_uuid,
+        }
+    })).data
+}
