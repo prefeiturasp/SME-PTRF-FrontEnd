@@ -241,7 +241,7 @@ export const ReceitaFormFormik = ({
 
                                 {/*Tipo de Conta */}
                                 <div className="col-12 col-md-6 mt-4">
-                                    <label htmlFor="conta_associacao">Tipo de conta</label>
+                                    <label htmlFor="conta_associacao">Conta</label>
                                     <select
                                         id="conta_associacao"
                                         name="conta_associacao"

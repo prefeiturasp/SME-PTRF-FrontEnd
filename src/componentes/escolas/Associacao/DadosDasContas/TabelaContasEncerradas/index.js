@@ -10,7 +10,7 @@ export const TabelaContasEncerradas = ({
     const dataTemplate = (rowData, column) => {
         return (
             <div>
-                {rowData.solicitacao_encerramento ? moment(rowData.solicitacao_encerramento.data_aprovacao).format('DD/MM/YYYY') : '-'}
+                {rowData.solicitacao_encerramento ? moment(rowData.solicitacao_encerramento.data_de_encerramento_na_agencia).format('DD/MM/YYYY') : '-'}
             </div>
         )
     };       
@@ -29,8 +29,8 @@ export const TabelaContasEncerradas = ({
             <Column field="banco_nome" header="Banco" />
             <Column field="agencia" header="Agência" />
             <Column field="numero_conta" header="Nº da conta com o dígito" />
-            <Column field="solicitacao_encerramento.data_aprovacao" 
-                    data="solicitacao_encerramento.data_aprovacao" 
+            <Column field="solicitacao_encerramento.data_de_encerramento_na_agencia" 
+                    data="solicitacao_encerramento.data_de_encerramento_na_agencia" 
                     header="Data do encerramento da conta" 
                     body={dataTemplate}/>
         </DataTable>
