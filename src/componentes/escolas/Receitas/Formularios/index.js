@@ -28,6 +28,7 @@ import {PaginasContainer} from "../../../../paginas/PaginasContainer";
 import {toastCustom} from "../../../Globais/ToastCustom";
 import { visoesService } from "../../../../services/visoes.service";
 import { getPeriodoPorUuid } from "../../../../services/sme/Parametrizacoes.service";
+import { STATUS_CONTA_ASSOCIACAO, STATUS_SOLICITACAO_ENCERRAMENTO_CONTA_ASSOCIACAO } from "../../../../constantes/contaAssociacao";
 
 
 export const ReceitaForm = () => {
@@ -500,7 +501,10 @@ export const ReceitaForm = () => {
                     getPath(resultCadastrar)
                 }
             }catch (e) {
-                console.log("Erro ao criar receita em criarReceita ", e)
+                console.log("Erro ao criar receita em criarReceita ", e.response.data)
+                let mensagemErro = e.response && e.response.data && e.response.data.mensagem && Array.isArray(e.response.data.mensagem) ? 
+                                   e.response.data.mensagem.map((msg) => msg).join(", ") : 'Verifique se os dados foram preenchidos corretamente.'
+                toastCustom.ToastCustomError('Erro ao tentar criar receita.', mensagemErro)
             }
         }
         setLoading(false);
@@ -899,14 +903,26 @@ export const ReceitaForm = () => {
             // Lista dos nomes dos tipos de conta que são aceitos pelo tipo de receita selecionado.
             const tipos_conta = tipoReceita.tipos_conta.map(item => item.nome);
 
+            const getOptionPorStatus = (item) => {
+                const defaultProps = {
+                    key: item.uuid,
+                    value: item.uuid
+                }
+                if(item.status === STATUS_CONTA_ASSOCIACAO.ATIVA){
+                    return  <option {...defaultProps}>{item.nome}</option>
+                } else if(item.solicitacao_encerramento && item.solicitacao_encerramento.status !== STATUS_SOLICITACAO_ENCERRAMENTO_CONTA_ASSOCIACAO.APROVADA) {
+                    let informacaoExtra = item.solicitacao_encerramento ? `- Conta encerrada em ${moment(item.solicitacao_encerramento.data_de_encerramento_na_agencia).format('DD/MM/YYYY')}` : ''
+                    return <option {...defaultProps} disabled>{item.nome} {informacaoExtra}</option>
+                }
+            }
             // Filtra as contas pelos tipos aceitos
             return (
                 tabelas.contas_associacao.filter(conta => (tipos_conta.includes(conta.nome))).map((item, key) => (
-                    <option key={item.uuid} value={item.uuid}>{item.nome}</option>)
-                ))
+                    getOptionPorStatus(item)
+                )))
         }
     };
-
+    
     const validateFormReceitas = async (values) => {
         const errors = {};
 
