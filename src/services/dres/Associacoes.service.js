@@ -62,3 +62,19 @@ export const updateAssociacao = async (uuid_associacao, payload) => {
 export const getProcessosAssociacao = async (uuid_associacao) => {
     return (await api.get(`api/associacoes/${uuid_associacao}/processos`, authHeader)).data
 };
+
+export const aprovarSolicitacaoEncerramentoConta = async (id_solicitacao) => {
+    return (await api.patch(`/api/solicitacoes-encerramento-conta/${id_solicitacao}/aprovar/`, {}, authHeader))
+};
+
+export const rejeitarSolicitacaoEncerramentoConta = async (payloadMotivos,id_solicitacao) => {
+    return (await api.patch(`/api/solicitacoes-encerramento-conta/${id_solicitacao}/rejeitar/`, payloadMotivos, authHeader))
+};
+
+export const getContas = async (id_associacao) => {
+    return (await api.get(`/api/associacoes/${id_associacao}/contas/`, authHeader)).data
+};
+
+export const getMotivosRejeicaoEncerramentoContas = async () => {
+    return (await api.get(`/api/motivos-rejeicao-encerramento-conta/`, authHeader)).data
+};

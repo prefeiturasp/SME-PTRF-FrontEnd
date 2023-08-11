@@ -12,8 +12,6 @@ import {visoesService} from "../../../../services/visoes.service"
 import "../associacoes.scss"
 
 export const DetalhesDaAssociacao = () => {
-    const [showModalConfirmarEncerramentoConta, setShowModalConfirmarEncerramentoConta] = useState(false);
-    const [showModalRejeitarEncerramentoConta, setShowModalRejeitarEncerramentoConta] = useState(false);
 
     const [clickBtnEscolheOpcao, setClickBtnEscolheOpcao] = useState({
         dados_unidade: true,
@@ -165,24 +163,6 @@ export const DetalhesDaAssociacao = () => {
         });
     };
 
-    const handleOpenModalConfirmarEncerramentoConta = (conta) => {
-        console.log("CONTA CONFIRMAR: ", conta)
-        return setShowModalConfirmarEncerramentoConta(true);
-    };
-
-    const handleCloseModalConfirmarEncerramentoConta = () => {
-        return setShowModalConfirmarEncerramentoConta(false);
-    };
-
-    const handleOpenModalRejeitarEncerramentoConta = (conta) => {
-        console.log("CONTA REJEITAR: ", conta)
-        return setShowModalRejeitarEncerramentoConta(true);
-    };
-
-    const handleCloseModalRejeitarEncerramentoConta = () => {
-        return setShowModalRejeitarEncerramentoConta(false);
-    };
-
     return (
         <>
             {dadosDaAssociacao ? (
@@ -269,8 +249,6 @@ export const DetalhesDaAssociacao = () => {
                                         <div className="page-content-inner">
                                             <InfosContas
                                                 dadosDaAssociacao={dadosDaAssociacao}
-                                                handleOpenModalConfirmarEncerramentoConta={handleOpenModalConfirmarEncerramentoConta}
-                                                handleOpenModalRejeitarEncerramentoConta={handleOpenModalRejeitarEncerramentoConta}
                                             />
                                         </div>
                                     </div>
