@@ -26,6 +26,7 @@ export const  InfosContas = ({dadosDaAssociacao}) =>{
     const [contasEncerradas, setContasEncerradas] = useState([]);
     const [motivos, setMotivos] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [errorModalRejeicao, setErrorModalRejeicao] = useState(null)
 
     const apresentaDataDeEncerramentoDeConta = (conta) => {
         return conta && conta.solicitacao_encerramento !== null && conta.solicitacao_encerramento.status === "PENDENTE";
@@ -92,11 +93,11 @@ export const  InfosContas = ({dadosDaAssociacao}) =>{
                         show: false,
                         conta: {}
                     })
-                    toastCustom.ToastCustomSuccess('Conta encerrada com sucesso.')
+                    toastCustom.ToastCustomSuccess('Conta encerrada com sucesso')
                     await getContasAssociacao(dadosDaAssociacao.dados_da_associacao.uuid);
                     await getContasAssociacaoEncerrada(dadosDaAssociacao.dados_da_associacao.uuid);
                 } else {
-                    toastCustom.ToastCustomError("Erro ao encerrar conta.");
+                    toastCustom.ToastCustomError("Erro ao encerrar conta");
                 }
             } catch (error) {
                 console.log(error)
@@ -107,6 +108,7 @@ export const  InfosContas = ({dadosDaAssociacao}) =>{
     }
 
     const handleOpenModalRejeitarEncerramentoConta = (conta) => {
+        setErrorModalRejeicao("")
         return setDataModalRejeitarEncerramentoConta({
             show: true,
             conta: conta
@@ -120,7 +122,7 @@ export const  InfosContas = ({dadosDaAssociacao}) =>{
         });
     };
 
-    const handleRejeitarEncerramentoConta = (motivosRejeicao, outrosMotivosRejeicao) => {
+    const handleRejeitarEncerramentoConta = (motivosRejeicao = [], outrosMotivosRejeicao = "") => {
         let motivosSelecionados = []
 
         if(motivosRejeicao && motivosRejeicao.length > 0) {
@@ -134,7 +136,11 @@ export const  InfosContas = ({dadosDaAssociacao}) =>{
             motivos_rejeicao:  motivosSelecionados
         };
 
-        rejeitarEncerramentoConta(payloadMotivos)
+        if((motivosSelecionados && motivosSelecionados.length > 0) || outrosMotivosRejeicao) {
+            rejeitarEncerramentoConta(payloadMotivos)
+        } else {
+            setErrorModalRejeicao("Selecionar ou digitar pelo menos um motivo.")
+        }
     }
 
     const rejeitarEncerramentoConta = async (payloadMotivos) => {
@@ -149,11 +155,11 @@ export const  InfosContas = ({dadosDaAssociacao}) =>{
                         show: false,
                         conta: {}
                     })
-                    toastCustom.ToastCustomSuccess('Solicitação rejeitada com sucesso.')
+                    toastCustom.ToastCustomSuccess('Solicitação negada com sucesso')
                     getContasAssociacao(dadosDaAssociacao.dados_da_associacao.uuid);
                     getContasAssociacaoEncerrada(dadosDaAssociacao.dados_da_associacao.uuid);
                 } else {
-                    toastCustom.ToastCustomSuccess("Erro rejeitar solicitação de encerramento.");
+                    toastCustom.ToastCustomError("Erro ao tentar rejeitar solicitação de encerramento");
                 }
             } catch (error) {
                 console.log(error)
@@ -289,9 +295,9 @@ export const  InfosContas = ({dadosDaAssociacao}) =>{
                             titulo="Encerramento da conta"
                             texto="<p>Confirmar o encerramento da conta bancária da Associação?</p>"
                             primeiroBotaoTexto="Cancelar"
-                            primeiroBotaoCss="outline-success"
+                            primeiroBotaoCss="btn btn-base-verde-outline"
                             segundoBotaoTexto="Confirmar"
-                            segundoBotaoCss="success"
+                            segundoBotaoCss="btn btn-base-verde"
                         />
                     </section>
 
@@ -302,11 +308,12 @@ export const  InfosContas = ({dadosDaAssociacao}) =>{
                             onRejeitarEncerramento={handleRejeitarEncerramentoConta}
                             setMotivosRejeicao={setMotivos}
                             motivosRejeicao={motivos}
+                            errorModalRejeicao={errorModalRejeicao}
                             titulo="Rejeitar encerramento da conta"
                             primeiroBotaoTexto="Cancelar"
-                            primeiroBotaoCss="outline-success"
+                            primeiroBotaoCss="btn btn-base-verde-outline"
                             segundoBotaoTexto="Confirmar encerramento"
-                            segundoBotaoCss="success"
+                            segundoBotaoCss="btn btn-base-vermelho"
                         />
                     </section>
                 </>

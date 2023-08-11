@@ -22,6 +22,11 @@ export const ModalRejeitarEncerramento = (props) => {
     const bodyMotivos = () => {
         return (
             <div>
+                {props.errorModalRejeicao &&
+                    <span className="span_erro text-danger mt-1">
+                        <small>* {props.errorModalRejeicao}</small>
+                    </span>
+                }
                 <p><strong>Selecione o(s) motivo(s):</strong></p>
                 {motivosRejeicao.map((motivo) => (
                     <div className="p-2 flex-grow-1" key={motivo.uuid}>
