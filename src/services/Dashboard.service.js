@@ -19,3 +19,7 @@ export const getAcoesAssociacaoPorPeriodoConta = async (associacao_uuid, periodo
 export const getTabelas = async (associacao_uuid) =>{
     return (await api.get(`api/receitas/tabelas/?associacao_uuid=${associacao_uuid}`, authHeader)).data
 };
+
+export const getContas = async (associacao_uuid, periodo_uuid = '') => {
+    return (await api.get(`/api/associacoes/${associacao_uuid}/contas/?periodo_uuid=${periodo_uuid}`, authHeader)).data
+};
