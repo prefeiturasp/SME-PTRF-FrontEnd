@@ -162,7 +162,7 @@ export const FormFiltrosAvancados = (props) => {
                             >
                                 <option key={0} value="">Selecione um tipo</option>
                                 {despesasTabelas.contas_associacao !== undefined && despesasTabelas.contas_associacao.length > 0 ? (despesasTabelas.contas_associacao.map((item, key) => (
-                                    <option key={key} value={item.uuid}>{item.nome}</option>
+                                    <option key={key} value={item.uuid}>{item.nome} {item.solicitacao_encerramento ? `- Conta encerrada em ${moment(item.solicitacao_encerramento.data_de_encerramento_na_agencia).format('DD/MM/YYYY')}` : ''}</option>
                                 ))) : null}
                             </select>
                         </div>

@@ -25,6 +25,7 @@ export const CadastroFormCapital = (propriedades) => {
         eh_despesa_com_comprovacao_fiscal,
         eh_despesa_com_retencao_imposto,
         bloqueiaRateioEstornado,
+        renderContaAssociacaoOptions
     } = propriedades;
 
     const handleChangeData = (quantidade, valor, setFieldValue) => {
@@ -143,7 +144,7 @@ export const CadastroFormCapital = (propriedades) => {
                     />
                 </div>
                 <div className="col-12 col-md-6 mt-4">
-                    <label htmlFor={`conta_associacao_${index}`}>Tipo de conta utilizada</label>
+                    <label htmlFor={`conta_associacao_${index}`}>Tipo de conta</label>
                     <select
                         value={
                             rateio.conta_associacao !== null ? (
@@ -157,9 +158,7 @@ export const CadastroFormCapital = (propriedades) => {
                         disabled={disabled || bloqueiaRateioEstornado(rateio) || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                     >
                         <option key={0} value="">Selecione uma conta</option>
-                        {despesasTabelas.contas_associacao && despesasTabelas.contas_associacao.map(item => (
-                            <option key={item.uuid} value={item.uuid}>{item.nome}</option>
-                        ))}
+                        {renderContaAssociacaoOptions()}
                     </select>
                 </div>
 
