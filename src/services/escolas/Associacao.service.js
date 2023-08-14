@@ -81,8 +81,8 @@ export const consultarCpfResponsavel = async (cpf) => {
     return (await api.get(`/api/membros-associacao/cpf-responsavel/?cpf=${cpf}&associacao_uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader))
 };
 
-export const getContas = async () => {
-    return (await api.get(`/api/associacoes/${localStorage.getItem(ASSOCIACAO_UUID)}/contas/`, authHeader)).data
+export const getContas = async (periodo_uuid = '') => {
+    return (await api.get(`/api/associacoes/${localStorage.getItem(ASSOCIACAO_UUID)}/contas/?periodo_uuid=${periodo_uuid}`, authHeader)).data
 };
 
 export const getContasEncerradas = async () => {
