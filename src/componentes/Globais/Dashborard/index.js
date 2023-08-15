@@ -4,14 +4,13 @@ import {DashboardCardInfoConta} from "./DashboardCardInfoConta";
 import {SelectPeriodo} from "./SelectPeriodo";
 import {SelectConta} from "./SelectConta";
 import {getPeriodosAteAgoraForaImplantacaoDaAssociacao, getStatusPeriodoPorData} from "../../../services/escolas/PrestacaoDeContas.service";
-import {getAcoesAssociacao, getAcoesAssociacaoPorPeriodoConta, getTabelas} from "../../../services/Dashboard.service";
-import {exibeDataPT_BR, getCorStatusPeriodo} from "../../../utils/ValidacoesAdicionaisFormularios";
+import {getAcoesAssociacao, getAcoesAssociacaoPorPeriodoConta, getContas} from "../../../services/Dashboard.service";
+import {exibeDataPT_BR} from "../../../utils/ValidacoesAdicionaisFormularios";
 import Loading from "../../../utils/Loading";
 import {BarraDeStatusPeriodoAssociacao} from "./BarraDeStatusPeriodoAssociacao";
 import "./dashboard.scss"
 import {ASSOCIACAO_UUID} from "../../../services/auth.service";
 import {visoesService} from "../../../services/visoes.service";
-import {getPeriodosDePrestacaoDeContasDaAssociacao} from "../../../services/escolas/Associacao.service";
 
 export const Dashboard = () => {
     let uuid_associacao;
@@ -67,12 +66,12 @@ export const Dashboard = () => {
 
 
     useEffect(() => {
-        const carregaTabelas = async () => {
-            let tabela =  await getTabelas(uuid_associacao);
-            setTiposConta(tabela.contas_associacao);
+        const carregaContasAssociacao = async () => {
+            let contas =  await getContas(uuid_associacao, selectPeriodo);
+            setTiposConta(contas);
         };
-        carregaTabelas()
-    }, [uuid_associacao]);
+        carregaContasAssociacao()
+    }, [uuid_associacao, selectPeriodo]);
 
 
     useEffect(()=>{
