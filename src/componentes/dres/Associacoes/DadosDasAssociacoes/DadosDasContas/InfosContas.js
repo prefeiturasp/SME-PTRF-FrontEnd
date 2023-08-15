@@ -4,7 +4,7 @@ import Img404 from "../../../../../assets/img/img-404.svg";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faExclamationCircle} from "@fortawesome/free-solid-svg-icons";
 import ReactTooltip from "react-tooltip";
-import {formataDataYYYYMMDDParaApresentacao} from "../../../../../utils/FormataData"
+import {formataData} from "../../../../../utils/FormataData"
 import { TabelaContasEncerradas } from "./TabelaContasEncerradas";
 import { ModalConfirmarEncerramento } from "./ModalConfirmarEncerramento";
 import { ModalRejeitarEncerramento } from "./ModalRejeitarEncerramento";
@@ -232,7 +232,7 @@ export const  InfosContas = ({dadosDaAssociacao}) =>{
                                             </span>
                                             <ReactTooltip html={true}/>
                                         </label>
-                                        <input className="form-control" disabled value={conta.solicitacao_encerramento !== null ? formataDataYYYYMMDDParaApresentacao(conta.solicitacao_encerramento.data_de_encerramento_na_agencia)  : null}/>
+                                        <input className="form-control" disabled value={conta.solicitacao_encerramento !== null ? formataData(conta.solicitacao_encerramento.data_de_encerramento_na_agencia)  : null}/>
                                     </div>
                                     </>
                                 }
