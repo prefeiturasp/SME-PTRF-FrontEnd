@@ -233,9 +233,28 @@ export const DadosDasContas = () => {
         return setModalEncerramentoData(initialStateModalEncerramento); 
     }
 
+    const addMotivoListItem = (ulElement, motivo) => {
+        const liElement = document.createElement("li");
+        liElement.textContent = motivo
+        ulElement.appendChild(liElement);
+    }
     const handleOpenModalMotivoRejeicaoEncerramento = (solicitacao) => {
-        const motivos = solicitacao.motivos_rejeicao.map(_motivo => _motivo.nome).join(', ');
-        setShowModalMotivoRejeicaoEncerramento({open: true, motivos: motivos});
+        const ulElement = document.createElement("ul"); 
+        
+        const h6 = document.createElement("h6"); 
+        h6.textContent = "Motivos"
+        ulElement.appendChild(h6);
+
+
+        for (let i = 0; i < solicitacao.motivos_rejeicao.length; i++) {
+            addMotivoListItem(ulElement, solicitacao.motivos_rejeicao[i]["nome"]);
+        }
+
+        if(solicitacao.outros_motivos_rejeicao){
+            addMotivoListItem(ulElement, solicitacao.outros_motivos_rejeicao);
+        }
+
+        setShowModalMotivoRejeicaoEncerramento({open: true, motivos: ulElement.innerHTML});
     }
 
     const handleCloseModalMotivoRejeicaoEncerramento = () => {
