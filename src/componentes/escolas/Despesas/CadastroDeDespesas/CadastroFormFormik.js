@@ -137,7 +137,7 @@ export const CadastroFormFormik = ({
                             {props.values.status === 'COMPLETO' ? null :
                                 props.values.qtde_erros_form_despesa > 0 && despesaContext.verboHttp === "PUT" &&
                                 <div className="col-12 barra-status-erros pt-1 pb-1">
-                                    <p className="titulo-status pt-1 pb-1 mb-0">O cadastro
+                                    <p data-qa="cadastro-edicao-despesa-erro-campos-nao-preenchidos" className="titulo-status pt-1 pb-1 mb-0">O cadastro
                                         possui {props.values.qtde_erros_form_despesa} campos não preenchidos, você pode
                                         completá-los agora ou terminar depois.</p>
                                 </div>
@@ -158,6 +158,7 @@ export const CadastroFormFormik = ({
                                     <div className="col-12 col-md-6 mt-4">
                                         <label htmlFor="cpf_cnpj_fornecedor">CNPJ ou CPF do fornecedor</label>
                                         <MaskedInput
+                                            data-qa="cadastro-edicao-despesa-cnpj-cpf-fornecedor"
                                             disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes) || !eh_despesa_com_comprovacao_fiscal(props.values)}
                                             mask={(valor) => cpfMaskContitional(valor)}
                                             value={props.values.cpf_cnpj_fornecedor}
@@ -180,12 +181,14 @@ export const CadastroFormFormik = ({
                                         />
                                         {/* Validações personalizadas */}
                                         {formErrors.cpf_cnpj_fornecedor && <p className='mb-0'><span
+                                            data-qa="cadastro-edicao-despesa-erro-cnpj-cpf-fornecedor"
                                             className="span_erro text-danger mt-1">{formErrors.cpf_cnpj_fornecedor}</span>
                                         </p>}
                                     </div>
                                     <div className="col-12 col-md-6  mt-4">
                                         <label htmlFor="nome_fornecedor">Razão social do fornecedor</label>
                                         <input
+                                            data-qa="cadastro-edicao-despesa-razao-social-fornecedor"
                                             value={props.values.nome_fornecedor}
                                             onChange={props.handleChange}
                                             onBlur={props.handleBlur}
@@ -205,6 +208,7 @@ export const CadastroFormFormik = ({
                                     <div className="col-12 col-md-3 mt-4">
                                         <label htmlFor="tipo_documento">Tipo de documento</label>
                                         <select
+                                            data-qa="cadastro-edicao-despesa-tipo-de-documento"
                                             value={
                                                 props.values.tipo_documento !== null ? (
                                                     props.values.tipo_documento === "object" ? props.values.tipo_documento.id : props.values.tipo_documento.id
@@ -227,6 +231,7 @@ export const CadastroFormFormik = ({
                                     <div className="col-12 col-md-3 mt-4">
                                         <label htmlFor="data_documento">Data do documento</label>
                                         <DatePickerField
+                                            dataQa="cadastro-edicao-despesa-data-do-documento"
                                             name="data_documento"
                                             id="data_documento"
                                             value={values.data_documento !== null ? values.data_documento : ""}
@@ -245,14 +250,17 @@ export const CadastroFormFormik = ({
                                             maxDate={new Date()}
                                         />
                                         {props.errors.data_documento && <span
+                                            data-qa="cadastro-edicao-despesa-erro-1-data-do-documento"
                                             className="span_erro text-danger mt-1"> {props.errors.data_documento}</span>}
                                         {formErrors.data_documento && <span
+                                            data-qa="cadastro-edicao-despesa-erro-2-data-do-documento"
                                             className="span_erro text-danger mt-1"> {formErrors.data_documento}</span>}
                                     </div>     
 
                                     <div className="col-12 col-md-6 mt-4">
                                         <label htmlFor="numero_documento">Número do documento</label>
                                         <input
+                                            data-qa="cadastro-edicao-despesa-numero-do-documento"
                                             value={props.values.numero_documento}
                                             onChange={(e) => {
                                                 aux.onHandleChangeApenasNumero(e, setFieldValue, "numero_documento");
@@ -269,12 +277,14 @@ export const CadastroFormFormik = ({
                                             disabled={readOnlyCampos || numeroDocumentoReadOnly || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes) || !eh_despesa_com_comprovacao_fiscal(props.values)}
                                         />
                                         {props.errors.numero_documento && <span
+                                            data-qa="cadastro-edicao-despesa-erro-numero-do-documento"
                                             className="span_erro text-danger mt-1"> {props.errors.numero_documento}</span>}
                                     </div>
 
                                     <div className="col-12 col-md-6 mt-4">
                                         <label htmlFor="tipo_transacao">Forma de pagamento</label>
                                         <select
+                                            data-qa="cadastro-edicao-despesa-forma-de-pagamento"
                                             value={
                                                 props.values.tipo_transacao !== null ? (
                                                     props.values.tipo_transacao === "object" ? props.values.tipo_transacao.id : props.values.tipo_transacao.id
@@ -300,6 +310,7 @@ export const CadastroFormFormik = ({
                                     <div className="col-12 col-md-3 mt-4">
                                         <label htmlFor="data_transacao">Data do pagamento</label>
                                         <DatePickerField
+                                            dataQa="cadastro-edicao-despesa-data-da-transacao"
                                             name="data_transacao"
                                             id="data_transacao"
                                             value={values.data_transacao != null ? values.data_transacao : ""}
@@ -315,9 +326,11 @@ export const CadastroFormFormik = ({
                                         />
                                         {props.errors.data_transacao &&
                                             <span
+                                                data-qa="cadastro-edicao-despesa-erro-1-data-da-transacao"
                                                 className="span_erro text-danger mt-1"> {props.errors.data_transacao}</span>}
                                         {formErrors.data_transacao &&
                                             <span
+                                                data-qa="cadastro-edicao-despesa-erro-2-data-da-transacao"
                                                 className="span_erro text-danger mt-1"> {formErrors.data_transacao}</span>}
                                     </div>
 
@@ -326,6 +339,7 @@ export const CadastroFormFormik = ({
                                             <label htmlFor="documento_transacao">Número
                                                 do {labelDocumentoTransacao}</label>
                                             <input
+                                                data-qa="cadastro-edicao-despesa-numero-do-documento-de-transacao"
                                                 value={props.values.documento_transacao}
                                                 onChange={props.handleChange}
                                                 onBlur={props.handleBlur}
@@ -337,6 +351,7 @@ export const CadastroFormFormik = ({
                                                 disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                                             />
                                             {props.errors.documento_transacao && <span
+                                                data-qa="cadastro-edicao-despesa-erro-numero-do-documento-de-transacao"
                                                 className="span_erro text-danger mt-1"> {props.errors.documento_transacao}</span>}
                                         </div>
                                     </div>
@@ -346,6 +361,7 @@ export const CadastroFormFormik = ({
                                     <div className="col-12 col-md-3 mt-4">
                                         <label htmlFor="valor_original_form_principal">Valor total do documento</label>
                                         <CurrencyInput
+                                            data-qa="cadastro-edicao-despesa-valor-total-do-documento"
                                             allowNegative={false}
                                             prefix='R$'
                                             decimalSeparator=","
@@ -362,13 +378,14 @@ export const CadastroFormFormik = ({
                                             disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                                         />
                                         {props.errors.valor_original && exibeMsgErroValorOriginal &&
-                                            <span className="span_erro text-danger mt-1"> A soma dos valores originais do rateio não está correspondendo ao valor total original utilizado com recursos do Programa.</span>}
+                                            <span data-qa="cadastro-edicao-despesa-erro-valor-total-do-documento" className="span_erro text-danger mt-1"> A soma dos valores originais do rateio não está correspondendo ao valor total original utilizado com recursos do Programa.</span>}
                                     </div>
 
                                     <div className="col-12 col-md-3 mt-4">
                                         <label htmlFor="valor_total" className="label-valor-realizado">Valor
                                             realizado</label>
                                         <CurrencyInput
+                                            data-qa="cadastro-edicao-despesa-valor-realizado"
                                             allowNegative={false}
                                             prefix='R$'
                                             decimalSeparator=","
@@ -385,12 +402,14 @@ export const CadastroFormFormik = ({
                                         />
                                         {props.errors.valor_total &&
                                             <span
+                                                data-qa="cadastro-edicao-despesa-erro-valor-realizado"
                                                 className="span_erro text-danger mt-1"> {props.errors.valor_total}</span>}
                                     </div>
 
                                     <div className="col-12 col-md-3 mt-4">
                                         <label htmlFor="valor_recursos_proprios">Valor do recurso próprio</label>
                                         <CurrencyInput
+                                            data-qa="cadastro-edicao-despesa-valor-recurso-proprio"
                                             allowNegative={false}
                                             prefix='R$'
                                             decimalSeparator=","
@@ -406,6 +425,7 @@ export const CadastroFormFormik = ({
                                             disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                                         />
                                         {props.errors.valor_recursos_proprios && <span
+                                            data-qa="cadastro-edicao-despesa-erro-valor-recurso-proprio"
                                             className="span_erro text-danger mt-1"> {props.errors.valor_recursos_proprios}</span>}
                                     </div>
 
@@ -414,6 +434,7 @@ export const CadastroFormFormik = ({
                                         <Field name="valor_recusos_acoes">
                                             {({field, form, meta}) => (
                                                 <CurrencyInput
+                                                    data-qa="cadastro-edicao-despesa-valor-do-ptrf"
                                                     allowNegative={false}
                                                     prefix='R$'
                                                     decimalSeparator=","
@@ -429,7 +450,7 @@ export const CadastroFormFormik = ({
                                             )}
                                         </Field>
                                         {errors.valor_recusos_acoes && exibeMsgErroValorRecursos &&
-                                            <span className="span_erro text-danger mt-1"> A soma dos valores do rateio não está correspondendo ao valor total utilizado com recursos do Programa.</span>}
+                                            <span data-qa="cadastro-edicao-despesa-erro-valor-do-ptrf" className="span_erro text-danger mt-1"> A soma dos valores do rateio não está correspondendo ao valor total utilizado com recursos do Programa.</span>}
                                     </div>
                                 </div>
 
@@ -440,6 +461,7 @@ export const CadastroFormFormik = ({
                                                 Ocorrência</label>
 
                                             <input
+                                                data-qa="cadastro-edicao-despesa-numero-boletim-de-ocorrencia"
                                                 value={props.values.numero_boletim_de_ocorrencia ? props.values.numero_boletim_de_ocorrencia : ""}
                                                 onChange={(e) => {
                                                     aux.onHandleChangeApenasNumero(e, setFieldValue, "numero_boletim_de_ocorrencia");
@@ -461,6 +483,7 @@ export const CadastroFormFormik = ({
                                                 disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                                             />
                                             {formErrors.numero_boletim_de_ocorrencia && <p className='mb-0'><span
+                                                data-qa="cadastro-edicao-despesa-erro-numero-boletim-de-ocorrencia"
                                                 className="span_erro text-danger mt-1">{formErrors.numero_boletim_de_ocorrencia}</span>
                                             </p>}
                                         </div>
@@ -516,6 +539,7 @@ export const CadastroFormFormik = ({
                                                             {eh_despesa_com_retencao_imposto(values) &&
                                                                 <div className="d-flex  justify-content-start mt-3 mb-3">
                                                                     <button
+                                                                        data-qa="cadastro-edicao-despesa-btn-adicionar-imposto"
                                                                         type="button"
                                                                         className="btn btn btn-outline-success mt-2 mr-2"
                                                                         disabled={disableBtnAdicionarImposto || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
@@ -572,6 +596,7 @@ export const CadastroFormFormik = ({
                                 <div className="form-row">
                                     <div className="col-12 col-md-3 ">
                                         <select
+                                            data-qa="cadastro-edicao-despesa-gasto-tem-rateios"
                                             value={props.values.mais_de_um_tipo_despesa}
                                             onChange={(e) => {
                                                 props.handleChange(e);
@@ -610,6 +635,7 @@ export const CadastroFormFormik = ({
                                                                         rateio.estorno && rateio.estorno.uuid
                                                                             ?
                                                                             <Link
+                                                                                data-qa={`cadastro-edicao-despesa-rateio-${index}-acessar-estorno`}
                                                                                 to={
                                                                                     {
                                                                                         pathname: `/edicao-de-receita/${rateio.estorno.uuid}`,
@@ -623,6 +649,7 @@ export const CadastroFormFormik = ({
                                                                             </Link>
                                                                             :
                                                                             <Link
+                                                                                data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastrar-estorno`}
                                                                                 to={
                                                                                     {
                                                                                         pathname: `/cadastro-de-credito/`,
@@ -640,6 +667,7 @@ export const CadastroFormFormik = ({
 
                                                                     {index >= 1 && values.rateios.length > 1 && (
                                                                         <button
+                                                                            data-qa={`cadastro-edicao-despesa-rateio-${index}-btn-remover-despesa`}
                                                                             type="button"
                                                                             className={`btn btn-link btn-remover-despesa mr-2 d-flex align-items-center ${bloqueiaCamposDespesa() ? 'desabilita-link-remover-despesa' : ''}`}
                                                                             onClick={() => removeRateio(remove, index, rateio)}
@@ -662,7 +690,7 @@ export const CadastroFormFormik = ({
                                                         <div className="form-row">
                                                             {rateio && rateio.uuid && rateio.estorno && rateio.estorno.uuid &&
                                                                 <div className="col-12 ">
-                                                                    <p className="mb-0 mt-3 texto-rateio-estornado-bloqueado">
+                                                                    <p data-qa={`cadastro-edicao-despesa-rateio-${index}-mensagem-edicao-bloqueada`} className="mb-0 mt-3 texto-rateio-estornado-bloqueado">
                                                                         Esta seção da despesa encontra-se bloqueada para edição. Para editar seus campos, deve-se primeiro deletar o estorno cadastrado.
                                                                     </p>
                                                                 </div>
@@ -673,6 +701,7 @@ export const CadastroFormFormik = ({
                                                                 <label htmlFor={`aplicacao_recurso_${index}`}>Tipo de
                                                                     aplicação do recurso</label>
                                                                 <select
+                                                                    data-qa={`cadastro-edicao-despesa-rateio-${index}-tipo-de-aplicacao-do-recurso`}
                                                                     value={rateio.aplicacao_recurso ? rateio.aplicacao_recurso : ""}
                                                                     onChange={(e) => {
                                                                         props.handleChange(e);
@@ -778,6 +807,7 @@ export const CadastroFormFormik = ({
                                             {props.values.mais_de_um_tipo_despesa === "sim" &&
                                                 <div className="d-flex  justify-content-start mt-3 mb-3">
                                                     <button
+                                                        data-qa="cadastro-edicao-despesa-btn-adicionar-despesa-parcial"
                                                         type="button"
                                                         className="btn btn btn-outline-success mt-2 mr-2"
                                                         disabled={![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes) || bloqueiaCamposDespesa()}
@@ -815,7 +845,8 @@ export const CadastroFormFormik = ({
                                     )}
                                 />
                                 <div className="d-flex  justify-content-end pb-3 mt-3">
-                                    <button type="reset"
+                                    <button data-qa={`cadastro-edicao-despesa-btn-voltar`}
+                                            type="reset"
                                             onClick={houveAlteracoes(values) ? onShowModal : onCancelarTrue}
                                             className="btn btn btn-outline-success mt-2 mr-2">Voltar
                                     </button>
@@ -823,6 +854,7 @@ export const CadastroFormFormik = ({
                                     {aux.mostraBotaoDeletar(despesaContext.idDespesa, parametroLocation)
                                         ? 
                                             <button
+                                                data-qa={`cadastro-edicao-despesa-btn-deletar`}
                                                 disabled={readOnlyBtnAcao || !visoesService.getPermissoes(["delete_despesa"])}
                                                 type="reset"
                                                 onClick={() => aux.onShowDeleteModal(setShowDelete, setShowTextoModalDelete, values)}
@@ -836,6 +868,7 @@ export const CadastroFormFormik = ({
                                     
                                     {!aux.ehOperacaoExclusao(parametroLocation) &&
                                         <button
+                                            data-qa={`cadastro-edicao-despesa-btn-salvar`}
                                             disabled={
                                                 eh_despesa_reconhecida(props.values)
                                                     ? btnSubmitDisable || readOnlyBtnAcao || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)
@@ -855,10 +888,12 @@ export const CadastroFormFormik = ({
                                 </div>
                                 <div className="d-flex justify-content-end">
                                     <p>{errors.valor_recusos_acoes && exibeMsgErroValorRecursos && <span
+                                        data-qa={`cadastro-edicao-despesa-msg-erro-valor-recursos`}
                                         className="span_erro text-danger mt-1"> {errors.valor_recusos_acoes}</span>}</p>
                                 </div>
                                 <div className="d-flex justify-content-end">
                                     <p>{errors.valor_original && exibeMsgErroValorOriginal && <span
+                                        data-qa={`cadastro-edicao-despesa-msg-erro-valor-original`}
                                         className="span_erro text-danger mt-1"> {errors.valor_original}</span>}</p>
                                 </div>
 

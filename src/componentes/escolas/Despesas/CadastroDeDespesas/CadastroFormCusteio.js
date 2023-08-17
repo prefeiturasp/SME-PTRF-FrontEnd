@@ -18,6 +18,7 @@ export const CadastroFormCusteio = (propriedades) => {
                 <div className="col-12 col-md-6 mt-4">
                     <label htmlFor="tipo_custeio">Tipo de despesa de custeio</label>
                     <select
+                        data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-custeio-tipo-de-despesa`}
                         value={
                             rateio.tipo_custeio !== null ? (
                                 typeof rateio.tipo_custeio === "object" ? rateio.tipo_custeio.id : rateio.tipo_custeio
@@ -47,6 +48,7 @@ export const CadastroFormCusteio = (propriedades) => {
                 <div className="col-12 mt-4">
                     <label htmlFor={`especificacao_material_servico_${index}`}>Especificação do bem, material ou serviço</label>
                     <select
+                        data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-custeio-especificacao-material`}
                         value={
                             rateio.especificacao_material_servico !== null ? (
                                 typeof rateio.especificacao_material_servico === "object" ? rateio.especificacao_material_servico.id : rateio.especificacao_material_servico
@@ -78,6 +80,7 @@ export const CadastroFormCusteio = (propriedades) => {
                 <div className="col-12 col-md-3 mt-4">
                     <label htmlFor="acao_associacao">Ação</label>
                     <select
+                        data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-custeio-acao`}
                         value={
                             rateio.acao_associacao !== null ? (
                                 typeof rateio.acao_associacao === "object" ? rateio.acao_associacao.uuid : rateio.acao_associacao
@@ -98,6 +101,7 @@ export const CadastroFormCusteio = (propriedades) => {
                 <div className="col-12 col-md-3 mt-4">
                     <label htmlFor="conta_associacao">Tipo de conta utilizada</label>
                     <select
+                        data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-custeio-tipo-conta-utilizada`}
                         value={
                             rateio.conta_associacao !== null ? (
                                 typeof rateio.conta_associacao === "object" ? rateio.conta_associacao.uuid : rateio.conta_associacao
@@ -119,6 +123,7 @@ export const CadastroFormCusteio = (propriedades) => {
                 <div className="col-12 col-md-3 mt-4">
                     <label htmlFor="valor_original_form_custeio">{eh_despesa_com_retencao_imposto(formikProps.values) ? 'Valor líquido' : 'Valor'}</label>
                     <CurrencyInput
+                        data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-custeio-valor`}
                         allowNegative={false}
                         prefix='R$'
                         decimalSeparator=","
@@ -134,11 +139,12 @@ export const CadastroFormCusteio = (propriedades) => {
                         onBlur={formikProps.handleBlur}
                         disabled={disabled || bloqueiaRateioEstornado(rateio) || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                     />
-                    {errors.valor_original && exibeMsgErroValorOriginal && <span className="span_erro text-danger mt-1"> A soma dos valores originais do rateio não está correspondendo ao valor total original utilizado com recursos do Programa.</span>}
+                    {errors.valor_original && exibeMsgErroValorOriginal && <span data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-custeio-erro-valor`} className="span_erro text-danger mt-1"> A soma dos valores originais do rateio não está correspondendo ao valor total original utilizado com recursos do Programa.</span>}
                 </div>
                 <div className="col-12 col-md-3 mt-4">
                     <label htmlFor="valor_rateio">{eh_despesa_com_retencao_imposto(formikProps.values) ? 'Valor líquido realizado' : 'Valor realizado'}</label>
                     <CurrencyInput
+                        data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-custeio-valor-realizado`}
                         allowNegative={false}
                         prefix='R$'
                         decimalSeparator=","
@@ -151,7 +157,7 @@ export const CadastroFormCusteio = (propriedades) => {
                         onBlur={formikProps.handleBlur}
                         disabled={disabled || bloqueiaRateioEstornado(rateio) || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                     />
-                    {errors.valor_recusos_acoes && exibeMsgErroValorRecursos && <span className="span_erro text-danger mt-1"> A soma dos valores do rateio não está correspondendo ao valor total utilizado com recursos do Programa.</span>}
+                    {errors.valor_recusos_acoes && exibeMsgErroValorRecursos && <span data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-custeio-erro-valor-realizado`} className="span_erro text-danger mt-1"> A soma dos valores do rateio não está correspondendo ao valor total utilizado com recursos do Programa.</span>}
                 </div>
             </div>
         </>

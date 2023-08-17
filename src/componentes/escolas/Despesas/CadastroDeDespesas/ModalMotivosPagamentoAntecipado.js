@@ -36,6 +36,7 @@ const ModalMotivosPagamentoAntecipado = ({
                         <div className="multiselect-demo">
                             <div className="">
                                 <MultiSelect
+                                    data-qa="modal-despesa-motivos-pagamentos-antecipados-select-motivos"
                                     value={selectMotivosPagamentoAntecipado}
                                     options={listaDemotivosPagamentoAntecipado}
                                     onChange={(e) => {
@@ -52,12 +53,14 @@ const ModalMotivosPagamentoAntecipado = ({
                         <div className="mt-2 ml-2">
                             {selectMotivosPagamentoAntecipado && selectMotivosPagamentoAntecipado.length > 0 && selectMotivosPagamentoAntecipado.map((motivo, index) => (
                                 <strong key={motivo.id}><p
+                                    data-qa={`modal-despesa-motivos-pagamentos-antecipados-select-motivo-${motivo.id}`}
                                     className="lista-motivos mb-0">{index + 1}. {motivo.motivo}</p></strong>
                             ))}
                         </div>
 
                         <div className="form-check mt-3 pl-0">
                             <input
+                                data-qa="modal-despesa-motivos-pagamentos-antecipados-outros-motivos-checkbox"
                                 name="check_box_outros_motivos"
                                 id="check_box_outros_motivos"
                                 type="checkbox"
@@ -70,6 +73,7 @@ const ModalMotivosPagamentoAntecipado = ({
                         </div>
                         {checkBoxOutrosMotivosPagamentoAntecipado &&
                             <textarea
+                                data-qa="modal-despesa-motivos-pagamentos-antecipados-outros-motivos-text-area"
                                 name='outros_motivos_reprovacao'
                                 value={txtOutrosMotivosPagamentoAntecipado}
                                 onChange={(e) => handleChangeTxtOutrosMotivosPagamentoAntecipado(e)}
@@ -81,10 +85,11 @@ const ModalMotivosPagamentoAntecipado = ({
 
                     <div className='col-12'>
                         <div className="d-flex  justify-content-end pb-3 mt-3">
-                            <button onClick={handleClose} type="reset"
+                            <button data-qa="modal-despesa-motivos-pagamentos-antecipados-btn-cancelar" onClick={handleClose} type="reset"
                                     className="btn btn btn-outline-success mt-2 mr-2">Cancelar
                             </button>
                             <button
+                                data-qa="modal-despesa-motivos-pagamentos-antecipados-btn-confirmar"
                                 onClick={onSalvarMotivosAntecipadosTrue}
                                 type="button"
                                 className="btn btn-success mt-2"

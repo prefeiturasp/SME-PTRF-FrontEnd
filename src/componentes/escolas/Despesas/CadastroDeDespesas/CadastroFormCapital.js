@@ -44,6 +44,7 @@ export const CadastroFormCapital = (propriedades) => {
                 <div className="col-12">
                     <label htmlFor={`especificacao_material_servico_${index}`}>Especificação do bem, material ou serviço</label>
                     <select
+                        data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-capital-especificacao-material`}
                         value={
                             rateio.especificacao_material_servico !== null ? (
                                 typeof rateio.especificacao_material_servico === "object" ? rateio.especificacao_material_servico.id : rateio.especificacao_material_servico
@@ -69,6 +70,7 @@ export const CadastroFormCapital = (propriedades) => {
                 <div className="col-12 col-md-6 mt-4">
                     <label htmlFor={`acao_associacao_form_capital_${index}`}>Ação</label>
                     <select
+                        data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-capital-acao`}
                         value={
                             rateio.acao_associacao !== null ? (
                                 typeof rateio.acao_associacao === "object" ? rateio.acao_associacao.uuid : rateio.acao_associacao
@@ -92,6 +94,7 @@ export const CadastroFormCapital = (propriedades) => {
                         <div className="col-12 col-md-6 mt-4">
                             <label htmlFor="quantidade_itens_capital">Quantidade de itens</label>
                             <NumberFormat
+                                data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-capital-quantidade-de-itens`}
                                 value={rateio.quantidade_itens_capital}
                                 onChange={(e) => {
                                     formikProps.handleChange(e);
@@ -110,6 +113,7 @@ export const CadastroFormCapital = (propriedades) => {
                         <div className="col-12 col-md-6 mt-4">
                             <label htmlFor={`valor_item_capital_${index}`}>Valor unitário </label>
                             <CurrencyInput
+                                data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-capital-valor-unitario`}
                                 allowNegative={false}
                                 prefix='R$'
                                 decimalSeparator=","
@@ -132,6 +136,7 @@ export const CadastroFormCapital = (propriedades) => {
                     <label htmlFor={`numero_processo_incorporacao_capital_${index}`}>Número do processo de
                         incorporação</label>
                     <MaskedInput
+                        data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-capital-numero-do-processo-incorporacao`}
                         disabled={disabled || bloqueiaRateioEstornado(rateio) || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                         mask={(valor) => processoIncorporacaoMask(valor)}
                         onChange={formikProps.handleChange}
@@ -145,6 +150,7 @@ export const CadastroFormCapital = (propriedades) => {
                 <div className="col-12 col-md-6 mt-4">
                     <label htmlFor={`conta_associacao_${index}`}>Tipo de conta utilizada</label>
                     <select
+                        data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-capital-tipo-conta`}
                         value={
                             rateio.conta_associacao !== null ? (
                                 typeof rateio.conta_associacao === "object" ? rateio.conta_associacao.uuid : rateio.conta_associacao
@@ -166,6 +172,7 @@ export const CadastroFormCapital = (propriedades) => {
                 <div className="col-12 col-md-6 mt-4">
                     <label htmlFor={`valor_original_form_capital_${index}`}>{eh_despesa_com_retencao_imposto(formikProps.values) ? 'Valor líquido total do capital' : 'Valor total do capital'}</label>
                     <CurrencyInput
+                        data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-capital-valor`}
                         allowNegative={false}
                         prefix='R$'
                         decimalSeparator=","
@@ -178,12 +185,13 @@ export const CadastroFormCapital = (propriedades) => {
                         disabled={true}
                     />
                     {errors.valor_original && exibeMsgErroValorOriginal &&
-                    <span className="span_erro text-danger mt-1"> A soma dos valores originais do rateio não está correspondendo ao valor total original utilizado com recursos do Programa.</span>}
+                    <span data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-capital-erro-valor`} className="span_erro text-danger mt-1"> A soma dos valores originais do rateio não está correspondendo ao valor total original utilizado com recursos do Programa.</span>}
                 </div>
 
                 <div className="col-12 col-md-6 mt-4">
                     <label htmlFor={`valor_rateio_${index}`} className="label-valor-realizado">{eh_despesa_com_retencao_imposto(formikProps.values) ? 'Valor líquido realizado' : 'Valor realizado'}</label>
                     <CurrencyInput
+                        data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-capital-valor-realizado`}
                         allowNegative={false}
                         prefix='R$'
                         decimalSeparator=","
@@ -198,7 +206,7 @@ export const CadastroFormCapital = (propriedades) => {
                         disabled={disabled || bloqueiaRateioEstornado(rateio) || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                     />
                     {errors.valor_recusos_acoes && exibeMsgErroValorRecursos &&
-                    <span className="span_erro text-danger mt-1"> A soma dos valores do rateio não está correspondendo ao valor total utilizado com recursos do Programa.</span>}
+                    <span data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-capital-erro-valor-realizado`} className="span_erro text-danger mt-1"> A soma dos valores do rateio não está correspondendo ao valor total utilizado com recursos do Programa.</span>}
                 </div>
             </div>
         </>

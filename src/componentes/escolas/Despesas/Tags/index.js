@@ -22,6 +22,7 @@ export const Tags = ({formikProps, index, rateio, verboHttp, disabled, despesasT
                 <div className="col-auto">
                     <div className="form-check form-check-inline">
                         <input
+                            data-qa={`cadastro-edicao-despesa-rateio-${index}-gasto-possui-vinculo-com-atividade-especifica`}
                             name={`rateios[${index}].escolha_tags`}
                             onChange={(e) => {
                                 formikProps.handleChange(e);
@@ -39,6 +40,7 @@ export const Tags = ({formikProps, index, rateio, verboHttp, disabled, despesasT
 
                     <div className="form-check form-check-inline">
                         <input
+                            data-qa={`cadastro-edicao-despesa-rateio-${index}-gasto-nao-possui-vinculo-com-atividade-especifica`}
                             name={`rateios[${index}].escolha_tags`}
                             onChange={(e) => {
                                 formikProps.handleChange(e);
@@ -58,6 +60,7 @@ export const Tags = ({formikProps, index, rateio, verboHttp, disabled, despesasT
                 {escolhaTags ?
                     <div className="col-auto">
                         <select
+                            data-qa={`cadastro-edicao-despesa-rateio-${index}-atividade-vinculada`}
                             value={
                                 rateio.tag !== null ? (
                                     typeof rateio.tag === "object" ? rateio.tag.uuid : rateio.tag
