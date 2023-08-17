@@ -16,6 +16,7 @@ import {DetalhedasPrestacoesPage} from "../paginas/escolas/DetalheDasPrestacoes"
 import {VisualizacaoDaAta} from "../componentes/escolas/GeracaoDaAta/VisualizacaoDaAta";
 import {EdicaoAta} from "../componentes/escolas/GeracaoDaAta/VisualizacaoDaAta/EdicaoAta";
 import {MembrosDaAssociacaoPage} from "../paginas/escolas/MembrosDaAssociacao";
+import {PaginaMandatoVigente} from "../componentes/escolas/MembrosDaAssociacao/pages/PaginaMandatoVigente";
 import { ValoresReprogramados } from "../componentes/Globais/ValoresReprogramados";
 import {DadosDasContasPage} from "../paginas/escolas/DadosDasContasAssociacao";
 import {EsqueciMinhaSenhaPage} from "../paginas/Login/EsqueciMinhaSenha";
@@ -92,6 +93,7 @@ import TesteDataTableAnt
 import {GestaoDeUsuariosFormPage} from "../componentes/Globais/GestaoDeUsuariosForm";
 import {Mandatos} from "../componentes/sme/Mandatos";
 import {MotivosRejeicaoEncerramentoConta} from "../componentes/sme/Parametrizacoes/Estrutura/MotivosRejeicaoEncerramentoConta";
+import {MandatosAnteriores} from "../componentes/escolas/MembrosDaAssociacao/pages/MandatosAnteriores";
 
 const routesConfig = [
     {
@@ -158,6 +160,18 @@ const routesConfig = [
         exact: true,
         path: "/membros-da-associacao",
         component: MembrosDaAssociacaoPage,
+        permissoes: ['access_dados_associacao'],
+    },
+    {
+        exact: true,
+        path: "/membros-da-associacao-mandato-vigente",
+        component: PaginaMandatoVigente,
+        permissoes: ['access_dados_associacao'],
+    },
+    {
+        exact: true,
+        path: "/membros-da-associacao-mandatos-anteriores",
+        component: MandatosAnteriores,
         permissoes: ['access_dados_associacao'],
     },
     {

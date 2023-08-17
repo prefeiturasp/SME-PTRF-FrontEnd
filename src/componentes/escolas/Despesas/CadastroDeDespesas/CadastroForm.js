@@ -39,6 +39,8 @@ import {getPeriodoFechado} from "../../../../services/escolas/Associacao.service
 import {ModalErroDeletarCadastroDespesa} from "./ModalErroDeletarCadastroDespesa";
 import { CadastroFormFormik } from "./CadastroFormFormik";
 import { getPeriodoPorUuid } from "../../../../services/sme/Parametrizacoes.service";
+import { STATUS_CONTA_ASSOCIACAO, STATUS_SOLICITACAO_ENCERRAMENTO_CONTA_ASSOCIACAO } from "../../../../constantes/contaAssociacao";
+import {toastCustom} from "../../../Globais/ToastCustom";
 
 export const CadastroForm = ({verbo_http}) => {
 
@@ -87,6 +89,26 @@ export const CadastroForm = ({verbo_http}) => {
         return periodo;
     }
 
+    const renderContaAssociacaoOptions = useCallback(() => {
+        const getOptionPorStatus = (item) => {
+            const defaultProps = {
+                key: item.uuid,
+                value: item.uuid
+            }   
+            
+            if(item.status === STATUS_CONTA_ASSOCIACAO.ATIVA){
+                return  <option {...defaultProps}>{item.nome}</option>
+            } else if(item.solicitacao_encerramento && item.solicitacao_encerramento.status !== STATUS_SOLICITACAO_ENCERRAMENTO_CONTA_ASSOCIACAO.APROVADA) {
+                let informacaoExtra = item.solicitacao_encerramento ? `- Conta encerrada em ${moment(item.solicitacao_encerramento.data_de_encerramento_na_agencia).format('DD/MM/YYYY')}` : ''
+                return <option {...defaultProps} disabled>{item.nome} {informacaoExtra}</option>
+            }
+        }
+        return (
+            despesasTabelas.contas_associacao.map(item => (
+                getOptionPorStatus(item)
+            ))
+        )    
+    }, [despesasTabelas]);
 
     useEffect(() => {
         if (despesaContext.initialValues.tipo_transacao && verbo_http === "PUT") {
@@ -472,9 +494,9 @@ export const CadastroForm = ({verbo_http}) => {
                                 }
 
                                 aux.getPath(origem, parametroLocation);
-                            }
-                            else {
+                            } else {
                                 setLoading(false);
+                                handleErroCriarDespesa(response);
                             }
                         } catch (error) {
                             console.log(error);
@@ -509,6 +531,7 @@ export const CadastroForm = ({verbo_http}) => {
                                 
                             }
                             else {
+                                handleErroCriarDespesa(response);
                                 setLoading(false);
                             }
                         } catch (error) {
@@ -529,6 +552,7 @@ export const CadastroForm = ({verbo_http}) => {
                             aux.getPath(origem);
                         } else {
                             setLoading(false);
+                            handleErroCriarDespesa(response);
                         }
                     } catch (error) {
                         console.log(error);
@@ -543,6 +567,7 @@ export const CadastroForm = ({verbo_http}) => {
                             aux.getPath(origem);
                         } else {
                             setLoading(false);
+                            handleErroCriarDespesa(response);
                         }
                     } catch (error) {
                         console.log(error);
@@ -551,6 +576,17 @@ export const CadastroForm = ({verbo_http}) => {
                 }
             }
         }
+    };
+
+    const handleErroCriarDespesa = (response) => {
+        let mensagemErro = 'Verifique se os dados foram preenchidos corretamente.'
+        if (response && response.data){
+            if (response.data.hasOwnProperty("rateios")) {
+                const rateios = response.data.rateios[0];
+                mensagemErro += " Rateios: " + rateios.mensagem.map((msg) => msg).join(", ")
+            }
+        }
+        toastCustom.ToastCustomError('Erro ao tentar salvar despesa.', mensagemErro)                            
     };
 
     const validateFormDespesas = async (values) => {
@@ -670,6 +706,8 @@ export const CadastroForm = ({verbo_http}) => {
                 error.response.data.error.itens_erro.map((erro)=>(
                     texto_erro += `<p class="mb-1"><small>${erro}</small></p>`
                 ))
+            } else if (error && error.response && error.response.data && error.response.data.erro && error.response.data.erro === 'rateio_com_conta_status_inativa') {
+                texto_erro += `<p class="mb-1">${error.response.data.mensagem}</p>`
             }else {
                 texto_erro += '<p class="mb-0">Despesa não pode ser apagada porque é referenciada no sistema</p>'
             }
@@ -1150,6 +1188,7 @@ export const CadastroForm = ({verbo_http}) => {
                         parametroLocation={parametroLocation}
                         bloqueiaCamposDespesa={bloqueiaCamposDespesa}
                         onCalendarCloseDataDoDocumento={onCalendarCloseDataDoDocumento}
+                        renderContaAssociacaoOptions={renderContaAssociacaoOptions}
                     />
             </>
             }

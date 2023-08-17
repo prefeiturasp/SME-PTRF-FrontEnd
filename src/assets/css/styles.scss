@@ -120,18 +120,18 @@ body {
 
   .p-paginator {
     background-color: #ffffff !important;
-    border: 0px;
-    padding: 2.5em !important;
+    border: 0;
+    padding: 2.5em;
   }
 
   .p-paginator-next {
-    height: 4em !important;
-    min-width: 4em !important;
+    height: 4em;
+    min-width: 4em;
   }
 
   .p-paginator-prev {
-    height: 4em !important;
-    min-width: 4em !important;
+    height: 4em;
+    min-width: 4em;
   }
 
   .p-paginator-page {
@@ -335,4 +335,8 @@ body {
       color: $corBtnDisabled;
     }
   }
+}
+
+.title-primary {
+  color: $corPrimaria;
 }

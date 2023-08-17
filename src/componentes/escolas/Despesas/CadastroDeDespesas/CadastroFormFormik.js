@@ -107,7 +107,8 @@ export const CadastroFormFormik = ({
                                        onCalendarCloseDataPagamentoImposto,
                                        parametroLocation,
                                        bloqueiaCamposDespesa,
-                                       onCalendarCloseDataDoDocumento
+                                       onCalendarCloseDataDoDocumento,
+                                       renderContaAssociacaoOptions
                                    }) => {
 
     // Corrigi Cálculo validação dos valores
@@ -508,6 +509,7 @@ export const CadastroFormFormik = ({
                                                                             remove={remove}
                                                                             formErrorsImposto={formErrorsImposto}
                                                                             onCalendarCloseDataPagamentoImposto={onCalendarCloseDataPagamentoImposto}
+                                                                            renderContaAssociacaoOptions={renderContaAssociacaoOptions}
                                                                         />
                                                                     </div>
                                                                 )
@@ -713,6 +715,7 @@ export const CadastroFormFormik = ({
                                                                     eh_despesa_com_comprovacao_fiscal={eh_despesa_com_comprovacao_fiscal}
                                                                     eh_despesa_com_retencao_imposto={eh_despesa_com_retencao_imposto}
                                                                     bloqueiaRateioEstornado={bloqueiaRateioEstornado}
+                                                                    renderContaAssociacaoOptions={renderContaAssociacaoOptions}
                                                                 />
                                                             ) :
                                                             rateio.aplicacao_recurso && rateio.aplicacao_recurso === 'CAPITAL' ? (
@@ -731,6 +734,7 @@ export const CadastroFormFormik = ({
                                                                     eh_despesa_com_comprovacao_fiscal={eh_despesa_com_comprovacao_fiscal}
                                                                     eh_despesa_com_retencao_imposto={eh_despesa_com_retencao_imposto}
                                                                     bloqueiaRateioEstornado={bloqueiaRateioEstornado}
+                                                                    renderContaAssociacaoOptions={renderContaAssociacaoOptions}
                                                                 />
                                                             ) : null
                                                         }

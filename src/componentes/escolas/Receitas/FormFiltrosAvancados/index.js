@@ -7,7 +7,7 @@ import moment from "moment";
 export const FormFiltrosAvancados = (props) => {
 
     const {btnMaisFiltros, onClickBtnMaisFiltros, setLista, setBuscaUtilizandoFiltro, iniciaLista, buscaTotaisReceitas} = props;
-
+    
     const tabelaInicial = {
         tipos_receita: [],
         acoes_associacao: [],
@@ -82,14 +82,14 @@ export const FormFiltrosAvancados = (props) => {
                                        placeholder="Termo que deseja filtrar"/>
                                 </div>
                                 <div className="form-group col-12 col-md-6 pl-md-1">
-                                    <label htmlFor="conta_associacao">Filtrar por tipo de conta</label>
+                                    <label htmlFor="conta_associacao">Filtrar por conta</label>
                                     <select id="conta_associacao" name="conta_associacao" value={state.conta_associacao}
                                             onChange={(e) => handleChange(e.target.name, e.target.value)}
                                             className="form-control"
                                     >
-                                        <option key={0} value="">Selecione um tipo</option>
+                                        <option key={0} value="">Selecione uma conta</option>
                                         {tabelas.contas_associacao !== undefined && tabelas.contas_associacao.length > 0 ? (tabelas.contas_associacao.map((item, key) => (
-                                            <option key={key} value={item.uuid}>{item.nome}</option>
+                                            <option key={key} value={item.uuid}>{item.nome} {item.solicitacao_encerramento ? `- Conta encerrada em ${moment(item.solicitacao_encerramento.data_de_encerramento_na_agencia).format('DD/MM/YYYY')}` : ''}</option>
                                         ))) : null}
                                     </select>
                                 </div>
