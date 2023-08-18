@@ -114,7 +114,6 @@ export const DetalheDasPrestacoes = () => {
 
     const carregaTabelas = async () => {
         await getTabelasReceita().then(response => {
-            setContasAssociacao(response.data.contas_associacao);
             setAcoesAssociacao(response.data.acoes_associacao);
         }).catch(error => {
             console.log(error);
@@ -128,7 +127,10 @@ export const DetalheDasPrestacoes = () => {
     };
 
     const carregaContas = async () => {
-        await getContas().then(response => {
+        setLoading(true);
+        let period_uuid = periodoConta ? periodoConta.periodo : '';
+        await getContas(period_uuid).then(response => {
+            setContasAssociacao(response);
             const files = JSON.parse(localStorage.getItem('periodoConta'));
             if (files && files.conta !== "") {
                 const conta = response.find(conta => conta.uuid === files.conta);
@@ -136,7 +138,7 @@ export const DetalheDasPrestacoes = () => {
             }
         }).catch(error => {
             console.log(error);
-        })
+        }).finally(() => setLoading(false))
     };
 
     const conciliar = useCallback(async (rateio_uuid) => {

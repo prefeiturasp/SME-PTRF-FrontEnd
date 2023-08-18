@@ -6,7 +6,21 @@ import {visoesService} from "../../../../services/visoes.service";
 
 export const CadastroFormCusteio = (propriedades) => {
 
-    const {formikProps, rateio, rateios, index, despesasTabelas,  especificacoes_custeio, verboHttp, disabled, errors, exibeMsgErroValorRecursos, exibeMsgErroValorOriginal, eh_despesa_com_comprovacao_fiscal, eh_despesa_com_retencao_imposto, bloqueiaRateioEstornado} = propriedades
+    const { formikProps, 
+            rateio, 
+            rateios, 
+            index, 
+            despesasTabelas,  
+            especificacoes_custeio, 
+            verboHttp, 
+            disabled, 
+            errors, 
+            exibeMsgErroValorRecursos, 
+            exibeMsgErroValorOriginal, 
+            eh_despesa_com_comprovacao_fiscal, 
+            eh_despesa_com_retencao_imposto, 
+            bloqueiaRateioEstornado, 
+            renderContaAssociacaoOptions } = propriedades
 
     const setValorRateioRealizado=(setFieldValue, index, valor)=>{
         setFieldValue(`rateios[${index}].valor_rateio`, trataNumericos(valor))
@@ -96,7 +110,7 @@ export const CadastroFormCusteio = (propriedades) => {
                     </select>
                 </div>
                 <div className="col-12 col-md-3 mt-4">
-                    <label htmlFor="conta_associacao">Tipo de conta utilizada</label>
+                    <label htmlFor="conta_associacao">Tipo de conta</label>
                     <select
                         value={
                             rateio.conta_associacao !== null ? (
@@ -110,9 +124,7 @@ export const CadastroFormCusteio = (propriedades) => {
                         disabled={disabled || bloqueiaRateioEstornado(rateio) || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                     >
                         <option key={0} value="">Selecione uma conta</option>
-                        {despesasTabelas.contas_associacao && despesasTabelas.contas_associacao.map(item => (
-                            <option key={item.uuid} value={item.uuid}>{item.nome}</option>
-                        ))}
+                        {renderContaAssociacaoOptions()}
                     </select>
                 </div>
 

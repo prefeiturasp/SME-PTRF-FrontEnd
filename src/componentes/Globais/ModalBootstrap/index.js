@@ -1165,3 +1165,52 @@ export const ModalBootstrapDetalhamentoDREDiarioOficial = (propriedades) => {
         </Fragment>
     )
 };
+
+export const ModalMotivosRejeicaoEncerramentoConta = (propriedades) => {
+    return (
+        <Fragment>
+            <Modal centered
+                show={
+                    propriedades.show
+                }
+                onHide={
+                    propriedades.onHide
+                }
+                size={
+                    propriedades.size
+            }>
+                <Modal.Header>
+                    <Modal.Title>{
+                        propriedades.titulo
+                    }</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {propriedades.bodyText}
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant={
+                            propriedades.primeiroBotaoCss ? propriedades.primeiroBotaoCss : "primary"
+                        }
+                        onClick={
+                            propriedades.primeiroBotaoOnclick
+                    }>
+                        {
+                        propriedades.primeiroBotaoTexto
+                    } </Button>
+                    {
+                    propriedades.segundoBotaoOnclick && propriedades.segundoBotaoTexto ? (
+                        <Button variant={
+                                propriedades.segundoBotaoCss ? propriedades.segundoBotaoCss : "primary"
+                            }
+                            onClick={
+                                propriedades.segundoBotaoOnclick
+                        }>
+                            {
+                            propriedades.segundoBotaoTexto
+                        } </Button>
+                    ) : null
+                } </Modal.Footer>
+            </Modal>
+        </Fragment>
+    )
+};

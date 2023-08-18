@@ -28,7 +28,8 @@ export const CadastroFormDespesaImposto = ({
 												despesa_imposto,
 												remove,
 												formErrorsImposto,
-												onCalendarCloseDataPagamentoImposto
+												onCalendarCloseDataPagamentoImposto,
+												renderContaAssociacaoOptions
 											}) => {
     
 	return(
@@ -251,7 +252,7 @@ export const CadastroFormDespesaImposto = ({
 						</div>
 
 						<div className="col-12 col-md-3 mt-4">
-							<label htmlFor={`despesas_impostos[${index}].rateios[0].conta_associacao`}>Tipo de conta utilizada</label>
+							<label htmlFor={`despesas_impostos[${index}].rateios[0].conta_associacao`}>Tipo de conta</label>
 							<select
 								value={
 									despesa_imposto.rateios[0].conta_associacao !== null ? (
@@ -265,9 +266,7 @@ export const CadastroFormDespesaImposto = ({
 								disabled={readOnlyCamposImposto[index] || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
 							>
 								<option key={0} value="">Selecione uma conta</option>
-								{despesasTabelas.contas_associacao && despesasTabelas.contas_associacao.map(item => (
-									<option key={item.uuid} value={item.uuid}>{item.nome}</option>
-								))}
+								{renderContaAssociacaoOptions()}
 							</select>
 						</div>
 

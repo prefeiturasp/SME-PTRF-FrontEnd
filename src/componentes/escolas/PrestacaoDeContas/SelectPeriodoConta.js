@@ -1,5 +1,6 @@
 import React from "react";
 import {exibeDataPT_BR} from "../../../utils/ValidacoesAdicionaisFormularios";
+import {formataData} from "../../../utils/FormataData";
 
 export const SelectPeriodoConta = ({periodoConta, handleChangePeriodoConta, periodosAssociacao, contasAssociacao}) => {
         return(
@@ -27,7 +28,7 @@ export const SelectPeriodoConta = ({periodoConta, handleChangePeriodoConta, peri
                             </div>
                         </div>
                     </div>
-
+                    
                     <div className="col-md-12 col-lg-5 col-xl-4 offset-xl-3">
 
                         <div className="row">
@@ -44,7 +45,10 @@ export const SelectPeriodoConta = ({periodoConta, handleChangePeriodoConta, peri
                                 >
                                     <option value="">Selecione uma conta</option>
                                     {contasAssociacao && contasAssociacao.map((conta)=>
-                                        <option key={conta.uuid} value={conta.uuid}>{conta.nome}</option>
+                                        <option key={conta.uuid} value={conta.uuid}>
+                                            {conta.nome}
+                                            {conta.solicitacao_encerramento ? ` (encerrada em ${formataData(conta.solicitacao_encerramento.data_de_encerramento_na_agencia)})` : ''}
+                                        </option>
                                     )}
                                 </select>
                             </div>
