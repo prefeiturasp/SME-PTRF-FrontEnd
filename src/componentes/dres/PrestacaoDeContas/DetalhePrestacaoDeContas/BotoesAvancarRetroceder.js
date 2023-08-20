@@ -22,8 +22,8 @@ export const BotoesAvancarRetroceder = ({prestacaoDeContas, textoBtnAvancar, tex
                                     style={{marginRight: "5px", color: '#fff'}}
                                     icon={faAngleDoubleLeft}
                                 />
-                                <span data-tip={tooltipRetroceder}>{textoBtnRetroceder}</span>
-                                {tooltipRetroceder && <ReactTooltip place="right"/>}
+                                <span data-tip={tooltipRetroceder} data-for={`tooltip-id-${prestacaoDeContas.uuid}`}>{textoBtnRetroceder}</span>
+                                {tooltipRetroceder && <ReactTooltip  place="right" id={`tooltip-id-${prestacaoDeContas.uuid}`} html={true}/>}
                             </button>
                             </>
                         }
