@@ -105,14 +105,14 @@ export const ListaDeDespesas = () => {
             .catch(console.error);
     }, [reusltadoSomaDosTotais])
 
-    const especificacaoDataTemplate = (despesa, rateio) => {
+    const especificacaoDataTemplate = (despesa, rateio, index) => {
         return (
             <div>
-                <span>
+                <span data-qa={`span-especificacao-${index}`}>
                     {rateio.especificacao_material_servico ? rateio.especificacao_material_servico.descricao : ''}
                 </span>
                 <br/>
-                <span>
+                <span data-qa={`span-data-documento-${index}`}>
                     Data:{' '}
                     {despesa.data_documento ? moment(despesa.data_documento).format('DD/MM/YYYY') : ''}
                 </span>
@@ -120,7 +120,7 @@ export const ListaDeDespesas = () => {
         )
     }
 
-    const valorTotalTemplate = (rateio) => {
+    const valorTotalTemplate = (rateio, index) => {
         const valorFormatado = parseFloat(rateio.valor_rateio)
             ? parseFloat(rateio.valor_rateio).toLocaleString('pt-BR', {
                 style: 'currency',
@@ -128,7 +128,7 @@ export const ListaDeDespesas = () => {
             })
             : '';
 
-        return <span>{valorFormatado}</span>
+        return <span data-qa={`span-rateio-valor-${index}`}>{valorFormatado}</span>
     }
 
     const novaDespesaButton = () => {
@@ -140,6 +140,7 @@ export const ListaDeDespesas = () => {
                         type="button"
                         className="btn btn btn-outline-success float-right mt-2"
                         disabled={!visoesService.getPermissoes(['add_despesa'])}
+                        data-qa="btn-cadastrar-despesa"
                     >
                         Cadastrar despesa
                     </button>
@@ -195,7 +196,7 @@ export const ListaDeDespesas = () => {
         )
     }
 
-    const tipoLancamentoTemplate = (rowData) => {
+    const tipoLancamentoTemplate = (rowData, index) => {
 
         if (rowData.despesa_geradora_do_imposto && rowData.despesa_geradora_do_imposto.uuid) {
             return tipoLancamentoTemplateDespesaGeradoraDoImposto(rowData)
@@ -204,9 +205,9 @@ export const ListaDeDespesas = () => {
         } else {
             return (
                 <>
-                    <span>{rowData.numero_documento}</span>
+                    <span data-qa={`span-numero-documento-${index}`}>{rowData.numero_documento}</span>
                     <br/>
-                    <span className={retornaStatusColor(rowData)}>{retornaStatusText(rowData)}</span>
+                    <span data-qa={`span-status-${index}`} className={retornaStatusColor(rowData)}>{retornaStatusText(rowData)}</span>
                 </>
             )
         }
@@ -343,6 +344,7 @@ export const ListaDeDespesas = () => {
                                 onClick={onClickBtnMaisFiltros}
                                 type="button"
                                 className="btn btn btn-outline-success"
+                                data-qa="btn-mais-filtros"
                             >
                                 Mais Filtros
                             </button>
@@ -401,43 +403,43 @@ export const ListaDeDespesas = () => {
                                     }
                                 </div>
 
-                                <table id="tabela-lista-despesas" className="table table-bordered">
-                                    <thead>
-                                    <tr>
-                                        <th style={{width: '17%'}} scope="col">Nº do documento</th>
-                                        <th style={{width: '17%'}} scope="col">Informações</th>
-                                        <th scope="col">Especif. do material ou serviço</th>
-                                        <th scope="col">Aplicação</th>
-                                        <th style={{width: '12%'}} scope="col">Tipo de ação</th>
-                                        <th style={{width: '12%'}} scope="col">Valor (R$)</th>
+                                <table data-qa="table-lista-despesas" id="tabela-lista-despesas" className="table table-bordered">
+                                    <thead data-qa="thead-cabecalho-lista-despesas">
+                                    <tr data-qa="tr-cabecalho-lista-despesas">
+                                        <th data-qa="th-num-documento" style={{width: '17%'}} scope="col">Nº do documento</th>
+                                        <th data-qa="th-info" style={{width: '17%'}} scope="col">Informações</th>
+                                        <th data-qa="th-especificacao" scope="col">Especif. do material ou serviço</th>
+                                        <th data-qa="th-aplicacao" scope="col">Aplicação</th>
+                                        <th data-qa="th-tipo-acao" style={{width: '12%'}} scope="col">Tipo de ação</th>
+                                        <th data-qa="th-valor" style={{width: '12%'}} scope="col">Valor (R$)</th>
                                     </tr>
                                     </thead>
                                     {despesas.map((despesa, index) =>
-                                        <tbody key={`tbody-despesa-${index}`} onClick={() => redirecionaDetalhe(despesa)}>
-                                        <tr key={`tr-despesa-${index}`}>
-                                            <td key={`td-despesa-numero_documento-${index}`}
+                                        <tbody data-qa={`tbody-despesa-${index}`} key={`tbody-despesa-${index}`} onClick={() => redirecionaDetalhe(despesa)}>
+                                        <tr key={`tr-despesa-${index}`} data-qa={`tr-despesa-${index}`}>
+                                            <td key={`td-despesa-numero_documento-${index}`} data-qa={`td-despesa-numero-documento-e-status-${index}`}
                                                 rowSpan={despesa.rateios.length > 0 ? despesa.rateios.length + 1 : 2}>
-                                                {tipoLancamentoTemplate(despesa)}
+                                                {tipoLancamentoTemplate(despesa, index)}
                                             </td>
                                         
-                                            <td rowSpan={despesa.rateios.length > 0 ? despesa.rateios.length + 1 : 2}>{<TableTags data={despesa} coresTags={coresTagsDespesas} />}</td>
+                                            <td data-qa={`td-despesa-informacoes-${index}`} rowSpan={despesa.rateios.length > 0 ? despesa.rateios.length + 1 : 2}>{<TableTags data={despesa} coresTags={coresTagsDespesas} />}</td>
                                         </tr>
 
 
                                         {despesa.rateios.length > 0 ?
                                             despesa.rateios.map((rateio, index) =>
-                                                <tr key={`tr-rateio-${index}`}>
+                                                <tr key={`tr-rateio-${index}`} data-qa={`tr-rateio-${index}`}>
 
-                                                    <td key={`td-rateio-especificacao-${index}`}>{especificacaoDataTemplate(despesa, rateio)}</td>
-                                                    <td className="centraliza-conteudo-tabela text-center">{rateio.aplicacao_recurso}</td>
+                                                    <td data-qa={`td-rateio-especificacao-e-data-documento-${index}`} key={`td-rateio-especificacao-${index}`}>{especificacaoDataTemplate(despesa, rateio, index)}</td>
+                                                    <td data-qa={`td-rateio-aplicacao-recurso-${index}`} className="centraliza-conteudo-tabela text-center">{rateio.aplicacao_recurso}</td>
                                                     {rateio.acao_associacao ?
-                                                        <td className="centraliza-conteudo-tabela text-center"
+                                                        <td data-qa={`td-rateio-acao-${index}`} className="centraliza-conteudo-tabela text-center"
                                                             key={`td-rateio-acao-${index}`}>{rateio.acao_associacao.acao.nome}</td>
                                                         :
-                                                        <td className="centraliza-conteudo-tabela text-center">-</td>
+                                                        <td data-qa={`td-rateio-acao-${index}`} className="centraliza-conteudo-tabela text-center">-</td>
                                                     }
-                                                    <td className="centraliza-conteudo-tabela text-center"
-                                                        key={`td-rateio-valor-${index}`}>{valorTotalTemplate(rateio)}</td>
+                                                    <td data-qa={`td-rateio-valor-${index}`} className="centraliza-conteudo-tabela text-center"
+                                                        key={`td-rateio-valor-${index}`}>{valorTotalTemplate(rateio, index)}</td>
                                                 </tr>
                                             )
                                             :
