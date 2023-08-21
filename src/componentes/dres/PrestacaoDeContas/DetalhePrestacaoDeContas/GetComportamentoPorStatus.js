@@ -553,8 +553,9 @@ export const GetComportamentoPorStatus = (
                         metodoAvancar={() => setShowConcluirAnalise(true)}
                         metodoRetroceder={() => setShowVoltarParaAnalise()}
                         disabledBtnAvancar={true}
-                        disabledBtnRetroceder={!TEMPERMISSAO}
+                        disabledBtnRetroceder={bloqueiaBtnRetroceder() || !TEMPERMISSAO}
                         esconderBotaoAvancar={true}
+                        tooltipRetroceder={tooltipRetroceder()}
                     />
                     <TrilhaDeStatus
                         prestacaoDeContas={prestacaoDeContas}
@@ -645,8 +646,9 @@ export const GetComportamentoPorStatus = (
                         metodoAvancar={() => setShowConcluirAnalise(true)}
                         metodoRetroceder={() => setShowVoltarParaAnalise(true)}
                         disabledBtnAvancar={true}
-                        disabledBtnRetroceder={!TEMPERMISSAO}
+                        disabledBtnRetroceder={bloqueiaBtnRetroceder() || !TEMPERMISSAO}
                         esconderBotaoAvancar={true}
+                        tooltipRetroceder={tooltipRetroceder()}
                     />
                     <TrilhaDeStatus
                         prestacaoDeContas={prestacaoDeContas}
