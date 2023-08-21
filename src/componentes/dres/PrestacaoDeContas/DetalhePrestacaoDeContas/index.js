@@ -1055,8 +1055,16 @@ export const DetalhePrestacaoDeContas = () =>{
         }
     }
 
+    const pcConcluida = () => {
+        if(prestacaoDeContas && (prestacaoDeContas.status === "APROVADA" || prestacaoDeContas.status === "APROVADA_RESSALVA" || prestacaoDeContas.status === "REPROVADA")){
+            return true;
+        }
+
+        return false;
+    }
+
     const bloqueiaBtnRetroceder = () => {
-        if((prestacaoDeContas && (prestacaoDeContas.status === "EM_ANALISE" || prestacaoDeContas.status === "RECEBIDA") && pcEmRetificacao())){
+        if((prestacaoDeContas && (prestacaoDeContas.status === "EM_ANALISE" || prestacaoDeContas.status === "RECEBIDA" || pcConcluida()) && pcEmRetificacao())){
             return true;
         }
         
@@ -1069,6 +1077,10 @@ export const DetalhePrestacaoDeContas = () =>{
         }
 
         if(prestacaoDeContas && prestacaoDeContas.status === "EM_ANALISE" && pcEmRetificacao()) {
+            return "Não é possível retornar o status da PC em retificação."
+        }
+
+        if(pcConcluida() && pcEmRetificacao()) {
             return "Não é possível retornar o status da PC em retificação."
         }
     
