@@ -15,16 +15,18 @@ export const Paginacao = () => {
     return(
         <>
             {!isLoading &&
-                <Paginator
-                    first={firstPage}
-                    //rows={1}
-                    rows={10}
-                    totalRecords={count}
-                    template="PrevPageLink NextPageLink"
-                    onPageChange={onPageChange}
-                    className='paginacao-composicoes'
-                    style={{padding: "0 0 15px 15px"}}
-                />
+                <div data-qa='paginacao-composicao'>
+                    <Paginator
+                        first={firstPage}
+                        rows={1}
+                        totalRecords={count}
+                        template="PrevPageLink NextPageLink"
+                        onPageChange={onPageChange}
+                        className='paginacao-composicoes'
+                        style={{padding: "0 0 15px 15px"}}
+                    />
+                </div>
+
             }
         </>
     )

@@ -1,15 +1,15 @@
-import {getCargosDaComposicao} from "../../../../services/Mandatos.service";
+import {getComposicao} from "../../../../services/Mandatos.service";
 import {useQuery} from "@tanstack/react-query";
 import {useContext} from "react";
 import {MembrosDaAssociacaoContext} from "../context/MembrosDaAssociacao";
 
-export const useGetCargosDaComposicao = () => {
+export const useGetComposicao = () => {
 
     const {composicaoUuid} = useContext(MembrosDaAssociacaoContext)
 
     const { isLoading, isError, data, error } = useQuery(
-        ['cargos-da-composicao', composicaoUuid],
-        ()=> getCargosDaComposicao(composicaoUuid),
+        ['retrieve-composicao', composicaoUuid],
+        ()=> getComposicao(composicaoUuid),
         {
             keepPreviousData: true,
             staleTime: 5000, // 5 segundos

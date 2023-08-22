@@ -6,9 +6,17 @@
 .paginacao-composicoes .p-paginator-prev, .paginacao-composicoes .p-paginator-next{
   height: 3em !important;
   min-width: 3em !important;
+  color: #FFFFFF !important;
 }
 
 .paginacao-composicoes .p-paginator-element{
   margin: 5px !important;
-  background-color: #DADADA !important;
+  background-color: #00585E;
 }
+
+.paginacao-composicoes .p-disabled{
+  margin: 5px !important;
+  background-color: #DADADA !important;
+  color: #A4A4A4 !important;
+}
+
