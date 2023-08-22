@@ -2,17 +2,17 @@
 import React from "react";
 import {ModalBootstrap} from "../../ModalBootstrap";
 
-export const ModalConfirmacao = (props) => {
+export const ModalConfirmacaoRemoverAcesso = (props) => {
     return (
         <ModalBootstrap
             show={props.show}
             onHide={props.botaoCancelarHandle}
-            titulo={props.titulo}
-            bodyText={props.texto}
-            primeiroBotaoTexto={props.botaoCancelarTexto}
+            titulo="Remover acesso"
+            bodyText="<p>Tem certeza que deseja remover o acesso deste usuário nessa unidade?</p>"
+            primeiroBotaoTexto="Cancelar"
             primeiroBotaoCss="outline-success"
             primeiroBotaoOnclick={props.botaoCancelarHandle}
-            segundoBotaoTexto={props.botaoConfirmarTexto}
+            segundoBotaoTexto="Remover acesso"
             segundoBotaoCss="danger"
             segundoBotaoOnclick={props.botaoConfirmarHandle}
         />

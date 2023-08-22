@@ -12,11 +12,12 @@ import Img404 from "../../../../assets/img/img-404.svg";
 import {MsgImgCentralizada} from "../../Mensagens/MsgImgCentralizada";
 import ReactTooltip from "react-tooltip";
 import {useAcessoEmSuporteInfo} from "../../../../hooks/Globais/useAcessoEmSuporteInfo";
-import {ModalConfirmacao} from "./ModalConfirmacao";
-import {toastCustom} from "../../ToastCustom";
-import {useUpdateUsuario} from "../../GestaoDeUsuariosForm/hooks/useUpdateUsuario";
-import {useRemoveAcessosUsuario} from "../hooks/useRemoveAcessosUsuario";
-import {removerAcessosUnidadeBase} from "../../../../services/GestaoDeUsuarios.service";
+import {ModalConfirmacaoRemoverAcesso} from "../../GestaoDeUsuarios/components/ModalConfirmacaoRemoverAcesso";
+import {useRemoveAcessosUsuario} from "../../GestaoDeUsuarios/hooks/useRemoveAcessosUsuario";
+import {
+    showMensagemErroAoRemoverAcesso,
+    showMensagemSucessoAoRemoverAcesso
+} from "../../GestaoDeUsuarios/utils/mensagens-remover-acesso";
 
 const corTagSuporte = {
           1: 'tag-blue-support',
@@ -38,22 +39,7 @@ export const ListaUsuarios = ({usuarios, isLoading}) => {
     const [showModalConfirmaRemoverAcesso, setShowModalConfirmaRemoverAcesso] = useState(false)
     const [userIdParaRemoverAcesso, setUserIdParaRemoverAcesso] = useState(null)
 
-
-    const showMensagemSucesso = () => {
-        toastCustom.ToastCustomSuccess(
-            "Remoção efetuada com sucesso",
-            "Usuário removido com sucesso desta unidade.",
-            'success',
-            'top-right',
-            true)
-    }
-
-    const showMensagemErro = () => {
-        toastCustom.ToastCustomError(
-            "Erro ao tentar remover o acesso",
-            "Não foi possível remover o acesso do usuário desta unidade.")
-    }
-    const { mutate: removeAcessos, isLoading: isLoadingRemoveAcessos, error: errorOnRemoveAcessos, data: resultRemoveAcessos } = useRemoveAcessosUsuario(showMensagemSucesso, showMensagemErro)
+    const { mutate: removeAcessos, isLoading: isLoadingRemoveAcessos, error: errorOnRemoveAcessos, data: resultRemoveAcessos } = useRemoveAcessosUsuario(showMensagemSucessoAoRemoverAcesso, showMensagemErroAoRemoverAcesso)
 
     const nomeUsuarioTemplate = (rowData) => {
 
@@ -266,13 +252,9 @@ export const ListaUsuarios = ({usuarios, isLoading}) => {
                 </div>
             }
             <section>
-                <ModalConfirmacao
+                <ModalConfirmacaoRemoverAcesso
                     show={showModalConfirmaRemoverAcesso}
-                    titulo="Remover acesso"
-                    texto="<p>Tem certeza que deseja remover o acesso deste usuário nessa unidade?</p>"
-                    botaoCancelarTexto="Cancelar"
                     botaoCancelarHandle={() => handleCloseModalConfirmaRemoverAcesso()}
-                    botaoConfirmarTexto="Remover acesso"
                     botaoConfirmarHandle={() => handleConfirmaRemoverAcesso()}
                 />
             </section>
