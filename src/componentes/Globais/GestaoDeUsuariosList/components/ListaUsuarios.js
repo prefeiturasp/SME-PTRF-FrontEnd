@@ -12,8 +12,11 @@ import Img404 from "../../../../assets/img/img-404.svg";
 import {MsgImgCentralizada} from "../../Mensagens/MsgImgCentralizada";
 import ReactTooltip from "react-tooltip";
 import {useAcessoEmSuporteInfo} from "../../../../hooks/Globais/useAcessoEmSuporteInfo";
-import {removerAcessosUnidadeBase} from "../../../../services/GestaoDeUsuarios.service";
 import {ModalConfirmacao} from "./ModalConfirmacao";
+import {toastCustom} from "../../ToastCustom";
+import {useUpdateUsuario} from "../../GestaoDeUsuariosForm/hooks/useUpdateUsuario";
+import {useRemoveAcessosUsuario} from "../hooks/useRemoveAcessosUsuario";
+import {removerAcessosUnidadeBase} from "../../../../services/GestaoDeUsuarios.service";
 
 const corTagSuporte = {
           1: 'tag-blue-support',
@@ -34,6 +37,23 @@ export const ListaUsuarios = ({usuarios, isLoading}) => {
 
     const [showModalConfirmaRemoverAcesso, setShowModalConfirmaRemoverAcesso] = useState(false)
     const [userIdParaRemoverAcesso, setUserIdParaRemoverAcesso] = useState(null)
+
+
+    const showMensagemSucesso = () => {
+        toastCustom.ToastCustomSuccess(
+            "Remoção efetuada com sucesso",
+            "Usuário removido com sucesso desta unidade.",
+            'success',
+            'top-right',
+            true)
+    }
+
+    const showMensagemErro = () => {
+        toastCustom.ToastCustomError(
+            "Erro ao tentar remover o acesso",
+            "Não foi possível remover o acesso do usuário desta unidade.")
+    }
+    const { mutate: removeAcessos, isLoading: isLoadingRemoveAcessos, error: errorOnRemoveAcessos, data: resultRemoveAcessos } = useRemoveAcessosUsuario(showMensagemSucesso, showMensagemErro)
 
     const nomeUsuarioTemplate = (rowData) => {
 
@@ -179,11 +199,12 @@ export const ListaUsuarios = ({usuarios, isLoading}) => {
     };
 
     const handleConfirmaRemoverAcesso = () => {
-        setShowModalConfirmaRemoverAcesso(false)
-        if (userIdParaRemoverAcesso){
-            removerAcessosUnidadeBase(userIdParaRemoverAcesso, uuidUnidadeBase);
+        setShowModalConfirmaRemoverAcesso(false);
+        if (userIdParaRemoverAcesso) {
+            removeAcessos({id:userIdParaRemoverAcesso, uuidUnidadeBase})
         }
     };
+
 
     return (
         <>
