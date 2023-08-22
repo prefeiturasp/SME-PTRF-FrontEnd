@@ -13,6 +13,7 @@ import {MsgImgCentralizada} from "../../Mensagens/MsgImgCentralizada";
 import ReactTooltip from "react-tooltip";
 import {useAcessoEmSuporteInfo} from "../../../../hooks/Globais/useAcessoEmSuporteInfo";
 import {removerAcessosUnidadeBase} from "../../../../services/GestaoDeUsuarios.service";
+import {ModalConfirmacao} from "./ModalConfirmacao";
 
 const corTagSuporte = {
           1: 'tag-blue-support',
@@ -30,6 +31,9 @@ export const ListaUsuarios = ({usuarios, isLoading}) => {
     const {uuidUnidadeBase, visaoBase} = useContext(GestaoDeUsuariosListContext);
     const [expandedRows, setExpandedRows] = useState(null);
     const {unidadeEstaEmSuporte} = useAcessoEmSuporteInfo()
+
+    const [showModalConfirmaRemoverAcesso, setShowModalConfirmaRemoverAcesso] = useState(false)
+    const [userIdParaRemoverAcesso, setUserIdParaRemoverAcesso] = useState(null)
 
     const nomeUsuarioTemplate = (rowData) => {
 
@@ -65,7 +69,8 @@ export const ListaUsuarios = ({usuarios, isLoading}) => {
                 <span data-tip="Remover acesso" data-html={true}>
                     <button
                         onClick={() => {
-                            removerAcessosUnidadeBase(rowData.id, uuidUnidadeBase);
+                            setUserIdParaRemoverAcesso(rowData.id)
+                            setShowModalConfirmaRemoverAcesso(true)
                         }}
                         style={{ background: 'none', border: 'none', cursor: 'pointer' }}
                         className="botao-acao-lista"
@@ -168,6 +173,18 @@ export const ListaUsuarios = ({usuarios, isLoading}) => {
             </>
         )
     };
+
+    const handleCloseModalConfirmaRemoverAcesso = () => {
+        setShowModalConfirmaRemoverAcesso(false);
+    };
+
+    const handleConfirmaRemoverAcesso = () => {
+        setShowModalConfirmaRemoverAcesso(false)
+        if (userIdParaRemoverAcesso){
+            removerAcessosUnidadeBase(userIdParaRemoverAcesso, uuidUnidadeBase);
+        }
+    };
+
     return (
         <>
             {isLoading &&
@@ -227,6 +244,17 @@ export const ListaUsuarios = ({usuarios, isLoading}) => {
                     </DataTable>
                 </div>
             }
+            <section>
+                <ModalConfirmacao
+                    show={showModalConfirmaRemoverAcesso}
+                    titulo="Remover acesso"
+                    texto="<p>Tem certeza que deseja remover o acesso deste usuário nessa unidade?</p>"
+                    botaoCancelarTexto="Cancelar"
+                    botaoCancelarHandle={() => handleCloseModalConfirmaRemoverAcesso()}
+                    botaoConfirmarTexto="Remover acesso"
+                    botaoConfirmarHandle={() => handleConfirmaRemoverAcesso()}
+                />
+            </section>
         </>
     )
 }
