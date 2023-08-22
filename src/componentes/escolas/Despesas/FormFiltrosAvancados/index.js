@@ -118,7 +118,7 @@ export const FormFiltrosAvancados = (props) => {
                             >
                                 <option data-qa={`option-filtrar-por-aplicacao-recurso-filtro-avancado-${0}`} key={0} value="">Selecione um tipo</option>
                                 {despesasTabelas.tipos_aplicacao_recurso && despesasTabelas.tipos_aplicacao_recurso.map((item, index) => (
-                                    <option data-qa={`option-filtrar-por-aplicacao-recurso-filtro-avancado-${index}`} key={item.id} value={item.id}>{item.nome}</option>
+                                    <option data-qa={`option-filtrar-por-aplicacao-recurso-filtro-avancado-${index+1}`} key={item.id} value={item.id}>{item.nome}</option>
                                 ))}
                             </select>
                         </div>
@@ -133,7 +133,7 @@ export const FormFiltrosAvancados = (props) => {
                             >
                                 <option data-qa={`option-filtrar-por-acao-associacao-filtro-avancado-${0}`} key={0} value="">Selecione uma ação</option>
                                 {despesasTabelas.acoes_associacao && despesasTabelas.acoes_associacao.map((item, index) => (
-                                    <option data-qa={`option-filtrar-por-acao-associacao-filtro-avancado-${index}`} key={item.uuid} value={item.uuid}>{item.nome}</option>
+                                    <option data-qa={`option-filtrar-por-acao-associacao-filtro-avancado-${index+1}`} key={item.uuid} value={item.uuid}>{item.nome}</option>
                                 ))}
                             </select>
                         </div>
@@ -167,7 +167,7 @@ export const FormFiltrosAvancados = (props) => {
                             >
                                 <option data-qa={`option-filtrar-por-conta-associacao-filtro-avancado-${0}`} key={0} value="">Selecione um tipo</option>
                                 {despesasTabelas.contas_associacao !== undefined && despesasTabelas.contas_associacao.length > 0 ? (despesasTabelas.contas_associacao.map((item, key) => (
-                                    <option data-qa={`option-filtrar-por-conta-associacao-filtro-avancado-${key}`} key={key} value={item.uuid}>{item.nome} {item.solicitacao_encerramento ? `- Conta encerrada em ${moment(item.solicitacao_encerramento.data_de_encerramento_na_agencia).format('DD/MM/YYYY')}` : ''}</option>
+                                    <option data-qa={`option-filtrar-por-conta-associacao-filtro-avancado-${key+1}`} key={key+1} value={item.uuid}>{item.nome} {item.solicitacao_encerramento ? `- Conta encerrada em ${moment(item.solicitacao_encerramento.data_de_encerramento_na_agencia).format('DD/MM/YYYY')}` : ''}</option>
                                 ))) : null}
                             </select>
                         </div>
