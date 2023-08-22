@@ -4,6 +4,7 @@ import {ModalBootstrap} from "../../../Globais/ModalBootstrap";
 export const ModalDespesaIncompleta = (props) =>{
     return (
         <ModalBootstrap
+            dataQa="modal-despesa-incompleta"
             show={props.show}
             onHide={props.handleClose}
             titulo={props.titulo}
