@@ -86,9 +86,9 @@ export const CadastroFormDespesaImposto = ({
 								className="form-control"
 								disabled={readOnlyCamposImposto[index] || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
 							>
-								<option key={0} value="">Selecione o tipo</option>
-								{tipos_documento_com_recolhimento_imposto().map(item =>
-									<option key={item.id} value={item.id}>{item.nome}</option>
+								<option data-qa={`cadastro-edicao-despesa-imposto-${index}-tipo-documento-option-${0}`} key={0} value="">Selecione o tipo</option>
+								{tipos_documento_com_recolhimento_imposto().map((item, key) =>
+									<option data-qa={`cadastro-edicao-despesa-imposto-${index}-tipo-documento-option-${key}`} key={item.id} value={item.id}>{item.nome}</option>
 								)}
 							</select>
 						</div>
@@ -153,14 +153,14 @@ export const CadastroFormDespesaImposto = ({
 								className={"form-control"}
 								disabled={readOnlyCamposImposto[index] || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
 							>
-								<option key={0} value="">Selecione uma especificação</option>
+								<option data-qa={`cadastro-edicao-despesa-imposto-${index}-especificacao-do-imposto-option-${0}`} key={0} value="">Selecione uma especificação</option>
 								{
 									despesa_imposto.rateios[0].tipo_custeio !== null && despesa_imposto.rateios[0].tipo_custeio !== undefined && despesa_imposto.rateios[0].tipo_custeio.id !== null && despesa_imposto.rateios[0].tipo_custeio.id !== undefined && typeof especificacoes_custeio === "object" && especificacoes_custeio[despesa_imposto.rateios[0].tipo_custeio] ? (especificacoes_custeio[despesa_imposto.rateios[0].tipo_custeio].map((item) => (
 											<option className={!item.ativa ? 'esconde-especificacao-material-servico' : ''} key={item.id} value={item.id}>{item.descricao}</option>
 									)))
 									: (
-										especificacoes_custeio && especificacoes_custeio[despesa_imposto.rateios[0].tipo_custeio] && especificacoes_custeio[despesa_imposto.rateios[0].tipo_custeio].map(item => (
-											<option className={!item.ativa ? 'esconde-especificacao-material-servico' : ''} key={item.id} value={item.id}>{item.descricao}</option>
+										especificacoes_custeio && especificacoes_custeio[despesa_imposto.rateios[0].tipo_custeio] && especificacoes_custeio[despesa_imposto.rateios[0].tipo_custeio].map((item,key) => (
+											<option data-qa={`cadastro-edicao-despesa-imposto-${index}-especificacao-do-imposto-option-${key}`} className={!item.ativa ? 'esconde-especificacao-material-servico' : ''} key={item.id} value={item.id}>{item.descricao}</option>
 										))
 									)
 								}
@@ -186,9 +186,9 @@ export const CadastroFormDespesaImposto = ({
 								className="form-control"
 								disabled={readOnlyCamposImposto[index] || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
 							>
-								<option key={0} value="">Selecione o tipo</option>
-								{despesasTabelas.tipos_transacao && despesasTabelas.tipos_transacao.map(item => (
-									<option key={item.id} value={item.id}>{item.nome}</option>
+								<option data-qa={`cadastro-edicao-despesa-imposto-${index}-forma-de-pagamento-option-${0}`} key={0} value="">Selecione o tipo</option>
+								{despesasTabelas.tipos_transacao && despesasTabelas.tipos_transacao.map((item, key) => (
+									<option data-qa={`cadastro-edicao-despesa-imposto-${index}-forma-de-pagamento-option-${key}`} key={item.id} value={item.id}>{item.nome}</option>
 								))}
 							</select>
 						</div>
@@ -252,9 +252,9 @@ export const CadastroFormDespesaImposto = ({
 								className="form-control"
 								disabled={readOnlyCamposImposto[index] || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
 							>
-								<option value="">Selecione uma ação</option>
-								{acoes_custeio().map(item =>
-									<option key={item.uuid} value={item.uuid}>{item.nome}</option>
+								<option data-qa={`cadastro-edicao-despesa-imposto-${index}-acao-option-${0}`} value="">Selecione uma ação</option>
+								{acoes_custeio().map((item, key) =>
+									<option data-qa={`cadastro-edicao-despesa-imposto-${index}-acao-option-${key}`} key={item.uuid} value={item.uuid}>{item.nome}</option>
 								)}
 							</select>
 						</div>
@@ -274,9 +274,9 @@ export const CadastroFormDespesaImposto = ({
 								className="form-control"
 								disabled={readOnlyCamposImposto[index] || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
 							>
-								<option key={0} value="">Selecione uma conta</option>
-								{despesasTabelas.contas_associacao && despesasTabelas.contas_associacao.map(item => (
-									<option key={item.uuid} value={item.uuid}>{item.nome}</option>
+								<option data-qa={`cadastro-edicao-despesa-imposto-${index}-tipo-de-conta-option-${0}`} key={0} value="">Selecione uma conta</option>
+								{despesasTabelas.contas_associacao && despesasTabelas.contas_associacao.map((item, key) => (
+									<option data-qa={`cadastro-edicao-despesa-imposto-${index}-tipo-de-conta-option-${key}`} key={item.uuid} value={item.uuid}>{item.nome}</option>
 								))}
 							</select>
 						</div>

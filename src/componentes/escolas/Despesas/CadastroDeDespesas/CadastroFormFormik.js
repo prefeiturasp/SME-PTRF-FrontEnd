@@ -221,9 +221,9 @@ export const CadastroFormFormik = ({
                                             className={!eh_despesa_com_comprovacao_fiscal(props.values) ? "form-control" : `${!props.values.tipo_documento && despesaContext.verboHttp === "PUT" && "is_invalid "} ${!props.values.tipo_documento && "despesa_incompleta"} form-control`}
                                             disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes) || !eh_despesa_com_comprovacao_fiscal(props.values)}
                                         >
-                                            <option value="">Selecione o tipo</option>
-                                            {despesasTabelas && despesasTabelas.tipos_documento && despesasTabelas.tipos_documento.length > 0 && despesasTabelas.tipos_documento.map(item =>
-                                                <option className={!item.documento_comprobatorio_de_despesa ? 'esconde-especificacao-material-servico' : ''} key={item.id} value={item.id}>{item.nome}</option>
+                                            <option data-qa={`cadastro-edicao-despesa-tipo-de-documento-option-${0}`} value="">Selecione o tipo</option>
+                                            {despesasTabelas && despesasTabelas.tipos_documento && despesasTabelas.tipos_documento.length > 0 && despesasTabelas.tipos_documento.map((item, key) =>
+                                                <option data-qa={`cadastro-edicao-despesa-tipo-de-documento-option-${key}`} className={!item.documento_comprobatorio_de_despesa ? 'esconde-especificacao-material-servico' : ''} key={item.id} value={item.id}>{item.nome}</option>
                                             )}
                                         </select>
                                     </div>
@@ -300,9 +300,9 @@ export const CadastroFormFormik = ({
                                             className={`${!props.values.tipo_transacao && despesaContext.verboHttp === "PUT" && "is_invalid "} ${!props.values.tipo_transacao && "despesa_incompleta"} form-control`}
                                             disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                                         >
-                                            <option key={0} value="">Selecione o tipo</option>
-                                            {despesasTabelas.tipos_transacao && despesasTabelas.tipos_transacao.map(item => (
-                                                <option key={item.id} value={item.id}>{item.nome}</option>
+                                            <option data-qa={`cadastro-edicao-despesa-forma-de-pagamento-option-${0}`} key={0} value="">Selecione o tipo</option>
+                                            {despesasTabelas.tipos_transacao && despesasTabelas.tipos_transacao.map((item, key) => (
+                                                <option data-qa={`cadastro-edicao-despesa-forma-de-pagamento-option-${key}`} key={item.id} value={item.id}>{item.nome}</option>
                                             ))}
                                         </select>
                                     </div>
@@ -608,9 +608,9 @@ export const CadastroFormFormik = ({
                                             className={`${!props.values.mais_de_um_tipo_despesa && despesaContext.verboHttp === "PUT" && "is_invalid "} ${!values.mais_de_um_tipo_despesa && "despesa_incompleta"} form-control`}
                                             disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                                         >
-                                            <option value="">Selecione</option>
-                                            <option value="nao">Não</option>
-                                            <option value="sim">Sim</option>
+                                            <option data-qa="cadastro-edicao-despesa-gasto-tem-rateios-option-0" value="">Selecione</option>
+                                            <option data-qa="cadastro-edicao-despesa-gasto-tem-rateios-option-1" value="nao">Não</option>
+                                            <option data-qa="cadastro-edicao-despesa-gasto-tem-rateios-option-2" value="sim">Sim</option>
                                         </select>
                                     </div>
                                 </div>
@@ -715,10 +715,10 @@ export const CadastroFormFormik = ({
                                                                     className={`${!rateio.aplicacao_recurso && despesaContext.verboHttp === "PUT" && "is_invalid "} ${!rateio.aplicacao_recurso && "despesa_incompleta"} form-control`}
                                                                     disabled={readOnlyCampos || bloqueiaRateioEstornado(rateio) || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                                                                 >
-                                                                    <option key={0} value="">Escolha uma opção
+                                                                    <option data-qa={`cadastro-edicao-despesa-rateio-${index}-tipo-de-aplicacao-do-recurso-option-${0}`} key={0} value="">Escolha uma opção
                                                                     </option>
-                                                                    {despesasTabelas.tipos_aplicacao_recurso && despesasTabelas.tipos_aplicacao_recurso.map(item => (
-                                                                        <option key={item.id}
+                                                                    {despesasTabelas.tipos_aplicacao_recurso && despesasTabelas.tipos_aplicacao_recurso.map((item, key) => (
+                                                                        <option data-qa={`cadastro-edicao-despesa-rateio-${index}-tipo-de-aplicacao-do-recurso-option-${key}`} key={item.id}
                                                                                 value={item.id}>{item.nome}</option>
                                                                     ))}
                                                                 </select>

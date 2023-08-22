@@ -60,9 +60,9 @@ export const CadastroFormCapital = (propriedades) => {
                         }
                         disabled={disabled || bloqueiaRateioEstornado(rateio) || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes) || !eh_despesa_com_comprovacao_fiscal(formikProps.values)}
                     >
-                        <option key={0} value="">Selecione uma especificação</option>
-                        {especificaoes_capital && especificaoes_capital.map((item) => (
-                            <option className={!item.ativa ? 'esconde-especificacao-material-servico' : ''} key={item.id} value={item.id}>{item.descricao}</option>
+                        <option data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-capital-especificacao-material-option-${0}`} key={0} value="">Selecione uma especificação</option>
+                        {especificaoes_capital && especificaoes_capital.map((item, key) => (
+                            <option data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-capital-especificacao-material-option-${key}`} className={!item.ativa ? 'esconde-especificacao-material-servico' : ''} key={item.id} value={item.id}>{item.descricao}</option>
                         ))}
                     </select>
                 </div>
@@ -82,9 +82,9 @@ export const CadastroFormCapital = (propriedades) => {
                         className={`${!rateio.acao_associacao && verboHttp === "PUT" && "is_invalid "} ${!rateio.acao_associacao && 'despesa_incompleta'} form-control`}
                         disabled={disabled || bloqueiaRateioEstornado(rateio) || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                     >
-                        <option value="">Selecione uma ação</option>
-                        {despesasTabelas.acoes_associacao && despesasTabelas.acoes_associacao.filter(acao => !acao.e_recursos_proprios).map(item => (
-                            <option key={item.uuid} value={item.uuid}>{item.nome}</option>
+                        <option data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-capital-acao-option-${0}`} value="">Selecione uma ação</option>
+                        {despesasTabelas.acoes_associacao && despesasTabelas.acoes_associacao.filter(acao => !acao.e_recursos_proprios).map((item, key) => (
+                            <option data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-capital-acao-option-${key}`} key={item.uuid} value={item.uuid}>{item.nome}</option>
                         ))}
                     </select>
                 </div>
@@ -162,9 +162,9 @@ export const CadastroFormCapital = (propriedades) => {
                         className={`${!rateio.conta_associacao && verboHttp === "PUT" && "is_invalid "} ${!rateio.conta_associacao && 'despesa_incompleta'} form-control`}
                         disabled={disabled || bloqueiaRateioEstornado(rateio) || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                     >
-                        <option key={0} value="">Selecione uma conta</option>
-                        {despesasTabelas.contas_associacao && despesasTabelas.contas_associacao.map(item => (
-                            <option key={item.uuid} value={item.uuid}>{item.nome}</option>
+                        <option data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-capital-tipo-conta-option-${0}`} key={0} value="">Selecione uma conta</option>
+                        {despesasTabelas.contas_associacao && despesasTabelas.contas_associacao.map((item, key) => (
+                            <option data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-capital-tipo-conta-option-${key}`} key={item.uuid} value={item.uuid}>{item.nome}</option>
                         ))}
                     </select>
                 </div>
