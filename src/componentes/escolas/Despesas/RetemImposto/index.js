@@ -10,6 +10,7 @@ export const RetemImposto = ({formikProps, eh_despesa_com_retencao_imposto, disa
             <div className="col-auto">
                 <div className="form-check form-check-inline">
                     <input
+                        data-qa="cadastro-edicao-despesa-retem-imposto"
                         name="retem_imposto"
                         onChange={(e) => {
                             formikProps.handleChange(e);
@@ -28,6 +29,7 @@ export const RetemImposto = ({formikProps, eh_despesa_com_retencao_imposto, disa
 
                 <div className="form-check form-check-inline">
                     <input
+                        data-qa="cadastro-edicao-despesa-nao-retem-imposto"
                         name="retem_imposto"
                         onChange={(e) => {
                             formikProps.handleChange(e);

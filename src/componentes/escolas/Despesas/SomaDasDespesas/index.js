@@ -15,11 +15,11 @@ export const SomaDasDespesas = ({somaDosTotais}) => {
                     </thead>
                     <tbody>
                     <tr>
-                        <td>{somaDosTotais.total_despesas_sem_filtro && somaDosTotais.total_despesas_sem_filtro.toLocaleString('pt-BR', {
+                        <td data-qa='soma-despesas-sem-filtros-aplicados'>{somaDosTotais.total_despesas_sem_filtro && somaDosTotais.total_despesas_sem_filtro.toLocaleString('pt-BR', {
                             style: 'currency',
                             currency: 'BRL'
                         })}</td>
-                        <td>{somaDosTotais.total_despesas_com_filtro && somaDosTotais.total_despesas_com_filtro.toLocaleString('pt-BR', {
+                        <td data-qa='soma-despesas-com-filtros-aplicados'>{somaDosTotais.total_despesas_com_filtro && somaDosTotais.total_despesas_com_filtro.toLocaleString('pt-BR', {
                             style: 'currency',
                             currency: 'BRL'
                         })}</td>

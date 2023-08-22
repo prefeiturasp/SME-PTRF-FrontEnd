@@ -18,10 +18,11 @@ export const ModalOrdenar = ({showModalOrdenar, setShowModalOrdenar, camposOrden
                             name="ordenar_por_numero_do_documento"
                             id="ordenar_por_numero_do_documento"
                             className="form-control"
+                            data-qa="ordenar-por-numero-documento"
                         >
-                            <option value=''>Selecionar</option>
-                            <option value='crescente'>Crescente</option>
-                            <option value='decrescente'>Decrescente</option>
+                            <option data-qa={`option-ordenar-por-numero-documento-${0}`} value=''>Selecionar</option>
+                            <option data-qa={`option-ordenar-por-numero-documento-${1}`} value='crescente'>Crescente</option>
+                            <option data-qa={`option-ordenar-por-numero-documento-${2}`} value='decrescente'>Decrescente</option>
 
                         </select>
                     </div>
@@ -34,10 +35,11 @@ export const ModalOrdenar = ({showModalOrdenar, setShowModalOrdenar, camposOrden
                             name="ordenar_por_data_especificacao"
                             id="ordenar_por_data_especificacao"
                             className="form-control"
+                            data-qa="ordenar-por-data-especificacao"
                         >
-                            <option value=''>Selecionar</option>
-                            <option value='crescente'>Crescente</option>
-                            <option value='decrescente'>Decrescente</option>
+                            <option data-qa={`option-ordenar-por-data-especificacao-${0}`} value=''>Selecionar</option>
+                            <option data-qa={`option-ordenar-por-data-especificacao-${1}`} value='crescente'>Crescente</option>
+                            <option data-qa={`option-ordenar-por-data-especificacao-${2}`} value='decrescente'>Decrescente</option>
                         </select>
                     </div>
 
@@ -49,10 +51,11 @@ export const ModalOrdenar = ({showModalOrdenar, setShowModalOrdenar, camposOrden
                             name="ordenar_por_valor"
                             id="ordenar_por_valor"
                             className="form-control"
+                            data-qa="ordenar-por-valor"
                         >
-                            <option value=''>Selecionar</option>
-                            <option value='crescente'>Crescente</option>
-                            <option value='decrescente'>Decrescente</option>
+                            <option data-qa={`option-ordenar-por-valor-${0}`} value=''>Selecionar</option>
+                            <option data-qa={`option-ordenar-por-valor-${1}`} value='crescente'>Crescente</option>
+                            <option data-qa={`option-ordenar-por-valor-${2}`} value='decrescente'>Decrescente</option>
                         </select>
                     </div>
 
@@ -65,6 +68,7 @@ export const ModalOrdenar = ({showModalOrdenar, setShowModalOrdenar, camposOrden
                                 id={`ordenar_por_imposto`}
                                 type="checkbox"
                                 className="form-check-input"
+                                data-qa="ordenar-por-imposto"
                             />
                             <label className="form-check-label" htmlFor={`ordenar_por_imposto`}>Ordenar com imposto vinculados às despesas</label>
                         </div>
@@ -76,6 +80,7 @@ export const ModalOrdenar = ({showModalOrdenar, setShowModalOrdenar, camposOrden
                                 type='button'
                                 onClick={()=>setShowModalOrdenar(false)}
                                 className='btn btn-outline-success mr-2'
+                                data-qa='btn-cancelar-modal-ordenacao'
                             >
                                 Cancelar
                             </button>
@@ -83,6 +88,7 @@ export const ModalOrdenar = ({showModalOrdenar, setShowModalOrdenar, camposOrden
                                 type='button'
                                 onClick={onSubmitOrdenar}
                                 className='btn btn-success'
+                                data-qa='btn-ordenar-modal-ordenacao'
                             >
                                 Ordenar
                             </button>
