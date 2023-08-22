@@ -93,7 +93,7 @@ import TesteDataTableAnt
 import {GestaoDeUsuariosFormPage} from "../componentes/Globais/GestaoDeUsuariosForm";
 import {Mandatos} from "../componentes/sme/Mandatos";
 import {MotivosRejeicaoEncerramentoConta} from "../componentes/sme/Parametrizacoes/Estrutura/MotivosRejeicaoEncerramentoConta";
-import {MandatosAnteriores} from "../componentes/escolas/MembrosDaAssociacao/pages/MandatosAnteriores";
+import {PaginaMandatosAnteriores} from "../componentes/escolas/MembrosDaAssociacao/pages/PaginaMandatosAnteriores";
 
 const routesConfig = [
     {
@@ -171,7 +171,7 @@ const routesConfig = [
     {
         exact: true,
         path: "/membros-da-associacao-mandatos-anteriores",
-        component: MandatosAnteriores,
+        component: PaginaMandatosAnteriores,
         permissoes: ['access_dados_associacao'],
     },
     {
