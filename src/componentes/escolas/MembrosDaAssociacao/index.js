@@ -2,7 +2,7 @@ import React from "react";
 import {UrlsMenuInterno} from "../Associacao/UrlsMenuInterno";
 import {MenuInterno} from "../../Globais/MenuInterno";
 import {PaginaMandatoVigente} from "./pages/PaginaMandatoVigente";
-import {MandatosAnteriores} from "./pages/MandatosAnteriores";
+import {PaginaMandatosAnteriores} from "./pages/PaginaMandatosAnteriores";
 import {ExportaDadosDaAsssociacao} from "../Associacao/ExportaDadosAssociacao";
 import {MembrosDaAssociacaoProvider} from "./context/MembrosDaAssociacao";
 import "./membros-da-associacao.scss"
@@ -25,7 +25,7 @@ export const MembrosDaAssociacao = () => {
                     <PaginaMandatoVigente/>
                 </div>
                 <div className="tab-pane fade" id="nav-mandatos-anteriores" role="tabpanel" aria-labelledby="nav-mandatos-anteriores-tab">
-                    <MandatosAnteriores/>
+                    <PaginaMandatosAnteriores/>
                 </div>
             </div>
         </MembrosDaAssociacaoProvider>
