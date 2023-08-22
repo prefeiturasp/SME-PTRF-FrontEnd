@@ -74,7 +74,7 @@ export const Tags = ({formikProps, index, rateio, verboHttp, disabled, despesasT
                         >
                             <option data-qa={`cadastro-edicao-despesa-rateio-${index}-atividade-vinculada-option-${0}`} value="">Selecione uma atividade</option>
                             {despesasTabelas.tags && despesasTabelas.tags.map((item, key) => (
-                                <option data-qa={`cadastro-edicao-despesa-rateio-${index}-atividade-vinculada-option-${key}`} key={item.uuid} value={item.uuid}>{item.nome}</option>
+                                <option data-qa={`cadastro-edicao-despesa-rateio-${index}-atividade-vinculada-option-${key + 1}`} key={item.uuid} value={item.uuid}>{item.nome}</option>
                             ))}
                         </select>
                     </div>

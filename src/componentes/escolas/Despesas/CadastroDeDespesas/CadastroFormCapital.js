@@ -63,7 +63,7 @@ export const CadastroFormCapital = (propriedades) => {
                     >
                         <option data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-capital-especificacao-material-option-${0}`} key={0} value="">Selecione uma especificação</option>
                         {especificaoes_capital && especificaoes_capital.map((item, key) => (
-                            <option data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-capital-especificacao-material-option-${key}`} className={!item.ativa ? 'esconde-especificacao-material-servico' : ''} key={item.id} value={item.id}>{item.descricao}</option>
+                            <option data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-capital-especificacao-material-option-${key + 1}`} className={!item.ativa ? 'esconde-especificacao-material-servico' : ''} key={item.id} value={item.id}>{item.descricao}</option>
                         ))}
                     </select>
                 </div>
@@ -85,7 +85,7 @@ export const CadastroFormCapital = (propriedades) => {
                     >
                         <option data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-capital-acao-option-${0}`} value="">Selecione uma ação</option>
                         {despesasTabelas.acoes_associacao && despesasTabelas.acoes_associacao.filter(acao => !acao.e_recursos_proprios).map((item, key) => (
-                            <option data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-capital-acao-option-${key}`} key={item.uuid} value={item.uuid}>{item.nome}</option>
+                            <option data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-capital-acao-option-${key + 1}`} key={item.uuid} value={item.uuid}>{item.nome}</option>
                         ))}
                     </select>
                 </div>

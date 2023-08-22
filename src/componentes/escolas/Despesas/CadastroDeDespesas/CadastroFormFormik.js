@@ -224,7 +224,7 @@ export const CadastroFormFormik = ({
                                         >
                                             <option data-qa={`cadastro-edicao-despesa-tipo-de-documento-option-${0}`} value="">Selecione o tipo</option>
                                             {despesasTabelas && despesasTabelas.tipos_documento && despesasTabelas.tipos_documento.length > 0 && despesasTabelas.tipos_documento.map((item, key) =>
-                                                <option data-qa={`cadastro-edicao-despesa-tipo-de-documento-option-${key}`} className={!item.documento_comprobatorio_de_despesa ? 'esconde-especificacao-material-servico' : ''} key={item.id} value={item.id}>{item.nome}</option>
+                                                <option data-qa={`cadastro-edicao-despesa-tipo-de-documento-option-${key + 1}`} className={!item.documento_comprobatorio_de_despesa ? 'esconde-especificacao-material-servico' : ''} key={item.id} value={item.id}>{item.nome}</option>
                                             )}
                                         </select>
                                     </div>
@@ -303,7 +303,7 @@ export const CadastroFormFormik = ({
                                         >
                                             <option data-qa={`cadastro-edicao-despesa-forma-de-pagamento-option-${0}`} key={0} value="">Selecione o tipo</option>
                                             {despesasTabelas.tipos_transacao && despesasTabelas.tipos_transacao.map((item, key) => (
-                                                <option data-qa={`cadastro-edicao-despesa-forma-de-pagamento-option-${key}`} key={item.id} value={item.id}>{item.nome}</option>
+                                                <option data-qa={`cadastro-edicao-despesa-forma-de-pagamento-option-${key + 1}`} key={item.id} value={item.id}>{item.nome}</option>
                                             ))}
                                         </select>
                                     </div>
@@ -720,7 +720,7 @@ export const CadastroFormFormik = ({
                                                                     <option data-qa={`cadastro-edicao-despesa-rateio-${index}-tipo-de-aplicacao-do-recurso-option-${0}`} key={0} value="">Escolha uma opção
                                                                     </option>
                                                                     {despesasTabelas.tipos_aplicacao_recurso && despesasTabelas.tipos_aplicacao_recurso.map((item, key) => (
-                                                                        <option data-qa={`cadastro-edicao-despesa-rateio-${index}-tipo-de-aplicacao-do-recurso-option-${key}`} key={item.id}
+                                                                        <option data-qa={`cadastro-edicao-despesa-rateio-${index}-tipo-de-aplicacao-do-recurso-option-${key + 1}`} key={item.id}
                                                                                 value={item.id}>{item.nome}</option>
                                                                     ))}
                                                                 </select>

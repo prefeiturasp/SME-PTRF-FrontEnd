@@ -90,22 +90,22 @@ export const CadastroForm = ({verbo_http}) => {
     }
 
     const renderContaAssociacaoOptions = useCallback(() => {
-        const getOptionPorStatus = (item) => {
+        const getOptionPorStatus = (item, key) => {
             const defaultProps = {
                 key: item.uuid,
                 value: item.uuid
             }   
             
             if(item.status === STATUS_CONTA_ASSOCIACAO.ATIVA){
-                return  <option {...defaultProps}>{item.nome}</option>
+                return  <option data-qa={`render-conta-associacao-option-${key + 1}`} {...defaultProps}>{item.nome}</option>
             } else if(item.solicitacao_encerramento && item.solicitacao_encerramento.status !== STATUS_SOLICITACAO_ENCERRAMENTO_CONTA_ASSOCIACAO.APROVADA) {
                 let informacaoExtra = item.solicitacao_encerramento ? `- Conta encerrada em ${moment(item.solicitacao_encerramento.data_de_encerramento_na_agencia).format('DD/MM/YYYY')}` : ''
-                return <option {...defaultProps} disabled>{item.nome} {informacaoExtra}</option>
+                return <option data-qa={`render-conta-associacao-option-${key + 1}`} {...defaultProps} disabled>{item.nome} {informacaoExtra}</option>
             }
         }
         return (
-            despesasTabelas.contas_associacao.map(item => (
-                getOptionPorStatus(item)
+            despesasTabelas.contas_associacao.map((item, key) => (
+                getOptionPorStatus(item, key)
             ))
         )    
     }, [despesasTabelas]);

@@ -52,7 +52,7 @@ export const CadastroFormCusteio = (propriedades) => {
                     >
                         <option data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-custeio-tipo-de-despesa-option-${0}`} value="">Selecione um tipo</option>
                         {despesasTabelas.tipos_custeio && despesasTabelas.tipos_custeio.map((item, key) => (
-                            <option data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-custeio-tipo-de-despesa-option-${key}`} key={item.id} value={item.id}>{item.nome}</option>
+                            <option data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-custeio-tipo-de-despesa-option-${key + 1}`} key={item.id} value={item.id}>{item.nome}</option>
                         ))}
                     </select>
                 </div>
@@ -78,14 +78,14 @@ export const CadastroFormCusteio = (propriedades) => {
                         }
                         disabled={disabled || bloqueiaRateioEstornado(rateio) || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes) || !eh_despesa_com_comprovacao_fiscal(formikProps.values)}
                     >
-                        <option key={0} value="">Selecione uma especificação</option>
+                        <option data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-custeio-especificacao-material-option-${0}`} key={0} value="">Selecione uma especificação</option>
                         {
-                            rateio.tipo_custeio !== null && rateio.tipo_custeio !== undefined && rateio.tipo_custeio.id !== null && rateio.tipo_custeio.id !== undefined && typeof especificacoes_custeio === "object" && especificacoes_custeio[rateio.tipo_custeio.id] ? (especificacoes_custeio[rateio.tipo_custeio.id].map((item) => (
-                                    <option data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-custeio-especificacao-material-option-${0}`} className={!item.ativa ? 'esconde-especificacao-material-servico' : ''} key={item.id} value={item.id}>{item.descricao}</option>
+                            rateio.tipo_custeio !== null && rateio.tipo_custeio !== undefined && rateio.tipo_custeio.id !== null && rateio.tipo_custeio.id !== undefined && typeof especificacoes_custeio === "object" && especificacoes_custeio[rateio.tipo_custeio.id] ? (especificacoes_custeio[rateio.tipo_custeio.id].map((item, key) => (
+                                    <option data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-custeio-especificacao-material-option-${key + 1}`} className={!item.ativa ? 'esconde-especificacao-material-servico' : ''} key={item.id} value={item.id}>{item.descricao}</option>
                                 )))
                                 : (
                                     especificacoes_custeio && especificacoes_custeio[rateio.tipo_custeio] && especificacoes_custeio[rateio.tipo_custeio].map((item, key) => (
-                                        <option data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-custeio-especificacao-material-option-${key}`} className={!item.ativa ? 'esconde-especificacao-material-servico' : ''} key={item.id} value={item.id}>{item.descricao}</option>
+                                        <option data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-custeio-especificacao-material-option-${key + 1}`} className={!item.ativa ? 'esconde-especificacao-material-servico' : ''} key={item.id} value={item.id}>{item.descricao}</option>
                                     ))
                                 )
                         }
@@ -108,7 +108,7 @@ export const CadastroFormCusteio = (propriedades) => {
                     >
                         <option data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-custeio-acao-option-${0}`} value="">Selecione uma ação</option>
                         {despesasTabelas.acoes_associacao && despesasTabelas.acoes_associacao.filter(acao => !acao.e_recursos_proprios).map((item, key) => (
-                            <option data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-custeio-acao-${key}`} key={item.uuid} value={item.uuid}>{item.nome}</option>
+                            <option data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-custeio-acao-option-${key + 1}`} key={item.uuid} value={item.uuid}>{item.nome}</option>
                         ))}
                     </select>
                 </div>
