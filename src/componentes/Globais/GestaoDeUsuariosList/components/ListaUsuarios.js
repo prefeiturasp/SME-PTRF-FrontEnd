@@ -12,6 +12,7 @@ import Img404 from "../../../../assets/img/img-404.svg";
 import {MsgImgCentralizada} from "../../Mensagens/MsgImgCentralizada";
 import ReactTooltip from "react-tooltip";
 import {useAcessoEmSuporteInfo} from "../../../../hooks/Globais/useAcessoEmSuporteInfo";
+import {removerAcessosUnidadeBase} from "../../../../services/GestaoDeUsuarios.service";
 
 const corTagSuporte = {
           1: 'tag-blue-support',
@@ -61,21 +62,22 @@ export const ListaUsuarios = ({usuarios, isLoading}) => {
     const acoesTemplate = (rowData) =>{
         return (
             <div>
-                <span data-tip="Excluir/Desvincular usuário" data-html={true}>
-                    <Link
-                        style={{pointerEvents: 'none'}}  //TODO: remover quando estiver pronto
-                        className="botao-acao-lista"
-                        to={{
-                            pathname: `/gestao-de-usuarios-form/${rowData.id}`,
+                <span data-tip="Remover acesso" data-html={true}>
+                    <button
+                        onClick={() => {
+                            removerAcessosUnidadeBase(rowData.id, uuidUnidadeBase);
                         }}
+                        style={{ background: 'none', border: 'none', cursor: 'pointer' }}
+                        className="botao-acao-lista"
                     >
-                            <FontAwesomeIcon
-                                style={{fontSize: '20px', marginRight: "0", color: "#B40C02"}}
-                                icon={faTimesCircle}
-                            />
-                    </Link>
+                        <FontAwesomeIcon
+                            style={{ fontSize: '20px', marginRight: "0", color: "#B40C02" }}
+                            icon={faTimesCircle}
+                        />
+                    </button>
                     <ReactTooltip/>
                 </span>
+
 
                 { ! unidadeEstaEmSuporte &&
                 <span data-tip="Editar usuário" data-html={true}>
