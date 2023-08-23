@@ -2,7 +2,7 @@
 import {useMutation, useQueryClient} from '@tanstack/react-query';
 import {removerAcessosUnidadeBase} from "../../../../services/GestaoDeUsuarios.service";
 
-export const useRemoveAcessosUsuario = (callOnSuccess, callOnError)  => {
+export const useRemoveAcessosUsuario = (callOnSuccess, callOnError, visao)  => {
   async function removeAcessoUsuario(id, uuidUnidadeBase) {
     if (!id || !uuidUnidadeBase) return null;
     try {
@@ -22,7 +22,7 @@ export const useRemoveAcessosUsuario = (callOnSuccess, callOnError)  => {
     onSuccess: () => {
       queryClient.invalidateQueries(["usuarios-list", "usuario-form"]);
       console.log('Acessos removidos com sucesso!')
-      callOnSuccess();
+      callOnSuccess(visao);
     },
     onError: (error) => {
       console.log('Erro ao remover acessos do usuario: ', error)

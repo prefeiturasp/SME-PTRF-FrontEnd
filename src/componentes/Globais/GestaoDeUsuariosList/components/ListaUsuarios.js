@@ -39,7 +39,7 @@ export const ListaUsuarios = ({usuarios, isLoading}) => {
     const [showModalConfirmaRemoverAcesso, setShowModalConfirmaRemoverAcesso] = useState(false)
     const [userIdParaRemoverAcesso, setUserIdParaRemoverAcesso] = useState(null)
 
-    const { mutate: removeAcessos, isLoading: isLoadingRemoveAcessos, error: errorOnRemoveAcessos, data: resultRemoveAcessos } = useRemoveAcessosUsuario(showMensagemSucessoAoRemoverAcesso, showMensagemErroAoRemoverAcesso)
+    const { mutate: removeAcessos, isLoading: isLoadingRemoveAcessos, error: errorOnRemoveAcessos, data: resultRemoveAcessos } = useRemoveAcessosUsuario(showMensagemSucessoAoRemoverAcesso, showMensagemErroAoRemoverAcesso, visaoBase)
 
     const nomeUsuarioTemplate = (rowData) => {
 
@@ -256,6 +256,7 @@ export const ListaUsuarios = ({usuarios, isLoading}) => {
                     show={showModalConfirmaRemoverAcesso}
                     botaoCancelarHandle={() => handleCloseModalConfirmaRemoverAcesso()}
                     botaoConfirmarHandle={() => handleConfirmaRemoverAcesso()}
+                    visao={visaoBase}
                 />
             </section>
         </>
