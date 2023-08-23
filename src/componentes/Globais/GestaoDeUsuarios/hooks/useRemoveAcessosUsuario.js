@@ -20,7 +20,7 @@ export const useRemoveAcessosUsuario = (callOnSuccess, callOnError, visao)  => {
     return removeAcessoUsuario(id, uuidUnidadeBase)
   }, {
     onSuccess: () => {
-      queryClient.invalidateQueries(["usuarios-list", "usuario-form"]);
+      queryClient.invalidateQueries("usuarios-list");
       console.log('Acessos removidos com sucesso!')
       callOnSuccess(visao);
     },
