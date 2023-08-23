@@ -49,6 +49,7 @@ export const CadastroFormDespesaImposto = ({
 							<div className="d-flex justify-content-start">
 								{index >= 1 && (
 									<button
+										data-qa={`cadastro-edicao-despesa-imposto-${index}-btn-remover`}
 										type="button"
 										className={`btn btn-link btn-remover-despesa mr-2 d-flex align-items-center ${readOnlyCamposImposto[index] ? 'desabilita-link-remover-despesa' : ''}`}
 										onClick={() => remove(index)}
@@ -73,6 +74,7 @@ export const CadastroFormDespesaImposto = ({
 						<div className="col-12 col-md-4 mt-1">
 							<label htmlFor={`tipo_documento_${index}`}>Tipo de documento</label>
 							<select
+								data-qa={`cadastro-edicao-despesa-imposto-${index}-tipo-documento`}
 								value={
 									despesa_imposto && despesa_imposto.tipo_documento !== null ? (
 										despesa_imposto.tipo_documento === "object" ? despesa_imposto.tipo_documento.id : despesa_imposto.tipo_documento
@@ -85,9 +87,9 @@ export const CadastroFormDespesaImposto = ({
 								className="form-control"
 								disabled={readOnlyCamposImposto[index] || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
 							>
-								<option key={0} value="">Selecione o tipo</option>
-								{tipos_documento_com_recolhimento_imposto().map(item =>
-									<option key={item.id} value={item.id}>{item.nome}</option>
+								<option data-qa={`cadastro-edicao-despesa-imposto-${index}-tipo-documento-option-${0}`} key={0} value="">Selecione o tipo</option>
+								{tipos_documento_com_recolhimento_imposto().map((item, key) =>
+									<option data-qa={`cadastro-edicao-despesa-imposto-${index}-tipo-documento-option-${key + 1}`} key={item.id} value={item.id}>{item.nome}</option>
 								)}
 							</select>
 						</div>
@@ -95,6 +97,7 @@ export const CadastroFormDespesaImposto = ({
 						<div className="col-12 col-md-4 mt-1">
 							<label htmlFor={`numero_documento_${index}`}>Número do documento</label>
 							<input
+								data-qa={`cadastro-edicao-despesa-imposto-${index}-numero-do-documento`}
 								value={
 									despesa_imposto && despesa_imposto.numero_documento !== null ? (
 										despesa_imposto.numero_documento
@@ -116,6 +119,7 @@ export const CadastroFormDespesaImposto = ({
 							
 							<label htmlFor={`despesas_impostos[${index}].rateios[0].tipo_custeio`}>Tipo de despesa</label>
 							<select
+								data-qa={`cadastro-edicao-despesa-imposto-${index}-tipo-de-despesa`}
 								value={preenche_tipo_despesa_custeio(formikProps.values, index)}
 								onChange={(e) => {
 									formikProps.handleChange(e);
@@ -136,6 +140,7 @@ export const CadastroFormDespesaImposto = ({
 						<div className="col-12 mt-4">
 							<label htmlFor={`despesas_impostos[${index}].rateios[0].especificacao_material_servico`}>Especificação do imposto</label>
 							<select
+								data-qa={`cadastro-edicao-despesa-imposto-${index}-especificacao-do-imposto`}
 								value={
 									despesa_imposto && despesa_imposto.rateios[0].especificacao_material_servico !== null ? (
 										typeof despesa_imposto.rateios[0].especificacao_material_servico === "object" ? despesa_imposto.rateios[0].especificacao_material_servico.id : despesa_imposto.rateios[0].especificacao_material_servico
@@ -149,14 +154,14 @@ export const CadastroFormDespesaImposto = ({
 								className={"form-control"}
 								disabled={readOnlyCamposImposto[index] || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
 							>
-								<option key={0} value="">Selecione uma especificação</option>
+								<option data-qa={`cadastro-edicao-despesa-imposto-${index}-especificacao-do-imposto-option-${0}`} key={0} value="">Selecione uma especificação</option>
 								{
-									despesa_imposto.rateios[0].tipo_custeio !== null && despesa_imposto.rateios[0].tipo_custeio !== undefined && despesa_imposto.rateios[0].tipo_custeio.id !== null && despesa_imposto.rateios[0].tipo_custeio.id !== undefined && typeof especificacoes_custeio === "object" && especificacoes_custeio[despesa_imposto.rateios[0].tipo_custeio] ? (especificacoes_custeio[despesa_imposto.rateios[0].tipo_custeio].map((item) => (
-											<option className={!item.ativa ? 'esconde-especificacao-material-servico' : ''} key={item.id} value={item.id}>{item.descricao}</option>
+									despesa_imposto.rateios[0].tipo_custeio !== null && despesa_imposto.rateios[0].tipo_custeio !== undefined && despesa_imposto.rateios[0].tipo_custeio.id !== null && despesa_imposto.rateios[0].tipo_custeio.id !== undefined && typeof especificacoes_custeio === "object" && especificacoes_custeio[despesa_imposto.rateios[0].tipo_custeio] ? (especificacoes_custeio[despesa_imposto.rateios[0].tipo_custeio].map((item, key) => (
+											<option data-qa={`cadastro-edicao-despesa-imposto-${index}-especificacao-do-imposto-option-${key + 1}`} className={!item.ativa ? 'esconde-especificacao-material-servico' : ''} key={item.id} value={item.id}>{item.descricao}</option>
 									)))
 									: (
-										especificacoes_custeio && especificacoes_custeio[despesa_imposto.rateios[0].tipo_custeio] && especificacoes_custeio[despesa_imposto.rateios[0].tipo_custeio].map(item => (
-											<option className={!item.ativa ? 'esconde-especificacao-material-servico' : ''} key={item.id} value={item.id}>{item.descricao}</option>
+										especificacoes_custeio && especificacoes_custeio[despesa_imposto.rateios[0].tipo_custeio] && especificacoes_custeio[despesa_imposto.rateios[0].tipo_custeio].map((item,key) => (
+											<option data-qa={`cadastro-edicao-despesa-imposto-${index}-especificacao-do-imposto-option-${key + 1}`} className={!item.ativa ? 'esconde-especificacao-material-servico' : ''} key={item.id} value={item.id}>{item.descricao}</option>
 										))
 									)
 								}
@@ -168,6 +173,7 @@ export const CadastroFormDespesaImposto = ({
 						<div className="col-md-6 mt-4">
 							<label htmlFor={`tipo_transacao_${index}`}>Forma de pagamento</label>
 							<select
+								data-qa={`cadastro-edicao-despesa-imposto-${index}-forma-de-pagamento`}
 								value={
 									despesa_imposto.tipo_transacao !== null ? (despesa_imposto.tipo_transacao === "object" ? despesa_imposto.tipo_transacao.id : despesa_imposto.tipo_transacao) : ""
 								}
@@ -181,9 +187,9 @@ export const CadastroFormDespesaImposto = ({
 								className="form-control"
 								disabled={readOnlyCamposImposto[index] || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
 							>
-								<option key={0} value="">Selecione o tipo</option>
-								{despesasTabelas.tipos_transacao && despesasTabelas.tipos_transacao.map(item => (
-									<option key={item.id} value={item.id}>{item.nome}</option>
+								<option data-qa={`cadastro-edicao-despesa-imposto-${index}-forma-de-pagamento-option-${0}`} key={0} value="">Selecione o tipo</option>
+								{despesasTabelas.tipos_transacao && despesasTabelas.tipos_transacao.map((item, key) => (
+									<option data-qa={`cadastro-edicao-despesa-imposto-${index}-forma-de-pagamento-option-${key + 1}`} key={item.id} value={item.id}>{item.nome}</option>
 								))}
 							</select>
 						</div>
@@ -191,6 +197,7 @@ export const CadastroFormDespesaImposto = ({
 						<div className="col-md-3 mt-4">
 							<label htmlFor={`data_transacao_${index}`}>Data do pagamento</label>
 							<DatePickerField
+								dataQa={`cadastro-edicao-despesa-imposto-${index}-data-do-pagamento`}
 								name={`despesas_impostos[${index}].data_transacao`}
 								id={`data_transacao_${index}`}
 								value={
@@ -213,6 +220,7 @@ export const CadastroFormDespesaImposto = ({
 							<div className={cssEscondeDocumentoTransacaoImposto[index] === '' ? cssEscondeDocumentoTransacaoImposto[index] : 'escondeItem'}>
 								<label htmlFor={`documento_transacao_${index}`}>Número do {labelDocumentoTransacaoImposto[index]}</label>
 								<input
+									data-qa={`cadastro-edicao-despesa-imposto-${index}-numero-do-documento-de-transacao`}
 									value={despesa_imposto.documento_transacao}
 									onChange={formikProps.handleChange}
 									onBlur={formikProps.handleBlur}
@@ -233,6 +241,7 @@ export const CadastroFormDespesaImposto = ({
 						<div className="col-12 col-md-3 mt-4">
 							<label htmlFor={`despesas_impostos[${index}].rateios[0].acao_associacao`}>Ação</label>
 							<select
+								data-qa={`cadastro-edicao-despesa-imposto-${index}-acao`}
 								value={
 									despesa_imposto.rateios[0].acao_associacao !== null ? (
 										typeof despesa_imposto.rateios[0].acao_associacao === "object" ? despesa_imposto.rateios[0].acao_associacao.uuid : despesa_imposto.rateios[0].acao_associacao
@@ -244,9 +253,9 @@ export const CadastroFormDespesaImposto = ({
 								className="form-control"
 								disabled={readOnlyCamposImposto[index] || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
 							>
-								<option value="">Selecione uma ação</option>
-								{acoes_custeio().map(item =>
-									<option key={item.uuid} value={item.uuid}>{item.nome}</option>
+								<option data-qa={`cadastro-edicao-despesa-imposto-${index}-acao-option-${0}`} value="">Selecione uma ação</option>
+								{acoes_custeio().map((item, key) =>
+									<option data-qa={`cadastro-edicao-despesa-imposto-${index}-acao-option-${key + 1}`} key={item.uuid} value={item.uuid}>{item.nome}</option>
 								)}
 							</select>
 						</div>
@@ -254,6 +263,7 @@ export const CadastroFormDespesaImposto = ({
 						<div className="col-12 col-md-3 mt-4">
 							<label htmlFor={`despesas_impostos[${index}].rateios[0].conta_associacao`}>Tipo de conta</label>
 							<select
+								data-qa={`cadastro-edicao-despesa-imposto-${index}-tipo-de-conta`}
 								value={
 									despesa_imposto.rateios[0].conta_associacao !== null ? (
 										typeof despesa_imposto.rateios[0].conta_associacao === "object" ? despesa_imposto.rateios[0].conta_associacao.uuid : despesa_imposto.rateios[0].conta_associacao
@@ -273,6 +283,7 @@ export const CadastroFormDespesaImposto = ({
 						<div className="col-12 col-md-3 mt-4">
 							<label htmlFor={`despesas_impostos[${index}].rateios[0].valor_original`}>Valor do imposto</label>
 							<CurrencyInput
+								data-qa={`cadastro-edicao-despesa-imposto-${index}-valor-do-imposto`}
 								allowNegative={false}
 								prefix='R$'
 								decimalSeparator=","
@@ -293,6 +304,7 @@ export const CadastroFormDespesaImposto = ({
 						<div className="col-12 col-md-3 mt-4">
 							<label htmlFor={`despesas_impostos[${index}].rateios[0].valor_rateio`} className="label-valor-realizado">Valor realizado do imposto</label>
 							<CurrencyInput
+								data-qa={`cadastro-edicao-despesa-imposto-${index}-valor-realizado-do-imposto`}
 								allowNegative={false}
 								prefix='R$'
 								decimalSeparator=","

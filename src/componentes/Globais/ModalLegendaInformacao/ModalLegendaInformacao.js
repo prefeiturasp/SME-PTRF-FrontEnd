@@ -71,10 +71,10 @@ export const ModalLegendaInformacao = (propriedades) => {
                     ) : listaTagInformacao?.length > 0 ? listaTagInformacao.map((tag, index) => {
                         tag.texto = tag.nome
                         return <React.Fragment key={index}>{<TagModalLegendaInformacao data={tag} coresTags={coresTags}/>}</React.Fragment>
-                    }) : <span>Nenhuma informação encontrada</span>
+                    }) : <span data-qa="span-nenhuma-info-encontrada">Nenhuma informação encontrada</span>
                 } </Modal.Body>
                 <Modal.Footer>
-                    <Button variant={
+                    <Button data-qa="btn-fechar-modal-legenda-info" variant={
                         propriedades.primeiroBotaoCss ? propriedades.primeiroBotaoCss : "info"
                     }
                             onClick={

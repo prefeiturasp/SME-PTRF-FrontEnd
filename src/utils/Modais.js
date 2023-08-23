@@ -18,6 +18,7 @@ import {Button} from "react-bootstrap";
 export const AvisoCapitalModal = (propriedades) => {
     return (
         <ModalBootstrap
+            dataQa="modal-despesa-aviso-capital"
             show={propriedades.show}
             onHide={propriedades.handleClose}
             titulo="Aviso"
@@ -32,6 +33,7 @@ capital é a mesma utilizada no Sistema de Bens Patrimoniais Móveis (SBPM) da P
 export const CancelarModal = (propriedades) => {
     return (
         <ModalBootstrap
+            dataQa="modal-despesa-cancelar-cadastro"
             show={propriedades.show}
             onHide={propriedades.handleClose}
             titulo="Cancelar cadastro"
@@ -47,6 +49,7 @@ export const CancelarModal = (propriedades) => {
 export const DeletarModal = (propriedades) => {
     return (
         <ModalBootstrap
+            dataQa="modal-despesa-excluir-despesa"
             show={propriedades.show}
             onHide={propriedades.handleClose}
             titulo="Deseja excluir esta Despesa?"
@@ -179,6 +182,7 @@ export const ConcluirPrestacaoDeContas = (propriedades) => {
 export const ErroGeral = (propriedades) => {
     return (
         <ModalBootstrap
+            dataQa="modal-erro-geral"
             show={propriedades.show}
             onHide={propriedades.handleClose}
             titulo="Ooops!!! Algum erro aconteceu"
@@ -382,6 +386,7 @@ export const SaldoInsuficienteConta = (propriedades) => {
 export const PeriodoFechado = (propriedades) => {
     return (
         <ModalBootstrap
+            dataQa="modal-periodo-fechado"
             show={propriedades.show}
             onHide={propriedades.handleClose}
             titulo="Período Fechado"
@@ -399,6 +404,7 @@ export const PeriodoFechado = (propriedades) => {
 export const PeriodoFechadoImposto = (propriedades) => {
     return (
         <ModalBootstrap
+            dataQa="modal-periodo-fechado-imposto"
             show={propriedades.show}
             onHide={propriedades.handleClose}
             titulo="Período Fechado"
@@ -416,6 +422,7 @@ export const PeriodoFechadoImposto = (propriedades) => {
 export const DespesaIncompletaNaoPermitida = (propriedades) => {
     return (
         <ModalBootstrap
+            dataQa="modal-despesa-incompleta-nao-permitida"
             show={propriedades.show}
             onHide={propriedades.handleClose}
             titulo="Despesa incompleta"
@@ -430,6 +437,7 @@ export const DespesaIncompletaNaoPermitida = (propriedades) => {
 export const ExcluirImposto = (propriedades) => {
     return (
         <ModalBootstrap
+            dataQa="modal-excluir-imposto"
             show={propriedades.show}
             onHide={propriedades.handleClose}
             titulo="Excluir imposto"
@@ -477,6 +485,7 @@ export const SalvarValoresReprogramados = (propriedades) => {
 export const ChecarDespesaExistente = (propriedades) => {
     return (
         <ModalBootstrap
+            dataQa="modal-checar-despesa-existente"
             show={propriedades.show}
             onHide={propriedades.handleClose}
             titulo="Despesa já cadastrada"

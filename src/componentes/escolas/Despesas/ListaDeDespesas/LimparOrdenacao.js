@@ -18,6 +18,7 @@ export const LimparArgumentosOrdenacao = ({limparOrdenacao, camposOrdenacao}) =>
                         padding: '4px',
                         marginRight: '5px'
                     }}
+                    data-qs="btn-limpar-ordenacao"
                 >
                     Limpar ordenação
                 </button>
