@@ -1,23 +1,22 @@
-import {toastCustom} from "../../ToastCustom";
+import { toastCustom } from "../../ToastCustom";
 
 export const showMensagemSucessoAoRemoverAcesso = (visao) => {
-    let mensagem = ""
+    const mensagens = {
+        UE: "Usuário removido com sucesso desta unidade.",
+        DRE: "Usuário removido com sucesso desta DRE e de suas unidades.",
+        SME: "Usuário removido com sucesso de todas as unidades."
+    };
 
-    if (visao === "UE") {
-        mensagem = "Usuário removido com sucesso desta unidade."
-    } else if (visao === "DRE") {
-        mensagem = "Usuário removido com sucesso desta DRE e de suas unidades."
-    } else if (visao === "SME") {
-        mensagem = "Usuário removido com sucesso de todas as unidades."
-    }
+    const mensagem = mensagens[visao] || "Mensagem não disponível para a visão selecionada.";
 
     toastCustom.ToastCustomSuccess(
-            "Remoção efetuada com sucesso",
-            mensagem,
-            'success',
-            'top-right',
-            true)
-    }
+        "Remoção efetuada com sucesso",
+        mensagem,
+        'success',
+        'top-right',
+        true
+    );
+};
 
 export const showMensagemErroAoRemoverAcesso = () => {
     toastCustom.ToastCustomError(

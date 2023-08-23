@@ -1,29 +1,32 @@
+import React from 'react';
+import { ModalBootstrap } from '../../ModalBootstrap';
 
-import React from "react";
-import {ModalBootstrap} from "../../ModalBootstrap";
+export const ModalConfirmacaoRemoverAcesso = ({
+  visao,
+  show,
+  botaoCancelarHandle,
+  botaoConfirmarHandle,
+}) => {
+  const mensagens = {
+    UE: '<p>Tem certeza que deseja remover o acesso deste usuário nessa unidade?</p>',
+    DRE: '<p>Tem certeza que deseja remover o acesso deste usuário nesta DRE e em suas unidades, se houver?</p><p>Observação: Para remover o acesso a apenas uma de suas unidades, basta desabilitá-lo na referida unidade.</p>',
+    SME: '<p>Tem certeza que deseja remover o acesso deste usuário em todas as unidades?</p><p>Observação: Para remover o acesso a apenas uma de suas unidades, basta desabilitá-lo na referida unidade.</p>'
+  };
 
-export const ModalConfirmacaoRemoverAcesso = (props) => {
-    let mensagem = ""
+  const mensagem = mensagens[visao] || '<p>Mensagem não disponível para a visão selecionada.</p>';
 
-    if (props.visao === "UE") {
-        mensagem = "<p>Tem certeza que deseja remover o acesso deste usuário nessa unidade?</p>"
-    } else if (props.visao === "DRE") {
-        mensagem = "<p>Tem certeza que deseja remover o acesso deste usuário nesta DRE e em suas unidades, se houver?</p><p>Observação: Para remover o acesso a apenas uma de suas unidades, basta desabilitá-lo na referida unidade.</p>"
-    } else if (props.visao === "SME") {
-        mensagem = "<p>Tem certeza que deseja remover o acesso deste usuário em todas as unidades?</p><p>Observação: Para remover o acesso a apenas uma de suas unidades, basta desabilitá-lo na referida unidade.</p>"
-    }
-    return (
-        <ModalBootstrap
-            show={props.show}
-            onHide={props.botaoCancelarHandle}
-            titulo="Remover acesso"
-            bodyText={mensagem}
-            primeiroBotaoTexto="Cancelar"
-            primeiroBotaoCss="outline-success"
-            primeiroBotaoOnclick={props.botaoCancelarHandle}
-            segundoBotaoTexto="Remover acesso"
-            segundoBotaoCss="danger"
-            segundoBotaoOnclick={props.botaoConfirmarHandle}
-        />
-    )
+  return (
+    <ModalBootstrap
+      show={show}
+      onHide={botaoCancelarHandle}
+      titulo="Remover acesso"
+      bodyText={mensagem}
+      primeiroBotaoTexto="Cancelar"
+      primeiroBotaoCss="outline-success"
+      primeiroBotaoOnclick={botaoCancelarHandle}
+      segundoBotaoTexto="Remover acesso"
+      segundoBotaoCss="danger"
+      segundoBotaoOnclick={botaoConfirmarHandle}
+    />
+  );
 };
