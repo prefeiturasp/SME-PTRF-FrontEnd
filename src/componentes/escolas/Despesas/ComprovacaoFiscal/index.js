@@ -11,6 +11,7 @@ export const ComprovacaoFiscal = ({formikProps, eh_despesa_com_comprovacao_fisca
                 <div className="col-auto">
                     <div className="form-check form-check-inline">
                         <input
+                            data-qa="cadastro-edicao-despesa-possui-comprovacao-fiscal"
                             name="eh_despesa_sem_comprovacao_fiscal"
                             onChange={(e) => {
                                 formikProps.handleChange(e);
@@ -31,6 +32,7 @@ export const ComprovacaoFiscal = ({formikProps, eh_despesa_com_comprovacao_fisca
 
                     <div className="form-check form-check-inline">
                         <input
+                            data-qa="cadastro-edicao-despesa-nao-possui-comprovacao-fiscal"
                             name="eh_despesa_sem_comprovacao_fiscal"
                             onChange={(e) => {
                                 formikProps.handleChange(e);
@@ -59,6 +61,7 @@ export const ComprovacaoFiscal = ({formikProps, eh_despesa_com_comprovacao_fisca
                     <div className="col-auto">
                         <div className="form-check form-check-inline">
                             <input
+                                data-qa="cadastro-edicao-despesa-reconhecida-pela-associacao"
                                 name="eh_despesa_reconhecida_pela_associacao"
                                 onChange={(e) => {
                                     formikProps.handleChange(e);
@@ -78,6 +81,7 @@ export const ComprovacaoFiscal = ({formikProps, eh_despesa_com_comprovacao_fisca
 
                         <div className="form-check form-check-inline">
                             <input
+                                data-qa="cadastro-edicao-despesa-nao-reconhecida-pela-associacao"
                                 name="eh_despesa_reconhecida_pela_associacao"
                                 onChange={(e) => {
                                     formikProps.handleChange(e);

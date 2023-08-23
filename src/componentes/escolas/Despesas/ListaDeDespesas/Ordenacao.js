@@ -18,6 +18,7 @@ export const Ordenacao = ({showModalOrdenar, setShowModalOrdenar, camposOrdenaca
                     padding: '4px',
                     marginRight: '5px'
                 }}
+                data-qa='btn-ordenacao'
             >
                 Ordenação
             </button>
