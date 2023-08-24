@@ -192,9 +192,7 @@ export const  InfosContas = ({dadosDaAssociacao}) =>{
                     </div>
 
                     <div className="row">
-                        {contasDaAssociacao &&
-                        contasDaAssociacao.length > 0 ?
-                        contasDaAssociacao.map((conta, index)=>
+                        {contasDaAssociacao && contasDaAssociacao.length > 0 ? contasDaAssociacao.map((conta, index)=>
                             <Fragment key={index}>
                                 
                                 <div className={`col-12 mt-${index === 0 ? "2" : 4} mb-xs-4 mb-md-4 mb-xl-3 ml-0`}>
@@ -219,7 +217,7 @@ export const  InfosContas = ({dadosDaAssociacao}) =>{
                                     <p>{conta.numero_conta}</p>
                                 </div>
                                 
-                                {apresentaDataDeEncerramentoDeConta(conta) &&
+                                {apresentaDataDeEncerramentoDeConta(conta) && conta.tipo_conta.permite_inativacao &&
                                     <>
                                     <div className="col-12 col-md-3 form-group">
                                         <label>
@@ -236,9 +234,10 @@ export const  InfosContas = ({dadosDaAssociacao}) =>{
                                     </div>
                                     </>
                                 }
+
                                 <div className="card h-100 w-100 mx-3">
                                     <div className="card-body">
-                                        {conta.solicitacao_encerramento && conta.solicitacao_encerramento.status === "REJEITADA" &&
+                                        {conta.solicitacao_encerramento && conta.solicitacao_encerramento.status === "REJEITADA" && conta.tipo_conta.permite_inativacao &&
                                             <BarraStatusEncerramentoConta conta={conta}/>
                                         }
                                         <div className="row">
@@ -250,16 +249,16 @@ export const  InfosContas = ({dadosDaAssociacao}) =>{
                                                     <span className="saldo-recursos-conta">R$ {conta.saldo_atual_conta ? conta.saldo_atual_conta.toLocaleString("pt-BR") : 0}</span>
                                                 </div>
                                             </div>
-                                            {apresentaDataDeEncerramentoDeConta(conta) &&
+                                            {apresentaDataDeEncerramentoDeConta(conta) && conta.tipo_conta.permite_inativacao &&
                                                 <div className="col-7 text-right mt-3">
-                                                    <button 
+                                                    <button
                                                         type="button"
                                                         className="btn btn-base-verde-outline mr-3"
                                                         onClick={() => handleOpenModalConfirmarEncerramentoConta(conta)}
                                                     >
                                                         Confirmar encerramento
                                                     </button>
-                                                    <button 
+                                                    <button
                                                         type="button"
                                                         className="btn btn-base-verde-outline"
                                                         onClick={() => handleOpenModalRejeitarEncerramentoConta(conta)}
@@ -280,12 +279,14 @@ export const  InfosContas = ({dadosDaAssociacao}) =>{
                         }
                     </div>
 
-                    <section className="mt-5">
-                        <TabelaContasEncerradas
-                            contas={contasEncerradas}
-                            rowsPerPage={10}
-                        />
-                    </section>
+                    {contasEncerradas && contasEncerradas.length > 0 &&
+                        <section className="mt-5">
+                            <TabelaContasEncerradas
+                                contas={contasEncerradas}
+                                rowsPerPage={10}
+                            />
+                        </section>
+                    }
 
                     <section>
                         <ModalConfirmarEncerramento

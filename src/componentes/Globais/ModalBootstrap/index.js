@@ -28,7 +28,7 @@ export const ModalBootstrap = (propriedades) => {
                     }/>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant={
+                    <Button data-qa={propriedades && propriedades.dataQa ? `${propriedades.dataQa}-btn-${propriedades.primeiroBotaoTexto}` : ""} variant={
                             propriedades.primeiroBotaoCss ? propriedades.primeiroBotaoCss : "primary"
                         }
                         onClick={
@@ -39,7 +39,7 @@ export const ModalBootstrap = (propriedades) => {
                     } </Button>
                     {
                     propriedades.segundoBotaoOnclick && propriedades.segundoBotaoTexto ? (
-                        <Button variant={
+                        <Button data-qa={propriedades && propriedades.dataQa ? `${propriedades.dataQa}-btn-${propriedades.segundoBotaoTexto}` : ""} variant={
                                 propriedades.segundoBotaoCss ? propriedades.segundoBotaoCss : "primary"
                             }
                             onClick={
@@ -190,7 +190,7 @@ export const ModalBootstrapSaldoInsuficiente = (propriedades) => {
                     propriedades.bodyText
                 } </Modal.Body>
                 <Modal.Footer>
-                    <Button variant={
+                    <Button data-qa={`modal-saldo-insuficiente-btn-${propriedades.primeiroBotaoTexto}`} variant={
                             propriedades.primeiroBotaoCss ? propriedades.primeiroBotaoCss : "primary"
                         }
                         onClick={
@@ -201,7 +201,7 @@ export const ModalBootstrapSaldoInsuficiente = (propriedades) => {
                     } </Button>
                     {
                     propriedades.segundoBotaoOnclick && propriedades.segundoBotaoTexto ? (
-                        <Button disabled={
+                        <Button data-qa={`modal-saldo-insuficiente-btn-${propriedades.segundoBotaoTexto}`} disabled={
                                 propriedades.segundoBotaoDisable
                             }
                             variant={
@@ -239,7 +239,7 @@ export const ModalBootstrapSaldoInsuficienteDaconta = (propriedades) => {
                     propriedades.bodyText
                 } </Modal.Body>
                 <Modal.Footer> {
-                    propriedades.aceitarLancamento && <Button variant={
+                    propriedades.aceitarLancamento && <Button data-qa={`modal-saldo-insuficiente-conta-btn-${propriedades.primeiroBotaoTexto}`} variant={
                             propriedades.primeiroBotaoCss ? propriedades.primeiroBotaoCss : "primary"
                         }
                         onClick={
@@ -251,7 +251,7 @@ export const ModalBootstrapSaldoInsuficienteDaconta = (propriedades) => {
                 }
                     {
                     propriedades.segundoBotaoOnclick && propriedades.segundoBotaoTexto ? (
-                        <Button disabled={
+                        <Button data-qa={`modal-saldo-insuficiente-conta-btn-${propriedades.segundoBotaoTexto}`} disabled={
                                 propriedades.segundoBotaoDisable
                             }
                             variant={
@@ -788,7 +788,7 @@ export const ModalBootstrapTipoRecursoNaoAceito = (propriedades) => {
                     propriedades.bodyText
                 } </Modal.Body>
                 <Modal.Footer>
-                    <Button variant={
+                    <Button data-qa={`modal-tipo-recurso-nao-aceito-btn-${propriedades.primeiroBotaoTexto}`} variant={
                             propriedades.primeiroBotaoCss ? propriedades.primeiroBotaoCss : "primary"
                         }
                         onClick={
@@ -799,7 +799,7 @@ export const ModalBootstrapTipoRecursoNaoAceito = (propriedades) => {
                     } </Button>
                     {
                     propriedades.segundoBotaoOnclick && propriedades.segundoBotaoTexto ? (
-                        <Button variant={
+                        <Button data-qa={`modal-tipo-recurso-nao-aceito-btn-${propriedades.segundoBotaoTexto}`} variant={
                                 propriedades.segundoBotaoCss ? propriedades.segundoBotaoCss : "primary"
                             }
                             onClick={

@@ -31,6 +31,7 @@ export const LegendaInformacao = ({
                     marginRight: '5px'
 
                 }}
+                data-qa="btn-legenda-informacoes"
             >
                 Legenda informação
             </button>

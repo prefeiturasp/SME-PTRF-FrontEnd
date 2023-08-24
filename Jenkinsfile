@@ -67,12 +67,16 @@ pipeline {
                       withCredentials([file(credentialsId: "${kubeconfig}", variable: 'config')]){
 		        sh('if [ -f '+"$home"+'/.kube/config ]; then rm -f '+"$home"+'/.kube/config; fi')
                         if ( env.branchname == 'homolog-r2' ) {
+                          sh('rm -f '+"$home"+'/.kube/config')
                           sh('cp $config '+"$home"+'/.kube/config')
                           sh 'kubectl rollout restart deployment/ptrf-frontend -n sme-ptrf-hom2'
+			  sh('rm -f '+"$home"+'/.kube/config')	
                         }
                         else {
+			  sh('rm -f '+"$home"+'/.kube/config')
                           sh('cp $config '+"$home"+'/.kube/config')
 			  sh 'kubectl rollout restart deployment/ptrf-frontend -n sme-ptrf'
+                          sh('rm -f '+"$home"+'/.kube/config')
                         }
                         sh('if [ -f '+"$home"+'/.kube/config ]; then rm -f '+"$home"+'/.kube/config; fi')
                       }
@@ -84,10 +88,12 @@ pipeline {
           when { anyOf {  branch 'master'; branch 'main' } }
           steps {
             withCredentials([file(credentialsId: "${kubeconfig}", variable: 'config')]){
+	      sh('rm -f '+"$home"+'/.kube/config')    
               sh('cp $config '+"$home"+'/.kube/config')
               sh 'kubectl rollout restart deployment/treinamento-frontend -n sigescola-treinamento'
               sh 'kubectl rollout restart deployment/treinamento-frontend -n sigescola-treinamento2'
               sh('if [ -f '+"$home"+'/.kube/config ]; then rm -f '+"$home"+'/.kube/config; fi')
+              sh('rm -f '+"$home"+'/.kube/config')
             }
           }
         }
