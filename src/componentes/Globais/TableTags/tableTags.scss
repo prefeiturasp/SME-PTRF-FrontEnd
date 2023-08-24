@@ -1,3 +1,5 @@
+@import 'src/assets/css/variaveis.scss';
+
 .text-wrap-tag {
     overflow-wrap: break-word;
 }
@@ -16,73 +18,79 @@
 
 .tag-purple {
     color: #fff;
-    background-color: #9C33AD;
+    background-color: $corTagRoxo;
 }
 
 .tag-darkblue {
     color: #fff;
-    background-color: #5F55A1;
+    background-color: $corTagRoxoClaro;
 }
 
 .tag-orange {
     color: #fff;
-    background-color: #F28A0D
+    background-color: $corTagLaranja;
 }
 
 .tag-green {
     color: #fff;
-    background-color: #03543F
+    background-color: $corTagVerde;
 }
 
 .tag-blank {
-    border: 2px solid #03543F;
-    color: #03543F;
+    border: 2px solid $corTagVerde;
+    color: $corTagVerde;
     background: inherit;
 }
 
 .tag-red-white{
-    border: 2px solid #D8DBDB;
+    border: 2px solid $corTagCinzaClaro;
     color: #424848;
-    background: #D8DBDB;
+    background: $corTagCinzaClaro;
 }
 
 .tag-neutral-3 {
     color: #fff;
-    background-color: #9B9C9C;
+    background-color: $corTagCinza;
 }
 
 .tag-verde {
     color: #fff;
-    background-color: #03543F;
+    background-color: $corTagVerde;
+}
+
+.tag-verde-claro {
+    color: #fff;
+    background-color: $corTagVerdeClaro;
 }
 
 .tag-light-purple {
     color: #fff;
-    background-color: #5F55A1;
+    background-color: $corTagRoxoClaro;
 }
 
 .tag-blue {
     color: #fff;
-    background-color: #1D55CF;
+    background-color: $corTagAzulEscuro;
 }
 
 .tag-blue-white {
-    border: 2px solid #1D55CF;
-    color: #1D55CF;
+    border: 2px solid $corTagAzulEscuro;
+    color: $corTagAzulEscuro;
     background: inherit;
 }
 
 .tag-red {
     color: #fff;
-    background-color: #C2255C;
+    background-color: $corTagVermelhoClaro;
 }
 
 .tag-dark-grey {
     color: #fff;
-    background-color: #424848;
+    background-color: $corTagCinzaEscuro;
 }
 
 .tag-blue-support {
     color: #fff;
-    background-color: #086397;
+    background-color: $corTagAzul;
 }
+
