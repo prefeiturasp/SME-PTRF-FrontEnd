@@ -9,6 +9,7 @@ export const coresTagsDespesas = {
    8: 'tag-dark-grey', // Sem comprovacao Fiscal
    9: 'tag-blue', // Conciliada
    10: 'tag-blue-white', // Não Conciliada
+   11: 'tag-verde-claro' //Imposto não pago
 }
 
 export const coresTagsAssociacoes = {

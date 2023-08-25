@@ -1,3 +1,5 @@
+@import 'src/assets/css/variaveis.scss';
+
 .tag-modal-legenda-informacoes {
     display: flex;
     flex: 1;
@@ -10,68 +12,68 @@
 
 .tag-purple {
     color: #fff;
-    background-color: #9C33AD;
+    background-color: $corTagRoxo;
 }
 
 .tag-darkblue {
     color: #fff;
-    background-color: #5F55A1;
+    background-color: $corTagRoxoClaro;
 }
 
 .tag-orange {
     color: #fff;
-    background-color: #F28A0D
+    background-color: $corTagLaranja;
 }
 
 .tag-green {
     color: #fff;
-    background-color: #03543F
+    background-color: $corTagVerde;
 }
 
 .tag-blank {
-    border: 2px solid #03543F;
-    color: #03543F;
+    border: 2px solid $corTagVerde;
+    color: $corTagVerde;
     background: inherit;
 }
 
 .tag-red-white{
-    border: 2px solid #D8DBDB;
-    color: #424848;
-    background: #D8DBDB;
+    border: 2px solid $corTagCinzaClaro;
+    color: $corTagCinzaEscuro;
+    background: $corTagCinzaClaro;
 }
 
 .tag-neutral-3 {
     color: #fff;
-    background-color: #9B9C9C;
+    background-color: $corTagCinza;
 }
 
 .tag-verde {
     color: #fff;
-    background-color: #03543F;
+    background-color: $corTagVerde;
 }
 
 .tag-light-purple {
     color: #fff;
-    background-color: #5F55A1;
+    background-color: $corTagRoxoClaro;
 }
 
 .tag-blue {
     color: #fff;
-    background-color: #1130AF;
+    background-color: $corTagAzulEscuro;
 }
 
 .tag-blue-white {
-    border: 2px solid #1130AF;
-    color: #1130AF;
+    border: 2px solid $corTagAzulEscuro;
+    color: $corTagAzulEscuro;
     background: inherit;
 }
 
 .tag-red {
     color: #fff;
-    background-color: #C2255C;
+    background-color: $corTagVermelhoClaro;
 }
 
 .tag-dark-grey {
     color: #fff;
-    background-color: #424848;
+    background-color: $corTagCinzaEscuro;
 }
