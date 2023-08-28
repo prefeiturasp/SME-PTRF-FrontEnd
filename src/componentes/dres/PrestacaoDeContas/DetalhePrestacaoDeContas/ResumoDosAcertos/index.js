@@ -344,6 +344,7 @@ export const ResumoDosAcertos = () => {
                         qtdeAjustesExtrato={totalExtratosAjustes}
                         btnDevolverParaAcertoDisabled={btnDevolverParaAcertoDisabled}
                         editavel={editavel}
+                        prestacaoDeContas={prestacaoDeContas}
                     />
 
                     {analiseAtualUuid && !loading ? (
