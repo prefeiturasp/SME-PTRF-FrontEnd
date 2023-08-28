@@ -46,7 +46,7 @@ export const CardSaldoEncerramentoConta = ({
                             <span className="saldo-recursos-conta">R$ {conta.saldo_atual_conta ? conta.saldo_atual_conta.toLocaleString("pt-BR") : 0}</span>
                         </div>
                     </div>
-                    {conta.saldo_atual_conta === 0 &&
+                    {conta.saldo_atual_conta === 0 && conta.tipo_conta.permite_inativacao &&
                         <>
                             <div className="col-3">
                                 <div className="form-group">
