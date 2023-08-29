@@ -44,7 +44,7 @@ export const FormDadosDasContas = ({
                                             
                                             return (
                                                 <div id={`dados-conta-id-${index}`} key={`dados-conta-id-${index}`}>
-                                                    {conta.solicitacao_encerramento && conta.solicitacao_encerramento.status !== "APROVADA" &&
+                                                    {conta.solicitacao_encerramento && conta.solicitacao_encerramento.status !== "APROVADA" && conta.tipo_conta.permite_inativacao &&
                                                         <BarraStatusEncerramentoConta conta={conta}/>
                                                     }
                                                     <div className="row" key={index}>
