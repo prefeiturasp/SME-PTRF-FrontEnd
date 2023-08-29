@@ -27,6 +27,8 @@ const DataSaldoBancario = ({
         salvarExtratoBancario();
     }
 
+    //  TODO códigos comentados propositalmente em função da história 102412 - Sprint 73 (Conciliação Bancária: Retirar validação e obrigatoriedade de preenchimento dos campos do Saldo bancário da conta ao concluir acerto/período) - que entrou como Hotfix
+
     return(
         <>
             <form method="post" encType="multipart/form-data">
@@ -35,12 +37,13 @@ const DataSaldoBancario = ({
                         <div className="card container-extrato">
                             <div className="card-body">
                                 <h5 className="card-title titulo">Saldo bancário da conta {pendenciaSaldoBancario ? IconeDataSaldoBancarioPendentes() :  null}</h5>
-                                <p className='text-right'><span className='font-weight-bold'>* Preenchimento obrigatório</span></p>
+                                {/*<p className='text-right'><span className='font-weight-bold'>* Preenchimento obrigatório</span></p>*/}
                                 <div className='row'>
                                     <div className='col-6'>
                                         <div className='row'>
                                             <div className="col">
-                                                <label htmlFor="data_extrato">Data *</label>
+                                                <label htmlFor="data_extrato">Data</label>
+                                                {/*<label htmlFor="data_extrato">Data *</label>*/}
                                                 <DatePickerField
                                                     value={dataSaldoBancario.data_extrato ? dataSaldoBancario.data_extrato : ''}
                                                     onChange={handleChangaDataSaldo}
@@ -56,7 +59,8 @@ const DataSaldoBancario = ({
 
                                         <div className='row'>
                                             <div className="col">
-                                                <label htmlFor="saldo_extrato">Saldo *</label>
+                                                <label htmlFor="saldo_extrato">Saldo</label>
+                                                {/*<label htmlFor="saldo_extrato">Saldo *</label>*/}
                                                 <CurrencyInput
                                                     allowNegative={false}
                                                     prefix='R$'
@@ -76,7 +80,8 @@ const DataSaldoBancario = ({
                                     </div>
                                     <div className="col-6">
                                         <div className="form-group">
-                                            <label htmlFor="upload_extrato" className="ml-1">Comprovante do saldo da conta {dataSaldoBancario.saldo_extrato !== 0 && dataSaldoBancario.saldo_extrato !== "R$0,00" ? "*" : ""}</label>
+                                            <label htmlFor="upload_extrato" className="ml-1">Comprovante do saldo da conta</label>
+                                            {/*<label htmlFor="upload_extrato" className="ml-1">Comprovante do saldo da conta {dataSaldoBancario.saldo_extrato !== 0 && dataSaldoBancario.saldo_extrato !== "R$0,00" ? "*" : ""}</label>*/}
                                             <div className='container-upload-extrato'>
                                                 <Upload
                                                     beforeUpload={() => false}
