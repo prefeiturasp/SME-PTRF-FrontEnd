@@ -48,9 +48,14 @@
     background: $corTagCinzaClaro;
 }
 
+.tag-neutral-2 {
+    color: #fff;
+    background-color: $corTagNeutral2;
+}
+
 .tag-neutral-3 {
     color: #fff;
-    background-color: $corTagCinza;
+    background-color: $corTagNeutral3;
 }
 
 .tag-verde {
@@ -82,11 +87,6 @@
 .tag-red {
     color: #fff;
     background-color: $corTagVermelhoClaro;
-}
-
-.tag-dark-grey {
-    color: #fff;
-    background-color: $corTagCinzaEscuro;
 }
 
 .tag-blue-support {
