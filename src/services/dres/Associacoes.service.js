@@ -13,6 +13,10 @@ export const getTabelaAssociacoes = async () => {
     return (await api.get(`/api/associacoes/tabelas`, authHeader)).data
 };
 
+export const getTabelaAssociacoesDre = async () => {
+    return (await api.get(`/api/associacoes/tabelas?filtros_informacoes_associacao_dre=True`, authHeader)).data
+}
+
 export const getAnosAnaliseRegularidade = async () => {
     return (await api.get(`/api/anos-analise-regularidade/`, authHeader)).data
 };
