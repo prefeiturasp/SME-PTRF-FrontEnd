@@ -33,6 +33,7 @@ import {FiltrosTransacoes} from "./FiltrosTransacoes";
 import { SidebarLeftService } from "../../../../services/SideBarLeft.service";
 import { SidebarContext } from "../../../../context/Sidebar";
 import {toastCustom} from "../../../Globais/ToastCustom";
+import { ModalSalvarDataSaldoExtrato } from "../ModalSalvarDataSaldoExtrato";
 
 export const DetalheDasPrestacoes = () => {
     let {periodo_uuid, conta_uuid} = useParams();
@@ -174,22 +175,70 @@ export const DetalheDasPrestacoes = () => {
             let conta_uuid = periodoConta.conta;
 
             let observacao = await getObservacoes(periodo_uuid, conta_uuid);
+            
+            if(observacao && observacao.possui_solicitacao_encerramento){
+                if (periodosAssociacao){
+                    const associacaoUuid = localStorage.getItem(ASSOCIACAO_UUID)
+                    const periodo = periodosAssociacao.find(o => o.uuid === periodo_uuid);
+                    
+                    await getStatusPeriodoPorData(associacaoUuid, periodo.data_inicio_realizacao_despesas).then(response => {
+                        
+                        let periodo_bloqueado = response.prestacao_contas_status ? response.prestacao_contas_status.periodo_bloqueado : true
+                        if(!periodo_bloqueado){
+                            setBtnSalvarExtratoBancarioDisable(false);
+                            setCheckSalvarExtratoBancario(false);
+                            setClassBtnSalvarExtratoBancario("success");
+                        }
+                    }).catch(error => {
+                        console.log(error);
+                    });
+                }
 
-            setObservacaoUuid(observacao.observacao_uuid)
 
-            setTextareaJustificativa(observacao.observacao ? observacao.observacao : '');
-            setDataSaldoBancario({
-                data_extrato: observacao.data_extrato ? observacao.data_extrato : '',
-                saldo_extrato: observacao.saldo_extrato ? observacao.saldo_extrato : 0,
-            })
-            setNomeComprovanteExtrato(observacao.comprovante_extrato ? observacao.comprovante_extrato : '')
-            setDataAtualizacaoComprovanteExtrato(moment(observacao.data_atualizacao_comprovante_extrato).format("YYYY-MM-DD HH:mm:ss"))
-            setDataAtualizacaoComprovanteExtratoView(moment(observacao.data_atualizacao_comprovante_extrato).format("DD/MM/YYYY HH:mm:ss"))
-            if (observacao.comprovante_extrato && observacao.data_extrato){
-                setExibeBtnDownload(true)
+                setDataSaldoBancario({
+                    data_extrato: observacao.data_extrato ? observacao.data_extrato : '',
+                    saldo_extrato: observacao.saldo_extrato ? observacao.saldo_extrato : 0,
+                })
+
+                setDataSaldoBancarioSolicitacaoEncerramento({
+                    data_extrato: observacao.data_extrato ? observacao.data_extrato : '',
+                    saldo_extrato: observacao.saldo_extrato ? observacao.saldo_extrato : 0,
+                    possui_solicitacao_encerramento: true
+                })
+
+                if(observacao.observacao_uuid){
+                    setObservacaoUuid(observacao.observacao_uuid)
+
+                    setTextareaJustificativa(observacao.observacao ? observacao.observacao : '');
+
+                    setNomeComprovanteExtrato(observacao.comprovante_extrato ? observacao.comprovante_extrato : '')
+                    setDataAtualizacaoComprovanteExtrato(moment(observacao.data_atualizacao_comprovante_extrato).format("YYYY-MM-DD HH:mm:ss"))
+                    setDataAtualizacaoComprovanteExtratoView(moment(observacao.data_atualizacao_comprovante_extrato).format("DD/MM/YYYY HH:mm:ss"))
+                    if (observacao.comprovante_extrato && observacao.data_extrato){
+                        setExibeBtnDownload(true)
+                    }
+                    else if(!observacao.comprovante_extrato){
+                        setExibeBtnDownload(false)
+                    }
+                }
             }
-            else if(!observacao.comprovante_extrato){
-                setExibeBtnDownload(false)
+            else{
+                setObservacaoUuid(observacao.observacao_uuid)
+
+                setTextareaJustificativa(observacao.observacao ? observacao.observacao : '');
+                setDataSaldoBancario({
+                    data_extrato: observacao.data_extrato ? observacao.data_extrato : '',
+                    saldo_extrato: observacao.saldo_extrato ? observacao.saldo_extrato : 0,
+                })
+                setNomeComprovanteExtrato(observacao.comprovante_extrato ? observacao.comprovante_extrato : '')
+                setDataAtualizacaoComprovanteExtrato(moment(observacao.data_atualizacao_comprovante_extrato).format("YYYY-MM-DD HH:mm:ss"))
+                setDataAtualizacaoComprovanteExtratoView(moment(observacao.data_atualizacao_comprovante_extrato).format("DD/MM/YYYY HH:mm:ss"))
+                if (observacao.comprovante_extrato && observacao.data_extrato){
+                    setExibeBtnDownload(true)
+                }
+                else if(!observacao.comprovante_extrato){
+                    setExibeBtnDownload(false)
+                }
             }
         }
     };
@@ -213,6 +262,10 @@ export const DetalheDasPrestacoes = () => {
     }
 
     const salvarExtratoBancario = async () => {
+        setBtnSalvarExtratoBancarioDisable(true);
+        setCheckSalvarExtratoBancario(true);
+        setClassBtnSalvarExtratoBancario("secondary");
+
         let payload;
 
         payload = {
@@ -226,6 +279,7 @@ export const DetalheDasPrestacoes = () => {
 
         try {
             await pathExtratoBancarioPrestacaoDeConta(payload);
+            setShowModalSalvarDataSaldoExtrato(false);
             verificaSePeriodoEstaAberto(periodoConta.periodo);
             toastCustom.ToastCustomSuccess('Edição salva', 'A edição foi salva com sucesso!')
             setDataAtualizacaoComprovanteExtrato('')
@@ -363,6 +417,8 @@ export const DetalheDasPrestacoes = () => {
 
     // Data Saldo Bancário
     const [dataSaldoBancario, setDataSaldoBancario]= useState({});
+    const [dataSaldoBancarioSolicitacaoEncerramento, setDataSaldoBancarioSolicitacaoEncerramento]= useState({});
+    const [showModalSalvarDataSaldoExtrato, setShowModalSalvarDataSaldoExtrato] = useState(false)
     const [selectedFile, setSelectedFile] = useState(null);
     const [nomeComprovanteExtrato, setNomeComprovanteExtrato] = useState('');
     const [dataAtualizacaoComprovanteExtrato, setDataAtualizacaoComprovanteExtrato] = useState('');
@@ -497,6 +553,10 @@ export const DetalheDasPrestacoes = () => {
         setLoadingNaoConciliadas(false);
     };
 
+    const onHandleCancelarModalSalvarDataSaldoExtrato = () => {
+        window.location.assign('/dados-das-contas-da-associacao')
+    }
+
     return (
         <>
         <div className="detalhe-das-prestacoes-container mb-5 mt-5">
@@ -573,6 +633,8 @@ export const DetalheDasPrestacoes = () => {
                                 erroDataSaldo={erroDataSaldo}
                                 permiteEditarCamposExtrato={permiteEditarCamposExtrato}
                                 pendenciaSaldoBancario={pendenciaSaldoBancario}
+                                dataSaldoBancarioSolicitacaoEncerramento={dataSaldoBancarioSolicitacaoEncerramento}
+                                setShowModalSalvarDataSaldoExtrato={setShowModalSalvarDataSaldoExtrato}
                             />
 
                             <p className="detalhe-das-prestacoes-titulo-lancamentos mt-3 mb-3">Gastos pendentes de conciliação</p>
@@ -642,6 +704,21 @@ export const DetalheDasPrestacoes = () => {
                 </>
             }
         </div>
+
+        <section>
+            <ModalSalvarDataSaldoExtrato
+                show={showModalSalvarDataSaldoExtrato}
+                titulo="Salvar alterações."
+                texto='Os campos "data" e "saldo" foram alterados e podem não ser mais os mesmos cadastrados na solicitação de encerramento da conta. Confirma a alteração?'
+                segundoBotaoTexto="Confirmar"
+                segundoBotaoOnclick={salvarExtratoBancario}
+                segundoBotaoCss="success"
+                primeiroBotaoCss="outline-success"
+                primeiroBotaoTexto="Cancelar"
+                handleClose={onHandleCancelarModalSalvarDataSaldoExtrato}
+                primeiroBotaoOnclick={onHandleCancelarModalSalvarDataSaldoExtrato}
+            />
+        </section>
 
         </>
     )
