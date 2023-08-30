@@ -2,7 +2,7 @@ import React, {useEffect, useState, Fragment, useCallback, useContext} from "rea
 import {useHistory, useParams} from "react-router-dom";
 import {useDispatch} from "react-redux";
 import {TopoSelectPeriodoBotaoConcluir} from "./TopoSelectPeriodoBotaoConcluir";
-import {getPeriodosDePrestacaoDeContasDaAssociacao, getDataPreenchimentoPreviaAta} from "../../../services/escolas/Associacao.service"
+import {getPeriodosDePrestacaoDeContasDaAssociacao, getDataPreenchimentoPreviaAta, getContasAtivasDaAssociacaoNoPeriodo} from "../../../services/escolas/Associacao.service"
 import {getStatusPeriodoPorData, postConcluirPeriodo, getDataPreenchimentoAta, getIniciarAta, getIniciarPreviaAta} from "../../../services/escolas/PrestacaoDeContas.service";
 import {getTabelasReceita} from "../../../services/escolas/Receitas.service";
 import {BarraDeStatusPrestacaoDeContas} from "./BarraDeStatusPrestacaoDeContas";
@@ -114,12 +114,18 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
         setPeriodosAssociacao(periodos);
     };
 
+    useEffect(() => {
+        carregaTabelas()
+    }, [periodoPrestacaoDeConta])
+
     const carregaTabelas = async () => {
-        await getTabelasReceita().then(response => {
-            setContasAssociacao(response.data.contas_associacao);
-        }).catch(error => {
-            console.log(error);
-        });
+        if(periodoPrestacaoDeConta && periodoPrestacaoDeConta.periodo_uuid) {
+            await getContasAtivasDaAssociacaoNoPeriodo(periodoPrestacaoDeConta.periodo_uuid).then(response => {
+                setContasAssociacao(response);
+            }).catch(error => {
+                console.log(error);
+            });
+        }
     };
 
     const getPeriodoPrestacaoDeConta = async () => {
