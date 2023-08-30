@@ -8,6 +8,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faTrashAlt, faDownload, faUpload, faPaperclip, faCheck} from '@fortawesome/free-solid-svg-icons'
 import 'antd/dist/antd.css';
 import { Upload, Button } from 'antd';
+import moment from "moment";
 
 import {IconeDataSaldoBancarioPendentes} from "./IconeDataSaldoBancarioPendentes";
 
@@ -18,13 +19,40 @@ const DataSaldoBancario = ({
     btnSalvarExtratoBancarioDisable, setBtnSalvarExtratoBancarioDisable, classBtnSalvarExtratoBancario,
     setClassBtnSalvarExtratoBancario, checkSalvarExtratoBancario, setCheckSalvarExtratoBancario, erroDataSaldo,
     dataAtualizacaoComprovanteExtrato, permiteEditarCamposExtrato,
-    pendenciaSaldoBancario
+    pendenciaSaldoBancario, dataSaldoBancarioSolicitacaoEncerramento, setShowModalSalvarDataSaldoExtrato
 }) => {
     const handleOnClick = () => {
-        setBtnSalvarExtratoBancarioDisable(true);
-        setCheckSalvarExtratoBancario(true);
-        setClassBtnSalvarExtratoBancario("secondary");
-        salvarExtratoBancario();
+        let dispara_modal = false;
+
+        if(dataSaldoBancarioSolicitacaoEncerramento && dataSaldoBancarioSolicitacaoEncerramento.possui_solicitacao_encerramento && dataSaldoBancario){
+            let data_solicitacao_encerramento = dataSaldoBancarioSolicitacaoEncerramento.data_extrato ? moment(dataSaldoBancarioSolicitacaoEncerramento.data_extrato, "YYYY-MM-DD").format("YYYY-MM-DD"): null
+            let saldo_solicitacao_encerramento = dataSaldoBancarioSolicitacaoEncerramento.saldo_extrato ? trataNumericos(dataSaldoBancarioSolicitacaoEncerramento.saldo_extrato) : 0
+
+            let data_formulario = dataSaldoBancario.data_extrato ? moment(dataSaldoBancario.data_extrato, "YYYY-MM-DD").format("YYYY-MM-DD"): null
+            let saldo_formulario = dataSaldoBancario.saldo_extrato ? trataNumericos(dataSaldoBancario.saldo_extrato) : 0
+
+            if(data_solicitacao_encerramento !== data_formulario || saldo_solicitacao_encerramento !== saldo_formulario){
+                dispara_modal = true;
+            }
+        }
+        
+        if(dispara_modal){
+            setShowModalSalvarDataSaldoExtrato(true);
+        }
+        else{
+            salvarExtratoBancario();
+        }
+    }
+
+    const dataLimite = () => {
+        if(dataSaldoBancarioSolicitacaoEncerramento && dataSaldoBancarioSolicitacaoEncerramento.data_extrato){
+            let data_encerramento = dataSaldoBancarioSolicitacaoEncerramento.data_extrato;
+            let objeto_data = new Date(data_encerramento);
+            objeto_data.setDate(objeto_data.getDate() + 1);
+            return objeto_data;
+        }
+
+        return new Date();
     }
 
     //  TODO códigos comentados propositalmente em função da história 102412 - Sprint 73 (Conciliação Bancária: Retirar validação e obrigatoriedade de preenchimento dos campos do Saldo bancário da conta ao concluir acerto/período) - que entrou como Hotfix
@@ -51,7 +79,7 @@ const DataSaldoBancario = ({
                                                     type="date"
                                                     className="form-control"
                                                     disabled={!permiteEditarCamposExtrato || !visoesService.getPermissoes(['change_conciliacao_bancaria'])}
-                                                    maxDate={new Date()}
+                                                    maxDate={dataLimite()}
                                                 />
                                                 {erroDataSaldo && <span className="span_erro text-danger mt-1"> {erroDataSaldo}</span>}
                                             </div>
