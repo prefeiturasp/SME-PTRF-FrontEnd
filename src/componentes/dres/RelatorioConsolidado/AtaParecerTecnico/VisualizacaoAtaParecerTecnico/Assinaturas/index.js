@@ -8,7 +8,14 @@ moment.updateLocale('pt', {
     ]
 });
 
-export const Assinaturas = ({presentes_na_ata}) => {
+export const Assinaturas = ({data_assinatura, presentes_na_ata}) => {
+    const renderAssinatura = () => {
+        if(data_assinatura) {
+            return <strong>São Paulo, {moment(data_assinatura).format('DD [de] MMMM [de] YYYY')}.</strong>
+        }
+        return <strong>São Paulo, {moment().format('DD [de] MMMM [de] YYYY')}.</strong>
+    }
+
     return (
         <>
             <p className="mt-3 titulo-assinaturas">
@@ -17,7 +24,7 @@ export const Assinaturas = ({presentes_na_ata}) => {
             </p>
 
             <p className="mt-5 mb-5 titulo-assinaturas">
-                <strong>São Paulo, {moment().format('DD [de] MMMM [de] YYYY')}.</strong>
+                {renderAssinatura()}
             </p>
 
 

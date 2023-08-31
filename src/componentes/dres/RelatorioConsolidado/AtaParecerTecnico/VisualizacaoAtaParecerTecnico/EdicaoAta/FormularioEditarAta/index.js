@@ -2,10 +2,11 @@ import React, {useState, useEffect } from "react";
 import {FieldArray, Formik} from "formik";
 import { DatePickerField } from "../../../../../../Globais/DatePickerField";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faTimesCircle} from "@fortawesome/free-solid-svg-icons";
+import {faInfoCircle, faTimesCircle} from "@fortawesome/free-solid-svg-icons";
 import { consultarRF } from "../../../../../../../services/escolas/Associacao.service";
 import {visoesService} from "../../../../../../../services/visoes.service"
 import {apenasNumero} from "../../../../../../../utils/ValidacoesAdicionaisFormularios";
+import ReactTooltip from "react-tooltip";
 
 
 export const FormularioEditaAta = ({listaPresentesPadrao, listaPresentes, stateFormEditarAta, uuid_ata, formRef, onSubmitFormEdicaoAta, setDisableBtnSalvar}) => {
@@ -157,7 +158,15 @@ export const FormularioEditaAta = ({listaPresentesPadrao, listaPresentes, stateF
 
                                     <div className="form-row mt-4">
                                         <div className="col">
-                                            <label htmlFor="stateFormEditarAta.numero_ata">Número da Ata</label>
+                                            <label htmlFor="stateFormEditarAta.numero_ata" data-tip={"Informar apenas o número da ata."} data-html={true} data-for="numero-ata-tooltip">
+                                                <span>Número da Ata</span>
+                                                <FontAwesomeIcon
+                                                    style={{fontSize: '12px', marginLeft: "3px", color: '#2B7D83'}}
+                                                    icon={faInfoCircle}
+                                                    id="numero-ata-tooltip"
+                                                />
+                                                <ReactTooltip id="numero-ata-tooltip" html={true}/>
+                                            </label>
                                             <input
                                                 value={values.stateFormEditarAta.numero_ata ? values.stateFormEditarAta.numero_ata : ''}
                                                 onChange={(e) => {
