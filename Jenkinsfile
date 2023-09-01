@@ -3,8 +3,9 @@ pipeline {
       branchname =  env.BRANCH_NAME.toLowerCase()
       kubeconfig = getKubeconf(env.branchname)
       registryCredential = 'jenkins_registry'
+      namespace = "${env.branchname == 'develop' ? 'sme-ptrf-dev' : env.branchname == 'homolog' ? 'sme-ptrf' : env.branchname == 'homolog-r2' ? 'sme-ptrf-hom2' : 'sme-ptrf' }"
     }
-  
+
     agent {
       node { label 'AGENT-NODES' }
     }
@@ -14,14 +15,14 @@ pipeline {
       disableConcurrentBuilds()
       skipDefaultCheckout()
     }
-  
+
     stages {
 
-        stage('CheckOut') {            
-            steps { checkout scm }            
+        stage('CheckOut') {
+            steps { checkout scm }
         }
 
-        
+
 
         stage('AnaliseCodigo') {
 	      when { branch 'homolog' }
@@ -34,10 +35,10 @@ pipeline {
           }
         }
 
-        
+
 
         stage('Build') {
-          when { anyOf { branch 'master'; branch 'main'; branch "story/*"; branch 'development'; branch 'develop'; branch 'release'; branch 'homolog'; branch 'homolog-r2';  } } 
+          when { anyOf { branch 'master'; branch 'main'; branch "story/*"; branch 'development'; branch 'develop'; branch 'release'; branch 'homolog'; branch 'homolog-r2';  } }
           steps {
             script {
               imagename1 = "registry.sme.prefeitura.sp.gov.br/${env.branchname}/ptrf-frontend"
@@ -53,9 +54,9 @@ pipeline {
             }
           }
         }
-	    
+
         stage('Deploy'){
-            when { anyOf {  branch 'master'; branch 'main'; branch 'develop'; branch 'development'; branch 'release'; branch 'homolog'; branch 'homolog-r2';  } }        
+            when { anyOf {  branch 'master'; branch 'main'; branch 'develop'; branch 'development'; branch 'release'; branch 'homolog'; branch 'homolog-r2';  } }
             steps {
                 script{
                     if ( env.branchname == 'main' ||  env.branchname == 'master' || env.branchname == 'homolog' || env.branchname == 'release' ) {
@@ -66,34 +67,22 @@ pipeline {
                     }
                       withCredentials([file(credentialsId: "${kubeconfig}", variable: 'config')]){
 		        sh('if [ -f '+"$home"+'/.kube/config ]; then rm -f '+"$home"+'/.kube/config; fi')
-                        if ( env.branchname == 'homolog-r2' ) {
-                          sh('rm -f '+"$home"+'/.kube/config')
-                          sh('cp $config '+"$home"+'/.kube/config')
-                          sh 'kubectl rollout restart deployment/ptrf-frontend -n sme-ptrf-hom2'
-			  sh('rm -f '+"$home"+'/.kube/config')	
-                        }
-                        else {
-			  sh('rm -f '+"$home"+'/.kube/config')
-                          sh('cp $config '+"$home"+'/.kube/config')
-			  sh 'kubectl rollout restart deployment/ptrf-frontend -n sme-ptrf'
-                          sh('rm -f '+"$home"+'/.kube/config')
-                        }
+                        sh('cp $config '+"$home"+'/.kube/config')
+			sh "kubectl rollout restart deployment/ptrf-frontend -n ${namespace}"
                         sh('if [ -f '+"$home"+'/.kube/config ]; then rm -f '+"$home"+'/.kube/config; fi')
                       }
                 }
-            }           
-        } 
+            }
+        }
 
         stage('Ambientes'){
           when { anyOf {  branch 'master'; branch 'main' } }
           steps {
             withCredentials([file(credentialsId: "${kubeconfig}", variable: 'config')]){
-	      sh('rm -f '+"$home"+'/.kube/config')    
               sh('cp $config '+"$home"+'/.kube/config')
               sh 'kubectl rollout restart deployment/treinamento-frontend -n sigescola-treinamento'
               sh 'kubectl rollout restart deployment/treinamento-frontend -n sigescola-treinamento2'
               sh('if [ -f '+"$home"+'/.kube/config ]; then rm -f '+"$home"+'/.kube/config; fi')
-              sh('rm -f '+"$home"+'/.kube/config')
             }
           }
         }
@@ -125,6 +114,6 @@ def getKubeconf(branchName) {
     else if ("homolog".equals(branchName)) { return "config_hom"; }
     else if ("homolog-r2".equals(branchName)) { return "config_hom"; }
     else if ("release".equals(branchName)) { return "config_hom"; }
-    else if ("development".equals(branchName)) { return "config_dev"; }
-    else if ("develop".equals(branchName)) { return "config_dev"; }
+    else if ("development".equals(branchName)) { return "config_release"; }
+    else if ("develop".equals(branchName)) { return "config_release"; }
 }

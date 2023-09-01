@@ -13,12 +13,21 @@ import {useUpdateUsuario} from "../hooks/useUpdateUsuario";
 import {ModalValidacao} from "./ModalValidacao";
 import {toastCustom} from "../../ToastCustom";
 import Loading from "../../../../utils/Loading";
+import {removerAcessosUnidadeBase} from "../../../../services/GestaoDeUsuarios.service";
+import {useRemoveAcessosUsuario} from "../../GestaoDeUsuarios/hooks/useRemoveAcessosUsuario";
+import {
+    showMensagemErroAoRemoverAcesso,
+    showMensagemSucessoAoRemoverAcesso
+} from "../../GestaoDeUsuarios/utils/mensagens-remover-acesso";
+import {ModalConfirmacaoRemoverAcesso} from "../../GestaoDeUsuarios/components/ModalConfirmacaoRemoverAcesso";
 
 
 export const FormUsuario = ({usuario}) => {
     const { modo, Modos, uuidUnidadeBase, visaoBase} = useContext(GestaoDeUsuariosFormContext)
     const { mutate: createUsuario, isLoading: isLoadingCreate, error: errorOnCreate, data: resultPost } = useCreateUsuario();
     const { mutate: updateUsuario, isLoading: isLoadingUpdate, error: errorOnUpdate, data: resultPut } = useUpdateUsuario();
+    const { mutate: removeAcessos, isLoading: isLoadingRemoveAcessos, error: errorOnRemoveAcessos, data: resultRemoveAcessos } = useRemoveAcessosUsuario(showMensagemSucessoAoRemoverAcesso, showMensagemErroAoRemoverAcesso, visaoBase)
+
     const history = useHistory();
     const [formErrors, setFormErrors] = useState({});
     const [bloquearCampoName, setBloquearCampoName] = useState(true)
@@ -47,6 +56,19 @@ export const FormUsuario = ({usuario}) => {
         setFormValues(emptyValues)
         resetForm()
         setShowModalValidacaoAcesso(false);
+    };
+
+    // Modal de confirmação de remoção de acesso
+    const [showModalConfirmaRemoverAcesso, setShowModalConfirmaRemoverAcesso] = useState(false)
+    const handleCloseModalConfirmaRemoverAcesso = () => {
+        setShowModalConfirmaRemoverAcesso(false);
+    };
+
+    const handleConfirmaRemoverAcesso = () => {
+        setShowModalConfirmaRemoverAcesso(false);
+        if (usuario?.id) {
+            removeAcessos({id:usuario.id, uuidUnidadeBase})
+        }
     };
 
     useEffect(()=>{
@@ -389,6 +411,17 @@ export const FormUsuario = ({usuario}) => {
 
                         {!isLoading &&
                         <div className={"barra-botoes-form-user d-flex justify-content-end mt-n2"}>
+                            {modo === Modos.EDIT &&
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setShowModalConfirmaRemoverAcesso(true)
+                                }}
+                                className="btn btn btn-danger mt-2 mr-2"
+                            >
+                                Remover acesso
+                            </button>
+                            }
                             <button type="submit" className="btn btn-success mt-2 ml-2">Salvar</button>
                         </div>
                         }
@@ -410,6 +443,14 @@ export const FormUsuario = ({usuario}) => {
                                 titulo="Usuário não autorizado na unidade"
                                 texto={mensagemModalValidacaoAcesso}
                                 botaoFecharHandle={() => handleFecharModalValidacaoAcesso({resetForm})}
+                            />
+                        </section>
+                        <section>
+                            <ModalConfirmacaoRemoverAcesso
+                                show={showModalConfirmaRemoverAcesso}
+                                botaoCancelarHandle={() => handleCloseModalConfirmaRemoverAcesso()}
+                                botaoConfirmarHandle={() => handleConfirmaRemoverAcesso()}
+                                visao={visaoBase}
                             />
                         </section>
                     </form>

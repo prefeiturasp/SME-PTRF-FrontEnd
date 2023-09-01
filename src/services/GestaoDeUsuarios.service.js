@@ -75,3 +75,7 @@ export const postUsuario = async (payload) => {
 export const putUsuario = async (id, payload) => {
     return (await api.put(`${URL_USUARIOS}${id}/`, payload, authHeader)).data
 };
+
+export const removerAcessosUnidadeBase = async (id, uuidUnidadeBase) => {
+    return (await api.put(`${URL_USUARIOS}${id}/remover-acessos-unidade-base/${uuidUnidadeBase}/`, {}, authHeader)).data
+};

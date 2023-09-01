@@ -373,6 +373,7 @@ export const DetalharAcertos = () => {
                 <TopoComBotoes
                     onSubmitFormAcertos={onSubmitFormAcertos}
                     onClickBtnVoltar={onClickBtnVoltar}
+                    prestacaoDeContas={prestacaoDeContas}
                 />
                 <TabelaDetalharAcertos
                     lancamemtosParaAcertos={lancamentos_para_acertos}
