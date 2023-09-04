@@ -5,6 +5,7 @@ import Loading from "../../../../utils/Loading";
 import {CargosDaComposicaoList} from "../components/CargosDaComposicaoList";
 import {MembrosDaAssociacaoContext} from "../context/MembrosDaAssociacao";
 import {Paginacao} from "../components/Paginacao";
+import {ComposicaoInfo} from "../components/ComposicaoInfo";
 
 export const PaginaMandatoVigente = () => {
 
@@ -38,7 +39,12 @@ export const PaginaMandatoVigente = () => {
 
     return (
         <>
-            <MandatoInfo/>
+            <div className="d-flex bd-highlight mt-2">
+                <MandatoInfo/>
+                {composicaoUuid && currentPage !== 1 &&
+                    <ComposicaoInfo/>
+                }
+            </div>
             <Paginacao/>
             {composicaoUuid &&
                 <CargosDaComposicaoList/>

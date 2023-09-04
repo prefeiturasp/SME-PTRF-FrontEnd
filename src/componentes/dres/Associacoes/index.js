@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {Redirect} from "react-router-dom";
-import {getTabelaAssociacoes, getAssociacoesPorUnidade, filtrosAssociacoes, getAssociacao, getContasAssociacao, getContasAssociacaoEncerradas} from "../../../services/dres/Associacoes.service";
+import {getAssociacoesPorUnidade, filtrosAssociacoes, getAssociacao, getContasAssociacao, getContasAssociacaoEncerradas, getTabelaAssociacoesDre} from "../../../services/dres/Associacoes.service";
 import "./associacoes.scss"
 import {TabelaAssociacoes} from "./TabelaAssociacoes";
 import {FiltrosAssociacoes} from "./FiltrosAssociacoes";
@@ -40,7 +40,7 @@ export const Associacoes = () =>{
     }, []);
 
     const buscaTabelaAssociacoes = async ()=>{
-        let tabela_associacoes = await getTabelaAssociacoes();
+        let tabela_associacoes = await getTabelaAssociacoesDre();
         setTabelaAssociacoes(tabela_associacoes);
     };
 

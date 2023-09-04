@@ -17,6 +17,10 @@ export const getAssociacaoByUUID = async (associacaoUUID) => {
     return (await api.get(`api/associacoes/${associacaoUUID}`, authHeader)).data
 };
 
+export const getContasAtivasDaAssociacaoNoPeriodo = async (periodoUUID) => {
+    return (await api.get(`api/associacoes/${localStorage.getItem(ASSOCIACAO_UUID)}/contas-do-periodo/?periodo_uuid=${periodoUUID}`, authHeader)).data
+}
+
 
 export const alterarAssociacao = async (payload) => {
     return api.put(`api/associacoes/${localStorage.getItem(ASSOCIACAO_UUID)}/`, payload, authHeader).then(response => {

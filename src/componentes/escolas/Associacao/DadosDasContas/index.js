@@ -165,6 +165,21 @@ export const DadosDasContas = () => {
         return false;
     }
 
+    const apresentaToast = (successMessage, errorMessage) => {
+        if (successMessage) {
+            const successMessages = successMessage.split('. ');
+            if (successMessages.length > 0) {
+                toastCustom.ToastCustomSuccess(successMessages[0], successMessages[1]);
+            }
+        } else if (errorMessage) {
+            const errorMessages = errorMessage.split('. ');
+            if (errorMessages.length > 0) {
+                toastCustom.ToastCustomError(errorMessages[0], errorMessages[1]);
+            }
+        }
+    };
+    
+
     const handleEncerrarTipoConta = async () => {
         let payload = {
             "conta_associacao": modalEncerramentoData.conta_associacao.uuid,
@@ -179,20 +194,27 @@ export const DadosDasContas = () => {
 
                 payload.status = "PENDENTE";
 
-                await reenviarSolicitacaoEncerramentoConta(payload, idSolicitacaoJaExistente);
-                await buscaContas();
-                toastCustom.ToastCustomSuccess('Nova solicitação de encerramento realizada com sucesso', 'A solicitação de encerramento de conta foi enviado para a Dre e está no estado de pendente de aprovação.')
+                const response = await reenviarSolicitacaoEncerramentoConta(payload, idSolicitacaoJaExistente);
+                if (response && response.data && response.data.msg_sucesso_ao_encerrar) {
+                    apresentaToast(response.data.msg_sucesso_ao_encerrar, null);
+                } else {
+                    apresentaToast('Solicitação de encerramento realizada com sucesso', 'A solicitação de encerramento de conta foi enviado para a Dre e está no estado de pendente de aprovação.');
+                }
             } else {
-                await encerrarConta(payload);
-                toastCustom.ToastCustomSuccess('Solicitação de encerramento realizada com sucesso', 'A solicitação de encerramento de conta foi enviado para a Dre e está no estado de pendente de aprovação.')
+                const response = await encerrarConta(payload);
+                if (response && response.data && response.data.msg_sucesso_ao_encerrar) {
+                    apresentaToast(response.data.msg_sucesso_ao_encerrar, null);
+                } else {
+                    apresentaToast('Solicitação de encerramento realizada com sucesso', 'A solicitação de encerramento de conta foi enviado para a Dre e está no estado de pendente de aprovação.');
+                }
             }
 
             buscaContas();
         } catch (error) {
-            if(error.response.data && error.response.data.mensagem) {
-                toastCustom.ToastCustomError('Erro ao enviar a solicitação de encerramento', error.response.data.mensagem)
+            if (error.response.data && error.response.data.mensagem && error.response.data.mensagem[0]) {
+                apresentaToast(null, error.response.data.mensagem[0]);
             } else {
-                toastCustom.ToastCustomError('Erro ao enviar a solicitação de encerramento', 'Ocorreu um erro e a solicitação de encerramento não foi enviada para a Dre.')
+                apresentaToast('Erro ao enviar a solicitação de encerramento', 'Ocorreu um erro e a solicitação de encerramento não foi enviada para a Dre.');
             }
         }
 

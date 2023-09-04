@@ -24,6 +24,10 @@ export const FormularioAcertos = ({solicitacoes_acerto, listaTiposDeAcertoLancam
     const uuidDevolucaoTesouro = listaTiposDeAcertoLancamentosAgrupado.find(item => item.id === "DEVOLUCAO")?.tipos_acerto_lancamento[0].uuid
     const {setIsValorParcialValido} = useContext(ValidarParcialTesouro)
 
+    const selecaoEmMassa = () => {
+        return true ? lancamentosParaAcertos.length > 1 : false;
+    }
+
     const categoriaNaoPodeRepetir = (categoria) => {
         const categoriasQueNaoPodemRepetir = [
             'DEVOLUCAO',
@@ -45,6 +49,14 @@ export const FormularioAcertos = ({solicitacoes_acerto, listaTiposDeAcertoLancam
         return false;
     }
 
+    const categoriaNaoPodeExibirEmSelecaoMassa = (categoria) => {
+        let categoriasQueNaoPodemExibir = [
+            'DEVOLUCAO',
+        ];
+
+        return categoriasQueNaoPodemExibir.includes(categoria.id);
+    }
+
     const opcoesSelect = (acertos) => {
         for(let index_categoria=0; index_categoria <= listaTiposDeAcertoLancamentosAgrupado.length -1; index_categoria ++){
 
@@ -52,6 +64,12 @@ export const FormularioAcertos = ({solicitacoes_acerto, listaTiposDeAcertoLancam
 
             let categoria = listaTiposDeAcertoLancamentosAgrupado[index_categoria]
             categoria.deve_exibir_categoria = true;
+
+            if(selecaoEmMassa()){
+                if(categoriaNaoPodeExibirEmSelecaoMassa(categoria)){
+                    categoria.deve_exibir_categoria = false;
+                }
+            }
 
             for(let index_tipo_acerto=0; index_tipo_acerto <= categoria.tipos_acerto_lancamento.length -1; index_tipo_acerto++){
                 let acerto = categoria.tipos_acerto_lancamento[index_tipo_acerto];
