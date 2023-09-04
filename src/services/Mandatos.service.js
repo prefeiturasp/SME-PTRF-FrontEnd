@@ -35,7 +35,7 @@ export const patchMandato = async (uuidMandato, payload) => {
     ))
 };
 
-export const getMandatoVigente = async (associacao_uuid, currentPage) => {
+export const getMandatoVigente = async (associacao_uuid) => {
     return (await api.get(`/api/mandatos/mandato-vigente/`,{
         ...authHeader,
         params: {
@@ -50,5 +50,11 @@ export const getCargosDaComposicao = async (composicao_uuid) => {
         params: {
             composicao_uuid: composicao_uuid,
         }
+    })).data
+}
+
+export const getComposicao = async (composicao_uuid) => {
+    return (await api.get(`/api/composicoes/${composicao_uuid}/`,{
+        ...authHeader,
     })).data
 }

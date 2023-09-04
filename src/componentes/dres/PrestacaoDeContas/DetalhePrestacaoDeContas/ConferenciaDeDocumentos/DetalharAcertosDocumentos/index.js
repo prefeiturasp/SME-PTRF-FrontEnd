@@ -196,6 +196,7 @@ const DetalharAcertosDocumentos = () =>{
                     <TopoComBotoes
                         onClickBtnVoltar={onClickBtnVoltar}
                         onSubmitFormAcertos={onSubmitFormAcertos}
+                        prestacaoDeContas={prestacaoDeContas}
                     />
                     <CabecalhoDocumento
                         documentos={documentos}

@@ -4,24 +4,33 @@ import {Column} from "primereact/column";
 import {DataTable} from "primereact/datatable";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEye, faDownload, faCheckCircle, faEdit} from "@fortawesome/free-solid-svg-icons";
-import {gravarAcertosDocumentos, detalhamentoConferenciaDocumentos, marcarAcertosDocumentosComoNaoCorreto, marcarAcertosDocumentosComoCorreto, downloadDocumentoRelatorio} from "../../../../../services/sme/AcompanhamentoSME.service";
+import {
+    gravarAcertosDocumentos,
+    detalhamentoConferenciaDocumentos,
+    marcarAcertosDocumentosComoNaoCorreto,
+    marcarAcertosDocumentosComoCorreto,
+    downloadDocumentoRelatorio
+} from "../../../../../services/sme/AcompanhamentoSME.service";
 import {ModalAdicionarAcertosDocumentos} from "./ModalAdicionarAcertosDocumentos";
-import {ModalCheckNaoPermitidoConfererenciaDeDocumentos} from "../../../../dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeDocumentos/ModalCheckNaoPermitidoConfererenciaDeDocumentos";
+import {
+    ModalCheckNaoPermitidoConfererenciaDeDocumentos
+} from "../../../../dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeDocumentos/ModalCheckNaoPermitidoConfererenciaDeDocumentos";
 import {toastCustom} from "../../../../Globais/ToastCustom";
 import {ModalFormBodyPdf} from "../../../../Globais/ModalBootstrap"
 import Dropdown from "react-bootstrap/Dropdown";
 import Loading from "../../../../../utils/Loading";
 import {AxiosError} from "axios";
+import "./conferencia-de-documentos.scss"
 
 const TabelaConferenciaDeDocumentosRelatorios = ({
-    relatorioConsolidado,
-    setListaDeDocumentosRelatorio,
-    listaDeDocumentosRelatorio,
-    carregaListaDeDocumentosRelatorio,
-    rowsPerPage,
-    loadingDocumentosRelatorio,
-    editavel
-}) => {
+                                                     relatorioConsolidado,
+                                                     setListaDeDocumentosRelatorio,
+                                                     listaDeDocumentosRelatorio,
+                                                     carregaListaDeDocumentosRelatorio,
+                                                     rowsPerPage,
+                                                     loadingDocumentosRelatorio,
+                                                     editavel
+                                                 }) => {
 
     const params = useParams();
     const [quantidadeSelecionada, setQuantidadeSelecionada] = useState(0);
@@ -41,16 +50,15 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
                 return {
                     documentos: action.payload
                 };
-            } 
+            }
             return state;
         }
     }, {
         documentos: []
     })
-    const [isModificado, setIsModificado] = useState(false);
 
     useEffect(() => {
-        dispatch({ type: 'atualizar', payload: listaDeDocumentosRelatorio })
+        dispatch({type: 'atualizar', payload: listaDeDocumentosRelatorio})
     }, [listaDeDocumentosRelatorio])
 
     useEffect(() => {
@@ -60,8 +68,8 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
 
     const getDetalhamentoConferenciaDocumentos = async (consolidado_dre_uuid) => {
         const response = await detalhamentoConferenciaDocumentos(consolidado_dre_uuid, relatorioConsolidado.analise_atual?.uuid)
-        const documento = response ?. data ?. lista_documentos.find((item) => item.uuid === documentoAcertoInfo ?. documento)
-        return documento ?. analise_documento_consolidado_dre.detalhamento ?? ''
+        const documento = response?.data?.lista_documentos.find((item) => item.uuid === documentoAcertoInfo?.documento)
+        return documento?.analise_documento_consolidado_dre.detalhamento ?? ''
     }
 
     const setDetalhamentoConferenciaDocumentos = async (consolidado_dre_uuid) => {
@@ -73,31 +81,45 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
         return (
             <div className="align-middle">
                 <Dropdown>
-                    <Dropdown.Toggle id="dropdown-basic">
-                        <input checked={false}
+                    <Dropdown.Toggle
+                        id="dropdown-basic"
+                        disabled={!editavel}
+                    >
+                        <input
+                            checked={false}
                             type="checkbox"
                             value=""
-                            onChange={
-                                (e) => e
-                            }
+                            onChange={(e) => e}
                             name="checkHeaderDocumentos"
                             id="checkHeaderDocumentos"
-                            disabled={false}/>
+                            disabled={!editavel}
+                        />
                     </Dropdown.Toggle>
 
-                    <Dropdown.Menu>
-                        <Dropdown.Item onClick={
-                            (e) => selecionarPorStatus(e, "CORRETO")
-                        }>Selecionar todos corretos</Dropdown.Item>
-                        <Dropdown.Item onClick={
-                            (e) => selecionarPorStatus(e, null)
-                        }>Selecionar todos não conferidos</Dropdown.Item>
-                        <Dropdown.Item onClick={
-                            (e) => selecionarPorStatus(e, "AJUSTE")
-                        }>Selecionar todos com solicitação de acertos</Dropdown.Item>
-                        <Dropdown.Item onClick={
-                            (e) => desmarcarTodos(e)
-                        }>Desmarcar todos</Dropdown.Item>
+                    <Dropdown.Menu
+                        rootCloseEvent='mousedown'
+                        className="dropdown-sme-conferencia-de-documentos"
+                    >
+                        <Dropdown.Item
+                            onClick={(e) => selecionarPorStatus(e, "CORRETO")}
+                        >
+                            Selecionar todos corretos
+                        </Dropdown.Item>
+                        <Dropdown.Item
+                            onClick={(e) => selecionarPorStatus(e, null)}
+                        >
+                            Selecionar todos não conferidos
+                        </Dropdown.Item>
+                        <Dropdown.Item
+                            onClick={(e) => selecionarPorStatus(e, "AJUSTE")}
+                        >
+                            Selecionar todos com solicitação de acertos
+                        </Dropdown.Item>
+                        <Dropdown.Item
+                            onClick={(e) => desmarcarTodos(e)}
+                        >
+                            Desmarcar todos
+                        </Dropdown.Item>
                     </Dropdown.Menu>
                 </Dropdown>
             </div>
@@ -108,17 +130,17 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
         return (
             <div className="align-middle text-center">
                 <input checked={
-                        listaDeDocumentosRelatorio.find(u => u.uuid === rowData.uuid).selecionado
-                    }
-                    type="checkbox"
-                    onChange={
-                        (e) => tratarSelecionado(e, rowData.uuid, rowData)
-                    }
-                    name="checkAtribuidoDocumento"
-                    id="checkAtribuidoDocumento"
-                    disabled={
-                        !editavel
-                    }/>
+                    listaDeDocumentosRelatorio.find(u => u.uuid === rowData.uuid).selecionado
+                }
+                       type="checkbox"
+                       onChange={
+                           (e) => tratarSelecionado(e, rowData.uuid, rowData)
+                       }
+                       name="checkAtribuidoDocumento"
+                       id="checkAtribuidoDocumento"
+                       disabled={
+                           !editavel
+                       }/>
             </div>
         )
     }
@@ -128,7 +150,7 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
         desmarcarTodos(event)
         let cont = 0;
         let result
-        if (status == 'CORRETO') {
+        if (status === 'CORRETO') {
             setExibirBtnMarcarComoCorreto(false)
             setExibirBtnMarcarComoNaoConferido(true)
             result = listaDeDocumentosRelatorio.reduce((acc, o) => {
@@ -171,11 +193,10 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
         if (rowData.analise_documento_consolidado_dre.resultado === 'CORRETO') {
             setExibirBtnMarcarComoCorreto(false)
             setExibirBtnMarcarComoNaoConferido(true)
-        } else if (rowData.analise_documento_consolidado_dre.resultado === 'AJUSTE'){
+        } else if (rowData.analise_documento_consolidado_dre.resultado === 'AJUSTE') {
             setExibirBtnMarcarComoNaoConferido(true)
             setExibirBtnMarcarComoCorreto(true)
-        }
-        else {
+        } else {
             setExibirBtnMarcarComoCorreto(true)
             setExibirBtnMarcarComoNaoConferido(false)
         }
@@ -197,7 +218,7 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
                 }
             } catch (err) {
                 if (err instanceof AxiosError) {
-                    toastCustom.ToastCustomError(err.response.data ?. mensagem ?? "Algo inesperado aconteceu", "tente novamente mais tarde")
+                    toastCustom.ToastCustomError(err.response.data?.mensagem ?? "Algo inesperado aconteceu", "tente novamente mais tarde")
                 }
             } finally {
                 desmarcarTodos()
@@ -210,7 +231,10 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
         if (documentos_marcados_como_corretos.length > 0) {
             let payload = {
                 analise_atual_consolidado: relatorioConsolidado.analise_atual?.uuid,
-                documentos: documentos_marcados_como_corretos.map(item => ({tipo_documento: item.tipo_documento, uuid_documento: item.uuid}))
+                documentos: documentos_marcados_como_corretos.map(item => ({
+                    tipo_documento: item.tipo_documento,
+                    uuid_documento: item.uuid
+                }))
             }
             try {
                 const {status, data} = await marcarAcertosDocumentosComoCorreto(payload);
@@ -221,7 +245,7 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
                 }
             } catch (err) {
                 if (err instanceof AxiosError) {
-                    toastCustom.ToastCustomError(err.response.data ?. mensagem ?? "Algo inesperado aconteceu", "tente novamente mais tarde")
+                    toastCustom.ToastCustomError(err.response.data?.mensagem ?? "Algo inesperado aconteceu", "tente novamente mais tarde")
                 }
             } finally {
                 desmarcarTodos()
@@ -231,7 +255,7 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
 
     const verificaSePodeSerCheckado = (e, rowData) => {
         let selecionados = getDocumentosSelecionados()
-        const statusSelecionado = selecionados[0] ?. analise_documento_consolidado_dre.resultado
+        const statusSelecionado = selecionados[0]?.analise_documento_consolidado_dre.resultado
 
         if (!(statusSelecionado === rowData.analise_documento_consolidado_dre.resultado || selecionados.length === 0)) {
             setTextoModalCheckNaoPermitido('<p>Esse documento tem um status de conferência que não pode ser selecionado em conjunto com os demais status já selecionados.</p>')
@@ -273,22 +297,22 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
         return (
             <div className="row">
                 <div className="col-12"
-                    style={
-                        {
-                            background: "#00585E",
-                            color: 'white',
-                            padding: "15px",
-                            margin: "0px 15px",
-                            flex: "100%"
-                        }
-                }>
+                     style={
+                         {
+                             background: "#00585E",
+                             color: 'white',
+                             padding: "15px",
+                             margin: "0px 15px",
+                             flex: "100%"
+                         }
+                     }>
                     <div className="row">
                         <div className="col-5">
                             {quantidadeSelecionada}
                             {" "}
                             {
-                            quantidadeSelecionada === 1 ? "documento selecionado " : "documentos selecionados "
-                        }
+                                quantidadeSelecionada === 1 ? "documento selecionado " : "documentos selecionados "
+                            }
                             / {totalDeDocumentosParaConferencia}
                             {" "}
                             totais
@@ -297,73 +321,75 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
                             <div className="row">
                                 <div className="col-12">
                                     <button className="float-right btn btn-link btn-montagem-selecionar"
-                                        onClick={
-                                            (e) => desmarcarTodos(e)
-                                        }
-                                        style={
-                                            {
-                                                textDecoration: "underline",
-                                                cursor: "pointer"
+                                            onClick={
+                                                (e) => desmarcarTodos(e)
                                             }
-                                    }>
+                                            style={
+                                                {
+                                                    textDecoration: "underline",
+                                                    cursor: "pointer"
+                                                }
+                                            }>
                                         <strong>Cancelar</strong>
                                     </button>
                                     {
-                                    exibirBtnMarcarComoCorreto && <>
-                                        <div className="float-right"
-                                            style={
-                                                {padding: "0px 10px"}
-                                        }>|</div>
-                                        <button className="float-right btn btn-link btn-montagem-selecionar"
-                                            onClick={
-                                                () => marcarComoCorreto()
-                                            }
-                                            style={
-                                                {
-                                                    textDecoration: "underline",
-                                                    cursor: "pointer"
-                                                }
-                                        }>
-                                            <FontAwesomeIcon style={
+                                        exibirBtnMarcarComoCorreto && <>
+                                            <div className="float-right"
+                                                 style={
+                                                     {padding: "0px 10px"}
+                                                 }>|
+                                            </div>
+                                            <button className="float-right btn btn-link btn-montagem-selecionar"
+                                                    onClick={
+                                                        () => marcarComoCorreto()
+                                                    }
+                                                    style={
+                                                        {
+                                                            textDecoration: "underline",
+                                                            cursor: "pointer"
+                                                        }
+                                                    }>
+                                                <FontAwesomeIcon style={
                                                     {
                                                         color: "white",
                                                         fontSize: '15px',
                                                         marginRight: "3px"
                                                     }
                                                 }
-                                                icon={faCheckCircle}/>
-                                            <strong>Marcar como Correto</strong>
-                                        </button>
-                                    </>
-                                }
+                                                                 icon={faCheckCircle}/>
+                                                <strong>Marcar como Correto</strong>
+                                            </button>
+                                        </>
+                                    }
                                     {
-                                    exibirBtnMarcarComoNaoConferido && <>
-                                        <div className="float-right"
-                                            style={
-                                                {padding: "0px 10px"}
-                                        }>|</div>
-                                        <button className="float-right btn btn-link btn-montagem-selecionar"
-                                            onClick={
-                                                () => marcarComoNaoConferido()
-                                            }
-                                            style={
-                                                {
-                                                    textDecoration: "underline",
-                                                    cursor: "pointer"
-                                                }
-                                        }>
-                                            <FontAwesomeIcon style={
+                                        exibirBtnMarcarComoNaoConferido && <>
+                                            <div className="float-right"
+                                                 style={
+                                                     {padding: "0px 10px"}
+                                                 }>|
+                                            </div>
+                                            <button className="float-right btn btn-link btn-montagem-selecionar"
+                                                    onClick={
+                                                        () => marcarComoNaoConferido()
+                                                    }
+                                                    style={
+                                                        {
+                                                            textDecoration: "underline",
+                                                            cursor: "pointer"
+                                                        }
+                                                    }>
+                                                <FontAwesomeIcon style={
                                                     {
                                                         color: "white",
                                                         fontSize: '15px',
                                                         marginRight: "3px"
                                                     }
                                                 }
-                                                icon={faCheckCircle}/>
-                                            <strong>Marcar como Não conferido</strong>
-                                        </button>
-                                    </>
-                                } </div>
+                                                                 icon={faCheckCircle}/>
+                                                <strong>Marcar como Não conferido</strong>
+                                            </button>
+                                        </>
+                                    } </div>
                             </div>
                         </div>
                     </div>
@@ -378,44 +404,41 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
         return (
             <div className="row">
                 <div className="col-12"
-                    style={
-                        {
-                            padding: "15px 0px",
-                            margin: "0px 15px",
-                            flex: "100%"
-                        }
-                }>
-                    Exibindo {" "}
-                    <span style={
-                        {
-                            color: "#00585E",
-                            fontWeight: "bold"
-                        }
-                    }>
-                        {totalDeDocumentosParaConferencia}</span>
-                    documentos
+                     style={
+                         {
+                             padding: "15px 0px",
+                             margin: "0px 15px",
+                             flex: "100%"
+                         }
+                     }>
+                    Exibindo <span
+                    style={{color: "#00585E", fontWeight: "bold"}}> {totalDeDocumentosParaConferencia}</span> documentos
                 </div>
             </div>
         )
     }
 
     const temAjusteConsideraCorreto = (data) => {
-        
+
         data.selecionado = true
-        if (relatorioConsolidado?.analise_atual){
+        if (relatorioConsolidado?.analise_atual) {
             let documentoAjuste = listaDeDocumentosRelatorio?.find((documento) => documento.uuid === data.uuid)
             if (documentoAjuste.analise_documento_consolidado_dre.resultado === 'AJUSTE') {
                 setPrecisaConsiderarCorreto(true)
             } else {
                 setPrecisaConsiderarCorreto(false)
             }
-        }else {
+        } else {
             setPrecisaConsiderarCorreto(false)
         }
     }
 
     const openModalAcertos = (data) => {
-        setDocumentoAcertoInfo({documento: data.uuid, tipo_documento: data.tipo_documento, uuids_analises_documento: data.analise_documento_consolidado_dre.uuid})
+        setDocumentoAcertoInfo({
+            documento: data.uuid,
+            tipo_documento: data.tipo_documento,
+            uuids_analises_documento: data.analise_documento_consolidado_dre.uuid
+        })
         setShowModalAdicionarAcertos(true)
         temAjusteConsideraCorreto(data)
     }
@@ -427,24 +450,21 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
             return (
                 <div className='p-2'>
                     <FontAwesomeIcon style={
-                            {
-                                marginRight: "3px",
-                                color: '#297805'
-                            }
+                        {
+                            marginRight: "3px",
+                            color: '#297805'
                         }
-                        icon={faCheckCircle}/>
+                    }
+                                     icon={faCheckCircle}/>
                 </div>
             )
         } else if (rowData.analise_documento_consolidado_dre.resultado === 'AJUSTE') {
             return (
                 <div className='p-2'>
-                    <FontAwesomeIcon style={
-                            {
-                                marginRight: "3px",
-                                color: '#B40C02'
-                            }
-                        }
-                        icon={faCheckCircle}/>
+                    <FontAwesomeIcon
+                        style={{marginRight: "3px", color: '#B40C02'}}
+                        icon={faCheckCircle}
+                    />
                 </div>
             )
         }
@@ -482,36 +502,36 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
             return (
                 <>
                     <button disabled={
-                            !editavel
-                        }
-                        title="Visualizar"
-                        className="btn btn-link fonte-14"
-                        type="button"
-                        onClick={() => handleShowPdf(rowData)}>
+                        !editavel
+                    }
+                            title="Visualizar"
+                            className="btn btn-link fonte-14"
+                            type="button"
+                            onClick={() => handleShowPdf(rowData)}>
                         <FontAwesomeIcon style={
-                                {
-                                    fontSize: '18px',
-                                    marginRight: "5px",
-                                    color: "#00585E"
-                                }
+                            {
+                                fontSize: '18px',
+                                marginRight: "5px",
+                                color: "#00585E"
                             }
-                            icon={faEye}/>
+                        }
+                                         icon={faEye}/>
                     </button>
                     <button disabled={
-                            !editavel
-                        }
-                        title="Download"
-                        onClick={() => getDownloadDocumentoRelatorio(rowData)}
-                        className="btn btn-link fonte-14"
-                        type="button">
+                        !editavel
+                    }
+                            title="Download"
+                            onClick={() => getDownloadDocumentoRelatorio(rowData)}
+                            className="btn btn-link fonte-14"
+                            type="button">
                         <FontAwesomeIcon style={
-                                {
-                                    fontSize: '18px',
-                                    marginRight: "5px",
-                                    color: "#00585E"
-                                }
+                            {
+                                fontSize: '18px',
+                                marginRight: "5px",
+                                color: "#00585E"
                             }
-                            icon={faDownload}/>
+                        }
+                                         icon={faDownload}/>
                     </button>
                 </>
             )
@@ -533,21 +553,21 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
     const adicionarAcertos = (rowData) => {
         return (
             <button disabled={
-                    !editavel
-                }
-                onClick={
-                    () => openModalAcertos(rowData)
-                }
-                className="btn btn-link fonte-14"
-                type="button">
-                <FontAwesomeIcon style={
-                        {
-                            fontSize: '18px',
-                            marginRight: "5px",
-                            color: "#00585E"
-                        }
+                !editavel
+            }
+                    onClick={
+                        () => openModalAcertos(rowData)
                     }
-                    icon={faEdit}/>
+                    className="btn btn-link fonte-14"
+                    type="button">
+                <FontAwesomeIcon style={
+                    {
+                        fontSize: '18px',
+                        marginRight: "5px",
+                        color: "#00585E"
+                    }
+                }
+                                 icon={faEdit}/>
             </button>
         )
     };
@@ -583,29 +603,29 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
             loadingDocumentosRelatorio ? (
                 <Loading corGrafico="black" corFonte="dark" marginTop="0" marginBottom="0"/>
             ) : <> {
-                    quantidadeSelecionada > 0 ? montagemSelecionar() : mensagemQuantidadeExibida()
-                }
-                    <DataTable value={listaDeDocumentosRelatorio}
-                        paginator={
-                            listaDeDocumentosRelatorio.length > rowsPerPage
-                        }
-                        rows={rowsPerPage}
-                        rowClassName={rowClassName}
-                        paginatorTemplate="PrevPageLink PageLinks NextPageLink"
-                        stripedRows
-                        className=""
-                        autoLayout={true}>
-                        <Column
-                            header={selecionarHeader()}
-                            className="align-middle text-left borda-coluna"
-                            body={selecionarTemplate}
-                            style={
-                                {
-                                    borderRight: 'none',
-                                    width: '1%'
-                                }
-                            }/>
-                        <Column header={'Nome do Documento'}
+                quantidadeSelecionada > 0 ? montagemSelecionar() : mensagemQuantidadeExibida()
+            }
+                <DataTable value={listaDeDocumentosRelatorio}
+                           paginator={
+                               listaDeDocumentosRelatorio.length > rowsPerPage
+                           }
+                           rows={rowsPerPage}
+                           rowClassName={rowClassName}
+                           paginatorTemplate="PrevPageLink PageLinks NextPageLink"
+                           stripedRows
+                           className="tabela-sme-conferencia-de-documentos"
+                           autoLayout={true}>
+                    <Column
+                        header={selecionarHeader()}
+                        className="align-middle text-left borda-coluna"
+                        body={selecionarTemplate}
+                        style={
+                            {
+                                borderRight: 'none',
+                                width: '1%'
+                            }
+                        }/>
+                    <Column header={'Nome do Documento'}
                             field='nome'
                             className="align-middle text-left borda-coluna"
                             body={nomeDocumento}
@@ -615,7 +635,7 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
                                     width: '200px'
                                 }
                             }/>
-                        <Column header={'Conferido'}
+                    <Column header={'Conferido'}
                             body={conferidoTemplate}
                             className="align-middle text-left borda-coluna"
                             style={
@@ -624,7 +644,7 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
                                     width: '10%'
                                 }
                             }/>
-                        <Column field='acoes' header='Ações'
+                    <Column field='acoes' header='Ações'
                             body={acoesTemplate}
                             className="align-middle text-left borda-coluna"
                             style={
@@ -633,17 +653,18 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
                                     width: '10%'
                                 }
                             }/>
-                        <Column field='adicionar_acertos' header='Adicionar Acerto'
+                    <Column field='adicionar_acertos' header='Adicionar Acerto'
                             body={adicionarAcertos}
                             className="align-middle text-left borda-coluna"
                             style={
                                 {width: '2%'}
                             }/>
-                    </DataTable>
-                </>
+                </DataTable>
+            </>
         }
             <section>
-                <ModalAdicionarAcertosDocumentos titulo="Detalhamento do acerto"
+                <ModalAdicionarAcertosDocumentos
+                    titulo="Detalhamento do acerto"
                     handleSubmitModal={handleSubmitModal}
                     handleClose={
                         () => {
@@ -661,24 +682,14 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
                 />
             </section>
             <section>
-                <ModalCheckNaoPermitidoConfererenciaDeDocumentos show={showModalCheckNaoPermitido}
-                    handleClose={
-                        () => setShowModalCheckNaoPermitido(false)
-                    }
+                <ModalCheckNaoPermitidoConfererenciaDeDocumentos
+                    show={showModalCheckNaoPermitido}
+                    handleClose={() => setShowModalCheckNaoPermitido(false)}
                     titulo='Seleção não permitida'
                     texto={textoModalCheckNaoPermitido}
                     primeiroBotaoTexto="Fechar"
-                    primeiroBotaoCss="success"/>
-            </section>
-            <section>
-                <ModalCheckNaoPermitidoConfererenciaDeDocumentos show={showModalCheckNaoPermitido}
-                    handleClose={
-                        () => setShowModalCheckNaoPermitido(false)
-                    }
-                    titulo='Seleção não permitida'
-                    texto={textoModalCheckNaoPermitido}
-                    primeiroBotaoTexto="Fechar"
-                    primeiroBotaoCss="success"/>
+                    primeiroBotaoCss="success"
+                />
             </section>
             <section>
                 <ModalFormBodyPdf
@@ -687,7 +698,7 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
                     titulo={'Visualização do documento.'}
                     onHide={() => setShowModalPdfDownload(false)}
                 >
-                <embed src={pdfVisualizacao} frameBorder="0" width="100%" height="700px"></embed>
+                    <embed src={pdfVisualizacao} frameBorder="0" width="100%" height="700px"></embed>
                 </ModalFormBodyPdf>
             </section>
         </>
