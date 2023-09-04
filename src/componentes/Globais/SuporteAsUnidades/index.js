@@ -5,6 +5,7 @@ import {visoesService} from "../../../services/visoes.service";
 import {ModalConfirmaInicioSuporte} from "./ModalConfirmaInicioSuporte";
 import {getUsuarioLogado, viabilizarAcessoSuporte, authService} from "../../../services/auth.service"
 import {setarUnidadeProximoLoginAcessoSuporte} from "../../../services/visoes.service"
+import {barraMensagemCustom} from "../BarraMensagem";
 
 export const SuporteAsUnidades = (props) =>{
 
@@ -56,6 +57,7 @@ export const SuporteAsUnidades = (props) =>{
         <div>
             <TextoExplicativo visao={visao}/>
             <div className="page-content-inner pt-0">
+                {visoesService.featureFlagAtiva('teste-flag') && barraMensagemCustom.BarraMensagemAcertoExterno("Feature flag teste-flag ativa.")}
                 <EscolheUnidade dre_uuid={dreUuid} onSelecionaUnidade={handleSelecaoUnidadeSuporte} visao={visao}/>
                 <section>
                     <ModalConfirmaInicioSuporte
@@ -66,6 +68,7 @@ export const SuporteAsUnidades = (props) =>{
                     />
                 </section>
             </div>
+
         </div>
 
     )
