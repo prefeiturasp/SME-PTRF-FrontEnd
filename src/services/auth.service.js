@@ -102,8 +102,6 @@ const login = async (login, senha) => {
 
             await visoesService.setDadosPrimeiroAcesso(resp);
 
-
-
             window.location.href = "/";
         } 
     } catch (error) {
