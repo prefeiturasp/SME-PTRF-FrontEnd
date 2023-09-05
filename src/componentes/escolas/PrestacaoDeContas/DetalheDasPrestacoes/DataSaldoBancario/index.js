@@ -90,7 +90,7 @@ const DataSaldoBancario = ({
                                                 <label htmlFor="saldo_extrato">Saldo</label>
                                                 {/*<label htmlFor="saldo_extrato">Saldo *</label>*/}
                                                 <CurrencyInput
-                                                    allowNegative={false}
+                                                    allowNegative={true}
                                                     prefix='R$'
                                                     decimalSeparator=","
                                                     thousandSeparator="."
