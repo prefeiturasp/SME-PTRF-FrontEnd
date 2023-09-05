@@ -274,7 +274,7 @@ export const AnalisesDeContaDaPrestacao = ({infoAta, analisesDeContaDaPrestacao,
                                             <label htmlFor="saldo_extrato"><strong>Saldo corrigido</strong></label>
                                             <CurrencyInput
                                                 disabled={!editavel || !adicaoAjusteSaldo}
-                                                allowNegative={false}
+                                                allowNegative={true}
                                                 prefix='R$'
                                                 decimalSeparator=","
                                                 thousandSeparator="."
