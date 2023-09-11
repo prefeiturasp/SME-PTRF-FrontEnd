@@ -11,6 +11,7 @@ import { Upload, Button } from 'antd';
 import moment from "moment";
 
 import {IconeDataSaldoBancarioPendentes} from "./IconeDataSaldoBancarioPendentes";
+import {formataData} from "../../../../../utils/FormataData";
 
 const DataSaldoBancario = ({
     valoresPendentes, dataSaldoBancario, handleChangaDataSaldo, periodoFechado,
@@ -25,13 +26,14 @@ const DataSaldoBancario = ({
         let dispara_modal = false;
 
         if(dataSaldoBancarioSolicitacaoEncerramento && dataSaldoBancarioSolicitacaoEncerramento.possui_solicitacao_encerramento && dataSaldoBancario){
-            let data_solicitacao_encerramento = dataSaldoBancarioSolicitacaoEncerramento.data_extrato ? moment(dataSaldoBancarioSolicitacaoEncerramento.data_extrato, "YYYY-MM-DD").format("YYYY-MM-DD"): null
-            let saldo_solicitacao_encerramento = dataSaldoBancarioSolicitacaoEncerramento.saldo_extrato ? trataNumericos(dataSaldoBancarioSolicitacaoEncerramento.saldo_extrato) : 0
+            let data_solicitacao_encerramento = dataSaldoBancarioSolicitacaoEncerramento.data_encerramento ? moment(dataSaldoBancarioSolicitacaoEncerramento.data_encerramento, "YYYY-MM-DD").format("YYYY-MM-DD"): null
+            let saldo_solicitacao_encerramento = dataSaldoBancarioSolicitacaoEncerramento.saldo_encerramento ? trataNumericos(dataSaldoBancarioSolicitacaoEncerramento.saldo_encerramento) : 0
 
             let data_formulario = dataSaldoBancario.data_extrato ? moment(dataSaldoBancario.data_extrato, "YYYY-MM-DD").format("YYYY-MM-DD"): null
             let saldo_formulario = dataSaldoBancario.saldo_extrato ? trataNumericos(dataSaldoBancario.saldo_extrato) : 0
 
-            if(data_solicitacao_encerramento !== data_formulario || saldo_solicitacao_encerramento !== saldo_formulario){
+            console.log(data_solicitacao_encerramento, data_formulario, saldo_solicitacao_encerramento, saldo_formulario, dataSaldoBancarioSolicitacaoEncerramento.data_encerramento, dataSaldoBancarioSolicitacaoEncerramento.saldo_encerramento )
+            if(dataSaldoBancarioSolicitacaoEncerramento.data_encerramento !== data_formulario || dataSaldoBancarioSolicitacaoEncerramento.saldo_encerramento !== saldo_formulario){
                 dispara_modal = true;
             }
         }
@@ -56,7 +58,6 @@ const DataSaldoBancario = ({
     }
 
     //  TODO códigos comentados propositalmente em função da história 102412 - Sprint 73 (Conciliação Bancária: Retirar validação e obrigatoriedade de preenchimento dos campos do Saldo bancário da conta ao concluir acerto/período) - que entrou como Hotfix
-
     return(
         <>
             <form method="post" encType="multipart/form-data">
@@ -82,15 +83,20 @@ const DataSaldoBancario = ({
                                                     maxDate={dataLimite()}
                                                 />
                                                 {erroDataSaldo && <span className="span_erro text-danger mt-1"> {erroDataSaldo}</span>}
+                                                {dataSaldoBancarioSolicitacaoEncerramento?.possui_solicitacao_encerramento === true &&
+                                                  <span>
+                                                    {`Data de encerramento da conta: ${formataData(dataSaldoBancarioSolicitacaoEncerramento.data_encerramento)}`}
+                                                  </span>
+                                                }
                                             </div>
                                         </div>
 
-                                        <div className='row'>
+                                        <div className='row' style={{ paddingTop: '10px' }}>
                                             <div className="col">
                                                 <label htmlFor="saldo_extrato">Saldo</label>
                                                 {/*<label htmlFor="saldo_extrato">Saldo *</label>*/}
                                                 <CurrencyInput
-                                                    allowNegative={false}
+                                                    allowNegative={true}
                                                     prefix='R$'
                                                     decimalSeparator=","
                                                     thousandSeparator="."
@@ -101,6 +107,12 @@ const DataSaldoBancario = ({
                                                     onChangeEvent={(e) => handleChangaDataSaldo(e.target.name, e.target.value)}
                                                     disabled={!permiteEditarCamposExtrato || !visoesService.getPermissoes(['change_conciliacao_bancaria'])}
                                                 />
+                                                {dataSaldoBancarioSolicitacaoEncerramento?.possui_solicitacao_encerramento === true &&
+                                                  <span>
+                                                    {`Saldo do encerramento: R$${parseFloat(dataSaldoBancarioSolicitacaoEncerramento.saldo_encerramento).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+                                                  </span>
+                                                }
+
                                             </div>
                                         </div>
 
