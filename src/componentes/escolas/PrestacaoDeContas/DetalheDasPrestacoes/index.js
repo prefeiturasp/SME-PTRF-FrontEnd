@@ -203,7 +203,9 @@ export const DetalheDasPrestacoes = () => {
                 setDataSaldoBancarioSolicitacaoEncerramento({
                     data_extrato: observacao.data_extrato ? observacao.data_extrato : '',
                     saldo_extrato: observacao.saldo_extrato ? observacao.saldo_extrato : 0,
-                    possui_solicitacao_encerramento: true
+                    possui_solicitacao_encerramento: true,
+                    data_encerramento: observacao.data_encerramento ? observacao.data_encerramento : '',
+                    saldo_encerramento: observacao.saldo_encerramento ? observacao.saldo_encerramento : 0,
                 })
 
                 if(observacao.observacao_uuid){
@@ -239,6 +241,8 @@ export const DetalheDasPrestacoes = () => {
                 else if(!observacao.comprovante_extrato){
                     setExibeBtnDownload(false)
                 }
+
+                setDataSaldoBancarioSolicitacaoEncerramento({})
             }
         }
     };
@@ -554,7 +558,8 @@ export const DetalheDasPrestacoes = () => {
     };
 
     const onHandleCancelarModalSalvarDataSaldoExtrato = () => {
-        window.location.assign('/dados-das-contas-da-associacao')
+        setShowModalSalvarDataSaldoExtrato(false);
+        // window.location.assign('/dados-das-contas-da-associacao')
     }
 
     return (
