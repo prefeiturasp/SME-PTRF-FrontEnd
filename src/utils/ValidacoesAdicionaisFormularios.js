@@ -478,16 +478,27 @@ export const round = (num, places) => {
   return +(parseFloat(num).toFixed(places));
 }
 
-export const trataNumericos = (valor) =>{
+export const trataNumericos = (valor) => {
+  if (typeof valor === "string") {
+    // Extrai o sinal negativo, se existir.
+    const isNegative = valor.startsWith('-');
 
-  if (typeof (valor) === "string"){
-    return Number(valor.replace(/\./gi,'').replace(/R/gi,'').replace(/,/gi,'.').replace(/\$/, ""));
+    // Remove todos os caracteres não numéricos, exceto a vírgula.
+    const cleaned = valor.replace(/[^\d,]/g, "");
 
-  }else {
+    // Converte a vírgula em um ponto para torná-la uma string numérica válida.
+    const converted = cleaned.replace(/,/g, ".");
 
-    return valor
+    // Converte a string numérica em um número.
+    const numberValue = Number(converted);
+
+    // Aplica de volta o sinal negativo, se necessário.
+    return isNegative ? -numberValue : numberValue;
+  } else {
+    return valor;
   }
 }
+
 
 export const calculaValorRateio = (valor1, valor2) => {
 
