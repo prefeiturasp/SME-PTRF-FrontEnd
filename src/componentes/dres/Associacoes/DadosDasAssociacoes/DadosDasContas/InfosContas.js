@@ -169,6 +169,14 @@ export const  InfosContas = ({dadosDaAssociacao}) =>{
         }
     }
 
+    const mensagemQuandoNaoExistemContasParaApresentar = (accEncerradas) => {
+        if(accEncerradas && accEncerradas.length <= 0) {
+            return "Não há conta vinculada a esta Associação. Para que seja possível cadastrar lançamentos será necessário que uma conta seja vinculada a ela."
+        } else if(accEncerradas && accEncerradas.length > 0) {
+            return "As contas da Associação foram encerradas. Para que seja possível cadastrar novos lançamentos será necessário que uma conta seja vinculada a ela." 
+        }
+        return "Não encontramos nenhuma conta, tente novamente."
+    }
     
 
     return(
@@ -273,7 +281,7 @@ export const  InfosContas = ({dadosDaAssociacao}) =>{
                             </Fragment>
                         ):
                             <MsgImgCentralizada
-                                texto='Não encontramos nenhuma conta, tente novamente'
+                                texto={mensagemQuandoNaoExistemContasParaApresentar(contasEncerradas)}
                                 img={Img404}
                             />
                         }
