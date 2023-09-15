@@ -621,7 +621,7 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
                                             </>
                                         :
                                             <MsgImgCentralizada
-                                                texto='Não há contas para o período selecionado.'
+                                                texto='Não há contas cadastradas para a Associação para o período selecionado. '
                                                 img={Img404}
                                             />
 
