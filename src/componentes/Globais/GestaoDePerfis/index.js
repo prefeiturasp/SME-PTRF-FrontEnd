@@ -13,6 +13,7 @@ import {UrlsMenuInterno} from "./UrlsMenuInterno";
 import {MenuInterno} from "../MenuInterno";
 import Loading from "../../../utils/Loading";
 import ReactTooltip from "react-tooltip";
+import {barraMensagemCustom} from "../BarraMensagem";
 
 export const GestaoDePerfis = () => {
 
@@ -160,6 +161,7 @@ export const GestaoDePerfis = () => {
                     caminhos_menu_interno={UrlsMenuInterno}
                 />
             }
+            {visoesService.featureFlagAtiva('teste-flag') && barraMensagemCustom.BarraMensagemAcertoExterno("Feature flag teste-flag ativa.")}
             <p>Faça a gestão dos seus usuários e determine seus perfis atrelando-os aos grupos de acesso.</p>
             <AccordionInfo
                 clickBtnInfo={clickBtnInfo}
