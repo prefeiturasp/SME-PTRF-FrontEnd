@@ -95,6 +95,10 @@ import {Mandatos} from "../componentes/sme/Mandatos";
 import {MotivosRejeicaoEncerramentoConta} from "../componentes/sme/Parametrizacoes/Estrutura/MotivosRejeicaoEncerramentoConta";
 import {PaginaMandatosAnteriores} from "../componentes/escolas/MembrosDaAssociacao/pages/PaginaMandatosAnteriores";
 
+// Migrando para V6 do react-router-dom
+// Referencia: https://github.com/remix-run/react-router/discussions/8753
+import {CompatRoute} from "react-router-dom-v5-compat";
+
 const routesConfig = [
     {
         exact: true,
@@ -257,7 +261,7 @@ const routesConfig = [
         exact: true,
         path: "/dre-comissoes",
         component: ComissoesDrePage,
-        permissoes: ['access_comissoes_dre'], 
+        permissoes: ['access_comissoes_dre'],
     },
     {
         exact: true,
@@ -592,13 +596,13 @@ const routesConfig = [
         component: RedirectLoginVisaoUe,
         permissoes: ['view_default'],
     },
-        {
+    {
         exact: true,
         path: "/regularidade-associacoes",
         component: RegularidadeAssociacoesPage,
         permissoes: ['access_regularidade_dre'],
     },
-        {
+    {
         exact: true,
         path: "/analises-regularidade-associacao/:associacao_uuid/",
         component: AnalisesRegularidadeAssociacaoPage,
@@ -645,7 +649,12 @@ const PrivateRouter = (
 export const Rotas = () => {
     return (
         <Switch>
+            {/*
             <Route path="/login" component={Login}/>
+            Migrando para V6 do react-router-dom
+            Referencia: https://github.com/remix-run/react-router/discussions/8753
+            */}
+            <CompatRoute path="/login" component={Login} />
             <Route strict path="/esqueci-minha-senha/" component={EsqueciMinhaSenhaPage}/>
             <Route exact={true} path="/redefinir-senha/:uuid/" component={RedefinirSenhaPage}/>
             {routesConfig.map(
