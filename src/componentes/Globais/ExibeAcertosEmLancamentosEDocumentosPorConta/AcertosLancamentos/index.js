@@ -75,14 +75,16 @@ const AcertosLancamentos = ({
         let expanded_uuids = dados_analise_dre_usuario_logado.conferencia_de_lancamentos.expanded
         let lista_objetos_expanded = []
 
-        for(let i=0; i<=expanded_uuids.length-1; i++){
-            let uuid = expanded_uuids[i]
-            let analise_encontrada = lancamentosAjustes.filter((item) => item.analise_lancamento.uuid === uuid)
-            lista_objetos_expanded.push(...analise_encontrada)
-        }
-
-        if(lista_objetos_expanded.length > 0){
-            setExpandedRowsLancamentos(lista_objetos_expanded)
+        if(expanded_uuids) {
+            for(let i=0; i<=expanded_uuids.length-1; i++){
+                let uuid = expanded_uuids[i]
+                let analise_encontrada = lancamentosAjustes.filter((item) => item.analise_lancamento.uuid === uuid)
+                lista_objetos_expanded.push(...analise_encontrada)
+            }
+    
+            if(lista_objetos_expanded.length > 0){
+                setExpandedRowsLancamentos(lista_objetos_expanded)
+            }
         }
 
     }, [lancamentosAjustes])

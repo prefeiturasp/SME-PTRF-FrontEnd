@@ -83,7 +83,6 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
         getStatusPrestacaoDeConta();
         getUuidPrestacaoDeConta();
         getContaPrestacaoDeConta();
-        getPrimeiraContaPrestacaoDeConta();
         setConfBoxAtaApresentacao()
     }, []);
 
@@ -121,12 +120,49 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
     const carregaTabelas = async () => {
         if(periodoPrestacaoDeConta && periodoPrestacaoDeConta.periodo_uuid) {
             await getContasAtivasDaAssociacaoNoPeriodo(periodoPrestacaoDeConta.periodo_uuid).then(response => {
-                setContasAssociacao(response);
+                if (response.length > 0){
+                    setContasAssociacao(response);
+                    setContaPrestacaoDeContas({
+                        conta_uuid: response[0].uuid
+                    })
+                }
+                else{
+                    setContasAssociacao(false);
+                    setContaPrestacaoDeContas(false);
+                }
             }).catch(error => {
                 console.log(error);
             });
         }
     };
+
+
+    const toggleBtnEscolheContaAoTrocarPeriodo = useCallback(() => {
+        if(localStorage.getItem('contaPrestacaoDeConta') && contasAssociacao){
+            let conta_local_storage = JSON.parse(localStorage.getItem('contaPrestacaoDeConta'));
+            let index_da_conta = null;
+
+            for(let i=0; i<=contasAssociacao.length-1; i++){
+                if(contasAssociacao[i].uuid === conta_local_storage.conta_uuid){
+                    index_da_conta = i;
+                    break;
+                }
+            }
+
+            // Caso não encontre a conta, é setado a primeira conta da lista
+            if(index_da_conta === null){
+                index_da_conta = 0;
+            }
+
+            setClickBtnEscolheConta({
+                [index_da_conta]: true
+            });
+        }
+    }, [contasAssociacao]);
+
+    useEffect(() => {
+        toggleBtnEscolheContaAoTrocarPeriodo()
+    }, [toggleBtnEscolheContaAoTrocarPeriodo])
 
     const getPeriodoPrestacaoDeConta = async () => {
         if (localStorage.getItem('periodoPrestacaoDeConta')) {
@@ -174,19 +210,6 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
         } else {
             setContaPrestacaoDeContas({})
         }
-    };
-
-    const getPrimeiraContaPrestacaoDeConta = async ()=>{
-        await getTabelasReceita()
-        .then(response => {
-            if (response.data.contas_associacao && response.data.contas_associacao.length > 0 ){
-                setContaPrestacaoDeContas({
-                    conta_uuid: response.data.contas_associacao[0].uuid
-                })
-            }
-        }).catch(error => {
-            console.log("Erro getPrimeiraContaPrestacaoDeConta ", error);
-        });
     };
 
     const handleChangePeriodoPrestacaoDeConta = async (name, value) => {
@@ -559,37 +582,49 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
                                                 </Fragment>
                                             )}
                                         </nav>
-                                        <DemonstrativoFinanceiroPorConta
-                                            periodoPrestacaoDeConta={periodoPrestacaoDeConta}
-                                            statusPrestacaoDeConta={statusPrestacaoDeConta}
-                                            contaPrestacaoDeContas={contaPrestacaoDeContas}
-                                            setLoading={setLoading}
-                                            podeGerarPrevias={podeGerarPrevias}
-                                            podeBaixarDocumentos={podeBaixarDocumentos}
-                                        />
-                                        <RelacaoDeBens
-                                            periodoPrestacaoDeConta={periodoPrestacaoDeConta}
-                                            statusPrestacaoDeConta={statusPrestacaoDeConta}
-                                            contaPrestacaoDeContas={contaPrestacaoDeContas}
-                                            setLoading={setLoading}
-                                            podeGerarPrevias={podeGerarPrevias}
-                                            podeBaixarDocumentos={podeBaixarDocumentos}
-                                        />
-                                        <GeracaoAtaApresentacao
-                                            onClickVisualizarAta={()=>onClickVisualizarAta(uuidAtaApresentacao)}
-                                            setLoading={setLoading}
-                                            corBoxAtaApresentacao={corBoxAtaApresentacao}
-                                            textoBoxAtaApresentacao={textoBoxAtaApresentacao}
-                                            dataBoxAtaApresentacao={dataBoxAtaApresentacao}
-                                            uuidAtaApresentacao={uuidAtaApresentacao}
-                                            uuidPrestacaoConta={uuidPrestacaoConta}
-                                        />
 
-                                        {localStorage.getItem('uuidPrestacaoConta') && exibeBoxAtaRetificadora() &&
-                                        <GeracaoAtaRetificadora
-                                            uuidPrestacaoConta={localStorage.getItem('uuidPrestacaoConta')}
-                                            statusPrestacaoDeConta={statusPrestacaoDeConta}
-                                        />
+                                        {contasAssociacao && contasAssociacao.length > 0 
+                                        ?
+                                            <>
+                                                <DemonstrativoFinanceiroPorConta
+                                                    periodoPrestacaoDeConta={periodoPrestacaoDeConta}
+                                                    statusPrestacaoDeConta={statusPrestacaoDeConta}
+                                                    contaPrestacaoDeContas={contaPrestacaoDeContas}
+                                                    setLoading={setLoading}
+                                                    podeGerarPrevias={podeGerarPrevias}
+                                                    podeBaixarDocumentos={podeBaixarDocumentos}
+                                                />
+                                                <RelacaoDeBens
+                                                    periodoPrestacaoDeConta={periodoPrestacaoDeConta}
+                                                    statusPrestacaoDeConta={statusPrestacaoDeConta}
+                                                    contaPrestacaoDeContas={contaPrestacaoDeContas}
+                                                    setLoading={setLoading}
+                                                    podeGerarPrevias={podeGerarPrevias}
+                                                    podeBaixarDocumentos={podeBaixarDocumentos}
+                                                />
+                                                <GeracaoAtaApresentacao
+                                                    onClickVisualizarAta={()=>onClickVisualizarAta(uuidAtaApresentacao)}
+                                                    setLoading={setLoading}
+                                                    corBoxAtaApresentacao={corBoxAtaApresentacao}
+                                                    textoBoxAtaApresentacao={textoBoxAtaApresentacao}
+                                                    dataBoxAtaApresentacao={dataBoxAtaApresentacao}
+                                                    uuidAtaApresentacao={uuidAtaApresentacao}
+                                                    uuidPrestacaoConta={uuidPrestacaoConta}
+                                                />
+
+                                                {localStorage.getItem('uuidPrestacaoConta') && exibeBoxAtaRetificadora() &&
+                                                    <GeracaoAtaRetificadora
+                                                        uuidPrestacaoConta={localStorage.getItem('uuidPrestacaoConta')}
+                                                        statusPrestacaoDeConta={statusPrestacaoDeConta}
+                                                    />
+                                                }
+                                            </>
+                                        :
+                                            <MsgImgCentralizada
+                                                texto='Não há contas cadastradas para a Associação para o período selecionado. '
+                                                img={Img404}
+                                            />
+
                                         }
                                     </>
                                 ):
