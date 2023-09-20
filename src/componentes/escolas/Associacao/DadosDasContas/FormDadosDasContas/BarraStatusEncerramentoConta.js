@@ -15,7 +15,7 @@ export const BarraStatusEncerramentoConta = ({conta}) =>{
 
     useEffect(() => {
         estadoEncerramentoConta(conta);
-    }, [])
+    }, [conta])
 
     const formatarDataSolicitacao = (dataStr) => {
         const data = new Date(dataStr);
