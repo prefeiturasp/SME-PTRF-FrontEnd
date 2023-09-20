@@ -163,6 +163,16 @@ const getPermissoes = (permissao) =>{
     }
 
 };
+const featureFlagAtiva = (featureFlag) => {
+  if (!featureFlag || !authService.isLoggedIn()) {
+    return false;
+  }
+
+  const featureFlagsAtivas = getItemUsuarioLogado('feature_flags');
+  return featureFlagsAtivas.includes(featureFlag);
+};
+
+
 
 const setDadosUsuariosLogados = async (resp) => {
 
@@ -200,7 +210,9 @@ const setDadosUsuariosLogados = async (resp) => {
                 nome: usuario_logado ? usuario_logado.associacao_selecionada.nome : "",
             },
 
-            permissoes: resp.permissoes ? resp.permissoes : []
+            permissoes: resp.permissoes ? resp.permissoes : [],
+
+            feature_flags: resp.feature_flags ? resp.feature_flags : []
         }
     };
     localStorage.setItem(DADOS_USUARIO_LOGADO, JSON.stringify(novos_dados_do_usuario_logado))
@@ -336,4 +348,5 @@ export const visoesService = {
     redirectVisao,
     getItemUsuarioLogado,
     getUsuarioLogin,
+    featureFlagAtiva,
 };
