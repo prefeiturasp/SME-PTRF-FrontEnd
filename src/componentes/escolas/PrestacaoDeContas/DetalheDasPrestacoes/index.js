@@ -15,8 +15,7 @@ import {
     patchDesconciliarDespesa,
     getDownloadExtratoBancario,
     pathSalvarJustificativaPrestacaoDeConta,
-    pathExtratoBancarioPrestacaoDeConta,
-    getPodeEditarCamposExtrato
+    pathExtratoBancarioPrestacaoDeConta    
 } from "../../../../services/escolas/PrestacaoDeContas.service";
 import {getContas, getPeriodosDePrestacaoDeContasDaAssociacao} from "../../../../services/escolas/Associacao.service";
 import Loading from "../../../../utils/Loading";
@@ -173,9 +172,14 @@ export const DetalheDasPrestacoes = () => {
         if (periodoConta.periodo && periodoConta.conta) {
             let periodo_uuid = periodoConta.periodo;
             let conta_uuid = periodoConta.conta;
+            const associacaoUuid = localStorage.getItem(ASSOCIACAO_UUID)
 
-            let observacao = await getObservacoes(periodo_uuid, conta_uuid);
-            
+            let observacao = await getObservacoes(periodo_uuid, conta_uuid, associacaoUuid);
+
+            if(observacao) {
+                setPermiteEditarCamposExtrato(observacao.permite_editar_campos_extrato)
+            }
+
             if(observacao && observacao.possui_solicitacao_encerramento){
                 if (periodosAssociacao){
                     const associacaoUuid = localStorage.getItem(ASSOCIACAO_UUID)
@@ -317,24 +321,6 @@ export const DetalheDasPrestacoes = () => {
             }
         }
     };
-
-    const verificaSePodeEditarCamposExtrato = useCallback(async (periodoUuid) => {
-        if (periodosAssociacao) {
-            const periodo = periodosAssociacao.find(o => o.uuid === periodoUuid);
-            if (periodo && periodoConta && periodoConta.conta) {
-                const associacaoUuid = localStorage.getItem(ASSOCIACAO_UUID)
-                await getPodeEditarCamposExtrato(associacaoUuid, periodoUuid, periodoConta.conta).then(response => {
-                    setPermiteEditarCamposExtrato(response.permite_editar_campos_extrato)
-                }).catch(error => {
-                    console.log(error);
-                });
-            }
-        }
-    }, [periodosAssociacao, periodoConta]);
-
-    useEffect(() => {
-        verificaSePodeEditarCamposExtrato(periodoConta.periodo);
-    }, [verificaSePodeEditarCamposExtrato, periodoConta]);
 
     // Tabela Valores Pendentes por Ação
     const [valoresPendentes, setValoresPendentes] = useState({});
