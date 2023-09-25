@@ -108,13 +108,18 @@ export const CadastroFormFormik = ({
                                        parametroLocation,
                                        bloqueiaCamposDespesa,
                                        onCalendarCloseDataDoDocumento,
-                                       renderContaAssociacaoOptions
+                                       renderContaAssociacaoOptions,
+                                       getOpcoesSelectConta,
                                    }) => {
 
     // Corrigi Cálculo validação dos valores
     const setaValorRealizado = (values, valor) =>{
         values.valor_total = valor
     }
+
+    const resetContaRateios = (setFieldValue, values) => {
+        setFieldValue('rateios', values.rateios.map((rateio) => {return {...rateio, conta_associacao: ""}}));
+    };
 
     return (
         <>
@@ -315,7 +320,10 @@ export const CadastroFormFormik = ({
                                             name="data_transacao"
                                             id="data_transacao"
                                             value={values.data_transacao != null ? values.data_transacao : ""}
-                                            onChange={setFieldValue}
+                                            onChange={(name, value) => {
+                                                setFieldValue(name, value, true);
+                                                resetContaRateios(setFieldValue, props.values);
+                                            }}
                                             onCalendarClose={async () => {
                                                 setFormErrors(await validacoesPersonalizadas(values, setFieldValue, "despesa_principal"));
                                                 onCalendarCloseDataPagamento(values, setFieldValue);
@@ -533,6 +541,7 @@ export const CadastroFormFormik = ({
                                                                             formErrorsImposto={formErrorsImposto}
                                                                             onCalendarCloseDataPagamentoImposto={onCalendarCloseDataPagamentoImposto}
                                                                             renderContaAssociacaoOptions={renderContaAssociacaoOptions}
+                                                                            getOpcoesSelectConta={getOpcoesSelectConta}
                                                                         />
                                                                     </div>
                                                                 )
@@ -745,6 +754,7 @@ export const CadastroFormFormik = ({
                                                                     eh_despesa_com_retencao_imposto={eh_despesa_com_retencao_imposto}
                                                                     bloqueiaRateioEstornado={bloqueiaRateioEstornado}
                                                                     renderContaAssociacaoOptions={renderContaAssociacaoOptions}
+                                                                    getOpcoesSelectConta={getOpcoesSelectConta}
                                                                 />
                                                             ) :
                                                             rateio.aplicacao_recurso && rateio.aplicacao_recurso === 'CAPITAL' ? (
@@ -764,6 +774,7 @@ export const CadastroFormFormik = ({
                                                                     eh_despesa_com_retencao_imposto={eh_despesa_com_retencao_imposto}
                                                                     bloqueiaRateioEstornado={bloqueiaRateioEstornado}
                                                                     renderContaAssociacaoOptions={renderContaAssociacaoOptions}
+                                                                    getOpcoesSelectConta={getOpcoesSelectConta}
                                                                 />
                                                             ) : null
                                                         }

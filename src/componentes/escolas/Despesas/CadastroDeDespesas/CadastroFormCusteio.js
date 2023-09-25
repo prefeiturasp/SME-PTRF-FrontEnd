@@ -20,7 +20,8 @@ export const CadastroFormCusteio = (propriedades) => {
             eh_despesa_com_comprovacao_fiscal, 
             eh_despesa_com_retencao_imposto, 
             bloqueiaRateioEstornado, 
-            renderContaAssociacaoOptions } = propriedades
+            renderContaAssociacaoOptions,
+            getOpcoesSelectConta } = propriedades
 
     const setValorRateioRealizado=(setFieldValue, index, valor)=>{
         setFieldValue(`rateios[${index}].valor_rateio`, trataNumericos(valor))
@@ -125,11 +126,13 @@ export const CadastroFormCusteio = (propriedades) => {
                         name={`rateios[${index}].conta_associacao`}
                         id='conta_associacao'
                         className={`${!rateio.conta_associacao && verboHttp === "PUT" && "is_invalid "} ${!rateio.conta_associacao && 'despesa_incompleta'} form-control`}
-                        disabled={disabled || bloqueiaRateioEstornado(rateio) || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
+                        disabled={disabled || bloqueiaRateioEstornado(rateio) || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes) || !formikProps.values['data_transacao']}
                     >
-                        <option key={0} value="">Selecione uma conta</option>
-                        {renderContaAssociacaoOptions()}
+                        <option key={0} value="">{getOpcoesSelectConta(formikProps.values['data_transacao']).length || !formikProps.values['data_transacao'] ? 'Selecione uma conta' : 'Não existem contas disponíveis'}</option>
+                        {renderContaAssociacaoOptions(formikProps.values)}
                     </select>
+                    <span>
+                    </span>
                 </div>
 
                 <div className="col-12 col-md-3 mt-4">
