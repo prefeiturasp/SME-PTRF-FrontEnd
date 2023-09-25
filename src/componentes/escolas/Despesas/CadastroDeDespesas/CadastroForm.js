@@ -89,7 +89,18 @@ export const CadastroForm = ({verbo_http}) => {
         return periodo;
     }
 
-    const renderContaAssociacaoOptions = useCallback(() => {
+    const getOpcoesSelectConta = (data_transacao) => {
+        return despesasTabelas.contas_associacao.filter((conta) => moment(conta.data_inicio, 'YYYY-MM-DD').toDate() <= data_transacao)
+    };
+
+    const renderContaAssociacaoOptions = useCallback((values) => {
+
+        let data_transacao = null;
+        if (values){
+            data_transacao = values['data_transacao']
+        }
+        
+
         const getOptionPorStatus = (item, key) => {
             const defaultProps = {
                 key: item.uuid,
@@ -104,7 +115,7 @@ export const CadastroForm = ({verbo_http}) => {
             }
         }
         return (
-            despesasTabelas.contas_associacao.map((item, key) => (
+            getOpcoesSelectConta(data_transacao).map((item, key) => (
                 getOptionPorStatus(item, key)
             ))
         )    
@@ -1189,6 +1200,7 @@ export const CadastroForm = ({verbo_http}) => {
                         bloqueiaCamposDespesa={bloqueiaCamposDespesa}
                         onCalendarCloseDataDoDocumento={onCalendarCloseDataDoDocumento}
                         renderContaAssociacaoOptions={renderContaAssociacaoOptions}
+                        getOpcoesSelectConta={getOpcoesSelectConta}
                     />
             </>
             }
