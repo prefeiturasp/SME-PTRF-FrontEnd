@@ -8,6 +8,7 @@ import './assets/css/styles.scss'
 import {Cabecalho} from './componentes/Globais/Cabecalho'
 import {SidebarLeft} from './componentes/Globais/SidebarLeft'
 import {ToastContainer} from "react-toastify";
+import Modal from './componentes/Globais/Modal/Modal'
 
 export const App = () => {
     const pathName = useHistory().location.pathname;
@@ -38,6 +39,7 @@ export const App = () => {
                         <Rotas/>
                     </>
                 }
+                <Modal/>
             </section>
         </>
     )
