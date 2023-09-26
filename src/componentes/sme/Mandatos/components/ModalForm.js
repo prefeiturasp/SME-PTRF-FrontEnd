@@ -7,8 +7,7 @@ import {DatePickerField} from "../../../Globais/DatePickerField";
 import ReactTooltip from "react-tooltip";
 import moment from "moment";
 
-export const ModalForm = ({handleSubmitFormModal}) => {
-
+export const ModalForm = ({handleSubmitFormModal, handleConfirmDeleteMandato}) => {
     const {showModalForm, setShowModalForm, stateFormModal, bloquearBtnSalvarForm} = useContext(MandatosContext)
 
     const bodyTextarea = () => {
@@ -92,7 +91,7 @@ export const ModalForm = ({handleSubmitFormModal}) => {
                                     <div className="p-Y flex-grow-1 bd-highlight">
                                         {values.uuid &&
                                             <button
-                                                //onClick={()=>setShowModalConfirmDeleteTag(true)}
+                                                onClick={() => handleConfirmDeleteMandato(values.uuid)}
                                                 type="button"
                                                 className="btn btn btn-danger mt-2 mr-2"
                                             >
