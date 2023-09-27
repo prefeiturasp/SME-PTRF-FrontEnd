@@ -53,15 +53,13 @@ export const DadosDasContas = () => {
         buscaContas();
     }, []);
 
-    useEffect(()=>{
-        setLoading(false)
-    }, []);
-
     const buscaContas = async ()=>{
+        setLoading(true);
         let contas = await getContas();
         let contasEncerradas = await getContasEncerradas();
         setContasEncerradas(contasEncerradas);
         setIntialValues(contas)
+        setLoading(false);
     };
 
     useEffect(() => {
