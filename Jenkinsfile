@@ -6,9 +6,11 @@ pipeline {
       namespace = "${env.branchname == 'develop' ? 'sme-ptrf-dev' : env.branchname == 'homolog' ? 'sme-ptrf-hom' : env.branchname == 'homolog-r2' ? 'sme-ptrf-hom2' : env.branchname == 'testejenkins2' ? 'testejenkins' : 'sme-ptrf' }"
     }
 
-    agent {
-      node { label 'AGENT-NODES' }
-    }
+    agent { kubernetes { 
+                  label 'builder'
+                  defaultContainer 'builder'
+                }
+              }
 
     options {
       buildDiscarder(logRotator(numToKeepStr: '20', artifactNumToKeepStr: '5'))
@@ -26,6 +28,11 @@ pipeline {
 
         stage('AnaliseCodigo') {
 	      when { branch 'testejenkins2' }
+          agent { kubernetes { 
+                  label 'python310'
+                  defaultContainer 'builder'
+                }
+              } 
           steps {
               withSonarQubeEnv('sonarqube-local'){
                 sh 'echo "[ INFO ] Iniciando analise Sonar..." && sonar-scanner \
