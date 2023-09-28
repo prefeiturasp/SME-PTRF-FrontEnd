@@ -26,6 +26,7 @@ import {getRegistrosFalhaGeracaoPc} from "../../../services/Notificacoes.service
 import {ModalNotificaErroConcluirPC} from "./ModalNotificaErroConcluirPC";
 import { ModalPendenciasCadastrais } from "./ModalPendenciasCadastrais";
 import { setPersistenteUrlVoltar } from "../../../store/reducers/componentes/escolas/PrestacaoDeContas/PendenciaCadastro/actions";
+import { ModalConfirm } from "../../Globais/Modal/ModalConfirm";
 
 export const PrestacaoDeContas = ({setStatusPC}) => {
     const history = useHistory();
@@ -333,7 +334,19 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
                         setShowConcluirAcertoComPendencia(true);
                     }
                     else{
-                        setShowConcluirAcertosSemPendencias(true);
+                        if(statusPrestacaoDeConta.tem_conta_encerrada_com_saldo){
+                            ModalConfirm({
+                                dispatch,
+                                title: 'Devido as alterações realizadas houve uma mudança no saldo da conta.',
+                                message: 'A análise da PC não poderá ser concluída pela DRE até a finalização dos acertos que tornem a conta zerada.',
+                                cancelText: 'Voltar',
+                                confirmText: 'Concluir acerto',
+                                dataQa: 'modal-acerto-alterou-saldo-conta-encerrada',
+                                onConfirm: () => setShowConcluirAcertosSemPendencias(true)
+                            });
+                        } else {
+                            setShowConcluirAcertosSemPendencias(true);
+                        }
                     }
                 }
             }
