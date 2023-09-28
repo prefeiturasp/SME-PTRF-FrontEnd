@@ -115,6 +115,7 @@ export const Periodos = () =>{
             <div>
                 <button className="btn-editar-membro" onClick={()=>handleEditFormModalPeriodos(rowData)}>
                     <FontAwesomeIcon
+                        data-qa={rowData.editavel ? "btn-editar-periodo" : "btn-visualizar-periodo"}
                         style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
                         icon={rowData.editavel ? faEdit : faEye}
                     />
@@ -238,7 +239,11 @@ export const Periodos = () =>{
                         handleSubmitFiltros={handleSubmitFiltros}
                         limpaFiltros={limpaFiltros}
                     />
-                    <p>Exibindo <span className='total-acoes'>{totalDePeriodos}</span> períodos</p>
+                    <p>Exibindo <span
+                        data-qa="total-acoes"
+                        className='total-acoes'>
+                        {totalDePeriodos}
+                    </span> períodos</p>
                     <TabelaPeriodos
                         rowsPerPage={rowsPerPage}
                         listaDePeriodos={listaDePeriodos}
