@@ -75,12 +75,16 @@ export const DetalheDasPrestacoes = () => {
     }, []);
 
     useEffect(() => {
-        localStorage.setItem('periodoConta', JSON.stringify(periodoConta));
-        carregaContas();
+        if(periodoConta) {
+            localStorage.setItem('periodoConta', JSON.stringify(periodoConta));
+            carregaContas();
+        }
     }, [periodoConta]);
 
     useEffect(()=>{
-        carregaObservacoes();
+        if(periodoConta) {
+            carregaObservacoes();
+        }
     }, [periodoConta, acoesAssociacao, acaoLancamento]);
 
     useEffect(()=>{
@@ -88,7 +92,9 @@ export const DetalheDasPrestacoes = () => {
     }, []);
 
     useEffect(() => {
-        verificaSePeriodoEstaAberto(periodoConta.periodo);
+        if(periodoConta) {
+            verificaSePeriodoEstaAberto(periodoConta.periodo);
+        }
     }, [periodoConta, periodosAssociacao]);
 
     const getPeriodoConta = () => {
