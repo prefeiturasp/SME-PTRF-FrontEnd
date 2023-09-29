@@ -2,7 +2,7 @@ import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {useHistory, useParams} from "react-router-dom";
 import {PaginasContainer} from "../../../../../../paginas/PaginasContainer";
 import {useSelector} from "react-redux";
-import {getTiposDevolucao, getListaDeSolicitacaoDeAcertos, postSolicitacoesParaAcertos, getTiposDeAcertoLancamentosAgrupadoCategoria} from "../../../../../../services/dres/PrestacaoDeContas.service";
+import {getTiposDevolucao, getListaDeSolicitacaoDeAcertos, postSolicitacoesParaAcertos, getTiposDeAcertoLancamentosAgrupadoCategoria, getContasComMovimentoNaPc} from "../../../../../../services/dres/PrestacaoDeContas.service";
 import {TopoComBotoes} from "./TopoComBotoes";
 import {TabelaDetalharAcertos} from "./TabelaDetalharAcertos";
 import {FormularioAcertos} from "./FormularioAcertos";
@@ -13,6 +13,7 @@ import useDataTemplate from "../../../../../../hooks/Globais/useDataTemplate";
 import {ProviderValidaParcial} from "../../../../../../context/DetalharAcertos";
 import {useCarregaPrestacaoDeContasPorUuid} from "../../../../../../hooks/dres/PrestacaoDeContas/useCarregaPrestacaoDeContasPorUuid";
 import moment from "moment/moment";
+import { ModalContaEncerrada } from "../Modais/ModalContaEncerrada";
 
 export const DetalharAcertos = () => {
 
@@ -34,6 +35,7 @@ export const DetalharAcertos = () => {
     const [tiposDevolucao, setTiposDevolucao] = useState([])
     const [bloqueiaSelectTipoDeAcerto, setBloqueiaSelectTipoDeAcerto] = useState([])
     const [loading, setLoading] = useState(true)
+    const [showModalContaEncerrada, setShowModalContaEncerrada] = useState(false)
 
     const totalDelancamentosParaConferencia = useMemo(() => lancamentos_para_acertos.length, [lancamentos_para_acertos]);
 
@@ -297,6 +299,81 @@ export const DetalharAcertos = () => {
         }
     }
 
+    const validaContaAoSalvar = async() => {
+        if (!formRef.current.errors.solicitacoes_acerto && formRef.current.values && formRef.current.values.solicitacoes_acerto) {
+            let {solicitacoes_acerto} = formRef.current.values
+            let conta_encerrada = await contaEncerrada();
+
+            if(conta_encerrada){
+                if(possuiAcertosQuePodemAlterarSaldo(solicitacoes_acerto)){
+                    setShowModalContaEncerrada(true);
+                }
+                else{
+                    await onSubmitFormAcertos();
+                }
+            }
+            else{
+                await onSubmitFormAcertos();
+            }
+        }
+    }
+
+    const contaEncerrada = async() => {
+        let conta_associacao_dos_lancamentos = null;
+
+        if(lancamentos_para_acertos && lancamentos_para_acertos.length > 0){
+            for(let i=0; i<=lancamentos_para_acertos.length-1; i++){
+                conta_associacao_dos_lancamentos = lancamentos_para_acertos[i].conta;
+                break
+            }
+        }
+
+        let contas_com_movimento = await getContasComMovimentoNaPc(prestacaoDeContas.uuid)
+        let conta_encontrada = contas_com_movimento.find(elemento => elemento.uuid === conta_associacao_dos_lancamentos)
+
+        return conta_encontrada.status === "INATIVA" ? true : false;
+    }
+
+    const possuiAcertosQuePodemAlterarSaldo = (solicitacoes_acerto) => {
+        const categoriasQuePodemAlterarSaldoDaConta = [
+            'DEVOLUCAO',
+            'EDICAO_LANCAMENTO',
+            'CONCILIACAO_LANCAMENTO',
+            'DESCONCILIACAO_LANCAMENTO',
+            'EXCLUSAO_LANCAMENTO'
+        ];
+
+        let possui_acerto_que_altera_saldo = false;
+
+        for(let index_solicitacao_acerto=0; index_solicitacao_acerto <= solicitacoes_acerto.length-1; index_solicitacao_acerto ++){
+            let tipo_acerto_uuid = solicitacoes_acerto[index_solicitacao_acerto].tipo_acerto
+            let categoria = retornaCategoriaTipoAcerto(tipo_acerto_uuid);
+
+            if(categoriasQuePodemAlterarSaldoDaConta.includes(categoria.id)){
+                possui_acerto_que_altera_saldo = true;
+                break;
+            }
+        }
+
+        return possui_acerto_que_altera_saldo;
+    }
+
+    const retornaCategoriaTipoAcerto = (tipo_acerto_uuid) => {
+        let categoria_encontrada = null;
+
+        for(let index_categoria=0; index_categoria <= listaTiposDeAcertoLancamentosAgrupado.length -1; index_categoria ++){
+            let categoria = listaTiposDeAcertoLancamentosAgrupado[index_categoria]
+            
+            let tipo_acerto = categoria.tipos_acerto_lancamento.find(elemento => elemento.uuid === tipo_acerto_uuid);
+            if(tipo_acerto){
+                categoria_encontrada = categoria;
+                break
+            }
+        }
+
+        return categoria_encontrada;
+    }
+
     const onSubmitFormAcertos = async () => {
         if (!formRef.current.errors.solicitacoes_acerto && formRef.current.values && formRef.current.values.solicitacoes_acerto) {
 
@@ -339,6 +416,7 @@ export const DetalharAcertos = () => {
 
             try {
                 await postSolicitacoesParaAcertos(prestacao_conta_uuid, payload)
+                setShowModalContaEncerrada(false);
                 console.log("Solicitações para acertos criadas com sucesso!")
                 onClickBtnVoltar()
             } catch (e) {
@@ -371,7 +449,7 @@ export const DetalharAcertos = () => {
                 <ProviderValidaParcial>
                 <>
                 <TopoComBotoes
-                    onSubmitFormAcertos={onSubmitFormAcertos}
+                    validaContaAoSalvar={validaContaAoSalvar}
                     onClickBtnVoltar={onClickBtnVoltar}
                     prestacaoDeContas={prestacaoDeContas}
                 />
@@ -394,7 +472,6 @@ export const DetalharAcertos = () => {
                             solicitacoes_acerto={acertos}
                             listaTiposDeAcertoLancamentosAgrupado={listaTiposDeAcertoLancamentosAgrupado}
                             setListaTiposDeAcertoLancamentosAgrupado={setListaTiposDeAcertoLancamentosAgrupado}
-                            onSubmitFormAcertos={onSubmitFormAcertos}
                             formRef={formRef}
                             handleChangeTipoDeAcertoLancamento={handleChangeTipoDeAcertoLancamento}
                             exibeCamposCategoriaDevolucao={exibeCamposCategoriaDevolucao}
@@ -409,7 +486,23 @@ export const DetalharAcertos = () => {
                             ehSolicitacaoCopiada={ehSolicitacaoCopiada}
                             valorDocumento={valorDocumento}
                             lancamentosParaAcertos={lancamentos_para_acertos}
+                            validaContaAoSalvar={validaContaAoSalvar}
                         />
+
+                        <section>
+                            <ModalContaEncerrada
+                                show={showModalContaEncerrada}
+                                titulo='A conta onde foram solicitados acertos foi encerrada'
+                                texto={'As solicitações realizadas podem alterar o saldo da conta encerrada. Lembrando que para concluir a análise da PC, o saldo da referida conta deverá estar zerado. Deseja prosseguir com a inclusão do acerto?'}
+                                primeiroBotaoTexto="Cancelar"
+                                primeiroBotaoCss="danger"
+                                primeiroBotaoOnclick={() => setShowModalContaEncerrada(false)}
+                                segundoBotaoTexto="Confirmar"
+                                segundoBotaoCss="success"
+                                segundoBotaoOnclick={() => onSubmitFormAcertos()}
+                                handleClose={() => setShowModalContaEncerrada(false)}
+                            />
+                        </section>
                     </>
                 }
                 </ProviderValidaParcial>
