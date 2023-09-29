@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {ReceitaSchema} from "../Schemas";
 import {visoesService} from "../../../../services/visoes.service";
 import {DatePickerField} from "../../../Globais/DatePickerField";
@@ -76,6 +76,7 @@ export const ReceitaFormFormik = ({
                                       validacoesPersonalizadasCredito,
                                       formDateErrors,
                                       escondeBotaoDeletar,
+                                      mensagemDataInicialConta
                                   }) => {
 
     return (
@@ -224,7 +225,10 @@ export const ReceitaFormFormik = ({
                                         name="data"
                                         id="data"
                                         value={values.data}
-                                        onChange={setFieldValue}
+                                        onChange={(name, value) => {
+                                            setFieldValue('conta_associacao', '');
+                                            setFieldValue(name, value);
+                                        }}
                                         onCalendarClose={async () => {
                                             validacoesPersonalizadasCredito(values, setFieldValue, "credito_principal")
                                         }}
@@ -249,14 +253,20 @@ export const ReceitaFormFormik = ({
                                         onChange={props.handleChange}
                                         onBlur={props.handleBlur}
                                         className="form-control"
-                                        disabled={readOnlyEstorno || readOnlyValor || readOnlyCampos || readOnlyContaAssociacaoReceita || ![['add_receita'], ['change_receita']].some(visoesService.getPermissoes)}
+                                        disabled={mensagemDataInicialConta || readOnlyEstorno || readOnlyValor || readOnlyCampos || readOnlyContaAssociacaoReceita || ![['add_receita'], ['change_receita']].some(visoesService.getPermissoes) || !values.data}
                                     >
-                                        {receita.conta_associacao
-                                            ? null
-                                            : <option key="" value="">Escolha uma conta</option>}
+
+                                        {!receita.conta_associacao || props.values.conta_associacao === "" ? (
+                                                <option key="" value="">
+                                                    Escolha uma conta
+                                                </option>
+                                            ) : null}
 
                                         {retornaTiposDeContas(props.values)}
                                     </select>
+                                    {mensagemDataInicialConta && <span
+                                            className="span_erro text-danger mt-1"> {mensagemDataInicialConta}</span>
+                                    }
                                     {props.touched.conta_associacao && props.errors.conta_associacao &&
                                         <span
                                             className="span_erro text-danger mt-1"> {props.errors.conta_associacao}</span>}
