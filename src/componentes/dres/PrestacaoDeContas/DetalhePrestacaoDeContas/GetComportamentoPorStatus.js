@@ -61,7 +61,8 @@ export const GetComportamentoPorStatus = (
         onClickDeletarAcertoSaldo,
         setAnalisesDeContaDaPrestacao,
         bloqueiaBtnRetroceder,
-        tooltipRetroceder
+        tooltipRetroceder,
+        handleConcluirPCemAnalise
     }) => {
 
         const TEMPERMISSAO = RetornaSeTemPermissaoEdicaoAcompanhamentoDePc()
@@ -162,7 +163,7 @@ export const GetComportamentoPorStatus = (
                         prestacaoDeContas={prestacaoDeContas}
                         textoBtnAvancar={"Concluir análise"}
                         textoBtnRetroceder={"Recebida"}
-                        metodoAvancar={() => setShowConcluirAnalise(true)}
+                        metodoAvancar={() => handleConcluirPCemAnalise()}
                         metodoRetroceder={() => setShowRecebida(true)}
                         disabledBtnAvancar={!TEMPERMISSAO}
                         disabledBtnRetroceder={bloqueiaBtnRetroceder() || !TEMPERMISSAO}
