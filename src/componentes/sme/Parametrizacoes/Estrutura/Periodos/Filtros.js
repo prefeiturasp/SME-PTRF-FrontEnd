@@ -8,6 +8,7 @@ export const Filtros = ({stateFiltros, handleChangeFiltros, handleSubmitFiltros,
                     <div className="p-Y flex-grow-1 bd-highlight">
                         <span className='mr-5'><label htmlFor="filtrar_por_referencia">Pesquisar</label></span>
                         <input
+                            data-qa="input-filtro-referencia"
                             value={stateFiltros.filtrar_por_referencia}
                             onChange={(e) => handleChangeFiltros(e.target.name, e.target.value)}
                             name='filtrar_por_referencia'
@@ -20,10 +21,22 @@ export const Filtros = ({stateFiltros, handleChangeFiltros, handleSubmitFiltros,
 
                     </div>
                     <div className="p-Y bd-highlight">
-                        <button onClick={() => limpaFiltros()} type="button" className="btn btn btn-outline-success mr-2">Limpar</button>
+                        <button
+                            data-qa="btn-limpar-filtros"
+                            onClick={() => limpaFiltros()}
+                            type="button"
+                            className="btn btn btn-outline-success mr-2">
+                            Limpar
+                        </button>
                     </div>
                     <div className="p-Y bd-highlight">
-                        <button onClick={handleSubmitFiltros} type="button" className="btn btn-success">Filtrar</button>
+                        <button
+                            data-qa="btn-filtrar"
+                            onClick={handleSubmitFiltros}
+                            type="button"
+                            className="btn btn-success">
+                            Filtrar
+                        </button>
                     </div>
                 </div>
             </form>

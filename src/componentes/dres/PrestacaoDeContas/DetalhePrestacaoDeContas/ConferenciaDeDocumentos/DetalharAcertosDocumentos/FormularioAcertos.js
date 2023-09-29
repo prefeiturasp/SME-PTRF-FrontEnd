@@ -4,7 +4,7 @@ import {YupSignupSchemaDetalharAcertosDocumentos} from './YupSignupSchemaDetalha
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTimesCircle, faExclamationCircle, faCheckCircle} from "@fortawesome/free-solid-svg-icons";
 
-const FormularioAcertos = ({solicitacoes_acerto, onSubmitFormAcertos, formRef, tiposDeAcertoDocumentosAgrupados, handleChangeTipoDeAcertoDocumento, textoCategoria, corTextoCategoria, adicionaTextoECorCategoriaVazio, removeTextoECorCategoriaTipoDeAcertoJaCadastrado, ehSolicitacaoCopiada}) =>{
+const FormularioAcertos = ({solicitacoes_acerto, validaContaAoSalvar, formRef, tiposDeAcertoDocumentosAgrupados, handleChangeTipoDeAcertoDocumento, textoCategoria, corTextoCategoria, adicionaTextoECorCategoriaVazio, removeTextoECorCategoriaTipoDeAcertoJaCadastrado, ehSolicitacaoCopiada}) =>{
 
     const categoriaNaoPodeRepetir = (categoria) => {
         const categoriasQueNaoPodemRepetir = [
@@ -71,7 +71,7 @@ const FormularioAcertos = ({solicitacoes_acerto, onSubmitFormAcertos, formRef, t
                 validateOnBlur={true}
                 validateOnChange={true}
                 validationSchema={YupSignupSchemaDetalharAcertosDocumentos}
-                onSubmit={onSubmitFormAcertos}
+                onSubmit={validaContaAoSalvar}
                 innerRef={formRef}
             >
                 {props => {

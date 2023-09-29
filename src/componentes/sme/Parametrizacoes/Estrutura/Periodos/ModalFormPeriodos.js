@@ -29,6 +29,7 @@ const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModal
                                         <div className="form-group">
                                             <label htmlFor="referencia">Referencia</label>
                                             <input
+                                                data-qa="input-referencia"
                                                 type="text"
                                                 value={props.values.referencia}
                                                 name="referencia"
@@ -44,6 +45,7 @@ const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModal
                                         <div className="form-group">
                                             <label htmlFor="data_prevista_repasse">Data prevista do repasse</label>
                                             <DatePickerField
+                                                dataQa={"input-data-prevista-repasse"}
                                                 name="data_prevista_repasse"
                                                 id="data_prevista_repasse"
                                                 value={values.data_prevista_repasse != null ? values.data_prevista_repasse : ""}
@@ -59,6 +61,7 @@ const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModal
                                         <div className="form-group">
                                             <label htmlFor="data_inicio_realizacao_despesas">Início realização de despesas</label>
                                             <DatePickerField
+                                                dataQa="input-data-inicio-realizacao-despesas"
                                                 name="data_inicio_realizacao_despesas"
                                                 id="data_inicio_realizacao_despesas"
                                                 value={values.data_inicio_realizacao_despesas != null ? values.data_inicio_realizacao_despesas : ""}
@@ -75,6 +78,7 @@ const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModal
                                         <div className="form-group">
                                             <label htmlFor="data_fim_realizacao_despesas">Fim realização de despesas</label>
                                             <DatePickerField
+                                                dataQa={"input-data-fim-realizacao-despesas"}
                                                 name="data_fim_realizacao_despesas"
                                                 id="data_fim_realizacao_despesas"
                                                 value={values.data_fim_realizacao_despesas != null ? values.data_fim_realizacao_despesas : ""}
@@ -90,6 +94,7 @@ const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModal
                                         <div className="form-group">
                                             <label htmlFor="data_inicio_prestacao_contas">Início prestação de contas</label>
                                             <DatePickerField
+                                                dataQa={"input-data-inicio-prestacao-contas"}
                                                 name="data_inicio_prestacao_contas"
                                                 id="data_inicio_prestacao_contas"
                                                 value={values.data_inicio_prestacao_contas != null ? values.data_inicio_prestacao_contas : ""}
@@ -103,6 +108,7 @@ const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModal
                                         <div className="form-group">
                                             <label htmlFor="data_fim_realizacao_despesas">Fim prestação de contas</label>
                                             <DatePickerField
+                                                dataQa={"input-data-fim-prestacao-contas"}
                                                 name="data_fim_prestacao_contas"
                                                 id="data_fim_prestacao_contas"
                                                 value={values.data_fim_prestacao_contas != null ? values.data_fim_prestacao_contas : ""}
@@ -118,6 +124,7 @@ const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModal
                                     <div className='col'>
                                         <label htmlFor="periodo_anterior">Período anterior</label>
                                         <select
+                                            data-qa="input-periodo-anterior"
                                             value={values.periodo_anterior ? values.periodo_anterior : ""}
                                             onChange={(e)=>{
                                                 props.handleChange(e);
@@ -128,9 +135,13 @@ const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModal
                                             id="periodo_anterior"
                                             className="form-control"
                                         >
-                                            <option value=''>Selecione um período</option>
+                                            <option data-qa="option-periodo-anterior-vazio" value=''>Selecione um período</option>
                                             {listaDePeriodos && listaDePeriodos.filter(element=> element.uuid !== values.uuid).map((periodo) =>
-                                                <option key={periodo.uuid} value={periodo.uuid}>{`${periodo.referencia} - ${periodo.data_inicio_realizacao_despesas ? exibeDataPT_BR(periodo.data_inicio_realizacao_despesas) : "-"} até ${periodo.data_fim_realizacao_despesas ? exibeDataPT_BR(periodo.data_fim_realizacao_despesas) : "-"}`}</option>
+                                                <option
+                                                    data-qa={`option-periodo-anterior-${periodo.uuid}`}
+                                                    key={periodo.uuid}
+                                                    value={periodo.uuid}>{`${periodo.referencia} - ${periodo.data_inicio_realizacao_despesas ? exibeDataPT_BR(periodo.data_inicio_realizacao_despesas) : "-"} até ${periodo.data_fim_realizacao_despesas ? exibeDataPT_BR(periodo.data_fim_realizacao_despesas) : "-"}`}
+                                                </option>
                                             )}
                                         </select>
                                     </div>
@@ -138,7 +149,7 @@ const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModal
                                 {erroDatasAtendemRegras &&
                                     <div className='row mt-2'>
                                         <div className='col'>
-                                            <p><span className="span_erro text-danger mt-1"><strong>{erroDatasAtendemRegras}</strong></span></p>
+                                            <p><span className="span_erro text-danger mt-1" data-qa="span-erro-datas-atendem-regras"><strong>{erroDatasAtendemRegras}</strong></span></p>
                                         </div>
                                     </div>
                                 }
@@ -156,17 +167,35 @@ const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModal
                                 <div className="d-flex bd-highlight mt-2">
                                     <div className="p-Y flex-grow-1 bd-highlight">
                                         {values.operacao === 'edit' && values.editavel ? (
-                                            <button onClick={()=>setShowModalConfirmDeletePeriodo(true)} type="button" className="btn btn btn-danger mt-2 mr-2">
+                                            <button
+                                                data-qa="btn-apagar-periodo"
+                                                onClick={()=>setShowModalConfirmDeletePeriodo(true)}
+                                                type="button"
+                                                className="btn btn btn-danger mt-2 mr-2"
+                                            >
                                                 Apagar
                                             </button>
                                         ): null}
                                     </div>
                                     <div className="p-Y bd-highlight">
-                                        <button onClick={()=>handleClose()} type="button" className={`btn btn${values.editavel ? '-outline-success' : '-success'} mt-2 mr-2`}>{values.editavel ? 'Cancelar' : 'Voltar'}</button>
+                                        <button
+                                            data-qa="btn-cancelar"
+                                            onClick={()=>handleClose()}
+                                            type="button"
+                                            className={`btn btn${values.editavel ? '-outline-success' : '-success'} mt-2 mr-2`}
+                                        >
+                                            {values.editavel ? 'Cancelar' : 'Voltar'}
+                                        </button>
                                     </div>
                                     {values.operacao === 'create' || (values.operacao === 'edit' && values.editavel) ? (
                                         <div className="p-Y bd-highlight">
-                                            <button type="submit" className="btn btn btn-success mt-2">Salvar</button>
+                                            <button
+                                                data-qa="btn-salvar"
+                                                type="submit"
+                                                className="btn btn btn-success mt-2"
+                                            >
+                                                Salvar
+                                            </button>
                                         </div>
                                     ):null}
                                 </div>

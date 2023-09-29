@@ -4,7 +4,7 @@ import {faArrowLeft} from "@fortawesome/free-solid-svg-icons";
 import {ValidarParcialTesouro} from '../../../../../../context/DetalharAcertos'
 import AssociacaoEPeriodoDoCabecalho from "../../AssociacaoEPeriodoDoCabecalho";
 
-export const TopoComBotoes = ({onSubmitFormAcertos, onClickBtnVoltar, prestacaoDeContas}) =>{
+export const TopoComBotoes = ({validaContaAoSalvar, onClickBtnVoltar, prestacaoDeContas}) =>{
     const {isValorParcialValido} = useContext(ValidarParcialTesouro)
 
     return(
@@ -21,7 +21,7 @@ export const TopoComBotoes = ({onSubmitFormAcertos, onClickBtnVoltar, prestacaoD
                 </button>
             </div>
             <div className="p-2 bd-highlight">
-                <button onClick={onSubmitFormAcertos} disabled={isValorParcialValido} className="btn btn btn-success">Salvar</button>
+                <button onClick={validaContaAoSalvar} disabled={isValorParcialValido} className="btn btn btn-success">Salvar</button>
             </div>
         </div>
         <div className="py-2 flex-grow-1 bd-highlight">

@@ -9,6 +9,7 @@ const TabelaPeriodos = ({rowsPerPage, listaDePeriodos, dataTemplate, acoesTempla
             rows={rowsPerPage}
             paginator={listaDePeriodos.length > rowsPerPage}
             paginatorTemplate="PrevPageLink PageLinks NextPageLink"
+            id={'tabela-periodos'}
         >
             <Column field="referencia" header="Referência"/>
             <Column

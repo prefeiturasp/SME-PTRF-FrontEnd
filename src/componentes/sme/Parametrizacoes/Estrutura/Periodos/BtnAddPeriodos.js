@@ -3,7 +3,7 @@ import React from "react";
 export const BtnAddPeriodos = ({FontAwesomeIcon, faPlus, setShowModalForm, initialStateFormModal, setStateFormModal}) =>{
     return(
         <div className="d-flex  justify-content-end pb-4 mt-2">
-            <button onClick={()=>{
+            <button data-qa="btn-add-periodo" onClick={()=>{
                 setStateFormModal(initialStateFormModal);
                 setShowModalForm(true);
             }
