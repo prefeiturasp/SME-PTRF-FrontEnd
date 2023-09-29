@@ -109,18 +109,13 @@ export const CadastroFormFormik = ({
                                        bloqueiaCamposDespesa,
                                        onCalendarCloseDataDoDocumento,
                                        renderContaAssociacaoOptions,
-                                       getOpcoesSelectConta,
+                                       filterContas
                                    }) => {
 
     // Corrigi Cálculo validação dos valores
     const setaValorRealizado = (values, valor) =>{
         values.valor_total = valor
     }
-
-    const resetContaRateios = (setFieldValue, values) => {
-        setFieldValue('rateios', values.rateios.map((rateio) => {return {...rateio, conta_associacao: ""}}));
-    };
-
     return (
         <>
             <Formik
@@ -322,7 +317,6 @@ export const CadastroFormFormik = ({
                                             value={values.data_transacao != null ? values.data_transacao : ""}
                                             onChange={(name, value) => {
                                                 setFieldValue(name, value, true);
-                                                resetContaRateios(setFieldValue, props.values);
                                             }}
                                             onCalendarClose={async () => {
                                                 setFormErrors(await validacoesPersonalizadas(values, setFieldValue, "despesa_principal"));
@@ -541,7 +535,7 @@ export const CadastroFormFormik = ({
                                                                             formErrorsImposto={formErrorsImposto}
                                                                             onCalendarCloseDataPagamentoImposto={onCalendarCloseDataPagamentoImposto}
                                                                             renderContaAssociacaoOptions={renderContaAssociacaoOptions}
-                                                                            getOpcoesSelectConta={getOpcoesSelectConta}
+                                                                            filterContas={filterContas}
                                                                         />
                                                                     </div>
                                                                 )
@@ -754,7 +748,7 @@ export const CadastroFormFormik = ({
                                                                     eh_despesa_com_retencao_imposto={eh_despesa_com_retencao_imposto}
                                                                     bloqueiaRateioEstornado={bloqueiaRateioEstornado}
                                                                     renderContaAssociacaoOptions={renderContaAssociacaoOptions}
-                                                                    getOpcoesSelectConta={getOpcoesSelectConta}
+                                                                    filterContas={filterContas}
                                                                 />
                                                             ) :
                                                             rateio.aplicacao_recurso && rateio.aplicacao_recurso === 'CAPITAL' ? (
@@ -774,7 +768,7 @@ export const CadastroFormFormik = ({
                                                                     eh_despesa_com_retencao_imposto={eh_despesa_com_retencao_imposto}
                                                                     bloqueiaRateioEstornado={bloqueiaRateioEstornado}
                                                                     renderContaAssociacaoOptions={renderContaAssociacaoOptions}
-                                                                    getOpcoesSelectConta={getOpcoesSelectConta}
+                                                                    filterContas={filterContas}
                                                                 />
                                                             ) : null
                                                         }
