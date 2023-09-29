@@ -6,7 +6,7 @@ import {TopoComBotoes} from "./TopoComBotoes";
 import CabecalhoDocumento from "./CabecalhoDocumento";
 import {getTiposDeAcertosDocumentos, getSolicitacaoDeAcertosDocumentos, postSolicitacoesParaAcertosDocumentos, getTabelas, getContasComMovimentoNaPc} from "../../../../../../services/dres/PrestacaoDeContas.service";
 import FormularioAcertos from "./FormularioAcertos";
-import { ModalContaEncerrada } from "../../ConferenciaDeLancamentos/Modais/ModalContaEncerrada";
+import { ModalAntDesignConfirmacao } from "../../../../../Globais/ModalAntDesign";
 
 // Hooks Personalizados
 import {useCarregaPrestacaoDeContasPorUuid} from "../../../../../../hooks/dres/PrestacaoDeContas/useCarregaPrestacaoDeContasPorUuid";
@@ -285,17 +285,14 @@ const DetalharAcertosDocumentos = () =>{
                     />
 
                     <section>
-                        <ModalContaEncerrada
-                            show={showModalContaEncerrada}
-                            titulo='A conta onde foram solicitados acertos foi encerrada'
-                            texto={'As solicitações realizadas podem alterar o saldo da conta encerrada. Lembrando que para concluir a análise da PC, o saldo da referida conta deverá estar zerado. Deseja prosseguir com a inclusão do acerto?'}
-                            primeiroBotaoTexto="Cancelar"
-                            primeiroBotaoCss="danger"
-                            primeiroBotaoOnclick={() => setShowModalContaEncerrada(false)}
-                            segundoBotaoTexto="Confirmar"
-                            segundoBotaoCss="success"
-                            segundoBotaoOnclick={() => onSubmitFormAcertos()}
-                            handleClose={() => setShowModalContaEncerrada(false)}
+                        <ModalAntDesignConfirmacao
+                            handleShow={showModalContaEncerrada}
+                            titulo={"A conta onde foram solicitados acertos foi encerrada"}
+                            bodyText="As solicitações realizadas podem alterar o saldo da conta encerrada. Lembrando que para concluir a análise da PC, o saldo da referida conta deverá estar zerado. Deseja prosseguir com a inclusão do acerto?"
+                            handleOk={(e) => onSubmitFormAcertos()}
+                            okText="Confirmar"
+                            handleCancel={(e) => setShowModalContaEncerrada(false)}
+                            cancelText="Cancelar"
                         />
                     </section>
                 </div>
