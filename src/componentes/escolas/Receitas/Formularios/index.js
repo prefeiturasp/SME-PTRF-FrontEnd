@@ -895,16 +895,10 @@ export const ReceitaForm = () => {
         if(contasNaoFiltradas && dataDigitadaFormulario) {
             contasFiltradasPelaDataInicial = contasNaoFiltradas.filter((acc) => { 
                 if (acc.data_inicio && moment(acc.data_inicio, 'YYYY-MM-DD').isValid()) {
-                  return moment(acc.data_inicio, 'YYYY-MM-DD').toDate() <= moment(dataDigitadaFormulario, 'YYYY-MM-DD').toDate();
+                    return moment(acc.data_inicio, 'YYYY-MM-DD').toDate() <= moment(dataDigitadaFormulario, 'YYYY-MM-DD').toDate();
                 }
                 return false;
-              });
-            
-            if(!contasFiltradasPelaDataInicial.length) {
-                setMensagemDataInicialConta("Não existem contas disponíveis para a data do crédito.")
-            } else {
-                setMensagemDataInicialConta("")
-            }
+            });
         }
 
         return contasFiltradasPelaDataInicial;
@@ -939,6 +933,16 @@ export const ReceitaForm = () => {
             }
             
             const contasFiltradasPelaDataInicialEPeloTipo = filtraContasPelaDataInicial({contasNaoFiltradas: tabelas.contas_associacao.filter(conta => (tipos_conta.includes(conta.nome))), dataDigitadaFormulario: values.data})
+
+            const contasFiltradasExcluindoContasComEncerramentoAprovado = contasFiltradasPelaDataInicialEPeloTipo.filter((elemento) => {
+                return !(elemento.status === STATUS_CONTA_ASSOCIACAO.INATIVA && elemento.solicitacao_encerramento.status === STATUS_SOLICITACAO_ENCERRAMENTO_CONTA_ASSOCIACAO.APROVADA);
+              })
+
+            if(!contasFiltradasExcluindoContasComEncerramentoAprovado.length && moment(values.data, 'YYYY-MM-DD').isValid()) {
+                setMensagemDataInicialConta("Não existem contas disponíveis para a data do crédito.")
+            } else {
+                setMensagemDataInicialConta("")
+            }
 
             return (
                 contasFiltradasPelaDataInicialEPeloTipo.map((item, key) => (
