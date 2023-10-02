@@ -1,6 +1,7 @@
 import React from "react";
-import {Button, Modal} from "react-bootstrap";
+import {Modal} from "react-bootstrap";
 import { openModal, closeModal } from "../../../store/reducers/componentes/Globais/Modal/actions";
+import "./modal-bootstrap.scss"
 
 export function ModalConfirm({
   dispatch,
@@ -41,13 +42,17 @@ export function ModalConfirm({
           {message}
         </Modal.Body>
         <Modal.Footer>
-            <Button data-qa={dataQa ? `${dataQa}-btn-${cancelText}` : ""} variant="secondary" onClick={handleClose}>
+            <button data-qa={dataQa ? `${dataQa}-btn-${cancelText}` : ""} 
+                    onClick={handleClose}
+                    className="btn btn-outline-success">
               {cancelText}
-            </Button>
+            </button>
             {onConfirm ? (
-                <Button data-qa={dataQa ? `${dataQa}-btn-${confirmText}` : ""} variant="primary" onClick={handleConfirm}>
+                <button data-qa={dataQa ? `${dataQa}-btn-${confirmText}` : ""} 
+                        onClick={handleConfirm}
+                        className="btn btn btn-success mt-2">
                   {confirmText}
-                </Button>
+                </button>
             ) : null} 
         </Modal.Footer>
         </>
