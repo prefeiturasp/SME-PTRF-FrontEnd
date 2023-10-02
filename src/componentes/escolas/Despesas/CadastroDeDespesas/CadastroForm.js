@@ -89,18 +89,28 @@ export const CadastroForm = ({verbo_http}) => {
         return periodo;
     }
 
-    const getOpcoesSelectConta = (data_transacao) => {
-        return despesasTabelas.contas_associacao.filter((conta) => moment(conta.data_inicio, 'YYYY-MM-DD').toDate() <= data_transacao)
-    };
+    const isEditing = () => {
+        return despesaContext.verboHttp === "PUT";
+    }
 
-    const renderContaAssociacaoOptions = useCallback((values) => {
-
+    const filterContas = (data) => {
         let data_transacao = null;
-        if (values){
-            data_transacao = values['data_transacao']
-        }
-        
 
+        if(moment.isMoment(data)){
+            data_transacao = data
+        } else {
+            data_transacao = moment(data, 'YYYY-MM-DD').toDate()
+
+        }
+
+        return despesasTabelas.contas_associacao.filter((conta) => 
+            (moment(conta.data_inicio, 'YYYY-MM-DD').toDate() <= data_transacao) &&
+            (!conta.solicitacao_encerramento || (conta.solicitacao_encerramento && 
+                                                 moment(conta.solicitacao_encerramento.data_de_encerramento_na_agencia, 'YYYY-MM-DD').toDate() > data_transacao))
+        )        
+    }
+
+    const renderContaAssociacaoOptions = useCallback((data_transacao) => {
         const getOptionPorStatus = (item, key) => {
             const defaultProps = {
                 key: item.uuid,
@@ -109,13 +119,16 @@ export const CadastroForm = ({verbo_http}) => {
             
             if(item.status === STATUS_CONTA_ASSOCIACAO.ATIVA){
                 return  <option data-qa={`render-conta-associacao-option-${key + 1}`} {...defaultProps}>{item.nome}</option>
-            } else if(item.solicitacao_encerramento && item.solicitacao_encerramento.status !== STATUS_SOLICITACAO_ENCERRAMENTO_CONTA_ASSOCIACAO.APROVADA) {
+            } else if(item.solicitacao_encerramento && (item.solicitacao_encerramento.status !== STATUS_SOLICITACAO_ENCERRAMENTO_CONTA_ASSOCIACAO.APROVADA) && !isEditing()) {
                 let informacaoExtra = item.solicitacao_encerramento ? `- Conta encerrada em ${moment(item.solicitacao_encerramento.data_de_encerramento_na_agencia).format('DD/MM/YYYY')}` : ''
                 return <option data-qa={`render-conta-associacao-option-${key + 1}`} {...defaultProps} disabled>{item.nome} {informacaoExtra}</option>
+            } else if(item.solicitacao_encerramento && isEditing()){
+                let informacaoExtra = item.solicitacao_encerramento ? `- Conta encerrada em ${moment(item.solicitacao_encerramento.data_de_encerramento_na_agencia).format('DD/MM/YYYY')}` : ''
+                return <option data-qa={`render-conta-associacao-option-${key + 1}`} {...defaultProps}>{item.nome} {informacaoExtra}</option>                
             }
-        }
+        }        
         return (
-            getOpcoesSelectConta(data_transacao).map((item, key) => (
+            filterContas(data_transacao).map((item, key) => (
                 getOptionPorStatus(item, key)
             ))
         )    
@@ -591,10 +604,16 @@ export const CadastroForm = ({verbo_http}) => {
 
     const handleErroCriarDespesa = (response) => {
         let mensagemErro = 'Verifique se os dados foram preenchidos corretamente.'
+
         if (response && response.data){
             if (response.data.hasOwnProperty("rateios")) {
                 const rateios = response.data.rateios[0];
                 mensagemErro += " Rateios: " + rateios.mensagem.map((msg) => msg).join(", ")
+            }
+            if(response.data.hasOwnProperty("mensagem")){
+                if(response.data.mensagem.length){
+                    mensagemErro = response.data.mensagem[0];
+                }
             }
         }
         toastCustom.ToastCustomError('Erro ao tentar salvar despesa.', mensagemErro)                            
@@ -1200,7 +1219,7 @@ export const CadastroForm = ({verbo_http}) => {
                         bloqueiaCamposDespesa={bloqueiaCamposDespesa}
                         onCalendarCloseDataDoDocumento={onCalendarCloseDataDoDocumento}
                         renderContaAssociacaoOptions={renderContaAssociacaoOptions}
-                        getOpcoesSelectConta={getOpcoesSelectConta}
+                        filterContas={filterContas}
                     />
             </>
             }

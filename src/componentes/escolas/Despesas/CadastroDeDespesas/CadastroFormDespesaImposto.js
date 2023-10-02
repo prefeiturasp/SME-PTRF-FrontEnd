@@ -30,7 +30,7 @@ export const CadastroFormDespesaImposto = ({
 	formErrorsImposto,
 	onCalendarCloseDataPagamentoImposto,
 	renderContaAssociacaoOptions,
-	getOpcoesSelectConta
+	filterContas
 }) => {										
 
 	return(
@@ -206,7 +206,6 @@ export const CadastroFormDespesaImposto = ({
 								}
 								onChange={(name, value) => {
 									formikProps.setFieldValue(name, value);
-									formikProps.setFieldValue(`despesas_impostos[${index}].rateios[0].conta_associacao`, '');
 								}}
 								onCalendarClose={async () => {
 									onCalendarCloseDataPagamentoImposto(formikProps.values, formikProps.setFieldValue, index)
@@ -279,9 +278,16 @@ export const CadastroFormDespesaImposto = ({
 								className="form-control"
 								disabled={readOnlyCamposImposto[index] || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes) || !(despesa_imposto.data_transacao !== null && despesa_imposto.data_transacao !== "")}
 							>
-								<option key={0} value="">{getOpcoesSelectConta(despesa_imposto.data_transacao).length || !despesa_imposto.data_transacao ? 'Selecione uma conta' : 'Não existem contas disponíveis'}</option>
-								{renderContaAssociacaoOptions(formikProps.values)}
+								<option key={0} value="">Selecione uma conta</option>
+								{renderContaAssociacaoOptions(despesa_imposto.data_transacao)}
 							</select>
+							{
+								(despesa_imposto.data_transacao && !filterContas(despesa_imposto.data_transacao).length) ?
+								<span data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-custeio-erro-conta-associacao`} 
+									className="mt-2">
+										Não existem contas disponíveis para a data do pagamento
+								</span> : null
+							}							
 						</div>
 
 						<div className="col-12 col-md-3 mt-4">
