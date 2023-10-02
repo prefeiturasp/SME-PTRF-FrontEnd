@@ -156,14 +156,22 @@ export const DetalheDasPrestacoes = () => {
     }, [periodoConta.periodo]) ;
 
 
-    const handleChangePeriodoConta = (name, value) => {
+    const handleChangePeriodoConta = (name, value, periodoOuConta) => {
         setCheckSalvarJustificativa(false);
         setCheckSalvarExtratoBancario(false);
         setBtnSalvarExtratoBancarioDisable(true);
-        setPeriodoConta({
-            ...periodoConta,
-            [name]: value
-        });
+
+        if(periodoOuConta === 'periodo') {
+            setPeriodoConta({
+                conta: '',
+                [name]: value
+            });
+        } else {
+            setPeriodoConta({
+                ...periodoConta,
+                [name]: value
+            });
+        } 
     };
 
     const handleChangeTextareaJustificativa = (event) => {
