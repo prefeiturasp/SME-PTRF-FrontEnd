@@ -24,13 +24,13 @@ import {ModalRecebida} from "../ModalRecebida";
 import {ModalConcluirAnalise} from "../ModalConcluirAnalise";
 import {ModalVoltarParaAnalise} from "../ModalVoltarParaAnalise";
 import { ModalDeleteAjusteSaldoPC } from "../ModalDeleteAjusteSaldoPC";
-import { ModalBloqueioConclusaoContaEncerradaNaoZerada } from "./ConferenciaDeLancamentos/Modais/ModalBloqueioConclusaoContaEncerradaNaoZerada";
 import {getDespesasTabelas} from "../../../../services/escolas/Despesas.service";
 import {trataNumericos} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import {GetComportamentoPorStatus} from "./GetComportamentoPorStatus";
 import {ModalSalvarPrestacaoDeContasAnalise} from "../../../../utils/Modais";
 import Loading from "../../../../utils/Loading";
 import {toastCustom} from "../../../Globais/ToastCustom";
+import {ModalAntDesignAviso} from "../../../Globais/ModalAntDesign/modalAviso"
 import {ModalNaoPodeVoltarParaAnalise} from "../ModalNaoPodeVoltarParaAnalise";
 import { getPeriodoPorUuid } from "../../../../services/sme/Parametrizacoes.service";
 
@@ -1086,7 +1086,7 @@ export const DetalhePrestacaoDeContas = () =>{
         let status = await getStatusPeriodo(prestacaoDeContas.associacao.uuid, periodo.data_inicio_realizacao_despesas);
         
         if(status.tem_conta_encerrada_com_saldo) {
-            setTiposContasEncerradasComSaldo(['Cheque', 'Cartão'])
+            setTiposContasEncerradasComSaldo(status.tipos_das_contas_encerradas_com_saldo)
             setShowModalBloqueioConclusaoContaEncerradaNaoZerada(true);
         } else {
             setShowConcluirAnalise(true);
@@ -1299,13 +1299,12 @@ export const DetalhePrestacaoDeContas = () =>{
                     />
                 </section>
                 <section>
-                    <ModalBloqueioConclusaoContaEncerradaNaoZerada
-                        show={showModalBloqueioConclusaoContaEncerradaNaoZerada}
-                        handleClose={onHandleClose}
-                        titulo="Conclusão de análise não permitida"
-                        texto={tiposContasEncerradasComSaldo.length > 1 ? `<p>A análise não pode ser concluída pois as contas ${tiposContasEncerradasComSaldo} foram encerradas e os saldos foram alterados. Favor solicitar os acertos necessários para que as contas sejam zeradas.</p>`:`<p>A análise não pode ser concluída pois a conta ${tiposContasEncerradasComSaldo} foi encerrada e o saldo foi alterado. Favor solicitar os acertos necessários para que a conta seja zerada.</p>`}
-                        primeiroBotaoTexto="Fechar"
-                        primeiroBotaoCss="success"
+                    <ModalAntDesignAviso
+                        handleShow={showModalBloqueioConclusaoContaEncerradaNaoZerada}
+                        titulo={"Conclusão de análise não permitida"}
+                        bodyText={tiposContasEncerradasComSaldo.length > 1 ? `A análise não pode ser concluída pois as contas ${tiposContasEncerradasComSaldo} foram encerradas e os saldos foram alterados. Favor solicitar os acertos necessários para que as contas sejam zeradas.`:`A análise não pode ser concluída pois a conta ${tiposContasEncerradasComSaldo} foi encerrada e o saldo foi alterado. Favor solicitar os acertos necessários para que a conta seja zerada.`}
+                        handleCancel={onHandleClose}
+                        cancelText="Fechar"
                     />
                 </section>
                 {redirectListaPc &&
