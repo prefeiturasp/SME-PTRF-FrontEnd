@@ -20,3 +20,13 @@
   color: #A4A4A4 !important;
 }
 
+// Para controlar a exibição das abas de Mandato Vigente e Mandatos Anteriores
+.tab-membros-associacao>.tab-pane{
+  display: block !important;
+}
+
+.tab-membros-associacao .fade:not(.show) {
+  opacity: 1;
+}
+
+
