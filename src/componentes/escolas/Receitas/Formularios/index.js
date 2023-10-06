@@ -101,6 +101,7 @@ export const ReceitaForm = () => {
     const [classificacoesAceitas, setClassificacoesAceitas] = useState([])
     const [tituloModalCancelar, setTituloModalCancelar] = useState("Deseja cancelar a inclusão de crédito?")
     const [periodosValidosAssociacaoencerrada, setPeriodosValidosAssociacaoencerrada] = useState([])
+    const [mensagemDataInicialConta, setMensagemDataInicialConta] = useState("")
 
     // ************* Modo Estorno
     const [readOnlyEstorno, setReadOnlyEstorno] = useState(false);
@@ -888,6 +889,21 @@ export const ReceitaForm = () => {
         }
     };
 
+    const filtraContasPelaDataInicial = ({contasNaoFiltradas = [], dataDigitadaFormulario = initialValue.data}) => {
+        let contasFiltradasPelaDataInicial = []
+
+        if(contasNaoFiltradas && dataDigitadaFormulario) {
+            contasFiltradasPelaDataInicial = contasNaoFiltradas.filter((acc) => { 
+                if (acc.data_inicio && moment(acc.data_inicio, 'YYYY-MM-DD').isValid()) {
+                    return moment(acc.data_inicio, 'YYYY-MM-DD').toDate() <= moment(dataDigitadaFormulario, 'YYYY-MM-DD').toDate();
+                }
+                return false;
+            });
+        }
+
+        return contasFiltradasPelaDataInicial;
+    }
+
 
     const retornaTiposDeContas = (values) => {
         if (tabelas.contas_associacao !== undefined && tabelas.contas_associacao.length > 0  && values.tipo_receita && e_repasse(values) && Object.keys(repasse).length !== 0) {
@@ -915,9 +931,21 @@ export const ReceitaForm = () => {
                     return <option {...defaultProps} disabled>{item.nome} {informacaoExtra}</option>
                 }
             }
-            // Filtra as contas pelos tipos aceitos
+            
+            const contasFiltradasPelaDataInicialEPeloTipo = filtraContasPelaDataInicial({contasNaoFiltradas: tabelas.contas_associacao.filter(conta => (tipos_conta.includes(conta.nome))), dataDigitadaFormulario: values.data})
+
+            const contasFiltradasExcluindoContasComEncerramentoAprovado = contasFiltradasPelaDataInicialEPeloTipo.filter((elemento) => {
+                return !(elemento.status === STATUS_CONTA_ASSOCIACAO.INATIVA && elemento.solicitacao_encerramento && elemento.solicitacao_encerramento.status === STATUS_SOLICITACAO_ENCERRAMENTO_CONTA_ASSOCIACAO.APROVADA);
+              })
+
+            if(!contasFiltradasExcluindoContasComEncerramentoAprovado.length && moment(values.data, 'YYYY-MM-DD').isValid()) {
+                setMensagemDataInicialConta("Não existem contas disponíveis para a data do crédito.")
+            } else {
+                setMensagemDataInicialConta("")
+            }
+
             return (
-                tabelas.contas_associacao.filter(conta => (tipos_conta.includes(conta.nome))).map((item, key) => (
+                contasFiltradasPelaDataInicialEPeloTipo.map((item, key) => (
                     getOptionPorStatus(item)
                 )))
         }
@@ -1280,6 +1308,7 @@ export const ReceitaForm = () => {
                         validacoesPersonalizadasCredito={validacoesPersonalizadasCredito}
                         formDateErrors={formDateErrors}
                         escondeBotaoDeletar={escondeBotaoDeletar}
+                        mensagemDataInicialConta={mensagemDataInicialConta}
                     />
                     <section>
                         <CancelarModalReceitas

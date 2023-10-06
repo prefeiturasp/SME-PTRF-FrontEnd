@@ -7,35 +7,36 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTimesCircle} from "@fortawesome/free-solid-svg-icons";
 
 export const CadastroFormDespesaImposto = ({
-												formikProps, 
-												eh_despesa_com_retencao_imposto,
-												disabled, 
-												tipos_documento_com_recolhimento_imposto, 
-												numeroDocumentoImpostoReadOnly, 
-												aux, 
-												preenche_tipo_despesa_custeio,
-												especificacoes_custeio,
-												despesasTabelas,
-												cssEscondeDocumentoTransacaoImposto,
-												labelDocumentoTransacaoImposto,
-												setCssEscondeDocumentoTransacaoImposto,
-												setLabelDocumentoTransacaoImposto,
-												despesaContext,
-												acoes_custeio,
-												setValorRateioRealizadoImposto,
-												readOnlyCamposImposto,
-												index,
-												despesa_imposto,
-												remove,
-												formErrorsImposto,
-												onCalendarCloseDataPagamentoImposto,
-												renderContaAssociacaoOptions
-											}) => {
-    
+	formikProps, 
+	eh_despesa_com_retencao_imposto,
+	disabled, 
+	tipos_documento_com_recolhimento_imposto, 
+	numeroDocumentoImpostoReadOnly, 
+	aux, 
+	preenche_tipo_despesa_custeio,
+	especificacoes_custeio,
+	despesasTabelas,
+	cssEscondeDocumentoTransacaoImposto,
+	labelDocumentoTransacaoImposto,
+	setCssEscondeDocumentoTransacaoImposto,
+	setLabelDocumentoTransacaoImposto,
+	despesaContext,
+	acoes_custeio,
+	setValorRateioRealizadoImposto,
+	readOnlyCamposImposto,
+	index,
+	despesa_imposto,
+	remove,
+	formErrorsImposto,
+	onCalendarCloseDataPagamentoImposto,
+	renderContaAssociacaoOptions,
+	filterContas
+}) => {										
+
 	return(
 		<>
 		<div key={index}>
-            {eh_despesa_com_retencao_imposto(formikProps.values) &&
+			{eh_despesa_com_retencao_imposto(formikProps.values) &&
 				<div className="form-retencao-imposto">
 
 					<div className="d-flex bd-highlight border-bottom mt-2 mb-2 align-items-center">
@@ -203,7 +204,9 @@ export const CadastroFormDespesaImposto = ({
 								value={
 									despesa_imposto.data_transacao !== null ? despesa_imposto.data_transacao : ""
 								}
-								onChange={formikProps.setFieldValue}
+								onChange={(name, value) => {
+									formikProps.setFieldValue(name, value);
+								}}
 								onCalendarClose={async () => {
 									onCalendarCloseDataPagamentoImposto(formikProps.values, formikProps.setFieldValue, index)
 								}}
@@ -273,11 +276,18 @@ export const CadastroFormDespesaImposto = ({
 								name={`despesas_impostos[${index}].rateios[0].conta_associacao`}
 								id={`despesas_impostos[${index}].rateios[0].conta_associacao`}
 								className="form-control"
-								disabled={readOnlyCamposImposto[index] || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
+								disabled={readOnlyCamposImposto[index] || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes) || !(despesa_imposto.data_transacao !== null && despesa_imposto.data_transacao !== "")}
 							>
 								<option key={0} value="">Selecione uma conta</option>
-								{renderContaAssociacaoOptions()}
+								{renderContaAssociacaoOptions(despesa_imposto.data_transacao)}
 							</select>
+							{
+								(despesa_imposto.data_transacao && !filterContas(despesa_imposto.data_transacao).length) ?
+								<span data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-custeio-erro-conta-associacao`} 
+									className="mt-2">
+										Não existem contas disponíveis para a data do pagamento
+								</span> : null
+							}							
 						</div>
 
 						<div className="col-12 col-md-3 mt-4">
@@ -322,9 +332,9 @@ export const CadastroFormDespesaImposto = ({
 					</div>
 
 				</div>	
-            }
+			}
 		</div>
-        </>
+		</>
 		
-    )
+	)
 }

@@ -10,7 +10,8 @@ import {
     getUltimaAnalisePc,
     postAnaliseAjustesSaldoPorConta,
     deleteAnaliseAjustesSaldoPorConta,
-    getAnaliseAjustesSaldoPorConta
+    getAnaliseAjustesSaldoPorConta,
+    getStatusPeriodo
 } from "../../../../services/dres/PrestacaoDeContas.service";
 import {getTabelasPrestacoesDeContas, getReceberPrestacaoDeContas, getReabrirPrestacaoDeContas, getDesfazerRecebimento, getAnalisarPrestacaoDeContas, getDesfazerAnalise, getSalvarAnalise, getInfoAta, getConcluirAnalise, getDespesasPorFiltros, getTiposDevolucao} from "../../../../services/dres/PrestacaoDeContas.service";
 import {patchReceberAposAcertos} from "../../../../services/dres/PrestacaoDeContas.service";
@@ -29,6 +30,7 @@ import {GetComportamentoPorStatus} from "./GetComportamentoPorStatus";
 import {ModalSalvarPrestacaoDeContasAnalise} from "../../../../utils/Modais";
 import Loading from "../../../../utils/Loading";
 import {toastCustom} from "../../../Globais/ToastCustom";
+import {ModalAntDesignAviso} from "../../../Globais/ModalAntDesign/modalAviso"
 import {ModalNaoPodeVoltarParaAnalise} from "../ModalNaoPodeVoltarParaAnalise";
 import { getPeriodoPorUuid } from "../../../../services/sme/Parametrizacoes.service";
 
@@ -117,6 +119,8 @@ export const DetalhePrestacaoDeContas = () =>{
     const [showConcluirAnalise, setShowConcluirAnalise] = useState(false);
     const [showVoltarParaAnalise, setShowVoltarParaAnalise] = useState(false);
     const [showNaoPodeVoltarParaAnalise, setShowNaoPodeVoltarParaAnalise] = useState(false);
+    const [showModalBloqueioConclusaoContaEncerradaNaoZerada,setShowModalBloqueioConclusaoContaEncerradaNaoZerada] = useState(false);
+    const [tiposContasEncerradasComSaldo, setTiposContasEncerradasComSaldo] = useState([]);
     const [redirectListaPc, setRedirectListaPc] = useState(false);
     const [informacoesPrestacaoDeContas, setInformacoesPrestacaoDeContas] = useState(initialInformacoesPrestacaoDeContas);
     const [clickBtnEscolheConta, setClickBtnEscolheConta] = useState({0: true, key_0: true});
@@ -143,6 +147,7 @@ export const DetalhePrestacaoDeContas = () =>{
     const [ajusteSaldoSalvoComSucesso, setAjusteSaldoSalvoComSucesso] = useState([]);
     const [showDeleteAjusteSaldoPC, setShowDeleteAjusteSaldoPC] = useState(false);
     const [periodoReferencia, setPeriodoReferencia] = useState('');
+    const [periodo, setPeriodo] = useState('');
 
     useEffect(()=>{
         carregaPrestacaoDeContas();
@@ -194,6 +199,7 @@ export const DetalhePrestacaoDeContas = () =>{
             if (prestacaoDeContas?.periodo_uuid){
                 let periodo = await getPeriodoPorUuid(prestacaoDeContas?.periodo_uuid);
                 setPeriodoReferencia(periodo.referencia)
+                setPeriodo(periodo)
             }
         }
         retornaPeriodo();
@@ -758,6 +764,7 @@ export const DetalhePrestacaoDeContas = () =>{
         setshowErroPrestacaoDeContasPosterior(false);
         setShowDeleteAjusteSaldoPC(false);
         setShowNaoPodeVoltarParaAnalise(false);
+        setShowModalBloqueioConclusaoContaEncerradaNaoZerada(false);
     };
 
     const onCloseModalSalvarAnalise = () => {
@@ -1075,6 +1082,17 @@ export const DetalhePrestacaoDeContas = () =>{
         return null;
     }
 
+    const handleConcluirPCemAnalise = async () => {
+        let status = await getStatusPeriodo(prestacaoDeContas.associacao.uuid, periodo.data_inicio_realizacao_despesas);
+        
+        if(status.tem_conta_encerrada_com_saldo) {
+            setTiposContasEncerradasComSaldo(status.tipos_das_contas_encerradas_com_saldo)
+            setShowModalBloqueioConclusaoContaEncerradaNaoZerada(true);
+        } else {
+            setShowConcluirAnalise(true);
+        }
+    }
+
     return(
         <PaginasContainer>
             <h1 className="titulo-itens-painel mt-5">Acompanhamento das Prestações de Contas</h1>
@@ -1152,6 +1170,7 @@ export const DetalhePrestacaoDeContas = () =>{
                                     setAnalisesDeContaDaPrestacao={setAnalisesDeContaDaPrestacao}
                                     bloqueiaBtnRetroceder={bloqueiaBtnRetroceder}
                                     tooltipRetroceder={adicionaTooltipBtnRetroceder}
+                                    handleConcluirPCemAnalise={handleConcluirPCemAnalise}
                                 />
                         }
                     </>
@@ -1277,6 +1296,15 @@ export const DetalhePrestacaoDeContas = () =>{
                         primeiroBotaoCss="outline-success"
                         segundoBotaoCss="success"
                         segundoBotaoTexto="Confirmar exclusão"
+                    />
+                </section>
+                <section>
+                    <ModalAntDesignAviso
+                        handleShow={showModalBloqueioConclusaoContaEncerradaNaoZerada}
+                        titulo={"Conclusão de análise não permitida"}
+                        bodyText={tiposContasEncerradasComSaldo.length > 1 ? `A análise não pode ser concluída pois as contas ${tiposContasEncerradasComSaldo} foram encerradas e os saldos foram alterados. Favor solicitar os acertos necessários para que as contas sejam zeradas.`:`A análise não pode ser concluída pois a conta ${tiposContasEncerradasComSaldo} foi encerrada e o saldo foi alterado. Favor solicitar os acertos necessários para que a conta seja zerada.`}
+                        handleCancel={onHandleClose}
+                        cancelText="Fechar"
                     />
                 </section>
                 {redirectListaPc &&

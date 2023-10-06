@@ -105,12 +105,8 @@ export const getDesconciliarReceita = async (receita_uuid, periodo_uuid) => {
   return (await api.patch(`/api/receitas/${receita_uuid}/desconciliar/?periodo=${periodo_uuid}`, {}, authHeader)).data
 };
 
-export const getObservacoes = async (periodo_uuid, conta_uuid) => {
-  return (await api.get(`/api/conciliacoes/observacoes/?periodo=${periodo_uuid}&conta_associacao=${conta_uuid}`,authHeader)).data
-};
-
-export const getPodeEditarCamposExtrato = async (associacao_uuid, periodo_uuid, conta_uuid, ) => {
-  return (await api.get(`/api/conciliacoes/tem_ajuste_bancario/?associacao=${associacao_uuid}&periodo=${periodo_uuid}&conta_associacao=${conta_uuid}`,authHeader)).data
+export const getObservacoes = async (periodo_uuid, conta_uuid, associacao_uuid) => {
+  return (await api.get(`/api/conciliacoes/observacoes/?periodo=${periodo_uuid}&conta_associacao=${conta_uuid}&associacao=${associacao_uuid}`,authHeader)).data
 };
 
 export const getVisualizarExtratoBancario = async (observacao_uuid) => {
