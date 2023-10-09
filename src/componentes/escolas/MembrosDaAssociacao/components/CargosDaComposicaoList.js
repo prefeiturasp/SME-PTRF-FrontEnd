@@ -7,12 +7,12 @@ import {faEdit, faEye} from "@fortawesome/free-solid-svg-icons";
 import ReactTooltip from "react-tooltip";
 import {MembrosDaAssociacaoContext} from "../context/MembrosDaAssociacao";
 
-export const CargosDaComposicaoList = () => {
+export const CargosDaComposicaoList = ({escopo}) => {
     const {isLoading, data} = useGetCargosDaComposicao()
     const {currentPage} = useContext(MembrosDaAssociacaoContext)
 
     const acoesTemplate = (rowData) => {
-        if (currentPage === 1){
+        if (currentPage === 1 && escopo === 'mandato-vigente'){
             return (
                 <div>
                     <button className="btn-editar-membro" data-qa='editar-membro'>
@@ -41,7 +41,6 @@ export const CargosDaComposicaoList = () => {
                 </div>
             )
         }
-
     };
 
     return(
@@ -63,7 +62,7 @@ export const CargosDaComposicaoList = () => {
                         />
                         <Column
                             field="ocupante_do_cargo.representacao_label"
-                            header="Nome"
+                            header="Representação"
                         />
                         <Column
                             field="acao"
@@ -75,7 +74,7 @@ export const CargosDaComposicaoList = () => {
                 </div>
             }
 
-            {data && data.conselho_fiscal &&
+            {!isLoading && data && data.conselho_fiscal &&
 
                 <div className="p-2 mt-3">
                     <p><strong>Conselho Fiscal</strong></p>
@@ -93,7 +92,7 @@ export const CargosDaComposicaoList = () => {
                         />
                         <Column
                             field="ocupante_do_cargo.representacao_label"
-                            header="Nome"
+                            header="Representação"
                         />
                         <Column
                             field="acao"
@@ -104,7 +103,6 @@ export const CargosDaComposicaoList = () => {
                     </DataTable>
                 </div>
             }
-
         </>
     )
 }
