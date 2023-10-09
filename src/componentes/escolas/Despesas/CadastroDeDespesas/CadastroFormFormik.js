@@ -108,14 +108,14 @@ export const CadastroFormFormik = ({
                                        parametroLocation,
                                        bloqueiaCamposDespesa,
                                        onCalendarCloseDataDoDocumento,
-                                       renderContaAssociacaoOptions
+                                       renderContaAssociacaoOptions,
+                                       filterContas
                                    }) => {
 
     // Corrigi Cálculo validação dos valores
     const setaValorRealizado = (values, valor) =>{
         values.valor_total = valor
     }
-
     return (
         <>
             <Formik
@@ -315,7 +315,9 @@ export const CadastroFormFormik = ({
                                             name="data_transacao"
                                             id="data_transacao"
                                             value={values.data_transacao != null ? values.data_transacao : ""}
-                                            onChange={setFieldValue}
+                                            onChange={(name, value) => {
+                                                setFieldValue(name, value, true);
+                                            }}
                                             onCalendarClose={async () => {
                                                 setFormErrors(await validacoesPersonalizadas(values, setFieldValue, "despesa_principal"));
                                                 onCalendarCloseDataPagamento(values, setFieldValue);
@@ -533,6 +535,7 @@ export const CadastroFormFormik = ({
                                                                             formErrorsImposto={formErrorsImposto}
                                                                             onCalendarCloseDataPagamentoImposto={onCalendarCloseDataPagamentoImposto}
                                                                             renderContaAssociacaoOptions={renderContaAssociacaoOptions}
+                                                                            filterContas={filterContas}
                                                                         />
                                                                     </div>
                                                                 )
@@ -745,6 +748,7 @@ export const CadastroFormFormik = ({
                                                                     eh_despesa_com_retencao_imposto={eh_despesa_com_retencao_imposto}
                                                                     bloqueiaRateioEstornado={bloqueiaRateioEstornado}
                                                                     renderContaAssociacaoOptions={renderContaAssociacaoOptions}
+                                                                    filterContas={filterContas}
                                                                 />
                                                             ) :
                                                             rateio.aplicacao_recurso && rateio.aplicacao_recurso === 'CAPITAL' ? (
@@ -764,6 +768,7 @@ export const CadastroFormFormik = ({
                                                                     eh_despesa_com_retencao_imposto={eh_despesa_com_retencao_imposto}
                                                                     bloqueiaRateioEstornado={bloqueiaRateioEstornado}
                                                                     renderContaAssociacaoOptions={renderContaAssociacaoOptions}
+                                                                    filterContas={filterContas}
                                                                 />
                                                             ) : null
                                                         }

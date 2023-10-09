@@ -35,6 +35,10 @@ export const patchMandato = async (uuidMandato, payload) => {
     ))
 };
 
+export const deleteMandato = async (uuidMandato) => {
+    return (await api.delete(`api/mandatos/${uuidMandato}/`, authHeader))
+};
+
 export const getMandatoVigente = async (associacao_uuid) => {
     return (await api.get(`/api/mandatos/mandato-vigente/`,{
         ...authHeader,
