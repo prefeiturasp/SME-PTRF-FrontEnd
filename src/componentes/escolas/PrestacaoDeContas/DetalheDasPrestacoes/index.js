@@ -15,8 +15,7 @@ import {
     patchDesconciliarDespesa,
     getDownloadExtratoBancario,
     pathSalvarJustificativaPrestacaoDeConta,
-    pathExtratoBancarioPrestacaoDeConta,
-    getPodeEditarCamposExtrato
+    pathExtratoBancarioPrestacaoDeConta    
 } from "../../../../services/escolas/PrestacaoDeContas.service";
 import {getContas, getPeriodosDePrestacaoDeContasDaAssociacao} from "../../../../services/escolas/Associacao.service";
 import Loading from "../../../../utils/Loading";
@@ -76,12 +75,16 @@ export const DetalheDasPrestacoes = () => {
     }, []);
 
     useEffect(() => {
-        localStorage.setItem('periodoConta', JSON.stringify(periodoConta));
-        carregaContas();
+        if(periodoConta) {
+            localStorage.setItem('periodoConta', JSON.stringify(periodoConta));
+            carregaContas();
+        }
     }, [periodoConta]);
 
     useEffect(()=>{
-        carregaObservacoes();
+        if(periodoConta) {
+            carregaObservacoes();
+        }
     }, [periodoConta, acoesAssociacao, acaoLancamento]);
 
     useEffect(()=>{
@@ -89,7 +92,9 @@ export const DetalheDasPrestacoes = () => {
     }, []);
 
     useEffect(() => {
-        verificaSePeriodoEstaAberto(periodoConta.periodo);
+        if(periodoConta) {
+            verificaSePeriodoEstaAberto(periodoConta.periodo);
+        }
     }, [periodoConta, periodosAssociacao]);
 
     const getPeriodoConta = () => {
@@ -151,14 +156,22 @@ export const DetalheDasPrestacoes = () => {
     }, [periodoConta.periodo]) ;
 
 
-    const handleChangePeriodoConta = (name, value) => {
+    const handleChangePeriodoConta = (name, value, periodoOuConta) => {
         setCheckSalvarJustificativa(false);
         setCheckSalvarExtratoBancario(false);
         setBtnSalvarExtratoBancarioDisable(true);
-        setPeriodoConta({
-            ...periodoConta,
-            [name]: value
-        });
+
+        if(periodoOuConta === 'periodo') {
+            setPeriodoConta({
+                conta: '',
+                [name]: value
+            });
+        } else {
+            setPeriodoConta({
+                ...periodoConta,
+                [name]: value
+            });
+        } 
     };
 
     const handleChangeTextareaJustificativa = (event) => {
@@ -173,9 +186,14 @@ export const DetalheDasPrestacoes = () => {
         if (periodoConta.periodo && periodoConta.conta) {
             let periodo_uuid = periodoConta.periodo;
             let conta_uuid = periodoConta.conta;
+            const associacaoUuid = localStorage.getItem(ASSOCIACAO_UUID)
 
-            let observacao = await getObservacoes(periodo_uuid, conta_uuid);
-            
+            let observacao = await getObservacoes(periodo_uuid, conta_uuid, associacaoUuid);
+
+            if(observacao) {
+                setPermiteEditarCamposExtrato(observacao.permite_editar_campos_extrato)
+            }
+
             if(observacao && observacao.possui_solicitacao_encerramento){
                 if (periodosAssociacao){
                     const associacaoUuid = localStorage.getItem(ASSOCIACAO_UUID)
@@ -317,24 +335,6 @@ export const DetalheDasPrestacoes = () => {
             }
         }
     };
-
-    const verificaSePodeEditarCamposExtrato = useCallback(async (periodoUuid) => {
-        if (periodosAssociacao) {
-            const periodo = periodosAssociacao.find(o => o.uuid === periodoUuid);
-            if (periodo && periodoConta && periodoConta.conta) {
-                const associacaoUuid = localStorage.getItem(ASSOCIACAO_UUID)
-                await getPodeEditarCamposExtrato(associacaoUuid, periodoUuid, periodoConta.conta).then(response => {
-                    setPermiteEditarCamposExtrato(response.permite_editar_campos_extrato)
-                }).catch(error => {
-                    console.log(error);
-                });
-            }
-        }
-    }, [periodosAssociacao, periodoConta]);
-
-    useEffect(() => {
-        verificaSePodeEditarCamposExtrato(periodoConta.periodo);
-    }, [verificaSePodeEditarCamposExtrato, periodoConta]);
 
     // Tabela Valores Pendentes por Ação
     const [valoresPendentes, setValoresPendentes] = useState({});

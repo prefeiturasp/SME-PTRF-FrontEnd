@@ -420,3 +420,7 @@ export const getTagsConferenciaLancamento = async () => {
 export const getTagsConferenciaDocumento = async () => {
     return (await api.get(`/api/analises-documento-prestacao-conta/tags-informacoes-conferencia/`, authHeader)).data
 }
+
+export const getStatusPeriodo = async (uuid_associacao, data_incial_periodo) => {
+    return(await api.get(`/api/associacoes/${uuid_associacao}/status-periodo/?data=${data_incial_periodo}`, authHeader)).data
+  };

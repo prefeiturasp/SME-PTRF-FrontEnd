@@ -1,4 +1,5 @@
 import React, {useContext} from "react";
+import {useDispatch} from "react-redux";
 import {Column} from "primereact/column";
 import {DataTable} from "primereact/datatable";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -13,13 +14,17 @@ import {usePostMandato} from "../hooks/usePostMandato";
 import moment from "moment/moment";
 import {ModalInfo} from "./ModalInfo";
 import {usePatchMandato} from "../hooks/usePatchMandato";
+import {useDeleteMandato} from "../hooks/useDeleteMandato";
+import { ModalConfirm} from "../../../Globais/Modal/ModalConfirm";
 
 export const Lista = () => {
+    const dispatch = useDispatch();
 
     const {setShowModalForm, stateFormModal, setStateFormModal, setBloquearBtnSalvarForm} = useContext(MandatosContext)
     const {isLoading, data} = useGetMandatos()
     const {mutationPost} = usePostMandato()
     const {mutationPatch} = usePatchMandato()
+    const {mutationDelete} = useDeleteMandato()
 
     // Necessária pela paginação
     const {results} = data
@@ -66,6 +71,15 @@ export const Lista = () => {
         } else {
             mutationPatch.mutate({uuidMandato: values.uuid, payload: payload})
         }
+    };
+
+    const handleConfirmDeleteMandato = (uuid) => {
+        ModalConfirm({
+            dispatch,
+            title: 'Tem certeza que deseja deletar período de mandato?',
+            message: 'Essa ação não poderá ser desfeita.',
+            onConfirm: () => mutationDelete.mutate({uuid})
+        })
     };
 
     if (isLoading) {
@@ -116,6 +130,7 @@ export const Lista = () => {
             <section>
                 <ModalForm
                     handleSubmitFormModal={handleSubmitFormModal}
+                    handleConfirmDeleteMandato={handleConfirmDeleteMandato}
                 />
                 <ModalInfo/>
             </section>

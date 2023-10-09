@@ -13,7 +13,6 @@ export const CadastroFormCapital = (propriedades) => {
     const {
         formikProps,
         rateio,
-        rateios,
         index,
         despesasTabelas,
         especificaoes_capital,
@@ -25,7 +24,8 @@ export const CadastroFormCapital = (propriedades) => {
         eh_despesa_com_comprovacao_fiscal,
         eh_despesa_com_retencao_imposto,
         bloqueiaRateioEstornado,
-        renderContaAssociacaoOptions
+        renderContaAssociacaoOptions,
+        filterContas
     } = propriedades;
 
     const handleChangeData = (quantidade, valor, setFieldValue) => {
@@ -161,11 +161,18 @@ export const CadastroFormCapital = (propriedades) => {
                         name={`rateios[${index}].conta_associacao`}
                         id={`conta_associacao_${index}`}
                         className={`${!rateio.conta_associacao && verboHttp === "PUT" && "is_invalid "} ${!rateio.conta_associacao && 'despesa_incompleta'} form-control`}
-                        disabled={disabled || bloqueiaRateioEstornado(rateio) || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
+                        disabled={disabled || bloqueiaRateioEstornado(rateio) || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes) || !formikProps.values['data_transacao']}
                     >
                         <option key={0} value="">Selecione uma conta</option>
-                        {renderContaAssociacaoOptions()}
+                        {renderContaAssociacaoOptions(formikProps.values.data_transacao)}
                     </select>
+                    {
+                        (formikProps.values.data_transacao && !filterContas(formikProps.values.data_transacao).length) ?
+                        <span data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-custeio-erro-conta-associacao`} 
+                            className="mt-1">
+                                Não existem contas disponíveis para a data do pagamento
+                        </span> : null
+                    }                    
                 </div>
 
                 <div className="col-12 col-md-6 mt-4">

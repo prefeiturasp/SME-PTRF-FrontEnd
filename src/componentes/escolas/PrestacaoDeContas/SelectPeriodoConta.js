@@ -15,7 +15,7 @@ export const SelectPeriodoConta = ({periodoConta, handleChangePeriodoConta, peri
                             <div className="col-12 col-sm-7 col-md-9 pl-0">
                                 <select
                                     value={periodoConta.periodo}
-                                    onChange={(e) => handleChangePeriodoConta(e.target.name, e.target.value)}
+                                    onChange={(e) => handleChangePeriodoConta(e.target.name, e.target.value, 'periodo')}
                                     name="periodo"
                                     id="periodo"
                                     className="form-control"
@@ -38,7 +38,7 @@ export const SelectPeriodoConta = ({periodoConta, handleChangePeriodoConta, peri
                             <div className="col-12 col-sm-7 col-md-9 pl-0">
                                 <select
                                     value={periodoConta.conta}
-                                    onChange={(e) => handleChangePeriodoConta(e.target.name, e.target.value)}
+                                    onChange={(e) => handleChangePeriodoConta(e.target.name, e.target.value, 'conta')}
                                     name="conta"
                                     id="conta"
                                     className="form-control"
