@@ -18,7 +18,7 @@ import {round, trataNumericos, periodoFechado} from "../../../../utils/Validacoe
 import moment from "moment";
 import {useLocation, useParams} from 'react-router-dom';
 import {ASSOCIACAO_UUID} from '../../../../services/auth.service';
-import {PeriodoFechado, ErroGeral, SalvarReceita, AvisoTipoReceita, AvisoTipoReceitaEstorno} from "../../../../utils/Modais";
+import {PeriodoFechado, ErroGeral, AvisoTipoReceita, AvisoTipoReceitaEstorno} from "../../../../utils/Modais";
 import {ModalDeletarReceita} from "../ModalDeletarReceita";
 import {CancelarModalReceitas} from "../CancelarModalReceitas";
 import "../receitas.scss"
@@ -75,7 +75,6 @@ export const ReceitaForm = () => {
     const [showEditarSaida, setShowEditarSaida] = useState(false);
     const [showAvisoTipoReceita, setShowAvisoTipoReceita] = useState(false);
     const [showAvisoTipoReceitaEstorno, setShowAvisoTipoReceitaEstorno] = useState(false);
-    const [showSalvarReceita, setShowSalvarReceita] = useState(false);
     const [initialValue, setInitialValue] = useState(initial);
     const [objetoParaComparacao, setObjetoParaComparacao] = useState({});
     const [receita, setReceita] = useState({});
@@ -486,7 +485,6 @@ export const ReceitaForm = () => {
                 let resultCadastrar = await criarReceita(payload)
                 console.log('CREATE ==========>>>>>>', resultCadastrar)
                 if (exibeModalSalvoComSucesso){
-                    setShowSalvarReceita(true);
                     setUuidReceita(resultCadastrar);
                     let uuidAcertoDocumento = parametros?.state?.uuid_acerto_documento;
                     if (uuidAcertoDocumento){
@@ -538,10 +536,6 @@ export const ReceitaForm = () => {
         setShowAvisoTipoReceitaEstorno(false);
     };
 
-    const fecharSalvarCredito = () => {
-        setShowSalvarReceita(false);
-        getPath();
-    }
 
     const onShowModal = () => {
         setShow(true);
@@ -1347,9 +1341,6 @@ export const ReceitaForm = () => {
                             handleClose={onHandleClose}
                             texto={msgAvisoTipoReceitaEstorno}
                         />
-                    </section>
-                    <section>
-                        <SalvarReceita show={showSalvarReceita} handleClose={fecharSalvarCredito}/>
                     </section>
                 </div>
             </PaginasContainer>
