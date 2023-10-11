@@ -42,13 +42,13 @@ export function CustomModalConfirm({
             </button>
           </div>
           <img src={IconeConfirmacao} alt="IconeConfirmacao" className="img-fluid mb-3"/>
-          <h4 className="custom-modal-title">{title}</h4>
-          <p className="custom-modal-message">{message}</p>
+          <h4 className="custom-modal-title" data-qa={dataQa ? `titulo-${dataQa}` : ""}>{title}</h4>
+          <p className="custom-modal-message" data-qa={dataQa ? `mensagem-${dataQa}` : ""}>{message}</p>
           <div className="col-12 mt-3 d-flex justify-content-center">
               <Button 
                 onClick={handleClose} 
                 className="btn-outline-success"
-                data-qa={dataQa ? `${dataQa}-btn-${cancelText}` : ""} 
+                data-qa={dataQa ? `btn-${cancelText}-${dataQa}` : ""} 
               >
                 {cancelText}
               </Button>
@@ -56,7 +56,7 @@ export function CustomModalConfirm({
                   <Button 
                     onClick={handleConfirm} 
                     className="btn btn-success ml-2"
-                    data-qa={dataQa ? `${dataQa}-btn-${confirmText}` : ""} 
+                    data-qa={dataQa ? `btn-${confirmText}-${dataQa}` : ""} 
                   >
                     {confirmText}
                   </Button>
