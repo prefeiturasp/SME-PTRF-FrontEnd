@@ -33,12 +33,14 @@ export const TopoSelectPeriodoBotaoConcluir = ({
                                     onChange={(e) => handleChangePeriodoPrestacaoDeConta(e.target.name, e.target.value)}
                                     name="periodoPrestacaoDeConta"
                                     id="periodoPrestacaoDeConta"
+                                    data-qa="select-periodo-pc"
                                     className="form-control"
                                 >
-                                    <option value="">Escolha um período</option>
-                                    {periodosAssociacao && periodosAssociacao.map((periodo) =>
+                                    <option value="" data-qa={`opt-0-select-periodo-pc`}>Escolha um período</option>
+                                    {periodosAssociacao && periodosAssociacao.map((periodo, index) =>
                                         <option
                                             key={periodo.uuid}
+                                            data-qa={`opt-${index+1}-select-periodo-pc`}
                                             value={
                                                 retornaObjetoPeriodoPrestacaoDeConta(
                                                     periodo.uuid,
@@ -63,6 +65,7 @@ export const TopoSelectPeriodoBotaoConcluir = ({
                             <button
                                 onClick={concluirPeriodo}
                                 className='btn btn-success'
+                                data-qa={`btn-${textoBotaoConcluir(statusPrestacaoDeConta)}`}
                                 type="button">{textoBotaoConcluir(statusPrestacaoDeConta)}
                             </button>
                         }
