@@ -14,6 +14,7 @@ export const ModalConcluirPeriodo = (props) =>{
             segundoBotaoOnclick={props.handleClose}
             segundoBotaoCss="danger"
             segundoBotaoTexto="Cancelar"
+            dataQa={props.dataQa}
         />
     )
 };
