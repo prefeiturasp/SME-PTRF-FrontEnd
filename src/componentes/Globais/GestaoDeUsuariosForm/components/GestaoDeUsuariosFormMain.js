@@ -2,7 +2,9 @@ import React, {useContext, useEffect} from "react";
 import {useParams} from "react-router-dom";
 import {BarraTopoForm} from "./BarraTopoForm";
 import {GestaoDeUsuariosFormContext} from "../context/GestaoDeUsuariosFormProvider";
+import { UnidadesUsuarioProvider } from "../context/UnidadesUsuarioProvider";
 import {FormUsuario} from "./FormUsuario";
+import { UnidadesUsuario } from "./UnidadesUsuario";
 import {useUsuario} from "../hooks/useUsuario";
 
 export const GestaoDeUsuariosFormMain = () => {
@@ -19,6 +21,11 @@ export const GestaoDeUsuariosFormMain = () => {
         <>
             <BarraTopoForm/>
             <FormUsuario usuario={usuario}/>
+
+            <UnidadesUsuarioProvider>
+                <UnidadesUsuario usuario={usuario}/>
+            </UnidadesUsuarioProvider>
+            
         </>
     )
 }
