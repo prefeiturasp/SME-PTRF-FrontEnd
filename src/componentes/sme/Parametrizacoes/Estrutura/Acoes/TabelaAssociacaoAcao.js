@@ -21,6 +21,7 @@ export const TabelaAssociacaoAcao = ({
                 showModalLegendaInformacao={showModalLegendaInformacao}
                 setShowModalLegendaInformacao={setShowModalLegendaInformacao}
                 entidadeDasTags="associacao"
+                excludedTags={["Encerramento de conta pendente"]}
             />
             <DataTable
                 value={unidades}
