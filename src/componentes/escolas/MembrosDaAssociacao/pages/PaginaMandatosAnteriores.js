@@ -12,7 +12,7 @@ export const PaginaMandatosAnteriores = () => {
 
     const {setComposicaoUuid, composicaoUuid, currentPage, setMandatoUuid, reiniciaEstadosControleComposicoes} = useContext(MembrosDaAssociacaoContext)
     const {data_mandatos_anteriores, isLoading_mandatos_anteriores} = useGetMandatosAnteriores()
-    const {isLoading, data, count} = useGetMandatoAnterior()
+    const {isLoading, data, count, isError} = useGetMandatoAnterior()
 
     // Reinicia os estados de controle
     useEffect(() => {
@@ -34,6 +34,12 @@ export const PaginaMandatosAnteriores = () => {
             setComposicaoUuid(composicao_uuid)
         }
     }, [data, setComposicaoUuid, currentPage]);
+
+    if ((data && !data.uuid) || isError){
+        return (
+            <p className='mt-3'><strong>Não existem mandatos anteriores</strong></p>
+        )
+    }
 
     return (
         <>

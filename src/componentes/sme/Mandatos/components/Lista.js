@@ -3,7 +3,7 @@ import {useDispatch} from "react-redux";
 import {Column} from "primereact/column";
 import {DataTable} from "primereact/datatable";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faEdit} from "@fortawesome/free-solid-svg-icons";
+import {faEdit, faEye} from "@fortawesome/free-solid-svg-icons";
 import ReactTooltip from "react-tooltip";
 import {useGetMandatos} from "../hooks/useGetMandatos";
 import Loading from "../../../../utils/Loading";
@@ -15,7 +15,7 @@ import moment from "moment/moment";
 import {ModalInfo} from "./ModalInfo";
 import {usePatchMandato} from "../hooks/usePatchMandato";
 import {useDeleteMandato} from "../hooks/useDeleteMandato";
-import { ModalConfirm} from "../../../Globais/Modal/ModalConfirm";
+import {ModalConfirm} from "../../../Globais/Modal/ModalConfirm";
 
 export const Lista = () => {
     const dispatch = useDispatch();
@@ -33,13 +33,23 @@ export const Lista = () => {
         return (
             <div>
                 <button className="btn-editar-membro" onClick={() => handleEditFormModal(rowData)}>
-                    <span data-tip="Editar mandato" data-html={true}>
-                        <FontAwesomeIcon
-                            style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
-                            icon={faEdit}
-                        />
-                        <ReactTooltip/>
-                    </span>
+                    {rowData && rowData.editavel ? (
+                        <div data-tip="Editar mandato" data-html={true}>
+                            <FontAwesomeIcon
+                                style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
+                                icon={faEdit}
+                            />
+                            <ReactTooltip/>
+                        </div>
+                    ) : (
+                        <div data-tip="Visualizar mandato" data-html={true}>
+                            <FontAwesomeIcon
+                                style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
+                                icon={faEye}
+                            />
+                            <ReactTooltip/>
+                        </div>
+                    )}
                 </button>
             </div>
         )
@@ -51,6 +61,8 @@ export const Lista = () => {
             referencia: rowData.referencia_mandato,
             data_inicial: rowData.data_inicial,
             data_final: rowData.data_final,
+            editavel: rowData.editavel,
+            data_inicial_proximo_mandato: rowData.data_inicial_proximo_mandato,
             uuid: rowData.uuid,
             id: rowData.id,
         });

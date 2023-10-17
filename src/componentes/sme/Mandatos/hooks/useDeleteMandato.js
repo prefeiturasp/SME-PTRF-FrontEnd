@@ -18,6 +18,7 @@ export const useDeleteMandato = () => {
         onSuccess: () => {
             // Refaz a lista de mandatos
             queryClient.invalidateQueries(['mandatos-list']).then()
+            queryClient.invalidateQueries(['mandato-mais-recente']).then()
             setShowModalForm(false)
             toastCustom.ToastCustomSuccess('Exclusão do período de mandato realizada com sucesso', `O período de mandato foi excluído com sucesso.`)
         },
