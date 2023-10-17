@@ -3,6 +3,14 @@ import {formataData} from "../../../utils/FormataData";
 
 export const SelectConta = ({handleChangeConta, selectConta, tiposConta}) =>{
     
+    const labelEncerramento = (conta) => {
+        if(conta.solicitacao_encerramento && conta.solicitacao_encerramento.status !== "REJEITADA"){
+            return ` (encerrada em ${formataData(conta.solicitacao_encerramento.data_de_encerramento_na_agencia)})`
+        }
+
+        return ''
+    }
+
     return(
         <>
             <div className="col-auto ml-3 my-1">
@@ -20,7 +28,7 @@ export const SelectConta = ({handleChangeConta, selectConta, tiposConta}) =>{
                     {tiposConta && tiposConta.map((conta) =>
                         <option key={conta.uuid} value={conta.uuid}>
                             {conta.nome}
-                            {conta.solicitacao_encerramento ? ` (encerrada em ${formataData(conta.solicitacao_encerramento.data_de_encerramento_na_agencia)})` : ''}
+                            {labelEncerramento(conta)}
                         </option>
                     )}
                 </select>
