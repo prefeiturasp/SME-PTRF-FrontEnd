@@ -77,3 +77,9 @@ export const getMandatoAnterior = async (mandato_uuid, associacao_uuid) => {
         }
     })).data
 }
+
+export const getMandatoMaisRecente = async () => {
+    return (await api.get(`/api/mandatos/mandato-mais-recente/`,{
+        ...authHeader,
+    })).data
+}
