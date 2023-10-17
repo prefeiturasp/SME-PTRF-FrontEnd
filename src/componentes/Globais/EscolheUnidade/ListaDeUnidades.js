@@ -63,6 +63,7 @@ export const ListaDeUnidades = ({
             showModalLegendaInformacao={showModalLegendaInformacao}
             setShowModalLegendaInformacao={setShowModalLegendaInformacao}
             entidadeDasTags="associacao"
+            excludedTags={["Encerramento de conta pendente"]}
         />
 
         <DataTable
@@ -88,7 +89,7 @@ export const ListaDeUnidades = ({
                 field="informacao"
                 header="Informações"
                 className="align-middle text-center"
-                body={(rowData) => <TableTags data={rowData} coresTags={coresTagsAssociacoes}/>}
+                body={(rowData) => <TableTags data={rowData} coresTags={coresTagsAssociacoes} excludeTags={["Encerramento de conta pendente"]}/>}
                 style={{width: '15%'}}
             />
             <Column
