@@ -79,3 +79,31 @@ export const putUsuario = async (id, payload) => {
 export const removerAcessosUnidadeBase = async (id, uuidUnidadeBase) => {
     return (await api.put(`${URL_USUARIOS}${id}/remover-acessos-unidade-base/${uuidUnidadeBase}/`, {}, authHeader)).data
 };
+
+export const getUnidadesUsuario = async(currentPage, username, visao_base, uuid_unidade) => {
+    const response = await api.get(`${URL_USUARIOS}unidades-do-usuario/`, {
+        params: {
+            page: currentPage,
+            username: username,
+            visao_base: visao_base,
+            uuid_unidade: uuid_unidade
+        }
+    });
+    return response.data;
+}
+
+export const patchHabilitarAcesso = async (payload) => {
+    return (await api.patch(`${URL_USUARIOS}habilitar-acesso/`, {
+            ...payload
+        },
+        authHeader,
+    ))
+};
+
+export const patchDesabilitarAcesso = async (payload) => {
+    return (await api.patch(`${URL_USUARIOS}desabilitar-acesso/`, {
+            ...payload
+        },
+        authHeader,
+    ))
+};
