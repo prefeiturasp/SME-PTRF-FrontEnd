@@ -9,7 +9,7 @@ import {useUsuario} from "../hooks/useUsuario";
 
 export const GestaoDeUsuariosFormMain = () => {
     const {id_usuario} = useParams();
-    const { setModo, Modos, setUsuarioId} = useContext(GestaoDeUsuariosFormContext)
+    const { setModo, Modos, setUsuarioId, visaoBase} = useContext(GestaoDeUsuariosFormContext)
     const { data: usuario, isLoading } = useUsuario(id_usuario);
 
     useEffect(() => {
@@ -22,9 +22,12 @@ export const GestaoDeUsuariosFormMain = () => {
             <BarraTopoForm/>
             <FormUsuario usuario={usuario}/>
 
-            <UnidadesUsuarioProvider>
-                <UnidadesUsuario usuario={usuario}/>
-            </UnidadesUsuarioProvider>
+            {visaoBase !== 'UE' &&
+                <UnidadesUsuarioProvider>
+                    <UnidadesUsuario usuario={usuario}/>
+                </UnidadesUsuarioProvider>
+            }
+            
             
         </>
     )
