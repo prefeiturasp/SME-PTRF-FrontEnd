@@ -20,7 +20,8 @@ export const TabelaAcoesDasAssociacoes = ({
             <LegendaInformacao
                 showModalLegendaInformacao={showModalLegendaInformacao}
                 setShowModalLegendaInformacao={setShowModalLegendaInformacao}  
-                entidadeDasTags="associacao"            
+                entidadeDasTags="associacao"
+                excludedTags={["Encerramento de conta pendente"]}     
             />
             <DataTable
                 value={todasAsAcoes}
