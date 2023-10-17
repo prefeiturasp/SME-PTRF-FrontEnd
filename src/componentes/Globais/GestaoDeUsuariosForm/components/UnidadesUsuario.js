@@ -95,6 +95,10 @@ export const UnidadesUsuario = ({usuario}) => {
         return false;
     }
 
+    if(visaoBase === 'UE'){
+        return
+    }
+
     return (
         <>
             <section className="row">
