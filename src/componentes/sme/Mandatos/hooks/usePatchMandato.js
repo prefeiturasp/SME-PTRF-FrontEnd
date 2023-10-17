@@ -17,6 +17,7 @@ export const usePatchMandato = () => {
             console.log("Mandato editado com sucesso ", data)
             // Refaz a lista de mandatos
             queryClient.invalidateQueries(['mandatos-list']).then()
+            queryClient.invalidateQueries(['mandato-mais-recente']).then()
             // Mensagens
             setShowModalForm(false)
             setShowModalInfo(false)
