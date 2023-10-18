@@ -17,7 +17,8 @@ export const TabelaAssociacoes = ({
         <LegendaInformacao
             showModalLegendaInformacao={showModalLegendaInformacao}
             setShowModalLegendaInformacao={setShowModalLegendaInformacao}  
-            entidadeDasTags="associacao"  
+            entidadeDasTags="associacao"
+            excludedTags={["Encerramento de conta pendente"]}
         />
         <DataTable
             value={listaDeAssociacoes}
@@ -31,7 +32,7 @@ export const TabelaAssociacoes = ({
                 field="informacao"
                 header="Informações"
                 className="align-middle text-center"
-                body={(rowData) => <TableTags data={rowData} coresTags={coresTagsAssociacoes}/>}
+                body={(rowData) => <TableTags data={rowData} coresTags={coresTagsAssociacoes} excludeTags={["Encerramento de conta pendente"]}/>}
                 style={{width: '15%'}}
             />
             <Column field="unidade.nome_dre" header="DRE"/>
