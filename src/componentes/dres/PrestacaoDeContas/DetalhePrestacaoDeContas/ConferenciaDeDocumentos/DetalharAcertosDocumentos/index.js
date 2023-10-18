@@ -90,23 +90,27 @@ const DetalharAcertosDocumentos = () =>{
 
     const validaContaAoSalvar = async() => {
         if (!formRef.current.errors.solicitacoes_acerto && formRef.current.values && formRef.current.values.solicitacoes_acerto) {
-            let conta_associacao = documentos && documentos[0] && documentos[0].tipo_documento_prestacao_conta && documentos[0].tipo_documento_prestacao_conta.conta_associacao ? documentos[0].tipo_documento_prestacao_conta.conta_associacao : null
-            let {solicitacoes_acerto} = formRef.current.values
-
-            if(conta_associacao){
-                let conta_encerrada = await contaEncerrada(conta_associacao);
+            if(documentos && documentos[0] && documentos[0].tipo_documento_prestacao_conta && documentos[0].tipo_documento_prestacao_conta && documentos[0].tipo_documento_prestacao_conta.documento_por_conta){
+                let conta_associacao = documentos[0].tipo_documento_prestacao_conta.conta_associacao;
+                let {solicitacoes_acerto} = formRef.current.values
     
-                if(conta_encerrada){
-                    if(possuiAcertosQuePodemAlterarSaldo(solicitacoes_acerto)){
-                        setShowModalContaEncerrada(true);
+                if(conta_associacao){
+                    let conta_encerrada = await contaEncerrada(conta_associacao);
+        
+                    if(conta_encerrada){
+                        if(possuiAcertosQuePodemAlterarSaldo(solicitacoes_acerto)){
+                            setShowModalContaEncerrada(true);
+                        }
+                        else{
+                            await onSubmitFormAcertos();
+                        }
                     }
                     else{
                         await onSubmitFormAcertos();
                     }
                 }
-                else{
-                    await onSubmitFormAcertos();
-                }
+            } else {
+                await onSubmitFormAcertos();
             }
         }
     }
