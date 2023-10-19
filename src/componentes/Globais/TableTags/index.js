@@ -2,10 +2,14 @@ import React from 'react';
 import ReactTooltip from "react-tooltip";
 import './tableTags.scss';
 
-export const TableTags = ({data, coresTags}) => {
+export const TableTags = ({data, coresTags, excludeTags = []}) => {
     return (
         <>
             {data.informacoes ? data.informacoes?.map((tag, index) => {
+                if(excludeTags.includes(tag.tag_nome)) {
+                    return ''
+                }
+
                 let toolTip = ""
 
                 if (typeof (tag.tag_hint) === 'string') {

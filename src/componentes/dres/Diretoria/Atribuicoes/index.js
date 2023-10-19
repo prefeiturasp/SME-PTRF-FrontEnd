@@ -308,7 +308,7 @@ export const Atribuicoes = () => {
                     checked={false}
                     type="checkbox"
                     value=""
-                    onChange={(e) => e}
+                    onChange={(e) => e.stopPropagation(e)}
                     name="checkHeader"
                     id="checkHeader"
                     disabled={!visoesService.getPermissoes(['change_atribuicao_por_ue'])}
