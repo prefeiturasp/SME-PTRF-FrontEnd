@@ -270,7 +270,7 @@ const RetificacaoRelatorioConsolidado = () => {
                             checked={listaEmRetificacao ? identificadorCheckboxClicadoPcsEmRetificacao : identificadorCheckboxClicado}
                             type="checkbox"
                             value=""
-                            onChange={(e) => e}
+                            onChange={(e) => e.stopPropagation(e)}
                             name="checkHeader"
                             id="checkHeader"
                         />

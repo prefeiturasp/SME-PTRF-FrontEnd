@@ -11,6 +11,7 @@ export const ModalPreviaSendoGerada = (propriedades) => {
             bodyText="<p>O documento está sendo gerado, enquanto isso você pode continuar a usar o sistema. Quando a geração for concluída, um botão de download ficará disponível.</p>"
             primeiroBotaoOnclick={propriedades.primeiroBotaoOnClick}
             primeiroBotaoTexto="Fechar"
+            dataQa={propriedades.dataQa}
         />
     )
 }

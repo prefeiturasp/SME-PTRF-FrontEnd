@@ -201,6 +201,7 @@ body {
   color: #ffffff !important;
   transition: 0s background-color;
   background-color: $corBtnErrorPrimaria !important;
+  border: $corBtnErrorPrimaria !important;
 
   .icon-btn-base-vermelho {
     color: #ffffff;

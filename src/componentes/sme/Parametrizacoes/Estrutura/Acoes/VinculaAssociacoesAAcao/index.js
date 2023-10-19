@@ -190,7 +190,7 @@ export const VinculaAssociacoesAAcao = () => {
                     checked={false}
                     type="checkbox"
                     value=""
-                    onChange={(e) => e}
+                    onChange={(e) => e.stopPropagation(e)}
                     name="checkHeader"
                     id="checkHeader"
                 />

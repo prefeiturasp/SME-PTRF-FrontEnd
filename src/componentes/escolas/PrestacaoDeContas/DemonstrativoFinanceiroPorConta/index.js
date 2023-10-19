@@ -192,15 +192,17 @@ export default class DemonstrativoFinanceiroPorConta extends Component {
                 <article>
                     <div className="info">
                     <p className="fonte-14 mb-1"><strong>Demonstrativo Financeiro da Conta</strong></p>
-                    <p className={`fonte-12 mb-1 ${classeMensagem}`}>
+                    <p className={`fonte-12 mb-1 ${classeMensagem}`} data-qa='status-demonstrativo-financeiro'>
                         {mensagem}
                         {exibeLoading ? <img src={Spinner} style={{height: "22px"}}/> : ''}
 
                         {status === 'CONCLUIDO' && documentoPrevio &&
                         <>
-                            <button className='btn-editar-membro'
-                                    type='button'
-                                    onClick={() => {this.downloadDocumentoPrevia("PDF")}}
+                            <button 
+                                className='btn-editar-membro'
+                                type='button'
+                                onClick={() => {this.downloadDocumentoPrevia("PDF")}}
+                                data-qa='btn-baixar-documento-previa-demonstrativo-financeiro'
                             >
                                 <FontAwesomeIcon
                                     style={{fontSize: '18px',}}
@@ -215,7 +217,15 @@ export default class DemonstrativoFinanceiroPorConta extends Component {
                     </div>
                     <div className="actions">
                         {this.props.podeGerarPrevias && !mensagem.includes('Não houve') && this.props.statusPrestacaoDeConta && this.props.statusPrestacaoDeConta.gerar_previas && this.props.statusPrestacaoDeConta.prestacao_contas_status && !this.props.statusPrestacaoDeConta.prestacao_contas_status.documentos_gerados &&
-                            <button onClick={(e) => this.showPrevia()} type="button" disabled={this.props.statusPrestacaoDeConta && this.props.statusPrestacaoDeConta.prestacao_contas_status && this.props.statusPrestacaoDeConta.prestacao_contas_status.documentos_gerados} className="btn btn-outline-success mr-2">prévia </button>
+                            <button 
+                                onClick={(e) => this.showPrevia()} 
+                                type="button" 
+                                disabled={this.props.statusPrestacaoDeConta && this.props.statusPrestacaoDeConta.prestacao_contas_status && this.props.statusPrestacaoDeConta.prestacao_contas_status.documentos_gerados} 
+                                className="btn btn-outline-success mr-2"
+                                data-qa='btn-abrir-modal-previa-demonstrativo-financeiro'
+                            >
+                                prévia 
+                            </button>
                         }
                         {this.props.podeBaixarDocumentos &&
                             <SplitButton
@@ -229,6 +239,7 @@ export default class DemonstrativoFinanceiroPorConta extends Component {
                                 model={formatos}
                                 menuStyle={{textAlign: "left"}}
                                 disabled={(this.props.statusPrestacaoDeConta && this.props.statusPrestacaoDeConta.prestacao_contas_status && !this.props.statusPrestacaoDeConta.prestacao_contas_status.documentos_gerados) || mensagem.includes('Não houve')}
+                                data-qa='btn-baixar-documento-final-demonstrativo-financeiro'
                             >
                             </SplitButton>
                         }
@@ -236,18 +247,21 @@ export default class DemonstrativoFinanceiroPorConta extends Component {
                     </div>
                 </article>
                 <ModalPrevia 
-                            show={this.state.show} 
-                            onHide={this.onHide} 
-                            titulo="Geração de documento prévio"
-                            data_inicio={this.state.data_inicio}
-                            data_fim={this.state.data_fim}
-                            mensagemErro={this.state.mensagemErro}
-                            handleChange={this.handleChange}
-                            primeiroBotaoOnclick={this.gerarPrevia}
-                            primeiroBotaoTexto="OK"/>
+                    show={this.state.show} 
+                    onHide={this.onHide} 
+                    titulo="Geração de documento prévio"
+                    data_inicio={this.state.data_inicio}
+                    data_fim={this.state.data_fim}
+                    mensagemErro={this.state.mensagemErro}
+                    handleChange={this.handleChange}
+                    primeiroBotaoOnclick={this.gerarPrevia}
+                    primeiroBotaoTexto="OK"
+                    dataQa="modal-previa-demonstrativo-financeiro"
+                />
                 <ModalPreviaSendoGerada
-                            show={this.state.showGerandoPreviaDoc}
-                            primeiroBotaoOnClick={this.handleOkGerandoPrevia}
+                    show={this.state.showGerandoPreviaDoc}
+                    primeiroBotaoOnClick={this.handleOkGerandoPrevia}
+                    dataQa="modal-previa-sendo-gerada-demonstrativo-financeiro"
                 />
             </div>
         )
