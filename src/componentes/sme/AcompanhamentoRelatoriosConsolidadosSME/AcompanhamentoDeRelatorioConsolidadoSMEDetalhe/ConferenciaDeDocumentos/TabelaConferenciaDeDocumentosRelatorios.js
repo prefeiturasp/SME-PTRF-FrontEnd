@@ -89,7 +89,7 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
                             checked={false}
                             type="checkbox"
                             value=""
-                            onChange={(e) => e}
+                            onChange={(e) => e.stopPropagation(e)}
                             name="checkHeaderDocumentos"
                             id="checkHeaderDocumentos"
                             disabled={!editavel}
