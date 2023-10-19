@@ -55,9 +55,23 @@ const ToastCustomInfo = (titulo, texto, tipo='info', posicao='top-right', autoCl
     ToastCustom(titulo, texto, tipo, posicao, autoClose)
 }
 
+const ToastCustomWarning = (titulo, texto, tipo='warning', posicao='top-right', autoClose=true, onClose=null) =>{
+    ToastCustom(titulo, texto, tipo, posicao, autoClose, onClose)
+}
+
+const ToastCustomColorInfo = (titulo, texto, colorIcon='#3498db', colorProgressBar='#3498db', tipo='info', posicao='top-right', autoClose=true, onClose=null) =>{
+    let root = document.documentElement;
+    root.style.setProperty('--toastify-icon-color-info', colorIcon);
+    root.style.setProperty('--toastify-color-progress-info', colorProgressBar);
+
+    ToastCustom(titulo, texto, tipo, posicao, autoClose, onClose)
+}
+
 export const toastCustom = {
     ToastCustomSuccess,
     ToastCustomGrandeSuccess,
     ToastCustomError,
     ToastCustomInfo,
+    ToastCustomWarning,
+    ToastCustomColorInfo
 }

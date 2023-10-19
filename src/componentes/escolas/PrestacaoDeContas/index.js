@@ -587,6 +587,7 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
                                                                 toggleBtnEscolheConta(index);
                                                                 handleClickContaPrestacaoDeContas(conta.uuid);
                                                             }}
+                                                            data-qa={`btn-${index}-tabs-contas`}
                                                             className={`nav-link btn-escolhe-acao mr-3 ${clickBtnEscolheConta[index] ? "btn-escolhe-acao-active" : ""}`}
                                                         >
                                                             Conta {conta.nome}
@@ -636,6 +637,7 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
                                             <MsgImgCentralizada
                                                 texto='Não há contas cadastradas para a Associação para o período selecionado. '
                                                 img={Img404}
+                                                dataQa='nao-ha-contas-cadastradas-para-associacao-periodo-selecionado'
                                             />
 
                                         }
@@ -644,6 +646,7 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
                                 <MsgImgCentralizada
                                     texto='Selecione um período acima para visualizar as ações'
                                     img={Img404}
+                                    dataQa='selecione-um-periodo'
                                 />
                             }
                         </>
@@ -663,6 +666,7 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
                                 setShowExibeModalErroConcluirPc(false)
                                 concluirPeriodo()
                             } : null }
+                            dataQa="modal-notificar-erro-concluir-PC"
                         />
                     </section>
                     <section>
@@ -675,6 +679,7 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
                             o cadastro e a edição de qualquer crédito ou despesa nesse período.
                             Para conferir as informações cadastradas, sem bloqueio do sistema nesse período, gere um documento prévio.
                             Você confirma a conclusão dessa Prestação de Contas?</p>"
+                            dataQa="modal-conluir-periodo"
                         />
                     </section>
                     <section>
@@ -683,6 +688,7 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
                             handleClose={onHandleCloseModalConcluirPeriodoComPendencias}
                             onIrParaAnaliseDre={onIrParaAnaliseDre}
                             show={showConcluirAcertoComPendencia}
+                            dataQa="modal-concluir-acertos-com-pendencias"
                         />
                     </section>
                     <section>
@@ -695,6 +701,7 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
                             o cadastro e a edição de qualquer crédito ou despesa nesse período.
                             Para conferir as informações cadastradas, sem bloqueio do sistema nesse período, gere um documento prévio.
                             Você confirma a conclusão do acerto da Prestação de Contas?</p>"
+                            dataQa="modal-concluir-acertos-sem-pendencias"
                         />
                     </section>
                     <section>
@@ -706,7 +713,8 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
                             size='md'                          
                             primeiroBotaoTexto="Fechar"
                             primeiroBotaoCss="outline-success"         
-                            handleClose={handleCloseModalPendenciasCadastrais}                   
+                            handleClose={handleCloseModalPendenciasCadastrais}   
+                            dataQa="modal-pendencias-cadastrais"                
                         />
                     </section>
                 </>

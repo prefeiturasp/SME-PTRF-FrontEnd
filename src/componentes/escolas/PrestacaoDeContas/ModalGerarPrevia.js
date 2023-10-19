@@ -24,6 +24,7 @@ export const ModalPrevia = (propriedades) => {
                                 id="data_inicio"
                                 value={propriedades.data_inicio !== null ? propriedades.data_inicio : ""}
                                 disabled
+                                data-qa={propriedades.dataQa ? `input-data-inicio-${propriedades.dataQa}` : ""}
                             />
                         </div>
                         <div className="col-6">
@@ -33,8 +34,9 @@ export const ModalPrevia = (propriedades) => {
                                 id="data_fim"
                                 value={propriedades.data_fim !== null ? propriedades.data_fim : ""}
                                 onChange={propriedades.handleChange}
+                                data-qa={propriedades.dataQa ? `input-data-fim-${propriedades.dataQa}` : ""}
                             />
-                            {propriedades.mensagemErro !== "" && <span className="span_erro text-danger mt-1"> {propriedades.mensagemErro}</span>}
+                            {propriedades.mensagemErro !== "" && <span className="span_erro text-danger mt-1" data-qa='mensagem-erro-modal-previa'> {propriedades.mensagemErro}</span>}
                         </div>
                     </div>
                 </Modal.Body>
@@ -43,6 +45,7 @@ export const ModalPrevia = (propriedades) => {
                     onClick={(e) => propriedades.onHide()}
                     className="btn btn-outline-success mt-2"
                     type="button"
+                    data-qa={propriedades.dataQa ? `btn-cancelar-${propriedades.dataQa}` : ""}
                 >
                 Cancelar
                 </button>
@@ -50,6 +53,7 @@ export const ModalPrevia = (propriedades) => {
                     onClick={(e) => propriedades.primeiroBotaoOnclick()}
                     type="submit"
                     className="btn btn-success mt-2"
+                    data-qa={propriedades.dataQa ? `btn-gerar-previa-${propriedades.dataQa}` : ""}
                 >
                 Gerar Prévia
                 </button>
