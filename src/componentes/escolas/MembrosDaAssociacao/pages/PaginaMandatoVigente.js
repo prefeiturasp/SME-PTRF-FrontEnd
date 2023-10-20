@@ -9,12 +9,19 @@ import {ComposicaoInfo} from "../components/ComposicaoInfo";
 
 export const PaginaMandatoVigente = () => {
 
-    const {isLoading, data, isError} = useGetMandatoVigente()
-    const {setComposicaoUuid, composicaoUuid, currentPage} = useContext(MembrosDaAssociacaoContext)
+    const {setComposicaoUuid, composicaoUuid, currentPage, reiniciaEstadosControleComposicoes} = useContext(MembrosDaAssociacaoContext)
 
+    // Reinicia os estados de controle
+    useEffect(() => {
+        reiniciaEstadosControleComposicoes()
+    }, [reiniciaEstadosControleComposicoes]);
+
+    const {isLoading, data, isError, count} = useGetMandatoVigente()
+
+    // Controla a exibição das Composições do componente ComposicaoInfo
     useEffect(() => {
         let indice = currentPage-1
-        if (data && data.composicoes && data.composicoes.length > 0) {
+        if (data && data.composicoes && data.composicoes.length > 0 && data.composicoes.length >= currentPage) {
             let composicao_uuid = data.composicoes[indice].uuid
             setComposicaoUuid(composicao_uuid)
         }
@@ -45,9 +52,13 @@ export const PaginaMandatoVigente = () => {
                     <ComposicaoInfo/>
                 }
             </div>
-            <Paginacao/>
+            <Paginacao
+                count={count}
+            />
             {composicaoUuid &&
-                <CargosDaComposicaoList/>
+                <CargosDaComposicaoList
+                    escopo='mandato-vigente'
+                />
             }
         </>
     )

@@ -77,19 +77,6 @@ export const CancelarModalAssociacao = (propriedades) => {
     )
 };
 
-export const SalvarReceita = (propriedades) => {
-    return (
-        <ModalBootstrap
-            show={propriedades.show}
-            onHide={propriedades.handleClose}
-            titulo="Salvar cadastro de crédito."
-            bodyText="<p>Crédito salvo com sucesso!</p>"
-            primeiroBotaoOnclick={propriedades.handleClose}
-            primeiroBotaoTexto="Fechar"
-        />
-    )
-};
-
 export const AvisoTipoReceita = (propriedades) => {
     return (
         <ModalBootstrap

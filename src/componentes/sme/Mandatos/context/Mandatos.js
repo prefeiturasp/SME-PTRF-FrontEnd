@@ -7,6 +7,8 @@ const initialStateFormModal = {
     referencia: '',
     data_inicial: '',
     data_final: '',
+    editavel: false,
+    data_inicial_proximo_mandato: null,
     uuid:"",
     id:"",
 };
@@ -29,7 +31,7 @@ export const MandatosContext = createContext({
     setTituloModalInfo: () => {},
     textoModalInfo: '',
     setTextoModalInfo: () => {},
-    bloquearBtnSalvarForm: '',
+    bloquearBtnSalvarForm: false,
     setBloquearBtnSalvarForm: () => {},
 })
 

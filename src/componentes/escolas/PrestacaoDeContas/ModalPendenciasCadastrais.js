@@ -16,6 +16,7 @@ export const ModalPendenciasCadastrais = (props) =>{
             segundoBotaoCss={props.segundoBotaoCss}
             segundoBotaoTexto={props.segundoBotaoTexto}
             bodyActions={props.bodyActions}
+            dataQa={props.dataQa}
         />
     )
 };

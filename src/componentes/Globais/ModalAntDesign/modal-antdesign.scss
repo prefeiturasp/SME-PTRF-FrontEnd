@@ -18,20 +18,28 @@
             border-radius: 3px;
         }
     }
-}
 
-.modal-ant-design{
     .title-modal-antdesign-aviso{
         font-weight: 700;
-        font-size: 24px;
+        font-size: 20px;
         line-height: 28px;
         color: #42474A;
     }
 
     .text-modal-antdesign-aviso{
         font-weight: 400;
-        font-size: 18px;
+        font-size: 16px;
         line-height: 24px;
         color: #B40C02;
     }
+
+    .observacao-modal{
+        background-color: #F4F4F4;
+    }
+
+    .title-observacao-modal-antdesign-aviso {
+        font-weight: 700;
+        font-size: 14px;
+    }
 }
+
