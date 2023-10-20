@@ -1,5 +1,5 @@
 import React from 'react';
-import { ModalBootstrap } from '../../ModalBootstrap';
+import { ModalRemovelAcessoUsuario } from '../../ModalAntDesign/modalRemoverAcessoUsuario';
 
 export const ModalConfirmacaoRemoverAcesso = ({
   visao,
@@ -8,25 +8,36 @@ export const ModalConfirmacaoRemoverAcesso = ({
   botaoConfirmarHandle,
 }) => {
   const mensagens = {
-    UE: '<p>Tem certeza que deseja remover o acesso deste usuário nessa unidade?</p>',
-    DRE: '<p>Tem certeza que deseja remover o acesso deste usuário nesta DRE e em suas unidades, se houver?</p><p>Observação: Para remover o acesso a apenas uma de suas unidades, basta desabilitá-lo na referida unidade.</p>',
-    SME: '<p>Tem certeza que deseja remover o acesso deste usuário em todas as unidades?</p><p>Observação: Para remover o acesso a apenas uma de suas unidades, basta desabilitá-lo na referida unidade.</p>'
+    UE: 'Tem certeza que deseja remover o acesso deste usuário nessa unidade?',
+    DRE: 'Tem certeza que deseja remover o acesso deste usuário nesta DRE e em suas unidades, se houver?',
+    SME: 'Tem certeza que deseja remover o acesso deste usuário em todas as unidades?'
   };
 
-  const mensagem = mensagens[visao] || '<p>Mensagem não disponível para a visão selecionada.</p>';
+  const observacoes = {
+    UE: '',
+    DRE: 'Para remover o acesso a apenas uma de suas unidades, basta desabilitá-lo na referida unidade.',
+    SME: 'Para remover o acesso a apenas uma de suas unidades, basta desabilitá-lo na referida unidade.'
+  }
+
+  const mensagem = mensagens[visao] || 'Mensagem não disponível para a visão selecionada.';
+
+  const observacao = observacoes[visao] || ''
+
 
   return (
-    <ModalBootstrap
-      show={show}
+    <ModalRemovelAcessoUsuario
+      handleShow={show}
       onHide={botaoCancelarHandle}
       titulo="Remover acesso"
       bodyText={mensagem}
-      primeiroBotaoTexto="Cancelar"
+      cancelText="Cancelar"
       primeiroBotaoCss="outline-success"
-      primeiroBotaoOnclick={botaoCancelarHandle}
-      segundoBotaoTexto="Remover acesso"
+      handleCancel={botaoCancelarHandle}
+      okText="Remover acesso"
       segundoBotaoCss="danger"
-      segundoBotaoOnclick={botaoConfirmarHandle}
+      handleOk={botaoConfirmarHandle}
+      okButton={true}
+      observacao={observacao}
     />
   );
 };

@@ -23,11 +23,17 @@ export const ModalConcluirAcertoComPendencias = (props) => {
                                 onClick={props.onIrParaAnaliseDre}
                                 type="button"
                                 className="btn btn-success mt-2 mr-2"
+                                data-qa={props.dataQa ? `btn-ir-para-analise-dre-${props.dataQa}` : ""}
                             >
                                 Ir para Análise DRE
                             </button>
-                            <button onClick={props.handleClose} type="reset"
-                                    className="btn btn btn-danger mt-2 mr-2">Fechar
+                            <button 
+                                onClick={props.handleClose} 
+                                type="reset"
+                                className="btn btn btn-danger mt-2 mr-2"
+                                data-qa={props.dataQa ? `btn-fechar-${props.dataQa}` : ""}
+                            >
+                                Fechar
                             </button>
                         </div>
                     </div>

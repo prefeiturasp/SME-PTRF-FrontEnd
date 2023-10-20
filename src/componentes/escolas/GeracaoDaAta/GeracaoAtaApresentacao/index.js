@@ -75,10 +75,8 @@ export const GeracaoAtaApresentacao = (
                 <div className="col-12">
                     <div className="row mt-3 container-box-prestacao-de-contas-por-periodo pt-4 pb-4">
                         <div className="col-12 col-md-8">
-                            <p className='fonte-14 mb-1'><strong>{textoBoxAtaApresentacao}</strong></p>
-                            <p
-                                className={`fonte-12 mb-1 status-data-${corBoxAtaApresentacao}`}
-                            >
+                            <p className='fonte-14 mb-1' data-qa='titulo-box-geracao-ata'><strong>{textoBoxAtaApresentacao}</strong></p>
+                            <p className={`fonte-12 mb-1 status-data-${corBoxAtaApresentacao}`} data-qa='status-box-geracao-ata'>
                                 {dataBoxAtaApresentacao}
 
                                 {dadosAta && dadosAta.status_geracao_pdf && dadosAta.status_geracao_pdf === "EM_PROCESSAMENTO" ? (
@@ -87,6 +85,7 @@ export const GeracaoAtaApresentacao = (
                                     <button className='btn-editar-membro'
                                             type='button'
                                             onClick={download_ata_pdf}
+                                            data-qa='btn-baixar-ata-pdf'
                                     >
                                         <FontAwesomeIcon
                                             style={{fontSize: '18px'}}
@@ -106,10 +105,19 @@ export const GeracaoAtaApresentacao = (
                             texto={textoModalAta}
                             primeiroBotaoTexto="Fechar"
                             primeiroBotaoCss="outline-success"
+                            dataQa="modal-nao-pode-gerar-ata-campos-incompletos"
                         />
                         </section>
                         <div className="col-12 col-md-4 align-self-center">
-                            <button onClick={()=>onClickVisualizarAta()}  type="button" className="btn btn-success float-right">{uuidPrestacaoConta ? "Visualizar ata" : "Visualizar prévia da ata"}</button>
+                            <button 
+                                onClick={()=>onClickVisualizarAta()}
+                                type="button" 
+                                className="btn btn-success float-right"
+                                data-qa="btn-visualizar-ata"
+                            >
+                                {uuidPrestacaoConta ? "Visualizar ata" : "Visualizar prévia da ata"}
+                            </button>
+
                             {uuidPrestacaoConta && 
                             <button
                                 onClick={() => gerarAta()}
@@ -117,6 +125,7 @@ export const GeracaoAtaApresentacao = (
                                 className="btn btn-outline-success float-right mr-2"
                                 disabled={!docPrestacaoConta?.gerar_ou_editar_ata_apresentacao}
                                 title={!(docPrestacaoConta?.gerar_ou_editar_ata_apresentacao) ? 'A ata de apresentação só pode ser gerada enquanto o status da PC for "Não recebida".': ''}
+                                data-qa="btn-gerar-ata"
                             >
                                 gerar ata
                             </button>

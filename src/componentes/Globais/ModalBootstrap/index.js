@@ -67,7 +67,8 @@ export const ModalBootstrapAcoesExtras = (propriedades) => {
                 }
                 size={
                     propriedades.size
-            }>
+                }
+                >
                 <Modal.Header>
                     <Modal.Title>{
                         propriedades.titulo
@@ -95,26 +96,22 @@ export const ModalBootstrapAcoesExtras = (propriedades) => {
                     ) : null }
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant={
-                            propriedades.primeiroBotaoCss ? propriedades.primeiroBotaoCss : "primary"
-                        }
-                        onClick={
-                            propriedades.primeiroBotaoOnclick
-                    }>
-                        {
-                        propriedades.primeiroBotaoTexto
-                    } </Button>
+                    <Button 
+                        variant={propriedades.primeiroBotaoCss ? propriedades.primeiroBotaoCss : "primary"}
+                        onClick={propriedades.primeiroBotaoOnclick}
+                        data-qa={propriedades && propriedades.dataQa ? `btn-${propriedades.primeiroBotaoTexto}-${propriedades.dataQa}` : ""}
+                    >
+                        {propriedades.primeiroBotaoTexto} 
+                    </Button>
                     {
                     propriedades.segundoBotaoOnclick && propriedades.segundoBotaoTexto ? (
-                        <Button variant={
-                                propriedades.segundoBotaoCss ? propriedades.segundoBotaoCss : "primary"
-                            }
-                            onClick={
-                                propriedades.segundoBotaoOnclick
-                        }>
-                            {
-                            propriedades.segundoBotaoTexto
-                        } </Button>
+                        <Button 
+                            variant={propriedades.segundoBotaoCss ? propriedades.segundoBotaoCss : "primary"}
+                            onClick={propriedades.segundoBotaoOnclick}
+                            data-qa={propriedades && propriedades.dataQa ? `btn-${propriedades.segundoBotaoTexto}-${propriedades.dataQa}` : ""}
+                        >
+                            {propriedades.segundoBotaoTexto} 
+                        </Button>
                     ) : null
                 } </Modal.Footer>
             </Modal>
