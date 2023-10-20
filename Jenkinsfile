@@ -82,13 +82,22 @@ pipeline {
             }
         }
 
-        stage('Ambientes'){
+        stage('Deploy Treino'){
           when { anyOf {  branch 'master'; branch 'main' } }
           steps {
             withCredentials([file(credentialsId: "${kubeconfig}", variable: 'config')]){
               sh('cp $config '+"$home"+'/.kube/config')
               sh 'kubectl rollout restart deployment/treinamento-frontend -n sigescola-treinamento'
-              sh 'kubectl rollout restart deployment/treinamento-frontend -n sigescola-treinamento2'
+              sh('if [ -f '+"$home"+'/.kube/config ]; then rm -f '+"$home"+'/.kube/config; fi')
+            }
+          }
+        }
+        stage('Deploy QA'){
+          when { anyOf {  branch 'homolog' } }
+          steps {
+            withCredentials([file(credentialsId: "${kubeconfig}", variable: 'config')]){
+              sh('cp $config '+"$home"+'/.kube/config')
+              sh 'kubectl rollout restart deployment/qa-frontend -n sme-ptrf-qa'
               sh('if [ -f '+"$home"+'/.kube/config ]; then rm -f '+"$home"+'/.kube/config; fi')
             }
           }
