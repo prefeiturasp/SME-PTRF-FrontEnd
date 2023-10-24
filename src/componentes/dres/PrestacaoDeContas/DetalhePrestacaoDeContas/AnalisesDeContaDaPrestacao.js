@@ -361,7 +361,7 @@ export const AnalisesDeContaDaPrestacao = ({infoAta, analisesDeContaDaPrestacao,
                                     {analisesDeContaDaPrestacao[index].solicitar_envio_do_comprovante_do_saldo_da_conta &&
                                         <div className="row container-extrato-bancario ml-0 mr-0">
                                             <div className="col-12 mt-2 pb-2">
-                                                <span><strong>Obervação</strong></span>
+                                                <span><strong>Observação</strong></span>
 
                                                 <textarea
                                                     value={analisesDeContaDaPrestacao[index].observacao_solicitar_envio_do_comprovante_do_saldo_da_conta}
