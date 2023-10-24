@@ -413,8 +413,8 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
                 }
 
             }
-            setLoading(false);
         }
+        setLoading(false);
 
     };
 
