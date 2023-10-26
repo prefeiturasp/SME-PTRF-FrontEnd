@@ -34,6 +34,21 @@ export const CardSaldoEncerramentoConta = ({
         }
     }, [conta]);
 
+    const exibeCamposDeEncerramento = () => {
+        if(!conta.tipo_conta.permite_inativacao){
+            return false;
+        }
+
+        if(conta.saldo_atual_conta === 0){
+            return true;
+        }
+        else if(conta.solicitacao_encerramento !== null){
+            return true;
+        }
+        
+        return false;
+    }
+
     return (
         <div className="card h-100">
             <div className="card-body">
@@ -46,7 +61,8 @@ export const CardSaldoEncerramentoConta = ({
                             <span className="saldo-recursos-conta">R$ {conta.saldo_atual_conta ? conta.saldo_atual_conta.toLocaleString("pt-BR") : 0}</span>
                         </div>
                     </div>
-                    {conta.saldo_atual_conta === 0 && conta.tipo_conta.permite_inativacao &&
+
+                    {exibeCamposDeEncerramento() &&
                         <>
                             <div className="col-3">
                                 <div className="form-group">
