@@ -11,7 +11,7 @@ import { setStatusCadastro, resetStatusCadastro } from "../../../../store/reduce
 import { toastCustom } from "../../../Globais/ToastCustom";
 import { ModalConfirmEncerramentoConta } from "./FormDadosDasContas/ModalConfirmEncerramentoConta";
 import { ModalCancelarSolicitacaoEncerramentoConta } from "./FormDadosDasContas/ModalCancelarSolicitacaoEncerramentoConta";
-import { formataDataParaPadraoYYYYMMDD } from "../../../../utils/FormataData";
+import { formataData } from "../../../../utils/FormataData";
 import { ModalMotivoRejeicaoEncerramento } from "./FormDadosDasContas/ModalMotivoRejeicaoEncerramento";
 import { TabelaContasEncerradas } from "./TabelaContasEncerradas";
 
@@ -236,8 +236,7 @@ export const DadosDasContas = () => {
 
         let errosFiltrados = errosDataEncerramentoConta.filter((erro) => erro.index !== index);
         setErrosDataEncerramentoConta(errosFiltrados);
-
-        const dataFormatada = formataDataParaPadraoYYYYMMDD(data)
+        const dataFormatada = formataData(data, 'YYYY-MM-DD')
 
         const modalData = {
             "show": true,
