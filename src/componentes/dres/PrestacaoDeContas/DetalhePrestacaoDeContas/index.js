@@ -33,7 +33,7 @@ import {toastCustom} from "../../../Globais/ToastCustom";
 import {ModalAntDesignAviso} from "../../../Globais/ModalAntDesign/modalAviso"
 import {ModalNaoPodeVoltarParaAnalise} from "../ModalNaoPodeVoltarParaAnalise";
 import { getPeriodoPorUuid } from "../../../../services/sme/Parametrizacoes.service";
-
+import IconeAvisoVermelho from "../../../../assets/img/icone-modal-aviso-vermelho.svg"
 
 require("ordinal-pt-br");
 
@@ -1300,11 +1300,13 @@ export const DetalhePrestacaoDeContas = () =>{
                 </section>
                 <section>
                     <ModalAntDesignAviso
-                        handleShow={showModalBloqueioConclusaoContaEncerradaNaoZerada}
+                        open={showModalBloqueioConclusaoContaEncerradaNaoZerada}
                         titulo={"Conclusão de análise não permitida"}
                         bodyText={tiposContasEncerradasComSaldo.length > 1 ? `A análise não pode ser concluída pois as contas ${tiposContasEncerradasComSaldo} foram encerradas e os saldos foram alterados. Favor solicitar os acertos necessários para que as contas sejam zeradas.`:`A análise não pode ser concluída pois a conta ${tiposContasEncerradasComSaldo} foi encerrada e o saldo foi alterado. Favor solicitar os acertos necessários para que a conta seja zerada.`}
                         handleCancel={onHandleClose}
                         cancelText="Fechar"
+                        wrapClassName={"modal-conclusao-analise-nao-permitida"}
+                        icone={IconeAvisoVermelho}
                     />
                 </section>
                 {redirectListaPc &&
