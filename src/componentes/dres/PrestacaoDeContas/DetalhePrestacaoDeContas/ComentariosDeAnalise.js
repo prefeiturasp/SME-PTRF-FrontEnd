@@ -229,8 +229,9 @@ const ComentariosDeAnalise = ({prestacaoDeContas="", associacaoUuid="", periodoU
 
     const SortableItem = SortableElement(({comentario}) =>
         <li className="d-flex bd-highlight border mt-2">
-            <div className="p-2 flex-grow-1 bd-highlight container-item-comentario">
+            <div data-qa={`comentario-${comentario.index}`} className="p-2 flex-grow-1 bd-highlight container-item-comentario">
                 <input
+                    data-qa={`checkbox-comentario-${comentario.index}`}
                     type='checkbox'
                     onChange={(event)=>handleChangeCheckboxNotificarComentarios(event, comentario.uuid)}
                     checked={verificaSeChecado(comentario.uuid)}
@@ -241,6 +242,7 @@ const ComentariosDeAnalise = ({prestacaoDeContas="", associacaoUuid="", periodoU
             </div>
             <div className="p-2 bd-highlight" >
                 <button
+                    data-qa={`botao-editar-comentario-${comentario.index}`}
                     onClick={()=>setComentarioParaEdicao(comentario)}
                     type='button'
                     className={!editavel ? "btn-editar-comentario-disabled ml-2" : "btn-cancelar-comentario ml-2"}
@@ -255,9 +257,12 @@ const ComentariosDeAnalise = ({prestacaoDeContas="", associacaoUuid="", periodoU
         return (
             <>
                 <ul className='p-0'>
-                    {comentarios && comentarios.length > 0 && comentarios.map((comentario, index) => (
-                        <SortableItem comentario={comentario} key={`item-${index}`} index={index} disabled={!editavel} />
-                    ))}
+                    {comentarios && comentarios.length > 0 && comentarios.map((comentario, index) => 
+                        {   
+                            comentario.index = index
+                            return (<SortableItem comentario={comentario} key={`item-${index}`} index={index} disabled={!editavel} />)
+                        }
+                    )}
                 </ul>
             </>
         );
@@ -296,6 +301,7 @@ const ComentariosDeAnalise = ({prestacaoDeContas="", associacaoUuid="", periodoU
 
                                                             <div className="col mt-4 mb-4">
                                                                 <input
+                                                                    data-qa="input-escrever-novo-comentario"
                                                                     value={comentario.comentario}
                                                                     name={`comentarios[${index}].comentario`}
                                                                     id="comentario"
@@ -316,6 +322,7 @@ const ComentariosDeAnalise = ({prestacaoDeContas="", associacaoUuid="", periodoU
                                                                 <div
                                                                     className="col-1 mt-4 d-flex justify-content-center">
                                                                     <button
+                                                                        data-qa="botao-cancelar-novo-comentario"
                                                                         className="btn-cancelar-comentario pt-0"
                                                                         onClick={() => {
                                                                             remove(index);
@@ -340,6 +347,7 @@ const ComentariosDeAnalise = ({prestacaoDeContas="", associacaoUuid="", periodoU
 
                                                 {toggleExibeBtnAddComentario ? (
                                                         <button
+                                                            data-qa="botao-adicionar-novo-comentario"
                                                             type="button"
                                                             className="btn btn btn-success mt-2 mr-2"
                                                             onClick={() => {
@@ -355,6 +363,7 @@ const ComentariosDeAnalise = ({prestacaoDeContas="", associacaoUuid="", periodoU
                                                         </button>
                                                 ) :
                                                     <button
+                                                        data-qa="botao-confirmar-novo-comentario"
                                                         type="button"
                                                         onClick={()=>onSubmit(values)}
                                                         className="btn btn btn-success mt-2 mr-2"
@@ -365,6 +374,7 @@ const ComentariosDeAnalise = ({prestacaoDeContas="", associacaoUuid="", periodoU
                                                 }
 
                                                 <button
+                                                    data-qa="botao-notificar-associacao"
                                                     className="btn btn btn-outline-success mt-2 mr-2"
                                                     type="button"
                                                     disabled={comentarioChecked.length <=0 || !editavel}
