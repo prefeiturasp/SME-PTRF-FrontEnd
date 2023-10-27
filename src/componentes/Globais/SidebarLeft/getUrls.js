@@ -82,6 +82,7 @@ const UrlsMenuDres ={
         },
         {label: "Fornecedores", url: "parametro-fornecedores", dataFor:"parametro_fornecedores", icone:IconeMenuFornecedores, permissoes: ['access_fornecedores'],},
         {label: "Suporte às Unidades", url: "suporte-unidades-dre", dataFor:"suporte_unidades_dre", icone:IconeMenuSuporteUnidades, permissoes: ['access_suporte_unidades_dre'],},
+        {label: "Extração de dados", url: "extracoes-dados", dataFor:"extracao_de_dados", icone:IconeMenuExtracaoDados, permissoes: ['access_extracao_de_dados_dre'],},
         {label: "Gestão de perfis", url: "gestao-de-perfis", dataFor:"gestao_de_perfis", icone:IconeGestaoDePerfis, permissoes: ['access_gestao_perfis_dre'],},
         {label: "Gestão de usuários", url: "gestao-de-usuarios-list", dataFor:"gestao_de_usuarios", icone:IconeGestaoDePerfis, permissoes: ['access_gestao_usuarios_dre'],},
     ]

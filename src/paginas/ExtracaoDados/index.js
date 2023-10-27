@@ -1,7 +1,6 @@
 import React from "react";
-import {PaginasContainer} from "../../PaginasContainer";
-import {ExtracaoDados} from "../../../componentes/sme/ExtracaoDados";
-
+import {PaginasContainer} from "../PaginasContainer";
+import {ExtracaoDados} from "../../componentes/Globais/ExtracaoDados";
 
 export const ExtracaoDadosPage = () =>{
     return (
