@@ -56,7 +56,7 @@ export const DetalhePrestacaoDeContasNaoApresentada = () =>{
 
     return(
         <PaginasContainer>
-            <h1 className="titulo-itens-painel mt-5">Acompanhamento das Prestações de Contas</h1>
+            <h1 data-qa="titulo-acompanhamento-pcs" className="titulo-itens-painel mt-5">Acompanhamento das Prestações de Contas</h1>
             <div className="page-content-inner">
                     <>
                         {prestacaoDeContas &&

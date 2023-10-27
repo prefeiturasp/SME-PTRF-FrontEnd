@@ -321,7 +321,7 @@ export const  InfosContas = ({dadosDaAssociacao}) =>{
                             titulo="Rejeitar encerramento da conta"
                             primeiroBotaoTexto="Cancelar"
                             primeiroBotaoCss="btn btn-base-verde-outline"
-                            segundoBotaoTexto="Confirmar encerramento"
+                            segundoBotaoTexto="Confirmar rejeição"
                             segundoBotaoCss="btn btn-base-vermelho"
                         />
                     </section>

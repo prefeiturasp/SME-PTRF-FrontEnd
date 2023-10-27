@@ -1,23 +1,31 @@
 import React from "react";
 import { Modal } from 'antd';
 import "./modal-antdesign.scss"
-import IconeAvisoVermelho from "../../../assets/img/icone-modal-aviso-vermelho.svg"
-
 
 export const ModalAntDesignAviso = (propriedades) => {
+
+    const okButtonProps = propriedades.okButton ? { className: "btn-base-vermelho"} : { style: { display: 'none' } }
+
+    const cancelButtonProps = propriedades.cancelButton ? {className: "btn-base-verde-outline"} : {}
+
+    const wrapClassName = `modal-ant-design ${propriedades.wrapClassName ? propriedades.wrapClassName : ''}` 
+
     return(
         <div className="modal-ant-design">
             <Modal 
-                open={propriedades.handleShow} 
+                open={propriedades.open}
+                onOk={propriedades.handleOk}
+                okText={propriedades.okText}
+                okButtonProps={okButtonProps}
                 onCancel={propriedades.handleCancel}
                 cancelText={propriedades.cancelText}
-                wrapClassName={'modal-ant-design'}
-                okButtonProps={{ style: { display: 'none' } }}
+                cancelButtonProps={cancelButtonProps}
+                wrapClassName={wrapClassName}
             >
                 <div className="row">
                     <div className="col-md-auto col-lg-12">
                         <div className="text-center">
-                            <img src={IconeAvisoVermelho} alt="" className="img-fluid"/>
+                            <img src={propriedades.icone} alt="" className="img-fluid"/>
                         </div>
                     </div>
 
@@ -26,13 +34,11 @@ export const ModalAntDesignAviso = (propriedades) => {
                             <p className="title-modal-antdesign-aviso">{propriedades.titulo}</p>
                         </div>
                         <div className="text-center mt-2">
-                            <p className="text-modal-antdesign-aviso">{propriedades.bodyText}</p>
+                            <p className="body-text-modal-antdesign-aviso">{propriedades.bodyText}</p>
                         </div>
                     </div>
                 </div>
             </Modal>
         </div>
-
-        
     )
 }

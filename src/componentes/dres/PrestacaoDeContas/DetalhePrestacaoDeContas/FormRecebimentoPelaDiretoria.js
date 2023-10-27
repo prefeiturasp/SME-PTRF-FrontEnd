@@ -18,12 +18,13 @@ export const FormRecebimentoPelaDiretoria = ({stateFormRecebimentoPelaDiretoria,
     
     return(
         <>
-            <h4>Recebimento pela Diretoria</h4>
+            <h4 data-qa="recebimento-pela-diretoria">Recebimento pela Diretoria</h4>
             <form method="post">
                 <div className="row mt-3">
                     <div className="col">
                         <label htmlFor="tecnico_atribuido">Técnico responsável</label>
                         <input
+                            data-qa="tecnico-responsavel"
                             value={stateFormRecebimentoPelaDiretoria.tecnico_atribuido ? stateFormRecebimentoPelaDiretoria.tecnico_atribuido : ''}
                             onChange={(e) => handleChangeFormRecebimentoPelaDiretoria(e.target.name, e.target.value)}
                             name='tecnico_atribuido'
@@ -35,6 +36,7 @@ export const FormRecebimentoPelaDiretoria = ({stateFormRecebimentoPelaDiretoria,
                     <div className="col">
                         <label htmlFor="data_recebimento">Data de recebimento</label>
                         <DatePickerField
+                            dataQa="data-de-recebimento"
                             name="data_recebimento"
                             id="data_recebimento"
                             value={stateFormRecebimentoPelaDiretoria.data_recebimento ? stateFormRecebimentoPelaDiretoria.data_recebimento : ''}
@@ -45,6 +47,7 @@ export const FormRecebimentoPelaDiretoria = ({stateFormRecebimentoPelaDiretoria,
                     <div className="col">
                         <label htmlFor="status">Status</label>
                         <select
+                            data-qa="select-status"
                             value={stateFormRecebimentoPelaDiretoria.status}
                             onChange={(e) => handleChangeFormRecebimentoPelaDiretoria(e.target.name, e.target.value)}
                             name="status"
@@ -53,25 +56,25 @@ export const FormRecebimentoPelaDiretoria = ({stateFormRecebimentoPelaDiretoria,
                             disabled={disabledStatus}
                         >
                             {tabelaPrestacoes.status && tabelaPrestacoes.status.length > 0 && tabelaPrestacoes.status.map(item => (
-                                <option key={item.id} value={item.id}>{item.nome}</option>
+                                <option data-qa={`select-status-${item.nome}`} key={item.id} value={item.id}>{item.nome}</option>
                             ))}
                         </select>
                     </div>
                     {exibeMotivo && prestacaoDeContas && ( (prestacaoDeContas[motivo] && prestacaoDeContas[motivo].length > 0) || prestacaoDeContas[outros_motivos])  &&
-                        <div className='col-12 mt-3'>
+                        <div data-qa="bloco-motivos-acompanhamento-pc" className='col-12 mt-3'>
                             <strong><label>Motivo(s)</label></strong>
  
                             {juntaMotivos(prestacaoDeContas[motivo], prestacaoDeContas[outros_motivos]).map((motivo, index) => (
-                                <strong key={index}><p className="lista-motivos mb-0" key={index}>{index+1}. {motivo}</p></strong>
+                                <strong data-qa={`motivo-${index+1}-${motivo}`} key={index}><p className="lista-motivos mb-0" key={index}>{index+1}. {motivo}</p></strong>
                             ))}
                         </div>   
                     }
 
                     {exibeRecomendacoes && prestacaoDeContas && prestacaoDeContas[recomendacoes] &&
-                        <div className='col-12 mt-3'>
+                        <div data-qa="bloco-recomendacoes-acompanhamento-pc" className='col-12 mt-3'>
                             <strong><label>Recomendações</label></strong>
 
-                            <p>{prestacaoDeContas[recomendacoes]}</p>
+                            <p data-qa="recomendacoes-acompanhamento-pc">{prestacaoDeContas[recomendacoes]}</p>
                         </div>  
                     } 
                 </div>
