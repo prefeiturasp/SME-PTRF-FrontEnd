@@ -14,7 +14,7 @@ const ComentariosDeAnaliseNotificados = ({comentariosNotificados}) => {
                         </Fragment>
                     ))
                 ) :
-                <p>Não existem comentários notificados</p>
+                <p data-qa="info-nao-existem-comentarios-notificados">Não existem comentários notificados</p>
             }
         </>
     )
