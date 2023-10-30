@@ -56,3 +56,21 @@
   margin-right: 7px;
   margin-left: 7px;
 }
+
+.tag-acesso-habilitado-sme {
+  display: flex;
+  flex: 1;
+  max-width: 175px;
+  justify-content: center;
+  padding-left: 2px;
+  padding-right: 2px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  border-radius: 5px;
+  margin-bottom: 2px;
+  color: #fff;
+  background-color: #2B7D83;
+  font-size: 12px;
+  line-height: 16px;
+  font-family: 'Roboto';
+}
