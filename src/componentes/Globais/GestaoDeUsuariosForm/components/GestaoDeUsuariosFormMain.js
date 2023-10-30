@@ -22,13 +22,9 @@ export const GestaoDeUsuariosFormMain = () => {
             <BarraTopoForm/>
             <FormUsuario usuario={usuario}/>
 
-            {visaoBase !== 'UE' &&
-                <UnidadesUsuarioProvider>
-                    <UnidadesUsuario usuario={usuario}/>
-                </UnidadesUsuarioProvider>
-            }
-            
-            
+            <UnidadesUsuarioProvider>
+                <UnidadesUsuario usuario={usuario}/>
+            </UnidadesUsuarioProvider>
         </>
     )
 }
