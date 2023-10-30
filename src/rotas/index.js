@@ -91,6 +91,7 @@ import {ExtracaoDadosPage} from '../paginas/ExtracaoDados'
 import TesteDataTableAnt
     from "../componentes/Globais/ExibeAcertosEmLancamentosEDocumentosPorConta/AcertosLancamentos/TesteDataTableAnt";
 import {GestaoDeUsuariosFormPage} from "../componentes/Globais/GestaoDeUsuariosForm";
+import { GestaoDeUsuariosAdicionarUnidadePage } from "../componentes/Globais/GestaoDeUsuariosAdicionarUnidade";
 import {Mandatos} from "../componentes/sme/Mandatos";
 import {MotivosRejeicaoEncerramentoConta} from "../componentes/sme/Parametrizacoes/Estrutura/MotivosRejeicaoEncerramentoConta";
 import {PaginaMandatosAnteriores} from "../componentes/escolas/MembrosDaAssociacao/pages/PaginaMandatosAnteriores";
@@ -365,6 +366,12 @@ const routesConfig = [
         path: "/gestao-de-usuarios-form/:id_usuario?",
         component: GestaoDeUsuariosFormPage,
         permissoes: ['access_gestao_usuarios_ue', 'access_gestao_usuarios_dre', 'access_gestao_usuarios_sme'],
+    },
+    {
+        exact: true,
+        path: "/gestao-de-usuarios-adicionar-unidade/:id_usuario?",
+        component: GestaoDeUsuariosAdicionarUnidadePage,
+        permissoes: ['access_gestao_usuarios_sme'],
     },
     {
         exact: true,

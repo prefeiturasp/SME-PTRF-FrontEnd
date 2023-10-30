@@ -80,10 +80,9 @@ export const removerAcessosUnidadeBase = async (id, uuidUnidadeBase) => {
     return (await api.put(`${URL_USUARIOS}${id}/remover-acessos-unidade-base/${uuidUnidadeBase}/`, {}, authHeader)).data
 };
 
-export const getUnidadesUsuario = async(currentPage, username, visao_base, uuid_unidade) => {
+export const getUnidadesUsuario = async(username, visao_base, uuid_unidade) => {
     const response = await api.get(`${URL_USUARIOS}unidades-do-usuario/`, {
         params: {
-            page: currentPage,
             username: username,
             visao_base: visao_base,
             uuid_unidade: uuid_unidade
@@ -104,6 +103,25 @@ export const patchDesabilitarAcesso = async (payload) => {
     return (await api.patch(`${URL_USUARIOS}desabilitar-acesso/`, {
             ...payload
         },
+        authHeader,
+    ))
+};
+
+export const getUnidadesDisponiveisInclusao = async(username, search, currentPage) => {
+    const response = await api.get(`${URL_USUARIOS}unidades-disponiveis-para-inclusao/`, {
+        params: {
+            page: currentPage,
+            username: username,
+            search: search,
+        }
+    });
+    return response.data;
+}
+
+export const postIncluirUnidade = async (payload) => {
+    return (await api.post(`${URL_USUARIOS}incluir-unidade/`, {
+        ...payload
+    },
         authHeader,
     ))
 };
