@@ -456,6 +456,7 @@ export const ReceitaForm = () => {
             ...values,
             associacao: localStorage.getItem(ASSOCIACAO_UUID),
             detalhe_tipo_receita: values.detalhe_tipo_receita && values.detalhe_tipo_receita.id !== undefined ? values.detalhe_tipo_receita.id : values.detalhe_tipo_receita,
+            origem_analise_lancamento: origemAnaliseLancamento()
         };
 
         if (Object.keys(repasse).length !== 0) {
@@ -476,8 +477,13 @@ export const ReceitaForm = () => {
                 }else {
                     getPath()
                 }
+                setFormDateErrors('')
             }catch (e) {
-                console.log("Erro ao editar receita em atualizaReceita ", e)
+                console.log("Erro ao editar receita em atualizaReceita ", e.response.data)
+                let mensagemErro = e.response && e.response.data && e.response.data.mensagem && Array.isArray(e.response.data.mensagem) ?
+                    e.response.data.mensagem.map((msg) => msg).join(", ") : ''
+                toastCustom.ToastCustomError('Erro ao tentar editar receita.', mensagemErro)
+
             }
         } else {
             // Criar Receita
@@ -885,7 +891,6 @@ export const ReceitaForm = () => {
 
     const filtraContasPelaDataInicial = ({contasNaoFiltradas = [], dataDigitadaFormulario = initialValue.data}) => {
         let contasFiltradasPelaDataInicial = []
-
         if(contasNaoFiltradas && dataDigitadaFormulario) {
             contasFiltradasPelaDataInicial = contasNaoFiltradas.filter((acc) => { 
                 if (acc.data_inicio && moment(acc.data_inicio, 'YYYY-MM-DD').isValid()) {
@@ -907,7 +912,6 @@ export const ReceitaForm = () => {
                 <option key={conta_associacao.uuid} value={conta_associacao.uuid}>{conta_associacao.nome}</option>
             )
         } else if (tabelas.contas_associacao !== undefined && tabelas.contas_associacao.length > 0  && values.tipo_receita) {
-
             const tipoReceita = tabelas.tipos_receita.find(element => element.id === Number(values.tipo_receita));
 
             // Lista dos nomes dos tipos de conta que são aceitos pelo tipo de receita selecionado.
@@ -920,7 +924,7 @@ export const ReceitaForm = () => {
                 }
                 if(item.status === STATUS_CONTA_ASSOCIACAO.ATIVA){
                     return  <option {...defaultProps}>{item.nome}</option>
-                } else if(item.solicitacao_encerramento && item.solicitacao_encerramento.status !== STATUS_SOLICITACAO_ENCERRAMENTO_CONTA_ASSOCIACAO.APROVADA) {
+                } else if(item.solicitacao_encerramento) {
                     let informacaoExtra = item.solicitacao_encerramento ? `- Conta encerrada em ${moment(item.solicitacao_encerramento.data_de_encerramento_na_agencia).format('DD/MM/YYYY')}` : ''
                     return <option {...defaultProps} disabled>{item.nome} {informacaoExtra}</option>
                 }
@@ -928,8 +932,9 @@ export const ReceitaForm = () => {
             
             const contasFiltradasPelaDataInicialEPeloTipo = filtraContasPelaDataInicial({contasNaoFiltradas: tabelas.contas_associacao.filter(conta => (tipos_conta.includes(conta.nome))), dataDigitadaFormulario: values.data})
 
+
             const contasFiltradasExcluindoContasComEncerramentoAprovado = contasFiltradasPelaDataInicialEPeloTipo.filter((elemento) => {
-                return !(elemento.status === STATUS_CONTA_ASSOCIACAO.INATIVA && elemento.solicitacao_encerramento && elemento.solicitacao_encerramento.status === STATUS_SOLICITACAO_ENCERRAMENTO_CONTA_ASSOCIACAO.APROVADA);
+                return !(elemento.status === STATUS_CONTA_ASSOCIACAO.INATIVA && elemento.solicitacao_encerramento );
               })
 
             if(!contasFiltradasExcluindoContasComEncerramentoAprovado.length && moment(values.data, 'YYYY-MM-DD').isValid()) {
