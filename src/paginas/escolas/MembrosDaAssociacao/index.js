@@ -18,7 +18,7 @@ export const MembrosDaAssociacaoPage = () => {
             <TopoComBotoes tituloPagina="Membros"/>
             <div className="page-content-inner">
                 <>
-                    {[['access_membros_da_associacao'], ['change_membros_da_associacao']].some(visoesService.getPermissoes) ? (
+                    {visoesService.featureFlagAtiva('historico-de-membros') && ([['access_membros_da_associacao'], ['change_membros_da_associacao']].some(visoesService.getPermissoes))  ? (
                             <NovoMembrosAssociacao/>
                         ) :
                         <MembrosDaAssociacao/>
