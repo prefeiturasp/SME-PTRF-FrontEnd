@@ -360,18 +360,21 @@ const routesConfig = [
         path: "/gestao-de-usuarios-list",
         component: GestaoDeUsuariosListPage,
         permissoes: ['access_gestao_usuarios_ue', 'access_gestao_usuarios_dre', 'access_gestao_usuarios_sme'],
+        featureFlag: 'gestao-usuarios',
     },
     {
         exact: true,
         path: "/gestao-de-usuarios-form/:id_usuario?",
         component: GestaoDeUsuariosFormPage,
         permissoes: ['access_gestao_usuarios_ue', 'access_gestao_usuarios_dre', 'access_gestao_usuarios_sme'],
+        featureFlag: 'gestao-usuarios',
     },
     {
         exact: true,
         path: "/gestao-de-usuarios-adicionar-unidade/:id_usuario?",
         component: GestaoDeUsuariosAdicionarUnidadePage,
         permissoes: ['access_gestao_usuarios_sme'],
+        featureFlag: 'gestao-usuarios',
     },
     {
         exact: true,
@@ -640,7 +643,7 @@ const PrivateRouter = (
         render={props =>
             authService.isLoggedIn() ? (
 
-                    visoesService.getPermissoes(rest.permissoes) ? (
+                rest.featureFlag && visoesService.getPermissoes(rest.permissoes) ? (
                             <Component {...props} />
                         ) :
                         <Route path="*" component={PaginaSemPermissao}/>
@@ -673,6 +676,7 @@ export const Rotas = () => {
                             path={value.path}
                             component={value.component}
                             permissoes={value.permissoes}
+                            featureFlag={value.featureFlag ? visoesService.featureFlagAtiva(value.featureFlag) : true}
                         />
                     );
                 })}
