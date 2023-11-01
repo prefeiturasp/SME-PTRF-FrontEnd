@@ -60,7 +60,7 @@ export const AnalisesDeContaDaPrestacao = ({infoAta, analisesDeContaDaPrestacao,
         }
 
         if (info){
-            dados.saldo_extrato = info.saldo_extrato ? info.saldo_extrato : '-';
+            dados.saldo_extrato = info.saldo_extrato;
             dados.data_extrato = info.data_extrato ? moment(info.data_extrato).format('DD/MM/YYYY') : '-';
             dados.extrato_bancario = extrato_bancario.length > 0 ? extrato_bancario[0] : null;
         }
