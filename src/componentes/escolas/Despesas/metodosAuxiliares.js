@@ -187,6 +187,10 @@ const setValorRealizado = (setFieldValue, valor) =>{
     setFieldValue("valor_total", trataNumericos(valor))
 };
 
+const limpaTipoDespesaCusteio = (setFieldValue) => {
+    setFieldValue('rateios[0].tipo_custeio', null)
+}
+
 const setaValoresCusteioCapital = (mais_de_um_tipo_de_despesa = null, values, setFieldValue) =>{
     if (mais_de_um_tipo_de_despesa && mais_de_um_tipo_de_despesa === 'nao'){
         setFieldValue('rateios[0].valor_rateio', calculaValorRecursoAcoes(values));
@@ -516,5 +520,6 @@ export const metodosAuxiliares = {
     mostraBotaoDeletar,
     validaConciliacao,
     conciliaRateios,
-    documentoTransacaoObrigatorio
+    documentoTransacaoObrigatorio,
+    limpaTipoDespesaCusteio
 };

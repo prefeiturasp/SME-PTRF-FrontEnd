@@ -6,6 +6,7 @@ import { useHabilitarAcesso } from "../hooks/useHabilitarAcesso";
 import { useDesabilitarAcesso } from "../hooks/useDesabilitarAcesso";
 
 import { GestaoDeUsuariosFormContext } from "../context/GestaoDeUsuariosFormProvider";
+import { UnidadesUsuarioContext } from "../context/UnidadesUsuarioProvider";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import { faExclamationCircle, faCheckCircle } from "@fortawesome/free-solid-svg-icons";
 import { Switch } from 'antd';
@@ -13,10 +14,14 @@ import ReactTooltip from "react-tooltip";
 import Loading from "../../../../utils/Loading";
 import { MsgImgCentralizada } from "../../../Globais/Mensagens/MsgImgCentralizada";
 import Img404 from "../../../../assets/img/img-404.svg"
+import { BarraTopoListagem } from "./BarraTopoListagem";
+import { ModalConfirmacao } from "./ModalConfirmacao";
 
 
 export const UnidadesUsuario = ({usuario}) => {
     const { visaoBase, uuidUnidadeBase, modo } = useContext(GestaoDeUsuariosFormContext)
+    const { showModalRemoverAcesso, setShowModalRemoverAcesso, textoModalRemoverAcesso, payloadRemoveAcessoConcedidoSme, setPayloadRemoveAcessoConcedidoSme,  } = useContext(UnidadesUsuarioContext)
+
     const {isLoading, data} = useUnidadesUsuario(usuario, visaoBase, uuidUnidadeBase);
     const rowsPerPage = 10;
     const {mutationHabilitarAcesso} = useHabilitarAcesso();
@@ -43,6 +48,10 @@ export const UnidadesUsuario = ({usuario}) => {
     }
 
     const disableSwitchTemAcesso = (rowData) => {
+        if(rowData.acesso_concedido_sme){
+            return false;
+        }
+
         if(usuario?.e_servidor && rowData.membro && rowData.unidade_em_exercicio === false){
             return true;
         }
@@ -74,26 +83,42 @@ export const UnidadesUsuario = ({usuario}) => {
         let payload = {
             "username": rowData.username,
             "uuid_unidade": rowData.uuid_unidade,
+            "acesso_concedido_sme": rowData.acesso_concedido_sme
         }
 
-        if(rowData.tem_acesso){
+        if(rowData.acesso_concedido_sme){
+            setPayloadRemoveAcessoConcedidoSme(payload);
+            setShowModalRemoverAcesso(true);
+        }
+        else{
+            acaoSwitchTemAcesso(payload, rowData.tem_acesso);
+        }
+    }
+
+    const acaoSwitchTemAcesso = (payload, tem_acesso=true) => {
+        if(tem_acesso){
             mutationDesabilitarAcesso.mutate({payload: payload});
+            setShowModalRemoverAcesso(false);
         }
         else{
             mutationHabilitarAcesso.mutate({payload: payload});
-        }  
+        }
     }
 
-    const exibeMensagemAviso = () => {
-        if(modo === 'Editar Usuário' && data && data.length > 0){
-            let unidades_sem_acesso = data.filter((item) => (item.tem_acesso === false))
-            
-            if(data.length === unidades_sem_acesso.length){
-                return true;
-            }
-        }
-        return false;
-    }
+    const unidadeEscolarTemplate = (rowData) => {
+        return (
+            <div>
+                <p className="pb-0 mb-0">{rowData.nome_com_tipo}</p>
+
+                {rowData.acesso_concedido_sme &&
+                    <div className={`tag-acesso-habilitado-sme mt-2`} key={rowData.uuid}>
+                        <span key={rowData.uuid}><strong>Acesso habilitado pela SME</strong></span>
+                    </div>
+                }
+                
+            </div>
+        )
+    };
 
     if(visaoBase === 'UE'){
         return
@@ -101,28 +126,7 @@ export const UnidadesUsuario = ({usuario}) => {
 
     return (
         <>
-            <section className="row">
-                <section className="col-12">
-                    <p className="titulo-info-unidades mb-0">Unidades do usuário</p>
-                    <span>Habilite ou desabilite o acesso do usuário às unidades {visaoBase === 'DRE' ? 'desta DRE' : null} </span>
-                </section>
-            </section>
-            
-            {exibeMensagemAviso() &&
-                <section className="row mt-2">
-                    <section className="col-12">
-                            <div className="barra-mensagem-info">
-                                <p className="pt-1 pb-1 mb-0">
-                                    <FontAwesomeIcon
-                                        className="icone-barra-mensagem-info"
-                                        icon={faExclamationCircle}
-                                    />
-                                    Selecione pelo menos uma unidade de acesso para este usuário.
-                                </p>
-                            </div>
-                    </section>
-                </section>
-            }
+            <BarraTopoListagem/>
 
             <section className="row">
                 <section className="col-12">
@@ -154,7 +158,10 @@ export const UnidadesUsuario = ({usuario}) => {
                                 paginatorTemplate="PrevPageLink PageLinks NextPageLink"
                                 autoLayout={true}
                             >
-                                <Column field="nome_com_tipo" header="Nome" />
+                                <Column 
+                                    header="Nome" 
+                                    body={unidadeEscolarTemplate}
+                                />
                                 <Column 
                                     header="Membro"
                                     body={membroTemplate}
@@ -183,6 +190,18 @@ export const UnidadesUsuario = ({usuario}) => {
                     }
                     
                 </section>
+            </section>
+
+            <section>
+                <ModalConfirmacao
+                    show={showModalRemoverAcesso}
+                    titulo="Exclusão de unidade"
+                    texto={textoModalRemoverAcesso}
+                    botaoCancelarTexto="Cancelar"
+                    botaoCancelarHandle={() => setShowModalRemoverAcesso(false)}
+                    botaoConfirmarTexto="Salvar"
+                    botaoConfirmarHandle={() => acaoSwitchTemAcesso(payloadRemoveAcessoConcedidoSme)}
+                />
             </section>
             
         </>

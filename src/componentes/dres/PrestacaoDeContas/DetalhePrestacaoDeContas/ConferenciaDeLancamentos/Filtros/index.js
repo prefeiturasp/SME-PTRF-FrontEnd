@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import moment from "moment";
-import './../../../../../sme/ExtracaoDados/extracao-dados.scss'
+import '../../../../../Globais/ExtracaoDados/extracao-dados.scss';
 import {getTagInformacao} from "../../../../../../services/escolas/Despesas.service";
 import {getTagsConferenciaLancamento} from "../../../../../../services/dres/PrestacaoDeContas.service";
 import {FiltroRecolhido} from "./FiltroRecolhido";
