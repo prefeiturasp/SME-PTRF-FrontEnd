@@ -14,6 +14,11 @@ import { ACOMPANHAMENTO_PC_UNIDADE } from "./mantemEstadoAcompanhamentoDePcUnida
 
 export const DADOS_USUARIO_LOGADO = "DADOS_USUARIO_LOGADO";
 export const DATA_HORA_USUARIO_LOGADO = "DATA_HORA_USUARIO_LOGADO";
+export const VISOES =  {
+    UE: 'UE',
+    DRE: 'DRE',
+    SME: 'SME',
+};
 
 const forcarNovoLogin = ()=>{
     const data_hora_atual = moment().format("YYYY-MM-DD HH:mm:ss");
@@ -349,4 +354,5 @@ export const visoesService = {
     getItemUsuarioLogado,
     getUsuarioLogin,
     featureFlagAtiva,
+    VISOES
 };
