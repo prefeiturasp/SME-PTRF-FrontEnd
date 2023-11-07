@@ -120,8 +120,13 @@ export const SidebarLeft = () => {
                 {/* <SideNav.Nav defaultSelected={urls.dados_iniciais.default_selected}> */}
                 <SideNav.Nav defaultSelected={getPathname()}>
                     {urls && urls.lista_de_urls.length > 0 && urls.lista_de_urls.map((url, index) => {
+                            let featureFlag = true
+                            if(url.featureFlag) {
+                                featureFlag = visoesService.featureFlagAtiva(url.featureFlag)
+                            }
+
                             return (
-                                validaPermissao(url) ? (
+                                featureFlag && validaPermissao(url) ? (
                                     <NavItem
                                         key={index}
                                         navitemClassName={`d-flex align-items-end ${url.subItens && url.subItens.length > 0 ? "sub-menu" : ""}`}

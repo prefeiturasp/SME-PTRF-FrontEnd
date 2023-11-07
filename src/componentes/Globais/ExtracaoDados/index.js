@@ -8,14 +8,20 @@ import {cards} from "./Cards"
 import locale from 'antd/es/date-picker/locale/pt_BR';
 import moment from "moment";
 import './extracao-dados.scss'
+import { visoesService } from '../../../services/visoes.service';
 
-export const ExtracaoDados = () => {
+export const ExtracaoDados = (props) => {
+    const visaoSelecionada = visoesService.getItemUsuarioLogado('visao_selecionada.nome');
+    const dre_uuid = visoesService.getItemUsuarioLogado('unidade_selecionada.uuid');
+    const isSME = visaoSelecionada === visoesService.VISOES.SME;
+
     const [dataInicial, setDataInicial] = useState('')
     const [dataFinal, setDataFinal] = useState('')
 
     async function handleExportaDados(endpoint) {
         try {
-            await getExportaCreditos(endpoint, dataInicial, dataFinal)
+
+            await getExportaCreditos(endpoint, dataInicial, dataFinal, isSME ? '' : dre_uuid)
             toastCustom.ToastCustomSuccess('Geração solicitada com sucesso.', 'A geração foi solicitada. Em breve você receberá um aviso na central de downloads com o resultado.')
         }
         catch (err) {
@@ -53,7 +59,7 @@ export const ExtracaoDados = () => {
                     <b className='extracao-date-msg'>{moment(dataFinal).format('DD/MM/YYYY')}</b>.</span> : <span className='extracao-date'></span>
                 }
             </Space>    
-            { cards.map(( {titulo, descricao, tags, endpoint}, index ) => (
+            { cards.filter(card => card.visao.includes(visaoSelecionada)).map(( {titulo, descricao, tags, endpoint}, index ) => (
                 <ExtracaoCard
                     key={`cards-${index}`} 
                     titulo={titulo}

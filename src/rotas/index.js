@@ -87,10 +87,11 @@ import { ParametrizacoesTiposAcertosDocumentos } from "../componentes/sme/Parame
 import { DevolucaoAoTesouroAjuste } from "../componentes/Globais/DevolucaoAoTesouroAjuste"
 import {AcompanhamentoDeRelatorioConsolidadoSMEDetalhe} from "../componentes/sme/AcompanhamentoRelatoriosConsolidadosSME/AcompanhamentoDeRelatorioConsolidadoSMEDetalhe"
 import {AcompanhamentoDeRelatorioConsolidadoSMEResumoAcertos} from "../componentes/sme/AcompanhamentoRelatoriosConsolidadosSME/AcompanhamentoDeRelatorioConsolidadoSMEResumoAcertos"
-import {ExtracaoDadosPage} from '../paginas/SME/ExtracaoDados'
+import {ExtracaoDadosPage} from '../paginas/ExtracaoDados'
 import TesteDataTableAnt
     from "../componentes/Globais/ExibeAcertosEmLancamentosEDocumentosPorConta/AcertosLancamentos/TesteDataTableAnt";
 import {GestaoDeUsuariosFormPage} from "../componentes/Globais/GestaoDeUsuariosForm";
+import { GestaoDeUsuariosAdicionarUnidadePage } from "../componentes/Globais/GestaoDeUsuariosAdicionarUnidade";
 import {Mandatos} from "../componentes/sme/Mandatos";
 import {MotivosRejeicaoEncerramentoConta} from "../componentes/sme/Parametrizacoes/Estrutura/MotivosRejeicaoEncerramentoConta";
 import {PaginaMandatosAnteriores} from "../componentes/escolas/MembrosDaAssociacao/pages/PaginaMandatosAnteriores";
@@ -359,18 +360,27 @@ const routesConfig = [
         path: "/gestao-de-usuarios-list",
         component: GestaoDeUsuariosListPage,
         permissoes: ['access_gestao_usuarios_ue', 'access_gestao_usuarios_dre', 'access_gestao_usuarios_sme'],
+        featureFlag: 'gestao-usuarios',
     },
     {
         exact: true,
         path: "/gestao-de-usuarios-form/:id_usuario?",
         component: GestaoDeUsuariosFormPage,
         permissoes: ['access_gestao_usuarios_ue', 'access_gestao_usuarios_dre', 'access_gestao_usuarios_sme'],
+        featureFlag: 'gestao-usuarios',
+    },
+    {
+        exact: true,
+        path: "/gestao-de-usuarios-adicionar-unidade/:id_usuario?",
+        component: GestaoDeUsuariosAdicionarUnidadePage,
+        permissoes: ['access_gestao_usuarios_sme'],
+        featureFlag: 'gestao-usuarios',
     },
     {
         exact: true,
         path: "/extracoes-dados",
         component: ExtracaoDadosPage,
-        permissoes: ['access_extracao_de_dados_sme'],
+        permissoes: ['access_gestao_perfis_dre', 'access_extracao_de_dados_sme'],
     },
 
     {
@@ -633,7 +643,7 @@ const PrivateRouter = (
         render={props =>
             authService.isLoggedIn() ? (
 
-                    visoesService.getPermissoes(rest.permissoes) ? (
+                rest.featureFlag && visoesService.getPermissoes(rest.permissoes) ? (
                             <Component {...props} />
                         ) :
                         <Route path="*" component={PaginaSemPermissao}/>
@@ -666,6 +676,7 @@ export const Rotas = () => {
                             path={value.path}
                             component={value.component}
                             permissoes={value.permissoes}
+                            featureFlag={value.featureFlag ? visoesService.featureFlagAtiva(value.featureFlag) : true}
                         />
                     );
                 })}

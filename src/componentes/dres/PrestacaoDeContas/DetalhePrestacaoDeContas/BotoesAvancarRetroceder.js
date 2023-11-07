@@ -13,6 +13,7 @@ export const BotoesAvancarRetroceder = ({prestacaoDeContas, textoBtnAvancar, tex
                         {!esconderBotaoRetroceder &&
                             <>
                             <button
+                                data-qa="botao-retroceder-acompanhamento-pc"
                                 id="btn-retroceder"
                                 onClick={metodoRetroceder}
                                 disabled={disabledBtnRetroceder}
@@ -31,6 +32,7 @@ export const BotoesAvancarRetroceder = ({prestacaoDeContas, textoBtnAvancar, tex
                     {!esconderBotaoAvancar &&
                         <div className="p-2 bd-highlight">
                             <button
+                                data-qa="botao-avancar-acompanhamento-pc"
                                 onClick={metodoAvancar}
                                 disabled={disabledBtnAvancar}
                                 className="btn btn-success ml-2"

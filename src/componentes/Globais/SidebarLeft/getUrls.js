@@ -55,7 +55,7 @@ const UrlsMenuEscolas ={
             ]
         },
         {label: "Gestão de perfis", url: "gestao-de-perfis", dataFor:"gestao_de_perfis", icone:IconeGestaoDePerfis, permissoes: ['access_gestao_perfis_ue'],},
-        {label: "Gestão de usuários", url: "gestao-de-usuarios-list", dataFor:"gestao_de_usuarios", icone:IconeGestaoDePerfis, permissoes: ['access_gestao_usuarios_ue'],},
+        {label: "Gestão de usuários", url: "gestao-de-usuarios-list", dataFor:"gestao_de_usuarios", icone:IconeGestaoDePerfis, permissoes: ['access_gestao_usuarios_ue'], featureFlag: 'gestao-usuarios',},
     ]
 };
 
@@ -82,8 +82,9 @@ const UrlsMenuDres ={
         },
         {label: "Fornecedores", url: "parametro-fornecedores", dataFor:"parametro_fornecedores", icone:IconeMenuFornecedores, permissoes: ['access_fornecedores'],},
         {label: "Suporte às Unidades", url: "suporte-unidades-dre", dataFor:"suporte_unidades_dre", icone:IconeMenuSuporteUnidades, permissoes: ['access_suporte_unidades_dre'],},
+        {label: "Extração de dados", url: "extracoes-dados", dataFor:"extracao_de_dados", icone:IconeMenuExtracaoDados, permissoes: ['access_extracao_de_dados_dre'],},
         {label: "Gestão de perfis", url: "gestao-de-perfis", dataFor:"gestao_de_perfis", icone:IconeGestaoDePerfis, permissoes: ['access_gestao_perfis_dre'],},
-        {label: "Gestão de usuários", url: "gestao-de-usuarios-list", dataFor:"gestao_de_usuarios", icone:IconeGestaoDePerfis, permissoes: ['access_gestao_usuarios_dre'],},
+        {label: "Gestão de usuários", url: "gestao-de-usuarios-list", dataFor:"gestao_de_usuarios", icone:IconeGestaoDePerfis, permissoes: ['access_gestao_usuarios_dre'], featureFlag: 'gestao-usuarios',},
     ]
 };
 
@@ -110,7 +111,7 @@ const UrlsMenuSME ={
         {label: "Suporte às Unidades", url: "suporte-unidades-sme", dataFor:"suporte_unidades_sme", icone:IconeMenuSuporteUnidades, permissoes: ['access_suporte_unidades_sme'],},
         {label: "Extração de dados", url: "extracoes-dados", dataFor:"extracao_de_dados", icone:IconeMenuExtracaoDados, permissoes: ['access_extracao_de_dados_sme'],},
         {label: "Gestão de perfis", url: "gestao-de-perfis", dataFor:"gestao_de_perfis", icone:IconeGestaoDePerfis, permissoes: ['access_gestao_perfis_sme'],},
-        {label: "Gestão de usuários", url: "gestao-de-usuarios-list", dataFor:"gestao_de_usuarios", icone:IconeGestaoDePerfis, permissoes: ['access_gestao_usuarios_sme'],},
+        {label: "Gestão de usuários", url: "gestao-de-usuarios-list", dataFor:"gestao_de_usuarios", icone:IconeGestaoDePerfis, permissoes: ['access_gestao_usuarios_sme'], featureFlag: 'gestao-usuarios',},
     ]
 };
 

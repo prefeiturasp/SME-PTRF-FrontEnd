@@ -14,6 +14,7 @@ export const ModalNotificarComentarios = (props) => {
             segundoBotaoOnclick={props.handleClose}
             segundoBotaoCss={props.segundoBotaoCss}
             segundoBotaoTexto={props.segundoBotaoTexto}
+            dataQa="modal-notificar-comentarios"
         />
     )
 };

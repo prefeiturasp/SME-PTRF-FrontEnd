@@ -77,19 +77,20 @@ const Cabecalho = ({prestacaoDeContas, exibeSalvar, metodoSalvarAnalise, btnSalv
             <>
                 <div className="d-flex bd-highlight mt-3 mb-0 container-cabecalho">
                     <div className="flex-grow-1 bd-highlight">
-                        <p className='titulo-explicativo mb-0'>{prestacaoDeContas.associacao.nome}</p>
+                        <p data-qa="cabecalho-nome-associacao" className='titulo-explicativo mb-0'>{prestacaoDeContas.associacao.nome}</p>
                         {periodoTexto &&
-                            <p className='fonte-16'><strong>Período: {periodoTexto}</strong></p>
+                            <p data-qa="cabecalho-periodo-pc" className='fonte-16'><strong>Período: {periodoTexto}</strong></p>
                         }
                         {publicacaoTexto &&
-                            <p className='fonte-16'><strong>{publicacaoTexto}</strong></p>
+                            <p data-qa="cabecalho-texto-publicacao" className='fonte-16'><strong>{publicacaoTexto}</strong></p>
                         }
                         {retificacaoTexto &&
-                            <p className='fonte-16'><strong>{retificacaoTexto}</strong></p>
+                            <p data-qa="cabecalho-texto-retificacao" className='fonte-16'><strong>{retificacaoTexto}</strong></p>
                         }
                     </div>
                     <div className="p-2 bd-highlight">
                         <Link
+                            data-qa="cabecalho-botao-ir-para-listagem"
                             to={`/dre-lista-prestacao-de-contas/${prestacaoDeContas.periodo_uuid}/${prestacaoDeContas.status}`}
                             className="btn btn-outline-success btn-ir-para-listagem ml-2"
                         >
@@ -103,6 +104,7 @@ const Cabecalho = ({prestacaoDeContas, exibeSalvar, metodoSalvarAnalise, btnSalv
                     {exibeSalvar &&
                         <div className="p-2 bd-highlight">
                             <button
+                                data-qa="cabecalho-botao-salvar"
                                 onClick={metodoSalvarAnalise}
                                 className="btn btn-success"
                                 disabled={btnSalvarDisabled}
@@ -115,19 +117,19 @@ const Cabecalho = ({prestacaoDeContas, exibeSalvar, metodoSalvarAnalise, btnSalv
                 </div>
                 <div className="row">
                     <div className='col-12 col-md-6'>
-                        <p><strong>Código Eol: </strong>{prestacaoDeContas.associacao.unidade.codigo_eol}</p>
+                        <p data-qa="cabecalho-codigo-eol"><strong>Código Eol: </strong>{prestacaoDeContas.associacao.unidade.codigo_eol}</p>
                     </div>
                     <div className='col-12 col-md-6'>
-                        <p><strong>Presidente da APM: </strong> {prestacaoDeContas.associacao.presidente_associacao.nome}</p>
+                        <p data-qa="cabecalho-presidente-apm"><strong>Presidente da APM: </strong> {prestacaoDeContas.associacao.presidente_associacao.nome}</p>
                     </div>
                     <div className='col-12 col-md-6'>
-                        <p><strong>Número do CNPJ: </strong> {prestacaoDeContas.associacao.cnpj}</p>
+                        <p data-qa="cabecalho-numero-cnpj"><strong>Número do CNPJ: </strong> {prestacaoDeContas.associacao.cnpj}</p>
                     </div>
                     <div className='col-12 col-md-6'>
-                        <p><strong>Presidente do Conselho Fiscal: </strong> {prestacaoDeContas.associacao.presidente_conselho_fiscal.nome}</p>
+                        <p data-qa="cabecalho-presidente-conselho-fiscal"><strong>Presidente do Conselho Fiscal: </strong> {prestacaoDeContas.associacao.presidente_conselho_fiscal.nome}</p>
                     </div>
 
-                    {verificaStatusPc() && prestacaoDeContas?.em_retificacao && !prestacaoDeContas?.publicada && visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'DRE' ? <div className="tag-justificativa"
+                    {verificaStatusPc() && prestacaoDeContas?.em_retificacao && !prestacaoDeContas?.publicada && visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'DRE' ? <div data-qa="cabecalho-tag-em-retificacao" className="tag-justificativa"
                         style={{ backgroundColor: '#D06D12', marginLeft: '15px' }}
                     >
                         Em retificação
