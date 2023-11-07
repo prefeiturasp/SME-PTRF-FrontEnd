@@ -14,6 +14,7 @@ export const ModalDeleteComentario = (props) => {
             segundoBotaoOnclick={props.onDeleteComentarioTrue}
             segundoBotaoCss={props.segundoBotaoCss}
             segundoBotaoTexto={props.segundoBotaoTexto}
+            dataQa="modal-excluir-comentario"
         />
     )
 };

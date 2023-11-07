@@ -8,6 +8,7 @@ export const ModalEditarDeletarComentario = (props) => {
 
                     <div className="col-12 mt-2">
                         <textarea
+                            data-qa="textarea-edicao-comentario"
                             name='resalvas'
                             value={props.comentario.comentario}
                             onChange={(e) => props.onChangeComentario(e.target.value, props.comentario)}
@@ -17,13 +18,13 @@ export const ModalEditarDeletarComentario = (props) => {
                 </div>
                 <div className="d-flex bd-highlight mt-2">
                     <div className="p-Y flex-grow-1 bd-highlight">
-                        <button onClick={()=>props.setShowModalDeleteComentario(true)} type="button" className="btn btn-danger mt-2"> Apagar</button>
+                        <button data-qa="botao-apagar-comentario-durante-edicao" onClick={()=>props.setShowModalDeleteComentario(true)} type="button" className="btn btn-danger mt-2"> Apagar</button>
                     </div>
                     <div className="p-Y bd-highlight">
-                        <button onClick={props.handleClose} type="reset" className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>
+                        <button data-qa="botao-cancelar-comentario-durante-edicao" onClick={props.handleClose} type="reset" className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>
                     </div>
                     <div className="p-Y bd-highlight">
-                        <button onClick={props.onEditarComentario} type="button" className="btn btn-success mt-2">Salvar</button>
+                        <button data-qa="botao-salvar-comentario-durante-edicao" onClick={props.onEditarComentario} type="button" className="btn btn-success mt-2">Salvar</button>
                     </div>
                 </div>
             </>
