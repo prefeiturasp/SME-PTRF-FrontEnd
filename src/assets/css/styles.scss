@@ -120,18 +120,18 @@ body {
 
   .p-paginator {
     background-color: #ffffff !important;
-    border: 0px;
-    padding: 2.5em !important;
+    border: 0;
+    padding: 2.5em;
   }
 
   .p-paginator-next {
-    height: 4em !important;
-    min-width: 4em !important;
+    height: 4em;
+    min-width: 4em;
   }
 
   .p-paginator-prev {
-    height: 4em !important;
-    min-width: 4em !important;
+    height: 4em;
+    min-width: 4em;
   }
 
   .p-paginator-page {
@@ -197,6 +197,38 @@ body {
   border: none !important;
 }
 
+.btn-base-vermelho {
+  color: #ffffff !important;
+  transition: 0s background-color;
+  background-color: $corBtnErrorPrimaria !important;
+  border: $corBtnErrorPrimaria !important;
+
+  .icon-btn-base-vermelho {
+    color: #ffffff;
+    margin-right: 7px;
+    font-size: 14px;
+    transition: 0s color;
+  }
+
+  .text-btn-base-vermelho {
+    font-size: 14px;
+  }
+
+  &:hover {
+    background-color: $corBtnErrorSecundaria !important;
+  }
+
+  &:disabled {
+    border-color: $corBtnDisabled !important;
+    color: $corBtnDisabled !important;
+    cursor: default;
+
+    .icon-btn-base-vermelho {
+      color: $corBtnDisabled;
+    }
+  }
+}
+
 .btn-base-vermelho-outline {
   border-color: $corBtnErrorPrimaria;
   color: $corBtnErrorPrimaria;
@@ -229,6 +261,41 @@ body {
     cursor: default;
 
     .icon-btn-base-vermelho-outline {
+      color: $corBtnDisabled;
+    }
+  }
+}
+
+.btn-base-verde {
+  color: #ffffff !important;
+  transition: 0s background-color;
+  background-color: $mainColor !important;
+
+  .icon-btn-base-verde {
+    color: #ffffff;
+    margin-right: 7px;
+    font-size: 14px;
+    transition: 0s color;
+  }
+
+  .text-btn-base-verde {
+    font-size: 14px;
+  }
+
+  &:hover {
+    background-color: $hoverBackgroundColor !important;
+
+    .icon-btn-base-verde {
+      color: $hoverBackgroundColor;
+    }
+  }
+
+  &:disabled {
+    border-color: $corBtnDisabled !important;
+    color: $corBtnDisabled !important;
+    cursor: default;
+
+    .icon-btn-base-verde {
       color: $corBtnDisabled;
     }
   }
@@ -269,4 +336,8 @@ body {
       color: $corBtnDisabled;
     }
   }
+}
+
+.title-primary {
+  color: $corPrimaria;
 }

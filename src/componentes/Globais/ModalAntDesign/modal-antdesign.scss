@@ -9,6 +9,7 @@
             background-color: #FFFFFF;
             border: 1px solid #00585E;
             border-radius: 3px;
+            font-weight: 700;
         }
 
         .ant-btn-primary{
@@ -16,6 +17,48 @@
             background-color: #00585E;
             border: 1px solid #00585E;
             border-radius: 3px;
+            font-weight: 700;
         }
     }
+
+    .title-modal-antdesign-aviso{
+        font-weight: 700;
+        font-size: 20px;
+        line-height: 28px;
+        color: #42474A;
+    }
+
+    .text-modal-antdesign-aviso{
+        font-weight: 400;
+        font-size: 16px;
+        line-height: 24px;
+        color: #B40C02;
+    }
+
+    .observacao-modal{
+        background-color: #F4F4F4;
+    }
+
+    .title-observacao-modal-antdesign-aviso {
+        font-weight: 700;
+        font-size: 14px;
+    }
+}
+
+.modal-ant-design.modal-conclusao-analise-nao-permitida{
+    font-family: "Roboto";
+
+    .title-modal-antdesign-aviso{
+        font-weight: 700;
+        font-size: 24px;
+        line-height: 28px;
+        color: #42474A;
+    }
+
+    .body-text-modal-antdesign-aviso{
+        font-weight: 400;
+        font-size: 18px;
+        line-height: 24px;
+        color: #000000;
+    } 
 }

@@ -15,8 +15,7 @@ import {
     patchDesconciliarDespesa,
     getDownloadExtratoBancario,
     pathSalvarJustificativaPrestacaoDeConta,
-    pathExtratoBancarioPrestacaoDeConta,
-    getPodeEditarCamposExtrato
+    pathExtratoBancarioPrestacaoDeConta    
 } from "../../../../services/escolas/PrestacaoDeContas.service";
 import {getContas, getPeriodosDePrestacaoDeContasDaAssociacao} from "../../../../services/escolas/Associacao.service";
 import Loading from "../../../../utils/Loading";
@@ -33,6 +32,7 @@ import {FiltrosTransacoes} from "./FiltrosTransacoes";
 import { SidebarLeftService } from "../../../../services/SideBarLeft.service";
 import { SidebarContext } from "../../../../context/Sidebar";
 import {toastCustom} from "../../../Globais/ToastCustom";
+import { ModalSalvarDataSaldoExtrato } from "../ModalSalvarDataSaldoExtrato";
 
 export const DetalheDasPrestacoes = () => {
     let {periodo_uuid, conta_uuid} = useParams();
@@ -64,6 +64,7 @@ export const DetalheDasPrestacoes = () => {
     const [checkSalvarExtratoBancario, setCheckSalvarExtratoBancario] = useState(false);
 
     const [showModalLegendaInformacao, setShowModalLegendaInformacao] = useState(false);
+    const [pendenciaSaldoBancario, setPendenciaSaldoBancario] = useState(false);
     const parametros = useLocation();
 
     useEffect(()=>{
@@ -74,12 +75,16 @@ export const DetalheDasPrestacoes = () => {
     }, []);
 
     useEffect(() => {
-        localStorage.setItem('periodoConta', JSON.stringify(periodoConta));
-        carregaContas();
+        if(periodoConta) {
+            localStorage.setItem('periodoConta', JSON.stringify(periodoConta));
+            carregaContas();
+        }
     }, [periodoConta]);
 
     useEffect(()=>{
-        carregaObservacoes();
+        if(periodoConta) {
+            carregaObservacoes();
+        }
     }, [periodoConta, acoesAssociacao, acaoLancamento]);
 
     useEffect(()=>{
@@ -87,9 +92,10 @@ export const DetalheDasPrestacoes = () => {
     }, []);
 
     useEffect(() => {
-            verificaSePeriodoEstaAberto(periodoConta.periodo)
-        }, [periodoConta, periodosAssociacao]
-    );
+        if(periodoConta) {
+            verificaSePeriodoEstaAberto(periodoConta.periodo);
+        }
+    }, [periodoConta, periodosAssociacao]);
 
     const getPeriodoConta = () => {
         if(periodo_uuid){
@@ -114,7 +120,6 @@ export const DetalheDasPrestacoes = () => {
 
     const carregaTabelas = async () => {
         await getTabelasReceita().then(response => {
-            setContasAssociacao(response.data.contas_associacao);
             setAcoesAssociacao(response.data.acoes_associacao);
         }).catch(error => {
             console.log(error);
@@ -128,7 +133,10 @@ export const DetalheDasPrestacoes = () => {
     };
 
     const carregaContas = async () => {
-        await getContas().then(response => {
+        setLoading(true);
+        let period_uuid = periodoConta ? periodoConta.periodo : '';
+        await getContas(period_uuid).then(response => {
+            setContasAssociacao(response);
             const files = JSON.parse(localStorage.getItem('periodoConta'));
             if (files && files.conta !== "") {
                 const conta = response.find(conta => conta.uuid === files.conta);
@@ -136,7 +144,7 @@ export const DetalheDasPrestacoes = () => {
             }
         }).catch(error => {
             console.log(error);
-        })
+        }).finally(() => setLoading(false))
     };
 
     const conciliar = useCallback(async (rateio_uuid) => {
@@ -148,14 +156,22 @@ export const DetalheDasPrestacoes = () => {
     }, [periodoConta.periodo]) ;
 
 
-    const handleChangePeriodoConta = (name, value) => {
+    const handleChangePeriodoConta = (name, value, periodoOuConta) => {
         setCheckSalvarJustificativa(false);
         setCheckSalvarExtratoBancario(false);
         setBtnSalvarExtratoBancarioDisable(true);
-        setPeriodoConta({
-            ...periodoConta,
-            [name]: value
-        });
+
+        if(periodoOuConta === 'periodo') {
+            setPeriodoConta({
+                conta: '',
+                [name]: value
+            });
+        } else {
+            setPeriodoConta({
+                ...periodoConta,
+                [name]: value
+            });
+        } 
     };
 
     const handleChangeTextareaJustificativa = (event) => {
@@ -170,24 +186,81 @@ export const DetalheDasPrestacoes = () => {
         if (periodoConta.periodo && periodoConta.conta) {
             let periodo_uuid = periodoConta.periodo;
             let conta_uuid = periodoConta.conta;
+            const associacaoUuid = localStorage.getItem(ASSOCIACAO_UUID)
 
-            let observacao = await getObservacoes(periodo_uuid, conta_uuid);
+            let observacao = await getObservacoes(periodo_uuid, conta_uuid, associacaoUuid);
 
-            setObservacaoUuid(observacao.observacao_uuid)
-
-            setTextareaJustificativa(observacao.observacao ? observacao.observacao : '');
-            setDataSaldoBancario({
-                data_extrato: observacao.data_extrato ? observacao.data_extrato : '',
-                saldo_extrato: observacao.saldo_extrato ? observacao.saldo_extrato : 0,
-            })
-            setNomeComprovanteExtrato(observacao.comprovante_extrato ? observacao.comprovante_extrato : '')
-            setDataAtualizacaoComprovanteExtrato(moment(observacao.data_atualizacao_comprovante_extrato).format("YYYY-MM-DD HH:mm:ss"))
-            setDataAtualizacaoComprovanteExtratoView(moment(observacao.data_atualizacao_comprovante_extrato).format("DD/MM/YYYY HH:mm:ss"))
-            if (observacao.comprovante_extrato && observacao.data_extrato){
-                setExibeBtnDownload(true)
+            if(observacao) {
+                setPermiteEditarCamposExtrato(observacao.permite_editar_campos_extrato)
             }
-            else if(!observacao.comprovante_extrato){
-                setExibeBtnDownload(false)
+
+            if(observacao && observacao.possui_solicitacao_encerramento){
+                if (periodosAssociacao){
+                    const associacaoUuid = localStorage.getItem(ASSOCIACAO_UUID)
+                    const periodo = periodosAssociacao.find(o => o.uuid === periodo_uuid);
+                    
+                    await getStatusPeriodoPorData(associacaoUuid, periodo.data_inicio_realizacao_despesas).then(response => {
+                        
+                        let periodo_bloqueado = response.prestacao_contas_status ? response.prestacao_contas_status.periodo_bloqueado : true
+                        if(!periodo_bloqueado){
+                            setBtnSalvarExtratoBancarioDisable(false);
+                            setCheckSalvarExtratoBancario(false);
+                            setClassBtnSalvarExtratoBancario("success");
+                        }
+                    }).catch(error => {
+                        console.log(error);
+                    });
+                }
+
+
+                setDataSaldoBancario({
+                    data_extrato: observacao.data_extrato ? observacao.data_extrato : '',
+                    saldo_extrato: observacao.saldo_extrato ? observacao.saldo_extrato : 0,
+                })
+
+                setDataSaldoBancarioSolicitacaoEncerramento({
+                    data_extrato: observacao.data_extrato ? observacao.data_extrato : '',
+                    saldo_extrato: observacao.saldo_extrato ? observacao.saldo_extrato : 0,
+                    possui_solicitacao_encerramento: true,
+                    data_encerramento: observacao.data_encerramento ? observacao.data_encerramento : '',
+                    saldo_encerramento: observacao.saldo_encerramento ? observacao.saldo_encerramento : 0,
+                })
+
+                if(observacao.observacao_uuid){
+                    setObservacaoUuid(observacao.observacao_uuid)
+
+                    setTextareaJustificativa(observacao.observacao ? observacao.observacao : '');
+
+                    setNomeComprovanteExtrato(observacao.comprovante_extrato ? observacao.comprovante_extrato : '')
+                    setDataAtualizacaoComprovanteExtrato(moment(observacao.data_atualizacao_comprovante_extrato).format("YYYY-MM-DD HH:mm:ss"))
+                    setDataAtualizacaoComprovanteExtratoView(moment(observacao.data_atualizacao_comprovante_extrato).format("DD/MM/YYYY HH:mm:ss"))
+                    if (observacao.comprovante_extrato && observacao.data_extrato){
+                        setExibeBtnDownload(true)
+                    }
+                    else if(!observacao.comprovante_extrato){
+                        setExibeBtnDownload(false)
+                    }
+                }
+            }
+            else{
+                setObservacaoUuid(observacao.observacao_uuid)
+
+                setTextareaJustificativa(observacao.observacao ? observacao.observacao : '');
+                setDataSaldoBancario({
+                    data_extrato: observacao.data_extrato ? observacao.data_extrato : '',
+                    saldo_extrato: observacao.saldo_extrato ? observacao.saldo_extrato : 0,
+                })
+                setNomeComprovanteExtrato(observacao.comprovante_extrato ? observacao.comprovante_extrato : '')
+                setDataAtualizacaoComprovanteExtrato(moment(observacao.data_atualizacao_comprovante_extrato).format("YYYY-MM-DD HH:mm:ss"))
+                setDataAtualizacaoComprovanteExtratoView(moment(observacao.data_atualizacao_comprovante_extrato).format("DD/MM/YYYY HH:mm:ss"))
+                if (observacao.comprovante_extrato && observacao.data_extrato){
+                    setExibeBtnDownload(true)
+                }
+                else if(!observacao.comprovante_extrato){
+                    setExibeBtnDownload(false)
+                }
+
+                setDataSaldoBancarioSolicitacaoEncerramento({})
             }
         }
     };
@@ -211,6 +284,10 @@ export const DetalheDasPrestacoes = () => {
     }
 
     const salvarExtratoBancario = async () => {
+        setBtnSalvarExtratoBancarioDisable(true);
+        setCheckSalvarExtratoBancario(true);
+        setClassBtnSalvarExtratoBancario("secondary");
+
         let payload;
 
         payload = {
@@ -224,6 +301,8 @@ export const DetalheDasPrestacoes = () => {
 
         try {
             await pathExtratoBancarioPrestacaoDeConta(payload);
+            setShowModalSalvarDataSaldoExtrato(false);
+            verificaSePeriodoEstaAberto(periodoConta.periodo);
             toastCustom.ToastCustomSuccess('Edição salva', 'A edição foi salva com sucesso!')
             setDataAtualizacaoComprovanteExtrato('')
             setDataAtualizacaoComprovanteExtratoView('')
@@ -234,6 +313,12 @@ export const DetalheDasPrestacoes = () => {
             console.log("Erro: ", e.message)
         }
     }
+    const checaPendenciaSaldoBancario =  (statusPeriodo) => {
+        const pendenciaCadastral = statusPeriodo.pendencias_cadastrais;
+        const contaPendente = pendenciaCadastral?.conciliacao_bancaria?.contas_pendentes?.includes(periodoConta.conta);
+
+        setPendenciaSaldoBancario(contaPendente ? true : false);
+    };
 
     const verificaSePeriodoEstaAberto = async (periodoUuid) => {
         if (periodosAssociacao) {
@@ -241,6 +326,7 @@ export const DetalheDasPrestacoes = () => {
             if (periodo) {
                 const associacaoUuid = localStorage.getItem(ASSOCIACAO_UUID)
                 await getStatusPeriodoPorData(associacaoUuid, periodo.data_inicio_realizacao_despesas).then(response => {
+                    checaPendenciaSaldoBancario(response);
                     const periodoBloqueado = response.prestacao_contas_status ? response.prestacao_contas_status.periodo_bloqueado : true
                     setPeriodoFechado(periodoBloqueado)
                 }).catch(error => {
@@ -249,24 +335,6 @@ export const DetalheDasPrestacoes = () => {
             }
         }
     };
-
-    const verificaSePodeEditarCamposExtrato = useCallback(async (periodoUuid) => {
-        if (periodosAssociacao) {
-            const periodo = periodosAssociacao.find(o => o.uuid === periodoUuid);
-            if (periodo && periodoConta && periodoConta.conta) {
-                const associacaoUuid = localStorage.getItem(ASSOCIACAO_UUID)
-                await getPodeEditarCamposExtrato(associacaoUuid, periodoUuid, periodoConta.conta).then(response => {
-                    setPermiteEditarCamposExtrato(response.permite_editar_campos_extrato)
-                }).catch(error => {
-                    console.log(error);
-                });
-            }
-        }
-    }, [periodosAssociacao, periodoConta]);
-
-    useEffect(() => {
-        verificaSePodeEditarCamposExtrato(periodoConta.periodo);
-    }, [verificaSePodeEditarCamposExtrato, periodoConta]);
 
     // Tabela Valores Pendentes por Ação
     const [valoresPendentes, setValoresPendentes] = useState({});
@@ -353,6 +421,8 @@ export const DetalheDasPrestacoes = () => {
 
     // Data Saldo Bancário
     const [dataSaldoBancario, setDataSaldoBancario]= useState({});
+    const [dataSaldoBancarioSolicitacaoEncerramento, setDataSaldoBancarioSolicitacaoEncerramento]= useState({});
+    const [showModalSalvarDataSaldoExtrato, setShowModalSalvarDataSaldoExtrato] = useState(false)
     const [selectedFile, setSelectedFile] = useState(null);
     const [nomeComprovanteExtrato, setNomeComprovanteExtrato] = useState('');
     const [dataAtualizacaoComprovanteExtrato, setDataAtualizacaoComprovanteExtrato] = useState('');
@@ -487,6 +557,11 @@ export const DetalheDasPrestacoes = () => {
         setLoadingNaoConciliadas(false);
     };
 
+    const onHandleCancelarModalSalvarDataSaldoExtrato = () => {
+        setShowModalSalvarDataSaldoExtrato(false);
+        // window.location.assign('/dados-das-contas-da-associacao')
+    }
+
     return (
         <>
         <div className="detalhe-das-prestacoes-container mb-5 mt-5">
@@ -562,6 +637,9 @@ export const DetalheDasPrestacoes = () => {
                                 setCheckSalvarExtratoBancario={setCheckSalvarExtratoBancario}
                                 erroDataSaldo={erroDataSaldo}
                                 permiteEditarCamposExtrato={permiteEditarCamposExtrato}
+                                pendenciaSaldoBancario={pendenciaSaldoBancario}
+                                dataSaldoBancarioSolicitacaoEncerramento={dataSaldoBancarioSolicitacaoEncerramento}
+                                setShowModalSalvarDataSaldoExtrato={setShowModalSalvarDataSaldoExtrato}
                             />
 
                             <p className="detalhe-das-prestacoes-titulo-lancamentos mt-3 mb-3">Gastos pendentes de conciliação</p>
@@ -631,6 +709,21 @@ export const DetalheDasPrestacoes = () => {
                 </>
             }
         </div>
+
+        <section>
+            <ModalSalvarDataSaldoExtrato
+                show={showModalSalvarDataSaldoExtrato}
+                titulo="Salvar alterações."
+                texto='Os campos "data" e "saldo" foram alterados e podem não ser mais os mesmos cadastrados na solicitação de encerramento da conta. Confirma a alteração?'
+                segundoBotaoTexto="Confirmar"
+                segundoBotaoOnclick={salvarExtratoBancario}
+                segundoBotaoCss="success"
+                primeiroBotaoCss="outline-success"
+                primeiroBotaoTexto="Cancelar"
+                handleClose={onHandleCancelarModalSalvarDataSaldoExtrato}
+                primeiroBotaoOnclick={onHandleCancelarModalSalvarDataSaldoExtrato}
+            />
+        </section>
 
         </>
     )

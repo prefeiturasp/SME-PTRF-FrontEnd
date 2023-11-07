@@ -13,6 +13,10 @@ export const getTabelaAssociacoes = async () => {
     return (await api.get(`/api/associacoes/tabelas`, authHeader)).data
 };
 
+export const getTabelaAssociacoesDre = async () => {
+    return (await api.get(`/api/associacoes/tabelas?filtros_informacoes_associacao_dre=True`, authHeader)).data
+}
+
 export const getAnosAnaliseRegularidade = async () => {
     return (await api.get(`/api/anos-analise-regularidade/`, authHeader)).data
 };
@@ -47,6 +51,10 @@ export const getContasAssociacao = async (uuid_associacao) => {
     return (await api.get(`api/associacoes/${uuid_associacao}/contas`, authHeader)).data
 };
 
+export const getContasAssociacaoEncerradas = async (uuid_associacao) => {
+    return (await api.get(`api/associacoes/${uuid_associacao}/contas/encerradas`, authHeader)).data
+};
+
 export const updateAssociacao = async (uuid_associacao, payload) => {
     return api.patch(`api/associacoes/${uuid_associacao}/`, payload, authHeader).then(response => {
         return response;
@@ -57,4 +65,20 @@ export const updateAssociacao = async (uuid_associacao, payload) => {
 
 export const getProcessosAssociacao = async (uuid_associacao) => {
     return (await api.get(`api/associacoes/${uuid_associacao}/processos`, authHeader)).data
+};
+
+export const aprovarSolicitacaoEncerramentoConta = async (id_solicitacao) => {
+    return (await api.patch(`/api/solicitacoes-encerramento-conta/${id_solicitacao}/aprovar/`, {}, authHeader))
+};
+
+export const rejeitarSolicitacaoEncerramentoConta = async (payloadMotivos,id_solicitacao) => {
+    return (await api.patch(`/api/solicitacoes-encerramento-conta/${id_solicitacao}/rejeitar/`, payloadMotivos, authHeader))
+};
+
+export const getContas = async (id_associacao) => {
+    return (await api.get(`/api/associacoes/${id_associacao}/contas/`, authHeader)).data
+};
+
+export const getMotivosRejeicaoEncerramentoContas = async () => {
+    return (await api.get(`/api/motivos-rejeicao-encerramento-conta/`, authHeader)).data
 };

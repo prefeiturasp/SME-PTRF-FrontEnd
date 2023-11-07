@@ -2,7 +2,7 @@ import React, {useEffect, useState, Fragment, useCallback, useContext} from "rea
 import {useHistory, useParams} from "react-router-dom";
 import {useDispatch} from "react-redux";
 import {TopoSelectPeriodoBotaoConcluir} from "./TopoSelectPeriodoBotaoConcluir";
-import {getPeriodosDePrestacaoDeContasDaAssociacao, getDataPreenchimentoPreviaAta} from "../../../services/escolas/Associacao.service"
+import {getPeriodosDePrestacaoDeContasDaAssociacao, getDataPreenchimentoPreviaAta, getContasAtivasDaAssociacaoNoPeriodo} from "../../../services/escolas/Associacao.service"
 import {getStatusPeriodoPorData, postConcluirPeriodo, getDataPreenchimentoAta, getIniciarAta, getIniciarPreviaAta} from "../../../services/escolas/PrestacaoDeContas.service";
 import {getTabelasReceita} from "../../../services/escolas/Receitas.service";
 import {BarraDeStatusPrestacaoDeContas} from "./BarraDeStatusPrestacaoDeContas";
@@ -26,6 +26,7 @@ import {getRegistrosFalhaGeracaoPc} from "../../../services/Notificacoes.service
 import {ModalNotificaErroConcluirPC} from "./ModalNotificaErroConcluirPC";
 import { ModalPendenciasCadastrais } from "./ModalPendenciasCadastrais";
 import { setPersistenteUrlVoltar } from "../../../store/reducers/componentes/escolas/PrestacaoDeContas/PendenciaCadastro/actions";
+import { CustomModalConfirm } from "../../Globais/Modal/CustomModalConfirm";
 
 export const PrestacaoDeContas = ({setStatusPC}) => {
     const history = useHistory();
@@ -83,7 +84,6 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
         getStatusPrestacaoDeConta();
         getUuidPrestacaoDeConta();
         getContaPrestacaoDeConta();
-        getPrimeiraContaPrestacaoDeConta();
         setConfBoxAtaApresentacao()
     }, []);
 
@@ -114,13 +114,56 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
         setPeriodosAssociacao(periodos);
     };
 
+    useEffect(() => {
+        carregaTabelas()
+    }, [periodoPrestacaoDeConta])
+
     const carregaTabelas = async () => {
-        await getTabelasReceita().then(response => {
-            setContasAssociacao(response.data.contas_associacao);
-        }).catch(error => {
-            console.log(error);
-        });
+        if(periodoPrestacaoDeConta && periodoPrestacaoDeConta.periodo_uuid) {
+            await getContasAtivasDaAssociacaoNoPeriodo(periodoPrestacaoDeConta.periodo_uuid).then(response => {
+                if (response.length > 0){
+                    setContasAssociacao(response);
+                    setContaPrestacaoDeContas({
+                        conta_uuid: response[0].uuid
+                    })
+                }
+                else{
+                    setContasAssociacao(false);
+                    setContaPrestacaoDeContas(false);
+                }
+            }).catch(error => {
+                console.log(error);
+            });
+        }
     };
+
+
+    const toggleBtnEscolheContaAoTrocarPeriodo = useCallback(() => {
+        if(localStorage.getItem('contaPrestacaoDeConta') && contasAssociacao){
+            let conta_local_storage = JSON.parse(localStorage.getItem('contaPrestacaoDeConta'));
+            let index_da_conta = null;
+
+            for(let i=0; i<=contasAssociacao.length-1; i++){
+                if(contasAssociacao[i].uuid === conta_local_storage.conta_uuid){
+                    index_da_conta = i;
+                    break;
+                }
+            }
+
+            // Caso não encontre a conta, é setado a primeira conta da lista
+            if(index_da_conta === null){
+                index_da_conta = 0;
+            }
+
+            setClickBtnEscolheConta({
+                [index_da_conta]: true
+            });
+        }
+    }, [contasAssociacao]);
+
+    useEffect(() => {
+        toggleBtnEscolheContaAoTrocarPeriodo()
+    }, [toggleBtnEscolheContaAoTrocarPeriodo])
 
     const getPeriodoPrestacaoDeConta = async () => {
         if (localStorage.getItem('periodoPrestacaoDeConta')) {
@@ -168,19 +211,6 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
         } else {
             setContaPrestacaoDeContas({})
         }
-    };
-
-    const getPrimeiraContaPrestacaoDeConta = async ()=>{
-        await getTabelasReceita()
-        .then(response => {
-            if (response.data.contas_associacao && response.data.contas_associacao.length > 0 ){
-                setContaPrestacaoDeContas({
-                    conta_uuid: response.data.contas_associacao[0].uuid
-                })
-            }
-        }).catch(error => {
-            console.log("Erro getPrimeiraContaPrestacaoDeConta ", error);
-        });
     };
 
     const handleChangePeriodoPrestacaoDeConta = async (name, value) => {
@@ -304,7 +334,19 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
                         setShowConcluirAcertoComPendencia(true);
                     }
                     else{
-                        setShowConcluirAcertosSemPendencias(true);
+                        if(statusPrestacaoDeConta.tem_conta_encerrada_com_saldo){
+                            CustomModalConfirm({
+                                dispatch,
+                                title: 'Devido as alterações realizadas houve uma mudança no saldo da conta.',
+                                message: 'A análise da PC não poderá ser concluída pela DRE até a finalização dos acertos que tornem a conta zerada.',
+                                cancelText: 'Voltar',
+                                confirmText: 'Concluir acerto',
+                                dataQa: 'modal-acerto-alterou-saldo-conta-encerrada',
+                                onConfirm: () => setShowConcluirAcertosSemPendencias(true)
+                            });
+                        } else {
+                            setShowConcluirAcertosSemPendencias(true);
+                        }
                     }
                 }
             }
@@ -371,8 +413,8 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
                 }
 
             }
-            setLoading(false);
         }
+        setLoading(false);
 
     };
 
@@ -545,6 +587,7 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
                                                                 toggleBtnEscolheConta(index);
                                                                 handleClickContaPrestacaoDeContas(conta.uuid);
                                                             }}
+                                                            data-qa={`btn-${index}-tabs-contas`}
                                                             className={`nav-link btn-escolhe-acao mr-3 ${clickBtnEscolheConta[index] ? "btn-escolhe-acao-active" : ""}`}
                                                         >
                                                             Conta {conta.nome}
@@ -553,43 +596,57 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
                                                 </Fragment>
                                             )}
                                         </nav>
-                                        <DemonstrativoFinanceiroPorConta
-                                            periodoPrestacaoDeConta={periodoPrestacaoDeConta}
-                                            statusPrestacaoDeConta={statusPrestacaoDeConta}
-                                            contaPrestacaoDeContas={contaPrestacaoDeContas}
-                                            setLoading={setLoading}
-                                            podeGerarPrevias={podeGerarPrevias}
-                                            podeBaixarDocumentos={podeBaixarDocumentos}
-                                        />
-                                        <RelacaoDeBens
-                                            periodoPrestacaoDeConta={periodoPrestacaoDeConta}
-                                            statusPrestacaoDeConta={statusPrestacaoDeConta}
-                                            contaPrestacaoDeContas={contaPrestacaoDeContas}
-                                            setLoading={setLoading}
-                                            podeGerarPrevias={podeGerarPrevias}
-                                            podeBaixarDocumentos={podeBaixarDocumentos}
-                                        />
-                                        <GeracaoAtaApresentacao
-                                            onClickVisualizarAta={()=>onClickVisualizarAta(uuidAtaApresentacao)}
-                                            setLoading={setLoading}
-                                            corBoxAtaApresentacao={corBoxAtaApresentacao}
-                                            textoBoxAtaApresentacao={textoBoxAtaApresentacao}
-                                            dataBoxAtaApresentacao={dataBoxAtaApresentacao}
-                                            uuidAtaApresentacao={uuidAtaApresentacao}
-                                            uuidPrestacaoConta={uuidPrestacaoConta}
-                                        />
 
-                                        {localStorage.getItem('uuidPrestacaoConta') && exibeBoxAtaRetificadora() &&
-                                        <GeracaoAtaRetificadora
-                                            uuidPrestacaoConta={localStorage.getItem('uuidPrestacaoConta')}
-                                            statusPrestacaoDeConta={statusPrestacaoDeConta}
-                                        />
+                                        {contasAssociacao && contasAssociacao.length > 0 
+                                        ?
+                                            <>
+                                                <DemonstrativoFinanceiroPorConta
+                                                    periodoPrestacaoDeConta={periodoPrestacaoDeConta}
+                                                    statusPrestacaoDeConta={statusPrestacaoDeConta}
+                                                    contaPrestacaoDeContas={contaPrestacaoDeContas}
+                                                    setLoading={setLoading}
+                                                    podeGerarPrevias={podeGerarPrevias}
+                                                    podeBaixarDocumentos={podeBaixarDocumentos}
+                                                />
+                                                <RelacaoDeBens
+                                                    periodoPrestacaoDeConta={periodoPrestacaoDeConta}
+                                                    statusPrestacaoDeConta={statusPrestacaoDeConta}
+                                                    contaPrestacaoDeContas={contaPrestacaoDeContas}
+                                                    setLoading={setLoading}
+                                                    podeGerarPrevias={podeGerarPrevias}
+                                                    podeBaixarDocumentos={podeBaixarDocumentos}
+                                                />
+                                                <GeracaoAtaApresentacao
+                                                    onClickVisualizarAta={()=>onClickVisualizarAta(uuidAtaApresentacao)}
+                                                    setLoading={setLoading}
+                                                    corBoxAtaApresentacao={corBoxAtaApresentacao}
+                                                    textoBoxAtaApresentacao={textoBoxAtaApresentacao}
+                                                    dataBoxAtaApresentacao={dataBoxAtaApresentacao}
+                                                    uuidAtaApresentacao={uuidAtaApresentacao}
+                                                    uuidPrestacaoConta={uuidPrestacaoConta}
+                                                />
+
+                                                {localStorage.getItem('uuidPrestacaoConta') && exibeBoxAtaRetificadora() &&
+                                                    <GeracaoAtaRetificadora
+                                                        uuidPrestacaoConta={localStorage.getItem('uuidPrestacaoConta')}
+                                                        statusPrestacaoDeConta={statusPrestacaoDeConta}
+                                                    />
+                                                }
+                                            </>
+                                        :
+                                            <MsgImgCentralizada
+                                                texto='Não há contas cadastradas para a Associação para o período selecionado. '
+                                                img={Img404}
+                                                dataQa='nao-ha-contas-cadastradas-para-associacao-periodo-selecionado'
+                                            />
+
                                         }
                                     </>
                                 ):
                                 <MsgImgCentralizada
                                     texto='Selecione um período acima para visualizar as ações'
                                     img={Img404}
+                                    dataQa='selecione-um-periodo'
                                 />
                             }
                         </>
@@ -609,6 +666,7 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
                                 setShowExibeModalErroConcluirPc(false)
                                 concluirPeriodo()
                             } : null }
+                            dataQa="modal-notificar-erro-concluir-PC"
                         />
                     </section>
                     <section>
@@ -621,6 +679,7 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
                             o cadastro e a edição de qualquer crédito ou despesa nesse período.
                             Para conferir as informações cadastradas, sem bloqueio do sistema nesse período, gere um documento prévio.
                             Você confirma a conclusão dessa Prestação de Contas?</p>"
+                            dataQa="modal-conluir-periodo"
                         />
                     </section>
                     <section>
@@ -629,6 +688,7 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
                             handleClose={onHandleCloseModalConcluirPeriodoComPendencias}
                             onIrParaAnaliseDre={onIrParaAnaliseDre}
                             show={showConcluirAcertoComPendencia}
+                            dataQa="modal-concluir-acertos-com-pendencias"
                         />
                     </section>
                     <section>
@@ -641,6 +701,7 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
                             o cadastro e a edição de qualquer crédito ou despesa nesse período.
                             Para conferir as informações cadastradas, sem bloqueio do sistema nesse período, gere um documento prévio.
                             Você confirma a conclusão do acerto da Prestação de Contas?</p>"
+                            dataQa="modal-concluir-acertos-sem-pendencias"
                         />
                     </section>
                     <section>
@@ -652,7 +713,8 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
                             size='md'                          
                             primeiroBotaoTexto="Fechar"
                             primeiroBotaoCss="outline-success"         
-                            handleClose={handleCloseModalPendenciasCadastrais}                   
+                            handleClose={handleCloseModalPendenciasCadastrais}   
+                            dataQa="modal-pendencias-cadastrais"                
                         />
                     </section>
                 </>

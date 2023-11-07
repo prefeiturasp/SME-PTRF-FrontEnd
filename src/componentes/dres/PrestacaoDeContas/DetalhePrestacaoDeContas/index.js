@@ -10,7 +10,8 @@ import {
     getUltimaAnalisePc,
     postAnaliseAjustesSaldoPorConta,
     deleteAnaliseAjustesSaldoPorConta,
-    getAnaliseAjustesSaldoPorConta
+    getAnaliseAjustesSaldoPorConta,
+    getStatusPeriodo
 } from "../../../../services/dres/PrestacaoDeContas.service";
 import {getTabelasPrestacoesDeContas, getReceberPrestacaoDeContas, getReabrirPrestacaoDeContas, getDesfazerRecebimento, getAnalisarPrestacaoDeContas, getDesfazerAnalise, getSalvarAnalise, getInfoAta, getConcluirAnalise, getDespesasPorFiltros, getTiposDevolucao} from "../../../../services/dres/PrestacaoDeContas.service";
 import {patchReceberAposAcertos} from "../../../../services/dres/PrestacaoDeContas.service";
@@ -29,9 +30,10 @@ import {GetComportamentoPorStatus} from "./GetComportamentoPorStatus";
 import {ModalSalvarPrestacaoDeContasAnalise} from "../../../../utils/Modais";
 import Loading from "../../../../utils/Loading";
 import {toastCustom} from "../../../Globais/ToastCustom";
+import {ModalAntDesignAviso} from "../../../Globais/ModalAntDesign/modalAviso"
 import {ModalNaoPodeVoltarParaAnalise} from "../ModalNaoPodeVoltarParaAnalise";
 import { getPeriodoPorUuid } from "../../../../services/sme/Parametrizacoes.service";
-
+import IconeAvisoVermelho from "../../../../assets/img/icone-modal-aviso-vermelho.svg"
 
 require("ordinal-pt-br");
 
@@ -117,6 +119,8 @@ export const DetalhePrestacaoDeContas = () =>{
     const [showConcluirAnalise, setShowConcluirAnalise] = useState(false);
     const [showVoltarParaAnalise, setShowVoltarParaAnalise] = useState(false);
     const [showNaoPodeVoltarParaAnalise, setShowNaoPodeVoltarParaAnalise] = useState(false);
+    const [showModalBloqueioConclusaoContaEncerradaNaoZerada,setShowModalBloqueioConclusaoContaEncerradaNaoZerada] = useState(false);
+    const [tiposContasEncerradasComSaldo, setTiposContasEncerradasComSaldo] = useState([]);
     const [redirectListaPc, setRedirectListaPc] = useState(false);
     const [informacoesPrestacaoDeContas, setInformacoesPrestacaoDeContas] = useState(initialInformacoesPrestacaoDeContas);
     const [clickBtnEscolheConta, setClickBtnEscolheConta] = useState({0: true, key_0: true});
@@ -143,6 +147,7 @@ export const DetalhePrestacaoDeContas = () =>{
     const [ajusteSaldoSalvoComSucesso, setAjusteSaldoSalvoComSucesso] = useState([]);
     const [showDeleteAjusteSaldoPC, setShowDeleteAjusteSaldoPC] = useState(false);
     const [periodoReferencia, setPeriodoReferencia] = useState('');
+    const [periodo, setPeriodo] = useState('');
 
     useEffect(()=>{
         carregaPrestacaoDeContas();
@@ -194,6 +199,7 @@ export const DetalhePrestacaoDeContas = () =>{
             if (prestacaoDeContas?.periodo_uuid){
                 let periodo = await getPeriodoPorUuid(prestacaoDeContas?.periodo_uuid);
                 setPeriodoReferencia(periodo.referencia)
+                setPeriodo(periodo)
             }
         }
         retornaPeriodo();
@@ -210,6 +216,9 @@ export const DetalhePrestacaoDeContas = () =>{
                             conta_associacao: conta.conta_associacao.uuid,
                             data_extrato: conta.data_extrato,
                             saldo_extrato: conta.saldo_extrato !== null ? valorTemplate(conta.saldo_extrato) : null,
+                            solicitar_envio_do_comprovante_do_saldo_da_conta: conta.solicitar_envio_do_comprovante_do_saldo_da_conta,
+                            observacao_solicitar_envio_do_comprovante_do_saldo_da_conta: conta.observacao_solicitar_envio_do_comprovante_do_saldo_da_conta ? conta.observacao_solicitar_envio_do_comprovante_do_saldo_da_conta : "",
+                            
                         })
                     });
                 setAnalisesDeContaDaPrestacao(arrayAnalises);
@@ -381,6 +390,8 @@ export const DetalhePrestacaoDeContas = () =>{
                 conta_associacao: conta.uuid,
                 data_extrato: '',
                 saldo_extrato: null,
+                solicitar_envio_do_comprovante_do_saldo_da_conta: false,
+                observacao_solicitar_envio_do_comprovante_do_saldo_da_conta: ""
             })
 
             setAnalisesDeContaDaPrestacao(lista)
@@ -401,18 +412,22 @@ export const DetalhePrestacaoDeContas = () =>{
             uuid: analise.uuid,
             conta_associacao: analise.conta_associacao.uuid,
             data_extrato: analise.data_extrato,
-            saldo_extrato: analise.saldo_extrato !== null ? valorTemplate(analise.saldo_extrato) : null
+            saldo_extrato: analise.saldo_extrato !== null ? valorTemplate(analise.saldo_extrato) : null,
+            solicitar_envio_do_comprovante_do_saldo_da_conta: analise.solicitar_envio_do_comprovante_do_saldo_da_conta,
+            observacao_solicitar_envio_do_comprovante_do_saldo_da_conta: analise.observacao_solicitar_envio_do_comprovante_do_saldo_da_conta !== null ? analise.observacao_solicitar_envio_do_comprovante_do_saldo_da_conta : "",
         })
 
         setAnalisesDeContaDaPrestacao(()=>[
             ...arrayAnalise
-        ])  
+        ])     
     }
 
     const onClickSalvarAcertoSaldo = async (conta, analise_de_conta, index) => {
         let uuid_analise;
         let data_extrato = null;
         let saldo_extato = null;
+        let solicitar_envio_do_comprovante_do_saldo_da_conta = null;
+        let observacao_solicitar_envio_do_comprovante_do_saldo_da_conta = null;
 
         if(prestacaoDeContas && prestacaoDeContas.analise_atual && prestacaoDeContas.analise_atual.uuid){
             uuid_analise = prestacaoDeContas.analise_atual.uuid
@@ -430,6 +445,19 @@ export const DetalhePrestacaoDeContas = () =>{
             if(analise_de_conta.saldo_extrato){
                 saldo_extato = trataNumericos(analise_de_conta.saldo_extrato)
             }
+
+            if(analise_de_conta.solicitar_envio_do_comprovante_do_saldo_da_conta !== null){
+                solicitar_envio_do_comprovante_do_saldo_da_conta = analise_de_conta.solicitar_envio_do_comprovante_do_saldo_da_conta
+            }
+
+            if(analise_de_conta.observacao_solicitar_envio_do_comprovante_do_saldo_da_conta){
+                if(solicitar_envio_do_comprovante_do_saldo_da_conta === false){
+                    observacao_solicitar_envio_do_comprovante_do_saldo_da_conta = null;
+                }
+                else{
+                    observacao_solicitar_envio_do_comprovante_do_saldo_da_conta = analise_de_conta.observacao_solicitar_envio_do_comprovante_do_saldo_da_conta;
+                }
+            }
         }
 
         let payload = {
@@ -437,7 +465,9 @@ export const DetalhePrestacaoDeContas = () =>{
             conta_associacao: conta.uuid,
             prestacao_conta: prestacaoDeContas.uuid,
             data_extrato: data_extrato,
-            saldo_extrato: saldo_extato
+            saldo_extrato: saldo_extato,
+            solicitar_envio_do_comprovante_do_saldo_da_conta: solicitar_envio_do_comprovante_do_saldo_da_conta,
+            observacao_solicitar_envio_do_comprovante_do_saldo_da_conta: observacao_solicitar_envio_do_comprovante_do_saldo_da_conta,
         }
 
         try {
@@ -594,23 +624,22 @@ export const DetalhePrestacaoDeContas = () =>{
                 uuid_analise = ultima_analise.uuid
             }
 
-            let analise_teste = await getAnaliseAjustesSaldoPorConta(info_ata_por_conta.conta_associacao.uuid, prestacaoDeContas.uuid, uuid_analise);
-            analise_teste = analise_teste[0]
+            let analise_encontrada = await getAnaliseAjustesSaldoPorConta(info_ata_por_conta.conta_associacao.uuid, prestacaoDeContas.uuid, uuid_analise);
+            analise_encontrada = analise_encontrada[0]
 
-
-            if(analise_teste){
+            if(analise_encontrada){
                 setAnalisesDeContaDaPrestacao(analise=>[
                     ...analise,
                     {
-                        uuid: analise_teste.uuid,
-                        conta_associacao: analise_teste.conta_associacao.uuid,
-                        data_extrato: analise_teste.data_extrato,
-                        saldo_extrato: analise_teste.saldo_extrato !== null ? valorTemplate(analise_teste.saldo_extrato) : null
+                        uuid: analise_encontrada.uuid,
+                        conta_associacao: analise_encontrada.conta_associacao.uuid,
+                        data_extrato: analise_encontrada.data_extrato,
+                        saldo_extrato: analise_encontrada.saldo_extrato !== null ? valorTemplate(analise_encontrada.saldo_extrato) : null,
+                        solicitar_envio_do_comprovante_do_saldo_da_conta: analise_encontrada.solicitar_envio_do_comprovante_do_saldo_da_conta,
+                        observacao_solicitar_envio_do_comprovante_do_saldo_da_conta: analise_encontrada.observacao_solicitar_envio_do_comprovante_do_saldo_da_conta ? analise_encontrada.observacao_solicitar_envio_do_comprovante_do_saldo_da_conta : "",
                     }
                 ])
             }
-
-            
         }
 
     };
@@ -735,6 +764,7 @@ export const DetalhePrestacaoDeContas = () =>{
         setshowErroPrestacaoDeContasPosterior(false);
         setShowDeleteAjusteSaldoPC(false);
         setShowNaoPodeVoltarParaAnalise(false);
+        setShowModalBloqueioConclusaoContaEncerradaNaoZerada(false);
     };
 
     const onCloseModalSalvarAnalise = () => {
@@ -1052,6 +1082,17 @@ export const DetalhePrestacaoDeContas = () =>{
         return null;
     }
 
+    const handleConcluirPCemAnalise = async () => {
+        let status = await getStatusPeriodo(prestacaoDeContas.associacao.uuid, periodo.data_inicio_realizacao_despesas);
+        
+        if(status.tem_conta_encerrada_com_saldo) {
+            setTiposContasEncerradasComSaldo(status.tipos_das_contas_encerradas_com_saldo)
+            setShowModalBloqueioConclusaoContaEncerradaNaoZerada(true);
+        } else {
+            setShowConcluirAnalise(true);
+        }
+    }
+
     return(
         <PaginasContainer>
             <h1 className="titulo-itens-painel mt-5">Acompanhamento das Prestações de Contas</h1>
@@ -1129,6 +1170,7 @@ export const DetalhePrestacaoDeContas = () =>{
                                     setAnalisesDeContaDaPrestacao={setAnalisesDeContaDaPrestacao}
                                     bloqueiaBtnRetroceder={bloqueiaBtnRetroceder}
                                     tooltipRetroceder={adicionaTooltipBtnRetroceder}
+                                    handleConcluirPCemAnalise={handleConcluirPCemAnalise}
                                 />
                         }
                     </>
@@ -1254,6 +1296,17 @@ export const DetalhePrestacaoDeContas = () =>{
                         primeiroBotaoCss="outline-success"
                         segundoBotaoCss="success"
                         segundoBotaoTexto="Confirmar exclusão"
+                    />
+                </section>
+                <section>
+                    <ModalAntDesignAviso
+                        open={showModalBloqueioConclusaoContaEncerradaNaoZerada}
+                        titulo={"Conclusão de análise não permitida"}
+                        bodyText={tiposContasEncerradasComSaldo.length > 1 ? `A análise não pode ser concluída pois as contas ${tiposContasEncerradasComSaldo} foram encerradas e os saldos foram alterados. Favor solicitar os acertos necessários para que as contas sejam zeradas.`:`A análise não pode ser concluída pois a conta ${tiposContasEncerradasComSaldo} foi encerrada e o saldo foi alterado. Favor solicitar os acertos necessários para que a conta seja zerada.`}
+                        handleCancel={onHandleClose}
+                        cancelText="Fechar"
+                        wrapClassName={"modal-conclusao-analise-nao-permitida"}
+                        icone={IconeAvisoVermelho}
                     />
                 </section>
                 {redirectListaPc &&

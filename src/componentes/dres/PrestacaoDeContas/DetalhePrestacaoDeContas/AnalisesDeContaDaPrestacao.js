@@ -1,33 +1,68 @@
-import React from "react";
+import React, {useState, useCallback} from "react";
 import {DatePickerField} from "../../../Globais/DatePickerField";
 import {trataNumericos} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import CurrencyInput from "react-currency-input";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {faExclamationCircle, faCheck, faTrash} from '@fortawesome/free-solid-svg-icons'
+import {faExclamationCircle, faCheck, faTrash, faDownload, faEye} from '@fortawesome/free-solid-svg-icons'
 import ReactTooltip from "react-tooltip";
 import moment from "moment";
+import ModalVisualizarArquivoDeReferencia from "./ModalVisualizarArquivoDeReferencia";
+import { getDownloadArquivoDeReferencia } from "../../../../services/dres/PrestacaoDeContas.service";
+import {Form} from 'react-bootstrap';
 
 
 export const AnalisesDeContaDaPrestacao = ({infoAta, analisesDeContaDaPrestacao, handleChangeAnalisesDeContaDaPrestacao, getObjetoIndexAnalise, editavel, prestacaoDeContas, adicaoAjusteSaldo, setAdicaoAjusteSaldo, onClickAdicionarAcertoSaldo, onClickDescartarAcerto, formErrosAjusteSaldo, validaAjustesSaldo, handleOnKeyDownAjusteSaldo, onClickSalvarAcertoSaldo, ajusteSaldoSalvoComSucesso, onClickDeletarAcertoSaldo}) => {
     let index = getObjetoIndexAnalise().analise_index;
     const tooltip_1 = 'A diferença entre o saldo bancário e o saldo reprogramado <br/> pode ocorrer em virtude de cheques não compensados, <br/> despesas/créditos não lançados ou lançados com erro ou <br/> estornos ainda não realizados.'
 
+    const [showModalVisualizarArquivoDeRerefencia, setShowModalVisualizarArquivoDeRerefencia] = useState(false)
+    const [uuidArquivoReferencia, setUuidArquivoReferencia] = useState('')
+    const [tipoArquivoReferencia, setTipoArquivoReferencia] = useState('')
+    const [nomeArquivoReferencia, setNomeArquivoReferencia] = useState('')
+
+    const handleClickDownloadArquivoDeReferencia = useCallback(async (rowData) => {
+        let nome_do_arquivo = `${rowData.nome}`
+        try {
+            await getDownloadArquivoDeReferencia(nome_do_arquivo, rowData.uuid, rowData.tipo);
+            console.log("Download efetuado com sucesso");
+        } catch (e) {
+            console.log("Erro ao efetuar o download ", e.response);
+        }
+    }, [])
+
+    const handleClickVisualizarArquivoDeReferencia = useCallback((extrato_bancario) => {
+        setUuidArquivoReferencia(extrato_bancario.uuid)
+        setTipoArquivoReferencia(extrato_bancario.tipo)
+        setNomeArquivoReferencia(extrato_bancario.nome)
+        setShowModalVisualizarArquivoDeRerefencia(true)
+    }, [])
+
+    const handleCloseModalVisualizarArquivoDeRerefencia = useCallback(() => {
+        setShowModalVisualizarArquivoDeRerefencia(false)
+    }, []);
+
     const informacoes_conciliacao_ue = () => {
         let info = null;
+        let extrato_bancario = [];
 
         if(infoAta && infoAta.conta_associacao){
             let conta_associacao = infoAta.conta_associacao.uuid;
             info = prestacaoDeContas.informacoes_conciliacao_ue.find(element => element.conta_uuid === conta_associacao);
+
+            let arquivos_referencia = prestacaoDeContas.arquivos_referencia.filter(element => element.conta_uuid === infoAta.conta_associacao.uuid);
+            extrato_bancario = arquivos_referencia.filter(element => element.tipo === "EB")
         }
 
         let dados = {
             saldo_extrato: '-',
-            data_extrato: '-'
+            data_extrato: '-',
+            extrato_bancario: null,
         }
 
         if (info){
-            dados.saldo_extrato = info.saldo_extrato ? info.saldo_extrato : '-';
-            dados.data_extrato = info.data_extrato ? moment(info.data_extrato).format('DD/MM/YYYY') : '-'
+            dados.saldo_extrato = info.saldo_extrato;
+            dados.data_extrato = info.data_extrato ? moment(info.data_extrato).format('DD/MM/YYYY') : '-';
+            dados.extrato_bancario = extrato_bancario.length > 0 ? extrato_bancario[0] : null;
         }
 
         return dados;
@@ -101,7 +136,7 @@ export const AnalisesDeContaDaPrestacao = ({infoAta, analisesDeContaDaPrestacao,
         let permite = true;
 
         if(index > -1){
-            if(!analisesDeContaDaPrestacao[index].saldo_extrato && !analisesDeContaDaPrestacao[index].data_extrato){
+            if(!analisesDeContaDaPrestacao[index].saldo_extrato && !analisesDeContaDaPrestacao[index].data_extrato && !analisesDeContaDaPrestacao[index].solicitar_envio_do_comprovante_do_saldo_da_conta){
                 permite = false;
             }
 
@@ -182,7 +217,31 @@ export const AnalisesDeContaDaPrestacao = ({infoAta, analisesDeContaDaPrestacao,
                                     </p>
 
                                 </div>
+                                
                             </div>
+                            
+                            {informacoes_conciliacao_ue().extrato_bancario &&
+                                <div className="row container-extrato-bancario ml-0 mr-0">
+                                    <div className="col-12 mt-3">
+                                        <div className="d-flex align-items-center justify-content-start pb-3">
+                                            <span className="pr-2">{informacoes_conciliacao_ue().extrato_bancario.nome}</span>
+                                            <button onClick={() => handleClickVisualizarArquivoDeReferencia(informacoes_conciliacao_ue().extrato_bancario)} className="btn-editar-membro" type="button">
+                                                <FontAwesomeIcon
+                                                    style={{fontSize: '20px', marginRight: "0", marginTop: '2px', color: "#00585E"}}
+                                                    icon={faEye}
+                                                />
+                                            </button>
+                                            <span> | </span>
+                                            <button onClick={() => handleClickDownloadArquivoDeReferencia(informacoes_conciliacao_ue().extrato_bancario)} className="btn-editar-membro" type="button">
+                                                <FontAwesomeIcon
+                                                    style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
+                                                    icon={faDownload}
+                                                />
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div> 
+                            }
 
                             {(adicaoAjusteSaldo || (index >-1 && analisesDeContaDaPrestacao[index] && analisesDeContaDaPrestacao[index].uuid)) &&
                                 <div id="correcao_extrato_bancario">
@@ -215,7 +274,7 @@ export const AnalisesDeContaDaPrestacao = ({infoAta, analisesDeContaDaPrestacao,
                                             <label htmlFor="saldo_extrato"><strong>Saldo corrigido</strong></label>
                                             <CurrencyInput
                                                 disabled={!editavel || !adicaoAjusteSaldo}
-                                                allowNegative={false}
+                                                allowNegative={true}
                                                 prefix='R$'
                                                 decimalSeparator=","
                                                 thousandSeparator="."
@@ -280,8 +339,46 @@ export const AnalisesDeContaDaPrestacao = ({infoAta, analisesDeContaDaPrestacao,
                                                 }
                                             </div>
                                         </div>
-
+    
                                     </div>
+
+                                    <div className="row container-extrato-bancario ml-0 mr-0">
+                                        <div className="col-12">
+                                            <Form.Check
+                                                type="checkbox"
+                                                checked={analisesDeContaDaPrestacao[index].solicitar_envio_do_comprovante_do_saldo_da_conta}
+                                                label={"Solicitar o envio do comprovante de saldo da conta"}
+                                                key={index}
+                                                onChange={(e) => {
+                                                    handleChangeAnalisesDeContaDaPrestacao(e.target.name, e.target.checked)
+                                                }}
+                                                name="solicitar_envio_do_comprovante_do_saldo_da_conta"
+                                                disabled={!editavel || !adicaoAjusteSaldo}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {analisesDeContaDaPrestacao[index].solicitar_envio_do_comprovante_do_saldo_da_conta &&
+                                        <div className="row container-extrato-bancario ml-0 mr-0">
+                                            <div className="col-12 mt-2 pb-2">
+                                                <span><strong>Observação</strong></span>
+
+                                                <textarea
+                                                    value={analisesDeContaDaPrestacao[index].observacao_solicitar_envio_do_comprovante_do_saldo_da_conta}
+                                                    onChange={(e) => {
+                                                        handleChangeAnalisesDeContaDaPrestacao(e.target.name, e.target.value)
+                                                    }}
+                                                    className="form-control mt-2"
+                                                    rows="3"
+                                                    id="observacao_solicitar_envio_do_comprovante_do_saldo_da_conta"
+                                                    name="observacao_solicitar_envio_do_comprovante_do_saldo_da_conta"
+                                                    placeholder="Descrição da observação"
+                                                    disabled={!editavel || !adicaoAjusteSaldo}
+                                                >
+                                                </textarea>
+                                            </div>
+                                        </div>
+                                    }
                                 </div>
                             }
 
@@ -358,6 +455,16 @@ export const AnalisesDeContaDaPrestacao = ({infoAta, analisesDeContaDaPrestacao,
                     </div>
                 </form>
             </>
+
+            <section>
+                <ModalVisualizarArquivoDeReferencia
+                    show={showModalVisualizarArquivoDeRerefencia}
+                    handleClose={handleCloseModalVisualizarArquivoDeRerefencia}
+                    uuidArquivoReferencia={uuidArquivoReferencia}
+                    nomeArquivoReferencia={nomeArquivoReferencia}
+                    tipoArquivoReferencia={tipoArquivoReferencia}
+                />
+            </section>
         </>
     )
 };

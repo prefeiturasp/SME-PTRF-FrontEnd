@@ -3,28 +3,36 @@ pipeline {
       branchname =  env.BRANCH_NAME.toLowerCase()
       kubeconfig = getKubeconf(env.branchname)
       registryCredential = 'jenkins_registry'
+      namespace = "${env.branchname == 'develop' ? 'sme-ptrf-dev' : env.branchname == 'homolog' ? 'sme-ptrf-hom' : env.branchname == 'homolog-r2' ? 'sme-ptrf-hom2' : 'sme-ptrf' }"
     }
-  
-    agent {
-      node { label 'AGENT-NODES' }
-    }
+
+   agent { kubernetes { 
+                  label 'builder'
+                  defaultContainer 'builder'
+                }
+              }
 
     options {
       buildDiscarder(logRotator(numToKeepStr: '20', artifactNumToKeepStr: '5'))
       disableConcurrentBuilds()
       skipDefaultCheckout()
     }
-  
+
     stages {
 
-        stage('CheckOut') {            
-            steps { checkout scm }            
+        stage('CheckOut') {
+            steps { checkout scm }
         }
 
-        
+
 
         stage('AnaliseCodigo') {
 	      when { branch 'homolog' }
+          agent { kubernetes { 
+                  label 'python310'
+                  defaultContainer 'builder'
+                }
+              } 
           steps {
               withSonarQubeEnv('sonarqube-local'){
                 sh 'echo "[ INFO ] Iniciando analise Sonar..." && sonar-scanner \
@@ -34,10 +42,10 @@ pipeline {
           }
         }
 
-        
+
 
         stage('Build') {
-          when { anyOf { branch 'master'; branch 'main'; branch "story/*"; branch 'development'; branch 'develop'; branch 'release'; branch 'homolog'; branch 'homolog-r2';  } } 
+          when { anyOf { branch 'master'; branch 'main'; branch "story/*"; branch 'development'; branch 'develop'; branch 'release'; branch 'homolog'; branch 'homolog-r2'; branch 'pre-release';  } }
           steps {
             script {
               imagename1 = "registry.sme.prefeitura.sp.gov.br/${env.branchname}/ptrf-frontend"
@@ -53,40 +61,43 @@ pipeline {
             }
           }
         }
-	    
+
         stage('Deploy'){
-            when { anyOf {  branch 'master'; branch 'main'; branch 'develop'; branch 'development'; branch 'release'; branch 'homolog'; branch 'homolog-r2';  } }        
+            when { anyOf {  branch 'master'; branch 'main'; branch 'develop'; branch 'development'; branch 'release'; branch 'homolog'; branch 'homolog-r2'; branch 'pre-release';  } }
             steps {
                 script{
                     if ( env.branchname == 'main' ||  env.branchname == 'master' || env.branchname == 'homolog' || env.branchname == 'release' ) {
                         sendTelegram("🤩 [Deploy ${env.branchname}] Job Name: ${JOB_NAME} \nBuild: ${BUILD_DISPLAY_NAME} \nMe aprove! \nLog: \n${env.BUILD_URL}")
                         timeout(time: 24, unit: "HOURS") {
-                            input message: 'Deseja realizar o deploy?', ok: 'SIM', submitter: 'alessandro_fernandes, kelwy_oliveira, anderson_morais, luis_zimmermann, rodolpho_azeredo, ollyver_ottoboni, rayane_santos'
+                            input message: 'Deseja realizar o deploy?', ok: 'SIM', submitter: 'alessandro_fernandes, kelwy_oliveira, anderson_morais, luis_zimmermann, rodolpho_azeredo, ollyver_ottoboni, rayane_santos, lucas_rocha, matheus_diori'
                         }
                     }
                       withCredentials([file(credentialsId: "${kubeconfig}", variable: 'config')]){
 		        sh('if [ -f '+"$home"+'/.kube/config ]; then rm -f '+"$home"+'/.kube/config; fi')
-                        if ( env.branchname == 'homolog-r2' ) {
-                          sh('cp $config '+"$home"+'/.kube/config')
-                          sh 'kubectl rollout restart deployment/ptrf-frontend -n sme-ptrf-hom2'
-                        }
-                        else {
-                          sh('cp $config '+"$home"+'/.kube/config')
-			  sh 'kubectl rollout restart deployment/ptrf-frontend -n sme-ptrf'
-                        }
+                        sh('cp $config '+"$home"+'/.kube/config')
+			sh "kubectl rollout restart deployment/ptrf-frontend -n ${namespace}"
                         sh('if [ -f '+"$home"+'/.kube/config ]; then rm -f '+"$home"+'/.kube/config; fi')
                       }
                 }
-            }           
-        } 
+            }
+        }
 
-        stage('Ambientes'){
+        stage('Deploy Treino'){
           when { anyOf {  branch 'master'; branch 'main' } }
           steps {
             withCredentials([file(credentialsId: "${kubeconfig}", variable: 'config')]){
               sh('cp $config '+"$home"+'/.kube/config')
               sh 'kubectl rollout restart deployment/treinamento-frontend -n sigescola-treinamento'
-              sh 'kubectl rollout restart deployment/treinamento-frontend -n sigescola-treinamento2'
+              sh('if [ -f '+"$home"+'/.kube/config ]; then rm -f '+"$home"+'/.kube/config; fi')
+            }
+          }
+        }
+        stage('Deploy QA'){
+          when { anyOf {  branch 'homolog' } }
+          steps {
+            withCredentials([file(credentialsId: "${kubeconfig}", variable: 'config')]){
+              sh('cp $config '+"$home"+'/.kube/config')
+              sh 'kubectl rollout restart deployment/qa-frontend -n sme-ptrf-qa'
               sh('if [ -f '+"$home"+'/.kube/config ]; then rm -f '+"$home"+'/.kube/config; fi')
             }
           }
@@ -116,9 +127,9 @@ def sendTelegram(message) {
 def getKubeconf(branchName) {
     if("main".equals(branchName)) { return "config_prd"; }
     else if ("master".equals(branchName)) { return "config_prd"; }
-    else if ("homolog".equals(branchName)) { return "config_hom"; }
-    else if ("homolog-r2".equals(branchName)) { return "config_hom"; }
-    else if ("release".equals(branchName)) { return "config_hom"; }
-    else if ("development".equals(branchName)) { return "config_dev"; }
-    else if ("develop".equals(branchName)) { return "config_dev"; }
+    else if ("homolog".equals(branchName)) { return "config_release"; }
+    else if ("homolog-r2".equals(branchName)) { return "config_release"; }
+    else if ("release".equals(branchName)) { return "config_release"; }
+    else if ("development".equals(branchName)) { return "config_release"; }
+    else if ("develop".equals(branchName)) { return "config_release"; }
 }

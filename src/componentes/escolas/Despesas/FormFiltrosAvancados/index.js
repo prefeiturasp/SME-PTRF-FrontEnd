@@ -104,6 +104,7 @@ export const FormFiltrosAvancados = (props) => {
                                    onChange={(e) => handleChange(e.target.name, e.target.value)}
                                    name="filtrar_por_termo" id="filtrar_por_termo" type="text" className="form-control"
                                    placeholder="Escreva o termo que deseja filtrar"
+                                   data-qa='filtrar-por-termo-filtro-avancado'
                             />
                         </div>
                         <div className="form-group col-md-6">
@@ -113,10 +114,11 @@ export const FormFiltrosAvancados = (props) => {
                                     name="aplicacao_recurso"
                                     id="aplicacao_recurso_form_filtros_avancados_despesas"
                                     className="form-control"
+                                    data-qa="filtrar-por-aplicacao-recurso-filtro-avancado"
                             >
-                                <option key={0} value="">Selecione um tipo</option>
-                                {despesasTabelas.tipos_aplicacao_recurso && despesasTabelas.tipos_aplicacao_recurso.map(item => (
-                                    <option key={item.id} value={item.id}>{item.nome}</option>
+                                <option data-qa={`option-filtrar-por-aplicacao-recurso-filtro-avancado-${0}`} key={0} value="">Selecione um tipo</option>
+                                {despesasTabelas.tipos_aplicacao_recurso && despesasTabelas.tipos_aplicacao_recurso.map((item, index) => (
+                                    <option data-qa={`option-filtrar-por-aplicacao-recurso-filtro-avancado-${index+1}`} key={item.id} value={item.id}>{item.nome}</option>
                                 ))}
                             </select>
                         </div>
@@ -127,10 +129,11 @@ export const FormFiltrosAvancados = (props) => {
                                     name="acao_associacao"
                                     id="acao_associacao_form_filtros_avancados_despesas"
                                     className="form-control"
+                                    data-qa="filtrar-por-acao-associacao-filtro-avancado"
                             >
-                                <option key={0} value="">Selecione uma ação</option>
-                                {despesasTabelas.acoes_associacao && despesasTabelas.acoes_associacao.map(item => (
-                                    <option key={item.uuid} value={item.uuid}>{item.nome}</option>
+                                <option data-qa={`option-filtrar-por-acao-associacao-filtro-avancado-${0}`} key={0} value="">Selecione uma ação</option>
+                                {despesasTabelas.acoes_associacao && despesasTabelas.acoes_associacao.map((item, index) => (
+                                    <option data-qa={`option-filtrar-por-acao-associacao-filtro-avancado-${index+1}`} key={item.uuid} value={item.uuid}>{item.nome}</option>
                                 ))}
                             </select>
                         </div>
@@ -146,6 +149,7 @@ export const FormFiltrosAvancados = (props) => {
                                 value={filtro_informacoes}
                                 onChange={handleChangeFiltroInformacoes}
                                 className='multiselect-filtrar-por-status'
+                                id='filtrar-por-informacoes-filtro-avancado'
                             >
                                 {listaTagInformacao && listaTagInformacao.length > 0 && listaTagInformacao.map(item => (
                                     <Option key={item.id} value={item.id}>{item.nome}</Option>
@@ -159,10 +163,11 @@ export const FormFiltrosAvancados = (props) => {
                                     value={filtrosAvancados.conta_associacao}
                                     onChange={(e) => handleChange(e.target.name, e.target.value)}
                                     className="form-control"
+                                    data-qa='filtrar-por-conta-associacao-filtro-avancado'
                             >
-                                <option key={0} value="">Selecione um tipo</option>
+                                <option data-qa={`option-filtrar-por-conta-associacao-filtro-avancado-${0}`} key={0} value="">Selecione um tipo</option>
                                 {despesasTabelas.contas_associacao !== undefined && despesasTabelas.contas_associacao.length > 0 ? (despesasTabelas.contas_associacao.map((item, key) => (
-                                    <option key={key} value={item.uuid}>{item.nome}</option>
+                                    <option data-qa={`option-filtrar-por-conta-associacao-filtro-avancado-${key+1}`} key={key+1} value={item.uuid}>{item.nome} {item.solicitacao_encerramento ? `- Conta encerrada em ${moment(item.solicitacao_encerramento.data_de_encerramento_na_agencia).format('DD/MM/YYYY')}` : ''}</option>
                                 ))) : null}
                             </select>
                         </div>
@@ -171,10 +176,10 @@ export const FormFiltrosAvancados = (props) => {
                             <label htmlFor="despesa_status">Status</label>
                             <select value={filtrosAvancados.despesa_status}
                                     onChange={(e) => handleChange(e.target.name, e.target.value)} name="despesa_status"
-                                    id="despesa_status" className="form-control">
-                                <option key={0} value="">Selecione status</option>
-                                <option key="COMPLETO" value="COMPLETO">COMPLETO</option>
-                                <option key="INCOMPLETO" value="INCOMPLETO">RASCUNHO</option>
+                                    id="despesa_status" className="form-control" data-qa='filtrar-por-status-filtro-avancado'>
+                                <option data-qa={`option-filtrar-por-status-filtro-avancado-${0}`} key={0} value="">Selecione status</option>
+                                <option data-qa={`option-filtrar-por-status-filtro-avancado-${1}`} key="COMPLETO" value="COMPLETO">COMPLETO</option>
+                                <option data-qa={`option-filtrar-por-status-filtro-avancado-${2}`} key="INCOMPLETO" value="INCOMPLETO">RASCUNHO</option>
                             </select>
                         </div>
                         <div className="form-group col-md-4">
@@ -187,6 +192,7 @@ export const FormFiltrosAvancados = (props) => {
                                 value={filtro_vinculo_atividades}
                                 onChange={handleChangeFiltroVinculoAtividades}
                                 className='multiselect-filtrar-por-status'
+                                id='filtrar-por-vinculo-atividade-filtro-avancado'
                             >
                                 {despesasTabelas.tags && despesasTabelas.tags.length > 0 && despesasTabelas.tags.map(item => (
                                     <Option key={item.id} value={item.id}>{item.nome}</Option>
@@ -206,6 +212,7 @@ export const FormFiltrosAvancados = (props) => {
                                         type="text"
                                         className="form-control"
                                         placeholder="Escreva a razão social"
+                                        data-qa='filtrar-por-fornecedor-filtro-avancado'
                                     />
                                 </div>
                                 <div className="form-group col-md-5">
@@ -217,6 +224,7 @@ export const FormFiltrosAvancados = (props) => {
                                                 id="data_inicio"
                                                 value={filtrosAvancados.data_inicio}
                                                 onChange={handleChange}
+                                                dataQa="filtrar-por-data-inicio-filtro-avancado"
                                             />
                                         </div>
                                         <div className="col-12 col-md-2 p-0 text-md-center ">
@@ -228,6 +236,7 @@ export const FormFiltrosAvancados = (props) => {
                                                 id="data_fim"
                                                 value={filtrosAvancados.data_fim}
                                                 onChange={handleChange}
+                                                dataQa="filtrar-por-data-fim-filtro-avancado"
                                             />
                                         </div>
                                     </div>
@@ -246,6 +255,7 @@ export const FormFiltrosAvancados = (props) => {
                             }
                             className="btn btn-outline-success mt-2"
                             type="button"
+                            data-qa='btn-cancelar-filtro-avancado'
                         >
                             Cancelar
                         </button>
@@ -258,12 +268,14 @@ export const FormFiltrosAvancados = (props) => {
                             }
                             className="btn btn-outline-success mt-2 ml-2"
                             type="button"
+                            data-qa='btn-limpar-filtro-avancado'
                         >
                             Limpar Filtros
                         </button>
                         <button
                             type="submit"
                             className="btn btn-success mt-2 ml-2"
+                            data-qa='btn-filtrar-filtro-avancado'
                         >
                             Filtrar
                         </button>

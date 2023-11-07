@@ -18,7 +18,7 @@ import {round, trataNumericos, periodoFechado} from "../../../../utils/Validacoe
 import moment from "moment";
 import {useLocation, useParams} from 'react-router-dom';
 import {ASSOCIACAO_UUID} from '../../../../services/auth.service';
-import {PeriodoFechado, ErroGeral, SalvarReceita, AvisoTipoReceita, AvisoTipoReceitaEstorno} from "../../../../utils/Modais";
+import {PeriodoFechado, ErroGeral, AvisoTipoReceita, AvisoTipoReceitaEstorno} from "../../../../utils/Modais";
 import {ModalDeletarReceita} from "../ModalDeletarReceita";
 import {CancelarModalReceitas} from "../CancelarModalReceitas";
 import "../receitas.scss"
@@ -28,6 +28,7 @@ import {PaginasContainer} from "../../../../paginas/PaginasContainer";
 import {toastCustom} from "../../../Globais/ToastCustom";
 import { visoesService } from "../../../../services/visoes.service";
 import { getPeriodoPorUuid } from "../../../../services/sme/Parametrizacoes.service";
+import { STATUS_CONTA_ASSOCIACAO, STATUS_SOLICITACAO_ENCERRAMENTO_CONTA_ASSOCIACAO } from "../../../../constantes/contaAssociacao";
 
 
 export const ReceitaForm = () => {
@@ -74,7 +75,6 @@ export const ReceitaForm = () => {
     const [showEditarSaida, setShowEditarSaida] = useState(false);
     const [showAvisoTipoReceita, setShowAvisoTipoReceita] = useState(false);
     const [showAvisoTipoReceitaEstorno, setShowAvisoTipoReceitaEstorno] = useState(false);
-    const [showSalvarReceita, setShowSalvarReceita] = useState(false);
     const [initialValue, setInitialValue] = useState(initial);
     const [objetoParaComparacao, setObjetoParaComparacao] = useState({});
     const [receita, setReceita] = useState({});
@@ -100,6 +100,7 @@ export const ReceitaForm = () => {
     const [classificacoesAceitas, setClassificacoesAceitas] = useState([])
     const [tituloModalCancelar, setTituloModalCancelar] = useState("Deseja cancelar a inclusão de crédito?")
     const [periodosValidosAssociacaoencerrada, setPeriodosValidosAssociacaoencerrada] = useState([])
+    const [mensagemDataInicialConta, setMensagemDataInicialConta] = useState("")
 
     // ************* Modo Estorno
     const [readOnlyEstorno, setReadOnlyEstorno] = useState(false);
@@ -455,6 +456,7 @@ export const ReceitaForm = () => {
             ...values,
             associacao: localStorage.getItem(ASSOCIACAO_UUID),
             detalhe_tipo_receita: values.detalhe_tipo_receita && values.detalhe_tipo_receita.id !== undefined ? values.detalhe_tipo_receita.id : values.detalhe_tipo_receita,
+            origem_analise_lancamento: origemAnaliseLancamento()
         };
 
         if (Object.keys(repasse).length !== 0) {
@@ -475,8 +477,13 @@ export const ReceitaForm = () => {
                 }else {
                     getPath()
                 }
+                setFormDateErrors('')
             }catch (e) {
-                console.log("Erro ao editar receita em atualizaReceita ", e)
+                console.log("Erro ao editar receita em atualizaReceita ", e.response.data)
+                let mensagemErro = e.response && e.response.data && e.response.data.mensagem && Array.isArray(e.response.data.mensagem) ?
+                    e.response.data.mensagem.map((msg) => msg).join(", ") : ''
+                toastCustom.ToastCustomError('Erro ao tentar editar receita.', mensagemErro)
+
             }
         } else {
             // Criar Receita
@@ -484,7 +491,6 @@ export const ReceitaForm = () => {
                 let resultCadastrar = await criarReceita(payload)
                 console.log('CREATE ==========>>>>>>', resultCadastrar)
                 if (exibeModalSalvoComSucesso){
-                    setShowSalvarReceita(true);
                     setUuidReceita(resultCadastrar);
                     let uuidAcertoDocumento = parametros?.state?.uuid_acerto_documento;
                     if (uuidAcertoDocumento){
@@ -500,7 +506,10 @@ export const ReceitaForm = () => {
                     getPath(resultCadastrar)
                 }
             }catch (e) {
-                console.log("Erro ao criar receita em criarReceita ", e)
+                console.log("Erro ao criar receita em criarReceita ", e.response.data)
+                let mensagemErro = e.response && e.response.data && e.response.data.mensagem && Array.isArray(e.response.data.mensagem) ? 
+                                   e.response.data.mensagem.map((msg) => msg).join(", ") : 'Verifique se os dados foram preenchidos corretamente.'
+                toastCustom.ToastCustomError('Erro ao tentar criar receita.', mensagemErro)
             }
         }
         setLoading(false);
@@ -533,10 +542,6 @@ export const ReceitaForm = () => {
         setShowAvisoTipoReceitaEstorno(false);
     };
 
-    const fecharSalvarCredito = () => {
-        setShowSalvarReceita(false);
-        getPath();
-    }
 
     const onShowModal = () => {
         setShow(true);
@@ -884,6 +889,20 @@ export const ReceitaForm = () => {
         }
     };
 
+    const filtraContasPelaDataInicial = ({contasNaoFiltradas = [], dataDigitadaFormulario = initialValue.data}) => {
+        let contasFiltradasPelaDataInicial = []
+        if(contasNaoFiltradas && dataDigitadaFormulario) {
+            contasFiltradasPelaDataInicial = contasNaoFiltradas.filter((acc) => { 
+                if (acc.data_inicio && moment(acc.data_inicio, 'YYYY-MM-DD').isValid()) {
+                    return moment(acc.data_inicio, 'YYYY-MM-DD').toDate() <= moment(dataDigitadaFormulario, 'YYYY-MM-DD').toDate();
+                }
+                return false;
+            });
+        }
+
+        return contasFiltradasPelaDataInicial;
+    }
+
 
     const retornaTiposDeContas = (values) => {
         if (tabelas.contas_associacao !== undefined && tabelas.contas_associacao.length > 0  && values.tipo_receita && e_repasse(values) && Object.keys(repasse).length !== 0) {
@@ -893,20 +912,44 @@ export const ReceitaForm = () => {
                 <option key={conta_associacao.uuid} value={conta_associacao.uuid}>{conta_associacao.nome}</option>
             )
         } else if (tabelas.contas_associacao !== undefined && tabelas.contas_associacao.length > 0  && values.tipo_receita) {
-
             const tipoReceita = tabelas.tipos_receita.find(element => element.id === Number(values.tipo_receita));
 
             // Lista dos nomes dos tipos de conta que são aceitos pelo tipo de receita selecionado.
             const tipos_conta = tipoReceita.tipos_conta.map(item => item.nome);
 
-            // Filtra as contas pelos tipos aceitos
+            const getOptionPorStatus = (item) => {
+                const defaultProps = {
+                    key: item.uuid,
+                    value: item.uuid
+                }
+                if(item.status === STATUS_CONTA_ASSOCIACAO.ATIVA){
+                    return  <option {...defaultProps}>{item.nome}</option>
+                } else if(item.solicitacao_encerramento) {
+                    let informacaoExtra = item.solicitacao_encerramento ? `- Conta encerrada em ${moment(item.solicitacao_encerramento.data_de_encerramento_na_agencia).format('DD/MM/YYYY')}` : ''
+                    return <option {...defaultProps} disabled>{item.nome} {informacaoExtra}</option>
+                }
+            }
+            
+            const contasFiltradasPelaDataInicialEPeloTipo = filtraContasPelaDataInicial({contasNaoFiltradas: tabelas.contas_associacao.filter(conta => (tipos_conta.includes(conta.nome))), dataDigitadaFormulario: values.data})
+
+
+            const contasFiltradasExcluindoContasComEncerramentoAprovado = contasFiltradasPelaDataInicialEPeloTipo.filter((elemento) => {
+                return !(elemento.status === STATUS_CONTA_ASSOCIACAO.INATIVA && elemento.solicitacao_encerramento );
+              })
+
+            if(!contasFiltradasExcluindoContasComEncerramentoAprovado.length && moment(values.data, 'YYYY-MM-DD').isValid()) {
+                setMensagemDataInicialConta("Não existem contas disponíveis para a data do crédito.")
+            } else {
+                setMensagemDataInicialConta("")
+            }
+
             return (
-                tabelas.contas_associacao.filter(conta => (tipos_conta.includes(conta.nome))).map((item, key) => (
-                    <option key={item.uuid} value={item.uuid}>{item.nome}</option>)
-                ))
+                contasFiltradasPelaDataInicialEPeloTipo.map((item, key) => (
+                    getOptionPorStatus(item)
+                )))
         }
     };
-
+    
     const validateFormReceitas = async (values) => {
         const errors = {};
 
@@ -1264,6 +1307,7 @@ export const ReceitaForm = () => {
                         validacoesPersonalizadasCredito={validacoesPersonalizadasCredito}
                         formDateErrors={formDateErrors}
                         escondeBotaoDeletar={escondeBotaoDeletar}
+                        mensagemDataInicialConta={mensagemDataInicialConta}
                     />
                     <section>
                         <CancelarModalReceitas
@@ -1302,9 +1346,6 @@ export const ReceitaForm = () => {
                             handleClose={onHandleClose}
                             texto={msgAvisoTipoReceitaEstorno}
                         />
-                    </section>
-                    <section>
-                        <SalvarReceita show={showSalvarReceita} handleClose={fecharSalvarCredito}/>
                     </section>
                 </div>
             </PaginasContainer>

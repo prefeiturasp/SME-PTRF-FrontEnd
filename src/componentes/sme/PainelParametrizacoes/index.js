@@ -17,6 +17,7 @@ import IconeTiposAcertos from "../../../assets/img/icone-parametro-tipos-acertos
 import IconeUsuarios from "../../../assets/img/icone-parametro-usuarios.svg"
 import IconeTextosFiqueDeOlho from "../../../assets/img/icone-parametro-textos-fique-de-olho.svg"
 import IconeFornecedores from "../../../assets/img/icone-parametro-fornecedores.svg"
+import IconeMandato from "../../../assets/img/icone-parametro-periodos-de-mandato.svg"
 
 export const PainelParametrizacoes = () => {
 
@@ -61,6 +62,18 @@ export const PainelParametrizacoes = () => {
             parametro: 'Tipos de Conta',
             url: 'parametro-tipos-conta',
             icone: IconeTiposConta,
+            permissoes: ['access_painel_parametrizacoes'],
+        },
+        {
+            parametro: 'Períodos de mandato',
+            url: 'parametro-mandato',
+            icone: IconeMandato,
+            permissoes: ['access_painel_parametrizacoes'],
+        },
+        {
+            parametro: 'Motivos Rejeição (encerramento conta)',
+            url: 'motivos-rejeicao',
+            icone: IconeTiposAcertos,
             permissoes: ['access_painel_parametrizacoes'],
         }
     ];

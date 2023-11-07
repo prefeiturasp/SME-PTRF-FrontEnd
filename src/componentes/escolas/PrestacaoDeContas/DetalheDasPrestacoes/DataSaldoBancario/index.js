@@ -1,4 +1,4 @@
-import React, {memo, useEffect, useCallback} from "react";
+import React, {memo} from "react";
 import {DatePickerField} from "../../../../Globais/DatePickerField";
 import CurrencyInput from "react-currency-input";
 import {trataNumericos} from "../../../../../utils/ValidacoesAdicionaisFormularios";
@@ -8,8 +8,10 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faTrashAlt, faDownload, faUpload, faPaperclip, faCheck} from '@fortawesome/free-solid-svg-icons'
 import 'antd/dist/antd.css';
 import { Upload, Button } from 'antd';
+import moment from "moment";
 
 import {IconeDataSaldoBancarioPendentes} from "./IconeDataSaldoBancarioPendentes";
+import {formataData} from "../../../../../utils/FormataData";
 
 const DataSaldoBancario = ({
     valoresPendentes, dataSaldoBancario, handleChangaDataSaldo, periodoFechado,
@@ -17,32 +19,45 @@ const DataSaldoBancario = ({
     changeUploadExtrato, reiniciaUploadExtrato, downloadComprovanteExtrato, salvarExtratoBancario,
     btnSalvarExtratoBancarioDisable, setBtnSalvarExtratoBancarioDisable, classBtnSalvarExtratoBancario,
     setClassBtnSalvarExtratoBancario, checkSalvarExtratoBancario, setCheckSalvarExtratoBancario, erroDataSaldo,
-    dataAtualizacaoComprovanteExtrato, permiteEditarCamposExtrato
+    dataAtualizacaoComprovanteExtrato, permiteEditarCamposExtrato,
+    pendenciaSaldoBancario, dataSaldoBancarioSolicitacaoEncerramento, setShowModalSalvarDataSaldoExtrato
 }) => {
-
     const handleOnClick = () => {
-        setBtnSalvarExtratoBancarioDisable(true);
-        setCheckSalvarExtratoBancario(true);
-        setClassBtnSalvarExtratoBancario("secondary");
-        salvarExtratoBancario();
+        let dispara_modal = false;
+
+        if(dataSaldoBancarioSolicitacaoEncerramento && dataSaldoBancarioSolicitacaoEncerramento.possui_solicitacao_encerramento && dataSaldoBancario){
+            let data_solicitacao_encerramento = dataSaldoBancarioSolicitacaoEncerramento.data_encerramento ? moment(dataSaldoBancarioSolicitacaoEncerramento.data_encerramento, "YYYY-MM-DD").format("YYYY-MM-DD"): null
+            let saldo_solicitacao_encerramento = dataSaldoBancarioSolicitacaoEncerramento.saldo_encerramento ? trataNumericos(dataSaldoBancarioSolicitacaoEncerramento.saldo_encerramento) : 0
+
+            let data_formulario = dataSaldoBancario.data_extrato ? moment(dataSaldoBancario.data_extrato, "YYYY-MM-DD").format("YYYY-MM-DD"): null
+            let saldo_formulario = dataSaldoBancario.saldo_extrato ? trataNumericos(dataSaldoBancario.saldo_extrato) : 0
+
+            console.log(data_solicitacao_encerramento, data_formulario, saldo_solicitacao_encerramento, saldo_formulario, dataSaldoBancarioSolicitacaoEncerramento.data_encerramento, dataSaldoBancarioSolicitacaoEncerramento.saldo_encerramento )
+            if(dataSaldoBancarioSolicitacaoEncerramento.data_encerramento !== data_formulario || dataSaldoBancarioSolicitacaoEncerramento.saldo_encerramento !== saldo_formulario){
+                dispara_modal = true;
+            }
+        }
+        
+        if(dispara_modal){
+            setShowModalSalvarDataSaldoExtrato(true);
+        }
+        else{
+            salvarExtratoBancario();
+        }
     }
 
-    const exibeIconeIncompleto = useCallback( () => {
-        if (!dataSaldoBancario || !dataSaldoBancario.data_extrato || (!dataSaldoBancario.saldo_extrato === 0 && dataSaldoBancario.saldo_extrato !== "R$0,00") ) {
-            return(
-                IconeDataSaldoBancarioPendentes()
-            )
-        }else if ( (dataSaldoBancario.saldo_extrato !== 0 && dataSaldoBancario.saldo_extrato !== "R$0,00") && !nomeComprovanteExtrato){
-            return(
-                IconeDataSaldoBancarioPendentes()
-            )
+    const dataLimite = () => {
+        if(dataSaldoBancarioSolicitacaoEncerramento && dataSaldoBancarioSolicitacaoEncerramento.data_extrato){
+            let data_encerramento = dataSaldoBancarioSolicitacaoEncerramento.data_extrato;
+            let objeto_data = new Date(data_encerramento);
+            objeto_data.setDate(objeto_data.getDate() + 1);
+            return objeto_data;
         }
-    }, [dataSaldoBancario, nomeComprovanteExtrato])
 
-    useEffect(()=>{
-        exibeIconeIncompleto()
-    }, [exibeIconeIncompleto])
+        return new Date();
+    }
 
+    //  TODO códigos comentados propositalmente em função da história 102412 - Sprint 73 (Conciliação Bancária: Retirar validação e obrigatoriedade de preenchimento dos campos do Saldo bancário da conta ao concluir acerto/período) - que entrou como Hotfix
     return(
         <>
             <form method="post" encType="multipart/form-data">
@@ -50,13 +65,14 @@ const DataSaldoBancario = ({
                     <div className="col-12">
                         <div className="card container-extrato">
                             <div className="card-body">
-                                <h5 className="card-title titulo">Saldo bancário da conta {exibeIconeIncompleto()}</h5>
-                                <p className='text-right'><span className='font-weight-bold'>* Preenchimento obrigatório</span></p>
+                                <h5 className="card-title titulo">Saldo bancário da conta {pendenciaSaldoBancario ? IconeDataSaldoBancarioPendentes() :  null}</h5>
+                                {/*<p className='text-right'><span className='font-weight-bold'>* Preenchimento obrigatório</span></p>*/}
                                 <div className='row'>
                                     <div className='col-6'>
                                         <div className='row'>
                                             <div className="col">
-                                                <label htmlFor="data_extrato">Data *</label>
+                                                <label htmlFor="data_extrato">Data</label>
+                                                {/*<label htmlFor="data_extrato">Data *</label>*/}
                                                 <DatePickerField
                                                     value={dataSaldoBancario.data_extrato ? dataSaldoBancario.data_extrato : ''}
                                                     onChange={handleChangaDataSaldo}
@@ -64,17 +80,23 @@ const DataSaldoBancario = ({
                                                     type="date"
                                                     className="form-control"
                                                     disabled={!permiteEditarCamposExtrato || !visoesService.getPermissoes(['change_conciliacao_bancaria'])}
-                                                    maxDate={new Date()}
+                                                    maxDate={dataLimite()}
                                                 />
                                                 {erroDataSaldo && <span className="span_erro text-danger mt-1"> {erroDataSaldo}</span>}
+                                                {dataSaldoBancarioSolicitacaoEncerramento?.possui_solicitacao_encerramento === true &&
+                                                  <span>
+                                                    {`Data de encerramento da conta: ${formataData(dataSaldoBancarioSolicitacaoEncerramento.data_encerramento)}`}
+                                                  </span>
+                                                }
                                             </div>
                                         </div>
 
-                                        <div className='row'>
+                                        <div className='row' style={{ paddingTop: '10px' }}>
                                             <div className="col">
-                                                <label htmlFor="saldo_extrato">Saldo *</label>
+                                                <label htmlFor="saldo_extrato">Saldo</label>
+                                                {/*<label htmlFor="saldo_extrato">Saldo *</label>*/}
                                                 <CurrencyInput
-                                                    allowNegative={false}
+                                                    allowNegative={true}
                                                     prefix='R$'
                                                     decimalSeparator=","
                                                     thousandSeparator="."
@@ -85,6 +107,12 @@ const DataSaldoBancario = ({
                                                     onChangeEvent={(e) => handleChangaDataSaldo(e.target.name, e.target.value)}
                                                     disabled={!permiteEditarCamposExtrato || !visoesService.getPermissoes(['change_conciliacao_bancaria'])}
                                                 />
+                                                {dataSaldoBancarioSolicitacaoEncerramento?.possui_solicitacao_encerramento === true &&
+                                                  <span>
+                                                    {`Saldo do encerramento: R$${parseFloat(dataSaldoBancarioSolicitacaoEncerramento.saldo_encerramento).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+                                                  </span>
+                                                }
+
                                             </div>
                                         </div>
 
@@ -92,7 +120,8 @@ const DataSaldoBancario = ({
                                     </div>
                                     <div className="col-6">
                                         <div className="form-group">
-                                            <label htmlFor="upload_extrato" className="ml-1">Comprovante do saldo da conta {dataSaldoBancario.saldo_extrato !== 0 && dataSaldoBancario.saldo_extrato !== "R$0,00" ? "*" : ""}</label>
+                                            <label htmlFor="upload_extrato" className="ml-1">Comprovante do saldo da conta</label>
+                                            {/*<label htmlFor="upload_extrato" className="ml-1">Comprovante do saldo da conta {dataSaldoBancario.saldo_extrato !== 0 && dataSaldoBancario.saldo_extrato !== "R$0,00" ? "*" : ""}</label>*/}
                                             <div className='container-upload-extrato'>
                                                 <Upload
                                                     beforeUpload={() => false}

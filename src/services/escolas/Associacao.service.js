@@ -17,6 +17,10 @@ export const getAssociacaoByUUID = async (associacaoUUID) => {
     return (await api.get(`api/associacoes/${associacaoUUID}`, authHeader)).data
 };
 
+export const getContasAtivasDaAssociacaoNoPeriodo = async (periodoUUID) => {
+    return (await api.get(`api/associacoes/${localStorage.getItem(ASSOCIACAO_UUID)}/contas-do-periodo/?periodo_uuid=${periodoUUID}`, authHeader)).data
+}
+
 
 export const alterarAssociacao = async (payload) => {
     return api.put(`api/associacoes/${localStorage.getItem(ASSOCIACAO_UUID)}/`, payload, authHeader).then(response => {
@@ -81,12 +85,28 @@ export const consultarCpfResponsavel = async (cpf) => {
     return (await api.get(`/api/membros-associacao/cpf-responsavel/?cpf=${cpf}&associacao_uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader))
 };
 
-export const getContas = async () => {
-    return (await api.get(`/api/associacoes/${localStorage.getItem(ASSOCIACAO_UUID)}/contas/`, authHeader)).data
+export const getContas = async (periodo_uuid = '') => {
+    return (await api.get(`/api/associacoes/${localStorage.getItem(ASSOCIACAO_UUID)}/contas/?periodo_uuid=${periodo_uuid}`, authHeader)).data
+};
+
+export const getContasEncerradas = async () => {
+    return (await api.get(`/api/associacoes/${localStorage.getItem(ASSOCIACAO_UUID)}/contas/encerradas/`, authHeader)).data
 };
 
 export const salvarContas = async (payload) => {
     return (await api.post(`/api/associacoes/${localStorage.getItem(ASSOCIACAO_UUID)}/contas-update/`, payload, authHeader))
+};
+
+export const encerrarConta = async (payload) => {
+    return (await api.post(`/api/solicitacoes-encerramento-conta/`, payload, authHeader))
+};
+
+export const reenviarSolicitacaoEncerramentoConta = async (payload, idSolicitacao) => {
+    return (await api.patch(`/api/solicitacoes-encerramento-conta/${idSolicitacao}/reenviar/`, payload, authHeader))
+};
+
+export const cancelarSolicitacaoEncerramentoConta = async (solicitacaoUUID) => {
+    return (await api.delete(`/api/solicitacoes-encerramento-conta/${solicitacaoUUID}/`, authHeader))
 };
 
 export const exportarDadosAssociacao = async () => {

@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {Redirect} from "react-router-dom";
-import {getTabelaAssociacoes, getAssociacoesPorUnidade, filtrosAssociacoes, getAssociacao, getContasAssociacao} from "../../../services/dres/Associacoes.service";
+import {getAssociacoesPorUnidade, filtrosAssociacoes, getAssociacao, getContasAssociacao, getContasAssociacaoEncerradas, getTabelaAssociacoesDre} from "../../../services/dres/Associacoes.service";
 import "./associacoes.scss"
 import {TabelaAssociacoes} from "./TabelaAssociacoes";
 import {FiltrosAssociacoes} from "./FiltrosAssociacoes";
@@ -40,7 +40,7 @@ export const Associacoes = () =>{
     }, []);
 
     const buscaTabelaAssociacoes = async ()=>{
-        let tabela_associacoes = await getTabelaAssociacoes();
+        let tabela_associacoes = await getTabelaAssociacoesDre();
         setTabelaAssociacoes(tabela_associacoes);
     };
 
@@ -59,11 +59,13 @@ export const Associacoes = () =>{
         try {
             let associacao = await getAssociacao(uuid_associacao, stateFiltros.filtro_status);
             let contas = await getContasAssociacao(uuid_associacao);
+            let contasEncerradas = await getContasAssociacaoEncerradas(uuid_associacao);
 
             let dados_da_associacao = {
                 dados_da_associacao:{
                     ...associacao,
-                    contas
+                    contas,
+                    contasEncerradas
                 }
             };
             localStorage.setItem(DADOS_DA_ASSOCIACAO, JSON.stringify(dados_da_associacao ));

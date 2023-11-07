@@ -16,6 +16,7 @@ import {DetalhedasPrestacoesPage} from "../paginas/escolas/DetalheDasPrestacoes"
 import {VisualizacaoDaAta} from "../componentes/escolas/GeracaoDaAta/VisualizacaoDaAta";
 import {EdicaoAta} from "../componentes/escolas/GeracaoDaAta/VisualizacaoDaAta/EdicaoAta";
 import {MembrosDaAssociacaoPage} from "../paginas/escolas/MembrosDaAssociacao";
+import {PaginaMandatoVigente} from "../componentes/escolas/MembrosDaAssociacao/pages/PaginaMandatoVigente";
 import { ValoresReprogramados } from "../componentes/Globais/ValoresReprogramados";
 import {DadosDasContasPage} from "../paginas/escolas/DadosDasContasAssociacao";
 import {EsqueciMinhaSenhaPage} from "../paginas/Login/EsqueciMinhaSenha";
@@ -37,6 +38,7 @@ import { ValoresReprogramadosDrePage } from "../paginas/dres/ValoresReprogramado
 import {AnalisesRegularidadeAssociacaoPage} from "../paginas/dres/RegularidadeAssociacoes/AnalisesRegularidadeDaAssociacao";
 import {SuporteAsUnidadesDre} from "../paginas/dres/SuporteAsUnidades"
 import {SuporteAsUnidadesSme} from "../paginas/SME/SuporteAsUnidades"
+import {GestaoDeUsuariosListPage} from "../componentes/Globais/GestaoDeUsuariosList"
 // Faz o redirect de acordo com a Visao Selecionada
 import {RedirectLoginVisaoUe} from "../utils/RedirectLoginVisaoUe";
 import {DadosDaDiretoriaDrePage} from "../paginas/dres/Diretoria/DadosDaDiretoria";
@@ -66,6 +68,7 @@ import {VinculaAssociacoesAAcao} from "../componentes/sme/Parametrizacoes/Estrut
 import {Periodos} from "../componentes/sme/Parametrizacoes/Estrutura/Periodos";
 import {Associacoes} from "../componentes/sme/Parametrizacoes/Estrutura/Associacoes";
 import {Tags} from "../componentes/sme/Parametrizacoes/Estrutura/Tags";
+import {TiposConta} from "../componentes/sme/Parametrizacoes/Estrutura/TiposConta";
 import {FiqueDeOlho} from "../componentes/sme/Parametrizacoes/EdicaoDeTextos/FiqueDeOlho";
 import ArquivosDeCarga from "../componentes/Globais/ArquivosDeCarga";
 import {TiposDeCusteio} from "../componentes/sme/Parametrizacoes/Despesas/TiposDeCusteio"
@@ -87,6 +90,14 @@ import {AcompanhamentoDeRelatorioConsolidadoSMEResumoAcertos} from "../component
 import {ExtracaoDadosPage} from '../paginas/SME/ExtracaoDados'
 import TesteDataTableAnt
     from "../componentes/Globais/ExibeAcertosEmLancamentosEDocumentosPorConta/AcertosLancamentos/TesteDataTableAnt";
+import {GestaoDeUsuariosFormPage} from "../componentes/Globais/GestaoDeUsuariosForm";
+import {Mandatos} from "../componentes/sme/Mandatos";
+import {MotivosRejeicaoEncerramentoConta} from "../componentes/sme/Parametrizacoes/Estrutura/MotivosRejeicaoEncerramentoConta";
+import {PaginaMandatosAnteriores} from "../componentes/escolas/MembrosDaAssociacao/pages/PaginaMandatosAnteriores";
+
+// Migrando para V6 do react-router-dom
+// Referencia: https://github.com/remix-run/react-router/discussions/8753
+import {CompatRoute} from "react-router-dom-v5-compat";
 
 const routesConfig = [
     {
@@ -153,6 +164,18 @@ const routesConfig = [
         exact: true,
         path: "/membros-da-associacao",
         component: MembrosDaAssociacaoPage,
+        permissoes: ['access_dados_associacao'],
+    },
+    {
+        exact: true,
+        path: "/membros-da-associacao-mandato-vigente",
+        component: PaginaMandatoVigente,
+        permissoes: ['access_dados_associacao'],
+    },
+    {
+        exact: true,
+        path: "/membros-da-associacao-mandatos-anteriores",
+        component: PaginaMandatosAnteriores,
         permissoes: ['access_dados_associacao'],
     },
     {
@@ -238,7 +261,7 @@ const routesConfig = [
         exact: true,
         path: "/dre-comissoes",
         component: ComissoesDrePage,
-        permissoes: ['access_comissoes_dre'], 
+        permissoes: ['access_comissoes_dre'],
     },
     {
         exact: true,
@@ -333,6 +356,18 @@ const routesConfig = [
     },
     {
         exact: true,
+        path: "/gestao-de-usuarios-list",
+        component: GestaoDeUsuariosListPage,
+        permissoes: ['access_gestao_usuarios_ue', 'access_gestao_usuarios_dre', 'access_gestao_usuarios_sme'],
+    },
+    {
+        exact: true,
+        path: "/gestao-de-usuarios-form/:id_usuario?",
+        component: GestaoDeUsuariosFormPage,
+        permissoes: ['access_gestao_usuarios_ue', 'access_gestao_usuarios_dre', 'access_gestao_usuarios_sme'],
+    },
+    {
+        exact: true,
         path: "/extracoes-dados",
         component: ExtracaoDadosPage,
         permissoes: ['access_extracao_de_dados_sme'],
@@ -421,6 +456,24 @@ const routesConfig = [
         exact: true,
         path: "/parametro-tags",
         component: Tags,
+        permissoes: ['access_painel_parametrizacoes'],
+    },
+    {
+        exact: true,
+        path: "/parametro-tipos-conta",
+        component: TiposConta,
+        permissoes: ['access_painel_parametrizacoes'],
+    },
+    {
+        exact: true,
+        path: "/parametro-mandato",
+        component: Mandatos,
+        permissoes: ['access_painel_parametrizacoes'],
+    },
+    {
+        exact: true,
+        path: "/motivos-rejeicao",
+        component: MotivosRejeicaoEncerramentoConta,
         permissoes: ['access_painel_parametrizacoes'],
     },
     {
@@ -543,13 +596,13 @@ const routesConfig = [
         component: RedirectLoginVisaoUe,
         permissoes: ['view_default'],
     },
-        {
+    {
         exact: true,
         path: "/regularidade-associacoes",
         component: RegularidadeAssociacoesPage,
         permissoes: ['access_regularidade_dre'],
     },
-        {
+    {
         exact: true,
         path: "/analises-regularidade-associacao/:associacao_uuid/",
         component: AnalisesRegularidadeAssociacaoPage,
@@ -596,7 +649,12 @@ const PrivateRouter = (
 export const Rotas = () => {
     return (
         <Switch>
+            {/*
             <Route path="/login" component={Login}/>
+            Migrando para V6 do react-router-dom
+            Referencia: https://github.com/remix-run/react-router/discussions/8753
+            */}
+            <CompatRoute path="/login" component={Login} />
             <Route strict path="/esqueci-minha-senha/" component={EsqueciMinhaSenhaPage}/>
             <Route exact={true} path="/redefinir-senha/:uuid/" component={RedefinirSenhaPage}/>
             {routesConfig.map(

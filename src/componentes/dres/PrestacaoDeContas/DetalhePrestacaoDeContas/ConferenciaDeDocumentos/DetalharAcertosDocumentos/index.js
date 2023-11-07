@@ -4,8 +4,9 @@ import {PaginasContainer} from "../../../../../../paginas/PaginasContainer";
 import {useSelector} from "react-redux";
 import {TopoComBotoes} from "./TopoComBotoes";
 import CabecalhoDocumento from "./CabecalhoDocumento";
-import {getTiposDeAcertosDocumentos, getSolicitacaoDeAcertosDocumentos, postSolicitacoesParaAcertosDocumentos, getTabelas} from "../../../../../../services/dres/PrestacaoDeContas.service";
+import {getTiposDeAcertosDocumentos, getSolicitacaoDeAcertosDocumentos, postSolicitacoesParaAcertosDocumentos, getTabelas, getContasComMovimentoNaPc} from "../../../../../../services/dres/PrestacaoDeContas.service";
 import FormularioAcertos from "./FormularioAcertos";
+import { ModalAntDesignConfirmacao } from "../../../../../Globais/ModalAntDesign";
 
 // Hooks Personalizados
 import {useCarregaPrestacaoDeContasPorUuid} from "../../../../../../hooks/dres/PrestacaoDeContas/useCarregaPrestacaoDeContasPorUuid";
@@ -26,6 +27,7 @@ const DetalharAcertosDocumentos = () =>{
     const [textoCategoria, setTextoCategoria] = useState([])
     const [corTextoCategoria, setCorTextoCategoria] = useState([])
     const [solicitacoesAcertosDocumentos, setSolicitacoesAcertosDocumentos] = useState({})
+    const [showModalContaEncerrada, setShowModalContaEncerrada] = useState(false)
 
     const carregaTiposDeAcertoDocumentos = useCallback(async () =>{
         if (documentos && documentos[0]){
@@ -86,6 +88,77 @@ const DetalharAcertosDocumentos = () =>{
         history.push(`/dre-detalhe-prestacao-de-contas/${prestacao_conta_uuid}#conferencia_de_documentos`)
     }
 
+    const validaContaAoSalvar = async() => {
+        if (!formRef.current.errors.solicitacoes_acerto && formRef.current.values && formRef.current.values.solicitacoes_acerto) {
+            if(documentos && documentos[0] && documentos[0].tipo_documento_prestacao_conta && documentos[0].tipo_documento_prestacao_conta && documentos[0].tipo_documento_prestacao_conta.documento_por_conta){
+                let conta_associacao = documentos[0].tipo_documento_prestacao_conta.conta_associacao;
+                let {solicitacoes_acerto} = formRef.current.values
+    
+                if(conta_associacao){
+                    let conta_encerrada = await contaEncerrada(conta_associacao);
+        
+                    if(conta_encerrada){
+                        if(possuiAcertosQuePodemAlterarSaldo(solicitacoes_acerto)){
+                            setShowModalContaEncerrada(true);
+                        }
+                        else{
+                            await onSubmitFormAcertos();
+                        }
+                    }
+                    else{
+                        await onSubmitFormAcertos();
+                    }
+                }
+            } else {
+                await onSubmitFormAcertos();
+            }
+        }
+    }
+
+    const contaEncerrada = async(conta_associacao) => {
+        let contas_com_movimento = await getContasComMovimentoNaPc(prestacaoDeContas.uuid)
+        let conta_encontrada = contas_com_movimento.find(elemento => elemento.uuid === conta_associacao)
+
+        return conta_encontrada.status === "INATIVA" ? true : false;
+    }
+
+    const possuiAcertosQuePodemAlterarSaldo = (solicitacoes_acerto) => {
+        const categoriasQuePodemAlterarSaldoDaConta = [
+            'INCLUSAO_CREDITO',
+            'INCLUSAO_GASTO',
+        ];
+
+        let possui_acerto_que_altera_saldo = false;
+
+        for(let index_solicitacao_acerto=0; index_solicitacao_acerto <= solicitacoes_acerto.length-1; index_solicitacao_acerto ++){
+            let tipo_acerto_uuid = solicitacoes_acerto[index_solicitacao_acerto].tipo_acerto
+            let categoria = retornaCategoriaTipoAcerto(tipo_acerto_uuid)
+
+            if(categoriasQuePodemAlterarSaldoDaConta.includes(categoria.id)){
+                possui_acerto_que_altera_saldo = true;
+                break;
+            }
+        }
+
+        return possui_acerto_que_altera_saldo;
+    }
+
+    const retornaCategoriaTipoAcerto = (tipo_acerto_uuid) => {
+        let categoria_encontrada = null;
+
+        for(let index_categoria=0; index_categoria <= tiposDeAcertoDocumentosAgrupados.length -1; index_categoria ++){
+            let categoria = tiposDeAcertoDocumentosAgrupados[index_categoria]
+            
+            let tipo_acerto = categoria.tipos_acerto_documento.find(elemento => elemento.uuid === tipo_acerto_uuid);
+            if(tipo_acerto){
+                categoria_encontrada = categoria;
+                break
+            }
+        }
+
+        return categoria_encontrada;
+    }
+
     const onSubmitFormAcertos = async () =>{
 
         if (!formRef.current.errors.solicitacoes_acerto && formRef.current.values && formRef.current.values.solicitacoes_acerto) {
@@ -106,6 +179,7 @@ const DetalharAcertosDocumentos = () =>{
             try {
                 await postSolicitacoesParaAcertosDocumentos(prestacao_conta_uuid, payload)
                 console.log("Solicitações de Acertos em Documento efetuada com sucesso!")
+                setShowModalContaEncerrada(false);
                 onClickBtnVoltar();
             } catch (e) {
                 console.log("Erro ao fazer Solicitações de Acertos em Documento! ", e.response)
@@ -195,14 +269,15 @@ const DetalharAcertosDocumentos = () =>{
                 <div className="page-content-inner">
                     <TopoComBotoes
                         onClickBtnVoltar={onClickBtnVoltar}
-                        onSubmitFormAcertos={onSubmitFormAcertos}
+                        validaContaAoSalvar={validaContaAoSalvar}
+                        prestacaoDeContas={prestacaoDeContas}
                     />
                     <CabecalhoDocumento
                         documentos={documentos}
                     />
                     <FormularioAcertos
                         solicitacoes_acerto={solicitacoesAcertosDocumentos}
-                        onSubmitFormAcertos={onSubmitFormAcertos}
+                        validaContaAoSalvar={validaContaAoSalvar}
                         formRef={formRef}
                         tiposDeAcertoDocumentosAgrupados={tiposDeAcertoDocumentosAgrupados}
                         handleChangeTipoDeAcertoDocumento={handleChangeTipoDeAcertoDocumento}
@@ -212,6 +287,18 @@ const DetalharAcertosDocumentos = () =>{
                         removeTextoECorCategoriaTipoDeAcertoJaCadastrado={removeTextoECorCategoriaTipoDeAcertoJaCadastrado}
                         ehSolicitacaoCopiada={ehSolicitacaoCopiada}
                     />
+
+                    <section>
+                        <ModalAntDesignConfirmacao
+                            handleShow={showModalContaEncerrada}
+                            titulo={"A conta onde foram solicitados acertos foi encerrada"}
+                            bodyText="As solicitações realizadas podem alterar o saldo da conta encerrada. Lembrando que para concluir a análise da PC, o saldo da referida conta deverá estar zerado. Deseja prosseguir com a inclusão do acerto?"
+                            handleOk={(e) => onSubmitFormAcertos()}
+                            okText="Confirmar"
+                            handleCancel={(e) => setShowModalContaEncerrada(false)}
+                            cancelText="Cancelar"
+                        />
+                    </section>
                 </div>
             ):
                 onClickBtnVoltar()

@@ -14,6 +14,7 @@ export const ModalNotificaErroConcluirPC = (props) =>{
             segundoBotaoOnclick={props.segundoBotaoOnclick}
             segundoBotaoCss={props.segundoBotaoCss}
             segundoBotaoTexto={props.segundoBotaoTexto}
+            dataQa={props.dataQa}
         />
     )
 };

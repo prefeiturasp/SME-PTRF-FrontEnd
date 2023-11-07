@@ -275,6 +275,7 @@ export const VisualizacaoDaAtaParecerTecnico = () => {
                         }
                         {dadosAta && Object.entries(dadosAta).length > 0 && dadosAta.presentes_na_ata &&
                             <Assinaturas
+                                data_assinatura={dadosAta.data_reuniao}
                                 presentes_na_ata={dadosAta.presentes_na_ata}
                             />
                         }

@@ -6,14 +6,8 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCheckCircle, faInfoCircle, faListUl} from "@fortawesome/free-solid-svg-icons";
 import Dropdown from "react-bootstrap/Dropdown";
 import {ModalCheckNaoPermitidoConfererenciaDeLancamentos} from "./Modais/ModalCheckNaoPermitidoConfererenciaDeLancamentos";
-import {FiltrosConferenciaDeLancamentos} from "./FiltrosConferenciaDeLancamentos";
-import {
-    postLancamentosParaConferenciaMarcarComoCorreto,
-    postLancamentosParaConferenciaMarcarNaoConferido
-} from "../../../../../services/dres/PrestacaoDeContas.service";
-import {
-    mantemEstadoAcompanhamentoDePc as meapcservice
-} from "../../../../../services/mantemEstadoAcompanhamentoDePc.service";
+import {postLancamentosParaConferenciaMarcarComoCorreto, postLancamentosParaConferenciaMarcarNaoConferido} from "../../../../../services/dres/PrestacaoDeContas.service";
+import {mantemEstadoAcompanhamentoDePc as meapcservice} from "../../../../../services/mantemEstadoAcompanhamentoDePc.service";
 import ReactTooltip from "react-tooltip";
 
 // Hooks Personalizados
@@ -31,15 +25,13 @@ import useNumeroDocumentoTemplate
 
 // Redux
 import {useDispatch} from "react-redux";
-import {
-    addDetalharAcertos,
-    limparDetalharAcertos
-} from "../../../../../store/reducers/componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeLancamentos/DetalharAcertos/actions";
+import {addDetalharAcertos, limparDetalharAcertos} from "../../../../../store/reducers/componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeLancamentos/DetalharAcertos/actions";
 import {visoesService} from "../../../../../services/visoes.service";
 import {ModalLegendaConferenciaLancamentos} from "./Modais/ModalLegendaConferenciaLancamentos"
 import { TableTags } from "../../../../Globais/TableTags";
 import { LegendaInformacao } from "../../../../Globais/ModalLegendaInformacao/LegendaInformacao";
 import { coresTagsDespesas } from "../../../../../utils/CoresTags";
+import {Filtros} from "./Filtros";
 
 const TabelaConferenciaDeLancamentos = ({
                                             setLancamentosParaConferencia,
@@ -63,6 +55,7 @@ const TabelaConferenciaDeLancamentos = ({
     const [showModalCheckNaoPermitido, setShowModalCheckNaoPermitido] = useState(false)
     const [showModalLegendaInformacao, setShowModalLegendaInformacao] = useState(false)
     const [showModalLegendaConferenciaLancamento, setShowModalLegendaConferenciaLancamento] = useState(false)
+    const [btnMaisFiltros, setBtnMaisFiltros] = useState(false)
 
     // Hooks Personalizados
     const valor_template = useValorTemplate()
@@ -89,7 +82,10 @@ const TabelaConferenciaDeLancamentos = ({
     let filtrar_por_numero_de_documento = dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_numero_de_documento
     let filtrar_por_tipo_de_documento = dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_tipo_de_documento
     let filtrar_por_tipo_de_pagamento = dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_tipo_de_pagamento
-
+    let filtrar_por_informacoes = dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_informacao
+    let filtrar_por_conferencia = dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_conferencia
+    let ordenamento_tabela_lancamentos = dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.ordenamento_tabela_lancamentos
+    
 
         useEffect(() => {
         desmarcarTodos()
@@ -190,7 +186,7 @@ const TabelaConferenciaDeLancamentos = ({
                                 checked={false}
                                 type="checkbox"
                                 value=""
-                                onChange={(e) => e}
+                                onChange={(e) => e.stopPropagation(e)}
                                 name="checkHeader"
                                 id="checkHeader"
                                 disabled={!editavel}
@@ -415,7 +411,7 @@ const TabelaConferenciaDeLancamentos = ({
                 await postLancamentosParaConferenciaMarcarComoCorreto(prestacaoDeContas.uuid, payload)
                 console.log("Marcados como correto com sucesso!")
                 desmarcarTodos()
-                await carregaLancamentosParaConferencia(prestacaoDeContas, contaUuid, stateFiltros.filtrar_por_acao, stateFiltros.filtrar_por_lancamento, paginacao_atual, false, stateFiltros.filtrar_por_data_inicio, stateFiltros.filtrar_por_data_fim, stateFiltros.filtrar_por_nome_fornecedor, stateFiltros.filtrar_por_numero_de_documento, stateFiltros.filtrar_por_tipo_de_documento, stateFiltros.filtrar_por_tipo_de_pagamento)
+                await carregaLancamentosParaConferencia(prestacaoDeContas, contaUuid, stateFiltros.filtrar_por_acao, stateFiltros.filtrar_por_lancamento, paginacao_atual, false, stateFiltros.filtrar_por_data_inicio, stateFiltros.filtrar_por_data_fim, stateFiltros.filtrar_por_nome_fornecedor, stateFiltros.filtrar_por_numero_de_documento, stateFiltros.filtrar_por_tipo_de_documento, stateFiltros.filtrar_por_tipo_de_pagamento, stateFiltros.filtrar_por_informacoes, stateFiltros.filtrar_por_conferencia, multiSortMeta)
             } catch (e) {
                 console.log("Erro ao marcar como correto ", e.response)
             }
@@ -444,7 +440,8 @@ const TabelaConferenciaDeLancamentos = ({
                 await postLancamentosParaConferenciaMarcarNaoConferido(prestacaoDeContas.uuid, payload)
                 console.log("Marcados como não conferido com sucesso!")
                 desmarcarTodos()
-                await carregaLancamentosParaConferencia(prestacaoDeContas, contaUuid, stateFiltros.filtrar_por_acao, stateFiltros.filtrar_por_lancamento, paginacao_atual, false, stateFiltros.filtrar_por_data_inicio, stateFiltros.filtrar_por_data_fim, stateFiltros.filtrar_por_nome_fornecedor, stateFiltros.filtrar_por_numero_de_documento, stateFiltros.filtrar_por_tipo_de_documento, stateFiltros.filtrar_por_tipo_de_pagamento)
+                await carregaLancamentosParaConferencia(prestacaoDeContas, contaUuid, stateFiltros.filtrar_por_acao, stateFiltros.filtrar_por_lancamento, paginacao_atual, false, stateFiltros.filtrar_por_data_inicio, stateFiltros.filtrar_por_data_fim, stateFiltros.filtrar_por_nome_fornecedor, stateFiltros.filtrar_por_numero_de_documento, stateFiltros.filtrar_por_tipo_de_documento, stateFiltros.filtrar_por_tipo_de_pagamento, stateFiltros.filtrar_por_informacoes, stateFiltros.filtrar_por_conferencia,
+                multiSortMeta)
             } catch (e) {
                 console.log("Erro ao marcar como não conferido ", e.response)
             }
@@ -484,8 +481,12 @@ const TabelaConferenciaDeLancamentos = ({
         filtrar_por_numero_de_documento: dados_acompanhamento_de_pc_usuario_logado && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_numero_de_documento ? dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_numero_de_documento : "",
         filtrar_por_tipo_de_documento: dados_acompanhamento_de_pc_usuario_logado && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_tipo_de_documento ? dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_tipo_de_documento : "",
         filtrar_por_tipo_de_pagamento: dados_acompanhamento_de_pc_usuario_logado && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_tipo_de_pagamento ? dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_tipo_de_pagamento : "",
+        filtrar_por_informacoes: dados_acompanhamento_de_pc_usuario_logado && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_informacao ? dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_informacao : [],
+        filtrar_por_conferencia: dados_acompanhamento_de_pc_usuario_logado && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_conferencia ? dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_conferencia : [],
+        ordenamento_tabela_lancamentos: dados_acompanhamento_de_pc_usuario_logado && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.ordenamento_tabela_lancamentos ? dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.ordenamento_tabela_lancamentos : [],
     }
     const [stateFiltros, setStateFiltros] = useState(initialStateFiltros);
+    const [multiSortMeta, setMultiSortMeta] = useState(initialStateFiltros.ordenamento_tabela_lancamentos);
 
     const handleChangeFiltros = (name, value) => {
         setStateFiltros({
@@ -493,6 +494,20 @@ const TabelaConferenciaDeLancamentos = ({
             [name]: value
         });
     };
+
+    const handleChangeFiltroInformacoes = (value) => {
+        setStateFiltros({
+            ...stateFiltros,
+            filtrar_por_informacoes: [...value]
+        });
+    }
+
+    const handleChangeFiltroConferencia = (value) => {
+        setStateFiltros({
+            ...stateFiltros,
+            filtrar_por_conferencia: [...value]
+        });
+    }
 
     const handleClearDate = () => {
         setStateFiltros({
@@ -504,7 +519,7 @@ const TabelaConferenciaDeLancamentos = ({
 
     const handleSubmitFiltros = async () => {
         desmarcarTodos()
-        await carregaLancamentosParaConferencia(prestacaoDeContas, contaUuid, stateFiltros.filtrar_por_acao, stateFiltros.filtrar_por_lancamento, paginacao_atual,  false, stateFiltros.filtrar_por_data_inicio, stateFiltros.filtrar_por_data_fim, stateFiltros.filtrar_por_nome_fornecedor, stateFiltros.filtrar_por_numero_de_documento, stateFiltros.filtrar_por_tipo_de_documento, stateFiltros.filtrar_por_tipo_de_pagamento)
+        await carregaLancamentosParaConferencia(prestacaoDeContas, contaUuid, stateFiltros.filtrar_por_acao, stateFiltros.filtrar_por_lancamento, paginacao_atual,  false, stateFiltros.filtrar_por_data_inicio, stateFiltros.filtrar_por_data_fim, stateFiltros.filtrar_por_nome_fornecedor, stateFiltros.filtrar_por_numero_de_documento, stateFiltros.filtrar_por_tipo_de_documento, stateFiltros.filtrar_por_tipo_de_pagamento, stateFiltros.filtrar_por_informacoes, stateFiltros.filtrar_por_conferencia, multiSortMeta)
     };
 
     const limpaFiltros = async () => {
@@ -531,6 +546,9 @@ const TabelaConferenciaDeLancamentos = ({
                 filtrar_por_numero_de_documento: filtrar_por_numero_de_documento,
                 filtrar_por_tipo_de_documento: filtrar_por_tipo_de_documento,
                 filtrar_por_tipo_de_pagamento: filtrar_por_tipo_de_pagamento,
+                filtrar_por_conferencia: filtrar_por_conferencia,
+                filtrar_por_informacoes: filtrar_por_informacoes,
+                ordenamento_tabela_lancamentos: ordenamento_tabela_lancamentos,
                 paginacao_atual: event.rows * event.page,
             },
         }
@@ -579,15 +597,26 @@ const TabelaConferenciaDeLancamentos = ({
         }
     }
 
+    const onSort = (event) => {   
+        let copiaArrayDeOrdenamento = [...event.multiSortMeta]
+        setMultiSortMeta(copiaArrayDeOrdenamento);
+        meapcservice.setOrdenamentoTabelaLancamentos(visoesService.getUsuarioLogin(), copiaArrayDeOrdenamento)
+    };
+    
     return (
         <>
-            <FiltrosConferenciaDeLancamentos
+
+            <Filtros
                 stateFiltros={stateFiltros}
                 tabelasDespesa={tabelaDespesa}
                 handleChangeFiltros={handleChangeFiltros}
                 handleClearDate={handleClearDate}
                 handleSubmitFiltros={handleSubmitFiltros}
                 limpaFiltros={limpaFiltros}
+                handleChangeFiltroInformacoes={handleChangeFiltroInformacoes}
+                handleChangeFiltroConferencia={handleChangeFiltroConferencia}
+                btnMaisFiltros={btnMaisFiltros}
+                setBtnMaisFiltros={setBtnMaisFiltros}
             />
 
             {lancamentosParaConferencia && lancamentosParaConferencia.length > 0 &&
@@ -623,10 +652,12 @@ const TabelaConferenciaDeLancamentos = ({
                         selectionMode="single"
                         onRowClick={e => redirecionaDetalhe(e.data)}
                         stripedRows
-
+                        sortMode="multiple"
                         // Usado para salvar no localStorage a página atual após os calculos ** ver função onPaginationClick
                         first={primeiroRegistroASerExibido}
                         onPage={onPaginationClick}
+                        multiSortMeta={multiSortMeta}
+                        onSort={onSort}
                     >
                         <Column
                             header={selecionarHeader()}
@@ -639,6 +670,7 @@ const TabelaConferenciaDeLancamentos = ({
                             body={dataTemplate}
                             className="align-middle text-left borda-coluna"
                             style={{width: '10%'}}
+                            sortable
                         />
                         <Column
                             field='tipo_transacao'
@@ -656,17 +688,21 @@ const TabelaConferenciaDeLancamentos = ({
                         <Column field='descricao' header='Descrição' className="align-middle text-left borda-coluna"
                                 style={{width: '24%'}}/>
                         <Column 
-                            field='informacao'
+                            field='informacoes'
                             header='Informações'
                             className="align-middle text-left borda-coluna"
                             body={(rowData) => <TableTags data={rowData} coresTags={coresTagsDespesas}/>}
-                            style={{width: '15%'}}/>
+                            style={{width: '15%'}}
+                            sortField="informacoes_ordenamento"  
+                            sortable  
+                        />
                         <Column
                             field='valor_transacao_total'
                             header='Valor (R$)'
                             body={valor_template}
                             className="align-middle text-left borda-coluna"
                             style={{width: '10%'}}
+                            sortable
                         />
                         <Column
                             field='analise_lancamento'
