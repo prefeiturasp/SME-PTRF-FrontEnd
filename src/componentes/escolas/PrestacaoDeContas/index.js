@@ -68,7 +68,7 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
     }, [notificacaoContext])
 
     useEffect(() => {
-        if (statusPrestacaoDeConta && statusPrestacaoDeConta.prestacao_contas_status && statusPrestacaoDeConta.prestacao_contas_status.status_prestacao === 'EM_PROCESSAMENTO'){
+        if (statusPrestacaoDeConta && statusPrestacaoDeConta.prestacao_contas_status && ['A_PROCESSAR', 'EM_PROCESSAMENTO'].includes(statusPrestacaoDeConta.prestacao_contas_status.status_prestacao)){
             const timer = setInterval(() => {
                 getStatusPrestacaoDeConta();
             }, 5000);
@@ -551,7 +551,7 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
                             statusPrestacaoDeConta={statusPrestacaoDeConta}
                         />
                     }
-                    {statusPrestacaoDeConta && statusPrestacaoDeConta.prestacao_contas_status && statusPrestacaoDeConta.prestacao_contas_status.status_prestacao === 'EM_PROCESSAMENTO' ? (
+                    {statusPrestacaoDeConta && statusPrestacaoDeConta.prestacao_contas_status && ['A_PROCESSAR', 'EM_PROCESSAMENTO'].includes(statusPrestacaoDeConta.prestacao_contas_status.status_prestacao ) ? (
                         <>
                             <Loading
                                 corGrafico="black"
