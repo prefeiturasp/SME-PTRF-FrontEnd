@@ -89,50 +89,112 @@ export const CadastroForm = ({verbo_http}) => {
         return periodo;
     }
 
-    const isEditing = () => {
-        return despesaContext.verboHttp === "PUT";
-    }
+    const limparSelecaoContasDesabilitadas = (setFieldValue, values, imposto=false) => {
+        if(imposto) {
+            const contasParaSeremDesabilitadasDaSelecao = despesasTabelas.contas_associacao
+            .filter(conta => conta.solicitacao_encerramento !== null && !conta.dataEncerramentoMaiorOuIgualQueDataTransacaoImposto)
+            .map(conta => conta.uuid);
 
-    const filterContas = (data) => {
+            values.despesas_impostos.forEach(function (imposto, idx) {
+                if (imposto.rateios[0].conta_associacao) {
+                  const uuid = typeof imposto.rateios[0].conta_associacao === 'object' ? imposto.rateios[0].conta_associacao.uuid : imposto.rateios[0].conta_associacao;
+            
+                  if (contasParaSeremDesabilitadasDaSelecao.includes(uuid)) {
+                    setFieldValue(`despesas_impostos[${idx}].rateios[0].conta_associacao`, null);
+                  }
+                }
+              });
+            
+        } else {
+            const contasParaSeremDesabilitadasDaSelecao = despesasTabelas.contas_associacao
+            .filter(conta => conta.solicitacao_encerramento !== null && !conta.dataEncerramentoMaiorOuIgualQueDataTransacao)
+            .map(conta => conta.uuid);
+
+            values.rateios.forEach(function (rateio, idx) {
+                if (rateio.conta_associacao) {
+                  const uuid = typeof rateio.conta_associacao === 'object' ? rateio.conta_associacao.uuid : rateio.conta_associacao;
+            
+                  if (contasParaSeremDesabilitadasDaSelecao.includes(uuid)) {
+                    setFieldValue(`rateios[${idx}].conta_associacao`, null);
+                  }
+                }
+              });
+        }
+      }
+      
+    const filterContas = (data, imposto=false) => {
         let data_transacao = null;
 
         if(moment.isMoment(data)){
             data_transacao = data
         } else {
             data_transacao = moment(data, 'YYYY-MM-DD').toDate()
-
         }
 
-        return despesasTabelas.contas_associacao.filter((conta) => 
-            (moment(conta.data_inicio, 'YYYY-MM-DD').toDate() <= data_transacao) &&
-            (!conta.solicitacao_encerramento || (conta.solicitacao_encerramento && 
-                                                 moment(conta.solicitacao_encerramento.data_de_encerramento_na_agencia, 'YYYY-MM-DD').toDate() > data_transacao))
+        return despesasTabelas.contas_associacao.filter((conta) => {
+            const dataInicioContaMenorDataTransacao = moment(conta.data_inicio, 'YYYY-MM-DD').toDate() < data_transacao
+            
+            if(imposto) {
+                const dataEncerramentoMaiorOuIgualQueDataTransacaoImposto = conta.solicitacao_encerramento && 
+                moment(conta.solicitacao_encerramento.data_de_encerramento_na_agencia, 'YYYY-MM-DD').toDate() >= data_transacao
+
+                conta.dataEncerramentoMaiorOuIgualQueDataTransacaoImposto = dataEncerramentoMaiorOuIgualQueDataTransacaoImposto;
+
+
+            } else {
+                const dataEncerramentoMaiorOuIgualQueDataTransacao = conta.solicitacao_encerramento && 
+                moment(conta.solicitacao_encerramento.data_de_encerramento_na_agencia, 'YYYY-MM-DD').toDate() >= data_transacao
+
+                conta.dataEncerramentoMaiorOuIgualQueDataTransacao = dataEncerramentoMaiorOuIgualQueDataTransacao;
+            }
+            
+            return  dataInicioContaMenorDataTransacao;
+            }
         )        
     }
 
-    const renderContaAssociacaoOptions = useCallback((data_transacao) => {
+    const renderContaAssociacaoOptions = useCallback((data_transacao, imposto=false) => {
         const getOptionPorStatus = (item, key) => {
-            const defaultProps = {
-                key: item.uuid,
-                value: item.uuid
-            }   
-            
-            if(item.status === STATUS_CONTA_ASSOCIACAO.ATIVA){
-                return  <option data-qa={`render-conta-associacao-option-${key + 1}`} {...defaultProps}>{item.nome}</option>
-            } else if(item.solicitacao_encerramento && (item.solicitacao_encerramento.status !== STATUS_SOLICITACAO_ENCERRAMENTO_CONTA_ASSOCIACAO.APROVADA) && !isEditing()) {
-                let informacaoExtra = item.solicitacao_encerramento ? `- Conta encerrada em ${moment(item.solicitacao_encerramento.data_de_encerramento_na_agencia).format('DD/MM/YYYY')}` : ''
-                return <option data-qa={`render-conta-associacao-option-${key + 1}`} {...defaultProps} disabled>{item.nome} {informacaoExtra}</option>
-            } else if(item.solicitacao_encerramento && isEditing()){
-                let informacaoExtra = item.solicitacao_encerramento ? `- Conta encerrada em ${moment(item.solicitacao_encerramento.data_de_encerramento_na_agencia).format('DD/MM/YYYY')}` : ''
-                return <option data-qa={`render-conta-associacao-option-${key + 1}`} {...defaultProps}>{item.nome} {informacaoExtra}</option>                
+          const defaultProps = {
+            key: item.uuid,
+            value: item.uuid,
+            'data-qa': `render-conta-associacao-option-${key + 1}`,
+          };
+      
+          let informacaoExtra = '';
+          let desativarSelecaoOption = false;
+      
+          if (item.status === STATUS_CONTA_ASSOCIACAO.ATIVA) {
+            return <option {...defaultProps}>{item.nome}</option>;
+          }
+      
+          if (item.solicitacao_encerramento) {
+
+            informacaoExtra = `- Conta encerrada em ${moment(
+              item.solicitacao_encerramento.data_de_encerramento_na_agencia
+            ).format('DD/MM/YYYY')}`;
+      
+
+            if (!imposto && item.dataEncerramentoMaiorOuIgualQueDataTransacao) {
+                desativarSelecaoOption = false;
+            } else if (imposto && item.dataEncerramentoMaiorOuIgualQueDataTransacaoImposto) {
+                desativarSelecaoOption = false;
+            } else {
+                desativarSelecaoOption = true;
             }
-        }        
-        return (
-            filterContas(data_transacao).map((item, key) => (
-                getOptionPorStatus(item, key)
-            ))
-        )    
-    }, [despesasTabelas]);
+          }
+      
+          return (
+            <option
+              {...defaultProps}
+              disabled={desativarSelecaoOption}
+            >{`${item.nome} ${informacaoExtra}`}</option>
+          );
+        };
+      
+        return filterContas(data_transacao, imposto).map((item, key) => getOptionPorStatus(item, key));
+      }, [despesasTabelas]);
+      
 
     useEffect(() => {
         if (despesaContext.initialValues.tipo_transacao && verbo_http === "PUT") {
@@ -1220,6 +1282,7 @@ export const CadastroForm = ({verbo_http}) => {
                         onCalendarCloseDataDoDocumento={onCalendarCloseDataDoDocumento}
                         renderContaAssociacaoOptions={renderContaAssociacaoOptions}
                         filterContas={filterContas}
+                        limparSelecaoContasDesabilitadas={limparSelecaoContasDesabilitadas}
                     />
             </>
             }

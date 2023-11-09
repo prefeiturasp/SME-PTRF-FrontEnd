@@ -109,7 +109,8 @@ export const CadastroFormFormik = ({
                                        bloqueiaCamposDespesa,
                                        onCalendarCloseDataDoDocumento,
                                        renderContaAssociacaoOptions,
-                                       filterContas
+                                       filterContas,
+                                       limparSelecaoContasDesabilitadas
                                    }) => {
 
     // Corrigi Cálculo validação dos valores
@@ -319,6 +320,7 @@ export const CadastroFormFormik = ({
                                                 setFieldValue(name, value, true);
                                             }}
                                             onCalendarClose={async () => {
+                                                limparSelecaoContasDesabilitadas(setFieldValue, values)
                                                 setFormErrors(await validacoesPersonalizadas(values, setFieldValue, "despesa_principal"));
                                                 onCalendarCloseDataPagamento(values, setFieldValue);
                                             }}
@@ -512,6 +514,7 @@ export const CadastroFormFormik = ({
                                                                 return (
                                                                     <div key={index}>
                                                                         <CadastroFormDespesaImposto
+
                                                                             formikProps={props}
                                                                             eh_despesa_com_retencao_imposto={eh_despesa_com_retencao_imposto}
                                                                             disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
@@ -536,6 +539,7 @@ export const CadastroFormFormik = ({
                                                                             onCalendarCloseDataPagamentoImposto={onCalendarCloseDataPagamentoImposto}
                                                                             renderContaAssociacaoOptions={renderContaAssociacaoOptions}
                                                                             filterContas={filterContas}
+                                                                            limparSelecaoContasDesabilitadas={limparSelecaoContasDesabilitadas}
                                                                         />
                                                                     </div>
                                                                 )
