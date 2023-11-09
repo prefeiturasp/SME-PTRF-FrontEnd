@@ -169,7 +169,7 @@ export const CadastroFormCapital = (propriedades) => {
                     {
                         (formikProps.values.data_transacao && !filterContas(formikProps.values.data_transacao).length) ?
                         <span data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-custeio-erro-conta-associacao`} 
-                            className="mt-1">
+                            className="mt-1 span_erro text-danger">
                                 Não existem contas disponíveis para a data do pagamento
                         </span> : null
                     }                    
