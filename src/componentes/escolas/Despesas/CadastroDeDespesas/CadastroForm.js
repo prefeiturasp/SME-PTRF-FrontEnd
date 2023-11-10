@@ -84,6 +84,10 @@ export const CadastroForm = ({verbo_http}) => {
     const [objetoParaComparacao, setObjetoParaComparacao] = useState({});
     const [showDespesaIncompletaNaoPermitida, setShowDespesaIncompletaNaoPermitida] = useState(false);
 
+    const isEditing = () => {
+        return despesaContext.verboHttp === "PUT";
+    }
+
     const retornaPeriodo = async (periodo_uuid) => {
         let periodo = await getPeriodoPorUuid(periodo_uuid);
         return periodo;
@@ -175,12 +179,24 @@ export const CadastroForm = ({verbo_http}) => {
             ).format('DD/MM/YYYY')}`;
       
 
-            if (!imposto && item.dataEncerramentoMaiorOuIgualQueDataTransacao) {
-                desativarSelecaoOption = false;
-            } else if (imposto && item.dataEncerramentoMaiorOuIgualQueDataTransacaoImposto) {
-                desativarSelecaoOption = false;
+            if(aux.origemAnaliseLancamento(parametroLocation)) {
+                if (!imposto && item.dataEncerramentoMaiorOuIgualQueDataTransacao) {
+                    desativarSelecaoOption = false;
+                } else if (imposto && item.dataEncerramentoMaiorOuIgualQueDataTransacaoImposto) {
+                    desativarSelecaoOption = false;
+                } else {
+                    desativarSelecaoOption = true;
+                }
             } else {
-                desativarSelecaoOption = true;
+                if(item.solicitacao_encerramento.status === STATUS_SOLICITACAO_ENCERRAMENTO_CONTA_ASSOCIACAO.PENDENTE && !isEditing()) {
+                    desativarSelecaoOption = true;
+                } else if(item.solicitacao_encerramento.status === STATUS_SOLICITACAO_ENCERRAMENTO_CONTA_ASSOCIACAO.APROVADA && !isEditing()) {
+                    return
+                } else if(item.solicitacao_encerramento.status === STATUS_SOLICITACAO_ENCERRAMENTO_CONTA_ASSOCIACAO.PENDENTE && isEditing()) {
+                    desativarSelecaoOption = true;
+                } else if(item.solicitacao_encerramento.status === STATUS_SOLICITACAO_ENCERRAMENTO_CONTA_ASSOCIACAO.APROVADA && isEditing()) {
+                    return
+                }
             }
           }
       
