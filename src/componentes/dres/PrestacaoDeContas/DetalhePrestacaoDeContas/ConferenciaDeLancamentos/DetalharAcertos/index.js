@@ -331,7 +331,11 @@ export const DetalharAcertos = () => {
         let contas_com_movimento = await getContasComMovimentoNaPc(prestacaoDeContas.uuid)
         let conta_encontrada = contas_com_movimento.find(elemento => elemento.uuid === conta_associacao_dos_lancamentos)
 
-        return conta_encontrada.status === "INATIVA" && prestacaoDeContas.periodo_referencia === conta_encontrada.periodo_encerramento_conta ? true : false;
+        if (conta_encontrada) {
+            return conta_encontrada.status === "INATIVA" && prestacaoDeContas.periodo_referencia === conta_encontrada.periodo_encerramento_conta ? true : false;    
+        } else {
+            return null;
+        }
     }
 
     const possuiAcertosQuePodemAlterarSaldo = (solicitacoes_acerto) => {
