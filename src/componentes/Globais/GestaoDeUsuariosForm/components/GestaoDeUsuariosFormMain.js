@@ -6,6 +6,7 @@ import { UnidadesUsuarioProvider } from "../context/UnidadesUsuarioProvider";
 import {FormUsuario} from "./FormUsuario";
 import { UnidadesUsuario } from "./UnidadesUsuario";
 import {useUsuario} from "../hooks/useUsuario";
+import {GrupoAcesso} from "./GruposAcesso";
 
 export const GestaoDeUsuariosFormMain = () => {
     const {id_usuario} = useParams();
@@ -24,6 +25,7 @@ export const GestaoDeUsuariosFormMain = () => {
 
             <UnidadesUsuarioProvider>
                 <UnidadesUsuario usuario={usuario}/>
+                <GrupoAcesso usuario={usuario}/>
             </UnidadesUsuarioProvider>
         </>
     )
