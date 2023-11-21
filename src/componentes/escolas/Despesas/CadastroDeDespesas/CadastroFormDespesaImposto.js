@@ -30,7 +30,8 @@ export const CadastroFormDespesaImposto = ({
 	formErrorsImposto,
 	onCalendarCloseDataPagamentoImposto,
 	renderContaAssociacaoOptions,
-	filterContas
+	filterContas,
+	limparSelecaoContasDesabilitadas
 }) => {										
 
 	return(
@@ -197,6 +198,7 @@ export const CadastroFormDespesaImposto = ({
 
 						<div className="col-md-3 mt-4">
 							<label htmlFor={`data_transacao_${index}`}>Data do pagamento</label>
+
 							<DatePickerField
 								dataQa={`cadastro-edicao-despesa-imposto-${index}-data-do-pagamento`}
 								name={`despesas_impostos[${index}].data_transacao`}
@@ -208,6 +210,7 @@ export const CadastroFormDespesaImposto = ({
 									formikProps.setFieldValue(name, value);
 								}}
 								onCalendarClose={async () => {
+									limparSelecaoContasDesabilitadas(formikProps.setFieldValue, formikProps.values, true)
 									onCalendarCloseDataPagamentoImposto(formikProps.values, formikProps.setFieldValue, index)
 								}}
 								about={despesaContext.verboHttp}
@@ -265,6 +268,7 @@ export const CadastroFormDespesaImposto = ({
 
 						<div className="col-12 col-md-3 mt-4">
 							<label htmlFor={`despesas_impostos[${index}].rateios[0].conta_associacao`}>Tipo de conta</label>
+
 							<select
 								data-qa={`cadastro-edicao-despesa-imposto-${index}-tipo-de-conta`}
 								value={
@@ -279,12 +283,12 @@ export const CadastroFormDespesaImposto = ({
 								disabled={readOnlyCamposImposto[index] || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes) || !(despesa_imposto.data_transacao !== null && despesa_imposto.data_transacao !== "")}
 							>
 								<option key={0} value="">Selecione uma conta</option>
-								{renderContaAssociacaoOptions(despesa_imposto.data_transacao)}
+								{renderContaAssociacaoOptions(despesa_imposto.data_transacao, true)}
 							</select>
 							{
 								(despesa_imposto.data_transacao && !filterContas(despesa_imposto.data_transacao).length) ?
 								<span data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-custeio-erro-conta-associacao`} 
-									className="mt-2">
+									className="mt-2 span_erro text-danger">
 										Não existem contas disponíveis para a data do pagamento
 								</span> : null
 							}							

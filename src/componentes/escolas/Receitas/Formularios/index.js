@@ -904,6 +904,13 @@ export const ReceitaForm = () => {
     }
 
 
+    const retornaSeDataDoCreditoEhPosteriorDataEncerramento = (dataDoCredito, dataEncerramento) => {
+        let momentDataDoCredito = moment(dataDoCredito,"DD/MM/YYYY");
+        let momentDataEncerramento = moment(dataEncerramento,"DD/MM/YYYY");
+        return momentDataDoCredito > momentDataEncerramento
+    }
+
+
     const retornaTiposDeContas = (values) => {
         if (tabelas.contas_associacao !== undefined && tabelas.contas_associacao.length > 0  && values.tipo_receita && e_repasse(values) && Object.keys(repasse).length !== 0) {
             let conta_associacao = tabelas.contas_associacao.find(conta => (repasse.conta_associacao.nome.includes(conta.nome)));
@@ -918,24 +925,46 @@ export const ReceitaForm = () => {
             const tipos_conta = tipoReceita.tipos_conta.map(item => item.nome);
 
             const getOptionPorStatus = (item) => {
+
                 const defaultProps = {
                     key: item.uuid,
                     value: item.uuid
                 }
                 if(item.status === STATUS_CONTA_ASSOCIACAO.ATIVA){
                     return  <option {...defaultProps}>{item.nome}</option>
+
                 } else if(item.solicitacao_encerramento) {
+
+                    let dataDoCredito = moment(values.data).format('DD/MM/YYYY')
+                    let dataEncerramento = moment(item.solicitacao_encerramento.data_de_encerramento_na_agencia).format('DD/MM/YYYY')
                     let informacaoExtra = item.solicitacao_encerramento ? `- Conta encerrada em ${moment(item.solicitacao_encerramento.data_de_encerramento_na_agencia).format('DD/MM/YYYY')}` : ''
-                    return <option {...defaultProps} disabled>{item.nome} {informacaoExtra}</option>
+
+                    // Verifica se a origem é Analise de Lancamento
+                    if (origemAnaliseLancamento()){
+
+                        // Se a data do Crédito for posterior a data de encerramento da conta, atribui disabled ao <option>
+                        if (retornaSeDataDoCreditoEhPosteriorDataEncerramento(dataDoCredito, dataEncerramento)){
+                            return <option {...defaultProps} disabled>{item.nome} {informacaoExtra}</option>
+                        }else {
+                            return <option {...defaultProps}>{item.nome} {informacaoExtra}</option>
+                        }
+
+                    }else {
+                        // Se não for Analise de Lancamento continua setando disabled ao <option> no caso de uma edição
+                        // Caso não seja uma edição nem mostra a conta encerrada
+                        if (uuid){
+                            return <option {...defaultProps} disabled>{item.nome} {informacaoExtra}</option>
+                        }
+                    }
                 }
             }
             
             const contasFiltradasPelaDataInicialEPeloTipo = filtraContasPelaDataInicial({contasNaoFiltradas: tabelas.contas_associacao.filter(conta => (tipos_conta.includes(conta.nome))), dataDigitadaFormulario: values.data})
 
-
+            let dataDoCredito = moment(values.data).format('DD/MM/YYYY')
             const contasFiltradasExcluindoContasComEncerramentoAprovado = contasFiltradasPelaDataInicialEPeloTipo.filter((elemento) => {
-                return !(elemento.status === STATUS_CONTA_ASSOCIACAO.INATIVA && elemento.solicitacao_encerramento );
-              })
+                return !( elemento.status === STATUS_CONTA_ASSOCIACAO.INATIVA && retornaSeDataDoCreditoEhPosteriorDataEncerramento(dataDoCredito, moment(elemento.solicitacao_encerramento.data_de_encerramento_na_agencia).format('DD/MM/YYYY')) )
+            })
 
             if(!contasFiltradasExcluindoContasComEncerramentoAprovado.length && moment(values.data, 'YYYY-MM-DD').isValid()) {
                 setMensagemDataInicialConta("Não existem contas disponíveis para a data do crédito.")
