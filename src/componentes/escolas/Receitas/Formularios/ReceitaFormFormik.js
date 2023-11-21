@@ -267,12 +267,10 @@ export const ReceitaFormFormik = ({
 
                                         {retornaTiposDeContas(props.values)}
                                     </select>
-                                    {mensagemDataInicialConta && <span
-                                            className="span_erro text-danger mt-1"> {mensagemDataInicialConta}</span>
-                                    }
+                                    {mensagemDataInicialConta && <span  className="span_erro text-danger mt-1"> {mensagemDataInicialConta}</span>}
                                     {props.touched.conta_associacao && props.errors.conta_associacao &&
-                                        <span
-                                            className="span_erro text-danger mt-1"> {props.errors.conta_associacao}</span>}
+                                        <span className="span_erro text-danger mt-1"> {props.errors.conta_associacao}</span>
+                                    }
                                 </div>
                                 {/*Fim Tipo de Conta */}
 
