@@ -20,6 +20,32 @@ export const getGrupos = async (visaoBase) => {
     })).data
 };
 
+export const getGruposDisponiveisAcessoUsuario = async (username, visao_base) => {
+    const response = await api.get(`${URL_GRUPOS}grupos-disponiveis-por-acesso-visao`, {
+        params: {
+            username: username,
+            visao_base: visao_base,
+        }
+    });
+    return response.data;
+};
+
+export const patchDesabilitarGrupoAcesso = async (payload) => {
+    return (await api.patch(`${URL_GRUPOS}desabilitar-grupo-acesso/`, {
+            ...payload
+        },
+        authHeader,
+    ))
+};
+
+export const patchHabilitarGrupoAcesso = async (payload) => {
+    return (await api.patch(`${URL_GRUPOS}habilitar-grupo-acesso/`, {
+            ...payload
+        },
+        authHeader,
+    ))
+};
+
 
 export const getUsuarios = async (uuidUnidadeBase, filter, currentPage) => {
     const {search, grupo, tipoUsuario, nomeUnidade, apenasUsuariosDaUnidade} = filter;
