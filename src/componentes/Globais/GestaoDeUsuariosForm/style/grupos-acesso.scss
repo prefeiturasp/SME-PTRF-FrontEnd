@@ -1,0 +1,35 @@
+.titulo-info-grupos-acesso {
+    color: #42474A;
+    font-size: 18px;
+    font-weight: 500px;
+  }
+
+
+.tabela-grupos-acesso {
+    .linha:not(:first-child) {
+        border-top: none;
+    }
+
+    .linha {
+        border: 1px solid #CED4DA;
+
+        .nome-grupo {
+            color: #42474A;
+            font-size: 16px;
+            font-weight: 700px;
+        }
+
+        .descricao-grupo {
+            color: #787F84;
+            font-size: 14px;
+            font-weight: 400px;
+        }
+
+        .checkbox-grupos-acessos {
+            accent-color: #00585D;
+            border-radius: 2px;
+            width: 16px;
+            height: 16px;
+        }
+    }
+}
