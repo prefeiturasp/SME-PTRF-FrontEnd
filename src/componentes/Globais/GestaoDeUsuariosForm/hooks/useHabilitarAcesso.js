@@ -14,6 +14,7 @@ export const useHabilitarAcesso = () => {
             // Refaz a lista
             queryClient.invalidateQueries(['unidades-usuario-list']).then()
             toastCustom.ToastCustomSuccess(`${response.data.mensagem}`, ``)
+            queryClient.invalidateQueries(['grupos-disponiveis-acesso-usuario'])
         },
         onError: (error) => {
             console.log("Erro ao habilitar acesso ", error.response)
