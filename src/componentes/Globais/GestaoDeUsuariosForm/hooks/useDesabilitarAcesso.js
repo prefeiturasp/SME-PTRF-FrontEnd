@@ -14,6 +14,7 @@ export const useDesabilitarAcesso = () => {
             // Refaz a lista
             queryClient.invalidateQueries(['unidades-usuario-list']).then()
             toastCustom.ToastCustomColorInfo(`${response.data.mensagem}`, '', '#de9524', '#de9524')
+            queryClient.invalidateQueries(['grupos-disponiveis-acesso-usuario'])
         },
         onError: (error) => {
             console.log("Erro ao desabilitar acesso ", error.response)

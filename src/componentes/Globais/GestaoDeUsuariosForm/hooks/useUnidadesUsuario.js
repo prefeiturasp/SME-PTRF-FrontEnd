@@ -1,6 +1,5 @@
 import {useQuery} from "@tanstack/react-query";
-import { useContext, useMemo } from "react";
-import { UnidadesUsuarioContext } from "../context/UnidadesUsuarioProvider";
+import { useMemo } from "react";
 import { getUnidadesUsuario } from "../../../../services/GestaoDeUsuarios.service";
 
 export const useUnidadesUsuario = (usuario, visao_base, uuid_unidade) => {
