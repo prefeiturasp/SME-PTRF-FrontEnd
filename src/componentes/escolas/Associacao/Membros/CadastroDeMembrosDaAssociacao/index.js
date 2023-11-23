@@ -54,6 +54,8 @@ const CadastroDeMembrosDaAssociacao = () => {
     const [stateAssociacao, setStateAssociacao] = useState({})
     const [loading, setLoading] = useState(true);
 
+    const isEditing = stateFormEditarMembro.id ? true : false;
+
     const carregaDadosMembro = useCallback(async () => {
         let mounted = true;
         let init;
@@ -578,6 +580,7 @@ const CadastroDeMembrosDaAssociacao = () => {
                             cargosDaDiretoriaExecutiva={cargosDaDiretoriaExecutiva}
                             possuiMaisDeUmCargoEducacao={possuiMaisDeUmCargoEducacao}
                             podeEditarDadosMembros={podeEditarDadosMembros}
+                            isEditing={isEditing}
                         />
                     </>
                 }

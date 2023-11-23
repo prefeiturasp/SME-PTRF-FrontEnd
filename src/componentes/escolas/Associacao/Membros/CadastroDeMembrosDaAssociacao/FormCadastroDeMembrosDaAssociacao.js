@@ -4,7 +4,7 @@ import MaskedInput from "react-text-mask";
 import {Formik} from "formik";
 import { Switch } from 'antd';
 
-export const FormCadastroDeMembrosDaAssociacao = ({stateFormEditarMembro, validateFormMembros, handleChangeEditarMembro, onSubmitEditarMembro, visoesService, ePresidente, formRef, telefoneMaskContitional, switchStatusPresidente, handleChangeSwitchStatusPresidente, cargosDaDiretoriaExecutiva, responsavelPelasAtribuicoes, handleChangeResponsavelPelaAtribuicao, possuiMaisDeUmCargoEducacao, podeEditarDadosMembros}) =>{
+export const FormCadastroDeMembrosDaAssociacao = ({stateFormEditarMembro, validateFormMembros, handleChangeEditarMembro, onSubmitEditarMembro, visoesService, ePresidente, formRef, telefoneMaskContitional, switchStatusPresidente, handleChangeSwitchStatusPresidente, cargosDaDiretoriaExecutiva, responsavelPelasAtribuicoes, handleChangeResponsavelPelaAtribuicao, possuiMaisDeUmCargoEducacao, podeEditarDadosMembros, isEditing}) =>{
 
     return(
         <>
@@ -54,7 +54,7 @@ export const FormCadastroDeMembrosDaAssociacao = ({stateFormEditarMembro, valida
                                     <div className="form-group">
                                         <label htmlFor="representacao">Representação na associação *</label>
                                         <select
-                                            disabled={!podeEditarDadosMembros(props.values)}
+                                            disabled={!podeEditarDadosMembros(props.values) || isEditing}
                                             value={props.values.representacao ? props.values.representacao : ""}
                                             onChange={(e) => {
                                                 props.handleChange(e);
@@ -76,7 +76,7 @@ export const FormCadastroDeMembrosDaAssociacao = ({stateFormEditarMembro, valida
                                     <div className="form-group">
                                         <label htmlFor="codigo_identificacao">{props.values.representacao === 'SERVIDOR' ? "Registro Funcional" : "Código EOL"}</label>
                                         <input
-                                            disabled={!podeEditarDadosMembros(props.values)}
+                                            disabled={!podeEditarDadosMembros(props.values) || isEditing}
                                             type="text"
                                             value={props.values.codigo_identificacao ? props.values.codigo_identificacao : ""}
                                             onChange={(e) => {
@@ -190,7 +190,7 @@ export const FormCadastroDeMembrosDaAssociacao = ({stateFormEditarMembro, valida
                                             <MaskedInput
                                                 mask={[/\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '-', /\d/, /\d/]}
                                                 readOnly={props.values.representacao !== 'PAI_RESPONSAVEL' && props.values.representacao !== 'ESTUDANTE'}
-                                                disabled={!podeEditarDadosMembros(props.values)}
+                                                disabled={!podeEditarDadosMembros(props.values) || isEditing}
                                                 type="text"
                                                 value={props.values.cpf ? props.values.cpf : ""}
                                                 onChange={(e) => {
