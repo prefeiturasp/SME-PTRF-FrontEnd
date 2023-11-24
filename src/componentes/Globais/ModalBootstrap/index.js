@@ -187,15 +187,17 @@ export const ModalBootstrapSaldoInsuficiente = (propriedades) => {
                     propriedades.bodyText
                 } </Modal.Body>
                 <Modal.Footer>
-                    <Button data-qa={`modal-saldo-insuficiente-btn-${propriedades.primeiroBotaoTexto}`} variant={
-                            propriedades.primeiroBotaoCss ? propriedades.primeiroBotaoCss : "primary"
-                        }
-                        onClick={
-                            propriedades.primeiroBotaoOnclick
-                    }>
-                        {
-                        propriedades.primeiroBotaoTexto
-                    } </Button>
+                    {
+                        propriedades.aceitarLancamento && 
+                            <Button data-qa={`modal-saldo-insuficiente-btn-${propriedades.primeiroBotaoTexto}`} variant={propriedades.primeiroBotaoCss ? propriedades.primeiroBotaoCss : "primary"}
+                                onClick={
+                                    propriedades.primeiroBotaoOnclick
+                                }
+                            >
+                                {propriedades.primeiroBotaoTexto} 
+                            </Button>
+                    }
+
                     {
                     propriedades.segundoBotaoOnclick && propriedades.segundoBotaoTexto ? (
                         <Button data-qa={`modal-saldo-insuficiente-btn-${propriedades.segundoBotaoTexto}`} disabled={
