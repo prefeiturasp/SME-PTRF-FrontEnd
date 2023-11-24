@@ -124,30 +124,30 @@ export const CadastroForm = ({verbo_http}) => {
                 }
               });
         }
-      }
+    }
+
+    const transformaEmData = (data_transacao) => {
+        if(moment.isMoment(data_transacao)){
+            return data_transacao;
+        } else {
+            return moment(data_transacao, "YYYY-MM-DD").toDate();
+        }
+    }
       
     const filterContas = (data, imposto=false) => {
-        let data_transacao = null;
-
-        if(moment.isMoment(data)){
-            data_transacao = data
-        } else {
-            data_transacao = moment(data, 'YYYY-MM-DD').toDate()
-        }
+        let data_transacao = transformaEmData(data);
 
         return despesasTabelas.contas_associacao.filter((conta) => {
-            const dataInicioContaMenorDataTransacao = moment(conta.data_inicio, 'YYYY-MM-DD').toDate() < data_transacao
+            const dataInicioContaMenorDataTransacao = transformaEmData(conta.data_inicio) <= data_transacao
             
             if(imposto) {
                 const dataEncerramentoMaiorOuIgualQueDataTransacaoImposto = conta.solicitacao_encerramento && 
-                moment(conta.solicitacao_encerramento.data_de_encerramento_na_agencia, 'YYYY-MM-DD').toDate() >= data_transacao
+                transformaEmData(conta.solicitacao_encerramento.data_de_encerramento_na_agencia) >= data_transacao
 
                 conta.dataEncerramentoMaiorOuIgualQueDataTransacaoImposto = dataEncerramentoMaiorOuIgualQueDataTransacaoImposto;
-
-
             } else {
                 const dataEncerramentoMaiorOuIgualQueDataTransacao = conta.solicitacao_encerramento && 
-                moment(conta.solicitacao_encerramento.data_de_encerramento_na_agencia, 'YYYY-MM-DD').toDate() >= data_transacao
+                transformaEmData(conta.solicitacao_encerramento.data_de_encerramento_na_agencia) >= data_transacao
 
                 conta.dataEncerramentoMaiorOuIgualQueDataTransacao = dataEncerramentoMaiorOuIgualQueDataTransacao;
             }
@@ -179,6 +179,7 @@ export const CadastroForm = ({verbo_http}) => {
             ).format('DD/MM/YYYY')}`;
       
 
+            // Verifica se vem de analise
             if(aux.origemAnaliseLancamento(parametroLocation)) {
                 if (!imposto && item.dataEncerramentoMaiorOuIgualQueDataTransacao) {
                     desativarSelecaoOption = false;
