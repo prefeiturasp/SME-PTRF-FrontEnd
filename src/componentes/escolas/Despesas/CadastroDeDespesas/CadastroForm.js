@@ -1023,7 +1023,7 @@ export const CadastroForm = ({verbo_http}) => {
         if (values.data_transacao) {
             let retorno_saldo = await aux.verificarSaldo(values, despesaContext);
             if (retorno_saldo.situacao_do_saldo === "saldo_insuficiente") {
-                setSaldosInsuficientesDaAcao(retorno_saldo.saldos_insuficientes);
+                setSaldosInsuficientesDaAcao(retorno_saldo);
                 setModalState('saldo-insuficiente-acao');
             }else{
                 await serviceSubmitModais(values, setFieldValue, errors, 'saldo_insuficiente_acao_validado')
