@@ -927,7 +927,6 @@ export const ReceitaForm = () => {
 
             // Verifica se a origem é Analise de Lancamento
             if (origemAnaliseLancamento()){
-
                 // Se a data do Crédito for posterior a data de encerramento da conta, atribui disabled ao <option>
                 if (retornaSeDataDoCreditoEhPosteriorDataEncerramento(dataDoCredito, dataEncerramento)){
                     return <option {...defaultProps} disabled>{item.nome} {informacaoExtra}</option>
@@ -942,9 +941,7 @@ export const ReceitaForm = () => {
             }else {
                 // Se não for Analise de Lancamento continua setando disabled ao <option> no caso de uma edição
                 // Caso não seja uma edição nem mostra a conta encerrada
-                if (uuid){
-                    return <option {...defaultProps} disabled>{item.nome} {informacaoExtra}</option>
-                }
+                return <option {...defaultProps} disabled>{item.nome} {informacaoExtra}</option>
             }
         }
     }
@@ -961,13 +958,7 @@ export const ReceitaForm = () => {
             }
         // Não é estorno
         } else { 
-            if (tabelas.contas_associacao !== undefined && tabelas.contas_associacao.length > 0  && values.tipo_receita && e_repasse(values) && Object.keys(repasse).length !== 0) {
-                let conta_associacao = tabelas.contas_associacao.find(conta => (repasse.conta_associacao.nome.includes(conta.nome)));
-                setreadOnlyContaAssociacaoReceita(true);
-                return (
-                    <option key={conta_associacao.uuid} value={conta_associacao.uuid}>{conta_associacao.nome}</option>
-                )
-            } else if (tabelas.contas_associacao !== undefined && tabelas.contas_associacao.length > 0  && values.tipo_receita) {
+            if (tabelas.contas_associacao !== undefined && tabelas.contas_associacao.length > 0  && values.tipo_receita) {
                 const tipoReceita = tabelas.tipos_receita.find(element => element.id === Number(values.tipo_receita));
     
                 // Lista dos nomes dos tipos de conta que são aceitos pelo tipo de receita selecionado.
@@ -978,7 +969,7 @@ export const ReceitaForm = () => {
     
                 let dataDoCredito = moment(values.data).format('DD/MM/YYYY')
                 const contasFiltradasExcluindoContasComEncerramentoAprovado = contasFiltradasPelaDataInicialEPeloTipo.filter((elemento) => {
-                    return !( elemento.status === STATUS_CONTA_ASSOCIACAO.INATIVA && retornaSeDataDoCreditoEhPosteriorDataEncerramento(dataDoCredito, moment(elemento.solicitacao_encerramento.data_de_encerramento_na_agencia).format('DD/MM/YYYY')) )
+                    return !(!origemAnaliseLancamento() && elemento.status === STATUS_CONTA_ASSOCIACAO.INATIVA && retornaSeDataDoCreditoEhPosteriorDataEncerramento(dataDoCredito, moment(elemento.solicitacao_encerramento.data_de_encerramento_na_agencia).format('DD/MM/YYYY')) )
                 })
     
                 if(!contasFiltradasExcluindoContasComEncerramentoAprovado.length && moment(values.data, 'YYYY-MM-DD').isValid()) {
