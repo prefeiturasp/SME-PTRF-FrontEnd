@@ -76,7 +76,8 @@ export const ReceitaFormFormik = ({
                                       validacoesPersonalizadasCredito,
                                       formDateErrors,
                                       escondeBotaoDeletar,
-                                      mensagemDataInicialConta
+                                      mensagemDataInicialConta,
+                                      repasse
                                   }) => {
 
     return (
@@ -226,7 +227,7 @@ export const ReceitaFormFormik = ({
                                         id="data"
                                         value={values.data}
                                         onChange={(name, value) => {
-                                            if (!repasses || repasses.length === 0) {
+                                            if (repasse.uuid === undefined) {
                                                 // Como o repasse seta a conta automaticamente ela não pode ser apagada.
                                                 setFieldValue('conta_associacao', '');
                                             }

@@ -1337,6 +1337,7 @@ export const ReceitaForm = () => {
                         formDateErrors={formDateErrors}
                         escondeBotaoDeletar={escondeBotaoDeletar}
                         mensagemDataInicialConta={mensagemDataInicialConta}
+                        repasse={repasse}
                     />
                     <section>
                         <CancelarModalReceitas
