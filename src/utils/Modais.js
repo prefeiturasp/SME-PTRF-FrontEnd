@@ -222,11 +222,12 @@ export const SaldoInsuficiente = (propriedades) => {
 
     const listaDeSaldosInsuficientes = () => {
 
+        let mensagem = "Não há saldo disponível para a despesa cadastrada nas ações/aplicações abaixo. Não é possível cadastrar com esta aplicação/ação. Informe outra aplicação e/ou ação para cadastrar a despesa."
+
         return (
             <>
-                <p>Não há saldo disponível para a despesa cadastrada, nas ações/aplicações abaixo. Você deseja
-                    cadastrá-la mesmo assim?</p>
-                {propriedades.saldosInsuficientesDaAcao && propriedades.saldosInsuficientesDaAcao.length > 0 && propriedades.saldosInsuficientesDaAcao.map((item, index) =>
+                <p>{mensagem}</p>
+                {propriedades.saldosInsuficientesDaAcao && propriedades.saldosInsuficientesDaAcao.saldos_insuficientes && propriedades.saldosInsuficientesDaAcao.saldos_insuficientes.length > 0 && propriedades.saldosInsuficientesDaAcao.saldos_insuficientes.map((item, index) =>
                     <ul key={index} className="list-group list-group-flush mb-3">
                         <li className="list-group-item p-0">
                             <strong>Ação:</strong> {item.acao}
@@ -258,6 +259,7 @@ export const SaldoInsuficiente = (propriedades) => {
             onHide={propriedades.handleClose}
             titulo="Saldo Insuficiente"
             bodyText={listaDeSaldosInsuficientes()}
+            aceitarLancamento={propriedades.saldosInsuficientesDaAcao.aceitar_lancamento}
             primeiroBotaoOnclick={propriedades.onSaldoInsuficienteTrue}
             primeiroBotaoTexto="OK"
             segundoBotaoOnclick={propriedades.handleClose}
