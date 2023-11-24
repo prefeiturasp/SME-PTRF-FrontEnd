@@ -952,9 +952,7 @@ export const ReceitaForm = () => {
                     }else {
                         // Se não for Analise de Lancamento continua setando disabled ao <option> no caso de uma edição
                         // Caso não seja uma edição nem mostra a conta encerrada
-                        if (uuid){
-                            return <option {...defaultProps} disabled>{item.nome} {informacaoExtra}</option>
-                        }
+                        return <option {...defaultProps} disabled>{item.nome} {informacaoExtra}</option>
                     }
                 }
             }
