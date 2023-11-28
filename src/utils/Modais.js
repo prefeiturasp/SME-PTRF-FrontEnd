@@ -222,7 +222,14 @@ export const SaldoInsuficiente = (propriedades) => {
 
     const listaDeSaldosInsuficientes = () => {
 
-        let mensagem = "Não há saldo disponível para a despesa cadastrada nas ações/aplicações abaixo. Não é possível cadastrar com esta aplicação/ação. Informe outra aplicação e/ou ação para cadastrar a despesa."
+        let mensagem = "";
+
+        if(propriedades && propriedades.saldosInsuficientesDaAcao && propriedades.saldosInsuficientesDaAcao.aceitar_lancamento){
+            mensagem = "Não há saldo disponível para a despesa cadastrada, nas ações/aplicações abaixo. Você deseja cadastrá-la mesmo assim?"
+        }
+        else{
+            mensagem = "Não há saldo disponível para a despesa cadastrada nas ações/aplicações abaixo. Não é possível cadastrar com esta aplicação/ação. Informe outra aplicação e/ou ação para cadastrar a despesa."
+        }
 
         return (
             <>
