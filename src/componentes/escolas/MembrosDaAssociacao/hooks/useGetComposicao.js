@@ -3,9 +3,13 @@ import {useQuery} from "@tanstack/react-query";
 import {useContext} from "react";
 import {MembrosDaAssociacaoContext} from "../context/MembrosDaAssociacao";
 
-export const useGetComposicao = () => {
+export const useGetComposicao = (composicao_uuid='') => {
 
-    const {composicaoUuid} = useContext(MembrosDaAssociacaoContext)
+    let {composicaoUuid} = useContext(MembrosDaAssociacaoContext)
+
+    if (composicao_uuid){
+        composicaoUuid = composicao_uuid
+    }
 
     const { isLoading, isError, data, error } = useQuery(
         ['retrieve-composicao', composicaoUuid],

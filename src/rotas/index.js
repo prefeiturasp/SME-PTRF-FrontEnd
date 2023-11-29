@@ -99,6 +99,9 @@ import {PaginaMandatosAnteriores} from "../componentes/escolas/MembrosDaAssociac
 // Migrando para V6 do react-router-dom
 // Referencia: https://github.com/remix-run/react-router/discussions/8753
 import {CompatRoute} from "react-router-dom-v5-compat";
+import {
+    PaginaCadastroHistoricoDeMembros
+} from "../componentes/escolas/MembrosDaAssociacao/pages/PaginaCadastroHistoricoDeMembros";
 
 const routesConfig = [
     {
@@ -177,6 +180,12 @@ const routesConfig = [
         exact: true,
         path: "/membros-da-associacao-mandatos-anteriores",
         component: PaginaMandatosAnteriores,
+        permissoes: ['access_dados_associacao'],
+    },
+    {
+        exact: true,
+        path: "/cadastro-historico-de-membros/:composicaoUuid?",
+        component: PaginaCadastroHistoricoDeMembros,
         permissoes: ['access_dados_associacao'],
     },
     {

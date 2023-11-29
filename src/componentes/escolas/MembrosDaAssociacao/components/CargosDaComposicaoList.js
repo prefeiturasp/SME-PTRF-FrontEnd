@@ -6,24 +6,32 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEdit, faEye} from "@fortawesome/free-solid-svg-icons";
 import ReactTooltip from "react-tooltip";
 import {MembrosDaAssociacaoContext} from "../context/MembrosDaAssociacao";
+import {Link} from "react-router-dom";
 
 export const CargosDaComposicaoList = ({escopo}) => {
     const {isLoading, data} = useGetCargosDaComposicao()
-    const {currentPage} = useContext(MembrosDaAssociacaoContext)
+    const {currentPage, composicaoUuid} = useContext(MembrosDaAssociacaoContext)
 
     const acoesTemplate = (rowData) => {
         if (currentPage === 1 && escopo === 'mandato-vigente'){
             return (
                 <div>
-                    <button className="btn-editar-membro" data-qa='editar-membro'>
-                    <span data-tip="Editar membro" data-html={true}>
-                        <FontAwesomeIcon
-                            style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
-                            icon={faEdit}
-                        />
-                        <ReactTooltip/>
-                    </span>
-                    </button>
+                    <Link
+                        to={{
+                            pathname: `/cadastro-historico-de-membros/${composicaoUuid}`,
+                            state: {cargo: rowData}
+                        }}
+                        className="btn-editar-membro"
+                        data-qa='editar-membro'
+                    >
+                        <span data-tip="Editar membro" data-html={true}>
+                            <FontAwesomeIcon
+                                style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
+                                icon={faEdit}
+                            />
+                            <ReactTooltip/>
+                        </span>
+                    </Link>
                 </div>
             )
         }else {
