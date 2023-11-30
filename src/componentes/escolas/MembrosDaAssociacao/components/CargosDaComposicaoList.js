@@ -13,17 +13,17 @@ export const CargosDaComposicaoList = ({escopo}) => {
     const {currentPage, composicaoUuid} = useContext(MembrosDaAssociacaoContext)
 
     const acoesTemplate = (rowData) => {
-        if (currentPage === 1 && escopo === 'mandato-vigente'){
-            return (
-                <div>
-                    <Link
-                        to={{
-                            pathname: `/cadastro-historico-de-membros/${composicaoUuid}`,
-                            state: {cargo: rowData}
-                        }}
-                        className="btn-editar-membro"
-                        data-qa='editar-membro'
-                    >
+        return (
+            <div>
+                <Link
+                    to={{
+                        pathname: `/cadastro-historico-de-membros/${composicaoUuid}`,
+                        state: {cargo: rowData}
+                    }}
+                    className="btn-editar-membro"
+                    data-qa='editar-membro'
+                >
+                    {currentPage === 1 && escopo === 'mandato-vigente' ? (
                         <span data-tip="Editar membro" data-html={true}>
                             <FontAwesomeIcon
                                 style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
@@ -31,24 +31,18 @@ export const CargosDaComposicaoList = ({escopo}) => {
                             />
                             <ReactTooltip/>
                         </span>
-                    </Link>
-                </div>
-            )
-        }else {
-            return (
-                <div>
-                    <button className="btn-editar-membro" data-qa='visualizar-membro'>
-                    <span data-tip="Visualizar membro" data-html={true}>
-                        <FontAwesomeIcon
-                            style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
-                            icon={faEye}
-                        />
-                        <ReactTooltip/>
-                    </span>
-                    </button>
-                </div>
-            )
-        }
+                    ):
+                        <span data-tip="Visualizar membro" data-html={true}>
+                            <FontAwesomeIcon
+                                style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
+                                icon={faEye}
+                            />
+                            <ReactTooltip/>
+                        </span>
+                    }
+                </Link>
+            </div>
+        )
     };
 
     return(
