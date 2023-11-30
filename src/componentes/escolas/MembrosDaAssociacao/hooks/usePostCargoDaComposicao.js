@@ -17,7 +17,7 @@ export const usePostCargoDaComposicao = () => {
             console.log("Cargo Composição criado com sucesso ", data)
             // Refaz a lista de cargos-da-composicao
             queryClient.invalidateQueries(['cargos-da-composicao']).then()
-            toastCustom.ToastCustomSuccess('Membro incluído com sucesso', `O membro foi adicionado ao sistema com sucesso.`)
+            toastCustom.ToastCustomSuccess('Membro incluído com sucesso.', `O membro foi adicionado ao sistema com sucesso.`)
             navigate("/membros-da-associacao");
         },
         onError: (error) => {
@@ -30,7 +30,7 @@ export const usePostCargoDaComposicao = () => {
             }else {
                 msg_erro = error.response.data.detail
             }
-            toastCustom.ToastCustomError('Erro ao criar Cargo da Composição', `${msg_erro}`)
+            toastCustom.ToastCustomError('Erro ao criar Cargo da Composição.', `${msg_erro}`)
         },
         onSettled: () => {
         },

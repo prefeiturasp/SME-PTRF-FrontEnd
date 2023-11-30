@@ -12,7 +12,7 @@ import moment from "moment/moment";
 import Loading from "../../../../utils/Loading";
 import {Switch} from "antd";
 
-export const FormCadastro = ({cargo, onSubmitForm, composicaoUuid, switchStatusPresidente, handleChangeSwitchStatusPresidente, cargosDaDiretoriaExecutiva, responsavelPelasAtribuicoes, handleChangeResponsavelPelaAtribuicao}) => {
+export const FormCadastro = ({cargo, onSubmitForm, composicaoUuid, switchStatusPresidente, cargosDaDiretoriaExecutiva, responsavelPelasAtribuicoes}) => {
 
     const {isLoading, data} = useGetComposicao(composicaoUuid)
 
@@ -36,14 +36,14 @@ export const FormCadastro = ({cargo, onSubmitForm, composicaoUuid, switchStatusP
     };
 
     const telefoneMaskContitional = (value) => {
-        let telefone = value.replace(/[^\d]+/g, "");
-        let mask;
+        let telefone = value.replace(/\D+/g, "");
+        let mascara;
         if (telefone.length <= 10) {
-            mask = ['(', /\d/, /\d/, ')', /\d/, /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/]
+            mascara = ['(', /\d/, /\d/, ')', /\d/, /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/]
         } else {
-            mask = ['(', /\d/, /\d/, ')', /\d/, /\d/, /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/]
+            mascara = ['(', /\d/, /\d/, ')', /\d/, /\d/, /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/]
         }
-        return mask
+        return mascara
     }
 
     const limparCampos = (values, setFieldValue) =>{
@@ -61,14 +61,18 @@ export const FormCadastro = ({cargo, onSubmitForm, composicaoUuid, switchStatusP
     const getInfoPeloCodigoIdentificacao = async (values, setFieldValue, setFieldError) => {
         if (values.representacao === "SERVIDOR") {
             setFieldValue('cargo_educacao', '')
-            setFieldValue('nome', '')
+            // A ordem de setFieldValue('email', '') primeiro e setFieldValue('nome', '') depois É IMPORTANTE! NÃO ALTERAR
+            // Para evitar compontamento indesejado no YupSignupSchemaHistoricoDeMembros
             setFieldValue('email', '')
+            setFieldValue('nome', '')
             try {
                 if (values.codigo_identificacao.trim()){
                     let servidor = await consultarRFNoSmeIntegracao(values.codigo_identificacao.trim());
                     if (servidor.status === 200 || servidor.status === 201) {
-                        setFieldValue('nome', servidor.data.nome)
+                        // A ordem de setFieldValue('email', '') primeiro e setFieldValue('nome', '') depois É IMPORTANTE! NÃO ALTERAR
+                        // Para evitar compontamento indesejado no YupSignupSchemaHistoricoDeMembros
                         setFieldValue('email', servidor.data.email)
+                        setFieldValue('nome', servidor.data.nome)
                     }
                     let cargos = await getCargosDoRFSmeIntegracao(values.codigo_identificacao.trim())
                     if (cargos.status === 200 || cargos.status === 201) {
@@ -100,7 +104,7 @@ export const FormCadastro = ({cargo, onSubmitForm, composicaoUuid, switchStatusP
             }
         }
     }
-    
+
     const retornaSeCampoEhDisabled = (values) => {
 
         if (!values.representacao){
@@ -115,6 +119,14 @@ export const FormCadastro = ({cargo, onSubmitForm, composicaoUuid, switchStatusP
         if (values && values.representacao && values.representacao === "SERVIDOR"){
             return !values.codigo_identificacao || !values.nome
         }
+    }
+
+    const retornaSeEhPresidente = () => {
+        return cargo.cargo_associacao === 'PRESIDENTE_DIRETORIA_EXECUTIVA'
+    }
+
+    const retornaSeEhComposicaoVigente = () => {
+        return cargo.eh_composicao_vigente
     }
 
     if (isLoading) {
@@ -156,6 +168,7 @@ export const FormCadastro = ({cargo, onSubmitForm, composicaoUuid, switchStatusP
                                 composicaoUuid={composicaoUuid}
                                 cargo={cargo ? cargo : ''}
                                 isValid={props.isValid}
+                                retornaSeEhComposicaoVigente={retornaSeEhComposicaoVigente}
                             />
 
                             <div className='row mt-3'>
@@ -163,12 +176,12 @@ export const FormCadastro = ({cargo, onSubmitForm, composicaoUuid, switchStatusP
                                     <div className="form-group">
                                         <label><span className='asterisco-vermelho'>* </span>Cargo na Associação</label>
                                         <input
-                                            readOnly={true}
                                             type="text"
                                             value={props.values.cargo_associacao_label ? props.values.cargo_associacao_label : ""}
                                             onChange={props.handleChange}
                                             name="cargo_associacao"
                                             className="form-control"
+                                            disabled={true}
                                         />
                                         {props.errors.cargo_associacao && <span className="span_erro text-danger mt-1"> {props.errors.cargo_associacao}</span>}
                                     </div>
@@ -182,7 +195,7 @@ export const FormCadastro = ({cargo, onSubmitForm, composicaoUuid, switchStatusP
                                             onBlur={()=>limparCampos(props.values, setFieldValue)}
                                             name="representacao"
                                             className="form-control"
-                                            disabled={cargo.uuid}
+                                            disabled={!retornaSeEhComposicaoVigente() || cargo.uuid}
                                         >
                                             <option value="">Escolha a Representação</option>
                                             <option value="ESTUDANTE">Estudante</option>
@@ -206,7 +219,7 @@ export const FormCadastro = ({cargo, onSubmitForm, composicaoUuid, switchStatusP
                                                 name="codigo_identificacao"
                                                 className="form-control"
                                                 onBlur={()=>getInfoPeloCodigoIdentificacao(props.values, setFieldValue, setFieldError)}
-                                                disabled={cargo.uuid}
+                                                disabled={!retornaSeEhComposicaoVigente() || cargo.uuid}
                                             />
                                             {props.errors.codigo_identificacao && <span className="span_erro text-danger mt-1"> {props.errors.codigo_identificacao}</span>}
                                         </div>
@@ -217,12 +230,12 @@ export const FormCadastro = ({cargo, onSubmitForm, composicaoUuid, switchStatusP
                                         <div className="form-group">
                                             <label htmlFor="cargo_educacao">Cargo na educação</label>
                                             <input
-                                                readOnly={true}
                                                 type="text"
                                                 value={props.values.cargo_educacao ? props.values.cargo_educacao : ""}
                                                 onChange={props.handleChange}
                                                 name="cargo_educacao"
                                                 className="form-control"
+                                                disabled={true}
                                             />
                                             {props.errors.cargo_educacao && <span className="span_erro text-danger mt-1"> {props.errors.cargo_educacao}</span>}
                                         </div>
@@ -235,17 +248,18 @@ export const FormCadastro = ({cargo, onSubmitForm, composicaoUuid, switchStatusP
                                     <div className="form-group">
                                         <label><span className='asterisco-vermelho'>* </span>Nome Completo</label>
                                         <input
-                                            readOnly={props.values.representacao === "SERVIDOR" || props.values.representacao === "ESTUDANTE"}
                                             type="text"
                                             value={props.values.nome ? props.values.nome : ""}
                                             onChange={props.handleChange}
                                             name="nome"
                                             className="form-control"
+                                            disabled={!retornaSeEhComposicaoVigente() || (props.values.representacao === "SERVIDOR" || props.values.representacao === "ESTUDANTE")}
                                         />
                                         {props.errors.nome && <span className="span_erro text-danger mt-1"> {props.errors.nome}</span>}
                                     </div>
                                 </div>
                             </div>
+
                             <div className="row">
                                 {(props.values.representacao === 'PAI_RESPONSAVEL' || props.values.representacao === 'ESTUDANTE') &&
                                     <div className="col-6">
@@ -253,12 +267,12 @@ export const FormCadastro = ({cargo, onSubmitForm, composicaoUuid, switchStatusP
                                             <label>{props.values.representacao === 'PAI_RESPONSAVEL' ? "CPF do pai ou responsável" : "CPF"} *</label>
                                             <MaskedInput
                                                 mask={[/\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '-', /\d/, /\d/]}
-                                                readOnly={props.values.representacao !== 'PAI_RESPONSAVEL' && props.values.representacao !== 'ESTUDANTE'}
                                                 type="text"
                                                 value={props.values.cpf_responsavel ? props.values.cpf_responsavel : ""}
                                                 onChange={props.handleChange}
                                                 name="cpf_responsavel"
                                                 className="form-control"
+                                                readOnly={!retornaSeEhComposicaoVigente() || (!cargo.uuid ? props.values.representacao !== 'PAI_RESPONSAVEL' && props.values.representacao !== 'ESTUDANTE' : true)}
                                             />
                                             {props.errors.cpf_responsavel && <span className="span_erro text-danger mt-1"> {props.errors.cpf_responsavel}</span>}
                                         </div>
@@ -276,7 +290,7 @@ export const FormCadastro = ({cargo, onSubmitForm, composicaoUuid, switchStatusP
                                             onChange={props.handleChange}
                                             name="telefone"
                                             className="form-control"
-                                            disabled={retornaSeCampoEhDisabled(props.values)}
+                                            disabled={!retornaSeEhComposicaoVigente() || (!cargo.uuid ? retornaSeCampoEhDisabled(props.values) : !retornaSeEhPresidente())}
                                         />
                                         {props.errors.telefone && <span className="span_erro text-danger mt-1"> {props.errors.telefone}</span>}
                                     </div>
@@ -291,7 +305,7 @@ export const FormCadastro = ({cargo, onSubmitForm, composicaoUuid, switchStatusP
                                             onChange={props.handleChange}
                                             name="cep"
                                             className="form-control"
-                                            disabled={retornaSeCampoEhDisabled(props.values)}
+                                            disabled={!retornaSeEhComposicaoVigente() || (!cargo.uuid ? retornaSeCampoEhDisabled(props.values) : !retornaSeEhPresidente())}
                                         />
                                         {props.errors.cep && <span className="span_erro text-danger mt-1"> {props.errors.cep}</span>}
                                     </div>
@@ -308,7 +322,7 @@ export const FormCadastro = ({cargo, onSubmitForm, composicaoUuid, switchStatusP
                                             onChange={props.handleChange}
                                             name="bairro"
                                             className="form-control"
-                                            disabled={retornaSeCampoEhDisabled(props.values)}
+                                            disabled={!retornaSeEhComposicaoVigente() || (!cargo.uuid ? retornaSeCampoEhDisabled(props.values) : !retornaSeEhPresidente())}
                                         />
                                         {props.errors.bairro && <span className="span_erro text-danger mt-1"> {props.errors.bairro}</span>}
                                     </div>
@@ -323,7 +337,7 @@ export const FormCadastro = ({cargo, onSubmitForm, composicaoUuid, switchStatusP
                                             onChange={props.handleChange}
                                             name="endereco"
                                             className="form-control"
-                                            disabled={retornaSeCampoEhDisabled(props.values)}
+                                            disabled={!retornaSeEhComposicaoVigente() || (!cargo.uuid ? retornaSeCampoEhDisabled(props.values) : !retornaSeEhPresidente())}
                                         />
                                         {props.errors.endereco && <span className="span_erro text-danger mt-1"> {props.errors.endereco}</span>}
                                     </div>
@@ -340,7 +354,7 @@ export const FormCadastro = ({cargo, onSubmitForm, composicaoUuid, switchStatusP
                                             onChange={props.handleChange}
                                             name="email"
                                             className="form-control"
-                                            disabled={retornaSeCampoEhDisabled(props.values)}
+                                            disabled={!retornaSeEhComposicaoVigente() || (!cargo.uuid ? retornaSeCampoEhDisabled(props.values) : false)}
                                         />
                                         {props.errors.email && <span className="span_erro text-danger mt-1"> {props.errors.email}</span>}
                                     </div>
@@ -357,7 +371,7 @@ export const FormCadastro = ({cargo, onSubmitForm, composicaoUuid, switchStatusP
                                             onChange={setFieldValue}
                                             minDate={data ? moment(data.data_inicial).toDate() : ""}
                                             maxDate={data ? moment(data.data_final).toDate() : ""}
-                                            disabled={retornaSeCampoEhDisabled(props.values)}
+                                            disabled={!retornaSeEhComposicaoVigente() || retornaSeCampoEhDisabled(props.values)}
                                         />
                                         {props.errors.data_inicio_no_cargo && <span className="span_erro text-danger mt-1"> {props.errors.data_inicio_no_cargo}</span>}
                                     </div>
@@ -369,45 +383,43 @@ export const FormCadastro = ({cargo, onSubmitForm, composicaoUuid, switchStatusP
                                             name="data_fim_no_cargo"
                                             value={props.values.data_fim_no_cargo ? props.values.data_fim_no_cargo : ""}
                                             onChange={setFieldValue}
-                                            disabled={!cargo.data_final_editavel || retornaSeCampoEhDisabled(props.values)}
+                                            disabled={true}
                                         />
                                         {props.errors.data_fim_no_cargo && <span className="span_erro text-danger mt-1"> {props.errors.data_fim_no_cargo}</span>}
                                     </div>
                                 </div>
                             </div>
 
-                            {cargo && cargo.cargo_associacao === 'PRESIDENTE_DIRETORIA_EXECUTIVA'  &&
+                            {retornaSeEhPresidente()  &&
                                 <>
                                     <hr/>
                                     <div className='d-flex align-items-center'>
-
                                         <div className='col-6 pl-0'>
                                             <span className='mr-2'>Status de ocupação: </span>
                                             <Switch
-                                                onChange={handleChangeSwitchStatusPresidente}
-                                                checked={switchStatusPresidente}
-                                                name="statusPresidenteSwitch"
+                                                onChange={(value) => props.setFieldValue("switch_status_presidente", value)}
+                                                checked={props.values.switch_status_presidente}
+                                                name="switch_status_presidente"
                                                 checkedChildren="Presente"
                                                 unCheckedChildren="Ausente"
-                                                className={`switch-status-presidente ${switchStatusPresidente ? "switch-status-presidente-checked" : ""}`}
+                                                className={`switch-status-presidente ${props.values.switch_status_presidente ? "switch-status-presidente-checked" : ""}`}
+                                                disabled={!retornaSeEhComposicaoVigente()}
                                             />
                                         </div>
 
-                                        {!switchStatusPresidente &&
+                                        {!props.values.switch_status_presidente &&
                                             <div className='col-6'>
                                                 <div className="row d-flex align-items-center">
                                                     <div className='col-auto'>
                                                         <label className='mb-0' htmlFor="responsavel_pelas_atribuicoes">Responsável pelas atribuições</label>
                                                     </div>
-
                                                     <div className='col-auto'>
                                                         <select
-                                                            value={responsavelPelasAtribuicoes}
-                                                            onChange={(e) => {
-                                                                handleChangeResponsavelPelaAtribuicao(e.target.value);
-                                                            }}
+                                                            value={props.values.responsavel_pelas_atribuicoes}
+                                                            onChange={props.handleChange}
                                                             name="responsavel_pelas_atribuicoes"
                                                             className="form-control"
+                                                            disabled={!retornaSeEhComposicaoVigente()}
                                                         >
                                                             <option value=''>Escolha o responsável</option>
                                                             {cargosDaDiretoriaExecutiva && cargosDaDiretoriaExecutiva.length > 0 && cargosDaDiretoriaExecutiva.filter(element => element.id !== "PRESIDENTE_DIRETORIA_EXECUTIVA").map((responsavel)=>
@@ -421,7 +433,6 @@ export const FormCadastro = ({cargo, onSubmitForm, composicaoUuid, switchStatusP
                                         }
                                     </div>
                                 </>
-
                             }
                         </form>
                     );

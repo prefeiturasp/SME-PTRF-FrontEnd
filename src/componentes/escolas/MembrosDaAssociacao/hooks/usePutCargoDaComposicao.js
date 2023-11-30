@@ -17,7 +17,7 @@ export const usePutCargoDaComposicao = () => {
             console.log("Cargo Composição alterado com sucesso ", data)
             // Refaz a lista de cargos-da-composicao
             queryClient.invalidateQueries(['cargos-da-composicao']).then()
-            toastCustom.ToastCustomSuccess('Membro alterado com sucesso', `O membro foi alterado no sistema com sucesso.`)
+            toastCustom.ToastCustomSuccess('Membro alterado com sucesso.', `O membro foi alterado no sistema com sucesso.`)
             navigate("/membros-da-associacao");
         },
         onError: (error) => {
@@ -30,7 +30,7 @@ export const usePutCargoDaComposicao = () => {
             }else {
                 msg_erro = error.response.data.detail
             }
-            toastCustom.ToastCustomError('Erro ao alterar Cargo da Composição', `${msg_erro}`)
+            toastCustom.ToastCustomError('Erro ao alterar Cargo da Composição.', `${msg_erro}`)
         },
         onSettled: () => {
         },
