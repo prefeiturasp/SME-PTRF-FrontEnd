@@ -927,7 +927,6 @@ export const ReceitaForm = () => {
 
             // Verifica se a origem é Analise de Lancamento
             if (origemAnaliseLancamento()){
-
                 // Se a data do Crédito for posterior a data de encerramento da conta, atribui disabled ao <option>
                 if (retornaSeDataDoCreditoEhPosteriorDataEncerramento(dataDoCredito, dataEncerramento)){
                     return <option {...defaultProps} disabled>{item.nome} {informacaoExtra}</option>
