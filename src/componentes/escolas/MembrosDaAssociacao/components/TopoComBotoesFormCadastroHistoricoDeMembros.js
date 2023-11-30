@@ -3,7 +3,7 @@ import {Link} from "react-router-dom";
 import {useGetComposicao} from "../hooks/useGetComposicao";
 import useDataTemplate from "../../../../hooks/Globais/useDataTemplate";
 
-export const TopoComBotoesFormCadastroHistoricoDeMembros = ({composicaoUuid, cargo, isValid}) => {
+export const TopoComBotoesFormCadastroHistoricoDeMembros = ({composicaoUuid, cargo, isValid, retornaSeEhComposicaoVigente}) => {
 
     const {data} = useGetComposicao(composicaoUuid)
     const dataTemplate = useDataTemplate()
@@ -27,7 +27,7 @@ export const TopoComBotoesFormCadastroHistoricoDeMembros = ({composicaoUuid, car
                     Voltar
                 </Link>
                 <button
-                    disabled={!isValid}
+                    disabled={!isValid || !retornaSeEhComposicaoVigente()}
                     type='submit'
                     className="btn btn-success mr-2"
                 >

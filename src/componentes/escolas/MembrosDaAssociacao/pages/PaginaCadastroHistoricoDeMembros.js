@@ -55,12 +55,6 @@ export const PaginaCadastroHistoricoDeMembros = () => {
         carregaCargosDaDiretoriaExecutiva().then()
     }, [carregaCargosDaDiretoriaExecutiva])
 
-    const handleChangeSwitchStatusPresidente = () => {
-        setSwitchStatusPresidente(!switchStatusPresidente)
-    }
-    const handleChangeResponsavelPelaAtribuicao = (value) => {
-        setResponsavelPelasAtribuicoes(value)
-    }
 
     const onSubmitForm = async (values) => {
         let payload = {
@@ -119,9 +113,6 @@ export const PaginaCadastroHistoricoDeMembros = () => {
                         setCargosDaDiretoriaExecutiva={setCargosDaDiretoriaExecutiva}
                         responsavelPelasAtribuicoes={responsavelPelasAtribuicoes}
                         switchStatusPresidente={switchStatusPresidente}
-                        setSwitchStatusPresidente={setSwitchStatusPresidente}
-                        handleChangeSwitchStatusPresidente={handleChangeSwitchStatusPresidente}
-                        handleChangeResponsavelPelaAtribuicao={handleChangeResponsavelPelaAtribuicao}
                     />
                 </div>
             </PaginasContainer>
