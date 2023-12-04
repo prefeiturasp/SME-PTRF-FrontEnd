@@ -118,8 +118,9 @@ const DetalharAcertosDocumentos = () =>{
     const contaEncerrada = async(conta_associacao) => {
         let contas_com_movimento = await getContasComMovimentoNaPc(prestacaoDeContas.uuid)
         let conta_encontrada = contas_com_movimento.find(elemento => elemento.uuid === conta_associacao)
+
         if(conta_encontrada) {
-            return conta_encontrada.status === "INATIVA" ? true : false;
+            return conta_encontrada.status === "INATIVA" && prestacaoDeContas.periodo_referencia === conta_encontrada.periodo_encerramento_conta ? true : false;
         } else {
             return null;
         }
