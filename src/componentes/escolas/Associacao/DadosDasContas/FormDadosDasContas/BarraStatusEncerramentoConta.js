@@ -36,7 +36,7 @@ export const BarraStatusEncerramentoConta = ({conta}) =>{
         } else if (conta.solicitacao_encerramento.status === "APROVADA"){
             return null;
         } else if (conta.solicitacao_encerramento.status === "PENDENTE"){
-            let dataSolicitacaoFormatada = formatarDataSolicitacao(conta.solicitacao_encerramento.criado_em);
+            let dataSolicitacaoFormatada = formatarDataSolicitacao(conta.solicitacao_encerramento.alterado_em);
 
             return setEstadoBarraEncerramento({
                 estiloBarra: "barra-status-encerramento-conta-pendente",

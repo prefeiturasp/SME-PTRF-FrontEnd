@@ -84,6 +84,30 @@ export const CadastroForm = ({verbo_http}) => {
     const [objetoParaComparacao, setObjetoParaComparacao] = useState({});
     const [showDespesaIncompletaNaoPermitida, setShowDespesaIncompletaNaoPermitida] = useState(false);
 
+    const [contasIniciais, setContasIniciais] = useState([])
+
+    useEffect(() => {
+        let contasJaExistentesEmAlgumRateioOuImpostoNoInicioDoFormulario = new Set();
+
+        if(despesaContext && despesaContext.initialValues && despesaContext.initialValues.rateios) {
+            despesaContext.initialValues.rateios.forEach(rateio => {
+                if(rateio.conta_associacao) {
+                    contasJaExistentesEmAlgumRateioOuImpostoNoInicioDoFormulario.add(rateio.conta_associacao.uuid)
+                }
+            });
+        }
+        
+        if(despesaContext && despesaContext.initialValues && despesaContext.initialValues.despesas_impostos) {
+            despesaContext.initialValues.despesas_impostos.forEach(imposto => {
+                if(imposto.rateios[0] && imposto.rateios[0].conta_associacao) {
+                    contasJaExistentesEmAlgumRateioOuImpostoNoInicioDoFormulario.add(imposto.rateios[0].conta_associacao)
+                }
+            });
+        }
+
+        setContasIniciais(contasJaExistentesEmAlgumRateioOuImpostoNoInicioDoFormulario);
+    }, [despesaContext])
+
     const isEditing = () => {
         return despesaContext.verboHttp === "PUT";
     }
@@ -177,10 +201,8 @@ export const CadastroForm = ({verbo_http}) => {
             informacaoExtra = `- Conta encerrada em ${moment(
               item.solicitacao_encerramento.data_de_encerramento_na_agencia
             ).format('DD/MM/YYYY')}`;
-      
-
-            // Verifica se vem de analise
-            if(aux.origemAnaliseLancamento(parametroLocation)) {
+            if(aux.origemAnaliseLancamento(parametroLocation)) { 
+                // Fluxo solicitação de ajuste
                 if (!imposto && item.dataEncerramentoMaiorOuIgualQueDataTransacao) {
                     desativarSelecaoOption = false;
                 } else if (imposto && item.dataEncerramentoMaiorOuIgualQueDataTransacaoImposto) {
@@ -188,15 +210,22 @@ export const CadastroForm = ({verbo_http}) => {
                 } else {
                     desativarSelecaoOption = true;
                 }
-            } else {
+            } else { 
+                // Fluxo normal (sem ser ajuste)
                 if(item.solicitacao_encerramento.status === STATUS_SOLICITACAO_ENCERRAMENTO_CONTA_ASSOCIACAO.PENDENTE && !isEditing()) {
                     desativarSelecaoOption = true;
                 } else if(item.solicitacao_encerramento.status === STATUS_SOLICITACAO_ENCERRAMENTO_CONTA_ASSOCIACAO.APROVADA && !isEditing()) {
                     return
                 } else if(item.solicitacao_encerramento.status === STATUS_SOLICITACAO_ENCERRAMENTO_CONTA_ASSOCIACAO.PENDENTE && isEditing()) {
                     desativarSelecaoOption = true;
-                } else if(item.solicitacao_encerramento.status === STATUS_SOLICITACAO_ENCERRAMENTO_CONTA_ASSOCIACAO.APROVADA && isEditing()) {
-                    return
+                } else if(item.solicitacao_encerramento.status === STATUS_SOLICITACAO_ENCERRAMENTO_CONTA_ASSOCIACAO.APROVADA && isEditing()) {     
+                    if(contasIniciais && contasIniciais.has(item.uuid)) {
+                         // Se já for a conta da despesa, ela mesmo sendo encerrada aparece desabilitada
+                        desativarSelecaoOption = true;
+                    } else {
+                        // Se não for a conta da despesa e estiver encerrada, não aparece
+                        return
+                    }
                 }
             }
           }
@@ -210,7 +239,7 @@ export const CadastroForm = ({verbo_http}) => {
         };
       
         return filterContas(data_transacao, imposto).map((item, key) => getOptionPorStatus(item, key));
-      }, [despesasTabelas]);
+      }, [despesasTabelas, contasIniciais]);
       
 
     useEffect(() => {
