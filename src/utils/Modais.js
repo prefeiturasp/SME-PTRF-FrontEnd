@@ -249,7 +249,7 @@ export const SaldoInsuficiente = (propriedades) => {
                         })}
                         </li>
                         <li className="list-group-item p-0" key={index}>
-                            <strong>Total dos rateios:</strong> {item.total_rateios.toLocaleString('pt-BR', {
+                            <strong>Total das despesas:</strong> {item.total_rateios.toLocaleString('pt-BR', {
                             style: 'currency',
                             currency: 'BRL'
                         })}
@@ -268,9 +268,9 @@ export const SaldoInsuficiente = (propriedades) => {
             bodyText={listaDeSaldosInsuficientes()}
             aceitarLancamento={propriedades.saldosInsuficientesDaAcao.aceitar_lancamento}
             primeiroBotaoOnclick={propriedades.onSaldoInsuficienteTrue}
-            primeiroBotaoTexto="OK"
+            primeiroBotaoTexto={propriedades.saldosInsuficientesDaAcao.aceitar_lancamento ? "Sim" : "OK"}
             segundoBotaoOnclick={propriedades.handleClose}
-            segundoBotaoTexto="Fechar"
+            segundoBotaoTexto={propriedades.saldosInsuficientesDaAcao.aceitar_lancamento ? "Não" : "Fechar"}
         />
     )
 };
