@@ -83,3 +83,37 @@ export const getMandatoMaisRecente = async () => {
         ...authHeader,
     })).data
 }
+
+export const postCargoComposicao = async (payload) => {
+    return (await api.post(`api/cargos-composicao/`, {
+            ...payload
+        },
+        authHeader,
+    ))
+};
+
+export const putCargoComposicao = async (uuidCargoComposicao, payload) => {
+    return (await api.put(`api/cargos-composicao/${uuidCargoComposicao}/`, {
+            ...payload
+        },
+        authHeader,
+    ))
+};
+
+export const consultarCodEolNoSmeIntegracao = async (cod_eol) => {
+    return (await api.get(`/api/ocupantes-cargos/codigo-identificacao/?codigo-eol=${cod_eol}`, authHeader))
+};
+
+export const consultarRFNoSmeIntegracao = async (rf) => {
+    return (await api.get(`/api/ocupantes-cargos/codigo-identificacao/?rf=${rf}`, authHeader))
+};
+
+export const getCargosDoRFSmeIntegracao = async (rf) => {
+    return (await api.get(`/api/ocupantes-cargos/cargos-do-rf/?rf=${rf}`, authHeader))
+};
+
+export const getCargosDaDiretoriaExecutiva = async () => {
+    return (await api.get(`/api/cargos-composicao/cargos-diretoria-executiva/`,{
+        ...authHeader,
+    })).data
+}
