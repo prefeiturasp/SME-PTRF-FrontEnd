@@ -75,4 +75,11 @@ export const cards = [
         endpoint: '/api/exportacoes-dados/documentos-despesas/',
         visao: ['SME']
     },
+    {
+        titulo: 'Dados das contas',
+        descricao: 'Arquivo com dados das contas das associações.',
+        tags: ['CSV'],
+        endpoint: '/api/exportacoes-dados/contas-associacao/',
+        visao: ['SME']
+    },    
 ]
