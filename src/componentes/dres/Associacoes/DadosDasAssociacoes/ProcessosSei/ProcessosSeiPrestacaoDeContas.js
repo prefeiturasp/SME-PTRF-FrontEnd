@@ -138,16 +138,20 @@ export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao}) => {
         setLoading(false)
     };
 
-    const handleConfirmSubmitProcessoForm = async () => {
-        ModalConfirm({
-            dispatch,
-            title: 'Atenção!',
-            message: 'A alteração desse número do processo SEI será exibida em todas as prestações de contas a ele vinculadas.',
-            cancelText: 'Cancelar',
-            confirmText: 'Confirmar',
-            dataQa: 'modal-confirmar-salvar-processo-SEI',
-            onConfirm: () => handleSubmitProcesso()
-        })
+    const handleConfirmSubmitProcessoForm = async (values) => {
+        if(values.uuid){
+            ModalConfirm({
+                dispatch,
+                title: 'Atenção!',
+                message: 'A alteração desse número do processo SEI será exibida em todas as prestações de contas a ele vinculadas.',
+                cancelText: 'Cancelar',
+                confirmText: 'Confirmar',
+                dataQa: 'modal-confirmar-salvar-processo-SEI',
+                onConfirm: () => handleSubmitProcesso()
+            })
+        } else {
+            handleSubmitProcesso()
+        }
     };
 
     const handleChangesInProcessoForm = (name, value) => {
