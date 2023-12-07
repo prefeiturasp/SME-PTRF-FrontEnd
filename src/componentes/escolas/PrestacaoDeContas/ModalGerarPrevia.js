@@ -54,6 +54,7 @@ export const ModalPrevia = (propriedades) => {
                     type="submit"
                     className="btn btn-success mt-2"
                     data-qa={propriedades.dataQa ? `btn-gerar-previa-${propriedades.dataQa}` : ""}
+                    disabled={!propriedades.data_inicio || !propriedades.data_fim}
                 >
                 Gerar Prévia
                 </button>
