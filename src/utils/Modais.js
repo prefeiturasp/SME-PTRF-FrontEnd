@@ -237,6 +237,9 @@ export const SaldoInsuficiente = (propriedades) => {
                 {propriedades.saldosInsuficientesDaAcao && propriedades.saldosInsuficientesDaAcao.saldos_insuficientes && propriedades.saldosInsuficientesDaAcao.saldos_insuficientes.length > 0 && propriedades.saldosInsuficientesDaAcao.saldos_insuficientes.map((item, index) =>
                     <ul key={index} className="list-group list-group-flush mb-3">
                         <li className="list-group-item p-0">
+                            <strong>Conta:</strong> {item.conta}
+                        </li>
+                        <li className="list-group-item p-0">
                             <strong>Ação:</strong> {item.acao}
                         </li>
                         <li className="list-group-item p-0">
