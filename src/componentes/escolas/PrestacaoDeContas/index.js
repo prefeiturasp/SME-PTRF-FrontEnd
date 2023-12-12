@@ -572,6 +572,7 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
                                 retornaObjetoPeriodoPrestacaoDeConta={retornaObjetoPeriodoPrestacaoDeConta}
                                 statusPrestacaoDeConta={statusPrestacaoDeConta}
                                 checkCondicaoExibicao={checkCondicaoExibicao}
+                                contasAssociacao={contasAssociacao}
                                 concluirPeriodo={handleConcluirPeriodo}
                                 podeConcluir={podeConcluir}
                                 textoBotaoConcluir={textoBotaoConcluir}
