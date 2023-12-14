@@ -1099,7 +1099,7 @@ export const DetalhePrestacaoDeContas = () =>{
     }
 
     const adicionaTooltipBtnAvancar = () => {
-        if(prestacaoDeContas && prestacaoDeContas.status === "NAO_RECEBIDA")
+        if(prestacaoDeContas && prestacaoDeContas.status === "NAO_RECEBIDA" && (informacoesPrestacaoDeContas.processo_sei === '' || !stateFormRecebimentoPelaDiretoria.data_recebimento))
             return "É necessário informar a data de recebimento e o número do Processo SEI para realizar o recebimento da Prestação de Contas."
         return null;
     }

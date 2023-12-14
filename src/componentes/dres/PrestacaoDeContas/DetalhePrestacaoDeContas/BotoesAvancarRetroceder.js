@@ -31,6 +31,7 @@ export const BotoesAvancarRetroceder = ({prestacaoDeContas, textoBtnAvancar, tex
                     </div>
                     {!esconderBotaoAvancar &&
                         <div className="p-2 bd-highlight">
+                            <span data-tip={tooltipAvancar} data-for={`tooltip-avancar-id-${prestacaoDeContas.uuid}`}>
                             <button
                                 data-qa="botao-avancar-acompanhamento-pc"
                                 id="btn-avancar"
@@ -38,13 +39,14 @@ export const BotoesAvancarRetroceder = ({prestacaoDeContas, textoBtnAvancar, tex
                                 disabled={disabledBtnAvancar}
                                 className="btn btn-success ml-2"
                             >
-                                <span data-tip={tooltipAvancar} data-for={`tooltip-avancar-id-${prestacaoDeContas.uuid}`}>{textoBtnAvancar}</span>
+                                {textoBtnAvancar}
                                 {tooltipAvancar && <ReactTooltip  place="right" id={`tooltip-avancar-id-${prestacaoDeContas.uuid}`} html={true}/>}
                                 <FontAwesomeIcon
                                     style={{marginLeft: "5px", color: '#fff'}}
                                     icon={faAngleDoubleRight}
                                 />
                             </button>
+                            </span>
                         </div>
                     }
 
