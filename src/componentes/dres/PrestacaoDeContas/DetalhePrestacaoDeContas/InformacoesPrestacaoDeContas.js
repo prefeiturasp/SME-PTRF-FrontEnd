@@ -1,5 +1,7 @@
 import React from "react";
 import {DatePickerField} from "../../../Globais/DatePickerField";
+import MaskedInput from "react-text-mask";
+import { processoSeiMask } from "../../../../utils/ProcessoSeiMask";
 
 export const InformacoesPrestacaoDeContas = ({handleChangeFormInformacoesPrestacaoDeContas, informacoesPrestacaoDeContas, editavel}) =>{
     return(
@@ -10,13 +12,14 @@ export const InformacoesPrestacaoDeContas = ({handleChangeFormInformacoesPrestac
                 <div className="row mt-3">
                     <div className="col">
                         <label htmlFor="processo_sei">Processo SEI</label>
-                        <input
-                            value={informacoesPrestacaoDeContas.processo_sei ? informacoesPrestacaoDeContas.processo_sei : ''}
+                        <MaskedInput
+                            mask={(valor) => processoSeiMask(valor)}
                             onChange={(e) => handleChangeFormInformacoesPrestacaoDeContas(e.target.name, e.target.value)}
-                            name='processo_sei'
-                            type="text"
+                            name="processo_sei"
                             className="form-control"
-                            disabled={true}
+                            value={informacoesPrestacaoDeContas.processo_sei ? informacoesPrestacaoDeContas.processo_sei : ''}
+                            id="processo_regularidade"
+                            disabled={!editavel}
                         />
                     </div>
                     <div className="col">
