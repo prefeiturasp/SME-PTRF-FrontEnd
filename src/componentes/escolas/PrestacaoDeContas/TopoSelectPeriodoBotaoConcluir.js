@@ -10,7 +10,8 @@ export const TopoSelectPeriodoBotaoConcluir = ({
                                                    checkCondicaoExibicao,
                                                    podeConcluir,
                                                    concluirPeriodo,
-                                                   textoBotaoConcluir
+                                                   textoBotaoConcluir,
+                                                   contasAssociacao
                                                }) => {
     return (
         <>
@@ -61,7 +62,10 @@ export const TopoSelectPeriodoBotaoConcluir = ({
                             {visibility: podeConcluir ? "visible" : "hidden"}
                         }
                     >
-                        {checkCondicaoExibicao(periodoPrestacaoDeConta) && statusPrestacaoDeConta && statusPrestacaoDeConta.prestacao_contas_status && statusPrestacaoDeConta.prestacao_contas_status.pc_requer_conclusao &&
+                        {checkCondicaoExibicao(periodoPrestacaoDeConta) && 
+                            statusPrestacaoDeConta && statusPrestacaoDeConta.prestacao_contas_status && 
+                            statusPrestacaoDeConta.prestacao_contas_status.pc_requer_conclusao &&
+                            contasAssociacao && contasAssociacao.length > 0 &&
                             <button
                                 onClick={concluirPeriodo}
                                 className='btn btn-success'
