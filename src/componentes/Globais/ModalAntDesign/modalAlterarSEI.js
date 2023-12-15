@@ -26,13 +26,13 @@ export const ModalAlterarSEI = (propriedades) => {
                     <div className="d-flex justify-content-center mt-3">
                         <Button className="w-100" variant="success" onClick={() => {
                         propriedades.receberPrestacaoDeContas()
-                        }}>Manter o número do processo SEI existente</Button>
+                        }}>Cancelar a alteração e receber a PC</Button>
                     </div>
 
                     <div className="d-flex justify-content-center mt-3">
                         <Button className="w-100" variant="success" onClick={() => {
                             propriedades.receberPrestacaoDeContas('editar')
-                        }}>Atualizar o número do processo SEI existente</Button>
+                        }}>Alterar o número do processo SEI existente</Button>
                     </div>
 
                     <div className="d-flex justify-content-center mt-3">
