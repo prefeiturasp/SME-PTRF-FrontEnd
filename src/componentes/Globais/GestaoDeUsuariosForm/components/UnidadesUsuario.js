@@ -83,7 +83,8 @@ export const UnidadesUsuario = ({usuario}) => {
         let payload = {
             "username": rowData.username,
             "uuid_unidade": rowData.uuid_unidade,
-            "acesso_concedido_sme": rowData.acesso_concedido_sme
+            "acesso_concedido_sme": rowData.acesso_concedido_sme,
+            "visao_base": visaoBase
         }
 
         if(rowData.acesso_concedido_sme){
