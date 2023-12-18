@@ -62,10 +62,12 @@ export const GetComportamentoPorStatus = (
         setAnalisesDeContaDaPrestacao,
         bloqueiaBtnRetroceder,
         tooltipRetroceder,
-        handleConcluirPCemAnalise
+        tooltipAvancar,
+        handleConcluirPCemAnalise,
+        verificaDadosParaRecebimentoDePrestacaoDeContas
     }) => {
 
-        const TEMPERMISSAO = RetornaSeTemPermissaoEdicaoAcompanhamentoDePc()
+    const TEMPERMISSAO = RetornaSeTemPermissaoEdicaoAcompanhamentoDePc()
     const [updateListaDeDocumentosParaConferencia, setUpdateListaDeDocumentosParaConferencia] = useState(0);
     const [carregaLancamentosParaConferencia, setCarregaLancamentosParaConferencia] = useState(0);
 
@@ -89,10 +91,11 @@ export const GetComportamentoPorStatus = (
                         prestacaoDeContas={prestacaoDeContas}
                         textoBtnAvancar={"Receber"}
                         textoBtnRetroceder={"Reabrir PC"}
-                        metodoAvancar={receberPrestacaoDeContas}
+                        metodoAvancar={() => verificaDadosParaRecebimentoDePrestacaoDeContas()}
                         metodoRetroceder={() => setShowReabrirPc(true)}
-                        disabledBtnAvancar={!stateFormRecebimentoPelaDiretoria.data_recebimento || !TEMPERMISSAO}
+                        disabledBtnAvancar={!stateFormRecebimentoPelaDiretoria.data_recebimento || !informacoesPrestacaoDeContas.processo_sei || !TEMPERMISSAO}
                         disabledBtnRetroceder={!TEMPERMISSAO}
+                        tooltipAvancar={tooltipAvancar()}
                     />
                     <TrilhaDeStatus
                         prestacaoDeContas={prestacaoDeContas}
@@ -106,6 +109,11 @@ export const GetComportamentoPorStatus = (
                         disabledStatus={true}
                         exibeMotivo={false}
                         exibeRecomendacoes={false}
+                    />
+                    <InformacoesPrestacaoDeContas
+                        handleChangeFormInformacoesPrestacaoDeContas={handleChangeFormInformacoesPrestacaoDeContas}
+                        informacoesPrestacaoDeContas={informacoesPrestacaoDeContas}
+                        editavel={TEMPERMISSAO}
                     />
                     <ComentariosDeAnalise
                         prestacaoDeContas={prestacaoDeContas}
@@ -142,6 +150,11 @@ export const GetComportamentoPorStatus = (
                         disabledStatus={true}
                         exibeMotivo={false}
                         exibeRecomendacoes={false}
+                    />
+                    <InformacoesPrestacaoDeContas
+                        handleChangeFormInformacoesPrestacaoDeContas={handleChangeFormInformacoesPrestacaoDeContas}
+                        informacoesPrestacaoDeContas={informacoesPrestacaoDeContas}
+                        editavel={false}
                     />
                     <ComentariosDeAnalise
                         prestacaoDeContas={prestacaoDeContas}
@@ -185,7 +198,7 @@ export const GetComportamentoPorStatus = (
                     <InformacoesPrestacaoDeContas
                         handleChangeFormInformacoesPrestacaoDeContas={handleChangeFormInformacoesPrestacaoDeContas}
                         informacoesPrestacaoDeContas={informacoesPrestacaoDeContas}
-                        editavel={TEMPERMISSAO}
+                        editavel={false}
                     />
                     <TabsArquivosDeReferencia
                         infoAta={infoAta}
