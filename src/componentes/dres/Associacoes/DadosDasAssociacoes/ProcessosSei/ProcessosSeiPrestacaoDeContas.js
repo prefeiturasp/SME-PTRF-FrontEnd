@@ -1,12 +1,13 @@
 import React, {useEffect, useState} from "react";
-
+import {useDispatch} from "react-redux";
 import "../../associacoes.scss"
-
+import { DeleteFilled } from '@ant-design/icons';
+import { Button, Tooltip } from 'antd';
 import {DataTable} from "primereact/datatable";
 import {Column} from "primereact/column";
 
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faEdit, faTrash, faPlus} from "@fortawesome/free-solid-svg-icons";
+import {faEdit, faPlus} from "@fortawesome/free-solid-svg-icons";
 
 import Img404 from "../../../../../assets/img/img-404.svg";
 import Loading from "../../../../../utils/Loading";
@@ -22,8 +23,10 @@ import {
 import {ProcessoSeiPrestacaoDeContaForm} from "./ProcessoSeiPrestacaoDeContaForm";
 import {ConfirmaDeleteProcesso} from "./ConfirmaDeleteProcessoDialog";
 import {visoesService} from "../../../../../services/visoes.service";
+import {ModalConfirm} from "../../../../Globais/Modal/ModalConfirm";
 
 export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao}) => {
+    const dispatch = useDispatch();
 
     const rowsPerPage = 7;
 
@@ -98,7 +101,7 @@ export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao}) => {
         setShowProcessoForm(false);
     };
 
-    const handleSubmitProcessoForm = async () => {
+    const handleSubmitProcesso = async () => {
         setLoading(true);
         setShowProcessoForm(false);
         const payload = {
@@ -135,6 +138,22 @@ export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao}) => {
         setLoading(false)
     };
 
+    const handleConfirmSubmitProcessoForm = async (values) => {
+        if(values.uuid){
+            ModalConfirm({
+                dispatch,
+                title: 'Atenção!',
+                message: 'A alteração desse número do processo SEI será exibida em todas as prestações de contas a ele vinculadas.',
+                cancelText: 'Cancelar',
+                confirmText: 'Confirmar',
+                dataQa: 'modal-confirmar-salvar-processo-SEI',
+                onConfirm: () => handleSubmitProcesso()
+            })
+        } else {
+            handleSubmitProcesso()
+        }
+    };
+
     const handleChangesInProcessoForm = (name, value) => {
         setStateProcessoForm({
             ...stateProcessoForm,
@@ -164,14 +183,16 @@ export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao}) => {
                     <FontAwesomeIcon
                         style={{fontSize: '20px', marginRight: "0"}}
                         icon={faEdit}
-                    />
+                    />                   
                 </button>
-                <button disabled={!visoesService.getPermissoes(['change_processo_sei'])} className="btn-editar-membro" onClick={() => handleDeleteProcessoAction(rowData)}>
-                    <FontAwesomeIcon
-                        style={{fontSize: '20px', marginRight: "0", color: "red"}}
-                        icon={faTrash}
+                <Tooltip title={rowData.permite_exclusao ? '' : rowData.tooltip_exclusao}>
+                    <Button type="text"  
+                            icon={<DeleteFilled style={{fontSize: '20px'}}/>}
+                            disabled={!visoesService.getPermissoes(['change_processo_sei']) || !rowData.permite_exclusao} 
+                            danger={visoesService.getPermissoes(['change_processo_sei']) && rowData.permite_exclusao}
+                            onClick={() => handleDeleteProcessoAction(rowData)}
                     />
-                </button>
+                </Tooltip>                
             </div>
         )
     };
@@ -238,7 +259,7 @@ export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao}) => {
                             <ProcessoSeiPrestacaoDeContaForm
                                 show={showProcessoForm}
                                 handleClose={handleCloseProcessoForm}
-                                onSubmit={handleSubmitProcessoForm}
+                                onSubmit={handleConfirmSubmitProcessoForm}
                                 handleChange={handleChangesInProcessoForm}
                                 validateForm={validateProcessoForm}
                                 initialValues={stateProcessoForm}

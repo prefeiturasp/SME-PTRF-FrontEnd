@@ -89,6 +89,7 @@ export const ProcessoSeiPrestacaoDeContaForm = ({show, handleClose, onSubmit, ha
                                                     className="form-control"
                                                     placeholder="Ano do processo"
                                                     value={props.values.ano ? props.values.ano : ""}
+                                                    disabled={initialValues.uuid ? true : false}
                                                 />
                                                 {props.errors.ano &&
                                                 <span className="span_erro text-danger mt-1"> {props.errors.ano}</span>}

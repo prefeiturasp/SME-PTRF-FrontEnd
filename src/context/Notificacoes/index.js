@@ -21,6 +21,9 @@ export const NotificacaoContext = createContext( {
     getExibeModalErroConcluirPc(){},
     exibeModalErroConcluirPc: false,
 
+    exibeModalPerdeuAcesso: false,
+    setExibeModalPerdeuAcesso(){},
+
 });
 
 export const NotificacaoContextProvider = ({children}) => {
@@ -42,6 +45,20 @@ export const NotificacaoContextProvider = ({children}) => {
         else {
             return true;
         }
+    }
+
+    const deveExibirModalPerdeuAcesso = () => {
+        let storage = JSON.parse(localStorage.getItem("INFO_PERDEU_ACESSO"));
+
+        if(storage === null || storage === "null"){
+            return false;
+        }
+        else if(storage.exibe_modal === 'true' || storage.exibe_modal === true) {
+            return true;
+        }
+        else{
+            return false;
+        }  
     }
 
     const getExibeModalErroConcluirPc = useCallback(async () => {
@@ -94,6 +111,7 @@ export const NotificacaoContextProvider = ({children}) => {
 
     const [show, setShow] = useState(false);
     const [exibeModalTemDevolucao, setExibeModalTemDevolucao] = useState(deveExibirModalDevolucao());
+    const [exibeModalPerdeuAcesso, setExibeModalPerdeuAcesso] = useState(deveExibirModalPerdeuAcesso());
 
 
     const getQtdeNotificacoesNaoLidas = async () =>{
@@ -118,6 +136,8 @@ export const NotificacaoContextProvider = ({children}) => {
                 getExibeModalErroConcluirPc,
                 setRegistroFalhaGeracaoPc,
                 setShow,
+                exibeModalPerdeuAcesso,
+                setExibeModalPerdeuAcesso
             }
         }>
             {children}

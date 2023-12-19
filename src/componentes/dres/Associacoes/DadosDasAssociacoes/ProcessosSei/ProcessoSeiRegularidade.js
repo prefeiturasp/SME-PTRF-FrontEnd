@@ -6,6 +6,7 @@ import {Formik} from "formik";
 import {YupSignupSchemaDadosDaAssociacao} from "../../../../../utils/ValidacoesAdicionaisFormularios";
 import MaskedInput from "react-text-mask";
 import {visoesService} from "../../../../../services/visoes.service";
+import { processoSeiMask } from "../../../../../utils/ProcessoSeiMask";
 
 
 export const ProcessoSeiRegularidade = ({dadosDaAssociacao}) => {
@@ -47,15 +48,6 @@ export const ProcessoSeiRegularidade = ({dadosDaAssociacao}) => {
         }
         setLoading(false)
     };
-
-    const processoSeiMask = (value) => {
-        // 0000.0000/0000000-0
-        let processo = value.replace(/[^\d]+/g, "");
-
-        let mask = [/\d/, /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, /\d/, '/', /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, '-', /\d/]
-
-        return mask
-    }
 
     return (
         <>

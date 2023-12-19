@@ -8,6 +8,7 @@ import {NotificacaoContext} from "../../../context/Notificacoes";
 import {CentralDeDownloadContext} from "../../../context/CentralDeDownloads"
 import {ModalConfirmaLogout} from "./ModalConfirmaLogout";
 import {ModalNotificaDevolucao} from "./ModalNotificaDevolucao";
+import { ModalInfoPerdeuAcesso } from "./ModalInfoPerdeuAcesso";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faBell, faChevronDown, faUser, faFileDownload} from "@fortawesome/free-solid-svg-icons";
 import {notificaDevolucaoPCService} from "../../../services/NotificacaDevolucaoPC.service";
@@ -117,6 +118,11 @@ export const Cabecalho = () => {
 
     const onHandleClose = () => {
         setShow(false);
+    };
+
+    const onHandleCloseModalInfoPerdeuAcesso = () => {
+        localStorage.setItem("INFO_PERDEU_ACESSO", null)
+        notificacaoContext.setExibeModalPerdeuAcesso(false);
     };
 
     const onRedirectNotificacoes = () => {
@@ -280,6 +286,14 @@ export const Cabecalho = () => {
                             onVerAcertosDepois={onVerAcertosDepois}
                             titulo="Atenção"
                             texto={`<p>A prestação de contas ${dados_usuario_logado.unidade_selecionada.notificar_devolucao_referencia} foi devolvida para acertos pela DRE.</p>`}
+                        />
+                    </section>
+
+                    <section>
+                        <ModalInfoPerdeuAcesso
+                            show={notificacaoContext.exibeModalPerdeuAcesso}
+                            handleClose={onHandleCloseModalInfoPerdeuAcesso}
+                            titulo="Atenção"
                         />
                     </section>
                 </>

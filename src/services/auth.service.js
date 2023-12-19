@@ -19,6 +19,7 @@ export const ASSOCIACAO_TIPO_ESCOLA = "TIPO_ESCOLA";
 export const USUARIO_EMAIL = "EMAIL";
 export const USUARIO_CPF = "CPF";
 export const USUARIO_LOGIN = "LOGIN";
+export const USUARIO_INFO_PERDEU_ACESSO = "INFO_PERDEU_ACESSO";
 export const DADOS_DA_ASSOCIACAO = "DADOS_DA_ASSOCIACAO";
 export const PERIODO_RELATORIO_CONSOLIDADO_DRE = "PERIODO_RELATORIO_CONSOLIDADO_DRE";
 
@@ -90,6 +91,14 @@ const login = async (login, senha) => {
                 USUARIO_CPF,
                 resp.cpf
             );
+
+            if(resp.info_perdeu_acesso !== undefined){
+                localStorage.setItem(
+                    USUARIO_INFO_PERDEU_ACESSO,
+                    JSON.stringify(resp.info_perdeu_acesso)
+                );
+            }
+
             localStorage.removeItem('medidorSenha');
 
             await meapcservice.setAcompanhamentoDePc()
