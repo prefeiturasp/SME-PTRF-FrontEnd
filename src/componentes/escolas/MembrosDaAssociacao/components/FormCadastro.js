@@ -129,6 +129,14 @@ export const FormCadastro = ({cargo, onSubmitForm, composicaoUuid, switchStatusP
         return cargo.eh_composicao_vigente
     }
 
+    const retornaSePeriodoFinalEhDisable = () =>{
+        if(cargo && cargo.id !== null){
+            return false;
+        }
+
+        return true;
+    }
+
     if (isLoading) {
         return (
             <Loading
@@ -383,7 +391,9 @@ export const FormCadastro = ({cargo, onSubmitForm, composicaoUuid, switchStatusP
                                             name="data_fim_no_cargo"
                                             value={props.values.data_fim_no_cargo ? props.values.data_fim_no_cargo : ""}
                                             onChange={setFieldValue}
-                                            disabled={true}
+                                            minDate={data && data.info_composicao_anterior && data.info_composicao_anterior.data_final ?  moment(data.info_composicao_anterior.data_final).toDate() : ""}
+                                            maxDate={data && data.mandato && data.mandato.data_final ? moment(data.mandato.data_final).toDate(): ""}
+                                            disabled={!retornaSeEhComposicaoVigente() || retornaSePeriodoFinalEhDisable()}
                                         />
                                         {props.errors.data_fim_no_cargo && <span className="span_erro text-danger mt-1"> {props.errors.data_fim_no_cargo}</span>}
                                     </div>
