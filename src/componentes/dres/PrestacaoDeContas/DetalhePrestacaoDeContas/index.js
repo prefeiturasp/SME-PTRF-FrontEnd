@@ -31,6 +31,7 @@ import {ModalSalvarPrestacaoDeContasAnalise} from "../../../../utils/Modais";
 import Loading from "../../../../utils/Loading";
 import {toastCustom} from "../../../Globais/ToastCustom";
 import {ModalAntDesignAviso} from "../../../Globais/ModalAntDesign/modalAviso"
+import {ModalAlterarSEI} from "../../../Globais/ModalAntDesign/modalAlterarSEI"
 import {ModalNaoPodeVoltarParaAnalise} from "../ModalNaoPodeVoltarParaAnalise";
 import { getPeriodoPorUuid } from "../../../../services/sme/Parametrizacoes.service";
 import IconeAvisoVermelho from "../../../../assets/img/icone-modal-aviso-vermelho.svg"
@@ -146,6 +147,7 @@ export const DetalhePrestacaoDeContas = () =>{
     const [formErrosAjusteSaldo, setFormErrosAjusteSaldo] = useState([])
     const [ajusteSaldoSalvoComSucesso, setAjusteSaldoSalvoComSucesso] = useState([]);
     const [showDeleteAjusteSaldoPC, setShowDeleteAjusteSaldoPC] = useState(false);
+    const [showModalAlterarSEI, setShowAlterarModalSEI] = useState(false);
     const [periodoReferencia, setPeriodoReferencia] = useState('');
     const [periodo, setPeriodo] = useState('');
 
@@ -281,11 +283,25 @@ export const DetalhePrestacaoDeContas = () =>{
         setTabelaPrestacoes(tabela_prestacoes);
     };
 
-    const receberPrestacaoDeContas = async ()=>{
+    const verificaDadosParaRecebimentoDePrestacaoDeContas = () => {
+        if(prestacaoDeContas.processo_sei === informacoesPrestacaoDeContas.processo_sei) {
+            return receberPrestacaoDeContas(null);
+        } else if((prestacaoDeContas.processo_sei === '') && (informacoesPrestacaoDeContas.processo_sei !== '')) {
+            return receberPrestacaoDeContas('incluir')
+        }
+
+        return setShowAlterarModalSEI(true);
+    } 
+
+    const receberPrestacaoDeContas = async (acao_processo_sei=null)=>{
+        setShowAlterarModalSEI(false);
+
         setLoading(true)
         let dt_recebimento = stateFormRecebimentoPelaDiretoria.data_recebimento ? moment(new Date(stateFormRecebimentoPelaDiretoria.data_recebimento), "YYYY-MM-DD").format("YYYY-MM-DD") : "";
         let payload = {
             data_recebimento: dt_recebimento,
+            processo_sei: informacoesPrestacaoDeContas.processo_sei,
+            acao_processo_sei: acao_processo_sei
         };
         await getReceberPrestacaoDeContas(prestacaoDeContas.uuid, payload);
         await carregaPrestacaoDeContas();
@@ -1082,6 +1098,12 @@ export const DetalhePrestacaoDeContas = () =>{
         return null;
     }
 
+    const adicionaTooltipBtnAvancar = () => {
+        if(prestacaoDeContas && prestacaoDeContas.status === "NAO_RECEBIDA" && (informacoesPrestacaoDeContas.processo_sei === '' || !stateFormRecebimentoPelaDiretoria.data_recebimento))
+            return "É necessário informar a data de recebimento e o número do Processo SEI para realizar o recebimento da Prestação de Contas."
+        return null;
+    }
+
     const handleConcluirPCemAnalise = async () => {
         let status = await getStatusPeriodo(prestacaoDeContas.associacao.uuid, periodo.data_inicio_realizacao_despesas);
         
@@ -1170,7 +1192,9 @@ export const DetalhePrestacaoDeContas = () =>{
                                     setAnalisesDeContaDaPrestacao={setAnalisesDeContaDaPrestacao}
                                     bloqueiaBtnRetroceder={bloqueiaBtnRetroceder}
                                     tooltipRetroceder={adicionaTooltipBtnRetroceder}
+                                    tooltipAvancar={adicionaTooltipBtnAvancar}
                                     handleConcluirPCemAnalise={handleConcluirPCemAnalise}
+                                    verificaDadosParaRecebimentoDePrestacaoDeContas={verificaDadosParaRecebimentoDePrestacaoDeContas}
                                 />
                         }
                     </>
@@ -1307,6 +1331,16 @@ export const DetalhePrestacaoDeContas = () =>{
                         cancelText="Fechar"
                         wrapClassName={"modal-conclusao-analise-nao-permitida"}
                         icone={IconeAvisoVermelho}
+                    />
+                </section>
+                <section>
+                    <ModalAlterarSEI
+                        show={showModalAlterarSEI}
+                        titulo="Inclusão de Processo SEI"
+                        primeiroBotaoClassName="btn btn-base-verde-outline"
+                        primeiroBotaoTexto="Cancelar"
+                        primeiroBotaoOnClick={() => setShowAlterarModalSEI(false)}
+                        receberPrestacaoDeContas={receberPrestacaoDeContas}
                     />
                 </section>
                 {redirectListaPc &&
