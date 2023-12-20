@@ -27,7 +27,8 @@ export function ModalConfirm({
     if (onConfirm) {
       onConfirm();
     }
-    handleClose();
+    
+    dispatch(closeModal());
   }
 
 
