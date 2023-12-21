@@ -10,9 +10,9 @@ import { useHabilitarGrupoAcesso } from "../hooks/useHabilitarGrupoAcesso";
 import "../style/grupos-acesso.scss"
 
 export const GrupoAcesso = ({usuario}) => {
-    const { visaoBase } = useContext(GestaoDeUsuariosFormContext)
+    const { visaoBase, uuidUnidadeBase } = useContext(GestaoDeUsuariosFormContext)
 
-    const {isLoading, data: grupos } = useGruposDisponiveisAcesso(usuario ? usuario : null, visaoBase ? visaoBase : null);
+    const {isLoading, data: grupos } = useGruposDisponiveisAcesso(usuario ? usuario : null, visaoBase ? visaoBase : null, uuidUnidadeBase ? uuidUnidadeBase : null);
 
     const {mutationDesabilitarGrupoAcesso} = useDesabilitarGrupoAcesso();
     const {mutationHabilitarGrupoAcesso} = useHabilitarGrupoAcesso();
@@ -79,10 +79,17 @@ export const GrupoAcesso = ({usuario}) => {
               ))}
             </div>
           ) : (
-            <div className="box-unidades-usuario">
-              <p className="mb-0 text-center texto-info">Selecione uma unidade para visualizar os</p>
-              <p className="mb-0 text-center texto-info">grupos de acesso disponíveis para seleçao.</p>
-            </div>
+            usuario ? (
+              <div className="box-unidades-usuario">
+                <p className="mb-0 text-center texto-info">Selecione uma unidade para visualizar os</p>
+                <p className="mb-0 text-center texto-info">grupos de acesso disponíveis para seleção.</p>
+              </div>
+            ) : (
+              <div className="box-unidades-usuario">
+                <p className="mb-0 text-center texto-info">Indique um usuário para visualizar os grupos</p>
+                <p className="mb-0 text-center texto-info">de acesso disponíveis para seleção.</p>
+              </div>
+            )
           )}
         </>
       );
