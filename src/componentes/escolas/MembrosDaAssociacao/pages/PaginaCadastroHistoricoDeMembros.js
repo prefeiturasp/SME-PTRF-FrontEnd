@@ -16,11 +16,7 @@ import {usePatchStatusPresidente} from "../hooks/usePatchStatusPresidente";
 import { ModalConfirm } from "../../../Globais/Modal/ModalConfirm";
 
 const CargoComposicaoModel = {
-    "id": null,
-    "uuid": null,
     "ocupante_do_cargo": {
-        "id": null,
-        "uuid": null,
         "nome": null,
         "codigo_identificacao": null,
         "cargo_educacao": null,
