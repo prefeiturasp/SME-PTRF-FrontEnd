@@ -130,7 +130,7 @@ export const FormCadastro = ({cargo, onSubmitForm, composicaoUuid, switchStatusP
     }
 
     const retornaSePeriodoFinalEhDisable = () =>{
-        if(cargo && cargo.id !== null){
+        if(cargo && cargo.id){
             return false;
         }
 
