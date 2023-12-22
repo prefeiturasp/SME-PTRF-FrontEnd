@@ -13,6 +13,7 @@ import ConferenciaDeDocumentos from "./ConferenciaDeDocumentos";
 import DevolutivaDaAssociacao from "./DevolutivaDaAssociacao";
 import JustificativaDeFaltaDeAjustes from "./JustificativaDeFaltaDeAjustes";
 import {RetornaSeTemPermissaoEdicaoAcompanhamentoDePc} from "../RetornaSeTemPermissaoEdicaoAcompanhamentoDePc";
+import { PendenciasRecebimento } from "../PendeciasRecebimento";
 
 
 export const GetComportamentoPorStatus = (
@@ -79,6 +80,15 @@ export const GetComportamentoPorStatus = (
         setCarregaLancamentosParaConferencia(prev => prev + 1);
     };
 
+    const podeReceber = () => {
+        return (
+            TEMPERMISSAO && 
+            stateFormRecebimentoPelaDiretoria.data_recebimento && 
+            informacoesPrestacaoDeContas.processo_sei && 
+            prestacaoDeContas.ata_aprensentacao_gerada
+        )
+    };
+
     if (prestacaoDeContas && prestacaoDeContas.status) {
         if (prestacaoDeContas.status === 'NAO_RECEBIDA') {
             return (
@@ -93,13 +103,15 @@ export const GetComportamentoPorStatus = (
                         textoBtnRetroceder={"Reabrir PC"}
                         metodoAvancar={() => verificaDadosParaRecebimentoDePrestacaoDeContas()}
                         metodoRetroceder={() => setShowReabrirPc(true)}
-                        disabledBtnAvancar={!stateFormRecebimentoPelaDiretoria.data_recebimento || !informacoesPrestacaoDeContas.processo_sei || !TEMPERMISSAO}
+                        disabledBtnAvancar={!podeReceber()}
                         disabledBtnRetroceder={!TEMPERMISSAO}
                         tooltipAvancar={tooltipAvancar()}
                     />
                     <TrilhaDeStatus
                         prestacaoDeContas={prestacaoDeContas}
                     />
+                    <PendenciasRecebimento prestacaoDeContas={prestacaoDeContas}/>
+                    
                     <FormRecebimentoPelaDiretoria
                         handleChangeFormRecebimentoPelaDiretoria={handleChangeFormRecebimentoPelaDiretoria}
                         stateFormRecebimentoPelaDiretoria={stateFormRecebimentoPelaDiretoria}
