@@ -3,8 +3,26 @@ import React, { useEffect, useState } from "react";
 import { List, Divider } from 'antd';
 import { ExclamationCircleFilled } from '@ant-design/icons';
 
+import {postNotificarPendenciaGeracaoAtaApresentacao} from '../../../../services/dres/PrestacaoDeContas.service';
+import { toastCustom } from "../../../Globais/ToastCustom";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faSpinner} from "@fortawesome/free-solid-svg-icons";
+
 export function PendenciasRecebimento({prestacaoDeContas}) {
     const [pendencias, setPendencias] = useState([]);
+    const [loading, setLoading] = useState(false);
+
+    async function notificar() {
+        setLoading(true);
+        try {
+            await postNotificarPendenciaGeracaoAtaApresentacao(prestacaoDeContas.uuid)   
+            toastCustom.ToastCustomSuccess('Notificação enviada com sucesso!')
+        } catch (error) {
+            toastCustom.ToastCustomError('Ops! Houve um erro ao tentar enviar notificação.')
+        } finally {
+            setLoading(false);
+        }
+    }
 
     const ataApresentacao = {
         title: 'Associação - Geração da ata de apresentação (PDF)',
@@ -12,11 +30,18 @@ export function PendenciasRecebimento({prestacaoDeContas}) {
         actions: [
             <button
                 id="btn-avancar"
-                // onClick={metodoAvancar}
-                // disabled={disabledBtnAvancar}
+                onClick={() => notificar()}
                 className="btn btn-success ml-2"
+                disabled={loading}
             >
-                Notificar associação
+                {
+                    loading ? (
+                        <FontAwesomeIcon
+                            style={{marginRight: "3px", color: '#fff'}}
+                            icon={faSpinner}
+                        />      
+                    ) : 'Notificar associação'
+                }          
             </button>                    
         ]
     }
@@ -29,9 +54,10 @@ export function PendenciasRecebimento({prestacaoDeContas}) {
         setPendencias(_pendencias);
     };
 
+    
     useEffect(() => {
         handlePendencias();
-    }, []);
+    }, [loading]);
 
     if(!pendencias.length) return null;
     
