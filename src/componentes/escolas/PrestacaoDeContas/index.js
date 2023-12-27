@@ -519,7 +519,7 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
 
     // Trata a exibição quando vem da Prestação de Contas, a chave é a stringMonitoramento que identifica que veio da NotificacaoContext
     const buscarRegistrosFalhaGeracaoPc = useCallback( async () => {
-        if (!stringMonitoramento && !loading && !loadingMonitoramentoPc && statusPrestacaoDeConta && statusPrestacaoDeConta.prestacao_contas_status && statusPrestacaoDeConta.prestacao_contas_status.status_prestacao !== 'EM_PROCESSAMENTO') {
+        if (!stringMonitoramento && !loading && !loadingMonitoramentoPc && statusPrestacaoDeConta && statusPrestacaoDeConta.prestacao_contas_status && statusPrestacaoDeConta.prestacao_contas_status.status_prestacao !== 'EM_PROCESSAMENTO' && statusPrestacaoDeConta.prestacao_contas_status.status_prestacao !== 'A_PROCESSAR') {
             let associacao_uuid = visoesService.getItemUsuarioLogado('associacao_selecionada.uuid')
             let registros_de_falha = await getRegistrosFalhaGeracaoPc(associacao_uuid)
             if (registros_de_falha && registros_de_falha.length > 0) {
