@@ -20,11 +20,12 @@ export const getGrupos = async (visaoBase) => {
     })).data
 };
 
-export const getGruposDisponiveisAcessoUsuario = async (username, visao_base) => {
+export const getGruposDisponiveisAcessoUsuario = async (username, visao_base, uuid_unidade) => {
     const response = await api.get(`${URL_GRUPOS}grupos-disponiveis-por-acesso-visao`, {
         params: {
             username: username,
             visao_base: visao_base,
+            uuid_unidade: uuid_unidade
         }
     });
     return response.data;
