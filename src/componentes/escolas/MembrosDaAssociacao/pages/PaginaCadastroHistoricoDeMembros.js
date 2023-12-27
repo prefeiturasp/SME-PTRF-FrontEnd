@@ -95,11 +95,13 @@ export const PaginaCadastroHistoricoDeMembros = () => {
             dataQa: 'modal-sugerir-incluir-novo-membro',
             onConfirm: async () => {
                 const mutationResp = await mutationPutCargoDaComposicao.mutateAsync({uuidCargoComposicao: state.cargo.uuid, payload: payload});
-                if (mutationResp.data.composicao_vigente) {
-                    navigate(`/cadastro-historico-de-membros/${mutationResp.data.composicao_vigente}`, {
+                if (mutationResp.data.composicao_posterior) {
+                    navigate(`/cadastro-historico-de-membros/${mutationResp.data.composicao_posterior}`, {
                         state: {cargo: cargoVazio}
                     });
-                }                        
+                }  else {
+                    navigate("/membros-da-associacao");
+                }                       
             }, 
             onCancel: async () => {
                 await mutationPutCargoDaComposicao.mutateAsync({uuidCargoComposicao: state.cargo.uuid, payload: payload});
