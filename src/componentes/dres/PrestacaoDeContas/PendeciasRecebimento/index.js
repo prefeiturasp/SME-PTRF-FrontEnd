@@ -11,11 +11,13 @@ import {faSpinner} from "@fortawesome/free-solid-svg-icons";
 export function PendenciasRecebimento({prestacaoDeContas}) {
     const [pendencias, setPendencias] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [notificationSent, setNotificationSent] = useState(false);
 
     async function notificar() {
         setLoading(true);
         try {
             await postNotificarPendenciaGeracaoAtaApresentacao(prestacaoDeContas.uuid)   
+            setNotificationSent(true);
             toastCustom.ToastCustomSuccess('Notificação enviada com sucesso!')
         } catch (error) {
             toastCustom.ToastCustomError('Ops! Houve um erro ao tentar enviar notificação.')
@@ -32,7 +34,7 @@ export function PendenciasRecebimento({prestacaoDeContas}) {
                 id="btn-avancar"
                 onClick={() => notificar()}
                 className="btn btn-success ml-2"
-                disabled={loading}
+                disabled={loading || notificationSent}
             >
                 {
                     loading ? (
