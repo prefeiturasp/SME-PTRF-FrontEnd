@@ -3,10 +3,10 @@ import {useQuery} from '@tanstack/react-query';
 import {useMemo} from "react";
 import {getGruposDisponiveisAcessoUsuario} from '../../../../services/GestaoDeUsuarios.service';
 
-export const useGruposDisponiveisAcesso = (usuario, visao_base)  => {
+export const useGruposDisponiveisAcesso = (usuario, visao_base, uuid_unidade)  => {
   const { isLoading, isError, data = [], error, refetch } = useQuery(
     ['grupos-disponiveis-acesso-usuario'],
-    () => getGruposDisponiveisAcessoUsuario(usuario.username, visao_base),
+    () => getGruposDisponiveisAcessoUsuario(usuario.username, visao_base, uuid_unidade),
     {
         keepPreviousData: true,
         staleTime: 5000, // 5 segundos
