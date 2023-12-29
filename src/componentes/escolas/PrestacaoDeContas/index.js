@@ -67,8 +67,21 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
         notificacaoContext.setShow(false)
     }, [notificacaoContext])
 
+    const status_a_considerar = () => {
+        let status = []
+
+        if(visoesService.featureFlagAtiva('novo-processo-pc')){
+            status = ['A_PROCESSAR', 'EM_PROCESSAMENTO', 'CALCULADA', 'DEVOLVIDA_CALCULADA']
+        }
+        else{
+            status = ['A_PROCESSAR', 'EM_PROCESSAMENTO']
+        }
+
+        return status
+    };
+
     useEffect(() => {
-        if (statusPrestacaoDeConta && statusPrestacaoDeConta.prestacao_contas_status && ['A_PROCESSAR', 'EM_PROCESSAMENTO'].includes(statusPrestacaoDeConta.prestacao_contas_status.status_prestacao)){
+        if (statusPrestacaoDeConta && statusPrestacaoDeConta.prestacao_contas_status && status_a_considerar().includes(statusPrestacaoDeConta.prestacao_contas_status.status_prestacao)){
             const timer = setInterval(() => {
                 getStatusPrestacaoDeConta();
             }, 5000);
@@ -551,7 +564,7 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
                             statusPrestacaoDeConta={statusPrestacaoDeConta}
                         />
                     }
-                    {statusPrestacaoDeConta && statusPrestacaoDeConta.prestacao_contas_status && ['A_PROCESSAR', 'EM_PROCESSAMENTO'].includes(statusPrestacaoDeConta.prestacao_contas_status.status_prestacao ) ? (
+                    {statusPrestacaoDeConta && statusPrestacaoDeConta.prestacao_contas_status && status_a_considerar().includes(statusPrestacaoDeConta.prestacao_contas_status.status_prestacao ) ? (
                         <>
                             <Loading
                                 corGrafico="black"
