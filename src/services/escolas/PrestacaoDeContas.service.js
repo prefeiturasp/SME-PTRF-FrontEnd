@@ -1,5 +1,6 @@
 import api from '../api'
 import { TOKEN_ALIAS, ASSOCIACAO_UUID } from '../auth.service'
+import { visoesService } from '../visoes.service';
 
 const authHeader = {
   headers: {
@@ -14,10 +15,24 @@ export const getStatusPeriodoPorData = async (uuid_associacao, data_incial_perio
 };
 
 export const postConcluirPeriodo = async (periodo_uuid, justificativaPendencia='') => {
-  const payLoad = {
+  if(visoesService.featureFlagAtiva('novo-processo-pc')){
+    
+    const payLoad = {
       justificativa_acertos_pendentes: justificativaPendencia,
+      associacao_uuid: localStorage.getItem(ASSOCIACAO_UUID),
+      periodo_uuid: periodo_uuid
+    }
+
+    return(await api.post(`/api/prestacoes-contas/concluir-v2/?associacao_uuid=${localStorage.getItem(ASSOCIACAO_UUID)}&periodo_uuid=${periodo_uuid}`, payLoad, authHeader)).data
   }
-  return(await api.post(`/api/prestacoes-contas/concluir/?associacao_uuid=${localStorage.getItem(ASSOCIACAO_UUID)}&periodo_uuid=${periodo_uuid}`, payLoad, authHeader)).data
+  else{
+  
+    const payLoad = {
+      justificativa_acertos_pendentes: justificativaPendencia,
+    }
+    
+    return(await api.post(`/api/prestacoes-contas/concluir/?associacao_uuid=${localStorage.getItem(ASSOCIACAO_UUID)}&periodo_uuid=${periodo_uuid}`, payLoad, authHeader)).data
+  }
 };
 
 
