@@ -341,3 +341,9 @@ body {
 .title-primary {
   color: $corPrimaria;
 }
+
+.is_invalid{
+  background-image: url("../img/icone-nao-conciliado.svg");
+  background-repeat: no-repeat;
+  background-position: 97% 50%;
+}

@@ -4,6 +4,17 @@ import MaskedInput from "react-text-mask";
 import { processoSeiMask } from "../../../../utils/ProcessoSeiMask";
 
 export const InformacoesPrestacaoDeContas = ({handleChangeFormInformacoesPrestacaoDeContas, informacoesPrestacaoDeContas, editavel}) =>{
+
+    const isValid = (value) => {
+        if(value !== '' &&
+           value !== null && 
+           value !== undefined){
+            return true
+        } else {
+            return false
+        }
+    };
+
     return(
         <>
             <hr className='mt-4 mb-3'/>
@@ -11,12 +22,12 @@ export const InformacoesPrestacaoDeContas = ({handleChangeFormInformacoesPrestac
             <form method="post">
                 <div className="row mt-3">
                     <div className="col">
-                        <label htmlFor="processo_sei">Processo SEI</label>
+                        <label htmlFor="processo_sei">Processo SEI *</label>
                         <MaskedInput
                             mask={(valor) => processoSeiMask(valor)}
                             onChange={(e) => handleChangeFormInformacoesPrestacaoDeContas(e.target.name, e.target.value)}
                             name="processo_sei"
-                            className="form-control"
+                            className={`form-control ${isValid(informacoesPrestacaoDeContas.processo_sei) ? '' : 'is_invalid'}`}
                             value={informacoesPrestacaoDeContas.processo_sei ? informacoesPrestacaoDeContas.processo_sei : ''}
                             id="processo_regularidade"
                             disabled={!editavel}

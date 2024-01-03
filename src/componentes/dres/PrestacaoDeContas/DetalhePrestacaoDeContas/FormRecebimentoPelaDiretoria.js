@@ -15,9 +15,22 @@ export const FormRecebimentoPelaDiretoria = ({stateFormRecebimentoPelaDiretoria,
         
         return lista;
     }
-    
+
+    const isValid = (value) => {
+        if(value !== '' &&
+           value !== null && 
+           value !== undefined){
+            return true
+        } else {
+            return false
+        }
+    };
+
     return(
         <>
+            <div className="mb-3">
+                <span>* Campos obrigatórios</span>
+            </div>
             <h4 data-qa="recebimento-pela-diretoria">Recebimento pela Diretoria</h4>
             <form method="post">
                 <div className="row mt-3">
@@ -34,7 +47,7 @@ export const FormRecebimentoPelaDiretoria = ({stateFormRecebimentoPelaDiretoria,
                         />
                     </div>
                     <div className="col">
-                        <label htmlFor="data_recebimento">Data de recebimento</label>
+                        <label htmlFor="data_recebimento">Data de recebimento *</label>
                         <DatePickerField
                             dataQa="data-de-recebimento"
                             name="data_recebimento"
@@ -42,6 +55,7 @@ export const FormRecebimentoPelaDiretoria = ({stateFormRecebimentoPelaDiretoria,
                             value={stateFormRecebimentoPelaDiretoria.data_recebimento ? stateFormRecebimentoPelaDiretoria.data_recebimento : ''}
                             onChange={handleChangeFormRecebimentoPelaDiretoria}
                             disabled={disabledData}
+                            className={`form-control ${isValid(stateFormRecebimentoPelaDiretoria.data_recebimento) ? '' : 'is_invalid'}`}
                         />
                     </div>
                     <div className="col">

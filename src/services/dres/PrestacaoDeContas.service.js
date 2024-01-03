@@ -126,6 +126,10 @@ export const postNotificarComentarios = async (payload) => {
     return (await api.post(`/api/notificacoes/notificar/`, payload, authHeader)).data
 };
 
+export const postNotificarPendenciaGeracaoAtaApresentacao = async (prestacao_conta_uuid) => {
+    return (await api.post(`/api/prestacoes-contas/${prestacao_conta_uuid}/notificar/pendencia_geracao_ata_apresentacao/`, null, authHeader)).data
+};
+
 export const getMotivosAprovadoComRessalva = async () => {
     return (await api.get(`/api/motivos-aprovacao-ressalva/`, authHeader)).data
 };
