@@ -2,12 +2,8 @@ import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {putCargoComposicao} from "../../../../services/Mandatos.service";
 import {toastCustom} from "../../../Globais/ToastCustom";
 
-// Preparação para react-router-dom-v6
-import {useNavigate} from "react-router-dom-v5-compat";
-
 export const usePutCargoDaComposicao = () => {
     const queryClient = useQueryClient()
-    const navigate = useNavigate();
 
     const mutationPutCargoDaComposicao = useMutation({
         mutationFn: ({uuidCargoComposicao, payload}) => {
@@ -24,7 +20,6 @@ export const usePutCargoDaComposicao = () => {
             else{
                 toastCustom.ToastCustomSuccess('Membro alterado com sucesso.', `O membro foi alterado no sistema com sucesso.`)
             }
-            navigate("/membros-da-associacao");
         },
         onError: (error) => {
             console.log("Erro ao alterar Cargo da Composição ", error.response)
