@@ -1,5 +1,6 @@
 import React, {useCallback, useContext, useEffect, useState} from "react";
 import {Formik} from "formik";
+import {useDispatch} from "react-redux";
 import {
     YupSignupSchemaCadastroDespesaSaida,
     validaPayloadDespesas,
@@ -25,13 +26,14 @@ import CurrencyInput from "react-currency-input";
 import HTTP_STATUS from "http-status-codes";
 import {getReceita} from '../../../../services/escolas/Receitas.service';
 import {ASSOCIACAO_UUID} from "../../../../services/auth.service";
-import {ModalValorReceitaDespesaDiferente} from "./ModalValorReceitaDespesaDiferente";
 import {ModalDeletarDespesa} from "./ModalDeletarDespesa";
 import {visoesService} from "../../../../services/visoes.service";
 import { apenasNumero } from "../../../../utils/ValidacoesAdicionaisFormularios";
+import { ModalConfirm } from "../../../Globais/Modal/ModalConfirm";
 
 
 export const CadastroSaidaForm = () => {
+    const dispatch = useDispatch();
     const aux = metodosAuxiliares;
 
     let {uuid_receita, uuid_despesa} = useParams();
@@ -81,7 +83,6 @@ export const CadastroSaidaForm = () => {
     const [loading, setLoading] = useState(true);
     const [receita, setReceita] = useState(true);
     const [initalValues, setInitialValues] = useState(initial)
-    const [showModalValorReceitaDespesaDiferente, setShowModalValorReceitaDespesaDiferente] = useState(false)
     const [showModalDeletarDespesa, setShowModalDeletarDespesa] = useState(false)
 
 
@@ -103,7 +104,6 @@ export const CadastroSaidaForm = () => {
                 if (uuid_despesa){
                     try {
                         await patchAtrelarSaidoDoRecurso(uuid_receita, uuid_despesa)
-                        console.log("Despesa atrelada com sucesso!")
                     }catch (e){
                         console.log("Erro ao atrelar despesa ", e)
                     }
@@ -219,17 +219,25 @@ export const CadastroSaidaForm = () => {
         aux.getPath();
     };
 
-    const serviceVerificacoes = useCallback(async (e, values)=>{
-        let valor_receita = parseFloat(receita.valor)
-        let valor_despesa = trataNumericos(values.valor_original)
-        if (valor_receita !== valor_despesa){
-            e.preventDefault();
-            setShowModalValorReceitaDespesaDiferente(true)
+    const handleValidation = (values) => {
+        const isMismatchedValues = parseFloat(receita.valor) !== trataNumericos(values.valor_original);
+
+        if (isMismatchedValues) {
+            ModalConfirm({
+                dispatch,
+                title: 'Valores distintos',
+                message: 'Os valores cadastrados do crédito de Recurso Externo e de sua saída são distintos, deseja salvar assim mesmo?',
+                cancelText: 'Não',
+                confirmText: 'Sim',
+                dataQa: 'modal-confirmar-salvar-valores-cadastro-saida-form',
+                onConfirm: () => onSubmit(values),
+            });
+        } else {
+            onSubmit(values);
         }
-    }, [receita])
+    }
 
     const onSubmit = async (values) => {
-
         setFormErrors(validacoesPersonalizadas(values));
         let erros_personalizados = validacoesPersonalizadas(values)
 
@@ -314,7 +322,7 @@ export const CadastroSaidaForm = () => {
                     validateOnChange={false}
                     validateOnBlur={false}
                     enableReinitialize={true}
-                    onSubmit={onSubmit}
+                    onSubmit={handleValidation}
                 >
                     {props => {
                         const {
@@ -566,25 +574,12 @@ export const CadastroSaidaForm = () => {
                                             </button>
                                            }
                                         <button
-                                            onClick={(e)=>serviceVerificacoes(e, values)}
                                             type="submit"
                                             className="btn btn-success mt-2"
                                         >
                                             Salvar
                                         </button>
                                     </div>
-                                    <section>
-                                        <ModalValorReceitaDespesaDiferente
-                                            show={showModalValorReceitaDespesaDiferente}
-                                            handleClose={() => setShowModalValorReceitaDespesaDiferente(false)}
-                                            onSalvarValoresDiferentes={() => {
-                                                setShowModalValorReceitaDespesaDiferente(false)
-                                                props.handleSubmit()
-                                            }}
-                                            titulo="Valores distintos"
-                                            texto="<p>Os valores cadastrados do crédito de Recurso Externo e de sua saída são distintos, deseja salvar assim mesmo?</p>"
-                                        />
-                                    </section>
                                     <section>
                                         <ModalDeletarDespesa
                                             show={showModalDeletarDespesa}
