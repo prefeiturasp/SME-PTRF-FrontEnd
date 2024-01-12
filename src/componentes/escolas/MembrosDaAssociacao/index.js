@@ -1,16 +1,20 @@
-import React, {useCallback, useState} from "react";
-import {UrlsMenuInterno} from "../Associacao/UrlsMenuInterno";
+import React, {useCallback, useEffect, useState} from "react";
+import {retornaMenuAtualizadoPorStatusCadastro, UrlsMenuInterno} from "../Associacao/UrlsMenuInterno";
 import {MenuInterno} from "../../Globais/MenuInterno";
 import {PaginaMandatoVigente} from "./pages/PaginaMandatoVigente";
 import {PaginaMandatosAnteriores} from "./pages/PaginaMandatosAnteriores";
 import {ExportaDadosDaAsssociacao} from "../Associacao/ExportaDadosAssociacao";
 import {MembrosDaAssociacaoProvider} from "./context/MembrosDaAssociacao";
+import {useGetStatusCadastroAssociacao} from "./hooks/useGetStatusCadastroAssociacao";
 import "./membros-da-associacao.scss"
 
 export const MembrosDaAssociacao = () => {
 
+    const {data_status_cadastro_associacao} = useGetStatusCadastroAssociacao()
+
     const [isActiveMandatoVigente, setIsActiveMandatoVigente] = useState(true)
     const [isActiveMandatosAnteriores, setIsActiveMandatosAnteriores] = useState(false)
+    const [menuUrls, setMenuUrls] = useState(UrlsMenuInterno);
 
     // Faz o controle do carregamento dos componentes, evitando conflito na exibição das Composições,
     const isActive = useCallback(()=>{
@@ -18,10 +22,20 @@ export const MembrosDaAssociacao = () => {
         setIsActiveMandatosAnteriores(prevState => !prevState)
     }, [])
 
+    // Faz a verificação se existem dados faltantes de preenchimento (Dados da Associação, Membros ou Dados das contas)
+    const atualizaMenu = useCallback( () => {
+        let urls = retornaMenuAtualizadoPorStatusCadastro(data_status_cadastro_associacao);
+        setMenuUrls(urls);
+    }, [data_status_cadastro_associacao]);
+
+    useEffect(()=>{
+        atualizaMenu()
+    }, [atualizaMenu])
+
     return (
         <MembrosDaAssociacaoProvider>
             <MenuInterno
-                caminhos_menu_interno={UrlsMenuInterno}
+                caminhos_menu_interno={menuUrls}
             />
             <ExportaDadosDaAsssociacao/>
             <nav>
