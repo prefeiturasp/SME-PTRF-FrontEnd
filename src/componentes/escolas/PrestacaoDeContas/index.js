@@ -25,6 +25,7 @@ import {NotificacaoContext} from "../../../context/Notificacoes";
 import {getRegistrosFalhaGeracaoPc} from "../../../services/Notificacoes.service";
 import {ModalNotificaErroConcluirPC} from "./ModalNotificaErroConcluirPC";
 import { ModalPendenciasCadastrais } from "./ModalPendenciasCadastrais";
+import { ModalAvisoAssinatura } from "./ModalAvisoAssinatura";
 import { setPersistenteUrlVoltar } from "../../../store/reducers/componentes/escolas/PrestacaoDeContas/PendenciaCadastro/actions";
 import { CustomModalConfirm } from "../../Globais/Modal/CustomModalConfirm";
 
@@ -53,6 +54,7 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
     const [dataBoxAtaApresentacao, setdataBoxAtaApresentacao] = useState("");
     const [uuidAtaApresentacao, setUuidAtaApresentacao] = useState("");
     const [showConcluirAcertosSemPendencias, setShowConcluirAcertosSemPendencias] = useState(false);
+    const [showModalConcluirAcertosSemPendencias, setShowModalConcluirAcertosSemPendencias] = useState(false);
     const [stringMonitoramento, setStringMonitoramento] = useState(monitoramento)
     const [modalPendenciasCadastrais, setModalPendenciasCadastrais] = useState({show: false, title: '', message: '', actions: []});
 
@@ -286,6 +288,10 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
         setModalPendenciasCadastrais({show: false, title: '', message: '', actions: []});
     };
 
+    function goToMembrosAssociacao() {
+        history.push(`/membros-da-associacao`)
+    }
+
     function goToAssociacoes() {
         dispatch(setPersistenteUrlVoltar('/prestacao-de-contas/'));
         history.push(`/dados-da-associacao/`)
@@ -439,6 +445,8 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
     const onConcluirSemPendencias = () => {
         setShowConcluir(false);
         setShowConcluirAcertosSemPendencias(false);
+        
+        setShowModalConcluirAcertosSemPendencias(false);
         concluirPeriodo();
         if (statusPrestacaoDeConta.prestacao_contas_status.status_prestacao === "DEVOLVIDA") {
             localStorage.removeItem("NOTIFICAR_DEVOLUCAO_REFERENCIA")
@@ -467,12 +475,11 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
     }
 
     const onHandleClose = () => {
+        setShowModalConcluirAcertosSemPendencias(false);
+        setShowConcluirAcertosSemPendencias(false);
         setShowConcluir(false);
     };
 
-    const onHandleCloseSemPendencias = () => {
-        setShowConcluirAcertosSemPendencias(false);
-    };
 
     const onHandleCloseModalConcluirPeriodoComPendencias = () => {
         setShowConcluirAcertoComPendencia(false);
@@ -685,7 +692,7 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
                     </section>
                     <section>
                         <ModalConcluirPeriodo
-                            show={showConcluir}
+                            show={visoesService.featureFlagAtiva('historico-de-membros') ? showModalConcluirAcertosSemPendencias : showConcluir}
                             handleClose={onHandleClose}
                             onConcluir={onConcluirSemPendencias}
                             titulo="Concluir Prestação de Contas"
@@ -706,9 +713,19 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
                         />
                     </section>
                     <section>
+                        <ModalAvisoAssinatura 
+                            show={(showConcluirAcertosSemPendencias || showConcluir) && visoesService.featureFlagAtiva('historico-de-membros') && !showModalConcluirAcertosSemPendencias}
+                            primeiroBotaoOnclick={goToMembrosAssociacao}
+                            segundoBotaoOnclick={() => setShowModalConcluirAcertosSemPendencias(true)}
+                            titulo="Assinaturas do Demonstrativo e da Relação de bens"
+                            texto="<p>Os campos de assinatura do Demonstrativo e da Relação de Bens, se houver, serão exibidos conforme os membros ativos da Associação na presente data. Caso precise realizar alguma atualização nos membros, faço-o primeiro e depois conclua o período /acertos.</p>"
+                            dataQa="modal-aviso-assinatura-demonstrativo-relacao-bens"
+                        />
+                    </section>
+                    <section>
                         <ModalConcluirAcertoSemPendencias
-                            show={showConcluirAcertosSemPendencias}
-                            handleClose={onHandleCloseSemPendencias}
+                            show={visoesService.featureFlagAtiva('historico-de-membros') ? showModalConcluirAcertosSemPendencias : showConcluirAcertosSemPendencias}
+                            handleClose={onHandleClose}
                             onConcluir={onConcluirSemPendencias}
                             titulo="Concluir acerto da Prestação de Contas"
                             texto="<p>Ao concluir a Prestação de Contas, o sistema <strong>bloqueará</strong> 

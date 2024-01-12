@@ -338,34 +338,36 @@ export const validaPayloadDespesas = (values, despesasTabelas=null, parametroLoc
     values.data_transacao = null
   }
 
-  // validacoes da despesa imposto
-  values.despesas_impostos.map((despesa_imposto) => {
-    if(despesa_imposto.data_transacao !== "" && despesa_imposto.data_transacao !== null){
-      despesa_imposto.data_transacao = moment(despesa_imposto.data_transacao).format("YYYY-MM-DD");
-    }
-    else{
-      despesa_imposto.data_transacao = null;
-    }
+  if (values.despesas_impostos){
+    // validacoes da despesa imposto
+    values.despesas_impostos.map((despesa_imposto) => {
+      if(despesa_imposto.data_transacao !== "" && despesa_imposto.data_transacao !== null){
+        despesa_imposto.data_transacao = moment(despesa_imposto.data_transacao).format("YYYY-MM-DD");
+      }
+      else{
+        despesa_imposto.data_transacao = null;
+      }
 
-    if(despesa_imposto.rateios.length >= 0){
-        despesa_imposto.rateios.map((rateio) => {
-            // o valor total e original da despesa imposto, devem ser o mesmo que o dos rateios
-            despesa_imposto.valor_total = trataNumericos(rateio.valor_rateio);
-            despesa_imposto.valor_original = trataNumericos(rateio.valor_original);
+      if(despesa_imposto.rateios.length >= 0){
+          despesa_imposto.rateios.map((rateio) => {
+              // o valor total e original da despesa imposto, devem ser o mesmo que o dos rateios
+              despesa_imposto.valor_total = trataNumericos(rateio.valor_rateio);
+              despesa_imposto.valor_original = trataNumericos(rateio.valor_original);
 
-            rateio.quantidade_itens_capital = convertToNumber(rateio.quantidade_itens_capital);
-            rateio.valor_item_capital = trataNumericos(rateio.valor_item_capital);
-            rateio.valor_rateio = round(trataNumericos(rateio.valor_rateio), 2);
-            rateio.valor_original = round(trataNumericos(rateio.valor_original), 2);
-        });
+              rateio.quantidade_itens_capital = convertToNumber(rateio.quantidade_itens_capital);
+              rateio.valor_item_capital = trataNumericos(rateio.valor_item_capital);
+              rateio.valor_rateio = round(trataNumericos(rateio.valor_rateio), 2);
+              rateio.valor_original = round(trataNumericos(rateio.valor_original), 2);
+          });
 
-        if(parametroLocation){
-          if(metodosAuxiliares.origemAnaliseLancamento(parametroLocation)){
-            metodosAuxiliares.mantemConciliacaoAtualImposto(despesa_imposto);
+          if(parametroLocation){
+            if(metodosAuxiliares.origemAnaliseLancamento(parametroLocation)){
+              metodosAuxiliares.mantemConciliacaoAtualImposto(despesa_imposto);
+            }
           }
-        }
-    }
-  });
+      }
+    });
+  }
 
   values.rateios.map((rateio) => {
 
