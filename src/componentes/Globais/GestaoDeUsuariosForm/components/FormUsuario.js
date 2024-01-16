@@ -176,7 +176,7 @@ export const FormUsuario = ({usuario}) => {
             username: values.username,
             name: values.name,
             email: values.email ? values.email : "",
-            unidade: uuidUnidadeBase,
+            unidade: uuidUnidadeBase === 'SME' ? null : uuidUnidadeBase,
             visao: visaoBase
         };
 
