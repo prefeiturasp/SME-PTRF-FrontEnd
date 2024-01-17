@@ -154,6 +154,31 @@ const logout = () => {
     window.location.assign("/login")
 };
 
+const logoutToSuporte = () => {
+    localStorage.removeItem('DADOS_USUARIO_LOGADO');
+    localStorage.removeItem(TOKEN_ALIAS);
+    localStorage.removeItem(USUARIO_NOME);
+    localStorage.removeItem(ASSOCIACAO_UUID);
+    localStorage.removeItem(ASSOCIACAO_NOME);
+    localStorage.removeItem(ASSOCIACAO_NOME_ESCOLA);
+    localStorage.removeItem(ASSOCIACAO_TIPO_ESCOLA);
+    localStorage.removeItem('periodoConta');
+    localStorage.removeItem('uuidPrestacaoConta');
+    localStorage.removeItem('periodoPrestacaoDeConta');
+    localStorage.removeItem('statusPrestacaoDeConta');
+    localStorage.removeItem('contaPrestacaoDeConta');
+    localStorage.removeItem('acaoLancamento');
+    localStorage.removeItem('uuidAta');
+    localStorage.removeItem('prestacao_de_contas_nao_apresentada');
+    localStorage.removeItem(USUARIO_EMAIL);
+    localStorage.removeItem(USUARIO_LOGIN);
+    localStorage.removeItem(USUARIO_CPF);
+    localStorage.removeItem(DADOS_DA_ASSOCIACAO);
+    localStorage.removeItem(PERIODO_RELATORIO_CONSOLIDADO_DRE);
+    window.location.assign("/login-suporte")
+};
+
+
 export const esqueciMinhaSenha = async (payload, rf) => {
     return (await api.put(`/api/esqueci-minha-senha/${rf}/`, payload, authHeader)).data
 };
@@ -173,6 +198,7 @@ export const alterarMinhaSenha = async (usuario, payload) => {
 export const authService = {
     login,
     logout,
+    logoutToSuporte,
     getToken,
     isLoggedIn,
     esqueciMinhaSenha,
@@ -189,6 +215,14 @@ export const getUsuarioLogado = () => {
 export const viabilizarAcessoSuporte = async (usuario, payload) => {
     return (await api.post(`api/usuarios/${usuario}/viabilizar-acesso-suporte/`, payload, authHeaderAuthorization))
 };
+
+export const viabilizarAcessoSuporteV2 = async (usuario, payload) => {
+    return (await api.post(`api/usuarios-v2/${usuario}/viabilizar-acesso-suporte/`, payload, authHeaderAuthorization))
+};
+
+export const getUnidadesEmSuporte = async (usuario, page=1) => {
+    return (await api.get(`/api/usuarios-v2/${usuario}/unidades-em-suporte/?page=${page}`, authHeader)).data
+  }
 
 export const encerrarAcessoSuporte = async (usuario, unidade_suporte_uuid) => {
     const payload = {

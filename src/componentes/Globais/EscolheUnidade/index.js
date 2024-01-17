@@ -8,7 +8,7 @@ import {MsgImgCentralizada} from "../Mensagens/MsgImgCentralizada";
 
 export const EscolheUnidade = (props) =>{
 
-    const {dre_uuid, visao} = props
+    const {dre_uuid, visao, textoAcaoEscolher = "Viabilizar acesso"} = props
 
     const initialStateFiltros = {
         nome_ou_codigo: "",
@@ -82,7 +82,7 @@ export const EscolheUnidade = (props) =>{
                     listaUnidades={listaUnidades}
                     rowsPerPage={10}
                     acaoAoEscolherUnidade={escolherUnidade}
-                    textoAcaoEscolher={"Viabilizar acesso"}
+                    textoAcaoEscolher={textoAcaoEscolher}
                     showModalLegendaInformacao={showModalLegendaInformacao}
                     setShowModalLegendaInformacao={setShowModalLegendaInformacao}
                 />
