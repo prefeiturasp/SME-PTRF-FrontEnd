@@ -11,6 +11,26 @@ export const TabelaValoresReprogramados = ({
     acoesTemplate
 }) => {
 
+    const retornaNomeContas = () => {
+        let objetoContas = {
+            nomeContaUm: '-',
+            nomeContaDois: '-'
+        }
+
+        if(listaDeValoresReprogramados && listaDeValoresReprogramados.length > 0){
+            let conta_um = listaDeValoresReprogramados[0].nome_conta_um
+            let conta_dois = listaDeValoresReprogramados[0].nome_conta_dois
+
+            objetoContas.nomeContaUm = `Saldo ${conta_um}`
+            objetoContas.nomeContaDois = `Saldo ${conta_dois}`
+        }
+
+        return objetoContas;
+        
+    }
+
+    const {nomeContaUm, nomeContaDois} = retornaNomeContas();
+
     return(
         <DataTable
             value={listaDeValoresReprogramados}
@@ -27,13 +47,13 @@ export const TabelaValoresReprogramados = ({
             <Column field="periodo.referencia" header="Período" style={{width: '8%'}}/>
             <Column 
                 field="total_conta_um" 
-                header="Saldo Cheque" 
+                header={nomeContaUm}
                 body={valorTemplateCheque} 
                 style={{width: '14%'}}
             />
             <Column 
                 field="total_conta_dois" 
-                header="Saldo Cartão" 
+                header={nomeContaDois}
                 body={valorTemplateCartao} 
                 style={{width: '14%'}}
             />
