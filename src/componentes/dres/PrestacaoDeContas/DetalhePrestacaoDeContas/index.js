@@ -140,7 +140,6 @@ export const DetalhePrestacaoDeContas = () =>{
     const [showErroPrestacaoDeContasPosterior, setshowErroPrestacaoDeContasPosterior] = useState(false);
     const [tituloErroPrestacaoDeContasPosterior, setTituloErroPrestacaoDeContasPosterior] = useState('');
     const [textoErroPrestacaoDeContasPosterior, setTextoErroPrestacaoDeContasPosterior] = useState('');
-    const [btnSalvarDisabled, setBtnSalvarDisabled] = useState(true);
     const [showModalSalvarAnalise, setShowModalSalvarAnalise] = useState(false);
     const [loading, setLoading] = useState(true);
     const [adicaoAjusteSaldo, setAdicaoAjusteSaldo] = useState(false);
@@ -684,7 +683,6 @@ export const DetalhePrestacaoDeContas = () =>{
     };
 
     const handleChangeAnalisesDeContaDaPrestacao = (name, value) =>{
-        setBtnSalvarDisabled(false);
         let arrayAnalise = analisesDeContaDaPrestacao;
         let analise_index = getObjetoIndexAnalise().analise_index;
 
@@ -764,7 +762,6 @@ export const DetalhePrestacaoDeContas = () =>{
     };
 
     const handleChangeFormInformacoesPrestacaoDeContas = (name, value) => {
-        setBtnSalvarDisabled(false);
         setInformacoesPrestacaoDeContas({
             ...informacoesPrestacaoDeContas,
             [name]: value
@@ -817,47 +814,6 @@ export const DetalhePrestacaoDeContas = () =>{
 
         deleteAnaliseAjustesSaldoPorConta(analise.uuid);
     }
-
-    const salvarAnalise = async () =>{
-        let devolucao_ao_tesouro_tratado;
-        if (formRef.current && informacoesPrestacaoDeContas.devolucao_ao_tesouro === 'Sim') {
-            devolucao_ao_tesouro_tratado = formRef.current.values.devolucoes_ao_tesouro_da_prestacao;
-            if (devolucao_ao_tesouro_tratado.length > 0 ){
-                devolucao_ao_tesouro_tratado.map((devolucao, )=>{
-                    delete devolucao.busca_por_cpf_cnpj;
-                    delete devolucao.busca_por_tipo_documento;
-                    delete devolucao.busca_por_numero_documento;
-                    devolucao.data = devolucao.data ?  moment(devolucao.data).format("YYYY-MM-DD") : null;
-                    devolucao.valor = devolucao.valor ? trataNumericos(devolucao.valor) : '';
-                    devolucao.devolucao_total = devolucao.devolucao_total === 'true' ? true : false;
-                })
-            }
-        }else {
-            devolucao_ao_tesouro_tratado=[];
-        }
-
-        const payload = {
-            devolucao_tesouro: informacoesPrestacaoDeContas.devolucao_ao_tesouro !== 'Não',
-            devolucoes_ao_tesouro_da_prestacao:devolucao_ao_tesouro_tratado
-        };
-
-        if (formRef.current && informacoesPrestacaoDeContas.devolucao_ao_tesouro === 'Sim') {
-            let validar =  await validateFormDevolucaoAoTesouro(formRef.current.values);
-            if (!camposObrigatorios && Object.entries(validar).length === 0){
-                await getSalvarAnalise(prestacaoDeContas.uuid, payload);
-                setShowModalSalvarAnalise(true);
-                setBtnSalvarDisabled(true);
-                await carregaPrestacaoDeContas();
-            }else {
-                return formRef.current.setErrors( validar )
-            }
-        }else {
-            await getSalvarAnalise(prestacaoDeContas.uuid, payload);
-            setShowModalSalvarAnalise(true);
-            setBtnSalvarDisabled(true);
-            await carregaPrestacaoDeContas();
-        }
-    };
 
     const onConcluirAnalise = async () => {
         setLoading(true);
@@ -1146,7 +1102,6 @@ export const DetalhePrestacaoDeContas = () =>{
                                     tabelaPrestacoes={tabelaPrestacoes}
                                     analisarPrestacaoDeContas={analisarPrestacaoDeContas}
                                     setShowNaoRecebida={setShowNaoRecebida}
-                                    salvarAnalise={salvarAnalise}
                                     setShowConcluirAnalise={setShowConcluirAnalise}
                                     setShowRecebida={setShowRecebida}
                                     handleChangeFormInformacoesPrestacaoDeContas={handleChangeFormInformacoesPrestacaoDeContas}
@@ -1171,8 +1126,6 @@ export const DetalhePrestacaoDeContas = () =>{
                                     toggleBtnTabelaAcoes={toggleBtnTabelaAcoes}
                                     clickBtnTabelaAcoes={clickBtnTabelaAcoes}
                                     setShowVoltarParaAnalise={verificaSePodeVoltarParaAnalise}
-                                    btnSalvarDisabled={btnSalvarDisabled}
-                                    setBtnSalvarDisabled={setBtnSalvarDisabled}
                                     carregaPrestacaoDeContas={carregaPrestacaoDeContas}
                                     dataRecebimentoDevolutiva={dataRecebimentoDevolutiva}
                                     handleChangedataRecebimentoDevolutiva={handleChangedataRecebimentoDevolutiva}
