@@ -216,12 +216,8 @@ export const viabilizarAcessoSuporte = async (usuario, payload) => {
     return (await api.post(`api/usuarios/${usuario}/viabilizar-acesso-suporte/`, payload, authHeaderAuthorization))
 };
 
-export const viabilizarAcessoSuporteV2 = async (usuario, payload) => {
-    return (await api.post(`api/usuarios-v2/${usuario}/viabilizar-acesso-suporte/`, payload, authHeaderAuthorization))
-};
-
 export const getUnidadesEmSuporte = async (usuario, page=1) => {
-    return (await api.get(`/api/usuarios-v2/${usuario}/unidades-em-suporte/?page=${page}`, authHeader)).data
+    return (await api.get(`/api/usuarios/${usuario}/unidades-em-suporte/?page=${page}`, authHeaderAuthorization)).data
   }
 
 export const encerrarAcessoSuporte = async (usuario, unidade_suporte_uuid) => {

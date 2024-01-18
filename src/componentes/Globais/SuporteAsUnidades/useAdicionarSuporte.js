@@ -1,5 +1,5 @@
 import {useMutation, useQueryClient} from "@tanstack/react-query";
-import { viabilizarAcessoSuporteV2 } from "../../../services/auth.service";
+import { viabilizarAcessoSuporte } from "../../../services/auth.service";
 import { toastCustom } from "../ToastCustom";
 
 export const useAdicionarSuporte = () => {
@@ -7,7 +7,7 @@ export const useAdicionarSuporte = () => {
     
     const mutationAdicionarSuporte = useMutation({
         mutationFn: ({usuario, payload}) => {
-            return viabilizarAcessoSuporteV2(usuario, payload)
+            return viabilizarAcessoSuporte(usuario, payload)
         },
         onSuccess: (response) => {
             toastCustom.ToastCustomSuccess("Suporte adicionado", "Unidade de suporte adicionada com sucesso.")           
