@@ -221,8 +221,9 @@ export const getUnidadesEmSuporte = async (usuario, page=1) => {
   }
 
 export const encerrarAcessoSuporte = async (usuario, unidade_suporte_uuid) => {
-    const payload = {
-        unidade_suporte_uuid: unidade_suporte_uuid
-    }
-    return (await api.post(`api/usuarios/${usuario}/encerrar-acesso-suporte/`, payload, authHeaderAuthorization))
+    return (await api.post(`api/usuarios/${usuario}/encerrar-acesso-suporte/`, {unidade_suporte_uuid}, authHeaderAuthorization))
+};
+
+export const encerrarAcessoSuporteEmLote = async (usuario, unidade_suporte_uuids = []) => {
+    return (await api.post(`api/usuarios/${usuario}/encerrar-acesso-suporte-em-lote/`, {unidade_suporte_uuids}, authHeaderAuthorization))
 };
