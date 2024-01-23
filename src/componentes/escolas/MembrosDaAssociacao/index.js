@@ -7,10 +7,12 @@ import {ExportaDadosDaAsssociacao} from "../Associacao/ExportaDadosAssociacao";
 import {MembrosDaAssociacaoProvider} from "./context/MembrosDaAssociacao";
 import {useGetStatusCadastroAssociacao} from "./hooks/useGetStatusCadastroAssociacao";
 import "./membros-da-associacao.scss"
+import {useGetMandatosAnteriores} from "./hooks/useGetMandatosAnteriores";
 
 export const MembrosDaAssociacao = () => {
 
     const {data_status_cadastro_associacao} = useGetStatusCadastroAssociacao()
+    const {count_mandatos_anteriores} = useGetMandatosAnteriores()
 
     const [isActiveMandatoVigente, setIsActiveMandatoVigente] = useState(true)
     const [isActiveMandatosAnteriores, setIsActiveMandatosAnteriores] = useState(false)
@@ -54,29 +56,33 @@ export const MembrosDaAssociacao = () => {
                     >
                         Mandato vigente
                     </button>
-                    <button
-                        disabled={isActiveMandatosAnteriores}
-                        onClick={isActive}
-                        className={`nav-link ${isActiveMandatosAnteriores && 'active'}`}
-                        id="nav-mandatos-anteriores-tab"
-                        data-toggle="tab"
-                        data-target="#nav-mandatos-anteriores"
-                        type="button"
-                        role="tab"
-                        aria-controls="nav-mandatos-anteriores"
-                        aria-selected="false"
-                    >
-                        Mandatos anteriores
-                    </button>
+                    {count_mandatos_anteriores > 0 &&
+                        <button
+                            disabled={isActiveMandatosAnteriores}
+                            onClick={isActive}
+                            className={`nav-link ${isActiveMandatosAnteriores && 'active'}`}
+                            id="nav-mandatos-anteriores-tab"
+                            data-toggle="tab"
+                            data-target="#nav-mandatos-anteriores"
+                            type="button"
+                            role="tab"
+                            aria-controls="nav-mandatos-anteriores"
+                            aria-selected="false"
+                        >
+                            Mandatos anteriores
+                        </button>
+                    }
                 </div>
             </nav>
             <div className="tab-membros-associacao tab-content" id="nav-tabContent">
-                <div className="tab-pane fade show active" id="nav-mandato-vigente" role="tabpanel" aria-labelledby="nav-mandato-vigente-tab">
+                <div className="tab-pane fade show active" id="nav-mandato-vigente" role="tabpanel"
+                     aria-labelledby="nav-mandato-vigente-tab">
                     {isActiveMandatoVigente &&
                         <PaginaMandatoVigente/>
                     }
                 </div>
-                <div className="tab-pane fade" id="nav-mandatos-anteriores" role="tabpanel" aria-labelledby="nav-mandatos-anteriores-tab">
+                <div className="tab-pane fade" id="nav-mandatos-anteriores" role="tabpanel"
+                     aria-labelledby="nav-mandatos-anteriores-tab">
                     {isActiveMandatosAnteriores &&
                         <PaginaMandatosAnteriores/>
                     }
