@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {useSelector, useDispatch} from "react-redux";
 import {UrlsMenuInterno, retornaMenuAtualizadoPorStatusCadastro} from "../UrlsMenuInterno";
 import Loading from "../../../../utils/Loading";
@@ -9,14 +9,12 @@ import {ExportaDadosDaAsssociacao} from "../ExportaDadosAssociacao";
 import { visoesService } from "../../../../services/visoes.service";
 import { setStatusCadastro, resetStatusCadastro } from "../../../../store/reducers/componentes/escolas/Associacao/DadosAssociacao/StatusCadastro/actions";
 import { toastCustom } from "../../../Globais/ToastCustom";
-import { ModalConfirmEncerramentoConta } from "./FormDadosDasContas/ModalConfirmEncerramentoConta";
-import { ModalCancelarSolicitacaoEncerramentoConta } from "./FormDadosDasContas/ModalCancelarSolicitacaoEncerramentoConta";
 import { formataData } from "../../../../utils/FormataData";
 import { ModalMotivoRejeicaoEncerramento } from "./FormDadosDasContas/ModalMotivoRejeicaoEncerramento";
 import { TabelaContasEncerradas } from "./TabelaContasEncerradas";
+import { ModalConfirm } from "../../../Globais/Modal/ModalConfirm";
 
 export const DadosDasContas = () => {
-
     // Redux
     const dispatch = useDispatch(); 
     const statusCadastro = useSelector(state => state.DadosAssociacao);
@@ -29,13 +27,6 @@ export const DadosDasContas = () => {
         numero_conta: "",
     }];
 
-    const initialStateModalEncerramento = {
-        show: false,
-        conta_associacao: "",
-        data_de_encerramento_na_agencia: "",
-        index: ""
-    }
-
     const [loading, setLoading] = useState(true);
     const [intialValues, setIntialValues] = useState(initial);
     const [errors, setErrors] = useState({});
@@ -43,11 +34,7 @@ export const DadosDasContas = () => {
     const [menuUrls, setMenuUrls] = useState(UrlsMenuInterno);
     const [errosDataEncerramentoConta, setErrosDataEncerramentoConta] = useState([]);
     const [contasEncerradas, setContasEncerradas] = useState([]);
-    const [modalEncerramentoData, setModalEncerramentoData] = useState(initialStateModalEncerramento);
     const [showModalMotivoRejeicaoEncerramento, setShowModalMotivoRejeicaoEncerramento] = useState({open: false, motivos: ''});
-    const [modalCancelarEncerramento, setShowModalCancelarEncerramento] = useState({open: false, solicitacao: null});
-    const [textoModalEncerramentoConta, setTextoModalEncerramentoConta] = useState("");
-
 
     useEffect(() =>{
         buscaContas();
@@ -74,23 +61,18 @@ export const DadosDasContas = () => {
         atualizaMenu();
     }, [statusCadastro]);
 
-    const geraTextoModalEncerramentoConta = (associacao) => {
-        let textoModal = "Dre"
-
-        if(associacao && associacao.unidade) {
-            let nomeDre = associacao.unidade.dre.nome;
+    const getNomeDREFormatado = useCallback(() => {
+        if(stateAssociacao && stateAssociacao.unidade) {
+            let nomeDre = stateAssociacao.unidade.dre.nome;
             nomeDre = nomeDre.toLowerCase().replace(/\b\w/g, (match) => match.toUpperCase());
-
-            textoModal = `<p>Ao confirmar essa ação, sua solicitação de encerramento de conta será encaminhada para validação da ${nomeDre}. Deseja continuar?</p>`;
+            return nomeDre
         }
-
-        setTextoModalEncerramentoConta(textoModal)
-    }
+        return ""
+    }, [stateAssociacao]);
 
     const buscaAssociacao = async () => {
         const associacao = await getAssociacao();
         setStateAssociacao(associacao);
-        geraTextoModalEncerramentoConta(associacao);
     };
 
     const buscaStatusCadastro = async () => {
@@ -178,17 +160,18 @@ export const DadosDasContas = () => {
     };
     
 
-    const handleEncerrarTipoConta = async () => {
+    const handleEncerrarTipoConta = async (conta_associacao, data_de_encerramento_na_agencia) => {
         let payload = {
-            "conta_associacao": modalEncerramentoData.conta_associacao.uuid,
-            "data_de_encerramento_na_agencia": modalEncerramentoData.data_de_encerramento_na_agencia
+            "conta_associacao": conta_associacao.uuid,
+            "data_de_encerramento_na_agencia": data_de_encerramento_na_agencia
         }
-    
+        
+        setErrosDataEncerramentoConta([]);
         setLoading(true);
         
         try {
-            if(modalEncerramentoData.conta_associacao.solicitacao_encerramento !== null) {
-                const idSolicitacaoJaExistente = modalEncerramentoData.conta_associacao.solicitacao_encerramento.uuid;
+            if(conta_associacao.solicitacao_encerramento !== null) {
+                const idSolicitacaoJaExistente = conta_associacao.solicitacao_encerramento.uuid;
 
                 payload.status = "PENDENTE";
 
@@ -206,7 +189,6 @@ export const DadosDasContas = () => {
                     apresentaToast('Solicitação de encerramento realizada com sucesso', 'A solicitação de encerramento de conta foi enviado para a Dre e está no estado de pendente de aprovação.');
                 }
             }
-
             buscaContas();
         } catch (error) {
             if (error.response.data && error.response.data.mensagem && error.response.data.mensagem[0]) {
@@ -214,43 +196,35 @@ export const DadosDasContas = () => {
             } else {
                 apresentaToast('Erro ao enviar a solicitação de encerramento', 'Ocorreu um erro e a solicitação de encerramento não foi enviada para a Dre.');
             }
+        } finally {
+            setLoading(false);
         }
-
-        const modalData = {
-            "show": false,
-            "conta_associacao": "",
-            "data_de_encerramento_na_agencia": "",
-            "index": ""
-        }
-
-        setModalEncerramentoData(modalData);
-
-        setLoading(false);
     }
 
     const handleOpenModalConfirmEncerramentoConta = (conta, data, index) => {
         if(!data) {
-            let erroPreenchimentoData = "* É obrigatório preencher a data de encerramento."
-            return setErrosDataEncerramentoConta([...errosDataEncerramentoConta, { index: index, mensagem: erroPreenchimentoData }]);
-        }
+            setErrosDataEncerramentoConta([...errosDataEncerramentoConta, { index: index, mensagem: "* É obrigatório preencher a data de encerramento." }]);
+            return
+        } else {
+            setErrosDataEncerramentoConta([]);
+            
+            const dataFormatada = formataData(data, 'YYYY-MM-DD');
 
-        let errosFiltrados = errosDataEncerramentoConta.filter((erro) => erro.index !== index);
-        setErrosDataEncerramentoConta(errosFiltrados);
-        const dataFormatada = formataData(data, 'YYYY-MM-DD')
-
-        const modalData = {
-            "show": true,
-            "conta_associacao": conta,
-            "data_de_encerramento_na_agencia": dataFormatada,
-            "index": index,
-        }
-
-        return setModalEncerramentoData(modalData);
+            let message = `<p>Ao confirmar essa ação, sua solicitação de encerramento de conta será encaminhada para validação da ${getNomeDREFormatado()}. Não será mais possível cadastrar crédito e despesa. Deseja continuar?</p>`
+            if (conta.mostrar_alerta_valores_reprogramados_ao_solicitar) {
+                message = `<p>Ao confirmar essa ação, sua solicitação de encerramento de conta será encaminhada para validação da ${getNomeDREFormatado()}. Não será mais possível cadastrar crédito, despesa ou valores reprogramados. Deseja continuar?</p>`
+            }
+            ModalConfirm({
+                dispatch,
+                title: 'Solicitar o encerramento da conta',
+                message: message,
+                cancelText: 'Cancelar',
+                confirmText: 'Confirmar',
+                dataQa: 'modal-confirmar-solicitacao-encerramento-de-conta',
+                onConfirm: () => handleEncerrarTipoConta(conta, dataFormatada)
+            })            
+        }       
     };
-
-    const handleCloseModalConfirmEncerramentoConta = () => {
-        return setModalEncerramentoData(initialStateModalEncerramento); 
-    }
 
     const addMotivoListItem = (ulElement, motivo) => {
         const liElement = document.createElement("li");
@@ -281,17 +255,21 @@ export const DadosDasContas = () => {
     }
 
     const handleOpenModalCancelarEncerramento = (solicitacao) => {
-        setShowModalCancelarEncerramento({open: true, solicitacao: solicitacao})
+        ModalConfirm({
+            dispatch,
+            title: 'Cancelar solicitação de encerramento.',
+            message: "Tem certeza que deseja cancelar solicitação? Essa ação não poderá ser desfeita.",
+            cancelText: 'Cancelar',
+            confirmText: 'Confirmar',
+            dataQa: 'modal-confirmar-cancelar-solicitacao',
+            onConfirm: () => handleCancelarEncerramento(solicitacao)
+        })        
     }
 
-    const handleCloseModalCancelarEncerramento = () => {
-        return setShowModalCancelarEncerramento({open: false, solicitacao: null}); 
-    }
-
-    const handleCancelarEncerramento = async () => {
+    const handleCancelarEncerramento = async (solicitacao) => {
         setLoading(true);
         try {
-            await cancelarSolicitacaoEncerramentoConta(modalCancelarEncerramento.solicitacao.uuid);   
+            await cancelarSolicitacaoEncerramentoConta(solicitacao.uuid);   
             toastCustom.ToastCustomSuccess('Solicitação de encerramento cancelada com sucesso.')
             buscaContas();
         } catch (error) {
@@ -301,7 +279,6 @@ export const DadosDasContas = () => {
                 toastCustom.ToastCustomError('Erro ao enviar a solicitação de encerramento', 'Ocorreu um erro e a solicitação de encerramento não foi enviada para a Dre.')
             }           
         } finally {
-            handleCloseModalCancelarEncerramento();
             setLoading(false);
         }
     };
@@ -338,19 +315,6 @@ export const DadosDasContas = () => {
                         </div>
                     </div>
                     <section>
-                        <ModalConfirmEncerramentoConta
-                            show={modalEncerramentoData.show}
-                            handleClose={handleCloseModalConfirmEncerramentoConta}
-                            handleEncerrarTipoConta={handleEncerrarTipoConta}
-                            titulo="Solicitar o encerramento da conta"
-                            texto={textoModalEncerramentoConta}
-                            primeiroBotaoTexto="Cancelar"
-                            primeiroBotaoCss="base-verde-outline"
-                            segundoBotaoCss="base-verde"
-                            segundoBotaoTexto="Confirmar"
-                        />
-                    </section>
-                    <section>
                         <ModalMotivoRejeicaoEncerramento
                             show={showModalMotivoRejeicaoEncerramento.open}
                             handleClose={handleCloseModalMotivoRejeicaoEncerramento}
@@ -358,19 +322,6 @@ export const DadosDasContas = () => {
                             bodyText={showModalMotivoRejeicaoEncerramento.motivos}
                             primeiroBotaoTexto="Fechar"
                             primeiroBotaoCss="base-verde"
-                        />
-                    </section>
-                    <section>
-                        <ModalCancelarSolicitacaoEncerramentoConta
-                            show={modalCancelarEncerramento.open}
-                            titulo="Cancelar solicitação de encerramento."
-                            texto="Tem certeza que deseja cancelar solicitação? Essa ação não poderá ser desfeita."
-                            segundoBotaoTexto="Confirmar"
-                            segundoBotaoOnclick={handleCancelarEncerramento}
-                            segundoBotaoCss="success"
-                            primeiroBotaoCss="outline-success"
-                            primeiroBotaoTexto="Cancelar"
-                            handleClose={handleCloseModalCancelarEncerramento}
                         />
                     </section>                    
                     <section className="mt-5">
