@@ -127,8 +127,8 @@ export const PaginaCadastroHistoricoDeMembros = () => {
                 endereco: values.endereco
             },
             cargo_associacao: values.cargo_associacao,
-            substituto: false,
-            substituido: false,
+            substituto: values.substituto,
+            substituido: values.substituido,
             data_inicio_no_cargo: moment(values.data_inicio_no_cargo).format('YYYY-MM-DD'),
             data_fim_no_cargo: moment(values.data_fim_no_cargo).format('YYYY-MM-DD')
         }
