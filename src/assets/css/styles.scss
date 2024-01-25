@@ -347,3 +347,19 @@ body {
   background-repeat: no-repeat;
   background-position: 97% 50%;
 }
+
+.badge-substituto {
+  background-color: $corTagSubstituto;
+  color: $corBranco;
+  font-size: 12px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.badge-substituido {
+  background-color: $corTagSubstituido;
+  color: $corBranco;
+  font-size: 12px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
