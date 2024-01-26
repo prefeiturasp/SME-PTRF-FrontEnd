@@ -683,7 +683,6 @@ export const Rotas = () => {
             Referencia: https://github.com/remix-run/react-router/discussions/8753
             */}
             <CompatRoute path="/login" component={Login} />
-            {/* {visoesService.featureFlagAtiva('novo-suporte-unidades') && <CompatRoute path="/login-suporte" component={LoginSuporte} />} */}
             <CompatRoute path="/login-suporte" component={LoginSuporte} />
             <Route strict path="/esqueci-minha-senha/" component={EsqueciMinhaSenhaPage}/>
             <Route exact={true} path="/redefinir-senha/:uuid/" component={RedefinirSenhaPage}/>
