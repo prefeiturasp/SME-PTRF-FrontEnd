@@ -108,6 +108,7 @@ export const CargosDaComposicaoList = ({escopo}) => {
                         <Column
                             field="ocupante_do_cargo.nome"
                             header="Nome"
+                            body={montaColunaNomeOcupante}
                         />
                         <Column
                             field="ocupante_do_cargo.representacao_label"
