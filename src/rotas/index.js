@@ -2,7 +2,6 @@ import React from "react";
 import {Route, Switch} from 'react-router-dom'
 import {Login} from "../paginas/Login";
 import {LoginSuporte} from "../paginas/LoginSuporte";
-import {LoginSuporteX} from "../paginas/Login/LoginSuporteX/index";
 import {Pagina404} from "../paginas/escolas/404";
 import {DashboardPage} from "../paginas/Dashboard";
 import {CadastroDeDespesa} from "../paginas/escolas/Despesas/CadastroDeDespesas";
@@ -685,7 +684,6 @@ export const Rotas = () => {
             */}
             <CompatRoute path="/login" component={Login} />
             <CompatRoute path="/login-suporte" component={LoginSuporte} />
-            <CompatRoute path="/login-suporte-x" component={LoginSuporteX} />
             <Route strict path="/esqueci-minha-senha/" component={EsqueciMinhaSenhaPage}/>
             <Route exact={true} path="/redefinir-senha/:uuid/" component={RedefinirSenhaPage}/>
             {routesConfig.map(

@@ -18,7 +18,6 @@ export const App = () => {
             <section role="main" id="main" className="row">
                 {pathName === '/login' || 
                 pathName === '/login-suporte' ||
-                pathName === '/login-suporte-x' ||
                 pathName === '/esqueci-minha-senha/' ||
                 pathName.match(/\/redefinir-senha\/[a-zA-Z0-9]/) ? (
                     <Rotas/>
