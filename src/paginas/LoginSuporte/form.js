@@ -1,11 +1,11 @@
 import React, {useState} from "react";
 import {Formik} from "formik";
-import {YupSignupSchemaLogin} from "../../../utils/ValidacoesAdicionaisFormularios";
-import { authService } from "../../../services/auth.service";
 import ReactTooltip from "react-tooltip";
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {faQuestionCircle, faEye, faEyeSlash} from '@fortawesome/free-solid-svg-icons'
-import Loading from "../../../utils/Loading";
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faQuestionCircle, faEye, faEyeSlash} from '@fortawesome/free-solid-svg-icons';
+import {YupSignupSchemaLogin} from "../../utils/ValidacoesAdicionaisFormularios";
+import { authService } from "../../services/auth.service";
+import Loading from "../../utils/Loading";
 
 export const LoginSuporteForm = ({redefinicaoDeSenha}) => {
     const [msgUsuario, setMsgUsuario] = useState('');
@@ -21,7 +21,6 @@ export const LoginSuporteForm = ({redefinicaoDeSenha}) => {
     const onSubmit = async (values) => {
         setLoading(true);
         let msg = await authService.login(values.login, values.senha, true);
-        console.log('MSG: ', msg)
         setLoading(false)
         if(msg && msg.detail){
             if (msg.detail === 'Senha inválida!'){
@@ -44,9 +43,8 @@ export const LoginSuporteForm = ({redefinicaoDeSenha}) => {
     };
 
     return (
-        <div className="w-75">
-            {loading 
-                ? 
+        <div>
+            {loading ? 
                     <Loading
                         corGrafico="black"
                         corFonte="dark"
@@ -78,7 +76,7 @@ export const LoginSuporteForm = ({redefinicaoDeSenha}) => {
                                         value={props.values.login}
                                         name="login"
                                         id="login"
-                                        className={`form-control ${msgUsuario ? 'falha-login-suporte' : ''}`}
+                                        className={`form-control ${msgUsuario ? 'falha-login' : ''}`}
                                         onChange={props.handleChange}
                                         onBlur={props.handleBlur}
                                         maxLength='60'
@@ -95,8 +93,8 @@ export const LoginSuporteForm = ({redefinicaoDeSenha}) => {
                                             type={showPassword}
                                             value={props.values.senha}
                                             name="senha"
-                                            id="senha_suporte"
-                                            className={`form-control ${msgSenha ? 'falha-login-senha-suporte' : ''}`}
+                                            id="senha"
+                                            className={`form-control ${msgSenha ? 'falha-login-senha' : ''}`}
                                             onChange={props.handleChange}
                                             onBlur={props.handleBlur}
                                             maxLength='16'
@@ -104,7 +102,7 @@ export const LoginSuporteForm = ({redefinicaoDeSenha}) => {
                                             aria-describedby="show_hide_password"
                                         />
                                         <div className="input-group-append">
-                                            <span className={`input-group-text ${msgSenha ? 'falha-login-icone-mostrar-senha-suporte' : ''}`} id="show_hide_password_suporte">
+                                            <span className={`input-group-text ${msgSenha ? 'falha-login-icone-mostrar-senha' : ''}`} id="show_hide_password">
                                                 <i className="glyphicon" onClick={() => showHidePassword()}>
                                                     <FontAwesomeIcon
                                                         style={{fontSize: '18px', color:'#42474A'}}
@@ -126,6 +124,14 @@ export const LoginSuporteForm = ({redefinicaoDeSenha}) => {
                     <div className='text-center mt-2'>
                         <button type="button" onClick={()=>window.location.assign('/esqueci-minha-senha/')} className="btn btn-link">Esqueci minha senha</button>
                     </div>
+
+                    <button 
+                        type="submit" 
+                        className="btn btn-block btn-outline-success mt-2" 
+                        onClick={()=>window.location.assign('/login')} 
+                    >
+                        Retornar para a página principal
+                    </button>
                 </>
             }
 
@@ -138,10 +144,6 @@ export const LoginSuporteForm = ({redefinicaoDeSenha}) => {
                     </button>
                 </div>
             </div>
-            }
-
-            {
-                <button type="button" onClick={()=>window.location.assign('/login')} className="btn btn-outline-success btn-block mt-2">Retornar para a página principal</button>
             }
             
         </div>
