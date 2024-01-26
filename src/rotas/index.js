@@ -684,11 +684,8 @@ export const Rotas = () => {
             Referencia: https://github.com/remix-run/react-router/discussions/8753
             */}
             <CompatRoute path="/login" component={Login} />
-<<<<<<< HEAD
             <CompatRoute path="/login-suporte" component={LoginSuporte} />
-=======
             <CompatRoute path="/login-suporte-x" component={LoginSuporteX} />
->>>>>>> a873a8b0 (feat(110953): Layout login suporte)
             <Route strict path="/esqueci-minha-senha/" component={EsqueciMinhaSenhaPage}/>
             <Route exact={true} path="/redefinir-senha/:uuid/" component={RedefinirSenhaPage}/>
             {routesConfig.map(
