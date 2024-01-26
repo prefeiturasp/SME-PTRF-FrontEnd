@@ -16,7 +16,7 @@ export const App = () => {
         <>
             <ToastContainer/>
             <section role="main" id="main" className="row">
-                {pathName === '/login' ||
+                {pathName === '/login' || pathName === '/login-suporte' ||
                 pathName === '/esqueci-minha-senha/' ||
                 pathName.match(/\/redefinir-senha\/[a-zA-Z0-9]/) ? (
                     <Rotas/>

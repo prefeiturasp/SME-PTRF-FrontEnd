@@ -1,0 +1,98 @@
+.login-bg-suporte {
+  background: url("../../../assets/img/bg-login-novo-tratado.jpg");
+  width: 50%;
+  position: absolute;
+  height: 100%;
+  left: 0;
+  object-fit: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+  
+.tela-direita-login-suporte {
+  @media screen and (min-width: 992px) {
+    position: absolute;
+    right: 0;
+    width: 50%;
+    height: 100%;
+    text-align: center;
+  }
+
+  .container {
+    position: absolute;
+    left: 50%;
+    height: 100%;
+    top: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    padding: 0 85px;
+    text-align: left;
+
+    .suporte-label {
+      font-weight: 700;
+      font-size: 20px;
+      line-height: 32.04px;
+      padding-top: 6rem;
+    }
+
+    .logo-ptrf {
+      text-align: center;
+      .img-logo-ptrf{
+        max-height: 134px;
+      }
+      @media screen and (max-height: 610px) {
+        padding-top: 2rem;
+      }
+      @media screen and (min-height: 611px) {
+        padding-top: 5rem;
+      }
+    }
+
+    .logo-prefeitura {
+      text-align: center;
+      @media screen and (max-height: 610px) {
+        padding-top: 1rem;
+        img {
+          height: auto;
+          width: 100px;
+        }
+      }
+      @media screen and (min-height: 611px) {
+        padding-top: 2rem;
+        img {
+          height: 65px;
+          width: 171px;
+        }
+      }
+    }
+  }
+}
+  
+.falha-login-suporte{
+  background-image: url("../../../assets/img/icone-falha-login.svg");
+  background-repeat: no-repeat;
+  background-position: 93% 50%;
+  border-color: #B40C02 !important;
+}
+  
+.falha-login-senha-suporte{
+  background-image: url("../../../assets/img/icone-falha-login.svg");
+  background-repeat: no-repeat;
+  background-position: 100% 50%;
+  border-color: #B40C02 !important;
+}
+  
+.falha-login-icone-mostrar-senha-suporte{
+  border-color: #B40C02 !important;
+}
+  
+#senha_suporte{
+  border-right: none;
+}
+  
+#show_hide_password_suporte{
+  border-left: none;
+  background-color: #fff;
+}
+  
