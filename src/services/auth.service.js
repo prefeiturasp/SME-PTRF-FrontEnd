@@ -22,6 +22,7 @@ export const USUARIO_LOGIN = "LOGIN";
 export const USUARIO_INFO_PERDEU_ACESSO = "INFO_PERDEU_ACESSO";
 export const DADOS_DA_ASSOCIACAO = "DADOS_DA_ASSOCIACAO";
 export const PERIODO_RELATORIO_CONSOLIDADO_DRE = "PERIODO_RELATORIO_CONSOLIDADO_DRE";
+export const ACESSO_MODO_SUPORTE = "ACESSO_MODO_SUPORTE";
 
 const authHeader = {
     'Content-Type': 'application/json'
@@ -57,10 +58,11 @@ const setDataLogin = async ()=>{
     }
 };
 
-const login = async (login, senha) => {
+const login = async (login, senha, suporte=false) => {
     let payload = {
         login: login,
-        senha: senha
+        senha: senha,
+        suporte: suporte
     };
 
     try {
@@ -73,6 +75,8 @@ const login = async (login, senha) => {
             }
 
             await setDataLogin();
+
+            localStorage.setItem(ACESSO_MODO_SUPORTE, suporte ? true : false);
 
             localStorage.setItem(TOKEN_ALIAS, resp.token);
             localStorage.setItem(
@@ -107,9 +111,9 @@ const login = async (login, senha) => {
 
             await meapcserviceAnaliseDre.setAnaliseDre()
 
-            await visoesService.setDadosUsuariosLogados(resp);
+            await visoesService.setDadosUsuariosLogados(resp, suporte);
 
-            await visoesService.setDadosPrimeiroAcesso(resp);
+            await visoesService.setDadosPrimeiroAcesso(resp, suporte);
 
             window.location.href = "/";
         } 
