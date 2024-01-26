@@ -1,6 +1,6 @@
 {
   "name": "ptrf",
-  "version": "8.16.2",
+  "version": "8.17.0",
   "private": true,
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.2.1",
@@ -15,6 +15,10 @@
     "@testing-library/user-event": "^13.5.0",
     "@tinymce/tinymce-react": "^3.14.0",
     "@trendmicro/react-sidenav": "^0.5.0",
+    "@types/jest": "^29.5.11",
+    "@types/node": "^20.11.5",
+    "@types/react": "^18.2.48",
+    "@types/react-dom": "^18.2.18",
     "antd": "^4.24.8",
     "array-find-duplicates": "^2.0.1",
     "array-move": "^3.0.1",
@@ -47,6 +51,7 @@
     "react-ultimate-pagination-bootstrap-4": "^1.1.0",
     "reactstrap": "^9.2.1",
     "redux": "^4.2.1",
+    "typescript": "^5.3.3",
     "yup": "^0.28.3"
   },
   "scripts": {
@@ -71,6 +76,8 @@
     ]
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.19.0",
+    "@typescript-eslint/parser": "^6.19.0",
     "react-intl-currency-input": "^0.2.6"
   }
 }

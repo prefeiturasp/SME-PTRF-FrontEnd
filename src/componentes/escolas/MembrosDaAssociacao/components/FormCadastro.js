@@ -33,6 +33,8 @@ export const FormCadastro = ({cargo, onSubmitForm, composicaoUuid, switchStatusP
         email : cargo.ocupante_do_cargo.email,
         switch_status_presidente : switchStatusPresidente,
         responsavel_pelas_atribuicoes : responsavelPelasAtribuicoes,
+        substituto: cargo.substituto,
+        substituido: cargo.substituido,
     };
 
     const telefoneMaskContitional = (value) => {

@@ -5,8 +5,9 @@ import {Column} from "primereact/column";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEdit, faEye} from "@fortawesome/free-solid-svg-icons";
 import ReactTooltip from "react-tooltip";
-import {MembrosDaAssociacaoContext} from "../context/MembrosDaAssociacao";
 import {Link} from "react-router-dom";
+import {Badge} from "react-bootstrap"
+import {MembrosDaAssociacaoContext} from "../context/MembrosDaAssociacao";;
 
 export const CargosDaComposicaoList = ({escopo}) => {
     const {isLoading, data} = useGetCargosDaComposicao()
@@ -43,8 +44,23 @@ export const CargosDaComposicaoList = ({escopo}) => {
                 </Link>
             </div>
         )
-    };
+    };  
 
+    const montaColunaNomeOcupante = (rowData) => {
+        return (
+            <div className="d-flex flex-column align-items-start">
+                <span>{rowData.ocupante_do_cargo.nome}</span>
+                {
+                    rowData.substituto === true ? (
+                        <Badge className="badge-substituto">{rowData.tag_substituto}</Badge>
+                    ) : rowData.substituido === true ? (
+                        <Badge className="badge-substituido">{rowData.tag_substituido}</Badge>
+                    ) : null
+                }
+            </div>
+        )
+    };
+    
     return(
         <>
             {!isLoading && data && data.diretoria_executiva &&
@@ -61,6 +77,7 @@ export const CargosDaComposicaoList = ({escopo}) => {
                         <Column
                             field="ocupante_do_cargo.nome"
                             header="Nome"
+                            body={montaColunaNomeOcupante}
                         />
                         <Column
                             field="ocupante_do_cargo.representacao_label"

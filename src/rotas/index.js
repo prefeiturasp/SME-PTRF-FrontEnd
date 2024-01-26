@@ -103,6 +103,7 @@ import {CompatRoute} from "react-router-dom-v5-compat";
 import {
     PaginaCadastroHistoricoDeMembros
 } from "../componentes/escolas/MembrosDaAssociacao/pages/PaginaCadastroHistoricoDeMembros";
+import {ChamaTypescriptFirstComponent} from "../componentes/ChamaTypescriptFirstComponent";
 
 const routesConfig = [
     {
@@ -641,6 +642,13 @@ const routesConfig = [
         path: "/teste-datatable-ant",
         component: TesteDataTableAnt,
         permissoes: ['access_regularidade_dre'],
+    },
+
+    {
+        exact: true,
+        path: "/componente-typescript",
+        component: ChamaTypescriptFirstComponent,
+        permissoes: ['view_default'],
     },
 
 ];
