@@ -564,6 +564,10 @@ export const PrestacaoDeContas = ({setStatusPC, registroFalhaGeracaoPc, setRegis
             if(statusPrestacaoDeConta && statusPrestacaoDeConta.prestacao_contas_status && status_a_considerar().includes(statusPrestacaoDeConta.prestacao_contas_status.status_prestacao )) {
                 return setApresentaBarraAvisoErroProcessamentoPc(false);
             }
+
+            if(statusPrestacaoDeConta && statusPrestacaoDeConta.prestacao_contas_status && statusPrestacaoDeConta.prestacao_contas_status.status_prestacao  === "NAO_RECEBIDA") {
+                return setApresentaBarraAvisoErroProcessamentoPc(false);
+            }
             return setApresentaBarraAvisoErroProcessamentoPc(true);
         }
         return setApresentaBarraAvisoErroProcessamentoPc(false);
@@ -571,7 +575,7 @@ export const PrestacaoDeContas = ({setStatusPC, registroFalhaGeracaoPc, setRegis
 
     useEffect(() => {
         verificaBarraAvisoErroProcessamentoPc()
-    }, [registroFalhaGeracaoPc, statusPrestacaoDeConta, periodoPrestacaoDeConta.periodo_uuid])
+    }, [registroFalhaGeracaoPc, statusPrestacaoDeConta, periodoPrestacaoDeConta.periodo_uuid, statusPrestacaoDeConta.prestacao_contas_status])
 
     return (
         <>
