@@ -340,9 +340,6 @@ export const PrestacaoDeContas = ({setStatusPC, registroFalhaGeracaoPc, setRegis
     };
 
     const handleConcluirPeriodo = () =>{
-        if(registroFalhaGeracaoPc.excede_tentativas) {
-            return setShowExibeModalErroConcluirPc(true);
-        } 
         if(statusPrestacaoDeConta && statusPrestacaoDeConta.pendencias_cadastrais){
             checkPendenciasCadastrais();
         } else {
