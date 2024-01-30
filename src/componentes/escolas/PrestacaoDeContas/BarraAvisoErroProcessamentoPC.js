@@ -14,7 +14,7 @@ export const BarraAvisoErroProcessamentoPC = ({registroFalhaGeracaoPc}) => {
                                     className="icone-barra-aviso-erro-conclusao-pc"
                                     icon={faExclamationCircle}
                                 />
-                                {registroFalhaGeracaoPc.excede_tentativas ? "Já foram feitas diversas tentativas para a conclusão do período. Entre em contato com a DRE para que a geração da PC possa ser concluída." : "Erro no processamento da conclusão do período, conclua o período novamente. " }
+                                {registroFalhaGeracaoPc.excede_tentativas ? `Já foram feitas diversas tentativas para a conclusão do período ${registroFalhaGeracaoPc.periodo_referencia}. Entre em contato com a DRE para que a geração da PC possa ser concluída.` : `Erro no processamento da conclusão do período ${registroFalhaGeracaoPc.periodo_referencia}, conclua o período novamente.`}
                             </p>
                         </div>
                 </section>
