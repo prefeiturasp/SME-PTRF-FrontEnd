@@ -23,13 +23,13 @@ import { SidebarLeftService } from "../../../services/SideBarLeft.service";
 import { SidebarContext } from "../../../context/Sidebar";
 import {NotificacaoContext} from "../../../context/Notificacoes";
 import {getRegistrosFalhaGeracaoPc} from "../../../services/Notificacoes.service";
-import {ModalNotificaErroConcluirPC} from "./ModalNotificaErroConcluirPC";
+import {ModalNotificaErroConcluirPC} from "../../Globais/ModalAntDesign/ModalNotificaErroConcluirPC";
 import { ModalPendenciasCadastrais } from "./ModalPendenciasCadastrais";
 import { ModalAvisoAssinatura } from "./ModalAvisoAssinatura";
 import { setPersistenteUrlVoltar } from "../../../store/reducers/componentes/escolas/PrestacaoDeContas/PendenciaCadastro/actions";
 import { CustomModalConfirm } from "../../Globais/Modal/CustomModalConfirm";
 
-export const PrestacaoDeContas = ({setStatusPC}) => {
+export const PrestacaoDeContas = ({setStatusPC, registroFalhaGeracaoPc, setRegistroFalhaGeracaoPc, setApresentaBarraAvisoErroProcessamentoPc}) => {
     const history = useHistory();
     const dispatch = useDispatch();
     let {monitoramento} = useParams();
@@ -62,7 +62,6 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
 
     // Falha Geracao PC
     // Força o fechamento do Modal de Falha ao Gerar PC, que é exibido em todas as outras páginas
-    const [registroFalhaGeracaoPc, setRegistroFalhaGeracaoPc] = useState([]);
     const [showExibeModalErroConcluirPc, setShowExibeModalErroConcluirPc] = useState(false);
 
     useEffect(()=>{
@@ -341,6 +340,9 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
     };
 
     const handleConcluirPeriodo = () =>{
+        if(registroFalhaGeracaoPc.excede_tentativas) {
+            return setShowExibeModalErroConcluirPc(true);
+        } 
         if(statusPrestacaoDeConta && statusPrestacaoDeConta.pendencias_cadastrais){
             checkPendenciasCadastrais();
         } else {
@@ -555,6 +557,22 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
         buscarRegistrosFalhaGeracaoPc()
     }, [buscarRegistrosFalhaGeracaoPc]);
 
+    const verificaBarraAvisoErroProcessamentoPc = () => {
+        if (!registroFalhaGeracaoPc) {
+            return setApresentaBarraAvisoErroProcessamentoPc(false);
+        } else if (registroFalhaGeracaoPc && periodoPrestacaoDeConta.periodo_uuid === registroFalhaGeracaoPc.periodo_uuid) {
+            if(statusPrestacaoDeConta && statusPrestacaoDeConta.prestacao_contas_status && status_a_considerar().includes(statusPrestacaoDeConta.prestacao_contas_status.status_prestacao )) {
+                return setApresentaBarraAvisoErroProcessamentoPc(false);
+            }
+            return setApresentaBarraAvisoErroProcessamentoPc(true);
+        }
+        return setApresentaBarraAvisoErroProcessamentoPc(false);
+    };
+
+    useEffect(() => {
+        verificaBarraAvisoErroProcessamentoPc()
+    }, [registroFalhaGeracaoPc, statusPrestacaoDeConta, periodoPrestacaoDeConta.periodo_uuid])
+
     return (
         <>
             {loading || loadingMonitoramentoPc ? (
@@ -675,19 +693,24 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
                     <section>
                         <ModalNotificaErroConcluirPC
                             show={showExibeModalErroConcluirPc}
+                            titulo={`${registroFalhaGeracaoPc.excede_tentativas ? "Já foram feitas diversas tentativas para realizar a conclusão do período" : "Não foi possível concluir o período"}`}
+                            texto={`${registroFalhaGeracaoPc.excede_tentativas ? `Favor entrar em contato com a DRE para que a geração da Prestação de Contas ${registroFalhaGeracaoPc.periodo_referencia} possa ser concluída.` : `Houve um erro na geração da Prestação de Contas do período ${registroFalhaGeracaoPc.periodo_referencia}, deseja reprocessar?`}`}
+                            
+                            primeiroBotaoTexto={`${registroFalhaGeracaoPc.excede_tentativas ? "OK" : "Cancelar"}`}
+                            primeiroBotaoCss={`${registroFalhaGeracaoPc.excede_tentativas ? "btn-base-verde" : "btn-base-verde-outline"}`}
                             handleClose={()=>setShowExibeModalErroConcluirPc(false)}
-                            titulo="Atenção"
-                            texto={`${registroFalhaGeracaoPc.excede_tentativas ? '<p><strong>Por favor, entre em contato com a DRE.</strong></p>' : ''}<p>${registroFalhaGeracaoPc.texto}</p>`}
-                            primeiroBotaoTexto="Fechar"
-                            primeiroBotaoCss="outline-success"
-                            segundoBotaoCss="success"
-                            segundoBotaoTexto={registroFalhaGeracaoPc && !registroFalhaGeracaoPc.excede_tentativas ? "Concluir geração" : null}
+                            
+                            segundoBotaoTexto={registroFalhaGeracaoPc && !registroFalhaGeracaoPc.excede_tentativas ? "Reprocessar" : null}
+                            segundoBotaoCss={`${registroFalhaGeracaoPc.excede_tentativas ? null : "success"}`}
                             segundoBotaoOnclick={
                             registroFalhaGeracaoPc && !registroFalhaGeracaoPc.excede_tentativas ? ()=> {
                                 setShowExibeModalErroConcluirPc(false)
                                 concluirPeriodo()
                             } : null }
-                            dataQa="modal-notificar-erro-concluir-PC"
+                            hideSegundoBotao={registroFalhaGeracaoPc.excede_tentativas}
+                            wrapClassName={"modal-notifica-erro-concluir-pc"}
+                            
+                            dataQa="modal-notifica-erro-concluir-PC"
                         />
                     </section>
                     <section>
