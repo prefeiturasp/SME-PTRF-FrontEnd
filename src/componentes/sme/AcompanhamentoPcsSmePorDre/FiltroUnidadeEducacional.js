@@ -136,6 +136,7 @@ return (
                 value={tipoUnidade}
                 onChange={handleChange}
                 placeholder="Filtrar por tipo de unidade"
+                className="form-control"
             >
             <option value="">Selecione o tipo de unidade</option>
             {tabelaAssociacoes.tipos_unidade && tabelaAssociacoes.tipos_unidade.length > 0 && tabelaAssociacoes.tipos_unidade.filter(element=> element.id !== 'ADM' && element.id !== 'DRE' && element.id !== 'IFSP' && element.id !== 'CMCT').map(item => (
