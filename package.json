@@ -1,6 +1,6 @@
 {
   "name": "ptrf",
-  "version": "8.17.0",
+  "version": "8.17.1",
   "private": true,
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.2.1",
