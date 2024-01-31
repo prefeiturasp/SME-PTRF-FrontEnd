@@ -8,7 +8,6 @@ import ComentariosDeAnalise from "./ComentariosDeAnalise";
 import {TabsArquivosDeReferencia} from "./ArquivosDeReferencia/TabsArquivosDeReferencia";
 import ConferenciaDeLancamentos from "./ConferenciaDeLancamentos";
 import DevolucaoParaAcertos from "./DevolucaoParaAcertos";
-import {BotaoSalvarRodape} from "./BotaoSalvarRodape";
 import ConferenciaDeDocumentos from "./ConferenciaDeDocumentos";
 import DevolutivaDaAssociacao from "./DevolutivaDaAssociacao";
 import JustificativaDeFaltaDeAjustes from "./JustificativaDeFaltaDeAjustes";
@@ -26,7 +25,6 @@ export const GetComportamentoPorStatus = (
         tabelaPrestacoes,
         analisarPrestacaoDeContas,
         setShowNaoRecebida,
-        salvarAnalise,
         setShowConcluirAnalise,
         setShowRecebida,
         handleChangeFormInformacoesPrestacaoDeContas,
@@ -43,7 +41,6 @@ export const GetComportamentoPorStatus = (
         toggleBtnTabelaAcoes,
         clickBtnTabelaAcoes,
         setShowVoltarParaAnalise,
-        btnSalvarDisabled,
         carregaPrestacaoDeContas,
         dataRecebimentoDevolutiva,
         handleChangedataRecebimentoDevolutiva,
@@ -95,7 +92,6 @@ export const GetComportamentoPorStatus = (
                 <>
                     <Cabecalho
                         prestacaoDeContas={prestacaoDeContas}
-                        exibeSalvar={false}
                     />
                     <BotoesAvancarRetroceder
                         prestacaoDeContas={prestacaoDeContas}
@@ -138,7 +134,6 @@ export const GetComportamentoPorStatus = (
                 <>
                     <Cabecalho
                         prestacaoDeContas={prestacaoDeContas}
-                        exibeSalvar={false}
                     />
                     <BotoesAvancarRetroceder
                         prestacaoDeContas={prestacaoDeContas}
@@ -180,9 +175,6 @@ export const GetComportamentoPorStatus = (
                 <>
                     <Cabecalho
                         prestacaoDeContas={prestacaoDeContas}
-                        exibeSalvar={TEMPERMISSAO}
-                        metodoSalvarAnalise={salvarAnalise}
-                        btnSalvarDisabled={btnSalvarDisabled}
                     />
                     <BotoesAvancarRetroceder
                         prestacaoDeContas={prestacaoDeContas}
@@ -271,15 +263,6 @@ export const GetComportamentoPorStatus = (
                         prestacaoDeContas={prestacaoDeContas}
                         editavel={TEMPERMISSAO}
                     />
-                    <div className='d-flex flex-row-reverse bd-highlight'>
-                        <BotaoSalvarRodape
-                            exibeSalvar={TEMPERMISSAO}
-                            textoBtn={'Salvar'}
-                            metodoSalvarAnalise={salvarAnalise}
-                            btnSalvarDisabled={btnSalvarDisabled}
-                        />
-                    </div>
-
                 </>
             )
         } else if (prestacaoDeContas.status === 'DEVOLVIDA') {
@@ -287,7 +270,6 @@ export const GetComportamentoPorStatus = (
                 <>
                     <Cabecalho
                         prestacaoDeContas={prestacaoDeContas}
-                        exibeSalvar={false}
                     />
                     <BotoesAvancarRetroceder
                         prestacaoDeContas={prestacaoDeContas}
@@ -376,7 +358,6 @@ export const GetComportamentoPorStatus = (
                 <>
                     <Cabecalho
                         prestacaoDeContas={prestacaoDeContas}
-                        exibeSalvar={false}
                     />
                     <BotoesAvancarRetroceder
                         prestacaoDeContas={prestacaoDeContas}
@@ -474,7 +455,6 @@ export const GetComportamentoPorStatus = (
                 <>
                     <Cabecalho
                         prestacaoDeContas={prestacaoDeContas}
-                        exibeSalvar={false}
                     />
                     <BotoesAvancarRetroceder
                         prestacaoDeContas={prestacaoDeContas}
@@ -569,7 +549,6 @@ export const GetComportamentoPorStatus = (
                 <>
                     <Cabecalho
                         prestacaoDeContas={prestacaoDeContas}
-                        exibeSalvar={false}
                     />
 
                     <BotoesAvancarRetroceder
@@ -661,7 +640,6 @@ export const GetComportamentoPorStatus = (
                 <>
                     <Cabecalho
                         prestacaoDeContas={prestacaoDeContas}
-                        exibeSalvar={false}
                     />
 
                     <BotoesAvancarRetroceder
