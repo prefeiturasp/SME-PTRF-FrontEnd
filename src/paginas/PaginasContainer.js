@@ -5,6 +5,8 @@ import {useHistory} from "react-router-dom";
 import {notificaDevolucaoPCService} from "../services/NotificacaDevolucaoPC.service";
 import { barraMensagemCustom } from "../componentes/Globais/BarraMensagem";
 
+import {BarraMensagemUnidadeEmSuporte} from "../componentes/Globais/BarraMensagemUnidadeEmSuporte";
+
 export const PaginasContainer = ({children}) => {
     const history = useHistory();
     const sidebarStatus = useContext(SidebarContext);
@@ -18,6 +20,7 @@ export const PaginasContainer = ({children}) => {
     return (
         <>
             <div className={`page-content  px-5 pt-0 pb-5 ${!sidebarStatus.sideBarStatus ? "active" : ""}`} id="content">
+                <BarraMensagemUnidadeEmSuporte/>
                 { notificacaoContext.exibeMensagemFixaTemDevolucao &&
                     barraMensagemCustom.BarraMensagemSucessLaranja(mensagem, "Ver acertos", onVerAcertos, true)
                 }
