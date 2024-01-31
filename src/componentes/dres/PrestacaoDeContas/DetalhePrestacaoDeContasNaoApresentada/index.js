@@ -63,7 +63,6 @@ export const DetalhePrestacaoDeContasNaoApresentada = () =>{
                             <>
                             <Cabecalho
                                 prestacaoDeContas={prestacaoDeContas}
-                                exibeSalvar={false}
                             />
                                 <BotoesAvancarRetroceder
                                     prestacaoDeContas={prestacaoDeContas}
