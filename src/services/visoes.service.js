@@ -13,7 +13,10 @@ import { ANALISE_DRE } from './mantemEstadoAnaliseDre.service';
 import { ACOMPANHAMENTO_PC_UNIDADE } from "./mantemEstadoAcompanhamentoDePcUnidadeEducacional.service";
 
 export const DADOS_USUARIO_LOGADO = "DADOS_USUARIO_LOGADO";
+export const DADOS_USUARIO_LOGADO_NORMAL = "DADOS_USUARIO_LOGADO_NORMAL";
+export const DADOS_USUARIO_LOGADO_SUPORTE = "DADOS_USUARIO_LOGADO_SUPORTE";
 export const DATA_HORA_USUARIO_LOGADO = "DATA_HORA_USUARIO_LOGADO";
+export const ACESSO_MODO_SUPORTE = "ACESSO_MODO_SUPORTE";
 export const VISOES =  {
     UE: 'UE',
     DRE: 'DRE',
@@ -53,6 +56,18 @@ const getDadosDoUsuarioLogado = () => {
     return dados_usuario_logado ? eval('dados_usuario_logado.usuario_' + getUsuarioLogin()) : null
 };
 
+const getDadosDoUsuarioLogadoNormal = () => {
+    let dados_usuario_logado = JSON.parse(localStorage.getItem(DADOS_USUARIO_LOGADO_NORMAL));
+    // eslint-disable-next-line no-eval
+    return dados_usuario_logado ? eval('dados_usuario_logado.usuario_' + getUsuarioLogin()) : null
+};
+
+const getDadosDoUsuarioLogadoSuporte = () => {
+    let dados_usuario_logado = JSON.parse(localStorage.getItem(DADOS_USUARIO_LOGADO_SUPORTE));
+    // eslint-disable-next-line no-eval
+    return dados_usuario_logado ? eval('dados_usuario_logado.usuario_' + getUsuarioLogin()) : null
+};
+
 const setDadosDoUsuarioLogado = (dados_usuario_logado) => {
     let dados_usuario_logado_atual = localStorage.getItem(DADOS_USUARIO_LOGADO) ? JSON.parse(localStorage.getItem(DADOS_USUARIO_LOGADO)) : null;
 
@@ -65,18 +80,83 @@ const setDadosDoUsuarioLogado = (dados_usuario_logado) => {
     localStorage.setItem(DADOS_USUARIO_LOGADO, JSON.stringify(dados_usuario_logado_update));
 };
 
+const salva_dados_ultimo_acesso = (
+    {
+        visao, visao_acesso_normal, visao_suporte, 
+        uuid_unidade, uuid_unidade_normal, uuid_unidade_suporte,
+        unidade_tipo, unidade_tipo_normal, unidade_tipo_suporte, 
+        unidade_nome, unidade_nome_normal, unidade_nome_suporte, 
+        uuid_associacao, uuid_associacao_normal, uuid_associacao_suporte, 
+        nome_associacao, nome_associacao_normal, nome_associacao_suporte,
+        atualizar_dados_alternancia_unidade = false
+    }) => {
 
-const setDadosPrimeiroAcesso = async (resp) =>{
+    let acesso_suporte = localStorage.getItem(ACESSO_MODO_SUPORTE)
 
+    let visao_selecionada_nome, unidade_selecionada_uuid, unidade_selecionada_tipo, unidade_selecionada_nome, associacao_selecionada_uuid, associacao_selecionada_nome;
+
+    if (acesso_suporte === "true") {
+        visao_selecionada_nome = atualizar_dados_alternancia_unidade ? visao : visao_suporte;
+        unidade_selecionada_uuid = atualizar_dados_alternancia_unidade ? uuid_unidade : uuid_unidade_suporte;
+        unidade_selecionada_tipo = atualizar_dados_alternancia_unidade ? unidade_tipo : unidade_tipo_suporte;
+        unidade_selecionada_nome = atualizar_dados_alternancia_unidade ? unidade_nome : unidade_nome_suporte;
+        associacao_selecionada_uuid = atualizar_dados_alternancia_unidade ? uuid_associacao : uuid_associacao_suporte;
+        associacao_selecionada_nome = atualizar_dados_alternancia_unidade ? nome_associacao : nome_associacao_suporte;
+    } else if(acesso_suporte === "false") {
+        visao_selecionada_nome = atualizar_dados_alternancia_unidade ? visao : visao_acesso_normal;
+        unidade_selecionada_uuid = atualizar_dados_alternancia_unidade ? uuid_unidade : uuid_unidade_normal;
+        unidade_selecionada_tipo = atualizar_dados_alternancia_unidade ? unidade_tipo : unidade_tipo_normal;
+        unidade_selecionada_nome = atualizar_dados_alternancia_unidade ? unidade_nome : unidade_nome_normal;
+        associacao_selecionada_uuid = atualizar_dados_alternancia_unidade ? uuid_associacao : uuid_associacao_normal;
+        associacao_selecionada_nome = atualizar_dados_alternancia_unidade ? nome_associacao : nome_associacao_normal;
+    }
+
+    let dados_do_ultimo_acesso = {
+        [`usuario_${getUsuarioLogin()}`]: {
+            visao_selecionada: {
+                nome: visao_selecionada_nome
+            },
+            unidade_selecionada: { 
+                uuid: unidade_selecionada_uuid,
+                tipo_unidade: unidade_selecionada_tipo,
+                nome: unidade_selecionada_nome,
+            },
+
+            associacao_selecionada: {
+                uuid: associacao_selecionada_uuid,
+                nome: associacao_selecionada_nome,
+            },
+        }
+    };
+
+    if (acesso_suporte === "true") {
+        localStorage.setItem(DADOS_USUARIO_LOGADO_SUPORTE, JSON.stringify(dados_do_ultimo_acesso));
+    } else if(acesso_suporte === "false") {
+        localStorage.setItem(DADOS_USUARIO_LOGADO_NORMAL, JSON.stringify(dados_do_ultimo_acesso));
+    }
+}
+
+const setDadosPrimeiroAcesso = async (resp, suporte) =>{
+    
+    // Dados visão acesso atual
     let visao, uuid_unidade, uuid_associacao, nome_associacao, unidade_tipo, unidade_nome, notificar_devolucao_referencia, notificar_devolucao_pc_uuid, notificacao_uuid;
+
+    // Dados visão de acesso normal
+    let visao_acesso_normal, uuid_unidade_normal, uuid_associacao_normal, nome_associacao_normal, unidade_tipo_normal, unidade_nome_normal;
+
+    // Dados visão de acesso suporte
+    let visao_suporte, uuid_unidade_suporte, uuid_associacao_suporte, nome_associacao_suporte, unidade_tipo_suporte, unidade_nome_suporte;
+
     let usuario_logado = getDadosDoUsuarioLogado();
+    let dados_acesso_normal = getDadosDoUsuarioLogadoNormal();
+    let dados_acesso_suporte = getDadosDoUsuarioLogadoSuporte();
 
     const temAcessoAUnidadeSelecionada = () => {
         return !!usuario_logado.unidades.find(unidade => unidade.uuid === usuario_logado.unidade_selecionada.uuid)
     };
 
     if (usuario_logado && usuario_logado.associacao_selecionada.uuid && temAcessoAUnidadeSelecionada() ){
-        visao=usuario_logado.visao_selecionada.nome;
+        visao = usuario_logado.visao_selecionada.nome;
         uuid_unidade = usuario_logado.unidade_selecionada.uuid;
         uuid_associacao = usuario_logado.associacao_selecionada.uuid;
         nome_associacao = usuario_logado.associacao_selecionada.nome;
@@ -93,6 +173,28 @@ const setDadosPrimeiroAcesso = async (resp) =>{
             notificacao_uuid = usuario_logado.unidade_selecionada.notificacao_uuid;
         }
 
+        if (suporte) {
+            visao_suporte = visao;
+            uuid_unidade_suporte = uuid_unidade;
+            uuid_associacao_suporte = uuid_associacao;
+            nome_associacao_suporte = nome_associacao;
+
+            visao_acesso_normal = dados_acesso_normal ? dados_acesso_normal.visao_selecionada.nome : '';
+            uuid_unidade_normal = dados_acesso_normal ? dados_acesso_normal.unidade_selecionada.uuid : '';
+            uuid_associacao_normal = dados_acesso_normal ? dados_acesso_normal.associacao_selecionada.uuid : '';
+            nome_associacao_normal = dados_acesso_normal ? dados_acesso_normal.associacao_selecionada.nome : '';
+        } else {
+            visao_suporte = dados_acesso_suporte ? dados_acesso_suporte.visao_selecionada.nome : "";
+            uuid_unidade_suporte = dados_acesso_suporte ? dados_acesso_suporte.unidade_selecionada.uuid : "";
+            uuid_associacao_suporte = dados_acesso_suporte ? dados_acesso_suporte.associacao_selecionada.uuid : "";
+            nome_associacao_suporte = dados_acesso_suporte ? dados_acesso_suporte.associacao_selecionada.nome : "";
+
+            visao_acesso_normal = visao;
+            uuid_unidade_normal =  uuid_unidade;
+            uuid_associacao_normal = uuid_associacao;
+            nome_associacao_normal = nome_associacao;
+        }
+
     }else {
         if (resp.visoes.find(visao=> visao === 'SME') && resp.unidades.find(unidade => unidade.tipo_unidade === "SME")){
             let unidade = resp.unidades.find(unidade => unidade.tipo_unidade === "SME");
@@ -103,6 +205,15 @@ const setDadosPrimeiroAcesso = async (resp) =>{
             notificar_devolucao_referencia = null;
             notificar_devolucao_pc_uuid = null;
             notificacao_uuid = null;
+
+            uuid_unidade_normal = uuid_unidade;
+            uuid_associacao_normal = uuid_associacao;
+            nome_associacao_normal = nome_associacao;
+
+            uuid_unidade_suporte = dados_acesso_suporte ? dados_acesso_suporte.unidade_selecionada.uuid : "";
+            uuid_associacao_suporte = dados_acesso_suporte ? dados_acesso_suporte.associacao_selecionada.uuid : "";
+            nome_associacao_suporte = dados_acesso_suporte ? dados_acesso_suporte.associacao_selecionada.nome : "";
+
         }else if (resp.visoes.find(visao=> visao === 'DRE') && resp.unidades.find(unidade => unidade.tipo_unidade === "DRE")){
             let unidade = resp.unidades.find(unidade => unidade.tipo_unidade === "DRE");
             visao="DRE";
@@ -112,6 +223,25 @@ const setDadosPrimeiroAcesso = async (resp) =>{
             notificar_devolucao_referencia = null;
             notificar_devolucao_pc_uuid = null;
             notificacao_uuid = null;
+
+            if (suporte) {
+                uuid_unidade_normal = dados_acesso_normal ? dados_acesso_normal.unidade_selecionada.uuid : "";
+                uuid_associacao_normal = dados_acesso_normal ? dados_acesso_normal.associacao_selecionada.uuid : "";
+                nome_associacao_normal = dados_acesso_normal ? dados_acesso_normal.associacao_selecionada.nome : "";
+
+                uuid_unidade_suporte = uuid_unidade;
+                uuid_associacao_suporte = uuid_associacao;
+                nome_associacao_suporte = nome_associacao;
+            } else {
+                uuid_unidade_normal = uuid_unidade;
+                uuid_associacao_normal = uuid_associacao;
+                nome_associacao_normal = nome_associacao;
+
+                uuid_unidade_suporte = dados_acesso_suporte ? dados_acesso_suporte.unidade_selecionada.uuid : "";
+                uuid_associacao_suporte = dados_acesso_suporte ? dados_acesso_suporte.associacao_selecionada.uuid : "";
+                nome_associacao_suporte = dados_acesso_suporte ? dados_acesso_suporte.associacao_selecionada.nome : "";
+            }
+
         }else if (resp.visoes.find(visao=> visao === 'UE')){
             let unidade = resp.unidades.find(unidade => unidade.tipo_unidade !== "DRE");
             visao="UE";
@@ -121,37 +251,120 @@ const setDadosPrimeiroAcesso = async (resp) =>{
             notificar_devolucao_referencia = unidade.notificar_devolucao_referencia;
             notificar_devolucao_pc_uuid = unidade.notificar_devolucao_pc_uuid;
             notificacao_uuid = unidade.notificacao_uuid;
+
+            if (suporte) {
+                uuid_unidade_normal = dados_acesso_normal ? dados_acesso_normal.unidade_selecionada.uuid : "";
+                uuid_associacao_normal = dados_acesso_normal ? dados_acesso_normal.associacao_selecionada.uuid : "";
+                nome_associacao_normal = dados_acesso_normal ? dados_acesso_normal.associacao_selecionada.nome : "";
+
+                uuid_unidade_suporte = uuid_unidade;
+                uuid_associacao_suporte = uuid_associacao;
+                nome_associacao_suporte = nome_associacao;
+            } else {
+                uuid_unidade_normal = uuid_unidade;
+                uuid_associacao_normal = uuid_associacao;
+                nome_associacao_normal = nome_associacao;
+
+                uuid_unidade_suporte = dados_acesso_suporte ? dados_acesso_suporte.unidade_selecionada.uuid : "";
+                uuid_associacao_suporte = dados_acesso_suporte ? dados_acesso_suporte.associacao_selecionada.uuid : "";
+                nome_associacao_suporte = dados_acesso_suporte ? dados_acesso_suporte.associacao_selecionada.nome : "";
+            }
         }
     }
 
     if (usuario_logado && usuario_logado.unidade_selecionada.nome && temAcessoAUnidadeSelecionada()){
         unidade_nome = usuario_logado.unidade_selecionada.nome;
+
+        if (suporte) {
+            unidade_nome_normal = dados_acesso_normal ? dados_acesso_normal.unidade_selecionada.nome : "";
+            unidade_nome_suporte = unidade_nome;
+        } else {
+            unidade_nome_normal = unidade_nome;
+            unidade_nome_suporte = dados_acesso_suporte ? dados_acesso_suporte.unidade_selecionada.nome : "";
+        }
     }else{
         if (resp.visoes.find(visao=> visao === 'SME') && resp.unidades.find(unidade => unidade.tipo_unidade === "SME")){
             let unidade = resp.unidades.find(unidade => unidade.tipo_unidade === "SME");
             unidade_nome = unidade.nome;
+
+            unidade_nome_normal = unidade_nome;
+            unidade_nome_suporte = dados_acesso_suporte ? dados_acesso_suporte.unidade_selecionada.nome : "";
+
         }else if (resp.visoes.find(visao=> visao === 'DRE') && resp.unidades.find(unidade => unidade.tipo_unidade === "DRE")){
             let unidade = resp.unidades.find(unidade => unidade.tipo_unidade === "DRE");
             unidade_nome = unidade.nome;
+
+            if (suporte) {
+                unidade_nome_normal = dados_acesso_normal ? dados_acesso_normal.unidade_selecionada.nome : "";
+                unidade_nome_suporte = unidade_nome;
+            } else {
+                unidade_nome_normal = unidade_nome;
+                unidade_nome_suporte = dados_acesso_suporte ? dados_acesso_suporte.unidade_selecionada.nome : "";
+            }
         }else if (resp.visoes.find(visao=> visao === 'UE')){
             let unidade = resp.unidades.find(unidade => unidade.tipo_unidade !== "DRE");
             unidade_nome = unidade.nome;
+
+            if (suporte) {
+                unidade_nome_normal = dados_acesso_normal ? dados_acesso_normal.unidade_selecionada.nome : "";
+                unidade_nome_suporte = unidade_nome;
+            } else {
+                unidade_nome_normal = unidade_nome;
+                unidade_nome_suporte = dados_acesso_suporte ? dados_acesso_suporte.unidade_selecionada.nome : "";
+            }
         }
     }
 
     if (usuario_logado && usuario_logado.unidade_selecionada.tipo_unidade && temAcessoAUnidadeSelecionada()){
         unidade_tipo = usuario_logado.unidade_selecionada.tipo_unidade;
+
+        unidade_tipo_normal = dados_acesso_normal ? dados_acesso_normal.unidade_selecionada.tipo_unidade : "";
+        unidade_tipo_suporte = dados_acesso_suporte ? dados_acesso_suporte.unidade_selecionada.tipo_unidade : "";
     }else {
         if (resp.visoes.find(visao=> visao === 'SME') && resp.unidades.find(unidade => unidade.tipo_unidade === "SME")){
             unidade_tipo = "SME";
+
+            unidade_tipo_normal = unidade_tipo;
+            unidade_tipo_suporte = dados_acesso_suporte ? dados_acesso_suporte.unidade_selecionada.tipo_unidade : "";
         }else if (resp.visoes.find(visao=> visao === 'DRE') && resp.unidades.find(unidade => unidade.tipo_unidade === "DRE")){
             let unidade = resp.unidades.find(unidade => unidade.tipo_unidade === "DRE");
             unidade_tipo = unidade.tipo_unidade;
+
+            if (suporte) {
+                unidade_tipo_normal = dados_acesso_normal ? dados_acesso_normal.unidade_selecionada.tipo : "";
+                unidade_tipo_suporte = unidade_tipo;
+            } else {
+                unidade_tipo_normal = unidade_tipo;
+                unidade_tipo_suporte = dados_acesso_suporte ? dados_acesso_suporte.unidade_selecionada.tipo : "";
+            }
+
         }else if (resp.visoes.find(visao=> visao === 'UE')){
             let unidade = resp.unidades.find(unidade => unidade.tipo_unidade !== "DRE");
             unidade_tipo = unidade.tipo_unidade;
+
+            if (suporte) {
+                unidade_tipo_normal = dados_acesso_normal ? dados_acesso_normal.unidade_selecionada.tipo : "";
+                unidade_tipo_suporte = unidade_tipo;
+            } else {
+                unidade_tipo_normal = unidade_tipo;
+                unidade_tipo_suporte = dados_acesso_suporte ? dados_acesso_suporte.unidade_selecionada.tipo : "";
+            }
         }
     }
+
+    salva_dados_ultimo_acesso({
+        visao, visao_acesso_normal, visao_suporte, 
+        uuid_unidade, uuid_unidade_normal, uuid_unidade_suporte,
+        unidade_tipo, unidade_tipo_normal, unidade_tipo_suporte, 
+        unidade_nome, unidade_nome_normal, unidade_nome_suporte, 
+        uuid_associacao, uuid_associacao_normal, uuid_associacao_suporte, 
+        nome_associacao, nome_associacao_normal, nome_associacao_suporte, 
+        notificar_devolucao_referencia, 
+        notificar_devolucao_pc_uuid, 
+        notificacao_uuid, 
+        atualizar_dados_alternancia_unidade: false
+    })
+    
     alternaVisoes(visao, uuid_unidade, uuid_associacao, nome_associacao, unidade_tipo, unidade_nome, notificar_devolucao_referencia, notificar_devolucao_pc_uuid, notificacao_uuid)
 };
 
@@ -179,11 +392,31 @@ const featureFlagAtiva = (featureFlag) => {
 
 
 
-const setDadosUsuariosLogados = async (resp) => {
-
+const setDadosUsuariosLogados = async (resp, suporte) => {
     let todos_os_dados_usuario_logado = localStorage.getItem(DADOS_USUARIO_LOGADO) ? JSON.parse(localStorage.getItem(DADOS_USUARIO_LOGADO)) : null;
 
     let usuario_logado = getDadosDoUsuarioLogado();
+    
+    let visao_selecionada_nome, unidade_selecionada_uuid, unidade_selecionada_tipo_unidade, unidade_selecionada_nome, associacao_selecionada_uuid, associacao_selecionada_nome;
+
+    let dados_acesso_normal = getDadosDoUsuarioLogadoNormal();
+    let dados_acesso_suporte = getDadosDoUsuarioLogadoSuporte();
+
+    if (suporte) {
+        visao_selecionada_nome = dados_acesso_suporte ? dados_acesso_suporte.visao_selecionada.nome : ""
+        unidade_selecionada_uuid = dados_acesso_suporte ? dados_acesso_suporte.unidade_selecionada.uuid : ""
+        unidade_selecionada_tipo_unidade = dados_acesso_suporte ? dados_acesso_suporte.unidade_selecionada.tipo_unidade : ""
+        unidade_selecionada_nome = dados_acesso_suporte ? dados_acesso_suporte.unidade_selecionada.nome : ""
+        associacao_selecionada_uuid = dados_acesso_suporte ? dados_acesso_suporte.associacao_selecionada.uuid : ""
+        associacao_selecionada_nome = dados_acesso_suporte ? dados_acesso_suporte.associacao_selecionada.nome : ""
+    } else {
+        visao_selecionada_nome = dados_acesso_normal ? dados_acesso_normal.visao_selecionada.nome : ""
+        unidade_selecionada_uuid = dados_acesso_normal ? dados_acesso_normal.unidade_selecionada.uuid : ""
+        unidade_selecionada_tipo_unidade = dados_acesso_normal ? dados_acesso_normal.unidade_selecionada.tipo_unidade : ""
+        unidade_selecionada_nome = dados_acesso_normal ? dados_acesso_normal.unidade_selecionada.nome : ""
+        associacao_selecionada_uuid = dados_acesso_normal ? dados_acesso_normal.associacao_selecionada.uuid : ""
+        associacao_selecionada_nome = dados_acesso_normal ? dados_acesso_normal.associacao_selecionada.nome : ""
+    }
 
     let novos_dados_do_usuario_logado = {
         ...todos_os_dados_usuario_logado,
@@ -196,14 +429,14 @@ const setDadosUsuariosLogados = async (resp) => {
             visoes: resp.visoes,
 
             visao_selecionada: {
-                nome: usuario_logado ? usuario_logado.visao_selecionada.nome : "",
+                nome: visao_selecionada_nome,
             },
             unidades: resp.unidades,
 
             unidade_selecionada: {
-                uuid: usuario_logado ? usuario_logado.unidade_selecionada.uuid : "",
-                tipo_unidade: usuario_logado ? usuario_logado.unidade_selecionada.tipo_unidade : "",
-                nome: usuario_logado ? usuario_logado.unidade_selecionada.nome : "",
+                uuid: unidade_selecionada_uuid,
+                tipo_unidade: unidade_selecionada_tipo_unidade,
+                nome: unidade_selecionada_nome,
                 notificar_devolucao_referencia: usuario_logado ? usuario_logado.unidade_selecionada.notificar_devolucao_referencia : "",
                 notificar_devolucao_pc_uuid: usuario_logado ? usuario_logado.unidade_selecionada.notificar_devolucao_pc_uuid : "",
                 notificacao_uuid: usuario_logado ? usuario_logado.unidade_selecionada.notificacao_uuid : "",
@@ -211,8 +444,8 @@ const setDadosUsuariosLogados = async (resp) => {
             },
 
             associacao_selecionada: {
-                uuid: usuario_logado ? usuario_logado.associacao_selecionada.uuid : "",
-                nome: usuario_logado ? usuario_logado.associacao_selecionada.nome : "",
+                uuid: associacao_selecionada_uuid,
+                nome: associacao_selecionada_nome,
             },
 
             permissoes: resp.permissoes ? resp.permissoes : [],
@@ -220,6 +453,7 @@ const setDadosUsuariosLogados = async (resp) => {
             feature_flags: resp.feature_flags ? resp.feature_flags : []
         }
     };
+
     localStorage.setItem(DADOS_USUARIO_LOGADO, JSON.stringify(novos_dados_do_usuario_logado))
 };
 
@@ -259,6 +493,21 @@ const alternaVisoes = (visao, uuid_unidade, uuid_associacao, nome_associacao, un
                 },
             }
         };
+
+        salva_dados_ultimo_acesso({
+            visao, 
+            uuid_unidade,
+            unidade_tipo,
+            unidade_nome,
+            uuid_associacao,
+            nome_associacao,
+            notificar_devolucao_referencia, 
+            notificar_devolucao_pc_uuid, 
+            notificacao_uuid, 
+            atualizar_dados_alternancia_unidade: true
+        })
+        
+
         localStorage.setItem(DADOS_USUARIO_LOGADO, JSON.stringify(alternar_visao));
         localStorage.setItem(ASSOCIACAO_UUID, uuid_associacao);
         localStorage.setItem(ASSOCIACAO_NOME,nome_associacao);

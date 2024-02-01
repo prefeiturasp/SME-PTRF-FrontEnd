@@ -22,6 +22,7 @@ export const USUARIO_LOGIN = "LOGIN";
 export const USUARIO_INFO_PERDEU_ACESSO = "INFO_PERDEU_ACESSO";
 export const DADOS_DA_ASSOCIACAO = "DADOS_DA_ASSOCIACAO";
 export const PERIODO_RELATORIO_CONSOLIDADO_DRE = "PERIODO_RELATORIO_CONSOLIDADO_DRE";
+export const ACESSO_MODO_SUPORTE = "ACESSO_MODO_SUPORTE";
 
 const authHeader = {
     'Content-Type': 'application/json'
@@ -57,10 +58,11 @@ const setDataLogin = async ()=>{
     }
 };
 
-const login = async (login, senha) => {
+const login = async (login, senha, suporte=false) => {
     let payload = {
         login: login,
-        senha: senha
+        senha: senha,
+        suporte: suporte
     };
 
     try {
@@ -73,6 +75,8 @@ const login = async (login, senha) => {
             }
 
             await setDataLogin();
+
+            localStorage.setItem(ACESSO_MODO_SUPORTE, suporte ? true : false);
 
             localStorage.setItem(TOKEN_ALIAS, resp.token);
             localStorage.setItem(
@@ -107,9 +111,9 @@ const login = async (login, senha) => {
 
             await meapcserviceAnaliseDre.setAnaliseDre()
 
-            await visoesService.setDadosUsuariosLogados(resp);
+            await visoesService.setDadosUsuariosLogados(resp, suporte);
 
-            await visoesService.setDadosPrimeiroAcesso(resp);
+            await visoesService.setDadosPrimeiroAcesso(resp, suporte);
 
             window.location.href = "/";
         } 
@@ -154,6 +158,31 @@ const logout = () => {
     window.location.assign("/login")
 };
 
+const logoutToSuporte = () => {
+    localStorage.removeItem('DADOS_USUARIO_LOGADO');
+    localStorage.removeItem(TOKEN_ALIAS);
+    localStorage.removeItem(USUARIO_NOME);
+    localStorage.removeItem(ASSOCIACAO_UUID);
+    localStorage.removeItem(ASSOCIACAO_NOME);
+    localStorage.removeItem(ASSOCIACAO_NOME_ESCOLA);
+    localStorage.removeItem(ASSOCIACAO_TIPO_ESCOLA);
+    localStorage.removeItem('periodoConta');
+    localStorage.removeItem('uuidPrestacaoConta');
+    localStorage.removeItem('periodoPrestacaoDeConta');
+    localStorage.removeItem('statusPrestacaoDeConta');
+    localStorage.removeItem('contaPrestacaoDeConta');
+    localStorage.removeItem('acaoLancamento');
+    localStorage.removeItem('uuidAta');
+    localStorage.removeItem('prestacao_de_contas_nao_apresentada');
+    localStorage.removeItem(USUARIO_EMAIL);
+    localStorage.removeItem(USUARIO_LOGIN);
+    localStorage.removeItem(USUARIO_CPF);
+    localStorage.removeItem(DADOS_DA_ASSOCIACAO);
+    localStorage.removeItem(PERIODO_RELATORIO_CONSOLIDADO_DRE);
+    window.location.assign("/login-suporte")
+};
+
+
 export const esqueciMinhaSenha = async (payload, rf) => {
     return (await api.put(`/api/esqueci-minha-senha/${rf}/`, payload, authHeader)).data
 };
@@ -173,6 +202,7 @@ export const alterarMinhaSenha = async (usuario, payload) => {
 export const authService = {
     login,
     logout,
+    logoutToSuporte,
     getToken,
     isLoggedIn,
     esqueciMinhaSenha,
@@ -190,9 +220,14 @@ export const viabilizarAcessoSuporte = async (usuario, payload) => {
     return (await api.post(`api/usuarios/${usuario}/viabilizar-acesso-suporte/`, payload, authHeaderAuthorization))
 };
 
+export const getUnidadesEmSuporte = async (usuario, page=1) => {
+    return (await api.get(`/api/usuarios/${usuario}/unidades-em-suporte/?page=${page}`, authHeaderAuthorization)).data
+  }
+
 export const encerrarAcessoSuporte = async (usuario, unidade_suporte_uuid) => {
-    const payload = {
-        unidade_suporte_uuid: unidade_suporte_uuid
-    }
-    return (await api.post(`api/usuarios/${usuario}/encerrar-acesso-suporte/`, payload, authHeaderAuthorization))
+    return (await api.post(`api/usuarios/${usuario}/encerrar-acesso-suporte/`, {unidade_suporte_uuid}, authHeaderAuthorization))
+};
+
+export const encerrarAcessoSuporteEmLote = async (usuario, unidade_suporte_uuids = []) => {
+    return (await api.post(`api/usuarios/${usuario}/encerrar-acesso-suporte-em-lote/`, {unidade_suporte_uuids}, authHeaderAuthorization))
 };
