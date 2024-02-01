@@ -6,7 +6,7 @@ import {faArrowLeft} from "@fortawesome/free-solid-svg-icons";
 import {getPeriodos} from "../../../../services/sme/DashboardSme.service";
 import {exibeDataPT_BR} from "../../../../utils/ValidacoesAdicionaisFormularios";
 
-const Cabecalho = ({prestacaoDeContas, exibeSalvar, metodoSalvarAnalise, btnSalvarDisabled}) => {
+const Cabecalho = ({prestacaoDeContas}) => {
 
     const [periodoTexto, setPeriodoTexto] = useState('')
     const [publicacaoTexto, setPublicacaoTexto] = useState('')
@@ -101,19 +101,6 @@ const Cabecalho = ({prestacaoDeContas, exibeSalvar, metodoSalvarAnalise, btnSalv
                             Ir para a listagem
                         </Link>
                     </div>
-                    {exibeSalvar &&
-                        <div className="p-2 bd-highlight">
-                            <button
-                                data-qa="cabecalho-botao-salvar"
-                                onClick={metodoSalvarAnalise}
-                                className="btn btn-success"
-                                disabled={btnSalvarDisabled}
-                            >
-                                Salvar
-                            </button>
-                        </div>
-                    }
-
                 </div>
                 <div className="row">
                     <div className='col-12 col-md-6'>
