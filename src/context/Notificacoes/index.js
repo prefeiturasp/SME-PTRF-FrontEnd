@@ -1,7 +1,7 @@
 import React, {useState, createContext, useCallback, useEffect} from "react";
 import {getQuantidadeNaoLidas, getRegistrosFalhaGeracaoPc} from "../../services/Notificacoes.service";
 import {visoesService} from "../../services/visoes.service";
-import {ModalNotificaErroConcluirPC} from "../../componentes/Globais/Cabecalho/ModalNotificaErroConcluirPC";
+import {ModalNotificaErroConcluirPC} from "../../componentes/Globais/ModalAntDesign/ModalNotificaErroConcluirPC";
 import {authService} from "../../services/auth.service";
 
 export const NotificacaoContext = createContext( {
@@ -145,14 +145,21 @@ export const NotificacaoContextProvider = ({children}) => {
             <section>
                 <ModalNotificaErroConcluirPC
                     show={show}
+                    titulo={`${registroFalhaGeracaoPc.excede_tentativas ? "Já foram feitas diversas tentativas para realizar a conclusão do período" : "Não foi possível concluir o período"}`}
+                    texto={`${registroFalhaGeracaoPc.excede_tentativas ? `Favor entrar em contato com a DRE para que a geração da Prestação de Contas ${registroFalhaGeracaoPc.periodo_referencia} possa ser concluída.` : `Houve um erro na geração da Prestação de Contas do período ${registroFalhaGeracaoPc.periodo_referencia}, deseja reprocessar?`}`}
+                    
+                    primeiroBotaoTexto={`${registroFalhaGeracaoPc.excede_tentativas ? "OK" : "Cancelar"}`}
+                    primeiroBotaoCss={`${registroFalhaGeracaoPc.excede_tentativas ? "btn-base-verde" : "btn-base-verde-outline"}`}
                     handleClose={()=>setShow(false)}
-                    titulo="Atenção"
-                    texto={`${registroFalhaGeracaoPc.excede_tentativas ? '<p><strong>Por favor, entre em contato com a DRE.</strong></p>' : ''}<p>${registroFalhaGeracaoPc.texto}</p>`}
-                    primeiroBotaoTexto="Fechar"
-                    primeiroBotaoCss="outline-success"
-                    segundoBotaoCss="success"
-                    segundoBotaoTexto={registroFalhaGeracaoPc && !registroFalhaGeracaoPc.excede_tentativas ? "Concluir geração" : null}
-                    segundoBotaoOnclick={registroFalhaGeracaoPc && !registroFalhaGeracaoPc.excede_tentativas ? irParaConcluirPc : null}
+                    
+                    segundoBotaoTexto={registroFalhaGeracaoPc && !registroFalhaGeracaoPc.excede_tentativas ? "Reprocessar" : null}
+                    segundoBotaoCss={`${registroFalhaGeracaoPc.excede_tentativas ? null : "success"}`}
+                    segundoBotaoOnclick={
+                        registroFalhaGeracaoPc && !registroFalhaGeracaoPc.excede_tentativas ? irParaConcluirPc : null
+                    }
+                    hideSegundoBotao={registroFalhaGeracaoPc.excede_tentativas}
+                    wrapClassName={"modal-notifica-erro-concluir-pc"}
+                    dataQa="modal-notifica-erro-concluir-PC"
                 />
             </section>
         </>

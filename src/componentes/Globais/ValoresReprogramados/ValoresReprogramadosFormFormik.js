@@ -20,6 +20,10 @@ export const ValoresReprogramadosFormFormik = ({
     rowSpan
 }) => {
     
+    const habilitarCampoValor = (conta) => {
+        return conta.bloquear_campos_valor === false
+    };
+
     return (
         <section>
 
@@ -89,7 +93,7 @@ export const ValoresReprogramadosFormFormik = ({
                                                                                     onKeyDown={(e) => handleOnKeyDown(setFieldValue, e, acao.custeio, index_conta, index_acao, "UE")}
                                                                                     placeholder=' '
                                                                                     allowEmpty={true}
-                                                                                    disabled={!editavelUE()}
+                                                                                    disabled={!editavelUE() || !habilitarCampoValor(dado.conta) || !habilitarCampoValor(dado.conta)}
                                                                                 />
                                                                             </td>
 
@@ -180,7 +184,7 @@ export const ValoresReprogramadosFormFormik = ({
                                                                                     onKeyDown={(e) => handleOnKeyDown(setFieldValue, e, acao.capital, index_conta, index_acao, "UE")}
                                                                                     placeholder=' '
                                                                                     allowEmpty={true}
-                                                                                    disabled={!editavelUE()}
+                                                                                    disabled={!editavelUE() || !habilitarCampoValor(dado.conta)}
                                                                                 />
                                                                             </td>
 
@@ -271,7 +275,7 @@ export const ValoresReprogramadosFormFormik = ({
                                                                                     onKeyDown={(e) => handleOnKeyDown(setFieldValue, e, acao.livre, index_conta, index_acao, "UE")}
                                                                                     placeholder=' '
                                                                                     allowEmpty={true}
-                                                                                    disabled={!editavelUE()}
+                                                                                    disabled={!editavelUE() || !habilitarCampoValor(dado.conta)}
                                                                                 />
                                                                             </td>
 

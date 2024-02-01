@@ -7,7 +7,7 @@ export const ModalConfirmaEncerramentoSuporte = (props) => {
             show={props.show}
             onHide={()=>{}}
             titulo={"Confirmação de encerramento de suporte"}
-            bodyText={"<p>Deseja encerrar o suporte a essa unidade?</p> <p>Ao confirmar, você será direcionado para a página de acesso ao sistema e ao acessá-lo, não visualizará mais essa unidade.</p>"}
+            bodyText={"<p>Deseja encerrar o suporte a essa unidade?</p> <p>Ao confirmar, você não visualizará mais essa unidade como suporte.</p>"}
             primeiroBotaoTexto={"Não"}
             primeiroBotaoCss={"outline-success"}
             primeiroBotaoOnclick={props.handleNaoConfirmaEncerramentoSuporte}

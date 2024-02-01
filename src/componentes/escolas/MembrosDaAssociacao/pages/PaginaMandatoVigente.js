@@ -46,9 +46,9 @@ export const PaginaMandatoVigente = () => {
 
     return (
         <>
-            <div className="d-flex bd-highlight mt-2">
+            <div className="d-flex bd-highlight align-items-end mt-2">
                 <MandatoInfo/>
-                {composicaoUuid && currentPage !== 1 &&
+                {composicaoUuid &&
                     <ComposicaoInfo/>
                 }
             </div>
