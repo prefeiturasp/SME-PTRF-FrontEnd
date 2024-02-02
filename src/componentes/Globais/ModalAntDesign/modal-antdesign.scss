@@ -62,3 +62,23 @@
         color: #000000;
     } 
 }
+
+.modal-ant-design.modal-notifica-erro-concluir-pc {
+    font-family: "Roboto";
+
+    .title-modal-antdesign-notifica-erro-pc {
+        font-size: 20px;
+        font-weight: 700;
+        line-height: 32px;
+        letter-spacing: 0px;
+        text-align: center;
+    }
+
+    .body-text-modal-antdesign-notifica-erro-pc {
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 24px;
+        letter-spacing: 0.15px;
+        text-align: center;
+    }
+}

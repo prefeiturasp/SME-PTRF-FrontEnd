@@ -67,7 +67,7 @@ export const CardSaldoEncerramentoConta = ({
                             <div className="col-3">
                                 <div className="form-group">
                                     <label htmlFor="data_encerramento">
-                                        Data de encerramento
+                                        Data de encerramento *
                                         <span data-html={true} data-tip="Informar a data de encerramento da conta na agência.">
                                             <FontAwesomeIcon
                                                 style={{marginLeft: "10px", color: '#2B7D83'}}
