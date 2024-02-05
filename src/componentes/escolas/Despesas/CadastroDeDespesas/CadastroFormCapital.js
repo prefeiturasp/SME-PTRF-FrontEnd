@@ -5,7 +5,7 @@ import {
     trataNumericos,
     processoIncorporacaoMask
 } from "../../../../utils/ValidacoesAdicionaisFormularios";
-import CurrencyInput from "react-currency-input";
+import { ReactNumberFormatInput as CurrencyInput } from "../../../Globais/ReactNumberFormatInput";
 import MaskedInput from "react-text-mask";
 import {visoesService} from "../../../../services/visoes.service";
 
