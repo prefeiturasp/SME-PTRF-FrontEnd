@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import {ReceitaSchema} from "../Schemas";
 import {visoesService} from "../../../../services/visoes.service";
 import {DatePickerField} from "../../../Globais/DatePickerField";
-import CurrencyInput from "react-currency-input";
+import { ReactNumberFormatInput as CurrencyInput } from "../../../Globais/ReactNumberFormatInput";
 import {comparaObjetos} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import {ModalReceitaConferida} from "../ModalReceitaJaConferida";
 import {ModalSelecionaRepasse} from "../ModalSelecionaRepasse";
