@@ -1,7 +1,7 @@
 import React, {useState, useCallback} from "react";
 import {DatePickerField} from "../../../Globais/DatePickerField";
 import {trataNumericos} from "../../../../utils/ValidacoesAdicionaisFormularios";
-import CurrencyInput from "react-currency-input";
+import { ReactNumberFormatInput as CurrencyInput } from "../../../Globais/ReactNumberFormatInput";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faExclamationCircle, faCheck, faTrash, faDownload, faEye} from '@fortawesome/free-solid-svg-icons'
 import ReactTooltip from "react-tooltip";
@@ -286,7 +286,6 @@ export const AnalisesDeContaDaPrestacao = ({infoAta, analisesDeContaDaPrestacao,
                                                     handleChangeAnalisesDeContaDaPrestacao(e.target.name, e.target.value)
                                                     validaAjustesSaldo(informacoes_conciliacao_ue(), index, analisesDeContaDaPrestacao[index], "saldo")
                                                 }}
-                                                allowEmpty={true}
                                                 selectAllOnFocus={true}
                                                 placeholder=' '
                                                 onKeyDown={(e) => handleOnKeyDownAjusteSaldo(e, analisesDeContaDaPrestacao[index].saldo_extrato)}
