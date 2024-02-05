@@ -21,6 +21,7 @@ import {
 
 const corTagSuporte = {
           1: 'tag-blue-support',
+          2: 'tag-acesso-sme',
         }
 
 const dataVisaoSuporteTag = {
@@ -30,6 +31,16 @@ const dataVisaoSuporteTag = {
                 tag_hint: "Usuário com acesso de suporte"
             }]
         }
+
+const dataAcessoConcedidoSmeTag = {
+    informacoes: [
+        {
+            tag_id: 2,
+            tag_nome: "Acesso habilitado pela SME",
+            tag_hint: "Usuário com acesso habilitado pela SME"
+        }
+    ]
+}
 
 export const ListaUsuarios = ({usuarios, isLoading}) => {
     const {uuidUnidadeBase, visaoBase} = useContext(GestaoDeUsuariosListContext);
@@ -144,14 +155,31 @@ export const ListaUsuarios = ({usuarios, isLoading}) => {
                             <p className='mb-0 font-weight-bold'>Unidades com acesso</p>
                         </div>
                     </div>
+
                     <div className="row pl-3 pr-3">
-                        {unidadesComAcesso
-                            .map((unidade, index) => (
-                        <div key={index} className="col-6 px-2">
-                            <span>{unidade.nome}</span>
-                        </div>))}
+                        {unidadesComAcesso.map((unidade, index) => (
+                            <Fragment key={index} >
+                                {unidade.acesso_concedido_sme 
+                                    ? 
+                                        <>
+                                        <div className="col-6 px-2">
+                                            <span>{unidade.nome}</span>
+                                        </div>
+                                        <div className="col-6" style={{marginLeft: -10, width:'30%'}}>
+                                            <TableTags data={dataAcessoConcedidoSmeTag} coresTags={corTagSuporte}/>
+                                        </div>
+                                        </>
+                                    :
+                                        <div className="col-12 px-2 pb-4">
+                                            <span>{unidade.nome}</span>
+                                        </div>
+                                }
+                                
+                            </Fragment>
+                        ))}
                     </div>
-                </div>}
+                </div>
+                }
 
                 {(visaoBase === 'DRE' || visaoBase === 'SME') && temUnidadesComAcessoSuporte &&
                 <div className="pb-2">
