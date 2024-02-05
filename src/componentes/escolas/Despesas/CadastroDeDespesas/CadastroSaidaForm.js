@@ -22,7 +22,7 @@ import "./cadastro-de-despesas.scss";
 import {metodosAuxiliares} from "../metodosAuxiliares";
 import {trataNumericos} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import Loading from "../../../../utils/Loading";
-import CurrencyInput from "react-currency-input";
+import { ReactNumberFormatInput as CurrencyInput } from "../../../Globais/ReactNumberFormatInput";
 import HTTP_STATUS from "http-status-codes";
 import {getReceita} from '../../../../services/escolas/Receitas.service';
 import {ASSOCIACAO_UUID} from "../../../../services/auth.service";

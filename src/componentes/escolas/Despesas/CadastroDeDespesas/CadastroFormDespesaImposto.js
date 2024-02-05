@@ -1,6 +1,6 @@
 import React from "react";
 import { DatePickerField } from "../../../Globais/DatePickerField";
-import CurrencyInput from "react-currency-input";
+import { ReactNumberFormatInput as CurrencyInput } from "../../../Globais/ReactNumberFormatInput";
 import { visoesService } from "../../../../services/visoes.service";
 import { trataNumericos } from "../../../../utils/ValidacoesAdicionaisFormularios";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";

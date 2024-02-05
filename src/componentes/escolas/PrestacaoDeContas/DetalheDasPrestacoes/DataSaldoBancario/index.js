@@ -1,6 +1,6 @@
 import React, {memo} from "react";
 import {DatePickerField} from "../../../../Globais/DatePickerField";
-import CurrencyInput from "react-currency-input";
+import { ReactNumberFormatInput as CurrencyInput } from "../../../../Globais/ReactNumberFormatInput";
 import {trataNumericos} from "../../../../../utils/ValidacoesAdicionaisFormularios";
 import './data-saldo-bancario.scss'
 import {visoesService} from "../../../../../services/visoes.service";
