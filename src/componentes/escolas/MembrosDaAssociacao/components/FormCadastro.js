@@ -221,7 +221,8 @@ export const FormCadastro = ({cargo, onSubmitForm, composicaoUuid, switchStatusP
                                 {(props.values.representacao === "SERVIDOR" || props.values.representacao === "ESTUDANTE") &&
                                     <div className="col-6 mt-3">
                                         <div className="form-group">
-                                            <label>{props.values.representacao === 'SERVIDOR' ? "Registro Funcional" : "Código EOL"}</label>
+                                            <label><span className='asterisco-vermelho'>* </span>{props.values.representacao === 'SERVIDOR' ? "Registro Funcional" : "Código EOL"}
+                                            </label>
                                             <input
                                                 type="text"
                                                 value={props.values.codigo_identificacao ? props.values.codigo_identificacao : ""}
@@ -274,7 +275,7 @@ export const FormCadastro = ({cargo, onSubmitForm, composicaoUuid, switchStatusP
                                 {(props.values.representacao === 'PAI_RESPONSAVEL' || props.values.representacao === 'ESTUDANTE') &&
                                     <div className="col-6">
                                         <div className="form-group">
-                                            <label>{props.values.representacao === 'PAI_RESPONSAVEL' ? "CPF do pai ou responsável" : "CPF"} *</label>
+                                            <label><span className='asterisco-vermelho'>* </span>{props.values.representacao === 'PAI_RESPONSAVEL' ? "CPF do pai ou responsável" : "CPF"}</label>
                                             <MaskedInput
                                                 mask={[/\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '-', /\d/, /\d/]}
                                                 type="text"
@@ -290,69 +291,77 @@ export const FormCadastro = ({cargo, onSubmitForm, composicaoUuid, switchStatusP
                                 }
                             </div>
 
-                            <div className='row mt-3'>
-                                <div className="col-6">
-                                    <div className="form-group">
-                                        <label>Telefone</label>
-                                        <MaskedInput
-                                            mask={(valor) => telefoneMaskContitional(valor)}
-                                            value={props.values.telefone ? props.values.telefone : ""}
-                                            onChange={props.handleChange}
-                                            name="telefone"
-                                            className="form-control"
-                                            disabled={!retornaSeEhComposicaoVigente() || (!cargo.uuid ? retornaSeCampoEhDisabled(props.values) : !retornaSeEhPresidente())}
-                                        />
-                                        {props.errors.telefone && <span className="span_erro text-danger mt-1"> {props.errors.telefone}</span>}
-                                    </div>
-                                </div>
+                            {retornaSeEhPresidente() &&
+                                <>
+                                    <div className='row mt-3'>
+                                        <div className="col-6">
+                                            <div className="form-group">
+                                                <label>Telefone</label>
+                                                <MaskedInput
+                                                    mask={(valor) => telefoneMaskContitional(valor)}
+                                                    value={props.values.telefone ? props.values.telefone : ""}
+                                                    onChange={props.handleChange}
+                                                    name="telefone"
+                                                    className="form-control"
+                                                    disabled={!retornaSeEhComposicaoVigente() || (!cargo.uuid ? retornaSeCampoEhDisabled(props.values) : !retornaSeEhPresidente())}
+                                                />
+                                                {props.errors.telefone && <span
+                                                    className="span_erro text-danger mt-1"> {props.errors.telefone}</span>}
+                                            </div>
+                                        </div>
 
-                                <div className="col-6">
-                                    <div className="form-group">
-                                        <label>CEP</label>
-                                        <MaskedInput
-                                            mask={[/\d/, /\d/, /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/]}
-                                            value={props.values.cep ? props.values.cep : ""}
-                                            onChange={props.handleChange}
-                                            name="cep"
-                                            className="form-control"
-                                            disabled={!retornaSeEhComposicaoVigente() || (!cargo.uuid ? retornaSeCampoEhDisabled(props.values) : !retornaSeEhPresidente())}
-                                        />
-                                        {props.errors.cep && <span className="span_erro text-danger mt-1"> {props.errors.cep}</span>}
+                                        <div className="col-6">
+                                            <div className="form-group">
+                                                <label>CEP</label>
+                                                <MaskedInput
+                                                    mask={[/\d/, /\d/, /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/]}
+                                                    value={props.values.cep ? props.values.cep : ""}
+                                                    onChange={props.handleChange}
+                                                    name="cep"
+                                                    className="form-control"
+                                                    disabled={!retornaSeEhComposicaoVigente() || (!cargo.uuid ? retornaSeCampoEhDisabled(props.values) : !retornaSeEhPresidente())}
+                                                />
+                                                {props.errors.cep && <span
+                                                    className="span_erro text-danger mt-1"> {props.errors.cep}</span>}
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
 
-                            <div className='row mt-3'>
-                                <div className="col-6">
-                                    <div className="form-group">
-                                        <label>Bairro</label>
-                                        <input
-                                            type="text"
-                                            value={props.values.bairro ? props.values.bairro : ""}
-                                            onChange={props.handleChange}
-                                            name="bairro"
-                                            className="form-control"
-                                            disabled={!retornaSeEhComposicaoVigente() || (!cargo.uuid ? retornaSeCampoEhDisabled(props.values) : !retornaSeEhPresidente())}
-                                        />
-                                        {props.errors.bairro && <span className="span_erro text-danger mt-1"> {props.errors.bairro}</span>}
-                                    </div>
-                                </div>
+                                    <div className='row mt-3'>
+                                        <div className="col-6">
+                                            <div className="form-group">
+                                                <label>Bairro</label>
+                                                <input
+                                                    type="text"
+                                                    value={props.values.bairro ? props.values.bairro : ""}
+                                                    onChange={props.handleChange}
+                                                    name="bairro"
+                                                    className="form-control"
+                                                    disabled={!retornaSeEhComposicaoVigente() || (!cargo.uuid ? retornaSeCampoEhDisabled(props.values) : !retornaSeEhPresidente())}
+                                                />
+                                                {props.errors.bairro && <span
+                                                    className="span_erro text-danger mt-1"> {props.errors.bairro}</span>}
+                                            </div>
+                                        </div>
 
-                                <div className="col-6">
-                                    <div className="form-group">
-                                        <label>Endereço</label>
-                                        <input
-                                            type="text"
-                                            value={props.values.endereco ? props.values.endereco : ""}
-                                            onChange={props.handleChange}
-                                            name="endereco"
-                                            className="form-control"
-                                            disabled={!retornaSeEhComposicaoVigente() || (!cargo.uuid ? retornaSeCampoEhDisabled(props.values) : !retornaSeEhPresidente())}
-                                        />
-                                        {props.errors.endereco && <span className="span_erro text-danger mt-1"> {props.errors.endereco}</span>}
+                                        <div className="col-6">
+                                            <div className="form-group">
+                                                <label>Endereço</label>
+                                                <input
+                                                    type="text"
+                                                    value={props.values.endereco ? props.values.endereco : ""}
+                                                    onChange={props.handleChange}
+                                                    name="endereco"
+                                                    className="form-control"
+                                                    disabled={!retornaSeEhComposicaoVigente() || (!cargo.uuid ? retornaSeCampoEhDisabled(props.values) : !retornaSeEhPresidente())}
+                                                />
+                                                {props.errors.endereco && <span
+                                                    className="span_erro text-danger mt-1"> {props.errors.endereco}</span>}
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
+                                </>
+                            }
 
                             <div className='row mt-3'>
                                 <div className="col-6">
@@ -366,7 +375,8 @@ export const FormCadastro = ({cargo, onSubmitForm, composicaoUuid, switchStatusP
                                             className="form-control"
                                             disabled={!retornaSeEhComposicaoVigente() || (!cargo.uuid ? retornaSeCampoEhDisabled(props.values) : false)}
                                         />
-                                        {props.errors.email && <span className="span_erro text-danger mt-1"> {props.errors.email}</span>}
+                                        {props.errors.email &&
+                                            <span className="span_erro text-danger mt-1"> {props.errors.email}</span>}
                                     </div>
                                 </div>
                             </div>
@@ -383,26 +393,29 @@ export const FormCadastro = ({cargo, onSubmitForm, composicaoUuid, switchStatusP
                                             maxDate={data ? moment(data.data_final).toDate() : ""}
                                             disabled={!retornaSeEhComposicaoVigente() || retornaSeCampoEhDisabled(props.values)}
                                         />
-                                        {props.errors.data_inicio_no_cargo && <span className="span_erro text-danger mt-1"> {props.errors.data_inicio_no_cargo}</span>}
+                                        {props.errors.data_inicio_no_cargo && <span
+                                            className="span_erro text-danger mt-1"> {props.errors.data_inicio_no_cargo}</span>}
                                     </div>
                                 </div>
                                 <div className="col-6">
                                     <div className="form-group">
-                                        <label><span className='asterisco-vermelho'>* </span>Período final de ocupação</label>
+                                        <label><span className='asterisco-vermelho'>* </span>Período final de
+                                            ocupação</label>
                                         <DatePickerField
                                             name="data_fim_no_cargo"
                                             value={props.values.data_fim_no_cargo ? props.values.data_fim_no_cargo : ""}
                                             onChange={setFieldValue}
-                                            minDate={data && data.info_composicao_anterior && data.info_composicao_anterior.data_final ?  moment(data.info_composicao_anterior.data_final).toDate() : ""}
-                                            maxDate={data && data.mandato && data.mandato.data_final ? moment(data.mandato.data_final).toDate(): ""}
+                                            minDate={data && data.info_composicao_anterior && data.info_composicao_anterior.data_final ? moment(data.info_composicao_anterior.data_final).toDate() : ""}
+                                            maxDate={data && data.mandato && data.mandato.data_final ? moment(data.mandato.data_final).toDate() : ""}
                                             disabled={!retornaSeEhComposicaoVigente() || retornaSePeriodoFinalEhDisable()}
                                         />
-                                        {props.errors.data_fim_no_cargo && <span className="span_erro text-danger mt-1"> {props.errors.data_fim_no_cargo}</span>}
+                                        {props.errors.data_fim_no_cargo && <span
+                                            className="span_erro text-danger mt-1"> {props.errors.data_fim_no_cargo}</span>}
                                     </div>
                                 </div>
                             </div>
 
-                            {retornaSeEhPresidente()  &&
+                            {retornaSeEhPresidente() &&
                                 <>
                                     <hr/>
                                     <div className='d-flex align-items-center'>
