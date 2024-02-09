@@ -12,7 +12,15 @@ import moment from "moment/moment";
 import Loading from "../../../../utils/Loading";
 import {Switch} from "antd";
 
-export const FormCadastro = ({cargo, onSubmitForm, composicaoUuid, switchStatusPresidente, cargosDaDiretoriaExecutiva, responsavelPelasAtribuicoes}) => {
+export const FormCadastro = ({
+    cargo, 
+    onSubmitForm, 
+    composicaoUuid, 
+    switchStatusPresidente, 
+    cargosDaDiretoriaExecutiva, 
+    responsavelPelasAtribuicoes,
+    onInformarSaida
+}) => {
 
     const {isLoading, data} = useGetComposicao(composicaoUuid)
 
@@ -179,6 +187,7 @@ export const FormCadastro = ({cargo, onSubmitForm, composicaoUuid, switchStatusP
                                 cargo={cargo ? cargo : ''}
                                 isValid={props.isValid}
                                 retornaSeEhComposicaoVigente={retornaSeEhComposicaoVigente}
+                                onInformarSaida={() => onInformarSaida(props.values, data)}
                             />
 
                             <div className='row mt-3'>
@@ -407,7 +416,8 @@ export const FormCadastro = ({cargo, onSubmitForm, composicaoUuid, switchStatusP
                                             onChange={setFieldValue}
                                             minDate={data && data.info_composicao_anterior && data.info_composicao_anterior.data_final ? moment(data.info_composicao_anterior.data_final).toDate() : ""}
                                             maxDate={data && data.mandato && data.mandato.data_final ? moment(data.mandato.data_final).toDate() : ""}
-                                            disabled={!retornaSeEhComposicaoVigente() || retornaSePeriodoFinalEhDisable()}
+                                            // disabled={!retornaSeEhComposicaoVigente() || retornaSePeriodoFinalEhDisable()}
+                                            disabled
                                         />
                                         {props.errors.data_fim_no_cargo && <span
                                             className="span_erro text-danger mt-1"> {props.errors.data_fim_no_cargo}</span>}
