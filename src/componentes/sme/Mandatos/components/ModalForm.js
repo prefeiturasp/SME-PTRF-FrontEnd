@@ -10,11 +10,10 @@ import {useGetMandatoMaisRecente} from "../hooks/useGetMandatoMaisRecente";
 
 export const ModalForm = ({handleSubmitFormModal, handleConfirmDeleteMandato}) => {
     const {showModalForm, setShowModalForm, stateFormModal, bloquearBtnSalvarForm} = useContext(MandatosContext)
-
     const {data} = useGetMandatoMaisRecente()
 
     const getDataInicial = (values) => {
-        return (values.uuid && data.data_final_mandato_anterior_ao_mais_recente) ? moment(data.data_final_mandato_anterior_ao_mais_recente).toDate()
+        return (values.uuid && values.limite_min_data_inicial) ? moment(values.limite_min_data_inicial).toDate()
             : !values.uuid && data.data_inicial_proximo_mandato ? moment(data.data_inicial_proximo_mandato).toDate()
                 : null
     }
