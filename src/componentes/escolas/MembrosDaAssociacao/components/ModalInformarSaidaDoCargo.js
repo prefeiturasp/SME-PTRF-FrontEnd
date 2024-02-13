@@ -10,10 +10,14 @@ export const ModalInformarSaidaDoCargo = ({
     handleConfirm
 }) => {
     const [dataSaida, setDataSaida] = useState("");
-
+    console.log('composicaoAtual', composicaoAtual);
     const handleChange = (name, value) => {
         setDataSaida(value);
     };
+
+    if (!composicaoAtual){
+        return null;
+    }
 
     return (
         <Modal show={show} onHide={handleClose}>
@@ -30,7 +34,7 @@ export const ModalInformarSaidaDoCargo = ({
                             onChange={handleChange}
                             placeholderText={"DD/MM/AAAA"}
                             minDate={composicaoAtual && composicaoAtual.info_composicao_anterior ? moment(composicaoAtual.info_composicao_anterior.data_final).toDate() : ""}
-                            maxDate={composicaoAtual && composicaoAtual.mandato ? moment(composicaoAtual.mandato.data_final).toDate() : ""}
+                            maxDate={new Date() < moment(composicaoAtual.data_final).toDate() ? new Date() : moment(composicaoAtual.data_final).toDate()}
                         />
                     </div>
                 </div>
