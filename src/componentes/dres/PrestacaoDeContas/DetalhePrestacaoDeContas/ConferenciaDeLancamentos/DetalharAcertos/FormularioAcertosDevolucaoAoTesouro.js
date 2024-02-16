@@ -1,7 +1,7 @@
 import React, { useRef, useState, useContext, useMemo } from "react";
 import {DatePickerField} from "../../../../../Globais/DatePickerField";
 import {visoesService} from "../../../../../../services/visoes.service";
-import CurrencyInput from "react-currency-input";
+import { ReactNumberFormatInput as CurrencyInput } from "../../../../../Globais/ReactNumberFormatInput";
 import {ValidarParcialTesouro} from "../../../../../../context/DetalharAcertos"
 
 export const FormularioAcertosDevolucaoAoTesouro = ({formikProps, acerto, index, tiposDevolucao, valorDocumento}) => {

@@ -8,7 +8,6 @@ import {
     calculaValorRecursoAcoes,
 } from "../../../../utils/ValidacoesAdicionaisFormularios";
 import {DatePickerField} from "../../../Globais/DatePickerField";
-import CurrencyInput from "react-currency-input";
 import {Link} from 'react-router-dom';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTimesCircle} from "@fortawesome/free-solid-svg-icons";
@@ -31,6 +30,7 @@ import {ModalDespesaIncompleta} from "./ModalDespesaIncompleta";
 import ModalMotivosPagamentoAntecipado from "./ModalMotivosPagamentoAntecipado";
 import ExibeMotivosPagamentoAntecipadoNoForm from "./ExibeMotivosPagamentoAntecipadoNoForm";
 import { RetemImposto } from "../RetemImposto";
+import { ReactNumberFormatInput as CurrencyInput } from "../../../Globais/ReactNumberFormatInput";
 
 
 export const CadastroFormFormik = ({
