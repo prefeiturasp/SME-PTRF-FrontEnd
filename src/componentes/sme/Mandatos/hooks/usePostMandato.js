@@ -7,7 +7,7 @@ import {toastCustom} from "../../../Globais/ToastCustom";
 export const usePostMandato = () => {
 
     const queryClient = useQueryClient()
-    const {setShowModalForm, setShowModalInfo, setTextoModalInfo, setTituloModalInfo, setBloquearBtnSalvarForm} = useContext(MandatosContext)
+    const {setShowModalForm, setShowModalInfo, setTextoModalInfo, setTituloModalInfo, setBloquearBtnSalvarForm, setForceLoading} = useContext(MandatosContext)
 
     const mutationPost = useMutation({
         mutationFn: ({payload}) => {
@@ -18,6 +18,7 @@ export const usePostMandato = () => {
             // Refaz a lista de mandatos
             queryClient.invalidateQueries(['mandatos-list']).then()
             queryClient.invalidateQueries(['mandato-mais-recente']).then()
+            setForceLoading(false);
             setShowModalForm(false)
             setShowModalInfo(false)
             setTextoModalInfo('')

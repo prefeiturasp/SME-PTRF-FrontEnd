@@ -1,6 +1,6 @@
 import React from "react";
 import {Formik} from "formik";
-import CurrencyInput from "react-currency-input";
+import { ReactNumberFormatInput as CurrencyInput } from "../../Globais/ReactNumberFormatInput";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCheckCircle, faExclamationTriangle} from "@fortawesome/free-solid-svg-icons";
 
