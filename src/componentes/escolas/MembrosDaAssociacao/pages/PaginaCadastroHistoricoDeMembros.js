@@ -14,7 +14,7 @@ import {getStatusPresidenteAssociacao} from "../../../../services/escolas/Associ
 import {ASSOCIACAO_UUID} from "../../../../services/auth.service";
 import {usePatchStatusPresidente} from "../hooks/usePatchStatusPresidente";
 import { ModalConfirm } from "../../../Globais/Modal/ModalConfirm";
-
+import { ModalInformarSaidaDoCargo } from "../components/ModalInformarSaidaDoCargo";
 const CargoComposicaoModel = {
     "ocupante_do_cargo": {
         "nome": null,
@@ -53,6 +53,7 @@ export const PaginaCadastroHistoricoDeMembros = () => {
     const [cargosDaDiretoriaExecutiva, setCargosDaDiretoriaExecutiva] = useState([])
     const [responsavelPelasAtribuicoes, setResponsavelPelasAtribuicoes] = useState('');
     const [switchStatusPresidente, setSwitchStatusPresidente] = useState(false);
+    const [showModalInformarSaida, setShowModalInformarSaida] = useState({show: false});
 
     const carregaStatusPresidenteAssociacao = useCallback(async () => {
         let mounted = true;
@@ -85,7 +86,7 @@ export const PaginaCadastroHistoricoDeMembros = () => {
         carregaCargosDaDiretoriaExecutiva().then()
     }, [carregaCargosDaDiretoriaExecutiva])
 
-    const perguntarIncluirNovoMembro = async (payload, cargoVazio) => {
+    const perguntarIncluirNovoMembro = async (composicao_posterior) => {
         ModalConfirm({
             dispatch,
             title: 'Importante',
@@ -94,24 +95,49 @@ export const PaginaCadastroHistoricoDeMembros = () => {
             confirmText: 'Incluir novo membro',
             dataQa: 'modal-sugerir-incluir-novo-membro',
             onConfirm: async () => {
-                const mutationResp = await mutationPutCargoDaComposicao.mutateAsync({uuidCargoComposicao: state.cargo.uuid, payload: payload});
-                if (mutationResp.data.composicao_posterior) {
-                    navigate(`/cadastro-historico-de-membros/${mutationResp.data.composicao_posterior}`, {
-                        state: {cargo: cargoVazio}
-                    });
-                }  else {
-                    navigate("/membros-da-associacao");
-                }                       
+
+                let cargoVazio = {...CargoComposicaoModel};  
+                cargoVazio.cargo_associacao = state.cargo.cargo_associacao;
+                cargoVazio.cargo_associacao_label = state.cargo.cargo_associacao_label;
+
+                navigate(`/cadastro-historico-de-membros/${composicao_posterior}`, {
+                    state: {cargo: cargoVazio}
+                });                       
             }, 
             onCancel: async () => {
-                await mutationPutCargoDaComposicao.mutateAsync({uuidCargoComposicao: state.cargo.uuid, payload: payload});
                 navigate("/membros-da-associacao");
             }               
         })
     };
 
+    // const perguntarIncluirNovoMembro = async (payload, cargoVazio, composicaoAtual) => {
+    //     ModalConfirm({
+    //         dispatch,
+    //         title: 'aten',
+    //         message: 'Deseja incluir um novo membro para o cargo?',
+    //         children: <DataSaidaForm composicaoAtual={composicaoAtual} callbackDataSaida={setDataSaidaCargo}/>,
+    //         cancelText: 'Cancelar',
+    //         confirmText: 'Confirmar',
+    //         dataQa: 'modal-sugerir-incluir-novo-membro',
+    //         confirmDisabled: dataSaidaCargo ===  null,
+    //         onConfirm: async () => {
+    //             const mutationResp = await mutationPutCargoDaComposicao.mutateAsync({uuidCargoComposicao: state.cargo.uuid, payload: payload});
+    //             if (mutationResp.data.composicao_posterior) {
+    //                 navigate(`/cadastro-historico-de-membros/${mutationResp.data.composicao_posterior}`, {
+    //                     state: {cargo: cargoVazio}
+    //                 });
+    //             }  else {
+    //                 navigate("/membros-da-associacao");
+    //             }    
+    //         }
+    //         // onCancel: async () => {
+    //         //     await mutationPutCargoDaComposicao.mutateAsync({uuidCargoComposicao: state.cargo.uuid, payload: payload});
+    //         //     navigate("/membros-da-associacao");
+    //         // }               
+    //     })
+    // };
 
-    const onSubmitForm = async (values) => {
+    const formatPayload = (values) => {
         let payload = {
             composicao: composicaoUuid,
             ocupante_do_cargo: {
@@ -132,19 +158,17 @@ export const PaginaCadastroHistoricoDeMembros = () => {
             data_inicio_no_cargo: moment(values.data_inicio_no_cargo).format('YYYY-MM-DD'),
             data_fim_no_cargo: moment(values.data_fim_no_cargo).format('YYYY-MM-DD')
         }
+        return payload
+    }
+
+    const onSubmitForm = async (values) => {
+        let payload = formatPayload(values);
 
         if (!state.cargo.uuid){
             mutationPostCargoDaComposicao.mutate({payload: payload})
         }else {
-            if(values.data_fim_no_cargo !== state.cargo.data_fim_no_cargo){
-                let cargoVazio = {...CargoComposicaoModel};  
-                cargoVazio.cargo_associacao = values.cargo_associacao
-                cargoVazio.cargo_associacao_label = values.cargo_associacao_label;
-                perguntarIncluirNovoMembro(payload, cargoVazio);
-            } else {
-                await mutationPutCargoDaComposicao.mutateAsync({uuidCargoComposicao: state.cargo.uuid, payload: payload});
-                navigate("/membros-da-associacao");
-            }
+            await mutationPutCargoDaComposicao.mutateAsync({uuidCargoComposicao: state.cargo.uuid, payload: payload});
+            navigate("/membros-da-associacao");            
         }
 
         let payloadStatusPresidente;
@@ -163,6 +187,27 @@ export const PaginaCadastroHistoricoDeMembros = () => {
         mutationPatchStatusPresidenteAssociacao.mutate({uuidAssociacao: uuid_associacao, payload: payloadStatusPresidente})
     }
 
+    function onInformarSaida(values, composicaoAtual){
+        setShowModalInformarSaida({show: true, values:values, composicaoAtual: composicaoAtual, })
+    }
+
+    async function onConfirmarInformarSaida(dataSaida){
+        let payload = formatPayload(showModalInformarSaida.values);
+        payload.data_saida_do_cargo = moment(dataSaida).format('YYYY-MM-DD');
+
+        const mutationResp = await mutationPutCargoDaComposicao.mutateAsync({uuidCargoComposicao: state.cargo.uuid, payload: payload});        
+        closeInformSaida();
+        if (mutationResp.data.composicao_posterior) {
+            perguntarIncluirNovoMembro(mutationResp.data.composicao_posterior)        
+        }  else {
+            navigate("/membros-da-associacao");
+        } 
+    }
+
+    function closeInformSaida () {
+        setShowModalInformarSaida({show: false});
+    }
+
     return(
         <>
             <PaginasContainer>
@@ -176,8 +221,16 @@ export const PaginaCadastroHistoricoDeMembros = () => {
                         setCargosDaDiretoriaExecutiva={setCargosDaDiretoriaExecutiva}
                         responsavelPelasAtribuicoes={responsavelPelasAtribuicoes}
                         switchStatusPresidente={switchStatusPresidente}
+                        onInformarSaida={onInformarSaida}
                     />
                 </div>
+
+                <ModalInformarSaidaDoCargo 
+                    show={showModalInformarSaida.show} 
+                    composicaoAtual={showModalInformarSaida.composicaoAtual}
+                    handleClose={closeInformSaida} 
+                    handleConfirm={onConfirmarInformarSaida}
+                />
             </PaginasContainer>
         </>
     )

@@ -3,7 +3,7 @@ import {Link} from "react-router-dom";
 import {useGetComposicao} from "../hooks/useGetComposicao";
 import useDataTemplate from "../../../../hooks/Globais/useDataTemplate";
 
-export const TopoComBotoesFormCadastroHistoricoDeMembros = ({composicaoUuid, cargo, isValid, retornaSeEhComposicaoVigente}) => {
+export const TopoComBotoesFormCadastroHistoricoDeMembros = ({composicaoUuid, cargo, isValid, retornaSeEhComposicaoVigente, onInformarSaida}) => {
 
     const {data} = useGetComposicao(composicaoUuid)
     const dataTemplate = useDataTemplate()
@@ -17,6 +17,18 @@ export const TopoComBotoesFormCadastroHistoricoDeMembros = ({composicaoUuid, car
                 </p>
             </div>
             <div className="p-2 pt-3" data-qa='composicao-info'>
+                {
+                    cargo.uuid ? (
+                        <button
+                            disabled={!isValid || !retornaSeEhComposicaoVigente()}
+                            type='button'
+                            className="btn btn-success mr-2"
+                            onClick={onInformarSaida}
+                        >
+                            Informar saída
+                        </button>   
+                    ) : null
+                }              
                 <Link
                     to={{
                         pathname: `/membros-da-associacao`,

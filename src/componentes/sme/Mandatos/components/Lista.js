@@ -20,7 +20,7 @@ import {ModalConfirm} from "../../../Globais/Modal/ModalConfirm";
 export const Lista = () => {
     const dispatch = useDispatch();
 
-    const {setShowModalForm, stateFormModal, setStateFormModal, setBloquearBtnSalvarForm} = useContext(MandatosContext)
+    const {setShowModalForm, stateFormModal, setStateFormModal, setBloquearBtnSalvarForm, forceLoading} = useContext(MandatosContext)
     const {isLoading, data} = useGetMandatos()
     const {mutationPost} = usePostMandato()
     const {mutationPatch} = usePatchMandato()
@@ -65,6 +65,7 @@ export const Lista = () => {
             data_inicial_proximo_mandato: rowData.data_inicial_proximo_mandato,
             uuid: rowData.uuid,
             id: rowData.id,
+            limite_min_data_inicial: rowData.limite_min_data_inicial
         });
         setShowModalForm(true)
     };
@@ -94,7 +95,7 @@ export const Lista = () => {
         })
     };
 
-    if (isLoading) {
+    if (isLoading || forceLoading) {
         return (
             <Loading
                 corGrafico="black"

@@ -11,6 +11,7 @@ const initialStateFormModal = {
     data_inicial_proximo_mandato: null,
     uuid:"",
     id:"",
+    limite_min_data_inicial: null
 };
 
 export const MandatosContext = createContext({
@@ -33,6 +34,8 @@ export const MandatosContext = createContext({
     setTextoModalInfo: () => {},
     bloquearBtnSalvarForm: false,
     setBloquearBtnSalvarForm: () => {},
+    forceLoading: false,
+    setForceLoading: () => {}
 })
 
 export const MandatosProvider = ({children}) => {
@@ -46,6 +49,7 @@ export const MandatosProvider = ({children}) => {
     const [textoModalInfo, setTextoModalInfo] = useState('');
     const [tituloModalInfo, setTituloModalInfo] = useState('');
     const [bloquearBtnSalvarForm, setBloquearBtnSalvarForm] = useState(false)
+    const [forceLoading, setForceLoading] = useState(false)
 
     const contextValue = useMemo(() => {
         return {
@@ -69,8 +73,10 @@ export const MandatosProvider = ({children}) => {
             setTituloModalInfo,
             bloquearBtnSalvarForm,
             setBloquearBtnSalvarForm,
+            forceLoading,
+            setForceLoading
         };
-    }, [filter, currentPage, firstPage, showModalForm, stateFormModal, textoModalInfo, showModalInfo, tituloModalInfo, bloquearBtnSalvarForm]);
+    }, [filter, currentPage, firstPage, showModalForm, stateFormModal, textoModalInfo, showModalInfo, tituloModalInfo, bloquearBtnSalvarForm, forceLoading]);
 
     return (
         <MandatosContext.Provider value={contextValue}>
