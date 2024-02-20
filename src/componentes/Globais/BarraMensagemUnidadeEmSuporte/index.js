@@ -15,7 +15,6 @@ export const BarraMensagemUnidadeEmSuporte = () => {
             const unidadeSelecionada = dadosUsuarioLogado.unidades.find(obj => {
                 return obj.uuid === dadosUsuarioLogado.unidade_selecionada.uuid
             })
-            console.log("UNIDADE SLECIONADA: ", unidadeSelecionada)
             if (unidadeSelecionada && unidadeSelecionada.acesso_de_suporte){
                 setUnidadeEstaEmSuporte(unidadeSelecionada.acesso_de_suporte)
             }

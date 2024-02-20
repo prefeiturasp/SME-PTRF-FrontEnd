@@ -7,10 +7,11 @@ import {toastCustom} from "../../../Globais/ToastCustom";
 export const usePatchMandato = () => {
 
     const queryClient = useQueryClient()
-    const {setShowModalForm, setShowModalInfo, setTextoModalInfo, setTituloModalInfo, setBloquearBtnSalvarForm} = useContext(MandatosContext)
+    const {setShowModalForm, setShowModalInfo, setTextoModalInfo, setTituloModalInfo, setBloquearBtnSalvarForm, setForceLoading} = useContext(MandatosContext)
 
     const mutationPatch = useMutation({
         mutationFn: ({uuidMandato, payload}) => {
+            setForceLoading(true);
             return patchMandato(uuidMandato, payload)
         },
         onSuccess: (data) => {
@@ -20,12 +21,14 @@ export const usePatchMandato = () => {
             queryClient.invalidateQueries(['mandato-mais-recente']).then()
             // Mensagens
             setShowModalForm(false)
+            setForceLoading(false);
             setShowModalInfo(false)
             setTextoModalInfo('')
             setTituloModalInfo('')
             toastCustom.ToastCustomSuccess('Edição do período de mandato realizada com sucesso', `O período de mandato foi editado com sucesso.`)
         },
         onError: (error) => {
+            setForceLoading(false);
             console.log("Erro ao editar mandato ", error.response)
             // Mensagens
             setShowModalInfo(true)
