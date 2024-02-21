@@ -20,8 +20,8 @@ export const getListaPresentesPadrao = async (uuid_ata) => {
     return (await api.get(`api/presentes-ata/padrao-de-presentes/?ata_uuid=${uuid_ata}`, authHeader)).data
 }
 
-export const getMembroPorIdentificador = async (uuid_ata, identificador) => {
-    return (await api.get(`api/presentes-ata/get-nome-cargo-membro-associacao/?ata_uuid=${uuid_ata}&identificador=${identificador}`, authHeader)).data
+export const getMembroPorIdentificador = async (uuid_ata, identificador, data) => {
+    return (await api.get(`api/presentes-ata/get-nome-cargo-membro-associacao/?ata_uuid=${uuid_ata}&identificador=${identificador}&data=${data}`, authHeader)).data
 }
 
 export const postEdicaoAta = async (ata_uuid, payload) => {
