@@ -27,3 +27,7 @@ export const getMembroPorIdentificador = async (uuid_ata, identificador) => {
 export const postEdicaoAta = async (ata_uuid, payload) => {
     return (await api.patch(`/api/atas-associacao/${ata_uuid}/`, payload, authHeader)).data
 };
+
+export const getParticipantesOrdenadosPorCargo = async (uuid_ata) => {
+    return (await api.get(`api/presentes-ata/get-participantes-ordenados-por-cargo/?ata_uuid=${uuid_ata}`, authHeader)).data
+}
