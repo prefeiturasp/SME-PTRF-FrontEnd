@@ -420,10 +420,10 @@ export const NovoFormularioEditaAta = ({
             lista_cargos_composicao.diretoria_executiva.forEach(membro => {
                 lista_formatada.push({
                     id: membro.id,
-                    cargo: membro.cargo_associacao_label_completa,
-                    identificacao: membro.ocupante_do_cargo.codigo_identificacao,
+                    cargo: membro.cargo,
+                    identificacao: membro.codigo_identificacao,
                     membro: true,
-                    nome: membro.ocupante_do_cargo.nome,
+                    nome: membro.nome,
                     presente: true,
                     presidente_da_reuniao: false,
                     secretario_da_reuniao: false
@@ -435,10 +435,10 @@ export const NovoFormularioEditaAta = ({
             lista_cargos_composicao.conselho_fiscal.forEach(membro => {
                 lista_formatada.push({
                     id: membro.id,
-                    cargo: membro.cargo_associacao_label_completa,
-                    identificacao: membro.ocupante_do_cargo.codigo_identificacao,
+                    cargo: membro.cargo,
+                    identificacao: membro.codigo_identificacao,
                     membro: true,
-                    nome: membro.ocupante_do_cargo.nome,
+                    nome: membro.nome,
                     presente: true,
                     presidente_da_reuniao: false,
                     secretario_da_reuniao: false
