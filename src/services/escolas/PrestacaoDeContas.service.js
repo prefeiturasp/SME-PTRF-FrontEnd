@@ -229,6 +229,12 @@ export const gerarPreviaRelatorioAposAcertos = async (uuid) => {
   }
 }
 
+export const regerarRelatorioAposAcertos = async (uuid) => {
+  if(uuid){
+    return (await api.get(`/api/analises-prestacoes-contas/regerar-relatorio-apos-acertos/?analise_prestacao_uuid=${uuid}`,authHeader)).data
+  }
+}
+
 export const verificarStatusGeracaoAposAcertos = async (uuid) => {
   return (await api.get(`/api/analises-prestacoes-contas/status-info_relatorio_apos_acertos/?analise_prestacao_uuid=${uuid}`,authHeader)).data
 }
