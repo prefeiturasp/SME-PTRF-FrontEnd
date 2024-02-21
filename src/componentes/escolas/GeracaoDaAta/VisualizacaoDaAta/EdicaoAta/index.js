@@ -2,6 +2,8 @@ import React from "react";
 import "../../geracao-da-ata.scss"
 import {TopoComBotoes} from "./TopoComBotoes";
 import {FormularioEditaAta} from "./FormularioEditaAta";
+import {NovoFormularioEditaAta} from "./NovoFormularioEditaAta";
+import {visoesService} from "../../../../../services/visoes.service";
 import {useParams} from "react-router-dom";
 import {useEffect, useState, useCallback, useRef} from "react";
 import {getMembrosCargos} from "../../../../../services/escolas/PrestacaoDeContas.service";
@@ -165,6 +167,38 @@ export const EdicaoAta = () => {
         return erros;
     };
 
+    const getPresidenteAndSecretario = (participantes) => {
+        let presidente = null;
+        let secretario = null;
+
+        participantes.forEach(participante => {
+            if(participante.presidente_da_reuniao) {
+                presidente = {
+                    nome: participante.nome,
+                    cargo: participante.cargo
+                }
+            } else if(participante.secretario_da_reuniao) {
+                secretario = {
+                    nome: participante.nome,
+                    cargo: participante.cargo
+                }
+            }
+        });
+
+        return {
+            presidente: presidente,
+            secretario: secretario
+        };
+    };
+
+    const adicionaAtaUuidAosParticipantes = (listaParticipantes) => {
+        listaParticipantes.forEach(participante => {
+            participante.ata = uuid_ata;
+        });
+
+        return listaParticipantes;
+    };
+
     const onSubmitFormEdicaoAta = async () => {
 
         let dadosForm = formRef.current.values
@@ -177,21 +211,48 @@ export const EdicaoAta = () => {
         let data_da_reuniao = dadosForm.stateFormEditarAta.data_reuniao ? moment(dadosForm.stateFormEditarAta.data_reuniao).format("YYYY-MM-DD") : null;
         let hora_reuniao = dadosForm.stateFormEditarAta.hora_reuniao ? moment(dadosForm.stateFormEditarAta.hora_reuniao, 'HHmm').format('HH:mm') : "00:00"
 
-        let payload = {
-            cargo_presidente_reuniao: dadosForm.stateFormEditarAta.cargo_presidente_reuniao,
-            cargo_secretaria_reuniao: dadosForm.stateFormEditarAta.cargo_secretaria_reuniao,
-            comentarios: dadosForm.stateFormEditarAta.comentarios,
-            convocacao: dadosForm.stateFormEditarAta.convocacao,
-            data_reuniao: data_da_reuniao,
-            local_reuniao: dadosForm.stateFormEditarAta.local_reuniao,
-            parecer_conselho: dadosForm.stateFormEditarAta.parecer_conselho,
-            presidente_reuniao: dadosForm.stateFormEditarAta.presidente_reuniao,
-            retificacoes: dadosForm.stateFormEditarAta.retificacoes,
-            secretario_reuniao: dadosForm.stateFormEditarAta.secretario_reuniao,
-            tipo_reuniao: dadosForm.stateFormEditarAta.tipo_reuniao,
-            presentes_na_ata: dadosForm.listaPresentesPadrao,
-            hora_reuniao: hora_reuniao,
-            justificativa_repasses_pendentes: dadosForm.stateFormEditarAta.justificativa_repasses_pendentes,
+        let payload = {}
+
+        if(visoesService.featureFlagAtiva('historico-de-membros')) {
+            let result = getPresidenteAndSecretario(dadosForm.listaParticipantes)
+
+            let listaParticipantes = adicionaAtaUuidAosParticipantes(dadosForm.listaParticipantes)
+
+            const {presidente, secretario} = result
+
+            payload = {
+                cargo_presidente_reuniao: presidente ? presidente.cargo : "",
+                cargo_secretaria_reuniao: secretario ? secretario.cargo : "",
+                comentarios: dadosForm.stateFormEditarAta.comentarios,
+                convocacao: dadosForm.stateFormEditarAta.convocacao,
+                data_reuniao: data_da_reuniao,
+                local_reuniao: dadosForm.stateFormEditarAta.local_reuniao,
+                parecer_conselho: dadosForm.stateFormEditarAta.parecer_conselho,
+                presidente_reuniao: presidente ? presidente.nome : "",
+                retificacoes: dadosForm.stateFormEditarAta.retificacoes,
+                secretario_reuniao: secretario ? secretario.nome : "",
+                tipo_reuniao: dadosForm.stateFormEditarAta.tipo_reuniao,
+                presentes_na_ata: listaParticipantes,
+                hora_reuniao: hora_reuniao,
+                justificativa_repasses_pendentes: dadosForm.stateFormEditarAta.justificativa_repasses_pendentes,
+            }
+        } else {
+            payload = {
+                cargo_presidente_reuniao: dadosForm.stateFormEditarAta.cargo_presidente_reuniao,
+                cargo_secretaria_reuniao: dadosForm.stateFormEditarAta.cargo_secretaria_reuniao,
+                comentarios: dadosForm.stateFormEditarAta.comentarios,
+                convocacao: dadosForm.stateFormEditarAta.convocacao,
+                data_reuniao: data_da_reuniao,
+                local_reuniao: dadosForm.stateFormEditarAta.local_reuniao,
+                parecer_conselho: dadosForm.stateFormEditarAta.parecer_conselho,
+                presidente_reuniao: dadosForm.stateFormEditarAta.presidente_reuniao,
+                retificacoes: dadosForm.stateFormEditarAta.retificacoes,
+                secretario_reuniao: dadosForm.stateFormEditarAta.secretario_reuniao,
+                tipo_reuniao: dadosForm.stateFormEditarAta.tipo_reuniao,
+                presentes_na_ata: dadosForm.listaPresentesPadrao,
+                hora_reuniao: hora_reuniao,
+                justificativa_repasses_pendentes: dadosForm.stateFormEditarAta.justificativa_repasses_pendentes,
+            }
         }
 
         try {
@@ -218,7 +279,17 @@ export const EdicaoAta = () => {
 
 
                 <div className="col-12">
-                    <FormularioEditaAta
+                    {visoesService.featureFlagAtiva('historico-de-membros') ?  <NovoFormularioEditaAta
+                        stateFormEditarAta={stateFormEditarAta}
+                        tabelas={tabelas}
+                        formRef={formRef}
+                        onSubmitFormEdicaoAta={onSubmitFormEdicaoAta}
+                        uuid_ata={uuid_ata}
+                        setDisableBtnSalvar={setDisableBtnSalvar}
+                        repassesPendentes={repassesPendentes}
+                        erros={erros}
+                    >
+                    </NovoFormularioEditaAta> : <FormularioEditaAta
                         listaPresentesPadrao={listaPresentesPadrao}
                         stateFormEditarAta={stateFormEditarAta}
                         tabelas={tabelas}
@@ -231,7 +302,7 @@ export const EdicaoAta = () => {
                         erros={erros}
                         editaStatusDePresencaMembro={editaStatusDePresencaMembro}
                     >
-                    </FormularioEditaAta>
+                    </FormularioEditaAta>}
                 </div>
 
             </div>
