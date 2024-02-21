@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from "react";
 import Spinner from "../../../assets/img/spinner.gif"
-import {gerarPreviaRelatorioAposAcertos, verificarStatusGeracaoAposAcertos, downloadDocumentPdfAposAcertos} from '../../../services/escolas/PrestacaoDeContas.service'
+import {gerarPreviaRelatorioAposAcertos, verificarStatusGeracaoAposAcertos, downloadDocumentPdfAposAcertos, regerarRelatorioAposAcertos} from '../../../services/escolas/PrestacaoDeContas.service'
 import { getAnalisePrestacaoConta, getAnalisesDePcDevolvidas } from "../../../services/dres/PrestacaoDeContas.service";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faDownload} from "@fortawesome/free-solid-svg-icons";
@@ -11,9 +11,11 @@ export const RelatorioAposAcertos = ({prestacaoDeContasUuid, prestacaoDeContas, 
     const [status, setStatus] = useState("")
     const [previaEmAndamento, setPreviaEmAndamento] = useState(false)
     const [disableBtnPrevia, setDisableBtnPrevia] = useState(false)
+    const [disableBtnRegerar, setDisableBtnRegerar] = useState(false)
     const [disableBtnDownload, setDisableBtnDownload] = useState(false);
     const [analisesDevolvidas, setAnalisesDevolvidas] = useState([]);
     const [numeroDevolucao, setNumeroDevolucao] = useState("");
+    const [podeReprocessar, setPodeReprocessar] = useState(false);
     const [versaoRascunho, setVersaoRascunho] = useState(true);
     const [loadingRelatorioAposAcertos, setLoadingRelatorioAposAcertos] = useState(true)
 
@@ -52,6 +54,7 @@ export const RelatorioAposAcertos = ({prestacaoDeContasUuid, prestacaoDeContas, 
                 setStatus("EM_PROCESSAMENTO")
                 setPreviaEmAndamento(true);
                 setDisableBtnPrevia(true);
+                setDisableBtnRegerar(true);
                 setDisableBtnDownload(true);
             }
             else if (statusInfo.includes('Nenhuma') || statusInfo.includes('Nenhum')) {
@@ -59,11 +62,20 @@ export const RelatorioAposAcertos = ({prestacaoDeContasUuid, prestacaoDeContas, 
                 setDisableBtnDownload(true);
                 setDisableBtnPrevia(false);
             }
+            else if (statusInfo.includes('Erro')) {
+                setStatus("PENDENTE");
+                setDisableBtnDownload(true);
+                setDisableBtnPrevia(true);
+                setDisableBtnRegerar(false);
+                setPodeReprocessar(true);
+            }
             else if(statusInfo.includes('gerada em') || statusInfo.includes('gerado em')) {
                 setStatus("CONCLUIDO");
                 setPreviaEmAndamento(false);
                 setDisableBtnDownload(false);
                 setDisableBtnPrevia(false);
+                setDisableBtnRegerar(true);
+                setPodeReprocessar(false);
             }   
         }
     }
@@ -76,6 +88,15 @@ export const RelatorioAposAcertos = ({prestacaoDeContasUuid, prestacaoDeContas, 
         setDisableBtnDownload(true);
 
         await gerarPreviaRelatorioAposAcertos(analiseAtualUuid);
+    }
+
+    const regerarDocumento = async () => {
+        setStatus("EM_PROCESSAMENTO");
+        setMensagem("Relatório sendo gerado...");
+        setDisableBtnRegerar(true);
+        setDisableBtnDownload(true);
+
+        await regerarRelatorioAposAcertos(analiseAtualUuid);
     }
 
     const downloadDocumentoPrevia = async () => {
@@ -113,6 +134,7 @@ export const RelatorioAposAcertos = ({prestacaoDeContasUuid, prestacaoDeContas, 
                 else if(analises_pc.versao === "RASCUNHO"){
                     setVersaoRascunho(true);
                 }
+                setPodeReprocessar(analises_pc.pode_reprocessar_relatorio_apos_acertos)
             }
             setLoadingRelatorioAposAcertos(false);
         }
@@ -122,7 +144,7 @@ export const RelatorioAposAcertos = ({prestacaoDeContasUuid, prestacaoDeContas, 
     const exibeLoading = status === 'EM_PROCESSAMENTO' || previaEmAndamento;
 
     let classeMensagem = "documento-gerado";
-    if (mensagem.includes('Nenhuma') || mensagem.includes('Nenhum')) {
+    if (mensagem.includes('Nenhuma') || mensagem.includes('Nenhum') || mensagem.includes("Erro")) {
         classeMensagem = "documento-pendente"
     }
     if (mensagem.includes('Relatório sendo gerado...')) {
@@ -186,6 +208,10 @@ export const RelatorioAposAcertos = ({prestacaoDeContasUuid, prestacaoDeContas, 
                                 <button onClick={(e) => gerarPrevia()} type="button" disabled={disableBtnPrevia} className="btn btn-outline-success mr-2">Gerar prévia</button>
                             : 
                                 null
+                        }
+
+                        {podeReprocessar &&
+                            <button onClick={(e) => regerarDocumento()} type="button" disabled={disableBtnRegerar} className="btn btn-outline-success mr-2">Regerar</button>
                         }
                     </div>
                     
