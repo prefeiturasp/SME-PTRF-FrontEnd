@@ -312,9 +312,13 @@ export const NovoFormularioEditaAta = ({
 
     const handleBlurIdentificador = async (e, setFieldValue, index) => {
         let identificador = e.target.value
+        let data_reuniao = null
+        if(dadosForm && dadosForm.stateFormEditarAta && dadosForm.stateFormEditarAta.data_reuniao) {
+            data_reuniao = dadosForm.stateFormEditarAta.data_reuniao
+        }
 
         if (identificador.length === 7 && isNumber(identificador)) {
-            let membro = await getMembroPorIdentificador(uuid_ata, identificador)
+            let membro = await getMembroPorIdentificador(uuid_ata, identificador, formatDate(data_reuniao))
 
             if (membro.mensagem === "membro-encontrado") {
                 setFieldValue(`listaParticipantes[${index}].nome`, membro.nome ? membro.nome : '')
@@ -329,7 +333,7 @@ export const NovoFormularioEditaAta = ({
             document.getElementById(`listaParticipantes.nome_[${index}]`).disabled = true;
             document.getElementById(`listaParticipantes.cargo_[${index}]`).disabled = true;
         } else if (identificador.length === 5 && isNumber(identificador)) {
-            let membro = await getMembroPorIdentificador(uuid_ata, identificador)
+            let membro = await getMembroPorIdentificador(uuid_ata, identificador, formatDate(data_reuniao))
 
             if (membro.mensagem === "membro-encontrado") {
                 setFieldValue(`listaParticipantes[${index}].nome`, membro.nome ? membro.nome : '')
@@ -344,7 +348,7 @@ export const NovoFormularioEditaAta = ({
             document.getElementById(`listaParticipantes.nome_[${index}]`).disabled = true;
             document.getElementById(`listaParticipantes.cargo_[${index}]`).disabled = true;
         } else if (identificador.length === 14 && valida_cpf_exportado(identificador)) {
-            let membro = await getMembroPorIdentificador(uuid_ata, identificador)
+            let membro = await getMembroPorIdentificador(uuid_ata, identificador, formatDate(data_reuniao))
 
             if (membro.mensagem === "membro-encontrado") {
                 setFieldValue(`listaParticipantes[${index}].nome`, membro.nome ? membro.nome : '')
@@ -421,7 +425,7 @@ export const NovoFormularioEditaAta = ({
                 lista_formatada.push({
                     id: membro.id,
                     cargo: membro.cargo,
-                    identificacao: membro.codigo_identificacao,
+                    identificacao: membro.identificacao,
                     membro: true,
                     nome: membro.nome,
                     presente: true,
@@ -436,7 +440,7 @@ export const NovoFormularioEditaAta = ({
                 lista_formatada.push({
                     id: membro.id,
                     cargo: membro.cargo,
-                    identificacao: membro.codigo_identificacao,
+                    identificacao: membro.identificacao,
                     membro: true,
                     nome: membro.nome,
                     presente: true,
