@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState, useContext} from "react";
 import {retornaMenuAtualizadoPorStatusCadastro, UrlsMenuInterno} from "../Associacao/UrlsMenuInterno";
 import {MenuInterno} from "../../Globais/MenuInterno";
 import {PaginaMandatoVigente} from "./pages/PaginaMandatoVigente";
@@ -8,6 +8,7 @@ import {MembrosDaAssociacaoProvider} from "./context/MembrosDaAssociacao";
 import {useGetStatusCadastroAssociacao} from "./hooks/useGetStatusCadastroAssociacao";
 import "./membros-da-associacao.scss"
 import {useGetMandatosAnteriores} from "./hooks/useGetMandatosAnteriores";
+import { ExportaDadosAssociacaoContext } from "../Associacao/ExportaDadosAssociacao/context/ExportaDadosAssociacao";
 
 export const MembrosDaAssociacao = () => {
 
@@ -18,6 +19,8 @@ export const MembrosDaAssociacao = () => {
     const [isActiveMandatosAnteriores, setIsActiveMandatosAnteriores] = useState(false)
     const [menuUrls, setMenuUrls] = useState(UrlsMenuInterno);
 
+    const { exibeComponent } = useContext(ExportaDadosAssociacaoContext)
+    
     // Faz o controle do carregamento dos componentes, evitando conflito na exibição das Composições,
     const isActive = useCallback(()=>{
         setIsActiveMandatoVigente(prevState => !prevState)
@@ -39,7 +42,11 @@ export const MembrosDaAssociacao = () => {
             <MenuInterno
                 caminhos_menu_interno={menuUrls}
             />
-            <ExportaDadosDaAsssociacao/>
+            
+            {isActiveMandatoVigente && exibeComponent &&
+                <ExportaDadosDaAsssociacao/>
+            }
+
             <nav>
                 <div className="nav nav-tabs nav-mandatos" id="nav-tab" role="tablist">
                     <button
