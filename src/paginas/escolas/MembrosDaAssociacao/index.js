@@ -10,7 +10,7 @@ import {MembrosDaAssociacao as NovoMembrosAssociacao} from '../../../componentes
 
 import {TopoComBotoes} from "../../../componentes/escolas/Associacao/TopoComBotoes";
 import {visoesService} from "../../../services/visoes.service";
-
+import { ExportaDadosAssociacaoProvider } from "../../../componentes/escolas/Associacao/ExportaDadosAssociacao/context/ExportaDadosAssociacao";
 
 export const MembrosDaAssociacaoPage = () => {
     return (
@@ -19,7 +19,9 @@ export const MembrosDaAssociacaoPage = () => {
             <div className="page-content-inner">
                 <>
                     {visoesService.featureFlagAtiva('historico-de-membros') ? (
+                        <ExportaDadosAssociacaoProvider>
                             <NovoMembrosAssociacao/>
+                        </ExportaDadosAssociacaoProvider>   
                         ) :
                             <MembrosDaAssociacao/>
                     }
