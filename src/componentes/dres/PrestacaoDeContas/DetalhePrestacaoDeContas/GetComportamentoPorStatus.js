@@ -13,6 +13,7 @@ import DevolutivaDaAssociacao from "./DevolutivaDaAssociacao";
 import JustificativaDeFaltaDeAjustes from "./JustificativaDeFaltaDeAjustes";
 import {RetornaSeTemPermissaoEdicaoAcompanhamentoDePc} from "../RetornaSeTemPermissaoEdicaoAcompanhamentoDePc";
 import { PendenciasRecebimento } from "../PendeciasRecebimento";
+import ConferenciaDespesasPeriodosAnteriores from "./ConferenciaDespesasPeriodosAnteriores";
 
 
 export const GetComportamentoPorStatus = (
@@ -68,6 +69,7 @@ export const GetComportamentoPorStatus = (
     const TEMPERMISSAO = RetornaSeTemPermissaoEdicaoAcompanhamentoDePc()
     const [updateListaDeDocumentosParaConferencia, setUpdateListaDeDocumentosParaConferencia] = useState(0);
     const [carregaLancamentosParaConferencia, setCarregaLancamentosParaConferencia] = useState(0);
+    const [carregaDespesasPeriodosAnterioresParaConferencia, setCarregaDespesasPeriodosAnterioresParaConferencia] = useState(0);
 
     const onUpdateListaDeDocumentosParaConferencia = () => {
         setUpdateListaDeDocumentosParaConferencia(prev => prev + 1);
@@ -75,6 +77,10 @@ export const GetComportamentoPorStatus = (
 
     const onCarregaLancamentosParaConferencia = () => {
         setCarregaLancamentosParaConferencia(prev => prev + 1);
+    };
+
+    const onCarregaDespesasPeriodosAnterioresParaConferencia = () => {
+        setCarregaDespesasPeriodosAnterioresParaConferencia(prev => prev + 1)
     };
 
     const podeReceber = () => {
@@ -243,11 +249,19 @@ export const GetComportamentoPorStatus = (
                         editavel={TEMPERMISSAO}
                         onCarregaLancamentosParaConferencia={onCarregaLancamentosParaConferencia}
                     />
+
+                    <ConferenciaDespesasPeriodosAnteriores
+                        prestacaoDeContas={prestacaoDeContas}
+                        editavel={TEMPERMISSAO}
+                        onCarregaLancamentosParaConferencia={onCarregaDespesasPeriodosAnterioresParaConferencia}                    
+                    />
+
                     <ConferenciaDeDocumentos
                         prestacaoDeContas={prestacaoDeContas}
                         editavel={TEMPERMISSAO}
                         onUpdateListaDeDocumentosParaConferencia={onUpdateListaDeDocumentosParaConferencia}
                     />
+                    
                     <DevolucaoParaAcertos
                         prestacaoDeContas={prestacaoDeContas}
                         analisesDeContaDaPrestacao={analisesDeContaDaPrestacao}
@@ -258,6 +272,7 @@ export const GetComportamentoPorStatus = (
                         setAnalisesDeContaDaPrestacao={setAnalisesDeContaDaPrestacao}
                         updateListaDeDocumentosParaConferencia={updateListaDeDocumentosParaConferencia}
                         carregaLancamentosParaConferencia={carregaLancamentosParaConferencia}
+                        carregaDespesasPeriodosAnterioresParaConferencia={carregaDespesasPeriodosAnterioresParaConferencia}
                     />
                     <ComentariosDeAnalise
                         prestacaoDeContas={prestacaoDeContas}
