@@ -13,7 +13,7 @@ const limpaAcompanhamentoDePcUsuarioLogado = (usuario) =>{
                 conta_uuid: '',
                 filtrar_por_acao: '',
                 filtrar_por_lancamento: '',
-                paginacao_atual: '',
+                paginacao_atual: 0,
                 filtrar_por_data_inicio:'',
                 filtrar_por_data_fim: '',
                 filtrar_por_nome_fornecedor: '',
@@ -22,13 +22,14 @@ const limpaAcompanhamentoDePcUsuarioLogado = (usuario) =>{
                 filtrar_por_tipo_de_pagamento: '',
                 filtrar_por_conferencia: [],
                 filtrar_por_informacao: [],
-                ordenamento_tabela_lancamentos: []
+                ordenamento_tabela_lancamentos: [],
+                ordenar_por_imposto: false
             },
             conferencia_despesas_periodos_anteriores: {
                 conta_uuid: '',
                 filtrar_por_acao: '',
                 filtrar_por_lancamento: '',
-                paginacao_atual: '',
+                paginacao_atual: 0,
                 filtrar_por_data_inicio:'',
                 filtrar_por_data_fim: '',
                 filtrar_por_nome_fornecedor: '',
@@ -37,7 +38,8 @@ const limpaAcompanhamentoDePcUsuarioLogado = (usuario) =>{
                 filtrar_por_tipo_de_pagamento: '',
                 filtrar_por_conferencia: [],
                 filtrar_por_informacao: [],
-                ordenamento_tabela_lancamentos: []
+                ordenamento_tabela_lancamentos: [],
+                ordenar_por_imposto: false
             },            
         }
     };
@@ -78,7 +80,8 @@ function extrairPropriedadesConferencia(obj) {
         filtrar_por_tipo_de_pagamento: obj?.filtrar_por_tipo_de_pagamento || '',
         filtrar_por_informacoes: obj?.filtrar_por_informacao || [],
         filtrar_por_conferencia: obj?.filtrar_por_conferencia || [],
-        ordenamento_tabela_lancamentos: obj?.ordenamento_tabela_lancamentos || []
+        ordenamento_tabela_lancamentos: obj?.ordenamento_tabela_lancamentos || [],
+        ordenar_por_imposto: obj?.ordenar_por_imposto || false
     };
 }
 

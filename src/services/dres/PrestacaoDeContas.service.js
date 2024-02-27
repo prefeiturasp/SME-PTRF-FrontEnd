@@ -219,7 +219,7 @@ export const getDespesasPeriodosAnterioresParaConferencia = async (prestacao_de_
 };
 
 export const getUltimaAnalisePc = async (prestacao_de_contas_uuid) => {
-    return (await api.get(`/api/prestacoes-contas/${prestacao_de_contas_uuid}/ultima-analise-pc`, authHeader)).data
+    return (await api.get(`/api/prestacoes-contas/${prestacao_de_contas_uuid}/ultima-analise-pc/`, authHeader)).data
 };
 
 export const postLancamentosParaConferenciaMarcarComoCorreto = async (prestacao_de_contas_uuid, payload) => {
@@ -284,6 +284,10 @@ export const getTemAjustesExtratos = async (analise_atual_uuid) => {
 
 export const getLancamentosAjustes = async (analise_atual_uuid, conta_uuid, tipo_lancamento=null, tipo_acerto=null) => {
     return (await api.get(`/api/analises-prestacoes-contas/${analise_atual_uuid}/lancamentos-com-ajustes/?conta_associacao=${conta_uuid}${tipo_lancamento ? '&tipo='+tipo_lancamento : ''}${tipo_acerto ? '&tipo_acerto='+tipo_acerto : ''}`, authHeader)).data
+};
+
+export const getDespesasPeriodosAnterioresAjustes = async (analise_atual_uuid, conta_uuid, tipo_lancamento=null, tipo_acerto=null) => {
+    return (await api.get(`/api/analises-prestacoes-contas/${analise_atual_uuid}/despesas-periodos-anteriores-com-ajustes/?conta_associacao=${conta_uuid}${tipo_lancamento ? '&tipo='+tipo_lancamento : ''}${tipo_acerto ? '&tipo_acerto='+tipo_acerto : ''}`, authHeader)).data
 };
 
 export const getDocumentosAjustes = async (analise_atual_uuid) => {

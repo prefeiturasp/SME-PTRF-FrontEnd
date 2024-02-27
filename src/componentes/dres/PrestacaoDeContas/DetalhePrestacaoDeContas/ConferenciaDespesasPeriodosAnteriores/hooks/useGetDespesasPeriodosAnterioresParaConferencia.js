@@ -19,7 +19,7 @@ export const useGetDespesasPeriodosAnterioresParaConferencia = (setLancamentosPa
         filtrar_por_conferencia = [],
         editavel = true
     } = params;
-
+    console.log(params)
     const { isLoading, isFetching, isError, data = [], error, refetch} = useQuery(
         ['despesas-periodos-anteriores-para-conferencia', 
         prestacaoDeContasUUID,

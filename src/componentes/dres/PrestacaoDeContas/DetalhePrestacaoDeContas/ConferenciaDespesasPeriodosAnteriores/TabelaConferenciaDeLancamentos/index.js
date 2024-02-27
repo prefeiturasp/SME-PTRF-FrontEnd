@@ -1,42 +1,47 @@
-import React, {useEffect, useMemo, useState, memo} from "react";
+import React, {useMemo, useState, memo, useEffect, useRef} from "react";
 import {useHistory} from "react-router-dom";
 import {Column} from "primereact/column";
 import {DataTable} from "primereact/datatable";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
 import Dropdown from "react-bootstrap/Dropdown";
-import {ModalCheckNaoPermitidoConfererenciaDeLancamentos} from "./Modais/ModalCheckNaoPermitidoConfererenciaDeLancamentos";
+import {ModalCheckNaoPermitidoConfererenciaDeLancamentos} from "../Modais/ModalCheckNaoPermitidoConfererenciaDeLancamentos";
 // Hooks Personalizados
-import useValorTemplate from "../../../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useValorTemplate";
-import {useCarregaTabelaDespesa} from "../../../../../hooks/Globais/useCarregaTabelaDespesa";
-import useDataTemplate from "../../../../../hooks/Globais/useDataTemplate";
+import useValorTemplate from "../../../../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useValorTemplate";
+import {useCarregaTabelaDespesa} from "../../../../../../hooks/Globais/useCarregaTabelaDespesa";
+import useDataTemplate from "../../../../../../hooks/Globais/useDataTemplate";
 import useConferidoTemplate
-    from "../../../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useConferidoTemplate";
+    from "../../../../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useConferidoTemplate";
 import useRowExpansionDespesaTemplate
-    from "../../../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useRowExpansionDespesaTemplate";
+    from "../../../../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useRowExpansionDespesaTemplate";
 import useNumeroDocumentoTemplate
-    from "../../../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useNumeroDocumentoTemplate";
+    from "../../../../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useNumeroDocumentoTemplate";
 
 // Redux
 import {useDispatch} from "react-redux";
-import {addDetalharAcertos, limparDetalharAcertos} from "../../../../../store/reducers/componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeLancamentos/DetalharAcertos/actions";
-import {ModalLegendaConferenciaLancamentos} from "./Modais/ModalLegendaConferenciaLancamentos"
-import { TableTags } from "../../../../Globais/TableTags";
-import { LegendaInformacao } from "../../../../Globais/ModalLegendaInformacao/LegendaInformacao";
-import { coresTagsDespesas } from "../../../../../utils/CoresTags";
-import {Filtros} from "./Filtros";
-import { useConferenciaDespesasPeriodosAnteriores } from "./context/ConferenciaDespesasPeriodosAnteriores";
-import { Acoes } from "./tabela/Acoes";
-import { usePostMarcarComoCorreto } from "./hooks/usePostMarcarComoCorreto";
-import { usePostMarcarComoNaoCorreto } from "./hooks/usePostMarcarComoNaoCorreto";
-import Loading from "../../../../../utils/Loading";
-const TabelaConferenciaDeLancamentos = () => {
+import {addDetalharAcertos, limparDetalharAcertos} from "../../../../../../store/reducers/componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeLancamentos/DetalharAcertos/actions";
+import {ModalLegendaConferenciaLancamentos} from "../Modais/ModalLegendaConferenciaLancamentos"
+import { TableTags } from "../../../../../Globais/TableTags";
+import { LegendaInformacao } from "../../../../../Globais/ModalLegendaInformacao/LegendaInformacao";
+import { coresTagsDespesas } from "../../../../../../utils/CoresTags";
+import {Filtros} from "../Filtros";
+import { Acoes } from "./Acoes";
+import { usePostMarcarComoCorreto } from "../hooks/usePostMarcarComoCorreto";
+import { usePostMarcarComoNaoCorreto } from "../hooks/usePostMarcarComoNaoCorreto";
+import Loading from "../../../../../../utils/Loading";
+import { useGetDespesasPeriodosAnterioresParaConferencia } from "../hooks/useGetDespesasPeriodosAnterioresParaConferencia";
 
+const TabelaConferenciaDeLancamentos = ({
+    contaUUID,
+    prestacaoDeContas,         
+    editavel,
+    filters,
+    onChangeFilters
+}) => {
     const rowsPerPage = 10;
     const history = useHistory();
     // Redux
     const dispatch = useDispatch()
-
     const [expandedRows, setExpandedRows] = useState(null);
     const [exibirBtnMarcarComoCorreto, setExibirBtnMarcarComoCorreto] = useState(false)
     const [exibirBtnMarcarComoNaoConferido, setExibirBtnMarcarComoNaoConferido] = useState(false)
@@ -45,20 +50,24 @@ const TabelaConferenciaDeLancamentos = () => {
     const [showModalLegendaConferenciaLancamento, setShowModalLegendaConferenciaLancamento] = useState(false)
     const {mutationPostMarcarComoCorreto} = usePostMarcarComoCorreto();
     const {mutationPostMarcarComoNaoCorreto} = usePostMarcarComoNaoCorreto();
+    const [lancamentosParaConferencia, setLancamentosParaConferencia] = useState([]);
+
+    const [stateCheckBoxOrdenarPorImposto, setStateCheckBoxOrdenarPorImposto] = useState(filters?.ordenar_por_imposto || false);
+    const [multiSortMeta, setMultiSortMeta] = useState(filters?.ordenamento_tabela_lancamentos || []);
+    const [primeiroRegistroASerExibido, setPrimeiroRegistroASerExibido] = useState(filters?.paginacao_atual || 0);
 
     const {
-        prestacaoDeContas,         
-        lancamentosParaConferencia,
-        editavel,
-        handleChangeCheckBoxOrdenarPorImposto,
-        setLancamentosParaConferencia,
-        onChangeOrdenamento,
-        onChangePage,
-        stateCheckBoxOrdenarPorImposto,
-        componentState,
-        isLoadingDespesas
-     } = useConferenciaDespesasPeriodosAnteriores();
-     
+        isLoading: isLoadingDespesas, 
+        isFetching: isFetchingDespesas, 
+        refetch
+    } = useGetDespesasPeriodosAnterioresParaConferencia(setLancamentosParaConferencia, {
+        ...filters, 
+        prestacaoDeContasUUID: prestacaoDeContas.uuid, 
+        analiseUUID: prestacaoDeContas.analise_atual ? prestacaoDeContas.analise_atual.uuid : '',
+        conta_uuid: contaUUID, 
+        editavel: editavel
+    } || {});
+
     // Hooks Personalizados
     const valor_template = useValorTemplate()
     const dataTemplate = useDataTemplate()
@@ -67,12 +76,38 @@ const TabelaConferenciaDeLancamentos = () => {
     const rowExpansionDespesaTemplate = useRowExpansionDespesaTemplate(prestacaoDeContas)
     const numeroDocumentoTemplate = useNumeroDocumentoTemplate()
 
-    const [multiSortMeta, setMultiSortMeta] = useState(componentState?.ordenamento_tabela_lancamentos);
-    const [primeiroRegistroASerExibido, setPrimeiroRegistroASerExibido] = useState(componentState?.paginacao_atual);
-
     const totalLancamentos = useMemo(() => lancamentosParaConferencia.length, [lancamentosParaConferencia]);
     const totalLancamentosSelecionados = useMemo(() => lancamentosParaConferencia.filter((item) => item.selecionado).length, [lancamentosParaConferencia]);
+    const isFirstRender = useRef(true);
 
+    useEffect(() => {
+        if (!isFirstRender.current && filters !== null) {
+            refetch();
+        } else {
+            isFirstRender.current = false;
+        }
+    }, [filters]);
+
+    useEffect(() => {
+        if (filters !== null) {
+            setPrimeiroRegistroASerExibido(filters.paginacao_atual);
+        }
+    }, [filters, filters.paginacao_atual]);
+
+    useEffect(() => {
+        if (filters !== null) {
+            setStateCheckBoxOrdenarPorImposto(filters.ordenar_por_imposto);
+        }
+    }, [filters, filters.ordenar_por_imposto]);    
+
+    const onSelectLancamentosParaConferencia = (items) => {
+        const modifiedItems = lancamentosParaConferencia.map((item) => ({
+            ...item,
+            selecionado: items.includes(item.documento_mestre.uuid),
+        }));
+
+        setLancamentosParaConferencia(modifiedItems);
+    };
 
     const rowClassName = (rowData) => {
         if (rowData && rowData.analise_lancamento && rowData.analise_lancamento.resultado) {
@@ -106,13 +141,13 @@ const TabelaConferenciaDeLancamentos = () => {
             result = lancamentosParaConferencia.filter((o) => !o.analise_lancamento);
         }
 
-        setLancamentosParaConferencia(result.map((_r) => _r.documento_mestre.uuid));
+        onSelectLancamentosParaConferencia(result.map((_r) => _r.documento_mestre.uuid));
     }
 
     const desmarcarTodos = () => {
         setExibirBtnMarcarComoCorreto(false)
         setExibirBtnMarcarComoNaoConferido(false)
-        setLancamentosParaConferencia([]);
+        onSelectLancamentosParaConferencia([]);
     }
 
     const verificaSeExisteLancamentoComStatusDeAjuste = () => {
@@ -168,7 +203,7 @@ const TabelaConferenciaDeLancamentos = () => {
             const verifica_se_pode_ser_checkado = verificaSePodeSerCheckado(e, rowData)
             if (verifica_se_pode_ser_checkado) {
                 let result = lancamentosParaConferencia.filter((o) => lancamentosParaConferenciaUuid === o.documento_mestre.uuid)
-                setLancamentosParaConferencia(result.map((_r) => _r.documento_mestre.uuid));
+                onSelectLancamentosParaConferencia(result.map((_r) => _r.documento_mestre.uuid));
                 setExibicaoBotoesMarcarComo(rowData)
             }
         }
@@ -226,13 +261,18 @@ const TabelaConferenciaDeLancamentos = () => {
 
     const onPaginationClick = (event) => {
         setPrimeiroRegistroASerExibido(event.first);
-        onChangePage(event.rows * event.page);
-        // : 
+        onChangeFilters({paginacao_atual: event.rows * event.page});
     }
+
     const onSort = (event) => {   
         let copiaArrayDeOrdenamento = [...event.multiSortMeta]
         setMultiSortMeta(copiaArrayDeOrdenamento);
-        onChangeOrdenamento(copiaArrayDeOrdenamento)
+        onChangeFilters({ordenamento_tabela_lancamentos: copiaArrayDeOrdenamento})
+    };
+
+    const handleChangeCheckBoxOrdenarPorImposto = (event) => {
+        setStateCheckBoxOrdenarPorImposto(event.target.checked);
+        onChangeFilters({ordenar_por_imposto: event.target.checked});
     };
 
     const selecionarTemplate = (rowData) => {
@@ -283,14 +323,19 @@ const TabelaConferenciaDeLancamentos = () => {
             </div>
         )
     }
+
     return (
         <>
-            <Filtros tabelasDespesa={tabelaDespesa}/>
+            <Filtros 
+                tabelasDespesa={tabelaDespesa}
+                filters={filters} 
+                onChangeFiltersState={onChangeFilters}
+            />
 
             {lancamentosParaConferencia && lancamentosParaConferencia.length > 0 &&
                 <div className="form-group form-check">
                     <input
-                        onChange={(e)=>handleChangeCheckBoxOrdenarPorImposto(e.target.checked)}
+                        onChange={handleChangeCheckBoxOrdenarPorImposto}
                         checked={stateCheckBoxOrdenarPorImposto}
                         name={`checkOerdenarPorImposto`}
                         id={`checkOerdenarPorImposto`}
@@ -337,7 +382,7 @@ const TabelaConferenciaDeLancamentos = () => {
             ) : null}
 
             {
-                isLoadingDespesas ? (
+                isLoadingDespesas || isFetchingDespesas ? (
                     <Loading
                         corGrafico="black"
                         corFonte="dark"

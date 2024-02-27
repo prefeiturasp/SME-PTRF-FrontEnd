@@ -14,6 +14,7 @@ import JustificativaDeFaltaDeAjustes from "./JustificativaDeFaltaDeAjustes";
 import {RetornaSeTemPermissaoEdicaoAcompanhamentoDePc} from "../RetornaSeTemPermissaoEdicaoAcompanhamentoDePc";
 import { PendenciasRecebimento } from "../PendeciasRecebimento";
 import ConferenciaDespesasPeriodosAnteriores from "./ConferenciaDespesasPeriodosAnteriores";
+import { visoesService } from "../../../../services/visoes.service";
 
 
 export const GetComportamentoPorStatus = (
@@ -67,6 +68,7 @@ export const GetComportamentoPorStatus = (
     }) => {
 
     const TEMPERMISSAO = RetornaSeTemPermissaoEdicaoAcompanhamentoDePc()
+    const flagAjustesDespesasAnterioresAtiva = visoesService.featureFlagAtiva('ajustes-despesas-anteriores')
     const [updateListaDeDocumentosParaConferencia, setUpdateListaDeDocumentosParaConferencia] = useState(0);
     const [carregaLancamentosParaConferencia, setCarregaLancamentosParaConferencia] = useState(0);
     const [carregaDespesasPeriodosAnterioresParaConferencia, setCarregaDespesasPeriodosAnterioresParaConferencia] = useState(0);
@@ -249,19 +251,23 @@ export const GetComportamentoPorStatus = (
                         editavel={TEMPERMISSAO}
                         onCarregaLancamentosParaConferencia={onCarregaLancamentosParaConferencia}
                     />
-
-                    <ConferenciaDespesasPeriodosAnteriores
-                        prestacaoDeContas={prestacaoDeContas}
-                        editavel={TEMPERMISSAO}
-                        onCarregaLancamentosParaConferencia={onCarregaDespesasPeriodosAnterioresParaConferencia}                    
-                    />
+                    
+                    {
+                        flagAjustesDespesasAnterioresAtiva ? (
+                            <ConferenciaDespesasPeriodosAnteriores
+                                prestacaoDeContas={prestacaoDeContas}
+                                editavel={TEMPERMISSAO}
+                                onCarregaLancamentosParaConferencia={onCarregaDespesasPeriodosAnterioresParaConferencia}                    
+                            />
+                        ) : null
+                    }
 
                     <ConferenciaDeDocumentos
                         prestacaoDeContas={prestacaoDeContas}
                         editavel={TEMPERMISSAO}
                         onUpdateListaDeDocumentosParaConferencia={onUpdateListaDeDocumentosParaConferencia}
                     />
-                    
+
                     <DevolucaoParaAcertos
                         prestacaoDeContas={prestacaoDeContas}
                         analisesDeContaDaPrestacao={analisesDeContaDaPrestacao}
@@ -350,6 +356,14 @@ export const GetComportamentoPorStatus = (
                         prestacaoDeContas={prestacaoDeContas}
                         editavel={false}
                     />
+                    {
+                        flagAjustesDespesasAnterioresAtiva ? (
+                            <ConferenciaDespesasPeriodosAnteriores
+                                prestacaoDeContas={prestacaoDeContas}
+                                editavel={false}
+                            />
+                        ) : null
+                    }                    
                     <ConferenciaDeDocumentos
                         prestacaoDeContas={prestacaoDeContas}
                         editavel={false}
@@ -447,6 +461,16 @@ export const GetComportamentoPorStatus = (
                         prestacaoDeContas={prestacaoDeContas}
                         editavel={false}
                     />
+
+                    {
+                        flagAjustesDespesasAnterioresAtiva ? (
+                            <ConferenciaDespesasPeriodosAnteriores
+                                prestacaoDeContas={prestacaoDeContas}
+                                editavel={false}
+                            />
+                        ) : null
+                    }
+
                     <ConferenciaDeDocumentos
                         prestacaoDeContas={prestacaoDeContas}
                         editavel={false}
@@ -541,6 +565,14 @@ export const GetComportamentoPorStatus = (
                         prestacaoDeContas={prestacaoDeContas}
                         editavel={false}
                     />
+                    {
+                        flagAjustesDespesasAnterioresAtiva ? (
+                            <ConferenciaDespesasPeriodosAnteriores
+                                prestacaoDeContas={prestacaoDeContas}
+                                editavel={false}
+                            />
+                        ) : null
+                    }                    
                     <ConferenciaDeDocumentos
                         prestacaoDeContas={prestacaoDeContas}
                         editavel={false}
@@ -632,6 +664,16 @@ export const GetComportamentoPorStatus = (
                         prestacaoDeContas={prestacaoDeContas}
                         editavel={false}
                     />
+
+                    {
+                        flagAjustesDespesasAnterioresAtiva ? (
+                            <ConferenciaDespesasPeriodosAnteriores
+                                prestacaoDeContas={prestacaoDeContas}
+                                editavel={false}
+                            />
+                        ) : null
+                    }
+
                     <ConferenciaDeDocumentos
                         prestacaoDeContas={prestacaoDeContas}
                         editavel={false}
@@ -725,6 +767,15 @@ export const GetComportamentoPorStatus = (
                         prestacaoDeContas={prestacaoDeContas}
                         editavel={false}
                     />
+
+                    {
+                        flagAjustesDespesasAnterioresAtiva ? (
+                            <ConferenciaDespesasPeriodosAnteriores
+                                prestacaoDeContas={prestacaoDeContas}
+                                editavel={false}
+                            />
+                        ) : null
+                    }                    
                     <ConferenciaDeDocumentos
                         prestacaoDeContas={prestacaoDeContas}
                         editavel={false}
