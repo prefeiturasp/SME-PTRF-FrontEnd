@@ -38,8 +38,8 @@ const ConferenciaDespesasPeriodosAnteriores = ({
             const pc = dados_acompanhamento_de_pc_usuario_logado?.prestacao_de_conta_uuid;
             const conta_uuid = params && params.conta_uuid ? params.conta_uuid : contasAssociacao[0].uuid;
             setFilters({
+                ...params,
                 conta_uuid: conta_uuid,
-                ...params
             });
 
             if (pc !== prestacaoDeContas.uuid){
