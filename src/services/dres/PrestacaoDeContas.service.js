@@ -214,8 +214,12 @@ export const getLancamentosParaConferencia = async (prestacao_de_contas_uuid, an
     return (await api.get(`/api/prestacoes-contas/${prestacao_de_contas_uuid}/lancamentos/?analise_prestacao=${analise_atual_uuid}&conta_associacao=${conta_uuid}${acao_associacao_uuid ? '&acao_associacao='+acao_associacao_uuid : ''}${tipo_lancamento ? '&tipo='+tipo_lancamento : ''}${ordenar_por_imposto ? '&ordenar_por_imposto='+ordenar_por_imposto : ''}${filtrar_por_data_inicio ? '&filtrar_por_data_inicio='+filtrar_por_data_inicio : ''}${filtrar_por_data_fim ? '&filtrar_por_data_fim='+filtrar_por_data_fim : ''}${filtrar_por_nome_fornecedor ? '&filtrar_por_nome_fornecedor='+filtrar_por_nome_fornecedor : ''}${filtrar_por_numero_de_documento ? '&filtrar_por_numero_de_documento='+filtrar_por_numero_de_documento : ''}${filtrar_por_tipo_de_documento ? '&filtrar_por_tipo_de_documento='+filtrar_por_tipo_de_documento : ''}${filtrar_por_tipo_de_pagamento ? '&filtrar_por_tipo_de_pagamento='+filtrar_por_tipo_de_pagamento : ''}${filtrar_por_informacoes ? '&filtrar_por_informacoes='+filtrar_por_informacoes : ''}${filtrar_por_conferencia ? '&filtrar_por_conferencia='+filtrar_por_conferencia : ''}`, authHeader)).data
 };
 
+export const getDespesasPeriodosAnterioresParaConferencia = async (prestacao_de_contas_uuid, analise_atual_uuid, conta_uuid, acao_associacao_uuid=null, tipo_lancamento=null, ordenar_por_imposto=null, filtrar_por_data_inicio=null, filtrar_por_data_fim=null, filtrar_por_nome_fornecedor=null, filtrar_por_numero_de_documento=null, filtrar_por_tipo_de_documento=null, filtrar_por_tipo_de_pagamento=null, filtrar_por_informacoes= [], filtrar_por_conferencia = []) => {
+    return (await api.get(`/api/prestacoes-contas/${prestacao_de_contas_uuid}/despesas-periodos-anteriores/?analise_prestacao=${analise_atual_uuid}&conta_associacao=${conta_uuid}${acao_associacao_uuid ? '&acao_associacao='+acao_associacao_uuid : ''}${tipo_lancamento ? '&tipo='+tipo_lancamento : ''}${ordenar_por_imposto ? '&ordenar_por_imposto='+ordenar_por_imposto : ''}${filtrar_por_data_inicio ? '&filtrar_por_data_inicio='+filtrar_por_data_inicio : ''}${filtrar_por_data_fim ? '&filtrar_por_data_fim='+filtrar_por_data_fim : ''}${filtrar_por_nome_fornecedor ? '&filtrar_por_nome_fornecedor='+filtrar_por_nome_fornecedor : ''}${filtrar_por_numero_de_documento ? '&filtrar_por_numero_de_documento='+filtrar_por_numero_de_documento : ''}${filtrar_por_tipo_de_documento ? '&filtrar_por_tipo_de_documento='+filtrar_por_tipo_de_documento : ''}${filtrar_por_tipo_de_pagamento ? '&filtrar_por_tipo_de_pagamento='+filtrar_por_tipo_de_pagamento : ''}${filtrar_por_informacoes ? '&filtrar_por_informacoes='+filtrar_por_informacoes : ''}${filtrar_por_conferencia ? '&filtrar_por_conferencia='+filtrar_por_conferencia : ''}`, authHeader)).data
+};
+
 export const getUltimaAnalisePc = async (prestacao_de_contas_uuid) => {
-    return (await api.get(`/api/prestacoes-contas/${prestacao_de_contas_uuid}/ultima-analise-pc`, authHeader)).data
+    return (await api.get(`/api/prestacoes-contas/${prestacao_de_contas_uuid}/ultima-analise-pc/`, authHeader)).data
 };
 
 export const postLancamentosParaConferenciaMarcarComoCorreto = async (prestacao_de_contas_uuid, payload) => {
@@ -280,6 +284,10 @@ export const getTemAjustesExtratos = async (analise_atual_uuid) => {
 
 export const getLancamentosAjustes = async (analise_atual_uuid, conta_uuid, tipo_lancamento=null, tipo_acerto=null) => {
     return (await api.get(`/api/analises-prestacoes-contas/${analise_atual_uuid}/lancamentos-com-ajustes/?conta_associacao=${conta_uuid}${tipo_lancamento ? '&tipo='+tipo_lancamento : ''}${tipo_acerto ? '&tipo_acerto='+tipo_acerto : ''}`, authHeader)).data
+};
+
+export const getDespesasPeriodosAnterioresAjustes = async (analise_atual_uuid, conta_uuid, tipo_lancamento=null, tipo_acerto=null) => {
+    return (await api.get(`/api/analises-prestacoes-contas/${analise_atual_uuid}/despesas-periodos-anteriores-com-ajustes/?conta_associacao=${conta_uuid}${tipo_lancamento ? '&tipo='+tipo_lancamento : ''}${tipo_acerto ? '&tipo_acerto='+tipo_acerto : ''}`, authHeader)).data
 };
 
 export const getDocumentosAjustes = async (analise_atual_uuid) => {
@@ -399,6 +407,10 @@ export const getAnaliseAjustesSaldoPorConta = async (conta_associacao_uuid, pres
 
 export const getContasComMovimentoNaPc = async (prestacao_de_contas_uuid) => {
     return (await api.get(`/api/prestacoes-contas/${prestacao_de_contas_uuid}/contas-com-movimento/`, authHeader)).data
+};
+
+export const getContasComMovimentoDespesasPeriodosAnteriores = async (prestacao_de_contas_uuid) => {
+    return (await api.get(`/api/prestacoes-contas/${prestacao_de_contas_uuid}/contas-com-movimento-despesas-periodos-anteriores/`, authHeader)).data
 };
 
 export const postMarcarGastoComoConciliado = async (payload) => {
