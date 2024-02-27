@@ -8,7 +8,8 @@ import {
     getLancamentosAjustes,
     getDocumentosAjustes,
     getUltimaAnalisePc,
-    getAnaliseAjustesSaldoPorConta
+    getAnaliseAjustesSaldoPorConta,
+    getDespesasPeriodosAnterioresAjustes
 } from "../../../../../services/dres/PrestacaoDeContas.service";
 import {trataNumericos} from "../../../../../utils/ValidacoesAdicionaisFormularios";
 import Loading from "../../../../../utils/Loading";
@@ -16,6 +17,7 @@ import {ModalErroDevolverParaAcerto} from "./ModalErroDevolverParaAcerto";
 import {ModalConfirmaDevolverParaAcerto} from "./ModalConfirmaDevolverParaAcerto";
 import { toastCustom } from "../../../../Globais/ToastCustom";
 import ReactTooltip from "react-tooltip";
+import { visoesService } from "../../../../../services/visoes.service";
 
 const DevolucaoParaAcertos = ({
     prestacaoDeContas, 
@@ -26,20 +28,23 @@ const DevolucaoParaAcertos = ({
     setLoadingAcompanhamentoPC, 
     setAnalisesDeContaDaPrestacao,
     updateListaDeDocumentosParaConferencia=null,
-    carregaLancamentosParaConferencia=null,
+    carregaLancamentosParaConferencia=null
 }) => {
-
+    const flagAjustesDespesasAnterioresAtiva = visoesService.featureFlagAtiva('ajustes-despesas-anteriores')
     const [dataLimiteDevolucao, setDataLimiteDevolucao] = useState('')
     const [showModalErroDevolverParaAcerto, setShowModalErroDevolverParaAcerto] = useState(false)
     const [showModalConfirmaDevolverParaAcerto, setShowModalConfirmaDevolverParaAcerto] = useState(false)
     const [textoErroDevolverParaAcerto, setTextoErroDevolverParaAcerto] = useState('')
     const [lancamentosAjustes, setLancamentosAjustes] = useState([])
     const [documentosAjustes, setDocumentosAjustes] = useState([])
+    const [despesasPeriodosAnterioresAjustes, setDespesasPeriodosAnterioresAjustes] = useState([])
     const [loading, setLoading] = useState(true)
     const [btnDevolverParaAcertoDisabled, setBtnDevolverParaAcertoDisabled] = useState(false)
 
     const totalLancamentosAjustes = useMemo(() => lancamentosAjustes.length, [lancamentosAjustes]);
     const totalDocumentosAjustes = useMemo(() => documentosAjustes.length, [documentosAjustes]);
+    const totalDespesasPeriodosAnterioresAjustes = useMemo(() => despesasPeriodosAnterioresAjustes.length, [despesasPeriodosAnterioresAjustes]);
+
     
     const totalDeAnalises = () => {
         // Esta função é necessária para não liberar o botão "ver resumo" enquanto o usuario esta cadastrando a analise
@@ -82,8 +87,13 @@ const DevolucaoParaAcertos = ({
                     return await infoAta.contas.map(async (conta) => {
                         let lancamentos_ajustes = await getLancamentosAjustes(analise_atual_uuid, conta.conta_associacao.uuid)
                         setLancamentosAjustes([...lancamentos_ajustes])
+                        
                         let documentos_ajustes = await getDocumentosAjustes(analise_atual_uuid, conta.conta_associacao.uuid)
                         setDocumentosAjustes([...documentos_ajustes])
+
+                        const despesas_periodos_anteriores_ajustes = await getDespesasPeriodosAnterioresAjustes(analise_atual_uuid, conta.conta_associacao.uuid)
+                        setDespesasPeriodosAnterioresAjustes(despesas_periodos_anteriores_ajustes)
+
                         setLoading(false);
                     })
                 }
@@ -159,8 +169,12 @@ const DevolucaoParaAcertos = ({
     };
     
     const possuiAcertosSelecionados = useCallback( () => {
-        return totalLancamentosAjustes > 0 || totalDocumentosAjustes > 0 || totalAnalisesDeContaDaPrestacao > 0
-    }, [totalLancamentosAjustes, totalDocumentosAjustes, totalAnalisesDeContaDaPrestacao]);
+        if(flagAjustesDespesasAnterioresAtiva){
+            return totalLancamentosAjustes > 0 || totalDocumentosAjustes > 0 || totalAnalisesDeContaDaPrestacao > 0 || totalDespesasPeriodosAnterioresAjustes > 0
+        } else {
+            return totalLancamentosAjustes > 0 || totalDocumentosAjustes > 0 || totalAnalisesDeContaDaPrestacao > 0
+        }
+    }, [totalLancamentosAjustes, totalDocumentosAjustes, totalAnalisesDeContaDaPrestacao, totalDespesasPeriodosAnterioresAjustes, flagAjustesDespesasAnterioresAtiva]);
 
     const podeDevolverParaAssociacao = () => {
         return dataLimiteDevolucao && !btnDevolverParaAcertoDisabled && editavel && possuiAcertosSelecionados()
