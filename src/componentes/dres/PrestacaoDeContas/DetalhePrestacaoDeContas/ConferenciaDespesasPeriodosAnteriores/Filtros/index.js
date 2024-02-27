@@ -20,20 +20,10 @@ export const Filtros = ({ tabelasDespesa, filters, onChangeFiltersState }) => {
         filtrar_por_conferencia: [],
         filtrar_por_informacao: [],
     };
+    
     const [listaTagInformacao, setListaTagInformacao] = useState([])
     const [listaTagsConferencia, setListaTagsConferencia] = useState([])
-    const [stateFiltros, setStateFiltros] = useState({
-        filtrar_por_acao:filters.filtrar_por_acao,
-        filtrar_por_lancamento:filters.filtrar_por_lancamento,
-        filtrar_por_data_inicio:filters.filtrar_por_data_inicio,
-        filtrar_por_data_fim:filters.filtrar_por_data_fim,
-        filtrar_por_nome_fornecedor:filters.filtrar_por_nome_fornecedor,
-        filtrar_por_numero_de_documento:filters.filtrar_por_numero_de_documento,
-        filtrar_por_tipo_de_documento:filters.filtrar_por_tipo_de_documento,
-        filtrar_por_tipo_de_pagamento:filters.filtrar_por_tipo_de_pagamento,
-        filtrar_por_conferencia:filters.filtrar_por_conferencia,
-        filtrar_por_informacao:filters.filtrar_por_informacao,        
-    });
+    const [stateFiltros, setStateFiltros] = useState(filters);
     const [btnMaisFiltros, setBtnMaisFiltros] = useState(false);
 
     const limpaFiltros = async () => {
