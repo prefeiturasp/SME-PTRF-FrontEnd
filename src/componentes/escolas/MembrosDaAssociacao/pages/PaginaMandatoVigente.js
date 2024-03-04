@@ -6,10 +6,12 @@ import {CargosDaComposicaoList} from "../components/CargosDaComposicaoList";
 import {MembrosDaAssociacaoContext} from "../context/MembrosDaAssociacao";
 import {Paginacao} from "../components/Paginacao";
 import {ComposicaoInfo} from "../components/ComposicaoInfo";
+import { ExportaDadosAssociacaoContext } from "../../Associacao/ExportaDadosAssociacao/context/ExportaDadosAssociacao";
 
 export const PaginaMandatoVigente = () => {
 
     const {setComposicaoUuid, composicaoUuid, currentPage, reiniciaEstadosControleComposicoes} = useContext(MembrosDaAssociacaoContext)
+    const {setExibeComponent} = useContext(ExportaDadosAssociacaoContext)
 
     // Reinicia os estados de controle
     useEffect(() => {
@@ -26,6 +28,15 @@ export const PaginaMandatoVigente = () => {
             setComposicaoUuid(composicao_uuid)
         }
     }, [data, setComposicaoUuid, currentPage]);
+
+    useEffect(() => {
+        if(currentPage === 1){
+            setExibeComponent(true);
+        }
+        else{
+            setExibeComponent(false);
+        }
+    }, [currentPage, setExibeComponent]);
 
     if (isLoading) {
         return (

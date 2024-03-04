@@ -13,7 +13,7 @@ const limpaAcompanhamentoDePcUsuarioLogado = (usuario) =>{
                 conta_uuid: '',
                 filtrar_por_acao: '',
                 filtrar_por_lancamento: '',
-                paginacao_atual: '',
+                paginacao_atual: 0,
                 filtrar_por_data_inicio:'',
                 filtrar_por_data_fim: '',
                 filtrar_por_nome_fornecedor: '',
@@ -22,18 +22,38 @@ const limpaAcompanhamentoDePcUsuarioLogado = (usuario) =>{
                 filtrar_por_tipo_de_pagamento: '',
                 filtrar_por_conferencia: [],
                 filtrar_por_informacao: [],
-                ordenamento_tabela_lancamentos: []
+                ordenamento_tabela_lancamentos: [],
+                ordenar_por_imposto: false
             },
+            conferencia_despesas_periodos_anteriores: {
+                conta_uuid: '',
+                filtrar_por_acao: '',
+                filtrar_por_lancamento: '',
+                paginacao_atual: 0,
+                filtrar_por_data_inicio:'',
+                filtrar_por_data_fim: '',
+                filtrar_por_nome_fornecedor: '',
+                filtrar_por_numero_de_documento: '',
+                filtrar_por_tipo_de_documento: '',
+                filtrar_por_tipo_de_pagamento: '',
+                filtrar_por_conferencia: [],
+                filtrar_por_informacao: [],
+                ordenamento_tabela_lancamentos: [],
+                ordenar_por_imposto: false
+            },            
         }
     };
     localStorage.setItem(ACOMPANHAMENTO_DE_PC, JSON.stringify(dados_acompanhamentos_de_pc_update));
 }
 
 const setAcompanhamentoDePcPorUsuario = (usuario, objeto) =>{
-    let todos_acompanhamentos_de_pc = getTodosAcompanhamentosDePc()
+    const todos_acompanhamentos_de_pc = getTodosAcompanhamentosDePc();
     let dados_acompanhamentos_de_pc_update = {
         ...todos_acompanhamentos_de_pc,
-        [`usuario_${usuario}`]: objeto
+        [`usuario_${usuario}`]: {
+            ...todos_acompanhamentos_de_pc[`usuario_${usuario}`],
+            ...objeto
+        }
     };
     localStorage.setItem(ACOMPANHAMENTO_DE_PC, JSON.stringify(dados_acompanhamentos_de_pc_update));
 }
@@ -46,31 +66,35 @@ const setOrdenamentoTabelaLancamentos = (usuario, ordenamento) => {
     }
 };
 
-const setAcompanhamentoDePc = async () =>{
-    let todos_acompanhamentos_de_pc = getTodosAcompanhamentosDePc()
-    let acompanhamento_de_pc_usuario_logado = getAcompanhamentoDePcUsuarioLogado()
+function extrairPropriedadesConferencia(obj) {
+    return {
+        conta_uuid: obj?.conta_uuid || '',
+        filtrar_por_acao: obj?.filtrar_por_acao || '',
+        filtrar_por_lancamento: obj?.filtrar_por_lancamento || '',
+        paginacao_atual: obj?.paginacao_atual || 0,
+        filtrar_por_data_inicio: obj?.filtrar_por_data_inicio || '',
+        filtrar_por_data_fim: obj?.filtrar_por_data_fim || '',
+        filtrar_por_nome_fornecedor: obj?.filtrar_por_nome_fornecedor || '',
+        filtrar_por_numero_de_documento: obj?.filtrar_por_numero_de_documento || '',
+        filtrar_por_tipo_de_documento: obj?.filtrar_por_tipo_de_documento || '',
+        filtrar_por_tipo_de_pagamento: obj?.filtrar_por_tipo_de_pagamento || '',
+        filtrar_por_informacoes: obj?.filtrar_por_informacao || [],
+        filtrar_por_conferencia: obj?.filtrar_por_conferencia || [],
+        ordenamento_tabela_lancamentos: obj?.ordenamento_tabela_lancamentos || [],
+        ordenar_por_imposto: obj?.ordenar_por_imposto || false
+    };
+}
 
+const setAcompanhamentoDePc = async () =>{
+    const todos_acompanhamentos_de_pc = getTodosAcompanhamentosDePc()
+    const acompanhamento_de_pc_usuario_logado = getAcompanhamentoDePcUsuarioLogado()
     let dados_acompanhamentos_de_pc_update = {
         ...todos_acompanhamentos_de_pc,
         [`usuario_${visoesService.getUsuarioLogin()}`]: {
             // Acompanhamento de PC de Contas
             prestacao_de_conta_uuid: acompanhamento_de_pc_usuario_logado && acompanhamento_de_pc_usuario_logado.prestacao_de_conta_uuid ? acompanhamento_de_pc_usuario_logado.prestacao_de_conta_uuid : '',
-            conferencia_de_lancamentos: {
-                conta_uuid:  acompanhamento_de_pc_usuario_logado && acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos && acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.conta_uuid ? acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.conta_uuid : '',
-                filtrar_por_acao: acompanhamento_de_pc_usuario_logado && acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos && acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_acao ? acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_acao : '',
-                filtrar_por_lancamento: acompanhamento_de_pc_usuario_logado && acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos && acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_lancamento ? acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_lancamento : '',
-                paginacao_atual: acompanhamento_de_pc_usuario_logado && acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos && acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.paginacao_atual ? acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.paginacao_atual : 0,
-
-               filtrar_por_data_inicio: acompanhamento_de_pc_usuario_logado && acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos && acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_data_inicio ? acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_data_inicio : '',
-               filtrar_por_data_fim: acompanhamento_de_pc_usuario_logado && acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos && acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_data_fim ? acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_data_fim : '',
-               filtrar_por_nome_fornecedor: acompanhamento_de_pc_usuario_logado && acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos && acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_nome_fornecedor ? acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_nome_fornecedor : '',
-               filtrar_por_numero_de_documento: acompanhamento_de_pc_usuario_logado && acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos && acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_numero_de_documento ? acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_numero_de_documento : '',
-               filtrar_por_tipo_de_documento: acompanhamento_de_pc_usuario_logado && acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos && acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_tipo_de_documento ? acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_tipo_de_documento : '',
-               filtrar_por_tipo_de_pagamento: acompanhamento_de_pc_usuario_logado && acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos && acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_tipo_de_pagamento ? acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_tipo_de_pagamento : '',
-               filtrar_por_informacoes: acompanhamento_de_pc_usuario_logado && acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos && acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_informacao ? acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_informacao : [],
-               filtrar_por_conferencia: acompanhamento_de_pc_usuario_logado && acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos && acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_conferencia ? acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_conferencia : [],
-               ordenamento_tabela_lancamentos: acompanhamento_de_pc_usuario_logado && acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos && acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos ? acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.ordenamento_tabela_lancamentos : [],
-            },
+            conferencia_de_lancamentos: extrairPropriedadesConferencia(acompanhamento_de_pc_usuario_logado?.conferencia_de_lancamentos),
+            conferencia_despesas_periodos_anteriores: extrairPropriedadesConferencia(acompanhamento_de_pc_usuario_logado?.conferencia_despesas_periodos_anteriores),
         }
     };
     localStorage.setItem(ACOMPANHAMENTO_DE_PC, JSON.stringify(dados_acompanhamentos_de_pc_update));

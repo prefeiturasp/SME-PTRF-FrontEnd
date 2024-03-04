@@ -63,6 +63,12 @@ export const getComposicao = async (composicao_uuid) => {
     })).data
 }
 
+export const getCargosComposicaoData = async (data, associacao_uuid) => {
+    return (await api.get(`/api/cargos-composicao/composicao-por-data?data=${data}&associacao_uuid=${associacao_uuid}`,{
+        ...authHeader,
+    })).data
+}
+
 export const getMandatosAnteriores = async () => {
     return (await api.get(`/api/mandatos/mandatos-anteriores/`,{
         ...authHeader,

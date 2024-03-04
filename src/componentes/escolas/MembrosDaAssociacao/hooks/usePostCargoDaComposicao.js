@@ -17,6 +17,7 @@ export const usePostCargoDaComposicao = () => {
             console.log("Cargo Composição criado com sucesso ", data)
             // Refaz a lista de cargos-da-composicao
             queryClient.invalidateQueries(['cargos-da-composicao']).then()
+            queryClient.invalidateQueries(['status-cadastro-associacao']).then()
             toastCustom.ToastCustomSuccess('Membro incluído com sucesso.', `O membro foi adicionado ao sistema com sucesso.`)
             navigate("/membros-da-associacao");
         },

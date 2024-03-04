@@ -4,8 +4,10 @@ import {NotificacaoContext} from "../context/Notificacoes";
 import {useHistory} from "react-router-dom";
 import {notificaDevolucaoPCService} from "../services/NotificacaDevolucaoPC.service";
 import { barraMensagemCustom } from "../componentes/Globais/BarraMensagem";
-
+import { visoesService } from "../services/visoes.service";
 import {BarraMensagemUnidadeEmSuporte} from "../componentes/Globais/BarraMensagemUnidadeEmSuporte";
+import { BarraMensagemFixa } from "../componentes/Globais/BarraMensagemFixa";
+import { BarraMensagemFixaProvider } from "../componentes/Globais/BarraMensagemFixa/context/BarraMensagemFixaProvider";
 
 export const PaginasContainer = ({children}) => {
     const history = useHistory();
@@ -21,6 +23,13 @@ export const PaginasContainer = ({children}) => {
         <>
             <div className={`page-content  px-5 pt-0 pb-5 ${!sidebarStatus.sideBarStatus ? "active" : ""}`} id="content">
                 <BarraMensagemUnidadeEmSuporte/>
+                
+                {visoesService.featureFlagAtiva('historico-de-membros') && visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'UE' &&
+                    <BarraMensagemFixaProvider>
+                        <BarraMensagemFixa/>
+                    </BarraMensagemFixaProvider>
+                }
+                
                 { notificacaoContext.exibeMensagemFixaTemDevolucao &&
                     barraMensagemCustom.BarraMensagemSucessLaranja(mensagem, "Ver acertos", onVerAcertos, true)
                 }
