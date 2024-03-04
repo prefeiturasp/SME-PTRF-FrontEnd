@@ -13,6 +13,7 @@ export const usePutCargoDaComposicao = () => {
             console.log("Cargo Composição alterado com sucesso ", data)
             // Refaz a lista de cargos-da-composicao
             queryClient.invalidateQueries(['cargos-da-composicao']).then()
+            queryClient.invalidateQueries(['status-cadastro-associacao']).then()
 
             if(data.data.substituido){
                 toastCustom.ToastCustomSuccess('Membro removido com sucesso.', `O membro foi removido com sucesso.`)
