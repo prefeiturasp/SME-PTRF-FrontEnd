@@ -7,7 +7,7 @@ import {faEdit, faEye} from "@fortawesome/free-solid-svg-icons";
 import ReactTooltip from "react-tooltip";
 import {Link} from "react-router-dom";
 import {Badge} from "react-bootstrap"
-import {MembrosDaAssociacaoContext} from "../context/MembrosDaAssociacao";;
+import {MembrosDaAssociacaoContext} from "../context/MembrosDaAssociacao";
 
 export const CargosDaComposicaoList = ({escopo}) => {
     const {isLoading, data} = useGetCargosDaComposicao()

@@ -47,7 +47,7 @@ const TabelaConferenciaDeLancamentos = ({
 
     const rowsPerPage = 10;
     const history = useHistory();
-
+                                           
     const [expandedRows, setExpandedRows] = useState(null);
     const [quantidadeSelecionada, setQuantidadeSelecionada] = useState(0);
     const [exibirBtnMarcarComoCorreto, setExibirBtnMarcarComoCorreto] = useState(false)

@@ -28,6 +28,8 @@ import {ModalDevolucaoAoTesouro} from "../ModalDevolucaoAoTesouro";
 import {getSalvarDevoulucoesAoTesouro} from "../../../../services/dres/PrestacaoDeContas.service";
 import {ASSOCIACAO_UUID} from "../../../../services/auth.service";
 import TabelaRepassesPendentes from "./TabelaRepassesPendentes";
+import {BarraAvisoPreencerData} from "../BarraAvisoPreencerData"
+import {visoesService} from "../../../../services/visoes.service";
 
 // Hooks Personalizados
 import {
@@ -549,7 +551,41 @@ export const VisualizacaoDaAta = () => {
                 }
             </div>
 
-            <div className="col-12">
+            {visoesService.featureFlagAtiva('historico-de-membros') ? (<div className="col-12">
+                {dadosAta && Object.entries(dadosAta).length > 0 &&
+                    <div className="mt-4">
+                        {listaPresentes && listaPresentes.presentes_membros && listaPresentes.presentes_membros.length > 0 ?
+                        <TabelaPresentes
+                            titulo="Membros da Diretoria Executiva e do Conselho Fiscal"
+                            listaPresentes={listaPresentes.presentes_membros}
+                        /> : <BarraAvisoPreencerData/>}
+                    </div>
+                }
+
+                {dadosAta && Object.entries(dadosAta).length > 0 &&
+                    listaPresentes &&
+                    listaPresentes.presentes_nao_membros &&
+                    listaPresentes.presentes_nao_membros.length > 0 &&
+                    <div className="mt-4">
+                        <TabelaPresentes
+                            titulo="Demais presentes"
+                            listaPresentes={listaPresentes.presentes_nao_membros}
+                        />
+                    </div>
+                }
+
+                {dadosAta && Object.entries(dadosAta).length > 0 &&
+                    <div className="mt-4">
+                        <p style={{fontSize: '24px', color: '#42474A'}}><strong>Parecer do Conselho Fiscal</strong></p>
+                        <p>{retornaDadosAtaFormatado("parecer_conselho")}</p>
+                        <p className="mt-5">{retornaDadosAtaFormatado("data_reuniao_texto_inferior")}</p>
+                        {listaPresentes && listaPresentes.presentes_ata_conselho_fiscal && listaPresentes.presentes_ata_conselho_fiscal.length > 0 ? <TabelaPresentes
+                            titulo="Membros do Conselho Fiscal"
+                            listaPresentes={listaPresentes.presentes_ata_conselho_fiscal}
+                        /> : <BarraAvisoPreencerData/>}
+                    </div>
+                }
+            </div>) : (<div className="col-12">
                 {dadosAta && Object.entries(dadosAta).length > 0 &&
                     <div className="mt-4">
                         <TabelaPresentes
@@ -582,7 +618,7 @@ export const VisualizacaoDaAta = () => {
                         />
                     </div>
                 }
-            </div>
+            </div>)}
             <section>
                 <ModalDevolucaoAoTesouro
                     show={showModalDevolucoesAoTesouro}
