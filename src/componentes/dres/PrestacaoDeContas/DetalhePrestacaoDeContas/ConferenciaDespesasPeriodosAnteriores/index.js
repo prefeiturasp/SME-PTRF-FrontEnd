@@ -1,11 +1,9 @@
-import React, {createContext, useEffect, useState, memo, useCallback, useMemo} from "react";
+import React, { useEffect, useState, memo, useCallback, useMemo } from "react";
 import { visoesService } from "../../../../../services/visoes.service";
 import { mantemEstadoAcompanhamentoDePc as meapcservice } from "../../../../../services/mantemEstadoAcompanhamentoDePc.service";
 import { useGetContasComMovimentoDespesasPeriodosAnteriores } from "./hooks/useGetContasComMovimentoDespesasPeriodosAnteriores";
 import Tabs from "../../../../Globais/UI/Tabs";
 import TabelaConferenciaDeLancamentos from "./TabelaConferenciaDeLancamentos/index";
-
-export const ConferenciaDespesasPeriodosAnterioresContext = createContext(1);
 
 const ConferenciaDespesasPeriodosAnteriores = ({
     prestacaoDeContas, 
