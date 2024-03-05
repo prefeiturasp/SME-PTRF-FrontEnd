@@ -5,7 +5,7 @@ import {DataTable} from "primereact/datatable";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
 import Dropdown from "react-bootstrap/Dropdown";
-import {ModalCheckNaoPermitidoConfererenciaDeLancamentos} from "../Modais/ModalCheckNaoPermitidoConfererenciaDeLancamentos";
+
 // Hooks Personalizados
 import useValorTemplate from "../../../../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useValorTemplate";
 import {useCarregaTabelaDespesa} from "../../../../../../hooks/Globais/useCarregaTabelaDespesa";
@@ -18,18 +18,19 @@ import useNumeroDocumentoTemplate
     from "../../../../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useNumeroDocumentoTemplate";
 
 // Redux
-import {useDispatch} from "react-redux";
-import {addDetalharAcertos, limparDetalharAcertos} from "../../../../../../store/reducers/componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeLancamentos/DetalharAcertos/actions";
-import {ModalLegendaConferenciaLancamentos} from "../Modais/ModalLegendaConferenciaLancamentos"
+import { useDispatch } from "react-redux";
+import { addDetalharAcertos, limparDetalharAcertos } from "../../../../../../store/reducers/componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeLancamentos/DetalharAcertos/actions";
+import { ModalLegendaConferenciaLancamentos } from "../Modais/ModalLegendaConferenciaLancamentos"
 import { TableTags } from "../../../../../Globais/TableTags";
 import { LegendaInformacao } from "../../../../../Globais/ModalLegendaInformacao/LegendaInformacao";
 import { coresTagsDespesas } from "../../../../../../utils/CoresTags";
-import {Filtros} from "../Filtros";
+import { Filtros } from "../Filtros";
 import { Acoes } from "./Acoes";
 import { usePostMarcarComoCorreto } from "../hooks/usePostMarcarComoCorreto";
 import { usePostMarcarComoNaoCorreto } from "../hooks/usePostMarcarComoNaoCorreto";
 import Loading from "../../../../../../utils/Loading";
 import { useGetDespesasPeriodosAnterioresParaConferencia } from "../hooks/useGetDespesasPeriodosAnterioresParaConferencia";
+import { ModalConfirm } from "../../../../../Globais/Modal/ModalConfirm";
 
 const TabelaConferenciaDeLancamentos = ({
     contaUUID,
@@ -45,16 +46,15 @@ const TabelaConferenciaDeLancamentos = ({
     const [expandedRows, setExpandedRows] = useState(null);
     const [exibirBtnMarcarComoCorreto, setExibirBtnMarcarComoCorreto] = useState(false)
     const [exibirBtnMarcarComoNaoConferido, setExibirBtnMarcarComoNaoConferido] = useState(false)
-    const [showModalCheckNaoPermitido, setShowModalCheckNaoPermitido] = useState(false)
     const [showModalLegendaInformacao, setShowModalLegendaInformacao] = useState(false)
     const [showModalLegendaConferenciaLancamento, setShowModalLegendaConferenciaLancamento] = useState(false)
-    const {mutationPostMarcarComoCorreto} = usePostMarcarComoCorreto();
-    const {mutationPostMarcarComoNaoCorreto} = usePostMarcarComoNaoCorreto();
-    const [lancamentosParaConferencia, setLancamentosParaConferencia] = useState([]);
-
     const [stateCheckBoxOrdenarPorImposto, setStateCheckBoxOrdenarPorImposto] = useState(filters?.ordenar_por_imposto || false);
     const [multiSortMeta, setMultiSortMeta] = useState(filters?.ordenamento_tabela_lancamentos || []);
     const [primeiroRegistroASerExibido, setPrimeiroRegistroASerExibido] = useState(filters?.paginacao_atual || 0);
+
+    const { mutationPostMarcarComoCorreto } = usePostMarcarComoCorreto();
+    const { mutationPostMarcarComoNaoCorreto } = usePostMarcarComoNaoCorreto();
+    const [lancamentosParaConferencia, setLancamentosParaConferencia] = useState([]);
 
     const {
         isLoading: isLoadingDespesas, 
@@ -187,10 +187,18 @@ const TabelaConferenciaDeLancamentos = ({
         }
 
         if (e.target.checked && status_permitido.length > 0) {
-            if (status_permitido.includes(rowData.analise_lancamento) || (rowData.analise_lancamento && rowData.analise_lancamento && rowData.analise_lancamento.resultado && status_permitido.includes(rowData.analise_lancamento.resultado))) {
+            if (status_permitido.includes(rowData.analise_lancamento) || 
+                (rowData.analise_lancamento && rowData.analise_lancamento.resultado && 
+                status_permitido.includes(rowData.analise_lancamento.resultado))) {
                 return true
             } else {
-                setShowModalCheckNaoPermitido(true)
+                ModalConfirm({
+                    dispatch,
+                    title: 'Seleção não permitida',
+                    message: '<p>Esse lançamento tem um status de conferência que não pode ser selecionado em conjunto com os demais status já selecionados.</p>',
+                    cancelText: 'Fechar',
+                    primeiroBotaoCss: "success"
+                })
                 return false
             }
         } else {
@@ -245,7 +253,7 @@ const TabelaConferenciaDeLancamentos = ({
     const addDispatchRedireciona = (lancamentos) => {
         dispatch(limparDetalharAcertos())
         dispatch(addDetalharAcertos(lancamentos))
-        history.push(`/dre-detalhe-prestacao-de-contas-detalhar-acertos/${prestacaoDeContas.uuid}`)
+        history.push(`/dre-detalhe-prestacao-de-contas-detalhar-acertos/${prestacaoDeContas.uuid}`, {aplicavel_despesas_periodos_anteriores: true})
     }
 
     const detalharAcertos = () => {
@@ -378,6 +386,7 @@ const TabelaConferenciaDeLancamentos = ({
                     desmarcarTodos={desmarcarTodos}
                     marcarComoCorreto={marcarComoCorreto}
                     marcarComoNaoConferido={marcarComoNaoConferido}
+                    detalharAcertos={detalharAcertos}
                 />
             ) : null}
 
@@ -400,7 +409,7 @@ const TabelaConferenciaDeLancamentos = ({
                         paginatorTemplate="PrevPageLink PageLinks NextPageLink"
                         rowClassName={rowClassName}
                         selectionMode="single"
-                        // onRowClick={e => redirecionaDetalhe(e.data)}
+                        onRowClick={e => redirecionaDetalhe(e.data)}
                         stripedRows
                         sortMode="multiple"
                         // Usado para salvar no localStorage a página atual após os calculos ** ver função onPaginationClick
@@ -460,17 +469,6 @@ const TabelaConferenciaDeLancamentos = ({
                     </DataTable>                    
                 )
             }
-
-            <section>
-                <ModalCheckNaoPermitidoConfererenciaDeLancamentos
-                    show={showModalCheckNaoPermitido}
-                    handleClose={() => setShowModalCheckNaoPermitido(false)}
-                    titulo='Seleção não permitida'
-                    texto='<p>Esse lançamento tem um status de conferência que não pode ser selecionado em conjunto com os demais status já selecionados.</p>'
-                    primeiroBotaoTexto="Fechar"
-                    primeiroBotaoCss="success"
-                />
-            </section>
 
             <ModalLegendaConferenciaLancamentos
                 show={showModalLegendaConferenciaLancamento}

@@ -6,7 +6,8 @@ const Tabs = ({ tabs, initialActiveTab, onTabClick, identifier='nav' }) => {
     function handleTabClick(tabId) {
         setActiveTab(tabId);
         onTabClick && onTabClick(tabId);
-    }
+    };
+    
     useEffect(() => {
         setActiveTab(initialActiveTab);
     }, [initialActiveTab]);
