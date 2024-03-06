@@ -7,7 +7,6 @@ export const FormikForm = ({
     comentariosNotificados,
     comentarioChecked, 
     SortableList, 
-    onSortEnd, 
     validaConteudoComentario, 
     setToggleExibeBtnAddComentario, 
     toggleExibeBtnAddComentario,
@@ -31,7 +30,7 @@ export const FormikForm = ({
                     } = props;
                     return (
                         <form onSubmit={props.handleSubmit}>
-                            <SortableList comentarios={comentarios} onSortEnd={onSortEnd} distance={1}/>
+                            <SortableList comentarios={comentarios} distance={1}/>
 
                             <FieldArray
                                     name="comentarios"
