@@ -1,4 +1,4 @@
-import React, {memo, useCallback, useEffect, useState} from "react";
+import React, {memo, useCallback, useEffect, useState, useMemo} from "react";
 import { FormikForm } from "./FormikForm";
 import { ModalEditarDeletarComentario } from "./ModalEditarDeletarComentario";
 import { ModalDeleteComentarioSme } from "./ModalDeletarComentario";
@@ -12,22 +12,28 @@ import {
     criarComentarioDeAnalise,
     postNotificarComentariosDre
 } from "../../../../../services/sme/DashboardSme.service";
-import arrayMove from 'array-move';
-import {SortableContainer, SortableElement} from 'react-sortable-hoc';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEdit} from "@fortawesome/free-solid-svg-icons";
 
+import {
+    DndContext,
+    closestCenter,
+    KeyboardSensor, 
+    MouseSensor, 
+    useSensor, 
+    useSensors
+  } from "@dnd-kit/core";
+  import {
+    arrayMove,
+    SortableContext,
+    verticalListSortingStrategy,
+    useSortable
+  } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+
 const Comentarios = ({relatorioConsolidado, setHabilitaVerResumoComentariosNotificados}) => {
-
-    const initialComentarios = {
-        uuid: '',
-        consolidado_dre: '',
-        ordem: '',
-        comentario: ''
-    };
-
     // Comentários que NÃO foram notificados ainda e que podem ser alterados ou excluídos
-    const [comentarios, setComentarios] = useState(initialComentarios);
+    const [comentarios, setComentarios] = useState([]);
     // Comentários que JÁ foram notificados e que NÃO podem ser alterados ou excluídos
     const [comentariosNotificados, setComentariosNotificados] = useState([]);
     const [toggleExibeBtnAddComentario, setToggleExibeBtnAddComentario] = useState(true);
@@ -178,71 +184,119 @@ const Comentarios = ({relatorioConsolidado, setHabilitaVerResumoComentariosNotif
         await carregaComentarios()
     };
     
-
-    // *********** Sortable Comentário
-    const onSortEnd = async ({oldIndex, newIndex}) => {
-        
-        let novoArrayComentarios = arrayMove(comentarios, oldIndex, newIndex);
-        
-        if (novoArrayComentarios && novoArrayComentarios.length > 0 ){
-            let arrayAnalises = [];
-            novoArrayComentarios.map((comentario, index)=>{
-                
-                arrayAnalises.push({
-                    uuid: comentario.uuid,
-                    consolidado_dre: relatorioConsolidado.uuid,
-                    ordem: index+1,
-                    comentario: comentario.comentario
-                })
+    //************ Novo sortable com dnd-kit
+    function handleDragEnd(event) {
+        const {active, over} = event;
+    
+        if (active.id !== over.id) {
+            setComentarios((items) => {
+                const activeIndex = items.findIndex(item => item.uuid === active.id);
+                const overIndex = items.findIndex(item => item.uuid === over.id);
+    
+                const newItems = arrayMove(items, activeIndex, overIndex);
+    
+                const payload = {
+                    comentarios_de_analise: newItems.map((comentario, index) => ({
+                        consolidado_dre: relatorioConsolidado.uuid,
+                        ordem: index + 1,
+                        comentario: comentario.comentario,
+                        uuid: comentario.uuid,
+                    }))
+                };
+    
+                getReordenarComentariosConsolidadoDre(payload)
+                    .then(() => {
+                        return carregaComentarios();
+                    })
+                    .catch(error => {
+                        console.error("Error updating comments order:", error);
+                        return items;
+                    });
+                    
+                return newItems;
             });
-            setComentarios(arrayAnalises);
-            const payload = {
-                comentarios_de_analise: [
-                    ...arrayAnalises
-                ]
-            };
-            await getReordenarComentariosConsolidadoDre(payload);
-            await carregaComentarios()
         }
-    };
-
-    const SortableItem = SortableElement(({comentario}) =>
-        <li className="d-flex bd-highlight border mt-2">
-            <div className="p-2 flex-grow-1 bd-highlight container-item-comentario">
-                <input
-                    type='checkbox'
-                    onChange={(event)=>handleChangeCheckboxNotificarComentarios(event, comentario.uuid)}
-                    checked={verificaSeChecado(comentario.uuid)}
-                    className="checkbox-comentario-de-analise"
-                    disabled={comentariosReadOnly}
-                />
-                {comentario.comentario}
-            </div>
-            <div className="p-2 bd-highlight">
-                <button onClick={()=>{setComentarioParaEdicao(comentario)}} type="button" className={`btn-cancelar-comentario ml-2 ${comentariosReadOnly ? 'btn-cancelar-comentario-disabled': ''}`} disabled={comentariosReadOnly}>
-                    <FontAwesomeIcon
-                        style={{fontSize: '18px', marginRight: "5px", color: "#00585E"}}
-                        icon={faEdit}
-                    />
-                </button>
-            </div>
-        </li>
-
-        
-    );
-
-    const SortableList = SortableContainer(({comentarios, distance=10}) => {
+    }
+    
+    const SortableItem = (props) => {
+        const {
+            attributes,
+            listeners,
+            setNodeRef,
+            transform,
+            transition
+        } = useSortable({id: props.id});
+    
+        const style = {
+            transform: CSS.Transform.toString(transform),
+            transition
+        }
+    
         return (
-            <>
-                <ul className='p-0'>
-                    {comentarios && comentarios.length > 0 && comentarios.map((comentario, index) => (
-                        <SortableItem comentario={comentario} key={`item-${index}`} index={index}/>
-                    ))}
-                </ul>
-            </>
-        );
-    });
-    // *********** Fim Sortable Comentário
+            <div >
+                <li className="d-flex bd-highlight border mt-2" ref={setNodeRef} style={style} {...attributes} {...listeners}>
+                    <div data-qa={`comentario-${props.comentario.index}`} className="p-2 flex-grow-1 bd-highlight container-item-comentario">
+                        <input
+                            data-qa={`checkbox-comentario-${props.comentario.index}`}
+                            type='checkbox'
+                            onChange={(event)=>handleChangeCheckboxNotificarComentarios(event, props.comentario.uuid)}
+                            checked={verificaSeChecado(props.comentario.uuid)}
+                            className="checkbox-comentario-de-analise"
+                            disabled={comentariosReadOnly}
+                        />
+                        {props.comentario.comentario}
+                    </div>
+                    <div className="p-2 bd-highlight">
+                        <button onClick={()=>{setComentarioParaEdicao(props.comentario)}} type="button" className={`btn-cancelar-comentario ml-2 ${comentariosReadOnly ? 'btn-cancelar-comentario-disabled': ''}`} disabled={comentariosReadOnly}>
+                            <FontAwesomeIcon
+                                style={{fontSize: '18px', marginRight: "5px", color: "#00585E"}}
+                                icon={faEdit}
+                            />
+                        </button>
+                    </div>
+                </li>
+            </div>
+        )
+    }
+
+    const SortableList = ({comentarios}) => {
+        const comentariosIds = useMemo(() => {
+            if (comentarios) {
+                return comentarios.map((comentario) => comentario.uuid);
+            }
+            return [];
+            }, [comentarios]);
+
+        const mouseSensor = useSensor(MouseSensor, {
+            activationConstraint: {
+                distance: 10,
+            },
+        })
+        const keyboardSensor = useSensor(KeyboardSensor)
+
+        const sensors = useSensors(mouseSensor, keyboardSensor)
+
+        if(comentarios && comentarios.length === 0) {
+            return <></>;
+        }
+
+        return (
+            <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
+            >
+                <SortableContext
+                    items={comentariosIds}
+                    strategy={verticalListSortingStrategy}
+                >
+                    {comentarios && comentarios.length && comentarios.map(comentario => <SortableItem key={comentario.uuid} id={comentario.uuid} comentario={comentario} disabled={comentariosReadOnly}/>)}
+                </SortableContext>
+            </DndContext>
+            );
+    }
+    //************ Fim novo sortable com dnd-kit
+        
 
     return(
         <>
@@ -256,7 +310,6 @@ const Comentarios = ({relatorioConsolidado, setHabilitaVerResumoComentariosNotif
                     comentariosNotificados={comentariosNotificados}
                     comentarioChecked={comentarioChecked}
                     SortableList={SortableList}
-                    onSortEnd={onSortEnd}
                     validaConteudoComentario={validaConteudoComentario}
                     setToggleExibeBtnAddComentario={setToggleExibeBtnAddComentario}
                     toggleExibeBtnAddComentario={toggleExibeBtnAddComentario}
