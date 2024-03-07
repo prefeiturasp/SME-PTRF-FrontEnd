@@ -196,7 +196,6 @@ export const ListaPrestacaoDeContas = () => {
     };
 
     const gravaPcNaoApresentada = (rowData) =>{
-        console.log('rowData', rowData)
         let obj_prestacao = {
             associacao: {
                 uuid: rowData.associacao_uuid,
