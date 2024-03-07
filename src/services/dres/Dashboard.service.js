@@ -14,5 +14,5 @@ export const getPeriodos = async () => {
 };
 
 export const getItensDashboard = async (uuid_periodo) => {
-    return (await api.get(`/api/prestacoes-contas/dashboard/?periodo=${uuid_periodo}&dre_uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader)).data
+    return (await api.get(`/api/prestacoes-contas/dashboard/?periodo=${uuid_periodo}&dre_uuid=${localStorage.getItem(ASSOCIACAO_UUID)}&add_reprovadas_nao_apresentacao=SIM`, authHeader)).data
 };
