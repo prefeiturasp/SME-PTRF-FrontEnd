@@ -89,8 +89,6 @@ import { DevolucaoAoTesouroAjuste } from "../componentes/Globais/DevolucaoAoTeso
 import {AcompanhamentoDeRelatorioConsolidadoSMEDetalhe} from "../componentes/sme/AcompanhamentoRelatoriosConsolidadosSME/AcompanhamentoDeRelatorioConsolidadoSMEDetalhe"
 import {AcompanhamentoDeRelatorioConsolidadoSMEResumoAcertos} from "../componentes/sme/AcompanhamentoRelatoriosConsolidadosSME/AcompanhamentoDeRelatorioConsolidadoSMEResumoAcertos"
 import {ExtracaoDadosPage} from '../paginas/ExtracaoDados'
-import TesteDataTableAnt
-    from "../componentes/Globais/ExibeAcertosEmLancamentosEDocumentosPorConta/AcertosLancamentos/TesteDataTableAnt";
 import {GestaoDeUsuariosFormPage} from "../componentes/Globais/GestaoDeUsuariosForm";
 import { GestaoDeUsuariosAdicionarUnidadePage } from "../componentes/Globais/GestaoDeUsuariosAdicionarUnidade";
 import {Mandatos} from "../componentes/sme/Mandatos";
@@ -104,6 +102,9 @@ import {
     PaginaCadastroHistoricoDeMembros
 } from "../componentes/escolas/MembrosDaAssociacao/pages/PaginaCadastroHistoricoDeMembros";
 import {ChamaTypescriptFirstComponent} from "../componentes/ChamaTypescriptFirstComponent";
+import {
+    PaginaDetalhePrestacaoContaReprovadaNaoApresentacao
+} from "../componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContasNaoApresentada/pages/PaginaDetalhePrestacaoContaReprovadaNaoApresentacao";
 
 const routesConfig = [
     {
@@ -635,15 +636,12 @@ const routesConfig = [
         component: SuporteAsUnidadesSme,
         permissoes: ['access_suporte_unidades_sme'],
     },
-
-
     {
         exact: true,
-        path: "/teste-datatable-ant",
-        component: TesteDataTableAnt,
-        permissoes: ['access_regularidade_dre'],
+        path: "/dre-detalhe-prestacao-de-contas-reprovada-nao-apresentacao/:prestacao_conta_uuid/",
+        component: PaginaDetalhePrestacaoContaReprovadaNaoApresentacao,
+        permissoes: ['access_acompanhamento_pcs_dre'],
     },
-
     {
         exact: true,
         path: "/componente-typescript",
