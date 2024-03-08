@@ -302,6 +302,10 @@ export const getContasDaAssociacaoComAcertosEmLancamentos = async (associacao_uu
     return (await api.get(`/api/associacoes/contas-com-acertos-em-lancamentos/?associacao_uuid=${associacao_uuid}&analise_prestacao_uuid=${analise_prestacao_uuid}`, authHeader)).data
 };
 
+export const getContasDaAssociacaoComAcertosEmDespesasPeriodosAnteriores = async (associacao_uuid, analise_prestacao_uuid) => {
+    return (await api.get(`/api/associacoes/contas-com-acertos-em-despesas-periodos-anteriores/?associacao_uuid=${associacao_uuid}&analise_prestacao_uuid=${analise_prestacao_uuid}`, authHeader)).data
+};
+
 export const getAnalisesDePcDevolvidas = async (prestacao_de_contas_uuid) => {
     return (await api.get(`/api/prestacoes-contas/${prestacao_de_contas_uuid}/devolucoes/`, authHeader)).data
 };
