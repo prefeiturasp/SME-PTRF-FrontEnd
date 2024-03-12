@@ -293,6 +293,10 @@ const ComentariosDeAnalise = ({prestacaoDeContas="", associacaoUuid="", periodoU
 
         const sensors = useSensors(mouseSensor, keyboardSensor)
 
+        if(comentarios && comentarios.length === 0) {
+            return <></>;
+        }
+
         return (
             <DndContext
               sensors={sensors}
