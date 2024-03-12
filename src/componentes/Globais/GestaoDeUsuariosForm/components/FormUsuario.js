@@ -177,7 +177,7 @@ export const FormUsuario = ({usuario}) => {
             name: values.name,
             email: values.email ? values.email : "",
             unidade: uuidUnidadeBase === 'SME' ? null : uuidUnidadeBase,
-            visao: visaoBase
+            visao: uuidUnidadeBase === 'SME' ? null : visaoBase
         };
 
         if (modo === Modos.INSERT) {
