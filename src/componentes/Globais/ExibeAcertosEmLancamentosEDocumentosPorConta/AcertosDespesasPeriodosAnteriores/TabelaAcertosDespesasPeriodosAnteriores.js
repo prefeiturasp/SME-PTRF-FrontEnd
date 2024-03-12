@@ -1,4 +1,4 @@
-import React, {useCallback, useState} from "react";
+import React, {useState} from "react";
 import {Column} from "primereact/column";
 import {DataTable} from "primereact/datatable";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -25,31 +25,31 @@ const tagColors = {
 }
 
 export const TabelaAcertosDespesasPeriodosAnteriores = ({
-                                             lancamentosAjustes,
-                                             limparStatus,
-                                             marcarComoRealizado,
-                                             prestacaoDeContas,
-                                             justificarNaoRealizacao,
-                                             opcoesJustificativa,
-                                             setExpandedRowsLancamentos,
-                                             expandedRowsLancamentos,
-                                             rowExpansionTemplateLancamentos,
-                                             rowsPerPageAcertosLancamentos,
-                                             dataTemplate,
-                                             numeroDocumentoTemplate,
-                                             valor_template,
-                                             selecionarTodosItensDosLancamentosGlobal,
-                                             selecionarTodosItensDoLancamentoRow,
-                                             tituloModalCheckNaoPermitido,
-                                             textoModalCheckNaoPermitido,
-                                             showModalCheckNaoPermitido,
-                                             setShowModalCheckNaoPermitido,
-                                             totalDeAcertosDosLancamentos,
-                                             analisePermiteEdicao,
-                                             quantidadeSelecionada,
-                                             acoesDisponiveis,
-                                             acaoCancelar
-                                         }) => {
+    lancamentosAjustes,
+    limparStatus,
+    marcarComoRealizado,
+    prestacaoDeContas,
+    justificarNaoRealizacao,
+    opcoesJustificativa,
+    setExpandedRowsLancamentos,
+    expandedRowsLancamentos,
+    rowExpansionTemplateLancamentos,
+    rowsPerPageAcertosLancamentos,
+    dataTemplate,
+    numeroDocumentoTemplate,
+    valor_template,
+    selecionarTodosItensDosLancamentosGlobal,
+    selecionarTodosItensDoLancamentoRow,
+    tituloModalCheckNaoPermitido,
+    textoModalCheckNaoPermitido,
+    showModalCheckNaoPermitido,
+    setShowModalCheckNaoPermitido,
+    totalDeAcertosDosLancamentos,
+    analisePermiteEdicao,
+    quantidadeSelecionada,
+    acoesDisponiveis,
+    acaoCancelar
+}) => {
 
     const [showModalJustificarNaoRealizacao, setShowModalJustificarNaoRealizacao] = useState(false)
     const [showModalJustificadaApagada, setShowModalJustificadaApagada] = useState(false)

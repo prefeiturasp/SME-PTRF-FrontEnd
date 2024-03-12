@@ -31,15 +31,16 @@ import { mantemEstadoAnaliseDre as meapcservice } from "../../../../services/man
 import {
     RetornaSeTemPermissaoEdicaoAcompanhamentoDePc
 } from "../../../dres/PrestacaoDeContas/RetornaSeTemPermissaoEdicaoAcompanhamentoDePc";
+import Tabs from "../../UI/Tabs";
 
 const AcertosDespesasPeriodosAnteriores = ({
-                                analiseAtualUuid,
-                                prestacaoDeContas,
-                                exibeBtnIrParaPaginaDeAcertos,
-                                exibeBtnIrParaPaginaDeReceitaOuDespesa,
-                                editavel,
-                                prestacaoDeContasUuid
-                            }) => {
+    analiseAtualUuid,
+    prestacaoDeContas,
+    exibeBtnIrParaPaginaDeAcertos,
+    exibeBtnIrParaPaginaDeReceitaOuDespesa,
+    editavel,
+    prestacaoDeContasUuid
+}) => {
 
     const TEMPERMISSAOEDICAOACOMPANHAMENTOPC = RetornaSeTemPermissaoEdicaoAcompanhamentoDePc()
 
@@ -940,76 +941,61 @@ const AcertosDespesasPeriodosAnteriores = ({
     
     if(contasAssociacao.length === 0){
         return null;
-    }
+    };
 
     return (
         <>
             <h5 className="mb-4 mt-4"><strong>Acertos nas despesas de períodos anteriores</strong></h5>
             {loadingLancamentos ? (
-                    <Loading
-                        corGrafico="black"
-                        corFonte="dark"
-                        marginTop="0"
-                        marginBottom="0"
-                    />
-                ) :
-                <>
-                    <nav>
-                        <div className="nav nav-tabs mb-3 tabs-resumo-dos-acertos" id="nav-tab-conferencia-de-lancamentos" role="tablist">
-                            {contasAssociacao && contasAssociacao && contasAssociacao.length > 0 && contasAssociacao.map((conta, indexTabs) =>
-                                <Fragment key={`key_${conta.uuid}`}>
-                                    <a
-                                        onClick={() => {
-                                            setContaSelecionada(conta.uuid)
-                                            carregaAcertosLancamentos(conta.uuid)
-                                            toggleBtnEscolheConta(`${indexTabs}`);
-                                        }}
-                                        className={`nav-link btn-escolhe-acao ${clickBtnEscolheConta[`${indexTabs}`] ? "active" : ""}`}
-                                        id={`nav-conferencia-de-lancamentos-${conta.uuid}-tab`}
-                                        data-toggle="tab"
-                                        href={`#nav-conferencia-de-lancamentos-${conta.uuid}`}
-                                        role="tab"
-                                        aria-controls={`nav-conferencia-de-lancamentos-${conta.uuid}`}
-                                        aria-selected="true"
-                                    >
-                                        Conta {conta.tipo_conta.nome}
-                                    </a>
-                                </Fragment>
-                            )}
-                        </div>
-                    </nav>
-
-                    <div className="tab-content" id="nav-conferencia-de-lancamentos-tabContent">
-                        <div className="tab-pane fade show active" role="tabpanel">
-                            <TabelaAcertosDespesasPeriodosAnteriores
-                                lancamentosAjustes={lancamentosAjustes}
-                                limparStatus={limparStatus}
-                                prestacaoDeContas={prestacaoDeContas}
-                                marcarComoRealizado={marcarComoRealizado}
-                                justificarNaoRealizacao={justificarNaoRealizacao}
-                                opcoesJustificativa={opcoesJustificativa}
-                                expandedRowsLancamentos={expandedRowsLancamentos}
-                                setExpandedRowsLancamentos={setExpandedRowsLancamentos}
-                                rowExpansionTemplateLancamentos={rowExpansionTemplateLancamentos}
-                                rowsPerPageAcertosLancamentos={rowsPerPageAcertosLancamentos}
-                                valor_template={valor_template}
-                                dataTemplate={dataTemplate}
-                                numeroDocumentoTemplate={numeroDocumentoTemplate}
-                                selecionarTodosItensDosLancamentosGlobal={selecionarTodosItensDosLancamentosGlobal}
-                                selecionarTodosItensDoLancamentoRow={selecionarTodosItensDoLancamentoRow}
-                                tituloModalCheckNaoPermitido={tituloModalCheckNaoPermitido}
-                                textoModalCheckNaoPermitido={textoModalCheckNaoPermitido}
-                                showModalCheckNaoPermitido={showModalCheckNaoPermitido}
-                                setShowModalCheckNaoPermitido={setShowModalCheckNaoPermitido}
-                                totalDeAcertosDosLancamentos={totalDeAcertosDosLancamentos}
-                                analisePermiteEdicao={analisePermiteEdicao}
-                                quantidadeSelecionada={quantidadeSelecionada}
-                                acoesDisponiveis={acoesDisponiveis}
-                                acaoCancelar={acaoCancelar}
-                            />
-                        </div>
+              <Loading
+                  corGrafico="black"
+                  corFonte="dark"
+                  marginTop="0"
+                  marginBottom="0"
+              />
+            ) :
+              <>
+                <Tabs
+                    tabs={contasAssociacao.map((conta) => {return {...conta, label: `Conta ${conta.tipo_conta.nome}`}})} 
+                    initialActiveTab={contaSelecionada} 
+                    onTabClick={(uuid, index) => {
+                        setContaSelecionada(uuid)
+                        carregaAcertosLancamentos(uuid)
+                        toggleBtnEscolheConta(`${index}`);
+                    }}
+                    identifier='nav-conferencia-de-despesas-periodos-anteriores'            
+                />
+                <div className="tab-content" id="nav-conferencia-de-lancamentos-tabContent">
+                    <div className="tab-pane fade show active" role="tabpanel">
+                        <TabelaAcertosDespesasPeriodosAnteriores
+                            lancamentosAjustes={lancamentosAjustes}
+                            limparStatus={limparStatus}
+                            prestacaoDeContas={prestacaoDeContas}
+                            marcarComoRealizado={marcarComoRealizado}
+                            justificarNaoRealizacao={justificarNaoRealizacao}
+                            opcoesJustificativa={opcoesJustificativa}
+                            expandedRowsLancamentos={expandedRowsLancamentos}
+                            setExpandedRowsLancamentos={setExpandedRowsLancamentos}
+                            rowExpansionTemplateLancamentos={rowExpansionTemplateLancamentos}
+                            rowsPerPageAcertosLancamentos={rowsPerPageAcertosLancamentos}
+                            valor_template={valor_template}
+                            dataTemplate={dataTemplate}
+                            numeroDocumentoTemplate={numeroDocumentoTemplate}
+                            selecionarTodosItensDosLancamentosGlobal={selecionarTodosItensDosLancamentosGlobal}
+                            selecionarTodosItensDoLancamentoRow={selecionarTodosItensDoLancamentoRow}
+                            tituloModalCheckNaoPermitido={tituloModalCheckNaoPermitido}
+                            textoModalCheckNaoPermitido={textoModalCheckNaoPermitido}
+                            showModalCheckNaoPermitido={showModalCheckNaoPermitido}
+                            setShowModalCheckNaoPermitido={setShowModalCheckNaoPermitido}
+                            totalDeAcertosDosLancamentos={totalDeAcertosDosLancamentos}
+                            analisePermiteEdicao={analisePermiteEdicao}
+                            quantidadeSelecionada={quantidadeSelecionada}
+                            acoesDisponiveis={acoesDisponiveis}
+                            acaoCancelar={acaoCancelar}
+                        />
                     </div>
-                </>
+                </div>
+              </>
             }
         </>
     )
