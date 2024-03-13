@@ -3,9 +3,9 @@ import React, { Fragment, useState, useEffect } from 'react';
 const Tabs = ({ tabs, initialActiveTab, onTabClick, identifier='nav' }) => {
     const [activeTab, setActiveTab] = useState(initialActiveTab);
 
-    function handleTabClick(tabId) {
+    function handleTabClick(tabId, index) {
         setActiveTab(tabId);
-        onTabClick && onTabClick(tabId);
+        onTabClick && onTabClick(tabId, index);
     };
     
     useEffect(() => {
