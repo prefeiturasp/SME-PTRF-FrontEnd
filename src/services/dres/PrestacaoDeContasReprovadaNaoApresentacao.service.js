@@ -22,3 +22,11 @@ export const getPrestacaoContaReprovadaNaoApresentacao = async (prestacao_conta_
         ...authHeader,
     })).data
 }
+
+export const postNotificarPrestacaoContaReprovadaNaoApresentacao = async (payload) => {
+    return (await api.post(`/api/notificacoes/notificar-prestacao-conta-reprovada-nao-apresentacao/`, {
+            ...payload
+        },
+        authHeader,
+    ))
+};
