@@ -12,6 +12,7 @@ import {BarraInfo} from "./components/BarraInfo";
 import {ModalConcluirPcNaoApresentada} from "./components/ModalConcluirPcNaoApresentada";
 import moment from "moment";
 import {usePostPrestacaoContaReprovadaNaoApresentacao} from "./hooks/usePostPrestacaoContaReprovadaNaoApresentacao";
+import {usePostNotificarPrestacaoContaReprovadaNaoApresentacao} from "./hooks/usePostNotificarPrestacaoContaReprovadaNaoApresentacao";
 
 export const DetalhePrestacaoDeContasNaoApresentada = () =>{
 
@@ -22,6 +23,7 @@ export const DetalhePrestacaoDeContasNaoApresentada = () =>{
     const prestacaoDeContas = JSON.parse(localStorage.getItem('prestacao_de_contas_nao_apresentada'));
 
     const {mutationPostPrestacaoContaReprovadaNaoApresentacao} = usePostPrestacaoContaReprovadaNaoApresentacao()
+    const {mutationPostNotificarPrestacaoContaReprovadaNaoApresentacao} = usePostNotificarPrestacaoContaReprovadaNaoApresentacao()
 
     const initialFormRecebimentoPelaDiretoria = {
         tecnico_atribuido: "",
@@ -64,7 +66,7 @@ export const DetalhePrestacaoDeContasNaoApresentada = () =>{
         getPeriodoUuid()
     }, [getPeriodoUuid])
 
-    const onConcluirPcNaoApresentada = () => {
+    const onConcluirPcNaoApresentada = async () => {
         setShowModalConcluirPcNaoApresentada(false);
         const currentDate = moment(new Date()).format('YYYY-MM-DDTHH:mm:ss');
 
@@ -73,7 +75,20 @@ export const DetalhePrestacaoDeContasNaoApresentada = () =>{
             associacao: associacaoUuid,
             data_de_reprovacao: currentDate,
         }
-        mutationPostPrestacaoContaReprovadaNaoApresentacao.mutate({payload: payload})
+        try {
+            const mutationResp = await mutationPostPrestacaoContaReprovadaNaoApresentacao.mutateAsync({payload: payload})
+            console.log("Prestação de Contas Reprovada por não Apresentação criada com sucesso ", mutationResp)
+
+            let payload_notificar = {
+                prestacao_conta_reprovada_nao_apresentacao: mutationResp.data.uuid
+            }
+            const mutatioRespNotificacao = await mutationPostNotificarPrestacaoContaReprovadaNaoApresentacao.mutateAsync({payload: payload_notificar})
+
+            console.log("Notificação de Prestação de Contas Reprovada por não Apresentação criada com sucesso ", mutatioRespNotificacao)
+
+        } catch (error) {
+            console.log("Falha ao Criar/Notificar Prestação de Contas Reprovada por não Apresentação", error)
+        }
     };
 
     return(
