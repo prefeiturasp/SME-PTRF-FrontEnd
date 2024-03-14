@@ -2,11 +2,10 @@ import React from "react";
 import {Column} from "primereact/column";
 import {DataTable} from "primereact/datatable";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faKey, faTimesCircle} from "@fortawesome/free-solid-svg-icons";
+import {faKey} from "@fortawesome/free-solid-svg-icons";
 import { TableTags } from "../TableTags";
 import { LegendaInformacao } from "../ModalLegendaInformacao/LegendaInformacao";
 import { coresTagsAssociacoes } from "../../../utils/CoresTags";
-import ReactTooltip from "react-tooltip";
 import {Button, Tooltip} from "antd";
 
 export const ListaDeUnidades = ({
@@ -55,6 +54,7 @@ export const ListaDeUnidades = ({
                                 />
                             }
                         >
+                            {textoAcaoEscolher}
                         </Button>
                     </Tooltip>
                 </>
