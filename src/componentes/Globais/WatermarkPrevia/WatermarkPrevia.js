@@ -1,7 +1,17 @@
 import React from 'react';
-import watermark from '../../../assets/img/watermark-visualizacao-previa.svg'
+import watermarkRascunho from '../../../assets/img/watermark-visualizacao-previa.svg'
+import watermarkVisualizacao from '../../../assets/img/watermark-visualizacao.svg'
 
-const WatermarkPrevia = ({alturaDocumento}) => {
+
+const WatermarkPrevia = ({alturaDocumento, icon}) => {
+
+  const watermarkIcon = () => {
+    if(icon === 'rascunho') {
+      return watermarkRascunho;
+    }
+    return watermarkVisualizacao;
+  }
+
   return (
     <div className='mt-4 postion-relative'>
       {Array.from({ length: Math.ceil(alturaDocumento / 500) }).map((_, index) => (
@@ -10,7 +20,7 @@ const WatermarkPrevia = ({alturaDocumento}) => {
           className='watermark-previa'
           alt="Rascunho"
           key={index}
-          src={watermark}
+          src={watermarkIcon()}
           style={{
             position: 'absolute',
             left: '50%',
