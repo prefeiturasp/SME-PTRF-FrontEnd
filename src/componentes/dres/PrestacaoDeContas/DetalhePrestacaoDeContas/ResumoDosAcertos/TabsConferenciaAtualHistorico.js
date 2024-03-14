@@ -8,7 +8,21 @@ import CardsDevolucoesParaAcertoDaDre from "../../../../Globais/CardsDevolucoesP
 import { RelatorioAposAcertos } from "../../../../Globais/ExibeAcertosEmLancamentosEDocumentosPorConta/RelatorioAposAcertos";
 import { getAnalisePrestacaoConta } from "../../../../../services/dres/PrestacaoDeContas.service";
 
-const TabsConferenciaAtualHistorico = ({dataLimiteDevolucao, handleChangeDataLimiteDevolucao, prestacao_conta_uuid, analiseAtualUuid, exibeMsg, textoMsg, totalAnalisesDePcDevolvidas, setAnaliseAtualUuidComPCAnaliseAtualUuid, setPrimeiraAnalisePcDevolvida, setAnaliseAtualUuid, editavel, pcEmAnalise, prestacaoDeContas, limpaStorage}) =>{
+const TabsConferenciaAtualHistorico = ({
+    dataLimiteDevolucao, 
+    handleChangeDataLimiteDevolucao, 
+    prestacao_conta_uuid, 
+    analiseAtualUuid, 
+    msgNaoExistemSolicitacoesDeAcerto = null, 
+    totalAnalisesDePcDevolvidas, 
+    setAnaliseAtualUuidComPCAnaliseAtualUuid, 
+    setPrimeiraAnalisePcDevolvida, 
+    setAnaliseAtualUuid, 
+    editavel, 
+    pcEmAnalise, 
+    prestacaoDeContas, 
+    limpaStorage
+}) =>{
 
     const ref_click_historico = useRef(null);
 
@@ -80,9 +94,9 @@ const TabsConferenciaAtualHistorico = ({dataLimiteDevolucao, handleChangeDataLim
             </nav>
             <div className="tab-content" id="nav-tabContent">
                 <div className={`tab-pane fade ${pcEmAnalise ? 'show active' : ''}`} id="nav-conferencia-atual" role="tabpanel" aria-labelledby="nav-conferencia-atual-tab">
-                    {exibeMsg ? (
+                    {msgNaoExistemSolicitacoesDeAcerto ? (
                             <MsgImgCentralizada
-                                texto={textoMsg}
+                                texto={msgNaoExistemSolicitacoesDeAcerto}
                                 img={Img404}
                             />
                     ):
