@@ -2,10 +2,12 @@ import React from "react";
 import {Column} from "primereact/column";
 import {DataTable} from "primereact/datatable";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faKey} from "@fortawesome/free-solid-svg-icons";
-import { TableTags } from "../../Globais/TableTags";
+import {faKey, faTimesCircle} from "@fortawesome/free-solid-svg-icons";
+import { TableTags } from "../TableTags";
 import { LegendaInformacao } from "../ModalLegendaInformacao/LegendaInformacao";
 import { coresTagsAssociacoes } from "../../../utils/CoresTags";
+import ReactTooltip from "react-tooltip";
+import {Button, Tooltip} from "antd";
 
 export const ListaDeUnidades = ({
     listaUnidades, 
@@ -41,26 +43,28 @@ export const ListaDeUnidades = ({
         return (
                 <>
 
-                    <button
-                        onClick={()=>handleAcaoEscolher(rowData)}
-                        className="btn btn-link link-green"
-                    >
-                        <FontAwesomeIcon
-                            style={{fontSize: '15px', marginRight: "0"}}
-                            icon={faKey}
-                        />
-                        <span> {textoAcaoEscolher} </span>
-
-                    </button>
-
+                    <Tooltip title="Viabilizar acesso">
+                        <Button
+                            type="text"
+                            onClick={() => handleAcaoEscolher(rowData)}
+                            className="btn btn-link link-green"
+                            icon={
+                                <FontAwesomeIcon
+                                    style={{fontSize: '15px', marginRight: "0"}}
+                                    icon={faKey}
+                                />
+                            }
+                        >
+                        </Button>
+                    </Tooltip>
                 </>
         )
     };
 
     return (
         <>
-        <LegendaInformacao
-            showModalLegendaInformacao={showModalLegendaInformacao}
+            <LegendaInformacao
+                showModalLegendaInformacao={showModalLegendaInformacao}
             setShowModalLegendaInformacao={setShowModalLegendaInformacao}
             entidadeDasTags="associacao"
             excludedTags={["Encerramento de conta pendente"]}
