@@ -584,7 +584,7 @@ export const TabelaAcertosDespesasPeriodosAnteriores = ({
                         }
                     </DataTable>
                 ) :
-                <p className='text-center fonte-18 mt-4'><strong>Não foram solicitados acertos nos lançamentos nessa análise da PC.</strong></p>
+                <p className='text-center fonte-18 mt-4'><strong>Não foram solicitados acertos nas despesas de períodos anteriores nessa análise da PC.</strong></p>
             }
             <section>
                 <ModalCheckNaoPermitidoConfererenciaDeLancamentos

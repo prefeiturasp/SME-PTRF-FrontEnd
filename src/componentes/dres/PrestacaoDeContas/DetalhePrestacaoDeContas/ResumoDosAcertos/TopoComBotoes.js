@@ -4,7 +4,7 @@ import {faArrowLeft} from "@fortawesome/free-solid-svg-icons";
 import {RetornaSeTemPermissaoEdicaoAcompanhamentoDePc} from "../../RetornaSeTemPermissaoEdicaoAcompanhamentoDePc";
 import AssociacaoEPeriodoDoCabecalho from "../AssociacaoEPeriodoDoCabecalho";
 
-export const TopoComBotoes = ({onClickBtnVoltar, setShowModalConfirmaDevolverParaAcerto, dataLimiteDevolucao, qtdeAjustesLancamentos, qtdeAjustesDocumentos, qtdeAjustesExtrato, btnDevolverParaAcertoDisabled, editavel, prestacaoDeContas}) => {
+export const TopoComBotoes = ({onClickBtnVoltar, setShowModalConfirmaDevolverParaAcerto, podeDevolver, prestacaoDeContas}) => {
 
     const TEMPERMISSAOEDICAOACOMPANHAMENTOPC = RetornaSeTemPermissaoEdicaoAcompanhamentoDePc()
 
@@ -23,7 +23,7 @@ export const TopoComBotoes = ({onClickBtnVoltar, setShowModalConfirmaDevolverPar
             </div>
             <div className="p-2 bd-highlight">
                 <button
-                    disabled={!TEMPERMISSAOEDICAOACOMPANHAMENTOPC || !dataLimiteDevolucao || (qtdeAjustesLancamentos <= 0 && qtdeAjustesDocumentos <= 0 && qtdeAjustesExtrato <= 0) || btnDevolverParaAcertoDisabled || !editavel}
+                    disabled={!TEMPERMISSAOEDICAOACOMPANHAMENTOPC || !podeDevolver}
                     onClick={()=>setShowModalConfirmaDevolverParaAcerto(true)}
                     className="btn btn-secondary"
                 >
