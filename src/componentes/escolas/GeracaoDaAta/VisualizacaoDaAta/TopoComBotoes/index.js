@@ -10,13 +10,13 @@ export const TopoComBotoes = ({dadosAta, docPrestacaoConta, prestacaoDeContasDet
                 {/*Para as atas de apresentação (Não retificação)*/}
                 {/*Se não tem Prestação de Conta trata-se de uma prévia*/}
                 {dadosAta && dadosAta.tipo_ata !== 'RETIFICACAO' &&
-                <p className='titulo-visualizacao-da-ata'>{dadosAta.prestacao_conta ? 'Visualização da Ata de Apresentação da PC' : 'Visualização da prévia da Ata de Apresentação da PC'}</p>
+                <p className='titulo-visualizacao-da-ata'>{dadosAta.prestacao_conta && dadosAta.completa && dadosAta.status_geracao_pdf === 'CONCLUIDO' ? 'Visualização da Ata de Apresentação da PC' : 'Visualização da prévia da Ata de Apresentação da PC'}</p>
                 }
 
                 {/*Para as atas de retificação*/}
                 {/*Se o status da PC é DEVOLVIDA trata-se de uma prévia*/}
                 {dadosAta && dadosAta.tipo_ata === 'RETIFICACAO' && prestacaoDeContasDetalhe && prestacaoDeContasDetalhe.status &&
-                <p className='titulo-visualizacao-da-ata'>{prestacaoDeContasDetalhe.status !== 'DEVOLVIDA' ? 'Visualização da ata de retificação' : 'Visualização da prévia da ata de retificação'}</p>
+                <p className='titulo-visualizacao-da-ata'>{prestacaoDeContasDetalhe.status !== 'DEVOLVIDA' && dadosAta.completa && dadosAta.status_geracao_pdf === 'CONCLUIDO' ? 'Visualização da ata de retificação da PC' : 'Visualização da prévia da ata de retificação da PC'}</p>
                 }
 
             </div>
