@@ -80,7 +80,7 @@ export const VisualizacaoDaAta = () => {
     const [prestacaoDeContasDetalhe, setPrestacaoDeContasDetalhe] = useState({});
     const [listaPresentes, setListaPresentes] = useState([]);
     const [despesasComPagamentoAntecipadoNoPeriodo, setDespesasComPagamentoAntecipadoNoPeriodo] = useState([]);
-    const [watermarkPrevia, setWatermarkPrevia] = useState(false);
+    const [watermark, setWatermark] = useState(false);
 
     const periodo_prestacao_de_contas = JSON.parse(localStorage.getItem('periodoPrestacaoDeConta'));
     const periodoUuid = periodo_prestacao_de_contas ? periodo_prestacao_de_contas.periodo_uuid : ""
@@ -133,9 +133,18 @@ export const VisualizacaoDaAta = () => {
         setListaPresentes(lista_presentes);
     }
 
-    const aprensentaWatermarkPrevia = (dados_da_ata, prestacaoDetalhes) => {
-        if(dados_da_ata && ((dados_da_ata.tipo_ata !== 'RETIFICACAO' && !dados_da_ata.prestacao_conta) || (dados_da_ata.tipo_ata === 'RETIFICACAO' && prestacaoDetalhes && prestacaoDetalhes.status && prestacaoDetalhes.status === 'DEVOLVIDA'))) {
-            setWatermarkPrevia(true)
+    const aprensentaWatermark = (dados_da_ata) => {
+        if(dados_da_ata) {
+            if(dados_da_ata.completa && dados_da_ata.status_geracao_pdf === 'CONCLUIDO') {
+                return setWatermark({
+                    show: true,
+                    icon: 'visualizacao'
+                })
+            }
+            return setWatermark({
+                show: true,
+                icon: 'rascunho'
+            })   
         }
     }
 
@@ -150,7 +159,7 @@ export const VisualizacaoDaAta = () => {
             prestacao = await getPreviaPrestacaoDeContasDetalhe(periodoUuid);
         }
 
-        aprensentaWatermarkPrevia(dados_ata, prestacao)
+        aprensentaWatermark(dados_ata)
 
         setPrestacaoDeContasDetalhe(prestacao);
         let data_da_reuniao = dados_ata.data_reuniao ? dados_ata.data_reuniao : "";
@@ -470,7 +479,7 @@ export const VisualizacaoDaAta = () => {
 
     return (
         <div className="col-12 container-visualizacao-da-ata mb-5" ref={referenciaDocumento}>
-            {watermarkPrevia && <WatermarkPrevia alturaDocumento={alturaDocumento}/>}
+            {watermark.show && <WatermarkPrevia alturaDocumento={alturaDocumento} icon={watermark.icon}/>}
             <div className="col-12 mt-4">
                 {dadosAta && Object.entries(dadosAta).length > 0 &&
                     <TopoComBotoes
