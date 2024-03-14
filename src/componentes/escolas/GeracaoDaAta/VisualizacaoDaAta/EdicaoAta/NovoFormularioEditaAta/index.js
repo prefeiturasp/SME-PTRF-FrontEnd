@@ -837,7 +837,7 @@ export const NovoFormularioEditaAta = ({
                                                                             {((ehEdicaoPresente[index] === undefined || ehEdicaoPresente[index] === false) && membro.membro === true &&
                                                                                 <>
                                                                                 <div className="row">
-                                                                                    <div className='col-3 mt-4 ml-4' style={{ opacity: `${ehAdicaoPresente ? "30%" : '100%'}` }}>
+                                                                                    <div className='col-3 mt-4 ml-4' style={{ opacity: `${ehAdicaoPresente || !podeEditarAta ? "30%" : '100%'}` }}>
                                                                                         <div className="row">
                                                                                             <span className='mr-2'>Membro estava: </span>
                                                                                         </div>
@@ -849,12 +849,12 @@ export const NovoFormularioEditaAta = ({
                                                                                                 checkedChildren="Presente"
                                                                                                 unCheckedChildren="Ausente"
                                                                                                 className={`mt-2 switch-status-presidente form-control ${membro.presente ? "switch-status-presidente-checked" : ""}`}
-                                                                                                disabled={ehAdicaoPresente}
+                                                                                                disabled={ehAdicaoPresente || !podeEditarAta}
                                                                                             />
                                                                                         </div>
                                                                                     </div>
 
-                                                                                    <div className='col-3 mt-4 ml-4' style={{ opacity: `${ehAdicaoPresente ? "30%" : '100%'}` }}>
+                                                                                    <div className='col-3 mt-4 ml-4' style={{ opacity: `${ehAdicaoPresente || !podeEditarAta ? "30%" : '100%'}` }}>
                                                                                         <div className="row">
                                                                                             <span className='mr-2'>Presidente: </span>
                                                                                         </div>
@@ -864,12 +864,12 @@ export const NovoFormularioEditaAta = ({
                                                                                                 checked={membro.presidente_da_reuniao}
                                                                                                 name="statusPresidenteSwitch"
                                                                                                 className={`mt-2 switch-status-presidente form-control ${membro.presidente_da_reuniao ? "switch-status-presidente-checked" : ""}`}
-                                                                                                disabled={ehAdicaoPresente || membro.secretario_da_reuniao}
+                                                                                                disabled={ehAdicaoPresente || membro.secretario_da_reuniao || !podeEditarAta}
                                                                                             />
                                                                                         </div>
                                                                                     </div>
 
-                                                                                    <div className='col-3 mt-4 ml-4' style={{ opacity: `${ehAdicaoPresente ? "30%" : '100%'}` }}>
+                                                                                    <div className='col-3 mt-4 ml-4' style={{ opacity: `${ehAdicaoPresente || !podeEditarAta ? "30%" : '100%'}` }}>
                                                                                         <div className="row">
                                                                                             <span className='mr-2'>Secretário: </span>
                                                                                         </div>
@@ -879,7 +879,7 @@ export const NovoFormularioEditaAta = ({
                                                                                                 checked={membro.secretario_da_reuniao}
                                                                                                 name="statusSecretarioSwitch"
                                                                                                 className={`mt-2 switch-status-presidente form-control ${membro.secretario_da_reuniao ? "switch-status-presidente-checked" : ""}`}
-                                                                                                disabled={ehAdicaoPresente || membro.presidente_da_reuniao}
+                                                                                                disabled={ehAdicaoPresente || membro.presidente_da_reuniao || !podeEditarAta}
                                                                                             />
                                                                                         </div>
                                                                                     </div>
@@ -944,7 +944,7 @@ export const NovoFormularioEditaAta = ({
                                                             <div className="col-12">
                                                                 <div className={`d-flex  justify-content-start mt-3 mb-3`}>
                                                                     <button
-                                                                        disabled={disableBtnAdicionarPresente}
+                                                                        disabled={disableBtnAdicionarPresente || !podeEditarAta}
                                                                         type="button"
                                                                         className="btn btn-outline-success mt-1 mr-2"
                                                                         onClick={() => {
