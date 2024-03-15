@@ -149,7 +149,21 @@ export const CadastroFormCapital = (propriedades) => {
                         </div>
                     </div>
                 </div>
-
+                <div className="col-12 mt-4" style={{marginLeft: "20px"}}>
+                    <input
+                        type="checkbox"
+                        id={`nao_exibir_rel_bens${index}`}
+                        name="topping"
+                        value={rateio.nao_exibir_em_rel_bens}
+                        checked={rateio.nao_exibir_em_rel_bens}
+                        onChange={(e) => {
+                            formikProps.handleChange(e);
+                            handleChangeCheckboxNaoExibirEmRelBens(e, formikProps.setFieldValue);
+                        }}
+                        className="form-check-input"
+                    />
+                    <label className="form-check-label" htmlFor={`nao_exibir_em_rel_bens_${index}`}>Não exibir na relação de bens</label>
+                </div>
 
                 <div className="col-12 col-md-6 mt-4">
                     <label htmlFor={`numero_processo_incorporacao_capital_${index}`}>Número do processo de
@@ -165,21 +179,6 @@ export const CadastroFormCapital = (propriedades) => {
                         defaultValue={rateio.numero_processo_incorporacao_capital}
                         id={`numero_processo_incorporacao_capital_${index}`}
                     />
-                </div>
-                <div className="col-12 mt-4" style={{marginLeft: "20px"}}>
-                    <input
-                        type="checkbox"
-                        id={`nao_exibir_rel_bens${index}`}
-                        name="topping"
-                        value={rateio.nao_exibir_em_rel_bens}
-                        checked={rateio.nao_exibir_em_rel_bens}
-                        onChange={(e) => {
-                            formikProps.handleChange(e);
-                            handleChangeCheckboxNaoExibirEmRelBens(e, formikProps.setFieldValue);
-                        }}
-                        className="form-check-input"
-                    />
-                    <label className="form-check-label" htmlFor={`nao_exibir_em_rel_bens_${index}`}>Não exibir na relação de bens</label>
                 </div>
                 <div className="col-12 col-md-6 mt-4">
                     <label htmlFor={`conta_associacao_${index}`}>Tipo de conta</label>
