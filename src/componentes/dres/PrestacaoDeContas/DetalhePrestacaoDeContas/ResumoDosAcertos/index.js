@@ -51,8 +51,7 @@ export const ResumoDosAcertos = () => {
 
     const carregaInfoAta = useCallback(async () =>{
         if (prestacaoDeContas.uuid){
-            let info_ata = await getInfoAta(prestacaoDeContas.uuid);
-            return info_ata;
+            return await getInfoAta(prestacaoDeContas.uuid);
         }
     }, [prestacaoDeContas]);
 
@@ -97,14 +96,18 @@ export const ResumoDosAcertos = () => {
     }, [getAnalisePrestacao, props, prestacaoDeContas])
 
     useEffect(() => {
-        if(props && props.state && props.state.infoAta){
-            setInfoAta(props.state.infoAta)
-        }
-        else if(prestacaoDeContas){
-            setInfoAta(carregaInfoAta())
-        }
-
-    }, [carregaInfoAta, props, prestacaoDeContas])
+        const fetchInfoAta = async () => {
+            if (props && props.state && props.state.infoAta) {
+                setInfoAta(props.state.infoAta);
+            } else if (prestacaoDeContas) {
+                const info = await carregaInfoAta();
+                setInfoAta(info);
+            }
+        };
+    
+        fetchInfoAta();
+    
+    }, [carregaInfoAta, props, prestacaoDeContas]);
 
     useEffect(() => {
         if(props && props.state && props.state.editavel){
@@ -199,30 +202,35 @@ export const ResumoDosAcertos = () => {
     useEffect(() => {
         verificaPcEmAnalise()
     }, [verificaPcEmAnalise])
-
-    const verificaQtdeLancamentosDocumentosAjustes = async () => {
-        setLoading(true);
-        if (infoAta && infoAta.contas && infoAta.contas.length > 0 && analiseAtualUuid) {
-            await Promise.all(infoAta.contas.map(async (conta) => {
-                const extratos_ajustes = await getExtratosBancariosAjustes(analiseAtualUuid, conta.conta_associacao.uuid);
-                setTotalExtratosAjustes(prev => isNaN(prev) ? 0 + extratos_ajustes.length : prev + extratos_ajustes.length);
-    
-                const lancamentos_ajustes = await getLancamentosAjustes(analiseAtualUuid, conta.conta_associacao.uuid);
-                setTotalLancamentosAjustes(prev => isNaN(prev) ? 0 + lancamentos_ajustes.length : prev + lancamentos_ajustes.length);
-    
-                const documentos_ajustes = await getDocumentosAjustes(analiseAtualUuid, conta.conta_associacao.uuid);
-                setTotalDocumentosAjustes(prev => isNaN(prev) ? 0 + documentos_ajustes.length : prev + documentos_ajustes.length);
-    
-                const despesas_periodos_anteriores_ajustes = await getDespesasPeriodosAnterioresAjustes(analiseAtualUuid, conta.conta_associacao.uuid);
-                setDespesasPeriodosAnterioresAjustes(prev => isNaN(prev) ? 0 + despesas_periodos_anteriores_ajustes.length : prev + despesas_periodos_anteriores_ajustes.length);
-            }));
-        }
-        setLoading(false);
-    };
   
     useEffect(() => {
-        verificaQtdeLancamentosDocumentosAjustes()
-    }, [analiseAtualUuid, infoAta, forcaVerificaSeExibeMsg])
+        const verificaQtdeLancamentosDocumentosAjustes = async () => {
+            setLoading(true);
+            if (infoAta && infoAta.contas && infoAta.contas.length > 0 && analiseAtualUuid) {
+                await Promise.all(infoAta.contas.map(async (conta) => {
+                    const extratos_ajustes = await getExtratosBancariosAjustes(analiseAtualUuid, conta.conta_associacao.uuid);
+                    console.log('extratos_ajustes', extratos_ajustes)
+                    setTotalExtratosAjustes(prev => isNaN(prev) ? 0 + extratos_ajustes.length : prev + extratos_ajustes.length);
+        
+                    const lancamentos_ajustes = await getLancamentosAjustes(analiseAtualUuid, conta.conta_associacao.uuid);
+                    console.log('lancamentos_ajustes', lancamentos_ajustes)
+                    setTotalLancamentosAjustes(prev => isNaN(prev) ? 0 + lancamentos_ajustes.length : prev + lancamentos_ajustes.length);
+        
+                    const documentos_ajustes = await getDocumentosAjustes(analiseAtualUuid, conta.conta_associacao.uuid);
+                    console.log('documentos_ajustes', documentos_ajustes)
+                    setTotalDocumentosAjustes(prev => isNaN(prev) ? 0 + documentos_ajustes.length : prev + documentos_ajustes.length);
+        
+                    const despesas_periodos_anteriores_ajustes = await getDespesasPeriodosAnterioresAjustes(analiseAtualUuid, conta.conta_associacao.uuid);
+                    console.log('despesas_periodos_anteriores_ajustes', despesas_periodos_anteriores_ajustes)
+                    setDespesasPeriodosAnterioresAjustes(prev => isNaN(prev) ? 0 + despesas_periodos_anteriores_ajustes.length : prev + despesas_periodos_anteriores_ajustes.length);
+                }));
+            }
+            setLoading(false);
+        };
+        
+        verificaQtdeLancamentosDocumentosAjustes();
+
+    }, [infoAta, analiseAtualUuid, forcaVerificaSeExibeMsg])
 
     const handleChangeDataLimiteDevolucao = useCallback((name, value) => {
         setDataLimiteDevolucao(value)
@@ -336,7 +344,15 @@ export const ResumoDosAcertos = () => {
                         prestacaoDeContas={prestacaoDeContas}
                     />
 
-                    {analiseAtualUuid && !loading ? (
+                    {
+                        loading || !analiseAtualUuid || !infoAta || !prestacaoDeContas ? (
+                            <Loading
+                                corGrafico="black"
+                                corFonte="dark"
+                                marginTop="0"
+                                marginBottom="0"
+                            />                            
+                        ) : (
                             <TabsConferenciaAtualHistorico
                                 dataLimiteDevolucao={dataLimiteDevolucao} // Para Devolver para acertos
                                 handleChangeDataLimiteDevolucao={handleChangeDataLimiteDevolucao} // Para Devolver para acertos
@@ -351,14 +367,8 @@ export const ResumoDosAcertos = () => {
                                 pcEmAnalise={pcEmAnalise}
                                 prestacaoDeContas={prestacaoDeContas}
                                 limpaStorage={limpaStorage}
-                            />
-                        ) :
-                            <Loading
-                                corGrafico="black"
-                                corFonte="dark"
-                                marginTop="0"
-                                marginBottom="0"
-                            />
+                            />                            
+                        )
                     }
                 </div>
                 <section>
