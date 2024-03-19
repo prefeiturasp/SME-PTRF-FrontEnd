@@ -13,7 +13,7 @@ export const ModalAvisoAssinatura = (props) =>{
             primeiroBotaoCss="success"
             segundoBotaoOnclick={props.segundoBotaoOnclick}
             segundoBotaoCss="success"
-            segundoBotaoTexto="Concluir período"
+            segundoBotaoTexto={props.segundoBotaoTexto}
             dataQa={props.dataQa}
             size={"lg"}
         />
