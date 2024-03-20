@@ -744,6 +744,7 @@ export const PrestacaoDeContas = ({setStatusPC, registroFalhaGeracaoPc, setRegis
                             titulo="Assinaturas do Demonstrativo e da Relação de bens"
                             texto="<p>Os campos de assinatura do Demonstrativo e da Relação de Bens, se houver, serão exibidos conforme os membros ativos da Associação na presente data. Caso precise realizar alguma atualização nos membros, faço-o primeiro e depois conclua o período /acertos.</p>"
                             dataQa="modal-aviso-assinatura-demonstrativo-relacao-bens"
+                            segundoBotaoTexto={textoBotaoConcluir(statusPrestacaoDeConta)}
                         />
                     </section>
                     <section>

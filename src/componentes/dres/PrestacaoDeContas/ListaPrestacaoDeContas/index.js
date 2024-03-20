@@ -157,7 +157,7 @@ export const ListaPrestacaoDeContas = () => {
                 prestacoes_de_contas = await getPrestacoesDeContasTodosOsStatus(periodoEscolhido, stateFiltros.filtrar_por_termo, stateFiltros.filtrar_por_tipo_de_unidade)
 
             }else if ( (selectedStatusPc.length === 1 && selectedStatusPc.includes('NAO_APRESENTADA') ) || ( selectedStatusPc.length === 2 && selectedStatusPc.includes('NAO_APRESENTADA') && selectedStatusPc.includes('NAO_RECEBIDA') ) ) {
-                prestacoes_de_contas = await getPrestacoesDeContasNaoRecebidaNaoGerada(periodoEscolhido, stateFiltros.filtrar_por_termo, stateFiltros.filtrar_por_tipo_de_unidade)
+                prestacoes_de_contas = await getPrestacoesDeContasNaoRecebidaNaoGerada(periodoEscolhido, stateFiltros.filtrar_por_termo, stateFiltros.filtrar_por_tipo_de_unidade, array_status_convertido)
 
             }else if (!selectedStatusPc.includes('NAO_APRESENTADA')) {
                 prestacoes_de_contas = await getPrestacoesDeContas(periodoEscolhido, stateFiltros.filtrar_por_termo, stateFiltros.filtrar_por_tipo_de_unidade, array_status_convertido, stateFiltros.filtrar_por_tecnico_atribuido, data_inicio, data_fim);
