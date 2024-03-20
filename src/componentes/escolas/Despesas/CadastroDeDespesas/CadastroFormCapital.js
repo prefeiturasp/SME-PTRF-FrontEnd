@@ -39,11 +39,18 @@ export const CadastroFormCapital = (propriedades) => {
         }
     };
 
+    const handleChangeCheckboxNaoExibirEmRelBens = async (e, setFieldValue) => {
+        let checado = e.target.checked;
+        setFieldValue(`rateios[${index}].nao_exibir_em_rel_bens`, checado)
+    };
+
+
     return (
         <>
             <div className="row mt-4">
                 <div className="col-12">
-                    <label htmlFor={`especificacao_material_servico_${index}`}>Especificação do bem, material ou serviço</label>
+                    <label htmlFor={`especificacao_material_servico_${index}`}>Especificação do bem, material ou
+                        serviço</label>
                     <select
                         data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-capital-especificacao-material`}
                         value={
@@ -56,14 +63,20 @@ export const CadastroFormCapital = (propriedades) => {
                         id={`especificacao_material_servico_${index}`}
                         className={
                             !eh_despesa_com_comprovacao_fiscal(formikProps.values)
-                            ? "form-control"
-                            : `${!rateio.especificacao_material_servico && verboHttp === "PUT" && "is_invalid "} ${!rateio.especificacao_material_servico && 'despesa_incompleta'} form-control`
+                                ? "form-control"
+                                : `${!rateio.especificacao_material_servico && verboHttp === "PUT" && "is_invalid "} ${!rateio.especificacao_material_servico && 'despesa_incompleta'} form-control`
                         }
                         disabled={disabled || bloqueiaRateioEstornado(rateio) || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes) || !eh_despesa_com_comprovacao_fiscal(formikProps.values)}
                     >
-                        <option data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-capital-especificacao-material-option-${0}`} key={0} value="">Selecione uma especificação</option>
+                        <option
+                            data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-capital-especificacao-material-option-${0}`}
+                            key={0} value="">Selecione uma especificação
+                        </option>
                         {especificaoes_capital && especificaoes_capital.map((item, key) => (
-                            <option data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-capital-especificacao-material-option-${key + 1}`} className={!item.ativa ? 'esconde-especificacao-material-servico' : ''} key={item.id} value={item.id}>{item.descricao}</option>
+                            <option
+                                data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-capital-especificacao-material-option-${key + 1}`}
+                                className={!item.ativa ? 'esconde-especificacao-material-servico' : ''} key={item.id}
+                                value={item.id}>{item.descricao}</option>
                         ))}
                     </select>
                 </div>
@@ -83,9 +96,13 @@ export const CadastroFormCapital = (propriedades) => {
                         className={`${!rateio.acao_associacao && verboHttp === "PUT" && "is_invalid "} ${!rateio.acao_associacao && 'despesa_incompleta'} form-control`}
                         disabled={disabled || bloqueiaRateioEstornado(rateio) || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                     >
-                        <option data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-capital-acao-option-${0}`} value="">Selecione uma ação</option>
+                        <option data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-capital-acao-option-${0}`}
+                                value="">Selecione uma ação
+                        </option>
                         {despesasTabelas.acoes_associacao && despesasTabelas.acoes_associacao.filter(acao => !acao.e_recursos_proprios).map((item, key) => (
-                            <option data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-capital-acao-option-${key + 1}`} key={item.uuid} value={item.uuid}>{item.nome}</option>
+                            <option
+                                data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-capital-acao-option-${key + 1}`}
+                                key={item.uuid} value={item.uuid}>{item.nome}</option>
                         ))}
                     </select>
                 </div>
@@ -133,20 +150,36 @@ export const CadastroFormCapital = (propriedades) => {
                     </div>
                 </div>
 
+
                 <div className="col-12 col-md-6 mt-4">
                     <label htmlFor={`numero_processo_incorporacao_capital_${index}`}>Número do processo de
                         incorporação</label>
                     <MaskedInput
                         data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-capital-numero-do-processo-incorporacao`}
-                        disabled={disabled || bloqueiaRateioEstornado(rateio) || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
+                        disabled={rateio.nao_exibir_em_rel_bens || disabled || bloqueiaRateioEstornado(rateio) || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                         mask={(valor) => processoIncorporacaoMask(valor)}
                         onChange={formikProps.handleChange}
                         name={`rateios[${index}].numero_processo_incorporacao_capital`}
-                        className={`${!rateio.numero_processo_incorporacao_capital && verboHttp === "PUT" && "is_invalid "} ${!rateio.numero_processo_incorporacao_capital && 'despesa_incompleta'} form-control`}
+                        className={`${!rateio.numero_processo_incorporacao_capital && !rateio.nao_exibir_em_rel_bens && verboHttp === "PUT" && "is_invalid "} ${!rateio.numero_processo_incorporacao_capital && !rateio.nao_exibir_em_rel_bens && 'despesa_incompleta'} form-control`}
                         placeholder="Escreva o número do processo"
                         defaultValue={rateio.numero_processo_incorporacao_capital}
                         id={`numero_processo_incorporacao_capital_${index}`}
                     />
+                </div>
+                <div className="col-12 mt-4" style={{marginLeft: "20px"}}>
+                    <input
+                        type="checkbox"
+                        id={`nao_exibir_rel_bens${index}`}
+                        name="topping"
+                        value={rateio.nao_exibir_em_rel_bens}
+                        checked={rateio.nao_exibir_em_rel_bens}
+                        onChange={(e) => {
+                            formikProps.handleChange(e);
+                            handleChangeCheckboxNaoExibirEmRelBens(e, formikProps.setFieldValue);
+                        }}
+                        className="form-check-input"
+                    />
+                    <label className="form-check-label" htmlFor={`nao_exibir_em_rel_bens_${index}`}>Não exibir na relação de bens</label>
                 </div>
                 <div className="col-12 col-md-6 mt-4">
                     <label htmlFor={`conta_associacao_${index}`}>Tipo de conta</label>
@@ -168,15 +201,17 @@ export const CadastroFormCapital = (propriedades) => {
                     </select>
                     {
                         (formikProps.values.data_transacao && !filterContas(formikProps.values.data_transacao).length) ?
-                        <span data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-custeio-erro-conta-associacao`} 
-                            className="mt-1 span_erro text-danger">
+                            <span
+                                data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-custeio-erro-conta-associacao`}
+                                className="mt-1 span_erro text-danger">
                                 Não existem contas disponíveis para a data do pagamento
                         </span> : null
-                    }                    
+                    }
                 </div>
 
                 <div className="col-12 col-md-6 mt-4">
-                    <label htmlFor={`valor_original_form_capital_${index}`}>{eh_despesa_com_retencao_imposto(formikProps.values) ? 'Valor líquido total do capital' : 'Valor total do capital'}</label>
+                    <label
+                        htmlFor={`valor_original_form_capital_${index}`}>{eh_despesa_com_retencao_imposto(formikProps.values) ? 'Valor líquido total do capital' : 'Valor total do capital'}</label>
                     <CurrencyInput
                         data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-capital-valor`}
                         allowNegative={false}
@@ -191,11 +226,13 @@ export const CadastroFormCapital = (propriedades) => {
                         disabled={true}
                     />
                     {errors.valor_original && exibeMsgErroValorOriginal &&
-                    <span data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-capital-erro-valor`} className="span_erro text-danger mt-1"> A soma dos valores originais do rateio não está correspondendo ao valor total original utilizado com recursos do Programa.</span>}
+                        <span data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-capital-erro-valor`}
+                              className="span_erro text-danger mt-1"> A soma dos valores originais do rateio não está correspondendo ao valor total original utilizado com recursos do Programa.</span>}
                 </div>
 
                 <div className="col-12 col-md-6 mt-4">
-                    <label htmlFor={`valor_rateio_${index}`} className="label-valor-realizado">{eh_despesa_com_retencao_imposto(formikProps.values) ? 'Valor líquido realizado' : 'Valor realizado'}</label>
+                    <label htmlFor={`valor_rateio_${index}`}
+                           className="label-valor-realizado">{eh_despesa_com_retencao_imposto(formikProps.values) ? 'Valor líquido realizado' : 'Valor realizado'}</label>
                     <CurrencyInput
                         data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-capital-valor-realizado`}
                         allowNegative={false}
@@ -212,7 +249,8 @@ export const CadastroFormCapital = (propriedades) => {
                         disabled={disabled || bloqueiaRateioEstornado(rateio) || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                     />
                     {errors.valor_recusos_acoes && exibeMsgErroValorRecursos &&
-                    <span data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-capital-erro-valor-realizado`} className="span_erro text-danger mt-1"> A soma dos valores do rateio não está correspondendo ao valor total utilizado com recursos do Programa.</span>}
+                        <span data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-capital-erro-valor-realizado`}
+                              className="span_erro text-danger mt-1"> A soma dos valores do rateio não está correspondendo ao valor total utilizado com recursos do Programa.</span>}
                 </div>
             </div>
         </>
