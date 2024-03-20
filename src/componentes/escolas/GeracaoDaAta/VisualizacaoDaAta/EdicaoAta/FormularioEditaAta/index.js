@@ -722,7 +722,7 @@ export const FormularioEditaAta = ({
 
                                                                     {((ehEdicaoPresente[index] === undefined || ehEdicaoPresente[index] === false) && membro.membro === true &&
                                                                         <>
-                                                                            <div className='col mt-4 ml-4' style={{ opacity: `${ehAdicaoPresente ? "30%" : '100%'}` }}>
+                                                                            <div className='col mt-4 ml-4' style={{ opacity: `${ehAdicaoPresente || !podeEditarAta ? "30%" : '100%'}` }}>
                                                                                 <div className="row">
                                                                                     <span className='mr-2'>Membro estava: </span>
                                                                                 </div>
@@ -737,7 +737,7 @@ export const FormularioEditaAta = ({
                                                                                         style={{
                                                                                             maxWidth: '30%',
                                                                                         }}
-                                                                                        disabled={ehAdicaoPresente}
+                                                                                        disabled={ehAdicaoPresente || !podeEditarAta}
                                                                                     />
                                                                                 </div>
                                                                             </div>
@@ -801,7 +801,7 @@ export const FormularioEditaAta = ({
                                                     <div className="col-12">
                                                         <div className={`d-flex  justify-content-start mt-3 mb-3`}>
                                                             <button
-                                                                disabled={disableBtnAdicionarPresente}
+                                                                disabled={disableBtnAdicionarPresente || !podeEditarAta}
                                                                 type="button"
                                                                 className="btn btn-outline-success mt-1 mr-2"
                                                                 onClick={() => {

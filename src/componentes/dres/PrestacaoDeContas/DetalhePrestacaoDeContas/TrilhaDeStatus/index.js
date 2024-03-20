@@ -4,6 +4,7 @@ import {TrilhaDeStatusRecebida} from "./TrilhaDeStatusRecebida";
 import {TrilhaDeStatusEmAnalise} from "./TrilhaDeStatusEmAnalise";
 import {TrilhaDeStatusDevolvidaParaAcertos} from "./TrilhaDeStatusDevolvidaParaAcertos";
 import {TrilhaDeStatusAprovada} from "./TrilhaDeStatusAprovada";
+import {TrilhaDeStatusReprovadaNaoApresentacao} from "./TrilhaDeStatusReprovadaNaoApresentacao";
 
 export const TrilhaDeStatus = ({prestacaoDeContas}) => {
 
@@ -27,6 +28,10 @@ export const TrilhaDeStatus = ({prestacaoDeContas}) => {
         }else if(status === 'APROVADA' || status === 'APROVADA_RESSALVA' || status === 'REPROVADA'){
             return (
                 <TrilhaDeStatusAprovada/>
+            )
+        }else if(status === 'REPROVADA_NAO_APRESENTACAO') {
+            return (
+                <TrilhaDeStatusReprovadaNaoApresentacao/>
             )
         }
     };

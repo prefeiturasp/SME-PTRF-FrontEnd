@@ -234,8 +234,8 @@ export const getTiposDeAcertoLancamentos = async () => {
     return (await api.get(`/api/tipos-acerto-lancamento/`, authHeader)).data
 };
 
-export const getTiposDeAcertoLancamentosAgrupadoCategoria = async () => {
-    return (await api.get(`/api/tipos-acerto-lancamento/tabelas/`, authHeader)).data
+export const getTiposDeAcertoLancamentosAgrupadoCategoria = async (aplicavel_despesas_periodos_anteriores=null) => {
+    return (await api.get(`/api/tipos-acerto-lancamento/tabelas/${aplicavel_despesas_periodos_anteriores ? `?aplicavel_despesas_periodos_anteriores=${aplicavel_despesas_periodos_anteriores}` : ''}`, authHeader)).data
 };
 
 export const getListaDeSolicitacaoDeAcertos = async (prestacao_de_contas_uuid, analise_lancamento_uuid) => {
@@ -300,6 +300,10 @@ export const getContasDaAssociacao = async (associacao_uuid) => {
 
 export const getContasDaAssociacaoComAcertosEmLancamentos = async (associacao_uuid, analise_prestacao_uuid) => {
     return (await api.get(`/api/associacoes/contas-com-acertos-em-lancamentos/?associacao_uuid=${associacao_uuid}&analise_prestacao_uuid=${analise_prestacao_uuid}`, authHeader)).data
+};
+
+export const getContasDaAssociacaoComAcertosEmDespesasPeriodosAnteriores = async (associacao_uuid, analise_prestacao_uuid) => {
+    return (await api.get(`/api/associacoes/contas-com-acertos-em-despesas-periodos-anteriores/?associacao_uuid=${associacao_uuid}&analise_prestacao_uuid=${analise_prestacao_uuid}`, authHeader)).data
 };
 
 export const getAnalisesDePcDevolvidas = async (prestacao_de_contas_uuid) => {
