@@ -9,6 +9,7 @@ import {
     getDocumentosAjustes,
     getExtratosBancariosAjustes,
     getInfoAta,
+    getDespesasPeriodosAnterioresAjustes,
 } from "../../../../../services/dres/PrestacaoDeContas.service";
 import moment from "moment";
 import {gerarUuid, trataNumericos} from "../../../../../utils/ValidacoesAdicionaisFormularios";
@@ -33,17 +34,15 @@ export const ResumoDosAcertos = () => {
 
     const [dataLimiteDevolucao, setDataLimiteDevolucao] = useState('')
     const [showModalErroDevolverParaAcerto, setShowModalErroDevolverParaAcerto] = useState(false)
-    const [exibeMsg, setExibeMsg] = useState(false)
     const [textoErroDevolverParaAcerto, setTextoErroDevolverParaAcerto] = useState('')
-    const [textoMsg, setTextoMsg] = useState('')
     const [analiseAtualUuid, setAnaliseAtualUuid] = useState('')
     const [analisesDePcDevolvidas, setAnalisesDePcDevolvidas] = useState([])
-    const [btnDevolverParaAcertoDisabled, setBtnDevolverParaAcertoDisabled] = useState(false)
     const [showModalConfirmaDevolverParaAcerto, setShowModalConfirmaDevolverParaAcerto] = useState(false)
     const [loading, setLoading] = useState(true)
     const [totalExtratosAjustes, setTotalExtratosAjustes] = useState(undefined)
     const [totalLancamentosAjustes, setTotalLancamentosAjustes] = useState(undefined)
     const [totalDocumentosAjustes, setTotalDocumentosAjustes] = useState(undefined)
+    const [totalDespesasPeriodosAnterioresAjustes, setDespesasPeriodosAnterioresAjustes] = useState(undefined)    
     const [forcaVerificaSeExibeMsg, setForcaVerificaSeExibeMsg] = useState('')
     const [pcEmAnalise, setPcEmAnalise] = useState(false)
     const [analisesDeContaDaPrestacao, setAnalisesDeContaDaPrestacao] = useState([])
@@ -52,8 +51,7 @@ export const ResumoDosAcertos = () => {
 
     const carregaInfoAta = useCallback(async () =>{
         if (prestacaoDeContas.uuid){
-            let info_ata = await getInfoAta(prestacaoDeContas.uuid);
-            return info_ata;
+            return await getInfoAta(prestacaoDeContas.uuid);
         }
     }, [prestacaoDeContas]);
 
@@ -98,14 +96,18 @@ export const ResumoDosAcertos = () => {
     }, [getAnalisePrestacao, props, prestacaoDeContas])
 
     useEffect(() => {
-        if(props && props.state && props.state.infoAta){
-            setInfoAta(props.state.infoAta)
-        }
-        else if(prestacaoDeContas){
-            setInfoAta(carregaInfoAta())
-        }
-
-    }, [carregaInfoAta, props, prestacaoDeContas])
+        const fetchInfoAta = async () => {
+            if (props && props.state && props.state.infoAta) {
+                setInfoAta(props.state.infoAta);
+            } else if (prestacaoDeContas) {
+                const info = await carregaInfoAta();
+                setInfoAta(info);
+            }
+        };
+    
+        fetchInfoAta();
+    
+    }, [carregaInfoAta, props, prestacaoDeContas]);
 
     useEffect(() => {
         if(props && props.state && props.state.editavel){
@@ -148,6 +150,7 @@ export const ResumoDosAcertos = () => {
         setTotalExtratosAjustes(undefined)
         setTotalLancamentosAjustes(undefined)
         setTotalDocumentosAjustes(undefined)
+        setDespesasPeriodosAnterioresAjustes(undefined)
         setForcaVerificaSeExibeMsg(gerarUuid())
     }, [prestacaoDeContas, props])
 
@@ -181,6 +184,7 @@ export const ResumoDosAcertos = () => {
         setTotalExtratosAjustes('')
         setTotalLancamentosAjustes('')
         setTotalDocumentosAjustes('')
+        setDespesasPeriodosAnterioresAjustes('')
     }, [analisesDePcDevolvidas])
 
     useEffect(() => {
@@ -200,18 +204,19 @@ export const ResumoDosAcertos = () => {
     useEffect(() => {
         verificaPcEmAnalise()
     }, [verificaPcEmAnalise])
-
+  
     const verificaQtdeLancamentosDocumentosAjustes = useCallback(async () => {
         setLoading(true)
         if (infoAta && infoAta.contas && infoAta.contas.length > 0 && analiseAtualUuid) {
             infoAta.contas.map(async (conta) => {
                 let extratos_ajustes = await getExtratosBancariosAjustes(analiseAtualUuid, conta.conta_associacao.uuid);
                 setTotalExtratosAjustes(extratos_ajustes.length)
-
                 let lancamentos_ajustes = await getLancamentosAjustes(analiseAtualUuid, conta.conta_associacao.uuid)
                 setTotalLancamentosAjustes(lanc => isNaN(lanc) ? 0 + lancamentos_ajustes.length : lanc + lancamentos_ajustes.length)
                 let documentos_ajustes = await getDocumentosAjustes(analiseAtualUuid, conta.conta_associacao.uuid)
                 setTotalDocumentosAjustes(documentos_ajustes.length)
+                const despesas_periodos_anteriores_ajustes = await getDespesasPeriodosAnterioresAjustes(analiseAtualUuid, conta.conta_associacao.uuid);
+                setDespesasPeriodosAnterioresAjustes(prev => isNaN(prev) ? 0 + despesas_periodos_anteriores_ajustes.length : prev + despesas_periodos_anteriores_ajustes.length);
             })
         }
 
@@ -221,25 +226,6 @@ export const ResumoDosAcertos = () => {
     useEffect(() => {
         verificaQtdeLancamentosDocumentosAjustes()
     }, [verificaQtdeLancamentosDocumentosAjustes, forcaVerificaSeExibeMsg])
-
-    const verificaSeExibeMsg = useCallback(() => {
-        setLoading(true)
-        if (totalLancamentosAjustes !== undefined && totalLancamentosAjustes <= 0 && totalDocumentosAjustes !== undefined && totalDocumentosAjustes <= 0 && totalExtratosAjustes !== undefined && totalExtratosAjustes <= 0) {
-            setExibeMsg(true)
-            if (prestacaoDeContas && prestacaoDeContas.devolucoes_da_prestacao && prestacaoDeContas.devolucoes_da_prestacao.length > 0) {
-                setTextoMsg('Não existem novas solicitações salvas desde o retorno da Associação. Consulte acima as solicitações anteriores')
-            } else {
-                setTextoMsg('Não existem solicitações para acerto salvas desde o envio da PC da Associação')
-            }
-        } else {
-            setExibeMsg(false)
-        }
-        setLoading(false)
-    }, [prestacaoDeContas, totalLancamentosAjustes, totalDocumentosAjustes, totalExtratosAjustes])
-
-    useEffect(() => {
-        verificaSeExibeMsg()
-    }, [verificaSeExibeMsg])
 
     const handleChangeDataLimiteDevolucao = useCallback((name, value) => {
         setDataLimiteDevolucao(value)
@@ -259,7 +245,6 @@ export const ResumoDosAcertos = () => {
     }, [analisesDeContaDaPrestacao])
 
     const devolverParaAcertos = useCallback(async () => {
-        setBtnDevolverParaAcertoDisabled(true)
         setShowModalConfirmaDevolverParaAcerto(false)
         let analises = trataAnalisesDeContaDaPrestacao()
         let payload = {
@@ -273,7 +258,6 @@ export const ResumoDosAcertos = () => {
         if(prestacaoDeContas.pode_devolver === false){
             setShowModalErroDevolverParaAcerto(true);
             setTextoErroDevolverParaAcerto("Foram solicitados acertos que demandam exclusão dos documentos e fechamentos na conclusão do acerto. Para fazer a devolução dessa prestação de contas é necessário reabrir ou devolver primeiro a prestação de contas mais recente para que sejam gerados novos documentos.")
-            setBtnDevolverParaAcertoDisabled(false)
         }
         else{
             try {
@@ -327,6 +311,22 @@ export const ResumoDosAcertos = () => {
         meapcservice.setAnaliseDrePorUsuario(visoesService.getUsuarioLogin(), objetoAnaliseDrePorUsuario)
     }
 
+    const podeDevolver = useMemo(() => {
+        return prestacaoDeContas.pode_devolver && editavel && dataLimiteDevolucao && (totalLancamentosAjustes > 0 || totalDocumentosAjustes > 0 || totalExtratosAjustes > 0 || totalDespesasPeriodosAnterioresAjustes > 0) 
+    }, [prestacaoDeContas, editavel, dataLimiteDevolucao, totalLancamentosAjustes, totalDocumentosAjustes, totalExtratosAjustes, totalDespesasPeriodosAnterioresAjustes])
+    
+    const msgNaoExistemSolicitacoesDeAcerto = useMemo(() => {
+        if ((totalLancamentosAjustes > 0 || totalDocumentosAjustes > 0 || totalExtratosAjustes > 0 || totalDespesasPeriodosAnterioresAjustes > 0)){   
+            return null;
+        } else {
+            if (prestacaoDeContas && prestacaoDeContas.devolucoes_da_prestacao && prestacaoDeContas.devolucoes_da_prestacao.length > 0) {
+                return 'Não existem novas solicitações salvas desde o retorno da Associação. Consulte acima as solicitações anteriores';
+            } else {
+                return 'Não existem solicitações para acerto salvas desde o envio da PC da Associação';
+            }
+        }
+    }, [prestacaoDeContas, totalLancamentosAjustes, totalDocumentosAjustes, totalExtratosAjustes, totalDespesasPeriodosAnterioresAjustes])
+
     return (
         <>
             <PaginasContainer>
@@ -335,27 +335,26 @@ export const ResumoDosAcertos = () => {
                     <TopoComBotoes
                         onClickBtnVoltar={onClickBtnVoltar}
                         setShowModalConfirmaDevolverParaAcerto={setShowModalConfirmaDevolverParaAcerto}
-                        dataLimiteDevolucao={dataLimiteDevolucao}
-                        // TODO verificar a necessidade desses props de lancamentos e documentos
-                        /* qtdeAjustesLancamentos={props.state.totalLancamentosAjustes}
-                        qtdeAjustesDocumentos={props.state.totalDocumentosAjustes} */
-                        qtdeAjustesLancamentos={totalLancamentosAjustes}
-                        qtdeAjustesDocumentos={totalDocumentosAjustes}
-                        qtdeAjustesExtrato={totalExtratosAjustes}
-                        btnDevolverParaAcertoDisabled={btnDevolverParaAcertoDisabled}
-                        editavel={editavel}
+                        podeDevolver={podeDevolver}
                         prestacaoDeContas={prestacaoDeContas}
                     />
 
-                    {analiseAtualUuid && !loading ? (
+                    {
+                        loading || !analiseAtualUuid ? (
+                            <Loading
+                                corGrafico="black"
+                                corFonte="dark"
+                                marginTop="0"
+                                marginBottom="0"
+                            />                            
+                        ) : (
                             <TabsConferenciaAtualHistorico
                                 dataLimiteDevolucao={dataLimiteDevolucao} // Para Devolver para acertos
                                 handleChangeDataLimiteDevolucao={handleChangeDataLimiteDevolucao} // Para Devolver para acertos
                                 prestacao_conta_uuid={prestacao_conta_uuid} // Para ExibeAcertosEmLancamentosEDocumentosPorConta e CardsDevolucoesParaAcertoDaDre
                                 analiseAtualUuid={analiseAtualUuid} // Para ExibeAcertosEmLancamentosEDocumentosPorConta
                                 setAnaliseAtualUuid={setAnaliseAtualUuid} // Para CardsDevolucoesParaAcertoDaDre
-                                exibeMsg={exibeMsg} // Para TabsConferenciaAtualHistorico
-                                textoMsg={textoMsg} // Para TabsConferenciaAtualHistorico
+                                msgNaoExistemSolicitacoesDeAcerto={msgNaoExistemSolicitacoesDeAcerto} // Para TabsConferenciaAtualHistorico
                                 totalAnalisesDePcDevolvidas={totalAnalisesDePcDevolvidas} // Para TabsConferenciaAtualHistorico
                                 setAnaliseAtualUuidComPCAnaliseAtualUuid={setAnaliseAtualUuidComPCAnaliseAtualUuid} // Para TabsConferenciaAtualHistorico
                                 setPrimeiraAnalisePcDevolvida={setPrimeiraAnalisePcDevolvida} // Para TabsConferenciaAtualHistorico
@@ -363,14 +362,8 @@ export const ResumoDosAcertos = () => {
                                 pcEmAnalise={pcEmAnalise}
                                 prestacaoDeContas={prestacaoDeContas}
                                 limpaStorage={limpaStorage}
-                            />
-                        ) :
-                            <Loading
-                                corGrafico="black"
-                                corFonte="dark"
-                                marginTop="0"
-                                marginBottom="0"
-                            />
+                            />                            
+                        )
                     }
                 </div>
                 <section>

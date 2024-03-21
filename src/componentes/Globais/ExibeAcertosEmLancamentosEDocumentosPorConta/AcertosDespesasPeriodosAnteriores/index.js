@@ -343,7 +343,7 @@ const AcertosDespesasPeriodosAnteriores = ({
         dispatch(limparDetalharAcertos())
         dispatch(addDetalharAcertos(lancamentos))
         dispatch(origemPagina("dre-detalhe-prestacao-de-contas-resumo-acertos"))
-        history.push(`/dre-detalhe-prestacao-de-contas-detalhar-acertos/${prestacaoDeContas.uuid}`)
+        history.push(`/dre-detalhe-prestacao-de-contas-detalhar-acertos/${prestacaoDeContas.uuid}`, {aplicavel_despesas_periodos_anteriores: true} )
     }
 
     const redirecionaDetalheAcerto = (lancamento) => {
@@ -938,10 +938,6 @@ const AcertosDespesasPeriodosAnteriores = ({
         dados_analise_dre_usuario_logado.conferencia_de_despesas_periodos_anteriores.expanded = lista
         meapcservice.setAnaliseDrePorUsuario(visoesService.getUsuarioLogin(), dados_analise_dre_usuario_logado)
     }
-    
-    if(contasAssociacao.length === 0){
-        return null;
-    };
 
     return (
         <>
