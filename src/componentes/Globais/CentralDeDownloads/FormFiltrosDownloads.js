@@ -9,7 +9,7 @@ export const FormFiltrosDownloads = ({handleSubmitFormFiltros, stateFormFiltros,
                 <form onSubmit={handleSubmitFormFiltros}>
                     <div className="form-row align-items-center">
                         <div className="form-group col">
-                            <label htmlFor="filtro_por_identificador">Filtrar por identificador</label>
+                            <label htmlFor="filtro_por_identificador">Filtrar por identificador/informações</label>
                             <input 
                                 id="filtro_por_identificador"
                                 name="filtro_por_identificador"
