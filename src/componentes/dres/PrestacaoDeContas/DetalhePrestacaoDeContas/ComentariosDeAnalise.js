@@ -1,24 +1,30 @@
-import React, {memo, useCallback, useEffect, useState} from "react";
+import React, {memo, useCallback, useEffect, useState, useMemo} from "react";
 import {getComentariosDeAnalise, criarComentarioDeAnalise, editarComentarioDeAnalise, deleteComentarioDeAnalise, getReordenarComentarios, postNotificarComentarios} from "../../../../services/dres/PrestacaoDeContas.service";
 import {FieldArray, Formik} from "formik";
 import {ModalEditarDeletarComentario} from "../ModalEditarDeletarComentario";
 import {ModalDeleteComentario} from "../ModalDeleteComentario";
 import {ModalNotificarComentarios} from "../ModalNotificarComentarios";
-import {SortableContainer, SortableElement} from 'react-sortable-hoc';
-import arrayMove from 'array-move';
 import ComentariosDeAnaliseNotificados from "./ComentariosDeAnaliseNotificados";
+import {
+    DndContext,
+    closestCenter,
+    KeyboardSensor, 
+    MouseSensor, 
+    useSensor, 
+    useSensors
+  } from "@dnd-kit/core";
+  import {
+    arrayMove,
+    SortableContext,
+    verticalListSortingStrategy,
+    useSortable
+  } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 const ComentariosDeAnalise = ({prestacaoDeContas="", associacaoUuid="", periodoUuid="", editavel=true}) => {
 
-    const initialComentarios = {
-        prestacao_conta: '',
-        ordem: '',
-        comentario: '',
-        uuid: '',
-    };
-
     // Comentários que NÃO foram notificados ainda e que podem ser alterados ou excluídos
-    const [comentarios, setComentarios] = useState(initialComentarios);
+    const [comentarios, setComentarios] = useState([]);
     // Comentários que JÁ foram notificados e que NÃO podem ser alterados ou excluídos
     const [comentariosNotificados, setComentariosNotificados] = useState([]);
     const [toggleExibeBtnAddComentario, setToggleExibeBtnAddComentario] = useState(true);
@@ -145,44 +151,6 @@ const ComentariosDeAnalise = ({prestacaoDeContas="", associacaoUuid="", periodoU
         }
     };
 
-    // *********** Sortable Comentário
-    const onSortEnd = async ({oldIndex, newIndex}) => {
-        let novoArrayComentarios = arrayMove(comentarios, oldIndex, newIndex);
-        if (novoArrayComentarios && novoArrayComentarios.length > 0 ){
-            let arrayAnalises = [];
-
-            if (prestacaoDeContas && prestacaoDeContas.uuid) {
-                novoArrayComentarios.map((comentario, index)=>{
-                    arrayAnalises.push({
-                        prestacao_conta: prestacaoDeContas.uuid,
-                        ordem: index+1,
-                        comentario: comentario.comentario,
-                        uuid: comentario.uuid,
-                    })
-                });
-            }else {
-                novoArrayComentarios.map((comentario, index)=>{
-                    arrayAnalises.push({
-                        associacao_uuid: associacaoUuid,
-                        periodo_uuid: periodoUuid,
-                        ordem: index+1,
-                        comentario: comentario.comentario,
-                        uuid: comentario.uuid,
-                    })
-                });
-            }
-
-            setComentarios(arrayAnalises);
-            const payload = {
-                comentarios_de_analise: [
-                    ...arrayAnalises
-                ]
-            };
-            await getReordenarComentarios(payload);
-            await carregaComentarios()
-        }
-    };
-
     const verificaSeChecado = (comentario_uuid) =>{
         if (comentarioChecked && comentarioChecked.length > 0){
             return comentarioChecked.find(element=> element === comentario_uuid)
@@ -227,47 +195,125 @@ const ComentariosDeAnalise = ({prestacaoDeContas="", associacaoUuid="", periodoU
         await carregaComentarios()
     };
 
-    const SortableItem = SortableElement(({comentario}) =>
-        <li className="d-flex bd-highlight border mt-2">
-            <div data-qa={`comentario-${comentario.index}`} className="p-2 flex-grow-1 bd-highlight container-item-comentario">
-                <input
-                    data-qa={`checkbox-comentario-${comentario.index}`}
-                    type='checkbox'
-                    onChange={(event)=>handleChangeCheckboxNotificarComentarios(event, comentario.uuid)}
-                    checked={verificaSeChecado(comentario.uuid)}
-                    className="checkbox-comentario-de-analise"
-                    disabled={!editavel}
-                />
-                {comentario.comentario}
-            </div>
-            <div className="p-2 bd-highlight" >
-                <button
-                    data-qa={`botao-editar-comentario-${comentario.index}`}
-                    onClick={()=>setComentarioParaEdicao(comentario)}
-                    type='button'
-                    className={!editavel ? "btn-editar-comentario-disabled ml-2" : "btn-cancelar-comentario ml-2"}
-                    disabled={!editavel}
-                >
-                    Editar
-                </button>
-            </div>
-        </li>
-    );
-    const SortableList = SortableContainer(({comentarios}) => {
+    //************ Novo sortable com dnd-kit
+    function handleDragEnd(event) {
+        const {active, over} = event;
+    
+        if (active.id !== over.id) {
+            setComentarios((items) => {
+                const activeIndex = items.findIndex(item => item.uuid === active.id);
+                const overIndex = items.findIndex(item => item.uuid === over.id);
+    
+                const newItems = arrayMove(items, activeIndex, overIndex);
+    
+                const payload = {
+                    comentarios_de_analise: newItems.map((comentario, index) => ({
+                        prestacao_conta: prestacaoDeContas && prestacaoDeContas.uuid ? prestacaoDeContas.uuid : associacaoUuid,
+                        ordem: index + 1,
+                        comentario: comentario.comentario,
+                        uuid: comentario.uuid,
+                    }))
+                };
+    
+                getReordenarComentarios(payload)
+                    .then(() => {
+                        return carregaComentarios();
+                    })
+                    .catch(error => {
+                        console.error("Error updating comments order:", error);
+                        return items;
+                    });
+                    
+                return newItems;
+            });
+        }
+    }
+
+    const SortableItem = (props) => {
+        const {
+            attributes,
+            listeners,
+            setNodeRef,
+            transform,
+            transition
+        } = useSortable({id: props.id});
+    
+        const style = {
+            transform: CSS.Transform.toString(transform),
+            transition
+        }
+    
         return (
-            <>
-                <ul className='p-0'>
-                    {comentarios && comentarios.length > 0 && comentarios.map((comentario, index) => 
-                        {   
-                            comentario.index = index
-                            return (<SortableItem comentario={comentario} key={`item-${index}`} index={index} disabled={!editavel} />)
-                        }
-                    )}
-                </ul>
-            </>
-        );
-    });
-    // *********** Fim Sortable Comentário
+            <div >
+                <li className="d-flex bd-highlight border mt-2" ref={setNodeRef} style={style} {...attributes} {...listeners}>
+                    <div data-qa={`comentario-${props.comentario.index}`} className="p-2 flex-grow-1 bd-highlight container-item-comentario">
+                        <input
+                            data-qa={`checkbox-comentario-${props.comentario.index}`}
+                            type='checkbox'
+                            onChange={(event)=>handleChangeCheckboxNotificarComentarios(event, props.comentario.uuid)}
+                            checked={verificaSeChecado(props.comentario.uuid)}
+                            className="checkbox-comentario-de-analise"
+                            disabled={!editavel}
+                        />
+                        {props.comentario.comentario}
+                    </div>
+                    <div className="p-2 bd-highlight" >
+                        <button
+                            data-qa={`botao-editar-comentario-${props.comentario.index}`}
+                            onClick={(event)=>{
+                                setComentarioParaEdicao(props.comentario)
+                                event.stopPropagation();
+                            }}
+                            type='button'
+                            className={!editavel ? "btn-editar-comentario-disabled ml-2" : "btn-cancelar-comentario ml-2"}
+                            disabled={!editavel}
+                        >
+                            Editar
+                        </button>
+                    </div>
+                </li>
+            </div>
+        )
+    }
+
+    const SortableList = ({comentarios}) => {
+        const comentariosIds = useMemo(() => {
+            if (comentarios) {
+              return comentarios.map((comentario) => comentario.uuid);
+            }
+            return [];
+          }, [comentarios]);
+
+        const mouseSensor = useSensor(MouseSensor, {
+            activationConstraint: {
+              distance: 10,
+            },
+        })
+        const keyboardSensor = useSensor(KeyboardSensor)
+
+        const sensors = useSensors(mouseSensor, keyboardSensor)
+
+        if(comentarios && comentarios.length === 0) {
+            return <></>;
+        }
+
+        return (
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+            >
+                <SortableContext
+                  items={comentariosIds}
+                  strategy={verticalListSortingStrategy}
+                >
+                  {comentarios && comentarios.length && comentarios.map(comentario => <SortableItem key={comentario.uuid} id={comentario.uuid} comentario={comentario} disabled={!editavel}/>)}
+                </SortableContext>
+            </DndContext>
+          );
+    }
+
+    //************ Fim novo sortable com dnd-kit
 
     return (
         <>
@@ -288,7 +334,7 @@ const ComentariosDeAnalise = ({prestacaoDeContas="", associacaoUuid="", periodoU
                         return (
                             <form onSubmit={props.handleSubmit}>
 
-                                <SortableList comentarios={comentarios} onSortEnd={onSortEnd} />
+                                <SortableList comentarios={comentarios} />
 
                                 <FieldArray
                                     name="comentarios"

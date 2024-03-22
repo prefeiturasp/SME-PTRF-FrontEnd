@@ -1,7 +1,7 @@
-import {ModalBootstrap} from "../../../../../Globais/ModalBootstrap";
 import React from "react";
+import {ModalBootstrap} from "../../../../Globais/ModalBootstrap";
 
-export const ModalCheckNaoPermitidoConfererenciaDeLancamentos = (props) => {
+export const ModalConcluirPcNaoApresentada = (props) => {
     return (
         <ModalBootstrap
             show={props.show}
@@ -11,6 +11,10 @@ export const ModalCheckNaoPermitidoConfererenciaDeLancamentos = (props) => {
             primeiroBotaoOnclick={props.handleClose}
             primeiroBotaoTexto={props.primeiroBotaoTexto}
             primeiroBotaoCss={props.primeiroBotaoCss}
+            segundoBotaoOnclick={props.onConcluirPcNaoApresentada}
+            segundoBotaoCss={props.segundoBotaoCss}
+            segundoBotaoTexto={props.segundoBotaoTexto}
+            dataQa="modal-concluir-pc-nao-apresentada"
         />
     )
 };

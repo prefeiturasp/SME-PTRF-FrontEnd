@@ -172,6 +172,8 @@ export default class RelacaoDeBens extends Component {
         const {mensagem, status, previaEmAndamento} = this.state;
         const exibeLoading = status === 'EM_PROCESSAMENTO' || previaEmAndamento;
         const documentoPrevio = mensagem.includes('prévio');
+        const documentoFinal = mensagem.includes('final');
+
         let classeMensagem = "documento-gerado"
         if (mensagem.includes('pendente') || mensagem.includes('Não houve')) {
             classeMensagem = "documento-pendente"
@@ -180,12 +182,11 @@ export default class RelacaoDeBens extends Component {
             classeMensagem = "documento-processando"
         }
 
-        const formatos = [
-            {
-                label: 'Baixar em .PDF',
-                command: () => {this.downloadDocumentoFinal("PDF")}
-            },
-        ];
+        const apresentarDownloadDocumentoFinal = () => {
+            const documentosGeradosNaoExistem = this.props.statusPrestacaoDeConta && this.props.statusPrestacaoDeConta.prestacao_contas_status && !this.props.statusPrestacaoDeConta.prestacao_contas_status.documentos_gerados;
+
+            return this.props.podeBaixarDocumentos && (!documentosGeradosNaoExistem || !mensagem.includes('Não houve'));
+        }
 
         return (
             <div className="relacao-bens-container mt-5">
@@ -208,7 +209,22 @@ export default class RelacaoDeBens extends Component {
                                     style={{fontSize: '18px',}}
                                     icon={faDownload}
                                 />
-                                &nbsp;PDF
+                                &nbsp;
+                            </button>
+                        </>
+                        }
+                        {status === 'CONCLUIDO' && documentoFinal && apresentarDownloadDocumentoFinal() &&
+                        <>
+                            <button className='btn-editar-membro'
+                                    type='button'
+                                    onClick={() => {this.downloadDocumentoFinal("PDF")}}
+                                    data-qa='btn-baixar-documento-final-relacao-bens'
+                            >
+                                <FontAwesomeIcon
+                                    style={{fontSize: '18px',}}
+                                    icon={faDownload}
+                                />
+                                &nbsp;
                             </button>
                         </>
                         }
@@ -225,27 +241,6 @@ export default class RelacaoDeBens extends Component {
                             >
                                 prévia 
                             </button>
-                        }
-                        {this.props.podeBaixarDocumentos &&
-                            <>
-                            <SplitButton
-                                className="btn-split"
-                                label="documento final"
-                                onClick={
-                                    () => {
-                                        this.downloadDocumentoFinal("PDF");
-                                        // TODO Remover Excel
-                                        // this.downloadDocumentoFinal("XLSX");
-                                    }
-                                }
-                                model={formatos}
-                                menuStyle={{textAlign: "left"}}
-                                disabled={(this.props.statusPrestacaoDeConta && this.props.statusPrestacaoDeConta.prestacao_contas_status && !this.props.statusPrestacaoDeConta.prestacao_contas_status.documentos_gerados) || mensagem.includes('Não houve')}
-                                data-qa='btn-baixar-documento-final-relacao-bens'
-                            >
-                            </SplitButton>
-                        </>
-
                         }
 
                     </div>

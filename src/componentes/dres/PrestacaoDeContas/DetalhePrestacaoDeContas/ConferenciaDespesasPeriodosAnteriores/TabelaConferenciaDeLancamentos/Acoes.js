@@ -1,6 +1,6 @@
 import React from "react"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheckCircle } from "@fortawesome/free-solid-svg-icons";
+import { faCheckCircle, faListUl } from "@fortawesome/free-solid-svg-icons";
 
 export const Acoes = ({
     totalLancamentosSelecionados,
@@ -9,8 +9,33 @@ export const Acoes = ({
     exibirBtnMarcarComoNaoConferido,
     desmarcarTodos,
     marcarComoCorreto,
-    marcarComoNaoConferido
+    marcarComoNaoConferido,
+    detalharAcertos
 }) => {
+
+    const buildOptionLink = (label, callback, icon = null, showBar = true) => {
+        return (
+            <>
+            {showBar && <div className="float-right" style={{padding: "0px 10px"}}>|</div>}
+            <button
+                className="float-right btn btn-link btn-montagem-selecionar"
+                onClick={callback}
+                style={{textDecoration: "underline", cursor: "pointer"}}
+            >
+                {
+                    icon && (
+                        <FontAwesomeIcon
+                            style={{color: "white", fontSize: '15px', marginRight: "3px"}}
+                            icon={icon}
+                        />
+                    )
+                }
+                <strong>{label}</strong>
+            </button>  
+            </>
+        )      
+    };
+
     return (
         <div className="row">
             <div className="col-12"
@@ -22,58 +47,10 @@ export const Acoes = ({
                     <div className="col-7">
                         <div className="row">
                             <div className="col-12">
-                                <button className="float-right btn btn-link btn-montagem-selecionar"
-                                        onClick={desmarcarTodos}
-                                        style={{textDecoration: "underline", cursor: "pointer"}}>
-                                    <strong>Cancelar</strong>
-                                </button>
-                                {exibirBtnMarcarComoCorreto &&
-                                    <>
-                                        <div className="float-right" style={{padding: "0px 10px"}}>|</div>
-                                        <button
-                                            className="float-right btn btn-link btn-montagem-selecionar"
-                                            onClick={marcarComoCorreto}
-                                            style={{textDecoration: "underline", cursor: "pointer"}}
-                                        >
-                                            <FontAwesomeIcon
-                                                style={{color: "white", fontSize: '15px', marginRight: "3px"}}
-                                                icon={faCheckCircle}
-                                            />
-                                            <strong>Marcar como Correto</strong>
-                                        </button>
-                                    </>
-                                }
-                                {exibirBtnMarcarComoNaoConferido &&
-                                    <>
-                                        <div className="float-right" style={{padding: "0px 10px"}}>|</div>
-                                        <button
-                                            className="float-right btn btn-link btn-montagem-selecionar"
-                                            onClick={marcarComoNaoConferido}
-                                            style={{textDecoration: "underline", cursor: "pointer"}}
-                                        >
-                                            <FontAwesomeIcon
-                                                style={{color: "white", fontSize: '15px', marginRight: "3px"}}
-                                                icon={faCheckCircle}
-                                            />
-                                            <strong>Marcar como não conferido</strong>
-                                        </button>
-                                    </>
-                                }
-                                {/* <div className="float-right" style={{padding: "0px 10px"}}>|</div> */}
-                                {/* <button
-                                    className="float-right btn btn-link btn-montagem-selecionar"
-                                    onClick={() => {
-                                        // setStateCheckBoxOrdenarPorImposto(false)
-                                        detalharAcertos()
-                                    }}
-                                    style={{textDecoration: "underline", cursor: "pointer"}}
-                                >
-                                    <FontAwesomeIcon
-                                        style={{color: "white", fontSize: '15px', marginRight: "3px"}}
-                                        icon={faListUl}
-                                    />
-                                    <strong>Detalhar acertos</strong>
-                                </button> */}
+                                {buildOptionLink('Cancelar', desmarcarTodos, null, false)}
+                                {exibirBtnMarcarComoCorreto ? buildOptionLink('Marcar como Correto', marcarComoCorreto, faCheckCircle) : null}
+                                {exibirBtnMarcarComoNaoConferido ? buildOptionLink('Marcar como não conferido', marcarComoNaoConferido, faCheckCircle) : null}
+                                {buildOptionLink('Detalhar acertos', detalharAcertos, faListUl)}
                             </div>
                         </div>
                     </div>

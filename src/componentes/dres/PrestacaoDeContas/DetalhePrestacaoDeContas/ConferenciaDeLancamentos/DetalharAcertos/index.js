@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
-import {useHistory, useParams} from "react-router-dom";
+import {useHistory, useParams, useLocation} from "react-router-dom";
 import {PaginasContainer} from "../../../../../../paginas/PaginasContainer";
 import {useSelector} from "react-redux";
 import {getTiposDevolucao, getListaDeSolicitacaoDeAcertos, postSolicitacoesParaAcertos, getTiposDeAcertoLancamentosAgrupadoCategoria, getContasComMovimentoNaPc} from "../../../../../../services/dres/PrestacaoDeContas.service";
@@ -12,16 +12,17 @@ import Loading from "../../../../../../utils/Loading";
 import useDataTemplate from "../../../../../../hooks/Globais/useDataTemplate";
 import {ProviderValidaParcial} from "../../../../../../context/DetalharAcertos";
 import {useCarregaPrestacaoDeContasPorUuid} from "../../../../../../hooks/dres/PrestacaoDeContas/useCarregaPrestacaoDeContasPorUuid";
-import moment from "moment/moment";
 import { ModalAntDesignConfirmacao } from "../../../../../Globais/ModalAntDesign";
 
 export const DetalharAcertos = () => {
 
     const {prestacao_conta_uuid} = useParams();
     const formRef = useRef();
-    const {lancamentos_para_acertos, origem} = useSelector(state => state.DetalharAcertos)
-    const valorDocumento = lancamentos_para_acertos[0]?.valor_transacao_total ?? 0;
+    const { lancamentos_para_acertos, origem } = useSelector(state => state.DetalharAcertos)
     const history = useHistory();
+    const { state } = useLocation();
+    const aplicavelDespesasPeriodosAnteriores = state?.aplicavel_despesas_periodos_anteriores;
+    const valorDocumento = lancamentos_para_acertos[0]?.valor_transacao_total ?? 0;
 
     // Hooks Personalizados
     const dataTemplate = useDataTemplate()
@@ -77,7 +78,7 @@ export const DetalharAcertos = () => {
             ];
 
             setLoading(true)
-            let tipos_de_acerto_lancamentos_agrupado = await getTiposDeAcertoLancamentosAgrupadoCategoria()
+            let tipos_de_acerto_lancamentos_agrupado = await getTiposDeAcertoLancamentosAgrupadoCategoria(aplicavelDespesasPeriodosAnteriores)
             tipos_de_acerto_lancamentos_agrupado = tipos_de_acerto_lancamentos_agrupado.agrupado_por_categorias
 
             let [tem_gasto, tem_gasto_conferido, tem_gasto_nao_conferido] = verificaSeTemLancamentosDoTipoGasto()

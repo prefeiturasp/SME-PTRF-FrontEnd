@@ -16,6 +16,7 @@ import TabelaAcertosEmExtratosBancarios from "./TabelaAcertosEmExtratosBancarios
 import {visoesService} from "../../../services/visoes.service";
 import {RelatorioAposAcertos} from './RelatorioAposAcertos'
 import AcertosLancamentos from "./AcertosLancamentos";
+import AcertosDespesasPeriodosAnteriores from "./AcertosDespesasPeriodosAnteriores";
 import AcertosDocumentos from "./AcertosDocumentos";
 
 const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
@@ -25,7 +26,7 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
                                                           analiseAtualUuid,
                                                           editavel
                                                       }) => {
-
+    const flagAjustesDespesasAnterioresAtiva = visoesService.featureFlagAtiva('ajustes-despesas-anteriores')
     const prestacaoDeContas = useCarregaPrestacaoDeContasPorUuid(prestacaoDeContasUuid)
 
     const [exibeAcertosNosExtratos, setExibeAcertosNosExtratos] = useState(true);
@@ -173,6 +174,16 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
                     editavel={editavel}
                     prestacaoDeContasUuid={prestacaoDeContasUuid}
                 />
+
+                {flagAjustesDespesasAnterioresAtiva ? (
+                    <AcertosDespesasPeriodosAnteriores
+                        analiseAtualUuid={analiseAtualUuid}
+                        prestacaoDeContas={prestacaoDeContas}
+                        exibeBtnIrParaPaginaDeAcertos={exibeBtnIrParaPaginaDeAcertos}
+                        exibeBtnIrParaPaginaDeReceitaOuDespesa={exibeBtnIrParaPaginaDeReceitaOuDespesa}
+                        editavel={editavel}
+                    />
+                ): null}
 
                 {analiseAtualUuid &&
                     <AcertosDocumentos
