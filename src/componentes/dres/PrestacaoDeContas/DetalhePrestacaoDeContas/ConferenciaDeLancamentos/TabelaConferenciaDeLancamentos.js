@@ -53,6 +53,7 @@ const TabelaConferenciaDeLancamentos = ({
     const [exibirBtnMarcarComoCorreto, setExibirBtnMarcarComoCorreto] = useState(false)
     const [exibirBtnMarcarComoNaoConferido, setExibirBtnMarcarComoNaoConferido] = useState(false)
     const [showModalCheckNaoPermitido, setShowModalCheckNaoPermitido] = useState(false)
+    const [txtModalCheckNaoPermitido, setTxtModalCheckNaoPermitido] = useState("")
     const [showModalLegendaInformacao, setShowModalLegendaInformacao] = useState(false)
     const [showModalLegendaConferenciaLancamento, setShowModalLegendaConferenciaLancamento] = useState(false)
     const [btnMaisFiltros, setBtnMaisFiltros] = useState(false)
@@ -125,7 +126,7 @@ const TabelaConferenciaDeLancamentos = ({
             }
 
             result = lancamentosParaConferencia.reduce((acc, o) => {
-                let obj = o.analise_lancamento && o.analise_lancamento.resultado && o.analise_lancamento.resultado === status ? Object.assign(o, {selecionado: true}) : o;
+                let obj = o.analise_lancamento && o.analise_lancamento.resultado && o.analise_lancamento.resultado === status && o.is_repasse === false ? Object.assign(o, {selecionado: true}) : o;
                 if (obj.selecionado) {
                     cont = cont + 1;
                 }
@@ -136,7 +137,7 @@ const TabelaConferenciaDeLancamentos = ({
             setExibirBtnMarcarComoCorreto(true)
             setExibirBtnMarcarComoNaoConferido(false)
             result = lancamentosParaConferencia.reduce((acc, o) => {
-                let obj = !o.analise_lancamento ? Object.assign(o, {selecionado: true}) : o;
+                let obj = !o.analise_lancamento && o.is_repasse === false ? Object.assign(o, {selecionado: true}) : o;
                 if (obj.selecionado) {
                     cont = cont + 1;
                 }
@@ -342,11 +343,35 @@ const TabelaConferenciaDeLancamentos = ({
         }
     }
 
+    const permiteSelecaoLancamentoRepasse = (e, rowData, selecionados) => {
+        if(selecionados.length > 0){
+            if(e.target.checked && rowData.is_repasse === true){
+                return false;
+            }
+        }
+
+        if(selecionados.length === 1) {
+            let selecionado = selecionados[0];
+
+            if(e.target.checked && selecionado.is_repasse === true){
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     const verificaSePodeSerCheckado = (e, rowData) => {
 
         let selecionados = getLancamentosSelecionados()
         let status_permitido = []
 
+        if(!permiteSelecaoLancamentoRepasse(e, rowData, selecionados)){
+            setTxtModalCheckNaoPermitido('<p>Esse lançamento tem um status de conferência que não pode ser selecionado em conjunto com os demais status já selecionados.</p>')
+            setShowModalCheckNaoPermitido(true);
+            return false;
+        }
+        
         if (selecionados.length > 0) {
             if (!selecionados[0].analise_lancamento || (selecionados[0].analise_lancamento && selecionados[0].analise_lancamento.resultado && selecionados[0].analise_lancamento.resultado === "AJUSTE")) {
                 status_permitido = [null, 'AJUSTE']
@@ -359,6 +384,7 @@ const TabelaConferenciaDeLancamentos = ({
             if (status_permitido.includes(rowData.analise_lancamento) || (rowData.analise_lancamento && rowData.analise_lancamento && rowData.analise_lancamento.resultado && status_permitido.includes(rowData.analise_lancamento.resultado))) {
                 return true
             } else {
+                setTxtModalCheckNaoPermitido('<p>Esse lançamento tem um status de conferência que não pode ser selecionado em conjunto com os demais status já selecionados.</p>')
                 setShowModalCheckNaoPermitido(true)
                 return false
             }
@@ -720,7 +746,7 @@ const TabelaConferenciaDeLancamentos = ({
                     show={showModalCheckNaoPermitido}
                     handleClose={() => setShowModalCheckNaoPermitido(false)}
                     titulo='Seleção não permitida'
-                    texto='<p>Esse lançamento tem um status de conferência que não pode ser selecionado em conjunto com os demais status já selecionados.</p>'
+                    texto={txtModalCheckNaoPermitido}
                     primeiroBotaoTexto="Fechar"
                     primeiroBotaoCss="success"
                 />

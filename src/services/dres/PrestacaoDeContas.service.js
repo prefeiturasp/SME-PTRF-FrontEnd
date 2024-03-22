@@ -13,8 +13,8 @@ export const getPrestacoesDeContas = async (periodo_uuid="",  nome="", associaca
     return (await api.get(`/api/prestacoes-contas/?associacao__unidade__dre__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}&periodo__uuid=${periodo_uuid}${nome ? '&nome=' + nome : ''}${associacao__unidade__tipo_unidade ? '&associacao__unidade__tipo_unidade=' + associacao__unidade__tipo_unidade : ''}${status ? '&status=' + status : ''}${tecnico_uuid ? '&tecnico=' + tecnico_uuid : ''}${data_inicio ? '&data_inicio='+data_inicio : ''}${data_fim ? '&data_fim='+data_fim : ''}`, authHeader)).data
 };
 
-export const getPrestacoesDeContasNaoRecebidaNaoGerada = async (periodo_uuid="",  nome="", tipo_unidade='') => {
-    return (await api.get(`/api/prestacoes-contas/nao-recebidas/?associacao__unidade__dre__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}&periodo__uuid=${periodo_uuid}${nome ? '&nome=' + nome : ''}${tipo_unidade ? '&tipo_unidade=' + tipo_unidade : ''}`, authHeader)).data
+export const getPrestacoesDeContasNaoRecebidaNaoGerada = async (periodo_uuid="",  nome="", tipo_unidade='', status='') => {
+    return (await api.get(`/api/prestacoes-contas/nao-recebidas/?associacao__unidade__dre__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}&periodo__uuid=${periodo_uuid}${nome ? '&nome=' + nome : ''}${tipo_unidade ? '&tipo_unidade=' + tipo_unidade : ''}${status ? '&status=' + status : ''}`, authHeader)).data
 };
 
 export const getPrestacoesDeContasTodosOsStatus = async (periodo_uuid="",  nome="", tipo_unidade='') => {
@@ -234,8 +234,8 @@ export const getTiposDeAcertoLancamentos = async () => {
     return (await api.get(`/api/tipos-acerto-lancamento/`, authHeader)).data
 };
 
-export const getTiposDeAcertoLancamentosAgrupadoCategoria = async (aplicavel_despesas_periodos_anteriores=null) => {
-    return (await api.get(`/api/tipos-acerto-lancamento/tabelas/${aplicavel_despesas_periodos_anteriores ? `?aplicavel_despesas_periodos_anteriores=${aplicavel_despesas_periodos_anteriores}` : ''}`, authHeader)).data
+export const getTiposDeAcertoLancamentosAgrupadoCategoria = async (aplicavel_despesas_periodos_anteriores=null, is_repasse=null) => {
+    return (await api.get(`/api/tipos-acerto-lancamento/tabelas/${aplicavel_despesas_periodos_anteriores ? `?aplicavel_despesas_periodos_anteriores=${aplicavel_despesas_periodos_anteriores}` : ''}${is_repasse ? `?is_repasse=${is_repasse}` : ''}`, authHeader)).data
 };
 
 export const getListaDeSolicitacaoDeAcertos = async (prestacao_de_contas_uuid, analise_lancamento_uuid) => {
