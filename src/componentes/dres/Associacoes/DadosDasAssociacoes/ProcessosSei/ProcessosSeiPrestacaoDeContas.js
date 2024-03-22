@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from "react";
 import {useDispatch} from "react-redux";
 import "../../associacoes.scss"
-import { DeleteFilled } from '@ant-design/icons';
-import { Button, Tooltip } from 'antd';
+import {DeleteFilled} from '@ant-design/icons';
+import {Button, Tooltip} from 'antd';
 import {DataTable} from "primereact/datatable";
 import {Column} from "primereact/column";
 
@@ -15,15 +15,17 @@ import {MsgImgLadoDireito} from "../../../../Globais/Mensagens/MsgImgLadoDireito
 
 import {getProcessosAssociacao} from "../../../../../services/dres/Associacoes.service";
 import {
-    updateProcessoAssociacao,
     createProcessoAssociacao,
-    deleteProcessoAssociacao
+    deleteProcessoAssociacao,
+    getPeriodosDisponiveis,
+    updateProcessoAssociacao
 } from "../../../../../services/dres/ProcessosAssociacao.service";
 
 import {ProcessoSeiPrestacaoDeContaForm} from "./ProcessoSeiPrestacaoDeContaForm";
 import {ConfirmaDeleteProcesso} from "./ConfirmaDeleteProcessoDialog";
 import {visoesService} from "../../../../../services/visoes.service";
 import {ModalConfirm} from "../../../../Globais/Modal/ModalConfirm";
+import {toastCustom} from "../../../../Globais/ToastCustom";
 
 export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao}) => {
     const dispatch = useDispatch();
@@ -34,24 +36,43 @@ export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao}) => {
         uuid: "",
         numero_processo: "",
         ano: "",
+        periodos: [],
     };
 
     const [loading, setLoading] = useState(true);
 
     const [stateProcessoForm, setStateProcessoForm] = useState(initProcessoForm);
 
-    const [associacaoUuid, setAssociacaoUuid] = useState(dadosDaAssociacao.dados_da_associacao.uuid);
-
     const [processosList, setProcessosList] = useState([]);
+
+    const [periodosDisponiveis, setPeriodosDisponiveis] = useState([]);
 
     const [showProcessoForm, setShowProcessoForm] = useState(false);
 
     const [showConfirmDelete, setShowConfirmDelete] = useState(false);
 
+    const associacaoUuid = dadosDaAssociacao.dados_da_associacao.uuid;
+
     const carregaProcessos = async () => {
         let processos = await getProcessosAssociacao(associacaoUuid);
         setProcessosList(processos)
     };
+
+    useEffect(() => {
+        carregaProcessos()
+        setLoading(false)
+    }, []);
+
+    const carregaPeriodosDisponiveis = async () => {
+        let periodosDisponiveis = await getPeriodosDisponiveis(associacaoUuid, stateProcessoForm.ano, stateProcessoForm.uuid)
+        setPeriodosDisponiveis(periodosDisponiveis)
+    }
+
+    useEffect(() => {
+        if (associacaoUuid && stateProcessoForm && stateProcessoForm.ano && stateProcessoForm.ano.replaceAll("_","").length >= 4){
+            carregaPeriodosDisponiveis()
+        }
+    }, [associacaoUuid, stateProcessoForm]);
 
     const deleteProcesso = async () => {
         setLoading(true);
@@ -59,9 +80,11 @@ export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao}) => {
             try {
                 const response = await deleteProcessoAssociacao(stateProcessoForm.uuid);
                 if (response.status === 204) {
+                    toastCustom.ToastCustomSuccess('Exclusão de Processo SEI', `Processo SEI excluído com sucesso.`)
                     console.log("Operação realizada com sucesso!");
                     await carregaProcessos();
                 } else {
+                    toastCustom.ToastCustomError('Exclusão de Processo SEI', `Erro ao excluir Processo SEI.`)
                     console.log("Erro ao excluir Processo")
                 }
             } catch (error) {
@@ -78,10 +101,17 @@ export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao}) => {
     };
 
     const handleEditProcessoAction = (processo) => {
+
+        let lista_uuids_periodos = []
+        for(let i=0; i<=processo.periodos.length-1; i++){
+            lista_uuids_periodos.push(processo.periodos[i].uuid)
+        }
+
         const initFormProcesso = {
             uuid: processo.uuid,
             numero_processo: processo.numero_processo,
             ano: processo.ano,
+            periodos: lista_uuids_periodos,
         };
         setShowProcessoForm(true);
         setStateProcessoForm(initFormProcesso)
@@ -92,6 +122,7 @@ export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao}) => {
             uuid: processo.uuid,
             numero_processo: processo.numero_processo,
             ano: processo.ano,
+            periodos: processo.periodos,
         };
         setStateProcessoForm(initFormProcesso);
         setShowConfirmDelete(true);
@@ -104,19 +135,31 @@ export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao}) => {
     const handleSubmitProcesso = async () => {
         setLoading(true);
         setShowProcessoForm(false);
-        const payload = {
-            'associacao': associacaoUuid,
-            'numero_processo': stateProcessoForm.numero_processo,
-            'ano': stateProcessoForm.ano
-        };
+        let payload
+        if (visoesService.featureFlagAtiva('periodos-processo-sei')){
+            payload = {
+                'associacao': associacaoUuid,
+                'numero_processo': stateProcessoForm.numero_processo,
+                'ano': stateProcessoForm.ano,
+                'periodos': stateProcessoForm.periodos
+            };
+        }else {
+            payload = {
+                'associacao': associacaoUuid,
+                'numero_processo': stateProcessoForm.numero_processo,
+                'ano': stateProcessoForm.ano,
+            };
+        }
 
         if (stateProcessoForm.uuid) {
             try {
                 const response = await updateProcessoAssociacao(stateProcessoForm.uuid, payload);
                 if (response.status === 200) {
+                    toastCustom.ToastCustomSuccess('Alteração de Processo SEI', `Processo SEI alterado com sucesso.`)
                     console.log("Processo atualizado com sucesso!");
                     await carregaProcessos();
                 } else {
+                    toastCustom.ToastCustomError('Alteração de Processo SEI', `Erro ao alterar Processo SEI.`)
                     console.log("Erro ao atualizar Processo")
                 }
             } catch (error) {
@@ -126,9 +169,11 @@ export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao}) => {
             try {
                 const response = await createProcessoAssociacao(payload);
                 if (response.status === 201) {
+                    toastCustom.ToastCustomSuccess('Inclusão de Processo SEI', `Processo SEI adicionado com sucesso.`)
                     console.log("Processo criado com sucesso!");
                     await carregaProcessos();
                 } else {
+                    toastCustom.ToastCustomError('Inclusão de Processo SEI', `Erro ao incluir Processo SEI.`)
                     console.log("Erro ao criar Processo")
                 }
             } catch (error) {
@@ -154,16 +199,43 @@ export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao}) => {
         }
     };
 
-    const handleChangesInProcessoForm = (name, value) => {
+    const handleChangesInProcessoForm = async (name, value) => {
+        // Limpando o campo Período quando alterar o campo Ano
+        if (name ==='ano'){
+
+            let lista_uuids_periodos_pre_selecao = []
+
+            if (associacaoUuid && value && value.replaceAll("_","").length >= 4){
+                let periodosDisponiveis = await getPeriodosDisponiveis(associacaoUuid, value, stateProcessoForm.uuid)
+                for(let i= 0; i<= periodosDisponiveis.length-1; i++){
+                    lista_uuids_periodos_pre_selecao.push(periodosDisponiveis[i].uuid)
+                }
+            }
+            setStateProcessoForm({
+                ...stateProcessoForm,
+                [name]: value,
+                periodos: lista_uuids_periodos_pre_selecao
+            });
+        }else {
+            setStateProcessoForm({
+                ...stateProcessoForm,
+                [name]: value
+            });
+        }
+
+    };
+
+    const handleChangeSelectPeriodos =  async (value) => {
+        let name = "periodos"
+
         setStateProcessoForm({
             ...stateProcessoForm,
             [name]: value
         });
-    };
+    }
 
-    const validateProcessoForm = async (values) => {
-        const errors = {};
-        return errors
+    const validateProcessoForm = async () => {
+        return {}
     };
 
 
@@ -176,7 +248,7 @@ export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao}) => {
         setShowConfirmDelete(false);
     };
 
-    const tableActionsTemplate = (rowData, column) => {
+    const tableActionsTemplate = (rowData) => {
         return (
             <div>
                 <button className="btn-editar-membro" onClick={() => handleEditProcessoAction(rowData)}>
@@ -186,9 +258,10 @@ export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao}) => {
                     />                   
                 </button>
                 <Tooltip title={rowData.permite_exclusao ? '' : rowData.tooltip_exclusao}>
-                    <Button type="text"  
+                    <Button
+                        type="text"
                             icon={<DeleteFilled style={{fontSize: '20px'}}/>}
-                            disabled={!visoesService.getPermissoes(['change_processo_sei']) || !rowData.permite_exclusao} 
+                            disabled={!visoesService.getPermissoes(['change_processo_sei']) || !rowData.permite_exclusao}
                             danger={visoesService.getPermissoes(['change_processo_sei']) && rowData.permite_exclusao}
                             onClick={() => handleDeleteProcessoAction(rowData)}
                     />
@@ -196,11 +269,16 @@ export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao}) => {
             </div>
         )
     };
-
-    useEffect(() => {
-        carregaProcessos()
-        setLoading(false)
-    }, []);
+    
+    const periodosTemplate = (rowData) => {
+        if (rowData && rowData.periodos && rowData.periodos.length > 0){
+            return(
+                rowData.periodos.map((periodo)=>
+                    <span key={periodo.uuid} className='span-periodos'>{periodo.referencia}</span>
+                )
+            )
+        }
+    }
 
     return (
         <>
@@ -242,6 +320,13 @@ export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao}) => {
                                     >
                                         <Column field='numero_processo' header='Número do processo'/>
                                         <Column field='ano' header='Ano'/>
+                                        {visoesService.featureFlagAtiva('periodos-processo-sei') &&
+                                            <Column
+                                                field='periodos'
+                                                header='Períodos'
+                                                body={periodosTemplate}
+                                            />
+                                        }
                                         <Column body={tableActionsTemplate} style={{textAlign: 'center', width: '8em'}}/>
                                     </DataTable>)
                                     : (
@@ -261,8 +346,10 @@ export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao}) => {
                                 handleClose={handleCloseProcessoForm}
                                 onSubmit={handleConfirmSubmitProcessoForm}
                                 handleChange={handleChangesInProcessoForm}
+                                handleChangeSelectPeriodos={handleChangeSelectPeriodos}
                                 validateForm={validateProcessoForm}
                                 initialValues={stateProcessoForm}
+                                periodosDisponiveis={periodosDisponiveis}
                             />
                         </section>
 
