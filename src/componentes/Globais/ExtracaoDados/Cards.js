@@ -81,5 +81,12 @@ export const cards = [
         tags: ['CSV'],
         endpoint: '/api/exportacoes-dados/contas-associacao/',
         visao: ['SME']
-    },    
+    },
+    {
+        titulo: 'Repassses',
+        descricao: 'Arquivo com dados dos repasses pendentes e realizados para as associações.',
+        tags: ['CSV'],
+        endpoint: '/api/exportacoes-dados/repasses/',
+        visao: ['SME']
+    },  
 ]
