@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from "react";
 import Spinner from "../../../assets/img/spinner.gif"
-import {gerarPreviaRelatorioAposAcertos, verificarStatusGeracaoAposAcertos, downloadDocumentPdfAposAcertos, regerarRelatorioAposAcertos} from '../../../services/escolas/PrestacaoDeContas.service'
+import {gerarPreviaRelatorioAposAcertos, verificarStatusGeracaoAposAcertos, downloadDocumentPdfAposAcertos, regerarRelatorioAposAcertos, regerarPreviaRelatorioAposAcertos} from '../../../services/escolas/PrestacaoDeContas.service'
 import { getAnalisePrestacaoConta, getAnalisesDePcDevolvidas } from "../../../services/dres/PrestacaoDeContas.service";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faDownload} from "@fortawesome/free-solid-svg-icons";
@@ -95,8 +95,12 @@ export const RelatorioAposAcertos = ({prestacaoDeContasUuid, prestacaoDeContas, 
         setMensagem("Relatório sendo gerado...");
         setDisableBtnRegerar(true);
         setDisableBtnDownload(true);
+        if (prestacaoDeContas.status === 'DEVOLVIDA'){
+            await regerarPreviaRelatorioAposAcertos(analiseAtualUuid);
+        } else {
+            await regerarRelatorioAposAcertos(analiseAtualUuid);
 
-        await regerarRelatorioAposAcertos(analiseAtualUuid);
+        }
     }
 
     const downloadDocumentoPrevia = async () => {
