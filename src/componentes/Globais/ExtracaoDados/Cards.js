@@ -38,7 +38,7 @@ export const cards = [
         descricao: 'Arquivo com informações do status das prestações de contas por período e unidade.',
         tags: ['CSV'],
         endpoint: '/api/exportacoes-dados/status-prestacoes-contas/',
-        visao: ['SME']
+        visao: ['DRE', 'SME']
     },
     {
         titulo: 'Prestações de contas: Devolução ao tesouro',
