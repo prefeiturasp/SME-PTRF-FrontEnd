@@ -83,10 +83,17 @@ export const cards = [
         visao: ['SME']
     },
     {
-        titulo: 'Repassses',
+        titulo: 'Repasses',
         descricao: 'Arquivo com dados dos repasses pendentes e realizados para as associações.',
         tags: ['CSV'],
         endpoint: '/api/exportacoes-dados/repasses/',
         visao: ['SME']
-    },  
+    },
+    {
+        titulo: 'Membros da APM',
+        descricao: 'Arquivo com dados dos membros das associações.',
+        tags: ['CSV'],
+        endpoint: '/api/exportacoes-dados/dados_membros_apm/',
+        visao: ['SME']
+    },
 ]
