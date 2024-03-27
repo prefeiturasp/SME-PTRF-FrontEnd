@@ -10,7 +10,7 @@ export const ModalInformarSaidaDoCargo = ({
     handleConfirm
 }) => {
     const [dataSaida, setDataSaida] = useState("");
-    console.log('composicaoAtual', composicaoAtual);
+
     const handleChange = (name, value) => {
         setDataSaida(value);
     };

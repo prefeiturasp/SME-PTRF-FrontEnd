@@ -34,6 +34,7 @@ export const FormCadastro = ({
         codigo_identificacao: cargo.ocupante_do_cargo.codigo_identificacao,
         data_inicio_no_cargo: cargo.uuid ? cargo.data_inicio_no_cargo : data ? data.data_inicial : "",
         data_fim_no_cargo: cargo.uuid ? cargo.data_fim_no_cargo : data ? data.data_final : "",
+        data_fim_no_cargo_composicao_mais_recente: cargo.uuid ? cargo.data_fim_no_cargo_composicao_mais_recente : null,
         telefone: cargo.ocupante_do_cargo.telefone,
         cep: cargo.ocupante_do_cargo.cep,
         bairro : cargo.ocupante_do_cargo.bairro,
@@ -44,7 +45,6 @@ export const FormCadastro = ({
         substituto: cargo.substituto,
         substituido: cargo.substituido,
     };
-
     const telefoneMaskContitional = (value) => {
         let telefone = value.replace(/\D+/g, "");
         let mascara;
@@ -406,23 +406,40 @@ export const FormCadastro = ({
                                             className="span_erro text-danger mt-1"> {props.errors.data_inicio_no_cargo}</span>}
                                     </div>
                                 </div>
-                                <div className="col-6">
-                                    <div className="form-group">
-                                        <label><span className='asterisco-vermelho'>* </span>Período final de
-                                            ocupação</label>
-                                        <DatePickerField
-                                            name="data_fim_no_cargo"
-                                            value={props.values.data_fim_no_cargo ? props.values.data_fim_no_cargo : ""}
-                                            onChange={setFieldValue}
-                                            minDate={data && data.info_composicao_anterior && data.info_composicao_anterior.data_final ? moment(data.info_composicao_anterior.data_final).toDate() : ""}
-                                            maxDate={data && data.mandato && data.mandato.data_final ? moment(data.mandato.data_final).toDate() : ""}
-                                            // disabled={!retornaSeEhComposicaoVigente() || retornaSePeriodoFinalEhDisable()}
-                                            disabled
-                                        />
-                                        {props.errors.data_fim_no_cargo && <span
-                                            className="span_erro text-danger mt-1"> {props.errors.data_fim_no_cargo}</span>}
-                                    </div>
-                                </div>
+                                {
+                                    props.values.data_fim_no_cargo_composicao_mais_recente ? (
+                                        <div className="col-6">
+                                            <div className="form-group">
+                                                <label><span className='asterisco-vermelho'>* </span>Período final de
+                                                    ocupação</label>
+                                                <DatePickerField
+                                                    name="data_fim_no_cargo"
+                                                    value={props.values.data_fim_no_cargo_composicao_mais_recente ? props.values.data_fim_no_cargo_composicao_mais_recente : ""}
+                                                    onChange={setFieldValue}
+                                                    disabled
+                                                />
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="col-6">
+                                            <div className="form-group">
+                                                <label><span className='asterisco-vermelho'>* </span>Período final de
+                                                    ocupação</label>
+                                                <DatePickerField
+                                                    name="data_fim_no_cargo"
+                                                    value={props.values.data_fim_no_cargo ? props.values.data_fim_no_cargo : ""}
+                                                    onChange={setFieldValue}
+                                                    minDate={data && data.info_composicao_anterior && data.info_composicao_anterior.data_final ? moment(data.info_composicao_anterior.data_final).toDate() : ""}
+                                                    maxDate={data && data.mandato && data.mandato.data_final ? moment(data.mandato.data_final).toDate() : ""}
+                                                    // disabled={!retornaSeEhComposicaoVigente() || retornaSePeriodoFinalEhDisable()}
+                                                    disabled
+                                                />
+                                                {props.errors.data_fim_no_cargo && <span
+                                                    className="span_erro text-danger mt-1"> {props.errors.data_fim_no_cargo}</span>}
+                                            </div>
+                                        </div>
+                                    )
+                                }
                             </div>
 
                             {retornaSeEhPresidente() &&
