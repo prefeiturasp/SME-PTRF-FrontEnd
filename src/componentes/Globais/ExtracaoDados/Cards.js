@@ -96,4 +96,11 @@ export const cards = [
         endpoint: '/api/exportacoes-dados/dados_membros_apm/',
         visao: ['SME']
     },
+    {
+        titulo: 'Processos SEI de regularidade',
+        descricao: 'Arquivo com dados dos processos SEI de regularidade das associações.',
+        tags: ['CSV'],
+        endpoint: '/api/exportacoes-dados/processos-sei-regularidade/',
+        visao: ['SME']
+    },    
 ]
