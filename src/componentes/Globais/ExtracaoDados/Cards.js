@@ -38,7 +38,7 @@ export const cards = [
         descricao: 'Arquivo com informações do status das prestações de contas por período e unidade.',
         tags: ['CSV'],
         endpoint: '/api/exportacoes-dados/status-prestacoes-contas/',
-        visao: ['SME']
+        visao: ['DRE', 'SME']
     },
     {
         titulo: 'Prestações de contas: Devolução ao tesouro',
@@ -80,6 +80,27 @@ export const cards = [
         descricao: 'Arquivo com dados das contas das associações.',
         tags: ['CSV'],
         endpoint: '/api/exportacoes-dados/contas-associacao/',
+        visao: ['SME']
+    },
+    {
+        titulo: 'Repasses',
+        descricao: 'Arquivo com dados dos repasses pendentes e realizados para as associações.',
+        tags: ['CSV'],
+        endpoint: '/api/exportacoes-dados/repasses/',
+        visao: ['SME']
+    },
+    {
+        titulo: 'Membros da APM',
+        descricao: 'Arquivo com dados dos membros das associações.',
+        tags: ['CSV'],
+        endpoint: '/api/exportacoes-dados/dados_membros_apm/',
+        visao: ['SME']
+    },
+    {
+        titulo: 'Processos SEI de regularidade',
+        descricao: 'Arquivo com dados dos processos SEI de regularidade das associações.',
+        tags: ['CSV'],
+        endpoint: '/api/exportacoes-dados/processos-sei-regularidade/',
         visao: ['SME']
     },    
 ]

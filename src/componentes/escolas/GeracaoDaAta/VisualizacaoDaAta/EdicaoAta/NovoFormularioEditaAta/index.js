@@ -511,6 +511,8 @@ export const NovoFormularioEditaAta = ({
         const membroListaPresentesSelecionado = copiaListaParticipantes.find(membro => membro.id === id);
 
         if (membroListaPresentesSelecionado) {
+            membroListaPresentesSelecionado.presidente_da_reuniao = false
+            membroListaPresentesSelecionado.secretario_da_reuniao = false
             membroListaPresentesSelecionado.presente = !membroListaPresentesSelecionado.presente;
         }
 
@@ -864,7 +866,7 @@ export const NovoFormularioEditaAta = ({
                                                                                                 checked={membro.presidente_da_reuniao}
                                                                                                 name="statusPresidenteSwitch"
                                                                                                 className={`mt-2 switch-status-presidente form-control ${membro.presidente_da_reuniao ? "switch-status-presidente-checked" : ""}`}
-                                                                                                disabled={ehAdicaoPresente || membro.secretario_da_reuniao || !podeEditarAta}
+                                                                                                disabled={ehAdicaoPresente || membro.secretario_da_reuniao || !podeEditarAta || !membro.presente}
                                                                                             />
                                                                                         </div>
                                                                                     </div>
@@ -879,7 +881,7 @@ export const NovoFormularioEditaAta = ({
                                                                                                 checked={membro.secretario_da_reuniao}
                                                                                                 name="statusSecretarioSwitch"
                                                                                                 className={`mt-2 switch-status-presidente form-control ${membro.secretario_da_reuniao ? "switch-status-presidente-checked" : ""}`}
-                                                                                                disabled={ehAdicaoPresente || membro.presidente_da_reuniao || !podeEditarAta}
+                                                                                                disabled={ehAdicaoPresente || membro.presidente_da_reuniao || !podeEditarAta || !membro.presente}
                                                                                             />
                                                                                         </div>
                                                                                     </div>
