@@ -32,3 +32,7 @@ export const deleteProcessoAssociacao = async (uuid_processo) => {
         return error.response;
     });
 };
+
+export const getPeriodosDisponiveis = async (associacao_uuid, ano, processo_uuid='') => {
+    return (await api.get(`api/processos-associacao/periodos-disponiveis/?associacao_uuid=${associacao_uuid}&ano=${ano}${processo_uuid ? "&processo_uuid="+processo_uuid : ""}`, authHeader)).data
+};

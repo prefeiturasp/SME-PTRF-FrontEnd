@@ -148,6 +148,12 @@ export const TabelaDownloads = ({listaArquivos, downloadArquivo, excluirArquivo,
                             className="align-middle text-center borda-coluna"
                         />
                         <Column 
+                            field="informacoes" 
+                            header="Informações"
+                            style={{width: '20em'}}
+                            className="align-middle text-center borda-coluna"
+                        />
+                        <Column 
                             field="status" 
                             header="Status"
                             body={statusTemplate}
