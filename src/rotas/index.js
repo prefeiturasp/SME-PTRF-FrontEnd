@@ -454,7 +454,7 @@ const routesConfig = [
         exact: true,
         path: "/painel-parametrizacoes",
         component: PainelParametrizacoesPage,
-        permissoes: ['access_painel_parametrizacoes'],
+        permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
     },
     {
         exact: true,
@@ -472,7 +472,7 @@ const routesConfig = [
         exact: true,
         path: "/parametro-periodos",
         component: Periodos,
-        permissoes: ['access_painel_parametrizacoes'],
+        permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
     },
     {
         exact: true,
