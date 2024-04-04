@@ -31,7 +31,7 @@ export const cards = [
         descricao: 'Arquivo com informações da relação de bens das prestações de contas por conta, período e unidade. ',
         tags: ['CSV'],
         endpoint: '/api/exportacoes-dados/relacao-bens/',
-        visao: ['SME']
+        visao: ['DRE', 'SME']
     },
     {
         titulo: 'Prestações de contas: Status',
