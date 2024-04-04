@@ -11,6 +11,7 @@ import { Ordenacao } from "./Ordenacao/Ordenacao";
 import { LimparArgumentosOrdenacao } from "./Ordenacao/LimparOrdenacao";
 import { LegendaInformacao } from "../../../../Globais/ModalLegendaInformacao/LegendaInformacao";
 import { coresTagsDespesas } from "../../../../../utils/CoresTags";
+import { visoesService } from "../../../../../services/visoes.service";
 
 const TabelaTransacoes = ({
     transacoes,
@@ -27,11 +28,12 @@ const TabelaTransacoes = ({
 
     let history = useHistory();
     const rowsPerPage = 10;
-
     const [expandedRows, setExpandedRows] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [urlRedirect, setUrlRedirect] = useState('');
     const [uuid, setUuid] = useState('');
+
+    const PERMISSAO_CHANGE_CONCILIACAO_BANCARIA = visoesService.getPermissoes(['change_conciliacao_bancaria']);
 
     const initOrdenacao = {
         ordenar_por_numero_do_documento: '',
@@ -130,7 +132,7 @@ const TabelaTransacoes = ({
                     onChange={(e) => handleChangeCheckboxTransacoes(e, rowData.documento_mestre.uuid, true, rowData.tipo_transacao)}
                     name="checkConferido"
                     id="checkConferido"
-                    disabled={periodoFechado}
+                    disabled={periodoFechado || !PERMISSAO_CHANGE_CONCILIACAO_BANCARIA}
                 />
             </div>
         )
@@ -146,7 +148,7 @@ const TabelaTransacoes = ({
                     onChange={(e) => handleChangeCheckboxTransacoes(e, rateio.uuid, false, rateio.tipo_transacao)}
                     name="checkConferido"
                     id="checkConferido"
-                    disabled={periodoFechado}
+                    disabled={periodoFechado || !PERMISSAO_CHANGE_CONCILIACAO_BANCARIA}
                 />
             </div>
         )

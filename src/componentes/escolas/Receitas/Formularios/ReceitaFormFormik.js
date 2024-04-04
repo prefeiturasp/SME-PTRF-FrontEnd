@@ -292,9 +292,7 @@ export const ReceitaFormFormik = ({
                                         onBlur={props.handleBlur}
                                         className="form-control"
                                     >
-                                        {receita.acao_associacao
-                                            ? null
-                                            : <option key={0} value="">Escolha uma ação</option>}
+                                        <option key={0} value="">Escolha uma ação</option>
                                         {retornaAcoes(props.values)}
                                     </select>
                                     {props.touched.acao_associacao && props.errors.acao_associacao &&
