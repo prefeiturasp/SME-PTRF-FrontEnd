@@ -111,6 +111,7 @@ export const FiltroExpandido = ({
                             className='form-control pr-3'
                             placeholder={['Data início', 'Data final']}
                             id="data_range"
+                            style={{display: 'inline-flex'}}
                             onCalendarChange={(date) => {
                                 if (!date) {
                                     handleClearDate()
