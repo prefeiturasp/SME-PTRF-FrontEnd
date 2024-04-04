@@ -54,6 +54,23 @@ export const DetalharAcertos = () => {
         verificaSeTemLancamentosDoTipoGasto()
     }, [verificaSeTemLancamentosDoTipoGasto])
 
+    const verificaSeEhRepasse = useCallback(() => {
+        if (lancamentos_para_acertos) {
+
+            // Lancamentos do tipo repasse não podem ser selecionados em lote
+            let lancamento = lancamentos_para_acertos[0]
+            if (lancamento){
+                return lancamento.is_repasse;
+            }
+            
+        }
+        return false;
+    }, [lancamentos_para_acertos])
+
+    useEffect(()=>{
+        verificaSeEhRepasse()
+    }, [verificaSeEhRepasse])
+
     useEffect(() => {
 
         let mounted = true;
@@ -78,7 +95,9 @@ export const DetalharAcertos = () => {
             ];
 
             setLoading(true)
-            let tipos_de_acerto_lancamentos_agrupado = await getTiposDeAcertoLancamentosAgrupadoCategoria(aplicavelDespesasPeriodosAnteriores)
+
+            let is_repasse = verificaSeEhRepasse()
+            let tipos_de_acerto_lancamentos_agrupado = await getTiposDeAcertoLancamentosAgrupadoCategoria(aplicavelDespesasPeriodosAnteriores, is_repasse);
             tipos_de_acerto_lancamentos_agrupado = tipos_de_acerto_lancamentos_agrupado.agrupado_por_categorias
 
             let [tem_gasto, tem_gasto_conferido, tem_gasto_nao_conferido] = verificaSeTemLancamentosDoTipoGasto()
@@ -106,7 +125,7 @@ export const DetalharAcertos = () => {
             mounted = false;
         }
 
-    }, [verificaSeTemLancamentosDoTipoGasto])
+    }, [verificaSeTemLancamentosDoTipoGasto, verificaSeEhRepasse])
 
     useEffect(() => {
         let mounted = true;
@@ -171,7 +190,8 @@ export const DetalharAcertos = () => {
                     let analise_lancamento_uuid = lancamentos_para_acertos[0] && lancamentos_para_acertos[0].analise_lancamento && lancamentos_para_acertos[0].analise_lancamento.uuid ? lancamentos_para_acertos[0].analise_lancamento.uuid : null
                     if (analise_lancamento_uuid) {
                         let acertos = await getListaDeSolicitacaoDeAcertos(prestacao_conta_uuid, analise_lancamento_uuid)
-                        let tipos_de_acerto_lancamentos_agrupado = await getTiposDeAcertoLancamentosAgrupadoCategoria();
+                        let is_repasse = verificaSeEhRepasse()
+                        let tipos_de_acerto_lancamentos_agrupado = await getTiposDeAcertoLancamentosAgrupadoCategoria(null, is_repasse);
                         let _acertos = []
                         if (acertos && acertos.solicitacoes_de_ajuste_da_analise && acertos.solicitacoes_de_ajuste_da_analise.length > 0) {
                             acertos.solicitacoes_de_ajuste_da_analise.map((acerto) =>
@@ -210,7 +230,7 @@ export const DetalharAcertos = () => {
             mounted = false;
         }
 
-    }, [lancamentos_para_acertos, prestacao_conta_uuid, totalDelancamentosParaConferencia])
+    }, [lancamentos_para_acertos, prestacao_conta_uuid, totalDelancamentosParaConferencia, verificaSeEhRepasse])
 
     const onClickBtnVoltar = () => {
         if(origem && origem === "dre-detalhe-prestacao-de-contas-resumo-acertos"){
