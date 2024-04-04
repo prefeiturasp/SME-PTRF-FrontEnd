@@ -420,14 +420,20 @@ export const PrestacaoDeContas = ({setStatusPC, registroFalhaGeracaoPc, setRegis
                         setcorBoxAtaApresentacao("verde");
                         setdataBoxAtaApresentacao("Último preenchimento em " + exibeDateTimePT_BR_Ata(data_preenchimento.alterado_em));
                     }
-
+                    return setLoading(false);
                 } catch (e) {
+                    console.log(e)
+                }
+
+                try {
                     data_preenchimento = await getIniciarPreviaAta(associacaoUuid, periodo_prestacao_de_contas.periodo_uuid);
                     localStorage.setItem("uuidAta", data_preenchimento.uuid);
                     setUuidAtaApresentacao(data_preenchimento.uuid)
                     setcorBoxAtaApresentacao("vermelho");
                     settextoBoxAtaApresentacao(data_preenchimento.nome);
                     setdataBoxAtaApresentacao("Ata não preenchida");
+                } catch (e) {
+                    console.log(e)
                 }
 
             }
