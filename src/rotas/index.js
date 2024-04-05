@@ -490,7 +490,7 @@ const routesConfig = [
         exact: true,
         path: "/parametro-mandato",
         component: Mandatos,
-        permissoes: ['access_painel_parametrizacoes'],
+        permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
     },
     {
         exact: true,
