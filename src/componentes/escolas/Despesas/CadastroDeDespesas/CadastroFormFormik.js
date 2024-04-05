@@ -640,7 +640,7 @@ export const CadastroFormFormik = ({
                                                             </div>
                                                             <div className="bd-highlight">
                                                                 <div className="d-flex justify-content-start">
-                                                                    {rateio && rateio.uuid && !aux.origemAnaliseLancamento(parametroLocation) && (
+                                                                    {rateio && rateio.uuid && (!aux.origemAnaliseLancamento(parametroLocation) || visoesService.featureFlagAtiva('habilita-estorno-ajuste-despesa')) && (
                                                                         rateio.estorno && rateio.estorno.uuid
                                                                             ?
                                                                             <Link
