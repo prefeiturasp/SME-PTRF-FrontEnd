@@ -29,10 +29,10 @@ const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModal
                             <form onSubmit={props.handleSubmit}>
                                 <div className='row'>
                                     <div className='col-12'>
-                                        <p>* Preenchimento obrigatório</p>
+                                        <p className='text-right mb-0'>* Preenchimento obrigatório</p>
                                     </div>
                                     <div className='col'>
-                                        <div className="form-group">
+                                    <div className="form-group">
                                             <label htmlFor="referencia">Referencia *</label>
                                             <input
                                                 data-qa="input-referencia"

@@ -32,10 +32,10 @@ export const Filtros = ({stateFiltros, handleChangeFiltros, handleSubmitFiltros,
                             className="categorias-table-multiple-search"
                             required
                         >
+                            <Option value="">Todos</Option>
                             {categoriaTabela && categoriaTabela.length > 0 && categoriaTabela.map(item => (
                                 <Option key={item.id} value={item.id}>{item.nome}</Option>
                             ))}
-                            <Option value="">Todos</Option>
                         </Select>
                     </div>
                     <div className="form-group col-md-3">
@@ -46,7 +46,6 @@ export const Filtros = ({stateFiltros, handleChangeFiltros, handleSubmitFiltros,
                             name='filtrar_por_ativo'
                             id="filtrar_por_ativo"
                             className="form-control"
-                            placeholder="Selecione um tipo"
                         >
                             <option value=''>Selecione o status</option>
                             <option value='True'>Ativo</option>
