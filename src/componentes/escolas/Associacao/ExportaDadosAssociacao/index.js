@@ -33,24 +33,22 @@ export const ExportaDadosDaAsssociacao = () => {
                 ) :
                 <div className="d-flex  justify-content-end pb-3">
                     <button
-                        disabled={!visoesService.getPermissoes(['change_associacao'])}
                         onClick={exportarDados}
-                        className={`link-exportar ${!visoesService.getPermissoes(['change_associacao']) ? 'link-exportar-disabled' : ''}`}
+                        className={`link-exportar`}
                     >
                         <FontAwesomeIcon
-                            style={{color: `${!visoesService.getPermissoes(['change_associacao']) ? '#7D7D7D' : '#00585E'}`, marginRight:'3px'}}
+                            style={{marginRight:'3px'}}
                             icon={faDownload}
                         />
                         <strong>Exportar dados da associação</strong>
                     </button>
                     <span> | </span>
                     <button
-                        disabled={!visoesService.getPermissoes(['change_associacao'])}
                         onClick={exportarDadosPdf}
-                        className={`link-exportar ${!visoesService.getPermissoes(['change_associacao']) ? 'link-exportar-disabled' : ''}`}
+                        className={`link-exportar`}
                     >
                         <FontAwesomeIcon
-                            style={{color: `${!visoesService.getPermissoes(['change_associacao']) ? '#7D7D7D' : '#00585E'}`, marginRight:'3px'}}
+                            style={{marginRight:'3px'}}
                             icon={faDownload}
                         />
                         <strong>Exportar ficha cadastral</strong>
