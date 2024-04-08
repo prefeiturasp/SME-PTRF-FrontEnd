@@ -11,6 +11,7 @@ import {useGetComposicao} from "../hooks/useGetComposicao";
 import moment from "moment/moment";
 import Loading from "../../../../utils/Loading";
 import {Switch} from "antd";
+import {RetornaSeTemPermissaoEdicaoHistoricoDeMembros} from "../RetornaSeTemPermissaoEdicaoHistoricoDeMembros";
 
 export const FormCadastro = ({
     cargo, 
@@ -23,6 +24,8 @@ export const FormCadastro = ({
 }) => {
 
     const {isLoading, data} = useGetComposicao(composicaoUuid)
+
+    const TEM_PERMISSAO_EDICAO_HISTORICO_DE_MEMBROS = RetornaSeTemPermissaoEdicaoHistoricoDeMembros()
 
     const initFormMembro = {
         nome: cargo.ocupante_do_cargo.nome,
@@ -214,7 +217,7 @@ export const FormCadastro = ({
                                             onBlur={()=>limparCampos(props.values, setFieldValue)}
                                             name="representacao"
                                             className="form-control"
-                                            disabled={!retornaSeEhComposicaoVigente() || cargo.uuid}
+                                            disabled={!retornaSeEhComposicaoVigente() || cargo.uuid || !TEM_PERMISSAO_EDICAO_HISTORICO_DE_MEMBROS}
                                         >
                                             <option value="">Escolha a Representação</option>
                                             <option value="ESTUDANTE">Estudante</option>
@@ -239,7 +242,7 @@ export const FormCadastro = ({
                                                 name="codigo_identificacao"
                                                 className="form-control"
                                                 onBlur={()=>getInfoPeloCodigoIdentificacao(props.values, setFieldValue, setFieldError)}
-                                                disabled={!retornaSeEhComposicaoVigente() || cargo.uuid}
+                                                disabled={!retornaSeEhComposicaoVigente() || cargo.uuid || !TEM_PERMISSAO_EDICAO_HISTORICO_DE_MEMBROS}
                                             />
                                             {props.errors.codigo_identificacao && <span className="span_erro text-danger mt-1"> {props.errors.codigo_identificacao}</span>}
                                         </div>
@@ -273,7 +276,7 @@ export const FormCadastro = ({
                                             onChange={props.handleChange}
                                             name="nome"
                                             className="form-control"
-                                            disabled={!retornaSeEhComposicaoVigente() || (props.values.representacao === "SERVIDOR" || props.values.representacao === "ESTUDANTE")}
+                                            disabled={!retornaSeEhComposicaoVigente() || (props.values.representacao === "SERVIDOR" || props.values.representacao === "ESTUDANTE") || !TEM_PERMISSAO_EDICAO_HISTORICO_DE_MEMBROS}
                                         />
                                         {props.errors.nome && <span className="span_erro text-danger mt-1"> {props.errors.nome}</span>}
                                     </div>
@@ -292,7 +295,7 @@ export const FormCadastro = ({
                                                 onChange={props.handleChange}
                                                 name="cpf_responsavel"
                                                 className="form-control"
-                                                readOnly={!retornaSeEhComposicaoVigente() || (!cargo.uuid ? props.values.representacao !== 'PAI_RESPONSAVEL' && props.values.representacao !== 'ESTUDANTE' : true)}
+                                                readOnly={!retornaSeEhComposicaoVigente() || (!cargo.uuid ? props.values.representacao !== 'PAI_RESPONSAVEL' && props.values.representacao !== 'ESTUDANTE' : true) || !TEM_PERMISSAO_EDICAO_HISTORICO_DE_MEMBROS}
                                             />
                                             {props.errors.cpf_responsavel && <span className="span_erro text-danger mt-1"> {props.errors.cpf_responsavel}</span>}
                                         </div>
@@ -312,7 +315,7 @@ export const FormCadastro = ({
                                                     onChange={props.handleChange}
                                                     name="telefone"
                                                     className="form-control"
-                                                    disabled={!retornaSeEhComposicaoVigente() || (!cargo.uuid ? retornaSeCampoEhDisabled(props.values) : !retornaSeEhPresidente())}
+                                                    disabled={!retornaSeEhComposicaoVigente() || (!cargo.uuid ? retornaSeCampoEhDisabled(props.values) : !retornaSeEhPresidente()) || !TEM_PERMISSAO_EDICAO_HISTORICO_DE_MEMBROS}
                                                 />
                                                 {props.errors.telefone && <span
                                                     className="span_erro text-danger mt-1"> {props.errors.telefone}</span>}
@@ -328,7 +331,7 @@ export const FormCadastro = ({
                                                     onChange={props.handleChange}
                                                     name="cep"
                                                     className="form-control"
-                                                    disabled={!retornaSeEhComposicaoVigente() || (!cargo.uuid ? retornaSeCampoEhDisabled(props.values) : !retornaSeEhPresidente())}
+                                                    disabled={!retornaSeEhComposicaoVigente() || (!cargo.uuid ? retornaSeCampoEhDisabled(props.values) : !retornaSeEhPresidente()) || !TEM_PERMISSAO_EDICAO_HISTORICO_DE_MEMBROS}
                                                 />
                                                 {props.errors.cep && <span
                                                     className="span_erro text-danger mt-1"> {props.errors.cep}</span>}
@@ -346,7 +349,7 @@ export const FormCadastro = ({
                                                     onChange={props.handleChange}
                                                     name="bairro"
                                                     className="form-control"
-                                                    disabled={!retornaSeEhComposicaoVigente() || (!cargo.uuid ? retornaSeCampoEhDisabled(props.values) : !retornaSeEhPresidente())}
+                                                    disabled={!retornaSeEhComposicaoVigente() || (!cargo.uuid ? retornaSeCampoEhDisabled(props.values) : !retornaSeEhPresidente()) || !TEM_PERMISSAO_EDICAO_HISTORICO_DE_MEMBROS}
                                                 />
                                                 {props.errors.bairro && <span
                                                     className="span_erro text-danger mt-1"> {props.errors.bairro}</span>}
@@ -362,7 +365,7 @@ export const FormCadastro = ({
                                                     onChange={props.handleChange}
                                                     name="endereco"
                                                     className="form-control"
-                                                    disabled={!retornaSeEhComposicaoVigente() || (!cargo.uuid ? retornaSeCampoEhDisabled(props.values) : !retornaSeEhPresidente())}
+                                                    disabled={!retornaSeEhComposicaoVigente() || (!cargo.uuid ? retornaSeCampoEhDisabled(props.values) : !retornaSeEhPresidente()) || !TEM_PERMISSAO_EDICAO_HISTORICO_DE_MEMBROS}
                                                 />
                                                 {props.errors.endereco && <span
                                                     className="span_erro text-danger mt-1"> {props.errors.endereco}</span>}
@@ -382,7 +385,7 @@ export const FormCadastro = ({
                                             onChange={props.handleChange}
                                             name="email"
                                             className="form-control"
-                                            disabled={!retornaSeEhComposicaoVigente() || (!cargo.uuid ? retornaSeCampoEhDisabled(props.values) : false)}
+                                            disabled={!retornaSeEhComposicaoVigente() || (!cargo.uuid ? retornaSeCampoEhDisabled(props.values) : false) || !TEM_PERMISSAO_EDICAO_HISTORICO_DE_MEMBROS}
                                         />
                                         {props.errors.email &&
                                             <span className="span_erro text-danger mt-1"> {props.errors.email}</span>}
@@ -400,7 +403,7 @@ export const FormCadastro = ({
                                             onChange={setFieldValue}
                                             minDate={data ? moment(data.data_inicial).toDate() : ""}
                                             maxDate={data ? moment(data.data_final).toDate() : ""}
-                                            disabled={!retornaSeEhComposicaoVigente() || retornaSeCampoEhDisabled(props.values)}
+                                            disabled={!retornaSeEhComposicaoVigente() || retornaSeCampoEhDisabled(props.values) || !TEM_PERMISSAO_EDICAO_HISTORICO_DE_MEMBROS}
                                         />
                                         {props.errors.data_inicio_no_cargo && <span
                                             className="span_erro text-danger mt-1"> {props.errors.data_inicio_no_cargo}</span>}
@@ -410,8 +413,7 @@ export const FormCadastro = ({
                                     props.values.data_fim_no_cargo_composicao_mais_recente ? (
                                         <div className="col-6">
                                             <div className="form-group">
-                                                <label><span className='asterisco-vermelho'>* </span>Período final de
-                                                    ocupação</label>
+                                                <label><span className='asterisco-vermelho'>* </span>Período final de ocupação</label>
                                                 <DatePickerField
                                                     name="data_fim_no_cargo"
                                                     value={props.values.data_fim_no_cargo_composicao_mais_recente ? props.values.data_fim_no_cargo_composicao_mais_recente : ""}
@@ -423,8 +425,7 @@ export const FormCadastro = ({
                                     ) : (
                                         <div className="col-6">
                                             <div className="form-group">
-                                                <label><span className='asterisco-vermelho'>* </span>Período final de
-                                                    ocupação</label>
+                                                <label><span className='asterisco-vermelho'>* </span>Período final de ocupação</label>
                                                 <DatePickerField
                                                     name="data_fim_no_cargo"
                                                     value={props.values.data_fim_no_cargo ? props.values.data_fim_no_cargo : ""}
@@ -455,7 +456,7 @@ export const FormCadastro = ({
                                                 checkedChildren="Presente"
                                                 unCheckedChildren="Ausente"
                                                 className={`switch-status-presidente ${props.values.switch_status_presidente ? "switch-status-presidente-checked" : ""}`}
-                                                disabled={!retornaSeEhComposicaoVigente()}
+                                                disabled={!retornaSeEhComposicaoVigente() || !TEM_PERMISSAO_EDICAO_HISTORICO_DE_MEMBROS}
                                             />
                                         </div>
 
@@ -471,7 +472,7 @@ export const FormCadastro = ({
                                                             onChange={props.handleChange}
                                                             name="responsavel_pelas_atribuicoes"
                                                             className="form-control"
-                                                            disabled={!retornaSeEhComposicaoVigente()}
+                                                            disabled={!retornaSeEhComposicaoVigente() || !TEM_PERMISSAO_EDICAO_HISTORICO_DE_MEMBROS}
                                                         >
                                                             <option value=''>Escolha o responsável</option>
                                                             {cargosDaDiretoriaExecutiva && cargosDaDiretoriaExecutiva.length > 0 && cargosDaDiretoriaExecutiva.filter(element => element.id !== "PRESIDENTE_DIRETORIA_EXECUTIVA").map((responsavel)=>
