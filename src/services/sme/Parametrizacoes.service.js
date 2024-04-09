@@ -133,6 +133,9 @@ export const deleteTag = async (tag_uuid) => {
 export const getAssociacoes = async () => {
     return (await api.get(`/api/associacoes/`, authHeader)).data
 };
+export const getParametrizacoesAssociacoes = async (page, tipo_unidade, unidade__dre__uuid, nome, informacoes) => {
+    return (await api.get(`/api/parametrizacoes-associacoes/?page=${page}&page_size=${20}&unidade__tipo_unidade=${tipo_unidade}&unidade__dre__uuid=${unidade__dre__uuid}&nome=${nome}&filtro_informacoes=${informacoes}`, authHeader)).data
+};
 export const getTabelaAssociacoes = async () => {
     return (await api.get(`/api/associacoes/tabelas/`, authHeader)).data
 };
