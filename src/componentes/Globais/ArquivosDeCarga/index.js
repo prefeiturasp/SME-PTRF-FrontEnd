@@ -14,8 +14,10 @@ import {MenuInterno} from "../MenuInterno";
 import ModalFormArquivosDeCarga from "./ModalFormArquivosDeCarga";
 import {ModalInfoArquivoDeCargas} from "./ModalInfoArquivoDeCargas";
 import {ModalConfirmDeleteArquivoDeCarga} from "./ModalConfirmDeleteArquivoDeCarga";
+import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../sme/Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
 
 const ArquivosDeCarga = () => {
+    const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES = RetornaSeTemPermissaoEdicaoPainelParametrizacoes()
 
     const url_params = useParams();
     const dadosDeOrigem = useMemo(() => {
@@ -243,28 +245,28 @@ const ArquivosDeCarga = () => {
                     <button className="btn-acoes"><span className="btn-acoes-dots">...</span></button>
                 </span>
                 <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <button onClick={()=>handleClickProcessarArquivoDeCarga(rowData)} className="btn btn-link dropdown-item fonte-14" type="button">
+                    <button onClick={()=>handleClickProcessarArquivoDeCarga(rowData)} className="btn btn-link dropdown-item fonte-14" type="button" disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}>
                         <FontAwesomeIcon
                             style={{fontSize: '15px', marginRight: "5px", color: "#00585E"}}
                             icon={faCogs}
                         />
                         <strong>Processar</strong>
                     </button>
-                    <button onClick={() => handleClickEditarArquivos(rowData)} className="btn btn-link dropdown-item fonte-14" type="button">
+                    <button onClick={() => handleClickEditarArquivos(rowData)} className="btn btn-link dropdown-item fonte-14" type="button" disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}>
                         <FontAwesomeIcon
                             style={{fontSize: '15px', marginRight: "5px", color: "#00585E"}}
                             icon={faEdit}
                         />
                         <strong>Editar</strong>
                     </button>
-                    <button onClick={()=>handleClickDownloadArquivoDeCarga(rowData)} className="btn btn-link dropdown-item fonte-14" type="button">
+                    <button onClick={()=>handleClickDownloadArquivoDeCarga(rowData)} className="btn btn-link dropdown-item fonte-14" type="button" disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}>
                         <FontAwesomeIcon
                             style={{fontSize: '15px', marginRight: "5px", color: "#00585E"}}
                             icon={faDownload}
                         />
                         <strong>Baixar</strong>
                     </button>
-                    <button onClick={()=>handleClickDeleteArquivoDeCarga(rowData.uuid)} className="btn btn-link dropdown-item fonte-14" type="button">
+                    <button onClick={()=>handleClickDeleteArquivoDeCarga(rowData.uuid)} className="btn btn-link dropdown-item fonte-14" type="button" disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}>
                         <FontAwesomeIcon
                             style={{fontSize: '15px', marginRight: "5px", color: "#B40C02"}}
                             icon={faTrashAlt}
