@@ -16,6 +16,7 @@ import {ModalInfoNaoPermitido} from "./ModalInfoNaoPermitido";
 import {ModalConfirmDeleteTag} from "./ModalConfirmDeleteTag";
 import {BtnAddTags} from "./BtnAddTags";
 import Loading from "../../../../../utils/Loading";
+import { toastCustom } from "../../../../Globais/ToastCustom";
 
 export const Tags = ()=>{
 
@@ -119,10 +120,12 @@ export const Tags = ()=>{
         if (values.operacao === 'create'){
             try{
                 await postCreateTag(payload);
+                toastCustom.ToastCustomSuccess('Inclusão de etiqueta/tag realizada com sucesso.', `A etiqueta/tag foi adicionada ao sistema com sucesso.`)
                 console.log('Tag criada com sucesso');
                 setShowModalForm(false);
                 await carregaTodasAsTags();
             }catch (e) {
+                toastCustom.ToastCustomError('Erro ao criar etiqueta/tag', `Não foi possível criar a etiqueta/tag`)
                 console.log('Erro ao criar tag ', e.response.data);
                 if (e.response.data && e.response.data.non_field_errors) {
                     setErroExclusaoNaoPermitida('Ja existe uma tag com esse nome');
@@ -136,10 +139,12 @@ export const Tags = ()=>{
         }else {
             try {
                 await patchAlterarTag(values.uuid, payload);
+                toastCustom.ToastCustomSuccess('Edição da etiqueta/tag realizado com sucesso.', `A etiqueta/tag foi editada no sistema com sucesso.`)
                 console.log('Tag alterada com sucesso');
                 setShowModalForm(false);
                 await carregaTodasAsTags();
             }catch (e) {
+                toastCustom.ToastCustomError('Erro ao atualizar etiqueta/tag', `Não foi possível atualizar a etiqueta/tag`)
                 console.log('Erro ao alterar tag ', e.response.data);
                 if (e.response.data && e.response.data.non_field_errors) {
                     setErroExclusaoNaoPermitida('Ja existe uma tag com esse nome');
@@ -157,11 +162,13 @@ export const Tags = ()=>{
         setLoading(true);
         try {
             await deleteTag(stateFormModal.uuid);
+            toastCustom.ToastCustomSuccess('Remoção da etiqueta/tag efetuada com sucesso.', `A etiqueta/tag foi removida do sistema com sucesso.`)
             console.log("Tag excluída com sucesso");
             setShowModalConfirmDeleteTag(false);
             setShowModalForm(false);
             await carregaTodasAsTags();
         }catch (e) {
+            toastCustom.ToastCustomError('Erro ao remover etiqueta/tag', `Não foi possível remover a etiqueta/tag`)
             console.log('Erro ao excluir tag ', e.response.data);
             setErroExclusaoNaoPermitida('Houve um erro ao tentar fazer essa atualização.');
             setShowModalInfoNaoPermitido(true);
