@@ -45,7 +45,7 @@ export const cards = [
         descricao: 'Arquivo com informações de devolução ao tesouro das prestações de contas por período e unidade',
         tags: ['CSV'],
         endpoint: '/api/exportacoes-dados/devolucao-ao-tesouro-prestacoes-contas/',
-        visao: ['SME']
+        visao: ['DRE', 'SME']
     },
     {
         titulo: 'Prestações de contas: Atas',
