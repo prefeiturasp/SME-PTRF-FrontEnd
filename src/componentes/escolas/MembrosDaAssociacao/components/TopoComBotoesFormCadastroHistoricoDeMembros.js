@@ -2,11 +2,14 @@ import React from "react";
 import {Link} from "react-router-dom";
 import {useGetComposicao} from "../hooks/useGetComposicao";
 import useDataTemplate from "../../../../hooks/Globais/useDataTemplate";
+import {RetornaSeTemPermissaoEdicaoHistoricoDeMembros} from "../RetornaSeTemPermissaoEdicaoHistoricoDeMembros";
 
 export const TopoComBotoesFormCadastroHistoricoDeMembros = ({composicaoUuid, cargo, isValid, retornaSeEhComposicaoVigente, onInformarSaida}) => {
 
     const {data} = useGetComposicao(composicaoUuid)
     const dataTemplate = useDataTemplate()
+
+    const TEM_PERMISSAO_EDICAO_HISTORICO_DE_MEMBROS = RetornaSeTemPermissaoEdicaoHistoricoDeMembros()
 
     return(
         <div className="d-flex align-items-end mt-0">
@@ -20,7 +23,7 @@ export const TopoComBotoesFormCadastroHistoricoDeMembros = ({composicaoUuid, car
                 {
                     cargo.uuid ? (
                         <button
-                            disabled={!isValid || !retornaSeEhComposicaoVigente()}
+                            disabled={!isValid || !retornaSeEhComposicaoVigente() || !TEM_PERMISSAO_EDICAO_HISTORICO_DE_MEMBROS}
                             type='button'
                             className="btn btn-success mr-2"
                             onClick={onInformarSaida}
@@ -39,7 +42,7 @@ export const TopoComBotoesFormCadastroHistoricoDeMembros = ({composicaoUuid, car
                     Voltar
                 </Link>
                 <button
-                    disabled={!isValid || !retornaSeEhComposicaoVigente()}
+                    disabled={!isValid || !retornaSeEhComposicaoVigente() || !TEM_PERMISSAO_EDICAO_HISTORICO_DE_MEMBROS}
                     type='submit'
                     className="btn btn-success mr-2"
                 >

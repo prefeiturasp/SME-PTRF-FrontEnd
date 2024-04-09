@@ -117,7 +117,7 @@ const routesConfig = [
         exact: true,
         path: "/dados-da-associacao",
         component: DadosDaAssociacaoPage,
-        permissoes: ['access_dados_associacao'],
+        permissoes: ['access_dados_associacao', 'change_associacao'],
     },
     {
         exact: true,
@@ -171,25 +171,25 @@ const routesConfig = [
         exact: true,
         path: "/membros-da-associacao",
         component: MembrosDaAssociacaoPage,
-        permissoes: ['access_dados_associacao'],
+        permissoes: ['access_dados_associacao', 'change_associacao'],
     },
     {
         exact: true,
         path: "/membros-da-associacao-mandato-vigente",
         component: PaginaMandatoVigente,
-        permissoes: ['access_dados_associacao'],
+        permissoes: ['access_dados_associacao', 'change_associacao'],
     },
     {
         exact: true,
         path: "/membros-da-associacao-mandatos-anteriores",
         component: PaginaMandatosAnteriores,
-        permissoes: ['access_dados_associacao'],
+        permissoes: ['access_dados_associacao', 'change_associacao'],
     },
     {
         exact: true,
         path: "/cadastro-historico-de-membros/:composicaoUuid?",
         component: PaginaCadastroHistoricoDeMembros,
-        permissoes: ['access_dados_associacao'],
+        permissoes: ['access_dados_associacao', 'change_associacao'],
     },
     {
         exact: true,
@@ -201,7 +201,7 @@ const routesConfig = [
         exact: true,
         path: "/dados-das-contas-da-associacao",
         component: DadosDasContasPage,
-        permissoes: ['access_dados_associacao'],
+        permissoes: ['access_dados_associacao', 'change_associacao'],
     },
     {
         exact: true,
@@ -490,7 +490,7 @@ const routesConfig = [
         exact: true,
         path: "/parametro-mandato",
         component: Mandatos,
-        permissoes: ['access_painel_parametrizacoes'],
+        permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
     },
     {
         exact: true,
@@ -574,7 +574,7 @@ const routesConfig = [
         exact: true,
         path: "/parametro-tipos-acertos-lancamentos",
         component: ParametrizacoesTiposAcertosLancamentos,
-        permissoes: ['access_painel_parametrizacoes'],
+        permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
     },
     {
         exact: true,
