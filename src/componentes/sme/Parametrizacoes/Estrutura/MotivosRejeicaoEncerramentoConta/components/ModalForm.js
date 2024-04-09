@@ -4,9 +4,10 @@ import { YupSchemaMotivosRejeicao } from "../YupSchemaMotivosRejeicao";
 import { ModalFormBodyText } from "../../../../../Globais/ModalBootstrap";
 import { MotivosRejeicaoContext } from "../context/MotivosRejeicao";
 import ReactTooltip from "react-tooltip";
+import {RetornaSeTemPermissaoEdicaoPainelParametrizacoes} from "../../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes"
 
 export const ModalForm = ({handleSubmitFormModal}) => {
-
+    const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES = RetornaSeTemPermissaoEdicaoPainelParametrizacoes()
     const {showModalForm, setShowModalForm, stateFormModal, bloquearBtnSalvarForm, setShowModalConfirmacaoExclusao} = useContext(MotivosRejeicaoContext)
 
     const bodyTextarea = () => {
@@ -29,10 +30,10 @@ export const ModalForm = ({handleSubmitFormModal}) => {
                             <form onSubmit={props.handleSubmit}>
                                 <div className='row'>
                                     <div className='col-12'>
-                                        <p className='text-right mb-0'><small>* Preenchimento obrigatório no cadastro e na edição do motivo</small></p>
+                                        <p className='text-right mb-0'><small> * Preenchimento obrigatório</small></p>
                                         <div className="form-group">
                                             <span data-tip="Preencher com um motivo de rejeição da solicitação de encerramento de conta. </br>Por exemplo: 2023 a 2025." data-html={true}>
-                                                <label>* Motivo</label>
+                                                <label>Motivo *</label>
                                                 <ReactTooltip/>
                                             </span>
 
@@ -43,6 +44,7 @@ export const ModalForm = ({handleSubmitFormModal}) => {
                                                 id="nome"
                                                 className="form-control"
                                                 onChange={props.handleChange}
+                                                disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                             />
                                             {props.touched.nome && props.errors.nome && <span className="span_erro text-danger mt-1"> {props.errors.nome}</span>}
                                         </div>
@@ -66,6 +68,7 @@ export const ModalForm = ({handleSubmitFormModal}) => {
                                                 onClick={()=>setShowModalConfirmacaoExclusao(true)}
                                                 type="button"
                                                 className="btn btn btn-danger mt-2 mr-2"
+                                                disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                             >
                                                 Apagar
                                             </button>
@@ -85,7 +88,7 @@ export const ModalForm = ({handleSubmitFormModal}) => {
                                         <button
                                             type="submit"
                                             className="btn btn btn-success mt-2"
-                                            disabled={bloquearBtnSalvarForm}
+                                            disabled={bloquearBtnSalvarForm || !TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                         >
                                             {stateFormModal.uuid ? "Salvar" : "Adicionar" }
                                         </button>

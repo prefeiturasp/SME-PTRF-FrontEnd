@@ -21,6 +21,7 @@ export const usePostMotivoRejeicao = () => {
             toastCustom.ToastCustomSuccess('Inclusão do motivo de rejeição de encerramento de conta realizada com sucesso', `O motivo de rejeição foi adicionado com sucesso.`)
         },
         onError: (error) => {
+            toastCustom.ToastCustomError('Erro ao criar o motivo de rejeição', `Não foi possível criar o motivo de rejeição`)
             console.log("Erro ao criar o motivo de rejeição", error.response)
         },
         onSettled: () => {

@@ -496,7 +496,7 @@ const routesConfig = [
         exact: true,
         path: "/motivos-rejeicao",
         component: MotivosRejeicaoEncerramentoConta,
-        permissoes: ['access_painel_parametrizacoes'],
+        permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
     },
     {
         exact: true,
