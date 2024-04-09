@@ -21,7 +21,7 @@ export const YupSignupSchemaProcesso = yup.object().shape({
             }),
 });
 
-export const ProcessoSeiPrestacaoDeContaForm = ({show, handleClose, onSubmit, handleChange, handleChangeSelectPeriodos, validateForm, initialValues, periodosDisponiveis}) => {
+export const ProcessoSeiPrestacaoDeContaForm = ({show, handleClose, onSubmit, handleChange, handleChangeSelectPeriodos, validateForm, initialValues, periodosDisponiveis, customNumeroProcessoError, setCustomNumeroProcessoError}) => {
 
     const { Option } = Select;
 
@@ -55,16 +55,17 @@ export const ProcessoSeiPrestacaoDeContaForm = ({show, handleClose, onSubmit, ha
 
                                     <div className="row">
                                         <div className='col-12'>
-                                            <p>* Preenchimento obrigatório</p>
+                                            <p>Preenchimento obrigatório *</p>
                                         </div>
                                         <div className="col-12 col-md-6">
                                             <div className="form-group">
-                                                <label htmlFor="cargo_associacao">* Número do processo SEI</label>
+                                                <label htmlFor="cargo_associacao">Número do processo SEI *</label>
                                                 <MaskedInput
                                                     mask={(valor) => processoSeiMask(valor)}
                                                     onChange={(e) => {
                                                         props.handleChange(e);
                                                         handleChange(e.target.name, e.target.value);
+                                                        setCustomNumeroProcessoError('');
                                                     }
                                                     }
                                                     name="numero_processo"
@@ -74,17 +75,20 @@ export const ProcessoSeiPrestacaoDeContaForm = ({show, handleClose, onSubmit, ha
                                                 />
                                                 {props.errors.numero_processo && <span
                                                     className="span_erro text-danger mt-1"> {props.errors.numero_processo}</span>}
+                                                {!props.errors.numero_processo && customNumeroProcessoError && <span
+                                                    className="span_erro text-danger mt-1"> {`${customNumeroProcessoError}`}</span>}
                                             </div>
                                         </div>
 
                                         <div className="col-12 col-md-6">
                                             <div className="form-group">
-                                                <label htmlFor="cargo_associacao">* Ano</label>
+                                                <label htmlFor="cargo_associacao">Ano *</label>
                                                 <MaskedInput
                                                     mask={(valor) => anoMask(valor)}
                                                     onChange={(e) => {
                                                         props.handleChange(e);
                                                         handleChange(e.target.name, e.target.value);
+                                                        setCustomNumeroProcessoError('');
                                                     }
                                                     }
                                                     name="ano"
@@ -102,7 +106,7 @@ export const ProcessoSeiPrestacaoDeContaForm = ({show, handleClose, onSubmit, ha
                                             <>
                                                 <div className="col-12">
                                                     <div className="form-group">
-                                                        <label htmlFor="periodos">* Períodos</label>
+                                                        <label htmlFor="periodos">Períodos *</label>
                                                         <Select
                                                             mode="multiple"
                                                             allowClear

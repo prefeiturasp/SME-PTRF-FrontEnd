@@ -51,6 +51,8 @@ export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao}) => {
 
     const [showConfirmDelete, setShowConfirmDelete] = useState(false);
 
+    const [customNumeroProcessoError, setCustomNumeroProcessoError] = useState('');
+
     const associacaoUuid = dadosDaAssociacao.dados_da_associacao.uuid;
 
     const carregaProcessos = async () => {
@@ -134,7 +136,7 @@ export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao}) => {
 
     const handleSubmitProcesso = async () => {
         setLoading(true);
-        setShowProcessoForm(false);
+        setCustomNumeroProcessoError('');
         let payload
         if (visoesService.featureFlagAtiva('periodos-processo-sei')){
             payload = {
@@ -157,13 +159,20 @@ export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao}) => {
                 if (response.status === 200) {
                     toastCustom.ToastCustomSuccess('Alteração de Processo SEI', `Processo SEI alterado com sucesso.`)
                     console.log("Processo atualizado com sucesso!");
+                    setShowProcessoForm(false);
                     await carregaProcessos();
                 } else {
                     toastCustom.ToastCustomError('Alteração de Processo SEI', `Erro ao alterar Processo SEI.`)
                     console.log("Erro ao atualizar Processo")
+                    if(response.status === 400 && response.data && response.data.numero_processo) {
+                        setCustomNumeroProcessoError(response.data.numero_processo[0]);
+                    } else {
+                        setShowProcessoForm(false);
+                    }
                 }
             } catch (error) {
                 console.log(error)
+                setShowProcessoForm(false);
             }
         } else {
             try {
@@ -171,13 +180,20 @@ export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao}) => {
                 if (response.status === 201) {
                     toastCustom.ToastCustomSuccess('Inclusão de Processo SEI', `Processo SEI adicionado com sucesso.`)
                     console.log("Processo criado com sucesso!");
+                    setShowProcessoForm(false);
                     await carregaProcessos();
                 } else {
                     toastCustom.ToastCustomError('Inclusão de Processo SEI', `Erro ao incluir Processo SEI.`)
                     console.log("Erro ao criar Processo")
+                    if(response.status === 400 && response.data && response.data.numero_processo) {
+                        setCustomNumeroProcessoError(response.data.numero_processo[0]);
+                    } else {
+                        setShowProcessoForm(false);
+                    }
                 }
             } catch (error) {
                 console.log(error)
+                setShowProcessoForm(false);
             }
         }
         setLoading(false)
@@ -350,6 +366,8 @@ export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao}) => {
                                 validateForm={validateProcessoForm}
                                 initialValues={stateProcessoForm}
                                 periodosDisponiveis={periodosDisponiveis}
+                                customNumeroProcessoError={customNumeroProcessoError}
+                                setCustomNumeroProcessoError={setCustomNumeroProcessoError}
                             />
                         </section>
 
