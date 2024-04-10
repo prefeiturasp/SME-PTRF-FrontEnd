@@ -448,7 +448,7 @@ const routesConfig = [
         exact: true,
         path: "/parametro-arquivos-de-carga/:tipo_de_carga/",
         component: ArquivosDeCarga,
-        permissoes: ['access_arquivos_carga', 'change_painel_parametrizacoes'],
+        permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
     },
     {
         exact: true,
@@ -568,7 +568,7 @@ const routesConfig = [
         exact: true,
         path: "/parametro-Fornecedores",
         component: Fornecedores,
-        permissoes: ['access_fornecedores'],
+        permissoes: ['access_fornecedores', 'access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
     },
     {
         exact: true,
