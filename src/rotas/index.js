@@ -580,7 +580,7 @@ const routesConfig = [
         exact: true,
         path: "/parametro-tipos-acertos-documentos",
         component: ParametrizacoesTiposAcertosDocumentos,
-        permissoes: ['access_painel_parametrizacoes'],
+        permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
     },
     {
         exact: true,
