@@ -562,7 +562,7 @@ const routesConfig = [
         exact: true,
         path: "/parametro-tipos-custeio",
         component: TiposDeCusteio,
-        permissoes: ['access_painel_parametrizacoes'],
+        permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
     },
     {
         exact: true,
