@@ -2,9 +2,10 @@ import React, {memo} from "react";
 import {ModalFormBodyText} from "../../../../Globais/ModalBootstrap";
 import {Formik} from "formik";
 import {YupSignupSchemaTags} from "./YupSignupSchemaTags";
+import {RetornaSeTemPermissaoEdicaoPainelParametrizacoes} from "../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes"
 
 const ModalForm = ({show, stateFormModal, handleClose, handleSubmitModalForm, setShowModalConfirmDelete}) => {
-
+    const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES = RetornaSeTemPermissaoEdicaoPainelParametrizacoes()
     const bodyTextarea = () => {
         return (
             <>
@@ -23,9 +24,12 @@ const ModalForm = ({show, stateFormModal, handleClose, handleSubmitModalForm, se
                             <form onSubmit={props.handleSubmit}>
 
                                 <div className='row'>
+                                    <div className='col-12'>
+                                        <p>* Preenchimento obrigatório</p>
+                                    </div>
                                     <div className='col'>
                                         <div className="form-group">
-                                            <label htmlFor="nome">Nome</label>
+                                            <label htmlFor="nome">Nome *</label>
                                             <input
                                                 type="text"
                                                 value={props.values.nome}
@@ -33,6 +37,7 @@ const ModalForm = ({show, stateFormModal, handleClose, handleSubmitModalForm, se
                                                 id="nome"
                                                 className="form-control"
                                                 onChange={props.handleChange}
+                                                disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                             />
                                             {props.touched.nome && props.errors.nome && <span className="span_erro text-danger mt-1"> {props.errors.nome} </span>}
                                         </div>
@@ -51,7 +56,7 @@ const ModalForm = ({show, stateFormModal, handleClose, handleSubmitModalForm, se
                                 <div className="d-flex bd-highlight mt-2">
                                     <div className="p-Y flex-grow-1 bd-highlight">
                                         {values.operacao === 'edit' ? (
-                                            <button onClick={()=>setShowModalConfirmDelete(true)} type="button" className="btn btn btn-danger mt-2 mr-2">
+                                            <button onClick={()=>setShowModalConfirmDelete(true)} type="button" className="btn btn btn-danger mt-2 mr-2" disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}>
                                                 Apagar
                                             </button>
                                         ): null}
@@ -61,7 +66,7 @@ const ModalForm = ({show, stateFormModal, handleClose, handleSubmitModalForm, se
                                     </div>
 
                                     <div className="p-Y bd-highlight">
-                                        <button type="submit" className="btn btn btn-success mt-2">Salvar</button>
+                                        <button type="submit" className="btn btn btn-success mt-2" disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}>Salvar</button>
                                     </div>
                                 </div>
                             </form>
