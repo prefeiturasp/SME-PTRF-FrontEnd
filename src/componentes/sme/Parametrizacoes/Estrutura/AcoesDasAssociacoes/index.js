@@ -1,9 +1,8 @@
 import React, {useState, useEffect, useCallback, useMemo} from "react";
 import {PaginasContainer} from "../../../../../paginas/PaginasContainer";
 import {
-    getTodasAcoesDasAssociacoes,
+    getParametrizacoesAcoesAssociacoes,
     getListaDeAcoes,
-    getFiltros,
     postAddAcaoAssociacao,
     putAtualizarAcaoAssociacao,
     deleteAcaoAssociacao,
@@ -23,6 +22,7 @@ import {ModalFormAcoesDaAssociacao} from "./ModalFormAcoesDasAssociacoes";
 import {ModalConfirmDeleteAcaoAssociacao} from "./ModalConfirmDeleteAcaoAssociacao";
 import {ModalInfoQtdeRateiosReceitasAcao} from "./ModalInfoQtdeRateiosReceitasAcao";
 import { getTabelaAssociacoes } from "../../../../../services/dres/Associacoes.service";
+import { toastCustom } from "../../../../Globais/ToastCustom";
 
 export const AcoesDasAssociacoes = () => {
 
@@ -40,27 +40,50 @@ export const AcoesDasAssociacoes = () => {
     const [loading, setLoading] = useState(true);
     const [showModalLegendaInformacao, setShowModalLegendaInformacao] = useState(false);
     const [tabelaAssociacoes, setTabelaAssociacoes] = useState({});
+    const [currentPage, setCurrentPage] = useState(1);
+    const [firstPage, setFirstPage] = useState(1);
 
-    const carregaTodasAsAcoes = useCallback(async () => {
+    const carregaTodasAsAcoes = useCallback(async (page=1, filtrar_por_nome_cod_eol='', filtrar_por_acao='', filtrar_por_status='', filtro_informacoes='') => {
         setLoading(true);
-        let todas_acoes = await getTodasAcoesDasAssociacoes();
+        let todas_acoes = await getParametrizacoesAcoesAssociacoes(page, filtrar_por_nome_cod_eol, filtrar_por_acao, filtrar_por_status, filtro_informacoes);
         setTodasAsAcoes(todas_acoes);
-
-        let todas_associacoes = await getAssociacoes();
-        setTodasAsAcoesAutoComplete(todas_associacoes);
-
-        let tabela_associacoes = await getTabelaAssociacoes();
-        setTabelaAssociacoes(tabela_associacoes);
-
         setLoading(false);
     }, []);
+
+    const fetchAssociacoes = async () => {
+        let todas_associacoes = await getAssociacoes();
+        setTodasAsAcoesAutoComplete(todas_associacoes);
+    };
+
+    const fetchTabelasAssociacoes = async () => {
+        let tabela_associacoes = await getTabelaAssociacoes();
+        setTabelaAssociacoes(tabela_associacoes);
+    };
+
+    useEffect(() => {
+        fetchAssociacoes();
+        fetchTabelasAssociacoes();
+    }, [])
+
+    const onPageChange = (event) => {
+        setCurrentPage(event.page + 1)
+        setFirstPage(event.first)
+
+        carregaTodasAsAcoes(
+            event.page + 1,
+            stateFiltros.filtrar_por_nome_cod_eol,
+            stateFiltros.filtrar_por_acao,
+            stateFiltros.filtrar_por_status,
+            stateFiltros.filtro_informacoes
+        )
+    };
 
     useEffect(() => {
         carregaTodasAsAcoes();
     }, [carregaTodasAsAcoes]);
 
     // Quando a state de todasAsAcoes sofrer alteração
-    const totalDeAcoes = useMemo(() => todasAsAcoes.length, [todasAsAcoes]);
+    const totalDeAcoes = useMemo(() => todasAsAcoes.count, [todasAsAcoes]);
 
     const carregaListaTiposDeAcao = useCallback(async () => {
         const resp = await getListaDeAcoes();
@@ -79,15 +102,21 @@ export const AcoesDasAssociacoes = () => {
         });
     };
     const handleSubmitFiltros = async () => {
+        setCurrentPage(1);
+        setFirstPage(1);
         setLoading(true);
-        let acoes_filtradas = await getFiltros(stateFiltros.filtrar_por_nome_cod_eol, 
-                                               stateFiltros.filtrar_por_acao, 
-                                               stateFiltros.filtrar_por_status, 
-                                               stateFiltros.filtro_informacoes);
+        let acoes_filtradas = await getParametrizacoesAcoesAssociacoes(1,
+            stateFiltros.filtrar_por_nome_cod_eol, 
+            stateFiltros.filtrar_por_acao, 
+            stateFiltros.filtrar_por_status, 
+            stateFiltros.filtro_informacoes
+        );
         setTodasAsAcoes(acoes_filtradas);
         setLoading(false)
     };
     const limpaFiltros = async () => {
+        setCurrentPage(1);
+        setFirstPage(1);
         setStateFiltros(initialStateFiltros);
         await carregaTodasAsAcoes();
     };
@@ -278,6 +307,8 @@ export const AcoesDasAssociacoes = () => {
                             acoesTemplate={acoesTemplate}
                             showModalLegendaInformacao={showModalLegendaInformacao}
                             setShowModalLegendaInformacao={setShowModalLegendaInformacao}
+                            onPageChange={onPageChange}
+                            firstPage={firstPage}
                         />
                     </>
                 }
