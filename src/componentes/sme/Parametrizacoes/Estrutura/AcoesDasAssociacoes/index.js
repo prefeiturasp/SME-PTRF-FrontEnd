@@ -218,19 +218,19 @@ export const AcoesDasAssociacoes = () => {
             try {
                 await postAddAcaoAssociacao(payload);
                 setShowModalForm(false);
-                console.log('Ação Associação criada com sucesso');
+                toastCustom.ToastCustomSuccess('Inclusão de ação da associação realizada com sucesso.', `A ação da associação foi adicionada ao sistema com sucesso.`)
                 await carregaTodasAsAcoes();
             } catch (e) {
-                console.log('Erro ao criar Ação Associação!! ', e)
+                console.log('Erro ao criar Ação Associação!', e)
             }
         } else {
             try {
                 await putAtualizarAcaoAssociacao(stateFormModal.uuid, payload);
                 setShowModalForm(false);
-                console.log('Ação Associação alterada com sucesso');
+                toastCustom.ToastCustomSuccess('Edição da ação da associação realizada com sucesso.', `A ação da associação foi editada no sistema com sucesso.`)
                 await carregaTodasAsAcoes();
             } catch (e) {
-                console.log('Erro ao alterar Ação Associação!! ', e)
+                console.log('Erro ao alterar Ação Associação!', e)
             }
         }
     };
@@ -239,7 +239,7 @@ export const AcoesDasAssociacoes = () => {
             await deleteAcaoAssociacao(stateFormModal.uuid);
             setShowModalDeleteAcao(false);
             setShowModalForm(false);
-            console.log('Ação Associação excluída com sucesso');
+            toastCustom.ToastCustomSuccess('Remoção da ação da associação efetuada com sucesso.', `A ação da associação foi removida do sistema com sucesso.`)
             await carregaTodasAsAcoes();
         } catch (e) {
             console.log('Erro ao excluir ação associação ', e.response.data);

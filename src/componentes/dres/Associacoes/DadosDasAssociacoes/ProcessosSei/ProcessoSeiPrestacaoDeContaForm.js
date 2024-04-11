@@ -55,7 +55,7 @@ export const ProcessoSeiPrestacaoDeContaForm = ({show, handleClose, onSubmit, ha
 
                                     <div className="row">
                                         <div className='col-12'>
-                                            <p>Preenchimento obrigatório *</p>
+                                            <p>* Preenchimento obrigatório</p>
                                         </div>
                                         <div className="col-12 col-md-6">
                                             <div className="form-group">
@@ -75,8 +75,8 @@ export const ProcessoSeiPrestacaoDeContaForm = ({show, handleClose, onSubmit, ha
                                                 />
                                                 {props.errors.numero_processo && <span
                                                     className="span_erro text-danger mt-1"> {props.errors.numero_processo}</span>}
-                                                {!props.errors.numero_processo && customNumeroProcessoError && <span
-                                                    className="span_erro text-danger mt-1"> {`${customNumeroProcessoError}`}</span>}
+                                                {!props.errors.numero_processo && customNumeroProcessoError && <small
+                                                    className="span_erro text-danger mt-1"> {`${customNumeroProcessoError}`}</small>}
                                             </div>
                                         </div>
 
