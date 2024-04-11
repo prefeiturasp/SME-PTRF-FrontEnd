@@ -2,8 +2,11 @@ import React, {useState, useEffect} from "react";
 import {ModalFormParametrizacoesAcertos} from "../../../../Globais/ModalBootstrap";
 import { Select } from 'antd';
 import '../parametrizacoes-prestacao-contas.scss'
+import {RetornaSeTemPermissaoEdicaoPainelParametrizacoes} from "../../RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
 
 export const ModalFormDocumentos = (props) => {
+    const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES = RetornaSeTemPermissaoEdicaoPainelParametrizacoes()
+    
     const [isEnabled, setIsEnabled] = useState(true);
     const { Option } = Select;
 
@@ -24,8 +27,12 @@ export const ModalFormDocumentos = (props) => {
                 <form onSubmit={props.handleSubmitModalFormDocumentos}>
                     <div className='row'>
 
+                    <div className='col-12'>
+                        <p className='text-right mb-0'>* Preenchimento obrigatório</p>
+                    </div>
+
                     <div className='form-group col-md-10'>
-                            <label htmlFor="nome">Nome do tipo</label>
+                            <label htmlFor="nome">Nome do tipo *</label>
                             <input
                                 value={props.stateFormModal.nome}
                                 name='nome'
@@ -34,10 +41,11 @@ export const ModalFormDocumentos = (props) => {
                                 className="form-control"
                                 required={true}
                                 onChange={(e) => props.handleChangeFormModal(e.target.name, e.target.value)}
+                                disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                             />
                         </div>
                         <div className="col-md-10">
-                        <label htmlFor="documentos_prestacao">Documentos Prestações</label>
+                        <label htmlFor="documentos_prestacao">Documentos Prestações *</label>
                         <Select
                             mode="multiple"
                             allowClear
@@ -48,6 +56,7 @@ export const ModalFormDocumentos = (props) => {
                             onChange={(value) => props.handleChangeFormModal('tipos_documento_prestacao', value)}
                             className="documentos-table-multiple-search mb-2"
                             required={true}
+                            disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                         >
                             {props.documentoTabela && props.documentoTabela.length > 0 && props.documentoTabela.map(item => (
                                 <Option key={item.id} value={item.id}>{item.nome}</Option>
@@ -56,7 +65,7 @@ export const ModalFormDocumentos = (props) => {
                         </Select>
                     </div>
                         <div className="form-group col-md-10">
-                            <label htmlFor="categoria">Categoria</label>
+                            <label htmlFor="categoria">Categoria *</label>
                                 <select value={props.stateFormModal.categoria}
                                         onChange={(e) => props.handleChangeFormModal(e.target.name, e.target.value)}
                                         placeholder="Selecione a categoria"
@@ -64,6 +73,7 @@ export const ModalFormDocumentos = (props) => {
                                         id="categoria"
                                         className="categorias-multiple-search form-control"
                                         required={true}
+                                        disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                 >
                                     <option value="">Selecione uma categoria</option>
                                     {props.categoriaTabela && props.categoriaTabela.length > 0 && props.categoriaTabela.map(item => (
@@ -74,7 +84,7 @@ export const ModalFormDocumentos = (props) => {
 
                         <div className='col-8'>
                             <div className="form-check form-check-inline">
-                                <p className='mt-3 mb-0 mr-4 pr-4 font-weight-normal'>Ativo?</p>
+                                <p className='mt-3 mb-0 mr-4 pr-4 font-weight-normal'>Ativo? *</p>
                             </div>
                             <div className="form-check form-check-inline">
                                 <input
@@ -85,6 +95,7 @@ export const ModalFormDocumentos = (props) => {
                                     value="True"
                                     checked={props.stateFormModal.ativo}
                                     onChange={() => props.handleChangeFormModal('ativo', true)}
+                                    disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                 />
                                 <label className="form-check-label font-weight-bold" htmlFor="reabertura-documentos">Sim</label>
                             </div>
@@ -97,6 +108,7 @@ export const ModalFormDocumentos = (props) => {
                                     value="False"
                                     checked={!props.stateFormModal.ativo}
                                     onChange={() => props.handleChangeFormModal('ativo', false)}
+                                    disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                 />
                                 <label className="form-check-label font-weight-bold" htmlFor="reabertura-documentos">Não</label>
                             </div>
@@ -119,7 +131,7 @@ export const ModalFormDocumentos = (props) => {
                     <div className="d-flex bd-highlight mt-2">
                         <div className="p-Y flex-grow-1 bd-highlight">
                             {props.stateFormModal && props.stateFormModal.operacao === 'edit' &&
-                            <button onClick={props.serviceCrudDocumentos} type="button" className="btn btn btn-danger mt-2 mr-2">
+                            <button onClick={props.serviceCrudDocumentos} type="button" className="btn btn btn-danger mt-2 mr-2" disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}>
                                 Apagar
                             </button>
                             }
@@ -132,7 +144,7 @@ export const ModalFormDocumentos = (props) => {
                                 id="btn-documento-submit"
                                 onClick={() => {props.handleSubmitModalFormDocumentos(props.stateFormModal)}}
                                 type="button"
-                                disabled={isEnabled}
+                                disabled={isEnabled || !TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                 className="btn btn btn-success mt-2"
                             >
                                 Salvar
