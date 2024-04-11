@@ -2,8 +2,10 @@ import React, {memo} from "react";
 import {ModalFormBodyText} from "../../../../Globais/ModalBootstrap";
 import {Formik} from "formik";
 import {YupSchemaTipoConta} from "./YupSchemaTipoConta";
+import {RetornaSeTemPermissaoEdicaoPainelParametrizacoes} from "../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes"
 
 const ModalAddEditTipoConta = ({show, stateFormModal, handleClose, handleSubmitModalFormTiposConta, setShowModalConfirmDeleteTipoConta}) => {
+    const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES = RetornaSeTemPermissaoEdicaoPainelParametrizacoes()
 
     const bodyTextarea = () => {
         return (
@@ -22,6 +24,9 @@ const ModalAddEditTipoConta = ({show, stateFormModal, handleClose, handleSubmitM
                         return(
                             <form onSubmit={props.handleSubmit}>
                                 <div className='row'>
+                                    <div className='col-12'>
+                                        <p>* Preenchimento obrigatório</p>
+                                    </div>
                                     <div className='col'>
                                         <div className="form-group">
                                             <label htmlFor="nome">Nome do tipo de conta *</label>
@@ -32,6 +37,7 @@ const ModalAddEditTipoConta = ({show, stateFormModal, handleClose, handleSubmitM
                                                 id="nome"
                                                 className="form-control"
                                                 onChange={props.handleChange}
+                                                disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                             />
                                             {props.touched.nome && props.errors.nome && <span className="span_erro text-danger mt-1"> {props.errors.nome} </span>}
                                         </div>
@@ -49,6 +55,7 @@ const ModalAddEditTipoConta = ({show, stateFormModal, handleClose, handleSubmitM
                                                 id="banco_nome"
                                                 className="form-control"
                                                 onChange={props.handleChange}
+                                                disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                             />
                                             {props.touched.banco_nome && props.errors.banco_nome && <span className="span_erro text-danger mt-1"> {props.errors.banco_nome} </span>}
                                         </div>
@@ -63,6 +70,7 @@ const ModalAddEditTipoConta = ({show, stateFormModal, handleClose, handleSubmitM
                                                 id="agencia"
                                                 className="form-control"
                                                 onChange={props.handleChange}
+                                                disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                             />
                                             {props.touched.agencia && props.errors.agencia && <span className="span_erro text-danger mt-1"> {props.errors.agencia} </span>}
                                         </div>
@@ -80,6 +88,7 @@ const ModalAddEditTipoConta = ({show, stateFormModal, handleClose, handleSubmitM
                                                 id="numero_conta"
                                                 className="form-control"
                                                 onChange={props.handleChange}
+                                                disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                             />
                                             {props.touched.numero_conta && props.errors.numero_conta && <span className="span_erro text-danger mt-1"> {props.errors.numero_conta} </span>}
                                         </div>
@@ -94,6 +103,7 @@ const ModalAddEditTipoConta = ({show, stateFormModal, handleClose, handleSubmitM
                                                 id="numero_cartao"
                                                 className="form-control"
                                                 onChange={props.handleChange}
+                                                disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                             />
                                             {props.touched.numero_cartao && props.errors.numero_cartao && <span className="span_erro text-danger mt-1"> {props.errors.numero_cartao} </span>}
                                         </div>
@@ -110,6 +120,7 @@ const ModalAddEditTipoConta = ({show, stateFormModal, handleClose, handleSubmitM
                                                 id="apenas_leitura"
                                                 className="form-check-input"
                                                 onChange={props.handleChange}
+                                                disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                             />
                                             <label className="form-check-label marcar-como-lida"
                                                 style={{ color: "#42474A" }}
@@ -125,6 +136,7 @@ const ModalAddEditTipoConta = ({show, stateFormModal, handleClose, handleSubmitM
                                                 id="permite_inativacao"
                                                 className="form-check-input"
                                                 onChange={props.handleChange}
+                                                disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                             />
                                             <label className="form-check-label marcar-como-lida"
                                                 style={{ color: "#42474A" }}
@@ -148,7 +160,7 @@ const ModalAddEditTipoConta = ({show, stateFormModal, handleClose, handleSubmitM
                                 <div className="d-flex bd-highlight mt-2">
                                     <div className="p-Y flex-grow-1 bd-highlight">
                                         {values.operacao === 'edit' ? (
-                                            <button onClick={()=>setShowModalConfirmDeleteTipoConta(true)} type="button" className="btn btn-base-vermelho mt-2 mr-2">
+                                            <button onClick={()=>setShowModalConfirmDeleteTipoConta(true)} type="button" className="btn btn-base-vermelho mt-2 mr-2" disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}>
                                                 Apagar tipo de conta
                                             </button>
                                         ): null}
@@ -158,7 +170,7 @@ const ModalAddEditTipoConta = ({show, stateFormModal, handleClose, handleSubmitM
                                     </div>
 
                                     <div className="p-Y bd-highlight">
-                                        <button type="submit" className="btn btn-base-verde mt-2">Salvar</button>
+                                        <button type="submit" className="btn btn-base-verde mt-2" disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}>Salvar</button>
                                     </div>
                                 </div>
                             </form>
