@@ -586,7 +586,7 @@ const routesConfig = [
         exact: true,
         path: "/parametro-motivos-estorno",
         component: ParametrizacoesMotivosDeEstorno,
-        permissoes: ['access_painel_parametrizacoes'],
+        permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
     },
     {
         exact: true,
