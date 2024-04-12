@@ -198,7 +198,7 @@ export const getTodasAcoesDasAssociacoes = async () => {
     return (await api.get(`/api/acoes-associacoes/`, authHeader)).data
 };
 export const getParametrizacoesAcoesAssociacoes = async (page, nome_cod_eol, acao__uuid, status, filtro_informacoes) => {
-    return (await api.get(`/api/parametrizacoes-acoes-associacoes/?page=${page}&page_size=${20}&nome=${nome_cod_eol}&acao__uuid=${acao__uuid}&status=${status}&filtro_informacoes=${filtro_informacoes}}`, authHeader)).data
+    return (await api.get(`/api/parametrizacoes-acoes-associacoes/?page=${page}&page_size=${20}&nome=${nome_cod_eol}&acao__uuid=${acao__uuid}&status=${status}&filtro_informacoes=${filtro_informacoes}`, authHeader)).data
 };
 
 export const getListaDeAcoes = async () => {
