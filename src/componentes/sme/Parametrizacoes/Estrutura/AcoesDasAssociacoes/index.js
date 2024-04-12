@@ -42,6 +42,7 @@ export const AcoesDasAssociacoes = () => {
     const [tabelaAssociacoes, setTabelaAssociacoes] = useState({});
     const [currentPage, setCurrentPage] = useState(1);
     const [firstPage, setFirstPage] = useState(1);
+    const [ĺoadingAssociacoes, setLoadingAssociacoes] = useState(true);
 
     const carregaTodasAsAcoes = useCallback(async (page=1, filtrar_por_nome_cod_eol='', filtrar_por_acao='', filtrar_por_status='', filtro_informacoes='') => {
         setLoading(true);
@@ -52,6 +53,7 @@ export const AcoesDasAssociacoes = () => {
 
     const fetchAssociacoes = async () => {
         let todas_associacoes = await getAssociacoes();
+        setLoadingAssociacoes(false);
         setTodasAsAcoesAutoComplete(todas_associacoes);
     };
 
@@ -327,6 +329,7 @@ export const AcoesDasAssociacoes = () => {
                         primeiroBotaoTexto="Cancelar"
                         primeiroBotaoCss="outline-success"
                         todasAsAcoesAutoComplete={todasAsAcoesAutoComplete}
+                        ĺoadingAssociacoes={ĺoadingAssociacoes}
                     />
                 </section>
                 <section>

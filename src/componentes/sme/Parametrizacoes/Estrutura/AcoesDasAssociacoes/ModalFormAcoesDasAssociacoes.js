@@ -2,6 +2,7 @@ import React from "react";
 import {ModalFormParametrizacoesAcoesDaAssociacao} from "../../../../Globais/ModalBootstrap";
 import AutoCompleteAssociacoes from "./AutoCompleteAssociacoes";
 import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../../../sme/Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
+import Spinner from "../../../../../assets/img/spinner.gif"
 
 export const ModalFormAcoesDaAssociacao = (props) => {
     const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES = RetornaSeTemPermissaoEdicaoPainelParametrizacoes()
@@ -33,6 +34,7 @@ export const ModalFormAcoesDaAssociacao = (props) => {
                     ) :
                         <>
                             <label htmlFor="selectedAcao">Unidade Educacional *</label>
+                             {props.ĺoadingAssociacoes && <p>Carregando unidades <img alt="" src={Spinner} style={{height: "22px"}}/></p>}
                             <AutoCompleteAssociacoes
                                 todasAsAcoesAutoComplete={props.todasAsAcoesAutoComplete}
                                 recebeAcaoAutoComplete={props.recebeAcaoAutoComplete}
