@@ -33,12 +33,12 @@ export const ModalFormAcoesDaAssociacao = (props) => {
                         </div>
                     ) :
                         <>
-                            <label htmlFor="selectedAcao">Unidade Educacional *</label>
-                             {props.ĺoadingAssociacoes && <p>Carregando unidades <img alt="" src={Spinner} style={{height: "22px"}}/></p>}
+                            <label htmlFor="selectedAcao">Unidade Educacional *{props.loadingAssociacoes && <img alt="" src={Spinner} style={{height: "22px"}}/>}</label>
                             <AutoCompleteAssociacoes
                                 todasAsAcoesAutoComplete={props.todasAsAcoesAutoComplete}
                                 recebeAcaoAutoComplete={props.recebeAcaoAutoComplete}
                                 disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
+                                loadingAssociacoes={props.loadingAssociacoes}
                             />
                         </>
                     }

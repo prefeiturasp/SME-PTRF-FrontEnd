@@ -81,8 +81,6 @@ export const FiqueDeOlho = () => {
             try {
                 await patchAlterarFiqueDeOlhoPrestacoesDeContas(payload);
                 toastCustom.ToastCustomSuccess('Edição do texto Fique de Olho realizado com sucesso.', 'O texto Fique de Olho foi editado no sistema com sucesso.')
-                setInfoModalFiqueDeOlho('Texto alterado com sucesso');
-                setShowModalInfoFiqueDeOlho(true);
                 await carregaTextos();
             } catch (e) {
                 console.log("Erro ao alterar texto ", e.response);
@@ -93,8 +91,6 @@ export const FiqueDeOlho = () => {
             try {
                 await patchAlterarFiqueDeOlhoRelatoriosConsolidadosDre(payload);
                 toastCustom.ToastCustomSuccess('Edição do texto Fique de Olho realizado com sucesso.', 'O texto Fique de Olho foi editado no sistema com sucesso.')
-                setInfoModalFiqueDeOlho('Texto alterado com sucesso');
-                setShowModalInfoFiqueDeOlho(true);
                 await carregaTextos();
             } catch (e) {
                 console.log("Erro ao alterar texto ", e.response);
