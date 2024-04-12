@@ -841,16 +841,17 @@ export const NovoFormularioEditaAta = ({
                                                                                 <div className="row">
                                                                                     <div className='col-3 mt-4 ml-4' style={{ opacity: `${ehAdicaoPresente || !podeEditarAta ? "30%" : '100%'}` }}>
                                                                                         <div className="row">
-                                                                                            <span className='mr-2'>Membro estava: </span>
+                                                                                            <span className='mr-3' style={{whiteSpace: 'nowrap'}}>Membro estava: </span>
                                                                                         </div>
                                                                                         <div className="row">
                                                                                             <Switch
+                                                                                                style={{width: '100%'}}
                                                                                                 onChange={() => editaStatusDePresencaParticipante(membro.id)}
                                                                                                 checked={membro.presente}
                                                                                                 name="statusPresencaSwitch"
                                                                                                 checkedChildren="Presente"
                                                                                                 unCheckedChildren="Ausente"
-                                                                                                className={`mt-2 switch-status-presidente form-control ${membro.presente ? "switch-status-presidente-checked" : ""}`}
+                                                                                                className={`mt-2 switch-status-presidente ${membro.presente ? "switch-status-presidente-checked" : ""}`}
                                                                                                 disabled={ehAdicaoPresente || !podeEditarAta}
                                                                                             />
                                                                                         </div>
@@ -862,25 +863,27 @@ export const NovoFormularioEditaAta = ({
                                                                                         </div>
                                                                                         <div className="row">
                                                                                             <Switch
+                                                                                                style={{width: '100%'}}
                                                                                                 onChange={() => editaStatusDePresidenteDaReuniao(membro.id)}
                                                                                                 checked={membro.presidente_da_reuniao}
                                                                                                 name="statusPresidenteSwitch"
-                                                                                                className={`mt-2 switch-status-presidente form-control ${membro.presidente_da_reuniao ? "switch-status-presidente-checked" : ""}`}
+                                                                                                className={`mt-2 switch-status-presidente ${membro.presidente_da_reuniao ? "switch-status-presidente-checked" : ""}`}
                                                                                                 disabled={ehAdicaoPresente || membro.secretario_da_reuniao || !podeEditarAta || !membro.presente}
                                                                                             />
                                                                                         </div>
                                                                                     </div>
 
-                                                                                    <div className='col-3 mt-4 ml-4' style={{ opacity: `${ehAdicaoPresente || !podeEditarAta ? "30%" : '100%'}` }}>
+                                                                                    <div className='col-3 mt-4 ml-3' style={{ opacity: `${ehAdicaoPresente || !podeEditarAta ? "30%" : '100%'}` }}>
                                                                                         <div className="row">
                                                                                             <span className='mr-2'>Secretário: </span>
                                                                                         </div>
                                                                                         <div className="row">
                                                                                             <Switch
+                                                                                                style={{width: '100%'}}
                                                                                                 onChange={() => editaStatusDeSecretarioDaReuniao(membro.id)}
                                                                                                 checked={membro.secretario_da_reuniao}
                                                                                                 name="statusSecretarioSwitch"
-                                                                                                className={`mt-2 switch-status-presidente form-control ${membro.secretario_da_reuniao ? "switch-status-presidente-checked" : ""}`}
+                                                                                                className={`mt-2 switch-status-presidente ${membro.secretario_da_reuniao ? "switch-status-presidente-checked" : ""}`}
                                                                                                 disabled={ehAdicaoPresente || membro.presidente_da_reuniao || !podeEditarAta || !membro.presente}
                                                                                             />
                                                                                         </div>
