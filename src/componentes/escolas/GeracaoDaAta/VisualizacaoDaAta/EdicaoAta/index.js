@@ -59,6 +59,7 @@ export const EdicaoAta = () => {
     const [disableBtnSalvar, setDisableBtnSalvar] = useState(false)
     const [dadosAta, setDadosAta] = useState({});
     const [erros, setErros] = useState({});
+    const [showModalAvisoRegeracaoAta, setShowModalAvisoRegeracaoAta] = useState(false);
 
 
     useEffect(() => {
@@ -256,8 +257,11 @@ export const EdicaoAta = () => {
         }
 
         try {
-            await postEdicaoAta(uuid_ata, payload)
+            const response = await postEdicaoAta(uuid_ata, payload)
             let tipo_ata = dadosAta.tipo_ata === 'RETIFICACAO' ? 'retificação' : 'apresentação'
+            if(response.pdf_gerado_previamente) {
+                setShowModalAvisoRegeracaoAta(true);
+            };
             toastCustom.ToastCustomSuccess('Ata salva com sucesso', `As edições da ata de ${tipo_ata} foram salvas com sucesso.`)
         } catch (e) {
             console.log("Erro ao fazer edição da Ata ", e.response)
@@ -288,6 +292,8 @@ export const EdicaoAta = () => {
                         setDisableBtnSalvar={setDisableBtnSalvar}
                         repassesPendentes={repassesPendentes}
                         erros={erros}
+                        showModalAvisoRegeracaoAta={showModalAvisoRegeracaoAta}
+                        setShowModalAvisoRegeracaoAta={setShowModalAvisoRegeracaoAta}
                     >
                     </NovoFormularioEditaAta> : <FormularioEditaAta
                         listaPresentesPadrao={listaPresentesPadrao}

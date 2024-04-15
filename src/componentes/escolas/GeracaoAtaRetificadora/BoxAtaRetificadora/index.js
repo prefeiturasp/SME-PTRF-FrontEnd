@@ -87,7 +87,7 @@ export const BoxAtaRetificadora = ({
                                             style={{fontSize: '18px'}}
                                             icon={faDownload}
                                         />
-                                        &nbsp;PDF
+                                        &nbsp;
                                     </button>
                                 }
 

@@ -17,6 +17,7 @@ import {
     getCargosComposicaoData
 } from "../../../../../../services/Mandatos.service";
 import { ModalAntDesignConfirmacao } from "../../../../../Globais/ModalAntDesign";
+import {ModalNotificarRegeracaoAta} from "./ModalNotificarRegeracaoAta";
 import {getParticipantesOrdenadosPorCargo} from "../../../../../../services/escolas/PresentesAta.service";
 
 export const NovoFormularioEditaAta = ({
@@ -28,6 +29,8 @@ export const NovoFormularioEditaAta = ({
                                        setDisableBtnSalvar,
                                        repassesPendentes,
                                        erros,
+                                       showModalAvisoRegeracaoAta,
+                                       setShowModalAvisoRegeracaoAta
                                    }) => {
 
     const podeEditarAta = [['change_ata_prestacao_contas']].some(visoesService.getPermissoes)
@@ -1066,6 +1069,17 @@ export const NovoFormularioEditaAta = ({
                                         okText="Confirmar"
                                         handleCancel={() => handleCancelarRemocaoParticipantes()}
                                         cancelText="Cancelar"
+                                    />
+                                </section>
+                                <section>
+                                    <ModalNotificarRegeracaoAta
+                                        handleShow={showModalAvisoRegeracaoAta}
+                                        titulo={"Edição da ata"}
+                                        bodyText={"A ata foi editada e é necessário gerar novo documento de ata."}
+                                        handleOk={() => setShowModalAvisoRegeracaoAta(false)}
+                                        handleCancel={() => setShowModalAvisoRegeracaoAta(false)}
+                                        okText="OK"
+                                        cancelButtonProps={{ style: { display: 'none' } }}
                                     />
                                 </section>
                             </>
