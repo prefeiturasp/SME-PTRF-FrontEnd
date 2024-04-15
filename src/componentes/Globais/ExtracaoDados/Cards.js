@@ -10,7 +10,7 @@ export const cards = [
         descricao: 'Arquivo com os créditos informados por todas as unidades educacionais no período. Arquivos: creditos_principal.csv e creditos_motivos_estorno.csv.',
         tags: ['CSV'],
         endpoint: '/api/exportacoes-dados/creditos/',
-        visao: ['SME']
+        visao: ['DRE', 'SME']
     },
     {
         titulo: 'Especificações de materiais e serviços',
