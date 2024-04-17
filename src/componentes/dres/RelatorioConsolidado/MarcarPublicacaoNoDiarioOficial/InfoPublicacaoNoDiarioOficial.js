@@ -6,9 +6,9 @@ import ReactTooltip from "react-tooltip";
 import {Link} from 'react-router-dom';
 import IconeMarcarPublicacaoNoDiarioOficial from "./IconeMarcarPublicacaoNoDiarioOficial";
 import {visoesService} from "../../../../services/visoes.service";
-const dataTemplate = useDataTemplate()
 
 const InfoPublicacaoNoDiarioOficial = ({consolidadoDre, carregaConsolidadosDreJaPublicadosProximaPublicacao}) => {
+    const dataTemplate = useDataTemplate()
     return(
         <>
             {consolidadoDre && consolidadoDre.data_publicacao &&

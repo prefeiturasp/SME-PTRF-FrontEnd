@@ -4,13 +4,16 @@ import {Column} from 'primereact/column'
 import { TableTags } from "../../../../Globais/TableTags";
 import { LegendaInformacao } from "../../../../Globais/ModalLegendaInformacao/LegendaInformacao";
 import { coresTagsAssociacoes } from "../../../../../utils/CoresTags";
+import {Paginator} from 'primereact/paginator';
 
 export const TabelaAssociacoes = ({
     listaDeAssociacoes, 
     rowsPerPage, 
     acoesTemplate,
     showModalLegendaInformacao, 
-    setShowModalLegendaInformacao
+    setShowModalLegendaInformacao,
+    onPageChange,
+    firstPage
 }) => {
     return(
         <>
@@ -21,10 +24,7 @@ export const TabelaAssociacoes = ({
             excludedTags={["Encerramento de conta pendente"]}
         />
         <DataTable
-            value={listaDeAssociacoes}
-            paginator={listaDeAssociacoes.length > rowsPerPage}
-            paginatorTemplate="PrevPageLink PageLinks NextPageLink"
-            rows={rowsPerPage}
+            value={listaDeAssociacoes.results}
         >
             <Column field="nome" header="Nome da Associação"/>
             <Column field="unidade.nome_com_tipo" header="Unidade educacional"/>
@@ -42,6 +42,14 @@ export const TabelaAssociacoes = ({
                 body={acoesTemplate}
             />
         </DataTable>
+
+        <Paginator
+            first={firstPage}
+            rows={rowsPerPage}
+            totalRecords={listaDeAssociacoes.count}
+            template="PrevPageLink PageLinks NextPageLink"
+            onPageChange={onPageChange}
+        />
         </>
     )
 };

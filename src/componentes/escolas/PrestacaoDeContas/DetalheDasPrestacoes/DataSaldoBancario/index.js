@@ -6,7 +6,7 @@ import './data-saldo-bancario.scss'
 import {visoesService} from "../../../../../services/visoes.service";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faTrashAlt, faDownload, faUpload, faPaperclip, faCheck} from '@fortawesome/free-solid-svg-icons'
-import 'antd/dist/antd.css';
+import 'antd/dist/reset.css';
 import { Upload, Button } from 'antd';
 import moment from "moment";
 

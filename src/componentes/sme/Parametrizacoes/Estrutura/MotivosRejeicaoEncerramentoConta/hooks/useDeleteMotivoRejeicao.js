@@ -22,6 +22,7 @@ export const useDeleteMotivoRejeicao = () => {
             toastCustom.ToastCustomSuccess('Exclusão do motivo de rejeição de encerramento de conta realizada com sucesso', `O motivo de rejeição foi excluído com sucesso.`);
         },
         onError: (error) => {
+            toastCustom.ToastCustomError('Erro ao apagar o motivo de rejeição', `Não foi possível apagar o motivo de rejeição`)
             console.log("Erro ao apagar o motivo de rejeição", error.response);
         },
         onSettled: () => {

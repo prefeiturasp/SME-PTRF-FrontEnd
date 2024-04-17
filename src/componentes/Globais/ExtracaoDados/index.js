@@ -18,6 +18,7 @@ export const ExtracaoDados = (props) => {
 
     const [dataInicial, setDataInicial] = useState('')
     const [dataFinal, setDataFinal] = useState('')
+    const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
     async function handleExportaDados(endpoint) {
         try {
@@ -51,8 +52,13 @@ export const ExtracaoDados = (props) => {
                     name="data_range"
                     id="data_range"
                     onCalendarChange={(dates) => {
-                        setDataInicial(dates?.[0] ? dates[0].format('YYYY-MM-DD'): '')
-                        setDataFinal(dates?.[1] ? dates[1].format('YYYY-MM-DD'): '')
+                        if (isCalendarOpen) {
+                            setDataInicial(dates?.[0] ? dates[0].format('YYYY-MM-DD'): '')
+                            setDataFinal(dates?.[1] ? dates[1].format('YYYY-MM-DD'): '')
+                        }
+                    }}
+                    onOpenChange={(open) => {
+                        setIsCalendarOpen(open);
                     }}
                 />
                 {

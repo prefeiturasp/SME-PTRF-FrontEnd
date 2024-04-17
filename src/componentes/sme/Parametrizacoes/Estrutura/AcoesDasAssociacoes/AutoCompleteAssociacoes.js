@@ -4,7 +4,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faSearch} from "@fortawesome/free-solid-svg-icons";
 import { Tag } from '../../../../Globais/Tag';
 
-const AutoCompleteAssociacoes = ({todasAsAcoesAutoComplete, recebeAcaoAutoComplete}) => {
+const AutoCompleteAssociacoes = ({todasAsAcoesAutoComplete, recebeAcaoAutoComplete, disabled = false, loadingAssociacoes = false}) => {
     const [selectedAcao, setSelectedAcao] = useState(null);
     const [filteredAcoes, setFilteredAcoes] = useState(null);
 
@@ -66,6 +66,8 @@ const AutoCompleteAssociacoes = ({todasAsAcoesAutoComplete, recebeAcaoAutoComple
                     onSelect={handleSelect}
                     style={{width: "100%", borderLeft:'none'}}
                     itemTemplate={itemTemplate}
+                    disabled={disabled || loadingAssociacoes}
+                    placeholder={`${loadingAssociacoes ? "Carregando unidades" : ""}`}
                 />
             </div>
             <div className="bd-highlight ml-0 py-1 px-3 ml-n3 border-top border-right border-bottom">
