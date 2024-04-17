@@ -10,7 +10,7 @@ export const cards = [
         descricao: 'Arquivo com os créditos informados por todas as unidades educacionais no período. Arquivos: creditos_principal.csv e creditos_motivos_estorno.csv.',
         tags: ['CSV'],
         endpoint: '/api/exportacoes-dados/creditos/',
-        visao: ['SME']
+        visao: ['DRE', 'SME']
     },
     {
         titulo: 'Especificações de materiais e serviços',
@@ -31,7 +31,7 @@ export const cards = [
         descricao: 'Arquivo com informações da relação de bens das prestações de contas por conta, período e unidade. ',
         tags: ['CSV'],
         endpoint: '/api/exportacoes-dados/relacao-bens/',
-        visao: ['SME']
+        visao: ['DRE', 'SME']
     },
     {
         titulo: 'Prestações de contas: Status',
@@ -45,7 +45,7 @@ export const cards = [
         descricao: 'Arquivo com informações de devolução ao tesouro das prestações de contas por período e unidade',
         tags: ['CSV'],
         endpoint: '/api/exportacoes-dados/devolucao-ao-tesouro-prestacoes-contas/',
-        visao: ['SME']
+        visao: ['DRE', 'SME']
     },
     {
         titulo: 'Prestações de contas: Atas',
@@ -87,7 +87,7 @@ export const cards = [
         descricao: 'Arquivo com dados dos repasses pendentes e realizados para as associações.',
         tags: ['CSV'],
         endpoint: '/api/exportacoes-dados/repasses/',
-        visao: ['SME']
+        visao: ['DRE','SME']
     },
     {
         titulo: 'Membros da APM',

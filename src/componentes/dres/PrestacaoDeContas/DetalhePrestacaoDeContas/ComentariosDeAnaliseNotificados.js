@@ -1,8 +1,8 @@
 import React, {Fragment, memo} from "react";
 import useDataTemplate from "../../../../hooks/Globais/useDataTemplate";
-const dataTemplate = useDataTemplate()
 
 const ComentariosDeAnaliseNotificados = ({comentariosNotificados}) => {
+    const dataTemplate = useDataTemplate()
     return (
         <>
             <p className='mb-2 fonte-14 lista-motivos'>Comentários já notificados</p>

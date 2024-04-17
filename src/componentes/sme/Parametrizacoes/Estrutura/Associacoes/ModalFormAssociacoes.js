@@ -8,8 +8,11 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faExclamationCircle} from '@fortawesome/free-solid-svg-icons'
 import { visoesService } from "../../../../../services/visoes.service";
 import ReactTooltip from "react-tooltip";
+import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
 
 const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitModalFormAssociacoes, listaDePeriodos, tabelaAssociacoes, carregaUnidadePeloCodigoEol, errosCodigoEol, onDeleteAssocicacaoTratamento}) => {
+
+    const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES = RetornaSeTemPermissaoEdicaoPainelParametrizacoes()
 
     const converteDataLocalParaUTC = (dateString) => {
         const dataObj = new Date(dateString);
@@ -79,7 +82,7 @@ const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitMo
                                                 id="nome"
                                                 className="form-control"
                                                 onChange={props.handleChange}
-                                                disabled={!podeEditarDadosAssociacao(props.values)}
+                                                disabled={!podeEditarDadosAssociacao(props.values) || !TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                             />
                                             {props.touched.nome && props.errors.nome && <span className="span_erro text-danger mt-1"> {props.errors.nome} </span>}
                                         </div>
@@ -99,7 +102,7 @@ const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitMo
                                                     props.handleChange(e);
                                                     carregaUnidadePeloCodigoEol(e.target.value, setFieldValue)
                                                 }}
-                                                disabled={!podeEditarDadosAssociacao(props.values, 'codigo_eol_unidade')}
+                                                disabled={!podeEditarDadosAssociacao(props.values, 'codigo_eol_unidade') || !TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                             />
                                             {errosCodigoEol &&
                                             <div className='row mt-2'>
@@ -137,7 +140,7 @@ const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitMo
                                                 id="cnpj"
                                                 className="form-control"
                                                 onChange={props.handleChange}
-                                                disabled={!podeEditarDadosAssociacao(props.values)}
+                                                disabled={!podeEditarDadosAssociacao(props.values) || !TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                             />
                                             {props.touched.cnpj && props.errors.cnpj && <span className="span_erro text-danger mt-1"> {props.errors.cnpj} </span>}
                                         </div>
@@ -153,7 +156,7 @@ const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitMo
                                                 id="processo_regularidade"
                                                 className="form-control"
                                                 onChange={props.handleChange}
-                                                disabled={!podeEditarDadosAssociacao(props.values)}
+                                                disabled={!podeEditarDadosAssociacao(props.values) || !TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                             />
                                             {props.touched.processo_regularidade && props.errors.processo_regularidade && <span className="span_erro text-danger mt-1"> {props.errors.processo_regularidade} </span>}
                                         </div>
@@ -171,7 +174,7 @@ const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitMo
                                                 id="ccm"
                                                 className="form-control"
                                                 onChange={props.handleChange}
-                                                disabled={!podeEditarDadosAssociacao(props.values)}
+                                                disabled={!podeEditarDadosAssociacao(props.values) || !TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                             />
                                             {props.touched.ccm && props.errors.ccm && <span className="span_erro text-danger mt-1"> {props.errors.ccm} </span>}
                                         </div>
@@ -186,7 +189,7 @@ const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitMo
                                                 id="email"
                                                 className="form-control"
                                                 onChange={props.handleChange}
-                                                disabled={!podeEditarDadosAssociacao(props.values)}
+                                                disabled={!podeEditarDadosAssociacao(props.values) || !TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                             />
                                             {props.touched.email && props.errors.email && <span className="span_erro text-danger mt-1"> {props.errors.email} </span>}
                                         </div>
@@ -210,7 +213,7 @@ const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitMo
                                             name="periodo_inicial"
                                             id="periodo_inicial"
                                             className="form-control"
-                                            disabled={!podeEditarDadosAssociacao(props.values, 'periodo_inicial')}
+                                            disabled={!podeEditarDadosAssociacao(props.values, 'periodo_inicial') || !TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                         >
                                             <option value=''>Selecione um período</option>
                                             {listaDePeriodos && listaDePeriodos.map((periodo) =>
@@ -240,7 +243,7 @@ const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitMo
                                                 onChange={visoesService.getPermissoes(['change_encerrar_associacoes']) ? (name, val) => {
                                                     setFieldValue(name, val ? val.toISOString().substr(0, 10) : null)
                                                     }: null}
-                                                disabled={!podeEditarDadosAssociacao(props.values, 'data_de_encerramento')}
+                                                disabled={!podeEditarDadosAssociacao(props.values, 'data_de_encerramento') || !TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                                 className="form-control"
                                                 minDate={converteDataLocalParaUTC(data_fim_periodo)}
                                                 maxDate={new Date()}
@@ -270,6 +273,7 @@ const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitMo
                                                     id="observacao"
                                                     name="observacao"
                                                     placeholder="Escreva o comentário"
+                                                    disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                                 >
                                                 </textarea>
                                                 <small className="form-text text-muted">
@@ -296,7 +300,7 @@ const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitMo
                                 <div className="d-flex bd-highlight mt-2">
                                     <div className="p-Y flex-grow-1 bd-highlight">
                                         {values.operacao === 'edit' &&
-                                            <button onClick={()=>onDeleteAssocicacaoTratamento(stateFormModal)} type="button" className="btn btn btn-danger mt-2 mr-2">
+                                            <button onClick={()=>onDeleteAssocicacaoTratamento(stateFormModal)} type="button" className="btn btn btn-danger mt-2 mr-2" disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}>
                                                 Apagar
                                             </button>
                                         }
@@ -305,7 +309,7 @@ const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitMo
                                         <button onClick={()=>handleClose()} type="button" className='btn btn-outline-success mt-2 mr-2'>Cancelar</button>
                                     </div>
                                     <div className="p-Y bd-highlight">
-                                        <button type="submit" className="btn btn-success mt-2">Salvar</button>
+                                        <button type="submit" className="btn btn-success mt-2" disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}>Salvar</button>
                                     </div>
                                 </div>
                             </form>

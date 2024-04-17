@@ -26,55 +26,55 @@ export const PainelParametrizacoes = () => {
             parametro: 'Associações',
             url: 'parametro-associacoes',
             icone: IconeAssociacoes,
-            permissoes: ['access_painel_parametrizacoes'],
+            permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
         },
         {
             parametro: 'Ações das Associações',
             url: 'parametro-acoes-associacoes',
             icone: IconeAcoesAssociacoes,
-            permissoes: ['access_painel_parametrizacoes'],
+            permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
         },
         {
             parametro: 'Contas das Associações',
             url: 'parametro-contas-associacoes',
             icone: IconeContasAssociacoes,
-            permissoes: ['access_painel_parametrizacoes'],
+            permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
         },
         {
             parametro: 'Períodos',
             url: 'parametro-periodos',
             icone: IconePeriodos,
-            permissoes: ['access_painel_parametrizacoes'],
+            permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
         },
         {
             parametro: 'Etiquetas/Tags',
             url: 'parametro-tags',
             icone: IconeTags,
-            permissoes: ['access_painel_parametrizacoes'],
+            permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
         },
         {
             parametro: 'Ações',
             url: 'parametro-acoes',
             icone: IconeTiposAcao,
-            permissoes: ['access_painel_parametrizacoes'],
+            permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
         },
         {
             parametro: 'Tipos de Conta',
             url: 'parametro-tipos-conta',
             icone: IconeTiposConta,
-            permissoes: ['access_painel_parametrizacoes'],
+            permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
         },
         {
             parametro: 'Períodos de mandato',
             url: 'parametro-mandato',
             icone: IconeMandato,
-            permissoes: ['access_painel_parametrizacoes'],
+            permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
         },
         {
             parametro: 'Motivos Rejeição (encerramento conta)',
             url: 'motivos-rejeicao',
             icone: IconeTiposAcertos,
-            permissoes: ['access_painel_parametrizacoes'],
+            permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
         }
     ];
 
@@ -83,31 +83,31 @@ export const PainelParametrizacoes = () => {
             parametro: 'Especificações',
             url: 'parametro-especificacoes',
             icone: IconeEspecificacoes,
-            permissoes: ['access_painel_parametrizacoes'],
+            permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
         },
         {
             parametro: 'Tipos de despesa de custeio',
             url: 'parametro-tipos-custeio',
             icone: IconeTiposCusteio,
-            permissoes: ['access_painel_parametrizacoes'],
+            permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
         },
         {
             parametro: 'Tipos de Documento',
             url: 'parametro-tipos-documento',
             icone: IconeTiposDocumento,
-            permissoes: ['access_painel_parametrizacoes'],
+            permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
         },
         {
             parametro: 'Tipos de Transação',
             url: 'parametro-tipos-transacao',
             icone: IconeTiposTransacao,
-            permissoes: ['access_painel_parametrizacoes'],
+            permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
         },
         {
             parametro: 'Fornecedores',
             url: 'parametro-fornecedores',
             icone: IconeFornecedores,
-            permissoes: ['access_painel_parametrizacoes'],
+            permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
         }
     ];
 
@@ -116,13 +116,13 @@ export const PainelParametrizacoes = () => {
             parametro: 'Tipos de Receita',
             url: 'parametro-tipos-receita',
             icone: IconeTiposReceita,
-            permissoes: ['access_painel_parametrizacoes'],
+            permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
         },
         {
             parametro: 'Motivos de Estorno',
             url: 'parametro-motivos-estorno',
             icone: IconeTiposConta,
-            permissoes: ['access_painel_parametrizacoes'],
+            permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
         }
     ];
 
@@ -131,13 +131,13 @@ export const PainelParametrizacoes = () => {
             parametro: 'Tipos de acertos Lançamentos',
             url: 'parametro-tipos-acertos-lancamentos',
             icone: IconeTiposAcertos,
-            permissoes: ['access_painel_parametrizacoes'],
+            permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
         },
         {
             parametro: 'Tipos de acertos Documentos',
             url: 'parametro-tipos-acertos-documentos',
             icone: IconeTiposAcertos,
-            permissoes: ['access_painel_parametrizacoes'],
+            permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
         },
     ];
 
@@ -146,7 +146,7 @@ export const PainelParametrizacoes = () => {
             parametro: 'Textos do Fique de Olho',
             url: 'parametro-textos-fique-de-olho',
             icone: IconeTextosFiqueDeOlho,
-            permissoes: ['access_painel_parametrizacoes'],
+            permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
         }
     ];
 
@@ -155,7 +155,7 @@ export const PainelParametrizacoes = () => {
             parametro: 'Usuários',
             url: 'parametro-arquivos-de-carga/CARGA_USUARIOS/',
             icone: IconeUsuarios,
-            permissoes: ['access_painel_parametrizacoes'],
+            permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
         }
     ];
 

@@ -3,9 +3,7 @@ import {PaginasContainer} from "../../../../../paginas/PaginasContainer";
 import {UrlsMenuInterno} from "./UrlsMenuInterno";
 import {MenuInterno} from "../../../../Globais/MenuInterno";
 import {
-    getAssociacoes,
     getTabelaAssociacoes,
-    getFiltrosAssociacoes,
     getAssociacaoPorUuid,
     getTodosPeriodos,
     getUnidadePeloCodigoEol,
@@ -14,7 +12,8 @@ import {
     deleteAssociacao,
     getAcoesAssociacao,
     getContasAssociacao,
-    validarDataDeEncerramento
+    validarDataDeEncerramento,
+    getParametrizacoesAssociacoes,
 } from "../../../../../services/sme/Parametrizacoes.service";
 import {TabelaAssociacoes} from "./TabelaAssociacoes";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -26,6 +25,7 @@ import {ModalConfirmDeleteAssociacao} from "./ModalConfirmDeleteAssociacao";
 import {ModalInfoExclusaoNaoPermitida} from "./ModalInfoExclusaoNaoPermitida";
 import { ModalConfirmUpdateObservacao } from "./ModalConfirmUpdateObservacao";
 import Loading from "../../../../../utils/Loading";
+import { toastCustom } from "../../../../Globais/ToastCustom";
 
 export const Associacoes = () => {
 
@@ -34,10 +34,12 @@ export const Associacoes = () => {
     const [tabelaAssociacoes, setTabelaAssociacoes] = useState([]);
     const [loading, setLoading] = useState(true);
     const [mensagemExcluirAssociacao, setMensagemExcluirAssociacao] = useState('<p>Deseja realmente excluir esta associação?<p/>')
+    const [currentPage, setCurrentPage] = useState(1);
+    const [firstPage, setFirstPage] = useState(1);
 
-    const carregaTodasAsAssociacoes = useCallback(async () => {
+    const carregaTodasAsAssociacoes = useCallback(async (page=1, filtrar_por_tipo_ue='', filtrar_por_dre='', filtrar_por_associacao='', filtrar_por_informacao='') => {
         setLoading(true);
-        let todas_associacoes = await getAssociacoes();
+        let todas_associacoes = await getParametrizacoesAssociacoes(page, filtrar_por_tipo_ue, filtrar_por_dre, filtrar_por_associacao, filtrar_por_informacao);
         setListaDeAssociacoes(todas_associacoes);
         setListaDeAssociacoesFiltrarCnpj(todas_associacoes);
         setLoading(false);
@@ -56,8 +58,21 @@ export const Associacoes = () => {
         carregaTabelasAssociacoes();
     }, [carregaTabelasAssociacoes]);
 
+    const onPageChange = (event) => {
+        setCurrentPage(event.page + 1)
+        setFirstPage(event.first)
+        
+        carregaTodasAsAssociacoes(
+            event.page + 1, 
+            stateFiltros.filtrar_por_tipo_ue, 
+            stateFiltros.filtrar_por_dre,
+            stateFiltros.filtrar_por_associacao,
+            stateFiltros.filtrar_por_informacao
+        )
+    };
+
     // Quando a state de listaDeAssociacoes sofrer alteração
-    const totalDeAssociacoes = useMemo(() => listaDeAssociacoes.length, [listaDeAssociacoes]);
+    const totalDeAssociacoes = useMemo(() => listaDeAssociacoes.count, [listaDeAssociacoes]);
 
     // Filtros
     const initialStateFiltros = {
@@ -85,13 +100,18 @@ export const Associacoes = () => {
     }
 
     const handleSubmitFiltros = async () => {
+        setCurrentPage(1);
+        setFirstPage(1);
         setLoading(true);
-        let associacoes_filtradas = await getFiltrosAssociacoes(stateFiltros.filtrar_por_tipo_ue, stateFiltros.filtrar_por_dre, stateFiltros.filtrar_por_associacao, stateFiltros.filtrar_por_informacao);
+        
+        let associacoes_filtradas = await getParametrizacoesAssociacoes(1, stateFiltros.filtrar_por_tipo_ue, stateFiltros.filtrar_por_dre, stateFiltros.filtrar_por_associacao, stateFiltros.filtrar_por_informacao);
         setListaDeAssociacoes(associacoes_filtradas);
         setLoading(false);
     };
 
     const limpaFiltros = async () => {
+        setCurrentPage(1);
+        setFirstPage(1);
         setLoading(true);
         setStateFiltros(initialStateFiltros);
         await carregaTodasAsAssociacoes();
@@ -243,10 +263,12 @@ export const Associacoes = () => {
                             await validarDataDeEncerramento(values.uuid, values.data_de_encerramento, values.periodo_inicial)
                         }
                         await postCriarAssociacao(payload);
+                        toastCustom.ToastCustomSuccess('Inclusão de associação realizada com sucesso.', `A associação foi adicionada ao sistema com sucesso.`)
                         console.log('Associação criada com sucesso.');
                         setShowModalForm(false);
                         await carregaTodasAsAssociacoes();
                     }catch (e) {
+                        toastCustom.ToastCustomError('Erro ao criar associação', `Não foi possível criar a associação`) 
                         console.log('Erro ao criar associação ', e.response.data)
                     }
                 }else {
@@ -269,6 +291,7 @@ export const Associacoes = () => {
 
                         if(values.pode_editar_dados_associacao_encerrada){
                             await patchUpdateAssociacao(values.uuid, payload);
+                            toastCustom.ToastCustomSuccess('Edição da associação realizada com sucesso.', `A associação foi editada no sistema com sucesso.`)
                             console.log('Associação editada com sucesso.');
                             setShowModalForm(false);
                             await carregaTodasAsAssociacoes();
@@ -280,7 +303,8 @@ export const Associacoes = () => {
                     }catch (e) {
                         if(e.response.data && e.response.data.erro === 'data_invalida') {
                             setErrors({ data_de_encerramento: e.response.data.mensagem.replace('data_fim_realizacao_despesas', 'a data do fim da realização das despesas') });
-                        } 
+                        }
+                        toastCustom.ToastCustomError('Erro ao atualizar associação', `Não foi possível atualizar a associação`) 
                         console.log('Erro ao editar associação ', e.response.data)
                     }
                 }
@@ -305,11 +329,13 @@ export const Associacoes = () => {
         setLoading(true);
         try {
             await deleteAssociacao(stateFormModal.uuid);
+            toastCustom.ToastCustomSuccess('Remoção da associação efetuada com sucesso.', `A associação foi removida do sistema com sucesso.`)
             console.log('Associação excluída com sucesso.');
             setShowModalConfirmDeleteAssociacao(false);
             setShowModalForm(false);
             await carregaTodasAsAssociacoes();
         }catch (e) {
+            toastCustom.ToastCustomError('Erro ao excluir associação', `Não foi possível excluir a associação`) 
             console.log('Erro ao excluir associação ', e.response.data);
             if (e.response.data && e.response.data.mensagem){
                 setShowModalConfirmDeleteAssociacao(false)
@@ -398,6 +424,8 @@ export const Associacoes = () => {
                         acoesTemplate={acoesTemplate}
                         showModalLegendaInformacao={showModalLegendaInformacao}
                         setShowModalLegendaInformacao={setShowModalLegendaInformacao}
+                        onPageChange={onPageChange}
+                        firstPage={firstPage}
                     />
                     <section>
                         <ModalFormAssociacoes

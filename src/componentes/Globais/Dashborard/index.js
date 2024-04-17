@@ -30,7 +30,7 @@ export const Dashboard = () => {
     const [statusPeriodoAssociacao, setStatusPeriodoAssociacao] = useState(false);
     // Lógica para "zerar" o select de Contas e Periodos
     const [selectConta, setSelectConta] = useState(false);
-    const [selectPeriodo, setSelectPeriodo] = useState(false);
+    const [selectPeriodo, setSelectPeriodo] = useState('');
 
     const buscaListaAcoesAssociacao = useCallback(async () => {
         const listaAcoes = await getAcoesAssociacao(uuid_associacao);

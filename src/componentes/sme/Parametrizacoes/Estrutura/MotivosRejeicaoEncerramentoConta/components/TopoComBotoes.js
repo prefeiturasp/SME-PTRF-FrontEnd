@@ -1,8 +1,9 @@
 import React, {useContext} from "react";
 import { MotivosRejeicaoContext } from "../context/MotivosRejeicao";
+import {RetornaSeTemPermissaoEdicaoPainelParametrizacoes} from "../../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes"
 
 export const TopoComBotoes = () => {
-
+    const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES = RetornaSeTemPermissaoEdicaoPainelParametrizacoes()
     const {setShowModalForm, setStateFormModal, initialStateFormModal} = useContext(MotivosRejeicaoContext)
 
     return(
@@ -17,6 +18,7 @@ export const TopoComBotoes = () => {
                         setShowModalForm(true);
                     }}
                     className="btn btn-success"
+                    disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                 >
                     + Adicionar motivo
                 </button>

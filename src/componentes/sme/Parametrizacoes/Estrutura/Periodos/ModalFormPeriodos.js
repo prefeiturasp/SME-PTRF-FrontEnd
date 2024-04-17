@@ -4,8 +4,11 @@ import {Formik} from "formik";
 import {DatePickerField} from "../../../../Globais/DatePickerField";
 import {exibeDataPT_BR} from "../../../../../utils/ValidacoesAdicionaisFormularios";
 import {YupSignupSchemaPeriodos} from "./YupSignupSchemaPeriodos";
+import {RetornaSeTemPermissaoEdicaoPainelParametrizacoes} from "../../RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
 
 const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModalFormPeriodos, listaDePeriodos, setErroDatasAtendemRegras, erroDatasAtendemRegras, setShowModalConfirmDeletePeriodo}) => {
+
+    const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES = RetornaSeTemPermissaoEdicaoPainelParametrizacoes()
 
     const bodyTextarea = () => {
         return (
@@ -25,9 +28,12 @@ const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModal
                         return(
                             <form onSubmit={props.handleSubmit}>
                                 <div className='row'>
+                                    <div className='col-12'>
+                                        <p className='text-right mb-0'>* Preenchimento obrigatório</p>
+                                    </div>
                                     <div className='col'>
-                                        <div className="form-group">
-                                            <label htmlFor="referencia">Referencia</label>
+                                    <div className="form-group">
+                                            <label htmlFor="referencia">Referencia *</label>
                                             <input
                                                 data-qa="input-referencia"
                                                 type="text"
@@ -36,7 +42,7 @@ const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModal
                                                 id="referencia"
                                                 className="form-control"
                                                 onChange={props.handleChange}
-                                                disabled={!props.values.editavel}
+                                                disabled={!props.values.editavel || !TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                             />
                                             {props.touched.referencia && props.errors.referencia && <span className="span_erro text-danger mt-1"> {props.errors.referencia} </span>}
                                         </div>
@@ -50,7 +56,7 @@ const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModal
                                                 id="data_prevista_repasse"
                                                 value={values.data_prevista_repasse != null ? values.data_prevista_repasse : ""}
                                                 onChange={setFieldValue}
-                                                disabled={!props.values.editavel}
+                                                disabled={!props.values.editavel || !TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                             />
                                             {props.touched.data_prevista_repasse && props.errors.data_prevista_repasse && <span className="span_erro text-danger mt-1"> {props.errors.data_prevista_repasse} </span>}
                                         </div>
@@ -59,7 +65,7 @@ const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModal
                                 <div className='row'>
                                     <div className='col'>
                                         <div className="form-group">
-                                            <label htmlFor="data_inicio_realizacao_despesas">Início realização de despesas</label>
+                                            <label htmlFor="data_inicio_realizacao_despesas">Início realização de despesas *</label>
                                             <DatePickerField
                                                 dataQa="input-data-inicio-realizacao-despesas"
                                                 name="data_inicio_realizacao_despesas"
@@ -69,7 +75,7 @@ const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModal
                                                     setFieldValue(name, value);
                                                     setErroDatasAtendemRegras(false);
                                                 }}
-                                                disabled={!props.values.editavel}
+                                                disabled={!props.values.editavel || !TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                             />
                                             {props.touched.data_inicio_realizacao_despesas && props.errors.data_inicio_realizacao_despesas && <span className="span_erro text-danger mt-1"> {props.errors.data_inicio_realizacao_despesas} </span>}
                                         </div>
@@ -83,7 +89,7 @@ const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModal
                                                 id="data_fim_realizacao_despesas"
                                                 value={values.data_fim_realizacao_despesas != null ? values.data_fim_realizacao_despesas : ""}
                                                 onChange={setFieldValue}
-                                                disabled={!props.values.editavel}
+                                                disabled={!props.values.editavel || !TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                             />
                                         </div>
                                     </div>
@@ -99,7 +105,7 @@ const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModal
                                                 id="data_inicio_prestacao_contas"
                                                 value={values.data_inicio_prestacao_contas != null ? values.data_inicio_prestacao_contas : ""}
                                                 onChange={setFieldValue}
-                                                disabled={!props.values.editavel}
+                                                disabled={!props.values.editavel || !TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                             />
                                             {props.touched.data_inicio_prestacao_contas && props.errors.data_inicio_prestacao_contas && <span className="span_erro text-danger mt-1"> {props.errors.data_inicio_prestacao_contas} </span>}
                                         </div>
@@ -113,7 +119,7 @@ const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModal
                                                 id="data_fim_prestacao_contas"
                                                 value={values.data_fim_prestacao_contas != null ? values.data_fim_prestacao_contas : ""}
                                                 onChange={setFieldValue}
-                                                disabled={!props.values.editavel}
+                                                disabled={!props.values.editavel || !TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                             />
                                             {props.touched.data_fim_prestacao_contas && props.errors.data_fim_prestacao_contas && <span className="span_erro text-danger mt-1"> {props.errors.data_fim_prestacao_contas} </span>}
                                         </div>
@@ -122,7 +128,7 @@ const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModal
 
                                 <div className='row'>
                                     <div className='col'>
-                                        <label htmlFor="periodo_anterior">Período anterior</label>
+                                        <label htmlFor="periodo_anterior">Período anterior {listaDePeriodos && listaDePeriodos.length > 1 ? "*" : ""}</label>
                                         <select
                                             data-qa="input-periodo-anterior"
                                             value={values.periodo_anterior ? values.periodo_anterior : ""}
@@ -130,7 +136,7 @@ const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModal
                                                 props.handleChange(e);
                                                 setErroDatasAtendemRegras(false);
                                             }}
-                                            disabled={!props.values.editavel}
+                                            disabled={!props.values.editavel || !TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                             name="periodo_anterior"
                                             id="periodo_anterior"
                                             className="form-control"
@@ -172,6 +178,7 @@ const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModal
                                                 onClick={()=>setShowModalConfirmDeletePeriodo(true)}
                                                 type="button"
                                                 className="btn btn btn-danger mt-2 mr-2"
+                                                disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                             >
                                                 Apagar
                                             </button>
@@ -193,6 +200,7 @@ const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModal
                                                 data-qa="btn-salvar"
                                                 type="submit"
                                                 className="btn btn btn-success mt-2"
+                                                disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                             >
                                                 Salvar
                                             </button>

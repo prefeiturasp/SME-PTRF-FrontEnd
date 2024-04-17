@@ -91,7 +91,7 @@ export const GeracaoAtaApresentacao = (
                                             style={{fontSize: '18px'}}
                                             icon={faDownload}
                                         />
-                                        &nbsp;PDF
+                                        &nbsp;
                                     </button>
                                 }
                             </p>

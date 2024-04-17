@@ -9,24 +9,27 @@ import {
   deleteAcertosLancamentos,
 } from "../../../../../services/sme/Parametrizacoes.service";
 import { Filtros } from "./Filtros";
-import { TabelaLancamentos } from "../../PrestacaoContas/TiposAcertosLancamentos/TabelaLancamentos";
+import { TabelaLancamentos } from "./TabelaLancamentos";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faEdit } from "@fortawesome/free-solid-svg-icons";
 import Loading from "../../../../../utils/Loading";
-import { Link } from "react-router-dom";
 import { ModalFormLancamentos } from "./ModalFormLancamento";
-import { ModalConfirmDeleteLancamento } from "../../PrestacaoContas/TiposAcertosLancamentos/ModalConfirmDeleteLancamento";
+import { ModalConfirmDeleteLancamento } from "./ModalConfirmDeleteLancamento";
 import { ModalInfoNaoPodeExcluir } from "../../Estrutura/Acoes/ModalInfoNaoPodeExcluir";
 import { ModalInfoNaoPodeGravar } from "../../Estrutura/Acoes/ModalInfoNaoPodeGravar";
 import {MsgImgCentralizada} from "../../../../Globais/Mensagens/MsgImgCentralizada";
 import Img404 from "../../../../../assets/img/img-404.svg"
 import "../parametrizacoes-prestacao-contas.scss";
+import {RetornaSeTemPermissaoEdicaoPainelParametrizacoes} from "../../RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
+import {toastCustom} from "../../../../Globais/ToastCustom";
 
 export const ParametrizacoesTiposAcertosLancamentos = () => {
+
+  const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES = RetornaSeTemPermissaoEdicaoPainelParametrizacoes()
   
   const initialStateFiltros = {
     filtrar_por_nome: "",
-    filtrar_por_categoria: "",
+    filtrar_por_categoria: [''],
     filtrar_por_ativo: "",
   };
 
@@ -58,7 +61,7 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
   }, []);
 
   useEffect(() => {
-    carregaTodosLancamentos();
+    carregaTodosLancamentos().then();
   }, [carregaTodosLancamentos]);
 
   useEffect(() => {
@@ -93,9 +96,8 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
   };
 
   const limpaFiltros = async () => {
-    setLoading(true);
     setStateFiltros(initialStateFiltros);
-    window.location.reload();
+    await carregaTodosLancamentos()
   };
 
   const rowsPerPage = 20;
@@ -141,6 +143,7 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
       try {
         await postAddAcertosLancamentos(payload);
         setShowModalForm(false);
+        toastCustom.ToastCustomSuccess('Inclusão de tipo de acerto em lançamento realizado com sucesso.', `O tipo de acerto em lançamento foi adicionado ao sistema com sucesso.`)
         await carregaTodosLancamentos();
       } catch (e) {
         if (e.response.data && e.response.data.non_field_errors) {
@@ -159,6 +162,7 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
       try {
         await putAtualizarAcertosLancamentos(stateFormModal.uuid, payload);
         setShowModalForm(false);
+        toastCustom.ToastCustomSuccess('Edição do tipo de acerto em lançamento realizado com sucesso.', `O tipo de acerto em lançamento foi editado no sistema com sucesso.`)
         console.log("Ação alterada com sucesso", payload);
         await carregaTodosLancamentos();
       } catch (e) {
@@ -191,6 +195,7 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
         setShowModalDeleteLancamento(false);
         await deleteAcertosLancamentos(stateFormModal.uuid);
         setShowModalForm(false);
+      toastCustom.ToastCustomSuccess('Remoção do tipo de acerto em lançamento efetuado com sucesso.', `O tipo de acerto em lançamento foi removido do sistema com sucesso.`)
         console.log('Lançamento excluído com sucesso');
         await carregaTodosLancamentos();
     } catch (e) {
@@ -237,21 +242,21 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
       <h1 className="titulo-itens-painel mt-5">Tipo de acertos em lançamentos</h1>
       <div className="page-content-inner">
         <>
-          <div className="p-2 bd-highlight pt-3 justify-content-end d-flex">
-                  <Link
-                    to="#"
+          <div className="p-2 bd-highlight pt-3 pb-3 justify-content-end d-flex">
+                  <button
                     onClick={() => {
                       setStateFormModal(initialStateFormModal);
                       setShowModalForm(true);
                     }}
                     className="btn btn-success ml-2"
+                    disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                   >
                     <FontAwesomeIcon
                       style={{ marginRight: "5px", color: "#fff" }}
                       icon={faPlus}
                     />
                     Adicionar tipo de acerto em lançamentos
-                  </Link>
+                  </button>
                 </div>
                 <Filtros
                   categoriaTabela={categoriaTabela}

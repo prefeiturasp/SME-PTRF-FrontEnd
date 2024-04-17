@@ -123,6 +123,7 @@ export const FiltroExpandido = ({
                             )}
                             allowEmpty={[true, true]}
                             className='form-control pr-3'
+                            style={{display: 'inline-flex'}}
                             placeholder={['Data início', 'Data final']}
                             id="data_range"
                             onCalendarChange={(date) => {
