@@ -1,12 +1,17 @@
 import React, {useContext} from "react";
 import {MandatosContext} from "../context/Mandatos";
 import {useGetMandatoMaisRecente} from "../hooks/useGetMandatoMaisRecente";
+import {
+    RetornaSeTemPermissaoEdicaoPainelParametrizacoes
+} from "../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
 
 export const TopoComBotoes = () => {
 
     const {setShowModalForm, setStateFormModal, initialStateFormModal} = useContext(MandatosContext)
 
     const {data} = useGetMandatoMaisRecente()
+
+    const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES = RetornaSeTemPermissaoEdicaoPainelParametrizacoes()
 
     const handleClickAddMandato = () => {
         setStateFormModal(
@@ -28,6 +33,7 @@ export const TopoComBotoes = () => {
                 <button
                     onClick={handleClickAddMandato}
                     className="btn btn-success"
+                    disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                 >
                     + adicionar mandato
                 </button>

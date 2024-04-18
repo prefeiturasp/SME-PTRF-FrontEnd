@@ -7,10 +7,15 @@ import {DatePickerField} from "../../../Globais/DatePickerField";
 import ReactTooltip from "react-tooltip";
 import moment from "moment";
 import {useGetMandatoMaisRecente} from "../hooks/useGetMandatoMaisRecente";
+import {
+    RetornaSeTemPermissaoEdicaoPainelParametrizacoes
+} from "../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
 
 export const ModalForm = ({handleSubmitFormModal, handleConfirmDeleteMandato}) => {
     const {showModalForm, setShowModalForm, stateFormModal, bloquearBtnSalvarForm} = useContext(MandatosContext)
     const {data} = useGetMandatoMaisRecente()
+
+    const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES = RetornaSeTemPermissaoEdicaoPainelParametrizacoes()
 
     const getDataInicial = (values) => {
         return (values.uuid && values.limite_min_data_inicial) ? moment(values.limite_min_data_inicial).toDate()
@@ -43,7 +48,7 @@ export const ModalForm = ({handleSubmitFormModal, handleConfirmDeleteMandato}) =
                                             <span
                                                 data-tip="Preencher com o período total do mandato. </br>Por exemplo: 2023 a 2025."
                                                 data-html={true}>
-                                                <label>* Referência do mandato</label>
+                                                <label>Referência do mandato *</label>
                                                 <ReactTooltip/>
                                             </span>
 
@@ -54,7 +59,7 @@ export const ModalForm = ({handleSubmitFormModal, handleConfirmDeleteMandato}) =
                                                 id="referencia"
                                                 className="form-control"
                                                 onChange={props.handleChange}
-                                                disabled={!values.editavel}
+                                                disabled={!values.editavel || !TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                             />
                                             {props.touched.referencia && props.errors.referencia && <span
                                                 className="span_erro text-danger mt-1"> {props.errors.referencia}</span>}
@@ -66,26 +71,26 @@ export const ModalForm = ({handleSubmitFormModal, handleConfirmDeleteMandato}) =
                                         <p><strong>Período</strong></p>
                                     </div>
                                     <div className='col-6'>
-                                        <label>* Data inicial</label>
+                                        <label>Data inicial *</label>
                                         <DatePickerField
                                             name="data_inicial"
                                             id="data_inicial"
                                             value={values.data_inicial}
                                             onChange={setFieldValue}
-                                            disabled={!values.editavel}
+                                            disabled={!values.editavel || !TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                             minDate={getDataInicial(values)}
                                         />
                                         {props.touched.data_inicial && props.errors.data_inicial && <span
                                             className="span_erro text-danger mt-1"> {props.errors.data_inicial}</span>}
                                     </div>
                                     <div className='col-6'>
-                                        <label>* Data final</label>
+                                        <label>Data final *</label>
                                         <DatePickerField
                                             name="data_final"
                                             id="data_final"
                                             value={values.data_final}
                                             onChange={setFieldValue}
-                                            disabled={!values.data_inicial || !values.editavel}
+                                            disabled={!values.data_inicial || !values.editavel || !TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                             minDate={moment(values.data_inicial).toDate()}
                                         />
                                         {props.touched.data_final && props.errors.data_final && <span
@@ -111,6 +116,7 @@ export const ModalForm = ({handleSubmitFormModal, handleConfirmDeleteMandato}) =
                                                     onClick={() => handleConfirmDeleteMandato(values.uuid)}
                                                     type="button"
                                                     className="btn btn btn-danger mt-2 mr-2"
+                                                    disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                                 >
                                                     Apagar
                                                 </button>
@@ -130,7 +136,7 @@ export const ModalForm = ({handleSubmitFormModal, handleConfirmDeleteMandato}) =
                                             <button
                                                 type="submit"
                                                 className="btn btn btn-success mt-2"
-                                                disabled={bloquearBtnSalvarForm}
+                                                disabled={bloquearBtnSalvarForm || !TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                             >
                                                 {stateFormModal.uuid ? "Salvar" : "Adicionar"}
                                             </button>
