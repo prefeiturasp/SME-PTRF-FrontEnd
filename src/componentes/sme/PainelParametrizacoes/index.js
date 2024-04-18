@@ -150,15 +150,6 @@ export const PainelParametrizacoes = () => {
         }
     ];
 
-    const itensParametrizacaoGestaoSme = [
-        {
-            parametro: 'Usuários',
-            url: 'parametro-arquivos-de-carga/CARGA_USUARIOS/',
-            icone: IconeUsuarios,
-            permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
-        }
-    ];
-
     return (
         <>
             <ParametrizacaoCard
@@ -180,10 +171,6 @@ export const PainelParametrizacoes = () => {
             <ParametrizacaoCard
                 itensParametrizacao={itensParametrizacaoEdicaoDeTexto}
                 nomeGrupo='Edição de texto'
-            />
-            <ParametrizacaoCard
-                itensParametrizacao={itensParametrizacaoGestaoSme}
-                nomeGrupo='Gestão SME'
             />
         </>
     )
