@@ -13,7 +13,6 @@ import { PaginasContainer } from "../../../../../paginas/PaginasContainer";
 import { Filtros } from "./Filtros";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faEdit } from "@fortawesome/free-solid-svg-icons";
-import { Link } from "react-router-dom";
 import {MsgImgCentralizada} from "../../../../Globais/Mensagens/MsgImgCentralizada";
 import Img404 from "../../../../../assets/img/img-404.svg"
 import "../parametrizacoes-prestacao-contas.scss";
@@ -21,10 +20,12 @@ import { ModalFormDocumentos } from "./ModalFormDocumento";
 import { ModalConfirmDeleteDocumento } from "../../PrestacaoContas/TiposAcertosDocumentos/ModalConfirmDeleteDocumento";
 import { ModalInfoNaoPodeExcluir } from "../../Estrutura/Acoes/ModalInfoNaoPodeExcluir";
 import { ModalInfoNaoPodeGravar } from "../../Estrutura/Acoes/ModalInfoNaoPodeGravar";
-
+import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
+import { toastCustom } from "../../../../Globais/ToastCustom";
 
 export const ParametrizacoesTiposAcertosDocumentos = () => {
-  
+  const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES = RetornaSeTemPermissaoEdicaoPainelParametrizacoes()
+
   const initialStateFiltros = {
       filtrar_por_nome: "",
       filtrar_por_categoria: [],
@@ -174,8 +175,10 @@ export const ParametrizacoesTiposAcertosDocumentos = () => {
       try {
         await postAddAcertosDocumentos(payload);
         setShowModalForm(false);
+        toastCustom.ToastCustomSuccess('Inclusão de tipo de acerto em documento realizado com sucesso.', `O tipo de acerto em documento foi adicionado ao sistema com sucesso.`)
         await carregaTodosAcertosDocumentos();
       } catch (e) {
+        toastCustom.ToastCustomError('Erro ao criar tipo de acerto em documento', `Não foi possível criar o tipo de acerto em documento`)
         if (e.response.data && e.response.data.non_field_errors) {
           setMensagemModalInfoNaoPodeGravar(
             "Ja existe uma ação com esse nome."
@@ -192,9 +195,11 @@ export const ParametrizacoesTiposAcertosDocumentos = () => {
       try {
         await putAtualizarAcertosDocumentos(stateFormModal.uuid, payload);
         setShowModalForm(false);
+        toastCustom.ToastCustomSuccess('Edição do tipo de acerto em documento realizado com sucesso.', `O tipo de acerto em documento foi editado no sistema com sucesso.`)
         console.log("Ação alterada com sucesso", payload);
         await carregaTodosAcertosDocumentos();
       } catch (e) {
+        toastCustom.ToastCustomError('Erro ao editar tipo de acerto em documento', `Não foi possível editar o tipo de acerto em documento`)
         if (e.response.data && e.response.data.non_field_errors) {
           setMensagemModalInfoNaoPodeGravar(
             e.response
@@ -224,9 +229,11 @@ export const ParametrizacoesTiposAcertosDocumentos = () => {
         setShowModalDeleteDocumento(false);
         await deleteAcertosDocumentos(stateFormModal.uuid);
         setShowModalForm(false);
+        toastCustom.ToastCustomSuccess('Remoção do tipo de acerto em documento efetuado com sucesso.', `O tipo de acerto em documento foi removido do sistema com sucesso.`)
         console.log('Documentos excluído com sucesso');
         await carregaTodosAcertosDocumentos();
     } catch (e) {
+        toastCustom.ToastCustomError('Erro ao remover tipo de acerto em documento', `Não foi possível remover o tipo de acerto em documento`)
         if (e.response && e.response.data && e.response.data.mensagem){
             setMensagemModalInfoNaoPodeExcluir(e.response.data.mensagem);
             setShowModalInfoNaoPodeExcluir(true);
@@ -258,20 +265,20 @@ export const ParametrizacoesTiposAcertosDocumentos = () => {
       <div className="page-content-inner">
         <>
           <div className="p-2 bd-highlight pt-3 justify-content-end d-flex">
-                  <Link
-                    to="#"
+                  <button
                     onClick={() => {
                       setStateFormModal(initialStateFormModal);
                       setShowModalForm(true);
                     }}
                     className="btn btn-success ml-2"
+                    disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                   >
                     <FontAwesomeIcon
                       style={{ marginRight: "5px", color: "#fff" }}
                       icon={faPlus}
                     />
                     Adicionar tipo de acertos em documentos
-                  </Link>
+                  </button>
                 </div>
                 <Filtros
                   categoriaTabela={categoriaTabela}

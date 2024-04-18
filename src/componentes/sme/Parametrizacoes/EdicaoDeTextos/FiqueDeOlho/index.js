@@ -13,9 +13,12 @@ import {
 import EditorWysiwyg from "../../../../Globais/EditorWysiwyg";
 import {ModalInfoFiqueDeOlho} from "./ModalInfoFiqueDeOlho";
 import Loading from "../../../../../utils/Loading";
+import {RetornaSeTemPermissaoEdicaoPainelParametrizacoes} from "../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes"
+import {toastCustom} from "../../../../Globais/ToastCustom";
 
 export const FiqueDeOlho = () => {
 
+    const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES = RetornaSeTemPermissaoEdicaoPainelParametrizacoes()
     const initalTextos = {
         textoAssociacao: '',
         textoDre: ''
@@ -77,9 +80,7 @@ export const FiqueDeOlho = () => {
         if (tipoDeTexto === 'associacoes') {
             try {
                 await patchAlterarFiqueDeOlhoPrestacoesDeContas(payload);
-                console.log("Texto alterado com sucesso");
-                setInfoModalFiqueDeOlho('Texto alterado com sucesso');
-                setShowModalInfoFiqueDeOlho(true);
+                toastCustom.ToastCustomSuccess('Edição do texto Fique de Olho realizado com sucesso.', 'O texto Fique de Olho foi editado no sistema com sucesso.')
                 await carregaTextos();
             } catch (e) {
                 console.log("Erro ao alterar texto ", e.response);
@@ -89,9 +90,7 @@ export const FiqueDeOlho = () => {
         } else if (tipoDeTexto === 'dre') {
             try {
                 await patchAlterarFiqueDeOlhoRelatoriosConsolidadosDre(payload);
-                console.log("Texto alterado com sucesso");
-                setInfoModalFiqueDeOlho('Texto alterado com sucesso');
-                setShowModalInfoFiqueDeOlho(true);
+                toastCustom.ToastCustomSuccess('Edição do texto Fique de Olho realizado com sucesso.', 'O texto Fique de Olho foi editado no sistema com sucesso.')
                 await carregaTextos();
             } catch (e) {
                 console.log("Erro ao alterar texto ", e.response);
@@ -134,6 +133,7 @@ export const FiqueDeOlho = () => {
                             textoInicialEditor={textoInicialEditor}
                             tituloEditor={tituloEditor}
                             handleSubmitEditor={handleSubmitEditor}
+                            disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                         />
                 }
             </div>

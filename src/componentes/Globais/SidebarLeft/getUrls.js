@@ -96,7 +96,7 @@ const UrlsMenuSME ={
         associacao_nome_escola: getDadosUnidade().nome_escola
     },
     lista_de_urls:[
-        {label: "Parametrizações", url: "painel-parametrizacoes", dataFor:"sme_painel_parametrizacoes", icone:IconeMenuParametrizacoes, permissoes: ['access_painel_parametrizacoes'],},
+        {label: "Parametrizações", url: "painel-parametrizacoes", dataFor:"sme_painel_parametrizacoes", icone:IconeMenuParametrizacoes, permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],},
         {label: "Prestação de Contas", url: "prestacao-contas-sme", dataFor:"prestacao_contas_sme", icone:IconeMenuPrestacaoContas, permissoes: ['access_acompanhamento_pc_sme', 'access_analise_relatorios_consolidados_sme'],
             subItens: [
                 {

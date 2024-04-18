@@ -11,6 +11,7 @@ import {Filtros} from "./Filtros";
 import {BtnAddPeriodos} from "./BtnAddPeriodos";
 import {ModalInfoExclusaoNaoPermitida} from "./ModalInfoExclusaoNaoPermitida";
 import Loading from "../../../../../utils/Loading";
+import {toastCustom} from "../../../../Globais/ToastCustom";
 
 export const Periodos = () =>{
 
@@ -145,19 +146,23 @@ export const Periodos = () =>{
         if (operacao === 'create'){
             try {
                 await postCriarPeriodo(payload);
-                console.log("Pedido criado com sucesso!");
+                toastCustom.ToastCustomSuccess('Inclusão de período realizado com sucesso.', `O período foi adicionado ao sistema com sucesso.`)
+                console.log("Período criado com sucesso!");
                 await carregaTodosPeriodos();
             }catch (e) {
-                console.log("Erro ao Criar Pedido ", e)
+                toastCustom.ToastCustomError('Erro ao criar período', `Não foi possível criar o período`)
+                console.log("Erro ao Criar Período ", e)
             }
             setLoading(false);
         }else{
             try {
                 await patchUpdatePeriodo(_periodo_uuid, payload);
-                console.log("Pedido atualizado com sucesso!");
+                toastCustom.ToastCustomSuccess('Edição do período realizado com sucesso.', `O período foi editado no sistema com sucesso.`)
+                console.log("Período atualizado com sucesso!");
                 await carregaTodosPeriodos();
             }catch (e) {
-                console.log("Erro ao Atualizar Pedido ", e)
+                toastCustom.ToastCustomError('Erro ao atualizar período', `Não foi possível atualizar o período`)
+                console.log("Erro ao Atualizar Período ", e)
             }
             setLoading(false);
         }
@@ -198,6 +203,7 @@ export const Periodos = () =>{
         setLoading(true);
         try {
             await deletePeriodo(stateFormModal.uuid);
+            toastCustom.ToastCustomSuccess('Remoção do período efetuada com sucesso.', `O período foi removido do sistema com sucesso.`)
             console.log("Período excluído com sucesso");
             setShowModalConfirmDeletePeriodo(false);
             setShowModalForm(false);

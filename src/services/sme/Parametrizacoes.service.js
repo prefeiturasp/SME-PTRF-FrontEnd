@@ -133,6 +133,9 @@ export const deleteTag = async (tag_uuid) => {
 export const getAssociacoes = async () => {
     return (await api.get(`/api/associacoes/`, authHeader)).data
 };
+export const getParametrizacoesAssociacoes = async (page, tipo_unidade, unidade__dre__uuid, nome, informacoes) => {
+    return (await api.get(`/api/parametrizacoes-associacoes/?page=${page}&page_size=${20}&unidade__tipo_unidade=${tipo_unidade}&unidade__dre__uuid=${unidade__dre__uuid}&nome=${nome}&filtro_informacoes=${informacoes}`, authHeader)).data
+};
 export const getTabelaAssociacoes = async () => {
     return (await api.get(`/api/associacoes/tabelas/`, authHeader)).data
 };
@@ -193,6 +196,9 @@ export const deletePeriodo = async (periodo_uuid) => {
 // AcoesDasAssociacoes
 export const getTodasAcoesDasAssociacoes = async () => {
     return (await api.get(`/api/acoes-associacoes/`, authHeader)).data
+};
+export const getParametrizacoesAcoesAssociacoes = async (page, nome_cod_eol, acao__uuid, status, filtro_informacoes) => {
+    return (await api.get(`/api/parametrizacoes-acoes-associacoes/?page=${page}&page_size=${20}&nome=${nome_cod_eol}&acao__uuid=${acao__uuid}&status=${status}&filtro_informacoes=${filtro_informacoes}`, authHeader)).data
 };
 
 export const getListaDeAcoes = async () => {

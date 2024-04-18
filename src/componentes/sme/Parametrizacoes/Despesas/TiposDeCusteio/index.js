@@ -17,6 +17,7 @@ import {ModalConfirmDelete} from "./ModalConfirmDelete";
 import {BtnAdd} from "./BtnAdd";
 import Loading from "../../../../../utils/Loading";
 import {ModalInfoNaoPodeExcluir} from "../../Estrutura/Acoes/ModalInfoNaoPodeExcluir";
+import {toastCustom} from "../../../../Globais/ToastCustom";
 
 export const TiposDeCusteio = ()=>{
 
@@ -119,7 +120,7 @@ export const TiposDeCusteio = ()=>{
         if (values.operacao === 'create'){
             try{
                 await postCreateTipoDeCusteio(payload);
-                console.log('Tipo de despesa de custeio criado com sucesso');
+                toastCustom.ToastCustomSuccess('Inclusão de tipo de despesa de custeio realizado com sucesso.', 'O tipo de despesa de custeio foi adicionado ao sistema com sucesso.')
                 setShowModalForm(false);
                 await carregaTodos();
             }catch (e) {
@@ -136,7 +137,7 @@ export const TiposDeCusteio = ()=>{
         }else {
             try {
                 await patchAlterarTipoDeCusteio(values.uuid, payload);
-                console.log('tipo de despesa de custeio alterado com sucesso');
+                toastCustom.ToastCustomSuccess('Edição do tipo de despesa de custeio realizado com sucesso.', 'O tipo de despesa de custeio foi editado no sistema com sucesso.')
                 setShowModalForm(false);
                 await carregaTodos();
             }catch (e) {
@@ -158,7 +159,7 @@ export const TiposDeCusteio = ()=>{
         try {
             setShowModalConfirmDelete(false);
             await deleteTipoDeCusteio(stateFormModal.uuid);
-            console.log("tipo de despesa de custeio excluído com sucesso");
+            toastCustom.ToastCustomSuccess('Remoção do tipo de despesa de custeio efetuado com sucesso.', 'O tipo de despesa de custeio foi removido do sistema com sucesso.')
             setShowModalForm(false);
             await carregaTodos();
         }catch (e) {

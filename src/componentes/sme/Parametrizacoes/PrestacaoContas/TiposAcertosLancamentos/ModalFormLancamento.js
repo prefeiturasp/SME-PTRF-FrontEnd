@@ -1,8 +1,11 @@
 import React from "react";
 import {ModalFormParametrizacoesAcertos} from "../../../../Globais/ModalBootstrap";
 import '../parametrizacoes-prestacao-contas.scss'
+import {RetornaSeTemPermissaoEdicaoPainelParametrizacoes} from "../../RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
 
 export const ModalFormLancamentos = (props) => {
+
+    const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES = RetornaSeTemPermissaoEdicaoPainelParametrizacoes()
 
     const bodyTextarea = (operacao) => {
 
@@ -10,9 +13,12 @@ export const ModalFormLancamentos = (props) => {
             <>
                 <form onSubmit={props.handleSubmitModalFormLancamentos}>
                     <div className='row'>
+                        <div className='col-12'>
+                            <p className='text-right mb-0'>* Preenchimento obrigatório</p>
+                        </div>
 
-                    <div className='form-group col-md-10'>
-                            <label htmlFor="nome">Nome do tipo</label>
+                        <div className='form-group col-md-10'>
+                            <label htmlFor="nome">Nome do tipo *</label>
                             <input
                                 value={props.stateFormModal.nome}
                                 name='nome'
@@ -21,24 +27,25 @@ export const ModalFormLancamentos = (props) => {
                                 className="form-control"
                                 required={true}
                                 onChange={(e) => props.handleChangeFormModal(e.target.name, e.target.value)}
+                                disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                             />
                         </div>
                         <div className="form-group col-md-10">
-                            <label htmlFor="categoria">Categoria</label>
-                                <select value={props.stateFormModal.categoria}
-                                        onChange={(e) => props.handleChangeFormModal(e.target.name, e.target.value)}
-                                        placeholder="Selecione a categoria"
-                                        name="categoria"
-                                        id="categoria"
-                                        className="form-control"
-                                        required={true}
-                                >
-                                    <option value="">Selecione uma categoria</option>
-                                    {props.categoriaTabela && props.categoriaTabela.length > 0 && props.categoriaTabela.map(item => (
-                                        <option key={item.id} value={item.id}>{item.nome}</option>
-                                    ))}
-                                </select>
-                                
+                            <label htmlFor="categoria">Categoria *</label>
+                            <select value={props.stateFormModal.categoria}
+                                    onChange={(e) => props.handleChangeFormModal(e.target.name, e.target.value)}
+                                    name="categoria"
+                                    id="categoria"
+                                    className="form-control"
+                                    required={true}
+                                    disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
+                            >
+                                <option value="">Selecione uma categoria</option>
+                                {props.categoriaTabela && props.categoriaTabela.length > 0 && props.categoriaTabela.map(item => (
+                                    <option key={item.id} value={item.id}>{item.nome}</option>
+                                ))}
+                            </select>
+
                         </div>
 
                         <div className='col-8'>
@@ -54,8 +61,10 @@ export const ModalFormLancamentos = (props) => {
                                     value="True"
                                     checked={props.stateFormModal.ativo}
                                     onChange={() => props.handleChangeFormModal('ativo', true)}
+                                    disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                 />
-                                <label className="form-check-label font-weight-bold" htmlFor="reabertura-lancamentos">Sim</label>
+                                <label className="form-check-label font-weight-bold"
+                                       htmlFor="reabertura-lancamentos">Sim</label>
                             </div>
                             <div className="form-check form-check-inline">
                                 <input
@@ -66,40 +75,56 @@ export const ModalFormLancamentos = (props) => {
                                     value="False"
                                     checked={!props.stateFormModal.ativo}
                                     onChange={() => props.handleChangeFormModal('ativo', false)}
+                                    disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                 />
-                                <label className="form-check-label font-weight-bold" htmlFor="reabertura-lancamentos">Não</label>
+                                <label className="form-check-label font-weight-bold"
+                                       htmlFor="reabertura-lancamentos">Não</label>
                             </div>
                         </div>
                     </div>
                     {operacao === 'edit' ? (
-                        <><div className='row mt-3'>   
-                        <div className='col'>
-                            <p>Uuid</p>
-                            <p>{props.stateFormModal.uuid}</p>
-                        </div>
-                        <div className='col'>
-                            <p>ID</p>
-                            <p>{props.stateFormModal.id}</p>
-                        </div>
-                    </div>
-</>): null}
+                        <>
+                            <div className='row mt-3'>
+                                <div className='col'>
+                                    <p>Uuid</p>
+                                    <p>{props.stateFormModal.uuid}</p>
+                                </div>
+                                <div className='col'>
+                                    <p>ID</p>
+                                    <p>{props.stateFormModal.id}</p>
+                                </div>
+                            </div>
+                        </>) : null}
 
 
                     <div className="d-flex bd-highlight mt-2">
                         <div className="p-Y flex-grow-1 bd-highlight">
                             {props.stateFormModal && props.stateFormModal.operacao === 'edit' &&
-                            <button onClick={props.serviceCrudLancamentos} type="button" className="btn btn btn-danger mt-2 mr-2">
-                                Apagar
-                            </button>
+                                <button
+                                    onClick={props.serviceCrudLancamentos}
+                                    type="button"
+                                    className="btn btn btn-danger mt-2 mr-2"
+                                    disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
+                                >
+                                    Apagar
+                                </button>
                             }
                         </div>
                         <div className="p-Y bd-highlight">
-                            <button onClick={props.handleClose} type="reset" className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>
+                            <button
+                                onClick={props.handleClose}
+                                type="reset"
+                                className="btn btn btn-outline-success mt-2 mr-2"
+                            >
+                                Cancelar
+                            </button>
                         </div>
                         <div className="p-Y bd-highlight">
                             <button
-                                disabled={props.readOnly || !props.stateFormModal.nome || !props.stateFormModal.categoria}
-                                onClick={() => {props.handleSubmitModalFormLancamentos(props.stateFormModal)}}
+                                disabled={props.readOnly || !props.stateFormModal.nome || !props.stateFormModal.categoria || !TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
+                                onClick={() => {
+                                    props.handleSubmitModalFormLancamentos(props.stateFormModal)
+                                }}
                                 type="button"
                                 className="btn btn btn-success mt-2"
                             >

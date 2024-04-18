@@ -17,8 +17,11 @@ import ModalFormFornecedores from "./ModalFormFornecedores";
 import {ModalInfoNaoPermitido} from "./ModalInfoNaoPermitido";
 import {ModalConfirmDeleteFornecedor} from "./ModalConfirmDeleteFornecedor";
 import {visoesService} from "../../../../../services/visoes.service";
+import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
+import { toastCustom } from "../../../../Globais/ToastCustom";
 
 export const Fornecedores = () =>{
+    const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES = RetornaSeTemPermissaoEdicaoPainelParametrizacoes()
 
     const [listaDeFornecedores, setListaDeFornecedores] = useState([])
     const [loading, setLoading] = useState(true);
@@ -98,14 +101,12 @@ export const Fornecedores = () =>{
     const acoesTemplate = useCallback((rowData) =>{
         return (
             <div>
-                {visoesService.getPermissoes(['change_fornecedores']) && (
-                    <button className="btn-editar-membro" onClick={()=>handleEditFormModalFornecedores(rowData)}>
-                        <FontAwesomeIcon
-                            style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
-                            icon={faEdit}
-                        />
-                    </button>
-                )}
+                <button className="btn-editar-membro" onClick={()=>handleEditFormModalFornecedores(rowData)}>
+                    <FontAwesomeIcon
+                        style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
+                        icon={faEdit}
+                    />
+                </button>
             </div>
         )
     }, [handleEditFormModalFornecedores]);
@@ -119,10 +120,12 @@ export const Fornecedores = () =>{
         if (values.operacao === 'create'){
             try{
                 await postCreateFornecedor(payload);
+                toastCustom.ToastCustomSuccess('Inclusão de fornecedor realizado com sucesso.', `O fornecedor foi adicionado ao sistema com sucesso.`)
                 console.log('Fornecedor criado com sucesso');
                 setShowModalForm(false);
                 await carregaListaFornecedores();
             }catch (e) {
+                toastCustom.ToastCustomError('Erro ao criar fornecedor', `Não foi possível criar o fornecedor`)
                 console.log('Erro ao criar fornecedor ', e.response.data);
                 if (e.response.data && e.response.data.cpf_cnpj && e.response.data.cpf_cnpj[0]) {
                     setErroExclusaoNaoPermitida(e.response.data.cpf_cnpj[0]);
@@ -136,10 +139,12 @@ export const Fornecedores = () =>{
         }else {
             try {
                 await patchAlterarFornecedor(values.id, payload);
+                toastCustom.ToastCustomSuccess('Edição do fornecedor realizado com sucesso.', `O fornecedor foi editado no sistema com sucesso.`)
                 console.log('Fornecedor alterado com sucesso');
                 setShowModalForm(false);
                 await carregaListaFornecedores();
             }catch (e) {
+                toastCustom.ToastCustomError('Erro ao editar fornecedor', `Não foi possível editar o fornecedor`)
                 console.log('Erro ao alterar fornecedor ', e.response.data);
                 if (e.response.data && e.response.data.cpf_cnpj && e.response.data.cpf_cnpj[0]) {
                     setErroExclusaoNaoPermitida(e.response.data.cpf_cnpj[0]);
@@ -157,11 +162,13 @@ export const Fornecedores = () =>{
         setLoading(true);
         try {
             await deleteFornecedor(stateFormModal.id);
+            toastCustom.ToastCustomSuccess('Remoção do fornecedor efetuada com sucesso.', `O fornecedor foi removido do sistema com sucesso.`)
             console.log("Fornecedor excluído com sucesso");
             setShowModalConfirmDeleteFornecedor(false);
             setShowModalForm(false);
             await carregaListaFornecedores();
         }catch (e) {
+            toastCustom.ToastCustomError('Erro ao remover fornecedor', `Não foi possível remover o fornecedor`)
             console.log('Erro ao excluir Fornecedor ', e.response.data);
             if (e.response.data && e.response.data.cpf_cnpj && e.response.data.cpf_cnpj[0]) {
                 setErroExclusaoNaoPermitida(e.response.data.cpf_cnpj[0]);
@@ -187,6 +194,21 @@ export const Fornecedores = () =>{
         setShowModalConfirmDeleteFornecedor(false)
     }, []);
 
+    const temPermissaoEditarFornecedores = () => {
+        if(visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'DRE'){
+            if(visoesService.getPermissoes(['change_fornecedores'])){
+                return true;
+            }
+        }
+        else if(visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'SME'){
+            if(TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES){
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     return(
         <PaginasContainer>
             <h1 className="titulo-itens-painel mt-5">Fornecedores</h1>
@@ -202,15 +224,16 @@ export const Fornecedores = () =>{
                 ) :
                 <>
                     <div className="page-content-inner">
-                        {visoesService.getPermissoes(['change_fornecedores']) && (
-                            <BtnAddFornecedores
-                                FontAwesomeIcon={FontAwesomeIcon}
-                                faPlus={faPlus}
-                                setShowModalForm={setShowModalForm}
-                                initialStateFormModal={initialStateFormModal}
-                                setStateFormModal={setStateFormModal}
-                            />
-                        )}
+                        
+                        <BtnAddFornecedores
+                            FontAwesomeIcon={FontAwesomeIcon}
+                            faPlus={faPlus}
+                            setShowModalForm={setShowModalForm}
+                            initialStateFormModal={initialStateFormModal}
+                            setStateFormModal={setStateFormModal}
+                            temPermissaoEditarFornecedores={temPermissaoEditarFornecedores}
+                        />
+                        
                         <Filtros
                             stateFiltros={stateFiltros}
                             handleChangeFiltros={handleChangeFiltros}
@@ -231,6 +254,7 @@ export const Fornecedores = () =>{
                             handleClose={handleCloseFormModal}
                             handleSubmitModalFormFornecedores={handleSubmitModalFormFornecedores}
                             setShowModalConfirmDeleteFornecedor={setShowModalConfirmDeleteFornecedor}
+                            temPermissaoEditarFornecedores={temPermissaoEditarFornecedores}
                         />
                     </section>
                     <section>

@@ -1,16 +1,25 @@
 import React from "react";
 import {ModalFormParametrizacoesAcoesDaAssociacao} from "../../../../Globais/ModalBootstrap";
 import AutoCompleteAssociacoes from "./AutoCompleteAssociacoes";
+import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../../../sme/Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
+import Spinner from "../../../../../assets/img/spinner.gif"
+
 export const ModalFormAcoesDaAssociacao = (props) => {
+    const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES = RetornaSeTemPermissaoEdicaoPainelParametrizacoes()
 
     const bodyTextarea = () => {
         return (
             <>
                 <form onSubmit={props.handleSubmitModalFormAcoes}>
+                    <div className="row">
+                        <div className='col-12'>
+                            <p>* Preenchimento obrigatório</p>
+                        </div>
+                    </div>
                     {props.stateFormModal && props.stateFormModal.operacao === 'edit' ? (
                         <div className='row'>
                             <div className='col'>
-                                <label htmlFor="cod_eol">Unidade Educacional</label>
+                                <label htmlFor="cod_eol">Unidade Educacional *</label>
                                 <input
                                     value={props.stateFormModal.nome_unidade}
                                     name='nome_unidade'
@@ -18,22 +27,25 @@ export const ModalFormAcoesDaAssociacao = (props) => {
                                     type="text"
                                     className="form-control"
                                     readOnly={true}
+                                    disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                 />
                             </div>
                         </div>
                     ) :
                         <>
-                            <label htmlFor="selectedAcao">Unidade Educacional</label>
+                            <label htmlFor="selectedAcao">Unidade Educacional *{props.loadingAssociacoes && <img alt="" src={Spinner} style={{height: "22px"}}/>}</label>
                             <AutoCompleteAssociacoes
                                 todasAsAcoesAutoComplete={props.todasAsAcoesAutoComplete}
                                 recebeAcaoAutoComplete={props.recebeAcaoAutoComplete}
+                                disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
+                                loadingAssociacoes={props.loadingAssociacoes}
                             />
                         </>
                     }
 
                     <div className='row mt-3'>
                         <div className='col'>
-                            <label htmlFor="cod_eol">Código EOL</label>
+                            <label htmlFor="cod_eol">Código EOL *</label>
                             <input
                                 value={props.stateFormModal.codigo_eol}
                                 name='cod_eol'
@@ -45,14 +57,14 @@ export const ModalFormAcoesDaAssociacao = (props) => {
                         </div>
 
                         <div className='col'>
-                            <label htmlFor="acao">Ação</label>
+                            <label htmlFor="acao">Ação *</label>
                             <select
                                 value={props.stateFormModal.acao}
                                 onChange={(e) => props.handleChangeFormModal(e.target.name, e.target.value)}
                                 name='acao'
                                 id="acao"
                                 className="form-control"
-                                disabled={props.readOnly}
+                                disabled={props.readOnly || !TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                             >
                                 <option value=''>Selecione ação</option>
                                 {props.listaTiposDeAcao && props.listaTiposDeAcao.length > 0 && props.listaTiposDeAcao.map(item => (
@@ -62,14 +74,14 @@ export const ModalFormAcoesDaAssociacao = (props) => {
                         </div>
 
                         <div className='col'>
-                            <label htmlFor="status">Status</label>
+                            <label htmlFor="status">Status *</label>
                             <select
                                 value={props.stateFormModal.status}
                                 onChange={(e) => props.handleChangeFormModal(e.target.name, e.target.value)}
                                 name='status'
                                 id="status"
                                 className="form-control"
-                                disabled={props.readOnly}
+                                disabled={props.readOnly || !TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                             >
                                 <option value=''>Selecione o status</option>
                                 <option value='ATIVA'>Ativa</option>
@@ -93,7 +105,7 @@ export const ModalFormAcoesDaAssociacao = (props) => {
                     <div className="d-flex bd-highlight mt-2">
                         <div className="p-Y flex-grow-1 bd-highlight">
                             {props.stateFormModal && props.stateFormModal.operacao === 'edit' &&
-                            <button onClick={()=>props.setShowModalDeleteAcao(true)} type="button" className="btn btn btn-danger mt-2 mr-2">
+                            <button onClick={()=>props.setShowModalDeleteAcao(true)} type="button" className="btn btn btn-danger mt-2 mr-2" disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}>
                                 Apagar
                             </button>
                             }
@@ -103,7 +115,7 @@ export const ModalFormAcoesDaAssociacao = (props) => {
                         </div>
                         <div className="p-Y bd-highlight">
                             <button
-                                disabled={props.readOnly || !props.stateFormModal.acao || !props.stateFormModal.status}
+                                disabled={props.readOnly || !props.stateFormModal.acao || !props.stateFormModal.status || !TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                 onClick={()=>props.handleSubmitModalFormAcoes(props.stateFormModal)}
                                 type="button"
                                 className="btn btn btn-success mt-2"

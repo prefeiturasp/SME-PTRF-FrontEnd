@@ -22,6 +22,7 @@ export const usePatchMotivoRejeicao = () => {
             toastCustom.ToastCustomSuccess('Edição do motivo de rejeição de encerramento de conta realizada com sucesso', `O motivo de rejeição foi editado com sucesso.`)
         },
         onError: (error) => {
+            toastCustom.ToastCustomError('Erro ao atualizar o motivo de rejeição', `Não foi possível atualizar o motivo de rejeição`)
             console.log("Erro ao editar o motivo de rejeição", error.response)
             // Mensagens
         },

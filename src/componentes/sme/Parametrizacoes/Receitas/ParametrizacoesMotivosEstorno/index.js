@@ -17,6 +17,7 @@ import ModalForm from "./ModalForm";
 import {ModalInfoUpdateNaoPermitido} from "./ModalInfoUpdateNaoPermitido";
 import {ModalInfoNaoPodeExcluir} from "./ModalInfoNaoPodeExcluir";
 import {ModalConfirmDelete} from "./ModalConfirmDelete";
+import {toastCustom} from "../../../../Globais/ToastCustom";
 
 export const ParametrizacoesMotivosDeEstorno = ()=>{
     const [listaMotivos, setListaMotivos] = useState([]);
@@ -120,7 +121,7 @@ export const ParametrizacoesMotivosDeEstorno = ()=>{
         if (values.operacao === 'create'){
             try{
                 await postCreateMotivoEstorno(payload);
-                console.log('Motivo de estorno criado com sucesso');
+                toastCustom.ToastCustomSuccess('Inclusão de motivo de estorno realizado com sucesso.', 'O motivo do estorno foi adicionado ao sistema com sucesso.')
                 setShowModalForm(false);
                 await carregaLista();
             }catch (e) {
@@ -137,7 +138,7 @@ export const ParametrizacoesMotivosDeEstorno = ()=>{
         }else {
             try {
                 await patchAlterarMotivoEstorno(values.uuid, payload);
-                console.log('Motivo de estorno alterado com sucesso');
+                toastCustom.ToastCustomSuccess('Edição do motivo de estorno realizado com sucesso.', 'O motivo de estorno foi editado no sistema com sucesso.')
                 setShowModalForm(false);
                 await carregaLista();
             }catch (e) {
@@ -160,7 +161,7 @@ export const ParametrizacoesMotivosDeEstorno = ()=>{
         try {
             setShowModalConfirmDelete(false);
             await deleteMotivoEstorno(stateFormModal.uuid);
-            console.log("Motivo de estorno excluído com sucesso");
+            toastCustom.ToastCustomSuccess('Remoção do motivo de estorno efetuado com sucesso.', 'O motivo de estorno foi removido do sistema com sucesso.')
             setShowModalForm(false);
             await carregaLista();
         }catch (e) {

@@ -3,11 +3,10 @@ span.total{
     font-weight: bold;
   }
 
-.categorias-table-multiple-search {
+.categorias-table-multiple-search, .ant-select-selector {
   width: 100%;
-  height: 50px;
   border-collapse: collapse;
-  min-height: calc(1.5em + .75rem + 2px);
+  min-height: 38px;
 }
 
 .documentos-table-multiple-search {
@@ -30,12 +29,4 @@ span.total{
   outline: none !important;
   border: none;
   background: #fafafa;
-}
-
-#filtrar_por_nome{
-  height: 33px;
-}
-
-#filtrar_por_ativo{
-  height: 33px;
 }
