@@ -12,10 +12,11 @@ import {ModalConfirmDeleteAcao} from "./ModalConfirmDeleteAcao";
 import {ModalInfoNaoPodeExcluir} from "./ModalInfoNaoPodeExcluir";
 import {ModalInfoNaoPodeGravar} from "./ModalInfoNaoPodeGravar";
 import {Link} from "react-router-dom";
-
+import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
+import { toastCustom } from "../../../../Globais/ToastCustom";
 
 export const Acoes = () => {
-
+    const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES = RetornaSeTemPermissaoEdicaoPainelParametrizacoes()
     const initialStateFiltros = {
         filtrar_por_nome: "",
     };
@@ -151,6 +152,7 @@ export const Acoes = () => {
                 await postAddAcao(payload);
                 setShowModalForm(false);
                 console.log('Ação criada com sucesso');
+                toastCustom.ToastCustomSuccess('Ação criada com sucesso');
                 await carregaTodasAsAcoes();
             } catch (e) {
                 console.log('Erro ao criar Ação!!! ', e.response.data)
@@ -161,13 +163,13 @@ export const Acoes = () => {
                     setMensagemModalInfoNaoPodeGravar('Houve um erro ao tentar fazer essa atualização.');
                     setShowModalInfoNaoPodeGravar(true);
                 }
-
             }
         } else {
             try {
                 await putAtualizarAcao(stateFormModal.uuid, payload);
                 setShowModalForm(false);
                 console.log('Ação alterada com sucesso', payload);
+                toastCustom.ToastCustomSuccess('Ação alterada com sucess');
                 await carregaTodasAsAcoes();
             } catch (e) {
                 console.log('Erro ao alterar Ação!! ', e)
@@ -191,6 +193,7 @@ export const Acoes = () => {
             await deleteAcao(stateFormModal.uuid);
             setShowModalForm(false);
             console.log('Ação excluída com sucesso');
+            toastCustom.ToastCustomSuccess('Ação excluída com sucesso');
             await carregaTodasAsAcoes();
         } catch (e) {
             if (e.response && e.response.data && e.response.data.mensagem){
@@ -201,6 +204,8 @@ export const Acoes = () => {
             console.log('Erro ao excluir Ação!! ', e.response)
         }
     };
+
+    const readOnlyMemo = useMemo(() => readOnly || !TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES, [readOnly]);
 
     return (
         <PaginasContainer>
@@ -219,19 +224,20 @@ export const Acoes = () => {
                     ) :
                     <>
                         <div className="p-2 bd-highlight pt-3 justify-content-end d-flex">
-                            <Link
-                                onClick={() => {
+                            <button 
+                                disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
+                                onClick={()=>{
                                     setStateFormModal(initialStateFormModal);
                                     setShowModalForm(true);
-                                }}
-                                className="btn btn-success ml-2"
-                            >
-                                <FontAwesomeIcon
-                                    style={{marginRight: "5px", color: '#fff'}}
-                                    icon={faPlus}
-                                />
-                                Adicionar ação
-                            </Link>
+                                    }} 
+                                type="button" 
+                                className="btn btn-success mt-2">
+                                    <FontAwesomeIcon
+                                        style={{fontSize: '15px', marginRight: "5", color:"#fff"}}
+                                        icon={faPlus}
+                                    />
+                                    Adicionar ação
+                            </button>                            
                         </div>
                         <Filtros
                             stateFiltros={stateFiltros}
@@ -255,7 +261,7 @@ export const Acoes = () => {
                         handleSubmitModalFormAcoes={handleSubmitModalFormAcoes}
                         handleChangeFormModal={handleChangeFormModal}
                         stateFormModal={stateFormModal}
-                        readOnly={readOnly}
+                        readOnly={readOnlyMemo}
                         serviceCrudAcoes={serviceCrudAcoes}
                         primeiroBotaoTexto="Cancelar"
                         primeiroBotaoCss="outline-success"
