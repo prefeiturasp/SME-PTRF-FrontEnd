@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from "react";
-import Toast from 'react-bootstrap/Toast'
 import Dropdown from 'react-bootstrap/Dropdown';
 import "../../../../../Globais/ModalBootstrap/modal-bootstrap.scss"
 import Img404 from "../../../../../../assets/img/img-404.svg";
@@ -13,41 +12,18 @@ import {faArrowLeft, faPlus, faTimesCircle} from "@fortawesome/free-solid-svg-ic
 import {ModalDesvincularLote} from "./Modais";
 import {Link, useParams} from 'react-router-dom';
 import {PaginasContainer} from "../../../../../../paginas/PaginasContainer";
-import {getUnidadesPorAcao, getAcao, deleteAcoesAssociacoesEmLote, deleteAcao} from "../../../../../../services/sme/Parametrizacoes.service"
+import {getUnidadesPorAcao, getAcao, deleteAcoesAssociacoesEmLote, deleteAcaoAssociacao} from "../../../../../../services/sme/Parametrizacoes.service"
 import {ModalConfirmDesvincularAcaoAssociacao} from "./ModalConfirmDesvincularAcaoAssociacao"
-import {ModalInfoNaoPodeExcluir} from "../ModalInfoNaoPodeExcluir";
 import { TabelaAssociacaoAcao } from "../TabelaAssociacaoAcao";
 import { getTabelaAssociacoes } from "../../../../../../services/dres/Associacoes.service";
-import {ModalInfoNaoPodeDesvincular} from "./ModalInfoNaoPodeDesvincular";
+import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../../RetornaSeTemPermissaoEdicaoPainelParametrizacoes";// Preparação para react-router-dom-v6
+import {useNavigate} from "react-router-dom-v5-compat";
+import {toastCustom} from "../../../../../Globais/ToastCustom";
 import "./associacoes.scss";
 
-const CustomToast = (propriedades) => {
-    return (
-        <Toast 
-            show={propriedades.show} 
-            onClose={propriedades.fecharToast} 
-            className="text-white bg-dark bg-gradient"
-            style={{
-                maxWidth: "600px"
-          }}>
-          <Toast.Header 
-            className="text-white bg-dark bg-gradient"
-           >
-            <img
-              src="holder.js/20x20?text=%20"
-              className="rounded mr-2"
-              alt=""
-            />
-            
-            <div>"{propriedades.mensagem}"</div>
-
-          </Toast.Header>
-        </Toast>
-    )
-}
-
-
 export const AssociacoesDaAcao = () => {
+    const navigate = useNavigate();
+
     const rowsPerPage = 10;
     let {acao_uuid} = useParams();
 
@@ -55,7 +31,7 @@ export const AssociacoesDaAcao = () => {
         filtrar_por_nome: "",
         filtro_informacoes: []
     };
-
+    const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES = RetornaSeTemPermissaoEdicaoPainelParametrizacoes()
     const [loading, setLoading] = useState(true);
     const [acao, setAcao] = useState(null);
     const [acaoAssociacaoUuid, setAcaoAssociacaoUuid] = useState(null);
@@ -64,16 +40,8 @@ export const AssociacoesDaAcao = () => {
     const [buscaUtilizandoFiltros, setBuscaUtilizandoFiltros] = useState(false);
     const [quantidadeSelecionada, setQuantidadeSelecionada] = useState(0);
     const [showModalDesvincular, setShowModalDesvincular] = useState(false);
-    const [showToast, setShowToast] = useState(false);
     const [showConfirmaDesvinculo, setShowConfirmaDesvinculo] = useState(false);
-    
-    const [showModalInfoNaoPodeExcluir, setShowModalInfoNaoPodeExcluir] = useState(false);
-    const [mensagemModalInfoNaoPodeExcluir, setMensagemModalInfoNaoPodeExcluir] = useState("");
 
-    const [showModalInfoNaoPodeDesvincular, setShowModalInfoNaoPodeDesvincular] = useState(false);
-    const [mensagemModalInfoNaoPodeDesvincular, setMensagemModalInfoNaoPodeDesvincular] = useState({titulo: "", mensagem: ""});
-
-    const [mensagemToast, setMensagemToast] = useState("");
     const [tabelaAssociacoes, setTabelaAssociacoes] = useState({});
 
     useEffect(() => {
@@ -125,8 +93,7 @@ export const AssociacoesDaAcao = () => {
         setLoading(true);
         setEstadoFiltros(estadoInicialFiltros);
         await buscaUnidadesDaAcao(acao_uuid);
-        setShowToast(false);
-        setLoading(false)
+        setLoading(false);
     };
 
     const atualizaListaUnidades = async () => {
@@ -211,10 +178,6 @@ export const AssociacoesDaAcao = () => {
     }
 
     const tratarSelecionado = (e, unidadeUuid) => {
-        if (showToast === true) {
-           setShowToast(false)
-        }
-
         let cont = quantidadeSelecionada;
         if (e.target.checked) {
             cont = cont + 1
@@ -245,6 +208,8 @@ export const AssociacoesDaAcao = () => {
     }
 
     const montagemDesvincularLote = () => {
+        const disabled = !TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES;
+
         return (
             <div className="row">
                 <div className="col-12" style={{background: "#00585E", color: 'white', padding:"15px", margin:"0px 15px", flex:"100%"}}>
@@ -253,21 +218,34 @@ export const AssociacoesDaAcao = () => {
                             {quantidadeSelecionada} {quantidadeSelecionada === 1 ? "unidade selecionada" : "unidades selecionadas"}  / {unidades.length} totais
                         </div>
                         <div className="col-7">
-                            <div className="row">
-                                <div className="col-12">
-                                    <a className="float-right" onClick={(e) => desmarcarTodos(e)} style={{textDecoration:"underline", cursor:"pointer"}}>
-                                        <strong>Cancelar</strong>
-                                    </a>
-                                    <div className="float-right" style={{padding: "0px 10px"}}>|</div>
-                                    <a className="float-right" onClick={(e) => handleDesvincularAssociacoesEmLote()} style={{textDecoration:"underline", cursor:"pointer"}}>
+                            <div className="d-flex align-items-center justify-content-end">
+                                <Button 
+                                    type='link'
+                                    style={{textDecoration:"underline", color: disabled ? "grey" : "white"}}
+                                    onClick={() => handleDesvincularAssociacoesEmLote()}
+                                    icon={
                                         <FontAwesomeIcon
-                                            style={{color: "white", fontSize: '15px', marginRight: "2px"}}
+                                            style={{
+                                                fontSize: '15px', 
+                                                marginRight: 2, 
+                                                color: disabled ? "grey" : "white"
+                                            }}
                                             icon={faTimesCircle}
                                         />
-                                        <strong>Desvincular da ação</strong>
-                                    </a>
-                                </div>
-                                
+                                    }
+                                    disabled={disabled} 
+                                >
+                                    <strong>Desvincular da ação</strong>            
+                                </Button>
+                                <div className="float-right">|</div>
+                                <Button 
+                                    type='link'
+                                    color="secondary"
+                                    style={{textDecoration:"underline", color:"#fff"}}
+                                    onClick={(e) => desmarcarTodos(e)}
+                                >
+                                    <strong>Cancelar</strong>            
+                                </Button>                                    
                             </div> 
                         </div>
                     </div>
@@ -284,29 +262,25 @@ export const AssociacoesDaAcao = () => {
         setShowModalDesvincular(false);
 
     }
-
-    const fecharToast = () => {
-        setShowToast(false);
-    }
-
     const acoesTemplate = (rowData) => {
+        const disabled = rowData.associacao.encerrada || !TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES
         return (
             <div>
                 <Button 
                     type="text" 
-                    className={`${rowData.associacao.encerrada ? '': 'link-red'}`}
-                    onClick={() => rowData.associacao.encerrada ? null : handleDesvinculaUE(rowData['uuid'])}
+                    className={`${disabled ? '': 'link-red'}`}
+                    onClick={() => disabled ? null : handleDesvinculaUE(rowData['uuid'])}
                     icon={
                         <FontAwesomeIcon
                             style={{
                                 fontSize: '20px', 
                                 marginRight: 3, 
-                                color: rowData.associacao.encerrada ? "grey" : "#B40C02"
+                                color: disabled ? "grey" : "#B40C02"
                             }}
                             icon={faTimesCircle}
                         />
                     }
-                    disabled={rowData.associacao.encerrada} 
+                    disabled={disabled} 
                 >
                     Desvincular                
                 </Button>
@@ -326,25 +300,19 @@ export const AssociacoesDaAcao = () => {
     const onDesvinculaAssociacaoTrue = async () => {
         setShowConfirmaDesvinculo(false);
         try {
-            const result = await deleteAcao(acaoAssociacaoUuid);
-            console.log('Associação desvinculada com sucesso', acaoAssociacaoUuid);
+            await deleteAcaoAssociacao(acaoAssociacaoUuid);
+            toastCustom.ToastCustomSuccess("Associação desvinculada com sucesso!");
+            await atualizaListaUnidades();
         } catch (e) {
-            if (e.response && e.response.data && e.response.data.mensagem){
-                setMensagemModalInfoNaoPodeExcluir(e.response.data.mensagem);
-                setShowModalInfoNaoPodeExcluir(true);
-                console.log(e.response.data.mensagem)
-            }
-            console.log('Erro ao desvincular associação!! ', e.response.data)
+            toastCustom.ToastCustomError('Erro ao desvincular associação.', e.response && e.response.data && e.response.data.mensagem ? e.response.data.mensagem : '');
         }
-        await atualizaListaUnidades()
         setAcaoAssociacaoUuid(null);
     };
 
     const handleDesvincularAssociacoesEmLote = () => {
         let associacoesEncerradasSelecionadas = unidades.filter(u => u.selecionado === true && u.associacao.encerrada);
         if(associacoesEncerradasSelecionadas.length > 0) {
-            setShowModalInfoNaoPodeDesvincular(true);
-            setMensagemModalInfoNaoPodeDesvincular({titulo: "Ação não permitida", mensagem: "Existem uma ou mais associações encerradas selecionadas."})
+            toastCustom.ToastCustomError('Ação não permitida', 'Existem uma ou mais associações encerradas selecionadas.')
         } else {
             modalDesvincular();
         }
@@ -362,29 +330,15 @@ export const AssociacoesDaAcao = () => {
         payLoad.lista_uuids = uuids;
 
         try {
-            let response = await deleteAcoesAssociacoesEmLote(payLoad);
-            console.log("Associações desvinculadas com sucesso!");
-            console.log(response.mensagem);
-            setMensagemToast(response.mensagem ? response.mensagem : "Associações desvinculadas com sucesso!")
+            const response = await deleteAcoesAssociacoesEmLote(payLoad);
+            toastCustom.ToastCustomSuccess("Associações desvinculadas com sucesso!", response.mensagem ? response.mensagem : '')
         } catch(e) {
-            console.log("Erro ao tentar desvincular associações");
-            console.log(e.response.data);
-            setMensagemToast(e.response && e.response.mensagem ? e.response.mensagem : "Erro ao tentar desvincular associações")
+            toastCustom.ToastCustomError('Erro ao tentar desvincular associações', e.response && e.response.mensagem ? e.response.mensagem : '')
         }
+
         await atualizaListaUnidades();
         setLoading(false);
-        setShowToast(true);
         setQuantidadeSelecionada(0);
-    };
-
-    const handleCloseInfoNaoPodeExcluir = () => {
-        setShowModalInfoNaoPodeExcluir(false);
-        setMensagemModalInfoNaoPodeExcluir("");
-    };
-
-    const handleCloseInfoNaoPodeDesvincular = () => {
-        setShowModalInfoNaoPodeDesvincular(false);
-        setMensagemModalInfoNaoPodeDesvincular("");
     };
 
     const handleOnChangeMultipleSelectStatus =  async (value) => {
@@ -394,6 +348,10 @@ export const AssociacoesDaAcao = () => {
             ...estadoFiltros,
             [name]: value
         });
+    };
+
+    const goTo = (url) => {
+        navigate(url);
     };
 
     return (
@@ -425,8 +383,10 @@ export const AssociacoesDaAcao = () => {
                                     </Link>
                                 </div>
                                 <div className="p-2 bd-highlight pt-3 justify-content-end d-flex">
-                                    <Link
-                                        to={`/vincula-associacoes-a-acao/${acao_uuid}`}
+                                    <button 
+                                        disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
+                                        onClick={() => goTo(`/vincula-associacoes-a-acao/${acao_uuid}`)}
+                                        type="button" 
                                         className="btn btn-success ml-2"
                                     >
                                         <FontAwesomeIcon
@@ -434,7 +394,7 @@ export const AssociacoesDaAcao = () => {
                                             icon={faPlus}
                                         />
                                         Vincular Associações
-                                    </Link>
+                                    </button>                                     
                                 </div>
                             </div>
                             <div className="page-content-inner">
@@ -453,12 +413,6 @@ export const AssociacoesDaAcao = () => {
                                     quantidadeSelecionada={quantidadeSelecionada}
                                     primeiroBotaoOnclick={desvincularAssociacoesEmLote}
                                     primeiroBotaoTexto="OK"
-                                />
-
-                                <CustomToast
-                                    show={showToast}
-                                    fecharToast={fecharToast}
-                                    mensagem={mensagemToast}
                                 />
 
                                 {quantidadeSelecionada > 0 ?
@@ -505,27 +459,7 @@ export const AssociacoesDaAcao = () => {
                         segundoBotaoCss="danger"
                         segundoBotaoTexto="Desvincular"
                     />
-                </section>
-                <section>
-                    <ModalInfoNaoPodeDesvincular
-                        show={showModalInfoNaoPodeDesvincular}
-                        handleClose={handleCloseInfoNaoPodeDesvincular}
-                        titulo={mensagemModalInfoNaoPodeDesvincular.titulo}
-                        texto={mensagemModalInfoNaoPodeDesvincular.mensagem}
-                        primeiroBotaoTexto="Fechar"
-                        primeiroBotaoCss="success"
-                    />
-                </section>                
-                <section>
-                    <ModalInfoNaoPodeExcluir
-                        show={showModalInfoNaoPodeExcluir}
-                        handleClose={handleCloseInfoNaoPodeExcluir}
-                        titulo="Exclusão não permitida"
-                        texto={mensagemModalInfoNaoPodeExcluir}
-                        primeiroBotaoTexto="Fechar"
-                        primeiroBotaoCss="success"
-                    />
-                </section>
+                </section>              
             </div>
         </PaginasContainer>
 
