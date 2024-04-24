@@ -102,5 +102,12 @@ export const cards = [
         tags: ['CSV'],
         endpoint: '/api/exportacoes-dados/processos-sei-regularidade/',
         visao: ['SME']
+    },   
+    {
+        titulo: 'Processos SEI de prestação de contas',
+        descricao: 'Arquivo com dados dos processos SEI de prestação de contas das associações.',
+        tags: ['CSV'],
+        endpoint: '/api/exportacoes-dados/processos-sei-prestacao-contas/',
+        visao: ['DRE','SME']
     },    
 ]
