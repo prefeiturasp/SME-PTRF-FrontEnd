@@ -52,7 +52,7 @@ export const cards = [
         descricao: 'Arquivo com informações das atas de reuniões relativas às prestações de contas, por período e unidade.',
         tags: ['CSV'],
         endpoint: '/api/exportacoes-dados/atas-prestacoes-contas/',
-        visao: ['SME']
+        visao: ['SME', 'DRE']
     },
     {
         titulo: 'Despesas: Classificação das despesas',
