@@ -59,7 +59,7 @@ export const cards = [
         descricao: 'Arquivo com informações de despesas (item de despesa classificado) por conta, período e unidade. ',
         tags: ['CSV'],
         endpoint: '/api/exportacoes-dados/rateios/',
-        visao: ['SME']
+        visao: ['DRE', 'SME']
     },
     {
         titulo: 'Prestações de contas: Demonstrativos',
