@@ -446,7 +446,7 @@ const routesConfig = [
     },
     {
         exact: true,
-        path: "/parametro-arquivos-de-carga/:tipo_de_carga/",
+        path: "/parametro-arquivos-de-carga/:tipo_de_carga/:versao?",
         component: ArquivosDeCarga,
         permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
     },
