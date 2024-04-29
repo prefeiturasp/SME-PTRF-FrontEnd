@@ -131,6 +131,7 @@ export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao}) => {
     };
 
     const handleCloseProcessoForm = () => {
+        setCustomNumeroProcessoError(false);
         setShowProcessoForm(false);
     };
 
@@ -183,7 +184,7 @@ export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao}) => {
                     setShowProcessoForm(false);
                     await carregaProcessos();
                 } else {
-                    toastCustom.ToastCustomError('Inclusão de Processo SEI', `Erro ao incluir Processo SEI.`)
+                    toastCustom.ToastCustomError('Processo SEI já cadastrado', `Esse processo SEI já foi cadastrado em uma unidade educacional.`)
                     console.log("Erro ao criar Processo")
                     if(response.status === 400 && response.data && response.data.numero_processo) {
                         setCustomNumeroProcessoError(response.data.numero_processo[0]);
