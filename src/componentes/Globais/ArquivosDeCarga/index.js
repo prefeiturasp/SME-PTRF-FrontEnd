@@ -12,9 +12,9 @@ import {faEdit, faCogs, faDownload, faTrashAlt} from "@fortawesome/free-solid-sv
 import {Filtros} from "./Filtros";
 import {MenuInterno} from "../MenuInterno";
 import ModalFormArquivosDeCarga from "./ModalFormArquivosDeCarga";
-import {ModalInfoArquivoDeCargas} from "./ModalInfoArquivoDeCargas";
 import {ModalConfirmDeleteArquivoDeCarga} from "./ModalConfirmDeleteArquivoDeCarga";
 import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../sme/Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
+import {toastCustom} from "../ToastCustom";
 
 const ArquivosDeCarga = () => {
     const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES = RetornaSeTemPermissaoEdicaoPainelParametrizacoes()
@@ -35,6 +35,15 @@ const ArquivosDeCarga = () => {
                 UrlsMenuInterno:[
                     {label: "Dados das associações", url: "parametro-associacoes"},
                     {label: "Cargas de arquivo", url: 'parametro-arquivos-de-carga', origem:'CARGA_ASSOCIACOES'},
+                ],
+            }
+        }else if (url_params.tipo_de_carga === 'CARGA_USUARIOS' && url_params.versao === 'V2'){
+            obj = {
+                titulo: 'Usuários',
+                acesso_permitido: true,
+                UrlsMenuInterno:[
+                    {label: "Dados dos usuários", url: "gestao-de-usuarios-list"},
+                    {label: "Cargas de arquivo", url: 'parametro-arquivos-de-carga', origem:'CARGA_USUARIOS'},
                 ],
             }
         }else if (url_params.tipo_de_carga === 'CARGA_USUARIOS'){
@@ -174,9 +183,8 @@ const ArquivosDeCarga = () => {
 
     const [showModalForm, setShowModalForm] = useState(false);
     const [stateFormModal, setStateFormModal] = useState(initialStateFormModal);
-    const [showModalInfoArquivosDeCarga, setShowModalInfoArquivosDeCarga] = useState(false);
     const [showModalConfirmDeleteArquivosDeCarga, setShowModalConfirmDeleteArquivosDeCarga] = useState(false);
-    const [infoModalArquivosDeCarga, setInfoModalArquivosDeCarga] = useState('');
+
 
     const handleClickEditarArquivos = useCallback(async (rowData) => {
         setShowModalForm(true);
@@ -291,16 +299,13 @@ const ArquivosDeCarga = () => {
                 await postCreateArquivoDeCarga(payload);
                 console.log("Arquivo de carga criado com sucesso");
                 setShowModalForm(false);
-                setInfoModalArquivosDeCarga('Arquivo de carga criado com sucesso');
-                setShowModalInfoArquivosDeCarga(true);
+                toastCustom.ToastCustomSuccess('Arquivo de carga', `Arquivo de carga criado com sucesso`)
                 await carregaArquivosPeloTipoDeCarga();
             }catch (e) {
                 console.log("Erro ao criar Arquivo de carga ", e.response.data);
-                setInfoModalArquivosDeCarga('Erro ao criar Arquivo de carga');
-                setShowModalInfoArquivosDeCarga(true);
+                toastCustom.ToastCustomError('Arquivo de carga', `Erro ao criar arquivo de carga.`)
                 if (e.response.data.identificador[0]){
-                    setInfoModalArquivosDeCarga(e.response.data.identificador[0]);
-                    setShowModalInfoArquivosDeCarga(true);
+                    toastCustom.ToastCustomError('Arquivo de carga', `${e.response.data.identificador[0]}`)
                 }
             }
         }else if (values.operacao === 'edit'){
@@ -321,16 +326,13 @@ const ArquivosDeCarga = () => {
                 await patchAlterarArquivoDeCarga(values.uuid, payload);
                 console.log("Arquivo de carga alterado com sucesso");
                 setShowModalForm(false);
-                setInfoModalArquivosDeCarga('Arquivo de carga alterado com sucesso');
+                toastCustom.ToastCustomSuccess('Arquivo de carga', `Arquivo de carga alterado com sucesso`)
                 await carregaArquivosPeloTipoDeCarga();
-                setShowModalInfoArquivosDeCarga(true);
             }catch (e) {
                 console.log("Erro ao alterar Arquivo de carga ", e.response.data);
-                setInfoModalArquivosDeCarga('Erro ao criar Arquivo de carga');
-                setShowModalInfoArquivosDeCarga(true);
+                toastCustom.ToastCustomError('Arquivo de carga', `Erro ao alterar arquivo de carga.`)
                 if (e.response.data.identificador[0]){
-                    setInfoModalArquivosDeCarga(e.response.data.identificador[0]);
-                    setShowModalInfoArquivosDeCarga(true);
+                    toastCustom.ToastCustomError('Arquivo de carga', `${e.response.data.identificador[0]}`)
                 }
             }
         }
@@ -342,23 +344,17 @@ const ArquivosDeCarga = () => {
             console.log("Arquivo de Carga excluído com sucesso");
             setShowModalConfirmDeleteArquivosDeCarga(false);
             setShowModalForm(false);
-            setInfoModalArquivosDeCarga('Arquivo de Carga excluído com sucesso');
-            setShowModalInfoArquivosDeCarga(true);
+            toastCustom.ToastCustomSuccess('Arquivo de carga', `Arquivo de Carga excluído com sucesso`)
             await carregaArquivosPeloTipoDeCarga();
         }catch (e) {
             console.log("Erro ao excluir Arquivo de carga ", e.response.data);
-            setInfoModalArquivosDeCarga('Erro ao excluir Arquivo de carga');
-            setShowModalInfoArquivosDeCarga(true);
+            toastCustom.ToastCustomError('Arquivo de carga', `Erro ao excluir Arquivo de carga`)
         }
     };
 
     const handleCloseFormModal = () => {
         setShowModalForm(false)
     };
-
-    const handleCloseModalInfoArquivosDeCarga = useCallback(() => {
-        setShowModalInfoArquivosDeCarga(false);
-    }, []);
 
     const handleCloseConfirmDeleteArquivoDeCarga = useCallback(()=>{
         setShowModalConfirmDeleteArquivosDeCarga(false)
@@ -414,16 +410,6 @@ const ArquivosDeCarga = () => {
                         statusTemplate={statusTemplate}
                         handleClose={handleCloseFormModal}
                         handleSubmitModalForm={handleSubmitModalForm}
-                    />
-                </section>
-                <section>
-                    <ModalInfoArquivoDeCargas
-                        show={showModalInfoArquivosDeCarga}
-                        handleClose={handleCloseModalInfoArquivosDeCarga}
-                        titulo='Arquivos de Carga'
-                        texto={`<p class="mb-0"> ${infoModalArquivosDeCarga}</p>`}
-                        primeiroBotaoTexto="Fechar"
-                        primeiroBotaoCss="success"
                     />
                 </section>
                 <section>
