@@ -20,9 +20,11 @@ import {
     showMensagemSucessoAoRemoverAcesso
 } from "../../GestaoDeUsuarios/utils/mensagens-remover-acesso";
 import {ModalConfirmacaoRemoverAcesso} from "../../GestaoDeUsuarios/components/ModalConfirmacaoRemoverAcesso";
-
+import { RetornaSeTemPermissaoEdicaoGestaoUsuarios } from "../../GestaoDeUsuarios/utils/RetornaSeTemPermissaoEdicaoGestaoUsuarios";
 
 export const FormUsuario = ({usuario}) => {
+    const TEM_PERMISSAO_EDICAO_GESTAO_USUARIOS = RetornaSeTemPermissaoEdicaoGestaoUsuarios()
+
     const { modo, Modos, uuidUnidadeBase, visaoBase} = useContext(GestaoDeUsuariosFormContext)
     const { mutate: createUsuario, isLoading: isLoadingCreate, error: errorOnCreate, data: resultPost } = useCreateUsuario();
     const { mutate: updateUsuario, isLoading: isLoadingUpdate, error: errorOnUpdate, data: resultPut } = useUpdateUsuario();
@@ -288,9 +290,13 @@ export const FormUsuario = ({usuario}) => {
                 return (
                     <form onSubmit={props.handleSubmit}>
                         <div className="row">
+                            <div className='col-12'>
+                                <p>* Preenchimento obrigatório</p>
+                            </div>
+
                             <div className="col-12 col-md-6">
                                 <div className="form-group">
-                                    <label htmlFor="e_servidor">Tipo de usuário</label>
+                                    <label htmlFor="e_servidor">Tipo de usuário *</label>
                                     <select
                                         value={values.e_servidor}
                                         onChange={(e) => {
@@ -298,7 +304,7 @@ export const FormUsuario = ({usuario}) => {
                                         }}
                                         name="e_servidor"
                                         className="form-control"
-                                        disabled={modo !== Modos.INSERT}
+                                        disabled={modo !== Modos.INSERT || !TEM_PERMISSAO_EDICAO_GESTAO_USUARIOS}
                                         onBlur={() => {
                                             validacoesPersonalizadas(values, {
                                                 setFieldValue,
@@ -319,7 +325,7 @@ export const FormUsuario = ({usuario}) => {
 
                             <div className="col-12 col-md-6">
                                 <div className="form-group">
-                                    <label htmlFor="username">{values.e_servidor === "False" ? "CPF" : "RF"}</label>
+                                    <label htmlFor="username">{values.e_servidor === "False" ? "CPF *" : "RF *"}</label>
                                     <MaskedInput
                                         mask={idUsuarioCondicionalMask(values.e_servidor)}
                                         showMask={false}
@@ -331,7 +337,7 @@ export const FormUsuario = ({usuario}) => {
                                         name="username"
                                         className="form-control"
                                         placeholder={values.e_servidor === "False" ? "Insira o CPF do usuário, sem ponto nem traço" : "Insira o RF do servidor, sem ponto nem traço"}
-                                        disabled={!values.e_servidor || modo !== Modos.INSERT}
+                                        disabled={!values.e_servidor || modo !== Modos.INSERT || !TEM_PERMISSAO_EDICAO_GESTAO_USUARIOS}
                                         onBlur={() => {
                                             validacoesPersonalizadas(values, {
                                                 setFieldValue,
@@ -360,7 +366,7 @@ export const FormUsuario = ({usuario}) => {
                             {!isLoading &&
                             <div className="col-12 col-md-6">
                                 <div className="form-group">
-                                    <label htmlFor="name">Nome Completo</label>
+                                    <label htmlFor="name">Nome Completo *</label>
                                     <input
                                         type="text"
                                         value={props.values.name ? props.values.name : ""}
@@ -370,6 +376,7 @@ export const FormUsuario = ({usuario}) => {
                                         name="name"
                                         className="form-control"
                                         readOnly={bloquearCampoName}
+                                        disabled={!TEM_PERMISSAO_EDICAO_GESTAO_USUARIOS}
                                         maxLength='255'
                                         onBlur={() => {
                                             validacoesPersonalizadas(props.values, {
@@ -400,7 +407,7 @@ export const FormUsuario = ({usuario}) => {
                                         className="form-control"
                                         placeholder='Insira o email'
                                         maxLength='254'
-                                        disabled={!values.e_servidor || !values.username}
+                                        disabled={!values.e_servidor || !values.username || !TEM_PERMISSAO_EDICAO_GESTAO_USUARIOS}
                                     />
                                     {props.errors.email && <span className="span_erro text-danger mt-1"> {props.errors.email}</span>}
                                 </div>
@@ -418,11 +425,12 @@ export const FormUsuario = ({usuario}) => {
                                     setShowModalConfirmaRemoverAcesso(true)
                                 }}
                                 className="btn btn btn-danger mt-2 mr-2"
+                                disabled={!TEM_PERMISSAO_EDICAO_GESTAO_USUARIOS}
                             >
                                 Remover acesso
                             </button>
                             }
-                            <button type="submit" className="btn btn-success mt-2 ml-2">Salvar</button>
+                            <button type="submit" className="btn btn-success mt-2 ml-2" disabled={!TEM_PERMISSAO_EDICAO_GESTAO_USUARIOS}>Salvar</button>
                         </div>
                         }
 
