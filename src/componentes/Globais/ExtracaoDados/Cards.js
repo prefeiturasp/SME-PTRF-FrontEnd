@@ -66,7 +66,7 @@ export const cards = [
         descricao: 'Arquivo com informações dos demonstrativos financeiros das prestações de contas por conta, período e unidade. ',
         tags: ['CSV'],
         endpoint: '/api/exportacoes-dados/demonstrativos-financeiros/',
-        visao: ['SME']
+        visao: ['DRE','SME']
     },
     {
         titulo: 'Despesas: Documentos',
