@@ -55,6 +55,8 @@ export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao}) => {
 
     const associacaoUuid = dadosDaAssociacao.dados_da_associacao.uuid;
 
+    const [loadingPeriodos, setLoadingPeriodos] = useState(false);
+
     const carregaProcessos = async () => {
         let processos = await getProcessosAssociacao(associacaoUuid);
         setProcessosList(processos)
@@ -68,6 +70,7 @@ export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao}) => {
     const carregaPeriodosDisponiveis = async () => {
         let periodosDisponiveis = await getPeriodosDisponiveis(associacaoUuid, stateProcessoForm.ano, stateProcessoForm.uuid)
         setPeriodosDisponiveis(periodosDisponiveis)
+        setLoadingPeriodos(false);
     }
 
     useEffect(() => {
@@ -103,7 +106,7 @@ export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao}) => {
     };
 
     const handleEditProcessoAction = (processo) => {
-
+        setLoadingPeriodos(true);
         let lista_uuids_periodos = []
         for(let i=0; i<=processo.periodos.length-1; i++){
             lista_uuids_periodos.push(processo.periodos[i].uuid)
@@ -116,7 +119,7 @@ export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao}) => {
             periodos: lista_uuids_periodos,
         };
         setShowProcessoForm(true);
-        setStateProcessoForm(initFormProcesso)
+        setStateProcessoForm(initFormProcesso);
     };
 
     const handleDeleteProcessoAction = (processo) => {
@@ -369,6 +372,7 @@ export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao}) => {
                                 periodosDisponiveis={periodosDisponiveis}
                                 customNumeroProcessoError={customNumeroProcessoError}
                                 setCustomNumeroProcessoError={setCustomNumeroProcessoError}
+                                loadingPeriodos={loadingPeriodos}
                             />
                         </section>
 
