@@ -371,14 +371,14 @@ const routesConfig = [
         exact: true,
         path: "/gestao-de-usuarios-list",
         component: GestaoDeUsuariosListPage,
-        permissoes: ['access_gestao_usuarios_ue', 'access_gestao_usuarios_dre', 'access_gestao_usuarios_sme'],
+        permissoes: ['access_gestao_usuarios_ue', 'change_gestao_usuarios_ue', 'access_gestao_usuarios_dre', 'change_gestao_usuarios_dre', 'access_gestao_usuarios_sme', 'change_gestao_usuarios_sme'],
         featureFlag: 'gestao-usuarios',
     },
     {
         exact: true,
         path: "/gestao-de-usuarios-form/:id_usuario?",
         component: GestaoDeUsuariosFormPage,
-        permissoes: ['access_gestao_usuarios_ue', 'access_gestao_usuarios_dre', 'access_gestao_usuarios_sme'],
+        permissoes: ['access_gestao_usuarios_ue', 'change_gestao_usuarios_ue', 'access_gestao_usuarios_dre', 'change_gestao_usuarios_dre', 'access_gestao_usuarios_sme', 'change_gestao_usuarios_sme'],
         featureFlag: 'gestao-usuarios',
     },
     {
@@ -446,9 +446,9 @@ const routesConfig = [
     },
     {
         exact: true,
-        path: "/parametro-arquivos-de-carga/:tipo_de_carga/",
+        path: "/parametro-arquivos-de-carga/:tipo_de_carga/:versao?",
         component: ArquivosDeCarga,
-        permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
+        permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes', 'access_gestao_usuarios_sme', 'change_gestao_usuarios_sme'],
     },
     {
         exact: true,

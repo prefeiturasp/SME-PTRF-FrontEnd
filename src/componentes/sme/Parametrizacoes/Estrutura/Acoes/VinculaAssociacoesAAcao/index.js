@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from "react";
-import Toast from 'react-bootstrap/Toast'
 import Dropdown from 'react-bootstrap/Dropdown';
 import "../../../../../Globais/ModalBootstrap/modal-bootstrap.scss"
 import Img404 from "../../../../../../assets/img/img-404.svg";
@@ -9,44 +8,20 @@ import {Button} from "antd";
 import {MsgImgCentralizada} from  "../../../../../Globais/Mensagens/MsgImgCentralizada";
 import {MsgImgLadoDireito} from "../../../../../Globais/Mensagens/MsgImgLadoDireito";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faArrowLeft, faPlusCircle, faTimesCircle} from "@fortawesome/free-solid-svg-icons";
+import {faArrowLeft, faPlusCircle} from "@fortawesome/free-solid-svg-icons";
 import {ModalVincularLote} from "./Modais";
 import "./associacoes.scss";
 import {Link, useParams} from 'react-router-dom';
 import {PaginasContainer} from "../../../../../../paginas/PaginasContainer";
 import {getAssociacoesNaoVinculadasAAcao, getAcao, postAddAcaoAssociacao, addAcoesAssociacoesEmLote} from "../../../../../../services/sme/Parametrizacoes.service"
 import {ModalConfirmVincularAcaoAssociacao} from "./ModalConfirmVincularAcaoAssociacao"
-import {ModalInfoNaoPodeVincular} from "./ModalInfoNaoPodeVincular";
 import { TabelaAssociacaoAcao } from "../TabelaAssociacaoAcao";
 import { getTabelaAssociacoes } from "../../../../../../services/dres/Associacoes.service";
-
-const CustomToast = (propriedades) => {
-    return (
-        <Toast 
-            show={propriedades.show} 
-            onClose={propriedades.fecharToast} 
-            className="text-white bg-dark bg-gradient"
-            style={{
-                maxWidth: "600px"
-          }}>
-          <Toast.Header 
-            className="text-white bg-dark bg-gradient"
-           >
-            <img
-              src="holder.js/20x20?text=%20"
-              className="rounded mr-2"
-              alt=""
-            />
-            
-            <div>"{propriedades.mensagem}"</div>
-
-          </Toast.Header>
-        </Toast>
-    )
-}
-
+import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../../RetornaSeTemPermissaoEdicaoPainelParametrizacoes";// Preparação para react-router-dom-v6
+import {toastCustom} from "../../../../../Globais/ToastCustom";
 
 export const VinculaAssociacoesAAcao = () => {
+    const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES = RetornaSeTemPermissaoEdicaoPainelParametrizacoes()
     const rowsPerPage = 10;
     let {acao_uuid} = useParams();
 
@@ -63,11 +38,7 @@ export const VinculaAssociacoesAAcao = () => {
     const [buscaUtilizandoFiltros, setBuscaUtilizandoFiltros] = useState(false);
     const [quantidadeSelecionada, setQuantidadeSelecionada] = useState(0);
     const [showModalVincular, setShowModalVincular] = useState(false);
-    const [showToast, setShowToast] = useState(false);
     const [showConfirmaVinculo, setShowConfirmaVinculo] = useState(false);
-    const [showModalInfoNaoPodeVincular, setShowModalInfoNaoPodeVincular] = useState(false);
-    const [mensagemModalInfoNaoPodeVincular, setMensagemModalInfoNaoPodeVincular] = useState({titulo: "", mensagem: ""});
-    const [mensagemToast, setMensagemToast] = useState("");
     const [tabelaAssociacoes, setTabelaAssociacoes] = useState({});
 
     useEffect(() => {
@@ -120,7 +91,6 @@ export const VinculaAssociacoesAAcao = () => {
         setLoading(true);
         setEstadoFiltros(estadoInicialFiltros);
         await buscaUnidadesNaoVinculadasAAcao(acao_uuid);
-        setShowToast(false);
         setLoading(false)
     };
 
@@ -206,10 +176,6 @@ export const VinculaAssociacoesAAcao = () => {
     }
 
     const tratarSelecionado = (e, unidadeUuid) => {
-        if (showToast === true) {
-           setShowToast(false)
-        }
-
         let cont = quantidadeSelecionada;
         if (e.target.checked) {
             cont = cont + 1
@@ -240,6 +206,7 @@ export const VinculaAssociacoesAAcao = () => {
     }
 
     const montagemVincularLote = () => {
+        const disabled = !TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES;
         return (
             <div className="row">
                 <div className="col-12" style={{background: "#00585E", color: 'white', padding:"15px", margin:"0px 15px", flex:"100%"}}>
@@ -248,23 +215,36 @@ export const VinculaAssociacoesAAcao = () => {
                             {quantidadeSelecionada} {quantidadeSelecionada === 1 ? "unidade selecionada" : "unidades selecionadas"}  / {unidades.length} totais
                         </div>
                         <div className="col-7">
-                            <div className="row">
-                                <div className="col-12">
-                                    <a className="float-right" onClick={(e) => desmarcarTodos(e)} style={{textDecoration:"underline", cursor:"pointer"}}>
-                                        <strong>Cancelar</strong>
-                                    </a>
-                                    <div className="float-right" style={{padding: "0px 10px"}}>|</div>
-                                    <a className="float-right" onClick={() => handleValidaAssociacoesEmLote()} style={{textDecoration:"underline", cursor:"pointer"}}>
+                            <div className="d-flex align-items-center justify-content-end">
+                                <Button 
+                                    type='link'
+                                    style={{textDecoration:"underline", color: disabled ? "grey" : "white"}}
+                                    onClick={() => handleValidaAssociacoesEmLote()}
+                                    icon={
                                         <FontAwesomeIcon
-                                            style={{color: "white", fontSize: '15px', marginRight: "2px"}}
+                                            style={{
+                                                fontSize: '15px', 
+                                                marginRight: 2, 
+                                                color: disabled ? "grey" : "white"
+                                            }}
                                             icon={faPlusCircle}
                                         />
-                                        <strong>Vincular à ação</strong>
-                                    </a>
-                                </div>
-
-                            </div>
-                        </div>
+                                    }
+                                    disabled={disabled} 
+                                >
+                                    <strong>Vincular à ação</strong>            
+                                </Button>
+                                <div className="float-right">|</div>
+                                <Button 
+                                    type='link'
+                                    color="secondary"
+                                    style={{textDecoration:"underline", color:"#fff"}}
+                                    onClick={(e) => desmarcarTodos(e)}
+                                >
+                                    <strong>Cancelar</strong>            
+                                </Button>                                    
+                            </div> 
+                        </div>                        
                     </div>
                 </div>
             </div>
@@ -280,28 +260,25 @@ export const VinculaAssociacoesAAcao = () => {
 
     }
 
-    const fecharToast = () => {
-        setShowToast(false);
-    }
-
     const acoesTemplate = (rowData) => {
+        const disabled = rowData.encerrada || !TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES;
         return (
             <div>
                 <Button 
                     type="text" 
-                    className={`${rowData.encerrada ? '': 'link-green'}`}
-                    onClick={() => rowData.encerrada ? null : handleVinculaUE(rowData['uuid'])}
+                    className={`${disabled? '': 'link-green'}`}
+                    onClick={() => disabled? null : handleVinculaUE(rowData['uuid'])}
                     icon={
                         <FontAwesomeIcon
                             style={{
                                 fontSize: '20px', 
                                 marginRight: 3, 
-                                color: rowData.encerrada ? "grey" : ""
+                                color: disabled? "grey" : ""
                             }}
                             icon={faPlusCircle}
                         />
                     }
-                    disabled={rowData.encerrada} 
+                    disabled={disabled} 
                 >
                     Vincular                
                 </Button>                
@@ -326,20 +303,19 @@ export const VinculaAssociacoesAAcao = () => {
         };
         setShowConfirmaVinculo(false);
         try {
-            const result = await postAddAcaoAssociacao(payload)
-            console.log('Associação vinculada com sucesso', associacaoUuid);
+            await postAddAcaoAssociacao(payload)
+            toastCustom.ToastCustomSuccess('Associação vinculada com sucesso')
+            await atualizaListaUnidades()
         } catch (e) {
-            console.log('Erro ao vincular associação!! ', e)
+            toastCustom.ToastCustomError('Erro ao vincular associação')
         }
-        await atualizaListaUnidades()
         setAssociacaoUuid(null);
     };
 
     const handleValidaAssociacoesEmLote = () => {
         let associacoesEncerradasSelecionadas = unidades.filter(u => u.selecionado === true && u.encerrada);
         if(associacoesEncerradasSelecionadas.length > 0) {
-            setShowModalInfoNaoPodeVincular(true);
-            setMensagemModalInfoNaoPodeVincular({titulo: "Ação não permitida", mensagem: "Existem uma ou mais associações encerradas selecionadas."})
+            toastCustom.ToastCustomError('Ação não permitida', 'Existem uma ou mais associações encerradas selecionadas.')
         } else {
             modalVincular();
         }
@@ -355,29 +331,17 @@ export const VinculaAssociacoesAAcao = () => {
 
         let uuids = unidades.filter(u => u.selecionado === true).map(item => {return item.uuid});
 
-        console.log("Lista de uuids", uuids)
-
         payLoad.associacoes_uuids = uuids;
 
         try {
-            let response = await addAcoesAssociacoesEmLote(payLoad);
-            console.log("Associações vinculadas com sucesso!");
-            console.log(response.mensagem);
-            setMensagemToast(response.mensagem ? response.mensagem : "Associações vinculadas com sucesso!")
+            const response = await addAcoesAssociacoesEmLote(payLoad);
+            toastCustom.ToastCustomSuccess('Associações vinculadas com sucesso!', response.mensagem ? response.mensagem : '')
         } catch(e) {
-            console.log("Erro ao tentar vincular associações");
-            console.log(e.response.data);
-            setMensagemToast(e.response && e.response.mensagem ? e.response.mensagem : "Erro ao tentar vincular associações")
+            toastCustom.ToastCustomError('Erro ao tentar vincular associações', e.response && e.response.mensagem ? e.response.mensagem : '');
         }
         await atualizaListaUnidades();
         setLoading(false);
-        setShowToast(true);
         setQuantidadeSelecionada(0);
-    };
-
-    const handleCloseInfoNaoPodeVincular = () => {
-        setShowModalInfoNaoPodeVincular(false);
-        setMensagemModalInfoNaoPodeVincular({titulo: "", mensagem: ""});
     };
 
     const handleOnChangeMultipleSelectStatus =  async (value) => {
@@ -438,14 +402,6 @@ export const VinculaAssociacoesAAcao = () => {
                                     primeiroBotaoTexto="OK"
                                 />
 
-
-                                <CustomToast
-                                    show={showToast}
-                                    fecharToast={fecharToast}
-                                    mensagem={mensagemToast}
-                                />
-
-
                                 {quantidadeSelecionada > 0 ?
                                     (montagemVincularLote()) :
                                     (mensagemQuantidadeExibida())
@@ -488,16 +444,6 @@ export const VinculaAssociacoesAAcao = () => {
                         primeiroBotaoCss="outline-success"
                         segundoBotaoCss="danger"
                         segundoBotaoTexto="Vincular"
-                    />
-                </section>
-                <section>
-                    <ModalInfoNaoPodeVincular
-                        show={showModalInfoNaoPodeVincular}
-                        handleClose={handleCloseInfoNaoPodeVincular}
-                        titulo={mensagemModalInfoNaoPodeVincular.titulo}
-                        texto={mensagemModalInfoNaoPodeVincular.mensagem}
-                        primeiroBotaoTexto="Fechar"
-                        primeiroBotaoCss="success"
                     />
                 </section>
             </div>

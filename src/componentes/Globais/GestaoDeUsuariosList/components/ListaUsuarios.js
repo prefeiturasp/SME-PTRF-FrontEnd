@@ -18,6 +18,7 @@ import {
     showMensagemErroAoRemoverAcesso,
     showMensagemSucessoAoRemoverAcesso
 } from "../../GestaoDeUsuarios/utils/mensagens-remover-acesso";
+import { RetornaSeTemPermissaoEdicaoGestaoUsuarios } from "../../GestaoDeUsuarios/utils/RetornaSeTemPermissaoEdicaoGestaoUsuarios";
 
 const corTagSuporte = {
           1: 'tag-blue-support',
@@ -43,6 +44,8 @@ const dataAcessoConcedidoSmeTag = {
 }
 
 export const ListaUsuarios = ({usuarios, isLoading}) => {
+    const TEM_PERMISSAO_EDICAO_GESTAO_USUARIOS = RetornaSeTemPermissaoEdicaoGestaoUsuarios()
+
     const {uuidUnidadeBase, visaoBase} = useContext(GestaoDeUsuariosListContext);
     const [expandedRows, setExpandedRows] = useState(null);
     const {unidadeEstaEmSuporte} = useAcessoEmSuporteInfo()
@@ -89,8 +92,9 @@ export const ListaUsuarios = ({usuarios, isLoading}) => {
                             setUserIdParaRemoverAcesso(rowData.id)
                             setShowModalConfirmaRemoverAcesso(true)
                         }}
-                        style={{ background: 'none', border: 'none', cursor: 'pointer' }}
-                        className="botao-acao-lista"
+                        style={{ background: 'none', border: 'none'}}
+                        className={`botao-acao-lista ${TEM_PERMISSAO_EDICAO_GESTAO_USUARIOS ? 'botao-acao-lista-enable' : 'botao-acao-lista-disable'} `}
+                        disabled={!TEM_PERMISSAO_EDICAO_GESTAO_USUARIOS}
                     >
                         <FontAwesomeIcon
                             style={{ fontSize: '20px', marginRight: "0", color: "#B40C02" }}

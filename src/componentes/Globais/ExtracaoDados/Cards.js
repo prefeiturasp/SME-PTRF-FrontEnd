@@ -52,21 +52,21 @@ export const cards = [
         descricao: 'Arquivo com informações das atas de reuniões relativas às prestações de contas, por período e unidade.',
         tags: ['CSV'],
         endpoint: '/api/exportacoes-dados/atas-prestacoes-contas/',
-        visao: ['SME']
+        visao: ['SME', 'DRE']
     },
     {
         titulo: 'Despesas: Classificação das despesas',
         descricao: 'Arquivo com informações de despesas (item de despesa classificado) por conta, período e unidade. ',
         tags: ['CSV'],
         endpoint: '/api/exportacoes-dados/rateios/',
-        visao: ['SME']
+        visao: ['DRE', 'SME']
     },
     {
         titulo: 'Prestações de contas: Demonstrativos',
         descricao: 'Arquivo com informações dos demonstrativos financeiros das prestações de contas por conta, período e unidade. ',
         tags: ['CSV'],
         endpoint: '/api/exportacoes-dados/demonstrativos-financeiros/',
-        visao: ['SME']
+        visao: ['DRE','SME']
     },
     {
         titulo: 'Despesas: Documentos',
@@ -102,5 +102,12 @@ export const cards = [
         tags: ['CSV'],
         endpoint: '/api/exportacoes-dados/processos-sei-regularidade/',
         visao: ['SME']
+    },   
+    {
+        titulo: 'Processos SEI de prestação de contas',
+        descricao: 'Arquivo com dados dos processos SEI de prestação de contas das associações.',
+        tags: ['CSV'],
+        endpoint: '/api/exportacoes-dados/processos-sei-prestacao-contas/',
+        visao: ['DRE','SME']
     },    
 ]

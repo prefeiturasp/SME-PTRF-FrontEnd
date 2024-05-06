@@ -6,10 +6,13 @@ import { useGruposDisponiveisAcesso } from "../hooks/useGruposDisponiveisAcesso"
 import { GestaoDeUsuariosFormContext } from "../context/GestaoDeUsuariosFormProvider";
 import { useDesabilitarGrupoAcesso } from "../hooks/useDesabilitarGrupoAcesso";
 import { useHabilitarGrupoAcesso } from "../hooks/useHabilitarGrupoAcesso";
+import { RetornaSeTemPermissaoEdicaoGestaoUsuarios } from "../../GestaoDeUsuarios/utils/RetornaSeTemPermissaoEdicaoGestaoUsuarios";
 
 import "../style/grupos-acesso.scss"
 
 export const GrupoAcesso = ({usuario}) => {
+    const TEM_PERMISSAO_EDICAO_GESTAO_USUARIOS = RetornaSeTemPermissaoEdicaoGestaoUsuarios()
+
     const { visaoBase, uuidUnidadeBase } = useContext(GestaoDeUsuariosFormContext)
 
     const {isLoading, data: grupos } = useGruposDisponiveisAcesso(usuario ? usuario : null, visaoBase ? visaoBase : null, uuidUnidadeBase ? uuidUnidadeBase : null);
@@ -69,6 +72,7 @@ export const GrupoAcesso = ({usuario}) => {
                       type="checkbox"
                       onChange={() => handleChangeCheckboxAcesso(group)}
                       checked={group.possui_acesso}
+                      disabled={!TEM_PERMISSAO_EDICAO_GESTAO_USUARIOS}
                     />
                   </div>
                   <div className="d-flex flex-column">

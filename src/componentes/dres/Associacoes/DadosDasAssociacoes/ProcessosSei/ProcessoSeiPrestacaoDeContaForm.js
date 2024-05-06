@@ -6,6 +6,7 @@ import * as yup from "yup";
 import MaskedInput from "react-text-mask";
 import {visoesService} from "../../../../../services/visoes.service";
 import {Select} from "antd";
+import Spinner from "../../../../../assets/img/spinner.gif"
 
 export const YupSignupSchemaProcesso = yup.object().shape({
     numero_processo: yup.string().required("Campo Número do processo é obrigatório"),
@@ -21,7 +22,7 @@ export const YupSignupSchemaProcesso = yup.object().shape({
             }),
 });
 
-export const ProcessoSeiPrestacaoDeContaForm = ({show, handleClose, onSubmit, handleChange, handleChangeSelectPeriodos, validateForm, initialValues, periodosDisponiveis, customNumeroProcessoError, setCustomNumeroProcessoError}) => {
+export const ProcessoSeiPrestacaoDeContaForm = ({show, handleClose, onSubmit, handleChange, handleChangeSelectPeriodos, validateForm, initialValues, periodosDisponiveis, customNumeroProcessoError, setCustomNumeroProcessoError, loadingPeriodos}) => {
 
     const { Option } = Select;
 
@@ -106,18 +107,18 @@ export const ProcessoSeiPrestacaoDeContaForm = ({show, handleClose, onSubmit, ha
                                             <>
                                                 <div className="col-12">
                                                     <div className="form-group">
-                                                        <label htmlFor="periodos">Períodos *</label>
+                                                        <label htmlFor="periodos">Períodos *{loadingPeriodos && <img alt="" src={Spinner} style={{height: "22px"}}/>}</label>
                                                         <Select
                                                             mode="multiple"
                                                             allowClear
                                                             style={{width: '100%'}}
-                                                            placeholder="Períodos"
+                                                            placeholder={loadingPeriodos ? "Carregando períodos" : "Períodos"}
                                                             name="periodos"
                                                             id="periodos"
-                                                            value={props.values.periodos}
+                                                            value={loadingPeriodos ? null : props.values.periodos}
                                                             onChange={handleChangeSelectPeriodos}
                                                             className='multiselect-lista-valores-reprogramados'
-                                                            disabled={!props.values.ano || props.values.ano.replaceAll("_","").length < 4}
+                                                            disabled={!props.values.ano || props.values.ano.replaceAll("_","").length < 4 || loadingPeriodos}
                                                         >
                                                             {periodosDisponiveis && periodosDisponiveis.length > 0 && periodosDisponiveis.map(item => (
                                                                 <Option key={item.uuid} value={item.uuid}>{item.referencia}</Option>
@@ -140,7 +141,7 @@ export const ProcessoSeiPrestacaoDeContaForm = ({show, handleClose, onSubmit, ha
                                             Cancelar
                                         </button>
                                         <button
-                                            disabled={!visoesService.getPermissoes(['change_processo_sei'])}
+                                            disabled={!visoesService.getPermissoes(['change_processo_sei']) || loadingPeriodos}
                                             type="submit"
                                             className="btn btn-success mt-2"
                                         >
