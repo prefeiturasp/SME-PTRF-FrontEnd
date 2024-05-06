@@ -41,7 +41,7 @@ export const Associacoes = () => {
         setLoading(true);
         let todas_associacoes = await getParametrizacoesAssociacoes(page, filtrar_por_tipo_ue, filtrar_por_dre, filtrar_por_associacao, filtrar_por_informacao);
         setListaDeAssociacoes(todas_associacoes);
-        setListaDeAssociacoesFiltrarCnpj(todas_associacoes);
+        setListaDeAssociacoesFiltrarCnpj(todas_associacoes.results);
         setLoading(false);
     }, []);
 

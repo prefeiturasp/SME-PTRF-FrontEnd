@@ -16,9 +16,12 @@ import { MsgImgCentralizada } from "../../../Globais/Mensagens/MsgImgCentralizad
 import Img404 from "../../../../assets/img/img-404.svg"
 import { BarraTopoListagem } from "./BarraTopoListagem";
 import { ModalConfirmacao } from "./ModalConfirmacao";
+import { RetornaSeTemPermissaoEdicaoGestaoUsuarios } from "../../GestaoDeUsuarios/utils/RetornaSeTemPermissaoEdicaoGestaoUsuarios";
 
 
 export const UnidadesUsuario = ({usuario}) => {
+    const TEM_PERMISSAO_EDICAO_GESTAO_USUARIOS = RetornaSeTemPermissaoEdicaoGestaoUsuarios()
+
     const { visaoBase, uuidUnidadeBase, modo } = useContext(GestaoDeUsuariosFormContext)
     const { showModalRemoverAcesso, setShowModalRemoverAcesso, textoModalRemoverAcesso, payloadRemoveAcessoConcedidoSme, setPayloadRemoveAcessoConcedidoSme,  } = useContext(UnidadesUsuarioContext)
 
@@ -67,7 +70,7 @@ export const UnidadesUsuario = ({usuario}) => {
                     onChange={() => handleChangeSwitchTemAcesso(rowData)}
                     checked={rowData.tem_acesso}
                     name="temAcessoSwitch"
-                    disabled={disableSwitchTemAcesso(rowData)}
+                    disabled={disableSwitchTemAcesso(rowData) || !TEM_PERMISSAO_EDICAO_GESTAO_USUARIOS}
                     className={`switch-tem-acesso ${rowData.tem_acesso ? "switch-tem-acesso-checked" : ""}`}
                 />
                 

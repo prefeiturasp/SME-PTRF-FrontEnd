@@ -8,9 +8,14 @@ export const ModalFormAcoes = (props) => {
         return (
             <>
                 <form onSubmit={props.handleSubmitModalFormAcoes}>
+                    <div className="row">
+                        <div className='col-12'>
+                            <p>* Preenchimento obrigatório</p>
+                        </div>
+                    </div>                    
                     <div className='row mt-3'>
                         <div className='col'>
-                            <label htmlFor="nome">Nome da ação</label>
+                            <label htmlFor="nome">Nome da ação *</label>
                             <input
                                 value={props.stateFormModal.nome}
                                 name='nome'
@@ -18,6 +23,7 @@ export const ModalFormAcoes = (props) => {
                                 type="text"
                                 className="form-control"
                                 onChange={(e) => props.handleChangeFormModal(e.target.name, e.target.value)}
+                                disabled={props.readOnly}
                             />
                         </div>
 
@@ -31,6 +37,7 @@ export const ModalFormAcoes = (props) => {
                                 className="form-control"
                                 onChange={(e) => props.handleChangeFormModal(e.target.name, e.target.value)}
                                 maxLength={10}
+                                disabled={props.readOnly}
                             />
                         </div>
 
@@ -44,6 +51,7 @@ export const ModalFormAcoes = (props) => {
                                 className="form-check-input"
                                 defaultChecked={false}
                                 onChange={(e) => props.handleChangeFormModal(e.target.name, e.target.checked)}
+                                disabled={props.readOnly}
                             />
                             <label className="form-check-label marcar-como-lida" htmlFor="e_recursos_proprios">recursos externos</label>
                         </div>
@@ -63,7 +71,7 @@ export const ModalFormAcoes = (props) => {
 
                     <div className="d-flex bd-highlight mt-2">
                         <div className="p-Y flex-grow-1 bd-highlight">
-                            {props.stateFormModal && props.stateFormModal.operacao === 'edit' &&
+                            {props.stateFormModal && props.stateFormModal.operacao === 'edit' && !props.readOnly &&
                             <button onClick={props.serviceCrudAcoes} type="button" className="btn btn btn-danger mt-2 mr-2">
                                 Apagar
                             </button>

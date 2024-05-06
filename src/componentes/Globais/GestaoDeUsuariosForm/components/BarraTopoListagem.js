@@ -4,9 +4,12 @@ import { useQueryClient } from "@tanstack/react-query";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import { faExclamationCircle, faPlus } from "@fortawesome/free-solid-svg-icons";
 import {Link} from "react-router-dom";
+import { RetornaSeTemPermissaoEdicaoGestaoUsuarios } from "../../GestaoDeUsuarios/utils/RetornaSeTemPermissaoEdicaoGestaoUsuarios";
 
 
 export const BarraTopoListagem = () => {
+    const TEM_PERMISSAO_EDICAO_GESTAO_USUARIOS = RetornaSeTemPermissaoEdicaoGestaoUsuarios()
+
     const { visaoBase, modo, usuarioId } = useContext(GestaoDeUsuariosFormContext)
     const queryClient = useQueryClient()
     const data = queryClient.getQueryData(['unidades-usuario-list'])
@@ -48,7 +51,7 @@ export const BarraTopoListagem = () => {
                         <div className="d-flex">
                             <div className="ml-auto">
                                 <Link
-                                    className="btn btn-success mt-2 ml-2"
+                                    className={`btn btn-success mt-2 ml-2 ${!TEM_PERMISSAO_EDICAO_GESTAO_USUARIOS ? 'link-adicionar-unidade-disable' : ''}`}
                                     to={{
                                         pathname: `/gestao-de-usuarios-adicionar-unidade/${usuarioId}`,
                                     }}
