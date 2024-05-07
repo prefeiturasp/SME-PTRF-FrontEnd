@@ -73,7 +73,7 @@ export const cards = [
         descricao: 'Arquivo com informações de despesas por período e unidade.',
         tags: ['CSV'],
         endpoint: '/api/exportacoes-dados/documentos-despesas/',
-        visao: ['SME']
+        visao: ['DRE', 'SME']
     },
     {
         titulo: 'Dados das contas',
