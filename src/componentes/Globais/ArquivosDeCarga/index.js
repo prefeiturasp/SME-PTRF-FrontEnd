@@ -57,6 +57,15 @@ const ArquivosDeCarga = () => {
                     {label: "Cargas de arquivo", url: 'parametro-arquivos-de-carga', origem:'CARGA_USUARIOS'},
                 ],
             }
+        }else if (url_params.tipo_de_carga === 'CARGA_MATERIAIS_SERVICOS') {
+            obj = {
+                titulo: 'Especificações de Materiais e Serviços',
+                acesso_permitido: true,
+                UrlsMenuInterno:[
+                    {label: "Dados especificações de Materiais e Serviços", url: "parametro-especificacoes"},
+                    {label: "Cargas de arquivo", url: "parametro-arquivos-de-carga", origem:'CARGA_MATERIAIS_SERVICOS'},
+                ],
+            }
         }
         return obj
     }, [url_params]);
@@ -399,6 +408,7 @@ const ArquivosDeCarga = () => {
                                 handleSubmitFiltros={handleSubmitFiltros}
                                 limpaFiltros={limpaFiltros}
                                 tabelaArquivos={tabelaArquivos}
+                                tipoCarga={url_params.tipo_de_carga}
                             />
                             <p>Exibindo <span className='total-acoes'>{totalDeArquivos}</span> cargas de arquivo</p>
                             <TabelaArquivosDeCarga
