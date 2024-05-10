@@ -72,6 +72,7 @@ import {Tags} from "../componentes/sme/Parametrizacoes/Estrutura/Tags";
 import {TiposConta} from "../componentes/sme/Parametrizacoes/Estrutura/TiposConta";
 import {FiqueDeOlho} from "../componentes/sme/Parametrizacoes/EdicaoDeTextos/FiqueDeOlho";
 import ArquivosDeCarga from "../componentes/Globais/ArquivosDeCarga";
+import {EspecificacoesMateriaisServicos} from "../componentes/sme/Parametrizacoes/Despesas/EspecificacoesMateriaisServicos";
 import {TiposDeCusteio} from "../componentes/sme/Parametrizacoes/Despesas/TiposDeCusteio"
 import {Fornecedores} from "../componentes/sme/Parametrizacoes/Despesas/Fornecedores";
 import {AnaliseDre} from "../componentes/escolas/AnaliseDre";
@@ -105,6 +106,7 @@ import {ChamaTypescriptFirstComponent} from "../componentes/ChamaTypescriptFirst
 import {
     PaginaDetalhePrestacaoContaReprovadaNaoApresentacao
 } from "../componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContasNaoApresentada/pages/PaginaDetalhePrestacaoContaReprovadaNaoApresentacao";
+
 
 const routesConfig = [
     {
@@ -557,6 +559,12 @@ const routesConfig = [
         path: "/vincula-associacoes-a-acao/:acao_uuid?",
         component: VinculaAssociacoesAAcao,
         permissoes: ['access_painel_parametrizacoes'],
+    },
+    {
+        exact: true,
+        path: "/parametro-especificacoes",
+        component: EspecificacoesMateriaisServicos,
+        permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
     },
     {
         exact: true,
