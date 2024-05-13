@@ -4,6 +4,8 @@ import { TabelaDownloads } from "./TabelaDownloads";
 import { getArquivosDownload, getDownloadArquivo, deleteArquivo, putMarcarDesmarcarLido, getArquivosDownloadFiltros, getStatus } from "../../../services/CentralDeDownload.service";
 import moment from "moment";
 import {CentralDeDownloadContext} from "../../../context/CentralDeDownloads";
+import {ModalConfirmarExclusaoArquivo} from "./ModalConfirmarExclusaoArquivo"
+import {toastCustom} from "../../Globais/ToastCustom";
 
 export const CentralDeDownloads = () => {
 
@@ -19,6 +21,8 @@ export const CentralDeDownloads = () => {
     const [listaArquivos, setListaArquivos] = useState([]);
     const [stateFormFiltros, setStateFormFiltros] = useState(initialStateFormFiltros);
     const [listaStatus, setListaStatus] = useState([]);
+    const [showModalConfirmarExclusaoArquivo, setShowModalConfirmarExclusaoArquivo] = useState(false);
+    const [arquivoSelecionadoParaExclusao, setArquivoSelecionadoParaExclusao] = useState(null);
 
 
     useEffect(()=> {
@@ -69,19 +73,17 @@ export const CentralDeDownloads = () => {
         }
     }
 
-    const excluirArquivo = async(arquivo_download_uuid) => {
-        let decisao = window.confirm("Deseja realmente excluir ?");
-
-        if(decisao){
-            try{
-                await deleteArquivo(arquivo_download_uuid);
+    const excluirArquivo = async() => {
+        try {
+            if(arquivoSelecionadoParaExclusao) {
+                await deleteArquivo(arquivoSelecionadoParaExclusao);
                 await trazerArquivos();
-            }catch(e){
-                console.log("Erro ao efetuar exclusão ", e.response);
+                setShowModalConfirmarExclusaoArquivo(false);
+                toastCustom.ToastCustomSuccess('Exclusão realizada com sucesso')
             }
+        } catch (error) {
+            toastCustom.ToastCustomError('Erro ao tentar excluir arquivo')
         }
-
-        
     }
 
     const marcarDesmarcarLido = async(e, uuid) => {
@@ -118,6 +120,16 @@ export const CentralDeDownloads = () => {
         }
     }
 
+    const handleOpenModalExcluirArquivo = (arquivoId) => {
+        setShowModalConfirmarExclusaoArquivo(true);
+        setArquivoSelecionadoParaExclusao(arquivoId);
+    }
+
+    const hangleCloseModalExcluirArquivo = () => {
+        setShowModalConfirmarExclusaoArquivo(false);
+        setArquivoSelecionadoParaExclusao(null);
+    }
+
     return (
         <>
             <FormFiltrosDownloads
@@ -129,10 +141,18 @@ export const CentralDeDownloads = () => {
             <TabelaDownloads
                 listaArquivos={listaArquivos}
                 downloadArquivo={downloadArquivo}
-                excluirArquivo={excluirArquivo}
+                excluirArquivo={(e) => handleOpenModalExcluirArquivo(e)}
                 marcarDesmarcarLido={marcarDesmarcarLido}
             />
-    
+            <ModalConfirmarExclusaoArquivo
+                open={showModalConfirmarExclusaoArquivo}
+                onOk={() => excluirArquivo()}
+                onCancel={() => hangleCloseModalExcluirArquivo()}
+                titulo="Excluir arquivo"
+                bodyText={"Deseja realmente excluir o arquivo selecionado?"}
+                okText={"Excluir"}
+                cancelText={"Cancelar"}
+            />
         </>
     )
 }
