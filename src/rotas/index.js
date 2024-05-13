@@ -95,6 +95,7 @@ import { GestaoDeUsuariosAdicionarUnidadePage } from "../componentes/Globais/Ges
 import {Mandatos} from "../componentes/sme/Mandatos";
 import {MotivosRejeicaoEncerramentoConta} from "../componentes/sme/Parametrizacoes/Estrutura/MotivosRejeicaoEncerramentoConta";
 import {PaginaMandatosAnteriores} from "../componentes/escolas/MembrosDaAssociacao/pages/PaginaMandatosAnteriores";
+import { ParametrizacoesRepasses } from "../componentes/sme/Parametrizacoes/Receitas/ParametrizacoesRepasses";
 
 // Migrando para V6 do react-router-dom
 // Referencia: https://github.com/remix-run/react-router/discussions/8753
@@ -594,6 +595,12 @@ const routesConfig = [
         exact: true,
         path: "/parametro-motivos-estorno",
         component: ParametrizacoesMotivosDeEstorno,
+        permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
+    },
+    {
+        exact: true,
+        path: "/parametro-repasse",
+        component: ParametrizacoesRepasses,
         permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
     },
     {
