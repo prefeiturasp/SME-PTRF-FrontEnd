@@ -5,13 +5,13 @@ import { ModalFormBodyText } from "../../../../../Globais/ModalBootstrap";
 import { RepassesContext } from "../context/Repasse";
 import { useGetTabelasRepasse } from "../hooks/useGetTabelasRepasse";
 import { useGetTabelasPorAssociacao } from "../hooks/useGetTabelasPorAssociacao";
-import { useGetUnidadesAutoComplete } from "../hooks/useGetUnidadesAutoComplete";
-import ReactTooltip from "react-tooltip";
+
 import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
 import { ReactNumberFormatInput as CurrencyInput } from "../../../../../Globais/ReactNumberFormatInput";
 import { trataNumericos } from "../../../../../../utils/ValidacoesAdicionaisFormularios";
 import Spinner from "../../../../../../assets/img/spinner.gif"
 import AutoCompleteAssociacoes from "./AutoCompleteAssociacoes";
+import { YupSchemaRepasse } from "../YupSchemaRepasse";
 
 export const ModalForm = ({handleSubmitFormModal, todasAsAssociacoesAutoComplete, loadingAssociacoes}) => {
     const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES = RetornaSeTemPermissaoEdicaoPainelParametrizacoes()
@@ -20,12 +20,6 @@ export const ModalForm = ({handleSubmitFormModal, todasAsAssociacoesAutoComplete
     const { data: tabelas } = useGetTabelasRepasse();
     const { data: tabelas_por_associacao } = useGetTabelasPorAssociacao();
     
-    const handleChangeFormModal = (name, value) => {
-        setStateFormModal({
-          ...stateFormModal,
-          [name]: value,
-        }); 
-    };
 
     const campo_editavel = (campo) => {
         if(!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES){
@@ -44,6 +38,7 @@ export const ModalForm = ({handleSubmitFormModal, todasAsAssociacoesAutoComplete
             <>
                 <Formik
                     initialValues={stateFormModal}
+                    validationSchema={YupSchemaRepasse}
                     enableReinitialize={true}
                     validateOnChange={false}
                     validateOnBlur={false}
@@ -60,6 +55,7 @@ export const ModalForm = ({handleSubmitFormModal, todasAsAssociacoesAutoComplete
                                     {stateFormModal.uuid 
                                     ? 
                                         <div className='form-group col-md-12'>
+                                            <p className='text-right mb-0'>* Preenchimento obrigatório</p>
                                             <label htmlFor="unidade_educacional">Unidade Educacional *</label>
                                             <input
                                                 value={values.nome_unidade}
@@ -73,6 +69,7 @@ export const ModalForm = ({handleSubmitFormModal, todasAsAssociacoesAutoComplete
                                         </div>
                                     :
                                         <div className="form-group col-md-12">
+                                            <p className='text-right mb-0'>* Preenchimento obrigatório</p>
                                             <label htmlFor="unidade_educacional">Unidade Educacional *{loadingAssociacoes && <img alt="" src={Spinner} style={{height: "22px"}}/>}</label>
                                             <AutoCompleteAssociacoes
                                                 todasAsAssociacoesAutoComplete={todasAsAssociacoesAutoComplete}
@@ -81,13 +78,14 @@ export const ModalForm = ({handleSubmitFormModal, todasAsAssociacoesAutoComplete
                                                 loadingAssociacoes={loadingAssociacoes}
                                                 
                                             />
+                                            {props.touched.associacao && props.errors.associacao && <span className="span_erro text-danger mt-1"> {props.errors.associacao}</span>}
                                         </div>
                                     }  
                                 </div>
 
                                 <div className="form-row">
                                     <div className="form-group col-md-4">
-                                        <label htmlFor="valor_capital">Valor capital</label>
+                                        <label htmlFor="valor_capital">Valor capital *</label>
                                         <CurrencyInput
                                             disabled={!campo_editavel("valor_capital")}
                                             allowNegative={false}
@@ -107,7 +105,7 @@ export const ModalForm = ({handleSubmitFormModal, todasAsAssociacoesAutoComplete
                                     </div>
 
                                     <div className="form-group col-md-4">
-                                        <label htmlFor="valor_custeio">Valor custeio</label>
+                                        <label htmlFor="valor_custeio">Valor custeio *</label>
                                         <CurrencyInput
                                             disabled={!campo_editavel("valor_custeio")}
                                             allowNegative={false}
@@ -127,7 +125,7 @@ export const ModalForm = ({handleSubmitFormModal, todasAsAssociacoesAutoComplete
                                     </div>
 
                                     <div className="form-group col-md-4">
-                                        <label htmlFor="valor_livre">Valor livre aplicação</label>
+                                        <label htmlFor="valor_livre">Valor livre aplicação *</label>
                                         <CurrencyInput
                                             disabled={!campo_editavel("valor_livre")}
                                             allowNegative={false}
@@ -149,7 +147,7 @@ export const ModalForm = ({handleSubmitFormModal, todasAsAssociacoesAutoComplete
 
                                 <div className="form-row">
                                     <div className="form-group col-md-6">
-                                        <label htmlFor="conta_associacao">Conta</label>
+                                        <label htmlFor="conta_associacao">Conta *</label>
                                         <select
                                             disabled={!campo_editavel("campos_identificacao") || !stateFormModal.associacao}
                                             value={values.conta_associacao}
@@ -163,10 +161,11 @@ export const ModalForm = ({handleSubmitFormModal, todasAsAssociacoesAutoComplete
                                                 <option key={conta_associacao.uuid} value={conta_associacao.uuid}>{conta_associacao.nome}</option>
                                             )}
                                         </select>
+                                        {props.touched.conta_associacao && props.errors.conta_associacao && <span className="span_erro text-danger mt-1"> {props.errors.conta_associacao}</span>}
                                     </div>
 
                                     <div className="form-group col-md-6">
-                                        <label htmlFor="acao_associacao">Ação</label>
+                                        <label htmlFor="acao_associacao">Ação *</label>
                                         <select
                                             disabled={!campo_editavel("campos_identificacao") || !stateFormModal.associacao}
                                             value={values.acao_associacao}
@@ -180,12 +179,13 @@ export const ModalForm = ({handleSubmitFormModal, todasAsAssociacoesAutoComplete
                                                 <option key={acao_associacao.uuid} value={acao_associacao.uuid}>{acao_associacao.nome}</option>
                                             )}
                                         </select>
+                                        {props.touched.acao_associacao && props.errors.acao_associacao && <span className="span_erro text-danger mt-1"> {props.errors.acao_associacao}</span>}
                                     </div>
                                 </div>
 
                                 <div className="form-row">
                                     <div className="form-group col-md-6">
-                                        <label htmlFor="periodo">Período</label>
+                                        <label htmlFor="periodo">Período *</label>
                                         <select
                                             disabled={!campo_editavel("campos_identificacao")}
                                             value={values.periodo}
@@ -199,10 +199,11 @@ export const ModalForm = ({handleSubmitFormModal, todasAsAssociacoesAutoComplete
                                                 <option key={periodo.uuid} value={periodo.uuid}>{periodo.referencia}</option>
                                             )}
                                         </select>
+                                        {props.touched.periodo && props.errors.periodo && <span className="span_erro text-danger mt-1"> {props.errors.periodo}</span>}
                                     </div>
 
                                     <div className="form-group col-md-6">
-                                        <label htmlFor="status">Status</label>
+                                        <label htmlFor="status">Status *</label>
                                         <select
                                             disabled={!campo_editavel("campos_identificacao")}
                                             value={values.status}

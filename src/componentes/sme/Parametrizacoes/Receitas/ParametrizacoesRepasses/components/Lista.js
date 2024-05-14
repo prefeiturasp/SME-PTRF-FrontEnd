@@ -9,6 +9,7 @@ import { getAssociacoes } from "../../../../../../services/sme/Parametrizacoes.s
 import { useGetRepasses } from "../hooks/useGetRepasses";
 import { usePostRepasse } from "../hooks/usePostRepasse";
 import { usePatchRepasse } from "../hooks/usePatchRepasse";
+import { useDeleteRepasse } from "../hooks/useDeleteRepasse";
 
 import ReactTooltip from "react-tooltip";
 import { round, trataNumericos } from "../../../../../../utils/ValidacoesAdicionaisFormularios";
@@ -16,14 +17,16 @@ import { round, trataNumericos } from "../../../../../../utils/ValidacoesAdicion
 import { faEdit } from "@fortawesome/free-solid-svg-icons";
 import Loading from "../../../../../../utils/Loading";
 import { ModalForm } from "./ModalForm";
+import { ModalConfirmacaoExclusao } from "./ModalConfirmacaoExclusao";
 
 export const Lista = () => {
 
-    const { setShowModalForm, stateFormModal, setStateFormModal, setBloquearBtnSalvarForm, showModalConfirmacaoExclusao } = useContext(RepassesContext)
+    const { setShowModalForm, stateFormModal, setStateFormModal, setBloquearBtnSalvarForm } = useContext(RepassesContext)
     const { isLoading, data, count } = useGetRepasses()
 
     const { mutationPost } = usePostRepasse();
     const { mutationPatch } = usePatchRepasse();
+    const { mutationDelete } = useDeleteRepasse()
 
     // Este trecho é responsável pelo auto complete de unidades
     const [todasAsAssociacoesAutoComplete, setTodasAsAssociacoesAutoComplete] = useState([]);
@@ -107,6 +110,14 @@ export const Lista = () => {
         }
     };
 
+    const handleExcluirRepasse = async (uuid) => {
+        if (!uuid) {
+            console.log("Erro ao tentar excluir o repasse.")
+        } else {
+            mutationDelete.mutate(uuid)
+        }
+    }
+
     const acoesTemplate = (rowData) => {
         return (
             <div>
@@ -124,15 +135,30 @@ export const Lista = () => {
     };
 
     const valorCapitalTemplate = (rowData) => {
-        return `R$ ${rowData.valor_capital}`
+        let valor_capital = rowData.valor_capital ? Number(rowData.valor_capital).toLocaleString('pt-BR', {
+            style: 'currency',
+            currency: 'BRL'
+        }) : ""
+
+        return valor_capital;
     }
 
     const valorCusteioTemplate = (rowData) => {
-        return `R$ ${rowData.valor_custeio}`
+        let valor_custeio = rowData.valor_custeio ? Number(rowData.valor_custeio).toLocaleString('pt-BR', {
+            style: 'currency',
+            currency: 'BRL'
+        }) : ""
+
+        return valor_custeio;
     }
 
     const valorLivreTemplate = (rowData) => {
-        return `R$ ${rowData.valor_livre}`
+        let valor_livre = rowData.valor_livre ? Number(rowData.valor_livre).toLocaleString('pt-BR', {
+            style: 'currency',
+            currency: 'BRL'
+        }) : ""
+
+        return valor_livre;
     }
 
     const statusTemplate = (rowData) => {
@@ -194,6 +220,12 @@ export const Lista = () => {
                     handleSubmitFormModal={handleSubmitFormModal}
                     todasAsAssociacoesAutoComplete={todasAsAssociacoesAutoComplete}
                     loadingAssociacoes={loadingAssociacoes}
+                />
+            </section>
+
+            <section>
+                <ModalConfirmacaoExclusao
+                    handleExcluirRepasse={handleExcluirRepasse}
                 />
             </section>
         </>
