@@ -22,6 +22,9 @@ export const postCreateArquivoDeCarga = async (payload) => {
     formData.append("tipo_delimitador", payload.tipo_delimitador);
     formData.append("status", payload.status);
     formData.append("conteudo", payload.conteudo);
+    if(payload.periodo){
+        formData.append("periodo", payload.periodo)
+    }
     return (await api.post(`/api/arquivos/`, formData, authHeader)).data
 };
 export const patchAlterarArquivoDeCarga = async (uuid_arquivo_de_carga, payload) => {
@@ -30,6 +33,9 @@ export const patchAlterarArquivoDeCarga = async (uuid_arquivo_de_carga, payload)
     formData.append("tipo_delimitador", payload.tipo_delimitador);
     if (payload.conteudo){
         formData.append("conteudo", payload.conteudo);
+    }
+    if(payload.periodo){
+        formData.append("periodo", payload.periodo)
     }
     return (await api.patch(`/api/arquivos/${uuid_arquivo_de_carga}/`, formData, authHeader)).data
 };
