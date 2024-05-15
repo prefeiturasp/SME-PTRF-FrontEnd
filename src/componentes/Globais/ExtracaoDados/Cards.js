@@ -80,7 +80,7 @@ export const cards = [
         descricao: 'Arquivo com dados das contas das associações.',
         tags: ['CSV'],
         endpoint: '/api/exportacoes-dados/contas-associacao/',
-        visao: ['SME']
+        visao: ['DRE', 'SME']
     },
     {
         titulo: 'Repasses',
