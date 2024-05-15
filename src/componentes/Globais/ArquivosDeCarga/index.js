@@ -16,6 +16,7 @@ import {ModalConfirmDeleteArquivoDeCarga} from "./ModalConfirmDeleteArquivoDeCar
 import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../sme/Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
 import { RetornaSeTemPermissaoEdicaoGestaoUsuarios } from "../GestaoDeUsuarios/utils/RetornaSeTemPermissaoEdicaoGestaoUsuarios";
 import {toastCustom} from "../ToastCustom";
+import { getPeriodos } from "../../../services/dres/Dashboard.service";
 
 const ArquivosDeCarga = () => {
     const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES = RetornaSeTemPermissaoEdicaoPainelParametrizacoes()
@@ -64,6 +65,26 @@ const ArquivosDeCarga = () => {
                 UrlsMenuInterno:[
                     {label: "Dados especificações de Materiais e Serviços", url: "parametro-especificacoes"},
                     {label: "Cargas de arquivo", url: "parametro-arquivos-de-carga", origem:'CARGA_MATERIAIS_SERVICOS'},
+                ],
+            }
+        }else if (url_params.tipo_de_carga === 'REPASSE_PREVISTO') {
+            obj = {
+                titulo: 'Repasses',
+                acesso_permitido: true,
+                UrlsMenuInterno:[
+                    {label: "Repasses", url: "parametro-repasse"},
+                    {label: "Cargas de repasses previstos", url: "parametro-arquivos-de-carga", origem:'REPASSE_PREVISTO'},
+                    {label: "Cargas de repasses realizados", url: "parametro-arquivos-de-carga", origem:'REPASSE_REALIZADO'},
+                ],
+            }
+        }else if (url_params.tipo_de_carga === 'REPASSE_REALIZADO') {
+            obj = {
+                titulo: 'Repasses',
+                acesso_permitido: true,
+                UrlsMenuInterno:[
+                    {label: "Repasses", url: "parametro-repasse"},
+                    {label: "Cargas de repasses previstos", url: "parametro-arquivos-de-carga", origem:'REPASSE_PREVISTO'},
+                    {label: "Cargas de repasses realizados", url: "parametro-arquivos-de-carga", origem:'REPASSE_REALIZADO'},
                 ],
             }
         }
@@ -213,6 +234,7 @@ const ArquivosDeCarga = () => {
             id: rowData.id,
             log: rowData.log,
             operacao: 'edit',
+            periodo: rowData.periodo
             }
         )
     }, [stateFormModal]);
@@ -297,6 +319,10 @@ const ArquivosDeCarga = () => {
         )
     }, [handleClickDeleteArquivoDeCarga, handleClickDownloadArquivoDeCarga, handleClickEditarArquivos, handleClickProcessarArquivoDeCarga]);
 
+    const verificaSeArquivoRequerPeriodo = () => {
+        return tabelaArquivos.tipos_cargas.find(tipo => tipo.id === url_params.tipo_de_carga)?.requer_periodo;
+    }
+
     const handleSubmitModalForm = useCallback(async (values) => {
         if (values.operacao === 'create'){
             try {
@@ -305,7 +331,10 @@ const ArquivosDeCarga = () => {
                     'tipo_carga': url_params.tipo_de_carga,
                     'tipo_delimitador': values.tipo_delimitador,
                     'status': 'PENDENTE',
-                    'conteudo': values.conteudo
+                    'conteudo': values.conteudo,
+                };
+                if(verificaSeArquivoRequerPeriodo()) {
+                    payload.periodo = values.periodo;
                 };
                 await postCreateArquivoDeCarga(payload);
                 console.log("Arquivo de carga criado com sucesso");
@@ -333,6 +362,9 @@ const ArquivosDeCarga = () => {
                     'tipo_delimitador': values.tipo_delimitador,
                 };
             }
+            if(verificaSeArquivoRequerPeriodo()) {
+                payload.periodo = values.periodo;
+            };
             try {
                 await patchAlterarArquivoDeCarga(values.uuid, payload);
                 console.log("Arquivo de carga alterado com sucesso");
@@ -378,6 +410,21 @@ const ArquivosDeCarga = () => {
 
         return TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES;
     }
+
+    const [periodos, setPeriodos] = useState([]);
+
+    const carregaPeriodos = async () => {
+        try {
+            let response = await getPeriodos();
+            setPeriodos(response);
+        } catch (error) {
+            console.log("Erro ao tentar resgatar períodos: ", error)
+        }
+    }
+
+    useEffect(() => {
+        carregaPeriodos();
+    }, []);
 
     return (
         <PaginasContainer>
@@ -431,6 +478,9 @@ const ArquivosDeCarga = () => {
                         statusTemplate={statusTemplate}
                         handleClose={handleCloseFormModal}
                         handleSubmitModalForm={handleSubmitModalForm}
+                        dadosDeOrigem={dadosDeOrigem}
+                        periodos={periodos}
+                        verificaSeArquivoRequerPeriodo={verificaSeArquivoRequerPeriodo}
                     />
                 </section>
                 <section>
