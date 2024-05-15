@@ -3,13 +3,13 @@ import {ModalFormBodyText} from "../ModalBootstrap";
 import {Formik} from "formik";
 import {YupSignupSchemaArquivosDeCarga} from "./YupSignupSchemaArquivosDeCarga";
 
-const ModalFormArquivosDeCarga = ({show, stateFormModal, handleClose, handleSubmitModalForm, tabelaArquivos, statusTemplate}) => {
+const ModalFormArquivosDeCarga = ({show, stateFormModal, handleClose, handleSubmitModalForm, tabelaArquivos, statusTemplate, dadosDeOrigem, periodos, verificaSeArquivoRequerPeriodo}) => {
     const bodyTextarea = () => {
         return (
             <>
                 <Formik
                     initialValues={stateFormModal}
-                    validationSchema={YupSignupSchemaArquivosDeCarga}
+                    validationSchema={YupSignupSchemaArquivosDeCarga(verificaSeArquivoRequerPeriodo)}
                     validateOnBlur={true}
                     enableReinitialize={true}
                     onSubmit={handleSubmitModalForm}
@@ -59,7 +59,25 @@ const ModalFormArquivosDeCarga = ({show, stateFormModal, handleClose, handleSubm
                                         </div>
                                     </div>
                                 </div>
-                                <div className='row'>
+                                {verificaSeArquivoRequerPeriodo() && <div className='row'>
+                                    <div className='col'>
+                                        <label htmlFor="tipo_periodo">Período *</label>
+                                        <select
+                                            value={props.values.periodo && props.values.periodo ? props.values.periodo : ""}
+                                            onChange={props.handleChange}
+                                            name="periodo"
+                                            id="periodo"
+                                            className="form-control"
+                                        >
+                                            <option value=''>Selecione o período</option>
+                                            {periodos && periodos.length > 0 && periodos.map((periodo) =>
+                                                <option key={periodo.uuid} value={periodo.uuid}>{periodo.referencia}</option>
+                                            )}
+                                        </select>
+                                        {props.errors && props.errors.periodo && props.errors.periodo && <span className="span_erro text-danger mt-1"> {props.errors.periodo} </span>}
+                                    </div>
+                                </div>}
+                                <div className='row mt-3'>
                                     <div className='col'>
                                         <label htmlFor="tipo_delimitador">Tipo delimitador</label>
                                         <select
@@ -137,7 +155,7 @@ const ModalFormArquivosDeCarga = ({show, stateFormModal, handleClose, handleSubm
     return (
         <ModalFormBodyText
             show={show}
-            titulo={stateFormModal && stateFormModal && stateFormModal.operacao === 'edit' ? 'Editar associação' : 'Adicionar associação'}
+            titulo={stateFormModal && stateFormModal && stateFormModal.operacao === 'edit' ? `Editar ${dadosDeOrigem.titulo}` : `Adicionar ${dadosDeOrigem.titulo}`}
             onHide={handleClose}
             size='lg'
             bodyText={bodyTextarea()}
