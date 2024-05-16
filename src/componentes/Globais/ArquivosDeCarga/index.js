@@ -333,9 +333,9 @@ const ArquivosDeCarga = () => {
                     'status': 'PENDENTE',
                     'conteudo': values.conteudo,
                 };
-                if(verificaSeArquivoRequerPeriodo()) {
+                if(url_params.tipo_de_carga === 'REPASSE_PREVISTO') {
                     payload.periodo = values.periodo;
-                };
+                }
                 await postCreateArquivoDeCarga(payload);
                 console.log("Arquivo de carga criado com sucesso");
                 setShowModalForm(false);
