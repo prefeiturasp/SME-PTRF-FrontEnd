@@ -18,6 +18,7 @@ import IconeUsuarios from "../../../assets/img/icone-parametro-usuarios.svg"
 import IconeTextosFiqueDeOlho from "../../../assets/img/icone-parametro-textos-fique-de-olho.svg"
 import IconeFornecedores from "../../../assets/img/icone-parametro-fornecedores.svg"
 import IconeMandato from "../../../assets/img/icone-parametro-periodos-de-mandato.svg"
+import IconeRepasses from "../../../assets/img/icone-parametro-repasses.svg"
 
 export const PainelParametrizacoes = () => {
 
@@ -122,6 +123,12 @@ export const PainelParametrizacoes = () => {
             parametro: 'Motivos de Estorno',
             url: 'parametro-motivos-estorno',
             icone: IconeTiposConta,
+            permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
+        },
+        {
+            parametro: 'Repasses',
+            url: 'parametro-repasse',
+            icone: IconeRepasses,
             permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
         }
     ];

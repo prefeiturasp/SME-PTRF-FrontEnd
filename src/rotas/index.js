@@ -72,6 +72,7 @@ import {Tags} from "../componentes/sme/Parametrizacoes/Estrutura/Tags";
 import {TiposConta} from "../componentes/sme/Parametrizacoes/Estrutura/TiposConta";
 import {FiqueDeOlho} from "../componentes/sme/Parametrizacoes/EdicaoDeTextos/FiqueDeOlho";
 import ArquivosDeCarga from "../componentes/Globais/ArquivosDeCarga";
+import {EspecificacoesMateriaisServicos} from "../componentes/sme/Parametrizacoes/Despesas/EspecificacoesMateriaisServicos";
 import {TiposDeCusteio} from "../componentes/sme/Parametrizacoes/Despesas/TiposDeCusteio"
 import {Fornecedores} from "../componentes/sme/Parametrizacoes/Despesas/Fornecedores";
 import {AnaliseDre} from "../componentes/escolas/AnaliseDre";
@@ -94,6 +95,7 @@ import { GestaoDeUsuariosAdicionarUnidadePage } from "../componentes/Globais/Ges
 import {Mandatos} from "../componentes/sme/Mandatos";
 import {MotivosRejeicaoEncerramentoConta} from "../componentes/sme/Parametrizacoes/Estrutura/MotivosRejeicaoEncerramentoConta";
 import {PaginaMandatosAnteriores} from "../componentes/escolas/MembrosDaAssociacao/pages/PaginaMandatosAnteriores";
+import { ParametrizacoesRepasses } from "../componentes/sme/Parametrizacoes/Receitas/ParametrizacoesRepasses";
 
 // Migrando para V6 do react-router-dom
 // Referencia: https://github.com/remix-run/react-router/discussions/8753
@@ -105,6 +107,7 @@ import {ChamaTypescriptFirstComponent} from "../componentes/ChamaTypescriptFirst
 import {
     PaginaDetalhePrestacaoContaReprovadaNaoApresentacao
 } from "../componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContasNaoApresentada/pages/PaginaDetalhePrestacaoContaReprovadaNaoApresentacao";
+
 
 const routesConfig = [
     {
@@ -560,6 +563,12 @@ const routesConfig = [
     },
     {
         exact: true,
+        path: "/parametro-especificacoes",
+        component: EspecificacoesMateriaisServicos,
+        permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
+    },
+    {
+        exact: true,
         path: "/parametro-tipos-custeio",
         component: TiposDeCusteio,
         permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
@@ -586,6 +595,12 @@ const routesConfig = [
         exact: true,
         path: "/parametro-motivos-estorno",
         component: ParametrizacoesMotivosDeEstorno,
+        permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
+    },
+    {
+        exact: true,
+        path: "/parametro-repasse",
+        component: ParametrizacoesRepasses,
         permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
     },
     {

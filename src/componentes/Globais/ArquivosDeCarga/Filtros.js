@@ -1,7 +1,7 @@
 import React from "react";
 import {DatePickerField} from "../DatePickerField";
 
-export const Filtros = ({stateFiltros, handleChangeFiltros, handleSubmitFiltros, limpaFiltros, tabelaArquivos}) => {
+export const Filtros = ({stateFiltros, handleChangeFiltros, handleSubmitFiltros, limpaFiltros, tabelaArquivos, tipoCarga}) => {
     return (
         <>
             <form>
@@ -15,7 +15,7 @@ export const Filtros = ({stateFiltros, handleChangeFiltros, handleSubmitFiltros,
                             id="filtrar_por_identificador"
                             type="text"
                             className="form-control"
-                            placeholder='Escreva o nome da associação'
+                            placeholder={tipoCarga === 'CARGA_ASSOCIACOES' ? 'Escreva o nome da associação' : ''}
                         />
                     </div>
                     <div className="form-group col">
