@@ -29,10 +29,11 @@ import {toastCustom} from "../../../Globais/ToastCustom";
 import { visoesService } from "../../../../services/visoes.service";
 import { getPeriodoPorUuid } from "../../../../services/sme/Parametrizacoes.service";
 import { STATUS_CONTA_ASSOCIACAO, STATUS_SOLICITACAO_ENCERRAMENTO_CONTA_ASSOCIACAO } from "../../../../constantes/contaAssociacao";
+import { useHistory } from 'react-router-dom';
 
 
 export const ReceitaForm = () => {
-
+    const history = useHistory();
     let {origem} = useParams();
     let {uuid} = useParams();
     const parametros = useLocation();
@@ -530,8 +531,14 @@ export const ReceitaForm = () => {
         setShow(false);
         setRedirectTo('');
         getPath('');
-
     };
+
+    const onCancelarEstornoTrue = () => {
+        setShow(false);
+        console.log(despesa.uuid)
+        const path = `/edicao-de-despesa/${despesa.uuid}`;
+        history.push(path);
+    }
 
     const onHandleClose = () => {
         setShow(false);
@@ -1348,7 +1355,7 @@ export const ReceitaForm = () => {
                         <CancelarModalReceitas
                             show={show}
                             handleClose={onHandleClose}
-                            onCancelarTrue={onCancelarTrue}
+                            onCancelarTrue={onCancelarEstornoTrue}
                             titulo={tituloModalCancelar}
                         />
                     </section>
