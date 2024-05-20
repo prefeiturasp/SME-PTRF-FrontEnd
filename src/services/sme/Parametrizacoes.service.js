@@ -22,6 +22,9 @@ export const postCreateArquivoDeCarga = async (payload) => {
     formData.append("tipo_delimitador", payload.tipo_delimitador);
     formData.append("status", payload.status);
     formData.append("conteudo", payload.conteudo);
+    if(payload.periodo){
+        formData.append("periodo", payload.periodo)
+    }
     return (await api.post(`/api/arquivos/`, formData, authHeader)).data
 };
 export const patchAlterarArquivoDeCarga = async (uuid_arquivo_de_carga, payload) => {
@@ -30,6 +33,9 @@ export const patchAlterarArquivoDeCarga = async (uuid_arquivo_de_carga, payload)
     formData.append("tipo_delimitador", payload.tipo_delimitador);
     if (payload.conteudo){
         formData.append("conteudo", payload.conteudo);
+    }
+    if(payload.periodo){
+        formData.append("periodo", payload.periodo)
     }
     return (await api.patch(`/api/arquivos/${uuid_arquivo_de_carga}/`, formData, authHeader)).data
 };
@@ -369,4 +375,51 @@ export const patchAlterarMotivoEstorno = async (motivo_uuid, payload) => {
 
 export const deleteMotivoEstorno = async (motivo_uuid) => {
     return (await api.delete(`/api/motivos-estorno/${motivo_uuid}/`, authHeader))
+};
+
+
+// Repasses
+
+export const getRepasses = async (filter, currentPage) => {
+    const {search, periodo, conta, acao, status} = filter;
+    return (await api.get(`/api/repasses/`,{
+        ...authHeader,
+        params: {
+            search: search,
+            periodo: periodo,
+            conta: conta,
+            acao: acao,
+            status: status,
+            page_size: 20,
+            page: currentPage,
+        }
+    })).data
+}
+
+export const getTabelasRepasse = async () => {
+    return (await api.get(`/api/repasses/tabelas/`, authHeader)).data
+};
+
+export const getTabelasRepassePorAssociacao = async (associacao_uuid) => {
+    return (await api.get(`/api/repasses/tabelas-por-associacao/?associacao_uuid=${associacao_uuid}`, authHeader)).data
+};
+
+export const postRepasse = async (payload) => {
+    return (await api.post(`api/repasses/`, {
+            ...payload
+        },
+        authHeader,
+    ))
+};
+
+export const patchRepasse = async (uuid_repasse, payload) => {
+    return (await api.patch(`api/repasses/${uuid_repasse}/`, {
+            ...payload
+        },
+        authHeader,
+    ))
+};
+
+export const deleteRepasse = async (uuid_repasse) => {
+    return (await api.delete(`api/repasses/${uuid_repasse}/`, authHeader));
 };
