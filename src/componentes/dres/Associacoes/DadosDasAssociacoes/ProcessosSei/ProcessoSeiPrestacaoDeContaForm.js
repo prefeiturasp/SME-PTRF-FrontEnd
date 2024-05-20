@@ -73,6 +73,7 @@ export const ProcessoSeiPrestacaoDeContaForm = ({show, handleClose, onSubmit, ha
                                                     className="form-control"
                                                     placeholder="Número do processo SEI"
                                                     value={props.values.numero_processo ? props.values.numero_processo : ""}
+                                                    disabled={!visoesService.getPermissoes(['change_processo_sei'])}
                                                 />
                                                 {props.errors.numero_processo && <span
                                                     className="span_erro text-danger mt-1"> {props.errors.numero_processo}</span>}
@@ -96,7 +97,7 @@ export const ProcessoSeiPrestacaoDeContaForm = ({show, handleClose, onSubmit, ha
                                                     className="form-control"
                                                     placeholder="Ano do processo"
                                                     value={props.values.ano ? props.values.ano : ""}
-                                                    disabled={!!initialValues.uuid}
+                                                    disabled={!!initialValues.uuid || !visoesService.getPermissoes(['change_processo_sei'])}
                                                 />
                                                 {props.errors.ano &&
                                                 <span className="span_erro text-danger mt-1"> {props.errors.ano}</span>}
@@ -118,7 +119,7 @@ export const ProcessoSeiPrestacaoDeContaForm = ({show, handleClose, onSubmit, ha
                                                             value={loadingPeriodos ? null : props.values.periodos}
                                                             onChange={handleChangeSelectPeriodos}
                                                             className='multiselect-lista-valores-reprogramados'
-                                                            disabled={!props.values.ano || props.values.ano.replaceAll("_","").length < 4 || loadingPeriodos}
+                                                            disabled={!props.values.ano || props.values.ano.replaceAll("_","").length < 4 || loadingPeriodos || !visoesService.getPermissoes(['change_processo_sei'])}
                                                         >
                                                             {periodosDisponiveis && periodosDisponiveis.length > 0 && periodosDisponiveis.map(item => (
                                                                 <Option key={item.uuid} value={item.uuid}>{item.referencia}</Option>
