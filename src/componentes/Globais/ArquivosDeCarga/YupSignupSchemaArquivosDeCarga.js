@@ -1,6 +1,6 @@
 import * as yup from "yup";
 
-export const YupSignupSchemaArquivosDeCarga = (verificaSeArquivoRequerPeriodo) => {
+export const YupSignupSchemaArquivosDeCarga = (verificaSeArquivoRequerPeriodo, arquivoRequerTipoDeConta) => {
     return yup.object().shape({
     identificador: yup.string().required("Identificador é obrigatório"),
     valida_conteudo: yup.boolean(),
@@ -29,6 +29,11 @@ export const YupSignupSchemaArquivosDeCarga = (verificaSeArquivoRequerPeriodo) =
         is: verificaSeArquivoRequerPeriodo,
         then: yup.string().required('Período é obrigatório'),
         otherwise: yup.string()
-    })
+    }),
+    tipo_de_conta: yup.string().when('valida_conteudo', {
+        is: arquivoRequerTipoDeConta,
+        then: yup.string().required('Tipo de conta é obrigatório'),
+        otherwise: yup.string()
+    }),
 });
 }
