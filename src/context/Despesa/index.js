@@ -30,6 +30,9 @@ export const DespesaContextProvider = ({children}) => {
         cpf_cnpj_fornecedor: "",
         nome_fornecedor: "",
         data_transacao: "",
+        despesa_anterior_ao_uso_do_sistema : false,
+        despesa_anterior_ao_uso_do_sistema_editavel : true,
+        despesa_anterior_ao_uso_do_sistema_pc_concluida : false,
         documento_transacao: "",
         valor_total: "",
         valor_recursos_proprios: "",
@@ -50,6 +53,9 @@ export const DespesaContextProvider = ({children}) => {
                 tipo_transacao: "",
                 documento_transacao: "",
                 data_transacao: "",
+                despesa_anterior_ao_uso_do_sistema : false,
+                despesa_anterior_ao_uso_do_sistema_editavel : true,
+                despesa_anterior_ao_uso_do_sistema_pc_concluida : false,
                 rateios: [
                     {
                         tipo_custeio: "",
@@ -97,6 +103,9 @@ export const DespesaContextProvider = ({children}) => {
         cpf_cnpj_fornecedor: "",
         nome_fornecedor: "",
         data_transacao: "",
+        despesa_anterior_ao_uso_do_sistema : false,
+        despesa_anterior_ao_uso_do_sistema_editavel : true,
+        despesa_anterior_ao_uso_do_sistema_pc_concluida : false,
         documento_transacao: "",
         valor_total: "",
         valor_recursos_proprios: "",
@@ -117,6 +126,9 @@ export const DespesaContextProvider = ({children}) => {
                 tipo_transacao: "",
                 documento_transacao: "",
                 data_transacao: "",
+                despesa_anterior_ao_uso_do_sistema : false,
+                despesa_anterior_ao_uso_do_sistema_editavel : true,
+                despesa_anterior_ao_uso_do_sistema_pc_concluida : false,
                 rateios: [
                     {
                         tipo_custeio: "",
