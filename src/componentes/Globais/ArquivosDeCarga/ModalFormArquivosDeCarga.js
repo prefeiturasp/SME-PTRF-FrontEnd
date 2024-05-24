@@ -9,7 +9,7 @@ const ModalFormArquivosDeCarga = ({show, stateFormModal, handleClose, handleSubm
             <>
                 <Formik
                     initialValues={stateFormModal}
-                    validationSchema={YupSignupSchemaArquivosDeCarga(arquivoRequerPeriodo, arquivoRequerTipoDeConta)}
+                    validationSchema={YupSignupSchemaArquivosDeCarga(arquivoRequerPeriodo, arquivoRequerTipoDeConta, stateFormModal.operacao === 'edit')}
                     validateOnBlur={true}
                     enableReinitialize={true}
                     onSubmit={handleSubmitModalForm}

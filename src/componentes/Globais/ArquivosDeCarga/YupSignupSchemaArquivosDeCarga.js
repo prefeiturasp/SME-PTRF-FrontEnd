@@ -1,10 +1,10 @@
 import * as yup from "yup";
 
-export const YupSignupSchemaArquivosDeCarga = (verificaSeArquivoRequerPeriodo, arquivoRequerTipoDeConta) => {
+export const YupSignupSchemaArquivosDeCarga = (verificaSeArquivoRequerPeriodo, arquivoRequerTipoDeConta, edicao) => {
     return yup.object().shape({
     identificador: yup.string().required("Identificador é obrigatório"),
     valida_conteudo: yup.boolean(),
-    conteudo: yup.mixed()
+    conteudo: edicao === 'edit' ? '' : yup.mixed()
     .when('valida_conteudo', {
         is: true,
         then: yup.mixed().required("Arquivo de Carga é obrigatório")
