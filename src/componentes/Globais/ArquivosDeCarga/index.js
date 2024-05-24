@@ -235,15 +235,6 @@ const ArquivosDeCarga = () => {
     const [stateFormModal, setStateFormModal] = useState(initialStateFormModal);
     const [showModalConfirmDeleteArquivosDeCarga, setShowModalConfirmDeleteArquivosDeCarga] = useState(false);
 
-    const fetchFileFromUrl = async (url) => {
-        const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error('Erro ao tentar resgatar arquivo.');
-        }
-        const blob = await response.blob();
-        return new File([blob], url.split('/').pop(), { type: blob.type });
-    };
-
     const handleClickEditarArquivos = useCallback(async (rowData) => {
         setShowModalForm(true);
     
@@ -254,7 +245,7 @@ const ArquivosDeCarga = () => {
             tipo_delimitador: rowData.tipo_delimitador,
             ultima_execucao: rowData.ultima_execucao ? moment(rowData.ultima_execucao).format('DD/MM/YYYY') : '-',
             status: rowData.status,
-            valida_conteudo: true,
+            valida_conteudo: false,
             uuid: rowData.uuid,
             id: rowData.id,
             log: rowData.log,
@@ -263,17 +254,10 @@ const ArquivosDeCarga = () => {
             tipo_de_conta: rowData.tipo_de_conta,
         };
     
-        try {
-            if (rowData.conteudo) {
-                const file = await fetchFileFromUrl(rowData.conteudo);
+        const url = rowData.conteudo;
+        const nome_arquivo = url.split('/').pop();
+        stateFormModalValues.nome_arquivo = nome_arquivo;
 
-                stateFormModalValues.nome_arquivo = file.name;
-                stateFormModalValues.conteudo = file;
-            }
-        } catch (error) {
-            console.error('Error fetching file:', error);
-        }
-    
         setStateFormModal(stateFormModalValues);
     }, [stateFormModal]);
     
