@@ -385,7 +385,7 @@ export const ModalForm = ({handleSubmitFormModal, todasAsAssociacoesAutoComplete
     return (
         <ModalFormBodyText
             show={showModalForm}
-            titulo={`${stateFormModal.uuid ? "Editar repasse" : "Adicionar repasse" }`}
+            titulo={`${stateFormModal.uuid ? "Editar repasse previsto" : "Adicionar repasse previsto" }`}
             onHide={setShowModalForm}
             size='lg'
             bodyText={bodyTextarea()}
