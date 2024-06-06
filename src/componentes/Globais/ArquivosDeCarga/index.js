@@ -4,7 +4,7 @@ import "../../dres/Associacoes/associacoes.scss"
 import {Redirect, useParams} from 'react-router-dom'
 import {BotoesTopo} from "./BotoesTopo";
 import {PaginasContainer} from "../../../paginas/PaginasContainer";
-import {getTabelaArquivosDeCarga, getArquivosDeCargaFiltros, postCreateArquivoDeCarga, patchAlterarArquivoDeCarga, deleteArquivoDeCarga, getDownloadArquivoDeCarga, postProcessarArquivoDeCarga, getDownloadModeloArquivoDeCarga} from "../../../services/sme/Parametrizacoes.service";
+import {getTabelaArquivosDeCarga, getArquivosDeCargaFiltros, postCreateArquivoDeCarga, patchAlterarArquivoDeCarga, deleteArquivoDeCarga, getDownloadArquivoDeCarga, postProcessarArquivoDeCarga, getDownloadModeloArquivoDeCarga, getTiposContas} from "../../../services/sme/Parametrizacoes.service";
 import moment from "moment";
 import TabelaArquivosDeCarga from "./TabelaArquivosDeCarga";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -34,6 +34,7 @@ const ArquivosDeCarga = () => {
         if (url_params.tipo_de_carga === 'CARGA_ASSOCIACOES') {
             obj = {
                 titulo: 'Associações',
+                titulo_modal: 'associação',
                 acesso_permitido: true,
                 UrlsMenuInterno:[
                     {label: "Dados das associações", url: "parametro-associacoes"},
@@ -43,6 +44,7 @@ const ArquivosDeCarga = () => {
         }else if (url_params.tipo_de_carga === 'CARGA_USUARIOS' && url_params.versao === 'V2'){
             obj = {
                 titulo: 'Usuários',
+                titulo_modal: 'usuário',
                 acesso_permitido: true,
                 UrlsMenuInterno:[
                     {label: "Dados dos usuários", url: "gestao-de-usuarios-list"},
@@ -52,6 +54,7 @@ const ArquivosDeCarga = () => {
         }else if (url_params.tipo_de_carga === 'CARGA_USUARIOS'){
             obj = {
                 titulo: 'Usuários',
+                titulo_modal: 'usuário',
                 acesso_permitido: true,
                 UrlsMenuInterno:[
                     {label: "Dados dos perfis", url: "gestao-de-perfis"},
@@ -61,6 +64,7 @@ const ArquivosDeCarga = () => {
         }else if (url_params.tipo_de_carga === 'CARGA_MATERIAIS_SERVICOS') {
             obj = {
                 titulo: 'Especificações de Materiais e Serviços',
+                titulo_modal: 'Especificações de Materiais e Serviços',
                 acesso_permitido: true,
                 UrlsMenuInterno:[
                     {label: "Dados especificações de Materiais e Serviços", url: "parametro-especificacoes"},
@@ -70,6 +74,7 @@ const ArquivosDeCarga = () => {
         }else if (url_params.tipo_de_carga === 'REPASSE_PREVISTO') {
             obj = {
                 titulo: 'Repasses',
+                titulo_modal: 'repasse previsto',
                 acesso_permitido: true,
                 UrlsMenuInterno:[
                     {label: "Repasses", url: "parametro-repasse"},
@@ -80,6 +85,7 @@ const ArquivosDeCarga = () => {
         }else if (url_params.tipo_de_carga === 'REPASSE_REALIZADO') {
             obj = {
                 titulo: 'Repasses',
+                titulo_modal: 'repasse realizado',
                 acesso_permitido: true,
                 UrlsMenuInterno:[
                     {label: "Repasses", url: "parametro-repasse"},
@@ -95,6 +101,9 @@ const ArquivosDeCarga = () => {
     const [tabelaArquivos, setTabelaArquivos] = useState([]);
     const [arquivos, setArquivos] = useState([]);
     const [clickProcessar, setClickProcessar] = useState(false);
+
+    const [arquivoRequerPeriodo, setArquivoRequerPeriodo] = useState(false);
+    const [arquivoRequerTipoDeConta, setArquivoRequerTipoDeConta] = useState(false);
 
     useEffect(() => {
         if (arquivos && arquivos.length > 0 && arquivos.filter(arquivo=> arquivo.status === 'PROCESSANDO' ).length > 0){
@@ -116,6 +125,15 @@ const ArquivosDeCarga = () => {
     useEffect(() => {
         carregaTabelaArquivos();
     }, [carregaTabelaArquivos]);
+
+    useEffect(() => {
+        if(tabelaArquivos && tabelaArquivos.tipos_cargas) {
+            const requerPeriodo = tabelaArquivos.tipos_cargas.find(tipo => tipo.id === url_params.tipo_de_carga)?.requer_periodo;
+            setArquivoRequerPeriodo(requerPeriodo);
+            const requerTipoConta = tabelaArquivos.tipos_cargas.find(tipo => tipo.id === url_params.tipo_de_carga)?.requer_tipo_de_conta
+            setArquivoRequerTipoDeConta(requerTipoConta);
+        }
+    }, [url_params.tipo_de_carga, tabelaArquivos])
 
     const carregaArquivosPeloTipoDeCarga = useCallback(async () => {
         if (dadosDeOrigem.acesso_permitido) {
@@ -217,27 +235,32 @@ const ArquivosDeCarga = () => {
     const [stateFormModal, setStateFormModal] = useState(initialStateFormModal);
     const [showModalConfirmDeleteArquivosDeCarga, setShowModalConfirmDeleteArquivosDeCarga] = useState(false);
 
-
     const handleClickEditarArquivos = useCallback(async (rowData) => {
         setShowModalForm(true);
-        setStateFormModal({
+    
+        let stateFormModalValues = {
             ...stateFormModal,
             identificador: rowData.identificador,
             tipo_carga: rowData.tipo_carga,
             tipo_delimitador: rowData.tipo_delimitador,
             ultima_execucao: rowData.ultima_execucao ? moment(rowData.ultima_execucao).format('DD/MM/YYYY') : '-',
             status: rowData.status,
-            conteudo: '',
             valida_conteudo: false,
-            nome_arquivo: rowData.conteudo,
             uuid: rowData.uuid,
             id: rowData.id,
             log: rowData.log,
             operacao: 'edit',
-            periodo: rowData.periodo
-            }
-        )
+            periodo: rowData.periodo,
+            tipo_de_conta: rowData.tipo_de_conta,
+        };
+    
+        const url = rowData.conteudo;
+        const nome_arquivo = url.split('/').pop();
+        stateFormModalValues.nome_arquivo = nome_arquivo;
+
+        setStateFormModal(stateFormModalValues);
     }, [stateFormModal]);
+    
 
     const handleClickDeleteArquivoDeCarga = useCallback((uuid_arquivo_de_carga)=>{
         setStateFormModal({
@@ -319,10 +342,6 @@ const ArquivosDeCarga = () => {
         )
     }, [handleClickDeleteArquivoDeCarga, handleClickDownloadArquivoDeCarga, handleClickEditarArquivos, handleClickProcessarArquivoDeCarga]);
 
-    const verificaSeArquivoRequerPeriodo = () => {
-        return tabelaArquivos.tipos_cargas.find(tipo => tipo.id === url_params.tipo_de_carga)?.requer_periodo;
-    }
-
     const handleSubmitModalForm = useCallback(async (values) => {
         if (values.operacao === 'create'){
             try {
@@ -336,6 +355,10 @@ const ArquivosDeCarga = () => {
                 if(url_params.tipo_de_carga === 'REPASSE_PREVISTO') {
                     payload.periodo = values.periodo;
                 }
+                if(url_params.tipo_de_carga === 'REPASSE_PREVISTO') {
+                    payload.tipo_de_conta = values.tipo_de_conta;
+                }
+
                 await postCreateArquivoDeCarga(payload);
                 console.log("Arquivo de carga criado com sucesso");
                 setShowModalForm(false);
@@ -362,9 +385,13 @@ const ArquivosDeCarga = () => {
                     'tipo_delimitador': values.tipo_delimitador,
                 };
             }
-            if(verificaSeArquivoRequerPeriodo()) {
+            if(url_params.tipo_de_carga === 'REPASSE_PREVISTO') {
                 payload.periodo = values.periodo;
             };
+            if(url_params.tipo_de_carga === 'REPASSE_PREVISTO') {
+                payload.tipo_de_conta = values.tipo_de_conta;
+            };
+
             try {
                 await patchAlterarArquivoDeCarga(values.uuid, payload);
                 console.log("Arquivo de carga alterado com sucesso");
@@ -412,7 +439,6 @@ const ArquivosDeCarga = () => {
     }
 
     const [periodos, setPeriodos] = useState([]);
-
     const carregaPeriodos = async () => {
         try {
             let response = await getPeriodos();
@@ -422,8 +448,19 @@ const ArquivosDeCarga = () => {
         }
     }
 
+    const [tiposDeContas, setTiposDeContas] = useState([]);
+    const carregaTiposDeContas = async () => {
+        try {
+            let response = await getTiposContas();
+            setTiposDeContas(response);
+        } catch (error) {
+            console.log("Erro ao tentar resgatar tipos de conta: ", error)
+        }
+    }
+
     useEffect(() => {
         carregaPeriodos();
+        carregaTiposDeContas();
     }, []);
 
     return (
@@ -480,7 +517,9 @@ const ArquivosDeCarga = () => {
                         handleSubmitModalForm={handleSubmitModalForm}
                         dadosDeOrigem={dadosDeOrigem}
                         periodos={periodos}
-                        verificaSeArquivoRequerPeriodo={verificaSeArquivoRequerPeriodo}
+                        arquivoRequerPeriodo={arquivoRequerPeriodo}
+                        tiposDeContas={tiposDeContas}
+                        arquivoRequerTipoDeConta={arquivoRequerTipoDeConta}
                     />
                 </section>
                 <section>

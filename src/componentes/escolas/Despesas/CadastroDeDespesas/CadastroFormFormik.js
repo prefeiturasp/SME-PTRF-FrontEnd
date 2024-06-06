@@ -150,7 +150,7 @@ export const CadastroFormFormik = ({
                                         <ComprovacaoFiscal
                                             formikProps={props}
                                             eh_despesa_com_comprovacao_fiscal={eh_despesa_com_comprovacao_fiscal}
-                                            disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
+                                            disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes) || !props.values.despesa_anterior_ao_uso_do_sistema_editavel}
                                             eh_despesa_reconhecida={eh_despesa_reconhecida}
                                             limpa_campos_sem_comprovacao_fiscal={limpa_campos_sem_comprovacao_fiscal}
                                             setFormErrors={setFormErrors}
@@ -161,7 +161,7 @@ export const CadastroFormFormik = ({
                                         <label htmlFor="cpf_cnpj_fornecedor">CNPJ ou CPF do fornecedor</label>
                                         <MaskedInput
                                             data-qa="cadastro-edicao-despesa-cnpj-cpf-fornecedor"
-                                            disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes) || !eh_despesa_com_comprovacao_fiscal(props.values)}
+                                            disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes) || !eh_despesa_com_comprovacao_fiscal(props.values) || !props.values.despesa_anterior_ao_uso_do_sistema_editavel}
                                             mask={(valor) => cpfMaskContitional(valor)}
                                             value={props.values.cpf_cnpj_fornecedor}
                                             onChange={(e) => {
@@ -201,7 +201,7 @@ export const CadastroFormFormik = ({
                                                     : `${!props.values.nome_fornecedor && despesaContext.verboHttp === "PUT" && "is_invalid "} ${!props.values.nome_fornecedor && 'despesa_incompleta'} form-control`
                                             }
                                             placeholder="Digite o nome"
-                                            disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes) || !eh_despesa_com_comprovacao_fiscal(props.values)}
+                                            disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes) || !eh_despesa_com_comprovacao_fiscal(props.values) || !props.values.despesa_anterior_ao_uso_do_sistema_editavel}
                                         />
                                     </div>
                                 </div>
@@ -221,7 +221,7 @@ export const CadastroFormFormik = ({
                                             name='tipo_documento'
                                             id='tipo_documento'
                                             className={!eh_despesa_com_comprovacao_fiscal(props.values) ? "form-control" : `${!props.values.tipo_documento && despesaContext.verboHttp === "PUT" && "is_invalid "} ${!props.values.tipo_documento && "despesa_incompleta"} form-control`}
-                                            disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes) || !eh_despesa_com_comprovacao_fiscal(props.values)}
+                                            disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes) || !eh_despesa_com_comprovacao_fiscal(props.values) || !props.values.despesa_anterior_ao_uso_do_sistema_editavel}
                                         >
                                             <option data-qa={`cadastro-edicao-despesa-tipo-de-documento-option-${0}`} value="">Selecione o tipo</option>
                                             {despesasTabelas && despesasTabelas.tipos_documento && despesasTabelas.tipos_documento.length > 0 && despesasTabelas.tipos_documento.map((item, key) =>
@@ -248,7 +248,7 @@ export const CadastroFormFormik = ({
                                                     : `${!props.values.data_documento && despesaContext.verboHttp === "PUT" && "is_invalid "} ${!props.values.data_documento && "despesa_incompleta"} form-control`
                                             }
                                             about={despesaContext.verboHttp}
-                                            disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes) || !eh_despesa_com_comprovacao_fiscal(props.values)}
+                                            disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes) || !eh_despesa_com_comprovacao_fiscal(props.values) || !props.values.despesa_anterior_ao_uso_do_sistema_editavel}
                                             maxDate={new Date()}
                                         />
                                         {props.errors.data_documento && <span
@@ -276,7 +276,7 @@ export const CadastroFormFormik = ({
                                                     : `${!numeroDocumentoReadOnly && !props.values.numero_documento && despesaContext.verboHttp === "PUT" && "is_invalid "} ${!numeroDocumentoReadOnly && !props.values.numero_documento && "despesa_incompleta"} form-control`
                                             }
                                             placeholder={numeroDocumentoReadOnly ? "" : "Digite o número"}
-                                            disabled={readOnlyCampos || numeroDocumentoReadOnly || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes) || !eh_despesa_com_comprovacao_fiscal(props.values)}
+                                            disabled={readOnlyCampos || numeroDocumentoReadOnly || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes) || !eh_despesa_com_comprovacao_fiscal(props.values) || !props.values.despesa_anterior_ao_uso_do_sistema_editavel}
                                         />
                                         {props.errors.numero_documento && <span
                                             data-qa="cadastro-edicao-despesa-erro-numero-do-documento"
@@ -300,7 +300,7 @@ export const CadastroFormFormik = ({
                                             name='tipo_transacao'
                                             id='tipo_transacao'
                                             className={`${!props.values.tipo_transacao && despesaContext.verboHttp === "PUT" && "is_invalid "} ${!props.values.tipo_transacao && "despesa_incompleta"} form-control`}
-                                            disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
+                                            disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes) || !props.values.despesa_anterior_ao_uso_do_sistema_editavel}
                                         >
                                             <option data-qa={`cadastro-edicao-despesa-forma-de-pagamento-option-${0}`} key={0} value="">Selecione o tipo</option>
                                             {despesasTabelas.tipos_transacao && despesasTabelas.tipos_transacao.map((item, key) => (
@@ -326,7 +326,7 @@ export const CadastroFormFormik = ({
                                             }}
                                             about={despesaContext.verboHttp}
                                             className={`${!values.data_transacao && verbo_http === "PUT" ? 'is_invalid' : ""} ${!values.data_transacao && "despesa_incompleta"} form-control`}
-                                            disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
+                                            disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes) || !props.values.despesa_anterior_ao_uso_do_sistema_editavel}
                                             maxDate={new Date()}
                                         />
                                         {props.errors.data_transacao &&
@@ -353,7 +353,7 @@ export const CadastroFormFormik = ({
                                                 type="text"
                                                 className={`${aux.documentoTransacaoObrigatorio(values.tipo_transacao, despesasTabelas) && !values.documento_transacao && verbo_http === "PUT" ? 'is_invalid' : ""} ${aux.documentoTransacaoObrigatorio(values.tipo_transacao, despesasTabelas) && !values.documento_transacao && "despesa_incompleta"} form-control`}
                                                 placeholder="Digite o número do documento"
-                                                disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
+                                                disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes) || !props.values.despesa_anterior_ao_uso_do_sistema_editavel}
                                             />
                                             {props.errors.documento_transacao && <span
                                                 data-qa="cadastro-edicao-despesa-erro-numero-do-documento-de-transacao"
@@ -380,7 +380,7 @@ export const CadastroFormFormik = ({
                                                 setaValorRealizado(props.values, e.target.value)
                                                 props.handleChange(e);
                                             }}
-                                            disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
+                                            disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes) || !props.values.despesa_anterior_ao_uso_do_sistema_editavel}
                                         />
                                         {props.errors.valor_original && exibeMsgErroValorOriginal &&
                                             <span data-qa="cadastro-edicao-despesa-erro-valor-total-do-documento" className="span_erro text-danger mt-1"> A soma dos valores originais do rateio não está correspondendo ao valor total original utilizado com recursos do Programa.</span>}
@@ -403,7 +403,7 @@ export const CadastroFormFormik = ({
                                             onChangeEvent={(e) => {
                                                 props.handleChange(e);
                                             }}
-                                            disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
+                                            disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes) || !props.values.despesa_anterior_ao_uso_do_sistema_editavel}
                                         />
                                         {props.errors.valor_total &&
                                             <span
@@ -427,7 +427,7 @@ export const CadastroFormFormik = ({
                                             onChangeEvent={(e) => {
                                                 props.handleChange(e);
                                             }}
-                                            disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
+                                            disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes) || !props.values.despesa_anterior_ao_uso_do_sistema_editavel}
                                         />
                                         {props.errors.valor_recursos_proprios && <span
                                             data-qa="cadastro-edicao-despesa-erro-valor-recurso-proprio"
@@ -450,7 +450,7 @@ export const CadastroFormFormik = ({
                                                     className="form-control"
                                                     onChangeEvent={props.handleChange}
                                                     readOnly={true}
-                                                    disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
+                                                    disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes) || !props.values.despesa_anterior_ao_uso_do_sistema_editavel}
                                                 />
                                             )}
                                         </Field>
@@ -485,7 +485,7 @@ export const CadastroFormFormik = ({
                                                         : `${!props.values.numero_boletim_de_ocorrencia && despesaContext.verboHttp === "PUT" && "is_invalid "} ${!props.values.numero_boletim_de_ocorrencia && "despesa_incompleta"} form-control`
                                                 }
                                                 placeholder={"Digite o número"}
-                                                disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
+                                                disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes) || !props.values.despesa_anterior_ao_uso_do_sistema_editavel}
                                             />
                                             {formErrors.numero_boletim_de_ocorrencia && <p className='mb-0'><span
                                                 data-qa="cadastro-edicao-despesa-erro-numero-boletim-de-ocorrencia"
@@ -502,7 +502,7 @@ export const CadastroFormFormik = ({
                                                 <RetemImposto
                                                     formikProps={props}
                                                     eh_despesa_com_retencao_imposto={eh_despesa_com_retencao_imposto}
-                                                    disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
+                                                    disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes) || !props.values.despesa_anterior_ao_uso_do_sistema_editavel}
                                                     mostraModalExcluirImposto={mostraModalExcluirImposto}
                                                 />
                                                 
@@ -517,7 +517,7 @@ export const CadastroFormFormik = ({
 
                                                                             formikProps={props}
                                                                             eh_despesa_com_retencao_imposto={eh_despesa_com_retencao_imposto}
-                                                                            disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
+                                                                            disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes) || !props.values.despesa_anterior_ao_uso_do_sistema_editavel}
                                                                             tipos_documento_com_recolhimento_imposto={tipos_documento_com_recolhimento_imposto}
                                                                             numeroDocumentoImpostoReadOnly={numeroDocumentoImpostoReadOnly}
                                                                             aux={aux}
@@ -551,7 +551,7 @@ export const CadastroFormFormik = ({
                                                                         data-qa="cadastro-edicao-despesa-btn-adicionar-imposto"
                                                                         type="button"
                                                                         className="btn btn btn-outline-success mt-2 mr-2"
-                                                                        disabled={disableBtnAdicionarImposto || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
+                                                                        disabled={disableBtnAdicionarImposto || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes) || !props.values.despesa_anterior_ao_uso_do_sistema_editavel}
                                                                         onChange={(e) => {
                                                                             props.handleChange(e);
                                                                         }}
@@ -615,7 +615,7 @@ export const CadastroFormFormik = ({
                                             name='mais_de_um_tipo_despesa'
                                             id='mais_de_um_tipo_despesa'
                                             className={`${!props.values.mais_de_um_tipo_despesa && despesaContext.verboHttp === "PUT" && "is_invalid "} ${!values.mais_de_um_tipo_despesa && "despesa_incompleta"} form-control`}
-                                            disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
+                                            disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes) || !props.values.despesa_anterior_ao_uso_do_sistema_editavel}
                                         >
                                             <option data-qa="cadastro-edicao-despesa-gasto-tem-rateios-option-0" value="">Selecione</option>
                                             <option data-qa="cadastro-edicao-despesa-gasto-tem-rateios-option-1" value="nao">Não</option>
@@ -680,7 +680,7 @@ export const CadastroFormFormik = ({
                                                                             type="button"
                                                                             className={`btn btn-link btn-remover-despesa mr-2 d-flex align-items-center ${bloqueiaCamposDespesa() ? 'desabilita-link-remover-despesa' : ''}`}
                                                                             onClick={() => removeRateio(remove, index, rateio)}
-                                                                            disabled={!visoesService.getPermissoes(['delete_despesa']) || bloqueiaCamposDespesa()}
+                                                                            disabled={!visoesService.getPermissoes(['delete_despesa']) || bloqueiaCamposDespesa() || !props.values.despesa_anterior_ao_uso_do_sistema_editavel}
                                                                         >
                                                                             <FontAwesomeIcon
                                                                                 style={{
@@ -723,7 +723,7 @@ export const CadastroFormFormik = ({
                                                                     name={`rateios[${index}].aplicacao_recurso`}
                                                                     id={`aplicacao_recurso_${index}`}
                                                                     className={`${!rateio.aplicacao_recurso && despesaContext.verboHttp === "PUT" && "is_invalid "} ${!rateio.aplicacao_recurso && "despesa_incompleta"} form-control`}
-                                                                    disabled={readOnlyCampos || bloqueiaRateioEstornado(rateio) || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
+                                                                    disabled={readOnlyCampos || bloqueiaRateioEstornado(rateio) || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes) || !props.values.despesa_anterior_ao_uso_do_sistema_editavel}
                                                                 >
                                                                     <option data-qa={`cadastro-edicao-despesa-rateio-${index}-tipo-de-aplicacao-do-recurso-option-${0}`} key={0} value="">Escolha uma opção
                                                                     </option>
@@ -744,7 +744,7 @@ export const CadastroFormFormik = ({
                                                                     despesasTabelas={despesasTabelas}
                                                                     especificacoes_custeio={especificacoes_custeio}
                                                                     verboHttp={despesaContext.verboHttp}
-                                                                    disabled={readOnlyCampos}
+                                                                    disabled={readOnlyCampos || !props.values.despesa_anterior_ao_uso_do_sistema_editavel}
                                                                     errors={errors}
                                                                     exibeMsgErroValorRecursos={exibeMsgErroValorRecursos}
                                                                     exibeMsgErroValorOriginal={exibeMsgErroValorOriginal}
@@ -765,7 +765,7 @@ export const CadastroFormFormik = ({
                                                                     despesasTabelas={despesasTabelas}
                                                                     especificaoes_capital={especificaoes_capital}
                                                                     verboHttp={despesaContext.verboHttp}
-                                                                    disabled={readOnlyCampos}
+                                                                    disabled={readOnlyCampos || !props.values.despesa_anterior_ao_uso_do_sistema_editavel}
                                                                     errors={errors}
                                                                     exibeMsgErroValorRecursos={exibeMsgErroValorRecursos}
                                                                     exibeMsgErroValorOriginal={exibeMsgErroValorOriginal}
@@ -788,7 +788,7 @@ export const CadastroFormFormik = ({
                                                                     rateios={values.rateios}
                                                                     index={index}
                                                                     verboHttp={despesaContext.verboHttp}
-                                                                    disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
+                                                                    disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes) || !props.values.despesa_anterior_ao_uso_do_sistema_editavel}
                                                                     errors={errors}
                                                                     setFieldValue={setFieldValue}
                                                                     despesasTabelas={despesasTabelas}
@@ -824,7 +824,7 @@ export const CadastroFormFormik = ({
                                                         data-qa="cadastro-edicao-despesa-btn-adicionar-despesa-parcial"
                                                         type="button"
                                                         className="btn btn btn-outline-success mt-2 mr-2"
-                                                        disabled={![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes) || bloqueiaCamposDespesa()}
+                                                        disabled={![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes) || bloqueiaCamposDespesa() || !props.values.despesa_anterior_ao_uso_do_sistema_editavel}
                                                         onChange={(e) => {
                                                             props.handleChange(e);
                                                             aux.handleAvisoCapital(e.target.value, setShowAvisoCapital);
@@ -862,14 +862,16 @@ export const CadastroFormFormik = ({
                                     <button data-qa={`cadastro-edicao-despesa-btn-voltar`}
                                             type="reset"
                                             onClick={houveAlteracoes(values) ? onShowModal : onCancelarTrue}
-                                            className="btn btn btn-outline-success mt-2 mr-2">Voltar
+                                            className="btn btn btn-outline-success mt-2 mr-2"
+                                    >
+                                        Voltar
                                     </button>
 
                                     {aux.mostraBotaoDeletar(despesaContext.idDespesa, parametroLocation)
                                         ? 
                                             <button
                                                 data-qa={`cadastro-edicao-despesa-btn-deletar`}
-                                                disabled={readOnlyBtnAcao || !visoesService.getPermissoes(["delete_despesa"])}
+                                                disabled={readOnlyBtnAcao || !visoesService.getPermissoes(["delete_despesa"]) || !props.values.despesa_anterior_ao_uso_do_sistema_editavel}
                                                 type="reset"
                                                 onClick={() => aux.onShowDeleteModal(setShowDelete, setShowTextoModalDelete, values)}
                                                 className="btn btn btn-danger mt-2 mr-2"
@@ -884,9 +886,8 @@ export const CadastroFormFormik = ({
                                         <button
                                             data-qa={`cadastro-edicao-despesa-btn-salvar`}
                                             disabled={
-                                                eh_despesa_reconhecida(props.values)
-                                                    ? btnSubmitDisable || readOnlyBtnAcao || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)
-                                                    : !props.values.numero_boletim_de_ocorrencia || btnSubmitDisable || readOnlyBtnAcao || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)
+                                                eh_despesa_reconhecida(props.values) ? btnSubmitDisable || readOnlyBtnAcao || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes) || !props.values.despesa_anterior_ao_uso_do_sistema_editavel
+                                                    : !props.values.numero_boletim_de_ocorrencia || btnSubmitDisable || readOnlyBtnAcao || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes) || !props.values.despesa_anterior_ao_uso_do_sistema_editavel
                                             }
                                             type="button"
                                             onClick={async (e) => {

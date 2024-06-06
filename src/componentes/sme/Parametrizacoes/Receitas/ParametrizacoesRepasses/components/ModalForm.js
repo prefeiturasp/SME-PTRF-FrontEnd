@@ -203,9 +203,9 @@ export const ModalForm = ({handleSubmitFormModal, todasAsAssociacoesAutoComplete
                                     </div>
 
                                     <div className="form-group col-md-6">
-                                        <label htmlFor="status">Status *</label>
+                                        <label htmlFor="status">Status</label>
                                         <select
-                                            disabled={!campo_editavel("campos_identificacao")}
+                                            disabled={!campo_editavel("campos_identificacao") || true}
                                             value={values.status}
                                             onChange={props.handleChange}
                                             name="status"
@@ -385,7 +385,7 @@ export const ModalForm = ({handleSubmitFormModal, todasAsAssociacoesAutoComplete
     return (
         <ModalFormBodyText
             show={showModalForm}
-            titulo={`${stateFormModal.uuid ? "Editar repasse" : "Adicionar repasse" }`}
+            titulo={`${stateFormModal.uuid ? "Editar repasse previsto" : "Adicionar repasse previsto" }`}
             onHide={setShowModalForm}
             size='lg'
             bodyText={bodyTextarea()}

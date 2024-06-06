@@ -1,15 +1,15 @@
-import React, {memo} from "react";
+import React, {memo, useEffect} from "react";
 import {ModalFormBodyText} from "../ModalBootstrap";
 import {Formik} from "formik";
 import {YupSignupSchemaArquivosDeCarga} from "./YupSignupSchemaArquivosDeCarga";
 
-const ModalFormArquivosDeCarga = ({show, stateFormModal, handleClose, handleSubmitModalForm, tabelaArquivos, statusTemplate, dadosDeOrigem, periodos, verificaSeArquivoRequerPeriodo}) => {
+const ModalFormArquivosDeCarga = ({show, stateFormModal, handleClose, handleSubmitModalForm, tabelaArquivos, statusTemplate, dadosDeOrigem, periodos, arquivoRequerPeriodo, tiposDeContas, arquivoRequerTipoDeConta}) => {    
     const bodyTextarea = () => {
         return (
             <>
                 <Formik
                     initialValues={stateFormModal}
-                    validationSchema={YupSignupSchemaArquivosDeCarga(verificaSeArquivoRequerPeriodo)}
+                    validationSchema={YupSignupSchemaArquivosDeCarga(arquivoRequerPeriodo, arquivoRequerTipoDeConta, stateFormModal.operacao === 'edit')}
                     validateOnBlur={true}
                     enableReinitialize={true}
                     onSubmit={handleSubmitModalForm}
@@ -21,10 +21,13 @@ const ModalFormArquivosDeCarga = ({show, stateFormModal, handleClose, handleSubm
                         } = props;
                         return(
                             <form onSubmit={props.handleSubmit} >
+                                <div className="mb-3" style={{ textAlign: 'right' }}>
+                                    <span>* Campos obrigatórios</span>
+                                </div>
                                 <div className='row'>
                                     <div className='col'>
                                         <div className="form-group">
-                                            <label htmlFor="identificador">Identificador</label>
+                                            <label htmlFor="identificador">Identificador *</label>
                                             <input
                                                 type="text"
                                                 value={props.values.identificador}
@@ -33,7 +36,7 @@ const ModalFormArquivosDeCarga = ({show, stateFormModal, handleClose, handleSubm
                                                 className="form-control"
                                                 onChange={props.handleChange}
                                             />
-                                            {props.touched.identificador && props.errors.identificador && <span className="span_erro text-danger mt-1"> {props.errors.identificador} </span>}
+                                            {props.touched.identificador && props.errors.identificador && <small className="span_erro text-danger mt-1"> * {props.errors.identificador} </small>}
                                         </div>
                                     </div>
                                 </div>
@@ -41,7 +44,7 @@ const ModalFormArquivosDeCarga = ({show, stateFormModal, handleClose, handleSubm
                                 <div className='row'>
                                     <div className='col'>
                                         <div className="form-group">
-                                            <label className='mb-0' htmlFor="conteudo">Conteúdo</label>
+                                            <label className='mb-0' htmlFor="conteudo">Conteúdo *</label>
                                             {props.values.nome_arquivo && props.values.operacao === 'edit' &&
                                             <p className='mb-1'><small><strong>Atualmente: </strong>{props.values.nome_arquivo.split('/').pop()}</small></p>
                                             }
@@ -55,11 +58,11 @@ const ModalFormArquivosDeCarga = ({show, stateFormModal, handleClose, handleSubm
                                                     setFieldValue("conteudo", event.currentTarget.files[0]);
                                                 }}
                                             />
-                                            {props.touched.conteudo && props.errors.conteudo && <span className="span_erro text-danger mt-1"> {props.errors.conteudo} </span>}
+                                            {props.touched.conteudo && props.errors.conteudo && <small className="span_erro text-danger mt-1"> * {props.errors.conteudo} </small>}
                                         </div>
                                     </div>
                                 </div>
-                                {verificaSeArquivoRequerPeriodo() && <div className='row'>
+                                {arquivoRequerPeriodo && <div className='row'>
                                     <div className='col'>
                                         <label htmlFor="tipo_periodo">Período *</label>
                                         <select
@@ -74,7 +77,25 @@ const ModalFormArquivosDeCarga = ({show, stateFormModal, handleClose, handleSubm
                                                 <option key={periodo.uuid} value={periodo.uuid}>{periodo.referencia}</option>
                                             )}
                                         </select>
-                                        {props.errors && props.errors.periodo && props.errors.periodo && <span className="span_erro text-danger mt-1"> {props.errors.periodo} </span>}
+                                        {props.errors && props.errors.periodo && props.errors.periodo && <small className="span_erro text-danger mt-1"> * {props.errors.periodo} </small>}
+                                    </div>
+                                </div>}
+                                {arquivoRequerTipoDeConta && <div className='row mt-3'>
+                                    <div className='col'>
+                                        <label htmlFor="tipo_de_conta">Tipo de conta *</label>
+                                        <select
+                                            value={props.values.tipo_de_conta && props.values.tipo_de_conta ? props.values.tipo_de_conta : ""}
+                                            onChange={props.handleChange}
+                                            name="tipo_de_conta"
+                                            id="tipo_de_conta"
+                                            className="form-control"
+                                        >
+                                            <option value=''>Selecione o tipo de conta</option>
+                                            {tiposDeContas && tiposDeContas.length > 0 && tiposDeContas.map((tipoDeConta) =>
+                                                <option key={tipoDeConta.uuid} value={tipoDeConta.uuid}>{tipoDeConta.nome}</option>
+                                            )}
+                                        </select>
+                                        {props.errors && props.errors.tipo_de_conta && props.errors.tipo_de_conta && <small className="span_erro text-danger mt-1"> * {props.errors.tipo_de_conta} </small>}
                                     </div>
                                 </div>}
                                 <div className='row mt-3'>
@@ -155,7 +176,7 @@ const ModalFormArquivosDeCarga = ({show, stateFormModal, handleClose, handleSubm
     return (
         <ModalFormBodyText
             show={show}
-            titulo={stateFormModal && stateFormModal && stateFormModal.operacao === 'edit' ? `Editar ${dadosDeOrigem.titulo}` : `Adicionar ${dadosDeOrigem.titulo}`}
+            titulo={stateFormModal && stateFormModal && stateFormModal.operacao === 'edit' ? `Editar ${dadosDeOrigem.titulo_modal}` : `Adicionar ${dadosDeOrigem.titulo_modal}`}
             onHide={handleClose}
             size='lg'
             bodyText={bodyTextarea()}

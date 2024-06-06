@@ -55,7 +55,7 @@ export const CadastroFormDespesaImposto = ({
 										type="button"
 										className={`btn btn-link btn-remover-despesa mr-2 d-flex align-items-center ${readOnlyCamposImposto[index] ? 'desabilita-link-remover-despesa' : ''}`}
 										onClick={() => remove(index)}
-										disabled={!visoesService.getPermissoes(['delete_despesa']) || readOnlyCamposImposto[index]}
+										disabled={disabled || !visoesService.getPermissoes(['delete_despesa']) || readOnlyCamposImposto[index]}
 									>
 										<FontAwesomeIcon
 											style={{
@@ -87,7 +87,7 @@ export const CadastroFormDespesaImposto = ({
 								name={`despesas_impostos[${index}].tipo_documento`}
 								id={`tipo_documento_${index}`}
 								className="form-control"
-								disabled={readOnlyCamposImposto[index] || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
+								disabled={disabled || readOnlyCamposImposto[index] || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
 							>
 								<option data-qa={`cadastro-edicao-despesa-imposto-${index}-tipo-documento-option-${0}`} key={0} value="">Selecione o tipo</option>
 								{tipos_documento_com_recolhimento_imposto().map((item, key) =>
@@ -113,7 +113,7 @@ export const CadastroFormDespesaImposto = ({
 								id={`numero_documento_${index}`} type="text"
 								className="form-control"
 								placeholder={numeroDocumentoImpostoReadOnly(despesa_imposto.tipo_documento, index, formikProps.values) ? "" : "Digite o número"}
-								disabled={readOnlyCamposImposto[index] || numeroDocumentoImpostoReadOnly(despesa_imposto.tipo_documento, index, formikProps.values) || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
+								disabled={disabled || readOnlyCamposImposto[index] || numeroDocumentoImpostoReadOnly(despesa_imposto.tipo_documento, index, formikProps.values) || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
 							/>
 						</div>
 
@@ -154,7 +154,7 @@ export const CadastroFormDespesaImposto = ({
 								name={`despesas_impostos[${index}].rateios[0].especificacao_material_servico`}
 								id={`despesas_impostos[${index}].rateios[0].especificacao_material_servico`}
 								className={"form-control"}
-								disabled={readOnlyCamposImposto[index] || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
+								disabled={disabled || readOnlyCamposImposto[index] || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
 							>
 								<option data-qa={`cadastro-edicao-despesa-imposto-${index}-especificacao-do-imposto-option-${0}`} key={0} value="">Selecione uma especificação</option>
 								{
@@ -187,7 +187,7 @@ export const CadastroFormDespesaImposto = ({
 								name={`despesas_impostos[${index}].tipo_transacao`}
 								id={`tipo_transacao_${index}`}
 								className="form-control"
-								disabled={readOnlyCamposImposto[index] || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
+								disabled={disabled || readOnlyCamposImposto[index] || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
 							>
 								<option data-qa={`cadastro-edicao-despesa-imposto-${index}-forma-de-pagamento-option-${0}`} key={0} value="">Selecione o tipo</option>
 								{despesasTabelas.tipos_transacao && despesasTabelas.tipos_transacao.map((item, key) => (
@@ -215,7 +215,7 @@ export const CadastroFormDespesaImposto = ({
 								}}
 								about={despesaContext.verboHttp}
 								className="form-control"
-								disabled={readOnlyCamposImposto[index] || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
+								disabled={disabled || readOnlyCamposImposto[index] || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
 								maxDate={new Date()}
 								minDate={new Date(formikProps.values.data_transacao)}
 							/>
@@ -235,7 +235,7 @@ export const CadastroFormDespesaImposto = ({
 									type="text"
 									className="form-control"
 									placeholder="Digite o número do documento"
-									disabled={readOnlyCamposImposto[index] || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
+									disabled={disabled || readOnlyCamposImposto[index] || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
 								/>
 							</div>
 						</div>
@@ -257,7 +257,7 @@ export const CadastroFormDespesaImposto = ({
 								name={`despesas_impostos[${index}].rateios[0].acao_associacao`}
 								id={`despesas_impostos[${index}].rateios[0].acao_associacao`}
 								className="form-control"
-								disabled={readOnlyCamposImposto[index] || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
+								disabled={disabled || readOnlyCamposImposto[index] || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
 							>
 								<option data-qa={`cadastro-edicao-despesa-imposto-${index}-acao-option-${0}`} value="">Selecione uma ação</option>
 								{acoes_custeio().map((item, key) =>
@@ -280,7 +280,7 @@ export const CadastroFormDespesaImposto = ({
 								name={`despesas_impostos[${index}].rateios[0].conta_associacao`}
 								id={`despesas_impostos[${index}].rateios[0].conta_associacao`}
 								className="form-control"
-								disabled={readOnlyCamposImposto[index] || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes) || !(despesa_imposto.data_transacao !== null && despesa_imposto.data_transacao !== "")}
+								disabled={disabled || readOnlyCamposImposto[index] || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes) || !(despesa_imposto.data_transacao !== null && despesa_imposto.data_transacao !== "")}
 							>
 								<option key={0} value="">Selecione uma conta</option>
 								{renderContaAssociacaoOptions(despesa_imposto.data_transacao, true)}

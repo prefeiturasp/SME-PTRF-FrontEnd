@@ -166,7 +166,7 @@ export const Lista = () => {
             return "Realizado"
         }
         else if(rowData.status === 'PENDENTE'){
-            return "Pendente"
+            return "Previsto"
         }
     }
 
@@ -202,7 +202,7 @@ export const Lista = () => {
 
                             <Column
                                 field="acao"
-                                header="Ação"
+                                header="Ações"
                                 body={acoesTemplate}
                                 style={{width: '10%', textAlign: "center",}}
                             />

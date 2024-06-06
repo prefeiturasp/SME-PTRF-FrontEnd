@@ -49,8 +49,7 @@ export const CadastroFormCapital = (propriedades) => {
         <>
             <div className="row mt-4">
                 <div className="col-12">
-                    <label htmlFor={`especificacao_material_servico_${index}`}>Especificação do bem, material ou
-                        serviço</label>
+                    <label htmlFor={`especificacao_material_servico_${index}`}>Especificação do bem, material ou serviço</label>
                     <select
                         data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-capital-especificacao-material`}
                         value={
@@ -160,6 +159,7 @@ export const CadastroFormCapital = (propriedades) => {
                             formikProps.handleChange(e);
                             handleChangeCheckboxNaoExibirEmRelBens(e, formikProps.setFieldValue);
                         }}
+                        disabled={disabled}
                         className="form-check-input"
                     />
                     <label className="form-check-label" htmlFor={`nao_exibir_em_rel_bens_${index}`}>Não exibir na relação de bens</label>

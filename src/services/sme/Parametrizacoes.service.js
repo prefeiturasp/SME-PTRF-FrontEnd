@@ -25,6 +25,9 @@ export const postCreateArquivoDeCarga = async (payload) => {
     if(payload.periodo){
         formData.append("periodo", payload.periodo)
     }
+    if(payload.tipo_de_conta){
+        formData.append("tipo_de_conta", payload.tipo_de_conta)
+    }
     return (await api.post(`/api/arquivos/`, formData, authHeader)).data
 };
 export const patchAlterarArquivoDeCarga = async (uuid_arquivo_de_carga, payload) => {
@@ -37,6 +40,10 @@ export const patchAlterarArquivoDeCarga = async (uuid_arquivo_de_carga, payload)
     if(payload.periodo){
         formData.append("periodo", payload.periodo)
     }
+    if(payload.tipo_de_conta){
+        formData.append("tipo_de_conta", payload.tipo_de_conta)
+    }
+
     return (await api.patch(`/api/arquivos/${uuid_arquivo_de_carga}/`, formData, authHeader)).data
 };
 export const deleteArquivoDeCarga = async (uuid_arquivo_de_carga) => {
