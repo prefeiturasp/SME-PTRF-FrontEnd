@@ -17,7 +17,7 @@ export const TopoComBotoes = () => {
                 className="btn btn-success"
                 disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
             >
-                + Adicionar repasse
+                + Adicionar repasse previsto
             </button>
         </div>
     )
