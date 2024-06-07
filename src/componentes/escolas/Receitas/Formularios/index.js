@@ -528,16 +528,23 @@ export const ReceitaForm = () => {
     }
 
     const onCancelarTrue = () => {
+        console.log("onCancelarTrue")
         setShow(false);
         setRedirectTo('');
         getPath('');
     };
 
     const onCancelarEstornoTrue = () => {
-        setShow(false);
+        console.log("readOnlyEstorno", readOnlyEstorno)
         console.log(despesa.uuid)
-        const path = `/edicao-de-despesa/${despesa.uuid}`;
-        history.push(path);
+        setShow(false);
+        if (readOnlyEstorno) {
+            const path = `/edicao-de-despesa/${despesa.uuid}`;
+            history.push(path);
+        } else {
+            setRedirectTo('');
+            getPath('');
+        }
     }
 
     const onHandleClose = () => {
