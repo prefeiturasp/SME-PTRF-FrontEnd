@@ -22,7 +22,7 @@ export const ExtracaoDados = (props) => {
 
     async function handleExportaDados(endpoint) {
         try {
-
+            console.log(`Exportando ${endpoint} ${dataInicial} ${dataFinal}`)
             await getExportaCreditos(endpoint, dataInicial, dataFinal, isSME ? '' : dre_uuid)
             toastCustom.ToastCustomSuccess('Geração solicitada com sucesso.', 'A geração foi solicitada. Em breve você receberá um aviso na central de downloads com o resultado.')
         }
@@ -59,6 +59,12 @@ export const ExtracaoDados = (props) => {
                     }}
                     onOpenChange={(open) => {
                         setIsCalendarOpen(open);
+                    }}
+                    onChange={(dates) => {
+                        console.log(dates?.[0] ? dates[0].format('YYYY-MM-DD'): 'Vazio')
+                        console.log(dates?.[1] ? dates[1].format('YYYY-MM-DD'): 'Vazio')
+                        setDataInicial(dates?.[0] ? dates[0].format('YYYY-MM-DD'): '')
+                        setDataFinal(dates?.[1] ? dates[1].format('YYYY-MM-DD'): '')
                     }}
                 />
                 {
