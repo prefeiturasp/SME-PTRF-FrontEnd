@@ -588,9 +588,9 @@ export const CadastroForm = ({verbo_http}) => {
 
             values.motivos_pagamento_antecipado = montaPayloadMotivosPagamentoAntecipado()
             values.outros_motivos_pagamento_antecipado = txtOutrosMotivosPagamentoAntecipado.trim() && checkBoxOutrosMotivosPagamentoAntecipado ? txtOutrosMotivosPagamentoAntecipado : ""
-
+            
             if(aux.origemAnaliseLancamento(parametroLocation)){
-                if(values.despesa_incompleta > 0){
+                if(document.getElementsByClassName("despesa_incompleta").length > 0){
                     setLoading(false);
                     setBtnSubmitDisable(false);
                     setShowDespesaIncompletaNaoPermitida(true);
