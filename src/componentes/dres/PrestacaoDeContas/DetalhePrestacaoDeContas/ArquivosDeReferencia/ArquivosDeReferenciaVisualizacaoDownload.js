@@ -2,7 +2,7 @@ import React, {memo, useCallback, useEffect, useState} from "react";
 import {DataTable} from 'primereact/datatable';
 import {Column} from 'primereact/column';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faDownload, faSearch} from "@fortawesome/free-solid-svg-icons";
+import {faDownload, faEye} from "@fortawesome/free-solid-svg-icons";
 import {getDownloadArquivoDeReferencia} from "../../../../../services/dres/PrestacaoDeContas.service";
 import ModalVisualizarArquivoDeReferencia from "../ModalVisualizarArquivoDeReferencia";
 
@@ -45,7 +45,7 @@ const ArquivosDeReferenciaVisualizacaoDownload = ({prestacaoDeContas, infoAta}) 
                 <button onClick={() => handleClickVisualizarArquivoDeReferencia(rowData)} className="btn-editar-membro">
                     <FontAwesomeIcon
                         style={{fontSize: '20px', marginRight: "0", marginTop: '2px', color: "#00585E"}}
-                        icon={faSearch}
+                        icon={faEye}
                     />
                 </button>
                 <span> | </span>
