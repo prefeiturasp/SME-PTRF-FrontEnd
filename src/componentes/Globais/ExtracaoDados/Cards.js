@@ -109,5 +109,12 @@ export const cards = [
         tags: ['CSV'],
         endpoint: '/api/exportacoes-dados/processos-sei-prestacao-contas/',
         visao: ['DRE','SME']
-    },    
+    },
+    {
+        titulo: 'Associações',
+        descricao: 'Arquivos com informações de associações cadastradas.',
+        tags: ['CSV'],
+        endpoint: '/api/exportacoes-dados/associacoes/',
+        visao: ['SME']
+    }
 ]
