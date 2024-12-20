@@ -116,5 +116,12 @@ export const cards = [
         tags: ['CSV'],
         endpoint: '/api/exportacoes-dados/associacoes/',
         visao: ['SME']
-    }
+    },
+    {
+        titulo: 'Unidades',
+        descricao: 'Arquivos com informações de unidades.',
+        tags: ['CSV'],
+        endpoint: '/api/exportacoes-dados/unidades/',
+        visao: ['SME']
+    },
 ]
