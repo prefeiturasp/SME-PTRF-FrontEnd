@@ -705,7 +705,9 @@ export const ModalFormBodyTextCloseButtonCabecalho = (props) => {
                 }
                 size={
                     props.size
-            }>
+                }
+                dialogClassName="custom-modal-width"
+            >
                 <Modal.Header closeButton>
                     <Modal.Title>{
                         props.titulo

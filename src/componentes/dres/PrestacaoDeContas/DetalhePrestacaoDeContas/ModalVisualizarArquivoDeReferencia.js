@@ -17,21 +17,28 @@ const ModalVisualizarArquivoDeReferencia = ({show, handleClose, uuidArquivoRefer
     })
 
     const bodyTextarea = () => {
+        const height = `${window.innerHeight * 0.85}px`;
+    
         return (
             <>
-                <object id='visualizar_arquivo_de_referencia'>
-
+                <object
+                    id="visualizar_arquivo_de_referencia"
+                    style={{ height: height, width: '100%' }}
+                    type="application/pdf"
+                >
+                    Este navegador não suporta a visualização de PDFs diretamente. Por favor, faça o download do arquivo.
                 </object>
             </>
-        )
+        );
     };
+    
 
     return (
         <ModalFormBodyTextCloseButtonCabecalho
             onClose={handleClose}
             show={show}
             onHide={handleClose}
-            size='lg'
+            size='xl'
             bodyText={bodyTextarea()}
         />
     )
