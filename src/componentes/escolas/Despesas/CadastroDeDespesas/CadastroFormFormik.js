@@ -714,7 +714,7 @@ export const CadastroFormFormik = ({
                                                                     value={rateio.aplicacao_recurso ? rateio.aplicacao_recurso : ""}
                                                                     onChange={(e) => {
                                                                         props.handleChange(e);
-                                                                        aux.limpaTipoDespesaCusteio(setFieldValue)
+                                                                        aux.limpaTipoDespesaCusteio(setFieldValue, index)
                                                                         aux.handleAvisoCapital(e.target.value, setShowAvisoCapital);
                                                                         aux.setaValoresCusteioCapital(props.values.mais_de_um_tipo_despesa, values, setFieldValue);
                                                                         aux.setValoresRateiosOriginal(props.values.mais_de_um_tipo_despesa, values, setFieldValue);
