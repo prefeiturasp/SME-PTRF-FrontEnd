@@ -25,6 +25,7 @@ import {Ordenacao} from "./Ordenacao";
 import {tr} from "date-fns/locale";
 import {LimparArgumentosOrdenacao} from "./LimparOrdenacao";
 import {FormFiltroPorEspecificacaoMaterialServico} from "../FormFiltroPorEspecificacaoMaterialServico";
+import { mantemEstadoFiltrosUnidade } from "../../../../services/mantemEstadoFiltrosUnidade.service";
 
 export const ListaDeDespesas = () => {
 
@@ -64,6 +65,20 @@ export const ListaDeDespesas = () => {
     const [camposOrdenacao, setCamposOrdenacao] = useState(initOrdenacao)
     const [buscaUtilizandoOrdenacao, setBuscaUtilizandoOrdenacao] = useState(false)
 
+    useEffect(() => {
+        setLoading(true);
+    
+        const storedFiltros = mantemEstadoFiltrosUnidade.getEstadoFiltrosUnidades();
+        const filtrosCompletos = { ...initFiltrosAvancados, ...storedFiltros };
+    
+        setFiltrosAvancados(filtrosCompletos);
+        set_filtro_informacoes(filtrosCompletos?.filtro_informacoes || []);
+        set_filtro_vinculo_atividades(filtrosCompletos?.filtro_vinculo_atividades || []);
+    
+        buscaDespesasOrdenacao('NAO', filtrosCompletos);
+    }, []);
+    
+
     const handleChangeFiltroInformacoes = (value) => {
         set_filtro_informacoes([...value]);
     }
@@ -80,11 +95,6 @@ export const ListaDeDespesas = () => {
         setTotalDePaginas(Math.ceil((numeroDePaginas) / divisorPaginas))
         setLoading(false)
     }, [])
-
-    useEffect(() => {
-        buscaDespesas()
-            .catch(console.error);
-    }, [buscaDespesas])
 
     const buscaDespesasPaginacao = async (page) => {
         setPaginacaoAtual(page)
@@ -234,52 +244,77 @@ export const ListaDeDespesas = () => {
         await buscaDespesasOrdenacao(_limpar_ordenacao);
     }
 
-    const buscaDespesasOrdenacao = async (_limpar_ordenacao= 'NAO') => {
-        setForcarPrimeiraPagina(gerarUuid)
-        let data_inicio = filtrosAvancados.data_inicio ? moment(new Date(filtrosAvancados.data_inicio), "YYYY-MM-DD").format("YYYY-MM-DD") : null;
-        let data_fim = filtrosAvancados.data_fim ? moment(new Date(filtrosAvancados.data_fim), "YYYY-MM-DD").format("YYYY-MM-DD") : null;
+    const buscaDespesasOrdenacao = async (_limpar_ordenacao = 'NAO', filtros = initFiltrosAvancados) => {
+        setForcarPrimeiraPagina(gerarUuid);
+        const filtrosAtuais = {
+            filtrar_por_termo: filtros?.filtrar_por_termo?.trim() !== "" ? filtros?.filtrar_por_termo : filtrosAvancados.filtrar_por_termo || "",
+            aplicacao_recurso: filtros?.aplicacao_recurso?.trim() !== "" ? filtros?.aplicacao_recurso : filtrosAvancados.aplicacao_recurso || "",
+            acao_associacao: filtros?.acao_associacao?.trim() !== "" ? filtros?.acao_associacao : filtrosAvancados.acao_associacao || "",
+            despesa_status: filtros?.despesa_status?.trim() !== "" ? filtros?.despesa_status : filtrosAvancados.despesa_status || "",
+            fornecedor: filtros?.fornecedor?.trim() !== "" ? filtros?.fornecedor : filtrosAvancados.fornecedor || "",
+            data_inicio: filtros?.data_inicio?.trim() !== "" ? filtros?.data_inicio : (filtrosAvancados.data_inicio ? moment(new Date(filtrosAvancados.data_inicio)).format("YYYY-MM-DD") : ""),
+            data_fim: filtros?.data_fim?.trim() !== "" ? filtros?.data_fim : (filtrosAvancados.data_fim ? moment(new Date(filtrosAvancados.data_fim)).format("YYYY-MM-DD") : ""),
+            conta_associacao: filtros?.conta_associacao?.trim() !== "" ? filtros?.conta_associacao : filtrosAvancados.conta_associacao || "",
+            filtro_vinculo_atividades: filtros?.filtro_vinculo_atividades?.length ? filtros?.filtro_vinculo_atividades : filtro_vinculo_atividades || [],
+            filtro_informacoes: filtros?.filtro_informacoes?.length ? filtros?.filtro_informacoes : filtro_informacoes || [],
+        };
 
-        let lista_retorno_api
-
-        if (_limpar_ordenacao === 'SIM'){
+        let lista_retorno_api;
+        if (_limpar_ordenacao === 'SIM') {
             lista_retorno_api = await ordenacaoDespesas(
-                filtrosAvancados.filtrar_por_termo,
-                filtrosAvancados.aplicacao_recurso,
-                filtrosAvancados.acao_associacao,
-                filtrosAvancados.despesa_status,
-                filtrosAvancados.fornecedor,
-                data_inicio,
-                data_fim,
-                filtrosAvancados.conta_associacao,
-                filtro_vinculo_atividades,
-                filtro_informacoes,
+                filtrosAtuais.filtrar_por_termo,
+                filtrosAtuais.aplicacao_recurso,
+                filtrosAtuais.acao_associacao,
+                filtrosAtuais.despesa_status,
+                filtrosAtuais.fornecedor,
+                filtrosAtuais.data_inicio,
+                filtrosAtuais.data_fim,
+                filtrosAtuais.conta_associacao,
+                filtrosAtuais.filtro_vinculo_atividades,
+                filtrosAtuais.filtro_informacoes
             );
-        }else {
+        } else {
             lista_retorno_api = await ordenacaoDespesas(
-                filtrosAvancados.filtrar_por_termo,
-                filtrosAvancados.aplicacao_recurso,
-                filtrosAvancados.acao_associacao,
-                filtrosAvancados.despesa_status,
-                filtrosAvancados.fornecedor,
-                data_inicio,
-                data_fim,
-                filtrosAvancados.conta_associacao,
-                filtro_vinculo_atividades,
-                filtro_informacoes,
+                filtrosAtuais.filtrar_por_termo,
+                filtrosAtuais.aplicacao_recurso,
+                filtrosAtuais.acao_associacao,
+                filtrosAtuais.despesa_status,
+                filtrosAtuais.fornecedor,
+                filtrosAtuais.data_inicio,
+                filtrosAtuais.data_fim,
+                filtrosAtuais.conta_associacao,
+                filtrosAtuais.filtro_vinculo_atividades,
+                filtrosAtuais.filtro_informacoes,
                 camposOrdenacao.ordenar_por_numero_do_documento,
                 camposOrdenacao.ordenar_por_data_especificacao,
                 camposOrdenacao.ordenar_por_valor,
-                camposOrdenacao.ordenar_por_imposto,
+                camposOrdenacao.ordenar_por_imposto
             );
         }
 
+        reusltadoSomaDosTotais(
+            filtrosAtuais.filtrar_por_termo,
+            filtrosAtuais.aplicacao_recurso,
+            filtrosAtuais.acao_associacao,
+            filtrosAtuais.despesa_status,
+            filtrosAtuais.fornecedor,
+            filtrosAtuais.data_inicio,
+            filtrosAtuais.data_fim,
+            filtrosAtuais.conta_associacao,
+            filtrosAtuais.vinculo_atividade,
+            filtrosAtuais.filtro_informacoes
+        );
+    
+        mantemEstadoFiltrosUnidade.setEstadoFiltrosUnidadesUsuario(visoesService.getUsuarioLogin(), {
+            filtros_despesas: filtrosAtuais,
+        });
 
-        let results = lista_retorno_api.results
-        setDespesas(results)
-        let numeroDePaginas = lista_retorno_api.count;
-        setTotalDePaginas(Math.ceil((numeroDePaginas) / divisorPaginas))
-        setLoading(false)
-    }
+        const results = lista_retorno_api.results;
+        setDespesas(results);
+        setTotalDePaginas(Math.ceil(lista_retorno_api.count / divisorPaginas));
+        setLoading(false);
+    };
+    
 
     const buscaDespesasOrdenacaoPaginacao = async (page) => {
         setPaginacaoAtual(page)
