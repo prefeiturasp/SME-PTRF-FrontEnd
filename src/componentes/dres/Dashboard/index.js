@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Redirect} from 'react-router-dom'
+import {Redirect, useLocation} from 'react-router-dom'
 import {getPeriodos, getItensDashboard} from "../../../services/dres/Dashboard.service";
 import {SelectPeriodo} from "./SelectPeriodo";
 import "./dashboard.scss"
@@ -15,22 +15,34 @@ export const DreDashboard = () => {
     const [statusPrestacao, setStatusPrestacao] = useState(false);
     const [loading, setLoading] = useState(false);
 
+    const location = useLocation();
+    const acessadoPelaSidebar = location.state?.acessadoPelaSidebar || false;
+
     useEffect(() => {
         carregaPeriodos();
     }, []);
 
     useEffect(() => {
         carregaItensDashboard();
+        if (periodoEscolhido) {
+            localStorage.setItem('PERIODO_SELECIONADO_DRE_ACOMPANHAMENTO', periodoEscolhido);
+        }
     }, [periodoEscolhido]);
 
     const carregaPeriodos = async () => {
         setLoading(true);
         let periodos = await getPeriodos();
         setPeriodos(periodos);
+
+        const storedPeriodo = localStorage.getItem('PERIODO_SELECIONADO_DRE_ACOMPANHAMENTO');
         if (periodos && periodos.length > 0){
-            //Caso exista mais de um período seleciona por default o anterior ao corrente.
-            const periodoIndex = periodos.length > 1 ? 1 : 0;
-            setPeriodoEsolhido(periodos[periodoIndex].uuid)
+            if(storedPeriodo && !acessadoPelaSidebar) {
+                setPeriodoEsolhido(storedPeriodo);
+            } else {
+                //Caso exista mais de um período seleciona por default o anterior ao corrente.
+                const periodoIndex = periodos.length > 1 ? 1 : 0;
+                setPeriodoEsolhido(periodos[periodoIndex].uuid)
+            }
         }
         setLoading(false);
     };
