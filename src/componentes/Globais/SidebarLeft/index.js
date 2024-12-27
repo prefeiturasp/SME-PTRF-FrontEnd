@@ -109,8 +109,15 @@ export const SidebarLeft = () => {
                     visoesService.forcarNovoLogin();
                     const to = '/' + selected;
                     if (history.location.pathname !== to) {
-                        if(sidebarStatus.irParaUrl){
-                            history.push(to)
+                        if (sidebarStatus.irParaUrl) {
+                            if (selected === 'dre-dashboard') {
+                                history.push({
+                                    pathname: to,
+                                    state: { acessadoPelaSidebar: true },
+                                });
+                            } else {
+                                history.push(to);
+                            }
                         }
                     }
                 }}
