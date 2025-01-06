@@ -65,18 +65,34 @@ export const ListaDeDespesas = () => {
     const [camposOrdenacao, setCamposOrdenacao] = useState(initOrdenacao)
     const [buscaUtilizandoOrdenacao, setBuscaUtilizandoOrdenacao] = useState(false)
 
+    const [previousPath, setPreviousPath] = useState(null);
+
     useEffect(() => {
+        if (!previousPath) {
+            const storedPath = sessionStorage.getItem('previousPath');
+            setPreviousPath(storedPath || '/');
+            sessionStorage.removeItem('previousPath');
+        }
+    }, [previousPath]);
+
+    useEffect(() => {
+        if (!previousPath) return;
+
         setLoading(true);
-    
-        const storedFiltros = mantemEstadoFiltrosUnidade.getEstadoFiltrosUnidades();
-        const filtrosCompletos = { ...initFiltrosAvancados, ...storedFiltros };
-    
+
+        let filtrosCompletos = { ...initFiltrosAvancados };
+
+        if (previousPath.includes('/edicao-de-despesa')) {
+            const storedFiltros = mantemEstadoFiltrosUnidade.getEstadoFiltrosUnidades();
+            filtrosCompletos = { ...initFiltrosAvancados, ...storedFiltros };
+        }
+
         setFiltrosAvancados(filtrosCompletos);
         set_filtro_informacoes(filtrosCompletos?.filtro_informacoes || []);
         set_filtro_vinculo_atividades(filtrosCompletos?.filtro_vinculo_atividades || []);
-    
+
         buscaDespesasOrdenacao('NAO', filtrosCompletos);
-    }, []);
+    }, [previousPath]);
     
 
     const handleChangeFiltroInformacoes = (value) => {
