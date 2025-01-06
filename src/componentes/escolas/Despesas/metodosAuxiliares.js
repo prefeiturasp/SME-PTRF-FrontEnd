@@ -109,6 +109,7 @@ const getPath = (origem, parametroLocation=null) => {
         }
     }
 
+    sessionStorage.setItem('previousPath', window.location.pathname);
     window.location.assign(path)
 };
 
