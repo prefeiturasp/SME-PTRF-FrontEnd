@@ -346,6 +346,23 @@ export const deleteTipoDeCusteio = async (tag_uuid) => {
     return (await api.delete(`/api/tipos-custeio/${tag_uuid}/`, authHeader))
 };
 
+// Tipos de Documento
+export const getTodosTiposDeDocumento = async () => {
+    return (await api.get(`/api/tipos-documento/`, authHeader)).data
+};
+export const getFiltrosTiposDeDocumento = async (nome) => {
+    return (await api.get(`/api/tipos-documento/?nome=${nome}`, authHeader)).data
+};
+export const postCreateTipoDeDocumento = async (payload) => {
+    return (await api.post(`/api/tipos-documento/`, payload, authHeader)).data
+};
+export const patchAlterarTipoDeDocumento = async (tag_uuid, payload) => {
+    return (await api.patch(`/api/tipos-documento/${tag_uuid}/`, payload, authHeader)).data
+};
+export const deleteTipoDeDocumento = async (tag_uuid) => {
+    return (await api.delete(`/api/tipos-documento/${tag_uuid}/`, authHeader))
+};
+
 // Fornecedores
 export const getFornecedores = async () => {
     return (await api.get(`/api/fornecedores/`, authHeader)).data
