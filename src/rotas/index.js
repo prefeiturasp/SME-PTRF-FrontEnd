@@ -73,6 +73,7 @@ import {TiposConta} from "../componentes/sme/Parametrizacoes/Estrutura/TiposCont
 import {FiqueDeOlho} from "../componentes/sme/Parametrizacoes/EdicaoDeTextos/FiqueDeOlho";
 import ArquivosDeCarga from "../componentes/Globais/ArquivosDeCarga";
 import {EspecificacoesMateriaisServicos} from "../componentes/sme/Parametrizacoes/Despesas/EspecificacoesMateriaisServicos";
+import {TiposDocumento} from "../componentes/sme/Parametrizacoes/Despesas/TiposDocumento";
 import {TiposDeCusteio} from "../componentes/sme/Parametrizacoes/Despesas/TiposDeCusteio"
 import {Fornecedores} from "../componentes/sme/Parametrizacoes/Despesas/Fornecedores";
 import {AnaliseDre} from "../componentes/escolas/AnaliseDre";
@@ -487,6 +488,12 @@ const routesConfig = [
         exact: true,
         path: "/parametro-tipos-conta",
         component: TiposConta,
+        permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
+    },
+    {
+        exact: true,
+        path: "/parametro-tipos-documento",
+        component: TiposDocumento,
         permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
     },
     {
