@@ -98,7 +98,6 @@ export const TiposDocumento = ()=>{
     const [showModalInfoNaoPodeExcluir, setShowModalInfoNaoPodeExcluir] = useState(false);
     const [mensagemModalInfoNaoPodeExcluir, setMensagemModalInfoNaoPodeExcluir] = useState("");
     const handleEditFormModal = useCallback( async (rowData) =>{
-        console.log(stateFormModal, rowData)
         setStateFormModal({
             ...stateFormModal,
             nome: rowData.nome,
