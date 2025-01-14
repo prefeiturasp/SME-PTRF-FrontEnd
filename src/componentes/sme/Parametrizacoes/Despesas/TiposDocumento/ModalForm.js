@@ -13,6 +13,7 @@ const ModalForm = ({show, stateFormModal, handleClose, handleSubmitModalForm, se
         return (
             <>
                 <Formik
+                    data-qa="formik-tipo-documento"	
                     initialValues={stateFormModal}
                     validationSchema={YupSignupSchemaTags}
                     validateOnBlur={true}
@@ -22,16 +23,17 @@ const ModalForm = ({show, stateFormModal, handleClose, handleSubmitModalForm, se
                     {props => {
                         const { values, setFieldValue } = props;
                         return(
-                            <form onSubmit={props.handleSubmit}>
+                            <form data-qa="form-tipo-documento"	onSubmit={props.handleSubmit}>
 
                                 <div className='row'>
-                                    <div className='col-12'>
+                                    <div className='col-12' data-qa="legenda-campos-obrigatorios">
                                         <p>* Preenchimento obrigatório</p>
                                     </div>
                                     <div className='col col-12'>
                                         <div className="form-group">
-                                            <label htmlFor="nome">Nome *</label>
+                                            <label data-qa="label-nome-tipo-documento" htmlFor="nome">Nome *</label>
                                             <input
+                                                data-qa="campo-nome-tipo-documento"
                                                 type="text"
                                                 value={props.values.nome}
                                                 placeholder="Nome do tipo de documento"
@@ -48,9 +50,10 @@ const ModalForm = ({show, stateFormModal, handleClose, handleSubmitModalForm, se
 
                                 <div className="form-row">
                                     <div className="form-group col-md-6">
-                                        <p className="mb-0">Solicitar a digitação do número do documento?</p>
+                                        <p data-qa="legenda-numero-documento-digitado" className="mb-0">Solicitar a digitação do número do documento?</p>
                                         <div className="form-check form-check-inline mt-2">
                                             <input
+                                                data-qa="campo-numero-documento-digitado-true"
                                                 name="numero_documento_digitado_true"
                                                 className={`form-check-input`}
                                                 type="radio"
@@ -60,10 +63,11 @@ const ModalForm = ({show, stateFormModal, handleClose, handleSubmitModalForm, se
                                                 onChange={() => setFieldValue("numero_documento_digitado", true)}
                                                 disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                             />
-                                            <label className="form-check-label" htmlFor="numero_documento_digitado_true">Sim</label>
+                                            <label data-qa="label-numero-documento-digitado-true" className="form-check-label" htmlFor="numero_documento_digitado_true">Sim</label>
                                         </div>
                                         <div className="form-check form-check-inline">
                                             <input
+                                                data-qa="campo-numero-documento-digitado-false"
                                                 name="numero_documento_digitado_false"
                                                 className={`form-check-input`}
                                                 type="radio"
@@ -73,14 +77,15 @@ const ModalForm = ({show, stateFormModal, handleClose, handleSubmitModalForm, se
                                                 onChange={() => setFieldValue("numero_documento_digitado", false)}
                                                 disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                             />
-                                            <label className="form-check-label" htmlFor="numero_documento_digitado_false">Não</label>
+                                            <label data-qa="label-numero-documento-digitado-false" className="form-check-label" htmlFor="numero_documento_digitado_false">Não</label>
                                         </div>
                                     </div>
                                 
                                     <div className="form-group col-md-6">
                                         <>
-                                            <p className="mb-0">No número do documento deve constar apenas dígitos?
-                                                <span data-tip="(ex: 0,1,2,3,4)" data-for={`tooltip-id-numero_documento_digitado`}>
+                                            <p data-qa="legenda-apenas-digitos" className="mb-0">No número do documento deve constar apenas dígitos?
+                                                <span data-qa="tooltip-apenas-digitos"
+                                                    data-tip="(ex: 0,1,2,3,4)" data-for={`tooltip-id-numero_documento_digitado`}>
                                                     <ReactTooltip id={`tooltip-id-numero_documento_digitado`}/>
                                                     <FontAwesomeIcon
                                                         style={{fontSize: '16px', marginLeft: "10px", color: "#00585E"}}
@@ -91,6 +96,7 @@ const ModalForm = ({show, stateFormModal, handleClose, handleSubmitModalForm, se
                                         </>
                                         <div className="form-check form-check-inline mt-2">
                                             <input
+                                                data-qa="campo-apenas-digitos-true"
                                                 name="apenas_digitos_true"
                                                 className={`form-check-input`}
                                                 type="radio"
@@ -99,11 +105,12 @@ const ModalForm = ({show, stateFormModal, handleClose, handleSubmitModalForm, se
                                                 checked={values.apenas_digitos === true}
                                                 onChange={() => setFieldValue("apenas_digitos", true)}
                                                 disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
-                                            />
-                                            <label className="form-check-label" htmlFor="apenas_digitos_true">Sim</label>
+                                                />
+                                            <label data-qa="label-apenas-digitos-true" className="form-check-label" htmlFor="apenas_digitos_true">Sim</label>
                                         </div>
                                         <div className="form-check form-check-inline">
                                             <input
+                                                data-qa="campo-apenas-digitos-false"
                                                 name="apenas_digitos_false"
                                                 className={`form-check-input`}
                                                 type="radio"
@@ -113,14 +120,15 @@ const ModalForm = ({show, stateFormModal, handleClose, handleSubmitModalForm, se
                                                 onChange={() => setFieldValue("apenas_digitos", false)}
                                                 disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                             />
-                                            <label className="form-check-label" htmlFor="apenas_digitos_false">Não</label>
+                                            <label data-qa="label-apenas-digitos-false" className="form-check-label" htmlFor="apenas_digitos_false">Não</label>
                                         </div>
                                     </div>
 
                                     <div className="form-group col-md-6">
-                                        <p className="mb-0">Documento comprobatório de despesa?</p>
+                                        <p data-qa="legenda-documento-comprobatorio-de-despesa" className="mb-0">Documento comprobatório de despesa?</p>
                                         <div className="form-check form-check-inline mt-2">
                                             <input
+                                                data-qa="campo-documento-comprobatorio-de-despesa-true"
                                                 name="documento_comprobatorio_de_despesa_true"
                                                 className={`form-check-input`}
                                                 type="radio"
@@ -130,10 +138,11 @@ const ModalForm = ({show, stateFormModal, handleClose, handleSubmitModalForm, se
                                                 onChange={() => setFieldValue("documento_comprobatorio_de_despesa", true)}
                                                 disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                             />
-                                            <label className="form-check-label" htmlFor="documento_comprobatorio_de_despesa_true">Sim</label>
+                                            <label data-qa="label-documento-comprobatorio-de-despesa-true" className="form-check-label" htmlFor="documento_comprobatorio_de_despesa_true">Sim</label>
                                         </div>
                                         <div className="form-check form-check-inline">
                                             <input
+                                                data-qa="campo-documento-comprobatorio-de-despesa-false"
                                                 name="documento_comprobatorio_de_despesa_false"
                                                 className={`form-check-input`}
                                                 type="radio"
@@ -143,14 +152,15 @@ const ModalForm = ({show, stateFormModal, handleClose, handleSubmitModalForm, se
                                                 onChange={() => setFieldValue("documento_comprobatorio_de_despesa", false)}
                                                 disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                             />
-                                            <label className="form-check-label" htmlFor="documento_comprobatorio_de_despesa_false">Não</label>
+                                            <label data-qa="label-documento-comprobatorio-de-despesa-false" className="form-check-label" htmlFor="documento_comprobatorio_de_despesa_false">Não</label>
                                         </div>
                                     </div>
 
                                     <div className="form-group col-md-6">
-                                        <p className="mb-0">Habilita preenchimento do imposto?</p>
+                                        <p data-qa="legenda-pode-reter-imposto" className="mb-0">Habilita preenchimento do imposto?</p>
                                         <div className="form-check form-check-inline mt-2">
                                             <input
+                                                data-qa="campo-pode-reter-imposto-true"
                                                 name="pode_reter_imposto_true"
                                                 className={`form-check-input`}
                                                 type="radio"
@@ -160,10 +170,11 @@ const ModalForm = ({show, stateFormModal, handleClose, handleSubmitModalForm, se
                                                 onChange={() => setFieldValue("pode_reter_imposto", true)}
                                                 disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                             />
-                                            <label className="form-check-label" htmlFor="pode_reter_imposto_true">Sim</label>
+                                            <label data-qa="label-pode-reter-imposto-true" className="form-check-label" htmlFor="pode_reter_imposto_true">Sim</label>
                                         </div>
                                         <div className="form-check form-check-inline">
                                             <input
+                                                data-qa="campo-pode-reter-imposto-false"
                                                 name="pode_reter_imposto_false"
                                                 className={`form-check-input`}
                                                 type="radio"
@@ -173,14 +184,15 @@ const ModalForm = ({show, stateFormModal, handleClose, handleSubmitModalForm, se
                                                 onChange={() => setFieldValue("pode_reter_imposto", false)}
                                                 disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                             />
-                                            <label className="form-check-label" htmlFor="pode_reter_imposto_false">Não</label>
+                                            <label data-qa="label-pode-reter-imposto-false" className="form-check-label" htmlFor="pode_reter_imposto_false">Não</label>
                                         </div>
                                     </div>
 
                                     <div className="form-group col-md-6">
-                                        <p className="mb-0">Documento relativo ao imposto recolhido?</p>
+                                        <p data-qa="legenda-documento-de-retencao-de-imposto" className="mb-0">Documento relativo ao imposto recolhido?</p>
                                         <div className="form-check form-check-inline mt-2">
                                             <input
+                                                data-qa="campo-documento-de-retencao-de-imposto-true"
                                                 name="eh_documento_de_retencao_de_imposto_true"
                                                 className={`form-check-input`}
                                                 type="radio"
@@ -190,10 +202,11 @@ const ModalForm = ({show, stateFormModal, handleClose, handleSubmitModalForm, se
                                                 onChange={() => setFieldValue("eh_documento_de_retencao_de_imposto", true)}
                                                 disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                             />
-                                            <label className="form-check-label" htmlFor="eh_documento_de_retencao_de_imposto_true">Sim</label>
+                                            <label data-qa="label-documento-de-retencao-de-imposto-true" className="form-check-label" htmlFor="eh_documento_de_retencao_de_imposto_true">Sim</label>
                                         </div>
                                         <div className="form-check form-check-inline">
                                             <input
+                                                data-qa="campo-documento-de-retencao-de-imposto-false"
                                                 name="eh_documento_de_retencao_de_imposto_false"
                                                 className={`form-check-input`}
                                                 type="radio"
@@ -203,7 +216,7 @@ const ModalForm = ({show, stateFormModal, handleClose, handleSubmitModalForm, se
                                                 onChange={() => setFieldValue("eh_documento_de_retencao_de_imposto", false)}
                                                 disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                             />
-                                            <label className="form-check-label" htmlFor="eh_documento_de_retencao_de_imposto_false">Não</label>
+                                            <label data-qa="label-documento-de-retencao-de-imposto-false" className="form-check-label" htmlFor="eh_documento_de_retencao_de_imposto_false">Não</label>
                                         </div>
                                     </div>
                                 </div>
@@ -211,23 +224,23 @@ const ModalForm = ({show, stateFormModal, handleClose, handleSubmitModalForm, se
                                 <div className='row mt-3'>
                                     <div className='col'>
                                         <p className='mb-2'>ID</p>
-                                        <p className='mb-2'>{values.id}</p>
+                                        <p className='mb-2' data-qa="label-id-tipo-documento">{values.id}</p>
                                     </div>
                                 </div>
                                 <div className="d-flex bd-highlight mt-2">
                                     <div className="p-Y flex-grow-1 bd-highlight">
                                         {values.operacao === 'edit' ? (
-                                            <button onClick={()=>setShowModalConfirmDelete(true)} type="button" className="btn btn btn-danger mt-2 mr-2" disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}>
+                                            <button data-qa="botao-confirmar-apagar-tipo-documento" onClick={()=>setShowModalConfirmDelete(true)} type="button" className="btn btn btn-danger mt-2 mr-2" disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}>
                                                 Apagar
                                             </button>
                                         ): null}
                                     </div>
                                     <div className="p-Y bd-highlight">
-                                        <button onClick={()=>handleClose()} type="button" className={`btn btn-outline-success mt-2 mr-2`}>Cancelar</button>
+                                        <button data-qa="botao-cancelar-modal-tipo-documento" onClick={()=>handleClose()} type="button" className={`btn btn-outline-success mt-2 mr-2`}>Cancelar</button>
                                     </div>
 
                                     <div className="p-Y bd-highlight">
-                                        <button type="submit" className="btn btn btn-success mt-2" disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}>Salvar</button>
+                                        <button data-qa="botao-submit-modal-tipo-documento" type="submit" className="btn btn btn-success mt-2" disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}>Salvar</button>
                                     </div>
                                 </div>
                             </form>

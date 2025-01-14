@@ -72,10 +72,10 @@ export const TiposDocumento = ()=>{
     const statusTemplate = (rowData) => {
         return rowData.status && rowData.status === 'ATIVO' ? 'Ativo' : 'Inativo'
     };
-    const apenasDigitoTemplate = (rowData) => {
-        // Apenas Dígitos
-        return rowData.apenas_digitos ? 'Sim': 'Não'
-    }
+    // const apenasDigitoTemplate = (rowData) => {
+    //     // Apenas Dígitos
+    //     return rowData.apenas_digitos ? 'Sim': 'Não'
+    // }
 
     // Modal
     const initialStateFormModal = {
@@ -116,7 +116,8 @@ export const TiposDocumento = ()=>{
     const acoesTemplate = useCallback((rowData) =>{
         return (
             <div>
-                <button className="btn-editar-membro" onClick={()=>handleEditFormModal(rowData)}>
+                <button data-qa="botao-editar-tipo-documento"
+                    className="btn-editar-membro" onClick={()=>handleEditFormModal(rowData)}>
                     <div data-tip="Editar" data-for={`tooltip-id-${rowData.uuid}`}>
                         <ReactTooltip id={`tooltip-id-${rowData.uuid}`}/>
                         <FontAwesomeIcon
@@ -252,6 +253,7 @@ export const TiposDocumento = ()=>{
                             </>
                         :
                             <MsgImgCentralizada
+                                data-qa="imagem-lista-sem-tipos-documentos"
                                 texto='Não existem tipos de documentos cadastrados, clique no botão "Adicionar tipo de documento" para começar.'
                                 img={Img404}
                                 dataQa=""

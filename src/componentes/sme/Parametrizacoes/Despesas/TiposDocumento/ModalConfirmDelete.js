@@ -4,6 +4,7 @@ import React from "react";
 export const ModalConfirmDelete = (props) => {
     return (
         <ModalBootstrap
+            data-qa="modal-confirmar-exclusao-tipo-documento"
             show={props.show}
             onHide={props.handleClose}
             titulo={props.titulo}
