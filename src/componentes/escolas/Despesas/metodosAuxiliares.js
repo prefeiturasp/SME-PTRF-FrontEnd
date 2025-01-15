@@ -109,6 +109,7 @@ const getPath = (origem, parametroLocation=null) => {
         }
     }
 
+    sessionStorage.setItem('previousPath', window.location.pathname);
     window.location.assign(path)
 };
 
@@ -187,8 +188,8 @@ const setValorRealizado = (setFieldValue, valor) =>{
     setFieldValue("valor_total", trataNumericos(valor))
 };
 
-const limpaTipoDespesaCusteio = (setFieldValue) => {
-    setFieldValue('rateios[0].tipo_custeio', null)
+const limpaTipoDespesaCusteio = (setFieldValue, index) => {
+    setFieldValue(`rateios[${index}].tipo_custeio`, null)
 }
 
 const setaValoresCusteioCapital = (mais_de_um_tipo_de_despesa = null, values, setFieldValue) =>{
