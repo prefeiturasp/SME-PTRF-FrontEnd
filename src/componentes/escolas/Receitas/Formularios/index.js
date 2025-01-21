@@ -647,6 +647,7 @@ export const ReceitaForm = () => {
             }
         }
 
+        sessionStorage.setItem('previousPath', window.location.pathname);
         window.location.assign(path);
     };
 
