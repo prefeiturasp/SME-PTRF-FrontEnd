@@ -2,26 +2,24 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter } from "react-router-dom";
 import { TiposDocumento } from '..';
-import { getTodosTiposDeDocumento } from "../../../../../../services/sme/Parametrizacoes.service";
+import { getTodosTiposDeDocumento, getFiltrosTiposDeDocumento } from "../../../../../../services/sme/Parametrizacoes.service";
 import { toastCustom } from "../../../../../Globais/ToastCustom";
-import { postCreateTipoDeDocumento, patchAlterarTipoDeDocumento } from '../../../../../../services/sme/Parametrizacoes.service';
+import { postCreateTipoDeDocumento, patchAlterarTipoDeDocumento, deleteTipoDeDocumento } from '../../../../../../services/sme/Parametrizacoes.service';
+import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
 import * as service from "../../../../../../services/sme/Parametrizacoes.service";
 import { Filtros } from '../Filtros';
+import { mockData } from '../__fixtures__/mockData';
 
 jest.mock("../../../../../../services/sme/Parametrizacoes.service", ()=>({
     getTodosTiposDeDocumento: jest.fn(),
     postCreateTipoDeDocumento: jest.fn(),
     patchAlterarTipoDeDocumento: jest.fn(),
+    deleteTipoDeDocumento: jest.fn(),
+    getFiltrosTiposDeDocumento: jest.fn(),
 }));
 
-jest.mock("../Filtros", () => ({
-    Filtros: ({ handleChangeFiltros, handleSubmitFiltros, limpaFiltros }) => (
-    <div>
-      <button onClick={() => handleChangeFiltros("filtrar_por_nome", "test")}>Filtrar</button>
-      <button onClick={handleSubmitFiltros}>Aplicar Filtros</button>
-      <button onClick={limpaFiltros}>Limpar Filtros</button>
-    </div>
-  ),
+jest.mock("../../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes", () => ({
+    RetornaSeTemPermissaoEdicaoPainelParametrizacoes: jest.fn(),
 }));
 
 jest.mock("../../../../../Globais/ToastCustom", () => ({
@@ -33,6 +31,51 @@ jest.mock("../../../../../Globais/ToastCustom", () => ({
 describe("Carrega página de Tipos de Documentos", () => {
     beforeEach(() => {
         jest.clearAllMocks();
+    });
+
+    it("Testa a chamada de getFiltrosTiposDeDocumento", async () => {
+        getTodosTiposDeDocumento.mockResolvedValueOnce(mockData);
+        render(<TiposDocumento />);
+
+        await waitFor(() => {
+
+            const filtro_nome = screen.getByLabelText(/filtrar por nome/i)
+            expect(filtro_nome).toBeInTheDocument();
+
+            fireEvent.change(filtro_nome, { target: { value: 'Tipo 1' } });
+            expect(filtro_nome.value).toBe('Tipo 1');
+
+        });
+        fireEvent.click(screen.getByRole('button', { name: /filtrar/i }));
+        await waitFor(() => {
+            expect(getFiltrosTiposDeDocumento).toHaveBeenCalledWith('Tipo 1');
+        });
+    });
+
+    it("Testa a chamada de limpar Filtros", async () => {
+        getTodosTiposDeDocumento.mockResolvedValue(mockData)
+        render(<TiposDocumento />);
+
+        expect(screen.getByText(/Carregando.../i)).toBeInTheDocument();
+
+        await waitFor(()=> expect(screen.getByText(/Tipo 10/i)).toBeInTheDocument());
+        const filtro_nome = screen.getByLabelText(/filtrar por nome/i)
+        expect(filtro_nome).toBeInTheDocument();
+
+        fireEvent.change(filtro_nome, { target: { value: 'Tipo 1' } });
+        expect(filtro_nome.value).toBe('Tipo 1');
+
+        const botao_limpar = screen.getByRole('button', { name: /Limpar/i })
+        expect(botao_limpar).toBeInTheDocument();
+        fireEvent.click(botao_limpar);
+
+        expect(screen.getByText(/Carregando.../i)).toBeInTheDocument();
+
+        await waitFor(()=> expect(screen.getByText(/Tipo 10/i)).toBeInTheDocument());
+        await waitFor(() => {
+            const filtro_nome = screen.getByLabelText(/filtrar por nome/i)
+            expect(filtro_nome.value).toBe('');
+        });
     });
 
     test('Renderiza a mensagem "Carregando..." ao abrir a página', () => {
@@ -62,6 +105,308 @@ describe("Carrega página de Tipos de Documentos", () => {
         await waitFor(()=> expect(getTodosTiposDeDocumento).toHaveBeenCalled());
         await waitFor(()=> {
             expect(screen.getByText(/Não existem tipos de documentos cadastrados, clique no botão "Adicionar tipo de documento" para começar./i)).toBeInTheDocument()
+        });
+    });
+
+});
+
+describe("Testes Operacao CREATE", ()=>{
+
+    it("Renderiza Operacao create sucesso", async () => {
+        RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
+
+        render(<TiposDocumento/>);
+
+        await waitFor(()=> {
+            const button = screen.getByRole('button', { name: /adicionar tipo de documento/i });
+            expect(button).toBeInTheDocument();
+            fireEvent.click(button);
+        });
+        expect(screen.getByText("* Preenchimento obrigatório")).toBeInTheDocument();
+        const input = screen.getByLabelText("Nome *");
+        expect(input).toBeInTheDocument();
+        expect(input.value).toBe("");
+
+        const btnSalvar = screen.getByRole("button", { name: "Salvar" });
+        expect(btnSalvar).toBeInTheDocument();
+        expect(btnSalvar).toBeEnabled();
+        fireEvent.change(input, { target: { value: "Documento Teste" } });
+        expect(input.value).toBe("Documento Teste");
+        fireEvent.click(btnSalvar);
+        await waitFor(() => {
+            expect(postCreateTipoDeDocumento).toHaveBeenCalled();
+        });
+
+    });
+    it("Renderiza Operacao create falha non_field_errors", async () => {
+        postCreateTipoDeDocumento.mockRejectedValueOnce({
+            response: { data: { non_field_errors: "Este tipo de documento já existe." } },
+        });
+        RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
+
+        render(<TiposDocumento/>);
+
+        await waitFor(()=> {
+            const button = screen.getByRole('button', { name: /adicionar tipo de documento/i });
+            expect(button).toBeInTheDocument();
+            fireEvent.click(button);
+        });
+        expect(screen.getByText("* Preenchimento obrigatório")).toBeInTheDocument();
+        const input = screen.getByLabelText("Nome *");
+        expect(input).toBeInTheDocument();
+        expect(input.value).toBe("");
+
+        const btnSalvar = screen.getByRole("button", { name: "Salvar" });
+        expect(btnSalvar).toBeInTheDocument();
+        expect(btnSalvar).toBeEnabled();
+        fireEvent.change(input, { target: { value: "Documento Teste" } });
+        expect(input.value).toBe("Documento Teste");
+        fireEvent.click(btnSalvar);
+        await waitFor(() => {
+            expect(postCreateTipoDeDocumento).toHaveBeenCalled();
+            const toastCustomError = screen.getByText(/Este tipo de documento já existe./i);
+            expect(toastCustomError).toBeInTheDocument();
+        });
+
+    });
+    it("Renderiza Operacao create falha erro response", async () => {
+        postCreateTipoDeDocumento.mockRejectedValueOnce({
+            response: { data: { nome: "Campo obrigatório" } },
+        });
+        RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
+
+        render(<TiposDocumento/>);
+
+        await waitFor(()=> {
+            const button = screen.getByRole('button', { name: /adicionar tipo de documento/i });
+            expect(button).toBeInTheDocument();
+            fireEvent.click(button);
+        });
+        expect(screen.getByText("* Preenchimento obrigatório")).toBeInTheDocument();
+        const input = screen.getByLabelText("Nome *");
+        expect(input).toBeInTheDocument();
+        expect(input.value).toBe("");
+
+        const btnSalvar = screen.getByRole("button", { name: "Salvar" });
+        expect(btnSalvar).toBeInTheDocument();
+        expect(btnSalvar).toBeEnabled();
+        fireEvent.change(input, { target: { value: "Documento Teste" } });
+        expect(input.value).toBe("Documento Teste");
+        fireEvent.click(btnSalvar);
+        await waitFor(() => {
+            expect(postCreateTipoDeDocumento).toHaveBeenCalled();
+
+            const toastCustomError = screen.getByText(/Houve um erro ao tentar fazer essa atualização./i);
+            expect(toastCustomError).toBeInTheDocument();
+        });
+
+    });
+
+});
+
+describe("Testes Operacao EDIT", ()=>{
+
+    it("Renderiza Operacao edit sucesso", async () => {
+        RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
+        getTodosTiposDeDocumento.mockResolvedValueOnce(mockData);
+        render(<TiposDocumento/>);
+
+        await waitFor(()=> {
+            const tabela = screen.getByRole('grid');
+            const linhas = tabela.querySelectorAll('tbody tr');
+            const linha = linhas[0];
+            const coluna = linha.querySelectorAll('td');
+            const btnAlterar = coluna[1].querySelector('button');
+            expect(btnAlterar).toBeInTheDocument();
+            fireEvent.click(btnAlterar);
+        });
+
+        expect(screen.getByText("* Preenchimento obrigatório")).toBeInTheDocument();
+        const input = screen.getByLabelText("Nome *");
+        expect(input).toBeInTheDocument();
+        expect(input.value).toBe("Tipo 1");
+
+        const btnSalvar = screen.getByRole("button", { name: "Salvar" });
+        expect(btnSalvar).toBeInTheDocument();
+        expect(btnSalvar).toBeEnabled();
+        fireEvent.change(input, { target: { value: "Tipo 1 Atualizado" } });
+        expect(input.value).toBe("Tipo 1 Atualizado");
+        fireEvent.click(btnSalvar);
+        await waitFor(() => {
+            expect(patchAlterarTipoDeDocumento).toHaveBeenCalled();
+        });
+    });
+
+    it("Renderiza Operacao edit erro non_field_errors", async () => {
+        RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
+        patchAlterarTipoDeDocumento.mockRejectedValueOnce({
+            response: { data: { non_field_errors: "Este tipo de documento já existe." } },
+        });
+        getTodosTiposDeDocumento.mockResolvedValueOnce(mockData);
+        render(<TiposDocumento/>);
+
+        await waitFor(()=> {
+            const tabela = screen.getByRole('grid');
+            const linhas = tabela.querySelectorAll('tbody tr');
+            const linha = linhas[0];
+            const coluna = linha.querySelectorAll('td');
+            const btnAlterar = coluna[1].querySelector('button');
+            expect(btnAlterar).toBeInTheDocument();
+            fireEvent.click(btnAlterar);
+        });
+
+        expect(screen.getByText("* Preenchimento obrigatório")).toBeInTheDocument();
+        const input = screen.getByLabelText("Nome *");
+        expect(input).toBeInTheDocument();
+        expect(input.value).toBe("Tipo 1");
+
+        const btnSalvar = screen.getByRole("button", { name: "Salvar" });
+        expect(btnSalvar).toBeInTheDocument();
+        expect(btnSalvar).toBeEnabled();
+        fireEvent.change(input, { target: { value: "Tipo 1 Atualizado" } });
+        expect(input.value).toBe("Tipo 1 Atualizado");
+        fireEvent.click(btnSalvar);
+        await waitFor(() => {
+            expect(patchAlterarTipoDeDocumento).toHaveBeenCalled();
+            const toastCustomError = screen.getByText(/Este tipo de documento já existe./i);
+            expect(toastCustomError).toBeInTheDocument();
+        });
+    });
+
+    it("Renderiza Operacao edit erro response", async () => {
+        RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
+        patchAlterarTipoDeDocumento.mockRejectedValueOnce({
+            response: { data: { nome: "Testando erro response" } },
+        });
+        getTodosTiposDeDocumento.mockResolvedValueOnce(mockData);
+        render(<TiposDocumento/>);
+
+        await waitFor(()=> {
+            const tabela = screen.getByRole('grid');
+            const linhas = tabela.querySelectorAll('tbody tr');
+            const linha = linhas[0];
+            const coluna = linha.querySelectorAll('td');
+            const btnAlterar = coluna[1].querySelector('button');
+            expect(btnAlterar).toBeInTheDocument();
+            fireEvent.click(btnAlterar);
+        });
+
+        expect(screen.getByText("* Preenchimento obrigatório")).toBeInTheDocument();
+        const input = screen.getByLabelText("Nome *");
+        expect(input).toBeInTheDocument();
+        expect(input.value).toBe("Tipo 1");
+
+        const btnSalvar = screen.getByRole("button", { name: "Salvar" });
+        expect(btnSalvar).toBeInTheDocument();
+        expect(btnSalvar).toBeEnabled();
+        fireEvent.change(input, { target: { value: "Tipo 1 Atualizado" } });
+        expect(input.value).toBe("Tipo 1 Atualizado");
+        fireEvent.click(btnSalvar);
+        await waitFor(() => {
+            expect(patchAlterarTipoDeDocumento).toHaveBeenCalled();
+            const toastCustomError = screen.getByText(/Houve um erro ao tentar fazer essa atualização./i);
+            expect(toastCustomError).toBeInTheDocument();
+        });
+    });
+});
+
+describe("Testes Operacao DELETE", ()=>{
+
+    it("Renderiza Operacao delete sucesso", async () => {
+        RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
+        getTodosTiposDeDocumento.mockResolvedValueOnce(mockData);
+        render(<TiposDocumento/>);
+
+        await waitFor(()=> {
+            const tabela = screen.getByRole('grid');
+            const linhas = tabela.querySelectorAll('tbody tr');
+            const linha = linhas[0];
+            const coluna = linha.querySelectorAll('td');
+            const btnAlterar = coluna[1].querySelector('button');
+            expect(btnAlterar).toBeInTheDocument();
+            fireEvent.click(btnAlterar);
+        });
+
+        const btnRemover = screen.getByRole("button", { name: "Apagar" });
+        expect(btnRemover).toBeInTheDocument();
+        expect(btnRemover).toBeEnabled();
+        fireEvent.click(btnRemover);
+        const btnConfirma = screen.getByRole("button", { name: "Excluir" });
+        expect(btnConfirma).toBeInTheDocument();
+        expect(btnConfirma).toBeEnabled();
+        fireEvent.click(btnConfirma);
+        await waitFor(() => {
+            expect(deleteTipoDeDocumento).toHaveBeenCalled();
+        });
+    });
+
+    it("Renderiza Operacao delete erro non_field_errors", async () => {
+        RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
+        deleteTipoDeDocumento.mockRejectedValueOnce({
+            response: { data: { mensagem: "mensagem de erro" } },
+        });
+        getTodosTiposDeDocumento.mockResolvedValueOnce(mockData);
+        render(<TiposDocumento/>);
+
+        await waitFor(()=> {
+            const tabela = screen.getByRole('grid');
+            const linhas = tabela.querySelectorAll('tbody tr');
+            const linha = linhas[0];
+            const coluna = linha.querySelectorAll('td');
+            const btnAlterar = coluna[1].querySelector('button');
+            expect(btnAlterar).toBeInTheDocument();
+            fireEvent.click(btnAlterar);
+        });
+
+        const btnRemover = screen.getByRole("button", { name: "Apagar" });
+        expect(btnRemover).toBeInTheDocument();
+        expect(btnRemover).toBeEnabled();
+        fireEvent.click(btnRemover);
+
+        const btnConfirma = screen.getByRole("button", { name: "Excluir" });
+        expect(btnConfirma).toBeInTheDocument();
+        expect(btnConfirma).toBeEnabled();
+        fireEvent.click(btnConfirma);
+
+        await waitFor(() => {
+            expect(deleteTipoDeDocumento).toHaveBeenCalled();
+            const toastCustomError = screen.getByText(/mensagem de erro/i);
+            expect(toastCustomError).toBeInTheDocument();
+        });
+    });
+
+    it("Renderiza Operacao delete erro response", async () => {
+        RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
+        deleteTipoDeDocumento.mockRejectedValueOnce({
+            response: { data: { nome: "Testando erro response" } },
+        });
+        getTodosTiposDeDocumento.mockResolvedValueOnce(mockData);
+        render(<TiposDocumento/>);
+
+        await waitFor(()=> {
+            const tabela = screen.getByRole('grid');
+            const linhas = tabela.querySelectorAll('tbody tr');
+            const linha = linhas[0];
+            const coluna = linha.querySelectorAll('td');
+            const btnAlterar = coluna[1].querySelector('button');
+            expect(btnAlterar).toBeInTheDocument();
+            fireEvent.click(btnAlterar);
+        });
+
+        const btnRemover = screen.getByRole("button", { name: "Apagar" });
+        expect(btnRemover).toBeInTheDocument();
+        expect(btnRemover).toBeEnabled();
+        fireEvent.click(btnRemover);
+
+        const btnConfirma = screen.getByRole("button", { name: "Excluir" });
+        expect(btnConfirma).toBeInTheDocument();
+        expect(btnConfirma).toBeEnabled();
+        fireEvent.click(btnConfirma);
+
+        await waitFor(() => {
+            expect(deleteTipoDeDocumento).toHaveBeenCalled();
+            const toastCustomError = screen.getByText(/Houve um erro ao tentar fazer essa atualização./i);
+            expect(toastCustomError).toBeInTheDocument();
         });
     });
 });
@@ -157,29 +502,4 @@ describe('Teste handleSubmitModalForm', () => {
         expect(values.operacao).toEqual('create');
     });
 
-    it('deve lidar com erro de "non_field_errors" no create', async () => {
-        postCreateTipoDeDocumento.mockRejectedValueOnce({
-            response: { data: { non_field_errors: true } },
-        });
-
-        const setErroExclusaoNaoPermitida = jest.fn();
-        const setShowModalInfoUpdateNaoPermitido = jest.fn();
-
-        const handleSubmitModalForm = jest.fn(async (values) => {
-            try {
-                await postCreateTipoDeDocumento(values);
-            } catch (e) {
-                if (e.response.data && e.response.data.non_field_errors) {
-                    setErroExclusaoNaoPermitida('Este tipo de documento já existe.');
-                    setShowModalInfoUpdateNaoPermitido(true);
-                }
-            }
-        });
-
-        const values = { operacao: 'create', nome: 'Documento Teste' };
-
-        await handleSubmitModalForm(values);
-        expect(setErroExclusaoNaoPermitida).toHaveBeenCalledWith('Este tipo de documento já existe.');
-        expect(setShowModalInfoUpdateNaoPermitido).toHaveBeenCalledWith(true);
-    });
 });
