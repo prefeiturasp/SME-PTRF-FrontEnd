@@ -19,6 +19,8 @@ import {visoesService} from "../../../../services/visoes.service";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faExclamationTriangle} from '@fortawesome/free-solid-svg-icons'
 import ReactTooltip from "react-tooltip";
+import { mantemEstadoFiltrosUnidade } from "../../../../services/mantemEstadoFiltrosUnidade.service";
+import {filtrosAvancadosReceitas} from "../../../../services/escolas/Receitas.service";
 
 
 export const ListaDeReceitas = () => {
@@ -32,12 +34,38 @@ export const ListaDeReceitas = () => {
     const [buscaUtilizandoFiltro, setBuscaUtilizandoFiltro] = useState(false);
     const [btnMaisFiltros, setBtnMaisFiltros] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [previousPath, setPreviousPath] = useState(null);
 
     useEffect(() => {
-        buscaTotaisReceitas()
-        buscaListaReceitas()
-    }, []);
+        if (!previousPath) {
+            const storedPath = sessionStorage.getItem('previousPath');
+            setPreviousPath(storedPath || '/');
+            sessionStorage.removeItem('previousPath');
+        }
+    }, [previousPath]);
 
+    useEffect(() => {
+        if (!previousPath) return;
+
+        setLoading(true);
+
+        if (previousPath.includes('/edicao-de-receita')) {
+            const storedFiltros = mantemEstadoFiltrosUnidade.getEstadoReceitasFiltrosUnidades();
+            let filtrosCompletos = { ...storedFiltros };
+            buscaListaUtilizandoFiltro(filtrosCompletos.filtrar_por_termo, filtrosCompletos.tipo_receita, filtrosCompletos.acao_associacao, filtrosCompletos.conta_associacao, filtrosCompletos.data_inicio, filtrosCompletos.data_fim);
+            buscaTotaisReceitas(filtrosCompletos.tipo_receita, filtrosCompletos.acao_associacao, filtrosCompletos.conta_associacao, filtrosCompletos.data_inicio, filtrosCompletos.data_fim);
+        } else {
+            buscaListaReceitas();
+            buscaTotaisReceitas();
+        }
+    }, [previousPath]);
+
+    const buscaListaUtilizandoFiltro = async (filtrar_por_termo = "", tipo_receita = "", acao_associacao = "", conta_associacao = "", data_inicio = "", data_fim = "") => {
+        const lista_retorno_api = await filtrosAvancadosReceitas(filtrar_por_termo, tipo_receita, acao_associacao, conta_associacao, data_inicio, data_fim);
+        setReceitas(lista_retorno_api);
+        setBuscaUtilizandoFiltro(true);
+        setLoading(false);
+    };
 
     const buscaListaReceitas = async () => {
         const listaReceitas = await getListaReceitas();

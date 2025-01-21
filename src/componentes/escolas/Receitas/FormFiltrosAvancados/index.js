@@ -3,6 +3,8 @@ import {getTabelasReceitaReceita} from "../../../../services/escolas/Receitas.se
 import {filtrosAvancadosReceitas} from "../../../../services/escolas/Receitas.service";
 import {DatePickerField} from "../../../Globais/DatePickerField";
 import moment from "moment";
+import {visoesService} from "../../../../services/visoes.service";
+import { mantemEstadoFiltrosUnidade } from "../../../../services/mantemEstadoFiltrosUnidade.service";
 
 export const FormFiltrosAvancados = (props) => {
 
@@ -50,6 +52,12 @@ export const FormFiltrosAvancados = (props) => {
         const lista_retorno_api = await filtrosAvancadosReceitas(state.filtrar_por_termo, state.tipo_receita, state.acao_associacao, state.conta_associacao, data_inicio, data_fim);
         setLista(lista_retorno_api);
         setBuscaUtilizandoFiltro(true)
+
+        mantemEstadoFiltrosUnidade.setEstadoFiltrosUnidadesUsuario(visoesService.getUsuarioLogin(), {
+            filtros_receitas: {
+                filtrar_por_termo: state.filtrar_por_termo, tipo_receita: state.tipo_receita, acao_associacao: state.acao_associacao, conta_associacao: state.conta_associacao, data_inicio, data_fim
+            },
+        });
     };
 
     const limpaFormulario = () => {
