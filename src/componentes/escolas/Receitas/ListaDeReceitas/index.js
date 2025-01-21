@@ -182,7 +182,7 @@ export const ListaDeReceitas = () => {
                         iniciaLista={buscaListaReceitas}
                         buscaTotaisReceitas={buscaTotaisReceitas}
                         setLoading={setLoading}
-
+                        previousPath={previousPath}
                     />
 
                     {receitas.length > 0  && Object.entries(totais).length > 0 ? (

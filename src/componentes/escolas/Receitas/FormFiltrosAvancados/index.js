@@ -8,7 +8,7 @@ import { mantemEstadoFiltrosUnidade } from "../../../../services/mantemEstadoFil
 
 export const FormFiltrosAvancados = (props) => {
 
-    const {btnMaisFiltros, onClickBtnMaisFiltros, setLista, setBuscaUtilizandoFiltro, iniciaLista, buscaTotaisReceitas} = props;
+    const {btnMaisFiltros, onClickBtnMaisFiltros, setLista, setBuscaUtilizandoFiltro, iniciaLista, buscaTotaisReceitas, previousPath} = props;
     
     const tabelaInicial = {
         tipos_receita: [],
@@ -27,6 +27,16 @@ export const FormFiltrosAvancados = (props) => {
 
     const [tabelas, setTabelas] = useState(tabelaInicial);
     const [state, setState] = useState(initialState);
+
+    useEffect(() => {
+        if (!previousPath) return;
+
+        if (previousPath.includes('/edicao-de-receita')) {
+            const storedFiltros = mantemEstadoFiltrosUnidade.getEstadoReceitasFiltrosUnidades();
+            let filtrosCompletos = { ...storedFiltros };
+            setState(filtrosCompletos);
+        };
+    }, [])
 
     useEffect(() => {
         const carregaTabelas = async () => {
