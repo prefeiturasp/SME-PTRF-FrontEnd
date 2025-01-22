@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
-import ModalForm from "../ModalForm"; // Ajuste o caminho, se necessário.
+import ModalForm from "../ModalForm";
 import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
 import { waitFor } from '@testing-library/react';
 
@@ -8,13 +8,16 @@ jest.mock("../../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametr
   RetornaSeTemPermissaoEdicaoPainelParametrizacoes: jest.fn(),
 }));
 
+const mockSetFieldValue = jest.fn();
+const mockSetShowModalConfirmDelete = jest.fn();
+
 const mockEdit = {
   nome: "Nome do tipo",
-  numero_documento_digitado: false,
-  apenas_digitos: false,
-  documento_comprobatorio_de_despesa: false,
-  pode_reter_imposto: false,
-  eh_documento_de_retencao_de_imposto: false,
+  numero_documento_digitado: null,
+  apenas_digitos: null,
+  documento_comprobatorio_de_despesa: null,
+  pode_reter_imposto: null,
+  eh_documento_de_retencao_de_imposto: null,
   id: 1,
   uuid: "12345",
   operacao: "edit"
@@ -26,18 +29,21 @@ const mockCreate = {
   id: null
 };
 
+const defaultProps = {
+  show: true,
+  stateFormModal: mockCreate,
+  handleClose: jest.fn(),
+  handleSubmitModalForm: jest.fn(),
+  setShowModalConfirmDelete: mockSetShowModalConfirmDelete,
+  setFieldValue: mockSetFieldValue
+};
+
+const defaultPropsEdicao = {
+  ...defaultProps,
+  stateFormModal: mockEdit
+};
+
 describe("Componente ModalForm", () => {
-  const defaultProps = {
-    show: true,
-    stateFormModal: mockCreate,
-    handleClose: jest.fn(),
-    handleSubmitModalForm: jest.fn(),
-    setShowModalConfirmDelete: jest.fn(),
-  };
-  const defaultPropsEdicao = {
-    ...defaultProps,
-    stateFormModal: mockEdit
-  };
 
   beforeEach(() => {
     RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
@@ -54,14 +60,14 @@ describe("Componente ModalForm", () => {
     expect(screen.getByRole("button", { name: "Cancelar" })).toBeInTheDocument();
     expect(screen.getAllByLabelText("Sim").length).toEqual(5);
     expect(screen.getAllByLabelText("Não").length).toEqual(5);
-    
+
     expect(screen.getByRole("button", { name: "Salvar" })).toBeEnabled();
     const campos = screen.getAllByRole(/textbox|radio/);
     campos.forEach((campo) => {
-        expect(campo).toBeEnabled();
+      expect(campo).toBeEnabled();
     });
   });
-  
+
   it("Renderiza a Modal quando a operação é Cadastro e Permissão False", () => {
     RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(false);
     render(<ModalForm {...defaultProps} />);
@@ -73,15 +79,15 @@ describe("Componente ModalForm", () => {
     expect(screen.getByRole("button", { name: "Cancelar" })).toBeInTheDocument();
     expect(screen.getAllByLabelText("Sim").length).toEqual(5);
     expect(screen.getAllByLabelText("Não").length).toEqual(5);
-    
+
     expect(screen.getByRole("button", { name: "Salvar" })).toBeDisabled();
     const campos = screen.getAllByRole(/textbox|radio/);
     campos.forEach((campo) => {
-        expect(campo).toBeDisabled();
+      expect(campo).toBeDisabled();
     });
-});
+  });
 
-it("Renderiza a Modal quando a operação é Edição e permissão é True", () => {
+  it("Renderiza a Modal quando a operação é Edição e permissão é True", () => {
     RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
     render(<ModalForm {...defaultPropsEdicao} />);
     
@@ -102,7 +108,7 @@ it("Renderiza a Modal quando a operação é Edição e permissão é True", () 
   it("Renderiza a Modal quando a operação é Edição e permissão é False", () => {
     RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(false);
     render(<ModalForm {...defaultPropsEdicao} />);
-    
+
     expect(screen.getByText("Editar tipo de documento")).toBeInTheDocument();
     expect(screen.getByLabelText("Nome *")).toHaveValue("Nome do tipo");
     expect(screen.queryByRole("button", { name: "Apagar" })).toBeInTheDocument();
@@ -113,7 +119,7 @@ it("Renderiza a Modal quando a operação é Edição e permissão é True", () 
     expect(screen.getByRole("button", { name: "Salvar" })).toBeDisabled();
     const campos = screen.getAllByRole(/textbox|radio/);
     campos.forEach((campo) => {
-        expect(campo).toBeDisabled();
+      expect(campo).toBeDisabled();
     });
   });
 
@@ -138,5 +144,43 @@ it("Renderiza a Modal quando a operação é Edição e permissão é True", () 
     expect(defaultProps.handleClose).toHaveBeenCalled();
   });
 
+  it('Deve atualizar o valor de Radios opção SIM para checked(true)', async () => {
+    render(<ModalForm {...defaultProps} />);
+
+    const Radios = screen.getAllByText('Sim');
+    Radios.forEach( async radio => {
+      fireEvent.click(radio);
+      await waitFor(() => {
+         expect(radio.checked).toBe(true);
+      });
+    });
+  });
+
+  it('Deve atualizar o valor de Radios opção NÃO para checked(true)', async () => {
+    render(<ModalForm {...defaultProps} />);
+
+    const Radios = screen.getAllByText('Não');
+    Radios.forEach( async radio => {
+      fireEvent.click(radio);
+      await waitFor(() => {
+         expect(radio.checked).toBe(true);
+      });
+    });
+  });
+
+  test('deve chamar setShowModalConfirmDelete quando o botão for clicado', () => {
+
+    // Renderize o componente, passando as props necessárias
+    render(<ModalForm {...defaultPropsEdicao}/>);
+
+    // Localize o botão
+    const button = screen.getByRole('button', { name: /Apagar/i });
+
+    // Simule o clique no botão
+    fireEvent.click(button);
+
+    // Verifique se a função setShowModalConfirmDelete foi chamada
+    expect(mockSetShowModalConfirmDelete).toHaveBeenCalledTimes(1);
+  });
 
 });

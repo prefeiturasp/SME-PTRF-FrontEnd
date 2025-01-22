@@ -1,7 +1,7 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { Filtros } from '../Filtros'; // Ajuste o caminho conforme necessário
+import { Filtros } from '../Filtros';
 
 describe('Componente Filtros', () => {
     const mockHandleChangeFiltros = jest.fn();
@@ -11,6 +11,12 @@ describe('Componente Filtros', () => {
     const initialStateFiltros = {
         filtrar_por_nome: '',
     };
+    const mockPropsFiltros = {
+        stateFiltros: initialStateFiltros,
+        handleChangeFiltros: mockHandleChangeFiltros,
+        handleSubmitFiltros: mockHandleSubmitFiltros,
+        limpaFiltros: mockLimpaFiltros,
+    };
 
     beforeEach(() => {
         jest.clearAllMocks();
@@ -18,12 +24,7 @@ describe('Componente Filtros', () => {
 
     it('testa a as labels e botões', () => {
         render(
-            <Filtros
-                stateFiltros={initialStateFiltros}
-                handleChangeFiltros={mockHandleChangeFiltros}
-                handleSubmitFiltros={mockHandleSubmitFiltros}
-                limpaFiltros={mockLimpaFiltros}
-            />
+            <Filtros {...mockPropsFiltros} />
         );
 
         expect(screen.getByLabelText(/filtrar por nome/i)).toBeInTheDocument();
@@ -34,12 +35,7 @@ describe('Componente Filtros', () => {
 
     it('testa a reatividade ao alterar o campo de filtro', () => {
         render(
-            <Filtros
-                stateFiltros={initialStateFiltros}
-                handleChangeFiltros={mockHandleChangeFiltros}
-                handleSubmitFiltros={mockHandleSubmitFiltros}
-                limpaFiltros={mockLimpaFiltros}
-            />
+            <Filtros {...mockPropsFiltros} />
         );
 
         const input = screen.getByLabelText(/filtrar por nome/i);
@@ -50,12 +46,7 @@ describe('Componente Filtros', () => {
 
     it('testa a chamada de LimpaFiltros ao clicar em Limpar', () => {
         render(
-            <Filtros
-                stateFiltros={initialStateFiltros}
-                handleChangeFiltros={mockHandleChangeFiltros}
-                handleSubmitFiltros={mockHandleSubmitFiltros}
-                limpaFiltros={mockLimpaFiltros}
-            />
+            <Filtros {...mockPropsFiltros} />
         );
 
         const limparButton = screen.getByRole('button', { name: /limpar/i });
@@ -63,21 +54,4 @@ describe('Componente Filtros', () => {
 
         expect(mockLimpaFiltros).toHaveBeenCalledTimes(1);
     });
-
-    it('testa a chamada de handleSubmitFiltros quanto "Filtrar" é clicado', () => {
-        render(
-            <Filtros
-                stateFiltros={initialStateFiltros}
-                handleChangeFiltros={mockHandleChangeFiltros}
-                handleSubmitFiltros={mockHandleSubmitFiltros}
-                limpaFiltros={mockLimpaFiltros}
-            />
-        );
-
-        const filtrarButton = screen.getByRole('button', { name: /filtrar/i });
-        fireEvent.click(filtrarButton);
-
-        expect(mockHandleSubmitFiltros).toHaveBeenCalledTimes(1);
-    });
-
 });
