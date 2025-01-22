@@ -1,9 +1,12 @@
 import React, {useEffect, useState} from "react";
 import {getTabelasReceitaReceita} from "../../../../services/escolas/Receitas.service";
 import {filtrosAvancadosReceitas} from "../../../../services/escolas/Receitas.service";
+import moment from "moment";
+import {visoesService} from "../../../../services/visoes.service";
+import { mantemEstadoFiltrosUnidade } from "../../../../services/mantemEstadoFiltrosUnidade.service";
 
 export const FiltroPorTipoReceita = (props) => {
-    const {setBuscaUtilizandoFiltro, setLista, buscaTotaisReceitas} = props
+    const {setBuscaUtilizandoFiltro, setLista, buscaTotaisReceitas, previousPath, state, setState} = props
 
     const tabelaInicial = {
         tipos_receita: [],
@@ -11,17 +14,17 @@ export const FiltroPorTipoReceita = (props) => {
         contas_associacao: []
     };
 
-    const initialState = {
-        filtrar_por_termo: "",
-        tipo_receita: "",
-        acao_associacao: "",
-        conta_associacao: "",
-        data_inicio: "",
-        data_fim: "",
-    };
-
     const [tabelas, setTabelas] = useState(tabelaInicial);
-    const [state, setState] = useState(initialState);
+
+    useEffect(() => {
+        if (!previousPath) return;
+
+        if (previousPath.includes('/edicao-de-receita')) {
+            const storedFiltros = mantemEstadoFiltrosUnidade.getEstadoReceitasFiltrosUnidades();
+            let filtrosCompletos = { ...storedFiltros };
+            setState(filtrosCompletos);
+        };
+    }, [])
 
     useEffect(() => {
         const carregaTabelas = async () => {
@@ -40,10 +43,19 @@ export const FiltroPorTipoReceita = (props) => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+        let data_inicio = state.data_inicio ? moment(state.data_inicio, "YYYY-MM-DD").format("YYYY-MM-DD") : null;
+        let data_fim = state.data_fim ? moment(state.data_fim, "YYYY-MM-DD").format("YYYY-MM-DD") : null;
+
         buscaTotaisReceitas(state.tipo_receita);
         const lista_retorno_api = await filtrosAvancadosReceitas(state.filtrar_por_termo, state.tipo_receita, state.acao_associacao, state.conta_associacao, null, null);
         setLista(lista_retorno_api);
         setBuscaUtilizandoFiltro(true)
+
+        mantemEstadoFiltrosUnidade.setEstadoFiltrosUnidadesUsuario(visoesService.getUsuarioLogin(), {
+            filtros_receitas: {
+                filtrar_por_termo: state.filtrar_por_termo, tipo_receita: state.tipo_receita, acao_associacao: state.acao_associacao, conta_associacao: state.conta_associacao, data_inicio, data_fim
+            },
+        });
     };
 
     return (

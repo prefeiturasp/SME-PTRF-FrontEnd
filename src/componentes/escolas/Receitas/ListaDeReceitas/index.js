@@ -28,6 +28,15 @@ export const ListaDeReceitas = () => {
     let history = useHistory();
     const rowsPerPage = 7;
 
+    const initialState = {
+        filtrar_por_termo: "",
+        tipo_receita: "",
+        acao_associacao: "",
+        conta_associacao: "",
+        data_inicio: "",
+        data_fim: "",
+    };
+
     const [receitas, setReceitas] = useState([]);
     const [totais, setTotais] = useState([]);
     const [inputPesquisa, setInputPesquisa] = useState("");
@@ -35,6 +44,7 @@ export const ListaDeReceitas = () => {
     const [btnMaisFiltros, setBtnMaisFiltros] = useState(false);
     const [loading, setLoading] = useState(true);
     const [previousPath, setPreviousPath] = useState(null);
+    const [state, setState] = useState(initialState);
 
     useEffect(() => {
         if (!previousPath) {
@@ -157,6 +167,9 @@ export const ListaDeReceitas = () => {
                                 setBuscaUtilizandoFiltro={setBuscaUtilizandoFiltro}
                                 setLista={setReceitas}
                                 buscaTotaisReceitas={buscaTotaisReceitas}
+                                previousPath={previousPath}
+                                state={state}
+                                setState={setState}
                             />
                         </div>
                         <div className={`col-12 col-md-2 mt-2 pl-0 ${!btnMaisFiltros ? "lista-de-receitas-visible" : "lista-de-receitas-invisible"}`}>
@@ -183,6 +196,9 @@ export const ListaDeReceitas = () => {
                         buscaTotaisReceitas={buscaTotaisReceitas}
                         setLoading={setLoading}
                         previousPath={previousPath}
+                        state={state}
+                        setState={setState}
+                        initialState={initialState}
                     />
 
                     {receitas.length > 0  && Object.entries(totais).length > 0 ? (
