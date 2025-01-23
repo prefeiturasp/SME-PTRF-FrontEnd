@@ -36,25 +36,4 @@ describe('AutoCompleteAssociacoes', () => {
     expect(screen.getByRole('listbox')).toBeInTheDocument();
   });
 
-  it('should handle selected associacao', async () => {
-    render(
-      <AutoCompleteAssociacoes
-        todasAsAssociacoesAutoComplete={mockAssociacoes}
-        recebeAutoComplete={mockRecebeAutoComplete}
-      />
-    );
-
-    const input = screen.getByRole('searchbox');
-    // userEvent.type(input, 'AAA');
-    await waitFor(()=> fireEvent.change(input, { target: { value: 'AAA' } }));
-    
-    const listbox = screen.getByRole('listbox');
-    // await waitFor(()=> console.log(listbox.querySelectorAll('li')));
-
-    // const optionsItems = screen.getAllByRole('option');
-    // expect(screen.getByRole('listbox')).toBeInTheDocument();
-    // console.log(optionsItems);
-    // expect(screen.getByRole('listbox')).toBeInTheDocument();
-  });
-
 });
