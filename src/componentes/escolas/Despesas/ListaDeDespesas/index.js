@@ -83,7 +83,7 @@ export const ListaDeDespesas = () => {
         let filtrosCompletos = { ...initFiltrosAvancados };
 
         if (previousPath.includes('/edicao-de-despesa')) {
-            const storedFiltros = mantemEstadoFiltrosUnidade.getEstadoFiltrosUnidades();
+            const storedFiltros = mantemEstadoFiltrosUnidade.getEstadoDespesasFiltrosUnidades();
             filtrosCompletos = { ...initFiltrosAvancados, ...storedFiltros };
         }
 
