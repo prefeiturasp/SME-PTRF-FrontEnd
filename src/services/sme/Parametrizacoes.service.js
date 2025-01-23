@@ -447,3 +447,20 @@ export const patchRepasse = async (uuid_repasse, payload) => {
 export const deleteRepasse = async (uuid_repasse) => {
     return (await api.delete(`api/repasses/${uuid_repasse}/`, authHeader));
 };
+
+// Motivos Pagamento Antecipado
+export const getTodosMotivosPagamentoAntecipado = async () => {
+    return (await api.get(`/api/motivos-pagamento-antecipado/`, authHeader)).data
+};
+export const getFiltrosMotivosPagamentoAntecipado = async (nome) => {
+    return (await api.get(`/api/motivos-pagamento-antecipado/?motivo=${nome}`, authHeader)).data
+};
+export const postCreateMotivoPagamentoAntecipado = async (payload) => {
+    return (await api.post(`/api/motivos-pagamento-antecipado/`, payload, authHeader)).data
+};
+export const patchAlterarMotivoPagamentoAntecipado = async (tag_uuid, payload) => {
+    return (await api.patch(`/api/motivos-pagamento-antecipado/${tag_uuid}/`, payload, authHeader)).data
+};
+export const deleteMotivoPagamentoAntecipado = async (tag_uuid) => {
+    return (await api.delete(`/api/motivos-pagamento-antecipado/${tag_uuid}/`, authHeader))
+};
