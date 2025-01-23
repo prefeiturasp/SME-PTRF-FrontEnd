@@ -11,6 +11,7 @@ import IconeTiposConta from "../../../assets/img/icone-parametro-tipos-conta.svg
 import IconeEspecificacoes from "../../../assets/img/icone-parametro-especificacoes.svg"
 import IconeTiposCusteio from "../../../assets/img/icone-parametro-tipos-custeio.svg"
 import IconeTiposDocumento from "../../../assets/img/icone-parametro-tipos-documento.svg"
+import IconeMotivosPagamentoAntecipado from "../../../assets/img/icone-parametro-motivos-pagamento-antecipado.svg"
 import IconeTiposTransacao from "../../../assets/img/icone-parametro-tipos-transacao.svg"
 import IconeTiposReceita from "../../../assets/img/icone-parametro-tipos-receita.svg"
 import IconeTiposAcertos from "../../../assets/img/icone-parametro-tipos-acertos.svg"
@@ -96,6 +97,12 @@ export const PainelParametrizacoes = () => {
             parametro: 'Tipos de Documento',
             url: 'parametro-tipos-documento',
             icone: IconeTiposDocumento,
+            permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
+        },
+        {
+            parametro: 'Motivos Pagamento Antecipado',
+            url: 'parametro-motivos-pagamento-antecipado',
+            icone: IconeMotivosPagamentoAntecipado,
             permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
         },
         {
