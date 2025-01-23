@@ -62,6 +62,7 @@ export const FormFiltrosAvancados = (props) => {
 
     const limpaFormulario = () => {
         setState(initialState);
+        mantemEstadoFiltrosUnidade.deleteEstadoFiltrosUnidades();
     };
 
     return (
