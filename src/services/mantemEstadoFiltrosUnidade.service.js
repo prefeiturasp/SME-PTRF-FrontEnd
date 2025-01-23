@@ -3,9 +3,8 @@ import {visoesService} from "./visoes.service";
 export const ESTADO_FILTROS_UNIDADES = "ESTADO_FILTROS_UNIDADES";
 
 const limpaEstadoFiltrosUnidadesUsuarioLogado = (usuario) =>{
-  let estado_filtros_unidades = getEstadoFiltrosUnidades()
+  localStorage.removeItem(ESTADO_FILTROS_UNIDADES);
   let estado_filtros_unidades_update = {
-      ...estado_filtros_unidades,
       [`usuario_${usuario}`]: {
           unidade_uuid: '',
           filtros_despesas: {
@@ -61,7 +60,7 @@ const getTodosEstadosFiltrosUnidades = () => {
         : {};
 };
 
-const getEstadoFiltrosUnidades = () => {
+const getEstadoDespesasFiltrosUnidades = () => {
     const usuario = visoesService.getUsuarioLogin();
     const todos_estados = getTodosEstadosFiltrosUnidades();
     return todos_estados[`usuario_${usuario}`]?.filtros_despesas || {};
@@ -73,10 +72,15 @@ const getEstadoReceitasFiltrosUnidades = () => {
     return todos_estados[`usuario_${usuario}`]?.filtros_receitas || {};
 };
 
+export const deleteEstadoFiltrosUnidades = () => {
+    localStorage.removeItem(ESTADO_FILTROS_UNIDADES);
+};
+
 export const mantemEstadoFiltrosUnidade = {
     limpaEstadoFiltrosUnidadesUsuarioLogado,
     setEstadoFiltrosUnidadesUsuario,
-    getEstadoFiltrosUnidades,
+    getEstadoDespesasFiltrosUnidades,
     getTodosEstadosFiltrosUnidades,
-    getEstadoReceitasFiltrosUnidades
+    getEstadoReceitasFiltrosUnidades,
+    deleteEstadoFiltrosUnidades
 };
