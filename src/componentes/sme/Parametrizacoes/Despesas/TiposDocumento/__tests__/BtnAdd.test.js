@@ -2,19 +2,20 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { BtnAdd } from '../BtnAdd';
+import { mockCreate } from '../__fixtures__/mockData';
 
 jest.mock('../../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes', () => ({
   RetornaSeTemPermissaoEdicaoPainelParametrizacoes: jest.fn(),
 }));
 
 const mockRetornaSeTemPermissaoEdicaoPainelParametrizacoes = require('../../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes').RetornaSeTemPermissaoEdicaoPainelParametrizacoes;
+const mockSetShowModalForm = jest.fn();
+const mockSetStateFormModal = jest.fn();
+const mockInitialStateFormModal = mockCreate
 
 describe('Componente BtnAdd', () => {
   it('deve renderizar o botão com o texto e ícone corretamente', () => {
     mockRetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
-
-    const mockSetShowModalForm = jest.fn();
-    const mockSetStateFormModal = jest.fn();
 
     render(
       <BtnAdd
@@ -67,10 +68,6 @@ describe('Componente BtnAdd', () => {
 
   it('deve chamar as funções de callback ao clicar no botão', () => {
     mockRetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
-
-    const mockSetShowModalForm = jest.fn();
-    const mockSetStateFormModal = jest.fn();
-    const mockInitialStateFormModal = { example: 'value' };
 
     render(
       <BtnAdd

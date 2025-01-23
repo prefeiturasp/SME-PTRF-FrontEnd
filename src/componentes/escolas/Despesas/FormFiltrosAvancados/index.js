@@ -5,6 +5,7 @@ import moment from "moment";
 import {gerarUuid} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import './multiselect.scss'
 import {Select} from 'antd';
+import { mantemEstadoFiltrosUnidade } from "../../../../services/mantemEstadoFiltrosUnidade.service";
 
 export const FormFiltrosAvancados = (props) => {
 
@@ -86,6 +87,7 @@ export const FormFiltrosAvancados = (props) => {
     };
 
     const limpaFormulario = () => {
+        mantemEstadoFiltrosUnidade.deleteEstadoFiltrosUnidades();
         forcarPrimeiraPagina(gerarUuid());
         setFiltrosAvancados(initialState);
         set_filtro_informacoes([])
