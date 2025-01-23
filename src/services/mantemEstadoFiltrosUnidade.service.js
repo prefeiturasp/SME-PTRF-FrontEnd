@@ -3,6 +3,7 @@ import {visoesService} from "./visoes.service";
 export const ESTADO_FILTROS_UNIDADES = "ESTADO_FILTROS_UNIDADES";
 
 const limpaEstadoFiltrosUnidadesUsuarioLogado = (usuario) =>{
+  localStorage.removeItem(ESTADO_FILTROS_UNIDADES);
   let estado_filtros_unidades_update = {
       [`usuario_${usuario}`]: {
           unidade_uuid: '',
