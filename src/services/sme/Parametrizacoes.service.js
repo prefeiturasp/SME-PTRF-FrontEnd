@@ -250,6 +250,27 @@ export const putAtualizarAcaoAssociacao = async (acao_associacao_uuid, payload) 
     return (await api.put(`/api/acoes-associacoes/${acao_associacao_uuid}/`, payload, authHeader)).data
 };
 
+// Contas Associações
+export const getContasAssociacoes = async () => {
+    return (await api.get(`/api/contas-associacoes/`, authHeader)).data
+};
+export const getContasAssociacoesFiltros = async (page=1, associacao_nome='', tipo_conta_uuid, status) => {
+    return (await api.get(`/api/contas-associacoes/?page=${page}&page_size=${20}&associacao_nome=${associacao_nome}${tipo_conta_uuid ? '&tipo_conta_uuid='+tipo_conta_uuid : ''}${status ? '&status='+status : ''}`, authHeader)).data
+};
+export const postContasAssociacoes = async (payload) => {
+    return (await api.post(`/api/contas-associacoes/`, payload, authHeader)).data
+};
+export const patchContasAssociacoes = async (tag_uuid, payload) => {
+    return (await api.patch(`/api/contas-associacoes/${tag_uuid}/`, payload, authHeader)).data
+};
+export const deleteContasAssociacoes = async (tag_uuid) => {
+    return (await api.delete(`/api/contas-associacoes/${tag_uuid}/`, authHeader))
+};
+export const getFiltrosDadosContasAssociacoes = async () => {
+    return (await api.get(`/api/contas-associacoes/filtros`, authHeader)).data
+};
+// Fim Contas Associações
+
 export const putAtualizarAcertosLancamentos = async (acerto_lancamento_uuid, payload) => {
     return (await api.patch(`/api/tipos-acerto-lancamento/${acerto_lancamento_uuid}/`, payload, authHeader)).data
 };

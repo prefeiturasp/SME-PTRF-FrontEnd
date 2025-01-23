@@ -63,6 +63,7 @@ import {AcompanhamentoPcsPorDre} from "../paginas/SME/PrestacaoDeContas/Acompanh
 import {RelatorioConsolidadoPage} from "../paginas/SME/PrestacaoDeContas/RelatorioConsolidado";
 import { AcompanhamentoRelatorioConsolidadosSmeListagem } from "../componentes/sme/AcompanhamentoRelatoriosConsolidadosSME/AcompanhamentoRelatoriosConsolidadosSmeListagem";
 import {AcoesDasAssociacoes} from "../componentes/sme/Parametrizacoes/Estrutura/AcoesDasAssociacoes";
+import {ContasDasAssociacoes} from "../componentes/sme/Parametrizacoes/Estrutura/ContasDasAssociacoes";
 import {Acoes} from "../componentes/sme/Parametrizacoes/Estrutura/Acoes";
 import {AssociacoesDaAcao} from "../componentes/sme/Parametrizacoes/Estrutura/Acoes/AssociacoesDaAcao";
 import {VinculaAssociacoesAAcao} from "../componentes/sme/Parametrizacoes/Estrutura/Acoes/VinculaAssociacoesAAcao";
@@ -469,6 +470,12 @@ const routesConfig = [
         exact: true,
         path: "/parametro-acoes-associacoes",
         component: AcoesDasAssociacoes,
+        permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
+    },
+    {
+        exact: true,
+        path: "/parametro-contas-associacoes",
+        component: ContasDasAssociacoes,
         permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
     },
     {
