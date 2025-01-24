@@ -104,7 +104,7 @@ describe("Carrega página de Tipos de Documentos", () => {
 
         await waitFor(()=> expect(getTodosTiposDeDocumento).toHaveBeenCalled());
         await waitFor(()=> {
-            expect(screen.getByText(/Não existem tipos de documentos cadastrados, clique no botão "Adicionar tipo de documento" para começar./i)).toBeInTheDocument()
+            expect(screen.getByText(/Nenhum resultado encontrado./i)).toBeInTheDocument()
         });
     });
 
