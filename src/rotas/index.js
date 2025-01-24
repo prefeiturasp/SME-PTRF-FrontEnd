@@ -97,6 +97,7 @@ import {Mandatos} from "../componentes/sme/Mandatos";
 import {MotivosRejeicaoEncerramentoConta} from "../componentes/sme/Parametrizacoes/Estrutura/MotivosRejeicaoEncerramentoConta";
 import {PaginaMandatosAnteriores} from "../componentes/escolas/MembrosDaAssociacao/pages/PaginaMandatosAnteriores";
 import { ParametrizacoesRepasses } from "../componentes/sme/Parametrizacoes/Receitas/ParametrizacoesRepasses";
+import {MotivosPagamentoAntecipado} from "../componentes/sme/Parametrizacoes/Despesas/MotivosPagamentoAntecipado";
 
 // Migrando para V6 do react-router-dom
 // Referencia: https://github.com/remix-run/react-router/discussions/8753
@@ -669,6 +670,12 @@ const routesConfig = [
         path: "/componente-typescript",
         component: ChamaTypescriptFirstComponent,
         permissoes: ['view_default'],
+    },
+    {
+        exact: true,
+        path: "/parametro-motivos-pagamento-antecipado",
+        component: MotivosPagamentoAntecipado,
+        permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
     },
 
 ];
