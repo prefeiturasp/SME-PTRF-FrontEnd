@@ -233,28 +233,29 @@ export const TiposDocumento = ()=>{
                             initialStateFormModal={initialStateFormModal}
                             setStateFormModal={setStateFormModal}
                         />
+                        <>
+                            <Filtros
+                                stateFiltros={stateFiltros}
+                                handleChangeFiltros={handleChangeFiltros}
+                                handleSubmitFiltros={handleSubmitFiltros}
+                                limpaFiltros={limpaFiltros}
+                            />
+                        </>
                         {
-                            (listaDeTipos || []).length ? 
+                            (listaDeTipos || []).length ?  
                             <>
-                                <Filtros
-                                    stateFiltros={stateFiltros}
-                                    handleChangeFiltros={handleChangeFiltros}
-                                    handleSubmitFiltros={handleSubmitFiltros}
-                                    limpaFiltros={limpaFiltros}
-                                />
                                 <p>Exibindo <span className='total-acoes'>{totalDeTipos}</span> tipo(s) de documento</p>
                                 <Tabela
                                     rowsPerPage={rowsPerPage}
                                     lista={listaDeTipos}
                                     statusTemplate={statusTemplate}
                                     acoesTemplate={acoesTemplate}
-                                    // apenasDigitoTemplate={apenasDigitoTemplate}
                                 />
                             </>
-                        :
+                            :
                             <MsgImgCentralizada
                                 data-qa="imagem-lista-sem-tipos-documentos"
-                                texto='Não existem tipos de documentos cadastrados, clique no botão "Adicionar tipo de documento" para começar.'
+                                texto='Nenhum resultado encontrado.'
                                 img={Img404}
                                 dataQa=""
                             />
