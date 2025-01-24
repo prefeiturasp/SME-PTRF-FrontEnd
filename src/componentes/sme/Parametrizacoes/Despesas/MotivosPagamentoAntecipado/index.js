@@ -70,9 +70,6 @@ export const MotivosPagamentoAntecipado = ()=>{
 
     // Tabela
     const rowsPerPage = 20;
-    const statusTemplate = (rowData) => {
-        return rowData.status && rowData.status === 'ATIVO' ? 'Ativo' : 'Inativo'
-    };
 
     // Modal
     const initialStateFormModal = {
@@ -224,15 +221,15 @@ export const MotivosPagamentoAntecipado = ()=>{
                             initialStateFormModal={initialStateFormModal}
                             setStateFormModal={setStateFormModal}
                         />
+                            <Filtros
+                                stateFiltros={stateFiltros}
+                                handleChangeFiltros={handleChangeFiltros}
+                                handleSubmitFiltros={handleSubmitFiltros}
+                                limpaFiltros={limpaFiltros}
+                            />
                         {
-                            (listaDeMotivos || []).length ? 
+                            (listaDeMotivos || []).length ?
                             <>
-                                <Filtros
-                                    stateFiltros={stateFiltros}
-                                    handleChangeFiltros={handleChangeFiltros}
-                                    handleSubmitFiltros={handleSubmitFiltros}
-                                    limpaFiltros={limpaFiltros}
-                                />
                                 <p>Exibindo <span className='total-acoes'>{totalDeMotivos}</span> motivos(s) de pagamento antecipado</p>
                                 <Tabela
                                     rowsPerPage={rowsPerPage}
@@ -243,7 +240,7 @@ export const MotivosPagamentoAntecipado = ()=>{
                         :
                             <MsgImgCentralizada
                                 data-qa="imagem-lista-sem-motivos-pagamento-antecipado"
-                                texto='Não existem motivos de pagamento antecipado cadastrados, clique no botão "Adicionar motivo de pagamento antecipado" para começar.'
+                                texto='Nenhum resultado encontrado.'
                                 img={Img404}
                             />
                         }

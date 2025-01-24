@@ -50,7 +50,7 @@ describe("Carrega página de Motivos de pagamento antecipado", () => {
 
         await waitFor(()=> expect(getTodosMotivosPagamentoAntecipado).toHaveBeenCalled());
         await waitFor(()=> {
-            expect(screen.getByText(/Não existem motivos de pagamento antecipado cadastrados, clique no botão "Adicionar motivo de pagamento antecipado" para começar./i)).toBeInTheDocument()
+            expect(screen.getByText(/Nenhum resultado encontrado./i)).toBeInTheDocument()
         });
     });
 });
