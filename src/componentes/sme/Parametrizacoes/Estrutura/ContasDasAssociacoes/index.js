@@ -313,17 +313,17 @@ export const ContasDasAssociacoes = () => {
                             initialStateFormModal={initialStateFormModal}
                             setStateFormModal={setStateFormModal}
                         />
+                        <Filtros
+                            stateFiltros={stateFiltros}
+                            handleChangeFiltros={handleChangeFiltros}
+                            handleSubmitFiltros={handleSubmitFiltros}
+                            limpaFiltros={limpaFiltros}
+                            listaTiposDeConta={listaTiposDeConta}
+                            tabelaAssociacoes={tabelaAssociacoes}
+                        />
                         {
                             (todasAsContas?.results || []).length ? 
                             <>
-                                <Filtros
-                                    stateFiltros={stateFiltros}
-                                    handleChangeFiltros={handleChangeFiltros}
-                                    handleSubmitFiltros={handleSubmitFiltros}
-                                    limpaFiltros={limpaFiltros}
-                                    listaTiposDeConta={listaTiposDeConta}
-                                    tabelaAssociacoes={tabelaAssociacoes}
-                                />
                                 <p>Exibindo <span className='total-acoes'>{totalDeContas}</span> contas de associações</p>
                                 <Tabela
                                     todasAsContas={todasAsContas}
