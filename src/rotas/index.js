@@ -76,6 +76,7 @@ import ArquivosDeCarga from "../componentes/Globais/ArquivosDeCarga";
 import {EspecificacoesMateriaisServicos} from "../componentes/sme/Parametrizacoes/Despesas/EspecificacoesMateriaisServicos";
 import {TiposDocumento} from "../componentes/sme/Parametrizacoes/Despesas/TiposDocumento";
 import {TiposDeCusteio} from "../componentes/sme/Parametrizacoes/Despesas/TiposDeCusteio"
+import {TiposDeTransacao} from "../componentes/sme/Parametrizacoes/Despesas/TiposDeTransacao"
 import {Fornecedores} from "../componentes/sme/Parametrizacoes/Despesas/Fornecedores";
 import {AnaliseDre} from "../componentes/escolas/AnaliseDre";
 import {DetalharAcertos} from "../componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeLancamentos/DetalharAcertos";
@@ -586,6 +587,12 @@ const routesConfig = [
         exact: true,
         path: "/parametro-tipos-custeio",
         component: TiposDeCusteio,
+        permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
+    },
+    {
+        exact: true,
+        path: "/parametro-tipos-transacao",
+        component: TiposDeTransacao,
         permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
     },
     {
