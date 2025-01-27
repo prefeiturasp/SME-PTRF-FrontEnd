@@ -20,6 +20,7 @@ import {BtnAdd} from "./BtnAdd";
 import Loading from "../../../../../utils/Loading";
 import {ModalInfoNaoPodeExcluir} from "../../Estrutura/Acoes/ModalInfoNaoPodeExcluir";
 import {toastCustom} from "../../../../Globais/ToastCustom";
+import './tipo_transacao.scss'
 
 
 export const TiposDeTransacao = ()=>{
@@ -72,19 +73,20 @@ export const TiposDeTransacao = ()=>{
     const rowsPerPage = 20;
     const temDocumentoTemplate = (rowData) => {
         const opcoes = {
-            true: {icone: faCheck, cor: "#297805", texto: "Sim"},
-            false: {icone: faClose, cor: "#B40C02", texto: "Não"}
-        }
-        const iconeData = opcoes[rowData.tem_documento]
+            true: {icone: faCheck, cor: "#297805", texto: "Sim", cor: "#297805"},
+            false: {icone: faClose, cor: "#B40C02", texto: "Não", cor: "#B40C02"}
+        };
+        const iconeData = opcoes[rowData.tem_documento];
+
         return (
-            <div>
+            <div style={{ display: 'flex', justifyContent: 'left', alignItems: 'center' }}>
                 <FontAwesomeIcon
-                    style={{fontSize: '20px', marginRight: "0", color: iconeData.cor}}
+                    style={{ fontSize: '20px', marginRight: "5px", color: iconeData.cor }}
                     icon={iconeData.icone}
                 />
-                {iconeData.texto}
+                <span style={{ color: iconeData.cor }}><strong>{iconeData.texto}</strong></span>
             </div>
-        )
+        );
     };
 
     // Modal
