@@ -34,6 +34,7 @@ const ModalForm = ({show, stateFormModal, handleClose, handleSubmitModalForm, se
                                             <label data-qa="label-nome-tipo-documento" htmlFor="nome">Nome *</label>
                                             <input
                                                 data-qa="campo-nome-tipo-documento"
+                                                maxlength={160}
                                                 type="text"
                                                 value={props.values.nome}
                                                 placeholder="Nome do tipo de documento"
