@@ -18,16 +18,22 @@ export const Tabela = ({
                 value={todasAsContas.results}
             >
                 <Column field="associacao_dados.nome" header="Associação"/>
-                <Column field="tipo_conta_dados.nome" header="Tipo de conta"/>
+                <Column
+                    field="tipo_conta_dados.nome"
+                    header="Tipo de conta"
+                    style={{width: '15%', textAlign: "center",}}/>
+
                 <Column
                     field="status"
                     header="Status"
                     body={statusTemplate}
+                    style={{width: '15%', textAlign: "center",}}
                 />
                 <Column
                     field="acoes"
                     header="Ações"
                     body={acoesTemplate}
+                    style={{width: '10%', textAlign: "center",}}
                 />
             </DataTable>
             <Paginator
