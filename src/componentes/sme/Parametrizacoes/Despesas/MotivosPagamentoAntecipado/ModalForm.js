@@ -36,7 +36,7 @@ const ModalForm = ({show, stateFormModal, handleClose, handleSubmitModalForm, se
                                             <input
                                                 data-qa="campo-motivo-motivo-pagamento-antecipado"
                                                 type="text"
-                                                maxlength={10}
+                                                maxlength={160}
                                                 value={props.values.motivo}
                                                 placeholder="Nome do motivo de pagamento antecipado"
                                                 name="motivo"
