@@ -107,6 +107,7 @@ const ModalForm = ({show, handleClose, handleSubmitModalForm, recebeAutoComplete
                                     id="banco_nome"
                                     type="text"
                                     className="form-control"
+                                    maxLength="50"
                                 />
                             </div>
 
@@ -117,6 +118,7 @@ const ModalForm = ({show, handleClose, handleSubmitModalForm, recebeAutoComplete
                                     id="agencia"
                                     type="text"
                                     className="form-control"
+                                    maxLength="15"
                                 />
                             </div>
                         </div>
@@ -129,6 +131,7 @@ const ModalForm = ({show, handleClose, handleSubmitModalForm, recebeAutoComplete
                                     id="numero_conta"
                                     type="text"
                                     className="form-control"
+                                    maxLength="30"
                                 />
                             </div>
 
@@ -139,6 +142,7 @@ const ModalForm = ({show, handleClose, handleSubmitModalForm, recebeAutoComplete
                                     id="numero_cartao"
                                     type="text"
                                     className="form-control"
+                                    maxLength="80"
                                 />
                             </div>
                         </div>

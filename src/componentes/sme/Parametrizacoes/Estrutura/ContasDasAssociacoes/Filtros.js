@@ -16,6 +16,7 @@ export const Filtros = ({stateFiltros, handleChangeFiltros, handleSubmitFiltros,
                             id="filtrar_por_associacao_nome"
                             type="text"
                             className="form-control"
+                            maxlength="160"
                         />
                     </div>
                     <div className="form-group col-md-3">
