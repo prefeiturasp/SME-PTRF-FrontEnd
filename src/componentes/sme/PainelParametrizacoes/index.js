@@ -20,6 +20,7 @@ import IconeTextosFiqueDeOlho from "../../../assets/img/icone-parametro-textos-f
 import IconeFornecedores from "../../../assets/img/icone-parametro-fornecedores.svg"
 import IconeMandato from "../../../assets/img/icone-parametro-periodos-de-mandato.svg"
 import IconeRepasses from "../../../assets/img/icone-parametro-repasses.svg"
+import IconeMotivosDevolucaoTesouro from "../../../assets/img/icone-parametro-devolucao-ao-tesouro.svg"
 
 export const PainelParametrizacoes = () => {
 
@@ -140,6 +141,15 @@ export const PainelParametrizacoes = () => {
         }
     ];
 
+    const itensParametrizacaoDre = [
+        {
+            parametro: 'Motivos de devolução ao tesouro',
+            url: 'parametro-motivos-devolucao-tesouro',
+            icone: IconeMotivosDevolucaoTesouro,
+            permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
+        },
+    ];
+
     const itensParametrizacaoPrestacaoContas = [
         {
             parametro: 'Tipos de acertos Lançamentos',
@@ -181,6 +191,10 @@ export const PainelParametrizacoes = () => {
             <ParametrizacaoCard
                 itensParametrizacao={itensParametrizacaoPrestacaoContas}
                 nomeGrupo='Prestação de Contas'
+            />
+            <ParametrizacaoCard
+                itensParametrizacao={itensParametrizacaoDre}
+                nomeGrupo='DRE'
             />
             <ParametrizacaoCard
                 itensParametrizacao={itensParametrizacaoEdicaoDeTexto}
