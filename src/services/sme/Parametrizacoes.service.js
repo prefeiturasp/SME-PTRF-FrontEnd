@@ -367,6 +367,7 @@ export const deleteTipoDeCusteio = async (tag_uuid) => {
     return (await api.delete(`/api/tipos-custeio/${tag_uuid}/`, authHeader))
 };
 
+
 // Tipos de Documento
 export const getTodosTiposDeDocumento = async () => {
     return (await api.get(`/api/tipos-documento/`, authHeader)).data
@@ -382,6 +383,23 @@ export const patchAlterarTipoDeDocumento = async (tag_uuid, payload) => {
 };
 export const deleteTipoDeDocumento = async (tag_uuid) => {
     return (await api.delete(`/api/tipos-documento/${tag_uuid}/`, authHeader))
+};
+
+// Tipos de Transação
+export const getTiposDeTransacao = async () => {
+    return (await api.get(`/api/tipos-transacao/`, authHeader)).data
+};
+export const getFiltrosTiposDeTransacao = async (nome, status) => {
+    return (await api.get(`/api/tipos-transacao/?nome=${nome}`, authHeader)).data
+};
+export const postTipoDeTransacao = async (payload) => {
+    return (await api.post(`/api/tipos-transacao/`, payload, authHeader)).data
+};
+export const patchTipoDeTransacao = async (tag_uuid, payload) => {
+    return (await api.patch(`/api/tipos-transacao/${tag_uuid}/`, payload, authHeader)).data
+};
+export const deleteTipoDeTransacao = async (tag_uuid) => {
+    return (await api.delete(`/api/tipos-transacao/${tag_uuid}/`, authHeader))
 };
 
 // Fornecedores
