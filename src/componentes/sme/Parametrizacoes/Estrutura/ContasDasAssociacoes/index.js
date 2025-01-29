@@ -1,5 +1,6 @@
 import React, {useState, useEffect, useCallback, useMemo} from "react";
 import {PaginasContainer} from "../../../../../paginas/PaginasContainer";
+import ReactTooltip from "react-tooltip";
 import {
     postContasAssociacoes,
     patchContasAssociacoes,
@@ -121,10 +122,13 @@ export const ContasDasAssociacoes = () => {
         return (
             <div>
                 <button onClick={() => handleEditarAcoes(rowData)} className="btn-editar-membro">
-                    <FontAwesomeIcon
-                        style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
-                        icon={faEdit}
-                    />
+                    <div data-tip="Editar" data-for={`tooltip-id-${rowData.uuid}`}>
+                        <ReactTooltip id={`tooltip-id-${rowData.uuid}`}/>
+                        <FontAwesomeIcon
+                            style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
+                            icon={faEdit}
+                        />
+                    </div>
                 </button>
             </div>
         )
