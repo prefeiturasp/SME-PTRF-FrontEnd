@@ -167,9 +167,7 @@ export const ContasDasAssociacoes = () => {
             setStateFormModal({
                 ...stateFormModal,
                 associacao: selectAssociacao.uuid,
-                associacao_nome: selectAssociacao.nome,
-                uuid: selectAssociacao.acao && selectAssociacao.acao.uuid ? selectAssociacao.acao.uuid : "",
-                id: selectAssociacao.acao && selectAssociacao.acao.id ? selectAssociacao.acao.id : "",
+                associacao_nome: selectAssociacao.nome
             });
             setReadOnly(false)
         }
@@ -205,6 +203,7 @@ export const ContasDasAssociacoes = () => {
     };
     const handleEditarAcoes = (rowData) => {
         setStateFormModal({
+            associacao_nome: rowData.associacao_dados.nome,
             associacao: rowData.associacao,
             tipo_conta: rowData.tipo_conta,
             status: rowData.status,

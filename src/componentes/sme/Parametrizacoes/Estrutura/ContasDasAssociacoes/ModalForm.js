@@ -10,6 +10,7 @@ const ModalForm = ({show, handleClose, handleSubmitModalForm, recebeAutoComplete
     const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES = RetornaSeTemPermissaoEdicaoPainelParametrizacoes()
 
     const bodyTextarea = () => {
+        const editReadonly = stateFormModal && stateFormModal.operacao === 'edit'
         return (
             <>
                 <Formik
@@ -20,6 +21,7 @@ const ModalForm = ({show, handleClose, handleSubmitModalForm, recebeAutoComplete
                     onSubmit={handleSubmitModalForm}
                 >
                     {props => (
+
                     <Form>
                         <div className="row">
                             <div className='col-12'>
@@ -29,42 +31,32 @@ const ModalForm = ({show, handleClose, handleSubmitModalForm, recebeAutoComplete
                         {stateFormModal && stateFormModal.operacao === 'edit' ? (
                             <div className='row'>
                                 <div className='col'>
-                                    <label htmlFor="associacao">Associação *</label>
+                                    <label htmlFor="associacao_nome">Associação *</label>
                                     <Field
-                                        name='nome_associacao'
-                                        id="nome_associacao"
+                                        name='associacao_nome'
+                                        id="associacao_nome"
                                         type="text"
                                         className="form-control"
-                                        readOnly={true}
+                                        readOnly={editReadonly}
                                         disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                     />
                                 </div>
                             </div>
                         ) :
                             <>
-                                <label htmlFor="selectedAcao">Associação *{loadingAssociacoes && <img alt="" src={Spinner} style={{height: "22px"}}/>}</label>
+                                <label htmlFor="associacao_nome">Associação *{loadingAssociacoes && <img alt="" src={Spinner} style={{height: "22px"}}/>}</label>
                                 <AutoCompleteAssociacoes
                                     todasAsAssociacoesAutoComplete={todasAsAssociacoesAutoComplete}
                                     recebeAutoComplete={recebeAutoComplete}
                                     disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                     loadingAssociacoes={loadingAssociacoes}
                                 />
+                                {props.touched.associacao_nome && props.errors.associacao_nome && <span className="span_erro text-danger mt-1"> {props.errors.associacao_nome} </span>}
                             </>
                         }
-
+                        <pre>{JSON.stringify(editReadonly)}
+                        {JSON.stringify(TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES)}</pre>
                         <div className='row mt-3'>
-                            <div className='col'>
-                                <label htmlFor="associacao">Associação *</label>
-                                <Field
-                                    name='associacao'
-                                    id="associacao"
-                                    type="text"
-                                    className="form-control"
-                                    readOnly={true}
-                                />
-                                {props.touched.associacao && props.errors.associacao && <span className="span_erro text-danger mt-1"> {props.errors.associacao} </span>}
-                            </div>
-
                             <div className='col'>
                                 <label htmlFor="tipo_conta">Tipos de conta *</label>
                                 <Field
@@ -72,7 +64,7 @@ const ModalForm = ({show, handleClose, handleSubmitModalForm, recebeAutoComplete
                                     name='tipo_conta'
                                     id="tipo_conta"
                                     className="form-control"
-                                    disabled={readOnly || !TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
+                                    disabled={editReadonly || !TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                 >
                                     <option value=''>Selecione tipo de conta</option>
                                     {listaTiposDeConta && listaTiposDeConta.length > 0 && listaTiposDeConta.map(item => (
@@ -89,7 +81,7 @@ const ModalForm = ({show, handleClose, handleSubmitModalForm, recebeAutoComplete
                                     name='status'
                                     id="status"
                                     className="form-control"
-                                    disabled={readOnly || !TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
+                                    disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                 >
                                     <option value=''>Selecione o status</option>
                                     <option value='ATIVA'>Ativa</option>

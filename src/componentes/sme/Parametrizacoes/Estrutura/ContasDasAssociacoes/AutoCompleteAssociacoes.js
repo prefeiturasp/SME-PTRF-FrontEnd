@@ -57,8 +57,8 @@ const AutoCompleteAssociacoes = ({todasAsAssociacoesAutoComplete, recebeAutoComp
             <div className="flex-grow-1 bd-highlight">
                 <AutoComplete
                     value={selectedAssociacao}
-                    name='selectedAssociacao'
-                    inputId='selectedAssociacao'
+                    name='associacao_nome'
+                    inputId='associacao_nome'
                     suggestions={filteredAssociacoes}
                     completeMethod={searchAssociacao}
                     field="nome"

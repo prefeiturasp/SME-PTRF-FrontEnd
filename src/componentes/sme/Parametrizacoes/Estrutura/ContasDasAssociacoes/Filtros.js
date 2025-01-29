@@ -1,6 +1,4 @@
 import React from "react";
-import { Select } from 'antd';
-const { Option } = Select;
 
 export const Filtros = ({stateFiltros, handleChangeFiltros, handleSubmitFiltros, limpaFiltros, listaTiposDeConta, tabelaAssociacoes}) =>{
     return(
@@ -17,6 +15,7 @@ export const Filtros = ({stateFiltros, handleChangeFiltros, handleSubmitFiltros,
                             type="text"
                             className="form-control"
                             maxlength="160"
+                            placeholder="Filtrar por associação, nome da unidade ou EOL"
                         />
                     </div>
                     <div className="form-group col-md-3">
