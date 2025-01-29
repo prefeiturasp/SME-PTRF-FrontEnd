@@ -43,7 +43,7 @@ const ModalForm = ({show, stateFormModal, handleClose, handleSubmitModalForm, se
                                 
                                 <div className="form-row">
                                     <div className="form-group col-md-6">
-                                        <p data-qa="legenda-numero-documento-digitado" className="mb-0">Tem documento? *</p>
+                                        <p data-qa="legenda-numero-documento-digitado" className="mb-0">Tem documento?</p>
                                     </div>
                                     <div className="form-group col-md-6">
                                         <div className="form-check form-check-inline mt-2">
