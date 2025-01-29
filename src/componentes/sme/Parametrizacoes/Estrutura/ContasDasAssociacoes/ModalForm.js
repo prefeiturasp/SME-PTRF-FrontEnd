@@ -54,8 +54,6 @@ const ModalForm = ({show, handleClose, handleSubmitModalForm, recebeAutoComplete
                                 {props.touched.associacao_nome && props.errors.associacao_nome && <span className="span_erro text-danger mt-1"> {props.errors.associacao_nome} </span>}
                             </>
                         }
-                        <pre>{JSON.stringify(editReadonly)}
-                        {JSON.stringify(TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES)}</pre>
                         <div className='row mt-3'>
                             <div className='col'>
                                 <label htmlFor="tipo_conta">Tipos de conta *</label>
