@@ -38,7 +38,7 @@ const Tabela = (props)=>{
             <Column
                 data-qa="tabela-col-tipo-documento-numero-documento-digitado"
                 field="numero_documento_digitado"
-                header="Solicitar a digitação do número do documento?"
+                header="Solicitar a digitação do número do documento"
                 body={props.numeroDocumentoDigitadoTemplate}
             />
             <Column
@@ -50,19 +50,19 @@ const Tabela = (props)=>{
             <Column
                 data-qa="tabela-col-tipo-documento-documento-comprobatorio-de-despesa"
                 field="documento_comprobatorio_de_despesa"
-                header="Documento comprobatório de despesa?"
+                header="Documento comprobatório de despesa"
                 body={props.documentoComprobatorioDeDespesaTemplate}
             />
             <Column
                 data-qa="tabela-col-tipo-documento-pode-reter-imposto"
                 field="pode_reter_imposto"
-                header="Habilita preenchimento do imposto?"
+                header="Habilita preenchimento do imposto"
                 body={props.podeReterImpostoTemplate}
             />
             <Column
                 data-qa="tabela-col-tipo-documento-eh-documento-de-retencao-de-imposto"
                 field="eh_documento_de_retencao_de_imposto"
-                header="Documento relativo ao imposto recolhido?"
+                header="Documento relativo ao imposto recolhido"
                 body={props.ehDocumentoDeRetencaoDeImpostoTemplate}
             />
             <Column
