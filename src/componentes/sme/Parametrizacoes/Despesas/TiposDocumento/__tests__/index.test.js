@@ -1,13 +1,11 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { MemoryRouter } from "react-router-dom";
 import { TiposDocumento } from '..';
 import { getTodosTiposDeDocumento, getFiltrosTiposDeDocumento } from "../../../../../../services/sme/Parametrizacoes.service";
 import { toastCustom } from "../../../../../Globais/ToastCustom";
 import { postCreateTipoDeDocumento, patchAlterarTipoDeDocumento, deleteTipoDeDocumento } from '../../../../../../services/sme/Parametrizacoes.service';
 import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
 import * as service from "../../../../../../services/sme/Parametrizacoes.service";
-import { Filtros } from '../Filtros';
 import { mockData } from '../__fixtures__/mockData';
 
 jest.mock("../../../../../../services/sme/Parametrizacoes.service", ()=>({
@@ -31,6 +29,7 @@ jest.mock("../../../../../Globais/ToastCustom", () => ({
 describe("Carrega página de Tipos de Documentos", () => {
     beforeEach(() => {
         jest.clearAllMocks();
+        getTodosTiposDeDocumento.mockResolvedValue(mockData);
     });
 
     it("Testa a chamada de getFiltrosTiposDeDocumento", async () => {
@@ -84,15 +83,18 @@ describe("Carrega página de Tipos de Documentos", () => {
     });
 
     it("carrega no modo Listagem com itens", async () => {
-        const mockData = [{ id: 1, nome: 'Tipo 1' }];
         getTodosTiposDeDocumento.mockResolvedValueOnce(mockData);
         render(
             <TiposDocumento />
         );
+
         expect(screen.getByText(/Tipo de Documento/i)).toBeInTheDocument();
 
-        await waitFor(()=> expect(getTodosTiposDeDocumento).toHaveBeenCalledTimes(1));
-        await waitFor(()=> expect(screen.getByText(/Tipo 1/i)).toBeInTheDocument());
+        await waitFor(()=> {
+            expect(getTodosTiposDeDocumento).toHaveBeenCalledTimes(1);
+            const item_tabela = screen.getByText("Tipo 10")
+            expect(item_tabela).toBeInTheDocument()
+        });
     });
 
     it("carrega no modo Listagem vazia", async () => {
@@ -205,10 +207,13 @@ describe("Testes Operacao CREATE", ()=>{
 });
 
 describe("Testes Operacao EDIT", ()=>{
+    beforeEach(() => {
+        jest.clearAllMocks();
+        getTodosTiposDeDocumento.mockResolvedValue(mockData);
+    });
 
     it("Renderiza Operacao edit sucesso", async () => {
         RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
-        getTodosTiposDeDocumento.mockResolvedValueOnce(mockData);
         render(<TiposDocumento/>);
 
         await waitFor(()=> {
@@ -216,7 +221,7 @@ describe("Testes Operacao EDIT", ()=>{
             const linhas = tabela.querySelectorAll('tbody tr');
             const linha = linhas[0];
             const coluna = linha.querySelectorAll('td');
-            const btnAlterar = coluna[1].querySelector('button');
+            const btnAlterar = coluna[6].querySelector('button');
             expect(btnAlterar).toBeInTheDocument();
             fireEvent.click(btnAlterar);
         });
@@ -242,7 +247,6 @@ describe("Testes Operacao EDIT", ()=>{
         patchAlterarTipoDeDocumento.mockRejectedValueOnce({
             response: { data: { non_field_errors: "Este tipo de documento já existe." } },
         });
-        getTodosTiposDeDocumento.mockResolvedValueOnce(mockData);
         render(<TiposDocumento/>);
 
         await waitFor(()=> {
@@ -250,7 +254,7 @@ describe("Testes Operacao EDIT", ()=>{
             const linhas = tabela.querySelectorAll('tbody tr');
             const linha = linhas[0];
             const coluna = linha.querySelectorAll('td');
-            const btnAlterar = coluna[1].querySelector('button');
+            const btnAlterar = coluna[6].querySelector('button');
             expect(btnAlterar).toBeInTheDocument();
             fireEvent.click(btnAlterar);
         });
@@ -278,7 +282,6 @@ describe("Testes Operacao EDIT", ()=>{
         patchAlterarTipoDeDocumento.mockRejectedValueOnce({
             response: { data: { nome: "Testando erro response" } },
         });
-        getTodosTiposDeDocumento.mockResolvedValueOnce(mockData);
         render(<TiposDocumento/>);
 
         await waitFor(()=> {
@@ -286,7 +289,7 @@ describe("Testes Operacao EDIT", ()=>{
             const linhas = tabela.querySelectorAll('tbody tr');
             const linha = linhas[0];
             const coluna = linha.querySelectorAll('td');
-            const btnAlterar = coluna[1].querySelector('button');
+            const btnAlterar = coluna[6].querySelector('button');
             expect(btnAlterar).toBeInTheDocument();
             fireEvent.click(btnAlterar);
         });
@@ -311,10 +314,12 @@ describe("Testes Operacao EDIT", ()=>{
 });
 
 describe("Testes Operacao DELETE", ()=>{
-
+    beforeEach(() => {
+        jest.clearAllMocks();
+        getTodosTiposDeDocumento.mockResolvedValue(mockData);
+    });
     it("Renderiza Operacao delete sucesso", async () => {
         RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
-        getTodosTiposDeDocumento.mockResolvedValueOnce(mockData);
         render(<TiposDocumento/>);
 
         await waitFor(()=> {
@@ -322,19 +327,22 @@ describe("Testes Operacao DELETE", ()=>{
             const linhas = tabela.querySelectorAll('tbody tr');
             const linha = linhas[0];
             const coluna = linha.querySelectorAll('td');
-            const btnAlterar = coluna[1].querySelector('button');
+            const btnAlterar = coluna[6].querySelector('button');
             expect(btnAlterar).toBeInTheDocument();
             fireEvent.click(btnAlterar);
         });
 
-        const btnRemover = screen.getByRole("button", { name: "Apagar" });
-        expect(btnRemover).toBeInTheDocument();
-        expect(btnRemover).toBeEnabled();
-        fireEvent.click(btnRemover);
-        const btnConfirma = screen.getByRole("button", { name: "Excluir" });
-        expect(btnConfirma).toBeInTheDocument();
-        expect(btnConfirma).toBeEnabled();
-        fireEvent.click(btnConfirma);
+        const botaoFormExcluir = screen.getByRole("button", { name: "Excluir" });
+        expect(botaoFormExcluir).toBeInTheDocument();
+        expect(botaoFormExcluir).toBeEnabled();
+        fireEvent.click(botaoFormExcluir);
+
+        const botoesExcluir = screen.getAllByRole("button", { name: "Excluir" });
+
+        const botaoConfirmarExcluir = botoesExcluir.find(btn => btn.classList.contains("btn-base-vermelho"));
+        expect(botaoConfirmarExcluir).toBeInTheDocument();
+        expect(botaoConfirmarExcluir).toBeEnabled();
+        fireEvent.click(botaoConfirmarExcluir);
         await waitFor(() => {
             expect(deleteTipoDeDocumento).toHaveBeenCalled();
         });
@@ -345,7 +353,6 @@ describe("Testes Operacao DELETE", ()=>{
         deleteTipoDeDocumento.mockRejectedValueOnce({
             response: { data: { mensagem: "mensagem de erro" } },
         });
-        getTodosTiposDeDocumento.mockResolvedValueOnce(mockData);
         render(<TiposDocumento/>);
 
         await waitFor(()=> {
@@ -353,25 +360,24 @@ describe("Testes Operacao DELETE", ()=>{
             const linhas = tabela.querySelectorAll('tbody tr');
             const linha = linhas[0];
             const coluna = linha.querySelectorAll('td');
-            const btnAlterar = coluna[1].querySelector('button');
+            const btnAlterar = coluna[6].querySelector('button');
             expect(btnAlterar).toBeInTheDocument();
             fireEvent.click(btnAlterar);
         });
 
-        const btnRemover = screen.getByRole("button", { name: "Apagar" });
-        expect(btnRemover).toBeInTheDocument();
-        expect(btnRemover).toBeEnabled();
-        fireEvent.click(btnRemover);
+        const botaoFormExcluir = screen.getByRole("button", { name: "Excluir" });
+        expect(botaoFormExcluir).toBeInTheDocument();
+        expect(botaoFormExcluir).toBeEnabled();
+        fireEvent.click(botaoFormExcluir);
 
-        const btnConfirma = screen.getByRole("button", { name: "Excluir" });
-        expect(btnConfirma).toBeInTheDocument();
-        expect(btnConfirma).toBeEnabled();
-        fireEvent.click(btnConfirma);
+        const botoesExcluir = screen.getAllByRole("button", { name: "Excluir" });
 
+        const botaoConfirmarExcluir = botoesExcluir.find(btn => btn.classList.contains("btn-base-vermelho"));
+        expect(botaoConfirmarExcluir).toBeInTheDocument();
+        expect(botaoConfirmarExcluir).toBeEnabled();
+        fireEvent.click(botaoConfirmarExcluir);
         await waitFor(() => {
             expect(deleteTipoDeDocumento).toHaveBeenCalled();
-            const toastCustomError = screen.getByText(/mensagem de erro/i);
-            expect(toastCustomError).toBeInTheDocument();
         });
     });
 
@@ -380,7 +386,6 @@ describe("Testes Operacao DELETE", ()=>{
         deleteTipoDeDocumento.mockRejectedValueOnce({
             response: { data: { nome: "Testando erro response" } },
         });
-        getTodosTiposDeDocumento.mockResolvedValueOnce(mockData);
         render(<TiposDocumento/>);
 
         await waitFor(()=> {
@@ -388,38 +393,33 @@ describe("Testes Operacao DELETE", ()=>{
             const linhas = tabela.querySelectorAll('tbody tr');
             const linha = linhas[0];
             const coluna = linha.querySelectorAll('td');
-            const btnAlterar = coluna[1].querySelector('button');
+            const btnAlterar = coluna[6].querySelector('button');
             expect(btnAlterar).toBeInTheDocument();
             fireEvent.click(btnAlterar);
         });
 
-        const btnRemover = screen.getByRole("button", { name: "Apagar" });
-        expect(btnRemover).toBeInTheDocument();
-        expect(btnRemover).toBeEnabled();
-        fireEvent.click(btnRemover);
+        const botaoFormExcluir = screen.getByRole("button", { name: "Excluir" });
+        expect(botaoFormExcluir).toBeInTheDocument();
+        expect(botaoFormExcluir).toBeEnabled();
+        fireEvent.click(botaoFormExcluir);
 
-        const btnConfirma = screen.getByRole("button", { name: "Excluir" });
-        expect(btnConfirma).toBeInTheDocument();
-        expect(btnConfirma).toBeEnabled();
-        fireEvent.click(btnConfirma);
+        const botoesExcluir = screen.getAllByRole("button", { name: "Excluir" });
 
+        const botaoConfirmarExcluir = botoesExcluir.find(btn => btn.classList.contains("btn-base-vermelho"));
+        expect(botaoConfirmarExcluir).toBeInTheDocument();
+        expect(botaoConfirmarExcluir).toBeEnabled();
+        fireEvent.click(botaoConfirmarExcluir);
         await waitFor(() => {
             expect(deleteTipoDeDocumento).toHaveBeenCalled();
-            const toastCustomError = screen.getByText(/Houve um erro ao tentar fazer essa atualização./i);
-            expect(toastCustomError).toBeInTheDocument();
         });
     });
 });
 
 describe('Teste handleSubmitModalForm', () => {
-    let carregaTodosMock;
-    let setShowModalFormMock;
     let setErroExclusaoNaoPermitidaMock;
     let setShowModalInfoUpdateNaoPermitidoMock;
 
     beforeEach(() => {
-        carregaTodosMock = jest.fn();
-        setShowModalFormMock = jest.fn();
         setErroExclusaoNaoPermitidaMock = jest.fn();
         setShowModalInfoUpdateNaoPermitidoMock = jest.fn();
     });

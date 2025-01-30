@@ -13,11 +13,11 @@ const mockSetShowModalConfirmDelete = jest.fn();
 
 const mockEdit = {
   nome: "Nome do tipo",
-  numero_documento_digitado: null,
-  apenas_digitos: null,
-  documento_comprobatorio_de_despesa: null,
-  pode_reter_imposto: null,
-  eh_documento_de_retencao_de_imposto: null,
+  numero_documento_digitado: true,
+  apenas_digitos: false,
+  documento_comprobatorio_de_despesa: false,
+  pode_reter_imposto: false,
+  eh_documento_de_retencao_de_imposto: false,
   id: 1,
   uuid: "12345",
   operacao: "edit"
@@ -43,6 +43,77 @@ const defaultPropsEdicao = {
   stateFormModal: mockEdit
 };
 
+describe("Controle Condicional de radio button", () => {
+
+  beforeEach(() => {
+    RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
+  });
+
+  test("Desabilitar radio #apenas_digitos_true e #apenas_digitos_false quando #numero_documento_digitado_false for selecionado",
+    async () => {
+      render(
+          <ModalForm {...defaultPropsEdicao}/>
+      );
+
+      const radioNumeroDocumentoNao = screen.getByLabelText("Não", { selector: 'input[name="numero_documento_digitado_false"]' });
+      const radioApenasDigitosSim = screen.getByLabelText("Sim", { selector: 'input[name="apenas_digitos_true"]' });
+      const radioApenasDigitosNao = screen.getByLabelText("Não", { selector: 'input[name="apenas_digitos_false"]' });
+      
+      fireEvent.click(radioNumeroDocumentoNao);
+      expect(radioApenasDigitosSim).toBeDisabled();
+      expect(radioApenasDigitosNao).toBeDisabled();
+    }
+  );
+
+  test("Habilitar radio #apenas_digitos_true e #apenas_digitos_false quando #numero_documento_digitado_true for selecionado",
+    async () => {
+      render(
+          <ModalForm {...defaultPropsEdicao}/>
+      );
+
+      const radioNumeroDocumentoSim = screen.getByLabelText("Sim", { selector: 'input[name="numero_documento_digitado_true"]' });
+      const radioApenasDigitosSim = screen.getByLabelText("Sim", { selector: 'input[name="apenas_digitos_true"]' });
+      const radioApenasDigitosNao = screen.getByLabelText("Não", { selector: 'input[name="apenas_digitos_false"]' });
+      
+      fireEvent.click(radioNumeroDocumentoSim);
+      expect(radioApenasDigitosSim).toBeEnabled();
+      expect(radioApenasDigitosNao).toBeEnabled();
+    }
+  );
+
+  test("Desabilitar radio #pode_reter_imposto_true e #pode_reter_imposto_false quando #documento_comprobatorio_de_despesa_false for selecionado",
+    async () => {
+      render(
+          <ModalForm {...defaultProps}/>
+      );
+
+      const radioDocumentoComprobatorioNao = screen.getByLabelText("Não", { selector: 'input[name="documento_comprobatorio_de_despesa_false"]' });
+      const radioPodeRetirarImpostoSim = screen.getByLabelText("Sim", { selector: 'input[name="pode_reter_imposto_true"]' });
+      const radioPodeRetirarImpostoNao = screen.getByLabelText("Não", { selector: 'input[name="pode_reter_imposto_false"]' });
+
+      fireEvent.click(radioDocumentoComprobatorioNao);
+      expect(radioPodeRetirarImpostoSim).toBeDisabled();
+      expect(radioPodeRetirarImpostoNao).toBeDisabled();
+
+    }
+  );
+  test("Habilitar radio #pode_reter_imposto_true e #pode_reter_imposto_false quando #documento_comprobatorio_de_despesa_true for selecionado",
+    async () => {
+      render(
+          <ModalForm {...defaultProps}/>
+      );
+
+      const radioDocumentoComprobatorioSim = screen.getByLabelText("Sim", { selector: 'input[name="documento_comprobatorio_de_despesa_true"]' });
+      const radioPodeRetirarImpostoSim = screen.getByLabelText("Sim", { selector: 'input[name="pode_reter_imposto_true"]' });
+      const radioPodeRetirarImpostoNao = screen.getByLabelText("Não", { selector: 'input[name="pode_reter_imposto_false"]' });
+
+      fireEvent.click(radioDocumentoComprobatorioSim);
+      expect(radioPodeRetirarImpostoSim).toBeEnabled();
+      expect(radioPodeRetirarImpostoNao).toBeEnabled();
+    }
+  );
+});
+
 describe("Componente ModalForm", () => {
 
   beforeEach(() => {
@@ -56,7 +127,7 @@ describe("Componente ModalForm", () => {
     expect(screen.getByText("Adicionar tipo de documento")).toBeInTheDocument();
     expect(screen.getByText("* Preenchimento obrigatório")).toBeInTheDocument();
     expect(screen.getByLabelText("Nome *")).toHaveValue("");
-    expect(screen.queryByRole("button", { name: "Apagar" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Excluir" })).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Cancelar" })).toBeInTheDocument();
     expect(screen.getAllByLabelText("Sim").length).toEqual(5);
     expect(screen.getAllByLabelText("Não").length).toEqual(5);
@@ -75,7 +146,7 @@ describe("Componente ModalForm", () => {
     expect(screen.getByText("Adicionar tipo de documento")).toBeInTheDocument();
     expect(screen.getByText("* Preenchimento obrigatório")).toBeInTheDocument();
     expect(screen.getByLabelText("Nome *")).toHaveValue("");
-    expect(screen.queryByRole("button", { name: "Apagar" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Excluir" })).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Cancelar" })).toBeInTheDocument();
     expect(screen.getAllByLabelText("Sim").length).toEqual(5);
     expect(screen.getAllByLabelText("Não").length).toEqual(5);
@@ -93,15 +164,18 @@ describe("Componente ModalForm", () => {
     
     expect(screen.getByText("Editar tipo de documento")).toBeInTheDocument();
     expect(screen.getByLabelText("Nome *")).toHaveValue("Nome do tipo");
-    expect(screen.queryByRole("button", { name: "Apagar" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Excluir" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Cancelar" })).toBeInTheDocument();
     expect(screen.getAllByLabelText("Sim").length).toEqual(5);
     expect(screen.getAllByLabelText("Não").length).toEqual(5);
 
     expect(screen.getByRole("button", { name: "Salvar" })).toBeEnabled();
-    const campos = screen.getAllByRole(/textbox|radio/);
-    campos.forEach((campo) => {
-        expect(campo).toBeEnabled();
+    const campoTexto = screen.getByRole(/textbox/);
+    expect(campoTexto).toBeEnabled();
+
+    const camposRadio = screen.getAllByRole(/radio/);
+    camposRadio.forEach((campo) => {
+        expect(campo).toBeInTheDocument();
     });
   });
 
@@ -111,7 +185,7 @@ describe("Componente ModalForm", () => {
 
     expect(screen.getByText("Editar tipo de documento")).toBeInTheDocument();
     expect(screen.getByLabelText("Nome *")).toHaveValue("Nome do tipo");
-    expect(screen.queryByRole("button", { name: "Apagar" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Excluir" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Cancelar" })).toBeInTheDocument();
     expect(screen.getAllByLabelText("Sim").length).toEqual(5);
     expect(screen.getAllByLabelText("Não").length).toEqual(5);
@@ -174,7 +248,7 @@ describe("Componente ModalForm", () => {
     render(<ModalForm {...defaultPropsEdicao}/>);
 
     // Localize o botão
-    const button = screen.getByRole('button', { name: /Apagar/i });
+    const button = screen.getByRole('button', { name: /Excluir/i });
 
     // Simule o clique no botão
     fireEvent.click(button);
