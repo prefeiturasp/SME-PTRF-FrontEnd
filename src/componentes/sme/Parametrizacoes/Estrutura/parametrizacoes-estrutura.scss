@@ -11,6 +11,14 @@ span.total-acoes{
   transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
 }
 
+#selectedAssociacao{
+  width: 100%;
+  border: 1px solid #ced4da;
+  border-radius: .25rem;
+  border-right: none;
+  transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+
 .btn-pesquisar-tipos-conta,.btn-pesquisar-tipos-conta:focus {
   border: none;
   background-color: transparent;

@@ -72,12 +72,10 @@ const AutoCompleteAssociacoes = ({todasAsAssociacoesAutoComplete, recebeAutoComp
                 />
             </div>
             <div className="bd-highlight ml-0 py-1 px-3 ml-n3 border-top border-right border-bottom">
-                <button className='btn btn-link ml-0 py-1 px-2 ml-n1 border-top border-right border-bottom' type='button'>
-                    <FontAwesomeIcon
-                        style={{fontSize: '18px', marginRight: "0", color: "#42474A"}}
-                        icon={faSearch}
-                    />
-                </button>
+                <FontAwesomeIcon
+                    style={{fontSize: '18px', marginRight: "0", color: "#42474A"}}
+                    icon={faSearch}
+                />
             </div>
         </div>
     )
