@@ -1,9 +1,9 @@
 import React, {useContext, useState} from "react";
-import { MotivosDevolucaoTesouroContext } from "../context/MotivosDevolucaoTesouro";
+import { MotivosAprovacaoPcRessalvaContext } from "../context/MotivosAprovacaoPcRessalva";
 
 export const Filtros = () => {
 
-    const {setFilter, initialFilter, setCurrentPage, setFirstPage} = useContext(MotivosDevolucaoTesouroContext)
+    const {setFilter, initialFilter, setCurrentPage, setFirstPage} = useContext(MotivosAprovacaoPcRessalvaContext)
     const [formFilter, setFormFilter] = useState(initialFilter);
 
     const handleChangeFormFilter = (name, value) => {
@@ -31,12 +31,12 @@ export const Filtros = () => {
             <div className="d-flex bd-highlight align-items-end mt-2">
                 <div className="p-2 flex-grow-1 bd-highlight">
                     <form>
-                        <label htmlFor="nome">Filtrar por motivo de devolução ao tesouro</label>
+                        <label htmlFor="motivo">Filtrar por motivo de aprovação de PC com ressalvas</label>
                         <input
-                            value={formFilter.nome}
+                            value={formFilter.motivo}
                             onChange={(e) => handleChangeFormFilter(e.target.name, e.target.value)}
-                            name='nome'
-                            id="nome"
+                            name='motivo'
+                            id="motivo"
                             type="text"
                             className="form-control"
                             placeholder='Busque por motivo'

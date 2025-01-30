@@ -1,13 +1,13 @@
 import React, {useContext} from "react";
 import {Paginator} from 'primereact/paginator';
-import { useGetMotivosDevolucaoTesouro } from "../hooks/useGetMotivosDevolucaoTesouro";
-import { MotivosDevolucaoTesouroContext } from "../context/MotivosDevolucaoTesouro";
+import { useGetMotivosAprovacaoPcRessalva } from "../hooks/useGetMotivosAprovacaoPcRessalva";
+import { MotivosAprovacaoPcRessalvaContext } from "../context/MotivosAprovacaoPcRessalva";
 
 
 export const Paginacao = () => {
-    const {isLoading, data, totalMotivosDevolucaoTesouro} = useGetMotivosDevolucaoTesouro()
+    const {isLoading, data, totalMotivosAprovacaoPcRessalva} = useGetMotivosAprovacaoPcRessalva()
     const {count} = data
-    const {setCurrentPage, firstPage,setFirstPage} = useContext(MotivosDevolucaoTesouroContext)
+    const {setCurrentPage, firstPage,setFirstPage} = useContext(MotivosAprovacaoPcRessalvaContext)
 
 
     const onPageChange = (event) => {
@@ -17,7 +17,7 @@ export const Paginacao = () => {
 
     return (
         <>
-            {!isLoading && totalMotivosDevolucaoTesouro ? (
+            {!isLoading && totalMotivosAprovacaoPcRessalva ? (
                     <Paginator
                         first={firstPage}
                         rows={20}

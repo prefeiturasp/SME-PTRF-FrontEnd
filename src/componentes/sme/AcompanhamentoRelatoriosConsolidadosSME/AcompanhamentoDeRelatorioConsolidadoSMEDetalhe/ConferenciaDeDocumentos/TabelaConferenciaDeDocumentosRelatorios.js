@@ -502,6 +502,7 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
         if (rowData.tipo_documento !== "DOCUMENTO_ADICIONAL") {
             return (
                 <>
+                <div className="d-flex align-items-center justify-content-start">
                     <button 
                         disabled={!editavel}
                         className="btn btn-link fonte-14"
@@ -537,6 +538,7 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
                         </span>
                         <ReactTooltip html={true}/>
                     </button>
+                </div>
                 </>
             )
         }
