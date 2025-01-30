@@ -15,18 +15,18 @@ export const usePostMotivoDevolucaoTesouro = () => {
         },
         onSuccess: (data) => {
             console.log("Motivo de devolução ao tesouro criado com sucesso.", data)
-            // Refaz a lista de motivos de de devolução ao tesouro
+            // Refaz a lista de motivos de devolução ao tesouro
             queryClient.invalidateQueries(['motivos-devolucao-tesouro-list']).then()
             setShowModalForm(false)
-            toastCustom.ToastCustomSuccess('Inclusão do motivo de de devolução ao tesouro realizada com sucesso', `O motivo de de devolução ao tesouro foi adicionado com sucesso.`)
+            toastCustom.ToastCustomSuccess('Inclusão do motivo de devolução ao tesouro realizada com sucesso', `O motivo de devolução ao tesouro foi adicionado com sucesso.`)
         },
         onError: (error) => {
             if (error && error.response && error.response.data && error.response.data.non_field_errors) {
-                toastCustom.ToastCustomError('Erro ao atualizar o motivo de de devolução ao tesouro',error.response.data.non_field_errors)
+                toastCustom.ToastCustomError('Erro ao criar o motivo de devolução ao tesouro',error.response.data.non_field_errors)
             } else {
-                toastCustom.ToastCustomError('Erro ao criar o motivo de de devolução ao tesouro', `Não foi possível criar o motivo de de devolução ao tesouro`)
+                toastCustom.ToastCustomError('Erro ao criar o motivo de devolução ao tesouro', `Não foi possível criar o motivo de devolução ao tesouro`)
             }
-            console.log("Erro ao criar o motivo de de devolução ao tesouro", error.response)
+            console.log("Erro ao criar o motivo de devolução ao tesouro", error.response)
         },
         onSettled: () => {
             setBloquearBtnSalvarForm(false)
