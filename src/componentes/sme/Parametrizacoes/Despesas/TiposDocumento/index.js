@@ -11,16 +11,17 @@ import {
 import Tabela from "./Tabela";
 import {Filtros} from "./Filtros";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faEdit, faPlus} from "@fortawesome/free-solid-svg-icons";
+import {faEdit, faPlus, faTimesCircle, faCheckCircle} from "@fortawesome/free-solid-svg-icons";
 import Img404 from "../../../../../assets/img/img-404.svg"
 import ModalForm from "./ModalForm";
 import {ModalInfoUpdateNaoPermitido} from "./ModalInfoUpdateNaoPermitido";
-import {ModalConfirmDelete} from "./ModalConfirmDelete";
+import {ModalConfirmarExclusao} from "../../componentes/ModalConfirmarExclusao";
 import {BtnAdd} from "./BtnAdd";
 import Loading from "../../../../../utils/Loading";
 import {ModalInfoNaoPodeExcluir} from "../../Estrutura/Acoes/ModalInfoNaoPodeExcluir";
 import {toastCustom} from "../../../../Globais/ToastCustom";
 import { MsgImgCentralizada } from "../../../../Globais/Mensagens/MsgImgCentralizada";
+
 export const TiposDocumento = ()=>{
 
     const [listaDeTipos, setListaDeTipos] = useState([]);
@@ -69,14 +70,43 @@ export const TiposDocumento = ()=>{
 
     // Tabela
     const rowsPerPage = 20;
-    const statusTemplate = (rowData) => {
-        return rowData.status && rowData.status === 'ATIVO' ? 'Ativo' : 'Inativo'
-    };
-    // const apenasDigitoTemplate = (rowData) => {
-    //     // Apenas Dígitos
-    //     return rowData.apenas_digitos ? 'Sim': 'Não'
-    // }
 
+    const booleanTemplate = (value) => {
+        const opcoes = {
+            true: {icone: faCheckCircle, cor: "#297805", texto: "Sim"},
+            false: {icone: faTimesCircle, cor: "#B40C02", texto: "Não"}
+        }
+        const iconeData = opcoes[value]
+        const estiloFlag = {fontSize: '14px', display: 'flex', justifyContent: 'center', alignItems: 'center', color: iconeData.cor}
+        return (
+            <div style={estiloFlag}>
+                <FontAwesomeIcon
+                    style={{fontSize: '16px', marginRight: "5px", color: iconeData.cor}}
+                    icon={iconeData.icone}/>
+            </div>
+        )
+    }
+    const apenasDigitoTemplate = (rowData) => {
+        // Apenas Dígitos
+        return booleanTemplate(rowData.apenas_digitos)
+    }
+    const numeroDocumentoDigitadoTemplate = (rowData) => {
+        // Solicitar a digitação do número do documento
+        return booleanTemplate(rowData.numero_documento_digitado)
+    }
+    const documentoComprobatorioDeDespesaTemplate = (rowData) => {
+        // Documento comprobatório de despesa
+        return booleanTemplate(rowData.documento_comprobatorio_de_despesa)
+    }
+    const podeReterImpostoTemplate = (rowData) => {
+        // Pode reter imposto
+        return booleanTemplate(rowData.pode_reter_imposto)
+    }
+    const ehDocumentoDeRetencaoDeImpostoTemplate = (rowData) => {
+        // É documento de retencão de imposto
+        return booleanTemplate(rowData.eh_documento_de_retencao_de_imposto)
+    }
+   
     // Modal
     const initialStateFormModal = {
         nome: "",
@@ -248,7 +278,11 @@ export const TiposDocumento = ()=>{
                                 <Tabela
                                     rowsPerPage={rowsPerPage}
                                     lista={listaDeTipos}
-                                    statusTemplate={statusTemplate}
+                                    apenasDigitoTemplate={apenasDigitoTemplate}
+                                    numeroDocumentoDigitadoTemplate={numeroDocumentoDigitadoTemplate}
+                                    documentoComprobatorioDeDespesaTemplate={documentoComprobatorioDeDespesaTemplate}
+                                    podeReterImpostoTemplate={podeReterImpostoTemplate}
+                                    ehDocumentoDeRetencaoDeImpostoTemplate={ehDocumentoDeRetencaoDeImpostoTemplate}
                                     acoesTemplate={acoesTemplate}
                                 />
                             </>
@@ -295,16 +329,16 @@ export const TiposDocumento = ()=>{
                         />
                     </section>
                     <section>
-                        <ModalConfirmDelete
-                            show={showModalConfirmDelete}
-                            handleClose={handleCloseConfirmDelete}
-                            onDeleteTrue={onDeleteTrue}
-                            titulo="Excluir Tipo de Documento"
-                            texto="<p>Deseja realmente excluir este tipo de documento?</p>"
-                            primeiroBotaoTexto="Cancelar"
-                            primeiroBotaoCss="outline-success"
-                            segundoBotaoCss="danger"
-                            segundoBotaoTexto="Excluir"
+                        <ModalConfirmarExclusao
+                            open={showModalConfirmDelete}
+                            onOk={onDeleteTrue}
+                            okText="Excluir"
+                            okButtonProps={{className: "btn-danger"}}
+                            onCancel={handleCloseConfirmDelete}
+                            cancelText="Cancelar"
+                            cancelButtonProps={{className: "btn-base-verde-outline"}}
+                            titulo="Excluir tipo de documento"
+                            bodyText={<p>Tem certeza que deseja excluir esse tipo de documento?</p>}
                         />
                     </section>
                 </>
