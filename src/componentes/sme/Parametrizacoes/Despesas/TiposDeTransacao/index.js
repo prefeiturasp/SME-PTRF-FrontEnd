@@ -1,5 +1,6 @@
 import React, {useCallback, useEffect, useMemo, useState} from "react";
 import {PaginasContainer} from "../../../../../paginas/PaginasContainer";
+import ReactTooltip from "react-tooltip";
 import {
     getTiposDeTransacao,
     getFiltrosTiposDeTransacao,
@@ -122,10 +123,13 @@ export const TiposDeTransacao = ()=>{
         return (
             <div>
                 <button className="btn-editar-membro" onClick={()=>handleEditFormModal(rowData)}>
-                    <FontAwesomeIcon
-                        style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
-                        icon={faEdit}
-                    />
+                    <div data-tip="Editar" data-for={`tooltip-id-${rowData.uuid}`}>
+                        <ReactTooltip id={`tooltip-id-${rowData.uuid}`}/>
+                        <FontAwesomeIcon
+                            style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
+                            icon={faEdit}
+                        />
+                    </div>
                 </button>
             </div>
         )
