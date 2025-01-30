@@ -1,4 +1,4 @@
-import { getMotivosDevolucaoTesouro } from "../../../../../../services/MotivosDevolucaoTesouro.service";
+import { getMotivosDevolucaoTesouro } from "../../../../../../services/sme/Parametrizacoes.service";
 import { useQuery } from "@tanstack/react-query";
 import { useContext, useMemo } from "react";
 import { MotivosDevolucaoTesouroContext } from "../context/MotivosDevolucaoTesouro";

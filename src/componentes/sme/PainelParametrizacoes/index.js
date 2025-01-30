@@ -21,6 +21,7 @@ import IconeFornecedores from "../../../assets/img/icone-parametro-fornecedores.
 import IconeMandato from "../../../assets/img/icone-parametro-periodos-de-mandato.svg"
 import IconeRepasses from "../../../assets/img/icone-parametro-repasses.svg"
 import IconeMotivosDevolucaoTesouro from "../../../assets/img/icone-parametro-devolucao-ao-tesouro.svg"
+import IconeMotivosAprovacaoPcRessalva from "../../../assets/img/icone-parametro-motivos-aprovacao-pc-ressalva.svg"
 
 export const PainelParametrizacoes = () => {
 
@@ -146,6 +147,12 @@ export const PainelParametrizacoes = () => {
             parametro: 'Motivos de devolução ao tesouro',
             url: 'parametro-motivos-devolucao-tesouro',
             icone: IconeMotivosDevolucaoTesouro,
+            permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
+        },
+        {
+            parametro: 'Motivos de aprovação de PC com ressalvas',
+            url: 'parametro-motivos-pc-aprovada-ressalva',
+            icone: IconeMotivosAprovacaoPcRessalva,
             permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
         },
     ];

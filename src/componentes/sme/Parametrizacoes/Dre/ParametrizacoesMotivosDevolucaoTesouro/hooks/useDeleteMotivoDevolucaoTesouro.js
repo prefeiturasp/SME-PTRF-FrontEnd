@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { deleteMotivoDevolucaoTesouro } from "../../../../../../services/MotivosDevolucaoTesouro.service";
+import { deleteMotivoDevolucaoTesouro } from "../../../../../../services/sme/Parametrizacoes.service";
 import { useContext } from "react";
 import { MotivosDevolucaoTesouroContext } from "../context/MotivosDevolucaoTesouro";
 import { toastCustom } from "../../../../../Globais/ToastCustom";
