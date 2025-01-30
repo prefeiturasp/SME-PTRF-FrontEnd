@@ -15,18 +15,18 @@ export const usePatchMotivoDevolucaoTesouro = () => {
         },
         onSuccess: (data) => {
             console.log("Motivo de devolução ao tesouro editado com sucesso.", data)
-            // Refaz a lista de motivos de de devolução ao tesouro
+            // Refaz a lista de motivos de devolução ao tesouro
             queryClient.invalidateQueries(['motivos-devolucao-tesouro-list']).then()
             setShowModalForm(false)
-            toastCustom.ToastCustomSuccess('Edição do motivo de de devolução ao tesouro realizada com sucesso', `O motivo de de devolução ao tesouro foi editado com sucesso.`)
+            toastCustom.ToastCustomSuccess('Edição do motivo de devolução ao tesouro realizada com sucesso', `O motivo de devolução ao tesouro foi editado com sucesso.`)
         },
         onError: (error) => {
             if (error && error.response && error.response.data && error.response.data.non_field_errors) {
-                toastCustom.ToastCustomError('Erro ao atualizar o motivo de de devolução ao tesouro',error.response.data.non_field_errors)
+                toastCustom.ToastCustomError('Erro ao atualizar o motivo de devolução ao tesouro',error.response.data.non_field_errors)
             } else {
-                toastCustom.ToastCustomError('Erro ao atualizar o motivo de de devolução ao tesouro', `Não foi possível atualizar o motivo de de devolução ao tesouro`)
+                toastCustom.ToastCustomError('Erro ao atualizar o motivo de devolução ao tesouro', `Não foi possível atualizar o motivo de devolução ao tesouro`)
             }
-            console.log("Erro ao editar o motivo de de devolução ao tesouro", error)
+            console.log("Erro ao editar o motivo de devolução ao tesouro", error)
         },
         onSettled: () => {
             setBloquearBtnSalvarForm(false)

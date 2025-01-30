@@ -22,7 +22,7 @@ export const usePostMotivoAprovacaoPcRessalva = () => {
         },
         onError: (error) => {
             if (error && error.response && error.response.data && error.response.data.non_field_errors) {
-                toastCustom.ToastCustomError('Erro ao atualizar o motivo de PC aprovada com ressalva',error.response.data.non_field_errors)
+                toastCustom.ToastCustomError('Erro ao criar o motivo de PC aprovada com ressalva',error.response.data.non_field_errors)
             } else {
                 toastCustom.ToastCustomError('Erro ao criar o motivo de PC aprovada com ressalva', `Não foi possível criar o motivo de PC aprovada com ressalva`)
             }
