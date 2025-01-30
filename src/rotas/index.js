@@ -90,6 +90,7 @@ import { ParametrizacoesMotivosDeEstorno } from "../componentes/sme/Parametrizac
 import { ParametrizacoesTiposAcertosLancamentos } from "../componentes/sme/Parametrizacoes/PrestacaoContas/TiposAcertosLancamentos";
 import { ParametrizacoesTiposAcertosDocumentos } from "../componentes/sme/Parametrizacoes/PrestacaoContas/TiposAcertosDocumentos";
 import { ParametrizacoesMotivosDevolucaoTesouro } from "../componentes/sme/Parametrizacoes/Dre/ParametrizacoesMotivosDevolucaoTesouro";
+import { ParametrizacoesMotivosAprovacaoPcRessalva } from "../componentes/sme/Parametrizacoes/Dre/MotivosAprovacaoPcRessalva";
 import { DevolucaoAoTesouroAjuste } from "../componentes/Globais/DevolucaoAoTesouroAjuste"
 import {AcompanhamentoDeRelatorioConsolidadoSMEDetalhe} from "../componentes/sme/AcompanhamentoRelatoriosConsolidadosSME/AcompanhamentoDeRelatorioConsolidadoSMEDetalhe"
 import {AcompanhamentoDeRelatorioConsolidadoSMEResumoAcertos} from "../componentes/sme/AcompanhamentoRelatoriosConsolidadosSME/AcompanhamentoDeRelatorioConsolidadoSMEResumoAcertos"
@@ -630,6 +631,12 @@ const routesConfig = [
         exact: true,
         path: "/parametro-motivos-devolucao-tesouro",
         component: ParametrizacoesMotivosDevolucaoTesouro,
+        permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
+    },
+    {
+        exact: true,
+        path: "/parametro-motivos-pc-aprovada-ressalva",
+        component: ParametrizacoesMotivosAprovacaoPcRessalva,
         permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
     },
     {

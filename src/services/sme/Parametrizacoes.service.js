@@ -503,3 +503,67 @@ export const patchAlterarMotivoPagamentoAntecipado = async (tag_uuid, payload) =
 export const deleteMotivoPagamentoAntecipado = async (tag_uuid) => {
     return (await api.delete(`/api/motivos-pagamento-antecipado/${tag_uuid}/`, authHeader))
 };
+
+// Motivos Devolução Tesouro
+export const getMotivosDevolucaoTesouro = async (filter, currentPage) => {
+    const {nome} = filter;
+    return (await api.get(`/api/motivos-devolucao-ao-tesouro/?page_size=${20}`,{
+        ...authHeader,
+        params: {
+            nome: nome,
+            page: currentPage,
+        }
+    })).data
+}
+
+export const postMotivosDevolucaoTesouro = async (payload) => {
+    return (await api.post(`api/motivos-devolucao-ao-tesouro/`, {
+            ...payload
+        },
+        authHeader,
+    ))
+};
+
+export const patchMotivosDevolucaoTesouro = async (uuidMotivoDevolucaoTesouro, payload) => {
+    return (await api.patch(`api/motivos-devolucao-ao-tesouro/${uuidMotivoDevolucaoTesouro}/`, {
+            ...payload
+        },
+        authHeader,
+    ))
+};
+
+export const deleteMotivoDevolucaoTesouro = async (uuidMotivoDevolucaoTesouro) => {
+    return (await api.delete(`api/motivos-devolucao-ao-tesouro/${uuidMotivoDevolucaoTesouro}/`, authHeader));
+};
+
+// Motivos de Aprovação de PC com ressalva
+export const getMotivosAprovacaoPcRessalva = async (filter, currentPage) => {
+    const {motivo} = filter;
+    return (await api.get(`/api/motivos-aprovacao-ressalva-parametrizacao/?page_size=${20}`,{
+        ...authHeader,
+        params: {
+            motivo: motivo,
+            page: currentPage,
+        }
+    })).data
+}
+
+export const postMotivoAprovacaoPcRessalva = async (payload) => {
+    return (await api.post(`api/motivos-aprovacao-ressalva-parametrizacao/`, {
+            ...payload
+        },
+        authHeader,
+    ))
+};
+
+export const patchMotivosAprovacaoPcRessalva = async (uuidMotivoAprovacaoPcRessalva, payload) => {
+    return (await api.patch(`api/motivos-aprovacao-ressalva-parametrizacao/${uuidMotivoAprovacaoPcRessalva}/`, {
+            ...payload
+        },
+        authHeader,
+    ))
+};
+
+export const deleteMotivoAprovacaoPcRessalva = async (uuidMotivoAprovacaoPcRessalva) => {
+    return (await api.delete(`api/motivos-aprovacao-ressalva-parametrizacao/${uuidMotivoAprovacaoPcRessalva}/`, authHeader));
+};
