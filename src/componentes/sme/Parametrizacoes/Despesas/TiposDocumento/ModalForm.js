@@ -34,7 +34,7 @@ const ModalForm = ({show, stateFormModal, handleClose, handleSubmitModalForm, se
                                             <label data-qa="label-nome-tipo-documento" htmlFor="nome">Nome *</label>
                                             <input
                                                 data-qa="campo-nome-tipo-documento"
-                                                maxlength={160}
+                                                maxLength={160}
                                                 type="text"
                                                 value={props.values.nome}
                                                 placeholder="Nome do tipo de documento"
@@ -86,8 +86,8 @@ const ModalForm = ({show, stateFormModal, handleClose, handleSubmitModalForm, se
                                         <>
                                             <p data-qa="legenda-apenas-digitos" className="mb-0">No número do documento deve constar apenas dígitos?
                                                 <span data-qa="tooltip-apenas-digitos"
-                                                    data-tip="(ex: 0,1,2,3,4)" data-for={`tooltip-id-numero_documento_digitado`}>
-                                                    <ReactTooltip id={`tooltip-id-numero_documento_digitado`}/>
+                                                    data-tip="(ex: 0,1,2,3,4)" data-for={`tooltip-id-apenas-digitos`}>
+                                                    <ReactTooltip id={`tooltip-id-apenas-digitos`}/>
                                                     <FontAwesomeIcon
                                                         style={{fontSize: '16px', marginLeft: "10px", color: "#00585E"}}
                                                         icon={faInfoCircle}
@@ -105,7 +105,7 @@ const ModalForm = ({show, stateFormModal, handleClose, handleSubmitModalForm, se
                                                 value="True"
                                                 checked={values.apenas_digitos === true}
                                                 onChange={() => setFieldValue("apenas_digitos", true)}
-                                                disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
+                                                disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES || values.numero_documento_digitado === false}
                                                 />
                                             <label data-qa="label-apenas-digitos-true" className="form-check-label" htmlFor="apenas_digitos_true">Sim</label>
                                         </div>
@@ -119,7 +119,7 @@ const ModalForm = ({show, stateFormModal, handleClose, handleSubmitModalForm, se
                                                 value="False"
                                                 checked={values.apenas_digitos === false}
                                                 onChange={() => setFieldValue("apenas_digitos", false)}
-                                                disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
+                                                disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES || values.numero_documento_digitado === false}
                                             />
                                             <label data-qa="label-apenas-digitos-false" className="form-check-label" htmlFor="apenas_digitos_false">Não</label>
                                         </div>
@@ -169,7 +169,7 @@ const ModalForm = ({show, stateFormModal, handleClose, handleSubmitModalForm, se
                                                 value="True"
                                                 checked={values.pode_reter_imposto === true}
                                                 onChange={() => setFieldValue("pode_reter_imposto", true)}
-                                                disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
+                                                disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES || values.documento_comprobatorio_de_despesa === false}
                                             />
                                             <label data-qa="label-pode-reter-imposto-true" className="form-check-label" htmlFor="pode_reter_imposto_true">Sim</label>
                                         </div>
@@ -183,7 +183,7 @@ const ModalForm = ({show, stateFormModal, handleClose, handleSubmitModalForm, se
                                                 value="False"
                                                 checked={values.pode_reter_imposto === false}
                                                 onChange={() => setFieldValue("pode_reter_imposto", false)}
-                                                disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
+                                                disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES || values.documento_comprobatorio_de_despesa === false}
                                             />
                                             <label data-qa="label-pode-reter-imposto-false" className="form-check-label" htmlFor="pode_reter_imposto_false">Não</label>
                                         </div>
@@ -232,7 +232,7 @@ const ModalForm = ({show, stateFormModal, handleClose, handleSubmitModalForm, se
                                     <div className="p-Y flex-grow-1 bd-highlight">
                                         {values.operacao === 'edit' ? (
                                             <button data-qa="botao-confirmar-apagar-tipo-documento" onClick={()=>setShowModalConfirmDelete(true)} type="button" className="btn btn btn-danger mt-2 mr-2" disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}>
-                                                Apagar
+                                                Excluir
                                             </button>
                                         ): null}
                                     </div>

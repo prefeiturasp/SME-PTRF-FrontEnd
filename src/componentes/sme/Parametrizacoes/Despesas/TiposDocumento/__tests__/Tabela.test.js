@@ -1,7 +1,5 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { DataTable } from "primereact/datatable";
-import { Column } from "primereact/column";
 import Tabela from "../Tabela";
 import ReactTooltip from "react-tooltip";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -32,7 +30,7 @@ const mockAcoesTemplate = (rowData) => {
 };
 
 describe("Tabela Component", () => {
-    
+
     it('deve renderizar a tabela com os dados fornecidos', () => {
         render(<Tabela rowsPerPage={20} lista={mockData} acoesTemplate={mockAcoesTemplate} />);
 
@@ -50,8 +48,8 @@ describe("Tabela Component", () => {
         expect(rows).toHaveLength(20);
         const row = rows[0]
         const cells = row.querySelectorAll("td");
-        expect(cells).toHaveLength(2); // Nome + Ações
-        const actionsCell = cells[1]
+        expect(cells).toHaveLength(7); // todas as colunas da tabela
+        const actionsCell = cells[6]
         expect(actionsCell).not.toBeEmptyDOMElement(); // Ações não está vazia
         const botaoEditar = actionsCell.querySelector("button");
         expect(botaoEditar).toBeInTheDocument();
