@@ -1,7 +1,10 @@
 import React, {memo} from "react";
 import {Formik, Field, Form} from "formik";
 import {ModalFormParametrizacoesAcoesDaAssociacao} from "../../../../Globais/ModalBootstrap";
+import {DatePickerField} from "../../../../Globais/DatePickerField";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import AutoCompleteAssociacoes from "./AutoCompleteAssociacoes";
+import {faExclamationCircle} from '@fortawesome/free-solid-svg-icons'
 import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
 import Spinner from "../../../../../assets/img/spinner.gif"
 import { YupSchemaContasAssociacoes } from "./FormValidacao";
@@ -20,7 +23,13 @@ const ModalForm = ({show, handleClose, handleSubmitModalForm, recebeAutoComplete
                     enableReinitialize={true}
                     onSubmit={handleSubmitModalForm}
                 >
-                    {props => (
+
+                    {props => {
+                        const {
+                            setFieldValue,
+                        } = props;
+
+                    return (
 
                     <Form>
                         <div className="row">
@@ -136,6 +145,24 @@ const ModalForm = ({show, handleClose, handleSubmitModalForm, recebeAutoComplete
                                 />
                             </div>
                         </div>
+                        <div className='row mt-3'>
+                            <div className="col-6">
+                                <label htmlFor="data_inicio">
+                                    Data de início *
+                                </label>
+                                <DatePickerField
+                                    name="data_inicio"
+                                    id="data_inicio"
+                                    value={props.values.data_inicio !== null ? props.values.data_inicio : ""}
+                                    onChange={(name, val) => {
+                                        setFieldValue(name, val ? val.toISOString().substr(0, 10) : "")
+                                        }}
+                                    disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
+                                    className="form-control"
+                                />
+                                {props.touched.data_inicio && props.errors.data_inicio && <span className="span_erro text-danger mt-1"> {props.errors.data_inicio} </span>}
+                            </div>
+                        </div>
 
                         <div className='row mt-3'>
                             <div className='col'>
@@ -166,7 +193,7 @@ const ModalForm = ({show, handleClose, handleSubmitModalForm, recebeAutoComplete
                             </div>
                         </div>
                     </Form>
-                     )}
+                     );}}
                 </Formik>
             </>
         )
