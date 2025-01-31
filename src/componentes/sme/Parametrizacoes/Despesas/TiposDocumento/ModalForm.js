@@ -23,7 +23,7 @@ const ModalForm = ({show, stateFormModal, handleClose, handleSubmitModalForm, se
                     {props => {
                         const { values, setFieldValue } = props;
                         return(
-                            <form data-qa="form-tipo-documento"	onSubmit={props.handleSubmit}>
+                            <form data-qa="form-tipo-documento" onSubmit={props.handleSubmit}>
 
                                 <div className='row'>
                                     <div className='col-12' data-qa="legenda-campos-obrigatorios">
@@ -75,7 +75,10 @@ const ModalForm = ({show, stateFormModal, handleClose, handleSubmitModalForm, se
                                                 id="numero_documento_digitado_false"
                                                 value="False"
                                                 checked={values.numero_documento_digitado === false}
-                                                onChange={() => setFieldValue("numero_documento_digitado", false)}
+                                                onChange={() => {
+                                                    setFieldValue("numero_documento_digitado", false);
+                                                    setFieldValue("apenas_digitos", false);
+                                                }}
                                                 disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                             />
                                             <label data-qa="label-numero-documento-digitado-false" className="form-check-label" htmlFor="numero_documento_digitado_false">Não</label>
@@ -150,7 +153,10 @@ const ModalForm = ({show, stateFormModal, handleClose, handleSubmitModalForm, se
                                                 id="documento_comprobatorio_de_despesa_false"
                                                 value="False"
                                                 checked={values.documento_comprobatorio_de_despesa === false}
-                                                onChange={() => setFieldValue("documento_comprobatorio_de_despesa", false)}
+                                                onChange={() => {
+                                                    setFieldValue("documento_comprobatorio_de_despesa",false);
+                                                    setFieldValue("pode_reter_imposto", false);
+                                                }}
                                                 disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                             />
                                             <label data-qa="label-documento-comprobatorio-de-despesa-false" className="form-check-label" htmlFor="documento_comprobatorio_de_despesa_false">Não</label>

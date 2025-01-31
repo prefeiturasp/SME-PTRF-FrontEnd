@@ -24,6 +24,8 @@ const Tabela = (props)=>{
     }
     return(
         <DataTable
+            sortField="nome"
+            sortOrder={1}
             data-qa="tabela-tipo-documento"
             value={props.lista}
             rows={props.rowsPerPage}
