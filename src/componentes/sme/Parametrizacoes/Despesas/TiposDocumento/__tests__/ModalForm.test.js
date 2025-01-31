@@ -60,6 +60,8 @@ describe("Controle Condicional de radio button", () => {
       const radioApenasDigitosNao = screen.getByLabelText("Não", { selector: 'input[name="apenas_digitos_false"]' });
       
       fireEvent.click(radioNumeroDocumentoNao);
+      expect(radioApenasDigitosSim).not.toBeChecked()
+      expect(radioApenasDigitosNao).toBeChecked()
       expect(radioApenasDigitosSim).toBeDisabled();
       expect(radioApenasDigitosNao).toBeDisabled();
     }
@@ -76,6 +78,8 @@ describe("Controle Condicional de radio button", () => {
       const radioApenasDigitosNao = screen.getByLabelText("Não", { selector: 'input[name="apenas_digitos_false"]' });
       
       fireEvent.click(radioNumeroDocumentoSim);
+      expect(radioApenasDigitosSim).not.toBeChecked();
+      expect(radioApenasDigitosNao).toBeChecked();
       expect(radioApenasDigitosSim).toBeEnabled();
       expect(radioApenasDigitosNao).toBeEnabled();
     }

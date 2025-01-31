@@ -7,7 +7,7 @@ import ReactTooltip from 'react-tooltip';
 
 const Tabela = (props)=>{
     const templateHeaderApenasDigito = ()=>{
-        const header ="No número do documento deve constar apenas dígitos?"
+        const header ="No número do documento deve constar apenas dígitos"
         return (
             <p data-qa="legenda-apenas-digitos" className="mb-0">
                 {header}
@@ -24,6 +24,8 @@ const Tabela = (props)=>{
     }
     return(
         <DataTable
+            sortField="nome"
+            sortOrder={1}
             data-qa="tabela-tipo-documento"
             value={props.lista}
             rows={props.rowsPerPage}
