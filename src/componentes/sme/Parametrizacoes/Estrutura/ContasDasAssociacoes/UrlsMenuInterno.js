@@ -1,5 +1,5 @@
 export const UrlsMenuInterno = [
-    {label: "Ações das associações", url: "parametro-acoes-associacoes"},
+    {label: "Contas das associações", url: "parametro-contas-associacoes"},
     {label: "Cargas de arquivo", url: "undefined"},
 ];
 

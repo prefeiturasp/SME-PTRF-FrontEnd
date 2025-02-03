@@ -134,11 +134,6 @@ export const ContasDasAssociacoes = () => {
         )
     };
 
-    // const UrlsMenuInterno = [
-    //     {label: "Ações das associações", url: "parametro-acoes-associacoes"},
-    //     {label: "Cargas de arquivo", url: "undefined"},
-    // ];
-
     // Para o ModalForm
     const initialStateFormModal = {
         associacao: "",
