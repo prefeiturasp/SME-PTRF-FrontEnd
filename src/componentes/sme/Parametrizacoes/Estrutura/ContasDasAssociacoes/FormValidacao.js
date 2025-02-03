@@ -12,5 +12,9 @@ export const YupSchemaContasAssociacoes  = yup.object().shape({
         return !(value === undefined || value === null || value === "");
 
       }),
+    data_inicio: yup.string().test('test-name', 'Data de início é obrigatório',
+      function (value) {
+        return !(value === undefined || value === null || value === "");
+      }),
   
 });

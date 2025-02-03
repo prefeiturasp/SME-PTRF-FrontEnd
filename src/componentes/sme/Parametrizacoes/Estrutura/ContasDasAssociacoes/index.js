@@ -134,11 +134,6 @@ export const ContasDasAssociacoes = () => {
         )
     };
 
-    // const UrlsMenuInterno = [
-    //     {label: "Ações das associações", url: "parametro-acoes-associacoes"},
-    //     {label: "Cargas de arquivo", url: "undefined"},
-    // ];
-
     // Para o ModalForm
     const initialStateFormModal = {
         associacao: "",
@@ -151,6 +146,7 @@ export const ContasDasAssociacoes = () => {
         agencia: "",
         numero_conta: "",
         numero_cartao: "",
+        data_inicio: "",
         operacao: 'create',
     };
     const [showModalForm, setShowModalForm] = useState(false);
@@ -217,6 +213,7 @@ export const ContasDasAssociacoes = () => {
             agencia: rowData.agencia,
             numero_conta: rowData.numero_conta,
             numero_cartao: rowData.numero_cartao,
+            data_inicio: rowData.data_inicio,
             operacao: 'edit',
         });
         setShowModalForm(true)
@@ -231,6 +228,7 @@ export const ContasDasAssociacoes = () => {
             agencia: stateFormModal.agencia,
             numero_conta: stateFormModal.numero_conta,
             numero_cartao: stateFormModal.numero_cartao,
+            data_inicio: stateFormModal.data_inicio,
         };
         if (stateFormModal.operacao === 'create') {
             try {
