@@ -63,6 +63,7 @@ import {AcompanhamentoPcsPorDre} from "../paginas/SME/PrestacaoDeContas/Acompanh
 import {RelatorioConsolidadoPage} from "../paginas/SME/PrestacaoDeContas/RelatorioConsolidado";
 import { AcompanhamentoRelatorioConsolidadosSmeListagem } from "../componentes/sme/AcompanhamentoRelatoriosConsolidadosSME/AcompanhamentoRelatoriosConsolidadosSmeListagem";
 import {AcoesDasAssociacoes} from "../componentes/sme/Parametrizacoes/Estrutura/AcoesDasAssociacoes";
+import {ContasDasAssociacoes} from "../componentes/sme/Parametrizacoes/Estrutura/ContasDasAssociacoes";
 import {Acoes} from "../componentes/sme/Parametrizacoes/Estrutura/Acoes";
 import {AssociacoesDaAcao} from "../componentes/sme/Parametrizacoes/Estrutura/Acoes/AssociacoesDaAcao";
 import {VinculaAssociacoesAAcao} from "../componentes/sme/Parametrizacoes/Estrutura/Acoes/VinculaAssociacoesAAcao";
@@ -73,7 +74,9 @@ import {TiposConta} from "../componentes/sme/Parametrizacoes/Estrutura/TiposCont
 import {FiqueDeOlho} from "../componentes/sme/Parametrizacoes/EdicaoDeTextos/FiqueDeOlho";
 import ArquivosDeCarga from "../componentes/Globais/ArquivosDeCarga";
 import {EspecificacoesMateriaisServicos} from "../componentes/sme/Parametrizacoes/Despesas/EspecificacoesMateriaisServicos";
+import {TiposDocumento} from "../componentes/sme/Parametrizacoes/Despesas/TiposDocumento";
 import {TiposDeCusteio} from "../componentes/sme/Parametrizacoes/Despesas/TiposDeCusteio"
+import {TiposDeTransacao} from "../componentes/sme/Parametrizacoes/Despesas/TiposDeTransacao"
 import {Fornecedores} from "../componentes/sme/Parametrizacoes/Despesas/Fornecedores";
 import {AnaliseDre} from "../componentes/escolas/AnaliseDre";
 import {DetalharAcertos} from "../componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeLancamentos/DetalharAcertos";
@@ -86,6 +89,8 @@ import { EdicaoAtaParecerTecnico } from "../componentes/dres/RelatorioConsolidad
 import { ParametrizacoesMotivosDeEstorno } from "../componentes/sme/Parametrizacoes/Receitas/ParametrizacoesMotivosEstorno";
 import { ParametrizacoesTiposAcertosLancamentos } from "../componentes/sme/Parametrizacoes/PrestacaoContas/TiposAcertosLancamentos";
 import { ParametrizacoesTiposAcertosDocumentos } from "../componentes/sme/Parametrizacoes/PrestacaoContas/TiposAcertosDocumentos";
+import { ParametrizacoesMotivosDevolucaoTesouro } from "../componentes/sme/Parametrizacoes/Dre/ParametrizacoesMotivosDevolucaoTesouro";
+import { ParametrizacoesMotivosAprovacaoPcRessalva } from "../componentes/sme/Parametrizacoes/Dre/MotivosAprovacaoPcRessalva";
 import { DevolucaoAoTesouroAjuste } from "../componentes/Globais/DevolucaoAoTesouroAjuste"
 import {AcompanhamentoDeRelatorioConsolidadoSMEDetalhe} from "../componentes/sme/AcompanhamentoRelatoriosConsolidadosSME/AcompanhamentoDeRelatorioConsolidadoSMEDetalhe"
 import {AcompanhamentoDeRelatorioConsolidadoSMEResumoAcertos} from "../componentes/sme/AcompanhamentoRelatoriosConsolidadosSME/AcompanhamentoDeRelatorioConsolidadoSMEResumoAcertos"
@@ -96,6 +101,7 @@ import {Mandatos} from "../componentes/sme/Mandatos";
 import {MotivosRejeicaoEncerramentoConta} from "../componentes/sme/Parametrizacoes/Estrutura/MotivosRejeicaoEncerramentoConta";
 import {PaginaMandatosAnteriores} from "../componentes/escolas/MembrosDaAssociacao/pages/PaginaMandatosAnteriores";
 import { ParametrizacoesRepasses } from "../componentes/sme/Parametrizacoes/Receitas/ParametrizacoesRepasses";
+import {MotivosPagamentoAntecipado} from "../componentes/sme/Parametrizacoes/Despesas/MotivosPagamentoAntecipado";
 
 // Migrando para V6 do react-router-dom
 // Referencia: https://github.com/remix-run/react-router/discussions/8753
@@ -473,6 +479,12 @@ const routesConfig = [
     },
     {
         exact: true,
+        path: "/parametro-contas-associacoes",
+        component: ContasDasAssociacoes,
+        permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
+    },
+    {
+        exact: true,
         path: "/parametro-periodos",
         component: Periodos,
         permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
@@ -487,6 +499,12 @@ const routesConfig = [
         exact: true,
         path: "/parametro-tipos-conta",
         component: TiposConta,
+        permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
+    },
+    {
+        exact: true,
+        path: "/parametro-tipos-documento",
+        component: TiposDocumento,
         permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
     },
     {
@@ -575,6 +593,12 @@ const routesConfig = [
     },
     {
         exact: true,
+        path: "/parametro-tipos-transacao",
+        component: TiposDeTransacao,
+        permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
+    },
+    {
+        exact: true,
         path: "/parametro-Fornecedores",
         component: Fornecedores,
         permissoes: ['access_fornecedores', 'access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
@@ -601,6 +625,18 @@ const routesConfig = [
         exact: true,
         path: "/parametro-repasse",
         component: ParametrizacoesRepasses,
+        permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
+    },
+    {
+        exact: true,
+        path: "/parametro-motivos-devolucao-tesouro",
+        component: ParametrizacoesMotivosDevolucaoTesouro,
+        permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
+    },
+    {
+        exact: true,
+        path: "/parametro-motivos-pc-aprovada-ressalva",
+        component: ParametrizacoesMotivosAprovacaoPcRessalva,
         permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
     },
     {
@@ -662,6 +698,12 @@ const routesConfig = [
         path: "/componente-typescript",
         component: ChamaTypescriptFirstComponent,
         permissoes: ['view_default'],
+    },
+    {
+        exact: true,
+        path: "/parametro-motivos-pagamento-antecipado",
+        component: MotivosPagamentoAntecipado,
+        permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
     },
 
 ];

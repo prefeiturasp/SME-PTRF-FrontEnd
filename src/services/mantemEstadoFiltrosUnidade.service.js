@@ -3,9 +3,8 @@ import {visoesService} from "./visoes.service";
 export const ESTADO_FILTROS_UNIDADES = "ESTADO_FILTROS_UNIDADES";
 
 const limpaEstadoFiltrosUnidadesUsuarioLogado = (usuario) =>{
-  let estado_filtros_unidades = getEstadoFiltrosUnidades()
+  localStorage.removeItem(ESTADO_FILTROS_UNIDADES);
   let estado_filtros_unidades_update = {
-      ...estado_filtros_unidades,
       [`usuario_${usuario}`]: {
           unidade_uuid: '',
           filtros_despesas: {
@@ -20,6 +19,14 @@ const limpaEstadoFiltrosUnidadesUsuarioLogado = (usuario) =>{
               data_inicio: '',
               data_fim: '',
           },
+          filtros_receitas: {
+                filtrar_por_termo: '',
+                tipo_receita: '',
+                acao_associacao: '',
+                conta_associacao: '',
+                data_inicio: '',
+                data_fim: '',
+          }
        }
     };
     localStorage.setItem(ESTADO_FILTROS_UNIDADES, JSON.stringify(estado_filtros_unidades_update));
@@ -36,6 +43,10 @@ const setEstadoFiltrosUnidadesUsuario = (usuario, objeto) => {
                 ...todos_estados_unidades[`usuario_${usuario}`]?.filtros_despesas,
                 ...objeto.filtros_despesas,
             },
+            filtros_receitas: {
+                ...todos_estados_unidades[`usuario_${usuario}`]?.filtros_receitas,
+                ...objeto.filtros_receitas
+            }
         },
     };
 
@@ -49,15 +60,27 @@ const getTodosEstadosFiltrosUnidades = () => {
         : {};
 };
 
-const getEstadoFiltrosUnidades = () => {
+const getEstadoDespesasFiltrosUnidades = () => {
     const usuario = visoesService.getUsuarioLogin();
     const todos_estados = getTodosEstadosFiltrosUnidades();
     return todos_estados[`usuario_${usuario}`]?.filtros_despesas || {};
 };
 
+const getEstadoReceitasFiltrosUnidades = () => {
+    const usuario = visoesService.getUsuarioLogin();
+    const todos_estados = getTodosEstadosFiltrosUnidades();
+    return todos_estados[`usuario_${usuario}`]?.filtros_receitas || {};
+};
+
+export const deleteEstadoFiltrosUnidades = () => {
+    localStorage.removeItem(ESTADO_FILTROS_UNIDADES);
+};
+
 export const mantemEstadoFiltrosUnidade = {
     limpaEstadoFiltrosUnidadesUsuarioLogado,
     setEstadoFiltrosUnidadesUsuario,
-    getEstadoFiltrosUnidades,
+    getEstadoDespesasFiltrosUnidades,
     getTodosEstadosFiltrosUnidades,
+    getEstadoReceitasFiltrosUnidades,
+    deleteEstadoFiltrosUnidades
 };

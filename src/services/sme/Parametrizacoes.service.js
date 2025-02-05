@@ -250,6 +250,27 @@ export const putAtualizarAcaoAssociacao = async (acao_associacao_uuid, payload) 
     return (await api.put(`/api/acoes-associacoes/${acao_associacao_uuid}/`, payload, authHeader)).data
 };
 
+// Contas Associações
+export const getContasAssociacoes = async () => {
+    return (await api.get(`/api/contas-associacoes/`, authHeader)).data
+};
+export const getContasAssociacoesFiltros = async (page=1, associacao_nome='', tipo_conta_uuid, status) => {
+    return (await api.get(`/api/contas-associacoes/?page=${page}&page_size=${20}&associacao_nome=${associacao_nome}${tipo_conta_uuid ? '&tipo_conta_uuid='+tipo_conta_uuid : ''}${status ? '&status='+status : ''}`, authHeader)).data
+};
+export const postContasAssociacoes = async (payload) => {
+    return (await api.post(`/api/contas-associacoes/`, payload, authHeader)).data
+};
+export const patchContasAssociacoes = async (tag_uuid, payload) => {
+    return (await api.patch(`/api/contas-associacoes/${tag_uuid}/`, payload, authHeader)).data
+};
+export const deleteContasAssociacoes = async (tag_uuid) => {
+    return (await api.delete(`/api/contas-associacoes/${tag_uuid}/`, authHeader))
+};
+export const getFiltrosDadosContasAssociacoes = async () => {
+    return (await api.get(`/api/contas-associacoes/filtros`, authHeader)).data
+};
+// Fim Contas Associações
+
 export const putAtualizarAcertosLancamentos = async (acerto_lancamento_uuid, payload) => {
     return (await api.patch(`/api/tipos-acerto-lancamento/${acerto_lancamento_uuid}/`, payload, authHeader)).data
 };
@@ -346,6 +367,40 @@ export const deleteTipoDeCusteio = async (tag_uuid) => {
     return (await api.delete(`/api/tipos-custeio/${tag_uuid}/`, authHeader))
 };
 
+// Tipos de Documento
+export const getTodosTiposDeDocumento = async () => {
+    return (await api.get(`/api/tipos-documento/`, authHeader)).data
+};
+export const getFiltrosTiposDeDocumento = async (nome) => {
+    return (await api.get(`/api/tipos-documento/?nome=${nome}`, authHeader)).data
+};
+export const postCreateTipoDeDocumento = async (payload) => {
+    return (await api.post(`/api/tipos-documento/`, payload, authHeader)).data
+};
+export const patchAlterarTipoDeDocumento = async (tag_uuid, payload) => {
+    return (await api.patch(`/api/tipos-documento/${tag_uuid}/`, payload, authHeader)).data
+};
+export const deleteTipoDeDocumento = async (tag_uuid) => {
+    return (await api.delete(`/api/tipos-documento/${tag_uuid}/`, authHeader))
+};
+
+// Tipos de Transação
+export const getTiposDeTransacao = async () => {
+    return (await api.get(`/api/tipos-transacao/`, authHeader)).data
+};
+export const getFiltrosTiposDeTransacao = async (nome, status) => {
+    return (await api.get(`/api/tipos-transacao/?nome=${nome}`, authHeader)).data
+};
+export const postTipoDeTransacao = async (payload) => {
+    return (await api.post(`/api/tipos-transacao/`, payload, authHeader)).data
+};
+export const patchTipoDeTransacao = async (tag_uuid, payload) => {
+    return (await api.patch(`/api/tipos-transacao/${tag_uuid}/`, payload, authHeader)).data
+};
+export const deleteTipoDeTransacao = async (tag_uuid) => {
+    return (await api.delete(`/api/tipos-transacao/${tag_uuid}/`, authHeader))
+};
+
 // Fornecedores
 export const getFornecedores = async () => {
     return (await api.get(`/api/fornecedores/`, authHeader)).data
@@ -429,4 +484,85 @@ export const patchRepasse = async (uuid_repasse, payload) => {
 
 export const deleteRepasse = async (uuid_repasse) => {
     return (await api.delete(`api/repasses/${uuid_repasse}/`, authHeader));
+};
+
+// Motivos Pagamento Antecipado
+export const getTodosMotivosPagamentoAntecipado = async () => {
+    return (await api.get(`/api/motivos-pagamento-antecipado/`, authHeader)).data
+};
+export const getFiltrosMotivosPagamentoAntecipado = async (nome) => {
+    return (await api.get(`/api/motivos-pagamento-antecipado/?motivo=${nome}`, authHeader)).data
+};
+export const postCreateMotivoPagamentoAntecipado = async (payload) => {
+    return (await api.post(`/api/motivos-pagamento-antecipado/`, payload, authHeader)).data
+};
+export const patchAlterarMotivoPagamentoAntecipado = async (tag_uuid, payload) => {
+    return (await api.patch(`/api/motivos-pagamento-antecipado/${tag_uuid}/`, payload, authHeader)).data
+};
+export const deleteMotivoPagamentoAntecipado = async (tag_uuid) => {
+    return (await api.delete(`/api/motivos-pagamento-antecipado/${tag_uuid}/`, authHeader))
+};
+
+// Motivos Devolução Tesouro
+export const getMotivosDevolucaoTesouro = async (filter, currentPage) => {
+    const {nome} = filter;
+    return (await api.get(`/api/motivos-devolucao-ao-tesouro/?page_size=${20}`,{
+        ...authHeader,
+        params: {
+            nome: nome,
+            page: currentPage,
+        }
+    })).data
+}
+
+export const postMotivosDevolucaoTesouro = async (payload) => {
+    return (await api.post(`api/motivos-devolucao-ao-tesouro/`, {
+            ...payload
+        },
+        authHeader,
+    ))
+};
+
+export const patchMotivosDevolucaoTesouro = async (uuidMotivoDevolucaoTesouro, payload) => {
+    return (await api.patch(`api/motivos-devolucao-ao-tesouro/${uuidMotivoDevolucaoTesouro}/`, {
+            ...payload
+        },
+        authHeader,
+    ))
+};
+
+export const deleteMotivoDevolucaoTesouro = async (uuidMotivoDevolucaoTesouro) => {
+    return (await api.delete(`api/motivos-devolucao-ao-tesouro/${uuidMotivoDevolucaoTesouro}/`, authHeader));
+};
+
+// Motivos de Aprovação de PC com ressalva
+export const getMotivosAprovacaoPcRessalva = async (filter, currentPage) => {
+    const {motivo} = filter;
+    return (await api.get(`/api/motivos-aprovacao-ressalva-parametrizacao/?page_size=${20}`,{
+        ...authHeader,
+        params: {
+            motivo: motivo,
+            page: currentPage,
+        }
+    })).data
+}
+
+export const postMotivoAprovacaoPcRessalva = async (payload) => {
+    return (await api.post(`api/motivos-aprovacao-ressalva-parametrizacao/`, {
+            ...payload
+        },
+        authHeader,
+    ))
+};
+
+export const patchMotivosAprovacaoPcRessalva = async (uuidMotivoAprovacaoPcRessalva, payload) => {
+    return (await api.patch(`api/motivos-aprovacao-ressalva-parametrizacao/${uuidMotivoAprovacaoPcRessalva}/`, {
+            ...payload
+        },
+        authHeader,
+    ))
+};
+
+export const deleteMotivoAprovacaoPcRessalva = async (uuidMotivoAprovacaoPcRessalva) => {
+    return (await api.delete(`api/motivos-aprovacao-ressalva-parametrizacao/${uuidMotivoAprovacaoPcRessalva}/`, authHeader));
 };

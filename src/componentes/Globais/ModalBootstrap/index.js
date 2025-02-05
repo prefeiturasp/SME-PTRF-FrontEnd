@@ -650,49 +650,6 @@ export const ModalFormBodyText = (props) => {
     )
 };
 
-export const ModalFormBodyPdf = ({
-    children,
-    ...props
-}) => {
-    return (
-        <Fragment>
-            <Modal show={
-                    props.show
-                }
-                onHide={
-                    props.onHide
-                }
-                size={
-                    props.size
-            }>
-                <Modal.Header>
-                    <Modal.Title>{
-                        props.titulo
-                    }</Modal.Title>
-                    <button 
-                        onClick={
-                            props.onHide
-                        }
-                        style={{
-                            border: 'none',
-                            background: 'transparent'
-                        }}
-                    >
-                        <FontAwesomeIcon style={
-                                {
-                                    color: "black",
-                                    fontSize: '20px',
-                                }
-                            }
-                            icon={faTimes}/>
-                    </button>
-                </Modal.Header>
-                <Modal.Body> {children} </Modal.Body>
-            </Modal>
-        </Fragment>
-    )
-};
-
 export const ModalFormBodyTextCloseButtonCabecalho = (props) => {
     return (
         <Fragment>

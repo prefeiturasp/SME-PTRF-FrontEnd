@@ -3,10 +3,12 @@ import {getTabelasReceitaReceita} from "../../../../services/escolas/Receitas.se
 import {filtrosAvancadosReceitas} from "../../../../services/escolas/Receitas.service";
 import {DatePickerField} from "../../../Globais/DatePickerField";
 import moment from "moment";
+import {visoesService} from "../../../../services/visoes.service";
+import { mantemEstadoFiltrosUnidade } from "../../../../services/mantemEstadoFiltrosUnidade.service";
 
 export const FormFiltrosAvancados = (props) => {
 
-    const {btnMaisFiltros, onClickBtnMaisFiltros, setLista, setBuscaUtilizandoFiltro, iniciaLista, buscaTotaisReceitas} = props;
+    const {btnMaisFiltros, onClickBtnMaisFiltros, setLista, setBuscaUtilizandoFiltro, iniciaLista, buscaTotaisReceitas, previousPath, state, setState, initialState} = props;
     
     const tabelaInicial = {
         tipos_receita: [],
@@ -14,17 +16,17 @@ export const FormFiltrosAvancados = (props) => {
         contas_associacao: []
     };
 
-    const initialState = {
-        filtrar_por_termo: "",
-        tipo_receita: "",
-        acao_associacao: "",
-        conta_associacao: "",
-        data_inicio: "",
-        data_fim: "",
-    };
-
     const [tabelas, setTabelas] = useState(tabelaInicial);
-    const [state, setState] = useState(initialState);
+
+    useEffect(() => {
+        if (!previousPath) return;
+
+        if (previousPath.includes('/edicao-de-receita')) {
+            const storedFiltros = mantemEstadoFiltrosUnidade.getEstadoReceitasFiltrosUnidades();
+            let filtrosCompletos = { ...storedFiltros };
+            setState(filtrosCompletos);
+        };
+    }, [])
 
     useEffect(() => {
         const carregaTabelas = async () => {
@@ -44,16 +46,23 @@ export const FormFiltrosAvancados = (props) => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        let data_inicio = state.data_inicio ? moment(new Date(state.data_inicio), "YYYY-MM-DD").format("YYYY-MM-DD") : null;
-        let data_fim = state.data_fim ? moment(new Date(state.data_fim), "YYYY-MM-DD").format("YYYY-MM-DD") : null;
+        let data_inicio = state.data_inicio ? moment(state.data_inicio, "YYYY-MM-DD").format("YYYY-MM-DD") : null;
+        let data_fim = state.data_fim ? moment(state.data_fim, "YYYY-MM-DD").format("YYYY-MM-DD") : null;
         buscaTotaisReceitas(state.tipo_receita, state.acao_associacao, state.conta_associacao, data_inicio, data_fim);
         const lista_retorno_api = await filtrosAvancadosReceitas(state.filtrar_por_termo, state.tipo_receita, state.acao_associacao, state.conta_associacao, data_inicio, data_fim);
         setLista(lista_retorno_api);
         setBuscaUtilizandoFiltro(true)
+
+        mantemEstadoFiltrosUnidade.setEstadoFiltrosUnidadesUsuario(visoesService.getUsuarioLogin(), {
+            filtros_receitas: {
+                filtrar_por_termo: state.filtrar_por_termo, tipo_receita: state.tipo_receita, acao_associacao: state.acao_associacao, conta_associacao: state.conta_associacao, data_inicio, data_fim
+            },
+        });
     };
 
     const limpaFormulario = () => {
         setState(initialState);
+        mantemEstadoFiltrosUnidade.limpaEstadoFiltrosUnidadesUsuarioLogado(visoesService.getUsuarioLogin());
     };
 
     return (
