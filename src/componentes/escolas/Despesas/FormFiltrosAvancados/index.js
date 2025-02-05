@@ -5,6 +5,8 @@ import moment from "moment";
 import {gerarUuid} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import './multiselect.scss'
 import {Select} from 'antd';
+import { mantemEstadoFiltrosUnidade } from "../../../../services/mantemEstadoFiltrosUnidade.service";
+import {visoesService} from "../../../../services/visoes.service";
 
 export const FormFiltrosAvancados = (props) => {
 
@@ -86,6 +88,7 @@ export const FormFiltrosAvancados = (props) => {
     };
 
     const limpaFormulario = () => {
+        mantemEstadoFiltrosUnidade.limpaEstadoFiltrosUnidadesUsuarioLogado(visoesService.getUsuarioLogin());
         forcarPrimeiraPagina(gerarUuid());
         setFiltrosAvancados(initialState);
         set_filtro_informacoes([])

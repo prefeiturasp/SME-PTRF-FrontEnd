@@ -16,11 +16,12 @@ import {
     ModalCheckNaoPermitidoConfererenciaDeDocumentos
 } from "../../../../dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeDocumentos/ModalCheckNaoPermitidoConfererenciaDeDocumentos";
 import {toastCustom} from "../../../../Globais/ToastCustom";
-import {ModalFormBodyPdf} from "../../../../Globais/ModalBootstrap"
+import {ModalFormBodyTextCloseButtonCabecalho} from "../../../../Globais/ModalBootstrap"
 import Dropdown from "react-bootstrap/Dropdown";
 import Loading from "../../../../../utils/Loading";
 import {AxiosError} from "axios";
 import "./conferencia-de-documentos.scss"
+import ReactTooltip from "react-tooltip";
 
 const TabelaConferenciaDeDocumentosRelatorios = ({
                                                      relatorioConsolidado,
@@ -501,38 +502,43 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
         if (rowData.tipo_documento !== "DOCUMENTO_ADICIONAL") {
             return (
                 <>
-                    <button disabled={
-                        !editavel
-                    }
-                            title="Visualizar"
-                            className="btn btn-link fonte-14"
-                            type="button"
-                            onClick={() => handleShowPdf(rowData)}>
-                        <FontAwesomeIcon style={
-                            {
-                                fontSize: '18px',
-                                marginRight: "5px",
-                                color: "#00585E"
+                <div className="d-flex align-items-center justify-content-start">
+                    <button 
+                        disabled={!editavel}
+                        className="btn btn-link fonte-14"
+                        type="button"
+                        onClick={() => handleShowPdf(rowData)}
+                    >
+                        <span data-html={true} data-tip="Visualização">
+                            <FontAwesomeIcon style={
+                                {
+                                    fontSize: '18px',
+                                    marginRight: "5px",
+                                    color: "#00585E"
+                                }
                             }
-                        }
-                                         icon={faEye}/>
+                            icon={faEye}/>
+                        </span>
+                        <ReactTooltip html={true}/>
                     </button>
                     <button disabled={
                         !editavel
                     }
-                            title="Download"
                             onClick={() => getDownloadDocumentoRelatorio(rowData)}
                             className="btn btn-link fonte-14"
                             type="button">
-                        <FontAwesomeIcon style={
-                            {
-                                fontSize: '18px',
-                                marginRight: "5px",
-                                color: "#00585E"
-                            }
-                        }
-                                         icon={faDownload}/>
+                        <span data-html={true} data-tip="Download">
+                            <FontAwesomeIcon style={
+                                {
+                                    fontSize: '18px',
+                                    marginRight: "5px",
+                                    color: "#00585E"
+                                }
+                            }icon={faDownload}/>
+                        </span>
+                        <ReactTooltip html={true}/>
                     </button>
+                </div>
                 </>
             )
         }
@@ -597,6 +603,20 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
         desmarcarTodos()
         carregaListaDeDocumentosRelatorio();
     }
+
+    const bodyTextarea = () => {
+        const height = `${window.innerHeight * 0.85}px`;
+    
+        return (
+            <object
+                style={{ height: height, width: '100%' }}
+                type="application/pdf"
+                data={pdfVisualizacao}
+            >
+                Este navegador não suporta a visualização de PDFs diretamente. Por favor, faça o download do arquivo.
+            </object>
+        );
+    };
 
     return (
         <> {
@@ -692,14 +712,13 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
                 />
             </section>
             <section>
-                <ModalFormBodyPdf
+                <ModalFormBodyTextCloseButtonCabecalho
+                    onClose={() => setShowModalPdfDownload(false)}
                     show={showModalPdfDownload}
-                    size="lg"
-                    titulo={'Visualização do documento.'}
                     onHide={() => setShowModalPdfDownload(false)}
-                >
-                    <embed src={pdfVisualizacao} frameBorder="0" width="100%" height="700px"></embed>
-                </ModalFormBodyPdf>
+                    size='xl'
+                    bodyText={bodyTextarea()}
+                />
             </section>
         </>
     )
