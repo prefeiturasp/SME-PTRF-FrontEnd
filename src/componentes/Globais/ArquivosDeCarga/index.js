@@ -41,6 +41,26 @@ const ArquivosDeCarga = () => {
                     {label: "Cargas de arquivo", url: 'parametro-arquivos-de-carga', origem:'CARGA_ASSOCIACOES'},
                 ],
             }
+        }else if (url_params.tipo_de_carga === 'CARGA_ACOES_ASSOCIACOES'){
+            obj = {
+                titulo: 'Ações das Associações',
+                titulo_modal: 'ações das associações',
+                acesso_permitido: true,
+                UrlsMenuInterno:[
+                    {label: "Ações das associações", url: "parametro-acoes-associacoes"},
+                    {label: "Cargas de arquivo", url: 'parametro-arquivos-de-carga', origem:'CARGA_ACOES_ASSOCIACOES'},
+                ],
+            }
+        }else if (url_params.tipo_de_carga === 'CARGA_CONTAS_ASSOCIACOES'){
+            obj = {
+                titulo: 'Contas de Associações',
+                titulo_modal: 'conta de associação',
+                acesso_permitido: true,
+                UrlsMenuInterno:[
+                    {label: "Dados dos usuários", url: "parametro-contas-associacoes"},
+                    {label: "Cargas de arquivo", url: 'parametro-arquivos-de-carga', origem:'CARGA_CONTAS_ASSOCIACOES'},
+                ],
+            }
         }else if (url_params.tipo_de_carga === 'CARGA_USUARIOS' && url_params.versao === 'V2'){
             obj = {
                 titulo: 'Usuários',
