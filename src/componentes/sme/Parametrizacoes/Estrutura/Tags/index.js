@@ -254,7 +254,7 @@ export const Tags = ()=>{
                             handleClose={handleCloseConfirmDeleteTag}
                             onDeleteTagTrue={onDeleteTagTrue}
                             titulo="Excluir Tag"
-                            texto="<p>Deseja realmente excluir esta Tag?</p>"
+                            texto="Deseja realmente excluir esta tag?"
                             primeiroBotaoTexto="Cancelar"
                             primeiroBotaoCss="outline-success"
                             segundoBotaoCss="danger"

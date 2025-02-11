@@ -10,7 +10,6 @@ const TabelaTags = ({rowsPerPage, listaDeTags, statusTemplate, acoesTemplate})=>
             paginator={listaDeTags.length > rowsPerPage}
             paginatorTemplate="PrevPageLink PageLinks NextPageLink"
         >
-            <Column field="uuid" header="UUID"/>
             <Column field="nome" header="Nome" />
             <Column
                 field="status"
