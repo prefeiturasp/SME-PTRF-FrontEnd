@@ -89,7 +89,9 @@ export const getDownloadModeloArquivoDeCarga = async (tipo_arquivo_de_carga) => 
             const url = window.URL.createObjectURL(new Blob([response.data]));
             const link = document.createElement('a');
             link.href = url;
-            link.setAttribute('download', 'Modelo_Carga_Associacoes.xlsx');
+            const file_extension = response.headers[Object.keys(response.headers)[2]].split('/')[1];
+            const filename = `modelo_${tipo_arquivo_de_carga.toLowerCase()}.${file_extension}`;
+            link.setAttribute('download', filename);
             document.body.appendChild(link);
             link.click();
         }).catch(error => {
