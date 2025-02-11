@@ -57,7 +57,7 @@ const ArquivosDeCarga = () => {
                 titulo_modal: 'conta de associação',
                 acesso_permitido: true,
                 UrlsMenuInterno:[
-                    {label: "Dados dos usuários", url: "parametro-contas-associacoes"},
+                    {label: "Contas de Associações", url: "parametro-contas-associacoes"},
                     {label: "Cargas de arquivo", url: 'parametro-arquivos-de-carga', origem:'CARGA_CONTAS_ASSOCIACOES'},
                 ],
             }
