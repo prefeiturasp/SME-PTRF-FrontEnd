@@ -20,7 +20,7 @@ const AutoCompleteAssociacoes = ({todasAsAssociacoesAutoComplete, setFieldValue,
                 filteredAssociacoes = [...todasAsAssociacoesAutoComplete];
             } else {
                 filteredAssociacoes = todasAsAssociacoesAutoComplete.filter((associacao) => {
-                    return associacao.unidade.nome_com_tipo.toLowerCase().includes(event.query.toLowerCase())
+                    return associacao.unidade.nome_com_tipo.toLowerCase().includes(event.query.toLowerCase()) || associacao.unidade.codigo_eol.includes(event.query.toLowerCase())
                 })
             }
             setFilteredAssociacoes(filteredAssociacoes);
