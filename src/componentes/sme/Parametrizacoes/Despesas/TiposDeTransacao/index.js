@@ -32,7 +32,7 @@ export const TiposDeTransacao = ()=>{
     const carregaTodos = useCallback(async ()=>{
         setLoading(true);
         let todos = await getTiposDeTransacao();
-        setListaDeTipos(todos);
+        setListaDeTipos(todos ?? []);
         setLoading(false);
     }, []);
 
@@ -41,7 +41,7 @@ export const TiposDeTransacao = ()=>{
     }, [carregaTodos]);
 
     // Quando a state da lista sofrer alteração
-    const totalDeTipos = useMemo(() => listaDeTipos.length, [listaDeTipos]);
+    const totalDeTipos = useMemo(() => listaDeTipos?.length ?? 0, [listaDeTipos]); 
 
     // Filtros
     const initialStateFiltros = {
