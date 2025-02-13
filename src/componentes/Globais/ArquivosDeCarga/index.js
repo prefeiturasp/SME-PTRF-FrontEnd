@@ -139,6 +139,12 @@ const ArquivosDeCarga = () => {
         if (dadosDeOrigem.acesso_permitido) {
             let tabela = await getTabelaArquivosDeCarga();
             setTabelaArquivos(tabela)
+            if(tabela && tabela.tipos_cargas) {
+                const requerPeriodo = tabela.tipos_cargas.find(tipo => tipo.id === url_params.tipo_de_carga)?.requer_periodo;
+                const requerTipoConta = tabela.tipos_cargas.find(tipo => tipo.id === url_params.tipo_de_carga)?.requer_tipo_de_conta
+                setArquivoRequerPeriodo(requerPeriodo);
+                setArquivoRequerTipoDeConta(requerTipoConta);
+            }
         }
     }, [dadosDeOrigem.acesso_permitido]);
 
@@ -149,8 +155,8 @@ const ArquivosDeCarga = () => {
     useEffect(() => {
         if(tabelaArquivos && tabelaArquivos.tipos_cargas) {
             const requerPeriodo = tabelaArquivos.tipos_cargas.find(tipo => tipo.id === url_params.tipo_de_carga)?.requer_periodo;
-            setArquivoRequerPeriodo(requerPeriodo);
             const requerTipoConta = tabelaArquivos.tipos_cargas.find(tipo => tipo.id === url_params.tipo_de_carga)?.requer_tipo_de_conta
+            setArquivoRequerPeriodo(requerPeriodo);
             setArquivoRequerTipoDeConta(requerTipoConta);
         }
     }, [url_params.tipo_de_carga, tabelaArquivos])
@@ -171,7 +177,7 @@ const ArquivosDeCarga = () => {
     }, [carregaArquivosPeloTipoDeCarga]);
 
     // Quando a state de todasAsAcoes sofrer alteração
-    const totalDeArquivos = useMemo(() => arquivos.length, [arquivos]);
+    const totalDeArquivos = useMemo(() => arquivos ? arquivos.length : 0, [arquivos]);
 
     // Filtros
     const initialStateFiltros = {
@@ -199,7 +205,7 @@ const ArquivosDeCarga = () => {
     };
 
     //Para a Tabela
-    const rowsPerPage = 10;
+    const rowsPerPage = 20;
 
     const conteudoTemplate = (rowData) => {
         return (
