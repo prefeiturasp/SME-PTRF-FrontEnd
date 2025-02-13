@@ -10,13 +10,18 @@ import {
   patchAlterarArquivoDeCarga,
   deleteArquivoDeCarga,
   getDownloadArquivoDeCarga,
-  getDownloadModeloArquivoDeCarga
+  getDownloadModeloArquivoDeCarga,
+  getTiposContas
 } from "../../../../services/sme/Parametrizacoes.service";
 import { visoesService as vs } from "../../../../services/visoes.service";
 import * as services from "../../../../services/sme/Parametrizacoes.service";
-import { mockTabelaArquivos as tabelaArquivos, mockListaArquivos as listaArquivos } from "../__fixtures__/mockData";
+import {
+  mockTabelaArquivos as tabelaArquivos,
+  mockListaArquivos as listaArquivos, 
+  mockTipoContas as tiposContas,
+  mockPeriodos as listaPeriodos } from "../__fixtures__/mockData";
 import { useParams } from "react-router-dom";
-import * as periodos from "../../../../services/dres/Dashboard.service";
+import { getPeriodos } from "../../../../services/dres/Dashboard.service";
 import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../../sme/Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
 
 // Mockando useParams
@@ -42,10 +47,10 @@ jest.mock("../../../../services/sme/Parametrizacoes.service", () => ({
   getDownloadArquivoDeCarga: jest.fn(),
   postProcessarArquivoDeCarga: jest.fn(),
   getDownloadModeloArquivoDeCarga: jest.fn(),
-
   postCreateArquivoDeCarga: jest.fn(),
   patchAlterarArquivoDeCarga: jest.fn(),
   deleteArquivoDeCarga: jest.fn(),
+  getTiposContas: jest.fn(),
 }));
 
 jest.mock("../../../../services/visoes.service", () => ({
@@ -73,6 +78,7 @@ describe("Renderiza Tipos de Carga existentes", () => {
 
   it("renderiza CARGA_CONTAS_ASSOCIACOES", async () => {
     useParams.mockReturnValue({ tipo_de_carga: "CARGA_CONTAS_ASSOCIACOES" });
+    getArquivosDeCargaFiltros.mockReturnValue(listaArquivos);
     render(
       <MemoryRouter initialEntries={["/parametro-arquivos-de-carga/CARGA_CONTAS_ASSOCIACOES"]}>
         <Route path="/parametro-arquivos-de-carga/:tipo_de_carga">
@@ -80,7 +86,9 @@ describe("Renderiza Tipos de Carga existentes", () => {
         </Route>
       </MemoryRouter>
     );
-    expect(await screen.findByText("Contas de Associações")).toBeInTheDocument();
+    const elementos = await screen.findAllByText("Contas de Associações");
+    expect(elementos[0]).toBeInTheDocument();
+    expect(elementos[1]).toBeInTheDocument();
   });
 
   it("renderiza CARGA_USUARIOS", async () => {
@@ -179,8 +187,8 @@ describe("ArquivosDeCarga Componente", () => {
   test("Upload de arquivo para processamento", async () => {
     RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
     useParams.mockReturnValue({ tipo_de_carga: "CARGA_CONTAS_ASSOCIACOES" });
-    getTabelaArquivosDeCarga.mockResolvedValue(tabelaArquivos);
-    getArquivosDeCargaFiltros.mockResolvedValue(listaArquivos);
+    getTabelaArquivosDeCarga.mockReturnValue(tabelaArquivos);
+    getArquivosDeCargaFiltros.mockReturnValue(listaArquivos);
     render(
       <MemoryRouter initialEntries={["/parametro-arquivos-de-carga/CARGA_CONTAS_ASSOCIACOES"]}>
         <Route path="/parametro-arquivos-de-carga/:tipo_de_carga">
@@ -188,16 +196,19 @@ describe("ArquivosDeCarga Componente", () => {
         </Route>
       </MemoryRouter>
     );
-    const table = screen.getByRole("grid");
-    expect(table).toBeInTheDocument();
+    await waitFor(() => {
+      const table = screen.getByRole("grid");
+      expect(table).toBeInTheDocument();
 
-    const botaoAdicionarCarga = screen.getByText(/Adicionar carga/i);
-    expect(botaoAdicionarCarga).toBeInTheDocument();
-    expect(botaoAdicionarCarga).toBeEnabled();
-    fireEvent.click(botaoAdicionarCarga);
+      const botaoAdicionarCarga = screen.getByText(/Adicionar carga/i);
+      expect(botaoAdicionarCarga).toBeInTheDocument();
+      expect(botaoAdicionarCarga).toBeEnabled();
+      fireEvent.click(botaoAdicionarCarga);
+    })
 
     const dialogModal = screen.getByRole("dialog")
     expect(dialogModal).toBeInTheDocument();
+
     const campoIdentificador = screen.getByLabelText("Identificador *");
     expect(campoIdentificador).toBeInTheDocument();
     fireEvent.change(campoIdentificador, { target: { value: "teste-contas-associacoes" } });
@@ -207,8 +218,8 @@ describe("ArquivosDeCarga Componente", () => {
     expect(campoArquivo).toBeInTheDocument();
     fireEvent.change(campoArquivo, { target: { files: [arquivo] } });
 
-    const campoTipoDelimitador = screen.getByLabelText("Tipo delimitador");
-    fireEvent.change(campoTipoDelimitador, { target: { value: "PONTO_E_VIRGULA" } });
+    const campoTipoDelimitador = screen.getByLabelText("Tipo delimitador *");
+    fireEvent.change(campoTipoDelimitador, { target: { value: "DELIMITADOR_PONTO_VIRGULA" } });
 
     const botaoSalvar = screen.getByText("Salvar e enviar");
     expect(botaoSalvar).toBeInTheDocument();
@@ -222,11 +233,13 @@ describe("ArquivosDeCarga Componente", () => {
   });
 
   test("Upload de arquivo para processamento REPASSE_PREVISTO", async () => {
-    // Teste para cobertura de condicional "create" quando o tipo é REPASSE_PREVISTO
     RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
     useParams.mockReturnValue({ tipo_de_carga: "REPASSE_PREVISTO" });
-    getTabelaArquivosDeCarga.mockResolvedValue(tabelaArquivos);
-    getArquivosDeCargaFiltros.mockResolvedValue(listaArquivos);
+
+    getTiposContas.mockReturnValue(tiposContas);
+    getTabelaArquivosDeCarga.mockReturnValue(tabelaArquivos);
+    getArquivosDeCargaFiltros.mockReturnValue(listaArquivos);
+    getPeriodos.mockReturnValue(listaPeriodos);
     render(
       <MemoryRouter initialEntries={["/parametro-arquivos-de-carga/REPASSE_PREVISTO"]}>
         <Route path="/parametro-arquivos-de-carga/:tipo_de_carga">
@@ -234,12 +247,13 @@ describe("ArquivosDeCarga Componente", () => {
         </Route>
       </MemoryRouter>
     );
-    const table = screen.getByRole("grid");
-    expect(table).toBeInTheDocument();
+    await waitFor(() => {
+      const table = screen.getByRole("grid");
+      expect(table).toBeInTheDocument();
 
-    const botaoAdicionarCarga = screen.getByText(/Adicionar carga/i);
-    fireEvent.click(botaoAdicionarCarga);
-
+      const botaoAdicionarCarga = screen.getByText(/Adicionar carga/i);
+      fireEvent.click(botaoAdicionarCarga);
+    })
     const dialogModal = screen.getByRole("dialog")
     const campoIdentificador = screen.getByLabelText("Identificador *");
     expect(campoIdentificador).toBeInTheDocument();
@@ -250,8 +264,14 @@ describe("ArquivosDeCarga Componente", () => {
     expect(campoArquivo).toBeInTheDocument();
     fireEvent.change(campoArquivo, { target: { files: [arquivo] } });
 
-    const campoTipoDelimitador = screen.getByLabelText("Tipo delimitador");
-    fireEvent.change(campoTipoDelimitador, { target: { value: "PONTO_E_VIRGULA" } });
+    const campoTipoDelimitador = screen.getByLabelText("Tipo delimitador *");
+    fireEvent.change(campoTipoDelimitador, { target: { value: "DELIMITADOR_PONTO_VIRGULA" } });
+
+    const campoPeriodo = screen.getByLabelText("Período *");
+    fireEvent.change(campoPeriodo, { target: { value: "d9bc43e3-cfd5-4969-bada-af78d96e8faf" } });
+
+    const campoTipoConta = screen.getByLabelText("Tipo de conta *");
+    fireEvent.change(campoTipoConta, { target: { value: "ba8b96ef-f05c-41f3-af10-73753490c111" } });
 
     const botaoSalvar = screen.getByText("Salvar e enviar");
     expect(botaoSalvar).toBeInTheDocument();
@@ -378,7 +398,7 @@ describe("Ações dos botões", () => {
       
         const tabela = screen.getByRole("grid");
         const rows = tabela.querySelectorAll("tbody tr");
-        expect(rows).toHaveLength(10);
+        expect(rows).toHaveLength(14);
         const primeiraLinha = rows[0];
         const colunas = primeiraLinha.querySelectorAll("td");
         const colunaActions = colunas[5];
@@ -405,7 +425,7 @@ describe("Ações dos botões", () => {
       
         const tabela = screen.getByRole("grid");
         const rows = tabela.querySelectorAll("tbody tr");
-        expect(rows).toHaveLength(10);
+        expect(rows).toHaveLength(14);
         const primeiraLinha = rows[1];
         const colunas = primeiraLinha.querySelectorAll("td");
         const colunaActions = colunas[5];
@@ -438,7 +458,7 @@ describe("Ações dos botões", () => {
       
         const tabela = screen.getByRole("grid");
         const rows = tabela.querySelectorAll("tbody tr");
-        expect(rows).toHaveLength(10);
+        expect(rows).toHaveLength(14);
         const primeiraLinha = rows[1];
         const colunas = primeiraLinha.querySelectorAll("td");
         const colunaActions = colunas[5];
@@ -469,7 +489,7 @@ describe("Ações dos botões", () => {
       
         const tabela = screen.getByRole("grid");
         const rows = tabela.querySelectorAll("tbody tr");
-        expect(rows).toHaveLength(10);
+        expect(rows).toHaveLength(14);
         const primeiraLinha = rows[0];
         const colunas = primeiraLinha.querySelectorAll("td");
         const colunaActions = colunas[5];
@@ -496,7 +516,7 @@ describe("Ações dos botões", () => {
       
         const tabela = screen.getByRole("grid");
         const rows = tabela.querySelectorAll("tbody tr");
-        expect(rows).toHaveLength(10);
+        expect(rows).toHaveLength(14);
         const primeiraLinha = rows[0];
         const colunas = primeiraLinha.querySelectorAll("td");
         const colunaActions = colunas[5];

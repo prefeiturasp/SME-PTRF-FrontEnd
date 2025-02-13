@@ -101,7 +101,7 @@ describe('Componente Filtros', () => {
     expect(screen.getByText("* Campos obrigatórios")).toBeInTheDocument();
     expect(screen.getByLabelText("Identificador *")).toHaveValue("");
     expect(screen.getByLabelText("Conteúdo *")).toHaveValue("");
-    expect(screen.getByLabelText("Tipo delimitador")).toHaveValue("");
+    expect(screen.getByLabelText("Tipo delimitador *")).toHaveValue("");
     expect(screen.getByLabelText("Última execução")).toHaveValue("");
     expect(screen.getByLabelText("Status")).toHaveValue("");
     expect(screen.queryByRole("button", { name: "Cancelar" })).toBeInTheDocument();
@@ -114,7 +114,7 @@ describe('Componente Filtros', () => {
 
     const identificador_input = screen.getByLabelText("Identificador *");
     const conteudo_input = screen.getByLabelText("Conteúdo *");
-    const tem_limitador_input = screen.getByLabelText("Tipo delimitador");
+    const tem_limitador_input = screen.getByLabelText("Tipo delimitador *");
     const saveButton = screen.getByRole("button", { name: "Salvar e enviar" });
     const arquivo = new File(["teste"], "arquivo123.csv", { type: "text/csv" });
 
@@ -161,7 +161,7 @@ describe('Componente Filtros', () => {
     render(<ModalFormArquivosDeCarga {...defaultPropsEdicao} />);
     
     expect(screen.getByLabelText("Identificador *")).toHaveValue("carga_007");
-    expect(screen.getByLabelText("Tipo delimitador")).toHaveValue("DELIMITADOR_PONTO_VIRGULA");
+    expect(screen.getByLabelText("Tipo delimitador *")).toHaveValue("DELIMITADOR_PONTO_VIRGULA");
   });
 
   it("Chama a ação de fechar modal de Criação quando o botão Cancelar for clicado", () => {

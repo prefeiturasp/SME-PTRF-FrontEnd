@@ -105,7 +105,7 @@ const ModalFormArquivosDeCarga = ({show, stateFormModal, handleClose, handleSubm
                                 </div>}
                                 <div className='row mt-3'>
                                     <div className='col'>
-                                        <label htmlFor="tipo_delimitador">Tipo delimitador</label>
+                                        <label htmlFor="tipo_delimitador">Tipo delimitador *</label>
                                         <select
                                             data-qa="campo_tipo_delimitador"
                                             value={props.values.tipo_delimitador && props.values.tipo_delimitador ? props.values.tipo_delimitador : ""}
@@ -119,6 +119,7 @@ const ModalFormArquivosDeCarga = ({show, stateFormModal, handleClose, handleSubm
                                                 <option key={delimitador.id} value={delimitador.id}>{delimitador.nome}</option>
                                             )}
                                         </select>
+                                        {props.errors && props.errors.tipo_delimitador && props.errors.tipo_delimitador && <small className="span_erro text-danger mt-1"> * {props.errors.tipo_delimitador} </small>}
                                     </div>
                                 </div>
                                 <div className='row mt-3'>
