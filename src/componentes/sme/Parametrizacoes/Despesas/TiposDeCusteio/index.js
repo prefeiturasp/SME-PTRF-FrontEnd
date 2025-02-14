@@ -126,10 +126,10 @@ export const TiposDeCusteio = ()=>{
             }catch (e) {
                 console.log('Erro ao criar Tipo de Despesa de Custeio ', e.response.data);
                 if (e.response.data && e.response.data.non_field_errors) {
-                    setErroExclusaoNaoPermitida('Ja existe um tipo de despesa de custeio com esse nome');
+                    setErroExclusaoNaoPermitida('Já existe um tipo de despesa de custeio com esse nome');
                     setShowModalInfoUpdateNaoPermitido(true)
                 } else {
-                    setErroExclusaoNaoPermitida('Houve um erro ao tentar fazer essa atualização.');
+                    setErroExclusaoNaoPermitida('Houve um erro ao tentar criar um tipo de despesa de custeio.');
                     setShowModalInfoUpdateNaoPermitido(true)
                 }
             }
@@ -143,7 +143,7 @@ export const TiposDeCusteio = ()=>{
             }catch (e) {
                 console.log('Erro ao alterar tipo de despesa de custeio ', e.response.data);
                 if (e.response.data && e.response.data.non_field_errors) {
-                    setErroExclusaoNaoPermitida('Ja existe um tipo de despesa de custeio com esse nome');
+                    setErroExclusaoNaoPermitida('Já existe um tipo de despesa de custeio com esse nome');
                     setShowModalInfoUpdateNaoPermitido(true);
                 } else {
                     setErroExclusaoNaoPermitida('Houve um erro ao tentar fazer essa atualização.');
