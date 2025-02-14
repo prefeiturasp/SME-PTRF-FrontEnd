@@ -572,6 +572,10 @@ export const CadastroForm = ({verbo_http}) => {
         setBtnSubmitDisable(true)
     }
 
+    const habilitaBtnSalvar = () => {
+        setBtnSubmitDisable(false)
+    }
+
     const onSubmit = async (values, setFieldValue) => {
         // Inclusão de validações personalizadas para reduzir o numero de requisições a API Campo: cpf_cnpj_fornecedor
         // Agora o campo cpf_cnpj_fornecedor, é validado no onBlur e quando o form tenta ser submetido
@@ -1030,7 +1034,10 @@ export const CadastroForm = ({verbo_http}) => {
             if (retorno_saldo.situacao_do_saldo === "saldo_conta_insuficiente" || retorno_saldo.situacao_do_saldo === "lancamento_anterior_implantacao") {
                 setSaldosInsuficientesDaConta(retorno_saldo);
                 setModalState('saldo-insuficiente-conta')
-            }else{
+            } else if (retorno_saldo.situacao_do_saldo === 'impossivel_determinar') {
+                await serviceSubmitModais(values, setFieldValue, errors, 'impossivel_determinar')
+            }
+            else{
                 await serviceSubmitModais(values, setFieldValue, errors, 'saldo_insuficiente_conta_validado')
             }
         }else {
@@ -1163,7 +1170,7 @@ export const CadastroForm = ({verbo_http}) => {
         }else if(msg === 'pagamento_antecipado_validado'){
             await verificaSeDespesaIncompleta(values, errors, setFieldValue)
 
-        }else if(msg === 'despesa_incompleta_validado'){
+        }else if(msg === 'despesa_incompleta_validado' || msg === 'impossivel_determinar'){
             setModalState('close')
             await onSubmit(values, setFieldValue);
         }
@@ -1282,6 +1289,7 @@ export const CadastroForm = ({verbo_http}) => {
                         setShowTextoModalDelete={setShowTextoModalDelete}
                         btnSubmitDisable={btnSubmitDisable}
                         desabilitaBtnSalvar={desabilitaBtnSalvar}
+                        habilitaBtnSalvar={habilitaBtnSalvar}
                         saldosInsuficientesDaAcao={saldosInsuficientesDaAcao}
                         setShow={setShow}
                         saldosInsuficientesDaConta={saldosInsuficientesDaConta}
