@@ -395,7 +395,6 @@ describe("Ações dos botões", () => {
     );
 
     await waitFor(() => {
-      
         const tabela = screen.getByRole("grid");
         const rows = tabela.querySelectorAll("tbody tr");
         expect(rows).toHaveLength(14);
@@ -408,7 +407,6 @@ describe("Ações dos botões", () => {
 
         expect(postProcessarArquivoDeCarga).toHaveBeenCalled();
     })
-
   });
 
   test("Botão de Ação Editar", async () => {
@@ -437,8 +435,8 @@ describe("Ações dos botões", () => {
 
         const botaoSalvarEnviar = screen.getByText('Salvar e enviar')
         expect(botaoSalvarEnviar).toBeInTheDocument()
-        // fireEvent.click(botaoSalvarEnviar)
-        // expect(patchAlterarArquivoDeCarga).not.toHaveBeenCalled()
+        fireEvent.click(botaoSalvarEnviar)
+        expect(patchAlterarArquivoDeCarga).not.toHaveBeenCalled()
     })
 
   });
@@ -446,6 +444,7 @@ describe("Ações dos botões", () => {
   test("Botão de Ação Editar REPASSE PREVISTO", async () => {
     // Testar Edição quando a condição
     useParams.mockReturnValue({ tipo_de_carga: "REPASSE_PREVISTO" });
+    getArquivosDeCargaFiltros.mockReturnValue(listaArquivos);
     render(
       <MemoryRouter initialEntries={["/parametro-arquivos-de-carga/REPASSE_PREVISTO"]}>
         <Route path="/parametro-arquivos-de-carga/:tipo_de_carga">
@@ -455,8 +454,8 @@ describe("Ações dos botões", () => {
     );
 
     await waitFor(() => {
-      
         const tabela = screen.getByRole("grid");
+        expect(tabela).toBeInTheDocument();
         const rows = tabela.querySelectorAll("tbody tr");
         expect(rows).toHaveLength(14);
         const primeiraLinha = rows[1];
@@ -464,11 +463,14 @@ describe("Ações dos botões", () => {
         const colunaActions = colunas[5];
         const botoes = colunaActions.querySelectorAll("button");
         const botaoAcao = Array.from(botoes).filter(btn => btn.textContent.trim() === "Editar")[0];
+        expect(botaoAcao).toBeInTheDocument();
         fireEvent.click(botaoAcao);
 
         expect(screen.getByText('Editar repasse previsto')).toBeInTheDocument();
 
         const botaoSalvarEnviar = screen.getByText('Salvar e enviar')
+        expect(botaoSalvarEnviar).toBeInTheDocument()
+        expect(botaoSalvarEnviar).toBeEnabled()
         // fireEvent.click(botaoSalvarEnviar)
         // expect(patchAlterarArquivoDeCarga).toHaveBeenCalled()
     })
@@ -486,7 +488,6 @@ describe("Ações dos botões", () => {
     );
 
     await waitFor(() => {
-      
         const tabela = screen.getByRole("grid");
         const rows = tabela.querySelectorAll("tbody tr");
         expect(rows).toHaveLength(14);
@@ -496,10 +497,8 @@ describe("Ações dos botões", () => {
         const botoes = colunaActions.querySelectorAll("button");
         const botaoAcao = Array.from(botoes).filter(btn => btn.textContent.trim() === "Baixar")[0];
         fireEvent.click(botaoAcao);
-
         expect(getDownloadArquivoDeCarga).toHaveBeenCalled();
     })
-
   });
 
   test("Botão de Ação Excluir", async () => {
@@ -513,7 +512,6 @@ describe("Ações dos botões", () => {
     );
 
     await waitFor(() => {
-      
         const tabela = screen.getByRole("grid");
         const rows = tabela.querySelectorAll("tbody tr");
         expect(rows).toHaveLength(14);
@@ -526,10 +524,8 @@ describe("Ações dos botões", () => {
         expect(botaoAcao).toBeInTheDocument();
         fireEvent.click(botaoAcao);
 
-        const modalConfirmaExcluir = screen.getByRole('dialog', { hidden: false });
-        console.log(modalConfirmaExcluir.innerHTML)
-        const botaoExcluir = modalConfirmaExcluir.querySelector('.btn-danger');
-        //Dentro dessa modal, encontra o botão "Excluir"
+        const botoesExcluir = screen.getAllByRole("button", { name: "Excluir" });
+        const botaoExcluir = botoesExcluir.find(btn => btn.classList.contains("btn-base-vermelho"));
         expect(botaoExcluir).toBeInTheDocument();
         fireEvent.click(botaoExcluir)
         expect(deleteArquivoDeCarga).toHaveBeenCalled();
