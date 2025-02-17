@@ -236,7 +236,7 @@ describe("Testes Operacao EDIT", () => {
 
   it("Renderiza Operacao edit erro non_field_errors", async () => {
       patchTipoDeTransacao.mockRejectedValueOnce({
-          response: { data: { non_field_errors: "Ja existe um tipo de transação com esse nome" } },
+          response: { data: { non_field_errors: "Já existe um tipo de transação com esse nome" } },
       });
 
       render(<TiposDeTransacao />);
@@ -258,7 +258,7 @@ describe("Testes Operacao EDIT", () => {
 
       await waitFor(() => {
           expect(patchTipoDeTransacao).toHaveBeenCalled();
-          const toastError = screen.getByText(/Ja existe um tipo de transação com esse nome/i);
+          const toastError = screen.getByText(/Já existe um tipo de transação com esse nome/i);
           expect(toastError).toBeInTheDocument();
       });
   });
