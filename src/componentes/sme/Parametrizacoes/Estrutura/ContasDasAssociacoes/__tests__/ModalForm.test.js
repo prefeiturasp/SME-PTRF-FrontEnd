@@ -105,7 +105,7 @@ describe("Componente ModalForm", () => {
     expect(screen.getByLabelText("Agência")).toHaveValue("");
     expect(screen.getByLabelText("Conta")).toHaveValue("");
     expect(screen.getByLabelText("Cartão")).toHaveValue("");
-    expect(screen.queryByRole("button", { name: "Apagar" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Excluir" })).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Cancelar" })).toBeInTheDocument();
 
     expect(screen.getByRole("button", { name: "Salvar" })).toBeEnabled();
@@ -126,7 +126,7 @@ describe("Componente ModalForm", () => {
     expect(screen.getByLabelText("Agência")).toHaveValue("");
     expect(screen.getByLabelText("Conta")).toHaveValue("");
     expect(screen.getByLabelText("Cartão")).toHaveValue("");
-    expect(screen.queryByRole("button", { name: "Apagar" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Excluir" })).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Cancelar" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Salvar" })).toBeDisabled();
   });
@@ -141,7 +141,7 @@ describe("Componente ModalForm", () => {
     expect(screen.getByLabelText("Agência")).toHaveValue("0001");
     expect(screen.getByLabelText("Conta")).toHaveValue("12345-2");
     expect(screen.getByLabelText("Cartão")).toHaveValue("1234432112344321");
-    expect(screen.queryByRole("button", { name: "Apagar" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Excluir" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Cancelar" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Salvar" })).toBeEnabled();
   });
@@ -156,7 +156,7 @@ describe("Componente ModalForm", () => {
     expect(screen.getByLabelText("Agência")).toHaveValue("0001");
     expect(screen.getByLabelText("Conta")).toHaveValue("12345-2");
     expect(screen.getByLabelText("Cartão")).toHaveValue("1234432112344321");
-    expect(screen.queryByRole("button", { name: "Apagar" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Excluir" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Cancelar" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Salvar" })).toBeDisabled();
   });
@@ -174,7 +174,7 @@ describe("Componente ModalForm", () => {
     render(<ModalForm {...defaultPropsEdicao}/>);
 
     // Localize o botão
-    const button = screen.getByRole('button', { name: /Apagar/i });
+    const button = screen.getByRole('button', { name: /Excluir/i });
 
     // Simule o clique no botão
     fireEvent.click(button);
