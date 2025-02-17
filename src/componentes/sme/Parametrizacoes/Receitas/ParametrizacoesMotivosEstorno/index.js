@@ -1,9 +1,6 @@
 import React, {useCallback, useEffect, useMemo, useState} from "react";
 import {PaginasContainer} from "../../../../../paginas/PaginasContainer";
 import Loading from "../../../../../utils/Loading";
-import {BtnAdd} from "./BtnAdd";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faEdit, faPlus} from "@fortawesome/free-solid-svg-icons";
 import {Filtros} from "./Filtros";
 import {
     getMotivosEstorno,
@@ -12,32 +9,29 @@ import {
     patchAlterarMotivoEstorno,
     deleteMotivoEstorno
 } from "../../../../../services/sme/Parametrizacoes.service";
-import Tabela from "./Tabela";
 import ModalForm from "./ModalForm";
-import {ModalInfoUpdateNaoPermitido} from "./ModalInfoUpdateNaoPermitido";
-import {ModalInfoNaoPodeExcluir} from "./ModalInfoNaoPodeExcluir";
-import {ModalConfirmDelete} from "./ModalConfirmDelete";
 import {toastCustom} from "../../../../Globais/ToastCustom";
+import {ModalBootstrap} from "../../../../Globais/ModalBootstrap";
+import { IconButton, Tabela } from "../../../../Globais/UI";
+import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
+import { MsgImgCentralizada } from "../../../../Globais/Mensagens/MsgImgCentralizada";
+import Img404 from "../../../../../assets/img/img-404.svg"
+
+const initialStateFiltros = {
+    filtrar_por_nome: "",
+};
+
+const initialStateFormModal = {
+    motivo: "",
+    uuid:"",
+    id:"",
+    operacao: 'create',
+};
 
 export const ParametrizacoesMotivosDeEstorno = ()=>{
     const [listaMotivos, setListaMotivos] = useState([]);
     const [loading, setLoading] = useState(false);
-    
-    // Filtros
-    const initialStateFiltros = {
-        filtrar_por_nome: "",
-    };
     const [stateFiltros, setStateFiltros] = useState(initialStateFiltros);
-    
-    
-    // Modal
-    const initialStateFormModal = {
-        motivo: "",
-        uuid:"",
-        id:"",
-        operacao: 'create',
-    };
-
     const [showModalForm, setShowModalForm] = useState(false);
     const [showModalInfoUpdateNaoPermitido, setShowModalInfoUpdateNaoPermitido] = useState(false);
     const [stateFormModal, setStateFormModal] = useState(initialStateFormModal);
@@ -45,12 +39,10 @@ export const ParametrizacoesMotivosDeEstorno = ()=>{
     const [erroExclusaoNaoPermitida, setErroExclusaoNaoPermitida] = useState('');
     const [showModalInfoNaoPodeExcluir, setShowModalInfoNaoPodeExcluir] = useState(false);
     const [mensagemModalInfoNaoPodeExcluir, setMensagemModalInfoNaoPodeExcluir] = useState("");
-    
 
-    // Quando a state da lista sofrer alteração
-    const totalDeMotivos = useMemo(() => listaMotivos.length, [listaMotivos]);
+    const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES = RetornaSeTemPermissaoEdicaoPainelParametrizacoes()
+    const totalDeMotivos = useMemo(() => listaMotivos?.length ?? 0, [listaMotivos]);
     const rowsPerPage = 20;
-
 
     const carregaLista = useCallback(async ()=>{
         setLoading(true);
@@ -63,8 +55,6 @@ export const ParametrizacoesMotivosDeEstorno = ()=>{
         carregaLista()
     }, [carregaLista]);
 
-
-    // filtros
     const handleChangeFiltros = useCallback((name, value) => {
         setStateFiltros({
             ...stateFiltros,
@@ -75,7 +65,6 @@ export const ParametrizacoesMotivosDeEstorno = ()=>{
     const handleSubmitFiltros = async () => {
         setLoading(true);
         let filtrados = await getFiltrosMotivosEstorno(stateFiltros.filtrar_por_nome);
-        console.log(stateFiltros.filtrar_por_nome)
         setListaMotivos(filtrados);
         setLoading(false);
     };
@@ -87,8 +76,6 @@ export const ParametrizacoesMotivosDeEstorno = ()=>{
         setLoading(false);
     };
 
-
-    // tabela
     const handleEditFormModal = useCallback( async (rowData) =>{
         setStateFormModal({
             ...stateFormModal,
@@ -102,14 +89,11 @@ export const ParametrizacoesMotivosDeEstorno = ()=>{
 
     const acoesTemplate = useCallback((rowData) =>{
         return (
-            <div>
-                <button className="btn-editar-membro" onClick={()=>handleEditFormModal(rowData)}>
-                    <FontAwesomeIcon
-                        style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
-                        icon={faEdit}
-                    />
-                </button>
-            </div>
+            <IconButton
+                icon="faEdit"
+                iconProps={{style: {fontSize: '20px', marginRight: "0", color: "#00585E"}}}
+                onClick={()=>handleEditFormModal(rowData)}
+            />
         )
     }, [handleEditFormModal]);
 
@@ -118,45 +102,37 @@ export const ParametrizacoesMotivosDeEstorno = ()=>{
             motivo: values.motivo,
         };
 
-        if (values.operacao === 'create'){
-            try{
+        try {
+            if (values.operacao === 'create') {
                 await postCreateMotivoEstorno(payload);
-                toastCustom.ToastCustomSuccess('Inclusão de motivo de estorno realizado com sucesso.', 'O motivo do estorno foi adicionado ao sistema com sucesso.')
-                setShowModalForm(false);
-                await carregaLista();
-            }catch (e) {
-                console.log('Erro ao criar motivo de estorno ', e.response.data);
-                if (e.response.data && e.response.data.non_field_errors) {
-                    setErroExclusaoNaoPermitida('Ja existe um motivo de estorno com esse nome');
-                    setShowModalInfoUpdateNaoPermitido(true)
-                } else {
-                    setErroExclusaoNaoPermitida('Houve um erro ao tentar fazer essa atualização.');
-                    setShowModalInfoUpdateNaoPermitido(true)
-                }
-            }
-
-        }else {
-            try {
+                toastCustom.ToastCustomSuccess(
+                    'Inclusão de motivo de estorno realizado com sucesso.',
+                    'O motivo do estorno foi adicionado ao sistema com sucesso.'
+                );
+            } else {
                 await patchAlterarMotivoEstorno(values.uuid, payload);
-                toastCustom.ToastCustomSuccess('Edição do motivo de estorno realizado com sucesso.', 'O motivo de estorno foi editado no sistema com sucesso.')
-                setShowModalForm(false);
-                await carregaLista();
-            }catch (e) {
-                console.log('Erro ao alterar motivo de estorno ', e.response.data);
-                if (e.response.data && e.response.data.non_field_errors) {
-                    setErroExclusaoNaoPermitida('Ja existe um motivo de estorno com esse nome');
-                    setShowModalInfoUpdateNaoPermitido(true);
-                } else {
-                    setErroExclusaoNaoPermitida('Houve um erro ao tentar fazer essa atualização.');
-                    setShowModalInfoUpdateNaoPermitido(true);
-                }
+                toastCustom.ToastCustomSuccess(
+                    'Edição do motivo de estorno realizado com sucesso.',
+                    'O motivo de estorno foi editado no sistema com sucesso.'
+                );
             }
+    
+            setShowModalForm(false);
+            await carregaLista();
+    
+        } catch (e) {
+            const errorMsg = e.response.data?.non_field_errors 
+            ? 'Já existe um motivo de estorno com esse nome' 
+            : 'Houve um erro ao tentar fazer essa atualização.';
+            setErroExclusaoNaoPermitida(errorMsg);
+            setShowModalInfoUpdateNaoPermitido(true);
+        } finally {
             setLoading(false);
         }
     }, [carregaLista]);
 
 
-    const onDeleteTrue = useCallback(async ()=>{
+    const onDelete = useCallback(async ()=>{
         setLoading(true);
         try {
             setShowModalConfirmDelete(false);
@@ -168,7 +144,6 @@ export const ParametrizacoesMotivosDeEstorno = ()=>{
             if (e.response && e.response.data && e.response.data.mensagem){
                 setMensagemModalInfoNaoPodeExcluir(e.response.data.mensagem);
                 setShowModalInfoNaoPodeExcluir(true);
-                console.log(e.response.data.mensagem)
             }else {
                 setMensagemModalInfoNaoPodeExcluir('Houve um erro ao tentar fazer essa atualização.');
                 setShowModalInfoNaoPodeExcluir(true);
@@ -176,9 +151,6 @@ export const ParametrizacoesMotivosDeEstorno = ()=>{
         }
         setLoading(false);
     }, [stateFormModal, carregaLista]);
-
-
-    // controladores modais
 
     const handleCloseFormModal = useCallback(()=>{
         setStateFormModal(initialStateFormModal);
@@ -214,25 +186,43 @@ export const ParametrizacoesMotivosDeEstorno = ()=>{
             ) :
                 <>
                     <div className="page-content-inner">
-                        <BtnAdd
-                            FontAwesomeIcon={FontAwesomeIcon}
-                            faPlus={faPlus}
-                            setShowModalForm={setShowModalForm}
-                            initialStateFormModal={initialStateFormModal}
-                            setStateFormModal={setStateFormModal}
-                        />
+                        <div className="d-flex  justify-content-end pb-4 mt-2">
+                            <IconButton
+                                icon="faPlus"
+                                iconProps={{ style: {fontSize: '15px', marginRight: "5", color:"#fff"} }}
+                                label="Adicionar motivo de estorno"
+                                onClick={() => {
+                                    setStateFormModal(initialStateFormModal);
+                                    setShowModalForm(true);
+                                }}
+                                variant="success"
+                                disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
+                            />
+                        </div>
+                        
                         <Filtros
                             stateFiltros={stateFiltros}
                             handleChangeFiltros={handleChangeFiltros}
                             handleSubmitFiltros={handleSubmitFiltros}
                             limpaFiltros={limpaFiltros}
                         />
-                        <p>Exibindo <span className='total-acoes'>{totalDeMotivos}</span> motivo(s) de estorno</p>
-                        <Tabela
-                            rowsPerPage={rowsPerPage}
-                            lista={listaMotivos}
-                            acoesTemplate={acoesTemplate}
-                        />
+                        {
+                            (listaMotivos || []).length ?
+                            <>
+                                <p>Exibindo <span className='total-acoes'>{totalDeMotivos}</span> motivo(s) de estorno</p>
+                                <Tabela
+                                    rowsPerPage={rowsPerPage}
+                                    lista={listaMotivos}
+                                    acoesTemplate={acoesTemplate}
+                                />
+                            </>
+                        :
+                            <MsgImgCentralizada
+                                data-qa="imagem-lista-sem-motivos-pagamento-antecipado"
+                                texto='Nenhum resultado encontrado.'
+                                img={Img404}
+                            />
+                        }
                     </div>
                     <section>
                         <ModalForm
@@ -244,36 +234,38 @@ export const ParametrizacoesMotivosDeEstorno = ()=>{
                         />
                     </section>
                     <section>
-                        <ModalInfoUpdateNaoPermitido
+                        <ModalBootstrap
                             show={showModalInfoUpdateNaoPermitido}
-                            handleClose={handleCloseModalInfoUpdateNaoPermitido}
+                            onHide={handleCloseModalInfoUpdateNaoPermitido}
+                            primeiroBotaoOnclick={handleCloseModalInfoUpdateNaoPermitido}
                             titulo={
                                 stateFormModal.operacao === 'create' ? 'Inclusão não permitida' :
                                     stateFormModal.operacao === 'edit' ? 'Alteração não permitida' :
                                         'Exclusão não permitida'
                             }
-                            texto={`<p class="mb-0"> ${erroExclusaoNaoPermitida}</p>`}
+                            bodyText={`<p class="mb-0"> ${erroExclusaoNaoPermitida}</p>`}
                             primeiroBotaoTexto="Fechar"
                             primeiroBotaoCss="success"
                         />
                     </section>
                     <section>
-                        <ModalInfoNaoPodeExcluir
+                        <ModalBootstrap
                             show={showModalInfoNaoPodeExcluir}
-                            handleClose={handleCloseInfoNaoPodeExcluir}
+                            onHide={handleCloseInfoNaoPodeExcluir}
+                            primeiroBotaoOnclick={handleCloseInfoNaoPodeExcluir}
                             titulo="Exclusão não permitida"
-                            texto={mensagemModalInfoNaoPodeExcluir}
+                            bodyText={mensagemModalInfoNaoPodeExcluir}
                             primeiroBotaoTexto="Fechar"
                             primeiroBotaoCss="success"
                         />
                     </section>
                     <section>
-                        <ModalConfirmDelete
+                        <ModalBootstrap
                             show={showModalConfirmDelete}
-                            handleClose={handleCloseConfirmDelete}
-                            onDeleteTrue={onDeleteTrue}
+                            onHide={handleCloseConfirmDelete}
+                            segundoBotaoOnclick={onDelete}
                             titulo="Excluir Motivo de Estorno"
-                            texto="<p>Deseja realmente excluir este motivo de estorno?</p>"
+                            bodyText="<p>Deseja realmente excluir este motivo de estorno?</p>"
                             primeiroBotaoTexto="Cancelar"
                             primeiroBotaoCss="outline-success"
                             segundoBotaoCss="danger"
