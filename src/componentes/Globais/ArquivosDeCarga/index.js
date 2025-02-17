@@ -13,7 +13,6 @@ import {faEdit, faCogs, faDownload, faTrashAlt} from "@fortawesome/free-solid-sv
 import {Filtros} from "./Filtros";
 import {MenuInterno} from "../MenuInterno";
 import ModalFormArquivosDeCarga from "./ModalFormArquivosDeCarga";
-// import {ModalConfirmDeleteArquivoDeCarga} from "./ModalConfirmDeleteArquivoDeCarga";
 import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../sme/Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
 import { RetornaSeTemPermissaoEdicaoGestaoUsuarios } from "../GestaoDeUsuarios/utils/RetornaSeTemPermissaoEdicaoGestaoUsuarios";
 import {toastCustom} from "../ToastCustom";
