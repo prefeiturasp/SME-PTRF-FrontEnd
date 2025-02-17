@@ -21,4 +21,3 @@ const Tabela = ({rowsPerPage, lista, acoesTemplate})=>{
     );
 };
 export default memo(Tabela)
-
