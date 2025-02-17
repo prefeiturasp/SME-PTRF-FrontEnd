@@ -149,7 +149,7 @@ export const TiposDeTransacao = ()=>{
             }catch (e) {
                 console.log('Erro ao criar Tipo de transação ', e.response.data);
                 if (e.response.data && e.response.data.non_field_errors) {
-                    setErroExclusaoNaoPermitida('Ja existe um tipo de transação com esse nome');
+                    setErroExclusaoNaoPermitida('Já existe um tipo de transação com esse nome');
                     setShowModalInfoUpdateNaoPermitido(true)
                 } else {
                     setErroExclusaoNaoPermitida('Erro ao criar tipo de transação. Tente novamente.');
@@ -164,7 +164,7 @@ export const TiposDeTransacao = ()=>{
                 await carregaTodos();
             }catch (e) {
                 if (e.response.data && e.response.data.non_field_errors) {
-                    setErroExclusaoNaoPermitida('Ja existe um tipo de transação com esse nome');
+                    setErroExclusaoNaoPermitida('Já existe um tipo de transação com esse nome');
                     setShowModalInfoUpdateNaoPermitido(true);
                 } else {
                     setErroExclusaoNaoPermitida('Erro ao atualizar tipo de transação. Tente novamente.');
