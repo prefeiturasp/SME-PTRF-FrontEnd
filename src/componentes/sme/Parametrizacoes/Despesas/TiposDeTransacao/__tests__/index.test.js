@@ -154,7 +154,7 @@ describe("Testes Operacao CREATE", () => {
 
   it("Renderiza Operacao create falha non_field_errors", async () => {
     postTipoDeTransacao.mockRejectedValueOnce({
-      response: { data: { non_field_errors: "Ja existe um tipo de transação com esse nome" } },
+      response: { data: { non_field_errors: "Já existe um tipo de transação com esse nome" } },
     });
     RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
 
@@ -165,7 +165,7 @@ describe("Testes Operacao CREATE", () => {
 
     // Verifica se o erro específico aparece
     await waitFor(() => {
-      const toastCustomError = screen.getByText(/Ja existe um tipo de transação com esse nome/i);
+      const toastCustomError = screen.getByText(/Já existe um tipo de transação com esse nome/i);
       expect(toastCustomError).toBeInTheDocument();
     });
   });
