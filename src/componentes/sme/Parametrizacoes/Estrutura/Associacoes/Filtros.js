@@ -22,7 +22,7 @@ export const Filtros = ({stateFiltros, handleChangeFiltros, handleSubmitFiltros,
                         />
                     </div>
                     <div className="form-group col-md-3">
-                        <label htmlFor="filtrar_por_acao">Filtrar por DRE</label>
+                        <label htmlFor="filtrar_por_dre">Filtrar por DRE</label>
                         <select
                             value={stateFiltros.filtrar_por_dre}
                             onChange={(e) => handleChangeFiltros(e.target.name, e.target.value)}
@@ -55,7 +55,7 @@ export const Filtros = ({stateFiltros, handleChangeFiltros, handleSubmitFiltros,
 
                 <div className="form-row">
                     <div className="form-group col-md-3">
-                        <label htmlFor="filtrar_por_informacoes">Filtrar por informações</label>
+                        <label htmlFor="filtrar_por_informacao">Filtrar por informações</label>
                         <Select
                             mode="multiple"
                             allowClear
