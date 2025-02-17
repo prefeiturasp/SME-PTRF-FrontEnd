@@ -1,6 +1,7 @@
 import React, {memo, useMemo, useCallback, useEffect, useState} from "react";
 import "./arquivos-de-carga.scss"
 import "../../dres/Associacoes/associacoes.scss"
+import {ModalConfirmarExclusao} from "../../../componentes/sme/Parametrizacoes/componentes/ModalConfirmarExclusao";
 import {Redirect, useParams} from 'react-router-dom'
 import {BotoesTopo} from "./BotoesTopo";
 import {PaginasContainer} from "../../../paginas/PaginasContainer";
@@ -12,7 +13,7 @@ import {faEdit, faCogs, faDownload, faTrashAlt} from "@fortawesome/free-solid-sv
 import {Filtros} from "./Filtros";
 import {MenuInterno} from "../MenuInterno";
 import ModalFormArquivosDeCarga from "./ModalFormArquivosDeCarga";
-import {ModalConfirmDeleteArquivoDeCarga} from "./ModalConfirmDeleteArquivoDeCarga";
+// import {ModalConfirmDeleteArquivoDeCarga} from "./ModalConfirmDeleteArquivoDeCarga";
 import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../sme/Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
 import { RetornaSeTemPermissaoEdicaoGestaoUsuarios } from "../GestaoDeUsuarios/utils/RetornaSeTemPermissaoEdicaoGestaoUsuarios";
 import {toastCustom} from "../ToastCustom";
@@ -549,16 +550,16 @@ const ArquivosDeCarga = () => {
                     />
                 </section>
                 <section>
-                    <ModalConfirmDeleteArquivoDeCarga
-                        show={showModalConfirmDeleteArquivosDeCarga}
-                        handleClose={handleCloseConfirmDeleteArquivoDeCarga}
-                        onDeleteArquivoDeCargaTrue={onDeleteArquivoDeCargaTrue}
-                        titulo="Excluir Arquivo de Carga"
-                        texto="<p>Deseja realmente excluir este Arquivo de Carga?</p>"
-                        primeiroBotaoTexto="Cancelar"
-                        primeiroBotaoCss="outline-success"
-                        segundoBotaoCss="danger"
-                        segundoBotaoTexto="Excluir"
+                    <ModalConfirmarExclusao
+                        open={showModalConfirmDeleteArquivosDeCarga}
+                        onOk={onDeleteArquivoDeCargaTrue}
+                        okText="Excluir"
+                        okButtonProps={{className: "btn-danger"}}
+                        onCancel={handleCloseConfirmDeleteArquivoDeCarga}
+                        cancelText="Cancelar"
+                        cancelButtonProps={{className: "btn-base-verde-outline"}}
+                        titulo="Excluir arquivo de carga"
+                        bodyText={<p>Tem certeza que deseja excluir este arquivo de carga?</p>}
                     />
                 </section>
             </>
