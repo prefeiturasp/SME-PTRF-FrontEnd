@@ -48,6 +48,28 @@ const listaTiposDeContaData = [{
     nome: 'Tipo 2',
 }];
 
+const mock_associacoes = [
+  {
+      uuid: "ba8b96ef-f05c-41f3-af10-73753490c545",
+      nome: "Associação A",
+  },
+  {
+      uuid: "ba8b96ef-f05c-41f3-af10-73753490c544",
+      nome: "Associação B",
+  }
+]
+
+const mock_tipo_contas = [
+    {
+        uuid: "ba8b96ef-f05c-41f3-af10-73753490c545",
+        nome: "Tipo A",
+    },
+    {
+        uuid: "ba8b96ef-f05c-41f3-af10-73753490c542",
+        nome: "Tipo B",
+    }
+]
+
 const defaultProps = {
   show: true,
   stateFormModal: mockCreate,
@@ -55,7 +77,10 @@ const defaultProps = {
   handleSubmitModalForm: jest.fn(),
   setShowModalDelete: mockSetShowModalConfirmDelete,
   setFieldValue: mockSetFieldValue,
-  listaTiposDeConta: listaTiposDeContaData
+  recebeAutoComplete: jest.fn(),
+  listaTiposDeConta: listaTiposDeContaData,
+  todasAsAssociacoesAutoComplete: mock_associacoes,
+  listaTiposDeConta: mock_tipo_contas
 };
 
 const defaultPropsEdicao = {
@@ -80,7 +105,7 @@ describe("Componente ModalForm", () => {
     expect(screen.getByLabelText("Agência")).toHaveValue("");
     expect(screen.getByLabelText("Conta")).toHaveValue("");
     expect(screen.getByLabelText("Cartão")).toHaveValue("");
-    expect(screen.queryByRole("button", { name: "Apagar" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Excluir" })).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Cancelar" })).toBeInTheDocument();
 
     expect(screen.getByRole("button", { name: "Salvar" })).toBeEnabled();
@@ -101,7 +126,7 @@ describe("Componente ModalForm", () => {
     expect(screen.getByLabelText("Agência")).toHaveValue("");
     expect(screen.getByLabelText("Conta")).toHaveValue("");
     expect(screen.getByLabelText("Cartão")).toHaveValue("");
-    expect(screen.queryByRole("button", { name: "Apagar" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Excluir" })).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Cancelar" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Salvar" })).toBeDisabled();
   });
@@ -116,7 +141,7 @@ describe("Componente ModalForm", () => {
     expect(screen.getByLabelText("Agência")).toHaveValue("0001");
     expect(screen.getByLabelText("Conta")).toHaveValue("12345-2");
     expect(screen.getByLabelText("Cartão")).toHaveValue("1234432112344321");
-    expect(screen.queryByRole("button", { name: "Apagar" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Excluir" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Cancelar" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Salvar" })).toBeEnabled();
   });
@@ -131,29 +156,9 @@ describe("Componente ModalForm", () => {
     expect(screen.getByLabelText("Agência")).toHaveValue("0001");
     expect(screen.getByLabelText("Conta")).toHaveValue("12345-2");
     expect(screen.getByLabelText("Cartão")).toHaveValue("1234432112344321");
-    expect(screen.queryByRole("button", { name: "Apagar" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Excluir" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Cancelar" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Salvar" })).toBeDisabled();
-  });
-
-  it.skip("chama handleSubmitModalForm quando o formulario for submetido", async () => {
-    render(<ModalForm {...defaultProps} />);
-
-    const input_associacao = screen.getByLabelText("Associação *");
-    const input_tipo_conta = screen.getByLabelText("Tipos de conta *");
-    const input_status = screen.getByLabelText("Status *");
-    const input_banco = screen.getByLabelText("Banco");
-    const saveButton = screen.getByRole("button", { name: "Salvar" });
-
-    fireEvent.change(input_associacao, { target: { value: "Associaçao 123" } });
-    fireEvent.change(input_tipo_conta, { target: { value: "ba8b96ef-f05c-41f3-af10-73753490c522" } });
-    fireEvent.change(input_status, { target: { value: "ATIVA" } });
-    fireEvent.change(input_banco, { target: { value: "Santander" } });
-    fireEvent.click(saveButton);
-
-    await waitFor(() => {
-        expect(defaultProps.handleSubmitModalForm).toHaveBeenCalledTimes(1);
-    });
   });
 
   it("Chama a ação de fechar modal quando o botão Cancelar for clicado", () => {
@@ -163,14 +168,13 @@ describe("Componente ModalForm", () => {
     expect(defaultProps.handleClose).toHaveBeenCalled();
   });
 
-
   test('deve chamar setShowModalConfirmDelete quando o botão for clicado', () => {
 
     // Renderize o componente, passando as props necessárias
     render(<ModalForm {...defaultPropsEdicao}/>);
 
     // Localize o botão
-    const button = screen.getByRole('button', { name: /Apagar/i });
+    const button = screen.getByRole('button', { name: /Excluir/i });
 
     // Simule o clique no botão
     fireEvent.click(button);

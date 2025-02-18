@@ -61,10 +61,6 @@ const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModal
                                 </div>
                                 <div className='row mt-3'>
                                     <div className='col'>
-                                        <p className='mb-2'>Uuid</p>
-                                        <p className='mb-2'>{values.uuid}</p>
-                                    </div>
-                                    <div className='col'>
                                         <p className='mb-2'>ID</p>
                                         <p className='mb-2'>{values.id}</p>
                                     </div>
@@ -73,7 +69,7 @@ const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModal
                                     <div className="p-Y flex-grow-1 bd-highlight">
                                         {values.operacao === 'edit' ? (
                                             <button onClick={()=>setShowModalConfirmDeleteTag(true)} type="button" className="btn btn btn-danger mt-2 mr-2" disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}>
-                                                Apagar
+                                                Excluir
                                             </button>
                                         ): null}
                                     </div>

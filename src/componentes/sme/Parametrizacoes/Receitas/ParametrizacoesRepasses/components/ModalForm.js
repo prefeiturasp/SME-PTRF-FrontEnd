@@ -350,7 +350,7 @@ export const ModalForm = ({handleSubmitFormModal, todasAsAssociacoesAutoComplete
                                                         className="btn btn btn-danger mt-2 mr-2"
                                                         disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                                     >
-                                                        Apagar
+                                                        Excluir
                                                     </button>
                                                 }
                                             </div>

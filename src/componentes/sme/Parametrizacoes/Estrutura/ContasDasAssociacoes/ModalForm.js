@@ -175,7 +175,7 @@ const ModalForm = ({show, handleClose, handleSubmitModalForm, recebeAutoComplete
                             <div className="p-Y flex-grow-1 bd-highlight">
                                 {stateFormModal && stateFormModal.operacao === 'edit' ? (
                                 <button onClick={()=>setShowModalDelete(true)} type="button" className="btn btn btn-danger mt-2 mr-2" disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}>
-                                    Apagar
+                                    Excluir
                                 </button>
                                 ): null}
                             </div>

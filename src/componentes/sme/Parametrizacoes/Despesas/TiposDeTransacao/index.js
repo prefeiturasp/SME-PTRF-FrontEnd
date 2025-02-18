@@ -32,7 +32,7 @@ export const TiposDeTransacao = ()=>{
     const carregaTodos = useCallback(async ()=>{
         setLoading(true);
         let todos = await getTiposDeTransacao();
-        setListaDeTipos(todos);
+        setListaDeTipos(todos ?? []);
         setLoading(false);
     }, []);
 
@@ -41,7 +41,7 @@ export const TiposDeTransacao = ()=>{
     }, [carregaTodos]);
 
     // Quando a state da lista sofrer alteração
-    const totalDeTipos = useMemo(() => listaDeTipos.length, [listaDeTipos]);
+    const totalDeTipos = useMemo(() => listaDeTipos?.length ?? 0, [listaDeTipos]); 
 
     // Filtros
     const initialStateFiltros = {
@@ -149,7 +149,7 @@ export const TiposDeTransacao = ()=>{
             }catch (e) {
                 console.log('Erro ao criar Tipo de transação ', e.response.data);
                 if (e.response.data && e.response.data.non_field_errors) {
-                    setErroExclusaoNaoPermitida('Ja existe um tipo de transação com esse nome');
+                    setErroExclusaoNaoPermitida('Já existe um tipo de transação com esse nome');
                     setShowModalInfoUpdateNaoPermitido(true)
                 } else {
                     setErroExclusaoNaoPermitida('Erro ao criar tipo de transação. Tente novamente.');
@@ -164,7 +164,7 @@ export const TiposDeTransacao = ()=>{
                 await carregaTodos();
             }catch (e) {
                 if (e.response.data && e.response.data.non_field_errors) {
-                    setErroExclusaoNaoPermitida('Ja existe um tipo de transação com esse nome');
+                    setErroExclusaoNaoPermitida('Já existe um tipo de transação com esse nome');
                     setShowModalInfoUpdateNaoPermitido(true);
                 } else {
                     setErroExclusaoNaoPermitida('Erro ao atualizar tipo de transação. Tente novamente.');

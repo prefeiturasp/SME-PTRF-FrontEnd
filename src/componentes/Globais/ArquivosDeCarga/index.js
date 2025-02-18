@@ -1,6 +1,7 @@
 import React, {memo, useMemo, useCallback, useEffect, useState} from "react";
 import "./arquivos-de-carga.scss"
 import "../../dres/Associacoes/associacoes.scss"
+import {ModalConfirmarExclusao} from "../../../componentes/sme/Parametrizacoes/componentes/ModalConfirmarExclusao";
 import {Redirect, useParams} from 'react-router-dom'
 import {BotoesTopo} from "./BotoesTopo";
 import {PaginasContainer} from "../../../paginas/PaginasContainer";
@@ -12,7 +13,6 @@ import {faEdit, faCogs, faDownload, faTrashAlt} from "@fortawesome/free-solid-sv
 import {Filtros} from "./Filtros";
 import {MenuInterno} from "../MenuInterno";
 import ModalFormArquivosDeCarga from "./ModalFormArquivosDeCarga";
-import {ModalConfirmDeleteArquivoDeCarga} from "./ModalConfirmDeleteArquivoDeCarga";
 import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../sme/Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
 import { RetornaSeTemPermissaoEdicaoGestaoUsuarios } from "../GestaoDeUsuarios/utils/RetornaSeTemPermissaoEdicaoGestaoUsuarios";
 import {toastCustom} from "../ToastCustom";
@@ -39,6 +39,26 @@ const ArquivosDeCarga = () => {
                 UrlsMenuInterno:[
                     {label: "Dados das associações", url: "parametro-associacoes"},
                     {label: "Cargas de arquivo", url: 'parametro-arquivos-de-carga', origem:'CARGA_ASSOCIACOES'},
+                ],
+            }
+        }else if (url_params.tipo_de_carga === 'CARGA_ACOES_ASSOCIACOES'){
+            obj = {
+                titulo: 'Ações das Associações',
+                titulo_modal: 'ações das associações',
+                acesso_permitido: true,
+                UrlsMenuInterno:[
+                    {label: "Ações das associações", url: "parametro-acoes-associacoes"},
+                    {label: "Cargas de arquivo", url: 'parametro-arquivos-de-carga', origem:'CARGA_ACOES_ASSOCIACOES'},
+                ],
+            }
+        }else if (url_params.tipo_de_carga === 'CARGA_CONTAS_ASSOCIACOES'){
+            obj = {
+                titulo: 'Contas de Associações',
+                titulo_modal: 'conta de associação',
+                acesso_permitido: true,
+                UrlsMenuInterno:[
+                    {label: "Contas de Associações", url: "parametro-contas-associacoes"},
+                    {label: "Cargas de arquivo", url: 'parametro-arquivos-de-carga', origem:'CARGA_CONTAS_ASSOCIACOES'},
                 ],
             }
         }else if (url_params.tipo_de_carga === 'CARGA_USUARIOS' && url_params.versao === 'V2'){
@@ -119,6 +139,12 @@ const ArquivosDeCarga = () => {
         if (dadosDeOrigem.acesso_permitido) {
             let tabela = await getTabelaArquivosDeCarga();
             setTabelaArquivos(tabela)
+            if(tabela && tabela.tipos_cargas) {
+                const requerPeriodo = tabela.tipos_cargas.find(tipo => tipo.id === url_params.tipo_de_carga)?.requer_periodo;
+                const requerTipoConta = tabela.tipos_cargas.find(tipo => tipo.id === url_params.tipo_de_carga)?.requer_tipo_de_conta
+                setArquivoRequerPeriodo(requerPeriodo);
+                setArquivoRequerTipoDeConta(requerTipoConta);
+            }
         }
     }, [dadosDeOrigem.acesso_permitido]);
 
@@ -129,8 +155,8 @@ const ArquivosDeCarga = () => {
     useEffect(() => {
         if(tabelaArquivos && tabelaArquivos.tipos_cargas) {
             const requerPeriodo = tabelaArquivos.tipos_cargas.find(tipo => tipo.id === url_params.tipo_de_carga)?.requer_periodo;
-            setArquivoRequerPeriodo(requerPeriodo);
             const requerTipoConta = tabelaArquivos.tipos_cargas.find(tipo => tipo.id === url_params.tipo_de_carga)?.requer_tipo_de_conta
+            setArquivoRequerPeriodo(requerPeriodo);
             setArquivoRequerTipoDeConta(requerTipoConta);
         }
     }, [url_params.tipo_de_carga, tabelaArquivos])
@@ -151,7 +177,7 @@ const ArquivosDeCarga = () => {
     }, [carregaArquivosPeloTipoDeCarga]);
 
     // Quando a state de todasAsAcoes sofrer alteração
-    const totalDeArquivos = useMemo(() => arquivos.length, [arquivos]);
+    const totalDeArquivos = useMemo(() => arquivos ? arquivos.length : 0, [arquivos]);
 
     // Filtros
     const initialStateFiltros = {
@@ -179,7 +205,7 @@ const ArquivosDeCarga = () => {
     };
 
     //Para a Tabela
-    const rowsPerPage = 10;
+    const rowsPerPage = 20;
 
     const conteudoTemplate = (rowData) => {
         return (
@@ -523,16 +549,16 @@ const ArquivosDeCarga = () => {
                     />
                 </section>
                 <section>
-                    <ModalConfirmDeleteArquivoDeCarga
-                        show={showModalConfirmDeleteArquivosDeCarga}
-                        handleClose={handleCloseConfirmDeleteArquivoDeCarga}
-                        onDeleteArquivoDeCargaTrue={onDeleteArquivoDeCargaTrue}
-                        titulo="Excluir Arquivo de Carga"
-                        texto="<p>Deseja realmente excluir este Arquivo de Carga?</p>"
-                        primeiroBotaoTexto="Cancelar"
-                        primeiroBotaoCss="outline-success"
-                        segundoBotaoCss="danger"
-                        segundoBotaoTexto="Excluir"
+                    <ModalConfirmarExclusao
+                        open={showModalConfirmDeleteArquivosDeCarga}
+                        onOk={onDeleteArquivoDeCargaTrue}
+                        okText="Excluir"
+                        okButtonProps={{className: "btn-danger"}}
+                        onCancel={handleCloseConfirmDeleteArquivoDeCarga}
+                        cancelText="Cancelar"
+                        cancelButtonProps={{className: "btn-base-verde-outline"}}
+                        titulo="Excluir arquivo de carga"
+                        bodyText={<p>Tem certeza que deseja excluir este arquivo de carga?</p>}
                     />
                 </section>
             </>

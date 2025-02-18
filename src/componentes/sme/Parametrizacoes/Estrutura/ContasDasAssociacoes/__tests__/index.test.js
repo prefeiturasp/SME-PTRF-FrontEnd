@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { act } from 'react-dom/test-utils';
+import { MemoryRouter, Route } from "react-router-dom";
 import { ContasDasAssociacoes } from '..';
 import {
     postContasAssociacoes,
@@ -41,7 +41,13 @@ describe("Carrega página de Contas de Associações", () => {
     });
 
     it('Renderiza a mensagem "Carregando..." ao abrir a página', () => {
-        render(<ContasDasAssociacoes />);
+        render(
+            <MemoryRouter initialEntries={["/parametro-contas-associacoes"]}>
+                <Route path="/parametro-contas-associacoes">
+                    <ContasDasAssociacoes />
+                </Route>
+            </MemoryRouter>
+        );
         expect(screen.getByText(/Carregando.../i)).toBeInTheDocument();
     });
 
@@ -57,9 +63,13 @@ describe("Carrega página de Contas de Associações", () => {
         };
         getContasAssociacoesFiltros.mockResolvedValueOnce(mockData);
         render(
-            <ContasDasAssociacoes />
+            <MemoryRouter initialEntries={["/parametro-contas-associacoes"]}>
+                <Route path="/parametro-contas-associacoes">
+                    <ContasDasAssociacoes />
+                </Route>
+            </MemoryRouter>
         );
-        expect(screen.getByText(/Contas das Associações/i)).toBeInTheDocument();
+        expect(screen.getAllByText(/Contas das Associações/i)).toHaveLength(2);
 
         await waitFor(()=> expect(getContasAssociacoesFiltros).toHaveBeenCalledTimes(1));
     });
@@ -68,7 +78,11 @@ describe("Carrega página de Contas de Associações", () => {
         const mockData = [];
         getContasAssociacoesFiltros.mockResolvedValue(mockData)
         render(
-            <ContasDasAssociacoes />
+            <MemoryRouter initialEntries={["/parametro-contas-associacoes"]}>
+                <Route path="/parametro-contas-associacoes">
+                    <ContasDasAssociacoes />
+                </Route>
+            </MemoryRouter>
         );
 
         await waitFor(()=> expect(getContasAssociacoesFiltros).toHaveBeenCalled());
@@ -107,82 +121,83 @@ describe('Teste handleSubmitModalForm', () => {
         getFiltrosDadosContasAssociacoes.mockResolvedValueOnce(mock_filtros);
     });
 
-    it.skip('teste criação sucesso', async() => {
-        const mock_contas_associacoes_full = { 
-            count: 21,
-            page: 1,
-            page_size: 20,
-            results: contasAssociacoes.slice(0, 20)};
-        getContasAssociacoesFiltros.mockResolvedValueOnce(mock_contas_associacoes_full).mockResolvedValueOnce(mock_contas_associacoes_full);
-        render(<ContasDasAssociacoes/>);
-        
-        await waitFor(()=>{
-            const botaoAdicionar = screen.getByRole("button", { name: "Adicionar conta de associação" });
-            expect(botaoAdicionar).toBeInTheDocument();
-            expect(botaoAdicionar).toBeEnabled();
-            fireEvent.click(botaoAdicionar);
-            }
-        );
+    // it('teste criação sucesso', async() => {
+    //     const mock_contas_associacoes_full = { 
+    //         count: 21,
+    //         page: 1,
+    //         page_size: 20,
+    //         results: contasAssociacoes.slice(0, 20)};
+    //     getContasAssociacoesFiltros.mockResolvedValue(mock_contas_associacoes_full)
+    //     render(
+    //         <MemoryRouter initialEntries={["/parametro-contas-associacoes"]}>
+    //             <Route path="/parametro-contas-associacoes">
+    //                 <ContasDasAssociacoes />
+    //             </Route>
+    //         </MemoryRouter>
+    //     );
 
-        expect(screen.getByText("* Preenchimento obrigatório")).toBeInTheDocument();
-        
-        const input_associacao = screen.getByLabelText("Associação *");
-        const input_tipo_conta = screen.getByLabelText("Tipos de conta *");
-        const input_status = screen.getByLabelText("Status *");
-        const input_banco = screen.getByLabelText("Banco");
-        const saveButton = screen.getByRole("button", { name: "Salvar" });
+    //     await waitFor(()=>{
+    //         const botaoAdicionar = screen.getByRole("button", { name: "Adicionar conta de associação" });
+    //         expect(botaoAdicionar).toBeInTheDocument();
+    //         expect(botaoAdicionar).toBeEnabled();
+    //         fireEvent.click(botaoAdicionar);
+    //         }
+    //     );
 
-        expect(input_associacao).toBeInTheDocument();
-        expect(input_associacao).toBeEnabled();
-        expect(input_tipo_conta).toBeInTheDocument();
-        expect(input_status).toBeInTheDocument();
-        expect(input_banco).toBeInTheDocument();
-        expect(input_banco).toBeEnabled();
+    //     expect(screen.getByText("* Preenchimento obrigatório")).toBeInTheDocument();
 
-        expect(saveButton).toBeInTheDocument();
-        expect(saveButton).toBeEnabled();
+    //     const input_associacao = screen.getByLabelText("Associação *");
+    //     const input_tipo_conta = screen.getByLabelText("Tipos de conta *");
+    //     const input_status = screen.getByLabelText("Status *");
+    //     const input_data_inicio = screen.getByLabelText("Data de início *");
+    //     const input_banco = screen.getByLabelText("Banco");
+    //     const saveButton = screen.getByRole("button", { name: "Salvar" });
 
-        // fireEvent.change(input_associacao, { target: { value: "Associacao 1" } });
-        const autocompleteInput = screen.getByRole('searchbox');
-        userEvent.type(autocompleteInput, 'Associação');
+    //     expect(input_associacao).toBeInTheDocument();
+    //     expect(input_associacao).toBeEnabled();
+    //     expect(input_tipo_conta).toBeInTheDocument();
+    //     expect(input_status).toBeInTheDocument();
+    //     expect(input_data_inicio).toBeInTheDocument();
+    //     expect(input_banco).toBeInTheDocument();
+    //     expect(input_banco).toBeEnabled();
 
-        
-            const suggestionsList = screen.getByRole('listbox'); // Exemplo: Adapte o seletor conforme sua estrutura
-            console.log("innerhtml")
-            console.log(suggestionsList.innerHTML);
-            const suggestions = suggestionsList.querySelectorAll('li');
-            console.log("suggestions");
-            console.log(suggestions);
-            expect(suggestions).toHaveLength(2);
-        
-        // Simula a seleção da primeira sugestão (ajuste o seletor conforme sua estrutura)
-        // const firstSuggestion = screen.getAllByRole('option')[0];
-        // await userEvent.click(firstSuggestion);
+    //     expect(saveButton).toBeInTheDocument();
+    //     expect(saveButton).toBeEnabled();
 
+    //     fireEvent.change(input_associacao, { target: { value: "Assoc" } }); // Digitar um valor parcial ao populado
+    //     await waitFor(() => {
+    //         const associacaoSelecionada = screen.getByText("Associação 1", { selector: ".p-autocomplete-list-item"}); // buscar pelo título do elemento
+    //         expect(associacaoSelecionada).toBeInTheDocument();
+    //         fireEvent.click(associacaoSelecionada);
+    //     })
+    //     expect(input_associacao.value).toBe("Associação 1");
+    //     fireEvent.change(input_tipo_conta, { target: { value: "ba8b96ef-f05c-41f3-af10-73753490c542" } });
+    //     fireEvent.change(input_status, { target: { value: "ATIVA" } });
 
-        // fireEvent.change(input_tipo_conta, { target: { value: "ba8b96ef-f05c-41f3-af10-73753490c542" } });
-        // fireEvent.change(input_status, { target: { value: "ATIVA" } });
-        // fireEvent.change(input_banco, { target: { value: "Santander" } });
-        // console.log("*****************************")
-        // console.log(input_associacao.value);
-        // console.log(input_tipo_conta.value);
-        // console.log(input_status.value);
+    //     // Simular o click em uma Data
+    //     fireEvent.click(input_data_inicio); // clicar no campo data
+    //     const data = screen.getByText("10") // seleciona o dia 10
+    //     fireEvent.click(data); // clicar no dia
 
-        // fireEvent.click(saveButton);
+    //     fireEvent.change(input_banco, { target: { value: "Santander" } });
+    //     fireEvent.click(saveButton);
 
-        // const errorMessage = screen.getByText('Associação é obrigatório');
-        // expect(errorMessage).toBeInTheDocument();
+    //     await waitFor(()=>{
+    //         expect(postContasAssociacoes).toHaveBeenCalled();
+    //         expect(getContasAssociacoesFiltros).toHaveBeenCalledTimes(2);
+    //     });
+    // });
 
-        // await waitFor(()=>{
-        //     expect(postContasAssociacoes).toHaveBeenCalled();
-        //     expect(getContasAssociacoesFiltros).toHaveBeenCalledTimes(2);
-        // });
-    });
-
-    it.skip('teste criação falha duplicidade', async() => {
+    it('teste criação falha duplicidade', async() => {
         postContasAssociacoes.mockRejectedValueOnce({response: {data: {non_field_errors: ["Esta conta de associacao já existe."]}}});
-        render(<ContasDasAssociacoes/>);
-        
+        render(
+            <MemoryRouter initialEntries={["/parametro-contas-associacoes"]}>
+                <Route path="/parametro-contas-associacoes">
+                    <ContasDasAssociacoes />
+                </Route>
+            </MemoryRouter>
+        );
+
         await waitFor(()=>{
             const botaoAdicionar = screen.getByRole("button", { name: "Adicionar conta de associação" });
             expect(botaoAdicionar).toBeInTheDocument();
@@ -194,6 +209,7 @@ describe('Teste handleSubmitModalForm', () => {
         const input_associacao = screen.getByLabelText("Associação *");
         const input_tipo_conta = screen.getByLabelText("Tipos de conta *");
         const input_status = screen.getByLabelText("Status *");
+        const input_data_inicio = screen.getByLabelText("Data de início *");
         const input_banco = screen.getByLabelText("Banco");
         const saveButton = screen.getByRole("button", { name: "Salvar" });
 
@@ -201,15 +217,27 @@ describe('Teste handleSubmitModalForm', () => {
         expect(input_associacao).toBeEnabled();
         expect(input_tipo_conta).toBeInTheDocument();
         expect(input_status).toBeInTheDocument();
+        expect(input_data_inicio).toBeInTheDocument();
         expect(input_banco).toBeInTheDocument();
         expect(input_banco).toBeEnabled();
 
         expect(saveButton).toBeInTheDocument();
         expect(saveButton).toBeEnabled();
 
-        fireEvent.change(input_associacao, { target: { value: "ba8b96ef-f05c-41f3-af10-73753490c001" } });
+        fireEvent.change(input_associacao, { target: { value: "Assoc" } }); // Digitar um valor parcial ao populado
+        await waitFor(() => {
+            const associacaoSelecionada = screen.getByText("Associação 1"); // buscar pelo título do elemento
+            expect(associacaoSelecionada).toBeInTheDocument();
+            fireEvent.click(associacaoSelecionada);
+            expect(input_associacao.value).toBe("Associação 1");
+        })
         fireEvent.change(input_tipo_conta, { target: { value: "ba8b96ef-f05c-41f3-af10-73753490c542" } });
         fireEvent.change(input_status, { target: { value: "ATIVA" } });
+
+        // Simular o click em uma Data
+        fireEvent.click(input_data_inicio); // clicar no campo data
+        const data = screen.getByText("10") // seleciona o dia 10
+        fireEvent.click(data); // clicar no dia
         fireEvent.change(input_banco, { target: { value: "Santander" } });
         fireEvent.click(saveButton);
 
@@ -220,7 +248,7 @@ describe('Teste handleSubmitModalForm', () => {
         });
     });
 
-    it.skip('teste criação falha genérica', async() => {
+    it('teste criação falha genérica', async() => {
         postContasAssociacoes.mockRejectedValueOnce(
             {
                 response: {
@@ -230,8 +258,14 @@ describe('Teste handleSubmitModalForm', () => {
                 }
             }
         );
-        render(<ContasDasAssociacoes/>);
-        
+        render(
+            <MemoryRouter initialEntries={["/parametro-contas-associacoes"]}>
+                <Route path="/parametro-contas-associacoes">
+                    <ContasDasAssociacoes />
+                </Route>
+            </MemoryRouter>
+        );
+
         await waitFor(()=>{
             const botaoAdicionar = screen.getByRole("button", { name: "Adicionar conta de associação" });
             expect(botaoAdicionar).toBeInTheDocument();
@@ -241,10 +275,9 @@ describe('Teste handleSubmitModalForm', () => {
         );
 
         const input_associacao = screen.getByLabelText("Associação *");
-        // // const input_associacao = screen.getByTestId('associacao_nome');
-        // const input_associacao = screen.getByRole('searchbox', { name: 'selectedAssociacao' });
         const input_tipo_conta = screen.getByLabelText("Tipos de conta *");
         const input_status = screen.getByLabelText("Status *");
+        const input_data_inicio = screen.getByLabelText("Data de início *");
         const input_banco = screen.getByLabelText("Banco");
         const saveButton = screen.getByRole("button", { name: "Salvar" });
 
@@ -252,15 +285,27 @@ describe('Teste handleSubmitModalForm', () => {
         expect(input_associacao).toBeEnabled();
         expect(input_tipo_conta).toBeInTheDocument();
         expect(input_status).toBeInTheDocument();
+        expect(input_data_inicio).toBeInTheDocument();
         expect(input_banco).toBeInTheDocument();
         expect(input_banco).toBeEnabled();
 
         expect(saveButton).toBeInTheDocument();
         expect(saveButton).toBeEnabled();
 
-        fireEvent.change(input_associacao, { target: { value: "Associacao 1" } });
+        fireEvent.change(input_associacao, { target: { value: "Assoc" } }); // Digitar um valor parcial ao populado
+        await waitFor(() => {
+            const associacaoSelecionada = screen.getByText("Associação 1"); // buscar pelo título do elemento
+            expect(associacaoSelecionada).toBeInTheDocument();
+            fireEvent.click(associacaoSelecionada);
+            expect(input_associacao.value).toBe("Associação 1");
+        })
         fireEvent.change(input_tipo_conta, { target: { value: "ba8b96ef-f05c-41f3-af10-73753490c542" } });
         fireEvent.change(input_status, { target: { value: "ATIVA" } });
+
+        // Simular o click em uma Data
+        fireEvent.click(input_data_inicio); // clicar no campo data
+        const data = screen.getByText("10") // seleciona o dia 10
+        fireEvent.click(data); // clicar no dia
         fireEvent.change(input_banco, { target: { value: "Santander" } });
         fireEvent.click(saveButton);
 
@@ -271,15 +316,21 @@ describe('Teste handleSubmitModalForm', () => {
         });
     });
 
-    it.skip('teste edição sucesso', async() => {
+    it('teste edição sucesso', async() => {
         const mock_contas_associacoes_full = { 
             count: 21,
             page: 1,
             page_size: 20,
             results: contasAssociacoes.slice(0, 20)};
-        getContasAssociacoesFiltros.mockResolvedValueOnce(mock_contas_associacoes_full).mockResolvedValueOnce(mock_contas_associacoes_full);
-        render(<ContasDasAssociacoes/>);
-        
+        getContasAssociacoesFiltros.mockResolvedValueOnce(mock_contas_associacoes_full)
+        render(
+            <MemoryRouter initialEntries={["/parametro-contas-associacoes"]}>
+                <Route path="/parametro-contas-associacoes">
+                    <ContasDasAssociacoes />
+                </Route>
+            </MemoryRouter>
+        );
+
         await waitFor(()=> {
             const tabela = screen.getByRole('grid');
             const linhas = tabela.querySelectorAll('tbody tr');
@@ -291,10 +342,11 @@ describe('Teste handleSubmitModalForm', () => {
         });
 
         expect(screen.getByText("* Preenchimento obrigatório")).toBeInTheDocument();
-        
+
         const input_associacao = screen.getByLabelText("Associação *");
         const input_tipo_conta = screen.getByLabelText("Tipos de conta *");
         const input_status = screen.getByLabelText("Status *");
+        const input_data_inicio = screen.getByLabelText("Data de início *");
         const input_banco = screen.getByLabelText("Banco");
         const saveButton = screen.getByRole("button", { name: "Salvar" });
 
@@ -302,14 +354,18 @@ describe('Teste handleSubmitModalForm', () => {
         expect(input_associacao.value).toBe("Associação 1");
         expect(input_tipo_conta).toBeInTheDocument();
         expect(input_tipo_conta.value).toBe("ba8b96ef-f05c-41f3-af10-73753490c542");
+        expect(input_data_inicio).toBeInTheDocument();
         expect(input_status).toBeInTheDocument();
         expect(input_banco).toBeInTheDocument();
 
         expect(saveButton).toBeInTheDocument();
         expect(saveButton).toBeEnabled();
 
+        // Simular o click em uma Data
+        fireEvent.click(input_data_inicio); // clicar no campo data
+        const data = screen.getByText("10") // seleciona o dia 10
+        fireEvent.click(data); // clicar no dia
         fireEvent.change(input_banco, { target: { value: "Santander" } });
-
         fireEvent.click(saveButton);
 
         await waitFor(()=>{
@@ -318,7 +374,7 @@ describe('Teste handleSubmitModalForm', () => {
         });
     });
 
-    it.skip('teste edição falha non_field_errors', async() => {
+    it('teste edição falha non_field_errors', async() => {
         const mock_contas_associacoes_full = { 
             count: 21,
             page: 1,
@@ -326,8 +382,14 @@ describe('Teste handleSubmitModalForm', () => {
             results: contasAssociacoes.slice(0, 20)};
         getContasAssociacoesFiltros.mockResolvedValueOnce(mock_contas_associacoes_full);
         patchContasAssociacoes.mockRejectedValueOnce({response: {data: {non_field_errors: ["Esta conta de associacao já existe."]}}});
-        render(<ContasDasAssociacoes/>);
-        
+        render(
+            <MemoryRouter initialEntries={["/parametro-contas-associacoes"]}>
+                <Route path="/parametro-contas-associacoes">
+                    <ContasDasAssociacoes />
+                </Route>
+            </MemoryRouter>
+        );
+
         await waitFor(()=> {
             const tabela = screen.getByRole('grid');
             const linhas = tabela.querySelectorAll('tbody tr');
@@ -339,10 +401,11 @@ describe('Teste handleSubmitModalForm', () => {
         });
 
         expect(screen.getByText("* Preenchimento obrigatório")).toBeInTheDocument();
-        
+
         const input_associacao = screen.getByLabelText("Associação *");
         const input_tipo_conta = screen.getByLabelText("Tipos de conta *");
         const input_status = screen.getByLabelText("Status *");
+        const input_data_inicio = screen.getByLabelText("Data de início *");
         const input_banco = screen.getByLabelText("Banco");
         const saveButton = screen.getByRole("button", { name: "Salvar" });
 
@@ -351,10 +414,16 @@ describe('Teste handleSubmitModalForm', () => {
         expect(input_tipo_conta).toBeInTheDocument();
         expect(input_tipo_conta.value).toBe("ba8b96ef-f05c-41f3-af10-73753490c542");
         expect(input_status).toBeInTheDocument();
+        expect(input_data_inicio).toBeInTheDocument();
         expect(input_banco).toBeInTheDocument();
 
         expect(saveButton).toBeInTheDocument();
         expect(saveButton).toBeEnabled();
+
+        // Simular o click em uma Data
+        fireEvent.click(input_data_inicio); // clicar no campo data
+        const data = screen.getByText("10") // seleciona o dia 10
+        fireEvent.click(data); // clicar no dia
 
         fireEvent.change(input_banco, { target: { value: "Santander" } });
 
@@ -368,7 +437,7 @@ describe('Teste handleSubmitModalForm', () => {
         });
     });
 
-    it.skip('teste edição erro genérico', async() => {
+    it('teste edição erro genérico', async() => {
         const mock_contas_associacoes_full = { 
             count: 21,
             page: 1,
@@ -384,8 +453,14 @@ describe('Teste handleSubmitModalForm', () => {
                 }
             }
         );
-        render(<ContasDasAssociacoes/>);
-        
+        render(
+            <MemoryRouter initialEntries={["/parametro-contas-associacoes"]}>
+                <Route path="/parametro-contas-associacoes">
+                    <ContasDasAssociacoes />
+                </Route>
+            </MemoryRouter>
+        );
+
         await waitFor(()=> {
             const tabela = screen.getByRole('grid');
             const linhas = tabela.querySelectorAll('tbody tr');
@@ -397,10 +472,11 @@ describe('Teste handleSubmitModalForm', () => {
         });
 
         expect(screen.getByText("* Preenchimento obrigatório")).toBeInTheDocument();
-        
+
         const input_associacao = screen.getByLabelText("Associação *");
         const input_tipo_conta = screen.getByLabelText("Tipos de conta *");
         const input_status = screen.getByLabelText("Status *");
+        const input_data_inicio = screen.getByLabelText("Data de início *");
         const input_banco = screen.getByLabelText("Banco");
         const saveButton = screen.getByRole("button", { name: "Salvar" });
 
@@ -409,10 +485,16 @@ describe('Teste handleSubmitModalForm', () => {
         expect(input_tipo_conta).toBeInTheDocument();
         expect(input_tipo_conta.value).toBe("ba8b96ef-f05c-41f3-af10-73753490c542");
         expect(input_status).toBeInTheDocument();
+        expect(input_data_inicio).toBeInTheDocument();
         expect(input_banco).toBeInTheDocument();
 
         expect(saveButton).toBeInTheDocument();
         expect(saveButton).toBeEnabled();
+
+        // Simular o click em uma Data
+        fireEvent.click(input_data_inicio); // clicar no campo data
+        const data = screen.getByText("10") // seleciona o dia 10
+        fireEvent.click(data); // clicar no dia
 
         fireEvent.change(input_banco, { target: { value: "Santander" } });
 
@@ -433,8 +515,14 @@ describe('Teste handleSubmitModalForm', () => {
             page_size: 20,
             results: contasAssociacoes.slice(0, 20)};
         getContasAssociacoesFiltros.mockResolvedValueOnce(mock_contas_associacoes_full).mockResolvedValueOnce(mock_contas_associacoes_full);
-        render(<ContasDasAssociacoes/>);
-        
+        render(
+            <MemoryRouter initialEntries={["/parametro-contas-associacoes"]}>
+                <Route path="/parametro-contas-associacoes">
+                    <ContasDasAssociacoes />
+                </Route>
+            </MemoryRouter>
+        );
+
         await waitFor(()=> {
             const tabela = screen.getByRole('grid');
             const linhas = tabela.querySelectorAll('tbody tr');
@@ -445,11 +533,13 @@ describe('Teste handleSubmitModalForm', () => {
             fireEvent.click(btnAlterar);
         });
 
-        const btnRemover = screen.getByRole("button", { name: "Apagar" });
+        const btnRemover = screen.getByRole("button", { name: "Excluir" });
         expect(btnRemover).toBeInTheDocument();
         expect(btnRemover).toBeEnabled();
         fireEvent.click(btnRemover);
-        const btnConfirma = screen.getByRole("button", { name: "Excluir" });
+        const botoesExcluir = screen.getAllByRole("button", { name: "Excluir" });
+
+        const btnConfirma = botoesExcluir.find(btn => btn.classList.contains("btn-base-vermelho"));
         expect(btnConfirma).toBeInTheDocument();
         expect(btnConfirma).toBeEnabled();
         fireEvent.click(btnConfirma);
@@ -470,8 +560,12 @@ describe('Teste handleSubmitModalForm', () => {
         deleteContasAssociacoes.mockRejectedValueOnce({
             response: { data: { mensagem: "mensagem de erro" } },
         });
-        render(<ContasDasAssociacoes/>);
-        
+        render(<MemoryRouter initialEntries={["/parametro-contas-associacoes"]}>
+            <Route path="/parametro-contas-associacoes">
+                <ContasDasAssociacoes />
+            </Route>
+        </MemoryRouter>);
+
         await waitFor(()=> {
             const tabela = screen.getByRole('grid');
             const linhas = tabela.querySelectorAll('tbody tr');
@@ -482,11 +576,13 @@ describe('Teste handleSubmitModalForm', () => {
             fireEvent.click(btnAlterar);
         });
 
-        const btnRemover = screen.getByRole("button", { name: "Apagar" });
+        const btnRemover = screen.getByRole("button", { name: "Excluir" });
         expect(btnRemover).toBeInTheDocument();
         expect(btnRemover).toBeEnabled();
         fireEvent.click(btnRemover);
-        const btnConfirma = screen.getByRole("button", { name: "Excluir" });
+        const botoesExcluir = screen.getAllByRole("button", { name: "Excluir" });
+
+        const btnConfirma = botoesExcluir.find(btn => btn.classList.contains("btn-base-vermelho"));
         expect(btnConfirma).toBeInTheDocument();
         expect(btnConfirma).toBeEnabled();
         fireEvent.click(btnConfirma);
@@ -509,8 +605,14 @@ describe('Teste handleSubmitModalForm', () => {
         deleteContasAssociacoes.mockRejectedValueOnce({
             response: { data: { nome: "Testando erro response" } },
         });
-        render(<ContasDasAssociacoes/>);
-        
+        render(
+            <MemoryRouter initialEntries={["/parametro-contas-associacoes"]}>
+                <Route path="/parametro-contas-associacoes">
+                    <ContasDasAssociacoes />
+                </Route>
+            </MemoryRouter>
+        );
+
         await waitFor(()=> {
             const tabela = screen.getByRole('grid');
             const linhas = tabela.querySelectorAll('tbody tr');
@@ -521,11 +623,13 @@ describe('Teste handleSubmitModalForm', () => {
             fireEvent.click(btnAlterar);
         });
 
-        const btnRemover = screen.getByRole("button", { name: "Apagar" });
+        const btnRemover = screen.getByRole("button", { name: "Excluir" });
         expect(btnRemover).toBeInTheDocument();
         expect(btnRemover).toBeEnabled();
         fireEvent.click(btnRemover);
-        const btnConfirma = screen.getByRole("button", { name: "Excluir" });
+        const botoesExcluir = screen.getAllByRole("button", { name: "Excluir" });
+
+        const btnConfirma = botoesExcluir.find(btn => btn.classList.contains("btn-base-vermelho"));
         expect(btnConfirma).toBeInTheDocument();
         expect(btnConfirma).toBeEnabled();
         fireEvent.click(btnConfirma);
@@ -580,7 +684,13 @@ describe('Teste handle functions', () => {
             page_size: 20,
             results: contasAssociacoes.slice(20, 21)};
         getContasAssociacoesFiltros.mockResolvedValueOnce(mock_contas_associacoes_full).mockResolvedValueOnce(mock_contas_associacoes_paginated);
-        render(<ContasDasAssociacoes/>);
+        render(
+            <MemoryRouter initialEntries={["/parametro-contas-associacoes"]}>
+                <Route path="/parametro-contas-associacoes">
+                    <ContasDasAssociacoes />
+                </Route>
+            </MemoryRouter>
+        );
         await waitFor(()=>{
                 const table = screen.getByRole("grid");
                 const rowsLength = table.querySelectorAll("tbody tr").length;
@@ -606,7 +716,13 @@ describe('Teste handle functions', () => {
             page_size: 20,
             results: contasAssociacoes.slice(0, 20)};
         getContasAssociacoesFiltros.mockResolvedValueOnce(mock_contas_associacoes_full).mockResolvedValueOnce(mock_contas_associacoes_full);
-        render(<ContasDasAssociacoes/>);
+        render(
+            <MemoryRouter initialEntries={["/parametro-contas-associacoes"]}>
+                <Route path="/parametro-contas-associacoes">
+                    <ContasDasAssociacoes />
+                </Route>
+            </MemoryRouter>
+        );
         await waitFor(()=>{
             const input = screen.getByLabelText(/por associação/i);
             fireEvent.change(input, { target: { name: 'filtrar_por_associacao_nome', value: 'Associação 1' } });
@@ -631,7 +747,13 @@ describe('Teste handle functions', () => {
             page_size: 20,
             results: contasAssociacoes.slice(0, 20)};
         getContasAssociacoesFiltros.mockResolvedValueOnce(mock_contas_associacoes_full);
-        render(<ContasDasAssociacoes/>);
+        render(
+            <MemoryRouter initialEntries={["/parametro-contas-associacoes"]}>
+                <Route path="/parametro-contas-associacoes">
+                    <ContasDasAssociacoes />
+                </Route>
+            </MemoryRouter>
+        );
         await waitFor(()=>{
             const input = screen.getByLabelText(/por associação/i);
             fireEvent.change(input, { target: { name: 'filtrar_por_associacao_nome', value: 'Associação 1' } });
@@ -639,7 +761,7 @@ describe('Teste handle functions', () => {
         });
 
         expect(getContasAssociacoesFiltros).toHaveBeenCalledTimes(1);
-        
+
     });
 
     it('test handleSubmitFiltros', async() => {
@@ -654,7 +776,13 @@ describe('Teste handle functions', () => {
             page_size: 20,
             results: contasAssociacoes.slice(0, 1)};
         getContasAssociacoesFiltros.mockResolvedValueOnce(mock_contas_associacoes_full).mockResolvedValueOnce(mock_contas_associacoes_filtered);
-        render(<ContasDasAssociacoes/>);
+        render(
+            <MemoryRouter initialEntries={["/parametro-contas-associacoes"]}>
+                <Route path="/parametro-contas-associacoes">
+                    <ContasDasAssociacoes />
+                </Route>
+            </MemoryRouter>
+        );
         await waitFor(()=>{
             const input = screen.getByLabelText(/por associação/i);
             fireEvent.change(input, { target: { name: 'filtrar_por_associacao_nome', value: 'Associação 1' } });
@@ -669,6 +797,5 @@ describe('Teste handle functions', () => {
             }
         );
         expect(getContasAssociacoesFiltros).toHaveBeenCalledTimes(2);
-        
     });
 });
