@@ -6,6 +6,7 @@ import { mockListaFornecedores, mockCreate } from "../__fixtures__/mockData";
 
 const mockSetFieldValue = jest.fn();
 const mockSetShowModalConfirmDelete = jest.fn();
+
 const defaultProps = {
     show: true,
     stateFormModal: mockCreate,
@@ -15,12 +16,14 @@ const defaultProps = {
     setFieldValue: mockSetFieldValue,
     temPermissaoEditarFornecedores: ()=> true,
 };
+
 const defaultPropsEdicao = {
   ...defaultProps,
   stateFormModal: {...mockListaFornecedores[0], operacao: 'edit'}
 };
+
 describe("Componente ModalForm", () => {
-  
+
   it("Renderiza a Modal quando a operação é Cadastro e Permissão True", () => {
     render(<ModalFormFornecedores {...defaultProps} />);
     expect(screen.getByText("fornecedor")).toBeInTheDocument();
@@ -56,9 +59,7 @@ describe("Componente ModalForm", () => {
   });
 
   it("Renderiza a Modal quando a operação é Edição e permissão é True", () => {
-    
     render(<ModalFormFornecedores {...defaultPropsEdicao} />);
-    
     expect(screen.getByLabelText("Nome do Fornecedor *")).toHaveValue("Fornecedor abcd-10");
     expect(screen.getByRole("button", { name: "Apagar" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Cancelar" })).toBeInTheDocument();
@@ -104,12 +105,14 @@ describe("Componente ModalForm", () => {
         expect(defaultProps.handleSubmitModalFormFornecedores).toHaveBeenCalled();
     });
   });
+
   it("Chama a ação de fechar modal quando o botão Cancelar for clicado", () => {
     render(<ModalFormFornecedores {...defaultProps} />);
     const cancelButton = screen.getByRole("button", { name: "Cancelar" });
     fireEvent.click(cancelButton);
     expect(defaultProps.handleClose).toHaveBeenCalled();
   });
+
   test('deve chamar setShowModalConfirmDeleteFornecedor quando o botão for clicado', () => {
     // Renderize o componente, passando as props necessárias
     render(<ModalFormFornecedores {...defaultPropsEdicao}/>);
