@@ -253,8 +253,8 @@ export const Tags = ()=>{
                             show={showModalConfirmDeleteTag}
                             handleClose={handleCloseConfirmDeleteTag}
                             onDeleteTagTrue={onDeleteTagTrue}
-                            titulo="Excluir Tag"
-                            texto="<p>Deseja realmente excluir esta Tag?</p>"
+                            titulo="Excluir etiqueta/tag"
+                            texto="Deseja realmente excluir esta etiqueta/tag?"
                             primeiroBotaoTexto="Cancelar"
                             primeiroBotaoCss="outline-success"
                             segundoBotaoCss="danger"

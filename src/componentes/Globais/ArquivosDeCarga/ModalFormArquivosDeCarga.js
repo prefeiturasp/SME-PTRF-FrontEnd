@@ -29,10 +29,12 @@ const ModalFormArquivosDeCarga = ({show, stateFormModal, handleClose, handleSubm
                                         <div className="form-group">
                                             <label htmlFor="identificador">Identificador *</label>
                                             <input
+                                                data-qa="campo-identificador"
                                                 type="text"
                                                 value={props.values.identificador}
                                                 name="identificador"
                                                 id="identificador"
+                                                maxLength={50}
                                                 className="form-control"
                                                 onChange={props.handleChange}
                                             />
@@ -49,6 +51,7 @@ const ModalFormArquivosDeCarga = ({show, stateFormModal, handleClose, handleSubm
                                             <p className='mb-1'><small><strong>Atualmente: </strong>{props.values.nome_arquivo.split('/').pop()}</small></p>
                                             }
                                             <input
+                                                data-qa="campo-conteudo"
                                                 accept=".csv"
                                                 className="form-control-file"
                                                 id="conteudo"
@@ -64,8 +67,9 @@ const ModalFormArquivosDeCarga = ({show, stateFormModal, handleClose, handleSubm
                                 </div>
                                 {arquivoRequerPeriodo && <div className='row'>
                                     <div className='col'>
-                                        <label htmlFor="tipo_periodo">Período *</label>
+                                        <label htmlFor="periodo">Período *</label>
                                         <select
+                                            data-qa="campo_periodo"
                                             value={props.values.periodo && props.values.periodo ? props.values.periodo : ""}
                                             onChange={props.handleChange}
                                             name="periodo"
@@ -84,6 +88,7 @@ const ModalFormArquivosDeCarga = ({show, stateFormModal, handleClose, handleSubm
                                     <div className='col'>
                                         <label htmlFor="tipo_de_conta">Tipo de conta *</label>
                                         <select
+                                            data-qa="campo_tipo_de_conta"
                                             value={props.values.tipo_de_conta && props.values.tipo_de_conta ? props.values.tipo_de_conta : ""}
                                             onChange={props.handleChange}
                                             name="tipo_de_conta"
@@ -100,8 +105,9 @@ const ModalFormArquivosDeCarga = ({show, stateFormModal, handleClose, handleSubm
                                 </div>}
                                 <div className='row mt-3'>
                                     <div className='col'>
-                                        <label htmlFor="tipo_delimitador">Tipo delimitador</label>
+                                        <label htmlFor="tipo_delimitador">Tipo delimitador *</label>
                                         <select
+                                            data-qa="campo_tipo_delimitador"
                                             value={props.values.tipo_delimitador && props.values.tipo_delimitador ? props.values.tipo_delimitador : ""}
                                             onChange={props.handleChange}
                                             name="tipo_delimitador"
@@ -113,6 +119,7 @@ const ModalFormArquivosDeCarga = ({show, stateFormModal, handleClose, handleSubm
                                                 <option key={delimitador.id} value={delimitador.id}>{delimitador.nome}</option>
                                             )}
                                         </select>
+                                        {props.errors && props.errors.tipo_delimitador && props.errors.tipo_delimitador && <small className="span_erro text-danger mt-1"> * {props.errors.tipo_delimitador} </small>}
                                     </div>
                                 </div>
                                 <div className='row mt-3'>
@@ -120,6 +127,7 @@ const ModalFormArquivosDeCarga = ({show, stateFormModal, handleClose, handleSubm
                                         <div className="form-group">
                                             <label htmlFor="ultima_execucao">Última execução</label>
                                             <input
+                                                data-qa="campo_ultima_execucao"
                                                 type="text"
                                                 value={props.values.ultima_execucao}
                                                 name="ultima_execucao"
@@ -134,6 +142,7 @@ const ModalFormArquivosDeCarga = ({show, stateFormModal, handleClose, handleSubm
                                         <div className="form-group">
                                             <label htmlFor="status">Status</label>
                                             <input
+                                                data-qa="campo_status"
                                                 type="text"
                                                 value={statusTemplate('', props.values.status)}
                                                 name="status"
@@ -152,10 +161,6 @@ const ModalFormArquivosDeCarga = ({show, stateFormModal, handleClose, handleSubm
                                     </div>
                                 </div>
                                 <div className='row mt-3'>
-                                    <div className='col'>
-                                        <p className='mb-2'>Uuid</p>
-                                        <p className='mb-2'>{values.uuid}</p>
-                                    </div>
                                     <div className='col'>
                                         <p className='mb-2'>ID</p>
                                         <p className='mb-2'>{values.id}</p>

@@ -21,6 +21,7 @@ export const ModalFormAcoesDaAssociacao = (props) => {
                             <div className='col'>
                                 <label htmlFor="cod_eol">Unidade Educacional *</label>
                                 <input
+                                    data-qa="campo-unidade-educacional"
                                     value={props.stateFormModal.nome_unidade}
                                     name='nome_unidade'
                                     id="nome_unidade"
@@ -47,6 +48,7 @@ export const ModalFormAcoesDaAssociacao = (props) => {
                         <div className='col'>
                             <label htmlFor="cod_eol">Código EOL *</label>
                             <input
+                                data-qa="campo-codigo-eol"
                                 value={props.stateFormModal.codigo_eol}
                                 name='cod_eol'
                                 id="cod_eol"
@@ -59,6 +61,7 @@ export const ModalFormAcoesDaAssociacao = (props) => {
                         <div className='col'>
                             <label htmlFor="acao">Ação *</label>
                             <select
+                                data-qa="campo-acao"
                                 value={props.stateFormModal.acao}
                                 onChange={(e) => props.handleChangeFormModal(e.target.name, e.target.value)}
                                 name='acao'
@@ -76,6 +79,7 @@ export const ModalFormAcoesDaAssociacao = (props) => {
                         <div className='col'>
                             <label htmlFor="status">Status *</label>
                             <select
+                                data-qa="campo-status"
                                 value={props.stateFormModal.status}
                                 onChange={(e) => props.handleChangeFormModal(e.target.name, e.target.value)}
                                 name='status'
@@ -92,29 +96,34 @@ export const ModalFormAcoesDaAssociacao = (props) => {
 
                     <div className='row mt-3'>
                         <div className='col'>
-                            <p>Uuid</p>
-                            <p>{props.stateFormModal.uuid}</p>
-                        </div>
-                        <div className='col'>
                             <p>ID</p>
                             <p>{props.stateFormModal.id}</p>
                         </div>
                     </div>
 
-
                     <div className="d-flex bd-highlight mt-2">
                         <div className="p-Y flex-grow-1 bd-highlight">
                             {props.stateFormModal && props.stateFormModal.operacao === 'edit' &&
-                            <button onClick={()=>props.setShowModalDeleteAcao(true)} type="button" className="btn btn btn-danger mt-2 mr-2" disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}>
+                            <button
+                                data-qa="botao-apagar-acao-edicao"
+                                onClick={()=>props.setShowModalDeleteAcao(true)}
+                                type="button"
+                                className="btn btn btn-danger mt-2 mr-2"
+                                disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}>
                                 Apagar
                             </button>
                             }
                         </div>
                         <div className="p-Y bd-highlight">
-                            <button onClick={props.handleClose} type="reset" className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>
+                            <button
+                                data-qa="botao-cancelar-acao-edicao"
+                                onClick={props.handleClose}
+                                type="reset"
+                                className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>
                         </div>
                         <div className="p-Y bd-highlight">
                             <button
+                                data-qa="botao-salvar-acao-edicao"
                                 disabled={props.readOnly || !props.stateFormModal.acao || !props.stateFormModal.status || !TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                 onClick={()=>props.handleSubmitModalFormAcoes(props.stateFormModal)}
                                 type="button"

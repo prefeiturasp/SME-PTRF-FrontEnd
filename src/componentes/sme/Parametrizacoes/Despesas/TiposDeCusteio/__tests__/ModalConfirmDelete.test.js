@@ -26,7 +26,7 @@ describe("Componente ModalConfirmDelete", () => {
     const defaultProps = {
         show: true,
         handleClose: mockHandleClose,
-        onDeleteAcaoTrue: mockOnDeleteTrue,
+        onDeleteTrue: mockOnDeleteTrue,
         titulo: "Confirmar Exclusão",
         texto: "Você tem certeza que deseja excluir este item?",
         primeiroBotaoTexto: "Cancelar",

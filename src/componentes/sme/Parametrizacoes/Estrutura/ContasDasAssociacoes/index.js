@@ -1,6 +1,7 @@
 import React, {useState, useEffect, useCallback, useMemo} from "react";
 import {PaginasContainer} from "../../../../../paginas/PaginasContainer";
 import ReactTooltip from "react-tooltip";
+import { ModalConfirmarExclusao } from "../../componentes/ModalConfirmarExclusao";
 import {
     postContasAssociacoes,
     patchContasAssociacoes,
@@ -19,7 +20,6 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlus, faEdit} from "@fortawesome/free-solid-svg-icons";
 import Loading from "../../../../../utils/Loading";
 import ModalForm from "./ModalForm";
-import {ModalConfirmDelete} from "./ModalConfirmDelete";
 import {ModalInfoUpdateNaoPermitido} from "./ModalInfoUpdateNaoPermitido";
 import {ModalInfoNaoPodeExcluir} from "../../Estrutura/Acoes/ModalInfoNaoPodeExcluir";
 import { toastCustom } from "../../../../Globais/ToastCustom";
@@ -273,9 +273,11 @@ export const ContasDasAssociacoes = () => {
             if (e.response.data && e.response.data.mensagem){
                 setMensagemModalInfoNaoPodeExcluir(e.response.data.mensagem);
                 setShowModalInfoNaoPodeExcluir(true);
+                setShowModalDeleteAcao(false);
             }else{
                 setMensagemModalInfoNaoPodeExcluir('Houve um problema ao realizar esta operação, tente novamente.');
                 setShowModalInfoNaoPodeExcluir(true);
+                setShowModalDeleteAcao(false);
             }
         }
     };
@@ -383,16 +385,16 @@ export const ContasDasAssociacoes = () => {
                     />
                 </section>
                 <section>
-                    <ModalConfirmDelete
-                        show={showModalDeleteAcao}
-                        handleClose={handleCloseDeleteAcao}
-                        onDeleteAcaoTrue={onDeleteAcaoTrue}
+                    <ModalConfirmarExclusao
+                        open={showModalDeleteAcao}
+                        onCancel={handleCloseDeleteAcao}
+                        onOk={onDeleteAcaoTrue}
+                        okText="Excluir"
+                        okButtonProps={{className: "btn-danger"}}
+                        cancelText="Cancelar"
+                        cancelButtonProps={{className: "btn-base-verde-outline"}}
                         titulo="Excluir Conta de Associação"
-                        texto="<p>Deseja realmente excluir esta conta de associação?</p>"
-                        primeiroBotaoTexto="Cancelar"
-                        primeiroBotaoCss="outline-success"
-                        segundoBotaoCss="danger"
-                        segundoBotaoTexto="Excluir"
+                        bodyText={<p>Tem certeza que deseja excluir esta conta de associação?</p>}
                     />
                 </section>
             </div>
