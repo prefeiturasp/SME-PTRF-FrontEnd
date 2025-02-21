@@ -5,9 +5,9 @@ const initialFilter = {
 };
 
 const initialStateFormModal = {
-    id: '',
+    id: null,
     uuid: '',
-    nome: '',
+    nome: null,
 };
 
 export const MotivosDevolucaoTesouroContext = createContext({

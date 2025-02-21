@@ -29,7 +29,7 @@ export const Lista = () => {
   const acoesTemplate = (rowData) => {
       return (
           <div>
-              <button className="btn-editar-membro" onClick={() => handleEditFormModal(rowData)}>
+              <button className="btn-editar-membro" onClick={() => handleEditFormModal(rowData)} aria-label="editar motivo">
                   <span data-tip="Editar motivo" data-html={true}>
                       <FontAwesomeIcon
                           style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}

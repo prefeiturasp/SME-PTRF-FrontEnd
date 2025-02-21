@@ -26,7 +26,7 @@ export const Tags = ()=>{
     const carregaTodasAsTags = useCallback(async ()=>{
         setLoading(true);
         let todas_tags = await getTodasTags();
-        setListaDeTags(todas_tags);
+        setListaDeTags(todas_tags ?? 0);
         setLoading(false);
     }, []);
 
@@ -35,7 +35,7 @@ export const Tags = ()=>{
     }, [carregaTodasAsTags]);
 
     // Quando a state de todasAsAcoes sofrer alteração
-    const totalDeTags = useMemo(() => listaDeTags.length, [listaDeTags]);
+    const totalDeTags = useMemo(() => listaDeTags?.length ?? 0, [listaDeTags]);
 
     // Filtros
     const initialStateFiltros = {
