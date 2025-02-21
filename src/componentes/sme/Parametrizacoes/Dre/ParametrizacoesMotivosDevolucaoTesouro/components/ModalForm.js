@@ -33,7 +33,7 @@ export const ModalForm = ({handleSubmitFormModal}) => {
                                         <p className='text-right mb-0'><small> * Preenchimento obrigatório</small></p>
                                         <div className="form-group">
                                             <span data-tip="Preencher com um motivo de devolução ao tesouro" data-html={true}>
-                                                <label>Motivo *</label>
+                                                <label htmlFor="nome">Motivo *</label>
                                                 <ReactTooltip/>
                                             </span>
 
@@ -102,7 +102,7 @@ export const ModalForm = ({handleSubmitFormModal}) => {
     return (
         <ModalFormBodyText
             show={showModalForm}
-            titulo={`${stateFormModal.uuid ? "Editar motivo" : "Adicionar motivo" }`}
+            titulo={`${stateFormModal && stateFormModal.uuid ? "Editar motivo" : "Adicionar motivo"}`}
             onHide={setShowModalForm}
             size='lg'
             bodyText={bodyTextarea()}
