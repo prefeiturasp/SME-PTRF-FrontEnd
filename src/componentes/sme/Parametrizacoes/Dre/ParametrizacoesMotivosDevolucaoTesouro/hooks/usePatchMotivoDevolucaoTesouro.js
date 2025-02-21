@@ -21,12 +21,12 @@ export const usePatchMotivoDevolucaoTesouro = () => {
             toastCustom.ToastCustomSuccess('Edição do motivo de devolução ao tesouro realizada com sucesso', `O motivo de devolução ao tesouro foi editado com sucesso.`)
         },
         onError: (error) => {
+            console.log("Erro ao editar o motivo de devolução ao tesouro", error)
             if (error && error.response && error.response.data && error.response.data.non_field_errors) {
                 toastCustom.ToastCustomError('Erro ao atualizar o motivo de devolução ao tesouro',error.response.data.non_field_errors)
             } else {
                 toastCustom.ToastCustomError('Erro ao atualizar o motivo de devolução ao tesouro', `Não foi possível atualizar o motivo de devolução ao tesouro`)
             }
-            console.log("Erro ao editar o motivo de devolução ao tesouro", error)
         },
         onSettled: () => {
             setBloquearBtnSalvarForm(false)
