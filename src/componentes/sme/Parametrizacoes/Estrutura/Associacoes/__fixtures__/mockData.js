@@ -173,7 +173,7 @@ export const mockListaAssociacoes = {
         "next": "http://localhost:8000/api/parametrizacoes-associacoes/?filtro_informacoes=&nome=&page=2&page_size=20&unidade__dre__uuid=&unidade__tipo_unidade=",
         "previous": null
     },
-    "count": 25,
+    "count": 22,
     "page": 1,
     "page_size": 20,
     "results": [
@@ -520,6 +520,52 @@ export const mockListaAssociacoes = {
     ]
 }
 
+export const mockListaAssociacoesPaginated = {
+    "links": {
+        "next": "http://localhost:8000/api/parametrizacoes-associacoes/?filtro_informacoes=&nome=&page=2&page_size=20&unidade__dre__uuid=&unidade__tipo_unidade=",
+        "previous": null
+    },
+    "count": 22,
+    "page": 2,
+    "page_size": 2,
+    "results": [
+        {
+            "uuid": "4c653e7a-1be9-4f79-b8c1-29ecb328bc77",
+            "nome": "ASSOCIACAO DE PAIS E MESTRES DO CEI DR ANTONIO JOAO SILVA",
+            "cnpj": "06.925.961/0001-38",
+            "status_valores_reprogramados": "VALORES_CORRETOS",
+            "data_de_encerramento": null,
+            "tooltip_data_encerramento": null,
+            "tooltip_encerramento_conta": null,
+            "unidade": {
+                "uuid": "366279a7-dd7a-4ae4-8f65-d55d5989ab4f",
+                "codigo_eol": "400011",
+                "nome_com_tipo": "CEI DIRET ANTONIO JOAO SILVA, DR.",
+                "nome_dre": "DIRETORIA REGIONAL DE EDUCACAO LAPA"
+            },
+            "encerrada": false,
+            "informacoes": []
+        },
+        {
+            "uuid": "4c653e7a-1be9-4f79-b8c1-29ecb328bc12",
+            "nome": "ASSOCIACAO DE PAIS E MESTRES DO CEI DR ANTONIO JOAO CAMPOS",
+            "cnpj": "06.125.961/0001-38",
+            "status_valores_reprogramados": "VALORES_CORRETOS",
+            "data_de_encerramento": null,
+            "tooltip_data_encerramento": null,
+            "tooltip_encerramento_conta": null,
+            "unidade": {
+                "uuid": "366279a7-dd7a-4ae4-8f65-d55d5989ab4f",
+                "codigo_eol": "400011",
+                "nome_com_tipo": "CEI DIRET ANTONIO JOAO CAMPOS, DR.",
+                "nome_dre": "DIRETORIA REGIONAL DE EDUCACAO ALTO"
+            },
+            "encerrada": false,
+            "informacoes": []
+        }
+    ]
+}
+
 
 export const mockListaPeriodos = [
     {
@@ -557,3 +603,82 @@ export const mockListaPeriodos = [
         }
     }
 ]
+
+
+export const mockAssociacaoUuid = {
+    "uuid": "5003fbd5-fd37-40eb-8889-e40042ec7e77",
+    "nome": "ASSOCIACAO DE PAIS E MESTRES DO CECI CEI JARAGUA",
+    "unidade": {
+        "uuid": "acf92a00-3fc7-4c41-8eab-ee54e3864052",
+        "codigo_eol": "200204",
+        "tipo_unidade": "CECI",
+        "nome": "JARAGUA",
+        "sigla": "",
+        "dre": {
+            "uuid": "dc6d5e38-265c-41e9-bb0f-67a5c4837756",
+            "codigo_eol": "109000",
+            "tipo_unidade": "DRE",
+            "nome": "DIRETORIA REGIONAL DE EDUCACAO PIRITUBA/JARAGUA",
+            "sigla": "P"
+        },
+        "email": "cecijaragua@sme.prefeitura.sp.gov.br",
+        "telefone": "39023682",
+        "tipo_logradouro": "Avenida",
+        "logradouro": "COMENDADOR JOSE DE MATOS",
+        "numero": "386",
+        "complemento": "",
+        "bairro": "VILA CLARICE",
+        "cep": "05177100",
+        "qtd_alunos": 0,
+        "diretor_nome": "",
+        "dre_cnpj": "",
+        "dre_diretor_regional_rf": "",
+        "dre_diretor_regional_nome": "",
+        "dre_designacao_portaria": "",
+        "dre_designacao_ano": "",
+        "observacao": ""
+    },
+    "cnpj": "11.267.355/0001-68",
+    "ccm": "4.184.240-5",
+    "email": "CECIJARAGUA123@SME.PREFEITURA.SP.GOV.BR",
+    "presidente_associacao": {
+        "nome": "JAQUELINE VIEIRA CABRAL",
+        "email": "JAQUE.VIEIRASILVA@YAHOO.COM.BR",
+        "cargo_educacao": "",
+        "telefone": "(11)95475-0659",
+        "endereco": "RUA GALEÃO COUTINHO, Nº 170",
+        "bairro": "VILA MARIANA",
+        "cep": "02967-150"
+    },
+    "presidente_conselho_fiscal": {
+        "nome": "ADILSON LAURINDO",
+        "email": "adilson.wera@gmail.com",
+        "cargo_educacao": ""
+    },
+    "processo_regularidade": "-",
+    "periodo_inicial": {
+        "uuid": "def64363-d264-4137-ac91-5a367b837131",
+        "referencia": "2021.3",
+        "data_inicio_realizacao_despesas": "2021-10-01",
+        "data_fim_realizacao_despesas": "2021-12-31",
+        "referencia_por_extenso": "3° repasse de 2021"
+    },
+    "data_de_encerramento": {
+        "data": "2022-01-31",
+        "help_text": "A associação deixará de ser exibida nos períodos posteriores à data de encerramento informada.",
+        "pode_editar_dados_associacao_encerrada": true
+    },
+    "id": 1188,
+    "pode_editar_periodo_inicial": {
+        "pode_editar_periodo_inicial": false,
+        "mensagem_pode_editar_periodo_inicial": [
+            "Não é permitido alterar o período inicial da Associação.",
+            "Há cadastros já realizados pela Associação no primeiro período de uso do sistema:",
+            "- Valores Reprogramados",
+            "- Despesa(s)",
+            "- Crédito(s)",
+            "- Prestação de Contas"
+        ],
+        "help_text": "O período inicial informado é uma referência e indica que o período a ser habilitado para a associação será o período posterior ao período informado."
+    }
+}

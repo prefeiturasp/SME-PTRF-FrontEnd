@@ -13,20 +13,18 @@ import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../RetornaS
 const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitModalFormAssociacoes, listaDePeriodos, tabelaAssociacoes, carregaUnidadePeloCodigoEol, errosCodigoEol, onDeleteAssocicacaoTratamento}) => {
 
     const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES = RetornaSeTemPermissaoEdicaoPainelParametrizacoes()
-
+    const podeEncerrarAssociacao = visoesService.getPermissoes(['change_encerrar_associacoes']);
     const converteDataLocalParaUTC = (dateString) => {
         const dataObj = new Date(dateString);
         const offsetMs = dataObj.getTimezoneOffset() * 60 * 1000;
         const utcDataObj = new Date(dataObj.getTime() + offsetMs);
         return utcDataObj;
     }
-
     const podeEditarDadosAssociacao = (values, field = '') => {
         const isEditing = values.operacao === 'edit';
 
         if(isEditing) {
             const podeEditarAssociacaoEncerrada = values.pode_editar_dados_associacao_encerrada;
-            const podeEncerrarAssociacao = visoesService.getPermissoes(['change_encerrar_associacoes']);
             const podeEditarPeriodoInicial = values.pode_editar_periodo_inicial;
 
             if(field === 'codigo_eol_unidade'){
@@ -240,7 +238,7 @@ const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitMo
                                                 name="data_de_encerramento"
                                                 id="data_de_encerramento"
                                                 value={values.data_de_encerramento !== null ? values.data_de_encerramento : ""}
-                                                onChange={visoesService.getPermissoes(['change_encerrar_associacoes']) ? (name, val) => {
+                                                onChange={podeEncerrarAssociacao ? (name, val) => {
                                                     setFieldValue(name, val ? val.toISOString().substr(0, 10) : null)
                                                     }: null}
                                                 disabled={!podeEditarDadosAssociacao(props.values, 'data_de_encerramento') || !TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
