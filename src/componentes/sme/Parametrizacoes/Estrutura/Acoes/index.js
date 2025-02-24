@@ -168,7 +168,7 @@ export const Acoes = () => {
             try {
                 await putAtualizarAcao(stateFormModal.uuid, payload);
                 setShowModalForm(false);
-                console.log('Ação alterada com sucesso', payload);
+                console.log('Ação alterada com sucesso');
                 toastCustom.ToastCustomSuccess('Ação alterada com sucesso');
                 await carregaTodasAsAcoes();
             } catch (e) {
