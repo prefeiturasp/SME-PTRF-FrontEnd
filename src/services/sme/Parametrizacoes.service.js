@@ -488,6 +488,44 @@ export const deleteRepasse = async (uuid_repasse) => {
     return (await api.delete(`api/repasses/${uuid_repasse}/`, authHeader));
 };
 
+// Especificações Materiais e Serviços
+export const getEspecificacoesMateriaisServicos = async (filter, currentPage) => {
+    const {descricao, tipo_custeio, aplicacao_recurso, ativa} = filter;
+    return (await api.get(`/api/especificacoes-materiais-servicos/`, {
+        ...authHeader,
+        params: {
+            descricao: descricao,
+            tipo_custeio: tipo_custeio,
+            aplicacao_recurso: aplicacao_recurso,
+            ativa: ativa,
+            page_size: 20,
+            page: currentPage,
+        }
+    })).data
+}
+
+export const getTabelasEspecificacoesMateriaisServicos = async () => {
+    return (await api.get(`/api/especificacoes-materiais-servicos/tabelas/`, authHeader)).data
+};
+
+export const postEspecificacoesMateriaisServicos = async (payload) => {
+    return (await api.post(`/api/especificacoes-materiais-servicos/`,
+        { ...payload },
+        authHeader,
+    ))
+};
+
+export const patchEspecificacoesMateriaisServicos = async (uuid, payload) => {
+    return (await api.patch(`/api/especificacoes-materiais-servicos/${uuid}/`,
+        { ...payload },
+        authHeader
+    ))
+};
+
+export const deleteEspecificacoesMateriaisServicos = async (uuid) => {
+    return (await api.delete(`/api/especificacoes-materiais-servicos/${uuid}/`, authHeader));
+};
+
 // Motivos Pagamento Antecipado
 export const getTodosMotivosPagamentoAntecipado = async () => {
     return (await api.get(`/api/motivos-pagamento-antecipado/`, authHeader)).data
