@@ -1,14 +1,16 @@
 import React from "react";
 
-import {MateriaisServicosProvider} from "./context//MateriaisServicos";
-import {PaginasContainer} from "../../../../../paginas/PaginasContainer";
-import {MenuInterno} from "../../../../Globais/MenuInterno";
+import { MateriaisServicosProvider } from "./context//MateriaisServicos";
+import { PaginasContainer } from "../../../../../paginas/PaginasContainer";
+import { UrlsMenuInterno } from "./UrlsMenuInterno";
+import { MenuInterno } from "../../../../Globais/MenuInterno";
+
+import { TopoComBotoes } from "./components/TopoComBotoes"
+import { Lista } from "./components/Lista"
+import { Filtros } from "./components/Filtros"
+import { Paginacao } from "./components/Paginacao"
 
 export const EspecificacoesMateriaisServicos = () => {
-    const UrlsMenuInterno = [
-        {label: "Dados especificações de Materiais e Serviços", url: "parametro-especificacoes"},
-        {label: "Cargas de arquivo", url: "parametro-arquivos-de-carga", origem:'CARGA_MATERIAIS_SERVICOS'},
-    ];
 
     return (
         <MateriaisServicosProvider>
@@ -18,6 +20,10 @@ export const EspecificacoesMateriaisServicos = () => {
                     <MenuInterno
                         caminhos_menu_interno={UrlsMenuInterno}
                     />
+                    <TopoComBotoes/>
+                    <Filtros/>
+                    <Lista/>
+                    <Paginacao/>
                 </div>
             </PaginasContainer>
         </MateriaisServicosProvider>

@@ -84,7 +84,7 @@ export const PainelParametrizacoes = () => {
 
     const itensParametrizacaoDespesas = [
         {
-            parametro: 'Especificações',
+            parametro: 'Especificações de Materiais e Serviços',
             url: 'parametro-especificacoes',
             icone: IconeEspecificacoes,
             permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
