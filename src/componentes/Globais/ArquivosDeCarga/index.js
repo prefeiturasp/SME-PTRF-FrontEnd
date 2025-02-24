@@ -87,7 +87,7 @@ const ArquivosDeCarga = () => {
                 titulo_modal: 'Especificações de Materiais e Serviços',
                 acesso_permitido: true,
                 UrlsMenuInterno:[
-                    {label: "Dados especificações de Materiais e Serviços", url: "parametro-especificacoes"},
+                    {label: "Especificações e Serviços", url: "parametro-especificacoes"},
                     {label: "Cargas de arquivo", url: "parametro-arquivos-de-carga", origem:'CARGA_MATERIAIS_SERVICOS'},
                 ],
             }
