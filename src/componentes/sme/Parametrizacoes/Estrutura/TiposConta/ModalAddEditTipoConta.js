@@ -161,7 +161,7 @@ const ModalAddEditTipoConta = ({show, stateFormModal, handleClose, handleSubmitM
                                     <div className="p-Y flex-grow-1 bd-highlight">
                                         {values.operacao === 'edit' ? (
                                             <button onClick={()=>setShowModalConfirmDeleteTipoConta(true)} type="button" className="btn btn-base-vermelho mt-2 mr-2" disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}>
-                                                Apagar tipo de conta
+                                                Apagar
                                             </button>
                                         ): null}
                                     </div>
