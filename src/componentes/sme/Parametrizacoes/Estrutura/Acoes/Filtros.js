@@ -6,7 +6,7 @@ export const Filtros = ({stateFiltros, handleChangeFiltros, handleSubmitFiltros,
             <form>
                 <div className="form-row">
                     <div className="form-group col-md-6">
-                        <label htmlFor="filtrar_por_nome_cod_eol">Filtrar por nome da ação</label>
+                        <label htmlFor="filtrar_por_nome">Filtrar por nome da ação</label>
                         <input
                             value={stateFiltros.filtrar_por_nome_cod_eol}
                             onChange={(e) => handleChangeFiltros(e.target.name, e.target.value)}
