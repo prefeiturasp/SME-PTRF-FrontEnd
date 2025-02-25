@@ -168,7 +168,7 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
       } catch (e) {
         if (e.response.data && e.response.data.non_field_errors) {
           setMensagemModalInfoNaoPodeGravar(
-            e.response
+            e.response.data.non_field_errors
           );
           setShowModalInfoNaoPodeGravar(true);
         } else {
