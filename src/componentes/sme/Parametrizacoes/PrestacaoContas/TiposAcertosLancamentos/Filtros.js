@@ -24,6 +24,7 @@ export const Filtros = ({stateFiltros, handleChangeFiltros, handleSubmitFiltros,
                     <div className="col-md-4">
                         <label htmlFor="filtrar_por_categoria">Filtrar por categorias</label>
                         <Select
+                            id="filtrar_por_categoria"
                             mode="multiple"
                             allowClear
                             placeholder="Selecione as categorias"
