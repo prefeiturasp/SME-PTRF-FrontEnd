@@ -70,7 +70,7 @@ export const Lista = () => {
     const acoesTemplate = (rowData) => {
         return (
             <div>
-                <button className="btn-editar-especificacoes" onClick={() => handleEditFormModal(rowData)}>
+                <button className="btn-editar-especificacoes btn-editar-membro" onClick={() => handleEditFormModal(rowData)}>
                     <span data-tip="Editar" data-html={true}>
                         <FontAwesomeIcon
                             style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
