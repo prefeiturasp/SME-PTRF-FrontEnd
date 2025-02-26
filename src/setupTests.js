@@ -7,20 +7,24 @@ import '@testing-library/jest-dom/extend-expect';
 const originalError = console.error;
 const originalWarn = console.warn;
 
-beforeAll(()=>{
+beforeAll(() => {
+    const originalError = console.error;
+    const originalWarn = console.warn;
+
     console.error = (...args) => {
-        if(args[0].includes('Warning:') || args[0].includes('DeprecationWarning:') ){
+        if (typeof args[0] === 'string' && (args[0].includes('Warning:') || args[0].includes('DeprecationWarning:'))) {
             return;
         }
-        originalError(...args)
-    }
+        originalError(...args);
+    };
+
     console.warn = (...args) => {
-        if(args[0].includes('Warning:')){
+        if (typeof args[0] === 'string' && args[0].includes('Warning:')) {
             return;
         }
-        originalWarn(...args)
-    }
-})
+        originalWarn(...args);
+    };
+});
 
 afterAll(()=>{
     console.error = originalError

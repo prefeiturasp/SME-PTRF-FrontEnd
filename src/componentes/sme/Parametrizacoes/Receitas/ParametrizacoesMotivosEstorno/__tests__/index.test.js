@@ -6,7 +6,6 @@ import {
     postCreateMotivoEstorno,
     patchAlterarMotivoEstorno,
     deleteMotivoEstorno,
-    getFiltrosMotivosEstorno,
     getMotivosEstorno
     } from '../../../../../../services/sme/Parametrizacoes.service';
 import * as service from "../../../../../../services/sme/Parametrizacoes.service";
@@ -19,7 +18,6 @@ jest.mock("../../../../../../services/sme/Parametrizacoes.service", ()=>({
     postCreateMotivoEstorno: jest.fn(),
     patchAlterarMotivoEstorno: jest.fn(),
     deleteMotivoEstorno: jest.fn(),
-    getFiltrosMotivosEstorno: jest.fn(),
 }));
 
 jest.mock("../../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes", () => ({
