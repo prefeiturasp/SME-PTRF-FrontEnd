@@ -69,7 +69,7 @@ describe("Hook usePost", () => {
             expect(mockContextValue.setShowModalForm).toHaveBeenCalledWith(false);
             expect(toastCustom.ToastCustomSuccess).toHaveBeenCalledWith(
                 "Inclusão da especificação realizada com sucesso",
-                "a especificação foi adicionada com sucesso."
+                "A especificação foi adicionada com sucesso."
             );
         });
     });
