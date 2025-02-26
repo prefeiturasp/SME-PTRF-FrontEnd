@@ -18,7 +18,7 @@ export const usePost = () => {
 
             queryClient.invalidateQueries(['especificacoes-materiais-servicos-list']).then()
             setShowModalForm(false)
-            toastCustom.ToastCustomSuccess('Inclusão da especificação realizada com sucesso', `a especificação foi adicionada com sucesso.`)
+            toastCustom.ToastCustomSuccess('Inclusão da especificação realizada com sucesso', `A especificação foi adicionada com sucesso.`)
         },
         onError: (error) => {
             let mensagem = `Não foi possível criar a especificação.`
