@@ -203,7 +203,7 @@ describe('Teste handleSubmitModalForm', () => {
         fireEvent.change(input_periodo_inicial, { target: { value: "1e8c492b-2edb-4acd-a808-71bdf0d805d5" } });
 
         fireEvent.click(input_data_encerramento);
-        const data = screen.getByText(new Date().getDate())
+        const data = screen.getAllByText(new Date().getDate())[0];
         fireEvent.click(data);
 
         fireEvent.click(saveButton);
