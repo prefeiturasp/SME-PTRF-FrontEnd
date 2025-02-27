@@ -50,7 +50,7 @@ export const ModalFormDocumentos = (props) => {
                             mode="multiple"
                             allowClear
                             name="tipos_documento_prestacao"
-                            id="documento"
+                            id="documentos_prestacao"
                             placeholder="Selecione as documentos de prestação"
                             value={props.stateFormModal.tipos_documento_prestacao}
                             onChange={(value) => props.handleChangeFormModal('tipos_documento_prestacao', value)}
