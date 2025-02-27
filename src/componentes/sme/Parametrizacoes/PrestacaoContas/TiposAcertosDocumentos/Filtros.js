@@ -23,6 +23,7 @@ export const Filtros = ({stateFiltros, handleChangeFiltros, handleSubmitFiltros,
                     <div className="col-md-3">
                         <label htmlFor="filtrar_por_categoria">Filtrar por categorias</label>
                         <Select
+                            id="filtrar_por_categoria"
                             mode="multiple"
                             allowClear
                             placeholder="Selecione as categorias"
@@ -40,6 +41,7 @@ export const Filtros = ({stateFiltros, handleChangeFiltros, handleSubmitFiltros,
                     <div className="col-md-4">
                         <label htmlFor="filtrar_por_documento_relacionado">Filtrar por tipo documentos de prestação</label>
                         <Select
+                            id="filtrar_por_documento_relacionado"
                             mode="multiple"
                             placeholder="Selecione os documentos de prestação"
                             value={stateFiltros.filtrar_por_documento_relacionado}
