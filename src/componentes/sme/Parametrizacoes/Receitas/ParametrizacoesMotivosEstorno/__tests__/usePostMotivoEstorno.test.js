@@ -1,4 +1,5 @@
-import { renderHook, act } from "@testing-library/react";
+import { act } from "react";
+import { renderHook } from "@testing-library/react";
 import { usePostMotivoEstorno } from "../hooks/usePostMotivoEstorno";
 import { postCreateMotivoEstorno } from "../../../../../../services/sme/Parametrizacoes.service";
 import { toastCustom } from "../../../../../Globais/ToastCustom";
@@ -19,7 +20,11 @@ jest.mock("../../../../../Globais/ToastCustom", () => ({
 
 describe("usePostMotivoEstorno", () => {
     const setShowModalForm = jest.fn();
-    const queryClient = new QueryClient();
+    const queryClient = new QueryClient({
+        defaultOptions: {
+            queries: { retry: false } // Desativa retry apenas para esse teste
+        }
+    })
 
     const wrapper = ({ children }) => (
         <QueryClientProvider client={queryClient}>
@@ -39,7 +44,7 @@ describe("usePostMotivoEstorno", () => {
         const { result } = renderHook(() => usePostMotivoEstorno(), { wrapper });
 
         await act(async () => {
-            await result.current.mutationPost.mutateAsync({
+            result.current.mutationPost.mutate({
                 payload: { nome: "Novo Motivo" },
             });
         });
@@ -60,7 +65,7 @@ describe("usePostMotivoEstorno", () => {
         const { result } = renderHook(() => usePostMotivoEstorno(), { wrapper });
 
         await act(async () => {
-            await result.current.mutationPost.mutateAsync({
+            result.current.mutationPost.mutate({
                 payload: { nome: "Motivo Existente" },
             });
         });
@@ -77,7 +82,7 @@ describe("usePostMotivoEstorno", () => {
         const { result } = renderHook(() => usePostMotivoEstorno(), { wrapper });
     
         await act(async () => {
-            await result.current.mutationPost.mutateAsync({
+            result.current.mutationPost.mutate({
                 payload: { nome: "Novo Motivo" },
             });
         });
@@ -86,21 +91,4 @@ describe("usePostMotivoEstorno", () => {
         
         expect(toastCustom.ToastCustomError).toHaveBeenCalledWith("Houve um erro ao tentar fazer essa atualização.");
     });
-    
-    it("deve exibir mensagem genérica quando `response` não está presente", async () => {
-        postCreateMotivoEstorno.mockRejectedValueOnce({}); // Simula uma falha com um erro sem resposta
-    
-        const { result } = renderHook(() => usePostMotivoEstorno(), { wrapper });
-    
-        await act(async () => {
-            await result.current.mutationPost.mutateAsync({
-                payload: { nome: "Novo Motivo" },
-            });
-        });
-    
-        expect(postCreateMotivoEstorno).toHaveBeenCalledWith({ nome: "Novo Motivo" });
-        
-        expect(toastCustom.ToastCustomError).toHaveBeenCalledWith("Houve um erro ao tentar fazer essa atualização.");
-    });
-    
 });

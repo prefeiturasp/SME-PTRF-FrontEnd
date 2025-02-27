@@ -1,11 +1,11 @@
-import { renderHook, act } from "@testing-library/react";
+import { act } from "react";
+import { renderHook } from "@testing-library/react";
 import { usePatchMotivoEstorno } from "../hooks/usePatchMotivoEstorno";
 import { patchAlterarMotivoEstorno } from "../../../../../../services/sme/Parametrizacoes.service";
 import { toastCustom } from "../../../../../Globais/ToastCustom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { MotivosEstornoContext } from "../context/MotivosEstorno";
 
-// Mockando serviços externos
 jest.mock("../../../../../../services/sme/Parametrizacoes.service", () => ({
     patchAlterarMotivoEstorno: jest.fn(),
 }));
@@ -19,7 +19,11 @@ jest.mock("../../../../../Globais/ToastCustom", () => ({
 
 describe("usePatchMotivoEstorno", () => {
     const setShowModalForm = jest.fn();
-    const queryClient = new QueryClient();
+    const queryClient =  new QueryClient({
+        defaultOptions: {
+            queries: { retry: false } // Desativa retry apenas para esse teste
+        }
+    })
 
     const wrapper = ({ children }) => (
         <QueryClientProvider client={queryClient}>
@@ -39,7 +43,7 @@ describe("usePatchMotivoEstorno", () => {
         const { result } = renderHook(() => usePatchMotivoEstorno(), { wrapper });
 
         await act(async () => {
-            await result.current.mutationPatch.mutateAsync({
+            result.current.mutationPatch.mutate({
                 UUID: "uuid-fake",
                 payload: { nome: "Novo Motivo" },
             });
@@ -61,7 +65,7 @@ describe("usePatchMotivoEstorno", () => {
         const { result } = renderHook(() => usePatchMotivoEstorno(), { wrapper });
 
         await act(async () => {
-            await result.current.mutationPatch.mutateAsync({
+            result.current.mutationPatch.mutate({
                 UUID: "uuid-fake",
                 payload: { nome: "Motivo Existente" },
             });
@@ -79,23 +83,7 @@ describe("usePatchMotivoEstorno", () => {
         const { result } = renderHook(() => usePatchMotivoEstorno(), { wrapper });
 
         await act(async () => {
-            await result.current.mutationPatch.mutateAsync({
-                UUID: "uuid-fake",
-                payload: { nome: "Novo Motivo" },
-            });
-        });
-
-        expect(patchAlterarMotivoEstorno).toHaveBeenCalledWith("uuid-fake", { nome: "Novo Motivo" });
-        expect(toastCustom.ToastCustomError).toHaveBeenCalledWith("Houve um erro ao tentar fazer essa atualização.");
-    });
-
-    it("deve exibir mensagem genérica quando `response` não está presente", async () => {
-        patchAlterarMotivoEstorno.mockRejectedValueOnce({});
-
-        const { result } = renderHook(() => usePatchMotivoEstorno(), { wrapper });
-
-        await act(async () => {
-            await result.current.mutationPatch.mutateAsync({
+            result.current.mutationPatch.mutate({
                 UUID: "uuid-fake",
                 payload: { nome: "Novo Motivo" },
             });

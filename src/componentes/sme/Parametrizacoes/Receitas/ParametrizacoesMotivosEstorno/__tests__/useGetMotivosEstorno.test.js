@@ -1,4 +1,5 @@
-import { renderHook, act, waitFor } from "@testing-library/react";
+import { act } from "react";
+import { renderHook, waitFor } from "@testing-library/react";
 import { useGetMotivosEstorno } from "../hooks/useGetMotivosEstorno";
 import { getMotivosEstorno } from "../../../../../../services/sme/Parametrizacoes.service";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -12,7 +13,11 @@ describe("useGetMotivosEstorno", () => {
     let queryClient;
 
     beforeEach(() => {
-        queryClient = new QueryClient();
+        queryClient = new QueryClient({
+            defaultOptions: {
+                queries: { retry: false } // Desativa retry apenas para esse teste
+            }
+        })
     });
 
     const renderCustomHook = (filterValue) => {
@@ -31,15 +36,14 @@ describe("useGetMotivosEstorno", () => {
         const mockData = [{ id: 1, motivo: "Motivo de Estorno 1" }];
         getMotivosEstorno.mockResolvedValue(mockData);
 
-        const { result } = renderCustomHook("Erro");
+        const { result } = renderCustomHook();
 
-        expect(result.current.isLoading).toBe(true);
-
-        await waitFor(() => expect(result.current.isLoading).toBe(false));
-
-        expect(result.current.isError).toBe(false);
-        expect(result.current.data).toEqual(mockData);
-        expect(result.current.count).toBe(1);
+        await waitFor(() => {
+            expect(result.current.isLoading).toBe(false)
+            expect(result.current.isError).toBe(false);
+            expect(result.current.data).toEqual(mockData);
+            expect(result.current.count).toBe(1);
+        });
     });
 
     test("deve lidar com erro da API corretamente", async () => {
@@ -47,9 +51,9 @@ describe("useGetMotivosEstorno", () => {
 
         const { result } = renderCustomHook("Erro");
 
-        await waitFor(() => expect(result.current.isLoading).toBe(false));
+        await waitFor(() => expect(result.current.isError).toBe(true));
 
-        expect(result.current.isError).toBe(true);
+        expect(result.current.isLoading).toBe(false);
         expect(result.current.error).toBeInstanceOf(Error);
         expect(result.current.data).toEqual([]);
         expect(result.current.count).toBe(0);

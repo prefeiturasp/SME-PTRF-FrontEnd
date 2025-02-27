@@ -1,4 +1,5 @@
-import { renderHook, act } from "@testing-library/react";
+import { act } from "react";
+import { renderHook } from "@testing-library/react";
 import { useDeleteMotivoEstorno } from "../hooks/useDeleteMotivoEstorno";
 import { deleteMotivoEstorno } from "../../../../../../services/sme/Parametrizacoes.service";
 import { toastCustom } from "../../../../../Globais/ToastCustom";
@@ -19,7 +20,11 @@ jest.mock("../../../../../Globais/ToastCustom", () => ({
 
 describe("useDeleteMotivoEstorno", () => {
     const setShowModalForm = jest.fn();
-    const queryClient = new QueryClient();
+    const queryClient = new QueryClient({
+        defaultOptions: {
+            queries: { retry: false } // Desativa retry apenas para esse teste
+        }
+    })
 
     const wrapper = ({ children }) => (
         <QueryClientProvider client={queryClient}>
@@ -54,11 +59,10 @@ describe("useDeleteMotivoEstorno", () => {
         deleteMotivoEstorno.mockRejectedValueOnce({
             response: { data: { mensagem: "Erro ao deletar" } },
         });
-    
         const { result } = renderHook(() => useDeleteMotivoEstorno(), { wrapper });
     
         await act(async () => {
-            await result.current.mutationDelete.mutateAsync("uuid-fake");
+            result.current.mutationDelete.mutate("uuid-fake");
         });
     
         expect(deleteMotivoEstorno).toHaveBeenCalledWith("uuid-fake");
