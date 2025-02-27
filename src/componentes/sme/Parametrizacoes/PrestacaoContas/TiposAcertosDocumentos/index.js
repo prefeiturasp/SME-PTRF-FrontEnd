@@ -67,19 +67,16 @@ export const ParametrizacoesTiposAcertosDocumentos = () => {
   }, [carregaTodosAcertosDocumentos]);
 
   useEffect(() => {
-    async function carregaTabelaCategoria() {
+    async function carregaTabela() {
         let resp = await getTabelaDocumento()
         setCategoriaTabela(resp.categorias)
+        const docsComIdString = resp.documentos.map(doc => ({
+          ...doc,
+          id: String(doc.id)
+        }));
+        setDocumentoTabela(docsComIdString)
     }
-    carregaTabelaCategoria();
-  }, []);
-
-  useEffect(() => {
-    async function carregaTabelaDocumento() {
-        let resp = await getTabelaDocumento()
-        setDocumentoTabela(resp.documentos)
-    }
-    carregaTabelaDocumento();
+    carregaTabela();
   }, []);
 
 
@@ -110,7 +107,7 @@ export const ParametrizacoesTiposAcertosDocumentos = () => {
   const limpaFiltros = async () => {
     setLoading(true);
     setStateFiltros(initialStateFiltros);
-    window.location.reload();
+    await getListaDeAcertosDocumentos();
   };
 
   const rowsPerPage = 20;
@@ -202,7 +199,7 @@ export const ParametrizacoesTiposAcertosDocumentos = () => {
         toastCustom.ToastCustomError('Erro ao editar tipo de acerto em documento', `Não foi possível editar o tipo de acerto em documento`)
         if (e.response.data && e.response.data.non_field_errors) {
           setMensagemModalInfoNaoPodeGravar(
-            e.response
+            e.response.data.non_field_errors
           );
           setShowModalInfoNaoPodeGravar(true);
         } else {
