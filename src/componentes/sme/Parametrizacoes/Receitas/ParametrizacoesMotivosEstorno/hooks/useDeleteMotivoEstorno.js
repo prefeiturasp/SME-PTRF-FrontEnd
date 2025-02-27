@@ -5,7 +5,6 @@ import { toastCustom } from "../../../../../Globais/ToastCustom";
 import { MotivosEstornoContext } from "../context/MotivosEstorno";
 
 export const useDeleteMotivoEstorno = () => {
-
     const queryClient = useQueryClient();
     const { setShowModalForm } = useContext(MotivosEstornoContext);
 

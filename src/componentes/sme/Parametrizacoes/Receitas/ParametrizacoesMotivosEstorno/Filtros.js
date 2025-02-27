@@ -3,7 +3,7 @@ import { MotivosEstornoContext } from "./context/MotivosEstorno";
 
 export const Filtros = () => {
 
-    const {setFilter, initialFilter} = useContext(MotivosEstornoContext)
+    const {setFilter, initialFilter} = useContext(MotivosEstornoContext);
     const [formFilter, setFormFilter] = useState(initialFilter);
 
     const handleChangeFormFilter = (name, value) => {
@@ -22,6 +22,8 @@ export const Filtros = () => {
         setFilter(initialFilter);
     };
     
+    if(!formFilter) return null;
+    
     return (
         <>
             <div className="d-flex bd-highlight align-items-end mt-2">
@@ -30,7 +32,7 @@ export const Filtros = () => {
                         <label htmlFor="motivo">Filtrar por nome</label>
                         <input
                             value={formFilter.motivo}
-                            onChange={(e) => handleChangeFormFilter(e.target.name, e.target.value)}
+                            onChange={(e) => {handleChangeFormFilter(e.target.name, e.target.value)}}
                             name='motivo'
                             id="motivo"
                             type="text"

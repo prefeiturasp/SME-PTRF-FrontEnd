@@ -6,7 +6,6 @@ import {RetornaSeTemPermissaoEdicaoPainelParametrizacoes} from "../../../Paramet
 import { MotivosEstornoContext } from "./context/MotivosEstorno";
 
 const ModalForm = ({handleSubmitFormModal}) => {
-
     const {
         showModalForm, 
         setShowModalForm, 

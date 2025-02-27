@@ -11,7 +11,8 @@ export const IconButton = ({
     disabled = false, 
     className = "", 
     buttonStyle = {},
-    variant = "primary"
+    variant = "primary",
+    ...props
 }) => {
     return (
         <button 
@@ -20,6 +21,7 @@ export const IconButton = ({
             onClick={onClick} 
             disabled={disabled}
             style={{ padding: "8px 12px", gap: "5px", ...buttonStyle }}
+            {...props}
         >
             {icon && <Icon icon={icon} iconProps={iconProps} />}
             {label}
@@ -36,15 +38,4 @@ IconButton.propTypes = {
     className: PropTypes.string,
     buttonStyle: PropTypes.object,
     variant: PropTypes.oneOf(["primary", "secondary", "danger", "success", "warning"]),
-};
-
-IconButton.defaultProps = {
-    icon: "",
-    iconProps: {},
-    label: "",
-    onClick: () => {},
-    disabled: false,
-    className: "",
-    buttonStyle: {},
-    variant: "",
 };

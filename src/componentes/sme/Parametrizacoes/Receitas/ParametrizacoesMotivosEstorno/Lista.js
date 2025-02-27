@@ -50,11 +50,12 @@ export const Lista = ()=>{
                 icon="faEdit"
                 iconProps={{style: {fontSize: '20px', marginRight: "0", color: "#00585E"}}}
                 onClick={()=>handleEditFormModal(rowData)}
+                aria-label="Editar"
             />
         )
     }, [handleEditFormModal]);
     
-    const handleSubmitFormModal = async (values) => {
+    const handleSubmitFormModal = (values) => {
         let payload = {
             motivo: values.motivo,
         };
@@ -62,7 +63,7 @@ export const Lista = ()=>{
         if (!values.uuid) {
             mutationPost.mutate({payload: payload})
         } else {
-            mutationPatch.mutate({uuidMotivoAprovacaoPcRessalva: values.uuid, payload: payload})
+            mutationPatch.mutate({UUID: values.uuid, payload: payload})
         }
     };
 
@@ -100,7 +101,7 @@ export const Lista = ()=>{
         {
             (results || []).length ?
             <>
-                <p>Exibindo <span className='total-acoes'>{count}</span> motivo(s) de estorno</p>
+                <p>Exibindo {count} motivo(s) de estorno</p>
                 <Tabela
                     rowsPerPage={rowsPerPage}
                     lista={results}
