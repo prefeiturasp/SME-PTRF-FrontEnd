@@ -50,7 +50,7 @@ export const TextosPaa = () => {
     const acoesTemplate = (tipo_texto) => {
         return (
             <div>
-                <button className="btn-editar-membro" onClick={() => handleEditarTextos(tipo_texto)}>
+                <button aria-label="Editar" className="btn-editar-membro" onClick={() => handleEditarTextos(tipo_texto)}>
                     <div data-tip="Editar" data-for={`tooltip-id-${tipo_texto}`}>
                      <ReactTooltip id={`tooltip-id-${tipo_texto}`}/>
                     <FontAwesomeIcon

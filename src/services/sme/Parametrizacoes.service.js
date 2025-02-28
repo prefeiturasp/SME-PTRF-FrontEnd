@@ -422,11 +422,7 @@ export const deleteFornecedor = async (fornecedores_id) => {
 };
 
 // Motivos estorno
-export const getMotivosEstorno = async () => {
-    return (await api.get(`/api/motivos-estorno/`, authHeader)).data
-};
-
-export const getFiltrosMotivosEstorno = async (motivo) => {
+export const getMotivosEstorno = async (motivo) => {
     return (await api.get(`/api/motivos-estorno/?motivo=${motivo}`, authHeader)).data
 };
 
