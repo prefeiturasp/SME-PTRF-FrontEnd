@@ -87,7 +87,7 @@ export const Periodos = ()=>{
 
                 <ModalBootstrap
                     show={showModalConfirmDeletePeriodo}
-                    onHide={() => setShowModalConfirmDeletePeriodo(false)}
+                    // onHide={() => setShowModalConfirmDeletePeriodo(false)}
                     primeiroBotaoOnclick={() => setShowModalConfirmDeletePeriodo(false)}
                     segundoBotaoOnclick={()=> {
                         setShowModalConfirmDeletePeriodo(false)
@@ -103,7 +103,7 @@ export const Periodos = ()=>{
 
                 <ModalBootstrap
                     show={showModalInfoExclusaoNaoPermitida}
-                    onHide={() => setShowModalInfoExclusaoNaoPermitida(false)}
+                    // onHide={() => setShowModalInfoExclusaoNaoPermitida(false)}
                     titulo="Exclusão não permitida"
                     bodyText={`<p class="mb-0"> ${erroExclusaoNaoPermitida}</p>`}
                     primeiroBotaoTexto="Fechar"
