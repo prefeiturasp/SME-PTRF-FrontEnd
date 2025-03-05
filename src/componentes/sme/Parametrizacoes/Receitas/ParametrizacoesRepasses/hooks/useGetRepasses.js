@@ -17,7 +17,7 @@ export const useGetRepasses = () => {
         }
     );
 
-    const totalRepasses = useMemo(() => data.results.length, [data]);
+    const totalRepasses = useMemo(() => data.length, [data]);
     const count = useMemo(() => data.count, [data]);
 
     return {isLoading, isError, data, error, refetch, totalRepasses, count}
