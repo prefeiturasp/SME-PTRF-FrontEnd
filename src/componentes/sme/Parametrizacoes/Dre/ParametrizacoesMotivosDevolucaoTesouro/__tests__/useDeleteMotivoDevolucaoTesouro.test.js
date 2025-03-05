@@ -98,4 +98,28 @@ describe("Hook useDeleteMotivoDevolucaoTesouro", () => {
             expect(screen.getByText("Erro ao excluir")).toBeInTheDocument();
         });
     });
+    test("Lida com erro ao excluir motivo sem prop mensagem", async () => {
+        deleteMotivoDevolucaoTesouro.mockRejectedValueOnce({
+            response: { data: { detail: "Erro ao excluir" } },
+        });
+
+        render(
+            <QueryClientProvider client={queryClient}>
+                <MotivosDevolucaoTesouroContext.Provider value={mockContextValue}>
+                    <TestComponent uuidMotivoDevolucaoTesouro="1234" />
+                </MotivosDevolucaoTesouroContext.Provider>
+            </QueryClientProvider>
+        );
+
+        userEvent.click(screen.getByText("Excluir Motivo"));
+
+        await waitFor(() => {
+            expect(deleteMotivoDevolucaoTesouro).toHaveBeenCalledWith("1234");
+            expect(toastCustom.ToastCustomError).toHaveBeenCalledWith(
+                "Erro ao apagar o motivo devolução ao tesouro",
+                "Não foi possível apagar o motivo de devolução ao tesouro"
+            );
+            expect(screen.getByText("Erro ao excluir")).toBeInTheDocument();
+        });
+    });
 });
