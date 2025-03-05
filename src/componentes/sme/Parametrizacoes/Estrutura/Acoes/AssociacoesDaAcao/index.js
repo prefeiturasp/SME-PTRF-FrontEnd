@@ -41,6 +41,8 @@ export const AssociacoesDaAcao = () => {
     const [quantidadeSelecionada, setQuantidadeSelecionada] = useState(0);
     const [showModalDesvincular, setShowModalDesvincular] = useState(false);
     const [showConfirmaDesvinculo, setShowConfirmaDesvinculo] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [firstPage, setFirstPage] = useState(1);
 
     const [tabelaAssociacoes, setTabelaAssociacoes] = useState({});
 
@@ -48,7 +50,7 @@ export const AssociacoesDaAcao = () => {
         buscaUnidadesDaAcao(acao_uuid).then(() => setLoading(false));
     }, []);
 
-    const buscaUnidadesDaAcao = async (acaoUuid) => {
+    const buscaUnidadesDaAcao = async (acaoUuid, pagina = 1) => {
         if (acaoUuid){
             let acao = await getAcao(acaoUuid)
             setAcao(acao);
@@ -56,13 +58,36 @@ export const AssociacoesDaAcao = () => {
             let _tabelaAssociacoes = await getTabelaAssociacoes();
             setTabelaAssociacoes(_tabelaAssociacoes);
 
-            let acoesAssociacoes = await getUnidadesPorAcao(acaoUuid);
+            let acoesAssociacoes = await getUnidadesPorAcao(acaoUuid, pagina);
             setUnidades(acoesAssociacoes);
+
+            console.log(acoesAssociacoes)
 
             setQuantidadeSelecionada(0);
         }
     }
 
+    const onPageChange = async (event) => {
+        setCurrentPage(event.page + 1)
+        setFirstPage(event.first)
+
+        let resultado_filtros = await getUnidadesPorAcao(acao_uuid, event.page + 1, estadoFiltros.filtrar_por_nome, estadoFiltros.filtro_informacoes);
+    
+        let unis = resultado_filtros.results.map(obj => {
+            return {
+                ...obj,
+                selecionado: false
+            }
+        });
+
+        setUnidades({
+            results: unis,
+            count: resultado_filtros.count,
+            next: resultado_filtros.next,
+            previous: resultado_filtros.previous
+        })
+        setLoading(false)
+    };
 
     const mudancasFiltros = (name, value) => {
         setEstadoFiltros({
@@ -71,21 +96,27 @@ export const AssociacoesDaAcao = () => {
         });
     };
 
-    const aplicaFiltrosUnidades = async (event)=>{
+    const aplicaFiltrosUnidades = async (event, pagina = 1)=>{
         setLoading(true);
         setBuscaUtilizandoFiltros(true);
         if (event) {
             event.preventDefault();
         }
-        let resultado_filtros = await getUnidadesPorAcao(acao_uuid, estadoFiltros.filtrar_por_nome, estadoFiltros.filtro_informacoes);
+        let resultado_filtros = await getUnidadesPorAcao(acao_uuid, pagina, estadoFiltros.filtrar_por_nome, estadoFiltros.filtro_informacoes);
     
-        let unis = resultado_filtros.map(obj => {
+        let unis = resultado_filtros.results.map(obj => {
             return {
                 ...obj,
                 selecionado: false
             }
         });
-        setUnidades(unis);
+
+        setUnidades({
+            results: unis,
+            count: resultado_filtros.count,
+            next: resultado_filtros.next,
+            previous: resultado_filtros.previous
+        })
         setLoading(false)
     };
 
@@ -109,7 +140,7 @@ export const AssociacoesDaAcao = () => {
 
     const selecionarTodos = (event) => {
         event.preventDefault();
-        let result = unidades.reduce((acc, o) => {
+        let result = unidades.results.reduce((acc, o) => {
 
             let obj = Object.assign(o, { selecionado: true }) ;
         
@@ -118,13 +149,16 @@ export const AssociacoesDaAcao = () => {
             return acc;
         
         }, []);
-        setUnidades(result);
-        setQuantidadeSelecionada(unidades.length);
+        setUnidades((prevUnidades) => ({
+            ...prevUnidades,
+            results: result,
+        }));
+        setQuantidadeSelecionada(unidades.results.length);
     }
 
     const desmarcarTodos = (event) => {
         event.preventDefault();
-        let result = unidades.reduce((acc, o) => {
+        let result = unidades.results.reduce((acc, o) => {
 
             let obj = Object.assign(o, { selecionado: false }) ;
         
@@ -133,7 +167,10 @@ export const AssociacoesDaAcao = () => {
             return acc;
         
         }, []);
-        setUnidades(result);
+        setUnidades((prevUnidades) => ({
+            ...prevUnidades,
+            results: result,
+        }));
         setQuantidadeSelecionada(0);
     };
 
@@ -142,7 +179,7 @@ export const AssociacoesDaAcao = () => {
         return (
             <div className="align-middle text-center">
                 <input
-                    checked={unidades.filter(u => u.uuid === rowData.uuid)[0].selecionado}
+                    checked={unidades.results.filter(u => u.uuid === rowData.uuid)[0].selecionado}
                     type="checkbox"
                     value=""
                     onChange={(e) => tratarSelecionado(e, rowData.uuid)}
@@ -185,7 +222,7 @@ export const AssociacoesDaAcao = () => {
             cont = cont - 1
         }
         setQuantidadeSelecionada(cont);
-        let result2 = unidades.reduce((acc, o) => {
+        let result2 = unidades.results.reduce((acc, o) => {
 
             let obj = unidadeUuid === o.uuid ? Object.assign(o, { selecionado: e.target.checked }) : o;
         
@@ -194,14 +231,17 @@ export const AssociacoesDaAcao = () => {
             return acc;
         
         }, []);
-        setUnidades(result2);
+        setUnidades((prevUnidades) => ({
+            ...prevUnidades,
+            results: result2,
+        }));
     }
 
     const mensagemQuantidadeExibida = () => {
         return (
             <div className="row">
                 <div className="col-12" style={{padding:"15px 0px", margin:"0px 15px", flex:"100%"}}>
-                    Exibindo <span style={{color: "#00585E", fontWeight:"bold"}}>{unidades.length}</span> unidades
+                    Exibindo <span style={{color: "#00585E", fontWeight:"bold"}}>{unidades.count}</span> unidades
                 </div>
             </div>
         )
@@ -215,7 +255,7 @@ export const AssociacoesDaAcao = () => {
                 <div className="col-12" style={{background: "#00585E", color: 'white', padding:"15px", margin:"0px 15px", flex:"100%"}}>
                     <div className="row">
                         <div className="col-5">
-                            {quantidadeSelecionada} {quantidadeSelecionada === 1 ? "unidade selecionada" : "unidades selecionadas"}  / {unidades.length} totais
+                            {quantidadeSelecionada} {quantidadeSelecionada === 1 ? "unidade selecionada" : "unidades selecionadas"}  / {unidades.results.length} totais
                         </div>
                         <div className="col-7">
                             <div className="d-flex align-items-center justify-content-end">
@@ -310,7 +350,7 @@ export const AssociacoesDaAcao = () => {
     };
 
     const handleDesvincularAssociacoesEmLote = () => {
-        let associacoesEncerradasSelecionadas = unidades.filter(u => u.selecionado === true && u.associacao.encerrada);
+        let associacoesEncerradasSelecionadas = unidades.results.filter(u => u.selecionado === true && u.associacao.encerrada);
         if(associacoesEncerradasSelecionadas.length > 0) {
             toastCustom.ToastCustomError('Ação não permitida', 'Existem uma ou mais associações encerradas selecionadas.')
         } else {
@@ -325,7 +365,7 @@ export const AssociacoesDaAcao = () => {
             lista_uuids: []
         };
 
-        let uuids = unidades.filter(u => u.selecionado === true).map(item => {return item.uuid});
+        let uuids = unidades.results.filter(u => u.selecionado === true).map(item => {return item.uuid});
 
         payLoad.lista_uuids = uuids;
 
@@ -421,7 +461,7 @@ export const AssociacoesDaAcao = () => {
                                 }
                                 <div className="row">
                                     <div className="col-12">
-                                        {unidades.length > 0 ? (
+                                        {unidades.results.length > 0 ? (
                                             <>
                                             <TabelaAssociacaoAcao
                                                 unidades={unidades}
@@ -430,6 +470,8 @@ export const AssociacoesDaAcao = () => {
                                                 selecionarTemplate={selecionarTemplate}
                                                 acoesTemplate={acoesTemplate}
                                                 caminhoUnidade="associacao.unidade"
+                                                onPageChange={onPageChange}
+                                                firstPage={firstPage}
                                             />                                            
                                             </>
                                         ) : buscaUtilizandoFiltros ?
