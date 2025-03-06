@@ -2,7 +2,7 @@ import React, {memo, useState} from "react";
 import { Editor } from "@tinymce/tinymce-react";
 import "./editor-wysiwyg.scss"
 
-const EditorWysiwyg = ({textoInicialEditor, tituloEditor, handleSubmitEditor, disabled=false})=>{
+const EditorWysiwyg = ({textoInicialEditor, tituloEditor, handleSubmitEditor, disabled=false, botaoCancelar=false, setExibeEditor=()=>{}})=>{
 
     let REACT_APP_EDITOR_KEY = "EDITOR_KEY_REPLACE_ME";
 
@@ -37,9 +37,19 @@ const EditorWysiwyg = ({textoInicialEditor, tituloEditor, handleSubmitEditor, di
                 onEditorChange={setTextoEditor}
                 disabled={disabled}
             />
-            <div className="d-flex  justify-content-end pb-3 mt-3">
-                <button className='btn btn-success' onClick={()=>handleSubmitEditor(textoEditor)} type='button' disabled={disabled}>Salvar</button>
+            <div className={`d-flex pb-3 mt-3 ${botaoCancelar ? 'justify-content-between' : 'justify-content-end'}`}>
+                {botaoCancelar && (
+                    <button className="btn btn-danger" onClick={() => {
+                        setExibeEditor(false);
+                    }} type="button">
+                        Cancelar
+                    </button>
+                )}
+                <button className="btn btn-success" onClick={() => handleSubmitEditor(textoEditor)} type="button" disabled={disabled}>
+                    Salvar
+                </button>
             </div>
+
         </>
     )
 };

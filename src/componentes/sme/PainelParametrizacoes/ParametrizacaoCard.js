@@ -69,13 +69,13 @@ export const ParametrizacaoCard = ({itensParametrizacao, nomeGrupo}) => {
         <>
             <h4 style={GrupoTituloStyle}>{nomeGrupo}</h4>
             <div className="row mt-4">
-                {itensParametrizacao && itensParametrizacao.length > 0 && itensParametrizacao.map((card, index) =>{
-                    return (
-                        visoesService.getPermissoes(card.permissoes) ? (
-                            <div key={index} className="col-sm-12 col-md-4 col-xl-3 mb-4 ">
+                {itensParametrizacao?.length > 0 && itensParametrizacao.map((card, index) => 
+                        visoesService.getPermissoes(card.permissoes) &&
+                        (!card.featureFlag || visoesService.featureFlagAtiva(card.featureFlag)) ? (
+                            <div key={index} className="col-sm-12 col-md-4 col-xl-3 mb-4">
                                 <div className="card h-100 container-cards-dre-dashboard">
                                     <Card
-                                        className="servico h-"
+                                        className="servico h-100"
                                         style={cardStyle}
                                         onClick={() => push(card.url)}
                                     >
@@ -85,13 +85,9 @@ export const ParametrizacaoCard = ({itensParametrizacao, nomeGrupo}) => {
                                             <CardSubtitle style={cardSubTitleStyle}><FontAwesomeIcon style={IconeSetaStyle} icon={faArrowRight}/></CardSubtitle>
                                         </CardBody>
                                     </Card>
-
                                 </div>
                             </div>
-                        ) : null
-                    )
-                })}
-            </div>
+):null)}</div>
         </>
     )
 };

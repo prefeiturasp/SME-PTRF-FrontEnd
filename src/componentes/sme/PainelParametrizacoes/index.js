@@ -84,7 +84,7 @@ export const PainelParametrizacoes = () => {
 
     const itensParametrizacaoDespesas = [
         {
-            parametro: 'Especificações',
+            parametro: 'Especificações de Materiais e Serviços',
             url: 'parametro-especificacoes',
             icone: IconeEspecificacoes,
             permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
@@ -178,7 +178,14 @@ export const PainelParametrizacoes = () => {
             url: 'parametro-textos-fique-de-olho',
             icone: IconeTextosFiqueDeOlho,
             permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
-        }
+        },
+        {
+            parametro: 'Textos do PAA',
+            url: 'parametro-textos-paa',
+            icone: IconeTextosFiqueDeOlho,
+            permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
+            featureFlag: 'paa',
+        },
     ];
 
     return (

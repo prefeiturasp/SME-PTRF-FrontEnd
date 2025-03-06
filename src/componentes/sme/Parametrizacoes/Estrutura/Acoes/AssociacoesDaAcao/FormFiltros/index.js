@@ -23,7 +23,7 @@ export const Filtros = ({
                                type="text" 
                                className="form-control"
                                placeholder="Código EOL, nomes da UE ou Associação..."
-                               value={estadoFiltros.filtrar_por_termo}
+                               value={estadoFiltros.filtrar_por_nome}
                             />
                         </div>
                         <div className="form-group col-md-3">

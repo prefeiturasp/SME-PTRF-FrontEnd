@@ -186,14 +186,24 @@ export const validarDataDeEncerramento = async (associacao_uuid, data_de_encerra
 
 
 // Periodos
-export const getTodosPeriodos = async () => {
-    return (await api.get(`/api/periodos/`, authHeader)).data
+export const getTodosPeriodos = async (referencia='') => {
+    return (await api.get(`/api/periodos/?referencia=${referencia}`, authHeader)).data
 };
 export const getPeriodoPorReferencia = async (referencia) => {
     return (await api.get(`/api/periodos/?referencia=${referencia}`, authHeader)).data
 };
 export const getDatasAtendemRegras = async (data_inicio_realizacao_despesas, data_fim_realizacao_despesas, periodo_anterior_uuid, periodo_uuid) => {
-    return (await api.get(`/api/periodos/verificar-datas/?data_inicio_realizacao_despesas=${data_inicio_realizacao_despesas}&data_fim_realizacao_despesas=${data_fim_realizacao_despesas}&periodo_anterior_uuid=${periodo_anterior_uuid}${periodo_uuid ? '&periodo_uuid='+periodo_uuid : ''}`, authHeader)).data
+    const queryParams = new URLSearchParams({
+        data_inicio_realizacao_despesas,
+        periodo_anterior_uuid,
+      });
+      if (data_fim_realizacao_despesas) {
+        queryParams.append("data_fim_realizacao_despesas", data_fim_realizacao_despesas);
+      }      
+      if (periodo_uuid) {
+        queryParams.append("periodo_uuid", periodo_uuid);
+      }
+    return (await api.get(`/api/periodos/verificar-datas/?${queryParams.toString()}`, authHeader)).data
 };
 export const getPeriodoPorUuid = async (periodo_uuid) => {
     return (await api.get(`/api/periodos/${periodo_uuid}/`, authHeader)).data
@@ -325,8 +335,8 @@ export const deleteAcertosDocumentos = async (documento_uuid) => {
     return (await api.delete(`/api/tipos-acerto-documento/${documento_uuid}/`, authHeader))
 };
 
-export const getUnidadesPorAcao = async (acao_uuid, nome="", informacoes=[]) => {
-    return (await api.get(`api/acoes-associacoes/?acao__uuid=${acao_uuid}&nome=${nome}&filtro_informacoes=${informacoes}`, authHeader)).data
+export const getUnidadesPorAcao = async (acao_uuid, pagina=1, nome="", informacoes=[]) => {
+    return (await api.get(`api/acoes-associacoes/?acao__uuid=${acao_uuid}&page=${pagina}&nome=${nome}&filtro_informacoes=${informacoes}`, authHeader)).data
 };
 
 export const getAcao = async (uuid='') => {
@@ -421,11 +431,7 @@ export const deleteFornecedor = async (fornecedores_id) => {
 };
 
 // Motivos estorno
-export const getMotivosEstorno = async () => {
-    return (await api.get(`/api/motivos-estorno/`, authHeader)).data
-};
-
-export const getFiltrosMotivosEstorno = async (motivo) => {
+export const getMotivosEstorno = async (motivo) => {
     return (await api.get(`/api/motivos-estorno/?motivo=${motivo}`, authHeader)).data
 };
 
@@ -486,6 +492,44 @@ export const patchRepasse = async (uuid_repasse, payload) => {
 
 export const deleteRepasse = async (uuid_repasse) => {
     return (await api.delete(`api/repasses/${uuid_repasse}/`, authHeader));
+};
+
+// Especificações Materiais e Serviços
+export const getEspecificacoesMateriaisServicos = async (filter, currentPage) => {
+    const {descricao, tipo_custeio, aplicacao_recurso, ativa} = filter;
+    return (await api.get(`/api/especificacoes-materiais-servicos/`, {
+        ...authHeader,
+        params: {
+            descricao: descricao,
+            tipo_custeio: tipo_custeio,
+            aplicacao_recurso: aplicacao_recurso,
+            ativa: ativa,
+            page_size: 20,
+            page: currentPage,
+        }
+    })).data
+}
+
+export const getTabelasEspecificacoesMateriaisServicos = async () => {
+    return (await api.get(`/api/especificacoes-materiais-servicos/tabelas/`, authHeader)).data
+};
+
+export const postEspecificacoesMateriaisServicos = async (payload) => {
+    return (await api.post(`/api/especificacoes-materiais-servicos/`,
+        { ...payload },
+        authHeader,
+    ))
+};
+
+export const patchEspecificacoesMateriaisServicos = async (uuid, payload) => {
+    return (await api.patch(`/api/especificacoes-materiais-servicos/${uuid}/`,
+        { ...payload },
+        authHeader
+    ))
+};
+
+export const deleteEspecificacoesMateriaisServicos = async (uuid) => {
+    return (await api.delete(`/api/especificacoes-materiais-servicos/${uuid}/`, authHeader));
 };
 
 // Motivos Pagamento Antecipado

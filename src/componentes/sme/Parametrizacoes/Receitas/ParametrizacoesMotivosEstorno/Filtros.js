@@ -1,28 +1,63 @@
-import React from "react";
+import React, {useContext, useState} from "react";
+import { MotivosEstornoContext } from "./context/MotivosEstorno";
 
-export const Filtros = ({stateFiltros, handleChangeFiltros, handleSubmitFiltros, limpaFiltros}) => {
+export const Filtros = () => {
+
+    const {setFilter, initialFilter} = useContext(MotivosEstornoContext);
+    const [formFilter, setFormFilter] = useState(initialFilter);
+
+    const handleChangeFormFilter = (name, value) => {
+        setFormFilter({
+            ...formFilter,
+            [name]: value
+        });
+    };
+
+    const handleSubmitFormFilter = () => {
+        setFilter(formFilter);
+    };
+
+    const clearFilter = () => {
+        setFormFilter(initialFilter);
+        setFilter(initialFilter);
+    };
+    
+    if(!formFilter) return null;
+    
     return (
         <>
-            <form>
-                <div className="form-row">
-                    <div className="form-group col-md-12">
-                        <label htmlFor="filtrar_por_nome">Filtrar por nome</label>
+            <div className="d-flex bd-highlight align-items-end mt-2">
+                <div className="p-2 flex-grow-1 bd-highlight">
+                    <form>
+                        <label htmlFor="motivo">Filtrar por nome</label>
                         <input
-                            value={stateFiltros.filtrar_por_nome}
-                            onChange={(e) => handleChangeFiltros(e.target.name, e.target.value)}
-                            name='filtrar_por_nome'
-                            id="filtrar_por_nome"
+                            value={formFilter.motivo}
+                            onChange={(e) => {handleChangeFormFilter(e.target.name, e.target.value)}}
+                            name='motivo'
+                            id="motivo"
                             type="text"
                             className="form-control"
-                            placeholder='Escreva o nome do motivo'
+                            placeholder='Busque por motivo'
                         />
-                    </div>
+                    </form>
                 </div>
-                <div className="d-flex justify-content-end mt-n2">
-                    <button onClick={() => limpaFiltros()} type="button" className="btn btn btn-outline-success mr-2">Limpar</button>
-                    <button onClick={handleSubmitFiltros} type="button" className="btn btn-success">Filtrar</button>
+                <div className="pt-2 pb-2 pr-0 pl-2 bd-highlight">
+                    <button
+                        onClick={clearFilter}
+                        className="btn btn-outline-success"
+                    >
+                        Limpar
+                    </button>
                 </div>
-            </form>
+                <div className="p-2 bd-highlight">
+                    <button
+                        onClick={handleSubmitFormFilter}
+                        className="btn btn-success"
+                    >
+                        Filtrar
+                    </button>
+                </div>
+            </div>
         </>
-    );
-};
+    )
+}

@@ -5,7 +5,7 @@ import icones from "./icones";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as faIcons from "@fortawesome/free-solid-svg-icons";
 
-export const Icon = ({icon, tooltipMessage, iconProps = {}}) => {
+export const Icon = ({icon, tooltipMessage = "", iconProps = {}}) => {
     const isFontAwesome = faIcons[icon] !== undefined;
 
     const IconImg = () => {
@@ -36,9 +36,4 @@ Icon.propTypes = {
     icon: PropTypes.string.isRequired,
     tooltipMessage: PropTypes.string,
     iconProps: PropTypes.object,
-};
-
-Icon.defaultProps = {
-    tooltipMessage: "",
-    iconProps: {},
 };
