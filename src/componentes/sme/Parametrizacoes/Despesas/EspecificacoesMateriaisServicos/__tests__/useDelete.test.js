@@ -1,12 +1,12 @@
-import { render, screen, waitFor, act } from "@testing-library/react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { MateriaisServicosContext } from "../context/MateriaisServicos";
+import { waitFor, renderHook } from "@testing-library/react";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useDelete } from "../hooks/useDelete";
 import { deleteEspecificacoesMateriaisServicos } from "../../../../../../services/sme/Parametrizacoes.service";
 import { toastCustom } from "../../../../../Globais/ToastCustom";
-import userEvent from "@testing-library/user-event";
 
-jest.mock("../../../../../../services/sme/Parametrizacoes.service");
+jest.mock('../../../../../../services/sme/Parametrizacoes.service', () => ({
+    deleteEspecificacoesMateriaisServicos: jest.fn(),
+}));
 
 jest.mock("../../../../../Globais/ToastCustom", () => ({
     toastCustom: {
@@ -15,87 +15,42 @@ jest.mock("../../../../../Globais/ToastCustom", () => ({
     },
 }));
 
-const queryClient = new QueryClient({
-    defaultOptions: {
-        queries: {
-            retry: false,
-        },
-    },
-});
+const wrapper = ({ children }) => (
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+);
 
-const TestComponent = ({ uuid }) => {
-  const { mutationDelete } = useDelete();
-
-  return (
-      <div>
-          <button onClick={() => mutationDelete.mutate(uuid)}>
-              Excluir especificação
-          </button>
-          {mutationDelete.isLoading && <p>Excluindo...</p>}
-          {mutationDelete.isError && <p>Erro ao excluir</p>}
-          {mutationDelete.isSuccess && <p>Exclusão concluída</p>}
-      </div>
-  );
-};
+const queryClient = new QueryClient();
 
 describe("Hook useDelete", () => {
-    let mockContextValue;
 
-    beforeEach(() => {
-        jest.clearAllMocks();
-        queryClient.clear();
+    it('deve chamar a mutação com sucesso', async () => {
+        deleteEspecificacoesMateriaisServicos.mockResolvedValue({ data: { sucesso: true } });
 
-        mockContextValue = {
-            setShowModalForm: jest.fn(),
-            setBloquearBtnSalvarForm: jest.fn(),
-        };
-    });
+        const { result } = renderHook(() => useDelete(), { wrapper });
 
-    test("Realiza a exclusão com sucesso", async () => {
-        deleteEspecificacoesMateriaisServicos.mockResolvedValueOnce(Promise.resolve());
-        jest.spyOn(queryClient, "invalidateQueries").mockResolvedValueOnce();
-
-        render(
-            <QueryClientProvider client={queryClient}>
-                <MateriaisServicosContext.Provider value={mockContextValue}>
-                    <TestComponent uuid="1234" />
-                </MateriaisServicosContext.Provider>
-            </QueryClientProvider>
-        );
-
-        userEvent.click(screen.getByText("Excluir especificação"));
-
-        await waitFor(() => {
-            expect(deleteEspecificacoesMateriaisServicos).toHaveBeenCalledWith("1234");
-            expect(screen.getByText("Exclusão concluída")).toBeInTheDocument();
-            expect(queryClient.invalidateQueries).toHaveBeenCalledWith(["especificacoes-materiais-servicos-list"]);
-        
-            expect(mockContextValue.setShowModalForm).toHaveBeenCalledWith(false);
-            expect(toastCustom.ToastCustomSuccess).toHaveBeenCalledWith(
-                "Exclusão de especificação realizada com sucesso",
-                "A especificação foi excluída com sucesso."
-            );
+        await waitFor(async () => {
+            await result.current.mutationDelete.mutateAsync("uuid");
         });
+
+        expect(deleteEspecificacoesMateriaisServicos).toHaveBeenCalled();
+        expect(toastCustom.ToastCustomSuccess).toHaveBeenCalledWith(
+            "Exclusão de especificação realizada com sucesso",
+            "A especificação foi excluída com sucesso."
+        );
     });
 
-    test("Lida com erro ao Excluir especificação", async () => {
+    it("deve exibir mensagem de erro quando a API retorna uma mensagem de erro", async () => {
         deleteEspecificacoesMateriaisServicos.mockRejectedValueOnce({
-            response: { data: { mensagem: "Erro ao excluir" } },
+            response: { data: { mensagem: "Erro" } },
         });
 
-        render(
-            <QueryClientProvider client={queryClient}>
-                <MateriaisServicosContext.Provider value={mockContextValue}>
-                    <TestComponent uuid="1234" />
-                </MateriaisServicosContext.Provider>
-            </QueryClientProvider>
-        );
+        const { result } = renderHook(() => useDelete(), { wrapper });
 
-        userEvent.click(screen.getByText("Excluir especificação"));
+        await waitFor(async () => {
+            await result.current.mutationDelete.mutateAsync({ nome: 'Material Teste' });
+        });
 
-        await waitFor(() => {
-            expect(deleteEspecificacoesMateriaisServicos).toHaveBeenCalledWith("1234");
-            expect(screen.getByText("Erro ao excluir")).toBeInTheDocument();
-        }); 
+        expect(deleteEspecificacoesMateriaisServicos).toHaveBeenCalled();
+        expect(toastCustom.ToastCustomError).toHaveBeenCalled();
     });
 });

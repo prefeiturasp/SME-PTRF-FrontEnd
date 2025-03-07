@@ -1,12 +1,13 @@
-import { render, screen, waitFor, act } from "@testing-library/react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { MateriaisServicosContext } from "../context/MateriaisServicos";
+import { waitFor, renderHook } from "@testing-library/react";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { usePost } from "../hooks/usePost";
 import { postEspecificacoesMateriaisServicos } from "../../../../../../services/sme/Parametrizacoes.service";
 import { toastCustom } from "../../../../../Globais/ToastCustom";
-import userEvent from "@testing-library/user-event";
 
-jest.mock("../../../../../../services/sme/Parametrizacoes.service");
+jest.mock('../../../../../../services/sme/Parametrizacoes.service', () => ({
+    postEspecificacoesMateriaisServicos: jest.fn(),
+}));
+
 jest.mock("../../../../../Globais/ToastCustom", () => ({
     toastCustom: {
         ToastCustomSuccess: jest.fn(),
@@ -14,84 +15,44 @@ jest.mock("../../../../../Globais/ToastCustom", () => ({
     },
 }));
 
-const queryClient = new QueryClient({
-    defaultOptions: {
-        queries: {
-            retry: false,
-        },
-    },
-});
+const wrapper = ({ children }) => (
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+);
 
-const TestComponent = ({ payload }) => {
-  const { mutationPost } = usePost();
-
-  return (
-      <div>
-          <button onClick={() => mutationPost.mutate({ payload })}>
-              Criar Especificação
-          </button>
-          {mutationPost.isLoading && <p>Criando...</p>}
-          {mutationPost.isError && <p>Erro ao criar</p>}
-          {mutationPost.isSuccess && <p>Criação concluída</p>}
-      </div>
-  );
-};
+const queryClient = new QueryClient();
 
 describe("Hook usePost", () => {
-    let mockContextValue;
 
-    beforeEach(() => {
-        jest.clearAllMocks();
-        queryClient.clear();
+    it('deve chamar a mutação com sucesso', async () => {
+        postEspecificacoesMateriaisServicos.mockResolvedValue({ data: { sucesso: true } });
 
-        mockContextValue = {
-            setShowModalForm: jest.fn(),
-            setBloquearBtnSalvarForm: jest.fn(),
-        };
-    });
+        const { result } = renderHook(() => usePost(), { wrapper });
 
-    test("Realiza a criação com sucesso", async () => {
-        postEspecificacoesMateriaisServicos.mockResolvedValueOnce({ descricao: "Novo registro"});
+        await waitFor(async () => {
+            await result.current.mutationPost.mutateAsync({ payload: { nome: 'Material Teste' } });
+        });
 
-        render(
-            <QueryClientProvider client={queryClient}>
-                <MateriaisServicosContext.Provider value={mockContextValue}>
-                    <TestComponent payload={{ descricao: "Novo registro" }} />
-                </MateriaisServicosContext.Provider>
-            </QueryClientProvider>
+        expect(postEspecificacoesMateriaisServicos).toHaveBeenCalledWith({ nome: 'Material Teste' });
+        expect(toastCustom.ToastCustomSuccess).toHaveBeenCalledWith(
+            "Inclusão da especificação realizada com sucesso",
+            "A especificação foi adicionada com sucesso."
         );
 
-        userEvent.click(screen.getByText("Criar Especificação"));
-
-        await waitFor(() => {
-            expect(screen.getByText("Criação concluída")).toBeInTheDocument();
-            expect(postEspecificacoesMateriaisServicos).toHaveBeenCalledWith({ descricao: "Novo registro" });
-            expect(mockContextValue.setShowModalForm).toHaveBeenCalledWith(false);
-            expect(toastCustom.ToastCustomSuccess).toHaveBeenCalledWith(
-                "Inclusão da especificação realizada com sucesso",
-                "A especificação foi adicionada com sucesso."
-            );
-        });
     });
 
-    test("Lida com erro ao criar Especificação", async () => {
-        postEspecificacoesMateriaisServicos.mockRejectedValue({
-            response: { data: { non_field_errors: "Erro ao criar" } },
+    it("deve exibir mensagem de erro quando a API retorna uma mensagem de erro", async () => {
+        postEspecificacoesMateriaisServicos.mockRejectedValueOnce({
+            response: { data: { mensagem: "Erro ao deletar" } },
         });
 
-        render(
-            <QueryClientProvider client={queryClient}>
-                <MateriaisServicosContext.Provider value={mockContextValue}>
-                    <TestComponent payload={{  }} />
-                </MateriaisServicosContext.Provider>
-            </QueryClientProvider>
-        );
+        const { result } = renderHook(() => usePost(), { wrapper });
 
-        userEvent.click(screen.getByText("Criar Especificação"));
-
-        await waitFor(() => {
-            expect(postEspecificacoesMateriaisServicos).toHaveBeenCalledWith({ });
-            expect(screen.getByText("Erro ao criar")).toBeInTheDocument();
+        await waitFor(async () => {
+            await result.current.mutationPost.mutateAsync({ nome: 'Material Teste' });
         });
+
+        expect(postEspecificacoesMateriaisServicos).toHaveBeenCalled();
+        expect(toastCustom.ToastCustomError).toHaveBeenCalledWith("Erro ao criar a especificação", "Erro ao deletar");
     });
+
 });

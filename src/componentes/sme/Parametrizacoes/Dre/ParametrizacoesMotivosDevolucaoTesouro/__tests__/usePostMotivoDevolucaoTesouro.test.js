@@ -98,4 +98,29 @@ describe("Hook usePostMotivoDevolucaoTesouro", () => {
             expect(screen.getByText("Erro ao criar")).toBeInTheDocument();
         });
     });
+
+    test("Lida com erro ao criar motivo sem a prop non_field_errors", async () => {
+        postMotivosDevolucaoTesouro.mockRejectedValueOnce({
+            response: { data: { error: "Erro ao criar" } },
+        });
+
+        render(
+            <QueryClientProvider client={queryClient}>
+                <MotivosDevolucaoTesouroContext.Provider value={mockContextValue}>
+                    <TestComponent payload={{ nome: "Novo Motivo" }} />
+                </MotivosDevolucaoTesouroContext.Provider>
+            </QueryClientProvider>
+        );
+
+        userEvent.click(screen.getByText("Criar Motivo"));
+
+        await waitFor(() => {
+            expect(postMotivosDevolucaoTesouro).toHaveBeenCalledWith({ nome: "Novo Motivo" });
+            expect(toastCustom.ToastCustomError).toHaveBeenCalledWith(
+                'Erro ao criar o motivo de devolução ao tesouro',
+                'Não foi possível criar o motivo de devolução ao tesouro'
+            );
+            expect(screen.getByText("Erro ao criar")).toBeInTheDocument();
+        });
+    });
 });

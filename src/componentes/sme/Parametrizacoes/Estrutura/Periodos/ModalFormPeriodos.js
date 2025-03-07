@@ -6,7 +6,17 @@ import {exibeDataPT_BR} from "../../../../../utils/ValidacoesAdicionaisFormulari
 import {YupSignupSchemaPeriodos} from "./YupSignupSchemaPeriodos";
 import {RetornaSeTemPermissaoEdicaoPainelParametrizacoes} from "../../RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
 
-const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModalFormPeriodos, listaDePeriodos, setErroDatasAtendemRegras, erroDatasAtendemRegras, setShowModalConfirmDeletePeriodo}) => {
+const ModalFormPeriodos = ({
+    show, 
+    stateFormModal, 
+    deveValidarPeriodoAnterior,
+    erroDatasAtendemRegras, 
+    periodos,
+    onSubmit,  
+    onHandleClose,
+    setErroDatasAtendemRegras, 
+    setShowModalConfirmDeletePeriodo
+}) => {
 
     const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES = RetornaSeTemPermissaoEdicaoPainelParametrizacoes()
 
@@ -15,10 +25,10 @@ const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModal
             <>
                 <Formik
                     initialValues={stateFormModal}
-                    validationSchema={YupSignupSchemaPeriodos}
+                    validationSchema={() => YupSignupSchemaPeriodos(deveValidarPeriodoAnterior)}
                     validateOnBlur={true}
                     enableReinitialize={true}
-                    onSubmit={handleSubmitModalFormPeriodos}
+                    onSubmit={onSubmit}
                 >
                     {props => {
                         const {
@@ -29,7 +39,7 @@ const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModal
                             <form onSubmit={props.handleSubmit}>
                                 <div className='row'>
                                     <div className='col-12'>
-                                        <p className='text-right mb-0'>* Preenchimento obrigatório</p>
+                                        <p className='text-right mb-2'><strong>* Preenchimento obrigatório</strong></p>
                                     </div>
                                     <div className='col'>
                                     <div className="form-group">
@@ -112,7 +122,7 @@ const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModal
                                     </div>
                                     <div className='col'>
                                         <div className="form-group">
-                                            <label htmlFor="data_fim_realizacao_despesas">Fim prestação de contas</label>
+                                            <label htmlFor="data_fim_prestacao_contas">Fim prestação de contas</label>
                                             <DatePickerField
                                                 dataQa={"input-data-fim-prestacao-contas"}
                                                 name="data_fim_prestacao_contas"
@@ -128,10 +138,10 @@ const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModal
 
                                 <div className='row'>
                                     <div className='col'>
-                                        <label htmlFor="periodo_anterior">Período anterior {listaDePeriodos && listaDePeriodos.length > 1 ? "*" : ""}</label>
+                                        <label htmlFor="periodo_anterior">Período anterior {deveValidarPeriodoAnterior ? "*" : ""}</label>
                                         <select
                                             data-qa="input-periodo-anterior"
-                                            value={values.periodo_anterior ? values.periodo_anterior : ""}
+                                            value={values.periodo_anterior ? values.periodo_anterior.uuid : ""}
                                             onChange={(e)=>{
                                                 props.handleChange(e);
                                                 setErroDatasAtendemRegras(false);
@@ -142,7 +152,7 @@ const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModal
                                             className="form-control"
                                         >
                                             <option data-qa="option-periodo-anterior-vazio" value=''>Selecione um período</option>
-                                            {listaDePeriodos && listaDePeriodos.filter(element=> element.uuid !== values.uuid).map((periodo) =>
+                                            {periodos && periodos.filter(element=> element.uuid !== values.uuid).map((periodo) =>
                                                 <option
                                                     data-qa={`option-periodo-anterior-${periodo.uuid}`}
                                                     key={periodo.uuid}
@@ -150,6 +160,7 @@ const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModal
                                                 </option>
                                             )}
                                         </select>
+                                        {props.touched.periodo_anterior && props.errors.periodo_anterior && <span className="span_erro text-danger mt-1"> {props.errors.periodo_anterior} </span>}
                                     </div>
                                 </div>
                                 {erroDatasAtendemRegras &&
@@ -164,10 +175,10 @@ const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModal
                                         <p className='mb-2'>Uuid</p>
                                         <p className='mb-2'>{values.uuid}</p>
                                     </div>
-                                    <div className='col'>
+                                    {/* <div className='col'>
                                         <p className='mb-2'>ID</p>
                                         <p className='mb-2'>{values.id}</p>
-                                    </div>
+                                    </div> */}
                                 </div>
 
                                 <div className="d-flex bd-highlight mt-2">
@@ -187,7 +198,7 @@ const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModal
                                     <div className="p-Y bd-highlight">
                                         <button
                                             data-qa="btn-cancelar"
-                                            onClick={()=>handleClose()}
+                                            onClick={onHandleClose}
                                             type="button"
                                             className={`btn btn${values.editavel ? '-outline-success' : '-success'} mt-2 mr-2`}
                                         >
@@ -219,7 +230,7 @@ const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModal
         <ModalFormBodyText
             show={show}
             titulo={stateFormModal && !stateFormModal.editavel ? 'Visualizar período' : stateFormModal && stateFormModal.operacao === 'edit' ? 'Editar período' : 'Adicionar período'}
-            onHide={handleClose}
+            onHide={onHandleClose}
             size='lg'
             bodyText={bodyTextarea()}
         />

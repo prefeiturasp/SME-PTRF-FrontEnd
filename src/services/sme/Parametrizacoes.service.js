@@ -186,14 +186,24 @@ export const validarDataDeEncerramento = async (associacao_uuid, data_de_encerra
 
 
 // Periodos
-export const getTodosPeriodos = async () => {
-    return (await api.get(`/api/periodos/`, authHeader)).data
+export const getTodosPeriodos = async (referencia='') => {
+    return (await api.get(`/api/periodos/?referencia=${referencia}`, authHeader)).data
 };
 export const getPeriodoPorReferencia = async (referencia) => {
     return (await api.get(`/api/periodos/?referencia=${referencia}`, authHeader)).data
 };
 export const getDatasAtendemRegras = async (data_inicio_realizacao_despesas, data_fim_realizacao_despesas, periodo_anterior_uuid, periodo_uuid) => {
-    return (await api.get(`/api/periodos/verificar-datas/?data_inicio_realizacao_despesas=${data_inicio_realizacao_despesas}&data_fim_realizacao_despesas=${data_fim_realizacao_despesas}&periodo_anterior_uuid=${periodo_anterior_uuid}${periodo_uuid ? '&periodo_uuid='+periodo_uuid : ''}`, authHeader)).data
+    const queryParams = new URLSearchParams({
+        data_inicio_realizacao_despesas,
+        periodo_anterior_uuid,
+      });
+      if (data_fim_realizacao_despesas) {
+        queryParams.append("data_fim_realizacao_despesas", data_fim_realizacao_despesas);
+      }      
+      if (periodo_uuid) {
+        queryParams.append("periodo_uuid", periodo_uuid);
+      }
+    return (await api.get(`/api/periodos/verificar-datas/?${queryParams.toString()}`, authHeader)).data
 };
 export const getPeriodoPorUuid = async (periodo_uuid) => {
     return (await api.get(`/api/periodos/${periodo_uuid}/`, authHeader)).data

@@ -6,57 +6,6 @@ import {ASSOCIACAO_UUID} from "../services/auth.service";
 import {getPeriodoFechado} from "../services/escolas/Associacao.service";
 import {metodosAuxiliares} from "../componentes/escolas/Despesas/metodosAuxiliares";
 
-const retornaNumeroOrdinal = (index) =>{
-  let _index = index + 1;
-
-  if (_index === 10){
-    return 'Décima'
-  }else if(_index === 20){
-    return 'Vigésima'
-  }else if(_index === 30){
-    return 'Trigésima'
-  }else if(_index === 40){
-    return 'Quadragésima'
-  }else if(_index === 50){
-    return 'Quinguasésima'
-  }else if(_index === 60){
-    return 'Sextagésima'
-  }else if(_index === 70){
-    return 'Séptimagésima'
-  }else if(_index === 80){
-    return 'Octagésima'
-  }else{
-    let oridinal = _index.toOrdinal({ genero: "a"});
-    let array = oridinal.split(' ');
-    let primeira_palavra = array[0];
-    let modificada = primeira_palavra.substring(0, primeira_palavra.length - 1) + 'a';
-    if (array[1] === undefined){
-      return modificada.charAt(0).toUpperCase() + modificada.slice(1)
-    }else {
-      return modificada.charAt(0).toUpperCase() + modificada.slice(1) + " " + array[1]
-    }
-  }
-};
-
-export const checkDuplicateInObject = (propertyName, inputArray) => {
-
-  var seenDuplicate = false,
-      testObject = {};
-
-  inputArray.map((item) => {
-    let itemPropertyName = item[propertyName];
-    if (itemPropertyName in testObject) {
-      testObject[itemPropertyName].duplicate = true;
-      item.duplicate = true;
-      seenDuplicate = true;
-    } else {
-      testObject[itemPropertyName] = item;
-      delete item.duplicate;
-    }
-  });
-  return seenDuplicate;
-};
-
 export const YupSignupSchemaAssociacoes  = yup.object().shape({
   nome: yup.string().required("Nome é obrigatório"),
   codigo_eol_unidade: yup.string().required("Código EOL da unidade é obrigatório"),
@@ -283,7 +232,6 @@ export const periodoFechadoImposto = async (despesas_impostos, setReadOnlyBtnAca
 }
 
 export const validaPayloadDespesas = (values, despesasTabelas=null, parametroLocation=null) => {
-
   let exibe_documento_transacao
   if (despesasTabelas){
     if (typeof values.tipo_transacao === 'object' && values.tipo_transacao !== null){
@@ -437,12 +385,15 @@ export const validaPayloadDespesas = (values, despesasTabelas=null, parametroLoc
   return values
 }
 
-export const exibeValorFormatadoPT_BR = (valor)  => {
-  return valor.toLocaleString('pt-BR', {
+export const exibeValorFormatadoPT_BR = (valor) => {
+  const isNegative = valor < 0;
+  const formattedValue = Math.abs(valor).toLocaleString('pt-BR', {
     style: 'currency',
     currency: 'BRL'
-  })
-}
+  });
+
+  return isNegative ? `R$-${formattedValue.replace("R$", "").trim()}` : formattedValue;
+};
 
 export const exibeDataPT_BR = (data) => {
   if (data === 'None'){
@@ -470,7 +421,6 @@ export const exibeDateTimePT_BR_Ata = (data) => {
   }
   return data
 }
-
 
 export const convertToNumber = (string)=>{
   return Number(string)
@@ -500,7 +450,6 @@ export const trataNumericos = (valor) => {
     return valor;
   }
 }
-
 
 export const calculaValorRateio = (valor1, valor2) => {
 

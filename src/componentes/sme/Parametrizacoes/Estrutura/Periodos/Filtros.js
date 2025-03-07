@@ -1,6 +1,11 @@
 import React from "react";
 
-export const Filtros = ({stateFiltros, handleChangeFiltros, handleSubmitFiltros, limpaFiltros}) => {
+export const Filtros = ({
+    stateFiltros, 
+    handleChangeFiltros, 
+    handleSubmitFiltros, 
+    limpaFiltros
+}) => {
     return (
         <>
             <form>

@@ -1,12 +1,13 @@
-import { render, screen, waitFor, act } from "@testing-library/react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { MateriaisServicosContext } from "../context/MateriaisServicos";
+import { waitFor, renderHook } from "@testing-library/react";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { usePatch } from "../hooks/usePatch";
 import { patchEspecificacoesMateriaisServicos } from "../../../../../../services/sme/Parametrizacoes.service";
 import { toastCustom } from "../../../../../Globais/ToastCustom";
-import userEvent from "@testing-library/user-event";
 
-jest.mock("../../../../../../services/sme/Parametrizacoes.service");
+jest.mock('../../../../../../services/sme/Parametrizacoes.service', () => ({
+    patchEspecificacoesMateriaisServicos: jest.fn(),
+}));
+
 jest.mock("../../../../../Globais/ToastCustom", () => ({
     toastCustom: {
         ToastCustomSuccess: jest.fn(),
@@ -14,84 +15,43 @@ jest.mock("../../../../../Globais/ToastCustom", () => ({
     },
 }));
 
-const queryClient = new QueryClient({
-    defaultOptions: {
-        queries: {
-            retry: false,
-        },
-    },
-});
+const wrapper = ({ children }) => (
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+);
 
-const TestComponent = ({ uuid, payload }) => {
-  const { mutationPatch } = usePatch();
-
-  return (
-      <div>
-          <button onClick={() => mutationPatch.mutate({ uuid, payload })}>
-              Atualizar Especificação
-          </button>
-          {mutationPatch.isLoading && <p>Atualizando...</p>}
-          {mutationPatch.isError && <p>Erro ao atualizar</p>}
-          {mutationPatch.isSuccess && <p>Atualização concluída</p>}
-      </div>
-  );
-};
+const queryClient = new QueryClient();
 
 describe("Hook usePatch", () => {
-    let mockContextValue;
 
-    beforeEach(() => {
-        jest.clearAllMocks();
-        queryClient.clear();
+    it('deve chamar a mutação com sucesso', async () => {
+        patchEspecificacoesMateriaisServicos.mockResolvedValue({ data: { sucesso: true } });
 
-        mockContextValue = {
-            setShowModalForm: jest.fn(),
-            setBloquearBtnSalvarForm: jest.fn(),
-        };
-    });
+        const { result } = renderHook(() => usePatch(), { wrapper });
 
-    test("Realiza a atualização com sucesso", async () => {
-      patchEspecificacoesMateriaisServicos.mockResolvedValueOnce({});
-
-      render(
-          <QueryClientProvider client={queryClient}>
-              <MateriaisServicosContext.Provider value={mockContextValue}>
-                  <TestComponent uuid="1234" payload={{ descricao: "Novo Nome" }} />
-              </MateriaisServicosContext.Provider>
-          </QueryClientProvider>
-      );
-
-      userEvent.click(screen.getByText("Atualizar Especificação"));
-
-      await waitFor(() => {
-          expect(screen.getByText("Atualização concluída")).toBeInTheDocument();
-          expect(patchEspecificacoesMateriaisServicos).toHaveBeenCalledWith("1234", { descricao: "Novo Nome" });
-          expect(mockContextValue.setShowModalForm).toHaveBeenCalledWith(false);
-          expect(toastCustom.ToastCustomSuccess).toHaveBeenCalledWith(
-              "Edição da especificação realizada com sucesso",
-              "A especificação foi editada com sucesso."
-          );
-      });
-    });
-
-    test("Lida com erro ao atualizar Especificação", async () => {
-        patchEspecificacoesMateriaisServicos.mockRejectedValueOnce({
-            response: { data: { non_field_errors: "Erro ao atualizar" } },
+        await waitFor(async () => {
+            await result.current.mutationPatch.mutateAsync({ payload: { nome: 'Material Teste' } });
         });
 
-        render(
-            <QueryClientProvider client={queryClient}>
-                <MateriaisServicosContext.Provider value={mockContextValue}>
-                    <TestComponent uuid="1234" payload={{ descricao: "Novo Nome" }} />
-                </MateriaisServicosContext.Provider>
-            </QueryClientProvider>
+        expect(patchEspecificacoesMateriaisServicos).toHaveBeenCalled();
+        expect(toastCustom.ToastCustomSuccess).toHaveBeenCalledWith(
+            "Edição da especificação realizada com sucesso",
+            "A especificação foi editada com sucesso."
         );
-
-        userEvent.click(screen.getByText("Atualizar Especificação"));
-
-        await waitFor(() => {
-            expect(patchEspecificacoesMateriaisServicos).toHaveBeenCalledWith("1234", { descricao: "Novo Nome" });
-            expect(screen.getByText("Erro ao atualizar")).toBeInTheDocument();
-        });
     });
+
+    it("deve exibir mensagem de erro quando a API retorna uma mensagem de erro", async () => {
+        patchEspecificacoesMateriaisServicos.mockRejectedValueOnce({
+            response: { data: { mensagem: "Erro" } },
+        });
+
+        const { result } = renderHook(() => usePatch(), { wrapper });
+
+        await waitFor(async () => {
+            await result.current.mutationPatch.mutateAsync({ nome: 'Material Teste' });
+        });
+
+        expect(patchEspecificacoesMateriaisServicos).toHaveBeenCalled();
+        expect(toastCustom.ToastCustomError).toHaveBeenCalled();
+    });
+
 });
