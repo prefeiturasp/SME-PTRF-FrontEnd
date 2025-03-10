@@ -33,7 +33,7 @@ export const ModalForm = ({handleSubmitFormModal}) => {
                                         <p className='text-right mb-0'><small> * Preenchimento obrigatório</small></p>
                                         <div className="form-group">
                                             <span data-tip="Preencher com um motivo de aprovação de pc com ressalva" data-html={true}>
-                                                <label>Motivo *</label>
+                                                <label htmlFor="motivo">Motivo *</label>
                                                 <ReactTooltip/>
                                             </span>
 
@@ -67,7 +67,7 @@ export const ModalForm = ({handleSubmitFormModal}) => {
                                                 className="btn btn btn-danger mt-2 mr-2"
                                                 disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                             >
-                                                Apagar
+                                                Excluir
                                             </button>
                                         }
                                     </div>

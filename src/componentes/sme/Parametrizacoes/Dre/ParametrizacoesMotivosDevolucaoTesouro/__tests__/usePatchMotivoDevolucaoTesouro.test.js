@@ -98,4 +98,29 @@ describe("Hook usePatchMotivoDevolucaoTesouro", () => {
             expect(screen.getByText("Erro ao atualizar")).toBeInTheDocument();
         });
     });
+
+    test("Lida com erro ao atualizar motivo sem a prop non_fields_errors", async () => {
+        patchMotivosDevolucaoTesouro.mockRejectedValueOnce({
+            response: { data: { error: "Erro ao atualizar" } },
+        });
+
+        render(
+            <QueryClientProvider client={queryClient}>
+                <MotivosDevolucaoTesouroContext.Provider value={mockContextValue}>
+                    <TestComponent uuidMotivoDevolucaoTesouro="1234" payload={{ nome: "Novo Nome" }} />
+                </MotivosDevolucaoTesouroContext.Provider>
+            </QueryClientProvider>
+        );
+
+        userEvent.click(screen.getByText("Atualizar Motivo"));
+
+        await waitFor(() => {
+            expect(patchMotivosDevolucaoTesouro).toHaveBeenCalledWith("1234", { nome: "Novo Nome" });
+            expect(toastCustom.ToastCustomError).toHaveBeenCalledWith(
+                'Erro ao atualizar o motivo de devolução ao tesouro',
+                'Não foi possível atualizar o motivo de devolução ao tesouro'
+            );
+            expect(screen.getByText("Erro ao atualizar")).toBeInTheDocument();
+        });
+    });
 });
