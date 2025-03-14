@@ -16,6 +16,7 @@ import IconeMenuFornecedores from "../../../assets/img/icone-menu-fornecedores.s
 import IconeMenuValoresReprogramados from "../../../assets/img/icone-menu-valores-reprogramados.svg"
 import IconeMenuSuporteUnidades from "../../../assets/img/icone-menu-suporte-unidades.svg"
 import IconeMenuExtracaoDados from '../../../assets/img/icone-dados-da-diretoria.svg'
+import IconePaa from '../../../assets/img/icone-paa.svg'
 
 const getDadosUsuario = () =>{
     let usuario = localStorage.getItem(USUARIO_NOME);
@@ -56,6 +57,16 @@ const UrlsMenuEscolas ={
         },
         {label: "Gestão de perfis", url: "gestao-de-perfis", dataFor:"gestao_de_perfis", icone:IconeGestaoDePerfis, permissoes: ['access_gestao_perfis_ue'],},
         {label: "Gestão de usuários", url: "gestao-de-usuarios-list", dataFor:"gestao_de_usuarios", icone:IconeGestaoDePerfis, permissoes: ['access_gestao_usuarios_ue', 'change_gestao_usuarios_ue'], featureFlag: 'gestao-usuarios',},
+        {label: "Plano Anual de Atividades", url: "paa", dataFor:"paa", icone:IconePaa, permissoes: ['access_paa'], featureFlag: 'paa',
+            subItens: [
+                {
+                    label: "Elaboração", url: "paa", dataFor:"paa", icone:"", permissoes: ['access_paa']
+                },
+                {
+                    label: "Execução do PAA", url: "execucao-paa", dataFor:"execucao-paa", icone:"", permissoes: ['access_paa']
+                },
+            ]
+        },
     ]
 };
 
