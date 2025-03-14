@@ -103,6 +103,9 @@ import {PaginaMandatosAnteriores} from "../componentes/escolas/MembrosDaAssociac
 import { ParametrizacoesRepasses } from "../componentes/sme/Parametrizacoes/Receitas/ParametrizacoesRepasses";
 import {MotivosPagamentoAntecipado} from "../componentes/sme/Parametrizacoes/Despesas/MotivosPagamentoAntecipado";
 import { TextosPaa } from '../componentes/sme/Parametrizacoes/EdicaoDeTextos/TextosPaa';
+import { ElaboracaoPaa } from '../componentes/escolas/Paa/ElaboracaoPaa';
+import { ElaborarNovoPlano } from '../componentes/escolas/Paa/ElaboracaoPaa/ElaborarNovoPlano';
+import { ExecucaoDoPaa } from '../componentes/escolas/Paa/ExecucaoDoPaa';
 
 // Migrando para V6 do react-router-dom
 // Referencia: https://github.com/remix-run/react-router/discussions/8753
@@ -713,7 +716,27 @@ const routesConfig = [
         component: MotivosPagamentoAntecipado,
         permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
     },
-
+    {
+        exact: true,
+        path: "/paa",
+        component: ElaboracaoPaa,
+        permissoes: ['access_paa'],
+        featureFlag: 'paa',
+    },
+    {
+        exact: true,
+        path: "/elaborar-novo-paa",
+        component: ElaborarNovoPlano,
+        permissoes: ['access_paa', 'change_paa'],
+        featureFlag: 'paa',
+    },
+    {
+        exact: true,
+        path: "/execucao-paa",
+        component: ExecucaoDoPaa,
+        permissoes: ['access_paa'],
+        featureFlag: 'paa',
+    },
 ];
 
 const PrivateRouter = (
