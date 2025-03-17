@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { faTimesCircle } from "@fortawesome/free-solid-svg-icons";
+import { faPlusCircle, faTimesCircle } from "@fortawesome/free-solid-svg-icons";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import {faPlus} from "@fortawesome/free-solid-svg-icons";
 import { Button, Tooltip } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Column } from "primereact/column";
@@ -9,8 +10,8 @@ import { Paginator } from "primereact/paginator";
 import { useDispatch } from "react-redux";
 import Loading from "../../../../../../../utils/Loading";
 import { ModalConfirm } from "../../../../../../Globais/Modal/ModalConfirm";
-import { useGetUnidadesVinculadas } from "./hooks/useGetUnidadesVinculadas";
-import { useDesvincularUnidade } from "./hooks/useDesvincularUnidade";
+import { useGetUnidadesNaoVinculadas } from "./hooks/useGetUnidadesNaoVinculadas";
+import { useVincularUnidade } from "./hooks/useVincularUnidade";
 import { Filtros } from "../Filtros";
 
 const filtroInicial ={
@@ -18,7 +19,7 @@ const filtroInicial ={
   dre: ""
 }
 
-export const UnidadesVinculadas = ({tipoContaUUID}) => {
+export const VincularUnidades = ({tipoContaUUID}) => {
   const dispatch = useDispatch();
   
   const [currentPage, setCurrentPage] = useState(1);
@@ -26,7 +27,7 @@ export const UnidadesVinculadas = ({tipoContaUUID}) => {
   const [selectedUnidades, setSelectedUnidades] = useState([]);
   const [filtros, setFiltros] = useState(filtroInicial);
 
-  const { data, refetch, isLoading, error, isError } = useGetUnidadesVinculadas(
+  const { data, refetch, isLoading, error, isError } = useGetUnidadesNaoVinculadas(
     tipoContaUUID,
     currentPage,
     filtros.nome_ou_codigo,
@@ -41,7 +42,7 @@ export const UnidadesVinculadas = ({tipoContaUUID}) => {
     }
   }, [isError]);
 
-  const { mutationDesvincularUnidade, mutationDesvincularUnidadeEmLote } = useDesvincularUnidade();
+  const { mutationVincularUnidade, mutationVincularUnidadeEmLote } = useVincularUnidade();
 
    useEffect(() => {
     refetch();
@@ -52,45 +53,45 @@ export const UnidadesVinculadas = ({tipoContaUUID}) => {
     setCurrentPage(event.page + 1);
   };
 
-  function handleDesvincular(rowData) {
-    mutationDesvincularUnidade.mutate({uuid: tipoContaUUID, unidadeUUID: rowData["uuid"]})
+  function handleVincular(rowData) {
+    mutationVincularUnidade.mutate({uuid: tipoContaUUID, unidadeUUID: rowData["uuid"]})
   }
 
-  const handleDesvincularEmLote = async () => {
+  const handleVincularEmLote = async () => {
     try {
       const uuids = selectedUnidades.map((item) => item.uuid);
-      mutationDesvincularUnidadeEmLote.mutate({uuid: tipoContaUUID, unidadeUUID: uuids})
+      mutationVincularUnidadeEmLote.mutate({uuid: tipoContaUUID, unidadeUUID: uuids})
       setSelectedUnidades([]);
     } catch (error) {
       console.error(error);
     }
   };
 
-  const handleConfirmDesvincular = (rowData) => {
+  const handleConfirmarVincularUnidade = (rowData) => {
     ModalConfirm({
       dispatch,
-      title: "Desvincular unidade ao tipo de crédito",
+      title: "Vincular unidade ao tipo de crédito",
       message:
-        "<p>Deseja realmente desvincular unidade ao tipo de crédito?</p>",
+        "<p>Deseja realmente vincular unidade ao tipo de crédito?</p>",
       cancelText: "Não",
       confirmText: "Sim",
       confirmButtonClass: "btn-danger",
-      dataQa: "modal-confirmar-desvincular-unidade-ao-tipo-de-credito",
-      onConfirm: () => handleDesvincular(rowData),
+      dataQa: "modal-confirmar-vincular-unidade-ao-tipo-de-credito",
+      onConfirm: () => handleVincular(rowData),
     });
   };
 
-  const handleConfirmDesvincularEmLote = (rowData) => {
+  const handleConfirmarVincularUnidadeEmLote = (rowData) => {
     ModalConfirm({
       dispatch,
-      title: "Confirmação desvincular unidades ao tipo de crédito",
+      title: "Confirmação vincular unidades em lote",
       message:
-        "<p>Deseja realmente desvincular as unidades selecionadas ao tipo de crédito?</p>",
+       "<p>Deseja realmente vincular as unidades selecionadas ao tipo de crédito?</p>",
       cancelText: "Não",
       confirmText: "Sim",
       confirmButtonClass: "btn-danger",
-      dataQa: "modal-confirmar-desvincular-unidade-ao-tipo-de-credito-em-lote",
-      onConfirm: () => handleDesvincularEmLote(),
+      dataQa: "modal-confirmar-vincular-unidade-ao-tipo-de-credito-em-lote",
+      onConfirm: () => handleVincularEmLote(),
     });
   };
 
@@ -152,7 +153,7 @@ export const UnidadesVinculadas = ({tipoContaUUID}) => {
                   <a
                     className="float-right"
                     style={{ textDecoration: "underline", cursor: "pointer" }}
-                    onClick={() => handleConfirmDesvincularEmLote()}
+                    onClick={() => handleConfirmarVincularUnidadeEmLote()}
                   >
                     <FontAwesomeIcon
                       style={{
@@ -160,9 +161,9 @@ export const UnidadesVinculadas = ({tipoContaUUID}) => {
                         fontSize: "15px",
                         marginRight: "2px",
                       }}
-                      icon={faTimesCircle}
+                      icon={faPlusCircle}
                     />
-                    <strong>Desvincular unidades</strong>
+                    <strong>Vincular unidades</strong>
                   </a>
                 </div>
               </div>
@@ -175,20 +176,20 @@ export const UnidadesVinculadas = ({tipoContaUUID}) => {
 
   const acoesTemplate = (rowData) => {
     return (
-      <Tooltip title="Desvincular unidade">
+      <Tooltip title="Vincular unidade">
         <Button
           type="text"
-          className="link-red"
-          onClick={() => handleConfirmDesvincular(rowData)}
+          className="btn btn-link link-green"
+          onClick={() => handleConfirmarVincularUnidade(rowData)}
           disabled={selectedUnidades.length > 0}
           icon={
             <FontAwesomeIcon
               style={{
                 fontSize: "20px",
                 marginRight: 3,
-                color: "#B40C02",
+                color: "#00585e",
               }}
-              icon={faTimesCircle}
+              icon={faPlusCircle}
             />
           }
         ></Button>
@@ -217,53 +218,58 @@ export const UnidadesVinculadas = ({tipoContaUUID}) => {
   }
 
   return (
-      <div>
-        <div style={{ position: "relative" }}>
-          <Filtros 
-            onFilterChange={() => onFilterChange()} 
-            limpaFiltros={limpaFiltros} 
-            setFiltros={setFiltros}
-            filtros={filtros}
-          />
-          {selectedUnidades.length ? montarBarraAcoesEmLote() : null}
-          <p className='mb-2'>Exibindo <span className='total'>{ data.count }</span> unidades</p>
-          <DataTable
-            value={data.results}
-            autoLayout={true}
-            selection={selectedUnidades}
-            onSelectionChange={(e) => setSelectedUnidades(e.value)}
-            disabled
-          >
-            <Column selectionMode="multiple" style={{ width: "3em" }} />
-            <Column
-              field="codigo_eol"
-              header="Código Eol"
-              className="text-center"
-              style={{ width: "15%" }}
-            />
-            <Column
-              field="nome_com_tipo"
-              header="Unidade educacional"
-              body={unidadeEscolarTemplate}
-            />
-            <Column
-              field="uuid"
-              header="Ação"
-              body={acoesTemplate}
-              className="text-center"
-              style={{ width: "20%" }}
-            />
-          </DataTable>
+    <div>
+      <div style={{ position: "relative" }}>
+        <Filtros 
+          onFilterChange={() => onFilterChange()} 
+          limpaFiltros={limpaFiltros} 
+          setFiltros={setFiltros}
+          filtros={filtros}
+        />
+        {selectedUnidades.length ? montarBarraAcoesEmLote() : null}
+        {data.count > 0 ? (
+            <>
+              <p className='mb-2'>Exibindo <span className='total'>{ data.count }</span> unidades</p>
+              <DataTable
+                value={data.results}
+                autoLayout={true}
+                selection={selectedUnidades}
+                onSelectionChange={(e) => setSelectedUnidades(e.value)}
+                disabled
+              >
+                <Column selectionMode="multiple" style={{ width: "3em" }} />
+                <Column
+                  field="codigo_eol"
+                  header="Código Eol"
+                  className="text-center"
+                  style={{ width: "15%" }}
+                />
+                <Column
+                  field="nome_com_tipo"
+                  header="Unidade educacional"
+                  body={unidadeEscolarTemplate}
+                />
+                <Column
+                  field="uuid"
+                  header="Ação"
+                  body={acoesTemplate}
+                  className="text-center"
+                  style={{ width: "20%" }}
+                />
+              </DataTable>
 
-          <Paginator
-            first={firstPage}
-            rows={10}
-            totalRecords={data.count}
-            template="PrevPageLink PageLinks NextPageLink"
-            onPageChange={onPageChange}
-            alwaysShow={false}
-          />
-        </div>
+              <Paginator
+                first={firstPage}
+                rows={10}
+                totalRecords={data.count}
+                template="PrevPageLink PageLinks NextPageLink"
+                onPageChange={onPageChange}
+                alwaysShow={false}
+              />
+            </>
+          ) : null
+        }
       </div>
+    </div>
   );
 };

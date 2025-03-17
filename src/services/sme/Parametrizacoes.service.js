@@ -160,23 +160,56 @@ export const patchAlterarFiqueDeOlhoRelatoriosConsolidadosDre = async (
 
 // ***** Estrutura *****
 
-//Tipos receita
+// Tipos receita
 
 export const getTipoReceita = async (uuid) => {
   return (await api.get(`/api/tipos-receitas/${uuid}/`, authHeader)).data;
 };
+
 export const postTipoReceita = async (payload) => {
   return (await api.post(`/api/tipos-receitas/`, payload, authHeader)).data;
 };
+
 export const patchTipoReceita = async (uuid, payload) => {
   return (await api.patch(`/api/tipos-receitas/${uuid}/`, payload, authHeader))
     .data;
 };
+
 export const deleteTipoReceita = async (uuid) => {
   return (await api.delete(`/api/tipos-receitas/${uuid}/`, authHeader)).data;
 };
+
 export const getFiltrosTipoReceita = async () => {
   return (await api.get(`/api/tipos-receitas/filtros/`, authHeader)).data;
+};
+
+// Unidades tipo de receita
+export const getUnidadesTipoReceita = async (uuid, nome_ou_codigo, dre, page) => {
+  return (await api.get(`/api/tipos-receitas/${uuid}/unidades-vinculadas/?nome_ou_codigo=${nome_ou_codigo}&dre=${dre}&page=${page}`, authHeader)).data;
+}
+
+export const getUnidadesNaoVinculadasTipoReceita = async (uuid, nome_ou_codigo, dre, page) => {
+  return (await api.get(`/api/tipos-receitas/${uuid}/unidades-nao-vinculadas/?nome_ou_codigo=${nome_ou_codigo}&dre=${dre}&page=${page}`, authHeader)).data;
+}
+
+export const vincularUnidadeTipoReceita = async (uuid, unidadeUUID) => {
+  return (await api.post(`/api/tipos-receitas/${uuid}/unidade/${unidadeUUID}/vincular/`, authHeader)).data;
+}
+
+export const vincularUnidadeTipoReceitaEmLote = async (uuid, payload) => {
+  return (await api.post(`/api/tipos-receitas/${uuid}/vincular-em-lote/`, payload, authHeader)).data;
+}
+
+export const desvincularUnidadeTipoReceita = async (uuid, unidadeUUID) => {
+  return (await api.post(`/api/tipos-receitas/${uuid}/unidade/${unidadeUUID}/desvincular/`, authHeader)).data;
+}
+
+export const desvincularUnidadeTipoReceitaEmLote = async (uuid, payload) => {
+  return (await api.post(`/api/tipos-receitas/${uuid}/desvincular-em-lote/`, payload, authHeader)).data;
+}
+
+export const getDres = async () => {
+  return (await api.get(`/api/dres/`, authHeader)).data
 };
 
 // Tipos de conta

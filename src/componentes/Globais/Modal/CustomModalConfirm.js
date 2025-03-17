@@ -70,7 +70,7 @@ export function CustomModalConfirm({
           <div className="col-12 mt-3 d-flex justify-content-center">
             <Button
               onClick={handleClose}
-              className="btn-outline-success"
+              className="btn-success"
               data-qa={dataQa ? `btn-${cancelText}-${dataQa}` : ""}
             >
               {cancelText}

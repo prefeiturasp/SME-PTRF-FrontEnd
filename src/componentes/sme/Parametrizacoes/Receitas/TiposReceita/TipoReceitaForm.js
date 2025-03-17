@@ -13,6 +13,7 @@ import {
 } from "antd";
 import { useParams } from "react-router-dom/cjs/react-router-dom.min";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom-v5-compat";
 import { useGetFiltrosTiposReceita } from "./hooks/useGetFiltrosTiposReceita";
 import { usePostTipoReceita } from "./hooks/usePostTipoReceita";
 import { usePatchTipoReceita } from "./hooks/usePatchTipoReceita";
@@ -20,9 +21,8 @@ import { useGetTipoReceita } from "./hooks/useGetTipoReceita";
 import { useDeleteTipoReceita } from "./hooks/useDeleteTipoReceita";
 import { CustomModalConfirm } from "../../../../Globais/Modal/CustomModalConfirm";
 import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
-import { useNavigate } from "react-router-dom-v5-compat";
-import { EscolheUnidade } from "../../../../Globais/EscolheUnidade";
-import { UnidadesAssociadas } from "./components/UnidadesAssociadas/Lista";
+import { UnidadesVinculadas } from "./components/UnidadesAssociadas/Lista";
+import { VincularUnidades } from "./components/VincularUnidades";
 
 const { TextArea } = Input;
 
@@ -301,8 +301,9 @@ export const TipoReceitaForm = () => {
 
         {form.getFieldValue("todas_unidades") !== true ? (
           <>
-            <UnidadesAssociadas />
-            <EscolheUnidade onSelecionaUnidade={handleSelecaoUnidadeSuporte} />
+            <UnidadesVinculadas tipoContaUUID={data?.uuid}/>
+            <h6 className="my-5">Vincular unidades ao tipo de crédito</h6>
+            <VincularUnidades tipoContaUUID={data?.uuid}/>
           </>
         ) : null}
 
