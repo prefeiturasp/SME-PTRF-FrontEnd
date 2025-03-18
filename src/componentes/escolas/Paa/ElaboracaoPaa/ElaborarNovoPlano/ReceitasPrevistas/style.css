@@ -1,0 +1,6 @@
+body .p-datatable .p-datatable-tbody > tr:nth-child(even) {
+    background-color: white !important;
+}
+body .p-datatable .p-datatable-thead > tr > th{
+    padding: 1.5em 0.857em !important;
+}
