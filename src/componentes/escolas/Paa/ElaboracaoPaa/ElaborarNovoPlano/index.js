@@ -25,7 +25,7 @@ export const ElaborarNovoPlano = () => {
 
   return (
     <PaginasContainer>
-      <BreadcrumbComponent items={itemsBreadCrumb} />
+      <BreadcrumbComponent items={itemsBreadCrumb}/>
       <h1 className="titulo-itens-painel mt-5">Plano Anual de Atividades</h1>
       <div className="page-content-inner">
         <BarraTopoTitulo />
