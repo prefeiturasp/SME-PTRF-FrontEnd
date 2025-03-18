@@ -1,6 +1,8 @@
 import * as Sentry from "@sentry/browser";
 import React from 'react';
 
+import { ConfigProvider } from "antd";
+
 // Migrando para V18 do react
 import ReactDOM from "react-dom/client";
 
@@ -33,6 +35,11 @@ if (process.env.REACT_APP_NODE_ENV === "local") {
     REACT_QUERY_DEV_TOOLS = process.env.REACT_APP_REACT_QUERY_DEV_TOOLS;
 }
 
+const antdTheme = {
+    token: {
+    colorPrimary: "#00585D"
+    },
+}
 
 const queryClient = new QueryClient();
 
@@ -47,7 +54,9 @@ root.render(
                             <DataLimiteProvider>
                                 <BrowserRouter>
                                     <CompatRouter>
-                                        <App/>
+                                        <ConfigProvider theme={antdTheme}>
+                                            <App/>
+                                        </ConfigProvider>
                                     </CompatRouter>
                                 </BrowserRouter>
                             </DataLimiteProvider>
