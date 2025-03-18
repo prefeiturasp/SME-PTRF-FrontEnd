@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
+import {
+  Spin,
+} from "antd";
+import Img404 from "../../../../../../../assets/img/img-404.svg";
 import { faPlusCircle, faTimesCircle } from "@fortawesome/free-solid-svg-icons";
-import { faTrash } from "@fortawesome/free-solid-svg-icons";
-import {faPlus} from "@fortawesome/free-solid-svg-icons";
 import { Button, Tooltip } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Column } from "primereact/column";
@@ -13,6 +15,7 @@ import { ModalConfirm } from "../../../../../../Globais/Modal/ModalConfirm";
 import { useGetUnidadesNaoVinculadas } from "./hooks/useGetUnidadesNaoVinculadas";
 import { useVincularUnidade } from "./hooks/useVincularUnidade";
 import { Filtros } from "../Filtros";
+import { MsgImgCentralizada } from "../../../../../../Globais/Mensagens/MsgImgCentralizada";
 
 const filtroInicial ={
   nome_ou_codigo: "",
@@ -226,6 +229,7 @@ export const VincularUnidades = ({tipoContaUUID}) => {
           setFiltros={setFiltros}
           filtros={filtros}
         />
+        <Spin spinning={mutationVincularUnidade.isLoading || mutationVincularUnidadeEmLote.isLoading}>
         {selectedUnidades.length ? montarBarraAcoesEmLote() : null}
         {data.count > 0 ? (
             <>
@@ -267,8 +271,14 @@ export const VincularUnidades = ({tipoContaUUID}) => {
                 alwaysShow={false}
               />
             </>
-          ) : null
+          ) : (
+            <MsgImgCentralizada
+              texto={"Use os filtros para localizar a unidade que será vinculada ao tipo de crédito."}
+              img={Img404}
+            />
+          )
         }
+        </Spin>
       </div>
     </div>
   );

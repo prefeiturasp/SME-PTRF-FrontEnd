@@ -13,10 +13,11 @@ export const useGetFiltrosTiposReceita = () => {
     },
     error,
     refetch,
-  } = useQuery(["tipos-conta"], () => getFiltrosTipoReceita(), {
+  } = useQuery(["filtros-tipo-de-credito"], () => getFiltrosTipoReceita(), {
     keepPreviousData: true,
-    staleTime: 5000, // 5 segundos
-    refetchOnWindowFocus: true, // Caso saia da aba e voltar ele refaz a requisição
+    staleTime: 5 * 60 * 1000, // 5 minutos antes de ser considerado "stale"
+    cacheTime: 10 * 60 * 1000, // 10 minutos antes de ser removido do cache
+    refetchOnWindowFocus: false, // Evita refazer a requisição ao trocar de aba
   });
 
   return { isLoading, isError, data, error, refetch };

@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
+import {
+  Spin,
+} from "antd";
 import { faTimesCircle } from "@fortawesome/free-solid-svg-icons";
-import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { Button, Tooltip } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Column } from "primereact/column";
@@ -225,44 +227,52 @@ export const UnidadesVinculadas = ({tipoContaUUID}) => {
             setFiltros={setFiltros}
             filtros={filtros}
           />
-          {selectedUnidades.length ? montarBarraAcoesEmLote() : null}
-          <p className='mb-2'>Exibindo <span className='total'>{ data.count }</span> unidades</p>
-          <DataTable
-            value={data.results}
-            autoLayout={true}
-            selection={selectedUnidades}
-            onSelectionChange={(e) => setSelectedUnidades(e.value)}
-            disabled
-          >
-            <Column selectionMode="multiple" style={{ width: "3em" }} />
-            <Column
-              field="codigo_eol"
-              header="Código Eol"
-              className="text-center"
-              style={{ width: "15%" }}
-            />
-            <Column
-              field="nome_com_tipo"
-              header="Unidade educacional"
-              body={unidadeEscolarTemplate}
-            />
-            <Column
-              field="uuid"
-              header="Ação"
-              body={acoesTemplate}
-              className="text-center"
-              style={{ width: "20%" }}
-            />
-          </DataTable>
+          <Spin spinning={mutationDesvincularUnidade.isLoading || mutationDesvincularUnidadeEmLote.isLoading}>
+          {
+            data.count > 0 ? (
+              <>
+                {selectedUnidades.length ? montarBarraAcoesEmLote() : null}
+                <p className='mb-2'>Exibindo <span className='total'>{ data.count }</span> unidades</p>
+                <DataTable
+                  value={data.results}
+                  autoLayout={true}
+                  selection={selectedUnidades}
+                  onSelectionChange={(e) => setSelectedUnidades(e.value)}
+                  disabled
+                >
+                  <Column selectionMode="multiple" style={{ width: "3em" }} />
+                  <Column
+                    field="codigo_eol"
+                    header="Código Eol"
+                    className="text-center"
+                    style={{ width: "15%" }}
+                  />
+                  <Column
+                    field="nome_com_tipo"
+                    header="Unidade educacional"
+                    body={unidadeEscolarTemplate}
+                  />
+                  <Column
+                    field="uuid"
+                    header="Ação"
+                    body={acoesTemplate}
+                    className="text-center"
+                    style={{ width: "20%" }}
+                  />
+                </DataTable>
 
-          <Paginator
-            first={firstPage}
-            rows={10}
-            totalRecords={data.count}
-            template="PrevPageLink PageLinks NextPageLink"
-            onPageChange={onPageChange}
-            alwaysShow={false}
-          />
+                <Paginator
+                  first={firstPage}
+                  rows={10}
+                  totalRecords={data.count}
+                  template="PrevPageLink PageLinks NextPageLink"
+                  onPageChange={onPageChange}
+                  alwaysShow={false}
+                />
+              </>
+            ) : null
+          }
+          </Spin>
         </div>
       </div>
   );

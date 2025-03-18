@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import {
   Form,
   Input,
@@ -10,6 +10,7 @@ import {
   Flex,
   Checkbox,
   Spin,
+  Tooltip,
 } from "antd";
 import { useParams } from "react-router-dom/cjs/react-router-dom.min";
 import { useDispatch } from "react-redux";
@@ -23,6 +24,8 @@ import { CustomModalConfirm } from "../../../../Globais/Modal/CustomModalConfirm
 import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
 import { UnidadesVinculadas } from "./components/UnidadesAssociadas/Lista";
 import { VincularUnidades } from "./components/VincularUnidades";
+import { faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const { TextArea } = Input;
 
@@ -32,17 +35,27 @@ export const TipoReceitaForm = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { uuid } = useParams();
+  
+  const isNew = uuid === undefined;
 
   const { data: filtros } = useGetFiltrosTiposReceita();
   const { mutationPost } = usePostTipoReceita();
   const { mutationPatch } = usePatchTipoReceita();
   const { mutationDelete } = useDeleteTipoReceita();
+
   const { data, isLoading } = useGetTipoReceita(uuid);
+  
+  const loading = useMemo(() => {
+     return (isLoading && !isNew) || mutationPost.isLoading || mutationPatch.isLoading || mutationDelete.isLoading
+  }, [isLoading, isNew, mutationPost.isLoading, mutationPatch.isLoading, mutationDelete.isLoading])
 
   const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES =
     RetornaSeTemPermissaoEdicaoPainelParametrizacoes();
 
-  Form.useWatch("todas_unidades", form);
+  Form.useWatch("selecionar_todas", form);
+  Form.useWatch("possui_detalhamento", form);
+  Form.useWatch("categoria", form);
+  
 
   useEffect(() => {
     if (data) {
@@ -61,6 +74,22 @@ export const TipoReceitaForm = () => {
           aceita_livre: data.aceita_livre,
         }),
         detalhes: data.detalhes.map((detalhe) => detalhe.id),
+        selecionar_todas: data.todas_unidades_selecionadas
+      });
+    } 
+    
+    if(isNew) {
+      form.setFieldsValue({
+        nome: "",
+        tipos_conta: [],
+        categoria: [],
+        aceita: [],
+        detalhes: [],
+        unidades: [],
+        mensagem_usuario: "",
+        possui_detalhamento: undefined,
+        e_recursos_proprios: false,
+        selecionar_todas: true
       });
     }
   }, [data]);
@@ -100,32 +129,40 @@ export const TipoReceitaForm = () => {
     }
   };
 
-  const handleSubmit = (values) => {
-    let payload = {
-      nome: values.nome,
-      tipos_conta: values.tipos_conta,
-      unidades: [],
-      detalhes: values.detalhes,
-      mensagem_usuario: values.mensagem_usuario,
-      possui_detalhamento: values.possui_detalhamento,
-      e_recursos_proprios: values.e_recursos_proprios,
-      e_rendimento: values.categoria === "e_rendimento" ? true : false,
-      e_devolucao: values.categoria === "e_devolucao" ? true : false,
-      e_estorno: values.categoria === "e_estorno" ? true : false,
-      e_repasse: values.categoria === "e_repasse" ? true : false,
-      aceita_capital: values.aceita.includes("aceita_capital") ? true : false,
-      aceita_custeio: values.aceita.includes("aceita_custeio") ? true : false,
-      aceita_livre: values.aceita.includes("aceita_livre") ? true : false,
-    };
+  const handleSubmit = async (values) => {
+    try {
+      await form.validateFields();
+      
+      let payload = {
+        nome: values.nome,
+        tipos_conta: values.tipos_conta,
+        unidades: [],
+        detalhes: values.detalhes,
+        mensagem_usuario: values.mensagem_usuario,
+        possui_detalhamento: values.possui_detalhamento,
+        e_recursos_proprios: values.e_recursos_proprios,
+        e_rendimento: values.categoria === "e_rendimento" ? true : false,
+        e_devolucao: values.categoria === "e_devolucao" ? true : false,
+        e_estorno: values.categoria === "e_estorno" ? true : false,
+        e_repasse: values.categoria === "e_repasse" ? true : false,
+        aceita_capital: values.aceita.includes("aceita_capital") ? true : false,
+        aceita_custeio: values.aceita.includes("aceita_custeio") ? true : false,
+        aceita_livre: values.aceita.includes("aceita_livre") ? true : false,
+        selecionar_todas: values.selecionar_todas
+      };
 
-    if (uuid) {
-      mutationPatch.mutate({ UUID: data.uuid, payload: payload });
-    } else {
-      mutationPost.mutate({ payload: payload });
+      if (uuid) {
+        mutationPatch.mutate({ UUID: data.uuid, payload: payload });
+      } else {
+        mutationPost.mutate({ payload: payload });
+      }
+
+    } catch {
+      form.setFieldValue("selecionar_todas", true);
     }
   };
 
-  const handleDelete = async (uuid) => {
+  const handleDelete = async () => {
     CustomModalConfirm({
       dispatch,
       title: "Apagar tipo de crédito",
@@ -142,19 +179,29 @@ export const TipoReceitaForm = () => {
     navigate("/parametro-tipos-receita");
   };
 
-  const handleSelecaoUnidadeSuporte = (unidadeSelecionada) => {};
-
-  const onFieldsChange = (values) => {
-    console.log(values);
-  };
-
   const handleTodasUnidades = (e) => {
-    form.setFieldValue("todas_unidades", e.target.checked);
+    if(e.target.checked === false && isNew) {
+      handleSubmit(form.getFieldsValue())
+    }
+    form.setFieldValue("selecionar_todas", e.target.checked);
   };
+
+  const exibirDetalhamento = () => {
+    return ["e_rendimento", "e_devolucao"].includes(form.getFieldValue("categoria"));
+  }
 
   return (
-    <Spin spinning={isLoading}>
-      <Form form={form} onFinish={handleSubmit} onFieldsChange={onFieldsChange}>
+    <Spin spinning={loading}>
+      <Flex justify="flex-end">
+        <span>
+        * Preenchimento obrigatório
+        </span>
+      </Flex>
+      <Form 
+        form={form} 
+        onFinish={handleSubmit} 
+        disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
+      >
         <Row>
           <Col md={24}>
             <Form.Item
@@ -163,6 +210,7 @@ export const TipoReceitaForm = () => {
               labelCol={{ span: 24 }}
               wrapperCol={{ span: 24 }}
               rules={[{ required: true, message: "Campo obrigatório" }]}
+              disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
             >
               <Input placeholder="Nome do tipo de crédito" />
             </Form.Item>
@@ -175,6 +223,8 @@ export const TipoReceitaForm = () => {
               label="Categoria"
               name="categoria"
               labelCol={{ span: 24 }}
+              rules={[{ required: true, message: "Campo obrigatório" }]}
+              disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
             >
               <Select
                 placeholder="Selecione"
@@ -188,7 +238,13 @@ export const TipoReceitaForm = () => {
             </Form.Item>
           </Col>
           <Col md={8}>
-            <Form.Item label="Aceita" name="aceita" labelCol={{ span: 24 }}>
+            <Form.Item 
+              label="Aceita" 
+              name="aceita" 
+              labelCol={{ span: 24 }} 
+              rules={[{ required: true, message: "Campo obrigatório" }]}
+              disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
+            >
               <Select
                 placeholder="Selecione"
                 mode="multiple"
@@ -217,43 +273,54 @@ export const TipoReceitaForm = () => {
             </Form.Item>
           </Col>
         </Row>
-
-        <Row gutter={16}>
-          <Col md={8}>
-            <Form.Item
-              label="Deve exibir detalhamento?"
-              name="possui_detalhamento"
-              labelCol={{ span: 24 }}
-            >
-              <Radio.Group
-                name="radiogroup"
-                defaultValue={1}
-                options={[
-                  { value: true, label: "Sim" },
-                  { value: false, label: "Não" },
-                ]}
-              />
-            </Form.Item>
-          </Col>
-          <Col md={16}>
-            <Form.Item
-              label="Detalhamento"
-              name="detalhes"
-              labelCol={{ span: 24 }}
-            >
-              <Select
-                placeholder="Selecione"
-                mode="multiple"
-                options={detalhesOpcoes.map((detalhe) => {
-                  return {
-                    value: detalhe.id,
-                    label: detalhe.nome,
-                  };
-                })}
-              ></Select>
-            </Form.Item>
-          </Col>
-        </Row>
+        
+        {
+          exibirDetalhamento() && (
+            <Row gutter={16}>
+            <Col md={8}>
+              <Form.Item
+                label="Deve exibir detalhamento?"
+                name="possui_detalhamento"
+                labelCol={{ span: 24 }}
+                disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
+              >
+                <Radio.Group
+                  name="radiogroup"
+                  defaultValue={1}
+                  options={[
+                    { value: true, label: "Sim" },
+                    { value: false, label: "Não" },
+                  ]}
+                />
+              </Form.Item>
+            </Col>
+            {
+              form.getFieldValue("possui_detalhamento") === true && (
+                <Col md={16}>
+                  <Form.Item
+                    label="Detalhamento"
+                    name="detalhes"
+                    labelCol={{ span: 24 }}
+                    disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
+                  >
+                    <Select
+                      placeholder="Selecione"
+                      mode="multiple"
+                      options={detalhesOpcoes.map((detalhe) => {
+                        return {
+                          value: detalhe.id,
+                          label: detalhe.nome,
+                        };
+                      })}
+                    ></Select>
+                  </Form.Item>
+                </Col>
+              ) 
+  
+            }
+          </Row>
+          )
+        }
 
         <Row>
           <Col md={24}>
@@ -261,6 +328,7 @@ export const TipoReceitaForm = () => {
               label="Tipos de conta"
               name="tipos_conta"
               labelCol={{ span: 24 }}
+              disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
             >
               <Select
                 placeholder="Selecione"
@@ -279,6 +347,7 @@ export const TipoReceitaForm = () => {
               label="Mensagem para o usuário"
               name="mensagem_usuario"
               labelCol={{ span: 24 }}
+              disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
             >
               <TextArea autoSize={{ minRows: 6, maxRows: 6 }} />
             </Form.Item>
@@ -287,26 +356,40 @@ export const TipoReceitaForm = () => {
 
         <Divider />
 
-        <h6>Unidades vinculadas ao tipo de crédito</h6>
+        <Flex gutter={8} align="end">
+          <h6 className="m-0">Unidades vinculadas ao tipo de crédito</h6>
+          <Tooltip title="Unidades vinculadas ao tipo de crédito">
+            <FontAwesomeIcon
+                style={{
+                    fontSize: '16px', 
+                    marginLeft: 4, 
+                    color: "#086397"
+                }}
+                icon={faExclamationCircle}
+            />
+          </Tooltip> 
+        </Flex>
 
         <Form.Item
-          name="todas_unidades"
+          name="selecionar_todas"
           labelCol={{ span: 24 }}
           className="mt-4"
+          valuePropName="checked"
+          disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
         >
-          <Checkbox defaultValue={false} onChange={handleTodasUnidades}>
+          <Checkbox onChange={handleTodasUnidades}>
             Todas as unidades
           </Checkbox>
         </Form.Item>
 
-        {form.getFieldValue("todas_unidades") !== true ? (
+        {uuid && form.getFieldValue("selecionar_todas") === false ? (
           <>
             <UnidadesVinculadas tipoContaUUID={data?.uuid}/>
             <h6 className="my-5">Vincular unidades ao tipo de crédito</h6>
             <VincularUnidades tipoContaUUID={data?.uuid}/>
           </>
-        ) : null}
-
+        ) : null}   
+      
         <Divider />
 
         <Row>
@@ -320,7 +403,7 @@ export const TipoReceitaForm = () => {
 
         <Divider />
 
-        <Flex gap="small" justify="space-between">
+        <Flex gap="small" justify={uuid ? "space-between" : "flex-end"}>
           {uuid ? (
             <button
               onClick={handleDelete}
