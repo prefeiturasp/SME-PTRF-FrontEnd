@@ -1,4 +1,4 @@
-@import 'variaveis.scss';
+@import "variaveis.scss";
 
 body {
   overflow-x: hidden;
@@ -175,8 +175,9 @@ body {
   }
 
   .p-datatable.p-datatable-hoverable-rows
-  .p-datatable-tbody
-  > tr:not(.p-highlight):not(.p-highlight-contextmenu):hover span {
+    .p-datatable-tbody
+    > tr:not(.p-highlight):not(.p-highlight-contextmenu):hover
+    span {
     color: #fff;
   }
 
@@ -184,14 +185,12 @@ body {
     color: green;
   }
 
-
-
   .ptrf-despesa-status-inativo {
     color: red;
   }
 }
 
-.btn-sem-borda-fundo{
+.btn-sem-borda-fundo {
   background-color: transparent !important;
   outline: none !important;
   border: none !important;
@@ -342,7 +341,7 @@ body {
   color: $corPrimaria;
 }
 
-.is_invalid{
+.is_invalid {
   background-image: url("../img/icone-nao-conciliado.svg");
   background-repeat: no-repeat;
   background-position: 97% 50%;
@@ -363,3 +362,10 @@ body {
   margin-top: 5px;
   margin-bottom: 5px;
 }
+
+// .ant-input,
+// .ant-input-password,
+// .ant-input-textarea {
+//   border-radius: 0.2rem !important;
+//   padding: 6px 11px !important;
+// }
