@@ -181,6 +181,7 @@ export const UnidadesVinculadas = ({tipoContaUUID}) => {
         <Button
           type="text"
           className="link-red"
+          aria-label="Desvincular unidade"
           onClick={() => handleConfirmDesvincular(rowData)}
           disabled={selectedUnidades.length > 0}
           icon={
@@ -229,7 +230,7 @@ export const UnidadesVinculadas = ({tipoContaUUID}) => {
           />
           <Spin spinning={mutationDesvincularUnidade.isLoading || mutationDesvincularUnidadeEmLote.isLoading}>
           {
-            data.count > 0 ? (
+            data && data.count > 0 ? (
               <>
                 {selectedUnidades.length ? montarBarraAcoesEmLote() : null}
                 <p className='mb-2'>Exibindo <span className='total'>{ data.count }</span> unidades</p>

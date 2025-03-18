@@ -193,7 +193,7 @@ export const getUnidadesNaoVinculadasTipoReceita = async (uuid, nome_ou_codigo, 
 }
 
 export const vincularUnidadeTipoReceita = async (uuid, unidadeUUID) => {
-  return (await api.post(`/api/tipos-receitas/${uuid}/unidade/${unidadeUUID}/vincular/`, authHeader)).data;
+  return (await api.post(`/api/tipos-receitas/${uuid}/unidade/${unidadeUUID}/vincular/`, {}, authHeader)).data;
 }
 
 export const vincularUnidadeTipoReceitaEmLote = async (uuid, payload) => {
@@ -201,7 +201,7 @@ export const vincularUnidadeTipoReceitaEmLote = async (uuid, payload) => {
 }
 
 export const desvincularUnidadeTipoReceita = async (uuid, unidadeUUID) => {
-  return (await api.post(`/api/tipos-receitas/${uuid}/unidade/${unidadeUUID}/desvincular/`, authHeader)).data;
+  return (await api.post(`/api/tipos-receitas/${uuid}/unidade/${unidadeUUID}/desvincular/`, {}, authHeader)).data;
 }
 
 export const desvincularUnidadeTipoReceitaEmLote = async (uuid, payload) => {

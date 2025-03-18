@@ -36,6 +36,7 @@ export const Filtros = ({filtros, onFilterChange, setFiltros, limpaFiltros}) => 
                             value={filtros.nome_ou_codigo}
                             onChange={(e) => handleChangeFiltros(e.target.name, e.target.value)}
                             name="nome_ou_codigo"
+                            id="nome_ou_codigo"
                             type="text"
                             className="form-control"
                             placeholder="Escreva o nome ou código que deseja procurar..."

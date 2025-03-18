@@ -201,6 +201,7 @@ export const TipoReceitaForm = () => {
         form={form} 
         onFinish={handleSubmit} 
         disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
+        role="form"
       >
         <Row>
           <Col md={24}>

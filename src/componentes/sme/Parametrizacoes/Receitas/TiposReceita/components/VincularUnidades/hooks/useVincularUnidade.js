@@ -1,9 +1,12 @@
 import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {toastCustom} from "../../../../../../../Globais/ToastCustom";
 import { vincularUnidadeTipoReceita, vincularUnidadeTipoReceitaEmLote } from "../../../../../../../../services/sme/Parametrizacoes.service";
+import { useDispatch } from "react-redux";
+import { CustomModalConfirm } from "../../../../../../../Globais/Modal/CustomModalConfirm";
 
 export const useVincularUnidade = () => {
     const queryClient = useQueryClient()
+    const dispatch = useDispatch();
 
     const mutationVincularUnidade = useMutation({
         mutationFn: ({uuid, unidadeUUID}) => {
@@ -15,7 +18,13 @@ export const useVincularUnidade = () => {
             toastCustom.ToastCustomSuccess("Sucesso!", "Unidade vinculada ao tipo de crédito com sucesso.")
         },
         onError: (error) => {
-            toastCustom.ToastCustomError("Houve um erro ao vincular unidade ao tipo de crédito.")
+            CustomModalConfirm({
+                dispatch,
+                title: "Restrição do tipo de crédito",
+                message: error.response.data.mensagem,
+                cancelText: "Ok",
+                dataQa: "modal-restricao-vincular-unidade-ao-tipo-de-credito",
+            });
         },
     });
 
@@ -29,7 +38,13 @@ export const useVincularUnidade = () => {
             toastCustom.ToastCustomSuccess("Sucesso!", "Unidades vinculadas ao tipo de crédito com sucesso.")
         },
         onError: (error) => {
-            toastCustom.ToastCustomError("Houve um erro ao vincular unidades em lote ao tipo de crédito.")
+            CustomModalConfirm({
+                dispatch,
+                title: "Restrição do tipo de crédito",
+                message: error.response.data.mensagem,
+                cancelText: "Ok",
+                dataQa: "modal-restricao-vincular-unidade-ao-tipo-de-credito-em-lote",
+            });
         },
     });
 
