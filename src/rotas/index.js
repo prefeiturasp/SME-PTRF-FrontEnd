@@ -108,6 +108,7 @@ import { ElaborarNovoPlano } from "../componentes/escolas/Paa/ElaboracaoPaa/Elab
 import { ExecucaoDoPaa } from "../componentes/escolas/Paa/ExecucaoDoPaa";
 import { CadastroTipoReceitaPage } from "../paginas/SME/Parametrizacoes/TiposReceita/CadastroTipoReceita";
 import { EdicaoTipoReceitaPage } from "../paginas/SME/Parametrizacoes/TiposReceita/EdicaoTipoReceita";
+import { TiposDeCredito } from '../componentes/sme/Parametrizacoes/Receitas/TiposDeCredito';
 
 // Migrando para V6 do react-router-dom
 // Referencia: https://github.com/remix-run/react-router/discussions/8753
@@ -436,7 +437,12 @@ const routesConfig = [
       "access_gestao_perfis_sme",
     ],
   },
-
+  {
+    exact: true,
+    path: "/parametro-tipos-receita",
+    component: TiposDeCredito,
+    permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
+  },
   {
     exact: true,
     path: "/dre-relatorio-consolidado",

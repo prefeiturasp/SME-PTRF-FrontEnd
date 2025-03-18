@@ -20,10 +20,15 @@ export const TableTags = ({data, coresTags, excludeTags = []}) => {
 
                 return (
                     <div key={index} className='p-2 text-wrap-tag'>
-                        <div data-qa={`tooltip-tag-${index}`} data-tip={toolTip} data-html={true} className={`${coresTags[tag.tag_id]} tag-tabelas`} key={index}>
+                        <div data-qa={`tooltip-tag-${index}`} data-tip={toolTip} data-html={true} className={`${coresTags[tag.tag_id]} tag-tabelas mb-0`} key={index}>
                             <span data-qa={`span-tag-${index}`} key={index}>{tag.tag_nome}</span>
                             <ReactTooltip/>
+                            
                         </div>
+                        {
+                                tag && tag.tag_nome && tag.tag_nome === 'Conciliada' &&
+                                <span className='pb-3'>asdsadas</span>
+                            }
                     </div>
                 )
             }) : '-'}
