@@ -1,7 +1,7 @@
 
 .btn-custom-iconbutton,.btn-custom-iconbutton:focus, .btn-custom-iconbutton:active {
-    border: none;
-    background-color: transparent;
-    outline: none;
-    box-shadow: none;
+    border: none !important;
+    background-color: transparent !important;
+    outline: none !important;
+    box-shadow: none !important;
 }
