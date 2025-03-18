@@ -183,6 +183,7 @@ export const VincularUnidades = ({tipoContaUUID}) => {
         <Button
           type="text"
           className="btn btn-link link-green"
+          aria-label="Vincular unidade"
           onClick={() => handleConfirmarVincularUnidade(rowData)}
           disabled={selectedUnidades.length > 0}
           icon={
