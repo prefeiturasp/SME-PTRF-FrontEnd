@@ -123,7 +123,7 @@ export const PainelParametrizacoes = () => {
 
     const itensParametrizacaoReceitas = [
         {
-            parametro: 'Tipos de Receita',
+            parametro: 'Tipos de Crédito',
             url: 'parametro-tipos-receita',
             icone: IconeTiposReceita,
             permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
