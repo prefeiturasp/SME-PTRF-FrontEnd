@@ -5,7 +5,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ReactTooltip from "react-tooltip";
 import { faEdit } from "@fortawesome/free-solid-svg-icons";
 import Loading from "../../../../../../utils/Loading";
-import { useGetTiposDeCredito } from '../hooks/useGetTiposDeCredito';
 import {Paginator} from 'primereact/paginator';
 import "./style.scss"; 
 import { Tag } from '../../../../../Globais/Tag';
@@ -15,7 +14,6 @@ export const Lista = ({isLoading, tiposDeCredito, count, firstPage, onPageChange
     const navigate = useNavigate();
 
     const handleEditFormModal = (rowData) => {
-        console.log("rowData", rowData);
         navigate(`/edicao-tipo-de-credito/${rowData.uuid}`);
     };
 
@@ -23,7 +21,7 @@ export const Lista = ({isLoading, tiposDeCredito, count, firstPage, onPageChange
         return (
             <div>
                 <button className="btn-editar-membro" onClick={() => handleEditFormModal(rowData)}>
-                    <span data-tip="Editar motivo" data-html={true}>
+                    <span data-tip="Editar tipo de crédito" data-html={true}>
                         <FontAwesomeIcon
                             style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
                             icon={faEdit}

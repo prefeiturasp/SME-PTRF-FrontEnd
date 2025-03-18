@@ -629,3 +629,7 @@ export const getFiltrosTiposDeCredito = async () => {
         ...authHeader
     })).data
 };
+
+export const getAssociacoesPeloNome = async (nome) => {
+    return (await api.get(`/api/associacoes/?nome=${nome}`, authHeader)).data
+};
