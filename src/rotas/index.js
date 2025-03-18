@@ -106,6 +106,7 @@ import { TextosPaa } from '../componentes/sme/Parametrizacoes/EdicaoDeTextos/Tex
 import { ElaboracaoPaa } from '../componentes/escolas/Paa/ElaboracaoPaa';
 import { ElaborarNovoPlano } from '../componentes/escolas/Paa/ElaboracaoPaa/ElaborarNovoPlano';
 import { ExecucaoDoPaa } from '../componentes/escolas/Paa/ExecucaoDoPaa';
+import { TiposDeCredito } from '../componentes/sme/Parametrizacoes/Receitas/TiposDeCredito';
 
 // Migrando para V6 do react-router-dom
 // Referencia: https://github.com/remix-run/react-router/discussions/8753
@@ -648,6 +649,12 @@ const routesConfig = [
         exact: true,
         path: "/parametro-motivos-pc-aprovada-ressalva",
         component: ParametrizacoesMotivosAprovacaoPcRessalva,
+        permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
+    },
+    {
+        exact: true,
+        path: "/parametro-tipos-receita",
+        component: TiposDeCredito,
         permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
     },
     {

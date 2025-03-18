@@ -612,3 +612,20 @@ export const patchMotivosAprovacaoPcRessalva = async (uuidMotivoAprovacaoPcRessa
 export const deleteMotivoAprovacaoPcRessalva = async (uuidMotivoAprovacaoPcRessalva) => {
     return (await api.delete(`api/motivos-aprovacao-ressalva-parametrizacao/${uuidMotivoAprovacaoPcRessalva}/`, authHeader));
 };
+
+// Tipo de receita
+export const getTiposDeCredito = async (filter, currentPage) => {
+    return (await api.get(`/api/tipos-receitas/?page_size=${20}`,{
+        ...authHeader,
+        params: {
+            page: currentPage,
+            ...filter
+        }
+    })).data
+};
+
+export const getFiltrosTiposDeCredito = async () => {
+    return (await api.get(`/api/tipos-receitas/filtros/`,{
+        ...authHeader
+    })).data
+};
