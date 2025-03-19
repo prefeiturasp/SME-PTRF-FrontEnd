@@ -1,11 +1,11 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { getDres } from '../../../../../../../../../services/sme/Parametrizacoes.service';
-import { Filtros } from '../../../../components/Filtros';
+import { getDres } from '../../../../../../../../services/sme/Parametrizacoes.service';
+import { Filtros } from '../../../components/Filtros';
 
 // Mock para a função de fetchDres
-jest.mock('../../../../../../../../../services/sme/Parametrizacoes.service', () => ({
+jest.mock('../../../../../../../../services/sme/Parametrizacoes.service', () => ({
   getDres: jest.fn()
 }));
 

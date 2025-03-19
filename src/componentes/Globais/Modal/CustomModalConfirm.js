@@ -41,7 +41,7 @@ export function CustomModalConfirm({
       children: (
         <div
           className="row text-center d-flex align-items-center justify-content-center"
-          style={{ padding: "10% 15%" }}
+          style={{ padding: "5% 10%" }}
         >
           <div className="w-100 d-flex justify-content-end">
             <button onClick={handleClose} className="btn p-0">
@@ -70,7 +70,7 @@ export function CustomModalConfirm({
           <div className="col-12 mt-3 d-flex justify-content-center">
             <Button
               onClick={handleClose}
-              className="btn-success"
+              className="btn-outline-success"
               data-qa={dataQa ? `btn-${cancelText}-${dataQa}` : ""}
             >
               {cancelText}
