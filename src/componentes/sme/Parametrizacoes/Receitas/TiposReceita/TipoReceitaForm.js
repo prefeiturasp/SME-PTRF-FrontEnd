@@ -38,7 +38,7 @@ export const TipoReceitaForm = () => {
   const selecionarTodasState = location.state?.selecionar_todas;
 
   const { uuid } = useParams();
-  
+
   const isNew = uuid === undefined;
 
   const { data: filtros } = useGetFiltrosTiposReceita();
@@ -47,10 +47,21 @@ export const TipoReceitaForm = () => {
   const { mutationDelete } = useDeleteTipoReceita();
 
   const { data, isLoading } = useGetTipoReceita(uuid);
-  
+
   const loading = useMemo(() => {
-     return (isLoading && !isNew) || mutationPost.isLoading || mutationPatch.isLoading || mutationDelete.isLoading
-  }, [isLoading, isNew, mutationPost.isLoading, mutationPatch.isLoading, mutationDelete.isLoading])
+    return (
+      (isLoading && !isNew) ||
+      mutationPost.isLoading ||
+      mutationPatch.isLoading ||
+      mutationDelete.isLoading
+    );
+  }, [
+    isLoading,
+    isNew,
+    mutationPost.isLoading,
+    mutationPatch.isLoading,
+    mutationDelete.isLoading,
+  ]);
 
   const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES =
     RetornaSeTemPermissaoEdicaoPainelParametrizacoes();
@@ -76,11 +87,14 @@ export const TipoReceitaForm = () => {
           aceita_livre: data.aceita_livre,
         }),
         detalhes: data.detalhes.map((detalhe) => detalhe.id),
-        selecionar_todas: selecionarTodasState !== undefined ? selecionarTodasState : data.todas_unidades_selecionadas
+        selecionar_todas:
+          selecionarTodasState !== undefined
+            ? selecionarTodasState
+            : data.todas_unidades_selecionadas,
       });
-    } 
-    
-    if(isNew) {
+    }
+
+    if (isNew) {
       form.setFieldsValue({
         nome: "",
         tipos_conta: [],
@@ -90,7 +104,7 @@ export const TipoReceitaForm = () => {
         mensagem_usuario: "",
         possui_detalhamento: undefined,
         e_recursos_proprios: false,
-        selecionar_todas: true
+        selecionar_todas: true,
       });
     }
   }, [data]);
@@ -133,7 +147,7 @@ export const TipoReceitaForm = () => {
   const handleSubmit = async (values) => {
     try {
       await form.validateFields();
-      
+
       let payload = {
         nome: values.nome,
         tipos_conta: values.tipos_conta,
@@ -148,19 +162,19 @@ export const TipoReceitaForm = () => {
         aceita_capital: values.aceita.includes("aceita_capital") ? true : false,
         aceita_custeio: values.aceita.includes("aceita_custeio") ? true : false,
         aceita_livre: values.aceita.includes("aceita_livre") ? true : false,
-        selecionar_todas: values.selecionar_todas
+        selecionar_todas: values.selecionar_todas,
       };
 
       if (uuid) {
         mutationPatch.mutate({ UUID: data.uuid, payload: payload });
       } else {
         try {
-          await mutationPost.mutateAsync({ 
-            payload, 
-            selecionar_todas: form.getFieldValue("selecionar_todas") 
+          await mutationPost.mutateAsync({
+            payload,
+            selecionar_todas: form.getFieldValue("selecionar_todas"),
           });
         } catch (error) {
-          form.setFieldValue("selecionar_todas", true); 
+          form.setFieldValue("selecionar_todas", true);
         }
       }
     } catch {
@@ -186,26 +200,26 @@ export const TipoReceitaForm = () => {
   };
 
   const handleTodasUnidades = (e) => {
-    if(e.target.checked === false && isNew) {
-      handleSubmit(form.getFieldsValue())
+    if (e.target.checked === false && isNew) {
+      handleSubmit(form.getFieldsValue());
     }
     form.setFieldValue("selecionar_todas", e.target.checked);
   };
 
   const exibirDetalhamento = () => {
-    return ["e_rendimento", "e_devolucao"].includes(form.getFieldValue("categoria"));
-  }
+    return ["e_rendimento", "e_devolucao"].includes(
+      form.getFieldValue("categoria")
+    );
+  };
 
   return (
     <Spin spinning={loading}>
       <Flex justify="flex-end">
-        <span>
-        * Preenchimento obrigatório
-        </span>
+        <span>* Preenchimento obrigatório</span>
       </Flex>
-      <Form 
-        form={form} 
-        onFinish={handleSubmit} 
+      <Form
+        form={form}
+        onFinish={handleSubmit}
         disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
         role="form"
       >
@@ -227,7 +241,7 @@ export const TipoReceitaForm = () => {
         <Row gutter={16}>
           <Col md={8}>
             <Form.Item
-              label="Categoria"
+              label="Tipo"
               name="categoria"
               labelCol={{ span: 24 }}
               rules={[{ required: true, message: "Campo obrigatório" }]}
@@ -245,10 +259,10 @@ export const TipoReceitaForm = () => {
             </Form.Item>
           </Col>
           <Col md={8}>
-            <Form.Item 
-              label="Aceita" 
-              name="aceita" 
-              labelCol={{ span: 24 }} 
+            <Form.Item
+              label="Aceita"
+              name="aceita"
+              labelCol={{ span: 24 }}
               rules={[{ required: true, message: "Campo obrigatório" }]}
               disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
             >
@@ -280,10 +294,9 @@ export const TipoReceitaForm = () => {
             </Form.Item>
           </Col>
         </Row>
-        
-        {
-          exibirDetalhamento() && (
-            <Row gutter={16}>
+
+        {exibirDetalhamento() && (
+          <Row gutter={16}>
             <Col md={8}>
               <Form.Item
                 label="Deve exibir detalhamento?"
@@ -301,33 +314,29 @@ export const TipoReceitaForm = () => {
                 />
               </Form.Item>
             </Col>
-            {
-              form.getFieldValue("possui_detalhamento") === true && (
-                <Col md={16}>
-                  <Form.Item
-                    label="Detalhamento"
-                    name="detalhes"
-                    labelCol={{ span: 24 }}
-                    disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
-                  >
-                    <Select
-                      placeholder="Selecione"
-                      mode="multiple"
-                      options={detalhesOpcoes.map((detalhe) => {
-                        return {
-                          value: detalhe.id,
-                          label: detalhe.nome,
-                        };
-                      })}
-                    ></Select>
-                  </Form.Item>
-                </Col>
-              ) 
-  
-            }
+            {form.getFieldValue("possui_detalhamento") === true && (
+              <Col md={16}>
+                <Form.Item
+                  label="Detalhamento"
+                  name="detalhes"
+                  labelCol={{ span: 24 }}
+                  disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
+                >
+                  <Select
+                    placeholder="Selecione ou digite um novo"
+                    mode="tags"
+                    options={detalhesOpcoes.map((detalhe) => {
+                      return {
+                        value: detalhe.id,
+                        label: detalhe.nome,
+                      };
+                    })}
+                  ></Select>
+                </Form.Item>
+              </Col>
+            )}
           </Row>
-          )
-        }
+        )}
 
         <Row>
           <Col md={24}>
@@ -336,6 +345,7 @@ export const TipoReceitaForm = () => {
               name="tipos_conta"
               labelCol={{ span: 24 }}
               disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
+              rules={[{ required: true, message: "Campo obrigatório" }]}
             >
               <Select
                 placeholder="Selecione"
@@ -367,14 +377,14 @@ export const TipoReceitaForm = () => {
           <h6 className="m-0">Unidades vinculadas ao tipo de crédito</h6>
           <Tooltip title="Unidades vinculadas ao tipo de crédito">
             <FontAwesomeIcon
-                style={{
-                    fontSize: '16px', 
-                    marginLeft: 4, 
-                    color: "#086397"
-                }}
-                icon={faExclamationCircle}
+              style={{
+                fontSize: "16px",
+                marginLeft: 4,
+                color: "#086397",
+              }}
+              icon={faExclamationCircle}
             />
-          </Tooltip> 
+          </Tooltip>
         </Flex>
 
         <Form.Item
@@ -384,19 +394,17 @@ export const TipoReceitaForm = () => {
           valuePropName="checked"
           disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
         >
-          <Checkbox onChange={handleTodasUnidades}>
-            Todas as unidades
-          </Checkbox>
+          <Checkbox onChange={handleTodasUnidades}>Todas as unidades</Checkbox>
         </Form.Item>
 
         {uuid && form.getFieldValue("selecionar_todas") === false ? (
           <>
-            <UnidadesVinculadas tipoContaUUID={data?.uuid}/>
+            <UnidadesVinculadas tipoContaUUID={data?.uuid} />
             <h6 className="my-5">Vincular unidades ao tipo de crédito</h6>
-            <VincularUnidades tipoContaUUID={data?.uuid}/>
+            <VincularUnidades tipoContaUUID={data?.uuid} />
           </>
-        ) : null}   
-      
+        ) : null}
+
         <Divider />
 
         <Row>
