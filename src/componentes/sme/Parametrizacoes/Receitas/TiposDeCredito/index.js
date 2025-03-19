@@ -35,7 +35,7 @@ export const TiposDeCredito = () => {
     let filtrosTratados = { ...restoFiltros };
 
     if (unidades__uuid && typeof unidades__uuid === "object" && Object.keys(unidades__uuid).length > 0 && unidades__uuid.uuid) {
-        filtrosTratados.unidades__uuid = unidades__uuid.uuid;
+      filtrosTratados.unidades__uuid = unidades__uuid.unidade.uuid;
     }
 
     if (tipo === "e_repasse") {
