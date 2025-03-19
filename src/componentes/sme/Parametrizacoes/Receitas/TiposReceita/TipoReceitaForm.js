@@ -14,7 +14,7 @@ import {
 } from "antd";
 import { useParams } from "react-router-dom/cjs/react-router-dom.min";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom-v5-compat";
+import { useLocation, useNavigate } from "react-router-dom-v5-compat";
 import { useGetFiltrosTiposReceita } from "./hooks/useGetFiltrosTiposReceita";
 import { usePostTipoReceita } from "./hooks/usePostTipoReceita";
 import { usePatchTipoReceita } from "./hooks/usePatchTipoReceita";
@@ -34,6 +34,9 @@ export const TipoReceitaForm = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
+  const selecionarTodasState = location.state?.selecionar_todas;
+
   const { uuid } = useParams();
   
   const isNew = uuid === undefined;
@@ -74,7 +77,7 @@ export const TipoReceitaForm = () => {
           aceita_livre: data.aceita_livre,
         }),
         detalhes: data.detalhes.map((detalhe) => detalhe.id),
-        selecionar_todas: data.todas_unidades_selecionadas
+        selecionar_todas: selecionarTodasState !== undefined ? selecionarTodasState : data.todas_unidades_selecionadas
       });
     } 
     
@@ -154,9 +157,15 @@ export const TipoReceitaForm = () => {
       if (uuid) {
         mutationPatch.mutate({ UUID: data.uuid, payload: payload });
       } else {
-        mutationPost.mutate({ payload: payload });
+        try {
+          await mutationPost.mutateAsync({ 
+            payload, 
+            selecionar_todas: form.getFieldValue("selecionar_todas") 
+          });
+        } catch (error) {
+          form.setFieldValue("selecionar_todas", true); 
+        }
       }
-
     } catch {
       form.setFieldValue("selecionar_todas", true);
     }
@@ -165,11 +174,11 @@ export const TipoReceitaForm = () => {
   const handleDelete = async () => {
     CustomModalConfirm({
       dispatch,
-      title: "Apagar tipo de crédito",
-      message: "Tem certeza que deseja apagar esse tipo de crédito?",
+      title: "Excluir tipo de crédito",
+      message: "Tem certeza que deseja excluir esse tipo de crédito?",
       cancelText: "Voltar",
-      confirmText: "Apagar",
-      dataQa: "modal-confirmar-apagar-tipo-de-credito",
+      confirmText: "Excluir",
+      dataQa: "modal-confirmar-excluir-tipo-de-credito",
       isDanger: true,
       onConfirm: () => mutationDelete.mutate(uuid),
     });
