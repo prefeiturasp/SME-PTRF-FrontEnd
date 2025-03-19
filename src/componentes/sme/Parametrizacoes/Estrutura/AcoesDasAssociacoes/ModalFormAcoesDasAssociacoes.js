@@ -108,9 +108,9 @@ export const ModalFormAcoesDaAssociacao = (props) => {
                                 data-qa="botao-apagar-acao-edicao"
                                 onClick={()=>props.setShowModalDeleteAcao(true)}
                                 type="button"
-                                className="btn btn btn-danger mt-2 mr-2"
+                                className="btn btn btn-danger mt-2 mr-2 botao-excluir-acao"
                                 disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}>
-                                Apagar
+                                Excluir
                             </button>
                             }
                         </div>
