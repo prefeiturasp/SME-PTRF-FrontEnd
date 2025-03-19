@@ -14,8 +14,8 @@ export const useDeleteTipoReceita = () => {
     onSuccess: () => {
       queryClient.invalidateQueries(["tipos-receita"]).then();
       toastCustom.ToastCustomSuccess(
-        "Sucesso!",
-        "Tipo de crédito excluído com sucesso."
+        "Remoção do tipo de crédito efetuado com sucesso.",
+        "O tipo de crédito foi removido do sistema com sucesso."
       );
       navigate("/parametro-tipos-receita");
     },
@@ -23,6 +23,10 @@ export const useDeleteTipoReceita = () => {
       if (e.response && e.response.data && e.response.data.mensagem) {
         const errorMsg = e.response.data.mensagem;
         toastCustom.ToastCustomError(errorMsg);
+      } else {
+        toastCustom.ToastCustomError(
+          "Houve um erro ao tentar excluir tipo de crédito."
+        );
       }
     },
   });

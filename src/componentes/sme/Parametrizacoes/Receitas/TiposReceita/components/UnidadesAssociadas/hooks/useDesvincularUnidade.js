@@ -41,7 +41,7 @@ export const useDesvincularUnidade = () => {
                 title: "Restrição do tipo de crédito",
                 message: error.response.data.mensagem,
                 cancelText: "Ok",
-                dataQa: "modal-restricao-desvincular-unidade-em-lote-ao-tipo-de-credito",
+                dataQa: "modal-restricao-desvincular-unidade-ao-tipo-de-credito-em-lote",
             });
         },
     });

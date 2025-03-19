@@ -1,9 +1,9 @@
 import { renderHook, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { getTipoReceita } from "../../../../../../../../services/sme/Parametrizacoes.service";
-import { useGetTipoReceita } from "../../../hooks/useGetTipoReceita";
+import { getTipoReceita } from "../../../../../../../services/sme/Parametrizacoes.service";
+import { useGetTipoReceita } from "../../hooks/useGetTipoReceita";
 
-jest.mock("../../../../../../../../services/sme/Parametrizacoes.service", () => ({
+jest.mock("../../../../../../../services/sme/Parametrizacoes.service", () => ({
   getTipoReceita: jest.fn(),
 }));
 

@@ -1,15 +1,15 @@
 import { act } from "react";
 import { renderHook } from "@testing-library/react";
-import { patchTipoReceita } from "../../../../../../../../services/sme/Parametrizacoes.service";
+import { patchTipoReceita } from "../../../../../../../services/sme/Parametrizacoes.service";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { toastCustom } from "../../../../../../../Globais/ToastCustom";
-import { usePatchTipoReceita } from "../../../hooks/usePatchTipoReceita";
+import { toastCustom } from "../../../../../../Globais/ToastCustom";
+import { usePatchTipoReceita } from "../../hooks/usePatchTipoReceita";
 
-jest.mock("../../../../../../../../services/sme/Parametrizacoes.service", () => ({
+jest.mock("../../../../../../../services/sme/Parametrizacoes.service", () => ({
     patchTipoReceita: jest.fn(),
 }));
 
-jest.mock("../../../../../../../Globais/ToastCustom", () => ({
+jest.mock("../../../../../../Globais/ToastCustom", () => ({
     toastCustom: {
         ToastCustomSuccess: jest.fn(),
         ToastCustomError: jest.fn(),

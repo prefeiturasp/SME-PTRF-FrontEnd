@@ -8,22 +8,32 @@ export const usePostTipoReceita = () => {
   const navigate = useNavigate();
 
   const mutationPost = useMutation({
-    mutationFn: ({ payload }) => {
-      return postTipoReceita(payload);
-    },
-    onSuccess: (data) => {
-      queryClient.invalidateQueries(["tipos-receita"]).then();
+    mutationFn: ({ payload }) => postTipoReceita(payload),
+    onSuccess: (data, variables) => {
+      queryClient.invalidateQueries(["tipos-receita"]);
       toastCustom.ToastCustomSuccess(
-        "Sucesso!",
-        "Tipo de crédito cadastrado com sucesso."
+        "Inclusão de tipo de crédito realizado com sucesso.",
+        "O tipo de crédito foi adicionado ao sistema com sucesso."
       );
-      navigate(`/edicao-tipo-de-credito/${data.uuid}`);
+
+      if (variables.selecionar_todas) {
+        navigate("/parametro-tipos-receita");
+      } else {
+        navigate(`/edicao-tipo-de-credito/${data.uuid}`, {
+          state: { selecionar_todas: false },
+        });
+      }
     },
     onError: (e) => {
-      toastCustom.ToastCustomError(
-        "Houve um erro ao tentar fazer essa atualização."
-      );
+      if (e.response?.data?.non_field_errors) {
+        toastCustom.ToastCustomError(e.response.data.non_field_errors);
+      } else {
+        toastCustom.ToastCustomError(
+          "Houve um erro ao tentar fazer essa atualização."
+        );
+      }
     },
   });
+
   return { mutationPost };
 };
