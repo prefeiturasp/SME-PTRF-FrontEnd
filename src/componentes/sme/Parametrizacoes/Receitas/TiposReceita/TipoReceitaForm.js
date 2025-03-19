@@ -58,7 +58,6 @@ export const TipoReceitaForm = () => {
   Form.useWatch("selecionar_todas", form);
   Form.useWatch("possui_detalhamento", form);
   Form.useWatch("categoria", form);
-  
 
   useEffect(() => {
     if (data) {
@@ -88,7 +87,6 @@ export const TipoReceitaForm = () => {
         categoria: [],
         aceita: [],
         detalhes: [],
-        unidades: [],
         mensagem_usuario: "",
         possui_detalhamento: undefined,
         e_recursos_proprios: false,
@@ -139,7 +137,6 @@ export const TipoReceitaForm = () => {
       let payload = {
         nome: values.nome,
         tipos_conta: values.tipos_conta,
-        unidades: [],
         detalhes: values.detalhes,
         mensagem_usuario: values.mensagem_usuario,
         possui_detalhamento: values.possui_detalhamento,
@@ -403,10 +400,7 @@ export const TipoReceitaForm = () => {
         <Divider />
 
         <Row>
-          <Col xs={12}>
-            <span className="mt-5">Uuid {data?.uuid}</span>
-          </Col>
-          <Col xs={12}>
+          <Col xs={24}>
             <span className="mt-5">ID {data?.id}</span>
           </Col>
         </Row>
@@ -421,7 +415,7 @@ export const TipoReceitaForm = () => {
               className="btn btn btn-danger mt-2 mr-2"
               disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
             >
-              Apagar
+              Excluir
             </button>
           ) : null}
           <Flex gap={16}>
