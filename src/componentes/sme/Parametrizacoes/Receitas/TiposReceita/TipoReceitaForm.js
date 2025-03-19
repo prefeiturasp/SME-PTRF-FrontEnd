@@ -87,6 +87,7 @@ export const TipoReceitaForm = () => {
           aceita_livre: data.aceita_livre,
         }),
         detalhes: data.detalhes.map((detalhe) => detalhe.id),
+        detalhesOpcoes: data.detalhes,
         selecionar_todas:
           selecionarTodasState !== undefined
             ? selecionarTodasState
@@ -101,6 +102,7 @@ export const TipoReceitaForm = () => {
         categoria: [],
         aceita: [],
         detalhes: [],
+        detalhesOpcoes: [],
         mensagem_usuario: "",
         possui_detalhamento: undefined,
         e_recursos_proprios: false,
@@ -113,7 +115,6 @@ export const TipoReceitaForm = () => {
     tiposContaOpcoes = filtros.tipos_contas,
     aceitaOpcoes = filtros.aceita,
     categoriaOpcoes = filtros.tipos,
-    detalhesOpcoes = filtros.detalhes,
   } = filtros;
 
   const getValorAceita = (opcoes) => {
@@ -325,7 +326,7 @@ export const TipoReceitaForm = () => {
                   <Select
                     placeholder="Selecione ou digite um novo"
                     mode="tags"
-                    options={detalhesOpcoes.map((detalhe) => {
+                    options={form.getFieldValue("detalhesOpcoes").map((detalhe) => {
                       return {
                         value: detalhe.id,
                         label: detalhe.nome,
