@@ -6,11 +6,12 @@ export const useGetTipoReceita = (uuid) => {
     ["tipo-receita", uuid],
     () => getTipoReceita(uuid),
     {
-      keepPreviousData: false,
-      staleTime: 5 * 60 * 1000, // 5 minutos antes de ser considerado "stale"
-      cacheTime: 10 * 60 * 1000, // 10 minutos antes de ser removido do cache
-      refetchOnWindowFocus: false, // Evita refazer a requisição ao trocar de aba
-      enabled: uuid !== null && uuid !== undefined,
+      cacheTime: 0,
+      staleTime: 0,
+      refetchOnWindowFocus: false,
+      refetchInterval: false,
+      refetchOnReconnect: false,
+      enabled: !!uuid,
     }
   );
 
