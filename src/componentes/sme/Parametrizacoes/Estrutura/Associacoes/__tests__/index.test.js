@@ -144,7 +144,12 @@ describe('Teste handleSubmitModalForm', () => {
         fireEvent.change(input_periodo_inicial, { target: { value: "1e8c492b-2edb-4acd-a808-71bdf0d805d5" } });
 
         fireEvent.click(input_data_encerramento);
-        const data = screen.getByText(new Date(2025, 2, 25).getDate())
+
+        const hoje = String(new Date().getDate())
+
+        // String com 3 dígitos "001" para obter a classe do datepicker, no selector
+        const hojeClasse = hoje.padStart(3, '0')
+        const data = screen.getByText(hoje, {selector: `.react-datepicker__day.react-datepicker__day--${hojeClasse}`})
         fireEvent.click(data);
 
         fireEvent.click(saveButton);

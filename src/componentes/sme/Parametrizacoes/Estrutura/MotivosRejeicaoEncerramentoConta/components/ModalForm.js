@@ -33,7 +33,7 @@ export const ModalForm = ({handleSubmitFormModal}) => {
                                         <p className='text-right mb-0'><small> * Preenchimento obrigatório</small></p>
                                         <div className="form-group">
                                             <span data-tip="Preencher com um motivo de rejeição da solicitação de encerramento de conta. </br>Por exemplo: 2023 a 2025." data-html={true}>
-                                                <label>Motivo *</label>
+                                                <label htmlFor="nome">Motivo *</label>
                                                 <ReactTooltip/>
                                             </span>
 
