@@ -123,7 +123,7 @@ export const Filtros = ({ filter, setFilter, handleSubmitFormFilter, clearFormFi
                           value={filter.unidades__uuid}
                           suggestions={filteredAssociacoes}
                           completeMethod={searchAssociacao}
-                          field="nome"
+                          field="unidade.nome_com_tipo"
                           onChange={(e) => handleChangeFormFilter("unidades__uuid", e.value)}
                           inputClassName="form-control"
                           inputStyle={{
