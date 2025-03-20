@@ -103,6 +103,7 @@ import {PaginaMandatosAnteriores} from "../componentes/escolas/MembrosDaAssociac
 import { ParametrizacoesRepasses } from "../componentes/sme/Parametrizacoes/Receitas/ParametrizacoesRepasses";
 import {MotivosPagamentoAntecipado} from "../componentes/sme/Parametrizacoes/Despesas/MotivosPagamentoAntecipado";
 import { TextosPaa } from '../componentes/sme/Parametrizacoes/EdicaoDeTextos/TextosPaa';
+import { AcoesPDDE } from '../componentes/sme/Parametrizacoes/Estrutura/AcoesPDDE';
 
 // Migrando para V6 do react-router-dom
 // Referencia: https://github.com/remix-run/react-router/discussions/8753
@@ -572,6 +573,13 @@ const routesConfig = [
         exact: true,
         path: "/parametro-textos-paa",
         component: TextosPaa,
+        permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
+        featureFlag: 'paa',
+    },
+    {
+        exact: true,
+        path: "/parametro-acoes-pdde",
+        component: AcoesPDDE,
         permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
         featureFlag: 'paa',
     },

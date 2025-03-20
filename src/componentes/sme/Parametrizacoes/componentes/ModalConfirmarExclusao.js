@@ -12,7 +12,7 @@ export const ModalConfirmarExclusao = (props) => {
             open={props.open}
             onOk={props.onOk}
             okText={props.okText}
-            okButtonProps={{className: "btn-base-vermelho"}}
+            okButtonProps={{className: props.okButtonProps ? props.okButtonProps : "btn-base-vermelho"}}
             onCancel={props.onCancel}
             cancelText={props.cancelText}
             cancelButtonProps={{className: "btn-base-verde-outline"}}
@@ -21,7 +21,7 @@ export const ModalConfirmarExclusao = (props) => {
             <div className="row">
                 <div className="col-md-auto col-lg-12">
                     <div className="text-center">
-                        <img src={IconeAvisoVermelho} alt="" className="img-fluid"/>
+                        <img src={props.iconeAviso ? props.iconeAviso : IconeAvisoVermelho} alt="" className="img-fluid"/>
                     </div>
                 </div>
 
