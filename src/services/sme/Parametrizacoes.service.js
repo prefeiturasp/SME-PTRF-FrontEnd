@@ -423,8 +423,8 @@ export const postAcoesPDDECategorias = async (payload) => {
 export const patchAcoesPDDECategorias = async (uuid, payload) => {
     return (await api.patch(`/api/categorias-pdde/${uuid}/`, payload, authHeader)).data
 };
-export const deleteAcoesPDDECategorias = async (uuid) => {
-    return (await api.delete(`/api/categorias-pdde/${uuid}/`, authHeader)).data
+export const deleteAcoesPDDECategorias = async (categoriaUuid, acaoUuid) => {
+    return (await api.delete(`/api/categorias-pdde/${categoriaUuid}/?acao_pdde_uuid=${acaoUuid}`, authHeader)).data
 };
 export const deleteAcoesPDDE = async (uuid) => {
     return (await api.delete(`/api/acoes-pdde/${uuid}/`, authHeader)).data
