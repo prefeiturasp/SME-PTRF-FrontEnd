@@ -17,7 +17,7 @@ export const useDeleteAcao = (
             queryClient.invalidateQueries(['acoes']).then();
             setModalForm({open: false})
             toastCustom.ToastCustomSuccess(
-                "Remoção da Ação PDDE efetuada com sucesso.", 
+                "Sucesso.", 
                 "A Ação PDDE foi removida do sistema com sucesso."
             )
         },

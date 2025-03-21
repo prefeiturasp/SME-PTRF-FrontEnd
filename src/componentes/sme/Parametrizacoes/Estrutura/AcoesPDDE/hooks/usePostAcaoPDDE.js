@@ -13,10 +13,10 @@ export const usePostAcaoPDDE = (setModalForm) => {
         onSuccess: (data) => {
             queryClient.invalidateQueries(['acoes']).then()
             setModalForm({open: false})
-            toastCustom.ToastCustomSuccess('Inclusão de Ação PDDE realizado com sucesso.', `A Ação PDDE foi adicionada ao sistema com sucesso.`)
+            toastCustom.ToastCustomSuccess('Sucesso.', `A Ação PDDE foi adicionada ao sistema com sucesso.`)
         },
         onError: (e) => {
-            toastCustom.ToastCustomError('Erro ao criar Ação PDDE', `Não foi possível criar a Ação PDDE`)
+            toastCustom.ToastCustomError('Ops!', `Não foi possível criar a Ação PDDE`)
         },
     })
     return {mutationPost}

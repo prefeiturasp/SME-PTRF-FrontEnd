@@ -40,7 +40,17 @@ export const useAcoesPDDE = () => {
     const handleOpenCreateModal = () => setModalForm({ ...initialStateFormModal, open: true });
 
     const handleClose = () => setModalForm(initialStateFormModal);
-    const handleOpenModalForm = (rowData) => setModalForm({ ...rowData, operacao: "edit", open: true, editavel: true });
+    const handleOpenModalForm = (rowData) => {
+        setModalForm({ 
+            ...rowData,
+            operacao: "edit",
+            open: true,
+            editavel: true,
+            categoria: rowData.categoria ? rowData.categoria : "", 
+        });
+        console.log(rowData);
+    }
+            
     const handleDelete = async (uuid) => mutationDelete.mutate(uuid);
 
     const submit = (values) => {
@@ -76,7 +86,8 @@ export const useAcoesPDDE = () => {
     }
 
     return {
-        modalForm, 
+        modalForm,
+        setModalForm,
         showModalConfirmDelete, 
         showModalInfoExclusaoNaoPermitida,
         erroExclusaoNaoPermitida, 

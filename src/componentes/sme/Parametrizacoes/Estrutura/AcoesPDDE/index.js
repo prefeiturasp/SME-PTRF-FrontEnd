@@ -87,21 +87,6 @@ export const AcoesPDDE = ()=>{
                     setShowModalConfirmDelete={setShowModalConfirmDelete}
                 />
 
-                {/* <ModalBootstrap
-                    show={showModalConfirmDelete}
-                    // onHide={() => setShowModalConfirmDeletePeriodo(false)}
-                    primeiroBotaoOnclick={() => setShowModalConfirmDelete(false)}
-                    segundoBotaoOnclick={()=> {
-                        setShowModalConfirmDelete(false)
-                        handleDelete(modalForm.uuid)
-                    }}
-                    titulo="Excluir Ação PDDE"
-                    bodyText="<p>Deseja realmente excluir esta Açãoi PDDE?</p>"
-                    primeiroBotaoTexto="Cancelar"
-                    primeiroBotaoCss="outline-success"
-                    segundoBotaoCss="danger"
-                    segundoBotaoTexto="Excluir"
-                /> */}
                 {/* Modal de Exclusão de Ação PDDE */}
                 <ModalConfirmar
                     open={showModalConfirmDelete}

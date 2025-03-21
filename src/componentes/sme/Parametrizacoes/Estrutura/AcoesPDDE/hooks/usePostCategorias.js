@@ -11,11 +11,10 @@ export const usePostCategorias = (payload) => {
         },
         onSuccess: (data) => {
             queryClient.invalidateQueries(['categorias']).then()
-            toastCustom.ToastCustomSuccess('Categoria de Ação PDDE criada com sucesso', 'Categoria de Ação PDDE criada com sucesso')
+            toastCustom.ToastCustomSuccess('Sucesso.', 'Categoria de Ação PDDE criada com sucesso')
         },
         onError: (e) => {
-            console.log('Erro ao criar Categoria de Ação PDDE', `Não foi possível criar a Categoria de Ação PDDE`)
-            toastCustom.ToastCustomError('Erro ao criar Categoria de Ação PDDE', 'Não foi possível criar a Categoria de Ação PDDE')
+            toastCustom.ToastCustomError('Ops!', 'Não foi possível criar a Categoria de Ação PDDE')
         },
     })
     return {mutationPost}

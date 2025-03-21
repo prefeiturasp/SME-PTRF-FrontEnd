@@ -20,7 +20,8 @@ const ModalForm = ({
     categorias,
     onSubmit,  
     onHandleClose,
-    setShowModalConfirmDelete
+    setShowModalConfirmDelete,
+    setModalForm
 }) => {
 
     const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES = RetornaSeTemPermissaoEdicaoPainelParametrizacoes()
@@ -32,29 +33,25 @@ const ModalForm = ({
     const [corCancelar, setCorCancelar] = useState('#808080');
     const { mutationPost } = usePostCategorias(stateFormCategoria);
     const { mutationPatch } = usePatchCategorias(stateFormCategoria);
-    const { mutationDeleteCategoria } = useDeleteCategoria(stateFormCategoria);
+    const { mutationDeleteCategoria, isSuccessDelete } = useDeleteCategoria();
     const [showModalConfirmEditCategoria, setShowModalConfirmEditCategoria] = useState(false);
     const [showModalConfirmDeleteCategoria, setShowModalConfirmDeleteCategoria] = useState(false);
 
     const handleSelectCategoria = (categoria) => {
-        console.log(stateFormModal);
-        console.log(categoria);
-        if (categoria != stateFormModal.categoria){
-
-        }
         if (stateFormModal.operacao === "edit"){
             const item = categorias.results.find(v => v.id == categoria) || initialStateFormCategoria
             setStateFormCategoria(item)
         }
     };
 
-    const handleCriarEditarCategoria = () => {
+    const handleCriarEditarCategoria = (categoriaId) => {
         setMostrarCategoria(!mostrarCategoria);
-        if (stateFormModal.operacao === "edit" && !stateFormCategoria.nome){
-            const categoria = categorias.results.find(categoria => categoria.id === stateFormModal.categoria)
+        if (stateFormModal.operacao === "edit"){
+            const categoria = categorias.results.find(categoria => categoria.id == categoriaId)
             setStateFormCategoria({
                 uuid: categoria.uuid,
-                nome: categoria.nome
+                nome: categoria.nome,
+                id: categoria.id
             })
         }
     };
@@ -64,8 +61,8 @@ const ModalForm = ({
         setStateFormCategoria(initialStateFormCategoria)
         setMostrarCategoriaErro(false)
         setShowModalConfirmEditCategoria(false)
+        setShowModalConfirmDeleteCategoria(false)
     };
-    
 
     const salvarFormCategoria = () => {
         if (!stateFormCategoria.nome){
@@ -83,8 +80,10 @@ const ModalForm = ({
     };
 
     const excluirCategoria = () => {
-        mutationDeleteCategoria.mutate(stateFormModal.categoria_objeto.uuid);
-        handleFecharFormCategoria();
+        mutationDeleteCategoria.mutate({categoriaUuid: stateFormCategoria.uuid, acaoUuid: stateFormModal.uuid});
+        if (isSuccessDelete){
+            handleFecharFormCategoria();
+        }
     };
 
     const handleChangeFormCategoria = (name, value) => {
@@ -95,7 +94,6 @@ const ModalForm = ({
     };
 
     const categoriaIconeTemplate = (operacao) => {
-        const iconeCriar = <FontAwesomeIcon icon={faPlus}/>
         const iconeEditar = <FontAwesomeIcon icon={faPencil} style={{color: "white"}}/>
         return operacao === "create" ? "+" : iconeEditar
     };
@@ -127,7 +125,6 @@ const ModalForm = ({
                                             <Field
                                                 data-qa="input-nome"
                                                 type="text"
-                                                value={props.values.nome}
                                                 name="nome"
                                                 id="nome"
                                                 className="form-control"
@@ -148,7 +145,7 @@ const ModalForm = ({
                                                     props.handleChange(e);
                                                     handleSelectCategoria(e.target.value);
                                                 }}
-                                                disabled={!props.values.editavel || !TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES || mostrarCategoria}
+                                                disabled={!props.values.editavel || !TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                                 name="categoria"
                                                 id="categoria"
                                                 className="form-control"
@@ -164,19 +161,17 @@ const ModalForm = ({
                                     </div>
                                     
                                     <div className='col-1'>
-                                    { stateFormModal.categoria == values.categoria &&
-                                        <div className="form-group">
-                                            <label htmlFor="categoria"></label>
-                                            <button
-                                                data-qa="btn-cancelar"
-                                                onClick={handleCriarEditarCategoria}
-                                                type="button"
-                                                className={`btn btn-success mt-2 mr-2`}
-                                            >
-                                            {categoriaIconeTemplate(stateFormModal.operacao)}
-                                            </button>
-                                        </div>
-                                    }
+                                            <div className="form-group">
+                                                <label htmlFor="categoria"></label>
+                                                <button
+                                                    data-qa="btn-cancelar"
+                                                    onClick={() => handleCriarEditarCategoria(values.categoria)}
+                                                    type="button"
+                                                    className={`btn btn-success mt-2 mr-2`}
+                                                >
+                                                {categoriaIconeTemplate(stateFormModal.operacao)}
+                                                </button>
+                                            </div>
                                     </div>
                                     
                                 </div>
@@ -222,7 +217,8 @@ const ModalForm = ({
                                             {mostrarCategoriaErro && <span className="span_erro text-danger mt-1"> Categoria é obrigatório </span>}
                                         </div>
                                     </div>
-                                    { stateFormModal.categoria && stateFormModal.categoria == values.categoria &&
+                                    {/* { stateFormModal.categoria && stateFormModal.categoria == values.categoria && */}
+                                    { stateFormModal.categoria && mostrarCategoria &&
                                     <div className='col-1'>
                                         <div className="form-group">
                                             <label htmlFor="categoria"></label>

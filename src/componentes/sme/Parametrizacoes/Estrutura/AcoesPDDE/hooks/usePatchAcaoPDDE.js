@@ -17,7 +17,7 @@ export const usePatchAcaoPDDE = (setModalForm) => {
             );
         },
         onError: (e) => {
-            toastCustom.ToastCustomError('Erro ao atualizar Ação PDDE', 'Não foi possível atualizar a Ação PDDE')
+            toastCustom.ToastCustomError('Ops!', 'Não foi possível atualizar a Ação PDDE')
         },
     })
     return {mutationPatch}
