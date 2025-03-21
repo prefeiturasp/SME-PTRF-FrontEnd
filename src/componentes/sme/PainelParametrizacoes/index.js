@@ -22,6 +22,8 @@ import IconeMandato from "../../../assets/img/icone-parametro-periodos-de-mandat
 import IconeRepasses from "../../../assets/img/icone-parametro-repasses.svg"
 import IconeMotivosDevolucaoTesouro from "../../../assets/img/icone-parametro-devolucao-ao-tesouro.svg"
 import IconeMotivosAprovacaoPcRessalva from "../../../assets/img/icone-parametro-motivos-aprovacao-pc-ressalva.svg"
+import IconeAcoesPDDE from "../../../assets/img/icone-parametro-acoes-pdde.svg"
+
 
 export const PainelParametrizacoes = () => {
 
@@ -188,6 +190,16 @@ export const PainelParametrizacoes = () => {
         },
     ];
 
+    const itensParametrizacaoAcoesPDDE = [
+        {
+            parametro: 'PDDE',
+            url: 'parametro-acoes-pdde',
+            icone: IconeAcoesPDDE,
+            permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
+            featureFlag: 'paa',
+        }
+    ];
+
     return (
         <>
             <ParametrizacaoCard
@@ -213,6 +225,10 @@ export const PainelParametrizacoes = () => {
             <ParametrizacaoCard
                 itensParametrizacao={itensParametrizacaoEdicaoDeTexto}
                 nomeGrupo='Edição de texto'
+            />
+            <ParametrizacaoCard
+                itensParametrizacao={itensParametrizacaoAcoesPDDE}
+                nomeGrupo='Ações PDDE'
             />
         </>
     )
