@@ -13,6 +13,7 @@ import {ModalConfirmarExclusao as ModalConfirmar} from "../../componentes/ModalC
 export const AcoesPDDE = ()=>{
     const {
         modalForm,
+        setModalForm,
         showModalConfirmDelete,
         showModalInfoExclusaoNaoPermitida,
         erroExclusaoNaoPermitida,
@@ -85,6 +86,7 @@ export const AcoesPDDE = ()=>{
                     onSubmit={handleSubmitFormModal}
                     categorias={categorias}
                     setShowModalConfirmDelete={setShowModalConfirmDelete}
+                    setModalForm={setModalForm}
                 />
 
                 {/* Modal de Exclusão de Ação PDDE */}

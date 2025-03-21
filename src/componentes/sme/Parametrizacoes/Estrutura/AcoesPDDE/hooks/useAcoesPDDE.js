@@ -48,7 +48,6 @@ export const useAcoesPDDE = () => {
             editavel: true,
             categoria: rowData.categoria ? rowData.categoria : "", 
         });
-        console.log(rowData);
     }
             
     const handleDelete = async (uuid) => mutationDelete.mutate(uuid);

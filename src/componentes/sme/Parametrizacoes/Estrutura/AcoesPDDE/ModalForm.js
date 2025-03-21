@@ -16,12 +16,12 @@ import IconeAvisoConfirmacao from "../../../../../assets/img/icone-modal-confirm
 
 const ModalForm = ({
     show, 
-    stateFormModal, 
+    stateFormModal,
+    setModalForm,
     categorias,
     onSubmit,  
     onHandleClose,
     setShowModalConfirmDelete,
-    setModalForm
 }) => {
 
     const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES = RetornaSeTemPermissaoEdicaoPainelParametrizacoes()
@@ -79,9 +79,12 @@ const ModalForm = ({
         handleFecharFormCategoria();
     };
 
-    const excluirCategoria = () => {
+    const excluirCategoria = (setFieldValue) => {
         mutationDeleteCategoria.mutate({categoriaUuid: stateFormCategoria.uuid, acaoUuid: stateFormModal.uuid});
         if (isSuccessDelete){
+            const categoria = stateFormModal.categoria != stateFormCategoria.id ? String(stateFormModal.categoria) : String(categorias.results[0].id)
+            setModalForm({...stateFormModal, categoria})
+            setFieldValue("categoria", categoria)
             handleFecharFormCategoria();
         }
     };
@@ -94,7 +97,7 @@ const ModalForm = ({
     };
 
     const categoriaIconeTemplate = (operacao) => {
-        const iconeEditar = <FontAwesomeIcon icon={faPencil} style={{color: "white"}}/>
+        const iconeEditar = <FontAwesomeIcon icon={faPencil} style={{color: "#ccc"}}/>
         return operacao === "create" ? "+" : iconeEditar
     };
 
@@ -140,7 +143,6 @@ const ModalForm = ({
                                             <Field
                                                 as="select"
                                                 data-qa="input-categoria"
-                                                value={values.categoria || ""}
                                                 onChange={(e)=>{
                                                     props.handleChange(e);
                                                     handleSelectCategoria(e.target.value);
@@ -167,7 +169,8 @@ const ModalForm = ({
                                                     data-qa="btn-cancelar"
                                                     onClick={() => handleCriarEditarCategoria(values.categoria)}
                                                     type="button"
-                                                    className={`btn btn-success mt-2 mr-2`}
+                                                    className={`btn btn${!values.categoria ? "-outline-secondary": "-success"} mt-2 mr-2`}
+                                                    disabled={!values.categoria}
                                                 >
                                                 {categoriaIconeTemplate(stateFormModal.operacao)}
                                                 </button>
@@ -218,7 +221,7 @@ const ModalForm = ({
                                         </div>
                                     </div>
                                     {/* { stateFormModal.categoria && stateFormModal.categoria == values.categoria && */}
-                                    { stateFormModal.categoria && mostrarCategoria &&
+                                    { mostrarCategoria &&
                                     <div className='col-1'>
                                         <div className="form-group">
                                             <label htmlFor="categoria"></label>
@@ -380,6 +383,31 @@ const ModalForm = ({
                                         </div>
                                     ):null}
                                 </div>
+                                {/* Modal de Edição/Adição da Categoria */}
+                                <ModalConfirmar
+                                    open={showModalConfirmEditCategoria}
+                                    onOk={salvarFormCategoria}
+                                    okText={stateFormModal.categoria ? "Editar" : "Adicionar"}
+                                    okButtonProps={{className: "btn-base-verde"}}
+                                    onCancel={() => setShowModalConfirmEditCategoria(false)}
+                                    cancelText="Cancelar"
+                                    cancelButtonProps={{className: "btn-base-verde-outline"}}
+                                    titulo={`${stateFormModal.categoria ? "Editar" : "Adicionar"} Categoria de Ação PDDE`}
+                                    bodyTexto={`<p>Tem certeza que deseja ${stateFormModal.categoria ? "editar" : "adicionar"} essa Categoria de Ação PDDE?</p>`}
+                                    iconeAviso={IconeAvisoConfirmacao}
+                                />
+                                {/* Modal de Exclusao da Categoria */}
+                                <ModalConfirmar
+                                    open={showModalConfirmDeleteCategoria}
+                                    onOk={() => excluirCategoria(setFieldValue)}
+                                    okText="Excluir"
+                                    okButtonProps={{className: "btn-danger"}}
+                                    onCancel={() => setShowModalConfirmDeleteCategoria(false)}
+                                    cancelText="Cancelar"
+                                    cancelButtonProps={{className: "btn-base-verde-outline"}}
+                                    titulo="Excluir Categoria de Ação PDDE"
+                                    bodyText={<p>Tem certeza que deseja excluir essa Categoria de Ação PDDE?</p>}
+                                />
                             </Form>
                         );
                     }}
@@ -399,33 +427,6 @@ const ModalForm = ({
                 }}
                 size='lg'
                 bodyText={bodyTextarea()}
-            />
-
-            {/* Modal de Edição/Adição da Categoria */}
-            <ModalConfirmar
-                open={showModalConfirmEditCategoria}
-                onOk={salvarFormCategoria}
-                okText={stateFormModal.categoria ? "Editar" : "Adicionar"}
-                okButtonProps={{className: "btn-base-verde"}}
-                onCancel={() => setShowModalConfirmEditCategoria(false)}
-                cancelText="Cancelar"
-                cancelButtonProps={{className: "btn-base-verde-outline"}}
-                titulo={`${stateFormModal.categoria ? "Editar" : "Adicionar"} Categoria de Ação PDDE`}
-                bodyTexto={`<p>Tem certeza que deseja ${stateFormModal.categoria ? "editar" : "adicionar"} essa Categoria de Ação PDDE?</p>`}
-                iconeAviso={IconeAvisoConfirmacao}
-            />
-
-            {/* Modal de Exclusao da Categoria */}
-            <ModalConfirmar
-                open={showModalConfirmDeleteCategoria}
-                onOk={excluirCategoria}
-                okText="Excluir"
-                okButtonProps={{className: "btn-danger"}}
-                onCancel={() => setShowModalConfirmDeleteCategoria(false)}
-                cancelText="Cancelar"
-                cancelButtonProps={{className: "btn-base-verde-outline"}}
-                titulo="Excluir Categoria de Ação PDDE"
-                bodyText={<p>Tem certeza que deseja excluir essa Categoria de Ação PDDE?</p>}
             />
         </>
     )
