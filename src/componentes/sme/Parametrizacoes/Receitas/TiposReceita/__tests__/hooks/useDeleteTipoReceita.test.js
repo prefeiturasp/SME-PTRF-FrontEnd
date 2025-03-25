@@ -7,79 +7,85 @@ import { useDeleteTipoReceita } from "../../hooks/useDeleteTipoReceita";
 import { deleteTipoReceita } from "../../../../../../../services/sme/Parametrizacoes.service";
 
 jest.mock("../../../../../../../services/sme/Parametrizacoes.service", () => ({
-    deleteTipoReceita: jest.fn(),
+  deleteTipoReceita: jest.fn(),
 }));
 
 jest.mock("../../../../../../Globais/ToastCustom", () => ({
-    toastCustom: {
-        ToastCustomSuccess: jest.fn(),
-        ToastCustomError: jest.fn(),
-    },
+  toastCustom: {
+    ToastCustomSuccess: jest.fn(),
+    ToastCustomError: jest.fn(),
+  },
 }));
 
 jest.mock("react-router-dom-v5-compat", () => ({
-    useNavigate: jest.fn(),
+  useNavigate: jest.fn(),
 }));
 
 describe("useDeleteTipoReceita", () => {
-    let queryClient;
-    let navigate;
+  let queryClient;
+  let navigate;
 
-    beforeEach(() => {
-        queryClient = new QueryClient({
-            defaultOptions: {
-                queries: {
-                    retry: false,
-                },
-            },
-        });
-        navigate = jest.fn();
-        useNavigate.mockReturnValue(navigate);
+  beforeEach(() => {
+    queryClient = new QueryClient({
+      defaultOptions: {
+        queries: {
+          retry: false,
+        },
+      },
+    });
+    navigate = jest.fn();
+    useNavigate.mockReturnValue(navigate);
+  });
+
+  const wrapper = ({ children }) => (
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  );
+
+  it("deve deletar um tipo de receita com sucesso", async () => {
+    deleteTipoReceita.mockResolvedValueOnce();
+
+    const { result } = renderHook(() => useDeleteTipoReceita(), { wrapper });
+
+    await act(async () => {
+      result.current.mutationDelete.mutate("uuid-teste");
     });
 
-    const wrapper = ({ children }) => (
-        <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    expect(deleteTipoReceita).toHaveBeenCalledWith("uuid-teste");
+    expect(toastCustom.ToastCustomSuccess).toHaveBeenCalledWith(
+      "Remoção do tipo de crédito efetuado com sucesso.",
+      "O tipo de crédito foi removido do sistema com sucesso."
     );
+    expect(navigate).toHaveBeenCalledWith("/parametro-tipos-receita");
+  });
 
-    it("deve deletar um tipo de receita com sucesso", async () => {
-        deleteTipoReceita.mockResolvedValueOnce();
+  it("deve lidar com erro específico na exclusão", async () => {
+    const erro = {
+      response: { data: { mensagem: "Erro ao excluir tipo de receita." } },
+    };
+    deleteTipoReceita.mockRejectedValueOnce(erro);
 
-        const { result } = renderHook(() => useDeleteTipoReceita(), { wrapper });
+    const { result } = renderHook(() => useDeleteTipoReceita(), { wrapper });
 
-        await act(async () => {
-            result.current.mutationDelete.mutate("uuid-teste");
-        });
-
-        expect(deleteTipoReceita).toHaveBeenCalledWith("uuid-teste");
-        expect(toastCustom.ToastCustomSuccess).toHaveBeenCalledWith(
-            "Sucesso!",
-            "Tipo de crédito excluído com sucesso."
-        );
-        expect(navigate).toHaveBeenCalledWith("/parametro-tipos-receita");
+    await act(async () => {
+      result.current.mutationDelete.mutate("uuid-teste");
     });
 
-    it("deve lidar com erro específico na exclusão", async () => {
-        const erro = { response: { data: { mensagem: "Erro ao excluir tipo de receita." } } };
-        deleteTipoReceita.mockRejectedValueOnce(erro);
+    expect(toastCustom.ToastCustomError).toHaveBeenCalledWith(
+      "Erro ao excluir tipo de receita."
+    );
+  });
 
-        const { result } = renderHook(() => useDeleteTipoReceita(), { wrapper });
+  it("deve lidar com erro genérico na exclusão", async () => {
+    deleteTipoReceita.mockRejectedValueOnce(new Error("Erro desconhecido"));
 
-        await act(async () => {
-            result.current.mutationDelete.mutate("uuid-teste");
-        });
+    const { result } = renderHook(() => useDeleteTipoReceita(), { wrapper });
 
-        expect(toastCustom.ToastCustomError).toHaveBeenCalledWith("Erro ao excluir tipo de receita.");
+    await act(async () => {
+      result.current.mutationDelete.mutate("uuid-teste");
     });
 
-    it("deve lidar com erro genérico na exclusão", async () => {
-        deleteTipoReceita.mockRejectedValueOnce(new Error("Erro desconhecido"));
-
-        const { result } = renderHook(() => useDeleteTipoReceita(), { wrapper });
-
-        await act(async () => {
-            result.current.mutationDelete.mutate("uuid-teste");
-        });
-
-        expect(toastCustom.ToastCustomError).not.toHaveBeenCalledWith(expect.any(String));
-    });
+    expect(toastCustom.ToastCustomError).toHaveBeenCalledWith(
+      "Houve um erro ao tentar excluir tipo de crédito."
+    );
+  });
 });
