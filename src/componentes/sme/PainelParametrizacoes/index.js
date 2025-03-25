@@ -192,7 +192,7 @@ export const PainelParametrizacoes = () => {
 
     const itensParametrizacaoAcoesPDDE = [
         {
-            parametro: 'PDDE',
+            parametro: 'Ações PDDE',
             url: 'parametro-acoes-pdde',
             icone: IconeAcoesPDDE,
             permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
