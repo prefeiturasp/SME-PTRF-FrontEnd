@@ -139,7 +139,7 @@ const ModalForm = ({
                                     </div>
                                     <div className='col'>
                                         <div className="form-group">
-                                            <label htmlFor="categoria">Categoria *</label>
+                                            <label htmlFor="categoria">Programa *</label>
                                             <Field
                                                 as="select"
                                                 data-qa="input-categoria"
@@ -152,7 +152,7 @@ const ModalForm = ({
                                                 id="categoria"
                                                 className="form-control"
                                             >
-                                                <option data-qa="option-categoria-vazio" value=''>Selecione uma categoria</option>
+                                                <option data-qa="option-categoria-vazio" value=''>Selecione um programa</option>
                                                 {categorias && categorias.results && categorias.results.length > 0 && categorias.results.map(item => (
                                                     <option data-qa={`option-categoria-${item.id}`} key={item.id} value={item.id}>{item.nome}</option>
                                                 ))}
@@ -169,8 +169,8 @@ const ModalForm = ({
                                                     data-qa="btn-cancelar"
                                                     onClick={() => handleCriarEditarCategoria(values.categoria)}
                                                     type="button"
-                                                    className={`btn btn${!values.categoria ? "-outline-secondary": "-success"} mt-2 mr-2`}
-                                                    disabled={!values.categoria}
+                                                    className={`btn btn${!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES ? "-outline-secondary": "-success"} mt-2 mr-2`}
+                                                    disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                                 >
                                                 {categoriaIconeTemplate(stateFormModal.operacao)}
                                                 </button>
@@ -182,7 +182,7 @@ const ModalForm = ({
                                 <div className='row'>
                                     <div className='col'>
                                         <div className="form-group">
-                                            <label htmlFor="nova_categoria">{stateFormModal.operacao === "create" ? "Adicionar nova" : "Editar"} Categoria</label>
+                                            <label htmlFor="nova_categoria">{stateFormModal.operacao === "create" ? "Adicionar novo" : "Editar"} Programa</label>
                                             <div className="d-flex">
                                                 <div className="flex-grow-1">
                                                     <Field
@@ -204,7 +204,7 @@ const ModalForm = ({
                                                         onClick={() => setShowModalConfirmEditCategoria(true)}
                                                         onMouseEnter={() => setCorOk('#297805')}
                                                         onMouseLeave={() => setCorOk('#808080')}
-                                                        data-tip={stateFormModal.categoria ? "Editar categoria" : "Adicionar nova categoria"} data-for="tooltip-id-salvar"
+                                                        data-tip={stateFormModal.categoria ? "Editar programa" : "Adicionar novo programa"} data-for="tooltip-id-salvar"
                                                     />
                                                     <ReactTooltip id="tooltip-id-cancelar"/>
                                                     <FontAwesomeIcon
@@ -217,10 +217,10 @@ const ModalForm = ({
                                                     />
                                                  </div>
                                             </div>
-                                            {mostrarCategoriaErro && <span className="span_erro text-danger mt-1"> Categoria é obrigatório </span>}
+                                            {mostrarCategoriaErro && <span className="span_erro text-danger mt-1"> Programa é obrigatório </span>}
                                         </div>
                                     </div>
-                                    {/* { stateFormModal.categoria && stateFormModal.categoria == values.categoria && */}
+
                                     { mostrarCategoria &&
                                     <div className='col-1'>
                                         <div className="form-group">
@@ -304,7 +304,7 @@ const ModalForm = ({
                                     </div>
                                     <div className='col'>
                                         <div className="form-group">
-                                        <p className="mb-0">Aceita livre apliacação? *</p>
+                                        <p className="mb-0">Aceita livre aplicação? *</p>
                                             <div className="form-check form-check-inline mt-2">
                                                 <input
                                                     name="aceita_livre_aplicacao_true"
@@ -353,7 +353,7 @@ const ModalForm = ({
                                                 className="btn btn btn-danger mt-2 mr-2"
                                                 disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                             >
-                                                Apagar
+                                                Excluir
                                             </button>
                                         ): null}
                                     </div>

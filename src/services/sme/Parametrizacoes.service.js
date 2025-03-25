@@ -731,7 +731,7 @@ export const deleteAcoesPDDECategorias = async (categoriaUuid, acaoUuid) => {
 export const deleteAcoesPDDE = async (uuid) => {
     return (await api.delete(`/api/acoes-pdde/${uuid}/`, authHeader)).data
 };
-export const getAcoesPDDE = async (nome="", categoria="", currentPage=1, rowsPerPage=5) => {
+export const getAcoesPDDE = async (nome="", categoria="", currentPage=1, rowsPerPage=20) => {
     return (await api.get(`/api/acoes-pdde/?nome=${nome}&categoria__uuid=${categoria}&page=${currentPage}&page_size=${rowsPerPage}`, authHeader)).data
 };
 export const postAcoesPDDE = async (payload) => {
