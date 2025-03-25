@@ -12,7 +12,7 @@ export const Paginacao = ({acoes, setCurrentPage, firstPage, setFirstPage, isLoa
             {!isLoading && acoes.results && acoes.results.length > 0 ? (
                     <Paginator
                         first={firstPage}
-                        rows={5}
+                        rows={20}
                         totalRecords={acoes.count}
                         template="PrevPageLink PageLinks NextPageLink"
                         onPageChange={onPageChange}
