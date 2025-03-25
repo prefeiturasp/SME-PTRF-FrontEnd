@@ -40,4 +40,17 @@ describe("BreadcrumbComponent", () => {
 
     expect(screen.getByText("Produto")).not.toHaveAttribute("href");
   });
+
+  it('deve marcar o último item do breadcrumb como ativo', () => {
+    const items = [
+      { label: 'Página 1', url: '/pagina1' },
+      { label: 'Página Atual', active: true }
+    ];
+
+    render(<BreadcrumbComponent items={items} />);
+
+    const activeItem = screen.getByText('Página Atual');
+    expect(activeItem).toHaveClass('active');
+    expect(activeItem).toHaveAttribute('aria-current', 'page');
+  });
 });
