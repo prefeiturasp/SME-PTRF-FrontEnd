@@ -85,7 +85,7 @@ export const AcoesPDDE = ()=>{
                     </>
                     :
                     <MsgImgCentralizada
-                        data-qa="imagem-lista-sem-tipos-documentos"
+                        data-qa="imagem-lista-sem-acoes-pdde"
                         texto='Nenhum resultado encontrado.'
                         img={Img404}
                         dataQa=""
