@@ -9,6 +9,8 @@ import { ModalBootstrap } from "../../../../Globais/ModalBootstrap";
 import { useAcoesPDDE } from "./hooks/useAcoesPDDE";
 import { Paginacao } from "./Paginacao"
 import {ModalConfirmarExclusao as ModalConfirmar} from "../../componentes/ModalConfirmarExclusao";
+import Img404 from "../../../../../assets/img/img-404.svg"
+import { MsgImgCentralizada } from "../../../../Globais/Mensagens/MsgImgCentralizada";
 
 export const AcoesPDDE = ()=>{
     const {
@@ -73,11 +75,22 @@ export const AcoesPDDE = ()=>{
                     categorias={categorias}
                 />
 
-                <Tabela 
-                    rowsPerPage={5} 
-                    data={acoes} 
-                    handleOpenModalForm={handleOpenModalForm}
-                />
+                { acoes.count > 0 ?
+                    <>
+                    <Tabela
+                        rowsPerPage={20}
+                        data={acoes}
+                        handleOpenModalForm={handleOpenModalForm}
+                    />
+                    </>
+                    :
+                    <MsgImgCentralizada
+                        data-qa="imagem-lista-sem-tipos-documentos"
+                        texto='Nenhum resultado encontrado.'
+                        img={Img404}
+                        dataQa=""
+                    />
+                }
 
                 <ModalForm
                     show={modalForm.open}
