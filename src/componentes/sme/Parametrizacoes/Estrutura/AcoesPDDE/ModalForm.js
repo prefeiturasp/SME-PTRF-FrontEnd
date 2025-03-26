@@ -1,11 +1,10 @@
 import React, {memo, useState} from "react";
 import {ModalFormBodyText} from "../../../../Globais/ModalBootstrap";
-import {Formik, Field, Form } from "formik";
+import { Formik, Field, Form } from "formik";
 import {FormAcoesPDDEValidacao} from "./FormValidacao";
 import {RetornaSeTemPermissaoEdicaoPainelParametrizacoes} from "../../RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
 import { usePostCategorias } from "./hooks/usePostCategorias";
 import { usePatchCategorias } from "./hooks/usePatchCategorias";
-import { useGetCategorias } from "./hooks/useGetCategorias";
 import { useDeleteCategoria } from "./hooks/useDeleteCategoriaAcaoPDDE";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPencil, faPlus, faCheck, faXmark, faTrashCan} from "@fortawesome/free-solid-svg-icons";
@@ -33,9 +32,25 @@ const ModalForm = ({
     const [corCancelar, setCorCancelar] = useState('#808080');
     const { mutationPost } = usePostCategorias(stateFormCategoria);
     const { mutationPatch } = usePatchCategorias(stateFormCategoria);
-    const { mutationDeleteCategoria, isSuccessDelete } = useDeleteCategoria();
     const [showModalConfirmEditCategoria, setShowModalConfirmEditCategoria] = useState(false);
     const [showModalConfirmDeleteCategoria, setShowModalConfirmDeleteCategoria] = useState(false);
+
+    const handleFecharFormCategoria = () => {
+        setMostrarCategoria(false)
+        setStateFormCategoria(initialStateFormCategoria)
+        setMostrarCategoriaErro(false)
+        setShowModalConfirmEditCategoria(false)
+        setShowModalConfirmDeleteCategoria(false)
+    };
+
+    const { mutationDeleteCategoria } = useDeleteCategoria({
+        categorias,
+        stateFormCategoria,
+        setModalForm,
+        stateFormModal,
+        handleFecharFormCategoria,
+        setShowModalConfirmDeleteCategoria
+    });
 
     const handleSelectCategoria = (categoria) => {
         if (stateFormModal.operacao === "edit"){
@@ -56,14 +71,6 @@ const ModalForm = ({
         }
     };
 
-    const handleFecharFormCategoria = () => {
-        setMostrarCategoria(false)
-        setStateFormCategoria(initialStateFormCategoria)
-        setMostrarCategoriaErro(false)
-        setShowModalConfirmEditCategoria(false)
-        setShowModalConfirmDeleteCategoria(false)
-    };
-
     const salvarFormCategoria = () => {
         if (!stateFormCategoria.nome){
             setMostrarCategoriaErro(true)
@@ -79,14 +86,11 @@ const ModalForm = ({
         handleFecharFormCategoria();
     };
 
-    const excluirCategoria = (setFieldValue) => {
-        mutationDeleteCategoria.mutate({categoriaUuid: stateFormCategoria.uuid, acaoUuid: stateFormModal.uuid});
-        if (isSuccessDelete){
-            const categoria = stateFormModal.categoria != stateFormCategoria.id ? String(stateFormModal.categoria) : String(categorias.results[0].id)
-            setModalForm({...stateFormModal, categoria})
-            setFieldValue("categoria", categoria)
-            handleFecharFormCategoria();
-        }
+    const excluirCategoria = () => {
+        mutationDeleteCategoria.mutate({
+            categoriaUuid: stateFormCategoria.uuid,
+            acaoUuid: stateFormModal.uuid
+        });
     };
 
     const handleChangeFormCategoria = (name, value) => {
@@ -220,9 +224,8 @@ const ModalForm = ({
                                             {mostrarCategoriaErro && <span className="span_erro text-danger mt-1"> Programa é obrigatório </span>}
                                         </div>
                                     </div>
-
-                                    { mostrarCategoria &&
                                     <div className='col-1'>
+                                    { mostrarCategoria && stateFormModal.operacao === "edit" &&
                                         <div className="form-group">
                                             <label htmlFor="categoria"></label>
                                             <button
@@ -234,9 +237,8 @@ const ModalForm = ({
                                             <FontAwesomeIcon icon={faTrashCan} style={{color: "#B40C02"}}/>
                                             </button>
                                         </div>
-                                    </div>
                                     }
-                                        
+                                    </div>
                                 </div>
                                 }
                                 <div className='row'>
@@ -399,7 +401,7 @@ const ModalForm = ({
                                 {/* Modal de Exclusao da Categoria */}
                                 <ModalConfirmar
                                     open={showModalConfirmDeleteCategoria}
-                                    onOk={() => excluirCategoria(setFieldValue)}
+                                    onOk={excluirCategoria}
                                     okText="Excluir"
                                     okButtonProps={{className: "btn-danger"}}
                                     onCancel={() => setShowModalConfirmDeleteCategoria(false)}
