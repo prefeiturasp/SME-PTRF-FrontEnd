@@ -60,8 +60,8 @@ const Tabela = ({
             value={data.results}
             id={'tabela-acoes-pdde'}
         >
-            <Column field="nome" header="Ações PDDE"/>
-            <Column field="categoria_objeto.nome" header="Categoria"/>
+            <Column field="nome" header="Ação PDDE"/>
+            <Column field="categoria_objeto.nome" header="Programa"/>
             <Column
                 field="aceita_capital"
                 header="Aceita capital?"

@@ -14,7 +14,12 @@ export const usePostCategorias = (payload) => {
             toastCustom.ToastCustomSuccess('Sucesso.', 'Categoria de Ação PDDE criada com sucesso')
         },
         onError: (e) => {
-            toastCustom.ToastCustomError('Ops!', 'Não foi possível criar a Categoria de Ação PDDE')
+            if (e.response && e.response.data && e.response.data.erro && e.response.data.erro === "Duplicated"){
+                toastCustom.ToastCustomError('Ops!', 'Categoria já existe.')
+            }
+            else{
+                toastCustom.ToastCustomError('Ops!', 'Não foi possível criar a Categoria de Ação PDDE')
+            }
         },
     })
     return {mutationPost}

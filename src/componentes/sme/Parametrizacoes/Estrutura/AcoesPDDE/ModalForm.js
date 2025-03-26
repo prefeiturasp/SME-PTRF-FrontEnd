@@ -1,11 +1,10 @@
 import React, {memo, useState} from "react";
 import {ModalFormBodyText} from "../../../../Globais/ModalBootstrap";
-import {Formik, Field, Form } from "formik";
+import { Formik, Field, Form } from "formik";
 import {FormAcoesPDDEValidacao} from "./FormValidacao";
 import {RetornaSeTemPermissaoEdicaoPainelParametrizacoes} from "../../RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
 import { usePostCategorias } from "./hooks/usePostCategorias";
 import { usePatchCategorias } from "./hooks/usePatchCategorias";
-import { useGetCategorias } from "./hooks/useGetCategorias";
 import { useDeleteCategoria } from "./hooks/useDeleteCategoriaAcaoPDDE";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPencil, faPlus, faCheck, faXmark, faTrashCan} from "@fortawesome/free-solid-svg-icons";
@@ -33,9 +32,25 @@ const ModalForm = ({
     const [corCancelar, setCorCancelar] = useState('#808080');
     const { mutationPost } = usePostCategorias(stateFormCategoria);
     const { mutationPatch } = usePatchCategorias(stateFormCategoria);
-    const { mutationDeleteCategoria, isSuccessDelete } = useDeleteCategoria();
     const [showModalConfirmEditCategoria, setShowModalConfirmEditCategoria] = useState(false);
     const [showModalConfirmDeleteCategoria, setShowModalConfirmDeleteCategoria] = useState(false);
+
+    const handleFecharFormCategoria = () => {
+        setMostrarCategoria(false)
+        setStateFormCategoria(initialStateFormCategoria)
+        setMostrarCategoriaErro(false)
+        setShowModalConfirmEditCategoria(false)
+        setShowModalConfirmDeleteCategoria(false)
+    };
+
+    const { mutationDeleteCategoria } = useDeleteCategoria({
+        categorias,
+        stateFormCategoria,
+        setModalForm,
+        stateFormModal,
+        handleFecharFormCategoria,
+        setShowModalConfirmDeleteCategoria
+    });
 
     const handleSelectCategoria = (categoria) => {
         if (stateFormModal.operacao === "edit"){
@@ -56,14 +71,6 @@ const ModalForm = ({
         }
     };
 
-    const handleFecharFormCategoria = () => {
-        setMostrarCategoria(false)
-        setStateFormCategoria(initialStateFormCategoria)
-        setMostrarCategoriaErro(false)
-        setShowModalConfirmEditCategoria(false)
-        setShowModalConfirmDeleteCategoria(false)
-    };
-
     const salvarFormCategoria = () => {
         if (!stateFormCategoria.nome){
             setMostrarCategoriaErro(true)
@@ -79,14 +86,11 @@ const ModalForm = ({
         handleFecharFormCategoria();
     };
 
-    const excluirCategoria = (setFieldValue) => {
-        mutationDeleteCategoria.mutate({categoriaUuid: stateFormCategoria.uuid, acaoUuid: stateFormModal.uuid});
-        if (isSuccessDelete){
-            const categoria = stateFormModal.categoria != stateFormCategoria.id ? String(stateFormModal.categoria) : String(categorias.results[0].id)
-            setModalForm({...stateFormModal, categoria})
-            setFieldValue("categoria", categoria)
-            handleFecharFormCategoria();
-        }
+    const excluirCategoria = () => {
+        mutationDeleteCategoria.mutate({
+            categoriaUuid: stateFormCategoria.uuid,
+            acaoUuid: stateFormModal.uuid
+        });
     };
 
     const handleChangeFormCategoria = (name, value) => {
@@ -139,7 +143,7 @@ const ModalForm = ({
                                     </div>
                                     <div className='col'>
                                         <div className="form-group">
-                                            <label htmlFor="categoria">Categoria *</label>
+                                            <label htmlFor="categoria">Programa *</label>
                                             <Field
                                                 as="select"
                                                 data-qa="input-categoria"
@@ -152,7 +156,7 @@ const ModalForm = ({
                                                 id="categoria"
                                                 className="form-control"
                                             >
-                                                <option data-qa="option-categoria-vazio" value=''>Selecione uma categoria</option>
+                                                <option data-qa="option-categoria-vazio" value=''>Selecione um programa</option>
                                                 {categorias && categorias.results && categorias.results.length > 0 && categorias.results.map(item => (
                                                     <option data-qa={`option-categoria-${item.id}`} key={item.id} value={item.id}>{item.nome}</option>
                                                 ))}
@@ -169,8 +173,8 @@ const ModalForm = ({
                                                     data-qa="btn-cancelar"
                                                     onClick={() => handleCriarEditarCategoria(values.categoria)}
                                                     type="button"
-                                                    className={`btn btn${!values.categoria ? "-outline-secondary": "-success"} mt-2 mr-2`}
-                                                    disabled={!values.categoria}
+                                                    className={`btn btn${!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES ? "-outline-secondary": "-success"} mt-2 mr-2`}
+                                                    disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                                 >
                                                 {categoriaIconeTemplate(stateFormModal.operacao)}
                                                 </button>
@@ -182,7 +186,7 @@ const ModalForm = ({
                                 <div className='row'>
                                     <div className='col'>
                                         <div className="form-group">
-                                            <label htmlFor="nova_categoria">{stateFormModal.operacao === "create" ? "Adicionar nova" : "Editar"} Categoria</label>
+                                            <label htmlFor="nova_categoria">{stateFormModal.operacao === "create" ? "Adicionar novo" : "Editar"} Programa</label>
                                             <div className="d-flex">
                                                 <div className="flex-grow-1">
                                                     <Field
@@ -204,7 +208,7 @@ const ModalForm = ({
                                                         onClick={() => setShowModalConfirmEditCategoria(true)}
                                                         onMouseEnter={() => setCorOk('#297805')}
                                                         onMouseLeave={() => setCorOk('#808080')}
-                                                        data-tip={stateFormModal.categoria ? "Editar categoria" : "Adicionar nova categoria"} data-for="tooltip-id-salvar"
+                                                        data-tip={stateFormModal.categoria ? "Editar programa" : "Adicionar novo programa"} data-for="tooltip-id-salvar"
                                                     />
                                                     <ReactTooltip id="tooltip-id-cancelar"/>
                                                     <FontAwesomeIcon
@@ -217,12 +221,11 @@ const ModalForm = ({
                                                     />
                                                  </div>
                                             </div>
-                                            {mostrarCategoriaErro && <span className="span_erro text-danger mt-1"> Categoria é obrigatório </span>}
+                                            {mostrarCategoriaErro && <span className="span_erro text-danger mt-1"> Programa é obrigatório </span>}
                                         </div>
                                     </div>
-                                    {/* { stateFormModal.categoria && stateFormModal.categoria == values.categoria && */}
-                                    { mostrarCategoria &&
                                     <div className='col-1'>
+                                    { mostrarCategoria && stateFormModal.operacao === "edit" &&
                                         <div className="form-group">
                                             <label htmlFor="categoria"></label>
                                             <button
@@ -234,9 +237,8 @@ const ModalForm = ({
                                             <FontAwesomeIcon icon={faTrashCan} style={{color: "#B40C02"}}/>
                                             </button>
                                         </div>
-                                    </div>
                                     }
-                                        
+                                    </div>
                                 </div>
                                 }
                                 <div className='row'>
@@ -304,7 +306,7 @@ const ModalForm = ({
                                     </div>
                                     <div className='col'>
                                         <div className="form-group">
-                                        <p className="mb-0">Aceita livre apliacação? *</p>
+                                        <p className="mb-0">Aceita livre aplicação? *</p>
                                             <div className="form-check form-check-inline mt-2">
                                                 <input
                                                     name="aceita_livre_aplicacao_true"
@@ -353,7 +355,7 @@ const ModalForm = ({
                                                 className="btn btn btn-danger mt-2 mr-2"
                                                 disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                             >
-                                                Apagar
+                                                Excluir
                                             </button>
                                         ): null}
                                     </div>
@@ -399,7 +401,7 @@ const ModalForm = ({
                                 {/* Modal de Exclusao da Categoria */}
                                 <ModalConfirmar
                                     open={showModalConfirmDeleteCategoria}
-                                    onOk={() => excluirCategoria(setFieldValue)}
+                                    onOk={excluirCategoria}
                                     okText="Excluir"
                                     okButtonProps={{className: "btn-danger"}}
                                     onCancel={() => setShowModalConfirmDeleteCategoria(false)}

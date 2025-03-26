@@ -44,14 +44,14 @@ export const Filtros = ({
 
                     </div>
                     <div className="form-group col-md-4">
-                        <label htmlFor="filtrar_por_categoria">Filtrar por categoria</label>
+                        <label htmlFor="filtrar_por_categoria">Filtrar por programa</label>
                             <select
                                 value={formFilter.filtrar_por_categoria}
                                 onChange={(e) => handleChangeFormFilter(e.target.name, e.target.value)}
                                 name="filtrar_por_categoria"
                                 id="filtrar_por_categoria"
                                 className="form-control">
-                                <option value="">Selecione a categoria</option>
+                                <option value="">Selecione o programa</option>
                                 {categorias && categorias.results && categorias.results.map((categoria)=>
                                     <option key={categoria.uuid} value={categoria.uuid}>{categoria.nome}</option>
                                 )}

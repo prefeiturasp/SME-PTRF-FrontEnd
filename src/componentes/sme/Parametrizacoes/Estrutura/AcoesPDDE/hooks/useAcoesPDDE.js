@@ -20,7 +20,7 @@ const initialStateFormModal = {
     open: false
 };
 const initialStateFiltros = { filtrar_por_nome: "", filtrar_por_categoria: "" };
-const rowsPerPage = 5;
+const rowsPerPage = 20;
 
 export const useAcoesPDDE = () => {
     const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES = RetornaSeTemPermissaoEdicaoPainelParametrizacoes();

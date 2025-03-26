@@ -13,7 +13,7 @@ export const usePatchAcaoPDDE = (setModalForm) => {
             queryClient.invalidateQueries(['acoes']).then()
             setModalForm({open: false})
             toastCustom.ToastCustomSuccess(
-                'Edição da Ação PDDE realizado com sucesso.'
+                'Sucesso', 'Edição da Ação PDDE realizado com sucesso.'
             );
         },
         onError: (e) => {
