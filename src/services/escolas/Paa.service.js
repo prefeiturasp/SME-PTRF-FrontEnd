@@ -1,4 +1,4 @@
-import api from "../api";
+import api from "../api/index.js";
 import { TOKEN_ALIAS } from "../auth.service.js";
 
 const authHeader = {
@@ -14,5 +14,16 @@ export const getSaldoAtualPorAcaoAssociacao = async (acaoAssociacaoUUID) => {
       `api/acoes-associacoes/${acaoAssociacaoUUID}/obter-saldo-atual/`,
       authHeader
     )
+  ).data;
+};
+
+export const postReceitasPrevistasPaa = async (payload) => {
+  return (await api.post(`api/receitas-previstas-paa/`, payload, authHeader))
+    .data;
+};
+
+export const patchReceitasPrevistasPaa = async (uuid, payload) => {
+  return (
+    await api.patch(`api/receitas-previstas-paa/${uuid}/`, payload, authHeader)
   ).data;
 };

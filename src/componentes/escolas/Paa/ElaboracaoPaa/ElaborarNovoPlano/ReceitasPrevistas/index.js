@@ -1,29 +1,47 @@
 import React, { Fragment, useCallback, useState } from "react";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
-import { Checkbox, Flex, Form, Spin, Tooltip } from "antd";
+import { Checkbox, Flex, Spin } from "antd";
 import { IconButton } from "../../../../../Globais/UI";
-import { useGetTabelasReceitas } from "./hooks/useGetTabelasReceitas";
+import { useGetAcoesAssociacao } from "./hooks/useGetAcoesAssociacao";
 import "./style.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
 import ReceitasPrevistasModalForm from "./ReceitasPrevistasModalForm";
+import { Icon } from "../../../../../Globais/UI/Icon";
+import { formatMoneyBRL } from "../../../../../../utils/money";
 
 const ReceitasPrevistas = () => {
   const [activeTab, setActiveTab] = useState("Receitas Previstas");
   const [modalForm, setModalForm] = useState({ open: false, data: null });
-  const { data, isLoading } = useGetTabelasReceitas();
+  const { data, isLoading } = useGetAcoesAssociacao();
 
   const tabs = ["Receitas Previstas", "Detalhamento de recursos próprios"];
 
   const dataTemplate = useCallback((rowData, column) => {
-    return <div className="text-right">__</div>;
+    const receitaPrevistaPaa = rowData?.receitas_previstas_paa?.[0];
+
+    if (!receitaPrevistaPaa) {
+      return <div className="text-right">__</div>;
+    }
+
+    const fieldMapping = {
+      valor_capital: receitaPrevistaPaa.previsao_valor_capital,
+      valor_custeio: receitaPrevistaPaa.previsao_valor_custeio,
+      valor_livre: receitaPrevistaPaa.previsao_valor_livre,
+      total:
+        parseFloat(receitaPrevistaPaa.previsao_valor_custeio) +
+        parseFloat(receitaPrevistaPaa.previsao_valor_capital) +
+        parseFloat(receitaPrevistaPaa.previsao_valor_livre),
+    };
+
+    const value = fieldMapping[column.field];
+
+    return <div className="text-right">{formatMoneyBRL(value)}</div>;
   }, []);
 
   const nomeTemplate = useCallback((rowData, column) => {
     return (
       <span style={{ color: "#00585E" }} className="font-weight-bold">
-        {rowData.nome}
+        {rowData.acao.nome}
       </span>
     );
   }, []);
@@ -32,6 +50,7 @@ const ReceitasPrevistas = () => {
     return !rowData["fixed"] === true ? (
       <IconButton
         icon="faEdit"
+        tooltipMessage="Editar"
         iconProps={{
           style: { fontSize: "20px", marginRight: "0", color: "#00585E" },
         }}
@@ -45,7 +64,7 @@ const ReceitasPrevistas = () => {
     setModalForm({ open: true, data: rowData });
   };
 
-  const rowClassName = (rowData) => {
+  const rowClassName = () => {
     return "inactive-row";
   };
 
@@ -83,24 +102,22 @@ const ReceitasPrevistas = () => {
             <h4 className="mb-0">Receitas Previstas</h4>
             <Flex align="center">
               <Checkbox>Parar atualizações do saldo</Checkbox>
-              <Tooltip title="Ao selecionar esta opção os valores dos recursos não serão atualizados e serão mantidos os valores da última atualização automática ou da edição realizada.">
-                <FontAwesomeIcon
-                  style={{
+              <Icon
+                tooltipMessage="Ao selecionar esta opção os valores dos recursos não serão atualizados e serão mantidos os valores da última atualização automática ou da edição realizada."
+                icon="faExclamationCircle"
+                iconProps={{
+                  style: {
                     fontSize: "16px",
                     marginLeft: 4,
                     color: "#086397",
-                  }}
-                  icon={faExclamationCircle}
-                />
-              </Tooltip>
+                  },
+                }}
+              />
             </Flex>
           </Flex>
 
           <DataTable
-            value={[
-              ...data.acoes_associacao,
-              { nome: "Total do PTRF", fixed: true },
-            ]}
+            value={[...data, { acao: { nome: "Total do PTRF" }, fixed: true }]}
             rowClassName={rowClassName}
           >
             <Column field="nome" header="Recursos" body={nomeTemplate} />
