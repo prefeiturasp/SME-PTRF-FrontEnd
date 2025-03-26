@@ -43,7 +43,7 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
       const total_livre = receitaPrevistaPaa
         ? parseFloat(receitaPrevistaPaa.previsao_valor_livre)
         : null;
-      const saldo_atual_custeio = data.saldo_atual_capital;
+      const saldo_atual_custeio = data.saldo_atual_custeio;
       const saldo_atual_capital = data.saldo_atual_capital;
       const saldo_atual_livre = data.saldo_atual_livre;
 

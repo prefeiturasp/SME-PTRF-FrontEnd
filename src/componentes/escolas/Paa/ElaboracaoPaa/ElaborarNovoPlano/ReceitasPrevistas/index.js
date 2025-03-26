@@ -74,11 +74,13 @@ const ReceitasPrevistas = () => {
 
   return (
     <div>
-      <ReceitasPrevistasModalForm
-        open={modalForm.open}
-        acaoAssociacao={modalForm.data}
-        onClose={handleCloseModalForm}
-      />
+      {modalForm.open && (
+        <ReceitasPrevistasModalForm
+          open={modalForm.open}
+          acaoAssociacao={modalForm.data}
+          onClose={handleCloseModalForm}
+        />
+      )}
 
       <nav className="nav mb-4 mt-4 menu-interno">
         {tabs.map((tab, index) => (
