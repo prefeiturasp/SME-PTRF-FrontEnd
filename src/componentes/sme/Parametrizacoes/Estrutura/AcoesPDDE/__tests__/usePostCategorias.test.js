@@ -65,4 +65,21 @@ describe("usePostCategoria", () => {
             "Não foi possível criar a Categoria de Ação PDDE"
         );
     });
+
+    it("deve exibir erro ao falhar na criação nome duplicado", async () => {
+        postAcoesPDDECategorias.mockRejectedValueOnce({response: { data: { erro: "Duplicated" } }});
+
+        const { result } = renderHook(() => usePostCategorias({ nome: "Categoria 1"} ), { wrapper });
+
+        await act(async () => {
+            result.current.mutationPost.mutate({
+                payload: { nome: "Categoria 1" },
+            });
+        });
+
+        expect(toastCustom.ToastCustomError).toHaveBeenCalledWith(
+            "Ops!",
+            "Categoria já existe."
+        );
+    });
 });

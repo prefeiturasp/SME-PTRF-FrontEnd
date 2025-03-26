@@ -33,7 +33,7 @@ describe("Filtros Componentes", () => {
         const nomeInput = screen.getByLabelText(/Filtrar por nome da Ação PDDE/i);
         expect(nomeInput).toBeInTheDocument()
 
-        const categoriasInput = screen.getByLabelText(/Filtrar por categoria/i);
+        const categoriasInput = screen.getByLabelText(/Filtrar por programa/i);
         expect(categoriasInput).toBeInTheDocument()
         const opcoesCategorias = categoriasInput.querySelectorAll("option");
         expect(opcoesCategorias).toHaveLength(5);
@@ -46,7 +46,7 @@ describe("Filtros Componentes", () => {
         fireEvent.change(nomeInput, { target: { value: "Acao" } });
         expect(nomeInput.value).toBe("Acao");
 
-        const categoriasInput = screen.getByLabelText(/Filtrar por categoria/i);
+        const categoriasInput = screen.getByLabelText(/Filtrar por programa/i);
         fireEvent.change(categoriasInput, { target: { value: "2df33e5d-fbbf-4a4a-ab9a-d5fa49de4db2" } });
         expect(categoriasInput.value).toBe("2df33e5d-fbbf-4a4a-ab9a-d5fa49de4db2");
 

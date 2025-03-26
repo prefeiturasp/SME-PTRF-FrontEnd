@@ -66,4 +66,25 @@ describe("usePatchtCategorias", () => {
             "Não foi possível atualizar a Categoria de Ação PDDE"
         );
     });
+
+    it("deve exibir erro ao falhar na criação nome duplicado", async () => {
+        patchAcoesPDDECategorias.mockRejectedValueOnce({response: { data: { erro: "Duplicated" } }});
+
+        const { result } = renderHook(() => usePatchCategorias(), { wrapper });
+
+        await act(async () => {
+            result.current.mutationPatch.mutate({
+                uuid: "4d272c66-0d2a-4f77-9979-6afeaec39332",
+                payload: { nome: "Categoria 1" },
+            });
+        });
+
+        expect(toastCustom.ToastCustomError).toHaveBeenCalledWith(
+            "Ops!",
+            "Categoria já existe."
+        );
+    });
 });
+
+
+

@@ -20,8 +20,8 @@ describe("Tabela", () => {
 
     it("deve exibir os dados corretamente formatados", () => {
         render(<Tabela rowsPerPage={5} data={mockData} handleOpenModalForm={mockHandleOpenModalForm} />);
-        expect(screen.getByText("Ações PDDE")).toBeInTheDocument();
-        expect(screen.getByText("Categoria")).toBeInTheDocument();
+        expect(screen.getByText("Ação PDDE")).toBeInTheDocument();
+        expect(screen.getByText("Programa")).toBeInTheDocument();
         expect(screen.getByText("Aceita capital?")).toBeInTheDocument();
         expect(screen.getByText("Aceita custeio?")).toBeInTheDocument();
         expect(screen.getByText("Aceita livre aplicação?")).toBeInTheDocument();

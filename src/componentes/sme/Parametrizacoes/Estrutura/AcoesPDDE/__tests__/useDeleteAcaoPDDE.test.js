@@ -71,4 +71,16 @@ describe("useDeleteAcaoPDDE", () => {
             "Houve um erro ao tentar completar ação."
         );
     });
+
+    it("deve exibir erro ao falhar na remoção por estar associada a outro registro", async () => {
+        deleteAcoesPDDE.mockRejectedValueOnce({response: { data: { mensagem: "Erro" } },});
+
+        const { result } = renderHook(() => useDeleteAcao(setModalForm, setErroExclusaoNaoPermitida, setShowModalInfoExclusaoNaoPermitida), { wrapper });
+
+        await act(async () => {
+            result.current.mutationDelete.mutate({
+                uuid: "4d272c66-0d2a-4f77-9979-6afeaec39332"
+            });
+        });
+    });
 });
