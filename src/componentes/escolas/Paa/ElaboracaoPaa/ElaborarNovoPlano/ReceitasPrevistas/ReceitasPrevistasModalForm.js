@@ -84,10 +84,6 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
     }
   };
 
-  const parser = (value) => {
-    return value ? parseFloat(value.replace(/\./g, "").replace(",", ".")) : 0;
-  };
-
   const onSubmit = (values) => {
     const payload = {
       acao_associacao: acaoAssociacao.id,
