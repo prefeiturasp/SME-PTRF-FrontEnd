@@ -132,7 +132,7 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                 <Flex align="center">
                   Receita Prevista
                   <Icon
-                    tooltipMessage="Dica de tela"
+                    tooltipMessage="Orienta-se somar todos os valores recebidos de Custeio, Capital e Livre Aplicação ao longo do último ano."
                     icon="faExclamationCircle"
                     iconProps={{
                       style: {
