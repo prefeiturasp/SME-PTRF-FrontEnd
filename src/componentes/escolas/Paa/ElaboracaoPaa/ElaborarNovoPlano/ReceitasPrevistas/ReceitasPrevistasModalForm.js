@@ -103,8 +103,8 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
     { required: true, message: "Campo obrigatório" },
     {
       type: "number",
-      min: 0.01,
-      message: "O valor deve ser maior que zero!",
+      min: 0,
+      message: "O valor deve ser maior ou igual a zero",
     },
   ];
 
@@ -190,6 +190,7 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                         formatter={formatMoneyBRL}
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
+                        min={0}
                       />
                     </Form.Item>
                     <Icon
@@ -255,6 +256,7 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                         formatter={formatMoneyBRL}
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
+                        min={0}
                       />
                     </Form.Item>
                     <Icon
@@ -320,6 +322,7 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                         formatter={formatMoneyBRL}
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
+                        min={0}
                       />
                     </Form.Item>
                     <Icon
