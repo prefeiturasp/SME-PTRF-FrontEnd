@@ -99,6 +99,15 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
     }
   };
 
+  const inputRules = [
+    { required: true, message: "Campo obrigatório" },
+    {
+      type: "number",
+      min: 0.01,
+      message: "O valor deve ser maior que zero!",
+    },
+  ];
+
   return (
     <ModalFormBodyText
       show={open}
@@ -174,7 +183,7 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                       name="valor_custeio"
                       labelCol={{ span: 24 }}
                       style={{ marginBottom: 8 }}
-                      rules={[{ required: true, message: "Campo obrigatório" }]}
+                      rules={inputRules}
                     >
                       <InputNumber
                         placeholder="00,00"
@@ -239,7 +248,7 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                       name="valor_capital"
                       labelCol={{ span: 24 }}
                       style={{ marginBottom: 8 }}
-                      rules={[{ required: true, message: "Campo obrigatório" }]}
+                      rules={inputRules}
                     >
                       <InputNumber
                         placeholder="00,00"
@@ -304,7 +313,7 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                       name="valor_livre"
                       labelCol={{ span: 24 }}
                       style={{ marginBottom: 8 }}
-                      rules={[{ required: true, message: "Campo obrigatório" }]}
+                      rules={inputRules}
                     >
                       <InputNumber
                         placeholder="00,00"
