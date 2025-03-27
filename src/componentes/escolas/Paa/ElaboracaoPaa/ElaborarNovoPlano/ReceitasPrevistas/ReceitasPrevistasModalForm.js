@@ -6,7 +6,7 @@ import { useGetSaldoAtual } from "./hooks/useGetSaldoAtual";
 import { usePostReceitasPrevistasPaa } from "./hooks/usePostReceitasPrevistasPaa";
 import { usePatchReceitasPrevistasPaa } from "./hooks/usePatchReceitasPrevistasPaa";
 import { formataData } from "../../../../../../utils/FormataData";
-import { formatMoneyBRL } from "../../../../../../utils/money";
+import { formatMoneyBRL, parseMoneyBRL } from "../../../../../../utils/money";
 
 const initialValues = {
   saldo_atual_capital: 0,
@@ -160,7 +160,7 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                       <InputNumber
                         placeholder="00,00"
                         formatter={formatMoneyBRL}
-                        parser={parser}
+                        parser={parseMoneyBRL}
                         style={{ width: "100%" }}
                         disabled
                       />
@@ -183,7 +183,7 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                       <InputNumber
                         placeholder="00,00"
                         formatter={formatMoneyBRL}
-                        parser={parser}
+                        parser={parseMoneyBRL}
                         style={{ width: "100%" }}
                       />
                     </Form.Item>
@@ -203,7 +203,7 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                     <InputNumber
                       placeholder="00,00"
                       formatter={formatMoneyBRL}
-                      parser={parser}
+                      parser={parseMoneyBRL}
                       style={{ width: "100%" }}
                       disabled
                     />
@@ -225,7 +225,7 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                       <InputNumber
                         placeholder="00,00"
                         formatter={formatMoneyBRL}
-                        parser={parser}
+                        parser={parseMoneyBRL}
                         style={{ width: "100%" }}
                         disabled
                       />
@@ -248,7 +248,7 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                       <InputNumber
                         placeholder="00,00"
                         formatter={formatMoneyBRL}
-                        parser={parser}
+                        parser={parseMoneyBRL}
                         style={{ width: "100%" }}
                       />
                     </Form.Item>
@@ -268,7 +268,7 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                     <InputNumber
                       placeholder="00,00"
                       formatter={formatMoneyBRL}
-                      parser={parser}
+                      parser={parseMoneyBRL}
                       style={{ width: "100%" }}
                       disabled
                     />
@@ -290,7 +290,7 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                       <InputNumber
                         placeholder="00,00"
                         formatter={formatMoneyBRL}
-                        parser={parser}
+                        parser={parseMoneyBRL}
                         style={{ width: "100%" }}
                         disabled
                       />
@@ -313,7 +313,7 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                       <InputNumber
                         placeholder="00,00"
                         formatter={formatMoneyBRL}
-                        parser={parser}
+                        parser={parseMoneyBRL}
                         style={{ width: "100%" }}
                       />
                     </Form.Item>
@@ -333,7 +333,7 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                     <InputNumber
                       placeholder="00,00"
                       formatter={formatMoneyBRL}
-                      parser={parser}
+                      parser={parseMoneyBRL}
                       style={{ width: "100%" }}
                       disabled
                     />
