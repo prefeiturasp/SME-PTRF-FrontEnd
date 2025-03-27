@@ -4,6 +4,7 @@ import { renderHook } from "@testing-library/react";
 import { deleteAcoesPDDECategorias } from "../../../../../../services/sme/Parametrizacoes.service";
 import { toastCustom } from "../../../../../Globais/ToastCustom";
 import { useDeleteCategoria } from "../hooks/useDeleteCategoriaAcaoPDDE";
+import { categoriasPDDE as mockCategoriasPDDE } from "../__fixtures__/mockData";
 
 jest.mock("../../../../../../services/sme/Parametrizacoes.service", () => ({
     deleteAcoesPDDECategorias: jest.fn(),
@@ -25,6 +26,13 @@ describe("useDeleteCategoriaAcaoPDDE", () => {
         },
     });
 
+    const categorias = mockCategoriasPDDE;
+    const stateFormCategoria = {id: "1", uuid: "fakw-uuid", nome: "Categoria 1"}
+    const stateFormModal = {categoria: "2"}
+    const setModalForm = jest.fn();
+    const handleFecharFormCategoria = jest.fn();
+    const setShowModalConfirmDeleteCategoria = jest.fn();
+
     const wrapper = ({ children }) => (
         <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     );
@@ -36,7 +44,14 @@ describe("useDeleteCategoriaAcaoPDDE", () => {
     it("deve remover a categoria da ação pdde com sucesso", async () => {
         deleteAcoesPDDECategorias.mockResolvedValueOnce({});
 
-        const { result } = renderHook(() => useDeleteCategoria(), { wrapper });
+        const { result } = renderHook(() => useDeleteCategoria({
+            categorias,
+            stateFormCategoria,
+            setModalForm,
+            stateFormModal,
+            handleFecharFormCategoria,
+            setShowModalConfirmDeleteCategoria
+        }), { wrapper });
 
         await act(async () => {
             result.current.mutationDeleteCategoria.mutate({
@@ -56,7 +71,14 @@ describe("useDeleteCategoriaAcaoPDDE", () => {
     it("deve exibir erro ao falhar na remoção", async () => {
         deleteAcoesPDDECategorias.mockRejectedValueOnce(new Error("Erro ao deletar"));
 
-        const { result } = renderHook(() => useDeleteCategoria(), { wrapper });
+        const { result } = renderHook(() => useDeleteCategoria(
+            categorias,
+            stateFormCategoria,
+            setModalForm,
+            stateFormModal,
+            handleFecharFormCategoria,
+            setShowModalConfirmDeleteCategoria
+        ), { wrapper });
 
         await act(async () => {
             result.current.mutationDeleteCategoria.mutate({
@@ -74,7 +96,14 @@ describe("useDeleteCategoriaAcaoPDDE", () => {
     it("deve exibir erro ao falhar na remoção por estar associada a alguma ação", async () => {
         deleteAcoesPDDECategorias.mockRejectedValueOnce({response: { data: { mensagem: "Categoria associada a alguma ação" } }});
 
-        const { result } = renderHook(() => useDeleteCategoria(), { wrapper });
+        const { result } = renderHook(() => useDeleteCategoria(
+            categorias,
+            stateFormCategoria,
+            setModalForm,
+            stateFormModal,
+            handleFecharFormCategoria,
+            setShowModalConfirmDeleteCategoria
+        ), { wrapper });
 
         await act(async () => {
             result.current.mutationDeleteCategoria.mutate({
