@@ -19,8 +19,6 @@ jest.mock("../../../../../Globais/ToastCustom", () => ({
 
 describe("useDeleteCategoriaAcaoPDDE", () => {
     let queryClient;
-    let setModalForm, handleFecharFormCategoria, setShowModalConfirmDeleteCategoria;
-    let categorias, stateFormCategoria, stateFormModal;
 
     queryClient = new QueryClient({
         defaultOptions: {
@@ -28,12 +26,12 @@ describe("useDeleteCategoriaAcaoPDDE", () => {
         },
     });
 
-    categorias = mockCategoriasPDDE;
-    stateFormCategoria = {id: "1", uuid: "fakw-uuid", nome: "Categoria 1"}
-    stateFormModal = {categoria: "2"}
-    setModalForm = jest.fn();
-    handleFecharFormCategoria = jest.fn();
-    setShowModalConfirmDeleteCategoria = jest.fn();
+    const categorias = mockCategoriasPDDE;
+    const stateFormCategoria = {id: "1", uuid: "fakw-uuid", nome: "Categoria 1"}
+    const stateFormModal = {categoria: "2"}
+    const setModalForm = jest.fn();
+    const handleFecharFormCategoria = jest.fn();
+    const setShowModalConfirmDeleteCategoria = jest.fn();
 
     const wrapper = ({ children }) => (
         <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
@@ -46,14 +44,14 @@ describe("useDeleteCategoriaAcaoPDDE", () => {
     it("deve remover a categoria da ação pdde com sucesso", async () => {
         deleteAcoesPDDECategorias.mockResolvedValueOnce({});
 
-        const { result } = renderHook(() => useDeleteCategoria(
+        const { result } = renderHook(() => useDeleteCategoria({
             categorias,
             stateFormCategoria,
             setModalForm,
             stateFormModal,
             handleFecharFormCategoria,
             setShowModalConfirmDeleteCategoria
-        ), { wrapper });
+        }), { wrapper });
 
         await act(async () => {
             result.current.mutationDeleteCategoria.mutate({
