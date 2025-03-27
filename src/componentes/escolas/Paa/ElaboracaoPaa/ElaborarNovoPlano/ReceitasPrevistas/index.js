@@ -16,72 +16,76 @@ const ReceitasPrevistas = () => {
 
   const tabs = ["Receitas Previstas", "Detalhamento de recursos próprios"];
 
-  const dataTemplate = useCallback((rowData, column) => {
-    if (rowData?.acao?.nome === "Total do PTRF") {
-      const totalCapital = data.reduce((acc, row) => {
-        return (
-          acc +
-          (parseFloat(
-            row?.receitas_previstas_paa?.[0]?.previsao_valor_capital
-          ) || 0)
-        );
-      }, 0);
+  const dataTemplate = useCallback(
+    (rowData, column) => {
+      if (rowData?.acao?.nome === "Total do PTRF") {
+        const totalCapital = data.reduce((acc, row) => {
+          return (
+            acc +
+            (parseFloat(
+              row?.receitas_previstas_paa?.[0]?.previsao_valor_capital
+            ) || 0)
+          );
+        }, 0);
 
-      const totalCusteio = data.reduce((acc, row) => {
-        return (
-          acc +
-          (parseFloat(
-            row?.receitas_previstas_paa?.[0]?.previsao_valor_custeio
-          ) || 0)
-        );
-      }, 0);
+        const totalCusteio = data.reduce((acc, row) => {
+          return (
+            acc +
+            (parseFloat(
+              row?.receitas_previstas_paa?.[0]?.previsao_valor_custeio
+            ) || 0)
+          );
+        }, 0);
 
-      const totalLivre = data.reduce((acc, row) => {
-        return (
-          acc +
-          (parseFloat(row?.receitas_previstas_paa?.[0]?.previsao_valor_livre) ||
-            0)
-        );
-      }, 0);
+        const totalLivre = data.reduce((acc, row) => {
+          return (
+            acc +
+            (parseFloat(
+              row?.receitas_previstas_paa?.[0]?.previsao_valor_livre
+            ) || 0)
+          );
+        }, 0);
 
-      const totalGeral = totalCapital + totalCusteio + totalLivre;
+        const totalGeral = totalCapital + totalCusteio + totalLivre;
+
+        const fieldMapping = {
+          valor_capital: totalCapital,
+          valor_custeio: totalCusteio,
+          valor_livre: totalLivre,
+          total: totalGeral,
+        };
+
+        return (
+          <div className="text-right font-bold">
+            {formatMoneyBRL(fieldMapping[column.field])}
+          </div>
+        );
+      }
+
+      const receitaPrevistaPaa = rowData?.receitas_previstas_paa?.[0];
+
+      if (!receitaPrevistaPaa) {
+        return <div className="text-right">__</div>;
+      }
 
       const fieldMapping = {
-        valor_capital: totalCapital,
-        valor_custeio: totalCusteio,
-        valor_livre: totalLivre,
-        total: totalGeral,
+        valor_capital: receitaPrevistaPaa.previsao_valor_capital,
+        valor_custeio: receitaPrevistaPaa.previsao_valor_custeio,
+        valor_livre: receitaPrevistaPaa.previsao_valor_livre,
+        total:
+          parseFloat(receitaPrevistaPaa.previsao_valor_custeio) +
+          parseFloat(receitaPrevistaPaa.previsao_valor_capital) +
+          parseFloat(receitaPrevistaPaa.previsao_valor_livre),
       };
 
       return (
-        <div className="text-right font-bold">
+        <div className="text-right">
           {formatMoneyBRL(fieldMapping[column.field])}
         </div>
       );
-    }
-
-    const receitaPrevistaPaa = rowData?.receitas_previstas_paa?.[0];
-
-    if (!receitaPrevistaPaa) {
-      return <div className="text-right">__</div>;
-    }
-
-    const fieldMapping = {
-      valor_capital: receitaPrevistaPaa.previsao_valor_capital,
-      valor_custeio: receitaPrevistaPaa.previsao_valor_custeio,
-      valor_livre: receitaPrevistaPaa.previsao_valor_livre,
-      total:
-        parseFloat(receitaPrevistaPaa.previsao_valor_custeio) +
-        parseFloat(receitaPrevistaPaa.previsao_valor_capital) +
-        parseFloat(receitaPrevistaPaa.previsao_valor_livre),
-    };
-
-    return (
-      <div className="text-right">
-        {formatMoneyBRL(fieldMapping[column.field])}
-      </div>
-    );
-  }, []);
+    },
+    [data]
+  );
 
   const nomeTemplate = useCallback((rowData, column) => {
     return (
