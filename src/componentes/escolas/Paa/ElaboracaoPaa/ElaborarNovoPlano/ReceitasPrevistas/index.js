@@ -17,6 +17,49 @@ const ReceitasPrevistas = () => {
   const tabs = ["Receitas Previstas", "Detalhamento de recursos próprios"];
 
   const dataTemplate = useCallback((rowData, column) => {
+    if (rowData?.acao?.nome === "Total do PTRF") {
+      const totalCapital = data.reduce((acc, row) => {
+        return (
+          acc +
+          (parseFloat(
+            row?.receitas_previstas_paa?.[0]?.previsao_valor_capital
+          ) || 0)
+        );
+      }, 0);
+
+      const totalCusteio = data.reduce((acc, row) => {
+        return (
+          acc +
+          (parseFloat(
+            row?.receitas_previstas_paa?.[0]?.previsao_valor_custeio
+          ) || 0)
+        );
+      }, 0);
+
+      const totalLivre = data.reduce((acc, row) => {
+        return (
+          acc +
+          (parseFloat(row?.receitas_previstas_paa?.[0]?.previsao_valor_livre) ||
+            0)
+        );
+      }, 0);
+
+      const totalGeral = totalCapital + totalCusteio + totalLivre;
+
+      const fieldMapping = {
+        valor_capital: totalCapital,
+        valor_custeio: totalCusteio,
+        valor_livre: totalLivre,
+        total: totalGeral,
+      };
+
+      return (
+        <div className="text-right font-bold">
+          {formatMoneyBRL(fieldMapping[column.field])}
+        </div>
+      );
+    }
+
     const receitaPrevistaPaa = rowData?.receitas_previstas_paa?.[0];
 
     if (!receitaPrevistaPaa) {
@@ -33,9 +76,11 @@ const ReceitasPrevistas = () => {
         parseFloat(receitaPrevistaPaa.previsao_valor_livre),
     };
 
-    const value = fieldMapping[column.field];
-
-    return <div className="text-right">{formatMoneyBRL(value)}</div>;
+    return (
+      <div className="text-right">
+        {formatMoneyBRL(fieldMapping[column.field])}
+      </div>
+    );
   }, []);
 
   const nomeTemplate = useCallback((rowData, column) => {
