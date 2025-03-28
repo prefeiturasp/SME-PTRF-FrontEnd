@@ -152,29 +152,4 @@ describe("Carrega página fique de olho", () => {
         expect(getFiqueDeOlhoRelatoriosConsolidados).toHaveBeenCalledTimes(1);
     });
 
-    //   getTiposDeTransacao.mockResolvedValue(mockData);
-    //   render(<TiposDeTransacao />);
-  
-    //   expect(screen.getByText(/Carregando.../i)).toBeInTheDocument();
-    //   await expect(screen.findByText(/Cartão/i)).resolves.toBeInTheDocument();
-
-    //   const filtro_nome = screen.getByLabelText(/filtrar por nome/i);
-    //   expect(filtro_nome).toBeInTheDocument();
-  
-    //   fireEvent.change(filtro_nome, { target: { value: 'Cartão' } });
-    //   expect(filtro_nome.value).toBe('Cartão');
-  
-    //   const botao_limpar = screen.getByRole('button', { name: /Limpar/i });
-    //   expect(botao_limpar).toBeInTheDocument();
-    //   fireEvent.click(botao_limpar);
-  
-    //   expect(screen.getByText(/Carregando.../i)).toBeInTheDocument();
-  
-    //   await waitFor(() => expect(screen.getByText(/Cartão/i)).toBeInTheDocument());
-  
-    //   await waitFor(() => {
-    //       const filtro_nome = screen.getByLabelText(/filtrar por nome/i);
-    //       expect(filtro_nome.value).toBe('');
-    //   });
-    // });
 });
