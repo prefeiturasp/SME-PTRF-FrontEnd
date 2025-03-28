@@ -107,7 +107,7 @@ describe('ModalForm Component', () => {
     fireEvent.click(screen.getByTestId('btn-adicionar-editar-categoria'));
     expect(screen.getByText(/Editar Programa/i)).toBeInTheDocument();
     fireEvent.click(screen.getByTestId('btn-confirmar-editar-adicionar-categoria'));
-    expect(screen.getByText(/Editar Categoria de Ação PDDE/i)).toBeInTheDocument();
+    expect(screen.getByText(/Editar Programa de Ação PDDE/i)).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Editar", selector: '.btn-editar-adicionar-categoria' }));
   });
 
@@ -122,7 +122,7 @@ describe('ModalForm Component', () => {
     const input = screen.getByLabelText("Programa *");
     fireEvent.change(input, { target: { value: 4 } });
     fireEvent.click(screen.getByTestId('btn-confirmar-editar-adicionar-categoria'));
-    expect(screen.getByText(/Editar Categoria de Ação PDDE/i)).toBeInTheDocument();
+    expect(screen.getByText(/Editar Programa de Ação PDDE/i)).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Editar", selector: '.btn-editar-adicionar-categoria' }));
   });
 
@@ -197,7 +197,7 @@ describe('ModalForm Component', () => {
     fireEvent.mouseEnter(botao_cancelar_editar);
     fireEvent.mouseLeave(botao_cancelar_editar);
     fireEvent.click(botao_confirmar_editar);
-    expect(screen.getByText(/Adicionar Categoria de Ação PDDE/i)).toBeInTheDocument();
+    expect(screen.getByText(/Adicionar Programa de Ação PDDE/i)).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Adicionar", selector: '.btn-editar-adicionar-categoria' }));
   });
 
