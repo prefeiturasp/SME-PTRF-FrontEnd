@@ -2,10 +2,15 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteAcoesPDDECategorias } from "../../../../../../services/sme/Parametrizacoes.service";
 import { toastCustom } from "../../../../../Globais/ToastCustom";
 
-export const useDeleteCategoria = (
-) => {
+export const useDeleteCategoria = ({
+    categorias,
+    stateFormCategoria,
+    setModalForm,
+    stateFormModal,
+    handleFecharFormCategoria,
+    setShowModalConfirmDeleteCategoria
+}) => {
     const queryClient = useQueryClient();
-    const isSuccessDelete = true;
     const mutationDeleteCategoria = useMutation({
         mutationFn: ({categoriaUuid, acaoUuid}) => {
             return deleteAcoesPDDECategorias(categoriaUuid, acaoUuid);
@@ -17,6 +22,9 @@ export const useDeleteCategoria = (
                 "Sucesso!", 
                 "A Categoria da Ação PDDE foi removida do sistema com sucesso."
             )
+            var categoria = stateFormModal.categoria != stateFormCategoria.id ? String(stateFormModal.categoria) : String(categorias.results[0].id)
+            setModalForm({...stateFormModal, categoria})
+            handleFecharFormCategoria();
         },
         onError: (e) => {
             if (e.response && e.response.data && e.response.data.mensagem){
@@ -24,10 +32,10 @@ export const useDeleteCategoria = (
             } else {
                 toastCustom.ToastCustomError("Ops!", "Houve um erro ao tentar completar ação.");
             }
-            isSuccessDelete = false;
+            setShowModalConfirmDeleteCategoria(false);
         },
     });
 
-    return { mutationDeleteCategoria, isSuccessDelete };
+    return { mutationDeleteCategoria };
 }
   
