@@ -81,6 +81,13 @@ export const PainelParametrizacoes = () => {
             url: 'motivos-rejeicao',
             icone: IconeTiposAcertos,
             permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
+        },
+        {
+            parametro: 'Ações PDDE',
+            url: 'parametro-acoes-pdde',
+            icone: IconeAcoesPDDE,
+            permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
+            featureFlag: 'paa',
         }
     ];
 
@@ -190,16 +197,6 @@ export const PainelParametrizacoes = () => {
         },
     ];
 
-    const itensParametrizacaoAcoesPDDE = [
-        {
-            parametro: 'Ações PDDE',
-            url: 'parametro-acoes-pdde',
-            icone: IconeAcoesPDDE,
-            permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
-            featureFlag: 'paa',
-        }
-    ];
-
     return (
         <>
             <ParametrizacaoCard
@@ -225,10 +222,6 @@ export const PainelParametrizacoes = () => {
             <ParametrizacaoCard
                 itensParametrizacao={itensParametrizacaoEdicaoDeTexto}
                 nomeGrupo='Edição de texto'
-            />
-            <ParametrizacaoCard
-                itensParametrizacao={itensParametrizacaoAcoesPDDE}
-                nomeGrupo='Ações PDDE'
             />
         </>
     )
