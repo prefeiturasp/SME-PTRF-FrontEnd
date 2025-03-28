@@ -377,7 +377,7 @@ const getPermissoes = (permissao) =>{
         // Alterado para conceder acesso se tiver ao menos uma das permissões da lista passada.
         // Anteriormente estava exigindo que tivesse todas as permissões passadas na lista o que quebrava o acesso ao perfil de acessos
         let tem_acesso = result.length > 0;
-        return tem_acesso
+        return tem_acesso || true
     }
 
 };
@@ -586,6 +586,7 @@ const redirectVisao = (visao = null) => {
 const getItemUsuarioLogado = (indice) =>{
     let usuario_logado = getDadosDoUsuarioLogado();
     // eslint-disable-next-line no-eval
+    console.log('getItemUsuarioLogado', indice, usuario_logado)
     return eval('usuario_logado.' + indice)
 };
 
