@@ -2,7 +2,7 @@ import React, {memo} from "react";
 
 const TabelaFiqueDeOlho = ({acoesTemplate}) => {
     return (
-        <table className="table table-bordered tabela-textos-fique-de-olho">
+        <table role="grid" className="table table-bordered tabela-textos-fique-de-olho">
             <thead>
                 <tr>
                     <th scope="col">Textos do fique de olho</th>
