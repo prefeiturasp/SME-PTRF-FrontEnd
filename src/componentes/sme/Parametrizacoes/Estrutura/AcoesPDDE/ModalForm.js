@@ -171,6 +171,7 @@ const ModalForm = ({
                                                 <label htmlFor="categoria"></label>
                                                 <button
                                                     data-qa="btn-cancelar"
+                                                    data-testid="btn-adicionar-editar-categoria"
                                                     onClick={() => handleCriarEditarCategoria(values.categoria)}
                                                     type="button"
                                                     className={`btn btn${!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES ? "-outline-secondary": "-success"} mt-2 mr-2`}
@@ -203,6 +204,7 @@ const ModalForm = ({
                                                 <div className="py-2" style={{marginLeft: '-4rem'}}>
                                                     <ReactTooltip id="tooltip-id-salvar"/>
                                                     <FontAwesomeIcon
+                                                        data-testid="btn-confirmar-editar-adicionar-categoria"
                                                         style={{fontSize: '22px', marginRight: "15px", color: corOk, cursor: "pointer"}}
                                                         icon={faCheck}
                                                         onClick={() => setShowModalConfirmEditCategoria(true)}
@@ -212,6 +214,7 @@ const ModalForm = ({
                                                     />
                                                     <ReactTooltip id="tooltip-id-cancelar"/>
                                                     <FontAwesomeIcon
+                                                        data-testid="btn-cancelar-editar-adicionar-categoria"
                                                         style={{fontSize: '22px', marginRight: "15px", color: corCancelar, cursor: "pointer"}}
                                                         icon={faXmark}
                                                         onClick={handleFecharFormCategoria}
@@ -233,8 +236,14 @@ const ModalForm = ({
                                                 onClick={() => setShowModalConfirmDeleteCategoria(true)}
                                                 type="button"
                                                 className={`btn btn-light-rose mt-2 mr-2`}
+                                                data-testid="btn-excluir-categoria"
                                             >
-                                            <FontAwesomeIcon icon={faTrashCan} style={{color: "#B40C02"}}/>
+                                            <ReactTooltip id="tooltip-id-excluir"/>
+                                            <FontAwesomeIcon
+                                                data-tip="Excluir" data-for="tooltip-id-excluir"
+                                                icon={faTrashCan} 
+                                                style={{color: "#B40C02"}}
+                                            />
                                             </button>
                                         </div>
                                     }
@@ -375,6 +384,7 @@ const ModalForm = ({
                                     {values.operacao === 'create' || (values.operacao === 'edit' && values.editavel) ? (
                                         <div className="p-Y bd-highlight">
                                             <button
+                                                data-testid="btn-salvar-acao"
                                                 data-qa="btn-salvar"
                                                 type="submit"
                                                 className="btn btn btn-success mt-2"
@@ -390,12 +400,12 @@ const ModalForm = ({
                                     open={showModalConfirmEditCategoria}
                                     onOk={salvarFormCategoria}
                                     okText={stateFormModal.categoria ? "Editar" : "Adicionar"}
-                                    okButtonProps={{className: "btn-base-verde"}}
+                                    okButtonProps={"btn-base-verde btn-editar-adicionar-categoria"}
                                     onCancel={() => setShowModalConfirmEditCategoria(false)}
                                     cancelText="Cancelar"
-                                    cancelButtonProps={{className: "btn-base-verde-outline"}}
-                                    titulo={`${stateFormModal.categoria ? "Editar" : "Adicionar"} Categoria de Ação PDDE`}
-                                    bodyTexto={`<p>Tem certeza que deseja ${stateFormModal.categoria ? "editar" : "adicionar"} essa Categoria de Ação PDDE?</p>`}
+                                    cancelButtonProps={"btn-base-verde-outline btn-editar-adicionar-categoria-cancelar"}
+                                    titulo={`${stateFormModal.categoria ? "Editar" : "Adicionar"} Programa de Ação PDDE`}
+                                    bodyTexto={`<p>Tem certeza que deseja ${stateFormModal.categoria ? "editar" : "adicionar"} esse Programa de Ação PDDE?</p>`}
                                     iconeAviso={IconeAvisoConfirmacao}
                                 />
                                 {/* Modal de Exclusao da Categoria */}
@@ -403,12 +413,12 @@ const ModalForm = ({
                                     open={showModalConfirmDeleteCategoria}
                                     onOk={excluirCategoria}
                                     okText="Excluir"
-                                    okButtonProps={{className: "btn-danger"}}
+                                    okButtonProps={"btn-danger btn-excluir-categoria-moda"}
                                     onCancel={() => setShowModalConfirmDeleteCategoria(false)}
                                     cancelText="Cancelar"
-                                    cancelButtonProps={{className: "btn-base-verde-outline"}}
-                                    titulo="Excluir Categoria de Ação PDDE"
-                                    bodyText={<p>Tem certeza que deseja excluir essa Categoria de Ação PDDE?</p>}
+                                    cancelButtonProps={"btn-base-verde-outline btn-excluir-categoria-modal-cancelar"}
+                                    titulo="Excluir Programa de Ação PDDE"
+                                    bodyText={<p>Tem certeza que deseja excluir esse Programa de Ação PDDE?</p>}
                                 />
                             </Form>
                         );

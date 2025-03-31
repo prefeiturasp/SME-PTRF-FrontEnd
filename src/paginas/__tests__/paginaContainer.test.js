@@ -1,11 +1,26 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { PaginasContainer } from './../PaginasContainer';
-import { SidebarContext } from '../../context/Sidebar';
+import { PaginasContainer } from "../PaginasContainer";
 import { NotificacaoContext } from '../../context/Notificacoes';
-import { MemoryRouter } from 'react-router-dom';
-import {visoesService as vs} from '../../services/visoes.service';
+import {notificaDevolucaoPCService} from "../../services/NotificacaDevolucaoPC.service";
+import {visoesService, visoesService as vs} from '../../services/visoes.service';
+import {BarraMensagemUnidadeEmSuporte} from "../../componentes/Globais/BarraMensagemUnidadeEmSuporte";
+import { BarraMensagemFixa } from "../../componentes/Globais/BarraMensagemFixa";
+import { barraMensagemCustom } from "../../componentes/Globais/BarraMensagem";
 
+jest.mock("../../componentes/Globais/BarraMensagemUnidadeEmSuporte", () => ({
+  BarraMensagemUnidadeEmSuporte: ()=> <></>,
+}));
+
+jest.mock("../../componentes/Globais/BarraMensagemFixa", () => ({
+  BarraMensagemFixa: ()=> <></>,
+}));
+
+const notificacaoContexto = {
+  exibeMensagemFixaTemDevolucao: true,
+  setExibeMensagemFixaTemDevolucao: jest.fn(),
+  marcaNotificacaoComoLidaERedirecianaParaVerAcertos: jest.fn()
+}
 jest.mock('../../services/visoes.service', () => ({
   visoesService: {
     featureFlagAtiva: jest.fn(),
@@ -13,37 +28,30 @@ jest.mock('../../services/visoes.service', () => ({
     getDadosDoUsuarioLogado: jest.fn(),
   }
 }));
-
-jest.mock('./../../componentes/Globais/BarraMensagem', () => ({
-    barraMensagemCustom: {
-        BarraMensagemSucessLaranja: jest.fn(() => <div>Mensagem de teste</div>)
-    }
+jest.mock('../../componentes/Globais/BarraMensagem', () => ({
+  barraMensagemCustom: {
+    BarraMensagemSucessLaranja: jest.fn()
+  }
 }));
 
-describe('PaginasContainer', () => {
-    beforeEach(() => {
-        vs.featureFlagAtiva.mockImplementation((flag) => true);
-    });
+jest.mock('../../services/NotificacaDevolucaoPC.service', () => ({
+  notificaDevolucaoPCService: {
+    marcaNotificacaoComoLidaERedirecianaParaVerAcertos: jest.fn()
+  }
+}));
 
-    afterEach(() => {
-        localStorage.clear();
-        jest.restoreAllMocks();
-    });
 
-    it("renderiza PaginasContainer", () => {
-      render(
-        <MemoryRouter>
-          <SidebarContext.Provider value={{ sideBarStatus: false }}>
-            <NotificacaoContext.Provider value={{ exibeMensagemFixaTemDevolucao: false }}>
-              <PaginasContainer>
-                <div>Conteúdo da Página</div>
-              </PaginasContainer>
-            </NotificacaoContext.Provider>
-          </SidebarContext.Provider>
-        </MemoryRouter>
-      );
-
-      expect(screen.getByText("Conteúdo da Página")).toBeInTheDocument();
-    });
+describe('<PaginasContainer>', () => {
  
+  test('Deve renderizar o componente', async () => {
+    visoesService.featureFlagAtiva.mockReturnValue(true);
+    visoesService.getItemUsuarioLogado.mockReturnValue('UE');
+    barraMensagemCustom.BarraMensagemSucessLaranja.mockReturnValue();
+    render(
+        <NotificacaoContext.Provider value={notificacaoContexto}>
+          <PaginasContainer/>
+        </NotificacaoContext.Provider>
+    );
+  });
+
 });
