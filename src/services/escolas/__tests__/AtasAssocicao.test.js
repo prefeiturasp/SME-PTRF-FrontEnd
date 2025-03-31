@@ -11,9 +11,6 @@ import {
  } from '../AtasAssociacao.service.js';
 import { TOKEN_ALIAS } from '../../auth.service.js';
 
-jest.mock('../../api', () => ({
-    get: jest.fn()
-}));
 
 jest.mock('../../api', () => ({
     get: jest.fn(),
