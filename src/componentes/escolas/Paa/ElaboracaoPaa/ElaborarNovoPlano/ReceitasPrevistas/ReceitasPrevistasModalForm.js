@@ -6,7 +6,11 @@ import { useGetSaldoAtual } from "./hooks/useGetSaldoAtual";
 import { usePostReceitasPrevistasPaa } from "./hooks/usePostReceitasPrevistasPaa";
 import { usePatchReceitasPrevistasPaa } from "./hooks/usePatchReceitasPrevistasPaa";
 import { formataData } from "../../../../../../utils/FormataData";
-import { formatMoneyBRL, parseMoneyBRL } from "../../../../../../utils/money";
+import {
+  formatMoneyBRL,
+  formatMoneyByCentsBRL,
+  parseMoneyBRL,
+} from "../../../../../../utils/money";
 
 const initialValues = {
   saldo_atual_capital: 0,
@@ -51,9 +55,9 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
         saldo_atual_capital: saldo_atual_capital,
         saldo_atual_custeio: saldo_atual_custeio,
         saldo_atual_livre: saldo_atual_livre,
-        valor_capital: valor_capital,
-        valor_custeio: valor_custeio,
-        valor_livre: total_livre,
+        valor_capital: valor_capital * 100,
+        valor_custeio: valor_custeio * 100,
+        valor_livre: total_livre * 100,
         total_custeio: valor_custeio + saldo_atual_custeio,
         total_capital: valor_capital + saldo_atual_capital,
         total_livre: total_livre + saldo_atual_livre,
@@ -67,19 +71,19 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
     if (values.valor_custeio) {
       form.setFieldValue(
         "total_custeio",
-        formValues.saldo_atual_custeio + parseFloat(values.valor_custeio)
+        formValues.saldo_atual_custeio + parseFloat(values.valor_custeio) / 100
       );
     }
     if (values.valor_capital) {
       form.setFieldValue(
         "total_capital",
-        formValues.saldo_atual_capital + parseFloat(values.valor_capital)
+        formValues.saldo_atual_capital + parseFloat(values.valor_capital) / 100
       );
     }
     if (values.valor_livre) {
       form.setFieldValue(
         "total_livre",
-        formValues.saldo_atual_livre + parseFloat(values.valor_livre)
+        formValues.saldo_atual_livre + parseFloat(values.valor_livre) / 100
       );
     }
   };
@@ -87,9 +91,9 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
   const onSubmit = (values) => {
     const payload = {
       acao_associacao: acaoAssociacao.id,
-      previsao_valor_custeio: values.valor_custeio,
-      previsao_valor_capital: values.valor_capital,
-      previsao_valor_livre: values.valor_livre,
+      previsao_valor_custeio: values.valor_custeio / 100,
+      previsao_valor_capital: values.valor_capital / 100,
+      previsao_valor_livre: values.valor_livre / 100,
     };
 
     if (receitaPrevistaPaa) {
@@ -187,7 +191,7 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                     >
                       <InputNumber
                         placeholder="00,00"
-                        formatter={formatMoneyBRL}
+                        formatter={formatMoneyByCentsBRL}
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
                         min={0}
@@ -253,7 +257,7 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                     >
                       <InputNumber
                         placeholder="00,00"
-                        formatter={formatMoneyBRL}
+                        formatter={formatMoneyByCentsBRL}
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
                         min={0}
@@ -319,7 +323,7 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                     >
                       <InputNumber
                         placeholder="00,00"
-                        formatter={formatMoneyBRL}
+                        formatter={formatMoneyByCentsBRL}
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
                         min={0}

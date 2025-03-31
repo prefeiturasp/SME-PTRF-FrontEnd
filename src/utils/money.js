@@ -1,7 +1,18 @@
+export const formatMoneyByCentsBRL = (value) => {
+  if (value === null || value === undefined || isNaN(value) || value === "")
+    return null;
+
+  return (value / 100).toLocaleString("pt-BR", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+};
+
 export const formatMoneyBRL = (value) => {
   if (value === null || value === undefined || isNaN(value) || value === "")
     return null;
-  return (value / 100).toLocaleString("pt-BR", {
+
+  return Number(value).toLocaleString("pt-BR", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   });
