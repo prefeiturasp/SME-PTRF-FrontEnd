@@ -72,6 +72,7 @@ export const LoginSuporteForm = ({redefinicaoDeSenha}) => {
                                     </span>
                                     <ReactTooltip html={true}/>
                                     <input
+                                        data-testid="usuario-input"
                                         type="text"
                                         value={props.values.login}
                                         name="login"
@@ -90,6 +91,7 @@ export const LoginSuporteForm = ({redefinicaoDeSenha}) => {
                                     <label htmlFor="senha">Senha</label>
                                     <div className="input-group">
                                         <input
+                                            data-testid="senha-input"
                                             type={showPassword}
                                             value={props.values.senha}
                                             name="senha"
@@ -103,7 +105,7 @@ export const LoginSuporteForm = ({redefinicaoDeSenha}) => {
                                         />
                                         <div className="input-group-append">
                                             <span className={`input-group-text ${msgSenha ? 'falha-login-icone-mostrar-senha' : ''}`} id="show_hide_password">
-                                                <i className="glyphicon" onClick={() => showHidePassword()}>
+                                                <i className="glyphicon" onClick={() => showHidePassword()} data-testid="mostrar-senha">
                                                     <FontAwesomeIcon
                                                         style={{fontSize: '18px', color:'#42474A'}}
                                                         icon={iconShowPassword}

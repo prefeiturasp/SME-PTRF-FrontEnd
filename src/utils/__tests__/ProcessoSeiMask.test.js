@@ -1,4 +1,4 @@
-import { processoSeiMask } from "../processoSeiMask";
+import { processoSeiMask } from "../ProcessoSeiMask";
 
 describe("processoSeiMask", () => {
     it("deve retornar a máscara correta para um processo SEI", () => {
