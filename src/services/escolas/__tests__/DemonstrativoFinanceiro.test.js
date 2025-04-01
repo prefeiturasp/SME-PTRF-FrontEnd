@@ -10,10 +10,6 @@ import {
 import { TOKEN_ALIAS } from '../../auth.service.js';
 
 jest.mock('../../api', () => ({
-    get: jest.fn()
-}));
-
-jest.mock('../../api', () => ({
     get: jest.fn(),
     put: jest.fn(),
     patch: jest.fn(),
