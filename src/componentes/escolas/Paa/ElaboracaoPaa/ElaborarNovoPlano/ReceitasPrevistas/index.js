@@ -24,7 +24,7 @@ const ReceitasPrevistas = () => {
             acc +
             (parseFloat(
               row?.receitas_previstas_paa?.[0]?.previsao_valor_capital
-            ) || 0)
+            ) || 0) + row?.saldos.saldo_atual_capital
           );
         }, 0);
 
@@ -33,7 +33,7 @@ const ReceitasPrevistas = () => {
             acc +
             (parseFloat(
               row?.receitas_previstas_paa?.[0]?.previsao_valor_custeio
-            ) || 0)
+            ) || 0) + row?.saldos.saldo_atual_custeio
           );
         }, 0);
 
@@ -42,7 +42,7 @@ const ReceitasPrevistas = () => {
             acc +
             (parseFloat(
               row?.receitas_previstas_paa?.[0]?.previsao_valor_livre
-            ) || 0)
+            ) || 0) + row?.saldos.saldo_atual_livre
           );
         }, 0);
 
@@ -62,25 +62,31 @@ const ReceitasPrevistas = () => {
         );
       }
 
-      const receitaPrevistaPaa = rowData?.receitas_previstas_paa?.[0];
+      const receitaPrevistaPaa = rowData?.receitas_previstas_paa?.[0]
 
-      if (!receitaPrevistaPaa) {
-        return <div className="text-right">__</div>;
-      }
+      const valores = {
+        previsao_valor_capital: receitaPrevistaPaa ?  parseFloat(receitaPrevistaPaa.previsao_valor_capital) : 0,
+        previsao_valor_custeio: receitaPrevistaPaa ?  parseFloat(receitaPrevistaPaa.previsao_valor_custeio) : 0 ,
+        previsao_valor_livre: receitaPrevistaPaa ?  parseFloat(receitaPrevistaPaa.previsao_valor_livre) : 0 
+      };
+
+      const valor_capital = valores.previsao_valor_capital + rowData?.saldos.saldo_atual_capital
+      const valor_custeio = valores.previsao_valor_custeio + rowData?.saldos.saldo_atual_custeio
+      const valor_livre = valores.previsao_valor_livre + rowData?.saldos.saldo_atual_livre
 
       const fieldMapping = {
-        valor_capital: receitaPrevistaPaa.previsao_valor_capital,
-        valor_custeio: receitaPrevistaPaa.previsao_valor_custeio,
-        valor_livre: receitaPrevistaPaa.previsao_valor_livre,
+        valor_capital: valor_capital,
+        valor_custeio: valor_custeio,
+        valor_livre: valor_livre,
         total:
-          parseFloat(receitaPrevistaPaa.previsao_valor_custeio) +
-          parseFloat(receitaPrevistaPaa.previsao_valor_capital) +
-          parseFloat(receitaPrevistaPaa.previsao_valor_livre),
+          parseFloat(valor_custeio) +
+          parseFloat(valor_capital) +
+          parseFloat(valor_livre),
       };
 
       return (
         <div className="text-right">
-          {formatMoneyBRL(fieldMapping[column.field])}
+          {fieldMapping[column.field] > 0 ? formatMoneyBRL(fieldMapping[column.field]) : <div className="text-right">__</div>}
         </div>
       );
     },
