@@ -24,7 +24,9 @@ const initialValues = {
 const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
   const [form] = Form.useForm();
 
-  const { data, isLoading } = useGetSaldoAtual(acaoAssociacao?.uuid);
+  //const { data, isLoading } = useGetSaldoAtual(acaoAssociacao?.uuid);
+  const data = acaoAssociacao.saldos;
+  const isLoading = false;
   const { mutationPost } = usePostReceitasPrevistasPaa(onClose);
   const { mutationPatch } = usePatchReceitasPrevistasPaa(onClose);
 
