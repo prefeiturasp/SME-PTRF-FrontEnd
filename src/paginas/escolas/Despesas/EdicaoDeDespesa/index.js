@@ -9,7 +9,7 @@ import moment from "moment";
 import {visoesService} from "../../../../services/visoes.service";
 import { metodosAuxiliares } from "../../../../componentes/escolas/Despesas/metodosAuxiliares";
 
-const tituloPagina = (parametroLocation) => {
+export const tituloPagina = (parametroLocation) => {
     const aux = metodosAuxiliares;
     const visao_selecionada = visoesService.getItemUsuarioLogado('visao_selecionada.nome')
 

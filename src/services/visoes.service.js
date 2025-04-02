@@ -585,7 +585,6 @@ const redirectVisao = (visao = null) => {
 
 const getItemUsuarioLogado = (indice) =>{
     let usuario_logado = getDadosDoUsuarioLogado();
-    // eslint-disable-next-line no-eval
     return eval('usuario_logado.' + indice)
 };
 

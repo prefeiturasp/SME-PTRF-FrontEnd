@@ -1,12 +1,17 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { useGetTabelasReceitas } from "../hooks/useGetTabelasReceitas";
-import ReceitasPrevistas from "..";
+import { useGetAcoesAssociacao } from "../hooks/useGetAcoesAssociacao";
+import ReceitasPrevistas from "../index";
 
-
-jest.mock("../hooks/useGetTabelasReceitas", () => ({
-  useGetTabelasReceitas: jest.fn(),
+jest.mock("../hooks/useGetAcoesAssociacao", () => ({
+  useGetAcoesAssociacao: jest.fn(),
 }));
+
+jest.mock("../ReceitasPrevistasModalForm", () => () => (
+  <div data-testid="mock-receitas-previstas-modal-form" />
+));
+
+const setModalFormMock = jest.fn();
 
 describe("ReceitasPrevistas Component", () => {
   beforeEach(() => {
@@ -14,36 +19,43 @@ describe("ReceitasPrevistas Component", () => {
   });
 
   it("deve renderizar corretamente", () => {
-    useGetTabelasReceitas.mockReturnValue({
-      data: { acoes_associacao: [] },
+    useGetAcoesAssociacao.mockReturnValue({
+      data: [],
       isLoading: false,
     });
 
     render(<ReceitasPrevistas />);
-    const titulo = screen.getByRole("heading", { level: 4, name: /receitas previstas/i });
+    const titulo = screen.getByRole("heading", {
+      level: 4,
+      name: /receitas previstas/i,
+    });
     expect(titulo).toBeInTheDocument();
   });
 
   it("deve mudar de aba corretamente", () => {
-    useGetTabelasReceitas.mockReturnValue({
-      data: { acoes_associacao: [] },
+    useGetAcoesAssociacao.mockReturnValue({
+      data: [],
       isLoading: false,
     });
 
     render(<ReceitasPrevistas />);
-    const tabDetalhamento = screen.getByText("Detalhamento de recursos próprios");
+    const tabDetalhamento = screen.getByText(
+      "Detalhamento de recursos próprios"
+    );
     fireEvent.click(tabDetalhamento);
 
     expect(tabDetalhamento).toHaveClass("btn-escolhe-acao-active");
   });
 
   it("deve exibir os dados da tabela corretamente", async () => {
-    useGetTabelasReceitas.mockReturnValue({
-      data: {
-        acoes_associacao: [
-          { nome: "Recurso 1", valor_custeio: 1000, valor_capital: 500, valor_livre: 200, total: 1700, fixed: false },
-        ],
-      },
+    useGetAcoesAssociacao.mockReturnValue({
+      data: [
+        {
+          acao: { nome: "Recurso 1" },
+          fixed: false,
+        },
+      ],
+
       isLoading: false,
     });
 
@@ -55,12 +67,14 @@ describe("ReceitasPrevistas Component", () => {
   });
 
   it("não deve renderizar o botão de edição quando `fixed` for `true`", () => {
-    useGetTabelasReceitas.mockReturnValue({
-      data: {
-        acoes_associacao: [
-          { nome: "Total do PTRF", fixed: true },
-        ],
-      },
+    useGetAcoesAssociacao.mockReturnValue({
+      data: [
+        {
+          uuid: "acao-associacao-uuid-1234",
+          acao: { nome: "Total do PTRF" },
+          fixed: true,
+        },
+      ],
       isLoading: false,
     });
 
@@ -70,16 +84,45 @@ describe("ReceitasPrevistas Component", () => {
   });
 
   it("deve renderizar o botão de edição quando `fixed` for `false`", () => {
-    useGetTabelasReceitas.mockReturnValue({
-      data: {
-        acoes_associacao: [
-          { nome: "Recurso Editável", fixed: false },
-        ],
-      },
+    useGetAcoesAssociacao.mockReturnValue({
+      data: [
+        {
+          uuid: "acao-associacao-uuid-1234",
+          acao: { nome: "Recurso Editável" },
+          fixed: false,
+        },
+      ],
       isLoading: false,
     });
 
     render(<ReceitasPrevistas />);
     expect(screen.getByLabelText("Editar")).toBeInTheDocument();
+  });
+
+  it("deve renderizar o componente de formulário ao clicar no botão de editar", async () => {
+    useGetAcoesAssociacao.mockReturnValue({
+      data: [
+        {
+          uuid: "acao-associacao-uuid-1234",
+          acao: { nome: "Recurso Editável" },
+          fixed: false,
+        },
+      ],
+      isLoading: false,
+    });
+
+    render(<ReceitasPrevistas />);
+
+    const editarButton = screen.getByRole("button", { name: /editar/i });
+    fireEvent.click(editarButton);
+
+    expect(setModalFormMock).toHaveBeenCalledWith({
+      open: true,
+      data: {
+        uuid: "acao-associacao-uuid-1234",
+        acao: { nome: "Recurso Editável" },
+        fixed: false,
+      },
+    });
   });
 });
