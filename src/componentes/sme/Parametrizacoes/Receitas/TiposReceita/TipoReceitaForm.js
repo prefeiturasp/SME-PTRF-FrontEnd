@@ -12,9 +12,12 @@ import {
   Spin,
   Tooltip,
 } from "antd";
-import { useParams } from "react-router-dom/cjs/react-router-dom.min";
 import { useDispatch } from "react-redux";
-import { useLocation, useNavigate } from "react-router-dom-v5-compat";
+import {
+  useNavigate,
+  useParams,
+  useLocation,
+} from "react-router-dom-v5-compat";
 import { useGetFiltrosTiposReceita } from "./hooks/useGetFiltrosTiposReceita";
 import { usePostTipoReceita } from "./hooks/usePostTipoReceita";
 import { usePatchTipoReceita } from "./hooks/usePatchTipoReceita";
@@ -68,14 +71,14 @@ export const TipoReceitaForm = () => {
 
   Form.useWatch("selecionar_todas", form);
   Form.useWatch("possui_detalhamento", form);
-  Form.useWatch("categoria", form);
+  Form.useWatch("tipo", form);
 
   useEffect(() => {
     if (data) {
       form.setFieldsValue({
         ...data,
         tipos_conta: data.tipos_conta.map((tipoConta) => tipoConta.uuid),
-        categoria: getValorCategoria({
+        tipo: getValorCategoria({
           e_rendimento: data.e_rendimento,
           e_devolucao: data.e_devolucao,
           e_estorno: data.e_estorno,
@@ -99,7 +102,7 @@ export const TipoReceitaForm = () => {
       form.setFieldsValue({
         nome: "",
         tipos_conta: [],
-        categoria: [],
+        tipo: [],
         aceita: [],
         detalhes: [],
         detalhesOpcoes: [],
@@ -156,10 +159,10 @@ export const TipoReceitaForm = () => {
         mensagem_usuario: values.mensagem_usuario,
         possui_detalhamento: values.possui_detalhamento,
         e_recursos_proprios: values.e_recursos_proprios,
-        e_rendimento: values.categoria === "e_rendimento" ? true : false,
-        e_devolucao: values.categoria === "e_devolucao" ? true : false,
-        e_estorno: values.categoria === "e_estorno" ? true : false,
-        e_repasse: values.categoria === "e_repasse" ? true : false,
+        e_rendimento: values.tipo === "e_rendimento" ? true : false,
+        e_devolucao: values.tipo === "e_devolucao" ? true : false,
+        e_estorno: values.tipo === "e_estorno" ? true : false,
+        e_repasse: values.tipo === "e_repasse" ? true : false,
         aceita_capital: values.aceita.includes("aceita_capital") ? true : false,
         aceita_custeio: values.aceita.includes("aceita_custeio") ? true : false,
         aceita_livre: values.aceita.includes("aceita_livre") ? true : false,
@@ -208,9 +211,7 @@ export const TipoReceitaForm = () => {
   };
 
   const exibirDetalhamento = () => {
-    return ["e_rendimento", "e_devolucao"].includes(
-      form.getFieldValue("categoria")
-    );
+    return ["e_rendimento", "e_devolucao"].includes(form.getFieldValue("tipo"));
   };
 
   return (
@@ -234,7 +235,7 @@ export const TipoReceitaForm = () => {
               rules={[{ required: true, message: "Campo obrigatório" }]}
               disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
             >
-              <Input placeholder="Nome do tipo de crédito" />
+              <Input name="nome" placeholder="Nome do tipo de crédito" />
             </Form.Item>
           </Col>
         </Row>
@@ -243,7 +244,7 @@ export const TipoReceitaForm = () => {
           <Col md={8}>
             <Form.Item
               label="Tipo"
-              name="categoria"
+              name="tipo"
               labelCol={{ span: 24 }}
               rules={[{ required: true, message: "Campo obrigatório" }]}
               disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
@@ -326,12 +327,14 @@ export const TipoReceitaForm = () => {
                   <Select
                     placeholder="Selecione ou digite um novo"
                     mode="tags"
-                    options={form.getFieldValue("detalhesOpcoes").map((detalhe) => {
-                      return {
-                        value: detalhe.id,
-                        label: detalhe.nome,
-                      };
-                    })}
+                    options={form
+                      .getFieldValue("detalhesOpcoes")
+                      .map((detalhe) => {
+                        return {
+                          value: detalhe.id,
+                          label: detalhe.nome,
+                        };
+                      })}
                   ></Select>
                 </Form.Item>
               </Col>

@@ -106,7 +106,7 @@ export const LoginForm = ({redefinicaoDeSenha}) => {
                                         />
                                         <div className="input-group-append">
                                             <span className={`input-group-text ${msgSenha ? 'falha-login-icone-mostrar-senha' : ''}`} id="show_hide_password">
-                                                <i className="glyphicon" onClick={() => showHidePassword()}>
+                                                <i className="glyphicon" onClick={() => showHidePassword()} data-testid="mostrar-senha">
                                                     <FontAwesomeIcon
                                                         style={{fontSize: '18px', color:'#42474A'}}
                                                         icon={iconShowPassword}

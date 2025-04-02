@@ -22,6 +22,8 @@ import IconeMandato from "../../../assets/img/icone-parametro-periodos-de-mandat
 import IconeRepasses from "../../../assets/img/icone-parametro-repasses.svg"
 import IconeMotivosDevolucaoTesouro from "../../../assets/img/icone-parametro-devolucao-ao-tesouro.svg"
 import IconeMotivosAprovacaoPcRessalva from "../../../assets/img/icone-parametro-motivos-aprovacao-pc-ressalva.svg"
+import IconeAcoesPDDE from "../../../assets/img/icone-parametro-acoes-pdde.svg"
+
 
 export const PainelParametrizacoes = () => {
 
@@ -79,6 +81,13 @@ export const PainelParametrizacoes = () => {
             url: 'motivos-rejeicao',
             icone: IconeTiposAcertos,
             permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
+        },
+        {
+            parametro: 'Ações PDDE',
+            url: 'parametro-acoes-pdde',
+            icone: IconeAcoesPDDE,
+            permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
+            featureFlag: 'paa',
         }
     ];
 

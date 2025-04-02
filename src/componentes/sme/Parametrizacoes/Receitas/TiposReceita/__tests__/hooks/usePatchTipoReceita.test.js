@@ -4,62 +4,78 @@ import { patchTipoReceita } from "../../../../../../../services/sme/Parametrizac
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { toastCustom } from "../../../../../../Globais/ToastCustom";
 import { usePatchTipoReceita } from "../../hooks/usePatchTipoReceita";
+import { useNavigate } from "react-router-dom-v5-compat";
 
 jest.mock("../../../../../../../services/sme/Parametrizacoes.service", () => ({
-    patchTipoReceita: jest.fn(),
+  patchTipoReceita: jest.fn(),
 }));
 
 jest.mock("../../../../../../Globais/ToastCustom", () => ({
-    toastCustom: {
-        ToastCustomSuccess: jest.fn(),
-        ToastCustomError: jest.fn(),
-    },
+  toastCustom: {
+    ToastCustomSuccess: jest.fn(),
+    ToastCustomError: jest.fn(),
+  },
+}));
+
+jest.mock("react-router-dom-v5-compat", () => ({
+  useNavigate: jest.fn(),
 }));
 
 describe("usePatchTipoReceita", () => {
-    let queryClient;
+  let queryClient;
+  let navigate;
 
-    beforeEach(() => {
-        queryClient = new QueryClient({
-            defaultOptions: {
-                queries: {
-                    retry: false,
-                },
-            },
-        });
+  beforeEach(() => {
+    queryClient = new QueryClient({
+      defaultOptions: {
+        queries: {
+          retry: false,
+        },
+      },
+    });
+    navigate = jest.fn();
+    useNavigate.mockReturnValue(navigate);
+  });
+
+  const wrapper = ({ children }) => (
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  );
+
+  it("deve atualizar um tipo de receita com sucesso", async () => {
+    patchTipoReceita.mockResolvedValueOnce();
+
+    const { result } = renderHook(() => usePatchTipoReceita(), { wrapper });
+
+    await act(async () => {
+      result.current.mutationPatch.mutate({
+        UUID: "uuid-teste",
+        payload: { nome: "Novo Nome" },
+      });
     });
 
-    const wrapper = ({ children }) => (
-        <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    expect(patchTipoReceita).toHaveBeenCalledWith("uuid-teste", {
+      nome: "Novo Nome",
+    });
+    expect(toastCustom.ToastCustomSuccess).toHaveBeenCalledWith(
+      "Edição do tipo de crédito realizado com sucesso.",
+      "O tipo de crédito foi editado no sistema com sucesso."
     );
+  });
 
-    it("deve atualizar um tipo de receita com sucesso", async () => {
-        patchTipoReceita.mockResolvedValueOnce();
+  it("deve lidar com erro ao atualizar um tipo de receita", async () => {
+    patchTipoReceita.mockRejectedValueOnce(new Error("Erro desconhecido"));
 
-        const { result } = renderHook(() => usePatchTipoReceita(), { wrapper });
+    const { result } = renderHook(() => usePatchTipoReceita(), { wrapper });
 
-        await act(async () => {
-            result.current.mutationPatch.mutate({ UUID: "uuid-teste", payload: { nome: "Novo Nome" } });
-        });
-
-        expect(patchTipoReceita).toHaveBeenCalledWith("uuid-teste", { nome: "Novo Nome" });
-        expect(toastCustom.ToastCustomSuccess).toHaveBeenCalledWith(
-            "Edição salva.",
-            "A edição foi salva com sucesso!"
-        );
+    await act(async () => {
+      result.current.mutationPatch.mutate({
+        UUID: "uuid-teste",
+        payload: { nome: "Novo Nome" },
+      });
     });
 
-    it("deve lidar com erro ao atualizar um tipo de receita", async () => {
-        patchTipoReceita.mockRejectedValueOnce(new Error("Erro desconhecido"));
-
-        const { result } = renderHook(() => usePatchTipoReceita(), { wrapper });
-
-        await act(async () => {
-            result.current.mutationPatch.mutate({ UUID: "uuid-teste", payload: { nome: "Novo Nome" } });
-        });
-
-        expect(toastCustom.ToastCustomError).toHaveBeenCalledWith(
-            "Houve um erro ao tentar fazer essa atualização."
-        );
-    });
+    expect(toastCustom.ToastCustomError).toHaveBeenCalledWith(
+      "Houve um erro ao tentar fazer essa atualização."
+    );
+  });
 });
