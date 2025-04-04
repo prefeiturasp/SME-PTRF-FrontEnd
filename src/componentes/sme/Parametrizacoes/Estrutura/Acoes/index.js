@@ -2,18 +2,22 @@ import React, {useState, useEffect, useCallback, useMemo} from "react";
 import {PaginasContainer} from "../../../../../paginas/PaginasContainer";
 import {getListaDeAcoes, getAcoesFiltradas, postAddAcao, putAtualizarAcao, deleteAcao} from "../../../../../services/sme/Parametrizacoes.service";
 import '../parametrizacoes-estrutura.scss'
+import ReactTooltip from "react-tooltip";
 import {Filtros} from "./Filtros";
 import {TabelaAcoes} from "./TabelaAcoes";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faPlus, faEdit, faClipboardList} from "@fortawesome/free-solid-svg-icons";
+import {faEdit, faClipboardList, faTimesCircle, faCheckCircle } from "@fortawesome/free-solid-svg-icons";
 import Loading from "../../../../../utils/Loading";
 import {ModalFormAcoes} from "./ModalFormAcoes";
-import {ModalConfirmDeleteAcao} from "./ModalConfirmDeleteAcao";
+import { ModalConfirmarExclusao } from "../../componentes/ModalConfirmarExclusao";
 import {ModalInfoNaoPodeExcluir} from "./ModalInfoNaoPodeExcluir";
 import {ModalInfoNaoPodeGravar} from "./ModalInfoNaoPodeGravar";
+import { BtnAdd } from "./BtnAdd";
 import {Link} from "react-router-dom";
 import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
 import { toastCustom } from "../../../../Globais/ToastCustom";
+import { MsgImgCentralizada } from "../../../../Globais/Mensagens/MsgImgCentralizada";
+import Img404 from "../../../../../assets/img/img-404.svg";
 
 export const Acoes = () => {
     const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES = RetornaSeTemPermissaoEdicaoPainelParametrizacoes()
@@ -46,7 +50,8 @@ export const Acoes = () => {
             [name]: value
         });
     };
-    const handleSubmitFiltros = async () => {
+    const handleSubmitFiltros = async (e) => {
+        e.preventDefault()
         setLoading(true);
         let acoes_filtradas = await getAcoesFiltradas(stateFiltros.filtrar_por_nome);
         setTodasAsAcoes(acoes_filtradas);
@@ -63,11 +68,16 @@ export const Acoes = () => {
     const acoesTemplate = (rowData) => {
         return (
             <div>
-                <button onClick={() => handleEditarAcoes(rowData)} className="btn-editar-membro">
-                    <FontAwesomeIcon
-                        style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
-                        icon={faEdit}
-                    />
+                <button data-qa="botao-editar-acoes" className="btn-editar-membro"
+                    onClick={() => handleEditarAcoes(rowData)}
+                    >
+                    <div data-tip="Editar ação" data-for={`tooltip-id-${rowData.uuid}`}>
+                        <ReactTooltip id={`tooltip-id-${rowData.uuid}`} />
+                        <FontAwesomeIcon
+                            style={{ fontSize: "20px", marginRight: "0", color: "#00585E" }}
+                            icon={faEdit}
+                        />
+                    </div>
                 </button>
             </div>
         )
@@ -92,6 +102,9 @@ export const Acoes = () => {
         nome: "",
         e_recursos_proprios: false,
         posicao_nas_pesquisas: "",
+        aceita_capital: false,
+        aceita_custeio: false,
+        aceita_livre: false,
         uuid: "",
         id: "",
         operacao: 'create',
@@ -136,6 +149,9 @@ export const Acoes = () => {
             nome: rowData.nome,
             e_recursos_proprios: rowData.e_recursos_proprios,
             posicao_nas_pesquisas: rowData.posicao_nas_pesquisas,
+            aceita_capital: rowData.aceita_capital,
+            aceita_custeio: rowData.aceita_custeio,
+            aceita_livre: rowData.aceita_livre,
             operacao: 'edit',
         });
         setShowModalForm(true)
@@ -145,6 +161,9 @@ export const Acoes = () => {
             nome: stateFormModal.nome,
             e_recursos_proprios: stateFormModal.e_recursos_proprios,
             posicao_nas_pesquisas: stateFormModal.posicao_nas_pesquisas,
+            aceita_capital: stateFormModal.aceita_capital,
+            aceita_custeio: stateFormModal.aceita_custeio,
+            aceita_livre: stateFormModal.aceita_livre,
         };
 
         if (stateFormModal.operacao === 'create') {
@@ -157,10 +176,10 @@ export const Acoes = () => {
             } catch (e) {
                 console.log('Erro ao criar Ação!!! ', e.response.data)
                 if (e.response.data && e.response.data.non_field_errors) {
-                    setMensagemModalInfoNaoPodeGravar('Ja existe uma ação com esse nome.');
+                    setMensagemModalInfoNaoPodeGravar('Já existe uma ação com esse nome.');
                     setShowModalInfoNaoPodeGravar(true);
                 } else {
-                    setMensagemModalInfoNaoPodeGravar('Houve um erro ao tentar fazer essa atualização.');
+                    setMensagemModalInfoNaoPodeGravar('Houve um erro ao tentar criar ação.');
                     setShowModalInfoNaoPodeGravar(true);
                 }
             }
@@ -174,7 +193,7 @@ export const Acoes = () => {
             } catch (e) {
                 console.log('Erro ao alterar Ação!! ', e)
                 if (e.response.data && e.response.data.non_field_errors) {
-                    setMensagemModalInfoNaoPodeGravar('Ja existe uma ação com esse nome.');
+                    setMensagemModalInfoNaoPodeGravar('Já existe uma ação com esse nome.');
                     setShowModalInfoNaoPodeGravar(true);
                 } else {
                     setMensagemModalInfoNaoPodeGravar('Houve um erro ao tentar fazer essa atualização.');
@@ -204,6 +223,40 @@ export const Acoes = () => {
             console.log('Erro ao excluir Ação!! ', e.response)
         }
     };
+    const booleanTemplate = (value) => {
+        const opcoes = {
+          true: { icone: faCheckCircle, cor: "#297805", texto: "Sim" },
+          false: { icone: faTimesCircle, cor: "#B40C02", texto: "Não" },
+        };
+        const iconeData = opcoes[value];
+        const estiloFlag = {
+          fontSize: "14px",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          color: iconeData.cor,
+        };
+        return (
+          <div style={estiloFlag}>
+            <FontAwesomeIcon
+              style={{ fontSize: "16px", marginRight: "5px", color: iconeData.cor }}
+              icon={iconeData.icone}
+            />
+          </div>
+        );
+      };
+    const aceitaCapitalTemplate = (rowData) => {
+        return booleanTemplate(rowData.aceita_capital);
+    };
+    const aceitaCusteioTemplate = (rowData) => {
+        return booleanTemplate(rowData.aceita_custeio);
+    };
+    const aceitaLivreTemplate = (rowData) => {
+        return booleanTemplate(rowData.aceita_livre);
+    };
+    const recursosPropriosTemplate = (rowData) => {
+        return booleanTemplate(rowData.e_recursos_proprios);
+    };
 
     const readOnlyMemo = useMemo(() => readOnly || !TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES, [readOnly]);
 
@@ -223,35 +276,38 @@ export const Acoes = () => {
                         </div>
                     ) :
                     <>
-                        <div className="p-2 bd-highlight pt-3 justify-content-end d-flex">
-                            <button 
-                                disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
-                                onClick={()=>{
-                                    setStateFormModal(initialStateFormModal);
-                                    setShowModalForm(true);
-                                    }} 
-                                type="button" 
-                                className="btn btn-success mt-2">
-                                    <FontAwesomeIcon
-                                        style={{fontSize: '15px', marginRight: "5", color:"#fff"}}
-                                        icon={faPlus}
-                                    />
-                                    Adicionar ação
-                            </button>                            
-                        </div>
+                        <BtnAdd
+                            setShowModalForm={setShowModalForm}
+                            initialStateFormModal={initialStateFormModal}
+                            setStateFormModal={setStateFormModal}
+                        />
                         <Filtros
                             stateFiltros={stateFiltros}
                             handleChangeFiltros={handleChangeFiltros}
-                            handleSubmitFiltros={handleSubmitFiltros}
+                            handleSubmitFiltros={(e) => handleSubmitFiltros(e)}
                             limpaFiltros={limpaFiltros}
                         />
-                        <p>Exibindo <span className='total-acoes'>{totalDeAcoes}</span> ações</p>
-                        <TabelaAcoes
-                            todasAsAcoes={todasAsAcoes}
-                            rowsPerPage={rowsPerPage}
-                            acoesTemplate={acoesTemplate}
-                            conferirUnidadesTemplate={conferirUnidadesTemplate}
-                        />
+                        {(todasAsAcoes || []).length ? (
+                            <>
+                                <p>Exibindo <span className='total-acoes'>{totalDeAcoes}</span> ações</p>
+                                <TabelaAcoes
+                                    todasAsAcoes={todasAsAcoes}
+                                    rowsPerPage={rowsPerPage}
+                                    acoesTemplate={acoesTemplate}
+                                    conferirUnidadesTemplate={conferirUnidadesTemplate}
+                                    aceitaCapitalTemplate={aceitaCapitalTemplate}
+                                    aceitaCusteioTemplate={aceitaCusteioTemplate}
+                                    aceitaLivreTemplate={aceitaLivreTemplate}
+                                    recursosPropriosTemplate={recursosPropriosTemplate}
+                                />
+                            </>
+                        ) : (
+                            <MsgImgCentralizada
+                                data-qa="imagem-lista-sem-acoes"
+                                texto="Nenhum resultado encontrado."
+                                img={Img404}
+                                />
+                        )}
                     </>
                 }
                 <section>
@@ -260,24 +316,12 @@ export const Acoes = () => {
                         handleClose={onHandleClose}
                         handleSubmitModalFormAcoes={handleSubmitModalFormAcoes}
                         handleChangeFormModal={handleChangeFormModal}
+                        setShowModalConfirmDelete={setShowModalDeleteAcao}
                         stateFormModal={stateFormModal}
                         readOnly={readOnlyMemo}
                         serviceCrudAcoes={serviceCrudAcoes}
                         primeiroBotaoTexto="Cancelar"
                         primeiroBotaoCss="outline-success"
-                    />
-                </section>
-                <section>
-                    <ModalConfirmDeleteAcao
-                        show={showModalDeleteAcao}
-                        handleClose={handleCloseDeleteAcao}
-                        onDeleteAcaoTrue={onDeleteAcaoTrue}
-                        titulo="Excluir Ação"
-                        texto="<p>Deseja realmente excluir esta ação?</p>"
-                        primeiroBotaoTexto="Cancelar"
-                        primeiroBotaoCss="outline-success"
-                        segundoBotaoCss="danger"
-                        segundoBotaoTexto="Excluir"
                     />
                 </section>
                 <section>
@@ -300,6 +344,20 @@ export const Acoes = () => {
                         primeiroBotaoCss="success"
                     />
                 </section>
+                <section>
+                    <ModalConfirmarExclusao
+                        open={showModalDeleteAcao}
+                        onOk={onDeleteAcaoTrue}
+                        okText="Excluir"
+                        onCancel={handleCloseDeleteAcao}
+                        cancelText="Cancelar"
+                        cancelButtonProps={{ className: "btn-base-verde-outline" }}
+                        titulo="Excluir Ação"
+                        bodyText={
+                        <p>Tem certeza que deseja excluir esta ação?</p>
+                        }
+                    />
+                    </section>
             </div>
         </PaginasContainer>
     )
