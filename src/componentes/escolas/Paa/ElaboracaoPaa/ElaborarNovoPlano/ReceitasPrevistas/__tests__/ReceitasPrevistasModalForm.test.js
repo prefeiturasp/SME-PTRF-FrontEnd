@@ -1,7 +1,6 @@
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import ReceitasPrevistasModalForm from "../ReceitasPrevistasModalForm";
-import { useGetSaldoAtual } from "../hooks/useGetSaldoAtual";
 import { usePostReceitasPrevistasPaa } from "../hooks/usePostReceitasPrevistasPaa";
 import { usePatchReceitasPrevistasPaa } from "../hooks/usePatchReceitasPrevistasPaa";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -34,15 +33,6 @@ describe("ReceitasPrevistasModalForm", () => {
       addListener: jest.fn(),
       removeListener: jest.fn(),
     }));
-
-    useGetSaldoAtual.mockReturnValue({
-      data: {
-        saldo_atual_custeio: 0,
-        saldo_atual_capital: 0,
-        saldo_atual_livre: 0,
-      },
-      isLoading: false,
-    });
 
     usePostReceitasPrevistasPaa.mockReturnValue({
       mutationPost: { mutate: mutationPost, isLoading: false },
