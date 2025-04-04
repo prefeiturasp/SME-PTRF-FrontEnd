@@ -174,6 +174,7 @@ const ReceitasPrevistas = () => {
           </Flex>
 
           <DataTable
+            className="tabela-receitas-previstas"
             value={[...data, { acao: { nome: "Total do PTRF" }, fixed: true }]}
             rowClassName={rowClassName}
           >
