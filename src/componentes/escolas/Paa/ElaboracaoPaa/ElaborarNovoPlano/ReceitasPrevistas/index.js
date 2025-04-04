@@ -24,7 +24,8 @@ const ReceitasPrevistas = () => {
             acc +
             (parseFloat(
               row?.receitas_previstas_paa?.[0]?.previsao_valor_capital
-            ) || 0) + row?.saldos.saldo_atual_capital
+            ) || 0) +
+            row?.saldos?.saldo_atual_capital
           );
         }, 0);
 
@@ -33,7 +34,8 @@ const ReceitasPrevistas = () => {
             acc +
             (parseFloat(
               row?.receitas_previstas_paa?.[0]?.previsao_valor_custeio
-            ) || 0) + row?.saldos.saldo_atual_custeio
+            ) || 0) +
+            row?.saldos?.saldo_atual_custeio
           );
         }, 0);
 
@@ -42,7 +44,8 @@ const ReceitasPrevistas = () => {
             acc +
             (parseFloat(
               row?.receitas_previstas_paa?.[0]?.previsao_valor_livre
-            ) || 0) + row?.saldos.saldo_atual_livre
+            ) || 0) +
+            row?.saldos?.saldo_atual_livre
           );
         }, 0);
 
@@ -62,17 +65,26 @@ const ReceitasPrevistas = () => {
         );
       }
 
-      const receitaPrevistaPaa = rowData?.receitas_previstas_paa?.[0]
+      const receitaPrevistaPaa = rowData?.receitas_previstas_paa?.[0];
 
       const valores = {
-        previsao_valor_capital: receitaPrevistaPaa ?  parseFloat(receitaPrevistaPaa.previsao_valor_capital) : 0,
-        previsao_valor_custeio: receitaPrevistaPaa ?  parseFloat(receitaPrevistaPaa.previsao_valor_custeio) : 0 ,
-        previsao_valor_livre: receitaPrevistaPaa ?  parseFloat(receitaPrevistaPaa.previsao_valor_livre) : 0 
+        previsao_valor_capital: receitaPrevistaPaa
+          ? parseFloat(receitaPrevistaPaa.previsao_valor_capital)
+          : 0,
+        previsao_valor_custeio: receitaPrevistaPaa
+          ? parseFloat(receitaPrevistaPaa.previsao_valor_custeio)
+          : 0,
+        previsao_valor_livre: receitaPrevistaPaa
+          ? parseFloat(receitaPrevistaPaa.previsao_valor_livre)
+          : 0,
       };
 
-      const valor_capital = valores.previsao_valor_capital + rowData?.saldos.saldo_atual_capital
-      const valor_custeio = valores.previsao_valor_custeio + rowData?.saldos.saldo_atual_custeio
-      const valor_livre = valores.previsao_valor_livre + rowData?.saldos.saldo_atual_livre
+      const valor_capital =
+        valores.previsao_valor_capital + rowData?.saldos?.saldo_atual_capital;
+      const valor_custeio =
+        valores.previsao_valor_custeio + rowData?.saldos?.saldo_atual_custeio;
+      const valor_livre =
+        valores.previsao_valor_livre + rowData?.saldos?.saldo_atual_livre;
 
       const fieldMapping = {
         valor_capital: valor_capital,
@@ -86,7 +98,11 @@ const ReceitasPrevistas = () => {
 
       return (
         <div className="text-right">
-          {fieldMapping[column.field] > 0 ? formatMoneyBRL(fieldMapping[column.field]) : <div className="text-right">__</div>}
+          {fieldMapping[column.field] > 0 ? (
+            formatMoneyBRL(fieldMapping[column.field])
+          ) : (
+            <div className="text-right">__</div>
+          )}
         </div>
       );
     },
@@ -101,20 +117,6 @@ const ReceitasPrevistas = () => {
     );
   }, []);
 
-  const acoesTemplate = (rowData) => {
-    return !rowData["fixed"] === true ? (
-      <IconButton
-        icon="faEdit"
-        tooltipMessage="Editar"
-        iconProps={{
-          style: { fontSize: "20px", marginRight: "0", color: "#00585E" },
-        }}
-        aria-label="Editar"
-        onClick={() => handleOpenEditar(rowData)}
-      />
-    ) : null;
-  };
-
   const handleOpenEditar = (rowData) => {
     setModalForm({ open: true, data: rowData });
   };
@@ -125,6 +127,20 @@ const ReceitasPrevistas = () => {
 
   const handleCloseModalForm = () => {
     setModalForm({ open: false, data: null });
+  };
+
+  const acoesTemplate = (rowData) => {
+    return rowData.fixed === false ? (
+      <IconButton
+        icon="faEdit"
+        tooltipMessage="Editar"
+        iconProps={{
+          style: { fontSize: "20px", marginRight: "0", color: "#00585E" },
+        }}
+        aria-label="Editar"
+        onClick={() => handleOpenEditar(rowData)}
+      />
+    ) : null;
   };
 
   return (

@@ -13,11 +13,8 @@ import {
   Tooltip,
 } from "antd";
 import { useDispatch } from "react-redux";
-import {
-  useNavigate,
-  useParams,
-  useLocation,
-} from "react-router-dom-v5-compat";
+import { useNavigate, useLocation } from "react-router-dom-v5-compat";
+import { useParams } from "react-router-dom";
 import { useGetFiltrosTiposReceita } from "./hooks/useGetFiltrosTiposReceita";
 import { usePostTipoReceita } from "./hooks/usePostTipoReceita";
 import { usePatchTipoReceita } from "./hooks/usePatchTipoReceita";

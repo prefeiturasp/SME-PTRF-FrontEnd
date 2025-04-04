@@ -2,7 +2,6 @@ import React, { memo, useEffect } from "react";
 import { Form, Row, Col, Flex, InputNumber, Spin } from "antd";
 import { ModalFormBodyText } from "../../../../../Globais/ModalBootstrap";
 import { Icon } from "../../../../../Globais/UI/Icon";
-import { useGetSaldoAtual } from "./hooks/useGetSaldoAtual";
 import { usePostReceitasPrevistasPaa } from "./hooks/usePostReceitasPrevistasPaa";
 import { usePatchReceitasPrevistasPaa } from "./hooks/usePatchReceitasPrevistasPaa";
 import { formataData } from "../../../../../../utils/FormataData";
@@ -24,7 +23,6 @@ const initialValues = {
 const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
   const [form] = Form.useForm();
 
-  //const { data, isLoading } = useGetSaldoAtual(acaoAssociacao?.uuid);
   const data = acaoAssociacao.saldos;
   const isLoading = false;
   const { mutationPost } = usePostReceitasPrevistasPaa(onClose);

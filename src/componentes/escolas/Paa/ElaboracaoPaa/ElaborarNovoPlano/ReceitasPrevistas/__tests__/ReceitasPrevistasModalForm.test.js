@@ -6,7 +6,6 @@ import { usePostReceitasPrevistasPaa } from "../hooks/usePostReceitasPrevistasPa
 import { usePatchReceitasPrevistasPaa } from "../hooks/usePatchReceitasPrevistasPaa";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-jest.mock("../hooks/useGetSaldoAtual");
 jest.mock("../hooks/usePostReceitasPrevistasPaa");
 jest.mock("../hooks/usePatchReceitasPrevistasPaa");
 
