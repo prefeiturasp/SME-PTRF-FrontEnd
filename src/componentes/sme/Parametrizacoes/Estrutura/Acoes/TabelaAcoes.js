@@ -25,13 +25,13 @@ export const TabelaAcoes = ({
 
             <Column body={conferirUnidadesTemplate} header='UEs vinculadas'
                                                 style={{textAlign: 'center', width:'140px',}}/>
-            <Column body={aceitaCapitalTemplate} header='Aceita Capital'
+            <Column body={aceitaCapitalTemplate} header='Aceita Capital?'
                                                 style={{textAlign: 'center', width:'110px',}}/>
-            <Column body={aceitaCusteioTemplate} header='Aceita Custeio'
+            <Column body={aceitaCusteioTemplate} header='Aceita Custeio?'
                                                 style={{textAlign: 'center', width:'110px',}}/>
-            <Column body={aceitaLivreTemplate} header='Aceita Livre Aplicação'
+            <Column body={aceitaLivreTemplate} header='Aceita Livre Aplicação?'
                                                 style={{textAlign: 'center', width:'110px',}}/>
-            <Column body={recursosPropriosTemplate} header='Recursos externos'
+            <Column body={recursosPropriosTemplate} header='Recursos externos?'
                                                 style={{textAlign: 'center', width:'110px',}}/>
 
             <Column
