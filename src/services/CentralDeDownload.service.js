@@ -1,23 +1,23 @@
 import api from './api';
 import {TOKEN_ALIAS} from "./auth.service";
 
-const authHeader = {
+const authHeader = ()=>({
     headers: {
         'Authorization': `JWT ${localStorage.getItem(TOKEN_ALIAS)}`,
         'Content-Type': 'application/json'
     }
-};
+});
 
 export const getArquivosDownload = async () => {
-    return (await api.get(`/api/arquivos-download/`, authHeader)).data
+    return (await api.get(`/api/arquivos-download/`, authHeader())).data
 }
 
 export const getArquivosDownloadFiltros = async(identificador="", status="", ultima_atualizacao="", visto="") => {
-    return (await api.get(`/api/arquivos-download/?identificador=${identificador}&status=${status}&ultima_atualizacao=${ultima_atualizacao}&lido=${visto}`, authHeader)).data
+    return (await api.get(`/api/arquivos-download/?identificador=${identificador}&status=${status}&ultima_atualizacao=${ultima_atualizacao}&lido=${visto}`, authHeader())).data
 }
 
 export const getStatus = async() => {
-    return (await api.get(`/api/arquivos-download/status/`, authHeader)).data
+    return (await api.get(`/api/arquivos-download/status/`, authHeader())).data
 }
 
 export const getDownloadArquivo = async (nome_do_arquivo_com_extensao, arquivo_download_uuid) => {
@@ -44,15 +44,15 @@ export const getDownloadArquivo = async (nome_do_arquivo_com_extensao, arquivo_d
 }
 
 export const deleteArquivo = async (arquivo_download_uuid) => {
-    return (await api.delete(`/api/arquivos-download/${arquivo_download_uuid}`, authHeader)).data
+    return (await api.delete(`/api/arquivos-download/${arquivo_download_uuid}`, authHeader())).data
 }
 
 
 export const putMarcarDesmarcarLido = async (payload) => {
-    return (await api.put(`/api/arquivos-download/marcar-lido/`, payload, authHeader)).data
+    return (await api.put(`/api/arquivos-download/marcar-lido/`, payload, authHeader())).data
 }
 
 
 export const getQuantidadeNaoLidas = async() => {
-    return (await api.get(`/api/arquivos-download/quantidade-nao-lidos/`, authHeader)).data
+    return (await api.get(`/api/arquivos-download/quantidade-nao-lidos/`, authHeader())).data
 }

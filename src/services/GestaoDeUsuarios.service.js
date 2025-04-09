@@ -4,16 +4,16 @@ import {TOKEN_ALIAS} from "./auth.service";
 const URL_GRUPOS = '/api/grupos/';
 const URL_USUARIOS = '/api/usuarios-v2/';
 
-const authHeader = {
+const authHeader = () => ({
     headers: {
         'Authorization': `JWT ${localStorage.getItem(TOKEN_ALIAS)}`,
         'Content-Type': 'application/json'
     }
-};
+});
 
 export const getGrupos = async (visaoBase) => {
     return (await api.get(URL_GRUPOS, {
-        ...authHeader,
+        ...authHeader(),
         params: {
             visao_base: visaoBase,
         }
@@ -35,7 +35,7 @@ export const patchDesabilitarGrupoAcesso = async (payload) => {
     return (await api.patch(`${URL_GRUPOS}desabilitar-grupo-acesso/`, {
             ...payload
         },
-        authHeader,
+        authHeader(),
     ))
 };
 
@@ -43,7 +43,7 @@ export const patchHabilitarGrupoAcesso = async (payload) => {
     return (await api.patch(`${URL_GRUPOS}habilitar-grupo-acesso/`, {
             ...payload
         },
-        authHeader,
+        authHeader(),
     ))
 };
 
@@ -61,7 +61,7 @@ export const getUsuarios = async (uuidUnidadeBase, filter, currentPage) => {
         visoes__nome = 'SME';
     }
     const result = (await api.get(URL_USUARIOS, {
-        ...authHeader,
+        ...authHeader(),
         params: {
             uuid_unidade_base: uuidUnidadeBase,
             page: currentPage,
@@ -78,14 +78,14 @@ export const getUsuarios = async (uuidUnidadeBase, filter, currentPage) => {
 
 export const getUsuarioById = async (usuarioId) => {
     const result = (await api.get(`${URL_USUARIOS}${usuarioId}/`, {
-        ...authHeader,
+        ...authHeader(),
     }))
     return result.data
 };
 
 export const getUsuarioStatus = async (username, e_servidor, uuid_unidade) =>{
         const result = (await api.get(`${URL_USUARIOS}status/`, {
-        ...authHeader,
+        ...authHeader(),
         params: {
             username,
             e_servidor,
@@ -96,15 +96,15 @@ export const getUsuarioStatus = async (username, e_servidor, uuid_unidade) =>{
 };
 
 export const postUsuario = async (payload) => {
-    return (await api.post(URL_USUARIOS, payload, authHeader)).data
+    return (await api.post(URL_USUARIOS, payload, authHeader())).data
 };
 
 export const putUsuario = async (id, payload) => {
-    return (await api.put(`${URL_USUARIOS}${id}/`, payload, authHeader)).data
+    return (await api.put(`${URL_USUARIOS}${id}/`, payload, authHeader())).data
 };
 
 export const removerAcessosUnidadeBase = async (id, uuidUnidadeBase) => {
-    return (await api.put(`${URL_USUARIOS}${id}/remover-acessos-unidade-base/${uuidUnidadeBase}/`, {}, authHeader)).data
+    return (await api.put(`${URL_USUARIOS}${id}/remover-acessos-unidade-base/${uuidUnidadeBase}/`, {}, authHeader())).data
 };
 
 export const getUnidadesUsuario = async(username, visao_base, uuid_unidade) => {
@@ -122,7 +122,7 @@ export const patchHabilitarAcesso = async (payload) => {
     return (await api.patch(`${URL_USUARIOS}habilitar-acesso/`, {
             ...payload
         },
-        authHeader,
+        authHeader(),
     ))
 };
 
@@ -130,7 +130,7 @@ export const patchDesabilitarAcesso = async (payload) => {
     return (await api.patch(`${URL_USUARIOS}desabilitar-acesso/`, {
             ...payload
         },
-        authHeader,
+        authHeader(),
     ))
 };
 
@@ -149,6 +149,6 @@ export const postIncluirUnidade = async (payload) => {
     return (await api.post(`${URL_USUARIOS}incluir-unidade/`, {
         ...payload
     },
-        authHeader,
+        authHeader(),
     ))
 };

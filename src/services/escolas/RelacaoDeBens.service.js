@@ -2,15 +2,15 @@ import api from "../api";
 
 import {TOKEN_ALIAS} from "../auth.service";
 
-const authHeader = {
+const authHeader = ()=>({
     headers: {
         'Authorization': `JWT ${localStorage.getItem(TOKEN_ALIAS)}`,
         'Content-Type': 'application/json',
     }
-};
+});
 
 export const previa = async (conta_associacao, periodo, data_inicio, data_fim) => {
-    return (await api.get(`/api/relacao-bens/previa/?conta-associacao=${conta_associacao}&periodo=${periodo}&data_inicio=${data_inicio}&data_fim=${data_fim}`, authHeader)).data
+    return (await api.get(`/api/relacao-bens/previa/?conta-associacao=${conta_associacao}&periodo=${periodo}&data_inicio=${data_inicio}&data_fim=${data_fim}`, authHeader())).data
 
 };
 
@@ -20,10 +20,7 @@ export const documentoFinal = async (conta_associacao, periodo, formato) => {
             .get(`/api/relacao-bens/documento-final/?conta-associacao=${conta_associacao}&periodo=${periodo}&formato_arquivo=${formato}`, {
                 responseType: 'blob',
                 timeout: 30000,
-                headers: {
-                    'Authorization': `JWT ${localStorage.getItem(TOKEN_ALIAS)}`,
-                    'Content-Type': 'application/json',
-                }
+                ...authHeader()
               })
             .then((response) => {
                 const url = window.URL.createObjectURL(new Blob([response.data]));
@@ -43,10 +40,7 @@ export const documentoPrevia = async (conta_associacao, periodo, formato) => {
             .get(`/api/relacao-bens/documento-previa/?conta-associacao=${conta_associacao}&periodo=${periodo}&formato_arquivo=${formato}`, {
                 responseType: 'blob',
                 timeout: 30000,
-                headers: {
-                    'Authorization': `JWT ${localStorage.getItem(TOKEN_ALIAS)}`,
-                    'Content-Type': 'application/json',
-                }
+                ...authHeader()
               })
             .then((response) => {
                 const url = window.URL.createObjectURL(new Blob([response.data]));
@@ -61,5 +55,5 @@ export const documentoPrevia = async (conta_associacao, periodo, formato) => {
 };
 
 export const getRelacaoBensInfo = async (conta_associacao, periodo) => {
-    return (await api.get(`/api/relacao-bens/relacao-bens-info/?conta-associacao=${conta_associacao}&periodo=${periodo}`, authHeader)).data
+    return (await api.get(`/api/relacao-bens/relacao-bens-info/?conta-associacao=${conta_associacao}&periodo=${periodo}`, authHeader())).data
 };
