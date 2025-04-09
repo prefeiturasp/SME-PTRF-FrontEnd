@@ -8,14 +8,26 @@ import "./style.css";
 import ReceitasPrevistasModalForm from "./ReceitasPrevistasModalForm";
 import { Icon } from "../../../../../Globais/UI/Icon";
 import { formatMoneyBRL } from "../../../../../../utils/money";
+import DetalhamentoRecursosProprios from "../DetalhamentoRecursosProprios";
+import { useGetTotalizadorRecursoProprio } from "../DetalhamentoRecursosProprios/hooks/useGetTotalizarRecursoProprio";
 
 const ReceitasPrevistas = () => {
   const [activeTab, setActiveTab] = useState("Receitas Previstas");
   const [modalForm, setModalForm] = useState({ open: false, data: null });
   const { data, isLoading } = useGetAcoesAssociacao();
+  const { data: totalRecursosProprios } = useGetTotalizadorRecursoProprio();
 
-  const tabs = ["Receitas Previstas", "Detalhamento de recursos próprios"];
+  const TAB_RECEITAS_PREVISTAS = "Receitas Previstas";
+  const TAB_DETALHAMENTO_RECURSOS_PROPRIOS =
+    "Detalhamento de recursos próprios";
 
+  const tabs = [TAB_RECEITAS_PREVISTAS, TAB_DETALHAMENTO_RECURSOS_PROPRIOS];
+
+  const dataRecursosProprios = [
+    {
+      nome: "Recursos Próprios",
+    },
+  ];
   const dataTemplate = useCallback(
     (rowData, column) => {
       if (rowData?.acao?.nome === "Total do PTRF") {
@@ -117,6 +129,38 @@ const ReceitasPrevistas = () => {
     );
   }, []);
 
+  const nomeRecursoProprioTemplate = useCallback((rowData, column) => {
+    return (
+      <span style={{ color: "#992B6C" }} className="font-weight-bold">
+        {rowData.nome}
+      </span>
+    );
+  }, []);
+
+  const acoesRecursoProprioTemplate = (rowData) => {
+    return !rowData["fixed"] ? (
+      <IconButton
+        icon="faEdit"
+        tooltipMessage="Editar"
+        iconProps={{
+          style: { fontSize: "20px", marginRight: "0", color: "#00585E" },
+        }}
+        aria-label="Editar"
+        onClick={() => setActiveTab(TAB_DETALHAMENTO_RECURSOS_PROPRIOS)}
+      />
+    ) : null;
+  };
+
+  const totalRecursoProprioTemplate = useCallback(() => {
+    return (
+      <span style={{ color: "#992B6C" }} className="font-weight-bold">
+        {totalRecursosProprios
+          ? formatMoneyBRL(totalRecursosProprios.total)
+          : "__"}
+      </span>
+    );
+  }, [totalRecursosProprios]);
+
   const handleOpenEditar = (rowData) => {
     setModalForm({ open: true, data: rowData });
   };
@@ -130,7 +174,7 @@ const ReceitasPrevistas = () => {
   };
 
   const acoesTemplate = (rowData) => {
-    return rowData.fixed === false ? (
+    return !rowData["fixed"] ? (
       <IconButton
         icon="faEdit"
         tooltipMessage="Editar"
@@ -169,7 +213,8 @@ const ReceitasPrevistas = () => {
           </Fragment>
         ))}
       </nav>
-      {activeTab === tabs[0] ? (
+
+      {activeTab === tabs.find((tab) => tab === TAB_RECEITAS_PREVISTAS) ? (
         <Spin spinning={isLoading}>
           <Flex gutter={8} justify="space-between" className="mb-4">
             <h4 className="mb-0">Receitas Previstas</h4>
@@ -213,7 +258,49 @@ const ReceitasPrevistas = () => {
             <Column field="total" header="Total (R$)" body={dataTemplate} />
             <Column field="acoes" header="Ações" body={acoesTemplate} />
           </DataTable>
+
+          <DataTable
+            className="tabela-recursos-proprios mt-5"
+            value={dataRecursosProprios}
+            rowClassName={rowClassName}
+          >
+            <Column
+              field="nome"
+              header="Recursos"
+              body={nomeRecursoProprioTemplate}
+            />
+            <Column
+              field="valor_custeio"
+              header="Custeio (R$)"
+              body={dataTemplate}
+            />
+            <Column
+              field="valor_capital"
+              header="Capital (R$)"
+              body={dataTemplate}
+            />
+            <Column
+              field="valor_livre"
+              header="Livre Aplicação (R$)"
+              body={dataTemplate}
+            />
+            <Column
+              field="total"
+              header="Total (R$)"
+              body={totalRecursoProprioTemplate}
+            />
+            <Column
+              field="acoes"
+              header="Ações"
+              body={acoesRecursoProprioTemplate}
+            />
+          </DataTable>
         </Spin>
+      ) : activeTab ===
+        tabs.find((tab) => tab === TAB_DETALHAMENTO_RECURSOS_PROPRIOS) ? (
+        <DetalhamentoRecursosProprios
+          totalRecursoProprioTemplate={totalRecursoProprioTemplate}
+        />
       ) : null}
     </div>
   );

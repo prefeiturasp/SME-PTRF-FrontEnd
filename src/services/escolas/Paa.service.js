@@ -24,7 +24,11 @@ export const postReceitasPrevistasPaa = async (payload) => {
 
 export const patchReceitasPrevistasPaa = async (uuid, payload) => {
   return (
-    await api.patch(`api/receitas-previstas-paa/${uuid}/`, payload, authHeader())
+    await api.patch(
+      `api/receitas-previstas-paa/${uuid}/`,
+      payload,
+      authHeader()
+    )
   ).data;
 };
 
@@ -36,16 +40,16 @@ export const downloadPdfLevantamentoPrioridades = async (associacao_uuid) => {
         params: {
           associacao_uuid,
         },
-        responseType: 'blob',
+        responseType: "blob",
         timeout: 30000,
         ...authHeader(),
       }
     );
 
     const url = window.URL.createObjectURL(new Blob([response.data]));
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = url;
-    link.setAttribute('download', `levantamento_prioridades_paa.pdf`);
+    link.setAttribute("download", `levantamento_prioridades_paa.pdf`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -54,4 +58,39 @@ export const downloadPdfLevantamentoPrioridades = async (associacao_uuid) => {
     console.error("Erro no download do PDF:", error);
     return error.response;
   }
+};
+
+// recursos próprios
+export const getRecursosProprios = async (associacaoUUID, page = 1) => {
+  return (
+    await api.get(
+      `api/recursos-proprios-paa/?associacao_uuid={associacaoUUID}&page=${page}`,
+      authHeader()
+    )
+  ).data;
+};
+
+export const postRecursoProprioPaa = async (payload) => {
+  return (await api.post(`api/recursos-proprios-paa/`, payload, authHeader()))
+    .data;
+};
+
+export const patchRecursoProprioPaa = async (uuid, payload) => {
+  return (
+    await api.patch(`api/recursos-proprios-paa/${uuid}/`, payload, authHeader())
+  ).data;
+};
+
+export const deleteRecursoProprioPaa = async (uuid) => {
+  return (await api.delete(`api/recursos-proprios-paa/${uuid}/`, authHeader()))
+    .data;
+};
+
+export const getTotalizadorRecursoProprio = async () => {
+  return (await api.get(`api/recursos-proprios-paa/total/`, authHeader())).data;
+};
+
+// fontes recursos
+export const getFontesRecursos = async () => {
+  return (await api.get(`api/fontes-recursos-paa/`, authHeader())).data;
 };
