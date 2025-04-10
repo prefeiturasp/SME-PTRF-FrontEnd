@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import { DatePicker, Flex, Input, InputNumber, Select, Spin } from "antd";
@@ -30,6 +30,7 @@ const DetalhamentoRecursosProprios = () => {
   const associacaoUUID = localStorage.getItem(ASSOCIACAO_UUID);
 
   const [items, setItems] = useState([]);
+  const [currentItem, setCurrentItem] = useState(null);
 
   const { data, isLoading } = useGetRecursosProprios(associacaoUUID);
   const { data: totalRecursosProprios } =
@@ -39,6 +40,7 @@ const DetalhamentoRecursosProprios = () => {
 
   const handleCloseFieldsToEdit = (item) => {
     updateValue(item.uuid, "edit", false);
+    setCurrentItem(null);
   };
 
   const { mutationPatch } = usePatchRecursoProprio(handleCloseFieldsToEdit);
@@ -52,11 +54,15 @@ const DetalhamentoRecursosProprios = () => {
   }, [data]);
 
   const handleOpenFieldsToEdit = (item) => {
+    if (currentItem) {
+      updateValue(currentItem, "edit", false);
+    }
     updateValue(item.uuid, "edit", true);
+    setCurrentItem(item.uuid);
   };
 
-  const handleRemoveItem = (item, column) => {
-    if (item.uuid) {
+  const handleRemoveItem = (rowData, column) => {
+    if (rowData.uuid && !rowData["new"]) {
       CustomModalConfirm({
         dispatch,
         title: "Excluir Recurso Próprio",
@@ -64,7 +70,7 @@ const DetalhamentoRecursosProprios = () => {
         cancelText: "Voltar",
         confirmText: "Excluir",
         isDanger: true,
-        onConfirm: () => mutationDelete.mutate(item.uuid),
+        onConfirm: () => mutationDelete.mutate(rowData.uuid),
       });
     } else {
       setItems((prevItems) => {
@@ -74,19 +80,21 @@ const DetalhamentoRecursosProprios = () => {
   };
 
   const handleAddNewItem = () => {
-    setItems((prev) => [
-      {
-        descricao: "",
-        fonte_recurso: null,
-        valor: undefined,
-        data_prevista: null,
-        edit: true,
-      },
-      ...prev,
-    ]);
+    const newItem = {
+      descricao: "",
+      fonte_recurso: null,
+      valor: undefined,
+      data_prevista: null,
+      edit: true,
+      new: true,
+      uuid: "fake-uuid",
+    };
+    setItems((prev) => [newItem, ...prev]);
+    setCurrentItem(newItem.uuid);
   };
 
   const validFields = (rowData) => {
+    console.log(rowData);
     return (
       rowData.descricao !== "" &&
       rowData?.fonte_recurso?.uuid &&
@@ -115,7 +123,7 @@ const DetalhamentoRecursosProprios = () => {
       valor: rowData?.valor,
     };
 
-    if (rowData.uuid) {
+    if (rowData.uuid && !rowData["new"]) {
       mutationPatch.mutate({ uuid: rowData.uuid, payload: payload });
     } else {
       mutationPost.mutate({ payload: payload });
@@ -177,7 +185,7 @@ const DetalhamentoRecursosProprios = () => {
   const valorTemplate = (rowData) => {
     if (rowData["edit"] === true) {
       const handleChange = (value) => {
-        updateValue(rowData.uuid, "valor", value / 100);
+        updateValue(rowData.uuid, "valor", value !== null ? value / 100 : null);
       };
 
       return (
@@ -185,7 +193,7 @@ const DetalhamentoRecursosProprios = () => {
           placeholder="00,00"
           formatter={formatMoneyByCentsBRL}
           parser={parseMoneyBRL}
-          value={rowData?.valor * 100}
+          value={rowData?.valor !== null ? rowData?.valor * 100 : null}
           style={{ width: "100%" }}
           onChange={handleChange}
         />
@@ -282,18 +290,34 @@ const DetalhamentoRecursosProprios = () => {
     return rowData?.fonte_recurso?.nome;
   };
 
+  const currentRowData = useMemo(() => {
+    return items.find((item) => item.uuid === currentItem);
+  }, [items, currentItem]);
+
   return (
     <div>
       <Spin spinning={isLoading || isLoadingFontesRecursos}>
         <Flex gutter={8} justify="space-between" className="mb-4">
           <h5 className="mb-0">Detalhamento de Recursos Próprios</h5>
-          <button
-            type="button"
-            className="btn btn-success"
-            onClick={() => handleAddNewItem()}
-          >
-            Adicionar fonte de recurso
-          </button>
+
+          {currentRowData ? (
+            <button
+              type="button"
+              className="btn btn-success"
+              disabled={!validFields(currentRowData)}
+              onClick={() => handleSave(currentRowData)}
+            >
+              Salvar fonte de recurso
+            </button>
+          ) : (
+            <button
+              type="button"
+              className="btn btn-success"
+              onClick={() => handleAddNewItem()}
+            >
+              Adicionar fonte de recurso
+            </button>
+          )}
         </Flex>
 
         <DataTable
