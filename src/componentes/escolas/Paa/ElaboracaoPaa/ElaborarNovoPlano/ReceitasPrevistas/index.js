@@ -1,154 +1,47 @@
-import React, { Fragment, useCallback, useState } from "react";
-import { Column } from "primereact/column";
-import { DataTable } from "primereact/datatable";
+import React, { Fragment, useState } from "react";
 import { Checkbox, Flex, Spin } from "antd";
-import { IconButton } from "../../../../../Globais/UI";
 import { useGetAcoesAssociacao } from "./hooks/useGetAcoesAssociacao";
 import "./style.css";
 import ReceitasPrevistasModalForm from "./ReceitasPrevistasModalForm";
 import { Icon } from "../../../../../Globais/UI/Icon";
-import { formatMoneyBRL } from "../../../../../../utils/money";
+import DetalhamentoRecursosProprios from "../DetalhamentoRecursosProprios";
+import { useGetTotalizadorRecursoProprio } from "../DetalhamentoRecursosProprios/hooks/useGetTotalizarRecursoProprio";
+import { ASSOCIACAO_UUID } from "../../../../../../services/auth.service";
 import TableReceitasPrevistasPdde from "./TableReceitasPrevistasPdde";
-import { DetalhamentoAcoesPdde } from './DetalhamentoAcoesPdde';
+import { DetalhamentoAcoesPdde } from "./DetalhamentoAcoesPdde";
+import TabelaRecursosProprios from "./TabelaRecursosProprios";
+import TabelaReceitasPrevistas from "./TabelaReceitasPrevistas";
 
 const ReceitasPrevistas = () => {
-  const [activeTab, setActiveTab] = useState('receitas-previstas');
+  const associacaoUUID = localStorage.getItem(ASSOCIACAO_UUID);
+  const [activeTab, setActiveTab] = useState("receitas-previstas");
   const [modalForm, setModalForm] = useState({ open: false, data: null });
-  const { data, isLoading } = useGetAcoesAssociacao();
+  const { data, isLoading: isLoadingAcoesassociacao } = useGetAcoesAssociacao();
+  const { data: totalRecursosProprios } =
+    useGetTotalizadorRecursoProprio(associacaoUUID);
+
+  const TAB_DETALHAMENTO_RECURSOS_PROPRIOS =
+    "detalhamento-de-recursos-proprios";
 
   const tabs = [
     { id: "receitas-previstas", label: "Receitas Previstas" },
-    { id: "detalhamento-das-acoes-pdde", label: "Detalhamamento das ações PDDE" },
-    { id: "detalhamento-de-recursos-proprios", label: "Detalhamento de recursos próprios" },
-  ];
-
-  const dataTemplate = useCallback(
-    (rowData, column) => {
-      if (rowData?.acao?.nome === "Total do PTRF") {
-        const totalCapital = data.reduce((acc, row) => {
-          return (
-            acc +
-            (parseFloat(
-              row?.receitas_previstas_paa?.[0]?.previsao_valor_capital
-            ) || 0) +
-            row?.saldos?.saldo_atual_capital
-          );
-        }, 0);
-
-        const totalCusteio = data.reduce((acc, row) => {
-          return (
-            acc +
-            (parseFloat(
-              row?.receitas_previstas_paa?.[0]?.previsao_valor_custeio
-            ) || 0) +
-            row?.saldos?.saldo_atual_custeio
-          );
-        }, 0);
-
-        const totalLivre = data.reduce((acc, row) => {
-          return (
-            acc +
-            (parseFloat(
-              row?.receitas_previstas_paa?.[0]?.previsao_valor_livre
-            ) || 0) +
-            row?.saldos?.saldo_atual_livre
-          );
-        }, 0);
-
-        const totalGeral = totalCapital + totalCusteio + totalLivre;
-
-        const fieldMapping = {
-          valor_capital: totalCapital,
-          valor_custeio: totalCusteio,
-          valor_livre: totalLivre,
-          total: totalGeral,
-        };
-
-        return (
-          <div className="text-right font-bold">
-            {formatMoneyBRL(fieldMapping[column.field])}
-          </div>
-        );
-      }
-
-      const receitaPrevistaPaa = rowData?.receitas_previstas_paa?.[0];
-
-      const valores = {
-        previsao_valor_capital: receitaPrevistaPaa
-          ? parseFloat(receitaPrevistaPaa.previsao_valor_capital)
-          : 0,
-        previsao_valor_custeio: receitaPrevistaPaa
-          ? parseFloat(receitaPrevistaPaa.previsao_valor_custeio)
-          : 0,
-        previsao_valor_livre: receitaPrevistaPaa
-          ? parseFloat(receitaPrevistaPaa.previsao_valor_livre)
-          : 0,
-      };
-
-      const valor_capital =
-        valores.previsao_valor_capital + rowData?.saldos?.saldo_atual_capital;
-      const valor_custeio =
-        valores.previsao_valor_custeio + rowData?.saldos?.saldo_atual_custeio;
-      const valor_livre =
-        valores.previsao_valor_livre + rowData?.saldos?.saldo_atual_livre;
-
-      const fieldMapping = {
-        valor_capital: valor_capital,
-        valor_custeio: valor_custeio,
-        valor_livre: valor_livre,
-        total:
-          parseFloat(valor_custeio) +
-          parseFloat(valor_capital) +
-          parseFloat(valor_livre),
-      };
-
-      return (
-        <div className="text-right">
-          {fieldMapping[column.field] > 0 ? (
-            formatMoneyBRL(fieldMapping[column.field])
-          ) : (
-            <div className="text-right">__</div>
-          )}
-        </div>
-      );
+    {
+      id: "detalhamento-das-acoes-pdde",
+      label: "Detalhamamento das ações PDDE",
     },
-    [data]
-  );
-
-  const nomeTemplate = useCallback((rowData, column) => {
-    return (
-      <span style={{ color: "#00585E" }} className="font-weight-bold">
-        {rowData.acao.nome}
-      </span>
-    );
-  }, []);
+    {
+      id: TAB_DETALHAMENTO_RECURSOS_PROPRIOS,
+      label: "Detalhamento de Recursos Próprios",
+    },
+  ];
 
   const handleOpenEditar = (rowData) => {
     setModalForm({ open: true, data: rowData });
   };
 
-  const rowClassName = () => {
-    return "inactive-row";
-  };
-
   const handleCloseModalForm = () => {
     setModalForm({ open: false, data: null });
   };
-
-  const acoesTemplate = (rowData) => {
-    return rowData.fixed === false ? (
-      <IconButton
-        icon="faEdit"
-        tooltipMessage="Editar"
-        iconProps={{
-          style: { fontSize: "20px", marginRight: "0", color: "#00585E" },
-        }}
-        aria-label="Editar"
-        onClick={() => handleOpenEditar(rowData)}
-      />
-    ) : null;
-  };
-
   return (
     <div>
       {modalForm.open && (
@@ -176,51 +69,31 @@ const ReceitasPrevistas = () => {
         ))}
       </nav>
 
-      {activeTab === tabs[0].id ? (
+      {activeTab === "receitas-previstas" ? (
         <>
-          <Spin spinning={isLoading}>
-            <Flex gutter={8} justify="space-between" className="mb-4">
-              <h4 className="mb-0">Receitas Previstas</h4>
-              <Flex align="center">
-                <Checkbox>Parar atualizações do saldo</Checkbox>
-                <Icon
-                  tooltipMessage="Ao selecionar esta opção os valores dos recursos não serão atualizados e serão mantidos os valores da última atualização automática ou da edição realizada."
-                  icon="faExclamationCircle"
-                  iconProps={{
-                    style: {
-                      fontSize: "16px",
-                      marginLeft: 4,
-                      color: "#086397",
-                    },
-                  }}
-                />
-              </Flex>
+          <Flex gutter={8} justify="space-between" className="mb-4">
+            <h4 className="mb-0">Receitas Previstas</h4>
+            <Flex align="center">
+              <Checkbox>Parar atualizações do saldo</Checkbox>
+              <Icon
+                tooltipMessage="Ao selecionar esta opção os valores dos recursos não serão atualizados e serão mantidos os valores da última atualização automática ou da edição realizada."
+                icon="faExclamationCircle"
+                iconProps={{
+                  style: {
+                    fontSize: "16px",
+                    marginLeft: 4,
+                    color: "#086397",
+                  },
+                }}
+              />
             </Flex>
+          </Flex>
 
-            <DataTable
-              className="tabela-receitas-previstas"
-              value={[...data, { acao: { nome: "Total do PTRF" }, fixed: true }]}
-              rowClassName={rowClassName}
-            >
-              <Column field="nome" header="Recursos" body={nomeTemplate} />
-              <Column
-                field="valor_custeio"
-                header="Custeio (R$)"
-                body={dataTemplate}
-              />
-              <Column
-                field="valor_capital"
-                header="Capital (R$)"
-                body={dataTemplate}
-              />
-              <Column
-                field="valor_livre"
-                header="Livre Aplicação (R$)"
-                body={dataTemplate}
-              />
-              <Column field="total" header="Total (R$)" body={dataTemplate} />
-              <Column field="acoes" header="Ações" body={acoesTemplate} />
-            </DataTable>
+          <Spin spinning={isLoadingAcoesassociacao}>
+            <TabelaReceitasPrevistas
+              data={data}
+              handleOpenEditar={handleOpenEditar}
+            />
           </Spin>
 
           <TableReceitasPrevistasPdde
@@ -228,11 +101,22 @@ const ReceitasPrevistas = () => {
             activeTab={activeTab}
             setActiveTab={setActiveTab}
           />
+
+          <TabelaRecursosProprios
+            setActiveTab={() =>
+              setActiveTab(TAB_DETALHAMENTO_RECURSOS_PROPRIOS)
+            }
+            totalRecursosProprios={totalRecursosProprios}
+          />
         </>
       ) : null}
 
-      {activeTab === 'detalhamento-das-acoes-pdde' ? (
+      {activeTab === "detalhamento-das-acoes-pdde" ? (
         <DetalhamentoAcoesPdde />
+      ) : null}
+
+      {activeTab === "detalhamento-de-recursos-proprios" ? (
+        <DetalhamentoRecursosProprios />
       ) : null}
     </div>
   );
