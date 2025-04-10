@@ -8,7 +8,7 @@ import DetalhamentoRecursosProprios from "../DetalhamentoRecursosProprios";
 import { useGetTotalizadorRecursoProprio } from "../DetalhamentoRecursosProprios/hooks/useGetTotalizarRecursoProprio";
 import { ASSOCIACAO_UUID } from "../../../../../../services/auth.service";
 import TableReceitasPrevistasPdde from "./TableReceitasPrevistasPdde";
-import { DetalhamentoAcoesPdde } from "./DetalhamentoAcoesPdde";
+import { DetalhamentoAcoesPdde } from "../DetalhamentoAcoesPdde";
 import TabelaRecursosProprios from "./TabelaRecursosProprios";
 import TabelaReceitasPrevistas from "./TabelaReceitasPrevistas";
 

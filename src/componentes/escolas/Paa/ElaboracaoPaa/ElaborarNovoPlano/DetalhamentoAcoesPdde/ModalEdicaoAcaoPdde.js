@@ -1,13 +1,13 @@
 import React, { memo, useEffect } from "react";
 import { Form, Row, Col, Flex, InputNumber, Spin } from "antd";
-import { ModalFormBodyText } from "../../../../../../Globais/ModalBootstrap";
-import { Icon } from "../../../../../../Globais/UI/Icon";
-import { usePatchAcaoPdde } from '../hooks/usePatchAcaoPdde';
+import { ModalFormBodyText } from "../../../../../Globais/ModalBootstrap";
+import { Icon } from "../../../../../Globais/UI/Icon";
+import { usePatchAcaoPdde } from './hooks/usePatchAcaoPdde';
 import {
   formatMoneyBRL,
   formatMoneyByCentsBRL,
   parseMoneyBRL,
-} from "../../../../../../../utils/money";
+} from "../../../../../../utils/money";
 
 const initialValues = {
   saldo_valor_capital: 0,
@@ -118,12 +118,11 @@ const ModalEdicaoAcaoPdde = ({ open, onClose, acaoPdde }) => {
               gutter={[16, 16]}
               style={{ marginBottom: 16, color: "rgba(66, 71, 74, 1)" }}
             >
-              <Col md={8}>Saldo Atual</Col>
               <Col md={8}>
                 <Flex align="center">
-                  Previsão
+                  Saldo reprogramado
                   <Icon
-                    tooltipMessage="Valores previstos para esta ação"
+                    tooltipMessage="Orienta-se somar todos os valores recebidos de Custeio, Capital e Livre Aplicação ao longo do último ano."
                     icon="faExclamationCircle"
                     iconProps={{
                       style: {
@@ -133,6 +132,11 @@ const ModalEdicaoAcaoPdde = ({ open, onClose, acaoPdde }) => {
                       },
                     }}
                   />
+                </Flex>
+              </Col>
+              <Col md={8}>
+                <Flex align="center">
+                  Receita prevista 
                 </Flex>
               </Col>
               <Col md={8}>Total</Col>

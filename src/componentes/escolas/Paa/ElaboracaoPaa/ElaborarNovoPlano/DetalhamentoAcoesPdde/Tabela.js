@@ -5,7 +5,7 @@ import {faEdit} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ReactTooltip from "react-tooltip";
 import {Paginacao} from "./Paginacao";
-import { formatMoneyBRL } from '../../../../../../../utils/money';
+import { formatMoneyBRL } from '../../../../../../utils/money';
 import ModalEdicaoAcaoPdde from './ModalEdicaoAcaoPdde';
 
 const Tabela = ({

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useGetAcoesPdde } from '../hooks/useGetAcoesPdde';
+import { useGetAcoesPdde } from './hooks/useGetAcoesPdde';
 import Tabela from './Tabela';
 import { Spin } from 'antd';
 
