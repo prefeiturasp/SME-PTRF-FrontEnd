@@ -1,105 +1,87 @@
 import React, { memo, useEffect } from "react";
 import { Form, Row, Col, Flex, InputNumber, Spin } from "antd";
-import { ModalFormBodyText } from "../../../../../Globais/ModalBootstrap";
-import { Icon } from "../../../../../Globais/UI/Icon";
-import { usePostReceitasPrevistasPaa } from "./hooks/usePostReceitasPrevistasPaa";
-import { usePatchReceitasPrevistasPaa } from "./hooks/usePatchReceitasPrevistasPaa";
-import { formataData } from "../../../../../../utils/FormataData";
+import { ModalFormBodyText } from "../../../../../../Globais/ModalBootstrap";
+import { Icon } from "../../../../../../Globais/UI/Icon";
+import { usePatchAcaoPdde } from '../hooks/usePatchAcaoPdde';
 import {
   formatMoneyBRL,
   formatMoneyByCentsBRL,
   parseMoneyBRL,
-} from "../../../../../../utils/money";
+} from "../../../../../../../utils/money";
 
 const initialValues = {
-  saldo_atual_capital: 0,
-  saldo_atual_custeio: 0,
-  saldo_atual_livre: 0,
+  saldo_valor_capital: 0,
+  saldo_valor_custeio: 0,
+  saldo_valor_livre_aplicacao: 0,
+  previsao_valor_custeio: 0,
+  previsao_valor_capital: 0,
+  previsao_valor_livre_aplicacao: 0,
   total_custeio: 0,
   total_capital: 0,
   total_livre: 0,
 };
 
-const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
+const ModalEdicaoAcaoPdde = ({ open, onClose, acaoPdde }) => {
   const [form] = Form.useForm();
 
-  const data = acaoAssociacao.saldos;
   const isLoading = false;
-  const { mutationPost } = usePostReceitasPrevistasPaa(onClose);
-  const { mutationPatch } = usePatchReceitasPrevistasPaa(onClose);
+  const { mutationPatch } = usePatchAcaoPdde(onClose);
 
-  const receitaPrevistaPaa = acaoAssociacao?.receitas_previstas_paa.length
-    ? acaoAssociacao?.receitas_previstas_paa[0]
-    : null;
-
-  Form.useWatch("saldo_atual_capital", form);
-  Form.useWatch("saldo_atual_custeio", form);
-  Form.useWatch("saldo_atual_livre", form);
+  Form.useWatch("saldo_valor_capital", form);
+  Form.useWatch("saldo_valor_custeio", form);
+  Form.useWatch("saldo_valor_livre_aplicacao", form);
+  Form.useWatch("previsao_valor_custeio", form);
+  Form.useWatch("previsao_valor_capital", form);
+  Form.useWatch("previsao_valor_livre_aplicacao", form);
 
   useEffect(() => {
-    if (data && acaoAssociacao) {
-      const valor_custeio = receitaPrevistaPaa
-        ? parseFloat(receitaPrevistaPaa.previsao_valor_custeio)
-        : null;
-      const valor_capital = receitaPrevistaPaa
-        ? parseFloat(receitaPrevistaPaa.previsao_valor_capital)
-        : null;
-      const total_livre = receitaPrevistaPaa
-        ? parseFloat(receitaPrevistaPaa.previsao_valor_livre)
-        : null;
-      const saldo_atual_custeio = data.saldo_atual_custeio;
-      const saldo_atual_capital = data.saldo_atual_capital;
-      const saldo_atual_livre = data.saldo_atual_livre;
-
+    if (acaoPdde) {
       form.setFieldsValue({
-        saldo_atual_capital: saldo_atual_capital,
-        saldo_atual_custeio: saldo_atual_custeio,
-        saldo_atual_livre: saldo_atual_livre,
-        valor_capital: valor_capital * 100,
-        valor_custeio: valor_custeio * 100,
-        valor_livre: total_livre * 100,
-        total_custeio: valor_custeio + saldo_atual_custeio,
-        total_capital: valor_capital + saldo_atual_capital,
-        total_livre: total_livre + saldo_atual_livre,
+        saldo_valor_capital: parseFloat(acaoPdde.saldo_valor_capital || 0) * 100,
+        saldo_valor_custeio: parseFloat(acaoPdde.saldo_valor_custeio || 0) * 100,
+        saldo_valor_livre_aplicacao: parseFloat(acaoPdde.saldo_valor_livre_aplicacao || 0) * 100,
+        previsao_valor_custeio: parseFloat(acaoPdde.previsao_valor_custeio || 0) * 100,
+        previsao_valor_capital: parseFloat(acaoPdde.previsao_valor_capital || 0) * 100,
+        previsao_valor_livre_aplicacao: parseFloat(acaoPdde.previsao_valor_livre_aplicacao || 0) * 100,
+        total_custeio: parseFloat(acaoPdde.saldo_valor_custeio || 0) + parseFloat(acaoPdde.previsao_valor_custeio || 0),
+        total_capital: parseFloat(acaoPdde.saldo_valor_capital || 0) + parseFloat(acaoPdde.previsao_valor_capital || 0),
+        total_livre: parseFloat(acaoPdde.saldo_valor_livre_aplicacao || 0) + parseFloat(acaoPdde.previsao_valor_livre_aplicacao || 0),
       });
     }
-  }, [data, acaoAssociacao]);
+  }, [acaoPdde, form, open]);
 
   const onValuesChange = (values) => {
     const formValues = form.getFieldsValue();
-
-    if (values.valor_custeio) {
-      form.setFieldValue(
-        "total_custeio",
-        formValues.saldo_atual_custeio + parseFloat(values.valor_custeio) / 100
-      );
-    }
-    if (values.valor_capital) {
-      form.setFieldValue(
-        "total_capital",
-        formValues.saldo_atual_capital + parseFloat(values.valor_capital) / 100
-      );
-    }
-    if (values.valor_livre) {
-      form.setFieldValue(
-        "total_livre",
-        formValues.saldo_atual_livre + parseFloat(values.valor_livre) / 100
-      );
-    }
+    
+    const saldoCusteio = (formValues.saldo_valor_custeio || 0) / 100;
+    const previsaoCusteio = (formValues.previsao_valor_custeio || 0) / 100;
+    const saldoCapital = (formValues.saldo_valor_capital || 0) / 100;
+    const previsaoCapital = (formValues.previsao_valor_capital || 0) / 100;
+    const saldoLivre = (formValues.saldo_valor_livre_aplicacao || 0) / 100;
+    const previsaoLivre = (formValues.previsao_valor_livre_aplicacao || 0) / 100;
+  
+    form.setFieldsValue({
+      total_custeio: saldoCusteio + previsaoCusteio,
+      total_capital: saldoCapital + previsaoCapital,
+      total_livre: saldoLivre + previsaoLivre,
+    });
   };
 
   const onSubmit = (values) => {
     const payload = {
-      acao_associacao: acaoAssociacao.id,
-      previsao_valor_custeio: values.valor_custeio / 100,
-      previsao_valor_capital: values.valor_capital / 100,
-      previsao_valor_livre: values.valor_livre / 100,
+      acao_associacao: acaoPdde.id,
+      saldo_valor_custeio: values.saldo_valor_custeio / 100,
+      saldo_valor_capital: values.saldo_valor_capital  / 100,
+      saldo_valor_livre_aplicacao: values.saldo_valor_livre_aplicacao  / 100,
+      previsao_valor_custeio: values.previsao_valor_custeio / 100,
+      previsao_valor_capital: values.previsao_valor_capital / 100,
+      previsao_valor_livre_aplicacao: values.previsao_valor_livre_aplicacao / 100,
+      nome: acaoPdde.nome,
+      categoria: acaoPdde.categoria_objeto.id,
     };
 
-    if (receitaPrevistaPaa) {
-      mutationPatch.mutate({ uuid: receitaPrevistaPaa.uuid, payload });
-    } else {
-      mutationPost.mutate({ payload });
+    if (acaoPdde.uuid) {
+      mutationPatch.mutate({ uuid: acaoPdde.uuid, payload });
     }
   };
 
@@ -115,13 +97,13 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
   return (
     <ModalFormBodyText
       show={open}
-      titulo={`Recurso ${acaoAssociacao ? acaoAssociacao.acao.nome : ""}`}
+      titulo={`Editar Recurso ${acaoPdde ? acaoPdde.nome : ""}`}
       onHide={onClose}
       size="lg"
       bodyText={
         <Spin
           spinning={
-            isLoading || mutationPatch.isLoading || mutationPost.isLoading
+            isLoading || mutationPatch.isLoading
           }
         >
           <Form
@@ -136,12 +118,12 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
               gutter={[16, 16]}
               style={{ marginBottom: 16, color: "rgba(66, 71, 74, 1)" }}
             >
-              <Col md={8}>Saldo em {formataData(new Date())}</Col>
+              <Col md={8}>Saldo Atual</Col>
               <Col md={8}>
                 <Flex align="center">
-                  Receita Prevista
+                  Previsão
                   <Icon
-                    tooltipMessage="Orienta-se somar todos os valores recebidos de Custeio, Capital e Livre Aplicação ao longo do último ano."
+                    tooltipMessage="Valores previstos para esta ação"
                     icon="faExclamationCircle"
                     iconProps={{
                       style: {
@@ -156,22 +138,24 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
               <Col md={8}>Total</Col>
             </Row>
 
+            {/* Custeio Row */}
             <Row gutter={[16, 16]}>
               <Flex align="end">
                 <Col md={8}>
                   <Flex align="end" gap={8}>
                     <Form.Item
                       label="Custeio"
-                      name="saldo_atual_custeio"
+                      name="saldo_valor_custeio"
                       labelCol={{ span: 24 }}
                       style={{ marginBottom: 8 }}
+                      rules={acaoPdde && acaoPdde.aceita_custeio ? inputRules : null}
                     >
                       <InputNumber
                         placeholder="00,00"
-                        formatter={formatMoneyBRL}
+                        formatter={formatMoneyByCentsBRL}
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
-                        disabled
+                        disabled={acaoPdde && !acaoPdde.aceita_custeio}
                       />
                     </Form.Item>
                     <Icon
@@ -184,10 +168,10 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                   <Flex align="end" gap={8}>
                     <Form.Item
                       label="Custeio"
-                      name="valor_custeio"
+                      name="previsao_valor_custeio"
                       labelCol={{ span: 24 }}
                       style={{ marginBottom: 8 }}
-                      rules={inputRules}
+                      rules={acaoPdde && acaoPdde.aceita_custeio ? inputRules : null}
                     >
                       <InputNumber
                         placeholder="00,00"
@@ -195,6 +179,7 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
                         min={0}
+                        disabled={acaoPdde && !acaoPdde.aceita_custeio}
                       />
                     </Form.Item>
                     <Icon
@@ -222,22 +207,24 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
               </Flex>
             </Row>
 
+            {/* Capital Row */}
             <Row gutter={[16, 16]}>
               <Flex align="end">
                 <Col md={8}>
                   <Flex align="end" gap={8}>
                     <Form.Item
                       label="Capital"
-                      name="saldo_atual_capital"
+                      name="saldo_valor_capital"
                       labelCol={{ span: 24 }}
                       style={{ marginBottom: 8 }}
+                      rules={acaoPdde && acaoPdde.aceita_capital ? inputRules : null}
                     >
                       <InputNumber
                         placeholder="00,00"
-                        formatter={formatMoneyBRL}
+                        formatter={formatMoneyByCentsBRL}
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
-                        disabled
+                        disabled={acaoPdde && !acaoPdde.aceita_capital}
                       />
                     </Form.Item>
                     <Icon
@@ -250,10 +237,10 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                   <Flex align="end" gap={8}>
                     <Form.Item
                       label="Capital"
-                      name="valor_capital"
+                      name="previsao_valor_capital"
                       labelCol={{ span: 24 }}
                       style={{ marginBottom: 8 }}
-                      rules={inputRules}
+                      rules={acaoPdde && acaoPdde.aceita_capital ? inputRules : null}
                     >
                       <InputNumber
                         placeholder="00,00"
@@ -261,6 +248,7 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
                         min={0}
+                        disabled={acaoPdde && !acaoPdde.aceita_capital}
                       />
                     </Form.Item>
                     <Icon
@@ -271,7 +259,7 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                 </Col>
                 <Col md={8}>
                   <Form.Item
-                    label="Custeio"
+                    label="Capital"
                     name="total_capital"
                     labelCol={{ span: 24 }}
                     style={{ marginBottom: 8 }}
@@ -288,22 +276,24 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
               </Flex>
             </Row>
 
+            {/* Livre Aplicação Row */}
             <Row gutter={[16, 16]}>
               <Flex align="end">
                 <Col md={8}>
                   <Flex align="end" gap={8}>
                     <Form.Item
                       label="Livre Aplicação"
-                      name="saldo_atual_livre"
+                      name="saldo_valor_livre_aplicacao"
                       labelCol={{ span: 24 }}
                       style={{ marginBottom: 8 }}
+                      rules={acaoPdde && acaoPdde.aceita_livre_aplicacao ? inputRules : null}
                     >
                       <InputNumber
                         placeholder="00,00"
-                        formatter={formatMoneyBRL}
+                        formatter={formatMoneyByCentsBRL}
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
-                        disabled
+                        disabled={acaoPdde && !acaoPdde.aceita_livre_aplicacao}
                       />
                     </Form.Item>
                     <Icon
@@ -316,10 +306,10 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                   <Flex align="end" gap={8}>
                     <Form.Item
                       label="Livre Aplicação"
-                      name="valor_livre"
+                      name="previsao_valor_livre_aplicacao"
                       labelCol={{ span: 24 }}
                       style={{ marginBottom: 8 }}
-                      rules={inputRules}
+                      rules={acaoPdde && acaoPdde.aceita_livre_aplicacao ? inputRules : null}
                     >
                       <InputNumber
                         placeholder="00,00"
@@ -327,6 +317,7 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
                         min={0}
+                        disabled={acaoPdde && !acaoPdde.aceita_livre_aplicacao}
                       />
                     </Form.Item>
                     <Icon
@@ -363,7 +354,11 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                 Cancelar
               </button>
 
-              <button type="submit" className="btn btn btn-success">
+              <button 
+                type="submit" 
+                className="btn btn btn-success"
+                disabled={acaoPdde && !acaoPdde.aceita_livre_aplicacao && !acaoPdde.aceita_capital && !acaoPdde.aceita_custeio}
+              >
                 Salvar
               </button>
             </Flex>
@@ -374,4 +369,4 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
   );
 };
 
-export default memo(ReceitasPrevistasModalForm);
+export default memo(ModalEdicaoAcaoPdde);

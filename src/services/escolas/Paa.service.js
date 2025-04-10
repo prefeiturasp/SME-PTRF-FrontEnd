@@ -55,3 +55,16 @@ export const downloadPdfLevantamentoPrioridades = async (associacao_uuid) => {
     return error.response;
   }
 };
+
+export const getCategoriasPddeTotais = async () => {
+  return (
+    await api.get(
+      `api/categorias-pdde/totais/`,
+      authHeader()
+    )
+  ).data;
+};
+
+export const getAcoesPDDE = async (currentPage=1, rowsPerPage=20) => {
+  return (await api.get(`/api/acoes-pdde/?page=${currentPage}&page_size=${rowsPerPage}`, authHeader())).data
+};

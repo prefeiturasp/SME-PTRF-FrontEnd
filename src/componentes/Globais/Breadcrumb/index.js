@@ -5,7 +5,7 @@ const BreadcrumbComponent = ({ items }) => {
     return (
       <nav aria-label="breadcrumb">
       <ol className="breadcrumb mt-3">
-        <li class="breadcrumb-item">
+        <li className="breadcrumb-item">
           <i className="pi pi-home"></i>
           <a href="/">Início</a>
         </li>
