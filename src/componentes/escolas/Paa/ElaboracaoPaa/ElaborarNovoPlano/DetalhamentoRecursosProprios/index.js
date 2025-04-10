@@ -27,10 +27,13 @@ const { TextArea } = Input;
 
 const DetalhamentoRecursosProprios = () => {
   const dispatch = useDispatch();
+  const associacaoUUID = localStorage.getItem(ASSOCIACAO_UUID);
+
   const [items, setItems] = useState([]);
 
-  const { data, isLoading } = useGetRecursosProprios();
-  const { data: totalRecursosProprios } = useGetTotalizadorRecursoProprio();
+  const { data, isLoading } = useGetRecursosProprios(associacaoUUID);
+  const { data: totalRecursosProprios } =
+    useGetTotalizadorRecursoProprio(associacaoUUID);
   const { data: fontesRecursos, isLoading: isLoadingFontesRecursos } =
     useGetFontesRecursos();
 
@@ -104,10 +107,8 @@ const DetalhamentoRecursosProprios = () => {
   };
 
   const handleSave = (rowData) => {
-    const associacao_uuid = localStorage.getItem(ASSOCIACAO_UUID);
-
     const payload = {
-      associacao: associacao_uuid,
+      associacao: associacaoUUID,
       fonte_recurso: rowData?.fonte_recurso?.uuid,
       data_prevista: rowData?.data_prevista,
       descricao: rowData?.descricao,

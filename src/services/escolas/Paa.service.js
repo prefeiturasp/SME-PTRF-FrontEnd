@@ -64,7 +64,7 @@ export const downloadPdfLevantamentoPrioridades = async (associacao_uuid) => {
 export const getRecursosProprios = async (associacaoUUID, page = 1) => {
   return (
     await api.get(
-      `api/recursos-proprios-paa/?associacao_uuid={associacaoUUID}&page=${page}`,
+      `api/recursos-proprios-paa/?associacao__uuid=${associacaoUUID}&page=${page}&page_size=20`,
       authHeader()
     )
   ).data;
@@ -86,8 +86,13 @@ export const deleteRecursoProprioPaa = async (uuid) => {
     .data;
 };
 
-export const getTotalizadorRecursoProprio = async () => {
-  return (await api.get(`api/recursos-proprios-paa/total/`, authHeader())).data;
+export const getTotalizadorRecursoProprio = async (associacaoUUID) => {
+  return (
+    await api.get(
+      `api/recursos-proprios-paa/total/?associacao__uuid=${associacaoUUID}`,
+      authHeader()
+    )
+  ).data;
 };
 
 // fontes recursos

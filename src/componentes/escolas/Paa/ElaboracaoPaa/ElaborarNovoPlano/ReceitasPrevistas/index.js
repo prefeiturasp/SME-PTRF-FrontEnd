@@ -10,12 +10,15 @@ import { Icon } from "../../../../../Globais/UI/Icon";
 import { formatMoneyBRL } from "../../../../../../utils/money";
 import DetalhamentoRecursosProprios from "../DetalhamentoRecursosProprios";
 import { useGetTotalizadorRecursoProprio } from "../DetalhamentoRecursosProprios/hooks/useGetTotalizarRecursoProprio";
+import { ASSOCIACAO_UUID } from "../../../../../../services/auth.service";
 
 const ReceitasPrevistas = () => {
+  const associacaoUUID = localStorage.getItem(ASSOCIACAO_UUID);
   const [activeTab, setActiveTab] = useState("Receitas Previstas");
   const [modalForm, setModalForm] = useState({ open: false, data: null });
   const { data, isLoading } = useGetAcoesAssociacao();
-  const { data: totalRecursosProprios } = useGetTotalizadorRecursoProprio();
+  const { data: totalRecursosProprios } =
+    useGetTotalizadorRecursoProprio(associacaoUUID);
 
   const TAB_RECEITAS_PREVISTAS = "Receitas Previstas";
   const TAB_DETALHAMENTO_RECURSOS_PROPRIOS =
@@ -153,7 +156,7 @@ const ReceitasPrevistas = () => {
 
   const totalRecursoProprioTemplate = useCallback(() => {
     return (
-      <span style={{ color: "#992B6C" }} className="font-weight-bold">
+      <span className="font-weight-bold">
         {totalRecursosProprios
           ? formatMoneyBRL(totalRecursosProprios.total)
           : "__"}
