@@ -60,7 +60,7 @@ export const downloadPdfLevantamentoPrioridades = async (associacao_uuid) => {
   }
 };
 
-// recursos próprios
+// Recursos Próprios
 export const getRecursosProprios = async (associacaoUUID, page = 1) => {
   return (
     await api.get(
@@ -95,7 +95,20 @@ export const getTotalizadorRecursoProprio = async (associacaoUUID) => {
   ).data;
 };
 
-// fontes recursos
+// Fonte Recurso
 export const getFontesRecursos = async () => {
   return (await api.get(`api/fontes-recursos-paa/`, authHeader())).data;
+};
+export const getAcoesPDDE = async (currentPage = 1, rowsPerPage = 20) => {
+  return (
+    await api.get(
+      `/api/acoes-pdde/?page=${currentPage}&page_size=${rowsPerPage}`,
+      authHeader()
+    )
+  ).data;
+};
+
+// PDDE
+export const getCategoriasPddeTotais = async () => {
+  return (await api.get(`api/categorias-pdde/totais/`, authHeader())).data;
 };

@@ -11,26 +11,38 @@ import { formatMoneyBRL } from "../../../../../../utils/money";
 import DetalhamentoRecursosProprios from "../DetalhamentoRecursosProprios";
 import { useGetTotalizadorRecursoProprio } from "../DetalhamentoRecursosProprios/hooks/useGetTotalizarRecursoProprio";
 import { ASSOCIACAO_UUID } from "../../../../../../services/auth.service";
+import TableReceitasPrevistasPdde from "./TableReceitasPrevistasPdde";
+import { DetalhamentoAcoesPdde } from "./DetalhamentoAcoesPdde";
 
 const ReceitasPrevistas = () => {
   const associacaoUUID = localStorage.getItem(ASSOCIACAO_UUID);
-  const [activeTab, setActiveTab] = useState("Receitas Previstas");
+  const [activeTab, setActiveTab] = useState("receitas-previstas");
   const [modalForm, setModalForm] = useState({ open: false, data: null });
   const { data, isLoading } = useGetAcoesAssociacao();
   const { data: totalRecursosProprios } =
     useGetTotalizadorRecursoProprio(associacaoUUID);
 
-  const TAB_RECEITAS_PREVISTAS = "Receitas Previstas";
   const TAB_DETALHAMENTO_RECURSOS_PROPRIOS =
-    "Detalhamento de recursos próprios";
+    "detalhamento-de-recursos-proprios";
 
-  const tabs = [TAB_RECEITAS_PREVISTAS, TAB_DETALHAMENTO_RECURSOS_PROPRIOS];
+  const tabs = [
+    { id: "receitas-previstas", label: "Receitas Previstas" },
+    {
+      id: "detalhamento-das-acoes-pdde",
+      label: "Detalhamamento das ações PDDE",
+    },
+    {
+      id: TAB_DETALHAMENTO_RECURSOS_PROPRIOS,
+      label: "Detalhamento de recursos próprios",
+    },
+  ];
 
   const dataRecursosProprios = [
     {
       nome: "Recursos Próprios",
     },
   ];
+
   const dataTemplate = useCallback(
     (rowData, column) => {
       if (rowData?.acao?.nome === "Total do PTRF") {
@@ -205,62 +217,73 @@ const ReceitasPrevistas = () => {
           <Fragment key={index}>
             <li className="nav-item">
               <button
-                className={`nav-link btn-escolhe-acao mr-3 ${
-                  activeTab === tab && "btn-escolhe-acao-active"
+                className={`nav-link btn-escolhe-acao mr-4 ${
+                  activeTab === tab.id && "btn-escolhe-acao-active"
                 }`}
-                onClick={() => setActiveTab(tab)}
+                onClick={() => setActiveTab(tab.id)}
               >
-                {tab}
+                {tab.label}
               </button>
             </li>
           </Fragment>
         ))}
       </nav>
 
-      {activeTab === tabs.find((tab) => tab === TAB_RECEITAS_PREVISTAS) ? (
-        <Spin spinning={isLoading}>
-          <Flex gutter={8} justify="space-between" className="mb-4">
-            <h4 className="mb-0">Receitas Previstas</h4>
-            <Flex align="center">
-              <Checkbox>Parar atualizações do saldo</Checkbox>
-              <Icon
-                tooltipMessage="Ao selecionar esta opção os valores dos recursos não serão atualizados e serão mantidos os valores da última atualização automática ou da edição realizada."
-                icon="faExclamationCircle"
-                iconProps={{
-                  style: {
-                    fontSize: "16px",
-                    marginLeft: 4,
-                    color: "#086397",
-                  },
-                }}
-              />
+      {activeTab === "receitas-previstas" ? (
+        <>
+          <Spin spinning={isLoading}>
+            <Flex gutter={8} justify="space-between" className="mb-4">
+              <h4 className="mb-0">Receitas Previstas</h4>
+              <Flex align="center">
+                <Checkbox>Parar atualizações do saldo</Checkbox>
+                <Icon
+                  tooltipMessage="Ao selecionar esta opção os valores dos recursos não serão atualizados e serão mantidos os valores da última atualização automática ou da edição realizada."
+                  icon="faExclamationCircle"
+                  iconProps={{
+                    style: {
+                      fontSize: "16px",
+                      marginLeft: 4,
+                      color: "#086397",
+                    },
+                  }}
+                />
+              </Flex>
             </Flex>
-          </Flex>
 
-          <DataTable
-            className="tabela-receitas-previstas"
-            value={[...data, { acao: { nome: "Total do PTRF" }, fixed: true }]}
-            rowClassName={rowClassName}
-          >
-            <Column field="nome" header="Recursos" body={nomeTemplate} />
-            <Column
-              field="valor_custeio"
-              header="Custeio (R$)"
-              body={dataTemplate}
-            />
-            <Column
-              field="valor_capital"
-              header="Capital (R$)"
-              body={dataTemplate}
-            />
-            <Column
-              field="valor_livre"
-              header="Livre Aplicação (R$)"
-              body={dataTemplate}
-            />
-            <Column field="total" header="Total (R$)" body={dataTemplate} />
-            <Column field="acoes" header="Ações" body={acoesTemplate} />
-          </DataTable>
+            <DataTable
+              className="tabela-receitas-previstas"
+              value={[
+                ...data,
+                { acao: { nome: "Total do PTRF" }, fixed: true },
+              ]}
+              rowClassName={rowClassName}
+            >
+              <Column field="nome" header="Recursos" body={nomeTemplate} />
+              <Column
+                field="valor_custeio"
+                header="Custeio (R$)"
+                body={dataTemplate}
+              />
+              <Column
+                field="valor_capital"
+                header="Capital (R$)"
+                body={dataTemplate}
+              />
+              <Column
+                field="valor_livre"
+                header="Livre Aplicação (R$)"
+                body={dataTemplate}
+              />
+              <Column field="total" header="Total (R$)" body={dataTemplate} />
+              <Column field="acoes" header="Ações" body={acoesTemplate} />
+            </DataTable>
+          </Spin>
+
+          <TableReceitasPrevistasPdde
+            tabs={tabs}
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+          />
 
           <DataTable
             className="tabela-recursos-proprios mt-5"
@@ -298,12 +321,15 @@ const ReceitasPrevistas = () => {
               body={acoesRecursoProprioTemplate}
             />
           </DataTable>
-        </Spin>
-      ) : activeTab ===
-        tabs.find((tab) => tab === TAB_DETALHAMENTO_RECURSOS_PROPRIOS) ? (
-        <DetalhamentoRecursosProprios
-          totalRecursoProprioTemplate={totalRecursoProprioTemplate}
-        />
+        </>
+      ) : null}
+
+      {activeTab === "detalhamento-das-acoes-pdde" ? (
+        <DetalhamentoAcoesPdde />
+      ) : null}
+
+      {activeTab === "detalhamento-de-recursos-proprios" ? (
+        <DetalhamentoRecursosProprios />
       ) : null}
     </div>
   );
