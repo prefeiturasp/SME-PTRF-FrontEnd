@@ -32,7 +32,7 @@ export const usePatchMandato = () => {
             console.log("Erro ao editar mandato ", error.response)
             // Mensagens
             setShowModalInfo(true)
-            setTituloModalInfo('Erro ao editar período de mandado')
+            setTituloModalInfo('Erro ao editar período de mandato')
             setTextoModalInfo(error.response.data.detail)
         },
         onSettled: () => {
