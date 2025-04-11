@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
+import { Paginator } from "primereact/paginator";
 import { DatePicker, Flex, Input, InputNumber, Select, Spin } from "antd";
 import { IconButton } from "../../../../../Globais/UI";
 import { useGetRecursosProprios } from "./hooks/useGetRecursosProprios";
@@ -31,8 +32,14 @@ const DetalhamentoRecursosProprios = () => {
 
   const [items, setItems] = useState([]);
   const [currentItem, setCurrentItem] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [firstPage, setFirstPage] = useState(0);
 
-  const { data, isLoading } = useGetRecursosProprios(associacaoUUID);
+  const { data, isLoading, count } = useGetRecursosProprios(
+    associacaoUUID,
+    currentPage
+  );
+
   const { data: totalRecursosProprios } =
     useGetTotalizadorRecursoProprio(associacaoUUID);
   const { data: fontesRecursos, isLoading: isLoadingFontesRecursos } =
@@ -48,9 +55,7 @@ const DetalhamentoRecursosProprios = () => {
   const { mutationDelete } = useDeleteRecursoProprio();
 
   useEffect(() => {
-    if (data && data.results) {
-      setItems(data.results);
-    }
+    setItems(data.results);
   }, [data]);
 
   const handleOpenFieldsToEdit = (item) => {
@@ -290,6 +295,11 @@ const DetalhamentoRecursosProprios = () => {
     return rowData?.fonte_recurso?.nome;
   };
 
+  const onPageChange = (event) => {
+    setFirstPage(event.first);
+    setCurrentPage(event.page + 1);
+  };
+
   const currentRowData = useMemo(() => {
     return items.find((item) => item.uuid === currentItem);
   }, [items, currentItem]);
@@ -343,6 +353,14 @@ const DetalhamentoRecursosProprios = () => {
           <Column field="valor" header="Valor estimado" body={valorTemplate} />
           <Column field="acoes" header="Ações" body={acoesTemplate} />
         </DataTable>
+
+        <Paginator
+          first={firstPage}
+          rows={20}
+          totalRecords={count}
+          template="PrevPageLink PageLinks NextPageLink"
+          onPageChange={onPageChange}
+        />
       </Spin>
     </div>
   );
