@@ -10,8 +10,8 @@ export const useGetAcoesAssociacao = () => {
     refetch,
   } = useQuery(["acoes-associacao"], () => getAcoesAssociacao(), {
     keepPreviousData: true,
-    staleTime: 5000, // 5 segundos
-    refetchOnWindowFocus: true, // Caso saia da aba e voltar ele refaz a requisição
+    staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: true,
   });
   return { isLoading, isError, data: data.results, error, refetch };
 };

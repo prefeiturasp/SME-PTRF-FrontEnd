@@ -10,11 +10,10 @@ export const useGetFontesRecursos = () => {
     error,
     refetch,
   } = useQuery(["fontes-recursos"], () => getFontesRecursos(), {
-    cacheTime: 0,
-    staleTime: 0,
+    keepPreviousData: false,
+    staleTime: 5 * 60 * 1000,
+    cacheTime: 10 * 60 * 1000,
     refetchOnWindowFocus: false,
-    refetchInterval: false,
-    refetchOnReconnect: false,
   });
   const count = useMemo(() => data.count, [data]);
   return { isLoading, isError, data, error, count, refetch };

@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getRecursosProprios } from "../../../../../../../services/escolas/Paa.service";
 import { useMemo } from "react";
 
-export const useGetRecursosProprios = (associacaoUUID, page = 1) => {
+export const useGetRecursosProprios = (associacaoUUID, page) => {
   const {
     isLoading,
     isError,
@@ -13,11 +13,10 @@ export const useGetRecursosProprios = (associacaoUUID, page = 1) => {
     ["recursos-proprios", page],
     () => getRecursosProprios(associacaoUUID, page),
     {
-      cacheTime: 0,
-      staleTime: 0,
+      keepPreviousData: false,
+      staleTime: 5 * 60 * 1000,
+      cacheTime: 10 * 60 * 1000,
       refetchOnWindowFocus: false,
-      refetchInterval: false,
-      refetchOnReconnect: false,
       enabled: !!associacaoUUID,
     }
   );
