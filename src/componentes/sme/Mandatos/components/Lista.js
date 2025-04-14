@@ -51,7 +51,7 @@ export const Lista = () => {
                         </div>
                     )}
                 </button>
-            </div>
+           </div>
         )
     };
 
