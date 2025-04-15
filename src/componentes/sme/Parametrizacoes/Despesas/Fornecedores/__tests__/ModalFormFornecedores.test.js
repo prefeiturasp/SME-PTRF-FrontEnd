@@ -60,6 +60,7 @@ describe("Componente ModalForm", () => {
 
   it("Renderiza a Modal quando a operação é Edição e permissão é True", () => {
     render(<ModalFormFornecedores {...defaultPropsEdicao} />);
+
     expect(screen.getByLabelText("Nome do Fornecedor *")).toHaveValue("Fornecedor abcd-10");
     expect(screen.getByRole("button", { name: "Apagar" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Cancelar" })).toBeInTheDocument();
