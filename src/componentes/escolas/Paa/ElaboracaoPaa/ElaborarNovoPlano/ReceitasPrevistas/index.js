@@ -27,7 +27,7 @@ const ReceitasPrevistas = () => {
     { id: "receitas-previstas", label: "Receitas Previstas" },
     {
       id: "detalhamento-das-acoes-pdde",
-      label: "Detalhamamento das ações PDDE",
+      label: "Detalhamento das ações PDDE",
     },
     {
       id: TAB_DETALHAMENTO_RECURSOS_PROPRIOS,
