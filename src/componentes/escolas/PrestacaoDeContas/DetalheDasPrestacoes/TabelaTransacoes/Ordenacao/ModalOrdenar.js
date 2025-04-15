@@ -32,7 +32,7 @@ export const ModalOrdenar = ({
           </div>
           <div className="col-12 mt-2">
             <InputSelect
-              label="Date"
+              label="Data"
               value={camposOrdenacao.ordenar_por_data_especificacao}
               options={opcoesOrdenacao}
               onChange={(e) =>

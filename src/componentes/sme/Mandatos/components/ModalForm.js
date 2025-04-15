@@ -48,7 +48,7 @@ export const ModalForm = ({handleSubmitFormModal, handleConfirmDeleteMandato}) =
                                             <span
                                                 data-tip="Preencher com o período total do mandato. </br>Por exemplo: 2023 a 2025."
                                                 data-html={true}>
-                                                <label>Referência do mandato *</label>
+                                                <label htmlFor="referencia">Referência do mandato *</label>
                                                 <ReactTooltip/>
                                             </span>
 
@@ -71,7 +71,7 @@ export const ModalForm = ({handleSubmitFormModal, handleConfirmDeleteMandato}) =
                                         <p><strong>Período</strong></p>
                                     </div>
                                     <div className='col-6'>
-                                        <label>Data inicial *</label>
+                                        <label htmlFor="data_inicial">Data inicial *</label>
                                         <DatePickerField
                                             name="data_inicial"
                                             id="data_inicial"
@@ -84,7 +84,7 @@ export const ModalForm = ({handleSubmitFormModal, handleConfirmDeleteMandato}) =
                                             className="span_erro text-danger mt-1"> {props.errors.data_inicial}</span>}
                                     </div>
                                     <div className='col-6'>
-                                        <label>Data final *</label>
+                                        <label htmlFor="data_final">Data final *</label>
                                         <DatePickerField
                                             name="data_final"
                                             id="data_final"

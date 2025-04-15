@@ -27,7 +27,7 @@ const Tabela = ({
     const acoesTemplate = (rowData) => {
         return (
             <div style={{ display: 'flex', justifyContent: 'center' }}>
-                <button onClick={() => handleOpenModalForm(rowData)} className="btn-editar-membro">
+                <button onClick={() => handleOpenModalForm(rowData)} className="btn-editar-membro" data-testid="botao-editar" aria-label="Editar ação">
                     <div data-tip="Editar ação" data-for={`tooltip-id-${rowData.uuid}`}>
                         <ReactTooltip id={`tooltip-id-${rowData.uuid}`}/>
                         <FontAwesomeIcon

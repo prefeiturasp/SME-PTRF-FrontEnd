@@ -1,15 +1,15 @@
 import api from '../api'
 import { TOKEN_ALIAS } from '../auth.service.js';
 
-const authHeader = {
+const authHeader = ()=>({
     headers: {
         'Authorization': `JWT ${localStorage.getItem(TOKEN_ALIAS)}`,
         'Content-Type': 'application/json'
     }
-};
+});
 
 export const updateProcessoAssociacao = async (uuid_processo, payload) => {
-    return api.patch(`api/processos-associacao/${uuid_processo}/`, payload, authHeader).then(response => {
+    return api.patch(`api/processos-associacao/${uuid_processo}/`, payload, authHeader()).then(response => {
         return response;
     }).catch(error => {
         return error.response;
@@ -18,7 +18,7 @@ export const updateProcessoAssociacao = async (uuid_processo, payload) => {
 
 
 export const createProcessoAssociacao = async (payload) => {
-    return api.post(`api/processos-associacao/`, payload, authHeader).then(response => {
+    return api.post(`api/processos-associacao/`, payload, authHeader()).then(response => {
         return response;
     }).catch(error => {
         return error.response;
@@ -26,7 +26,7 @@ export const createProcessoAssociacao = async (payload) => {
 };
 
 export const deleteProcessoAssociacao = async (uuid_processo) => {
-    return api.delete(`api/processos-associacao/${uuid_processo}/`, authHeader).then(response => {
+    return api.delete(`api/processos-associacao/${uuid_processo}/`, authHeader()).then(response => {
         return response;
     }).catch(error => {
         return error.response;
@@ -34,5 +34,5 @@ export const deleteProcessoAssociacao = async (uuid_processo) => {
 };
 
 export const getPeriodosDisponiveis = async (associacao_uuid, ano, processo_uuid='') => {
-    return (await api.get(`api/processos-associacao/periodos-disponiveis/?associacao_uuid=${associacao_uuid}&ano=${ano}${processo_uuid ? "&processo_uuid="+processo_uuid : ""}`, authHeader)).data
+    return (await api.get(`api/processos-associacao/periodos-disponiveis/?associacao_uuid=${associacao_uuid}&ano=${ano}${processo_uuid ? "&processo_uuid="+processo_uuid : ""}`, authHeader())).data
 };

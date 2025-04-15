@@ -218,6 +218,7 @@ const ModalEdicaoAcaoPdde = ({ open, onClose, acaoPdde }) => {
                   <Flex align="end" gap={8}>
                     <Form.Item
                       label="Capital"
+                      data-testid="saldo_valor_capital"
                       name="saldo_valor_capital"
                       labelCol={{ span: 24 }}
                       style={{ marginBottom: 8 }}
