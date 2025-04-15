@@ -64,8 +64,19 @@ describe("Carrega página de Acoes das Associações", () => {
             const filtro_nome = screen.getByLabelText(/filtrar por nome ou código EOL/i)
             expect(filtro_nome).toBeInTheDocument();
 
+            const filtro_acoes = screen.getByLabelText(/Filtrar por ação/i)
+            expect(filtro_acoes).toBeInTheDocument();
+
+            const filtro_status = screen.getByLabelText(/Filtrar por status/i)
+            expect(filtro_status).toBeInTheDocument();
+
             fireEvent.change(filtro_nome, { target: { value: 'Filtro' } });
             expect(filtro_nome.value).toBe('Filtro');
+
+            fireEvent.change(filtro_acoes, { target: { value: 'Tipo c511' } });
+            fireEvent.click(screen.getByText('Tipo c511'))
+
+            fireEvent.change(filtro_status, { target: { value: 'Ativa' } });
 
         });
         fireEvent.click(screen.getByRole('button', { name: /filtrar/i }));
@@ -74,7 +85,7 @@ describe("Carrega página de Acoes das Associações", () => {
         });
     });
 
-    it.skip("Testa a chamada de limpar Filtros", async () => {
+    it("Testa a chamada de limpar Filtros", async () => {
         renderComponent()
         expect(screen.getByText(/Carregando.../i)).toBeInTheDocument();
         
