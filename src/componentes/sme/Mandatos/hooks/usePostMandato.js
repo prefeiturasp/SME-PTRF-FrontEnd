@@ -28,7 +28,7 @@ export const usePostMandato = () => {
         onError: (error) => {
             console.log("Erro ao criar mandato ", error.response)
             setShowModalInfo(true)
-            setTituloModalInfo('Erro ao cadastrar período de mandado')
+            setTituloModalInfo('Erro ao cadastrar período de mandato')
             setTextoModalInfo(error.response.data.detail)
         },
         onSettled: () => {
