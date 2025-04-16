@@ -3,7 +3,7 @@ import { useGetCategoriasPddeTotais } from "./hooks/useGetCategoriasPddeTotais";
 import { Spin } from "antd";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
-import { IconButton } from "../../../../../Globais/UI";
+import { IconButton } from "../../../../../Globais/UI/Button/IconButton";
 import { formatMoneyBRL } from "../../../../../../utils/money";
 
 const TableReceitasPrevistasPdde = ({ activeTab, tabs, setActiveTab }) => {
@@ -51,7 +51,7 @@ const TableReceitasPrevistasPdde = ({ activeTab, tabs, setActiveTab }) => {
   };
 
   const totalRow = {
-    nome: "Total do PTRF",
+    nome: "Total do PDDE",
     total_valor_custeio: total?.total_valor_custeio || 0,
     total_valor_capital: total?.total_valor_capital || 0,
     total_valor_livre_aplicacao: total?.total_valor_livre_aplicacao || 0,

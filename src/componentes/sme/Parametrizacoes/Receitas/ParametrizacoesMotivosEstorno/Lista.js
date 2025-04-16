@@ -3,7 +3,7 @@ import Loading from "../../../../../utils/Loading";
 import { Filtros } from "./Filtros";
 import ModalForm from "./ModalForm";
 import { ModalBootstrap } from "../../../../Globais/ModalBootstrap";
-import { IconButton } from "../../../../Globais/UI";
+import { IconButton } from "../../../../Globais/UI/Button/IconButton";
 import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
 import { MsgImgCentralizada } from "../../../../Globais/Mensagens/MsgImgCentralizada";
 import Img404 from "../../../../../assets/img/img-404.svg";

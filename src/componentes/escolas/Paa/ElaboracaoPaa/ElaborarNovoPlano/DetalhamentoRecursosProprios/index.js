@@ -3,7 +3,7 @@ import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import { Paginator } from "primereact/paginator";
 import { DatePicker, Flex, Input, InputNumber, Select, Spin } from "antd";
-import { IconButton } from "../../../../../Globais/UI";
+import { IconButton } from "../../../../../Globais/UI/Button/IconButton";
 import { useGetRecursosProprios } from "./hooks/useGetRecursosProprios";
 import "./style.css";
 import {

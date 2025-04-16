@@ -10,6 +10,7 @@ import {
   formatMoneyByCentsBRL,
   parseMoneyBRL,
 } from "../../../../../../utils/money";
+import "./style.css";
 
 const initialValues = {
   saldo_atual_capital: 0,
@@ -172,6 +173,7 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
                         disabled
+                        controls={false}
                       />
                     </Form.Item>
                     <Icon
@@ -195,6 +197,7 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
                         min={0}
+                        controls={false}
                       />
                     </Form.Item>
                     <Icon
@@ -216,6 +219,7 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                       parser={parseMoneyBRL}
                       style={{ width: "100%" }}
                       disabled
+                      controls={false}
                     />
                   </Form.Item>
                 </Col>
@@ -238,6 +242,7 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
                         disabled
+                        controls={false}
                       />
                     </Form.Item>
                     <Icon
@@ -261,6 +266,7 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
                         min={0}
+                        controls={false}
                       />
                     </Form.Item>
                     <Icon
@@ -282,6 +288,7 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                       parser={parseMoneyBRL}
                       style={{ width: "100%" }}
                       disabled
+                      controls={false}
                     />
                   </Form.Item>
                 </Col>
@@ -304,6 +311,7 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
                         disabled
+                        controls={false}
                       />
                     </Form.Item>
                     <Icon
@@ -327,6 +335,7 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
                         min={0}
+                        controls={false}
                       />
                     </Form.Item>
                     <Icon
@@ -348,6 +357,7 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                       parser={parseMoneyBRL}
                       style={{ width: "100%" }}
                       disabled
+                      controls={false}
                     />
                   </Form.Item>
                 </Col>
