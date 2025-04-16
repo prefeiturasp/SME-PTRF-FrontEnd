@@ -68,6 +68,7 @@ export const AssociacoesDaAcao = () => {
     }
 
     const onPageChange = async (event) => {
+        setLoading(true)
         setCurrentPage(event.page + 1)
         setFirstPage(event.first)
 

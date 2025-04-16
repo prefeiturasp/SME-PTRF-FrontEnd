@@ -1,12 +1,12 @@
 import api from '../api'
 import { TOKEN_ALIAS } from '../auth.service.js';
 
-const authHeader = {
+const authHeader = ()=>({
     headers: {
         'Authorization': `JWT ${localStorage.getItem(TOKEN_ALIAS)}`,
         'Content-Type': 'application/json'
     }
-}
+});
 
 
 export const getDownloadLauda = async (lauda_uuid, filename) => {
@@ -14,10 +14,7 @@ export const getDownloadLauda = async (lauda_uuid, filename) => {
     .get(`api/consolidados-dre/download-lauda/?lauda=${lauda_uuid}`, {
         responseType: 'blob',
         timeout: 30000,
-        headers: {
-            'Authorization': `JWT ${localStorage.getItem(TOKEN_ALIAS)}`,
-            'Content-Type': 'application/json',
-        }
+        ...authHeader()
     })
     .then((response) => {
         const url = window.URL.createObjectURL(new Blob([response.data]));

@@ -1,0 +1,22 @@
+.tabela-receitas-previstas
+  .p-datatable
+  .p-datatable-tbody
+  > tr:nth-child(even) {
+  background-color: white !important;
+}
+.tabela-receitas-previstas .p-datatable .p-datatable-thead > tr > th {
+  padding: 1.5em 0.857em !important;
+}
+.ant-select-single {
+  height: initial !important;
+}
+.tabela-recursos-proprios-lista .p-datatable-row:last-child {
+  background-color: rgba(43, 125, 131, 1) !important;
+}
+.tabela-recursos-proprios-lista .p-datatable-row:last-child td {
+  color: white;
+  font-weight: 600;
+}
+.tabela-recursos-proprios-lista .p-datatable-tbody > tr:last-child > td {
+  border: none !important;
+}

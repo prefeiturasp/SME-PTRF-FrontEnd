@@ -28,12 +28,12 @@ const authHeader = {
     'Content-Type': 'application/json'
 };
 
-const authHeaderAuthorization = {
+const authHeaderAuthorization = ()=>({
     headers: {
         'Authorization': `JWT ${localStorage.getItem(TOKEN_ALIAS)}`,
         'Content-Type': 'application/json'
     }
-};
+});
 
 const setDataLogin = async ()=>{
     let data_login = localStorage.getItem(DATA_LOGIN);
@@ -118,8 +118,8 @@ const login = async (login, senha, suporte=false) => {
             window.location.href = "/";
         } 
     } catch (error) {
-        console.log("Erro ao efetuar o login ", error.response.data)
-        return error.response.data;
+        console.log("Erro ao efetuar o login ", error.response?.data)
+        return error.response?.data;
     }
 };
 
@@ -192,15 +192,16 @@ export const redefinirMinhaSenha = async (payload) => {
 };
 
 export const alterarMeuEmail = async (usuario, payload) => {
-    return (await api.patch(`api/usuarios/${usuario}/altera-email/`, payload, authHeaderAuthorization))
+    return (await api.patch(`api/usuarios/${usuario}/altera-email/`, payload, authHeaderAuthorization()))
 };
 
 export const alterarMinhaSenha = async (usuario, payload) => {
-    return (await api.patch(`/api/usuarios/${usuario}/altera-senha/`, payload, authHeaderAuthorization))
+    return (await api.patch(`/api/usuarios/${usuario}/altera-senha/`, payload, authHeaderAuthorization()))
 };
 
 export const authService = {
     login,
+    setDataLogin,
     logout,
     logoutToSuporte,
     getToken,
@@ -217,17 +218,17 @@ export const getUsuarioLogado = () => {
 }
 
 export const viabilizarAcessoSuporte = async (usuario, payload) => {
-    return (await api.post(`api/usuarios/${usuario}/viabilizar-acesso-suporte/`, payload, authHeaderAuthorization))
+    return (await api.post(`api/usuarios/${usuario}/viabilizar-acesso-suporte/`, payload, authHeaderAuthorization()))
 };
 
 export const getUnidadesEmSuporte = async (usuario, page=1) => {
-    return (await api.get(`/api/usuarios/${usuario}/unidades-em-suporte/?page=${page}`, authHeaderAuthorization)).data
+    return (await api.get(`/api/usuarios/${usuario}/unidades-em-suporte/?page=${page}`, authHeaderAuthorization())).data
   }
 
 export const encerrarAcessoSuporte = async (usuario, unidade_suporte_uuid) => {
-    return (await api.post(`api/usuarios/${usuario}/encerrar-acesso-suporte/`, {unidade_suporte_uuid}, authHeaderAuthorization))
+    return (await api.post(`api/usuarios/${usuario}/encerrar-acesso-suporte/`, {unidade_suporte_uuid}, authHeaderAuthorization()))
 };
 
 export const encerrarAcessoSuporteEmLote = async (usuario, unidade_suporte_uuids = []) => {
-    return (await api.post(`api/usuarios/${usuario}/encerrar-acesso-suporte-em-lote/`, {unidade_suporte_uuids}, authHeaderAuthorization))
+    return (await api.post(`api/usuarios/${usuario}/encerrar-acesso-suporte-em-lote/`, {unidade_suporte_uuids}, authHeaderAuthorization()))
 };

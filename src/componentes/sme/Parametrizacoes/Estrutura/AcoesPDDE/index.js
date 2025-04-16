@@ -3,7 +3,7 @@ import { PaginasContainer } from "../../../../../paginas/PaginasContainer";
 import ModalForm from "./ModalForm";
 import { Filtros } from "./Filtros";
 import Tabela from "./Tabela";
-import { IconButton } from "../../../../Globais/UI";
+import { IconButton } from "../../../../Globais/UI/Button/IconButton";
 import Loading from "../../../../../utils/Loading";
 import { ModalBootstrap } from "../../../../Globais/ModalBootstrap";
 import { useAcoesPDDE } from "./hooks/useAcoesPDDE";

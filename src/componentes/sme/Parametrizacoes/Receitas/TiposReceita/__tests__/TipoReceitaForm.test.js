@@ -4,11 +4,8 @@ import { createStore } from "redux";
 import userEvent from "@testing-library/user-event";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { MemoryRouter } from "react-router-dom";
-import {
-  useParams,
-  useLocation,
-  useNavigate,
-} from "react-router-dom-v5-compat";
+import { useLocation, useNavigate } from "react-router-dom-v5-compat";
+import { useParams } from "react-router-dom";
 import { TipoReceitaForm } from "../TipoReceitaForm";
 import { useGetFiltrosTiposReceita } from "../hooks/useGetFiltrosTiposReceita";
 import { usePostTipoReceita } from "../hooks/usePostTipoReceita";
@@ -26,18 +23,18 @@ jest.mock("../../../RetornaSeTemPermissaoEdicaoPainelParametrizacoes");
 jest.mock("react-router-dom-v5-compat", () => ({
   ...jest.requireActual("react-router-dom-v5-compat"),
   useNavigate: jest.fn(),
-  useParams: jest.fn(),
   useLocation: jest.fn(),
+}));
+
+jest.mock("react-router-dom", () => ({
+  ...jest.requireActual("react-router-dom"),
+  useParams: jest.fn(),
 }));
 
 let queryClient;
 const mockMutateAsyncPost = jest.fn();
 const mockMutatePatch = jest.fn();
 const mockNavigate = jest.fn();
-
-const wrapper = ({ children }) => (
-  <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-);
 
 const mockStore = createStore(() => ({}));
 

@@ -1,17 +1,17 @@
 import api from './api';
 import {TOKEN_ALIAS} from "./auth.service";
 
-const authHeader = {
+const authHeader = ()=>({
     headers: {
         'Authorization': `JWT ${localStorage.getItem(TOKEN_ALIAS)}`,
         'Content-Type': 'application/json'
     }
-};
+});
 
 export const getMotivosRejeicaoEncerramentoConta = async (filter, currentPage) => {
     const {nome} = filter;
     return (await api.get(`/api/motivos-rejeicao-encerramento-conta/`,{
-        ...authHeader,
+        ...authHeader(),
         params: {
             nome: nome,
             page: currentPage,
@@ -23,7 +23,7 @@ export const postMotivosRejeicaoEncerramentoConta = async (payload) => {
     return (await api.post(`api/motivos-rejeicao-encerramento-conta/`, {
             ...payload
         },
-        authHeader,
+        authHeader(),
     ))
 };
 
@@ -31,10 +31,10 @@ export const patchMotivosRejeicaoEncerramentoConta = async (uuidMotivoRejeicaoEn
     return (await api.patch(`api/motivos-rejeicao-encerramento-conta/${uuidMotivoRejeicaoEncerramentoConta}/`, {
             ...payload
         },
-        authHeader,
+        authHeader(),
     ))
 };
 
 export const deleteMotivoRejeicaoEncerramentoConta = async (uuidMotivoRejeicaoEncerramentoConta) => {
-    return (await api.delete(`api/motivos-rejeicao-encerramento-conta/${uuidMotivoRejeicaoEncerramentoConta}/`, authHeader));
+    return (await api.delete(`api/motivos-rejeicao-encerramento-conta/${uuidMotivoRejeicaoEncerramentoConta}/`, authHeader()));
 };

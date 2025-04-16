@@ -22,17 +22,12 @@ const mockToken = 'fake-token';
 const mockData = [{ id: 1, nome: 'Teste 1' }];
 const associacao_uuid = '1234'
 const rateio_uuid = '1234'
-const receita_uuid = '1234';
-const periodo_uuid = '1234';
-const uuidPrestacaoDeContas = '1234';
 
 describe('Testes para funções de análise', () => {
     
     beforeEach(() => {
-        // localStorage.setItem(ASSOCIACAO_UUID, associacao_uuid);
+        localStorage.setItem(ASSOCIACAO_UUID, associacao_uuid);
         localStorage.setItem(TOKEN_ALIAS, mockToken);
-        // localStorage.setItem('uuidPrestacaoConta', uuidPrestacaoDeContas);
-        
     });
 
     afterEach(() => {
@@ -55,7 +50,6 @@ describe('Testes para funções de análise', () => {
             `api/rateios-despesas/${uuid_rateio}`,
             getAuthHeader()
         )
-        
         expect(result).toEqual(mockData);
     });
 
@@ -67,7 +61,6 @@ describe('Testes para funções de análise', () => {
             `api/rateios-despesas/?associacao__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`,
             getAuthHeader()
         )
-        
         expect(result).toEqual(mockData);
     });
 
@@ -79,7 +72,6 @@ describe('Testes para funções de análise', () => {
             `api/rateios-despesas/?search=${palavra}&associacao__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`,
             getAuthHeader()
         )
-        
         expect(result).toEqual(mockData);
     });
 
@@ -99,7 +91,6 @@ describe('Testes para funções de análise', () => {
             `api/rateios-despesas/?search=${palavra}&aplicacao_recurso=${aplicacao_recurso}&acao_associacao__uuid=${acao_associacao__uuid}&despesa__status=${despesa__status}&fornecedor=${fornecedor}${data_inicio ? '&data_inicio='+data_inicio : ""}${data_fim ? '&data_fim='+data_fim : ""}&conta_associacao__uuid=${conta_associacao__uuid}&associacao__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`,
             getAuthHeader()
         )
-        
         expect(result).toEqual(mockData);
     });
 
@@ -113,7 +104,18 @@ describe('Testes para funções de análise', () => {
             payload,
             getAuthHeader()
         )
-        
+        expect(result).toEqual(mockData);
+    });
+
+    test('getVerificarSaldo deve chamar a API corretamente SEM passar Despesa UUID', async () => {
+        api.post.mockResolvedValue({ data: mockData })
+        const payload = { teste: 'testes'}
+        const result = await getVerificarSaldo(payload);
+        expect(api.post).toHaveBeenCalledWith(
+            `/api/rateios-despesas/verificar-saldos/`,
+            payload,
+            getAuthHeader()
+        )
         expect(result).toEqual(mockData);
     });
 
@@ -134,7 +136,6 @@ describe('Testes para funções de análise', () => {
             `api/rateios-despesas/totais/?search=${palavra}&aplicacao_recurso=${aplicacao_recurso}&acao_associacao__uuid=${acao_associacao__uuid}&despesa__status=${despesa__status}&fornecedor=${fornecedor}${data_inicio ? '&data_inicio='+data_inicio : ""}${data_fim ? '&data_fim='+data_fim : ""}&conta_associacao__uuid=${conta_associacao__uuid}&filtro_vinculo_atividades=${filtro_vinculo_atividades}&filtro_informacoes=${filtro_informacoes}&associacao__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`,
             getAuthHeader()
         )
-        
         expect(result).toEqual(mockData);
     });
 });
