@@ -160,6 +160,7 @@ const ModalEdicaoAcaoPdde = ({ open, onClose, acaoPdde }) => {
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
                         disabled={acaoPdde && !acaoPdde.aceita_custeio}
+                        controls={false}
                       />
                     </Form.Item>
                     <Icon
@@ -184,6 +185,7 @@ const ModalEdicaoAcaoPdde = ({ open, onClose, acaoPdde }) => {
                         style={{ width: "100%" }}
                         min={0}
                         disabled={acaoPdde && !acaoPdde.aceita_custeio}
+                        controls={false}
                       />
                     </Form.Item>
                     <Icon
@@ -205,6 +207,7 @@ const ModalEdicaoAcaoPdde = ({ open, onClose, acaoPdde }) => {
                       parser={parseMoneyBRL}
                       style={{ width: "100%" }}
                       disabled
+                      controls={false}
                     />
                   </Form.Item>
                 </Col>
@@ -230,6 +233,7 @@ const ModalEdicaoAcaoPdde = ({ open, onClose, acaoPdde }) => {
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
                         disabled={acaoPdde && !acaoPdde.aceita_capital}
+                        controls={false}
                       />
                     </Form.Item>
                     <Icon
@@ -254,6 +258,7 @@ const ModalEdicaoAcaoPdde = ({ open, onClose, acaoPdde }) => {
                         style={{ width: "100%" }}
                         min={0}
                         disabled={acaoPdde && !acaoPdde.aceita_capital}
+                        controls={false}
                       />
                     </Form.Item>
                     <Icon
@@ -275,6 +280,7 @@ const ModalEdicaoAcaoPdde = ({ open, onClose, acaoPdde }) => {
                       parser={parseMoneyBRL}
                       style={{ width: "100%" }}
                       disabled
+                      controls={false}
                     />
                   </Form.Item>
                 </Col>
@@ -299,6 +305,7 @@ const ModalEdicaoAcaoPdde = ({ open, onClose, acaoPdde }) => {
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
                         disabled={acaoPdde && !acaoPdde.aceita_livre_aplicacao}
+                        controls={false}
                       />
                     </Form.Item>
                     <Icon
@@ -323,6 +330,7 @@ const ModalEdicaoAcaoPdde = ({ open, onClose, acaoPdde }) => {
                         style={{ width: "100%" }}
                         min={0}
                         disabled={acaoPdde && !acaoPdde.aceita_livre_aplicacao}
+                        controls={false}
                       />
                     </Form.Item>
                     <Icon
@@ -344,6 +352,7 @@ const ModalEdicaoAcaoPdde = ({ open, onClose, acaoPdde }) => {
                       parser={parseMoneyBRL}
                       style={{ width: "100%" }}
                       disabled
+                      controls={false}
                     />
                   </Form.Item>
                 </Col>

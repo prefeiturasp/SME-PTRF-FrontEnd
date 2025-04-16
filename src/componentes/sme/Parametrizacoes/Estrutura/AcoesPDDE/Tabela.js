@@ -2,7 +2,7 @@ import React, {memo, useCallback} from "react";
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import moment from "moment";
-import { IconButton } from "../../../../Globais/UI";
+import { IconButton } from "../../../../Globais/UI/Button/IconButton";
 import {faEdit, faPlus, faTimesCircle, faCheckCircle} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ReactTooltip from "react-tooltip";
