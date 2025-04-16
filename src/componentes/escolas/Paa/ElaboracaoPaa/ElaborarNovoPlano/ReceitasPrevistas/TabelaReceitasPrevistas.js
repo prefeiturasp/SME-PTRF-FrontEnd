@@ -2,7 +2,7 @@ import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import { useCallback } from "react";
 import { formatMoneyBRL } from "../../../../../../utils/money";
-import { IconButton } from "../../../../../Globais/UI";
+import { IconButton } from "../../../../../Globais/UI/Button/IconButton";
 
 const TabelaReceitasPrevistas = ({ data, handleOpenEditar }) => {
   const nomeTemplate = useCallback((rowData) => {

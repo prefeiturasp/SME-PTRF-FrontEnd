@@ -2,7 +2,7 @@ import React, {memo, useCallback} from "react";
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import moment from "moment";
-import { IconButton } from "../../../../Globais/UI";
+import { IconButton } from "../../../../Globais/UI/Button/IconButton";
 
 const Tabela = ({
     rowsPerPage, 
