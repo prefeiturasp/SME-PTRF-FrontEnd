@@ -15,7 +15,7 @@ import {Link, useParams} from 'react-router-dom';
 import {PaginasContainer} from "../../../../../../paginas/PaginasContainer";
 import {getAssociacoesNaoVinculadasAAcao, getAcao, postAddAcaoAssociacao, addAcoesAssociacoesEmLote} from "../../../../../../services/sme/Parametrizacoes.service"
 import {ModalConfirmVincularAcaoAssociacao} from "./ModalConfirmVincularAcaoAssociacao"
-import { TabelaAssociacaoAcao } from "../TabelaAssociacaoAcao";
+import { TabelaAssociacaoAcaoNaoVinculadas } from "./TabelaAssociacaoAcaoNaoVinculadas";
 import { getTabelaAssociacoes } from "../../../../../../services/dres/Associacoes.service";
 import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../../RetornaSeTemPermissaoEdicaoPainelParametrizacoes";// Preparação para react-router-dom-v6
 import {toastCustom} from "../../../../../Globais/ToastCustom";
@@ -409,7 +409,7 @@ export const VinculaAssociacoesAAcao = () => {
                                 <div className="row">
                                     <div className="col-12">
                                         {unidades.length > 0 ? (
-                                            <TabelaAssociacaoAcao
+                                            <TabelaAssociacaoAcaoNaoVinculadas
                                                 unidades={unidades}
                                                 rowsPerPage={rowsPerPage}
                                                 autoLayout={true}

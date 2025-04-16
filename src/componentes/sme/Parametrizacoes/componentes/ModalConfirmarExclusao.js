@@ -12,10 +12,10 @@ export const ModalConfirmarExclusao = (props) => {
             open={props.open}
             onOk={props.onOk}
             okText={props.okText}
-            okButtonProps={{className: props.okButtonProps ? props.okButtonProps : "btn-base-vermelho"}}
+            okButtonProps={{className: props.okButtonProps ? props.okButtonProps : "btn-base-vermelho",  "data-testid": "botao-confirmar-modal"}}
             onCancel={props.onCancel}
             cancelText={props.cancelText}
-            cancelButtonProps={{className: props.cancelButtonProps ? props.cancelButtonProps : "btn-base-verde-outline"}}
+            cancelButtonProps={{className: props.cancelButtonProps ? props.cancelButtonProps : "btn-base-verde-outline", "data-testid": "botao-cancelar-confirmacao-modal"}}
             wrapClassName={'modal-ant-design'}
         >
             <div className="row">

@@ -2,7 +2,6 @@ import React, { memo, useEffect } from "react";
 import { Form, Row, Col, Flex, InputNumber, Spin } from "antd";
 import { ModalFormBodyText } from "../../../../../Globais/ModalBootstrap";
 import { Icon } from "../../../../../Globais/UI/Icon";
-import { useGetSaldoAtual } from "./hooks/useGetSaldoAtual";
 import { usePostReceitasPrevistasPaa } from "./hooks/usePostReceitasPrevistasPaa";
 import { usePatchReceitasPrevistasPaa } from "./hooks/usePatchReceitasPrevistasPaa";
 import { formataData } from "../../../../../../utils/FormataData";
@@ -11,6 +10,7 @@ import {
   formatMoneyByCentsBRL,
   parseMoneyBRL,
 } from "../../../../../../utils/money";
+import "./style.css";
 
 const initialValues = {
   saldo_atual_capital: 0,
@@ -24,7 +24,6 @@ const initialValues = {
 const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
   const [form] = Form.useForm();
 
-  //const { data, isLoading } = useGetSaldoAtual(acaoAssociacao?.uuid);
   const data = acaoAssociacao.saldos;
   const isLoading = false;
   const { mutationPost } = usePostReceitasPrevistasPaa(onClose);
@@ -174,6 +173,7 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
                         disabled
+                        controls={false}
                       />
                     </Form.Item>
                     <Icon
@@ -197,6 +197,7 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
                         min={0}
+                        controls={false}
                       />
                     </Form.Item>
                     <Icon
@@ -218,6 +219,7 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                       parser={parseMoneyBRL}
                       style={{ width: "100%" }}
                       disabled
+                      controls={false}
                     />
                   </Form.Item>
                 </Col>
@@ -240,6 +242,7 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
                         disabled
+                        controls={false}
                       />
                     </Form.Item>
                     <Icon
@@ -263,6 +266,7 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
                         min={0}
+                        controls={false}
                       />
                     </Form.Item>
                     <Icon
@@ -284,6 +288,7 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                       parser={parseMoneyBRL}
                       style={{ width: "100%" }}
                       disabled
+                      controls={false}
                     />
                   </Form.Item>
                 </Col>
@@ -306,6 +311,7 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
                         disabled
+                        controls={false}
                       />
                     </Form.Item>
                     <Icon
@@ -329,6 +335,7 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
                         min={0}
+                        controls={false}
                       />
                     </Form.Item>
                     <Icon
@@ -350,6 +357,7 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                       parser={parseMoneyBRL}
                       style={{ width: "100%" }}
                       disabled
+                      controls={false}
                     />
                   </Form.Item>
                 </Col>
