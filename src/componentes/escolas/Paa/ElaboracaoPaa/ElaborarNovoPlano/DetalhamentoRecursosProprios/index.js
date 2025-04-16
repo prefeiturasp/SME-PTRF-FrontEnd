@@ -100,7 +100,6 @@ const DetalhamentoRecursosProprios = () => {
   };
 
   const validFields = (rowData) => {
-    console.log(rowData);
     return (
       rowData.descricao !== "" &&
       rowData?.fonte_recurso?.uuid &&
