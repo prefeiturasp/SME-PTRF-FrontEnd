@@ -15,6 +15,7 @@ jest.mock("../hooks/useGetRecursosProprios");
 jest.mock("../hooks/usePostRecursoProprio");
 jest.mock("../hooks/usePatchRecursoProprio");
 jest.mock("../hooks/useGetFontesRecursos");
+jest.mock("antd/es/date-picker/locale/pt_BR", () => ({}));
 
 let queryClient;
 
