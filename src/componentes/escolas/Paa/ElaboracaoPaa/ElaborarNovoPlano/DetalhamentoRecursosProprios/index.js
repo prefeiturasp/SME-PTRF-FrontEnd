@@ -12,7 +12,6 @@ import {
   parseMoneyBRL,
 } from "../../../../../../utils/money";
 import { formataData } from "../../../../../../utils/FormataData";
-import locale from "antd/es/date-picker/locale/pt_BR";
 import moment from "moment";
 import { useGetFontesRecursos } from "./hooks/useGetFontesRecursos";
 import { usePatchRecursoProprio } from "./hooks/usePatchRecursoProprio";
@@ -23,6 +22,8 @@ import { useDispatch } from "react-redux";
 import { useDeleteRecursoProprio } from "./hooks/useDeleteRecursoProprio";
 import { usePostRecursoProprio } from "./hooks/usePostRecursoProprio";
 import { useGetTotalizadorRecursoProprio } from "./hooks/useGetTotalizarRecursoProprio";
+import locale from "antd/es/date-picker/locale/pt_BR";
+
 const DatePickerCustom = DatePicker.generatePicker(momentGenerateConfig);
 const { TextArea } = Input;
 
@@ -99,7 +100,6 @@ const DetalhamentoRecursosProprios = () => {
   };
 
   const validFields = (rowData) => {
-    console.log(rowData);
     return (
       rowData.descricao !== "" &&
       rowData?.fonte_recurso?.uuid &&
@@ -172,7 +172,7 @@ const DetalhamentoRecursosProprios = () => {
         )}
         <IconButton
           icon="faTrash"
-          tooltipMessage="Apagar"
+          tooltipMessage="Excluir"
           iconProps={{
             style: {
               fontSize: "20px",
@@ -180,7 +180,7 @@ const DetalhamentoRecursosProprios = () => {
               color: "rgba(180, 12, 2, 1)",
             },
           }}
-          aria-label="Apagar"
+          aria-label="Excluir"
           onClick={() => handleRemoveItem(rowData, column)}
         />
       </Flex>
@@ -201,6 +201,7 @@ const DetalhamentoRecursosProprios = () => {
           value={rowData?.valor !== null ? rowData?.valor * 100 : null}
           style={{ width: "100%" }}
           onChange={handleChange}
+          aria-label="valor"
         />
       );
     }
@@ -221,6 +222,7 @@ const DetalhamentoRecursosProprios = () => {
       return (
         <TextArea
           placeholder="Descrição de atividade prevista"
+          aria-label="Descrição de atividade prevista"
           style={{ width: "100%" }}
           value={rowData?.descricao}
           autoSize
@@ -258,6 +260,7 @@ const DetalhamentoRecursosProprios = () => {
           placeholder="Data prevista"
           defaultValue={dateValue}
           onChange={handleChange}
+          aria-label="Data prevista"
         />
       );
     }
