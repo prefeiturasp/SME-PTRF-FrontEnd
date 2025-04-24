@@ -225,6 +225,21 @@ export const deleteTipoConta = async (tipo_conta_uuid) => {
   return await api.delete(`/api/tipos-conta/${tipo_conta_uuid}/`, authHeader());
 };
 
+// PAA - Períodos
+export const getPeriodosPaa = async (filtros, page, page_size) => {
+  const result = (await api.get(`/api/periodos-paa/`,{...authHeader(), params: {...filtros, page: page, page_size}})).data;
+  return result
+};
+export const postPeriodosPaa = async (payload) => {
+  return (await api.post(`/api/periodos-paa/`, payload, authHeader())).data;
+};
+export const patchPeriodosPaa = async (uuid, payload) => {
+  return (await api.patch(`/api/periodos-paa/${uuid}/`, payload, authHeader())).data;
+};
+export const deletePeriodosPaa = async (uuid) => {
+  return await api.delete(`/api/periodos-paa/${uuid}/`, authHeader());
+};
+
 // Tags
 export const getTodasTags = async () => {
   return (await api.get(`/api/tags/`, authHeader())).data;
