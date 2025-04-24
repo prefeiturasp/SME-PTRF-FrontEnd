@@ -2,7 +2,7 @@ import * as Sentry from "@sentry/browser";
 import React from 'react';
 
 import { ConfigProvider } from "antd";
-
+import locale from 'antd/locale/pt_BR';
 // Migrando para V18 do react
 import ReactDOM from "react-dom/client";
 
@@ -54,7 +54,7 @@ root.render(
                             <DataLimiteProvider>
                                 <BrowserRouter>
                                     <CompatRouter>
-                                        <ConfigProvider theme={antdTheme}>
+                                        <ConfigProvider theme={antdTheme} locale={locale}>
                                             <App/>
                                         </ConfigProvider>
                                     </CompatRouter>

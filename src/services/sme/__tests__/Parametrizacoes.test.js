@@ -144,7 +144,11 @@ import {
     deleteMotivoAprovacaoPcRessalva,
     getTiposDeCredito,
     getFiltrosTiposDeCredito,
-    getAssociacoesPeloNome
+    getAssociacoesPeloNome,
+    getPeriodosPaa,
+    postPeriodosPaa,
+    patchPeriodosPaa,
+    deletePeriodosPaa
 } from '../Parametrizacoes.service.js';
 import { TOKEN_ALIAS, ASSOCIACAO_UUID } from '../../auth.service.js';
 
@@ -1812,6 +1816,42 @@ describe('Testes para funções de análise', () => {
         const url = `/api/associacoes/?nome=${nome}`;
         expect(api.get).toHaveBeenCalledWith(url, authHeader());
         expect(result).toEqual(mockData);
+    });
+
+    test('getPeriodosPaa deve chamar a API corretamente', async () => {
+        api.get.mockResolvedValue({ data: mockData });
+        const page = 1;
+        const page_size = 20;
+
+        const params = {
+            page,
+            page_size,
+        };
+        const result = await getPeriodosPaa({}, page, page_size);
+        const url = `/api/periodos-paa/`;
+        expect(api.get).toHaveBeenCalledWith(url, {...authHeader(), params: params});
+        expect(result).toEqual(mockData);
+    });
+
+    test('postPeriodosPaa deve chamar a API corretamente', async () => {
+        api.post.mockResolvedValue(mockData);
+        const result = await postPeriodosPaa(payload);
+        const url = `/api/periodos-paa/`;
+        expect(api.post).toHaveBeenCalledWith(url, payload, authHeader());
+    });
+
+    test('patchPeriodosPaa deve chamar a API corretamente', async () => {
+        api.patch.mockResolvedValue(mockData);
+        const result = await patchPeriodosPaa(uuid, payload);
+        const url = `/api/periodos-paa/${uuid}/`;
+        expect(api.patch).toHaveBeenCalledWith(url, payload, authHeader());
+    });
+
+    test('deletePeriodosPaa deve chamar a API corretamente', async () => {
+        api.delete.mockResolvedValue(mockData);
+        const result = await deletePeriodosPaa(uuid);
+        const url = `/api/periodos-paa/${uuid}/`;
+        expect(api.delete).toHaveBeenCalledWith(url, authHeader());
     });
 
 });
