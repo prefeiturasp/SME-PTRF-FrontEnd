@@ -188,6 +188,9 @@ export const PainelParametrizacoes = () => {
             icone: IconeTextosFiqueDeOlho,
             permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
         },
+    ];
+
+    const itensParametrizacaoPAA = [
         {
             parametro: 'Textos do PAA',
             url: 'parametro-textos-paa',
@@ -195,34 +198,34 @@ export const PainelParametrizacoes = () => {
             permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
             featureFlag: 'paa',
         },
+        {
+            parametro: 'Períodos do PAA',
+            url: 'parametro-periodos-paa',
+            icone: IconePeriodos,
+            permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
+            featureFlag: 'paa',
+        },
     ];
+
+    const painel = [
+        ['Estrutura', itensParametrizacaoEstrutura],
+        ['Despesas', itensParametrizacaoDespesas],
+        ['Receitas', itensParametrizacaoReceitas],
+        ['Prestação de Contas', itensParametrizacaoPrestacaoContas],
+        ['DRE', itensParametrizacaoDre],
+        ['Edição de texto', itensParametrizacaoEdicaoDeTexto],
+        ['PAA', itensParametrizacaoPAA],
+    ]
 
     return (
         <>
-            <ParametrizacaoCard
-                itensParametrizacao={itensParametrizacaoEstrutura}
-                nomeGrupo='Estrutura'
-            />
-            <ParametrizacaoCard
-                itensParametrizacao={itensParametrizacaoDespesas}
-                nomeGrupo='Despesas'
-            />
-            <ParametrizacaoCard
-                itensParametrizacao={itensParametrizacaoReceitas}
-                nomeGrupo='Receitas'
-            />
-            <ParametrizacaoCard
-                itensParametrizacao={itensParametrizacaoPrestacaoContas}
-                nomeGrupo='Prestação de Contas'
-            />
-            <ParametrizacaoCard
-                itensParametrizacao={itensParametrizacaoDre}
-                nomeGrupo='DRE'
-            />
-            <ParametrizacaoCard
-                itensParametrizacao={itensParametrizacaoEdicaoDeTexto}
-                nomeGrupo='Edição de texto'
-            />
+            {painel.map((item, index) => (
+                <ParametrizacaoCard
+                    key={index}
+                    itensParametrizacao={item[1]}
+                    nomeGrupo={item[0]}
+                />
+            ))}
         </>
     )
 };

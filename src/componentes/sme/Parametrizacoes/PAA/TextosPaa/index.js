@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useState} from "react";
 import {PaginasContainer} from "../../../../../paginas/PaginasContainer";
-import "../parametrizacoes-edicao-de-textos.scss"
+import "../../EdicaoDeTextos/parametrizacoes-edicao-de-textos.scss"
 import TabelaTextosPaa from "./TabelaTextosPaa";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEdit} from "@fortawesome/free-solid-svg-icons";
