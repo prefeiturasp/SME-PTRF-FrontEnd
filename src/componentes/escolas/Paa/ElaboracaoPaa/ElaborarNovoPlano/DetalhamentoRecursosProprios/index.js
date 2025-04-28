@@ -202,6 +202,7 @@ const DetalhamentoRecursosProprios = () => {
           style={{ width: "100%" }}
           onChange={handleChange}
           aria-label="valor"
+          controls={false}
         />
       );
     }
