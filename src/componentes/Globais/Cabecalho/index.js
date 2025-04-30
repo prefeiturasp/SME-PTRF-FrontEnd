@@ -13,6 +13,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faBell, faChevronDown, faUser, faFileDownload} from "@fortawesome/free-solid-svg-icons";
 import {notificaDevolucaoPCService} from "../../../services/NotificacaDevolucaoPC.service";
 import { mantemEstadoAnaliseDre as meapcservice } from "../../../services/mantemEstadoAnaliseDre.service";
+import { consultarListaCargos } from "../../../services/escolas/Associacao.service";
 
 export const Cabecalho = () => {
 
@@ -156,7 +157,6 @@ export const Cabecalho = () => {
                                 <div className="pt-2 container-select-visoes">
                                     <div className="d-flex mb-3 w-100">
                                         <div className="p-2 bd-highlight"><span className='span-label-visao-selecionada'>{visoesService.getItemUsuarioLogado('visao_selecionada.nome')}</span></div>
-
                                         <div className="p-0 bd-highlight w-100">
                                             <select
                                                 value={
@@ -176,6 +176,7 @@ export const Cabecalho = () => {
                                                     notificacaoContext.getExibeModalErroConcluirPc();
                                                 }}
                                                 className="form-control"
+                                                data-testid="select-unidade"
                                             >
                                                 {dados_usuario_logado.unidades.map((unidade, index)=>
                                                     <option
@@ -207,6 +208,7 @@ export const Cabecalho = () => {
                                     <div className="col-3 p-0 m-0 text-right pt-4">
                                         <button
                                             onClick={()=>redirectCentralDeDownloads()}
+                                            data-testid="botao-central-downloads"
                                             className="btn-sair">
                                             <span className="span-icone-verde">
                                                 <FontAwesomeIcon
@@ -219,6 +221,7 @@ export const Cabecalho = () => {
 
                                         <button
                                             onClick={()=>redirectCentralDeNotificacoes()}
+                                            data-testid="botao-central-notificacoes"
                                             className="btn-sair">
                                             <span className="span-icone-verde">
                                                 <FontAwesomeIcon
@@ -260,7 +263,7 @@ export const Cabecalho = () => {
 
                                         <div className={`dropdown-menu dropdown-menu-opcoes`} aria-labelledby="linkDropdownAcoes">
                                             <button className="btn-sair" onClick={()=>history.push(`/meus-dados`)}>Meus dados</button><br />
-                                            <button className="btn-sair" onClick={()=>onShow()}>Sair</button>
+                                            <button className="btn-sair" data-testid="botao-sair" onClick={()=>onShow()}>Sair</button>
                                         </div>
                                     </li>
                                     </div>
