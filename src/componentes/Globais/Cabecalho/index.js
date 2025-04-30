@@ -13,7 +13,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faBell, faChevronDown, faUser, faFileDownload} from "@fortawesome/free-solid-svg-icons";
 import {notificaDevolucaoPCService} from "../../../services/NotificacaDevolucaoPC.service";
 import { mantemEstadoAnaliseDre as meapcservice } from "../../../services/mantemEstadoAnaliseDre.service";
-import { consultarListaCargos } from "../../../services/escolas/Associacao.service";
+
 
 export const Cabecalho = () => {
 
