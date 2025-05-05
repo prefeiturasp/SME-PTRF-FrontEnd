@@ -21,7 +21,7 @@ const TabelaRecursosProprios = ({ totalRecursosProprios, setActiveTab }) => {
 
   const totalRecursoProprioTemplate = useCallback(() => {
     return (
-      <span className="font-weight-bold">
+      <span>
         {totalRecursosProprios
           ? formatMoneyBRL(totalRecursosProprios.total)
           : "__"}
@@ -54,11 +54,17 @@ const TabelaRecursosProprios = ({ totalRecursosProprios, setActiveTab }) => {
       />
       <Column field="valor_custeio" header="Custeio (R$)" />
       <Column field="valor_capital" header="Capital (R$)" />
-      <Column field="valor_livre" header="Livre Aplicação (R$)" />
+      <Column 
+        field="valor_livre"
+        header="Livre Aplicação (R$)"
+        body={totalRecursoProprioTemplate}
+        bodyClassName="text-right"
+        />
       <Column
         field="total"
         header="Total (R$)"
         body={totalRecursoProprioTemplate}
+        bodyClassName="text-right"
       />
       <Column field="acoes" header="Ações" body={acoesRecursoProprioTemplate} />
     </DataTable>

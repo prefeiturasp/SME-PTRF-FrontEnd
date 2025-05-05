@@ -22,7 +22,6 @@ import { useDispatch } from "react-redux";
 import { useDeleteRecursoProprio } from "./hooks/useDeleteRecursoProprio";
 import { usePostRecursoProprio } from "./hooks/usePostRecursoProprio";
 import { useGetTotalizadorRecursoProprio } from "./hooks/useGetTotalizarRecursoProprio";
-import locale from "antd/es/date-picker/locale/pt_BR";
 
 const DatePickerCustom = DatePicker.generatePicker(momentGenerateConfig);
 const { TextArea } = Input;
@@ -57,7 +56,7 @@ const DetalhamentoRecursosProprios = () => {
 
   useEffect(() => {
     setItems(data.results);
-  }, [data]);
+  }, [data.results]);
 
   const handleOpenFieldsToEdit = (item) => {
     if (currentItem) {
@@ -202,6 +201,7 @@ const DetalhamentoRecursosProprios = () => {
           style={{ width: "100%" }}
           onChange={handleChange}
           aria-label="valor"
+          controls={false}
         />
       );
     }
@@ -254,7 +254,6 @@ const DetalhamentoRecursosProprios = () => {
 
       return (
         <DatePickerCustom
-          locale={locale}
           format={"DD/MM/YYYY"}
           style={{ width: "100%" }}
           placeholder="Data prevista"
