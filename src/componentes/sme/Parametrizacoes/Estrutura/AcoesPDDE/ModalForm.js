@@ -242,7 +242,7 @@ const ModalForm = ({
                                             >
                                             <ReactTooltip id="tooltip-id-excluir"/>
                                             <FontAwesomeIcon
-                                                data-tip={stateFormCategoria.pode_ser_excluida ? "Excluir" : "Não é possível excluir. Este programa ainda está vinculado a esta ação."} data-for="tooltip-id-excluir"
+                                                data-tip={stateFormCategoria.pode_ser_excluida ? "Excluir" : "Não é possível excluir. Este programa ainda está vinculado a alguma ação."} data-for="tooltip-id-excluir"
                                                 icon={faTrashCan} 
                                                 style={{color: "#B40C02"}}
                                             />
