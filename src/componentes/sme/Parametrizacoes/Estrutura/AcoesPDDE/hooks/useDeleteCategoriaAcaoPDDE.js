@@ -12,15 +12,15 @@ export const useDeleteCategoria = ({
 }) => {
     const queryClient = useQueryClient();
     const mutationDeleteCategoria = useMutation({
-        mutationFn: ({categoriaUuid, acaoUuid}) => {
-            return deleteAcoesPDDECategorias(categoriaUuid, acaoUuid);
+        mutationFn: ({categoriaUuid}) => {
+            return deleteAcoesPDDECategorias(categoriaUuid);
         },
         onSuccess: () => {
             queryClient.invalidateQueries(['categorias']).then();
             queryClient.invalidateQueries(['acoes']).then();
             toastCustom.ToastCustomSuccess(
                 "Sucesso!", 
-                "A Categoria da Ação PDDE foi removida do sistema com sucesso."
+                "O Programa da Ação PDDE foi removida do sistema com sucesso."
             )
             var categoria = stateFormModal.categoria != stateFormCategoria.id ? String(stateFormModal.categoria) : String(categorias.results[0].id)
             setModalForm({...stateFormModal, categoria})
