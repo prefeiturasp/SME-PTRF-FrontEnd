@@ -56,7 +56,7 @@ const DetalhamentoRecursosProprios = () => {
 
   useEffect(() => {
     setItems(data.results);
-  }, [data]);
+  }, [data.results]);
 
   const handleOpenFieldsToEdit = (item) => {
     if (currentItem) {
