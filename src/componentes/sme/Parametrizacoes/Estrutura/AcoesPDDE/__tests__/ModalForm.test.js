@@ -228,4 +228,30 @@ describe('ModalForm Component', () => {
     
   });
 
+  it('deve editar ação e não conseguir deletar categoria', async() => {
+
+    render(
+      <QueryClientProvider client={queryClient}><ModalForm {...initialProps} /></QueryClientProvider>
+    );
+
+    fireEvent.click(screen.getByTestId('btn-adicionar-editar-categoria'));
+    expect(screen.getByText(/Editar Programa/i)).toBeInTheDocument();
+    const botao_excluir = screen.getByTestId('btn-excluir-categoria');
+    expect(botao_excluir).toBeDisabled();
+  });
+
+  it('deve editar ação e conseguir deletar categoria', async() => {
+
+    render(
+      <QueryClientProvider client={queryClient}><ModalForm {...initialProps} /></QueryClientProvider>
+    );
+
+    fireEvent.click(screen.getByTestId('btn-adicionar-editar-categoria'));
+    expect(screen.getByText(/Editar Programa/i)).toBeInTheDocument();
+    const input = screen.getByLabelText("Programa *");
+    fireEvent.change(input, { target: { value: 5 } });
+    const botao_excluir = screen.getByTestId('btn-excluir-categoria');
+    expect(botao_excluir).toBeEnabled();
+  });
+
 });
