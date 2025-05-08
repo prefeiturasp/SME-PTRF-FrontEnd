@@ -20,7 +20,7 @@ export const useDeleteCategoria = ({
             queryClient.invalidateQueries(['acoes']).then();
             toastCustom.ToastCustomSuccess(
                 "Sucesso!", 
-                "O Programa da Ação PDDE foi removida do sistema com sucesso."
+                "O Programa da Ação PDDE foi removido do sistema com sucesso."
             )
             var categoria = stateFormModal.categoria != stateFormCategoria.id ? String(stateFormModal.categoria) : String(categorias.results[0].id)
             setModalForm({...stateFormModal, categoria})

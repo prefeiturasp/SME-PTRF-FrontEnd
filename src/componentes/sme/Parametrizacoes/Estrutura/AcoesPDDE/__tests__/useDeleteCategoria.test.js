@@ -55,16 +55,14 @@ describe("useDeleteCategoriaAcaoPDDE", () => {
 
         await act(async () => {
             result.current.mutationDeleteCategoria.mutate({
-                categoriaUuid: "4d272c66-0d2a-4f77-9979-6afeaec39332",
-                acaoUuid: "4d272c66-0d2a-4f77-9979-6afeaec39331"
+                categoriaUuid: "4d272c66-0d2a-4f77-9979-6afeaec39332"
             });
         });
 
         expect(deleteAcoesPDDECategorias).toHaveBeenCalledWith(
-            "4d272c66-0d2a-4f77-9979-6afeaec39332",
-            "4d272c66-0d2a-4f77-9979-6afeaec39331");
+            "4d272c66-0d2a-4f77-9979-6afeaec39332");
         expect(toastCustom.ToastCustomSuccess).toHaveBeenCalledWith(
-            "Sucesso!", "A Categoria da Ação PDDE foi removida do sistema com sucesso."
+            "Sucesso!", "O Programa da Ação PDDE foi removido do sistema com sucesso."
         );
     });
 
@@ -82,8 +80,7 @@ describe("useDeleteCategoriaAcaoPDDE", () => {
 
         await act(async () => {
             result.current.mutationDeleteCategoria.mutate({
-                categoriaUuid: "4d272c66-0d2a-4f77-9979-6afeaec39332",
-                acaoUuid: "4d272c66-0d2a-4f77-9979-6afeaec39331"
+                categoriaUuid: "4d272c66-0d2a-4f77-9979-6afeaec39332"
             });
         });
 
@@ -107,8 +104,7 @@ describe("useDeleteCategoriaAcaoPDDE", () => {
 
         await act(async () => {
             result.current.mutationDeleteCategoria.mutate({
-                categoriaUuid: "4d272c66-0d2a-4f77-9979-6afeaec39332",
-                acaoUuid: "4d272c66-0d2a-4f77-9979-6afeaec39331"
+                categoriaUuid: "4d272c66-0d2a-4f77-9979-6afeaec39332"
             });
         });
 

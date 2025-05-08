@@ -1446,7 +1446,7 @@ describe('Testes para funções de análise', () => {
         const categoriaUuid = '1234'
         const acaoUuid = '1234'
         const result = await deleteAcoesPDDECategorias(categoriaUuid, acaoUuid);
-        const url = `/api/categorias-pdde/${categoriaUuid}/?acao_pdde_uuid=${acaoUuid}`;
+        const url = `/api/categorias-pdde/${categoriaUuid}/`;
         expect(api.delete).toHaveBeenCalledWith(url, authHeader());
         expect(result).toEqual(mockData);
     });
