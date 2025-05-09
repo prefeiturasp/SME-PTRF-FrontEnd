@@ -240,6 +240,16 @@ export const deletePeriodosPaa = async (uuid) => {
   return await api.delete(`/api/periodos-paa/${uuid}/`, authHeader());
 };
 
+// PAA
+export const getPaaVigente = async (associacao_uuid) => {
+  const result = await api.get(`/api/associacoes/${associacao_uuid}/paa-vigente/`, authHeader());
+  return result
+};
+export const postPaa = async (payload) => {
+  return (await api.post(`/api/paa/`, payload, authHeader())).data;
+};
+
+
 // Tags
 export const getTodasTags = async () => {
   return (await api.get(`/api/tags/`, authHeader())).data;

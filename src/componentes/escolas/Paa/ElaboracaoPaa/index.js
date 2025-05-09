@@ -1,19 +1,38 @@
-import { React, useEffect, useState } from 'react'
+import { React, useEffect, useState, useCallback } from 'react'
 import { PaginasContainer } from '../../../../paginas/PaginasContainer'
 import Loading from "../../../../utils/Loading";
 import { getTextoExplicacaoPaa } from '../../../../services/escolas/PrestacaoDeContas.service';
 import BreadcrumbComponent from '../../../Globais/Breadcrumb';
 import { useNavigate } from 'react-router-dom-v5-compat';
+import {ASSOCIACAO_UUID} from "../../../../services/auth.service";
+import { usePostPaa } from "./hooks/usePostPaa";
+import { getPaaVigente } from "../../../../services/sme/Parametrizacoes.service";
 
 export const ElaboracaoPaa = () => {
+  const associacao_uuid = localStorage.getItem(ASSOCIACAO_UUID);
   const navigate = useNavigate();
 
+  const [notValidPaa, setNotValidPaa] = useState(true);
   const [loading, setLoading] = useState(true);
   const [textoPaa, setTextoPaa] = useState('');
+  const { mutationPost } = usePostPaa();
 
   const itemsBreadCrumb = [
     { label: 'Plano Anual de Atividades', active: true },
   ];
+
+  const carregaPaa = useCallback(async ()=>{
+    try {
+        let response = await getPaaVigente(associacao_uuid)
+        setNotValidPaa(false);
+    } catch (error) {
+        setNotValidPaa(true);
+    }
+    }, [])
+
+    useEffect(()=>{
+      carregaPaa()
+    }, [carregaPaa])
 
   useEffect(() => {
     getTextoExplicacaoPaa().then((response) => {
@@ -25,6 +44,16 @@ export const ElaboracaoPaa = () => {
       console.log(error);
     });
   }, []);
+
+  const handlePaa = () => {
+    if (notValidPaa){
+      const payload = {
+        associacao: associacao_uuid
+      }
+      mutationPost.mutate({payload: payload})
+    }
+    navigate('/elaborar-novo-paa');
+};
 
   return (
     <>
@@ -45,7 +74,7 @@ export const ElaboracaoPaa = () => {
             </div>
             <p>Confira a estrutura completa aqui.</p>
             <div className="d-flex justify-content-center">
-              <button type="button" className="btn btn-success mt-2 mr-5" onClick={() => {navigate('/elaborar-novo-paa')}}>Elaborar novo PAA</button>
+              <button type="button" className="btn btn-success mt-2 mr-5" onClick={handlePaa}>{!notValidPaa ? "Continuar elaboração de PAA" : "Elaborar novo PAA"}</button>
               <button type="button" className="btn btn-success mt-2 ml-5" onClick={() => {}}>PAA vigente e anteriores</button>
             </div>
           </div>
