@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom-v5-compat";
 
-export const ListaSituacaoPatrimonial = (props) => {
+export const ListaBemProduzido = (props) => {
   const navigate = useNavigate();
   return (
     <div className="d-flex  justify-content-end pb-4 mt-2">
