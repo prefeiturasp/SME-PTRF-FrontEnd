@@ -13,9 +13,7 @@ export const Steps = ({ currentStep, stepList }) => {
 
             return (
               <div key={index} className="container-circulo">
-                <span className={circuloClass} data-qa={step.qa}>
-                  {stepNumber}
-                </span>
+                <span className={circuloClass}>{stepNumber}</span>
                 <p className={`mt-2 ${textClass}`}>
                   <strong>{step.label}</strong>
                 </p>

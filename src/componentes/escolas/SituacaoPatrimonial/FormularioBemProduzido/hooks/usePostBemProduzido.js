@@ -6,7 +6,7 @@ export const usePostBemProduzido = (navigate) => {
   const mutationPost = useMutation({
     mutationFn: ({ payload }) => postBemProduzido(payload),
     onSuccess: (data) => {
-      toastCustom.ToastCustomSuccess("Bem Produzido criado com successo");
+      toastCustom.ToastCustomSuccess("Bem Produzido criado com sucesso.");
       navigate("/lista-situacao-patrimonial");
     },
     onError: (e) => {
