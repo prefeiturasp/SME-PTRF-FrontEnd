@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import { getListaDespesasPaginacao } from "../../../../../../services/escolas/Despesas.service";
+import { getListaDespesasComFiltros } from "../../../../../../services/escolas/Despesas.service";
 
-export const useGetDespesas = (page) => {
+export const useGetDespesas = (filtros, page) => {
   const { isLoading, isFetching, isError, data, error, refetch } = useQuery(
     ["despesas-situacao-patrimonial", page],
-    () => getListaDespesasPaginacao(page),
+    () => getListaDespesasComFiltros(filtros, page),
     {
       keepPreviousData: false,
       staleTime: 5 * 60 * 1000, // 5 minutos antes de ser considerado "stale"

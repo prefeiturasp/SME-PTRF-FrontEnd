@@ -1,3 +1,4 @@
+import { useParams } from "react-router-dom-v5-compat";
 import { IconButton } from "../../../Globais/UI";
 import { Steps } from "./components/Steps";
 import { VincularDespesas } from "./VincularDespesas";
@@ -11,6 +12,7 @@ const stepList = [
 
 export const FormularioBemProduzido = (props) => {
   const [step, setStep] = useState(1);
+  const { uuid } = useParams();
 
   return (
     <div>
@@ -28,7 +30,7 @@ export const FormularioBemProduzido = (props) => {
 
       <Steps currentStep={step} stepList={stepList} />
 
-      {step === 1 ? <VincularDespesas /> : null}
+      {step === 1 ? <VincularDespesas uuid={uuid} /> : null}
     </div>
   );
 };

@@ -9,20 +9,47 @@ import { useGetDespesas } from "./hooks/useGetDespesas";
 import { formataData } from "../../../../../utils/FormataData";
 import { formatMoneyBRL } from "../../../../../utils/money";
 import { FormFiltrosDespesas } from "./FormFiltrosDespesas";
+import { useCarregaTabelaDespesa } from "../../../../../hooks/Globais/useCarregaTabelaDespesa";
+import { useGetPeriodos } from "../../../../../hooks/Globais/useGetPeriodo";
+import moment from "moment";
+import { useNavigate } from "react-router-dom-v5-compat";
+import { usePostBemProduzido } from "../hooks/usePostBemProduzido";
 
 const filtroInicial = {
-  nome_ou_codigo: "",
-  dre: "",
+  fornecedor: "",
+  search: "",
+  conta_associacao__uuid: "",
+  periodo__uuid: "",
+  data_inicio: "",
+  data_fim: "",
 };
 
-export const VincularDespesas = () => {
+export const VincularDespesas = ({ uuid }) => {
+  const navigate = useNavigate();
   const [expandedRows, setExpandedRows] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [firstPage, setFirstPage] = useState(0);
-  const [selectedUnidades, setSelectedUnidades] = useState([]);
+  const [selectedDespesas, setSelectedDespesas] = useState([]);
   const [filtros, setFiltros] = useState(filtroInicial);
-  const { data, refetch, isLoading, error, isError } =
-    useGetDespesas(currentPage);
+  const { mutationPost } = usePostBemProduzido(navigate);
+
+  const { data, refetch, isLoading, error, isError } = useGetDespesas(
+    {
+      fornecedor: filtros.fornecedor,
+      search: filtros.search,
+      conta_associacao__uuid: filtros.conta_associacao__uuid,
+      periodo__uuid: filtros.periodo__uuid,
+      data_inicio: filtros.data_inicio
+        ? moment(filtros.data_inicio).format("YYYY-MM-DD")
+        : "",
+      data_fim: filtros.data_fim
+        ? moment(filtros.data_fim).format("YYYY-MM-DD")
+        : "",
+    },
+    currentPage
+  );
+  const tabelas = useCarregaTabelaDespesa(null);
+  const { data: periodos } = useGetPeriodos({ filtrar_por_referencia: "" });
 
   useEffect(() => {
     // tratamento para cenário de remover acesso do último item da página.
@@ -41,8 +68,14 @@ export const VincularDespesas = () => {
     setCurrentPage(event.page + 1);
   };
 
-  const onFilterChange = () => {
+  const onFiltrar = () => {
     refetch();
+  };
+
+  const onFiltrosChange = (values) => {
+    setFiltros((prev) => {
+      return { ...prev, ...values };
+    });
   };
 
   const limpaFiltros = () => {
@@ -64,6 +97,18 @@ export const VincularDespesas = () => {
 
   const rateioTemplate = (rowData, column) => {
     return `Rateio ${column.rowIndex + 1}`;
+  };
+
+  const handleSaveRascunho = () => {
+    if (uuid) {
+      //
+    } else {
+      mutationPost.mutate({
+        payload: {
+          despesas: selectedDespesas.map((despesa) => despesa.uuid),
+        },
+      });
+    }
   };
 
   const expandedRowTemplate = (data) => {
@@ -104,8 +149,11 @@ export const VincularDespesas = () => {
         </h5>
 
         <FormFiltrosDespesas
-          onFiltrar={onFilterChange}
+          onFiltrar={onFiltrar}
+          onFiltrosChange={onFiltrosChange}
           onLimparFiltros={limpaFiltros}
+          contaOptions={tabelas?.contas_associacao}
+          periodoOptions={periodos}
         />
 
         <div className="mb-5">
@@ -123,14 +171,14 @@ export const VincularDespesas = () => {
               <DataTable
                 value={data.results}
                 autoLayout={true}
-                selection={selectedUnidades}
-                onSelectionChange={(e) => setSelectedUnidades(e.value)}
+                selection={selectedDespesas}
+                onSelectionChange={(e) => setSelectedDespesas(e.value)}
                 expandedRows={expandedRows}
                 onRowToggle={(e) => setExpandedRows(e.data)}
                 rowExpansionTemplate={expandedRowTemplate}
               >
                 <Column selectionMode="multiple" style={{ width: "3em" }} />
-                <Column field="periodo" header="Período" />
+                <Column field="periodo_referencia" header="Período" />
                 <Column field="numero_documento" header="Nº do documento" />
                 <Column
                   field="data_documento"
@@ -168,10 +216,17 @@ export const VincularDespesas = () => {
           )}
 
           <Flex justify="end" gap={8} className="mt-4">
-            <button className="btn btn-outline-success float-right">
+            <button
+              className="btn btn-outline-success float-right"
+              onClick={() => navigate(-1)}
+            >
               Cancelar
             </button>
-            <button className="btn btn-outline-success float-right" disabled>
+            <button
+              className="btn btn-outline-success float-right"
+              disabled={!selectedDespesas.length}
+              onClick={handleSaveRascunho}
+            >
               Salvar rascunho
             </button>
           </Flex>

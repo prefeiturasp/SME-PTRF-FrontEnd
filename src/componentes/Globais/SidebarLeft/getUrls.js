@@ -152,8 +152,8 @@ const UrlsMenuEscolas = {
       url: "lista-situacao-patrimonial",
       dataFor: "situacao_patrimonial",
       icone: IconeMenuSituacaoPatrimonial,
-      permissoes: ["access_paa"],
-      //   featureFlag: "situacao-patrimonial",
+      permissoes: ["access_situacao_patrimonial"],
+      featureFlag: "situacao-patrimonial",
     },
   ],
 };

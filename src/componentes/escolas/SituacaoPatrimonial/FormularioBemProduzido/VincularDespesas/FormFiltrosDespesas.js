@@ -1,9 +1,12 @@
 import { Col, DatePicker, Flex, Form, Input, Row, Select } from "antd";
+import momentGenerateConfig from "rc-picker/lib/generate/moment";
+const DatePickerCustom = DatePicker.generatePicker(momentGenerateConfig);
 
 export const FormFiltrosDespesas = ({
   contaOptions = [],
   periodoOptions = [],
   onFiltrar,
+  onFiltrosChange,
   onLimparFiltros,
 }) => {
   const [form] = Form.useForm();
@@ -12,19 +15,29 @@ export const FormFiltrosDespesas = ({
     onFiltrar && onFiltrar(values);
   };
 
+  const onValuesChange = () => {
+    const values = form.getFieldsValue();
+    onFiltrosChange && onFiltrosChange(values);
+  };
+
   const handleCleanFilter = () => {
     form.setFieldsValue({
       fornecedor: "",
-      material_servico: "",
-      conta: "",
-      periodo: "",
-      data_documento_inicio: "",
-      data_documento_fim: "",
+      search: "",
+      conta_associacao__uuid: "",
+      periodo__uuid: "",
+      data_inicio: "",
+      data_fim: "",
     });
     onLimparFiltros && onLimparFiltros();
   };
   return (
-    <Form form={form} onFinish={handleFilter} role="form">
+    <Form
+      form={form}
+      onFinish={handleFilter}
+      onValuesChange={onValuesChange}
+      role="form"
+    >
       <Row gutter={[16, 16]}>
         <Col md={12}>
           <Form.Item
@@ -42,11 +55,11 @@ export const FormFiltrosDespesas = ({
         <Col md={12}>
           <Form.Item
             label="Filtrar por Material ou Serviço"
-            name="material_servico"
+            name="search"
             labelCol={{ span: 24 }}
           >
             <Input
-              name="material_servico"
+              name="search"
               placeholder="Digite Material ou Serviço"
               size="large"
             />
@@ -57,16 +70,17 @@ export const FormFiltrosDespesas = ({
         <Col md={6}>
           <Form.Item
             label="Filtrar por conta"
-            name="conta"
+            name="conta_associacao__uuid"
             labelCol={{ span: 24 }}
+            allowClear
           >
             <Select
               size="large"
               placeholder="Selecione"
-              options={contaOptions.map((tipo) => {
+              options={contaOptions.map((conta) => {
                 return {
-                  value: tipo.field_name,
-                  label: tipo.name,
+                  value: conta.uuid,
+                  label: conta.nome,
                 };
               })}
             />
@@ -75,16 +89,17 @@ export const FormFiltrosDespesas = ({
         <Col md={6}>
           <Form.Item
             label="Filtrar por período"
-            name="periodo"
+            name="periodo__uuid"
             size="large"
             labelCol={{ span: 24 }}
           >
             <Select
               placeholder="Selecione"
+              allowClear
               options={periodoOptions.map((tipo) => {
                 return {
-                  value: tipo.field_name,
-                  label: tipo.name,
+                  value: tipo.uuid,
+                  label: tipo.referencia,
                 };
               })}
             />
@@ -95,23 +110,33 @@ export const FormFiltrosDespesas = ({
             Data do documento
           </label>
           <Flex align="baseline">
-            <Form.Item name="data_documento_inicio" style={{ width: "100%" }}>
-              <DatePicker
+            <Form.Item name="data_inicio" style={{ width: "100%" }}>
+              <DatePickerCustom
                 format={"DD/MM/YYYY"}
                 style={{ width: "100%" }}
                 aria-label="Data do documento início"
                 size="large"
+                disabledDate={(current) => {
+                  const dataFim = form.getFieldValue("data_fim");
+                  return dataFim && current && current.isAfter(dataFim, "day");
+                }}
               />
             </Form.Item>
 
             <span style={{ margin: "0 8px", alignContent: "center" }}>até</span>
 
-            <Form.Item name="data_documento_fim" style={{ width: "100%" }}>
-              <DatePicker
+            <Form.Item name="data_fim" style={{ width: "100%" }}>
+              <DatePickerCustom
                 format={"DD/MM/YYYY"}
                 style={{ width: "100%" }}
                 aria-label="Data do documento fim"
                 size="large"
+                disabledDate={(current) => {
+                  const dataInicio = form.getFieldValue("data_inicio");
+                  return (
+                    dataInicio && current && current.isBefore(dataInicio, "day")
+                  );
+                }}
               />
             </Form.Item>
           </Flex>
