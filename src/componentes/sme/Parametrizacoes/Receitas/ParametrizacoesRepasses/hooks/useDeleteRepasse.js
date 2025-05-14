@@ -21,8 +21,8 @@ export const useDeleteRepasse = () => {
             toastCustom.ToastCustomSuccess('Exclusão do repasse realizada com sucesso', `O repasse foi excluído com sucesso.`);
         },
         onError: (error) => {
-            let data = error.response.data
-            let mensagem = data.mensagem ? data.mensagem : 'Não foi possível apagar o repasse'
+            let data = error.response?.data
+            let mensagem = data?.mensagem ? data.mensagem : 'Não foi possível apagar o repasse'
             toastCustom.ToastCustomError('Erro ao apagar o repasse', mensagem)
             console.log("Erro ao apagar o repasse", error.response);
         },

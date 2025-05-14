@@ -63,6 +63,14 @@ const mockCreate = {
   operacao: "create",
 };
 
+const getTodayStringFormat = () => {
+  const dateToday = new Date()
+  const mes = String(dateToday.getMonth() + 1).padStart(2, '0') ;
+  const ano = dateToday.getFullYear();
+
+  return `${mes}/${ano}`
+}
+
 const renderComponent = (mockForm) => {
   return render(
     <PeriodosPaaContext.Provider value={{...contexto, stateFormModal: mockForm}}>
@@ -186,16 +194,18 @@ describe("Componente ModalForm", () => {
     renderComponent(mockCreate);
 
     const campo = screen.getByTestId("input-data-inicial");
-    fireEvent.change(campo, { target: { value: "04/2025" } });
-    expect(campo).toHaveValue("04/2025")
+    const mes_atual = getTodayStringFormat()
+    fireEvent.change(campo, { target: { value: mes_atual } });
+    expect(campo).toHaveValue(mes_atual)
   
   });
   
   it("deve validar onchange do campo data_final", async () => {
     renderComponent(mockCreate);
     const campo = screen.getByTestId("input-data-final");
-    fireEvent.change(campo, { target: { value: "04/2025" } });
-    expect(campo).toHaveValue("04/2025")
+    const mes_atual = getTodayStringFormat()
+    fireEvent.change(campo, { target: { value: mes_atual } });
+    expect(campo).toHaveValue(mes_atual)
   });
 
 });
