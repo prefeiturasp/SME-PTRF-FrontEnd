@@ -18,7 +18,7 @@ import { usePostBemProduzido } from "../hooks/usePostBemProduzido";
 const filtroInicial = {
   fornecedor: "",
   search: "",
-  conta_associacao__uuid: "",
+  rateios__conta_associacao__uuid: "",
   periodo__uuid: "",
   data_inicio: "",
   data_fim: "",
@@ -37,7 +37,7 @@ export const VincularDespesas = ({ uuid }) => {
     {
       fornecedor: filtros.fornecedor,
       search: filtros.search,
-      conta_associacao__uuid: filtros.conta_associacao__uuid,
+      rateios__conta_associacao__uuid: filtros.rateios__conta_associacao__uuid,
       periodo__uuid: filtros.periodo__uuid,
       data_inicio: filtros.data_inicio
         ? moment(filtros.data_inicio).format("YYYY-MM-DD")

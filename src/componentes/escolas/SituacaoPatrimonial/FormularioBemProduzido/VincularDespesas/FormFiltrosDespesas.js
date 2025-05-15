@@ -24,7 +24,7 @@ export const FormFiltrosDespesas = ({
     form.setFieldsValue({
       fornecedor: "",
       search: "",
-      conta_associacao__uuid: "",
+      rateios__conta_associacao__uuid: "",
       periodo__uuid: "",
       data_inicio: "",
       data_fim: "",
@@ -70,7 +70,7 @@ export const FormFiltrosDespesas = ({
         <Col md={6}>
           <Form.Item
             label="Filtrar por conta"
-            name="conta_associacao__uuid"
+            name="rateios__conta_associacao__uuid"
             labelCol={{ span: 24 }}
             allowClear
           >
