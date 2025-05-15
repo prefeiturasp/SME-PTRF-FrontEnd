@@ -1331,19 +1331,13 @@ const routesConfig = [
     exact: true,
     path: "/lista-situacao-patrimonial",
     component: SituacaoPatrimonialPage,
-    permissoes: [
-      "access_painel_parametrizacoes",
-      "change_painel_parametrizacoes",
-    ],
+    permissoes: ["access_situacao_patrimonial"],
   },
   {
     exact: true,
     path: "/cadastro-bem-produzido/",
     component: CadastroBemProduzidoPage,
-    permissoes: [
-      "access_painel_parametrizacoes",
-      "change_painel_parametrizacoes",
-    ],
+    permissoes: ["access_situacao_patrimonial", "change_situacao_patrimonial"],
   },
 ];
 
@@ -1354,15 +1348,17 @@ const PrivateRouter = (
     {...rest}
     render={
       (props) =>
-        authService.isLoggedIn() ? (
-          rest.featureFlag && visoesService.getPermissoes(rest.permissoes) ? (
-            <Component {...props} />
-          ) : (
-            <Route path="*" component={PaginaSemPermissao} />
-          )
-        ) : (
-          window.location.assign("/login")
-        )
+        authService.isLoggedIn()
+          ? (console.log(
+              rest.permissoes,
+              visoesService.getPermissoes(rest.permissoes)
+            ),
+            rest.featureFlag && visoesService.getPermissoes(rest.permissoes) ? (
+              <Component {...props} />
+            ) : (
+              <Route path="*" component={PaginaSemPermissao} />
+            ))
+          : window.location.assign("/login")
       /* <Redirect
               to={{ pathname: "/login", state: { from: props.location } }} // eslint-disable-line
             /> */
