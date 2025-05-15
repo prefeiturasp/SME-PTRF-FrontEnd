@@ -1,21 +1,18 @@
-import {useEffect, useState} from "react";
-import {getDespesasTabelas} from "../../services/escolas/Despesas.service";
+import { useQuery } from "@tanstack/react-query";
+import { getDespesasTabelas } from "../../services/escolas/Despesas.service";
 
-export const useCarregaTabelaDespesa = (prestacaoDeContas=null) =>{
-    const [tabelasDespesa, setTabelasDespesa] = useState([]);
+export const useCarregaTabelaDespesa = (prestacaoDeContas = null) => {
+  const associacaoUuid = prestacaoDeContas?.associacao?.uuid;
 
-    useEffect(() => {
-        const carregaTabelasDespesa = async () => {
-            let resp
-            if (prestacaoDeContas && prestacaoDeContas.associacao && prestacaoDeContas.associacao.uuid){
-                resp = await getDespesasTabelas(prestacaoDeContas.associacao.uuid);
-            }else {
-                resp = await getDespesasTabelas();
-            }
-            setTabelasDespesa(resp);
-        };
-        carregaTabelasDespesa();
-    }, [prestacaoDeContas]);
+  const { data } = useQuery(
+    ["tabelas-despesa", associacaoUuid],
+    () => getDespesasTabelas(associacaoUuid),
+    {
+      keepPreviousData: true,
+      staleTime: 5000,
+      refetchOnWindowFocus: true,
+    }
+  );
 
-    return tabelasDespesa
-}
+  return data;
+};
