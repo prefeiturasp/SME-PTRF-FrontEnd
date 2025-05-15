@@ -1331,19 +1331,13 @@ const routesConfig = [
     exact: true,
     path: "/lista-situacao-patrimonial",
     component: SituacaoPatrimonialPage,
-    permissoes: [
-      "access_painel_parametrizacoes",
-      "change_painel_parametrizacoes",
-    ],
+    permissoes: ["access_situacao_patrimonial"],
   },
   {
     exact: true,
     path: "/cadastro-bem-produzido/",
     component: CadastroBemProduzidoPage,
-    permissoes: [
-      "access_painel_parametrizacoes",
-      "change_painel_parametrizacoes",
-    ],
+    permissoes: ["access_situacao_patrimonial", "change_situacao_patrimonial"],
   },
 ];
 
