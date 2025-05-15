@@ -1348,17 +1348,15 @@ const PrivateRouter = (
     {...rest}
     render={
       (props) =>
-        authService.isLoggedIn()
-          ? (console.log(
-              rest.permissoes,
-              visoesService.getPermissoes(rest.permissoes)
-            ),
-            rest.featureFlag && visoesService.getPermissoes(rest.permissoes) ? (
-              <Component {...props} />
-            ) : (
-              <Route path="*" component={PaginaSemPermissao} />
-            ))
-          : window.location.assign("/login")
+        authService.isLoggedIn() ? (
+          rest.featureFlag && visoesService.getPermissoes(rest.permissoes) ? (
+            <Component {...props} />
+          ) : (
+            <Route path="*" component={PaginaSemPermissao} />
+          )
+        ) : (
+          window.location.assign("/login")
+        )
       /* <Redirect
               to={{ pathname: "/login", state: { from: props.location } }} // eslint-disable-line
             /> */
