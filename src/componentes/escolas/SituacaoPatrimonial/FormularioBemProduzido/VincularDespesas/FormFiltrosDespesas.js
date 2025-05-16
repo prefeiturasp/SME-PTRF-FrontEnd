@@ -146,6 +146,7 @@ export const FormFiltrosDespesas = ({
         <button
           className="btn btn-outline-success float-right"
           onClick={handleCleanFilter}
+          type="button"
         >
           Limpar Filtros
         </button>
