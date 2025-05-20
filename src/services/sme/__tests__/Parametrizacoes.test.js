@@ -148,7 +148,10 @@ import {
     getPeriodosPaa,
     postPeriodosPaa,
     patchPeriodosPaa,
-    deletePeriodosPaa
+    deletePeriodosPaa,
+    getPaaVigente,
+    getParametroPaa,
+    postPaa
 } from '../Parametrizacoes.service.js';
 import { TOKEN_ALIAS, ASSOCIACAO_UUID } from '../../auth.service.js';
 
@@ -1446,7 +1449,7 @@ describe('Testes para funções de análise', () => {
         const categoriaUuid = '1234'
         const acaoUuid = '1234'
         const result = await deleteAcoesPDDECategorias(categoriaUuid, acaoUuid);
-        const url = `/api/categorias-pdde/${categoriaUuid}/?acao_pdde_uuid=${acaoUuid}`;
+        const url = `/api/categorias-pdde/${categoriaUuid}/`;
         expect(api.delete).toHaveBeenCalledWith(url, authHeader());
         expect(result).toEqual(mockData);
     });
@@ -1665,15 +1668,6 @@ describe('Testes para funções de análise', () => {
         expect(result).toEqual(mockData);
     });
 
-
-
-
-
-
-
-
-
-
     test('getFiltrosMotivosPagamentoAntecipado deve chamar a API corretamente', async () => {
         api.get.mockResolvedValue({ data: mockData });
         const nome = 'Motivo Teste';
@@ -1852,6 +1846,30 @@ describe('Testes para funções de análise', () => {
         const result = await deletePeriodosPaa(uuid);
         const url = `/api/periodos-paa/${uuid}/`;
         expect(api.delete).toHaveBeenCalledWith(url, authHeader());
+    });
+
+    test('getPaaVigente deve chamar a API corretamente', async () => {
+        api.get.mockResolvedValue({ data: mockData });
+        const associacao_uuid = '1234';
+        const result = await getPaaVigente(associacao_uuid);
+        const url = `/api/associacoes/${associacao_uuid}/paa-vigente/`;
+        expect(api.get).toHaveBeenCalledWith(url, authHeader());
+        expect(result).toEqual({data: mockData});
+    });
+    
+    test('getParametroPaa deve chamar a API corretamente', async () => {
+        api.get.mockResolvedValue({ data: mockData });
+        const result = await getParametroPaa();
+        const url = `/api/parametros-paa/mes-elaboracao-paa/`;
+        expect(api.get).toHaveBeenCalledWith(url, authHeader());
+        expect(result).toEqual(mockData);
+    });
+
+    test('postPaa deve chamar a API corretamente', async () => {
+        api.post.mockResolvedValue(mockData);
+        await postPaa(payload);
+        const url = `/api/paa/`;
+        expect(api.post).toHaveBeenCalledWith(url, payload, authHeader());
     });
 
 });

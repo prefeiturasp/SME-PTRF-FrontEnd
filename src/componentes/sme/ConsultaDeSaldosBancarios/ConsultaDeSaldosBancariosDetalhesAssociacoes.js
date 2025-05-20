@@ -18,6 +18,7 @@ import ModalVisualizarExtrato from "./ModalVisualizarExtrato";
 import { BtnExportar } from "./BtnExportar";
 
 import {ModalConfirmarExportacao} from "../../../utils/Modais"
+import { consultarCodEol } from "../../../services/escolas/Associacao.service";
 
 export const ConsultaDeSaldosBancariosDetalhesAssociacoes = () =>{
 
@@ -109,13 +110,13 @@ export const ConsultaDeSaldosBancariosDetalhesAssociacoes = () =>{
             <div>
                 {rowData.obs_periodo__uuid && rowData.obs_periodo__comprovante_extrato ? (
                     <>
-                        <button className="btn-editar-membro mr-2" onClick={()=>handleClickVerExtrato(rowData)}>
+                        <button className="btn-editar-membro mr-2" data-testid="botaoVerExtrato" onClick={()=>handleClickVerExtrato(rowData)}>
                             <FontAwesomeIcon
                                 style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
                                 icon={faSearch}
                             />
                         </button>
-                        <button className="btn-editar-membro" onClick={()=>handleClickDownloadExtrato(rowData)}>
+                        <button className="btn-editar-membro" data-testid="botaoDownloadExtrato" onClick={()=>handleClickDownloadExtrato(rowData)}>
                             <FontAwesomeIcon
                                 style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
                                 icon={faDownload}

@@ -240,6 +240,19 @@ export const deletePeriodosPaa = async (uuid) => {
   return await api.delete(`/api/periodos-paa/${uuid}/`, authHeader());
 };
 
+// PAA
+export const getPaaVigente = async (associacao_uuid) => {
+  const result = await api.get(`/api/associacoes/${associacao_uuid}/paa-vigente/`, authHeader());
+  return result
+};
+export const getParametroPaa = async () => {
+  return (await api.get(`/api/parametros-paa/mes-elaboracao-paa/`, authHeader())).data;
+};
+export const postPaa = async (payload) => {
+  return (await api.post(`/api/paa/`, payload, authHeader())).data;
+};
+
+
 // Tags
 export const getTodasTags = async () => {
   return (await api.get(`/api/tags/`, authHeader())).data;
@@ -734,8 +747,8 @@ export const postAcoesPDDECategorias = async (payload) => {
 export const patchAcoesPDDECategorias = async (uuid, payload) => {
     return (await api.patch(`/api/categorias-pdde/${uuid}/`, payload, authHeader())).data
 };
-export const deleteAcoesPDDECategorias = async (categoriaUuid, acaoUuid) => {
-    return (await api.delete(`/api/categorias-pdde/${categoriaUuid}/?acao_pdde_uuid=${acaoUuid}`, authHeader())).data
+export const deleteAcoesPDDECategorias = async (categoriaUuid) => {
+    return (await api.delete(`/api/categorias-pdde/${categoriaUuid}/`, authHeader())).data
 };
 export const deleteAcoesPDDE = async (uuid) => {
     return (await api.delete(`/api/acoes-pdde/${uuid}/`, authHeader())).data
