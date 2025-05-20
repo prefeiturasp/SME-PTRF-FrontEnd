@@ -15,7 +15,8 @@ export const acoesPDDE = {
             "categoria_objeto": {
                 "id": 1,
                 "uuid": "2df33e5d-fbbf-4a4a-ab9a-d5fa49de4db2",
-                "nome": "Categoria 1"
+                "nome": "Categoria 1",
+                "pode_ser_excluida": false
             },
             "aceita_capital": false,
             "aceita_custeio": false,
@@ -29,7 +30,8 @@ export const acoesPDDE = {
             "categoria_objeto": {
                 "id": 2,
                 "uuid": "e88e6b4e-dbb2-4a88-8f80-6ada74d927c6",
-                "nome": "Categoria 2"
+                "nome": "Categoria 2",
+                "pode_ser_excluida": true
             },
             "aceita_capital": false,
             "aceita_custeio": false,
@@ -60,22 +62,26 @@ export const categoriasPDDE = {
         {
             "id": 1,
             "uuid": "2df33e5d-fbbf-4a4a-ab9a-d5fa49de4db2",
-            "nome": "Categoria 1"
+            "nome": "Categoria 1",
+            "pode_ser_excluida": false
         },
         {
             "id": 2,
             "uuid": "e88e6b4e-dbb2-4a88-8f80-6ada74d927c6",
-            "nome": "Categoria 2"
+            "nome": "Categoria 2",
+            "pode_ser_excluida": false
         },
         {
             "id": 4,
             "uuid": "d73fbc8e-4fb4-40fb-8928-b312f7f2b647",
-            "nome": "Categoria 4"
+            "nome": "Categoria 4",
+            "pode_ser_excluida": false
         },
         {
             "id": 5,
             "uuid": "8492d8b9-b2dc-463a-b4a7-1474c950c7e5",
-            "nome": "Categoria 5"
+            "nome": "Categoria 5",
+            "pode_ser_excluida": true
         }
     ]
 }

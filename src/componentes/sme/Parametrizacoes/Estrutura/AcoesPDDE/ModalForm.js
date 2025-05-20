@@ -24,7 +24,7 @@ const ModalForm = ({
 }) => {
 
     const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES = RetornaSeTemPermissaoEdicaoPainelParametrizacoes()
-    const initialStateFormCategoria = {id: 0, uuid: "", nome: ""}
+    const initialStateFormCategoria = {id: 0, uuid: "", nome: "", pode_ser_excluida: true}
     const [stateFormCategoria, setStateFormCategoria] = useState(initialStateFormCategoria);
     const [mostrarCategoria, setMostrarCategoria] = useState(false);
     const [mostrarCategoriaErro, setMostrarCategoriaErro] = useState(false);
@@ -66,7 +66,8 @@ const ModalForm = ({
             setStateFormCategoria({
                 uuid: categoria.uuid,
                 nome: categoria.nome,
-                id: categoria.id
+                id: categoria.id,
+                pode_ser_excluida: categoria.pode_ser_excluida
             })
         }
     };
@@ -167,19 +168,19 @@ const ModalForm = ({
                                     </div>
                                     
                                     <div className='col-1'>
-                                            <div className="form-group">
-                                                <label htmlFor="categoria"></label>
-                                                <button
-                                                    data-qa="btn-cancelar"
-                                                    data-testid="btn-adicionar-editar-categoria"
-                                                    onClick={() => handleCriarEditarCategoria(values.categoria)}
-                                                    type="button"
-                                                    className={`btn btn${!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES ? "-outline-secondary": "-success"} mt-2 mr-2`}
-                                                    disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
-                                                >
-                                                {categoriaIconeTemplate(stateFormModal.operacao)}
-                                                </button>
-                                            </div>
+                                        <div className="form-group">
+                                            <label htmlFor="categoria"></label>
+                                            <button
+                                                data-qa="btn-cancelar"
+                                                data-testid="btn-adicionar-editar-categoria"
+                                                onClick={() => handleCriarEditarCategoria(values.categoria)}
+                                                type="button"
+                                                className={`btn btn${!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES ? "-outline-secondary": "-success"} mt-2 mr-2`}
+                                                disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
+                                            >
+                                            {categoriaIconeTemplate(stateFormModal.operacao)}
+                                            </button>
+                                        </div>
                                     </div>
                                     
                                 </div>
@@ -237,10 +238,11 @@ const ModalForm = ({
                                                 type="button"
                                                 className={`btn btn-light-rose mt-2 mr-2`}
                                                 data-testid="btn-excluir-categoria"
+                                                disabled={!stateFormCategoria.pode_ser_excluida}
                                             >
                                             <ReactTooltip id="tooltip-id-excluir"/>
                                             <FontAwesomeIcon
-                                                data-tip="Excluir" data-for="tooltip-id-excluir"
+                                                data-tip={stateFormCategoria.pode_ser_excluida ? "Excluir" : "Não é possível excluir. Este programa ainda está vinculado a alguma ação."} data-for="tooltip-id-excluir"
                                                 icon={faTrashCan} 
                                                 style={{color: "#B40C02"}}
                                             />

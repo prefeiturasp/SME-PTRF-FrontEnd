@@ -6,6 +6,7 @@ import "./style.css";
 export const IconButton = ({
   icon = "",
   iconProps = {},
+  iconPosition = "left",
   label = "",
   onClick,
   disabled = false,
@@ -26,7 +27,7 @@ export const IconButton = ({
       style={{ padding: "8px 12px", gap: "5px", ...buttonStyle }}
       {...props}
     >
-      {icon && (
+      {icon && iconPosition === "left" && (
         <Icon
           icon={icon}
           iconProps={iconProps}
@@ -34,6 +35,13 @@ export const IconButton = ({
         />
       )}
       {label}
+      {icon && iconPosition === "right" && (
+        <Icon
+          icon={icon}
+          iconProps={iconProps}
+          tooltipMessage={tooltipMessage}
+        />
+      )}
     </button>
   );
 };

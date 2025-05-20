@@ -5,7 +5,6 @@ import {CardButton} from "./CardButton"
 import {getExportaCreditos} from "../../../services/sme/ExtracaoDados.service"
 import {toastCustom} from "../../Globais/ToastCustom";
 import {cards} from "./Cards"
-import locale from 'antd/es/date-picker/locale/pt_BR';
 import moment from "moment";
 import './extracao-dados.scss'
 import { visoesService } from '../../../services/visoes.service';
@@ -40,7 +39,6 @@ export const ExtracaoDados = (props) => {
                 <span data-tip="As datas informadas correspondem a data de criação do registro." data-for="tooltip-selecione-periodo-extracao">Selecione o período de criação (vazio para todos)</span>
                 <ReactTooltip place="right" id="tooltip-selecione-periodo-extracao" html={true}/>
                 <DatePicker.RangePicker
-                    locale={locale}
                     format={'DD/MM/YYYY'}
                     disabledDate={(date) => (
                         (date).startOf('day').toDate().valueOf() >
