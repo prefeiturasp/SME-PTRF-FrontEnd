@@ -160,6 +160,7 @@ export const DetalheDasPrestacoes = () => {
         setCheckSalvarJustificativa(false);
         setCheckSalvarExtratoBancario(false);
         setBtnSalvarExtratoBancarioDisable(true);
+        setExibeBtnDownload(false);
 
         if(periodoOuConta === 'periodo') {
             setPeriodoConta({
