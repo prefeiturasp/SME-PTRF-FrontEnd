@@ -11,7 +11,6 @@ import { getDownloadExtratoBancario, getVisualizarExtratoBancario } from "../../
 import { getTabelaAssociacoes } from "../../../../services/sme/Parametrizacoes.service";
 import { ConsultaDeSaldosBancariosDetalhesAssociacoes } from "../ConsultaDeSaldosBancariosDetalhesAssociacoes"
 import { mockPeriodos, mockTiposDeConta, mockDres, mockTabelaAssociacoes } from "../__fixtures__/mockData";
-import { fi } from 'date-fns/locale';
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
