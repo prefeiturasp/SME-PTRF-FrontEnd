@@ -6,8 +6,7 @@ import BreadcrumbComponent from '../../../Globais/Breadcrumb';
 import { useNavigate } from 'react-router-dom-v5-compat';
 import {ASSOCIACAO_UUID} from "../../../../services/auth.service";
 import { usePostPaa } from "./hooks/usePostPaa";
-import { getPaaVigente } from "../../../../services/sme/Parametrizacoes.service";
-import { getParametroPaa } from "../../../../services/sme/Parametrizacoes.service";
+import { getPaaVigente, getParametroPaa } from "../../../../services/sme/Parametrizacoes.service";
 
 export const ElaboracaoPaa = () => {
   const associacao_uuid = localStorage.getItem(ASSOCIACAO_UUID);
@@ -90,7 +89,7 @@ export const ElaboracaoPaa = () => {
             </div>
             <p>Confira a estrutura completa aqui.</p>
             <div className="d-flex justify-content-center">
-              <button type="button" className="btn btn-success mt-2 mr-5" onClick={handlePaa} disabled={!validMonthPaa}>{!notValidPaa ? "Continuar elaboração de PAA" : "Elaborar novo PAA"}</button>
+              <button type="button" className="btn btn-success mt-2 mr-5" data-testid="elaborar-paa-button" onClick={handlePaa} disabled={!validMonthPaa}>{!notValidPaa ? "Continuar elaboração de PAA" : "Elaborar novo PAA"}</button>
               <button type="button" className="btn btn-success mt-2 ml-5" onClick={() => {}}>PAA vigente e anteriores</button>
             </div>
           </div>
