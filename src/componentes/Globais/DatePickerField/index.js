@@ -2,11 +2,11 @@ import React from "react";
 import MaskedInput from 'react-text-mask'
 import DatePicker, {registerLocale} from "react-datepicker";
 import 'react-datepicker/dist/react-datepicker.css';
-import pt from "date-fns/locale/pt-BR";
+import { ptBR } from "date-fns/locale";
 import "./datePickerField.scss";
 import moment from "moment";
 
-registerLocale("pt", pt );
+registerLocale("pt", ptBR);
 
 
 export const DatePickerField = ({ dataQa="", name, id, value, className="form-control", onChange, onCalendarOpen, onCalendarClose, disabled, placeholderText, maxDate=null, wrapperClassName=null, minDate=null }) => {
