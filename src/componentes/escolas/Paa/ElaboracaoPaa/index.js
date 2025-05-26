@@ -26,6 +26,7 @@ export const ElaboracaoPaa = () => {
   const carregaPaa = useCallback(async ()=>{
     try {
         let response = await getPaaVigente(associacao_uuid)
+        localStorage.setItem("PAA", response.data.uuid);
         setNotValidPaa(false);
     } catch (error) {
         setNotValidPaa(true);

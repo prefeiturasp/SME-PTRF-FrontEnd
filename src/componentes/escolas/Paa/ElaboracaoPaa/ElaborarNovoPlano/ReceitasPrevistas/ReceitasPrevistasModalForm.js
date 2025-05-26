@@ -91,7 +91,8 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
 
   const onSubmit = (values) => {
     const payload = {
-      acao_associacao: acaoAssociacao.id,
+      paa: localStorage.getItem("PAA"),
+      acao_associacao: acaoAssociacao.uuid,
       previsao_valor_custeio: values.valor_custeio / 100,
       previsao_valor_capital: values.valor_capital / 100,
       previsao_valor_livre: values.valor_livre / 100,
