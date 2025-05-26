@@ -13,6 +13,7 @@ export const usePostPaa = () => {
         onSuccess: (data) => {
             queryClient.invalidateQueries(['paa']).then()
             toastCustom.ToastCustomSuccess('Sucesso.', `O PAA foi adicionado ao sistema com sucesso.`)
+            localStorage.setItem("PAA", data.uuid);
         },
         onError: (e) => {
             toastCustom.ToastCustomError('Ops!', `Não foi possível criar o PAA`)
