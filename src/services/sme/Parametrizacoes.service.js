@@ -739,22 +739,22 @@ export const deleteTipoDeTransacao = async (tag_uuid) => {
 
 // Ações PDDE
 export const getAcoesPDDECategorias = async () => {
-    return (await api.get(`/api/categorias-pdde/?page1&page_size=100`, authHeader())).data
+    return (await api.get(`/api/programas-pdde/?page1&page_size=100`, authHeader())).data
 };
 export const postAcoesPDDECategorias = async (payload) => {
-    return (await api.post(`/api/categorias-pdde/`, payload, authHeader())).data
+    return (await api.post(`/api/programas-pdde/`, payload, authHeader())).data
 };
 export const patchAcoesPDDECategorias = async (uuid, payload) => {
-    return (await api.patch(`/api/categorias-pdde/${uuid}/`, payload, authHeader())).data
+    return (await api.patch(`/api/programas-pdde/${uuid}/`, payload, authHeader())).data
 };
 export const deleteAcoesPDDECategorias = async (categoriaUuid) => {
-    return (await api.delete(`/api/categorias-pdde/${categoriaUuid}/`, authHeader())).data
+    return (await api.delete(`/api/programas-pdde/${categoriaUuid}/`, authHeader())).data
 };
 export const deleteAcoesPDDE = async (uuid) => {
     return (await api.delete(`/api/acoes-pdde/${uuid}/`, authHeader())).data
 };
 export const getAcoesPDDE = async (nome="", categoria="", currentPage=1, rowsPerPage=20) => {
-    return (await api.get(`/api/acoes-pdde/?nome=${nome}&categoria__uuid=${categoria}&page=${currentPage}&page_size=${rowsPerPage}`, authHeader())).data
+    return (await api.get(`/api/acoes-pdde/?nome=${nome}&programa__uuid=${categoria}&page=${currentPage}&page_size=${rowsPerPage}`, authHeader())).data
 };
 export const postAcoesPDDE = async (payload) => {
     return (await api.post('/api/acoes-pdde/', payload, authHeader())).data

@@ -54,7 +54,8 @@ const ModalForm = ({
 
     const handleSelectCategoria = (categoria) => {
         if (stateFormModal.operacao === "edit"){
-            const item = categorias.results.find(v => v.id == categoria) || initialStateFormCategoria
+            const item = categorias.results.find(v => v.uuid == categoria) || initialStateFormCategoria
+            console.log("item", item)
             setStateFormCategoria(item)
         }
     };
@@ -62,7 +63,7 @@ const ModalForm = ({
     const handleCriarEditarCategoria = (categoriaId) => {
         setMostrarCategoria(!mostrarCategoria);
         if (stateFormModal.operacao === "edit"){
-            const categoria = categorias.results.find(categoria => categoria.id == categoriaId)
+            const categoria = categorias.results.find(categoria => categoria.uuid == categoriaId)
             setStateFormCategoria({
                 uuid: categoria.uuid,
                 nome: categoria.nome,
@@ -142,9 +143,10 @@ const ModalForm = ({
                                             {props.touched.nome && props.errors.nome && <span className="span_erro text-danger mt-1"> {props.errors.nome} </span>}
                                         </div>
                                     </div>
+
                                     <div className='col'>
                                         <div className="form-group">
-                                            <label htmlFor="categoria">Programa *</label>
+                                            <label htmlFor="programa">Programa *</label>
                                             <Field
                                                 as="select"
                                                 data-qa="input-categoria"
@@ -153,27 +155,27 @@ const ModalForm = ({
                                                     handleSelectCategoria(e.target.value);
                                                 }}
                                                 disabled={!props.values.editavel || !TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
-                                                name="categoria"
-                                                id="categoria"
+                                                name="programa"
+                                                id="programa"
                                                 className="form-control"
                                             >
                                                 <option data-qa="option-categoria-vazio" value=''>Selecione um programa</option>
                                                 {categorias && categorias.results && categorias.results.length > 0 && categorias.results.map(item => (
-                                                    <option data-qa={`option-categoria-${item.id}`} key={item.id} value={item.id}>{item.nome}</option>
+                                                    <option data-qa={`option-categoria-${item.uuid}`} key={item.uuid} value={item.uuid}>{item.nome}</option>
                                                 ))}
                                                 
                                             </Field>
-                                            {props.touched.categoria && props.errors.categoria && <span className="span_erro text-danger mt-1"> {props.errors.categoria} </span>}
+                                            {props.touched.programa && props.errors.programa && <span className="span_erro text-danger mt-1"> {props.errors.programa} </span>}
                                         </div>
                                     </div>
                                     
                                     <div className='col-1'>
                                         <div className="form-group">
-                                            <label htmlFor="categoria"></label>
+                                            <label htmlFor="programa"></label>
                                             <button
                                                 data-qa="btn-cancelar"
                                                 data-testid="btn-adicionar-editar-categoria"
-                                                onClick={() => handleCriarEditarCategoria(values.categoria)}
+                                                onClick={() => handleCriarEditarCategoria(values.programa)}
                                                 type="button"
                                                 className={`btn btn${!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES ? "-outline-secondary": "-success"} mt-2 mr-2`}
                                                 disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
@@ -231,7 +233,7 @@ const ModalForm = ({
                                     <div className='col-1'>
                                     { mostrarCategoria && stateFormModal.operacao === "edit" &&
                                         <div className="form-group">
-                                            <label htmlFor="categoria"></label>
+                                            <label htmlFor="programa"></label>
                                             <button
                                                 data-qa="btn-cancelar"
                                                 onClick={() => setShowModalConfirmDeleteCategoria(true)}
@@ -401,13 +403,13 @@ const ModalForm = ({
                                 <ModalConfirmar
                                     open={showModalConfirmEditCategoria}
                                     onOk={salvarFormCategoria}
-                                    okText={stateFormModal.categoria ? "Editar" : "Adicionar"}
+                                    okText={stateFormModal.programa ? "Editar" : "Adicionar"}
                                     okButtonProps={"btn-base-verde btn-editar-adicionar-categoria"}
                                     onCancel={() => setShowModalConfirmEditCategoria(false)}
                                     cancelText="Cancelar"
                                     cancelButtonProps={"btn-base-verde-outline btn-editar-adicionar-categoria-cancelar"}
-                                    titulo={`${stateFormModal.categoria ? "Editar" : "Adicionar"} Programa de Ação PDDE`}
-                                    bodyTexto={`<p>Tem certeza que deseja ${stateFormModal.categoria ? "editar" : "adicionar"} esse Programa de Ação PDDE?</p>`}
+                                    titulo={`${stateFormModal.programa ? "Editar" : "Adicionar"} Programa de Ação PDDE`}
+                                    bodyTexto={`<p>Tem certeza que deseja ${stateFormModal.programa ? "editar" : "adicionar"} esse Programa de Ação PDDE?</p>`}
                                     iconeAviso={IconeAvisoConfirmacao}
                                 />
                                 {/* Modal de Exclusao da Categoria */}
