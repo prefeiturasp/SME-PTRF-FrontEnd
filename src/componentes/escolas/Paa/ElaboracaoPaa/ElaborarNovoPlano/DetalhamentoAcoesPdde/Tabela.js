@@ -6,7 +6,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ReactTooltip from "react-tooltip";
 import {Paginacao} from "./Paginacao";
 import { formatMoneyBRL } from '../../../../../../utils/money';
-import ModalEdicaoAcaoPdde from './ModalEdicaoAcaoPdde';
+import ModalEdicaoReceitaPrevistaPDDE from './ModalEdicaoReceitaPrevistaPdde';
 
 const Tabela = ({
     rowsPerPage, 
@@ -40,15 +40,8 @@ const Tabela = ({
         )
     }
 
-    const cleanMoneyString = (value) => {
-        if (!value) return 0;
-        return parseFloat(value.toString()
-            .replace('.', '')
-            .replace(',', '.'));
-    };
-    
-    const moneyTemplate = (previsao, saldo, acceptsField) => (rowData) => {        
-        if (!rowData[acceptsField]) {
+    const moneyTemplate = (previsao, saldo, acceptsField) => {
+        if (!acceptsField) {
             return (
                 <div style={{
                     backgroundColor: '#DADADA',
@@ -61,14 +54,12 @@ const Tabela = ({
                 }} />
             );
         }
-        
-        const previsaoValue = cleanMoneyString(rowData[previsao]);
-        const saldoValue = cleanMoneyString(rowData[saldo]);
-        const value = (previsaoValue + saldoValue)/100;
+
+        const value = previsao + saldo;
         
         return (
             <div style={{ textAlign: 'right' }}>
-                {isNaN(value) ? '00,00' : formatMoneyBRL(value)}
+                {isNaN(value) ? '0,00' : formatMoneyBRL(value)}
             </div>
         );
     }
@@ -81,25 +72,31 @@ const Tabela = ({
             id={'tabela-acoes-pdde'}
         >
             <Column field="nome" header="Ação PDDE"/>
-            <Column field="categoria_objeto.nome" header="Programa"/>
+            <Column field="programa_objeto.nome" header="Programa"/>
             <Column 
-                field="saldo_valor_custeio" 
                 header="Custeio (R$)"
-                body={moneyTemplate('previsao_valor_custeio','saldo_valor_custeio', 'aceita_custeio')}
+                body={(rowData) => moneyTemplate(
+                    rowData.receitas_previstas_pdde_valores?.previsao_valor_custeio,
+                    rowData.receitas_previstas_pdde_valores?.saldo_custeio,
+                    rowData.aceita_custeio)}
                 align="right"
                 style={{ position: 'relative', overflow: 'hidden' }}
             />
             <Column 
-                field="saldo_valor_capital" 
                 header="Capital (R$)"
-                body={moneyTemplate('previsao_valor_capital','saldo_valor_capital', 'aceita_capital')}
+                body={(rowData) => moneyTemplate(
+                    rowData.receitas_previstas_pdde_valores?.previsao_valor_capital,
+                    rowData.receitas_previstas_pdde_valores?.saldo_capital,
+                    rowData.aceita_capital)}
                 align="right"
                 style={{ position: 'relative', overflow: 'hidden' }}
             />
             <Column 
-                field="saldo_valor_livre_aplicacao" 
                 header="Livre aplicação (R$)"
-                body={moneyTemplate('previsao_valor_livre_aplicacao','saldo_valor_livre_aplicacao', 'aceita_livre_aplicacao')}
+                body={(rowData) => moneyTemplate(
+                    rowData.receitas_previstas_pdde_valores?.previsao_valor_livre,
+                    rowData.receitas_previstas_pdde_valores?.saldo_livre,
+                    rowData.aceita_livre_aplicacao)}
                 align="right"
                 style={{ position: 'relative', overflow: 'hidden' }}
             />
@@ -119,10 +116,10 @@ const Tabela = ({
             count={count}
         />
 
-        <ModalEdicaoAcaoPdde
+        <ModalEdicaoReceitaPrevistaPDDE
             open={showModalForm}
             onClose={() => setShowModalForm(false)}
-            acaoPdde={modalFormData}
+            receitaPrevistaPDDE={modalFormData}
         />
         </>
     );
