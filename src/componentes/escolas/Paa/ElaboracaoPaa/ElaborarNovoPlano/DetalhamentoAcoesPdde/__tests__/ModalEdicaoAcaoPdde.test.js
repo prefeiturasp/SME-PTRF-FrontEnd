@@ -1,29 +1,34 @@
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import ModalEdicaoAcaoPdde from "../ModalEdicaoAcaoPdde";
-import { usePatchAcaoPdde } from '../hooks/usePatchAcaoPdde';
+import ModalEdicaoReceitaPrevistaPDDE from "../ModalEdicaoReceitaPrevistaPdde";
+import { usePatchReceitaPrevistaPdde } from '../hooks/usePatchReceitaPrevistaPdde';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Form } from "antd";
 
-jest.mock("../hooks/usePatchAcaoPdde");
+jest.mock("../hooks/usePatchReceitaPrevistaPdde");
 
+localStorage.setItem("PAA", "fake-uuid-paa")
 const onClose = jest.fn();
 const mutationPatch = jest.fn();
 
-const acaoPdde = {
+const receitaPrevisaPdde = {
   id: 1,
   uuid: "acao-pdde-uuid-1234",
   nome: "Recurso PDDE",
-  categoria_objeto: { id: 1 },
+  programa: 1,
+  programa_objeto: { id: 1, uuid: "1de0c2ac-8468-48a6-89e8-14ffa0d78133", },
   aceita_custeio: true,
   aceita_capital: true,
   aceita_livre_aplicacao: true,
-  saldo_valor_capital: "100.00",
-  saldo_valor_custeio: "200.00",
-  saldo_valor_livre_aplicacao: "300.00",
-  previsao_valor_capital: "50.00",
-  previsao_valor_custeio: "60.00",
-  previsao_valor_livre_aplicacao: "70.00",
+  receitas_previstas_pdde_valores:{
+    uuid: "1de0c2ac-8468-48a6-89e8-14ffa0d78131",
+    saldo_capital: "100.00",
+    saldo_custeio: "200.00",
+    saldo_livre: "300.00",
+    previsao_valor_capital: "50.00",
+    previsao_valor_custeio: "60.00",
+    previsao_valor_livre: "70.00",
+  }
 };
 
 describe("ModalEdicaoAcaoPdde", () => {
@@ -42,35 +47,39 @@ describe("ModalEdicaoAcaoPdde", () => {
       removeListener: jest.fn(),
     }));
 
-    usePatchAcaoPdde.mockReturnValue({
+    usePatchReceitaPrevistaPdde.mockReturnValue({
       mutationPatch: { mutate: mutationPatch, isLoading: false },
     });
   });
 
-  test("renderiza o formulário corretamente", async () => {
+  it("renderiza o formulário corretamente", async () => {
     render(
       <QueryClientProvider client={queryClient}>
-        <ModalEdicaoAcaoPdde
+        <ModalEdicaoReceitaPrevistaPDDE
           open={true}
           onClose={onClose}
-          acaoPdde={acaoPdde}
+          receitaPrevistaPDDE={receitaPrevisaPdde}
         />
       </QueryClientProvider>
     );
     
-    expect(screen.getByText(`Editar Recurso ${acaoPdde.nome}`)).toBeInTheDocument();
+    const input_saldo_custeio = screen.getAllByLabelText("Custeio")[0];
+    console.log(input_saldo_custeio);
+    fireEvent.change(input_saldo_custeio, { target: { value: "250.00" } });
+
+    expect(screen.getByText(`Editar Recurso ${receitaPrevisaPdde.nome}`)).toBeInTheDocument();
     expect(screen.getByText("Saldo reprogramado")).toBeInTheDocument();
     expect(screen.getByText("Receita prevista")).toBeInTheDocument();
     expect(screen.getByText("Total")).toBeInTheDocument();
   });
 
-  test("chama a mutationPatch quando o formulário é submetido", async () => {
+  it("chama a mutationPatch quando o formulário é submetido", async () => {
     render(
       <QueryClientProvider client={queryClient}>
-        <ModalEdicaoAcaoPdde
+        <ModalEdicaoReceitaPrevistaPDDE
           open={true}
           onClose={onClose}
-          acaoPdde={acaoPdde}
+          receitaPrevistaPDDE={receitaPrevisaPdde}
         />
       </QueryClientProvider>
     );
@@ -80,19 +89,22 @@ describe("ModalEdicaoAcaoPdde", () => {
       fireEvent.click(submitButton);
       
       expect(mutationPatch).toHaveBeenCalledWith({
-        uuid: acaoPdde.uuid,
-        payload: expect.objectContaining({
-          acao_associacao: acaoPdde.id,
-          nome: acaoPdde.nome,
-          categoria: acaoPdde.categoria_objeto.id,
-        })
+        uuid: receitaPrevisaPdde.receitas_previstas_pdde_valores.uuid,
+        payload: {
+          saldo_custeio: parseFloat(receitaPrevisaPdde.receitas_previstas_pdde_valores.saldo_custeio),
+          saldo_capital: parseFloat(receitaPrevisaPdde.receitas_previstas_pdde_valores.saldo_capital),
+          saldo_livre: parseFloat(receitaPrevisaPdde.receitas_previstas_pdde_valores.saldo_livre),
+          previsao_valor_custeio: parseFloat(receitaPrevisaPdde.receitas_previstas_pdde_valores.previsao_valor_custeio),
+          previsao_valor_capital: parseFloat(receitaPrevisaPdde.receitas_previstas_pdde_valores.previsao_valor_capital),
+          previsao_valor_livre: parseFloat(receitaPrevisaPdde.receitas_previstas_pdde_valores.previsao_valor_livre)
+        }
       });
     });
   });
 
-  test("desabilita o botão Salvar quando nenhum tipo é aceito", async () => {
-    const acaoSemTipos = {
-      ...acaoPdde,
+  it("desabilita o botão Salvar quando nenhum tipo é aceito", async () => {
+    const receitaPrevisaPddeData = {
+      ...receitaPrevisaPdde,
       aceita_custeio: false,
       aceita_capital: false,
       aceita_livre_aplicacao: false
@@ -100,10 +112,10 @@ describe("ModalEdicaoAcaoPdde", () => {
 
     render(
       <QueryClientProvider client={queryClient}>
-        <ModalEdicaoAcaoPdde
+        <ModalEdicaoReceitaPrevistaPDDE
           open={true}
           onClose={onClose}
-          acaoPdde={acaoSemTipos}
+          receitaPrevistaPDDE={receitaPrevisaPddeData}
         />
       </QueryClientProvider>
     );

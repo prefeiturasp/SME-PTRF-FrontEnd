@@ -17,7 +17,7 @@ export const usePostReceitaPrevistaPdde = (setModalForm) => {
             );
         },
         onError: (e) => {
-            toastCustom.ToastCustomError('Ops!', 'Não foi possível atualizar a Receita Prevista PDDE')
+            toastCustom.ToastCustomError('Ops!', 'Não foi possível criar a Receita Prevista PDDE')
         },
     })
     return {mutationPost}
