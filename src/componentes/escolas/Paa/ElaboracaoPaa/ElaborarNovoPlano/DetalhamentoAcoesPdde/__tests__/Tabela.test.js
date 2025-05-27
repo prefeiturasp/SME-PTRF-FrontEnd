@@ -12,10 +12,10 @@ jest.mock('../Paginacao', () => ({
   Paginacao: () => <div data-testid="paginacao" />,
 }));
 
-jest.mock('../ModalEdicaoAcaoPdde', () => ({ open, onClose, acaoPdde }) =>
+jest.mock('../ModalEdicaoReceitaPrevistaPdde', () => ({ open, onClose, receitaPrevistaPDDE }) =>
   open ? (
     <div data-testid="modal">
-      Modal Aberto - {acaoPdde?.nome}
+      Modal Aberto - {receitaPrevistaPDDE?.nome}
       <button onClick={onClose}>Fechar</button>
     </div>
   ) : null
@@ -24,18 +24,23 @@ jest.mock('../ModalEdicaoAcaoPdde', () => ({ open, onClose, acaoPdde }) =>
 const mockData = {
   results: [
     {
-      uuid: '123',
-      nome: 'Ação Teste',
-      categoria_objeto: { nome: 'Programa A' },
-      previsao_valor_custeio: '100,00',
-      saldo_valor_custeio: '200,00',
-      previsao_valor_capital: '50,00',
-      saldo_valor_capital: '100,00',
-      previsao_valor_livre_aplicacao: '30,00',
-      saldo_valor_livre_aplicacao: '70,00',
+      id: 1,
+      uuid: "acao-pdde-uuid-1234",
+      nome: "Ação PDDE 1",
+      programa: 1,
+      programa_objeto: { id: 1, uuid: "1de0c2ac-8468-48a6-89e8-14ffa0d78133", nome: "Programa A" },
       aceita_custeio: true,
-      aceita_capital: false,
+      aceita_capital: true,
       aceita_livre_aplicacao: true,
+      receitas_previstas_pdde_valores:{
+        uuid: "1de0c2ac-8468-48a6-89e8-14ffa0d78131",
+        saldo_capital: 100.00,
+        saldo_custeio: 200.00,
+        saldo_livre: 300.00,
+        previsao_valor_capital: 50.00,
+        previsao_valor_custeio: 60.00,
+        previsao_valor_livre: 70.00,
+      }
     },
   ],
 };
@@ -75,10 +80,10 @@ describe('Tabela', () => {
       />
     );
 
-    expect(screen.getByText('Ação Teste')).toBeInTheDocument();
+    expect(screen.getByText('Ação PDDE 1')).toBeInTheDocument();
     expect(screen.getByText('Programa A')).toBeInTheDocument();
-    expect(screen.getByText(/3,00/)).toBeInTheDocument();
-    expect(screen.getByText(/1,00/)).toBeInTheDocument();
+    expect(screen.getByText(/150,00/)).toBeInTheDocument();
+    expect(screen.getByText(/260,00/)).toBeInTheDocument();
   });
 
   it('deve abrir o modal ao clicar no botão de editar', () => {
@@ -98,7 +103,7 @@ describe('Tabela', () => {
     fireEvent.click(botaoEditar);
 
     expect(screen.getByTestId('modal')).toBeInTheDocument();
-    expect(screen.getByText(/Modal Aberto - Ação Teste/i)).toBeInTheDocument();
+    expect(screen.getByText(/Modal Aberto - Ação PDDE 1/i)).toBeInTheDocument();
   });
 
   it('deve fechar o modal ao clicar no botão fechar', () => {
@@ -123,6 +128,3 @@ describe('Tabela', () => {
     expect(screen.queryByTestId('modal')).not.toBeInTheDocument();
   });
 });
-
-
-/* expect(screen.getByRole('grid')).toBeInTheDocument(); */
