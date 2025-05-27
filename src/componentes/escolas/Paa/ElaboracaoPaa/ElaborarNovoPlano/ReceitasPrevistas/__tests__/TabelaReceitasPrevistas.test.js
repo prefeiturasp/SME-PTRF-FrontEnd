@@ -2,14 +2,14 @@ import React from "react";
 import { render, screen, renderHook, fireEvent } from "@testing-library/react";
 import { useGetAcoesAssociacao } from "../hooks/useGetAcoesAssociacao";
 import TabelaReceitasPrevistas from "../TabelaReceitasPrevistas";
-import { useGetCategoriasPddeTotais } from "../hooks/useGetCategoriasPddeTotais";
+import { useGetProgramasPddeTotais } from "../hooks/useGetProgramasPddeTotais";
 
 jest.mock("../hooks/useGetAcoesAssociacao", () => ({
   useGetAcoesAssociacao: jest.fn(),
 }));
 
-jest.mock("../hooks/useGetCategoriasPddeTotais", () => ({
-  useGetCategoriasPddeTotais: jest.fn(),
+jest.mock("../hooks/useGetProgramasPddeTotais", () => ({
+  useGetProgramasPddeTotais: jest.fn(),
 }));
 
 jest.mock("../ReceitasPrevistasModalForm", () => () => (
@@ -22,8 +22,8 @@ describe("TabelaReceitasPrevistas Component", () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    useGetCategoriasPddeTotais.mockReturnValue({
-      data: { categorias: [], total: {} },
+    useGetProgramasPddeTotais.mockReturnValue({
+      data: { programas: [], total: {} },
     });
   });
 

@@ -157,6 +157,7 @@ const ModalEdicaoReceitaPrevistaPDDE = ({ open, onClose, receitaPrevistaPDDE }) 
                       name="saldo_custeio"
                       labelCol={{ span: 24 }}
                       style={{ marginBottom: 8 }}
+                      data-testid="saldo_custeio_input"
                       rules={receitaPrevistaPDDE && receitaPrevistaPDDE.aceita_custeio ? inputRules : null}
                     >
                       <InputNumber
@@ -166,6 +167,7 @@ const ModalEdicaoReceitaPrevistaPDDE = ({ open, onClose, receitaPrevistaPDDE }) 
                         style={{ width: "100%" }}
                         disabled={receitaPrevistaPDDE && !receitaPrevistaPDDE.aceita_custeio}
                         controls={false}
+                        data-testid="saldo_custeio_input"
                       />
                     </Form.Item>
                     <Icon
