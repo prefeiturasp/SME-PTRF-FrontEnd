@@ -41,7 +41,6 @@ export const useAcoesPDDE = () => {
 
     const handleClose = () => setModalForm(initialStateFormModal);
     const handleOpenModalForm = (rowData) => {
-        console.log("rowData", rowData);
         setModalForm({ 
             ...rowData,
             operacao: "edit",
@@ -74,7 +73,6 @@ export const useAcoesPDDE = () => {
     };
 
     const handleSubmitFormModal = async (values) => {
-        console.log("values", values);
         const payload = {
             nome: values.nome,
             programa: values.programa,
