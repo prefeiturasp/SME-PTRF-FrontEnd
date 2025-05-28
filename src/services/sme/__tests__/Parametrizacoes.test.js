@@ -417,7 +417,7 @@ describe('Testes para funções de análise', () => {
     test('getAcoesPDDECategorias  deve chamar a API corretamente', async () => {
         api.get.mockResolvedValue({ data: mockData })
         const result = await getAcoesPDDECategorias();
-        const url = `/api/categorias-pdde/?page1&page_size=100`
+        const url = `/api/programas-pdde/?page1&page_size=100`
         expect(api.get).toHaveBeenCalledWith(url, authHeader())
         expect(result).toEqual(mockData);
     });
@@ -1430,7 +1430,7 @@ describe('Testes para funções de análise', () => {
     test('postAcoesPDDECategorias deve chamar a API corretamente', async () => {
         api.post.mockResolvedValue({ data: mockData });
         const result = await postAcoesPDDECategorias(payload);
-        const url = `/api/categorias-pdde/`;
+        const url = `/api/programas-pdde/`;
         expect(api.post).toHaveBeenCalledWith(url, payload, authHeader());
         expect(result).toEqual(mockData);
     });
@@ -1439,7 +1439,7 @@ describe('Testes para funções de análise', () => {
         const categoriaUuid = 'uuid-cat-pdde-patch';
         api.patch.mockResolvedValue({ data: mockData });
         const result = await patchAcoesPDDECategorias(categoriaUuid, payload);
-        const url = `/api/categorias-pdde/${categoriaUuid}/`;
+        const url = `/api/programas-pdde/${categoriaUuid}/`;
         expect(api.patch).toHaveBeenCalledWith(url, payload, authHeader());
         expect(result).toEqual(mockData);
     });
@@ -1449,7 +1449,7 @@ describe('Testes para funções de análise', () => {
         const categoriaUuid = '1234'
         const acaoUuid = '1234'
         const result = await deleteAcoesPDDECategorias(categoriaUuid, acaoUuid);
-        const url = `/api/categorias-pdde/${categoriaUuid}/`;
+        const url = `/api/programas-pdde/${categoriaUuid}/`;
         expect(api.delete).toHaveBeenCalledWith(url, authHeader());
         expect(result).toEqual(mockData);
     });
@@ -1470,7 +1470,7 @@ describe('Testes para funções de análise', () => {
         const currentPage = 2;
         const rowsPerPage = 10;
         const result = await getAcoesPDDE(nome, categoria, currentPage, rowsPerPage);
-        const url = `/api/acoes-pdde/?nome=${nome}&categoria__uuid=${categoria}&page=${currentPage}&page_size=${rowsPerPage}`;
+        const url = `/api/acoes-pdde/?nome=${nome}&programa__uuid=${categoria}&page=${currentPage}&page_size=${rowsPerPage}`;
         expect(api.get).toHaveBeenCalledWith(url, authHeader());
         expect(result).toEqual(mockData);
     });
