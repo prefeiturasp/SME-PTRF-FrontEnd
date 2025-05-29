@@ -13,7 +13,6 @@ import { useCarregaTabelaDespesa } from "../../../../../hooks/Globais/useCarrega
 import { useGetPeriodos } from "../../../../../hooks/Globais/useGetPeriodo";
 import moment from "moment";
 import { useNavigate } from "react-router-dom-v5-compat";
-import { usePostBemProduzido } from "../hooks/usePostBemProduzido";
 
 const filtroInicial = {
   fornecedor: "",
@@ -24,14 +23,17 @@ const filtroInicial = {
   data_fim: "",
 };
 
-export const VincularDespesas = ({ uuid }) => {
+export const VincularDespesas = ({
+  uuid,
+  despesasSelecionadas,
+  setDespesasSelecionadas,
+  salvarRascunho,
+}) => {
   const navigate = useNavigate();
   const [expandedRows, setExpandedRows] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [firstPage, setFirstPage] = useState(0);
-  const [selectedDespesas, setSelectedDespesas] = useState([]);
   const [filtros, setFiltros] = useState(filtroInicial);
-  const { mutationPost } = usePostBemProduzido(navigate);
 
   const { data, refetch, isLoading, error, isError } = useGetDespesas(
     {
@@ -91,24 +93,20 @@ export const VincularDespesas = ({ uuid }) => {
     return "R$ " + formatMoneyBRL(rowData.valor_total);
   };
 
+  const valorUtilizadoRateioTemplate = (rowData, column) => {
+    return "R$ " + formatMoneyBRL(rowData.valor_utilizado);
+  };
+
+  const valorDisponivelRateioTemplate = (rowData, column) => {
+    return "R$ " + formatMoneyBRL(rowData.valor_disponivel);
+  };
+
   const valorRateioTemplate = (rowData, column) => {
     return "R$ " + formatMoneyBRL(rowData.valor_rateio);
   };
 
   const rateioTemplate = (rowData, column) => {
     return `Rateio ${column.rowIndex + 1}`;
-  };
-
-  const handleSaveRascunho = () => {
-    if (uuid) {
-      //
-    } else {
-      mutationPost.mutate({
-        payload: {
-          despesas: selectedDespesas.map((despesa) => despesa.uuid),
-        },
-      });
-    }
   };
 
   const expandedRowTemplate = (data) => {
@@ -130,12 +128,12 @@ export const VincularDespesas = ({ uuid }) => {
         <Column
           field="valor_rateio"
           header="Valor disponível para utilização"
-          body={valorRateioTemplate}
+          body={valorDisponivelRateioTemplate}
         />
         <Column
           field="valor_rateio"
           header="Valor utilizado"
-          body={valorRateioTemplate}
+          body={valorUtilizadoRateioTemplate}
         />
       </DataTable>
     );
@@ -171,8 +169,8 @@ export const VincularDespesas = ({ uuid }) => {
               <DataTable
                 value={data.results}
                 autoLayout={true}
-                selection={selectedDespesas}
-                onSelectionChange={(e) => setSelectedDespesas(e.value)}
+                selection={despesasSelecionadas}
+                onSelectionChange={(e) => setDespesasSelecionadas(e.value)}
                 expandedRows={expandedRows}
                 onRowToggle={(e) => setExpandedRows(e.data)}
                 rowExpansionTemplate={expandedRowTemplate}
@@ -224,8 +222,8 @@ export const VincularDespesas = ({ uuid }) => {
             </button>
             <button
               className="btn btn-outline-success float-right"
-              disabled={!selectedDespesas.length}
-              onClick={handleSaveRascunho}
+              disabled={!despesasSelecionadas.length && !uuid}
+              onClick={salvarRascunho}
             >
               Salvar rascunho
             </button>
