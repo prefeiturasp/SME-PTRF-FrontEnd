@@ -119,10 +119,8 @@ import { PaginaCadastroHistoricoDeMembros } from "../componentes/escolas/Membros
 import { ChamaTypescriptFirstComponent } from "../componentes/ChamaTypescriptFirstComponent";
 import { PaginaDetalhePrestacaoContaReprovadaNaoApresentacao } from "../componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContasNaoApresentada/pages/PaginaDetalhePrestacaoContaReprovadaNaoApresentacao";
 import { SituacaoPatrimonialPage } from "../paginas/escolas/SituacaoPatrimonial";
-import {
-  CadastroBemProduzidoPage,
-  CadastroSituacaoPatrimonialPage,
-} from "../paginas/escolas/SituacaoPatrimonial/CadastroBemProduzido";
+import { CadastroBemProduzidoPage } from "../paginas/escolas/SituacaoPatrimonial/CadastroBemProduzido";
+import { EdicaoBemProduzidoPage } from "../paginas/escolas/SituacaoPatrimonial/EdicaoBemProduzido";
 
 const routesConfig = [
   {
@@ -1337,6 +1335,12 @@ const routesConfig = [
     exact: true,
     path: "/cadastro-bem-produzido/",
     component: CadastroBemProduzidoPage,
+    permissoes: ["access_situacao_patrimonial", "change_situacao_patrimonial"],
+  },
+  {
+    exact: true,
+    path: "/edicao-bem-produzido/:uuid/",
+    component: EdicaoBemProduzidoPage,
     permissoes: ["access_situacao_patrimonial", "change_situacao_patrimonial"],
   },
 ];
