@@ -1,14 +1,15 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import React from "react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { createStore, combineReducers } from "redux";
 import { Provider } from "react-redux";
+import userEvent from "@testing-library/user-event";
 import { InformarValores } from "../../InformarValores/index";
 import { MemoryRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Modal as modalReducer } from "../../../../../../store/reducers/componentes/Globais/Modal/reducer";
+import { usePostExluirDespesaBemProduzidoEmLote } from "../../hooks/usePostExluirDespesaBemProduzidoEmLote";
+import { CustomModalConfirm } from "../../../../../Globais/Modal/CustomModalConfirm";
 
-import React from "react";
-
-const mockUseNavigate = jest.fn();
 const mockBemProduzidoDespesas = [
   {
     bem_produzido_despesa_uuid: "234cd9fb-adaf-4c29-83e7-f75b04c06cc2",
@@ -141,17 +142,15 @@ const mockBemProduzidoDespesas = [
     },
   },
 ];
-
+const mockUseNavigate = jest.fn();
+jest.mock("../../hooks/usePostExluirDespesaBemProduzidoEmLote");
 jest.mock("react-router-dom-v5-compat", () => ({
   ...jest.requireActual("react-router-dom-v5-compat"),
   useNavigate: () => mockUseNavigate,
 }));
-
-const mockSetDespesasSelecionadas = jest.fn();
-
-jest
-  .spyOn(React, "useState")
-  .mockReturnValue([mockBemProduzidoDespesas, mockSetDespesasSelecionadas]);
+jest.mock("../../../../../Globais/Modal/CustomModalConfirm", () => ({
+  CustomModalConfirm: jest.fn(),
+}));
 
 const rootReducer = combineReducers({
   Modal: modalReducer,
@@ -161,16 +160,28 @@ const mockStore = createStore(rootReducer);
 let queryClient;
 
 describe("InformarValores", () => {
+  const mockMutationPost = jest.fn();
+
   beforeEach(() => {
     queryClient = new QueryClient({
       defaultOptions: {
         queries: { retry: false },
       },
     });
+
+    usePostExluirDespesaBemProduzidoEmLote.mockReturnValue({
+      mutationPost: { mutate: mockMutationPost },
+    });
+
+    window.matchMedia = jest.fn().mockImplementation((query) => ({
+      matches: false,
+      addListener: jest.fn(),
+      removeListener: jest.fn(),
+    }));
   });
 
-  it("Deve solicitar confirmação ao clicar em Excluir despesa", async () => {
-    render(
+  it("Deve solicitar confirmação ao clicar em Excluir despesa e excluir quando confirmado", async () => {
+    const { container } = render(
       <MemoryRouter>
         <Provider store={mockStore}>
           <QueryClientProvider client={queryClient}>
@@ -185,14 +196,121 @@ describe("InformarValores", () => {
       </MemoryRouter>
     );
 
+    const hiddenInput = container.querySelector(
+      '.p-hidden-accessible input[type="checkbox"]'
+    );
+
+    fireEvent.click(hiddenInput);
+
     const buttonExcluir = screen.getByRole("button", {
       name: "Excluir despesa",
     });
+
     fireEvent.click(buttonExcluir);
 
-    expect(
-      screen.findByText("Tem certeza que deseja excluir a despesa selecionada?")
-    ).toBeInTheDocument();
+    expect(CustomModalConfirm).toHaveBeenCalledWith({
+      dispatch: expect.any(Function),
+      title: "Excluir despesa",
+      message: "Tem certeza que deseja excluir a despesa selecionada?",
+      cancelText: "Voltar",
+      confirmText: "Excluir",
+      isDanger: true,
+      onConfirm: expect.any(Function),
+    });
+
+    const modalCall = CustomModalConfirm.mock.calls[0][0];
+    const onConfirmFunction = modalCall.onConfirm;
+
+    await onConfirmFunction();
+
+    expect(mockMutationPost).toHaveBeenCalled();
+  });
+
+  it("Deve expandir linha ao clicar na seta para baixo", async () => {
+    const { container } = render(
+      <MemoryRouter>
+        <Provider store={mockStore}>
+          <QueryClientProvider client={queryClient}>
+            <InformarValores
+              uuid={null}
+              podeEditar={true}
+              despesas={mockBemProduzidoDespesas}
+              salvarRascunhoInformarValores={jest.fn()}
+            />
+          </QueryClientProvider>
+        </Provider>
+      </MemoryRouter>
+    );
+
+    const buttonCollapse = container.querySelector(".p-row-toggler");
+
+    fireEvent.click(buttonCollapse);
+
+    expect(screen.getByText("Despesa 1")).toBeInTheDocument();
+  });
+
+  it("Deve mostrar erro de validação quando o usuário inputar um valor maior do que o disponível", async () => {
+    const { container } = render(
+      <MemoryRouter>
+        <Provider store={mockStore}>
+          <QueryClientProvider client={queryClient}>
+            <InformarValores
+              uuid={null}
+              podeEditar={true}
+              despesas={mockBemProduzidoDespesas}
+              salvarRascunhoInformarValores={jest.fn()}
+            />
+          </QueryClientProvider>
+        </Provider>
+      </MemoryRouter>
+    );
+
+    const buttonCollapse = container.querySelector(".p-row-toggler");
+
+    fireEvent.click(buttonCollapse);
+
+    const input = screen.getByRole("spinbutton", {
+      name: /valor utilizado/i,
+    });
+    userEvent.type(input, "9200");
+
+    await waitFor(() => {
+      expect(
+        screen.getByText("Maior que o valor disponível para utilização")
+      ).toBeInTheDocument();
+    });
+  });
+
+  it("Deve validar se o usuário informou valor para pelo menos um dos rateios ao clicar em Salvar Rascunho", async () => {
+    const { container } = render(
+      <MemoryRouter>
+        <Provider store={mockStore}>
+          <QueryClientProvider client={queryClient}>
+            <InformarValores
+              uuid={null}
+              podeEditar={true}
+              despesas={mockBemProduzidoDespesas}
+              salvarRascunhoInformarValores={jest.fn()}
+            />
+          </QueryClientProvider>
+        </Provider>
+      </MemoryRouter>
+    );
+
+    const buttonCollapse = container.querySelector(".p-row-toggler");
+    fireEvent.click(buttonCollapse);
+
+    const buttonSalvarRascunho = screen.getByRole("button", {
+      name: /salvar rascunho/i,
+    });
+    fireEvent.click(buttonSalvarRascunho);
+
+    expect(CustomModalConfirm).toHaveBeenCalledWith({
+      dispatch: expect.any(Function),
+      title: "Atenção!",
+      message: "Informe pelo menos um valor utilizado por despesa.",
+      cancelText: "Ok",
+    });
   });
 
   it("Deve voltar para a página de listagem ao clicar no botão cancelar", async () => {
