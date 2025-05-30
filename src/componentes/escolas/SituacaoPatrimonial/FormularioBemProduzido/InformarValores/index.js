@@ -16,13 +16,11 @@ import { usePostExluirDespesaBemProduzidoEmLote } from "../hooks/usePostExluirDe
 
 export const InformarValores = ({
   uuid,
-  podeEditar,
   despesas: data = [],
   salvarRascunhoInformarValores,
 }) => {
   const dispatch = useDispatch();
   const [form] = Form.useForm();
-  Form.useWatch("saldo_capital", form);
   const navigate = useNavigate();
   const [expandedRows, setExpandedRows] = useState(null);
   const [despesasSelecionadas, setDespesasSelecionadas] = useState([]);
@@ -37,9 +35,7 @@ export const InformarValores = ({
         rateios: bemProduzido.despesa.rateios.map((rateio) => ({
           uuid: rateio.uuid,
           bem_produzido_despesa_uuid: bemProduzido.bem_produzido_despesa_uuid,
-          valor_utilizado: rateio.valor_utilizado
-            ? rateio.valor_utilizado * 100
-            : null,
+          valor_utilizado: null,
         })),
       }));
 
@@ -194,7 +190,7 @@ export const InformarValores = ({
                         placeholder="0,00"
                         style={{ width: "100%" }}
                         controls={false}
-                        disabled={rateio.valor_disponivel === 0 && !podeEditar}
+                        disabled={rateio.valor_disponivel === 0}
                         formatter={formatMoneyByCentsBRL}
                         parser={parseMoneyBRL}
                       />
