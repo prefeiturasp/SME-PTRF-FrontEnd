@@ -12,7 +12,7 @@ import { CustomModalConfirm } from "../../../../../Globais/Modal/CustomModalConf
 
 const mockBemProduzidoDespesas = [
   {
-    bem_produzido_despesa_uuid: "234cd9fb-adaf-4c29-83e7-f75b04c06cc2",
+    bem_produzido_despesa_uuid: "uuid-bem-produzido-despesa-1234",
     bem_produzido_uuid: "a6bb041d-cc53-4e81-9a59-b43c1e86f956",
     despesa: {
       uuid: "307b5b34-c42e-404f-81ab-e6f1b4025085",
@@ -37,7 +37,7 @@ const mockBemProduzidoDespesas = [
       documento_transacao: "850561",
       rateios: [
         {
-          uuid: "867eb045-15aa-433a-a27b-d0d5803e7f55",
+          uuid: "uuid-rateio-1234",
           bem_produzido_rateio_uuid: "e874a8af-b757-4853-8784-d92c1298bb1b",
           valor_disponivel: 90,
           valor_rateio: "790.00",
@@ -143,6 +143,8 @@ const mockBemProduzidoDespesas = [
   },
 ];
 const mockUseNavigate = jest.fn();
+const mockSalvarRascunhoInformarValores = jest.fn();
+
 jest.mock("../../hooks/usePostExluirDespesaBemProduzidoEmLote");
 jest.mock("react-router-dom-v5-compat", () => ({
   ...jest.requireActual("react-router-dom-v5-compat"),
@@ -305,11 +307,53 @@ describe("InformarValores", () => {
     });
     fireEvent.click(buttonSalvarRascunho);
 
-    expect(CustomModalConfirm).toHaveBeenCalledWith({
-      dispatch: expect.any(Function),
-      title: "Atenção!",
-      message: "Informe pelo menos um valor utilizado por despesa.",
-      cancelText: "Ok",
+    await waitFor(() => {
+      expect(CustomModalConfirm).toHaveBeenCalledWith({
+        dispatch: expect.any(Function),
+        title: "Atenção!",
+        message: "Informe pelo menos um valor utilizado por despesa.",
+        cancelText: "Ok",
+      });
+    });
+  });
+
+  it("Deve chamar salvarRascunhoInformarValores com valores formatados ao clicar em Salvar Rascunho", async () => {
+    const { container } = render(
+      <MemoryRouter>
+        <Provider store={mockStore}>
+          <QueryClientProvider client={queryClient}>
+            <InformarValores
+              uuid={null}
+              podeEditar={true}
+              despesas={mockBemProduzidoDespesas}
+              salvarRascunhoInformarValores={mockSalvarRascunhoInformarValores}
+            />
+          </QueryClientProvider>
+        </Provider>
+      </MemoryRouter>
+    );
+
+    const buttonCollapse = container.querySelector(".p-row-toggler");
+    fireEvent.click(buttonCollapse);
+
+    const input = screen.getByRole("spinbutton", {
+      name: /valor utilizado/i,
+    });
+    userEvent.type(input, "9000");
+
+    const buttonSalvarRascunho = screen.getByRole("button", {
+      name: /salvar rascunho/i,
+    });
+    fireEvent.click(buttonSalvarRascunho);
+
+    await waitFor(() => {
+      expect(mockSalvarRascunhoInformarValores).toHaveBeenCalledWith([
+        {
+          uuid: "uuid-rateio-1234",
+          bem_produzido_despesa: "uuid-bem-produzido-despesa-1234",
+          valor_utilizado: 90,
+        },
+      ]);
     });
   });
 

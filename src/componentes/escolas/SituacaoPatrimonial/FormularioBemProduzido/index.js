@@ -17,10 +17,12 @@ const stepList = [
 
 export const FormularioBemProduzido = () => {
   const { uuid } = useParams();
+
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [despesasSelecionadas, setDespesasSelecionadas] = useState([]);
   const { data } = useGetBemProduzido(uuid);
+
   const { mutationPost } = usePostBemProduzido();
   const { mutationPatch } = usePatchBemProduzido();
 
@@ -33,28 +35,28 @@ export const FormularioBemProduzido = () => {
   }, [data]);
 
   const salvarRascunho = async () => {
-    if (uuid) {
-      try {
-        await mutationPatch.mutateAsync({
-          uuid: uuid,
-          payload: {
-            despesas: despesasSelecionadas.map((despesa) => despesa.uuid),
-          },
-        });
+    // if (uuid) {
+    //   try {
+    //     await mutationPatch.mutateAsync({
+    //       uuid: uuid,
+    //       payload: {
+    //         despesas: despesasSelecionadas.map((despesa) => despesa.uuid),
+    //       },
+    //     });
 
-        navigate(`/lista-situacao-patrimonial`);
-      } catch (error) {}
-    } else {
-      try {
-        await mutationPost.mutateAsync({
-          payload: {
-            despesas: despesasSelecionadas.map((despesa) => despesa.uuid),
-          },
-        });
+    //     navigate(`/lista-situacao-patrimonial`);
+    //   } catch (error) {}
+    // } else {
+    // }
+    try {
+      await mutationPost.mutateAsync({
+        payload: {
+          despesas: despesasSelecionadas.map((despesa) => despesa.uuid),
+        },
+      });
 
-        navigate(`/lista-situacao-patrimonial`);
-      } catch (error) {}
-    }
+      navigate(`/lista-situacao-patrimonial`);
+    } catch (error) {}
   };
 
   const salvarRascunhoInformarValores = async (rateiosComValores) => {
@@ -69,28 +71,28 @@ export const FormularioBemProduzido = () => {
   };
 
   const informarValores = async () => {
-    if (uuid) {
-      try {
-        const mutationResp = await mutationPatch.mutateAsync({
-          uuid: uuid,
-          payload: {
-            despesas: despesasSelecionadas.map((despesa) => despesa.uuid),
-          },
-        });
+    // if (uuid) {
+    //   try {
+    //     const mutationResp = await mutationPatch.mutateAsync({
+    //       uuid: uuid,
+    //       payload: {
+    //         despesas: despesasSelecionadas.map((despesa) => despesa.uuid),
+    //       },
+    //     });
 
-        navigate(`/edicao-bem-produzido/${mutationResp.uuid}`);
-      } catch (error) {}
-    } else {
-      try {
-        const mutationResp = await mutationPost.mutateAsync({
-          payload: {
-            despesas: despesasSelecionadas.map((despesa) => despesa.uuid),
-          },
-        });
+    //     navigate(`/edicao-bem-produzido/${mutationResp.uuid}`);
+    //   } catch (error) {}
+    // } else {
+    // }
+    try {
+      const mutationResp = await mutationPost.mutateAsync({
+        payload: {
+          despesas: despesasSelecionadas.map((despesa) => despesa.uuid),
+        },
+      });
 
-        navigate(`/edicao-bem-produzido/${mutationResp.uuid}`);
-      } catch (error) {}
-    }
+      navigate(`/edicao-bem-produzido/${mutationResp.uuid}`);
+    } catch (error) {}
   };
 
   return (
@@ -130,7 +132,6 @@ export const FormularioBemProduzido = () => {
             iconProps={{
               style: { color: "white" },
             }}
-            // onClick={() => setStep(3)}
           />
         </div>
       ) : null}

@@ -66,7 +66,7 @@ export const InformarValores = ({
 
   const handleSaveRascunho = (values) => {
     const validationErrors = validateDespesas(values);
-    console.log(validationErrors);
+
     if (validationErrors.length > 0) {
       CustomModalConfirm({
         dispatch,
