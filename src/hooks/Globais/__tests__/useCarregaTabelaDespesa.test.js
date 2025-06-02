@@ -1,4 +1,4 @@
-import { renderHook } from "@testing-library/react";
+import { renderHook, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useCarregaTabelaDespesa } from '../useCarregaTabelaDespesa';
 import { visoesService } from '../../../services/visoes.service';
@@ -10,39 +10,60 @@ jest.mock("../../../services/escolas/Despesas.service", () => ({
   getDespesasTabelas: jest.fn(),
 }));
 
+const createWrapper = () => {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+    },
+  });
+
+  return ({ children }) => (
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  );
+};
+const prestacaoDeContas = {
+    associacao: {
+      uuid: 'abc-123'
+    }
+  };
+  
 describe('useCarregaTabelaDespesa', () => {
-    const queryClient = new QueryClient()
     afterEach(() => {
         jest.clearAllMocks();
     });
 
     it('deve chamar getDespesasTabelas com o uuid da associacao se prestacaoDeContas estiver completa', async () => {
-      getDespesasTabelas.mockResolvedValue();
+      getDespesasTabelas.mockResolvedValue({dados: []});
+    
+      const { result } = renderHook(() => useCarregaTabelaDespesa(prestacaoDeContas), { wrapper: createWrapper() });
   
-      const prestacaoDeContas = {
-        associacao: {
-          uuid: 'abc-123'
-        }
-      };
+      await waitFor(() => {
+        expect(getDespesasTabelas).toHaveBeenCalledTimes(1);
+        expect(getDespesasTabelas).toHaveBeenCalledWith('abc-123');
+        expect(result.current).toEqual({dados: []});
+      });
   
-      renderHook(() => useCarregaTabelaDespesa(prestacaoDeContas));
-  
-      expect(getDespesasTabelas).toHaveBeenCalledWith('abc-123');
     });
   
     it('deve chamar getDespesasTabelas sem parâmetro se prestacaoDeContas estiver null ou incompleta', async () => {
-      getDespesasTabelas.mockResolvedValue();
+      getDespesasTabelas.mockResolvedValue([]);
   
-      renderHook(() => useCarregaTabelaDespesa(null));
+      const { result }  = renderHook(() => useCarregaTabelaDespesa({}), { wrapper: createWrapper() });
   
-      expect(getDespesasTabelas).toHaveBeenCalledWith();
+      await waitFor(() => {
+        expect(getDespesasTabelas).toHaveBeenCalled();
+        expect(result.current).toEqual([]);
+      });
     });
   
-    it('deve retornar lista vazia inicialmente', () => {
-      const { result } = renderHook(() =>
-        useCarregaTabelaDespesa(null)
-      );
-      expect(result.current).toEqual([]);
+    it('deve retornar lista vazia inicialmente', async () => {
+      getDespesasTabelas.mockResolvedValue([]);
+      const { result } = renderHook(() => useCarregaTabelaDespesa({}), { wrapper: createWrapper() });
+      await waitFor(() => {
+        expect(result.current).toEqual([]);
+      });
     });
 
 });
