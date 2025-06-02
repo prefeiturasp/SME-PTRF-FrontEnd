@@ -8,6 +8,7 @@ const SelectAnalisesDePcDevolvidas = ({uuidAnalisePcDevolvida, handleChangeSelec
             </div>
             <div className='col'>
                 <select
+                    data-testid="select-filtro-ajuste"
                     value={uuidAnalisePcDevolvida}
                     onChange={(e) => handleChangeSelectAnalisesDePcDevolvidas(e.target.value, e)}
                     name={`filtrar_por_tipo_de_ajuste`}
