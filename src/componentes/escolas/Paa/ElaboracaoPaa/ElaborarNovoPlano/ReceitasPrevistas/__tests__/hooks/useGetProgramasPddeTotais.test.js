@@ -1,12 +1,12 @@
 import { renderHook, waitFor } from "@testing-library/react";
 import { useQuery } from "@tanstack/react-query";
-import { useGetCategoriasPddeTotais } from "../../hooks/useGetCategoriasPddeTotais";
-import { getCategoriasPddeTotais } from "../../../../../../../../services/escolas/Paa.service";
+import { useGetProgramasPddeTotais } from "../../hooks/useGetProgramasPddeTotais";
+import { getProgramasPddeTotais } from "../../../../../../../../services/escolas/Paa.service";
 
 jest.mock("@tanstack/react-query");
 jest.mock("../../../../../../../../services/escolas/Paa.service");
 
-describe('useGetCategoriasPddeTotais', () => {
+describe('useGetProgramasPddeTotais', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -20,31 +20,31 @@ describe('useGetCategoriasPddeTotais', () => {
       refetch: jest.fn(),
     });
 
-    const { result } = renderHook(() => useGetCategoriasPddeTotais());
+    const { result } = renderHook(() => useGetProgramasPddeTotais());
 
     expect(result.current).toEqual({
       isLoading: true,
       isError: false,
-      categorias: [],
+      programas: [],
       total: {},
       error: null,
       refetch: expect.any(Function),
     });
   });
 
-  it("deve chamar getCategoriasPddeTotais com os parâmetros corretos", () => {
+  it("deve chamar getProgramasPddeTotais com os parâmetros corretos", () => {
     (useQuery).mockReturnValue({
       isLoading: false,
       isError: false,
-      data: { categorias: [], total: {} },
+      data: { programas: [], total: {} },
       error: null,
       refetch: jest.fn(),
     });
 
-    renderHook(() => useGetCategoriasPddeTotais());
+    renderHook(() => useGetProgramasPddeTotais());
 
     expect(useQuery).toHaveBeenCalledWith(
-      ["categorias-pdde-totais"],
+      ["programas-pdde-totais"],
       expect.any(Function),
       {
         keepPreviousData: true,
@@ -55,12 +55,12 @@ describe('useGetCategoriasPddeTotais', () => {
 
     const queryFn = (useQuery).mock.calls[0][1];
     queryFn();
-    expect(getCategoriasPddeTotais).toHaveBeenCalled();
+    expect(getProgramasPddeTotais).toHaveBeenCalled();
   });
 
   it("deve retornar dados quando a requisição for bem-sucedida", () => {
     const mockData = {
-      categorias: [{ id: 1, nome: "Categoria 1" }],
+      programas: [{ id: 1, nome: "programa 1" }],
       total: { valorTotal: 1000 },
     };
 
@@ -72,12 +72,12 @@ describe('useGetCategoriasPddeTotais', () => {
       refetch: jest.fn(),
     });
 
-    const { result } = renderHook(() => useGetCategoriasPddeTotais());
+    const { result } = renderHook(() => useGetProgramasPddeTotais());
 
     expect(result.current).toEqual({
       isLoading: false,
       isError: false,
-      categorias: mockData.categorias,
+      programas: mockData.programas,
       total: mockData.total,
       error: null,
       refetch: expect.any(Function),
@@ -95,12 +95,12 @@ describe('useGetCategoriasPddeTotais', () => {
       refetch: jest.fn(),
     });
 
-    const { result } = renderHook(() => useGetCategoriasPddeTotais());
+    const { result } = renderHook(() => useGetProgramasPddeTotais());
 
     expect(result.current).toEqual({
       isLoading: false,
       isError: true,
-      categorias: [],
+      programas: [],
       total: {},
       error: mockError,
       refetch: expect.any(Function),
@@ -116,9 +116,9 @@ describe('useGetCategoriasPddeTotais', () => {
       refetch: jest.fn(),
     });
 
-    const { result } = renderHook(() => useGetCategoriasPddeTotais());
+    const { result } = renderHook(() => useGetProgramasPddeTotais());
 
-    expect(result.current.categorias).toEqual([]);
+    expect(result.current.programas).toEqual([]);
     expect(result.current.total).toEqual({});
   });
 
@@ -128,12 +128,12 @@ describe('useGetCategoriasPddeTotais', () => {
     (useQuery).mockReturnValue({
       isLoading: false,
       isError: false,
-      data: { categorias: [], total: {} },
+      data: { programas: [], total: {} },
       error: null,
       refetch: mockRefetch,
     });
 
-    const { result } = renderHook(() => useGetCategoriasPddeTotais());
+    const { result } = renderHook(() => useGetProgramasPddeTotais());
 
     result.current.refetch();
     expect(mockRefetch).toHaveBeenCalled();

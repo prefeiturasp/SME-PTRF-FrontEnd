@@ -1,5 +1,6 @@
 import api from "../api/index.js";
 import { TOKEN_ALIAS } from "../auth.service.js";
+import { consultarListaCargos } from "./Associacao.service.js";
 
 const authHeader = () => ({
   headers: {
@@ -102,13 +103,23 @@ export const getFontesRecursos = async () => {
 export const getAcoesPDDE = async (currentPage = 1, rowsPerPage = 20) => {
   return (
     await api.get(
-      `/api/acoes-pdde/?page=${currentPage}&page_size=${rowsPerPage}`,
+      `/api/acoes-pdde/receitas-previstas-pdde/?page=${currentPage}&page_size=${rowsPerPage}&paa_uuid=${localStorage.getItem("PAA")}`,
       authHeader()
     )
   ).data;
 };
 
 // PDDE
-export const getCategoriasPddeTotais = async () => {
-  return (await api.get(`api/categorias-pdde/totais/`, authHeader())).data;
+export const getProgramasPddeTotais = async () => {
+  return (await api.get(`api/programas-pdde/totais/?paa_uuid=${localStorage.getItem("PAA")}`, authHeader())).data;
+};
+
+export const postReceitaPrevistaPDDE = async (payload) => {
+  return (await api.post(`api/receitas-previstas-pdde/`, payload, authHeader())).data;
+};
+
+export const patchReceitaPrevistaPDDE = async (uuid, payload) => {
+  return (
+    await api.patch(`api/receitas-previstas-pdde/${uuid}/`, payload, authHeader())
+  ).data;
 };

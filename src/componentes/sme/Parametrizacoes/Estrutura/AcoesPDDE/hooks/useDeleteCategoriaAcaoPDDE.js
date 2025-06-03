@@ -22,8 +22,8 @@ export const useDeleteCategoria = ({
                 "Sucesso!", 
                 "O Programa da Ação PDDE foi removido do sistema com sucesso."
             )
-            var categoria = stateFormModal.categoria != stateFormCategoria.id ? String(stateFormModal.categoria) : String(categorias.results[0].id)
-            setModalForm({...stateFormModal, categoria})
+            var programa = stateFormModal.programa != stateFormCategoria.uuid ? String(stateFormModal.programa) : String(categorias.results[0].uuid)
+            setModalForm({...stateFormModal, programa})
             handleFecharFormCategoria();
         },
         onError: (e) => {

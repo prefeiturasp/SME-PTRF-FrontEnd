@@ -22,7 +22,6 @@ import {MsgImgLadoDireito} from "../../../Globais/Mensagens/MsgImgLadoDireito";
 import {LegendaInformacao} from "../../../Globais/ModalLegendaInformacao/LegendaInformacao";
 import { TableTags } from "../../../Globais/TableTags";
 import {Ordenacao} from "./Ordenacao";
-import {tr} from "date-fns/locale";
 import {LimparArgumentosOrdenacao} from "./LimparOrdenacao";
 import {FormFiltroPorEspecificacaoMaterialServico} from "../FormFiltroPorEspecificacaoMaterialServico";
 import { mantemEstadoFiltrosUnidade } from "../../../../services/mantemEstadoFiltrosUnidade.service";
