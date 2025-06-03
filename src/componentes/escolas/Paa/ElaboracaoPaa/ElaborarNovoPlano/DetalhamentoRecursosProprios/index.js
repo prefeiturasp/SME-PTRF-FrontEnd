@@ -120,6 +120,7 @@ const DetalhamentoRecursosProprios = () => {
 
   const handleSave = (rowData) => {
     const payload = {
+      paa: localStorage.getItem("PAA"),
       associacao: associacaoUUID,
       fonte_recurso: rowData?.fonte_recurso?.uuid,
       data_prevista: rowData?.data_prevista,

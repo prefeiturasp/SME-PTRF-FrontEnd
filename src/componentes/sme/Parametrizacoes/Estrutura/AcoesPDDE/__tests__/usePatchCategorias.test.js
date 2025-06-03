@@ -45,7 +45,7 @@ describe("usePatchtCategorias", () => {
 
         expect(patchAcoesPDDECategorias).toHaveBeenCalledWith("4d272c66-0d2a-4f77-9979-6afeaec39332", { nome: "Categoria 1" });
         expect(toastCustom.ToastCustomSuccess).toHaveBeenCalledWith(
-            'Sucesso', 'Edição da Categoria de Ação PDDE realizada com sucesso'
+            'Sucesso', 'Edição do Programa de Ação PDDE realizada com sucesso'
         );
     });
 
@@ -63,7 +63,7 @@ describe("usePatchtCategorias", () => {
 
         expect(toastCustom.ToastCustomError).toHaveBeenCalledWith(
             "Ops!",
-            "Não foi possível atualizar a Categoria de Ação PDDE"
+            "Não foi possível atualizar o Programa de Ação PDDE"
         );
     });
 
@@ -81,7 +81,7 @@ describe("usePatchtCategorias", () => {
 
         expect(toastCustom.ToastCustomError).toHaveBeenCalledWith(
             "Ops!",
-            "Categoria já existe."
+            "Programa já existe."
         );
     });
 });

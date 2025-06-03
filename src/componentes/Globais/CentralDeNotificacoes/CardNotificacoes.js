@@ -39,6 +39,7 @@ export const CardNotificacoes = ({notificacoes, toggleBtnNotificacoes, clickBtnN
                                         </div>
                                         <div className="col-1 align-self-center">
                                             <button
+                                                data-testid="botao-toggle-notificacao"
                                                 onClick={() => toggleBtnNotificacoes(info.uuid)}
                                                 className="btn btn-link btn-block text-left px-0" type="button"
                                                 data-toggle="collapse" data-target={`#collapse_${info.uuid}`}

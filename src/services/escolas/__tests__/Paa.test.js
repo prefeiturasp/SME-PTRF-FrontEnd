@@ -7,7 +7,7 @@ import {
     getRecursosProprios,
     getTotalizadorRecursoProprio,
     getFontesRecursos,
-    getCategoriasPddeTotais,
+    getProgramasPddeTotais,
     getAcoesPDDE,
     postRecursoProprioPaa,
     patchRecursoProprioPaa,
@@ -155,21 +155,23 @@ describe('Testes para funções de análise', () => {
     });
 
     test('getCategoriasPddeTotais deve chamar a API corretamente', async () => {
+        localStorage.setItem('PAA', '1234');
         api.get.mockResolvedValue({ data: mockData });
-        const result = await getCategoriasPddeTotais();
+        const result = await getProgramasPddeTotais();
 
-        expect(api.get).toHaveBeenCalledWith(`api/categorias-pdde/totais/`, getAuthHeader());
+        expect(api.get).toHaveBeenCalledWith(`api/programas-pdde/totais/?paa_uuid=1234`, getAuthHeader());
         expect(result).toEqual(mockData);
     });
 
     test('getAcoesPDDE deve chamar a API corretamente', async () => {
+        localStorage.setItem('PAA', '1234');
         api.get.mockResolvedValue({ data: mockData });
         const currentPage = 1;
         const rowsPerPage = 20;
         const result = await getAcoesPDDE();
 
         expect(api.get).toHaveBeenCalledWith(
-            `/api/acoes-pdde/?page=${currentPage}&page_size=${rowsPerPage}`,
+            `/api/acoes-pdde/receitas-previstas-pdde/?page=${currentPage}&page_size=${rowsPerPage}&paa_uuid=1234`,
             getAuthHeader()
         );
         expect(result).toEqual(mockData);

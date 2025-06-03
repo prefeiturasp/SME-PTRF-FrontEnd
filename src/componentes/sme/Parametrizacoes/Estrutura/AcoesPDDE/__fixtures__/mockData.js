@@ -11,8 +11,8 @@ export const acoesPDDE = {
             "id": 1,
             "uuid": "3de9eeff-534b-46d5-ab74-4fe18b15a0de",
             "nome": "Acao 1 pdde",
-            "categoria": 1,
-            "categoria_objeto": {
+            "programa": 1,
+            "programa_objeto": {
                 "id": 1,
                 "uuid": "2df33e5d-fbbf-4a4a-ab9a-d5fa49de4db2",
                 "nome": "Categoria 1",
@@ -26,8 +26,8 @@ export const acoesPDDE = {
             "id": 2,
             "uuid": "7d19caf8-6399-489b-8e21-1239f949711b",
             "nome": "Acao 2 pdde",
-            "categoria": 2,
-            "categoria_objeto": {
+            "programa": 2,
+            "programa_objeto": {
                 "id": 2,
                 "uuid": "e88e6b4e-dbb2-4a88-8f80-6ada74d927c6",
                 "nome": "Categoria 2",
@@ -41,8 +41,8 @@ export const acoesPDDE = {
             "id": 3,
             "uuid": "14bfe8a2-be09-4274-848c-6b59a5eaf68b",
             "nome": "Acao 3 pdde",
-            "categoria": null,
-            "categoria_objeto": null,
+            "programa": null,
+            "programa_objeto": null,
             "aceita_capital": false,
             "aceita_custeio": false,
             "aceita_livre_aplicacao": false

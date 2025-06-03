@@ -74,6 +74,19 @@ export const getListaDespesasComFiltros = async (filters, page) => {
   return (await api.get(`api/despesas/${queryString}`, authHeader())).data;
 };
 
+export const getListaDespesasSituacaoPatrimonial = async (filters, page) => {
+  let queryString = `?associacao__uuid=${localStorage.getItem(
+    ASSOCIACAO_UUID
+  )}&page=${page}`;
+  queryString = addFiltersToQueryString(queryString, filters);
+  return (
+    await api.get(
+      `api/despesa-situacao-patrimonial/${queryString}`,
+      authHeader()
+    )
+  ).data;
+};
+
 export const ordenacaoDespesas = async (
   palavra,
   aplicacao_recurso,
