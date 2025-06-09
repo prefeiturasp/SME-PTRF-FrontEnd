@@ -144,10 +144,6 @@ export const CadastroFormFormik = ({
             } else {
                 setPodeHabilitar(false);
             }
-            console.log(readOnlyBtnAcao);
-            console.log(visoesService.getPermissoes(["delete_despesa"]));
-            console.log(valoresIniciais.despesa_anterior_ao_uso_do_sistema_editavel);
-            console.log("data_documento:", valoresIniciais.data_documento);
         } else {
             setPodeHabilitar(false);
         }
