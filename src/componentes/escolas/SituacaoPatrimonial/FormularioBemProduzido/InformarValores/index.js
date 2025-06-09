@@ -43,16 +43,16 @@ export const InformarValores = ({
         despesas: despesasComValoresIniciais,
       });
 
-      const total = despesasComValoresIniciais.reduce((acc, despesa) => {
-        return (
-          acc +
-          despesa.rateios.reduce((sum, rateio) => {
-            return sum + (rateio.valor_utilizado / 100 ?? 0);
-          }, 0)
-        );
-      }, 0);
+      // const total = despesasComValoresIniciais.reduce((acc, despesa) => {
+      //   return (
+      //     acc +
+      //     despesa.rateios.reduce((sum, rateio) => {
+      //       return sum + (rateio.valor_utilizado / 100 ?? 0);
+      //     }, 0)
+      //   );
+      // }, 0);
 
-      setTotal(total);
+      // setTotal(total);
     }
   }, [data]);
 
@@ -73,7 +73,6 @@ export const InformarValores = ({
         title: "Atenção!",
         message: "Informe pelo menos um valor utilizado por despesa.",
         cancelText: "Ok",
-        dataQa: "modal-confirmar-salvar-processo-SEI",
       });
     }
 
@@ -173,8 +172,6 @@ export const InformarValores = ({
                       rules={[
                         {
                           validator(_, value) {
-                            if (rateio.valor_disponivel === 0)
-                              return Promise.resolve();
                             if (value / 100 > rateio.valor_disponivel)
                               return Promise.reject(
                                 new Error(

@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import { Fragment, useState, useCallback, useEffect } from "react";
 import { Checkbox, Flex, Spin } from "antd";
 import { useGetAcoesAssociacao } from "./hooks/useGetAcoesAssociacao";
 import "./style.css";
@@ -11,14 +11,30 @@ import TableReceitasPrevistasPdde from "./TableReceitasPrevistasPdde";
 import { DetalhamentoAcoesPdde } from "../DetalhamentoAcoesPdde";
 import TabelaRecursosProprios from "./TabelaRecursosProprios";
 import TabelaReceitasPrevistas from "./TabelaReceitasPrevistas";
+import ModalConfirmaPararAtualizacaoSaldo from "./ModalConfirmarPararAtualizacaoSaldo";
+import { getPaaVigente } from "../../../../../../services/sme/Parametrizacoes.service";
 
 const ReceitasPrevistas = () => {
-  const associacaoUUID = localStorage.getItem(ASSOCIACAO_UUID);
+
+  const associacaoUUID = () => localStorage.getItem(ASSOCIACAO_UUID);
+  const dadosPaaLocalStorage = () => JSON.parse(localStorage.getItem('DADOS_PAA'))
+
+  const [checkPararAtualizacaoSaldo, setValorCheckPararAtualizacaoSaldo] = useState(
+    !!dadosPaaLocalStorage()?.saldo_congelado_em);
+
+  const [loadingPaa, setLoadingPaa] = useState(false);
   const [activeTab, setActiveTab] = useState("receitas-previstas");
   const [modalForm, setModalForm] = useState({ open: false, data: null });
-  const { data, isLoading: isLoadingAcoesassociacao } = useGetAcoesAssociacao();
+  const [ showModalConfirmaPararAtualizacaoSaldo, setShowModalConfirmaPararAtualizacaoSaldo ] = useState(false)
+
+  const {
+    data,
+    isLoading: isLoadingAcoesassociacao,
+    refetch: refetchAcoesAssociacao,
+    isFetching: isFetchingAcoesassociacao,
+  } = useGetAcoesAssociacao();
   const { data: totalRecursosProprios } =
-    useGetTotalizadorRecursoProprio(associacaoUUID);
+    useGetTotalizadorRecursoProprio(associacaoUUID());
 
   const TAB_DETALHAMENTO_RECURSOS_PROPRIOS =
     "detalhamento-de-recursos-proprios";
@@ -42,6 +58,46 @@ const ReceitasPrevistas = () => {
   const handleCloseModalForm = () => {
     setModalForm({ open: false, data: null });
   };
+
+  const carregaPaa = useCallback(async ()=>{
+    setLoadingPaa(true);
+
+    try {
+      let response = await getPaaVigente(associacaoUUID())
+      localStorage.setItem("PAA", response.data.uuid);
+      localStorage.setItem("DADOS_PAA", JSON.stringify(response.data));
+    } catch (error) {
+      console.error("Falha ao carregar PAA: ", error)
+    }
+    setLoadingPaa(false);
+  }, [])
+
+  useEffect(()=>{
+    const loadPaa = async () => {
+      await carregaPaa()
+    }
+    loadPaa()
+  }, [carregaPaa])
+
+  const onTogglePararAtualizacoesSaldo = (e) => {
+    setValorCheckPararAtualizacaoSaldo(e.target.checked);
+    setShowModalConfirmaPararAtualizacaoSaldo(true)
+  }
+
+  const recarregarAcoesAssociacoes = async () => {
+    return await refetchAcoesAssociacao()
+  }
+
+  const onSubmitParadaSaldo = async() => {
+    await recarregarAcoesAssociacoes()
+    await carregaPaa()
+    setShowModalConfirmaPararAtualizacaoSaldo(false)
+  }
+
+  const onCancelConfirmaParadaSaldo = () => {
+    setShowModalConfirmaPararAtualizacaoSaldo(false)
+  }
+
   return (
     <div>
       {modalForm.open && (
@@ -74,22 +130,42 @@ const ReceitasPrevistas = () => {
           <Flex gutter={8} justify="space-between" className="mb-4">
             <h4 className="mb-0">Receitas Previstas</h4>
             <Flex align="center">
-              <Checkbox>Parar atualizações do saldo</Checkbox>
-              <Icon
-                tooltipMessage="Ao selecionar esta opção os valores dos recursos não serão atualizados e serão mantidos os valores da última atualização automática ou da edição realizada."
-                icon="faExclamationCircle"
-                iconProps={{
-                  style: {
-                    fontSize: "16px",
-                    marginLeft: 4,
-                    color: "#086397",
-                  },
-                }}
-              />
+              {!!dadosPaaLocalStorage()?.uuid &&
+                <>
+                  <Checkbox
+                    checked={!!dadosPaaLocalStorage()?.saldo_congelado_em}
+                    onChange={(e) => onTogglePararAtualizacoesSaldo(e)}
+                    disabled={
+                      isLoadingAcoesassociacao ||
+                      isFetchingAcoesassociacao ||
+                      loadingPaa
+                    }>
+                    Parar atualizações do saldo
+                  </Checkbox>
+                  <Icon
+                    tooltipMessage="Ao selecionar esta opção os valores dos recursos não serão atualizados e serão mantidos os valores da última atualização automática ou da edição realizada."
+                    icon="faExclamationCircle"
+                    iconProps={{
+                      style: {
+                        fontSize: "16px",
+                        marginLeft: 4,
+                        color: "#086397",
+                      },
+                    }}
+                  />
+                </>
+              }
             </Flex>
           </Flex>
 
-          <Spin spinning={isLoadingAcoesassociacao}>
+          <ModalConfirmaPararAtualizacaoSaldo
+            open={showModalConfirmaPararAtualizacaoSaldo}
+            onClose={onCancelConfirmaParadaSaldo}
+            check={checkPararAtualizacaoSaldo}
+            paa={dadosPaaLocalStorage()}
+            onSubmitParadaSaldo={onSubmitParadaSaldo}
+          />
+          <Spin spinning={isLoadingAcoesassociacao || isFetchingAcoesassociacao}>
             <TabelaReceitasPrevistas
               data={data}
               handleOpenEditar={handleOpenEditar}
