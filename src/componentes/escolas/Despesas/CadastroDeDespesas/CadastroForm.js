@@ -827,34 +827,62 @@ export const CadastroForm = ({verbo_http}) => {
         setLoading(true);
 
         try {
-            await deleteDespesa(despesaContext.idDespesa)
-            console.log("Despesa deletada com sucesso.");
+            if (!despesaContext.initialValues.data_documento) {
+                throw new Error('Erro ao carregar informações para apagar despesa.');
+            }
 
-            if(aux.origemAnaliseLancamento(parametroLocation)){
-                let uuid_analise_lancamento = parametroLocation.state.uuid_analise_lancamento;
-                let response_exclui_lancamento = await marcarLancamentoExcluido(uuid_analise_lancamento);
-                
-                if (response_exclui_lancamento.status === 200) {
-                    console.log("Exclusão de lancamento realizada com sucesso!");
+            let data = moment(despesaContext.initialValues.data_documento, "YYYY-MM-DD").format("YYYY-MM-DD");
+            let periodo_fechado = await getPeriodoFechado(data);
+
+            if (!periodo_fechado.aceita_alteracoes) {
+                throw new Error('Periódo Fechado: As alterações não são aceitas para o período informado.');
+            }
+            else {
+                await deleteDespesa(despesaContext.idDespesa)
+                console.log("Despesa deletada com sucesso.");
+
+                if (aux.origemAnaliseLancamento(parametroLocation)) {
+                    let uuid_analise_lancamento = parametroLocation.state.uuid_analise_lancamento;
+                    let response_exclui_lancamento = await marcarLancamentoExcluido(uuid_analise_lancamento);
+
+                    if (response_exclui_lancamento.status === 200) {
+                        console.log("Exclusão de lancamento realizada com sucesso!");
+                    }
                 }
+
+                aux.getPath(origem, parametroLocation);
+            }
+        } catch (error) {
+            console.log(error.response || error.message);
+            let texto_erro = '';
+
+            if (
+                error &&
+                error.response &&
+                error.response.data &&
+                error.response.data.error &&
+                error.response.data.error.itens_erro &&
+                error.response.data.error.itens_erro.length > 0
+            ) {
+                texto_erro += '<p class="mb-2">Despesa não pode ser apagada porque os seguintes itens fazem referência a ela:</p>';
+                error.response.data.error.itens_erro.map(
+                    (erro) =>
+                        (texto_erro += `<p class="mb-1"><small>${erro}</small></p>`)
+                );
+            } else if (
+                error &&
+                error.response &&
+                error.response.data &&
+                error.response.data.erro === 'rateio_com_conta_status_inativa'
+            ) {
+                texto_erro += `<p class="mb-1">${error.response.data.mensagem}</p>`;
+            } else {
+                texto_erro += `<p class="mb-0">${error.message || 'Despesa não pode ser apagada porque é referenciada no sistema'
+                    }</p>`;
             }
 
-            aux.getPath(origem, parametroLocation);
-        }catch (error){
-            console.log(error.response);
-            let texto_erro = ''
-            if (error && error.response && error.response.data && error.response.data.error && error.response.data.error.itens_erro && error.response.data.error.itens_erro.length > 0){
-                texto_erro += '<p class="mb-2">Despesa não pode ser apagada porque os seguintes itens fazem referência a ela:</p>'
-                error.response.data.error.itens_erro.map((erro)=>(
-                    texto_erro += `<p class="mb-1"><small>${erro}</small></p>`
-                ))
-            } else if (error && error.response && error.response.data && error.response.data.erro && error.response.data.erro === 'rateio_com_conta_status_inativa') {
-                texto_erro += `<p class="mb-1">${error.response.data.mensagem}</p>`
-            }else {
-                texto_erro += '<p class="mb-0">Despesa não pode ser apagada porque é referenciada no sistema</p>'
-            }
-            setTextoModalErroDeletarDespesa(texto_erro)
-            setShowModalErroDeletarDespesa(true)
+            setTextoModalErroDeletarDespesa(texto_erro);
+            setShowModalErroDeletarDespesa(true);
             setLoading(false);
         }
     };
