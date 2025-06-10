@@ -57,7 +57,7 @@ const ModalConfirmaPararAtualizacaoSaldo = ({ open, onClose, check, paa, onSubmi
               <img src={IconeAvisoVermelho} alt="" className="img-fluid my-3"/>
             </Row>
             <Row justify="center">
-                <p className="title-modal-antdesign-aviso">{`${check ? 'Parar' : 'Habilitar'} atualização do saldo`}</p>
+                <p className="title-modal-antdesign-aviso">{`${check ? 'Parar' : 'Desbloquear'} atualização do saldo`}</p>
             </Row>
             <Row justify="center">
                 <div className="body-text-modal-antdesign-aviso my-3 text-center">

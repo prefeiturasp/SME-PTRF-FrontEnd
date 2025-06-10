@@ -141,6 +141,12 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
     return toolTip(texto)
   }
 
+  const getDataCongeladoOuAtual = () => {
+    return !!dadosPaaLocalStorage()?.saldo_congelado_em ?
+              formataData(dadosPaaLocalStorage()?.saldo_congelado_em, 'DD/MM/YYYY HH:mm') :
+              formataData(new Date())
+  }
+
   return (
     <ModalFormBodyText
       show={open}
@@ -166,7 +172,7 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
               style={{ marginBottom: 16, color: "rgba(66, 71, 74, 1)" }}
             >
               <Col md={8}>
-                Saldo em {formataData(dadosPaaLocalStorage()?.saldo_congelado_em || new Date())}
+                Saldo em {getDataCongeladoOuAtual()}
               </Col>
 
               <Col md={8}>
