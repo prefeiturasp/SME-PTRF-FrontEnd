@@ -133,6 +133,7 @@ const ReceitasPrevistas = () => {
               {!!dadosPaaLocalStorage()?.uuid &&
                 <>
                   <Checkbox
+                    data-testid="checkbox-parar-atualizacoes-saldo"
                     checked={!!dadosPaaLocalStorage()?.saldo_congelado_em}
                     onChange={(e) => onTogglePararAtualizacoesSaldo(e)}
                     disabled={
