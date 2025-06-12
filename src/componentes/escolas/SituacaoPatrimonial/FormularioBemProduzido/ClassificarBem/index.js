@@ -191,10 +191,21 @@ export const ClassificarBem = ({
                         {...restField}
                         name={[name, "quantidade"]}
                         label="Quantidade"
-                        rules={[{ required: true, message: "Obrigatório" }]}
+                        rules={[
+                          { required: true, message: "Obrigatório" },
+                          {
+                            validator(_, value) {
+                              if (value > 0) {
+                                return Promise.resolve();
+                              }
+                              return Promise.reject(
+                                "O valor deve ser maior que 0"
+                              );
+                            },
+                          },
+                        ]}
                       >
                         <InputNumber
-                          min={0}
                           style={{ width: "100%" }}
                           controls={false}
                         />
@@ -205,10 +216,21 @@ export const ClassificarBem = ({
                         {...restField}
                         name={[name, "valor_individual"]}
                         label="Valor Individual"
-                        rules={[{ required: true, message: "Obrigatório" }]}
+                        rules={[
+                          { required: true, message: "Obrigatório" },
+                          {
+                            validator(_, value) {
+                              if (value > 0) {
+                                return Promise.resolve();
+                              }
+                              return Promise.reject(
+                                "O valor deve ser maior que 0"
+                              );
+                            },
+                          },
+                        ]}
                       >
                         <InputNumber
-                          min={0}
                           style={{ width: "100%" }}
                           controls={false}
                         />
@@ -272,9 +294,7 @@ export const ClassificarBem = ({
                           ? `Faltam R$${faltam.toFixed(2)} para classificar`
                           : faltam === 0
                           ? `Valor total classificado com sucesso!`
-                          : `Excedido em R$${Math.abs(faltam).toFixed(
-                              2
-                            )} o valor total permitido`}
+                          : `O valor total indicado no(s )item(ns) excede o valor das despesas informadas`}
                       </Text>
                     );
                   }}
