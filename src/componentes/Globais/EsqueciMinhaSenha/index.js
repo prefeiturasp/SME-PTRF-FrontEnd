@@ -51,6 +51,7 @@ export const EsqueciMinhaSenha = () => {
         let conteudo_arroba = email.substr(3, pos_arroba - 3);
         let assinatura_email = email.substr(pos_arroba);
         let email_com_mascara = iniciais_email + conteudo_arroba.replace(/\w/gim, "*") + assinatura_email;
+
         return email_com_mascara
     };
 
