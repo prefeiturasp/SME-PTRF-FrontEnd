@@ -24,7 +24,7 @@ export const RecuperarMinhaSenha = ({initialValuesRecuperarSenha, onSubmitReuper
                     return(
                     <form onSubmit={props.handleSubmit}>
                         <div className="form-group">
-                            <label htmlFor="login">Usuário</label>
+                            <label htmlFor="usuario">Usuário</label>
                             <input
                                 type="text"
                                 value={props.values.usuario}
