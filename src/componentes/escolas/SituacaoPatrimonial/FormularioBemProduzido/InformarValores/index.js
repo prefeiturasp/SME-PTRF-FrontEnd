@@ -18,6 +18,8 @@ export const InformarValores = ({
   uuid,
   despesas: data = [],
   salvarRascunhoInformarValores,
+  setRateiosComValores,
+  setHabilitaClassificarBem,
 }) => {
   const dispatch = useDispatch();
   const [form] = Form.useForm();
@@ -64,6 +66,15 @@ export const InformarValores = ({
     return "R$ " + formatMoneyBRL(rowData.despesa.valor_total);
   };
 
+  const onValuesChange = () => {
+    const values = form.getFieldValue();
+    const rateiosComValores = getRateiosComValores();
+    const validationErrors = validateDespesas(values);
+
+    setHabilitaClassificarBem(validationErrors.length === 0);
+    setRateiosComValores(rateiosComValores);
+  };
+
   const handleSaveRascunho = (values) => {
     const validationErrors = validateDespesas(values);
 
@@ -75,6 +86,12 @@ export const InformarValores = ({
         cancelText: "Ok",
       });
     }
+
+    salvarRascunhoInformarValores();
+  };
+
+  const getRateiosComValores = () => {
+    const values = form.getFieldValue();
 
     const rateiosComValores = values.despesas.flatMap((despesa) =>
       despesa.rateios
@@ -89,7 +106,7 @@ export const InformarValores = ({
         }))
     );
 
-    salvarRascunhoInformarValores(rateiosComValores);
+    return rateiosComValores;
   };
 
   const expandedRowTemplate = (item) => {
@@ -130,7 +147,7 @@ export const InformarValores = ({
                   <div className="col-md-8">
                     {despesaItem(
                       "Especificação do material ou serviço:",
-                      rateio.especificacao_material_servico.descricao
+                      rateio?.especificacao_material_servico?.descricao
                     )}
                   </div>
                 </div>
@@ -151,7 +168,7 @@ export const InformarValores = ({
                   <div className="col-md-4">
                     {despesaItem(
                       `Conta:`,
-                      rateio.conta_associacao.tipo_conta.nome
+                      rateio?.conta_associacao?.tipo_conta?.nome
                     )}
                   </div>
                   <div className="col-md-8">
@@ -282,6 +299,7 @@ export const InformarValores = ({
               );
 
             setTotal(total);
+            onValuesChange(changed);
           }}
         >
           <DataTable
@@ -324,11 +342,12 @@ export const InformarValores = ({
               <strong>{"R$ " + formatMoneyBRL(total)}</strong>
             </p>
           </div>
+
           <Flex justify="end" gap={8} className="mt-4">
             <button
               className="btn btn-outline-success float-right"
               type="button"
-              onClick={() => navigate(-1)}
+              onClick={() => navigate("/lista-situacao-patrimonial")}
             >
               Cancelar
             </button>

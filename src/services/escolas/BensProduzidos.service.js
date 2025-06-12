@@ -37,3 +37,13 @@ export const postExluirDespesaBemProduzidoEmLote = async (uuid, payload) => {
     )
   ).data;
 };
+
+export const patchCadastrarBem = async (bem_produzido_uuid, payload) => {
+  return (
+    await api.patch(
+      `api/bens-produzidos/${bem_produzido_uuid}/cadastrar-bem/`,
+      payload,
+      authHeader()
+    )
+  ).data;
+};

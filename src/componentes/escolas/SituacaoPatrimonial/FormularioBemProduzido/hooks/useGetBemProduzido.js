@@ -3,7 +3,7 @@ import { getBemProduzido } from "../../../../../services/escolas/BensProduzidos.
 
 export const useGetBemProduzido = (uuid) => {
   const { isLoading, isError, data, error, refetch } = useQuery(
-    ["bem-produzido-detail"],
+    ["bem-produzido-detail", uuid],
     () => getBemProduzido(uuid),
     {
       cacheTime: 0,
