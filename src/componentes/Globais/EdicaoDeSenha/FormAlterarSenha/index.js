@@ -57,7 +57,7 @@ export const FormAlterarSenha = ({textoValidacaoDentroDoForm=null, handleClose=n
                     <form onSubmit={props.handleSubmit}>
 
                         <div className="form-group">
-                            <label htmlFor="login">Senha atual</label>
+                            <label htmlFor="senha_atual">Senha atual</label>
                             <input
                                 type="password"
                                 value={props.values.senha_atual}
@@ -70,7 +70,7 @@ export const FormAlterarSenha = ({textoValidacaoDentroDoForm=null, handleClose=n
                             {props.touched.senha_atual && props.errors.senha_atual && <span className="span_erro text-danger mt-1"> {props.errors.senha_atual} </span>}
                         </div>
                         <div className="form-group">
-                            <label htmlFor="login">Nova Senha</label>
+                            <label htmlFor="senha">Nova Senha</label>
                             <input
                                 type="password"
                                 value={props.values.senha}

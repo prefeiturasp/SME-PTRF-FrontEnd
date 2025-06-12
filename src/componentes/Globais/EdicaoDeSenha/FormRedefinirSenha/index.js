@@ -22,7 +22,7 @@ export const FormRedefinirSenha = ({textoValidacaoDentroDoForm=null, redirectUrl
 
     const onSubmit = async (values) =>{
         const payload ={
-            "hash_redefinicao":uuid,
+            "hash_redefinicao": uuid,
             "password": values.senha,
             "password2": values.confirmacao_senha
         };
@@ -54,7 +54,7 @@ export const FormRedefinirSenha = ({textoValidacaoDentroDoForm=null, redirectUrl
                 {props => (
                     <form onSubmit={props.handleSubmit}>
                         <div className="form-group">
-                            <label htmlFor="login">Nova Senha</label>
+                            <label htmlFor="senha">Nova Senha</label>
                             <input
                                 type="password"
                                 value={props.values.senha}
@@ -68,7 +68,7 @@ export const FormRedefinirSenha = ({textoValidacaoDentroDoForm=null, redirectUrl
 
                         </div>
                         <div className="form-group">
-                            <label htmlFor="senha">Confirmação da Nova Senha</label>
+                            <label htmlFor="confirmacao_senha">Confirmação da Nova Senha</label>
                             <input
                                 type="password"
                                 value={props.values.confirmacao_senha}
