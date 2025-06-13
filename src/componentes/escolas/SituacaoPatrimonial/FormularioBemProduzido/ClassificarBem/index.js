@@ -12,7 +12,7 @@ import {
 } from "antd";
 import { CloseCircleFilled, PlusOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom-v5-compat";
-import { formatMoneyBRL } from "../../../../../utils/money";
+import { formatMoneyBRL, parseMoneyCentsBRL } from "../../../../../utils/money";
 import { useCallback, useEffect, useState } from "react";
 import { getEspecificacoesCapital } from "../../../../../services/escolas/Despesas.service";
 
@@ -171,6 +171,8 @@ export const ClassificarBem = ({
                       >
                         <Select
                           placeholder="Selecione uma especificação"
+                          optionFilterProp="label"
+                          showSearch
                           allowClear
                           options={especificacoes.map((especificacao) => {
                             return {
@@ -233,6 +235,9 @@ export const ClassificarBem = ({
                         <InputNumber
                           style={{ width: "100%" }}
                           controls={false}
+                          prefix="R$"
+                          parser={parseMoneyCentsBRL}
+                          formatter={formatMoneyBRL}
                         />
                       </Form.Item>
                     </Col>
@@ -256,7 +261,7 @@ export const ClassificarBem = ({
                               <Input
                                 disabled
                                 readOnly
-                                value={`R$ ${total.toFixed(2)}`}
+                                value={`R$ ${formatMoneyBRL(total)}`}
                               />
                             );
                           }}
@@ -291,7 +296,9 @@ export const ClassificarBem = ({
                         }}
                       >
                         {faltam > 0
-                          ? `Faltam R$${faltam.toFixed(2)} para classificar`
+                          ? `Faltam R$${formatMoneyBRL(
+                              faltam
+                            )} para classificar`
                           : faltam === 0
                           ? `Valor total classificado com sucesso!`
                           : `O valor total indicado no(s )item(ns) excede o valor das despesas informadas`}
