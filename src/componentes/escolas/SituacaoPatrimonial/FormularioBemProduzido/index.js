@@ -9,7 +9,8 @@ import { useNavigate, useSearchParams } from "react-router-dom-v5-compat";
 import { usePostBemProduzido } from "./hooks/usePostBemProduzido";
 import { usePatchBemProduzido } from "./hooks/usePatchBemProduzido";
 import { ClassificarBem } from "./ClassificarBem";
-import { usePostBemProduzidoItems } from "./ClassificarBem/hooks/usePostBemProduzidoItems";
+import { usePatchBemProduzidoItems } from "./ClassificarBem/hooks/usePatchBemProduzidoItems";
+import { usePatchBemProduzidoItemsRascunho } from "./ClassificarBem/hooks/usePatchBemProduzidoItemsRascunho";
 
 const stepList = [
   { label: "Selecionar despesas" },
@@ -32,8 +33,10 @@ export const FormularioBemProduzido = () => {
   const { data } = useGetBemProduzido(uuid);
   const { mutationPost } = usePostBemProduzido();
   const { mutationPatch } = usePatchBemProduzido();
-  const { mutationPost: mutationPostBemProduzidoItems } =
-    usePostBemProduzidoItems();
+  const { mutationPatch: mutationPatchBemProduzidoItems } =
+    usePatchBemProduzidoItems();
+  const { mutationPatch: mutationPatchBemProduzidoItemsRascunho } =
+    usePatchBemProduzidoItemsRascunho();
 
   const podeEditar = uuid && data?.status === "INCOMPLETO";
   const paramStep = searchParams.get("step");
@@ -79,11 +82,10 @@ export const FormularioBemProduzido = () => {
 
   const salvarRascunhoClassificarBens = async () => {
     try {
-      await mutationPostBemProduzidoItems.mutateAsync({
+      await mutationPatchBemProduzidoItemsRascunho.mutateAsync({
         uuid: uuid,
         payload: {
           itens: bemProduzidoItems,
-          completar_status: false,
         },
       });
 
@@ -93,11 +95,10 @@ export const FormularioBemProduzido = () => {
 
   const cadastrarBens = async () => {
     try {
-      await mutationPostBemProduzidoItems.mutateAsync({
+      await mutationPatchBemProduzidoItems.mutateAsync({
         uuid: uuid,
         payload: {
           itens: bemProduzidoItems,
-          completar_status: true,
         },
       });
 

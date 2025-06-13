@@ -2,13 +2,13 @@ import { useMutation } from "@tanstack/react-query";
 import { patchCadastrarBem } from "../../../../../../services/escolas/BensProduzidos.service";
 import { toastCustom } from "../../../../../Globais/ToastCustom";
 
-export const usePostBemProduzidoItems = () => {
-  const mutationPost = useMutation({
-    mutationFn: ({ uuid, payload }) => patchCadastrarBem(uuid, payload),
+export const usePatchBemProduzidoItemsRascunho = () => {
+  const mutationPatch = useMutation({
+    mutationFn: ({ uuid, payload }) =>
+      patchCadastrarBem(uuid, { ...payload, completar_status: false }),
     onSuccess: (data) => {
       toastCustom.ToastCustomSuccess(
-        "Sucesso!",
-        "Bem produzido adicionado com sucesso."
+        "Rascunho do bem produzido salvo com sucesso."
       );
     },
     onError: (e) => {
@@ -16,5 +16,5 @@ export const usePostBemProduzidoItems = () => {
     },
   });
 
-  return { mutationPost };
+  return { mutationPatch };
 };
