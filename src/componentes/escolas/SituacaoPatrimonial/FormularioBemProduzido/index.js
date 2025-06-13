@@ -5,9 +5,11 @@ import { VincularDespesas } from "./VincularDespesas";
 import { useEffect, useState } from "react";
 import { useGetBemProduzido } from "./hooks/useGetBemProduzido";
 import { InformarValores } from "./InformarValores";
-import { useNavigate } from "react-router-dom-v5-compat";
+import { useNavigate, useSearchParams } from "react-router-dom-v5-compat";
 import { usePostBemProduzido } from "./hooks/usePostBemProduzido";
 import { usePatchBemProduzido } from "./hooks/usePatchBemProduzido";
+import { ClassificarBem } from "./ClassificarBem";
+import { usePostBemProduzidoItems } from "./ClassificarBem/hooks/usePostBemProduzidoItems";
 
 const stepList = [
   { label: "Selecionar despesas" },
@@ -17,37 +19,32 @@ const stepList = [
 
 export const FormularioBemProduzido = () => {
   const { uuid } = useParams();
-
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
   const [step, setStep] = useState(1);
   const [despesasSelecionadas, setDespesasSelecionadas] = useState([]);
-  const { data } = useGetBemProduzido(uuid);
+  const [rateiosComValores, setRateiosComValores] = useState([]);
+  const [bemProduzidoItems, setBemProduzidoItems] = useState([]);
+  const [habilitaClassificarBem, setHabilitaClassificarBem] = useState(false);
+  const [habilitaCadastrarBem, setHabilitaCadastrarBem] = useState(false);
 
+  const { data } = useGetBemProduzido(uuid);
   const { mutationPost } = usePostBemProduzido();
   const { mutationPatch } = usePatchBemProduzido();
+  const { mutationPost: mutationPostBemProduzidoItems } =
+    usePostBemProduzidoItems();
 
   const podeEditar = uuid && data?.status === "INCOMPLETO";
+  const paramStep = searchParams.get("step");
 
   useEffect(() => {
-    if (data?.despesas?.length) {
-      setStep(2);
+    if (paramStep) {
+      setStep(parseInt(paramStep));
     }
-  }, [data]);
+  }, [paramStep]);
 
-  const salvarRascunho = async () => {
-    // if (uuid) {
-    //   try {
-    //     await mutationPatch.mutateAsync({
-    //       uuid: uuid,
-    //       payload: {
-    //         despesas: despesasSelecionadas.map((despesa) => despesa.uuid),
-    //       },
-    //     });
-
-    //     navigate(`/lista-situacao-patrimonial`);
-    //   } catch (error) {}
-    // } else {
-    // }
+  const salvarRascunhoVincularDespesas = async () => {
     try {
       await mutationPost.mutateAsync({
         payload: {
@@ -59,7 +56,7 @@ export const FormularioBemProduzido = () => {
     } catch (error) {}
   };
 
-  const salvarRascunhoInformarValores = async (rateiosComValores) => {
+  const salvarRascunhoInformarValores = async () => {
     try {
       await mutationPatch.mutateAsync({
         uuid: uuid,
@@ -71,27 +68,51 @@ export const FormularioBemProduzido = () => {
   };
 
   const informarValores = async () => {
-    // if (uuid) {
-    //   try {
-    //     const mutationResp = await mutationPatch.mutateAsync({
-    //       uuid: uuid,
-    //       payload: {
-    //         despesas: despesasSelecionadas.map((despesa) => despesa.uuid),
-    //       },
-    //     });
+    try {
+      const mutationResp = await mutationPatch.mutateAsync({
+        uuid: uuid,
+        payload: { rateios: rateiosComValores },
+      });
+      navigate(`/edicao-bem-produzido/${mutationResp.uuid}/?step=3`);
+    } catch (error) {}
+  };
 
-    //     navigate(`/edicao-bem-produzido/${mutationResp.uuid}`);
-    //   } catch (error) {}
-    // } else {
-    // }
+  const salvarRascunhoClassificarBens = async () => {
+    try {
+      await mutationPostBemProduzidoItems.mutateAsync({
+        uuid: uuid,
+        payload: {
+          itens: bemProduzidoItems,
+          completar_status: false,
+        },
+      });
+
+      navigate(`/lista-situacao-patrimonial`);
+    } catch (error) {}
+  };
+
+  const cadastrarBens = async () => {
+    try {
+      await mutationPostBemProduzidoItems.mutateAsync({
+        uuid: uuid,
+        payload: {
+          itens: bemProduzidoItems,
+          completar_status: true,
+        },
+      });
+
+      navigate(`/lista-situacao-patrimonial`);
+    } catch (error) {}
+  };
+
+  const salvarDespesas = async () => {
     try {
       const mutationResp = await mutationPost.mutateAsync({
         payload: {
           despesas: despesasSelecionadas.map((despesa) => despesa.uuid),
         },
       });
-
-      navigate(`/edicao-bem-produzido/${mutationResp.uuid}`);
+      navigate(`/edicao-bem-produzido/${mutationResp.uuid}/?step=2`);
     } catch (error) {}
   };
 
@@ -108,7 +129,7 @@ export const FormularioBemProduzido = () => {
               style: { color: "white" },
             }}
             disabled={!despesasSelecionadas.length && !uuid}
-            onClick={informarValores}
+            onClick={salvarDespesas}
           />
         </div>
       ) : step === 2 ? (
@@ -132,6 +153,31 @@ export const FormularioBemProduzido = () => {
             iconProps={{
               style: { color: "white" },
             }}
+            disabled={!habilitaClassificarBem}
+            onClick={informarValores}
+          />
+        </div>
+      ) : step === 3 ? (
+        <div className="d-flex justify-content-between pb-4 mt-2 mb-4">
+          <IconButton
+            icon="faAngleDoubleLeft"
+            label="Informar valores"
+            iconPosition="left"
+            variant="success"
+            iconProps={{
+              style: { color: "white" },
+            }}
+            onClick={() => setStep(2)}
+          />
+
+          <IconButton
+            label="Cadastrar bem"
+            variant="success"
+            iconProps={{
+              style: { color: "white" },
+            }}
+            disabled={!habilitaCadastrarBem}
+            onClick={cadastrarBens}
           />
         </div>
       ) : null}
@@ -145,7 +191,7 @@ export const FormularioBemProduzido = () => {
           despesas={data?.despesas || []}
           setDespesasSelecionadas={setDespesasSelecionadas}
           despesasSelecionadas={despesasSelecionadas}
-          salvarRascunho={salvarRascunho}
+          salvarRascunho={salvarRascunhoVincularDespesas}
         />
       ) : null}
       {step === 2 ? (
@@ -154,6 +200,19 @@ export const FormularioBemProduzido = () => {
           despesas={data?.despesas || []}
           salvarRascunhoInformarValores={salvarRascunhoInformarValores}
           podeEditar={podeEditar}
+          setRateiosComValores={setRateiosComValores}
+          setHabilitaClassificarBem={setHabilitaClassificarBem}
+        />
+      ) : step === 3 ? (
+        <ClassificarBem
+          total={data?.valor_total_informado}
+          items={data?.items || []}
+          salvarRascunhoClassificarBens={salvarRascunhoClassificarBens}
+          cadastrarBens={cadastrarBens}
+          setBemProduzidoItems={setBemProduzidoItems}
+          bemProduzidoItems={bemProduzidoItems}
+          setHabilitaCadastrarBem={setHabilitaCadastrarBem}
+          habilitaCadastrarBem={habilitaCadastrarBem}
         />
       ) : null}
     </div>
