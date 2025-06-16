@@ -1,6 +1,6 @@
 {
   "name": "ptrf",
-  "version": "9.16.0",
+  "version": "9.17.0",
   "private": true,
   "dependencies": {
     "@dnd-kit/core": "^6.1.0",
@@ -81,5 +81,13 @@
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@typescript-eslint/eslint-plugin": "^6.19.0",
     "@typescript-eslint/parser": "^6.19.0"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.(js|jsx)$": "babel-jest"
+    },
+    "transformIgnorePatterns": [
+      "/node_modules/(?!axios)/"
+    ]
   }
 }

@@ -7,8 +7,6 @@ export const usePatchReceitaPrevistaPdde = (setModalForm) => {
 
     const mutationPatch = useMutation({
         mutationFn: ({uuid, payload}) => {
-            console.log('payload', payload)
-            console.log('uuid', uuid)
             return patchReceitaPrevistaPDDE(uuid, payload)
         },
         onSuccess: () => {

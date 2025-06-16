@@ -23,3 +23,13 @@ export const parseMoneyBRL = (value) => {
   const numericValue = value.replace(/\D/g, "");
   return parseInt(numericValue, 10);
 };
+
+export const parseMoneyCentsBRL = (value) => {
+  if (!value) return null;
+
+  const clean = value.replace(/[^\d]/g, "");
+
+  const float = parseFloat(clean) / 100;
+
+  return isNaN(float) ? null : float;
+};

@@ -24,6 +24,8 @@ const initialValues = {
 const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
   const [form] = Form.useForm();
 
+  const dadosPaaLocalStorage = () => JSON.parse(localStorage.getItem('DADOS_PAA'))
+
   const data = acaoAssociacao.saldos;
   const isLoading = false;
   const { mutationPost } = usePostReceitasPrevistasPaa(onClose);
@@ -37,6 +39,11 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
   Form.useWatch("saldo_atual_custeio", form);
   Form.useWatch("saldo_atual_livre", form);
 
+ const valorZeroOuPositivo = (valor) => {
+    const val = parseFloat(valor || 0)
+    return val < 0 ? 0 : val
+ }
+
   useEffect(() => {
     if (data && acaoAssociacao) {
       const valor_custeio = receitaPrevistaPaa
@@ -48,9 +55,9 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
       const total_livre = receitaPrevistaPaa
         ? parseFloat(receitaPrevistaPaa.previsao_valor_livre)
         : null;
-      const saldo_atual_custeio = data.saldo_atual_custeio;
-      const saldo_atual_capital = data.saldo_atual_capital;
-      const saldo_atual_livre = data.saldo_atual_livre;
+      const saldo_atual_custeio = receitaPrevistaPaa?.saldo_congelado_custeio || data.saldo_atual_custeio;
+      const saldo_atual_capital = receitaPrevistaPaa?.saldo_congelado_capital || data.saldo_atual_capital;
+      const saldo_atual_livre = receitaPrevistaPaa?.saldo_congelado_livre || data.saldo_atual_livre;
 
       form.setFieldsValue({
         saldo_atual_capital: saldo_atual_capital,
@@ -59,9 +66,9 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
         valor_capital: valor_capital * 100,
         valor_custeio: valor_custeio * 100,
         valor_livre: total_livre * 100,
-        total_custeio: valor_custeio + saldo_atual_custeio,
-        total_capital: valor_capital + saldo_atual_capital,
-        total_livre: total_livre + saldo_atual_livre,
+        total_custeio: valor_custeio + valorZeroOuPositivo(saldo_atual_custeio),
+        total_capital: valor_capital + valorZeroOuPositivo(saldo_atual_capital),
+        total_livre: total_livre + valorZeroOuPositivo(saldo_atual_livre),
       });
     }
   }, [data, acaoAssociacao]);
@@ -72,19 +79,19 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
     if (values.valor_custeio) {
       form.setFieldValue(
         "total_custeio",
-        formValues.saldo_atual_custeio + parseFloat(values.valor_custeio) / 100
+        valorZeroOuPositivo(formValues.saldo_atual_custeio) + parseFloat(values.valor_custeio) / 100
       );
     }
     if (values.valor_capital) {
       form.setFieldValue(
         "total_capital",
-        formValues.saldo_atual_capital + parseFloat(values.valor_capital) / 100
+        valorZeroOuPositivo(formValues.saldo_atual_capital) + parseFloat(values.valor_capital) / 100
       );
     }
     if (values.valor_livre) {
       form.setFieldValue(
         "total_livre",
-        formValues.saldo_atual_livre + parseFloat(values.valor_livre) / 100
+        valorZeroOuPositivo(formValues.saldo_atual_livre) + parseFloat(values.valor_livre) / 100
       );
     }
   };
@@ -114,6 +121,32 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
     },
   ];
 
+  const toolTip = (texto) => (
+    <Icon
+      tooltipMessage={texto}
+      icon="faExclamationCircle"
+      iconProps={
+        { style: { fontSize: "16px", marginLeft: 4, color: "#086397" }}
+      }
+    />
+  )
+
+  const toolTipValorNegativo = () => {
+    const texto = "O saldo negativo não será computado para o cálculo, será considerado o valor R$0,00."
+    return toolTip(texto)
+  }
+
+  const toolTipReceitaPrevistaOrientacao = () => {
+    const texto = "Orienta-se somar todos os valores recebidos de Custeio, Capital e Livre Aplicação ao longo do último ano."
+    return toolTip(texto)
+  }
+
+  const getDataCongeladoOuAtual = () => {
+    return !!dadosPaaLocalStorage()?.saldo_congelado_em ?
+              formataData(dadosPaaLocalStorage()?.saldo_congelado_em, 'DD/MM/YYYY HH:mm') :
+              formataData(new Date())
+  }
+
   return (
     <ModalFormBodyText
       show={open}
@@ -138,21 +171,13 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
               gutter={[16, 16]}
               style={{ marginBottom: 16, color: "rgba(66, 71, 74, 1)" }}
             >
-              <Col md={8}>Saldo em {formataData(new Date())}</Col>
+              <Col md={8}>
+                Saldo em {getDataCongeladoOuAtual()}
+              </Col>
+
               <Col md={8}>
                 <Flex align="center">
-                  Receita Prevista
-                  <Icon
-                    tooltipMessage="Orienta-se somar todos os valores recebidos de Custeio, Capital e Livre Aplicação ao longo do último ano."
-                    icon="faExclamationCircle"
-                    iconProps={{
-                      style: {
-                        fontSize: "16px",
-                        marginLeft: 4,
-                        color: "#086397",
-                      },
-                    }}
-                  />
+                  Receita Prevista {toolTipReceitaPrevistaOrientacao()}
                 </Flex>
               </Col>
               <Col md={8}>Total</Col>
@@ -163,7 +188,15 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                 <Col md={8}>
                   <Flex align="end" gap={8}>
                     <Form.Item
-                      label="Custeio"
+                      label={
+                        <>
+                          Custeio {
+                            /* Exibe tooltip quando o valor for negativo */
+                            (form?.getFieldsValue()?.saldo_atual_custeio||0) < 0 &&
+                            toolTipValorNegativo()
+                          }
+                        </>
+                      }
                       name="saldo_atual_custeio"
                       labelCol={{ span: 24 }}
                       style={{ marginBottom: 8 }}
@@ -232,7 +265,15 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                 <Col md={8}>
                   <Flex align="end" gap={8}>
                     <Form.Item
-                      label="Capital"
+                      label={
+                        <>
+                          Capital {
+                            /* Exibe tooltip quando o valor for negativo */
+                            (form?.getFieldsValue()?.saldo_atual_capital||0) < 0 &&
+                            toolTipValorNegativo()
+                          }
+                        </>
+                      }
                       name="saldo_atual_capital"
                       labelCol={{ span: 24 }}
                       style={{ marginBottom: 8 }}
@@ -278,7 +319,7 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                 </Col>
                 <Col md={8}>
                   <Form.Item
-                    label="Custeio"
+                    label="Capital"
                     name="total_capital"
                     labelCol={{ span: 24 }}
                     style={{ marginBottom: 8 }}
@@ -301,7 +342,15 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                 <Col md={8}>
                   <Flex align="end" gap={8}>
                     <Form.Item
-                      label="Livre Aplicação"
+                      label={
+                        <>
+                          Livre Aplicação {
+                            /* Exibe tooltip quando o valor for negativo */
+                            (form?.getFieldsValue()?.saldo_atual_livre||0) < 0 &&
+                            toolTipValorNegativo()
+                          }
+                        </>
+                      }
                       name="saldo_atual_livre"
                       labelCol={{ span: 24 }}
                       style={{ marginBottom: 8 }}
