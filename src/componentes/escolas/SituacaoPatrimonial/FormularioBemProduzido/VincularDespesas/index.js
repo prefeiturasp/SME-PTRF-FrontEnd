@@ -216,7 +216,7 @@ export const VincularDespesas = ({
           <Flex justify="end" gap={8} className="mt-4">
             <button
               className="btn btn-outline-success float-right"
-              onClick={() => navigate(-1)}
+              onClick={() => navigate("/lista-situacao-patrimonial")}
             >
               Cancelar
             </button>

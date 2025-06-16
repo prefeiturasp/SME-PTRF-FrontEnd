@@ -14,6 +14,7 @@ export const ElaboracaoPaa = () => {
 
   const [notValidPaa, setNotValidPaa] = useState(true);
   const [loading, setLoading] = useState(true);
+  const [loadingPaa, setLoadingPaa] = useState(false);
   const [validMonthPaa, setValidMonthPaa] = useState('');
   const [textoPaa, setTextoPaa] = useState('');
   const { mutationPost } = usePostPaa();
@@ -24,14 +25,17 @@ export const ElaboracaoPaa = () => {
   const dataAtual = new Date();
 
   const carregaPaa = useCallback(async ()=>{
+    setLoadingPaa(true);
     try {
         let response = await getPaaVigente(associacao_uuid)
         localStorage.setItem("PAA", response.data.uuid);
+        localStorage.setItem("DADOS_PAA", JSON.stringify(response.data));
         setNotValidPaa(false);
     } catch (error) {
         setNotValidPaa(true);
     }
-    }, [])
+    setLoadingPaa(false);
+  }, [])
 
     useEffect(()=>{
       carregaPaa()

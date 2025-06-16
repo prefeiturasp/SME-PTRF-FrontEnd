@@ -123,3 +123,15 @@ export const patchReceitaPrevistaPDDE = async (uuid, payload) => {
     await api.patch(`api/receitas-previstas-pdde/${uuid}/`, payload, authHeader())
   ).data;
 };
+
+export const postDesativarAtualizacaoSaldoPAA = async (uuid) => {
+  return (
+    await api.post(`api/paa/${uuid}/desativar-atualizacao-saldo/`, {}, authHeader())
+  ).data;
+};
+
+export const postAtivarAtualizacaoSaldoPAA = async (uuid) => {
+  return (
+    await api.post(`api/paa/${uuid}/ativar-atualizacao-saldo/`, {}, authHeader())
+  ).data;
+};

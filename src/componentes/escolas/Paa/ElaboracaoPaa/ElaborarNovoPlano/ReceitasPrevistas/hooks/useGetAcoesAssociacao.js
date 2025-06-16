@@ -4,6 +4,7 @@ import { getAcoesAssociacao } from "../../../../../../../services/escolas/Associ
 export const useGetAcoesAssociacao = () => {
   const {
     isLoading,
+    isFetching,
     isError,
     data = { results: [] },
     error,
@@ -13,5 +14,5 @@ export const useGetAcoesAssociacao = () => {
     staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: true,
   });
-  return { isLoading, isError, data: data.results, error, refetch };
+  return { isLoading, isError, data: data.results, error, refetch, isFetching };
 };
