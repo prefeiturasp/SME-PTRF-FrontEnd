@@ -45,7 +45,6 @@ export const ClassificarBem = ({
 
     const totalFaltante = getTotalFaltante();
     setHabilitaCadastrarBem(totalFaltante === 0);
-
     setBemProduzidoItems(allValues?.itens);
   };
 
@@ -275,7 +274,14 @@ export const ClassificarBem = ({
                 <Button
                   color="primary"
                   icon={<PlusOutlined />}
-                  onClick={() => add()}
+                  onClick={() =>
+                    add({
+                      num_processo_incorporacao: "",
+                      especificacao_do_bem: "",
+                      quantidade: "",
+                      valor_individual: "",
+                    })
+                  }
                 >
                   Adicionar item
                 </Button>
