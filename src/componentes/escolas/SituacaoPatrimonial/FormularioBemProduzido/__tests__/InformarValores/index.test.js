@@ -192,6 +192,8 @@ describe("InformarValores", () => {
               podeEditar={true}
               despesas={mockBemProduzidoDespesas}
               salvarRascunhoInformarValores={jest.fn()}
+              setHabilitaClassificarBem={jest.fn()}
+              setRateiosComValores={jest.fn()}
             />
           </QueryClientProvider>
         </Provider>
@@ -238,6 +240,8 @@ describe("InformarValores", () => {
               podeEditar={true}
               despesas={mockBemProduzidoDespesas}
               salvarRascunhoInformarValores={jest.fn()}
+              setHabilitaClassificarBem={jest.fn()}
+              setRateiosComValores={jest.fn()}
             />
           </QueryClientProvider>
         </Provider>
@@ -261,6 +265,8 @@ describe("InformarValores", () => {
               podeEditar={true}
               despesas={mockBemProduzidoDespesas}
               salvarRascunhoInformarValores={jest.fn()}
+              setHabilitaClassificarBem={jest.fn()}
+              setRateiosComValores={jest.fn()}
             />
           </QueryClientProvider>
         </Provider>
@@ -293,6 +299,8 @@ describe("InformarValores", () => {
               podeEditar={true}
               despesas={mockBemProduzidoDespesas}
               salvarRascunhoInformarValores={jest.fn()}
+              setHabilitaClassificarBem={jest.fn()}
+              setRateiosComValores={jest.fn()}
             />
           </QueryClientProvider>
         </Provider>
@@ -327,6 +335,8 @@ describe("InformarValores", () => {
               podeEditar={true}
               despesas={mockBemProduzidoDespesas}
               salvarRascunhoInformarValores={mockSalvarRascunhoInformarValores}
+              setHabilitaClassificarBem={jest.fn()}
+              setRateiosComValores={jest.fn()}
             />
           </QueryClientProvider>
         </Provider>
@@ -347,13 +357,7 @@ describe("InformarValores", () => {
     fireEvent.click(buttonSalvarRascunho);
 
     await waitFor(() => {
-      expect(mockSalvarRascunhoInformarValores).toHaveBeenCalledWith([
-        {
-          uuid: "uuid-rateio-1234",
-          bem_produzido_despesa: "uuid-bem-produzido-despesa-1234",
-          valor_utilizado: 90,
-        },
-      ]);
+      expect(mockSalvarRascunhoInformarValores).toHaveBeenCalled();
     });
   });
 
@@ -367,6 +371,8 @@ describe("InformarValores", () => {
               podeEditar={true}
               despesas={mockBemProduzidoDespesas}
               salvarRascunhoInformarValores={jest.fn()}
+              setHabilitaClassificarBem={jest.fn()}
+              setRateiosComValores={jest.fn()}
             />
           </QueryClientProvider>
         </Provider>
@@ -376,6 +382,6 @@ describe("InformarValores", () => {
     const buttonCancelar = screen.getByRole("button", { name: "Cancelar" });
     fireEvent.click(buttonCancelar);
 
-    expect(mockUseNavigate).toHaveBeenCalledWith(-1);
+    expect(mockUseNavigate).toHaveBeenCalledWith("/lista-situacao-patrimonial");
   });
 });

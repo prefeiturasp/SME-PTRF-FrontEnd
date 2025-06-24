@@ -1,6 +1,6 @@
 {
   "name": "ptrf",
-  "version": "9.16.0",
+  "version": "9.17.0",
   "private": true,
   "dependencies": {
     "@dnd-kit/core": "^6.1.0",
@@ -52,7 +52,7 @@
     "redux": "^4.2.1",
     "sass": "^1.71.1",
     "typescript": "^4.9.5",
-    "yup": "^0.28.3"
+    "yup": "^0.32.11"
   },
   "scripts": {
     "start": "react-scripts start",
