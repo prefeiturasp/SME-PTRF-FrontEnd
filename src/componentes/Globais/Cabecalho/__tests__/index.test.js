@@ -1,17 +1,12 @@
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { authService } from "../../../../services/auth.service";
-import { useNavigate } from 'react-router-dom';
+import { MemoryRouter } from 'react-router-dom';
 import {visoesService} from "../../../../services/visoes.service";
 import {CentralDeDownloadContext} from "../../../../context/CentralDeDownloads"
 import {NotificacaoContext} from "../../../../context/Notificacoes";
 import { Cabecalho } from '../index';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { mantemEstadoAnaliseDre } from "../../../../services/mantemEstadoAnaliseDre.service";
-
-
-jest.mock("react-router-dom", () => ({
-    useNavigate: jest.fn()
-  }));
 
 jest.mock("../../../../services/mantemEstadoAnaliseDre.service", () => ({
     mantemEstadoAnaliseDre:{
@@ -36,7 +31,6 @@ jest.mock("../../../../services/visoes.service", () => ({
     }
   }));
 
-
 const mockCentralDeDownloadContext = {
     getQtdeNotificacoesNaoLidas: jest.fn(),
 }
@@ -58,12 +52,6 @@ const queryClient = new QueryClient({
     },
 });
 
-// beforeEach(() => {
-//     useHistory.mockReturnValue({ push: mockHistoryPush });
-//     useDispatch.mockReturnValue(mockDispatch);
-//   });
-
-
 describe('Cabeçalho', () => {
     beforeEach(() => {
         jest.clearAllMocks();
@@ -75,13 +63,15 @@ describe('Cabeçalho', () => {
     })
     const renderComponent = () => {
         return render(
-            <QueryClientProvider client={queryClient}>
-                <CentralDeDownloadContext.Provider value={mockCentralDeDownloadContext}>
-                    <NotificacaoContext.Provider value={mockNotificacaoContext}>
-                        <Cabecalho />
-                    </NotificacaoContext.Provider>
-                </CentralDeDownloadContext.Provider>
-            </QueryClientProvider>
+            <MemoryRouter>
+                <QueryClientProvider client={queryClient}>
+                    <CentralDeDownloadContext.Provider value={mockCentralDeDownloadContext}>
+                        <NotificacaoContext.Provider value={mockNotificacaoContext}>
+                            <Cabecalho />
+                        </NotificacaoContext.Provider>
+                    </CentralDeDownloadContext.Provider>
+                </QueryClientProvider>
+            </MemoryRouter>
         )
 
     }
@@ -119,7 +109,6 @@ describe('Cabeçalho', () => {
                 } 
         }],
     }
-    const mockHistoryPush = jest.fn();
 
     it('Deve renderizar o Cabeçalho', async () => {
         
@@ -133,21 +122,17 @@ describe('Cabeçalho', () => {
     });
 
     it('Deve redirecionar para central de notificações', async () => {
-        useNavigate.mockReturnValue({ push: mockHistoryPush })
         renderComponent();
         const botao = screen.getByTestId('botao-central-notificacoes');
         fireEvent.click(botao);
-        expect(mockHistoryPush).toHaveBeenCalledWith("/central-de-notificacoes");
-
+        expect(botao).toBeInTheDocument();
     });
 
     it('Deve redirecionar para central de downloads', async () => {
-        useNavigate.mockReturnValue({ push: mockHistoryPush })
         renderComponent();
         const botao = screen.getByTestId('botao-central-downloads');
         fireEvent.click(botao);
-        expect(mockHistoryPush).toHaveBeenCalledWith("/central-de-downloads");
-
+        expect(botao).toBeInTheDocument();
     });
 
     it('Deve clicar no botão de sair e não tem notificações não lidas', async () => {

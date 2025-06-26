@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { DevolucaoAoTesouroAjuste } from '../index';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, MemoryRouter } from 'react-router-dom';
 import { marcarDevolucaoTesouro, desmarcarDevolucaoTesouro, getSalvarDevoulucoesAoTesouro, deleteDevolucaoAoTesouro } from '../../../../services/dres/PrestacaoDeContas.service.js';
 import { toastCustom } from "../../ToastCustom";
 import moment from 'moment';
@@ -52,7 +52,11 @@ describe('DevolucaoAoTesouroAjuste Component', () => {
   });
 
   it('renders component with initial data', () => {
-    render(<DevolucaoAoTesouroAjuste />);
+    render(
+      <MemoryRouter>
+        <DevolucaoAoTesouroAjuste />
+      </MemoryRouter>
+    );
     
     expect(screen.getByText('Devolução ao tesouro')).toBeInTheDocument();
     expect(screen.getByText('Fornecedor Teste')).toBeInTheDocument();
@@ -62,7 +66,11 @@ describe('DevolucaoAoTesouroAjuste Component', () => {
   });
 
   it('handles date change correctly', async () => {
-    render(<DevolucaoAoTesouroAjuste />);
+    render(
+      <MemoryRouter>
+        <DevolucaoAoTesouroAjuste />
+      </MemoryRouter>
+    );
     
     const dateInput = screen.getByPlaceholderText('dd/mm/aaaa');
     fireEvent.change(dateInput, { target: { value: '21/03/2024' } });
@@ -74,7 +82,11 @@ describe('DevolucaoAoTesouroAjuste Component', () => {
     getSalvarDevoulucoesAoTesouro.mockResolvedValue({});
     marcarDevolucaoTesouro.mockResolvedValue({});
 
-    render(<DevolucaoAoTesouroAjuste />);
+    render(
+      <MemoryRouter>
+        <DevolucaoAoTesouroAjuste />
+      </MemoryRouter>
+    );
     
     const saveButton = screen.getByText('Salvar');
     fireEvent.click(saveButton);
@@ -91,7 +103,11 @@ describe('DevolucaoAoTesouroAjuste Component', () => {
     deleteDevolucaoAoTesouro.mockResolvedValue({});
     desmarcarDevolucaoTesouro.mockResolvedValue({});
 
-    render(<DevolucaoAoTesouroAjuste />);
+    render(
+      <MemoryRouter>
+        <DevolucaoAoTesouroAjuste />
+      </MemoryRouter>
+    );
     
     const deleteButton = screen.getByText('Desfazer dev. tesouro');
     fireEvent.click(deleteButton);
@@ -108,7 +124,11 @@ describe('DevolucaoAoTesouroAjuste Component', () => {
   });
 
   it('handles cancel button click correctly', () => {
-    render(<DevolucaoAoTesouroAjuste />);
+    render(
+      <MemoryRouter>
+        <DevolucaoAoTesouroAjuste />
+      </MemoryRouter>
+    );
     
     const cancelButton = screen.getByText('Cancelar');
     fireEvent.click(cancelButton);
@@ -123,7 +143,11 @@ describe('DevolucaoAoTesouroAjuste Component', () => {
     };
     useLocation.mockReturnValue({ state: mockStateWithoutPermission });
 
-    render(<DevolucaoAoTesouroAjuste />);
+    render(
+      <MemoryRouter>
+        <DevolucaoAoTesouroAjuste />
+      </MemoryRouter>
+    );
     
     expect(screen.getByText('Salvar')).toBeDisabled();
     expect(screen.getByText('Desfazer dev. tesouro')).toBeDisabled();

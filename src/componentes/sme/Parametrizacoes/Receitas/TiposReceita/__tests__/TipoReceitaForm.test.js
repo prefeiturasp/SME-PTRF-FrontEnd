@@ -76,13 +76,13 @@ describe("TipoReceitaForm", () => {
 
   test("renderiza o formulário corretamente", () => {
     render(
-      <Provider store={mockStore}>
-        <MemoryRouter>
+      <MemoryRouter>
+        <Provider store={mockStore}>
           <QueryClientProvider client={queryClient}>
             <TipoReceitaForm />
           </QueryClientProvider>
-        </MemoryRouter>
-      </Provider>
+        </Provider>
+      </MemoryRouter>
     );
 
     expect(screen.getByLabelText(/Nome/i)).toBeInTheDocument();
@@ -91,13 +91,13 @@ describe("TipoReceitaForm", () => {
 
   test("atribui valores iniciais ao formulário quando for cadastro", async () => {
     render(
-      <Provider store={mockStore}>
-        <MemoryRouter>
+      <MemoryRouter>
+        <Provider store={mockStore}>
           <QueryClientProvider client={queryClient}>
             <TipoReceitaForm />
           </QueryClientProvider>
-        </MemoryRouter>
-      </Provider>
+        </Provider>
+      </MemoryRouter>
     );
 
     expect(screen.getByPlaceholderText("Nome do tipo de crédito")).toHaveValue(
@@ -141,13 +141,13 @@ describe("TipoReceitaForm", () => {
     useParams.mockReturnValue({ uuid: "1234" });
 
     render(
-      <Provider store={mockStore}>
-        <MemoryRouter>
+      <MemoryRouter>
+        <Provider store={mockStore}>
           <QueryClientProvider client={queryClient}>
             <TipoReceitaForm />
           </QueryClientProvider>
-        </MemoryRouter>
-      </Provider>
+        </Provider>
+      </MemoryRouter>
     );
 
     expect(screen.getByPlaceholderText("Nome do tipo de crédito")).toHaveValue(
@@ -158,13 +158,13 @@ describe("TipoReceitaForm", () => {
 
   test("quando desmarcar `Todas as unidades` no fluxo de cadastro, validar campos", async () => {
     render(
-      <Provider store={mockStore}>
-        <MemoryRouter>
+      <MemoryRouter>
+        <Provider store={mockStore}>
           <QueryClientProvider client={queryClient}>
             <TipoReceitaForm />
           </QueryClientProvider>
-        </MemoryRouter>
-      </Provider>
+        </Provider>
+      </MemoryRouter>
     );
 
     const checkbox = screen.getByLabelText("Todas as unidades");
@@ -180,13 +180,13 @@ describe("TipoReceitaForm", () => {
 
   test("submete o formulário de cadastro com valores preenchidos corretamente", async () => {
     render(
-      <Provider store={mockStore}>
-        <MemoryRouter>
+      <MemoryRouter>
+        <Provider store={mockStore}>
           <QueryClientProvider client={queryClient}>
             <TipoReceitaForm />
           </QueryClientProvider>
-        </MemoryRouter>
-      </Provider>
+        </Provider>
+      </MemoryRouter>
     );
 
     const nome = screen.getByPlaceholderText("Nome do tipo de crédito");
@@ -254,13 +254,13 @@ describe("TipoReceitaForm", () => {
     useParams.mockReturnValue({ uuid: "1234" });
 
     render(
-      <Provider store={mockStore}>
-        <MemoryRouter>
+      <MemoryRouter>
+        <Provider store={mockStore}>
           <QueryClientProvider client={queryClient}>
             <TipoReceitaForm />
           </QueryClientProvider>
-        </MemoryRouter>
-      </Provider>
+        </Provider>
+      </MemoryRouter>
     );
 
     const nome = screen.getByPlaceholderText("Nome do tipo de crédito");
@@ -281,13 +281,13 @@ describe("TipoReceitaForm", () => {
     RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(false);
 
     render(
-      <Provider store={mockStore}>
-        <MemoryRouter>
+      <MemoryRouter>
+        <Provider store={mockStore}>
           <QueryClientProvider client={queryClient}>
             <TipoReceitaForm />
           </QueryClientProvider>
-        </MemoryRouter>
-      </Provider>
+        </Provider>
+      </MemoryRouter>
     );
 
     expect(screen.getByLabelText(/Nome/i)).toBeDisabled();
@@ -299,13 +299,13 @@ describe("TipoReceitaForm", () => {
     RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(false);
 
     render(
-      <Provider store={mockStore}>
-        <MemoryRouter>
+      <MemoryRouter>
+        <Provider store={mockStore}>
           <QueryClientProvider client={queryClient}>
             <TipoReceitaForm />
           </QueryClientProvider>
-        </MemoryRouter>
-      </Provider>
+        </Provider>
+      </MemoryRouter>
     );
     const cancelarButton = screen.getByRole("button", { name: "Cancelar" });
     fireEvent.click(cancelarButton);

@@ -1,7 +1,7 @@
 import { act } from "react";
 import { renderHook } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, MemoryRouter } from 'react-router-dom';
 import { toastCustom } from "../../../../../../Globais/ToastCustom";
 import { useDeleteTipoReceita } from "../../hooks/useDeleteTipoReceita";
 import { deleteTipoReceita } from "../../../../../../../services/sme/Parametrizacoes.service";
@@ -39,7 +39,11 @@ describe("useDeleteTipoReceita", () => {
   });
 
   const wrapper = ({ children }) => (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    <QueryClientProvider client={queryClient}>
+      <MemoryRouter>
+        {children}
+      </MemoryRouter>
+    </QueryClientProvider>
   );
 
   it("deve deletar um tipo de receita com sucesso", async () => {

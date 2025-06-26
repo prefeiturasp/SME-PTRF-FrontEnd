@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { TopoComBotoes } from "../TopoComBotoes";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, MemoryRouter } from 'react-router-dom';
 import { useSelector, useDispatch } from "react-redux";
 
 // Mock mais robusto do FontAwesomeIcon
@@ -42,7 +42,11 @@ describe("TopoComBotoes", () => {
       PendenciaCadastro: { popTo: null }
     }));
 
-    render(<TopoComBotoes tituloPagina="Meu Título" />);
+    render(
+      <MemoryRouter>
+        <TopoComBotoes tituloPagina="Meu Título" />
+      </MemoryRouter>
+    );
 
     expect(screen.getByText("Meu Título")).toBeInTheDocument();
     expect(screen.queryByText("Voltar")).not.toBeInTheDocument();
@@ -53,7 +57,11 @@ describe("TopoComBotoes", () => {
       PendenciaCadastro: { popTo: "/minha-rota" }
     }));
 
-    render(<TopoComBotoes tituloPagina="Meu Título" />);
+    render(
+      <MemoryRouter>
+        <TopoComBotoes tituloPagina="Meu Título" />
+      </MemoryRouter>
+    );
 
     expect(screen.getByText("Meu Título")).toBeInTheDocument();
     expect(screen.getByText("Voltar")).toBeInTheDocument();
@@ -71,7 +79,11 @@ describe("TopoComBotoes", () => {
       PendenciaCadastro: { popTo: mockPopTo }
     }));
 
-    render(<TopoComBotoes tituloPagina="Meu Título" />);
+    render(
+      <MemoryRouter>
+        <TopoComBotoes tituloPagina="Meu Título" />
+      </MemoryRouter>
+    );
 
     const botaoVoltar = screen.getByText("Voltar");
     fireEvent.click(botaoVoltar);
@@ -85,7 +97,11 @@ describe("TopoComBotoes", () => {
       PendenciaCadastro: { popTo: "/minha-rota" }
     }));
 
-    render(<TopoComBotoes tituloPagina="Meu Título" />);
+    render(
+      <MemoryRouter>
+        <TopoComBotoes tituloPagina="Meu Título" />
+      </MemoryRouter>
+    );
 
     const botaoVoltar = screen.getByText("Voltar");
     expect(botaoVoltar).toHaveClass("btn btn-outline-success mr-2");

@@ -2,7 +2,7 @@ import { act } from "react";
 import { renderHook } from "@testing-library/react";
 import { postTipoReceita } from "../../../../../../../services/sme/Parametrizacoes.service";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, MemoryRouter } from 'react-router-dom';
 import { toastCustom } from "../../../../../../Globais/ToastCustom";
 import { usePostTipoReceita } from "../../hooks/usePostTipoReceita";
 
@@ -37,7 +37,11 @@ describe("usePostTipoReceita", () => {
   });
 
   const wrapper = ({ children }) => (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    <QueryClientProvider client={queryClient}>
+      <MemoryRouter>
+        {children}
+      </MemoryRouter>
+    </QueryClientProvider>
   );
 
   it("deve criar um tipo de receita com sucesso", async () => {

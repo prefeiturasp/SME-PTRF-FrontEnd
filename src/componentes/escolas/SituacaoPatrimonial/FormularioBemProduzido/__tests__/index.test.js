@@ -17,18 +17,19 @@ import { usePatchBemProduzidoItemsRascunho } from "../ClassificarBem/hooks/usePa
 import { usePatchBemProduzidoItems } from "../ClassificarBem/hooks/usePatchBemProduzidoItems";
 
 const mockUseNavigate = jest.fn();
+
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useParams: jest.fn(),
+  useNavigate: () => mockUseNavigate,
+}));
+
 const mockSearchParams = new URLSearchParams("?step=1");
 const mockSetSearchParams = jest.fn();
 const mockMutatePostAsync = jest.fn();
 const mockMutatePatchAsync = jest.fn();
 const mockMutationPatchBemProduzidoItemsRascunhoAsync = jest.fn();
 const mockMutationPatchBemProduzidoItemsAsync = jest.fn();
-
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
-  useNavigate: jest.fn(),
-  useSearchParams: jest.fn()
-}));
 
 jest.mock("../../../../Globais/UI", () => ({
   IconButton: ({ label }) => <button>{label}</button>,
@@ -78,7 +79,7 @@ jest.mock("../hooks/usePatchBemProduzido");
 jest.mock("../ClassificarBem/hooks/usePatchBemProduzidoItemsRascunho");
 jest.mock("../ClassificarBem/hooks/usePatchBemProduzidoItems");
 
-const rootReducer = combineReducers({});
+const rootReducer = combineReducers({ dummy: (state = {}) => state });
 const mockStore = createStore(rootReducer);
 
 let queryClient;
@@ -97,6 +98,7 @@ describe("Componente FormularioBemProduzido", () => {
   };
 
   beforeEach(() => {
+    mockUseNavigate.mockClear();
     queryClient = new QueryClient({
       defaultOptions: {
         queries: { retry: false },

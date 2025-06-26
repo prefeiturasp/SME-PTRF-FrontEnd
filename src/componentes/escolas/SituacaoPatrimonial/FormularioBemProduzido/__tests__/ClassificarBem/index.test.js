@@ -8,8 +8,15 @@ const mockCadastrarBem = jest.fn();
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
-  useNavigate: jest.fn(),
+  useNavigate: () => mockUseNavigate,
   useSearchParams: jest.fn()
+}));
+
+jest.mock('../../../../../../services/escolas/Despesas.service', () => ({
+  getEspecificacoesCapital: jest.fn(() => Promise.resolve([
+    { uuid: '1', descricao: 'Bem 1' },
+    { uuid: '2', descricao: 'Bem 2' }
+  ]))
 }));
 
 describe("ClassificarBem", () => {

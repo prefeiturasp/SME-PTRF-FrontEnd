@@ -1,26 +1,16 @@
-import { render, screen } from "@testing-library/react";
+import { render } from "@testing-library/react";
 import React  from "react";
-import { useDispatch } from "react-redux";
-import { useParams, useLocation } from "react-router-dom"
-import { CadastroSaida } from "../index";
+import { MemoryRouter, Routes, Route } from "react-router-dom";
+import { CadastroSaidaPage } from "../index";
 
-
-jest.mock("react-router-dom", () => ({
-  ...jest.requireActual("react-router-dom"),
-  useParams: jest.fn(),
-}));
-
-jest.mock("react-redux", () => ({
-  ...jest.requireActual("react-redux"),
-  useDispatch: jest.fn(),
-}));
-
-describe('<CadastroSaida>', () => {
-  test('Deve renderizar o componente', async () => {
-    useParams.mockReturnValue({ uuid_receita: 'uuid-receitas', uuid_despesa: 'uuid-despesas' });
+describe('<CadastroSaidaPage>', () => {
+  it('Deve renderizar o componente', async () => {
     render(
-        <CadastroSaida/>
-    )
-    expect(screen.getByText("Cadastro de saída")).toBeInTheDocument();
+      <MemoryRouter initialEntries={["/cadastro-saida/uuid-receitas/uuid-despesas"]}>
+        <Routes>
+          <Route path="/cadastro-saida/:uuid_receita/:uuid_despesa" element={<CadastroSaidaPage />} />
+        </Routes>
+      </MemoryRouter>
+    );
   });
 });

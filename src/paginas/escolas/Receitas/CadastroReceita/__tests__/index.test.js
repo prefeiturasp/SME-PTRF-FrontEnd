@@ -4,6 +4,8 @@ import React  from "react";
 import { CadastroDeReceita } from "../index";
 import { visoesService } from "../../../../../services/visoes.service";
 import { SidebarContext } from "../../../../../context/Sidebar";
+import { MemoryRouter, Routes, Route } from "react-router-dom";
+import { CadastroReceitaPage } from "../index";
 
 // Mockando useParams
 jest.mock("react-router-dom", () => ({
@@ -38,5 +40,17 @@ describe('<CadastroDeReceita>', () => {
     expect(visoesService.featureFlagAtiva).toHaveBeenCalled();
     expect(visoesService.getDadosDoUsuarioLogado).toHaveBeenCalled();
     expect(visoesService.getPermissoes).toHaveBeenCalled();
+  });
+});
+
+describe('<CadastroReceitaPage>', () => {
+  it('Deve renderizar o componente', async () => {
+    render(
+      <MemoryRouter initialEntries={["/cadastro-receita/teste-origem"]}>
+        <Routes>
+          <Route path="/cadastro-receita/:origem" element={<CadastroReceitaPage />} />
+        </Routes>
+      </MemoryRouter>
+    );
   });
 });

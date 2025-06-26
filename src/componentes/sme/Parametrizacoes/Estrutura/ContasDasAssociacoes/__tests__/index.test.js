@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { MemoryRouter, Route } from "react-router-dom";
+import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { ContasDasAssociacoes } from '..';
 import {
     postContasAssociacoes,
@@ -43,9 +43,9 @@ describe("Carrega página de Contas de Associações", () => {
     it('Renderiza a mensagem "Carregando..." ao abrir a página', () => {
         render(
             <MemoryRouter initialEntries={["/parametro-contas-associacoes"]}>
-                <Route path="/parametro-contas-associacoes">
-                    <ContasDasAssociacoes />
-                </Route>
+                <Routes>
+                    <Route path="/parametro-contas-associacoes" element={<ContasDasAssociacoes />} />
+                </Routes>
             </MemoryRouter>
         );
         expect(screen.getByText(/Carregando.../i)).toBeInTheDocument();
@@ -64,9 +64,9 @@ describe("Carrega página de Contas de Associações", () => {
         getContasAssociacoesFiltros.mockResolvedValueOnce(mockData);
         render(
             <MemoryRouter initialEntries={["/parametro-contas-associacoes"]}>
-                <Route path="/parametro-contas-associacoes">
-                    <ContasDasAssociacoes />
-                </Route>
+                <Routes>
+                    <Route path="/parametro-contas-associacoes" element={<ContasDasAssociacoes />} />
+                </Routes>
             </MemoryRouter>
         );
         expect(screen.getAllByText(/Contas das Associações/i)).toHaveLength(2);
@@ -79,9 +79,9 @@ describe("Carrega página de Contas de Associações", () => {
         getContasAssociacoesFiltros.mockResolvedValue(mockData)
         render(
             <MemoryRouter initialEntries={["/parametro-contas-associacoes"]}>
-                <Route path="/parametro-contas-associacoes">
-                    <ContasDasAssociacoes />
-                </Route>
+                <Routes>
+                    <Route path="/parametro-contas-associacoes" element={<ContasDasAssociacoes />} />
+                </Routes>
             </MemoryRouter>
         );
 
@@ -192,9 +192,9 @@ describe('Teste handleSubmitModalForm', () => {
         postContasAssociacoes.mockRejectedValueOnce({response: {data: {non_field_errors: ["Esta conta de associacao já existe."]}}});
         render(
             <MemoryRouter initialEntries={["/parametro-contas-associacoes"]}>
-                <Route path="/parametro-contas-associacoes">
-                    <ContasDasAssociacoes />
-                </Route>
+                <Routes>
+                    <Route path="/parametro-contas-associacoes" element={<ContasDasAssociacoes />} />
+                </Routes>
             </MemoryRouter>
         );
 
@@ -260,9 +260,9 @@ describe('Teste handleSubmitModalForm', () => {
         );
         render(
             <MemoryRouter initialEntries={["/parametro-contas-associacoes"]}>
-                <Route path="/parametro-contas-associacoes">
-                    <ContasDasAssociacoes />
-                </Route>
+                <Routes>
+                    <Route path="/parametro-contas-associacoes" element={<ContasDasAssociacoes />} />
+                </Routes>
             </MemoryRouter>
         );
 
@@ -325,9 +325,9 @@ describe('Teste handleSubmitModalForm', () => {
         getContasAssociacoesFiltros.mockResolvedValueOnce(mock_contas_associacoes_full)
         render(
             <MemoryRouter initialEntries={["/parametro-contas-associacoes"]}>
-                <Route path="/parametro-contas-associacoes">
-                    <ContasDasAssociacoes />
-                </Route>
+                <Routes>
+                    <Route path="/parametro-contas-associacoes" element={<ContasDasAssociacoes />} />
+                </Routes>
             </MemoryRouter>
         );
 
@@ -384,9 +384,9 @@ describe('Teste handleSubmitModalForm', () => {
         patchContasAssociacoes.mockRejectedValueOnce({response: {data: {non_field_errors: ["Esta conta de associacao já existe."]}}});
         render(
             <MemoryRouter initialEntries={["/parametro-contas-associacoes"]}>
-                <Route path="/parametro-contas-associacoes">
-                    <ContasDasAssociacoes />
-                </Route>
+                <Routes>
+                    <Route path="/parametro-contas-associacoes" element={<ContasDasAssociacoes />} />
+                </Routes>
             </MemoryRouter>
         );
 
@@ -455,9 +455,9 @@ describe('Teste handleSubmitModalForm', () => {
         );
         render(
             <MemoryRouter initialEntries={["/parametro-contas-associacoes"]}>
-                <Route path="/parametro-contas-associacoes">
-                    <ContasDasAssociacoes />
-                </Route>
+                <Routes>
+                    <Route path="/parametro-contas-associacoes" element={<ContasDasAssociacoes />} />
+                </Routes>
             </MemoryRouter>
         );
 
@@ -517,9 +517,9 @@ describe('Teste handleSubmitModalForm', () => {
         getContasAssociacoesFiltros.mockResolvedValueOnce(mock_contas_associacoes_full).mockResolvedValueOnce(mock_contas_associacoes_full);
         render(
             <MemoryRouter initialEntries={["/parametro-contas-associacoes"]}>
-                <Route path="/parametro-contas-associacoes">
-                    <ContasDasAssociacoes />
-                </Route>
+                <Routes>
+                    <Route path="/parametro-contas-associacoes" element={<ContasDasAssociacoes />} />
+                </Routes>
             </MemoryRouter>
         );
 
@@ -561,9 +561,9 @@ describe('Teste handleSubmitModalForm', () => {
             response: { data: { mensagem: "mensagem de erro" } },
         });
         render(<MemoryRouter initialEntries={["/parametro-contas-associacoes"]}>
-            <Route path="/parametro-contas-associacoes">
-                <ContasDasAssociacoes />
-            </Route>
+            <Routes>
+                <Route path="/parametro-contas-associacoes" element={<ContasDasAssociacoes />} />
+            </Routes>
         </MemoryRouter>);
 
         await waitFor(()=> {
@@ -607,9 +607,9 @@ describe('Teste handleSubmitModalForm', () => {
         });
         render(
             <MemoryRouter initialEntries={["/parametro-contas-associacoes"]}>
-                <Route path="/parametro-contas-associacoes">
-                    <ContasDasAssociacoes />
-                </Route>
+                <Routes>
+                    <Route path="/parametro-contas-associacoes" element={<ContasDasAssociacoes />} />
+                </Routes>
             </MemoryRouter>
         );
 
@@ -686,9 +686,9 @@ describe('Teste handle functions', () => {
         getContasAssociacoesFiltros.mockResolvedValueOnce(mock_contas_associacoes_full).mockResolvedValueOnce(mock_contas_associacoes_paginated);
         render(
             <MemoryRouter initialEntries={["/parametro-contas-associacoes"]}>
-                <Route path="/parametro-contas-associacoes">
-                    <ContasDasAssociacoes />
-                </Route>
+                <Routes>
+                    <Route path="/parametro-contas-associacoes" element={<ContasDasAssociacoes />} />
+                </Routes>
             </MemoryRouter>
         );
         await waitFor(()=>{
@@ -718,9 +718,9 @@ describe('Teste handle functions', () => {
         getContasAssociacoesFiltros.mockResolvedValueOnce(mock_contas_associacoes_full).mockResolvedValueOnce(mock_contas_associacoes_full);
         render(
             <MemoryRouter initialEntries={["/parametro-contas-associacoes"]}>
-                <Route path="/parametro-contas-associacoes">
-                    <ContasDasAssociacoes />
-                </Route>
+                <Routes>
+                    <Route path="/parametro-contas-associacoes" element={<ContasDasAssociacoes />} />
+                </Routes>
             </MemoryRouter>
         );
         await waitFor(()=>{
@@ -749,9 +749,9 @@ describe('Teste handle functions', () => {
         getContasAssociacoesFiltros.mockResolvedValueOnce(mock_contas_associacoes_full);
         render(
             <MemoryRouter initialEntries={["/parametro-contas-associacoes"]}>
-                <Route path="/parametro-contas-associacoes">
-                    <ContasDasAssociacoes />
-                </Route>
+                <Routes>
+                    <Route path="/parametro-contas-associacoes" element={<ContasDasAssociacoes />} />
+                </Routes>
             </MemoryRouter>
         );
         await waitFor(()=>{
@@ -778,9 +778,9 @@ describe('Teste handle functions', () => {
         getContasAssociacoesFiltros.mockResolvedValueOnce(mock_contas_associacoes_full).mockResolvedValueOnce(mock_contas_associacoes_filtered);
         render(
             <MemoryRouter initialEntries={["/parametro-contas-associacoes"]}>
-                <Route path="/parametro-contas-associacoes">
-                    <ContasDasAssociacoes />
-                </Route>
+                <Routes>
+                    <Route path="/parametro-contas-associacoes" element={<ContasDasAssociacoes />} />
+                </Routes>
             </MemoryRouter>
         );
         await waitFor(()=>{

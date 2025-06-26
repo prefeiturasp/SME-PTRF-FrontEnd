@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, MemoryRouter } from 'react-router-dom';
 import AcertosDespesasPeriodosAnteriores from '../index';
 import { visoesService } from '../../../../../services/visoes.service';
 import { mantemEstadoAnaliseDre as meapcservice } from '../../../../../services/mantemEstadoAnaliseDre.service';
@@ -102,9 +102,11 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
     });
 
     render(
-      <Provider store={mockStore}>
-        <AcertosDespesasPeriodosAnteriores {...defaultProps} />
-      </Provider>
+      <MemoryRouter>
+        <Provider store={mockStore}>
+          <AcertosDespesasPeriodosAnteriores {...defaultProps} />
+        </Provider>
+      </MemoryRouter>
     );
 
     expect(screen.getByTestId('loading')).toBeInTheDocument();
@@ -131,9 +133,11 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
     });
 
     render(
-      <Provider store={mockStore}>
-        <AcertosDespesasPeriodosAnteriores {...defaultProps} />
-      </Provider>
+      <MemoryRouter>
+        <Provider store={mockStore}>
+          <AcertosDespesasPeriodosAnteriores {...defaultProps} />
+        </Provider>
+      </MemoryRouter>
     );
 
     await waitFor(() => {
@@ -162,9 +166,11 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
     });
 
     render(
-      <Provider store={mockStore}>
-        <AcertosDespesasPeriodosAnteriores {...defaultProps} />
-      </Provider>
+      <MemoryRouter>
+        <Provider store={mockStore}>
+          <AcertosDespesasPeriodosAnteriores {...defaultProps} />
+        </Provider>
+      </MemoryRouter>
     );
 
     await waitFor(() => {
@@ -198,9 +204,11 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
     });
 
     render(
-      <Provider store={mockStore}>
-        <AcertosDespesasPeriodosAnteriores {...defaultProps} />
-      </Provider>
+      <MemoryRouter>
+        <Provider store={mockStore}>
+          <AcertosDespesasPeriodosAnteriores {...defaultProps} />
+        </Provider>
+      </MemoryRouter>
     );
 
     await waitFor(() => {
@@ -229,9 +237,11 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
     });
 
     render(
-      <Provider store={mockStore}>
-        <AcertosDespesasPeriodosAnteriores {...defaultProps} />
-      </Provider>
+      <MemoryRouter>
+        <Provider store={mockStore}>
+          <AcertosDespesasPeriodosAnteriores {...defaultProps} />
+        </Provider>
+      </MemoryRouter>
     );
 
     await waitFor(() => {
