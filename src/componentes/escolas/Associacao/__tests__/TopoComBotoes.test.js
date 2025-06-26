@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { TopoComBotoes } from "../TopoComBotoes";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from "react-redux";
 
 // Mock mais robusto do FontAwesomeIcon
@@ -12,7 +12,7 @@ jest.mock("@fortawesome/react-fontawesome", () => ({
 }));
 
 jest.mock("react-router-dom", () => ({
-  useHistory: jest.fn()
+  useNavigate: jest.fn()
 }));
 
 jest.mock("react-redux", () => ({
@@ -25,11 +25,11 @@ jest.mock("../../../../store/reducers/componentes/escolas/PrestacaoDeContas/Pend
 }));
 
 describe("TopoComBotoes", () => {
-  const mockHistoryPush = jest.fn();
+  const mockNavigate = jest.fn();
   const mockDispatch = jest.fn();
 
   beforeEach(() => {
-    useHistory.mockReturnValue({ push: mockHistoryPush });
+    useNavigate.mockReturnValue(mockNavigate);
     useDispatch.mockReturnValue(mockDispatch);
   });
 
@@ -77,7 +77,7 @@ describe("TopoComBotoes", () => {
     fireEvent.click(botaoVoltar);
 
     expect(mockDispatch).toHaveBeenCalledTimes(1);
-    expect(mockHistoryPush).toHaveBeenCalledWith(mockPopTo);
+    expect(mockNavigate).toHaveBeenCalledWith(mockPopTo);
   });
 
   test("aplica os estilos corretos no botão Voltar", () => {

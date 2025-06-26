@@ -17,7 +17,7 @@ import {ModalConfirmDesvincularAcaoAssociacao} from "./ModalConfirmDesvincularAc
 import { TabelaAssociacaoAcao } from "../TabelaAssociacaoAcao";
 import { getTabelaAssociacoes } from "../../../../../../services/dres/Associacoes.service";
 import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../../RetornaSeTemPermissaoEdicaoPainelParametrizacoes";// Preparação para react-router-dom-v6
-import {useNavigate} from "react-router-dom-v5-compat";
+import {useNavigate} from "react-router-dom";
 import {toastCustom} from "../../../../../Globais/ToastCustom";
 import "./associacoes.scss";
 

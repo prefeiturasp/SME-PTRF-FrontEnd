@@ -1,6 +1,6 @@
 import React, {Fragment, useState, useEffect} from "react";
 import { DADOS_DA_ASSOCIACAO } from "../../../../services/auth.service";
-import {Redirect} from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { TopoComBotoes } from "./TopoComBotoes";
 import {InfosAssociacao} from "./DadosDaAssociacao/InfosAssociacao";
 import {InfosUnidadeEducacional} from "./DadosDaUnidadeEducacional/InfosUnidadeEducacional";
@@ -298,10 +298,11 @@ export const DetalhesDaAssociacao = () => {
                         </div>
                     </>
                 ) :
-                <Redirect
+                <Navigate
                     to={{
                         pathname: "/dre-associacoes",
                     }}
+                    replace
                 />
             
             }

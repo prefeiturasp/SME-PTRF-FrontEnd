@@ -1,5 +1,5 @@
 import React, {useMemo, useState, memo, useEffect, useRef} from "react";
-import {useHistory} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import {Column} from "primereact/column";
 import {DataTable} from "primereact/datatable";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -40,7 +40,7 @@ const TabelaConferenciaDeLancamentos = ({
     onChangeFilters
 }) => {
     const rowsPerPage = 10;
-    const history = useHistory();
+    const navigate = useNavigate();
     // Redux
     const dispatch = useDispatch()
     const [expandedRows, setExpandedRows] = useState(null);
@@ -253,7 +253,7 @@ const TabelaConferenciaDeLancamentos = ({
     const addDispatchRedireciona = (lancamentos) => {
         dispatch(limparDetalharAcertos())
         dispatch(addDetalharAcertos(lancamentos))
-        history.push(`/dre-detalhe-prestacao-de-contas-detalhar-acertos/${prestacaoDeContas.uuid}`, {aplicavel_despesas_periodos_anteriores: true})
+        navigate(`/dre-detalhe-prestacao-de-contas-detalhar-acertos/${prestacaoDeContas.uuid}`, {replace: true})
     }
 
     const detalharAcertos = () => {

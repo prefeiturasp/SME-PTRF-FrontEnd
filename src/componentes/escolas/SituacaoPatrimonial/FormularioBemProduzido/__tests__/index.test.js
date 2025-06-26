@@ -24,15 +24,10 @@ const mockMutatePatchAsync = jest.fn();
 const mockMutationPatchBemProduzidoItemsRascunhoAsync = jest.fn();
 const mockMutationPatchBemProduzidoItemsAsync = jest.fn();
 
-jest.mock("react-router-dom", () => ({
-  ...jest.requireActual("react-router-dom"),
-  useParams: jest.fn(),
-}));
-
-jest.mock("react-router-dom-v5-compat", () => ({
-  ...jest.requireActual("react-router-dom-v5-compat"),
-  useNavigate: () => mockUseNavigate,
-  useSearchParams: () => [mockSearchParams, mockSetSearchParams],
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: jest.fn(),
+  useSearchParams: jest.fn()
 }));
 
 jest.mock("../../../../Globais/UI", () => ({

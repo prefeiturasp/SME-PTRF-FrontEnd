@@ -1,6 +1,6 @@
 import React, {memo, useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {PaginasContainer} from "../../../../../paginas/PaginasContainer";
-import {useLocation, useHistory} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import {ASSOCIACAO_UUID} from "../../../../../services/auth.service";
 import {visoesService} from "../../../../../services/visoes.service";
 import {TopoComBotoes} from "./TopoComBotoes";
@@ -23,7 +23,7 @@ const CadastroDeMembrosDaAssociacao = () => {
     let uuid_associacao = localStorage.getItem(ASSOCIACAO_UUID);
     const parametros = useLocation();
     const formRef = useRef();
-    const history = useHistory();
+    const navigate = useNavigate();
 
     const initFormMembro = {
         cargo: "",
@@ -197,7 +197,7 @@ const CadastroDeMembrosDaAssociacao = () => {
 
     const redirectListaDeMembrosDaAssociacao = () => {
         let path = `/membros-da-associacao`;
-        history.push(path);
+        navigate(path);
     };
 
     const listaDeCargos = (dados) => {

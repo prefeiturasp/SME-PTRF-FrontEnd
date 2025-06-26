@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import AcertosDespesasPeriodosAnteriores from '../index';
 import { visoesService } from '../../../../../services/visoes.service';
 import { mantemEstadoAnaliseDre as meapcservice } from '../../../../../services/mantemEstadoAnaliseDre.service';
@@ -18,7 +18,7 @@ import {
 
 // Mock react-router-dom
 jest.mock('react-router-dom', () => ({
-  useHistory: jest.fn()
+  useNavigate: jest.fn()
 }));
 
 // Mock components
@@ -87,7 +87,7 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    useHistory.mockReturnValue(mockHistory);
+    useNavigate.mockReturnValue(mockHistory);
     localStorage.clear();
   });
 

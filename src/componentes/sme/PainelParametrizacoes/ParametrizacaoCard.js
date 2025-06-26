@@ -2,7 +2,7 @@ import React from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faArrowRight} from "@fortawesome/free-solid-svg-icons";
 
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom';
 
 import {
     Card,
@@ -63,7 +63,7 @@ const IconeSetaStyle = {
 
 export const ParametrizacaoCard = ({itensParametrizacao, nomeGrupo}) => {
 
-    const { push } = useHistory()
+    const navigate = useNavigate()
 
     return (
         <>
@@ -77,7 +77,7 @@ export const ParametrizacaoCard = ({itensParametrizacao, nomeGrupo}) => {
                                     <Card
                                         className="servico h-100"
                                         style={cardStyle}
-                                        onClick={() => push(card.url)}
+                                        onClick={() => navigate(`/${card.url}`)}
                                     >
                                         <CardImg top width="100%" src={card.icone} alt="Icone de seleção" height="71"/>
                                         <CardBody>

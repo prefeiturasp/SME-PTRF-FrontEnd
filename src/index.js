@@ -9,10 +9,6 @@ import ReactDOM from "react-dom/client";
 import App from "./App";
 import { BrowserRouter } from "react-router-dom";
 
-// Migrando para V6 do react-router-dom
-// Referencia: https://github.com/remix-run/react-router/discussions/8753
-import { CompatRouter } from "react-router-dom-v5-compat";
-
 import { SidebarContextProvider } from "./context/Sidebar";
 import { DespesaContextProvider } from "./context/Despesa";
 import { NotificacaoContextProvider } from "./context/Notificacoes";
@@ -65,11 +61,9 @@ root.render(
             <SidebarContextProvider>
               <DataLimiteProvider>
                 <BrowserRouter>
-                  <CompatRouter>
-                    <ConfigProvider theme={antdTheme} locale={locale}>
-                      <App />
-                    </ConfigProvider>
-                  </CompatRouter>
+                  <ConfigProvider theme={antdTheme} locale={locale}>
+                    <App />
+                  </ConfigProvider>
                 </BrowserRouter>
               </DataLimiteProvider>
             </SidebarContextProvider>

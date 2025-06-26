@@ -4,7 +4,7 @@ import { createStore } from "redux";
 import userEvent from "@testing-library/user-event";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { MemoryRouter } from "react-router-dom";
-import { useLocation, useNavigate } from "react-router-dom-v5-compat";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { TipoReceitaForm } from "../TipoReceitaForm";
 import { useGetFiltrosTiposReceita } from "../hooks/useGetFiltrosTiposReceita";
@@ -20,14 +20,10 @@ jest.mock("../hooks/usePostTipoReceita");
 jest.mock("../hooks/usePatchTipoReceita");
 jest.mock("../hooks/useDeleteTipoReceita");
 jest.mock("../../../RetornaSeTemPermissaoEdicaoPainelParametrizacoes");
-jest.mock("react-router-dom-v5-compat", () => ({
-  ...jest.requireActual("react-router-dom-v5-compat"),
-  useNavigate: jest.fn(),
-  useLocation: jest.fn(),
-}));
-
 jest.mock("react-router-dom", () => ({
   ...jest.requireActual("react-router-dom"),
+  useNavigate: jest.fn(),
+  useLocation: jest.fn(),
   useParams: jest.fn(),
 }));
 

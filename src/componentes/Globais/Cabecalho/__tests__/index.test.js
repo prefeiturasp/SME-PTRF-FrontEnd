@@ -1,6 +1,6 @@
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { authService } from "../../../../services/auth.service";
-import {useHistory } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 import {visoesService} from "../../../../services/visoes.service";
 import {CentralDeDownloadContext} from "../../../../context/CentralDeDownloads"
 import {NotificacaoContext} from "../../../../context/Notificacoes";
@@ -10,7 +10,7 @@ import { mantemEstadoAnaliseDre } from "../../../../services/mantemEstadoAnalise
 
 
 jest.mock("react-router-dom", () => ({
-    useHistory: jest.fn()
+    useNavigate: jest.fn()
   }));
 
 jest.mock("../../../../services/mantemEstadoAnaliseDre.service", () => ({
@@ -133,7 +133,7 @@ describe('Cabeçalho', () => {
     });
 
     it('Deve redirecionar para central de notificações', async () => {
-        useHistory.mockReturnValue({ push: mockHistoryPush })
+        useNavigate.mockReturnValue({ push: mockHistoryPush })
         renderComponent();
         const botao = screen.getByTestId('botao-central-notificacoes');
         fireEvent.click(botao);
@@ -142,7 +142,7 @@ describe('Cabeçalho', () => {
     });
 
     it('Deve redirecionar para central de downloads', async () => {
-        useHistory.mockReturnValue({ push: mockHistoryPush })
+        useNavigate.mockReturnValue({ push: mockHistoryPush })
         renderComponent();
         const botao = screen.getByTestId('botao-central-downloads');
         fireEvent.click(botao);

@@ -1,7 +1,7 @@
 import { act } from "react";
 import { renderHook } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom-v5-compat";
+import { useNavigate } from 'react-router-dom';
 import { toastCustom } from "../../../../../../Globais/ToastCustom";
 import { useDeleteTipoReceita } from "../../hooks/useDeleteTipoReceita";
 import { deleteTipoReceita } from "../../../../../../../services/sme/Parametrizacoes.service";
@@ -17,8 +17,9 @@ jest.mock("../../../../../../Globais/ToastCustom", () => ({
   },
 }));
 
-jest.mock("react-router-dom-v5-compat", () => ({
-  useNavigate: jest.fn(),
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: jest.fn()
 }));
 
 describe("useDeleteTipoReceita", () => {

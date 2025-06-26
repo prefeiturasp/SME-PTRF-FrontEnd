@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { DevolucaoAoTesouroAjuste } from '../index';
-import { useLocation, useHistory } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { marcarDevolucaoTesouro, desmarcarDevolucaoTesouro, getSalvarDevoulucoesAoTesouro, deleteDevolucaoAoTesouro } from '../../../../services/dres/PrestacaoDeContas.service.js';
 import { toastCustom } from "../../ToastCustom";
 import moment from 'moment';
@@ -9,7 +9,7 @@ import moment from 'moment';
 // Mock the required modules
 jest.mock('react-router-dom', () => ({
   useLocation: jest.fn(),
-  useHistory: jest.fn()
+  useNavigate: jest.fn()
 }));
 
 jest.mock('../../../../services/dres/PrestacaoDeContas.service.js');
@@ -48,7 +48,7 @@ describe('DevolucaoAoTesouroAjuste Component', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     useLocation.mockReturnValue({ state: mockState });
-    useHistory.mockReturnValue({ push: mockHistoryPush });
+    useNavigate.mockReturnValue({ push: mockHistoryPush });
   });
 
   it('renders component with initial data', () => {
