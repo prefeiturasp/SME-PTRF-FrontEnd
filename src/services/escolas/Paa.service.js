@@ -135,3 +135,12 @@ export const postAtivarAtualizacaoSaldoPAA = async (uuid) => {
     await api.post(`api/paa/${uuid}/ativar-atualizacao-saldo/`, {}, authHeader())
   ).data;
 };
+
+// Prioridades
+export const getPrioridadesTabelas = async () => {
+  return (await api.get(`api/prioridades-paa/tabelas/`, authHeader())).data;
+};
+
+export const postPrioridade = async (payload) => {
+  return (await api.post(`api/prioridades-paa/`, payload, authHeader())).data;
+}
