@@ -160,10 +160,6 @@ export const ListaBemProduzido = (props) => {
   const { data: periodos } = useGetPeriodosComPC({ filtrar_por_referencia: "" });
   const tabelas = useCarregaTabelaDespesa(null);
 
-  useEffect(() => {
-    refetch();
-  }, [currentPage]);
-
   const onPageChange = (event) => {
     setFirstPage(event.first);
     setCurrentPage(event.page + 1);
@@ -172,6 +168,8 @@ export const ListaBemProduzido = (props) => {
   const onFiltrar = () => {
     refetch();
     setFiltroSalvo(filtros);
+    setCurrentPage(1);
+    setFirstPage(0);
   };
 
   const onFiltrosChange = (values) => {
@@ -183,6 +181,8 @@ export const ListaBemProduzido = (props) => {
   const limpaFiltros = () => {
     setFiltros(filtroInicial);
     setTimeout(() => refetch(), 0);
+    setCurrentPage(1);
+    setFirstPage(0);
   };
 
   const onCancelarFiltros = () => {
@@ -349,14 +349,16 @@ export const ListaBemProduzido = (props) => {
             }}
           />
         </DataTable>
-        <Paginator
-          first={firstPage}
-          rows={10}
-          totalRecords={data?.count}
-          template="PrevPageLink PageLinks NextPageLink"
-          onPageChange={onPageChange}
-          alwaysShow={false}
-        />
+        {data?.count > 10 && (
+          <Paginator
+            first={firstPage}
+            rows={10}
+            totalRecords={data?.count}
+            template="PrevPageLink PageLinks NextPageLink"
+            onPageChange={onPageChange}
+            alwaysShow={false}
+          />
+        )}
       </Spin>
       </div>
     </div>
