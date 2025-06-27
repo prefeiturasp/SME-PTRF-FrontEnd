@@ -10,7 +10,7 @@ export const useGetBemProduzidosComAdquiridos = (filtros, page) => {
       staleTime: 0,
       cacheTime: 0,
       refetchOnWindowFocus: false,
-      enabled: false,
+      enabled: true,
     }
   );
 
