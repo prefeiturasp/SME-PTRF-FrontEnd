@@ -51,9 +51,11 @@ const formatarDescricao = (rowData) => {
   const status = rowData.status || "";
   
   let statusColor = "#000000";
+  let statusExibido = status;
   
-  if (status === "RASCUNHO") {
+  if (status === "RASCUNHO" || status === "INCOMPLETO") {
     statusColor = "#B40C02";
+    statusExibido = "RASCUNHO";
   } else if (status === "COMPLETO") {
     statusColor = "#138E56";
   }
@@ -69,7 +71,7 @@ const formatarDescricao = (rowData) => {
         {especificacao}
       </div>
       <div style={{ color: statusColor, fontSize: "0.9em" }}>
-        Status: {status}
+        Status: {statusExibido}
       </div>
     </div>
   );
@@ -258,7 +260,7 @@ export const ListaBemProduzido = (props) => {
               <span className="total">{data?.count}</span>
             </span>
             <button
-              onClick={console.log("EXPORTAR")}
+              onClick={() => console.log("EXPORTAR")}
               className={`link-exportar`}
             >
               <FontAwesomeIcon
