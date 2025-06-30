@@ -13,6 +13,8 @@ import { FormFiltrosBens } from "./FormFiltrosBens";
 import { useGetPeriodosComPC } from "../../../../hooks/Globais/useGetPeriodoComPC";
 import { useCarregaTabelaDespesa } from "../../../../hooks/Globais/useCarregaTabelaDespesa";
 import {faDownload} from "@fortawesome/free-solid-svg-icons";
+import { MsgImgCentralizada } from "../../../Globais/Mensagens/MsgImgCentralizada";
+import Img404 from "../../../../assets/img/img-404.svg";
 
 const filtroInicial = {
   especificacao_bem: "",
@@ -180,6 +182,7 @@ export const ListaBemProduzido = (props) => {
 
   const limpaFiltros = () => {
     setFiltros(filtroInicial);
+    setFiltroSalvo(filtroInicial);
     setTimeout(() => refetch(), 0);
     setCurrentPage(1);
     setFirstPage(0);
@@ -253,112 +256,125 @@ export const ListaBemProduzido = (props) => {
         />
 
       <Spin spinning={isLoading}>
-        <p className="mb-2 mt-4">
-          <Flex justify="space-between" align="center">
-            <span>
-              Exibindo <span className="total">{data?.results.length}</span> de{" "}
-              <span className="total">{data?.count}</span>
-            </span>
-            <button
-              onClick={() => console.log("EXPORTAR")}
-              className={`link-exportar`}
-            >
-              <FontAwesomeIcon
-                  style={{marginRight:'3px'}}
-                  icon={faDownload}
-              />
-              <strong>Exportar</strong>
-            </button>
-          </Flex>
-        </p>
+        {data && data.count > 0 ? (
+        <>
+          <p className="mb-2 mt-4">
+            <Flex justify="space-between" align="center">
+              <span>
+                Exibindo <span className="total">{data?.results.length}</span> de{" "}
+                <span className="total">{data?.count}</span>
+              </span>
+              <button
+                onClick={() => console.log("EXPORTAR")}
+                className={`link-exportar`}
+              >
+                <FontAwesomeIcon
+                    style={{marginRight:'3px'}}
+                    icon={faDownload}
+                />
+                <strong>Exportar</strong>
+              </button>
+            </Flex>
+          </p>
 
-        <DataTable
-          value={data?.results}
-          autoLayout={true}
-          expandedRows={expandedRows}
-          rowExpansionTemplate={expandedRowTemplate}
-          dataKey="uuid"
-          className="no-stripe mt-3"
-        >
-          <Column 
-            field="numero_documento" 
-            header="Nº do documento" 
-            body={(rowData) => formatarNumeroDocumento(rowData.numero_documento)}
-          />
-          <Column 
-            field="descricao" 
-            header="Especificação do bem" 
-            body={(rowData) => formatarDescricao(rowData)}
-          />
-          <Column 
-            field="num_processo_incorporacao" 
-            header="Nº do processo de incorporação"
-            body={(rowData) => formatarNumeroProcesso(rowData.num_processo_incorporacao)}
-          />
-          <Column 
-            field="data_aquisicao_producao" 
-            header="Data de aquisição/ produção"
-            style={{ width: "60px" }}
-            body={(rowData) => formatarData(rowData.data_aquisicao_producao)}
-          />
-          <Column field="periodo" header="Período" />
-          <Column 
-            field="quantidade" 
-            header="Quantidade"
-            style={{ width: "30px", textAlign: "center" }}
-            bodyStyle={{ textAlign: 'center' }}
-          />
-          <Column 
-            field="valor_total" 
-            header="Valor total"
-            body={(rowData) => formatarValorMonetario(rowData.valor_total)}
-          />
-          <Column 
-            field="tipo" 
-            header="Tipo de bem"
-            body={(rowData) => {
-              if (rowData.tipo === "Produzido") {
-                return <Tag label="Produzido" color="bem-produzido" />;
-              } else if (rowData.tipo === "Adquirido") {
-                return <Tag label="Adquirido" color="bem-adquirido" />;
-              } else {
+          <DataTable
+            value={data?.results}
+            autoLayout={true}
+            expandedRows={expandedRows}
+            rowExpansionTemplate={expandedRowTemplate}
+            dataKey="uuid"
+            className="no-stripe mt-3"
+          >
+            <Column 
+              field="numero_documento" 
+              header="Nº do documento" 
+              body={(rowData) => formatarNumeroDocumento(rowData.numero_documento)}
+            />
+            <Column 
+              field="descricao" 
+              header="Especificação do bem" 
+              body={(rowData) => formatarDescricao(rowData)}
+            />
+            <Column 
+              field="num_processo_incorporacao" 
+              header="Nº do processo de incorporação"
+              body={(rowData) => formatarNumeroProcesso(rowData.num_processo_incorporacao)}
+            />
+            <Column 
+              field="data_aquisicao_producao" 
+              header="Data de aquisição/ produção"
+              style={{ width: "60px" }}
+              body={(rowData) => formatarData(rowData.data_aquisicao_producao)}
+            />
+            <Column field="periodo" header="Período" />
+            <Column 
+              field="quantidade" 
+              header="Quantidade"
+              style={{ width: "30px", textAlign: "center" }}
+              bodyStyle={{ textAlign: 'center' }}
+            />
+            <Column 
+              field="valor_total" 
+              header="Valor total"
+              body={(rowData) => formatarValorMonetario(rowData.valor_total)}
+            />
+            <Column 
+              field="tipo" 
+              header="Tipo de bem"
+              body={(rowData) => {
+                if (rowData.tipo === "Produzido") {
+                  return <Tag label="Produzido" color="bem-produzido" />;
+                } else if (rowData.tipo === "Adquirido") {
+                  return <Tag label="Adquirido" color="bem-adquirido" />;
+                } else {
+                  return null;
+                }
+              }}
+            />
+            <Column
+              header="Ação"
+              style={{ width: "5%", borderLeft: "none", textAlign: 'center' }}
+              body={rowData => {
+                if (rowData.tipo === "Produzido") {
+                  const isExpanded = isRowExpanded(rowData);
+                  return (
+                    <button
+                      onClick={() => handleToggleRow(rowData)}
+                      style={{ background: 'none', border: 'none', cursor: 'pointer' }}
+                      aria-label={isExpanded ? "Recolher" : "Expandir"}
+                    >
+                      <FontAwesomeIcon icon={isExpanded ? faChevronDown : faChevronRight} />
+                    </button>
+                  );
+                }
+                if (rowData.tipo === "Adquirido") {
+                  return <FontAwesomeIcon icon={faEye} style={{ color: '#888', fontSize: '1.2em' }} />;
+                }
                 return null;
-              }
-            }}
-          />
-          <Column
-            header="Ação"
-            style={{ width: "5%", borderLeft: "none", textAlign: 'center' }}
-            body={rowData => {
-              if (rowData.tipo === "Produzido") {
-                const isExpanded = isRowExpanded(rowData);
-                return (
-                  <button
-                    onClick={() => handleToggleRow(rowData)}
-                    style={{ background: 'none', border: 'none', cursor: 'pointer' }}
-                    aria-label={isExpanded ? "Recolher" : "Expandir"}
-                  >
-                    <FontAwesomeIcon icon={isExpanded ? faChevronDown : faChevronRight} />
-                  </button>
-                );
-              }
-              if (rowData.tipo === "Adquirido") {
-                return <FontAwesomeIcon icon={faEye} style={{ color: '#888', fontSize: '1.2em' }} />;
-              }
-              return null;
-            }}
-          />
-        </DataTable>
-        {data?.count > 10 && (
-          <Paginator
-            first={firstPage}
-            rows={10}
-            totalRecords={data?.count}
-            template="PrevPageLink PageLinks NextPageLink"
-            onPageChange={onPageChange}
-            alwaysShow={false}
+              }}
+            />
+          </DataTable>
+
+          {data?.count > 10 && (
+            <Paginator
+              first={firstPage}
+              rows={10}
+              totalRecords={data?.count}
+              template="PrevPageLink PageLinks NextPageLink"
+              onPageChange={onPageChange}
+              alwaysShow={false}
+            />
+          )}
+        </>
+        ) : (
+          <MsgImgCentralizada
+            texto={
+              "Nenhum resultado encontrado."
+            }
+            img={Img404}
           />
         )}
+        
       </Spin>
       </div>
     </div>
