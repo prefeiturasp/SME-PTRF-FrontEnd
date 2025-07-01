@@ -173,14 +173,13 @@ export const ClassificarBem = ({
                           optionFilterProp="label"
                           showSearch
                           allowClear
+                          style={{ width: "100%" }}
                           options={especificacoes.map((especificacao) => {
                             return {
                               label: especificacao.descricao,
                               value: especificacao.uuid,
                             };
                           })}
-                          style={{ width: "100%" }}
-                          size="small"
                         ></Select>
                       </Form.Item>
                     </Col>
