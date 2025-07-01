@@ -58,7 +58,6 @@ export const FormFiltrosBens = ({
             <Input
               name="especificacao_bem"
               placeholder="Digite uma especificação"
-              size="large"
             />
           </Form.Item>
         </Col>
@@ -68,11 +67,7 @@ export const FormFiltrosBens = ({
             name="fornecedor"
             labelCol={{ span: 24 }}
           >
-            <Input
-              name="fornecedor"
-              placeholder="Digite um fornecedor"
-              size="large"
-            />
+            <Input name="fornecedor" placeholder="Digite um fornecedor" />
           </Form.Item>
         </Col>
       </Row>
@@ -85,7 +80,6 @@ export const FormFiltrosBens = ({
             allowClear
           >
             <Select
-              size="large"
               placeholder="Selecione uma ação"
               options={acaoOptions.map((acao) => {
                 return {
@@ -104,7 +98,6 @@ export const FormFiltrosBens = ({
             allowClear
           >
             <Select
-              size="large"
               placeholder="Selecione a conta"
               options={tipoContaOptions.map((conta) => {
                 return {
@@ -125,7 +118,6 @@ export const FormFiltrosBens = ({
           >
             <Select
               mode="multiple"
-              size="large"
               placeholder="Selecione o período"
               allowClear
               options={periodoOptions.map((tipo) => {
@@ -149,7 +141,6 @@ export const FormFiltrosBens = ({
                 className="mt-1"
                 style={{ width: "100%" }}
                 aria-label="Data do documento início"
-                size="large"
                 disabledDate={(current) => {
                   const dataFim = form.getFieldValue("data_fim");
                   return dataFim && current && current.isAfter(dataFim, "day");
@@ -164,7 +155,6 @@ export const FormFiltrosBens = ({
                 format={"DD/MM/YYYY"}
                 style={{ width: "100%" }}
                 aria-label="Data do documento fim"
-                size="large"
                 disabledDate={(current) => {
                   const dataInicio = form.getFieldValue("data_inicio");
                   return (
@@ -178,11 +168,11 @@ export const FormFiltrosBens = ({
       </Row>
       <Flex justify="end" gap={8} className="mt-4">
         <button
-            className="btn btn-outline-success float-right"
-            onClick={handleCancelFilter}
-            type="button"
-          >
-            Cancelar
+          className="btn btn-outline-success float-right"
+          onClick={handleCancelFilter}
+          type="button"
+        >
+          Cancelar
         </button>
         <button
           className="btn btn-outline-success float-right"
