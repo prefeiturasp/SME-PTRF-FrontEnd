@@ -95,6 +95,6 @@ describe("VincularDespesas", () => {
     const buttonCancelar = screen.getByRole("button", { name: "Cancelar" });
     fireEvent.click(buttonCancelar);
 
-    expect(mockUseNavigate).toHaveBeenCalledWith(-1);
+    expect(mockUseNavigate).toHaveBeenCalledWith("/lista-situacao-patrimonial");
   });
 });
