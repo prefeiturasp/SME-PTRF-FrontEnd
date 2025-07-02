@@ -12,7 +12,7 @@ export const usePatchBemProduzidoItemsRascunho = () => {
       );
     },
     onError: (e) => {
-      toastCustom.ToastCustomError("Houve um erro ao adicionar bem produzido.");
+      toastCustom.ToastCustomError("Houve um erro ao salvar rascunho.");
     },
   });
 

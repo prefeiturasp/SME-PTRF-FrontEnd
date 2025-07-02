@@ -2,12 +2,15 @@ import { Col, DatePicker, Flex, Form, Input, Row, Select } from "antd";
 import momentGenerateConfig from "rc-picker/lib/generate/moment";
 const DatePickerCustom = DatePicker.generatePicker(momentGenerateConfig);
 
-export const FormFiltrosDespesas = ({
-  contaOptions = [],
+export const FormFiltrosBens = ({
+  acaoOptions = [],
+  tipoContaOptions = [],
   periodoOptions = [],
   onFiltrar,
   onFiltrosChange,
   onLimparFiltros,
+  filtroSalvo,
+  onCancelarFiltros,
 }) => {
   const [form] = Form.useForm();
 
@@ -22,15 +25,22 @@ export const FormFiltrosDespesas = ({
 
   const handleCleanFilter = () => {
     form.setFieldsValue({
+      especificacao_bem: "",
       fornecedor: "",
-      search: "",
-      rateios__conta_associacao__uuid: "",
-      periodo__uuid: "",
+      acao_associacao_uuid: undefined,
+      conta_associacao_uuid: undefined,
+      periodos_uuid: undefined,
       data_inicio: "",
       data_fim: "",
     });
     onLimparFiltros && onLimparFiltros();
   };
+
+  const handleCancelFilter = () => {
+    form.setFieldsValue(filtroSalvo);
+    onCancelarFiltros && onCancelarFiltros();
+  };
+
   return (
     <Form
       form={form}
@@ -41,37 +51,55 @@ export const FormFiltrosDespesas = ({
       <Row gutter={[16, 16]}>
         <Col md={12}>
           <Form.Item
-            label="Filtrar por fornecedor"
-            name="fornecedor"
+            label="Filtro por especificação do material ou serviço"
+            name="especificacao_bem"
             labelCol={{ span: 24 }}
           >
             <Input
-              name="fornecedor"
-              placeholder="Digite o CNPJ/CPF ou a Razão Social do Fornecedor"
+              name="especificacao_bem"
+              placeholder="Digite uma especificação"
             />
           </Form.Item>
         </Col>
         <Col md={12}>
           <Form.Item
-            label="Filtrar por Material ou Serviço"
-            name="search"
+            label="Filtrar por fornecedor"
+            name="fornecedor"
             labelCol={{ span: 24 }}
           >
-            <Input name="search" placeholder="Digite Material ou Serviço" />
+            <Input name="fornecedor" placeholder="Digite um fornecedor" />
           </Form.Item>
         </Col>
       </Row>
       <Row gutter={[16, 16]}>
-        <Col md={6}>
+        <Col md={12}>
           <Form.Item
-            label="Filtrar por conta"
-            name="rateios__conta_associacao__uuid"
+            label="Filtrar por ação"
+            name="acao_associacao_uuid"
             labelCol={{ span: 24 }}
             allowClear
           >
             <Select
-              placeholder="Selecione"
-              options={contaOptions.map((conta) => {
+              placeholder="Selecione uma ação"
+              options={acaoOptions.map((acao) => {
+                return {
+                  value: acao.uuid,
+                  label: acao.nome,
+                };
+              })}
+            />
+          </Form.Item>
+        </Col>
+        <Col md={12}>
+          <Form.Item
+            label="Filtrar por conta"
+            name="conta_associacao_uuid"
+            labelCol={{ span: 24 }}
+            allowClear
+          >
+            <Select
+              placeholder="Selecione a conta"
+              options={tipoContaOptions.map((conta) => {
                 return {
                   value: conta.uuid,
                   label: conta.nome,
@@ -80,14 +108,17 @@ export const FormFiltrosDespesas = ({
             />
           </Form.Item>
         </Col>
-        <Col md={6}>
+      </Row>
+      <Row gutter={[16, 16]}>
+        <Col md={12}>
           <Form.Item
             label="Filtrar por período"
-            name="periodo__uuid"
+            name="periodos_uuid"
             labelCol={{ span: 24 }}
           >
             <Select
-              placeholder="Selecione"
+              mode="multiple"
+              placeholder="Selecione o período"
               allowClear
               options={periodoOptions.map((tipo) => {
                 return {
@@ -98,14 +129,16 @@ export const FormFiltrosDespesas = ({
             />
           </Form.Item>
         </Col>
+
         <Col md={12}>
           <label style={{ width: "100%", padding: "5px 0" }}>
-            Data do documento
+            Filtrar por data do documento
           </label>
           <Flex align="baseline">
             <Form.Item name="data_inicio" style={{ width: "100%" }}>
               <DatePickerCustom
                 format={"DD/MM/YYYY"}
+                className="mt-1"
                 style={{ width: "100%" }}
                 aria-label="Data do documento início"
                 disabledDate={(current) => {
@@ -136,12 +169,19 @@ export const FormFiltrosDespesas = ({
       <Flex justify="end" gap={8} className="mt-4">
         <button
           className="btn btn-outline-success float-right"
+          onClick={handleCancelFilter}
+          type="button"
+        >
+          Cancelar
+        </button>
+        <button
+          className="btn btn-outline-success float-right"
           onClick={handleCleanFilter}
           type="button"
         >
           Limpar Filtros
         </button>
-        <button className="btn btn-success float-right">Fitrar</button>
+        <button className="btn btn-success float-right">Filtrar</button>
       </Flex>
     </Form>
   );
