@@ -36,9 +36,20 @@ const antdTheme = {
     colorPrimary: "#00585D",
     borderRadius: 4,
     colorError: "rgba(184, 0, 0, 1)",
-    controlHeight: 38,
   },
   components: {
+    Input: {
+      controlHeight: 38,
+    },
+    InputNumber: {
+      controlHeight: 38,
+    },
+    Select: {
+      controlHeight: 38,
+    },
+    DatePicker: {
+      controlHeight: 38,
+    },
     Button: {
       colorPrimary: "#00585D",
       colorPrimaryHover: "#007B80",
