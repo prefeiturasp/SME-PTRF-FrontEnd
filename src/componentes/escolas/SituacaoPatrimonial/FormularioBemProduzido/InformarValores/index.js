@@ -17,7 +17,7 @@ import { usePostExluirDespesaBemProduzidoEmLote } from "../hooks/usePostExluirDe
 export const InformarValores = ({
   uuid,
   despesas: data = [],
-  salvarRascunhoInformarValores,
+  salvarRacuscunho,
   setRateiosComValores,
   setHabilitaClassificarBem,
 }) => {
@@ -33,10 +33,9 @@ export const InformarValores = ({
 
   useEffect(() => {
     if (data.length) {
-      const despesasComValoresIniciais = data.map((bemProduzido) => ({
-        rateios: bemProduzido.despesa.rateios.map((rateio) => ({
+      const despesasComValoresIniciais = data.map((despesa) => ({
+        rateios: despesa.rateios.map((rateio) => ({
           uuid: rateio.uuid,
-          bem_produzido_despesa_uuid: bemProduzido.bem_produzido_despesa_uuid,
           valor_utilizado: null,
         })),
       }));
@@ -44,17 +43,6 @@ export const InformarValores = ({
       form.setFieldsValue({
         despesas: despesasComValoresIniciais,
       });
-
-      // const total = despesasComValoresIniciais.reduce((acc, despesa) => {
-      //   return (
-      //     acc +
-      //     despesa.rateios.reduce((sum, rateio) => {
-      //       return sum + (rateio.valor_utilizado / 100 ?? 0);
-      //     }, 0)
-      //   );
-      // }, 0);
-
-      // setTotal(total);
     }
   }, [data]);
 
@@ -63,7 +51,7 @@ export const InformarValores = ({
   };
 
   const moneyTemplate = (rowData, column) => {
-    return "R$ " + formatMoneyBRL(rowData.despesa.valor_total);
+    return "R$ " + formatMoneyBRL(rowData.valor_total);
   };
 
   const onValuesChange = () => {
@@ -87,7 +75,7 @@ export const InformarValores = ({
       });
     }
 
-    salvarRascunhoInformarValores();
+    salvarRacuscunho();
   };
 
   const getRateiosComValores = () => {
@@ -110,10 +98,7 @@ export const InformarValores = ({
   };
 
   const expandedRowTemplate = (item) => {
-    const index = data.findIndex(
-      (row) =>
-        row.bem_produzido_despesa_uuid === item.bem_produzido_despesa_uuid
-    );
+    const index = data.findIndex((row) => row.uuid === item.uuid);
 
     const despesaItem = (title, valor) => (
       <div className="d-flex">
@@ -128,7 +113,7 @@ export const InformarValores = ({
       <Form.List name={["despesas", index, "rateios"]}>
         {(rateiosFields) =>
           rateiosFields.map(({ key: rateioKey, name: rateioIndex }) => {
-            const rateio = data[index].despesa.rateios[rateioIndex];
+            const rateio = data[index].rateios[rateioIndex];
 
             return (
               <div key={rateioKey} className="mt-4">
@@ -312,22 +297,15 @@ export const InformarValores = ({
             rowExpansionTemplate={expandedRowTemplate}
           >
             <Column selectionMode="multiple" style={{ width: "3em" }} />
-            <Column field="despesa.periodo_referencia" header="Período" />
-            <Column field="despesa.numero_documento" header="Nº do documento" />
+            <Column field="periodo_referencia" header="Período" />
+            <Column field="numero_documento" header="Nº do documento" />
             <Column
-              field="despesa.data_documento"
+              field="data_documento"
               header="Data do documento"
               body={dataTemplate}
             />
-            <Column
-              field="despesa.tipo_documento.nome"
-              header="Tipo de Documento"
-            />
-            <Column
-              field="despesa.valor_total"
-              header="Valor"
-              body={moneyTemplate}
-            />
+            <Column field="tipo_documento.nome" header="Tipo de Documento" />
+            <Column field="valor_total" header="Valor" body={moneyTemplate} />
             <Column expander style={{ width: "5%", borderLeft: "none" }} />
           </DataTable>
 

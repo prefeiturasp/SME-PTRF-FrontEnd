@@ -15,13 +15,17 @@ import { useNavigate } from 'react-router-dom';
 import { formatMoneyBRL, parseMoneyCentsBRL } from "../../../../../utils/money";
 import { useCallback, useEffect, useState } from "react";
 import { getEspecificacoesCapital } from "../../../../../services/escolas/Despesas.service";
+import {
+  formatProcessoIncorporacao,
+  parsetFormattedProcessoIncorporacao,
+} from "../../../../../utils/Masks";
 
 const { Text } = Typography;
 
 export const ClassificarBem = ({
   items = [],
-  cadastrarBens,
-  salvarRascunhoClassificarBens,
+  salvar,
+  salvarRacuscunho,
   setBemProduzidoItems,
   setHabilitaCadastrarBem,
   habilitaCadastrarBem,
@@ -55,29 +59,23 @@ export const ClassificarBem = ({
 
   useEffect(() => {
     getEspecificacoesData();
+
+    if (!items.length) {
+      form.setFieldsValue({
+        itens: [
+          {
+            num_processo_incorporacao: "",
+            quantidade: null,
+            valor_individual: null,
+            especificacao_do_bem: null,
+          },
+        ],
+      });
+    }
   }, []);
 
-  const formatMaskedValue = (value) => {
-    const digits = String(value || "")
-      .replace(/\D/g, "")
-      .slice(0, 16);
-
-    let result = "";
-
-    if (digits.length > 0) result += digits.slice(0, 4);
-    if (digits.length >= 5) result += "." + digits.slice(4, 8);
-    if (digits.length >= 9) result += "/" + digits.slice(8, 15);
-    if (digits.length === 16) result += "-" + digits.slice(15, 16);
-
-    return result;
-  };
-
-  const parseMaskedValue = (value) => {
-    return value.replace(/\D/g, "").slice(0, 16);
-  };
-
   const onFinish = () => {
-    cadastrarBens();
+    salvar();
   };
 
   const getTotalFaltante = useCallback(() => {
@@ -154,8 +152,8 @@ export const ClassificarBem = ({
                         <InputNumber
                           placeholder="Digite número do processo de incorporação"
                           controls={false}
-                          formatter={formatMaskedValue}
-                          parser={parseMaskedValue}
+                          formatter={formatProcessoIncorporacao}
+                          parser={parsetFormattedProcessoIncorporacao}
                           style={{ width: "100%" }}
                           maxLength={19}
                         />
@@ -329,7 +327,7 @@ export const ClassificarBem = ({
           <button
             className="btn btn-outline-success float-right"
             type="button"
-            onClick={salvarRascunhoClassificarBens}
+            onClick={salvarRacuscunho}
           >
             Salvar rascunho
           </button>
