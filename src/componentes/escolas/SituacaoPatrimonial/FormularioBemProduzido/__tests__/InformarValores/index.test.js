@@ -148,7 +148,7 @@ const mockSalvarRascunhoInformarValores = jest.fn();
 jest.mock("../../hooks/usePostExluirDespesaBemProduzidoEmLote");
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
-  useNavigate: jest.fn(),
+  useNavigate: () => mockUseNavigate,
   useSearchParams: jest.fn()
 }));
 jest.mock("../../../../../Globais/Modal/CustomModalConfirm", () => ({

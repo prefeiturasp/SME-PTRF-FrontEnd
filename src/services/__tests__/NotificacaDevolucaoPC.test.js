@@ -40,9 +40,7 @@ jest.mock('../sme/Parametrizacoes.service', () => ({
 
 describe('NotificaDevolucaoPC Service', () => {
 
-  const mockHistory = {
-    push: jest.fn(),
-  };
+  const mockNavigate = jest.fn();
 
   const mockNotificacaoUuid = 'notif-uuid-123';
   const mockPcUuid = 'pc-uuid-456';
@@ -92,12 +90,12 @@ describe('NotificaDevolucaoPC Service', () => {
   describe('marcaNotificacaoComoLidaERedirecianaParaVerAcertos', () => {
 
     it('should call getDadosDoUsuarioLogado to fetch user data', async () => {
-      notificaDevolucaoPCService.marcaNotificacaoComoLidaERedirecianaParaVerAcertos(mockHistory);
+      notificaDevolucaoPCService.marcaNotificacaoComoLidaERedirecianaParaVerAcertos(mockNavigate);
       expect(visoesService.getDadosDoUsuarioLogado).toHaveBeenCalled();
     });
 
     it('should call setNotificacaoMarcarDesmarcarLida with correct parameters', async () => {
-      notificaDevolucaoPCService.marcaNotificacaoComoLidaERedirecianaParaVerAcertos(mockHistory);
+      notificaDevolucaoPCService.marcaNotificacaoComoLidaERedirecianaParaVerAcertos(mockNavigate);
       expect(setNotificacaoMarcarDesmarcarLida).toHaveBeenCalledTimes(1);
       expect(setNotificacaoMarcarDesmarcarLida).toHaveBeenCalledWith({
         uuid: mockNotificacaoUuid,

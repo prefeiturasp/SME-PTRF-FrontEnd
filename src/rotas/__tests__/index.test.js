@@ -66,9 +66,7 @@ describe('Routes', () => {
     test('deve renderizar corretamente quando estiver na rota /exemplo', () => {
         const { getByText } = render(
             <MemoryRouter initialEntries={['/exemplo']}>
-            <Routes>
-                <Route path="/exemplo" element={<Rotas />} />
-            </Routes>
+                <Rotas />
             </MemoryRouter>
         );
 

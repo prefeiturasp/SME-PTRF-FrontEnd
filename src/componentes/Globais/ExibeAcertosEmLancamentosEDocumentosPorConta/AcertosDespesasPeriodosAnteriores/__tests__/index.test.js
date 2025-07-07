@@ -18,17 +18,14 @@ import {
 
 // Mock react-router-dom
 jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
   useNavigate: jest.fn()
 }));
 
 // Mock components
-jest.mock('../TabelaAcertosDespesasPeriodosAnteriores', () => () => (
-  <div data-testid="tabela-acertos-despesas" />
-));
-
 jest.mock('../TabelaAcertosDespesasPeriodosAnteriores', () => ({
-    TabelaAcertosDespesasPeriodosAnteriores: () => <div data-testid="tabela-acertos-despesas" />
-  }));
+  TabelaAcertosDespesasPeriodosAnteriores: () => <div data-testid="tabela-acertos-despesas" />
+}));
 
 jest.mock('../../../../../utils/Loading', () => () => (
   <div data-testid="loading" />
@@ -243,6 +240,14 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
         </Provider>
       </MemoryRouter>
     );
+
+    // Primeiro verifica se o componente está renderizando
+    expect(screen.getByTestId('loading')).toBeInTheDocument();
+
+    // Aguarda o loading desaparecer e a tabela aparecer
+    await waitFor(() => {
+      expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
+    });
 
     await waitFor(() => {
       expect(screen.getByTestId('tabela-acertos-despesas')).toBeInTheDocument();

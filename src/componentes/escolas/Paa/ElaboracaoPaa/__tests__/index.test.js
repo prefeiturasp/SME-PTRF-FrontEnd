@@ -27,7 +27,7 @@ const mockNavigate = jest.fn();
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
-  useNavigate: () => mockNavigate,
+  useNavigate: jest.fn(),
 }));
 
 let queryClient;
@@ -51,10 +51,10 @@ describe('ElaboracaoPaa Component', () => {
       usePostPaa.mockReturnValue({
         mutationPost: { mutate: mockMutatePost, isLoading: false },
       });
+      require('react-router-dom').useNavigate.mockReturnValue(mockNavigate);
     });
 
   it('renderiza a página', () => {
-    useNavigate.mockReturnValue(mockNavigate);
     getTextoExplicacaoPaa.mockResolvedValue({detail: "Texto ABC"});
     getPaaVigente.mockReturnValue({});
     getParametroPaa.mockReturnValue({detail: new Date().getMonth() + 1});
@@ -82,7 +82,6 @@ describe('ElaboracaoPaa Component', () => {
   });
 
   it('renderiza a página com botão desabilitado', () => {
-    useNavigate.mockReturnValue(mockNavigate);
     getTextoExplicacaoPaa.mockResolvedValue({detail: "Texto ABC"});
     getPaaVigente.mockReturnValue({});
     getParametroPaa.mockReturnValue({detail: new Date().getMonth() + 2});

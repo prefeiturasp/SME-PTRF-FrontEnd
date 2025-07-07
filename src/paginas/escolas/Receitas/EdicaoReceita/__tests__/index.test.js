@@ -3,6 +3,7 @@ import React  from "react";
 import { MemoryRouter, Routes, Route } from "react-router-dom";
 import { EdicaoDeReceita } from "../index";
 import { visoesService } from "../../../../../services/visoes.service";
+import { useParams, useLocation } from "react-router-dom";
 
 // Mockando useParams
 jest.mock("react-router-dom", () => ({
@@ -22,6 +23,8 @@ jest.mock("../../../../../services/visoes.service", () => ({
 
 describe('<EdicaoDeReceita>', () => {
   it('Deve renderizar o componente', async () => {
+    useParams.mockReturnValue({ origem: "teste-origem" });
+    useLocation.mockReturnValue({ state: null });
     visoesService.getItemUsuarioLogado.mockReturnValue('visao_selecionada.nome');
     visoesService.featureFlagAtiva.mockReturnValue(true);
     visoesService.getDadosDoUsuarioLogado.mockReturnValue({unidades: []});

@@ -7,16 +7,20 @@ import { toastCustom } from "../../ToastCustom";
 import moment from 'moment';
 
 // Mock the required modules
-jest.mock('react-router-dom', () => ({
-  useLocation: jest.fn(),
-  useNavigate: jest.fn()
-}));
+jest.mock('react-router-dom', () => {
+  const actual = jest.requireActual('react-router-dom');
+  return {
+    ...actual,
+    useLocation: jest.fn(),
+    useNavigate: jest.fn(),
+  };
+});
 
 jest.mock('../../../../services/dres/PrestacaoDeContas.service.js');
 jest.mock("../../ToastCustom");
 
 describe('DevolucaoAoTesouroAjuste Component', () => {
-  const mockHistoryPush = jest.fn();
+  const mockNavigate = jest.fn();
   const mockState = {
     origem: '/origem',
     uuid_pc: 'uuid-pc-123',
@@ -48,7 +52,12 @@ describe('DevolucaoAoTesouroAjuste Component', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     useLocation.mockReturnValue({ state: mockState });
-    useNavigate.mockReturnValue({ push: mockHistoryPush });
+    useNavigate.mockReturnValue(mockNavigate);
+  });
+
+  it('should import the component correctly', () => {
+    expect(DevolucaoAoTesouroAjuste).toBeDefined();
+    expect(typeof DevolucaoAoTesouroAjuste).toBe('function');
   });
 
   it('renders component with initial data', () => {
@@ -94,7 +103,7 @@ describe('DevolucaoAoTesouroAjuste Component', () => {
     await waitFor(() => {
       expect(getSalvarDevoulucoesAoTesouro).toHaveBeenCalled();
       expect(marcarDevolucaoTesouro).toHaveBeenCalled();
-      expect(mockHistoryPush).toHaveBeenCalledWith(`${mockState.origem}/${mockState.uuid_pc}`);
+      expect(mockNavigate).toHaveBeenCalledWith(`${mockState.origem}/${mockState.uuid_pc}`);
       expect(toastCustom.ToastCustomSuccess).toHaveBeenCalledWith('Data de devolução ao tesouro alterada com sucesso.');
     });
   });
@@ -118,7 +127,7 @@ describe('DevolucaoAoTesouroAjuste Component', () => {
     await waitFor(() => {
       expect(deleteDevolucaoAoTesouro).toHaveBeenCalled();
       expect(desmarcarDevolucaoTesouro).toHaveBeenCalled();
-      expect(mockHistoryPush).toHaveBeenCalledWith(`${mockState.origem}/${mockState.uuid_pc}`);
+      expect(mockNavigate).toHaveBeenCalledWith(`${mockState.origem}/${mockState.uuid_pc}`);
       expect(toastCustom.ToastCustomSuccess).toHaveBeenCalledWith('Devolução ao tesouro removida com sucesso.');
     });
   });
@@ -133,7 +142,7 @@ describe('DevolucaoAoTesouroAjuste Component', () => {
     const cancelButton = screen.getByText('Cancelar');
     fireEvent.click(cancelButton);
 
-    expect(mockHistoryPush).toHaveBeenCalledWith(`${mockState.origem}/${mockState.uuid_pc}#tabela-acertos-lancamentos`);
+    expect(mockNavigate).toHaveBeenCalledWith(`${mockState.origem}/${mockState.uuid_pc}#tabela-acertos-lancamentos`);
   });
 
   it('disables buttons when user does not have edit permission', () => {

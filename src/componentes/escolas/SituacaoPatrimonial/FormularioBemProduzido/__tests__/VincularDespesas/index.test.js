@@ -60,6 +60,12 @@ jest.mock("../../VincularDespesas/FormFiltrosDespesas", () => ({
 }));
 
 describe("VincularDespesas", () => {
+  beforeEach(() => {
+    // Set up the useNavigate mock before each test
+    const { useNavigate } = require('react-router-dom');
+    useNavigate.mockImplementation(() => mockUseNavigate);
+  });
+
   it("deve renderizar a tabela de despesas", async () => {
     render(
       <MemoryRouter>

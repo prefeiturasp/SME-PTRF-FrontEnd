@@ -174,7 +174,7 @@ export const ClassificarBem = ({
                           showSearch
                           allowClear
                           style={{ width: "100%" }}
-                          options={especificacoes.map((especificacao) => {
+                          options={(especificacoes || []).map((especificacao) => {
                             return {
                               label: especificacao.descricao,
                               value: especificacao.uuid,

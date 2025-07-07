@@ -5,7 +5,6 @@ import { CadastroDeReceita } from "../index";
 import { visoesService } from "../../../../../services/visoes.service";
 import { SidebarContext } from "../../../../../context/Sidebar";
 import { MemoryRouter, Routes, Route } from "react-router-dom";
-import { CadastroReceitaPage } from "../index";
 
 // Mockando useParams
 jest.mock("react-router-dom", () => ({
@@ -31,9 +30,11 @@ describe('<CadastroDeReceita>', () => {
     visoesService.getDadosDoUsuarioLogado.mockReturnValue({unidades: []});
     visoesService.getPermissoes.mockReturnValue([]);
     render(
-      <SidebarContext.Provider value={ { sideBarStatus: true, setSideBarStatus: jest.fn(), irParaUrl:'', setIrParaUrl: jest.fn() } }>
-        <CadastroDeReceita/>
-      </SidebarContext.Provider>
+      <MemoryRouter>
+        <SidebarContext.Provider value={ { sideBarStatus: true, setSideBarStatus: jest.fn(), irParaUrl:'', setIrParaUrl: jest.fn() } }>
+          <CadastroDeReceita/>
+        </SidebarContext.Provider>
+      </MemoryRouter>
     )
 
     expect(visoesService.getItemUsuarioLogado).toHaveBeenCalled();
@@ -43,12 +44,18 @@ describe('<CadastroDeReceita>', () => {
   });
 });
 
-describe('<CadastroReceitaPage>', () => {
-  it('Deve renderizar o componente', async () => {
+describe('<CadastroDeReceita>', () => {
+  it('Deve renderizar o componente com rota', async () => {
+    useParams.mockReturnValue({ origem: "teste-origem" });
+    visoesService.getItemUsuarioLogado.mockReturnValue('visao_selecionada.nome');
+    visoesService.featureFlagAtiva.mockReturnValue(true);
+    visoesService.getDadosDoUsuarioLogado.mockReturnValue({unidades: []});
+    visoesService.getPermissoes.mockReturnValue([]);
+    
     render(
       <MemoryRouter initialEntries={["/cadastro-receita/teste-origem"]}>
         <Routes>
-          <Route path="/cadastro-receita/:origem" element={<CadastroReceitaPage />} />
+          <Route path="/cadastro-receita/:origem" element={<CadastroDeReceita />} />
         </Routes>
       </MemoryRouter>
     );

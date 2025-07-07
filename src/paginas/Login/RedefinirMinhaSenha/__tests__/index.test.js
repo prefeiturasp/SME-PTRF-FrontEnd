@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import React  from "react";
-import { MemoryRouter, Routes, Route } from "react-router-dom";
+import { MemoryRouter, Routes, Route, useParams } from "react-router-dom";
 import { RedefinirSenhaPage } from "../index";
 
 jest.mock("react-router-dom", () => ({
@@ -10,6 +10,7 @@ jest.mock("react-router-dom", () => ({
 
 describe('<RedefinirSenhaPage>', () => {
   test('Deve renderizar o componente', async () => {
+    useParams.mockReturnValue({ uuid: "uuid-teste" });
     render(
       <MemoryRouter initialEntries={["/redefinir-senha/uuid-teste"]}>
         <Routes>

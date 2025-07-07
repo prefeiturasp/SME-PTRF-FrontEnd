@@ -11,8 +11,11 @@ jest.mock("@fortawesome/react-fontawesome", () => ({
   )
 }));
 
+// Mock apenas o hook useNavigate, preservando outros exports
+const mockNavigate = jest.fn();
 jest.mock("react-router-dom", () => ({
-  useNavigate: jest.fn()
+  ...jest.requireActual("react-router-dom"),
+  useNavigate: () => mockNavigate
 }));
 
 jest.mock("react-redux", () => ({
@@ -25,11 +28,10 @@ jest.mock("../../../../store/reducers/componentes/escolas/PrestacaoDeContas/Pend
 }));
 
 describe("TopoComBotoes", () => {
-  const mockNavigate = jest.fn();
   const mockDispatch = jest.fn();
 
   beforeEach(() => {
-    useNavigate.mockReturnValue(mockNavigate);
+    mockNavigate.mockClear();
     useDispatch.mockReturnValue(mockDispatch);
   });
 
@@ -89,7 +91,7 @@ describe("TopoComBotoes", () => {
     fireEvent.click(botaoVoltar);
 
     expect(mockDispatch).toHaveBeenCalledTimes(1);
-    expect(mockNavigate).toHaveBeenCalledWith(mockPopTo);
+    expect(mockNavigate).toHaveBeenCalledWith(-1);
   });
 
   test("aplica os estilos corretos no botão Voltar", () => {
