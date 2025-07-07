@@ -11,13 +11,13 @@ import Spinner from "../../../../../assets/img/spinner.gif"
 export const YupSignupSchemaProcesso = yup.object().shape({
     numero_processo: yup.string().required("Campo Número do processo é obrigatório"),
     ano: yup.string().required("Campo ano é obrigatório"),
-    periodos: yup.string().nullable()
+    periodos: yup.array().of(yup.string()).nullable()
         .test('test-name', 'Campo períodos é obrigatório',
             function (value) {
                 if(!visoesService.featureFlagAtiva('periodos-processo-sei')){
                     return true
                 }else {
-                    return value;
+                    return value && value.length > 0;
                 }
             }),
 });
