@@ -29,11 +29,11 @@ import {toastCustom} from "../../../Globais/ToastCustom";
 import { visoesService } from "../../../../services/visoes.service";
 import { getPeriodoPorUuid } from "../../../../services/sme/Parametrizacoes.service";
 import { STATUS_CONTA_ASSOCIACAO, STATUS_SOLICITACAO_ENCERRAMENTO_CONTA_ASSOCIACAO } from "../../../../constantes/contaAssociacao";
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 
 export const ReceitaForm = () => {
-    const history = useHistory();
+    const navigate = useNavigate();
     let {origem} = useParams();
     let {uuid} = useParams();
     const parametros = useLocation();
@@ -540,7 +540,7 @@ export const ReceitaForm = () => {
         setShow(false);
         if (readOnlyEstorno) {
             const path = `/edicao-de-despesa/${despesa.uuid}`;
-            history.push(path);
+            navigate(path);
         } else {
             setRedirectTo('');
             getPath('');
@@ -648,7 +648,7 @@ export const ReceitaForm = () => {
         }
 
         sessionStorage.setItem('previousPath', window.location.pathname);
-        window.location.assign(path);
+        navigate(path);
     };
 
     const setaRepasse = async (value)=>{

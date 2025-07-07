@@ -1,6 +1,6 @@
 import { render } from "@testing-library/react";
 import React  from "react";
-import { useParams, useLocation } from "react-router-dom";
+import { useParams, useLocation, MemoryRouter } from "react-router-dom";
 import { DetalhedasPrestacoesPage } from "../index";
 
 jest.mock("react-router-dom", () => ({
@@ -13,7 +13,9 @@ describe('<DetalhedasPrestacoesPage>', () => {
   it('Deve renderizar o componente', async () => {
     useParams.mockReturnValue({periodo_uuid: 'uuid-teste', conta_uuid: 'uuid-teste'});
     render(
+      <MemoryRouter>
         <DetalhedasPrestacoesPage/>
+      </MemoryRouter>
     )
     expect(useParams).toHaveBeenCalled();
   });

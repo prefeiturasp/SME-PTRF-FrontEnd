@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { MemoryRouter, Route } from "react-router-dom";
+import { MemoryRouter, Route, Routes } from "react-router-dom";
 import ArquivosDeCarga from "../index";
 import {
   getTabelaArquivosDeCarga,
@@ -68,9 +68,9 @@ describe("Renderiza Tipos de Carga existentes", () => {
     useParams.mockReturnValue({ tipo_de_carga: "CARGA_ASSOCIACOES" });
     render(
       <MemoryRouter initialEntries={["/parametro-arquivos-de-carga/CARGA_ASSOCIACOES"]}>
-        <Route path="/parametro-arquivos-de-carga/:tipo_de_carga">
-          <ArquivosDeCarga />
-        </Route>
+        <Routes>
+          <Route path="/parametro-arquivos-de-carga/:tipo_de_carga" element={<ArquivosDeCarga />} />
+        </Routes>
       </MemoryRouter>
     );
     expect(await screen.findByText("Associações")).toBeInTheDocument();
@@ -81,9 +81,9 @@ describe("Renderiza Tipos de Carga existentes", () => {
     getArquivosDeCargaFiltros.mockReturnValue(listaArquivos);
     render(
       <MemoryRouter initialEntries={["/parametro-arquivos-de-carga/CARGA_CONTAS_ASSOCIACOES"]}>
-        <Route path="/parametro-arquivos-de-carga/:tipo_de_carga">
-          <ArquivosDeCarga />
-        </Route>
+        <Routes>
+          <Route path="/parametro-arquivos-de-carga/:tipo_de_carga" element={<ArquivosDeCarga />} />
+        </Routes>
       </MemoryRouter>
     );
     const elementos = await screen.findAllByText("Contas de Associações");
@@ -95,9 +95,9 @@ describe("Renderiza Tipos de Carga existentes", () => {
     useParams.mockReturnValue({ tipo_de_carga: "CARGA_USUARIOS" });
     render(
       <MemoryRouter initialEntries={["/parametro-arquivos-de-carga/CARGA_USUARIOS"]}>
-        <Route path="/parametro-arquivos-de-carga/:tipo_de_carga">
-          <ArquivosDeCarga />
-        </Route>
+        <Routes>
+          <Route path="/parametro-arquivos-de-carga/:tipo_de_carga" element={<ArquivosDeCarga />} />
+        </Routes>
       </MemoryRouter>
     );
     expect(await screen.findByText("Usuários")).toBeInTheDocument();
@@ -107,9 +107,9 @@ describe("Renderiza Tipos de Carga existentes", () => {
     useParams.mockReturnValue({ tipo_de_carga: "CARGA_USUARIOS", versao: "V2" });
     render(
       <MemoryRouter initialEntries={["/parametro-arquivos-de-carga/CARGA_USUARIOS/V2"]}>
-        <Route path="/parametro-arquivos-de-carga/:tipo_de_carga/:versao?">
-          <ArquivosDeCarga />
-        </Route>
+        <Routes>
+          <Route path="/parametro-arquivos-de-carga/:tipo_de_carga/:versao?" element={<ArquivosDeCarga />} />
+        </Routes>
       </MemoryRouter>
     );
     expect(await screen.findByText("Usuários")).toBeInTheDocument();
@@ -119,9 +119,9 @@ describe("Renderiza Tipos de Carga existentes", () => {
     useParams.mockReturnValue({ tipo_de_carga: "CARGA_MATERIAIS_SERVICOS" });
     render(
       <MemoryRouter initialEntries={["/parametro-arquivos-de-carga/CARGA_MATERIAIS_SERVICOS"]}>
-        <Route path="/parametro-arquivos-de-carga/:tipo_de_carga">
-          <ArquivosDeCarga />
-        </Route>
+        <Routes>
+          <Route path="/parametro-arquivos-de-carga/:tipo_de_carga" element={<ArquivosDeCarga />} />
+        </Routes>
       </MemoryRouter>
     );
     expect(await screen.findByText("Especificações de Materiais e Serviços")).toBeInTheDocument();
@@ -131,9 +131,9 @@ describe("Renderiza Tipos de Carga existentes", () => {
     useParams.mockReturnValue({ tipo_de_carga: "REPASSE_PREVISTO" });
     render(
       <MemoryRouter initialEntries={["/parametro-arquivos-de-carga/REPASSE_PREVISTO"]}>
-        <Route path="/parametro-arquivos-de-carga/:tipo_de_carga">
-          <ArquivosDeCarga />
-        </Route>
+        <Routes>
+          <Route path="/parametro-arquivos-de-carga/:tipo_de_carga" element={<ArquivosDeCarga />} />
+        </Routes>
       </MemoryRouter>
     );
     expect(await screen.findByText("Cargas de repasses previstos")).toBeInTheDocument();
@@ -143,9 +143,9 @@ describe("Renderiza Tipos de Carga existentes", () => {
     useParams.mockReturnValue({ tipo_de_carga: "REPASSE_REALIZADO" });
     render(
       <MemoryRouter initialEntries={["/parametro-arquivos-de-carga/REPASSE_REALIZADO"]}>
-        <Route path="/parametro-arquivos-de-carga/:tipo_de_carga">
-          <ArquivosDeCarga />
-        </Route>
+        <Routes>
+          <Route path="/parametro-arquivos-de-carga/:tipo_de_carga" element={<ArquivosDeCarga />} />
+        </Routes>
       </MemoryRouter>
     );
     expect(await screen.findByText("Cargas de repasses realizados")).toBeInTheDocument();
@@ -164,9 +164,9 @@ describe("ArquivosDeCarga Componente", () => {
     useParams.mockReturnValue({ tipo_de_carga: "CARGA_CONTAS_ASSOCIACOES" });
     render(
       <MemoryRouter initialEntries={["/parametro-arquivos-de-carga/CARGA_CONTAS_ASSOCIACOES"]}>
-        <Route path="/parametro-arquivos-de-carga/:tipo_de_carga">
-          <ArquivosDeCarga />
-        </Route>
+        <Routes>
+          <Route path="/parametro-arquivos-de-carga/:tipo_de_carga" element={<ArquivosDeCarga />} />
+        </Routes>
       </MemoryRouter>
     );
     await waitFor(() => {
@@ -191,9 +191,9 @@ describe("ArquivosDeCarga Componente", () => {
     getArquivosDeCargaFiltros.mockReturnValue(listaArquivos);
     render(
       <MemoryRouter initialEntries={["/parametro-arquivos-de-carga/CARGA_CONTAS_ASSOCIACOES"]}>
-        <Route path="/parametro-arquivos-de-carga/:tipo_de_carga">
-          <ArquivosDeCarga />
-        </Route>
+        <Routes>
+          <Route path="/parametro-arquivos-de-carga/:tipo_de_carga" element={<ArquivosDeCarga />} />
+        </Routes>
       </MemoryRouter>
     );
     await waitFor(() => {
@@ -242,9 +242,9 @@ describe("ArquivosDeCarga Componente", () => {
     getPeriodos.mockReturnValue(listaPeriodos);
     render(
       <MemoryRouter initialEntries={["/parametro-arquivos-de-carga/REPASSE_PREVISTO"]}>
-        <Route path="/parametro-arquivos-de-carga/:tipo_de_carga">
-          <ArquivosDeCarga />
-        </Route>
+        <Routes>
+          <Route path="/parametro-arquivos-de-carga/:tipo_de_carga" element={<ArquivosDeCarga />} />
+        </Routes>
       </MemoryRouter>
     );
     await waitFor(() => {
@@ -298,9 +298,9 @@ describe("Listagem de Arquivos Carga", () => {
     useParams.mockReturnValue({ tipo_de_carga: "CARGA_CONTAS_ASSOCIACOES" });
     render(
       <MemoryRouter initialEntries={["/parametro-arquivos-de-carga/CARGA_CONTAS_ASSOCIACOES"]}>
-        <Route path="/parametro-arquivos-de-carga/:tipo_de_carga">
-          <ArquivosDeCarga />
-        </Route>
+        <Routes>
+          <Route path="/parametro-arquivos-de-carga/:tipo_de_carga" element={<ArquivosDeCarga />} />
+        </Routes>
       </MemoryRouter>
     );
 
@@ -328,9 +328,9 @@ describe("Ações dos botões", () => {
     useParams.mockReturnValue({ tipo_de_carga: "CARGA_CONTAS_ASSOCIACOES" });
     render(
       <MemoryRouter initialEntries={["/parametro-arquivos-de-carga/CARGA_CONTAS_ASSOCIACOES"]}>
-        <Route path="/parametro-arquivos-de-carga/:tipo_de_carga">
-          <ArquivosDeCarga />
-        </Route>
+        <Routes>
+          <Route path="/parametro-arquivos-de-carga/:tipo_de_carga" element={<ArquivosDeCarga />} />
+        </Routes>
       </MemoryRouter>);
     
     const botaoFiltro = screen.getByText("Filtrar");
@@ -347,9 +347,9 @@ describe("Ações dos botões", () => {
     useParams.mockReturnValue({ tipo_de_carga: "CARGA_CONTAS_ASSOCIACOES" });
     render(
       <MemoryRouter initialEntries={["/parametro-arquivos-de-carga/CARGA_CONTAS_ASSOCIACOES"]}>
-        <Route path="/parametro-arquivos-de-carga/:tipo_de_carga">
-          <ArquivosDeCarga />
-        </Route>
+        <Routes>
+          <Route path="/parametro-arquivos-de-carga/:tipo_de_carga" element={<ArquivosDeCarga />} />
+        </Routes>
       </MemoryRouter>
     );
 
@@ -368,9 +368,9 @@ describe("Ações dos botões", () => {
     useParams.mockReturnValue({ tipo_de_carga: "CARGA_CONTAS_ASSOCIACOES" });
     render(
       <MemoryRouter initialEntries={["/parametro-arquivos-de-carga/CARGA_CONTAS_ASSOCIACOES"]}>
-        <Route path="/parametro-arquivos-de-carga/:tipo_de_carga">
-          <ArquivosDeCarga />
-        </Route>
+        <Routes>
+          <Route path="/parametro-arquivos-de-carga/:tipo_de_carga" element={<ArquivosDeCarga />} />
+        </Routes>
       </MemoryRouter>
     );
 
@@ -388,9 +388,9 @@ describe("Ações dos botões", () => {
     useParams.mockReturnValue({ tipo_de_carga: "CARGA_CONTAS_ASSOCIACOES" });
     render(
       <MemoryRouter initialEntries={["/parametro-arquivos-de-carga/CARGA_CONTAS_ASSOCIACOES"]}>
-        <Route path="/parametro-arquivos-de-carga/:tipo_de_carga">
-          <ArquivosDeCarga />
-        </Route>
+        <Routes>
+          <Route path="/parametro-arquivos-de-carga/:tipo_de_carga" element={<ArquivosDeCarga />} />
+        </Routes>
       </MemoryRouter>
     );
 
@@ -413,9 +413,9 @@ describe("Ações dos botões", () => {
     useParams.mockReturnValue({ tipo_de_carga: "CARGA_CONTAS_ASSOCIACOES" });
     render(
       <MemoryRouter initialEntries={["/parametro-arquivos-de-carga/CARGA_CONTAS_ASSOCIACOES"]}>
-        <Route path="/parametro-arquivos-de-carga/:tipo_de_carga">
-          <ArquivosDeCarga />
-        </Route>
+        <Routes>
+          <Route path="/parametro-arquivos-de-carga/:tipo_de_carga" element={<ArquivosDeCarga />} />
+        </Routes>
       </MemoryRouter>
     );
 
@@ -447,9 +447,9 @@ describe("Ações dos botões", () => {
     getArquivosDeCargaFiltros.mockReturnValue(listaArquivos);
     render(
       <MemoryRouter initialEntries={["/parametro-arquivos-de-carga/REPASSE_PREVISTO"]}>
-        <Route path="/parametro-arquivos-de-carga/:tipo_de_carga">
-          <ArquivosDeCarga />
-        </Route>
+        <Routes>
+          <Route path="/parametro-arquivos-de-carga/:tipo_de_carga" element={<ArquivosDeCarga />} />
+        </Routes>
       </MemoryRouter>
     );
 
@@ -481,9 +481,9 @@ describe("Ações dos botões", () => {
     useParams.mockReturnValue({ tipo_de_carga: "CARGA_CONTAS_ASSOCIACOES" });
     render(
       <MemoryRouter initialEntries={["/parametro-arquivos-de-carga/CARGA_CONTAS_ASSOCIACOES"]}>
-        <Route path="/parametro-arquivos-de-carga/:tipo_de_carga">
-          <ArquivosDeCarga />
-        </Route>
+        <Routes>
+          <Route path="/parametro-arquivos-de-carga/:tipo_de_carga" element={<ArquivosDeCarga />} />
+        </Routes>
       </MemoryRouter>
     );
 
@@ -505,9 +505,9 @@ describe("Ações dos botões", () => {
     useParams.mockReturnValue({ tipo_de_carga: "CARGA_CONTAS_ASSOCIACOES" });
     render(
       <MemoryRouter initialEntries={["/parametro-arquivos-de-carga/CARGA_CONTAS_ASSOCIACOES"]}>
-        <Route path="/parametro-arquivos-de-carga/:tipo_de_carga">
-          <ArquivosDeCarga />
-        </Route>
+        <Routes>
+          <Route path="/parametro-arquivos-de-carga/:tipo_de_carga" element={<ArquivosDeCarga />} />
+        </Routes>
       </MemoryRouter>
     );
 

@@ -2,7 +2,7 @@ import React, { memo, useMemo, useCallback, useEffect, useState } from "react";
 import "./arquivos-de-carga.scss";
 import "../../dres/Associacoes/associacoes.scss";
 import { ModalConfirmarExclusao } from "../../../componentes/sme/Parametrizacoes/componentes/ModalConfirmarExclusao";
-import { Redirect, useParams } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 import { BotoesTopo } from "./BotoesTopo";
 import { PaginasContainer } from "../../../paginas/PaginasContainer";
 import {
@@ -696,10 +696,11 @@ const ArquivosDeCarga = () => {
     <PaginasContainer>
       <>
         {!dadosDeOrigem.acesso_permitido ? (
-          <Redirect
+          <Navigate
             to={{
               pathname: "/painel-parametrizacoes",
             }}
+            replace
           />
         ) : (
           <>

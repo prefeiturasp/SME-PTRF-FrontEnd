@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { TiposDeCusteio } from '..';
+import { MemoryRouter } from 'react-router-dom';
+import { TiposDeCusteio } from '../index';
 import { 
     getTodosTiposDeCusteio,
     getFiltrosTiposDeCusteio,
@@ -39,7 +40,7 @@ describe("Carrega página de Tipos", () => {
 
     it("Testa a chamada de getFiltros", async () => {
         getTodosTiposDeCusteio.mockResolvedValueOnce(mockData);
-        render(<TiposDeCusteio />);
+        render(<MemoryRouter><TiposDeCusteio /></MemoryRouter>);
 
         await waitFor(() => {
 
@@ -58,7 +59,7 @@ describe("Carrega página de Tipos", () => {
 
     it("Testa a chamada de limpar Filtros", async () => {
         getTodosTiposDeCusteio.mockResolvedValue(mockData)
-        render(<TiposDeCusteio />);
+        render(<MemoryRouter><TiposDeCusteio /></MemoryRouter>);
 
         expect(screen.getByText(/Carregando.../i)).toBeInTheDocument();
 
@@ -84,7 +85,7 @@ describe("Carrega página de Tipos", () => {
 
     it("carrega no modo Listagem com itens", async () => {
         getTodosTiposDeCusteio.mockResolvedValueOnce(mockData);
-        render(<TiposDeCusteio />);
+        render(<MemoryRouter><TiposDeCusteio /></MemoryRouter>);
 
         expect(screen.getByText(/Tipo de despesa de custeio/i)).toBeInTheDocument();
 
@@ -102,7 +103,7 @@ describe("Testes Operacao CREATE", ()=>{
     it("Renderiza Operacao create sucesso", async () => {
         RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
         getTodosTiposDeCusteio.mockResolvedValue([])
-        render(<TiposDeCusteio/>);
+        render(<MemoryRouter><TiposDeCusteio/></MemoryRouter>);
 
         await waitFor(()=> {
             const button = screen.getByRole('button', { name: /adicionar tipo de despesa de custeio/i });
@@ -133,7 +134,7 @@ describe("Testes Operacao CREATE", ()=>{
         RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
         getTodosTiposDeCusteio.mockResolvedValue([])
 
-        render(<TiposDeCusteio/>);
+        render(<MemoryRouter><TiposDeCusteio/></MemoryRouter>);
 
         await waitFor(()=> {
             const button = screen.getByRole('button', { name: /Adicionar tipo de despesa de custeio/i });
@@ -165,7 +166,7 @@ describe("Testes Operacao CREATE", ()=>{
         RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
         getTodosTiposDeCusteio.mockResolvedValue([])
 
-        render(<TiposDeCusteio/>);
+        render(<MemoryRouter><TiposDeCusteio/></MemoryRouter>);
 
         await waitFor(()=> {
             const button = screen.getByRole('button', { name: /adicionar tipo de despesa de custeio/i });
@@ -202,7 +203,7 @@ describe("Testes Operacao EDIT", ()=>{
 
     it("Renderiza Operacao edit sucesso", async () => {
         RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
-        render(<TiposDeCusteio/>);
+        render(<MemoryRouter><TiposDeCusteio/></MemoryRouter>);
 
         await waitFor(()=> {
             const tabela = screen.getByRole('grid');
@@ -235,7 +236,7 @@ describe("Testes Operacao EDIT", ()=>{
         patchAlterarTipoDeCusteio.mockRejectedValueOnce({
             response: { data: { non_field_errors: "Este tipo de despesa de custeio já existe." } },
         });
-        render(<TiposDeCusteio/>);
+        render(<MemoryRouter><TiposDeCusteio/></MemoryRouter>);
 
         await waitFor(()=> {
             const tabela = screen.getByRole('grid');
@@ -270,7 +271,7 @@ describe("Testes Operacao EDIT", ()=>{
         patchAlterarTipoDeCusteio.mockRejectedValueOnce({
             response: { data: { nome: "Testando erro response" } },
         });
-        render(<TiposDeCusteio/>);
+        render(<MemoryRouter><TiposDeCusteio/></MemoryRouter>);
 
         await waitFor(()=> {
             const tabela = screen.getByRole('grid');
@@ -308,7 +309,7 @@ describe("Testes Operacao DELETE", ()=>{
     });
     it("Renderiza Operacao delete sucesso", async () => {
         RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
-        render(<TiposDeCusteio/>);
+        render(<MemoryRouter><TiposDeCusteio/></MemoryRouter>);
 
         await waitFor(()=> {
             const tabela = screen.getByRole('grid');
@@ -341,7 +342,7 @@ describe("Testes Operacao DELETE", ()=>{
         deleteTipoDeCusteio.mockRejectedValueOnce({
             response: { data: { mensagem: "mensagem de erro" } },
         });
-        render(<TiposDeCusteio/>);
+        render(<MemoryRouter><TiposDeCusteio/></MemoryRouter>);
 
         await waitFor(()=> {
             const tabela = screen.getByRole('grid');
@@ -374,7 +375,7 @@ describe("Testes Operacao DELETE", ()=>{
         deleteTipoDeCusteio.mockRejectedValueOnce({
             response: { data: { nome: "Testando erro response" } },
         });
-        render(<TiposDeCusteio/>);
+        render(<MemoryRouter><TiposDeCusteio/></MemoryRouter>);
 
         await waitFor(()=> {
             const tabela = screen.getByRole('grid');

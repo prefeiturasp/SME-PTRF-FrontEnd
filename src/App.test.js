@@ -1,7 +1,6 @@
 import React from 'react';
 import {render, screen} from '@testing-library/react';
-import {createMemoryHistory} from 'history';
-import {Router} from 'react-router-dom';
+import { MemoryRouter } from 'react-router-dom';
 import App from './App';
 
 // Mockar os componentes que você não quer testar agora
@@ -25,12 +24,10 @@ jest.mock('./componentes/Globais/Modal/Modal', () => ({
 describe('App Component', () => {
 
     const renderWithRouter = (route) => {
-        const history = createMemoryHistory();
-        history.push(route);
         return render(
-            <Router history={history}>
+            <MemoryRouter initialEntries={[route]}>
                 <App />
-            </Router>
+            </MemoryRouter>
         );
     };
 

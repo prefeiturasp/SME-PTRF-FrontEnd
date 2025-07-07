@@ -1,6 +1,7 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import React  from "react";
 import { DashboardPage } from "../index";
+import { MemoryRouter } from "react-router-dom";
 import { visoesService } from "../../../services/visoes.service";
 
 
@@ -17,7 +18,9 @@ describe('<DashboardPage>', () => {
  
   test('Deve renderizar o componente', async () => {
     render(
-        <DashboardPage/>
+        <MemoryRouter>
+          <DashboardPage/>
+        </MemoryRouter>
     )
   });
 

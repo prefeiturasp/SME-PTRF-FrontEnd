@@ -1,10 +1,10 @@
+import { useNavigate } from 'react-router-dom';
 import React, { useEffect, useState } from "react";
 import moment from "moment";
 import { Flex, Spin } from "antd";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Paginator } from "primereact/paginator";
-import { useNavigate } from "react-router-dom-v5-compat";
 import { useGetBemProduzidosComAdquiridos } from "./hooks/useGetBemProduzidosComAdquiridos";
 import { Tag } from "../../../Globais/Tag";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

@@ -1,18 +1,18 @@
 import React from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faArrowLeft} from "@fortawesome/free-solid-svg-icons";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 import {useSelector, useDispatch} from "react-redux";
 import { resetUrlVoltar } from "../../../store/reducers/componentes/escolas/PrestacaoDeContas/PendenciaCadastro/actions";
 
 export const TopoComBotoes = ({tituloPagina = ''}) =>{
-    const history = useHistory();
+    const navigate = useNavigate();
     const dispatch = useDispatch();
     const { popTo } = useSelector(state => state.PendenciaCadastro);
 
     const goBack = () => {
         dispatch(resetUrlVoltar());
-        history.push(popTo);
+        navigate(-1);
     }
     return(
         <div className="d-flex bd-highlight justify-content-between align-items-center mt-5">

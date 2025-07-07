@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import { TextosPaa } from '../index.js';
 import { getTextoExplicacaoPaa, patchTextoExplicacaoPaa } from '../../../../../../services/escolas/PrestacaoDeContas.service';
 import { toastCustom } from '../../../../../Globais/ToastCustom';
@@ -28,19 +29,31 @@ describe('TextosPaa Component', () => {
 
     test('deve renderizar o título corretamente', async () => {
         getTextoExplicacaoPaa.mockResolvedValue({ detail: 'Texto de exemplo' });
-        render(<TextosPaa />);
+        render(
+            <MemoryRouter>
+                <TextosPaa />
+            </MemoryRouter>
+        );
         expect(await screen.findByText(/Textos do PAA/i)).toBeInTheDocument();
     });
 
     test('deve exibir a tabela de textos após o carregamento', async () => {
         getTextoExplicacaoPaa.mockResolvedValue({ detail: 'Texto de exemplo' });
-        render(<TextosPaa />);
+        render(
+            <MemoryRouter>
+                <TextosPaa />
+            </MemoryRouter>
+        );
         expect(await screen.findByText(/Exibindo/i)).toBeInTheDocument();
     });
 
     test('deve abrir o editor ao clicar no botão de edição', async () => {
         getTextoExplicacaoPaa.mockResolvedValue({ detail: 'Texto de exemplo' });
-        render(<TextosPaa />);
+        render(
+            <MemoryRouter>
+                <TextosPaa />
+            </MemoryRouter>
+        );
 
         const editButton = await screen.findByRole('button', { name: /editar/i });
         fireEvent.click(editButton);
@@ -53,7 +66,11 @@ describe('TextosPaa Component', () => {
 
       getTextoExplicacaoPaa.mockResolvedValue({ detail: 'Texto de exemplo' });
       patchTextoExplicacaoPaa.mockResolvedValue({});
-      render(<TextosPaa />);
+      render(
+          <MemoryRouter>
+              <TextosPaa />
+          </MemoryRouter>
+      );
 
       const editButton = await screen.findByRole('button', { name: /editar/i });
       fireEvent.click(editButton);
@@ -72,7 +89,11 @@ describe('TextosPaa Component', () => {
   
       getTextoExplicacaoPaa.mockResolvedValue({ detail: 'Texto de exemplo' });
       patchTextoExplicacaoPaa.mockRejectedValue(new Error('Erro ao editar'));
-      render(<TextosPaa />);
+      render(
+          <MemoryRouter>
+              <TextosPaa />
+          </MemoryRouter>
+      );
   
       const editButton = await screen.findByRole('button', { name: /editar/i });
       fireEvent.click(editButton);

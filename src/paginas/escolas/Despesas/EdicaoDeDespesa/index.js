@@ -19,7 +19,7 @@ export const tituloPagina = (parametroLocation) => {
 
     if(visao_selecionada === "UE"){
         if(aux.origemAnaliseLancamento(parametroLocation)){
-            let operacao = parametroLocation.state.operacao;
+            let operacao = parametroLocation.state?.operacao;
             let texto = operacao === "requer_exclusao_lancamento_gasto" ? "Exclusão de Despesa" : "Edição de Despesa";
             return texto;
         }
