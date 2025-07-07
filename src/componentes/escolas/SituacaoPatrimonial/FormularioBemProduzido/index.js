@@ -2,15 +2,15 @@ import { useParams } from "react-router-dom";
 import { IconButton } from "../../../Globais/UI";
 import { Steps } from "./components/Steps";
 import { VincularDespesas } from "./VincularDespesas";
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import { useGetBemProduzido } from "./hooks/useGetBemProduzido";
 import { InformarValores } from "./InformarValores";
-import { useNavigate, useSearchParams } from "react-router-dom-v5-compat";
+import { useNavigate } from "react-router-dom-v5-compat";
 import { usePostBemProduzido } from "./hooks/usePostBemProduzido";
 import { usePatchBemProduzido } from "./hooks/usePatchBemProduzido";
+import { usePostBemProduzidoRascunho } from "./hooks/usePostBemProduzidoRascunho";
+import { usePatchBemProduzidoRascunho } from "./hooks/usePatchBemProduzidoRascunho";
 import { ClassificarBem } from "./ClassificarBem";
-import { usePatchBemProduzidoItems } from "./ClassificarBem/hooks/usePatchBemProduzidoItems";
-import { usePatchBemProduzidoItemsRascunho } from "./ClassificarBem/hooks/usePatchBemProduzidoItemsRascunho";
 
 const stepList = [
   { label: "Selecionar despesas" },
@@ -21,7 +21,6 @@ const stepList = [
 export const FormularioBemProduzido = () => {
   const { uuid } = useParams();
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
 
   const [step, setStep] = useState(1);
   const [despesasSelecionadas, setDespesasSelecionadas] = useState([]);
@@ -33,87 +32,52 @@ export const FormularioBemProduzido = () => {
   const { data } = useGetBemProduzido(uuid);
   const { mutationPost } = usePostBemProduzido();
   const { mutationPatch } = usePatchBemProduzido();
-  const { mutationPatch: mutationPatchBemProduzidoItems } =
-    usePatchBemProduzidoItems();
-  const { mutationPatch: mutationPatchBemProduzidoItemsRascunho } =
-    usePatchBemProduzidoItemsRascunho();
+
+  const { mutationPost: mutationPostRascunho } = usePostBemProduzidoRascunho();
+  const { mutationPatch: mutationPatchRascunho } =
+    usePatchBemProduzidoRascunho();
 
   const podeEditar = uuid && data?.status === "INCOMPLETO";
-  const paramStep = searchParams.get("step");
 
-  useEffect(() => {
-    if (paramStep) {
-      setStep(parseInt(paramStep));
-    }
-  }, [paramStep]);
+  const valorTotalUtilizado = useMemo(() => {
+    const total = rateiosComValores.reduce(
+      (sum, r) => sum + (Number(r.valor_utilizado) || 0),
+      0
+    );
+    return total;
+  }, [rateiosComValores]);
 
-  const salvarRascunhoVincularDespesas = async () => {
+  const salvarRascunho = async () => {
+    const payload = {
+      despesas: despesasSelecionadas.map((despesa) => despesa.uuid),
+      rateios: rateiosComValores,
+      itens: bemProduzidoItems,
+    };
+
     try {
-      await mutationPost.mutateAsync({
-        payload: {
-          despesas: despesasSelecionadas.map((despesa) => despesa.uuid),
-        },
-      });
-
+      if (uuid) {
+        await mutationPatchRascunho.mutateAsync({ uuid, payload });
+      } else {
+        await mutationPostRascunho.mutateAsync({ payload });
+      }
       navigate(`/lista-situacao-patrimonial`);
     } catch (error) {}
   };
 
-  const salvarRascunhoInformarValores = async () => {
-    try {
-      await mutationPatch.mutateAsync({
-        uuid: uuid,
-        payload: { rateios: rateiosComValores },
-      });
+  const salvar = async () => {
+    const payload = {
+      despesas: despesasSelecionadas.map((despesa) => despesa.uuid),
+      rateios: rateiosComValores,
+      itens: bemProduzidoItems,
+    };
 
+    try {
+      if (uuid) {
+        await mutationPatch.mutateAsync({ uuid, payload });
+      } else {
+        await mutationPost.mutateAsync({ payload });
+      }
       navigate(`/lista-situacao-patrimonial`);
-    } catch (error) {}
-  };
-
-  const informarValores = async () => {
-    try {
-      const mutationResp = await mutationPatch.mutateAsync({
-        uuid: uuid,
-        payload: { rateios: rateiosComValores },
-      });
-      navigate(`/edicao-bem-produzido/${mutationResp.uuid}/?step=3`);
-    } catch (error) {}
-  };
-
-  const salvarRascunhoClassificarBens = async () => {
-    try {
-      await mutationPatchBemProduzidoItemsRascunho.mutateAsync({
-        uuid: uuid,
-        payload: {
-          itens: bemProduzidoItems,
-        },
-      });
-
-      navigate(`/lista-situacao-patrimonial`);
-    } catch (error) {}
-  };
-
-  const cadastrarBens = async () => {
-    try {
-      await mutationPatchBemProduzidoItems.mutateAsync({
-        uuid: uuid,
-        payload: {
-          itens: bemProduzidoItems,
-        },
-      });
-
-      navigate(`/lista-situacao-patrimonial`);
-    } catch (error) {}
-  };
-
-  const salvarDespesas = async () => {
-    try {
-      const mutationResp = await mutationPost.mutateAsync({
-        payload: {
-          despesas: despesasSelecionadas.map((despesa) => despesa.uuid),
-        },
-      });
-      navigate(`/edicao-bem-produzido/${mutationResp.uuid}/?step=2`);
     } catch (error) {}
   };
 
@@ -129,8 +93,8 @@ export const FormularioBemProduzido = () => {
             iconProps={{
               style: { color: "white" },
             }}
-            disabled={!despesasSelecionadas.length && !uuid}
-            onClick={salvarDespesas}
+            disabled={!despesasSelecionadas.length}
+            onClick={() => setStep(2)}
           />
         </div>
       ) : step === 2 ? (
@@ -155,7 +119,7 @@ export const FormularioBemProduzido = () => {
               style: { color: "white" },
             }}
             disabled={!habilitaClassificarBem}
-            onClick={informarValores}
+            onClick={() => setStep(3)}
           />
         </div>
       ) : step === 3 ? (
@@ -178,7 +142,7 @@ export const FormularioBemProduzido = () => {
               style: { color: "white" },
             }}
             disabled={!habilitaCadastrarBem}
-            onClick={cadastrarBens}
+            onClick={salvar}
           />
         </div>
       ) : null}
@@ -189,29 +153,27 @@ export const FormularioBemProduzido = () => {
         <VincularDespesas
           uuid={uuid}
           setStep={setStep}
-          despesas={data?.despesas || []}
           setDespesasSelecionadas={setDespesasSelecionadas}
           despesasSelecionadas={despesasSelecionadas}
-          salvarRascunho={salvarRascunhoVincularDespesas}
+          salvarRascunho={salvarRascunho}
         />
       ) : null}
       {step === 2 ? (
         <InformarValores
           uuid={uuid}
-          despesas={data?.despesas || []}
-          salvarRascunhoInformarValores={salvarRascunhoInformarValores}
+          despesas={despesasSelecionadas}
+          salvarRacuscunho={salvarRascunho}
           podeEditar={podeEditar}
           setRateiosComValores={setRateiosComValores}
           setHabilitaClassificarBem={setHabilitaClassificarBem}
         />
       ) : step === 3 ? (
         <ClassificarBem
-          total={data?.valor_total_informado}
-          items={data?.items || []}
-          salvarRascunhoClassificarBens={salvarRascunhoClassificarBens}
-          cadastrarBens={cadastrarBens}
+          total={valorTotalUtilizado}
+          items={bemProduzidoItems}
+          salvarRacuscunho={salvarRascunho}
+          salvar={salvar}
           setBemProduzidoItems={setBemProduzidoItems}
-          bemProduzidoItems={bemProduzidoItems}
           setHabilitaCadastrarBem={setHabilitaCadastrarBem}
           habilitaCadastrarBem={habilitaCadastrarBem}
         />

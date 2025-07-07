@@ -13,8 +13,8 @@ import { useParams } from "react-router-dom";
 import { combineReducers, createStore } from "redux";
 import { usePostBemProduzido } from "../hooks/usePostBemProduzido";
 import { usePatchBemProduzido } from "../hooks/usePatchBemProduzido";
-import { usePatchBemProduzidoItemsRascunho } from "../ClassificarBem/hooks/usePatchBemProduzidoItemsRascunho";
-import { usePatchBemProduzidoItems } from "../ClassificarBem/hooks/usePatchBemProduzidoItems";
+// import { usePatchBemProduzidoItemsRascunho } from "../ClassificarBem/hooks/usePatchBemProduzidoItemsRascunho";
+// import { usePatchBemProduzidoItems } from "../ClassificarBem/hooks/usePatchBemProduzidoItems";
 
 const mockUseNavigate = jest.fn();
 const mockSearchParams = new URLSearchParams("?step=1");
@@ -80,8 +80,8 @@ jest.mock("../ClassificarBem", () => ({
 jest.mock("../hooks/useGetBemProduzido");
 jest.mock("../hooks/usePostBemProduzido");
 jest.mock("../hooks/usePatchBemProduzido");
-jest.mock("../ClassificarBem/hooks/usePatchBemProduzidoItemsRascunho");
-jest.mock("../ClassificarBem/hooks/usePatchBemProduzidoItems");
+// jest.mock("../ClassificarBem/hooks/usePatchBemProduzidoItemsRascunho");
+// jest.mock("../ClassificarBem/hooks/usePatchBemProduzidoItems");
 
 const rootReducer = combineReducers({});
 const mockStore = createStore(rootReducer);
@@ -114,18 +114,18 @@ describe("Componente FormularioBemProduzido", () => {
     usePatchBemProduzido.mockReturnValue({
       mutationPatch: { mutateAsync: mockMutatePatchAsync, isLoading: false },
     });
-    usePatchBemProduzidoItemsRascunho.mockReturnValue({
-      mutationPatch: {
-        mutateAsync: mockMutationPatchBemProduzidoItemsRascunhoAsync,
-        isLoading: false,
-      },
-    });
-    usePatchBemProduzidoItems.mockReturnValue({
-      mutationPatch: {
-        mutateAsync: mockMutationPatchBemProduzidoItemsAsync,
-        isLoading: false,
-      },
-    });
+    // usePatchBemProduzidoItemsRascunho.mockReturnValue({
+    //   mutationPatch: {
+    //     mutateAsync: mockMutationPatchBemProduzidoItemsRascunhoAsync,
+    //     isLoading: false,
+    //   },
+    // });
+    // usePatchBemProduzidoItems.mockReturnValue({
+    //   mutationPatch: {
+    //     mutateAsync: mockMutationPatchBemProduzidoItemsAsync,
+    //     isLoading: false,
+    //   },
+    // });
 
     useParams.mockReturnValue({ uuid: undefined });
   });
