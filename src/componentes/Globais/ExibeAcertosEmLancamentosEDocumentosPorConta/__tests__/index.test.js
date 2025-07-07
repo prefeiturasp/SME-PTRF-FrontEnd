@@ -17,7 +17,7 @@ jest.mock('../TabelaAcertosEmExtratosBancarios', () => () => <div data-testid="t
 jest.mock('../AcertosLancamentos', () => () => <div data-testid="acertos-lancamentos" />);
 jest.mock('../AcertosDespesasPeriodosAnteriores', () => () => <div data-testid="acertos-despesas" />);
 jest.mock('../AcertosDocumentos', () => () => <div data-testid="acertos-documentos" />);
-jest.mock('../../RelatorioAposAcertos', () => ({
+jest.mock('../RelatorioAposAcertos', () => ({
   RelatorioAposAcertos: () => <div data-testid="relatorio-apos-acertos" />
 }));
 jest.mock('../../../../utils/Loading', () => () => <div data-testid="loading" />);

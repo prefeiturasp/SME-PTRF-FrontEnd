@@ -8,7 +8,7 @@ import {
   formatMoneyByCentsBRL,
   parseMoneyBRL,
 } from "../../../../../utils/money";
-import { useNavigate } from "react-router-dom-v5-compat";
+import { useNavigate } from 'react-router-dom';
 import { useDispatch } from "react-redux";
 import { CustomModalConfirm } from "../../../../Globais/Modal/CustomModalConfirm";
 import { BarraAcaoEmLote } from "./BarraAcaoEmLote";

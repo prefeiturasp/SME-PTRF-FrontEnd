@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import { FiqueDeOlho } from '..';
 import { 
     patchAlterarFiqueDeOlhoPrestacoesDeContas,
@@ -38,7 +39,11 @@ describe("Carrega página fique de olho", () => {
     });
 
     it('Renderiza a página', async() => {
-        render(<FiqueDeOlho />);
+        render(
+            <MemoryRouter>
+                <FiqueDeOlho />
+            </MemoryRouter>
+        );
         expect(screen.getByText(/Carregando.../i)).toBeInTheDocument();
         await waitFor(() => {
             expect(screen.getByText(/ASSOCIAÇÕES - Prestação de Contas/i)).toBeInTheDocument();
@@ -48,7 +53,11 @@ describe("Carrega página fique de olho", () => {
 
     it("Testa edição associacoes", async () => {
         RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
-        render(<FiqueDeOlho />);
+        render(
+            <MemoryRouter>
+                <FiqueDeOlho />
+            </MemoryRouter>
+        );
 
         expect(screen.getByText(/Carregando.../i)).toBeInTheDocument();
 
@@ -76,7 +85,11 @@ describe("Carrega página fique de olho", () => {
         patchAlterarFiqueDeOlhoPrestacoesDeContas.mockRejectedValueOnce({
             response: { data: { non_field_errors: "Erro 007" } },
         });
-        render(<FiqueDeOlho />);
+        render(
+            <MemoryRouter>
+                <FiqueDeOlho />
+            </MemoryRouter>
+        );
 
         expect(screen.getByText(/Carregando.../i)).toBeInTheDocument();
 
@@ -101,7 +114,11 @@ describe("Carrega página fique de olho", () => {
 
     it("Testa edição dre", async () => {
         RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
-        render(<FiqueDeOlho />);
+        render(
+            <MemoryRouter>
+                <FiqueDeOlho />
+            </MemoryRouter>
+        );
 
         expect(screen.getByText(/Carregando.../i)).toBeInTheDocument();
 
@@ -129,7 +146,11 @@ describe("Carrega página fique de olho", () => {
         patchAlterarFiqueDeOlhoRelatoriosConsolidadosDre.mockRejectedValueOnce({
             response: { data: { non_field_errors: "Erro 007" } },
         });
-        render(<FiqueDeOlho />);
+        render(
+            <MemoryRouter>
+                <FiqueDeOlho />
+            </MemoryRouter>
+        );
 
         expect(screen.getByText(/Carregando.../i)).toBeInTheDocument();
 

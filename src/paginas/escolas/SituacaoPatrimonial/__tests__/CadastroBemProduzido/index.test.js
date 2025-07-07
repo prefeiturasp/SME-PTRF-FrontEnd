@@ -1,4 +1,6 @@
 import { render, screen } from "@testing-library/react";
+import React  from "react";
+import { MemoryRouter } from 'react-router-dom';
 import { CadastroBemProduzidoPage } from "../../CadastroBemProduzido";
 
 jest.mock(
@@ -10,14 +12,14 @@ jest.mock(
 
 describe("CadastroBemProduzidoPage", () => {
   it("deve renderizar o título 'Adicionar bem produzido'", () => {
-    render(<CadastroBemProduzidoPage />);
+    render(<MemoryRouter><CadastroBemProduzidoPage /></MemoryRouter>);
 
     const titulo = screen.getByText("Adicionar bem produzido");
     expect(titulo).toBeInTheDocument();
   });
 
   it("deve renderizar o componente FormularioBemProduzido", () => {
-    render(<CadastroBemProduzidoPage />);
+    render(<MemoryRouter><CadastroBemProduzidoPage /></MemoryRouter>);
 
     const formularioBemProduzido = screen.getByText(
       "Formulario Bem Produzido Mock"

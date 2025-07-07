@@ -1,5 +1,5 @@
 import React, {useEffect, useMemo, useState, memo} from "react";
-import {useHistory} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import {Column} from "primereact/column";
 import {DataTable} from "primereact/datatable";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -46,7 +46,7 @@ const TabelaConferenciaDeLancamentos = ({
                                         }) => {
 
     const rowsPerPage = 10;
-    const history = useHistory();
+    const navigate = useNavigate();
                                            
     const [expandedRows, setExpandedRows] = useState(null);
     const [quantidadeSelecionada, setQuantidadeSelecionada] = useState(0);
@@ -481,7 +481,7 @@ const TabelaConferenciaDeLancamentos = ({
     const addDispatchRedireciona = (lancamentos) => {
         dispatch(limparDetalharAcertos())
         dispatch(addDetalharAcertos(lancamentos))
-        history.push(`/dre-detalhe-prestacao-de-contas-detalhar-acertos/${prestacaoDeContas.uuid}`)
+        navigate(`/dre-detalhe-prestacao-de-contas-detalhar-acertos/${prestacaoDeContas.uuid}`)
     }
 
     const detalharAcertos = () => {

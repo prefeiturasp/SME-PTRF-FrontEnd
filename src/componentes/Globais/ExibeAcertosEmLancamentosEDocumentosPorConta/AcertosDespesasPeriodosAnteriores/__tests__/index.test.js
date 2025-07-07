@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
-import { useHistory } from 'react-router-dom';
+import { useNavigate, MemoryRouter } from 'react-router-dom';
 import AcertosDespesasPeriodosAnteriores from '../index';
 import { visoesService } from '../../../../../services/visoes.service';
 import { mantemEstadoAnaliseDre as meapcservice } from '../../../../../services/mantemEstadoAnaliseDre.service';
@@ -18,17 +18,14 @@ import {
 
 // Mock react-router-dom
 jest.mock('react-router-dom', () => ({
-  useHistory: jest.fn()
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: jest.fn()
 }));
 
 // Mock components
-jest.mock('../TabelaAcertosDespesasPeriodosAnteriores', () => () => (
-  <div data-testid="tabela-acertos-despesas" />
-));
-
 jest.mock('../TabelaAcertosDespesasPeriodosAnteriores', () => ({
-    TabelaAcertosDespesasPeriodosAnteriores: () => <div data-testid="tabela-acertos-despesas" />
-  }));
+  TabelaAcertosDespesasPeriodosAnteriores: () => <div data-testid="tabela-acertos-despesas" />
+}));
 
 jest.mock('../../../../../utils/Loading', () => () => (
   <div data-testid="loading" />
@@ -87,7 +84,7 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    useHistory.mockReturnValue(mockHistory);
+    useNavigate.mockReturnValue(mockHistory);
     localStorage.clear();
   });
 
@@ -102,9 +99,11 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
     });
 
     render(
-      <Provider store={mockStore}>
-        <AcertosDespesasPeriodosAnteriores {...defaultProps} />
-      </Provider>
+      <MemoryRouter>
+        <Provider store={mockStore}>
+          <AcertosDespesasPeriodosAnteriores {...defaultProps} />
+        </Provider>
+      </MemoryRouter>
     );
 
     expect(screen.getByTestId('loading')).toBeInTheDocument();
@@ -131,9 +130,11 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
     });
 
     render(
-      <Provider store={mockStore}>
-        <AcertosDespesasPeriodosAnteriores {...defaultProps} />
-      </Provider>
+      <MemoryRouter>
+        <Provider store={mockStore}>
+          <AcertosDespesasPeriodosAnteriores {...defaultProps} />
+        </Provider>
+      </MemoryRouter>
     );
 
     await waitFor(() => {
@@ -162,9 +163,11 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
     });
 
     render(
-      <Provider store={mockStore}>
-        <AcertosDespesasPeriodosAnteriores {...defaultProps} />
-      </Provider>
+      <MemoryRouter>
+        <Provider store={mockStore}>
+          <AcertosDespesasPeriodosAnteriores {...defaultProps} />
+        </Provider>
+      </MemoryRouter>
     );
 
     await waitFor(() => {
@@ -198,9 +201,11 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
     });
 
     render(
-      <Provider store={mockStore}>
-        <AcertosDespesasPeriodosAnteriores {...defaultProps} />
-      </Provider>
+      <MemoryRouter>
+        <Provider store={mockStore}>
+          <AcertosDespesasPeriodosAnteriores {...defaultProps} />
+        </Provider>
+      </MemoryRouter>
     );
 
     await waitFor(() => {
@@ -229,10 +234,20 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
     });
 
     render(
-      <Provider store={mockStore}>
-        <AcertosDespesasPeriodosAnteriores {...defaultProps} />
-      </Provider>
+      <MemoryRouter>
+        <Provider store={mockStore}>
+          <AcertosDespesasPeriodosAnteriores {...defaultProps} />
+        </Provider>
+      </MemoryRouter>
     );
+
+    // Primeiro verifica se o componente está renderizando
+    expect(screen.getByTestId('loading')).toBeInTheDocument();
+
+    // Aguarda o loading desaparecer e a tabela aparecer
+    await waitFor(() => {
+      expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
+    });
 
     await waitFor(() => {
       expect(screen.getByTestId('tabela-acertos-despesas')).toBeInTheDocument();

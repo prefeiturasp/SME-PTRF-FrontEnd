@@ -1,8 +1,8 @@
 import React from "react";
-import {useHistory} from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 
 export const TopoComBotao = () => {
-    let history = useHistory();
+    let navigate = useNavigate();
 
     return (
         <>
@@ -16,7 +16,7 @@ export const TopoComBotao = () => {
                         <div className="ml-auto bd-highlight">
                             <button
                                 onClick={() => {
-                                    history.goBack()
+                                    navigate(-1)
                                 }}
                                 className="btn btn btn-outline-success"
                             >

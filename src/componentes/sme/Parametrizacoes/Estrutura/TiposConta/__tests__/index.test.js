@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { MemoryRouter, Route } from "react-router-dom";
+import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { TiposConta } from '..';
 import {
     deleteTipoConta,
@@ -33,9 +33,9 @@ describe("Carrega página de Tipos de Conta", () => {
     it("carrega no modo Listagem com itens", async () => {
         render(
             <MemoryRouter initialEntries={["/parametro-tipos-conta"]}>
-                <Route path="/parametro-tipos-conta">
-                    <TiposConta />
-                </Route>
+                <Routes>
+                    <Route path="/parametro-tipos-conta" element={<TiposConta />} />
+                </Routes>
             </MemoryRouter>
         );
         expect(screen.getAllByText(/Tipos de conta/i)).toHaveLength(1);
@@ -54,9 +54,9 @@ describe('Teste handleSubmitModalForm', () => {
         getTiposContas.mockResolvedValueOnce(mockTiposConta).mockResolvedValueOnce(mockTiposConta);
         render(
             <MemoryRouter initialEntries={["/parametro-tipos-conta"]}>
-                <Route path="/parametro-tipos-conta">
-                    <TiposConta />
-                </Route>
+                <Routes>
+                    <Route path="/parametro-tipos-conta" element={<TiposConta />} />
+                </Routes>
             </MemoryRouter>
         );
 
@@ -120,9 +120,9 @@ describe('Teste handleSubmitModalForm', () => {
         });
         render(
             <MemoryRouter initialEntries={["/parametro-tipos-conta"]}>
-                <Route path="/parametro-tipos-conta">
-                    <TiposConta />
-                </Route>
+                <Routes>
+                    <Route path="/parametro-tipos-conta" element={<TiposConta />} />
+                </Routes>
             </MemoryRouter>
         );
 
@@ -167,9 +167,9 @@ describe('Teste handleSubmitModalForm', () => {
         });
         render(
             <MemoryRouter initialEntries={["/parametro-tipos-conta"]}>
-                <Route path="/parametro-tipos-conta">
-                    <TiposConta />
-                </Route>
+                <Routes>
+                    <Route path="/parametro-tipos-conta" element={<TiposConta />} />
+                </Routes>
             </MemoryRouter>
         );
 
@@ -211,9 +211,9 @@ describe('Teste handleSubmitModalForm', () => {
         getTiposContas.mockResolvedValueOnce(mockTiposConta).mockResolvedValueOnce(mockTiposConta);
         render(
             <MemoryRouter initialEntries={["/parametro-tipos-conta"]}>
-                <Route path="/parametro-tipos-conta">
-                    <TiposConta />
-                </Route>
+                <Routes>
+                    <Route path="/parametro-tipos-conta" element={<TiposConta />} />
+                </Routes>
             </MemoryRouter>
         );
 
@@ -269,9 +269,9 @@ describe('Teste handleSubmitModalForm', () => {
         });
         render(
             <MemoryRouter initialEntries={["/parametro-tipos-conta"]}>
-                <Route path="/parametro-tipos-conta">
-                    <TiposConta />
-                </Route>
+                <Routes>
+                    <Route path="/parametro-tipos-conta" element={<TiposConta />} />
+                </Routes>
             </MemoryRouter>
         );
 
@@ -304,9 +304,9 @@ describe('Teste handleSubmitModalForm', () => {
         });
         render(
             <MemoryRouter initialEntries={["/parametro-tipos-conta"]}>
-                <Route path="/parametro-tipos-conta">
-                    <TiposConta />
-                </Route>
+                <Routes>
+                    <Route path="/parametro-tipos-conta" element={<TiposConta />} />
+                </Routes>
             </MemoryRouter>
         );
 
@@ -336,9 +336,9 @@ describe('Teste handleSubmitModalForm', () => {
         getTiposContas.mockResolvedValueOnce(mockTiposConta).mockResolvedValueOnce(mockTiposConta);
         render(
             <MemoryRouter initialEntries={["/parametro-tipos-conta"]}>
-                <Route path="/parametro-tipos-conta">
-                    <TiposConta />
-                </Route>
+                <Routes>
+                    <Route path="/parametro-tipos-conta" element={<TiposConta />} />
+                </Routes>
             </MemoryRouter>
         );
 
@@ -379,9 +379,9 @@ describe('Teste handleSubmitModalForm', () => {
         });
         render(
             <MemoryRouter initialEntries={["/parametro-tipos-conta"]}>
-                <Route path="/parametro-tipos-conta">
-                    <TiposConta />
-                </Route>
+                <Routes>
+                    <Route path="/parametro-tipos-conta" element={<TiposConta />} />
+                </Routes>
             </MemoryRouter>
         );
 

@@ -6,7 +6,7 @@ import {
 import {getSomaDosTotais} from "../../../../services/escolas/RateiosDespesas.service";
 import {SomaDasDespesas} from "../SomaDasDespesas";
 import moment from "moment/moment";
-import {Route} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import {visoesService} from "../../../../services/visoes.service";
 import {redirect} from "../../../../utils/redirect";
 import {coresTagsDespesas} from "../../../../utils/CoresTags";
@@ -27,6 +27,7 @@ import {FormFiltroPorEspecificacaoMaterialServico} from "../FormFiltroPorEspecif
 import { mantemEstadoFiltrosUnidade } from "../../../../services/mantemEstadoFiltrosUnidade.service";
 
 export const ListaDeDespesas = () => {
+    const navigate = useNavigate();
 
     const divisorPaginas = 10
 
@@ -158,19 +159,15 @@ export const ListaDeDespesas = () => {
 
     const novaDespesaButton = () => {
         return (
-            <Route
-                render={({history}) => (
-                    <button
-                        onClick={() => history.push('/cadastro-de-despesa')}
-                        type="button"
-                        className="btn btn btn-outline-success float-right mt-2"
-                        disabled={!visoesService.getPermissoes(['add_despesa'])}
-                        data-qa="btn-cadastrar-despesa"
-                    >
-                        Cadastrar despesa
-                    </button>
-                )}
-            />
+            <button
+                onClick={() => navigate('/cadastro-de-despesa')}
+                type="button"
+                className="btn btn btn-outline-success float-right mt-2"
+                disabled={!visoesService.getPermissoes(['add_despesa'])}
+                data-qa="btn-cadastrar-despesa"
+            >
+                Cadastrar despesa
+            </button>
         )
     }
 

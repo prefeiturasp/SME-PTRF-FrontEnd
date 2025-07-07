@@ -6,7 +6,7 @@ import { MotivoRetificacao } from "./MotivoRetificacao";
 import { Filtros } from "./Filtros";
 import { TabelaPcsRetificaveis } from "./TabelaPcsRetificaveis";
 import { TabelaPcsEmRetificacao } from "./TabelaPcsEmRetificacao";
-import {useHistory, useParams, useLocation} from "react-router-dom";
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { getConsolidadoDrePorUuid, getPcsRetificaveis, postRetificarPcs, getPcsEmRetificacao, postDesfazerRetificacaoPcs, patchMotivoRetificaoPcs, updateRetificarPcs, getPcsDoConsolidado } from "../../../../services/dres/RelatorioConsolidado.service";
 import { getTabelaAssociacoes } from "../../../../services/sme/Parametrizacoes.service";
 import Loading from "../../../../utils/Loading";
@@ -53,7 +53,7 @@ const RetificacaoRelatorioConsolidado = () => {
 
     const {relatorio_consolidado_uuid} = useParams();
     const parametros = useLocation();
-    const history = useHistory();
+    const navigate = useNavigate();
     const formRef = useRef();
     const rowsPerPage = 10;
 
@@ -144,7 +144,7 @@ const RetificacaoRelatorioConsolidado = () => {
         if(relatorioConsolidado && relatorioConsolidado.periodo){
             let uuid_periodo = relatorioConsolidado.periodo.uuid;
             localStorage.setItem(PERIODO_RELATORIO_CONSOLIDADO_DRE, uuid_periodo);
-            history.push(`/dre-relatorio-consolidado/`)
+            navigate('/dre-relatorio-consolidado/')
         }
     }
 

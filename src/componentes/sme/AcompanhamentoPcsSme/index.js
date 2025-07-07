@@ -14,7 +14,7 @@ export const AcompanhamentoPcsSme = () => {
     const [periodoEscolhido, setPeriodoEsolhido] = useState(false);
     const [itensDashboard, setItensDashboard] = useState(false);
     const [resumoPorDre, setResumoPorDre] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [statusPeriodo, setStatusPeriodo] = useState(false);
     const [totalUnidades, setTotalUnidades] = useState(0);
 
