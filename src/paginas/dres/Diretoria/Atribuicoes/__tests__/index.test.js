@@ -1,6 +1,6 @@
 import React  from "react";
 import { render, screen } from "@testing-library/react";
-import { useParams } from "react-router-dom";
+import { useParams, MemoryRouter } from "react-router-dom";
 import { AtribuicoesPage } from "../index";
 import { visoesService } from "../../../../../services/visoes.service";
 
@@ -22,7 +22,9 @@ describe('<AtribuicoesPage>', () => {
   test('Deve renderizar o componente', async () => {
     useParams.mockReturnValue({ tecnico_uuid: '1234' });
     render(
+      <MemoryRouter>
         <AtribuicoesPage/>
+      </MemoryRouter>
     )
     expect(useParams).toHaveBeenCalled()
     expect(visoesService.featureFlagAtiva).toHaveBeenCalled()

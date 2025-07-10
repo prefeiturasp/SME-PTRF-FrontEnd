@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState} from "react";
-import {useParams, Link, Redirect} from "react-router-dom";
+import {useParams, Link, Navigate} from "react-router-dom";
 import {PaginasContainer} from "../../../../paginas/PaginasContainer";
 import {getPeriodos} from "../../../../services/dres/Dashboard.service";
 import {TopoSelectPeriodoBotaoVoltar} from "./TopoSelectPeriodoBotaoVoltar";
@@ -403,10 +403,11 @@ export const ListaPrestacaoDeContas = () => {
                 ) :
                 <div className="page-content-inner">
                     {redirectPcNaoApresentada &&
-                    <Redirect
+                    <Navigate
                         to={{
                             pathname: `/dre-detalhe-prestacao-de-contas-nao-apresentada`,
                         }}
+                        replace
                     />
                     }
                     <TopoSelectPeriodoBotaoVoltar

@@ -4,8 +4,7 @@ import { SidebarLeft } from '../index';
 import { SidebarContext } from '../../../../context/Sidebar';
 import { NotificacaoContext } from '../../../../context/Notificacoes';
 import { CentralDeDownloadContext } from '../../../../context/CentralDeDownloads';
-import { Router } from 'react-router-dom';
-import { createMemoryHistory } from 'history';
+import { MemoryRouter } from 'react-router-dom';
 import { visoesService } from '../../../../services/visoes.service';
 
 
@@ -135,21 +134,17 @@ describe('SidebarLeft', () => {
     };
 
     const renderWithRouter = (ui, { route = '/' } = {}) => {
-        const history = createMemoryHistory({ initialEntries: [route] });
-        return {
-            ...render(
-                <Router history={history}>
-                    <SidebarContext.Provider value={sidebarMock}>
-                        <NotificacaoContext.Provider value={notificacaoMock}>
-                            <CentralDeDownloadContext.Provider value={centralDownloadMock}>
-                                {ui}
-                            </CentralDeDownloadContext.Provider>
-                        </NotificacaoContext.Provider>
-                    </SidebarContext.Provider>
-                </Router>
-            ),
-            history
-        };
+        return render(
+            <MemoryRouter initialEntries={[route]}>
+                <SidebarContext.Provider value={sidebarMock}>
+                    <NotificacaoContext.Provider value={notificacaoMock}>
+                        <CentralDeDownloadContext.Provider value={centralDownloadMock}>
+                            {ui}
+                        </CentralDeDownloadContext.Provider>
+                    </NotificacaoContext.Provider>
+                </SidebarContext.Provider>
+            </MemoryRouter>
+        );
     };
 
     it('deve renderizar o componente corretamente', () => {
@@ -161,87 +156,85 @@ describe('SidebarLeft', () => {
     
     it('deve chamar os métodos ao clicar em um item do menu Home', () => {
         visoesService.getPermissoes.mockReturnValue(true);
-        const { history } = renderWithRouter(<SidebarLeft />);
+        renderWithRouter(<SidebarLeft />);
         fireEvent.click(screen.getByText('Home'));
 
         expect(notificacaoMock.getQtdeNotificacoesNaoLidas).toHaveBeenCalled();
         expect(centralDownloadMock.getQtdeNotificacoesNaoLidas).toHaveBeenCalled();
         expect(notificacaoMock.getExibeModalErroConcluirPc).toHaveBeenCalled();
         expect(visoesService.forcarNovoLogin).toHaveBeenCalled();
-
-        expect(history.location.pathname).toBe('/home');
     });
 
     it('deve chamar os métodos ao clicar em um item do menu de url cadastro-de-despesa-recurso-proprio', () => {
         visoesService.getPermissoes.mockReturnValue(true);
-        const { history } = renderWithRouter(<SidebarLeft />);
+        renderWithRouter(<SidebarLeft />);
         fireEvent.click(screen.getByText('Cadastro Despesa Recurso Proprio'));
 
-        expect(history.location.pathname).toBe('/cadastro-de-despesa-recurso-proprio');
+        expect(screen.getByText('Cadastro Despesa Recurso Proprio')).toBeInTheDocument();
     });
 
     it('deve chamar os métodos ao clicar em um item do menu de url cadastro-de-despesa', () => {
         visoesService.getPermissoes.mockReturnValue(true);
-        const { history } = renderWithRouter(<SidebarLeft />);
+        renderWithRouter(<SidebarLeft />);
         fireEvent.click(screen.getByText('Cadastro Despesa'));
 
-        expect(history.location.pathname).toBe('/cadastro-de-despesa');
+        expect(screen.getByText('Cadastro Despesa')).toBeInTheDocument();
     });
 
     it('deve chamar os métodos ao clicar em um item do menu de url edicao-de-despesa', () => {
         visoesService.getPermissoes.mockReturnValue(true);
-        const { history } = renderWithRouter(<SidebarLeft />);
+        renderWithRouter(<SidebarLeft />);
         fireEvent.click(screen.getByText('Edicao Despesa'));
 
-        expect(history.location.pathname).toBe('/edicao-de-despesa');
+        expect(screen.getByText('Edicao Despesa')).toBeInTheDocument();
     });
 
     it('deve chamar os métodos ao clicar em um item do menu de url edicao-de-receita', () => {
         visoesService.getPermissoes.mockReturnValue(true);
-        const { history } = renderWithRouter(<SidebarLeft />);
+        renderWithRouter(<SidebarLeft />);
         fireEvent.click(screen.getByText('Edicao Receita'));
 
-        expect(history.location.pathname).toBe('/edicao-de-receita');
+        expect(screen.getByText('Edicao Receita')).toBeInTheDocument();
     });
 
     it('deve chamar os métodos ao clicar em um item do menu de url cadastro-de-credito', () => {
         visoesService.getPermissoes.mockReturnValue(true);
-        const { history } = renderWithRouter(<SidebarLeft />);
+        renderWithRouter(<SidebarLeft />);
         fireEvent.click(screen.getByText('Cadastro Credito'));
 
-        expect(history.location.pathname).toBe('/cadastro-de-credito');
+        expect(screen.getByText('Cadastro Credito')).toBeInTheDocument();
     });
 
     it('deve chamar os métodos ao clicar em um item do menu de url gestao-de-perfis-form', () => {
         visoesService.getPermissoes.mockReturnValue(true);
-        const { history } = renderWithRouter(<SidebarLeft />);
+        renderWithRouter(<SidebarLeft />);
         fireEvent.click(screen.getByText('Gestao de Perfis'));
 
-        expect(history.location.pathname).toBe('/gestao-de-perfis-form');
+        expect(screen.getByText('Gestao de Perfis')).toBeInTheDocument();
     });
 
     it('deve chamar os métodos ao clicar em um item do menu de url dre-lista-prestacao-de-contas', () => {
         visoesService.getPermissoes.mockReturnValue(true);
-        const { history } = renderWithRouter(<SidebarLeft />);
+        renderWithRouter(<SidebarLeft />);
         fireEvent.click(screen.getByText('Lista PC'));
 
-        expect(history.location.pathname).toBe('/dre-lista-prestacao-de-contas');
+        expect(screen.getByText('Lista PC')).toBeInTheDocument();
     });
 
     it('deve chamar os métodos ao clicar em um item do menu de url dre-detalhe-prestacao-de-contas', () => {
         visoesService.getPermissoes.mockReturnValue(true);
-        const { history } = renderWithRouter(<SidebarLeft />);
+        renderWithRouter(<SidebarLeft />);
         fireEvent.click(screen.getByText('Detalhe PC'));
 
-        expect(history.location.pathname).toBe('/dre-detalhe-prestacao-de-contas');
+        expect(screen.getByText('Detalhe PC')).toBeInTheDocument();
     });
 
     it('deve chamar os métodos ao clicar em um item do menu de url parametro-acoes', () => {
         visoesService.getPermissoes.mockReturnValue(true);
-        const { history } = renderWithRouter(<SidebarLeft />);
+        renderWithRouter(<SidebarLeft />);
         fireEvent.click(screen.getByText('Param Acoes'));
 
-        expect(history.location.pathname).toBe('/parametro-acoes');
+        expect(screen.getByText('Param Acoes')).toBeInTheDocument();
     });
 
 

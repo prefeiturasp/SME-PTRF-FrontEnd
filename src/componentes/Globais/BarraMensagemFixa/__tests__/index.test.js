@@ -2,13 +2,13 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 import { BarraMensagemFixa } from "../index";
 import { BarraMensagemFixaContext } from "../context/BarraMensagemFixaProvider";
-import { useHistory } from "react-router-dom";
+import { useNavigate, MemoryRouter } from 'react-router-dom';
 import { useGetStatusCadastroAssociacao } from "../../../escolas/MembrosDaAssociacao/hooks/useGetStatusCadastroAssociacao";
 import { barraMensagemCustom } from "../../BarraMensagem/index";
 
 jest.mock("react-router-dom", () => ({
   ...jest.requireActual("react-router-dom"),
-  useHistory: jest.fn(),
+  useNavigate: jest.fn(),
 }));
 
 jest.mock(
@@ -31,7 +31,7 @@ describe("Componente BarraMensagemFixa", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    useHistory.mockReturnValue({ push: mockPush });
+    useNavigate.mockReturnValue({ push: mockPush });
   });
 
   const renderComContexto = (contextValue, hookValue) => {
@@ -40,9 +40,11 @@ describe("Componente BarraMensagemFixa", () => {
     });
 
     return render(
-      <BarraMensagemFixaContext.Provider value={contextValue}>
-        <BarraMensagemFixa />
-      </BarraMensagemFixaContext.Provider>
+      <MemoryRouter>
+        <BarraMensagemFixaContext.Provider value={contextValue}>
+          <BarraMensagemFixa />
+        </BarraMensagemFixaContext.Provider>
+      </MemoryRouter>
     );
   };
 

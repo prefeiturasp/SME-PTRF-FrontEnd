@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { MemoryRouter, Route } from "react-router-dom";
+import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { Associacoes } from "..";
 import {
   getTabelaAssociacoes,
@@ -73,9 +73,9 @@ describe("Carrega página de Associações", () => {
   it("carrega no modo Listagem com itens", async () => {
     render(
       <MemoryRouter initialEntries={["/parametro-associacoes"]}>
-        <Route path="/parametro-associacoes">
-          <Associacoes />
-        </Route>
+        <Routes>
+          <Route path="/parametro-associacoes" element={<Associacoes />} />
+        </Routes>
       </MemoryRouter>
     );
     expect(screen.getAllByText(/Associações/i)).toHaveLength(1);
@@ -120,9 +120,9 @@ describe("Teste handleSubmitModalForm", () => {
     visoesService.getPermissoes.mockResolvedValue(true);
     render(
       <MemoryRouter initialEntries={["/parametro-associacoes"]}>
-        <Route path="/parametro-associacoes">
-          <Associacoes />
-        </Route>
+        <Routes>
+          <Route path="/parametro-associacoes" element={<Associacoes />} />
+        </Routes>
       </MemoryRouter>
     );
 
@@ -196,9 +196,9 @@ describe("Teste handleSubmitModalForm", () => {
     });
     render(
       <MemoryRouter initialEntries={["/parametro-associacoes"]}>
-        <Route path="/parametro-associacoes">
-          <Associacoes />
-        </Route>
+        <Routes>
+          <Route path="/parametro-associacoes" element={<Associacoes />} />
+        </Routes>
       </MemoryRouter>
     );
 
@@ -262,9 +262,9 @@ describe("Teste handleSubmitModalForm", () => {
     visoesService.getPermissoes.mockResolvedValue(true);
     render(
       <MemoryRouter initialEntries={["/parametro-associacoes"]}>
-        <Route path="/parametro-associacoes">
-          <Associacoes />
-        </Route>
+        <Routes>
+          <Route path="/parametro-associacoes" element={<Associacoes />} />
+        </Routes>
       </MemoryRouter>
     );
 
@@ -318,9 +318,9 @@ describe("Teste handleSubmitModalForm", () => {
     });
     render(
       <MemoryRouter initialEntries={["/parametro-associacoes"]}>
-        <Route path="/parametro-associacoes">
-          <Associacoes />
-        </Route>
+        <Routes>
+          <Route path="/parametro-associacoes" element={<Associacoes />} />
+        </Routes>
       </MemoryRouter>
     );
 
@@ -367,9 +367,9 @@ describe("Teste handleSubmitModalForm", () => {
     visoesService.getPermissoes.mockResolvedValue(true);
     render(
       <MemoryRouter initialEntries={["/parametro-associacoes"]}>
-        <Route path="/parametro-associacoes">
-          <Associacoes />
-        </Route>
+        <Routes>
+          <Route path="/parametro-associacoes" element={<Associacoes />} />
+        </Routes>
       </MemoryRouter>
     );
 
@@ -411,9 +411,9 @@ describe("Teste handleSubmitModalForm", () => {
     });
     render(
       <MemoryRouter initialEntries={["/parametro-associacoes"]}>
-        <Route path="/parametro-associacoes">
-          <Associacoes />
-        </Route>
+        <Routes>
+          <Route path="/parametro-associacoes" element={<Associacoes />} />
+        </Routes>
       </MemoryRouter>
     );
 
@@ -455,9 +455,9 @@ describe("Teste handleSubmitModalForm", () => {
     });
     render(
       <MemoryRouter initialEntries={["/parametro-associacoes"]}>
-        <Route path="/parametro-associacoes">
-          <Associacoes />
-        </Route>
+        <Routes>
+          <Route path="/parametro-associacoes" element={<Associacoes />} />
+        </Routes>
       </MemoryRouter>
     );
 
@@ -500,9 +500,9 @@ describe("Teste handleSubmitModalForm", () => {
     visoesService.getPermissoes.mockResolvedValue(true);
     render(
       <MemoryRouter initialEntries={["/parametro-associacoes"]}>
-        <Route path="/parametro-associacoes">
-          <Associacoes />
-        </Route>
+        <Routes>
+          <Route path="/parametro-associacoes" element={<Associacoes />} />
+        </Routes>
       </MemoryRouter>
     );
 
@@ -575,9 +575,9 @@ describe("Teste handle functions", () => {
     visoesService.getPermissoes.mockResolvedValue(true);
     render(
       <MemoryRouter initialEntries={["/parametro-associacoes"]}>
-        <Route path="/parametro-associacoes">
-          <Associacoes />
-        </Route>
+        <Routes>
+          <Route path="/parametro-associacoes" element={<Associacoes />} />
+        </Routes>
       </MemoryRouter>
     );
     await waitFor(() => {
@@ -637,9 +637,9 @@ describe("Teste handle functions", () => {
     visoesService.getPermissoes.mockResolvedValue(true);
     render(
       <MemoryRouter initialEntries={["/parametro-associacoes"]}>
-        <Route path="/parametro-associacoes">
-          <Associacoes />
-        </Route>
+        <Routes>
+          <Route path="/parametro-associacoes" element={<Associacoes />} />
+        </Routes>
       </MemoryRouter>
     );
     await waitFor(() => {
@@ -674,9 +674,9 @@ describe("Teste handle functions", () => {
     visoesService.getPermissoes.mockResolvedValue(true);
     render(
       <MemoryRouter initialEntries={["/parametro-associacoes"]}>
-        <Route path="/parametro-associacoes">
-          <Associacoes />
-        </Route>
+        <Routes>
+          <Route path="/parametro-associacoes" element={<Associacoes />} />
+        </Routes>
       </MemoryRouter>
     );
     await waitFor(() => {

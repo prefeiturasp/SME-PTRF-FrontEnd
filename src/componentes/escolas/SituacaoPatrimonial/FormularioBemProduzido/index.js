@@ -5,7 +5,7 @@ import { VincularDespesas } from "./VincularDespesas";
 import { useMemo, useState } from "react";
 import { useGetBemProduzido } from "./hooks/useGetBemProduzido";
 import { InformarValores } from "./InformarValores";
-import { useNavigate } from "react-router-dom-v5-compat";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { usePostBemProduzido } from "./hooks/usePostBemProduzido";
 import { usePatchBemProduzido } from "./hooks/usePatchBemProduzido";
 import { usePostBemProduzidoRascunho } from "./hooks/usePostBemProduzidoRascunho";

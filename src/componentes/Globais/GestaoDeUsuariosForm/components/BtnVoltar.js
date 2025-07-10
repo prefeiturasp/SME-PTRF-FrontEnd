@@ -1,11 +1,12 @@
 import React from "react";
-import {useHistory} from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
+
 export const BtnVoltar = () => {
-    let history = useHistory();
+    let navigate = useNavigate();
     return (
         <button
             onClick={() => {
-                history.push('/gestao-de-usuarios-list')
+                navigate('/gestao-de-usuarios-list')
             }}
             className="btn btn btn-outline-success mt-2 mr-2"
         >

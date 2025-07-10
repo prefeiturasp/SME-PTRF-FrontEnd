@@ -12,7 +12,7 @@ import { FormFiltrosDespesas } from "./FormFiltrosDespesas";
 import { useCarregaTabelaDespesa } from "../../../../../hooks/Globais/useCarregaTabelaDespesa";
 import { useGetPeriodos } from "../../../../../hooks/Globais/useGetPeriodo";
 import moment from "moment";
-import { useNavigate } from "react-router-dom-v5-compat";
+import { useNavigate } from 'react-router-dom';
 
 const filtroInicial = {
   fornecedor: "",

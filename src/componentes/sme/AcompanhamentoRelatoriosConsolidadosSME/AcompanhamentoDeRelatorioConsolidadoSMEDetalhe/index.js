@@ -1,5 +1,5 @@
 import React, {useEffect, useState, useCallback} from 'react'
-import { useParams, useHistory } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 
 import {Cabecalho} from './Cabecalho'
 import {BotoesAvancarRetroceder} from "./BotoesAvancarRetroceder"
@@ -22,7 +22,7 @@ import { BarraDeStatus } from './BarraDeStatus'
 
 export const AcompanhamentoDeRelatorioConsolidadoSMEDetalhe = () => {
     const params = useParams()
-    const history = useHistory()
+    const navigate = useNavigate()
     const [relatorioConsolidado, setRelatorioConsolidado] = useState({});
     const [isShowModalReabrirParaDre, setIsShowModalReabrirParaDre] = useState(false);
     const [isShowModalVoltarParaPublicado, setIsShowModalVoltarParaPublicado] = useState(false);
@@ -149,7 +149,7 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEDetalhe = () => {
         setDisabledBtnRetroceder(true);
         const {consolidado_dre_uuid} = params
         await deleteReabreConsolidadoDRE(consolidado_dre_uuid)
-        history.push('/analises-relatorios-consolidados-dre/')
+        navigate('/analises-relatorios-consolidados-dre/')
     }
 
     const handleVoltarParaPublicado =  async () => {

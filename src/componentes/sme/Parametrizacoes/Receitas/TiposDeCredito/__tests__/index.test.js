@@ -7,9 +7,9 @@ import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../../../Pa
 import { mockFiltros, mockTiposReceitas } from '../__fixtures__/mockData';
 
 
-jest.mock('react-router-dom-v5-compat', () => ({
-    ...jest.requireActual('react-router-dom-v5-compat'),
-    useNavigate: jest.fn(),
+jest.mock('react-router-dom', () => ({
+    ...jest.requireActual('react-router-dom'),
+    useNavigate: jest.fn()
 }));
 
 jest.mock("../../../../../../services/sme/Parametrizacoes.service", ()=>({

@@ -11,7 +11,7 @@ import {
   Typography,
 } from "antd";
 import { CloseCircleFilled, PlusOutlined } from "@ant-design/icons";
-import { useNavigate } from "react-router-dom-v5-compat";
+import { useNavigate } from 'react-router-dom';
 import { formatMoneyBRL, parseMoneyCentsBRL } from "../../../../../utils/money";
 import { useCallback, useEffect, useState } from "react";
 import { getEspecificacoesCapital } from "../../../../../services/escolas/Despesas.service";
@@ -172,7 +172,7 @@ export const ClassificarBem = ({
                           showSearch
                           allowClear
                           style={{ width: "100%" }}
-                          options={especificacoes.map((especificacao) => {
+                          options={(especificacoes || []).map((especificacao) => {
                             return {
                               label: especificacao.descricao,
                               value: especificacao.uuid,
