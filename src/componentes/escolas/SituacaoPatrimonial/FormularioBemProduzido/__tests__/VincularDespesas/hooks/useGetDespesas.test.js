@@ -1,6 +1,6 @@
 import { renderHook, waitFor } from "@testing-library/react";
 import { useGetDespesas } from "../../../VincularDespesas/hooks/useGetDespesas";
-import { getListaDespesasComFiltros } from "../../../../../../../services/escolas/Despesas.service";
+import { getListaDespesasSituacaoPatrimonial } from "../../../../../../../services/escolas/Despesas.service";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 jest.mock("../../../../../../../services/escolas/Despesas.service");
@@ -34,7 +34,7 @@ describe("useGetDespesas", () => {
     const filtros = { categoria: "alimentacao" };
     const page = 1;
 
-    getListaDespesasComFiltros.mockResolvedValue(mockData);
+    getListaDespesasSituacaoPatrimonial.mockResolvedValue(mockData);
 
     const { result } = renderHook(() => useGetDespesas(filtros, page), {
       wrapper,
@@ -47,9 +47,12 @@ describe("useGetDespesas", () => {
 
       expect(result.current.data).toEqual(mockData);
 
-      expect(getListaDespesasComFiltros).toHaveBeenCalledTimes(1);
+      expect(getListaDespesasSituacaoPatrimonial).toHaveBeenCalledTimes(1);
 
-      expect(getListaDespesasComFiltros).toHaveBeenCalledWith(filtros, page);
+      expect(getListaDespesasSituacaoPatrimonial).toHaveBeenCalledWith(
+        filtros,
+        page
+      );
     });
   });
 
@@ -58,7 +61,7 @@ describe("useGetDespesas", () => {
     const filtros = { categoria: "alimentacao" };
     const page = 1;
 
-    getListaDespesasComFiltros.mockRejectedValue(mockError);
+    getListaDespesasSituacaoPatrimonial.mockRejectedValue(mockError);
 
     const { result } = renderHook(() => useGetDespesas(filtros, page), {
       wrapper,
@@ -71,9 +74,12 @@ describe("useGetDespesas", () => {
 
       expect(result.current.data).toBeUndefined();
 
-      expect(getListaDespesasComFiltros).toHaveBeenCalledTimes(1);
+      expect(getListaDespesasSituacaoPatrimonial).toHaveBeenCalledTimes(1);
 
-      expect(getListaDespesasComFiltros).toHaveBeenCalledWith(filtros, page);
+      expect(getListaDespesasSituacaoPatrimonial).toHaveBeenCalledWith(
+        filtros,
+        page
+      );
     });
   });
 });

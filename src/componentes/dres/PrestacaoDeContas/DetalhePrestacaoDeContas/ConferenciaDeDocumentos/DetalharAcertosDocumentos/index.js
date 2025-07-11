@@ -1,5 +1,5 @@
 import React, {memo, useCallback, useEffect, useRef, useState} from "react";
-import {useHistory, useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {PaginasContainer} from "../../../../../../paginas/PaginasContainer";
 import {useSelector} from "react-redux";
 import {TopoComBotoes} from "./TopoComBotoes";
@@ -15,7 +15,7 @@ const DetalharAcertosDocumentos = () =>{
 
     const {prestacao_conta_uuid} = useParams();
     const formRef = useRef();
-    const history = useHistory();
+    const navigate = useNavigate();
 
     // Redux
     const {documentos} = useSelector(state => state.DetalharAcertosDocumentos)
@@ -85,7 +85,7 @@ const DetalharAcertosDocumentos = () =>{
     }, [carregaSolicitacoesAcertosDocumentos])
 
     const onClickBtnVoltar = () => {
-        history.push(`/dre-detalhe-prestacao-de-contas/${prestacao_conta_uuid}#conferencia_de_documentos`)
+        navigate(`/dre-detalhe-prestacao-de-contas/${prestacao_conta_uuid}#conferencia_de_documentos`)
     }
 
     const validaContaAoSalvar = async() => {

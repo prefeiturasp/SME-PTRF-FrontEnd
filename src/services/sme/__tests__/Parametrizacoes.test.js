@@ -148,7 +148,10 @@ import {
     getPeriodosPaa,
     postPeriodosPaa,
     patchPeriodosPaa,
-    deletePeriodosPaa
+    deletePeriodosPaa,
+    getPaaVigente,
+    getParametroPaa,
+    postPaa
 } from '../Parametrizacoes.service.js';
 import { TOKEN_ALIAS, ASSOCIACAO_UUID } from '../../auth.service.js';
 
@@ -414,7 +417,7 @@ describe('Testes para funções de análise', () => {
     test('getAcoesPDDECategorias  deve chamar a API corretamente', async () => {
         api.get.mockResolvedValue({ data: mockData })
         const result = await getAcoesPDDECategorias();
-        const url = `/api/categorias-pdde/?page1&page_size=100`
+        const url = `/api/programas-pdde/?page1&page_size=100`
         expect(api.get).toHaveBeenCalledWith(url, authHeader())
         expect(result).toEqual(mockData);
     });
@@ -1427,7 +1430,7 @@ describe('Testes para funções de análise', () => {
     test('postAcoesPDDECategorias deve chamar a API corretamente', async () => {
         api.post.mockResolvedValue({ data: mockData });
         const result = await postAcoesPDDECategorias(payload);
-        const url = `/api/categorias-pdde/`;
+        const url = `/api/programas-pdde/`;
         expect(api.post).toHaveBeenCalledWith(url, payload, authHeader());
         expect(result).toEqual(mockData);
     });
@@ -1436,7 +1439,7 @@ describe('Testes para funções de análise', () => {
         const categoriaUuid = 'uuid-cat-pdde-patch';
         api.patch.mockResolvedValue({ data: mockData });
         const result = await patchAcoesPDDECategorias(categoriaUuid, payload);
-        const url = `/api/categorias-pdde/${categoriaUuid}/`;
+        const url = `/api/programas-pdde/${categoriaUuid}/`;
         expect(api.patch).toHaveBeenCalledWith(url, payload, authHeader());
         expect(result).toEqual(mockData);
     });
@@ -1446,7 +1449,7 @@ describe('Testes para funções de análise', () => {
         const categoriaUuid = '1234'
         const acaoUuid = '1234'
         const result = await deleteAcoesPDDECategorias(categoriaUuid, acaoUuid);
-        const url = `/api/categorias-pdde/${categoriaUuid}/`;
+        const url = `/api/programas-pdde/${categoriaUuid}/`;
         expect(api.delete).toHaveBeenCalledWith(url, authHeader());
         expect(result).toEqual(mockData);
     });
@@ -1467,7 +1470,7 @@ describe('Testes para funções de análise', () => {
         const currentPage = 2;
         const rowsPerPage = 10;
         const result = await getAcoesPDDE(nome, categoria, currentPage, rowsPerPage);
-        const url = `/api/acoes-pdde/?nome=${nome}&categoria__uuid=${categoria}&page=${currentPage}&page_size=${rowsPerPage}`;
+        const url = `/api/acoes-pdde/?nome=${nome}&programa__uuid=${categoria}&page=${currentPage}&page_size=${rowsPerPage}`;
         expect(api.get).toHaveBeenCalledWith(url, authHeader());
         expect(result).toEqual(mockData);
     });
@@ -1665,15 +1668,6 @@ describe('Testes para funções de análise', () => {
         expect(result).toEqual(mockData);
     });
 
-
-
-
-
-
-
-
-
-
     test('getFiltrosMotivosPagamentoAntecipado deve chamar a API corretamente', async () => {
         api.get.mockResolvedValue({ data: mockData });
         const nome = 'Motivo Teste';
@@ -1852,6 +1846,30 @@ describe('Testes para funções de análise', () => {
         const result = await deletePeriodosPaa(uuid);
         const url = `/api/periodos-paa/${uuid}/`;
         expect(api.delete).toHaveBeenCalledWith(url, authHeader());
+    });
+
+    test('getPaaVigente deve chamar a API corretamente', async () => {
+        api.get.mockResolvedValue({ data: mockData });
+        const associacao_uuid = '1234';
+        const result = await getPaaVigente(associacao_uuid);
+        const url = `/api/associacoes/${associacao_uuid}/paa-vigente/`;
+        expect(api.get).toHaveBeenCalledWith(url, authHeader());
+        expect(result).toEqual({data: mockData});
+    });
+    
+    test('getParametroPaa deve chamar a API corretamente', async () => {
+        api.get.mockResolvedValue({ data: mockData });
+        const result = await getParametroPaa();
+        const url = `/api/parametros-paa/mes-elaboracao-paa/`;
+        expect(api.get).toHaveBeenCalledWith(url, authHeader());
+        expect(result).toEqual(mockData);
+    });
+
+    test('postPaa deve chamar a API corretamente', async () => {
+        api.post.mockResolvedValue(mockData);
+        await postPaa(payload);
+        const url = `/api/paa/`;
+        expect(api.post).toHaveBeenCalledWith(url, payload, authHeader());
     });
 
 });

@@ -1,5 +1,5 @@
 import React, {memo, useMemo, useState} from "react";
-import {useHistory} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import {Column} from "primereact/column";
 import {DataTable} from "primereact/datatable";
 
@@ -20,7 +20,7 @@ import {ModalLegendaConferenciaDocumentos} from "./Modais/ModalLegendaConferenci
 
 const TabelaConferenciaDeDocumentos = ({carregaListaDeDocumentosParaConferencia, setListaDeDocumentosParaConferencia, listaDeDocumentosParaConferencia, rowsPerPage, prestacaoDeContas, loadingDocumentosParaConferencia, editavel}) =>{
 
-    const history = useHistory();
+    const navigate = useNavigate();
 
     // Hooks Personalizados
     const conferidoTemplate = useConferidoTemplate()
@@ -39,7 +39,7 @@ const TabelaConferenciaDeDocumentos = ({carregaListaDeDocumentosParaConferencia,
         if (editavel){
             dispatch(limparDetalharAcertosDocumentos())
             dispatch(addDetalharAcertosDocumentos(documento))
-            history.push(`/dre-detalhe-prestacao-de-contas-detalhar-acertos-documentos/${prestacaoDeContas.uuid}`)
+            navigate(`/dre-detalhe-prestacao-de-contas-detalhar-acertos-documentos/${prestacaoDeContas.uuid}`)
         }
     }
 

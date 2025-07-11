@@ -61,7 +61,7 @@ const Tabela = ({
             id={'tabela-acoes-pdde'}
         >
             <Column field="nome" header="Ação PDDE"/>
-            <Column field="categoria_objeto.nome" header="Programa"/>
+            <Column field="programa_objeto.nome" header="Programa"/>
             <Column
                 field="aceita_capital"
                 header="Aceita capital?"

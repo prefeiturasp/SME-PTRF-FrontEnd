@@ -90,9 +90,7 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
 
             // Historia 77618 - Sprint 53
             let periodo_conta_ajustes_extratos_bancarios = JSON.parse(localStorage.getItem('periodoContaAcertosEmExtratosBancarios'));
-
             let dados_analise_dre_user_logado = meapcservice.getAnaliseDreUsuarioLogado()
-
             if (periodo_conta_ajustes_extratos_bancarios && periodo_conta_ajustes_extratos_bancarios.conta){
                 carregarAjustesExtratosBancarios(periodo_conta_ajustes_extratos_bancarios.conta);
                 toggleBtnEscolheContaExtratosBancarios(periodo_conta_ajustes_extratos_bancarios.conta)
@@ -120,11 +118,9 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
 
     const salvaObjetoAnaliseDrePorUsuarioLocalStorage = (conta_uuid) =>{
         let objetoAnaliseDrePorUsuario = meapcservice.getAnaliseDreUsuarioLogado();
-
         objetoAnaliseDrePorUsuario.conferencia_extrato_bancario.conta_uuid = conta_uuid
         meapcservice.setAnaliseDrePorUsuario(visoesService.getUsuarioLogin(), objetoAnaliseDrePorUsuario)
     }
-
 
     return (
         <>
@@ -200,10 +196,10 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
                     prestacaoDeContas={prestacaoDeContas}
                     analiseAtualUuid={analiseAtualUuid}
                     podeGerarPrevia={true}
-                /> : null}
+                /> : null} 
 
             </>
-        </>
+        </> 
     )
 }
 export default memo(ExibeAcertosEmLancamentosEDocumentosPorConta)

@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import {useParams} from 'react-router-dom';
 import {redefinirMinhaSenha} from "../../../../services/auth.service";
 import {Formik} from "formik";
-import {Redirect} from "react-router-dom";
+import {Navigate} from "react-router-dom";
 import "../../MedidorForcaSenha/validacao-de-senha.scss"
 import {MedidorForcaSenha} from "../../MedidorForcaSenha";
 import {TextoValidacaoSenha} from "../../MedidorForcaSenha/textoValidacaoSenha";
@@ -22,7 +22,7 @@ export const FormRedefinirSenha = ({textoValidacaoDentroDoForm=null, redirectUrl
 
     const onSubmit = async (values) =>{
         const payload ={
-            "hash_redefinicao":uuid,
+            "hash_redefinicao": uuid,
             "password": values.senha,
             "password2": values.confirmacao_senha
         };
@@ -54,7 +54,7 @@ export const FormRedefinirSenha = ({textoValidacaoDentroDoForm=null, redirectUrl
                 {props => (
                     <form onSubmit={props.handleSubmit}>
                         <div className="form-group">
-                            <label htmlFor="login">Nova Senha</label>
+                            <label htmlFor="senha">Nova Senha</label>
                             <input
                                 type="password"
                                 value={props.values.senha}
@@ -68,7 +68,7 @@ export const FormRedefinirSenha = ({textoValidacaoDentroDoForm=null, redirectUrl
 
                         </div>
                         <div className="form-group">
-                            <label htmlFor="senha">Confirmação da Nova Senha</label>
+                            <label htmlFor="confirmacao_senha">Confirmação da Nova Senha</label>
                             <input
                                 type="password"
                                 value={props.values.confirmacao_senha}
@@ -89,7 +89,7 @@ export const FormRedefinirSenha = ({textoValidacaoDentroDoForm=null, redirectUrl
                             <button onClick={() => window.location.assign("/login")} type="reset" className="btn btn btn-outline-success mt-2 mr-2">Sair</button>
                             <button disabled={localStorage.getItem("medidorSenha") < 7} type="submit" className="btn btn-success mt-2">Continuar</button>
                             {senhaRedefinida &&
-                            <Redirect
+                            <Navigate
                                 to={{
                                     pathname: redirectUrlSucesso,
                                     redefinicaoDeSenha: {
@@ -98,6 +98,7 @@ export const FormRedefinirSenha = ({textoValidacaoDentroDoForm=null, redirectUrl
                                     }
                                 }}
                                 className="btn btn-success btn-block"
+                                replace
                             />
                             }
                         </div>

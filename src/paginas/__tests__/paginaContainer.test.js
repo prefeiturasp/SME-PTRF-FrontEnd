@@ -7,6 +7,7 @@ import {visoesService, visoesService as vs} from '../../services/visoes.service'
 import {BarraMensagemUnidadeEmSuporte} from "../../componentes/Globais/BarraMensagemUnidadeEmSuporte";
 import { BarraMensagemFixa } from "../../componentes/Globais/BarraMensagemFixa";
 import { barraMensagemCustom } from "../../componentes/Globais/BarraMensagem";
+import { MemoryRouter } from 'react-router-dom';
 
 jest.mock("../../componentes/Globais/BarraMensagemUnidadeEmSuporte", () => ({
   BarraMensagemUnidadeEmSuporte: ()=> <></>,
@@ -48,9 +49,11 @@ describe('<PaginasContainer>', () => {
     visoesService.getItemUsuarioLogado.mockReturnValue('UE');
     barraMensagemCustom.BarraMensagemSucessLaranja.mockReturnValue();
     render(
-        <NotificacaoContext.Provider value={notificacaoContexto}>
-          <PaginasContainer/>
-        </NotificacaoContext.Provider>
+        <MemoryRouter>
+          <NotificacaoContext.Provider value={notificacaoContexto}>
+            <PaginasContainer/>
+          </NotificacaoContext.Provider>
+        </MemoryRouter>
     );
   });
 

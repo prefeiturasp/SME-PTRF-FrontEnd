@@ -1,5 +1,8 @@
 import api from "../api/index.js";
 import { TOKEN_ALIAS } from "../auth.service.js";
+import { consultarListaCargos } from "./Associacao.service.js";
+import { addFiltersToQueryString } from "../../utils/Api.js";
+
 
 const authHeader = () => ({
   headers: {
@@ -102,13 +105,52 @@ export const getFontesRecursos = async () => {
 export const getAcoesPDDE = async (currentPage = 1, rowsPerPage = 20) => {
   return (
     await api.get(
-      `/api/acoes-pdde/?page=${currentPage}&page_size=${rowsPerPage}`,
+      `/api/acoes-pdde/receitas-previstas-pdde/?page=${currentPage}&page_size=${rowsPerPage}&paa_uuid=${localStorage.getItem("PAA")}`,
       authHeader()
     )
   ).data;
 };
 
 // PDDE
-export const getCategoriasPddeTotais = async () => {
-  return (await api.get(`api/categorias-pdde/totais/`, authHeader())).data;
+export const getProgramasPddeTotais = async () => {
+  return (await api.get(`api/programas-pdde/totais/?paa_uuid=${localStorage.getItem("PAA")}`, authHeader())).data;
 };
+
+export const postReceitaPrevistaPDDE = async (payload) => {
+  return (await api.post(`api/receitas-previstas-pdde/`, payload, authHeader())).data;
+};
+
+export const patchReceitaPrevistaPDDE = async (uuid, payload) => {
+  return (
+    await api.patch(`api/receitas-previstas-pdde/${uuid}/`, payload, authHeader())
+  ).data;
+};
+
+export const postDesativarAtualizacaoSaldoPAA = async (uuid) => {
+  return (
+    await api.post(`api/paa/${uuid}/desativar-atualizacao-saldo/`, {}, authHeader())
+  ).data;
+};
+
+export const postAtivarAtualizacaoSaldoPAA = async (uuid) => {
+  return (
+    await api.post(`api/paa/${uuid}/ativar-atualizacao-saldo/`, {}, authHeader())
+  ).data;
+};
+
+// Prioridades
+export const getPrioridadesTabelas = async () => {
+  return (await api.get(`api/prioridades-paa/tabelas/`, authHeader())).data;
+};
+
+export const getPrioridades = async (filtros, page=1) => {
+  let queryString = `?paa__uuid=${localStorage.getItem(
+    "PAA"
+  )}&page=${page}`;
+  queryString = addFiltersToQueryString(queryString, filtros);
+  return (await api.get(`api/prioridades-paa/${queryString}`, authHeader())).data;
+};
+
+export const postPrioridade = async (payload) => {
+  return (await api.post(`api/prioridades-paa/`, payload, authHeader())).data;
+}

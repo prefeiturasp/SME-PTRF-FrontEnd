@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { MemoryRouter, Route } from "react-router-dom";
+import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { ParametrizacoesTiposAcertosLancamentos } from '..';
 import {
     getListaDeAcertosLancamentos,
@@ -36,9 +36,9 @@ describe("Carrega página de Tipos de acertos em lançamentos", () => {
     it("carrega no modo Listagem com itens", async () => {
         render(
             <MemoryRouter initialEntries={["/parametro-tipos-acertos-lancamentos"]}>
-                <Route path="/parametro-tipos-acertos-lancamentos">
-                    <ParametrizacoesTiposAcertosLancamentos />
-                </Route>
+                <Routes>
+                    <Route path="/parametro-tipos-acertos-lancamentos" element={<ParametrizacoesTiposAcertosLancamentos />} />
+                </Routes>
             </MemoryRouter>
         );
         expect(screen.getAllByText(/Tipo de acertos em lançamentos/i)).toHaveLength(1);
@@ -59,9 +59,9 @@ describe("Teste dos filtros", () => {
     it("Teste filtro de nome", async () => {
         render(
             <MemoryRouter initialEntries={["/parametro-tipos-acertos-lancamentos"]}>
-                <Route path="/parametro-tipos-acertos-lancamentos">
-                    <ParametrizacoesTiposAcertosLancamentos />
-                </Route>
+                <Routes>
+                    <Route path="/parametro-tipos-acertos-lancamentos" element={<ParametrizacoesTiposAcertosLancamentos />} />
+                </Routes>
             </MemoryRouter>
         );
         const input_nome = screen.getByLabelText("Filtrar por nome");
@@ -79,9 +79,9 @@ describe("Teste dos filtros", () => {
     it("Teste filtro de categoria", async () => {
         render(
             <MemoryRouter initialEntries={["/parametro-tipos-acertos-lancamentos"]}>
-                <Route path="/parametro-tipos-acertos-lancamentos">
-                    <ParametrizacoesTiposAcertosLancamentos />
-                </Route>
+                <Routes>
+                    <Route path="/parametro-tipos-acertos-lancamentos" element={<ParametrizacoesTiposAcertosLancamentos />} />
+                </Routes>
             </MemoryRouter>
         );
         const input_categoria = screen.getByLabelText("Filtrar por categorias");
@@ -108,9 +108,9 @@ describe("Teste dos filtros", () => {
     it("Teste filtro limpar", async () => {
         render(
             <MemoryRouter initialEntries={["/parametro-tipos-acertos-lancamentos"]}>
-                <Route path="/parametro-tipos-acertos-lancamentos">
-                    <ParametrizacoesTiposAcertosLancamentos />
-                </Route>
+                <Routes>
+                    <Route path="/parametro-tipos-acertos-lancamentos" element={<ParametrizacoesTiposAcertosLancamentos />} />
+                </Routes>
             </MemoryRouter>
         );
         const input_nome = screen.getByLabelText("Filtrar por nome");
@@ -137,9 +137,9 @@ describe('Teste handleSubmitModalForm', () => {
         getListaDeAcertosLancamentos.mockResolvedValueOnce(mockTiposAcertosLancamentos).mockResolvedValueOnce(mockTiposAcertosLancamentos);
         render(
             <MemoryRouter initialEntries={["/parametro-tipos-acertos-lancamentos"]}>
-                <Route path="/parametro-tipos-acertos-lancamentos">
-                    <ParametrizacoesTiposAcertosLancamentos />
-                </Route>
+                <Routes>
+                    <Route path="/parametro-tipos-acertos-lancamentos" element={<ParametrizacoesTiposAcertosLancamentos />} />
+                </Routes>
             </MemoryRouter>
         );
 
@@ -183,9 +183,9 @@ describe('Teste handleSubmitModalForm', () => {
                 });
         render(
             <MemoryRouter initialEntries={["/parametro-tipos-acertos-lancamentos"]}>
-                <Route path="/parametro-tipos-acertos-lancamentos">
-                    <ParametrizacoesTiposAcertosLancamentos />
-                </Route>
+                <Routes>
+                    <Route path="/parametro-tipos-acertos-lancamentos" element={<ParametrizacoesTiposAcertosLancamentos />} />
+                </Routes>
             </MemoryRouter>
         );
 
@@ -230,9 +230,9 @@ describe('Teste handleSubmitModalForm', () => {
         });
         render(
             <MemoryRouter initialEntries={["/parametro-tipos-acertos-lancamentos"]}>
-                <Route path="/parametro-tipos-acertos-lancamentos">
-                    <ParametrizacoesTiposAcertosLancamentos />
-                </Route>
+                <Routes>
+                    <Route path="/parametro-tipos-acertos-lancamentos" element={<ParametrizacoesTiposAcertosLancamentos />} />
+                </Routes>
             </MemoryRouter>
         );
 
@@ -274,9 +274,9 @@ describe('Teste handleSubmitModalForm', () => {
         getListaDeAcertosLancamentos.mockResolvedValueOnce(mockTiposAcertosLancamentos).mockResolvedValueOnce(mockTiposAcertosLancamentos);
         render(
             <MemoryRouter initialEntries={["/parametro-tipos-acertos-lancamentos"]}>
-                <Route path="/parametro-tipos-acertos-lancamentos">
-                    <ParametrizacoesTiposAcertosLancamentos />
-                </Route>
+                <Routes>
+                    <Route path="/parametro-tipos-acertos-lancamentos" element={<ParametrizacoesTiposAcertosLancamentos />} />
+                </Routes>
             </MemoryRouter>
         );
 
@@ -322,9 +322,9 @@ describe('Teste handleSubmitModalForm', () => {
         });
         render(
             <MemoryRouter initialEntries={["/parametro-tipos-acertos-lancamentos"]}>
-                <Route path="/parametro-tipos-acertos-lancamentos">
-                    <ParametrizacoesTiposAcertosLancamentos />
-                </Route>
+                <Routes>
+                    <Route path="/parametro-tipos-acertos-lancamentos" element={<ParametrizacoesTiposAcertosLancamentos />} />
+                </Routes>
             </MemoryRouter>
         );
 
@@ -373,9 +373,9 @@ describe('Teste handleSubmitModalForm', () => {
         });
         render(
             <MemoryRouter initialEntries={["/parametro-tipos-acertos-lancamentos"]}>
-                <Route path="/parametro-tipos-acertos-lancamentos">
-                    <ParametrizacoesTiposAcertosLancamentos />
-                </Route>
+                <Routes>
+                    <Route path="/parametro-tipos-acertos-lancamentos" element={<ParametrizacoesTiposAcertosLancamentos />} />
+                </Routes>
             </MemoryRouter>
         );
 
@@ -420,9 +420,9 @@ describe('Teste handleSubmitModalForm', () => {
         getListaDeAcertosLancamentos.mockResolvedValueOnce(mockTiposAcertosLancamentos).mockResolvedValueOnce(mockTiposAcertosLancamentos);
         render(
             <MemoryRouter initialEntries={["/parametro-tipos-acertos-lancamentos"]}>
-                <Route path="/parametro-tipos-acertos-lancamentos">
-                    <ParametrizacoesTiposAcertosLancamentos />
-                </Route>
+                <Routes>
+                    <Route path="/parametro-tipos-acertos-lancamentos" element={<ParametrizacoesTiposAcertosLancamentos />} />
+                </Routes>
             </MemoryRouter>
         );
 
@@ -463,9 +463,9 @@ describe('Teste handleSubmitModalForm', () => {
         });
         render(
             <MemoryRouter initialEntries={["/parametro-tipos-acertos-lancamentos"]}>
-                <Route path="/parametro-tipos-acertos-lancamentos">
-                    <ParametrizacoesTiposAcertosLancamentos />
-                </Route>
+                <Routes>
+                    <Route path="/parametro-tipos-acertos-lancamentos" element={<ParametrizacoesTiposAcertosLancamentos />} />
+                </Routes>
             </MemoryRouter>
         );
 

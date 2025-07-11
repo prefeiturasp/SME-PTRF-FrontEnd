@@ -2,7 +2,7 @@ import { act } from "react";
 import { renderHook } from "@testing-library/react";
 import { postTipoReceita } from "../../../../../../../services/sme/Parametrizacoes.service";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom-v5-compat";
+import { useNavigate, MemoryRouter } from 'react-router-dom';
 import { toastCustom } from "../../../../../../Globais/ToastCustom";
 import { usePostTipoReceita } from "../../hooks/usePostTipoReceita";
 
@@ -17,8 +17,9 @@ jest.mock("../../../../../../Globais/ToastCustom", () => ({
   },
 }));
 
-jest.mock("react-router-dom-v5-compat", () => ({
-  useNavigate: jest.fn(),
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: jest.fn()
 }));
 
 describe("usePostTipoReceita", () => {
@@ -36,7 +37,11 @@ describe("usePostTipoReceita", () => {
   });
 
   const wrapper = ({ children }) => (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    <QueryClientProvider client={queryClient}>
+      <MemoryRouter>
+        {children}
+      </MemoryRouter>
+    </QueryClientProvider>
   );
 
   it("deve criar um tipo de receita com sucesso", async () => {

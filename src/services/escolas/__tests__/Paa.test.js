@@ -3,7 +3,15 @@ import {
     getSaldoAtualPorAcaoAssociacao,
     postReceitasPrevistasPaa,
     patchReceitasPrevistasPaa,
-    downloadPdfLevantamentoPrioridades
+    downloadPdfLevantamentoPrioridades,
+    getRecursosProprios,
+    getTotalizadorRecursoProprio,
+    getFontesRecursos,
+    getProgramasPddeTotais,
+    getAcoesPDDE,
+    postRecursoProprioPaa,
+    patchRecursoProprioPaa,
+    deleteRecursoProprioPaa,
  } from '../Paa.service.js';
 import { TOKEN_ALIAS } from '../../auth.service.js';
 
@@ -111,6 +119,101 @@ describe('Testes para funções de análise', () => {
 
         mockCreateObjectURL.mockRestore();
         mockCreateElement.mockRestore();
+    });
+
+    test('getRecursosProprios deve chamar a API corretamente', async () => {
+        api.get.mockResolvedValue({ data: mockData });
+        const associacaoUUID = '1234'
+        const page = '1'
+        const result = await getRecursosProprios(associacaoUUID);
+
+        expect(api.get).toHaveBeenCalledWith(
+            `api/recursos-proprios-paa/?associacao__uuid=${associacaoUUID}&page=${page}&page_size=20`,
+            getAuthHeader()
+        );
+        expect(result).toEqual(mockData);
+    });
+
+    test('getTotalizadorRecursoProprio deve chamar a API corretamente', async () => {
+        api.get.mockResolvedValue({ data: mockData });
+        const associacaoUUID = '1234'
+        const result = await getTotalizadorRecursoProprio(associacaoUUID);
+
+        expect(api.get).toHaveBeenCalledWith(
+            `api/recursos-proprios-paa/total/?associacao__uuid=${associacaoUUID}`,
+            getAuthHeader()
+        );
+        expect(result).toEqual(mockData);
+    });
+
+    test('getFontesRecursos deve chamar a API corretamente', async () => {
+        api.get.mockResolvedValue({ data: mockData });
+        const result = await getFontesRecursos();
+
+        expect(api.get).toHaveBeenCalledWith(`api/fontes-recursos-paa/`, getAuthHeader());
+        expect(result).toEqual(mockData);
+    });
+
+    test('getCategoriasPddeTotais deve chamar a API corretamente', async () => {
+        localStorage.setItem('PAA', '1234');
+        api.get.mockResolvedValue({ data: mockData });
+        const result = await getProgramasPddeTotais();
+
+        expect(api.get).toHaveBeenCalledWith(`api/programas-pdde/totais/?paa_uuid=1234`, getAuthHeader());
+        expect(result).toEqual(mockData);
+    });
+
+    test('getAcoesPDDE deve chamar a API corretamente', async () => {
+        localStorage.setItem('PAA', '1234');
+        api.get.mockResolvedValue({ data: mockData });
+        const currentPage = 1;
+        const rowsPerPage = 20;
+        const result = await getAcoesPDDE();
+
+        expect(api.get).toHaveBeenCalledWith(
+            `/api/acoes-pdde/receitas-previstas-pdde/?page=${currentPage}&page_size=${rowsPerPage}&paa_uuid=1234`,
+            getAuthHeader()
+        );
+        expect(result).toEqual(mockData);
+    });
+
+    test('patchRecursoProprioPaa deve chamar a API corretamente', async () => {
+        api.patch.mockResolvedValue({ data: mockData });
+        const payload = { teste: 'testes'}
+        const uuid = '1234'
+        const result = await patchRecursoProprioPaa(uuid, payload);
+
+        expect(api.patch).toHaveBeenCalledWith(
+            `api/recursos-proprios-paa/${uuid}/`,
+            payload,
+            getAuthHeader()
+        );
+        expect(result).toEqual(mockData);
+    });
+
+    test('postRecursoProprioPaa deve chamar a API corretamente', async () => {
+        api.post.mockResolvedValue({ data: mockData });
+        const payload = { teste: 'testes'}
+        const result = await postRecursoProprioPaa(payload);
+
+        expect(api.post).toHaveBeenCalledWith(
+            `api/recursos-proprios-paa/`,
+            payload,
+            getAuthHeader()
+        );
+        expect(result).toEqual(mockData);
+    });
+
+    test('deleteRecursoProprioPaa deve chamar a API corretamente', async () => {
+        api.delete.mockResolvedValue({ data: mockData });
+        const uuid = '1234'
+        const result = await deleteRecursoProprioPaa(uuid);
+
+        expect(api.delete).toHaveBeenCalledWith(
+            `api/recursos-proprios-paa/${uuid}/`,
+            getAuthHeader()
+        );
+        expect(result).toEqual(mockData);
     });
 
 });

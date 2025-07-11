@@ -3,7 +3,7 @@ import SideNav, {NavItem, NavIcon, NavText} from '@trendmicro/react-sidenav'
 import '@trendmicro/react-sidenav/dist/react-sidenav.css'
 import './siderbarLeft.scss'
 import {SidebarContext} from '../../../context/Sidebar'
-import {useHistory} from 'react-router-dom'
+import {useNavigate} from 'react-router-dom'
 import {Versao} from "../Versao";
 import ReactTooltip from "react-tooltip";
 import {getUrls} from "./getUrls";
@@ -20,7 +20,7 @@ export const SidebarLeft = () => {
     const sidebarStatus = useContext(SidebarContext);
     const notificacaoContext = useContext(NotificacaoContext);
     const centralDeDownloadContext = useContext(CentralDeDownloadContext)
-    let history = useHistory();
+    let navigate = useNavigate();
 
     const location = useLocation();
 
@@ -108,15 +108,12 @@ export const SidebarLeft = () => {
                     notificacaoContext.getExibeModalErroConcluirPc();
                     visoesService.forcarNovoLogin();
                     const to = '/' + selected;
-                    if (history.location.pathname !== to) {
+                    if (location.pathname !== to) {
                         if (sidebarStatus.irParaUrl) {
                             if (selected === 'dre-dashboard') {
-                                history.push({
-                                    pathname: to,
-                                    state: { acessadoPelaSidebar: true },
-                                });
+                                navigate(to, { state: { acessadoPelaSidebar: true } });
                             } else {
-                                history.push(to);
+                                navigate(to);
                             }
                         }
                     }

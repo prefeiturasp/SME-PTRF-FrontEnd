@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { TiposDocumento } from '..';
+import { MemoryRouter } from 'react-router-dom';
+import { TiposDocumento } from '../index';
 import { getTodosTiposDeDocumento, getFiltrosTiposDeDocumento } from "../../../../../../services/sme/Parametrizacoes.service";
 import { toastCustom } from "../../../../../Globais/ToastCustom";
 import { postCreateTipoDeDocumento, patchAlterarTipoDeDocumento, deleteTipoDeDocumento } from '../../../../../../services/sme/Parametrizacoes.service';
@@ -34,7 +35,7 @@ describe("Carrega página de Tipos de Documentos", () => {
 
     it("Testa a chamada de getFiltrosTiposDeDocumento", async () => {
         getTodosTiposDeDocumento.mockResolvedValueOnce(mockData);
-        render(<TiposDocumento />);
+        render(<MemoryRouter><TiposDocumento /></MemoryRouter>);
 
         await waitFor(() => {
 
@@ -53,7 +54,7 @@ describe("Carrega página de Tipos de Documentos", () => {
 
     it("Testa a chamada de limpar Filtros", async () => {
         getTodosTiposDeDocumento.mockResolvedValue(mockData)
-        render(<TiposDocumento />);
+        render(<MemoryRouter><TiposDocumento /></MemoryRouter>);
 
         expect(screen.getByText(/Carregando.../i)).toBeInTheDocument();
 
@@ -78,15 +79,13 @@ describe("Carrega página de Tipos de Documentos", () => {
     });
 
     test('Renderiza a mensagem "Carregando..." ao abrir a página', () => {
-        render(<TiposDocumento />);
+        render(<MemoryRouter><TiposDocumento /></MemoryRouter>);
         expect(screen.getByText(/Carregando.../i)).toBeInTheDocument();
     });
 
     it("carrega no modo Listagem com itens", async () => {
         getTodosTiposDeDocumento.mockResolvedValueOnce(mockData);
-        render(
-            <TiposDocumento />
-        );
+        render(<MemoryRouter><TiposDocumento /></MemoryRouter>);
 
         expect(screen.getByText(/Tipo de Documento/i)).toBeInTheDocument();
 
@@ -100,9 +99,7 @@ describe("Carrega página de Tipos de Documentos", () => {
     it("carrega no modo Listagem vazia", async () => {
         const mockData = [];
         getTodosTiposDeDocumento.mockResolvedValue(mockData)
-        render(
-            <TiposDocumento />
-        );
+        render(<MemoryRouter><TiposDocumento /></MemoryRouter>);
 
         await waitFor(()=> expect(getTodosTiposDeDocumento).toHaveBeenCalled());
         await waitFor(()=> {
@@ -117,7 +114,7 @@ describe("Testes Operacao CREATE", ()=>{
     it("Renderiza Operacao create sucesso", async () => {
         RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
 
-        render(<TiposDocumento/>);
+        render(<MemoryRouter><TiposDocumento/></MemoryRouter>);
 
         await waitFor(()=> {
             const button = screen.getByRole('button', { name: /adicionar tipo de documento/i });
@@ -146,7 +143,7 @@ describe("Testes Operacao CREATE", ()=>{
         });
         RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
 
-        render(<TiposDocumento/>);
+        render(<MemoryRouter><TiposDocumento/></MemoryRouter>);
 
         await waitFor(()=> {
             const button = screen.getByRole('button', { name: /adicionar tipo de documento/i });
@@ -177,7 +174,7 @@ describe("Testes Operacao CREATE", ()=>{
         });
         RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
 
-        render(<TiposDocumento/>);
+        render(<MemoryRouter><TiposDocumento/></MemoryRouter>);
 
         await waitFor(()=> {
             const button = screen.getByRole('button', { name: /adicionar tipo de documento/i });
@@ -214,7 +211,7 @@ describe("Testes Operacao EDIT", ()=>{
 
     it("Renderiza Operacao edit sucesso", async () => {
         RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
-        render(<TiposDocumento/>);
+        render(<MemoryRouter><TiposDocumento/></MemoryRouter>);
 
         await waitFor(()=> {
             const tabela = screen.getByRole('grid');
@@ -247,7 +244,7 @@ describe("Testes Operacao EDIT", ()=>{
         patchAlterarTipoDeDocumento.mockRejectedValueOnce({
             response: { data: { non_field_errors: "Este tipo de documento já existe." } },
         });
-        render(<TiposDocumento/>);
+        render(<MemoryRouter><TiposDocumento/></MemoryRouter>);
 
         await waitFor(()=> {
             const tabela = screen.getByRole('grid');
@@ -282,7 +279,7 @@ describe("Testes Operacao EDIT", ()=>{
         patchAlterarTipoDeDocumento.mockRejectedValueOnce({
             response: { data: { nome: "Testando erro response" } },
         });
-        render(<TiposDocumento/>);
+        render(<MemoryRouter><TiposDocumento/></MemoryRouter>);
 
         await waitFor(()=> {
             const tabela = screen.getByRole('grid');
@@ -320,7 +317,7 @@ describe("Testes Operacao DELETE", ()=>{
     });
     it("Renderiza Operacao delete sucesso", async () => {
         RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
-        render(<TiposDocumento/>);
+        render(<MemoryRouter><TiposDocumento/></MemoryRouter>);
 
         await waitFor(()=> {
             const tabela = screen.getByRole('grid');
@@ -353,7 +350,7 @@ describe("Testes Operacao DELETE", ()=>{
         deleteTipoDeDocumento.mockRejectedValueOnce({
             response: { data: { mensagem: "mensagem de erro" } },
         });
-        render(<TiposDocumento/>);
+        render(<MemoryRouter><TiposDocumento/></MemoryRouter>);
 
         await waitFor(()=> {
             const tabela = screen.getByRole('grid');
@@ -386,7 +383,7 @@ describe("Testes Operacao DELETE", ()=>{
         deleteTipoDeDocumento.mockRejectedValueOnce({
             response: { data: { nome: "Testando erro response" } },
         });
-        render(<TiposDocumento/>);
+        render(<MemoryRouter><TiposDocumento/></MemoryRouter>);
 
         await waitFor(()=> {
             const tabela = screen.getByRole('grid');

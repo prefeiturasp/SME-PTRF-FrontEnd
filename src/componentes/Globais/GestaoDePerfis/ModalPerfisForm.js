@@ -12,7 +12,7 @@ export const ModalPerfisForm = ({show, handleClose, statePerfisForm, setStatePer
     const YupSignupSchemaPerfis = yup.object().shape({
         tipo_usuario: yup.string().required("Tipo de usuário é obrigatório"),
         nome_usuario: yup.string().required("Nome de usuário é obrigatório"),
-        grupo_acesso: yup.string().required("Grupo de acesso é obrigatório"),
+        grupo_acesso: yup.array().of(yup.string()).min(1, "Grupo de acesso é obrigatório"),
     });
 
     const validateFormPerfis = async (values) => {
