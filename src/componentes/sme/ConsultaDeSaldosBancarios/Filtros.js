@@ -10,8 +10,8 @@ export const Filtros = ({stateFiltros, handleChangeFiltros, handleSubmitFiltros,
                         <input
                             value={stateFiltros.filtrar_por_unidade}
                             onChange={(e) => handleChangeFiltros(e.target.name, e.target.value)}
-                            name='filtrar_por_unidade'
-                            id="filtrar_por_unidade"
+                            name='filtrar_por_associacao'
+                            id="filtrar_por_associacao"
                             type="text"
                             className="form-control"
                             placeholder='Escreva o nome da associação'

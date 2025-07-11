@@ -12,14 +12,14 @@ export const usePatchCategorias = (uuid, payload) => {
         },
         onSuccess: () => {
             queryClient.invalidateQueries(['categorias']).then()
-            toastCustom.ToastCustomSuccess('Sucesso', 'Edição da Categoria de Ação PDDE realizada com sucesso')
+            toastCustom.ToastCustomSuccess('Sucesso', 'Edição do Programa de Ação PDDE realizada com sucesso')
         },
         onError: (e) => {
             if (e.response && e.response.data && e.response.data.erro && e.response.data.erro === "Duplicated"){
-                toastCustom.ToastCustomError('Ops!', 'Categoria já existe.')
+                toastCustom.ToastCustomError('Ops!', 'Programa já existe.')
             }
             else{
-                toastCustom.ToastCustomError('Ops!', 'Não foi possível atualizar a Categoria de Ação PDDE')
+                toastCustom.ToastCustomError('Ops!', 'Não foi possível atualizar o Programa de Ação PDDE')
             }
         },
     })

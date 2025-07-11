@@ -8,7 +8,7 @@ import Loading from "../../../../../../utils/Loading";
 import {Paginator} from 'primereact/paginator';
 import "./style.scss"; 
 import { Tag } from '../../../../../Globais/Tag';
-import {useNavigate} from "react-router-dom-v5-compat";
+import { useNavigate } from 'react-router-dom';
 
 export const Lista = ({isLoading, tiposDeCredito, count, firstPage, onPageChange}) => {
     const navigate = useNavigate();

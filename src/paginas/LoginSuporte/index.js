@@ -3,8 +3,10 @@ import { LoginSuporteForm } from "./form"
 import logoSP from "../../assets/img/logoSP.svg"
 import LogoPtrf from "../../assets/img/logo-ptrf-verde.png"
 import './login-suporte.scss'
+import { useLocation } from "react-router-dom";
 
-export const LoginSuporte = (props) => {
+export const LoginSuporte = () => {
+    const location = useLocation();
     return (
     <div className="login-suporte-container">
         <div className="login-suporte-card">
@@ -15,9 +17,7 @@ export const LoginSuporte = (props) => {
                 <img className="img-fluid" src={LogoPtrf} alt="logo-ptrf"/>
             </div>
             <div className="login-suporte-card-form">
-                <LoginSuporteForm
-                    redefinicaoDeSenha={props.location.redefinicaoDeSenha}
-                />
+                <LoginSuporteForm redefinicaoDeSenha={location.state?.redefinicaoDeSenha} />
             </div>
             <div className="text-center my-3">
                 <img src={logoSP} alt="logo-prefeitura-sp"/>

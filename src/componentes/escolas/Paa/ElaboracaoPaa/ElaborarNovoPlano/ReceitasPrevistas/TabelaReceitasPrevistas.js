@@ -13,6 +13,26 @@ const TabelaReceitasPrevistas = ({ data, handleOpenEditar }) => {
     );
   }, []);
 
+  const getCongeladoOuCapital = (row) => {
+    const saldo_congelado_receita_prevista = parseFloat(
+      row?.receitas_previstas_paa?.[0]?.saldo_congelado_capital
+    )
+    return saldo_congelado_receita_prevista || row?.saldos?.saldo_atual_capital
+  }
+  const getCongeladoOuCusteio = (row) => {
+    const saldo_congelado_receita_prevista = parseFloat(
+      row?.receitas_previstas_paa?.[0]?.saldo_congelado_custeio
+    )
+    return saldo_congelado_receita_prevista ||
+            row?.saldos?.saldo_atual_custeio
+  }
+  const getCongeladoOuLivre = (row) => {
+    const saldo_congelado_receita_prevista = parseFloat(
+      row?.receitas_previstas_paa?.[0]?.saldo_congelado_livre
+    )
+    return saldo_congelado_receita_prevista || row?.saldos?.saldo_atual_livre
+  }
+
   const dataTemplate = useCallback(
     (rowData, column) => {
       if (rowData?.acao?.nome === "Total do PTRF") {
@@ -21,8 +41,7 @@ const TabelaReceitasPrevistas = ({ data, handleOpenEditar }) => {
             acc +
             (parseFloat(
               row?.receitas_previstas_paa?.[0]?.previsao_valor_capital
-            ) || 0) +
-            row?.saldos?.saldo_atual_capital
+            ) || 0) + getCongeladoOuCapital(row)
           );
         }, 0);
 
@@ -31,8 +50,7 @@ const TabelaReceitasPrevistas = ({ data, handleOpenEditar }) => {
             acc +
             (parseFloat(
               row?.receitas_previstas_paa?.[0]?.previsao_valor_custeio
-            ) || 0) +
-            row?.saldos?.saldo_atual_custeio
+            ) || 0) + getCongeladoOuCusteio(row)
           );
         }, 0);
 
@@ -41,8 +59,7 @@ const TabelaReceitasPrevistas = ({ data, handleOpenEditar }) => {
             acc +
             (parseFloat(
               row?.receitas_previstas_paa?.[0]?.previsao_valor_livre
-            ) || 0) +
-            row?.saldos?.saldo_atual_livre
+            ) || 0) + getCongeladoOuLivre(row)
           );
         }, 0);
 
@@ -77,11 +94,13 @@ const TabelaReceitasPrevistas = ({ data, handleOpenEditar }) => {
       };
 
       const valor_capital =
-        valores.previsao_valor_capital + rowData?.saldos?.saldo_atual_capital;
+        valores.previsao_valor_capital + getCongeladoOuCapital(rowData);
+
       const valor_custeio =
-        valores.previsao_valor_custeio + rowData?.saldos?.saldo_atual_custeio;
+        valores.previsao_valor_custeio + getCongeladoOuCusteio(rowData);
+
       const valor_livre =
-        valores.previsao_valor_livre + rowData?.saldos?.saldo_atual_livre;
+        valores.previsao_valor_livre + getCongeladoOuLivre(rowData);
 
       const fieldMapping = {
         valor_capital: valor_capital,

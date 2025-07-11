@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { MemoryRouter, Route } from "react-router-dom";
+import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { Acoes } from '..';
 import {
     getListaDeAcoes,
@@ -27,9 +27,9 @@ jest.mock("../../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametr
 const renderComponent = () => {
     render(
         <MemoryRouter initialEntries={["/parametro-acoes"]}>
-            <Route path="/parametro-acoes">
-                <Acoes />
-            </Route>
+            <Routes>
+                <Route path="/parametro-acoes" element={<Acoes />} />
+            </Routes>
         </MemoryRouter>
     );
 };

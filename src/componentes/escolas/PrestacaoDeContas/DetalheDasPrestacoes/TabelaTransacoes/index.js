@@ -1,5 +1,5 @@
 import React, {memo, useState, Fragment} from "react";
-import {useHistory} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {DataTable} from "primereact/datatable";
 import {Column} from "primereact/column";
 import moment from "moment";
@@ -26,7 +26,7 @@ const TabelaTransacoes = ({
     emptyListComponent = <></>
 }) => {
 
-    let history = useHistory();
+    let navigate = useNavigate();
     const rowsPerPage = 10;
     const [expandedRows, setExpandedRows] = useState(null);
     const [showModal, setShowModal] = useState(false);
@@ -55,7 +55,7 @@ const TabelaTransacoes = ({
     const onCancelarTrue = () => {
         setShowModal(false);
         const url = urlRedirect + uuid + '/tabela-de-lancamentos-despesas';
-        history.push(url);
+        navigate(url);
     };
 
     const redirecionaDetalhe = value => {

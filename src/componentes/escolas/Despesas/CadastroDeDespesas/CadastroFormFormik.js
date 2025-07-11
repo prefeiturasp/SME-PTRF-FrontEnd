@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {Formik, FieldArray, Field} from "formik";
 import MaskedInput from 'react-text-mask'
 import {visoesService} from "../../../../services/visoes.service";
@@ -118,6 +118,46 @@ export const CadastroFormFormik = ({
     const setaValorRealizado = (values, valor) =>{
         values.valor_total = valor
     }
+
+    const [podeHabilitar, setPodeHabilitar] = useState(false);
+
+    useEffect(() => {
+        const valoresIniciais = initialValues();
+        let timeoutId;
+
+        if (
+            valoresIniciais &&
+            typeof valoresIniciais.despesa_anterior_ao_uso_do_sistema_editavel !== "undefined"
+        ) {
+            const desabilita =
+                readOnlyBtnAcao ||
+                !visoesService.getPermissoes(["delete_despesa"]) ||
+                !valoresIniciais.despesa_anterior_ao_uso_do_sistema_editavel;
+
+            const temDataDocumento = !!valoresIniciais.data_documento;
+
+            if (!desabilita && temDataDocumento) {
+                setPodeHabilitar(false);
+                timeoutId = setTimeout(() => {
+                    setPodeHabilitar(true);
+                }, 1000);
+            } else {
+                setPodeHabilitar(false);
+            }
+        } else {
+            setPodeHabilitar(false);
+        }
+
+        return () => {
+            if (timeoutId) {
+                clearTimeout(timeoutId);
+            }
+        };
+    }, [
+        readOnlyBtnAcao,
+        initialValues
+    ]);
+
     return (
         <>
             <Formik
@@ -869,18 +909,18 @@ export const CadastroFormFormik = ({
                                     </button>
 
                                     {aux.mostraBotaoDeletar(despesaContext.idDespesa, parametroLocation)
-                                        ? 
-                                            <button
-                                                data-qa={`cadastro-edicao-despesa-btn-deletar`}
-                                                disabled={readOnlyBtnAcao || !visoesService.getPermissoes(["delete_despesa"]) || !props.values.despesa_anterior_ao_uso_do_sistema_editavel}
-                                                type="reset"
-                                                onClick={() => aux.onShowDeleteModal(setShowDelete, setShowTextoModalDelete, values)}
-                                                className="btn btn btn-danger mt-2 mr-2"
-                                            >
-                                                Deletar
-                                            </button>
-                                        : 
-                                            null
+                                        ?
+                                        <button
+                                            data-qa={`cadastro-edicao-despesa-btn-deletar`}
+                                            disabled={!podeHabilitar}
+                                            type="reset"
+                                            onClick={() => aux.onShowDeleteModal(setShowDelete, setShowTextoModalDelete, values)}
+                                            className="btn btn btn-danger mt-2 mr-2"
+                                        >
+                                            Deletar
+                                        </button>
+                                        :
+                                        null
                                     }
                                     
                                     {!aux.ehOperacaoExclusao(parametroLocation) &&

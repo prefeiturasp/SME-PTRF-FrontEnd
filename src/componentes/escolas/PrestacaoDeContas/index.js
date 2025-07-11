@@ -1,5 +1,5 @@
 import React, {useEffect, useState, Fragment, useCallback, useContext} from "react";
-import {useHistory, useParams} from "react-router-dom";
+import { useNavigate, useParams } from 'react-router-dom';
 import {useDispatch} from "react-redux";
 import {TopoSelectPeriodoBotaoConcluir} from "./TopoSelectPeriodoBotaoConcluir";
 import {getPeriodosDePrestacaoDeContasDaAssociacao, getDataPreenchimentoPreviaAta, getContasAtivasDaAssociacaoNoPeriodo} from "../../../services/escolas/Associacao.service"
@@ -30,7 +30,7 @@ import { setPersistenteUrlVoltar } from "../../../store/reducers/componentes/esc
 import { CustomModalConfirm } from "../../Globais/Modal/CustomModalConfirm";
 
 export const PrestacaoDeContas = ({setStatusPC, registroFalhaGeracaoPc, setRegistroFalhaGeracaoPc, setApresentaBarraAvisoErroProcessamentoPc}) => {
-    const history = useHistory();
+    const navigate = useNavigate();
     const dispatch = useDispatch();
     let {monitoramento} = useParams();
 
@@ -288,19 +288,19 @@ export const PrestacaoDeContas = ({setStatusPC, registroFalhaGeracaoPc, setRegis
     };
 
     function goToMembrosAssociacao() {
-        history.push(`/membros-da-associacao`)
+        navigate('/membros-da-associacao')
     }
 
     function goToAssociacoes() {
         dispatch(setPersistenteUrlVoltar('/prestacao-de-contas/'));
-        history.push(`/dados-da-associacao/`)
+        navigate('/dados-da-associacao/')
     };
 
     function goToConciliacaoBancaria(pendencias) {
         if (pendencias.contas_pendentes.length > 1){
-            history.push(`/detalhe-das-prestacoes/${periodoPrestacaoDeConta.periodo_uuid}/?origem=concluir-periodo`)
+            navigate(`/detalhe-das-prestacoes/${periodoPrestacaoDeConta.periodo_uuid}/?origem=concluir-periodo`)
         } else {
-            history.push(`/detalhe-das-prestacoes/${periodoPrestacaoDeConta.periodo_uuid}/${pendencias.contas_pendentes[0]}/?origem=concluir-periodo`)
+            navigate(`/detalhe-das-prestacoes/${periodoPrestacaoDeConta.periodo_uuid}/${pendencias.contas_pendentes[0]}/?origem=concluir-periodo`)
         }
     };
     
@@ -476,7 +476,7 @@ export const PrestacaoDeContas = ({setStatusPC, registroFalhaGeracaoPc, setRegis
         contextSideBar.setIrParaUrl(true)
         
         let uuid_prestacao_de_contas = localStorage.getItem('uuidPrestacaoConta');
-        history.push(`/consulta-detalhamento-analise-da-dre/${uuid_prestacao_de_contas}`)
+        navigate(`/consulta-detalhamento-analise-da-dre/${uuid_prestacao_de_contas}`)
     }
 
     const onHandleClose = () => {
@@ -528,7 +528,7 @@ export const PrestacaoDeContas = ({setStatusPC, registroFalhaGeracaoPc, setRegis
                 // Removendo o parâmetro /monitoramento-de-pc, que veio na url para evitar disparar novamente o concluirPeriodo() no caso de um Refresh.
                 // Não foi possível utilizar useHistory.push() dentro do NotificacaoContext.
                 // Por isso, ao clicar no modal de Monitoramento de PC (Concluir geração) o redirecionamento foi feito com  window.location.assign('/prestacao-de-contas/monitoramento-de-pc')
-                window.history.replaceState({}, document.title, "/prestacao-de-contas/");
+                navigate('/prestacao-de-contas/', { replace: true })
                 setStringMonitoramento(undefined)
 
                 await concluirPeriodo()

@@ -1,5 +1,5 @@
 import React, {useEffect, useState, useCallback} from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 import {DatePickerField} from "../DatePickerField";
 import {PaginasContainer} from "../../../paginas/PaginasContainer";
 import {useLocation} from 'react-router-dom';
@@ -14,7 +14,7 @@ import './../../../componentes/escolas/GeracaoDaAta/geracao-da-ata.scss'
 export const DevolucaoAoTesouroAjuste = () => {
     const { state } = useLocation();
 
-    const history = useHistory();
+    const navigate = useNavigate();
     const [devolucao, setDevolucao] = useState([]);
     const [despesa, setDespesas] = useState([]);
     const [dateDevolucao, setDateDevolucao] = useState('');
@@ -45,7 +45,7 @@ export const DevolucaoAoTesouroAjuste = () => {
     }, [])
 
     const handleCancelar = () => {
-        history.push(`${state.origem}/${state.uuid_pc}#tabela-acertos-lancamentos`)
+        navigate(`${state.origem}/${state.uuid_pc}#tabela-acertos-lancamentos`)
     }
 
     const handleModalDevolucaoAoTesouro = () => {
@@ -68,7 +68,7 @@ export const DevolucaoAoTesouroAjuste = () => {
         await deleteDevolucaoAoTesouro(state.uuid_pc, payload)
         await desmarcarDevolucaoTesouro(state.uuid_analise_lancamento)
         toastCustom.ToastCustomSuccess('Devolução ao tesouro removida com sucesso.')
-        history.push(`${state.origem}/${state.uuid_pc}`)
+        navigate(`${state.origem}/${state.uuid_pc}`)
     }
 
     const submitAlteracaoDevolucaoTesouro = async () => {
@@ -89,7 +89,7 @@ export const DevolucaoAoTesouroAjuste = () => {
         await getSalvarDevoulucoesAoTesouro(state.uuid_pc, payload);
         await marcarDevolucaoTesouro(state.uuid_analise_lancamento);
         toastCustom.ToastCustomSuccess('Data de devolução ao tesouro alterada com sucesso.')
-        history.push(`${state.origem}/${state.uuid_pc}`)
+        navigate(`${state.origem}/${state.uuid_pc}`)
     }
 
     return(

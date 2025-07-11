@@ -30,7 +30,7 @@ export const Filtros = ({stateFiltros, handleChangeFiltros, handleSubmitFiltros,
                             placeholder="Selecione as categorias"
                             value={stateFiltros.filtrar_por_categoria}
                             onChange={(value) => handleChangeFiltros('filtrar_por_categoria', value)}
-                            className="categorias-table-multiple-search"
+                            style={{ width: "100%" }}
                             required
                         >
                             <Option value="">Todos</Option>

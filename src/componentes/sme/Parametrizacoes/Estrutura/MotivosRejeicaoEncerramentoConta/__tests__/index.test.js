@@ -7,6 +7,7 @@ import { useGetMotivosRejeicao } from "../hooks/useGetMotivosRejeicao";
 import { usePostMotivoRejeicao } from "../hooks/usePostMotivoRejeicao";
 import { usePatchMotivoRejeicao } from "../hooks/usePatchMotivoRejeicao";
 import { useDeleteMotivoRejeicao } from "../hooks/useDeleteMotivoRejeicao";
+import { MemoryRouter } from 'react-router-dom';
 
 jest.mock("../hooks/useGetMotivosRejeicao");
 jest.mock("../hooks/usePostMotivoRejeicao");
@@ -123,11 +124,13 @@ describe('MotivosRejeicaoEncerramentoConta', () => {
     })
     const renderComponent = () => {
         return render(
-            <QueryClientProvider client={queryClient}>
-                <MotivosRejeicaoContext.Provider value={mockContext}>
-                    <MotivosRejeicaoEncerramentoConta />
-                </MotivosRejeicaoContext.Provider>
-            </QueryClientProvider>
+            <MemoryRouter>
+                <QueryClientProvider client={queryClient}>
+                    <MotivosRejeicaoContext.Provider value={mockContext}>
+                        <MotivosRejeicaoEncerramentoConta />
+                    </MotivosRejeicaoContext.Provider>
+                </QueryClientProvider>
+            </MemoryRouter>
         )
         // return render(
         //     <QueryClientProvider client={queryClient}>

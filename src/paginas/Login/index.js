@@ -1,13 +1,15 @@
 import React from "react";
 import {LoginForm} from "./LoginForm"
 import {LoginContainer} from "../LoginContainer";
+import { useLocation } from "react-router-dom";
 
-export const Login = (props) => {
+export const Login = () => {
+    const location = useLocation();
     return (
         <>
             <LoginContainer>
                 <LoginForm
-                    redefinicaoDeSenha={props.location.redefinicaoDeSenha}
+                    redefinicaoDeSenha={location.state?.redefinicaoDeSenha}
                 />
             </LoginContainer>
         </>

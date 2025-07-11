@@ -11,14 +11,14 @@ export const usePostCategorias = (payload) => {
         },
         onSuccess: (data) => {
             queryClient.invalidateQueries(['categorias']).then()
-            toastCustom.ToastCustomSuccess('Sucesso.', 'Categoria de Ação PDDE criada com sucesso')
+            toastCustom.ToastCustomSuccess('Sucesso.', 'Programa de Ação PDDE criada com sucesso')
         },
         onError: (e) => {
             if (e.response && e.response.data && e.response.data.erro && e.response.data.erro === "Duplicated"){
-                toastCustom.ToastCustomError('Ops!', 'Categoria já existe.')
+                toastCustom.ToastCustomError('Ops!', 'Programa já existe.')
             }
             else{
-                toastCustom.ToastCustomError('Ops!', 'Não foi possível criar a Categoria de Ação PDDE')
+                toastCustom.ToastCustomError('Ops!', 'Não foi possível criar o Programa de Ação PDDE')
             }
         },
     })

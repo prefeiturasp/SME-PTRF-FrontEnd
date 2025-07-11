@@ -28,7 +28,7 @@ describe('ModalForm Component', () => {
     show: true,
     stateFormModal: {
       nome: "Acao pdde 1",
-      categoria: 1,
+      programa: "2df33e5d-fbbf-4a4a-ab9a-d5fa49de4db2",
       aceita_capital: false,
       aceita_custeio: false,
       aceita_livre_aplicacao: false,    
@@ -172,7 +172,7 @@ describe('ModalForm Component', () => {
       ...initialProps,
       stateFormModal: {
         nome: "",
-        categoria: "",
+        programa: "",
         aceita_capital: false,
         aceita_custeio: false,
         aceita_livre_aplicacao: false,    
@@ -206,7 +206,7 @@ describe('ModalForm Component', () => {
       ...initialProps,
       stateFormModal: {
         nome: "",
-        categoria: "",
+        programa: "",
         aceita_capital: false,
         aceita_custeio: false,
         aceita_livre_aplicacao: false,    

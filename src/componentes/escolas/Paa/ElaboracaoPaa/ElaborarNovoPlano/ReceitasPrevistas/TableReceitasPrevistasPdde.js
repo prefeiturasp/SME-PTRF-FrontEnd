@@ -1,5 +1,5 @@
 import React from "react";
-import { useGetCategoriasPddeTotais } from "./hooks/useGetCategoriasPddeTotais";
+import { useGetProgramasPddeTotais } from "./hooks/useGetProgramasPddeTotais";
 import { Spin } from "antd";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
@@ -7,7 +7,7 @@ import { IconButton } from "../../../../../Globais/UI/Button/IconButton";
 import { formatMoneyBRL } from "../../../../../../utils/money";
 
 const TableReceitasPrevistasPdde = ({ activeTab, tabs, setActiveTab }) => {
-  const { categorias, total, isLoading } = useGetCategoriasPddeTotais();
+  const { programas, total, isLoading } = useGetProgramasPddeTotais();
 
   const nomeTemplate = (rowData, column) => {
     return (
@@ -65,7 +65,7 @@ const TableReceitasPrevistasPdde = ({ activeTab, tabs, setActiveTab }) => {
         <Spin spinning={isLoading}>
           <DataTable
             className="tabela-receitas-previstas mt-4"
-            value={[...categorias, totalRow]}
+            value={[...programas, totalRow]}
             rowClassName={rowClassName}
           >
             <Column field="nome" header="Recursos" body={nomeTemplate} />

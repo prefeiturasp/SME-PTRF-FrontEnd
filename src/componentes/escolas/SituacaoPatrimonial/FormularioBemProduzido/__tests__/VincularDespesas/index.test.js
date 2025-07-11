@@ -1,10 +1,15 @@
-import { render, screen } from "@testing-library/react";
-
+import { fireEvent, render, screen } from "@testing-library/react";
 import { VincularDespesas } from "../../VincularDespesas";
+import { MemoryRouter } from "react-router-dom";
 
-jest.mock("react-router-dom-v5-compat", () => ({
-  ...jest.requireActual("react-router-dom-v5-compat"),
+const mockUseNavigate = jest.fn();
+const mockSalvarRascunho = jest.fn();
+const mockSetDespesasSelecionadas = jest.fn();
+
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
   useNavigate: jest.fn(),
+  useSearchParams: jest.fn()
 }));
 
 jest.mock("../../hooks/usePostBemProduzido", () => ({
@@ -55,8 +60,24 @@ jest.mock("../../VincularDespesas/FormFiltrosDespesas", () => ({
 }));
 
 describe("VincularDespesas", () => {
+  beforeEach(() => {
+    // Set up the useNavigate mock before each test
+    const { useNavigate } = require('react-router-dom');
+    useNavigate.mockImplementation(() => mockUseNavigate);
+  });
+
   it("deve renderizar a tabela de despesas", async () => {
-    render(<VincularDespesas uuid={null} />);
+    render(
+      <MemoryRouter>
+        <VincularDespesas
+          uuid={null}
+          salvarRascunho={mockSalvarRascunho}
+          setDespesasSelecionadas={mockSetDespesasSelecionadas}
+          despesasSelecionadas={[]}
+        />
+        ,
+      </MemoryRouter>
+    );
 
     expect(
       screen.getByText("Pesquise as despesas relacionadas à produção do bem")
@@ -64,5 +85,23 @@ describe("VincularDespesas", () => {
     expect(await screen.findByText("ABC123")).toBeInTheDocument();
     expect(screen.getByText("Filtrar")).toBeInTheDocument();
     expect(screen.getByText("Salvar rascunho")).toBeDisabled();
+  });
+
+  it("Deve voltar para a página de listagem ao clicar no botão cancelar", async () => {
+    render(
+      <MemoryRouter>
+        <VincularDespesas
+          uuid={null}
+          salvarRascunho={mockSalvarRascunho}
+          setDespesasSelecionadas={mockSetDespesasSelecionadas}
+          despesasSelecionadas={[]}
+        />
+      </MemoryRouter>
+    );
+
+    const buttonCancelar = screen.getByRole("button", { name: "Cancelar" });
+    fireEvent.click(buttonCancelar);
+
+    expect(mockUseNavigate).toHaveBeenCalledWith("/lista-situacao-patrimonial");
   });
 });

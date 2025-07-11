@@ -368,6 +368,14 @@ describe('Testes para funções de análise', () => {
     
     test('pathExtratoBancarioPrestacaoDeConta deve chamar a API corretamente', async () => {
         api.patch.mockResolvedValue({ data: mockData })
+        const getAuthHeaderFormdata = () => {
+            return {
+                headers: {
+                    'Authorization': `JWT ${mockToken}`,
+                    'Content-Type': 'multipart/form-data'
+                }
+            };
+        };
         const payload = {
             periodo_uuid: periodo_uuid,
             conta_associacao_uuid: '1234',
@@ -394,7 +402,7 @@ describe('Testes para funções de análise', () => {
         expect(api.patch).toHaveBeenCalledWith(
             `/api/conciliacoes/salvar-observacoes/`,
             formData,
-            getAuthHeader()
+            getAuthHeaderFormdata()
         )
         expect(result).toEqual(mockData);
     });

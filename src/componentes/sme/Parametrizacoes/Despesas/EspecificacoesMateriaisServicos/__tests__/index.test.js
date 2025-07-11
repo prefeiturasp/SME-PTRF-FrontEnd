@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { EspecificacoesMateriaisServicos } from '../index';
 import { MateriaisServicosProvider } from '../context/MateriaisServicos';
-import { MemoryRouter, Route } from "react-router-dom";
+import { MemoryRouter, Route, Routes } from "react-router-dom";
 import '@testing-library/jest-dom';
 
 // Mock dos componentes filhos para verificar se estão sendo renderizados
@@ -29,11 +29,9 @@ describe('EspecificacoesMateriaisServicos', () => {
     const renderComponent = (()=>{
         return render(
             <MemoryRouter initialEntries={["/parametro-especificacoes"]}>
-                <Route path="/parametro-especificacoes">
-                    <MateriaisServicosProvider>
-                        <EspecificacoesMateriaisServicos />
-                    </MateriaisServicosProvider>
-                </Route>
+                <Routes>
+                    <Route path="/parametro-especificacoes" element={<MateriaisServicosProvider><EspecificacoesMateriaisServicos /></MateriaisServicosProvider>} />
+                </Routes>
             </MemoryRouter>
         );
     })

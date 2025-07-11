@@ -1,6 +1,7 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import React  from "react";
 import { Pagina404 } from "../index";
+import { MemoryRouter } from "react-router-dom";
 
 
 describe('<Pagina404>', () => {
@@ -11,7 +12,9 @@ describe('<Pagina404>', () => {
   });
   test('Deve renderizar o componente', async () => {
     render(
-        <Pagina404/>
+        <MemoryRouter>
+          <Pagina404/>
+        </MemoryRouter>
     )
     expect(screen.getByText(
       "Não encontramos a página, clique no link abaixo e seja direcionado para a página inicial")).toBeInTheDocument();
