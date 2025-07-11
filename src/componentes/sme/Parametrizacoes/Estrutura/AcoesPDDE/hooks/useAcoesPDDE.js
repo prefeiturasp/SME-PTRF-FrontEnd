@@ -9,7 +9,7 @@ import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../../Retor
 
 const initialStateFormModal = {
     nome: "",
-    categoria: "",
+    programa: "",
     aceita_capital: false,
     aceita_custeio: false,
     aceita_livre_aplicacao: false,    
@@ -46,7 +46,7 @@ export const useAcoesPDDE = () => {
             operacao: "edit",
             open: true,
             editavel: true,
-            categoria: rowData.categoria ? rowData.categoria : "", 
+            programa: rowData.programa ? rowData.programa : "", 
         });
     }
             
@@ -75,7 +75,7 @@ export const useAcoesPDDE = () => {
     const handleSubmitFormModal = async (values) => {
         const payload = {
             nome: values.nome,
-            categoria: values.categoria,
+            programa: values.programa,
             aceita_capital: values.aceita_capital,
             aceita_custeio: values.aceita_custeio,
             aceita_livre_aplicacao: values.aceita_livre_aplicacao,

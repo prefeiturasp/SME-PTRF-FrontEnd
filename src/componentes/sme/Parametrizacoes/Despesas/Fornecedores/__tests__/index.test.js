@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { Fornecedores } from '..';
+import { MemoryRouter } from 'react-router-dom';
+import { Fornecedores } from '../index';
 import {
     getFornecedores,
     getFiltrosFornecedores,
@@ -51,7 +52,7 @@ describe("Carrega página de registros", () => {
 
     it("Testa a chamada de getFiltros", async () => {
         getFornecedores.mockResolvedValue(mockListaFornecedores);
-        render(<Fornecedores />);
+        render(<MemoryRouter><Fornecedores /></MemoryRouter>);
 
         await waitFor(() => {
 
@@ -70,7 +71,7 @@ describe("Carrega página de registros", () => {
 
     it("Testa a chamada de limpar Filtros", async () => {
         getFornecedores.mockResolvedValue(mockListaFornecedores)
-        render(<Fornecedores />);
+        render(<MemoryRouter><Fornecedores /></MemoryRouter>);
 
         expect(screen.getByText(/Carregando.../i)).toBeInTheDocument();
 
@@ -96,7 +97,7 @@ describe("Carrega página de registros", () => {
 
     it("carrega no modo Listagem com itens", async () => {
         getFornecedores.mockResolvedValueOnce(mockListaFornecedores);
-        render(<Fornecedores />);
+        render(<MemoryRouter><Fornecedores /></MemoryRouter>);
 
         expect(screen.getByText(/Fornecedores/i)).toBeInTheDocument();
 
@@ -118,7 +119,7 @@ describe("Testes Permissões condicionais para DRE e SME", ()=>{
         visoesService.getItemUsuarioLogado.mockReturnValue('DRE');
         visoesService.getPermissoes.mockReturnValue(true);
         getFornecedores.mockResolvedValue([])
-        render(<Fornecedores/>);
+        render(<MemoryRouter><Fornecedores/></MemoryRouter>);
 
         await waitFor(()=> {
             const btnAdicionar = screen.getByRole('button', { name: /adicionar fornecedor/i });
@@ -131,7 +132,7 @@ describe("Testes Permissões condicionais para DRE e SME", ()=>{
         RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
         visoesService.getItemUsuarioLogado.mockReturnValue('SME');
         getFornecedores.mockResolvedValue([])
-        render(<Fornecedores/>);
+        render(<MemoryRouter><Fornecedores/></MemoryRouter>);
 
         await waitFor(()=> {
             const btnAdicionar = screen.getByRole('button', { name: /adicionar fornecedor/i });
@@ -153,7 +154,7 @@ describe("Testes Operacao CREATE", ()=>{
         visoesService.getItemUsuarioLogado.mockReturnValue('SME');
         visoesService.getPermissoes.mockReturnValue(true);
         getFornecedores.mockResolvedValue([])
-        render(<Fornecedores/>);
+        render(<MemoryRouter><Fornecedores/></MemoryRouter>);
 
         await waitFor(()=> {
             const btnAdicionar = screen.getByRole('button', { name: /adicionar fornecedor/i });
@@ -173,7 +174,7 @@ describe("Testes Operacao CREATE", ()=>{
         RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
         getFornecedores.mockResolvedValue([])
 
-        render(<Fornecedores/>);
+        render(<MemoryRouter><Fornecedores/></MemoryRouter>);
 
         await waitFor(()=> {
             const btnAdd = screen.getByRole('button', { name: /adicionar fornecedor/i });
@@ -217,7 +218,7 @@ describe("Testes Operacao CREATE", ()=>{
         RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
         getFornecedores.mockResolvedValue([])
 
-        render(<Fornecedores/>);
+        render(<MemoryRouter><Fornecedores/></MemoryRouter>);
 
         await waitFor(()=> {
             const btnAdd = screen.getByRole('button', { name: /adicionar fornecedor/i });
@@ -261,7 +262,7 @@ describe("Testes Operacao EDIT", ()=>{
         RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
         visoesService.getItemUsuarioLogado.mockReturnValue('SME');
         visoesService.getPermissoes.mockReturnValue(true);
-        render(<Fornecedores/>);
+        render(<MemoryRouter><Fornecedores/></MemoryRouter>);
 
         await waitFor(()=> {
             const tabela = screen.getByRole('grid');
@@ -306,7 +307,7 @@ describe("Testes Operacao EDIT", ()=>{
             response: { data: { non_field_errors: "Este fornecedor já existe." } },
         });
         getFornecedores.mockResolvedValue(mockListaFornecedores)
-        render(<Fornecedores/>);
+        render(<MemoryRouter><Fornecedores/></MemoryRouter>);
 
         await waitFor(()=> {
             const tabela = screen.getByRole('grid');
@@ -351,7 +352,7 @@ describe("Testes Operacao EDIT", ()=>{
         patchAlterarFornecedor.mockRejectedValueOnce({
             response: { data: { nome: "Testando erro response" } },
         });
-        render(<Fornecedores/>);
+        render(<MemoryRouter><Fornecedores/></MemoryRouter>);
 
         await waitFor(()=> {
             const tabela = screen.getByRole('grid');
@@ -398,7 +399,7 @@ describe("Testes Operacao DELETE", ()=>{
         RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
         visoesService.getItemUsuarioLogado.mockReturnValue('SME');
         visoesService.getPermissoes.mockReturnValue(true);
-        render(<Fornecedores/>);
+        render(<MemoryRouter><Fornecedores/></MemoryRouter>);
 
         await waitFor(()=> {
             const tabela = screen.getByRole('grid');
@@ -433,7 +434,7 @@ describe("Testes Operacao DELETE", ()=>{
         deleteFornecedor.mockRejectedValueOnce({
             response: { data: { non_field_errors: "mensagem de erro" } },
         });
-        render(<Fornecedores/>);
+        render(<MemoryRouter><Fornecedores/></MemoryRouter>);
 
         await waitFor(()=> {
             const tabela = screen.getByRole('grid');
@@ -468,7 +469,7 @@ describe("Testes Operacao DELETE", ()=>{
         deleteFornecedor.mockRejectedValueOnce({
             response: { data: { nome: "Testando erro response" } },
         });
-        render(<Fornecedores/>);
+        render(<MemoryRouter><Fornecedores/></MemoryRouter>);
 
         await waitFor(()=> {
             const tabela = screen.getByRole('grid');

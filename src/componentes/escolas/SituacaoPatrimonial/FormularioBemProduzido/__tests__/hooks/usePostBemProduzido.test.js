@@ -5,8 +5,8 @@ import { toastCustom } from "../../../../../Globais/ToastCustom";
 import { usePostBemProduzido } from "../../hooks/usePostBemProduzido";
 import { postBemProduzido } from "../../../../../../services/escolas/BensProduzidos.service";
 
-jest.mock("react-router-dom-v5-compat", () => ({
-  ...jest.requireActual("react-router-dom-v5-compat"),
+jest.mock("react-router-dom", () => ({
+  ...jest.requireActual("react-router-dom"),
   useNavigate: jest.fn(),
 }));
 jest.mock("../../../../../../services/escolas/BensProduzidos.service");
@@ -67,7 +67,7 @@ describe("usePostBemProduzido", () => {
     });
 
     expect(toastCustom.ToastCustomSuccess).toHaveBeenCalledWith(
-      "Bem Produzido criado com sucesso."
+      "Rascunho do bem produzido salvo com sucesso."
     );
   });
 
@@ -85,7 +85,7 @@ describe("usePostBemProduzido", () => {
     } catch (error) {}
 
     expect(toastCustom.ToastCustomError).toHaveBeenCalledWith(
-      "Houve um erro ao criar bem produzido."
+      "Houve um erro ao salvar rascunho."
     );
   });
 
@@ -104,7 +104,7 @@ describe("usePostBemProduzido", () => {
 
     await waitFor(() => {
       expect(toastCustom.ToastCustomError).toHaveBeenCalledWith(
-        "Houve um erro ao criar bem produzido."
+        "Houve um erro ao salvar rascunho."
       );
     });
   });

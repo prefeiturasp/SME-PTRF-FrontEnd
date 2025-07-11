@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { EdicaoTipoReceitaPage } from "../EdicaoTipoReceita";
 import { PaginasContainer } from "../../../../PaginasContainer";
+import { MemoryRouter } from "react-router-dom";
 
 
 jest.mock("../../../../PaginasContainer", () => ({
@@ -13,7 +14,11 @@ jest.mock("../../../../../componentes/sme/Parametrizacoes/Receitas/TiposReceita/
 
 describe("EdicaoTipoReceitaPage", () => {
   it("deve renderizar corretamente a página de edição tipo de crédito", () => {
-    render(<EdicaoTipoReceitaPage />);
+    render(
+      <MemoryRouter>
+        <EdicaoTipoReceitaPage />
+      </MemoryRouter>
+    );
 
     expect(screen.getByText("Edição tipo de crédito")).toBeInTheDocument();
     expect(screen.getByTestId("paginas-container")).toBeInTheDocument();

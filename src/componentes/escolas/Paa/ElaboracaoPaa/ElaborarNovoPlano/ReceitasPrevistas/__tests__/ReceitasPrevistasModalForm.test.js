@@ -15,7 +15,16 @@ const mutationPost = jest.fn();
 const acaoAssociacao = {
   uuid: "acao-associacao-uuid-1234",
   acao: { nome: "Recurso 1" },
-  receitas_previstas_paa: [],
+  receitas_previstas_paa: [{
+    saldo_congelado_capital: -1,
+    saldo_congelado_custeio: 0,
+    saldo_congelado_livre: 0,
+  }],
+  saldos: {
+    saldo_atual_capital: 0,
+    saldo_atual_custeio: 0,
+    saldo_atual_livre: 0,
+  },
   fixed: false,
 };
 describe("ReceitasPrevistasModalForm", () => {
@@ -60,7 +69,7 @@ describe("ReceitasPrevistasModalForm", () => {
         <ReceitasPrevistasModalForm
           open={true}
           onClose={onClose}
-          acaoAssociacao={acaoAssociacao}
+          acaoAssociacao={{...acaoAssociacao, receitas_previstas_paa: []}}
         />
       </QueryClientProvider>
     );

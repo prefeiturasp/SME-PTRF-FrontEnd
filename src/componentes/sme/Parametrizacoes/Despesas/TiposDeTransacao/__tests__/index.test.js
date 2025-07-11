@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { TiposDeTransacao } from '..';
+import { MemoryRouter } from 'react-router-dom';
+import { TiposDeTransacao } from '../index';
 import { getTiposDeTransacao, getFiltrosTiposDeTransacao, postTipoDeTransacao, patchTipoDeTransacao, deleteTipoDeTransacao } from "../../../../../../services/sme/Parametrizacoes.service";
 import { toastCustom } from "../../../../../Globais/ToastCustom";
 import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
@@ -31,13 +32,13 @@ describe("Carrega página de tipo de transação", () => {
     });
 
     it('Renderiza a mensagem "Carregando..." ao abrir a página', () => {
-      render(<TiposDeTransacao />);
+      render(<MemoryRouter><TiposDeTransacao /></MemoryRouter>);
       expect(screen.getByText(/Carregando.../i)).toBeInTheDocument();
     });
 
     it("Testa a chamada de getFiltrosTiposDeTransacao", async () => {
         getTiposDeTransacao.mockResolvedValueOnce(mockData);
-        render(<TiposDeTransacao />);
+        render(<MemoryRouter><TiposDeTransacao /></MemoryRouter>);
 
         await waitFor(() => {
             const filtro_nome = screen.getByLabelText(/filtrar por nome/i)
@@ -55,7 +56,7 @@ describe("Carrega página de tipo de transação", () => {
 
     it("Testa a chamada de limpar Filtros", async () => {
       getTiposDeTransacao.mockResolvedValue(mockData);
-      render(<TiposDeTransacao />);
+      render(<MemoryRouter><TiposDeTransacao /></MemoryRouter>);
   
       expect(screen.getByText(/Carregando.../i)).toBeInTheDocument();
       await expect(screen.findByText(/Cartão/i)).resolves.toBeInTheDocument();
@@ -82,9 +83,7 @@ describe("Carrega página de tipo de transação", () => {
 
     it("Carrega no modo Listagem com itens", async () => {
       getTiposDeTransacao.mockResolvedValueOnce(mockData);
-        render(
-            <TiposDeTransacao />
-        );
+        render(<MemoryRouter><TiposDeTransacao /></MemoryRouter>);
 
         expect(screen.getByText(/Tipos de transação/i)).toBeInTheDocument();
 
@@ -98,9 +97,7 @@ describe("Carrega página de tipo de transação", () => {
     it("Carrega no modo Listagem vazia", async () => {
         const mockData = [];
         getTiposDeTransacao.mockResolvedValue(mockData)
-        render(
-            <TiposDeTransacao />
-        );
+        render(<MemoryRouter><TiposDeTransacao /></MemoryRouter>);
 
         await waitFor(()=> expect(getTiposDeTransacao).toHaveBeenCalled());
         await waitFor(()=> {
@@ -113,7 +110,7 @@ describe("Carrega página de tipo de transação", () => {
 describe("Testes Operacao CREATE", () => {
 
   const renderizarTelaEInteragirComBotaoAdicionar = async () => {
-    render(<TiposDeTransacao />);
+    render(<MemoryRouter><TiposDeTransacao /></MemoryRouter>);
     await waitFor(() => {
       const button = screen.getByRole('button', { name: /adicionar tipo de transação/i });
       expect(button).toBeInTheDocument();
@@ -192,7 +189,7 @@ describe("Testes Operacao CREATE", () => {
 
 describe("Testes Operacao EDIT", () => {
   const setupAndClickAlterar = async () => {
-      render(<TiposDeTransacao />);
+      render(<MemoryRouter><TiposDeTransacao /></MemoryRouter>);
 
       await waitFor(() => {
           const tabela = screen.getByRole('grid');
@@ -212,7 +209,7 @@ describe("Testes Operacao EDIT", () => {
   });
 
   it("Renderiza Operacao edit sucesso", async () => {
-      render(<TiposDeTransacao />);
+      render(<MemoryRouter><TiposDeTransacao /></MemoryRouter>);
 
       await setupAndClickAlterar();
 
@@ -239,7 +236,7 @@ describe("Testes Operacao EDIT", () => {
           response: { data: { non_field_errors: "Já existe um tipo de transação com esse nome" } },
       });
 
-      render(<TiposDeTransacao />);
+      render(<MemoryRouter><TiposDeTransacao /></MemoryRouter>);
 
       await setupAndClickAlterar();
 
@@ -268,7 +265,7 @@ describe("Testes Operacao EDIT", () => {
           response: { data: { nome: "Testando erro response" } },
       });
 
-      render(<TiposDeTransacao />);
+      render(<MemoryRouter><TiposDeTransacao /></MemoryRouter>);
 
       await setupAndClickAlterar();
 
@@ -302,7 +299,7 @@ describe("Testes Operacao DELETE", ()=>{
 
     it("Renderiza Operacao delete sucesso", async () => {
         RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
-        render(<TiposDeTransacao/>);
+        render(<MemoryRouter><TiposDeTransacao /></MemoryRouter>);
 
         await waitFor(()=> {
             const tabela = screen.getByRole('grid');
@@ -336,7 +333,7 @@ describe("Testes Operacao DELETE", ()=>{
         deleteTipoDeTransacao.mockRejectedValueOnce({
             response: { data: { mensagem: "mensagem de erro" } },
         });
-        render(<TiposDeTransacao/>);
+        render(<MemoryRouter><TiposDeTransacao /></MemoryRouter>);
 
         await waitFor(()=> {
             const tabela = screen.getByRole('grid');
@@ -370,7 +367,7 @@ describe("Testes Operacao DELETE", ()=>{
         deleteTipoDeTransacao.mockRejectedValueOnce({
             response: { data: { nome: "Testando erro response" } },
         });
-        render(<TiposDeTransacao/>);
+        render(<MemoryRouter><TiposDeTransacao /></MemoryRouter>);
 
         await waitFor(()=> {
             const tabela = screen.getByRole('grid');

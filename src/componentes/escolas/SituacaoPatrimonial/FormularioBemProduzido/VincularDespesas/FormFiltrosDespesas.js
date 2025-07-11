@@ -48,7 +48,6 @@ export const FormFiltrosDespesas = ({
             <Input
               name="fornecedor"
               placeholder="Digite o CNPJ/CPF ou a Razão Social do Fornecedor"
-              size="large"
             />
           </Form.Item>
         </Col>
@@ -58,11 +57,7 @@ export const FormFiltrosDespesas = ({
             name="search"
             labelCol={{ span: 24 }}
           >
-            <Input
-              name="search"
-              placeholder="Digite Material ou Serviço"
-              size="large"
-            />
+            <Input name="search" placeholder="Digite Material ou Serviço" />
           </Form.Item>
         </Col>
       </Row>
@@ -75,7 +70,6 @@ export const FormFiltrosDespesas = ({
             allowClear
           >
             <Select
-              size="large"
               placeholder="Selecione"
               options={contaOptions.map((conta) => {
                 return {
@@ -90,7 +84,6 @@ export const FormFiltrosDespesas = ({
           <Form.Item
             label="Filtrar por período"
             name="periodo__uuid"
-            size="large"
             labelCol={{ span: 24 }}
           >
             <Select
@@ -115,7 +108,6 @@ export const FormFiltrosDespesas = ({
                 format={"DD/MM/YYYY"}
                 style={{ width: "100%" }}
                 aria-label="Data do documento início"
-                size="large"
                 disabledDate={(current) => {
                   const dataFim = form.getFieldValue("data_fim");
                   return dataFim && current && current.isAfter(dataFim, "day");
@@ -130,7 +122,6 @@ export const FormFiltrosDespesas = ({
                 format={"DD/MM/YYYY"}
                 style={{ width: "100%" }}
                 aria-label="Data do documento fim"
-                size="large"
                 disabledDate={(current) => {
                   const dataInicio = form.getFieldValue("data_inicio");
                   return (

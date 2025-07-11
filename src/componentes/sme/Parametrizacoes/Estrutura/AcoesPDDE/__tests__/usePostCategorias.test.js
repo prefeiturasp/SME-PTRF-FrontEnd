@@ -45,7 +45,7 @@ describe("usePostCategoria", () => {
         expect(postAcoesPDDECategorias).toHaveBeenCalledWith({ nome: "Categoria 1" });
         expect(toastCustom.ToastCustomSuccess).toHaveBeenCalledWith(
             "Sucesso.",
-            "Categoria de Ação PDDE criada com sucesso"
+            "Programa de Ação PDDE criada com sucesso"
         );
     });
 
@@ -62,7 +62,7 @@ describe("usePostCategoria", () => {
 
         expect(toastCustom.ToastCustomError).toHaveBeenCalledWith(
             "Ops!",
-            "Não foi possível criar a Categoria de Ação PDDE"
+            "Não foi possível criar o Programa de Ação PDDE"
         );
     });
 
@@ -79,7 +79,7 @@ describe("usePostCategoria", () => {
 
         expect(toastCustom.ToastCustomError).toHaveBeenCalledWith(
             "Ops!",
-            "Categoria já existe."
+            "Programa já existe."
         );
     });
 });

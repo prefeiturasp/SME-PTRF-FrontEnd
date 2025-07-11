@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useRef, useState} from "react";
-import {useParams, Redirect, useLocation} from "react-router-dom";
+import {useParams, Navigate, useLocation} from "react-router-dom";
 import {PaginasContainer} from "../../../../paginas/PaginasContainer";
 import {
     getDesfazerConclusaoAnalise,
@@ -333,7 +333,7 @@ export const DetalhePrestacaoDeContas = () =>{
         setLoading(true)
         await getDesfazerRecebimento(prestacaoDeContas.uuid);
         await carregaPrestacaoDeContas();
-        toastCustom.ToastCustomSuccess('Status alterado com sucesso', 'A prestação de conta foi alterada para “Não recebida”.')
+        toastCustom.ToastCustomSuccess('Status alterado com sucesso', 'A prestação de conta foi alterada para "Não recebida".')
         setLoading(false)
     };
 
@@ -341,7 +341,7 @@ export const DetalhePrestacaoDeContas = () =>{
         setLoading(true)
         await getAnalisarPrestacaoDeContas(prestacaoDeContas.uuid);
         await carregaPrestacaoDeContas();
-        toastCustom.ToastCustomSuccess('Status alterado com sucesso', 'A prestação de conta foi alterada para “Em análise”.')
+        toastCustom.ToastCustomSuccess('Status alterado com sucesso', 'A prestação de conta foi alterada para "Em análise".')
         setLoading(false)
     };
 
@@ -349,7 +349,7 @@ export const DetalhePrestacaoDeContas = () =>{
         setLoading(true)
         await getDesfazerAnalise(prestacaoDeContas.uuid);
         await carregaPrestacaoDeContas();
-        toastCustom.ToastCustomSuccess('Status alterado com sucesso', 'A prestação de conta foi alterada para “Recebida”.')
+        toastCustom.ToastCustomSuccess('Status alterado com sucesso', 'A prestação de conta foi alterada para "Recebida".')
         setLoading(false)
     };
 
@@ -1076,7 +1076,7 @@ export const DetalhePrestacaoDeContas = () =>{
             <h1 className="titulo-itens-painel mt-5">Acompanhamento das Prestações de Contas</h1>
             <div className="page-content-inner">
                 {!prestacao_conta_uuid ? (
-                        <Redirect
+                        <Navigate
                             to={{
                                 pathname: `/dre-lista-prestacao-de-contas/`,
                             }}
@@ -1297,7 +1297,7 @@ export const DetalhePrestacaoDeContas = () =>{
                     />
                 </section>
                 {redirectListaPc &&
-                    <Redirect
+                    <Navigate
                         to={{
                             pathname: `/dre-lista-prestacao-de-contas/${prestacaoDeContas.periodo_uuid}/${prestacaoDeContas.status}`,
                         }}

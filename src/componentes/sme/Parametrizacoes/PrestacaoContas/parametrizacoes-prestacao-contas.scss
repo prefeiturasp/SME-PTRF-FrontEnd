@@ -1,28 +1,26 @@
-span.total{
-    color: #00585e;
-    font-weight: bold;
-  }
-
-.categorias-table-multiple-search, .ant-select-selector {
-  width: 100%;
-  border-collapse: collapse;
-  min-height: 38px;
+span.total {
+  color: #00585e;
+  font-weight: bold;
 }
 
 .documentos-table-multiple-search {
   width: 100%;
   border-collapse: collapse;
-  min-height: calc(1.5em + .75rem + 2px);
+  min-height: calc(1.5em + 0.75rem + 2px);
 }
 
-.documentos-multiple-search .ant-select-selector .ant-select-selection-overflow{
+.documentos-multiple-search
+  .ant-select-selector
+  .ant-select-selection-overflow {
   height: 40px;
-  min-height: calc(1.5em + .75rem + 2px);
+  min-height: calc(1.5em + 0.75rem + 2px);
 }
 
-.categorias-multiple-search .ant-select-selector .ant-select-selection-overflow{
+.categorias-multiple-search
+  .ant-select-selector
+  .ant-select-selection-overflow {
   height: 40px;
-  min-height: calc(1.5em + .75rem + 2px);
+  min-height: calc(1.5em + 0.75rem + 2px);
 }
 
 .btn-editar-acertos {

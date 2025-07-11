@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Redirect} from "react-router-dom";
+import {Navigate} from "react-router-dom";
 import {getAssociacoesPorUnidade, filtrosAssociacoes, getAssociacao, getContasAssociacao, getContasAssociacaoEncerradas, getTabelaAssociacoesDre} from "../../../services/dres/Associacoes.service";
 import "./associacoes.scss"
 import {TabelaAssociacoes} from "./TabelaAssociacoes";
@@ -103,10 +103,11 @@ export const Associacoes = () =>{
                         />
 
                         {urlRedirect &&
-                            <Redirect
+                            <Navigate
                                 to={{
                                     pathname: urlRedirect,
                                 }}
+                                replace
                             />
                         }
                     </button>

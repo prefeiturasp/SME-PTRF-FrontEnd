@@ -191,9 +191,14 @@ export const pathExtratoBancarioPrestacaoDeConta = async (payload) => {
   if (payload.comprovante_extrato){
     formData.append("comprovante_extrato", payload.comprovante_extrato);
   }
-  
+  const authHeaderMultipart = ()=>({
+    headers: {
+      Authorization: `JWT ${localStorage.getItem(TOKEN_ALIAS)}`,
+      'Content-Type': 'multipart/form-data',
+    },
+  });
 
-  return (await api.patch(`/api/conciliacoes/salvar-observacoes/`, formData, authHeader())).data
+  return (await api.patch(`/api/conciliacoes/salvar-observacoes/`, formData, authHeaderMultipart())).data
 }
 
 export const getDataPreenchimentoAta = async (uuidPrestacaoDeContas) => {
