@@ -1,10 +1,13 @@
 import React from "react";
 import { LoginSuporteForm } from "./form";
 import LogoPtrf from "../../assets/img/logo-ptrf-verde.png";
-import "./login-suporte.scss";
 import { LogoSPHorizontalColorida } from "../../componentes/Globais/UI/LogoSP";
+import { useLocation } from "react-router-dom";
+import "./login-suporte.scss";
 
 export const LoginSuporte = (props) => {
+  const location = useLocation();
+
   return (
     <div className="login-suporte-container">
       <div className="login-suporte-card">
@@ -18,7 +21,7 @@ export const LoginSuporte = (props) => {
         </div>
         <div className="login-suporte-card-form">
           <LoginSuporteForm
-            redefinicaoDeSenha={props.location.redefinicaoDeSenha}
+            redefinicaoDeSenha={location.state?.redefinicaoDeSenha}
           />
         </div>
         <div className="text-center my-3">
