@@ -143,10 +143,10 @@ export const getPrioridadesTabelas = async () => {
   return (await api.get(`api/prioridades-paa/tabelas/`, authHeader())).data;
 };
 
-export const getPrioridades = async (filtros, page=1) => {
+export const getPrioridades = async (filtros, page=1, page_size=20) => {
   let queryString = `?paa__uuid=${localStorage.getItem(
     "PAA"
-  )}&page=${page}`;
+  )}&page=${page}&page_size=${page_size}`;
   queryString = addFiltersToQueryString(queryString, filtros);
   return (await api.get(`api/prioridades-paa/${queryString}`, authHeader())).data;
 };

@@ -325,7 +325,7 @@ export const FormFiltros = ({
                     >
                         Limpar Filtros
                     </button>
-                    <button className="btn btn-success float-right">Filtrar</button>
+                    <button className="btn btn-success float-right" type="submit">Filtrar</button>
                 </Flex>
             </Col>
         </>

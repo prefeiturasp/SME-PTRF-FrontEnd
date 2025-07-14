@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState} from "react";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {PaginasContainer} from "../../../paginas/PaginasContainer";
 import {getListaDeAnalises, getListaDeAnalisesFiltros} from "../../../services/escolas/AnaliseDaDre.service";
 import TabelaAnaliseDre from "./TabelaAnaliseDre";
@@ -19,6 +19,7 @@ export const AnaliseDre = () =>{
 
     const associacao_uuid = localStorage.getItem(ASSOCIACAO_UUID);
     const rowsPerPage = 10
+    const navigate = useNavigate();
 
     const [listaDeAnalises, setListaDeAnalises] = useState([])
     const [loading, setLoading] = useState(false);
@@ -104,18 +105,18 @@ export const AnaliseDre = () =>{
         return (
             <>
                 {rowData.pode_habilitar_botao_ver_acertos_em_analise_da_dre ? (
-                    <Link to={{pathname: `consulta-detalhamento-analise-da-dre/${rowData.prestacao_de_contas_uuid}`,
-                            state: {
-                                periodoFormatado: retornaObjetoPeriodo(rowData),
-                            }
+                    <FontAwesomeIcon
+                        style={{fontSize: '20px', marginRight: "0", color: "#00585E", cursor: "pointer"}}
+                        icon={faEye}
+                        onClick={() => {
+                            limpaStorageAnaliseDre();
+                            navigate(`/consulta-detalhamento-analise-da-dre/${rowData.prestacao_de_contas_uuid}`, {
+                                state: {
+                                    periodoFormatado: retornaObjetoPeriodo(rowData),
+                                }
+                            });
                         }}
-                    >
-                        <FontAwesomeIcon
-                            style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
-                            icon={faEye}
-                            onClick={() => limpaStorageAnaliseDre()}
-                        />
-                    </Link>
+                    />
                 ):
                     <span> - </span>
                 }
