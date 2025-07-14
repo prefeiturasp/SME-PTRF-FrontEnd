@@ -9,6 +9,7 @@ import {faExclamationCircle} from '@fortawesome/free-solid-svg-icons'
 import { visoesService } from "../../../../../services/visoes.service";
 import ReactTooltip from "react-tooltip";
 import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
+import { getCCMMask } from "../../../../../utils/masks";
 
 const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitModalFormAssociacoes, listaDePeriodos, tabelaAssociacoes, carregaUnidadePeloCodigoEol, errosCodigoEol, onDeleteAssocicacaoTratamento}) => {
 
@@ -165,7 +166,7 @@ const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitMo
                                         <div className="form-group">
                                             <label htmlFor="ccm">CCM</label>
                                             <MaskedInput
-                                                mask={[/\d/, '.', /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '-', /\d/]}
+                                                mask={(valor) => getCCMMask(valor)}
                                                 type="text"
                                                 value={props.values.ccm}
                                                 name="ccm"
