@@ -104,10 +104,10 @@ const Prioridades = () => {
             </Flex>
           </p>
           <Tabela data={prioridades} />
-          {quantidade > 10 && (
+          {quantidade > 20 && (
             <Paginator
               first={firstPage}
-              rows={10}
+              rows={20}
               totalRecords={quantidade}
               template="PrevPageLink PageLinks NextPageLink"
               onPageChange={onPageChange}
