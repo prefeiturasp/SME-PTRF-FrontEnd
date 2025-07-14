@@ -508,8 +508,8 @@ const RetificacaoRelatorioConsolidado = () => {
             return {
                 ...obj,
                 selecionado: false
-                }
-            });
+            }
+        });
 
         let filtro_por_nome = values.filtro_por_nome;
         let filtro_por_tipo = values.filtro_por_tipo;
@@ -535,8 +535,8 @@ const RetificacaoRelatorioConsolidado = () => {
             return {
                 ...obj,
                 selecionado: false
-                }
-            });
+            }
+        });
 
         let filtro_por_nome = values.filtro_por_nome;
         let filtro_por_tipo = values.filtro_por_tipo;
@@ -704,6 +704,8 @@ const RetificacaoRelatorioConsolidado = () => {
             setShowModalDesfazerRetificacao(true);
         }
     }
+
+
 
     const disparaModalRetificar = async() => {
         setShowModal(true);
