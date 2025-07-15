@@ -40,27 +40,27 @@ const ModalFormAdicionarPrioridade = ({ open, onClose, data }) => {
     valor_total: undefined
   }
 
-  const prioridadesOptions = data.prioridades.map(item => ({
+  const prioridadesOptions = (data.prioridades || []).map(item => ({
     value: item.key,
     label: item.value
   }));
 
-  const recursosOptions = data.recursos.map(item => ({
+  const recursosOptions = (data.recursos || []).map(item => ({
     value: item.key,
     label: item.value
   }));
 
-  const tiposAplicacaoOptions = data.tipos_aplicacao.map(item => ({
+  const tiposAplicacaoOptions = (data.tipos_aplicacao || []).map(item => ({
     value: item.key,
     label: item.value
   }));
 
-  const tiposDespesaCusteioOptions = data.tipos_despesa_custeio.map(item => ({
+  const tiposDespesaCusteioOptions = (data.tipos_despesa_custeio || []).map(item => ({
     value: item.id,
     label: item.nome
   }));
 
-  const acoesAssociacaoOptions = acoesAssociacao?.map(item => ({
+  const acoesAssociacaoOptions = (acoesAssociacao || []).map(item => ({
     value: item.uuid,
     label: item.acao.nome
   })) || [];
@@ -83,7 +83,7 @@ const ModalFormAdicionarPrioridade = ({ open, onClose, data }) => {
       }
     });
     
-    return Array.from(programasUnicos.entries()).map(([uuid, nome]) => ({
+    return (Array.from(programasUnicos.entries()) || []).map(([uuid, nome]) => ({
       value: uuid,
       label: nome
     }));
@@ -95,7 +95,7 @@ const ModalFormAdicionarPrioridade = ({ open, onClose, data }) => {
     const acoes = acoesPdde.results || acoesPdde;
     if (!acoes || !Array.isArray(acoes)) return [];
     
-    return acoes
+    return (acoes || [])
       .filter(acao => acao.programa_objeto?.uuid === selectedProgramaPdde)
       .map(acao => ({
         value: acao.uuid,
@@ -103,7 +103,7 @@ const ModalFormAdicionarPrioridade = ({ open, onClose, data }) => {
       }));
   }, [acoesPdde, selectedProgramaPdde]);
 
-  const especificacoesOptions = especificacoes?.map(item => ({
+  const especificacoesOptions = (especificacoes || []).map(item => ({
     value: item.uuid,
     label: item.descricao
   })) || [];
@@ -131,7 +131,7 @@ const ModalFormAdicionarPrioridade = ({ open, onClose, data }) => {
           errors[error.path] = error.message;
         });
         form.setFields(
-          Object.keys(errors).map(key => ({
+          (Object.keys(errors) || []).map(key => ({
             name: key,
             errors: [errors[key]]
           }))

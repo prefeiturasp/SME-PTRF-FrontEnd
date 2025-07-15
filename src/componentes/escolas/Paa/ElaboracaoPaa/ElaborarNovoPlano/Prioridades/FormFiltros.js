@@ -39,32 +39,32 @@ export const FormFiltros = ({
     onFiltrosChange(fieldName, value);
   };
 
-  const prioridadesOptions = prioridadesTabelas.map(item => ({
+  const prioridadesOptions = (prioridadesTabelas || []).map(item => ({
     value: item.key,
     label: item.value
   }));
 
-  const recursosOptions = recursos.map(item => ({
+  const recursosOptions = (recursos || []).map(item => ({
     value: item.key,
     label: item.value
   }));
 
-  const tiposAplicacaoOptions = tipos_aplicacao.map(item => ({
+  const tiposAplicacaoOptions = (tipos_aplicacao || []).map(item => ({
     value: item.key,
     label: item.value
   }));
 
-  const tiposDespesaCusteioOptions = tipos_despesa_custeio.map(item => ({
+  const tiposDespesaCusteioOptions = (tipos_despesa_custeio || []).map(item => ({
     value: item.id,
     label: item.nome
   }));
 
-  const acoesAssociacaoOptions = acoesAssociacao?.map(item => ({
+  const acoesAssociacaoOptions = (acoesAssociacao || []).map(item => ({
     value: item.uuid,
     label: item.acao.nome
-  })) || [];
+  }));
 
-  const especificacoesOptions = especificacoes?.map(item => ({
+  const especificacoesOptions = (especificacoes || []).map(item => ({
     value: item.uuid,
     label: item.descricao
   })) || [];
@@ -87,7 +87,7 @@ export const FormFiltros = ({
       }
     });
     
-    return Array.from(programasUnicos.entries()).map(([uuid, nome]) => ({
+    return (Array.from(programasUnicos.entries()) || []).map(([uuid, nome]) => ({
       value: uuid,
       label: nome
     }));
@@ -99,7 +99,7 @@ export const FormFiltros = ({
     const acoes = acoesPdde.results || acoesPdde;
     if (!acoes || !Array.isArray(acoes)) return [];
     
-    return acoes
+    return (acoes || [])
       .filter(acao => acao.programa_objeto?.uuid === selectedProgramaPdde)
       .map(acao => ({
         value: acao.uuid,
@@ -274,7 +274,7 @@ export const FormFiltros = ({
                   onChange={handleTipoAplicacaoChange}
                   allowClear
                 >
-                  {tipos_aplicacao.map(t => (
+                  {(tipos_aplicacao || []).map(t => (
                     <Option key={t.key} value={t.key}>{t.value}</Option>
                   ))}
                 </Select>
@@ -289,7 +289,7 @@ export const FormFiltros = ({
                   disabled={selectedTipoAplicacao !== 'CUSTEIO'}
                   allowClear
                 >
-                  {tipos_despesa_custeio.map(t => (
+                  {(tipos_despesa_custeio || []).map(t => (
                     <Option key={t.id} value={t.id}>{t.nome}</Option>
                   ))}
                 </Select>
