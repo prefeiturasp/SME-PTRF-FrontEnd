@@ -1,9 +1,10 @@
 import React, {Fragment} from "react";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faAngleDown, faAngleUp, faEdit, faTimesCircle} from '@fortawesome/free-solid-svg-icons'
-import {Link} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 
 export const TabelaMembros = ({titulo, clickIconeToogle, toggleIcon, cargos, converteNomeRepresentacao, retornaDadosAdicionaisTabela, onDeleteMembro, verificaSeExibeToolTip=null, visoesService}) => {
+    const navigate = useNavigate();
     const podeEditarDadosMembros = (item) => {
         if(visoesService.getPermissoes(['change_associacao']) && item && item.infos && item.infos.associacao && item.infos.associacao.data_de_encerramento && item.infos.associacao.data_de_encerramento.pode_editar_dados_associacao_encerrada){
             return true;
@@ -43,11 +44,13 @@ export const TabelaMembros = ({titulo, clickIconeToogle, toggleIcon, cargos, con
                                 <td><span>{item.infos && item.infos.representacao ? converteNomeRepresentacao(item.infos.representacao) : ""}</span></td>
                                 <td>
                                     <div className="d-flex justify-content-center">
-                                        <Link
-                                            to={{pathname: `/cadastro-de-membros-da-associacao/${item && item.infos && item.infos.uuid ? item.infos.uuid : ''}`,
-                                                state: {
-                                                   ...item,
-                                                }
+                                        <button
+                                            onClick={() => {
+                                                navigate(`/cadastro-de-membros-da-associacao/${item && item.infos && item.infos.uuid ? item.infos.uuid : ''}`, {
+                                                    state: {
+                                                       ...item,
+                                                    }
+                                                });
                                             }}
                                             className="btn-editar-membro"
                                         >
@@ -55,7 +58,7 @@ export const TabelaMembros = ({titulo, clickIconeToogle, toggleIcon, cargos, con
                                                 style={{fontSize: '20px', marginRight: "0"}}
                                                 icon={faEdit}
                                             />
-                                        </Link>
+                                        </button>
 
                                         {podeEditarDadosMembros(item) &&
                                             <button

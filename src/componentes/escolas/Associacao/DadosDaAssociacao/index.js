@@ -14,6 +14,8 @@ import {visoesService} from "../../../../services/visoes.service";
 import { setStatusCadastro, resetStatusCadastro } from "../../../../store/reducers/componentes/escolas/Associacao/DadosAssociacao/StatusCadastro/actions";
 import {toastCustom} from "../../../Globais/ToastCustom";
 import "../associacao.scss"
+import { getCCMMask } from "../../../../utils/masks";
+import { validarDAC11A } from "../../../../utils/validators";
 
 export const DadosDaAsssociacao = () => {
     
@@ -73,6 +75,15 @@ export const DadosDaAsssociacao = () => {
     
     const validForm = (values) => {
         let erros = {};
+
+        const digits = values.ccm.replace(/\D/g, '');
+        if (digits.length === 12 && !validarDAC11A(values.ccm)) {
+            erros = {
+                ccm: 'CCM inválido. Verifique os 12 dígitos'
+            }
+            formRef.current.setErrors({...erros});            
+        }
+
         if (!values.nome.trim()){
             erros = {
                 nome: 'Nome é obrigatório'
@@ -245,7 +256,7 @@ export const DadosDaAsssociacao = () => {
                                                     <label htmlFor="ccm"><strong>Cadastro de Contribuintes Mobiliários
                                                         (CCM)</strong></label>
                                                     <MaskedInput
-                                                        mask={[/\d/, '.', /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '-', /\d/]}
+                                                        mask={(valor) => getCCMMask(valor)}
                                                         type="text"
                                                         value={props.values.ccm ? props.values.ccm : ""}
                                                         name="ccm"

@@ -52,8 +52,8 @@ const TabelaRecursosProprios = ({ totalRecursosProprios, setActiveTab }) => {
         header="Recursos"
         body={nomeRecursoProprioTemplate}
       />
-      <Column field="valor_custeio" header="Custeio (R$)" />
-      <Column field="valor_capital" header="Capital (R$)" />
+      <Column field="valor_custeio" header="Custeio (R$)" bodyStyle={{ backgroundColor: '#DADADA' }}/>
+      <Column field="valor_capital" header="Capital (R$)" bodyStyle={{ backgroundColor: '#DADADA' }}/>
       <Column 
         field="valor_livre"
         header="Livre Aplicação (R$)"
