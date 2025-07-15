@@ -39,35 +39,35 @@ export const FormFiltros = ({
     onFiltrosChange(fieldName, value);
   };
 
-  const prioridadesOptions = (prioridadesTabelas || []).map(item => ({
+  const prioridadesOptions = Array.isArray(prioridadesTabelas) ? prioridadesTabelas.map(item => ({
     value: item.key,
     label: item.value
-  }));
+  })) : [];
 
-  const recursosOptions = (recursos || []).map(item => ({
+  const recursosOptions = Array.isArray(recursos) ? recursos.map(item => ({
     value: item.key,
     label: item.value
-  }));
+  })) : [];
 
-  const tiposAplicacaoOptions = (tipos_aplicacao || []).map(item => ({
+  const tiposAplicacaoOptions = Array.isArray(tipos_aplicacao) ? tipos_aplicacao.map(item => ({
     value: item.key,
     label: item.value
-  }));
+  })) : [];
 
-  const tiposDespesaCusteioOptions = (tipos_despesa_custeio || []).map(item => ({
+  const tiposDespesaCusteioOptions = Array.isArray(tipos_despesa_custeio) ? tipos_despesa_custeio.map(item => ({
     value: item.id,
     label: item.nome
-  }));
+  })) : [];
 
-  const acoesAssociacaoOptions = (acoesAssociacao || []).map(item => ({
+  const acoesAssociacaoOptions = Array.isArray(acoesAssociacao) ? acoesAssociacao.map(item => ({
     value: item.uuid,
     label: item.acao.nome
-  }));
+  })) : [];
 
-  const especificacoesOptions = (especificacoes || []).map(item => ({
+  const especificacoesOptions = Array.isArray(especificacoes) ? especificacoes.map(item => ({
     value: item.uuid,
     label: item.descricao
-  })) || [];
+  })) : [];
 
   const programasPddeOptions = useMemo(() => {
     if (!acoesPdde) {
@@ -87,10 +87,11 @@ export const FormFiltros = ({
       }
     });
     
-    return (Array.from(programasUnicos.entries()) || []).map(([uuid, nome]) => ({
+    const entries = Array.from(programasUnicos.entries());
+    return Array.isArray(entries) ? entries.map(([uuid, nome]) => ({
       value: uuid,
       label: nome
-    }));
+    })) : [];
   }, [acoesPdde]);
 
   const acoesPddeFiltradas = useMemo(() => {
@@ -99,12 +100,11 @@ export const FormFiltros = ({
     const acoes = acoesPdde.results || acoesPdde;
     if (!acoes || !Array.isArray(acoes)) return [];
     
-    return (acoes || [])
-      .filter(acao => acao.programa_objeto?.uuid === selectedProgramaPdde)
-      .map(acao => ({
-        value: acao.uuid,
-        label: acao.nome
-      }));
+    const acoesFiltradas = (acoes || []).filter(acao => acao.programa_objeto?.uuid === selectedProgramaPdde);
+    return Array.isArray(acoesFiltradas) ? acoesFiltradas.map(acao => ({
+      value: acao.uuid,
+      label: acao.nome
+    })) : [];
   }, [acoesPdde, selectedProgramaPdde]);
 
   const handleToggleFiltros = () => setShowAll(prev => !prev);
@@ -231,7 +231,6 @@ export const FormFiltros = ({
                   style={{ width: "100%" }}
                   options={programasPddeOptions}
                   onChange={handleProgramaPddeChange}
-                  loading={isLoadingAcoesPDDE}
                   disabled={selectedRecurso !== 'PDDE'}
                   allowClear
                 />
@@ -243,7 +242,6 @@ export const FormFiltros = ({
                   <Select
                     placeholder="Selecione a ação"
                     disabled={selectedRecurso !== 'PTRF'}
-                    loading={isLoadingAcoesAssociacao}
                     style={{ width: "100%" }}
                     options={acoesAssociacaoOptions}
                     onChange={(value) => handleFieldChange('acao_associacao__uuid', value)}
@@ -274,24 +272,24 @@ export const FormFiltros = ({
                   onChange={handleTipoAplicacaoChange}
                   allowClear
                 >
-                  {(tipos_aplicacao || []).map(t => (
+                  {Array.isArray(tipos_aplicacao) ? tipos_aplicacao.map(t => (
                     <Option key={t.key} value={t.key}>{t.value}</Option>
-                  ))}
+                  )) : []}
                 </Select>
               </Form.Item>
             </Col>
             <Col span={8}>
               <Form.Item label="Tipo de Despesa" name="tipo_despesa_custeio">
                 <Select 
-                  placeholder="Selecione"
+                  placeholder="Selecione o tipo de despesa"
                   options={tiposDespesaCusteioOptions}
                   onChange={handleTipoDespesaCusteioChange}
                   disabled={selectedTipoAplicacao !== 'CUSTEIO'}
                   allowClear
                 >
-                  {(tipos_despesa_custeio || []).map(t => (
+                  {Array.isArray(tipos_despesa_custeio) ? tipos_despesa_custeio.map(t => (
                     <Option key={t.id} value={t.id}>{t.nome}</Option>
-                  ))}
+                  )) : []}
                 </Select>
               </Form.Item>
             </Col>
@@ -303,7 +301,6 @@ export const FormFiltros = ({
                   optionFilterProp="label"
                   style={{ width: "100%" }}
                   options={especificacoesOptions}
-                  loading={isLoadingEspecificacoes}
                   onChange={(value) => handleFieldChange('especificacao_material__uuid', value)}
                   allowClear
                 />
