@@ -132,7 +132,7 @@ describe('FormFiltros', () => {
   it('renderiza o formulário com campo de recurso visível', () => {
     renderWithQueryClient(<FormFiltros {...mockProps} />);
     
-    expect(screen.getByLabelText('Recurso')).toBeInTheDocument();
+    expect(screen.getByLabelText('Filtrar por recurso')).toBeInTheDocument();
     expect(screen.getByText('Mais Filtros')).toBeInTheDocument();
   });
 
@@ -154,12 +154,12 @@ describe('FormFiltros', () => {
     
     fireEvent.click(screen.getByText('Mais Filtros'));
     
-    const tipoAplicacaoSelect = screen.getByLabelText('Tipo de Aplicação');
+    const tipoAplicacaoSelect = screen.getByLabelText('Filtrar por tipo de aplicação');
     fireEvent.mouseDown(tipoAplicacaoSelect);
     fireEvent.click(screen.getByText('Custeio'));
     
     await waitFor(() => {
-      const tipoDespesaSelect = screen.getByLabelText('Tipo de Despesa');
+      const tipoDespesaSelect = screen.getByLabelText('Filtrar por tipo de despesa');
       expect(tipoDespesaSelect).not.toBeDisabled();
     });
   });
@@ -169,7 +169,7 @@ describe('FormFiltros', () => {
     
     fireEvent.click(screen.getByText('Mais Filtros'));
     
-    const prioridadeSelect = screen.getByLabelText('Prioridade');
+    const prioridadeSelect = screen.getByLabelText('Filtrar por prioridade');
     fireEvent.mouseDown(prioridadeSelect);
     fireEvent.click(screen.getByText('Sim'));
     
@@ -213,7 +213,7 @@ describe('FormFiltros', () => {
     fireEvent.click(screen.getByText('Mais Filtros'));
     
     // Seleciona PTRF para mostrar campo de ação
-    const recursoSelect = screen.getByLabelText('Recurso');
+    const recursoSelect = screen.getByLabelText('Filtrar por recurso');
     fireEvent.mouseDown(recursoSelect);
     await waitFor(() => {
         const allPtrfElements = screen.getAllByText('PTRF');
@@ -224,7 +224,7 @@ describe('FormFiltros', () => {
     });
     
     // Verifica se o campo de ação está em loading
-    const programaSelect = screen.getByLabelText('Programa');
+    const programaSelect = screen.getByLabelText('Filtrar por programa');
     expect(programaSelect).toBeDisabled();
   });
 
@@ -235,7 +235,7 @@ describe('FormFiltros', () => {
     fireEvent.click(screen.getByText('Mais Filtros'));
     
     // Seleciona PDDE
-    const recursoSelect = screen.getByLabelText('Recurso');
+    const recursoSelect = screen.getByLabelText('Filtrar por recurso');
     fireEvent.mouseDown(recursoSelect);
     await waitFor(() => {
         const allPddeElements = screen.getAllByText('PDDE');
@@ -245,7 +245,7 @@ describe('FormFiltros', () => {
         fireEvent.click(pddeOptionElement);
     });
     
-    const programaSelect = screen.getByLabelText('Programa');
+    const programaSelect = screen.getByLabelText('Filtrar por programa');
     fireEvent.mouseDown(programaSelect);
     await waitFor(() => {
         const allProgramaElements = screen.getAllByText('Programa 1');
@@ -255,7 +255,7 @@ describe('FormFiltros', () => {
         fireEvent.click(programaOptionElement);
     });
 
-    const acaoPddeSelect = screen.getByLabelText('Ação PDDE');
+    const acaoPddeSelect = screen.getByLabelText('Filtrar por ação');
     fireEvent.mouseDown(acaoPddeSelect);
     await waitFor(() => {
         const allAcaoPddeElements = screen.getAllByText('Ação PDDE 1');
@@ -265,7 +265,7 @@ describe('FormFiltros', () => {
         fireEvent.click(acaoPddeOptionElement);
     });
 
-    const tipoAplicacaoSelect = screen.getByLabelText('Tipo de Aplicação');
+    const tipoAplicacaoSelect = screen.getByLabelText('Filtrar por tipo de aplicação');
     fireEvent.mouseDown(tipoAplicacaoSelect);
     await waitFor(() => {
         const allTipoAplicacaoElements = screen.getAllByText('Custeio');
@@ -275,7 +275,7 @@ describe('FormFiltros', () => {
         fireEvent.click(tipoAplicacaoOptionElement);
     });
 
-    const tipoDespesaSelect = screen.getByLabelText('Tipo de Despesa');
+    const tipoDespesaSelect = screen.getByLabelText('Filtrar por tipo de despesa');
     fireEvent.mouseDown(tipoDespesaSelect);
     await waitFor(() => {
         const allTipoDespesaElements = screen.getAllByText('Tipo 1');
