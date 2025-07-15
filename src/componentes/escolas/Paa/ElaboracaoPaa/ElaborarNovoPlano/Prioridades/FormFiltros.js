@@ -180,6 +180,11 @@ export const FormFiltros = ({
       tipo_despesa_custeio: undefined,
       especificacao_material: undefined
     });
+    setSelectedRecurso('');
+    setSelectedProgramaPdde('');
+    setSelectedAcaoPdde('');
+    setSelectedTipoAplicacao('');
+    setSelectedTipoDespesaCusteio('');
     onLimparFiltros && onLimparFiltros();
   };
 
@@ -187,7 +192,7 @@ export const FormFiltros = ({
     <Form form={form} layout="vertical" style={{ marginBottom: 24 }} onFinish={onSubmit}>
       <Row gutter={16} align="middle">
         <Col span={8}>
-          <Form.Item label="Recurso" name="recurso">
+          <Form.Item label="Filtrar por recurso" name="recurso">
             <Select
               placeholder="Selecione o recurso"
               style={{ width: "100%" }}
@@ -200,22 +205,20 @@ export const FormFiltros = ({
         {!showAll ? (
           <>
           <Col span={16}>
-            {/* <Flex gap={8} className="mt-4"> */}
-                <button className="btn btn-outline-success mx-2">Filtrar</button>
-                <button
-                    className="btn btn-success"
-                    onClick={handleToggleFiltros}
-                    type="button"
-                >
-                    Mais Filtros
-                </button>
-            {/* </Flex> */}
+              <button className="btn btn-outline-success mx-2">Filtrar</button>
+              <button
+                  className="btn btn-success"
+                  onClick={handleToggleFiltros}
+                  type="button"
+              >
+                  Mais Filtros
+              </button>
           </Col>
           </>
         ) : (
         <>
             <Col span={8}>
-              <Form.Item label="Prioridade" name="prioridade">
+              <Form.Item label="Filtrar por prioridade" name="prioridade">
                 <Select 
                   placeholder="Selecione a prioridade"
                   onChange={(value) => handleFieldChange('prioridade', value)}
@@ -225,7 +228,7 @@ export const FormFiltros = ({
               </Form.Item>
             </Col>
             <Col span={8}>
-              <Form.Item label="Programa" name="programa_pdde">
+              <Form.Item label="Filtrar por programa" name="programa_pdde">
                 <Select
                   placeholder="Selecione o programa"
                   style={{ width: "100%" }}
@@ -238,7 +241,7 @@ export const FormFiltros = ({
             </Col>
             {selectedRecurso !== 'PDDE' && (
               <Col span={8}>
-                <Form.Item label="Ação" name="acao_associacao">
+                <Form.Item label="Filtrar por ação" name="acao_associacao">
                   <Select
                     placeholder="Selecione a ação"
                     disabled={selectedRecurso !== 'PTRF'}
@@ -252,7 +255,7 @@ export const FormFiltros = ({
             )}
             {selectedRecurso === 'PDDE' && (
               <Col span={8}>
-                <Form.Item label="Ação PDDE" name="acao_pdde">
+                <Form.Item label="Filtrar por ação" name="acao_pdde">
                   <Select
                     placeholder="Selecione a ação"
                     style={{ width: "100%" }}
@@ -265,7 +268,7 @@ export const FormFiltros = ({
               </Col>
             )}
             <Col span={8}>
-              <Form.Item label="Tipo de Aplicação" name="tipo_aplicacao">
+              <Form.Item label="Filtrar por tipo de aplicação" name="tipo_aplicacao">
                 <Select 
                   placeholder="Selecione o tipo de aplicação"
                   options={tiposAplicacaoOptions}
@@ -279,7 +282,7 @@ export const FormFiltros = ({
               </Form.Item>
             </Col>
             <Col span={8}>
-              <Form.Item label="Tipo de Despesa" name="tipo_despesa_custeio">
+              <Form.Item label="Filtrar por tipo de despesa" name="tipo_despesa_custeio">
                 <Select 
                   placeholder="Selecione o tipo de despesa"
                   options={tiposDespesaCusteioOptions}
@@ -294,7 +297,7 @@ export const FormFiltros = ({
               </Form.Item>
             </Col>
             <Col span={8}>
-              <Form.Item label="Especificação de Material, Bens ou Serviços" name="especificacao_material">
+              <Form.Item label="Filtrar por especificação de material, bens ou serviços" name="especificacao_material">
                 <Select
                   placeholder="Selecione a especificação do bem, material ou serviço"
                   showSearch
