@@ -2,7 +2,6 @@ import React, {useContext} from 'react'
 import SideNav, {NavItem, NavIcon, NavText} from '@trendmicro/react-sidenav'
 import '@trendmicro/react-sidenav/dist/react-sidenav.css'
 import './siderbarLeft.scss'
-import LogoSP from '../../../assets/img/logo-menu-tratado.png'
 import {SidebarContext} from '../../../context/Sidebar'
 import {useNavigate} from 'react-router-dom'
 import {Versao} from "../Versao";
@@ -15,6 +14,7 @@ import {Ambientes} from "../Ambientes";
 import {AmbientesApi} from "../AmbientesApi";
 
 import { useLocation } from 'react-router-dom'
+import { LogoSPHorizontalMonocromatica } from '../UI/LogoSP';
 
 export const SidebarLeft = () => {
     const sidebarStatus = useContext(SidebarContext);
@@ -173,7 +173,7 @@ export const SidebarLeft = () => {
                         <NavIcon>&nbsp;</NavIcon>
                         <NavText>
                             <div className="container-nome-instituicao mt-n4">
-                                <img src={LogoSP} alt=""/>
+                                <LogoSPHorizontalMonocromatica/>
                             </div>
                         </NavText>
                     </NavItem>
