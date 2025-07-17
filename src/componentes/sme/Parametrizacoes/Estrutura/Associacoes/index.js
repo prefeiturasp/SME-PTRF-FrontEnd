@@ -228,7 +228,7 @@ export const Associacoes = () => {
     const handleSubmitModalFormAssociacoes = useCallback(async (values,{setErrors})=>{
 
         const digits = values.ccm.replace(/\D/g, '');
-        if (digits.length === 12 && !validarDAC11A(values.ccm)) {
+        if (digits.length > 8 && !validarDAC11A(values.ccm)) {
             setErrors({ ccm: 'CCM inválido. Verifique os 12 dígitos.' });
             return;
         }

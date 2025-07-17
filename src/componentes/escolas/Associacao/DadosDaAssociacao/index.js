@@ -77,7 +77,7 @@ export const DadosDaAsssociacao = () => {
         let erros = {};
 
         const digits = values.ccm.replace(/\D/g, '');
-        if (digits.length === 12 && !validarDAC11A(values.ccm)) {
+        if (digits.length > 8 && !validarDAC11A(values.ccm)) {
             erros = {
                 ccm: 'CCM inválido. Verifique os 12 dígitos'
             }
