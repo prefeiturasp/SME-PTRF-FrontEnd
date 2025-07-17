@@ -28,6 +28,8 @@ export const VincularDespesas = ({
   despesasSelecionadas,
   setDespesasSelecionadas,
   salvarRascunho,
+  bemProduzidoDespesas,
+  statusCompletoBemProduzido,
 }) => {
   const navigate = useNavigate();
   const [expandedRows, setExpandedRows] = useState(null);
@@ -47,6 +49,7 @@ export const VincularDespesas = ({
       data_fim: filtros.data_fim
         ? moment(filtros.data_fim).format("YYYY-MM-DD")
         : "",
+      bem_produzido_uuid: uuid ? uuid : null,
     },
     currentPage
   );
@@ -64,6 +67,32 @@ export const VincularDespesas = ({
   useEffect(() => {
     refetch();
   }, [currentPage]);
+
+  useEffect(() => {
+    if (data && data.results && Array.isArray(bemProduzidoDespesas)) {
+      const uuidsBem = bemProduzidoDespesas.map(d => d.despesa ? d.despesa.uuid : d.uuid);
+      const novasSelecionadas = data.results
+        .filter(result => uuidsBem.includes(result.uuid))
+        .map(result => JSON.parse(JSON.stringify(result)));
+      setDespesasSelecionadas(prev => {
+        const bemMap = new Map(
+          bemProduzidoDespesas.map(d => {
+            const uuid = d.despesa ? d.despesa.uuid : d.uuid;
+            return [uuid, d.despesa || d];
+          })
+        );
+
+        const antigos = prev.filter(
+          d => !novasSelecionadas.some(n => n.uuid === d.uuid)
+        );
+
+        const atualizados = novasSelecionadas.map(n => bemMap.get(n.uuid) || n);
+
+        const novoValor = [...antigos, ...atualizados];
+        return novoValor;
+      });
+    }
+  }, [data && data.results, bemProduzidoDespesas]);
 
   const onPageChange = (event) => {
     setFirstPage(event.first);
@@ -169,6 +198,7 @@ export const VincularDespesas = ({
               <DataTable
                 value={data.results}
                 autoLayout={true}
+                dataKey="uuid"
                 selection={despesasSelecionadas}
                 onSelectionChange={(e) => setDespesasSelecionadas(e.value)}
                 expandedRows={expandedRows}
@@ -225,7 +255,7 @@ export const VincularDespesas = ({
               disabled={!despesasSelecionadas.length && !uuid}
               onClick={salvarRascunho}
             >
-              Salvar rascunho
+              {statusCompletoBemProduzido ? "Salvar" : "Salvar rascunho"}
             </button>
           </Flex>
         </Spin>
