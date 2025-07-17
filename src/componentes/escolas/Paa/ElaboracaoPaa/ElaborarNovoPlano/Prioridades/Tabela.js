@@ -100,7 +100,7 @@ export const Tabela = ({ data }) => {
                 body={(rowData) => formatMoneyBRL(rowData.valor_total)}
             />
             <Column
-                header="Ação"
+                header="Ações"
                 style={{ width: "75px", borderLeft: "none", textAlign: 'center' }}
                 body={rowData => {
                     return (
