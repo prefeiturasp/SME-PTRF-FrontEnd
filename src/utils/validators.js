@@ -9,7 +9,7 @@ export function validarDAC11A(ccmComDV) {
   let peso = 2;
   let soma = 0;
 
-  for (let i = 0; i < base.length; i++) {
+  for (let i = base.length - 1; i >= 0; i--) {
     soma += parseInt(base[i], 10) * peso;
     peso = peso === 9 ? 2 : peso + 1;
   }

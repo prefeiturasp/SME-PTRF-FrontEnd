@@ -11,14 +11,14 @@ import {
   Typography,
 } from "antd";
 import { CloseCircleFilled, PlusOutlined } from "@ant-design/icons";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import { formatMoneyBRL, parseMoneyCentsBRL } from "../../../../../utils/money";
 import { useCallback, useEffect, useState } from "react";
 import { getEspecificacoesCapital } from "../../../../../services/escolas/Despesas.service";
 import {
   formatProcessoIncorporacao,
   parsetFormattedProcessoIncorporacao,
-} from "../../../../../utils/Masks";
+} from "../../../../../utils/masks";
 
 const { Text } = Typography;
 
@@ -47,21 +47,21 @@ export const ClassificarBem = ({
 
   const verificarCamposPreenchidos = useCallback((_items = []) => {
     if (!_items || _items.length === 0) return false;
-    
-    return _items.every(item => {
+
+    return _items.every((item) => {
       const numProcesso = item?.num_processo_incorporacao;
       const especificacao = item?.especificacao_do_bem;
       const quantidade = Number(item?.quantidade);
       const valorIndividual = Number(item?.valor_individual);
 
-      const especificacaoValida = especificacao && (
-        (typeof especificacao === 'string' && especificacao.trim() !== '') ||
-        (typeof especificacao === 'object' && especificacao?.uuid)
-      );
-      
+      const especificacaoValida =
+        especificacao &&
+        ((typeof especificacao === "string" && especificacao.trim() !== "") ||
+          (typeof especificacao === "object" && especificacao?.uuid));
+
       return (
-        numProcesso && 
-        numProcesso.toString().trim() !== '' &&
+        numProcesso &&
+        numProcesso.toString().trim() !== "" &&
         especificacaoValida &&
         quantidade > 0 &&
         valorIndividual > 0
@@ -76,17 +76,22 @@ export const ClassificarBem = ({
     // Aguarda o próximo tick para garantir que o form foi atualizado
     setTimeout(() => {
       const totalFaltante = getTotalFaltante();
-      const camposPreenchidos = verificarCamposPreenchidos(allValues?.itens || []);
+      const camposPreenchidos = verificarCamposPreenchidos(
+        allValues?.itens || []
+      );
       setHabilitaCadastrarBem(totalFaltante === 0 && camposPreenchidos);
     }, 0);
-    
-    const itensProcessados = allValues?.itens?.map(item => ({
-      ...item,
-      especificacao_do_bem: typeof item.especificacao_do_bem === 'object' && item.especificacao_do_bem?.uuid 
-        ? item.especificacao_do_bem.uuid 
-        : item.especificacao_do_bem
-    })) || [];
-    
+
+    const itensProcessados =
+      allValues?.itens?.map((item) => ({
+        ...item,
+        especificacao_do_bem:
+          typeof item.especificacao_do_bem === "object" &&
+          item.especificacao_do_bem?.uuid
+            ? item.especificacao_do_bem.uuid
+            : item.especificacao_do_bem,
+      })) || [];
+
     setBemProduzidoItems(itensProcessados);
   };
 
@@ -112,13 +117,14 @@ export const ClassificarBem = ({
         ],
       });
     } else {
-      const transformedItems = items.map(item => ({
+      const transformedItems = items.map((item) => ({
         ...item,
-        especificacao_do_bem: item.especificacao_do_bem?.uuid || item.especificacao_do_bem
+        especificacao_do_bem:
+          item.especificacao_do_bem?.uuid || item.especificacao_do_bem,
       }));
-      
+
       form.setFieldsValue({
-        itens: transformedItems
+        itens: transformedItems,
       });
     }
   }, [items, form]);
@@ -139,7 +145,7 @@ export const ClassificarBem = ({
     if (items && items.length > 0) {
       const totalClassificado = calcularTotalClassificado(items);
       form.setFieldsValue({ totalClassificado });
-      
+
       setTimeout(() => {
         const totalFaltante = getTotalFaltante();
         const camposPreenchidos = verificarCamposPreenchidos(items);
@@ -149,7 +155,13 @@ export const ClassificarBem = ({
       // Se não há items, desabilita o botão
       setHabilitaCadastrarBem(false);
     }
-  }, [items, form, getTotalFaltante, verificarCamposPreenchidos, calcularTotalClassificado]);
+  }, [
+    items,
+    form,
+    getTotalFaltante,
+    verificarCamposPreenchidos,
+    calcularTotalClassificado,
+  ]);
 
   return (
     <div>
@@ -238,12 +250,14 @@ export const ClassificarBem = ({
                           showSearch
                           allowClear
                           style={{ width: "100%" }}
-                          options={(especificacoes || []).map((especificacao) => {
-                            return {
-                              label: especificacao.descricao,
-                              value: especificacao.uuid,
-                            };
-                          })}
+                          options={(especificacoes || []).map(
+                            (especificacao) => {
+                              return {
+                                label: especificacao.descricao,
+                                value: especificacao.uuid,
+                              };
+                            }
+                          )}
                         ></Select>
                       </Form.Item>
                     </Col>
