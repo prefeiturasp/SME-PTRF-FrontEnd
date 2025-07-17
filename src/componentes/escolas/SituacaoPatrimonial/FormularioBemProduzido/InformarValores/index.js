@@ -13,13 +13,17 @@ import { useDispatch } from "react-redux";
 import { CustomModalConfirm } from "../../../../Globais/Modal/CustomModalConfirm";
 import { BarraAcaoEmLote } from "./BarraAcaoEmLote";
 import { usePostExluirDespesaBemProduzidoEmLote } from "../hooks/usePostExluirDespesaBemProduzidoEmLote";
+import { useWatch } from "antd/es/form/Form";
 
 export const InformarValores = ({
   uuid,
   despesas: data = [],
   salvarRacuscunho,
   setRateiosComValores,
+  rateiosComValores,
   setHabilitaClassificarBem,
+  step,
+  statusCompletoBemProduzido
 }) => {
   const dispatch = useDispatch();
   const [form] = Form.useForm();
@@ -27,24 +31,79 @@ export const InformarValores = ({
   const [expandedRows, setExpandedRows] = useState(null);
   const [despesasSelecionadas, setDespesasSelecionadas] = useState([]);
   const [total, setTotal] = useState(0);
+  const [formValues, setFormValues] = useState({});
 
   const { mutationPost: mutationPostExcluirLote } =
     usePostExluirDespesaBemProduzidoEmLote(setDespesasSelecionadas);
+
+  useEffect(() => {
+    if ((!rateiosComValores || rateiosComValores.length === 0) && data.length) {
+      const rateios = [];
+      data.forEach(despesa => {
+        (despesa.rateios || []).forEach(rateio => {
+          rateios.push({
+            uuid: rateio.uuid,
+            bem_produzido_despesa: despesa.bem_produzido_despesa_uuid,
+            valor_utilizado: Number(rateio.bem_produzido_rateio_valor_utilizado) || 0,
+          });
+        });
+      });
+      setRateiosComValores(rateios);
+    }
+    // eslint-disable-next-line
+  }, []);
+
+  // Função para calcular o total de todas as despesas
+  const calcularTotalDespesas = (valoresForm) => {
+    if (!valoresForm?.despesas) return 0;
+    
+    return (valoresForm.despesas || []).reduce((total, despesaForm, despesaIdx) => {
+      if (!despesaForm || !Array.isArray(despesaForm.rateios)) return total;
+      const despesaData = data[despesaIdx];
+      return total + despesaForm.rateios.reduce((soma, rateioForm, rateioIdx) => {
+        // Se o valor foi alterado no formulário, usa ele; senão, usa o valor original do backend
+        let valorUtilizado = rateioForm?.valor_utilizado;
+        if (valorUtilizado == null || valorUtilizado === undefined) {
+          valorUtilizado =
+            despesaData?.rateios?.[rateioIdx]?.bem_produzido_rateio_valor_utilizado != null
+              ? Number(despesaData.rateios[rateioIdx].bem_produzido_rateio_valor_utilizado) * 100
+              : 0;
+        }
+        return soma + (Number(valorUtilizado) / 100);
+      }, 0);
+    }, 0);
+  };
 
   useEffect(() => {
     if (data.length) {
       const despesasComValoresIniciais = data.map((despesa) => ({
         rateios: despesa.rateios.map((rateio) => ({
           uuid: rateio.uuid,
-          valor_utilizado: null,
+          valor_utilizado: rateio.bem_produzido_rateio_valor_utilizado != null
+          ? Math.round(Number(rateio.bem_produzido_rateio_valor_utilizado) * 100) // para centavos
+          : null,
         })),
       }));
+
+      despesasComValoresIniciais.forEach((despesa) => {
+        despesa.rateios.forEach((rateio) => {
+          const rateioComValor = rateiosComValores.find((r) => r.uuid === rateio.uuid);
+          if (rateioComValor) {
+            rateio.valor_utilizado = rateioComValor.valor_utilizado * 100;
+          }
+        })
+      })
 
       form.setFieldsValue({
         despesas: despesasComValoresIniciais,
       });
     }
   }, [data]);
+
+  useEffect(() => {
+    const total = calcularTotalDespesas(form.getFieldValue());
+    setTotal(total);
+  }, [step]);
 
   const dataTemplate = (rowData, column) => {
     return formataData(rowData.data_documento);
@@ -59,21 +118,31 @@ export const InformarValores = ({
     const rateiosComValores = getRateiosComValores();
     const validationErrors = validateDespesas(values);
 
-    setHabilitaClassificarBem(validationErrors.length === 0);
+    const peloMenosUmRateioPorDespesa = (values.despesas || []).every(
+      (despesa) => (despesa.rateios || []).some((rateio) => rateio.valor_utilizado > 0)
+    );
+    setHabilitaClassificarBem(validationErrors.length === 0 && peloMenosUmRateioPorDespesa);
     setRateiosComValores(rateiosComValores);
   };
+
+  useEffect(() => {
+    const peloMenosUmRateioPorDespesa = data.every(
+      (despesa) => (despesa.rateios || []).some((rateio) => rateio.valor_utilizado > 0)
+    );
+    setHabilitaClassificarBem(peloMenosUmRateioPorDespesa);
+  }, [step])
 
   const handleSaveRascunho = (values) => {
     const validationErrors = validateDespesas(values);
 
-    if (validationErrors.length > 0) {
-      CustomModalConfirm({
+    /* if (validationErrors.length > 1) {
+      return CustomModalConfirm({
         dispatch,
         title: "Atenção!",
         message: "Informe pelo menos um valor utilizado por despesa.",
         cancelText: "Ok",
       });
-    }
+    } */
 
     salvarRacuscunho();
   };
@@ -82,15 +151,10 @@ export const InformarValores = ({
     const values = form.getFieldValue();
 
     const rateiosComValores = values.despesas.flatMap((despesa) =>
-      despesa.rateios
-        .filter(
-          (rateio) =>
-            rateio.valor_utilizado !== null && rateio.valor_utilizado !== 0
-        )
-        .map((rateio) => ({
+      despesa.rateios.map((rateio) => ({
           uuid: rateio.uuid,
           bem_produzido_despesa: rateio.bem_produzido_despesa_uuid,
-          valor_utilizado: rateio.valor_utilizado / 100,
+          valor_utilizado: rateio.valor_utilizado != null ? rateio.valor_utilizado / 100 : 0,
         }))
     );
 
@@ -159,7 +223,11 @@ export const InformarValores = ({
                   <div className="col-md-8">
                     {despesaItem(
                       `Valor disponível para utilização:`,
-                      "R$ " + formatMoneyBRL(rateio.valor_disponivel)
+                      "R$ " + formatMoneyBRL(
+                        (Number(rateio.valor_disponivel) || 0) +
+                        (Number(rateio.bem_produzido_rateio_valor_utilizado) || 0) -
+                        ((formValues?.despesas?.[index]?.rateios?.[rateioIndex]?.valor_utilizado || 0) / 100)
+                      )
                     )}
                   </div>
                 </div>
@@ -174,7 +242,7 @@ export const InformarValores = ({
                       rules={[
                         {
                           validator(_, value) {
-                            if (value / 100 > rateio.valor_disponivel)
+                            if (value / 100 > (rateio.valor_disponivel + parseFloat(rateio.bem_produzido_rateio_valor_utilizado)))
                               return Promise.reject(
                                 new Error(
                                   "Maior que o valor disponível para utilização"
@@ -189,7 +257,7 @@ export const InformarValores = ({
                         placeholder="0,00"
                         style={{ width: "100%" }}
                         controls={false}
-                        disabled={rateio.valor_disponivel === 0}
+                        disabled={rateio.valor_disponivel - parseFloat(rateio.bem_produzido_rateio_valor_utilizado) === 0}
                         formatter={formatMoneyByCentsBRL}
                         parser={parseMoneyBRL}
                       />
@@ -276,14 +344,9 @@ export const InformarValores = ({
           onFinish={handleSaveRascunho}
           layout="vertical"
           onValuesChange={(changed, allValues) => {
-            const total = allValues.despesas
-              ?.flatMap((d) => d.rateios || [])
-              .reduce(
-                (sum, r) => sum + (Number(r.valor_utilizado / 100) || 0),
-                0
-              );
-
+            const total = calcularTotalDespesas(allValues);
             setTotal(total);
+            setFormValues(allValues);
             onValuesChange(changed);
           }}
         >
@@ -330,7 +393,7 @@ export const InformarValores = ({
               Cancelar
             </button>
             <button className="btn btn-outline-success float-right">
-              Salvar rascunho
+              {statusCompletoBemProduzido ? "Salvar" : "Salvar rascunho"}
             </button>
           </Flex>
         </Form>
