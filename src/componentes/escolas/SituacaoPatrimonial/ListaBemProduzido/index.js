@@ -213,7 +213,12 @@ export const ListaBemProduzido = (props) => {
         </DataTable>
       ))}
       <Flex justify="end" gap={8} className="mt-1 mb-4 mx-4">
-        <button className="btn btn-outline-success float-right">Editar bem</button>
+        <button 
+          className="btn btn-outline-success float-right"
+          onClick={() => navigate(`/edicao-bem-produzido/${data.bem_produzido_uuid}`)}
+        >
+          Editar bem
+        </button>
       </Flex>
     </>
   );
