@@ -16,26 +16,3 @@ export const formatProcessoIncorporacao = (value) => {
 export const parsetFormattedProcessoIncorporacao = (value) => {
   return value.replace(/\D/g, "").slice(0, 16);
 };
-
-export function getCCMMask(value) {
-  const digits = value.replace(/\D/g, "");
-  if (digits.length > 8) {
-    return [
-      /\d/,
-      /\d/,
-      /\d/,
-      /\d/,
-      /\d/,
-      /\d/,
-      /\d/,
-      /\d/,
-      /\d/,
-      /\d/,
-      /\d/,
-      "-",
-      /\d/,
-    ];
-  } else {
-    return [/\d/, ".", /\d/, /\d/, /\d/, ".", /\d/, /\d/, /\d/, "-", /\d/];
-  }
-}
