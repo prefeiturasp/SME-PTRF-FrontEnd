@@ -15,37 +15,79 @@ import { useNavigate } from 'react-router-dom';
 import { formatMoneyBRL, parseMoneyCentsBRL } from "../../../../../utils/money";
 import { useCallback, useEffect, useState } from "react";
 import { getEspecificacoesCapital } from "../../../../../services/escolas/Despesas.service";
+import {
+  formatProcessoIncorporacao,
+  parsetFormattedProcessoIncorporacao,
+} from "../../../../../utils/Masks";
 
 const { Text } = Typography;
 
 export const ClassificarBem = ({
   items = [],
-  cadastrarBens,
-  salvarRascunhoClassificarBens,
+  salvar,
+  salvarRacuscunho,
   setBemProduzidoItems,
   setHabilitaCadastrarBem,
   habilitaCadastrarBem,
   total = 0,
+  statusCompletoBemProduzido,
 }) => {
   const navigate = useNavigate();
   const [especificacoes, setEspecificacoes] = useState([]);
   const [form] = Form.useForm();
 
-  const calcularTotalClassificado = (_items = []) => {
-    return _items.reduce((acc, item) => {
-      const quantidade = item?.quantidade || 0;
-      const valor = item?.valor_individual || 0;
+  const calcularTotalClassificado = useCallback((_items = []) => {
+    const total = _items.reduce((acc, item) => {
+      const quantidade = Number(item?.quantidade) || 0;
+      const valor = Number(item?.valor_individual) || 0;
       return acc + quantidade * valor;
     }, 0);
-  };
+    return total;
+  }, []);
+
+  const verificarCamposPreenchidos = useCallback((_items = []) => {
+    if (!_items || _items.length === 0) return false;
+    
+    return _items.every(item => {
+      const numProcesso = item?.num_processo_incorporacao;
+      const especificacao = item?.especificacao_do_bem;
+      const quantidade = Number(item?.quantidade);
+      const valorIndividual = Number(item?.valor_individual);
+
+      const especificacaoValida = especificacao && (
+        (typeof especificacao === 'string' && especificacao.trim() !== '') ||
+        (typeof especificacao === 'object' && especificacao?.uuid)
+      );
+      
+      return (
+        numProcesso && 
+        numProcesso.toString().trim() !== '' &&
+        especificacaoValida &&
+        quantidade > 0 &&
+        valorIndividual > 0
+      );
+    });
+  }, []);
 
   const handleValuesChange = (_, allValues) => {
     const total = calcularTotalClassificado(allValues?.itens || []);
     form.setFieldsValue({ totalClassificado: total });
 
-    const totalFaltante = getTotalFaltante();
-    setHabilitaCadastrarBem(totalFaltante === 0);
-    setBemProduzidoItems(allValues?.itens);
+    // Aguarda o próximo tick para garantir que o form foi atualizado
+    setTimeout(() => {
+      const totalFaltante = getTotalFaltante();
+      const camposPreenchidos = verificarCamposPreenchidos(allValues?.itens || []);
+      setHabilitaCadastrarBem(totalFaltante === 0 && camposPreenchidos);
+    }, 0);
+    
+    const itensProcessados = allValues?.itens?.map(item => ({
+      ...item,
+      especificacao_do_bem: typeof item.especificacao_do_bem === 'object' && item.especificacao_do_bem?.uuid 
+        ? item.especificacao_do_bem.uuid 
+        : item.especificacao_do_bem
+    })) || [];
+    
+    setBemProduzidoItems(itensProcessados);
   };
 
   const getEspecificacoesData = async () => {
@@ -57,27 +99,32 @@ export const ClassificarBem = ({
     getEspecificacoesData();
   }, []);
 
-  const formatMaskedValue = (value) => {
-    const digits = String(value || "")
-      .replace(/\D/g, "")
-      .slice(0, 16);
-
-    let result = "";
-
-    if (digits.length > 0) result += digits.slice(0, 4);
-    if (digits.length >= 5) result += "." + digits.slice(4, 8);
-    if (digits.length >= 9) result += "/" + digits.slice(8, 15);
-    if (digits.length === 16) result += "-" + digits.slice(15, 16);
-
-    return result;
-  };
-
-  const parseMaskedValue = (value) => {
-    return value.replace(/\D/g, "").slice(0, 16);
-  };
+  useEffect(() => {
+    if (!items.length) {
+      form.setFieldsValue({
+        itens: [
+          {
+            num_processo_incorporacao: "",
+            quantidade: null,
+            valor_individual: null,
+            especificacao_do_bem: null,
+          },
+        ],
+      });
+    } else {
+      const transformedItems = items.map(item => ({
+        ...item,
+        especificacao_do_bem: item.especificacao_do_bem?.uuid || item.especificacao_do_bem
+      }));
+      
+      form.setFieldsValue({
+        itens: transformedItems
+      });
+    }
+  }, [items, form]);
 
   const onFinish = () => {
-    cadastrarBens();
+    salvar();
   };
 
   const getTotalFaltante = useCallback(() => {
@@ -86,6 +133,23 @@ export const ClassificarBem = ({
     const faltam = total - (totalClassificado || 0);
     return faltam;
   }, [total, form]);
+
+  // Recalcula o total quando os items mudarem
+  useEffect(() => {
+    if (items && items.length > 0) {
+      const totalClassificado = calcularTotalClassificado(items);
+      form.setFieldsValue({ totalClassificado });
+      
+      setTimeout(() => {
+        const totalFaltante = getTotalFaltante();
+        const camposPreenchidos = verificarCamposPreenchidos(items);
+        setHabilitaCadastrarBem(totalFaltante === 0 && camposPreenchidos);
+      }, 0);
+    } else {
+      // Se não há items, desabilita o botão
+      setHabilitaCadastrarBem(false);
+    }
+  }, [items, form, getTotalFaltante, verificarCamposPreenchidos, calcularTotalClassificado]);
 
   return (
     <div>
@@ -108,7 +172,7 @@ export const ClassificarBem = ({
         onValuesChange={handleValuesChange}
         onFinish={onFinish}
         layout="vertical"
-        initialValues={{ itens: items }}
+        initialValues={{ itens: [] }}
       >
         <Form.List name="itens">
           {(fields, { add, remove }) => (
@@ -154,8 +218,8 @@ export const ClassificarBem = ({
                         <InputNumber
                           placeholder="Digite número do processo de incorporação"
                           controls={false}
-                          formatter={formatMaskedValue}
-                          parser={parseMaskedValue}
+                          formatter={formatProcessoIncorporacao}
+                          parser={parsetFormattedProcessoIncorporacao}
                           style={{ width: "100%" }}
                           maxLength={19}
                         />
@@ -306,7 +370,7 @@ export const ClassificarBem = ({
                             )} para classificar`
                           : faltam === 0
                           ? `Valor total classificado com sucesso!`
-                          : `O valor total indicado no(s )item(ns) excede o valor das despesas informadas`}
+                          : `O valor total indicado no(s) item(ns) excede o valor das despesas informadas`}
                       </Text>
                     );
                   }}
@@ -329,16 +393,9 @@ export const ClassificarBem = ({
           <button
             className="btn btn-outline-success float-right"
             type="button"
-            onClick={salvarRascunhoClassificarBens}
+            onClick={salvarRacuscunho}
           >
-            Salvar rascunho
-          </button>
-          <button
-            className="btn btn-success float-right"
-            type="submit"
-            disabled={!habilitaCadastrarBem}
-          >
-            Cadastrar bem
+            {statusCompletoBemProduzido ? "Salvar" : "Salvar rascunho"}
           </button>
         </Flex>
       </Form>
