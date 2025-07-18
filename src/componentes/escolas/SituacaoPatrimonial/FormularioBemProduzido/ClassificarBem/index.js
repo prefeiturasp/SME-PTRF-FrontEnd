@@ -31,6 +31,7 @@ export const ClassificarBem = ({
   habilitaCadastrarBem,
   total = 0,
   statusCompletoBemProduzido,
+  uuid,
 }) => {
   const navigate = useNavigate();
   const [especificacoes, setEspecificacoes] = useState([]);
@@ -409,7 +410,7 @@ export const ClassificarBem = ({
             type="button"
             onClick={salvarRacuscunho}
           >
-            {statusCompletoBemProduzido ? "Salvar" : "Salvar rascunho"}
+            {uuid ? "Salvar" : "Salvar rascunho"}
           </button>
         </Flex>
       </Form>

@@ -28,8 +28,8 @@ describe("ClassificarBem", () => {
     }));
   });
 
-  it("Deve chamar cadastrarBens ao clicar em Cadastrar bem", async () => {
-    render(
+  it("Deve chamar cadastrarBens ao clicar em Salvar", async () => {
+    const { container } = render(
       <MemoryRouter>
         <ClassificarBem
           items={[
@@ -40,7 +40,7 @@ describe("ClassificarBem", () => {
               valor_individual: 1000,
             },
           ]}
-          cadastrarBens={mockCadastrarBem}
+          salvar={mockCadastrarBem}
           salvarRascunhoClassificarBens={jest.fn()}
           setBemProduzidoItems={jest.fn()}
           setHabilitaCadastrarBem={jest.fn()}
@@ -50,18 +50,18 @@ describe("ClassificarBem", () => {
       </MemoryRouter>
     );
 
-    const buttonCadastrarBem = screen.getByRole("button", {
-      name: "Cadastrar bem",
-    });
-
-    fireEvent.click(buttonCadastrarBem);
+    // Submete o formulário diretamente
+    const form = container.querySelector('form');
+    fireEvent.submit(form);
 
     await waitFor(() => {
       expect(mockCadastrarBem).toHaveBeenCalled();
     });
   });
 
-  it("Deve desabilitar botão de cadastrar bem se valores inválidos", async () => {
+  it("Não deve chamar salvar se valores inválidos", async () => {
+    const mockSalvar = jest.fn();
+
     render(
       <MemoryRouter>
         <ClassificarBem
@@ -73,7 +73,7 @@ describe("ClassificarBem", () => {
               valor_individual: "",
             },
           ]}
-          cadastrarBens={jest.fn()}
+          salvar={mockSalvar}
           salvarRascunhoClassificarBens={jest.fn()}
           setBemProduzidoItems={jest.fn()}
           setHabilitaCadastrarBem={jest.fn()}
@@ -83,11 +83,15 @@ describe("ClassificarBem", () => {
       </MemoryRouter>
     );
 
-    const buttonCadastrarBem = screen.getByRole("button", {
-      name: "Cadastrar bem",
+    const buttonSalvar = screen.getByRole("button", {
+      name: /Salvar/i,
     });
 
-    expect(buttonCadastrarBem).toBeDisabled();
+    fireEvent.click(buttonSalvar);
+
+    await waitFor(() => {
+      expect(mockSalvar).not.toHaveBeenCalled();
+    });
   });
 
   it("Deve adicionar formulário na tela quando clicar em adicionar item", async () => {

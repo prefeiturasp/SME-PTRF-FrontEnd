@@ -255,7 +255,7 @@ export const VincularDespesas = ({
               disabled={!despesasSelecionadas.length && !uuid}
               onClick={salvarRascunho}
             >
-              {statusCompletoBemProduzido ? "Salvar" : "Salvar rascunho"}
+              {uuid ? "Salvar" : "Salvar rascunho"}
             </button>
           </Flex>
         </Spin>
