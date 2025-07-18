@@ -274,6 +274,7 @@ export const FormularioBemProduzido = () => {
           setHabilitaCadastrarBem={setHabilitaCadastrarBem}
           habilitaCadastrarBem={habilitaCadastrarBem}
           statusCompletoBemProduzido={statusCompletoBemProduzido}
+          uuid={uuid}
         />
       ) : null}
 

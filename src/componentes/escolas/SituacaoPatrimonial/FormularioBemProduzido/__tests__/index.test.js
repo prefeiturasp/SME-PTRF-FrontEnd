@@ -13,8 +13,7 @@ import { useParams } from "react-router-dom";
 import { combineReducers, createStore } from "redux";
 import { usePostBemProduzido } from "../hooks/usePostBemProduzido";
 import { usePatchBemProduzido } from "../hooks/usePatchBemProduzido";
-// import { usePatchBemProduzidoItemsRascunho } from "../ClassificarBem/hooks/usePatchBemProduzidoItemsRascunho";
-// import { usePatchBemProduzidoItems } from "../ClassificarBem/hooks/usePatchBemProduzidoItems";
+import { usePatchBemProduzidoRascunho } from "../hooks/usePatchBemProduzidoRascunho";
 
 const mockUseNavigate = jest.fn();
 
@@ -76,8 +75,16 @@ jest.mock("../ClassificarBem", () => ({
 jest.mock("../hooks/useGetBemProduzido");
 jest.mock("../hooks/usePostBemProduzido");
 jest.mock("../hooks/usePatchBemProduzido");
-// jest.mock("../ClassificarBem/hooks/usePatchBemProduzidoItemsRascunho");
-// jest.mock("../ClassificarBem/hooks/usePatchBemProduzidoItems");
+jest.mock("../hooks/usePatchBemProduzidoRascunho");
+
+beforeAll(() => {
+  global.IntersectionObserver = class {
+    constructor() {}
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  };
+});
 
 const rootReducer = combineReducers({ dummy: (state = {}) => state });
 const mockStore = createStore(rootReducer);
@@ -111,15 +118,9 @@ describe("Componente FormularioBemProduzido", () => {
     usePatchBemProduzido.mockReturnValue({
       mutationPatch: { mutateAsync: mockMutatePatchAsync, isLoading: false },
     });
-    usePatchBemProduzidoItemsRascunho.mockReturnValue({
+    usePatchBemProduzidoRascunho.mockReturnValue({
       mutationPatch: {
         mutateAsync: mockMutationPatchBemProduzidoItemsRascunhoAsync,
-        isLoading: false,
-      },
-    });
-    usePatchBemProduzidoItems.mockReturnValue({
-      mutationPatch: {
-        mutateAsync: mockMutationPatchBemProduzidoItemsAsync,
         isLoading: false,
       },
     });
