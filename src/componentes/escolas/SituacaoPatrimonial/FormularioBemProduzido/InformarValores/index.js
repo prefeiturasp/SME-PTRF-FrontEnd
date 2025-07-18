@@ -135,14 +135,14 @@ export const InformarValores = ({
   const handleSaveRascunho = (values) => {
     const validationErrors = validateDespesas(values);
 
-    /* if (validationErrors.length > 1) {
+    if (validationErrors.length > 0) {
       return CustomModalConfirm({
         dispatch,
         title: "Atenção!",
         message: "Informe pelo menos um valor utilizado por despesa.",
         cancelText: "Ok",
       });
-    } */
+    }
 
     salvarRacuscunho();
   };
@@ -242,7 +242,7 @@ export const InformarValores = ({
                       rules={[
                         {
                           validator(_, value) {
-                            if (value / 100 > (rateio.valor_disponivel + parseFloat(rateio.bem_produzido_rateio_valor_utilizado)))
+                            if (toNumber(value) / 100 > (toNumber(rateio.valor_disponivel) + toNumber(rateio.bem_produzido_rateio_valor_utilizado)))
                               return Promise.reject(
                                 new Error(
                                   "Maior que o valor disponível para utilização"
@@ -320,6 +320,11 @@ export const InformarValores = ({
     });
   };
 
+  function toNumber(val) {
+    const num = Number(val);
+    return isNaN(num) ? 0 : num;
+  }
+
   return (
     <div>
       <div style={{ position: "relative" }}>
@@ -393,7 +398,7 @@ export const InformarValores = ({
               Cancelar
             </button>
             <button className="btn btn-outline-success float-right">
-              {statusCompletoBemProduzido ? "Salvar" : "Salvar rascunho"}
+              {uuid ? "Salvar" : "Salvar rascunho"}
             </button>
           </Flex>
         </Form>
