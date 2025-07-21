@@ -13,6 +13,7 @@ import { useCarregaTabelaDespesa } from "../../../../../hooks/Globais/useCarrega
 import { useGetPeriodos } from "../../../../../hooks/Globais/useGetPeriodo";
 import moment from "moment";
 import { useNavigate } from 'react-router-dom';
+import './index.css';
 
 const filtroInicial = {
   fornecedor: "",
@@ -22,6 +23,13 @@ const filtroInicial = {
   data_inicio: "",
   data_fim: "",
 };
+
+function isRowDisabled(rowData, despesasSelecionadas) {
+  if (Array.isArray(despesasSelecionadas) && despesasSelecionadas.some(despesa => despesa.uuid === rowData.uuid)) {
+    return false;
+  }
+  return !(rowData.rateios || []).some(rateio => rateio.valor_disponivel > 0);
+}
 
 export const VincularDespesas = ({
   uuid,
@@ -200,10 +208,23 @@ export const VincularDespesas = ({
                 autoLayout={true}
                 dataKey="uuid"
                 selection={despesasSelecionadas}
-                onSelectionChange={(e) => setDespesasSelecionadas(e.value)}
+                onSelectionChange={(e) => {
+                  const disabledSelectedRows = (despesasSelecionadas || []).filter(
+                    row => isRowDisabled(row)
+                  );
+                  const newSelection = Array.isArray(e.value)
+                    ? [
+                        ...e.value.filter(row => !isRowDisabled(row)),
+                        ...disabledSelectedRows
+                      ]
+                    : disabledSelectedRows;
+                  setDespesasSelecionadas(newSelection);
+                }}
+                selectableRowDisabled={rowData => isRowDisabled(rowData)}
                 expandedRows={expandedRows}
                 onRowToggle={(e) => setExpandedRows(e.data)}
                 rowExpansionTemplate={expandedRowTemplate}
+                rowClassName={data => ({ 'row-disabled-situacao-patrimonial': isRowDisabled(data, despesasSelecionadas) })}
               >
                 <Column selectionMode="multiple" style={{ width: "3em" }} />
                 <Column field="periodo_referencia" header="Período" />
