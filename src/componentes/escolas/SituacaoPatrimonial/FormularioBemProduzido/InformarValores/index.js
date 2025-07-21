@@ -97,6 +97,7 @@ export const InformarValores = ({
       form.setFieldsValue({
         despesas: despesasComValoresIniciais,
       });
+      setFormValues({ despesas: despesasComValoresIniciais });
     }
   }, [data]);
 
@@ -179,6 +180,14 @@ export const InformarValores = ({
           rateiosFields.map(({ key: rateioKey, name: rateioIndex }) => {
             const rateio = data[index].rateios[rateioIndex];
 
+            const valorUtilizadoForm = formValues?.despesas?.[index]?.rateios?.[rateioIndex]?.valor_utilizado;
+            const valorUtilizado =
+              valorUtilizadoForm != null && valorUtilizadoForm !== undefined
+                ? valorUtilizadoForm
+                : rateio.bem_produzido_rateio_valor_utilizado != null
+                  ? Number(rateio.bem_produzido_rateio_valor_utilizado) * 100
+                  : 0;
+
             return (
               <div key={rateioKey} className="mt-4">
                 <h6 style={{ color: "#01585e", fontWeight: 600 }}>
@@ -224,9 +233,12 @@ export const InformarValores = ({
                     {despesaItem(
                       `Valor disponível para utilização:`,
                       "R$ " + formatMoneyBRL(
-                        (Number(rateio.valor_disponivel) || 0) +
-                        (Number(rateio.bem_produzido_rateio_valor_utilizado) || 0) -
-                        ((formValues?.despesas?.[index]?.rateios?.[rateioIndex]?.valor_utilizado || 0) / 100)
+                        Math.max(
+                          (Number(rateio.valor_disponivel) || 0) +
+                          (Number(rateio.bem_produzido_rateio_valor_utilizado) || 0) -
+                          (Number(valorUtilizado) / 100),
+                          0
+                        )
                       )
                     )}
                   </div>
@@ -242,12 +254,19 @@ export const InformarValores = ({
                       rules={[
                         {
                           validator(_, value) {
-                            if (toNumber(value) / 100 > (toNumber(rateio.valor_disponivel) + toNumber(rateio.bem_produzido_rateio_valor_utilizado)))
+                            const valorDigitado = Number(toNumber(value)) / 100;
+                            const valorDisponivel =
+                              Number(toNumber(rateio.valor_disponivel)) +
+                              Number(toNumber(rateio.bem_produzido_rateio_valor_utilizado));
+                            const valorDigitadoFixed = Math.round(valorDigitado * 100) / 100;
+                            const valorDisponivelFixed = Math.round(valorDisponivel * 100) / 100;
+
+                            if (valorDigitadoFixed > valorDisponivelFixed) {
+                              setHabilitaClassificarBem(false);
                               return Promise.reject(
-                                new Error(
-                                  "Maior que o valor disponível para utilização"
-                                )
+                                new Error("Maior que o valor disponível para utilização")
                               );
+                            }
                             return Promise.resolve();
                           },
                         },
