@@ -14,7 +14,7 @@ import {visoesService} from "../../../../services/visoes.service";
 import { setStatusCadastro, resetStatusCadastro } from "../../../../store/reducers/componentes/escolas/Associacao/DadosAssociacao/StatusCadastro/actions";
 import {toastCustom} from "../../../Globais/ToastCustom";
 import "../associacao.scss"
-import { getCCMMask } from "../../../../utils/masks";
+import { getCCMMask } from "../../../../utils/Mascaras";
 import { validarDAC11A } from "../../../../utils/validators";
 
 export const DadosDaAsssociacao = () => {

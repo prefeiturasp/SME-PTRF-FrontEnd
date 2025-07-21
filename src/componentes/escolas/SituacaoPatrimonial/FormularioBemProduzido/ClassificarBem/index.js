@@ -18,7 +18,7 @@ import { getEspecificacoesCapital } from "../../../../../services/escolas/Despes
 import {
   formatProcessoIncorporacao,
   parsetFormattedProcessoIncorporacao,
-} from "../../../../../utils/masks";
+} from "../../../../../utils/Mascaras";
 
 const { Text } = Typography;
 
