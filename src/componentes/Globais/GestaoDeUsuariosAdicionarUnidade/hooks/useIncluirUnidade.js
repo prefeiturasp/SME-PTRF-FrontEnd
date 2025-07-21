@@ -1,13 +1,13 @@
 import {useContext} from "react";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
-import {useHistory} from "react-router-dom";
+import {useNavigate} from 'react-router-dom';
 import { postIncluirUnidade } from "../../../../services/GestaoDeUsuarios.service";
 import { GestaoDeUsuariosAdicionarUnidadeContext } from "../context/GestaoUsuariosAdicionarUnidadeProvider";
 import {toastCustom} from "../../../Globais/ToastCustom";
 
 export const useIncluirUnidade = () => {
     const queryClient = useQueryClient();
-    const history = useHistory();
+    const navigate = useNavigate();
     const { currentPage } = useContext(GestaoDeUsuariosAdicionarUnidadeContext)
     
     const mutationIncluirUnidade = useMutation({
@@ -19,7 +19,7 @@ export const useIncluirUnidade = () => {
             // Refaz a lista
             queryClient.invalidateQueries(['unidades-disponiveis-inclusao', currentPage]).then()
             toastCustom.ToastCustomSuccess(`${response.data}`, ``);
-            history.goBack()
+            navigate(-1)
         },
         onError: (error) => {
             console.log("Erro ao habilitar acesso ", error.response)

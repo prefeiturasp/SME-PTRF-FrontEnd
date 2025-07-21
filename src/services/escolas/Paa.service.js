@@ -1,6 +1,8 @@
 import api from "../api/index.js";
 import { TOKEN_ALIAS } from "../auth.service.js";
 import { consultarListaCargos } from "./Associacao.service.js";
+import { addFiltersToQueryString } from "../../utils/Api.js";
+
 
 const authHeader = () => ({
   headers: {
@@ -139,6 +141,14 @@ export const postAtivarAtualizacaoSaldoPAA = async (uuid) => {
 // Prioridades
 export const getPrioridadesTabelas = async () => {
   return (await api.get(`api/prioridades-paa/tabelas/`, authHeader())).data;
+};
+
+export const getPrioridades = async (filtros, page=1, page_size=20) => {
+  let queryString = `?paa__uuid=${localStorage.getItem(
+    "PAA"
+  )}&page=${page}&page_size=${page_size}`;
+  queryString = addFiltersToQueryString(queryString, filtros);
+  return (await api.get(`api/prioridades-paa/${queryString}`, authHeader())).data;
 };
 
 export const postPrioridade = async (payload) => {

@@ -29,12 +29,12 @@
     text-align: left;
     .logo-ptrf {
       text-align: center;
-      .img-logo-ptrf{
+      .img-logo-ptrf {
         max-height: 134px;
       }
       @media screen and (max-height: 610px) {
         padding-top: 2rem;
-/*        img {
+        /*        img {
           height: auto;
           width: 300px;
         }*/
@@ -59,7 +59,6 @@
       @media screen and (min-height: 611px) {
         padding-top: 2rem;
         img {
-          height: 65px;
           width: 171px;
         }
       }
@@ -67,29 +66,29 @@
   }
 }
 
-.falha-login{
+.falha-login {
   background-image: url("../../assets/img/icone-falha-login.svg");
   background-repeat: no-repeat;
   background-position: 93% 50%;
-  border-color: #B40C02 !important;
+  border-color: #b40c02 !important;
 }
 
-.falha-login-senha{
+.falha-login-senha {
   background-image: url("../../assets/img/icone-falha-login.svg");
   background-repeat: no-repeat;
   background-position: 100% 50%;
-  border-color: #B40C02 !important;
+  border-color: #b40c02 !important;
 }
 
-.falha-login-icone-mostrar-senha{
-  border-color: #B40C02 !important;
+.falha-login-icone-mostrar-senha {
+  border-color: #b40c02 !important;
 }
 
-#senha{
+#senha {
   border-right: none;
 }
 
-#show_hide_password{
+#show_hide_password {
   border-left: none;
   background-color: #fff;
 }

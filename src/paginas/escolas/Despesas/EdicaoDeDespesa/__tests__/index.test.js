@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import React  from "react";
-import { useParams, useLocation } from "react-router-dom"
+import { useParams, useLocation, MemoryRouter } from "react-router-dom"
 import { EdicaoDeDespesa, tituloPagina } from "../index";
 import { visoesService } from "../../../../../services/visoes.service";
 import {DespesaContext} from "../../../../../context/Despesa";
@@ -37,9 +37,11 @@ describe('<EdicaoDeDespesa>', () => {
   test('Deve renderizar o componente', async () => {
     useParams.mockReturnValue({ associacao: '' });
     render(
-      <DespesaContext.Provider value={contexto}>
-        <EdicaoDeDespesa/>
-      </DespesaContext.Provider>
+      <MemoryRouter>
+        <DespesaContext.Provider value={contexto}>
+          <EdicaoDeDespesa/>
+        </DespesaContext.Provider>
+      </MemoryRouter>
     )
     expect(screen.getByText("Dados do documento")).toBeInTheDocument();
   });
@@ -48,9 +50,11 @@ describe('<EdicaoDeDespesa>', () => {
     useParams.mockReturnValue({ associacao: '' });
     visoesService.getItemUsuarioLogado.mockReturnValue('DRE');
     render(
-      <DespesaContext.Provider value={contexto}>
-        <EdicaoDeDespesa/>
-      </DespesaContext.Provider>
+      <MemoryRouter>
+        <DespesaContext.Provider value={contexto}>
+          <EdicaoDeDespesa/>
+        </DespesaContext.Provider>
+      </MemoryRouter>
     )
     expect(screen.getByText("Dados do documento")).toBeInTheDocument();
   });
@@ -68,9 +72,11 @@ describe('<EdicaoDeDespesa>', () => {
     visoesService.getItemUsuarioLogado.mockReturnValue('UE');
     metodosAuxiliares.origemAnaliseLancamento.mockReturnValue(true);
     render(
-      <DespesaContext.Provider value={contexto}>
-        <EdicaoDeDespesa/>
-      </DespesaContext.Provider>
+      <MemoryRouter>
+        <DespesaContext.Provider value={contexto}>
+          <EdicaoDeDespesa/>
+        </DespesaContext.Provider>
+      </MemoryRouter>
     )
     expect(screen.getByText("Dados do documento")).toBeInTheDocument();
   });
@@ -88,9 +94,11 @@ describe('<EdicaoDeDespesa>', () => {
     visoesService.getItemUsuarioLogado.mockReturnValue('UE');
     metodosAuxiliares.origemAnaliseLancamento.mockReturnValue(true);
     render(
-      <DespesaContext.Provider value={contexto}>
-        <EdicaoDeDespesa/>
-      </DespesaContext.Provider>
+      <MemoryRouter>
+        <DespesaContext.Provider value={contexto}>
+          <EdicaoDeDespesa/>
+        </DespesaContext.Provider>
+      </MemoryRouter>
     )
     expect(screen.getByText("Dados do documento")).toBeInTheDocument();
   });
@@ -109,9 +117,11 @@ describe('<EdicaoDeDespesa>', () => {
     metodosAuxiliares.origemAnaliseLancamento.mockReturnValue(false);
     
     render(
-      <DespesaContext.Provider value={contexto}>
-        <EdicaoDeDespesa/>
-      </DespesaContext.Provider>
+      <MemoryRouter>
+        <DespesaContext.Provider value={contexto}>
+          <EdicaoDeDespesa/>
+        </DespesaContext.Provider>
+      </MemoryRouter>
     )
     expect(screen.getByText("Dados do documento")).toBeInTheDocument();
   });

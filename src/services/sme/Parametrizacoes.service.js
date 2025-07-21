@@ -699,6 +699,7 @@ export const deleteTipoDeCusteio = async (tag_uuid) => {
   return await api.delete(`/api/tipos-custeio/${tag_uuid}/`, authHeader());
 };
 
+
 // Tipos de Documento
 export const getTodosTiposDeDocumento = async () => {
   return (await api.get(`/api/tipos-documento/`, authHeader())).data;

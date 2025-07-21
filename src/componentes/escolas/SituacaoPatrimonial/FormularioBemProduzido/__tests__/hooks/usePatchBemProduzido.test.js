@@ -39,7 +39,7 @@ describe("usePatchBemProduzido", () => {
 
     await waitFor(() => {
       expect(toastCustom.ToastCustomSuccess).toHaveBeenCalledWith(
-        "Rascunho do bem produzido salvo com sucesso."
+        "Bem produzido salvo com sucesso."
       );
     });
   });
@@ -58,7 +58,7 @@ describe("usePatchBemProduzido", () => {
 
     await waitFor(() => {
       expect(toastCustom.ToastCustomError).toHaveBeenCalledWith(
-        "Houve um erro ao salvar rascunho."
+        "Houve um erro ao salvar bem produzido."
       );
     });
   });

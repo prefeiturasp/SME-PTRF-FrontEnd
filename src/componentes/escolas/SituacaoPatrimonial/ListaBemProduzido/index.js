@@ -1,10 +1,10 @@
+import { useNavigate } from 'react-router-dom';
 import React, { useEffect, useState } from "react";
 import moment from "moment";
 import { Flex, Spin } from "antd";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Paginator } from "primereact/paginator";
-import { useNavigate } from "react-router-dom-v5-compat";
 import { useGetBemProduzidosComAdquiridos } from "./hooks/useGetBemProduzidosComAdquiridos";
 import { Tag } from "../../../Globais/Tag";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -213,7 +213,12 @@ export const ListaBemProduzido = (props) => {
         </DataTable>
       ))}
       <Flex justify="end" gap={8} className="mt-1 mb-4 mx-4">
-        <button className="btn btn-outline-success float-right">Editar bem</button>
+        <button 
+          className="btn btn-outline-success float-right"
+          onClick={() => navigate(`/edicao-bem-produzido/${data.bem_produzido_uuid}`)}
+        >
+          Editar bem
+        </button>
       </Flex>
     </>
   );

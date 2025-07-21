@@ -1,5 +1,5 @@
 import React from "react";
-import { Route, Switch } from "react-router-dom";
+import { Route, Routes, Navigate } from "react-router-dom";
 import { Login } from "../paginas/Login";
 import { LoginSuporte } from "../paginas/LoginSuporte";
 import { Pagina404 } from "../paginas/escolas/404";
@@ -40,7 +40,6 @@ import { AnalisesRegularidadeAssociacaoPage } from "../paginas/dres/Regularidade
 import { SuporteAsUnidadesDre } from "../paginas/dres/SuporteAsUnidades";
 import { SuporteAsUnidadesSme } from "../paginas/SME/SuporteAsUnidades";
 import { GestaoDeUsuariosListPage } from "../componentes/Globais/GestaoDeUsuariosList";
-// Faz o redirect de acordo com a Visao Selecionada
 import { RedirectLoginVisaoUe } from "../utils/RedirectLoginVisaoUe";
 import { DadosDaDiretoriaDrePage } from "../paginas/dres/Diretoria/DadosDaDiretoria";
 import { TecnicosDaDiretoriaDrePage } from "../paginas/dres/Diretoria/TecnicosDaDiretoria";
@@ -52,7 +51,6 @@ import { ListaPrestacaoDeContas } from "../componentes/dres/PrestacaoDeContas/Li
 import { DetalhePrestacaoDeContas } from "../componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas";
 import { DetalhePrestacaoDeContasNaoApresentada } from "../componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContasNaoApresentada";
 import RelatorioConsolidado from "../componentes/dres/RelatorioConsolidado";
-// TODO Remover RelatorioConsolidadoApuracao
 import { RelatorioConsolidadoApuracao } from "../componentes/dres/RelatorioConsolidado/RelatorioConsolidadoApuracao";
 import { RelatorioConsolidadoEmTela } from "../componentes/dres/RelatorioConsolidado/RelatorioConsolidadoEmTela";
 import { RelatorioConsolidadoDadosDasUes } from "../componentes/dres/RelatorioConsolidado/RelatorioConsolidadoDadosDasUes";
@@ -111,10 +109,6 @@ import { CadastroTipoReceitaPage } from "../paginas/SME/Parametrizacoes/TiposRec
 import { EdicaoTipoReceitaPage } from "../paginas/SME/Parametrizacoes/TiposReceita/EdicaoTipoReceita";
 import { TiposDeCredito } from "../componentes/sme/Parametrizacoes/Receitas/TiposDeCredito";
 import { AcoesPDDE } from "../componentes/sme/Parametrizacoes/Estrutura/AcoesPDDE";
-
-// Migrando para V6 do react-router-dom
-// Referencia: https://github.com/remix-run/react-router/discussions/8753
-import { CompatRoute } from "react-router-dom-v5-compat";
 import { PaginaCadastroHistoricoDeMembros } from "../componentes/escolas/MembrosDaAssociacao/pages/PaginaCadastroHistoricoDeMembros";
 import { ChamaTypescriptFirstComponent } from "../componentes/ChamaTypescriptFirstComponent";
 import { PaginaDetalhePrestacaoContaReprovadaNaoApresentacao } from "../componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContasNaoApresentada/pages/PaginaDetalhePrestacaoContaReprovadaNaoApresentacao";
@@ -270,7 +264,6 @@ const routesConfig = [
     component: ValoresReprogramadosDrePage,
     permissoes: ["access_valores_reprogramados_dre"],
   },
-
   {
     exact: true,
     path: "/dre-detalhes-associacao/:origem?/:periodo_uuid?/:conta_uuid?",
@@ -379,7 +372,6 @@ const routesConfig = [
     component: PaginaSemPermissao,
     permissoes: ["view_default"],
   },
-
   {
     exact: true,
     path: "/gestao-de-perfis",
@@ -431,58 +423,6 @@ const routesConfig = [
     component: ExtracaoDadosPage,
     permissoes: ["access_gestao_perfis_dre", "access_extracao_de_dados_sme"],
   },
-  {
-    exact: true,
-    path: "/gestao-de-perfis",
-    component: GestaoDePerfisPage,
-    permissoes: [
-      "access_gestao_perfis_ue",
-      "access_gestao_perfis_dre",
-      "access_gestao_perfis_sme",
-    ],
-  },
-  {
-    exact: true,
-    path: "/gestao-de-usuarios-list",
-    component: GestaoDeUsuariosListPage,
-    permissoes: [
-      "access_gestao_usuarios_ue",
-      "change_gestao_usuarios_ue",
-      "access_gestao_usuarios_dre",
-      "change_gestao_usuarios_dre",
-      "access_gestao_usuarios_sme",
-      "change_gestao_usuarios_sme",
-    ],
-    featureFlag: "gestao-usuarios",
-  },
-  {
-    exact: true,
-    path: "/gestao-de-usuarios-form/:id_usuario?",
-    component: GestaoDeUsuariosFormPage,
-    permissoes: [
-      "access_gestao_usuarios_ue",
-      "change_gestao_usuarios_ue",
-      "access_gestao_usuarios_dre",
-      "change_gestao_usuarios_dre",
-      "access_gestao_usuarios_sme",
-      "change_gestao_usuarios_sme",
-    ],
-    featureFlag: "gestao-usuarios",
-  },
-  {
-    exact: true,
-    path: "/gestao-de-usuarios-adicionar-unidade/:id_usuario?",
-    component: GestaoDeUsuariosAdicionarUnidadePage,
-    permissoes: ["access_gestao_usuarios_sme"],
-    featureFlag: "gestao-usuarios",
-  },
-  {
-    exact: true,
-    path: "/extracoes-dados",
-    component: ExtracaoDadosPage,
-    permissoes: ["access_gestao_perfis_dre", "access_extracao_de_dados_sme"],
-  },
-
   {
     exact: true,
     path: "/gestao-de-perfis-form/:id_usuario?",
@@ -493,7 +433,6 @@ const routesConfig = [
       "access_gestao_perfis_sme",
     ],
   },
-
   {
     exact: true,
     path: "/dre-relatorio-consolidado",
@@ -890,402 +829,6 @@ const routesConfig = [
       "change_painel_parametrizacoes",
     ],
   },
-
-  {
-    exact: true,
-    path: "/gestao-de-perfis-form/:id_usuario?",
-    component: GestaoDePerfisForm,
-    permissoes: [
-      "access_gestao_perfis_ue",
-      "access_gestao_perfis_dre",
-      "access_gestao_perfis_sme",
-    ],
-  },
-  {
-    exact: true,
-    path: "/parametro-tipos-receita",
-    component: TiposDeCredito,
-    permissoes: [
-      "access_painel_parametrizacoes",
-      "change_painel_parametrizacoes",
-    ],
-  },
-  {
-    exact: true,
-    path: "/dre-relatorio-consolidado",
-    component: RelatorioConsolidado,
-    permissoes: ["access_relatorio_consolidado_dre"],
-  },
-  {
-    exact: true,
-    path: "/visualizacao-da-ata-parecer-tecnico/:uuid_ata/:ja_publicado?",
-    component: VisualizacaoDaAtaParecerTecnico,
-    permissoes: ["access_relatorio_consolidado_dre"],
-  },
-  {
-    exact: true,
-    path: "/edicao-da-ata-parecer-tecnico/:uuid_ata",
-    component: EdicaoAtaParecerTecnico,
-    permissoes: ["access_relatorio_consolidado_dre"],
-  },
-  {
-    exact: true,
-    path: "/dre-relatorio-consolidado-apuracao/:periodo_uuid/:conta_uuid/:ja_publicado?/:consolidado_dre_uuid?",
-    component: RelatorioConsolidadoApuracao,
-    permissoes: ["access_relatorio_consolidado_dre"],
-  },
-  {
-    exact: true,
-    path: "/dre-relatorio-consolidado-em-tela/:periodo_uuid/:ja_publicado?/:consolidado_dre_uuid?",
-    component: RelatorioConsolidadoEmTela,
-    permissoes: ["access_relatorio_consolidado_dre"],
-  },
-  {
-    exact: true,
-    path: "/dre-relatorio-consolidado-dados-das-ues/:periodo_uuid/:conta_uuid/:ja_publicado?",
-    component: RelatorioConsolidadoDadosDasUes,
-    permissoes: ["access_relatorio_consolidado_dre"],
-  },
-  {
-    exact: true,
-    path: "/dre-relatorio-consolidado-retificacao/:relatorio_consolidado_uuid/",
-    component: RetificacaoRelatorioConsolidado,
-    permissoes: ["access_retificacao_dre"],
-  },
-  {
-    exact: true,
-    path: "/parametro-arquivos-de-carga/:tipo_de_carga/:versao?",
-    component: ArquivosDeCarga,
-    permissoes: [
-      "access_painel_parametrizacoes",
-      "change_painel_parametrizacoes",
-      "access_gestao_usuarios_sme",
-      "change_gestao_usuarios_sme",
-    ],
-  },
-  {
-    exact: true,
-    path: "/painel-parametrizacoes",
-    component: PainelParametrizacoesPage,
-    permissoes: [
-      "access_painel_parametrizacoes",
-      "change_painel_parametrizacoes",
-    ],
-  },
-  {
-    exact: true,
-    path: "/parametro-associacoes",
-    component: Associacoes,
-    permissoes: [
-      "access_painel_parametrizacoes",
-      "change_painel_parametrizacoes",
-    ],
-  },
-  {
-    exact: true,
-    path: "/parametro-acoes-associacoes",
-    component: AcoesDasAssociacoes,
-    permissoes: [
-      "access_painel_parametrizacoes",
-      "change_painel_parametrizacoes",
-    ],
-  },
-  {
-    exact: true,
-    path: "/parametro-contas-associacoes",
-    component: ContasDasAssociacoes,
-    permissoes: [
-      "access_painel_parametrizacoes",
-      "change_painel_parametrizacoes",
-    ],
-  },
-  {
-    exact: true,
-    path: "/parametro-periodos",
-    component: Periodos,
-    permissoes: [
-      "access_painel_parametrizacoes",
-      "change_painel_parametrizacoes",
-    ],
-  },
-  {
-    exact: true,
-    path: "/parametro-tags",
-    component: Tags,
-    permissoes: [
-      "access_painel_parametrizacoes",
-      "change_painel_parametrizacoes",
-    ],
-  },
-  {
-    exact: true,
-    path: "/parametro-tipos-conta",
-    component: TiposConta,
-    permissoes: [
-      "access_painel_parametrizacoes",
-      "change_painel_parametrizacoes",
-    ],
-  },
-  {
-    exact: true,
-    path: "/parametro-tipos-documento",
-    component: TiposDocumento,
-    permissoes: [
-      "access_painel_parametrizacoes",
-      "change_painel_parametrizacoes",
-    ],
-  },
-  {
-    exact: true,
-    path: "/parametro-mandato",
-    component: Mandatos,
-    permissoes: [
-      "access_painel_parametrizacoes",
-      "change_painel_parametrizacoes",
-    ],
-  },
-  {
-    exact: true,
-    path: "/motivos-rejeicao",
-    component: MotivosRejeicaoEncerramentoConta,
-    permissoes: [
-      "access_painel_parametrizacoes",
-      "change_painel_parametrizacoes",
-    ],
-  },
-  {
-    exact: true,
-    path: "/acompanhamento-pcs-sme",
-    component: AcompanhamentoPcsSmePage,
-    permissoes: ["access_acompanhamento_pc_sme"],
-  },
-  {
-    exact: true,
-    path: "/acompanhamento-pcs-sme/:dre_uuid?/:periodo_uuid?",
-    component: AcompanhamentoPcsPorDre,
-    permissoes: ["access_acompanhamento_pc_sme"],
-  },
-  {
-    exact: true,
-    path: "/analises-relatorios-consolidados-dre",
-    component: RelatorioConsolidadoPage,
-    permissoes: ["access_analise_relatorios_consolidados_sme"],
-  },
-  {
-    exact: true,
-    path: "/analise-relatorio-consolidado-dre-detalhe/:consolidado_dre_uuid/",
-    component: AcompanhamentoDeRelatorioConsolidadoSMEDetalhe,
-    permissoes: ["access_analise_relatorios_consolidados_sme"],
-  },
-  {
-    exact: true,
-    path: "/analise-relatorio-consolidado-dre-detalhe-acertos-resumo/:consolidado_dre_uuid/",
-    component: AcompanhamentoDeRelatorioConsolidadoSMEResumoAcertos,
-    permissoes: ["access_analise_relatorios_consolidados_sme"],
-  },
-  {
-    exact: true,
-    path: "/listagem-relatorios-consolidados-dre/:periodo_uuid?/:status_sme?",
-    component: AcompanhamentoRelatorioConsolidadosSmeListagem,
-    permissoes: ["access_analise_relatorios_consolidados_sme"],
-  },
-  {
-    exact: true,
-    path: "/parametro-acoes",
-    component: Acoes,
-    permissoes: ["access_painel_parametrizacoes"],
-  },
-  {
-    exact: true,
-    path: "/parametro-textos-fique-de-olho",
-    component: FiqueDeOlho,
-    permissoes: [
-      "access_painel_parametrizacoes",
-      "change_painel_parametrizacoes",
-    ],
-  },
-  {
-    exact: true,
-    path: "/parametro-textos-paa",
-    component: TextosPaa,
-    permissoes: [
-      "access_painel_parametrizacoes",
-      "change_painel_parametrizacoes",
-    ],
-    featureFlag: "paa",
-  },
-  {
-    exact: true,
-    path: "/associacoes-da-acao/:acao_uuid?",
-    component: AssociacoesDaAcao,
-    permissoes: ["access_painel_parametrizacoes"],
-  },
-  {
-    exact: true,
-    path: "/vincula-associacoes-a-acao/:acao_uuid?",
-    component: VinculaAssociacoesAAcao,
-    permissoes: ["access_painel_parametrizacoes"],
-  },
-  {
-    exact: true,
-    path: "/parametro-especificacoes",
-    component: EspecificacoesMateriaisServicos,
-    permissoes: [
-      "access_painel_parametrizacoes",
-      "change_painel_parametrizacoes",
-    ],
-  },
-  {
-    exact: true,
-    path: "/parametro-tipos-custeio",
-    component: TiposDeCusteio,
-    permissoes: [
-      "access_painel_parametrizacoes",
-      "change_painel_parametrizacoes",
-    ],
-  },
-  {
-    exact: true,
-    path: "/parametro-tipos-transacao",
-    component: TiposDeTransacao,
-    permissoes: [
-      "access_painel_parametrizacoes",
-      "change_painel_parametrizacoes",
-    ],
-  },
-  {
-    exact: true,
-    path: "/parametro-Fornecedores",
-    component: Fornecedores,
-    permissoes: [
-      "access_fornecedores",
-      "access_painel_parametrizacoes",
-      "change_painel_parametrizacoes",
-    ],
-  },
-  {
-    exact: true,
-    path: "/parametro-tipos-acertos-lancamentos",
-    component: ParametrizacoesTiposAcertosLancamentos,
-    permissoes: [
-      "access_painel_parametrizacoes",
-      "change_painel_parametrizacoes",
-    ],
-  },
-  {
-    exact: true,
-    path: "/parametro-tipos-acertos-documentos",
-    component: ParametrizacoesTiposAcertosDocumentos,
-    permissoes: [
-      "access_painel_parametrizacoes",
-      "change_painel_parametrizacoes",
-    ],
-  },
-  {
-    exact: true,
-    path: "/parametro-motivos-estorno",
-    component: ParametrizacoesMotivosDeEstorno,
-    permissoes: [
-      "access_painel_parametrizacoes",
-      "change_painel_parametrizacoes",
-    ],
-  },
-  {
-    exact: true,
-    path: "/parametro-repasse",
-    component: ParametrizacoesRepasses,
-    permissoes: [
-      "access_painel_parametrizacoes",
-      "change_painel_parametrizacoes",
-    ],
-  },
-  {
-    exact: true,
-    path: "/parametro-motivos-devolucao-tesouro",
-    component: ParametrizacoesMotivosDevolucaoTesouro,
-    permissoes: [
-      "access_painel_parametrizacoes",
-      "change_painel_parametrizacoes",
-    ],
-  },
-  {
-    exact: true,
-    path: "/parametro-motivos-pc-aprovada-ressalva",
-    component: ParametrizacoesMotivosAprovacaoPcRessalva,
-    permissoes: [
-      "access_painel_parametrizacoes",
-      "change_painel_parametrizacoes",
-    ],
-  },
-  {
-    exact: true,
-    path: "/consulta-de-saldos-bancarios/:periodo_uuid?/:conta_uuid?/",
-    component: ConsultaDeSaldosBancarios,
-    permissoes: ["access_consulta_saldo_bancario"],
-  },
-  {
-    exact: true,
-    path: "/consulta-de-saldos-bancarios-detalhes-associacoes/:periodo_uuid/:conta_uuid/:dre_uuid/",
-    component: ConsultaDeSaldosBancariosDetalhesAssociacoes,
-    permissoes: ["access_consulta_saldo_bancario"],
-  },
-  {
-    exact: true,
-    path: "/analise-dre",
-    component: AnaliseDre,
-    permissoes: ["access_analise_dre"],
-  },
-  {
-    exact: true,
-    path: "/consulta-detalhamento-analise-da-dre/:prestacao_conta_uuid?",
-    component: ConsultaDetalhamentoAnaliseDaDre,
-    permissoes: ["access_analise_dre"],
-  },
-  {
-    exact: true,
-    path: "/",
-    component: RedirectLoginVisaoUe,
-    permissoes: ["view_default"],
-  },
-  {
-    exact: true,
-    path: "/regularidade-associacoes",
-    component: RegularidadeAssociacoesPage,
-    permissoes: ["access_regularidade_dre"],
-  },
-  {
-    exact: true,
-    path: "/analises-regularidade-associacao/:associacao_uuid/",
-    component: AnalisesRegularidadeAssociacaoPage,
-    permissoes: ["access_regularidade_dre"],
-  },
-  {
-    exact: true,
-    path: "/suporte-unidades-sme",
-    component: SuporteAsUnidadesSme,
-    permissoes: ["access_suporte_unidades_sme"],
-  },
-  {
-    exact: true,
-    path: "/dre-detalhe-prestacao-de-contas-reprovada-nao-apresentacao/:prestacao_conta_uuid/",
-    component: PaginaDetalhePrestacaoContaReprovadaNaoApresentacao,
-    permissoes: ["access_acompanhamento_pcs_dre"],
-  },
-  {
-    exact: true,
-    path: "/componente-typescript",
-    component: ChamaTypescriptFirstComponent,
-    permissoes: ["view_default"],
-  },
-  {
-    exact: true,
-    path: "/parametro-motivos-pagamento-antecipado",
-    component: MotivosPagamentoAntecipado,
-    permissoes: [
-      "access_painel_parametrizacoes",
-      "change_painel_parametrizacoes",
-    ],
-  },
   {
     exact: true,
     path: "/paa",
@@ -1345,66 +888,47 @@ const routesConfig = [
   },
 ];
 
-const PrivateRouter = (
-  { component: Component, ...rest } // eslint-disable-line
-) => (
-  <Route
-    {...rest}
-    render={
-      (props) =>
-        authService.isLoggedIn() ? (
-          rest.featureFlag && visoesService.getPermissoes(rest.permissoes) ? (
-            <Component {...props} />
-          ) : (
-            <Route path="*" component={PaginaSemPermissao} />
-          )
-        ) : (
-          window.location.assign("/login")
-        )
-      /* <Redirect
-              to={{ pathname: "/login", state: { from: props.location } }} // eslint-disable-line
-            /> */
-    }
-  />
-);
+const PrivateRoute = ({ element, permissoes, featureFlag }) => {
+  const isLoggedIn = authService.isLoggedIn();
+  const hasPerm = !permissoes || visoesService.getPermissoes(permissoes);
+  const isFeatureEnabled = featureFlag === undefined || featureFlag;
+  
+  if (!isLoggedIn) {
+    return <Navigate to="/login" replace />;
+  }
+  if (!hasPerm || !isFeatureEnabled) {
+    return <PaginaSemPermissao />;
+  }
+  return element;
+};
 
 export const Rotas = () => {
   return (
-    <Switch>
-      {/*
-            <Route path="/login" component={Login}/>
-            Migrando para V6 do react-router-dom
-            Referencia: https://github.com/remix-run/react-router/discussions/8753
-            */}
-      <CompatRoute path="/login" component={Login} />
-      <CompatRoute path="/login-suporte" component={LoginSuporte} />
-      <Route
-        strict
-        path="/esqueci-minha-senha/"
-        component={EsqueciMinhaSenhaPage}
-      />
-      <Route
-        exact={true}
-        path="/redefinir-senha/:uuid/"
-        component={RedefinirSenhaPage}
-      />
+    <Routes>
+      <Route path="/login" element={<Login />} />
+      <Route path="/login-suporte" element={<LoginSuporte />} />
+      <Route path="/esqueci-minha-senha/" element={<EsqueciMinhaSenhaPage />} />
+      <Route path="/redefinir-senha/:uuid/" element={<RedefinirSenhaPage />} />
       {routesConfig.map((value, key) => {
         return (
-          <PrivateRouter
+          <Route
             key={key}
-            exact={value.exact}
             path={value.path}
-            component={value.component}
-            permissoes={value.permissoes}
-            featureFlag={
-              value.featureFlag
-                ? visoesService.featureFlagAtiva(value.featureFlag)
-                : true
+            element={
+              <PrivateRoute
+                element={<value.component />}
+                permissoes={value.permissoes}
+                featureFlag={
+                  value.featureFlag
+                    ? visoesService.featureFlagAtiva(value.featureFlag)
+                    : true
+                }
+              />
             }
           />
         );
       })}
-      <Route path="*" component={Pagina404} />
-    </Switch>
+      <Route path="*" element={<Pagina404 />} />
+    </Routes>
   );
 };

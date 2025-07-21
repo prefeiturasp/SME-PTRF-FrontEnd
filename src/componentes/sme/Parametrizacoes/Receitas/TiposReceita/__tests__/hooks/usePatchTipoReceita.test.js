@@ -4,7 +4,7 @@ import { patchTipoReceita } from "../../../../../../../services/sme/Parametrizac
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { toastCustom } from "../../../../../../Globais/ToastCustom";
 import { usePatchTipoReceita } from "../../hooks/usePatchTipoReceita";
-import { useNavigate } from "react-router-dom-v5-compat";
+import { useNavigate, MemoryRouter } from 'react-router-dom';
 
 jest.mock("../../../../../../../services/sme/Parametrizacoes.service", () => ({
   patchTipoReceita: jest.fn(),
@@ -17,8 +17,9 @@ jest.mock("../../../../../../Globais/ToastCustom", () => ({
   },
 }));
 
-jest.mock("react-router-dom-v5-compat", () => ({
-  useNavigate: jest.fn(),
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: jest.fn()
 }));
 
 describe("usePatchTipoReceita", () => {
@@ -38,7 +39,11 @@ describe("usePatchTipoReceita", () => {
   });
 
   const wrapper = ({ children }) => (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    <QueryClientProvider client={queryClient}>
+      <MemoryRouter>
+        {children}
+      </MemoryRouter>
+    </QueryClientProvider>
   );
 
   it("deve atualizar um tipo de receita com sucesso", async () => {

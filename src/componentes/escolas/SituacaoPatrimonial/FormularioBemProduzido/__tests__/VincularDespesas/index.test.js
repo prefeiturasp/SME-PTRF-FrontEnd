@@ -6,9 +6,10 @@ const mockUseNavigate = jest.fn();
 const mockSalvarRascunho = jest.fn();
 const mockSetDespesasSelecionadas = jest.fn();
 
-jest.mock("react-router-dom-v5-compat", () => ({
-  ...jest.requireActual("react-router-dom-v5-compat"),
-  useNavigate: () => mockUseNavigate,
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: jest.fn(),
+  useSearchParams: jest.fn()
 }));
 
 jest.mock("../../hooks/usePostBemProduzido", () => ({
@@ -59,6 +60,12 @@ jest.mock("../../VincularDespesas/FormFiltrosDespesas", () => ({
 }));
 
 describe("VincularDespesas", () => {
+  beforeEach(() => {
+    // Set up the useNavigate mock before each test
+    const { useNavigate } = require('react-router-dom');
+    useNavigate.mockImplementation(() => mockUseNavigate);
+  });
+
   it("deve renderizar a tabela de despesas", async () => {
     render(
       <MemoryRouter>

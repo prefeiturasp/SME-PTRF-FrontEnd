@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { TopoComBotoes } from "../TopoComBotoes";
-import { useHistory } from "react-router-dom";
+import { useNavigate, MemoryRouter } from 'react-router-dom';
 import { useSelector, useDispatch } from "react-redux";
 
 // Mock mais robusto do FontAwesomeIcon
@@ -11,8 +11,11 @@ jest.mock("@fortawesome/react-fontawesome", () => ({
   )
 }));
 
+// Mock apenas o hook useNavigate, preservando outros exports
+const mockNavigate = jest.fn();
 jest.mock("react-router-dom", () => ({
-  useHistory: jest.fn()
+  ...jest.requireActual("react-router-dom"),
+  useNavigate: () => mockNavigate
 }));
 
 jest.mock("react-redux", () => ({
@@ -25,11 +28,10 @@ jest.mock("../../../../store/reducers/componentes/escolas/PrestacaoDeContas/Pend
 }));
 
 describe("TopoComBotoes", () => {
-  const mockHistoryPush = jest.fn();
   const mockDispatch = jest.fn();
 
   beforeEach(() => {
-    useHistory.mockReturnValue({ push: mockHistoryPush });
+    mockNavigate.mockClear();
     useDispatch.mockReturnValue(mockDispatch);
   });
 
@@ -42,7 +44,11 @@ describe("TopoComBotoes", () => {
       PendenciaCadastro: { popTo: null }
     }));
 
-    render(<TopoComBotoes tituloPagina="Meu Título" />);
+    render(
+      <MemoryRouter>
+        <TopoComBotoes tituloPagina="Meu Título" />
+      </MemoryRouter>
+    );
 
     expect(screen.getByText("Meu Título")).toBeInTheDocument();
     expect(screen.queryByText("Voltar")).not.toBeInTheDocument();
@@ -53,7 +59,11 @@ describe("TopoComBotoes", () => {
       PendenciaCadastro: { popTo: "/minha-rota" }
     }));
 
-    render(<TopoComBotoes tituloPagina="Meu Título" />);
+    render(
+      <MemoryRouter>
+        <TopoComBotoes tituloPagina="Meu Título" />
+      </MemoryRouter>
+    );
 
     expect(screen.getByText("Meu Título")).toBeInTheDocument();
     expect(screen.getByText("Voltar")).toBeInTheDocument();
@@ -71,13 +81,17 @@ describe("TopoComBotoes", () => {
       PendenciaCadastro: { popTo: mockPopTo }
     }));
 
-    render(<TopoComBotoes tituloPagina="Meu Título" />);
+    render(
+      <MemoryRouter>
+        <TopoComBotoes tituloPagina="Meu Título" />
+      </MemoryRouter>
+    );
 
     const botaoVoltar = screen.getByText("Voltar");
     fireEvent.click(botaoVoltar);
 
     expect(mockDispatch).toHaveBeenCalledTimes(1);
-    expect(mockHistoryPush).toHaveBeenCalledWith(mockPopTo);
+    expect(mockNavigate).toHaveBeenCalledWith(-1);
   });
 
   test("aplica os estilos corretos no botão Voltar", () => {
@@ -85,7 +99,11 @@ describe("TopoComBotoes", () => {
       PendenciaCadastro: { popTo: "/minha-rota" }
     }));
 
-    render(<TopoComBotoes tituloPagina="Meu Título" />);
+    render(
+      <MemoryRouter>
+        <TopoComBotoes tituloPagina="Meu Título" />
+      </MemoryRouter>
+    );
 
     const botaoVoltar = screen.getByText("Voltar");
     expect(botaoVoltar).toHaveClass("btn btn-outline-success mr-2");

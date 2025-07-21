@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { ParametrizacoesRepasses } from '../index';
 import { RepassesProvider } from '../context/Repasse';
-import { MemoryRouter, Route } from "react-router-dom";
+import { MemoryRouter, Route, Routes } from "react-router-dom";
 import '@testing-library/jest-dom';
 
 jest.mock("../../../../../../paginas/PaginasContainer", () => ({
@@ -28,11 +28,9 @@ describe("Carrega página de Repasses", () => {
     const renderComponent = (()=>{
         return render(
             <MemoryRouter initialEntries={["/parametro-repasse"]}>
-                <Route path="/parametro-repasse">
-                    <RepassesProvider>
-                        <ParametrizacoesRepasses />
-                    </RepassesProvider>
-                </Route>
+                <Routes>
+                    <Route path="/parametro-repasse" element={<RepassesProvider><ParametrizacoesRepasses /></RepassesProvider>} />
+                </Routes>
             </MemoryRouter>
         );
     })

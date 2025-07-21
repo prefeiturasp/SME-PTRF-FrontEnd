@@ -1,9 +1,10 @@
 import React, {memo} from "react";
-import {Link} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import {visoesService} from "../../../../services/visoes.service";
 import {RetornaSeTemPermissaoEdicaoAjustesLancamentos} from "../RetornaSeTemPermissaoEdicaoAjustesLancamentos";
 
 const LinkCustom = ({url, analise_documento, prestacaoDeContasUuid, prestacaoDeContas, classeCssBotao, children, operacao, analisePermiteEdicao, uuid_acerto_documento}) => {
+    const navigate = useNavigate();
 
     const getCurrentPathWithoutLastPart = () => {
         const pathRgx = /\//g;
@@ -25,26 +26,27 @@ const LinkCustom = ({url, analise_documento, prestacaoDeContasUuid, prestacaoDeC
     }
 
     return(
-        <Link
-            to={{
-                pathname: `${url}`,
-                state: {
-                    uuid_acerto_documento: uuid_acerto_documento,
-                    uuid_pc: prestacaoDeContasUuid,
-                    uuid_despesa: analise_documento.despesa,
-                    uuid_receita: analise_documento.receita,
-                    uuid_associacao: prestacaoDeContas?.associacao?.uuid,
-                    origem: getCurrentPathWithoutLastPart(),
-                    origem_visao: visoesService.getItemUsuarioLogado('visao_selecionada.nome'),
-                    tem_permissao_de_edicao: checaSeTemPermissao(),
-                    operacao: operacao,
-                    periodo_uuid: prestacaoDeContas?.periodo_uuid
-                }
+        <button
+            onClick={() => {
+                navigate(`${url}`, {
+                    state: {
+                        uuid_acerto_documento: uuid_acerto_documento,
+                        uuid_pc: prestacaoDeContasUuid,
+                        uuid_despesa: analise_documento.despesa,
+                        uuid_receita: analise_documento.receita,
+                        uuid_associacao: prestacaoDeContas?.associacao?.uuid,
+                        origem: getCurrentPathWithoutLastPart(),
+                        origem_visao: visoesService.getItemUsuarioLogado('visao_selecionada.nome'),
+                        tem_permissao_de_edicao: checaSeTemPermissao(),
+                        operacao: operacao,
+                        periodo_uuid: prestacaoDeContas?.periodo_uuid
+                    }
+                });
             }}
             className={classeCssBotao}
         >
             {children}
-        </Link>
+        </button>
     )
 }
 

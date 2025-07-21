@@ -95,12 +95,15 @@ const mockUsuarioLogado = {
 describe('CardsDevolucoesParaAcertoDaDre', ()=>{
 
     test('Renderiza componente', async ()=>{
-        await waitFor(()=>{
-            getAnalisesDePcDevolvidas.mockReturnValue(mockAnalises)
-            mantemEstadoAnaliseDre.getAnaliseDreUsuarioLogado.mockReturnValue(mockUsuarioLogado)
+        getAnalisesDePcDevolvidas.mockReturnValue(mockAnalises)
+        mantemEstadoAnaliseDre.getAnaliseDreUsuarioLogado.mockReturnValue(mockUsuarioLogado)
 
-            render(<CardsDevolucoesParaAcertoDaDre {...mockData}/>)
+        render(<CardsDevolucoesParaAcertoDaDre {...mockData}/>)
+        
+        await waitFor(() => {
+            expect(screen.queryByText('Carregando...')).not.toBeInTheDocument()
         })
+        
         await waitFor(()=>{
             const campo = screen.getByTestId('select-filtro-ajuste')
             expect(campo).toBeInTheDocument()
@@ -110,12 +113,15 @@ describe('CardsDevolucoesParaAcertoDaDre', ()=>{
     })
 
     test('Renderiza componente', async ()=>{
-        await waitFor(() => {
-            getAnalisesDePcDevolvidas.mockReturnValue([])
-            mantemEstadoAnaliseDre.getAnaliseDreUsuarioLogado.mockReturnValue(mockUsuarioLogado)
+        getAnalisesDePcDevolvidas.mockReturnValue([])
+        mantemEstadoAnaliseDre.getAnaliseDreUsuarioLogado.mockReturnValue(mockUsuarioLogado)
 
-            render(<CardsDevolucoesParaAcertoDaDre {...mockData}/>)
+        render(<CardsDevolucoesParaAcertoDaDre {...mockData}/>)
+        
+        await waitFor(() => {
+            expect(screen.queryByText('Carregando...')).not.toBeInTheDocument()
         })
+        
         await waitFor(() => {
             const campo = screen.getByTestId('select-filtro-ajuste')
             expect(campo).toBeInTheDocument()
@@ -125,18 +131,20 @@ describe('CardsDevolucoesParaAcertoDaDre', ()=>{
     })
 
     test('Renderiza componente', async ()=>{
-        await waitFor(() => {
-            getAnalisesDePcDevolvidas.mockReturnValue(mockAnalises)
-            mantemEstadoAnaliseDre.getAnaliseDreUsuarioLogado.mockReturnValue(mockUsuarioLogado)
+        getAnalisesDePcDevolvidas.mockReturnValue(mockAnalises)
+        mantemEstadoAnaliseDre.getAnaliseDreUsuarioLogado.mockReturnValue(mockUsuarioLogado)
 
-            render(<CardsDevolucoesParaAcertoDaDre {...mockData}/>)
+        render(<CardsDevolucoesParaAcertoDaDre {...mockData}/>)
+        
+        await waitFor(() => {
+            expect(screen.queryByText('Carregando...')).not.toBeInTheDocument()
         })
+        
         await waitFor(() => {
             const campo = screen.getByTestId('select-filtro-ajuste')
             console.log(campo.innerHTML)
             expect(campo).toBeInTheDocument()
             fireEvent.change(campo, {target: {value: '5678', selectedIndex: 0}})
-            
         })
     })
 })

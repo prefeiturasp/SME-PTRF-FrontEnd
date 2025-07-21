@@ -2,6 +2,7 @@ import React  from "react";
 import { render, screen } from "@testing-library/react";
 import { SuporteAsUnidadesDre } from "../index";
 import { visoesService } from "../../../../services/visoes.service";
+import { MemoryRouter } from "react-router-dom";
 
 jest.mock("../../../../services/visoes.service", () => ({
   visoesService: {
@@ -14,7 +15,9 @@ jest.mock("../../../../services/visoes.service", () => ({
 describe('<SuporteAsUnidadesDre>', () => {
   test('Deve renderizar o componente', async () => {
     render(
-      <SuporteAsUnidadesDre/>
+      <MemoryRouter>
+        <SuporteAsUnidadesDre/>
+      </MemoryRouter>
     )
     expect(screen.getByText('Suporte às unidades da DRE')).toBeInTheDocument()
   });

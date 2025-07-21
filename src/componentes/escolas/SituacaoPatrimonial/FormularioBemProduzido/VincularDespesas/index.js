@@ -12,7 +12,8 @@ import { FormFiltrosDespesas } from "./FormFiltrosDespesas";
 import { useCarregaTabelaDespesa } from "../../../../../hooks/Globais/useCarregaTabelaDespesa";
 import { useGetPeriodos } from "../../../../../hooks/Globais/useGetPeriodo";
 import moment from "moment";
-import { useNavigate } from "react-router-dom-v5-compat";
+import { useNavigate } from 'react-router-dom';
+import './index.css';
 
 const filtroInicial = {
   fornecedor: "",
@@ -23,11 +24,20 @@ const filtroInicial = {
   data_fim: "",
 };
 
+function isRowDisabled(rowData, despesasSelecionadas) {
+  if (Array.isArray(despesasSelecionadas) && despesasSelecionadas.some(despesa => despesa.uuid === rowData.uuid)) {
+    return false;
+  }
+  return !(rowData.rateios || []).some(rateio => rateio.valor_disponivel > 0);
+}
+
 export const VincularDespesas = ({
   uuid,
   despesasSelecionadas,
   setDespesasSelecionadas,
   salvarRascunho,
+  bemProduzidoDespesas,
+  statusCompletoBemProduzido,
 }) => {
   const navigate = useNavigate();
   const [expandedRows, setExpandedRows] = useState(null);
@@ -47,6 +57,7 @@ export const VincularDespesas = ({
       data_fim: filtros.data_fim
         ? moment(filtros.data_fim).format("YYYY-MM-DD")
         : "",
+      bem_produzido_uuid: uuid ? uuid : null,
     },
     currentPage
   );
@@ -64,6 +75,32 @@ export const VincularDespesas = ({
   useEffect(() => {
     refetch();
   }, [currentPage]);
+
+  useEffect(() => {
+    if (data && data.results && Array.isArray(bemProduzidoDespesas)) {
+      const uuidsBem = bemProduzidoDespesas.map(d => d.despesa ? d.despesa.uuid : d.uuid);
+      const novasSelecionadas = data.results
+        .filter(result => uuidsBem.includes(result.uuid))
+        .map(result => JSON.parse(JSON.stringify(result)));
+      setDespesasSelecionadas(prev => {
+        const bemMap = new Map(
+          bemProduzidoDespesas.map(d => {
+            const uuid = d.despesa ? d.despesa.uuid : d.uuid;
+            return [uuid, d.despesa || d];
+          })
+        );
+
+        const antigos = prev.filter(
+          d => !novasSelecionadas.some(n => n.uuid === d.uuid)
+        );
+
+        const atualizados = novasSelecionadas.map(n => bemMap.get(n.uuid) || n);
+
+        const novoValor = [...antigos, ...atualizados];
+        return novoValor;
+      });
+    }
+  }, [data && data.results, bemProduzidoDespesas]);
 
   const onPageChange = (event) => {
     setFirstPage(event.first);
@@ -169,11 +206,25 @@ export const VincularDespesas = ({
               <DataTable
                 value={data.results}
                 autoLayout={true}
+                dataKey="uuid"
                 selection={despesasSelecionadas}
-                onSelectionChange={(e) => setDespesasSelecionadas(e.value)}
+                onSelectionChange={(e) => {
+                  const disabledSelectedRows = (despesasSelecionadas || []).filter(
+                    row => isRowDisabled(row)
+                  );
+                  const newSelection = Array.isArray(e.value)
+                    ? [
+                        ...e.value.filter(row => !isRowDisabled(row)),
+                        ...disabledSelectedRows
+                      ]
+                    : disabledSelectedRows;
+                  setDespesasSelecionadas(newSelection);
+                }}
+                selectableRowDisabled={rowData => isRowDisabled(rowData)}
                 expandedRows={expandedRows}
                 onRowToggle={(e) => setExpandedRows(e.data)}
                 rowExpansionTemplate={expandedRowTemplate}
+                rowClassName={data => ({ 'row-disabled-situacao-patrimonial': isRowDisabled(data, despesasSelecionadas) })}
               >
                 <Column selectionMode="multiple" style={{ width: "3em" }} />
                 <Column field="periodo_referencia" header="Período" />
@@ -225,7 +276,7 @@ export const VincularDespesas = ({
               disabled={!despesasSelecionadas.length && !uuid}
               onClick={salvarRascunho}
             >
-              Salvar rascunho
+              {uuid ? "Salvar" : "Salvar rascunho"}
             </button>
           </Flex>
         </Spin>

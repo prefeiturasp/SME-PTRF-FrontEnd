@@ -3,7 +3,7 @@ import {postCargoComposicao} from "../../../../services/Mandatos.service";
 import {toastCustom} from "../../../Globais/ToastCustom";
 
 // Preparação para react-router-dom-v6
-import {useNavigate} from "react-router-dom-v5-compat";
+import {useNavigate} from 'react-router-dom';
 
 export const usePostCargoDaComposicao = () => {
     const queryClient = useQueryClient()
