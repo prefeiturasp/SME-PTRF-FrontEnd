@@ -1,6 +1,6 @@
 import React, {useState, useCallback, useEffect} from 'react';
 import {Button} from 'react-bootstrap';
-import {useHistory} from 'react-router-dom'
+import { useNavigate } from 'react-router-dom';
 import {ModalConfirmaDevolverParaAcerto} from "../../.././../../componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas/DevolucaoParaAcertos/ModalConfirmaDevolverParaAcerto";
 import {devolverConsolidado} from '../../../../../services/dres/RelatorioConsolidado.service'
 import { toastCustom } from "../../../../Globais/ToastCustom";
@@ -31,7 +31,7 @@ export const TopoComBotoes = ({relatorioConsolidado, dataLimiteDevolucao, tabAtu
     }
     
 
-    let history = useHistory();
+    let navigate = useNavigate();
 
     return (
         <>
@@ -54,7 +54,7 @@ export const TopoComBotoes = ({relatorioConsolidado, dataLimiteDevolucao, tabAtu
                 </h2>
                 <div className="container-botoes">
                     <Button variant="outline-success"
-                        onClick={() => history.push(`/analise-relatorio-consolidado-dre-detalhe/${obterUuid()}/`)}>
+                        onClick={() => navigate(`/analise-relatorio-consolidado-dre-detalhe/${obterUuid()}/`)}>
                         Voltar
                     </Button>
                     {tabAtual === 'conferencia-atual' &&              

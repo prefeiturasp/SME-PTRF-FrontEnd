@@ -2,6 +2,7 @@ import React  from "react";
 import { render, screen } from "@testing-library/react";
 import { TecnicosDaDiretoriaDrePage } from "../index";
 import { visoesService } from "../../../../../services/visoes.service";
+import { MemoryRouter } from "react-router-dom";
 
 
 jest.mock("../../../../../services/visoes.service", () => ({
@@ -15,7 +16,9 @@ jest.mock("../../../../../services/visoes.service", () => ({
 describe('<TecnicosDaDiretoriaDrePage>', () => {
   test('Deve renderizar o componente', async () => {
     render(
-        <TecnicosDaDiretoriaDrePage/>
+        <MemoryRouter>
+          <TecnicosDaDiretoriaDrePage/>
+        </MemoryRouter>
     )
     expect(visoesService.featureFlagAtiva).toHaveBeenCalled()
     expect(visoesService.getDadosDoUsuarioLogado).toHaveBeenCalled()

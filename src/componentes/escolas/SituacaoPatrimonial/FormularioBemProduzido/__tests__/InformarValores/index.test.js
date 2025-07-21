@@ -146,9 +146,10 @@ const mockUseNavigate = jest.fn();
 const mockSalvarRascunhoInformarValores = jest.fn();
 
 jest.mock("../../hooks/usePostExluirDespesaBemProduzidoEmLote");
-jest.mock("react-router-dom-v5-compat", () => ({
-  ...jest.requireActual("react-router-dom-v5-compat"),
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
   useNavigate: () => mockUseNavigate,
+  useSearchParams: jest.fn()
 }));
 jest.mock("../../../../../Globais/Modal/CustomModalConfirm", () => ({
   CustomModalConfirm: jest.fn(),
@@ -183,6 +184,11 @@ describe("InformarValores", () => {
   });
 
   it("Deve solicitar confirmação ao clicar em Excluir despesa e excluir quando confirmado", async () => {
+    const despesasParaTeste = mockBemProduzidoDespesas.map(d => ({
+      ...d.despesa,
+      bem_produzido_despesa_uuid: d.bem_produzido_despesa_uuid,
+      bem_produzido_uuid: d.bem_produzido_uuid,
+    }));
     const { container } = render(
       <MemoryRouter>
         <Provider store={mockStore}>
@@ -190,10 +196,11 @@ describe("InformarValores", () => {
             <InformarValores
               uuid={null}
               podeEditar={true}
-              despesas={mockBemProduzidoDespesas}
-              salvarRascunhoInformarValores={jest.fn()}
+              despesas={despesasParaTeste}
+              salvarRacuscunho={jest.fn()}
               setHabilitaClassificarBem={jest.fn()}
               setRateiosComValores={jest.fn()}
+              rateiosComValores={[]}
             />
           </QueryClientProvider>
         </Provider>
@@ -231,6 +238,11 @@ describe("InformarValores", () => {
   });
 
   it("Deve expandir linha ao clicar na seta para baixo", async () => {
+    const despesasParaTeste = mockBemProduzidoDespesas.map(d => ({
+      ...d.despesa,
+      bem_produzido_despesa_uuid: d.bem_produzido_despesa_uuid,
+      bem_produzido_uuid: d.bem_produzido_uuid,
+    }));
     const { container } = render(
       <MemoryRouter>
         <Provider store={mockStore}>
@@ -238,10 +250,11 @@ describe("InformarValores", () => {
             <InformarValores
               uuid={null}
               podeEditar={true}
-              despesas={mockBemProduzidoDespesas}
-              salvarRascunhoInformarValores={jest.fn()}
+              despesas={despesasParaTeste}
+              salvarRacuscunho={jest.fn()}
               setHabilitaClassificarBem={jest.fn()}
               setRateiosComValores={jest.fn()}
+              rateiosComValores={[]}
             />
           </QueryClientProvider>
         </Provider>
@@ -256,6 +269,11 @@ describe("InformarValores", () => {
   });
 
   it("Deve mostrar erro de validação quando o usuário inputar um valor maior do que o disponível", async () => {
+    const despesasParaTeste = mockBemProduzidoDespesas.map(d => ({
+      ...d.despesa,
+      bem_produzido_despesa_uuid: d.bem_produzido_despesa_uuid,
+      bem_produzido_uuid: d.bem_produzido_uuid,
+    }));
     const { container } = render(
       <MemoryRouter>
         <Provider store={mockStore}>
@@ -263,10 +281,11 @@ describe("InformarValores", () => {
             <InformarValores
               uuid={null}
               podeEditar={true}
-              despesas={mockBemProduzidoDespesas}
-              salvarRascunhoInformarValores={jest.fn()}
+              despesas={despesasParaTeste}
+              salvarRacuscunho={jest.fn()}
               setHabilitaClassificarBem={jest.fn()}
               setRateiosComValores={jest.fn()}
+              rateiosComValores={[]}
             />
           </QueryClientProvider>
         </Provider>
@@ -290,6 +309,11 @@ describe("InformarValores", () => {
   });
 
   it("Deve validar se o usuário informou valor para pelo menos um dos rateios ao clicar em Salvar Rascunho", async () => {
+    const despesasParaTeste = mockBemProduzidoDespesas.map(d => ({
+      ...d.despesa,
+      bem_produzido_despesa_uuid: d.bem_produzido_despesa_uuid,
+      bem_produzido_uuid: d.bem_produzido_uuid,
+    }));
     const { container } = render(
       <MemoryRouter>
         <Provider store={mockStore}>
@@ -297,10 +321,11 @@ describe("InformarValores", () => {
             <InformarValores
               uuid={null}
               podeEditar={true}
-              despesas={mockBemProduzidoDespesas}
-              salvarRascunhoInformarValores={jest.fn()}
+              despesas={despesasParaTeste}
+              salvarRacuscunho={jest.fn()}
               setHabilitaClassificarBem={jest.fn()}
               setRateiosComValores={jest.fn()}
+              rateiosComValores={[]}
             />
           </QueryClientProvider>
         </Provider>
@@ -310,10 +335,22 @@ describe("InformarValores", () => {
     const buttonCollapse = container.querySelector(".p-row-toggler");
     fireEvent.click(buttonCollapse);
 
+    // Seleciona o checkbox da despesa
+    const hiddenInput = container.querySelector('.p-hidden-accessible input[type="checkbox"]');
+    await userEvent.click(hiddenInput);
+
+    // Garante que o input está vazio (nenhum valor informado)
+    const input = await screen.findByRole("spinbutton", {
+      name: /valor utilizado/i,
+    });
+    await userEvent.clear(input);
+    expect(input.value).toBe("");
+
     const buttonSalvarRascunho = screen.getByRole("button", {
       name: /salvar rascunho/i,
     });
-    fireEvent.click(buttonSalvarRascunho);
+    expect(buttonSalvarRascunho).not.toBeDisabled();
+    await userEvent.click(buttonSalvarRascunho);
 
     await waitFor(() => {
       expect(CustomModalConfirm).toHaveBeenCalledWith({
@@ -326,6 +363,11 @@ describe("InformarValores", () => {
   });
 
   it("Deve chamar salvarRascunhoInformarValores com valores formatados ao clicar em Salvar Rascunho", async () => {
+    const despesasParaTeste = mockBemProduzidoDespesas.map(d => ({
+      ...d.despesa,
+      bem_produzido_despesa_uuid: d.bem_produzido_despesa_uuid,
+      bem_produzido_uuid: d.bem_produzido_uuid,
+    }));
     const { container } = render(
       <MemoryRouter>
         <Provider store={mockStore}>
@@ -333,10 +375,11 @@ describe("InformarValores", () => {
             <InformarValores
               uuid={null}
               podeEditar={true}
-              despesas={mockBemProduzidoDespesas}
-              salvarRascunhoInformarValores={mockSalvarRascunhoInformarValores}
+              despesas={despesasParaTeste}
+              salvarRacuscunho={mockSalvarRascunhoInformarValores}
               setHabilitaClassificarBem={jest.fn()}
               setRateiosComValores={jest.fn()}
+              rateiosComValores={[]}
             />
           </QueryClientProvider>
         </Provider>
@@ -346,15 +389,24 @@ describe("InformarValores", () => {
     const buttonCollapse = container.querySelector(".p-row-toggler");
     fireEvent.click(buttonCollapse);
 
-    const input = screen.getByRole("spinbutton", {
+    // Seleciona o checkbox da despesa
+    const hiddenInput = container.querySelector('.p-hidden-accessible input[type="checkbox"]');
+    await userEvent.click(hiddenInput);
+
+    const input = await screen.findByRole("spinbutton", {
       name: /valor utilizado/i,
     });
-    userEvent.type(input, "9000");
+    await userEvent.clear(input);
+    await userEvent.type(input, "9000");
+    expect(input.value).toBe("9000");
+    // Força blur para disparar validação, se necessário
+    input.blur && input.blur();
 
     const buttonSalvarRascunho = screen.getByRole("button", {
       name: /salvar rascunho/i,
     });
-    fireEvent.click(buttonSalvarRascunho);
+    expect(buttonSalvarRascunho).not.toBeDisabled();
+    await userEvent.click(buttonSalvarRascunho);
 
     await waitFor(() => {
       expect(mockSalvarRascunhoInformarValores).toHaveBeenCalled();
@@ -362,6 +414,11 @@ describe("InformarValores", () => {
   });
 
   it("Deve voltar para a página de listagem ao clicar no botão cancelar", async () => {
+    const despesasParaTeste = mockBemProduzidoDespesas.map(d => ({
+      ...d.despesa,
+      bem_produzido_despesa_uuid: d.bem_produzido_despesa_uuid,
+      bem_produzido_uuid: d.bem_produzido_uuid,
+    }));
     render(
       <MemoryRouter>
         <Provider store={mockStore}>
@@ -369,10 +426,11 @@ describe("InformarValores", () => {
             <InformarValores
               uuid={null}
               podeEditar={true}
-              despesas={mockBemProduzidoDespesas}
-              salvarRascunhoInformarValores={jest.fn()}
+              despesas={despesasParaTeste}
+              salvarRacuscunho={jest.fn()}
               setHabilitaClassificarBem={jest.fn()}
               setRateiosComValores={jest.fn()}
+              rateiosComValores={[]}
             />
           </QueryClientProvider>
         </Provider>

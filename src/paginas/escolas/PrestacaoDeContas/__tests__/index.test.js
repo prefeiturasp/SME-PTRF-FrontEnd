@@ -1,6 +1,6 @@
 import { render } from "@testing-library/react";
-import { useParams } from "react-router-dom";
 import React  from "react";
+import { MemoryRouter, Routes, Route } from "react-router-dom";
 import { PrestacaoDeContasPage } from "../index";
 import { PrestacaoDeContas } from "../../../../componentes/escolas/PrestacaoDeContas";
 import {NotificacaoContext} from "../../../../context/Notificacoes";
@@ -29,7 +29,6 @@ jest.mock("../../../../componentes/escolas/PrestacaoDeContas/BarraAvisoErroProce
 
 describe('<PrestacaoDeContasPage>', () => {
   it('Deve renderizar o componente PrestacaoDeContas', async () => {
-    useParams.mockReturnValue({ monitoramento: "teste-monitoramento" });
     render(
         <NotificacaoContext.Provider value={{ setShow: jest.fn() }}>
             <PrestacaoDeContas 
@@ -43,7 +42,11 @@ describe('<PrestacaoDeContasPage>', () => {
   });
   it('Deve renderizar o componente PrestacaoDeContasPage', async () => {
     render(
-      <PrestacaoDeContasPage />
-    )
+      <MemoryRouter initialEntries={["/prestacao-de-contas/teste-monitoramento"]}>
+        <Routes>
+          <Route path="/prestacao-de-contas/:monitoramento" element={<PrestacaoDeContasPage />} />
+        </Routes>
+      </MemoryRouter>
+    );
   });
 });

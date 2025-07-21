@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState, useMemo} from "react";
-import {useParams, useLocation, useHistory} from "react-router-dom";
+import {useParams, useLocation, useNavigate} from "react-router-dom";
 import {PaginasContainer} from "../../../../../paginas/PaginasContainer";
 import {
     getConcluirAnalise,
@@ -28,7 +28,7 @@ export const ResumoDosAcertos = () => {
 
     const {prestacao_conta_uuid} = useParams()
     const props = useLocation();
-    const history = useHistory();
+    const navigate = useNavigate();
 
     const prestacaoDeContas = useCarregaPrestacaoDeContasPorUuid(prestacao_conta_uuid)
 
@@ -232,8 +232,8 @@ export const ResumoDosAcertos = () => {
     }, [])
 
     const onClickBtnVoltar = useCallback(() => {
-        history.push(`/dre-detalhe-prestacao-de-contas/${prestacao_conta_uuid}#devolucao_para_acerto`)
-    }, [prestacao_conta_uuid, history])
+        navigate(`/dre-detalhe-prestacao-de-contas/${prestacao_conta_uuid}#devolucao_para_acerto`)
+    }, [prestacao_conta_uuid, navigate])
 
     const trataAnalisesDeContaDaPrestacao = useCallback(() => {
         let analises = [...analisesDeContaDaPrestacao]

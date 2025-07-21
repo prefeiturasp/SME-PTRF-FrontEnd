@@ -3,7 +3,7 @@ import React, {useEffect, useState} from "react";
 import {DataTable} from 'primereact/datatable';
 
 import {Column} from 'primereact/column';
-import {useHistory} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import '../../../../paginas/escolas/404/pagina-404.scss'
 import moment from 'moment';
 import {getListaReceitas, getTotaisReceitas} from "../../../../services/escolas/Receitas.service";
@@ -25,7 +25,7 @@ import {filtrosAvancadosReceitas} from "../../../../services/escolas/Receitas.se
 
 export const ListaDeReceitas = () => {
 
-    let history = useHistory();
+    let navigate = useNavigate();
     const rowsPerPage = 7;
 
     const initialState = {
@@ -91,7 +91,7 @@ export const ListaDeReceitas = () => {
 
     const redirecionaDetalhe = value => {
         const url = '/edicao-de-receita/' + value.uuid;
-        history.push(url);
+        navigate(url);
     };
 
     const tipoReceitaTemplate = (rowData) => {
@@ -182,8 +182,8 @@ export const ListaDeReceitas = () => {
                             </button>
                         </div>
                         <div className={`${btnMaisFiltros ? "col-12" : "col-12 col-md-5 mt-2"}`}>
-                            <button disabled={!visoesService.getPermissoes(['add_receita'])} onClick={() => history.push('/cadastro-de-credito')} type="submit" className="btn btn btn-outline-success float-right">Cadastrar crédito</button>
-                            <button disabled={!visoesService.getPermissoes(['add_receita'])} onClick={() => history.push('/cadastro-de-valores-reprogramados')} type="submit" className="btn btn btn-outline-success float-right mr-2">Valores reprogramados</button>
+                            <button disabled={!visoesService.getPermissoes(['add_receita'])} onClick={() => navigate('/cadastro-de-credito')} type="submit" className="btn btn btn-outline-success float-right">Cadastrar crédito</button>
+                            <button disabled={!visoesService.getPermissoes(['add_receita'])} onClick={() => navigate('/cadastro-de-valores-reprogramados')} type="submit" className="btn btn btn-outline-success float-right mr-2">Valores reprogramados</button>
                         </div>
                     </div>
 

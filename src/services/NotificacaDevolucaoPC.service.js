@@ -31,7 +31,7 @@ const marcaNotificacaoComoLida = async () => {
         })
     }
 
-const redirectVerAcertos = (history, periodoReferencia, pcUuid) => {
+const redirectVerAcertos = (navigate, periodoReferencia, pcUuid) => {
 
     let path = `/consulta-detalhamento-analise-da-dre/${pcUuid}`;
 
@@ -44,17 +44,17 @@ const redirectVerAcertos = (history, periodoReferencia, pcUuid) => {
                     data_fim_realizacao_despesas: periodo && periodo.length > 0 ? periodo[0].data_fim_realizacao_despesas : '',
                 }
             }
-            history.push(path, state);
+            navigate(path, { state });
         }
     )
 };
 
-const marcaNotificacaoComoLidaERedirecianaParaVerAcertos = (history) => {
+const marcaNotificacaoComoLidaERedirecianaParaVerAcertos = (navigate) => {
     let dados_usuario_logado = visoesService.getDadosDoUsuarioLogado();
     let periodoReferencia = dados_usuario_logado.unidade_selecionada.notificar_devolucao_referencia
     let pcUuid = dados_usuario_logado.unidade_selecionada.notificar_devolucao_pc_uuid
     marcaNotificacaoComoLida();
-    redirectVerAcertos(history, periodoReferencia, pcUuid);
+    redirectVerAcertos(navigate, periodoReferencia, pcUuid);
 }
 
 export const notificaDevolucaoPCService = {

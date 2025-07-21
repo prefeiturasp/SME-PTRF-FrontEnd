@@ -40,30 +40,30 @@ const ModalFormAdicionarPrioridade = ({ open, onClose, data }) => {
     valor_total: undefined
   }
 
-  const prioridadesOptions = data.prioridades.map(item => ({
+  const prioridadesOptions = Array.isArray(data.prioridades) ? data.prioridades.map(item => ({
     value: item.key,
     label: item.value
-  }));
+  })) : [];
 
-  const recursosOptions = data.recursos.map(item => ({
+  const recursosOptions = Array.isArray(data.recursos) ? data.recursos.map(item => ({
     value: item.key,
     label: item.value
-  }));
+  })) : [];
 
-  const tiposAplicacaoOptions = data.tipos_aplicacao.map(item => ({
+  const tiposAplicacaoOptions = Array.isArray(data.tipos_aplicacao) ? data.tipos_aplicacao.map(item => ({
     value: item.key,
     label: item.value
-  }));
+  })) : [];
 
-  const tiposDespesaCusteioOptions = data.tipos_despesa_custeio.map(item => ({
+  const tiposDespesaCusteioOptions = Array.isArray(data.tipos_despesa_custeio) ? data.tipos_despesa_custeio.map(item => ({
     value: item.id,
     label: item.nome
-  }));
+  })) : [];
 
-  const acoesAssociacaoOptions = acoesAssociacao?.map(item => ({
+  const acoesAssociacaoOptions = Array.isArray(acoesAssociacao) ? acoesAssociacao.map(item => ({
     value: item.uuid,
     label: item.acao.nome
-  })) || [];
+  })) : [];
 
   const programasPddeOptions = useMemo(() => {
     if (!acoesPdde) {
@@ -83,10 +83,11 @@ const ModalFormAdicionarPrioridade = ({ open, onClose, data }) => {
       }
     });
     
-    return Array.from(programasUnicos.entries()).map(([uuid, nome]) => ({
+    const entries = Array.from(programasUnicos.entries());
+    return Array.isArray(entries) ? entries.map(([uuid, nome]) => ({
       value: uuid,
       label: nome
-    }));
+    })) : [];
   }, [acoesPdde]);
 
   const acoesPddeFiltradas = useMemo(() => {
@@ -95,18 +96,17 @@ const ModalFormAdicionarPrioridade = ({ open, onClose, data }) => {
     const acoes = acoesPdde.results || acoesPdde;
     if (!acoes || !Array.isArray(acoes)) return [];
     
-    return acoes
-      .filter(acao => acao.programa_objeto?.uuid === selectedProgramaPdde)
-      .map(acao => ({
-        value: acao.uuid,
-        label: acao.nome
-      }));
+    const acoesFiltradas = (acoes || []).filter(acao => acao.programa_objeto?.uuid === selectedProgramaPdde);
+    return Array.isArray(acoesFiltradas) ? acoesFiltradas.map(acao => ({
+      value: acao.uuid,
+      label: acao.nome
+    })) : [];
   }, [acoesPdde, selectedProgramaPdde]);
 
-  const especificacoesOptions = especificacoes?.map(item => ({
+  const especificacoesOptions = Array.isArray(especificacoes) ? especificacoes.map(item => ({
     value: item.uuid,
     label: item.descricao
-  })) || [];
+  })) : [];
 
   const onSubmit = async (values) => {
     try {
@@ -130,11 +130,12 @@ const ModalFormAdicionarPrioridade = ({ open, onClose, data }) => {
         validationErrors.inner.forEach(error => {
           errors[error.path] = error.message;
         });
+        const errorKeys = Object.keys(errors);
         form.setFields(
-          Object.keys(errors).map(key => ({
+          Array.isArray(errorKeys) ? errorKeys.map(key => ({
             name: key,
             errors: [errors[key]]
-          }))
+          })) : []
         );
       }
     }
@@ -334,7 +335,7 @@ const ModalFormAdicionarPrioridade = ({ open, onClose, data }) => {
                     style={{ marginBottom: 4 }}
                   >
                     <Select
-                      placeholder="Selecione a despesa"
+                      placeholder="Selecione o tipo de despesa"
                       style={{ width: "100%" }}
                       options={tiposDespesaCusteioOptions}
                       onChange={handleTipoDespesaCusteioChange}

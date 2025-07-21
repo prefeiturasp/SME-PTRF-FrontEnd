@@ -24,7 +24,7 @@ import {
     origemPagina
 } from "../../../../store/reducers/componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeLancamentos/DetalharAcertos/actions";
 import {useDispatch} from "react-redux";
-import {useHistory} from "react-router-dom";
+import {useNavigate} from 'react-router-dom';
 import Loading from "../../../../utils/Loading";
 import './acertos-lancamentos.scss'
 import { mantemEstadoAnaliseDre as meapcservice } from "../../../../services/mantemEstadoAnaliseDre.service";
@@ -54,7 +54,7 @@ const AcertosDespesasPeriodosAnteriores = ({
 
     const dispatch = useDispatch()
 
-    const history = useHistory();
+    const navigate = useNavigate();
 
     const [contasAssociacao, setContasAssociacao] = useState([])
     const [contaSelecionada, setContaSelecionada] = useState([])
@@ -343,7 +343,7 @@ const AcertosDespesasPeriodosAnteriores = ({
         dispatch(limparDetalharAcertos())
         dispatch(addDetalharAcertos(lancamentos))
         dispatch(origemPagina("dre-detalhe-prestacao-de-contas-resumo-acertos"))
-        history.push(`/dre-detalhe-prestacao-de-contas-detalhar-acertos/${prestacaoDeContas.uuid}`, {aplicavel_despesas_periodos_anteriores: true} )
+        navigate(`/dre-detalhe-prestacao-de-contas-detalhar-acertos/${prestacaoDeContas.uuid}`, {replace: true, state: {aplicavel_despesas_periodos_anteriores: true} })
     }
 
     const redirecionaDetalheAcerto = (lancamento) => {
@@ -389,7 +389,7 @@ const AcertosDespesasPeriodosAnteriores = ({
         } else if (data.tipo_transacao === 'Crédito' && data.documento_mestre) {
             url = `/edicao-de-receita/${data.documento_mestre.uuid}`
         }
-        history.push(url)
+        navigate(url)
     };
 
     const salvarDesabilitadosEsclarecimento = (acerto) => {

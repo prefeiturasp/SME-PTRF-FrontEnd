@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState, useContext} from "react";
-import {Link, useLocation, useParams} from "react-router-dom";
+import {useLocation, useParams, useNavigate} from "react-router-dom";
 import moment from "moment";
 import {TopoComBotoes} from "./TopoComBotoes";
 import TabelaValoresPendentesPorAcao from "./TabelaValoresPendentesPorAcao";
@@ -37,6 +37,7 @@ import { ModalSalvarDataSaldoExtrato } from "../ModalSalvarDataSaldoExtrato";
 export const DetalheDasPrestacoes = () => {
     let {periodo_uuid, conta_uuid} = useParams();
     const contextSideBar = useContext(SidebarContext);
+    const navigate = useNavigate();
     const origem = (new URLSearchParams(window.location.search)).get("origem")
 
     // Alteracoes
@@ -572,18 +573,20 @@ export const DetalheDasPrestacoes = () => {
 
                     {parametros && parametros.state && parametros.state && parametros.state && parametros.state.origem === 'ir_para_conciliacao_bancaria' &&
                         <div className="bd-highlight detalhe-das-prestacoes-texto-cabecalho">
-                            <Link
-                                to={{pathname: `/consulta-detalhamento-analise-da-dre/${parametros.state.prestacaoDeContasUuid}/`,
-                                    state: {
-                                        origem: 'ir_para_conciliacao_bancaria',
-                                        periodoFormatado: parametros && parametros.state && parametros.state.periodoFormatado ? parametros.state.periodoFormatado : ""
-                                    }
-                                }}
+                            <button
                                 className="btn btn-outline-success"
-                                onClick={irParaAnaliseDre}
+                                onClick={() => {
+                                    irParaAnaliseDre();
+                                    navigate(`/consulta-detalhamento-analise-da-dre/${parametros.state.prestacaoDeContasUuid}/`, {
+                                        state: {
+                                            origem: 'ir_para_conciliacao_bancaria',
+                                            periodoFormatado: parametros && parametros.state && parametros.state.periodoFormatado ? parametros.state.periodoFormatado : ""
+                                        }
+                                    });
+                                }}
                             >
                                 Voltar para Análise DRE
-                            </Link>
+                            </button>
                         </div>
                     }
                 </div>

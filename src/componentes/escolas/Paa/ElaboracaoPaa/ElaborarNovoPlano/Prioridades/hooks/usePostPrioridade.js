@@ -3,10 +3,12 @@ import { postPrioridade } from "../../../../../../../services/escolas/Paa.servic
 import { toastCustom } from "../../../../../../Globais/ToastCustom";
 
 export const usePostPrioridade = (onClose) => {
+  const queryClient = useQueryClient();
   const mutationPost = useMutation({
     mutationFn: ({ payload }) => postPrioridade(payload),
     onSuccess: (data) => {
       toastCustom.ToastCustomSuccess("Prioridade criada com sucesso.");
+      queryClient.invalidateQueries(["prioridades"]);
       onClose && onClose();
     },
     onError: (e) => {

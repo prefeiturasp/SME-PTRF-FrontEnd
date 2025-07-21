@@ -6,12 +6,10 @@ export const usePostBemProduzido = () => {
   const mutationPost = useMutation({
     mutationFn: ({ payload }) => postBemProduzido(payload),
     onSuccess: (data) => {
-      toastCustom.ToastCustomSuccess(
-        "Rascunho do bem produzido salvo com sucesso."
-      );
+      toastCustom.ToastCustomSuccess("Bem produzido criado com sucesso.");
     },
     onError: (e) => {
-      toastCustom.ToastCustomError("Houve um erro ao salvar rascunho.");
+      toastCustom.ToastCustomError("Houve um erro ao criar bem produzido.");
     },
   });
 

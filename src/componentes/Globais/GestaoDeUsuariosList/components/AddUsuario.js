@@ -1,14 +1,14 @@
 import React from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlus} from "@fortawesome/free-solid-svg-icons";
-import {useHistory} from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 import {useQueryClient} from '@tanstack/react-query';
 import { RetornaSeTemPermissaoEdicaoGestaoUsuarios } from "../../GestaoDeUsuarios/utils/RetornaSeTemPermissaoEdicaoGestaoUsuarios";
 
 export const AddUsuario = () => {
     const TEM_PERMISSAO_EDICAO_GESTAO_USUARIOS = RetornaSeTemPermissaoEdicaoGestaoUsuarios()
 
-    let history = useHistory();
+    let navigate = useNavigate();
     const queryClient = useQueryClient();
     
     const removeQuery = () => {
@@ -17,7 +17,7 @@ export const AddUsuario = () => {
 
     return (
         <button onClick={() => {
-            history.push('/gestao-de-usuarios-form')
+            navigate('/gestao-de-usuarios-form')
             removeQuery()
         }
         } type="button" className="btn btn-success mt-2" disabled={!TEM_PERMISSAO_EDICAO_GESTAO_USUARIOS}>

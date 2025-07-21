@@ -2,11 +2,11 @@ import React, {useContext, useEffect, useState} from "react";
 import MaskedInput from "react-text-mask";
 import {Formik} from "formik";
 import * as yup from "yup";
+import { useNavigate } from 'react-router-dom';
 
 import {GestaoDeUsuariosFormContext} from "../context/GestaoDeUsuariosFormProvider";
 import {valida_cpf_cnpj} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import {ModalConfirmacao} from "./ModalConfirmacao";
-import {useHistory} from "react-router-dom";
 import {useUsuarioStatus} from "../hooks/useUsuarioStatus";
 import {useCreateUsuario} from "../hooks/useCreateUsuario";
 import {useUpdateUsuario} from "../hooks/useUpdateUsuario";
@@ -30,7 +30,7 @@ export const FormUsuario = ({usuario}) => {
     const { mutate: updateUsuario, isLoading: isLoadingUpdate, error: errorOnUpdate, data: resultPut } = useUpdateUsuario();
     const { mutate: removeAcessos, isLoading: isLoadingRemoveAcessos, error: errorOnRemoveAcessos, data: resultRemoveAcessos } = useRemoveAcessosUsuario(showMensagemSucessoAoRemoverAcesso, showMensagemErroAoRemoverAcesso, visaoBase)
 
-    const history = useHistory();
+    const navigate = useNavigate();
     const [formErrors, setFormErrors] = useState({});
     const [bloquearCampoName, setBloquearCampoName] = useState(true)
 
@@ -91,9 +91,9 @@ export const FormUsuario = ({usuario}) => {
 
     useEffect(() => {
         if (modo === Modos.INSERT && resultPost?.id){
-            history.push(`/gestao-de-usuarios-form/${resultPost.id}`)
+            navigate(`/gestao-de-usuarios-form/${resultPost.id}`)
         }
-    }, [resultPost, modo, Modos, history])
+    }, [resultPost, modo, Modos, navigate])
 
     // Ações executadas quando a API retorna as informações de status do usuário
     useEffect(() => {
@@ -161,7 +161,7 @@ export const FormUsuario = ({usuario}) => {
                     abreModalDeAvisoSeNaoPuderAcessarUnidade()
                     return
                 }
-                history.push(`/gestao-de-usuarios-form/${usuarioStatus.usuario_sig_escola.info_sig_escola.user_id}`)
+                navigate(`/gestao-de-usuarios-form/${usuarioStatus.usuario_sig_escola.info_sig_escola.user_id}`)
             }
 
         }

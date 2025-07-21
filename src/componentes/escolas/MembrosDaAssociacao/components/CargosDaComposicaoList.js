@@ -5,21 +5,23 @@ import {Column} from "primereact/column";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEdit, faEye} from "@fortawesome/free-solid-svg-icons";
 import ReactTooltip from "react-tooltip";
-import {Link} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import {Badge} from "react-bootstrap"
 import {MembrosDaAssociacaoContext} from "../context/MembrosDaAssociacao";
 
 export const CargosDaComposicaoList = ({escopo}) => {
     const {isLoading, data} = useGetCargosDaComposicao()
     const {currentPage, composicaoUuid} = useContext(MembrosDaAssociacaoContext)
+    const navigate = useNavigate();
 
     const acoesTemplate = (rowData) => {
         return (
             <div>
-                <Link
-                    to={{
-                        pathname: `/cadastro-historico-de-membros/${composicaoUuid}`,
-                        state: {cargo: rowData}
+                <button
+                    onClick={() => {
+                        navigate(`/cadastro-historico-de-membros/${composicaoUuid}`, {
+                            state: {cargo: rowData}
+                        });
                     }}
                     className="btn-editar-membro"
                     data-qa='editar-membro'
@@ -41,7 +43,7 @@ export const CargosDaComposicaoList = ({escopo}) => {
                             <ReactTooltip/>
                         </span>
                     }
-                </Link>
+                </button>
             </div>
         )
     };  
