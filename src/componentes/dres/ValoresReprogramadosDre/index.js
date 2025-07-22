@@ -179,14 +179,10 @@ export const ValoresReprogramadosDre = () =>{
         return (
             <div>
                 <Link
-                    to={
-                        {
-                            pathname: `/cadastro-de-valores-reprogramados/`,
-                            state: {
-                                uuid_associacao: rowData.associacao.uuid,
-                            }
-                        }
-                    }
+                    to="/cadastro-de-valores-reprogramados/"
+                    state={{
+                        uuid_associacao: rowData.associacao.uuid,
+                    }}
                     className="btn-editar-membro"
                 >
                     <FontAwesomeIcon
