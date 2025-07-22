@@ -27,15 +27,11 @@ const InfoPublicacaoNoDiarioOficial = ({consolidadoDre, carregaConsolidadosDreJa
                     </strong>
                     <Link
                         onClick={e => !visoesService.getPermissoes(['change_relatorio_consolidado_dre']) && e.preventDefault()}
-                        to={
-                            {
-                                pathname: `/dre-relatorio-consolidado-retificacao/${consolidadoDre.uuid}`,
-                                state: {
-                                    referencia_publicacao: consolidadoDre.titulo_relatorio,
-                                    eh_edicao_retificacao: true
-                                }
-                            }
-                        }
+                        to={`/dre-relatorio-consolidado-retificacao/${consolidadoDre.uuid}`}
+                        state={{
+                            referencia_publicacao: consolidadoDre.titulo_relatorio,
+                            eh_edicao_retificacao: true
+                        }}
                     >
 
 
