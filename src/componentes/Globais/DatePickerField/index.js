@@ -4,7 +4,6 @@ import DatePicker, {registerLocale} from "react-datepicker";
 import 'react-datepicker/dist/react-datepicker.css';
 import { ptBR } from "date-fns/locale";
 import "./datePickerField.scss";
-import moment from "moment";
 
 registerLocale("pt", ptBR);
 
@@ -14,7 +13,7 @@ export const DatePickerField = ({ dataQa="", name, id, value, className="form-co
     return (
         <DatePicker
             disabled={disabled}
-            selected={(value && new Date(moment(value))) || null}
+            selected={(value && new Date(value)) || null}
             onChange={val => {
                 onChange(name, val);
             }}
