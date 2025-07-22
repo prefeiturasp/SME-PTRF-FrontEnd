@@ -700,14 +700,8 @@ export const CadastroFormFormik = ({
                                                                             :
                                                                             <Link
                                                                                 data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastrar-estorno`}
-                                                                                to={
-                                                                                    {
-                                                                                        pathname: `/cadastro-de-credito/`,
-                                                                                        state: {
-                                                                                            uuid_rateio: rateio.uuid,
-                                                                                        }
-                                                                                    }
-                                                                                }
+                                                                                to="/cadastro-de-credito/"
+                                                                                state={{ uuid_rateio: rateio.uuid }}
                                                                                 className={`btn btn-link btn-remover-despesa mr-2 d-flex align-items-center ${bloqueiaLinkCadastrarEstorno(rateio) ? 'desabilita-link-estorno' : ''}`}
                                                                                 disabled={bloqueiaLinkCadastrarEstorno(rateio)}
                                                                             >
