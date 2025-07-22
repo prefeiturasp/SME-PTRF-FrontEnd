@@ -37,10 +37,8 @@ export const ResumoPorDre = ({resumoPorDre, statusPeriodo, periodoEscolhido}) =>
         return (
             <div>
                 <Link
-                    to={{
-                        pathname: `${url}`,
-                        state: {nome_dre: rowData.dre.nome}
-                    }}
+                    to={url}
+                    state={{ nome_dre: rowData.dre.nome }}
                     className={`btn btn-link`}
                 >
                     <FontAwesomeIcon
