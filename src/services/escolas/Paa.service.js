@@ -1,6 +1,5 @@
 import api from "../api/index.js";
 import { TOKEN_ALIAS } from "../auth.service.js";
-import { consultarListaCargos } from "./Associacao.service.js";
 import { addFiltersToQueryString } from "../../utils/Api.js";
 
 
@@ -153,4 +152,8 @@ export const getPrioridades = async (filtros, page=1, page_size=20) => {
 
 export const postPrioridade = async (payload) => {
   return (await api.post(`api/prioridades-paa/`, payload, authHeader())).data;
+}
+
+export const patchPrioridade = async (uuid, payload) => {
+  return (await api.patch(`api/prioridades-paa/${uuid}/`, payload, authHeader())).data;
 }

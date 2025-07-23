@@ -23,7 +23,7 @@ export const useGetPrioridades = (filtros, page) => {
 
   const dadosProcessados = (data?.results || []).map(item => ({
     ...item,
-    acao: item.acao_associacao?.nome || item.acao_pdde?.nome || "Recurso Próprio",
+    acao: item?.acao_associacao_objeto?.nome || item?.acao_pdde_objeto?.nome || "Recurso Próprio",
     valor_total: parseFloat(item.valor_total)
   }));
   return { isLoading, isError, prioridades: dadosProcessados, quantidade: data.count, error, refetch };
