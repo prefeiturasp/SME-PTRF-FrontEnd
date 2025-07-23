@@ -152,7 +152,6 @@ export const FormFiltros = ({
 
   const handleTipoDespesaCusteioChange = (value) => {
     setSelectedTipoDespesaCusteio(value);
-    console.log('handle value: ', value)
     form.setFieldsValue({
       especificacao_material: undefined
     });
