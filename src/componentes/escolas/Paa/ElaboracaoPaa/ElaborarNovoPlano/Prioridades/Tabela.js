@@ -1,19 +1,14 @@
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronRight, faTrash, faCopy } from '@fortawesome/free-solid-svg-icons';
 import { IconButton } from "../../../../../Globais/UI/Button/IconButton";
 import { useState } from 'react';
-import { Flex } from 'antd';    
+import { Button, Space } from 'antd';
 import { formatMoneyBRL } from "../../../../../../utils/money";
 
 
-export const Tabela = ({ data }) => {
+export const Tabela = ({ data, handleEditar }) => {
     const [selectedItems, setSelectedItems] = useState([]);
 
-    const handleEditar = (rowData) => {
-        // Implementar lógica de edição
-    }
     const handleExcluir = (rowData) => {
         // Implementar lógica de exclusão
     }
@@ -73,66 +68,90 @@ export const Tabela = ({ data }) => {
                 header="Ação" 
                 field="acao"
                 sortable
+                body={(rowData) => (
+                    <>
+                        <div>{rowData.acao}</div>
+                        {!rowData.prioridade &&
+                            <Button
+                                variant="solid"
+                                size="small"
+                                style={
+                                    {
+                                        backgroundColor:'#a4a4a4',
+                                        borderColor:'transparent',
+                                        color:'white',
+                                        fontSize: '11px',
+                                        height: 'auto'
+                                    }
+                                }>Não priorizado</Button>
+                        }
+                    </>
+                )}
             />
             <Column 
-                field="tipo_aplicacao.value" 
+                field="tipo_aplicacao_objeto.value"
                 header="Tipo de aplicação"
                 sortable
-                style={{ width: "200px" }}
+                style={{ width: "120px" }}
             />
             <Column 
-                field="tipo_despesa_custeio.nome" 
+                field="tipo_despesa_custeio_objeto.nome"
                 header="Tipo de despesa"
                 sortable
                 style={{ width: "180px" }}
             />
             <Column 
-                field="especificacao_material.nome" 
+                field="especificacao_material_objeto.nome"
                 header="Especificação do material, bem ou serviço"
                 sortable
             />
             <Column 
-                field="valor_total" 
+                field="valor_total"
                 header="Valor total"
                 sortable
-                style={{ width: "200px", textAlign: "center" }}
+                style={{ width: "120px", textAlign: "center" }}
                 bodyStyle={{ textAlign: 'center' }}
-                body={(rowData) => formatMoneyBRL(rowData.valor_total)}
+                body={(rowData) => (
+                    <>{formatMoneyBRL(rowData.valor_total)}</>
+                )}
             />
             <Column
                 header="Ações"
                 style={{ width: "75px", borderLeft: "none", textAlign: 'center' }}
                 body={rowData => {
                     return (
-                        <Flex justify="center">
-                        <IconButton
-                            icon="faEdit"
-                            tooltipMessage="Editar"
-                            iconProps={{
-                            style: { fontSize: "20px", marginRight: "0", color: "#00585E" },
-                            }}
-                            aria-label="Editar"
-                            onClick={() => handleEditar(rowData)}
-                        />
-                        <IconButton
-                            icon="faTrashCan"
-                            tooltipMessage="Excluir"
-                            iconProps={{
-                            style: { fontSize: "20px", marginRight: "0", color: "#B40C02" },
-                            }}
-                            aria-label="Excluir"
-                            onClick={() => handleExcluir(rowData)}
-                        />
-                        <IconButton
-                            icon="faCopy"
-                            tooltipMessage="Duplicar"
-                            iconProps={{
-                            style: { fontSize: "20px", marginRight: "0", color: "#00585E" },
-                            }}
-                            aria-label="Duplicar"
-                            onClick={() => handleDuplicar(rowData)}
-                        />
-                        </Flex>
+                        <Space direction="horizontal" size={0}>
+                            <IconButton
+                                className='p-2'
+                                icon="faEdit"
+                                tooltipMessage="Editar"
+                                iconProps={{
+                                style: { color: "#00585E" },
+                                }}
+                                aria-label="Editar"
+                                onClick={() => handleEditar(rowData, false)}
+                            />
+                            <IconButton
+                                className='p-2'
+                                icon="faTrashCan"
+                                tooltipMessage="Excluir"
+                                iconProps={{
+                                style: { color: "#B40C02" },
+                                }}
+                                aria-label="Excluir"
+                                onClick={() => handleExcluir(rowData)}
+                            />
+                            <IconButton
+                                className='p-2'
+                                icon="faCopy"
+                                tooltipMessage="Duplicar"
+                                iconProps={{
+                                style: { color: "#00585E" },
+                                }}
+                                aria-label="Duplicar"
+                                onClick={() => handleDuplicar(rowData)}
+                            />
+                        </Space>
                     );
                  }}
             />

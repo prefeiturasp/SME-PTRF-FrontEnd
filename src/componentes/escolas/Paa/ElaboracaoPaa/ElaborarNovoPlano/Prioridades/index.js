@@ -25,12 +25,12 @@ const Prioridades = () => {
   const [filtros, setFiltros] = useState(filtroInicial);
   const [currentPage, setCurrentPage] = useState(1);
   const [firstPage, setFirstPage] = useState(0);
-  const [modalForm, setModalForm] = useState({ open: false, data: null });
+  const [modalForm, setModalForm] = useState({ open: false, tabelas: null, formModal: null });
   const { prioridadesTabelas, recursos, tipos_aplicacao } = useGetPrioridadeTabelas();
   const { tipos_despesa_custeio } = useGetTiposDespesaCusteio();
   const { isLoading: isLoadingPrioridades, prioridades, quantidade, refetch } = useGetPrioridades(filtros, currentPage);
 
-  const modalFormData = {
+  const dadosTabelas = {
     prioridades: prioridadesTabelas,
     recursos: recursos,
     tipos_aplicacao: tipos_aplicacao,
@@ -62,7 +62,11 @@ const Prioridades = () => {
   };
 
   const abrirModal = async () => {
-    setModalForm({ open: true, data: modalFormData });
+    setModalForm({ open: true, tabelas: dadosTabelas, formModal: null });
+  };
+
+  const onEditar = (rowData, focusValor=false) => {
+    setModalForm({ open: true, tabelas: dadosTabelas, formModal: rowData, focusValor: focusValor });
   };
 
   return (
@@ -81,10 +85,7 @@ const Prioridades = () => {
       {/* Bloco de filtros com 7 selects */}
       {recursos && prioridadesTabelas && tipos_aplicacao && tipos_despesa_custeio && (
         <FormFiltros
-          recursos={recursos}
-          prioridadesTabelas={prioridadesTabelas}
-          tipos_aplicacao={tipos_aplicacao}
-          tipos_despesa_custeio={tipos_despesa_custeio}
+          tabelas={dadosTabelas}
           onFiltrar={onFiltrar}
           onFiltrosChange={onFiltrosChange}
           onLimparFiltros={limpaFiltros}
@@ -103,7 +104,9 @@ const Prioridades = () => {
 
             </Flex>
           </p>
-          <Tabela data={prioridades} />
+          <Tabela
+            data={prioridades}
+            handleEditar={onEditar}/>
           {quantidade > 20 && (
             <Paginator
               first={firstPage}
@@ -128,8 +131,14 @@ const Prioridades = () => {
       {modalForm.open && (
         <ModalFormAdicionarPrioridade
           open={modalForm.open}
-          data={modalForm.data}
-          onClose={() => setModalForm({ open: false, data: null })}
+          tabelas={modalForm.tabelas}
+          formModal={modalForm.formModal}
+          focusValor={modalForm.focusValor}
+          onClose={() => setModalForm({
+            open: false,
+            tabelas: null,
+            formModal: null,
+            focusValor: false })}
         />
       )}
     </div>
