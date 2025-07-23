@@ -7,6 +7,7 @@ import { useGetAcoesAssociacao } from '../../ReceitasPrevistas/hooks/useGetAcoes
 import { useGetAcoesPDDE } from '../hooks/useGetAcoesPDDE';
 import { useGetEspecificacoes } from '../hooks/useGetEspecificacoes';
 import { usePostPrioridade } from '../hooks/usePostPrioridade';
+import { usePatchPrioridade } from '../hooks/usePatchPrioridade';
 
 // Mock dos hooks que fazem requests HTTP
 jest.mock('../../ReceitasPrevistas/hooks/useGetAcoesAssociacao', () => ({
@@ -23,6 +24,10 @@ jest.mock('../hooks/useGetEspecificacoes', () => ({
 
 jest.mock('../hooks/usePostPrioridade', () => ({
   usePostPrioridade: jest.fn(),
+}));
+
+jest.mock('../hooks/usePatchPrioridade', () => ({
+  usePatchPrioridade: jest.fn(),
 }));
 
 
@@ -128,14 +133,22 @@ describe('ModalFormAdicionarPrioridade', () => {
       },
     });
 
+    // Mock do hook de patch
+    usePatchPrioridade.mockReturnValue({
+      mutationPatch: {
+        mutate: jest.fn(),
+        isLoading: false,
+      },
+    });
+
     localStorage.setItem("PAA", "paa-uuid");
   });
 
   const renderComponent = (props = {}) => {
     const defaultProps = {
       open: true,
+      tabelas: mockData,
       onClose: jest.fn(),
-      data: mockData,
       ...props,
     };
 
@@ -218,7 +231,7 @@ describe('ModalFormAdicionarPrioridade', () => {
 
     });
 
-    it.skip('deve criar prioridade PTRF', async () => {
+    it('deve criar prioridade PTRF', async () => {
       const mockMutate = jest.fn();
       usePostPrioridade.mockReturnValue({
         mutationPost: {
@@ -242,6 +255,106 @@ describe('ModalFormAdicionarPrioridade', () => {
         );
         fireEvent.click(prioridadeOptionElement);
       });
+
+      const recursoSelect = screen.getByLabelText('Recurso *');
+      antSelectTrigger = recursoSelect.closest('.ant-select').querySelector('.ant-select-selector');
+      fireEvent.mouseDown(antSelectTrigger);
+
+      await waitFor(() => {
+        const allPtrfElements = screen.getAllByText('PTRF');
+        const ptrfOptionElement = allPtrfElements.find(el => 
+          el.classList.contains('ant-select-item-option-content')
+        );
+        fireEvent.click(ptrfOptionElement);
+      });
+      
+      await waitFor(() => {
+        acaoSelect = screen.getByLabelText('Ação *');
+        antSelectTrigger = acaoSelect.closest('.ant-select').querySelector('.ant-select-selector');
+        fireEvent.mouseDown(antSelectTrigger);
+        const allAcoesElements = screen.getAllByText('Ação PTRF 1');
+        const acaoOptionElement = allAcoesElements.find(el => 
+          el.classList.contains('ant-select-item-option-content')
+        );
+        fireEvent.click(acaoOptionElement);
+      });
+
+      const tipoAplicacaoSelect = screen.getByLabelText('Tipo de aplicação *');
+      antSelectTrigger = tipoAplicacaoSelect.closest('.ant-select').querySelector('.ant-select-selector');
+      fireEvent.mouseDown(antSelectTrigger);
+
+      await waitFor(() => {
+        const allTiposAplicacaoElements = screen.getAllByText('Custeio');
+        const tipoAplicacaoOptionElement = allTiposAplicacaoElements.find(el => 
+          el.classList.contains('ant-select-item-option-content')
+        );
+        fireEvent.click(tipoAplicacaoOptionElement);
+      });
+
+      const tipoDespesaCusteioSelect = screen.getByLabelText('Tipo de despesa *');
+      antSelectTrigger = tipoDespesaCusteioSelect.closest('.ant-select').querySelector('.ant-select-selector');
+      fireEvent.mouseDown(antSelectTrigger);
+
+      await waitFor(() => {
+        const allTiposDespesaCusteioElements = screen.getAllByText('Tipo 1');
+        const tipoDespesaCusteioOptionElement = allTiposDespesaCusteioElements.find(el => 
+          el.classList.contains('ant-select-item-option-content')
+        );
+        fireEvent.click(tipoDespesaCusteioOptionElement);
+      });
+      
+      const especificacaoMaterialInput = screen.getByLabelText('Especificação do Bem, Material ou Serviço *');
+      antSelectTrigger = especificacaoMaterialInput.closest('.ant-select').querySelector('.ant-select-selector');
+      fireEvent.mouseDown(antSelectTrigger);
+
+      await waitFor(() => {
+        const allEspecificacoesElements = screen.getAllByText('Especificação 1');
+        const especificacaoOptionElement = allEspecificacoesElements.find(el => 
+          el.classList.contains('ant-select-item-option-content')
+        );
+        fireEvent.click(especificacaoOptionElement);
+      });
+
+      fireEvent.change(document.getElementById("valor_total"), { target: { value: 1001 } });
+
+      fireEvent.submit(screen.getByRole("form"));
+
+      await waitFor(() => {
+        expect(mockMutate).toHaveBeenCalled();
+      });
+    });
+
+    it('deve chamar patch ao alterar um registro', async () => {
+      const mockMutate = jest.fn();
+      usePatchPrioridade.mockReturnValue({
+        mutationPatch: {
+          mutate: mockMutate,
+          isLoading: false,
+        },
+      });
+
+      const formModal = {
+        uuid: 'uuid',
+      };
+
+      renderComponent({formModal});
+      let acaoSelect = null;
+      let antSelectTrigger = null;
+
+      const prioridadeSelect = screen.getByLabelText('Prioridade *');
+      expect(prioridadeSelect).toBeInTheDocument();
+
+      antSelectTrigger = prioridadeSelect.closest('.ant-select').querySelector('.ant-select-selector');
+      fireEvent.mouseDown(antSelectTrigger);
+      
+      await waitFor(() => {
+        const allPrioridadesElements = screen.getAllByText('Sim');
+        const prioridadeOptionElement = allPrioridadesElements.find(el => 
+          el.classList.contains('ant-select-item-option-content')
+        );
+        fireEvent.click(prioridadeOptionElement);
+      });
+
 
       const recursoSelect = screen.getByLabelText('Recurso *');
       antSelectTrigger = recursoSelect.closest('.ant-select').querySelector('.ant-select-selector');
