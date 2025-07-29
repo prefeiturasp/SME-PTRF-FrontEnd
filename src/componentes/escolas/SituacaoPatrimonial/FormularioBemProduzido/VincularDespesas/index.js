@@ -82,21 +82,31 @@ export const VincularDespesas = ({
       const novasSelecionadas = data.results
         .filter(result => uuidsBem.includes(result.uuid))
         .map(result => JSON.parse(JSON.stringify(result)));
-      setDespesasSelecionadas(prev => {
-        const bemMap = new Map(
-          bemProduzidoDespesas.map(d => {
-            const uuid = d.despesa ? d.despesa.uuid : d.uuid;
-            return [uuid, d.despesa || d];
-          })
-        );
+      const bemMap = new Map(
+        bemProduzidoDespesas.map(d => {
+          const uuid = d.despesa ? d.despesa.uuid : d.uuid;
+          return [uuid, d.despesa || d];
+        })
+      );
 
+      setDespesasSelecionadas(prev => {
         const antigos = prev.filter(
           d => !novasSelecionadas.some(n => n.uuid === d.uuid)
         );
-
         const atualizados = novasSelecionadas.map(n => bemMap.get(n.uuid) || n);
 
-        const novoValor = [...antigos, ...atualizados];
+        const bemMapArray = Array.from(bemMap.values());
+
+        let novoValor = [...antigos, ...atualizados, ...bemMapArray];
+
+        const seen = new Set();
+        novoValor = novoValor.filter(item => {
+          if (!item || !item.uuid) return false;
+          if (seen.has(item.uuid)) return false;
+          seen.add(item.uuid);
+          return true;
+        });
+
         return novoValor;
       });
     }
@@ -209,15 +219,16 @@ export const VincularDespesas = ({
                 dataKey="uuid"
                 selection={despesasSelecionadas}
                 onSelectionChange={(e) => {
-                  const disabledSelectedRows = (despesasSelecionadas || []).filter(
-                    row => isRowDisabled(row)
-                  );
-                  const newSelection = Array.isArray(e.value)
-                    ? [
-                        ...e.value.filter(row => !isRowDisabled(row)),
-                        ...disabledSelectedRows
-                      ]
-                    : disabledSelectedRows;
+                  const current = despesasSelecionadas || [];
+                  let newSelection = current;
+                  if (Array.isArray(e.value)) {
+                    newSelection = [
+                      ...current,
+                      ...e.value.filter(
+                        row => !current.some(sel => sel.uuid === row.uuid)
+                      )
+                    ];
+                  }
                   setDespesasSelecionadas(newSelection);
                 }}
                 selectableRowDisabled={rowData => isRowDisabled(rowData)}

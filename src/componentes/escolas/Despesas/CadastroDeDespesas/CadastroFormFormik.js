@@ -111,7 +111,8 @@ export const CadastroFormFormik = ({
                                        onCalendarCloseDataDoDocumento,
                                        renderContaAssociacaoOptions,
                                        filterContas,
-                                       limparSelecaoContasDesabilitadas
+                                       limparSelecaoContasDesabilitadas,
+                                       veioDeSituacaoPatrimonial = false,
                                    }) => {
 
     // Corrigi Cálculo validação dos valores
@@ -894,51 +895,51 @@ export const CadastroFormFormik = ({
                                     )}
                                 />
                                 <div className="d-flex  justify-content-end pb-3 mt-3">
-                                    <button data-qa={`cadastro-edicao-despesa-btn-voltar`}
-                                            type="reset"
-                                            onClick={houveAlteracoes(values) ? onShowModal : onCancelarTrue}
-                                            className="btn btn btn-outline-success mt-2 mr-2"
-                                    >
-                                        Voltar
-                                    </button>
-
-                                    {aux.mostraBotaoDeletar(despesaContext.idDespesa, parametroLocation)
-                                        ?
-                                        <button
-                                            data-qa={`cadastro-edicao-despesa-btn-deletar`}
-                                            disabled={!podeHabilitar}
-                                            type="reset"
-                                            onClick={() => aux.onShowDeleteModal(setShowDelete, setShowTextoModalDelete, values)}
-                                            className="btn btn btn-danger mt-2 mr-2"
-                                        >
-                                            Deletar
-                                        </button>
-                                        :
-                                        null
-                                    }
-                                    
-                                    {!aux.ehOperacaoExclusao(parametroLocation) &&
-                                        <button
-                                            data-qa={`cadastro-edicao-despesa-btn-salvar`}
-                                            disabled={
-                                                eh_despesa_reconhecida(props.values) ? btnSubmitDisable || readOnlyBtnAcao || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes) || !props.values.despesa_anterior_ao_uso_do_sistema_editavel
-                                                    : !props.values.numero_boletim_de_ocorrencia || btnSubmitDisable || readOnlyBtnAcao || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes) || !props.values.despesa_anterior_ao_uso_do_sistema_editavel
+                                    {!veioDeSituacaoPatrimonial && (
+                                        <>
+                                            <button data-qa={`cadastro-edicao-despesa-btn-voltar`}
+                                                type="reset"
+                                                onClick={houveAlteracoes(props.values) ? onShowModal : onCancelarTrue}
+                                                className="btn btn btn-outline-success mt-2 mr-2"
+                                            >
+                                                Voltar
+                                            </button>
+                                            {aux.mostraBotaoDeletar(despesaContext.idDespesa, parametroLocation)
+                                                ?
+                                                <button
+                                                    data-qa={`cadastro-edicao-despesa-btn-deletar`}
+                                                    disabled={!podeHabilitar}
+                                                    type="reset"
+                                                    onClick={() => aux.onShowDeleteModal(setShowDelete, setShowTextoModalDelete, props.values)}
+                                                    className="btn btn btn-danger mt-2 mr-2"
+                                                >
+                                                    Deletar
+                                                </button>
+                                                : null
                                             }
-                                            type="button"
-                                            onClick={async (e) => {
-                                                try {
-                                                    desabilitaBtnSalvar();
-                                                    await serviceIniciaEncadeamentoDosModais(values, errors, setFieldValue, {resetForm});
-                                                } catch (err) {
-                                                    habilitaBtnSalvar(); 
-                                                }
-                                            }}
-                                            className="btn btn-success mt-2"
-                                        >
-                                            Salvar
-                                        </button>
-                                    }
-                                    
+                                            {!aux.ehOperacaoExclusao(parametroLocation) &&
+                                                <button
+                                                    data-qa={`cadastro-edicao-despesa-btn-salvar`}
+                                                    disabled={
+                                                        eh_despesa_reconhecida(props.values) ? btnSubmitDisable || readOnlyBtnAcao || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes) || !props.values.despesa_anterior_ao_uso_do_sistema_editavel
+                                                            : !props.values.numero_boletim_de_ocorrencia || btnSubmitDisable || readOnlyBtnAcao || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes) || !props.values.despesa_anterior_ao_uso_do_sistema_editavel
+                                                    }
+                                                    type="button"
+                                                    onClick={async (e) => {
+                                                        try {
+                                                            desabilitaBtnSalvar();
+                                                            await serviceIniciaEncadeamentoDosModais(props.values, props.errors, props.setFieldValue, {resetForm: props.resetForm});
+                                                        } catch (err) {
+                                                            habilitaBtnSalvar(); 
+                                                        }
+                                                    }}
+                                                    className="btn btn-success mt-2"
+                                                >
+                                                    Salvar
+                                                </button>
+                                            }
+                                        </>
+                                    )}
                                 </div>
                                 <div className="d-flex justify-content-end">
                                     <p>{errors.valor_recusos_acoes && exibeMsgErroValorRecursos && <span
