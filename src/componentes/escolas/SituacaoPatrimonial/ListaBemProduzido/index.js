@@ -15,6 +15,7 @@ import { useCarregaTabelaDespesa } from "../../../../hooks/Globais/useCarregaTab
 import {faDownload} from "@fortawesome/free-solid-svg-icons";
 import { MsgImgCentralizada } from "../../../Globais/Mensagens/MsgImgCentralizada";
 import Img404 from "../../../../assets/img/img-404.svg";
+import ReactTooltip from "react-tooltip";
 
 const filtroInicial = {
   especificacao_bem: "",
@@ -206,9 +207,22 @@ export const ListaBemProduzido = (props) => {
           <Column
             header="Ação"
             style={{ width: "70px", textAlign: "center" }}
-            body={() => (
-              <FontAwesomeIcon icon={faEye} style={{ color: '#888', fontSize: '1.2em' }} />
-            )}
+            body={() => {
+              return (
+                <>
+                  <button
+                    data-tip="Visualizar despesa"
+                    data-for={`tooltip-visualizar-despesa-${despesa.despesa_uuid}`}
+                    onClick={() => navigate(`/edicao-de-despesa/${despesa.despesa_uuid}`, { state: { origem: 'situacao_patrimonial' } })}
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+                    aria-label="Visualizar despesa"
+                  >
+                    <FontAwesomeIcon icon={faEye} style={{ color: '#888', fontSize: '1.2em' }} />
+                  </button>
+                  <ReactTooltip id={`tooltip-visualizar-despesa-${despesa.despesa_uuid}`} effect="solid" place="top" />
+                </>
+              )
+            }}
           />
         </DataTable>
       ))}
@@ -353,7 +367,20 @@ export const ListaBemProduzido = (props) => {
                   );
                 }
                 if (rowData.tipo === "Adquirido") {
-                  return <FontAwesomeIcon icon={faEye} style={{ color: '#888', fontSize: '1.2em' }} />;
+                  return (
+                    <>
+                      <button
+                        data-tip="Visualizar despesa"
+                        data-for={`tooltip-visualizar-despesa-${rowData.despesa_uuid}`}
+                        onClick={() => navigate(`/edicao-de-despesa/${rowData.despesa_uuid}`, { state: { origem: 'situacao_patrimonial' } })}
+                        style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+                        aria-label="Visualizar despesa"
+                      >
+                        <FontAwesomeIcon icon={faEye} style={{ color: '#888', fontSize: '1.2em' }} />
+                      </button>
+                      <ReactTooltip id={`tooltip-visualizar-despesa-${rowData.despesa_uuid}`} effect="solid" place="top" />
+                    </>
+                  );
                 }
                 return null;
               }}

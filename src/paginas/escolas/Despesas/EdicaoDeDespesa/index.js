@@ -1,6 +1,6 @@
 import React, {useContext, useEffect} from "react";
 import {PaginasContainer} from "../../../PaginasContainer";
-import {useParams, useLocation} from 'react-router-dom'
+import {useParams, useLocation, useNavigate} from 'react-router-dom'
 import {DespesaContext} from "../../../../context/Despesa";
 import {getDespesa} from "../../../../services/escolas/Despesas.service";
 import {CadastroDeDespesas} from "../../../../componentes/escolas/Despesas/CadastroDeDespesas";
@@ -9,7 +9,7 @@ import moment from "moment";
 import {visoesService} from "../../../../services/visoes.service";
 import { metodosAuxiliares } from "../../../../componentes/escolas/Despesas/metodosAuxiliares";
 
-export const tituloPagina = (parametroLocation) => {
+export const tituloPagina = (parametroLocation, veioDeSituacaoPatrimonial) => {
     const aux = metodosAuxiliares;
     const visao_selecionada = visoesService.getItemUsuarioLogado('visao_selecionada.nome')
 
@@ -22,6 +22,8 @@ export const tituloPagina = (parametroLocation) => {
             let operacao = parametroLocation.state?.operacao;
             let texto = operacao === "requer_exclusao_lancamento_gasto" ? "Exclusão de Despesa" : "Edição de Despesa";
             return texto;
+        } else if(veioDeSituacaoPatrimonial){
+            return "Visualização de Despesa"
         }
         else{
             return "Edição de Despesa"
@@ -38,6 +40,8 @@ export const EdicaoDeDespesa = ()=>{
 
     let {associacao} = useParams();    
     const parametroLocation = useLocation();
+    const navigate = useNavigate();
+    const veioDeSituacaoPatrimonial = parametroLocation.state?.origem === 'situacao_patrimonial';
 
     useEffect(() => {
         (async function setValoresIniciais() {
@@ -153,12 +157,34 @@ export const EdicaoDeDespesa = ()=>{
 
     return(
         <PaginasContainer>
-            <h1 className="titulo-itens-painel mt-5">{tituloPagina(parametroLocation)}</h1>
+            <h1 className="titulo-itens-painel mt-5">{tituloPagina(parametroLocation, veioDeSituacaoPatrimonial)}</h1>
             <div className="page-content-inner ">
-                <h2 className="subtitulo-itens-painel mb-4">Dados do documento</h2>
+                <div className="d-flex justify-content-between align-items-center mb-4">
+                    <h2 className="subtitulo-itens-painel mb-0">Dados do documento</h2>
+                    {veioDeSituacaoPatrimonial && (
+                        <button
+                            className="btn btn btn-outline-success mt-2 mr-2"
+                            onClick={() => navigate('/lista-situacao-patrimonial')}
+                        >
+                            Voltar para Situação Patrimonial
+                        </button>
+                    )}
+                </div>
                 <CadastroDeDespesas
+                    veioDeSituacaoPatrimonial={veioDeSituacaoPatrimonial}
                     verbo_http={"PUT"}
                 />
+                <hr />
+                {veioDeSituacaoPatrimonial && (
+                    <div className="d-flex justify-content-end mb-4">
+                        <button
+                            className="align-self-end btn btn btn-outline-success mt-2 mr-2"
+                            onClick={() => navigate('/lista-situacao-patrimonial')}
+                        >
+                            Voltar para Situação Patrimonial
+                        </button>
+                    </div>
+                )}
             </div>
         </PaginasContainer>
     )

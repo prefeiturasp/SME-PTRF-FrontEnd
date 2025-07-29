@@ -127,11 +127,12 @@ export const InformarValores = ({
   };
 
   useEffect(() => {
-    const peloMenosUmRateioPorDespesa = data.every(
-      (despesa) => (despesa.rateios || []).some((rateio) => rateio.valor_utilizado > 0)
+    const values = form.getFieldValue();
+    const peloMenosUmRateioPorDespesa = (values?.despesas || []).every(
+      (despesa) => (despesa.rateios || []).some((rateio) => Number(rateio.valor_utilizado) > 0)
     );
     setHabilitaClassificarBem(peloMenosUmRateioPorDespesa);
-  }, [step])
+  }, [step, form]);
 
   const handleSaveRascunho = (values) => {
     const validationErrors = validateDespesas(values);
