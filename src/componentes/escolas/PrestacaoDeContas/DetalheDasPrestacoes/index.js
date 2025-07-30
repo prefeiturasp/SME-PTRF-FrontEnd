@@ -220,7 +220,7 @@ export const DetalheDasPrestacoes = () => {
                 
                 setDataSaldoBancario({
                     data_extrato: observacao.data_extrato ? parseLocalDate(observacao.data_extrato) : null,
-                    saldo_extrato: observacao.saldo_extrato ? observacao.saldo_extrato : null,
+                    saldo_extrato: observacao.saldo_extrato ? observacao.saldo_extrato : 0,
                 })
 
                 setDataSaldoBancarioSolicitacaoEncerramento({
@@ -253,7 +253,7 @@ export const DetalheDasPrestacoes = () => {
                 setTextareaJustificativa(observacao.observacao ? observacao.observacao : '');
                 setDataSaldoBancario({
                     data_extrato: observacao.data_extrato ? parseLocalDate(observacao.data_extrato) : null,
-                    saldo_extrato: observacao.saldo_extrato ? observacao.saldo_extrato : null,
+                    saldo_extrato: observacao.saldo_extrato ? observacao.saldo_extrato : 0,
                 })
                 setNomeComprovanteExtrato(observacao.comprovante_extrato ? observacao.comprovante_extrato : '')
                 setDataAtualizacaoComprovanteExtrato(moment(observacao.data_atualizacao_comprovante_extrato).format("YYYY-MM-DD HH:mm:ss"))
