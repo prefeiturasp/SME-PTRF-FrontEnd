@@ -1,7 +1,5 @@
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
-// import { useNavigate } from "react-router-dom";
-// import { useDispatch } from "react-redux";
 import { PrestacaoDeContas } from '../index';
 import * as associacaoService from '../../../../services/escolas/Associacao.service';
 import * as prestacaoService from '../../../../services/escolas/PrestacaoDeContas.service';
@@ -51,16 +49,9 @@ jest.mock('react-router-dom', () => ({
   useNavigate: () => mockNavigate
 }));
 
-
 jest.mock("../../../../store/reducers/componentes/escolas/PrestacaoDeContas/PendenciaCadastro/actions", () => ({
   setPersistenteUrlVoltar: jest.fn(),
 }));
-
-// jest.mock('react-router-dom', () => ({
-//   ...jest.requireActual('react-router-dom'),
-//   useNavigate: () => jest.fn(),
-//   useParams: () => ({ monitoramento: undefined }),
-// }));
     
 jest.mock('../../../../services/escolas/Associacao.service');
 jest.mock('../../../../services/escolas/PrestacaoDeContas.service');
