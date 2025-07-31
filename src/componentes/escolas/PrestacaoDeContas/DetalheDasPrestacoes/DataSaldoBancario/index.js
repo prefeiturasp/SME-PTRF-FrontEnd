@@ -75,6 +75,7 @@ const DataSaldoBancario = ({
                                                     value={dataSaldoBancario.data_extrato}
                                                     onChange={handleChangaDataSaldo}
                                                     name='data_extrato'
+                                                    id='data_extrato'
                                                     type="date"
                                                     className="form-control"
                                                     // disabled={!permiteEditarCamposExtrato || !visoesService.getPermissoes(['change_conciliacao_bancaria'])}
