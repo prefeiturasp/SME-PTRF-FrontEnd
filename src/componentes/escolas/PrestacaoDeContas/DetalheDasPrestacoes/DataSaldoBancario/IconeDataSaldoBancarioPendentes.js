@@ -6,7 +6,7 @@ export const IconeDataSaldoBancarioPendentes = () => {
     <Icon
       tooltipMessage="Há campos pendentes para preenchimento"
       icon="icone-exclamacao-vermelho"
-      iconProps={{ className: "mb-1" }}
+      iconProps={{ className: "mb-1", ["data-testid"]: "icone-data-saldo-bancario-pendentes" }}
     />
   );
 };
