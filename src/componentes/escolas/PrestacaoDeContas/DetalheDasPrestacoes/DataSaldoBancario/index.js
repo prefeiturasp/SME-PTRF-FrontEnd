@@ -132,6 +132,7 @@ const DataSaldoBancario = ({
                       </label>
                       <div className="container-upload-extrato">
                         <Upload
+                          beforeUpload={() => false}
                           disabled={!permiteEditarCamposExtrato || !permissaoEditarConciliacao}
                           className={`${
                             !permiteEditarCamposExtrato || !permissaoEditarConciliacao ? "disabled_upload" : ""
