@@ -82,7 +82,8 @@ const DataSaldoBancario = ({
                           id="data_extrato"
                           type="date"
                           className="form-control"
-                          disabled
+                          // disabled
+                          disabled={!permiteEditarCamposExtrato || !permissaoEditarConciliacao}
                         />
                         {erroDataSaldo && <span className="span_erro text-danger mt-1"> {erroDataSaldo}</span>}
                         {dataSaldoBancarioSolicitacaoEncerramento?.possui_solicitacao_encerramento === true && (
@@ -108,9 +109,7 @@ const DataSaldoBancario = ({
                           name="saldo_extrato"
                           className="form-control"
                           onChangeEvent={(e) => handleChangaDataSaldo(e.target.name, e.target.value)}
-                          disabled={
-                            !permiteEditarCamposExtrato || !visoesService.getPermissoes(["change_conciliacao_bancaria"])
-                          }
+                          disabled={!permiteEditarCamposExtrato || !permissaoEditarConciliacao}
                         />
                         {dataSaldoBancarioSolicitacaoEncerramento?.possui_solicitacao_encerramento === true && (
                           <span>
