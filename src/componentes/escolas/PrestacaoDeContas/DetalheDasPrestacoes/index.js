@@ -68,6 +68,8 @@ export const DetalheDasPrestacoes = () => {
     const [pendenciaSaldoBancario, setPendenciaSaldoBancario] = useState(false);
     const parametros = useLocation();
 
+    const associacaoUuid = localStorage.getItem(ASSOCIACAO_UUID)
+
     useEffect(()=>{
         getPeriodoConta();
         getAcaoLancamento();
@@ -193,7 +195,6 @@ export const DetalheDasPrestacoes = () => {
         if (periodosAssociacao && periodoConta.periodo && periodoConta.conta) {
             const periodo_uuid = periodoConta.periodo;
             const conta_uuid = periodoConta.conta;
-            const associacaoUuid = localStorage.getItem(ASSOCIACAO_UUID)
 
             const periodo = periodosAssociacao.find(o => o.uuid === periodo_uuid);
 
@@ -204,7 +205,6 @@ export const DetalheDasPrestacoes = () => {
             }
 
             if(observacao && observacao.possui_solicitacao_encerramento){
-                const associacaoUuid = localStorage.getItem(ASSOCIACAO_UUID)
                 
                 await getStatusPeriodoPorData(associacaoUuid, periodo.data_inicio_realizacao_despesas).then(response => {
                     
@@ -283,6 +283,7 @@ export const DetalheDasPrestacoes = () => {
             await pathSalvarJustificativaPrestacaoDeConta(payload);
             toastCustom.ToastCustomSuccess('Edição salva', 'A edição foi salva com sucesso!')
             await carregaObservacoes();
+            await getPendenciasConciliacao()
         } catch (e) {
             console.log("Erro: ", e.message)
         }
@@ -318,25 +319,40 @@ export const DetalheDasPrestacoes = () => {
             console.log("Erro: ", e.message)
         }
     }
+
     const checaPendenciaSaldoBancario =  (statusPeriodo) => {
         const pendenciaCadastral = statusPeriodo.pendencias_cadastrais;
         const contaPendente = pendenciaCadastral?.conciliacao_bancaria?.contas_pendentes?.includes(periodoConta.conta);
-
-        setPendenciaSaldoBancario(contaPendente ? true : false);
+        setPendenciaSaldoBancario(contaPendente);
     };
+
+    const  getPendenciasConciliacao = async () => {
+        if(periodosAssociacao && periodoConta.periodo) {
+            const periodo = periodosAssociacao.find(o => o.uuid === periodoConta.periodo);
+            try {
+                const response =  await fetchStatusPeriodo(periodo.data_inicio_realizacao_despesas)
+                checaPendenciaSaldoBancario(response)   
+            } catch (error) {
+                //  
+            }
+        }
+    }      
+
+    const fetchStatusPeriodo = async (data_inicio_realizacao_despesas) => {
+        return await getStatusPeriodoPorData(associacaoUuid, data_inicio_realizacao_despesas)
+    }
 
     const verificaSePeriodoEstaAberto = async (periodoUuid) => {
         if (periodosAssociacao) {
             const periodo = periodosAssociacao.find(o => o.uuid === periodoUuid);
             if (periodo) {
-                const associacaoUuid = localStorage.getItem(ASSOCIACAO_UUID)
-                await getStatusPeriodoPorData(associacaoUuid, periodo.data_inicio_realizacao_despesas).then(response => {
+                try {
+                    const response = await fetchStatusPeriodo(periodo.data_inicio_realizacao_despesas);   
                     checaPendenciaSaldoBancario(response);
-                    const periodoBloqueado = response.prestacao_contas_status ? response.prestacao_contas_status.periodo_bloqueado : true
-                    setPeriodoFechado(periodoBloqueado)
-                }).catch(error => {
-                    console.log(error);
-                });
+                    setPeriodoFechado(response.prestacao_contas_status ? response.prestacao_contas_status.periodo_bloqueado : true)                     
+                } catch (error) {
+                 console.log(error);   
+                }
             }
         }
     };
