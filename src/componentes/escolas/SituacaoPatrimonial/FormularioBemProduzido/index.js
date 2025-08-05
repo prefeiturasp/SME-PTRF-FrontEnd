@@ -186,7 +186,7 @@ export const FormularioBemProduzido = () => {
               iconProps={{
                 style: { color: "white" },
               }}
-              disabled={!despesasSelecionadas.length}
+              disabled={!uuid && !despesasSelecionadas.length}
               onClick={() => setStep(2)}
             />
           </div>

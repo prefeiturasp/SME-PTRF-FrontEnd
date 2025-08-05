@@ -43,11 +43,11 @@ jest.mock('../FormFiltros', () => ({
 
 // Mock do Tabela
 jest.mock('../Tabela', () => ({
-  Tabela: ({ data }) => (
+  Tabela: ({ data, handleEditar }) => (
     <div data-testid="tabela">
       {data?.map((item, index) => (
         <div key={item.uuid || index} data-testid={`row-${index}`}>
-          {item.acao || 'Ação'}
+          {item.acao || 'Ação'} <button data-testid={`btn-editar-${index}`} onClick={() => handleEditar()}>Editar</button>
         </div>
       ))}
     </div>
@@ -88,17 +88,17 @@ const mockPrioridades = [
   {
     uuid: 'uuid1',
     acao: 'Ação PTRF 1',
-    especificacao_material: { nome: 'Especificação 1' },
-    tipo_aplicacao: { name: 'Custeio' },
-    tipo_despesa_custeio: { nome: 'Tipo 1' },
+    especificacao_material_objeto: { nome: 'Especificação 1' },
+    tipo_aplicacao_objeto: { name: 'Custeio' },
+    tipo_despesa_custeio_objeto: { nome: 'Tipo 1' },
     valor_total: 1000.50
   },
   {
     uuid: 'uuid2',
     acao: 'Ação PDDE 1',
-    especificacao_material: { nome: 'Especificação 2' },
-    tipo_aplicacao: { name: 'Capital' },
-    tipo_despesa_custeio: null,
+    especificacao_material_objeto: { nome: 'Especificação 2' },
+    tipo_aplicacao_objeto: { name: 'Capital' },
+    tipo_despesa_custeio_objeto: null,
     valor_total: 2000.75
   }
 ];
@@ -228,6 +228,8 @@ describe('Prioridades', () => {
 
     renderWithQueryClient(<Prioridades />);
     
+    const mudarfiltro = screen.getByText('Mudar Filtro');
+    fireEvent.click(mudarfiltro);
     const filtrarButton = screen.getByText('Filtrar');
     fireEvent.click(filtrarButton);
     
@@ -289,4 +291,20 @@ describe('Prioridades', () => {
     expect(pagina2).toBeInTheDocument();
 
   });
+
+  test('chamar o handleEditar', () => {
+      useGetPrioridades.mockReturnValue({
+        isLoading: false,
+        prioridades: mockPrioridades,
+        quantidade: mockPrioridades.length,
+        refetch: jest.fn()
+      });
+      renderWithQueryClient(<Prioridades />);
+
+      const botaoEditar = screen.getByTestId('btn-editar-0');
+      fireEvent.click(botaoEditar);
+
+      expect(botaoEditar).toBeInTheDocument();
+
+    });
 }); 

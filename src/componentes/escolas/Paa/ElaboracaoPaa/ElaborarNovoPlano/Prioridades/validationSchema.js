@@ -6,7 +6,10 @@ export const createValidationSchema = (selectedRecurso, selectedTipoAplicacao) =
     recurso: Yup.string().required('Recurso é obrigatório'),
     tipo_aplicacao: Yup.string().required('Tipo de aplicação é obrigatório'),
     especificacao_material: Yup.string().required('Especificação de material é obrigatório'),
-    valor_total: Yup.string().required('Valor total é obrigatório')
+    valor_total: Yup.number()
+                    .required('Valor total é obrigatório!')
+                    .typeError('Valor total é obrigatório!')
+                    .moreThan(0, 'Valor total é obrigatório!')
   });
 
   // Adicionar validação para campos específicos do PTRF
