@@ -113,7 +113,7 @@ export const RedirectModalTabelaLancamentos = (propriedades) => {
             primeiroBotaoOnclick={propriedades.handleClose}
             primeiroBotaoTexto="Não"
             primeiroBotaoCss="outline-success"
-            segundoBotaoOnclick={propriedades.onCancelarTrue}
+            segundoBotaoOnclick={propriedades.onConfirm}
             segundoBotaoTexto="Sim, leve-me à página de edição"
             segundoBotaoCss="success"
         />

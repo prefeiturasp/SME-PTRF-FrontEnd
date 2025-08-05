@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState, useContext} from "react";
+import React, {useCallback, useEffect, useState, useContext, useMemo} from "react";
 import {useLocation, useParams, useNavigate} from "react-router-dom";
 import moment from "moment";
 import {TopoComBotoes} from "./TopoComBotoes";
@@ -67,6 +67,8 @@ export const DetalheDasPrestacoes = () => {
     const [showModalLegendaInformacao, setShowModalLegendaInformacao] = useState(false);
     const [pendenciaSaldoBancario, setPendenciaSaldoBancario] = useState(false);
     const parametros = useLocation();
+
+    const associacaoUuid = localStorage.getItem(ASSOCIACAO_UUID)
 
     useEffect(()=>{
         getPeriodoConta();
@@ -183,40 +185,41 @@ export const DetalheDasPrestacoes = () => {
         setClassBtnSalvarJustificativa("success");
     };
 
+    const parseLocalDate = (dateStr) => {
+        if (!dateStr) return null;
+        const [year, month, day] = dateStr.split('-').map(Number);
+        return new Date(year, month - 1, day);
+    };
+
     const carregaObservacoes = async () => {
+        if (periodosAssociacao && periodoConta.periodo && periodoConta.conta) {
+            const periodo_uuid = periodoConta.periodo;
+            const conta_uuid = periodoConta.conta;
 
-        if (periodoConta.periodo && periodoConta.conta) {
-            let periodo_uuid = periodoConta.periodo;
-            let conta_uuid = periodoConta.conta;
-            const associacaoUuid = localStorage.getItem(ASSOCIACAO_UUID)
+            const periodo = periodosAssociacao.find(o => o.uuid === periodo_uuid);
 
-            let observacao = await getObservacoes(periodo_uuid, conta_uuid, associacaoUuid);
+            const observacao = await getObservacoes(periodo_uuid, conta_uuid, associacaoUuid);
 
             if(observacao) {
                 setPermiteEditarCamposExtrato(observacao.permite_editar_campos_extrato)
             }
 
             if(observacao && observacao.possui_solicitacao_encerramento){
-                if (periodosAssociacao){
-                    const associacaoUuid = localStorage.getItem(ASSOCIACAO_UUID)
-                    const periodo = periodosAssociacao.find(o => o.uuid === periodo_uuid);
+                
+                await getStatusPeriodoPorData(associacaoUuid, periodo.data_inicio_realizacao_despesas).then(response => {
                     
-                    await getStatusPeriodoPorData(associacaoUuid, periodo.data_inicio_realizacao_despesas).then(response => {
-                        
-                        let periodo_bloqueado = response.prestacao_contas_status ? response.prestacao_contas_status.periodo_bloqueado : true
-                        if(!periodo_bloqueado){
-                            setBtnSalvarExtratoBancarioDisable(false);
-                            setCheckSalvarExtratoBancario(false);
-                            setClassBtnSalvarExtratoBancario("success");
-                        }
-                    }).catch(error => {
-                        console.log(error);
-                    });
-                }
-
-
+                    const periodo_bloqueado = response.prestacao_contas_status ? response.prestacao_contas_status.periodo_bloqueado : true
+                    if(!periodo_bloqueado){
+                        setBtnSalvarExtratoBancarioDisable(false);
+                        setCheckSalvarExtratoBancario(false);
+                        setClassBtnSalvarExtratoBancario("success");
+                    }
+                }).catch(error => {
+                    console.log(error);
+                });
+                
                 setDataSaldoBancario({
-                    data_extrato: observacao.data_extrato ? observacao.data_extrato : '',
+                    data_extrato: observacao.data_extrato ? parseLocalDate(observacao.data_extrato) : null,
                     saldo_extrato: observacao.saldo_extrato ? observacao.saldo_extrato : 0,
                 })
 
@@ -249,7 +252,7 @@ export const DetalheDasPrestacoes = () => {
 
                 setTextareaJustificativa(observacao.observacao ? observacao.observacao : '');
                 setDataSaldoBancario({
-                    data_extrato: observacao.data_extrato ? observacao.data_extrato : '',
+                    data_extrato: observacao.data_extrato ? parseLocalDate(observacao.data_extrato) : null,
                     saldo_extrato: observacao.saldo_extrato ? observacao.saldo_extrato : 0,
                 })
                 setNomeComprovanteExtrato(observacao.comprovante_extrato ? observacao.comprovante_extrato : '')
@@ -280,6 +283,7 @@ export const DetalheDasPrestacoes = () => {
             await pathSalvarJustificativaPrestacaoDeConta(payload);
             toastCustom.ToastCustomSuccess('Edição salva', 'A edição foi salva com sucesso!')
             await carregaObservacoes();
+            await getPendenciasConciliacao()
         } catch (e) {
             console.log("Erro: ", e.message)
         }
@@ -315,25 +319,40 @@ export const DetalheDasPrestacoes = () => {
             console.log("Erro: ", e.message)
         }
     }
+
     const checaPendenciaSaldoBancario =  (statusPeriodo) => {
         const pendenciaCadastral = statusPeriodo.pendencias_cadastrais;
         const contaPendente = pendenciaCadastral?.conciliacao_bancaria?.contas_pendentes?.includes(periodoConta.conta);
-
-        setPendenciaSaldoBancario(contaPendente ? true : false);
+        setPendenciaSaldoBancario(contaPendente);
     };
+
+    const  getPendenciasConciliacao = async () => {
+        if(periodosAssociacao && periodoConta.periodo) {
+            const periodo = periodosAssociacao.find(o => o.uuid === periodoConta.periodo);
+            try {
+                const response =  await fetchStatusPeriodo(periodo.data_inicio_realizacao_despesas)
+                checaPendenciaSaldoBancario(response)   
+            } catch (error) {
+                //  
+            }
+        }
+    }      
+
+    const fetchStatusPeriodo = async (data_inicio_realizacao_despesas) => {
+        return await getStatusPeriodoPorData(associacaoUuid, data_inicio_realizacao_despesas)
+    }
 
     const verificaSePeriodoEstaAberto = async (periodoUuid) => {
         if (periodosAssociacao) {
             const periodo = periodosAssociacao.find(o => o.uuid === periodoUuid);
             if (periodo) {
-                const associacaoUuid = localStorage.getItem(ASSOCIACAO_UUID)
-                await getStatusPeriodoPorData(associacaoUuid, periodo.data_inicio_realizacao_despesas).then(response => {
+                try {
+                    const response = await fetchStatusPeriodo(periodo.data_inicio_realizacao_despesas);   
                     checaPendenciaSaldoBancario(response);
-                    const periodoBloqueado = response.prestacao_contas_status ? response.prestacao_contas_status.periodo_bloqueado : true
-                    setPeriodoFechado(periodoBloqueado)
-                }).catch(error => {
-                    console.log(error);
-                });
+                    setPeriodoFechado(response.prestacao_contas_status ? response.prestacao_contas_status.periodo_bloqueado : true)                     
+                } catch (error) {
+                 console.log(error);   
+                }
             }
         }
     };
@@ -564,6 +583,13 @@ export const DetalheDasPrestacoes = () => {
         // window.location.assign('/dados-das-contas-da-associacao')
     }
 
+    const justificativaObrigatoria = useMemo(
+      () =>
+        transacoesNaoConciliadas && transacoesNaoConciliadas.length === 0 &&
+        valoresPendentes.saldo_posterior_total - dataSaldoBancario.saldo_extrato !== 0,
+      [dataSaldoBancario, valoresPendentes, transacoesNaoConciliadas]
+    );
+    
     return (
         <>
         <div className="detalhe-das-prestacoes-container mb-5 mt-5">
@@ -691,6 +717,7 @@ export const DetalheDasPrestacoes = () => {
                             />                            
 
                             <Justificativa
+                                justificativaObrigatoria={justificativaObrigatoria}
                                 textareaJustificativa={textareaJustificativa}
                                 handleChangeTextareaJustificativa={handleChangeTextareaJustificativa}
                                 periodoFechado={periodoFechado}

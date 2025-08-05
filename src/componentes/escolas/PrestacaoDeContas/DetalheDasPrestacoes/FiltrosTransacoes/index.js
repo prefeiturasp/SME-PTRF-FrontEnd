@@ -6,7 +6,7 @@ export const FiltrosTransacoes = ({conciliado, stateFiltros, tabelasDespesa, han
             <form>
                 <div className="form-row align-items-center">
                     <div className="form-group col-5">
-                        <label htmlFor="filtrar_por_acao">Filtrar por ação</label>
+                        <label htmlFor={`filtrar_por_acao_${conciliado}`}>Filtrar por ação</label>
                         <select
                             value={stateFiltros.filtrar_por_acao}
                             onChange={(e) => handleChangeFiltros(e.target.name, e.target.value)}

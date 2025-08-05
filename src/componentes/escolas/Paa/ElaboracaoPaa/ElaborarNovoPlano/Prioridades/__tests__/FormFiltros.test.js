@@ -26,23 +26,25 @@ jest.mock('../hooks/useGetPrioridades', () => ({
 }));
 
 const mockProps = {
-  recursos: [
-    { key: 'PTRF', value: 'PTRF' },
-    { key: 'PDDE', value: 'PDDE' },
-    { key: 'RECURSO_PROPRIO', value: 'Recurso Próprio' }
-  ],
-  prioridadesTabelas: [
-    { key: 1, value: 'Sim' },
-    { key: 0, value: 'Não' }
-  ],
-  tipos_aplicacao: [
-    { key: 'CUSTEIO', value: 'Custeio' },
-    { key: 'CAPITAL', value: 'Capital' }
-  ],
-  tipos_despesa_custeio: [
-    { id: 1, nome: 'Tipo 1' },
-    { id: 2, nome: 'Tipo 2' }
-  ],
+  tabelas : {
+    recursos: [
+      { key: 'PTRF', value: 'PTRF' },
+      { key: 'PDDE', value: 'PDDE' },
+      { key: 'RECURSO_PROPRIO', value: 'Recurso Próprio' }
+    ],
+    prioridades: [
+      { key: 1, value: 'Sim' },
+      { key: 0, value: 'Não' }
+    ],
+    tipos_aplicacao: [
+      { key: 'CUSTEIO', value: 'Custeio' },
+      { key: 'CAPITAL', value: 'Capital' }
+    ],
+    tipos_despesa_custeio: [
+      { id: 1, nome: 'Tipo 1' },
+      { id: 2, nome: 'Tipo 2' }
+    ]
+  },
   onFiltrar: jest.fn(),
   onFiltrosChange: jest.fn(),
   onLimparFiltros: jest.fn(),
