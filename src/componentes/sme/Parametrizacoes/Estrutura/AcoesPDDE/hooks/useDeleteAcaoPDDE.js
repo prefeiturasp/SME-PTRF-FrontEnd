@@ -13,12 +13,12 @@ export const useDeleteAcao = (
         mutationFn: (uuid) => {
             return deleteAcoesPDDE(uuid);
         },
-        onSuccess: () => {
+        onSuccess: (response) => {
             queryClient.invalidateQueries(['acoes']).then();
             setModalForm({open: false})
             toastCustom.ToastCustomSuccess(
                 "Sucesso.", 
-                "A Ação PDDE foi removida do sistema com sucesso."
+                response.detail || "A Ação PDDE foi removida do sistema com sucesso."
             )
         },
         onError: (e) => {
@@ -26,7 +26,8 @@ export const useDeleteAcao = (
                 setErroExclusaoNaoPermitida(e.response.data.mensagem);
                 setShowModalInfoExclusaoNaoPermitida(true)
             } else {
-                toastCustom.ToastCustomError("Ops!", "Houve um erro ao tentar completar ação.");
+                const errorDetail = e.response.data.detail
+                toastCustom.ToastCustomError("Ops!", errorDetail || "Houve um erro ao tentar completar ação.");
             }
         },
     });
