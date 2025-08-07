@@ -1,7 +1,7 @@
 import React from 'react'
 import { useLocation } from 'react-router-dom';
 import {Rotas} from './rotas'
-import 'primereact/resources/themes/nova-light/theme.css'
+import 'primereact/resources/themes/saga-blue/theme.css';
 import 'primereact/resources/primereact.min.css'
 import 'primeicons/primeicons.css'
 import './assets/css/styles.scss'
