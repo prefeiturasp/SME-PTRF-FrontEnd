@@ -190,6 +190,148 @@ body {
   }
 }
 
+/* ---------------------------------------------------
+    Atualização PrimeReact para versão 10.9.6 (compatibilidade para utilizar saga-blue/theme.css) - Inicio
+----------------------------------------------------- */
+
+/* === Personalizações para DataTable PrimeReact === */
+
+/* Estilos da tabela de dados */
+.p-datatable {
+  .p-datatable-thead > tr > th {
+    background: #f4f4f4;
+    color: #333;
+    font-weight: 700;
+    border: 1px solid #c8c8c8;
+    padding: 0.75rem;
+    font-size: 15px;
+    text-align: left;
+  }
+
+  .p-datatable-tbody > tr {
+    > td {
+      border: 1px solid #e5e5e5;
+      font-size: 14px;
+      color: #333;
+      border: 1px solid #c8c8c8;
+      padding: 0.50rem;
+    }
+
+    &:nth-child(even) {
+      background-color: #fcfcfc;
+    }
+
+    &:hover {
+      background: $hoverBackgroundColor;
+      
+      > td {
+        color: #fff !important;
+      }
+    }
+  }
+}
+
+/* Botões de ação na tabela */
+.p-button.p-button-text {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+
+  &:hover {
+    background: #f0f0f0;
+    color: #007ad9;
+  }
+}
+
+/* ===== Custom PrimeReact Paginator ===== */
+
+/* Container principal do paginador */
+.p-paginator {
+  background-color: #ffffff !important;
+  border: none !important;
+  padding: 2em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.1rem;
+  flex-wrap: wrap;
+  font-size: 0.85rem;
+}
+
+/* Botões de próxima e anterior */
+.p-paginator-next,
+.p-paginator-prev {
+  height: 3em;
+  min-width: 3em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Número de página */
+.p-paginator-page {
+  height: 3em !important;
+  min-width: 3em !important;
+  border: 1px solid #dadada !important;
+  background-color: #fff;
+  color: #c8c8c8;
+  font-weight: normal !important;
+}
+
+/* Página atual destacada */
+.p-paginator-page.p-highlight {
+  background-color: #00585e !important;
+  color: #fff !important;
+}
+
+/* Elementos do paginador com borda (setas, números etc.) */
+.p-paginator-element {
+  border: 1px solid #dadada !important;
+  transition: background-color 0.2s ease-in-out;
+}
+
+/* Hover nos botões */
+.p-paginator-element:hover {
+  background-color: #f0f0f0;
+  color: #00585e;
+}
+
+/* Desabilita hover para tabelas com classe no-hover */
+.no-hover .p-datatable-tbody > tr:hover {
+  background-color: inherit !important;
+  color: inherit !important;
+  cursor: default !important;
+}
+
+.no-hover .p-datatable-tbody > tr:hover > td {
+  background-color: inherit !important;
+  color: inherit !important;
+}
+
+.no-hover .p-datatable-tbody > tr:hover span {
+  color: inherit !important;
+}
+
+/* Remove mensagem "No available options" das DataTables */
+.p-datatable .p-datatable-tbody > tr.p-datatable-emptymessage {
+  display: none !important;
+}
+
+/* Classe para fundo cinza que mantém a cor durante hover */
+.bg-cinza {
+  background-color: #DADADA !important;
+}
+
+.p-datatable .p-datatable-tbody > tr:hover > td.bg-cinza {
+  background-color: #DADADA !important;
+  color: #333 !important;
+}
+
+
+/* ---------------------------------------------------
+  Atualização PrimeReact para versão 10.9.6 (compatibilidade para utilizar saga-blue/theme.css) - Inicio - Fim
+----------------------------------------------------- */
+
 .btn-sem-borda-fundo {
   background-color: transparent !important;
   outline: none !important;

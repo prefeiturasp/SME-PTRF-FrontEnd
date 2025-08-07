@@ -141,19 +141,20 @@ const TabelaReceitasPrevistas = ({ data, handleOpenEditar }) => {
 
   return (
     <DataTable
-      className="tabela-receitas-previstas"
+      className="tabela-receitas-previstas no-hover"
       value={[...data, { acao: { nome: "Total do PTRF" }, fixed: true }]}
     >
-      <Column field="nome" header="Recursos" body={nomeTemplate} />
-      <Column field="valor_custeio" header="Custeio (R$)" body={dataTemplate} />
-      <Column field="valor_capital" header="Capital (R$)" body={dataTemplate} />
+      <Column field="nome" header="Recursos" body={nomeTemplate} style={{width: '15%'}} />
+      <Column field="valor_custeio" header="Custeio (R$)" body={dataTemplate} style={{width: '15%'}} />
+      <Column field="valor_capital" header="Capital (R$)" body={dataTemplate} style={{width: '15%'}} />
       <Column
         field="valor_livre"
         header="Livre Aplicação (R$)"
         body={dataTemplate}
+        style={{width: '20%'}}
       />
-      <Column field="total" header="Total (R$)" body={dataTemplate} />
-      <Column field="acoes" header="Ações" body={acoesTemplate} />
+      <Column field="total" header="Total (R$)" body={dataTemplate} style={{width: '15%'}} />
+      <Column field="acoes" header="Ações" body={acoesTemplate} style={{width: '10%'}} />
     </DataTable>
   );
 };
