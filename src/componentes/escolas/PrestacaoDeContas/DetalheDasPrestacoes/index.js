@@ -585,7 +585,7 @@ export const DetalheDasPrestacoes = () => {
 
     const justificativaObrigatoria = useMemo(
       () =>
-        transacoesNaoConciliadas.length === 0 &&
+        transacoesNaoConciliadas && transacoesNaoConciliadas.length === 0 &&
         valoresPendentes.saldo_posterior_total - dataSaldoBancario.saldo_extrato !== 0,
       [dataSaldoBancario, valoresPendentes, transacoesNaoConciliadas]
     );
