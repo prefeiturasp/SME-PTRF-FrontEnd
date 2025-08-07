@@ -40,7 +40,7 @@ export const Tabela = ({ data, handleEditar }) => {
             value={data}
             autoLayout={true}
             dataKey="uuid"
-            className="no-stripe mt-3"
+            className="no-stripe mt-3 no-hover"
             >
             <Column 
                 header={
