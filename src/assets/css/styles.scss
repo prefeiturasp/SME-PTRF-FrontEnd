@@ -221,11 +221,13 @@ body {
       background-color: #fcfcfc;
     }
 
-    &:hover {
-      background: $hoverBackgroundColor;
-      
-      > td {
-        color: #fff !important;
+    .p-datatable-hoverable-rows & {
+      &:hover {
+        background: $hoverBackgroundColor;
+
+        > td {
+          color: #fff !important;
+        }
       }
     }
   }
@@ -294,22 +296,6 @@ body {
 .p-paginator-element:hover {
   background-color: #f0f0f0;
   color: #00585e;
-}
-
-/* Desabilita hover para tabelas com classe no-hover */
-.no-hover .p-datatable-tbody > tr:hover {
-  background-color: inherit !important;
-  color: inherit !important;
-  cursor: default !important;
-}
-
-.no-hover .p-datatable-tbody > tr:hover > td {
-  background-color: inherit !important;
-  color: inherit !important;
-}
-
-.no-hover .p-datatable-tbody > tr:hover span {
-  color: inherit !important;
 }
 
 /* Remove mensagem "No available options" das DataTables */
