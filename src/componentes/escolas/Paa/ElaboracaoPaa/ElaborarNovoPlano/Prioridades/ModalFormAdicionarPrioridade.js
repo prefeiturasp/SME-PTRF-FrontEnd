@@ -1,10 +1,11 @@
-import React, { memo, useState, useMemo } from "react";
-import { Form, Row, Col, Flex, InputNumber, Spin, Input, Select } from "antd";
+import { memo, useState, useMemo, useEffect, useRef } from "react";
+import { Form, Row, Col, Flex, InputNumber, Spin, Select } from "antd";
 import { ModalFormBodyText } from "../../../../../Globais/ModalBootstrap";
 import { useGetAcoesAssociacao } from "../ReceitasPrevistas/hooks/useGetAcoesAssociacao";
 import { useGetEspecificacoes } from "./hooks/useGetEspecificacoes";
 import { useGetAcoesPDDE } from "./hooks/useGetAcoesPDDE";
 import { usePostPrioridade } from "./hooks/usePostPrioridade";
+import { usePatchPrioridade } from "./hooks/usePatchPrioridade";
 import { createValidationSchema } from "./validationSchema";
 import {
   formatMoneyByCentsBRL,
@@ -12,7 +13,7 @@ import {
 } from "../../../../../../utils/money";
 
 
-const ModalFormAdicionarPrioridade = ({ open, onClose, data }) => {
+const ModalFormAdicionarPrioridade = ({ open, onClose, tabelas, formModal, focusValor=false }) => {
   const [form] = Form.useForm();
   const [selectedRecurso, setSelectedRecurso] = useState('');
   const [selectedTipoAplicacao, setSelectedTipoAplicacao] = useState('');
@@ -30,6 +31,8 @@ const ModalFormAdicionarPrioridade = ({ open, onClose, data }) => {
     selectedTipoAplicacao === 'CUSTEIO' ? selectedTipoDespesaCusteio : ""
   );
   const { mutationPost } = usePostPrioridade(onClose);
+  const { mutationPatch } = usePatchPrioridade(onClose);
+
   const isLoading = false;
   const initialValues = {
     prioridade: undefined,
@@ -40,30 +43,30 @@ const ModalFormAdicionarPrioridade = ({ open, onClose, data }) => {
     valor_total: undefined
   }
 
-  const prioridadesOptions = data.prioridades.map(item => ({
+  const prioridadesOptions = Array.isArray(tabelas?.prioridades) ? tabelas.prioridades.map(item => ({
     value: item.key,
     label: item.value
-  }));
+  })) : [];
 
-  const recursosOptions = data.recursos.map(item => ({
+  const recursosOptions = Array.isArray(tabelas?.recursos) ? tabelas.recursos.map(item => ({
     value: item.key,
     label: item.value
-  }));
+  })) : [];
 
-  const tiposAplicacaoOptions = data.tipos_aplicacao.map(item => ({
+  const tiposAplicacaoOptions = Array.isArray(tabelas?.tipos_aplicacao) ? tabelas.tipos_aplicacao.map(item => ({
     value: item.key,
     label: item.value
-  }));
+  })) : [];
 
-  const tiposDespesaCusteioOptions = data.tipos_despesa_custeio.map(item => ({
+  const tiposDespesaCusteioOptions = Array.isArray(tabelas?.tipos_despesa_custeio) ? tabelas.tipos_despesa_custeio.map(item => ({
     value: item.id,
     label: item.nome
-  }));
+  })) : [];
 
-  const acoesAssociacaoOptions = acoesAssociacao?.map(item => ({
+  const acoesAssociacaoOptions = Array.isArray(acoesAssociacao) ? acoesAssociacao.map(item => ({
     value: item.uuid,
     label: item.acao.nome
-  })) || [];
+  })) : [];
 
   const programasPddeOptions = useMemo(() => {
     if (!acoesPdde) {
@@ -83,10 +86,11 @@ const ModalFormAdicionarPrioridade = ({ open, onClose, data }) => {
       }
     });
     
-    return Array.from(programasUnicos.entries()).map(([uuid, nome]) => ({
+    const entries = Array.from(programasUnicos.entries());
+    return Array.isArray(entries) ? entries.map(([uuid, nome]) => ({
       value: uuid,
       label: nome
-    }));
+    })) : [];
   }, [acoesPdde]);
 
   const acoesPddeFiltradas = useMemo(() => {
@@ -95,25 +99,24 @@ const ModalFormAdicionarPrioridade = ({ open, onClose, data }) => {
     const acoes = acoesPdde.results || acoesPdde;
     if (!acoes || !Array.isArray(acoes)) return [];
     
-    return acoes
-      .filter(acao => acao.programa_objeto?.uuid === selectedProgramaPdde)
-      .map(acao => ({
-        value: acao.uuid,
-        label: acao.nome
-      }));
+    const acoesFiltradas = (acoes || []).filter(acao => acao.programa_objeto?.uuid === selectedProgramaPdde);
+    return Array.isArray(acoesFiltradas) ? acoesFiltradas.map(acao => ({
+      value: acao.uuid,
+      label: acao.nome
+    })) : [];
   }, [acoesPdde, selectedProgramaPdde]);
 
-  const especificacoesOptions = especificacoes?.map(item => ({
+  const especificacoesOptions = Array.isArray(especificacoes) ? especificacoes.map(item => ({
     value: item.uuid,
     label: item.descricao
-  })) || [];
+  })) : [];
 
   const onSubmit = async (values) => {
     try {
       const validationSchema = createValidationSchema(selectedRecurso, selectedTipoAplicacao);
       await validationSchema.validate(values, { abortEarly: false });
 
-      const tiposDespesaCusteioUuid = data.tipos_despesa_custeio?.find(item => item.id == values.tipo_despesa_custeio);
+      const tiposDespesaCusteioUuid = tabelas?.tipos_despesa_custeio?.find(item => item.id === values.tipo_despesa_custeio);
 
       const payload = {
         paa: localStorage.getItem("PAA"),
@@ -121,8 +124,11 @@ const ModalFormAdicionarPrioridade = ({ open, onClose, data }) => {
         ...(values.tipo_despesa_custeio && { tipo_despesa_custeio: tiposDespesaCusteioUuid.uuid }),
         valor_total: values.valor_total / 100
       };
-      
-      mutationPost.mutate({ payload });
+      if(formModal?.uuid){
+        mutationPatch.mutate({ uuid: formModal.uuid, payload });
+      } else {
+        mutationPost.mutate({ payload });
+      }
       
     } catch (validationErrors) {
       if (validationErrors.inner) {
@@ -130,11 +136,12 @@ const ModalFormAdicionarPrioridade = ({ open, onClose, data }) => {
         validationErrors.inner.forEach(error => {
           errors[error.path] = error.message;
         });
+        const errorKeys = Object.keys(errors);
         form.setFields(
-          Object.keys(errors).map(key => ({
+          Array.isArray(errorKeys) ? errorKeys.map(key => ({
             name: key,
             errors: [errors[key]]
-          }))
+          })) : []
         );
       }
     }
@@ -194,11 +201,49 @@ const ModalFormAdicionarPrioridade = ({ open, onClose, data }) => {
     ]);
   };
 
+  const valorTotalRef = useRef(null);
+  useEffect(() => {
+    if (formModal) {
+      const tipo_despesa_custeio_id = (tabelas?.tipos_despesa_custeio||[]).find(item => item.uuid === formModal?.tipo_despesa_custeio);
+      const initial = {
+        uuid: formModal?.uuid || undefined,
+        prioridade: formModal?.prioridade ? 1 : 0,
+        acao_associacao: formModal?.acao_associacao || undefined,
+        acao_pdde: formModal?.acao_pdde || undefined,
+        programa_pdde: formModal?.programa_pdde || undefined,
+        recurso: formModal?.recurso || undefined,
+        tipo_aplicacao: formModal?.tipo_aplicacao || undefined,
+        tipo_despesa_custeio: tipo_despesa_custeio_id?.id || undefined,
+        especificacao_material: formModal?.especificacao_material || undefined,
+        valor_total: formModal?.valor_total ? formModal?.valor_total * 100 : undefined
+      }
+      handleRecursoChange(initial.recurso);
+      handleProgramaPddeChange(initial.programa_pdde);
+      handleTipoAplicacaoChange(initial.tipo_aplicacao);
+      handleTipoDespesaCusteioChange(initial.tipo_despesa_custeio);
+
+      form.setFieldsValue(initial);
+
+      if(formModal?.uuid && !formModal?.valor_total && focusValor){
+        form.setFields([{
+          name: 'valor_total', errors: ['Valor total é obrigatório!']
+        }]);
+        form.scrollToField('valor_total', {
+          behavior: 'smooth',
+          block: 'center',
+        });
+        valorTotalRef?.current?.focus();
+      }
+    } else {
+      form.resetFields();
+    }
+  }, [formModal, form]);
+
   return (
     <ModalFormBodyText
       show={open}
       onHide={onClose}
-      titulo="Adicionar nova prioridade"
+      titulo={`${formModal?.uuid ? 'Editar' : 'Adicionar nova'} prioridade`}
       size="lg"
       bodyText={
         <Spin
@@ -213,7 +258,6 @@ const ModalFormAdicionarPrioridade = ({ open, onClose, data }) => {
             role="form"
             className="p-2"
           >
-
             <Row gutter={[16, 8]}>
               <Col md={12}>
                 <Form.Item
@@ -334,7 +378,7 @@ const ModalFormAdicionarPrioridade = ({ open, onClose, data }) => {
                     style={{ marginBottom: 4 }}
                   >
                     <Select
-                      placeholder="Selecione a despesa"
+                      placeholder="Selecione o tipo de despesa"
                       style={{ width: "100%" }}
                       options={tiposDespesaCusteioOptions}
                       onChange={handleTipoDespesaCusteioChange}
@@ -372,6 +416,7 @@ const ModalFormAdicionarPrioridade = ({ open, onClose, data }) => {
                   style={{ marginBottom: 4 }}
                 >
                   <InputNumber
+                    ref={valorTotalRef}
                     placeholder="00,00"
                     formatter={formatMoneyByCentsBRL}
                     parser={parseMoneyBRL}

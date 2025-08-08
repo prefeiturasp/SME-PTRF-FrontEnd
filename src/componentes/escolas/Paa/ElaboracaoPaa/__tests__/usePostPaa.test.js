@@ -24,7 +24,7 @@ const queryClient = new QueryClient();
 describe("Hook usePost", () => {
 
     it('deve chamar a mutação com sucesso', async () => {
-        postPaa.mockResolvedValue({ data: { sucesso: true } });
+        postPaa.mockResolvedValue({ uuid: 'fake-uuid', sucesso: true });
 
         const { result } = renderHook(() => usePostPaa(), { wrapper });
 
@@ -48,7 +48,11 @@ describe("Hook usePost", () => {
         const { result } = renderHook(() => usePostPaa(), { wrapper });
 
         await waitFor(async () => {
-            await result.current.mutationPost.mutateAsync({ associacao: 'fake-uuid' });
+            try {
+                await result.current.mutationPost.mutateAsync({ payload: { associacao: 'fake-uuid' } });
+            } catch (e) {
+                // expected error, do nothing
+            }
         });
 
         expect(postPaa).toHaveBeenCalled();

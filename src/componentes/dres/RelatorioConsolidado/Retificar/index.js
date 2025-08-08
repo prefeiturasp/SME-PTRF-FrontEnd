@@ -9,15 +9,11 @@ export const Retificar = ({consolidadoDre}) => {
           {consolidadoDre && consolidadoDre?.exibe_botao_retificar && [['access_retificacao_dre']].some(visoesService.getPermissoes) &&
               <div className="p-2 bd-highlight">
                     <Link
-                        to={
-                            {
-                                pathname: `/dre-relatorio-consolidado-retificacao/${consolidadoDre.uuid}`,
-                                state: {
-                                    referencia_publicacao: consolidadoDre.titulo_relatorio,
-                                    eh_edicao_retificacao: false
-                                }
-                            }
-                        }
+                        to={`/dre-relatorio-consolidado-retificacao/${consolidadoDre.uuid}`}
+                        state={{
+                            referencia_publicacao: consolidadoDre.titulo_relatorio,
+                            eh_edicao_retificacao: false
+                        }}
                     >
                         <button 
                             className="btn btn-success"

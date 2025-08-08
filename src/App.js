@@ -1,5 +1,5 @@
 import React from 'react'
-import {useHistory} from 'react-router-dom'
+import { useLocation } from 'react-router-dom';
 import {Rotas} from './rotas'
 import 'primereact/resources/themes/nova-light/theme.css'
 import 'primereact/resources/primereact.min.css'
@@ -11,7 +11,7 @@ import {ToastContainer} from "react-toastify";
 import Modal from './componentes/Globais/Modal/Modal'
 
 export const App = () => {
-    const pathName = useHistory().location.pathname;
+    const pathName = useLocation().pathname;
     return (
         <>
             <ToastContainer/>

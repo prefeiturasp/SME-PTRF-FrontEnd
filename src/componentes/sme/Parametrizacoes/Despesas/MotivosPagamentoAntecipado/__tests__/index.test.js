@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { MotivosPagamentoAntecipado } from '..';
+import { MemoryRouter } from 'react-router-dom';
+import { MotivosPagamentoAntecipado } from '../index';
 import { getTodosMotivosPagamentoAntecipado } from "../../../../../../services/sme/Parametrizacoes.service";
 import { toastCustom } from "../../../../../Globais/ToastCustom";
 import { 
@@ -38,15 +39,13 @@ describe("Carrega página de Motivos de pagamento antecipado", () => {
     });
 
     test('Renderiza a mensagem "Carregando..." ao abrir a página', () => {
-        render(<MotivosPagamentoAntecipado />);
+        render(<MemoryRouter><MotivosPagamentoAntecipado /></MemoryRouter>);
         expect(screen.getByText(/Carregando.../i)).toBeInTheDocument();
     });
 
     it("carrega no modo Listagem vazia", async () => {
         getTodosMotivosPagamentoAntecipado.mockResolvedValue([])
-        render(
-            <MotivosPagamentoAntecipado />
-        );
+        render(<MemoryRouter><MotivosPagamentoAntecipado /></MemoryRouter>);
 
         await waitFor(()=> expect(getTodosMotivosPagamentoAntecipado).toHaveBeenCalled());
         await waitFor(()=> {
@@ -179,7 +178,7 @@ describe("Testes Operacao CREATE Motivo de pagamento antecipado", ()=>{
     it("Renderiza Operacao create sucesso", async () => {
         RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
 
-        render(<MotivosPagamentoAntecipado/>);
+        render(<MemoryRouter><MotivosPagamentoAntecipado/></MemoryRouter>);
 
         await waitFor(()=> {
             const button = screen.getByRole('button', { name: /adicionar motivo de pagamento antecipado/i });
@@ -208,7 +207,7 @@ describe("Testes Operacao CREATE Motivo de pagamento antecipado", ()=>{
         });
         RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
 
-        render(<MotivosPagamentoAntecipado/>);
+        render(<MemoryRouter><MotivosPagamentoAntecipado/></MemoryRouter>);
 
         await waitFor(()=> {
             const button = screen.getByRole('button', { name: /adicionar motivo de pagamento antecipado/i });
@@ -239,7 +238,7 @@ describe("Testes Operacao CREATE Motivo de pagamento antecipado", ()=>{
         });
         RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
 
-        render(<MotivosPagamentoAntecipado/>);
+        render(<MemoryRouter><MotivosPagamentoAntecipado/></MemoryRouter>);
 
         await waitFor(()=> {
             const button = screen.getByRole('button', { name: /adicionar motivo de pagamento antecipado/i });
@@ -273,7 +272,7 @@ describe("Testes Operacao EDIT Motivo de pagamento antecipado", ()=>{
     it("Renderiza Operacao edit sucesso", async () => {
         RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
         getTodosMotivosPagamentoAntecipado.mockResolvedValueOnce(mockData);
-        render(<MotivosPagamentoAntecipado/>);
+        render(<MemoryRouter><MotivosPagamentoAntecipado/></MemoryRouter>);
 
         await waitFor(()=> {
             const tabela = screen.getByRole('grid');
@@ -307,7 +306,7 @@ describe("Testes Operacao EDIT Motivo de pagamento antecipado", ()=>{
             response: { data: { non_field_errors: "Este motivo de pagamento antecipado já existe." } },
         });
         getTodosMotivosPagamentoAntecipado.mockResolvedValueOnce(mockData);
-        render(<MotivosPagamentoAntecipado/>);
+        render(<MemoryRouter><MotivosPagamentoAntecipado/></MemoryRouter>);
 
         await waitFor(()=> {
             const tabela = screen.getByRole('grid');
@@ -343,7 +342,7 @@ describe("Testes Operacao EDIT Motivo de pagamento antecipado", ()=>{
             response: { data: { nome: "Testando erro response" } },
         });
         getTodosMotivosPagamentoAntecipado.mockResolvedValueOnce(mockData);
-        render(<MotivosPagamentoAntecipado/>);
+        render(<MemoryRouter><MotivosPagamentoAntecipado/></MemoryRouter>);
 
         await waitFor(()=> {
             const tabela = screen.getByRole('grid');
@@ -379,7 +378,7 @@ describe("Testes Operacao DELETE Motivo de pagamento antecipado", ()=>{
     it("Renderiza Operacao delete sucesso", async () => {
         RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
         getTodosMotivosPagamentoAntecipado.mockResolvedValueOnce(mockData);
-        render(<MotivosPagamentoAntecipado/>);
+        render(<MemoryRouter><MotivosPagamentoAntecipado/></MemoryRouter>);
 
         await waitFor(()=> {
             const tabela = screen.getByRole('grid');
@@ -410,7 +409,7 @@ describe("Testes Operacao DELETE Motivo de pagamento antecipado", ()=>{
             response: { data: { mensagem: "mensagem de erro" } },
         });
         getTodosMotivosPagamentoAntecipado.mockResolvedValueOnce(mockData);
-        render(<MotivosPagamentoAntecipado/>);
+        render(<MemoryRouter><MotivosPagamentoAntecipado/></MemoryRouter>);
 
         await waitFor(()=> {
             const tabela = screen.getByRole('grid');
@@ -445,7 +444,7 @@ describe("Testes Operacao DELETE Motivo de pagamento antecipado", ()=>{
             response: { data: { nome: "Testando erro response" } },
         });
         getTodosMotivosPagamentoAntecipado.mockResolvedValueOnce(mockData);
-        render(<MotivosPagamentoAntecipado/>);
+        render(<MemoryRouter><MotivosPagamentoAntecipado/></MemoryRouter>);
 
         await waitFor(()=> {
             const tabela = screen.getByRole('grid');

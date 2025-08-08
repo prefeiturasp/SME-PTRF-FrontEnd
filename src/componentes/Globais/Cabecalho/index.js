@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from "react";
-import {useHistory } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 import "./cabecalho.scss"
 import LogoPtrf from "../../../assets/img/logo-ptrf-verde.png"
 import { authService, USUARIO_LOGIN } from '../../../services/auth.service';
@@ -17,7 +17,7 @@ import { mantemEstadoAnaliseDre as meapcservice } from "../../../services/mantem
 
 export const Cabecalho = () => {
 
-    const history = useHistory();
+    const navigate = useNavigate();
     const logout = async () => {
         await authService.logout()
     };
@@ -95,12 +95,12 @@ export const Cabecalho = () => {
 
     const redirectCentralDeNotificacoes = () =>{
         let path = `/central-de-notificacoes`;
-        history.push(path);
+        navigate(path);
     };
 
     const redirectCentralDeDownloads = () => {
         let path = `/central-de-downloads`;
-        history.push(path);
+        navigate(path);
     }
 
     const onShow = async () =>{
@@ -128,7 +128,7 @@ export const Cabecalho = () => {
 
     const onRedirectNotificacoes = () => {
         setShow(false);
-        window.location.assign('/central-de-notificacoes')
+        navigate('/central-de-notificacoes', { replace: true })
     };
 
     const onVerAcertosDepois = async () => {
@@ -138,7 +138,7 @@ export const Cabecalho = () => {
 
     const onVerAcertos = () => {
         notificacaoContext.setExibeModalTemDevolucao(false)
-        notificaDevolucaoPCService.marcaNotificacaoComoLidaERedirecianaParaVerAcertos(history)
+        notificaDevolucaoPCService.marcaNotificacaoComoLidaERedirecianaParaVerAcertos(navigate)
     };
 
     return (
@@ -262,7 +262,7 @@ export const Cabecalho = () => {
                                         </a>
 
                                         <div className={`dropdown-menu dropdown-menu-opcoes`} aria-labelledby="linkDropdownAcoes">
-                                            <button className="btn-sair" onClick={()=>history.push(`/meus-dados`)}>Meus dados</button><br />
+                                            <button className="btn-sair" onClick={()=>navigate(`/meus-dados`)}>Meus dados</button><br />
                                             <button className="btn-sair" data-testid="botao-sair" onClick={()=>onShow()}>Sair</button>
                                         </div>
                                     </li>

@@ -26,6 +26,7 @@ import {ModalInfoExclusaoNaoPermitida} from "./ModalInfoExclusaoNaoPermitida";
 import { ModalConfirmUpdateObservacao } from "./ModalConfirmUpdateObservacao";
 import Loading from "../../../../../utils/Loading";
 import { toastCustom } from "../../../../Globais/ToastCustom";
+import { validarDAC11A } from "../../../../../utils/validators";
 
 export const Associacoes = () => {
 
@@ -225,6 +226,13 @@ export const Associacoes = () => {
     const verifica_alteracao_cnpj =  useMemo(() => stateFormModal.cnpj, [stateFormModal.cnpj]);
 
     const handleSubmitModalFormAssociacoes = useCallback(async (values,{setErrors})=>{
+
+        const digits = values.ccm.replace(/\D/g, '');
+        if (digits.length > 8 && !validarDAC11A(values.ccm)) {
+            setErrors({ ccm: 'CCM inválido. Verifique os 12 dígitos.' });
+            return;
+        }
+
         let cnpj_existente=false;
         if (verifica_alteracao_cnpj !== values.cnpj.trim() || !values.cnpj.trim()){
             cnpj_existente = listaDeAssociacoesFiltrarCnpj.find(element=> element.cnpj === values.cnpj);

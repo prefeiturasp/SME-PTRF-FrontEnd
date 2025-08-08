@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import { Tags } from '../index';
 import {
     getTodasTags,
@@ -38,13 +39,13 @@ describe("Teste da página Tags", () => {
     });
 
     it('Renderiza a mensagem "Carregando..." ao abrir a página', () => {
-        render(<Tags />);
+        render(<MemoryRouter><Tags /></MemoryRouter>);
         expect(screen.getByText(/Carregando.../i)).toBeInTheDocument();
     });
 
     it("Testa a chamada de getFiltrosTags", async () => {
         getTodasTags.mockResolvedValueOnce(mockData);
-        render(<Tags />);
+        render(<MemoryRouter><Tags /></MemoryRouter>);
         
         await waitFor(() => {
           const filtroNome = screen.getByLabelText(/Filtrar por etiqueta\/tag/i);
@@ -60,7 +61,7 @@ describe("Teste da página Tags", () => {
 
     it("Testa a chamada de getFiltrosTags com filtro de status", async () => {
         getTodasTags.mockResolvedValueOnce(mockData);
-        render(<Tags />);
+        render(<MemoryRouter><Tags /></MemoryRouter>);
         
         await waitFor(() => {
           const filtroNome = screen.getByLabelText(/Filtrar por etiqueta\/tag/i);
@@ -80,7 +81,7 @@ describe("Teste da página Tags", () => {
 
     it("Testa a chamada de limpar Filtros", async () => {
         getTodasTags.mockResolvedValueOnce(mockData);
-        render(<Tags />);
+        render(<MemoryRouter><Tags /></MemoryRouter>);
 
         expect(screen.getByText(/Carregando.../i)).toBeInTheDocument();
         await expect(screen.findByText(/COVID-19/i)).resolves.toBeInTheDocument();
@@ -111,9 +112,7 @@ describe("Teste da página Tags", () => {
 
     it("Carrega no modo Listagem com itens", async () => {
       getTodasTags.mockResolvedValueOnce(mockData);
-        render(
-            <Tags />
-        );
+        render(<MemoryRouter><Tags /></MemoryRouter>);
 
         expect(screen.getByText(/Etiquetas\/Tags/i)).toBeInTheDocument();
 
@@ -128,7 +127,7 @@ describe("Teste da página Tags", () => {
 describe("Testes Operacao CREATE", () => {
 
   const renderizarTelaEInteragirComBotaoAdicionar = async () => {
-    render(<Tags />);
+    render(<MemoryRouter><Tags /></MemoryRouter>);
     await waitFor(() => {
       const button = screen.getByRole('button', { name: /adicionar etiqueta\/tag/i });
       expect(button).toBeInTheDocument();
@@ -216,7 +215,7 @@ describe("Testes Operacao CREATE", () => {
 
 describe("Testes Operacao EDIT", () => {
   const setupAndClickAlterar = async () => {
-      render(<Tags />);
+      render(<MemoryRouter><Tags /></MemoryRouter>);
 
       await waitFor(() => {
           const tabela = screen.getByRole('grid');
@@ -236,7 +235,7 @@ describe("Testes Operacao EDIT", () => {
   });
 
   it("Renderiza Operacao edit sucesso", async () => {
-      render(<Tags />);
+      render(<MemoryRouter><Tags /></MemoryRouter>);
 
       await setupAndClickAlterar();
 
@@ -266,7 +265,7 @@ describe("Testes Operacao EDIT", () => {
         response: { data: { non_field_errors: "Ja existe uma tag com esse nome" } },
     });
 
-    render(<Tags />);
+    render(<MemoryRouter><Tags /></MemoryRouter>);
 
     await setupAndClickAlterar();
 
@@ -298,7 +297,7 @@ describe("Testes Operacao EDIT", () => {
         response: { data: { nome: "Testando erro response" } },
     });
 
-    render(<Tags />);
+    render(<MemoryRouter><Tags /></MemoryRouter>);
 
     await setupAndClickAlterar();
 
@@ -334,7 +333,7 @@ describe("Testes Operacao DELETE", ()=>{
 
   it("Renderiza Operacao delete sucesso", async () => {
       RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
-      render(<Tags/>);
+      render(<MemoryRouter><Tags /></MemoryRouter>);
 
       await waitFor(()=> {
           const tabela = screen.getByRole('grid');
@@ -371,7 +370,7 @@ describe("Testes Operacao DELETE", ()=>{
       deleteTag.mockRejectedValueOnce({
           response: { data: { mensagem: "mensagem de erro" } },
       });
-      render(<Tags/>);
+      render(<MemoryRouter><Tags /></MemoryRouter>);
 
       await waitFor(()=> {
           const tabela = screen.getByRole('grid');
@@ -407,7 +406,7 @@ describe("Testes Operacao DELETE", ()=>{
     deleteTag.mockRejectedValueOnce({
         response: { data: { nome: "Testando erro response" } },
     });
-    render(<Tags/>);
+    render(<MemoryRouter><Tags /></MemoryRouter>);
 
     await waitFor(()=> {
         const tabela = screen.getByRole('grid');

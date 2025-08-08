@@ -1,42 +1,42 @@
 .login-suporte-container {
-    background: url("../../assets/img/bg-login-novo-tratado.jpg");
-    background-position: center;
-    background-position-x: left;
-    background-size: 120% auto;
+  background: url("../../assets/img/bg-login-novo-tratado.jpg");
+  background-position: center;
+  background-position-x: left;
+  background-size: 120% auto;
 
-    width: 100%;
-    height: 100vh;
+  width: 100%;
+  height: 100vh;
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.login-suporte-card{
-    width: 100%;
-    max-width: 550px;
-    background-color: white;
-    padding-bottom: 12px;
+.login-suporte-card {
+  width: 100%;
+  max-width: 550px;
+  background-color: white;
+  padding-bottom: 12px;
 }
 
-.login-suporte-card img{
-    max-width: 300px;
+.login-suporte-card img {
+  width: 171px;
 }
 
 .login-suporte-card .login-suporte-card-form {
-    margin: 0 20%;
+  margin: 0 20%;
 }
 
 .login-suporte-card-header {
-    display: flex;
-    height: 80px;
-    background: #01585d;
-    border-radius: 0px 0px 30px 30px;
-    align-items: center;
-    justify-content: center;
+  display: flex;
+  height: 80px;
+  background: #01585d;
+  border-radius: 0px 0px 30px 30px;
+  align-items: center;
+  justify-content: center;
 }
 
 .login-suporte-card-header h6 {
-    color: #ffff;
-    font-weight: 700;
+  color: #ffff;
+  font-weight: 700;
 }

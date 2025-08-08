@@ -3,7 +3,7 @@ import { PaginasContainer } from '../../../../paginas/PaginasContainer'
 import Loading from "../../../../utils/Loading";
 import { getTextoExplicacaoPaa } from '../../../../services/escolas/PrestacaoDeContas.service';
 import BreadcrumbComponent from '../../../Globais/Breadcrumb';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router-dom';
 import {ASSOCIACAO_UUID} from "../../../../services/auth.service";
 import { usePostPaa } from "./hooks/usePostPaa";
 import { getPaaVigente, getParametroPaa } from "../../../../services/sme/Parametrizacoes.service";

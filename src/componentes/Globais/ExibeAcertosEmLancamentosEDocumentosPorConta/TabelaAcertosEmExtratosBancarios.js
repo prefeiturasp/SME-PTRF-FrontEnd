@@ -1,6 +1,6 @@
 import React, {useEffect, useState, useContext} from "react";
 import moment from "moment";
-import {Link, useLocation} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import {visoesService} from "../../../services/visoes.service";
 import {getPeriodos} from "../../../services/dres/Dashboard.service";
 import { SidebarLeftService } from "../../../services/SideBarLeft.service";
@@ -12,6 +12,7 @@ import {AcertoComprovanteSaldoDaConta} from "./AcertoComprovanteSaldoDaConta";
 const TabelaAcertosEmExtratosBancarios = ({extratosBancariosAjustes, contaUuidAjustesExtratosBancarios, prestacaoDeContasUuid}) => {
     const contextSideBar = useContext(SidebarContext);
     const parametros = useLocation();
+    const navigate = useNavigate();
     const [uuidPeriodo, setUuidPeriodo] = useState('')
     const prestacaoDeContas = useCarregaPrestacaoDeContasPorUuid(prestacaoDeContasUuid)
 
@@ -76,19 +77,21 @@ const TabelaAcertosEmExtratosBancarios = ({extratosBancariosAjustes, contaUuidAj
                     extratosBancariosAjustes={extratosBancariosAjustes}
                 />
                 {visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'UE' &&
-                    <Link
-                        to={{pathname: `/detalhe-das-prestacoes`,
-                        state: {
-                            origem: 'ir_para_conciliacao_bancaria',
-                            periodoFormatado: parametros && parametros.state && parametros.state.periodoFormatado ? parametros.state.periodoFormatado : "",
-                            prestacaoDeContasUuid: prestacaoDeContasUuid
-                        }
+                    <button
+                        className="btn btn-outline-success mr-2"
+                        onClick={() => {
+                            irParaConciliacaoBancaria();
+                            navigate(`/detalhe-das-prestacoes`, {
+                                state: {
+                                    origem: 'ir_para_conciliacao_bancaria',
+                                    periodoFormatado: parametros && parametros.state && parametros.state.periodoFormatado ? parametros.state.periodoFormatado : "",
+                                    prestacaoDeContasUuid: prestacaoDeContasUuid
+                                }
+                            });
                         }}
-                    className="btn btn-outline-success mr-2"
-                    onClick={irParaConciliacaoBancaria}
                     >
                         Ir para conciliação bancária
-                    </Link>
+                    </button>
                 }
             </>
             ):

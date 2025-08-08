@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toastCustom } from "../../../../../Globais/ToastCustom";
 import { postTipoReceita } from "../../../../../../services/sme/Parametrizacoes.service";
-import { useNavigate } from "react-router-dom-v5-compat";
+import { useNavigate } from 'react-router-dom';
 
 export const usePostTipoReceita = () => {
   const queryClient = useQueryClient();

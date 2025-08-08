@@ -8,12 +8,10 @@ export const usePatchBemProduzido = () => {
     mutationFn: ({ uuid, payload }) => patchBemProduzido(uuid, payload),
     onSuccess: (data) => {
       queryClient.invalidateQueries(["bem-produzido-detail", data.uuid]);
-      toastCustom.ToastCustomSuccess(
-        "Rascunho do bem produzido salvo com sucesso."
-      );
+      toastCustom.ToastCustomSuccess("Bem produzido salvo com sucesso.");
     },
     onError: (e) => {
-      toastCustom.ToastCustomError("Houve um erro ao salvar rascunho.");
+      toastCustom.ToastCustomError("Houve um erro ao salvar bem produzido.");
     },
   });
 
