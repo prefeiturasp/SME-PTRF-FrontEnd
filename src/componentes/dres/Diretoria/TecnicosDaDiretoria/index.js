@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Redirect} from "react-router-dom";
+import {Navigate} from "react-router-dom";
 import {MenuInterno} from "../../../Globais/MenuInterno";
 import {UrlsMenuInterno} from "../UrlsMenuInterno";
 import {CadastroTecnicosDre} from "./CadastroTecnicosDre";

@@ -2,8 +2,7 @@ import React, {useCallback, useEffect, useState} from "react";
 import {useDispatch} from "react-redux";
 import {PaginasContainer} from "../../../../paginas/PaginasContainer";
 import {useLocation, useParams} from "react-router-dom";
-// Preparação para react-router-dom-v6
-import {useNavigate} from "react-router-dom-v5-compat";
+import {useNavigate} from 'react-router-dom';
 import {FormCadastro} from "../components/FormCadastro";
 import {usePostCargoDaComposicao} from "../hooks/usePostCargoDaComposicao";
 import {useGetCargosDiretoriaExecutiva} from "../hooks/useGetCargosDiretoriaExecutiva";

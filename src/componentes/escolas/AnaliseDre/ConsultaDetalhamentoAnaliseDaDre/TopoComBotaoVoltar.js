@@ -1,5 +1,5 @@
 import React, {useEffect, useState, useContext} from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faArrowLeft} from "@fortawesome/free-solid-svg-icons";
 import {getPeriodoPorUuid} from "../../../../services/sme/Parametrizacoes.service";
@@ -11,7 +11,7 @@ import { SidebarContext } from "../../../../context/Sidebar";
 export const TopoComBotaoVoltar = ({statusPc, prestacaoContaUuid, onClickVoltar, periodoFormatado, periodoUuid, podeAbrirModalAcertos, devolucaoAtualSelecionada}) => {
 
     const [periodo, setPeriodo] = useState(null);
-    const history = useHistory()
+    const navigate = useNavigate();
     const contextSideBar = useContext(SidebarContext);
 
     useEffect( () => {
@@ -66,7 +66,7 @@ export const TopoComBotaoVoltar = ({statusPc, prestacaoContaUuid, onClickVoltar,
 
         // Necessário voltar o estado para true, para clicks nos itens do menu continuarem funcionando corretamente
         contextSideBar.setIrParaUrl(true)
-        history.push(`/prestacao-de-contas/`)
+        navigate('/prestacao-de-contas/')
     }
 
     return(

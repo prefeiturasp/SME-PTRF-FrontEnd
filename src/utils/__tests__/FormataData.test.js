@@ -1,24 +1,35 @@
-import { formataData } from "../FormataData";
+import { formataData, formatDateOrDash } from "../FormataData";
 
 describe("formataData", () => {
-    it("deve formatar a data no padrão DD/MM/YYYY por padrão", () => {
-        const data = "2025-03-01";
-        expect(formataData(data)).toBe("01/03/2025");
-    });
+  it("deve formatar a data no padrão DD/MM/YYYY por padrão", () => {
+    const data = "2025-03-01";
+    expect(formataData(data)).toBe("01/03/2025");
+  });
 
-    it("deve aceitar um formato personalizado", () => {
-        const data = "2025-03-01";
-        expect(formataData(data, "YYYY-MM-DD")).toBe("2025-03-01");
-    });
+  it("deve aceitar um formato personalizado", () => {
+    const data = "2025-03-01";
+    expect(formataData(data, "YYYY-MM-DD")).toBe("2025-03-01");
+  });
 
-    it("deve retornar 'Invalid date' para entradas inválidas", () => {
-        expect(formataData(null)).toBe("Invalid date");
-        expect(formataData("")).toBe("Invalid date");
-        expect(formataData("data inválida")).toBe("Invalid date");
-    });
+  it("deve retornar 'Invalid date' para entradas inválidas", () => {
+    expect(formataData(null)).toBe("Invalid date");
+    expect(formataData("")).toBe("Invalid date");
+    expect(formataData("data inválida")).toBe("Invalid date");
+  });
 
-    it("deve lidar com objetos Date corretamente", () => {
-        const data = new Date(2025, 2, 1); // Março é 2 porque os meses começam do zero
-        expect(formataData(data)).toBe("01/03/2025");
-    });
+  it("deve lidar com objetos Date corretamente", () => {
+    const data = new Date(2025, 2, 1); // Março é 2 porque os meses começam do zero
+    expect(formataData(data)).toBe("01/03/2025");
+  });
+});
+
+describe("formatDateOrDash", () => {
+  it("deve formatar a data no padrão DD/MM/YYYY por padrão, se diferente de nulo", () => {
+    const data = "2025-03-01";
+    expect(formatDateOrDash(data)).toBe("01/03/2025");
+  });
+
+  it("deve retornar '-', caso data seja nula", () => {
+    expect(formatDateOrDash(null)).toBe("-");
+  });
 });

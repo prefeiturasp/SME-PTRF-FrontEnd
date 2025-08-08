@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
-import {useHistory, useParams, useLocation} from "react-router-dom";
+import {useNavigate, useParams, useLocation} from "react-router-dom";
 import {PaginasContainer} from "../../../../../../paginas/PaginasContainer";
 import {useSelector} from "react-redux";
 import {getTiposDevolucao, getListaDeSolicitacaoDeAcertos, postSolicitacoesParaAcertos, getTiposDeAcertoLancamentosAgrupadoCategoria, getContasComMovimentoNaPc} from "../../../../../../services/dres/PrestacaoDeContas.service";
@@ -19,7 +19,7 @@ export const DetalharAcertos = () => {
     const {prestacao_conta_uuid} = useParams();
     const formRef = useRef();
     const { lancamentos_para_acertos, origem } = useSelector(state => state.DetalharAcertos)
-    const history = useHistory();
+    const navigate = useNavigate();
     const { state } = useLocation();
     const aplicavelDespesasPeriodosAnteriores = state?.aplicavel_despesas_periodos_anteriores;
     const valorDocumento = lancamentos_para_acertos[0]?.valor_transacao_total ?? 0;
@@ -234,10 +234,10 @@ export const DetalharAcertos = () => {
 
     const onClickBtnVoltar = () => {
         if(origem && origem === "dre-detalhe-prestacao-de-contas-resumo-acertos"){
-            history.push(`/dre-detalhe-prestacao-de-contas-resumo-acertos/${prestacao_conta_uuid}#tabela-acertos-lancamentos`)
+            navigate(`/dre-detalhe-prestacao-de-contas-resumo-acertos/${prestacao_conta_uuid}#tabela-acertos-lancamentos`)
         }
         else{
-            history.push(`/dre-detalhe-prestacao-de-contas/${prestacao_conta_uuid}#conferencia_de_lancamentos`)
+            navigate(`/dre-detalhe-prestacao-de-contas/${prestacao_conta_uuid}#conferencia_de_lancamentos`)
         }
         
     }

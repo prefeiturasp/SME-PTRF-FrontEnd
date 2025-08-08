@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Redirect} from "react-router-dom";
+import {Navigate} from "react-router-dom";
 import {
     getTabelaAssociacoes,
     getRegularidadeAssociacoesAno,
@@ -109,10 +109,11 @@ export const RegularidadeAssociacoes = () =>{
                         />
 
                         {urlRedirect &&
-                            <Redirect
+                            <Navigate
                                 to={{
                                     pathname: urlRedirect,
                                 }}
+                                replace
                             />
                         }
                     </button>

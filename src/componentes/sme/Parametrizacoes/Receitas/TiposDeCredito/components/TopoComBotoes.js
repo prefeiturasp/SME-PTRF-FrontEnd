@@ -1,6 +1,6 @@
 import React from "react";
 import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
-import {useNavigate} from "react-router-dom-v5-compat";
+import { useNavigate } from 'react-router-dom';
 
 export const TopoComBotoes = () => {
     const navigate = useNavigate();

@@ -44,29 +44,32 @@ const TabelaRecursosProprios = ({ totalRecursosProprios, setActiveTab }) => {
   };
   return (
     <DataTable
-      className="tabela-recursos-proprios mt-5"
+      className="tabela-recursos-proprios mt-5 no-hover"
       value={dataRecursosProprios}
     >
       <Column
         field="nome"
         header="Recursos"
         body={nomeRecursoProprioTemplate}
+        style={{width: '15%'}}
       />
-      <Column field="valor_custeio" header="Custeio (R$)" />
-      <Column field="valor_capital" header="Capital (R$)" />
+      <Column field="valor_custeio" header="Custeio (R$)" bodyClassName="bg-cinza" style={{width: '15%'}}/>
+      <Column field="valor_capital" header="Capital (R$)" bodyClassName="bg-cinza" style={{width: '15%'}}/>
       <Column 
         field="valor_livre"
         header="Livre Aplicação (R$)"
         body={totalRecursoProprioTemplate}
         bodyClassName="text-right"
+        style={{width: '20%'}}
         />
       <Column
         field="total"
         header="Total (R$)"
         body={totalRecursoProprioTemplate}
         bodyClassName="text-right"
+        style={{width: '15%'}}
       />
-      <Column field="acoes" header="Ações" body={acoesRecursoProprioTemplate} />
+      <Column field="acoes" header="Ações" body={acoesRecursoProprioTemplate} style={{width: '10%'}} />
     </DataTable>
   );
 };

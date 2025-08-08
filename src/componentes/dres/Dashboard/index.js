@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Redirect, useLocation} from 'react-router-dom'
+import {Navigate, useLocation} from 'react-router-dom'
 import {getPeriodos, getItensDashboard} from "../../../services/dres/Dashboard.service";
 import {SelectPeriodo} from "./SelectPeriodo";
 import "./dashboard.scss"
@@ -90,10 +90,11 @@ export const DreDashboard = () => {
                         handleClickVerPrestacaoes={handleClickVerPrestacaoes}
                     />
                     {statusPrestacao &&
-                    <Redirect
+                    <Navigate
                         to={{
                             pathname: `/dre-lista-prestacao-de-contas/${periodoEscolhido}/${statusPrestacao}`,
                         }}
+                        replace
                     />
                     }
                 </>

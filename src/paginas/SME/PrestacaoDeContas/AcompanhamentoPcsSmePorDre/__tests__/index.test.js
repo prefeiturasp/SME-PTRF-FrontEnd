@@ -2,6 +2,7 @@ import { render, screen } from "@testing-library/react";
 import React  from "react";
 import { useParams, useLocation } from "react-router-dom";
 import { AcompanhamentoPcsPorDre } from "../index";
+import { MemoryRouter } from "react-router-dom";
 
 jest.mock("react-router-dom", () => ({
   ...jest.requireActual("react-router-dom"),
@@ -18,7 +19,9 @@ describe('<AcompanhamentoPcsPorDre>', () => {
     });
     useLocation.mockReturnValue({ state: {} });
     render(
-        <AcompanhamentoPcsPorDre/>
+        <MemoryRouter>
+          <AcompanhamentoPcsPorDre/>
+        </MemoryRouter>
     )
     expect(screen.getByText("Acompanhamento das Prestações de Contas")).toBeInTheDocument();
     expect(useParams).toHaveBeenCalled();

@@ -42,7 +42,7 @@ import { getPeriodoPorUuid } from "../../../../services/sme/Parametrizacoes.serv
 import { STATUS_CONTA_ASSOCIACAO, STATUS_SOLICITACAO_ENCERRAMENTO_CONTA_ASSOCIACAO } from "../../../../constantes/contaAssociacao";
 import {toastCustom} from "../../../Globais/ToastCustom";
 
-export const CadastroForm = ({verbo_http}) => {
+export const CadastroForm = ({verbo_http, veioDeSituacaoPatrimonial}) => {
 
     let {origem} = useParams();
     const aux = metodosAuxiliares;
@@ -1261,7 +1261,7 @@ export const CadastroForm = ({verbo_http}) => {
                         onSubmit={onSubmit}
                         validateFormDespesas={validateFormDespesas}
                         despesaContext={despesaContext}
-                        readOnlyCampos={readOnlyCampos}
+                        readOnlyCampos={readOnlyCampos || veioDeSituacaoPatrimonial}
                         setFormErrors={setFormErrors}
                         validacoesPersonalizadas={validacoesPersonalizadas}
                         formErrors={formErrors}
@@ -1284,10 +1284,10 @@ export const CadastroForm = ({verbo_http}) => {
                         houveAlteracoes={houveAlteracoes}
                         onShowModal={onShowModal}
                         onCancelarTrue={onCancelarTrue}
-                        readOnlyBtnAcao={readOnlyBtnAcao}
+                        readOnlyBtnAcao={readOnlyBtnAcao || veioDeSituacaoPatrimonial}
                         setShowDelete={setShowDelete}
                         setShowTextoModalDelete={setShowTextoModalDelete}
-                        btnSubmitDisable={btnSubmitDisable}
+                        btnSubmitDisable={btnSubmitDisable || veioDeSituacaoPatrimonial}
                         desabilitaBtnSalvar={desabilitaBtnSalvar}
                         habilitaBtnSalvar={habilitaBtnSalvar}
                         saldosInsuficientesDaAcao={saldosInsuficientesDaAcao}
@@ -1321,14 +1321,14 @@ export const CadastroForm = ({verbo_http}) => {
                         txtOutrosMotivosPagamentoAntecipado={txtOutrosMotivosPagamentoAntecipado}
                         handleChangeCheckBoxOutrosMotivosPagamentoAntecipado={handleChangeCheckBoxOutrosMotivosPagamentoAntecipado}
                         handleChangeTxtOutrosMotivosPagamentoAntecipado={handleChangeTxtOutrosMotivosPagamentoAntecipado}
-                        bloqueiaLinkCadastrarEstorno={bloqueiaLinkCadastrarEstorno}
+                        bloqueiaLinkCadastrarEstorno={(rateio) => veioDeSituacaoPatrimonial || bloqueiaLinkCadastrarEstorno(rateio)}
                         bloqueiaRateioEstornado={bloqueiaRateioEstornado}
                         modalState={modalState}
                         setModalState={setModalState}
                         serviceIniciaEncadeamentoDosModais={serviceIniciaEncadeamentoDosModais}
                         serviceSubmitModais={serviceSubmitModais}
                         formErrorsImposto={formErrorsImposto}
-                        disableBtnAdicionarImposto={disableBtnAdicionarImposto}
+                        disableBtnAdicionarImposto={disableBtnAdicionarImposto || veioDeSituacaoPatrimonial}
                         onCalendarCloseDataPagamento={onCalendarCloseDataPagamento}
                         onCalendarCloseDataPagamentoImposto={onCalendarCloseDataPagamentoImposto}
                         parametroLocation={parametroLocation}
@@ -1337,8 +1337,9 @@ export const CadastroForm = ({verbo_http}) => {
                         renderContaAssociacaoOptions={renderContaAssociacaoOptions}
                         filterContas={filterContas}
                         limparSelecaoContasDesabilitadas={limparSelecaoContasDesabilitadas}
+                        veioDeSituacaoPatrimonial={veioDeSituacaoPatrimonial}
                     />
-            </>
+                </>
             }
             <section>
                 <CancelarModal

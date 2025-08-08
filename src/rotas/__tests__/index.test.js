@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { MemoryRouter, Route, Switch } from 'react-router-dom';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import {Rotas} from '../index';
 import { useSelector } from 'react-redux';
 import { Login } from '../../paginas/Login';
@@ -66,11 +66,7 @@ describe('Routes', () => {
     test('deve renderizar corretamente quando estiver na rota /exemplo', () => {
         const { getByText } = render(
             <MemoryRouter initialEntries={['/exemplo']}>
-            <Switch>
-                <Route path="/exemplo">
-                    <Rotas />
-                </Route>
-            </Switch>
+                <Rotas />
             </MemoryRouter>
         );
 

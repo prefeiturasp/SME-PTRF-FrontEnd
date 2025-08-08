@@ -1,5 +1,5 @@
 import React, {memo, useCallback, useContext, useEffect, useMemo, useState} from "react";
-import {useParams, useLocation, useHistory} from "react-router-dom";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
 import {PaginasContainer} from "../../../../paginas/PaginasContainer";
 // Hooks Personalizados
 import {useCarregaPrestacaoDeContasPorUuid} from "../../../../hooks/dres/PrestacaoDeContas/useCarregaPrestacaoDeContasPorUuid";
@@ -18,7 +18,7 @@ const ConsultaDetalhamentoAnaliseDaDre = () => {
 
     let {prestacao_conta_uuid} = useParams();
     const parametros = useLocation();
-    const history = useHistory();
+    const navigate = useNavigate();
 
     // Hooks Personalizados
     const prestacaoDeContas = useCarregaPrestacaoDeContasPorUuid(prestacao_conta_uuid)
@@ -101,8 +101,8 @@ const ConsultaDetalhamentoAnaliseDaDre = () => {
     }, [parametros, prestacaoDeContas]);
 
     const onClickVoltar = useCallback(() => {
-        history.push('/analise-dre')
-    }, [history])
+        navigate('/analise-dre')
+    }, [navigate])
 
     const exibeLabelStatus = (status) => {
         if (status === 'EM_ANDAMENTO') {

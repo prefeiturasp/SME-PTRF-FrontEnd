@@ -1,10 +1,10 @@
+import { useNavigate } from 'react-router-dom';
 import React, { useEffect, useState } from "react";
 import moment from "moment";
 import { Flex, Spin } from "antd";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Paginator } from "primereact/paginator";
-import { useNavigate } from "react-router-dom-v5-compat";
 import { useGetBemProduzidosComAdquiridos } from "./hooks/useGetBemProduzidosComAdquiridos";
 import { Tag } from "../../../Globais/Tag";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -15,6 +15,7 @@ import { useCarregaTabelaDespesa } from "../../../../hooks/Globais/useCarregaTab
 import {faDownload} from "@fortawesome/free-solid-svg-icons";
 import { MsgImgCentralizada } from "../../../Globais/Mensagens/MsgImgCentralizada";
 import Img404 from "../../../../assets/img/img-404.svg";
+import ReactTooltip from "react-tooltip";
 
 const filtroInicial = {
   especificacao_bem: "",
@@ -206,14 +207,32 @@ export const ListaBemProduzido = (props) => {
           <Column
             header="Ação"
             style={{ width: "70px", textAlign: "center" }}
-            body={() => (
-              <FontAwesomeIcon icon={faEye} style={{ color: '#888', fontSize: '1.2em' }} />
-            )}
+            body={() => {
+              return (
+                <>
+                  <button
+                    data-tip="Visualizar despesa"
+                    data-for={`tooltip-visualizar-despesa-${despesa.despesa_uuid}`}
+                    onClick={() => navigate(`/edicao-de-despesa/${despesa.despesa_uuid}`, { state: { origem: 'situacao_patrimonial' } })}
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+                    aria-label="Visualizar despesa"
+                  >
+                    <FontAwesomeIcon icon={faEye} style={{ color: '#888', fontSize: '1.2em' }} />
+                  </button>
+                  <ReactTooltip id={`tooltip-visualizar-despesa-${despesa.despesa_uuid}`} effect="solid" place="top" />
+                </>
+              )
+            }}
           />
         </DataTable>
       ))}
       <Flex justify="end" gap={8} className="mt-1 mb-4 mx-4">
-        <button className="btn btn-outline-success float-right">Editar bem</button>
+        <button 
+          className="btn btn-outline-success float-right"
+          onClick={() => navigate(`/edicao-bem-produzido/${data.bem_produzido_uuid}`)}
+        >
+          Editar bem
+        </button>
       </Flex>
     </>
   );
@@ -283,7 +302,7 @@ export const ListaBemProduzido = (props) => {
             expandedRows={expandedRows}
             rowExpansionTemplate={expandedRowTemplate}
             dataKey="uuid"
-            className="no-stripe mt-3"
+            className="no-stripe mt-3 no-hover"
           >
             <Column 
               field="numero_documento" 
@@ -348,7 +367,20 @@ export const ListaBemProduzido = (props) => {
                   );
                 }
                 if (rowData.tipo === "Adquirido") {
-                  return <FontAwesomeIcon icon={faEye} style={{ color: '#888', fontSize: '1.2em' }} />;
+                  return (
+                    <>
+                      <button
+                        data-tip="Visualizar despesa"
+                        data-for={`tooltip-visualizar-despesa-${rowData.despesa_uuid}`}
+                        onClick={() => navigate(`/edicao-de-despesa/${rowData.despesa_uuid}`, { state: { origem: 'situacao_patrimonial' } })}
+                        style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+                        aria-label="Visualizar despesa"
+                      >
+                        <FontAwesomeIcon icon={faEye} style={{ color: '#888', fontSize: '1.2em' }} />
+                      </button>
+                      <ReactTooltip id={`tooltip-visualizar-despesa-${rowData.despesa_uuid}`} effect="solid" place="top" />
+                    </>
+                  );
                 }
                 return null;
               }}

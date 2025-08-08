@@ -13,5 +13,13 @@ export const useGetPrioridadeTabelas = () => {
     staleTime: 5000, // 5 segundos
     refetchOnWindowFocus: true, // Caso saia da aba e voltar ele refaz a requisição
   });
-  return { isLoading, isError, prioridades: data.prioridades, recursos: data.recursos, tipos_aplicacao: data.tipos_aplicacao, error, refetch };
+  return {
+    isLoading,
+    isError,
+    prioridadesTabelas: data.prioridades,
+    recursos: data.recursos,
+    tipos_aplicacao: data.tipos_aplicacao,
+    error,
+    refetch
+  };
 };

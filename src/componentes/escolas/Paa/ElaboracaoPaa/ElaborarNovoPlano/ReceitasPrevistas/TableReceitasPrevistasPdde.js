@@ -64,36 +64,40 @@ const TableReceitasPrevistasPdde = ({ activeTab, tabs, setActiveTab }) => {
       {tabs.length > 0 && activeTab === tabs[0].id ? (
         <Spin spinning={isLoading}>
           <DataTable
-            className="tabela-receitas-previstas mt-4"
+            className="tabela-receitas-previstas mt-4 no-hover"
             value={[...programas, totalRow]}
             rowClassName={rowClassName}
           >
-            <Column field="nome" header="Recursos" body={nomeTemplate} />
+            <Column field="nome" header="Recursos" body={nomeTemplate} style={{width: '15%'}} />
             <Column
               field="total_valor_custeio"
               header="Custeio (R$)"
               body={moneyTemplate("total_valor_custeio")}
               align="right"
+              style={{width: '15%'}}
             />
             <Column
               field="total_valor_capital"
               header="Capital (R$)"
               body={moneyTemplate("total_valor_capital")}
               align="right"
+              style={{width: '15%'}}
             />
             <Column
               field="total_valor_livre_aplicacao"
               header="Livre Aplicação (R$)"
               body={moneyTemplate("total_valor_livre_aplicacao")}
               align="right"
+              style={{width: '20%'}}
             />
             <Column
               field="total"
               header="Total (R$)"
               body={moneyTemplate("total")}
               align="right"
+              style={{width: '15%'}}
             />
-            <Column field="acoes" header="Ações" body={acoesTemplate} />
+            <Column field="acoes" header="Ações" body={acoesTemplate} style={{width: '10%'}} />
           </DataTable>
         </Spin>
       ) : null}

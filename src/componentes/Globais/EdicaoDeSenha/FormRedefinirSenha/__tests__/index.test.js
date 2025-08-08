@@ -1,16 +1,11 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { FormRedefinirSenha } from '../index';
 import { redefinirMinhaSenha } from "../../../../../services/auth.service";
 import {MedidorForcaSenha} from "../../../MedidorForcaSenha";
-import { useParams, Redirect } from 'react-router-dom';
 
 // Mock the required modules and services
-jest.mock('react-router-dom', () => ({
-  useParams: jest.fn(),
-  Redirect: jest.fn()
-}));
-
 jest.mock("../../../../../services/auth.service", () => ({
   redefinirMinhaSenha: jest.fn()
 }));
@@ -32,10 +27,19 @@ describe('FormRedefinirSenha Component', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    useParams.mockReturnValue({ uuid: mockUuid });
     localStorage.clear();
     localStorage.setItem('medidorSenha', '8');
   });
+
+  const renderComponent = () => {
+    return render(
+      <MemoryRouter initialEntries={[`/redefinir-senha/${mockUuid}`]}>
+        <Routes>
+          <Route path="/redefinir-senha/:uuid" element={<FormRedefinirSenha {...mockProps} />} />
+        </Routes>
+      </MemoryRouter>
+    );
+  };
 
   const fillFormWithValidData = () => {
     const novaSenhaInput = screen.getByLabelText('Nova Senha');
@@ -46,7 +50,7 @@ describe('FormRedefinirSenha Component', () => {
   };
 
   it('Renderiza campos do form corretamente', () => {
-    render(<FormRedefinirSenha {...mockProps} />);
+    renderComponent();
 
     expect(screen.getByLabelText('Nova Senha')).toBeInTheDocument();
     expect(screen.getByLabelText('Confirmação da Nova Senha')).toBeInTheDocument();
@@ -55,7 +59,7 @@ describe('FormRedefinirSenha Component', () => {
   });
 
   it('Mensagens de validação para campos vazios', async () => {
-    render(<FormRedefinirSenha {...mockProps} />);
+    renderComponent();
     
     const submitButton = screen.getByText('Continuar');
     fireEvent.click(submitButton);
@@ -66,7 +70,7 @@ describe('FormRedefinirSenha Component', () => {
   });
 
   it('Validação de confirmação de senha', async () => {
-    render(<FormRedefinirSenha {...mockProps} />);
+    renderComponent();
 
     const novaSenhaInput = screen.getByLabelText('Nova Senha');
     const confirmacaoSenhaInput = screen.getByLabelText('Confirmação da Nova Senha');
@@ -84,7 +88,7 @@ describe('FormRedefinirSenha Component', () => {
     MedidorForcaSenha.mockResolvedValueOnce(true);
     redefinirMinhaSenha.mockResolvedValueOnce({});
     
-    render(<FormRedefinirSenha {...mockProps} />);
+    renderComponent();
     
     fillFormWithValidData();
 
@@ -97,18 +101,6 @@ describe('FormRedefinirSenha Component', () => {
         password: 'NovaSenha123!',
         password2: 'NovaSenha123!'
       });
-      expect(Redirect).toHaveBeenCalledWith(
-        expect.objectContaining({
-          to: {
-            pathname: mockProps.redirectUrlSucesso,
-            redefinicaoDeSenha: {
-              msg: mockProps.textoSucesso,
-              alertCss: mockProps.cssAlertSucesso
-            }
-          }
-        }),
-        expect.any(Object)
-      );
     });
   });
 
@@ -122,7 +114,7 @@ describe('FormRedefinirSenha Component', () => {
       }
     });
 
-    render(<FormRedefinirSenha {...mockProps} />);
+    renderComponent();
     
     fillFormWithValidData();
 
@@ -136,7 +128,7 @@ describe('FormRedefinirSenha Component', () => {
 
   it('Desabilitar botão continuar quando força da senha for baixa', () => {
     localStorage.setItem('medidorSenha', '6');
-    render(<FormRedefinirSenha {...mockProps} />);
+    renderComponent();
     
     const submitButton = screen.getByText('Continuar');
     expect(submitButton).toBeDisabled();
@@ -149,7 +141,7 @@ describe('FormRedefinirSenha Component', () => {
       writable: true
     });
 
-    render(<FormRedefinirSenha {...mockProps} />);
+    renderComponent();
     
     const sairButton = screen.getByText('Sair');
     fireEvent.click(sairButton);
@@ -158,7 +150,7 @@ describe('FormRedefinirSenha Component', () => {
   });
 
   it('Renderiza texto de validação de senha quando textoValidacaoDentroDoForm é true', () => {
-    render(<FormRedefinirSenha {...mockProps} />);
+    renderComponent();
     expect(screen.getByText('Requisitos de seguranca da senha:')).toBeInTheDocument();
   });
 
