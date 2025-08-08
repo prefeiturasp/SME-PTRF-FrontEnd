@@ -1,12 +1,21 @@
 .paginacao-composicoes{
   text-align: right !important;
   padding: 0 10px 0 0 !important;
+  display: flex !important;
+  justify-content: flex-end !important;
+}
+
+.paginacao-composicoes .p-paginator {
+  display: flex !important;
+  justify-content: flex-end !important;
+  width: 100% !important;
 }
 
 .paginacao-composicoes .p-paginator-prev, .paginacao-composicoes .p-paginator-next{
   height: 3em !important;
   min-width: 3em !important;
   color: #FFFFFF !important;
+  margin: 0 2px !important;
 }
 
 .paginacao-composicoes .p-paginator-element{

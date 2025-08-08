@@ -303,6 +303,10 @@ const DetalhamentoRecursosProprios = () => {
     setCurrentPage(event.page + 1);
   };
 
+  const rowClassName = (rowData) => {
+    return rowData.fixed ? "total-row" : "";
+  };
+
   const currentRowData = useMemo(() => {
     return items.find((item) => item.uuid === currentItem);
   }, [items, currentItem]);
@@ -334,8 +338,9 @@ const DetalhamentoRecursosProprios = () => {
         </Flex>
 
         <DataTable
-          className="tabela-recursos-proprios-lista"
+          className="tabela-recursos-proprios-lista no-hover"
           value={[...items, { fonte_recurso: { nome: "TOTAL" }, fixed: true }]}
+          rowClassName={rowClassName}
         >
           <Column
             field="fonte_recurso.nome"
