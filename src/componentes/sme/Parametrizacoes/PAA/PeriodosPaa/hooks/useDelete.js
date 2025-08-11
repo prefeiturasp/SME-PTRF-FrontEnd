@@ -13,12 +13,12 @@ export const useDelete = () => {
         mutationFn: (uuid) => {
             return deletePeriodosPaa(uuid);
         },
-        onSuccess: () => {
+        onSuccess: (response) => {
             queryClient.invalidateQueries(['periodos-paa']).then();
             setShowModalForm(false);
             toastCustom.ToastCustomSuccess(
                 "Remoção do período efetuada com sucesso.", 
-                "O período foi removido com sucesso."
+                response.mensagem || "O período foi removido com sucesso."
             )
         },
         onError: (error) => {
