@@ -38,6 +38,11 @@ const antdTheme = {
     colorError: "rgba(184, 0, 0, 1)",
   },
   components: {
+    Alert: {
+      defaultPadding: '2px 4px',
+      withDescriptionIconSize: 18,
+      withDescriptionPadding: '3px 6px'
+    },
     Input: {
       controlHeight: 38,
     },
