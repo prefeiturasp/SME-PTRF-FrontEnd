@@ -2,18 +2,16 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { IconButton } from "../../../../../Globais/UI/Button/IconButton";
 import { useState } from 'react';
-import { Button, Space } from 'antd';
+import { Space } from 'antd';
 import { formatMoneyBRL } from "../../../../../../utils/money";
+import { BadgeCustom } from './BadgeCustom';
 
 
-export const Tabela = ({ data, handleEditar }) => {
+export const Tabela = ({ data, handleEditar, handleDuplicar }) => {
     const [selectedItems, setSelectedItems] = useState([]);
 
     const handleExcluir = (rowData) => {
         // Implementar lógica de exclusão
-    }
-    const handleDuplicar = (rowData) => {
-        // Implementar lógica de duplicação
     }
 
     const handleSelectAll = (e) => {
@@ -72,18 +70,10 @@ export const Tabela = ({ data, handleEditar }) => {
                     <>
                         <div>{rowData.acao}</div>
                         {!rowData.prioridade &&
-                            <Button
-                                variant="solid"
-                                size="small"
-                                style={
-                                    {
-                                        backgroundColor:'#a4a4a4',
-                                        borderColor:'transparent',
-                                        color:'white',
-                                        fontSize: '11px',
-                                        height: 'auto'
-                                    }
-                                }>Não priorizado</Button>
+                            <BadgeCustom
+                                buttonColor='#a4a4a4'
+                                buttonLabel='Não priorizado'
+                            />
                         }
                     </>
                 )}
@@ -112,7 +102,18 @@ export const Tabela = ({ data, handleEditar }) => {
                 style={{ width: "120px", textAlign: "center" }}
                 bodyStyle={{ textAlign: 'center' }}
                 body={(rowData) => (
-                    <>{formatMoneyBRL(rowData.valor_total)}</>
+                    <>
+                        {!rowData.valor_total ?
+                            <BadgeCustom
+                                badge={true}
+                                buttonColor='#62a9ad'
+                                buttonLabel='Informar Valor'
+                                handleClick={() => handleEditar(rowData, true)}
+                            />
+                            :
+                            <>{formatMoneyBRL(rowData.valor_total)}</>
+                        }
+                    </>
                 )}
             />
             <Column
@@ -153,7 +154,7 @@ export const Tabela = ({ data, handleEditar }) => {
                             />
                         </Space>
                     );
-                 }}
+                }}
             />
         </DataTable>
     )

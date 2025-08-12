@@ -13,7 +13,7 @@ export const usePatchPrioridade = (onClose) => {
       onClose && onClose();
     },
     onError: (e) => {
-      toastCustom.ToastCustomError("Houve um erro ao alterar a prioridade.");
+      toastCustom.ToastCustomError(e?.response?.data?.mensagem || "Houve um erro ao alterar a prioridade.");
     },
   });
 

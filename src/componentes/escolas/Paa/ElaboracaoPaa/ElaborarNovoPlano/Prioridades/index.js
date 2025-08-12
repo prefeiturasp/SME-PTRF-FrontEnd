@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
-import { Flex, Button, Spin } from 'antd';
+import { useState } from 'react';
+import { Flex, Button, Spin, Alert, Typography } from 'antd';
 import { Paginator } from "primereact/paginator";
 import ModalFormAdicionarPrioridade from './ModalFormAdicionarPrioridade';
 import { useGetPrioridadeTabelas } from "./hooks/useGetPrioridadeTabelas";
 import { useGetPrioridades } from "./hooks/useGetPrioridades";
+import { usePostDuplicarPrioridade } from "./hooks/usePostPrioridade";
 import { useGetTiposDespesaCusteio } from "./hooks/useGetTiposDespesaCusteio";
 import { FormFiltros } from './FormFiltros';
 import { MsgImgCentralizada } from "../../../../../Globais/Mensagens/MsgImgCentralizada";
@@ -23,12 +24,13 @@ const filtroInicial = {
 
 const Prioridades = () => {
   const [filtros, setFiltros] = useState(filtroInicial);
+  const [ultimoDuplicado, setUltimoDuplicado] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [firstPage, setFirstPage] = useState(0);
   const [modalForm, setModalForm] = useState({ open: false, tabelas: null, formModal: null });
   const { prioridadesTabelas, recursos, tipos_aplicacao } = useGetPrioridadeTabelas();
   const { tipos_despesa_custeio } = useGetTiposDespesaCusteio();
-  const { isLoading: isLoadingPrioridades, prioridades, quantidade, refetch } = useGetPrioridades(filtros, currentPage);
+  const { isFetching: isLoadingPrioridades, prioridades, quantidade, refetch } = useGetPrioridades(filtros, currentPage);
 
   const dadosTabelas = {
     prioridades: prioridadesTabelas,
@@ -69,6 +71,16 @@ const Prioridades = () => {
     setModalForm({ open: true, tabelas: dadosTabelas, formModal: rowData, focusValor: focusValor });
   };
 
+  const { mutationPost: mutationPostDuplicar } = usePostDuplicarPrioridade();
+
+  const onDuplicar = (rowData) => {
+    mutationPostDuplicar.mutate({uuid: rowData.uuid});
+  };
+
+  const existePrioridadesSemValor = () => {
+    return prioridades.some((prioridade) => !prioridade?.valor_total);
+  };
+
   return (
     <div>
       <Flex gutter={8} justify="space-between" align="flex-end" className="mb-4">
@@ -97,16 +109,25 @@ const Prioridades = () => {
         <>
           <p className="mb-2 mt-4">
             <Flex justify="space-between" align="center">
-              <span>
-                Exibindo <span className="total">{prioridades?.length}</span> de{" "}
-                <span className="total">{quantidade}</span>
-              </span>
+              {existePrioridadesSemValor() && <Alert
+                showIcon
+                className="mr-2"
+                type="warning"
+                style={{flex: 'auto', fontSize: '13px'}}
+                description={<>O campo <b>Valor Total</b> é de preenchimento obrigatório.</>}
+              />}
+
+              <Typography.Text type="secondary">
+                {`Exibindo ${prioridades?.length} de ${quantidade} registros`}
+              </Typography.Text>
 
             </Flex>
           </p>
           <Tabela
             data={prioridades}
-            handleEditar={onEditar}/>
+            handleEditar={onEditar}
+            handleDuplicar={onDuplicar}
+          />
           {quantidade > 20 && (
             <Paginator
               first={firstPage}
