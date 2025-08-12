@@ -1,17 +1,11 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { Form, Row, Col, Select, Button, Flex } from 'antd';
+import { useState, useMemo } from 'react';
+import { Form, Row, Col, Select, Flex } from 'antd';
 import { useGetAcoesAssociacao } from '../ReceitasPrevistas/hooks/useGetAcoesAssociacao';
 import { useGetAcoesPDDE } from './hooks/useGetAcoesPDDE';
 import { useGetEspecificacoes } from './hooks/useGetEspecificacoes';
-import { useGetPrioridades } from './hooks/useGetPrioridades';
-
-const { Option } = Select;
 
 export const FormFiltros = ({
-  recursos = [],
-  prioridadesTabelas = [],
-  tipos_aplicacao = [],
-  tipos_despesa_custeio = [],
+  tabelas= {},
   onFiltrar,
   onFiltrosChange,
   onLimparFiltros,
@@ -23,88 +17,90 @@ export const FormFiltros = ({
   const [selectedTipoDespesaCusteio, setSelectedTipoDespesaCusteio] = useState('');
   const [selectedProgramaPdde, setSelectedProgramaPdde] = useState('');
   const [selectedAcaoPdde, setSelectedAcaoPdde] = useState('');
-  const [filtros, setFiltros] = useState({});
 
   // Hooks para buscar ações
-  const { data: acoesAssociacao, isLoading: isLoadingAcoesAssociacao } = useGetAcoesAssociacao({ enabled: selectedRecurso === 'PTRF' });
-  const { acoesPdde, isLoading: isLoadingAcoesPDDE } = useGetAcoesPDDE({ enabled: selectedRecurso === 'PDDE' });
-  const { especificacoes, isLoading: isLoadingEspecificacoes } = useGetEspecificacoes(
+  const { data: acoesAssociacao } = useGetAcoesAssociacao({ enabled: selectedRecurso === 'PTRF' });
+  const { acoesPdde } = useGetAcoesPDDE({ enabled: selectedRecurso === 'PDDE' });
+  const { especificacoes } = useGetEspecificacoes(
     selectedTipoAplicacao, 
     selectedTipoAplicacao === 'CUSTEIO' ? selectedTipoDespesaCusteio : ""
   );
-  const { isLoading: isLoadingPrioridades, prioridades, quantidade, refetch } = useGetPrioridades(filtros);
 
   // Método genérico para campos que não têm onChange específico
   const handleFieldChange = (fieldName, value) => {
     onFiltrosChange(fieldName, value);
   };
 
-  const prioridadesOptions = (prioridadesTabelas || []).map(item => ({
+  const prioridadesOptions = (tabelas?.prioridades||[]).map(item => ({
     value: item.key,
     label: item.value
   }));
 
-  const recursosOptions = (recursos || []).map(item => ({
+  const recursosOptions = (tabelas?.recursos||[]).map(item => ({
     value: item.key,
     label: item.value
   }));
 
-  const tiposAplicacaoOptions = (tipos_aplicacao || []).map(item => ({
+  const tiposAplicacaoOptions = (tabelas?.tipos_aplicacao||[]).map(item => ({
     value: item.key,
     label: item.value
   }));
 
-  const tiposDespesaCusteioOptions = (tipos_despesa_custeio || []).map(item => ({
-    value: item.id,
+  const tiposDespesaCusteioOptions = Array.isArray(tabelas?.tipos_despesa_custeio) ? tabelas?.tipos_despesa_custeio.map(item => ({
+    value: item.id, // considera id para reaproveitamento de API de Especificacoes com filtro em ?tipos_custeio=<id>
     label: item.nome
-  }));
+  })): [];
 
-  const acoesAssociacaoOptions = (acoesAssociacao || []).map(item => ({
+  const acoesAssociacaoOptions = (acoesAssociacao||[]).map(item => ({
     value: item.uuid,
     label: item.acao.nome
   }));
 
-  const especificacoesOptions = (especificacoes || []).map(item => ({
+  const especificacoesOptions = (especificacoes||[]).map(item => ({
     value: item.uuid,
     label: item.descricao
-  })) || [];
+  }));
 
   const programasPddeOptions = useMemo(() => {
+    // A lista de programa é extraída da lista de ações PDDE.
+    // Podendo haver várias Açoes com o mesmo programa PDDE.
+    // Considerando isso, esta função extrai apenas os objetos únicos de programas PDDE
     if (!acoesPdde) {
       return [];
     }
 
-    const acoes = acoesPdde.results || acoesPdde;
-    
+    const acoes = acoesPdde?.results || acoesPdde;
+
     if (!acoes || !Array.isArray(acoes)) {
       return [];
     }
-    
-    const programasUnicos = new Map();
-    acoes.forEach((acao) => {
-      if (acao.programa_objeto?.uuid && acao.programa_objeto?.nome) {
-        programasUnicos.set(acao.programa_objeto.uuid, acao.programa_objeto.nome);
-      }
-    });
-    
-    return (Array.from(programasUnicos.entries()) || []).map(([uuid, nome]) => ({
-      value: uuid,
-      label: nome
-    }));
+
+    const programas_unicos = [
+      ...new Map(
+        acoes
+          .map(acao => ({...acao.programa_objeto}))
+          .map(item => [item.uuid, item])
+        ).values()
+    ]
+
+    const programas = programas_unicos.map(item => ({
+      value: item.uuid,
+      label: item.nome
+    }))
+    return programas
   }, [acoesPdde]);
 
   const acoesPddeFiltradas = useMemo(() => {
     if (!acoesPdde || !selectedProgramaPdde) return [];
-    
+
     const acoes = acoesPdde.results || acoesPdde;
     if (!acoes || !Array.isArray(acoes)) return [];
-    
-    return (acoes || [])
-      .filter(acao => acao.programa_objeto?.uuid === selectedProgramaPdde)
-      .map(acao => ({
-        value: acao.uuid,
-        label: acao.nome
-      }));
+
+    const acoesFiltradas = (acoes || []).filter(acao => acao.programa_objeto?.uuid === selectedProgramaPdde);
+    return Array.isArray(acoesFiltradas) ? acoesFiltradas.map(acao => ({
+      value: acao.uuid,
+      label: acao.nome
+    })) : [];
   }, [acoesPdde, selectedProgramaPdde]);
 
   const handleToggleFiltros = () => setShowAll(prev => !prev);
@@ -160,8 +156,8 @@ export const FormFiltros = ({
       especificacao_material: undefined
     });
 
-    const tiposDespesaCusteioUuid = tipos_despesa_custeio?.find(item => item.id == value);
-    onFiltrosChange('tipo_despesa_custeio__uuid', tiposDespesaCusteioUuid.uuid);
+    const tiposDespesaCusteioUuid = (tabelas?.tipos_despesa_custeio||[]).find(item => item.id === value);
+    onFiltrosChange('tipo_despesa_custeio__uuid', tiposDespesaCusteioUuid?.uuid);
     onFiltrosChange('especificacao_material__uuid', undefined);
   };
 
@@ -180,6 +176,11 @@ export const FormFiltros = ({
       tipo_despesa_custeio: undefined,
       especificacao_material: undefined
     });
+    setSelectedRecurso('');
+    setSelectedProgramaPdde('');
+    setSelectedAcaoPdde('');
+    setSelectedTipoAplicacao('');
+    setSelectedTipoDespesaCusteio('');
     onLimparFiltros && onLimparFiltros();
   };
 
@@ -187,7 +188,7 @@ export const FormFiltros = ({
     <Form form={form} layout="vertical" style={{ marginBottom: 24 }} onFinish={onSubmit}>
       <Row gutter={16} align="middle">
         <Col span={8}>
-          <Form.Item label="Recurso" name="recurso">
+          <Form.Item label="Filtrar por recurso" name="recurso">
             <Select
               placeholder="Selecione o recurso"
               style={{ width: "100%" }}
@@ -200,22 +201,20 @@ export const FormFiltros = ({
         {!showAll ? (
           <>
           <Col span={16}>
-            {/* <Flex gap={8} className="mt-4"> */}
-                <button className="btn btn-outline-success mx-2">Filtrar</button>
-                <button
-                    className="btn btn-success"
-                    onClick={handleToggleFiltros}
-                    type="button"
-                >
-                    Mais Filtros
-                </button>
-            {/* </Flex> */}
+              <button className="btn btn-outline-success mx-2">Filtrar</button>
+              <button
+                  className="btn btn-success"
+                  onClick={handleToggleFiltros}
+                  type="button"
+              >
+                  Mais Filtros
+              </button>
           </Col>
           </>
         ) : (
         <>
             <Col span={8}>
-              <Form.Item label="Prioridade" name="prioridade">
+              <Form.Item label="Filtrar por prioridade" name="prioridade">
                 <Select 
                   placeholder="Selecione a prioridade"
                   onChange={(value) => handleFieldChange('prioridade', value)}
@@ -225,13 +224,12 @@ export const FormFiltros = ({
               </Form.Item>
             </Col>
             <Col span={8}>
-              <Form.Item label="Programa" name="programa_pdde">
+              <Form.Item label="Filtrar por programa" name="programa_pdde">
                 <Select
                   placeholder="Selecione o programa"
                   style={{ width: "100%" }}
                   options={programasPddeOptions}
                   onChange={handleProgramaPddeChange}
-                  loading={isLoadingAcoesPDDE}
                   disabled={selectedRecurso !== 'PDDE'}
                   allowClear
                 />
@@ -239,11 +237,10 @@ export const FormFiltros = ({
             </Col>
             {selectedRecurso !== 'PDDE' && (
               <Col span={8}>
-                <Form.Item label="Ação" name="acao_associacao">
+                <Form.Item label="Filtrar por ação" name="acao_associacao">
                   <Select
                     placeholder="Selecione a ação"
                     disabled={selectedRecurso !== 'PTRF'}
-                    loading={isLoadingAcoesAssociacao}
                     style={{ width: "100%" }}
                     options={acoesAssociacaoOptions}
                     onChange={(value) => handleFieldChange('acao_associacao__uuid', value)}
@@ -254,7 +251,7 @@ export const FormFiltros = ({
             )}
             {selectedRecurso === 'PDDE' && (
               <Col span={8}>
-                <Form.Item label="Ação PDDE" name="acao_pdde">
+                <Form.Item label="Filtrar por ação" name="acao_pdde">
                   <Select
                     placeholder="Selecione a ação"
                     style={{ width: "100%" }}
@@ -267,43 +264,34 @@ export const FormFiltros = ({
               </Col>
             )}
             <Col span={8}>
-              <Form.Item label="Tipo de Aplicação" name="tipo_aplicacao">
+              <Form.Item label="Filtrar por tipo de aplicação" name="tipo_aplicacao">
                 <Select 
                   placeholder="Selecione o tipo de aplicação"
                   options={tiposAplicacaoOptions}
                   onChange={handleTipoAplicacaoChange}
                   allowClear
-                >
-                  {(tipos_aplicacao || []).map(t => (
-                    <Option key={t.key} value={t.key}>{t.value}</Option>
-                  ))}
-                </Select>
+                />
               </Form.Item>
             </Col>
             <Col span={8}>
-              <Form.Item label="Tipo de Despesa" name="tipo_despesa_custeio">
+              <Form.Item label="Filtrar por tipo de despesa" name="tipo_despesa_custeio">
                 <Select 
-                  placeholder="Selecione"
+                  placeholder="Selecione o tipo de despesa"
                   options={tiposDespesaCusteioOptions}
                   onChange={handleTipoDespesaCusteioChange}
                   disabled={selectedTipoAplicacao !== 'CUSTEIO'}
                   allowClear
-                >
-                  {(tipos_despesa_custeio || []).map(t => (
-                    <Option key={t.id} value={t.id}>{t.nome}</Option>
-                  ))}
-                </Select>
+                />
               </Form.Item>
             </Col>
             <Col span={8}>
-              <Form.Item label="Especificação de Material, Bens ou Serviços" name="especificacao_material">
+              <Form.Item label="Filtrar por especificação de material, bens ou serviços" name="especificacao_material">
                 <Select
                   placeholder="Selecione a especificação do bem, material ou serviço"
                   showSearch
                   optionFilterProp="label"
                   style={{ width: "100%" }}
                   options={especificacoesOptions}
-                  loading={isLoadingEspecificacoes}
                   onChange={(value) => handleFieldChange('especificacao_material__uuid', value)}
                   allowClear
                 />

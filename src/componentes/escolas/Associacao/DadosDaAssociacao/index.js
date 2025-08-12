@@ -14,7 +14,7 @@ import {visoesService} from "../../../../services/visoes.service";
 import { setStatusCadastro, resetStatusCadastro } from "../../../../store/reducers/componentes/escolas/Associacao/DadosAssociacao/StatusCadastro/actions";
 import {toastCustom} from "../../../Globais/ToastCustom";
 import "../associacao.scss"
-import { getCCMMask } from "../../../../utils/masks";
+import { getCCMMask } from "../../../../utils/Mascaras";
 import { validarDAC11A } from "../../../../utils/validators";
 
 export const DadosDaAsssociacao = () => {
@@ -77,7 +77,7 @@ export const DadosDaAsssociacao = () => {
         let erros = {};
 
         const digits = values.ccm.replace(/\D/g, '');
-        if (digits.length === 12 && !validarDAC11A(values.ccm)) {
+        if (digits.length > 8 && !validarDAC11A(values.ccm)) {
             erros = {
                 ccm: 'CCM inválido. Verifique os 12 dígitos'
             }

@@ -9,7 +9,7 @@ import {faExclamationCircle} from '@fortawesome/free-solid-svg-icons'
 import { visoesService } from "../../../../../services/visoes.service";
 import ReactTooltip from "react-tooltip";
 import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
-import { getCCMMask } from "../../../../../utils/masks";
+import { getCCMMask } from "../../../../../utils/Mascaras";
 
 const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitModalFormAssociacoes, listaDePeriodos, tabelaAssociacoes, carregaUnidadePeloCodigoEol, errosCodigoEol, onDeleteAssocicacaoTratamento}) => {
 

@@ -29,20 +29,30 @@ export const patchBemProduzido = async (uuid, payload) => {
   ).data;
 };
 
-export const postExluirDespesaBemProduzidoEmLote = async (uuid, payload) => {
+export const patchBemProduzidoRascunho = async (uuid, payload) => {
   return (
-    await api.post(
-      `api/bens-produzidos/${uuid}/excluir-lote/`,
+    await api.patch(
+      `api/bens-produzidos-rascunho/${uuid}/`,
       payload,
       authHeader()
     )
   ).data;
 };
 
-export const patchCadastrarBem = async (bem_produzido_uuid, payload) => {
+export const postBemProduzidoRascunho = async (payload) => {
   return (
-    await api.patch(
-      `api/bens-produzidos/${bem_produzido_uuid}/cadastrar-bem/`,
+    await api.post(
+      `api/bens-produzidos-rascunho/`,
+      { ...payload, associacao: localStorage.getItem(ASSOCIACAO_UUID) },
+      authHeader()
+    )
+  ).data;
+};
+
+export const postExluirDespesaBemProduzidoEmLote = async (uuid, payload) => {
+  return (
+    await api.post(
+      `api/bens-produzidos/${uuid}/excluir-lote/`,
       payload,
       authHeader()
     )
@@ -63,5 +73,12 @@ export const getBemProduzidosComAdquiridos = async (filters, page) => {
 };
 
 export const getTodosPeriodosComPC = async (referencia = "") => {
-  return (await api.get(`/api/periodos/?referencia=${referencia}&somente_com_pcs_entregues=true&associacao_uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader())).data;
+  return (
+    await api.get(
+      `/api/periodos/?referencia=${referencia}&somente_com_pcs_entregues=true&associacao_uuid=${localStorage.getItem(
+        ASSOCIACAO_UUID
+      )}`,
+      authHeader()
+    )
+  ).data;
 };

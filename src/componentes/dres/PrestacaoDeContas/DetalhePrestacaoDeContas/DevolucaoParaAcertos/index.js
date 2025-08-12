@@ -202,13 +202,11 @@ const DevolucaoParaAcertos = ({
                             </div>
                             <div>
                                 <Link onClick={(possuiHistoricoDeDevolucoes() || possuiAcertosSelecionados()) ? null : (event) => event.preventDefault()}
-                                        to={{
-                                            pathname: `/dre-detalhe-prestacao-de-contas-resumo-acertos/${prestacaoDeContas.uuid}`,
-                                            state: {
-                                                analisesDeContaDaPrestacao: analisesDeContaDaPrestacao,
-                                                editavel: editavel,
-                                                infoAta: infoAta,
-                                            }
+                                        to={`/dre-detalhe-prestacao-de-contas-resumo-acertos/${prestacaoDeContas.uuid}`}
+                                        state={{
+                                            analisesDeContaDaPrestacao: analisesDeContaDaPrestacao,
+                                            editavel: editavel,
+                                            infoAta: infoAta,
                                         }}
                                         className="btn btn-outline-success mr-2"
                                         disabled={!(possuiHistoricoDeDevolucoes() || possuiAcertosSelecionados())}
