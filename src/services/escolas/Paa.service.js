@@ -154,6 +154,10 @@ export const postPrioridade = async (payload) => {
   return (await api.post(`api/prioridades-paa/`, payload, authHeader())).data;
 }
 
+export const postDuplicarPrioridade = async (uuid) => {
+  return (await api.post(`api/prioridades-paa/${uuid}/duplicar/`, {}, authHeader())).data;
+}
+
 export const patchPrioridade = async (uuid, payload) => {
   return (await api.patch(`api/prioridades-paa/${uuid}/`, payload, authHeader())).data;
 }
