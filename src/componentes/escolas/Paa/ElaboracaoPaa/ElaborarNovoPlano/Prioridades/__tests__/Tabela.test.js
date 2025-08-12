@@ -26,13 +26,22 @@ const mockData = [
     tipo_aplicacao_objeto: { name: 'Custeio' },
     tipo_despesa_custeio_objeto: { nome: 'Tipo 2' },
     valor_total: 1500.25
+  },
+  {
+    uuid: 'uuid4',
+    acao: 'Teste Sem Valor',
+    especificacao_material_objeto: { nome: 'Especificação 4' },
+    tipo_aplicacao_objeto: { name: 'Custeio' },
+    tipo_despesa_custeio_objeto: { nome: 'Tipo 2' },
+    valor_total: null
   }
 ];
 
 const handleEditar = jest.fn();
+const handleDuplicar = jest.fn();
 
 const renderizaComponente = () => {
-  return render(<Tabela data={mockData} handleEditar={handleEditar} />);
+  return render(<Tabela data={mockData} handleEditar={handleEditar} handleDuplicar={handleDuplicar} />);
 };
 
 describe('Tabela', () => {
@@ -53,9 +62,11 @@ describe('Tabela', () => {
     expect(screen.getByText('Ação PTRF 1')).toBeInTheDocument();
     expect(screen.getByText('Ação PDDE 1')).toBeInTheDocument();
     expect(screen.getByText('Recurso Próprio')).toBeInTheDocument();
+    expect(screen.getByText('Teste Sem Valor')).toBeInTheDocument();
     expect(screen.getByText('Especificação 1')).toBeInTheDocument();
     expect(screen.getByText('Especificação 2')).toBeInTheDocument();
     expect(screen.getByText('Especificação 3')).toBeInTheDocument();
+    expect(screen.getByText('Especificação 4')).toBeInTheDocument();
   });
 
   test('mostra checkbox para seleção individual', () => {
@@ -138,21 +149,16 @@ describe('Tabela', () => {
   });
 
   test('renderiza tabela com dados nulos/undefined', () => {
-    const dataWithNulls = [
-      {
-        uuid: 'uuid1',
-        acao: 'Recurso Próprio',
-        especificacao_material: { nome: 'Especificação 1' },
-        tipo_aplicacao: { name: 'Custeio' },
-        tipo_despesa_custeio: null,
-        valor_total: 1000.50
-      }
-    ];
 
-    renderizaComponente();
+    render(<Tabela data={[mockData[3]]} handleEditar={handleEditar} handleDuplicar={handleDuplicar} />);
 
-    // Verifica se o valor padrão é exibido quando não há ação
-    expect(screen.getByText('Recurso Próprio')).toBeInTheDocument();
+    expect(screen.getByText('Teste Sem Valor')).toBeInTheDocument();
+    // Exibe o botão para inserir valor quando não há valor (item duplicado)
+    const botaoEditarDuplicado = screen.getByText('Informar Valor');
+    expect(botaoEditarDuplicado).toBeInTheDocument();
+    fireEvent.click(botaoEditarDuplicado)
+    expect(handleEditar).toHaveBeenCalled();
+
   });
 
   test('mantém estado de seleção ao re-renderizar', () => {
@@ -214,8 +220,8 @@ describe('Tabela', () => {
     );
 
     // Verifica se existem os 3 botões
-    const linhas_tabela = 3
-    const botoes_acoes = 3
+    const linhas_tabela = mockData.length
+    const botoes_acoes = ['Editar', 'Excluir', 'Duplicar'].length
     expect(iconButtons).toHaveLength(linhas_tabela * botoes_acoes);
 
     // Clica em cada botão
@@ -225,24 +231,44 @@ describe('Tabela', () => {
 
   });
 
-  test('chamar o handleEditar', () => {
+  test('chamar o handleEditar/Duplicar', () => {
     renderizaComponente();
-    
+
     // Encontra todos os botões de ação (Edit, Delete, Duplicate)
-    const actionButtons = screen.getAllByRole('button').slice(0, 3);
-    
-    // Filtra apenas os botões que são IconButton (baseado no aria-label)
-    const iconButtons = actionButtons.filter(button => button.getAttribute('aria-label') === 'Editar');
-    
-    // Verifica se existe 1 botão
-    expect(iconButtons).toHaveLength(1);
-    
-    // Clica em cada botão
-    iconButtons.forEach(button => {
+    const actionsEditar = document.querySelectorAll('button[aria-label="Editar"]');
+    expect(actionsEditar).toHaveLength(mockData.length);
+
+    const actionsExcluir = document.querySelectorAll('button[aria-label="Excluir"]');
+    expect(actionsExcluir).toHaveLength(mockData.length);
+
+    const actionsDuplicar = document.querySelectorAll('button[aria-label="Duplicar"]');
+    expect(actionsDuplicar).toHaveLength(mockData.length);
+
+    // Clica em cada botão Editar
+    actionsEditar.forEach(button => {
+      expect(button).toBeInTheDocument();
+      expect(button).toBeEnabled();
       fireEvent.click(button);
     });
+    expect(handleEditar).toHaveBeenCalledTimes(mockData.length);
+    
+    // Clica em cada botão Duplicar
+    actionsDuplicar.forEach(button => {
+      expect(button).toBeInTheDocument();
+      expect(button).toBeEnabled();
+      fireEvent.click(button);
+    });
+    expect(handleDuplicar).toHaveBeenCalledTimes(mockData.length);
 
-    expect(handleEditar).toHaveBeenCalledTimes(1);
+    // TODO: após implementar task de exclusão
+    // // Clica em cada botão Excluir
+    // actionsExcluir.forEach(button => {
+    //   expect(button).toBeInTheDocument();
+    //   expect(button).toBeEnabled();
+    //   fireEvent.click(button);
+    // });
+    // expect(handleEditar).toHaveBeenCalledTimes(mockData.length);
+
 
   });
 }); 
