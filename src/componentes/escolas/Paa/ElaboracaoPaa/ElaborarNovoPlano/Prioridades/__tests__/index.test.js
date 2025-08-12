@@ -100,6 +100,14 @@ const mockPrioridades = [
     tipo_aplicacao_objeto: { name: 'Capital' },
     tipo_despesa_custeio_objeto: null,
     valor_total: 2000.75
+  },
+  {
+    uuid: 'uuid3',
+    acao: 'Teste Sem Valor',
+    especificacao_material_objeto: { nome: 'Especificação 2' },
+    tipo_aplicacao_objeto: { name: 'Capital' },
+    tipo_despesa_custeio_objeto: null,
+    valor_total: null
   }
 ];
 
@@ -305,6 +313,30 @@ describe('Prioridades', () => {
       fireEvent.click(botaoEditar);
 
       expect(botaoEditar).toBeInTheDocument();
+  });
 
+  test('valida a mensagem de alerta de valor total com preenchimento obrigatório existente', () => {
+    useGetPrioridades.mockReturnValue({
+      isLoading: false,
+      prioridades: mockPrioridades,
+      quantidade: mockPrioridades.length,
+      refetch: jest.fn()
     });
+    renderWithQueryClient(<Prioridades />);
+
+    expect(screen.getByRole('alert')).toBeInTheDocument();
+  });
+
+  test('valida a mensagem de alerta de valor total com preenchimento obrigatório NÃO existente', () => {
+    const prioridades = mockPrioridades.filter(prioridade => !!prioridade.valor_total)
+    useGetPrioridades.mockReturnValue({
+      isLoading: false,
+      prioridades: prioridades,
+      quantidade: prioridades.length,
+      refetch: jest.fn()
+    });
+    renderWithQueryClient(<Prioridades />);
+
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+  });
 }); 
