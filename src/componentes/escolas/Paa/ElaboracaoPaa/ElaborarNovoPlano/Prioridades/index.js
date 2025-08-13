@@ -1,13 +1,16 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Flex, Button, Spin, Alert, Typography } from 'antd';
 import { Paginator } from "primereact/paginator";
 import ModalFormAdicionarPrioridade from './ModalFormAdicionarPrioridade';
 import { useGetPrioridadeTabelas } from "./hooks/useGetPrioridadeTabelas";
 import { useGetPrioridades } from "./hooks/useGetPrioridades";
 import { usePostDuplicarPrioridade } from "./hooks/usePostPrioridade";
+import { useDeletePrioridade } from "./hooks/useDeletePrioridade";
+import { useDeletePrioridadesEmLote } from "./hooks/useDeletePrioridadesEmLote";
 import { useGetTiposDespesaCusteio } from "./hooks/useGetTiposDespesaCusteio";
 import { FormFiltros } from './FormFiltros';
 import { MsgImgCentralizada } from "../../../../../Globais/Mensagens/MsgImgCentralizada";
+import { ModalConfirmarExclusao } from "../../../../../sme/Parametrizacoes/componentes/ModalConfirmarExclusao";
 import Img404 from "../../../../../../assets/img/img-404.svg";
 import { Tabela } from './Tabela';
 
@@ -28,9 +31,19 @@ const Prioridades = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [firstPage, setFirstPage] = useState(0);
   const [modalForm, setModalForm] = useState({ open: false, tabelas: null, formModal: null });
+  const [modalExclusao, setModalExclusao] = useState({ open: false, item: null, tipo: 'individual' });
+  const tabelaRef = useRef(null);
   const { prioridadesTabelas, recursos, tipos_aplicacao } = useGetPrioridadeTabelas();
   const { tipos_despesa_custeio } = useGetTiposDespesaCusteio();
   const { isFetching: isLoadingPrioridades, prioridades, quantidade, refetch } = useGetPrioridades(filtros, currentPage);
+  
+  const { mutationDelete } = useDeletePrioridade(() => setModalExclusao({ open: false, item: null, tipo: 'individual' }));
+  const { mutationDeleteEmLote } = useDeletePrioridadesEmLote(() => {
+    setModalExclusao({ open: false, item: null, tipo: 'lote' });
+    if (tabelaRef.current) {
+      tabelaRef.current.clearSelectedItems();
+    }
+  });
 
   const dadosTabelas = {
     prioridades: prioridadesTabelas,
@@ -75,6 +88,22 @@ const Prioridades = () => {
 
   const onDuplicar = (rowData) => {
     mutationPostDuplicar.mutate({uuid: rowData.uuid});
+  };
+
+  const onExcluir = (rowData) => {
+    setModalExclusao({ open: true, item: rowData, tipo: 'individual' });
+  };
+
+  const onExcluirEmLote = (listaUuids) => {
+    setModalExclusao({ open: true, item: { lista_uuids: listaUuids }, tipo: 'lote' });
+  };
+
+  const handleConfirmarExclusao = () => {
+    if (modalExclusao.tipo === 'individual') {
+      mutationDelete.mutate({ uuid: modalExclusao.item.uuid });
+    } else {
+      mutationDeleteEmLote.mutate({ payload: modalExclusao.item });
+    }
   };
 
   const existePrioridadesSemValor = () => {
@@ -124,9 +153,12 @@ const Prioridades = () => {
             </Flex>
           </p>
           <Tabela
+            ref={tabelaRef}
             data={prioridades}
             handleEditar={onEditar}
             handleDuplicar={onDuplicar}
+            handleExcluir={onExcluir}
+            handleExcluirEmLote={onExcluirEmLote}
           />
           {quantidade > 20 && (
             <Paginator
@@ -162,6 +194,22 @@ const Prioridades = () => {
             focusValor: false })}
         />
       )}
+
+      {/* Modal de confirmação de exclusão */}
+      <ModalConfirmarExclusao
+        open={modalExclusao.open}
+        onOk={handleConfirmarExclusao}
+        okText="Excluir"
+        onCancel={() => setModalExclusao({ open: false, item: null, tipo: 'individual' })}
+        cancelText="Cancelar"
+        cancelButtonProps={{ className: "btn-base-verde-outline" }}
+        titulo={modalExclusao.tipo === 'individual' ? "Excluir Prioridade" : "Excluir Prioridades"}
+        bodyText={
+          modalExclusao.tipo === 'individual' 
+            ? <p>Tem certeza que deseja excluir a prioridade selecionada?</p>
+            : <p>Tem certeza que deseja excluir as prioridades selecionadas?</p>
+        }
+      />
     </div>
   );
 };
