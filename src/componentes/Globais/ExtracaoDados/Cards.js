@@ -124,4 +124,11 @@ export const cards = [
         endpoint: '/api/exportacoes-dados/unidades/',
         visao: ['DRE','SME']
     },
+    {
+        titulo: 'Saldo bancário das unidades',
+        descricao: 'Arquivos com informações de saldo bancário das unidades.',
+        tags: ['CSV'],
+        endpoint: '/api/exportacoes-dados/saldos-bancarios/',
+        visao: ['DRE','SME']
+    }
 ]
