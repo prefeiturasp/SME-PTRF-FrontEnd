@@ -161,3 +161,11 @@ export const postDuplicarPrioridade = async (uuid) => {
 export const patchPrioridade = async (uuid, payload) => {
   return (await api.patch(`api/prioridades-paa/${uuid}/`, payload, authHeader())).data;
 }
+
+export const deletePrioridade = async (uuid) => {
+  return (await api.delete(`api/prioridades-paa/${uuid}/`, authHeader())).data;
+}
+
+export const deletePrioridadesEmLote = async (payload) => {
+  return (await api.post(`api/prioridades-paa/excluir-lote/`, payload, authHeader())).data;
+}

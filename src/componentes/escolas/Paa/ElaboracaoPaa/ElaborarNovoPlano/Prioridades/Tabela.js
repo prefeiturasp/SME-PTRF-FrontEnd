@@ -1,17 +1,24 @@
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { IconButton } from "../../../../../Globais/UI/Button/IconButton";
-import { useState } from 'react';
+import { useState, useCallback, forwardRef, useImperativeHandle } from 'react';
 import { Space } from 'antd';
 import { formatMoneyBRL } from "../../../../../../utils/money";
 import { BadgeCustom } from './BadgeCustom';
+import { BarraAcaoEmLote } from './BarraAcaoEmLote';
 
 
-export const Tabela = ({ data, handleEditar, handleDuplicar }) => {
+export const Tabela = forwardRef(({ data, handleEditar, handleDuplicar, handleExcluir, handleExcluirEmLote }, ref) => {
     const [selectedItems, setSelectedItems] = useState([]);
 
-    const handleExcluir = (rowData) => {
-        // Implementar lógica de exclusão
+    useImperativeHandle(ref, () => ({
+        clearSelectedItems: () => {
+            setSelectedItems([]);
+        }
+    }));
+
+    const onExcluir = (rowData) => {
+        handleExcluir(rowData);
     }
 
     const handleSelectAll = (e) => {
@@ -22,23 +29,39 @@ export const Tabela = ({ data, handleEditar, handleDuplicar }) => {
         }
     };
 
-    const handleSelectItem = (uuid, checked) => {
-        if (checked) {
-            setSelectedItems(prev => [...prev, uuid]);
-        } else {
-            setSelectedItems(prev => prev.filter(id => id !== uuid));
-        }
-    };
+    const handleSelectItem = useCallback((uuid) => {
+        setSelectedItems(prev => {
+            const newItems = prev.includes(uuid) 
+                ? prev.filter(id => id !== uuid)
+                : [...prev, uuid];
+            return newItems;
+        });
+    }, []);
 
     const isAllSelected = data && data.length > 0 && selectedItems.length === data.length;
     const isIndeterminate = selectedItems.length > 0 && selectedItems.length < data.length;
 
+    const onExcluirEmLote = () => {
+        if (selectedItems.length > 0) {
+            handleExcluirEmLote(selectedItems);
+        }
+    };
+
     return (
-        <DataTable
+        <>
+            {selectedItems.length > 0 && (
+                <BarraAcaoEmLote
+                    setPrioridadesSelecionadas={setSelectedItems}
+                    prioridadesSelecionadas={selectedItems}
+                    handleExcluirPrioridades={onExcluirEmLote}
+                />
+            )}
+            <DataTable
             value={data}
             autoLayout={true}
             dataKey="uuid"
             className="no-stripe mt-3 no-hover"
+            key={`table-${selectedItems.length}`}
             >
             <Column 
                 header={
@@ -53,14 +76,18 @@ export const Tabela = ({ data, handleEditar, handleDuplicar }) => {
                     />
                 }
                 style={{ width: "50px", textAlign: 'center' }}
-                body={(rowData) => (
-                    <input 
-                        type="checkbox" 
-                        checked={selectedItems.includes(rowData.uuid)}
-                        onChange={(e) => handleSelectItem(rowData.uuid, e.target.checked)}
-                        style={{ cursor: 'pointer' }}
-                    />
-                )}
+                body={(rowData) => {
+                    const isChecked = selectedItems.includes(rowData.uuid);
+                    
+                    return (
+                        <input 
+                            type="checkbox" 
+                            checked={isChecked}
+                            onChange={() => handleSelectItem(rowData.uuid)}
+                            style={{ cursor: 'pointer' }}
+                        />
+                    );
+                }}
             />
             <Column 
                 header="Ação" 
@@ -140,7 +167,7 @@ export const Tabela = ({ data, handleEditar, handleDuplicar }) => {
                                 style: { color: "#B40C02" },
                                 }}
                                 aria-label="Excluir"
-                                onClick={() => handleExcluir(rowData)}
+                                onClick={() => onExcluir(rowData)}
                             />
                             <IconButton
                                 className='p-2'
@@ -157,5 +184,6 @@ export const Tabela = ({ data, handleEditar, handleDuplicar }) => {
                 }}
             />
         </DataTable>
-    )
-}
+        </>
+    );
+});
