@@ -1,4 +1,5 @@
 import React from "react";
+import moment from 'moment';
 import MaskedInput from 'react-text-mask'
 import DatePicker, {registerLocale} from "react-datepicker";
 import 'react-datepicker/dist/react-datepicker.css';
@@ -9,11 +10,17 @@ registerLocale("pt", ptBR);
 
 
 export const DatePickerField = ({ dataQa="", name, id, value, className="form-control", onChange, onCalendarOpen, onCalendarClose, disabled, placeholderText, maxDate=null, wrapperClassName=null, minDate=null }) => {
+    const parseDate = (dateString) => {
+        if (!dateString) return null;
+        if (dateString instanceof Date) return dateString;
+        const date = moment(dateString, 'YYYY-MM-DD', true);
+        return date.isValid() ? date.toDate() : null;
+    };
 
     return (
         <DatePicker
             disabled={disabled}
-            selected={(value && new Date(value)) || null}
+            selected={parseDate(value)}
             onChange={val => {
                 onChange(name, val);
             }}

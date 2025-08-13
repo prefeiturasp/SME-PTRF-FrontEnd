@@ -302,7 +302,7 @@ export const ListaBemProduzido = (props) => {
             expandedRows={expandedRows}
             rowExpansionTemplate={expandedRowTemplate}
             dataKey="uuid"
-            className="no-stripe mt-3"
+            className="no-stripe mt-3 no-hover"
           >
             <Column 
               field="numero_documento" 
