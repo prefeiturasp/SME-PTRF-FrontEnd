@@ -93,3 +93,7 @@ input[data-state="invalid"] {
   color: #B40C02 !important;
   font-weight: bold;
 }
+
+.p-multiselect-panel {
+  z-index: 1060 !important;
+}
