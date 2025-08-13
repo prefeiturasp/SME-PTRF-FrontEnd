@@ -4,6 +4,7 @@ import DatePicker, {registerLocale} from "react-datepicker";
 import 'react-datepicker/dist/react-datepicker.css';
 import { ptBR } from "date-fns/locale";
 import "./datePickerField.scss";
+import moment from "moment";
 
 registerLocale("pt", ptBR);
 
