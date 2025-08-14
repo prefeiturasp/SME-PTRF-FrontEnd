@@ -205,7 +205,7 @@ const Prioridades = () => {
         cancelButtonProps={{ className: "btn-base-verde-outline" }}
         titulo={modalExclusao.tipo === 'individual' ? "Excluir Prioridade" : "Excluir Prioridades"}
         bodyText={
-          modalExclusao.tipo === 'individual' 
+          modalExclusao.tipo === 'individual'
             ? <p>Tem certeza que deseja excluir a prioridade selecionada? Esta ação não poderá ser desfeita.</p>
             : <p>Tem certeza que deseja excluir as prioridades selecionadas? Esta ação não poderá ser desfeita.</p>
         }
