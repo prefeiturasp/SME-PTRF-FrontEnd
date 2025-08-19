@@ -26,13 +26,31 @@ const mockData = [
     tipo_aplicacao_objeto: { name: 'Custeio' },
     tipo_despesa_custeio_objeto: { nome: 'Tipo 2' },
     valor_total: 1500.25
+  },
+  {
+    uuid: 'uuid4',
+    acao: 'Teste Sem Valor',
+    especificacao_material_objeto: { nome: 'Especificação 4' },
+    tipo_aplicacao_objeto: { name: 'Custeio' },
+    tipo_despesa_custeio_objeto: { nome: 'Tipo 2' },
+    valor_total: null
   }
 ];
 
 const handleEditar = jest.fn();
+const handleDuplicar = jest.fn();
+const handleExcluir = jest.fn();
+const handleExcluirEmLote = jest.fn();
 
 const renderizaComponente = () => {
-  return render(<Tabela data={mockData} handleEditar={handleEditar} />);
+  return render(<Tabela 
+    data={mockData} 
+    handleEditar={handleEditar} 
+    handleDuplicar={handleDuplicar}
+    handleExcluir={handleExcluir}
+    handleExcluirEmLote={handleExcluirEmLote}
+    ref={null}
+  />);
 };
 
 describe('Tabela', () => {
@@ -53,9 +71,11 @@ describe('Tabela', () => {
     expect(screen.getByText('Ação PTRF 1')).toBeInTheDocument();
     expect(screen.getByText('Ação PDDE 1')).toBeInTheDocument();
     expect(screen.getByText('Recurso Próprio')).toBeInTheDocument();
+    expect(screen.getByText('Teste Sem Valor')).toBeInTheDocument();
     expect(screen.getByText('Especificação 1')).toBeInTheDocument();
     expect(screen.getByText('Especificação 2')).toBeInTheDocument();
     expect(screen.getByText('Especificação 3')).toBeInTheDocument();
+    expect(screen.getByText('Especificação 4')).toBeInTheDocument();
   });
 
   test('mostra checkbox para seleção individual', () => {
@@ -81,45 +101,63 @@ describe('Tabela', () => {
     expect(firstItemCheckbox).not.toBeChecked();
   });
 
-  test('seleciona todos os itens com checkbox do header', () => {
-    renderizaComponente();
-
-    const checkboxes = screen.getAllByRole('checkbox');
+  test('seleciona todos os itens com checkbox do header', async () => {
+    renderizaComponente({
+      data: [
+        { uuid: '1', acao: 'Ação 1' },
+        { uuid: '2', acao: 'Ação 2' },
+        { uuid: '3', acao: 'Ação 3' },
+      ],
+    });
+  
+    // Pega todos os checkboxes
+    let checkboxes = screen.getAllByRole('checkbox');
     const headerCheckbox = checkboxes[0];
-    const itemCheckboxes = checkboxes.slice(1);
-
+  
     // Seleciona todos
     fireEvent.click(headerCheckbox);
-
-    // Verifica se todos os checkboxes estão marcados
+  
+    // Busca novamente os checkboxes após o re-render
+    const updatedCheckboxes = await screen.findAllByRole('checkbox');
+    const itemCheckboxes = updatedCheckboxes.slice(1);
+  
     itemCheckboxes.forEach(checkbox => {
       expect(checkbox).toBeChecked();
     });
-
+  
     // Deseleciona todos
-    fireEvent.click(headerCheckbox);
-
-    // Verifica se todos os checkboxes estão desmarcados
-    itemCheckboxes.forEach(checkbox => {
+    fireEvent.click(updatedCheckboxes[0]);
+    const uncheckedCheckboxes = await screen.findAllByRole('checkbox');
+    const itemCheckboxesAfterUncheck = uncheckedCheckboxes.slice(1);
+  
+    itemCheckboxesAfterUncheck.forEach(checkbox => {
       expect(checkbox).not.toBeChecked();
     });
   });
-
-  test('mostra estado intermediário quando alguns itens estão selecionados', () => {
-    renderizaComponente();
-
-    const checkboxes = screen.getAllByRole('checkbox');
-    const headerCheckbox = checkboxes[0];
+  
+  
+  test('mostra estado intermediário quando alguns itens estão selecionados', async () => {
+    renderizaComponente({
+      data: [
+        { uuid: '1', acao: 'Ação 1' },
+        { uuid: '2', acao: 'Ação 2' },
+      ],
+    });
+  
+    let checkboxes = screen.getAllByRole('checkbox');
     const firstItemCheckbox = checkboxes[1];
-
+  
     // Seleciona apenas o primeiro item
     fireEvent.click(firstItemCheckbox);
-
-    // Verifica se o header está em estado intermediário
+  
+    // Aguarda o re-render e pega o header atualizado
+    const updatedCheckboxes = await screen.findAllByRole('checkbox');
+    const headerCheckbox = updatedCheckboxes[0];
+  
     expect(headerCheckbox).not.toBeChecked();
     expect(headerCheckbox.indeterminate).toBe(true);
   });
-
+  
   test('renderiza botões de ação para cada linha', () => {
     renderizaComponente();
 
@@ -138,21 +176,16 @@ describe('Tabela', () => {
   });
 
   test('renderiza tabela com dados nulos/undefined', () => {
-    const dataWithNulls = [
-      {
-        uuid: 'uuid1',
-        acao: 'Recurso Próprio',
-        especificacao_material: { nome: 'Especificação 1' },
-        tipo_aplicacao: { name: 'Custeio' },
-        tipo_despesa_custeio: null,
-        valor_total: 1000.50
-      }
-    ];
 
-    renderizaComponente();
+    render(<Tabela data={[mockData[3]]} handleEditar={handleEditar} handleDuplicar={handleDuplicar} />);
 
-    // Verifica se o valor padrão é exibido quando não há ação
-    expect(screen.getByText('Recurso Próprio')).toBeInTheDocument();
+    expect(screen.getByText('Teste Sem Valor')).toBeInTheDocument();
+    // Exibe o botão para inserir valor quando não há valor (item duplicado)
+    const botaoEditarDuplicado = screen.getByText('Informar Valor');
+    expect(botaoEditarDuplicado).toBeInTheDocument();
+    fireEvent.click(botaoEditarDuplicado)
+    expect(handleEditar).toHaveBeenCalled();
+
   });
 
   test('mantém estado de seleção ao re-renderizar', () => {
@@ -214,8 +247,8 @@ describe('Tabela', () => {
     );
 
     // Verifica se existem os 3 botões
-    const linhas_tabela = 3
-    const botoes_acoes = 3
+    const linhas_tabela = mockData.length
+    const botoes_acoes = ['Editar', 'Excluir', 'Duplicar'].length
     expect(iconButtons).toHaveLength(linhas_tabela * botoes_acoes);
 
     // Clica em cada botão
@@ -225,24 +258,61 @@ describe('Tabela', () => {
 
   });
 
-  test('chamar o handleEditar', () => {
+  test('chamar o handleEditar/Duplicar', () => {
     renderizaComponente();
-    
+
     // Encontra todos os botões de ação (Edit, Delete, Duplicate)
-    const actionButtons = screen.getAllByRole('button').slice(0, 3);
-    
-    // Filtra apenas os botões que são IconButton (baseado no aria-label)
-    const iconButtons = actionButtons.filter(button => button.getAttribute('aria-label') === 'Editar');
-    
-    // Verifica se existe 1 botão
-    expect(iconButtons).toHaveLength(1);
-    
-    // Clica em cada botão
-    iconButtons.forEach(button => {
+    const actionsEditar = document.querySelectorAll('button[aria-label="Editar"]');
+    expect(actionsEditar).toHaveLength(mockData.length);
+
+    const actionsExcluir = document.querySelectorAll('button[aria-label="Excluir"]');
+    expect(actionsExcluir).toHaveLength(mockData.length);
+
+    const actionsDuplicar = document.querySelectorAll('button[aria-label="Duplicar"]');
+    expect(actionsDuplicar).toHaveLength(mockData.length);
+
+    // Clica em cada botão Editar
+    actionsEditar.forEach(button => {
+      expect(button).toBeInTheDocument();
+      expect(button).toBeEnabled();
       fireEvent.click(button);
     });
+    expect(handleEditar).toHaveBeenCalledTimes(mockData.length);
+    
+    // Clica em cada botão Duplicar
+    actionsDuplicar.forEach(button => {
+      expect(button).toBeInTheDocument();
+      expect(button).toBeEnabled();
+      fireEvent.click(button);
+    });
+    expect(handleDuplicar).toHaveBeenCalledTimes(mockData.length);
 
-    expect(handleEditar).toHaveBeenCalledTimes(1);
+    // Clica em cada botão Excluir
+    actionsExcluir.forEach(button => {
+      expect(button).toBeInTheDocument();
+      expect(button).toBeEnabled();
+      fireEvent.click(button);
+    });
+    expect(handleExcluir).toHaveBeenCalledTimes(mockData.length);
+  });
 
+  test('deve exluir em lote', async () => {
+    renderizaComponente();
+
+    // Seleciona todos os itens usando o checkbox do header
+    const checkboxes = screen.getAllByRole('checkbox');
+    const selectAllCheckbox = checkboxes[0]; // Checkbox do header
+    
+    fireEvent.click(selectAllCheckbox);
+    
+    // Verifica se a barra de ação em lote aparece
+    expect(screen.getByText('Excluir prioridades')).toBeInTheDocument();
+
+    // Clica no botão de excluir em lote
+    const excluirEmLoteButton = screen.getByText('Excluir prioridades');
+    fireEvent.click(excluirEmLoteButton);
+
+    // Verifica se a função handleExcluirEmLote foi chamada com os UUIDs corretos
+    expect(handleExcluirEmLote).toHaveBeenCalledWith(['uuid1', 'uuid2', 'uuid3', 'uuid4']);
   });
 }); 
