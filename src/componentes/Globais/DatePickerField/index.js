@@ -1,4 +1,5 @@
 import React from "react";
+import moment from 'moment';
 import MaskedInput from 'react-text-mask'
 import DatePicker, {registerLocale} from "react-datepicker";
 import 'react-datepicker/dist/react-datepicker.css';
