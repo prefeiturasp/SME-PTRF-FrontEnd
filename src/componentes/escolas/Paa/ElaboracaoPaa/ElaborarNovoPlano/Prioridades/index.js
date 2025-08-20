@@ -1,12 +1,16 @@
-import React, { useState } from 'react';
-import { Flex, Button, Spin } from 'antd';
+import { useState, useRef } from 'react';
+import { Flex, Button, Spin, Alert, Typography } from 'antd';
 import { Paginator } from "primereact/paginator";
 import ModalFormAdicionarPrioridade from './ModalFormAdicionarPrioridade';
 import { useGetPrioridadeTabelas } from "./hooks/useGetPrioridadeTabelas";
 import { useGetPrioridades } from "./hooks/useGetPrioridades";
+import { usePostDuplicarPrioridade } from "./hooks/usePostPrioridade";
+import { useDeletePrioridade } from "./hooks/useDeletePrioridade";
+import { useDeletePrioridadesEmLote } from "./hooks/useDeletePrioridadesEmLote";
 import { useGetTiposDespesaCusteio } from "./hooks/useGetTiposDespesaCusteio";
 import { FormFiltros } from './FormFiltros';
 import { MsgImgCentralizada } from "../../../../../Globais/Mensagens/MsgImgCentralizada";
+import { ModalConfirmarExclusao } from "../../../../../sme/Parametrizacoes/componentes/ModalConfirmarExclusao";
 import Img404 from "../../../../../../assets/img/img-404.svg";
 import { Tabela } from './Tabela';
 
@@ -23,12 +27,23 @@ const filtroInicial = {
 
 const Prioridades = () => {
   const [filtros, setFiltros] = useState(filtroInicial);
+  const [ultimoDuplicado, setUltimoDuplicado] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [firstPage, setFirstPage] = useState(0);
   const [modalForm, setModalForm] = useState({ open: false, tabelas: null, formModal: null });
+  const [modalExclusao, setModalExclusao] = useState({ open: false, item: null, tipo: 'individual' });
+  const tabelaRef = useRef(null);
   const { prioridadesTabelas, recursos, tipos_aplicacao } = useGetPrioridadeTabelas();
   const { tipos_despesa_custeio } = useGetTiposDespesaCusteio();
-  const { isLoading: isLoadingPrioridades, prioridades, quantidade, refetch } = useGetPrioridades(filtros, currentPage);
+  const { isFetching: isLoadingPrioridades, prioridades, quantidade, refetch } = useGetPrioridades(filtros, currentPage);
+  
+  const { mutationDelete } = useDeletePrioridade(() => setModalExclusao({ open: false, item: null, tipo: 'individual' }));
+  const { mutationDeleteEmLote } = useDeletePrioridadesEmLote(() => {
+    setModalExclusao({ open: false, item: null, tipo: 'lote' });
+    if (tabelaRef.current) {
+      tabelaRef.current.clearSelectedItems();
+    }
+  });
 
   const dadosTabelas = {
     prioridades: prioridadesTabelas,
@@ -69,6 +84,32 @@ const Prioridades = () => {
     setModalForm({ open: true, tabelas: dadosTabelas, formModal: rowData, focusValor: focusValor });
   };
 
+  const { mutationPost: mutationPostDuplicar } = usePostDuplicarPrioridade();
+
+  const onDuplicar = (rowData) => {
+    mutationPostDuplicar.mutate({uuid: rowData.uuid});
+  };
+
+  const onExcluir = (rowData) => {
+    setModalExclusao({ open: true, item: rowData, tipo: 'individual' });
+  };
+
+  const onExcluirEmLote = (listaUuids) => {
+    setModalExclusao({ open: true, item: { lista_uuids: listaUuids }, tipo: 'lote' });
+  };
+
+  const handleConfirmarExclusao = () => {
+    if (modalExclusao.tipo === 'individual') {
+      mutationDelete.mutate({ uuid: modalExclusao.item.uuid });
+    } else {
+      mutationDeleteEmLote.mutate({ payload: modalExclusao.item });
+    }
+  };
+
+  const existePrioridadesSemValor = () => {
+    return prioridades.some((prioridade) => !prioridade?.valor_total);
+  };
+
   return (
     <div>
       <Flex gutter={8} justify="space-between" align="flex-end" className="mb-4">
@@ -97,16 +138,28 @@ const Prioridades = () => {
         <>
           <p className="mb-2 mt-4">
             <Flex justify="space-between" align="center">
-              <span>
-                Exibindo <span className="total">{prioridades?.length}</span> de{" "}
-                <span className="total">{quantidade}</span>
-              </span>
+              {existePrioridadesSemValor() && <Alert
+                showIcon
+                className="mr-2"
+                type="warning"
+                style={{flex: 'auto', fontSize: '13px'}}
+                description={<>O campo <b>Valor Total</b> é de preenchimento obrigatório.</>}
+              />}
+
+              <Typography.Text type="secondary">
+                {`Exibindo ${prioridades?.length} de ${quantidade} registros`}
+              </Typography.Text>
 
             </Flex>
           </p>
           <Tabela
+            ref={tabelaRef}
             data={prioridades}
-            handleEditar={onEditar}/>
+            handleEditar={onEditar}
+            handleDuplicar={onDuplicar}
+            handleExcluir={onExcluir}
+            handleExcluirEmLote={onExcluirEmLote}
+          />
           {quantidade > 20 && (
             <Paginator
               first={firstPage}
@@ -141,6 +194,22 @@ const Prioridades = () => {
             focusValor: false })}
         />
       )}
+
+      {/* Modal de confirmação de exclusão */}
+      <ModalConfirmarExclusao
+        open={modalExclusao.open}
+        onOk={handleConfirmarExclusao}
+        okText="Excluir"
+        onCancel={() => setModalExclusao({ open: false, item: null, tipo: 'individual' })}
+        cancelText="Cancelar"
+        cancelButtonProps={{ className: "btn-base-verde-outline" }}
+        titulo={modalExclusao.tipo === 'individual' ? "Excluir Prioridade" : "Excluir Prioridades"}
+        bodyText={
+          modalExclusao.tipo === 'individual'
+            ? <p>Tem certeza que deseja excluir a prioridade selecionada? Esta ação não poderá ser desfeita.</p>
+            : <p>Tem certeza que deseja excluir as prioridades selecionadas? Esta ação não poderá ser desfeita.</p>
+        }
+      />
     </div>
   );
 };

@@ -5,6 +5,7 @@ import { getPrioridades } from "../../../../../../../services/escolas/Paa.servic
 export const useGetPrioridades = (filtros, page) => {
   const {
     isLoading,
+    isFetching,
     isError,
     data = {},
     error,
@@ -26,5 +27,5 @@ export const useGetPrioridades = (filtros, page) => {
     acao: item?.acao_associacao_objeto?.nome || item?.acao_pdde_objeto?.nome || "Recurso Próprio",
     valor_total: parseFloat(item.valor_total)
   }));
-  return { isLoading, isError, prioridades: dadosProcessados, quantidade: data.count, error, refetch };
+  return { isLoading, isFetching, isError, prioridades: dadosProcessados, quantidade: data.count, error, refetch };
 };

@@ -1,19 +1,24 @@
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { IconButton } from "../../../../../Globais/UI/Button/IconButton";
-import { useState } from 'react';
-import { Button, Space } from 'antd';
+import { useState, useCallback, forwardRef, useImperativeHandle } from 'react';
+import { Space } from 'antd';
 import { formatMoneyBRL } from "../../../../../../utils/money";
+import { BadgeCustom } from './BadgeCustom';
+import { BarraAcaoEmLote } from './BarraAcaoEmLote';
 
 
-export const Tabela = ({ data, handleEditar }) => {
+export const Tabela = forwardRef(({ data, handleEditar, handleDuplicar, handleExcluir, handleExcluirEmLote }, ref) => {
     const [selectedItems, setSelectedItems] = useState([]);
 
-    const handleExcluir = (rowData) => {
-        // Implementar lógica de exclusão
-    }
-    const handleDuplicar = (rowData) => {
-        // Implementar lógica de duplicação
+    useImperativeHandle(ref, () => ({
+        clearSelectedItems: () => {
+            setSelectedItems([]);
+        }
+    }));
+
+    const onExcluir = (rowData) => {
+        handleExcluir(rowData);
     }
 
     const handleSelectAll = (e) => {
@@ -24,23 +29,39 @@ export const Tabela = ({ data, handleEditar }) => {
         }
     };
 
-    const handleSelectItem = (uuid, checked) => {
-        if (checked) {
-            setSelectedItems(prev => [...prev, uuid]);
-        } else {
-            setSelectedItems(prev => prev.filter(id => id !== uuid));
-        }
-    };
+    const handleSelectItem = useCallback((uuid) => {
+        setSelectedItems(prev => {
+            const newItems = prev.includes(uuid) 
+                ? prev.filter(id => id !== uuid)
+                : [...prev, uuid];
+            return newItems;
+        });
+    }, []);
 
     const isAllSelected = data && data.length > 0 && selectedItems.length === data.length;
     const isIndeterminate = selectedItems.length > 0 && selectedItems.length < data.length;
 
+    const onExcluirEmLote = () => {
+        if (selectedItems.length > 0) {
+            handleExcluirEmLote(selectedItems);
+        }
+    };
+
     return (
-        <DataTable
+        <>
+            {selectedItems.length > 0 && (
+                <BarraAcaoEmLote
+                    setPrioridadesSelecionadas={setSelectedItems}
+                    prioridadesSelecionadas={selectedItems}
+                    handleExcluirPrioridades={onExcluirEmLote}
+                />
+            )}
+            <DataTable
             value={data}
             autoLayout={true}
             dataKey="uuid"
             className="no-stripe mt-3 no-hover"
+            key={`table-${selectedItems.length}`}
             >
             <Column 
                 header={
@@ -55,14 +76,18 @@ export const Tabela = ({ data, handleEditar }) => {
                     />
                 }
                 style={{ width: "50px", textAlign: 'center' }}
-                body={(rowData) => (
-                    <input 
-                        type="checkbox" 
-                        checked={selectedItems.includes(rowData.uuid)}
-                        onChange={(e) => handleSelectItem(rowData.uuid, e.target.checked)}
-                        style={{ cursor: 'pointer' }}
-                    />
-                )}
+                body={(rowData) => {
+                    const isChecked = selectedItems.includes(rowData.uuid);
+                    
+                    return (
+                        <input 
+                            type="checkbox" 
+                            checked={isChecked}
+                            onChange={() => handleSelectItem(rowData.uuid)}
+                            style={{ cursor: 'pointer' }}
+                        />
+                    );
+                }}
             />
             <Column 
                 header="Ação" 
@@ -72,18 +97,10 @@ export const Tabela = ({ data, handleEditar }) => {
                     <>
                         <div>{rowData.acao}</div>
                         {!rowData.prioridade &&
-                            <Button
-                                variant="solid"
-                                size="small"
-                                style={
-                                    {
-                                        backgroundColor:'#a4a4a4',
-                                        borderColor:'transparent',
-                                        color:'white',
-                                        fontSize: '11px',
-                                        height: 'auto'
-                                    }
-                                }>Não priorizado</Button>
+                            <BadgeCustom
+                                buttonColor='#a4a4a4'
+                                buttonLabel='Não priorizado'
+                            />
                         }
                     </>
                 )}
@@ -112,7 +129,18 @@ export const Tabela = ({ data, handleEditar }) => {
                 style={{ width: "120px", textAlign: "center" }}
                 bodyStyle={{ textAlign: 'center' }}
                 body={(rowData) => (
-                    <>{formatMoneyBRL(rowData.valor_total)}</>
+                    <>
+                        {!rowData.valor_total ?
+                            <BadgeCustom
+                                badge={true}
+                                buttonColor='#62a9ad'
+                                buttonLabel='Informar Valor'
+                                handleClick={() => handleEditar(rowData, true)}
+                            />
+                            :
+                            <>{formatMoneyBRL(rowData.valor_total)}</>
+                        }
+                    </>
                 )}
             />
             <Column
@@ -139,7 +167,7 @@ export const Tabela = ({ data, handleEditar }) => {
                                 style: { color: "#B40C02" },
                                 }}
                                 aria-label="Excluir"
-                                onClick={() => handleExcluir(rowData)}
+                                onClick={() => onExcluir(rowData)}
                             />
                             <IconButton
                                 className='p-2'
@@ -153,8 +181,9 @@ export const Tabela = ({ data, handleEditar }) => {
                             />
                         </Space>
                     );
-                 }}
+                }}
             />
         </DataTable>
-    )
-}
+        </>
+    );
+});

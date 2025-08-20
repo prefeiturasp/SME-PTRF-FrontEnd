@@ -1,4 +1,4 @@
-import { formatMoneyByCentsBRL, formatMoneyBRL, parseMoneyBRL } from "../money";
+import { formatMoneyByCentsBRL, formatMoneyBRL, parseMoneyBRL, parseMoneyCentsBRL } from "../money";
 
 describe("formatMoneyByCentsBRL", () => {
   it("formata corretamente valores em centavos", () => {
@@ -42,5 +42,30 @@ describe("parseMoneyBRL", () => {
     expect(parseMoneyBRL("")).toBeNull();
     expect(parseMoneyBRL("R$ um real")).toBeNull();
     expect(parseMoneyBRL("abc123")).toBeNull();
+  });
+});
+
+describe("parseMoneyCentsBRL", () => {
+  it("deve retornar null para valores nulos ou undefined", () => {
+    expect(parseMoneyCentsBRL(null)).toBeNull();
+    expect(parseMoneyCentsBRL(undefined)).toBeNull();
+    expect(parseMoneyCentsBRL("")).toBeNull();
+  });
+
+  it("deve converter strings de centavos corretamente", () => {
+    expect(parseMoneyCentsBRL("12345")).toBe(123.45); // 12345 centavos = 123,45
+    expect(parseMoneyCentsBRL("100")).toBe(1); // 100 centavos = 1
+    expect(parseMoneyCentsBRL("0")).toBe(0);
+  });
+
+  it("deve remover caracteres não numéricos antes da conversão", () => {
+    expect(parseMoneyCentsBRL("R$ 1.234,56")).toBe(1234.56);
+    expect(parseMoneyCentsBRL("12.345")).toBe(123.45);
+    expect(parseMoneyCentsBRL("1.000")).toBe(10); // 1000 → 10,00
+  });
+
+  it("deve retornar null se não houver números válidos", () => {
+    expect(parseMoneyCentsBRL("abc")).toBeNull();
+    expect(parseMoneyCentsBRL("R$ ,")).toBeNull();
   });
 });
