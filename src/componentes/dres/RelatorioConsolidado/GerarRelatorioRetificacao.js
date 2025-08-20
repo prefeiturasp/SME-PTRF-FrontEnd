@@ -68,7 +68,7 @@ const GerarRelatorioRetificado = (publicarConsolidadoDre, podeGerarPrevia, child
                             </div>
                         ):
 
-                            <div className="p-2 bd-highlight font-weight-normal" data-html={true} data-tip={consolidadoDre?.texto_tool_tip_botao_gerar}>
+                            <div className="p-2 bd-highlight font-weight-normal" data-html={true} data-tooltip-content={consolidadoDre?.texto_tool_tip_botao_gerar}>
                                 <button
                                     onClick={!consolidadoDre?.eh_consolidado_de_publicacoes_parciais ? () => setShowPublicarRelatorioConsolidado(true) : ()=>publicarConsolidadoDePublicacoesParciais()}
                                     className="btn btn btn btn-success"

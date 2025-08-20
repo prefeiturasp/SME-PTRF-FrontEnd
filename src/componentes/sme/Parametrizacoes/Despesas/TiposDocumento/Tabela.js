@@ -3,7 +3,7 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
-import ReactTooltip from 'react-tooltip';
+import { Tooltip as ReactTooltip } from "react-tooltip";
 
 const Tabela = (props)=>{
     const templateHeaderApenasDigito = ()=>{
@@ -12,7 +12,7 @@ const Tabela = (props)=>{
             <p data-qa="legenda-apenas-digitos" className="mb-0">
                 {header}
                 <span data-qa="col-tooltip-apenas-digitos"
-                    data-tip="(ex: 0,1,2,3,4)" data-for={` col-tooltip-id-apenas-digitos`}>
+                    data-tooltip-content="(ex: 0,1,2,3,4)" data-tooltip-id={` col-tooltip-id-apenas-digitos`}>
                     <ReactTooltip id={` col-tooltip-id-apenas-digitos`}/>
                     <FontAwesomeIcon
                         style={{fontSize: '16px', marginLeft: "10px", color: "#00585E"}}

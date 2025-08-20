@@ -2,7 +2,7 @@ import React, {useState, useEffect, useCallback, useMemo} from "react";
 import {PaginasContainer} from "../../../../../paginas/PaginasContainer";
 import {getListaDeAcoes, getAcoesFiltradas, postAddAcao, putAtualizarAcao, deleteAcao} from "../../../../../services/sme/Parametrizacoes.service";
 import '../parametrizacoes-estrutura.scss'
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 import {Filtros} from "./Filtros";
 import {TabelaAcoes} from "./TabelaAcoes";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -71,7 +71,7 @@ export const Acoes = () => {
                 <button data-qa="botao-editar-acoes" className="btn-editar-membro"
                     onClick={() => handleEditarAcoes(rowData)}
                     >
-                    <div data-tip="Editar ação" data-for={`tooltip-id-${rowData.uuid}`}>
+                    <div data-tooltip-content="Editar ação" data-tooltip-id={`tooltip-id-${rowData.uuid}`}>
                         <ReactTooltip id={`tooltip-id-${rowData.uuid}`} />
                         <FontAwesomeIcon
                             style={{ fontSize: "20px", marginRight: "0", color: "#00585E" }}

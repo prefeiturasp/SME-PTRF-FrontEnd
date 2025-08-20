@@ -10,7 +10,7 @@ import { UnidadesUsuarioContext } from "../context/UnidadesUsuarioProvider";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import { faExclamationCircle, faCheckCircle } from "@fortawesome/free-solid-svg-icons";
 import { Switch } from 'antd';
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 import Loading from "../../../../utils/Loading";
 import { MsgImgCentralizada } from "../../../Globais/Mensagens/MsgImgCentralizada";
 import Img404 from "../../../../assets/img/img-404.svg"
@@ -65,7 +65,7 @@ export const UnidadesUsuario = ({usuario}) => {
     const temAcessoTemplate = (rowData) => {
         let tooltip = 'Não é possível habilitar o acesso nesta unidade pois não é uma unidade de exercício do servidor informado.'
         return(
-            <div data-tip={tooltip} data-for={`tooltip-id-${rowData.uuid_unidade}`}>
+            <div data-tooltip-content={tooltip} data-tooltip-id={`tooltip-id-${rowData.uuid_unidade}`}>
                 <Switch
                     onChange={() => handleChangeSwitchTemAcesso(rowData)}
                     checked={rowData.tem_acesso}

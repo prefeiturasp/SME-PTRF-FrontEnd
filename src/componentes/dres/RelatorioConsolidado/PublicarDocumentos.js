@@ -4,7 +4,7 @@ import InfoPublicacaoNoDiarioOficial from "./MarcarPublicacaoNoDiarioOficial/Inf
 import BotaoMarcarPublicacaoNoDiarioOficial from "./MarcarPublicacaoNoDiarioOficial/BotaoMarcarPublicacaoNoDiarioOficial";
 import {Retificar} from "./Retificar";
 import PreviaDocumentoRetificado from "./PreviaDocumentoRetificado";
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 import {visoesService} from "../../../services/visoes.service";
 
 const PublicarDocumentos = ({publicarConsolidadoDre, podeGerarPrevia, children, consolidadoDre, carregaConsolidadosDreJaPublicadosProximaPublicacao, execucaoFinanceira, disableGerar, todasAsPcsDaRetificacaoConcluidas, publicarRetificacao, showPublicarRetificacao, setShowPublicarRetificacao, gerarPreviaRetificacao, removerBtnGerar=false, execucaoFinanceiraCarregando}) => {
@@ -70,7 +70,7 @@ const PublicarDocumentos = ({publicarConsolidadoDre, podeGerarPrevia, children, 
                             ):
 
                             (!consolidadoDre.eh_consolidado_de_publicacoes_parciais &&
-                                (<div className="p-2 bd-highlight font-weight-normal" data-html={true} data-tip={consolidadoDre.texto_tool_tip_botao_gerar}>
+                                (<div className="p-2 bd-highlight font-weight-normal" data-html={true} data-tooltip-content={consolidadoDre.texto_tool_tip_botao_gerar}>
                                     <button
                                         onClick={() => setShowPublicarRelatorioConsolidado(true)}
                                         className="btn btn btn btn-success"

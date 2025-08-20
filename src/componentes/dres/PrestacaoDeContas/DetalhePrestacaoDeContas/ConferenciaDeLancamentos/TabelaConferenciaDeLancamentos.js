@@ -8,7 +8,7 @@ import Dropdown from "react-bootstrap/Dropdown";
 import {ModalCheckNaoPermitidoConfererenciaDeLancamentos} from "./Modais/ModalCheckNaoPermitidoConfererenciaDeLancamentos";
 import {postLancamentosParaConferenciaMarcarComoCorreto, postLancamentosParaConferenciaMarcarNaoConferido} from "../../../../../services/dres/PrestacaoDeContas.service";
 import {mantemEstadoAcompanhamentoDePc as meapcservice} from "../../../../../services/mantemEstadoAcompanhamentoDePc.service";
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 
 // Hooks Personalizados
 import useValorTemplate from "../../../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useValorTemplate";
@@ -600,7 +600,7 @@ const TabelaConferenciaDeLancamentos = ({
             let texto_tooltip = `Esse estorno está vinculado <br/> à despesa do dia ${data_rateio}.`
             return (
                 <>
-                    <div data-tip={texto_tooltip} data-html={true}>
+                    <div data-tooltip-content={texto_tooltip} data-html={true}>
                         <span>{rowData.tipo_transacao}</span>
                         <FontAwesomeIcon
                             style={{fontSize: '18px', marginLeft: "4px", color: '#2A6397'}}

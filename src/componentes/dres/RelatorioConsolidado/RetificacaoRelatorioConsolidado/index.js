@@ -17,7 +17,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faAngleDoubleLeft, faTimesCircle} from "@fortawesome/free-solid-svg-icons";
 import { ModalAntDesignConfirmacao } from "../../../Globais/ModalAntDesign";
 import { TituloTabela } from "./TituloTabela";
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 import { toastCustom } from "../../../Globais/ToastCustom";
 
 const RetificacaoRelatorioConsolidado = () => {
@@ -160,7 +160,7 @@ const RetificacaoRelatorioConsolidado = () => {
     const nomeComTipoTemplate = (rowData) => {
         return(
             <>
-                <span data-tip={rowData.tooltip_nao_pode_retificar}>{`${rowData.unidade_tipo_unidade} ${rowData.unidade_nome}`}</span>
+                <span data-tooltip-content={rowData.tooltip_nao_pode_retificar}>{`${rowData.unidade_tipo_unidade} ${rowData.unidade_nome}`}</span>
                 
                 {rowData.tooltip_nao_pode_retificar &&
                     <ReactTooltip/>
@@ -172,7 +172,7 @@ const RetificacaoRelatorioConsolidado = () => {
     const nomeComTipoTemplateRetificacao = (rowData) => {
         return(
             <>
-                <span data-tip={rowData.tooltip_nao_pode_desfazer_retificacao}>{`${rowData.unidade_tipo_unidade} ${rowData.unidade_nome}`}</span>
+                <span data-tooltip-content={rowData.tooltip_nao_pode_desfazer_retificacao}>{`${rowData.unidade_tipo_unidade} ${rowData.unidade_nome}`}</span>
                 
                 {rowData.tooltip_nao_pode_desfazer_retificacao &&
                     <ReactTooltip/>

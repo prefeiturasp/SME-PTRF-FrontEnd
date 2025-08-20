@@ -9,7 +9,7 @@ import EditorWysiwyg from "../../../../Globais/EditorWysiwyg";
 import Loading from "../../../../../utils/Loading";
 import {RetornaSeTemPermissaoEdicaoPainelParametrizacoes} from "../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes"
 import {toastCustom} from "../../../../Globais/ToastCustom";
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 
 export const TextosPaa = () => {
 
@@ -51,7 +51,7 @@ export const TextosPaa = () => {
         return (
             <div>
                 <button aria-label="Editar" className="btn-editar-membro" onClick={() => handleEditarTextos(tipo_texto)}>
-                    <div data-tip="Editar" data-for={`tooltip-id-${tipo_texto}`}>
+                    <div data-tooltip-content="Editar" data-tooltip-id={`tooltip-id-${tipo_texto}`}>
                      <ReactTooltip id={`tooltip-id-${tipo_texto}`}/>
                     <FontAwesomeIcon
                         style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}

@@ -10,7 +10,7 @@ import {visoesService} from "../../../../services/visoes.service";
 import {ConfirmaDeleteMembro} from "./ConfirmaDeleteMembroDialog";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 import { setStatusCadastro, resetStatusCadastro } from "../../../../store/reducers/componentes/escolas/Associacao/DadosAssociacao/StatusCadastro/actions";
 
 export const MembrosDaAssociacao = () => {
@@ -295,7 +295,7 @@ export const MembrosDaAssociacao = () => {
             if (id_cargo === "PRESIDENTE_DIRETORIA_EXECUTIVA") {
                 return (
                     <>
-                        <span data-html={true} data-tip={`Presidente ausente`}>
+                        <span data-html={true} data-tooltip-content={`Presidente ausente`}>
                         <FontAwesomeIcon
                             style={{marginLeft: "3px", color: '#B41D00', fontSize: '18px'}}
                             icon={faInfoCircle}
@@ -307,7 +307,7 @@ export const MembrosDaAssociacao = () => {
             } else if (statusPresidenteAssociacao.cargo_substituto_presidente_ausente === id_cargo) {
                 return (
                     <>
-                        <span data-html={true} data-tip={`${obj_completo.cargo} em <br/> atribuições da presidência`}>
+                        <span data-html={true} data-tooltip-content={`${obj_completo.cargo} em <br/> atribuições da presidência`}>
                         <FontAwesomeIcon
                             style={{marginLeft: "3px", color: '#297806', fontSize: '18px'}}
                             icon={faInfoCircle}

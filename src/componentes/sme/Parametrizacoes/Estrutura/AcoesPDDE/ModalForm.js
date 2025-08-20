@@ -8,7 +8,7 @@ import { usePatchCategorias } from "./hooks/usePatchCategorias";
 import { useDeleteCategoria } from "./hooks/useDeleteCategoriaAcaoPDDE";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPencil, faPlus, faCheck, faXmark, faTrashCan} from "@fortawesome/free-solid-svg-icons";
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 import {ModalConfirmarExclusao as ModalConfirmar} from "../../componentes/ModalConfirmarExclusao";
 import IconeAvisoConfirmacao from "../../../../../assets/img/icone-modal-confirmacao.svg"
 
@@ -213,7 +213,7 @@ const ModalForm = ({
                                                         onClick={() => setShowModalConfirmEditCategoria(true)}
                                                         onMouseEnter={() => setCorOk('#297805')}
                                                         onMouseLeave={() => setCorOk('#808080')}
-                                                        data-tip={stateFormModal.categoria ? "Editar programa" : "Adicionar novo programa"} data-for="tooltip-id-salvar"
+                                                        data-tooltip-content={stateFormModal.categoria ? "Editar programa" : "Adicionar novo programa"} data-tooltip-id="tooltip-id-salvar"
                                                     />
                                                     <ReactTooltip id="tooltip-id-cancelar"/>
                                                     <FontAwesomeIcon
@@ -223,7 +223,7 @@ const ModalForm = ({
                                                         onClick={handleFecharFormCategoria}
                                                         onMouseEnter={() => setCorCancelar('#FF0000')}
                                                         onMouseLeave={() => setCorCancelar('#808080')}
-                                                        data-tip="Cancelar" data-for="tooltip-id-cancelar"
+                                                        data-tooltip-content="Cancelar" data-tooltip-id="tooltip-id-cancelar"
                                                     />
                                                  </div>
                                             </div>
@@ -244,7 +244,7 @@ const ModalForm = ({
                                             >
                                             <ReactTooltip id="tooltip-id-excluir"/>
                                             <FontAwesomeIcon
-                                                data-tip={stateFormCategoria.pode_ser_excluida ? "Excluir" : "Não é possível excluir. Este programa ainda está vinculado a alguma ação."} data-for="tooltip-id-excluir"
+                                                data-tooltip-content={stateFormCategoria.pode_ser_excluida ? "Excluir" : "Não é possível excluir. Este programa ainda está vinculado a alguma ação."} data-tooltip-id="tooltip-id-excluir"
                                                 icon={faTrashCan} 
                                                 style={{color: "#B40C02"}}
                                             />

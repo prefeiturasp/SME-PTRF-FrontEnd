@@ -10,7 +10,7 @@ import {Column} from "primereact/column";
 import {DataTable} from "primereact/datatable";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 
 export const TabelaDetalharAcertos = ({lancamemtosParaAcertos, prestacaoDeContas, rowClassName}) =>{
 
@@ -43,7 +43,7 @@ export const TabelaDetalharAcertos = ({lancamemtosParaAcertos, prestacaoDeContas
             let texto_tooltip = `Esse estorno está vinculado <br/> à despesa do dia ${data_rateio}.`
             return(
                 <>
-                    <div data-tip={texto_tooltip} data-html={true}>
+                    <div data-tooltip-content={texto_tooltip} data-html={true}>
                         <span>{rowData.tipo_transacao}</span>
                         <FontAwesomeIcon
                             style={{fontSize: '18px', marginLeft: "4px", color: '#2A6397'}}
@@ -65,7 +65,7 @@ export const TabelaDetalharAcertos = ({lancamemtosParaAcertos, prestacaoDeContas
                 let texto_tooltip = `Esse gasto possui estornos.`
                 return(
                     <>
-                        <div data-tip={texto_tooltip} data-html={true}>
+                        <div data-tooltip-content={texto_tooltip} data-html={true}>
                             <span>{rowData.tipo_transacao}</span>
                             <FontAwesomeIcon
                                 style={{fontSize: '18px', marginLeft: "4px", color: '#2A6397'}}

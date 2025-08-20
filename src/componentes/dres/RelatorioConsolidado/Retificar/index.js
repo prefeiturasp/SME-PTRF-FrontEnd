@@ -1,6 +1,6 @@
 import React from "react";
 import {Link} from 'react-router-dom';
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 import { visoesService } from "../../../../services/visoes.service";
 
 export const Retificar = ({consolidadoDre}) => {
@@ -19,7 +19,7 @@ export const Retificar = ({consolidadoDre}) => {
                             className="btn btn-success"
                             disabled={(consolidadoDre && !consolidadoDre?.habilita_retificar) || !visoesService.getPermissoes(['change_relatorio_consolidado_dre'])}
                         >
-                            <span data-tip={consolidadoDre?.tooltip_habilita_retificar}>
+                            <span data-tooltip-content={consolidadoDre?.tooltip_habilita_retificar}>
                                 Retificar
                             </span>
                             {consolidadoDre?.tooltip_habilita_retificar && <ReactTooltip place="right"/>}

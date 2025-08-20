@@ -5,7 +5,7 @@ import moment from "moment";
 import { IconButton } from "../../../../Globais/UI/Button/IconButton";
 import {faEdit, faPlus, faTimesCircle, faCheckCircle} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 
 const Tabela = ({
     rowsPerPage, 
@@ -41,7 +41,7 @@ const Tabela = ({
         return (
             <div>
                 <button onClick={() => handleOpenModalForm(rowData)} className="btn-editar-membro">
-                    <div data-tip="Editar" data-for={`tooltip-id-${rowData.uuid}`}>
+                    <div data-tooltip-content="Editar" data-tooltip-id={`tooltip-id-${rowData.uuid}`}>
                         <ReactTooltip id={`tooltip-id-${rowData.uuid}`}/>
                         <FontAwesomeIcon
                             style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
