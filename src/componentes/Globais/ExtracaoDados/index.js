@@ -33,9 +33,10 @@ export const ExtracaoDados = (props) => {
     return (
      <>
       <h6 className="extracao-title">Dados disponíveis para extração</h6>
-      <p className="extracao-title-filter">Filtrar por data</p>
+      {/* OBS: O filtro foi removido temporariamente, contemplando a história: 132561 - [SME/DRE] Extrações de dados: Remover filtros de período de criação */}
+      {/* <p className="extracao-title-filter">Filtrar por data</p> */}
       <div className="extracao-filter">
-            <Space className='extracao-space' direction='vertical'>
+            {/* <Space className='extracao-space' direction='vertical'>
                 <span data-tip="As datas informadas correspondem a data de criação do registro." data-for="tooltip-selecione-periodo-extracao">Selecione o período de criação (vazio para todos)</span>
                 <ReactTooltip place="right" id="tooltip-selecione-periodo-extracao" html={true}/>
                 <DatePicker.RangePicker
@@ -70,7 +71,7 @@ export const ExtracaoDados = (props) => {
                     <span className='extracao-date'>Exibindo dados de <b className='extracao-date-msg'>{moment(dataInicial).format('DD/MM/YYYY')}</b>&nbsp;à&nbsp; 
                     <b className='extracao-date-msg'>{moment(dataFinal).format('DD/MM/YYYY')}</b>.</span> : <span className='extracao-date'></span>
                 }
-            </Space>    
+            </Space>     */}
             { cards.filter(card => card.visao.includes(visaoSelecionada)).map(( {titulo, descricao, tags, endpoint}, index ) => (
                 <ExtracaoCard
                     key={`cards-${index}`} 
