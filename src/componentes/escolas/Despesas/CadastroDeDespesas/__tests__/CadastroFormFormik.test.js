@@ -2,6 +2,7 @@ import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { CadastroFormFormik } from "../CadastroFormFormik";
+import { act } from "@testing-library/react";
 
 // Mock dos serviços
 jest.mock("../../../../../services/visoes.service");
@@ -529,5 +530,52 @@ describe("Componente CadastroFormFormik", () => {
     
     const cpfInput = screen.getByLabelText("CNPJ ou CPF do fornecedor");
     expect(cpfInput).toHaveClass("despesa_incompleta");
+  });
+
+  it("deve mostrar botão deletar quando data_documento não estiver preenchido", async () => {
+    jest.useFakeTimers();
+
+    const initialValuesWithoutDate = () => ({
+      ...mockInitialValues(),
+      data_documento: '',
+      despesa_anterior_ao_uso_do_sistema_editavel: true,
+    });
+
+    const auxComBotaoDeletar = {
+      onHandleChangeApenasNumero: jest.fn(),
+      documentoTransacaoObrigatorio: jest.fn(() => false),
+      exibeDocumentoTransacao: jest.fn(),
+      setaValorRealizado: jest.fn(),
+      mostraBotaoDeletar: jest.fn(() => true),
+      ehOperacaoExclusao: jest.fn(() => false),
+      origemAnaliseLancamento: jest.fn(() => false),
+      setaValoresCusteioCapital: jest.fn(),
+      setValoresRateiosOriginal: jest.fn(),
+      limpaTipoDespesaCusteio: jest.fn(),
+      handleAvisoCapital: jest.fn(),
+      onShowDeleteModal: jest.fn(),
+    };
+
+    jest.spyOn(visoesService.visoesService, "getPermissoes").mockImplementation((permissoes) => {
+      if (permissoes.includes("delete_despesa")) return true;
+      return true;
+    });
+
+    renderComponent({
+      initialValues: initialValuesWithoutDate,
+      despesaContext: { ...mockDespesaContext, verboHttp: "PUT" },
+      aux: auxComBotaoDeletar,
+      readOnlyBtnAcao: false,
+    });
+
+    jest.runAllTimers();
+
+    await waitFor(() => {
+      const deleteButton = screen.getByRole("button", { name: /deletar/i });
+      expect(deleteButton).toBeInTheDocument();
+      expect(deleteButton).toBeEnabled();
+    });
+
+    jest.useRealTimers();
   });
 }); 
