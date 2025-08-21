@@ -8,7 +8,7 @@ import {
   faInfoCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import "./central-de-downloads.scss";
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 import moment from "moment";
 
 export const TabelaDownloads = ({
@@ -104,7 +104,7 @@ export const TabelaDownloads = ({
     return (
       <div className="align-middle text-center">
         {rowData.status === "ERRO" ? (
-          <div data-tip={rowData.msg_erro} data-html={true}>
+          <div data-tooltip-content={rowData.msg_erro} data-html={true}>
             <span>{opcoesStatus(rowData.status)}</span>
             <FontAwesomeIcon
               style={{ fontSize: "18px", marginLeft: "3px", color: "#B40C02" }}

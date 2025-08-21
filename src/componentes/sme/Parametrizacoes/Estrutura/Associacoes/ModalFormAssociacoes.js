@@ -7,7 +7,7 @@ import MaskedInput from "react-text-mask";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faExclamationCircle} from '@fortawesome/free-solid-svg-icons'
 import { visoesService } from "../../../../../services/visoes.service";
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
 import { getCCMMask } from "../../../../../utils/Mascaras";
 
@@ -200,11 +200,11 @@ const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitMo
                                         Período inicial*
                                     </label>
                                        <div
-                                           data-tip={
+                                           data-tooltip-content={
                                             values.pode_editar_periodo_inicial && !values.pode_editar_periodo_inicial?.pode_editar_periodo_inicial
                                                 ? values.pode_editar_periodo_inicial?.mensagem_pode_editar_periodo_inicial?.reduce((hint, text) => (hint + `${text}<br/>`), '<p>') + '</p>'
                                                 : ''
-                                           } data-html={true} style={{display:'inline'}} data-for={`tooltip-id-${values.uuid}`}
+                                           } data-html={true} style={{display:'inline'}} data-tooltip-id={`tooltip-id-${values.uuid}`}
                                        >
                                        <select
                                             value={values.periodo_inicial && values.periodo_inicial ? values.periodo_inicial : ""}

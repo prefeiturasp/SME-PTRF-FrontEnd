@@ -1,7 +1,7 @@
 import React from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faAngleDoubleLeft, faAngleDoubleRight} from "@fortawesome/free-solid-svg-icons";
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 import {RetornaSeFlagAtiva} from "../DetalhePrestacaoDeContasNaoApresentada/RetornaSeFlagAtiva";
 
 export const BotoesAvancarRetroceder = ({prestacaoDeContas, textoBtnAvancar, textoBtnRetroceder, metodoAvancar, metodoRetroceder, disabledBtnAvancar, disabledBtnRetroceder, esconderBotaoRetroceder=false, esconderBotaoAvancar, tooltipRetroceder=null, tooltipAvancar=null, setShowModalConcluirPcNaoApresentada=null}) =>{
@@ -27,7 +27,7 @@ export const BotoesAvancarRetroceder = ({prestacaoDeContas, textoBtnAvancar, tex
                                     style={{marginRight: "5px", color: '#fff'}}
                                     icon={faAngleDoubleLeft}
                                 />
-                                <span data-tip={tooltipRetroceder} data-for={`tooltip-id-${prestacaoDeContas.uuid}`}>{textoBtnRetroceder}</span>
+                                <span data-tooltip-content={tooltipRetroceder} data-tooltip-id={`tooltip-id-${prestacaoDeContas.uuid}`}>{textoBtnRetroceder}</span>
                             </button>
                             {tooltipRetroceder && <ReactTooltip  place="right" id={`tooltip-id-${prestacaoDeContas.uuid}`} html={true}/>}
                             </>
@@ -49,7 +49,7 @@ export const BotoesAvancarRetroceder = ({prestacaoDeContas, textoBtnAvancar, tex
                             }
 
                             <div className="p-2 bd-highlight">
-                                <span data-tip={tooltipAvancar} data-for={`tooltip-avancar-id-${prestacaoDeContas.uuid}`}>
+                                <span data-tooltip-content={tooltipAvancar} data-tooltip-id={`tooltip-avancar-id-${prestacaoDeContas.uuid}`}>
                                 <button
                                     data-qa="botao-avancar-acompanhamento-pc"
                                     id="btn-avancar"
@@ -57,7 +57,7 @@ export const BotoesAvancarRetroceder = ({prestacaoDeContas, textoBtnAvancar, tex
                                     disabled={disabledBtnAvancar}
                                     className="btn btn-success ml-2"
                                 >
-                                    <span data-tip={tooltipAvancar} data-for={`tooltip-avancar-id-${prestacaoDeContas.uuid}`}>{textoBtnAvancar}</span>
+                                    <span data-tooltip-content={tooltipAvancar} data-tooltip-id={`tooltip-avancar-id-${prestacaoDeContas.uuid}`}>{textoBtnAvancar}</span>
                                     <FontAwesomeIcon
                                         style={{marginLeft: "5px", color: '#fff'}}
                                         icon={faAngleDoubleRight}

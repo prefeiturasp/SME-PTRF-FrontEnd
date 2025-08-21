@@ -8,7 +8,7 @@ import {cards} from "./Cards"
 import moment from "moment";
 import './extracao-dados.scss'
 import { visoesService } from '../../../services/visoes.service';
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 
 export const ExtracaoDados = (props) => {
     const visaoSelecionada = visoesService.getItemUsuarioLogado('visao_selecionada.nome');
@@ -37,7 +37,7 @@ export const ExtracaoDados = (props) => {
       {/* <p className="extracao-title-filter">Filtrar por data</p> */}
       <div className="extracao-filter">
             {/* <Space className='extracao-space' direction='vertical'>
-                <span data-tip="As datas informadas correspondem a data de criação do registro." data-for="tooltip-selecione-periodo-extracao">Selecione o período de criação (vazio para todos)</span>
+                <span data-tooltip-content="As datas informadas correspondem a data de criação do registro." data-tooltip-id="tooltip-selecione-periodo-extracao">Selecione o período de criação (vazio para todos)</span>
                 <ReactTooltip place="right" id="tooltip-selecione-periodo-extracao" html={true}/>
                 <DatePicker.RangePicker
                     format={'DD/MM/YYYY'}

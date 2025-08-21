@@ -11,7 +11,7 @@ import { usePostRepasse } from "../hooks/usePostRepasse";
 import { usePatchRepasse } from "../hooks/usePatchRepasse";
 import { useDeleteRepasse } from "../hooks/useDeleteRepasse";
 
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 import { round, trataNumericos } from "../../../../../../utils/ValidacoesAdicionaisFormularios";
 
 import { faEdit } from "@fortawesome/free-solid-svg-icons";
@@ -122,7 +122,7 @@ export const Lista = () => {
         return (
             <div>
                 <button className="btn-editar-membro" onClick={() => handleEditFormModal(rowData)}>
-                    <span data-tip="Editar repasse" data-html={true}>
+                    <span data-tooltip-content="Editar repasse" data-html={true}>
                         <FontAwesomeIcon
                             style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
                             icon={faEdit}

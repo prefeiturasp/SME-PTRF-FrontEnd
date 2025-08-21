@@ -3,7 +3,7 @@ import { Formik } from "formik";
 import { YupSchemaMotivosRejeicao } from "../YupSchemaMotivosRejeicao";
 import { ModalFormBodyText } from "../../../../../Globais/ModalBootstrap";
 import { MotivosRejeicaoContext } from "../context/MotivosRejeicao";
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 import {RetornaSeTemPermissaoEdicaoPainelParametrizacoes} from "../../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes"
 
 export const ModalForm = ({handleSubmitFormModal}) => {
@@ -32,7 +32,7 @@ export const ModalForm = ({handleSubmitFormModal}) => {
                                     <div className='col-12'>
                                         <p className='text-right mb-0'><small> * Preenchimento obrigatório</small></p>
                                         <div className="form-group">
-                                            <span data-tip="Preencher com um motivo de rejeição da solicitação de encerramento de conta. </br>Por exemplo: 2023 a 2025." data-html={true}>
+                                            <span data-tooltip-content="Preencher com um motivo de rejeição da solicitação de encerramento de conta. </br>Por exemplo: 2023 a 2025." data-html={true}>
                                                 <label htmlFor="nome">Motivo *</label>
                                                 <ReactTooltip/>
                                             </span>

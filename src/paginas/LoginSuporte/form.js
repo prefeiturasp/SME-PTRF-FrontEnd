@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {Formik} from "formik";
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faQuestionCircle, faEye, faEyeSlash} from '@fortawesome/free-solid-svg-icons';
 import {YupSignupSchemaLogin} from "../../utils/ValidacoesAdicionaisFormularios";
@@ -64,7 +64,7 @@ export const LoginSuporteForm = ({redefinicaoDeSenha}) => {
                             <form onSubmit={props.handleSubmit}>
                                 <div className="form-group">
                                     <label htmlFor="login">Usuário</label>
-                                    <span data-html={true} data-tip='Digite, sem ponto nem traço, </br>os 7 dígitos do RF para servidor,<br/> ou o CPF para usuário não servidor'>
+                                    <span data-html={true} data-tooltip-content='Digite, sem ponto nem traço, </br>os 7 dígitos do RF para servidor,<br/> ou o CPF para usuário não servidor'>
                                         <FontAwesomeIcon
                                             style={{fontSize: '18px', marginLeft: "3px", color:'#42474A'}}
                                             icon={faQuestionCircle}

@@ -6,7 +6,7 @@ import {useCarregaTabelaDespesa} from "../../../Globais/useCarregaTabelaDespesa"
 import useConferidoRateioTemplate from "./useConferidoRateioTemplate";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 import { barraMensagemCustom } from "./../../../../componentes/Globais/BarraMensagem";
 import './scss/rowExpansionTable.scss';
 
@@ -24,7 +24,7 @@ const useRowExpansionDespesaTemplate = (prestacaoDeContas) =>{
             let data_estorno = dataTemplate(null, null, rateio.estorno.data)
             let texto_tooltip = `O estorno do dia ${data_estorno} <br/> esta vinculado a essa despesa.`
             return (
-                <span className='font-weight-normal' data-tip={texto_tooltip} data-html={true}>
+                <span className='font-weight-normal' data-tooltip-content={texto_tooltip} data-html={true}>
                     <FontAwesomeIcon
                         style={{fontSize: '18px', marginLeft: "4px", color: '#2A6397'}}
                         icon={faInfoCircle}

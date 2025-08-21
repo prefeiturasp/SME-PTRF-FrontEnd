@@ -3,7 +3,7 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import Tabela from "../Tabela";
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import { faEdit } from '@fortawesome/free-solid-svg-icons';
 
@@ -47,7 +47,7 @@ const mockAcoesTemplate = (rowData) => {
                 className="btn-editar-membro"
                 onClick={() => mockHandleEditFormModal(rowData)}
             >
-                <div data-tip="Editar" data-for={`tooltip-id-${rowData.uuid}`}>
+                <div data-tooltip-content="Editar" data-tooltip-id={`tooltip-id-${rowData.uuid}`}>
                     <ReactTooltip id={`tooltip-id-${rowData.uuid}`} />
                     <FontAwesomeIcon
                         style={{ fontSize: '20px', marginRight: "0", color: "#00585E" }}
@@ -88,7 +88,7 @@ describe("Componente Tabela", () => {
             const actionsCell = cells[1]
             expect(actionsCell).not.toBeEmptyDOMElement(); // Ações não está vazia
 
-            const divTooltipEditar = actionsCell.querySelector("[data-tip='Editar']");
+            const divTooltipEditar = actionsCell.querySelector("[data-tooltip-content='Editar']");
             expect(divTooltipEditar).toBeInTheDocument();
             const svgElement = divTooltipEditar.querySelector("svg");
             expect(svgElement).toBeInTheDocument();

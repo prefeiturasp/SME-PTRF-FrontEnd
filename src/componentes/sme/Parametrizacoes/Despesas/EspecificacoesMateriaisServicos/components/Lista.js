@@ -10,7 +10,7 @@ import { usePost } from "../hooks/usePost";
 import { usePatch } from "../hooks/usePatch";
 import { useDelete } from "../hooks/useDelete";
 
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 import Loading from "../../../../../../utils/Loading";
 import { ModalForm } from "./ModalForm";
 import { ModalConfirmacaoExclusao } from "./ModalConfirmacaoExclusao";
@@ -71,7 +71,7 @@ export const Lista = () => {
         return (
             <div>
                 <button className="btn-editar-especificacoes btn-editar-membro" onClick={() => handleEditFormModal(rowData)}>
-                    <span data-tip="Editar" data-html={true}>
+                    <span data-tooltip-content="Editar" data-html={true}>
                         <FontAwesomeIcon
                             style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
                             icon={faEdit}

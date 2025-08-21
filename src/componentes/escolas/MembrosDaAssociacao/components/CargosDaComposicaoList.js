@@ -4,7 +4,7 @@ import {DataTable} from "primereact/datatable";
 import {Column} from "primereact/column";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEdit, faEye} from "@fortawesome/free-solid-svg-icons";
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 import {useNavigate} from "react-router-dom";
 import {Badge} from "react-bootstrap"
 import {MembrosDaAssociacaoContext} from "../context/MembrosDaAssociacao";
@@ -27,7 +27,7 @@ export const CargosDaComposicaoList = ({escopo}) => {
                     data-qa='editar-membro'
                 >
                     {currentPage === 1 && escopo === 'mandato-vigente' ? (
-                        <span data-tip="Editar membro" data-html={true}>
+                        <span data-tooltip-content="Editar membro" data-html={true}>
                             <FontAwesomeIcon
                                 style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
                                 icon={faEdit}
@@ -35,7 +35,7 @@ export const CargosDaComposicaoList = ({escopo}) => {
                             <ReactTooltip/>
                         </span>
                     ):
-                        <span data-tip="Visualizar membro" data-html={true}>
+                        <span data-tooltip-content="Visualizar membro" data-html={true}>
                             <FontAwesomeIcon
                                 style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
                                 icon={faEye}
