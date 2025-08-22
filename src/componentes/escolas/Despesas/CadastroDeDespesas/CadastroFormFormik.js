@@ -135,9 +135,7 @@ export const CadastroFormFormik = ({
                 !visoesService.getPermissoes(["delete_despesa"]) ||
                 !valoresIniciais.despesa_anterior_ao_uso_do_sistema_editavel;
 
-            const temDataDocumento = !!valoresIniciais.data_documento;
-
-            if (!desabilita && temDataDocumento) {
+            if (!desabilita) {
                 setPodeHabilitar(false);
                 timeoutId = setTimeout(() => {
                     setPodeHabilitar(true);
