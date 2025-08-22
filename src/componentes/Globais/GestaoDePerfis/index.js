@@ -12,7 +12,7 @@ import {Link} from "react-router-dom";
 import {UrlsMenuInterno} from "./UrlsMenuInterno";
 import {MenuInterno} from "../MenuInterno";
 import Loading from "../../../utils/Loading";
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 import {barraMensagemCustom} from "../BarraMensagem";
 
 export const GestaoDePerfis = () => {
@@ -95,7 +95,7 @@ export const GestaoDePerfis = () => {
                         <p key={index} className='mb-0'>
                         {unidade.acesso_de_suporte &&
                         <>
-                            <span data-html={true} data-tip='Acesso de suporte'>
+                            <span data-html={true} data-tooltip-content='Acesso de suporte'>
                                 <FontAwesomeIcon
                                     style={{marginLeft: "3px", marginRight: "3px", color: '#086397'}}
                                     icon={faKey}
@@ -120,7 +120,7 @@ export const GestaoDePerfis = () => {
             <div>
                 {unidadeLogada.acesso_de_suporte &&
                 <>
-                    <span data-html={true} data-tip='Acesso de suporte'>
+                    <span data-html={true} data-tooltip-content='Acesso de suporte'>
                         <FontAwesomeIcon
                             style={{marginLeft: "3px", marginRight: "3px", color: '#086397'}}
                             icon={faKey}

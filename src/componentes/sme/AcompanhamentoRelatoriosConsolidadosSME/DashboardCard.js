@@ -1,7 +1,7 @@
 import React from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEye, faInfoCircle} from "@fortawesome/free-solid-svg-icons";
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 
 export const DashboardCard = ({itensDashboard, handleClickVerRelatorios, handleClickVerDRE}) => {
     return (
@@ -18,7 +18,7 @@ export const DashboardCard = ({itensDashboard, handleClickVerRelatorios, handleC
                                 <div className="card-text card-qtde-associacoes  mb-0 pb-3 d-flex justify-content-between">
                                     <span>{card.quantidade_de_relatorios}</span>
                                     {card.quantidade_retornadas >= 1 &&
-                                        <span data-tip={card.quantidade_retornadas > 1 ? '<p class="mb-0">Existem ' + card.quantidade_retornadas + ' relatórios</p> <p class="mb-0">retornadas das U.Es</p>' : '<p class="mb-0">Existe ' + card.quantidade_retornadas + ' relatório </p><p class="mb-0"> retornada das U.Es</p>' } data-html={true}>
+                                        <span data-tooltip-content={card.quantidade_retornadas > 1 ? '<p class="mb-0">Existem ' + card.quantidade_retornadas + ' relatórios</p> <p class="mb-0">retornadas das U.Es</p>' : '<p class="mb-0">Existe ' + card.quantidade_retornadas + ' relatório </p><p class="mb-0"> retornada das U.Es</p>' } data-html={true}>
                                             <FontAwesomeIcon
                                                 style={{fontSize: '18px', marginLeft: "3px", color: '#C65D00'}}
                                                 icon={faInfoCircle}
@@ -27,7 +27,7 @@ export const DashboardCard = ({itensDashboard, handleClickVerRelatorios, handleC
                                         </span>
                                     }
                                     {card.quantidade_nao_recebida >= 1 &&
-                                        <span data-tip={card.quantidade_nao_recebida > 1 ? '<p class="mb-0">'+ card.quantidade_nao_recebida + ' novas relatórios não recebidas</p>' : '<p class="mb-0">' + card.quantidade_nao_recebida + ' nova relatório não recebida</p>' } data-html={true}>
+                                        <span data-tooltip-content={card.quantidade_nao_recebida > 1 ? '<p class="mb-0">'+ card.quantidade_nao_recebida + ' novas relatórios não recebidas</p>' : '<p class="mb-0">' + card.quantidade_nao_recebida + ' nova relatório não recebida</p>' } data-html={true}>
                                             <FontAwesomeIcon
                                                 style={{fontSize: '18px', marginLeft: "3px", color: '#C65D00'}}
                                                 icon={faInfoCircle}

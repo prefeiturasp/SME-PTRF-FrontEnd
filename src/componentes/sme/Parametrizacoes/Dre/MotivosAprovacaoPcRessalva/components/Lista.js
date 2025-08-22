@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 import { faEdit } from "@fortawesome/free-solid-svg-icons";
 import { useGetMotivosAprovacaoPcRessalva } from "../hooks/useGetMotivosAprovacaoPcRessalva";
 import Loading from "../../../../../../utils/Loading";
@@ -30,7 +30,7 @@ export const Lista = () => {
       return (
           <div>
               <button className="btn-editar-membro" onClick={() => handleEditFormModal(rowData)}>
-                  <span data-tip="Editar motivo" data-html={true}>
+                  <span data-tooltip-content="Editar motivo" data-html={true}>
                       <FontAwesomeIcon
                           style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
                           icon={faEdit}

@@ -90,7 +90,7 @@ const DemonstrativoDaExecucaoFisicoFinanceira = ({consolidadoDre, periodoEscolhi
                     </div>
                     {!consolidadoDre.eh_consolidado_de_publicacoes_parciais &&
                         <div className="col-12 col-md-4 align-self-center text-right">
-                        <span data-html={true} data-tip={!podeAcessarInfoConsolidado(consolidadoDre) ? "Não é possível consultar/preencher o resumo. A análise da(s) prestação(ões) de contas em retificação ainda não foi concluída." : ""}>
+                        <span data-html={true} data-tooltip-content={!podeAcessarInfoConsolidado(consolidadoDre) ? "Não é possível consultar/preencher o resumo. A análise da(s) prestação(ões) de contas em retificação ainda não foi concluída." : ""}>
                             <button
                                 onClick={() => onClickPreencherRelatorio()}
                                 type="button"

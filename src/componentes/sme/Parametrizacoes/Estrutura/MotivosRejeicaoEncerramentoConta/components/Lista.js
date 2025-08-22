@@ -6,7 +6,7 @@ import { MotivosRejeicaoContext } from "../context/MotivosRejeicao";
 import { useGetMotivosRejeicao } from "../hooks/useGetMotivosRejeicao";
 import { usePostMotivoRejeicao } from "../hooks/usePostMotivoRejeicao";
 import { usePatchMotivoRejeicao } from "../hooks/usePatchMotivoRejeicao";
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 import { faEdit } from "@fortawesome/free-solid-svg-icons";
 import Loading from "../../../../../../utils/Loading";
 import {ModalForm} from "./ModalForm";
@@ -27,7 +27,7 @@ export const Lista = () => {
         return (
             <div>
                 <button className="btn-editar-membro" onClick={() => handleEditFormModal(rowData)}>
-                    <span data-tip="Editar motivo" data-html={true}>
+                    <span data-tooltip-content="Editar motivo" data-html={true}>
                         <FontAwesomeIcon
                             style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
                             icon={faEdit}

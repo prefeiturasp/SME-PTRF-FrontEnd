@@ -2,7 +2,7 @@ import React, {memo, useState} from "react";
 import {ModalMarcarPublicacaoNoDiarioOficial} from "../ModalMarcarPublicacaoNoDiarioOficial";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEdit} from '@fortawesome/free-solid-svg-icons'
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 import moment from "moment";
 import {visoesService} from "../../../../services/visoes.service";
 
@@ -24,7 +24,7 @@ const IconeMarcarPublicacaoNoDiarioOficial = ({consolidadoDre, carregaConsolidad
     return (
         <>
             {consolidadoDre && consolidadoDre.ja_publicado && consolidadoDre.data_publicacao &&
-                <div data-tip={retornaMsgToolTip()} data-html={true} style={{display:'inline'}} data-for={`tooltip-id-${consolidadoDre.uuid}`}>
+                <div data-tooltip-content={retornaMsgToolTip()} data-html={true} style={{display:'inline'}} data-tooltip-id={`tooltip-id-${consolidadoDre.uuid}`}>
                     <button
                         disabled={!visoesService.getPermissoes(['change_relatorio_consolidado_dre'])}
                         onClick={() => setShowModalMarcarPublicacaoNoDiarioOficial(true)}

@@ -3,7 +3,7 @@ import {MsgImgCentralizada} from "../../../../Globais/Mensagens/MsgImgCentraliza
 import Img404 from "../../../../../assets/img/img-404.svg";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faExclamationCircle} from "@fortawesome/free-solid-svg-icons";
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 import {formataData} from "../../../../../utils/FormataData"
 import { TabelaContasEncerradas } from "./TabelaContasEncerradas";
 import { ModalConfirmarEncerramento } from "./ModalConfirmarEncerramento";
@@ -230,7 +230,7 @@ export const  InfosContas = ({dadosDaAssociacao}) =>{
                                     <div className="col-12 col-md-3 form-group">
                                         <label>
                                             <strong>Data do encerramento</strong> 
-                                            <span data-html={true} data-tip="Data de encerramento da conta na agência.">
+                                            <span data-html={true} data-tooltip-content="Data de encerramento da conta na agência.">
                                                 <FontAwesomeIcon
                                                     style={{marginLeft: "10px", color: '#2B7D83'}}
                                                     icon={faExclamationCircle}

@@ -1,7 +1,7 @@
 import React, {memo} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEdit} from '@fortawesome/free-solid-svg-icons'
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 import moment from "moment";
 import {visoesService} from "../../../../services/visoes.service";
 
@@ -21,7 +21,7 @@ const IconeEditarRetificacao = ({consolidadoDre}) => {
     return (
         <>
             {consolidadoDre && consolidadoDre?.ja_publicado && consolidadoDre?.data_publicacao && consolidadoDre?.eh_retificacao && 
-                    <div data-tip={retornaMsgToolTip()} data-html={true} style={{display:'inline'}} data-for={`tooltip-id-${consolidadoDre.uuid}`}>
+                    <div data-tooltip-content={retornaMsgToolTip()} data-html={true} style={{display:'inline'}} data-tooltip-id={`tooltip-id-${consolidadoDre.uuid}`}>
                     <button
                         onClick={(e) => console.log(e)}
                         className="btn btn-link pt-1 pb-1 pl-2 pr-0"

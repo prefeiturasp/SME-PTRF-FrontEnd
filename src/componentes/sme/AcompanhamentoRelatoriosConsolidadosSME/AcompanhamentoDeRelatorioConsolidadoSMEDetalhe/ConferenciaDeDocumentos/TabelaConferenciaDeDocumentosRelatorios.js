@@ -21,7 +21,7 @@ import Dropdown from "react-bootstrap/Dropdown";
 import Loading from "../../../../../utils/Loading";
 import {AxiosError} from "axios";
 import "./conferencia-de-documentos.scss"
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 
 const TabelaConferenciaDeDocumentosRelatorios = ({
                                                      relatorioConsolidado,
@@ -509,7 +509,7 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
                         type="button"
                         onClick={() => handleShowPdf(rowData)}
                     >
-                        <span data-html={true} data-tip="Visualização">
+                        <span data-html={true} data-tooltip-content="Visualização">
                             <FontAwesomeIcon style={
                                 {
                                     fontSize: '18px',
@@ -527,7 +527,7 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
                             onClick={() => getDownloadDocumentoRelatorio(rowData)}
                             className="btn btn-link fonte-14"
                             type="button">
-                        <span data-html={true} data-tip="Download">
+                        <span data-html={true} data-tooltip-content="Download">
                             <FontAwesomeIcon style={
                                 {
                                     fontSize: '18px',

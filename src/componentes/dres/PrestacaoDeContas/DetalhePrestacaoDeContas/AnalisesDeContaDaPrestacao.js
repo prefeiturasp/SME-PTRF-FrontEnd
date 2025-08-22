@@ -4,7 +4,7 @@ import {trataNumericos} from "../../../../utils/ValidacoesAdicionaisFormularios"
 import { ReactNumberFormatInput as CurrencyInput } from "../../../Globais/ReactNumberFormatInput";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faExclamationCircle, faCheck, faTrash, faDownload, faEye} from '@fortawesome/free-solid-svg-icons'
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 import moment from "moment";
 import ModalVisualizarArquivoDeReferencia from "./ModalVisualizarArquivoDeReferencia";
 import { getDownloadArquivoDeReferencia } from "../../../../services/dres/PrestacaoDeContas.service";
@@ -194,7 +194,7 @@ export const AnalisesDeContaDaPrestacao = ({infoAta, analisesDeContaDaPrestacao,
                                     
                                     {temDiferencaUe() &&
                                         <>
-                                            <span data-html={true} data-tip={tooltip_1}>
+                                            <span data-html={true} data-tooltip-content={tooltip_1}>
                                                 <FontAwesomeIcon
                                                     style={{marginLeft: "10px", color: '#2B7D83'}}
                                                     icon={faExclamationCircle}
@@ -300,7 +300,7 @@ export const AnalisesDeContaDaPrestacao = ({infoAta, analisesDeContaDaPrestacao,
                                             
                                             {temDiferencaAjusteDre() &&
                                                 <>
-                                                    <span data-html={true} data-tip={tooltip_1}>
+                                                    <span data-html={true} data-tooltip-content={tooltip_1}>
                                                         <FontAwesomeIcon
                                                             style={{marginLeft: "10px", color: '#2B7D83'}}
                                                             icon={faExclamationCircle}

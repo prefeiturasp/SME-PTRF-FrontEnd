@@ -3,7 +3,7 @@ import {DataTable} from 'primereact/datatable';
 import {Column} from 'primereact/column';
 import {faEdit} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 import {Paginacao} from "./Paginacao";
 import { formatMoneyBRL } from '../../../../../../utils/money';
 import ModalEdicaoReceitaPrevistaPDDE from './ModalEdicaoReceitaPrevistaPdde';
@@ -28,7 +28,7 @@ const Tabela = ({
         return (
             <div style={{ display: 'flex', justifyContent: 'center' }}>
                 <button onClick={() => handleOpenModalForm(rowData)} className="btn-editar-membro" data-testid="botao-editar" aria-label="Editar ação">
-                    <div data-tip="Editar ação" data-for={`tooltip-id-${rowData.uuid}`}>
+                    <div data-tooltip-content="Editar ação" data-tooltip-id={`tooltip-id-${rowData.uuid}`}>
                         <ReactTooltip id={`tooltip-id-${rowData.uuid}`}/>
                         <FontAwesomeIcon
                             style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}

@@ -3,7 +3,7 @@ import './ata-parecer-tecnico.scss';
 import { exibeDateTimePT_BR_Ata } from "../../../../utils/ValidacoesAdicionaisFormularios";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faDownload} from '@fortawesome/free-solid-svg-icons'
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 import {getDownloadAtaParecerTecnico} from "../../../../services/dres/AtasParecerTecnico.service";
 import {postCriarAtaAtrelarAoConsolidadoDre} from "../../../../services/dres/RelatorioConsolidado.service";
 
@@ -85,7 +85,7 @@ export const AtaParecerTecnico = ({consolidadoDre, podeAcessarInfoConsolidado}) 
                             </button>
                             ):
                             <>
-                                <span data-html={true} data-tip={!podeAcessarInfoConsolidado(consolidadoDre) ? "Não é possível preencher a ata. A análise da(s) prestação(ões) de contas em retificação ainda não foi concluída." : ""}>
+                                <span data-html={true} data-tooltip-content={!podeAcessarInfoConsolidado(consolidadoDre) ? "Não é possível preencher a ata. A análise da(s) prestação(ões) de contas em retificação ainda não foi concluída." : ""}>
                                 <button
                                     onClick={() => criarAtaAtrelarAoConsolidado(consolidadoDre.dre_uuid, consolidadoDre.periodo_uuid, consolidadoDre.uuid ? consolidadoDre.uuid : null)}
                                     type="button"

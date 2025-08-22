@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import TabelaFornecedores from "../TabelaFornecedores";
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import { faEdit } from '@fortawesome/free-solid-svg-icons';
 import { mockListaFornecedores } from "../__fixtures__/mockData";
@@ -13,7 +13,7 @@ const mockAcoesTemplate = (rowData) => {
     return (
         <div>
             <button onClick={() => handleEditFormModalFornecedores(rowData)}>
-                <div data-tip="Editar" data-for={`tooltip-id-${rowData.uuid}`}>
+                <div data-tooltip-content="Editar" data-tooltip-id={`tooltip-id-${rowData.uuid}`}>
                     <ReactTooltip id={`tooltip-id-${rowData.uuid}`} />
                     <FontAwesomeIcon
                         style={{ fontSize: '20px', marginRight: "0", color: "#00585E" }}

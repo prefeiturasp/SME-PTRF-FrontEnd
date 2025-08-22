@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useMemo, useState} from "react";
 import {PaginasContainer} from "../../../../../paginas/PaginasContainer";
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 import {
     getTodosMotivosPagamentoAntecipado,
     getFiltrosMotivosPagamentoAntecipado,
@@ -102,7 +102,7 @@ export const MotivosPagamentoAntecipado = ()=>{
             <div>
                 <button data-qa="botao-editar-motivo-pagamento-antecipado"
                     className="btn-editar-membro" onClick={()=>handleEditFormModal(rowData)}>
-                    <div data-tip="Editar" data-for={`tooltip-id-${rowData.uuid}`}>
+                    <div data-tooltip-content="Editar" data-tooltip-id={`tooltip-id-${rowData.uuid}`}>
                         <ReactTooltip id={`tooltip-id-${rowData.uuid}`}/>
                         <FontAwesomeIcon
                             style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}

@@ -15,7 +15,7 @@ import { useCarregaTabelaDespesa } from "../../../../hooks/Globais/useCarregaTab
 import {faDownload} from "@fortawesome/free-solid-svg-icons";
 import { MsgImgCentralizada } from "../../../Globais/Mensagens/MsgImgCentralizada";
 import Img404 from "../../../../assets/img/img-404.svg";
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 
 const filtroInicial = {
   especificacao_bem: "",
@@ -211,8 +211,8 @@ export const ListaBemProduzido = (props) => {
               return (
                 <>
                   <button
-                    data-tip="Visualizar despesa"
-                    data-for={`tooltip-visualizar-despesa-${despesa.despesa_uuid}`}
+                    data-tooltip-content="Visualizar despesa"
+                    data-tooltip-id={`tooltip-visualizar-despesa-${despesa.despesa_uuid}`}
                     onClick={() => navigate(`/edicao-de-despesa/${despesa.despesa_uuid}`, { state: { origem: 'situacao_patrimonial' } })}
                     style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
                     aria-label="Visualizar despesa"
@@ -370,8 +370,8 @@ export const ListaBemProduzido = (props) => {
                   return (
                     <>
                       <button
-                        data-tip="Visualizar despesa"
-                        data-for={`tooltip-visualizar-despesa-${rowData.despesa_uuid}`}
+                        data-tooltip-content="Visualizar despesa"
+                        data-tooltip-id={`tooltip-visualizar-despesa-${rowData.despesa_uuid}`}
                         onClick={() => navigate(`/edicao-de-despesa/${rowData.despesa_uuid}`, { state: { origem: 'situacao_patrimonial' } })}
                         style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
                         aria-label="Visualizar despesa"

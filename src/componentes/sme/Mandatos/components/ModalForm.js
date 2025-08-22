@@ -4,7 +4,7 @@ import {YupSignupSchemaMandatos} from "../YupSignupSchemaMandatos";
 import {ModalFormBodyText} from "../../../Globais/ModalBootstrap";
 import {MandatosContext} from "../context/Mandatos";
 import {DatePickerField} from "../../../Globais/DatePickerField";
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 import moment from "moment";
 import {useGetMandatoMaisRecente} from "../hooks/useGetMandatoMaisRecente";
 import {
@@ -46,7 +46,7 @@ export const ModalForm = ({handleSubmitFormModal, handleConfirmDeleteMandato}) =
                                         <p className='text-right mb-0'>* Preenchimento obrigatório</p>
                                         <div className="form-group">
                                             <span
-                                                data-tip="Preencher com o período total do mandato. </br>Por exemplo: 2023 a 2025."
+                                                data-tooltip-content="Preencher com o período total do mandato. </br>Por exemplo: 2023 a 2025."
                                                 data-html={true}>
                                                 <label htmlFor="referencia">Referência do mandato *</label>
                                                 <ReactTooltip/>

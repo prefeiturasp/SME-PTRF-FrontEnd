@@ -3,7 +3,7 @@ import { Formik } from "formik";
 import { YupSchemaMotivosDevolucaoTesouro } from "../YupSchemaMotivosDevolucaoTesouro";
 import { ModalFormBodyText } from "../../../../../Globais/ModalBootstrap";
 import { MotivosDevolucaoTesouroContext } from "../context/MotivosDevolucaoTesouro";
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 import {RetornaSeTemPermissaoEdicaoPainelParametrizacoes} from "../../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes"
 
 export const ModalForm = ({handleSubmitFormModal}) => {
@@ -32,7 +32,7 @@ export const ModalForm = ({handleSubmitFormModal}) => {
                                     <div className='col-12'>
                                         <p className='text-right mb-0'><small> * Preenchimento obrigatório</small></p>
                                         <div className="form-group">
-                                            <span data-tip="Preencher com um motivo de devolução ao tesouro" data-html={true}>
+                                            <span data-tooltip-content="Preencher com um motivo de devolução ao tesouro" data-html={true}>
                                                 <label htmlFor="nome">Motivo *</label>
                                                 <ReactTooltip/>
                                             </span>
