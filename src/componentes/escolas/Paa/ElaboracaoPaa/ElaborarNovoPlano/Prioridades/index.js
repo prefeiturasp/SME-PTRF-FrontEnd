@@ -13,6 +13,7 @@ import { MsgImgCentralizada } from "../../../../../Globais/Mensagens/MsgImgCentr
 import { ModalConfirmarExclusao } from "../../../../../sme/Parametrizacoes/componentes/ModalConfirmarExclusao";
 import Img404 from "../../../../../../assets/img/img-404.svg";
 import { Tabela } from './Tabela';
+import { Resumo } from './Resumo';
 
 
 const filtroInicial = {
@@ -112,13 +113,16 @@ const Prioridades = () => {
 
   return (
     <div>
-      <Flex gutter={8} justify="space-between" align="flex-end" className="mb-4">
-        <h5 className="mb-0">Prioridades</h5>
+      <Resumo />
+
+      <Flex gutter={8} justify="space-between" align="center" className="my-4">
+        <Typography.Title level={5} style={{ color: '#00585E', fontWeight: 'bold',}}>
+            Registro de prioridades
+        </Typography.Title>
+
         <Button
           type="primary"
-          onClick={abrirModal}
-          style={{ marginTop: '20px' }}
-        >
+          onClick={abrirModal}>
           Adicionar nova prioridade
         </Button>
       </Flex>
