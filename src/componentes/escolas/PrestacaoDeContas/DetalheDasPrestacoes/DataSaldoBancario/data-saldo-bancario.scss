@@ -1,34 +1,34 @@
-#diferenca_prestacao_de_conta{
+#diferenca_prestacao_de_conta {
   font-weight: bold;
-  color: #B40C02;
-  background-color: #DADADA;
+  color: #b40c02;
+  background-color: #dadada;
 }
 
-.container-upload-extrato{
-  background-color: #F3F3F3;
+.container-upload-extrato {
+  background-color: #f3f3f3;
   padding: 4px;
-  color: #42474A;
+  color: #42474a;
 }
 
-.container-upload-item{
-  height: 40px;
-  background-color: #E2E2E2;
+.container-upload-item {
+  padding: 0 10px;
+  background-color: #e2e2e2;
 }
 
 .container-upload-extrato .btn-apagar-comprovante-extrato {
   padding-left: 10px;
 }
 
-#upload_extrato{
+#upload_extrato {
   display: inline !important;
   width: auto !important;
 }
 
-.exibe-data-comprovante-extrato{
+.exibe-data-comprovante-extrato {
   display: block;
   font-size: 12px;
 }
 
-.disabled_upload{
+.disabled_upload {
   pointer-events: none;
 }

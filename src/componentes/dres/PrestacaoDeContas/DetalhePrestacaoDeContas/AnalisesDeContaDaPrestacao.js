@@ -136,7 +136,7 @@ export const AnalisesDeContaDaPrestacao = ({infoAta, analisesDeContaDaPrestacao,
         let permite = true;
 
         if(index > -1){
-            if(!analisesDeContaDaPrestacao[index].saldo_extrato && !analisesDeContaDaPrestacao[index].data_extrato && !analisesDeContaDaPrestacao[index].solicitar_envio_do_comprovante_do_saldo_da_conta){
+            if(!analisesDeContaDaPrestacao[index].saldo_extrato && !analisesDeContaDaPrestacao[index].data_extrato && !analisesDeContaDaPrestacao[index].solicitar_envio_do_comprovante_do_saldo_da_conta && !analisesDeContaDaPrestacao[index].solicitar_correcao_da_data_do_saldo_da_conta){
                 permite = false;
             }
 
@@ -254,7 +254,7 @@ export const AnalisesDeContaDaPrestacao = ({infoAta, analisesDeContaDaPrestacao,
                                     </div>
 
                                     <div className="row container-extrato-bancario ml-0 mr-0">
-                                        <div className="col-3 mt-2 mb-4">
+                                        {/* <div className="col-3 mt-2 mb-4">
                                             <label htmlFor="data_extrato"><strong>Data corrigida</strong></label>
                                             <DatePickerField
                                                 disabled={!editavel || !adicaoAjusteSaldo}
@@ -269,7 +269,7 @@ export const AnalisesDeContaDaPrestacao = ({infoAta, analisesDeContaDaPrestacao,
                                             />
                                             {formErrosAjusteSaldo[index] && formErrosAjusteSaldo[index].data && <span className="span_erro text-danger mt-1"> {formErrosAjusteSaldo[index].data}</span>}
                                             
-                                        </div>
+                                        </div> */}
                                         <div className="col-4 mt-2 mb-4">
                                             <label htmlFor="saldo_extrato"><strong>Saldo corrigido</strong></label>
                                             <CurrencyInput
@@ -339,6 +339,23 @@ export const AnalisesDeContaDaPrestacao = ({infoAta, analisesDeContaDaPrestacao,
                                             </div>
                                         </div>
     
+                                    </div>
+
+
+                                    <div className="row container-extrato-bancario ml-0 mr-0">
+                                        <div className="col-12">
+                                            <Form.Check
+                                                type="checkbox"
+                                                checked={analisesDeContaDaPrestacao[index].solicitar_correcao_da_data_do_saldo_da_conta}
+                                                label={"Solicitar correção da data do saldo da conta"}
+                                                key={index}
+                                                onChange={(e) => {
+                                                    handleChangeAnalisesDeContaDaPrestacao(e.target.name, e.target.checked)
+                                                }}
+                                                name="solicitar_correcao_da_data_do_saldo_da_conta"
+                                                disabled={!editavel || !adicaoAjusteSaldo}
+                                            />
+                                        </div>
                                     </div>
 
                                     <div className="row container-extrato-bancario ml-0 mr-0">
