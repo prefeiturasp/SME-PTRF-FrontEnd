@@ -9,6 +9,7 @@ export const usePostPrioridade = (onClose) => {
     onSuccess: (data) => {
       toastCustom.ToastCustomSuccess("Prioridade criada com sucesso.");
       queryClient.invalidateQueries(["prioridades"]);
+      queryClient.invalidateQueries(["prioridades-resumo"]);
       onClose && onClose();
     },
     onError: (e) => {
