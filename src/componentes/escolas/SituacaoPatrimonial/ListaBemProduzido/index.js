@@ -302,7 +302,7 @@ export const ListaBemProduzido = (props) => {
                     style={{marginRight:'3px'}}
                     icon={faDownload}
                 />
-                <strong>Exportar</strong>
+                <strong>Exportar Excel</strong>
               </button>
             </Flex>
           </p>
