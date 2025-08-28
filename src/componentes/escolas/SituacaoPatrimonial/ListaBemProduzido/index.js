@@ -16,6 +16,8 @@ import {faDownload} from "@fortawesome/free-solid-svg-icons";
 import { MsgImgCentralizada } from "../../../Globais/Mensagens/MsgImgCentralizada";
 import Img404 from "../../../../assets/img/img-404.svg";
 import { Tooltip as ReactTooltip } from "react-tooltip";
+import { getExportarBensProduzidos } from '../../../../services/escolas/BensProduzidos.service';
+import { toastCustom } from '../../../Globais/ToastCustom';
 
 const filtroInicial = {
   especificacao_bem: "",
@@ -193,6 +195,15 @@ export const ListaBemProduzido = (props) => {
     setFiltros(filtroSalvo);
   };
 
+  async function handleExportar() {
+    try {
+      await getExportarBensProduzidos();
+      toastCustom.ToastCustomSuccess('Geração solicitada com sucesso.', 'A geração foi solicitada. Em breve você receberá um aviso na central de downloads com o resultado.')
+    } catch (error) {
+      console.log("Erro ao exportar dados", error)
+    }
+  }
+
   const expandedRowTemplate = (data) => (
     <>
       {data.despesas.map((despesa) => (
@@ -284,7 +295,7 @@ export const ListaBemProduzido = (props) => {
                 <span className="total">{data?.count}</span>
               </span>
               <button
-                onClick={() => console.log("EXPORTAR")}
+                onClick={handleExportar}
                 className={`link-exportar`}
               >
                 <FontAwesomeIcon
