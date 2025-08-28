@@ -209,11 +209,13 @@ export const ResumoDosAcertos = () => {
         setLoading(true)
         if (infoAta && infoAta.contas && infoAta.contas.length > 0 && analiseAtualUuid) {
             infoAta.contas.map(async (conta) => {
-                let extratos_ajustes = await getExtratosBancariosAjustes(analiseAtualUuid, conta.conta_associacao.uuid);
-                setTotalExtratosAjustes(extratos_ajustes.length)
-                let lancamentos_ajustes = await getLancamentosAjustes(analiseAtualUuid, conta.conta_associacao.uuid)
+                const extratos_ajustes = await getExtratosBancariosAjustes(analiseAtualUuid, conta.conta_associacao.uuid);
+                if(extratos_ajustes) {
+                    setTotalExtratosAjustes(prev => prev || 0 + 1)
+                }
+                const lancamentos_ajustes = await getLancamentosAjustes(analiseAtualUuid, conta.conta_associacao.uuid)
                 setTotalLancamentosAjustes(lanc => isNaN(lanc) ? 0 + lancamentos_ajustes.length : lanc + lancamentos_ajustes.length)
-                let documentos_ajustes = await getDocumentosAjustes(analiseAtualUuid, conta.conta_associacao.uuid)
+                const documentos_ajustes = await getDocumentosAjustes(analiseAtualUuid, conta.conta_associacao.uuid)
                 setTotalDocumentosAjustes(documentos_ajustes.length)
                 const despesas_periodos_anteriores_ajustes = await getDespesasPeriodosAnterioresAjustes(analiseAtualUuid, conta.conta_associacao.uuid);
                 setDespesasPeriodosAnterioresAjustes(prev => isNaN(prev) ? 0 + despesas_periodos_anteriores_ajustes.length : prev + despesas_periodos_anteriores_ajustes.length);
