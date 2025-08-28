@@ -109,7 +109,6 @@ describe("DetalheDasPrestacoes", () => {
 
       renderComponent();
 
-      // 👇 Espera os efeitos dispararem
       await waitFor(() => {
         expect(localStorage.getItem('periodoConta')).toBe(ls);
         expect(receitaService.getTabelasReceita).toHaveBeenCalledTimes(1);
