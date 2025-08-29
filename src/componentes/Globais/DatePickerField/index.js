@@ -4,7 +4,7 @@ import DatePicker, {registerLocale} from "react-datepicker";
 import 'react-datepicker/dist/react-datepicker.css';
 import { ptBR } from "date-fns/locale";
 import "./datePickerField.scss";
-import moment from "moment";
+import dayjs from "dayjs";
 
 registerLocale("pt", ptBR);
 
@@ -13,7 +13,7 @@ export const DatePickerField = ({ dataQa="", name, id, value, className="form-co
     const parseDate = (dateString) => {
         if (!dateString) return null;
         if (dateString instanceof Date) return dateString;
-        const date = moment(dateString, 'YYYY-MM-DD', true);
+        const date = dayjs(dateString, "YYYY-MM-DD", true); 
         return date.isValid() ? date.toDate() : null;
     };
 

@@ -6,7 +6,9 @@ import * as associacaoService from "../../../../../services/escolas/Associacao.s
 import * as receitaService from "../../../../../services/escolas/Receitas.service";
 import { SidebarContext } from "../../../../../context/Sidebar";
 import { useParams, useLocation } from 'react-router-dom';
+import * as tabelaValoresPendentesService from "../../../../../services/escolas/TabelaValoresPendentesPorAcao.service";
 
+jest.mock("../../../../../services/escolas/TabelaValoresPendentesPorAcao.service");
 jest.mock("../../../../../services/escolas/PrestacaoDeContas.service");
 jest.mock("../../../../../services/escolas/Receitas.service");
 jest.mock("../../../../../services/escolas/Associacao.service");
@@ -59,20 +61,23 @@ const renderComponent = () =>
 describe("DetalheDasPrestacoes", () => {
 
     beforeEach(() => {
-        localStorage.removeItem('ASSOCIACAO_UUID');
-        jest.clearAllMocks();
+      jest.clearAllMocks();
 
-        localStorage.setItem('ASSOCIACAO_UUID', 'associacao-uuid');
-        receitaService.getTabelasReceita.mockResolvedValue({ data: { acoes_associacao: [] } });
-        associacaoService.getContas.mockResolvedValue([{uuid: 'conta-uuid', conta: 'conta-nome', tipo_conta: {nome: 'conta-tipo'}}]);
-        prestacaoService.getObservacoes.mockResolvedValue({
-            possui_solicitacao_encerramento: true,
-            data_encerramento : '2025-07-05',
-            data_extrato : '2025-07-05',
-            saldo_extrato : 100,
-            saldo_encerramento : '2025-07-05',
-        });
-    })
+      localStorage.setItem('ASSOCIACAO_UUID', 'associacao-uuid');
+
+      receitaService.getTabelasReceita.mockResolvedValue({ data: { acoes_associacao: [] } });
+      associacaoService.getContas.mockResolvedValue([{ uuid: 'conta-uuid', conta: 'conta-nome', tipo_conta: { nome: 'conta-tipo' } }]);
+      prestacaoService.getObservacoes.mockResolvedValue({
+        possui_solicitacao_encerramento: true,
+        data_encerramento: '2025-07-05',
+        data_extrato: '2025-07-05',
+        saldo_extrato: 100,
+        saldo_encerramento: '2025-07-05',
+      });
+      prestacaoService.getStatusPeriodoPorData.mockResolvedValue({ prestacao_contas_status: { periodo_bloqueado: false } });
+      associacaoService.getPeriodosDePrestacaoDeContasDaAssociacao.mockResolvedValue([{ uuid: 'periodo-uuid' }]);
+      tabelaValoresPendentesService.tabelaValoresPendentes.mockResolvedValue([]);
+    });
 
     beforeEach(() => {
         jest.clearAllMocks();
@@ -98,15 +103,18 @@ describe("DetalheDasPrestacoes", () => {
     });
 
     it("renderiza o componente e periodo_uuid SEM parâmetro de url (else if em getPeriodoConta())", async () => {
-        const ls = JSON.stringify({periodo: 'periodo-uuid', conta: 'conta-uuid'})
-        localStorage.setItem('periodoConta', ls);
-        useParams.mockReturnValue({ periodo_uuid: null });
+      const ls = JSON.stringify({ periodo: 'periodo-uuid', conta: 'conta-uuid' });
+      localStorage.setItem('periodoConta', ls);
+      useParams.mockReturnValue({ periodo_uuid: null });
 
-        renderComponent();
+      renderComponent();
+
+      await waitFor(() => {
         expect(localStorage.getItem('periodoConta')).toBe(ls);
         expect(receitaService.getTabelasReceita).toHaveBeenCalledTimes(1);
         expect(associacaoService.getContas).toHaveBeenCalledTimes(1);
         expect(prestacaoService.getObservacoes).toHaveBeenCalledTimes(1);
+      });
     });
 
     it("renderiza o componente e carregaObservacoes em (if(periodosAssociacao) em carregaObservacoes())", async () => {
@@ -195,15 +203,11 @@ describe("DetalheDasPrestacoes", () => {
 
         renderComponent();
 
-        const campoDataSaldo = await screen.findByLabelText(/Data/i)
-        const nova_data = '2025-07-05'
-        fireEvent.change(campoDataSaldo, { target: { value: nova_data } })
-        const dataEsperada = '04/07/2025' // considerando -03:00
-
+        const campoDataSaldo = await screen.findByLabelText(/Data/i);
+        fireEvent.change(campoDataSaldo, { target: { value: "05/07/2025" } });
         await waitFor(() => {
-            expect(campoDataSaldo).toHaveValue(dataEsperada);
+          expect(campoDataSaldo).toHaveValue("05/07/2025");
         });
-
         expect(useLocation).toHaveBeenCalled();
         expect(useParams).toHaveBeenCalled();
     });

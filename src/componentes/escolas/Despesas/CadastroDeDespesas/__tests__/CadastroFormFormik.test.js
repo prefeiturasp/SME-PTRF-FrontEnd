@@ -2,7 +2,6 @@ import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { CadastroFormFormik } from "../CadastroFormFormik";
-import { act } from "@testing-library/react";
 
 // Mock dos serviços
 jest.mock("../../../../../services/visoes.service");
