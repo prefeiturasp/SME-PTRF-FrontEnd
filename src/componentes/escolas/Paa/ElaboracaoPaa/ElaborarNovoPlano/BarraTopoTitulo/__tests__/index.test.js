@@ -33,7 +33,7 @@ describe("BarraTopoTitulo", () => {
     localStorage.setItem(
       "DADOS_PAA",
       JSON.stringify({
-        periodo_paa_objeto: { data_inicial: "2025-01-15" },
+        periodo_paa_objeto: { referencia: "Teste Referência" },
       })
     );
 
@@ -44,7 +44,7 @@ describe("BarraTopoTitulo", () => {
     );
 
     expect(screen.getByRole("heading", { level: 2 })).toHaveTextContent(
-      "Plano Anual 01/2025"
+      "Plano Anual Teste Referência"
     );
   });
 
@@ -59,7 +59,7 @@ describe("BarraTopoTitulo", () => {
     localStorage.setItem(
       "DADOS_PAA",
       JSON.stringify({
-        periodo_paa_objeto: { data_inicial: "2026-05-01" },
+        periodo_paa_objeto: { referencia: "Teste Referência" },
       })
     );
     fireEvent(
@@ -67,13 +67,13 @@ describe("BarraTopoTitulo", () => {
       new StorageEvent("storage", {
         key: "DADOS_PAA",
         newValue: JSON.stringify({
-          periodo_paa_objeto: { data_inicial: "2026-05-01" },
+          periodo_paa_objeto: { referencia: "Teste Referência" },
         }),
       })
     );
 
     expect(screen.getByRole("heading", { level: 2 })).toHaveTextContent(
-      "Plano Anual 05/2026"
+      "Plano Anual Teste Referência"
     );
   });
 
