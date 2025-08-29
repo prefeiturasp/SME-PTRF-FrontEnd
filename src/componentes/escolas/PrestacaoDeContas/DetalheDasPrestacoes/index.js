@@ -25,7 +25,6 @@ import Img404 from "../../../../assets/img/img-404.svg";
 import {ASSOCIACAO_UUID} from "../../../../services/auth.service";
 import {tabelaValoresPendentes} from "../../../../services/escolas/TabelaValoresPendentesPorAcao.service";
 import DataSaldoBancario from "./DataSaldoBancario";
-import {trataNumericos} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import TabelaTransacoes from "./TabelaTransacoes";
 import {getDespesasTabelas} from "../../../../services/escolas/Despesas.service";
 import {FiltrosTransacoes} from "./FiltrosTransacoes";
@@ -33,6 +32,7 @@ import { SidebarLeftService } from "../../../../services/SideBarLeft.service";
 import { SidebarContext } from "../../../../context/Sidebar";
 import {toastCustom} from "../../../Globais/ToastCustom";
 import { ModalSalvarDataSaldoExtrato } from "../ModalSalvarDataSaldoExtrato";
+import {criarPayloadExtratoBancario} from "../../../../utils/PayloadExtratoBancario";
 
 export const DetalheDasPrestacoes = () => {
     let {periodo_uuid, conta_uuid} = useParams();
@@ -294,16 +294,12 @@ export const DetalheDasPrestacoes = () => {
         setCheckSalvarExtratoBancario(true);
         setClassBtnSalvarExtratoBancario("secondary");
 
-        let payload;
-
-        payload = {
-            "periodo_uuid": periodoConta.periodo,
-            "conta_associacao_uuid": periodoConta.conta,
-            "data_extrato": dataSaldoBancario.data_extrato ? moment(dataSaldoBancario.data_extrato, "YYYY-MM-DD").format("YYYY-MM-DD"): null,
-            "saldo_extrato": dataSaldoBancario.saldo_extrato ? trataNumericos(dataSaldoBancario.saldo_extrato) : 0,
-            "comprovante_extrato": selectedFile,
-            "data_atualizacao_comprovante_extrato": dataAtualizacaoComprovanteExtrato ? moment(dataAtualizacaoComprovanteExtrato, "YYYY-MM-DD HH:mm:ss").format("YYYY-MM-DD HH:mm:ss"): null,
-        }
+        const payload = criarPayloadExtratoBancario({
+            periodoConta,
+            dataSaldoBancario,
+            selectedFile,
+            dataAtualizacaoComprovanteExtrato,
+        });
 
         try {
             await pathExtratoBancarioPrestacaoDeConta(payload);
