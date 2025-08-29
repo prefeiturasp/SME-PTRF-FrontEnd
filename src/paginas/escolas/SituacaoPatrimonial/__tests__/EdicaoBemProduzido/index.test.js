@@ -11,10 +11,10 @@ jest.mock(
 );
 
 describe("EdicaoBemProduzidoPage", () => {
-  it("deve renderizar o título 'Adicionar bem produzido'", () => {
+  it("deve renderizar o título 'Editar bem produzido'", () => {
     render(<MemoryRouter><EdicaoBemProduzidoPage /></MemoryRouter>);
 
-    const titulo = screen.getByText("Adicionar bem produzido");
+    const titulo = screen.getByText("Editar bem produzido");
     expect(titulo).toBeInTheDocument();
   });
 
