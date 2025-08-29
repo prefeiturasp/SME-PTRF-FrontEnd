@@ -39,7 +39,7 @@ describe("FormFiltrosDespesas", () => {
     ).toBeInTheDocument();
     expect(screen.getByLabelText("Data do documento fim")).toBeInTheDocument();
     expect(screen.getByText("Limpar Filtros")).toBeInTheDocument();
-    expect(screen.getByText("Fitrar")).toBeInTheDocument(); // Observação: "Fitrar" parece um erro de digitação no botão
+    expect(screen.getByText("Filtrar")).toBeInTheDocument();
   });
 
   test("chama onFiltrar ao submeter o formulário", async () => {
@@ -58,7 +58,7 @@ describe("FormFiltrosDespesas", () => {
     );
 
     await userEvent.type(fornecedorInput, "Fornecedor Teste");
-    fireEvent.click(screen.getByText("Fitrar"));
+    fireEvent.click(screen.getByText("Filtrar"));
 
     await waitFor(() => {
       expect(onFiltrar).toHaveBeenCalled();

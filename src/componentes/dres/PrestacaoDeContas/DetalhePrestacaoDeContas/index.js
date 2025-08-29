@@ -217,6 +217,7 @@ export const DetalhePrestacaoDeContas = () =>{
                             conta_associacao: conta.conta_associacao.uuid,
                             data_extrato: conta.data_extrato,
                             saldo_extrato: conta.saldo_extrato !== null ? valorTemplate(conta.saldo_extrato) : null,
+                            solicitar_correcao_da_data_do_saldo_da_conta: conta.solicitar_correcao_da_data_do_saldo_da_conta,
                             solicitar_envio_do_comprovante_do_saldo_da_conta: conta.solicitar_envio_do_comprovante_do_saldo_da_conta,
                             observacao_solicitar_envio_do_comprovante_do_saldo_da_conta: conta.observacao_solicitar_envio_do_comprovante_do_saldo_da_conta ? conta.observacao_solicitar_envio_do_comprovante_do_saldo_da_conta : "",
                             
@@ -405,6 +406,7 @@ export const DetalhePrestacaoDeContas = () =>{
                 conta_associacao: conta.uuid,
                 data_extrato: '',
                 saldo_extrato: null,
+                solicitar_correcao_da_data_do_saldo_da_conta: false,
                 solicitar_envio_do_comprovante_do_saldo_da_conta: false,
                 observacao_solicitar_envio_do_comprovante_do_saldo_da_conta: ""
             })
@@ -428,6 +430,7 @@ export const DetalhePrestacaoDeContas = () =>{
             conta_associacao: analise.conta_associacao.uuid,
             data_extrato: analise.data_extrato,
             saldo_extrato: analise.saldo_extrato !== null ? valorTemplate(analise.saldo_extrato) : null,
+            solicitar_correcao_da_data_do_saldo_da_conta: analise.solicitar_correcao_da_data_do_saldo_da_conta,
             solicitar_envio_do_comprovante_do_saldo_da_conta: analise.solicitar_envio_do_comprovante_do_saldo_da_conta,
             observacao_solicitar_envio_do_comprovante_do_saldo_da_conta: analise.observacao_solicitar_envio_do_comprovante_do_saldo_da_conta !== null ? analise.observacao_solicitar_envio_do_comprovante_do_saldo_da_conta : "",
         })
@@ -442,6 +445,7 @@ export const DetalhePrestacaoDeContas = () =>{
         let data_extrato = null;
         let saldo_extato = null;
         let solicitar_envio_do_comprovante_do_saldo_da_conta = null;
+        let solicitar_correcao_da_data_do_saldo_da_conta = null;
         let observacao_solicitar_envio_do_comprovante_do_saldo_da_conta = null;
 
         if(prestacaoDeContas && prestacaoDeContas.analise_atual && prestacaoDeContas.analise_atual.uuid){
@@ -465,6 +469,10 @@ export const DetalhePrestacaoDeContas = () =>{
                 solicitar_envio_do_comprovante_do_saldo_da_conta = analise_de_conta.solicitar_envio_do_comprovante_do_saldo_da_conta
             }
 
+            if(analise_de_conta.solicitar_correcao_da_data_do_saldo_da_conta !== null){
+                solicitar_correcao_da_data_do_saldo_da_conta = analise_de_conta.solicitar_correcao_da_data_do_saldo_da_conta
+            }            
+
             if(analise_de_conta.observacao_solicitar_envio_do_comprovante_do_saldo_da_conta){
                 if(solicitar_envio_do_comprovante_do_saldo_da_conta === false){
                     observacao_solicitar_envio_do_comprovante_do_saldo_da_conta = null;
@@ -481,6 +489,7 @@ export const DetalhePrestacaoDeContas = () =>{
             prestacao_conta: prestacaoDeContas.uuid,
             data_extrato: data_extrato,
             saldo_extrato: saldo_extato,
+            solicitar_correcao_da_data_do_saldo_da_conta: solicitar_correcao_da_data_do_saldo_da_conta,
             solicitar_envio_do_comprovante_do_saldo_da_conta: solicitar_envio_do_comprovante_do_saldo_da_conta,
             observacao_solicitar_envio_do_comprovante_do_saldo_da_conta: observacao_solicitar_envio_do_comprovante_do_saldo_da_conta,
         }
@@ -650,6 +659,7 @@ export const DetalhePrestacaoDeContas = () =>{
                         conta_associacao: analise_encontrada.conta_associacao.uuid,
                         data_extrato: analise_encontrada.data_extrato,
                         saldo_extrato: analise_encontrada.saldo_extrato !== null ? valorTemplate(analise_encontrada.saldo_extrato) : null,
+                        solicitar_correcao_da_data_do_saldo_da_conta: analise_encontrada.solicitar_correcao_da_data_do_saldo_da_conta,
                         solicitar_envio_do_comprovante_do_saldo_da_conta: analise_encontrada.solicitar_envio_do_comprovante_do_saldo_da_conta,
                         observacao_solicitar_envio_do_comprovante_do_saldo_da_conta: analise_encontrada.observacao_solicitar_envio_do_comprovante_do_saldo_da_conta ? analise_encontrada.observacao_solicitar_envio_do_comprovante_do_saldo_da_conta : "",
                     }
