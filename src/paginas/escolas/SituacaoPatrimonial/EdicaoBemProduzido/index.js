@@ -5,7 +5,7 @@ import { FormularioBemProduzido } from "../../../../componentes/escolas/Situacao
 export const EdicaoBemProduzidoPage = (props) => {
   return (
     <PaginasContainer>
-      <h1 className="titulo-itens-painel mt-5">Adicionar bem produzido</h1>
+      <h1 className="titulo-itens-painel mt-5">Editar bem produzido</h1>
       <div className="page-content-inner ">
         <FormularioBemProduzido />
       </div>
