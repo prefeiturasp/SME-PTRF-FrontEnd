@@ -1,25 +1,24 @@
-import React, { useContext } from "react";
 import { Formik } from "formik";
+import React, { useContext } from "react";
 
 import { ModalFormBodyText } from "../../../../../Globais/ModalBootstrap";
 import { RepassesContext } from "../context/Repasse";
-import { useGetTabelasRepasse } from "../hooks/useGetTabelasRepasse";
 import { useGetTabelasPorAssociacao } from "../hooks/useGetTabelasPorAssociacao";
+import { useGetTabelasRepasse } from "../hooks/useGetTabelasRepasse";
 
-import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
-import { ReactNumberFormatInput as CurrencyInput } from "../../../../../Globais/ReactNumberFormatInput";
+import Spinner from "../../../../../../assets/img/spinner.gif";
 import { trataNumericos } from "../../../../../../utils/ValidacoesAdicionaisFormularios";
-import Spinner from "../../../../../../assets/img/spinner.gif"
-import AutoCompleteAssociacoes from "./AutoCompleteAssociacoes";
+import { ReactNumberFormatInput as CurrencyInput } from "../../../../../Globais/ReactNumberFormatInput";
+import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
 import { YupSchemaRepasse } from "../YupSchemaRepasse";
+import AutoCompleteAssociacoes from "./AutoCompleteAssociacoes";
 
 export const ModalForm = ({handleSubmitFormModal, todasAsAssociacoesAutoComplete, loadingAssociacoes}) => {
     const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES = RetornaSeTemPermissaoEdicaoPainelParametrizacoes()
     const {showModalForm, setShowModalForm, stateFormModal, bloquearBtnSalvarForm, setShowModalConfirmacaoExclusao, setStateFormModal} = useContext(RepassesContext)
     
     const { data: tabelas } = useGetTabelasRepasse();
-    const { data: tabelas_por_associacao } = useGetTabelasPorAssociacao();
-    
+    const { data: tabelas_por_associacao, isFetching: isFetchingTabelaPorAssociacao } = useGetTabelasPorAssociacao();
 
     const campo_editavel = (campo) => {
         if(!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES){
@@ -149,7 +148,7 @@ export const ModalForm = ({handleSubmitFormModal, todasAsAssociacoesAutoComplete
                                     <div className="form-group col-md-6">
                                         <label htmlFor="conta_associacao">Conta *</label>
                                         <select
-                                            disabled={!campo_editavel("campos_identificacao") || !stateFormModal.associacao}
+                                            disabled={!campo_editavel("campos_identificacao") || !stateFormModal.associacao || isFetchingTabelaPorAssociacao}
                                             value={values.conta_associacao}
                                             onChange={props.handleChange}
                                             name="conta_associacao"
@@ -167,7 +166,7 @@ export const ModalForm = ({handleSubmitFormModal, todasAsAssociacoesAutoComplete
                                     <div className="form-group col-md-6">
                                         <label htmlFor="acao_associacao">Ação *</label>
                                         <select
-                                            disabled={!campo_editavel("campos_identificacao") || !stateFormModal.associacao}
+                                            disabled={!campo_editavel("campos_identificacao") || !stateFormModal.associacao || isFetchingTabelaPorAssociacao}
                                             value={values.acao_associacao}
                                             onChange={props.handleChange}
                                             name="acao_associacao"
