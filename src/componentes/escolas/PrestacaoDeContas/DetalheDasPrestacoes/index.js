@@ -88,7 +88,7 @@ export const DetalheDasPrestacoes = () => {
         if(periodoConta) {
             carregaObservacoes();
         }
-    }, [periodoConta, acoesAssociacao, acaoLancamento]);
+    }, [periodosAssociacao, periodoConta, acoesAssociacao, acaoLancamento]);
 
     useEffect(()=>{
         setLoading(false)
@@ -130,7 +130,7 @@ export const DetalheDasPrestacoes = () => {
     };
 
     const carregaPeriodos = async () => {
-        let ignorar_devolvidas = false
+        const ignorar_devolvidas = false
         let periodos = await getPeriodosDePrestacaoDeContasDaAssociacao(ignorar_devolvidas);
         setPeriodosAssociacao(periodos);
     };
@@ -204,19 +204,19 @@ export const DetalheDasPrestacoes = () => {
                 setPermiteEditarCamposExtrato(observacao.permite_editar_campos_extrato)
             }
 
+            try {
+                const response =  await fetchStatusPeriodo(periodo.data_inicio_realizacao_despesas)
+                if(response.prestacao_contas_status && 
+                    (!response.prestacao_contas_status.periodo_bloqueado || response.prestacao_contas_status.requer_acertos_em_extrato)){
+                    setBtnSalvarExtratoBancarioDisable(false);
+                    setCheckSalvarExtratoBancario(false);
+                    setClassBtnSalvarExtratoBancario("success");
+                }
+            } catch (error) {
+                //
+            }
+
             if(observacao && observacao.possui_solicitacao_encerramento){
-                
-                await getStatusPeriodoPorData(associacaoUuid, periodo.data_inicio_realizacao_despesas).then(response => {
-                    
-                    const periodo_bloqueado = response.prestacao_contas_status ? response.prestacao_contas_status.periodo_bloqueado : true
-                    if(!periodo_bloqueado){
-                        setBtnSalvarExtratoBancarioDisable(false);
-                        setCheckSalvarExtratoBancario(false);
-                        setClassBtnSalvarExtratoBancario("success");
-                    }
-                }).catch(error => {
-                    console.log(error);
-                });
                 
                 setDataSaldoBancario({
                     data_extrato: observacao.data_extrato ? parseLocalDate(observacao.data_extrato) : null,
