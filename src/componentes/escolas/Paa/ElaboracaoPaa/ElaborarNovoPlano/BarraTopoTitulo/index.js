@@ -13,11 +13,7 @@ const BarraTopoTitulo = () => {
 
   const headerPaaReferencia = useCallback(() => {
     // retornar o texto completo(com referência de período) do header
-    return `Plano Anual ${
-      paa?.periodo_paa_objeto?.data_inicial
-        ? dayjs(paa.periodo_paa_objeto.data_inicial).format("MM/YYYY")
-        : ""
-    }`;
+    return `Plano Anual ${paa?.periodo_paa_objeto?.referencia}`;
   }, [paa]);
 
   useEffect(() => {
