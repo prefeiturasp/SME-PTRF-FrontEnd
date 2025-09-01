@@ -16,6 +16,7 @@ export const Justificativa = ({
   lancamentosSelecionados,
   setClassBtnSalvarJustificativa,
   justificativaObrigatoria,
+  permiteEditarCamposExtrato
 }) => {
   const handleOnClick = () => {
     setBtnJustificativaSalvarDisable(true);
@@ -58,7 +59,8 @@ export const Justificativa = ({
         required={justificativaObrigatoria}
         disabled={
           periodoFechado ||
-          !visoesService.getPermissoes(["change_conciliacao_bancaria"])
+          !visoesService.getPermissoes(["change_conciliacao_bancaria"]) ||
+          !permiteEditarCamposExtrato
         }
       ></textarea>
 
