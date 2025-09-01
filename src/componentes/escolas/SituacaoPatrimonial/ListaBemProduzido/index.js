@@ -210,7 +210,6 @@ export const ListaBemProduzido = (props) => {
   }
 
   const expandedRowTemplate = (data) => {
-    // Combina todos os rateios de todas as despesas em uma única lista
     const todosRateios = data.despesas.flatMap((despesa, despesaIndex) => 
       despesa.rateios.map((rateio, rateioIndex) => ({
         ...rateio,
@@ -224,12 +223,55 @@ export const ListaBemProduzido = (props) => {
       return a.rateio_index - b.rateio_index;
     });
 
+    const todosItens = [...todosRateios];
+    
+    const gruposPorId = {};
+    todosRateios.forEach(rateio => {
+      if (!gruposPorId[rateio.grupo_id]) {
+        gruposPorId[rateio.grupo_id] = [];
+      }
+      gruposPorId[rateio.grupo_id].push(rateio);
+    });
+    
+    Object.keys(gruposPorId).forEach(grupoId => {
+      const rateiosDoGrupo = gruposPorId[grupoId];
+      if (rateiosDoGrupo.length > 0) {
+        const primeiroRateio = rateiosDoGrupo[0];
+        const despesaPai = data.despesas.find(d => d.despesa_uuid === primeiroRateio.despesa_uuid);
+        
+        if (despesaPai && despesaPai.valor_original_recurso_proprio && despesaPai.valor_original_recurso_proprio > 0) {
+          todosItens.push({
+            num_documento: primeiroRateio.num_documento,
+            data_documento: primeiroRateio.data_documento,
+            despesa_uuid: '',
+            grupo_id: grupoId,
+            tipo: 'recurso_proprio',
+            valor: despesaPai.valor_original_recurso_proprio,
+            especificacao_do_bem: '',
+            acao: '',
+            valor_utilizado: despesaPai.valor_recurso_proprio_utilizado
+          });
+        }
+      }
+    });
+
+    todosItens.sort((a, b) => {
+      const dataA = new Date(a.data_documento.split('/').reverse().join('-'));
+      const dataB = new Date(b.data_documento.split('/').reverse().join('-'));
+      return dataB - dataA;
+    });
+
     return (
       <>
-        <DataTable value={todosRateios} rowGroupMode="rowspan" className="mx-4 my-3" groupRowsBy="grupo_id">
+        <DataTable value={todosItens} rowGroupMode="rowspan" className="mx-4 my-3" groupRowsBy="grupo_id">
           <Column field="grupo_id" header="Nº do Documento" body={(rowData) => formatarNumeroDocumento(rowData.num_documento)}/>
           <Column field="grupo_id" header="Data do Documento" body={(rowData) => formatarData(rowData.data_documento)} />
-          <Column field="" header="Rateio" body={(rowData) => `Despesa ${rowData.rateio_index}`} style={{ whiteSpace: 'nowrap' }} />
+          <Column field="" header="Rateio" body={(rowData) => {
+            if (rowData.tipo === 'recurso_proprio') {
+              return 'Recursos Próprios';
+            }
+            return `Despesa ${rowData.rateio_index}`;
+          }} style={{ whiteSpace: 'nowrap' }} />
           <Column field="especificacao_do_bem" header="Especificação do material ou serviço" />
           <Column field="acao" header="Ação" style={{ whiteSpace: 'nowrap' }}/>
           <Column field="valor" header="Valor" body={(rowData) => formatarValorMonetario(rowData.valor)} style={{ whiteSpace: 'nowrap' }}/>
