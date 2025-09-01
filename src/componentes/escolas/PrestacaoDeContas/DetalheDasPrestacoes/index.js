@@ -33,6 +33,7 @@ import { SidebarContext } from "../../../../context/Sidebar";
 import {toastCustom} from "../../../Globais/ToastCustom";
 import { ModalSalvarDataSaldoExtrato } from "../ModalSalvarDataSaldoExtrato";
 import {criarPayloadExtratoBancario} from "../../../../utils/PayloadExtratoBancario";
+import { visoesService } from "../../../../services/visoes.service";
 
 export const DetalheDasPrestacoes = () => {
     let {periodo_uuid, conta_uuid} = useParams();
@@ -69,6 +70,8 @@ export const DetalheDasPrestacoes = () => {
     const parametros = useLocation();
 
     const associacaoUuid = localStorage.getItem(ASSOCIACAO_UUID)
+
+    const permissaoEditarConciliacao = visoesService.getPermissoes(["change_conciliacao_bancaria"]);
 
     useEffect(()=>{
         getPeriodoConta();
@@ -725,6 +728,7 @@ export const DetalheDasPrestacoes = () => {
                                 classBtnSalvarJustificativa={classBtnSalvarJustificativa}
                                 setClassBtnSalvarJustificativa={setClassBtnSalvarJustificativa}
                                 permiteEditarCamposExtrato={permiteEditarCamposExtrato}
+                                permissaoEditarConciliacao={permissaoEditarConciliacao}
 
                             />
                         </>
