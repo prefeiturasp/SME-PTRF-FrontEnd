@@ -101,7 +101,7 @@ describe("DetalheDasPrestacoes", () => {
     expect(iconePendencia).not.toBeInTheDocument();
   });
 
-  it("deve chamar handleChangaDataSaldo ao alterar data extrado", async () => {
+  it("deve chamar handleChangaDataSaldo ao alterar data extrato", async () => {
     const props = {
       ...propsBase,
     };
@@ -113,5 +113,28 @@ describe("DetalheDasPrestacoes", () => {
     await waitFor(() => {
       expect(props.handleChangaDataSaldo).toHaveBeenCalled();
     });
+  });
+
+  it("deve exibir todos os inputs com '*'", () => {
+    const props = {
+      ...propsBase,
+    };
+
+    render(<DetalheDasPrestacoes {...props} />);
+
+    expect(screen.getByText("Data *")).toBeInTheDocument();
+    expect(screen.getByText("Saldo *")).toBeInTheDocument();
+    expect(screen.getByText("Comprovante do saldo da conta *")).toBeInTheDocument();
+  });
+
+  it("deve exibir o campo de data extrato sempre desabilitado", () => {
+    const props = {
+      ...propsBase,
+    };
+
+    render(<DetalheDasPrestacoes {...props} />);
+
+    const inputDataExtrato = screen.getByLabelText("Data *");
+    expect(inputDataExtrato).toBeDisabled();
   });
 });
