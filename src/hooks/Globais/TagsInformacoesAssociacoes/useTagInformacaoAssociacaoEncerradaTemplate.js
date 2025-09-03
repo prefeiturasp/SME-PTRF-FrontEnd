@@ -1,5 +1,5 @@
 import React from "react";
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 import '../../../componentes/Globais/LegendaInformaçãoAssociacao/legendaInformacoesAssociacao.scss';
 
 function useTagInformacaoAssociacaoEncerradaTemplate(){
@@ -14,7 +14,7 @@ function useTagInformacaoAssociacaoEncerradaTemplate(){
         return (
             data_de_encerramento !== undefined && data_de_encerramento !== null &&
                 <>
-                    <div data-tip={tooltip_data_encerramento} data-html={true} className="tag-informacoes-associacao-encerrada fundo-cor-cinza-neutral-03 texto-cor-branco" key={associacao_uuid}>
+                    <div data-tooltip-content={tooltip_data_encerramento} data-html={true} className="tag-informacoes-associacao-encerrada fundo-cor-cinza-neutral-03 texto-cor-branco" key={associacao_uuid}>
                         <span>Associação encerrada</span>
                     </div>
                     <ReactTooltip/>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { PaginasContainer } from "../../../../../paginas/PaginasContainer";
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 import { ModalConfirmarExclusao } from "../../componentes/ModalConfirmarExclusao";
 import {
   postContasAssociacoes,
@@ -142,7 +142,7 @@ export const ContasDasAssociacoes = () => {
           onClick={() => handleEditarAcoes(rowData)}
           className="btn-editar-membro"
         >
-          <div data-tip="Editar" data-for={`tooltip-id-${rowData.uuid}`}>
+          <div data-tooltip-content="Editar" data-tooltip-id={`tooltip-id-${rowData.uuid}`}>
             <ReactTooltip id={`tooltip-id-${rowData.uuid}`} />
             <FontAwesomeIcon
               style={{ fontSize: "20px", marginRight: "0", color: "#00585E" }}

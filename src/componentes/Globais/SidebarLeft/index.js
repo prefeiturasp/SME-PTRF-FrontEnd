@@ -5,7 +5,7 @@ import './siderbarLeft.scss'
 import {SidebarContext} from '../../../context/Sidebar'
 import {useNavigate} from 'react-router-dom'
 import {Versao} from "../Versao";
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 import {getUrls} from "./getUrls";
 import {NotificacaoContext} from "../../../context/Notificacoes";
 import {CentralDeDownloadContext} from "../../../context/CentralDeDownloads";
@@ -134,7 +134,7 @@ export const SidebarLeft = () => {
                                     <NavItem
                                         key={index}
                                         navitemClassName={`d-flex align-items-end ${url.subItens && url.subItens.length > 0 ? "sub-menu" : ""}`}
-                                        data-tip={url.label} data-for={url.dataFor}
+                                        data-tooltip-content={url.label} data-tooltip-id={url.dataFor}
                                         eventKey={url.url}
                                     >
                                         <NavIcon>

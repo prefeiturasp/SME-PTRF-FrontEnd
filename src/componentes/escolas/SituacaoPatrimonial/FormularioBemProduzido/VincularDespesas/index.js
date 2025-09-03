@@ -219,17 +219,7 @@ export const VincularDespesas = ({
                 dataKey="uuid"
                 selection={despesasSelecionadas}
                 onSelectionChange={(e) => {
-                  const current = despesasSelecionadas || [];
-                  let newSelection = current;
-                  if (Array.isArray(e.value)) {
-                    newSelection = [
-                      ...current,
-                      ...e.value.filter(
-                        row => !current.some(sel => sel.uuid === row.uuid)
-                      )
-                    ];
-                  }
-                  setDespesasSelecionadas(newSelection);
+                  setDespesasSelecionadas(Array.isArray(e.value) ? e.value : []);
                 }}
                 selectableRowDisabled={rowData => isRowDisabled(rowData)}
                 expandedRows={expandedRows}

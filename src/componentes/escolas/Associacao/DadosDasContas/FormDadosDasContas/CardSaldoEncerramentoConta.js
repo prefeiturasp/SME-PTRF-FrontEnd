@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import {DatePickerField} from "../../../../Globais/DatePickerField";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faExclamationCircle, faTimesCircle} from "@fortawesome/free-solid-svg-icons";
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 
 export const CardSaldoEncerramentoConta = ({
     index, 
@@ -68,7 +68,7 @@ export const CardSaldoEncerramentoConta = ({
                                 <div className="form-group">
                                     <label htmlFor="data_encerramento">
                                         Data de encerramento *
-                                        <span data-html={true} data-tip="Informar a data de encerramento da conta na agência.">
+                                        <span data-html={true} data-tooltip-content="Informar a data de encerramento da conta na agência.">
                                             <FontAwesomeIcon
                                                 style={{marginLeft: "10px", color: '#2B7D83'}}
                                                 icon={faExclamationCircle}
@@ -97,7 +97,7 @@ export const CardSaldoEncerramentoConta = ({
 
                             <div className="col-6 d-flex flex-wrap justify-content-end mt-5">
                                 {conta.habilitar_solicitar_encerramento && (
-                                    <div data-html={true} data-tip="Essa solicitação deve ser feita à DRE, após o encerramento da conta no banco e, caso validada, inativará a referida conta para eventos futuros no sistema."
+                                    <div data-html={true} data-tooltip-content="Essa solicitação deve ser feita à DRE, após o encerramento da conta no banco e, caso validada, inativará a referida conta para eventos futuros no sistema."
                                         className="mb-3">
                                         <button 
                                             type="button"

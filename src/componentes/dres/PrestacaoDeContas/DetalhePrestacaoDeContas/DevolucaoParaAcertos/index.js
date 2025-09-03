@@ -16,7 +16,7 @@ import Loading from "../../../../../utils/Loading";
 import {ModalErroDevolverParaAcerto} from "./ModalErroDevolverParaAcerto";
 import {ModalConfirmaDevolverParaAcerto} from "./ModalConfirmaDevolverParaAcerto";
 import { toastCustom } from "../../../../Globais/ToastCustom";
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 import { visoesService } from "../../../../../services/visoes.service";
 
 const DevolucaoParaAcertos = ({
@@ -222,7 +222,7 @@ const DevolucaoParaAcertos = ({
                                     onClick={handleDevolverParaAssociacao}
                                     className="btn btn-success"
                                 >
-                                    <span data-tip={!possuiAcertosSelecionados() ? 'Não é permitido devolver PC sem acertos indicados.' : ''}>
+                                    <span data-tooltip-content={!possuiAcertosSelecionados() ? 'Não é permitido devolver PC sem acertos indicados.' : ''}>
                                         Devolver para Associação
                                     </span>                                         
                                     <ReactTooltip/>

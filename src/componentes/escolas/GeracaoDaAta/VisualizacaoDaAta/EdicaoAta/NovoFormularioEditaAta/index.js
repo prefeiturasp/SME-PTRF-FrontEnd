@@ -11,7 +11,7 @@ import TabelaRepassesPendentes from "../../TabelaRepassesPendentes";
 import { Switch } from 'antd';
 import { BarraAvisoPreencerData } from "../../../BarraAvisoPreencerData";
 import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 import {ASSOCIACAO_UUID} from "../../../../../../services/auth.service";
 import {
     getCargosComposicaoData
@@ -610,7 +610,7 @@ export const NovoFormularioEditaAta = ({
                                     <div className="form-row mt-4">
                                         <div className="col">
                                             <label htmlFor="stateFormEditarAta.data_reuniao">Data
-                                                <span className='font-weight-normal' data-tip={"Preencha a data da reunião para visualização dos participantes."} data-html={true}>
+                                                <span className='font-weight-normal' data-tooltip-content={"Preencha a data da reunião para visualização dos participantes."} data-html={true}>
                                                     <FontAwesomeIcon
                                                         style={{marginLeft: "4px"}}
                                                         icon={faInfoCircle}

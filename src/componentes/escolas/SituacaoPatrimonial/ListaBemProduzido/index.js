@@ -15,7 +15,9 @@ import { useCarregaTabelaDespesa } from "../../../../hooks/Globais/useCarregaTab
 import {faDownload} from "@fortawesome/free-solid-svg-icons";
 import { MsgImgCentralizada } from "../../../Globais/Mensagens/MsgImgCentralizada";
 import Img404 from "../../../../assets/img/img-404.svg";
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
+import { getExportarBensProduzidos } from '../../../../services/escolas/BensProduzidos.service';
+import { toastCustom } from '../../../Globais/ToastCustom';
 
 const filtroInicial = {
   especificacao_bem: "",
@@ -126,6 +128,11 @@ const formatarData = (data) => {
     return "-";
   }
   try {
+    if (typeof data === 'string' && data.match(/^\d{4}-\d{2}-\d{2}$/)) {
+      const [ano, mes, dia] = data.split('-');
+      return `${dia}/${mes}/${ano}`;
+    }
+    
     const dataObj = new Date(data);
     if (isNaN(dataObj.getTime())) {
       return "-";
@@ -192,50 +199,116 @@ export const ListaBemProduzido = (props) => {
   const onCancelarFiltros = () => {
     setFiltros(filtroSalvo);
   };
+  
+  async function handleExportar() {
+    try {
+      await getExportarBensProduzidos();
+      toastCustom.ToastCustomSuccess('Geração solicitada com sucesso.', 'A geração foi solicitada. Em breve você receberá um aviso na central de downloads com o resultado.')
+    } catch (error) {
+      console.log("Erro ao exportar dados", error)
+    }
+  }
 
-  const expandedRowTemplate = (data) => (
-    <>
-      {data.despesas.map((despesa) => (
-        <DataTable key={despesa.uuid} value={despesa.rateios} rowGroupMode="rowspan" className="mx-4 my-3">
-          <Column field="num_documento" header="Nº do Documento" />
-          <Column field="data_documento" header="Data do Documento" body={(rowData) => formatarData(rowData.data_documento)} />
-          <Column field="" header="Rateio" body={(_, { rowIndex }) => `Despesa ${rowIndex + 1}`} />
+  const expandedRowTemplate = (data) => {
+    const todosRateios = data.despesas.flatMap((despesa, despesaIndex) => 
+      despesa.rateios.map((rateio, rateioIndex) => ({
+        ...rateio,
+        despesa_uuid: despesa.despesa_uuid,
+        rateio_index: rateioIndex + 1,
+        grupo_id: `${rateio.num_documento}_${rateio.data_documento}`
+      }))
+    ).sort((a, b) => {
+      const docComparison = String(a.num_documento).localeCompare(String(b.num_documento));
+      if (docComparison !== 0) return docComparison;
+      return a.rateio_index - b.rateio_index;
+    });
+
+    const todosItens = [...todosRateios];
+    
+    const gruposPorId = {};
+    todosRateios.forEach(rateio => {
+      if (!gruposPorId[rateio.grupo_id]) {
+        gruposPorId[rateio.grupo_id] = [];
+      }
+      gruposPorId[rateio.grupo_id].push(rateio);
+    });
+    
+    Object.keys(gruposPorId).forEach(grupoId => {
+      const rateiosDoGrupo = gruposPorId[grupoId];
+      if (rateiosDoGrupo.length > 0) {
+        const primeiroRateio = rateiosDoGrupo[0];
+        const despesaPai = data.despesas.find(d => d.despesa_uuid === primeiroRateio.despesa_uuid);
+        
+        if (despesaPai && despesaPai.valor_original_recurso_proprio && despesaPai.valor_original_recurso_proprio > 0) {
+          todosItens.push({
+            num_documento: primeiroRateio.num_documento,
+            data_documento: primeiroRateio.data_documento,
+            despesa_uuid: '',
+            grupo_id: grupoId,
+            tipo: 'recurso_proprio',
+            valor: despesaPai.valor_original_recurso_proprio,
+            especificacao_do_bem: '',
+            acao: '',
+            valor_utilizado: despesaPai.valor_recurso_proprio_utilizado
+          });
+        }
+      }
+    });
+
+    todosItens.sort((a, b) => {
+      const dataA = new Date(a.data_documento.split('/').reverse().join('-'));
+      const dataB = new Date(b.data_documento.split('/').reverse().join('-'));
+      return dataB - dataA;
+    });
+
+    return (
+      <>
+        <DataTable value={todosItens} rowGroupMode="rowspan" className="mx-4 my-3" groupRowsBy="grupo_id">
+          <Column field="grupo_id" header="Nº do Documento" body={(rowData) => formatarNumeroDocumento(rowData.num_documento)}/>
+          <Column field="grupo_id" header="Data do Documento" body={(rowData) => formatarData(rowData.data_documento)} />
+          <Column field="" header="Rateio" body={(rowData) => {
+            if (rowData.tipo === 'recurso_proprio') {
+              return 'Recursos Próprios';
+            }
+            return `Despesa ${rowData.rateio_index}`;
+          }} style={{ whiteSpace: 'nowrap' }} />
           <Column field="especificacao_do_bem" header="Especificação do material ou serviço" />
-          <Column field="acao" header="Ação" />
-          <Column field="valor" header="Valor" body={(rowData) => formatarValorMonetario(rowData.valor)} />
-          <Column field="valor_utilizado" header="Valor utilizado" body={(rowData) => formatarValorMonetario(rowData.valor_utilizado)} />
+          <Column field="acao" header="Ação" style={{ whiteSpace: 'nowrap' }}/>
+          <Column field="valor" header="Valor" body={(rowData) => formatarValorMonetario(rowData.valor)} style={{ whiteSpace: 'nowrap' }}/>
+          <Column field="valor_utilizado" header="Valor utilizado" body={(rowData) => formatarValorMonetario(rowData.valor_utilizado)} style={{ whiteSpace: 'nowrap' }}/>
           <Column
+            field="grupo_id"
             header="Ação"
             style={{ width: "70px", textAlign: "center" }}
-            body={() => {
+            body={(rowData) => {
               return (
                 <>
                   <button
-                    data-tip="Visualizar despesa"
-                    data-for={`tooltip-visualizar-despesa-${despesa.despesa_uuid}`}
-                    onClick={() => navigate(`/edicao-de-despesa/${despesa.despesa_uuid}`, { state: { origem: 'situacao_patrimonial' } })}
+                    data-tooltip-content="Visualizar despesa"
+                    data-tooltip-id={`tooltip-visualizar-despesa-${rowData.despesa_uuid}`}
+                    onClick={() => navigate(`/edicao-de-despesa/${rowData.despesa_uuid}`, { state: { origem: 'situacao_patrimonial' } })}
                     style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
                     aria-label="Visualizar despesa"
                   >
                     <FontAwesomeIcon icon={faEye} style={{ color: '#888', fontSize: '1.2em' }} />
                   </button>
-                  <ReactTooltip id={`tooltip-visualizar-despesa-${despesa.despesa_uuid}`} effect="solid" place="top" />
+                  <ReactTooltip id={`tooltip-visualizar-despesa-${rowData.despesa_uuid}`} effect="solid" place="top" />
                 </>
               )
             }}
           />
         </DataTable>
-      ))}
-      <Flex justify="end" gap={8} className="mt-1 mb-4 mx-4">
-        <button 
-          className="btn btn-outline-success float-right"
-          onClick={() => navigate(`/edicao-bem-produzido/${data.bem_produzido_uuid}`)}
-        >
-          Editar bem
-        </button>
-      </Flex>
-    </>
-  );
+        <Flex justify="end" gap={8} className="mt-1 mb-4 mx-4">
+          <button 
+            className="btn btn-outline-success float-right"
+            onClick={() => navigate(`/edicao-bem-produzido/${data.bem_produzido_uuid}`)}
+          >
+            Editar bem
+          </button>
+        </Flex>
+      </>
+    );
+  };
 
   const isRowExpanded = (rowData) => !!expandedRows[rowData.uuid];
   const handleToggleRow = (rowData) => {
@@ -284,14 +357,14 @@ export const ListaBemProduzido = (props) => {
                 <span className="total">{data?.count}</span>
               </span>
               <button
-                onClick={() => console.log("EXPORTAR")}
+                onClick={handleExportar}
                 className={`link-exportar`}
               >
                 <FontAwesomeIcon
                     style={{marginRight:'3px'}}
                     icon={faDownload}
                 />
-                <strong>Exportar</strong>
+                <strong>Exportar Excel</strong>
               </button>
             </Flex>
           </p>
@@ -370,8 +443,8 @@ export const ListaBemProduzido = (props) => {
                   return (
                     <>
                       <button
-                        data-tip="Visualizar despesa"
-                        data-for={`tooltip-visualizar-despesa-${rowData.despesa_uuid}`}
+                        data-tooltip-content="Visualizar despesa"
+                        data-tooltip-id={`tooltip-visualizar-despesa-${rowData.despesa_uuid}`}
                         onClick={() => navigate(`/edicao-de-despesa/${rowData.despesa_uuid}`, { state: { origem: 'situacao_patrimonial' } })}
                         style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
                         aria-label="Visualizar despesa"

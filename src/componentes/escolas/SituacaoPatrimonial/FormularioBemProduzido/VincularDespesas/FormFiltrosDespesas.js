@@ -141,7 +141,7 @@ export const FormFiltrosDespesas = ({
         >
           Limpar Filtros
         </button>
-        <button className="btn btn-success float-right">Fitrar</button>
+        <button className="btn btn-success float-right">Filtrar</button>
       </Flex>
     </Form>
   );

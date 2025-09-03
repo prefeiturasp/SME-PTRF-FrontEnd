@@ -1,5 +1,5 @@
 import React, {useState,  memo} from "react";
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 import { ModalPublicarRetificacao } from "../../../utils/Modais";
 import { ModalPublicarRetificacaoPendente } from "../../../utils/Modais";
 import {postCriarAtaAtrelarAoConsolidadoDre} from "../../../services/dres/RelatorioConsolidado.service";
@@ -80,7 +80,7 @@ const PreviaDocumentoRetificado = ({consolidadoDre, todasAsPcsDaRetificacaoConcl
             {consolidadoDre && consolidadoDre.eh_retificacao &&
                 <>
                     {!consolidadoDre.ja_publicado &&
-                        <span data-html={true} data-tip={!todasAsPcsDaRetificacaoConcluidas(consolidadoDre) ? "A análise da(s) prestação(ões) de contas em retificação ainda não foi concluída." : ""}>
+                        <span data-html={true} data-tooltip-content={!todasAsPcsDaRetificacaoConcluidas(consolidadoDre) ? "A análise da(s) prestação(ões) de contas em retificação ainda não foi concluída." : ""}>
                             <button
                                 onClick={() => gerarPreviaRetificacao(consolidadoDre)}
                                 className="btn btn-outline-success"
@@ -94,7 +94,7 @@ const PreviaDocumentoRetificado = ({consolidadoDre, todasAsPcsDaRetificacaoConcl
                     {consolidadoDre.habilita_botao_gerar &&
 
                         <div className="p-2 bd-highlight font-weight-normal" data-html={true}>
-                            <span data-html={true} data-tip={!todasAsPcsDaRetificacaoConcluidas(consolidadoDre) ? "Os documentos ainda não podem ser gerados, pois se encontra em análise prestação(ões) de contas a ser(em) retificada(s)." : ""}>
+                            <span data-html={true} data-tooltip-content={!todasAsPcsDaRetificacaoConcluidas(consolidadoDre) ? "Os documentos ainda não podem ser gerados, pois se encontra em análise prestação(ões) de contas a ser(em) retificada(s)." : ""}>
                                 <Button
                                     className="btn btn btn btn-success botao-carregar"
                                     type="primary"

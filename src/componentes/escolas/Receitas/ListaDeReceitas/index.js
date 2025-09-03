@@ -18,7 +18,7 @@ import Loading from "../../../../utils/Loading";
 import {visoesService} from "../../../../services/visoes.service";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faExclamationTriangle} from '@fortawesome/free-solid-svg-icons'
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 import { mantemEstadoFiltrosUnidade } from "../../../../services/mantemEstadoFiltrosUnidade.service";
 import {filtrosAvancadosReceitas} from "../../../../services/escolas/Receitas.service";
 
@@ -100,7 +100,7 @@ export const ListaDeReceitas = () => {
                 return(
                     <div>
                         {rowData.tipo_receita.nome}
-                        <span data-html={true} data-tip='A saída desse crédito ainda <br/> não foi registrada!'>
+                        <span data-html={true} data-tooltip-content='A saída desse crédito ainda <br/> não foi registrada!'>
                         <FontAwesomeIcon
                             style={{marginLeft: "3px", color: '#b41d00'}}
                             icon={faExclamationTriangle}

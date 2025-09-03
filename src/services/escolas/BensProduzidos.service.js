@@ -82,3 +82,11 @@ export const getTodosPeriodosComPC = async (referencia = "") => {
     )
   ).data;
 };
+
+export const getExportarBensProduzidos = async () => {
+  const queryString = `?associacao_uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`;
+
+  return (
+    await api.get(`api/bens-produzidos-e-adquiridos/exportar/${queryString}`, authHeader())
+  ).data;
+};

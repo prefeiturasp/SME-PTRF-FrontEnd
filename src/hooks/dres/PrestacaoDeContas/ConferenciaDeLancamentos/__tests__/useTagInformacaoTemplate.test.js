@@ -32,9 +32,9 @@ describe("useTagInformacaoTemplate", () => {
     expect(screen.getByText("Nome da Tag 1")).toBeInTheDocument();
     expect(screen.getByText("Nome da Tag 2")).toBeInTheDocument();
 
-    const tags = document.querySelectorAll("[data-tip]");
-    expect(tags[0].getAttribute("data-tip")).toContain("Texto do Hint 1");
-    expect(tags[1].getAttribute("data-tip")).toContain("Linha 1<br/>Linha 2");
+    const tags = document.querySelectorAll("[data-tooltip-content]");
+    expect(tags[0].getAttribute("data-tooltip-content")).toContain("Texto do Hint 1");
+    expect(tags[1].getAttribute("data-tooltip-content")).toContain("Linha 1<br/>Linha 2");
 
     expect(tags[0].className).toContain("tag-purple");
     expect(tags[1].className).toContain("tag-darkblue");

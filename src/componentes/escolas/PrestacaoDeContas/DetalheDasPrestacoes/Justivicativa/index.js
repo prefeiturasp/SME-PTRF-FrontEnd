@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { visoesService } from "../../../../../services/visoes.service";
+import React from "react";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -16,6 +15,8 @@ export const Justificativa = ({
   lancamentosSelecionados,
   setClassBtnSalvarJustificativa,
   justificativaObrigatoria,
+  permiteEditarCamposExtrato,
+  permissaoEditarConciliacao,
 }) => {
   const handleOnClick = () => {
     setBtnJustificativaSalvarDisable(true);
@@ -26,25 +27,16 @@ export const Justificativa = ({
 
   return (
     <div className="form-group mt-4">
-      <p className="justificativas-e-informacoes-adicionais mt-5 mb-3">
-        Justificativas e informações adicionais
-      </p>
+      <p className="justificativas-e-informacoes-adicionais mt-5 mb-3">Justificativas e informações adicionais</p>
       {justificativaObrigatoria ? (
         <>
           <p className="text-left">
-            <span className="font-weight-bold">
-              * Preenchimento obrigatório
-            </span>
+            <span className="font-weight-bold">* Preenchimento obrigatório</span>
           </p>
-          <p>
-            Adicione justificativas e informações adicionais se necessário *
-          </p>
+          <p>Adicione justificativas e informações adicionais se necessário *</p>
         </>
       ) : (
-        <p>
-          Adicione justificativas e informações adicionais se necessário
-          (opcional)
-        </p>
+        <p>Adicione justificativas e informações adicionais se necessário (opcional)</p>
       )}
 
       <textarea
@@ -56,22 +48,16 @@ export const Justificativa = ({
         name="justificativa"
         placeholder="Escreva o comentário"
         required={justificativaObrigatoria}
-        disabled={
-          periodoFechado ||
-          !visoesService.getPermissoes(["change_conciliacao_bancaria"])
-        }
+        disabled={!permissaoEditarConciliacao || !permiteEditarCamposExtrato}
       ></textarea>
 
-      {visoesService.getPermissoes(["change_conciliacao_bancaria"]) && (
+      {permissaoEditarConciliacao && permiteEditarCamposExtrato && (
         <div className="bd-highlight d-flex justify-content-end align-items-center">
           {checkSalvarJustificativa && (
             <div className="">
               <p className="mr-2 mt-3">
                 <span className="mr-1">
-                  <FontAwesomeIcon
-                    style={{ fontSize: "16px", color: "#297805" }}
-                    icon={faCheck}
-                  />
+                  <FontAwesomeIcon style={{ fontSize: "16px", color: "#297805" }} icon={faCheck} />
                 </span>
                 Salvo
               </p>

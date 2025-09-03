@@ -1,6 +1,7 @@
 import React, { memo } from "react";
 import { DatePickerField } from "../../../../Globais/DatePickerField";
 import { ReactNumberFormatInput as CurrencyInput } from "../../../../Globais/ReactNumberFormatInput";
+import { ReactNumberFormatInputV2 } from "../../../../Globais/ReactNumberFormatInput/indexv2";
 import { trataNumericos } from "../../../../../utils/ValidacoesAdicionaisFormularios";
 import "./data-saldo-bancario.scss";
 import { visoesService } from "../../../../../services/visoes.service";
@@ -82,8 +83,8 @@ const DataSaldoBancario = ({
                           id="data_extrato"
                           type="date"
                           className="form-control"
-                          // disabled
-                          disabled={!permiteEditarCamposExtrato || !permissaoEditarConciliacao}
+                          disabled
+                          // disabled={!permiteEditarCamposExtrato || !permissaoEditarConciliacao}
                         />
                         {erroDataSaldo && <span className="span_erro text-danger mt-1"> {erroDataSaldo}</span>}
                         {dataSaldoBancarioSolicitacaoEncerramento?.possui_solicitacao_encerramento === true && (
@@ -99,16 +100,16 @@ const DataSaldoBancario = ({
                     <div className="row" style={{ paddingTop: "10px" }}>
                       <div className="col">
                         <label htmlFor="saldo_extrato">Saldo *</label>
-                        <CurrencyInput
+                        <ReactNumberFormatInputV2
                           allowNegative={true}
-                          prefix="R$"
+                          prefix="R$ "
                           decimalSeparator=","
                           thousandSeparator="."
                           value={dataSaldoBancario.saldo_extrato ? dataSaldoBancario.saldo_extrato : 0}
                           id="saldo_extrato"
                           name="saldo_extrato"
                           className="form-control"
-                          onChangeEvent={(e) => handleChangaDataSaldo(e.target.name, e.target.value)}
+                          onChangeEvent={(value) => handleChangaDataSaldo("saldo_extrato", value)}
                           disabled={!permiteEditarCamposExtrato || !permissaoEditarConciliacao}
                         />
                         {dataSaldoBancarioSolicitacaoEncerramento?.possui_solicitacao_encerramento === true && (
@@ -124,10 +125,7 @@ const DataSaldoBancario = ({
                   <div className="col-6">
                     <div className="form-group">
                       <label htmlFor="upload_extrato" className="ml-1">
-                        Comprovante do saldo da conta{" "}
-                        {dataSaldoBancario.saldo_extrato !== 0 && dataSaldoBancario.saldo_extrato !== "R$0,00"
-                          ? "*"
-                          : ""}
+                        Comprovante do saldo da conta *
                       </label>
                       <div className="container-upload-extrato">
                         <Upload

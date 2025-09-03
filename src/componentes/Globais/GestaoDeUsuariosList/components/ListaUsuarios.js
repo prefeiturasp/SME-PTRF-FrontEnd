@@ -10,7 +10,7 @@ import {GestaoDeUsuariosListContext} from "../context/GestaoDeUsuariosListProvid
 import {TableTags} from "../../TableTags";
 import Img404 from "../../../../assets/img/img-404.svg";
 import {MsgImgCentralizada} from "../../Mensagens/MsgImgCentralizada";
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 import {useAcessoEmSuporteInfo} from "../../../../hooks/Globais/useAcessoEmSuporteInfo";
 import {ModalConfirmacaoRemoverAcesso} from "../../GestaoDeUsuarios/components/ModalConfirmacaoRemoverAcesso";
 import {useRemoveAcessosUsuario} from "../../GestaoDeUsuarios/hooks/useRemoveAcessosUsuario";
@@ -86,7 +86,7 @@ export const ListaUsuarios = ({usuarios, isLoading}) => {
     const acoesTemplate = (rowData) =>{
         return (
             <div>
-                <span data-tip="Remover acesso" data-html={true}>
+                <span data-tooltip-content="Remover acesso" data-html={true}>
                     <button
                         onClick={() => {
                             setUserIdParaRemoverAcesso(rowData.id)
@@ -106,7 +106,7 @@ export const ListaUsuarios = ({usuarios, isLoading}) => {
 
 
                 { ! unidadeEstaEmSuporte &&
-                <span data-tip="Editar usuário" data-html={true}>
+                <span data-tooltip-content="Editar usuário" data-html={true}>
                     <Link
                         className="botao-acao-lista"
                         to={{

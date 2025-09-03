@@ -1,7 +1,7 @@
 import React, {memo} from "react";
 import {ModalFormBodyText} from "../../../../Globais/ModalBootstrap";
 import {Formik} from "formik";
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
 import {YupSignupSchemaTags} from "./YupSignupSchemaTags";
@@ -89,7 +89,7 @@ const ModalForm = ({show, stateFormModal, handleClose, handleSubmitModalForm, se
                                         <>
                                             <p data-qa="legenda-apenas-digitos" className="mb-0">No número do documento deve constar apenas dígitos?
                                                 <span data-qa="tooltip-apenas-digitos"
-                                                    data-tip="(ex: 0,1,2,3,4)" data-for={`tooltip-id-apenas-digitos`}>
+                                                    data-tooltip-content="(ex: 0,1,2,3,4)" data-tooltip-id={`tooltip-id-apenas-digitos`}>
                                                     <ReactTooltip id={`tooltip-id-apenas-digitos`}/>
                                                     <FontAwesomeIcon
                                                         style={{fontSize: '16px', marginLeft: "10px", color: "#00585E"}}

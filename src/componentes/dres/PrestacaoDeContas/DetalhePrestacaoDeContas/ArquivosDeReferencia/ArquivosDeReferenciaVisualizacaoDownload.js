@@ -5,7 +5,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faDownload, faEye} from "@fortawesome/free-solid-svg-icons";
 import {getDownloadArquivoDeReferencia} from "../../../../../services/dres/PrestacaoDeContas.service";
 import ModalVisualizarArquivoDeReferencia from "../ModalVisualizarArquivoDeReferencia";
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 
 const ArquivosDeReferenciaVisualizacaoDownload = ({prestacaoDeContas, infoAta}) => {
 
@@ -44,7 +44,7 @@ const ArquivosDeReferenciaVisualizacaoDownload = ({prestacaoDeContas, infoAta}) 
         return (
             <div className="d-flex align-items-center justify-content-start">
                 <button onClick={() => handleClickVisualizarArquivoDeReferencia(rowData)} className="btn-editar-membro">
-                    <span data-html={true} data-tip="Visualização">
+                    <span data-html={true} data-tooltip-content="Visualização">
                         <FontAwesomeIcon
                             style={{fontSize: '20px', marginRight: "0", marginTop: '2px', color: "#00585E"}}
                             icon={faEye}

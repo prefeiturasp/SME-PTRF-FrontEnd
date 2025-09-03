@@ -1,5 +1,5 @@
 import React from "react";
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 import '../ConferenciaDeLancamentos/scss/tagInformacaoTemplate.scss';
 
 const types = {
@@ -28,7 +28,7 @@ function useTagInformacaoTemplate() {
                     const toolTip = retornaTagInformacaoToolTip(tag.tag_hint)
                     return (
                         <div key={index} className='p-2 text-wrap-conferencia-de-lancamentos'>
-                            <div data-tip={toolTip} data-html={true} className={`tag-informacoes ${types[tag.tag_id]}`} key={index}>
+                            <div data-tooltip-content={toolTip} data-html={true} className={`tag-informacoes ${types[tag.tag_id]}`} key={index}>
                                 <span key={index}>{tag.tag_nome}</span>
                                 <ReactTooltip/>
                             </div>

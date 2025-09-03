@@ -10,6 +10,7 @@ export const usePatchPrioridade = (onClose) => {
     onSuccess: () => {
       toastCustom.ToastCustomSuccess("Prioridade alterada com sucesso.");
       queryClient.invalidateQueries(["prioridades"]);
+      queryClient.invalidateQueries(["prioridades-resumo"]);
       onClose && onClose();
     },
     onError: (e) => {
