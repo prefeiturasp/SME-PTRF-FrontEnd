@@ -13,7 +13,8 @@ export const usePostPrioridade = (onClose) => {
       onClose && onClose();
     },
     onError: (e) => {
-      toastCustom.ToastCustomError("Houve um erro ao criar a prioridade.");
+      const mensagemDeErro = e?.response?.data?.mensagem || "Houve um erro ao criar a prioridade.";
+      toastCustom.ToastCustomError(mensagemDeErro);
     },
   });
 
