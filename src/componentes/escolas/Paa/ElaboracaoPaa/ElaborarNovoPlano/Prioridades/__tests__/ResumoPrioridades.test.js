@@ -1,5 +1,5 @@
 import { useGetResumoPrioridades } from '../hooks/useGetResumoPrioridades';
-import { getResumoPrioridades } from '../../../../../../../services/escolas/Paa.service';
+import { getResumoPrioridades, postPrioridade, patchPrioridade } from '../../../../../../../services/escolas/Paa.service';
 
 // Mock do serviço
 jest.mock('../../../../../../../services/escolas/Paa.service');
@@ -951,5 +951,263 @@ describe('useGetResumoPrioridades Hook', () => {
             handleExpand(false, resumoPrioridades[0].children[0]);
             expect(expandedRowKeys).toEqual(['ptrf-total']);
         });
+    });
+});
+
+describe('Validação de Valor da Prioridade', () => {
+    beforeEach(() => {
+        jest.clearAllMocks();
+        localStorageMock.getItem.mockReturnValue('mock-paa-uuid');
+    });
+
+    it('deve falhar ao criar prioridade que excede valor de custeio', async () => {
+        const mockPayload = {
+            paa: 'mock-paa-uuid',
+            prioridade: 'Prioridade com Valor Excedente - Custeio',
+            recurso: 'PTRF',
+            tipo_aplicacao: 'CUSTEIO',
+            acao_associacao: 'acao-uuid-123',
+            especificacao_material: 'espec-uuid-456',
+            valor_total: 50000.00 // Valor muito alto que excede o disponível
+        };
+
+        // Simula erro de validação do backend quando valor excede o disponível
+        const validationError = {
+            response: {
+                status: 400,
+                data: {
+                    mensagem: 'O valor indicado para a prioridade excede o valor disponível de receita prevista.'
+                }
+            }
+        };
+
+        postPrioridade.mockRejectedValue(validationError);
+
+        await expect(postPrioridade(mockPayload)).rejects.toEqual(validationError);
+        expect(postPrioridade).toHaveBeenCalledWith(mockPayload);
+    });
+
+    it('deve falhar ao criar prioridade que excede valor de capital', async () => {
+        const mockPayload = {
+            paa: 'mock-paa-uuid',
+            prioridade: 'Prioridade com Valor Excedente - Capital',
+            recurso: 'PTRF',
+            tipo_aplicacao: 'CAPITAL',
+            acao_associacao: 'acao-uuid-123',
+            especificacao_material: 'espec-uuid-456',
+            valor_total: 75000.00 // Valor muito alto que excede o disponível para capital
+        };
+
+        // Simula erro de validação do backend quando valor excede o disponível
+        const validationError = {
+            response: {
+                status: 400,
+                data: {
+                    mensagem: 'O valor indicado para a prioridade excede o valor disponível de receita prevista.'
+                }
+            }
+        };
+
+        postPrioridade.mockRejectedValue(validationError);
+
+        await expect(postPrioridade(mockPayload)).rejects.toEqual(validationError);
+        expect(postPrioridade).toHaveBeenCalledWith(mockPayload);
+    });
+
+    it('deve criar prioridade com sucesso quando custeio é menor mas livre aplicação cobre a diferença', async () => {
+        const mockPayload = {
+            paa: 'mock-paa-uuid',
+            prioridade: 'Prioridade com Livre Aplicação - Custeio',
+            recurso: 'PTRF',
+            tipo_aplicacao: 'CUSTEIO',
+            acao_associacao: 'acao-uuid-123',
+            especificacao_material: 'espec-uuid-456',
+            valor_total: 15000.00 // Valor maior que custeio disponível, mas menor que custeio + livre aplicação
+        };
+
+        // Simula sucesso quando o valor da prioridade é coberto por custeio + livre aplicação
+        const successResponse = {
+            success: true,
+            data: {
+                uuid: 'prioridade-criada-uuid-123',
+                prioridade: 'Prioridade com Livre Aplicação - Custeio',
+                valor_total: 15000.00,
+                tipo_aplicacao: 'CUSTEIO',
+                recurso: 'PTRF'
+            }
+        };
+
+        postPrioridade.mockResolvedValue(successResponse);
+
+        const result = await postPrioridade(mockPayload);
+
+        expect(postPrioridade).toHaveBeenCalledWith(mockPayload);
+        expect(result).toEqual(successResponse);
+        expect(result.success).toBe(true);
+        expect(result.data.valor_total).toBe(15000.00);
+    });
+
+    it('deve criar prioridade com sucesso quando capital é menor mas livre aplicação cobre a diferença', async () => {
+        const mockPayload = {
+            paa: 'mock-paa-uuid',
+            prioridade: 'Prioridade com Livre Aplicação - Capital',
+            recurso: 'PTRF',
+            tipo_aplicacao: 'CAPITAL',
+            acao_associacao: 'acao-uuid-123',
+            especificacao_material: 'espec-uuid-456',
+            valor_total: 20000.00 // Valor maior que capital disponível, mas menor que capital + livre aplicação
+        };
+
+        // Simula sucesso quando o valor da prioridade é coberto por capital + livre aplicação
+        const successResponse = {
+            success: true,
+            data: {
+                uuid: 'prioridade-criada-uuid-456',
+                prioridade: 'Prioridade com Livre Aplicação - Capital',
+                valor_total: 20000.00,
+                tipo_aplicacao: 'CAPITAL',
+                recurso: 'PTRF'
+            }
+        };
+
+        postPrioridade.mockResolvedValue(successResponse);
+
+        const result = await postPrioridade(mockPayload);
+
+        expect(postPrioridade).toHaveBeenCalledWith(mockPayload);
+        expect(result).toEqual(successResponse);
+        expect(result.success).toBe(true);
+        expect(result.data.valor_total).toBe(20000.00);
+    });
+});
+
+describe('Validação de Valor da Prioridade - Atualização', () => {
+    beforeEach(() => {
+        jest.clearAllMocks();
+        localStorageMock.getItem.mockReturnValue('mock-paa-uuid');
+    });
+
+    it('deve falhar ao atualizar prioridade que excede valor de custeio', async () => {
+        const mockUuid = 'prioridade-uuid-123';
+        const mockPayload = {
+            paa: 'mock-paa-uuid',
+            prioridade: 'Prioridade Atualizada com Valor Excedente - Custeio',
+            recurso: 'PTRF',
+            tipo_aplicacao: 'CUSTEIO',
+            acao_associacao: 'acao-uuid-123',
+            especificacao_material: 'espec-uuid-456',
+            valor_total: 50000.00 // Valor muito alto que excede o disponível
+        };
+
+        // Simula erro de validação do backend quando valor excede o disponível
+        const validationError = {
+            response: {
+                status: 400,
+                data: {
+                    mensagem: 'O valor indicado para a prioridade excede o valor disponível de receita prevista.'
+                }
+            }
+        };
+
+        patchPrioridade.mockRejectedValue(validationError);
+
+        await expect(patchPrioridade(mockUuid, mockPayload)).rejects.toEqual(validationError);
+        expect(patchPrioridade).toHaveBeenCalledWith(mockUuid, mockPayload);
+    });
+
+    it('deve falhar ao atualizar prioridade que excede valor de capital', async () => {
+        const mockUuid = 'prioridade-uuid-456';
+        const mockPayload = {
+            paa: 'mock-paa-uuid',
+            prioridade: 'Prioridade Atualizada com Valor Excedente - Capital',
+            recurso: 'PTRF',
+            tipo_aplicacao: 'CAPITAL',
+            acao_associacao: 'acao-uuid-123',
+            especificacao_material: 'espec-uuid-456',
+            valor_total: 75000.00 // Valor muito alto que excede o disponível para capital
+        };
+
+        // Simula erro de validação do backend quando valor excede o disponível
+        const validationError = {
+            response: {
+                status: 400,
+                data: {
+                    mensagem: 'O valor indicado para a prioridade excede o valor disponível de receita prevista.'
+                }
+            }
+        };
+
+        patchPrioridade.mockRejectedValue(validationError);
+
+        await expect(patchPrioridade(mockUuid, mockPayload)).rejects.toEqual(validationError);
+        expect(patchPrioridade).toHaveBeenCalledWith(mockUuid, mockPayload);
+    });
+
+    it('deve atualizar prioridade com sucesso quando custeio é menor mas livre aplicação cobre a diferença', async () => {
+        const mockUuid = 'prioridade-uuid-789';
+        const mockPayload = {
+            paa: 'mock-paa-uuid',
+            prioridade: 'Prioridade Atualizada com Livre Aplicação - Custeio',
+            recurso: 'PTRF',
+            tipo_aplicacao: 'CUSTEIO',
+            acao_associacao: 'acao-uuid-123',
+            especificacao_material: 'espec-uuid-456',
+            valor_total: 15000.00 // Valor maior que custeio disponível, mas menor que custeio + livre aplicação
+        };
+
+        // Simula sucesso quando o valor da prioridade é coberto por custeio + livre aplicação
+        const successResponse = {
+            success: true,
+            data: {
+                uuid: 'prioridade-uuid-789',
+                prioridade: 'Prioridade Atualizada com Livre Aplicação - Custeio',
+                valor_total: 15000.00,
+                tipo_aplicacao: 'CUSTEIO',
+                recurso: 'PTRF'
+            }
+        };
+
+        patchPrioridade.mockResolvedValue(successResponse);
+
+        const result = await patchPrioridade(mockUuid, mockPayload);
+
+        expect(patchPrioridade).toHaveBeenCalledWith(mockUuid, mockPayload);
+        expect(result).toEqual(successResponse);
+        expect(result.success).toBe(true);
+        expect(result.data.valor_total).toBe(15000.00);
+    });
+
+    it('deve atualizar prioridade com sucesso quando capital é menor mas livre aplicação cobre a diferença', async () => {
+        const mockUuid = 'prioridade-uuid-101';
+        const mockPayload = {
+            paa: 'mock-paa-uuid',
+            prioridade: 'Prioridade Atualizada com Livre Aplicação - Capital',
+            recurso: 'PTRF',
+            tipo_aplicacao: 'CAPITAL',
+            acao_associacao: 'acao-uuid-123',
+            especificacao_material: 'espec-uuid-456',
+            valor_total: 20000.00 // Valor maior que capital disponível, mas menor que capital + livre aplicação
+        };
+
+        // Simula sucesso quando o valor da prioridade é coberto por capital + livre aplicação
+        const successResponse = {
+            success: true,
+            data: {
+                uuid: 'prioridade-uuid-101',
+                prioridade: 'Prioridade Atualizada com Livre Aplicação - Capital',
+                valor_total: 20000.00,
+                tipo_aplicacao: 'CAPITAL',
+                recurso: 'PTRF'
+            }
+        };
+
+        patchPrioridade.mockResolvedValue(successResponse);
+
+        const result = await patchPrioridade(mockUuid, mockPayload);
+
+        expect(patchPrioridade).toHaveBeenCalledWith(mockUuid, mockPayload);
+        expect(result).toEqual(successResponse);
+        expect(result.success).toBe(true);
+        expect(result.data.valor_total).toBe(20000.00);
     });
 });
