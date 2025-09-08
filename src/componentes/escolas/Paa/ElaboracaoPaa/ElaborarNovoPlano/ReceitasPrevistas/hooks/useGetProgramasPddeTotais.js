@@ -8,7 +8,7 @@ export const useGetProgramasPddeTotais = () => {
     data = { programas: [], total: {} },
     error,
     refetch,
-  } = useQuery(["programas-pdde-totais"], () => getProgramasPddeTotais(0), {
+  } = useQuery(["programas-pdde-totais"], () => getProgramasPddeTotais(1000), {
     keepPreviousData: true,
     staleTime: 5000, // 5 segundos
     refetchOnWindowFocus: true, // Caso saia da aba e voltar ele refaz a requisição
