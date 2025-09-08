@@ -9,7 +9,7 @@ export const useGetAcoesAssociacao = (options = {}) => {
     data = { results: [] },
     error,
     refetch,
-  } = useQuery(["acoes-associacao"], () => getAcoesAssociacao(), {
+  } = useQuery(["acoes-associacao"], () => getAcoesAssociacao(null, 1000), {
     keepPreviousData: true,
     staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: true,
