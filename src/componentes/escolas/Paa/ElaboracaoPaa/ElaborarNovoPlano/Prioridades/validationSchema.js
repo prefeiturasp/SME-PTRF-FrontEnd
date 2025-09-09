@@ -38,4 +38,12 @@ export const createValidationSchema = (selectedRecurso, selectedTipoAplicacao) =
   }
 
   return schema;
+};
+
+export const importaPrioridadesValidationSchema = () => {
+  let schema = Yup.object().shape({
+    uuid_paa_anterior: Yup.string().required('PAA anterior é obrigatório'),
+  });
+
+  return schema;
 }; 
