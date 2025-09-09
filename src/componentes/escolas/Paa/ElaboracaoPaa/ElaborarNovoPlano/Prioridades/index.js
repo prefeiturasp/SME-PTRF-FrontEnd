@@ -28,7 +28,6 @@ const filtroInicial = {
 
 const Prioridades = () => {
   const [filtros, setFiltros] = useState(filtroInicial);
-  const [ultimoDuplicado, setUltimoDuplicado] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [firstPage, setFirstPage] = useState(0);
   const [modalForm, setModalForm] = useState({ open: false, tabelas: null, formModal: null });
