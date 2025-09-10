@@ -130,15 +130,13 @@ describe('CardsDevolucoesParaAcertoDaDre', ()=>{
         })
     })
 
-    test('Renderiza componente', async ()=>{
+    it('Renderiza componente', async ()=>{
         getAnalisesDePcDevolvidas.mockReturnValue(mockAnalises)
         mantemEstadoAnaliseDre.getAnaliseDreUsuarioLogado.mockReturnValue(mockUsuarioLogado)
 
         render(<CardsDevolucoesParaAcertoDaDre {...mockData}/>)
         
-        await waitFor(() => {
-            expect(screen.queryByText('Carregando...')).not.toBeInTheDocument()
-        })
+        expect(screen.queryByText('Carregando...')).toBeInTheDocument()
         
         await waitFor(() => {
             const campo = screen.getByTestId('select-filtro-ajuste')

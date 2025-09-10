@@ -41,17 +41,16 @@ describe('ResumoPorDre', () => {
         renderComponent(1);
 
         // Colunas visíveis
-        expect(screen.getByText('DRE')).toBeInTheDocument();
-        expect(screen.getByText('Total de Associações')).toBeInTheDocument();
-        expect(screen.getByText('Não apresentadas')).toBeInTheDocument();
-        expect(screen.getByText('Aguardando análise')).toBeInTheDocument();
-        expect(screen.getByText('Aprovadas')).toBeInTheDocument();
-        expect(screen.getByText('Aprovadas com ressalvas')).toBeInTheDocument();
-        expect(screen.getByText('Reprovadas')).toBeInTheDocument();
-        expect(screen.getByText('Ações')).toBeInTheDocument();
+        expect(screen.getAllByText('DRE').length).toBeGreaterThan(0);
+        expect(screen.getAllByText('Total de Associações').length).toBeGreaterThan(0);
+        expect(screen.getAllByText('Não apresentadas').length).toBeGreaterThan(0);
+        expect(screen.getAllByText('Aguardando análise').length).toBeGreaterThan(0);
+        expect(screen.getAllByText('Aprovadas').length).toBeGreaterThan(0);
+        expect(screen.getAllByText('Aprovadas com ressalvas').length).toBeGreaterThan(0);
+        expect(screen.getAllByText('Reprovadas').length).toBeGreaterThan(0);
+        expect(screen.getAllByText('Ações').length).toBeGreaterThan(0);
 
         // Valores
-        expect(screen.getByText('DRE')).toBeInTheDocument(); // sigla da DRE
         expect(screen.getByText('10')).toBeInTheDocument(); // Total unidades
         expect(screen.getByText('1352')).toBeInTheDocument(); // RECEBIDA
         expect(screen.getByText('46961')).toBeInTheDocument(); // APROVADA

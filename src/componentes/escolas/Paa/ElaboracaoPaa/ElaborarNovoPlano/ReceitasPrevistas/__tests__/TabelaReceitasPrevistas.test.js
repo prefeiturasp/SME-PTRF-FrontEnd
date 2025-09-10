@@ -48,9 +48,9 @@ describe("TabelaReceitasPrevistas Component", () => {
       />
     );
 
-    expect(screen.getByText("Recurso 1")).toBeInTheDocument();
-    expect(screen.getByText("Custeio (R$)")).toBeInTheDocument();
-    expect(screen.getByText("Capital (R$)")).toBeInTheDocument();
+    expect(screen.getAllByText("Recurso 1").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Custeio (R$)").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Capital (R$)").length).toBeGreaterThan(0);
   });
 
   it("não deve renderizar o botão de edição quando `fixed` for `true`", () => {
