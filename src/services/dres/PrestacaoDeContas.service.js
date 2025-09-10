@@ -130,6 +130,10 @@ export const postNotificarPendenciaGeracaoAtaApresentacao = async (prestacao_con
     return (await api.post(`/api/prestacoes-contas/${prestacao_conta_uuid}/notificar/pendencia_geracao_ata_apresentacao/`, null, authHeader())).data
 };
 
+export const postNotificarPendenciaGeracaoAtaRetificacao = async (prestacao_conta_uuid) => {
+    return (await api.post(`/api/prestacoes-contas/${prestacao_conta_uuid}/notificar/pendencia_geracao_ata_retificacao/`, null, authHeader())).data
+};
+
 export const getMotivosAprovadoComRessalva = async () => {
     return (await api.get(`/api/motivos-aprovacao-ressalva/`, authHeader())).data
 };

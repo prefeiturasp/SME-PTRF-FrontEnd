@@ -12,9 +12,10 @@ import ConferenciaDeDocumentos from "./ConferenciaDeDocumentos";
 import DevolutivaDaAssociacao from "./DevolutivaDaAssociacao";
 import JustificativaDeFaltaDeAjustes from "./JustificativaDeFaltaDeAjustes";
 import {RetornaSeTemPermissaoEdicaoAcompanhamentoDePc} from "../RetornaSeTemPermissaoEdicaoAcompanhamentoDePc";
-import { PendenciasRecebimento } from "../PendeciasRecebimento";
+import { PendenciasRecebimento } from "../PendenciasRecebimento";
 import ConferenciaDespesasPeriodosAnteriores from "./ConferenciaDespesasPeriodosAnteriores";
 import { visoesService } from "../../../../services/visoes.service";
+import { STATUS_PRESTACAO_CONTA } from "../../../../constantes/prestacaoConta";
 
 
 export const GetComportamentoPorStatus = (
@@ -93,6 +94,25 @@ export const GetComportamentoPorStatus = (
             prestacaoDeContas.ata_aprensentacao_gerada
         )
     };
+
+    const podeReceberDevolvidaRetornada = () => {
+        return (
+            TEMPERMISSAO && 
+            dataRecebimentoDevolutiva && 
+            prestacaoDeContas.ata_retificacao_gerada
+        )
+    };
+
+
+    const tooltipReceberAposAcerto = () => {
+        if(prestacaoDeContas && prestacaoDeContas.status === STATUS_PRESTACAO_CONTA.DEVOLVIDA_RETORNADA && !dataRecebimentoDevolutiva){
+            return "É necessário informar a data de recebimento para realizar o recebimento da Prestação de Contas."
+        } else if(prestacaoDeContas && prestacaoDeContas.status === STATUS_PRESTACAO_CONTA.DEVOLVIDA_RETORNADA && !prestacaoDeContas.ata_retificacao_gerada){
+            return "É necessário efetuar a geração da ata de retificação para realizar o recebimento da Prestação de Contas."
+        }
+            
+        return null;
+    }
 
     if (prestacaoDeContas && prestacaoDeContas.status) {
         if (prestacaoDeContas.status === 'NAO_RECEBIDA') {
@@ -393,13 +413,15 @@ export const GetComportamentoPorStatus = (
                         esconderBotaoRetroceder={true}
                         textoBtnAvancar={"Receber após acertos"}
                         metodoAvancar={() => receberAposAcertos(prestacaoDeContas)}
-
-                        // disabledBtnAvancar={!dataRecebimentoDevolutiva}
-                        disabledBtnAvancar={!dataRecebimentoDevolutiva || !TEMPERMISSAO}
+                        disabledBtnAvancar={!podeReceberDevolvidaRetornada()}
+                        tooltipAvancar={tooltipReceberAposAcerto()}
                     />
                     <TrilhaDeStatus
                         prestacaoDeContas={prestacaoDeContas}
                     />
+                    
+                    <PendenciasRecebimento prestacaoDeContas={prestacaoDeContas}/>
+
                     <FormRecebimentoPelaDiretoria
                         handleChangeFormRecebimentoPelaDiretoria={handleChangeFormRecebimentoPelaDiretoria}
                         stateFormRecebimentoPelaDiretoria={stateFormRecebimentoPelaDiretoria}
