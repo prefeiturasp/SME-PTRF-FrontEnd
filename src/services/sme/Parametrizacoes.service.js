@@ -245,6 +245,11 @@ export const getPaaVigente = async (associacao_uuid) => {
   const result = await api.get(`/api/associacoes/${associacao_uuid}/paa-vigente/`, authHeader());
   return result
 };
+
+export const getPAAsAnteriores = async () => {
+  return (await api.get(`/api/paa/${localStorage.getItem('PAA')}/paas-anteriores/`, authHeader())).data;
+};
+
 export const getParametroPaa = async () => {
   return (await api.get(`/api/parametros-paa/mes-elaboracao-paa/`, authHeader())).data;
 };

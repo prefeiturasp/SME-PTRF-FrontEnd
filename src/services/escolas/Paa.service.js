@@ -137,6 +137,10 @@ export const postAtivarAtualizacaoSaldoPAA = async (uuid) => {
   ).data;
 };
 
+export const postImportarPrioridades = async (uuid_paa_atual, uuid_paa_anterior) => {
+  return (await api.post(`api/paa/${uuid_paa_atual}/importar-prioridades/${uuid_paa_anterior}/`, {}, authHeader())).data;
+}
+
 // Prioridades
 export const getPrioridadesTabelas = async () => {
   return (await api.get(`api/prioridades-paa/tabelas/`, authHeader())).data;
