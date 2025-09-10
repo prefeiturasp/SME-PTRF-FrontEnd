@@ -127,6 +127,7 @@ export const Associacoes = () => {
         observacao: '',
         tipo_unidade: '',
         nome_unidade: '',
+        nome_dre: '',
         cnpj: '',
         periodo_inicial: '' ,
         ccm: '',
@@ -180,6 +181,9 @@ export const Associacoes = () => {
 
     const handleEditFormModalAssociacoes = useCallback( async (rowData) =>{
         let associacao_por_uuid = await getAssociacaoPorUuid(rowData.uuid);
+        console.log({
+            associacao_por_uuid
+        })
         setStateFormModal({
             ...stateFormModal,
             nome: associacao_por_uuid.nome,
@@ -188,6 +192,7 @@ export const Associacoes = () => {
             observacao: associacao_por_uuid.unidade.observacao,
             tipo_unidade: associacao_por_uuid.unidade.tipo_unidade,
             nome_unidade: associacao_por_uuid.unidade.nome,
+            nome_dre: associacao_por_uuid.unidade.dre.nome,
             cnpj: associacao_por_uuid.cnpj,
             periodo_inicial: associacao_por_uuid.periodo_inicial && associacao_por_uuid.periodo_inicial.uuid ? associacao_por_uuid.periodo_inicial.uuid : '' ,
             ccm: associacao_por_uuid.ccm ? associacao_por_uuid.ccm : "",
@@ -212,6 +217,9 @@ export const Associacoes = () => {
             if (Object.entries(unidade).length > 0){
                 setFieldValue('tipo_unidade', unidade.tipo_unidade.trim());
                 setFieldValue('nome_unidade', unidade.nome.trim());
+                if (unidade.nome_dre) {
+                    setFieldValue('nome_dre', unidade.nome_dre.trim());
+                }
                 setErrosCodigoEol('');
             }else {
                 setErrosCodigoEol('Unidade não encontrada.');
