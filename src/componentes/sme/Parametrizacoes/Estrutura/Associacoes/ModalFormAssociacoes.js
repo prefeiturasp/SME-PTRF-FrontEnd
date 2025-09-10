@@ -59,6 +59,8 @@ const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitMo
                         } = props;
                         
                         let data_fim_periodo = null
+                        let nome_dre_tratado = props.values?.nome_dre?.replace(/DIRETORIA REGIONAL DE EDUCACAO\s*/i, '').trim() || '';
+
                         if(values.periodo_inicial) {
                             let periodo = listaDePeriodos.find(periodo => periodo.uuid === values.periodo_inicial)
                             data_fim_periodo = periodo ? periodo.data_fim_realizacao_despesas : null;
@@ -134,7 +136,7 @@ const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitMo
                                             <label htmlFor="nome_dre">DRE</label>
                                             <input
                                                 type="text"
-                                                value={props.values?.nome_dre?.replace(/DIRETORIA REGIONAL DE EDUCACAO\s*/i, '').trim()}
+                                                value={nome_dre_tratado}
                                                 name="nome_dre"
                                                 id="nome_dre"
                                                 className="form-control"
