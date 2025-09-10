@@ -1,6 +1,6 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import React  from "react";
-import { useParams, useLocation, MemoryRouter } from "react-router-dom"
+import { useParams, useLocation, MemoryRouter, useNavigate } from "react-router-dom"
 import { EdicaoDeDespesa, tituloPagina } from "../index";
 import { visoesService } from "../../../../../services/visoes.service";
 import {DespesaContext} from "../../../../../context/Despesa";
@@ -21,10 +21,13 @@ jest.mock("../../../../../services/visoes.service", () => ({
   }
 }));
 
+const mockNavigate = jest.fn();
+
 jest.mock("react-router-dom", () => ({
   ...jest.requireActual("react-router-dom"),
   useParams: jest.fn(),
-  useLocation: jest.fn()
+  useLocation: jest.fn(),
+  useNavigate: () => mockNavigate
 }));
 
 const contexto = {
@@ -34,8 +37,13 @@ const contexto = {
   getDespesa: jest.fn(),
 }
 describe('<EdicaoDeDespesa>', () => {
+  beforeEach(() => {
+    mockNavigate.mockClear();
+  });
+
   test('Deve renderizar o componente', async () => {
     useParams.mockReturnValue({ associacao: '' });
+    useLocation.mockReturnValue({ state: null });
     render(
       <MemoryRouter>
         <DespesaContext.Provider value={contexto}>
@@ -48,6 +56,7 @@ describe('<EdicaoDeDespesa>', () => {
 
   test('Deve renderizar o componente na visao DRE', async () => {
     useParams.mockReturnValue({ associacao: '' });
+    useLocation.mockReturnValue({ state: null });
     visoesService.getItemUsuarioLogado.mockReturnValue('DRE');
     render(
       <MemoryRouter>
@@ -124,6 +133,99 @@ describe('<EdicaoDeDespesa>', () => {
       </MemoryRouter>
     )
     expect(screen.getByText("Dados do documento")).toBeInTheDocument();
+  });
+
+  test('Deve renderizar botão "Voltar para Situação Patrimonial" quando veioDeSituacaoPatrimonial é true', () => {
+    const parametroLocation = {
+      state: {
+        origem: 'situacao_patrimonial'
+      }
+    };
+    useParams.mockReturnValue({ associacao: '1234' });
+    useLocation.mockReturnValue(parametroLocation);
+    visoesService.getItemUsuarioLogado.mockReturnValue('UE');
+
+    render(
+      <MemoryRouter>
+        <DespesaContext.Provider value={contexto}>
+          <EdicaoDeDespesa/>
+        </DespesaContext.Provider>
+      </MemoryRouter>
+    );
+
+    const botoes = screen.getAllByText("Voltar para Situação Patrimonial");
+    expect(botoes).toHaveLength(2); // Há dois botões sendo renderizados
+    expect(botoes[0]).toBeInTheDocument();
+  });
+
+  test('Deve navegar para "/lista-situacao-patrimonial" quando visão é UE e clica no botão', () => {
+    const parametroLocation = {
+      state: {
+        origem: 'situacao_patrimonial'
+      }
+    };
+    useParams.mockReturnValue({ associacao: '1234' });
+    useLocation.mockReturnValue(parametroLocation);
+    visoesService.getItemUsuarioLogado.mockReturnValue('UE');
+
+    render(
+      <MemoryRouter>
+        <DespesaContext.Provider value={contexto}>
+          <EdicaoDeDespesa/>
+        </DespesaContext.Provider>
+      </MemoryRouter>
+    );
+
+    const botoes = screen.getAllByText("Voltar para Situação Patrimonial");
+    fireEvent.click(botoes[0]);
+
+    expect(mockNavigate).toHaveBeenCalledWith('/lista-situacao-patrimonial');
+  });
+
+  test('Deve navegar para "/dre-detalhes-associacao" quando visão é DRE e clica no botão', () => {
+    const parametroLocation = {
+      state: {
+        origem: 'situacao_patrimonial'
+      }
+    };
+    useParams.mockReturnValue({ associacao: '1234' });
+    useLocation.mockReturnValue(parametroLocation);
+    visoesService.getItemUsuarioLogado.mockReturnValue('DRE');
+
+    render(
+      <MemoryRouter>
+        <DespesaContext.Provider value={contexto}>
+          <EdicaoDeDespesa/>
+        </DespesaContext.Provider>
+      </MemoryRouter>
+    );
+
+    const botoes = screen.getAllByText("Voltar para Situação Patrimonial");
+    fireEvent.click(botoes[0]);
+
+    expect(mockNavigate).toHaveBeenCalledWith('/dre-detalhes-associacao');
+  });
+
+  test('Não deve renderizar botão quando veioDeSituacaoPatrimonial é false', () => {
+    const parametroLocation = {
+      state: {
+        origem: 'outra_origem'
+      }
+    };
+    useParams.mockReturnValue({ associacao: '1234' });
+    useLocation.mockReturnValue(parametroLocation);
+    visoesService.getItemUsuarioLogado.mockReturnValue('UE');
+
+    render(
+      <MemoryRouter>
+        <DespesaContext.Provider value={contexto}>
+          <EdicaoDeDespesa/>
+        </DespesaContext.Provider>
+      </MemoryRouter>
+    );
+
+    const botao = screen.queryByText("Voltar para Situação Patrimonial");
+    expect(botao).not.toBeInTheDocument();
   });
 
 });

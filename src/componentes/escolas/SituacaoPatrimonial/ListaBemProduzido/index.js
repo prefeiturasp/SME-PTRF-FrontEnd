@@ -143,7 +143,7 @@ const formatarData = (data) => {
   }
 };
 
-export const ListaBemProduzido = (props) => {
+export const ListaBemProduzido = ({visao_dre=false}) => {
   const navigate = useNavigate();
   const [filtros, setFiltros] = useState(filtroInicial);
   const [currentPage, setCurrentPage] = useState(1);
@@ -299,12 +299,12 @@ export const ListaBemProduzido = (props) => {
           />
         </DataTable>
         <Flex justify="end" gap={8} className="mt-1 mb-4 mx-4">
-          <button 
-            className="btn btn-outline-success float-right"
-            onClick={() => navigate(`/edicao-bem-produzido/${data.bem_produzido_uuid}`)}
-          >
-            Editar bem
-          </button>
+          {!visao_dre && <button 
+              className="btn btn-outline-success float-right"
+              onClick={() => navigate(`/edicao-bem-produzido/${data.bem_produzido_uuid}`)}
+            >
+              Editar bem
+            </button>}
         </Flex>
       </>
     );
@@ -327,14 +327,14 @@ export const ListaBemProduzido = (props) => {
     <div>
       <div style={{ position: "relative" }}>
 
-      <div className="d-flex justify-content-end mb-3">
+      {!visao_dre && <div className="d-flex justify-content-end mb-3">
         <button
           className="btn btn-success"
           onClick={() => navigate("/cadastro-bem-produzido")}
         >
           Adicionar bem produzido
         </button>
-      </div>
+      </div>}
 
       <FormFiltrosBens
           onFiltrar={onFiltrar}

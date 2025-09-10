@@ -1,6 +1,7 @@
 import api from "../api";
 import { TOKEN_ALIAS } from "../auth.service.js";
 import { ASSOCIACAO_UUID } from "../auth.service";
+import { getUuidAssociacao } from "../../utils/AssociacaoUtils.js";
 
 const authHeader = () => ({
   headers: {
@@ -65,11 +66,10 @@ export const alterarAssociacao = async (payload) => {
 };
 
 export const getPeriodoFechado = async (data_verificacao) => {
+  const uuid_associacao = getUuidAssociacao();
   return (
     await api.get(
-      `/api/associacoes/${localStorage.getItem(
-        ASSOCIACAO_UUID
-      )}/status-periodo/?data=${data_verificacao}`,
+      `/api/associacoes/${uuid_associacao}/status-periodo/?data=${data_verificacao}`,
       authHeader()
     )
   ).data;

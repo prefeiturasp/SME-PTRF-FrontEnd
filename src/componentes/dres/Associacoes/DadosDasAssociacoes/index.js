@@ -9,6 +9,7 @@ import { ProcessoSeiRegularidade } from "./ProcessosSei/ProcessoSeiRegularidade"
 import { ProcessosSeiPrestacaoDeContas } from "./ProcessosSei/ProcessosSeiPrestacaoDeContas";
 import { SituacaoFinanceiraUnidadeEducacional } from "./SituacaoFinanceiraUnidadeEducacional";
 import {visoesService} from "../../../../services/visoes.service"
+import { SituacaoPatrimonialUnidadeEducacional } from "./SituacaoPatrimonial";
 import "../associacoes.scss"
 
 export const DetalhesDaAssociacao = () => {
@@ -57,6 +58,11 @@ export const DetalhesDaAssociacao = () => {
             nome: "Situação Financeira",
             permissao: visoesService.getPermissoes(["access_situacao_financeira_dre"])
         },
+        {
+            id: "situacao_patrimonial",
+            nome: "Situação Patrimonial",
+            permissao: visoesService.getPermissoes(["access_situacao_patrimonial_dre"])
+        },
     ]
 
     let conteudo_tab = {
@@ -79,6 +85,10 @@ export const DetalhesDaAssociacao = () => {
         situacao_financeira : {
             id: tabs[4].id,
             permissao: visoesService.getPermissoes(["access_situacao_financeira_dre"])
+        },
+        situacao_patrimonial : {
+            id: tabs[5].id,
+            permissao: visoesService.getPermissoes(["access_situacao_patrimonial_dre"])
         },
     }
 
@@ -290,6 +300,22 @@ export const DetalhesDaAssociacao = () => {
                                                 dadosDaAssociacao={dadosDaAssociacao}
                                             />
                                             
+                                        </div>
+                                    </div>
+                                :
+                                    null
+                            }
+
+                            {conteudo_tab.situacao_patrimonial.permissao
+                                ?
+                                    <div 
+                                        className={`tab-pane fade show ${activeTab.situacao_patrimonial ? "active" : ""}`} 
+                                        id={`nav-${conteudo_tab.situacao_patrimonial.id}`} 
+                                        role="tabpanel" 
+                                        aria-labelledby={`nav-${conteudo_tab.situacao_patrimonial.id}-tab`}
+                                    >
+                                        <div className="page-content-inner">
+                                            <SituacaoPatrimonialUnidadeEducacional visao_dre={true} />
                                         </div>
                                     </div>
                                 :

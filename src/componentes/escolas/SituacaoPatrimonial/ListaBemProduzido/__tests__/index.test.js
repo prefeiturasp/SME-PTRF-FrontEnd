@@ -187,16 +187,37 @@ describe("ListaBemProduzido", () => {
   });
 
   it("deve renderizar corretamente valores e datas formatadas", () => {
-    // O componente está renderizando 31/12/2022 e 31/01/2023, então vamos esperar por esses valores
     render(<ListaBemProduzido />, { wrapper: RouterWrapper });
     expect(screen.getByText("R$ 1.000,00")).toBeInTheDocument();
-    expect(screen.getByText("31/12/2022")).toBeInTheDocument();
-    expect(screen.getByText("31/01/2023")).toBeInTheDocument();
+    expect(screen.getByText("R$ 500,00")).toBeInTheDocument();
+    expect(screen.getByText("01/01/2023")).toBeInTheDocument();
+    expect(screen.getByText("01/02/2023")).toBeInTheDocument();
   });
 
   it("deve lidar com erro no hook de dados", () => {
     useGetBemProduzidosComAdquiridos.mockReturnValue({ isLoading: false, isError: true, error: { message: "Erro" }, data: null, refetch: jest.fn() });
     render(<ListaBemProduzido />, { wrapper: RouterWrapper });
     expect(screen.getByTestId("form-filtros-bens")).toBeInTheDocument();
+  });
+
+  describe("quando visao_dre é true", () => {
+    it("não deve renderizar o botão 'Adicionar bem produzido'", () => {
+      render(<ListaBemProduzido visao_dre={true} />, { wrapper: RouterWrapper });
+      
+      const button = screen.queryByRole("button", {
+        name: /adicionar bem produzido/i,
+      });
+      expect(button).not.toBeInTheDocument();
+    });
+
+    it("não deve renderizar o botão 'Editar bem' nas linhas da tabela", () => {
+      useGetBemProduzidosComAdquiridos.mockReturnValue({ isLoading: false, data: baseData, refetch: jest.fn() });
+      render(<ListaBemProduzido visao_dre={true} />, { wrapper: RouterWrapper });
+      
+      const editButtons = screen.queryAllByRole("button", {
+        name: /editar bem/i,
+      });
+      expect(editButtons).toHaveLength(0);
+    });
   });
 });
