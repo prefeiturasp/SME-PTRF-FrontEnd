@@ -56,14 +56,12 @@ describe("useDeleteAcaoPDDE", () => {
     });
 
     it("deve exibir erro ao falhar na remoção", async () => {
-        deleteAcoesPDDE.mockRejectedValueOnce(new Error("Erro ao deletar"));
+        deleteAcoesPDDE.mockRejectedValue({response: { data: { detail: "Houve um erro ao tentar completar ação." } },});
 
         const { result } = renderHook(() => useDeleteAcao(setModalForm, setErroExclusaoNaoPermitida, setShowModalInfoExclusaoNaoPermitida), { wrapper });
 
         await act(async () => {
-            result.current.mutationDelete.mutate({
-                uuid: "4d272c66-0d2a-4f77-9979-6afeaec39332"
-            });
+            result.current.mutationDelete.mutate("4d272c66-0d2a-4f77-9979-6afeaec39332");
         });
 
         expect(toastCustom.ToastCustomError).toHaveBeenCalledWith(

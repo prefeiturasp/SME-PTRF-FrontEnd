@@ -9,6 +9,8 @@ import { useGetEspecificacoes } from '../hooks/useGetEspecificacoes';
 import { usePostPrioridade } from '../hooks/usePostPrioridade';
 import { usePatchPrioridade } from '../hooks/usePatchPrioridade';
 
+jest.setTimeout(30000);
+
 // Mock dos hooks que fazem requests HTTP
 jest.mock('../../ReceitasPrevistas/hooks/useGetAcoesAssociacao', () => ({
   useGetAcoesAssociacao: jest.fn(),

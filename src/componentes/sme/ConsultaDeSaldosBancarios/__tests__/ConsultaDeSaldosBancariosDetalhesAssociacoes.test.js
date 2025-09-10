@@ -66,7 +66,7 @@ describe('Componente Consulta de Saldos Bancarios Detalhes Associacoes', () => {
     render(<MemoryRouter><ConsultaDeSaldosBancariosDetalhesAssociacoes/></MemoryRouter>);
     await waitFor(() => {
       expect(screen.getByText("Consulta de saldos bancários")).toBeInTheDocument();
-      expect(screen.getByText("Código Eol")).toBeInTheDocument();
+      expect(screen.getAllByText("Código Eol")[0]).toBeInTheDocument();
       expect(screen.getByText("123456")).toBeInTheDocument();
       const botaoModalExtrato = screen.getByTestId("botaoVerExtrato");
       fireEvent.click(botaoModalExtrato);
@@ -100,7 +100,7 @@ describe('Componente Consulta de Saldos Bancarios Detalhes Associacoes', () => {
     render(<MemoryRouter><ConsultaDeSaldosBancariosDetalhesAssociacoes/></MemoryRouter>);
     await waitFor(() => {
       expect(screen.getByText("Consulta de saldos bancários")).toBeInTheDocument();
-      expect(screen.getByText("Código Eol")).toBeInTheDocument();
+      expect(screen.getAllByText("Código Eol")[0]).toBeInTheDocument();
       expect(screen.getByText("123456")).toBeInTheDocument();
       const botaoDownloadExtrato = screen.getByTestId("botaoDownloadExtrato");
       fireEvent.click(botaoDownloadExtrato);

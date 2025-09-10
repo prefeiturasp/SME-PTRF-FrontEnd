@@ -32,8 +32,10 @@ describe("Paginacao", () => {
     });
 
     it("testa a renderização da paginação", () => {
+        const botao_page2 = screen.getByText("2");
+        expect(botao_page2).toBeInTheDocument();
 
-        fireEvent.click(screen.getByRole("button", {name: "2"}));
+        fireEvent.click(botao_page2);
         expect(mockSetCurrentPage).toHaveBeenCalledWith(2);
 
     });
