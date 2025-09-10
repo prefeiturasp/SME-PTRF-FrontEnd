@@ -181,9 +181,7 @@ export const Associacoes = () => {
 
     const handleEditFormModalAssociacoes = useCallback( async (rowData) =>{
         let associacao_por_uuid = await getAssociacaoPorUuid(rowData.uuid);
-        console.log({
-            associacao_por_uuid
-        })
+
         setStateFormModal({
             ...stateFormModal,
             nome: associacao_por_uuid.nome,
