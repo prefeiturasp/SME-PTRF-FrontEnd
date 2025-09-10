@@ -134,7 +134,7 @@ const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitMo
                                             <label htmlFor="nome_dre">DRE</label>
                                             <input
                                                 type="text"
-                                                value={props.values.nome_dre}
+                                                value={props.values?.nome_dre?.replace(/DIRETORIA REGIONAL DE EDUCACAO\s*/i, '').trim()}
                                                 name="nome_dre"
                                                 id="nome_dre"
                                                 className="form-control"
