@@ -17,10 +17,10 @@ export function PendenciasRecebimento({ prestacaoDeContas }) {
   const [loading, setLoading] = useState(false);
   const [notificationSent, setNotificationSent] = useState(false);
 
-  async function notificar() {
+  async function notificar(notificarFunction) {
     setLoading(true);
     try {
-      await postNotificarPendenciaGeracaoAtaApresentacao(prestacaoDeContas.uuid);
+      await notificarFunction(prestacaoDeContas.uuid);
       setNotificationSent(true);
       toastCustom.ToastCustomSuccess("Notificação enviada com sucesso!");
     } catch (error) {
@@ -30,68 +30,53 @@ export function PendenciasRecebimento({ prestacaoDeContas }) {
     }
   }
 
-  async function notificarRetificacao() {
-    setLoading(true);
-    try {
-      await postNotificarPendenciaGeracaoAtaRetificacao(prestacaoDeContas.uuid);
-      setNotificationSent(true);
-      toastCustom.ToastCustomSuccess("Notificação enviada com sucesso!");
-    } catch (error) {
-      toastCustom.ToastCustomError("Ops! Houve um erro ao tentar enviar notificação.");
-    } finally {
-      setLoading(false);
-    }
+  function generatePendencia(title, subtitle, callback) {
+    return {
+      title: title,
+      subtitle: subtitle,
+      actions: [
+        <button
+          id="btn-avancar"
+          onClick={() => notificar(callback)}
+          className="btn btn-success ml-2"
+          disabled={loading || notificationSent}
+        >
+          {loading ? (
+            <FontAwesomeIcon style={{ marginRight: "3px", color: "#fff" }} icon={faSpinner} />
+          ) : (
+            "Notificar associação"
+          )}
+        </button>,
+      ],
+    };
   }
-
-  const ataApresentacao = {
-    title: "Associação - Geração da ata de apresentação (PDF)",
-    subtitle: "Notificar a associação sobre a geração da ata",
-    actions: [
-      <button
-        id="btn-avancar"
-        onClick={() => notificar()}
-        className="btn btn-success ml-2"
-        disabled={loading || notificationSent}
-      >
-        {loading ? (
-          <FontAwesomeIcon style={{ marginRight: "3px", color: "#fff" }} icon={faSpinner} />
-        ) : (
-          "Notificar associação"
-        )}
-      </button>,
-    ],
-  };
-
-  const ataRetificacao = {
-    title: "Associação - Geração da ata de retificação (PDF)",
-    subtitle: "Notificar a associação sobre a geração da ata",
-    actions: [
-      <button
-        id="btn-avancar"
-        onClick={() => notificarRetificacao()}
-        className="btn btn-success ml-2"
-        disabled={loading || notificationSent}
-      >
-        {loading ? (
-          <FontAwesomeIcon style={{ marginRight: "3px", color: "#fff" }} icon={faSpinner} />
-        ) : (
-          "Notificar associação"
-        )}
-      </button>,
-    ],
-  };
 
   const handlePendencias = () => {
     let _pendencias = [];
-    if (!prestacaoDeContas.ata_aprensentacao_gerada) {
-      _pendencias.push(ataApresentacao);
+    if (
+      prestacaoDeContas.status === STATUS_PRESTACAO_CONTA.NAO_RECEBIDA &&
+      !prestacaoDeContas.ata_aprensentacao_gerada
+    ) {
+      _pendencias.push(
+        generatePendencia(
+          "Associação - Geração da ata de apresentação (PDF)",
+          "Notificar a associação sobre a geração da ata",
+          postNotificarPendenciaGeracaoAtaApresentacao
+        )
+      );
     }
 
     if (
       prestacaoDeContas.status === STATUS_PRESTACAO_CONTA.DEVOLVIDA_RETORNADA &&
       !prestacaoDeContas.ata_retificacao_gerada
     ) {
-      _pendencias.push(ataRetificacao);
+      _pendencias.push(
+        generatePendencia(
+          "Associação - Geração da ata de retificação (PDF)",
+          "Notificar a associação sobre a geração da ata",
+          postNotificarPendenciaGeracaoAtaRetificacao
+        )
+      );
     }
 
     setPendencias(_pendencias);

@@ -12,7 +12,7 @@ import ConferenciaDeDocumentos from "./ConferenciaDeDocumentos";
 import DevolutivaDaAssociacao from "./DevolutivaDaAssociacao";
 import JustificativaDeFaltaDeAjustes from "./JustificativaDeFaltaDeAjustes";
 import {RetornaSeTemPermissaoEdicaoAcompanhamentoDePc} from "../RetornaSeTemPermissaoEdicaoAcompanhamentoDePc";
-import { PendenciasRecebimento } from "../PendeciasRecebimento";
+import { PendenciasRecebimento } from "../PendenciasRecebimento";
 import ConferenciaDespesasPeriodosAnteriores from "./ConferenciaDespesasPeriodosAnteriores";
 import { visoesService } from "../../../../services/visoes.service";
 import { STATUS_PRESTACAO_CONTA } from "../../../../constantes/prestacaoConta";
