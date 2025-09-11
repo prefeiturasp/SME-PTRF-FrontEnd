@@ -4,29 +4,6 @@
 // learn more: https://github.com/testing-library/jest-dom
 import '@testing-library/jest-dom';
 
-// const originalError = console.error;
-// const originalWarn = console.warn;
 
-// beforeAll(() => {
-//     const originalError = console.error;
-//     const originalWarn = console.warn;
-
-//     console.error = (...args) => {
-//         if (typeof args[0] === 'string' && (args[0].includes('Warning:') || args[0].includes('DeprecationWarning:'))) {
-//             return;
-//         }
-//         originalError(...args);
-//     };
-
-//     console.warn = (...args) => {
-//         if (typeof args[0] === 'string' && args[0].includes('Warning:')) {
-//             return;
-//         }
-//         originalWarn(...args);
-//     };
-// });
-
-// afterAll(()=>{
-//     console.error = originalError
-//     console.warn = originalWarn
-// })
+// Redefine o timeout para 60 segundos, evitar erros de timeout durante a execução de todos os testes
+jest.setTimeout(60000); // 60 segundos
