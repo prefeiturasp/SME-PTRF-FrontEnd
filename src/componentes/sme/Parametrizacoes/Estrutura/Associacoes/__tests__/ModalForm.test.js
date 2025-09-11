@@ -165,4 +165,37 @@ describe("Componente ModalForm", () => {
     expect(mockOnDeleteAssocicacaoTratamento).toHaveBeenCalledTimes(1);
   });
 
+  it("Exibe o nome da DRE tratado no modo Cadastro quando retornado da busca por EOL", async () => {
+    mockCarregaUnidadePeloCodigoEol.mockImplementation((valor, setFieldValue) => {
+      setFieldValue('nome_dre', 'DIRETORIA REGIONAL DE EDUCACAO DRE BUTANTÃ');
+    });
+
+    render(<ModalFormAssociacoes {...defaultProps} />);
+
+    const inputEol = screen.getByLabelText("Código EOL*");
+    fireEvent.change(inputEol, { target: { value: '123456' } });
+
+    await waitFor(() => {
+      const inputDre = screen.getByLabelText("DRE");
+      expect(inputDre).toHaveValue("DRE BUTANTÃ");
+      expect(inputDre).toBeDisabled();
+    });
+  });
+
+  it("Exibe o nome da DRE tratado no modo Edição", () => {
+    const propsEdicaoComDre = {
+      ...defaultPropsEdicao,
+      stateFormModal: {
+        ...EditStateFormModal,
+        nome_dre: 'DIRETORIA REGIONAL DE EDUCACAO DRE IPIRANGA'
+      }
+    };
+
+    render(<ModalFormAssociacoes {...propsEdicaoComDre} />);
+
+    const inputDre = screen.getByLabelText("DRE");
+    expect(inputDre).toHaveValue("DRE IPIRANGA");
+    expect(inputDre).toBeDisabled();
+  });
+
 });
