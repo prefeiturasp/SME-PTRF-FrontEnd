@@ -134,6 +134,7 @@ export const SidebarLeft = () => {
                                         key={index}
                                         navitemClassName={`d-flex align-items-end ${url.subItens && url.subItens.length > 0 ? "sub-menu" : ""}`}
                                         eventKey={url.url}
+                                        data-cy={url.label}
                                     >
                                         <NavIcon>
                                             <img src={url.icone} alt=""/>
