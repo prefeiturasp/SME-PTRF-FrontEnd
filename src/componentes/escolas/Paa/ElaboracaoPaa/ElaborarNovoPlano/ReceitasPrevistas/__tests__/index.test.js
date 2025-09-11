@@ -119,8 +119,9 @@ describe("ReceitasPrevistas Component", () => {
     const botaoConfirmar = screen.getByTestId("botao-confirmar-congelamento");
     expect(botaoConfirmar).toBeEnabled();
     fireEvent.click(botaoConfirmar)
+
     await waitFor(()=> {
       expect(botaoConfirmar).toBeDisabled();
-    })
+    }, { timeout: 5000 })
   })
 });

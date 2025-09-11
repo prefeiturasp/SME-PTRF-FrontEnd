@@ -82,6 +82,12 @@ jest.mock("../../../../Globais/ToastCustom", () => ({
   },
 }));
 
+jest.mock("../../../../../services/visoes.service", () => ({
+  visoesService: {
+    getItemUsuarioLogado: jest.fn().mockReturnValue("UE"),
+  },
+}));
+
 const mockDespesaContext = {
   initialValues: {
     uuid: null,
