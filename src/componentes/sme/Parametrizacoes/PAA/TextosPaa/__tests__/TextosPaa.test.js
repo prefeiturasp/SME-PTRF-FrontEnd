@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { TextosPaa } from '../index.js';
-import { getTextoExplicacaoPaa, patchTextoExplicacaoPaa } from '../../../../../../services/escolas/PrestacaoDeContas.service';
+import { getTextosPaaUe, patchTextosPaaUe } from '../../../../../../services/escolas/PrestacaoDeContas.service';
 import { toastCustom } from '../../../../../Globais/ToastCustom';
 import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
 
@@ -11,8 +11,8 @@ jest.mock("../../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametr
 }));
 
 jest.mock('../../../../../../services/escolas/PrestacaoDeContas.service', () => ({
-    getTextoExplicacaoPaa: jest.fn(),
-    patchTextoExplicacaoPaa: jest.fn()
+    getTextosPaaUe: jest.fn(),
+    patchTextosPaaUe: jest.fn()
 }));
 
 jest.mock('../../../../../Globais/ToastCustom', () => ({
@@ -28,7 +28,13 @@ describe('TextosPaa Component', () => {
     });
 
     test('deve renderizar o título corretamente', async () => {
-        getTextoExplicacaoPaa.mockResolvedValue({ detail: 'Texto de exemplo' });
+        getTextosPaaUe.mockResolvedValue({ 
+            texto_pagina_paa_ue: 'Texto de exemplo',
+            introducao_do_paa_ue_1: '',
+            introducao_do_paa_ue_2: '',
+            conclusao_do_paa_ue_1: '',
+            conclusao_do_paa_ue_2: ''
+        });
         render(
             <MemoryRouter>
                 <TextosPaa />
@@ -38,7 +44,13 @@ describe('TextosPaa Component', () => {
     });
 
     test('deve exibir a tabela de textos após o carregamento', async () => {
-        getTextoExplicacaoPaa.mockResolvedValue({ detail: 'Texto de exemplo' });
+        getTextosPaaUe.mockResolvedValue({ 
+            texto_pagina_paa_ue: 'Texto de exemplo',
+            introducao_do_paa_ue_1: '',
+            introducao_do_paa_ue_2: '',
+            conclusao_do_paa_ue_1: '',
+            conclusao_do_paa_ue_2: ''
+        });
         render(
             <MemoryRouter>
                 <TextosPaa />
@@ -48,15 +60,22 @@ describe('TextosPaa Component', () => {
     });
 
     test('deve abrir o editor ao clicar no botão de edição', async () => {
-        getTextoExplicacaoPaa.mockResolvedValue({ detail: 'Texto de exemplo' });
+        getTextosPaaUe.mockResolvedValue({ 
+            texto_pagina_paa_ue: 'Texto de exemplo',
+            introducao_do_paa_ue_1: '',
+            introducao_do_paa_ue_2: '',
+            conclusao_do_paa_ue_1: '',
+            conclusao_do_paa_ue_2: ''
+        });
         render(
             <MemoryRouter>
                 <TextosPaa />
             </MemoryRouter>
         );
 
-        const editButton = await screen.findByRole('button', { name: /editar/i });
-        fireEvent.click(editButton);
+        // Clica no primeiro botão de editar (texto_pagina_paa_ue)
+        const editButtons = await screen.findAllByRole('button', { name: /editar/i });
+        fireEvent.click(editButtons[0]);
         
         expect(await screen.findByText(/Explicação sobre o PAA/i)).toBeInTheDocument();
     });
@@ -64,46 +83,58 @@ describe('TextosPaa Component', () => {
     test('deve enviar o texto editado com sucesso', async () => {
       RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
 
-      getTextoExplicacaoPaa.mockResolvedValue({ detail: 'Texto de exemplo' });
-      patchTextoExplicacaoPaa.mockResolvedValue({});
+      getTextosPaaUe.mockResolvedValue({ 
+          texto_pagina_paa_ue: 'Texto de exemplo',
+          introducao_do_paa_ue_1: '',
+          introducao_do_paa_ue_2: '',
+          conclusao_do_paa_ue_1: '',
+          conclusao_do_paa_ue_2: ''
+      });
+      patchTextosPaaUe.mockResolvedValue({});
       render(
           <MemoryRouter>
               <TextosPaa />
           </MemoryRouter>
       );
 
-      const editButton = await screen.findByRole('button', { name: /editar/i });
-      fireEvent.click(editButton);
+      // Clica no primeiro botão de editar (texto_pagina_paa_ue)
+      const editButtons = await screen.findAllByRole('button', { name: /editar/i });
+      fireEvent.click(editButtons[0]);
 
       expect(await screen.findByText(/Explicação sobre o PAA/i)).toBeInTheDocument();
 
       const submitButton = await screen.findByRole('button', { name: /salvar/i });
       fireEvent.click(submitButton);
 
-      await waitFor(() => expect(patchTextoExplicacaoPaa).toHaveBeenCalled());
-      /* expect(toastCustom.ToastCustomSuccess).toHaveBeenCalled(); */
+      await waitFor(() => expect(patchTextosPaaUe).toHaveBeenCalled());
     });
 
     test('deve exibir mensagem de erro ao falhar ao editar o texto', async () => {
       RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
   
-      getTextoExplicacaoPaa.mockResolvedValue({ detail: 'Texto de exemplo' });
-      patchTextoExplicacaoPaa.mockRejectedValue(new Error('Erro ao editar'));
+      getTextosPaaUe.mockResolvedValue({ 
+          texto_pagina_paa_ue: 'Texto de exemplo',
+          introducao_do_paa_ue_1: '',
+          introducao_do_paa_ue_2: '',
+          conclusao_do_paa_ue_1: '',
+          conclusao_do_paa_ue_2: ''
+      });
+      patchTextosPaaUe.mockRejectedValue(new Error('Erro ao editar'));
       render(
           <MemoryRouter>
               <TextosPaa />
           </MemoryRouter>
       );
   
-      const editButton = await screen.findByRole('button', { name: /editar/i });
-      fireEvent.click(editButton);
+      // Clica no primeiro botão de editar (texto_pagina_paa_ue)
+      const editButtons = await screen.findAllByRole('button', { name: /editar/i });
+      fireEvent.click(editButtons[0]);
   
       expect(await screen.findByText(/Explicação sobre o PAA/i)).toBeInTheDocument();
   
       const submitButton = await screen.findByRole('button', { name: /salvar/i });
       fireEvent.click(submitButton);
   
-      await waitFor(() => expect(patchTextoExplicacaoPaa).toHaveBeenCalled());
-      /* expect(toastCustom.ToastCustomError).toHaveBeenCalled(); */
+      await waitFor(() => expect(patchTextosPaaUe).toHaveBeenCalled());
     });
 });
