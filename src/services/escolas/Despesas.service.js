@@ -2,6 +2,7 @@ import api from "../api";
 import { TOKEN_ALIAS } from "../auth.service.js";
 import { ASSOCIACAO_UUID } from "../auth.service";
 import { addFiltersToQueryString } from "../../utils/Api.js";
+import { getUuidAssociacao } from "../../utils/AssociacaoUtils.js";
 
 const authHeader = () => ({
   headers: {
@@ -15,12 +16,13 @@ export const deleteDespesa = async (uuid) => {
 };
 
 export const getDespesasTabelas = async (associacao_uuid = null) => {
+  const uuid_associacao = getUuidAssociacao();
   return (
     await api.get(
       `api/despesas/tabelas/?associacao_uuid=${
         associacao_uuid
           ? associacao_uuid
-          : localStorage.getItem(ASSOCIACAO_UUID)
+          : uuid_associacao
       }`,
       authHeader()
     )
