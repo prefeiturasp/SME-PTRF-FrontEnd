@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { getBemProduzidosComAdquiridos } from "../../../../../services/escolas/BensProduzidos.service";
 
-export const useGetBemProduzidosComAdquiridos = (filtros, page) => {
+export const useGetBemProduzidosComAdquiridos = (filtros, page, visao_dre = false) => {
   const { isLoading, isFetching, isError, data, error, refetch } = useQuery(
-    ["list-bemproduzidos-e-adquiridos", page],
-    () => getBemProduzidosComAdquiridos(filtros, page),
+    ["list-bemproduzidos-e-adquiridos", page, visao_dre],
+    () => getBemProduzidosComAdquiridos(filtros, page, visao_dre),
     {
       keepPreviousData: false,
       staleTime: 0,

@@ -60,10 +60,13 @@ export const postExluirDespesaBemProduzidoEmLote = async (uuid, payload) => {
   ).data;
 };
 
-export const getBemProduzidosComAdquiridos = async (filters, page) => {
+export const getBemProduzidosComAdquiridos = async (filters, page, visao_dre = false) => {
   const uuid_associacao = getUuidAssociacao();
 
   let queryString = `?associacao_uuid=${uuid_associacao}&page=${page}`;
+  if (visao_dre) {
+    queryString += `&visao_dre=true`;
+  }
   queryString = addFiltersToQueryString(queryString, filters);
   return (
     await api.get(
