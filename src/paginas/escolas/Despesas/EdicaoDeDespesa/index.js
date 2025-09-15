@@ -165,7 +165,7 @@ export const EdicaoDeDespesa = ()=>{
                     {veioDeSituacaoPatrimonial && (
                         <button
                             className="btn btn btn-outline-success mt-2 mr-2"
-                            onClick={() => navigate(visao_selecionada === "UE" ? '/lista-situacao-patrimonial' : '/dre-detalhes-associacao')}
+                            onClick={() => navigate(visao_selecionada === "UE" ? '/lista-situacao-patrimonial' : '/dre-detalhes-associacao/situacao-patrimonial')}
                         >
                             Voltar para Situação Patrimonial
                         </button>
@@ -180,7 +180,7 @@ export const EdicaoDeDespesa = ()=>{
                     <div className="d-flex justify-content-end mb-4">
                         <button
                             className="align-self-end btn btn btn-outline-success mt-2 mr-2"
-                            onClick={() => navigate('/lista-situacao-patrimonial')}
+                            onClick={() => navigate(visao_selecionada === "UE" ? '/lista-situacao-patrimonial' : '/dre-detalhes-associacao/situacao-patrimonial')}
                         >
                             Voltar para Situação Patrimonial
                         </button>

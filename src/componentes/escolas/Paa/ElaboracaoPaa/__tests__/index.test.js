@@ -2,7 +2,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { useNavigate } from 'react-router-dom';
 import { MemoryRouter, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { getTextoExplicacaoPaa } from '../../../../../services/escolas/PrestacaoDeContas.service';
+import { getTextosPaaUe } from '../../../../../services/escolas/PrestacaoDeContas.service';
 import { usePostPaa } from "../hooks/usePostPaa";
 import { getPaaVigente, getParametroPaa } from "../../../../../services/sme/Parametrizacoes.service";
 import { ElaboracaoPaa } from '../index';
@@ -20,7 +20,7 @@ jest.mock('../../../../../services/sme/Parametrizacoes.service', () => ({
 }));
 
 jest.mock('../../../../../services/escolas/PrestacaoDeContas.service', () => ({
-  getTextoExplicacaoPaa: jest.fn()
+  getTextosPaaUe: jest.fn()
 }));
 
 const mockNavigate = jest.fn();
@@ -55,7 +55,13 @@ describe('ElaboracaoPaa Component', () => {
     });
 
   it('renderiza a página', () => {
-    getTextoExplicacaoPaa.mockResolvedValue({detail: "Texto ABC"});
+    getTextosPaaUe.mockResolvedValue({
+      texto_pagina_paa_ue: "Texto ABC",
+      introducao_do_paa_ue_1: '',
+      introducao_do_paa_ue_2: '',
+      conclusao_do_paa_ue_1: '',
+      conclusao_do_paa_ue_2: ''
+    });
     getPaaVigente.mockReturnValue({});
     getParametroPaa.mockReturnValue({detail: new Date().getMonth() + 1});
     render(
@@ -71,7 +77,7 @@ describe('ElaboracaoPaa Component', () => {
       expect(screen.getByText('Confira a estrutura completa aqui.')).toBeInTheDocument();
       expect(screen.getByTestId('elaborar-paa-button')).toBeInTheDocument();
       expect(screen.getByTestId('elaborar-paa-button')).toBeEnabled();
-      expect(getTextoExplicacaoPaa).toHaveBeenCalled();
+      expect(getTextosPaaUe).toHaveBeenCalled();
       expect(getPaaVigente).toHaveBeenCalled();
       expect(getParametroPaa).toHaveBeenCalled();
       fireEvent.click(screen.getByTestId('elaborar-paa-button'));
@@ -82,7 +88,13 @@ describe('ElaboracaoPaa Component', () => {
   });
 
   it('renderiza a página com botão desabilitado', () => {
-    getTextoExplicacaoPaa.mockResolvedValue({detail: "Texto ABC"});
+    getTextosPaaUe.mockResolvedValue({
+      texto_pagina_paa_ue: "Texto ABC",
+      introducao_do_paa_ue_1: '',
+      introducao_do_paa_ue_2: '',
+      conclusao_do_paa_ue_1: '',
+      conclusao_do_paa_ue_2: ''
+    });
     getPaaVigente.mockReturnValue({});
     getParametroPaa.mockReturnValue({detail: new Date().getMonth() + 2});
     render(
@@ -98,7 +110,7 @@ describe('ElaboracaoPaa Component', () => {
       expect(screen.getByText('Confira a estrutura completa aqui.')).toBeInTheDocument();
       expect(screen.getByTestId('elaborar-paa-button')).toBeInTheDocument();
       expect(screen.getByTestId('elaborar-paa-button')).toBeDisabled();
-      expect(getTextoExplicacaoPaa).toHaveBeenCalled();
+      expect(getTextosPaaUe).toHaveBeenCalled();
       expect(getPaaVigente).toHaveBeenCalled();
       expect(getParametroPaa).toHaveBeenCalled();
     });

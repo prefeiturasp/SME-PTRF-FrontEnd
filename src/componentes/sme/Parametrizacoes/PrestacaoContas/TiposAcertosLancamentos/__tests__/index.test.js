@@ -1,6 +1,4 @@
-import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { ParametrizacoesTiposAcertosLancamentos } from '..';
 import {
@@ -281,7 +279,7 @@ describe('Teste handleSubmitModalForm', () => {
         );
 
          await waitFor(()=>{
-            const tabela = screen.getByRole('grid');
+            const tabela = screen.getByRole('table');
             const linhas = tabela.querySelectorAll('tbody tr');
             const linha = linhas[0];
             const coluna = linha.querySelectorAll('td');
@@ -329,7 +327,7 @@ describe('Teste handleSubmitModalForm', () => {
         );
 
          await waitFor(()=>{
-            const tabela = screen.getByRole('grid');
+            const tabela = screen.getByRole('table');
             const linhas = tabela.querySelectorAll('tbody tr');
             const linha = linhas[0];
             const coluna = linha.querySelectorAll('td');
@@ -380,7 +378,7 @@ describe('Teste handleSubmitModalForm', () => {
         );
 
          await waitFor(()=>{
-            const tabela = screen.getByRole('grid');
+            const tabela = screen.getByRole('table');
             const linhas = tabela.querySelectorAll('tbody tr');
             const linha = linhas[0];
             const coluna = linha.querySelectorAll('td');
@@ -427,7 +425,7 @@ describe('Teste handleSubmitModalForm', () => {
         );
 
          await waitFor(()=>{
-            const tabela = screen.getByRole('grid');
+            const tabela = screen.getByRole('table');
             const linhas = tabela.querySelectorAll('tbody tr');
             const linha = linhas[0];
             const coluna = linha.querySelectorAll('td');
@@ -470,7 +468,7 @@ describe('Teste handleSubmitModalForm', () => {
         );
 
          await waitFor(()=>{
-            const tabela = screen.getByRole('grid');
+            const tabela = screen.getByRole('table');
             const linhas = tabela.querySelectorAll('tbody tr');
             const linha = linhas[0];
             const coluna = linha.querySelectorAll('td');

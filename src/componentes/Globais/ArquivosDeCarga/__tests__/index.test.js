@@ -170,7 +170,7 @@ describe("ArquivosDeCarga Componente", () => {
       </MemoryRouter>
     );
     await waitFor(() => {
-      const table = screen.getByRole("grid");
+      const table = screen.getByRole("table");
       expect(table).toBeInTheDocument();
     });
     expect(screen.getByLabelText(/Filtrar por identificador/i)).toBeInTheDocument();
@@ -197,7 +197,7 @@ describe("ArquivosDeCarga Componente", () => {
       </MemoryRouter>
     );
     await waitFor(() => {
-      const table = screen.getByRole("grid");
+      const table = screen.getByRole("table");
       expect(table).toBeInTheDocument();
 
       const botaoAdicionarCarga = screen.getByText(/Adicionar carga/i);
@@ -248,7 +248,7 @@ describe("ArquivosDeCarga Componente", () => {
       </MemoryRouter>
     );
     await waitFor(() => {
-      const table = screen.getByRole("grid");
+      const table = screen.getByRole("table");
       expect(table).toBeInTheDocument();
 
       const botaoAdicionarCarga = screen.getByText(/Adicionar carga/i);
@@ -306,7 +306,7 @@ describe("Listagem de Arquivos Carga", () => {
 
     await waitFor(() => {
       expect(getArquivosDeCargaFiltros).toHaveBeenCalledWith("CARGA_CONTAS_ASSOCIACOES");
-      const table = screen.getByRole("grid");
+      const table = screen.getByRole("table");
       expect(table).toBeInTheDocument();
       const rows = table.querySelectorAll("tbody tr");
       expect(rows.length).toBeGreaterThan(0);
@@ -395,7 +395,7 @@ describe("Ações dos botões", () => {
     );
 
     await waitFor(() => {
-        const tabela = screen.getByRole("grid");
+        const tabela = screen.getByRole("table");
         const rows = tabela.querySelectorAll("tbody tr");
         expect(rows).toHaveLength(14);
         const primeiraLinha = rows[0];
@@ -421,7 +421,7 @@ describe("Ações dos botões", () => {
 
     await waitFor(() => {
       
-        const tabela = screen.getByRole("grid");
+        const tabela = screen.getByRole("table");
         const rows = tabela.querySelectorAll("tbody tr");
         expect(rows).toHaveLength(14);
         const primeiraLinha = rows[1];
@@ -454,7 +454,7 @@ describe("Ações dos botões", () => {
     );
 
     await waitFor(() => {
-        const tabela = screen.getByRole("grid");
+        const tabela = screen.getByRole("table");
         expect(tabela).toBeInTheDocument();
         const rows = tabela.querySelectorAll("tbody tr");
         expect(rows).toHaveLength(14);
@@ -488,7 +488,7 @@ describe("Ações dos botões", () => {
     );
 
     await waitFor(() => {
-        const tabela = screen.getByRole("grid");
+        const tabela = screen.getByRole("table");
         const rows = tabela.querySelectorAll("tbody tr");
         expect(rows).toHaveLength(14);
         const primeiraLinha = rows[0];
@@ -512,7 +512,7 @@ describe("Ações dos botões", () => {
     );
 
     await waitFor(() => {
-        const tabela = screen.getByRole("grid");
+        const tabela = screen.getByRole("table");
         const rows = tabela.querySelectorAll("tbody tr");
         expect(rows).toHaveLength(14);
         const primeiraLinha = rows[0];

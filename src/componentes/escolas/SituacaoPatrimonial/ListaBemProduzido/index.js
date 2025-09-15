@@ -165,7 +165,8 @@ export const ListaBemProduzido = ({visao_dre=false}) => {
         ? moment(filtros.data_fim).format("YYYY-MM-DD")
         : "",
     },
-    currentPage
+    currentPage,
+    visao_dre
   );
   const { data: periodos } = useGetPeriodosComPC({ filtrar_por_referencia: "" });
   const tabelas = useCarregaTabelaDespesa(null);

@@ -1,7 +1,7 @@
 import { React, useEffect, useState, useCallback } from 'react'
 import { PaginasContainer } from '../../../../paginas/PaginasContainer'
 import Loading from "../../../../utils/Loading";
-import { getTextoExplicacaoPaa } from '../../../../services/escolas/PrestacaoDeContas.service';
+import { getTextosPaaUe } from '../../../../services/escolas/PrestacaoDeContas.service';
 import BreadcrumbComponent from '../../../Globais/Breadcrumb';
 import { useNavigate } from 'react-router-dom';
 import {ASSOCIACAO_UUID} from "../../../../services/auth.service";
@@ -55,8 +55,8 @@ export const ElaboracaoPaa = () => {
     }, [carregaParametroPaa])
 
   useEffect(() => {
-    getTextoExplicacaoPaa().then((response) => {
-      setTextoPaa(response.detail);
+    getTextosPaaUe().then((response) => {
+      setTextoPaa(response.texto_pagina_paa_ue);
       setLoading(false);
     }
     ).catch((error) => {

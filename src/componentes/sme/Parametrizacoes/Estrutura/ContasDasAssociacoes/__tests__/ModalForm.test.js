@@ -109,8 +109,12 @@ describe("Componente ModalForm", () => {
     expect(screen.getByRole("button", { name: "Cancelar" })).toBeInTheDocument();
 
     expect(screen.getByRole("button", { name: "Salvar" })).toBeEnabled();
-    const campos = screen.getAllByRole(/textbox|radio/);
-    campos.forEach((campo) => {
+    const camposTextos = screen.getAllByRole("textbox");
+    camposTextos.forEach((campo) => {
+      expect(campo).toBeEnabled();
+    });
+    const camposRadio = screen.getAllByRole("radio");
+    camposRadio.forEach((campo) => {
       expect(campo).toBeEnabled();
     });
   });

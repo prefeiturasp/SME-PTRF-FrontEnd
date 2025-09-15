@@ -140,8 +140,12 @@ describe("Componente ModalForm", () => {
     expect(screen.getAllByLabelText("Não").length).toEqual(4);
 
     expect(screen.getByRole("button", { name: "Salvar" })).toBeEnabled();
-    const campos = screen.getAllByRole(/textbox|radio/);
-    campos.forEach((campo) => {
+    const camposTextos = screen.getAllByRole("textbox");
+    camposTextos.forEach((campo) => {
+      expect(campo).toBeEnabled();
+    });
+    const camposRadio = screen.getAllByRole("radio");
+    camposRadio.forEach((campo) => {
       expect(campo).toBeEnabled();
     });
   });
@@ -164,8 +168,12 @@ describe("Componente ModalForm", () => {
     expect(screen.getAllByLabelText("Não").length).toEqual(4);
 
     expect(screen.getByRole("button", { name: "Salvar" })).toBeDisabled();
-    const campos = screen.getAllByRole(/textbox|radio/);
-    campos.forEach((campo) => {
+    const camposTextos = screen.getAllByRole("textbox");
+    camposTextos.forEach((campo) => {
+      expect(campo).toBeDisabled();
+    });
+    const camposRadio = screen.getAllByRole("radio");
+    camposRadio.forEach((campo) => {
       expect(campo).toBeDisabled();
     });
   });
