@@ -5,7 +5,7 @@ import {getAnalisesDePcDevolvidas}  from "../../../../../services/dres/Prestacao
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faDownload} from "@fortawesome/free-solid-svg-icons";
 import Loading from "../../../../../utils/Loading";
-
+import {RetornaSeTemPermissaoEdicaoAcompanhamentoDePc} from "../../RetornaSeTemPermissaoEdicaoAcompanhamentoDePc";
 
 export const RelatorioDosAcertos = ({prestacaoDeContasUuid, analiseAtualUuid, podeGerarPrevia}) => {
     const [mensagem, setMensagem] = useState("");
@@ -43,6 +43,8 @@ export const RelatorioDosAcertos = ({prestacaoDeContasUuid, analiseAtualUuid, po
         getNumeroDaDevolucao();
     }, [analiseAtualUuid, analisesDevolvidas]);
 
+    const temPermissao = RetornaSeTemPermissaoEdicaoAcompanhamentoDePc()
+    const btGerardesabilitado = disableBtnPrevia || !(podeGerarPrevia && versaoRascunho) || !temPermissao;
 
     const relatorioAcertosInfo = async () => {
         let statusInfo = await getRelatorioAcertosInfo(analiseAtualUuid)
@@ -165,12 +167,7 @@ export const RelatorioDosAcertos = ({prestacaoDeContasUuid, analiseAtualUuid, po
                     </div>
 
                     <div className="actions">
-                        {podeGerarPrevia && versaoRascunho
-                            ? 
-                                <button onClick={(e) => gerarPrevia()} type="button" disabled={disableBtnPrevia} className="btn btn-outline-success mr-2">Gerar prévia</button>
-                            : 
-                                null
-                        }
+                        <button onClick={(e) => gerarPrevia()} type="button" disabled={btGerardesabilitado} className="btn btn-outline-success mr-2">Gerar prévia</button>
                     </div>
                     
                 </article>
