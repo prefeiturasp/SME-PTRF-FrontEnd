@@ -5,6 +5,7 @@ import { getAnalisePrestacaoConta, getAnalisesDePcDevolvidas } from "../../../se
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faDownload} from "@fortawesome/free-solid-svg-icons";
 import Loading from "../../../utils/Loading";
+import {visoesService} from "../../../services/visoes.service"
 
 export const RelatorioAposAcertos = ({prestacaoDeContasUuid, prestacaoDeContas, analiseAtualUuid, podeGerarPrevia}) => {
     const [mensagem, setMensagem] = useState("");
@@ -18,6 +19,12 @@ export const RelatorioAposAcertos = ({prestacaoDeContasUuid, prestacaoDeContas, 
     const [podeReprocessar, setPodeReprocessar] = useState(false);
     const [versaoRascunho, setVersaoRascunho] = useState(true);
     const [loadingRelatorioAposAcertos, setLoadingRelatorioAposAcertos] = useState(true)
+    const temPermissao = visoesService.getPermissoes(["change_analise_dre"])
+    const btGerarHabilitado =
+        podeGerarPrevia &&
+        prestacaoDeContas.status === 'DEVOLVIDA' &&
+        temPermissao &&
+        !disableBtnPrevia
 
     useEffect(() => {
         analisesDePcDevolvidas();
@@ -207,13 +214,7 @@ export const RelatorioAposAcertos = ({prestacaoDeContasUuid, prestacaoDeContas, 
                     </div>
 
                     <div className="actions">
-                        {podeGerarPrevia && prestacaoDeContas.status === 'DEVOLVIDA' && !documentoFinalGerado()
-                            ? 
-                                <button onClick={(e) => gerarPrevia()} type="button" disabled={disableBtnPrevia} className="btn btn-outline-success mr-2">Gerar prévia</button>
-                            : 
-                                null
-                        }
-
+                        <button onClick={(e) => gerarPrevia()} type="button" disabled={!btGerarHabilitado && !documentoFinalGerado()} className="btn btn-outline-success mr-2">Gerar prévia</button>
                         {podeReprocessar &&
                             <button onClick={(e) => regerarDocumento()} type="button" disabled={disableBtnRegerar} className="btn btn-outline-success mr-2">Regerar</button>
                         }
