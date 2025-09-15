@@ -137,7 +137,7 @@ describe('ListaBemProduzido - Funcionalidade de Exportar', () => {
         </MemoryRouter>
       );
 
-      const botaoExportar = screen.getByText('Exportar');
+      const botaoExportar = screen.getByText('Exportar Excel');
       expect(botaoExportar).toBeInTheDocument();
       expect(botaoExportar.closest('button')).toHaveClass('link-exportar');
     });
@@ -151,7 +151,7 @@ describe('ListaBemProduzido - Funcionalidade de Exportar', () => {
         </MemoryRouter>
       );
 
-      const botaoExportar = screen.getByText('Exportar');
+      const botaoExportar = screen.getByText('Exportar Excel');
       const iconeDownload = botaoExportar.previousElementSibling;
       expect(iconeDownload).toBeInTheDocument();
       expect(iconeDownload.tagName).toBe('svg');
@@ -194,7 +194,7 @@ describe('ListaBemProduzido - Funcionalidade de Exportar', () => {
         </MemoryRouter>
       );
 
-      const botaoExportar = screen.getByText('Exportar');
+      const botaoExportar = screen.getByText('Exportar Excel');
       fireEvent.click(botaoExportar);
 
       await waitFor(() => {
@@ -213,7 +213,7 @@ describe('ListaBemProduzido - Funcionalidade de Exportar', () => {
         </MemoryRouter>
       );
 
-      const botaoExportar = screen.getByText('Exportar');
+      const botaoExportar = screen.getByText('Exportar Excel');
       fireEvent.click(botaoExportar);
 
       await waitFor(() => {
@@ -235,7 +235,7 @@ describe('ListaBemProduzido - Funcionalidade de Exportar', () => {
         </MemoryRouter>
       );
 
-      const botaoExportar = screen.getByText('Exportar');
+      const botaoExportar = screen.getByText('Exportar Excel');
       fireEvent.click(botaoExportar);
 
       await waitFor(() => {
@@ -255,7 +255,7 @@ describe('ListaBemProduzido - Funcionalidade de Exportar', () => {
         </MemoryRouter>
       );
 
-      const botaoExportar = screen.getByText('Exportar');
+      const botaoExportar = screen.getByText('Exportar Excel');
       fireEvent.click(botaoExportar);
 
       await waitFor(() => {
@@ -276,7 +276,7 @@ describe('ListaBemProduzido - Funcionalidade de Exportar', () => {
         </MemoryRouter>
       );
 
-      const botaoExportar = screen.getByText('Exportar');
+      const botaoExportar = screen.getByText('Exportar Excel');
       
       // Primeira tentativa com erro
       fireEvent.click(botaoExportar);
@@ -315,7 +315,7 @@ describe('ListaBemProduzido - Funcionalidade de Exportar', () => {
         </MemoryRouter>
       );
 
-      const botaoExportar = screen.getByText('Exportar');
+      const botaoExportar = screen.getByText('Exportar Excel');
       expect(botaoExportar.closest('button')).not.toBeDisabled();
 
       fireEvent.click(botaoExportar);
@@ -338,7 +338,7 @@ describe('ListaBemProduzido - Funcionalidade de Exportar', () => {
         </MemoryRouter>
       );
 
-      const botaoExportar = screen.getByText('Exportar');
+      const botaoExportar = screen.getByText('Exportar Excel');
       
       // Múltiplos cliques
       fireEvent.click(botaoExportar);
@@ -365,7 +365,7 @@ describe('ListaBemProduzido - Funcionalidade de Exportar', () => {
         </MemoryRouter>
       );
 
-      const botaoExportar = screen.getByText('Exportar');
+      const botaoExportar = screen.getByText('Exportar Excel');
       fireEvent.click(botaoExportar);
 
       await waitFor(() => {
@@ -388,7 +388,7 @@ describe('ListaBemProduzido - Funcionalidade de Exportar', () => {
         </MemoryRouter>
       );
 
-      const botaoExportar = screen.getByText('Exportar');
+      const botaoExportar = screen.getByText('Exportar Excel');
       fireEvent.click(botaoExportar);
 
       await waitFor(() => {
@@ -416,7 +416,7 @@ describe('ListaBemProduzido - Funcionalidade de Exportar', () => {
         </MemoryRouter>
       );
 
-      const botaoExportar = screen.getByText('Exportar');
+      const botaoExportar = screen.getByText('Exportar Excel');
       fireEvent.click(botaoExportar);
 
       await waitFor(() => {
@@ -438,7 +438,7 @@ describe('ListaBemProduzido - Funcionalidade de Exportar', () => {
         </MemoryRouter>
       );
 
-      const botaoExportar = screen.getByText('Exportar');
+      const botaoExportar = screen.getByText('Exportar Excel');
       fireEvent.click(botaoExportar);
 
       await waitFor(() => {

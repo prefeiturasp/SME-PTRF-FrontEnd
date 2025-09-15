@@ -81,7 +81,7 @@ export const ParametrizacoesTiposAcertosDocumentos = () => {
 
 
   const totalDocumentos = useMemo(
-    () => todosDocumentos.length,
+    () => (todosDocumentos||[]).length,
     [todosDocumentos]
   );
 
@@ -300,7 +300,7 @@ export const ParametrizacoesTiposAcertosDocumentos = () => {
               />
             </div>
           ) : (
-            todosDocumentos.length > 0 ? (
+            (todosDocumentos||[]).length > 0 ? (
             <>
               <TabelaDocumentos
                 todosDocumentos={todosDocumentos}

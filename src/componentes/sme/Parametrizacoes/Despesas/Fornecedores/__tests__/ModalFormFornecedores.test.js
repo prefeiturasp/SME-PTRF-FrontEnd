@@ -65,7 +65,7 @@ describe("Componente ModalForm", () => {
     expect(screen.getByRole("button", { name: "Apagar" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Cancelar" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Salvar" })).toBeEnabled();
-    const campoTexto = screen.getAllByRole(/textbox/);
+    const campoTexto = screen.getAllByRole("textbox");
     expect(campoTexto).toHaveLength(2);
     campoTexto.forEach((campo) => {
         expect(campo).toBeEnabled();
