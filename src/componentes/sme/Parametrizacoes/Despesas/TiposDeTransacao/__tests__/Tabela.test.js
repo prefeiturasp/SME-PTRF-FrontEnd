@@ -42,7 +42,7 @@ describe("Tabela Component", () => {
             }
         });
 
-        const tabela = screen.getByRole("grid");
+        const tabela = screen.getByRole("table");
         const rows = tabela.querySelectorAll("tbody tr");
         expect(rows).toHaveLength(20);
         const row = rows[0]

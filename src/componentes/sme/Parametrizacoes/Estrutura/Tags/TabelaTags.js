@@ -7,7 +7,7 @@ const TabelaTags = ({rowsPerPage, listaDeTags, statusTemplate, acoesTemplate})=>
         <DataTable
             value={listaDeTags}
             rows={rowsPerPage}
-            paginator={listaDeTags.length > rowsPerPage}
+            paginator={(listaDeTags||[]).length > rowsPerPage}
             paginatorTemplate="PrevPageLink PageLinks NextPageLink"
         >
             <Column field="nome" header="Nome" />

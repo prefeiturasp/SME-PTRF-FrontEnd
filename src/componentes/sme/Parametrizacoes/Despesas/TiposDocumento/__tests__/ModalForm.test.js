@@ -137,8 +137,12 @@ describe("Componente ModalForm", () => {
     expect(screen.getAllByLabelText("Não").length).toEqual(5);
 
     expect(screen.getByRole("button", { name: "Salvar" })).toBeEnabled();
-    const campos = screen.getAllByRole(/textbox|radio/);
-    campos.forEach((campo) => {
+    const camposTextos = screen.getAllByRole("textbox");
+    camposTextos.forEach((campo) => {
+      expect(campo).toBeEnabled();
+    });
+    const camposRadio = screen.getAllByRole("radio");
+    camposRadio.forEach((campo) => {
       expect(campo).toBeEnabled();
     });
   });
@@ -156,8 +160,12 @@ describe("Componente ModalForm", () => {
     expect(screen.getAllByLabelText("Não").length).toEqual(5);
 
     expect(screen.getByRole("button", { name: "Salvar" })).toBeDisabled();
-    const campos = screen.getAllByRole(/textbox|radio/);
-    campos.forEach((campo) => {
+    const camposTexto = screen.getAllByRole("textbox");
+    camposTexto.forEach((campo) => {
+      expect(campo).toBeDisabled();
+    });
+    const camposRadio = screen.getAllByRole("radio");
+    camposRadio.forEach((campo) => {
       expect(campo).toBeDisabled();
     });
   });
@@ -174,10 +182,10 @@ describe("Componente ModalForm", () => {
     expect(screen.getAllByLabelText("Não").length).toEqual(5);
 
     expect(screen.getByRole("button", { name: "Salvar" })).toBeEnabled();
-    const campoTexto = screen.getByRole(/textbox/);
+    const campoTexto = screen.getByRole("textbox");
     expect(campoTexto).toBeEnabled();
 
-    const camposRadio = screen.getAllByRole(/radio/);
+    const camposRadio = screen.getAllByRole("radio");
     camposRadio.forEach((campo) => {
         expect(campo).toBeInTheDocument();
     });
@@ -195,8 +203,12 @@ describe("Componente ModalForm", () => {
     expect(screen.getAllByLabelText("Não").length).toEqual(5);
 
     expect(screen.getByRole("button", { name: "Salvar" })).toBeDisabled();
-    const campos = screen.getAllByRole(/textbox|radio/);
-    campos.forEach((campo) => {
+    const camposText = screen.getAllByRole("textbox");
+    camposText.forEach((campo) => {
+      expect(campo).toBeDisabled();
+    });
+    const camposRadio = screen.getAllByRole("radio");
+    camposRadio.forEach((campo) => {
       expect(campo).toBeDisabled();
     });
   });

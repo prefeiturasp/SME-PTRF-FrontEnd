@@ -214,7 +214,7 @@ describe("Testes Operacao EDIT", ()=>{
         render(<MemoryRouter><TiposDocumento/></MemoryRouter>);
 
         await waitFor(()=> {
-            const tabela = screen.getByRole('grid');
+            const tabela = screen.getByRole('table');
             const linhas = tabela.querySelectorAll('tbody tr');
             const linha = linhas[0];
             const coluna = linha.querySelectorAll('td');
@@ -247,7 +247,7 @@ describe("Testes Operacao EDIT", ()=>{
         render(<MemoryRouter><TiposDocumento/></MemoryRouter>);
 
         await waitFor(()=> {
-            const tabela = screen.getByRole('grid');
+            const tabela = screen.getByRole('table');
             const linhas = tabela.querySelectorAll('tbody tr');
             const linha = linhas[0];
             const coluna = linha.querySelectorAll('td');
@@ -282,7 +282,7 @@ describe("Testes Operacao EDIT", ()=>{
         render(<MemoryRouter><TiposDocumento/></MemoryRouter>);
 
         await waitFor(()=> {
-            const tabela = screen.getByRole('grid');
+            const tabela = screen.getByRole('table');
             const linhas = tabela.querySelectorAll('tbody tr');
             const linha = linhas[0];
             const coluna = linha.querySelectorAll('td');
@@ -320,7 +320,7 @@ describe("Testes Operacao DELETE", ()=>{
         render(<MemoryRouter><TiposDocumento/></MemoryRouter>);
 
         await waitFor(()=> {
-            const tabela = screen.getByRole('grid');
+            const tabela = screen.getByRole('table');
             const linhas = tabela.querySelectorAll('tbody tr');
             const linha = linhas[0];
             const coluna = linha.querySelectorAll('td');
@@ -353,7 +353,7 @@ describe("Testes Operacao DELETE", ()=>{
         render(<MemoryRouter><TiposDocumento/></MemoryRouter>);
 
         await waitFor(()=> {
-            const tabela = screen.getByRole('grid');
+            const tabela = screen.getByRole('table');
             const linhas = tabela.querySelectorAll('tbody tr');
             const linha = linhas[0];
             const coluna = linha.querySelectorAll('td');
@@ -386,7 +386,7 @@ describe("Testes Operacao DELETE", ()=>{
         render(<MemoryRouter><TiposDocumento/></MemoryRouter>);
 
         await waitFor(()=> {
-            const tabela = screen.getByRole('grid');
+            const tabela = screen.getByRole('table');
             const linhas = tabela.querySelectorAll('tbody tr');
             const linha = linhas[0];
             const coluna = linha.querySelectorAll('td');

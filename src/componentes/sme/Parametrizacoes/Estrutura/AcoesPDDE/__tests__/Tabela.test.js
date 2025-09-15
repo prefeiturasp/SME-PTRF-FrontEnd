@@ -20,12 +20,12 @@ describe("Tabela", () => {
 
     it("deve exibir os dados corretamente formatados", () => {
         render(<Tabela rowsPerPage={5} data={mockData} handleOpenModalForm={mockHandleOpenModalForm} />);
-        expect(screen.getByText("Ação PDDE")).toBeInTheDocument();
-        expect(screen.getByText("Programa")).toBeInTheDocument();
-        expect(screen.getByText("Aceita capital?")).toBeInTheDocument();
-        expect(screen.getByText("Aceita custeio?")).toBeInTheDocument();
-        expect(screen.getByText("Aceita livre aplicação?")).toBeInTheDocument();
-        expect(screen.getByText("Ações")).toBeInTheDocument();
+        expect(screen.getAllByText("Ação PDDE").length).toBeGreaterThan(0);
+        expect(screen.getAllByText("Programa").length).toBeGreaterThan(0);
+        expect(screen.getAllByText("Aceita capital?").length).toBeGreaterThan(0);
+        expect(screen.getAllByText("Aceita custeio?").length).toBeGreaterThan(0);
+        expect(screen.getAllByText("Aceita livre aplicação?").length).toBeGreaterThan(0);
+        expect(screen.getAllByText("Ações").length).toBeGreaterThan(0);
     });
 
     it("deve chamar handleOpenModalForm ao clicar no botão de ação editar", () => {

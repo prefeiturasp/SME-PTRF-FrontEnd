@@ -54,7 +54,7 @@ describe("Componente ModalForm", () => {
     expect(screen.getByRole("button", { name: "Cancelar" })).toBeInTheDocument();
 
     expect(screen.getByRole("button", { name: "Adicionar" })).toBeEnabled();
-    const campos = screen.getAllByRole(/textbox/);
+    const campos = screen.getAllByRole("textbox");
     campos.forEach((campo) => {
       expect(campo).toBeEnabled();
     });
@@ -79,7 +79,7 @@ describe("Componente ModalForm", () => {
     expect(screen.getByRole("button", { name: "Cancelar" })).toBeInTheDocument();
 
     expect(screen.getByRole("button", { name: "Adicionar" })).toBeDisabled();
-    const campos = screen.getAllByRole(/textbox/);
+    const campos = screen.getAllByRole("textbox");
     campos.forEach((campo) => {
       expect(campo).toBeDisabled();
     });
@@ -101,7 +101,7 @@ describe("Componente ModalForm", () => {
     expect(screen.queryByRole("button", { name: "Apagar" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Cancelar" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Salvar" })).toBeEnabled();
-    const campos = screen.getAllByRole(/textbox/);
+    const campos = screen.getAllByRole("textbox");
     campos.forEach((campo) => {
         expect(campo).toBeEnabled();
     });
@@ -124,7 +124,7 @@ describe("Componente ModalForm", () => {
     expect(screen.getByRole("button", { name: "Cancelar" })).toBeInTheDocument();
 
     expect(screen.getByRole("button", { name: "Salvar" })).toBeDisabled();
-    const campos = screen.getAllByRole(/textbox/);
+    const campos = screen.getAllByRole("textbox");
     campos.forEach((campo) => {
       expect(campo).toBeDisabled();
     });
