@@ -35,7 +35,7 @@ const BarraTopoTitulo = () => {
         <h2>{headerPaaReferencia()}</h2>
       </div>
       <div className="p-2 bd-highlight">
-        <button className="btn btn-outline-success" onClick={() => navigate('/paa')}>Voltar</button>
+        <button className="btn btn-outline-success btn-sm" onClick={() => navigate('/paa')}>Voltar</button>
       </div>
     </div>
   );

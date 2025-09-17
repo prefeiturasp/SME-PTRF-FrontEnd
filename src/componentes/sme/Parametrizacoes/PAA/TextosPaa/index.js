@@ -4,7 +4,7 @@ import "../../EdicaoDeTextos/parametrizacoes-edicao-de-textos.scss"
 import TabelaTextosPaa from "./TabelaTextosPaa";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEdit} from "@fortawesome/free-solid-svg-icons";
-import {getTextoExplicacaoPaa, patchTextoExplicacaoPaa} from "../../../../../services/escolas/PrestacaoDeContas.service";
+import {getTextosPaaUe, patchTextosPaaUe} from "../../../../../services/escolas/PrestacaoDeContas.service";
 import EditorWysiwyg from "../../../../Globais/EditorWysiwyg";
 import Loading from "../../../../../utils/Loading";
 import {RetornaSeTemPermissaoEdicaoPainelParametrizacoes} from "../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes"
@@ -15,7 +15,11 @@ export const TextosPaa = () => {
 
     const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES = RetornaSeTemPermissaoEdicaoPainelParametrizacoes()
     const initalTextos = {
-        explicacaoSobrePaa: '',
+        texto_pagina_paa_ue: '',
+        introducao_do_paa_ue_1: '',
+        introducao_do_paa_ue_2: '',
+        conclusao_do_paa_ue_1: '',
+        conclusao_do_paa_ue_2: '',
     };
 
     const [textosPaa, setTextosPaa] = useState(initalTextos);
@@ -27,9 +31,14 @@ export const TextosPaa = () => {
 
     const carregaTextos = useCallback(async () => {
         setLoading(true);
-        let explicacao_sobre_paa = await getTextoExplicacaoPaa();
+        let textosPaa = await getTextosPaaUe();
+
         setTextosPaa({
-            explicacaoSobrePaa: explicacao_sobre_paa,
+            texto_pagina_paa_ue: textosPaa.texto_pagina_paa_ue,
+            introducao_do_paa_ue_1: textosPaa.introducao_do_paa_ue_1,
+            introducao_do_paa_ue_2: textosPaa.introducao_do_paa_ue_2,
+            conclusao_do_paa_ue_1: textosPaa.conclusao_do_paa_ue_1,
+            conclusao_do_paa_ue_2: textosPaa.conclusao_do_paa_ue_2,
         });
         setLoading(false);
     }, []);
@@ -41,10 +50,17 @@ export const TextosPaa = () => {
     const handleEditarTextos = useCallback(async (tipo_texto) => {
         setTipoDeTexto(tipo_texto);
         setExibeEditor(true);
-        if (tipo_texto === 'explicacao_sobre_paa') {
-            setTextoInicialEditor(textosPaa.explicacaoSobrePaa.detail);
-            setTituloEditor('Explicação sobre o PAA')
-        }
+        
+        const titulos = {
+            'texto_pagina_paa_ue': 'Explicação sobre o PAA',
+            'introducao_do_paa_ue_1': 'Introdução do PAA 1',
+            'introducao_do_paa_ue_2': 'Introdução do PAA 2',
+            'conclusao_do_paa_ue_1': 'Conclusão do PAA 1',
+            'conclusao_do_paa_ue_2': 'Conclusão do PAA 2'
+        };
+        
+        setTextoInicialEditor(textosPaa[tipo_texto] || '');
+        setTituloEditor(titulos[tipo_texto] || '');
     }, [textosPaa]);
 
     const acoesTemplate = (tipo_texto) => {
@@ -65,22 +81,34 @@ export const TextosPaa = () => {
 
     const handleSubmitEditor = useCallback(async (textoEditor) => {
         let payload = {
-            texto_pagina_paa_ue: textoEditor
+            texto_pagina_paa_ue: textosPaa.texto_pagina_paa_ue,
+            introducao_do_paa_ue_1: textosPaa.introducao_do_paa_ue_1,
+            introducao_do_paa_ue_2: textosPaa.introducao_do_paa_ue_2,
+            conclusao_do_paa_ue_1: textosPaa.conclusao_do_paa_ue_1,
+            conclusao_do_paa_ue_2: textosPaa.conclusao_do_paa_ue_2,
         };
-        if (tipoDeTexto === 'explicacao_sobre_paa') {
+        
+        payload[tipoDeTexto] = textoEditor;
+        
+        const textosPaaUe = ['texto_pagina_paa_ue', 'introducao_do_paa_ue_1', 'introducao_do_paa_ue_2', 'conclusao_do_paa_ue_1', 'conclusao_do_paa_ue_2'];
+
+        console.log("textosPaaUe", textosPaaUe);
+        console.log("tipoDeTexto", tipoDeTexto);
+        console.log("payload", payload);
+        if (textosPaaUe.includes(tipoDeTexto)) {
             try {
-                await patchTextoExplicacaoPaa(payload);
-                toastCustom.ToastCustomSuccess('Edição do texto de explicação do PAA foi realizada com sucesso.', 'O texto de explicação do PAA foi editado no sistema com sucesso.')
+                await patchTextosPaaUe(payload);
+                toastCustom.ToastCustomSuccess('Edição do texto do PAA foi realizada com sucesso.', 'O texto do PAA foi editado no sistema com sucesso.')
                 await carregaTextos();
             } catch (e) {
                 console.log("Erro ao alterar texto ", e.response);
-                toastCustom.ToastCustomError('Erro ao editar o texto de explicação do PAA.', 'O texto de explicação do PAA não foi editado.')
+                toastCustom.ToastCustomError('Erro ao editar o texto do PAA.', 'O texto do PAA não foi editado.')
             }
         }
         setTextoInicialEditor('');
         setTituloEditor('');
         setExibeEditor(false);
-    }, [tipoDeTexto, carregaTextos]);
+    }, [tipoDeTexto, carregaTextos, textosPaa]);
 
     return (
         <PaginasContainer>

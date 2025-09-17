@@ -2,7 +2,7 @@ import React, {act} from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import userEvent from '@testing-library/user-event';
-import '@testing-library/jest-dom/extend-expect';
+import '@testing-library/jest-dom';
 import ModalForm from '../ModalForm';
 import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from '../../../RetornaSeTemPermissaoEdicaoPainelParametrizacoes';
 import { categoriasPDDE as mockCategoriasPDDE } from "../__fixtures__/mockData";

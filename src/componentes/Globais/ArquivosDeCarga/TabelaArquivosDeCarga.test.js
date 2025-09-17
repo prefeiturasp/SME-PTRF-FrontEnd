@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import TabelaArquivosDeCarga from './TabelaArquivosDeCarga';
 import '@testing-library/jest-dom';
 
@@ -93,7 +93,7 @@ describe('TabelaArquivosDeCarga', () => {
     expect(screen.getByText('Conteúdo 3')).toBeInTheDocument();
   });
 
-  it('deve mudar a página corretamente ao interagir com a paginação', () => {
+  it('deve mudar a página corretamente ao interagir com a paginação', async () => {
     render(
       <TabelaArquivosDeCarga
         arquivos={arquivosMock}
@@ -108,11 +108,7 @@ describe('TabelaArquivosDeCarga', () => {
 
     expect(screen.getByText('Conteúdo 1')).toBeInTheDocument();
 
-    const buttons = screen.getAllByRole('button'); 
-
-    const nextButton = buttons.find(button =>
-      button.querySelector('.p-paginator-icon.pi-caret-right')
-    );
+    const nextButton = screen.getByText('2')
 
     fireEvent.click(nextButton);
     

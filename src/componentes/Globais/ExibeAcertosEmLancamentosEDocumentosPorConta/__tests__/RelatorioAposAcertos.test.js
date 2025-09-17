@@ -9,6 +9,7 @@ import {
     regerarPreviaRelatorioAposAcertos
 } from '../../../../services/escolas/PrestacaoDeContas.service';
 import { getAnalisePrestacaoConta, getAnalisesDePcDevolvidas } from "../../../../services/dres/PrestacaoDeContas.service";
+import { visoesService } from '../../../../services/visoes.service';
 
 jest.mock('../../../../services/dres/PrestacaoDeContas.service');
 
@@ -23,6 +24,12 @@ jest.mock("../../../../services/escolas/PrestacaoDeContas.service", () => ({
 jest.mock("../../../../services/dres/PrestacaoDeContas.service", () => ({
     getAnalisePrestacaoConta: jest.fn(),
     getAnalisesDePcDevolvidas: jest.fn()
+}));
+
+jest.mock('../../../../services/visoes.service', () => ({
+    visoesService: {
+        getPermissoes: jest.fn(),
+    }
 }));
 
 
@@ -70,18 +77,16 @@ describe('RelatorioAposAcertos Component', () => {
         verificarStatusGeracaoAposAcertos
             .mockResolvedValueOnce('Nenhum relatório gerado')
             .mockResolvedValueOnce('Relatório sendo gerado...');
-        
+
+        visoesService.getPermissoes.mockReturnValue(true);
         render(<RelatorioAposAcertos {...mockProps} />);
-        
-        await waitFor(() => {
-            expect(screen.getByText('Gerar prévia')).toBeInTheDocument();
-        });
-
-        const gerarPreviaButton = screen.getByText('Gerar prévia');
+        const gerarPreviaButton = await screen.findByText('Gerar prévia');
+        expect(gerarPreviaButton).toBeEnabled();
         fireEvent.click(gerarPreviaButton);
-
         await waitFor(() => {
             expect(gerarPreviaRelatorioAposAcertos).toHaveBeenCalledWith('analise-uuid');
+        });
+        await waitFor(() => {
             expect(screen.getByText('Relatório sendo gerado...')).toBeInTheDocument();
         });
     });
@@ -203,5 +208,25 @@ describe('RelatorioAposAcertos Component', () => {
             if (regerarButton) expect(regerarButton).toBeDisabled();
             expect(downloadButton).not.toBeInTheDocument();
         });
+    });
+
+    it('desabilita "Gerar prévia" quando não tem permissão, mesmo com demais condições válidas', async () => {
+        visoesService.getPermissoes.mockReturnValue(false);
+        verificarStatusGeracaoAposAcertos.mockResolvedValue('Nenhum relatório gerado');
+
+        render(<RelatorioAposAcertos {...mockProps} />);
+
+        const gerarPreviaButton = await screen.findByText('Gerar prévia');
+        expect(gerarPreviaButton).toBeDisabled();
+    });
+
+    it('habilita "Gerar prévia" quando tem permissão e condições válidas', async () => {
+        visoesService.getPermissoes.mockReturnValue(true);
+        verificarStatusGeracaoAposAcertos.mockResolvedValue('Nenhum relatório gerado');
+
+        render(<RelatorioAposAcertos {...mockProps} />);
+
+        const gerarPreviaButton = await screen.findByText('Gerar prévia');
+        expect(gerarPreviaButton).toBeEnabled();
     });
 }); 

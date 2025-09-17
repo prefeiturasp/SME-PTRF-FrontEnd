@@ -111,8 +111,8 @@ export const getAcoesPDDE = async (currentPage = 1, rowsPerPage = 20) => {
 };
 
 // PDDE
-export const getProgramasPddeTotais = async () => {
-  return (await api.get(`api/programas-pdde/totais/?paa_uuid=${localStorage.getItem("PAA")}`, authHeader())).data;
+export const getProgramasPddeTotais = async (rowsPerPage = 1000) => {
+  return (await api.get(`api/programas-pdde/totais/?paa_uuid=${localStorage.getItem("PAA")}&page_size=${rowsPerPage}`, authHeader())).data;
 };
 
 export const postReceitaPrevistaPDDE = async (payload) => {
@@ -136,6 +136,10 @@ export const postAtivarAtualizacaoSaldoPAA = async (uuid) => {
     await api.post(`api/paa/${uuid}/ativar-atualizacao-saldo/`, {}, authHeader())
   ).data;
 };
+
+export const postImportarPrioridades = async (uuid_paa_atual, uuid_paa_anterior) => {
+  return (await api.post(`api/paa/${uuid_paa_atual}/importar-prioridades/${uuid_paa_anterior}/`, {}, authHeader())).data;
+}
 
 // Prioridades
 export const getPrioridadesTabelas = async () => {

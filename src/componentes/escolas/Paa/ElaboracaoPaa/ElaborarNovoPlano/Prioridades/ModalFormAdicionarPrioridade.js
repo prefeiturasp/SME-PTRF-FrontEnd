@@ -437,10 +437,11 @@ const ModalFormAdicionarPrioridade = ({ open, onClose, tabelas, formModal, focus
               >
                 Cancelar
               </button>
-
-              <button type="submit" className="btn btn btn-success">
-                Salvar
-              </button>
+              <Spin spinning={mutationPatch.isPending || mutationPost.isPending}>
+                <button type="submit" className="btn btn btn-success">
+                  Salvar
+                </button>
+              </Spin>
             </Flex>
           </Form>
         </Spin>

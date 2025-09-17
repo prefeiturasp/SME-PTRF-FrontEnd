@@ -5,7 +5,6 @@ import './siderbarLeft.scss'
 import {SidebarContext} from '../../../context/Sidebar'
 import {useNavigate} from 'react-router-dom'
 import {Versao} from "../Versao";
-import { Tooltip as ReactTooltip } from "react-tooltip";
 import {getUrls} from "./getUrls";
 import {NotificacaoContext} from "../../../context/Notificacoes";
 import {CentralDeDownloadContext} from "../../../context/CentralDeDownloads";
@@ -134,15 +133,13 @@ export const SidebarLeft = () => {
                                     <NavItem
                                         key={index}
                                         navitemClassName={`d-flex align-items-end ${url.subItens && url.subItens.length > 0 ? "sub-menu" : ""}`}
-                                        data-tooltip-content={url.label} data-tooltip-id={url.dataFor}
                                         eventKey={url.url}
+                                        data-cy={url.label}
                                     >
                                         <NavIcon>
                                             <img src={url.icone} alt=""/>
                                         </NavIcon>
                                         <NavText>{url.label}</NavText>
-                                        <ReactTooltip disable={sidebarStatus.sideBarStatus}
-                                                      id={url.dataFor}>{}</ReactTooltip>
                                         {url.subItens && url.subItens.length > 0 && url.subItens.map((subItem, index) =>
                                             visoesService.getPermissoes(subItem.permissoes) ? (
                                             <NavItem

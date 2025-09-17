@@ -3,6 +3,7 @@ import { Flex, Button, Spin, Alert, Typography } from 'antd';
 import { Paginator } from "primereact/paginator";
 import ModalFormAdicionarPrioridade from './ModalFormAdicionarPrioridade';
 import { useGetPrioridadeTabelas } from "./hooks/useGetPrioridadeTabelas";
+import { useGetPAAsAnteriores } from "./hooks/useGetPAAsAnteriores";
 import { useGetPrioridades } from "./hooks/useGetPrioridades";
 import { usePostDuplicarPrioridade } from "./hooks/usePostPrioridade";
 import { useDeletePrioridade } from "./hooks/useDeletePrioridade";
@@ -14,6 +15,7 @@ import { ModalConfirmarExclusao } from "../../../../../sme/Parametrizacoes/compo
 import Img404 from "../../../../../../assets/img/img-404.svg";
 import { Tabela } from './Tabela';
 import { Resumo } from './Resumo';
+import ModalImportarPrioridades from './ModalImportarPrioridades';
 
 
 const filtroInicial = {
@@ -28,7 +30,6 @@ const filtroInicial = {
 
 const Prioridades = () => {
   const [filtros, setFiltros] = useState(filtroInicial);
-  const [ultimoDuplicado, setUltimoDuplicado] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [firstPage, setFirstPage] = useState(0);
   const [modalForm, setModalForm] = useState({ open: false, tabelas: null, formModal: null });
@@ -37,6 +38,10 @@ const Prioridades = () => {
   const { prioridadesTabelas, recursos, tipos_aplicacao } = useGetPrioridadeTabelas();
   const { tipos_despesa_custeio } = useGetTiposDespesaCusteio();
   const { isFetching: isLoadingPrioridades, prioridades, quantidade, refetch } = useGetPrioridades(filtros, currentPage);
+
+  // PAA`s Anteriores
+  const [modalImportarPrioridades, setModalImportarPrioridades] = useState({ open: false, paas: [] });
+  const { paas_anteriores, isFetching: isLoadingPAAsAnteriores } = useGetPAAsAnteriores();
   
   const { mutationDelete } = useDeletePrioridade(() => setModalExclusao({ open: false, item: null, tipo: 'individual' }));
   const { mutationDeleteEmLote } = useDeletePrioridadesEmLote(() => {
@@ -77,7 +82,11 @@ const Prioridades = () => {
     setFirstPage(0);
   };
 
-  const abrirModal = async () => {
+  const abrirModalImportarPAAsAnteriores = async () => {
+    setModalImportarPrioridades({ open: true, paas: paas_anteriores });
+  };
+
+  const abrirModalNovaPrioridade = async () => {
     setModalForm({ open: true, tabelas: dadosTabelas, formModal: null });
   };
 
@@ -105,6 +114,7 @@ const Prioridades = () => {
     } else {
       mutationDeleteEmLote.mutate({ payload: modalExclusao.item });
     }
+    onFiltrar();
   };
 
   const existePrioridadesSemValor = () => {
@@ -120,11 +130,22 @@ const Prioridades = () => {
             Registro de prioridades
         </Typography.Title>
 
-        <Button
-          type="primary"
-          onClick={abrirModal}>
-          Adicionar nova prioridade
-        </Button>
+        <Flex>
+          <Spin spinning={isLoadingPAAsAnteriores}>
+            <button
+              className="btn btn-outline-success btn-sm mx-2"
+              onClick={abrirModalImportarPAAsAnteriores}
+              type="button">
+                Importar PAAs anteriores
+            </button>
+          </Spin>
+          <button
+              className="btn btn-success btn-sm"
+              onClick={abrirModalNovaPrioridade}
+              type="button">
+              Adicionar prioridade
+          </button>
+        </Flex>
       </Flex>
 
       {/* Bloco de filtros com 7 selects */}
@@ -196,6 +217,16 @@ const Prioridades = () => {
             tabelas: null,
             formModal: null,
             focusValor: false })}
+        />
+      )}
+
+      {modalImportarPrioridades.open && (
+        <ModalImportarPrioridades
+          open={modalImportarPrioridades.open}
+          paas={modalImportarPrioridades.paas}
+          onClose={() => setModalImportarPrioridades({
+            open: false,
+            paas: []})}
         />
       )}
 

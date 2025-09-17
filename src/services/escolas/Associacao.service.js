@@ -1,6 +1,7 @@
 import api from "../api";
 import { TOKEN_ALIAS } from "../auth.service.js";
 import { ASSOCIACAO_UUID } from "../auth.service";
+import { getUuidAssociacao } from "../../utils/AssociacaoUtils.js";
 
 const authHeader = () => ({
   headers: {
@@ -23,15 +24,19 @@ export const getAssociacaoByUUID = async (associacaoUUID) => {
     .data;
 };
 
-export const getAcoesAssociacao = async (associacao_uuid) => {
-  return (
-    await api.get(
-      `api/acoes-associacoes/?associacao__uuid=${localStorage.getItem(
-        ASSOCIACAO_UUID
-      )}`,
-      authHeader()
-    )
-  ).data;
+export const getAcoesAssociacao = async (associacao_uuid, page_size = null) => {
+  const params = new URLSearchParams({
+    associacao__uuid: localStorage.getItem(ASSOCIACAO_UUID),
+  });
+
+  if (page_size) {
+    params.append('page_size', String(page_size));
+  }
+
+  return (await api.get(
+    `api/acoes-associacoes/?${params.toString()}`,
+    authHeader()
+  )).data;
 };
 
 export const getContasAtivasDaAssociacaoNoPeriodo = async (periodoUUID) => {
@@ -61,11 +66,10 @@ export const alterarAssociacao = async (payload) => {
 };
 
 export const getPeriodoFechado = async (data_verificacao) => {
+  const uuid_associacao = getUuidAssociacao();
   return (
     await api.get(
-      `/api/associacoes/${localStorage.getItem(
-        ASSOCIACAO_UUID
-      )}/status-periodo/?data=${data_verificacao}`,
+      `/api/associacoes/${uuid_associacao}/status-periodo/?data=${data_verificacao}`,
       authHeader()
     )
   ).data;

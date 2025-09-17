@@ -71,7 +71,7 @@ describe("Tabela Component", () => {
             expect(screen.getByText(row.tipo_conta_dados.nome)).toBeInTheDocument();
         });
         
-        const table = screen.getByRole("grid");
+        const table = screen.getByRole("table");
         const rows = table.querySelectorAll("tbody tr");
         rows.forEach((row, index) => {
             const cells = row.querySelectorAll("td");

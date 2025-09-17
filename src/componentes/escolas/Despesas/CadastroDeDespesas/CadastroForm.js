@@ -41,6 +41,8 @@ import { CadastroFormFormik } from "./CadastroFormFormik";
 import { getPeriodoPorUuid } from "../../../../services/sme/Parametrizacoes.service";
 import { STATUS_CONTA_ASSOCIACAO, STATUS_SOLICITACAO_ENCERRAMENTO_CONTA_ASSOCIACAO } from "../../../../constantes/contaAssociacao";
 import {toastCustom} from "../../../Globais/ToastCustom";
+import {visoesService} from "../../../../services/visoes.service";
+import {getUuidAssociacao} from "../../../../utils/AssociacaoUtils";
 
 export const CadastroForm = ({verbo_http, veioDeSituacaoPatrimonial}) => {
 
@@ -83,6 +85,8 @@ export const CadastroForm = ({verbo_http, veioDeSituacaoPatrimonial}) => {
     const [disableBtnAdicionarImposto, setDisableBtnAdicionarImposto] = useState(false);
     const [objetoParaComparacao, setObjetoParaComparacao] = useState({});
     const [showDespesaIncompletaNaoPermitida, setShowDespesaIncompletaNaoPermitida] = useState(false);
+
+    const visao_selecionada = visoesService.getItemUsuarioLogado('visao_selecionada.nome')
 
     const [contasIniciais, setContasIniciais] = useState([])
 
@@ -282,7 +286,13 @@ export const CadastroForm = ({verbo_http, veioDeSituacaoPatrimonial}) => {
                 resp = await getDespesasTabelas(parametroLocation.state.uuid_associacao);
             }
             else{
-                resp = await getDespesasTabelas();
+                if(veioDeSituacaoPatrimonial && visao_selecionada === "DRE"){
+                    const uuid_associacao = getUuidAssociacao();
+                    resp = await getDespesasTabelas(uuid_associacao);
+                }
+                else{
+                    resp = await getDespesasTabelas();
+                }
             }
 
             setDespesasTabelas(resp);
@@ -1365,10 +1375,12 @@ export const CadastroForm = ({verbo_http, veioDeSituacaoPatrimonial}) => {
                 : null
             }
             <section>
+            {visao_selecionada === "UE" && (
                 <PeriodoFechado
                     show={showPeriodoFechado}
                     handleClose={()=>setShowPeriodoFechado(false)}
                 />
+            )}
             </section>
             <section>
                 <PeriodoFechadoImposto

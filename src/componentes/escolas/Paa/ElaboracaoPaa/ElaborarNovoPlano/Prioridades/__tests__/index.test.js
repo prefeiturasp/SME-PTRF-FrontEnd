@@ -1,4 +1,3 @@
-import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Prioridades from '../index';
@@ -129,6 +128,11 @@ const renderWithQueryClient = (component) => {
 
 describe('Prioridades', () => {
   beforeEach(() => {
+    window.matchMedia = jest.fn().mockImplementation((query) => ({
+        matches: false,
+        addListener: jest.fn(),
+        removeListener: jest.fn(),
+      }));
     // Mock dos hooks
     useGetPrioridadeTabelas.mockReturnValue(mockPrioridadeTabelas);
     useGetTiposDespesaCusteio.mockReturnValue({
@@ -146,22 +150,34 @@ describe('Prioridades', () => {
     jest.clearAllMocks();
   });
 
+  it("abre modal de importar PAAs anteriores", () => {
+    renderWithQueryClient(<Prioridades />);
+
+    const botaoImportar = screen.getByRole("button", { name: /Importar PAAs anteriores/i })
+    fireEvent.click(botaoImportar);
+
+    const tituloModal = screen.getByText("Importar PAAs anteriores", {selector: ".modal-title"})
+
+    expect(tituloModal).toBeInTheDocument();
+  });
+
   test('renderiza o componente com título e botão de adicionar', () => {
     renderWithQueryClient(<Prioridades />);
-    
-    expect(screen.getByText('Prioridades')).toBeInTheDocument();
-    expect(screen.getByText('Adicionar nova prioridade')).toBeInTheDocument();
+
+    expect(screen.getByText('Resumo de recursos')).toBeInTheDocument();
+    expect(screen.getByText('Registro de prioridades')).toBeInTheDocument();
+    expect(screen.getByText('Adicionar prioridade')).toBeInTheDocument();
   });
 
   test('renderiza o formulário de filtros quando dados estão disponíveis', () => {
     renderWithQueryClient(<Prioridades />);
-    
+
     expect(screen.getByTestId('form-filtros')).toBeInTheDocument();
   });
 
   test('renderiza a tabela quando há prioridades', () => {
     renderWithQueryClient(<Prioridades />);
-    
+
     expect(screen.getByTestId('tabela')).toBeInTheDocument();
   });
 
@@ -174,17 +190,17 @@ describe('Prioridades', () => {
     });
 
     renderWithQueryClient(<Prioridades />);
-    
+
     expect(screen.getByTestId('msg-img-centralizada')).toBeInTheDocument();
     expect(screen.getByText('Nenhum resultado encontrado.')).toBeInTheDocument();
   });
 
   test('abre modal ao clicar no botão de adicionar', async () => {
     renderWithQueryClient(<Prioridades />);
-    
-    const addButton = screen.getByText('Adicionar nova prioridade');
+
+    const addButton = screen.getByText('Adicionar prioridade');
     fireEvent.click(addButton);
-    
+
     await waitFor(() => {
       expect(screen.getByTestId('modal-form')).toBeInTheDocument();
     });
@@ -192,19 +208,19 @@ describe('Prioridades', () => {
 
   test('fecha modal ao clicar em fechar', async () => {
     renderWithQueryClient(<Prioridades />);
-    
+
     // Abre o modal
-    const addButton = screen.getByText('Adicionar nova prioridade');
+    const addButton = screen.getByText('Adicionar prioridade');
     fireEvent.click(addButton);
-    
+
     await waitFor(() => {
       expect(screen.getByTestId('modal-form')).toBeInTheDocument();
     });
-    
+
     // Fecha o modal
     const closeButton = screen.getByText('Fechar Modal');
     fireEvent.click(closeButton);
-    
+
     await waitFor(() => {
       expect(screen.queryByTestId('modal-form')).not.toBeInTheDocument();
     });
@@ -219,7 +235,7 @@ describe('Prioridades', () => {
     });
 
     renderWithQueryClient(<Prioridades />);
-    
+
     // Verifica se o Spin está ativo (loading)
     const spinElement = document.querySelector('.ant-spin');
     expect(spinElement).toBeInTheDocument();
@@ -235,12 +251,12 @@ describe('Prioridades', () => {
     });
 
     renderWithQueryClient(<Prioridades />);
-    
+
     const mudarfiltro = screen.getByText('Mudar Filtro');
     fireEvent.click(mudarfiltro);
     const filtrarButton = screen.getByText('Filtrar');
     fireEvent.click(filtrarButton);
-    
+
     expect(mockRefetch).toHaveBeenCalled();
   });
 
@@ -254,10 +270,10 @@ describe('Prioridades', () => {
     });
 
     renderWithQueryClient(<Prioridades />);
-    
+
     const limparButton = screen.getByText('Limpar Filtros');
     fireEvent.click(limparButton);
-    
+
     await waitFor(() => {
       expect(mockRefetch).toHaveBeenCalled();
     });
@@ -272,7 +288,7 @@ describe('Prioridades', () => {
     });
 
     renderWithQueryClient(<Prioridades />);
-    
+
     expect(screen.queryByTestId('form-filtros')).not.toBeInTheDocument();
   });
 
@@ -286,14 +302,14 @@ describe('Prioridades', () => {
     });
 
     renderWithQueryClient(<Prioridades />);
-    
+
     // Verifica se o paginador está presente
     const paginatorElement = document.querySelector('.p-paginator');
     expect(paginatorElement).toBeInTheDocument();
-    
+
     // Encontra todos os botões de página
     const pagina2 = document.querySelectorAll('.p-paginator-page')[1];
-    
+
     // Clica em cada botão de página disponível
     fireEvent.click(pagina2);
     expect(pagina2).toBeInTheDocument();
@@ -339,4 +355,4 @@ describe('Prioridades', () => {
 
     expect(screen.queryByRole('alert')).not.toBeInTheDocument();
   });
-}); 
+});

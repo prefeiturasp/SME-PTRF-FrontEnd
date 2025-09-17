@@ -49,15 +49,16 @@ describe('ExtracaoDados - Saldos Bancários', () => {
     jest.spyOn(console, 'log').mockImplementation(() => {});
   });
 
-  it('renderiza o título e filtro de data corretamente', () => {
-    render(<ExtracaoDados />);
+  // Filtro de Data para extração temporariamente removido relacionado ao commit de refactor(132561)
+  // it('renderiza o título e filtro de data corretamente', () => {
+  //   render(<ExtracaoDados />);
     
-    expect(screen.getByText('Dados disponíveis para extração')).toBeInTheDocument();
-    expect(screen.getByText('Filtrar por data')).toBeInTheDocument();
-    expect(screen.getByText('Selecione o período de criação (vazio para todos)')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('data inicial')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('data final')).toBeInTheDocument();
-  });
+  //   expect(screen.getByText('Dados disponíveis para extração')).toBeInTheDocument();
+  //   expect(screen.getByText('Filtrar por data')).toBeInTheDocument();
+  //   expect(screen.getByText('Selecione o período de criação (vazio para todos)')).toBeInTheDocument();
+  //   expect(screen.getByPlaceholderText('data inicial')).toBeInTheDocument();
+  //   expect(screen.getByPlaceholderText('data final')).toBeInTheDocument();
+  // });
 
   it('renderiza o card de saldos bancários com informações corretas', () => {
     render(<ExtracaoDados />);

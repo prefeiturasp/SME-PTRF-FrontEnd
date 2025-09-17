@@ -218,7 +218,7 @@ describe('Teste handleSubmitModalForm', () => {
         );
 
         await waitFor(()=>{
-            const tabela = screen.getByRole('grid');
+            const tabela = screen.getByRole('table');
             const linhas = tabela.querySelectorAll('tbody tr');
             const linha = linhas[0];
             const coluna = linha.querySelectorAll('td');
@@ -276,7 +276,7 @@ describe('Teste handleSubmitModalForm', () => {
         );
 
         await waitFor(()=>{
-            const tabela = screen.getByRole('grid');
+            const tabela = screen.getByRole('table');
             const linhas = tabela.querySelectorAll('tbody tr');
             const linha = linhas[0];
             const coluna = linha.querySelectorAll('td');
@@ -311,7 +311,7 @@ describe('Teste handleSubmitModalForm', () => {
         );
 
         await waitFor(()=>{
-            const tabela = screen.getByRole('grid');
+            const tabela = screen.getByRole('table');
             const linhas = tabela.querySelectorAll('tbody tr');
             const linha = linhas[0];
             const coluna = linha.querySelectorAll('td');
@@ -343,7 +343,7 @@ describe('Teste handleSubmitModalForm', () => {
         );
 
         await waitFor(()=>{
-            const tabela = screen.getByRole('grid');
+            const tabela = screen.getByRole('table');
             const linhas = tabela.querySelectorAll('tbody tr');
             const linha = linhas[0];
             const coluna = linha.querySelectorAll('td');
@@ -386,7 +386,7 @@ describe('Teste handleSubmitModalForm', () => {
         );
 
         await waitFor(()=>{
-            const tabela = screen.getByRole('grid');
+            const tabela = screen.getByRole('table');
             const linhas = tabela.querySelectorAll('tbody tr');
             const linha = linhas[0];
             const coluna = linha.querySelectorAll('td');

@@ -25,9 +25,6 @@ jest.mock("../../../../../services/SideBarLeft.service", () => ({
 
 jest.mock('../../../../../utils/ValidacoesAdicionaisFormularios', () => ({
   exibeDataPT_BR: (data) => `formatada-${data}`,
-}));
-
-jest.mock("../../../../../utils/ValidacoesAdicionaisFormularios", () => ({
   trataNumericos: (v) => v,
 }));
 
@@ -121,7 +118,7 @@ describe("DetalheDasPrestacoes", () => {
         const ls = JSON.stringify({periodo: 'periodo-uuid', conta: 'conta-uuid'})
         localStorage.setItem('periodoConta', ls);
         useParams.mockReturnValue({ periodo_uuid: 'periodo-uuid', conta_uuid: 'conta-uuid' });
-        associacaoService.getPeriodosDePrestacaoDeContasDaAssociacao.mockResolvedValue(true);
+        associacaoService.getPeriodosDePrestacaoDeContasDaAssociacao.mockResolvedValue([{uuid: 'periodo-uuid', referencia: '2025', data_inicio_realizacao_despesas: '2025-01-01', data_fim_realizacao_despesas: '2025-12-31'}]);
 
         renderComponent();
 

@@ -1,6 +1,7 @@
 import api from "../api";
 import { ASSOCIACAO_UUID, TOKEN_ALIAS } from "../auth.service.js";
 import { addFiltersToQueryString } from "../../utils/Api.js";
+import { getUuidAssociacao } from "../../utils/AssociacaoUtils.js";
 
 const authHeader = () => ({
   headers: {
@@ -59,10 +60,13 @@ export const postExluirDespesaBemProduzidoEmLote = async (uuid, payload) => {
   ).data;
 };
 
-export const getBemProduzidosComAdquiridos = async (filters, page) => {
-  let queryString = `?associacao_uuid=${localStorage.getItem(
-    ASSOCIACAO_UUID
-  )}&page=${page}`;
+export const getBemProduzidosComAdquiridos = async (filters, page, visao_dre = false) => {
+  const uuid_associacao = getUuidAssociacao();
+
+  let queryString = `?associacao_uuid=${uuid_associacao}&page=${page}`;
+  if (visao_dre) {
+    queryString += `&visao_dre=true`;
+  }
   queryString = addFiltersToQueryString(queryString, filters);
   return (
     await api.get(
@@ -73,18 +77,19 @@ export const getBemProduzidosComAdquiridos = async (filters, page) => {
 };
 
 export const getTodosPeriodosComPC = async (referencia = "") => {
+  const uuid_associacao = getUuidAssociacao();
+  
   return (
     await api.get(
-      `/api/periodos/?referencia=${referencia}&somente_com_pcs_entregues=true&associacao_uuid=${localStorage.getItem(
-        ASSOCIACAO_UUID
-      )}`,
+      `/api/periodos/?referencia=${referencia}&somente_com_pcs_entregues=true&associacao_uuid=${uuid_associacao}`,
       authHeader()
     )
   ).data;
 };
 
 export const getExportarBensProduzidos = async () => {
-  const queryString = `?associacao_uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`;
+  const uuid_associacao = getUuidAssociacao();
+  const queryString = `?associacao_uuid=${uuid_associacao}`;
 
   return (
     await api.get(`api/bens-produzidos-e-adquiridos/exportar/${queryString}`, authHeader())

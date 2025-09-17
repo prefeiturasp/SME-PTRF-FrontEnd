@@ -66,7 +66,8 @@ export const Tabela = forwardRef(({ data, handleEditar, handleDuplicar, handleEx
             <Column 
                 header={
                     <input 
-                        type="checkbox" 
+                        type="checkbox"
+                        className='seletor-header'
                         checked={isAllSelected}
                         ref={(input) => {
                             if (input) input.indeterminate = isIndeterminate;
@@ -81,6 +82,7 @@ export const Tabela = forwardRef(({ data, handleEditar, handleDuplicar, handleEx
                     
                     return (
                         <input 
+                            className='seletor-individual'
                             type="checkbox" 
                             checked={isChecked}
                             onChange={() => handleSelectItem(rowData.uuid)}

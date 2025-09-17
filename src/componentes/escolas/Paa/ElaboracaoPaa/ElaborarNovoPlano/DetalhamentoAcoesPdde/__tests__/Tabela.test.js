@@ -1,130 +1,105 @@
-import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
-import Tabela from '../Tabela';
+import { render, screen, fireEvent } from "@testing-library/react";
+import Tabela from "../Tabela";
 
-jest.mock('@fortawesome/react-fontawesome', () => ({
-  FontAwesomeIcon: () => <i data-testid="fa-icon" />,
-}));
-
-jest.mock('react-tooltip', () => () => <div data-testid="tooltip" />);
-
-jest.mock('../Paginacao', () => ({
-  Paginacao: () => <div data-testid="paginacao" />,
-}));
-
-jest.mock('../ModalEdicaoReceitaPrevistaPdde', () => ({ open, onClose, receitaPrevistaPDDE }) =>
-  open ? (
-    <div data-testid="modal">
-      Modal Aberto - {receitaPrevistaPDDE?.nome}
-      <button onClick={onClose}>Fechar</button>
+jest.mock("../Paginacao", () => ({
+  Paginacao: ({ acoes, setCurrentPage, firstPage, setFirstPage, isLoading, count }) => (
+    <div data-testid="paginacao">
+      paginação simulada - {acoes.length} ações
     </div>
-  ) : null
-);
+  ),
+}));
 
-const mockData = {
-  results: [
-    {
-      id: 1,
-      uuid: "acao-pdde-uuid-1234",
-      nome: "Ação PDDE 1",
-      programa: 1,
-      programa_objeto: { id: 1, uuid: "1de0c2ac-8468-48a6-89e8-14ffa0d78133", nome: "Programa A" },
-      aceita_custeio: true,
-      aceita_capital: true,
-      aceita_livre_aplicacao: true,
-      receitas_previstas_pdde_valores:{
-        uuid: "1de0c2ac-8468-48a6-89e8-14ffa0d78131",
-        saldo_capital: 100.00,
-        saldo_custeio: 200.00,
-        saldo_livre: 300.00,
-        previsao_valor_capital: 50.00,
-        previsao_valor_custeio: 60.00,
-        previsao_valor_livre: 70.00,
-      }
-    },
-  ],
-};
+jest.mock("../ModalEdicaoReceitaPrevistaPdde", () => {
+  return ({ open, onClose, receitaPrevistaPDDE }) => (
+    <div data-testid="modal-edicao">
+      {open ? `Modal aberto para ${receitaPrevistaPDDE?.nome}` : "Modal fechado"}
+      <button onClick={onClose}>Fechar Modal</button>
+    </div>
+  );
+});
 
-describe('Tabela', () => {
-  it('deve renderizar colunas e dados corretamente', () => {
-    render(
-      <Tabela
-        data={mockData}
-        rowsPerPage={20}
-        setCurrentPage={() => {}}
-        setFirstPage={() => {}}
-        firstPage={0}
-        count={1}
-        isLoading={false}
-      />
-    );
+describe("Tabela", () => {
+  const baseData = {
+    results: [
+      {
+        uuid: "123",
+        nome: "Ação Teste",
+        programa_objeto: { nome: "Programa X" },
+        aceita_custeio: true,
+        aceita_capital: true,
+        aceita_livre_aplicacao: false,
+        receitas_previstas_pdde_valores: {
+          previsao_valor_custeio: 100,
+          saldo_custeio: 50,
+          previsao_valor_capital: 200,
+          saldo_capital: 100,
+          previsao_valor_livre: 0,
+          saldo_livre: 0,
+        },
+      },
+    ],
+  };
 
-    expect(screen.getByText('Ação PDDE')).toBeInTheDocument();
-    expect(screen.getByText('Programa')).toBeInTheDocument();
-    expect(screen.getByText('Custeio (R$)')).toBeInTheDocument();
-    expect(screen.getByText('Capital (R$)')).toBeInTheDocument();
-    expect(screen.getByText('Livre aplicação (R$)')).toBeInTheDocument();
-    expect(screen.getByTestId('paginacao')).toBeInTheDocument();
+  const defaultProps = {
+    rowsPerPage: 10,
+    data: baseData,
+    isLoading: false,
+    setCurrentPage: jest.fn(),
+    firstPage: 0,
+    setFirstPage: jest.fn(),
+    count: 1,
+  };
+
+  it("renderiza título e tabela", () => {
+    render(<Tabela {...defaultProps} />);
+    expect(screen.getByText("Ações PDDE")).toBeInTheDocument();
+    expect(screen.getAllByText("Ação PDDE").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Programa").length).toBeGreaterThan(0);
   });
 
-  it('deve renderizar dados da ação corretamente', () => {
-    render(
-      <Tabela
-        data={mockData}
-        rowsPerPage={20}
-        setCurrentPage={() => {}}
-        setFirstPage={() => {}}
-        firstPage={0}
-        count={1}
-        isLoading={false}
-      />
-    );
-
-    expect(screen.getByText('Ação PDDE 1')).toBeInTheDocument();
-    expect(screen.getByText('Programa A')).toBeInTheDocument();
-    expect(screen.getByText(/150,00/)).toBeInTheDocument();
-    expect(screen.getByText(/260,00/)).toBeInTheDocument();
+  it("renderiza valores monetários formatados corretamente", () => {
+    render(<Tabela {...defaultProps} />);
+    // custo = 100 + 50 = 150
+    expect(screen.getByText("150,00")).toBeInTheDocument();
+    // capital = 200 + 100 = 300
+    expect(screen.getByText("300,00")).toBeInTheDocument();
+    // livre aplicação não aceito → bloco cinza
+    expect(screen.getAllByText("Ações")[0]).toBeInTheDocument();
   });
 
-  it('deve abrir o modal ao clicar no botão de editar', () => {
-    render(
-      <Tabela
-        data={mockData}
-        rowsPerPage={20}
-        setCurrentPage={() => {}}
-        setFirstPage={() => {}}
-        firstPage={0}
-        count={1}
-        isLoading={false}
-      />
-    );
+  it("renderiza fallback 0,00 quando valor é NaN", () => {
+    const dataComNaN = {
+      results: [
+        {
+          uuid: "456",
+          nome: "Ação Inválida",
+          programa_objeto: { nome: "Programa Y" },
+          aceita_custeio: true,
+          receitas_previstas_pdde_valores: {
+            previsao_valor_custeio: NaN,
+            saldo_custeio: NaN,
+          },
+        },
+      ],
+    };
 
-    const botaoEditar = screen.getByTestId('botao-editar');
+    render(<Tabela {...defaultProps} data={dataComNaN} />);
+    expect(screen.getByText("0,00")).toBeInTheDocument();
+  });
+
+  it("abre e fecha modal ao clicar no botão de editar", () => {
+    render(<Tabela {...defaultProps} />);
+    const botaoEditar = screen.getByTestId("botao-editar");
     fireEvent.click(botaoEditar);
 
-    expect(screen.getByTestId('modal')).toBeInTheDocument();
-    expect(screen.getByText(/Modal Aberto - Ação PDDE 1/i)).toBeInTheDocument();
+    expect(screen.getByTestId("modal-edicao")).toHaveTextContent("Modal aberto para Ação Teste");
+
+    fireEvent.click(screen.getByText("Fechar Modal"));
+    expect(screen.getByTestId("modal-edicao")).toHaveTextContent("Modal fechado");
   });
 
-  it('deve fechar o modal ao clicar no botão fechar', () => {
-    render(
-      <Tabela
-        data={mockData}
-        rowsPerPage={20}
-        setCurrentPage={() => {}}
-        setFirstPage={() => {}}
-        firstPage={0}
-        count={1}
-        isLoading={false}
-      />
-    );
-
-    const botaoEditar = screen.getByTestId('botao-editar');
-    fireEvent.click(botaoEditar);
-
-    const botaoFechar = screen.getByText('Fechar');
-    fireEvent.click(botaoFechar);
-
-    expect(screen.queryByTestId('modal')).not.toBeInTheDocument();
+  it("renderiza componente de paginação com número de ações", () => {
+    render(<Tabela {...defaultProps} />);
+    expect(screen.getByTestId("paginacao")).toHaveTextContent("1 ações");
   });
 });
