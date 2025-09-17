@@ -12,6 +12,7 @@ import { aprovarSolicitacaoEncerramentoConta, rejeitarSolicitacaoEncerramentoCon
 import Loading from "../../../../../utils/Loading";
 import {toastCustom} from "../../../../Globais/ToastCustom";
 import { BarraStatusEncerramentoConta } from "./BarraStatusEncerramentoConta/index";
+import {visoesService} from "../../../../../services/visoes.service"
 
 export const  InfosContas = ({dadosDaAssociacao}) =>{
     const [dataModalConfirmarEncerramentoConta, setDataModalConfirmarEncerramentoConta] = useState({
@@ -27,7 +28,12 @@ export const  InfosContas = ({dadosDaAssociacao}) =>{
     const [motivos, setMotivos] = useState([]);
     const [loading, setLoading] = useState(true);
     const [errorModalRejeicao, setErrorModalRejeicao] = useState(null)
-
+    const permiossaoEncerramento = visoesService.getPermissoes(["change_encerrar_associacoes"])
+    const habilitaBotoesEncerramento = (conta) => {
+        return apresentaDataDeEncerramentoDeConta(conta) &&
+            conta.tipo_conta.permite_inativacao &&
+            permiossaoEncerramento;
+    };
     const apresentaDataDeEncerramentoDeConta = (conta) => {
         return conta && conta.solicitacao_encerramento !== null && conta.solicitacao_encerramento.status === "PENDENTE";
     };
@@ -257,24 +263,24 @@ export const  InfosContas = ({dadosDaAssociacao}) =>{
                                                     <span className="saldo-recursos-conta">R$ {conta.saldo_atual_conta ? conta.saldo_atual_conta.toLocaleString("pt-BR") : 0}</span>
                                                 </div>
                                             </div>
-                                            {apresentaDataDeEncerramentoDeConta(conta) && conta.tipo_conta.permite_inativacao &&
-                                                <div className="col-7 text-right mt-3">
-                                                    <button
-                                                        type="button"
-                                                        className="btn btn-base-verde-outline mr-3"
-                                                        onClick={() => handleOpenModalConfirmarEncerramentoConta(conta)}
-                                                    >
-                                                        Confirmar encerramento
-                                                    </button>
-                                                    <button
-                                                        type="button"
-                                                        className="btn btn-base-verde-outline"
-                                                        onClick={() => handleOpenModalRejeitarEncerramentoConta(conta)}
-                                                    >
-                                                        Rejeitar encerramento
-                                                    </button>
-                                                </div>
-                                            }
+                                            <div className="col-7 text-right mt-3">
+                                                <button
+                                                    type="button"
+                                                    className="btn btn-base-verde-outline mr-3"
+                                                    onClick={() => handleOpenModalConfirmarEncerramentoConta(conta)}
+                                                    disabled={!habilitaBotoesEncerramento(conta)}
+                                                >
+                                                    Confirmar encerramento
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    className="btn btn-base-verde-outline"
+                                                    onClick={() => handleOpenModalRejeitarEncerramentoConta(conta)}
+                                                    disabled={!habilitaBotoesEncerramento(conta)}
+                                                >
+                                                    Rejeitar encerramento
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

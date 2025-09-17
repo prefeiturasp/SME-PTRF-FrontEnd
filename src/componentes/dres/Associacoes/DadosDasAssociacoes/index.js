@@ -1,6 +1,6 @@
 import React, {Fragment, useState, useEffect} from "react";
 import { DADOS_DA_ASSOCIACAO } from "../../../../services/auth.service";
-import { Navigate } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 import { TopoComBotoes } from "./TopoComBotoes";
 import {InfosAssociacao} from "./DadosDaAssociacao/InfosAssociacao";
 import {InfosUnidadeEducacional} from "./DadosDaUnidadeEducacional/InfosUnidadeEducacional";
@@ -9,16 +9,19 @@ import { ProcessoSeiRegularidade } from "./ProcessosSei/ProcessoSeiRegularidade"
 import { ProcessosSeiPrestacaoDeContas } from "./ProcessosSei/ProcessosSeiPrestacaoDeContas";
 import { SituacaoFinanceiraUnidadeEducacional } from "./SituacaoFinanceiraUnidadeEducacional";
 import {visoesService} from "../../../../services/visoes.service"
+import { SituacaoPatrimonialUnidadeEducacional } from "./SituacaoPatrimonial";
 import "../associacoes.scss"
 
 export const DetalhesDaAssociacao = () => {
+    const { origem } = useParams();
 
     const [clickBtnEscolheOpcao, setClickBtnEscolheOpcao] = useState({
         dados_unidade: true,
         dados_associacao: false,
         contas_associacao: false,
         processos_sei: false,
-        situacao_financeira: false
+        situacao_financeira: false,
+        situacao_patrimonial: false
     });
 
     const [activeTab, setActiveTab] = useState({
@@ -26,7 +29,8 @@ export const DetalhesDaAssociacao = () => {
         dados_associacao: false,
         contas_associacao: false,
         processos_sei: false,
-        situacao_financeira: false
+        situacao_financeira: false,
+        situacao_patrimonial: false
     });
     let dadosDaAssociacao = JSON.parse(localStorage.getItem(DADOS_DA_ASSOCIACAO));
 
@@ -57,6 +61,11 @@ export const DetalhesDaAssociacao = () => {
             nome: "Situação Financeira",
             permissao: visoesService.getPermissoes(["access_situacao_financeira_dre"])
         },
+        {
+            id: "situacao_patrimonial",
+            nome: "Situação Patrimonial",
+            permissao: visoesService.getPermissoes(["access_situacao_patrimonial_dre"])
+        },
     ]
 
     let conteudo_tab = {
@@ -80,6 +89,10 @@ export const DetalhesDaAssociacao = () => {
             id: tabs[4].id,
             permissao: visoesService.getPermissoes(["access_situacao_financeira_dre"])
         },
+        situacao_patrimonial : {
+            id: tabs[5].id,
+            permissao: visoesService.getPermissoes(["access_situacao_patrimonial_dre"])
+        },
     }
 
     useEffect(() => {
@@ -94,7 +107,8 @@ export const DetalhesDaAssociacao = () => {
             dados_associacao: false,
             contas_associacao: false,
             processos_sei: false,
-            situacao_financeira: false
+            situacao_financeira: false,
+            situacao_patrimonial: false
         }
 
         let novoEstadoAba = {
@@ -102,7 +116,8 @@ export const DetalhesDaAssociacao = () => {
             dados_associacao: false,
             contas_associacao: false,
             processos_sei: false,
-            situacao_financeira: false
+            situacao_financeira: false,
+            situacao_patrimonial: false
         }
 
         for(let i=0; i<=tabs.length-1; i++){
@@ -127,8 +142,8 @@ export const DetalhesDaAssociacao = () => {
         */
 
         let url = window.location.pathname;
-        let origem = "dre-relatorio-consolidado"
-        let acessouPeloRelatorioConsolidado = url.indexOf(origem) !== -1;
+        let origemRelatorio = "dre-relatorio-consolidado"
+        let acessouPeloRelatorioConsolidado = url.indexOf(origemRelatorio) !== -1;
 
         if (acessouPeloRelatorioConsolidado){
             let novoEstadoAba = {
@@ -136,7 +151,8 @@ export const DetalhesDaAssociacao = () => {
                 dados_associacao: false,
                 contas_associacao: false,
                 processos_sei: false,
-                situacao_financeira: false
+                situacao_financeira: false,
+                situacao_patrimonial: false
             }
 
             let novoEstadoConteudo = {
@@ -144,11 +160,35 @@ export const DetalhesDaAssociacao = () => {
                 dados_associacao: false,
                 contas_associacao: false,
                 processos_sei: false,
-                situacao_financeira: false
+                situacao_financeira: false,
+                situacao_patrimonial: false
             }
 
             setClickBtnEscolheOpcao(novoEstadoAba);
             setActiveTab(novoEstadoConteudo);  
+        }
+        else if (origem === "situacao-patrimonial") {
+            // Se veio da situação patrimonial, ativa a aba de situação patrimonial
+            let novoEstadoAba = {
+                dados_unidade: false,
+                dados_associacao: false,
+                contas_associacao: false,
+                processos_sei: false,
+                situacao_financeira: false,
+                situacao_patrimonial: true
+            }
+
+            let novoEstadoConteudo = {
+                dados_unidade: false,
+                dados_associacao: false,
+                contas_associacao: false,
+                processos_sei: false,
+                situacao_financeira: false,
+                situacao_patrimonial: true
+            }
+
+            setClickBtnEscolheOpcao(novoEstadoAba);
+            setActiveTab(novoEstadoConteudo);
         }
         else{
             setPrimeiroActive();
@@ -290,6 +330,22 @@ export const DetalhesDaAssociacao = () => {
                                                 dadosDaAssociacao={dadosDaAssociacao}
                                             />
                                             
+                                        </div>
+                                    </div>
+                                :
+                                    null
+                            }
+
+                            {conteudo_tab.situacao_patrimonial.permissao
+                                ?
+                                    <div 
+                                        className={`tab-pane fade show ${activeTab.situacao_patrimonial ? "active" : ""}`} 
+                                        id={`nav-${conteudo_tab.situacao_patrimonial.id}`} 
+                                        role="tabpanel" 
+                                        aria-labelledby={`nav-${conteudo_tab.situacao_patrimonial.id}-tab`}
+                                    >
+                                        <div className="page-content-inner">
+                                            <SituacaoPatrimonialUnidadeEducacional visao_dre={true} />
                                         </div>
                                     </div>
                                 :

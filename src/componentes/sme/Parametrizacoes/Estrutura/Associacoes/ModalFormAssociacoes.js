@@ -57,8 +57,10 @@ const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitMo
                             values,
                             setFieldValue,
                         } = props;
-
+                        
                         let data_fim_periodo = null
+                        let nome_dre_tratado = props.values?.nome_dre?.replace(/DIRETORIA REGIONAL DE EDUCACAO\s*/i, '').trim() || '';
+
                         if(values.periodo_inicial) {
                             let periodo = listaDePeriodos.find(periodo => periodo.uuid === values.periodo_inicial)
                             data_fim_periodo = periodo ? periodo.data_fim_realizacao_despesas : null;
@@ -125,6 +127,21 @@ const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitMo
                                                 disabled={true}
                                             />
                                             {props.touched.tipo_nome_unidade && props.errors.tipo_nome_unidade && <span className="span_erro text-danger mt-1"> {props.errors.tipo_nome_unidade} </span>}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className='row'>
+                                    <div className='col'>
+                                        <div className="form-group">
+                                            <label htmlFor="nome_dre">DRE</label>
+                                            <input
+                                                type="text"
+                                                value={nome_dre_tratado}
+                                                name="nome_dre"
+                                                id="nome_dre"
+                                                className="form-control"
+                                                disabled={true}
+                                            />
                                         </div>
                                     </div>
                                 </div>

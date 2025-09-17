@@ -45,7 +45,7 @@ describe("TabelaTags Component", () => {
             }
         });
 
-        const tabela = screen.getByRole("grid");
+        const tabela = screen.getByRole("test");
         expect(tabela).toBeInTheDocument();
 
         const rows = screen.getAllByRole("row");

@@ -154,7 +154,7 @@ describe('MotivosRejeicaoEncerramentoConta', () => {
     test('Deve Abrir a Modal', async () => {
         renderComponent();
 
-        const botaoEditar = within(screen.getByRole("grid")).getByRole("button", { selector: ".btn-editar-membro" });
+        const botaoEditar = within(screen.getByRole("table")).getByRole("button", { selector: ".btn-editar-membro" });
         expect(botaoEditar).toBeInTheDocument();
         fireEvent.click(botaoEditar);
 

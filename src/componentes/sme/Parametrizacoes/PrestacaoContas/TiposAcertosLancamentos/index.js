@@ -73,7 +73,7 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
   }, []);
 
   const totalLancamentos = useMemo(
-    () => todosLancamentos.length,
+    () => (todosLancamentos||[]).length,
     [todosLancamentos]
   );
 
@@ -282,7 +282,7 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
             />
           </div>
         ) : (
-          todosLancamentos.length > 0 ? (
+          (todosLancamentos||[]).length > 0 ? (
           <>
             <TabelaLancamentos
               todosLancamentos={todosLancamentos}

@@ -6,6 +6,7 @@ import Spinner from "../../../../assets/img/spinner.gif";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faDownload} from '@fortawesome/free-solid-svg-icons'
 import {getPeriodoFechado} from "../../../../services/escolas/Associacao.service";
+import {visoesService} from "../../../../services/visoes.service"
 
 export const GeracaoAtaApresentacao = (
     {
@@ -22,6 +23,10 @@ export const GeracaoAtaApresentacao = (
     const [showNaoPodeGerarAta, setShowNaoPodeGerarAta] = useState(false);
     const [docPrestacaoConta, setDocPrestacaoConta] = useState({});
     const [textoModalAta, setTextoModalAta] = useState('<p>Você não pode gerar o PDF de uma ata incompleta.</p>');
+    const temPermissao = visoesService.getPermissoes(["change_ata_prestacao_contas"])
+    const btGerarDesabilitado =
+        !(uuidPrestacaoConta && docPrestacaoConta?.gerar_ou_editar_ata_apresentacao) ||
+        !temPermissao;
 
     useEffect(() => {
         if (uuidAtaApresentacao && dadosAta && dadosAta.status_geracao_pdf && dadosAta.status_geracao_pdf === 'EM_PROCESSAMENTO'){
@@ -118,18 +123,16 @@ export const GeracaoAtaApresentacao = (
                                 {uuidPrestacaoConta ? "Visualizar ata" : "Visualizar prévia da ata"}
                             </button>
 
-                            {uuidPrestacaoConta && 
                             <button
                                 onClick={() => gerarAta()}
                                 type="button"
                                 className="btn btn-outline-success float-right mr-2"
-                                disabled={!docPrestacaoConta?.gerar_ou_editar_ata_apresentacao}
+                                disabled={btGerarDesabilitado}
                                 title={!(docPrestacaoConta?.gerar_ou_editar_ata_apresentacao) ? 'A ata de apresentação só pode ser gerada enquanto o status da PC for "Não recebida".': ''}
                                 data-qa="btn-gerar-ata"
                             >
                                 gerar ata
                             </button>
-                            }
 
                         </div>
 

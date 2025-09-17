@@ -281,12 +281,12 @@ export const getFiqueDeOlhoPrestacoesDeContas = async () => {
   return (await api.get(`/api/prestacoes-contas/fique-de-olho/`,authHeader())).data
 };
 
-export const getTextoExplicacaoPaa = async () => {
-  return (await api.get(`/api/parametros-ue/texto-pagina-paa-ue/`,authHeader())).data
+export const getTextosPaaUe = async () => {
+  return (await api.get(`/api/parametros-paa/textos-paa-ue/`,authHeader())).data
 };
 
-export const patchTextoExplicacaoPaa = async (payload) => {
-  return (await api.patch(`api/parametros-ue/update-texto-pagina-paa-ue/`, {
+export const patchTextosPaaUe = async (payload) => {
+  return (await api.patch(`/api/parametros-paa/update-textos-paa-ue/`, {
           ...payload
       },
       authHeader(),

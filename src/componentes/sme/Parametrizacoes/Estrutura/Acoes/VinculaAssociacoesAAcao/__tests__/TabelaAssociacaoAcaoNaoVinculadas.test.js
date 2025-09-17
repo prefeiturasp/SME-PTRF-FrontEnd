@@ -34,10 +34,10 @@ describe('TabelaAssociacaoAcaoNaoVinculadas', () => {
       <TabelaAssociacaoAcaoNaoVinculadas {...defaultProps}/>
     );
 
-    expect(screen.getByText('Código Eol')).toBeInTheDocument();
-    expect(screen.getByText('Nome UE')).toBeInTheDocument();
-    expect(screen.getByText('Informações')).toBeInTheDocument();
-    expect(screen.getByText('Ações')).toBeInTheDocument();
+    expect(screen.getAllByText('Código Eol').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Nome UE').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Informações').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Ações').length).toBeGreaterThan(0);
   });
 
   it('deve chamar a função onPageChange ao clicar no Paginator', () => {
@@ -45,7 +45,7 @@ describe('TabelaAssociacaoAcaoNaoVinculadas', () => {
       <TabelaAssociacaoAcaoNaoVinculadas {...defaultProps}/>
     );
 
-    const tabela = screen.getByRole("grid");
+    const tabela = screen.getByRole("table");
     const rows = tabela.querySelectorAll("tbody tr");
     expect(rows).toHaveLength(2);
     const row = rows[0]

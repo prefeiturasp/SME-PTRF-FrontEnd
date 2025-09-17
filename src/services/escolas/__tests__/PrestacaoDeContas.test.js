@@ -33,8 +33,8 @@ import {
     downloadDocumentPdfAposAcertos,
     getConcluirPrestacaoDeConta,
     getFiqueDeOlhoPrestacoesDeContas,
-    getTextoExplicacaoPaa,
-    patchTextoExplicacaoPaa,
+    getTextosPaaUe,
+    patchTextosPaaUe,
     getAtaRetificadora,
     getIniciarAtaRetificadora,
     getMembrosCargos,
@@ -544,22 +544,22 @@ describe('Testes para funções de análise', () => {
         expect(result).toEqual(mockData);
     });
     
-    test('getTextoExplicacaoPaa deve chamar a API corretamente', async () => {
+    test('getTextosPaaUe deve chamar a API corretamente', async () => {
         api.get.mockResolvedValue({ data: mockData })
-        const result = await getTextoExplicacaoPaa();
+        const result = await getTextosPaaUe();
         expect(api.get).toHaveBeenCalledWith(
-            `/api/parametros-ue/texto-pagina-paa-ue/`,
+            `/api/parametros-paa/textos-paa-ue/`,
             getAuthHeader()
         )
         expect(result).toEqual(mockData);
     });
     
-    test('patchTextoExplicacaoPaa deve chamar a API corretamente', async () => {
+    test('patchTextosPaaUe deve chamar a API corretamente', async () => {
         api.patch.mockResolvedValue({ data: mockData })
         const payload = { teste: 'testes' }
-        const result = await patchTextoExplicacaoPaa(payload);
+        const result = await patchTextosPaaUe(payload);
         expect(api.patch).toHaveBeenCalledWith(
-            `api/parametros-ue/update-texto-pagina-paa-ue/`,
+            `/api/parametros-paa/update-textos-paa-ue/`,
             payload,
             getAuthHeader()
         )

@@ -12,7 +12,37 @@ const TabelaTextosPaa = ({acoesTemplate}) => {
             <tbody>
                 <tr>
                     <td>Explicação sobre o PAA</td>
-                    <td>{acoesTemplate('explicacao_sobre_paa')}</td>
+                    <td>{acoesTemplate('texto_pagina_paa_ue')}</td>
+                </tr>
+                <tr>
+                    <td>Introdução da aba Relatórios</td>
+                    <td>
+                        <div className="d-flex flex-column">
+                            <div className="mb-2">
+                                <small className="text-muted">Introdução 1:</small>
+                                {acoesTemplate('introducao_do_paa_ue_1')}
+                            </div>
+                            <div>
+                                <small className="text-muted">Introdução 2:</small>
+                                {acoesTemplate('introducao_do_paa_ue_2')}
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Conclusão da aba Relatórios</td>
+                    <td>
+                        <div className="d-flex flex-column">
+                            <div className="mb-2">
+                                <small className="text-muted">Conclusão 1:</small>
+                                {acoesTemplate('conclusao_do_paa_ue_1')}
+                            </div>
+                            <div>
+                                <small className="text-muted">Conclusão 2:</small>
+                                {acoesTemplate('conclusao_do_paa_ue_2')}
+                            </div>
+                        </div>
+                    </td>
                 </tr>
             </tbody>
         </table>

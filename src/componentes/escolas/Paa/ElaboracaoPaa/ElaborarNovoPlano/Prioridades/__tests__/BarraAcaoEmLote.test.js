@@ -23,13 +23,15 @@ describe('BarraAcaoEmLote', () => {
   test('renderiza a barra com o número correto de prioridades selecionadas', () => {
     renderizaComponente(['uuid1', 'uuid2', 'uuid3']);
 
-    expect(screen.getByText('3 prioridades selecionadas')).toBeInTheDocument();
+    const element = screen.getByText(/prioridades selecionadas/i);
+    expect(element).toHaveTextContent("3 prioridades selecionadas");
   });
 
   test('renderiza texto singular quando há apenas uma prioridade selecionada', () => {
     renderizaComponente(['uuid1']);
 
-    expect(screen.getByText('1 prioridade selecionada')).toBeInTheDocument();
+    const element = screen.getByText(/prioridade selecionada/i);
+    expect(element).toHaveTextContent("1 prioridade selecionada");
   });
 
   test('chama handleExcluirPrioridades quando clica no botão excluir', () => {

@@ -76,13 +76,14 @@ describe('Tags Component', () => {
   test('handles "Sim" radio button click', async () => {
     const props = getProps('nao');
     render(<Tags {...props} />);
+    const user = userEvent.setup();
 
     expect(screen.getByLabelText('Não')).toBeChecked();
 
     const radioNao = screen.getByLabelText('Não');
     const radioSim = screen.getByLabelText('Sim');
-    await fireEvent.click(radioSim);
-    await fireEvent.click(radioNao);
+    await user.click(radioSim);
+    await user.click(radioNao);
     expect(radioNao.value).toBe('nao');
     expect(radioSim.value).toBe('sim');
 
@@ -97,12 +98,12 @@ describe('Tags Component', () => {
   test('altera a selecao de tag', async () => {
     const props = getProps('sim');
     render(<Tags {...props} />);
-    const user = userEvent;
+    const user = userEvent.setup();
 
     const selectElement = screen.getByRole('combobox');
     expect(selectElement).toBeInTheDocument();
 
-    user.selectOptions(selectElement, 'tag2-uuid');
+    await user.selectOptions(selectElement, 'tag2-uuid');
 
     expect(props.formikProps.handleChange).toHaveBeenCalledTimes(1);
   });
