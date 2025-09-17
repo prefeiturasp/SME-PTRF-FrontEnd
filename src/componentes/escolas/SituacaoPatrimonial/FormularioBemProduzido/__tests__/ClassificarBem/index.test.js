@@ -6,17 +6,19 @@ import { ClassificarBem } from "../../ClassificarBem/index";
 const mockUseNavigate = jest.fn();
 const mockCadastrarBem = jest.fn();
 
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
+jest.mock("react-router-dom", () => ({
+  ...jest.requireActual("react-router-dom"),
   useNavigate: () => mockUseNavigate,
-  useSearchParams: jest.fn()
+  useSearchParams: jest.fn(),
 }));
 
-jest.mock('../../../../../../services/escolas/Despesas.service', () => ({
-  getEspecificacoesCapital: jest.fn(() => Promise.resolve([
-    { uuid: '1', descricao: 'Bem 1' },
-    { uuid: '2', descricao: 'Bem 2' }
-  ]))
+jest.mock("../../../../../../services/escolas/Despesas.service", () => ({
+  getEspecificacoesCapital: jest.fn(() =>
+    Promise.resolve([
+      { uuid: "1", descricao: "Bem 1" },
+      { uuid: "2", descricao: "Bem 2" },
+    ])
+  ),
 }));
 
 describe("ClassificarBem", () => {
@@ -51,7 +53,7 @@ describe("ClassificarBem", () => {
     );
 
     // Submete o formulário diretamente
-    const form = container.querySelector('form');
+    const form = container.querySelector("form");
     fireEvent.submit(form);
 
     await waitFor(() => {
@@ -181,23 +183,20 @@ describe("ClassificarBem", () => {
     const inputQnt = screen.getByRole("spinbutton", {
       name: /Quantidade/i,
     });
-    userEvent.type(inputQnt, "0");
+    await userEvent.type(inputQnt, "0");
 
     await waitFor(() => {
-      expect(
-        screen.getByText("O valor deve ser maior que 0")
-      ).toBeInTheDocument();
+      expect(screen.getByText("O valor deve ser maior que 0")).toBeInTheDocument();
     });
 
     const inputValor = screen.getByRole("spinbutton", {
       name: /Valor Individual/i,
     });
-    userEvent.type(inputValor, "0");
+
+    await userEvent.type(inputValor, "0");
 
     await waitFor(() => {
-      expect(
-        screen.getByText("O valor deve ser maior que 0")
-      ).toBeInTheDocument();
+      expect(screen.getByText("O valor deve ser maior que 0")).toBeInTheDocument();
     });
   });
 
@@ -227,7 +226,7 @@ describe("ClassificarBem", () => {
       name: /Número do processo de incorporação/i,
     });
 
-    userEvent.type(input, "1111111111111111");
+    await userEvent.type(input, "1111111111111111");
 
     await waitFor(() => {
       expect(input).toHaveValue("1111.1111/1111111-1");
