@@ -17,13 +17,15 @@ export const deleteDespesa = async (uuid) => {
 
 export const getDespesasTabelas = async (associacao_uuid = null) => {
   const uuid_associacao = getUuidAssociacao();
+  const uuid = associacao_uuid || uuid_associacao;
+  
+  if (!uuid) {
+    return null;
+  }
+  
   return (
     await api.get(
-      `api/despesas/tabelas/?associacao_uuid=${
-        associacao_uuid
-          ? associacao_uuid
-          : uuid_associacao
-      }`,
+      `api/despesas/tabelas/?associacao_uuid=${uuid}`,
       authHeader()
     )
   ).data;

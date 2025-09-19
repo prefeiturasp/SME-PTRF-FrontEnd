@@ -68,6 +68,7 @@ export function PendenciasRecebimento({ prestacaoDeContas }) {
 
     if (
       prestacaoDeContas.status === STATUS_PRESTACAO_CONTA.DEVOLVIDA_RETORNADA &&
+      !prestacaoDeContas.tem_apenas_ajustes_externos &&
       !prestacaoDeContas.ata_retificacao_gerada
     ) {
       _pendencias.push(
