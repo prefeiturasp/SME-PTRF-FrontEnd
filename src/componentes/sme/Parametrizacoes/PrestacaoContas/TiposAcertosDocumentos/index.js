@@ -17,7 +17,7 @@ import {MsgImgCentralizada} from "../../../../Globais/Mensagens/MsgImgCentraliza
 import Img404 from "../../../../../assets/img/img-404.svg"
 import "../parametrizacoes-prestacao-contas.scss";
 import { ModalFormDocumentos } from "./ModalFormDocumento";
-import { ModalConfirmDeleteDocumento } from "../../PrestacaoContas/TiposAcertosDocumentos/ModalConfirmDeleteDocumento";
+import { ModalConfirmarExclusao } from "../../componentes/ModalConfirmarExclusao";
 import { ModalInfoNaoPodeExcluir } from "../../Estrutura/Acoes/ModalInfoNaoPodeExcluir";
 import { ModalInfoNaoPodeGravar } from "../../Estrutura/Acoes/ModalInfoNaoPodeGravar";
 import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
@@ -108,6 +108,7 @@ export const ParametrizacoesTiposAcertosDocumentos = () => {
     setLoading(true);
     setStateFiltros(initialStateFiltros);
     await getListaDeAcertosDocumentos();
+    setLoading(false);
   };
 
   const rowsPerPage = 20;
@@ -137,6 +138,7 @@ export const ParametrizacoesTiposAcertosDocumentos = () => {
       categoria: rowData.categoria,
       tipos_documento_prestacao: rowData.tipos_documento_prestacao.map(v => v.id),
       ativo: rowData.ativo,
+      pode_alterar_saldo_conciliacao: rowData.pode_alterar_saldo_conciliacao,
       operacao: "edit",
     });
     setShowModalForm(true);
@@ -162,6 +164,7 @@ export const ParametrizacoesTiposAcertosDocumentos = () => {
       categoria: stateFormModal.categoria,
       tipos_documento_prestacao: stateFormModal.tipos_documento_prestacao,
       ativo: stateFormModal.ativo,
+      pode_alterar_saldo_conciliacao: stateFormModal.pode_alterar_saldo_conciliacao
     }
 
     if(payload.tipos_documento_prestacao.includes('all')){
@@ -193,7 +196,6 @@ export const ParametrizacoesTiposAcertosDocumentos = () => {
         await putAtualizarAcertosDocumentos(stateFormModal.uuid, payload);
         setShowModalForm(false);
         toastCustom.ToastCustomSuccess('Edição do tipo de acerto em documento realizado com sucesso.', `O tipo de acerto em documento foi editado no sistema com sucesso.`)
-        console.log("Ação alterada com sucesso", payload);
         await carregaTodosAcertosDocumentos();
       } catch (e) {
         toastCustom.ToastCustomError('Erro ao editar tipo de acerto em documento', `Não foi possível editar o tipo de acerto em documento`)
@@ -227,16 +229,18 @@ export const ParametrizacoesTiposAcertosDocumentos = () => {
         await deleteAcertosDocumentos(stateFormModal.uuid);
         setShowModalForm(false);
         toastCustom.ToastCustomSuccess('Remoção do tipo de acerto em documento efetuado com sucesso.', `O tipo de acerto em documento foi removido do sistema com sucesso.`)
-        console.log('Documentos excluído com sucesso');
         await carregaTodosAcertosDocumentos();
     } catch (e) {
         toastCustom.ToastCustomError('Erro ao remover tipo de acerto em documento', `Não foi possível remover o tipo de acerto em documento`)
         if (e.response && e.response.data && e.response.data.mensagem){
             setMensagemModalInfoNaoPodeExcluir(e.response.data.mensagem);
+
+            // fechar a Modal de confirmação antes de abrir a de erro para evitar que uma Modal seja aberta sobre a info
+            setShowModalDeleteDocumento(false)
+
             setShowModalInfoNaoPodeExcluir(true);
-            console.log(e.response.data.mensagem)
+            console.error(e.response)
         }
-        console.log('Erro ao excluir Delete!! ', e.response)
     }
 };
 
@@ -332,19 +336,6 @@ export const ParametrizacoesTiposAcertosDocumentos = () => {
           />
         </section>
         <section>
-          <ModalConfirmDeleteDocumento
-            show={showModalDeleteDocumento}
-            handleClose={handleCloseDeleteDocumento}
-            onDeleteDocumentoTrue={onDeleteDocumentoTrue}
-            titulo="Excluir documento"
-            texto={`<p>Deseja realmente apagar ${stateFormModal.nome}?</p>`}
-            primeiroBotaoTexto="Cancelar"
-            primeiroBotaoCss="outline-success"
-            segundoBotaoCss="danger"
-            segundoBotaoTexto="Excluir"
-          />
-        </section>
-        <section>
           <ModalInfoNaoPodeExcluir
             show={showModalInfoNaoPodeExcluir}
             handleClose={handleCloseInfoNaoPodeExcluir}
@@ -362,6 +353,20 @@ export const ParametrizacoesTiposAcertosDocumentos = () => {
             texto={mensagemModalInfoNaoPodeGravar}
             primeiroBotaoTexto="Fechar"
             primeiroBotaoCss="success"
+          />
+        </section>
+        <section>
+          <ModalConfirmarExclusao
+            open={showModalDeleteDocumento}
+            onOk={onDeleteDocumentoTrue}
+            okText="Excluir"
+            onCancel={handleCloseDeleteDocumento}
+            cancelText="Cancelar"
+            cancelButtonProps={{ className: "btn-base-verde-outline" }}
+            titulo="Excluir tipo de acerto em documento"
+            bodyText={
+              <p>Tem certeza que deseja excluir o tipo de acerto em documento?</p>
+            }
           />
         </section>
         </>
