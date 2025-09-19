@@ -203,7 +203,7 @@ describe('<EdicaoDeDespesa>', () => {
     const botoes = screen.getAllByText("Voltar para Situação Patrimonial");
     fireEvent.click(botoes[0]);
 
-    expect(mockNavigate).toHaveBeenCalledWith('/dre-detalhes-associacao');
+    expect(mockNavigate).toHaveBeenCalledWith('/dre-detalhes-associacao/situacao-patrimonial');
   });
 
   test('Não deve renderizar botão quando veioDeSituacaoPatrimonial é false', () => {
