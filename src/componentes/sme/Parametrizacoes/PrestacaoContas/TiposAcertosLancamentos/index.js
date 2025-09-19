@@ -14,7 +14,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faEdit } from "@fortawesome/free-solid-svg-icons";
 import Loading from "../../../../../utils/Loading";
 import { ModalFormLancamentos } from "./ModalFormLancamento";
-import { ModalConfirmDeleteLancamento } from "./ModalConfirmDeleteLancamento";
+import { ModalConfirmarExclusao } from "../../componentes/ModalConfirmarExclusao";
 import { ModalInfoNaoPodeExcluir } from "../../Estrutura/Acoes/ModalInfoNaoPodeExcluir";
 import { ModalInfoNaoPodeGravar } from "../../Estrutura/Acoes/ModalInfoNaoPodeGravar";
 import {MsgImgCentralizada} from "../../../../Globais/Mensagens/MsgImgCentralizada";
@@ -137,6 +137,7 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
       nome: stateFormModal.nome,
       categoria: stateFormModal.categoria,
       ativo: stateFormModal.ativo,
+      pode_alterar_saldo_conciliacao: stateFormModal.pode_alterar_saldo_conciliacao
     };
 
     if (stateFormModal.operacao === "create") {
@@ -163,7 +164,6 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
         await putAtualizarAcertosLancamentos(stateFormModal.uuid, payload);
         setShowModalForm(false);
         toastCustom.ToastCustomSuccess('Edição do tipo de acerto em lançamento realizado com sucesso.', `O tipo de acerto em lançamento foi editado no sistema com sucesso.`)
-        console.log("Ação alterada com sucesso", payload);
         await carregaTodosLancamentos();
       } catch (e) {
         if (e.response.data && e.response.data.non_field_errors) {
@@ -195,16 +195,18 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
         setShowModalDeleteLancamento(false);
         await deleteAcertosLancamentos(stateFormModal.uuid);
         setShowModalForm(false);
-      toastCustom.ToastCustomSuccess('Remoção do tipo de acerto em lançamento efetuado com sucesso.', `O tipo de acerto em lançamento foi removido do sistema com sucesso.`)
-        console.log('Lançamento excluído com sucesso');
+        toastCustom.ToastCustomSuccess('Remoção do tipo de acerto em lançamento efetuado com sucesso.', `O tipo de acerto em lançamento foi removido do sistema com sucesso.`)
         await carregaTodosLancamentos();
     } catch (e) {
         if (e.response && e.response.data && e.response.data.mensagem){
             setMensagemModalInfoNaoPodeExcluir(e.response.data.mensagem);
+
+            // fechar a Modal de confirmação antes de abrir a de erro para evitar que uma Modal seja aberta sobre a info
+            setShowModalDeleteLancamento(false)
+
             setShowModalInfoNaoPodeExcluir(true);
-            console.log(e.response.data.mensagem)
+            console.error(e.response)
         }
-        console.log('Erro ao excluir Lançamento!! ', e.response)
     }
 };
 
@@ -225,6 +227,7 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
       nome: rowData.nome,
       categoria: rowData.categoria,
       ativo: rowData.ativo,
+      pode_alterar_saldo_conciliacao: rowData.pode_alterar_saldo_conciliacao,
       operacao: "edit",
     });
     setShowModalForm(true);
@@ -313,16 +316,17 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
           />
         </section>
         <section>
-          <ModalConfirmDeleteLancamento
-            show={showModalDeleteLancamento}
-            handleClose={handleCloseDeleteLancamento}
-            onDeleteLancamentoTrue={onDeleteLancamentoTrue}
-            titulo="Excluir Ação"
-            texto={`<p>Deseja realmente apagar ${stateFormModal.nome}?</p>`}
-            primeiroBotaoTexto="Cancelar"
-            primeiroBotaoCss="outline-success"
-            segundoBotaoCss="danger"
-            segundoBotaoTexto="Excluir"
+          <ModalConfirmarExclusao
+            open={showModalDeleteLancamento}
+            onOk={onDeleteLancamentoTrue}
+            okText="Excluir"
+            onCancel={handleCloseDeleteLancamento}
+            cancelText="Cancelar"
+            cancelButtonProps={{ className: "btn-base-verde-outline" }}
+            titulo="Excluir tipo de acerto em lançamentos"
+            bodyText={
+              <p>Tem certeza que deseja excluir o tipo de acerto em lançamentos?</p>
+            }
           />
         </section>
         <section>
