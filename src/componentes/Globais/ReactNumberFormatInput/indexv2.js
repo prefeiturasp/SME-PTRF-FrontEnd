@@ -1,17 +1,9 @@
 import React, { useRef } from "react";
-import NumberFormat from "react-number-format";
+import { NumericFormat } from "react-number-format";
 import { formatMoneyByCentsBRL, parseMoneyBRL } from "../../../utils/money";
 
-
 export const ReactNumberFormatInputV2 = (props) => {
-  const {
-    value,
-    onChangeEvent,
-    selectAllOnFocus,
-    allowEmpty,
-    placeholder,
-    ...restProps
-  } = props;
+  const { value, onChangeEvent, selectAllOnFocus, allowEmpty, placeholder, ...restProps } = props;
 
   const numberFormatRef = useRef(null);
 
@@ -24,11 +16,11 @@ export const ReactNumberFormatInputV2 = (props) => {
   const handleValueChange = (values) => {
     const rawValue = values.value;
     const cents = parseMoneyBRL(rawValue);
-    onChangeEvent?.(cents/100);
+    onChangeEvent?.(cents / 100);
   };
 
   return (
-    <NumberFormat
+    <NumericFormat
       ref={numberFormatRef}
       onFocus={handleFocus}
       allowEmptyFormatting={allowEmpty}
