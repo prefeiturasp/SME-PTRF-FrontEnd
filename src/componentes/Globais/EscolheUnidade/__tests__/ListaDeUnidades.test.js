@@ -48,10 +48,10 @@ describe('ListaDeUnidades', () => {
   it('renderiza colunas e dados da unidade', () => {
     renderComponent();
 
-    expect(screen.getByText('Código Eol')).toBeInTheDocument();
-    expect(screen.getByText('Unidade educacional')).toBeInTheDocument();
-    expect(screen.getByText('Informações')).toBeInTheDocument();
-    expect(screen.getByText('Ação')).toBeInTheDocument();
+    expect(screen.getByRole('columnheader', { name: /código eol/i })).toBeInTheDocument();
+    expect(screen.getByRole('columnheader', { name: /unidade educacional/i })).toBeInTheDocument();
+    expect(screen.getByRole('columnheader', { name: /informações/i })).toBeInTheDocument();
+    expect(screen.getByRole('columnheader', { name: /ação/i })).toBeInTheDocument();
 
     expect(screen.getByText('123456')).toBeInTheDocument();
     expect(screen.getByText('EM Escola A')).toBeInTheDocument();

@@ -153,27 +153,22 @@ describe("ModalForm Componente", () => {
   it("CREATE - Chama submit e onChange quando preenchidos os campos", async () => {
     renderComponent();
 
-    const campoReferencia = screen.getByLabelText("Referência do mandato *")
+    const campoReferencia = screen.getByLabelText("Referência do mandato *");
     expect(campoReferencia).toBeInTheDocument();
     fireEvent.change(campoReferencia, { target: { value: "Referencia 1" } });
 
-    const campoDataInicial = screen.getByLabelText("Data inicial *")
-    const campoDataFinal = screen.getByLabelText("Data final *")
+    const campoDataInicial = screen.getByLabelText("Data inicial *");
+    const campoDataFinal = screen.getByLabelText("Data final *");
 
-    userEvent.clear(campoDataInicial);
-    userEvent.click(campoDataInicial);
-    userEvent.type(campoDataInicial, "14/04/2025");
-
-    userEvent.clear(campoDataFinal);
-    userEvent.click(campoDataFinal);
-    userEvent.type(campoDataFinal, "15/04/2025");
+    fireEvent.change(campoDataInicial, { target: { value: "14/04/2025" } });
+    fireEvent.change(campoDataFinal, { target: { value: "15/04/2025" } });
 
     const botaoSalvar = screen.getByRole("button", { name: "Adicionar" });
     fireEvent.click(botaoSalvar);
 
     await waitFor(() => {
       expect(handleSubmitFormModal).toHaveBeenCalled();
-    })
+    });
   });
 
   it("EDIT - Chama submit de edição", async () => {

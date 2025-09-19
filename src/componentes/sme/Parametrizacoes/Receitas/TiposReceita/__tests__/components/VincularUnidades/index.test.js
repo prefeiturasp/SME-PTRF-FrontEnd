@@ -52,8 +52,8 @@ describe("VincularUnidades", () => {
     render(<Provider store={mockStore}><VincularUnidades tipoContaUUID="uuid" /></Provider>);
 
     // Verifique se os dados estão sendo exibidos
-    expect(screen.getByText("Código Eol")).toBeInTheDocument();
-    expect(screen.getByText("Unidade educacional")).toBeInTheDocument();
+    expect(screen.getByRole("columnheader", { name: /Código Eol/i })).toBeInTheDocument();
+    expect(screen.getByRole("columnheader", { name: /Unidade educacional/i })).toBeInTheDocument();
 
     // Verifique a exibição da unidade
     expect(screen.getByText("Unidade A")).toBeInTheDocument();

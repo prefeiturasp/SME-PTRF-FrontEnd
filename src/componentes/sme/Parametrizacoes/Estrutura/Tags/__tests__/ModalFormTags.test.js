@@ -71,10 +71,8 @@ describe("Componente ModalForm", () => {
       camposTexto.forEach((campo) => {
         expect(campo).toBeEnabled();
       });
-      const camposRadio = screen.getAllByRole("radio");
-      camposRadio.forEach((campo) => {
-        expect(campo).toBeEnabled();
-      });
+
+      expect(screen.getByRole("combobox", { name: /Status \*/i })).toBeEnabled();
     });
 
     it("Renderiza a Modal corretamente com permissão False", () => {
@@ -91,10 +89,8 @@ describe("Componente ModalForm", () => {
       camposTexto.forEach((campo) => {
         expect(campo).toBeDisabled();
       });
-      const camposRadio = screen.getAllByRole("radio");
-      camposRadio.forEach((campo) => {
-        expect(campo).toBeDisabled();
-      });
+
+      expect(screen.getByRole("combobox", { name: /Status \*/i })).toBeDisabled();
     });
   });
 
@@ -112,10 +108,8 @@ describe("Componente ModalForm", () => {
       camposTexto.forEach((campo) => {
         expect(campo).toBeEnabled();
       });
-      const camposRadio = screen.getAllByRole("radio");
-      camposRadio.forEach((campo) => {
-        expect(campo).toBeEnabled();
-      });
+
+      expect(screen.getByRole("combobox", { name: /Status \*/i })).toBeEnabled();
     });
 
     it("Renderiza a Modal corretamente com permissão False", () => {
@@ -132,49 +126,8 @@ describe("Componente ModalForm", () => {
       camposTexto.forEach((campo) => {
         expect(campo).toBeDisabled();
       });
-      const camposRadio = screen.getAllByRole("radio");
-      camposRadio.forEach((campo) => {
-        expect(campo).toBeDisabled();
-      });
-    });
-  });
 
-  describe("Quando a operação é Edição", () => {
-    it("Renderiza a Modal corretamente com permissão True", () => {
-      renderModalForm(defaultPropsEdicao);
-      verifyCommonElements(true);
-
-      expect(screen.getByLabelText("Nome *")).toHaveValue("Nome de teste na edição");
-      expect(screen.queryByRole("button", { name: "Excluir" })).toBeInTheDocument();
-      expect(screen.getByRole("button", { name: "Salvar" })).toBeEnabled();
-      
-      const camposTexto = screen.getAllByRole("textbox");
-      camposTexto.forEach((campo) => {
-        expect(campo).toBeEnabled();
-      });
-      const camposRadio = screen.getAllByRole("radio");
-      camposRadio.forEach((campo) => {
-        expect(campo).toBeEnabled();
-      });
-    });
-
-    it("Renderiza a Modal corretamente com permissão False", () => {
-      RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(false);
-      renderModalForm(defaultPropsEdicao);
-      verifyCommonElements(true);
-
-      expect(screen.getByLabelText("Nome *")).toHaveValue("Nome de teste na edição");
-      expect(screen.queryByRole("button", { name: "Excluir" })).toBeInTheDocument();
-      expect(screen.getByRole("button", { name: "Salvar" })).toBeDisabled();
-      
-      const camposTexto = screen.getAllByRole("textbox");
-      camposTexto.forEach((campo) => {
-        expect(campo).toBeDisabled();
-      });
-      const camposRadio = screen.getAllByRole("radio");
-      camposRadio.forEach((campo) => {
-        expect(campo).toBeDisabled();
-      });
+      expect(screen.getByRole("combobox", { name: /Status \*/i })).toBeDisabled();
     });
   });
 

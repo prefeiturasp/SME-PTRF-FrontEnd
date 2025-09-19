@@ -54,6 +54,15 @@ describe('ModalForm Component', () => {
     RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
   });
 
+  beforeAll(() => {
+    global.ResizeObserver = class {
+      constructor(callback) { }
+      observe() { }
+      unobserve() { }
+      disconnect() { }
+    };
+  });
+
   it('deve renderizar o modal com os campos', () => {
     
     render(

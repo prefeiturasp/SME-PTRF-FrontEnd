@@ -94,22 +94,17 @@ const mockUsuarioLogado = {
 
 describe('CardsDevolucoesParaAcertoDaDre', ()=>{
 
-    test('Renderiza componente', async ()=>{
-        getAnalisesDePcDevolvidas.mockReturnValue(mockAnalises)
+    test('Renderiza componente', async () => {
+        getAnalisesDePcDevolvidas.mockResolvedValue({ data: mockAnalises })
         mantemEstadoAnaliseDre.getAnaliseDreUsuarioLogado.mockReturnValue(mockUsuarioLogado)
 
-        render(<CardsDevolucoesParaAcertoDaDre {...mockData}/>)
-        
-        await waitFor(() => {
-            expect(screen.queryByText('Carregando...')).not.toBeInTheDocument()
-        })
-        
-        await waitFor(()=>{
-            const campo = screen.getByTestId('select-filtro-ajuste')
-            expect(campo).toBeInTheDocument()
-            expect(getAnalisesDePcDevolvidas).toHaveBeenCalled()
-            expect(mantemEstadoAnaliseDre.getAnaliseDreUsuarioLogado).toHaveBeenCalled()
-        })
+        render(<CardsDevolucoesParaAcertoDaDre {...mockData} />)
+
+        const campo = await screen.findByTestId('select-filtro-ajuste')
+
+        expect(campo).toBeInTheDocument()
+        expect(getAnalisesDePcDevolvidas).toHaveBeenCalled()
+        expect(mantemEstadoAnaliseDre.getAnaliseDreUsuarioLogado).toHaveBeenCalled()
     })
 
     test('Renderiza componente', async ()=>{
