@@ -13,7 +13,7 @@ export const ModalFormLancamentos = (props) => {
             <>
                 <form onSubmit={props.handleSubmitModalFormLancamentos}>
                     <div className='row'>
-                        <div className='col-12'>
+                        <div className='col-10'>
                             <p className='text-right mb-0'>* Preenchimento obrigatório</p>
                         </div>
 
@@ -48,53 +48,88 @@ export const ModalFormLancamentos = (props) => {
 
                         </div>
 
-                        <div className='col-8'>
+                        <div className='form-group col-sm-12 col-lg-8'>
+                            <div className="form-check form-check-inline">
+                                <p className='mt-3 mb-0 mr-4 pr-4 font-weight-normal'>
+                                    Tipo de acerto pode alterar o saldo em conciliação bancária?
+                                </p>
+                            </div>
+                            <div className="form-check form-check-inline">
+                                <input
+                                    name="pode_alterar_saldo_conciliacao"
+                                    className={`form-check-input`}
+                                    type="radio"
+                                    id="pode_alterar_saldo_conciliacao_sim"
+                                    value="True"
+                                    checked={props.stateFormModal.pode_alterar_saldo_conciliacao}
+                                    onChange={() => props.handleChangeFormModal('pode_alterar_saldo_conciliacao', true)}
+                                    disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
+                                />
+                                <label className="form-check-label font-weight-bold"
+                                       htmlFor="pode_alterar_saldo_conciliacao_sim">Sim</label>
+                            </div>
+                            <div className="form-check form-check-inline">
+                                <input
+                                    name="pode_alterar_saldo_conciliacao"
+                                    className={`form-check-input`}
+                                    type="radio"
+                                    id="pode_alterar_saldo_conciliacao_nao"
+                                    value="False"
+                                    checked={!props.stateFormModal.pode_alterar_saldo_conciliacao}
+                                    onChange={() => props.handleChangeFormModal('pode_alterar_saldo_conciliacao', false)}
+                                    disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
+                                />
+                                <label className="form-check-label font-weight-bold"
+                                       htmlFor="pode_alterar_saldo_conciliacao_nao">Não</label>
+                            </div>
+                        </div>
+
+                        <div className='form-group col-sm-4 col-md-4 col-lg-3'>
                             <div className="form-check form-check-inline">
                                 <p className='mt-3 mb-0 mr-4 pr-4 font-weight-normal'>Ativo?</p>
                             </div>
-                            <div className="form-check form-check-inline">
-                                <input
-                                    name="ativo"
-                                    className={`form-check-input`}
-                                    type="radio"
-                                    id="reabertura-lancamentos"
-                                    value="True"
-                                    checked={props.stateFormModal.ativo}
-                                    onChange={() => props.handleChangeFormModal('ativo', true)}
-                                    disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
-                                />
-                                <label className="form-check-label font-weight-bold"
-                                       htmlFor="reabertura-lancamentos">Sim</label>
-                            </div>
-                            <div className="form-check form-check-inline">
-                                <input
-                                    name="ativo"
-                                    className={`form-check-input`}
-                                    type="radio"
-                                    id="reabertura-lancamentos"
-                                    value="False"
-                                    checked={!props.stateFormModal.ativo}
-                                    onChange={() => props.handleChangeFormModal('ativo', false)}
-                                    disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
-                                />
-                                <label className="form-check-label font-weight-bold"
-                                       htmlFor="reabertura-lancamentos">Não</label>
+                            <div>
+
+                                <div className="form-check form-check-inline">
+                                    <input
+                                        name="ativo"
+                                        className={`form-check-input`}
+                                        type="radio"
+                                        id="ativo-sim"
+                                        value="True"
+                                        checked={props.stateFormModal.ativo}
+                                        onChange={() => props.handleChangeFormModal('ativo', true)}
+                                        disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
+                                    />
+                                    <label className="form-check-label font-weight-bold"
+                                        htmlFor="ativo-sim">Sim</label>
+                                </div>
+                                <div className="form-check form-check-inline">
+                                    <input
+                                        name="ativo"
+                                        className={`form-check-input`}
+                                        type="radio"
+                                        id="ativo-nao"
+                                        value="False"
+                                        checked={!props.stateFormModal.ativo}
+                                        onChange={() => props.handleChangeFormModal('ativo', false)}
+                                        disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
+                                    />
+                                    <label className="form-check-label font-weight-bold"
+                                        htmlFor="ativo-nao">Não</label>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    {operacao === 'edit' ? (
+                    {operacao === 'edit' && (
                         <>
                             <div className='row mt-3'>
                                 <div className='col'>
-                                    <p>Uuid</p>
-                                    <p>{props.stateFormModal.uuid}</p>
-                                </div>
-                                <div className='col'>
                                     <p>ID</p>
-                                    <p>{props.stateFormModal.id}</p>
+                                    <p>{props.stateFormModal?.id}</p>
                                 </div>
                             </div>
-                        </>) : null}
+                        </>)}
 
 
                     <div className="d-flex bd-highlight mt-2">
@@ -106,7 +141,7 @@ export const ModalFormLancamentos = (props) => {
                                     className="btn btn btn-danger mt-2 mr-2"
                                     disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                 >
-                                    Apagar
+                                    Excluir
                                 </button>
                             }
                         </div>
@@ -126,8 +161,7 @@ export const ModalFormLancamentos = (props) => {
                                     props.handleSubmitModalFormLancamentos(props.stateFormModal)
                                 }}
                                 type="button"
-                                className="btn btn btn-success mt-2"
-                            >
+                                className="btn btn btn-success mt-2">
                                 Salvar
                             </button>
                         </div>
