@@ -378,7 +378,7 @@ describe('Testes de Filtros', () => {
 
     it("Testa a chamada de getFiltrosTiposDeDocumento", async () => {
         getListaDeAcoes.mockResolvedValueOnce(mockAcoes);
-        getAcoesFiltradas.mockResolvedValueOnce(mockAcoes); // Garante que retorna array
+        getAcoesFiltradas.mockResolvedValueOnce(mockAcoes);
         renderComponent();
 
         await waitFor(() => {
