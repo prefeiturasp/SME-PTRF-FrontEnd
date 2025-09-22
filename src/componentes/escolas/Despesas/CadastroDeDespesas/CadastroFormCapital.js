@@ -1,5 +1,5 @@
 import React from "react";
-import NumberFormat from "react-number-format";
+import { NumericFormat } from "react-number-format";
 import {
     calculaValorRateio,
     trataNumericos,
@@ -110,7 +110,7 @@ export const CadastroFormCapital = (propriedades) => {
                     <div className='row'>
                         <div className="col-12 col-md-6 mt-4">
                             <label htmlFor="quantidade_itens_capital">Quantidade de itens</label>
-                            <NumberFormat
+                            <NumericFormat
                                 data-qa={`cadastro-edicao-despesa-rateio-${index}-cadastro-capital-quantidade-de-itens`}
                                 value={rateio.quantidade_itens_capital}
                                 onChange={(e) => {
