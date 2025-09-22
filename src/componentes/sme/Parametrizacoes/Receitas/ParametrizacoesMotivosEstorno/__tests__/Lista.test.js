@@ -1,5 +1,5 @@
 import React, {act} from "react";
-import { render, screen, fireEvent, waitFor, renderHook } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor, renderHook, within } from "@testing-library/react";
 import { Lista } from "../Lista";
 import { MotivosEstornoContext } from "../context/MotivosEstorno";
 import { usePostMotivoEstorno } from "../hooks/usePostMotivoEstorno";
@@ -204,7 +204,8 @@ describe("Lista Component", () => {
         </MotivosEstornoContext.Provider>
       );
 
-      const botaoAdicionar = screen.getByRole("button", { name: /adicionar/i });
+      const modal = screen.getByRole("dialog");
+      const botaoAdicionar = within(modal).getByRole("button", { name: /^Adicionar$/ });
       fireEvent.click(botaoAdicionar);
       
       const { result } = renderHook(() => usePostMotivoEstorno(), { wrapper });
