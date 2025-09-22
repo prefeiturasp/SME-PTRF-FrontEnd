@@ -89,13 +89,9 @@ export const TabelaDownloads = ({
   const ultimaAtualizacaoTemplate = (rowData) => {
     return (
       <div className="align-middle text-center">
-        {rowData.status === "EM_PROCESSAMENTO" ? (
-          <span style={{ fontSize: "16pt" }}>-</span>
-        ) : (
-          <span>
-            {moment(rowData.alterado_em).format("DD/MM/YYYY [às] HH:mm")}
-          </span>
-        )}
+        <span>
+          {moment(rowData.criado_em).format("DD/MM/YYYY [às] HH:mm")}
+        </span>        
       </div>
     );
   };
@@ -159,8 +155,8 @@ export const TabelaDownloads = ({
               style={{ width: "10em" }}
             />
             <Column
-              field="ultima_atualizacao"
-              header="Ultima atualização"
+              field="data_solicitacao"
+              header="Data de solicitação"
               body={ultimaAtualizacaoTemplate}
               style={{ width: "15em" }}
               className="align-middle text-center borda-coluna"
