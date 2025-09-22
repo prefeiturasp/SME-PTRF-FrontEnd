@@ -18,12 +18,25 @@ export const TableTags = ({data, coresTags, excludeTags = []}) => {
                     toolTip = tag.tag_hint.reduce((acc, info) => (acc + `${info}<br/>`), '<p>') + '</p>'
                 }
 
+                const tooltipId = `tooltip-tag-${index}`;
+
                 return (
                     <div key={index} className='p-2 text-wrap-tag'>
-                        <div data-qa={`tooltip-tag-${index}`} data-tooltip-content={toolTip} data-html={true} className={`${coresTags[tag.tag_id]} tag-tabelas mb-0`} key={index}>
+                        <div 
+                            data-qa={`tooltip-tag-${index}`} 
+                            data-tooltip-id={tooltipId}
+                            data-tooltip-html={toolTip}
+                            className={`${coresTags[tag.tag_id]} tag-tabelas mb-0`} 
+                            key={index}
+                        >
                             <span data-qa={`span-tag-${index}`} key={index}>{tag.tag_nome}</span>
-                            <ReactTooltip/>
                         </div>
+                        <ReactTooltip 
+                            id={tooltipId}
+                            html={toolTip}
+                            place="top"
+                            style={{ maxWidth: '200px' }}
+                        />
                     </div>
                 )
             }) : '-'}
