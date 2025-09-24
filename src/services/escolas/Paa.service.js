@@ -19,6 +19,14 @@ export const getSaldoAtualPorAcaoAssociacao = async (acaoAssociacaoUUID) => {
   ).data;
 };
 
+export const getPaa = async (uuid) => {
+  return (await api.get(`api/paa/${uuid}/`, authHeader())).data;
+};
+
+export const patchPaa = async (uuid, payload) => {
+  return (await api.patch(`api/paa/${uuid}/`, payload, authHeader())).data;
+};
+
 export const postReceitasPrevistasPaa = async (payload) => {
   return (await api.post(`api/receitas-previstas-paa/`, payload, authHeader()))
     .data;
