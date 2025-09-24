@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Tooltip } from 'antd';
-import { faInfoCircle, faSpinner } from '@fortawesome/free-solid-svg-icons';
+import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { toastCustom } from '../../../../../Globais/ToastCustom';
 import './styles.css';
