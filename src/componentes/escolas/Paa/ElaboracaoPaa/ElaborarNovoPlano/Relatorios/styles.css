@@ -1,0 +1,361 @@
+.documentos-card {
+  background: white;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 1px solid #DADADA;
+  margin-top: 20px;
+  overflow: hidden;
+}
+
+.documentos-header {
+  background: #F3F3F3;
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.documentos-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: bold;
+  color: #42474A;
+}
+
+.documentos-buttons {
+  display: flex;
+  gap: 20px;
+}
+
+.btn-previas {
+  background: white;
+  border: 1px solid #00585E;
+  color: #00585E;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #f8f9fa;
+  }
+}
+
+.btn-gerar {
+  background: #00585E;
+  border: 1px solid #00585E;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #1ba085;
+    border-color: #1ba085;
+  }
+}
+
+.documentos-list {
+  .documento-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid #e0e0e0;
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+}
+
+.documento-info {
+  flex: 1;
+}
+
+.documento-nome {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.documento-status {
+  font-size: 14px;
+  color: #dc3545;
+  font-weight: 500;
+}
+
+.documento-actions {
+  display: flex;
+  align-items: center;
+}
+
+.btn-dropdown {
+  background: #DADADA;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #333;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #e9ecef;
+  }
+
+  .chevron-icon {
+    width: 12px;
+    height: 8px;
+  }
+}
+
+.btn-editar {
+  background: white;
+  border: 1px solid #00585E;
+  color: #00585E;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #f8f9fa;
+  }
+}
+
+/* Estilos para as subseções do Plano anual */
+.plano-anual-subsecoes {
+  background: #f8f9fa;
+  border-top: 1px solid #e0e0e0;
+}
+
+.subsecao-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 12px 20px;
+  border-bottom: 1px solid #e0e0e0;
+  background: #f8f9fa;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.subsecao-item-open {
+  background-color: #f8f9fa;
+}
+
+.subsecao-info {
+  flex: 1;
+}
+
+.subsecao-titulo {
+  font-size: 14px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.textos-introducao {
+  margin-top: 8px;
+}
+
+.texto-introducao {
+  font-size: 14px;
+  color: #42474A;
+}
+
+.texto-introducao p {
+  margin: 0 0 8px 0;
+}
+
+.texto-introducao p:last-child {
+  margin-bottom: 0;
+}
+
+.texto-introducao strong {
+  font-weight: 600;
+  color: #333;
+}
+
+.texto-introducao em {
+  font-style: italic;
+}
+
+.texto-introducao ul, .texto-introducao ol {
+  margin: 8px 0;
+  padding-left: 20px;
+}
+
+.texto-introducao li {
+  margin-bottom: 4px;
+}
+
+/* Estilos para o conteúdo da introdução dentro do header */
+.introducao-content {
+  margin-top: 12px;
+}
+
+/* Container dos textos de introdução com fundo azul */
+.textos-introducao {
+  background: #d3f1f3;
+  padding: 12px;
+  border-radius: 4px;
+  margin-bottom: 0;
+}
+
+
+/* Estilos para o editor dentro do dropdown */
+.editor-dropdown-container {
+  margin-top: 20px;
+  padding: 20px;
+  background: white;
+  border-top: 1px solid #e0e0e0;
+  border-radius: 0 0 8px 8px;
+}
+
+/* Container do editor */
+.editor-container {
+  margin-top: 20px;
+  position: relative;
+}
+
+/* Tooltip externo posicionado sobre a div do texto automático */
+.tooltip-icon-externo {
+  position: absolute;
+  top: 55px; /* Ajuste para posicionar sobre a div do texto automático */
+  right: 20px; /* Ajuste para posicionar no canto direito */
+  color: #1890ff;
+  cursor: help;
+  font-size: 16px;
+  transition: color 0.2s ease;
+  z-index: 10; /* Garante que fique sobre o editor */
+  pointer-events: auto; /* Permite interação com o tooltip */
+}
+
+.tooltip-icon-externo:hover {
+  color: #40a9ff;
+}
+
+
+.editor-dropdown-container .editor-section {
+  margin-bottom: 20px;
+  /* padding-bottom: 15px; */
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.editor-dropdown-container .editor-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.editor-dropdown-container h5 {
+  color: #42474A;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+/* Estilos para os botões de ação */
+.botoes-acao {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.texto-loading {
+  font-size: 13px;
+  color: #666;
+  font-style: italic;
+  margin-top: 8px;
+}
+
+.texto-error {
+  font-size: 13px;
+  color: #dc3545;
+  margin-top: 8px;
+}
+
+/* Estilos para os editores WYSIWYG */
+.editores-container {
+  margin-top: 20px;
+  padding: 20px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 1px solid #DADADA;
+}
+
+.editor-section {
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.editor-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.editor-section h4 {
+  color: #42474A;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+.subsecao-actions {
+  display: flex;
+  align-items: flex-start;
+  margin-top: 2px;
+}
+
+/* Estilos para o Dropdown do react-bootstrap */
+.dropdown-toggle::after {
+  display: none !important;
+}
+
+.dropdown-menu {
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 4px 0;
+  margin-top: 4px;
+}
+
+.dropdown-item {
+  padding: 8px 16px;
+  font-size: 14px;
+  color: #333;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: #f8f9fa;
+    color: #333;
+  }
+
+  &:active {
+    background-color: #e9ecef;
+  }
+}
