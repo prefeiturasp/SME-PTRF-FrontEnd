@@ -243,7 +243,7 @@ export const deletePeriodosPaa = async (uuid) => {
 // PAA
 export const getPaaVigente = async (associacao_uuid) => {
   const result = await api.get(`/api/associacoes/${associacao_uuid}/paa-vigente/`, authHeader());
-  return result
+  return result.data;
 };
 
 export const getPAAsAnteriores = async () => {
