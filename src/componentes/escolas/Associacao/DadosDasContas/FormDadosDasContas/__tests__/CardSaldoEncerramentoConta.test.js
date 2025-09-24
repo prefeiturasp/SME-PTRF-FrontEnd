@@ -12,7 +12,29 @@ jest.mock("../../../../../../services/visoes.service", () => ({
   },
 }));
 
+jest.mock('react-tooltip', () => ({
+  Tooltip: () => null,
+}));
+
 const { visoesService } = require("../../../../../../services/visoes.service");
+
+beforeAll(() => {
+  class MockResizeObserver {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  }
+
+  if (typeof globalThis !== 'undefined' && typeof globalThis.ResizeObserver === 'undefined') {
+    globalThis.ResizeObserver = MockResizeObserver;
+  }
+  if (typeof global !== 'undefined' && typeof global.ResizeObserver === 'undefined') {
+    global.ResizeObserver = MockResizeObserver;
+  }
+  if (typeof window !== 'undefined' && typeof window.ResizeObserver === 'undefined') {
+    window.ResizeObserver = MockResizeObserver;
+  }
+});
 
 function setupComponent(overrides = {}) {
   const props = {
