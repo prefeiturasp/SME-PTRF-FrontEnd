@@ -139,7 +139,6 @@ const Relatorios = () => {
                     })()}
                     tituloEditor=""
                     handleSubmitEditor={(texto) => handleSalvarTexto(config.campoPaa, texto)}
-                    // handleLimparEditor={handleLimparTexto}
                     botaoCancelar={false}
                     disabled={isSaving}
                     isSaving={isSaving}
