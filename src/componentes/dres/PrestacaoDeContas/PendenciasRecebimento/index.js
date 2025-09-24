@@ -53,6 +53,7 @@ export function PendenciasRecebimento({ prestacaoDeContas }) {
 
   const handlePendencias = () => {
     let _pendencias = [];
+    const naoRequerAta = prestacaoDeContas?.possui_apenas_categorias_que_nao_requerem_ata;
     if (
       prestacaoDeContas.status === STATUS_PRESTACAO_CONTA.NAO_RECEBIDA &&
       !prestacaoDeContas.ata_aprensentacao_gerada
@@ -68,7 +69,7 @@ export function PendenciasRecebimento({ prestacaoDeContas }) {
 
     if (
       prestacaoDeContas.status === STATUS_PRESTACAO_CONTA.DEVOLVIDA_RETORNADA &&
-      !prestacaoDeContas.tem_apenas_ajustes_externos &&
+      !naoRequerAta &&
       !prestacaoDeContas.ata_retificacao_gerada
     ) {
       _pendencias.push(
