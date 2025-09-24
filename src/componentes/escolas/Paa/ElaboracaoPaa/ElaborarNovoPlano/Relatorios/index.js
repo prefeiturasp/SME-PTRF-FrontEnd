@@ -69,7 +69,16 @@ const Relatorios = () => {
     return (
       <div key={secaoKey} className={`subsecao-item ${isExpanded ? 'subsecao-item-open' : ''}`}>
         <div className="subsecao-info">
-          <div className="subsecao-titulo">{config.titulo}</div>
+          <div className="subsecao-header">
+            <div className="subsecao-titulo">{config.titulo}</div>
+            <button className="btn-dropdown" onClick={() => toggleSection(secaoKey)}>
+              <img 
+                src={isExpanded ? chevronUp : chevronDown} 
+                alt={isExpanded ? 'Fechar' : 'Abrir'} 
+                className="chevron-icon"
+              />
+            </button>
+          </div>
           {/* Textos de introdução dentro do header */}
           {isExpanded && (
             <div className="introducao-content">
@@ -142,15 +151,6 @@ const Relatorios = () => {
               )}
             </div>
           )}
-        </div>
-        <div className="subsecao-actions">
-          <button className="btn-dropdown" onClick={() => toggleSection(secaoKey)}>
-            <img 
-              src={isExpanded ? chevronUp : chevronDown} 
-              alt={isExpanded ? 'Fechar' : 'Abrir'} 
-              className="chevron-icon"
-            />
-          </button>
         </div>
       </div>
     );

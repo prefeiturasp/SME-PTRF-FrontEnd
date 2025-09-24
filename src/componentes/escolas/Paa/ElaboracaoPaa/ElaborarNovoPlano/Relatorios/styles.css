@@ -166,11 +166,19 @@
   flex: 1;
 }
 
+.subsecao-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
 .subsecao-titulo {
   font-size: 14px;
   font-weight: 700;
   color: #333;
   margin-bottom: 8px;
+  flex: 1;
 }
 
 .textos-introducao {
@@ -325,11 +333,6 @@
   margin-bottom: 15px;
 }
 
-.subsecao-actions {
-  display: flex;
-  align-items: flex-start;
-  margin-top: 2px;
-}
 
 /* Estilos para o Dropdown do react-bootstrap */
 .dropdown-toggle::after {
