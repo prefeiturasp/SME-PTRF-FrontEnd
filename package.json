@@ -1,6 +1,6 @@
 {
   "name": "ptrf",
-  "version": "9.23.1",
+  "version": "9.23.3",
   "private": true,
   "dependencies": {
     "@dnd-kit/core": "^6.1.0",
