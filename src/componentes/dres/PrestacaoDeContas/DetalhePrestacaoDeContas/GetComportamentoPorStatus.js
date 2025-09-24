@@ -96,24 +96,18 @@ export const GetComportamentoPorStatus = (
     };
 
     const podeReceberDevolvidaRetornada = () => {
-        if (prestacaoDeContas.tem_apenas_ajustes_externos) {
-            const resultado = TEMPERMISSAO && dataRecebimentoDevolutiva;
-            return resultado;
+        const naoRequerAta = prestacaoDeContas?.possui_apenas_categorias_que_nao_requerem_ata;
+        if (naoRequerAta) {
+            return TEMPERMISSAO && dataRecebimentoDevolutiva;
         }
-        
-        const resultado = (
-            TEMPERMISSAO && 
-            dataRecebimentoDevolutiva && 
-            prestacaoDeContas.ata_retificacao_gerada
-        );
-        return resultado;
+        return TEMPERMISSAO && dataRecebimentoDevolutiva && prestacaoDeContas.ata_retificacao_gerada;
     };
 
 
     const tooltipReceberAposAcerto = () => {
         if(prestacaoDeContas && prestacaoDeContas.status === STATUS_PRESTACAO_CONTA.DEVOLVIDA_RETORNADA && !dataRecebimentoDevolutiva){
             return "É necessário informar a data de recebimento para realizar o recebimento da Prestação de Contas."
-        } else if(prestacaoDeContas && prestacaoDeContas.status === STATUS_PRESTACAO_CONTA.DEVOLVIDA_RETORNADA && !prestacaoDeContas.ata_retificacao_gerada && !prestacaoDeContas.tem_apenas_ajustes_externos){
+        } else if(prestacaoDeContas && prestacaoDeContas.status === STATUS_PRESTACAO_CONTA.DEVOLVIDA_RETORNADA && !prestacaoDeContas.ata_retificacao_gerada && !prestacaoDeContas?.possui_apenas_categorias_que_nao_requerem_ata){
             return "É necessário efetuar a geração da ata de retificação para realizar o recebimento da Prestação de Contas."
         }
             
