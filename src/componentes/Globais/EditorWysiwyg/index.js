@@ -1,8 +1,10 @@
-import React, {memo, useState} from "react";
+import React, {memo, useState, useEffect, useRef} from "react";
 import { Editor } from "@tinymce/tinymce-react";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import "./editor-wysiwyg.scss"
 
-const EditorWysiwyg = ({textoInicialEditor, tituloEditor, handleSubmitEditor, disabled=false, botaoCancelar=false, setExibeEditor=()=>{}})=>{
+const EditorWysiwyg = ({textoInicialEditor, tituloEditor, handleSubmitEditor, disabled=false, botaoCancelar=false, setExibeEditor=()=>{}, handleLimparEditor=()=>{}, isSaving=false})=>{
 
     let REACT_APP_EDITOR_KEY = "EDITOR_KEY_REPLACE_ME";
 
@@ -11,6 +13,20 @@ const EditorWysiwyg = ({textoInicialEditor, tituloEditor, handleSubmitEditor, di
     }
 
     const [textoEditor, setTextoEditor] = useState(textoInicialEditor);
+    const editorRef = useRef(null);
+
+    // Atualizar o editor quando textoInicialEditor mudar
+    useEffect(() => {
+        setTextoEditor(textoInicialEditor);
+    }, [textoInicialEditor]);
+
+    const handleLimpar = () => {
+        setTextoEditor('');
+        if (editorRef.current) {
+            editorRef.current.setContent('');
+        }
+        // Não chama handleLimparEditor automaticamente - apenas limpa visualmente
+    };
 
     return(
         <>
@@ -19,7 +35,8 @@ const EditorWysiwyg = ({textoInicialEditor, tituloEditor, handleSubmitEditor, di
             }
             <Editor
                 apiKey={REACT_APP_EDITOR_KEY}
-                initialValue={textoInicialEditor ? textoInicialEditor : '<p> </p>'}
+                value={textoEditor}
+                onInit={(evt, editor) => editorRef.current = editor}
                 init={{
                     height: 500,
                     menubar: false,
@@ -45,9 +62,25 @@ const EditorWysiwyg = ({textoInicialEditor, tituloEditor, handleSubmitEditor, di
                         Cancelar
                     </button>
                 )}
-                <button className="btn btn-success" onClick={() => handleSubmitEditor(textoEditor)} type="button" disabled={disabled}>
-                    Salvar
-                </button>
+                <div className="d-flex" style={{ gap: '11px' }}>
+                    <button className="btn btn-outline-secondary btn-limpar-customizado" onClick={handleLimpar} type="button" disabled={disabled || isSaving}>
+                        Limpar
+                    </button>
+                    <button className="btn btn-success" onClick={() => handleSubmitEditor(textoEditor)} type="button" disabled={disabled || isSaving}>
+                        {isSaving ? (
+                            <>
+                                <FontAwesomeIcon 
+                                    icon={faSpinner} 
+                                    spin 
+                                    style={{ marginRight: "8px" }} 
+                                />
+                                Salvando...
+                            </>
+                        ) : (
+                            "Salvar"
+                        )}
+                    </button>
+                </div>
             </div>
 
         </>
