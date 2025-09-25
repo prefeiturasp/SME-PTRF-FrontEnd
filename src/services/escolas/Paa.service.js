@@ -19,6 +19,14 @@ export const getSaldoAtualPorAcaoAssociacao = async (acaoAssociacaoUUID) => {
   ).data;
 };
 
+export const getPaa = async (uuid) => {
+  return (await api.get(`api/paa/${uuid}/`, authHeader())).data;
+};
+
+export const patchPaa = async (uuid, payload) => {
+  return (await api.patch(`api/paa/${uuid}/`, payload, authHeader())).data;
+};
+
 export const postReceitasPrevistasPaa = async (payload) => {
   return (await api.post(`api/receitas-previstas-paa/`, payload, authHeader()))
     .data;
@@ -137,8 +145,10 @@ export const postAtivarAtualizacaoSaldoPAA = async (uuid) => {
   ).data;
 };
 
-export const postImportarPrioridades = async (uuid_paa_atual, uuid_paa_anterior) => {
-  return (await api.post(`api/paa/${uuid_paa_atual}/importar-prioridades/${uuid_paa_anterior}/`, {}, authHeader())).data;
+export const postImportarPrioridades = async (uuid_paa_atual, uuid_paa_anterior, confirmar=0) => {
+  return (await api.post(
+    `api/paa/${uuid_paa_atual}/importar-prioridades/${uuid_paa_anterior}/?confirmar=${confirmar}`,
+    {}, authHeader())).data;
 }
 
 // Prioridades
