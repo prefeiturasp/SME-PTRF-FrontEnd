@@ -870,6 +870,15 @@ const routesConfig = [
   },
   {
     exact: true,
+    path: "/parametro-tipos-receita",
+    component: TiposDeCredito,
+    permissoes: [
+      "access_painel_parametrizacoes",
+      "change_painel_parametrizacoes",
+    ],
+  },
+  {
+    exact: true,
     path: "/lista-situacao-patrimonial",
     component: SituacaoPatrimonialPage,
     permissoes: ["access_situacao_patrimonial"],
