@@ -85,7 +85,7 @@ describe('ModalImportarPrioridades', () => {
 
   it('deve renderizar o modal quando open=true', () => {
     renderComponent();
-    expect(screen.getByText('Importar PAAs anteriores')).toBeInTheDocument();
+    expect(screen.getByText('Importação de PAA anterior')).toBeInTheDocument();
   });
 
   it('deve renderizar todos os campos obrigatórios', () => {
@@ -98,7 +98,7 @@ describe('ModalImportarPrioridades', () => {
   it("renderiza o título e o texto de instrução", () => {
     render(<ModalImportarPrioridades open={true} onClose={mockOnClose} paas={[]} />);
 
-    expect(screen.getByText("Importar PAAs anteriores")).toBeInTheDocument();
+    expect(screen.getByText("Importação de PAA anterior")).toBeInTheDocument();
     expect(
       screen.getByText("Selecione o ano em que deseja importar os dados para o PAA atual.")
     ).toBeInTheDocument();

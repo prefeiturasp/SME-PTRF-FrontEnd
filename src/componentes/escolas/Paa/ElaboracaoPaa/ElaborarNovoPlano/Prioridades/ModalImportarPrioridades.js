@@ -41,8 +41,8 @@ const ModalImportarPrioridades = ({ open, onClose, paas }) => {
               dispatch,
               title: "Confirma importação?",
               message: e.response.data.confirmar,
-              cancelText: "Não",
-              confirmText: "Sim",
+              cancelText: "Cancelar",
+              confirmText: "Confirmar",
               dataQa: "modal-confirmar-importar-prioridades",
               isDanger: true,
               onConfirm: () => {
@@ -84,7 +84,7 @@ const ModalImportarPrioridades = ({ open, onClose, paas }) => {
     <ModalFormBodyText
       show={open}
       onHide={onClose}
-      titulo={`Importar PAAs anteriores`}
+      titulo={`Importação de PAA anterior`}
       // size="lg"
       bodyText={
         <Spin spinning={ isLoading }>
