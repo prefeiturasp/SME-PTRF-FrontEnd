@@ -166,7 +166,7 @@ describe('Prioridades', () => {
     const botaoImportar = screen.getByRole("button", { name: /Importar PAAs anteriores/i })
     fireEvent.click(botaoImportar);
 
-    const tituloModal = screen.getByText("Importar PAAs anteriores", {selector: ".modal-title"})
+    const tituloModal = screen.getByText("Importação de PAA anterior", {selector: ".modal-title"})
 
     expect(tituloModal).toBeInTheDocument();
   });
