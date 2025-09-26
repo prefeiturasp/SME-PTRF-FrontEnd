@@ -61,15 +61,15 @@ describe("ReceitasPrevistas Component", () => {
   it("onChange checkbox Para atualizacoes do Saldo", async ()=>{
     localStorage.setItem("PAA", "fake-uuid-paa")
     localStorage.setItem("DADOS_PAA", JSON.stringify({uuid: "fake-uuid-paa", saldo_congelado_em: null }))
-    getPaaVigente.mockReturnValue({data: {uuid: "fake-uuid-paa"}})
+    getPaaVigente.mockResolvedValue({uuid: "fake-uuid-paa"})
     useGetAcoesAssociacao.mockReturnValue({
       data: [],
       isLoading: false,
     });
     render(<ReceitasPrevistas />, { wrapper });
 
+    const checkbox = screen.getByTestId("checkbox-parar-atualizacoes-saldo")
     await waitFor(()=> {
-      const checkbox = screen.getByTestId("checkbox-parar-atualizacoes-saldo")
       expect(checkbox).toBeEnabled();
       fireEvent.click(checkbox)
     })
@@ -77,7 +77,6 @@ describe("ReceitasPrevistas Component", () => {
     const botaoCancelar = screen.getByText("Cancelar");
     expect(botaoConfirmar).toBeEnabled();
     expect(botaoCancelar).toBeEnabled();
-
   })
 
   it("Cancelar checkbox Para atualizacoes do Saldo", async ()=>{

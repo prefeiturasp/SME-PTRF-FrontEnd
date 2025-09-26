@@ -1,9 +1,6 @@
 import React, {useState, memo} from 'react';
-import {AutoComplete} from 'primereact/autocomplete';
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faSearch} from "@fortawesome/free-solid-svg-icons";
+import AutoCompleteModal from '../../../../Globais/AutoCompleteComponent/AutoCompleteModal';
 import { Tag } from '../../../../Globais/Tag';
-
 
 const AutoCompleteAssociacoes = ({todasAsAssociacoesAutoComplete, recebeAutoComplete, disabled = false, loadingAssociacoes = false}) => {
     const [selectedAssociacao, setSelectedAssociacao] = useState(null);
@@ -53,31 +50,21 @@ const AutoCompleteAssociacoes = ({todasAsAssociacoesAutoComplete, recebeAutoComp
     };
 
     return (
-        <div className="d-flex bd-highlight">
-            <div className="flex-grow-1 bd-highlight">
-                <AutoComplete
-                    value={selectedAssociacao}
-                    name='associacao_nome'
-                    inputId='associacao_nome'
-                    suggestions={filteredAssociacoes}
-                    completeMethod={searchAssociacao}
-                    field="nome"
-                    onChange={handleChange}
-                    inputClassName="form-control"
-                    onSelect={handleSelect}
-                    style={{width: "100%", borderLeft:'none'}}
-                    itemTemplate={itemTemplate}
-                    disabled={disabled || loadingAssociacoes}
-                    placeholder={`${loadingAssociacoes ? "Carregando associações" : ""}`}
-                />
-            </div>
-            <div className="bd-highlight ml-0 py-1 px-3 ml-n3 border-top border-right border-bottom">
-                <FontAwesomeIcon
-                    style={{fontSize: '18px', marginRight: "0", color: "#42474A"}}
-                    icon={faSearch}
-                />
-            </div>
-        </div>
+        <AutoCompleteModal
+            value={selectedAssociacao}
+            name='associacao_nome'
+            inputId='associacao_nome'
+            suggestions={filteredAssociacoes}
+            completeMethod={searchAssociacao}
+            field="nome"
+            onChange={handleChange}
+            onSelect={handleSelect}
+            itemTemplate={itemTemplate}
+            disabled={disabled}
+            loading={loadingAssociacoes}
+            placeholder=""
+            loadingText="Carregando associações"
+        />
     )
 };
 

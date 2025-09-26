@@ -1,18 +1,14 @@
 import React, {useState, memo} from 'react';
-import {AutoComplete} from 'primereact/autocomplete';
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faSearch} from "@fortawesome/free-solid-svg-icons";
+import AutoCompleteModal from '../../../../../Globais/AutoCompleteComponent/AutoCompleteModal';
 import { Tag } from '../../../../../Globais/Tag';
 import { useContext } from "react";
 import { RepassesContext } from "../context/Repasse";
-
 
 const AutoCompleteAssociacoes = ({todasAsAssociacoesAutoComplete, setFieldValue, disabled = false, loadingAssociacoes = false}) => {
     const [selectedAssociacao, setSelectedAssociacao] = useState(null);
     const [filteredAssociacoes, setFilteredAssociacoes] = useState(null);
     const {stateFormModal, setStateFormModal} = useContext(RepassesContext)
 
-    
     const searchAssociacao = (event) => {
         setTimeout(() => {
             let filteredAssociacoes;
@@ -67,33 +63,21 @@ const AutoCompleteAssociacoes = ({todasAsAssociacoesAutoComplete, setFieldValue,
     };
 
     return (
-        <div className="d-flex bd-highlight">
-            <div className="flex-grow-1 bd-highlight">
-                <AutoComplete
-                    value={selectedAssociacao}
-                    name='associacao'
-                    inputId='associacao'
-                    suggestions={filteredAssociacoes}
-                    completeMethod={searchAssociacao}
-                    field="unidade.nome_com_tipo"
-                    onChange={handleChange}
-                    inputClassName="form-control"
-                    onSelect={handleSelect}
-                    style={{width: "100%", borderLeft:'none'}}
-                    itemTemplate={itemTemplate}
-                    disabled={disabled || loadingAssociacoes}
-                    placeholder={`${loadingAssociacoes ? "Carregando unidades" : ""}`}
-                />
-            </div>
-            <div className="bd-highlight ml-0 py-1 px-3 ml-n3 border-top border-right border-bottom">
-                
-                <FontAwesomeIcon
-                    style={{fontSize: '18px', marginRight: "0", color: "#42474A"}}
-                    icon={faSearch}
-                />
-                
-            </div>
-        </div>
+        <AutoCompleteModal
+            value={selectedAssociacao}
+            name='associacao'
+            inputId='associacao'
+            suggestions={filteredAssociacoes}
+            completeMethod={searchAssociacao}
+            field="unidade.nome_com_tipo"
+            onChange={handleChange}
+            onSelect={handleSelect}
+            itemTemplate={itemTemplate}
+            disabled={disabled}
+            loading={loadingAssociacoes}
+            placeholder=""
+            loadingText="Carregando unidades"
+        />
     )
 };
 
