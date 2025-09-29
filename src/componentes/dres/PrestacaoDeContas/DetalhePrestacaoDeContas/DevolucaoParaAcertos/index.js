@@ -231,8 +231,10 @@ const DevolucaoParaAcertos = ({
             return [];
         }
 
-        // Extrair os nomes das contas do array retornado pela API
-        return contasPendenciaConciliacao.map(conta => conta.nome || conta.conta_associacao?.nome || 'Conta sem nome');
+        return contasPendenciaConciliacao.map(conta => {
+            const contaNome = infoAta.contas.find(conta => conta.uuid === conta.uuid)?.conta_associacao?.nome;
+            return contaNome || conta.conta_associacao?.nome || 'Conta sem nome';
+        });
     }, [contasPendenciaConciliacao]);
 
     const possuiHistoricoDeDevolucoes = () => {
