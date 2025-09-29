@@ -11,7 +11,6 @@ jest.mock('../../../../../componentes/Globais/ReactNumberFormatInput/indexv2', (
       data-testid="react-number-format-mock"
       {...rest}
       onChange={(e) => {
-        // Emule o valor que seu componente espera. Se ele espera número, envie número; se string, string.
         const raw = e.target.value;
         const num = Number(raw);
         onChangeEvent && onChangeEvent(Number.isNaN(num) ? raw : num);

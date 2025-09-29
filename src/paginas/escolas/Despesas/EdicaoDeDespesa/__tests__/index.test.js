@@ -76,8 +76,8 @@ beforeEach(() => {
   getDespesa.mockResolvedValue(mockDespesaData);
 
   getDespesasTabelas.mockResolvedValue({
-    tipos_custeio: [],               // evita o erro no .map
-    especificacoes_custeio: [],      // ou um objeto conforme o código
+    tipos_custeio: [],
+    especificacoes_custeio: [],
     aplicacoes_recurso: [],
     naturezas: [],
     categorias: [],
@@ -86,11 +86,9 @@ beforeEach(() => {
     documentos: [],
     impostos: [],
     motivos_pagamento_antecipado: [],
-    // adicione qualquer outra chave que o CadastroForm leia
   });
 
   const mockData = { results: [] };
-  // Use mockResolvedValue (não Once) para todos os testes
   getEspecificacoesCapital.mockResolvedValue(mockData);
   getEspecificacoesCusteio.mockResolvedValue(mockData);
 
