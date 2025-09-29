@@ -3,6 +3,7 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { AcompanhamentoPcsSme } from "../index";
 import * as DashboardSmeService from "../../../../services/sme/DashboardSme.service";
+import { MemoryRouter } from "react-router-dom";
 
 jest.mock("../../../../services/sme/DashboardSme.service");
 jest.mock("../../../../utils/Loading", () => () => <div>Loading...</div>);
@@ -19,13 +20,23 @@ const mockPeriodos = [
 const exibeOpcao = `2023 - 01/01/2023 até 31/12/2023`
 
 const mockItensDashboard = {
-  cards: [
-    { quantidade_prestacoes: 42 },
-    { nome: "Item 1" },
-    { nome: "Item 2" },
-  ],
-  status: { cor_idx: 1, status_txt: "Ativo" },
-  resumo_por_dre: [{ dre: "DRE 1" }]
+    cards: [
+        { quantidade_prestacoes: 42 },
+        { nome: "Item 1" },
+        { nome: "Item 2" },
+    ],
+    status: { cor_idx: 1, status_txt: "Ativo" },
+    resumo_por_dre: [
+        {
+            dre: { nome: "DIRETORIA REGIONAL DE EDUCACAO DRE 1" },
+            cards: {
+                TOTAL_UNIDADES: 5,
+                NAO_APRESENTADA: 1,
+                APROVADA: 3,
+                REPROVADA: 1,
+            },
+        },
+    ],
 };
 
 describe("AcompanhamentoPcsSme Component", () => {
@@ -56,17 +67,17 @@ describe("AcompanhamentoPcsSme Component", () => {
         DashboardSmeService.getPeriodos.mockResolvedValue(mockPeriodos);
         DashboardSmeService.getItensDashboardSme.mockResolvedValue(mockItensDashboard);
 
-        render(<AcompanhamentoPcsSme />);
+        render(
+            <MemoryRouter>
+                <AcompanhamentoPcsSme />
+            </MemoryRouter>
+        );
 
-        await waitFor(() => {
-            expect(screen.getByText(exibeOpcao)).toBeInTheDocument();
-        });
+        const select = await screen.findByRole("combobox");
+        await userEvent.selectOptions(select, "uuid1");
 
-        userEvent.selectOptions(screen.getByRole("combobox"), "uuid1");
-
-        await waitFor(() => {
-            expect(screen.getByText(/Resumo geral do período/i)).toBeInTheDocument();
-        });
+        expect(await screen.findByText(/Resumo geral do período/i))
+            .toBeInTheDocument();
     });
 
     it("displays dashboard data correctly", async () => {

@@ -28,6 +28,10 @@ jest.mock('../../../../../Globais/ReactNumberFormatInput', () => ({
   )
 }));
 
+jest.mock('../../../../../Globais/ReactNumberFormatInput/indexv2', () => ({
+  __esModule: true,
+  ReactNumberFormatInputV2: (props) => <input data-testid="react-number-format-mock" {...props} />,
+}));
 
 describe('DataSaldoBancario', () => {
     const defaultProps = {
