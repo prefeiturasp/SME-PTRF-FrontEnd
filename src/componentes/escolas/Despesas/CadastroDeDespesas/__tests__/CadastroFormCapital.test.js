@@ -46,6 +46,18 @@ jest.mock("react-text-mask", () => ({
   ),
 }));
 
+jest.mock("react-number-format", () => ({
+  __esModule: true,
+  NumericFormat: ({ value, onChange, ...props }) => (
+    <input
+      data-testid="number-format-input"
+      value={value}
+      onChange={onChange}
+      {...props}
+    />
+  ),
+}));
+
 jest.mock("../../../../../utils/ValidacoesAdicionaisFormularios", () => ({
   calculaValorRateio: jest.fn().mockReturnValue(100),
   trataNumericos: jest.fn().mockReturnValue(100),

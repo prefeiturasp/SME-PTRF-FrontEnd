@@ -21,6 +21,11 @@ jest.mock("../../../../../services/visoes.service", () => ({
   }
 }));
 
+jest.mock('../../../../../componentes/Globais/ReactNumberFormatInput', () => ({
+  __esModule: true,
+  ReactNumberFormatInput: (props) => <input data-testid="react-format-input-mock" {...props} />,
+}));
+
 describe('<EdicaoDeReceita>', () => {
   it('Deve renderizar o componente', async () => {
     useParams.mockReturnValue({ origem: "teste-origem" });
