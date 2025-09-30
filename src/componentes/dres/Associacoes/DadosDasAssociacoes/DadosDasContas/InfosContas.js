@@ -28,7 +28,7 @@ export const  InfosContas = ({dadosDaAssociacao}) =>{
     const [motivos, setMotivos] = useState([]);
     const [loading, setLoading] = useState(true);
     const [errorModalRejeicao, setErrorModalRejeicao] = useState(null)
-    const permissaoEditarDadosAssociacao = visoesService.getPermissoes(["change_associacao"])
+    const podeAceitarRejeitarCancelamentoConta = visoesService.getPermissoes(["aceita_e_rejeita_cancelamento_conta"])
     const apresentaDataDeEncerramentoDeConta = (conta) => {
         return conta && conta.solicitacao_encerramento !== null && conta.solicitacao_encerramento.status === "PENDENTE";
     };
@@ -38,7 +38,7 @@ export const  InfosContas = ({dadosDaAssociacao}) =>{
                conta.solicitacao_encerramento !== null && 
                conta.solicitacao_encerramento.status === "PENDENTE" && 
                conta.tipo_conta.permite_inativacao &&
-               permissaoEditarDadosAssociacao;
+               podeAceitarRejeitarCancelamentoConta;
     };
 
     useEffect(() => {
