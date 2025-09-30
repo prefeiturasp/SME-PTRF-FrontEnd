@@ -159,7 +159,10 @@ describe('Testes para funções de análise', () => {
         api.get.mockResolvedValue({ data: mockData });
         const result = await getProgramasPddeTotais();
 
-        expect(api.get).toHaveBeenCalledWith(`api/programas-pdde/totais/?paa_uuid=1234`, getAuthHeader());
+        expect(api.get).toHaveBeenCalledWith(
+            `api/programas-pdde/totais/?paa_uuid=1234&page_size=1000`,
+            getAuthHeader()
+        );
         expect(result).toEqual(mockData);
     });
 

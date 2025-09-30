@@ -1,10 +1,18 @@
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import React  from "react";
 import { useParams, useLocation, MemoryRouter, useNavigate } from "react-router-dom"
 import { EdicaoDeDespesa, tituloPagina } from "../index";
 import { visoesService } from "../../../../../services/visoes.service";
 import {DespesaContext} from "../../../../../context/Despesa";
 import { metodosAuxiliares } from "../../../../../componentes/escolas/Despesas/metodosAuxiliares";
+import { getDespesa, getDespesasTabelas, getEspecificacoesCapital, getEspecificacoesCusteio } from "../../../../../services/escolas/Despesas.service";
+
+jest.mock("../../../../../services/escolas/Despesas.service", () => ({
+  getDespesa: jest.fn(),
+  getDespesasTabelas: jest.fn(),
+  getEspecificacoesCapital: jest.fn(),
+  getEspecificacoesCusteio: jest.fn(),
+}));
 
 jest.mock("../../../../../componentes/escolas/Despesas/metodosAuxiliares", () => ({
   metodosAuxiliares: {
@@ -30,16 +38,65 @@ jest.mock("react-router-dom", () => ({
   useNavigate: () => mockNavigate
 }));
 
+const mockDespesaData = {
+  rateios: [{
+    associacao: 'test',
+    conta_associacao: 'test',
+    acao_associacao: 'test',
+    aplicacao_recurso: 'CUSTEIO',
+    tipo_custeio: 'test',
+    especificacao_material_servico: 'test',
+    valor_rateio: '100',
+    quantidade_itens_capital: '1',
+    valor_item_capital: '50',
+    numero_processo_incorporacao_capital: 'test',
+    valor_original: '100'
+  }],
+  despesas_impostos: [],
+  data_documento: '2023-01-01',
+  data_transacao: '2023-01-01',
+  motivos_pagamento_antecipado: [],
+  outros_motivos_pagamento_antecipado: '',
+  valor_total: '100',
+  valor_recursos_proprios: '0',
+  valor_original: '100',
+  valor_total_dos_rateios: '100'
+};
+
 const contexto = {
   initialValues: { outros_motivos_pagamento_antecipado: ''},
   setVerboHttp: jest.fn(),
   setIdDespesa: jest.fn(),
-  getDespesa: jest.fn(),
+  setInitialValues: jest.fn(),
 }
 describe('<EdicaoDeDespesa>', () => {
-  beforeEach(() => {
-    mockNavigate.mockClear();
+beforeEach(() => {
+  mockNavigate.mockClear();
+
+  getDespesa.mockResolvedValue(mockDespesaData);
+
+  getDespesasTabelas.mockResolvedValue({
+    tipos_custeio: [],
+    especificacoes_custeio: [],
+    aplicacoes_recurso: [],
+    naturezas: [],
+    categorias: [],
+    especificacoes: [],
+    formas_pagamento: [],
+    documentos: [],
+    impostos: [],
+    motivos_pagamento_antecipado: [],
   });
+
+  const mockData = { results: [] };
+  getEspecificacoesCapital.mockResolvedValue(mockData);
+  getEspecificacoesCusteio.mockResolvedValue(mockData);
+
+  visoesService.getItemUsuarioLogado.mockReturnValue('UE');
+  contexto.setVerboHttp.mockClear();
+  contexto.setIdDespesa.mockClear();
+  contexto.setInitialValues.mockClear();
+});
 
   test('Deve renderizar o componente', async () => {
     useParams.mockReturnValue({ associacao: '' });
