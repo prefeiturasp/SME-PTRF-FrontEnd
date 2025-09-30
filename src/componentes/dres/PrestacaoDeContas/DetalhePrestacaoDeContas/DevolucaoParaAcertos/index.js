@@ -231,9 +231,9 @@ const DevolucaoParaAcertos = ({
             return [];
         }
 
-        return contasPendenciaConciliacao.map(conta => {
-            const contaNome = infoAta.contas.find(conta => conta.uuid === conta.uuid)?.conta_associacao?.nome;
-            return contaNome || conta.conta_associacao?.nome || 'Conta sem nome';
+        return contasPendenciaConciliacao.map(contaUuid => {
+            const contaNome = infoAta.contas.find(_conta => _conta.conta_associacao.uuid === contaUuid)?.conta_associacao?.nome;
+            return contaNome || 'N/E';
         });
     }, [contasPendenciaConciliacao]);
 
