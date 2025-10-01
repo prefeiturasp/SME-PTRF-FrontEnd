@@ -88,14 +88,11 @@ const Relatorios = () => {
                 <div className="texto-error">Erro ao carregar textos do PAA</div>
               ) : (
                 <div className="textos-introducao">
-                  {config.textosPaa.map((textoKey, index) => 
-                    textosPaa[textoKey] && (
-                      <div 
-                        key={index}
-                        className="texto-introducao"
-                        dangerouslySetInnerHTML={{ __html: textosPaa[textoKey] }}
-                      />
-                    )
+                  {textosPaa['introducao_do_paa_ue_1'] && (
+                    <div
+                      className="texto-introducao"
+                      dangerouslySetInnerHTML={{ __html: textosPaa['introducao_do_paa_ue_1'] }}
+                    />
                   )}
                 </div>
               )}
