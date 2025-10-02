@@ -1,4 +1,5 @@
 import api from '../../api';
+import { getUuidAssociacao } from '../../../utils/AssociacaoUtils';
 import {
     getAssociacao,
     getAssociacaoByUUID,
@@ -41,6 +42,10 @@ jest.mock('../../api', () => ({
     delete: jest.fn(),
 }));
 
+jest.mock('../../../utils/AssociacaoUtils.js', () => ({
+    getUuidAssociacao: jest.fn(),
+}));
+
 const mockToken = 'fake-token';
 const associacao_uuid = '12345';
 const periodo_uuid = '67890';
@@ -51,6 +56,7 @@ describe('Testes para funções de análise', () => {
     beforeEach(() => {
         localStorage.setItem(ASSOCIACAO_UUID, associacao_uuid);
         localStorage.setItem(TOKEN_ALIAS, mockToken);
+        getUuidAssociacao.mockReturnValue(associacao_uuid);
     });
 
     afterEach(() => {
@@ -131,7 +137,7 @@ describe('Testes para funções de análise', () => {
         const result = await getPeriodoFechado(data_verificacao);
 
         expect(api.get).toHaveBeenCalledWith(
-            `/api/associacoes/${localStorage.getItem(ASSOCIACAO_UUID)}/status-periodo/?data=${data_verificacao}`,
+            `/api/associacoes/${associacao_uuid}/status-periodo/?data=${data_verificacao}`,
             getAuthHeader()
         );
         expect(result).toEqual(mockData);

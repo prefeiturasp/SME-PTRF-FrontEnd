@@ -1854,7 +1854,7 @@ describe('Testes para funções de análise', () => {
         const result = await getPaaVigente(associacao_uuid);
         const url = `/api/associacoes/${associacao_uuid}/paa-vigente/`;
         expect(api.get).toHaveBeenCalledWith(url, authHeader());
-        expect(result).toEqual({data: mockData});
+        expect(result).toEqual(mockData);
     });
     
     test('getParametroPaa deve chamar a API corretamente', async () => {

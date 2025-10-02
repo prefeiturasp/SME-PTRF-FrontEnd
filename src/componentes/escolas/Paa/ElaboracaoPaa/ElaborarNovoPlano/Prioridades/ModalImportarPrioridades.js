@@ -1,12 +1,16 @@
 import { memo, useState, useMemo, useEffectseRef } from "react";
+import { useDispatch } from "react-redux";
 import { Form, Row, Col, Flex, Spin, Typography, Select } from 'antd';
 import { ModalFormBodyText } from "../../../../../Globais/ModalBootstrap";
 import { usePostImportarPrioridades } from "./hooks/usePostImportarPrioridades";
 import { importaPrioridadesValidationSchema } from "./validationSchema";
-
+import { CustomModalConfirm } from "../../../../../Globais/Modal/CustomModalConfirm";
+import { toastCustom } from "../../../../../Globais/ToastCustom";
 
 const ModalImportarPrioridades = ({ open, onClose, paas }) => {
   const [form] = Form.useForm();
+
+  const dispatch = useDispatch();
 
   const { mutationImportarPrioridades } = usePostImportarPrioridades(onClose);
 
@@ -28,7 +32,36 @@ const ModalImportarPrioridades = ({ open, onClose, paas }) => {
       const uuid_paa_atual = localStorage.getItem("PAA")
       const uuid_paa_anterior = values.uuid_paa_anterior
       
-      mutationImportarPrioridades.mutate({ uuid_paa_atual, uuid_paa_anterior});
+      mutationImportarPrioridades.mutate(
+        { uuid_paa_atual, uuid_paa_anterior, confirmar: 0},
+        {
+        onError: (e) => {
+          if (e?.response?.data?.confirmar) {
+            CustomModalConfirm({
+              dispatch,
+              title: "Confirma importação?",
+              message: e.response.data.confirmar,
+              cancelText: "Cancelar",
+              confirmText: "Confirmar",
+              dataQa: "modal-confirmar-importar-prioridades",
+              isDanger: true,
+              onConfirm: () => {
+                mutationImportarPrioridades.mutate({
+                  uuid_paa_atual,
+                  uuid_paa_anterior,
+                  confirmar: 1,
+                });
+                onClose();
+              },
+            });
+          } else {
+            const mensagemDeErro = e?.response?.data?.mensagem || "Houve um erro ao importar prioridades.";
+            toastCustom.ToastCustomError(mensagemDeErro);
+            console.error(e)
+          }
+        },
+      }
+      );
       
     } catch (validationErrors) {
       if (validationErrors.inner) {
@@ -51,7 +84,7 @@ const ModalImportarPrioridades = ({ open, onClose, paas }) => {
     <ModalFormBodyText
       show={open}
       onHide={onClose}
-      titulo={`Importar PAAs anteriores`}
+      titulo={`Importação de PAA anterior`}
       // size="lg"
       bodyText={
         <Spin spinning={ isLoading }>

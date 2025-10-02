@@ -40,9 +40,9 @@ describe('Filtros Component', () => {
         expect(screen.getByRole('button', { name: /Limpar filtro/i })).toBeInTheDocument();
     });
 
-    test('chama mudancasFiltros ao digitar no input de pesquisa', () => {
+    test('chama mudancasFiltros ao digitar no input de pesquisa', async () => {
         render(
-            <Filtros 
+            <Filtros
                 estadoFiltros={mockEstadoFiltros}
                 mudancasFiltros={mockMudancasFiltros}
                 enviarFiltrosAssociacao={mockEnviarFiltrosAssociacao}
@@ -51,11 +51,12 @@ describe('Filtros Component', () => {
                 tabelaAssociacoes={mockTabelaAssociacoes}
             />
         );
-        
+
         const input = screen.getByLabelText(/Pesquisar unidades vinculadas à ação/i);
-        userEvent.type(input, 'Teste');
-        
+        await userEvent.type(input, 'Teste');
+
         expect(mockMudancasFiltros).toHaveBeenCalled();
+        expect(mockMudancasFiltros).toHaveBeenCalledTimes('Teste'.length);
     });
 
     test('chama limparFiltros ao clicar no botão "Limpar filtro"', () => {

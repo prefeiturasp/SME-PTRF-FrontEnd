@@ -22,7 +22,8 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 if (process.env.NODE_ENV === "production") {
   const SENTRY_URL = "SENTRY_URL_REPLACE_ME";
-  Sentry.init({ dsn: SENTRY_URL });
+  const SENTRY_ENVIRONMENT = "SENTRY_ENVIRONMENT_REPLACE_ME";
+  Sentry.init({ dsn: SENTRY_URL, environment: SENTRY_ENVIRONMENT });
 }
 
 let REACT_QUERY_DEV_TOOLS = "REACT_QUERY_DEV_TOOLS_REPLACE_ME";

@@ -4,6 +4,26 @@ import { visoesService } from "../../../../../services/visoes.service";
 
 jest.mock("../../../../../services/visoes.service");
 
+jest.mock('../../../../../componentes/Globais/ReactNumberFormatInput/indexv2', () => ({
+  __esModule: true,
+  ReactNumberFormatInputV2: ({ onChangeEvent, ...rest }) => (
+    <input
+      data-testid="react-number-format-mock"
+      {...rest}
+      onChange={(e) => {
+        const raw = e.target.value;
+        const num = Number(raw);
+        onChangeEvent && onChangeEvent(Number.isNaN(num) ? raw : num);
+      }}
+    />
+  ),
+}));
+
+jest.mock('../../../../../componentes/Globais/ReactNumberFormatInput', () => ({
+  __esModule: true,
+  ReactNumberFormatInput: (props) => <input data-testid="react-format-input-mock" {...props} />,
+}));
+
 const propsBase = {
   dataSaldoBancario: {
     observacao_uuid: "03b8bb62-688c-4ce3-9c39-c57de91c2b85",
@@ -101,17 +121,19 @@ describe("DetalheDasPrestacoes", () => {
     expect(iconePendencia).not.toBeInTheDocument();
   });
 
-  it("deve chamar handleChangaDataSaldo ao alterar data extrato", async () => {
+  it("deve chamar handleChangaDataSaldo ao alterar saldo", async () => {
     const props = {
       ...propsBase,
+      permiteEditarCamposExtrato: true,
     };
 
     render(<DetalheDasPrestacoes {...props} />);
 
-    fireEvent.change(document.getElementById("saldo_extrato"), { target: { value: 1001 } });
+    const input = screen.getByTestId("react-number-format-mock");
+    fireEvent.change(input, { target: { value: "1001" } });
 
     await waitFor(() => {
-      expect(props.handleChangaDataSaldo).toHaveBeenCalled();
+      expect(props.handleChangaDataSaldo).toHaveBeenCalledWith("saldo_extrato", 1001);
     });
   });
 

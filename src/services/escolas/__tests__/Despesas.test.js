@@ -1,4 +1,5 @@
 import api from '../../api';
+import { getUuidAssociacao } from '../../../utils/AssociacaoUtils.js';
 import { 
     deleteDespesa,
     getDespesasTabelas,
@@ -32,6 +33,10 @@ jest.mock('../../api', () => ({
     delete: jest.fn(),
 }));
 
+jest.mock('../../../utils/AssociacaoUtils.js', () => ({
+    getUuidAssociacao: jest.fn(),
+}));
+
 
 const mockToken = 'fake-token';
 const associacao_uuid = '12345';
@@ -42,6 +47,7 @@ describe('Testes para funções de análise', () => {
     beforeEach(() => {
         localStorage.setItem(ASSOCIACAO_UUID, associacao_uuid);
         localStorage.setItem(TOKEN_ALIAS, mockToken);
+        getUuidAssociacao.mockReturnValue(associacao_uuid);
     });
 
     afterEach(() => {

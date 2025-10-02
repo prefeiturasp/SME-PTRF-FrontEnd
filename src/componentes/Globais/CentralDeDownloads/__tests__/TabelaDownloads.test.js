@@ -38,12 +38,22 @@ describe("TabelaDownloads", () => {
   it("Deve renderizar tabela corretamente", async () => {
     const mockListaArquivos = [arquivoConcluido];
     render(<TabelaDownloads listaArquivos={mockListaArquivos} />);
-    expect(screen.getByText("Identificador")).toBeInTheDocument();
-    expect(screen.getByText("Informações")).toBeInTheDocument();
-    expect(screen.getByText("Status")).toBeInTheDocument();
-    expect(screen.getByText("Ultima atualização")).toBeInTheDocument();
-    expect(screen.getByText("Visto")).toBeInTheDocument();
-    expect(screen.getByText("Ações")).toBeInTheDocument();
+    expect(
+      screen.getByRole("columnheader", { name: /Identificador/i })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("columnheader", { name: /Informações/i })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("columnheader", { name: /Status/i })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("columnheader", { name: /Data de solicitação/i })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("columnheader", { name: /Visto/i })
+    ).toBeInTheDocument();                
+    expect(screen.getAllByRole("columnheader", { name: /Ações/i })[0]).toBeInTheDocument();                
   });
 
   it("adiciona a classe 'marcado-como-lido' quando lido é true", () => {

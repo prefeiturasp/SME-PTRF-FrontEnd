@@ -28,10 +28,11 @@ export const ElaboracaoPaa = () => {
     setLoadingPaa(true);
     try {
         let response = await getPaaVigente(associacao_uuid)
-        localStorage.setItem("PAA", response.data.uuid);
-        localStorage.setItem("DADOS_PAA", JSON.stringify(response.data));
+        localStorage.setItem("PAA", response.uuid);
+        localStorage.setItem("DADOS_PAA", JSON.stringify(response));
         setNotValidPaa(false);
     } catch (error) {
+        console.log(error);
         setNotValidPaa(true);
     }
     setLoadingPaa(false);

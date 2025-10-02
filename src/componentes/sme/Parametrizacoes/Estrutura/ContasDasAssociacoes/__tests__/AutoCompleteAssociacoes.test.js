@@ -31,9 +31,14 @@ describe('AutoCompleteAssociacoes', () => {
       />
     );
 
-    const input = screen.getByRole('searchbox');
-    userEvent.type(input, 'AAA');
-    expect(screen.getByRole('listbox')).toBeInTheDocument();
+    const input = screen.getByRole('combobox');
+    await userEvent.type(input, 'AAA');
+    
+    // Aguarda a aparição do listbox após a digitação
+    await waitFor(() => {
+      const listbox = document.querySelector('[role="listbox"]');
+      expect(listbox).toBeInTheDocument();
+    }, { timeout: 3000 });
   });
 
 });

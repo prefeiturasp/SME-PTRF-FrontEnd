@@ -20,7 +20,8 @@ const mockOnClose = jest.fn();
 
 const params = {
   uuid_paa_atual: 'uuid-test',
-  uuid_paa_anterior: 'uuid-test'
+  uuid_paa_anterior: 'uuid-test',
+  confirmar: 1
 };
 
 describe("usePostImportarPrioridadess", () => {
@@ -57,21 +58,65 @@ describe("usePostImportarPrioridadess", () => {
     );
   });
 
-  it("deve lidar com erro ao criar uma prioridade", async () => {
-    postImportarPrioridades.mockRejectedValueOnce(
-      new Error("Error")
-    );
+  it("executa mutate e chama postImportarPrioridades com parâmetros corretos", async () => {
+    postImportarPrioridades.mockResolvedValue({ mensagem: "Importado!" });
+    const onClose = jest.fn();
 
-    const { result } = renderHook(
-      () => usePostImportarPrioridades(mockOnClose), { wrapper }
-    );
-
-    await act(async () => {
-      result.current.mutationImportarPrioridades.mutate(params);
+    const { result } = renderHook(() => usePostImportarPrioridades(onClose), {
+      wrapper,
     });
 
-    expect(toastCustom.ToastCustomError).toHaveBeenCalledWith(
-      "Houve um erro ao importar prioridades."
+    await act(async () => {
+      result.current.mutationImportarPrioridades.mutate({
+        uuid_paa_atual: "123",
+        uuid_paa_anterior: "456",
+        confirmar: 0,
+      });
+    });
+
+    expect(postImportarPrioridades).toHaveBeenCalledWith("123", "456", 0);
+  });
+
+  it("onSuccess → chama toast, invalida queries e chama onClose", async () => {
+    const invalidateQueriesSpy = jest.spyOn(queryClient, "invalidateQueries");
+    postImportarPrioridades.mockResolvedValue({ mensagem: "Importado com sucesso" });
+    const onClose = jest.fn();
+
+    const { result } = renderHook(() => usePostImportarPrioridades(onClose), {
+      wrapper,
+    });
+
+    await act(async () => {
+      result.current.mutationImportarPrioridades.mutate(
+        { uuid_paa_atual: "123", uuid_paa_anterior: "456", confirmar: 1 },
+      );
+    });
+
+    expect(toastCustom.ToastCustomSuccess).toHaveBeenCalledWith(
+      "Importado com sucesso"
+    );
+    expect(invalidateQueriesSpy).toHaveBeenCalledWith(["prioridades"]);
+    expect(invalidateQueriesSpy).toHaveBeenCalledWith(["prioridades-resumo"]);
+    expect(onClose).toHaveBeenCalled();
+  });
+
+  it("onSuccess sem mensagem → usa texto padrão", async () => {
+    postImportarPrioridades.mockResolvedValue({});
+    const onClose = jest.fn();
+
+    const { result } = renderHook(() => usePostImportarPrioridades(onClose), {
+      wrapper,
+    });
+
+    await act(async () => {
+      result.current.mutationImportarPrioridades.mutate(
+        { uuid_paa_atual: "1", uuid_paa_anterior: "2", confirmar: 1 },
+      );
+    });
+
+    expect(toastCustom.ToastCustomSuccess).toHaveBeenCalledWith(
+      "Prioridades importadas com sucesso."
     );
   });
+
 });
