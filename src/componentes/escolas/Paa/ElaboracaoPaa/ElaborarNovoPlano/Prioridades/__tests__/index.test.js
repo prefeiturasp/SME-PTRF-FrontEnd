@@ -1,4 +1,5 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { useDispatch } from 'react-redux';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Prioridades from '../index';
 import { useGetPrioridadeTabelas } from '../hooks/useGetPrioridadeTabelas';
@@ -8,6 +9,10 @@ import { useGetTiposDespesaCusteio } from '../hooks/useGetTiposDespesaCusteio';
 // Mock dos hooks
 jest.mock('../hooks/useGetPrioridadeTabelas', () => ({
   useGetPrioridadeTabelas: jest.fn(),
+}));
+
+jest.mock("react-redux", () => ({
+  useDispatch: jest.fn()
 }));
 
 jest.mock('../hooks/useGetPrioridades', () => ({
@@ -42,11 +47,13 @@ jest.mock('../FormFiltros', () => ({
 
 // Mock do Tabela
 jest.mock('../Tabela', () => ({
-  Tabela: ({ data, handleEditar }) => (
+  Tabela: ({ data, handleEditar, handleDuplicar }) => (
     <div data-testid="tabela">
       {data?.map((item, index) => (
         <div key={item.uuid || index} data-testid={`row-${index}`}>
-          {item.acao || 'Ação'} <button data-testid={`btn-editar-${index}`} onClick={() => handleEditar()}>Editar</button>
+          {item.acao || 'Ação'}
+          <button data-testid={`btn-editar-${index}`} onClick={() => handleEditar()}>Editar</button>
+          <button data-testid={`btn-duplicar-${index}`} onClick={() => handleDuplicar(item.uuid)}>Duplicar</button>
         </div>
       ))}
     </div>
@@ -127,7 +134,10 @@ const renderWithQueryClient = (component) => {
 };
 
 describe('Prioridades', () => {
+  const mockDispatch = jest.fn();
+
   beforeEach(() => {
+    useDispatch.mockReturnValue(mockDispatch);
     window.matchMedia = jest.fn().mockImplementation((query) => ({
         matches: false,
         addListener: jest.fn(),
@@ -156,7 +166,7 @@ describe('Prioridades', () => {
     const botaoImportar = screen.getByRole("button", { name: /Importar PAAs anteriores/i })
     fireEvent.click(botaoImportar);
 
-    const tituloModal = screen.getByText("Importar PAAs anteriores", {selector: ".modal-title"})
+    const tituloModal = screen.getByText("Importação de PAA anterior", {selector: ".modal-title"})
 
     expect(tituloModal).toBeInTheDocument();
   });
@@ -354,5 +364,23 @@ describe('Prioridades', () => {
     renderWithQueryClient(<Prioridades />);
 
     expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+  });
+
+  it("aciona edição e duplicação via tabela", () => {
+    const prioridades = mockPrioridades
+    useGetPrioridades.mockReturnValue({
+      isLoading: false,
+      prioridades: prioridades,
+      quantidade: prioridades.length,
+      refetch: jest.fn()
+    });
+    renderWithQueryClient(<Prioridades />);
+
+    const botaoEditar = screen.getByTestId('btn-editar-0');
+    const botaoDuplicar = screen.getByTestId('btn-duplicar-0');
+    fireEvent.click(botaoEditar);
+    expect(screen.getByTestId("modal-form")).toBeInTheDocument();
+
+    fireEvent.click(botaoDuplicar);
   });
 });

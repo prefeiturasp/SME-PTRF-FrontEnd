@@ -42,7 +42,7 @@ describe("TipoReceitaForm", () => {
       },
     });
 
-    window.matchMedia = jest.fn().mockImplementation((query) => ({
+    window.matchMedia = jest.fn().mockImplementation(() => ({
       matches: false,
       addListener: jest.fn(),
       removeListener: jest.fn(),
@@ -56,18 +56,33 @@ describe("TipoReceitaForm", () => {
         detalhes: [{ id: "1", nome: "Detalhe 1" }],
       },
     });
+
     useParams.mockReturnValue({ uuid: undefined });
     useNavigate.mockReturnValue(mockNavigate);
+
     usePostTipoReceita.mockReturnValue({
-      mutationPost: { mutateAsync: mockMutateAsyncPost },
+      mutationPost: {
+        mutateAsync: mockMutateAsyncPost,
+        isLoading: false,
+      },
     });
+
     usePatchTipoReceita.mockReturnValue({
-      mutationPatch: { mutate: mockMutatePatch },
+      mutationPatch: {
+        mutate: mockMutatePatch,
+        isLoading: false,
+      },
     });
+
     useDeleteTipoReceita.mockReturnValue({
-      mutationDelete: { mutate: jest.fn() },
+      mutationDelete: {
+        mutate: jest.fn(),
+        isLoading: false,
+      },
     });
-    useGetTipoReceita.mockReturnValue({ data: null, isLoading: true });
+
+    useGetTipoReceita.mockReturnValue({ data: null, isLoading: false });
+
     RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
     useLocation.mockReturnValue({
       state: { selecionar_todas: undefined },
@@ -190,31 +205,31 @@ describe("TipoReceitaForm", () => {
     );
 
     const nome = screen.getByPlaceholderText("Nome do tipo de crédito");
+    fireEvent.change(nome, { target: { value: "Novo Tipo" } });
+
     const selects = await screen.findAllByRole("combobox");
-
-    fireEvent.change(nome, {
-      target: { value: "Novo Tipo" },
-    });
-
     selects[0].style.pointerEvents = "auto";
-    userEvent.click(selects[0]);
+    await userEvent.click(selects[0]);
     const optionTipo = await screen.findByText("Rendimento");
-    userEvent.click(optionTipo);
+    await userEvent.click(optionTipo);
 
     selects[1].style.pointerEvents = "auto";
-    userEvent.click(selects[1]);
+    await userEvent.click(selects[1]);
     const optionAceita = await screen.findByText("Capital");
-    userEvent.click(optionAceita);
+    await userEvent.click(optionAceita);
 
     selects[2].style.pointerEvents = "auto";
-    userEvent.click(selects[2]);
+    await userEvent.click(selects[2]);
     const optionContas = await screen.findByText("Conta 1");
-    userEvent.click(optionContas);
+    await userEvent.click(optionContas);
 
-    fireEvent.submit(screen.getByRole("form"));
+    const salvarButton = await screen.findByRole("button", { name: /Salvar/i });
+    expect(salvarButton).toBeEnabled();
+
+    await userEvent.click(salvarButton);
 
     await waitFor(() => {
-      expect(mockMutateAsyncPost).toHaveBeenCalled();
+      expect(mockMutateAsyncPost).toHaveBeenCalledTimes(1);
     });
   });
 

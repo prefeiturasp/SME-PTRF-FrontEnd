@@ -232,7 +232,6 @@ export const Associacoes = () => {
     const verifica_alteracao_cnpj =  useMemo(() => stateFormModal.cnpj, [stateFormModal.cnpj]);
 
     const handleSubmitModalFormAssociacoes = useCallback(async (values,{setErrors})=>{
-
         const digits = values.ccm.replace(/\D/g, '');
         if (digits.length > 8 && !validarDAC11A(values.ccm)) {
             setErrors({ ccm: 'CCM inválido. Verifique os 12 dígitos.' });
@@ -260,6 +259,7 @@ export const Associacoes = () => {
                         unidade: {
                             codigo_eol: values.codigo_eol_unidade,
                             nome: values.nome_unidade,
+                            nome_dre: values.nome_dre,
                             tipo_unidade: values.tipo_unidade,
                             email: '',
                             telefone: '',

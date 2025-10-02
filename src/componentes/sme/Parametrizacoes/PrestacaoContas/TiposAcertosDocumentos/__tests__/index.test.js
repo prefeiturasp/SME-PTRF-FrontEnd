@@ -454,14 +454,14 @@ describe('Teste handleSubmitModalForm', () => {
         });
 
          await waitFor(()=> {
-            const btnRemover = screen.getByRole("button", { name: "Apagar" });
+            const btnRemover = screen.getByRole("button", { name: "Excluir", selector: ".btn-danger" });
             expect(btnRemover).toBeInTheDocument();
             expect(btnRemover).toBeEnabled();
             fireEvent.click(btnRemover);
         });
 
         await waitFor(() => {
-            const btnConfirma = screen.getByRole("button", { name: "Excluir" });
+            const btnConfirma = screen.getByTestId("botao-confirmar-modal");
             expect(btnConfirma).toBeInTheDocument();
             expect(btnConfirma).toBeEnabled();
             fireEvent.click(btnConfirma);
@@ -497,14 +497,14 @@ describe('Teste handleSubmitModalForm', () => {
         });
 
          await waitFor(()=> {
-            const btnRemover = screen.getByRole("button", { name: "Apagar" });
+            const btnRemover = screen.getByRole("button", { name: "Excluir", selector: ".btn-danger" });
             expect(btnRemover).toBeInTheDocument();
             expect(btnRemover).toBeEnabled();
             fireEvent.click(btnRemover);
         });
 
         await waitFor(() => {
-            const btnConfirma = screen.getByRole("button", { name: "Excluir" });
+            const btnConfirma = screen.getByTestId("botao-confirmar-modal");
             expect(btnConfirma).toBeInTheDocument();
             expect(btnConfirma).toBeEnabled();
             fireEvent.click(btnConfirma);

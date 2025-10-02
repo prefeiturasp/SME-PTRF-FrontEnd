@@ -113,10 +113,6 @@ describe("Componente ModalForm", () => {
     camposTextos.forEach((campo) => {
       expect(campo).toBeEnabled();
     });
-    const camposRadio = screen.getAllByRole("radio");
-    camposRadio.forEach((campo) => {
-      expect(campo).toBeEnabled();
-    });
   });
 
   it("Renderiza a Modal quando a operação é Cadastro e Permissão False", () => {

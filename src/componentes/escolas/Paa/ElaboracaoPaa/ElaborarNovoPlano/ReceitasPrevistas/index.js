@@ -64,8 +64,8 @@ const ReceitasPrevistas = () => {
 
     try {
       let response = await getPaaVigente(associacaoUUID())
-      localStorage.setItem("PAA", response.data.uuid);
-      localStorage.setItem("DADOS_PAA", JSON.stringify(response.data));
+      localStorage.setItem("PAA", response.uuid);
+      localStorage.setItem("DADOS_PAA", JSON.stringify(response));
     } catch (error) {
       console.error("Falha ao carregar PAA: ", error)
     }

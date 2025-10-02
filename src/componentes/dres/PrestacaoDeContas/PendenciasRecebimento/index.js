@@ -53,7 +53,7 @@ export function PendenciasRecebimento({ prestacaoDeContas }) {
 
   const handlePendencias = () => {
     let _pendencias = [];
-    const naoRequerAta = prestacaoDeContas?.possui_apenas_categorias_que_nao_requerem_ata;
+    // const naoRequerAta = prestacaoDeContas?.possui_apenas_categorias_que_nao_requerem_ata;
     if (
       prestacaoDeContas.status === STATUS_PRESTACAO_CONTA.NAO_RECEBIDA &&
       !prestacaoDeContas.ata_aprensentacao_gerada
@@ -66,20 +66,20 @@ export function PendenciasRecebimento({ prestacaoDeContas }) {
         )
       );
     }
-
-    if (
-      prestacaoDeContas.status === STATUS_PRESTACAO_CONTA.DEVOLVIDA_RETORNADA &&
-      !naoRequerAta &&
-      !prestacaoDeContas.ata_retificacao_gerada
-    ) {
-      _pendencias.push(
-        generatePendencia(
-          "Associação - Geração da ata de retificação (PDF)",
-          "Notificar a associação sobre a geração da ata",
-          postNotificarPendenciaGeracaoAtaRetificacao
-        )
-      );
-    }
+    //[HISTÓRIA 133162] DESCONSIDERA VALIDAÇÃO DE ATA RETIFICAÇÃO DEVISO A INCOSISTÊNCIA NAS REGRAS DE NEGÓCIO PARA EXIGIR GERAÇÃO DA ATA
+    // if (
+    //   prestacaoDeContas.status === STATUS_PRESTACAO_CONTA.DEVOLVIDA_RETORNADA &&
+    //   !naoRequerAta &&
+    //   !prestacaoDeContas.ata_retificacao_gerada
+    // ) {
+    //   _pendencias.push(
+    //     generatePendencia(
+    //       "Associação - Geração da ata de retificação (PDF)",
+    //       "Notificar a associação sobre a geração da ata",
+    //       postNotificarPendenciaGeracaoAtaRetificacao
+    //     )
+    //   );
+    // }
 
     setPendencias(_pendencias);
   };

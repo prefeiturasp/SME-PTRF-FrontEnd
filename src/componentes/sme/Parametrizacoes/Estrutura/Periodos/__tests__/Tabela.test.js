@@ -41,13 +41,21 @@ describe("Tabela", () => {
 
     it("deve exibir os dados corretamente formatados", () => {
         render(<Tabela rowsPerPage={5} data={mockData} count={mockData.length} handleOpenModalForm={mockHandleOpenModalForm} />);
-        expect(screen.getByText("Referência")).toBeInTheDocument();
-        expect(screen.getByText("Data prevista do repasse")).toBeInTheDocument();
-        expect(screen.getByText("Início realização de despesas")).toBeInTheDocument();
-        expect(screen.getByText("Fim realização de despesas")).toBeInTheDocument();
-        expect(screen.getByText("Início prestação de contas")).toBeInTheDocument();
-        expect(screen.getByText("Fim prestação de contas")).toBeInTheDocument();
-        expect(screen.getByText("Ações")).toBeInTheDocument();
+
+        const headerNames = [
+            "Referência",
+            "Data prevista do repasse",
+            "Início realização de despesas",
+            "Fim realização de despesas",
+            "Início prestação de contas",
+            "Fim prestação de contas",
+            "Ações",
+        ];
+
+        headerNames.forEach(name => {
+            expect(screen.getByRole('columnheader', { name })).toBeInTheDocument();
+        });
+
         expect(screen.getByText("2025.1")).toBeInTheDocument();
     });
 

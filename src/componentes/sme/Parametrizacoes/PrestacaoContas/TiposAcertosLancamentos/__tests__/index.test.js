@@ -159,7 +159,7 @@ describe('Teste handleSubmitModalForm', () => {
         expect(input_nome).toBeEnabled();
         expect(input_categoria).toBeInTheDocument();
         expect(input_categoria).toBeEnabled();
-        
+
         expect(saveButton).toBeInTheDocument();
 
         fireEvent.change(input_nome, { target: { value: "Tipo conta 007" } });
@@ -205,7 +205,7 @@ describe('Teste handleSubmitModalForm', () => {
         expect(input_nome).toBeEnabled();
         expect(input_categoria).toBeInTheDocument();
         expect(input_categoria).toBeEnabled();
-        
+
         expect(saveButton).toBeInTheDocument();
 
         fireEvent.change(input_nome, { target: { value: "Tipo conta 007" } });
@@ -252,7 +252,7 @@ describe('Teste handleSubmitModalForm', () => {
         expect(input_nome).toBeEnabled();
         expect(input_categoria).toBeInTheDocument();
         expect(input_categoria).toBeEnabled();
-        
+
         expect(saveButton).toBeInTheDocument();
 
         fireEvent.change(input_nome, { target: { value: "Tipo conta 007" } });
@@ -298,7 +298,7 @@ describe('Teste handleSubmitModalForm', () => {
         expect(input_nome).toBeEnabled();
         expect(input_categoria).toBeInTheDocument();
         expect(input_categoria).toBeEnabled();
-        
+
         expect(saveButton).toBeInTheDocument();
 
         fireEvent.change(input_nome, { target: { value: "Tipo conta 007" } });
@@ -391,13 +391,34 @@ describe('Teste handleSubmitModalForm', () => {
 
         const input_nome = screen.getByLabelText("Nome do tipo *");
         const input_categoria = screen.getByLabelText("Categoria *");
+        const radioPodeAlterarSim = screen.getByLabelText("Sim", { selector: 'input[id="pode_alterar_saldo_conciliacao_sim"]' });
+        const radioPodeAlterarNao = screen.getByLabelText("Não", { selector: 'input[id="pode_alterar_saldo_conciliacao_nao"]' });
+        const radioAtivoSim = screen.getByLabelText("Sim", { selector: 'input[id="ativo-sim"]' });
+        const radioAtivoNao = screen.getByLabelText("Não", { selector: 'input[id="ativo-nao"]' });
+
+        fireEvent.click(radioPodeAlterarSim);
+        expect(radioPodeAlterarSim).toBeChecked();
+        expect(radioPodeAlterarNao).not.toBeChecked();
+
+        fireEvent.click(radioPodeAlterarNao);
+        expect(radioPodeAlterarSim).not.toBeChecked();
+        expect(radioPodeAlterarNao).toBeChecked();
+
+        fireEvent.click(radioAtivoSim);
+        expect(radioAtivoSim).toBeChecked();
+        expect(radioAtivoNao).not.toBeChecked();
+
+        fireEvent.click(radioAtivoNao);
+        expect(radioAtivoSim).not.toBeChecked();
+        expect(radioAtivoNao).toBeChecked();
+
         const saveButton = screen.getByRole("button", { name: "Salvar" });
 
         expect(input_nome).toBeInTheDocument();
         expect(input_nome).toBeEnabled();
         expect(input_categoria).toBeInTheDocument();
         expect(input_categoria).toBeEnabled();
-        
+
         expect(saveButton).toBeInTheDocument();
 
         fireEvent.change(input_nome, { target: { value: "Tipo conta 007" } });
@@ -435,14 +456,14 @@ describe('Teste handleSubmitModalForm', () => {
         });
 
          await waitFor(()=> {
-            const btnRemover = screen.getByRole("button", { name: "Apagar" });
+            const btnRemover = screen.getByRole("button", { name: "Excluir", selector: ".btn-danger" });
             expect(btnRemover).toBeInTheDocument();
             expect(btnRemover).toBeEnabled();
             fireEvent.click(btnRemover);
         });
 
         await waitFor(() => {
-            const btnConfirma = screen.getByRole("button", { name: "Excluir" });
+            const btnConfirma = screen.getByTestId("botao-confirmar-modal");
             expect(btnConfirma).toBeInTheDocument();
             expect(btnConfirma).toBeEnabled();
             fireEvent.click(btnConfirma);
@@ -478,14 +499,14 @@ describe('Teste handleSubmitModalForm', () => {
         });
 
          await waitFor(()=> {
-            const btnRemover = screen.getByRole("button", { name: "Apagar" });
+            const btnRemover = screen.getByRole("button", { name: "Excluir", selector: ".btn-danger" });
             expect(btnRemover).toBeInTheDocument();
             expect(btnRemover).toBeEnabled();
             fireEvent.click(btnRemover);
         });
 
         await waitFor(() => {
-            const btnConfirma = screen.getByRole("button", { name: "Excluir" });
+            const btnConfirma = screen.getByTestId("botao-confirmar-modal");
             expect(btnConfirma).toBeInTheDocument();
             expect(btnConfirma).toBeEnabled();
             fireEvent.click(btnConfirma);

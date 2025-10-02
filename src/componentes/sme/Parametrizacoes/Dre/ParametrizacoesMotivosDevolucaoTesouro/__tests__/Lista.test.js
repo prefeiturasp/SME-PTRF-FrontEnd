@@ -50,7 +50,9 @@ describe("Lista", () => {
       </MotivosDevolucaoTesouroContext.Provider>
     );
 
-    expect(screen.getByText("Motivos de devolução ao tesouro")).toBeInTheDocument();
+    expect(
+      screen.getByRole('columnheader', { name: 'Motivos de devolução ao tesouro' })
+    ).toBeInTheDocument();
     expect(screen.getByText("Motivo 1")).toBeInTheDocument();
   });
 

@@ -1,13 +1,27 @@
 import React from 'react';
+import { useDispatch } from 'react-redux';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import ModalImportarPrioridades from '../ModalImportarPrioridades';
 import { usePostImportarPrioridades } from '../hooks/usePostImportarPrioridades';
+import { toastCustom } from '../../../../../../Globais/ToastCustom';
+import { CustomModalConfirm } from "../../../../../../Globais/Modal/CustomModalConfirm";
 
+jest.mock("../../../../../../Globais/ToastCustom", () => ({
+  toastCustom: { ToastCustomError: jest.fn() },
+}));
 
 jest.mock('../hooks/usePostImportarPrioridades', () => ({
   usePostImportarPrioridades: jest.fn(),
+}));
+
+jest.mock("react-redux", () => ({
+  useDispatch: jest.fn()
+}));
+
+jest.mock("../../../../../../Globais/Modal/CustomModalConfirm", () => ({
+  CustomModalConfirm: jest.fn(),
 }));
 
 describe('ModalImportarPrioridades', () => {
@@ -15,8 +29,10 @@ describe('ModalImportarPrioridades', () => {
   let mockData;
   const mockOnClose = jest.fn();
   const mockMutate = jest.fn();
+  const mockDispatch = jest.fn();
 
   beforeEach(() => {
+    useDispatch.mockReturnValue(mockDispatch);
     localStorage.setItem("PAA", "uuid-atual-123");
     queryClient = new QueryClient({
       defaultOptions: {
@@ -69,7 +85,7 @@ describe('ModalImportarPrioridades', () => {
 
   it('deve renderizar o modal quando open=true', () => {
     renderComponent();
-    expect(screen.getByText('Importar PAAs anteriores')).toBeInTheDocument();
+    expect(screen.getByText('Importação de PAA anterior')).toBeInTheDocument();
   });
 
   it('deve renderizar todos os campos obrigatórios', () => {
@@ -82,7 +98,7 @@ describe('ModalImportarPrioridades', () => {
   it("renderiza o título e o texto de instrução", () => {
     render(<ModalImportarPrioridades open={true} onClose={mockOnClose} paas={[]} />);
 
-    expect(screen.getByText("Importar PAAs anteriores")).toBeInTheDocument();
+    expect(screen.getByText("Importação de PAA anterior")).toBeInTheDocument();
     expect(
       screen.getByText("Selecione o ano em que deseja importar os dados para o PAA atual.")
     ).toBeInTheDocument();
@@ -105,24 +121,6 @@ describe('ModalImportarPrioridades', () => {
     expect(mockOnClose).toHaveBeenCalledTimes(1);
   });
 
-  it("faz submit válido e chama mutationImportarPrioridades.mutate", async () => {
-    const paas = mockData;
-
-    render(<ModalImportarPrioridades open={true} onClose={mockOnClose} paas={paas} />);
-
-    fireEvent.mouseDown(screen.getByRole("combobox"));
-    fireEvent.click(screen.getByText("2024 Teste Anterior"));
-
-    fireEvent.click(screen.getByRole("button", { name: /Importar/i }));
-
-    await waitFor(() => {
-      expect(mockMutate).toHaveBeenCalledWith({
-        uuid_paa_atual: "uuid-atual-123",
-        uuid_paa_anterior: mockData[0].uuid,
-      });
-    });
-  });
-
   it("exibe erros de validação quando o form é enviado vazio", async () => {
     render(<ModalImportarPrioridades open={true} onClose={mockOnClose} paas={[]} />);
 
@@ -130,6 +128,74 @@ describe('ModalImportarPrioridades', () => {
 
     await waitFor(() => {
       expect(screen.getByText(/PAA anterior é obrigatório/i)).toBeInTheDocument();
+    });
+  });
+
+  it("clica em Cancelar → chama onClose", () => {
+    const onClose = jest.fn();
+    render(<ModalImportarPrioridades open onClose={onClose} paas={[]} />);
+
+    fireEvent.click(screen.getByText(/Cancelar/i));
+
+    expect(onClose).toHaveBeenCalled();
+  });
+
+  it("trata erro sem confirmar → chama toastCustom", async () => {
+    mockMutate.mockImplementation((_, { onError }) => {
+      onError({ response: { data: { mensagem: "Erro ao importar" } } });
+    });
+
+    render(<ModalImportarPrioridades open onClose={jest.fn()} paas={mockData} />);
+    fireEvent.mouseDown(screen.getByRole("combobox"));
+    fireEvent.click(screen.getByText("2024 Teste Anterior"));
+
+
+    fireEvent.click(screen.getByText("Importar"));
+
+    await waitFor(() => {
+      expect(toastCustom.ToastCustomError).toHaveBeenCalledWith(
+        "Erro ao importar"
+      );
+    });
+  });
+
+  it("trata erro com confirmar → abre CustomModalConfirm exigindo a confirmação", async () => {
+    mockMutate.mockImplementation((_, { onError }) => {
+      onError({ response: { data: { confirmar: "Confirmação necessária" } } });
+    });
+
+    render(<ModalImportarPrioridades open onClose={jest.fn()} paas={mockData} />);
+    fireEvent.mouseDown(screen.getByRole("combobox"));
+    fireEvent.click(screen.getByText("2024 Teste Anterior"));
+
+    fireEvent.click(screen.getByText("Importar"));
+
+    await waitFor(() => {
+      expect(CustomModalConfirm).toHaveBeenCalledWith(
+        expect.objectContaining({
+          title: "Confirma importação?",
+          message: "Confirmação necessária",
+        })
+      );
+    });
+  });
+
+  it("submete form com sucesso", async () => {
+    render(<ModalImportarPrioridades open onClose={jest.fn()} paas={mockData} />);
+    fireEvent.mouseDown(screen.getByRole("combobox"));
+    fireEvent.click(screen.getByText("2024 Teste Anterior"));
+
+    fireEvent.click(screen.getByText("Importar"));
+
+    await waitFor(() => {
+      expect(mockMutate).toHaveBeenCalledWith(
+        {
+          uuid_paa_atual: "uuid-atual-123",
+          uuid_paa_anterior: mockData[0].uuid,
+          confirmar: 0,
+        },
+        expect.any(Object)
+      );
     });
   });
 });

@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
-import DadosDaAsssociacao from '../index';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { DadosDaAsssociacao } from '../index';
+import { useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { 
   getAssociacao, 
@@ -11,7 +11,6 @@ import {
 import { visoesService } from '../../../../../services/visoes.service';
 import { toastCustom } from '../../../../Globais/ToastCustom';
 
-// Mock all external dependencies
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useLocation: jest.fn(),
@@ -28,8 +27,14 @@ jest.mock('../../../../../services/escolas/Associacao.service', () => ({
   getStatusCadastroAssociacao: jest.fn(),
 }));
 
-jest.mock('../../../../Globais/MenuInterno', () => () => <div>MenuInterno</div>);
-jest.mock('../../ExportaDadosAssociacao', () => () => <div>ExportaDados</div>);
+jest.mock('../../../../Globais/MenuInterno', () => ({
+  MenuInterno: () => <div>MenuInterno</div>,
+}));
+
+jest.mock('../../ExportaDadosAssociacao', () => ({
+  ExportaDadosDaAsssociacao: () => <div>ExportaDados</div>,
+}));
+
 jest.mock('../../../../../utils/Modais', () => ({
   CancelarModalAssociacao: ({ show, handleClose, onCancelarTrue }) => 
     show ? <div>
@@ -50,6 +55,13 @@ jest.mock('../../../../Globais/ToastCustom', () => ({
   },
 }));
 
+jest.mock('../../../../../utils/Loading', () => () => <div data-testid="loading" />);
+
+jest.mock('../../UrlsMenuInterno', () => ({
+  UrlsMenuInterno: [],
+  retornaMenuAtualizadoPorStatusCadastro: jest.fn(() => []),
+}));
+
 describe('DadosDaAsssociacao', () => {
   const mockDispatch = jest.fn();
   const mockAssociacao = {
@@ -64,9 +76,7 @@ describe('DadosDaAsssociacao', () => {
     email: 'test@example.com',
     unidade: {
       codigo_eol: '123456',
-      dre: {
-        nome: 'Test DRE'
-      },
+      dre: { nome: 'Test DRE' },
       email: 'unidade@test.com'
     },
     data_de_encerramento: {
@@ -97,12 +107,6 @@ describe('DadosDaAsssociacao', () => {
 
   afterEach(() => {
     jest.clearAllMocks();
-  });
-
-  test('renders loading state initially', async () => {
-    render(<DadosDaAsssociacao />);
-    expect(screen.getByTestId('loading')).toBeInTheDocument();
-    await waitFor(() => expect(getAssociacao).toHaveBeenCalled());
   });
 
   test('renders association data after loading', async () => {

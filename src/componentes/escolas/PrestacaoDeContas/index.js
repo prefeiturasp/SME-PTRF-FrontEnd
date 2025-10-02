@@ -28,6 +28,7 @@ import { ModalPendenciasCadastrais } from "./ModalPendenciasCadastrais";
 import { ModalAvisoAssinatura } from "./ModalAvisoAssinatura";
 import { setPersistenteUrlVoltar } from "../../../store/reducers/componentes/escolas/PrestacaoDeContas/PendenciaCadastro/actions";
 import { CustomModalConfirm } from "../../Globais/Modal/CustomModalConfirm";
+import { ModalDevolucaoNaoPermitida } from "./ModalDevolucaoNaoPermitida";
 
 export const PrestacaoDeContas = ({setStatusPC, registroFalhaGeracaoPc, setRegistroFalhaGeracaoPc, setApresentaBarraAvisoErroProcessamentoPc}) => {
     const navigate = useNavigate();
@@ -57,6 +58,8 @@ export const PrestacaoDeContas = ({setStatusPC, registroFalhaGeracaoPc, setRegis
     const [showModalConcluirAcertosSemPendencias, setShowModalConcluirAcertosSemPendencias] = useState(false);
     const [stringMonitoramento, setStringMonitoramento] = useState(monitoramento)
     const [modalPendenciasCadastrais, setModalPendenciasCadastrais] = useState({show: false, title: '', message: '', actions: []});
+    const [showModalDevolucaoNaoPermitida, setShowModalDevolucaoNaoPermitida] = useState(false);
+    const [mensagemDevolucaoNaoPermitida, setMensagemDevolucaoNaoPermitida] = useState('');
 
     const associacaoUuid = localStorage.getItem(ASSOCIACAO_UUID)
 
@@ -271,20 +274,43 @@ export const PrestacaoDeContas = ({setStatusPC, registroFalhaGeracaoPc, setRegis
 
     const concluirPeriodo = useCallback( async (justificativaPendencia='') =>{
         if (periodoPrestacaoDeConta && periodoPrestacaoDeConta.periodo_uuid){
+            try {
+                let status_concluir_periodo = await postConcluirPeriodo(periodoPrestacaoDeConta.periodo_uuid, justificativaPendencia);
+                setUuidPrestacaoConta(status_concluir_periodo.uuid);
+                let status = await getStatusPeriodoPorData(localStorage.getItem(ASSOCIACAO_UUID), periodoPrestacaoDeConta.data_inicial);
+                setStatusPrestacaoDeConta(status);
+                setStatusPC(status)
+                setLoadingMonitoramentoPc(false)
+                await carregaPeriodos();
+                await setConfBoxAtaApresentacao();
+            } catch (error) {
+                setLoadingMonitoramentoPc(false);
 
-            let status_concluir_periodo = await postConcluirPeriodo(periodoPrestacaoDeConta.periodo_uuid, justificativaPendencia);
-            setUuidPrestacaoConta(status_concluir_periodo.uuid);
-            let status = await getStatusPeriodoPorData(localStorage.getItem(ASSOCIACAO_UUID), periodoPrestacaoDeConta.data_inicial);
-            setStatusPrestacaoDeConta(status);
-            setStatusPC(status)
-            setLoadingMonitoramentoPc(false)
-            await carregaPeriodos();
-            await setConfBoxAtaApresentacao();
+                const { response } = error || {};
+                const data = response && response.data ? response.data : {};
+                const erros = Array.isArray(data.erro) ? data.erro : [];
+
+                if (response && response.status === 400 && erros.includes('prestacao_com_saldos_alterados_sem_solicitacao')) {
+                    const mensagens = Array.isArray(data.mensagem) ? data.mensagem : [data.mensagem].filter(Boolean);
+                    const mensagem = mensagens.filter(Boolean).join(' ') || 'O saldo bancário da conta informada foi modificado e não é permitido devolução. Favor retornar o saldo bancário para o valor original indicado na entrega da prestação de contas.';
+
+                    setMensagemDevolucaoNaoPermitida(mensagem);
+                    setShowModalDevolucaoNaoPermitida(true);
+                    return;
+                }
+
+                throw error;
+            }
         }
     }, [periodoPrestacaoDeConta]);
 
     const handleCloseModalPendenciasCadastrais = () => {
         setModalPendenciasCadastrais({show: false, title: '', message: '', actions: []});
+    };
+
+    const handleCloseModalDevolucaoNaoPermitida = () => {
+        setShowModalDevolucaoNaoPermitida(false);
+        setMensagemDevolucaoNaoPermitida('');
     };
 
     function goToMembrosAssociacao() {
@@ -764,6 +790,13 @@ export const PrestacaoDeContas = ({setStatusPC, registroFalhaGeracaoPc, setRegis
                             Para conferir as informações cadastradas, sem bloqueio do sistema nesse período, gere um documento prévio.
                             Você confirma a conclusão do acerto da Prestação de Contas?</p>"
                             dataQa="modal-concluir-acertos-sem-pendencias"
+                        />
+                    </section>
+                    <section>
+                        <ModalDevolucaoNaoPermitida
+                            show={showModalDevolucaoNaoPermitida}
+                            handleClose={handleCloseModalDevolucaoNaoPermitida}
+                            mensagem={mensagemDevolucaoNaoPermitida}
                         />
                     </section>
                     <section>

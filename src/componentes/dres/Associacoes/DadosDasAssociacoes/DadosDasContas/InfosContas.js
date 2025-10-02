@@ -28,14 +28,17 @@ export const  InfosContas = ({dadosDaAssociacao}) =>{
     const [motivos, setMotivos] = useState([]);
     const [loading, setLoading] = useState(true);
     const [errorModalRejeicao, setErrorModalRejeicao] = useState(null)
-    const permiossaoEncerramento = visoesService.getPermissoes(["change_encerrar_associacoes"])
-    const habilitaBotoesEncerramento = (conta) => {
-        return apresentaDataDeEncerramentoDeConta(conta) &&
-            conta.tipo_conta.permite_inativacao &&
-            permiossaoEncerramento;
-    };
+    const podeAceitarRejeitarCancelamentoConta = visoesService.getPermissoes(["aceita_e_rejeita_cancelamento_conta"])
     const apresentaDataDeEncerramentoDeConta = (conta) => {
         return conta && conta.solicitacao_encerramento !== null && conta.solicitacao_encerramento.status === "PENDENTE";
+    };
+
+    const habilitaBotoesEncerramento = (conta) => {
+        return conta && 
+               conta.solicitacao_encerramento !== null && 
+               conta.solicitacao_encerramento.status === "PENDENTE" && 
+               conta.tipo_conta.permite_inativacao &&
+               podeAceitarRejeitarCancelamentoConta;
     };
 
     useEffect(() => {
@@ -263,24 +266,26 @@ export const  InfosContas = ({dadosDaAssociacao}) =>{
                                                     <span className="saldo-recursos-conta">R$ {conta.saldo_atual_conta ? conta.saldo_atual_conta.toLocaleString("pt-BR") : 0}</span>
                                                 </div>
                                             </div>
-                                            <div className="col-7 text-right mt-3">
-                                                <button
-                                                    type="button"
-                                                    className="btn btn-base-verde-outline mr-3"
-                                                    onClick={() => handleOpenModalConfirmarEncerramentoConta(conta)}
-                                                    disabled={!habilitaBotoesEncerramento(conta)}
-                                                >
-                                                    Confirmar encerramento
-                                                </button>
-                                                <button
-                                                    type="button"
-                                                    className="btn btn-base-verde-outline"
-                                                    onClick={() => handleOpenModalRejeitarEncerramentoConta(conta)}
-                                                    disabled={!habilitaBotoesEncerramento(conta)}
-                                                >
-                                                    Rejeitar encerramento
-                                                </button>
-                                            </div>
+                                            {apresentaDataDeEncerramentoDeConta(conta) && conta.tipo_conta.permite_inativacao &&
+                                                <div className="col-7 text-right mt-3">
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn-base-verde-outline mr-3"
+                                                        onClick={() => handleOpenModalConfirmarEncerramentoConta(conta)}
+                                                        disabled={!habilitaBotoesEncerramento(conta)}
+                                                    >
+                                                        Confirmar encerramento
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn-base-verde-outline"
+                                                        onClick={() => handleOpenModalRejeitarEncerramentoConta(conta)}
+                                                        disabled={!habilitaBotoesEncerramento(conta)}
+                                                    >
+                                                        Rejeitar encerramento
+                                                    </button>
+                                                </div>
+                                            }
                                         </div>
                                     </div>
                                 </div>

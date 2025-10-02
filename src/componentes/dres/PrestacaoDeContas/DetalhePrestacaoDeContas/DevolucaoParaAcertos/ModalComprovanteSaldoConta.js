@@ -1,7 +1,7 @@
 import {ModalBootstrap} from "../../../../Globais/ModalBootstrap";
 import React from "react";
 
-export const ModalConfirmDeleteLancamento = (props) => {
+export const ModalComprovanteSaldoConta = (props) => {
     return (
         <ModalBootstrap
             show={props.show}
@@ -11,7 +11,7 @@ export const ModalConfirmDeleteLancamento = (props) => {
             primeiroBotaoOnclick={props.handleClose}
             primeiroBotaoTexto={props.primeiroBotaoTexto}
             primeiroBotaoCss={props.primeiroBotaoCss}
-            segundoBotaoOnclick={props.onDeleteLancamentoTrue}
+            segundoBotaoOnclick={props.onConfirmar}
             segundoBotaoCss={props.segundoBotaoCss}
             segundoBotaoTexto={props.segundoBotaoTexto}
         />

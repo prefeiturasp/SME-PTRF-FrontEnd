@@ -36,22 +36,25 @@ describe("Carrega página de Tipos", () => {
     beforeEach(() => {
         jest.clearAllMocks();
         getTodosTiposDeCusteio.mockResolvedValue(mockData);
+        getFiltrosTiposDeCusteio.mockResolvedValue(mockData);
     });
 
     it("Testa a chamada de getFiltros", async () => {
-        getTodosTiposDeCusteio.mockResolvedValueOnce(mockData);
+        getTodosTiposDeCusteio.mockResolvedValue(mockData);
         render(<MemoryRouter><TiposDeCusteio /></MemoryRouter>);
 
         await waitFor(() => {
-
-            const filtro_nome = screen.getByLabelText(/filtrar por nome/i)
-            expect(filtro_nome).toBeInTheDocument();
-
-            fireEvent.change(filtro_nome, { target: { value: 'Tipo 1' } });
-            expect(filtro_nome.value).toBe('Tipo 1');
-
+            expect(screen.queryByText(/Carregando.../i)).not.toBeInTheDocument();
         });
+
+        const filtro_nome = screen.getByLabelText(/filtrar por nome/i);
+        expect(filtro_nome).toBeInTheDocument();
+
+        fireEvent.change(filtro_nome, { target: { value: 'Tipo 1' } });
+        expect(filtro_nome.value).toBe('Tipo 1');
+
         fireEvent.click(screen.getByRole('button', { name: /filtrar/i }));
+
         await waitFor(() => {
             expect(getFiltrosTiposDeCusteio).toHaveBeenCalledWith('Tipo 1');
         });

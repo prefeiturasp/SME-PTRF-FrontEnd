@@ -1,7 +1,5 @@
 import React, {useState, memo} from 'react';
-import {AutoComplete} from 'primereact/autocomplete';
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faSearch} from "@fortawesome/free-solid-svg-icons";
+import AutoCompleteModal from '../../../../Globais/AutoCompleteComponent/AutoCompleteModal';
 import { Tag } from '../../../../Globais/Tag';
 
 const AutoCompleteAssociacoes = ({todasAsAcoesAutoComplete, recebeAcaoAutoComplete, disabled = false, loadingAssociacoes = false}) => {
@@ -52,33 +50,21 @@ const AutoCompleteAssociacoes = ({todasAsAcoesAutoComplete, recebeAcaoAutoComple
     };
 
     return (
-        <div className="d-flex bd-highlight">
-            <div className="flex-grow-1 bd-highlight">
-                <AutoComplete
-                    value={selectedAcao}
-                    name='selectedAcao'
-                    inputId='selectedAcao'
-                    suggestions={filteredAcoes}
-                    completeMethod={searchAcao}
-                    field="unidade.nome_com_tipo"
-                    onChange={handleChange}
-                    inputClassName="form-control"
-                    onSelect={handleSelect}
-                    style={{width: "100%", borderLeft:'none'}}
-                    itemTemplate={itemTemplate}
-                    disabled={disabled || loadingAssociacoes}
-                    placeholder={`${loadingAssociacoes ? "Carregando unidades" : ""}`}
-                />
-            </div>
-            <div className="bd-highlight ml-0 py-1 px-3 ml-n3 border-top border-right border-bottom">
-                {/*<button className='btn btn-link ml-0 py-1 px-2 ml-n1 border-top border-right border-bottom' type='button'>*/}
-                    <FontAwesomeIcon
-                        style={{fontSize: '18px', marginRight: "0", color: "#42474A"}}
-                        icon={faSearch}
-                    />
-                {/*</button>*/}
-            </div>
-        </div>
+        <AutoCompleteModal
+            value={selectedAcao}
+            name='selectedAcao'
+            inputId='selectedAcao'
+            suggestions={filteredAcoes}
+            completeMethod={searchAcao}
+            field="unidade.nome_com_tipo"
+            onChange={handleChange}
+            onSelect={handleSelect}
+            itemTemplate={itemTemplate}
+            disabled={disabled}
+            loading={loadingAssociacoes}
+            placeholder=""
+            loadingText="Carregando unidades"
+        />
     )
 };
 

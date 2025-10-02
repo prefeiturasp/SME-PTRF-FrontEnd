@@ -34,12 +34,21 @@ jest.mock('react-router-dom', () => ({
   useLocation: jest.fn(),
 }));
 
-
 jest.mock("../../../../../services/auth.service", () => ({
     authService:{
         logout: jest.fn(),
         isLoggedIn: jest.fn(),
     }
+}));
+
+jest.mock('../../../../../componentes/Globais/ReactNumberFormatInput/indexv2', () => ({
+  __esModule: true,
+  ReactNumberFormatInputV2: (props) => <input data-testid="react-number-format-mock" {...props} />,
+}));
+
+jest.mock('../../../../../componentes/Globais/ReactNumberFormatInput', () => ({
+  __esModule: true,
+  ReactNumberFormatInput: (props) => <input data-testid="react-format-input-mock" {...props} />,
 }));
 
 const mockSidebarContext = {
