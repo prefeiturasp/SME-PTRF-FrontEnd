@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { Tooltip } from 'antd';
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -21,6 +21,10 @@ const Relatorios = () => {
     introducao: false,
   });
   const [isSaving, setIsSaving] = useState(false);
+  const [introducaoEditorInstance, setIntroducaoEditorInstance] = useState(null);
+  const introducaoEditorContainerRef = useRef(null);
+  const tooltipIconRef = useRef(null);
+  const [tooltipOffsetTop, setTooltipOffsetTop] = useState(55);
 
   const associacaoUuid = localStorage.getItem(ASSOCIACAO_UUID);
   const { textosPaa, isLoading, isError } = useGetTextosPaa();
@@ -106,6 +110,61 @@ const Relatorios = () => {
     return novoTexto;
   };
 
+  const atualizarPosicaoTooltipIntroducao = useCallback(() => {
+    if (!introducaoEditorInstance || !introducaoEditorContainerRef.current) {
+      return;
+    }
+
+    const textoFixo = introducaoEditorInstance.getBody()?.querySelector('#texto-automatico-introducao-paa');
+    const iframeElement = introducaoEditorInstance.iframeElement || introducaoEditorInstance.getContentAreaContainer()?.querySelector('iframe');
+
+    if (!textoFixo || !iframeElement) {
+      return;
+    }
+
+    const textoRect = textoFixo.getBoundingClientRect();
+    const iframeRect = iframeElement.getBoundingClientRect();
+    const containerRect = introducaoEditorContainerRef.current.getBoundingClientRect();
+
+    const novoTop = textoRect.top + iframeRect.top - containerRect.top;
+    if (!Number.isFinite(novoTop)) {
+      return;
+    }
+
+    const iconHeight = tooltipIconRef.current?.offsetHeight || 24;
+    const maxTop = Math.max(0, containerRect.height - iconHeight);
+    const clampedTop = Math.min(Math.max(novoTop, 0), maxTop);
+
+    setTooltipOffsetTop(prev => (Math.abs(prev - clampedTop) > 0.5 ? clampedTop : prev));
+  }, [introducaoEditorInstance]);
+
+  useEffect(() => {
+    if (!introducaoEditorInstance) {
+      setTooltipOffsetTop(55);
+      return;
+    }
+
+    const handler = () => atualizarPosicaoTooltipIntroducao();
+
+    introducaoEditorInstance.on('ScrollContent', handler);
+    introducaoEditorInstance.on('NodeChange', handler);
+    introducaoEditorInstance.on('SetContent', handler);
+    window.addEventListener('resize', handler);
+
+    handler();
+
+    return () => {
+      introducaoEditorInstance.off('ScrollContent', handler);
+      introducaoEditorInstance.off('NodeChange', handler);
+      introducaoEditorInstance.off('SetContent', handler);
+      window.removeEventListener('resize', handler);
+    };
+  }, [introducaoEditorInstance, atualizarPosicaoTooltipIntroducao]);
+
+  useEffect(() => {
+    atualizarPosicaoTooltipIntroducao();
+  }, [paaVigente, textosPaa, atualizarPosicaoTooltipIntroducao]);
+
   const renderSecao = (secaoKey, config) => {
     const isExpanded = expandedSections[secaoKey];
     
@@ -141,10 +200,17 @@ const Relatorios = () => {
               )}
             
                   {config.temEditor && !isLoadingPaa && (
-                    <div className="editor-container">
+                    <div
+                      className="editor-container"
+                      ref={config.chave === 'introducao' ? introducaoEditorContainerRef : undefined}
+                    >
                       {config.chave === 'introducao' && (
                         <Tooltip title="Texto padrão inserido automaticamente no documento" placement="top">
-                          <span className="tooltip-icon-externo">
+                          <span
+                            className="tooltip-icon-externo"
+                            ref={tooltipIconRef}
+                            style={{ top: tooltipOffsetTop }}
+                          >
                             <FontAwesomeIcon icon={faInfoCircle} />
                           </span>
                         </Tooltip>
@@ -178,6 +244,7 @@ const Relatorios = () => {
                     botaoCancelar={false}
                     disabled={isSaving}
                     isSaving={isSaving}
+                    onEditorReady={config.chave === 'introducao' ? setIntroducaoEditorInstance : undefined}
                   />
                 </div>
               )}

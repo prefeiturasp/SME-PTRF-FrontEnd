@@ -7,7 +7,18 @@ import "./editor-wysiwyg-custom.scss"
 const TEXT_NODE = 3;
 const ELEMENT_NODE = 1;
 
-const EditorWysiwygCustom = ({textoInicialEditor, tituloEditor, handleSubmitEditor, disabled=false, botaoCancelar=false, setExibeEditor=()=>{}, handleLimparEditor=()=>{}, handleMudancaEditor=null, isSaving=false})=>{
+const EditorWysiwygCustom = ({
+    textoInicialEditor,
+    tituloEditor,
+    handleSubmitEditor,
+    disabled=false,
+    botaoCancelar=false,
+    setExibeEditor=()=>{},
+    handleLimparEditor=()=>{},
+    handleMudancaEditor=null,
+    isSaving=false,
+    onEditorReady=()=>{}
+})=>{
 
     let REACT_APP_EDITOR_KEY = "EDITOR_KEY_REPLACE_ME";
 
@@ -83,6 +94,12 @@ const EditorWysiwygCustom = ({textoInicialEditor, tituloEditor, handleSubmitEdit
                     editorRef.current = editor;
                     const textoFixoId = 'texto-automatico-introducao-paa';
                     const isBrowserEnvironment = typeof window !== 'undefined' && window.Node;
+
+                    if (onEditorReady && typeof onEditorReady === 'function') {
+                        onEditorReady(editor);
+                        const handleRemove = () => onEditorReady(null);
+                        editor.on('remove', handleRemove);
+                    }
 
                     const obterElementoFixo = () => editor.getBody().querySelector(`#${textoFixoId}`);
 

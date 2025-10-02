@@ -219,6 +219,8 @@
 /* Estilos para o conteúdo da introdução dentro do header */
 .introducao-content {
   margin-top: 12px;
+  position: relative;
+  z-index: 3;
 }
 
 /* Container dos textos de introdução com fundo azul */
@@ -248,13 +250,12 @@
 /* Tooltip externo posicionado sobre a div do texto automático */
 .tooltip-icon-externo {
   position: absolute;
-  top: 55px; /* Ajuste para posicionar sobre a div do texto automático */
-  right: 20px; /* Ajuste para posicionar no canto direito */
+  right: 35px; /* Ajuste para posicionar no canto direito */
   color: #1890ff;
   cursor: help;
   font-size: 16px;
   transition: color 0.2s ease;
-  z-index: 10; /* Garante que fique sobre o editor */
+  z-index: 1; /* Garante que fique sobre o editor */
   pointer-events: auto; /* Permite interação com o tooltip */
 }
 
