@@ -290,9 +290,14 @@ const EditorWysiwygCustom = ({textoInicialEditor, tituloEditor, handleSubmitEdit
                     
                     // Adiciona evento para interceptar inserção de conteúdo antes do texto fixo
                     editor.on('BeforeSetContent', (e) => {
+                        // Ignora alterações que afetam apenas a seleção (ex.: bold, italic, listas)
+                        if (e.selection) {
+                            return;
+                        }
+
                         const textoFixoId = 'texto-automatico-introducao-paa';
                         const elementoFixo = editor.getBody().querySelector(`#${textoFixoId}`);
-                        
+
                         if (elementoFixo && e.content) {
                             // Se o conteúdo não contém o texto fixo, adiciona ele no início
                             if (!e.content.includes(`id="${textoFixoId}"`)) {
