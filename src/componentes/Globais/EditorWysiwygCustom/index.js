@@ -426,7 +426,10 @@ const EditorWysiwygCustom = ({
                     <button className="btn btn-outline-secondary btn-limpar-customizado" onClick={handleLimpar} type="button" disabled={disabled || isSaving}>
                         Limpar
                     </button>
-                    <button className="btn btn-success" onClick={() => handleSubmitEditor(textoEditor)} type="button" disabled={disabled || isSaving}>
+                    <button className="btn btn-success" style={{
+                        fontSize: '12px',
+                        fontWeight: 'bold',
+                    }} onClick={() => handleSubmitEditor(textoEditor)} type="button" disabled={disabled || isSaving}>
                         {isSaving ? (
                             <>
                                 <FontAwesomeIcon 
