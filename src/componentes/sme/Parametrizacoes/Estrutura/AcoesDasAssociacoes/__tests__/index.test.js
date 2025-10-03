@@ -8,12 +8,8 @@ import {
     getParametrizacoesAcoesAssociacoes,
     getAssociacoes,
     getTabelaAssociacoes
-    // getFiltrosTiposDeDocumento
 } from "../../../../../../services/sme/Parametrizacoes.service";
-import { toastCustom } from "../../../../../Globais/ToastCustom";
-import { postCreateTipoDeDocumento, patchAlterarTipoDeDocumento, deleteTipoDeDocumento } from '../../../../../../services/sme/Parametrizacoes.service';
-import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
-import * as service from "../../../../../../services/sme/Parametrizacoes.service";
+import { getTabelaAssociacoes as getTabelaAssociacoesDres } from "../../../../../../services/dres/Associacoes.service";
 import { mockAcoes, mockSelectAcoes, mockSelectAssociacoes, tabelas } from '../__fixtures__/mockData';
 
 jest.mock("../TabelaAcoesDasAssociacoes", () => ({
@@ -28,6 +24,10 @@ jest.mock("../../../../../../services/sme/Parametrizacoes.service", ()=>({
     patchAlterarTipoDeDocumento: jest.fn(),
     deleteTipoDeDocumento: jest.fn(),
     getParametrizacoesAcoesAssociacoes: jest.fn(),
+}));
+
+jest.mock("../../../../../../services/dres/Associacoes.service", ()=>({
+    getTabelaAssociacoes: jest.fn(),
 }));
 
 jest.mock("../../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes", () => ({
@@ -54,6 +54,7 @@ describe("Carrega página de Acoes das Associações", () => {
         getParametrizacoesAcoesAssociacoes.mockResolvedValue(mockAcoes);
         getTabelaAssociacoes.mockResolvedValue(tabelas);
         getListaDeAcoes.mockResolvedValue(mockSelectAcoes);
+        getTabelaAssociacoesDres.mockResolvedValue(tabelas);
     });
 
     it("Testa a chamada de get de Filtros", async () => {
