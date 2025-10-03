@@ -56,17 +56,17 @@ const EditorWysiwyg = ({textoInicialEditor, tituloEditor, handleSubmitEditor, di
             />
             <div className={`d-flex pb-3 mt-3 ${botaoCancelar ? 'justify-content-between' : 'justify-content-end'}`}>
                 {botaoCancelar && (
-                    <button className="btn btn-danger" onClick={() => {
+                    <button className="btn btn-danger btn-textos" onClick={() => {
                         setExibeEditor(false);
                     }} type="button">
                         Cancelar
                     </button>
                 )}
                 <div className="d-flex" style={{ gap: '11px' }}>
-                    <button className="btn btn-outline-secondary btn-limpar-customizado" onClick={handleLimpar} type="button" disabled={disabled || isSaving}>
+                    <button className="btn btn-outline-secondary btn-limpar-customizado btn-textos" onClick={handleLimpar} type="button" disabled={disabled || isSaving}>
                         Limpar
                     </button>
-                    <button className="btn btn-success" onClick={() => handleSubmitEditor(textoEditor)} type="button" disabled={disabled || isSaving}>
+                    <button className="btn btn-success btn-textos" onClick={() => handleSubmitEditor(textoEditor)} type="button" disabled={disabled || isSaving}>
                         {isSaving ? (
                             <>
                                 <FontAwesomeIcon 

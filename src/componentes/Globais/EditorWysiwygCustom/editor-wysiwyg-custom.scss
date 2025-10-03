@@ -4,12 +4,16 @@
   color: #2B7D83;
 }
 
+.btn-texto {
+  font-family: "Roboto";
+  font-size: 12px !important;
+  font-weight: bold !important;
+}
+
 .btn-limpar-customizado {
   border-color: #00585E !important;
   color: #00585E !important;
-  font-size: 13px !important;
-  font-weight: bold !important;
-  
+
   &:hover {
     background-color: #00585E !important;
     color: white !important;
