@@ -240,6 +240,29 @@ export const deletePeriodosPaa = async (uuid) => {
   return await api.delete(`/api/periodos-paa/${uuid}/`, authHeader());
 };
 
+// PAA - Objetivos
+export const getObjetivosPaa = async (filtros, page, page_size) => {
+  const result = (await api.get(`/api/objetivos-paa/`,{...authHeader(), params: {...filtros, page: page, page_size}})).data;
+  return result
+};
+
+export const getObjetivosTabelasPaa = async () => {
+  const result = (await api.get(`/api/objetivos-paa/tabelas`, {...authHeader() })).data;
+  return result
+};
+
+export const postObjetivosPaa = async (payload) => {
+  return (await api.post(`/api/objetivos-paa/`, payload, authHeader())).data;
+};
+
+export const patchObjetivosPaa = async (uuid, payload) => {
+  return (await api.patch(`/api/objetivos-paa/${uuid}/`, payload, authHeader())).data;
+};
+
+export const deleteObjetivosPaa = async (uuid) => {
+  return await api.delete(`/api/objetivos-paa/${uuid}/`, authHeader());
+};
+
 // PAA
 export const getPaaVigente = async (associacao_uuid) => {
   const result = await api.get(`/api/associacoes/${associacao_uuid}/paa-vigente/`, authHeader());
