@@ -178,14 +178,14 @@ const DevolucaoParaAcertos = ({
         const contasPendencia = prestacaoDeContasAtualizada?.analise_atual?.contas_pendencia_conciliacao_sem_solicitacao_de_acerto_em_conta || [];
         setContasPendenciaConciliacao(contasPendencia);
         
-        if (acertosPodemAlterarSaldoConciliacao) {
-            setShowModalConciliacaoBancaria(true)
+        if (temPendenciaConciliacaoSemSolicitacaoDeAcertoEmConta) {
+            setShowModalComprovanteSaldoConta(true)
             setBtnDevolverParaAcertoDisabled(false)
             return;
         }
 
-        if (temPendenciaConciliacaoSemSolicitacaoDeAcertoEmConta) {
-            setShowModalComprovanteSaldoConta(true)
+        if (acertosPodemAlterarSaldoConciliacao && !temPendenciaConciliacaoSemSolicitacaoDeAcertoEmConta) {
+            setShowModalConciliacaoBancaria(true)
             setBtnDevolverParaAcertoDisabled(false)
             return;
         }
