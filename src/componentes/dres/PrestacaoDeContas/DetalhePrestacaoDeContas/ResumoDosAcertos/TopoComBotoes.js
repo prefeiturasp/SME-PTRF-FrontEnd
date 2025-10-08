@@ -7,7 +7,7 @@ import AssociacaoEPeriodoDoCabecalho from "../AssociacaoEPeriodoDoCabecalho";
 export const TopoComBotoes = ({onClickBtnVoltar, setShowModalConfirmaDevolverParaAcerto, podeDevolver, prestacaoDeContas}) => {
 
     const TEMPERMISSAOEDICAOACOMPANHAMENTOPC = RetornaSeTemPermissaoEdicaoAcompanhamentoDePc()
-
+    
     return(
         <>
         <div className="d-flex bd-highlight mt-3 mb-0 container-cabecalho">
@@ -25,7 +25,7 @@ export const TopoComBotoes = ({onClickBtnVoltar, setShowModalConfirmaDevolverPar
                 <button
                     disabled={!TEMPERMISSAOEDICAOACOMPANHAMENTOPC || !podeDevolver}
                     onClick={()=>setShowModalConfirmaDevolverParaAcerto(true)}
-                    className="btn btn-secondary"
+                    className={`btn ${(!TEMPERMISSAOEDICAOACOMPANHAMENTOPC || !podeDevolver) ? 'btn-disabled' : 'btn-success'}`}
                 >
                     Devolver para Associação
                 </button>

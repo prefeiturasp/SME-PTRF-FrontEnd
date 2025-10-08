@@ -33,6 +33,12 @@ body {
     background-color: $corBtnSuccess;
     border-color: $corBtnSuccess;
   }
+  
+  .btn-disabled {
+    background-color: $corBtnDisabled;
+    border-color: $corBtnDisabled;
+    color: #fff;
+  }
 
   .btn-outline-success {
     border-color: $corBtnSuccess;
