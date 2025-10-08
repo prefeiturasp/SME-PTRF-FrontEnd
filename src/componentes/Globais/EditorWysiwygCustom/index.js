@@ -29,37 +29,6 @@ const EditorWysiwygCustom = ({
     const [textoEditor, setTextoEditor] = useState(textoInicialEditor);
     const editorRef = useRef(null);
 
-    const posicionarCursorAposTextoProtegido = () => {
-        if (!editorRef.current) {
-            return;
-        }
-
-        const editor = editorRef.current;
-        const textoFixoId = 'texto-automatico-introducao-paa';
-        const body = editor.getBody();
-        const elementoFixo = body.querySelector(`#${textoFixoId}`);
-
-        if (!elementoFixo) {
-            return;
-        }
-
-        // Remove nós de texto vazios imediatamente após o texto fixo
-        let proximoNo = elementoFixo.nextSibling;
-        while (proximoNo && proximoNo.nodeType === TEXT_NODE && !proximoNo.nodeValue.trim()) {
-            const noParaRemover = proximoNo;
-            proximoNo = proximoNo.nextSibling;
-            body.removeChild(noParaRemover);
-        }
-
-        // Garante que exista um bloco editável logo após o texto fixo
-        if (!proximoNo || proximoNo.nodeType !== ELEMENT_NODE) {
-            proximoNo = editor.dom.create('p', {}, '<br>');
-            body.insertBefore(proximoNo, elementoFixo.nextSibling);
-        }
-
-        editor.selection.setCursorLocation(proximoNo, 0);
-    };
-
     // Atualizar o editor quando textoInicialEditor mudar
     useEffect(() => {
         setTextoEditor(textoInicialEditor);
@@ -423,10 +392,10 @@ const EditorWysiwygCustom = ({
                     </button>
                 )}
                 <div className="d-flex" style={{ gap: '11px' }}>
-                    <button className="btn btn-outline-secondary btn-limpar-customizado" onClick={handleLimpar} type="button" disabled={disabled || isSaving}>
+                    <button className="btn btn-outline-secondary btn-limpar-customizado btn-texto" onClick={handleLimpar} type="button" disabled={disabled || isSaving}>
                         Limpar
                     </button>
-                    <button className="btn btn-success" onClick={() => handleSubmitEditor(textoEditor)} type="button" disabled={disabled || isSaving}>
+                    <button className="btn btn-success btn-texto" onClick={() => handleSubmitEditor(textoEditor)} type="button" disabled={disabled || isSaving}>
                         {isSaving ? (
                             <>
                                 <FontAwesomeIcon 
