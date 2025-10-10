@@ -10,6 +10,7 @@ import {
     getExtratosBancariosAjustes,
     getInfoAta,
     getDespesasPeriodosAnterioresAjustes,
+    getPrestacaoDeContasDetalhe,
 } from "../../../../../services/dres/PrestacaoDeContas.service";
 import moment from "moment";
 import {gerarUuid, trataNumericos} from "../../../../../utils/ValidacoesAdicionaisFormularios";
@@ -18,6 +19,8 @@ import {ModalErroDevolverParaAcerto} from "../DevolucaoParaAcertos/ModalErroDevo
 import TabsConferenciaAtualHistorico from "./TabsConferenciaAtualHistorico";
 import {useCarregaPrestacaoDeContasPorUuid} from "../../../../../hooks/dres/PrestacaoDeContas/useCarregaPrestacaoDeContasPorUuid";
 import {ModalConfirmaDevolverParaAcerto} from "../DevolucaoParaAcertos/ModalConfirmaDevolverParaAcerto";
+import {ModalConciliacaoBancaria} from "../DevolucaoParaAcertos/ModalConciliacaoBancaria";
+import {ModalComprovanteSaldoConta} from "../DevolucaoParaAcertos/ModalComprovanteSaldoConta";
 import Loading from "../../../../../utils/Loading";
 import {isNaN} from "formik";
 import { toastCustom } from "../../../../Globais/ToastCustom";
@@ -48,6 +51,10 @@ export const ResumoDosAcertos = () => {
     const [analisesDeContaDaPrestacao, setAnalisesDeContaDaPrestacao] = useState([])
     const [infoAta, setInfoAta] = useState([])
     const [editavel, setEditavel] = useState(false)
+    const [showModalConciliacaoBancaria, setShowModalConciliacaoBancaria] = useState(false)
+    const [showModalComprovanteSaldoConta, setShowModalComprovanteSaldoConta] = useState(false)
+    const [contasPendenciaConciliacao, setContasPendenciaConciliacao] = useState([])
+    const [btnDevolverParaAcertoDisabled, setBtnDevolverParaAcertoDisabled] = useState(false)
 
     const carregaInfoAta = useCallback(async () =>{
         if (prestacaoDeContas.uuid){
@@ -248,6 +255,7 @@ export const ResumoDosAcertos = () => {
 
     const devolverParaAcertos = useCallback(async () => {
         setShowModalConfirmaDevolverParaAcerto(false)
+
         let analises = trataAnalisesDeContaDaPrestacao()
         let payload = {
             devolucao_tesouro: false,
@@ -281,6 +289,51 @@ export const ResumoDosAcertos = () => {
             setLoading(false);
         }
     }, [dataLimiteDevolucao, trataAnalisesDeContaDaPrestacao, prestacao_conta_uuid, onClickBtnVoltar])
+
+    const handleDevolverParaAssociacao = useCallback(async () => {
+        setBtnDevolverParaAcertoDisabled(true)
+        const prestacaoDeContasAtualizada = await getPrestacaoDeContasDetalhe(prestacaoDeContas.uuid)
+        const acertosPodemAlterarSaldoConciliacao = prestacaoDeContasAtualizada?.analise_atual?.acertos_podem_alterar_saldo_conciliacao;
+        const temPendenciaConciliacaoSemSolicitacaoDeAcertoEmConta = prestacaoDeContasAtualizada?.analise_atual?.tem_pendencia_conciliacao_sem_solicitacao_de_acerto_em_conta;
+
+        const contasPendencia = prestacaoDeContasAtualizada?.analise_atual?.contas_pendencia_conciliacao_sem_solicitacao_de_acerto_em_conta || [];
+        setContasPendenciaConciliacao(contasPendencia);
+
+        if (temPendenciaConciliacaoSemSolicitacaoDeAcertoEmConta) {
+            setShowModalComprovanteSaldoConta(true)
+            setBtnDevolverParaAcertoDisabled(false)
+            return;
+        }
+
+        if (acertosPodemAlterarSaldoConciliacao && !temPendenciaConciliacaoSemSolicitacaoDeAcertoEmConta) {
+            setShowModalConciliacaoBancaria(true)
+            setBtnDevolverParaAcertoDisabled(false)
+            return;
+        }
+
+        setShowModalConfirmaDevolverParaAcerto(true);
+        setBtnDevolverParaAcertoDisabled(false)
+    }, [prestacaoDeContas])
+
+    const handleConfirmarDevolucaoConciliacao = useCallback(async () => {
+        setShowModalConciliacaoBancaria(false)
+        setShowModalConfirmaDevolverParaAcerto(true)
+    }, [])
+
+    const handleConfirmarComprovanteSaldo = useCallback(() => {
+        setShowModalComprovanteSaldoConta(false)
+        navigate(`/dre-detalhe-prestacao-de-contas/${prestacao_conta_uuid}#collapse_sintese_por_realizacao_da_despesa`)
+    }, [prestacao_conta_uuid, navigate])
+
+    const obterContasSemComprovanteSaldo = useCallback(() => {
+        if (!contasPendenciaConciliacao || contasPendenciaConciliacao.length === 0) {
+            return [];
+        }
+        return contasPendenciaConciliacao.map(contaUuid => {
+            const contaNome = infoAta.contas.find(_conta => _conta.conta_associacao.uuid === contaUuid)?.conta_associacao?.nome;
+            return contaNome || 'N/E';
+        });
+    }, [contasPendenciaConciliacao, infoAta])
 
 
     const valorTemplate = (valor) => {
@@ -339,6 +392,8 @@ export const ResumoDosAcertos = () => {
                         setShowModalConfirmaDevolverParaAcerto={setShowModalConfirmaDevolverParaAcerto}
                         podeDevolver={podeDevolver}
                         prestacaoDeContas={prestacaoDeContas}
+                        onClickDevolver={handleDevolverParaAssociacao}
+                        devolverDisabled={btnDevolverParaAcertoDisabled}
                     />
 
                     {
@@ -390,6 +445,32 @@ export const ResumoDosAcertos = () => {
                         primeiroBotaoCss="outline-success"
                         segundoBotaoCss="success"
                         segundoBotaoTexto="Confirmar"
+                    />
+                </section>
+                <section>
+                    <ModalConciliacaoBancaria
+                        show={showModalConciliacaoBancaria}
+                        handleClose={() => setShowModalConciliacaoBancaria(false)}
+                        onConfirmarDevolucao={handleConfirmarDevolucaoConciliacao}
+                        titulo="Acertos que podem alterar a conciliação bancária"
+                        texto="Foram indicados acertos na prestação de contas que podem alterar o saldo da conciliação bancária. Por favor, confira o extrato bancário da unidade para indicar a solicitação de correção de saldo, se necessário."
+                        primeiroBotaoTexto="Cancelar"
+                        primeiroBotaoCss="outline-success"
+                        segundoBotaoCss="success"
+                        segundoBotaoTexto="Confirmar devolução para acertos"
+                    />
+                </section>
+                <section>
+                    <ModalComprovanteSaldoConta
+                        show={showModalComprovanteSaldoConta}
+                        handleClose={() => setShowModalComprovanteSaldoConta(false)}
+                        onConfirmar={handleConfirmarComprovanteSaldo}
+                        titulo="Comprovante de saldo da conta"
+                        texto={`A(s) conta(s) ${obterContasSemComprovanteSaldo().join(', ')} não possuem comprovante de saldo. Favor solicitar o acerto para envio do comprovante para que a PC possa ser devolvida.`}
+                        primeiroBotaoTexto="Fechar"
+                        primeiroBotaoCss="outline-success"
+                        segundoBotaoCss="success"
+                        segundoBotaoTexto="Ir para Extrato Bancário"
                     />
                 </section>
             </PaginasContainer>
