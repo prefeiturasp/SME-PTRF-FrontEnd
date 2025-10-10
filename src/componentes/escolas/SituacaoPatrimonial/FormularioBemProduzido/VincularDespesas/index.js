@@ -13,7 +13,7 @@ import { useCarregaTabelaDespesa } from "../../../../../hooks/Globais/useCarrega
 import { useGetPeriodos } from "../../../../../hooks/Globais/useGetPeriodo";
 import moment from "moment";
 import { useNavigate } from 'react-router-dom';
-import './index.css';
+import './index.scss';
 
 const filtroInicial = {
   fornecedor: "",
@@ -226,6 +226,7 @@ export const VincularDespesas = ({
                 onRowToggle={(e) => setExpandedRows(e.data)}
                 rowExpansionTemplate={expandedRowTemplate}
                 rowClassName={data => ({ 'row-disabled-situacao-patrimonial': isRowDisabled(data, despesasSelecionadas) })}
+                className="datatable-situacao-patrimonial"
               >
                 <Column selectionMode="multiple" style={{ width: "3em" }} />
                 <Column field="periodo_referencia" header="Período" />

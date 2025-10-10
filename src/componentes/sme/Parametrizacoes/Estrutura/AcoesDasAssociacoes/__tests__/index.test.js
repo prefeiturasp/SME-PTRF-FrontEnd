@@ -7,9 +7,8 @@ import {
     getListaDeAcoes,
     getParametrizacoesAcoesAssociacoes,
     getAssociacoes,
-    getTabelaAssociacoes
-    // getFiltrosTiposDeDocumento
 } from "../../../../../../services/sme/Parametrizacoes.service";
+import { getTabelaAssociacoes } from "../../../../../../services/dres/Associacoes.service";
 import { toastCustom } from "../../../../../Globais/ToastCustom";
 import { postCreateTipoDeDocumento, patchAlterarTipoDeDocumento, deleteTipoDeDocumento } from '../../../../../../services/sme/Parametrizacoes.service';
 import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
@@ -28,6 +27,10 @@ jest.mock("../../../../../../services/sme/Parametrizacoes.service", ()=>({
     patchAlterarTipoDeDocumento: jest.fn(),
     deleteTipoDeDocumento: jest.fn(),
     getParametrizacoesAcoesAssociacoes: jest.fn(),
+}));
+
+jest.mock("../../../../../../services/dres/Associacoes.service", () => ({
+    getTabelaAssociacoes: jest.fn(),
 }));
 
 jest.mock("../../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes", () => ({
