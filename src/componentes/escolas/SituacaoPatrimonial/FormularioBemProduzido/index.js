@@ -12,6 +12,9 @@ import { usePostBemProduzidoRascunho } from "./hooks/usePostBemProduzidoRascunho
 import { usePatchBemProduzidoRascunho } from "./hooks/usePatchBemProduzidoRascunho";
 import { ClassificarBem } from "./ClassificarBem";
 import ModalConfirmarAlteracaoBemProduzido from "./components/ModalConfirmarAlteracaoBemProduzido";
+import ModalPeriodoFechado from "./components/ModalPeriodoFechado";
+import { postVerificarSePodeInformarValores } from "../../../../services/escolas/BensProduzidos.service";
+import { toastCustom } from "../../../Globais/ToastCustom";
 
 const stepList = [
   { label: "Selecionar despesas" },
@@ -32,6 +35,7 @@ export const FormularioBemProduzido = () => {
   const [habilitaCadastrarBem, setHabilitaCadastrarBem] = useState(false);
   const [statusCompletoBemProduzido, setStatusCompletoBemProduzido] = useState(false);
   const [showModalConfirmacao, setShowModalConfirmacao] = useState(false);
+  const [showModalPeriodoFechado, setShowModalPeriodoFechado] = useState(false);
   const [onConfirmSalvar, setOnConfirmSalvar] = useState(null);
   const [modalLoading, setModalLoading] = useState(false);
   const [originalData, setOriginalData] = useState(null);
@@ -179,6 +183,52 @@ export const FormularioBemProduzido = () => {
     });
   };
 
+  const handleInformarValores = async () => {
+    try {
+      const uuids = despesasSelecionadas.map((despesa) => despesa.uuid);
+      const resultado = await postVerificarSePodeInformarValores({ uuids });
+      
+      if (resultado.pode_informar_valores) {
+        setStep(2);
+      } else {
+        setShowModalPeriodoFechado(true);
+      }
+    } catch (error) {
+      console.error("Erro ao verificar períodos:", error);
+      toastCustom.ToastCustomError("Erro ao verificar períodos das despesas. Tente novamente.");
+    }
+  };
+
+  const handleClassificarBem = async () => {
+    if (syncRateiosFromFormRef.current) {
+      try { 
+        syncRateiosFromFormRef.current(); 
+      } catch(e) {
+        console.error("Erro ao sincronizar rateios:", e);
+      }
+    }
+
+    try {
+      const uuids = despesasSelecionadas.map((despesa) => despesa.uuid);
+      
+      if (!uuids.length) {
+        toastCustom.ToastCustomError("Nenhuma despesa selecionada.");
+        return;
+      }
+
+      const resultado = await postVerificarSePodeInformarValores({ uuids });
+      
+      if (resultado.pode_informar_valores) {
+        setStep(3);
+      } else {
+        setShowModalPeriodoFechado(true);
+      }
+    } catch (error) {
+      console.error("Erro ao verificar períodos:", error);
+      toastCustom.ToastCustomError("Erro ao verificar períodos das despesas. Tente novamente.");
+    }
+  };
+
   const [isStuck, setIsStuck] = useState(false);
   const sentinelRef = useRef(null);
 
@@ -219,7 +269,7 @@ export const FormularioBemProduzido = () => {
                 style: { color: "white" },
               }}
               disabled={!uuid && !despesasSelecionadas.length}
-              onClick={() => setStep(2)}
+              onClick={handleInformarValores}
             />
           </div>
         ) : step === 2 ? (
@@ -243,12 +293,7 @@ export const FormularioBemProduzido = () => {
                 style: { color: "white" },
               }}
               disabled={!habilitaClassificarBem}
-              onClick={() => {
-                if (syncRateiosFromFormRef.current) {
-                  try { syncRateiosFromFormRef.current(); } catch(e) {}
-                }
-                setStep(3);
-              }}
+              onClick={handleClassificarBem}
             />
           </div>
         ) : step === 3 ? (
@@ -328,6 +373,11 @@ export const FormularioBemProduzido = () => {
         loading={modalLoading}
         title={"Alteração de valores detectada"}
         message={"Você alterou valores do bem produzido. Tem certeza que deseja salvar essas alterações?"}
+      />
+
+      <ModalPeriodoFechado
+        open={showModalPeriodoFechado}
+        onClose={() => setShowModalPeriodoFechado(false)}
       />
     </div>
   );
