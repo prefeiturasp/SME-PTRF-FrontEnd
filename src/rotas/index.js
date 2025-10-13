@@ -103,6 +103,7 @@ import { MotivosPagamentoAntecipado } from "../componentes/sme/Parametrizacoes/D
 import { TextosPaa } from "../componentes/sme/Parametrizacoes/PAA/TextosPaa";
 import { PeriodosPaa } from "../componentes/sme/Parametrizacoes/PAA/PeriodosPaa";
 import { ObjetivosPaa } from "../componentes/sme/Parametrizacoes/PAA/ObjetivosPaa";
+import { AtividadesEstatutarias } from "../componentes/sme/Parametrizacoes/PAA/AtividadesEstatutarias";
 import { ElaboracaoPaa } from "../componentes/escolas/Paa/ElaboracaoPaa";
 import { ElaborarNovoPlano } from "../componentes/escolas/Paa/ElaboracaoPaa/ElaborarNovoPlano";
 import { ExecucaoDoPaa } from "../componentes/escolas/Paa/ExecucaoDoPaa";
@@ -605,6 +606,16 @@ const routesConfig = [
     path: "/parametro-objetivos-paa",
     component: ObjetivosPaa,
     permissoes: ["access_painel_parametrizacoes", "change_painel_parametrizacoes"],
+    featureFlag: "paa",
+  },
+  {
+    exact: true,
+    path: "/parametro-atividades-estatutarias-paa",
+    component: AtividadesEstatutarias,
+    permissoes: [
+      "access_painel_parametrizacoes",
+      "change_painel_parametrizacoes",
+    ],
     featureFlag: "paa",
   },
   {

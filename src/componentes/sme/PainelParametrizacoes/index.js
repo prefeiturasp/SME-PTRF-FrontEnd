@@ -18,6 +18,7 @@ import IconeTiposAcertos from "../../../assets/img/icone-parametro-tipos-acertos
 import IconeUsuarios from "../../../assets/img/icone-parametro-usuarios.svg"
 import IconeTextosFiqueDeOlho from "../../../assets/img/icone-parametro-textos-fique-de-olho.svg"
 import IconeObjetivos from "../../../assets/img/icone-objetivos.svg"
+import IconeAtividadesEstatutarias from "../../../assets/img/icone-atividades-estatutarias.svg"
 import IconeFornecedores from "../../../assets/img/icone-parametro-fornecedores.svg"
 import IconeMandato from "../../../assets/img/icone-parametro-periodos-de-mandato.svg"
 import IconeRepasses from "../../../assets/img/icone-parametro-repasses.svg"
@@ -210,6 +211,13 @@ export const PainelParametrizacoes = () => {
             parametro: 'Objetivos',
             url: 'parametro-objetivos-paa',
             icone: IconeObjetivos,
+            permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
+            featureFlag: 'paa',
+        },
+        {
+            parametro: 'Atividades estatutárias',
+            url: 'parametro-atividades-estatutarias-paa',
+            icone: IconeAtividadesEstatutarias,
             permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
             featureFlag: 'paa',
         },

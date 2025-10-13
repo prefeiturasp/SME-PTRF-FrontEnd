@@ -263,6 +263,29 @@ export const deleteObjetivosPaa = async (uuid) => {
   return await api.delete(`/api/objetivos-paa/${uuid}/`, authHeader());
 };
 
+// PAA - Atividades Estatutárias
+export const getAtividadesEstatutarias = async (filtros, page, page_size) => {
+  const result = (await api.get(`/api/atividades-estatutarias/`,{...authHeader(), params: {...filtros, page: page, page_size}})).data;
+  return result
+};
+
+export const getAtividadesEstatutariasTabelas = async () => {
+  const result = (await api.get(`/api/atividades-estatutarias/tabelas`, {...authHeader() })).data;
+  return result
+};
+
+export const postAtividadesEstatutarias = async (payload) => {
+  return (await api.post(`/api/atividades-estatutarias/`, payload, authHeader())).data;
+};
+
+export const patchAtividadesEstatutarias = async (uuid, payload) => {
+  return (await api.patch(`/api/atividades-estatutarias/${uuid}/`, payload, authHeader())).data;
+};
+
+export const deleteAtividadesEstatutarias = async (uuid) => {
+  return await api.delete(`/api/atividades-estatutarias/${uuid}/`, authHeader());
+};
+
 // PAA
 export const getPaaVigente = async (associacao_uuid) => {
   const result = await api.get(`/api/associacoes/${associacao_uuid}/paa-vigente/`, authHeader());
