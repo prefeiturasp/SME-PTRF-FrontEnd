@@ -712,6 +712,9 @@ export const addAcoesAssociacoesEmLote = async (payload) => {
 export const getTodosTiposDeCusteio = async () => {
   return (await api.get(`/api/tipos-custeio/`, authHeader())).data;
 };
+export const getTipoCusteio = async (uuid) => {
+  return (await api.get(`/api/tipos-custeio/${uuid}`, authHeader())).data;
+};
 export const getFiltrosTiposDeCusteio = async (nome, status) => {
   return (await api.get(`/api/tipos-custeio/?nome=${nome}`, authHeader())).data;
 };
@@ -726,7 +729,21 @@ export const patchAlterarTipoDeCusteio = async (tag_uuid, payload) => {
 export const deleteTipoDeCusteio = async (tag_uuid) => {
   return await api.delete(`/api/tipos-custeio/${tag_uuid}/`, authHeader());
 };
+export const getUnidadesTipoCusteio = async (uuid, nome_ou_codigo, dre, page) => {
+  return (await api.get(`/api/tipos-custeio/${uuid}/unidades-vinculadas/?nome_ou_codigo=${nome_ou_codigo}&dre=${dre}&page=${page}`, authHeader())).data;
+}
 
+export const getUnidadesNaoVinculadasTipoCusteio = async (uuid, nome_ou_codigo, dre, page) => {
+  return (await api.get(`/api/tipos-custeio/${uuid}/unidades-nao-vinculadas/?nome_ou_codigo=${nome_ou_codigo}&dre=${dre}&page=${page}`, authHeader())).data;
+}
+
+export const vincularUnidadesTipoCusteio = async (uuid, payload) => {
+  return (await api.post(`/api/tipos-custeio/${uuid}/vincular-unidades/`, payload, authHeader())).data;
+}
+
+export const desvincularUnidadesTipoCusteio = async (uuid, payload) => {
+  return (await api.post(`/api/tipos-custeio/${uuid}/desvincular-unidades/`, payload, authHeader())).data;
+}
 
 // Tipos de Documento
 export const getTodosTiposDeDocumento = async () => {
