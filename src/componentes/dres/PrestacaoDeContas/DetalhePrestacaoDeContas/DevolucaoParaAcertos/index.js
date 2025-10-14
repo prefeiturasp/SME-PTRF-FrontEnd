@@ -10,8 +10,7 @@ import {
     getDocumentosAjustes,
     getUltimaAnalisePc,
     getAnaliseAjustesSaldoPorConta,
-    getDespesasPeriodosAnterioresAjustes,
-    getPrestacaoDeContasDetalhe
+    getDespesasPeriodosAnterioresAjustes
 } from "../../../../../services/dres/PrestacaoDeContas.service";
 import {trataNumericos} from "../../../../../utils/ValidacoesAdicionaisFormularios";
 import Loading from "../../../../../utils/Loading";
@@ -22,6 +21,7 @@ import {ModalComprovanteSaldoConta} from "./ModalComprovanteSaldoConta";
 import { toastCustom } from "../../../../Globais/ToastCustom";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import { visoesService } from "../../../../../services/visoes.service";
+import {useHandleDevolverParaAssociacao} from "../hooks/useHandleDevolverParaAssociacao";
 
 const DevolucaoParaAcertos = ({
     prestacaoDeContas, 
@@ -52,6 +52,15 @@ const DevolucaoParaAcertos = ({
     const totalLancamentosAjustes = useMemo(() => lancamentosAjustes.length, [lancamentosAjustes]);
     const totalDocumentosAjustes = useMemo(() => documentosAjustes.length, [documentosAjustes]);
     const totalDespesasPeriodosAnterioresAjustes = useMemo(() => despesasPeriodosAnterioresAjustes.length, [despesasPeriodosAnterioresAjustes]);
+
+    const handleDevolverParaAssociacao = useHandleDevolverParaAssociacao({
+        prestacaoDeContas,
+        setContasPendenciaConciliacao,
+        setShowModalComprovanteSaldoConta,
+        setShowModalConciliacaoBancaria,
+        setShowModalConfirmaDevolverParaAcerto,
+        setBtnDevolverParaAcertoDisabled
+    });
 
     
     const totalDeAnalises = () => {
@@ -198,33 +207,6 @@ const DevolucaoParaAcertos = ({
         }
 
     }, [dataLimiteDevolucao, carregaPrestacaoDeContas, prestacaoDeContas, trataAnalisesDeContaDaPrestacao])
-
-    const handleDevolverParaAssociacao = async () => {
-        setBtnDevolverParaAcertoDisabled(true)
-        
-        const prestacaoDeContasAtualizada = await getPrestacaoDeContasDetalhe(prestacaoDeContas.uuid)
-        const acertosPodemAlterarSaldoConciliacao = prestacaoDeContasAtualizada?.analise_atual?.acertos_podem_alterar_saldo_conciliacao;
-        const temPendenciaConciliacaoSemSolicitacaoDeAcertoEmConta = prestacaoDeContasAtualizada?.analise_atual?.tem_pendencia_conciliacao_sem_solicitacao_de_acerto_em_conta;
-        
-        const contasPendencia = prestacaoDeContasAtualizada?.analise_atual?.contas_pendencia_conciliacao_sem_solicitacao_de_acerto_em_conta || [];
-        setContasPendenciaConciliacao(contasPendencia);
-        
-        if (temPendenciaConciliacaoSemSolicitacaoDeAcertoEmConta) {
-            setShowModalComprovanteSaldoConta(true)
-            setBtnDevolverParaAcertoDisabled(false)
-            return;
-        }
-
-        if (acertosPodemAlterarSaldoConciliacao && !temPendenciaConciliacaoSemSolicitacaoDeAcertoEmConta) {
-            setShowModalConciliacaoBancaria(true)
-            setBtnDevolverParaAcertoDisabled(false)
-            return;
-        }
-
-        setShowModalConfirmaDevolverParaAcerto(true);
-        setBtnDevolverParaAcertoDisabled(false)
-    };
-
     const handleConfirmarDevolucaoConciliacao = useCallback(async () => {
         setShowModalConciliacaoBancaria(false)
         setShowModalConfirmaDevolverParaAcerto(true)

@@ -10,7 +10,6 @@ import {
     getExtratosBancariosAjustes,
     getInfoAta,
     getDespesasPeriodosAnterioresAjustes,
-    getPrestacaoDeContasDetalhe,
 } from "../../../../../services/dres/PrestacaoDeContas.service";
 import moment from "moment";
 import {gerarUuid, trataNumericos} from "../../../../../utils/ValidacoesAdicionaisFormularios";
@@ -26,6 +25,7 @@ import {isNaN} from "formik";
 import { toastCustom } from "../../../../Globais/ToastCustom";
 import { mantemEstadoAnaliseDre as meapcservice } from "../../../../../services/mantemEstadoAnaliseDre.service";
 import { visoesService } from "../../../../../services/visoes.service";
+import {useHandleDevolverParaAssociacao} from "../hooks/useHandleDevolverParaAssociacao";
 
 export const ResumoDosAcertos = () => {
 
@@ -55,6 +55,15 @@ export const ResumoDosAcertos = () => {
     const [showModalComprovanteSaldoConta, setShowModalComprovanteSaldoConta] = useState(false)
     const [contasPendenciaConciliacao, setContasPendenciaConciliacao] = useState([])
     const [btnDevolverParaAcertoDisabled, setBtnDevolverParaAcertoDisabled] = useState(false)
+
+    const handleDevolverParaAssociacao = useHandleDevolverParaAssociacao({
+        prestacaoDeContas,
+        setContasPendenciaConciliacao,
+        setShowModalComprovanteSaldoConta,
+        setShowModalConciliacaoBancaria,
+        setShowModalConfirmaDevolverParaAcerto,
+        setBtnDevolverParaAcertoDisabled
+    });
 
     const carregaInfoAta = useCallback(async () =>{
         if (prestacaoDeContas.uuid){
@@ -289,32 +298,6 @@ export const ResumoDosAcertos = () => {
             setLoading(false);
         }
     }, [dataLimiteDevolucao, trataAnalisesDeContaDaPrestacao, prestacao_conta_uuid, onClickBtnVoltar])
-
-    const handleDevolverParaAssociacao = useCallback(async () => {
-        setBtnDevolverParaAcertoDisabled(true)
-        const prestacaoDeContasAtualizada = await getPrestacaoDeContasDetalhe(prestacaoDeContas.uuid)
-        const acertosPodemAlterarSaldoConciliacao = prestacaoDeContasAtualizada?.analise_atual?.acertos_podem_alterar_saldo_conciliacao;
-        const temPendenciaConciliacaoSemSolicitacaoDeAcertoEmConta = prestacaoDeContasAtualizada?.analise_atual?.tem_pendencia_conciliacao_sem_solicitacao_de_acerto_em_conta;
-
-        const contasPendencia = prestacaoDeContasAtualizada?.analise_atual?.contas_pendencia_conciliacao_sem_solicitacao_de_acerto_em_conta || [];
-        setContasPendenciaConciliacao(contasPendencia);
-
-        if (temPendenciaConciliacaoSemSolicitacaoDeAcertoEmConta) {
-            setShowModalComprovanteSaldoConta(true)
-            setBtnDevolverParaAcertoDisabled(false)
-            return;
-        }
-
-        if (acertosPodemAlterarSaldoConciliacao && !temPendenciaConciliacaoSemSolicitacaoDeAcertoEmConta) {
-            setShowModalConciliacaoBancaria(true)
-            setBtnDevolverParaAcertoDisabled(false)
-            return;
-        }
-
-        setShowModalConfirmaDevolverParaAcerto(true);
-        setBtnDevolverParaAcertoDisabled(false)
-    }, [prestacaoDeContas])
-
     const handleConfirmarDevolucaoConciliacao = useCallback(async () => {
         setShowModalConciliacaoBancaria(false)
         setShowModalConfirmaDevolverParaAcerto(true)
