@@ -1,5 +1,6 @@
 import React, {memo, useCallback, useEffect, useState, useMemo} from "react";
 import {Link} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {DatePickerField} from "../../../../Globais/DatePickerField";
 import './devolucao-para-acertos.scss'
 import moment from "moment";
@@ -9,8 +10,7 @@ import {
     getDocumentosAjustes,
     getUltimaAnalisePc,
     getAnaliseAjustesSaldoPorConta,
-    getDespesasPeriodosAnterioresAjustes,
-    getPrestacaoDeContasDetalhe
+    getDespesasPeriodosAnterioresAjustes
 } from "../../../../../services/dres/PrestacaoDeContas.service";
 import {trataNumericos} from "../../../../../utils/ValidacoesAdicionaisFormularios";
 import Loading from "../../../../../utils/Loading";
@@ -21,6 +21,7 @@ import {ModalComprovanteSaldoConta} from "./ModalComprovanteSaldoConta";
 import { toastCustom } from "../../../../Globais/ToastCustom";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import { visoesService } from "../../../../../services/visoes.service";
+import {useHandleDevolverParaAssociacao} from "../hooks/useHandleDevolverParaAssociacao";
 
 const DevolucaoParaAcertos = ({
     prestacaoDeContas, 
@@ -33,6 +34,7 @@ const DevolucaoParaAcertos = ({
     updateListaDeDocumentosParaConferencia=null,
     carregaLancamentosParaConferencia=null
 }) => {
+    const navigate = useNavigate();
     const flagAjustesDespesasAnterioresAtiva = visoesService.featureFlagAtiva('ajustes-despesas-anteriores')
     const [dataLimiteDevolucao, setDataLimiteDevolucao] = useState('')
     const [showModalErroDevolverParaAcerto, setShowModalErroDevolverParaAcerto] = useState(false)
@@ -50,6 +52,15 @@ const DevolucaoParaAcertos = ({
     const totalLancamentosAjustes = useMemo(() => lancamentosAjustes.length, [lancamentosAjustes]);
     const totalDocumentosAjustes = useMemo(() => documentosAjustes.length, [documentosAjustes]);
     const totalDespesasPeriodosAnterioresAjustes = useMemo(() => despesasPeriodosAnterioresAjustes.length, [despesasPeriodosAnterioresAjustes]);
+
+    const handleDevolverParaAssociacao = useHandleDevolverParaAssociacao({
+        prestacaoDeContas,
+        setContasPendenciaConciliacao,
+        setShowModalComprovanteSaldoConta,
+        setShowModalConciliacaoBancaria,
+        setShowModalConfirmaDevolverParaAcerto,
+        setBtnDevolverParaAcertoDisabled
+    });
 
     
     const totalDeAnalises = () => {
@@ -113,6 +124,35 @@ const DevolucaoParaAcertos = ({
 
     }, [infoAta, prestacaoDeContas, editavel, updateListaDeDocumentosParaConferencia, carregaLancamentosParaConferencia])
 
+    useEffect(() => {
+        if (!loading && window && window.location && window.location.hash === '#collapse_sintese_por_realizacao_da_despesa') {
+            let tentativas = 0;
+            const tentarRolagem = () => {
+                const elemento = document.getElementById('collapse_sintese_por_realizacao_da_despesa');
+                if (elemento) {
+                    elemento.classList.add('show');
+                    setTimeout(() => {
+                        elemento.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start',
+                            inline: 'nearest'
+                        });
+                        const retangulo = elemento.getBoundingClientRect();
+                        const deslocamentoTopo = window.pageYOffset + retangulo.top - 100;
+                        window.scrollTo({
+                            top: deslocamentoTopo,
+                            behavior: 'smooth'
+                        });
+                    }, 50);
+                } else if (tentativas < 10) {
+                    tentativas = tentativas + 1;
+                    setTimeout(tentarRolagem, 100);
+                }
+            };
+            setTimeout(tentarRolagem, 100);
+        }
+    }, [loading])
+
     const handleChangeDataLimiteDevolucao = useCallback((name, value) => {
         setDataLimiteDevolucao(value)
     }, [])
@@ -167,33 +207,6 @@ const DevolucaoParaAcertos = ({
         }
 
     }, [dataLimiteDevolucao, carregaPrestacaoDeContas, prestacaoDeContas, trataAnalisesDeContaDaPrestacao])
-
-    const handleDevolverParaAssociacao = async () => {
-        setBtnDevolverParaAcertoDisabled(true)
-        
-        const prestacaoDeContasAtualizada = await getPrestacaoDeContasDetalhe(prestacaoDeContas.uuid)
-        const acertosPodemAlterarSaldoConciliacao = prestacaoDeContasAtualizada?.analise_atual?.acertos_podem_alterar_saldo_conciliacao;
-        const temPendenciaConciliacaoSemSolicitacaoDeAcertoEmConta = prestacaoDeContasAtualizada?.analise_atual?.tem_pendencia_conciliacao_sem_solicitacao_de_acerto_em_conta;
-        
-        const contasPendencia = prestacaoDeContasAtualizada?.analise_atual?.contas_pendencia_conciliacao_sem_solicitacao_de_acerto_em_conta || [];
-        setContasPendenciaConciliacao(contasPendencia);
-        
-        if (temPendenciaConciliacaoSemSolicitacaoDeAcertoEmConta) {
-            setShowModalComprovanteSaldoConta(true)
-            setBtnDevolverParaAcertoDisabled(false)
-            return;
-        }
-
-        if (acertosPodemAlterarSaldoConciliacao && !temPendenciaConciliacaoSemSolicitacaoDeAcertoEmConta) {
-            setShowModalConciliacaoBancaria(true)
-            setBtnDevolverParaAcertoDisabled(false)
-            return;
-        }
-
-        setShowModalConfirmaDevolverParaAcerto(true);
-        setBtnDevolverParaAcertoDisabled(false)
-    };
-
     const handleConfirmarDevolucaoConciliacao = useCallback(async () => {
         setShowModalConciliacaoBancaria(false)
         setShowModalConfirmaDevolverParaAcerto(true)
@@ -202,29 +215,25 @@ const DevolucaoParaAcertos = ({
     const handleConfirmarComprovanteSaldo = useCallback(() => {
         setShowModalComprovanteSaldoConta(false)
         setTimeout(() => {
-            const element = document.getElementById('collapse_sintese_por_realizacao_da_despesa');
-            if (element) {
-                element.classList.add('show');
-                
-                // Aguardar um momento para o collapse abrir completamente
+            const elemento = document.getElementById('collapse_sintese_por_realizacao_da_despesa');
+            if (elemento) {
+                elemento.classList.add('show');
                 setTimeout(() => {
-                    element.scrollIntoView({ 
+                    elemento.scrollIntoView({ 
                         behavior: 'smooth', 
                         block: 'start',
                         inline: 'nearest'
                     });
-                    
-                    // Fallback: se o scrollIntoView não funcionar, usar scroll manual
-                    const rect = element.getBoundingClientRect();
-                    const scrollTop = window.pageYOffset + rect.top - 100;
+                    const retangulo = elemento.getBoundingClientRect();
+                    const deslocamentoTopo = window.pageYOffset + retangulo.top - 100;
                     window.scrollTo({
-                        top: scrollTop,
+                        top: deslocamentoTopo,
                         behavior: 'smooth'
                     });
                 }, 300);
             }
         }, 100);
-    }, []);
+    }, [navigate, prestacaoDeContas]);
 
     const obterContasSemComprovanteSaldo = useCallback(() => {
         if (!contasPendenciaConciliacao || contasPendenciaConciliacao.length === 0) {
