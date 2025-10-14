@@ -20,7 +20,7 @@ const filtroInicial = {
   dre: "",
 };
 
-export const VincularUnidades = ({ UUID }) => {
+export const VincularUnidades = ({ UUID, podeEditar }) => {
   const dispatch = useDispatch();
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -174,7 +174,7 @@ export const VincularUnidades = ({ UUID }) => {
             e.stopPropagation();
             handleConfirmarVincularUnidade(rowData);
           }}
-          disabled={selectedUnidades.length > 0}
+          disabled={selectedUnidades.length > 0 || !podeEditar}
           icon={
             <FontAwesomeIcon
               style={{
@@ -224,18 +224,19 @@ export const VincularUnidades = ({ UUID }) => {
                 autoLayout={true}
                 selection={selectedUnidades}
                 onSelectionChange={(e) => setSelectedUnidades(e.value)}
-                disabled
               >
-                <Column selectionMode="multiple" style={{ width: "3em" }} />
+                {podeEditar && <Column selectionMode="multiple" style={{ width: "3em" }} />}
                 <Column field="codigo_eol" header="Código Eol" className="text-center" style={{ width: "15%" }} />
                 <Column field="nome_com_tipo" header="Unidade educacional" body={unidadeEscolarTemplate} />
-                <Column
-                  field="uuid"
-                  header="Ação"
-                  body={acoesTemplate}
-                  className="text-center"
-                  style={{ width: "20%", zIndex: 999 }}
-                />
+                {podeEditar && (
+                  <Column
+                    field="uuid"
+                    header="Ação"
+                    body={acoesTemplate}
+                    className="text-center"
+                    style={{ width: "20%", zIndex: 999 }}
+                  />
+                )}
               </DataTable>
 
               <Paginator
