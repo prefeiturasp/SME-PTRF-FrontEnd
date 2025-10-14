@@ -4,7 +4,7 @@ import {faArrowLeft} from "@fortawesome/free-solid-svg-icons";
 import {RetornaSeTemPermissaoEdicaoAcompanhamentoDePc} from "../../RetornaSeTemPermissaoEdicaoAcompanhamentoDePc";
 import AssociacaoEPeriodoDoCabecalho from "../AssociacaoEPeriodoDoCabecalho";
 
-export const TopoComBotoes = ({onClickBtnVoltar, setShowModalConfirmaDevolverParaAcerto, podeDevolver, prestacaoDeContas}) => {
+export const TopoComBotoes = ({onClickBtnVoltar, setShowModalConfirmaDevolverParaAcerto, podeDevolver, prestacaoDeContas, onClickDevolver = null, devolverDisabled = false}) => {
 
     const TEMPERMISSAOEDICAOACOMPANHAMENTOPC = RetornaSeTemPermissaoEdicaoAcompanhamentoDePc()
     
@@ -23,8 +23,8 @@ export const TopoComBotoes = ({onClickBtnVoltar, setShowModalConfirmaDevolverPar
             </div>
             <div className="p-2 bd-highlight">
                 <button
-                    disabled={!TEMPERMISSAOEDICAOACOMPANHAMENTOPC || !podeDevolver}
-                    onClick={()=>setShowModalConfirmaDevolverParaAcerto(true)}
+                    disabled={!TEMPERMISSAOEDICAOACOMPANHAMENTOPC || !podeDevolver || devolverDisabled}
+                    onClick={()=> onClickDevolver ? onClickDevolver() : setShowModalConfirmaDevolverParaAcerto(true)}
                     className={`btn ${(!TEMPERMISSAOEDICAOACOMPANHAMENTOPC || !podeDevolver) ? 'btn-disabled' : 'btn-success'}`}
                 >
                     Devolver para Associação
