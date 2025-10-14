@@ -186,9 +186,9 @@ export const TipoDeDespesaCusteioForm = () => {
 
         {uuid && form.getFieldValue("selecionar_todas") === false ? (
           <>
-            <UnidadesVinculadas UUID={uuid} />
+            <UnidadesVinculadas UUID={uuid} podeEditar={TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}/>
             <h6 className="my-5">Vincular unidades ao tipo de despesa de custeio</h6>
-            <VincularUnidades UUID={uuid} />
+            <VincularUnidades UUID={uuid} podeEditar={TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}/>
           </>
         ) : null}
 

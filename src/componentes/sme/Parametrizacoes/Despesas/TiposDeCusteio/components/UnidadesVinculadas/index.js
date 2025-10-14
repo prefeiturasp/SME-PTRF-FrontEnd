@@ -18,7 +18,7 @@ const filtroInicial = {
   dre: "",
 };
 
-export const UnidadesVinculadas = ({ UUID }) => {
+export const UnidadesVinculadas = ({ UUID, podeEditar }) => {
   const dispatch = useDispatch();
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -172,7 +172,7 @@ export const UnidadesVinculadas = ({ UUID }) => {
             e.stopPropagation();
             handleConfirmDesvincular(rowData);
           }}
-          disabled={selectedUnidades.length > 0}
+          disabled={selectedUnidades.length > 0 || !podeEditar}
           icon={
             <FontAwesomeIcon
               style={{
@@ -224,16 +224,18 @@ export const UnidadesVinculadas = ({ UUID }) => {
                 onSelectionChange={(e) => setSelectedUnidades(e.value)}
                 disabled
               >
-                <Column selectionMode="multiple" style={{ width: "3em" }} />
+                {podeEditar && <Column selectionMode="multiple" style={{ width: "3em" }} />}
                 <Column field="codigo_eol" header="Código Eol" className="text-center" style={{ width: "15%" }} />
                 <Column field="nome_com_tipo" header="Unidade educacional" body={unidadeEscolarTemplate} />
-                <Column
-                  field="uuid"
-                  header="Ação"
-                  body={acoesTemplate}
-                  className="text-center"
-                  style={{ width: "20%" }}
-                />
+                {podeEditar && (
+                  <Column
+                    field="uuid"
+                    header="Ação"
+                    body={acoesTemplate}
+                    className="text-center"
+                    style={{ width: "20%" }}
+                  />
+                )}
               </DataTable>
 
               <Paginator

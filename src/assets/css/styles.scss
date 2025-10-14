@@ -33,7 +33,7 @@ body {
     background-color: $corBtnSuccess;
     border-color: $corBtnSuccess;
   }
-  
+
   .btn-disabled {
     background-color: $corBtnDisabled;
     border-color: $corBtnDisabled;
@@ -147,7 +147,12 @@ body {
   }
 
   .p-highlight {
-    background-color: #00585e !important;
+    background-color: #e9ecec !important;
+  }
+
+  .p-checkbox .p-checkbox-box.p-highlight {
+    border-color: rgb(0, 88, 94);
+    background: rgb(0, 88, 94) !important;
   }
 
   .p-paginator-element {
@@ -220,7 +225,7 @@ body {
       font-size: 14px;
       color: #333;
       border: 1px solid #c8c8c8;
-      padding: 0.50rem;
+      padding: 0.5rem;
     }
 
     &:nth-child(even) {
@@ -311,14 +316,13 @@ body {
 
 /* Classe para fundo cinza que mantém a cor durante hover */
 .bg-cinza {
-  background-color: #DADADA !important;
+  background-color: #dadada !important;
 }
 
 .p-datatable .p-datatable-tbody > tr:hover > td.bg-cinza {
-  background-color: #DADADA !important;
+  background-color: #dadada !important;
   color: #333 !important;
 }
-
 
 /* ---------------------------------------------------
   Atualização PrimeReact para versão 10.9.6 (compatibilidade para utilizar saga-blue/theme.css) - Inicio - Fim
@@ -504,7 +508,6 @@ body {
 //   padding: 6px 11px !important;
 // }
 
-.btn-light-rose{
-  background-color: #F8E7E6;
+.btn-light-rose {
+  background-color: #f8e7e6;
 }
-
