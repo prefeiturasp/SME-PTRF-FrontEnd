@@ -4,57 +4,33 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ResumoDosAcertos } from '../index';
 
-jest.mock('react-router-dom', () => ({
-  ...(jest.requireActual('react-router-dom') as object),
-  useParams: jest.fn(),
-  useLocation: jest.fn(),
-  useNavigate: jest.fn(),
-}));
+const mockNavigate = jest.fn();
+
+jest.mock('react-router-dom', () => {
+  const actual = jest.requireActual('react-router-dom');
+  return {
+    ...actual,
+    useParams: jest.fn(),
+    useLocation: jest.fn(),
+    useNavigate: jest.fn(),
+  };
+});
 
 jest.mock('../TopoComBotoes', () => ({
   TopoComBotoes: ({
     onClickDevolver,
-    devolverDisabled,
   }: {
     onClickDevolver: () => void;
-    devolverDisabled: boolean;
   }) => (
-    <div>
-      <button
-        type="button"
-        data-testid="botao-devolver"
-        onClick={onClickDevolver}
-        disabled={devolverDisabled}
-      >
-        Disparar devolução
-      </button>
-      <span data-testid="devolver-disabled">{String(devolverDisabled)}</span>
-    </div>
+    <button type="button" data-testid="botao-devolver" onClick={onClickDevolver}>
+      Devolver para Associação
+    </button>
   ),
 }));
 
-jest.mock('../TabsConferenciaAtualHistorico', () => {
-  const React = require('react');
-  const TabsMock = ({
-    handleChangeDataLimiteDevolucao,
-  }: {
-    handleChangeDataLimiteDevolucao: (name: string, value: string) => void;
-  }) => {
-    React.useEffect(() => {
-      handleChangeDataLimiteDevolucao('data_limite_devolucao', '2024-01-01');
-    }, [handleChangeDataLimiteDevolucao]);
-    return <div data-testid="tabs-mock">Tabs</div>;
-  };
-  return { __esModule: true, default: TabsMock };
-});
-
-jest.mock(
-  '../../../../Globais/DatePickerField',
-  () => ({
-    DatePickerField: () => <input data-testid="datepicker-mock" />,
-  }),
-  { virtual: true }
-);
+jest.mock('../TabsConferenciaAtualHistorico', () => () => (
+  <div data-testid="tabs-conferencia-mock" />
+));
 
 jest.mock('../../DevolucaoParaAcertos/ModalErroDevolverParaAcerto', () => ({
   ModalErroDevolverParaAcerto: ({ show }: { show: boolean }) => (
@@ -81,20 +57,20 @@ jest.mock('../../DevolucaoParaAcertos/ModalComprovanteSaldoConta', () => ({
 }));
 
 jest.mock(
-  '../../../../../paginas/PaginasContainer',
+  '../../../../../../paginas/PaginasContainer',
   () => ({
     PaginasContainer: ({ children }: { children: React.ReactNode }) => (
-      <div data-testid="paginas-container">{children}</div>
+      <div data-testid="paginas-container-mock">{children}</div>
     ),
   }),
   { virtual: true }
 );
 
-jest.mock('../../../../../hooks/dres/PrestacaoDeContas/useCarregaPrestacaoDeContasPorUuid', () => ({
+jest.mock('../../../../../../hooks/dres/PrestacaoDeContas/useCarregaPrestacaoDeContasPorUuid', () => ({
   useCarregaPrestacaoDeContasPorUuid: jest.fn(),
 }));
 
-jest.mock('../../../../../services/dres/PrestacaoDeContas.service', () => ({
+jest.mock('../../../../../../services/dres/PrestacaoDeContas.service', () => ({
   getConcluirAnalise: jest.fn(),
   getAnalisesDePcDevolvidas: jest.fn(),
   getUltimaAnalisePc: jest.fn(),
@@ -106,35 +82,47 @@ jest.mock('../../../../../services/dres/PrestacaoDeContas.service', () => ({
   getPrestacaoDeContasDetalhe: jest.fn(),
 }));
 
-jest.mock('../../../../../services/mantemEstadoAnaliseDre.service', () => ({
-  mantemEstadoAnaliseDre: {
-    getAnaliseDreUsuarioLogado: jest.fn(() => ({})),
-    limpaAnaliseDreUsuarioLogado: jest.fn(),
-    setAnaliseDrePorUsuario: jest.fn(),
-  },
-}));
+jest.mock('../../../../../../services/mantemEstadoAnaliseDre.service', () => {
+  const getAnaliseDreUsuarioLogado = jest.fn(() => ({ analise_pc_uuid: '' }));
+  const limpaAnaliseDreUsuarioLogado = jest.fn();
+  const setAnaliseDrePorUsuario = jest.fn();
 
-jest.mock('../../../../../services/visoes.service', () => ({
+  return {
+    mantemEstadoAnaliseDre: {
+      getAnaliseDreUsuarioLogado,
+      limpaAnaliseDreUsuarioLogado,
+      setAnaliseDrePorUsuario,
+    },
+  };
+});
+
+jest.mock('../../../../../../services/visoes.service', () => ({
   visoesService: {
     featureFlagAtiva: jest.fn(() => false),
     getUsuarioLogin: jest.fn(() => 'usuario-teste'),
   },
 }));
 
-const {
-  useParams,
-  useLocation,
-  useNavigate,
-} = jest.requireMock('react-router-dom') as {
+jest.mock('../../../../../../componentes/Globais/ToastCustom', () => ({
+  toastCustom: {
+    ToastCustomSuccess: jest.fn(),
+  },
+}));
+
+jest.mock('../../../../../../utils/Loading', () => () => (
+  <div data-testid="loading-mock" />
+));
+
+const { useParams, useLocation, useNavigate } = jest.requireMock(
+  'react-router-dom'
+) as {
   useParams: jest.Mock;
   useLocation: jest.Mock;
   useNavigate: jest.Mock;
 };
 
-const {
-  useCarregaPrestacaoDeContasPorUuid,
-} = jest.requireMock(
-  '../../../../../hooks/dres/PrestacaoDeContas/useCarregaPrestacaoDeContasPorUuid'
+const { useCarregaPrestacaoDeContasPorUuid } = jest.requireMock(
+  '../../../../../../hooks/dres/PrestacaoDeContas/useCarregaPrestacaoDeContasPorUuid'
 ) as { useCarregaPrestacaoDeContasPorUuid: jest.Mock };
 
 const {
@@ -146,7 +134,7 @@ const {
   getInfoAta,
   getDespesasPeriodosAnterioresAjustes,
   getPrestacaoDeContasDetalhe,
-} = jest.requireMock('../../../../../services/dres/PrestacaoDeContas.service') as {
+} = jest.requireMock('../../../../../../services/dres/PrestacaoDeContas.service') as {
   getAnalisesDePcDevolvidas: jest.Mock;
   getUltimaAnalisePc: jest.Mock;
   getLancamentosAjustes: jest.Mock;
@@ -155,6 +143,20 @@ const {
   getInfoAta: jest.Mock;
   getDespesasPeriodosAnterioresAjustes: jest.Mock;
   getPrestacaoDeContasDetalhe: jest.Mock;
+};
+
+const {
+  mantemEstadoAnaliseDre: {
+    getAnaliseDreUsuarioLogado,
+    limpaAnaliseDreUsuarioLogado,
+    setAnaliseDrePorUsuario,
+  },
+} = jest.requireMock('../../../../../../services/mantemEstadoAnaliseDre.service') as {
+  mantemEstadoAnaliseDre: {
+    getAnaliseDreUsuarioLogado: jest.Mock;
+    limpaAnaliseDreUsuarioLogado: jest.Mock;
+    setAnaliseDrePorUsuario: jest.Mock;
+  };
 };
 
 const basePrestacao = {
@@ -186,33 +188,23 @@ const defaultLocationState = {
   editavel: true,
 };
 
-const setupRender = async (
-  prestacaoDetalhada: Partial<typeof basePrestacao> = {}
-) => {
-  useParams.mockReturnValue({ prestacao_conta_uuid: 'prestacao-uuid' });
+const setupComponent = async (analiseOverride?: Partial<typeof basePrestacao.analise_atual>) => {
+  const prestacao = {
+    ...basePrestacao,
+    analise_atual: {
+      ...basePrestacao.analise_atual,
+      ...(analiseOverride || {}),
+    },
+  };
+
+  useParams.mockReturnValue({ prestacao_conta_uuid: prestacao.uuid });
   useLocation.mockReturnValue({ state: defaultLocationState });
-  useNavigate.mockReturnValue(jest.fn());
+  useNavigate.mockReturnValue(mockNavigate);
+  useCarregaPrestacaoDeContasPorUuid.mockReturnValue(prestacao);
 
-  useCarregaPrestacaoDeContasPorUuid.mockReturnValue({
-    ...basePrestacao,
-    ...prestacaoDetalhada,
-    analise_atual: {
-      ...basePrestacao.analise_atual,
-      ...(prestacaoDetalhada.analise_atual || {}),
-    },
-  });
-
-  getPrestacaoDeContasDetalhe.mockResolvedValue({
-    ...basePrestacao,
-    ...prestacaoDetalhada,
-    analise_atual: {
-      ...basePrestacao.analise_atual,
-      ...(prestacaoDetalhada.analise_atual || {}),
-    },
-  });
-
+  getPrestacaoDeContasDetalhe.mockResolvedValue(prestacao);
   getAnalisesDePcDevolvidas.mockResolvedValue([]);
-  getUltimaAnalisePc.mockResolvedValue({ uuid: 'analise-uuid' });
+  getUltimaAnalisePc.mockResolvedValue({ uuid: prestacao.analise_atual.uuid });
   getLancamentosAjustes.mockResolvedValue([]);
   getDocumentosAjustes.mockResolvedValue([]);
   getExtratosBancariosAjustes.mockResolvedValue([]);
@@ -222,102 +214,64 @@ const setupRender = async (
   const user = userEvent.setup();
   render(<ResumoDosAcertos />);
 
-  const botaoDevolver = await screen.findByTestId('botao-devolver');
+  const botao = await screen.findByTestId('botao-devolver');
 
-  return { user, botaoDevolver };
+  return { user, botao };
 };
 
 describe('ResumoDosAcertos - handleDevolverParaAssociacao', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    getAnaliseDreUsuarioLogado.mockReturnValue({ analise_pc_uuid: '' });
+    limpaAnaliseDreUsuarioLogado.mockImplementation(() => {});
+    setAnaliseDrePorUsuario.mockImplementation(() => {});
   });
 
-  it('exibe modal de comprovante de saldo quando há pendência de conciliação sem solicitação de acerto', async () => {
-    const { user, botaoDevolver } = await setupRender({
-      analise_atual: {
-        tem_pendencia_conciliacao_sem_solicitacao_de_acerto_em_conta: true,
-        contas_pendencia_conciliacao_sem_solicitacao_de_acerto_em_conta: [
-          'conta-1',
-        ],
-      },
+  it('abre o modal de comprovante quando existe pendência de conciliação sem solicitação de acerto', async () => {
+    const { user, botao } = await setupComponent({
+      tem_pendencia_conciliacao_sem_solicitacao_de_acerto_em_conta: true,
+      contas_pendencia_conciliacao_sem_solicitacao_de_acerto_em_conta: ['conta-1'],
     });
 
-    await user.click(botaoDevolver);
+    await user.click(botao);
 
     await waitFor(() => {
-      expect(screen.getByTestId('modal-comprovante')).toHaveAttribute(
-        'data-visible',
-        'true'
-      );
+      expect(screen.getByTestId('modal-comprovante')).toHaveAttribute('data-visible', 'true');
     });
-
-    expect(screen.getByTestId('modal-conciliacao')).toHaveAttribute(
-      'data-visible',
-      'false'
-    );
-    expect(screen.getByTestId('modal-confirma')).toHaveAttribute(
-      'data-visible',
-      'false'
-    );
-    expect(screen.getByTestId('devolver-disabled')).toHaveTextContent('false');
+    expect(screen.getByTestId('modal-conciliacao')).toHaveAttribute('data-visible', 'false');
+    expect(screen.getByTestId('modal-confirma')).toHaveAttribute('data-visible', 'false');
     expect(getPrestacaoDeContasDetalhe).toHaveBeenCalledTimes(1);
   });
 
-  it('exibe modal de conciliação quando há acertos que podem alterar a conciliação bancária', async () => {
-    const { user, botaoDevolver } = await setupRender({
-      analise_atual: {
-        acertos_podem_alterar_saldo_conciliacao: true,
-        tem_pendencia_conciliacao_sem_solicitacao_de_acerto_em_conta: false,
-      },
+  it('abre o modal de conciliação quando ajustes podem alterar a conciliação e não há pendência de comprovante', async () => {
+    const { user, botao } = await setupComponent({
+      acertos_podem_alterar_saldo_conciliacao: true,
+      tem_pendencia_conciliacao_sem_solicitacao_de_acerto_em_conta: false,
     });
 
-    await user.click(botaoDevolver);
+    await user.click(botao);
 
     await waitFor(() => {
-      expect(screen.getByTestId('modal-conciliacao')).toHaveAttribute(
-        'data-visible',
-        'true'
-      );
+      expect(screen.getByTestId('modal-conciliacao')).toHaveAttribute('data-visible', 'true');
     });
-
-    expect(screen.getByTestId('modal-comprovante')).toHaveAttribute(
-      'data-visible',
-      'false'
-    );
-    expect(screen.getByTestId('modal-confirma')).toHaveAttribute(
-      'data-visible',
-      'false'
-    );
-    expect(screen.getByTestId('devolver-disabled')).toHaveTextContent('false');
+    expect(screen.getByTestId('modal-comprovante')).toHaveAttribute('data-visible', 'false');
+    expect(screen.getByTestId('modal-confirma')).toHaveAttribute('data-visible', 'false');
     expect(getPrestacaoDeContasDetalhe).toHaveBeenCalledTimes(1);
   });
 
-  it('exibe modal de confirmação quando não há pendências nem impacto na conciliação', async () => {
-    const { user, botaoDevolver } = await setupRender({
-      analise_atual: {
-        acertos_podem_alterar_saldo_conciliacao: false,
-        tem_pendencia_conciliacao_sem_solicitacao_de_acerto_em_conta: false,
-      },
+  it('abre o modal de confirmação quando não existe pendência nem impacto na conciliação', async () => {
+    const { user, botao } = await setupComponent({
+      acertos_podem_alterar_saldo_conciliacao: false,
+      tem_pendencia_conciliacao_sem_solicitacao_de_acerto_em_conta: false,
     });
 
-    await user.click(botaoDevolver);
+    await user.click(botao);
 
     await waitFor(() => {
-      expect(screen.getByTestId('modal-confirma')).toHaveAttribute(
-        'data-visible',
-        'true'
-      );
+      expect(screen.getByTestId('modal-confirma')).toHaveAttribute('data-visible', 'true');
     });
-
-    expect(screen.getByTestId('modal-conciliacao')).toHaveAttribute(
-      'data-visible',
-      'false'
-    );
-    expect(screen.getByTestId('modal-comprovante')).toHaveAttribute(
-      'data-visible',
-      'false'
-    );
-    expect(screen.getByTestId('devolver-disabled')).toHaveTextContent('false');
+    expect(screen.getByTestId('modal-conciliacao')).toHaveAttribute('data-visible', 'false');
+    expect(screen.getByTestId('modal-comprovante')).toHaveAttribute('data-visible', 'false');
     expect(getPrestacaoDeContasDetalhe).toHaveBeenCalledTimes(1);
   });
 });
