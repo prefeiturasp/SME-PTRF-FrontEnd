@@ -7,9 +7,12 @@ import {
     getListaDeAcoes,
     getParametrizacoesAcoesAssociacoes,
     getAssociacoes,
-    getTabelaAssociacoes
 } from "../../../../../../services/sme/Parametrizacoes.service";
-import { getTabelaAssociacoes as getTabelaAssociacoesDres } from "../../../../../../services/dres/Associacoes.service";
+import { getTabelaAssociacoes } from "../../../../../../services/dres/Associacoes.service";
+import { toastCustom } from "../../../../../Globais/ToastCustom";
+import { postCreateTipoDeDocumento, patchAlterarTipoDeDocumento, deleteTipoDeDocumento } from '../../../../../../services/sme/Parametrizacoes.service';
+import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
+import * as service from "../../../../../../services/sme/Parametrizacoes.service";
 import { mockAcoes, mockSelectAcoes, mockSelectAssociacoes, tabelas } from '../__fixtures__/mockData';
 
 jest.mock("../TabelaAcoesDasAssociacoes", () => ({
@@ -26,7 +29,7 @@ jest.mock("../../../../../../services/sme/Parametrizacoes.service", ()=>({
     getParametrizacoesAcoesAssociacoes: jest.fn(),
 }));
 
-jest.mock("../../../../../../services/dres/Associacoes.service", ()=>({
+jest.mock("../../../../../../services/dres/Associacoes.service", () => ({
     getTabelaAssociacoes: jest.fn(),
 }));
 

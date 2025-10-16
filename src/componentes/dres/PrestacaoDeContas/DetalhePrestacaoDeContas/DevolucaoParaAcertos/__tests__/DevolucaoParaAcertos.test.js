@@ -38,6 +38,17 @@ jest.mock("../../../../../../utils/Loading", () => {
   };
 });
 
+jest.mock("../../../../../Globais/DatePickerField", () => ({
+  DatePickerField: ({ name, value, onChange }) => (
+    <input
+      data-testid="data_limite_devolucao"
+      name={name}
+      value={value ?? ""}
+      onChange={(event) => onChange(name, event.target.value)}
+    />
+  ),
+}));
+
 const mockPrestacaoDeContas = {
   uuid: "test-uuid",
   pode_devolver: true,
@@ -88,6 +99,34 @@ const defaultProps = {
 
 const renderWithRouter = (component) => {
   return render(<BrowserRouter>{component}</BrowserRouter>);
+};
+
+const acionarDevolucaoParaAssociacao = async (analiseOverrides) => {
+  service.getPrestacaoDeContasDetalhe.mockResolvedValueOnce({
+    ...mockPrestacaoDeContas,
+    analise_atual: {
+      ...mockPrestacaoDeContas.analise_atual,
+      ...analiseOverrides,
+    },
+  });
+
+  const utils = renderWithRouter(<DevolucaoParaAcertos {...defaultProps} />);
+
+  await waitFor(() =>
+    expect(screen.queryByTestId("loading")).not.toBeInTheDocument()
+  );
+
+  const input = await screen.findByTestId("data_limite_devolucao");
+  fireEvent.change(input, { target: { value: "2024-02-15" } });
+
+  const button = screen.getByRole("button", {
+    name: /devolver para associação/i,
+  });
+
+  await waitFor(() => expect(button).toBeEnabled());
+  fireEvent.click(button);
+
+  return utils;
 };
 
 describe("DevolucaoParaAcertos", () => {
@@ -175,13 +214,48 @@ describe("DevolucaoParaAcertos", () => {
   it("deve renderizar todas as seções do componente", async () => {
     renderWithRouter(<DevolucaoParaAcertos {...defaultProps} />);
 
-    await waitFor(() => {
-      // Verifica se todas as seções principais estão presentes
-      expect(screen.getByText("Devolução para acertos")).toBeInTheDocument();
-      expect(screen.getByText(/Caso deseje enviar todos esses apontamentos a Associação/)).toBeInTheDocument();
-      expect(screen.getByText("Prazo para reenvio:")).toBeInTheDocument();
-      expect(screen.getByRole("link", { name: /ver resumo/i })).toBeInTheDocument();
-      expect(screen.getByRole("button", { name: /devolver para associação/i })).toBeInTheDocument();
+    await waitFor(() =>
+      expect(screen.queryByTestId("loading")).not.toBeInTheDocument()
+    );
+
+    // Verifica se todas as seções principais estão presentes
+    expect(screen.getByText("Devolução para acertos")).toBeInTheDocument();
+    expect(
+      screen.getByText(/Caso deseje enviar todos esses apontamentos a Associação/)
+    ).toBeInTheDocument();
+    expect(screen.getByText("Prazo para reenvio:")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /ver resumo/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /devolver para associação/i })
+    ).toBeInTheDocument();
+  });
+
+  it("exibe o modal de conciliação apenas quando não há pendência de conciliação", async () => {
+    const primeiroRender = await acionarDevolucaoParaAssociacao({
+      acertos_podem_alterar_saldo_conciliacao: true,
+      tem_pendencia_conciliacao_sem_solicitacao_de_acerto_em_conta: false,
+      contas_pendencia_conciliacao_sem_solicitacao_de_acerto_em_conta: [],
     });
+
+    expect(
+      await screen.findByText("Acertos que podem alterar a conciliação bancária")
+    ).toBeInTheDocument();
+    primeiroRender.unmount();
+
+    const segundoRender = await acionarDevolucaoParaAssociacao({
+      acertos_podem_alterar_saldo_conciliacao: true,
+      tem_pendencia_conciliacao_sem_solicitacao_de_acerto_em_conta: true,
+      contas_pendencia_conciliacao_sem_solicitacao_de_acerto_em_conta: [
+        "conta-uuid-1",
+      ],
+    });
+
+    expect(
+      await screen.findByText("Comprovante de saldo da conta")
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByText("Acertos que podem alterar a conciliação bancária")
+    ).not.toBeInTheDocument();
+    segundoRender.unmount();
   });
 });

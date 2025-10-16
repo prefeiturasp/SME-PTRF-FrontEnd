@@ -60,6 +60,16 @@ export const postExluirDespesaBemProduzidoEmLote = async (uuid, payload) => {
   ).data;
 };
 
+export const postVerificarSePodeInformarValores = async (payload) => {
+  return (
+    await api.post(
+      `api/bens-produzidos/verificar_se_pode_informar_valores/`,
+      payload,
+      authHeader()
+    )
+  ).data;
+};
+
 export const getBemProduzidosComAdquiridos = async (filters, page, visao_dre = false) => {
   const uuid_associacao = getUuidAssociacao();
 
