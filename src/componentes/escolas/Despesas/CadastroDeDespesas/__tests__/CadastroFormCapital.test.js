@@ -271,4 +271,99 @@ describe("Componente CadastroFormCapital", () => {
     
     expect(screen.getByText("A soma dos valores do rateio não está correspondendo ao valor total utilizado com recursos do Programa.")).toBeInTheDocument();
   });
+
+  it("deve executar handleChangeQtdeItens ao alterar quantidade", () => {
+    renderComponent();
+    
+    const input = screen.getByTestId("number-format-input");
+    fireEvent.change(input, { target: { value: "2" } });
+    
+    expect(mockFormikProps.setFieldValue).toHaveBeenCalled();
+  });
+
+  it("deve executar handleChangeCheckboxNaoExibirEmRelBens ao clicar no checkbox", () => {
+    renderComponent();
+    
+    const checkbox = screen.getByRole("checkbox");
+    fireEvent.click(checkbox);
+    
+    expect(mockFormikProps.setFieldValue).toHaveBeenCalled();
+  });
+
+  it("deve executar handleChangeData ao alterar valor unitário", () => {
+    renderComponent();
+    
+    const inputs = screen.getAllByTestId("currency-input");
+    const valorUnitarioInput = inputs[0];
+    fireEvent.change(valorUnitarioInput, { target: { value: "200" } });
+    
+    expect(mockFormikProps.setFieldValue).toHaveBeenCalled();
+  });
+
+  it("deve desabilitar campo de processo de incorporação quando checkbox está marcado", () => {
+    renderComponent({
+      rateio: { ...mockRateio, nao_exibir_em_rel_bens: true }
+    });
+    
+    const maskedInput = screen.getByTestId("masked-input");
+    expect(maskedInput).toBeDisabled();
+  });
+
+  it("deve renderizar select com valor object para especificacao_material_servico", () => {
+    renderComponent({
+      rateio: { ...mockRateio, especificacao_material_servico: { id: 1 } }
+    });
+    
+    const select = screen.getByLabelText("Especificação do bem, material ou serviço");
+    expect(select).toHaveValue("1");
+  });
+
+  it("deve renderizar select com valor object para acao_associacao", () => {
+    renderComponent({
+      rateio: { ...mockRateio, acao_associacao: { uuid: "1" } }
+    });
+    
+    const select = screen.getByLabelText("Ação");
+    expect(select).toHaveValue("1");
+  });
+
+  it("deve renderizar select com valor object para conta_associacao", () => {
+    renderComponent({
+      rateio: { ...mockRateio, conta_associacao: { uuid: "conta-1" } },
+      renderContaAssociacaoOptions: jest.fn().mockReturnValue([
+        <option key="conta-1" value="conta-1">Conta 1</option>
+      ])
+    });
+    
+    const select = screen.getByLabelText("Tipo de conta");
+    expect(select).toHaveValue("conta-1");
+  });
+
+  it("deve desabilitar especificação quando não há comprovação fiscal", () => {
+    renderComponent({
+      eh_despesa_com_comprovacao_fiscal: jest.fn().mockReturnValue(false)
+    });
+    
+    const select = screen.getByLabelText("Especificação do bem, material ou serviço");
+    expect(select).toBeDisabled();
+  });
+
+  it("deve filtrar ações que não são recursos próprios", () => {
+    const acoesComRecursosProprios = {
+      acoes_associacao: [
+        { uuid: '1', nome: 'Ação 1', e_recursos_proprios: false },
+        { uuid: '2', nome: 'Ação 2', e_recursos_proprios: true },
+        { uuid: '3', nome: 'Ação 3', e_recursos_proprios: false },
+      ],
+    };
+    
+    renderComponent({
+      despesasTabelas: acoesComRecursosProprios
+    });
+    
+    const select = screen.getByLabelText("Ação");
+    const options = select.querySelectorAll("option");
+    // Deve ter 1 (placeholder) + 2 (não recursos próprios) = 3 opções
+    expect(options).toHaveLength(3);
+  });
 }); 

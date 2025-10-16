@@ -57,6 +57,7 @@ describe("Carrega página de Acoes das Associações", () => {
         getParametrizacoesAcoesAssociacoes.mockResolvedValue(mockAcoes);
         getTabelaAssociacoes.mockResolvedValue(tabelas);
         getListaDeAcoes.mockResolvedValue(mockSelectAcoes);
+        getTabelaAssociacoesDres.mockResolvedValue(tabelas);
     });
 
     it("Testa a chamada de get de Filtros", async () => {
