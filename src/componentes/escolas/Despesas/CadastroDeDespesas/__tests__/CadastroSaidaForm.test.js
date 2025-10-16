@@ -679,5 +679,224 @@ describe("CadastroSaidaForm", () => {
       expect(screen.getByText("Número do")).toBeInTheDocument();
     });
   });
+
+  it("deve validar número do documento obrigatório", async () => {
+    DespesasService.getDespesasTabelas.mockResolvedValue({
+      tipos_documento: [
+        { id: 1, nome: "Nota Fiscal", numero_documento_digitado: true, apenas_digitos: false },
+      ],
+      tipos_transacao: [{ id: 1, nome: "Dinheiro" }],
+    });
+
+    renderComponent();
+
+    await waitFor(() => {
+      const tipoSelect = screen.getByLabelText("Tipo de documento");
+      fireEvent.change(tipoSelect, { target: { value: "1" } });
+      
+      const numeroInput = screen.getByPlaceholderText("Digite o número");
+      fireEvent.blur(numeroInput);
+      
+      expect(screen.getByText("Número do documento é obrigatório")).toBeInTheDocument();
+    });
+  });
+
+  it("deve tratar erro ao buscar receita", async () => {
+    ReceitasService.getReceita.mockRejectedValue(new Error("Erro"));
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+
+    renderComponent();
+
+    await waitFor(() => {
+      expect(consoleSpy).toHaveBeenCalled();
+    });
+
+    consoleSpy.mockRestore();
+  });
+
+  it("deve deletar despesa quando botão deletar é clicado", async () => {
+    mockUseParams.mockReturnValue({
+      uuid_receita: "receita-uuid",
+      uuid_despesa: "despesa-uuid",
+    });
+
+    ReceitasService.getReceita.mockResolvedValue({
+      data: {
+        valor: 1000.00,
+        saida_do_recurso: {
+          valor_ptrf: 1000,
+          valor_total: 1000,
+        },
+        acao_associacao: { uuid: "acao-uuid" },
+        conta_associacao: { uuid: "conta-uuid" },
+      },
+    });
+
+    DespesasService.deleteDespesa.mockResolvedValue({});
+
+    renderComponent();
+
+    await waitFor(() => {
+      const deletarBtn = screen.getByText("Deletar");
+      fireEvent.click(deletarBtn);
+    });
+
+    await waitFor(() => {
+      const btnDeletarModal = screen.getByTestId("btn-deletar");
+      fireEvent.click(btnDeletarModal);
+    });
+
+    await waitFor(() => {
+      expect(DespesasService.deleteDespesa).toHaveBeenCalled();
+    });
+  });
+
+  it("deve fechar modal de deletar ao clicar em fechar", async () => {
+    mockUseParams.mockReturnValue({
+      uuid_receita: "receita-uuid",
+      uuid_despesa: "despesa-uuid",
+    });
+
+    ReceitasService.getReceita.mockResolvedValue({
+      data: {
+        valor: 1000.00,
+        saida_do_recurso: {
+          valor_ptrf: 1000,
+          valor_total: 1000,
+        },
+        acao_associacao: { uuid: "acao-uuid" },
+        conta_associacao: { uuid: "conta-uuid" },
+      },
+    });
+
+    renderComponent();
+
+    await waitFor(() => {
+      const deletarBtn = screen.getByText("Deletar");
+      fireEvent.click(deletarBtn);
+    });
+
+    await waitFor(() => {
+      const btnFechar = screen.getByTestId("btn-fechar");
+      fireEvent.click(btnFechar);
+      expect(screen.queryByTestId("modal-deletar-despesa")).not.toBeInTheDocument();
+    });
+  });
+
+  it("deve validar número do documento quando tipo requer apenas dígitos", async () => {
+    const validacoesModule = require("../../../../../utils/ValidacoesAdicionaisFormularios");
+    validacoesModule.apenasNumero.mockReturnValue(false);
+
+    DespesasService.getDespesasTabelas.mockResolvedValue({
+      tipos_documento: [
+        { id: 1, nome: "Nota Fiscal", numero_documento_digitado: true, apenas_digitos: true },
+      ],
+      tipos_transacao: [{ id: 1, nome: "Dinheiro" }],
+    });
+
+    renderComponent();
+
+    await waitFor(() => {
+      const tipoSelect = screen.getByLabelText("Tipo de documento");
+      fireEvent.change(tipoSelect, { target: { value: "1" } });
+      
+      const numeroInput = screen.getByPlaceholderText("Digite o número");
+      fireEvent.change(numeroInput, { target: { value: "abc123" } });
+      fireEvent.blur(numeroInput);
+    });
+  });
+
+  it("deve desabilitar número do documento quando tipo não permite digitação", async () => {
+    DespesasService.getDespesasTabelas.mockResolvedValue({
+      tipos_documento: [
+        { id: 1, nome: "Recibo", numero_documento_digitado: false, apenas_digitos: false },
+      ],
+      tipos_transacao: [{ id: 1, nome: "Dinheiro" }],
+    });
+
+    renderComponent();
+
+    await waitFor(() => {
+      const tipoSelect = screen.getByLabelText("Tipo de documento");
+      fireEvent.change(tipoSelect, { target: { value: "1" } });
+      fireEvent.blur(tipoSelect);
+    });
+
+    await waitFor(() => {
+      const numeroInput = screen.getByLabelText("Número do documento");
+      expect(numeroInput).toBeDisabled();
+    });
+  });
+
+  it("deve atrelar saída do recurso ao editar despesa", async () => {
+    mockUseParams.mockReturnValue({
+      uuid_receita: "receita-uuid",
+      uuid_despesa: "despesa-uuid",
+    });
+
+    ReceitasService.getReceita.mockResolvedValue({
+      data: {
+        valor: 1000.00,
+        saida_do_recurso: {
+          valor_ptrf: 1000,
+          valor_total: 1000,
+        },
+        acao_associacao: { uuid: "acao-uuid" },
+        conta_associacao: { uuid: "conta-uuid" },
+      },
+    });
+
+    renderComponent();
+
+    await waitFor(() => {
+      expect(DespesasService.patchAtrelarSaidoDoRecurso).toHaveBeenCalledWith("receita-uuid", "despesa-uuid");
+    });
+  });
+
+  it("deve tratar erro ao atrelar saída do recurso", async () => {
+    mockUseParams.mockReturnValue({
+      uuid_receita: "receita-uuid",
+      uuid_despesa: "despesa-uuid",
+    });
+
+    DespesasService.patchAtrelarSaidoDoRecurso.mockRejectedValue(new Error("Erro"));
+    
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+
+    ReceitasService.getReceita.mockResolvedValue({
+      data: {
+        valor: 1000.00,
+        saida_do_recurso: {
+          valor_ptrf: 1000,
+          valor_total: 1000,
+        },
+        acao_associacao: { uuid: "acao-uuid" },
+        conta_associacao: { uuid: "conta-uuid" },
+      },
+    });
+
+    renderComponent();
+
+    await waitFor(() => {
+      expect(consoleSpy).toHaveBeenCalledWith("Erro ao atrelar despesa ", expect.any(Error));
+    });
+
+    consoleSpy.mockRestore();
+  });
+
+  it("deve limpar erros ao clicar nos campos", async () => {
+    renderComponent();
+
+    await waitFor(() => {
+      const cpfInput = screen.getByTestId("masked-input");
+      fireEvent.click(cpfInput);
+      
+      const nomeInput = screen.getByPlaceholderText("Digite o nome");
+      fireEvent.click(nomeInput);
+      
+      const tipoSelect = screen.getByLabelText("Tipo de documento");
+      fireEvent.click(tipoSelect);
+    });
+  });
  
 }); 
