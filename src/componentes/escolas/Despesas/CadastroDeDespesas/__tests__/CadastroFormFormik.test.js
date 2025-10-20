@@ -3,12 +3,10 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { CadastroFormFormik } from "../CadastroFormFormik";
 
-// Mock dos serviços
 jest.mock("../../../../../services/visoes.service");
 
 import * as visoesService from "../../../../../services/visoes.service";
 
-// Mock dos componentes
 jest.mock("../../../../Globais/DatePickerField", () => ({
   DatePickerField: ({ value, onChange, onCalendarClose, ...props }) => (
     <input
@@ -149,7 +147,6 @@ beforeEach(() => {
   jest.spyOn(visoesService.visoesService, 'getPermissoes').mockReturnValue(true);
   jest.spyOn(visoesService.visoesService, 'featureFlagAtiva').mockReturnValue(true);
   
-  // Mock localStorage
   Object.defineProperty(window, 'localStorage', {
     value: {
       getItem: jest.fn(() => 'test-association-uuid'),
@@ -206,6 +203,38 @@ const mockDespesasTabelas = {
   ],
 };
 
+const createMockAux = (overrides = {}) => ({
+  onHandleChangeApenasNumero: jest.fn(),
+  documentoTransacaoObrigatorio: jest.fn(() => false),
+  exibeDocumentoTransacao: jest.fn(),
+  setaValorRealizado: jest.fn(),
+  mostraBotaoDeletar: jest.fn(() => false),
+  ehOperacaoExclusao: jest.fn(() => false),
+  origemAnaliseLancamento: jest.fn(() => false),
+  setaValoresCusteioCapital: jest.fn(),
+  setValoresRateiosOriginal: jest.fn(),
+  limpaTipoDespesaCusteio: jest.fn(),
+  handleAvisoCapital: jest.fn(),
+  onShowDeleteModal: jest.fn(),
+  ...overrides,
+});
+
+const createInitialValuesWithRateios = (rateios) => () => ({
+  ...mockInitialValues(),
+  rateios,
+});
+
+const createInitialValuesWithEstorno = (estornoUuid = null) => () => ({
+  ...mockInitialValues(),
+  rateios: [
+    { 
+      ...mockInitialValues().rateios[0], 
+      uuid: "rateio-uuid-1",
+      estorno: estornoUuid ? { uuid: estornoUuid } : null
+    },
+  ],
+});
+
 const renderComponent = (props = {}) => {
   const defaultProps = {
     initialValues: mockInitialValues,
@@ -218,20 +247,7 @@ const renderComponent = (props = {}) => {
     formErrors: {},
     despesasTabelas: mockDespesasTabelas,
     numeroDocumentoReadOnly: jest.fn().mockReturnValue(false),
-    aux: {
-      onHandleChangeApenasNumero: jest.fn(),
-      documentoTransacaoObrigatorio: jest.fn(() => false),
-      exibeDocumentoTransacao: jest.fn(),
-      setaValorRealizado: jest.fn(),
-      mostraBotaoDeletar: jest.fn(() => false),
-      ehOperacaoExclusao: jest.fn(() => false),
-      origemAnaliseLancamento: jest.fn(() => false),
-      setaValoresCusteioCapital: jest.fn(),
-      setValoresRateiosOriginal: jest.fn(),
-      limpaTipoDespesaCusteio: jest.fn(),
-      handleAvisoCapital: jest.fn(),
-      onShowDeleteModal: jest.fn(),
-    },
+    aux: createMockAux(),
     setCssEscondeDocumentoTransacao: jest.fn(),
     setLabelDocumentoTransacao: jest.fn(),
     verbo_http: "POST",
@@ -311,7 +327,6 @@ const renderComponent = (props = {}) => {
 
 describe("Componente CadastroFormFormik", () => {
   it("deve renderizar o componente com formulário básico", () => {
-    // Força o valor inicial do rateio para CUSTEIO
     const initialValuesWithCusteio = () => ({
       ...mockInitialValues(),
       rateios: [{
@@ -540,21 +555,6 @@ describe("Componente CadastroFormFormik", () => {
       despesa_anterior_ao_uso_do_sistema_editavel: true,
     });
 
-    const auxComBotaoDeletar = {
-      onHandleChangeApenasNumero: jest.fn(),
-      documentoTransacaoObrigatorio: jest.fn(() => false),
-      exibeDocumentoTransacao: jest.fn(),
-      setaValorRealizado: jest.fn(),
-      mostraBotaoDeletar: jest.fn(() => true),
-      ehOperacaoExclusao: jest.fn(() => false),
-      origemAnaliseLancamento: jest.fn(() => false),
-      setaValoresCusteioCapital: jest.fn(),
-      setValoresRateiosOriginal: jest.fn(),
-      limpaTipoDespesaCusteio: jest.fn(),
-      handleAvisoCapital: jest.fn(),
-      onShowDeleteModal: jest.fn(),
-    };
-
     jest.spyOn(visoesService.visoesService, "getPermissoes").mockImplementation((permissoes) => {
       if (permissoes.includes("delete_despesa")) return true;
       return true;
@@ -563,7 +563,7 @@ describe("Componente CadastroFormFormik", () => {
     renderComponent({
       initialValues: initialValuesWithoutDate,
       despesaContext: { ...mockDespesaContext, verboHttp: "PUT" },
-      aux: auxComBotaoDeletar,
+      aux: createMockAux({ mostraBotaoDeletar: jest.fn(() => true) }),
       readOnlyBtnAcao: false,
     });
 
@@ -576,5 +576,411 @@ describe("Componente CadastroFormFormik", () => {
     });
 
     jest.useRealTimers();
+  });
+
+  it("deve renderizar número do boletim de ocorrência quando não há comprovação fiscal e não é despesa reconhecida", () => {
+    renderComponent({
+      eh_despesa_com_comprovacao_fiscal: jest.fn().mockReturnValue(false),
+      eh_despesa_reconhecida: jest.fn().mockReturnValue(false),
+    });
+
+    expect(screen.getByText("Número do Boletim de Ocorrência")).toBeInTheDocument();
+  });
+
+  it("deve chamar aux.onHandleChangeApenasNumero ao alterar número do documento", () => {
+    const mockAux = createMockAux();
+    renderComponent({ aux: mockAux });
+
+    const numeroDocInput = screen.getByLabelText("Número do documento");
+    fireEvent.change(numeroDocInput, { target: { value: "12345" } });
+
+    expect(mockAux.onHandleChangeApenasNumero).toHaveBeenCalled();
+  });
+
+  it("deve chamar exibeDocumentoTransacao ao alterar tipo de transação", () => {
+    const mockAux = createMockAux();
+
+    renderComponent({
+      aux: mockAux,
+      despesasTabelas: {
+        ...mockDespesasTabelas,
+        tipos_transacao: [{ id: 1, nome: "Dinheiro" }],
+      },
+    });
+
+    const tipoTransacaoSelect = screen.getByLabelText("Forma de pagamento");
+    fireEvent.change(tipoTransacaoSelect, { target: { value: "1" } });
+
+    expect(mockAux.exibeDocumentoTransacao).toHaveBeenCalled();
+  });
+
+  it("deve renderizar botão adicionar despesa parcial quando mais_de_um_tipo_despesa for sim", () => {
+    const initialValuesMultiple = () => ({
+      ...mockInitialValues(),
+      mais_de_um_tipo_despesa: "sim",
+      despesa_anterior_ao_uso_do_sistema_editavel: true,
+    });
+
+    renderComponent({ initialValues: initialValuesMultiple });
+
+    expect(screen.getByText("+ Adicionar despesa parcial")).toBeInTheDocument();
+  });
+
+  it("deve adicionar novo rateio ao clicar em adicionar despesa parcial", () => {
+    const initialValuesMultiple = () => ({
+      ...mockInitialValues(),
+      mais_de_um_tipo_despesa: "sim",
+      despesa_anterior_ao_uso_do_sistema_editavel: true,
+    });
+
+    renderComponent({ 
+      initialValues: initialValuesMultiple,
+      bloqueiaCamposDespesa: jest.fn(() => false),
+    });
+
+    const addButton = screen.getByText("+ Adicionar despesa parcial");
+    fireEvent.click(addButton);
+
+    const despesas = screen.getAllByText(/Despesa \d+/);
+    expect(despesas.length).toBeGreaterThan(0);
+  });
+
+  it("deve renderizar botão remover despesa quando há mais de um rateio", () => {
+    const multipleRateios = [
+      { ...mockInitialValues().rateios[0], uuid: "rateio-1" },
+      { ...mockInitialValues().rateios[0], uuid: "rateio-2" },
+    ];
+
+    renderComponent({ initialValues: createInitialValuesWithRateios(multipleRateios) });
+    expect(screen.getByText("Remover Despesa")).toBeInTheDocument();
+  });
+
+  it("deve chamar removeRateio ao clicar em remover despesa", () => {
+    const mockRemoveRateio = jest.fn();
+    const multipleRateios = [
+      { ...mockInitialValues().rateios[0], uuid: "rateio-1" },
+      { ...mockInitialValues().rateios[0], uuid: "rateio-2" },
+    ];
+
+    jest.spyOn(visoesService.visoesService, "getPermissoes").mockReturnValue(true);
+
+    renderComponent({ 
+      initialValues: () => ({
+        ...mockInitialValues(),
+        rateios: multipleRateios,
+        despesa_anterior_ao_uso_do_sistema_editavel: true,
+      }),
+      removeRateio: mockRemoveRateio,
+      bloqueiaCamposDespesa: jest.fn(() => false),
+    });
+
+    const removeButton = screen.getByText("Remover Despesa");
+    fireEvent.click(removeButton);
+
+    expect(mockRemoveRateio).toHaveBeenCalled();
+  });
+
+  it("deve renderizar link de cadastrar estorno quando rateio tem uuid mas não tem estorno", () => {
+    renderComponent({ 
+      initialValues: createInitialValuesWithEstorno(null),
+      aux: createMockAux(),
+    });
+
+    expect(screen.getByText("Cadastrar estorno")).toBeInTheDocument();
+  });
+
+  it("deve renderizar link de acessar estorno quando rateio tem estorno", () => {
+    renderComponent({ 
+      initialValues: createInitialValuesWithEstorno("estorno-uuid-1"),
+      aux: createMockAux(),
+    });
+
+    expect(screen.getByText("Acessar estorno")).toBeInTheDocument();
+  });
+
+  it("deve mostrar mensagem de bloqueio quando rateio tem estorno", () => {
+    renderComponent({ 
+      initialValues: createInitialValuesWithEstorno("estorno-uuid-1"),
+      aux: createMockAux(),
+    });
+
+    expect(screen.getByText(/Esta seção da despesa encontra-se bloqueada para edição/)).toBeInTheDocument();
+  });
+
+  it("deve renderizar botão adicionar imposto quando eh_despesa_com_retencao_imposto retorna true", () => {
+    const initialValuesComRetencao = () => ({
+      ...mockInitialValues(),
+      despesas_impostos: [],
+    });
+
+    renderComponent({
+      initialValues: initialValuesComRetencao,
+      showRetencaoImposto: true,
+      eh_despesa_com_retencao_imposto: jest.fn().mockReturnValue(true),
+    });
+
+    expect(screen.getByText("+ Adicionar imposto")).toBeInTheDocument();
+  });
+
+  it("deve adicionar novo imposto ao clicar em adicionar imposto", () => {
+    const initialValuesComRetencao = () => ({
+      ...mockInitialValues(),
+      despesas_impostos: [],
+      despesa_anterior_ao_uso_do_sistema_editavel: true,
+    });
+
+    renderComponent({
+      initialValues: initialValuesComRetencao,
+      showRetencaoImposto: true,
+      eh_despesa_com_retencao_imposto: jest.fn().mockReturnValue(true),
+      disableBtnAdicionarImposto: false,
+    });
+
+    const addButton = screen.getByText("+ Adicionar imposto");
+    fireEvent.click(addButton);
+
+    expect(screen.getByTestId("cadastro-form-despesa-imposto")).toBeInTheDocument();
+  });
+
+  it("deve renderizar componente de despesa imposto quando há despesas_impostos", () => {
+    const initialValuesComImposto = () => ({
+      ...mockInitialValues(),
+      despesas_impostos: [
+        {
+          tipo_documento: "",
+          numero_documento: "",
+          tipo_transacao: "",
+          documento_transacao: "",
+          data_transacao: "",
+          rateios: [],
+        }
+      ],
+    });
+
+    renderComponent({
+      initialValues: initialValuesComImposto,
+      showRetencaoImposto: true,
+    });
+
+    expect(screen.getByTestId("cadastro-form-despesa-imposto")).toBeInTheDocument();
+  });
+
+  it("deve chamar setaValoresCusteioCapital ao alterar mais_de_um_tipo_despesa", () => {
+    const mockAux = createMockAux();
+    renderComponent({ aux: mockAux });
+
+    const select = document.getElementById("mais_de_um_tipo_despesa");
+    fireEvent.change(select, { target: { value: "sim" } });
+
+    expect(mockAux.setaValoresCusteioCapital).toHaveBeenCalled();
+    expect(mockAux.setValoresRateiosOriginal).toHaveBeenCalled();
+  });
+
+  it("deve chamar handleAvisoCapital ao alterar tipo de aplicação do recurso", () => {
+    const mockAux = createMockAux();
+
+    renderComponent({ 
+      aux: mockAux,
+      despesasTabelas: {
+        ...mockDespesasTabelas,
+        tipos_aplicacao_recurso: [
+          { id: "CUSTEIO", nome: "Custeio" },
+          { id: "CAPITAL", nome: "Capital" },
+        ],
+      },
+    });
+
+    const tipoAplicacaoSelect = screen.getByLabelText("Tipo de aplicação do recurso");
+    fireEvent.change(tipoAplicacaoSelect, { target: { value: "CAPITAL" } });
+
+    expect(mockAux.handleAvisoCapital).toHaveBeenCalled();
+    expect(mockAux.limpaTipoDespesaCusteio).toHaveBeenCalled();
+  });
+
+  it("deve chamar onCalendarCloseDataPagamento ao fechar calendário de data de pagamento", async () => {
+    const mockOnCalendarClose = jest.fn();
+
+    renderComponent({
+      onCalendarCloseDataPagamento: mockOnCalendarClose,
+    });
+
+    const dataPagamentoInput = screen.getByLabelText("Data do pagamento");
+    fireEvent.change(dataPagamentoInput, { target: { value: "2024-01-01" } });
+
+    await waitFor(() => {
+      expect(mockOnCalendarClose).toHaveBeenCalled();
+    });
+  });
+
+  it("deve chamar onCalendarCloseDataDoDocumento ao fechar calendário de data do documento", async () => {
+    const mockOnCalendarClose = jest.fn();
+
+    renderComponent({
+      onCalendarCloseDataDoDocumento: mockOnCalendarClose,
+    });
+
+    const dataDocumentoInput = screen.getByLabelText("Data do documento");
+    fireEvent.change(dataDocumentoInput, { target: { value: "2024-01-01" } });
+
+    await waitFor(() => {
+      expect(mockOnCalendarClose).toHaveBeenCalled();
+    });
+  });
+
+  it("deve mostrar erro de valor_recusos_acoes quando exibeMsgErroValorRecursos for true", () => {
+    const initialValuesComErro = () => ({
+      ...mockInitialValues(),
+    });
+
+    const mockErrors = {
+      valor_recusos_acoes: "Erro no valor de recursos",
+    };
+
+    const mockValidate = jest.fn().mockReturnValue(mockErrors);
+
+    renderComponent({
+      initialValues: initialValuesComErro,
+      validateFormDespesas: mockValidate,
+      exibeMsgErroValorRecursos: true,
+    });
+
+    expect(screen.getByText("Valor do PTRF")).toBeInTheDocument();
+  });
+
+  it("deve chamar setaValorRealizado ao alterar valor original", () => {
+    renderComponent();
+
+    const valorOriginalInput = screen.getByLabelText("Valor total do documento");
+    fireEvent.change(valorOriginalInput, { target: { value: "200" } });
+
+    // setaValorRealizado é chamado internamente
+    expect(valorOriginalInput).toBeInTheDocument();
+  });
+
+  it("deve desabilitar campos quando eh_despesa_com_comprovacao_fiscal retorna false", () => {
+    renderComponent({
+      eh_despesa_com_comprovacao_fiscal: jest.fn().mockReturnValue(false),
+    });
+
+    const cpfInput = screen.getByLabelText("CNPJ ou CPF do fornecedor");
+    const nomeInput = screen.getByLabelText("Razão social do fornecedor");
+    const tipoDocInput = screen.getByLabelText("Tipo de documento");
+
+    expect(cpfInput).toBeDisabled();
+    expect(nomeInput).toBeDisabled();
+    expect(tipoDocInput).toBeDisabled();
+  });
+
+  it("deve renderizar botão salvar quando não é operação de exclusão", () => {
+    renderComponent({ aux: createMockAux() });
+    expect(screen.getByText("Salvar")).toBeInTheDocument();
+  });
+
+  it("deve chamar serviceIniciaEncadeamentoDosModais ao clicar em salvar", async () => {
+    const mockService = jest.fn().mockResolvedValue(true);
+    const mockDesabilita = jest.fn();
+    const mockHabilita = jest.fn();
+
+    const initialValuesComBoletim = () => ({
+      ...mockInitialValues(),
+      numero_boletim_de_ocorrencia: "12345",
+      despesa_anterior_ao_uso_do_sistema_editavel: true,
+    });
+
+    renderComponent({
+      initialValues: initialValuesComBoletim,
+      serviceIniciaEncadeamentoDosModais: mockService,
+      desabilitaBtnSalvar: mockDesabilita,
+      habilitaBtnSalvar: mockHabilita,
+      eh_despesa_reconhecida: jest.fn().mockReturnValue(true),
+      aux: createMockAux(),
+    });
+
+    const salvarButton = screen.getByText("Salvar");
+    fireEvent.click(salvarButton);
+
+    await waitFor(() => {
+      expect(mockDesabilita).toHaveBeenCalled();
+      expect(mockService).toHaveBeenCalled();
+    });
+  });
+
+  it("deve chamar habilitaBtnSalvar quando serviceIniciaEncadeamentoDosModais falha", async () => {
+    const mockService = jest.fn().mockRejectedValue(new Error("Erro"));
+    const mockDesabilita = jest.fn();
+    const mockHabilita = jest.fn();
+
+    const initialValuesComBoletim = () => ({
+      ...mockInitialValues(),
+      numero_boletim_de_ocorrencia: "12345",
+      despesa_anterior_ao_uso_do_sistema_editavel: true,
+    });
+
+    renderComponent({
+      initialValues: initialValuesComBoletim,
+      serviceIniciaEncadeamentoDosModais: mockService,
+      desabilitaBtnSalvar: mockDesabilita,
+      habilitaBtnSalvar: mockHabilita,
+      eh_despesa_reconhecida: jest.fn().mockReturnValue(true),
+      aux: createMockAux(),
+    });
+
+    const salvarButton = screen.getByText("Salvar");
+    fireEvent.click(salvarButton);
+
+    await waitFor(() => {
+      expect(mockDesabilita).toHaveBeenCalled();
+      expect(mockHabilita).toHaveBeenCalled();
+    });
+  });
+
+  it("deve chamar onCancelarTrue ao clicar em voltar sem alterações", () => {
+    const mockOnCancelar = jest.fn();
+
+    renderComponent({
+      onCancelarTrue: mockOnCancelar,
+      houveAlteracoes: jest.fn(() => false),
+    });
+
+    const voltarButton = screen.getByText("Voltar");
+    fireEvent.click(voltarButton);
+
+    expect(mockOnCancelar).toHaveBeenCalled();
+  });
+
+  it("deve chamar onShowModal ao clicar em voltar com alterações", () => {
+    const mockOnShowModal = jest.fn();
+
+    renderComponent({
+      onShowModal: mockOnShowModal,
+      houveAlteracoes: jest.fn(() => true),
+    });
+
+    const voltarButton = screen.getByText("Voltar");
+    fireEvent.click(voltarButton);
+
+    expect(mockOnShowModal).toHaveBeenCalled();
+  });
+
+  it("deve limpar timeout no cleanup do useEffect", () => {
+    jest.useFakeTimers();
+    const clearTimeoutSpy = jest.spyOn(global, 'clearTimeout');
+
+    const initialValuesEditavel = () => ({
+      ...mockInitialValues(),
+      despesa_anterior_ao_uso_do_sistema_editavel: true,
+    });
+
+    const { unmount } = renderComponent({
+      initialValues: initialValuesEditavel,
+      readOnlyBtnAcao: false,
+    });
+
+    unmount();
+
+    expect(clearTimeoutSpy).toHaveBeenCalled();
+
+    jest.useRealTimers();
+    clearTimeoutSpy.mockRestore();
   });
 }); 

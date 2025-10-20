@@ -19,6 +19,7 @@ import {
   formatProcessoIncorporacao,
   parsetFormattedProcessoIncorporacao,
 } from "../../../../../utils/Mascaras";
+import { BarraAvisoValorTotalBemProduzido } from "../components/BarraAvisoValorTotalBemProduzido";
 
 const { Text } = Typography;
 
@@ -177,6 +178,8 @@ export const ClassificarBem = ({
           <strong>{"R$ " + formatMoneyBRL(total)}</strong>
         </p>
       </div>
+
+      <BarraAvisoValorTotalBemProduzido />
 
       <h5 className="mt-5 mb-5">Classifique o bem</h5>
 
