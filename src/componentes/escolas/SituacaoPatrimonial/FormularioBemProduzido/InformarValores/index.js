@@ -13,6 +13,7 @@ import { useDispatch } from "react-redux";
 import { CustomModalConfirm } from "../../../../Globais/Modal/CustomModalConfirm";
 import { BarraAcaoEmLote } from "./BarraAcaoEmLote";
 import { usePostExluirDespesaBemProduzidoEmLote } from "../hooks/usePostExluirDespesaBemProduzidoEmLote";
+import "./index.scss";
 
 export const InformarValores = ({
   uuid,
@@ -636,6 +637,7 @@ export const InformarValores = ({
             expandedRows={expandedRows}
             onRowToggle={(e) => setExpandedRows(e.data)}
             rowExpansionTemplate={expandedRowTemplate}
+            className="datatable-situacao-patrimonial"
           >
             <Column selectionMode="multiple" style={{ width: "3em" }} />
             <Column field="periodo_referencia" header="Período" />

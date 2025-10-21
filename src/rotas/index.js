@@ -102,6 +102,8 @@ import { ParametrizacoesRepasses } from "../componentes/sme/Parametrizacoes/Rece
 import { MotivosPagamentoAntecipado } from "../componentes/sme/Parametrizacoes/Despesas/MotivosPagamentoAntecipado";
 import { TextosPaa } from "../componentes/sme/Parametrizacoes/PAA/TextosPaa";
 import { PeriodosPaa } from "../componentes/sme/Parametrizacoes/PAA/PeriodosPaa";
+import { ObjetivosPaa } from "../componentes/sme/Parametrizacoes/PAA/ObjetivosPaa";
+import { AtividadesEstatutarias } from "../componentes/sme/Parametrizacoes/PAA/AtividadesEstatutarias";
 import { ElaboracaoPaa } from "../componentes/escolas/Paa/ElaboracaoPaa";
 import { ElaborarNovoPlano } from "../componentes/escolas/Paa/ElaboracaoPaa/ElaborarNovoPlano";
 import { ExecucaoDoPaa } from "../componentes/escolas/Paa/ExecucaoDoPaa";
@@ -115,6 +117,8 @@ import { PaginaDetalhePrestacaoContaReprovadaNaoApresentacao } from "../componen
 import { SituacaoPatrimonialPage } from "../paginas/escolas/SituacaoPatrimonial";
 import { CadastroBemProduzidoPage } from "../paginas/escolas/SituacaoPatrimonial/CadastroBemProduzido";
 import { EdicaoBemProduzidoPage } from "../paginas/escolas/SituacaoPatrimonial/EdicaoBemProduzido";
+import { CadastroTipoDeDespesaCusteioPage } from "../paginas/SME/Parametrizacoes/Despesas/TiposDeDespesaCusteio/Cadastro";
+import { EdicaoTipoDeDespesaCusteioPage } from "../paginas/SME/Parametrizacoes/Despesas/TiposDeDespesaCusteio/Edicao";
 
 const routesConfig = [
   {
@@ -175,10 +179,7 @@ const routesConfig = [
     exact: true,
     path: "/cadastro-de-valores-reprogramados",
     component: ValoresReprogramados,
-    permissoes: [
-      "access_valores_reprogramados_ue",
-      "access_valores_reprogramados_dre",
-    ],
+    permissoes: ["access_valores_reprogramados_ue", "access_valores_reprogramados_dre"],
   },
   {
     exact: true,
@@ -376,11 +377,7 @@ const routesConfig = [
     exact: true,
     path: "/gestao-de-perfis",
     component: GestaoDePerfisPage,
-    permissoes: [
-      "access_gestao_perfis_ue",
-      "access_gestao_perfis_dre",
-      "access_gestao_perfis_sme",
-    ],
+    permissoes: ["access_gestao_perfis_ue", "access_gestao_perfis_dre", "access_gestao_perfis_sme"],
   },
   {
     exact: true,
@@ -427,11 +424,7 @@ const routesConfig = [
     exact: true,
     path: "/gestao-de-perfis-form/:id_usuario?",
     component: GestaoDePerfisForm,
-    permissoes: [
-      "access_gestao_perfis_ue",
-      "access_gestao_perfis_dre",
-      "access_gestao_perfis_sme",
-    ],
+    permissoes: ["access_gestao_perfis_ue", "access_gestao_perfis_dre", "access_gestao_perfis_sme"],
   },
   {
     exact: true,
@@ -490,91 +483,61 @@ const routesConfig = [
     exact: true,
     path: "/painel-parametrizacoes",
     component: PainelParametrizacoesPage,
-    permissoes: [
-      "access_painel_parametrizacoes",
-      "change_painel_parametrizacoes",
-    ],
+    permissoes: ["access_painel_parametrizacoes", "change_painel_parametrizacoes"],
   },
   {
     exact: true,
     path: "/parametro-associacoes",
     component: Associacoes,
-    permissoes: [
-      "access_painel_parametrizacoes",
-      "change_painel_parametrizacoes",
-    ],
+    permissoes: ["access_painel_parametrizacoes", "change_painel_parametrizacoes"],
   },
   {
     exact: true,
     path: "/parametro-acoes-associacoes",
     component: AcoesDasAssociacoes,
-    permissoes: [
-      "access_painel_parametrizacoes",
-      "change_painel_parametrizacoes",
-    ],
+    permissoes: ["access_painel_parametrizacoes", "change_painel_parametrizacoes"],
   },
   {
     exact: true,
     path: "/parametro-contas-associacoes",
     component: ContasDasAssociacoes,
-    permissoes: [
-      "access_painel_parametrizacoes",
-      "change_painel_parametrizacoes",
-    ],
+    permissoes: ["access_painel_parametrizacoes", "change_painel_parametrizacoes"],
   },
   {
     exact: true,
     path: "/parametro-periodos",
     component: Periodos,
-    permissoes: [
-      "access_painel_parametrizacoes",
-      "change_painel_parametrizacoes",
-    ],
+    permissoes: ["access_painel_parametrizacoes", "change_painel_parametrizacoes"],
   },
   {
     exact: true,
     path: "/parametro-tags",
     component: Tags,
-    permissoes: [
-      "access_painel_parametrizacoes",
-      "change_painel_parametrizacoes",
-    ],
+    permissoes: ["access_painel_parametrizacoes", "change_painel_parametrizacoes"],
   },
   {
     exact: true,
     path: "/parametro-tipos-conta",
     component: TiposConta,
-    permissoes: [
-      "access_painel_parametrizacoes",
-      "change_painel_parametrizacoes",
-    ],
+    permissoes: ["access_painel_parametrizacoes", "change_painel_parametrizacoes"],
   },
   {
     exact: true,
     path: "/parametro-tipos-documento",
     component: TiposDocumento,
-    permissoes: [
-      "access_painel_parametrizacoes",
-      "change_painel_parametrizacoes",
-    ],
+    permissoes: ["access_painel_parametrizacoes", "change_painel_parametrizacoes"],
   },
   {
     exact: true,
     path: "/parametro-mandato",
     component: Mandatos,
-    permissoes: [
-      "access_painel_parametrizacoes",
-      "change_painel_parametrizacoes",
-    ],
+    permissoes: ["access_painel_parametrizacoes", "change_painel_parametrizacoes"],
   },
   {
     exact: true,
     path: "/motivos-rejeicao",
     component: MotivosRejeicaoEncerramentoConta,
-    permissoes: [
-      "access_painel_parametrizacoes",
-      "change_painel_parametrizacoes",
-    ],
+    permissoes: ["access_painel_parametrizacoes", "change_painel_parametrizacoes"],
   },
   {
     exact: true,
@@ -622,25 +585,33 @@ const routesConfig = [
     exact: true,
     path: "/parametro-textos-fique-de-olho",
     component: FiqueDeOlho,
-    permissoes: [
-      "access_painel_parametrizacoes",
-      "change_painel_parametrizacoes",
-    ],
+    permissoes: ["access_painel_parametrizacoes", "change_painel_parametrizacoes"],
   },
   {
     exact: true,
     path: "/parametro-textos-paa",
     component: TextosPaa,
-    permissoes: [
-      "access_painel_parametrizacoes",
-      "change_painel_parametrizacoes",
-    ],
+    permissoes: ["access_painel_parametrizacoes", "change_painel_parametrizacoes"],
     featureFlag: "paa",
   },
   {
     exact: true,
     path: "/parametro-periodos-paa",
     component: PeriodosPaa,
+    permissoes: ["access_painel_parametrizacoes", "change_painel_parametrizacoes"],
+    featureFlag: "paa",
+  },
+  {
+    exact: true,
+    path: "/parametro-objetivos-paa",
+    component: ObjetivosPaa,
+    permissoes: ["access_painel_parametrizacoes", "change_painel_parametrizacoes"],
+    featureFlag: "paa",
+  },
+  {
+    exact: true,
+    path: "/parametro-atividades-estatutarias-paa",
+    component: AtividadesEstatutarias,
     permissoes: [
       "access_painel_parametrizacoes",
       "change_painel_parametrizacoes",
@@ -651,10 +622,7 @@ const routesConfig = [
     exact: true,
     path: "/parametro-acoes-pdde",
     component: AcoesPDDE,
-    permissoes: [
-      "access_painel_parametrizacoes",
-      "change_painel_parametrizacoes",
-    ],
+    permissoes: ["access_painel_parametrizacoes", "change_painel_parametrizacoes"],
     featureFlag: "paa",
   },
   {
@@ -673,92 +641,73 @@ const routesConfig = [
     exact: true,
     path: "/parametro-especificacoes",
     component: EspecificacoesMateriaisServicos,
-    permissoes: [
-      "access_painel_parametrizacoes",
-      "change_painel_parametrizacoes",
-    ],
+    permissoes: ["access_painel_parametrizacoes", "change_painel_parametrizacoes"],
+  },
+  {
+    exact: true,
+    path: "/cadastro-tipo-de-despesa-custeio/",
+    component: CadastroTipoDeDespesaCusteioPage,
+    permissoes: ["access_painel_parametrizacoes", "change_painel_parametrizacoes"],
+  },
+  {
+    exact: true,
+    path: "/edicao-tipo-de-despesa-custeio/:uuid/",
+    component: EdicaoTipoDeDespesaCusteioPage,
+    permissoes: ["access_painel_parametrizacoes", "change_painel_parametrizacoes"],
   },
   {
     exact: true,
     path: "/parametro-tipos-custeio",
     component: TiposDeCusteio,
-    permissoes: [
-      "access_painel_parametrizacoes",
-      "change_painel_parametrizacoes",
-    ],
+    permissoes: ["access_painel_parametrizacoes", "change_painel_parametrizacoes"],
   },
   {
     exact: true,
     path: "/parametro-tipos-transacao",
     component: TiposDeTransacao,
-    permissoes: [
-      "access_painel_parametrizacoes",
-      "change_painel_parametrizacoes",
-    ],
+    permissoes: ["access_painel_parametrizacoes", "change_painel_parametrizacoes"],
   },
   {
     exact: true,
     path: "/parametro-Fornecedores",
     component: Fornecedores,
-    permissoes: [
-      "access_fornecedores",
-      "access_painel_parametrizacoes",
-      "change_painel_parametrizacoes",
-    ],
+    permissoes: ["access_fornecedores", "access_painel_parametrizacoes", "change_painel_parametrizacoes"],
   },
   {
     exact: true,
     path: "/parametro-tipos-acertos-lancamentos",
     component: ParametrizacoesTiposAcertosLancamentos,
-    permissoes: [
-      "access_painel_parametrizacoes",
-      "change_painel_parametrizacoes",
-    ],
+    permissoes: ["access_painel_parametrizacoes", "change_painel_parametrizacoes"],
   },
   {
     exact: true,
     path: "/parametro-tipos-acertos-documentos",
     component: ParametrizacoesTiposAcertosDocumentos,
-    permissoes: [
-      "access_painel_parametrizacoes",
-      "change_painel_parametrizacoes",
-    ],
+    permissoes: ["access_painel_parametrizacoes", "change_painel_parametrizacoes"],
   },
   {
     exact: true,
     path: "/parametro-motivos-estorno",
     component: ParametrizacoesMotivosDeEstorno,
-    permissoes: [
-      "access_painel_parametrizacoes",
-      "change_painel_parametrizacoes",
-    ],
+    permissoes: ["access_painel_parametrizacoes", "change_painel_parametrizacoes"],
   },
   {
     exact: true,
     path: "/parametro-repasse",
     component: ParametrizacoesRepasses,
-    permissoes: [
-      "access_painel_parametrizacoes",
-      "change_painel_parametrizacoes",
-    ],
+    permissoes: ["access_painel_parametrizacoes", "change_painel_parametrizacoes"],
   },
   {
     exact: true,
     path: "/parametro-motivos-devolucao-tesouro",
     component: ParametrizacoesMotivosDevolucaoTesouro,
-    permissoes: [
-      "access_painel_parametrizacoes",
-      "change_painel_parametrizacoes",
-    ],
+    permissoes: ["access_painel_parametrizacoes", "change_painel_parametrizacoes"],
   },
   {
     exact: true,
     path: "/parametro-motivos-pc-aprovada-ressalva",
     component: ParametrizacoesMotivosAprovacaoPcRessalva,
-    permissoes: [
-      "access_painel_parametrizacoes",
-      "change_painel_parametrizacoes",
-    ],
+    permissoes: ["access_painel_parametrizacoes", "change_painel_parametrizacoes"],
   },
   {
     exact: true,
@@ -824,10 +773,7 @@ const routesConfig = [
     exact: true,
     path: "/parametro-motivos-pagamento-antecipado",
     component: MotivosPagamentoAntecipado,
-    permissoes: [
-      "access_painel_parametrizacoes",
-      "change_painel_parametrizacoes",
-    ],
+    permissoes: ["access_painel_parametrizacoes", "change_painel_parametrizacoes"],
   },
   {
     exact: true,
@@ -854,28 +800,19 @@ const routesConfig = [
     exact: true,
     path: "/cadastro-tipo-de-credito/",
     component: CadastroTipoReceitaPage,
-    permissoes: [
-      "access_painel_parametrizacoes",
-      "change_painel_parametrizacoes",
-    ],
+    permissoes: ["access_painel_parametrizacoes", "change_painel_parametrizacoes"],
   },
   {
     exact: true,
     path: "/edicao-tipo-de-credito/:uuid/",
     component: EdicaoTipoReceitaPage,
-    permissoes: [
-      "access_painel_parametrizacoes",
-      "change_painel_parametrizacoes",
-    ],
+    permissoes: ["access_painel_parametrizacoes", "change_painel_parametrizacoes"],
   },
   {
     exact: true,
     path: "/parametro-tipos-receita",
     component: TiposDeCredito,
-    permissoes: [
-      "access_painel_parametrizacoes",
-      "change_painel_parametrizacoes",
-    ],
+    permissoes: ["access_painel_parametrizacoes", "change_painel_parametrizacoes"],
   },
   {
     exact: true,
@@ -901,7 +838,7 @@ const PrivateRoute = ({ element, permissoes, featureFlag }) => {
   const isLoggedIn = authService.isLoggedIn();
   const hasPerm = !permissoes || visoesService.getPermissoes(permissoes);
   const isFeatureEnabled = featureFlag === undefined || featureFlag;
-  
+
   if (!isLoggedIn) {
     return <Navigate to="/login" replace />;
   }
@@ -927,11 +864,7 @@ export const Rotas = () => {
               <PrivateRoute
                 element={<value.component />}
                 permissoes={value.permissoes}
-                featureFlag={
-                  value.featureFlag
-                    ? visoesService.featureFlagAtiva(value.featureFlag)
-                    : true
-                }
+                featureFlag={value.featureFlag ? visoesService.featureFlagAtiva(value.featureFlag) : true}
               />
             }
           />

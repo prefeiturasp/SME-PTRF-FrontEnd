@@ -240,6 +240,52 @@ export const deletePeriodosPaa = async (uuid) => {
   return await api.delete(`/api/periodos-paa/${uuid}/`, authHeader());
 };
 
+// PAA - Objetivos
+export const getObjetivosPaa = async (filtros, page, page_size) => {
+  const result = (await api.get(`/api/objetivos-paa/`,{...authHeader(), params: {...filtros, page: page, page_size}})).data;
+  return result
+};
+
+export const getObjetivosTabelasPaa = async () => {
+  const result = (await api.get(`/api/objetivos-paa/tabelas`, {...authHeader() })).data;
+  return result
+};
+
+export const postObjetivosPaa = async (payload) => {
+  return (await api.post(`/api/objetivos-paa/`, payload, authHeader())).data;
+};
+
+export const patchObjetivosPaa = async (uuid, payload) => {
+  return (await api.patch(`/api/objetivos-paa/${uuid}/`, payload, authHeader())).data;
+};
+
+export const deleteObjetivosPaa = async (uuid) => {
+  return await api.delete(`/api/objetivos-paa/${uuid}/`, authHeader());
+};
+
+// PAA - Atividades Estatutárias
+export const getAtividadesEstatutarias = async (filtros, page, page_size) => {
+  const result = (await api.get(`/api/atividades-estatutarias/`,{...authHeader(), params: {...filtros, page: page, page_size}})).data;
+  return result
+};
+
+export const getAtividadesEstatutariasTabelas = async () => {
+  const result = (await api.get(`/api/atividades-estatutarias/tabelas`, {...authHeader() })).data;
+  return result
+};
+
+export const postAtividadesEstatutarias = async (payload) => {
+  return (await api.post(`/api/atividades-estatutarias/`, payload, authHeader())).data;
+};
+
+export const patchAtividadesEstatutarias = async (uuid, payload) => {
+  return (await api.patch(`/api/atividades-estatutarias/${uuid}/`, payload, authHeader())).data;
+};
+
+export const deleteAtividadesEstatutarias = async (uuid) => {
+  return await api.delete(`/api/atividades-estatutarias/${uuid}/`, authHeader());
+};
+
 // PAA
 export const getPaaVigente = async (associacao_uuid) => {
   const result = await api.get(`/api/associacoes/${associacao_uuid}/paa-vigente/`, authHeader());
@@ -689,6 +735,9 @@ export const addAcoesAssociacoesEmLote = async (payload) => {
 export const getTodosTiposDeCusteio = async () => {
   return (await api.get(`/api/tipos-custeio/`, authHeader())).data;
 };
+export const getTipoCusteio = async (uuid) => {
+  return (await api.get(`/api/tipos-custeio/${uuid}`, authHeader())).data;
+};
 export const getFiltrosTiposDeCusteio = async (nome, status) => {
   return (await api.get(`/api/tipos-custeio/?nome=${nome}`, authHeader())).data;
 };
@@ -703,7 +752,21 @@ export const patchAlterarTipoDeCusteio = async (tag_uuid, payload) => {
 export const deleteTipoDeCusteio = async (tag_uuid) => {
   return await api.delete(`/api/tipos-custeio/${tag_uuid}/`, authHeader());
 };
+export const getUnidadesTipoCusteio = async (uuid, nome_ou_codigo, dre, page) => {
+  return (await api.get(`/api/tipos-custeio/${uuid}/unidades-vinculadas/?nome_ou_codigo=${nome_ou_codigo}&dre=${dre}&page=${page}`, authHeader())).data;
+}
 
+export const getUnidadesNaoVinculadasTipoCusteio = async (uuid, nome_ou_codigo, dre, page) => {
+  return (await api.get(`/api/tipos-custeio/${uuid}/unidades-nao-vinculadas/?nome_ou_codigo=${nome_ou_codigo}&dre=${dre}&page=${page}`, authHeader())).data;
+}
+
+export const vincularUnidadesTipoCusteio = async (uuid, payload) => {
+  return (await api.post(`/api/tipos-custeio/${uuid}/vincular-unidades/`, payload, authHeader())).data;
+}
+
+export const desvincularUnidadesTipoCusteio = async (uuid, payload) => {
+  return (await api.post(`/api/tipos-custeio/${uuid}/desvincular-unidades/`, payload, authHeader())).data;
+}
 
 // Tipos de Documento
 export const getTodosTiposDeDocumento = async () => {

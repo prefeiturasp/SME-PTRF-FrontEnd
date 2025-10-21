@@ -1,81 +1,205 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import Relatorios from '../index';
 
-// Mock dos hooks
+const mockUseGetTextosPaa = jest.fn();
 jest.mock('../hooks/useGetTextosPaa', () => ({
-  useGetTextosPaa: () => ({
-    textosPaa: {
-      introducao_do_paa_ue_1: '<p>Texto de introdução 1</p>',
-      introducao_do_paa_ue_2: '<p>Texto de introdução 2</p>'
-    },
-    isLoading: false,
-    isError: false
-  })
+  useGetTextosPaa: () => mockUseGetTextosPaa(),
 }));
 
+const mockUseGetPaaVigente = jest.fn();
 jest.mock('../hooks/useGetPaaVigente', () => ({
-  useGetPaaVigente: () => ({
-    paaVigente: {
-      uuid: 'paa-uuid-123',
-      texto_introducao: '<p>Texto existente do PAA</p>'
-    },
-    isLoading: false
-  })
+  useGetPaaVigente: (...args) => mockUseGetPaaVigente(...args),
 }));
 
+const mockPatchPaa = jest.fn();
 jest.mock('../hooks/usePatchPaa', () => ({
-  usePatchPaa: () => ({
-    patchPaa: jest.fn()
-  })
+  usePatchPaa: () => ({ patchPaa: mockPatchPaa }),
 }));
 
-// Mock do EditorWysiwyg
-jest.mock('../../../../../../Globais/EditorWysiwyg', () => {
-  return function MockEditorWysiwyg({ textoInicialEditor, handleSubmitEditor, handleLimparEditor }) {
-    return (
-      <div data-testid="editor-wysiwyg">
-        <div dangerouslySetInnerHTML={{ __html: textoInicialEditor }} />
-        <button onClick={() => handleSubmitEditor('Texto editado')} data-testid="btn-salvar">
-          Salvar
-        </button>
-        <button onClick={handleLimparEditor} data-testid="btn-limpar">
-          Limpar
-        </button>
-      </div>
-    );
+var mockToastCustom;
+jest.mock('../../../../../../Globais/ToastCustom', () => {
+  mockToastCustom = {
+    ToastCustomSuccess: jest.fn(),
+    ToastCustomError: jest.fn(),
+  };
+  return {
+    toastCustom: mockToastCustom,
   };
 });
 
-// Mock do localStorage
-const mockLocalStorage = {
-  getItem: jest.fn(() => 'associacao-uuid-123')
-};
-Object.defineProperty(window, 'localStorage', {
-  value: mockLocalStorage
+jest.mock('antd', () => {
+  const ReactLib = require('react');
+  return {
+    Tooltip: ({ title, children }) =>
+      ReactLib.createElement('div', { title, 'data-testid': 'tooltip' }, children),
+  };
 });
 
-// Mock dos ícones SVG
+jest.mock('@fortawesome/react-fontawesome', () => {
+  const ReactLib = require('react');
+  return {
+    FontAwesomeIcon: () => ReactLib.createElement('span', { 'data-testid': 'font-awesome-icon' }),
+  };
+});
+
 jest.mock('../../../../../../../assets/img/icone-chevron-up.svg', () => 'chevron-up.svg');
 jest.mock('../../../../../../../assets/img/icone-chevron-down.svg', () => 'chevron-down.svg');
 
-describe('Relatorios - Seção Introdução', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
+let latestEditorProps = null;
+const mockEditorWysiwygCustom = jest.fn(props => {
+  const ReactLib = require('react');
+  latestEditorProps = props;
+  return ReactLib.createElement(
+    'div',
+    { 'data-testid': 'editor-wysiwyg' },
+    ReactLib.createElement('div', {
+      'data-testid': 'editor-initial-content',
+      dangerouslySetInnerHTML: { __html: props.textoInicialEditor },
+    }),
+    ReactLib.createElement(
+      'button',
+      {
+        type: 'button',
+        'data-testid': 'btn-salvar',
+        onClick: () => props.handleSubmitEditor('novo texto'),
+      },
+      'Salvar'
+    ),
+    ReactLib.createElement(
+      'button',
+      {
+        type: 'button',
+        'data-testid': 'btn-salvar-vazio',
+        onClick: () => props.handleSubmitEditor(''),
+      },
+      'Salvar vazio'
+    ),
+    ReactLib.createElement(
+      'button',
+      {
+        type: 'button',
+        'data-testid': 'btn-limpar',
+        onClick: () => props.handleLimparEditor('texto atual'),
+      },
+      'Limpar'
+    ),
+    ReactLib.createElement(
+      'button',
+      {
+        type: 'button',
+        'data-testid': 'btn-mudar',
+        onClick: () => props.handleMudancaEditor('<p>conteudo livre</p>'),
+      },
+      'Mudar'
+    )
+  );
+});
+
+jest.mock('../../../../../../Globais/EditorWysiwygCustom', () => ({
+  __esModule: true,
+  default: props => mockEditorWysiwygCustom(props),
+}));
+
+const textoIntroducaoUm = '<p>Texto de introducao 1</p>';
+const textoIntroducaoFixo = '<p>Texto automatico padrao</p>';
+
+const configurarMocks = ({
+  textoIntroducao = '<p>Conteudo do PAA</p>',
+  textosLoading = false,
+  textosError = false,
+  paaLoading = false,
+  paaVigente = {
+    uuid: 'paa-uuid-123',
+    texto_introducao: textoIntroducao,
+  },
+  textosOverrides = {},
+} = {}) => {
+  mockUseGetTextosPaa.mockReturnValue({
+    textosPaa: {
+      introducao_do_paa_ue_1: textoIntroducaoUm,
+      introducao_do_paa_ue_2: textoIntroducaoFixo,
+      ...textosOverrides,
+    },
+    isLoading: textosLoading,
+    isError: textosError,
   });
 
-  const expandirSecaoIntroducao = () => {
-    // Expande o Plano Anual
-    const planoAnualChevron = screen.getByAltText('Abrir');
-    fireEvent.click(planoAnualChevron);
+  mockUseGetPaaVigente.mockReturnValue({
+    paaVigente,
+    isLoading: paaLoading,
+  });
 
-    // Expande a Introdução
-    const introducaoSection = screen.getByText('I. Introdução').closest('.subsecao-item');
-    const introducaoChevron = introducaoSection.querySelector('button');
-    fireEvent.click(introducaoChevron);
+  mockPatchPaa.mockResolvedValue({});
+};
+
+describe('Relatorios - Secao Introducao', () => {
+  let consoleLogSpy;
+
+  beforeAll(() => {
+    Object.defineProperty(window, 'localStorage', {
+      value: {
+        getItem: jest.fn(key => (key === 'UUID' ? 'associacao-uuid-123' : null)),
+        setItem: jest.fn(),
+        removeItem: jest.fn(),
+        clear: jest.fn(),
+      },
+      configurable: true,
+      writable: true,
+    });
+
+    consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+  });
+
+  beforeEach(() => {
+    latestEditorProps = null;
+    mockUseGetTextosPaa.mockReset();
+    mockUseGetPaaVigente.mockReset();
+    mockPatchPaa.mockReset();
+    mockEditorWysiwygCustom.mockClear();
+    mockToastCustom.ToastCustomSuccess.mockReset();
+    mockToastCustom.ToastCustomError.mockReset();
+
+    window.localStorage.getItem.mockImplementation(key => (key === 'UUID' ? 'associacao-uuid-123' : null));
+
+    configurarMocks();
+  });
+
+  afterEach(() => {
+    consoleLogSpy.mockClear();
+  });
+
+  afterAll(() => {
+    consoleLogSpy.mockRestore();
+  });
+
+  const expandirPlanoAnual = () => {
+    fireEvent.click(screen.getByRole('button', { name: /Abrir/i }));
   };
 
-  it('renderiza o card de documentos com título e botões', () => {
+  const expandirSecaoIntroducao = async () => {
+    expandirPlanoAnual();
+    const introducaoTitulo = await screen.findByText('I. Introdução');
+    const introducaoSection = introducaoTitulo.closest('.subsecao-item');
+    if (!introducaoSection) {
+      throw new Error('Secao de introducao nao encontrada.');
+    }
+    const botaoIntroducao = introducaoSection.querySelector('button');
+    if (!botaoIntroducao) {
+      throw new Error('Botao da secao de introducao nao encontrado.');
+    }
+    fireEvent.click(botaoIntroducao);
+    await waitFor(() => {
+      expect(mockEditorWysiwygCustom).toHaveBeenCalled();
+    });
+  };
+
+  const obterPropsEditor = () => {
+    const chamadas = mockEditorWysiwygCustom.mock.calls;
+    return chamadas.length ? chamadas[chamadas.length - 1][0] : null;
+  };
+
+  it('exibe o cabecalho de documentos', () => {
     render(<Relatorios />);
 
     expect(screen.getByText('Documentos')).toBeInTheDocument();
@@ -83,104 +207,120 @@ describe('Relatorios - Seção Introdução', () => {
     expect(screen.getByText('Gerar')).toBeInTheDocument();
   });
 
-  it('renderiza o item Plano Anual com status pendente', () => {
+  it('expande o plano anual e mostra o texto de introducao', async () => {
     render(<Relatorios />);
+    await expandirSecaoIntroducao();
 
-    expect(screen.getByText('Plano Anual')).toBeInTheDocument();
-    expect(screen.getByText('Documento pendente de geração')).toBeInTheDocument();
+    expect(screen.getByText('Texto de introducao 1')).toBeInTheDocument();
+    expect(screen.getByTestId('tooltip')).toHaveAttribute('title', 'Texto padrão inserido automaticamente no documento');
   });
 
-  it('expande o dropdown do Plano Anual ao clicar no chevron', () => {
+  it('usa o uuid da associacao ao buscar o paa vigente', () => {
     render(<Relatorios />);
 
-    const chevronButton = screen.getByAltText('Abrir');
-    fireEvent.click(chevronButton);
-
-    expect(screen.getByText('I. Introdução')).toBeInTheDocument();
+    expect(mockUseGetPaaVigente).toHaveBeenCalledWith('associacao-uuid-123');
   });
 
-  it('expande a seção de introdução ao clicar no chevron', () => {
+  it('renderiza o editor com texto fixo seguido do conteudo do paa', async () => {
     render(<Relatorios />);
-    expandirSecaoIntroducao();
+    await expandirSecaoIntroducao();
 
-    expect(screen.getByText('Texto de introdução 1')).toBeInTheDocument();
-    expect(screen.getByText('Texto de introdução 2')).toBeInTheDocument();
+    const editorProps = obterPropsEditor();
+    expect(editorProps).not.toBeNull();
+    expect(editorProps.textoInicialEditor).toContain('id="texto-automatico-introducao-paa"');
+    expect(editorProps.textoInicialEditor).toContain('Texto automatico padrao');
+    expect(editorProps.textoInicialEditor).toContain('Conteudo do PAA');
   });
 
-  it('renderiza o editor WYSIWYG quando a seção introdução está expandida', () => {
-    render(<Relatorios />);
-    expandirSecaoIntroducao();
+  it('nao duplica o texto fixo quando ja existe no paa', async () => {
+    const textoComFixo = '<div id="texto-automatico-introducao-paa">Bloco automatico existente</div><p>Texto adicional</p>';
+    configurarMocks({ textoIntroducao: textoComFixo });
 
-    expect(screen.getByTestId('editor-wysiwyg')).toBeInTheDocument();
-    expect(screen.getByTestId('btn-salvar')).toBeInTheDocument();
-    expect(screen.getByTestId('btn-limpar')).toBeInTheDocument();
+    render(<Relatorios />);
+    await expandirSecaoIntroducao();
+
+    const editorProps = obterPropsEditor();
+    expect(editorProps).not.toBeNull();
+    expect(editorProps.textoInicialEditor).toBe(textoComFixo);
   });
 
-  it('adiciona o texto automático quando não existe no PAA vigente', () => {
-    // Mock com PAA sem texto_introducao
-    jest.doMock('../hooks/useGetPaaVigente', () => ({
-      useGetPaaVigente: () => ({
-        paaVigente: {
-          uuid: 'paa-uuid-123',
-          texto_introducao: ''
-        },
-        isLoading: false
-      })
-    }));
-
+  it('limpa o editor mantendo apenas o texto fixo e um paragrafo vazio', async () => {
     render(<Relatorios />);
-    expandirSecaoIntroducao();
+    await expandirSecaoIntroducao();
 
-    // Verifica se o texto automático foi adicionado
-    expect(screen.getByText(/O Plano Anual de Atividades previsto nos artigos 10 e 32/)).toBeInTheDocument();
+    const editorProps = obterPropsEditor();
+    expect(editorProps).not.toBeNull();
+    const resultado = editorProps.handleLimparEditor('<p>qualquer conteudo</p>');
+
+    expect(resultado).toContain('id="texto-automatico-introducao-paa"');
+    expect(resultado.trim().endsWith('<p><br></p>')).toBe(true);
   });
 
-  it('não adiciona texto automático quando já existe no PAA vigente', () => {
-    // Mock com PAA que já contém o texto automático
-    jest.doMock('../hooks/useGetPaaVigente', () => ({
-      useGetPaaVigente: () => ({
-        paaVigente: {
-          uuid: 'paa-uuid-123',
-          texto_introducao: '<div id="texto-automatico-introducao-paa">O Plano Anual de Atividades previsto nos artigos 10 e 32, da Portaria SME nº 3.539 de 06/04/2017, contém Atividades Previstas, Plano de Aplicação de Recursos e Plano Orçamentário, e está elaborado em consonância com o Projeto Pedagógico da "CEMEI - JARDIM IPORANGA", e a ele se integra.</div><p>Texto adicional</p>'
-        },
-        isLoading: false
-      })
-    }));
-
+  it('mantem o texto fixo ao alterar o conteudo manualmente', async () => {
     render(<Relatorios />);
-    expandirSecaoIntroducao();
+    await expandirSecaoIntroducao();
 
-    // Verifica se o texto automático não foi duplicado
-    const textosAutomaticos = screen.getAllByText(/O Plano Anual de Atividades previsto nos artigos 10 e 32/);
-    expect(textosAutomaticos).toHaveLength(1);
+    const editorProps = obterPropsEditor();
+    expect(editorProps).not.toBeNull();
+    const resultado = editorProps.handleMudancaEditor('<p>conteudo livre</p>');
+
+    expect(resultado.startsWith('<div id="texto-automatico-introducao-paa"')).toBe(true);
+    expect(resultado).toContain('<p>conteudo livre</p>');
   });
 
-  it('exibe o tooltip apenas quando o texto automático não existe', () => {
+  it('chama patchPaa com o texto informado ao salvar', async () => {
     render(<Relatorios />);
-    expandirSecaoIntroducao();
+    await expandirSecaoIntroducao();
 
-    // Verifica se o tooltip está presente (o mock padrão tem texto_introducao com conteúdo, então o tooltip não deve aparecer)
-    expect(screen.queryByTitle('Texto padrão inserido automaticamente no documento')).not.toBeInTheDocument();
+    const editorProps = obterPropsEditor();
+    expect(editorProps).not.toBeNull();
+    await act(async () => {
+      await editorProps.handleSubmitEditor('novo texto');
+    });
+
+    await waitFor(() => {
+      expect(mockPatchPaa).toHaveBeenCalledWith({
+        uuid: 'paa-uuid-123',
+        payload: { texto_introducao: 'novo texto' },
+      });
+    });
+
+    expect(mockToastCustom.ToastCustomSuccess).toHaveBeenCalledWith('Sucesso!', 'Item salvo com sucesso!');
   });
 
-  it('não exibe o tooltip quando o texto automático já existe', () => {
+  it('usa texto padrao ao salvar campo vazio', async () => {
     render(<Relatorios />);
-    expandirSecaoIntroducao();
+    await expandirSecaoIntroducao();
 
-    // Verifica se o tooltip não está presente (o mock padrão já tem o texto automático)
-    expect(screen.queryByTitle('Texto padrão inserido automaticamente no documento')).not.toBeInTheDocument();
+    const editorProps = obterPropsEditor();
+    expect(editorProps).not.toBeNull();
+    await act(async () => {
+      await editorProps.handleSubmitEditor('');
+    });
+
+    await waitFor(() => {
+      expect(mockPatchPaa).toHaveBeenCalledWith({
+        uuid: 'paa-uuid-123',
+        payload: { texto_introducao: 'Comece a digitar aqui...' },
+      });
+    });
   });
 
-  it('chama patchPaa ao salvar texto', async () => {
+  it('exibe erro quando nao ha paa vigente ao salvar', async () => {
+    configurarMocks({ paaVigente: null });
+
     render(<Relatorios />);
-    expandirSecaoIntroducao();
+    await expandirSecaoIntroducao();
 
-    // Clica no botão salvar
-    const salvarButton = screen.getByTestId('btn-salvar');
-    fireEvent.click(salvarButton);
+    const editorProps = obterPropsEditor();
+    expect(editorProps).not.toBeNull();
+    await act(async () => {
+      await editorProps.handleSubmitEditor('novo texto');
+    });
 
-    // Como o mock do patchPaa é uma função jest.fn(), podemos verificar se foi chamada
-    // O teste verifica se o componente renderiza corretamente e se o botão funciona
-    expect(salvarButton).toBeInTheDocument();
+    await waitFor(() => {
+      expect(mockPatchPaa).not.toHaveBeenCalled();
+      expect(mockToastCustom.ToastCustomError).toHaveBeenCalledWith('Erro!', 'PAA vigente não encontrado.');
+    });
   });
 });
