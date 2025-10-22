@@ -521,7 +521,7 @@ export const ResumoDosAcertos = () => {
                         show={showModalLancamentosConciliacao}
                         handleClose={handleFecharModalLancamentosConciliacao}
                         onConfirmar={handleIrParaExtratoLancamentosConciliacao}
-                        titulo="Acertos que alteram a conciliação bancária"
+                        titulo="Pendências da conciliação bancária"
                         texto={textoModalLancamentosConciliacao}
                         primeiroBotaoTexto="Fechar"
                         primeiroBotaoCss="outline-success"
