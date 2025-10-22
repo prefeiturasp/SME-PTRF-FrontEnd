@@ -26,10 +26,7 @@ export const useHandleDevolverParaAssociacao = ({
             const contasSolicitacoesLancamentoPendentes = analiseAtual?.contas_solicitacoes_lancar_credito_ou_despesa_com_pendencia_conciliacao || [];
             setContasPendenciaConciliacao(contasPendencia);
             setContasPendenciaLancamentosConciliacao(contasSolicitacoesLancamentoPendentes);
-            console.log({
-                temPendenciaConciliacaoSemSolicitacaoDeAcertoEmConta,
-                temSolicitacoesLancamentoComPendenciaConciliacao
-            })
+
             if (temSolicitacoesLancamentoComPendenciaConciliacao) {
                 setShowModalLancamentosConciliacao(true);
                 return;
