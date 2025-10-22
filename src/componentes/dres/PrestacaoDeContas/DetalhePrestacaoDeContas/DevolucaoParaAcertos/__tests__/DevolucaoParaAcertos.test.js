@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor, within } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
 import DevolucaoParaAcertos from "../index";
 import * as service from "../../../../../../services/dres/PrestacaoDeContas.service";
@@ -57,6 +57,8 @@ const mockPrestacaoDeContas = {
     acertos_podem_alterar_saldo_conciliacao: false,
     tem_pendencia_conciliacao_sem_solicitacao_de_acerto_em_conta: false,
     contas_pendencia_conciliacao_sem_solicitacao_de_acerto_em_conta: [],
+    tem_solicitacoes_lancar_credito_ou_despesa_com_pendencia_conciliacao: false,
+    contas_solicitacoes_lancar_credito_ou_despesa_com_pendencia_conciliacao: [],
   },
 };
 
@@ -208,6 +210,7 @@ describe("DevolucaoParaAcertos", () => {
       // Verifica se os modais não estão sendo exibidos inicialmente
       expect(screen.queryByText("Acertos que podem alterar a conciliação bancária")).not.toBeInTheDocument();
       expect(screen.queryByText("Comprovante de saldo da conta")).not.toBeInTheDocument();
+      expect(screen.queryByText("Acertos que alteram a conciliação bancária")).not.toBeInTheDocument();
     });
   });
 
@@ -228,6 +231,56 @@ describe("DevolucaoParaAcertos", () => {
     expect(
       screen.getByRole("button", { name: /devolver para associação/i })
     ).toBeInTheDocument();
+  });
+
+  const obterModalAcertos = async () => {
+    const candidatos = await screen.findAllByText("Acertos que alteram a conciliação bancária");
+    const cabecalho = candidatos.find((elemento) => {
+      const header = elemento.closest(".modal-header");
+      return header && header.contains(elemento);
+    });
+
+    if (!cabecalho) {
+      throw new Error("Cabeçalho do modal de acertos não encontrado");
+    }
+
+    const modalElemento = cabecalho.closest(".modal-content") || cabecalho.parentElement;
+    if (!modalElemento) {
+      throw new Error("Conteúdo do modal de acertos não encontrado");
+    }
+
+    return within(modalElemento);
+  };
+
+  it("exibe o modal de lançamentos que alteram a conciliação quando existem solicitações com pendência", async () => {
+    const renderUtils = await acionarDevolucaoParaAssociacao({
+      tem_solicitacoes_lancar_credito_ou_despesa_com_pendencia_conciliacao: true,
+      contas_solicitacoes_lancar_credito_ou_despesa_com_pendencia_conciliacao: ["conta-uuid-1"],
+    });
+
+    const modal = await obterModalAcertos();
+
+    expect(modal.getByText("Comprovante de saldo da conta")).toBeInTheDocument();
+    expect(modal.getByText(/nenhuma conta identificada/i)).toBeInTheDocument();
+    expect(modal.getByText(/Conta Corrente/)).toBeInTheDocument();
+    renderUtils.unmount();
+  });
+
+  it("exibe a mensagem de comprovante dentro do modal de lançamentos quando há pendência de comprovante", async () => {
+    const renderUtils = await acionarDevolucaoParaAssociacao({
+      tem_solicitacoes_lancar_credito_ou_despesa_com_pendencia_conciliacao: true,
+      contas_solicitacoes_lancar_credito_ou_despesa_com_pendencia_conciliacao: ["conta-uuid-1"],
+      tem_pendencia_conciliacao_sem_solicitacao_de_acerto_em_conta: true,
+      contas_pendencia_conciliacao_sem_solicitacao_de_acerto_em_conta: ["conta-uuid-2"],
+    });
+
+    const modal = await obterModalAcertos();
+
+    expect(modal.getByText("Comprovante de saldo da conta")).toBeInTheDocument();
+    expect(modal.getByText(/Conta Corrente/)).toBeInTheDocument();
+    expect(modal.getByText(/Poupança/)).toBeInTheDocument();
+
+    renderUtils.unmount();
   });
 
   it("exibe o modal de conciliação apenas quando não há pendência de conciliação", async () => {
