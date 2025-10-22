@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor, within } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
 import DevolucaoParaAcertos from "../index";
 import * as service from "../../../../../../services/dres/PrestacaoDeContas.service";
@@ -57,6 +57,9 @@ const mockPrestacaoDeContas = {
     acertos_podem_alterar_saldo_conciliacao: false,
     tem_pendencia_conciliacao_sem_solicitacao_de_acerto_em_conta: false,
     contas_pendencia_conciliacao_sem_solicitacao_de_acerto_em_conta: [],
+    tem_solicitacoes_lancar_credito_ou_despesa_com_pendencia_conciliacao: false,
+    solicitacoes_lancar_credito_ou_despesa_com_pendencia_conciliacao: false,
+    contas_solicitacoes_lancar_credito_ou_despesa_com_pendencia_conciliacao: [],
   },
 };
 
@@ -208,6 +211,7 @@ describe("DevolucaoParaAcertos", () => {
       // Verifica se os modais não estão sendo exibidos inicialmente
       expect(screen.queryByText("Acertos que podem alterar a conciliação bancária")).not.toBeInTheDocument();
       expect(screen.queryByText("Comprovante de saldo da conta")).not.toBeInTheDocument();
+      expect(screen.queryByText("Pendências da conciliação bancária")).not.toBeInTheDocument();
     });
   });
 
@@ -229,6 +233,7 @@ describe("DevolucaoParaAcertos", () => {
       screen.getByRole("button", { name: /devolver para associação/i })
     ).toBeInTheDocument();
   });
+
 
   it("exibe o modal de conciliação apenas quando não há pendência de conciliação", async () => {
     const primeiroRender = await acionarDevolucaoParaAssociacao({
