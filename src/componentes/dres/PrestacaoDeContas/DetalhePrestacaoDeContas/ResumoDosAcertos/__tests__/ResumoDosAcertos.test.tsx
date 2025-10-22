@@ -51,9 +51,20 @@ jest.mock('../../DevolucaoParaAcertos/ModalConciliacaoBancaria', () => ({
 }));
 
 jest.mock('../../DevolucaoParaAcertos/ModalComprovanteSaldoConta', () => ({
-  ModalComprovanteSaldoConta: ({ show }: { show: boolean }) => (
-    <div data-testid="modal-comprovante" data-visible={String(show)} />
-  ),
+  ModalComprovanteSaldoConta: ({
+    show,
+    titulo,
+  }: {
+    show: boolean;
+    titulo: string;
+  }) => {
+    const testId =
+      titulo === 'Comprovante de saldo da conta'
+        ? 'modal-comprovante'
+        : 'modal-lancamentos-conciliacao';
+
+    return <div data-testid={testId} data-visible={String(show)} />;
+  },
 }));
 
 jest.mock(
@@ -169,6 +180,9 @@ const basePrestacao = {
     acertos_podem_alterar_saldo_conciliacao: false,
     tem_pendencia_conciliacao_sem_solicitacao_de_acerto_em_conta: false,
     contas_pendencia_conciliacao_sem_solicitacao_de_acerto_em_conta: [],
+    tem_solicitacoes_lancar_credito_ou_despesa_com_pendencia_conciliacao: false,
+    solicitacoes_lancar_credito_ou_despesa_com_pendencia_conciliacao: false,
+    contas_solicitacoes_lancar_credito_ou_despesa_com_pendencia_conciliacao: [],
   },
   analises_de_conta_da_prestacao: [],
 };
@@ -238,6 +252,7 @@ describe('ResumoDosAcertos - handleDevolverParaAssociacao', () => {
     await waitFor(() => {
       expect(screen.getByTestId('modal-comprovante')).toHaveAttribute('data-visible', 'true');
     });
+    expect(screen.getByTestId('modal-lancamentos-conciliacao')).toHaveAttribute('data-visible', 'false');
     expect(screen.getByTestId('modal-conciliacao')).toHaveAttribute('data-visible', 'false');
     expect(screen.getByTestId('modal-confirma')).toHaveAttribute('data-visible', 'false');
     expect(getPrestacaoDeContasDetalhe).toHaveBeenCalledTimes(1);
@@ -255,7 +270,46 @@ describe('ResumoDosAcertos - handleDevolverParaAssociacao', () => {
       expect(screen.getByTestId('modal-conciliacao')).toHaveAttribute('data-visible', 'true');
     });
     expect(screen.getByTestId('modal-comprovante')).toHaveAttribute('data-visible', 'false');
+    expect(screen.getByTestId('modal-lancamentos-conciliacao')).toHaveAttribute('data-visible', 'false');
     expect(screen.getByTestId('modal-confirma')).toHaveAttribute('data-visible', 'false');
+    expect(getPrestacaoDeContasDetalhe).toHaveBeenCalledTimes(1);
+  });
+
+  it('abre o modal de lançamentos que alteram a conciliação quando existem solicitações com pendência', async () => {
+    const { user, botao } = await setupComponent({
+      tem_solicitacoes_lancar_credito_ou_despesa_com_pendencia_conciliacao: true,
+      solicitacoes_lancar_credito_ou_despesa_com_pendencia_conciliacao: true,
+      contas_solicitacoes_lancar_credito_ou_despesa_com_pendencia_conciliacao: ['conta-1'],
+    });
+
+    await user.click(botao);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('modal-lancamentos-conciliacao')).toHaveAttribute('data-visible', 'true');
+    });
+    expect(screen.getByTestId('modal-comprovante')).toHaveAttribute('data-visible', 'false');
+    expect(screen.getByTestId('modal-conciliacao')).toHaveAttribute('data-visible', 'false');
+    expect(screen.getByTestId('modal-confirma')).toHaveAttribute('data-visible', 'false');
+    expect(getPrestacaoDeContasDetalhe).toHaveBeenCalledTimes(1);
+  });
+
+  it('abre o modal de lançamentos com alerta de comprovante quando também existe pendência de comprovante', async () => {
+    const { user, botao } = await setupComponent({
+      tem_solicitacoes_lancar_credito_ou_despesa_com_pendencia_conciliacao: true,
+      solicitacoes_lancar_credito_ou_despesa_com_pendencia_conciliacao: true,
+      contas_solicitacoes_lancar_credito_ou_despesa_com_pendencia_conciliacao: ['conta-1'],
+      tem_pendencia_conciliacao_sem_solicitacao_de_acerto_em_conta: true,
+      contas_pendencia_conciliacao_sem_solicitacao_de_acerto_em_conta: ['conta-1'],
+    });
+
+    await user.click(botao);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('modal-lancamentos-conciliacao')).toHaveAttribute('data-visible', 'true');
+    });
+    expect(screen.getByTestId('modal-conciliacao')).toHaveAttribute('data-visible', 'false');
+    expect(screen.getByTestId('modal-confirma')).toHaveAttribute('data-visible', 'false');
+    expect(screen.getByTestId('modal-comprovante')).toHaveAttribute('data-visible', 'false');
     expect(getPrestacaoDeContasDetalhe).toHaveBeenCalledTimes(1);
   });
 
@@ -272,6 +326,7 @@ describe('ResumoDosAcertos - handleDevolverParaAssociacao', () => {
     });
     expect(screen.getByTestId('modal-conciliacao')).toHaveAttribute('data-visible', 'false');
     expect(screen.getByTestId('modal-comprovante')).toHaveAttribute('data-visible', 'false');
+    expect(screen.getByTestId('modal-lancamentos-conciliacao')).toHaveAttribute('data-visible', 'false');
     expect(getPrestacaoDeContasDetalhe).toHaveBeenCalledTimes(1);
   });
 });
