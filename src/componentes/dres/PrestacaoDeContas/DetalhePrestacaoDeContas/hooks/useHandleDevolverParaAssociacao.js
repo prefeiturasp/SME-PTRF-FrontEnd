@@ -20,13 +20,16 @@ export const useHandleDevolverParaAssociacao = ({
 
             const acertosPodemAlterarSaldoConciliacao = analiseAtual?.acertos_podem_alterar_saldo_conciliacao;
             const temPendenciaConciliacaoSemSolicitacaoDeAcertoEmConta = analiseAtual?.tem_pendencia_conciliacao_sem_solicitacao_de_acerto_em_conta;
-            const temSolicitacoesLancamentoComPendenciaConciliacao = analiseAtual?.tem_solicitacoes_lancar_credito_ou_despesa_com_pendencia_conciliacao;
+            const temSolicitacoesLancamentoComPendenciaConciliacao = analiseAtual?.solicitacoes_lancar_credito_ou_despesa_com_pendencia_conciliacao;
 
             const contasPendencia = analiseAtual?.contas_pendencia_conciliacao_sem_solicitacao_de_acerto_em_conta || [];
             const contasSolicitacoesLancamentoPendentes = analiseAtual?.contas_solicitacoes_lancar_credito_ou_despesa_com_pendencia_conciliacao || [];
             setContasPendenciaConciliacao(contasPendencia);
             setContasPendenciaLancamentosConciliacao(contasSolicitacoesLancamentoPendentes);
-
+            console.log({
+                temPendenciaConciliacaoSemSolicitacaoDeAcertoEmConta,
+                temSolicitacoesLancamentoComPendenciaConciliacao
+            })
             if (temSolicitacoesLancamentoComPendenciaConciliacao) {
                 setShowModalLancamentosConciliacao(true);
                 return;
