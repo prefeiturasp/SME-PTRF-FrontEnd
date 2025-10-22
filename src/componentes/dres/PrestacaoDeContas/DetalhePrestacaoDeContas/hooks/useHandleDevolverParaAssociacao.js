@@ -7,23 +7,36 @@ export const useHandleDevolverParaAssociacao = ({
     setShowModalComprovanteSaldoConta,
     setShowModalConciliacaoBancaria,
     setShowModalConfirmaDevolverParaAcerto,
-    setBtnDevolverParaAcertoDisabled
+    setBtnDevolverParaAcertoDisabled,
+    setContasPendenciaLancamentosConciliacao,
+    setShowModalLancamentosConciliacao
 }) => {
     return useCallback(async () => {
         setBtnDevolverParaAcertoDisabled(true);
 
         try {
             const prestacaoDeContasAtualizada = await getPrestacaoDeContasDetalhe(prestacaoDeContas.uuid);
-            const acertosPodemAlterarSaldoConciliacao = prestacaoDeContasAtualizada?.analise_atual?.acertos_podem_alterar_saldo_conciliacao;
-            const temPendenciaConciliacaoSemSolicitacaoDeAcertoEmConta = prestacaoDeContasAtualizada?.analise_atual?.tem_pendencia_conciliacao_sem_solicitacao_de_acerto_em_conta;
+            const analiseAtual = prestacaoDeContasAtualizada?.analise_atual || {};
 
-            const contasPendencia = prestacaoDeContasAtualizada?.analise_atual?.contas_pendencia_conciliacao_sem_solicitacao_de_acerto_em_conta || [];
+            const acertosPodemAlterarSaldoConciliacao = analiseAtual?.acertos_podem_alterar_saldo_conciliacao;
+            const temPendenciaConciliacaoSemSolicitacaoDeAcertoEmConta = analiseAtual?.tem_pendencia_conciliacao_sem_solicitacao_de_acerto_em_conta;
+            const temSolicitacoesLancamentoComPendenciaConciliacao = analiseAtual?.tem_solicitacoes_lancar_credito_ou_despesa_com_pendencia_conciliacao;
+
+            const contasPendencia = analiseAtual?.contas_pendencia_conciliacao_sem_solicitacao_de_acerto_em_conta || [];
+            const contasSolicitacoesLancamentoPendentes = analiseAtual?.contas_solicitacoes_lancar_credito_ou_despesa_com_pendencia_conciliacao || [];
             setContasPendenciaConciliacao(contasPendencia);
+            setContasPendenciaLancamentosConciliacao(contasSolicitacoesLancamentoPendentes);
+
+            if (temSolicitacoesLancamentoComPendenciaConciliacao) {
+                setShowModalLancamentosConciliacao(true);
+                return;
+            }
 
             if (temPendenciaConciliacaoSemSolicitacaoDeAcertoEmConta) {
                 setShowModalComprovanteSaldoConta(true);
                 return;
             }
+
 
             if (acertosPodemAlterarSaldoConciliacao && !temPendenciaConciliacaoSemSolicitacaoDeAcertoEmConta) {
                 setShowModalConciliacaoBancaria(true);
@@ -40,6 +53,8 @@ export const useHandleDevolverParaAssociacao = ({
         setShowModalComprovanteSaldoConta,
         setShowModalConciliacaoBancaria,
         setShowModalConfirmaDevolverParaAcerto,
-        setBtnDevolverParaAcertoDisabled
+        setBtnDevolverParaAcertoDisabled,
+        setContasPendenciaLancamentosConciliacao,
+        setShowModalLancamentosConciliacao
     ]);
 };
