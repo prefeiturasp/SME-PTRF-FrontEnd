@@ -105,7 +105,7 @@ describe('useGetResumoPrioridades Hook', () => {
                 {
                     keepPreviousData: true,
                     staleTime: 5000,
-                    refetchOnWindowFocus: false
+                    refetchOnWindowFocus: true
                 }
             );
         });
@@ -570,7 +570,7 @@ describe('useGetResumoPrioridades Hook', () => {
                 ['prioridades-resumo'],
                 expect.any(Function),
                 expect.objectContaining({
-                    refetchOnWindowFocus: false
+                    refetchOnWindowFocus: true
                 })
             );
         });

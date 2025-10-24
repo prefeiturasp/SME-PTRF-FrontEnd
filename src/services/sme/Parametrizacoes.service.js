@@ -303,6 +303,14 @@ export const postPaa = async (payload) => {
   return (await api.post(`/api/paa/`, payload, authHeader())).data;
 };
 
+// PAA - Acoes PTRF
+export const getAcoesPTRFPaa = async () => {
+  const result = await api.get(`/api/acoes/`, authHeader());
+  return result.data;
+};
+export const patchExibirAcoesPTRFPaa = async (uuid, payload) => {
+  return (await api.patch(`/api/acoes/${uuid}/`, payload, authHeader())).data;
+};
 
 // Tags
 export const getTodasTags = async () => {

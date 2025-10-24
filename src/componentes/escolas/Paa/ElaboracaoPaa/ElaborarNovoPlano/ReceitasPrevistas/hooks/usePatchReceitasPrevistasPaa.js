@@ -9,7 +9,7 @@ export const usePatchReceitasPrevistasPaa = (onClose) => {
     mutationFn: ({ uuid, payload }) => patchReceitasPrevistasPaa(uuid, payload),
     onSuccess: (data) => {
       toastCustom.ToastCustomSuccess("Recurso editado com sucesso.");
-      queryClient.invalidateQueries(["acoes-associacao"]);
+      queryClient.invalidateQueries(["receitas-previstas-paa"]);
       onClose && onClose();
     },
     onError: (e) => {

@@ -25,6 +25,7 @@ import IconeRepasses from "../../../assets/img/icone-parametro-repasses.svg"
 import IconeMotivosDevolucaoTesouro from "../../../assets/img/icone-parametro-devolucao-ao-tesouro.svg"
 import IconeMotivosAprovacaoPcRessalva from "../../../assets/img/icone-parametro-motivos-aprovacao-pc-ressalva.svg"
 import IconeAcoesPDDE from "../../../assets/img/icone-parametro-acoes-pdde.svg"
+import IconeAcoesPTRFPaa from "../../../assets/img/icone-parametro-acoes-ptrf-paa.svg"
 
 
 export const PainelParametrizacoes = () => {
@@ -218,6 +219,13 @@ export const PainelParametrizacoes = () => {
             parametro: 'Atividades estatutárias',
             url: 'parametro-atividades-estatutarias-paa',
             icone: IconeAtividadesEstatutarias,
+            permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
+            featureFlag: 'paa',
+        },
+        {
+            parametro: 'Ações PTRF',
+            url: 'parametro-acoes-ptrf-paa',
+            icone: IconeAcoesPTRFPaa,
             permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
             featureFlag: 'paa',
         },

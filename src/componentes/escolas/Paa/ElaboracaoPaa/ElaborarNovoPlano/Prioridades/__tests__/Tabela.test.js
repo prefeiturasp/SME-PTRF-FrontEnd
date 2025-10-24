@@ -34,6 +34,16 @@ const mockData = [
     tipo_aplicacao_objeto: { name: 'Custeio' },
     tipo_despesa_custeio_objeto: { nome: 'Tipo 2' },
     valor_total: null
+  },
+  {
+    uuid: 'uuid5',
+    acao: 'Ação PTRF Sem Ação',
+    especificacao_material_objeto: { nome: 'Especificação 5' },
+    recurso: 'PTRF',
+    acao_associacao: null,
+    tipo_aplicacao_objeto: { name: 'Custeio' },
+    tipo_despesa_custeio_objeto: { nome: 'Tipo 1' },
+    valor_total: 1000.50
   }
 ];
 
@@ -96,14 +106,26 @@ describe('Tabela', () => {
 
     const checkboxes = screen.getAllByRole('checkbox');
     const firstItemCheckbox = checkboxes[1]; // Primeiro item (índice 0 é o header)
-
+    
     // Seleciona o primeiro item
     fireEvent.click(firstItemCheckbox);
     expect(firstItemCheckbox).toBeChecked();
-
+    
     // Deseleciona o primeiro item
     fireEvent.click(firstItemCheckbox);
     expect(firstItemCheckbox).not.toBeChecked();
+    
+    // Seleciona o primeiro item
+    fireEvent.click(firstItemCheckbox);
+    expect(firstItemCheckbox).toBeChecked();
+    
+    const botaoCancelarSelecaoLote = screen.getByRole('button', { name: 'Cancelar', selector: '.botao-cancelar-selecao-lote'});
+    fireEvent.click(botaoCancelarSelecaoLote);
+    const allCheckboxes = screen.getAllByRole('checkbox');
+    allCheckboxes.forEach(checkbox => {
+      expect(checkbox).not.toBeChecked();
+    });
+    
   });
 
   test('seleciona todos os itens com checkbox do header', async () => {
@@ -317,6 +339,22 @@ describe('Tabela', () => {
     fireEvent.click(excluirEmLoteButton);
 
     // Verifica se a função handleExcluirEmLote foi chamada com os UUIDs corretos
-    expect(handleExcluirEmLote).toHaveBeenCalledWith(['uuid1', 'uuid2', 'uuid3', 'uuid4']);
+    expect(handleExcluirEmLote).toHaveBeenCalledWith(['uuid1', 'uuid2', 'uuid3', 'uuid4', 'uuid5']);
+  });
+
+  test('deve exibir botão Informar Ação quando há Prioridade PTRF sem Ação', async () => {
+    renderizaComponente();
+    expect(screen.getByText('Informar Ação')).toBeInTheDocument();
+  });
+
+  test('deve chamar botão Informar Ação', () => {
+
+    render(<Tabela data={[mockData[4]]} handleEditar={handleEditar} />);
+
+    const botaoInformarAcao = screen.getByText('Informar Ação');
+    expect(botaoInformarAcao).toBeInTheDocument();
+    fireEvent.click(botaoInformarAcao)
+    expect(handleEditar).toHaveBeenCalled();
+
   });
 }); 
