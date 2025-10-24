@@ -40,6 +40,7 @@ const DevolucaoParaAcertos = ({
     const [showModalConciliacaoBancaria, setShowModalConciliacaoBancaria] = useState(false)
     const [showModalComprovanteSaldoConta, setShowModalComprovanteSaldoConta] = useState(false)
     const [showModalLancamentosConciliacao, setShowModalLancamentosConciliacao] = useState(false)
+    const [mostrarModalLancamentosSomenteSolicitacoes, setMostrarModalLancamentosSomenteSolicitacoes] = useState(false)
     const [contasPendenciaConciliacao, setContasPendenciaConciliacao] = useState([])
     const [contasPendenciaLancamentosConciliacao, setContasPendenciaLancamentosConciliacao] = useState([])
     const [textoErroDevolverParaAcerto, setTextoErroDevolverParaAcerto] = useState('')
@@ -61,7 +62,8 @@ const DevolucaoParaAcertos = ({
         setShowModalConfirmaDevolverParaAcerto,
         setBtnDevolverParaAcertoDisabled,
         setContasPendenciaLancamentosConciliacao,
-        setShowModalLancamentosConciliacao
+        setShowModalLancamentosConciliacao,
+        setMostrarModalLancamentosSomenteSolicitacoes
     });
 
     
@@ -245,11 +247,13 @@ const DevolucaoParaAcertos = ({
 
     const handleIrParaExtratoLancamentosConciliacao = useCallback(() => {
         setShowModalLancamentosConciliacao(false);
+        setMostrarModalLancamentosSomenteSolicitacoes(false);
         rolarParaExtratoBancario();
     }, [rolarParaExtratoBancario]);
 
     const handleFecharModalLancamentosConciliacao = useCallback(() => {
         setShowModalLancamentosConciliacao(false);
+        setMostrarModalLancamentosSomenteSolicitacoes(false);
     }, []);
 
     const obterNomeContaPorUuid = useCallback((uuid) => {
@@ -315,9 +319,20 @@ const DevolucaoParaAcertos = ({
         return formatarListaContas(contas);
     }, [formatarListaContas, obterContasLancamentosConciliacao]);
 
+    const textoSolicitacoesLancamentosConciliacao = useMemo(() => {
+        return `<p><strong>Acertos que alteram a conciliação bancária</strong></p><p>Foram indicados acertos de inclusão/exclusão de lançamento na(s) conta(s) ${contasLancamentosConciliacaoTexto} que alteram o saldo da conciliação bancária. Favor solicitar o acerto de saldo para que a PC possa ser devolvida.</p>`;
+    }, [contasLancamentosConciliacaoTexto]);
+
+    const textoComprovanteSaldoConciliacao = useMemo(() => {
+        return `<p><strong>Comprovante de saldo da conta</strong></p><p>A(s) conta(s) ${contasSemComprovanteTexto} não possuem comprovante de saldo. Favor solicitar o acerto para envio do comprovante para que a PC possa ser devolvida.</p>`;
+    }, [contasSemComprovanteTexto]);
+
     const textoModalLancamentosConciliacao = useMemo(() => {
-        return `<p><strong>Acertos que alteram a conciliação bancária</strong></p><p>Foram indicados acertos de inclusão/exclusão de lançamento na(s) conta(s) ${contasLancamentosConciliacaoTexto} que alteram o saldo da conciliação bancária. Favor solicitar o acerto de saldo para que a PC possa ser devolvida.</p><p><strong>Comprovante de saldo da conta</strong></p><p>A(s) conta(s) ${contasSemComprovanteTexto} não possuem comprovante de saldo. Favor solicitar o acerto para envio do comprovante para que a PC possa ser devolvida.</p>`;
-    }, [contasLancamentosConciliacaoTexto, contasSemComprovanteTexto]);
+        if (mostrarModalLancamentosSomenteSolicitacoes) {
+            return textoSolicitacoesLancamentosConciliacao;
+        }
+        return `${textoSolicitacoesLancamentosConciliacao}${textoComprovanteSaldoConciliacao}`;
+    }, [mostrarModalLancamentosSomenteSolicitacoes, textoSolicitacoesLancamentosConciliacao, textoComprovanteSaldoConciliacao]);
 
     const possuiHistoricoDeDevolucoes = () => {
         return (prestacaoDeContas && prestacaoDeContas.devolucoes_da_prestacao && prestacaoDeContas.devolucoes_da_prestacao.length > 0);
