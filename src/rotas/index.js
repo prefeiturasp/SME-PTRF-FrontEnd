@@ -418,7 +418,7 @@ const routesConfig = [
     exact: true,
     path: "/extracoes-dados",
     component: ExtracaoDadosPage,
-    permissoes: ["access_gestao_perfis_dre", "access_extracao_de_dados_sme"],
+    permissoes: ["access_extracao_de_dados_dre", "access_extracao_de_dados_sme"],
   },
   {
     exact: true,
