@@ -1,6 +1,7 @@
 import { Fragment, useState, useCallback, useEffect } from "react";
 import { Checkbox, Flex, Spin } from "antd";
 import { useGetAcoesAssociacao } from "./hooks/useGetAcoesAssociacao";
+import { useGetReceitasPrevistas } from "./hooks/useGetReceitasPrevistas";
 import "./style.css";
 import ReceitasPrevistasModalForm from "./ReceitasPrevistasModalForm";
 import { Icon } from "../../../../../Globais/UI/Icon";
@@ -29,10 +30,14 @@ const ReceitasPrevistas = () => {
 
   const {
     data,
-    isLoading: isLoadingAcoesassociacao,
-    refetch: refetchAcoesAssociacao,
-    isFetching: isFetchingAcoesassociacao,
-  } = useGetAcoesAssociacao();
+    isLoading: isLoadingReceitasPrevistas,
+    refetch: refetchReceitasPrevistas,
+    isFetching: isFetchingReceitasPrevistas,
+  } = useGetReceitasPrevistas();
+
+  // Exibir apenas Receitas previstas das acoes associadas com exibir_paa = true
+  const dataReceitasPrevistas = (data||[]).filter(item => item.acao.exibir_paa)
+
   const { data: totalRecursosProprios } =
     useGetTotalizadorRecursoProprio(associacaoUUID());
 
@@ -85,7 +90,7 @@ const ReceitasPrevistas = () => {
   }
 
   const recarregarAcoesAssociacoes = async () => {
-    return await refetchAcoesAssociacao()
+    return await refetchReceitasPrevistas()
   }
 
   const onSubmitParadaSaldo = async() => {
@@ -137,8 +142,8 @@ const ReceitasPrevistas = () => {
                     checked={!!dadosPaaLocalStorage()?.saldo_congelado_em}
                     onChange={(e) => onTogglePararAtualizacoesSaldo(e)}
                     disabled={
-                      isLoadingAcoesassociacao ||
-                      isFetchingAcoesassociacao ||
+                      isLoadingReceitasPrevistas ||
+                      isFetchingReceitasPrevistas ||
                       loadingPaa
                     }>
                     Parar atualizações do saldo
@@ -166,9 +171,9 @@ const ReceitasPrevistas = () => {
             paa={dadosPaaLocalStorage()}
             onSubmitParadaSaldo={onSubmitParadaSaldo}
           />
-          <Spin spinning={isLoadingAcoesassociacao || isFetchingAcoesassociacao}>
+          <Spin spinning={isLoadingReceitasPrevistas || isFetchingReceitasPrevistas}>
             <TabelaReceitasPrevistas
-              data={data}
+              data={dataReceitasPrevistas}
               handleOpenEditar={handleOpenEditar}
             />
           </Spin>

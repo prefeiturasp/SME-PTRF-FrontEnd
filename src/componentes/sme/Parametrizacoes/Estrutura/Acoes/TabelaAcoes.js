@@ -12,6 +12,7 @@ export const TabelaAcoes = ({
     aceitaCusteioTemplate,
     aceitaLivreTemplate,
     recursosPropriosTemplate,
+    exibePaa
 }) => {
 
     return(
@@ -32,6 +33,8 @@ export const TabelaAcoes = ({
             <Column body={aceitaLivreTemplate} header='Aceita Livre Aplicação?'
                                                 style={{textAlign: 'center', width:'110px',}}/>
             <Column body={recursosPropriosTemplate} header='Recursos externos?'
+                                                style={{textAlign: 'center', width:'110px',}}/>
+            <Column body={exibePaa} header='Exibe no PAA?'
                                                 style={{textAlign: 'center', width:'110px',}}/>
 
             <Column

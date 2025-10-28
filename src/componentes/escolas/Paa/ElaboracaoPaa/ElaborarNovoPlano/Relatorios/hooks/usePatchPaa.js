@@ -13,8 +13,6 @@ export const usePatchPaa = () => {
         
         // Invalidar cache do PAA específico se necessário
         queryClient.invalidateQueries(["paa", variables.uuid]);
-        
-        console.log('PAA atualizado com sucesso:', data);
       },
       onError: (error) => {
         console.error('Erro ao atualizar PAA:', error);
