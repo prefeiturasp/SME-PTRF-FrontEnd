@@ -9,7 +9,8 @@ export const useHandleDevolverParaAssociacao = ({
     setShowModalConfirmaDevolverParaAcerto,
     setBtnDevolverParaAcertoDisabled,
     setContasPendenciaLancamentosConciliacao,
-    setShowModalLancamentosConciliacao
+    setShowModalLancamentosConciliacao,
+    setMostrarModalLancamentosSomenteSolicitacoes
 }) => {
     return useCallback(async () => {
         setBtnDevolverParaAcertoDisabled(true);
@@ -26,8 +27,10 @@ export const useHandleDevolverParaAssociacao = ({
             const contasSolicitacoesLancamentoPendentes = analiseAtual?.contas_solicitacoes_lancar_credito_ou_despesa_com_pendencia_conciliacao || [];
             setContasPendenciaConciliacao(contasPendencia);
             setContasPendenciaLancamentosConciliacao(contasSolicitacoesLancamentoPendentes);
+            setMostrarModalLancamentosSomenteSolicitacoes(false);
 
-            if (temSolicitacoesLancamentoComPendenciaConciliacao) {
+            if (temPendenciaConciliacaoSemSolicitacaoDeAcertoEmConta && temSolicitacoesLancamentoComPendenciaConciliacao) {
+                // Modal unificado
                 setShowModalLancamentosConciliacao(true);
                 return;
             }
@@ -37,6 +40,12 @@ export const useHandleDevolverParaAssociacao = ({
                 return;
             }
 
+            if (temSolicitacoesLancamentoComPendenciaConciliacao) {
+                const deveMostrarSomenteSolicitacoes = !temPendenciaConciliacaoSemSolicitacaoDeAcertoEmConta;
+                setMostrarModalLancamentosSomenteSolicitacoes(deveMostrarSomenteSolicitacoes);
+                setShowModalLancamentosConciliacao(true);
+                return;
+            }
 
             if (acertosPodemAlterarSaldoConciliacao && !temPendenciaConciliacaoSemSolicitacaoDeAcertoEmConta) {
                 setShowModalConciliacaoBancaria(true);
@@ -55,6 +64,7 @@ export const useHandleDevolverParaAssociacao = ({
         setShowModalConfirmaDevolverParaAcerto,
         setBtnDevolverParaAcertoDisabled,
         setContasPendenciaLancamentosConciliacao,
-        setShowModalLancamentosConciliacao
+        setShowModalLancamentosConciliacao,
+        setMostrarModalLancamentosSomenteSolicitacoes
     ]);
 };
