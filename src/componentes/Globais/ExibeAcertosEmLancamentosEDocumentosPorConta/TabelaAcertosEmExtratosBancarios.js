@@ -8,6 +8,7 @@ import { SidebarContext } from "../../../context/Sidebar";
 import { useCarregaPrestacaoDeContasPorUuid } from "../../../hooks/dres/PrestacaoDeContas/useCarregaPrestacaoDeContasPorUuid";
 import {AcertoComprovanteSaldoDaConta} from "./AcertoComprovanteSaldoDaConta";
 import { AcertoCorrecaoDataSaldoConta } from "./AcertoCorrecaoDataSaldoConta";
+import { AcertoJustificativaSaldoDaConta } from "./AcertoJustificativaSaldoDaConta";
 
 
 const TabelaAcertosEmExtratosBancarios = ({extratosBancariosAjustes, contaUuidAjustesExtratosBancarios, prestacaoDeContasUuid}) => {
@@ -76,7 +77,10 @@ const TabelaAcertosEmExtratosBancarios = ({extratosBancariosAjustes, contaUuidAj
                 </div>
                 <AcertoCorrecaoDataSaldoConta
                     extratosBancariosAjustes={extratosBancariosAjustes}
-                />                
+                />
+                <AcertoJustificativaSaldoDaConta
+                    extratosBancariosAjustes={extratosBancariosAjustes}
+                />
                 <AcertoComprovanteSaldoDaConta
                     extratosBancariosAjustes={extratosBancariosAjustes}
                 />
