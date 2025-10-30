@@ -24,10 +24,6 @@ jest.mock('../RelSecaoTextos', () => ({
   ),
 }));
 
-// jest.mock('../RelSecaoTextos', () => ({
-//   RelSecaoTextos: jest.fn(() => <div data-testid="mock-editor"></div>),
-// }));
-
 const createWrapper = () => {
   const queryClient = new QueryClient({
     defaultOptions: {

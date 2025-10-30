@@ -4,9 +4,8 @@ import Relatorios from '../index';
 import { useGetPaaVigente } from '../hooks/useGetPaaVigente';
 import { useGetTextosPaa } from '../hooks/useGetTextosPaa';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-// import { RenderSecao } from '../RenderSecao';
 
-// mocks dos hooks
+
 jest.mock('../hooks/useGetTextosPaa', () => ({
   useGetTextosPaa: jest.fn(),
 }));
@@ -14,12 +13,6 @@ jest.mock('../hooks/useGetTextosPaa', () => ({
 jest.mock('../hooks/useGetPaaVigente', () => ({
     useGetPaaVigente: jest.fn(),
 }));
-
-// jest.mock("../RenderSecao", () => {
-//   return ({ secaoKey, config }) => (
-//     <div data-testid={`render-secao-${secaoKey}`}>{config.titulo}</div>
-//   );
-// });
 
 describe('Relatorios', () => {
     let queryClient;

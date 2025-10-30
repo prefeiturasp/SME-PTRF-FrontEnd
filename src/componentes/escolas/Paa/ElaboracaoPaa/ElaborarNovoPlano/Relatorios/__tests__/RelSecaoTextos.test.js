@@ -21,52 +21,6 @@ jest.mock('tinymce/plugins/insertdatetime', () => ({}));
 jest.mock('tinymce/plugins/table', () => ({}));
 jest.mock('tinymce/plugins/wordcount', () => ({}));
 
-// jest.mock('../../../../../../Globais/EditorWysiwygCustom', () => ({
-//   EditorWysiwygCustom: jest.fn(({ onEditorReady, handleSubmitEditor }) => {
-//     onEditorReady?.({ getDoc: () => ({ body: { style: {} } }) });
-//     return <div data-testid="editor-wysiwyg">Editor Mock</div>;
-//   }),
-// }));
-// jest.mock('../../../../../../Globais/EditorWysiwygCustom', () => ({
-//   __esModule: true,
-//   default: jest.fn(
-//     ({
-//       textoInicialEditor,
-//       tituloEditor,
-//       handleSubmitEditor,
-//       handleLimparEditor,
-//       botaoCancelar,
-//       disabled,
-//       isSaving,
-//       onEditorReady,
-//     }) => {
-//       // Simula inicialização do editor
-//       onEditorReady?.({ getDoc: () => ({ body: { style: {} } }) });
-
-//       return (
-//         <div data-testid="editor-wysiwyg">
-//           <div data-testid="texto-inicial">{textoInicialEditor}</div>
-//           <div data-testid="titulo-editor">{tituloEditor}</div>
-//           <button
-//             data-testid="submit-editor"
-//             disabled={disabled || isSaving}
-//             onClick={() => handleSubmitEditor('<p>novo texto</p>')}
-//           >
-//             Salvar
-//           </button>
-//           <button
-//             data-testid="limpar-editor"
-//             onClick={() => handleLimparEditor('<p>texto atual</p>')}
-//           >
-//             Limpar
-//           </button>
-//           {!botaoCancelar && <span data-testid="sem-botao-cancelar">Sem botão cancelar</span>}
-//         </div>
-//       );
-//     }
-//   ),
-// }));
-
 describe('RelSecaoTextos', () => {
     const baseProps = {
         textosPaa: {
