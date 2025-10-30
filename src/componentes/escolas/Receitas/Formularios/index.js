@@ -408,12 +408,6 @@ export const ReceitaForm = () => {
             e.preventDefault();
             setShowReceitaRepasse(true)
         }
-
-        if (values.tipo_receita === idTipoReceitaEstorno && Object.keys(errors).length === 0 && values.data){
-            e.preventDefault()
-            setShowModalMotivoEstorno(true)
-        }
-
     };
 
     const exibeMsgSalvoComSucesso = (payload) =>{
@@ -437,6 +431,12 @@ export const ReceitaForm = () => {
     }
 
     const onSubmit = async (values, errors) => {
+        if (values.tipo_receita === idTipoReceitaEstorno && !showModalMotivoEstorno) {
+            setShowModalMotivoEstorno(true);
+            setReadOnlyBtnAcao(false);
+            return;
+        }
+
         setReadOnlyBtnAcao(true)
 
         // Validando e ou removendo e_devolucao
@@ -798,7 +798,7 @@ export const ReceitaForm = () => {
 
         let aceitaClassificacao  = eval('tabelas.acoes_associacao.find(element => element.uuid === uuid_acao).acao.aceita_' + id_categoria_receita_lower);
 
-        if(classificacoesAceitas.includes(id_categoria_receita_lower) && aceitaClassificacao){
+        if ((classificacoesAceitas.length === 0 || classificacoesAceitas.includes(id_categoria_receita_lower)) && aceitaClassificacao){
 
             return "block"
         }
@@ -853,18 +853,30 @@ export const ReceitaForm = () => {
 
 
 
-    const retornaClassificacaoReceita = (values, setFieldValue) => {
+    const retornaClassificacaoReceita = (values, setFieldValue, categoriaSelecionada) => {
+        const categoriaSelecionadaId = categoriaSelecionada !== undefined && categoriaSelecionada !== null
+            ? String(categoriaSelecionada)
+            : null;
+
         if (tabelas.categorias_receita !== undefined && tabelas.categorias_receita.length > 0 && values !== undefined && values.acao_associacao && values.tipo_receita && Object.entries(repasse).length > 0 && uuid === undefined) {
-            return tabelas.categorias_receita.map((item, index) => {
+            const opcoes = tabelas.categorias_receita.map((item, index) => {
 
                 let id_categoria_receita_lower = item.id.toLowerCase();
 
                 // Quando a flag e_repasse for true eu checo também se o valor da classificacao_receita é !== "0.00"
                 if (tabelas.tipos_receita.find(element => element.id === Number(values.tipo_receita)).e_repasse) {
                     if (tabelas.acoes_associacao && tabelas.acoes_associacao.find(element => element.uuid === values.acao_associacao) && eval('repasse.valor_' + id_categoria_receita_lower) !== "0.00") {
+                        if (categoriaSelecionadaId && String(item.id) === categoriaSelecionadaId) {
+                            return null;
+                        }
+
+                        const display = getDisplayOptionClassificacaoReceita(item.id, values.acao_associacao);
+                        if (display === "none") {
+                            return null;
+                        }
+
                         return (
                             <option
-                                style={{display: getDisplayOptionClassificacaoReceita(item.id, values.acao_associacao)}}
                                 key={item.id}
                                 value={item.id}
                             >
@@ -875,9 +887,17 @@ export const ReceitaForm = () => {
 
                 }else{
                     if ( tabelas.tipos_receita && tabelas.tipos_receita.find(element => element.id === Number(values.tipo_receita))){
+                        if (categoriaSelecionadaId && String(item.id) === categoriaSelecionadaId) {
+                            return null;
+                        }
+
+                        const display = getDisplayOptionClassificacaoReceita(item.id, values.acao_associacao);
+                        if (display === "none") {
+                            return null;
+                        }
+
                         return (
                             <option
-                                style={{display: getDisplayOptionClassificacaoReceita(item.id, values.acao_associacao)}}
                                 key={item.id}
                                 value={item.id}
                             >
@@ -886,20 +906,32 @@ export const ReceitaForm = () => {
                         );
                     }
                 }
-            })
+            });
+
+            return opcoes.filter(Boolean);
         }else{
             if (tabelas.categorias_receita && tabelas.categorias_receita.length > 0 && values.acao_associacao){
-                return tabelas.categorias_receita.map((item)=>{
+                const opcoes = tabelas.categorias_receita.map((item)=>{
+                    if (categoriaSelecionadaId && String(item.id) === categoriaSelecionadaId) {
+                        return null;
+                    }
+
+                    const display = getDisplayOptionClassificacaoReceita(item.id, values.acao_associacao);
+                    if (display === "none") {
+                        return null;
+                    }
+
                     return (
                         <option
-                            style={{display: getDisplayOptionClassificacaoReceita(item.id, values.acao_associacao)}}
                             key={item.id}
                             value={item.id}
                         >
                             {item.nome}
                         </option>
                     );
-                })
+                });
+
+                return opcoes.filter(Boolean);
             }
         }
     };
