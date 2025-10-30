@@ -10,7 +10,9 @@ export const useHandleDevolverParaAssociacao = ({
     setBtnDevolverParaAcertoDisabled,
     setContasPendenciaLancamentosConciliacao,
     setShowModalLancamentosConciliacao,
-    setMostrarModalLancamentosSomenteSolicitacoes
+    setMostrarModalLancamentosSomenteSolicitacoes,
+    setShowModalJustificativaSaldoConta,
+    setContasSolicitarCorrecaoJustificativaConciliacao
 }) => {
     return useCallback(async () => {
         setBtnDevolverParaAcertoDisabled(true);
@@ -22,16 +24,31 @@ export const useHandleDevolverParaAssociacao = ({
             const acertosPodemAlterarSaldoConciliacao = analiseAtual?.acertos_podem_alterar_saldo_conciliacao;
             const temPendenciaConciliacaoSemSolicitacaoDeAcertoEmConta = analiseAtual?.tem_pendencia_conciliacao_sem_solicitacao_de_acerto_em_conta;
             const temSolicitacoesLancamentoComPendenciaConciliacao = analiseAtual?.solicitacoes_lancar_credito_ou_despesa_com_pendencia_conciliacao;
+            const solicitarCorrecaoJustificativaConciliacao = !!analiseAtual?.solicitar_correcao_de_justificativa_de_conciliacao;
 
             const contasPendencia = analiseAtual?.contas_pendencia_conciliacao_sem_solicitacao_de_acerto_em_conta || [];
             const contasSolicitacoesLancamentoPendentes = analiseAtual?.contas_solicitacoes_lancar_credito_ou_despesa_com_pendencia_conciliacao || [];
+            const contasSolicitarCorrecaoJustificativa = analiseAtual?.contas_solicitar_correcao_de_justificativa_de_conciliacao || [];
+
             setContasPendenciaConciliacao(contasPendencia);
             setContasPendenciaLancamentosConciliacao(contasSolicitacoesLancamentoPendentes);
-            setMostrarModalLancamentosSomenteSolicitacoes(false);
+            setContasSolicitarCorrecaoJustificativaConciliacao?.(contasSolicitarCorrecaoJustificativa);
+            setMostrarModalLancamentosSomenteSolicitacoes?.(false);
 
-            if (temPendenciaConciliacaoSemSolicitacaoDeAcertoEmConta && temSolicitacoesLancamentoComPendenciaConciliacao) {
+            const quantidadePendencias = [
+                temPendenciaConciliacaoSemSolicitacaoDeAcertoEmConta,
+                temSolicitacoesLancamentoComPendenciaConciliacao,
+                solicitarCorrecaoJustificativaConciliacao
+            ].filter(Boolean).length;
+
+            if (quantidadePendencias > 1) {
                 // Modal unificado
                 setShowModalLancamentosConciliacao(true);
+                return;
+            }
+
+            if (solicitarCorrecaoJustificativaConciliacao) {
+                setShowModalJustificativaSaldoConta?.(true);
                 return;
             }
 
@@ -41,8 +58,9 @@ export const useHandleDevolverParaAssociacao = ({
             }
 
             if (temSolicitacoesLancamentoComPendenciaConciliacao) {
-                const deveMostrarSomenteSolicitacoes = !temPendenciaConciliacaoSemSolicitacaoDeAcertoEmConta;
-                setMostrarModalLancamentosSomenteSolicitacoes(deveMostrarSomenteSolicitacoes);
+                const deveMostrarSomenteSolicitacoes =
+                    !temPendenciaConciliacaoSemSolicitacaoDeAcertoEmConta && !solicitarCorrecaoJustificativaConciliacao;
+                setMostrarModalLancamentosSomenteSolicitacoes?.(deveMostrarSomenteSolicitacoes);
                 setShowModalLancamentosConciliacao(true);
                 return;
             }
@@ -65,6 +83,8 @@ export const useHandleDevolverParaAssociacao = ({
         setBtnDevolverParaAcertoDisabled,
         setContasPendenciaLancamentosConciliacao,
         setShowModalLancamentosConciliacao,
-        setMostrarModalLancamentosSomenteSolicitacoes
+        setMostrarModalLancamentosSomenteSolicitacoes,
+        setShowModalJustificativaSaldoConta,
+        setContasSolicitarCorrecaoJustificativaConciliacao
     ]);
 };
