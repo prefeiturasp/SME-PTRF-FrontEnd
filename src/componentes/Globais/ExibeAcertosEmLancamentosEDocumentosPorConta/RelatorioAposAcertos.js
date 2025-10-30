@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useMemo} from "react";
 import Spinner from "../../../assets/img/spinner.gif"
 import {gerarPreviaRelatorioAposAcertos, verificarStatusGeracaoAposAcertos, downloadDocumentPdfAposAcertos, regerarRelatorioAposAcertos, regerarPreviaRelatorioAposAcertos} from '../../../services/escolas/PrestacaoDeContas.service'
 import { getAnalisePrestacaoConta, getAnalisesDePcDevolvidas } from "../../../services/dres/PrestacaoDeContas.service";
@@ -20,11 +20,6 @@ export const RelatorioAposAcertos = ({prestacaoDeContasUuid, prestacaoDeContas, 
     const [versaoRascunho, setVersaoRascunho] = useState(true);
     const [loadingRelatorioAposAcertos, setLoadingRelatorioAposAcertos] = useState(true)
     const temPermissao = visoesService.getPermissoes(["change_analise_dre"])
-    const btGerarHabilitado =
-        podeGerarPrevia &&
-        prestacaoDeContas.status === 'DEVOLVIDA' &&
-        temPermissao &&
-        !disableBtnPrevia
 
     useEffect(() => {
         analisesDePcDevolvidas();
@@ -162,14 +157,16 @@ export const RelatorioAposAcertos = ({prestacaoDeContasUuid, prestacaoDeContas, 
         classeMensagem = "documento-processando"
     }
 
-    const documentoFinalGerado = () => {
-        if(mensagem.includes('Documento gerado')){
-            return true;
-        }
-
-        return false;
-    }
-
+    const gerarPreviaHabilitado = useMemo(() => {
+        return (
+            podeGerarPrevia &&
+            prestacaoDeContas.status === 'DEVOLVIDA' &&
+            temPermissao &&
+            !disableBtnPrevia && 
+            !mensagem.includes('Documento gerado')
+        )
+    }, [podeGerarPrevia, prestacaoDeContas.status, disableBtnPrevia, temPermissao, mensagem]);
+    
     return (
         loadingRelatorioAposAcertos ? (
             <Loading
@@ -214,7 +211,7 @@ export const RelatorioAposAcertos = ({prestacaoDeContasUuid, prestacaoDeContas, 
                     </div>
 
                     <div className="actions">
-                        <button onClick={(e) => gerarPrevia()} type="button" disabled={!btGerarHabilitado && !documentoFinalGerado()} className="btn btn-outline-success mr-2">Gerar prévia</button>
+                        <button onClick={(e) => gerarPrevia()} type="button" disabled={!gerarPreviaHabilitado} className="btn btn-outline-success mr-2">Gerar prévia</button>
                         {podeReprocessar &&
                             <button onClick={(e) => regerarDocumento()} type="button" disabled={disableBtnRegerar} className="btn btn-outline-success mr-2">Regerar</button>
                         }
