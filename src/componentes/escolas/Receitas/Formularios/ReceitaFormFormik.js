@@ -334,7 +334,6 @@ export const ReceitaFormFormik = ({
                                         }
                                         onBlur={props.handleBlur}
                                         className="form-control"
-                                        // disabled={readOnlyEstorno || readOnlyClassificacaoReceita || readOnlyCampos || readOnlyValor || ![['add_receita'], ['change_receita']].some(visoesService.getPermissoes)}
 
                                     >
                                         {receita.categorias_receita ? null :
