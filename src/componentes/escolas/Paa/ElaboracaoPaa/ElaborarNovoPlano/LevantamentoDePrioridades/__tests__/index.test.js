@@ -76,7 +76,7 @@ describe('LevantamentoDePrioridades', () => {
   });
 
   it('lida com erro ao baixar o PDF sem quebrar o componente', async () => {
-    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
     downloadPdfLevantamentoPrioridades.mockRejectedValueOnce(new Error('Falha no download'));
 
     render(<LevantamentoDePrioridades />);
