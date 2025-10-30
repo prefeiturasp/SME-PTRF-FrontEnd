@@ -40,7 +40,7 @@ describe("useGetPrioridades", () => {
     const expectedData = {
       ...mockData,
       results: mockData.results.map((item) => ({
-        acao: item?.acao_associacao_objeto?.nome || item?.acao_pdde_objeto?.nome || "Recurso Próprio",
+        acao: item?.acao_associacao_objeto?.nome || item?.acao_pdde_objeto?.nome || "",
         valor_total: parseFloat(item.valor_total),
       })),
     }

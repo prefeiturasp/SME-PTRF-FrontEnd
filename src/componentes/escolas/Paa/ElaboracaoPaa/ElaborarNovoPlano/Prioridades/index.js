@@ -90,8 +90,8 @@ const Prioridades = () => {
     setModalForm({ open: true, tabelas: dadosTabelas, formModal: null });
   };
 
-  const onEditar = (rowData, focusValor=false) => {
-    setModalForm({ open: true, tabelas: dadosTabelas, formModal: rowData, focusValor: focusValor });
+  const onEditar = (rowData, focusValor=false, focusAcao=true) => {
+    setModalForm({ open: true, tabelas: dadosTabelas, formModal: rowData, focusValor: focusValor, focusAcao: focusAcao });
   };
 
   const { mutationPost: mutationPostDuplicar } = usePostDuplicarPrioridade();
@@ -119,6 +119,19 @@ const Prioridades = () => {
 
   const existePrioridadesSemValor = () => {
     return prioridades.some((prioridade) => !prioridade?.valor_total);
+  };
+  const existePrioridadesPTRFSemAcaoPTRF = () => {
+    return prioridades.some((prioridade) => !prioridade?.acao_associacao_objeto?.uuid && prioridade?.recurso === 'PTRF');
+  };
+  const existePendencias = () => {
+    const listaPendencias = []
+    if (existePrioridadesSemValor()){
+      listaPendencias.push(<>O campo <b>Valor Total</b> é de preenchimento obrigatório.</>);
+    }
+    if (existePrioridadesPTRFSemAcaoPTRF()){
+      listaPendencias.push(<>Existem prioridades sem Ação PTRF informada.</>);
+    }
+    return listaPendencias
   };
 
   return (
@@ -163,12 +176,12 @@ const Prioridades = () => {
         <>
           <p className="mb-2 mt-4">
             <Flex justify="space-between" align="center">
-              {existePrioridadesSemValor() && <Alert
+              { existePendencias().length && <Alert
                 showIcon
                 className="mr-2"
                 type="warning"
                 style={{flex: 'auto', fontSize: '13px'}}
-                description={<>O campo <b>Valor Total</b> é de preenchimento obrigatório.</>}
+                description={existePendencias().map((pendencia, index) => <div key={index}>- {pendencia} </div>)}
               />}
 
               <Typography.Text type="secondary">
@@ -212,11 +225,14 @@ const Prioridades = () => {
           tabelas={modalForm.tabelas}
           formModal={modalForm.formModal}
           focusValor={modalForm.focusValor}
+          focusAcao={modalForm.focusAcao}
           onClose={() => setModalForm({
             open: false,
             tabelas: null,
             formModal: null,
-            focusValor: false })}
+            focusValor: false,
+            focusAcao: false
+           })}
         />
       )}
 

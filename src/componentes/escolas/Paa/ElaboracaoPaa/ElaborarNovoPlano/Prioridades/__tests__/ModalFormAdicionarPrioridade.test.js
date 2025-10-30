@@ -1,6 +1,4 @@
-import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import ModalFormAdicionarPrioridade from '../ModalFormAdicionarPrioridade';
 import { useGetAcoesAssociacao } from '../../ReceitasPrevistas/hooks/useGetAcoesAssociacao';
@@ -76,11 +74,11 @@ describe('ModalFormAdicionarPrioridade', () => {
       data: [
         {
           uuid: 'acao-uuid-1',
-          acao: { nome: 'Ação PTRF 1' }
+          acao: { nome: 'Ação PTRF 1', exibir_paa: true }
         },
         {
           uuid: 'acao-uuid-2',
-          acao: { nome: 'Ação PTRF 2' }
+          acao: { nome: 'Ação PTRF 2', exibir_paa: true }
         }
       ],
       isLoading: false,
@@ -179,7 +177,7 @@ describe('ModalFormAdicionarPrioridade', () => {
   });
 
   describe('Requests HTTP mockados', () => {
-    it('deve chamar getAcoesAssociacao quando recurso PTRF for selecionado', async () => {
+    it('deve chamar getAcoesAssociacoes quando recurso PTRF for selecionado', async () => {
       renderComponent();
       let acaoSelect = null;
       let antSelectTrigger = null;
