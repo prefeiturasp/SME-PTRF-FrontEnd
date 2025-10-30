@@ -13,7 +13,7 @@ const LevantamentoDePrioridades = () => {
       const associacao_uuid = localStorage.getItem(ASSOCIACAO_UUID);
       await downloadPdfLevantamentoPrioridades(associacao_uuid);
     } catch (error) {
-      console.log("Erro ao baixar PDF:", error);
+      console.error("Erro ao baixar PDF:", error);
     } finally {
       setIsDownloading(false);
     }
