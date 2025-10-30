@@ -64,7 +64,6 @@ describe("ModalEdicaoAcaoPdde", () => {
     );
     
     const input_saldo_custeio = screen.getAllByLabelText("Custeio")[0];
-    console.log(input_saldo_custeio);
     fireEvent.change(input_saldo_custeio, { target: { value: "250.00" } });
 
     expect(screen.getByText(`Editar Recurso ${receitaPrevisaPdde.nome}`)).toBeInTheDocument();

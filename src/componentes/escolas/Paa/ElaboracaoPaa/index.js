@@ -32,7 +32,7 @@ export const ElaboracaoPaa = () => {
         localStorage.setItem("DADOS_PAA", JSON.stringify(response));
         setNotValidPaa(false);
     } catch (error) {
-        console.log(error);
+        console.error(error);
         setNotValidPaa(true);
     }
     setLoadingPaa(false);
@@ -47,7 +47,7 @@ export const ElaboracaoPaa = () => {
         let response = await getParametroPaa();
         setValidMonthPaa((dataAtual.getMonth() + 1) >= response.detail);
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
     }, [])
 
@@ -62,7 +62,7 @@ export const ElaboracaoPaa = () => {
     }
     ).catch((error) => {
       setLoading(false);
-      console.log(error);
+      console.error(error);
     });
   }, []);
 
@@ -81,7 +81,7 @@ export const ElaboracaoPaa = () => {
     <PaginasContainer>
       <BreadcrumbComponent items={itemsBreadCrumb}/>
       <h1 className="titulo-itens-painel mt-5">Plano Anual de Atividades</h1>
-      {loading ? (
+      {(loading || loadingPaa) ? (
         <Loading
             corGrafico="black"
             corFonte="dark"

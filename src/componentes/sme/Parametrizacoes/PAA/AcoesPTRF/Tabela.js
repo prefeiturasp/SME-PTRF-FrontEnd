@@ -48,7 +48,8 @@ export const Tabela = () => {
         const desabilitando_acao = valor_anterior && !valor_novo
         // verifica quando houver receitas previstas indicadas
         const tem_receitas_previstas_indicadas = values?.tem_receitas_previstas_paa_em_elaboracao;
-        if (desabilitando_acao && tem_receitas_previstas_indicadas) {
+        const tem_prioridades = values?.tem_prioridades_paa_em_elaboracao;
+        if (desabilitando_acao && (tem_receitas_previstas_indicadas || tem_prioridades)) {
             // Exibe Modal de confirmação da desativacão da ação, 
             // guardando o values para ser utilizado posteriormente na modal de
             // confirmação sem a perda dos dados em edição

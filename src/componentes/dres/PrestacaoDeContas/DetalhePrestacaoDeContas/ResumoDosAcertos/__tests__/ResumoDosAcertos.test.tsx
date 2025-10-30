@@ -50,22 +50,34 @@ jest.mock('../../DevolucaoParaAcertos/ModalConciliacaoBancaria', () => ({
   ),
 }));
 
-jest.mock('../../DevolucaoParaAcertos/ModalComprovanteSaldoConta', () => ({
-  ModalComprovanteSaldoConta: ({
+jest.mock('../../DevolucaoParaAcertos/ModalComprovanteSaldoConta', () => {
+  const React = require('react');
+
+  const ModalComprovanteSaldoConta = ({
     show,
     titulo,
+    texto,
   }: {
     show: boolean;
     titulo: string;
+    texto: string;
   }) => {
-    const testId =
-      titulo === 'Comprovante de saldo da conta'
-        ? 'modal-comprovante'
-        : 'modal-lancamentos-conciliacao';
+    let testId = 'modal-lancamentos-conciliacao';
+    if (titulo === 'Comprovante de saldo da conta') {
+      testId = 'modal-comprovante';
+    } else if (titulo === 'Justificativa de saldo da conta') {
+      testId = 'modal-justificativa';
+    }
 
-    return <div data-testid={testId} data-visible={String(show)} />;
-  },
-}));
+    return React.createElement('div', {
+      'data-testid': testId,
+      'data-visible': String(show),
+      'data-texto': texto,
+    });
+  };
+
+  return { ModalComprovanteSaldoConta };
+});
 
 jest.mock(
   '../../../../../../paginas/PaginasContainer',
@@ -328,5 +340,42 @@ describe('ResumoDosAcertos - handleDevolverParaAssociacao', () => {
     expect(screen.getByTestId('modal-comprovante')).toHaveAttribute('data-visible', 'false');
     expect(screen.getByTestId('modal-lancamentos-conciliacao')).toHaveAttribute('data-visible', 'false');
     expect(getPrestacaoDeContasDetalhe).toHaveBeenCalledTimes(1);
+  });
+
+  it('abre o modal específico de justificativa de saldo quando apenas essa pendência existe', async () => {
+    const { user, botao } = await setupComponent({
+      solicitar_correcao_de_justificativa_de_conciliacao: true,
+      contas_solicitar_correcao_de_justificativa_de_conciliacao: ['conta-1'],
+    });
+
+    await user.click(botao);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('modal-justificativa')).toHaveAttribute('data-visible', 'true');
+    });
+    expect(screen.getByTestId('modal-comprovante')).toHaveAttribute('data-visible', 'false');
+    expect(screen.getByTestId('modal-lancamentos-conciliacao')).toHaveAttribute('data-visible', 'false');
+    expect(screen.getByTestId('modal-conciliacao')).toHaveAttribute('data-visible', 'false');
+    expect(screen.getByTestId('modal-confirma')).toHaveAttribute('data-visible', 'false');
+  });
+
+  it('inclui o texto de justificativa no modal unificado quando há múltiplas pendências', async () => {
+    const { user, botao } = await setupComponent({
+      tem_pendencia_conciliacao_sem_solicitacao_de_acerto_em_conta: true,
+      contas_pendencia_conciliacao_sem_solicitacao_de_acerto_em_conta: ['conta-1'],
+      solicitar_correcao_de_justificativa_de_conciliacao: true,
+      contas_solicitar_correcao_de_justificativa_de_conciliacao: ['conta-1'],
+    });
+
+    await user.click(botao);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('modal-lancamentos-conciliacao')).toHaveAttribute('data-visible', 'true');
+    });
+    const modalLancamentos = screen.getByTestId('modal-lancamentos-conciliacao');
+    expect(modalLancamentos).toHaveAttribute('data-texto');
+    expect(modalLancamentos.getAttribute('data-texto')).toMatch(/Justificativa de saldo da conta/);
+    expect(screen.getByTestId('modal-comprovante')).toHaveAttribute('data-visible', 'false');
+    expect(screen.getByTestId('modal-justificativa')).toHaveAttribute('data-visible', 'false');
   });
 });

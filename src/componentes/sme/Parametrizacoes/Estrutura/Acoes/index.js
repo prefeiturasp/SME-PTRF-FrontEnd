@@ -180,7 +180,8 @@ export const Acoes = () => {
         )
         const edicao = formModal.operacao === 'edit';
         const tem_receitas_previstas_indicadas = formModal?.tem_receitas_previstas_paa_em_elaboracao;
-        if (edicao && desabilitando_acao && tem_receitas_previstas_indicadas) {
+        const tem_prioridades = formModal?.tem_prioridades_paa_em_elaboracao;
+        if (edicao && desabilitando_acao && (tem_receitas_previstas_indicadas || tem_prioridades)) {
             // Exibe Modal de confirmação da desativacão da ação,
             // guardando o formModal para ser utilizado posteriormente na modal de
             // confirmação sem a perda dos dados em edição
