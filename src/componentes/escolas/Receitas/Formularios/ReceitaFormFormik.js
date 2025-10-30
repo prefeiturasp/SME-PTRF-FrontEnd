@@ -96,6 +96,25 @@ export const ReceitaFormFormik = ({
                         errors,
                         setFieldValue,
                     } = props;
+
+                    const categoriaSelecionadaId = values.categoria_receita && typeof values.categoria_receita === 'object'
+                        ? values.categoria_receita.id
+                        : values.categoria_receita;
+
+                    const categoriaSelecionadaInfo =
+                        (categoriaSelecionadaId && tabelas?.categorias_receita
+                            ? tabelas.categorias_receita.find(item => String(item.id) === String(categoriaSelecionadaId))
+                            : null) ||
+                        (categoriaSelecionadaId && Array.isArray(receita?.categorias_receita)
+                            ? receita.categorias_receita.find(item => String(item.id) === String(categoriaSelecionadaId))
+                            : null);
+
+                    const categoriaSelecionadaLabel =
+                        categoriaSelecionadaInfo?.nome ||
+                        (typeof values.categoria_receita === 'object'
+                            ? values.categoria_receita?.nome
+                            : categoriaSelecionadaId);
+
                     return (
                         <form method="POST" id="receitaForm" onSubmit={props.handleSubmit}>
                             <div className="form-row">
@@ -315,15 +334,23 @@ export const ReceitaFormFormik = ({
                                         }
                                         onBlur={props.handleBlur}
                                         className="form-control"
-                                        disabled={readOnlyEstorno || readOnlyClassificacaoReceita || readOnlyCampos || readOnlyValor || ![['add_receita'], ['change_receita']].some(visoesService.getPermissoes)}
+                                        // disabled={readOnlyEstorno || readOnlyClassificacaoReceita || readOnlyCampos || readOnlyValor || ![['add_receita'], ['change_receita']].some(visoesService.getPermissoes)}
 
                                     >
                                         {receita.categorias_receita ? null :
                                             <option key={0} value="">Escolha a classificação</option>}
 
-                                        {retornaClassificacaoReceita(props.values, setFieldValue)}
-                                    </select>
+                                        {categoriaSelecionadaId && (
+                                            <option
+                                                key={`categoria-selecionada-${categoriaSelecionadaId}`}
+                                                value={categoriaSelecionadaId}
+                                            >
+                                                {categoriaSelecionadaLabel}
+                                            </option>
+                                        )}
 
+                                        {retornaClassificacaoReceita(props.values, setFieldValue, categoriaSelecionadaId)}
+                                    </select>
                                     {props.touched.categoria_receita && props.errors.categoria_receita && <span
                                         className="span_erro text-danger mt-1"> {props.errors.categoria_receita}</span>}
                                 </div>
