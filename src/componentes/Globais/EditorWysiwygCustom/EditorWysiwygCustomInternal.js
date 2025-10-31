@@ -15,6 +15,8 @@ const EditorWysiwygCustom = ({
     handleLimparEditor=()=>{},
     isSaving=false,
     onEditorReady=()=>{},
+    topExtraContent=undefined,
+    bottomExtraContent=undefined
 })=>{
 
     let REACT_APP_EDITOR_KEY = "EDITOR_KEY_REPLACE_ME";
@@ -53,6 +55,7 @@ const EditorWysiwygCustom = ({
             {tituloEditor &&
                 <p className='titulo-editor-fique-de-olho'>{tituloEditor}</p>
             }
+            {topExtraContent}
             <Editor
                 apiKey={REACT_APP_EDITOR_KEY}
                 value={textoEditor}
@@ -89,6 +92,7 @@ const EditorWysiwygCustom = ({
                 }}
                 disabled={disabled}
             />
+            {bottomExtraContent}
             <div className={`d-flex pb-3 mt-3 ${botaoCancelar ? 'justify-content-between' : 'justify-content-end'}`}>
                 {botaoCancelar && (
                     <button className="btn btn-danger" onClick={() => {

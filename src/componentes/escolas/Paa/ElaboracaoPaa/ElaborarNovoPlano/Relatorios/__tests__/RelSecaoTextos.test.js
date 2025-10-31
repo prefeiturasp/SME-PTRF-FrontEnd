@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { RelSecaoTextos } from '../RelSecaoTextos';
 import EditorWysiwygCustom from '../../../../../../Globais/EditorWysiwygCustom';
 
@@ -43,7 +43,7 @@ describe('RelSecaoTextos', () => {
         }));
     });
 
-    it('renderiza textos fixos e o editor componente chave introducao', () => {
+    it('renderiza textos fixos e o editor componente chave introducao', async () => {
         const props = {
             ...baseProps,
             secaoKey: 'introducao',
@@ -59,12 +59,13 @@ describe('RelSecaoTextos', () => {
             },
         };
         render(<RelSecaoTextos {...props} />);
-        
-        expect(screen.getByText('Texto fixo intro', { exact: false })).toBeInTheDocument();
-        expect(screen.getByText('mensagem padrão intro', { exact: false })).toBeInTheDocument();
+        await waitFor(() => {
+            expect(screen.getByText('Texto fixo intro', { exact: false })).toBeInTheDocument();
+            expect(screen.getByText('Mensagem padrão intro', { exact: false })).toBeInTheDocument();
+        })
     });
 
-    it('renderiza textos fixos e o editor componente chave conclusao', () => {
+    it('renderiza textos fixos e o editor componente chave conclusao', async () => {
         const props = {
             ...baseProps,
             secaoKey: 'conclusao',
@@ -80,11 +81,13 @@ describe('RelSecaoTextos', () => {
             },
         };
         render(<RelSecaoTextos {...props} />);
-        expect(screen.getByText('Texto fixo conclusão', { exact: false })).toBeInTheDocument();
-        expect(screen.getByText('mensagem padrão conclusão', { exact: false })).toBeInTheDocument();
+        await waitFor(() => {
+            expect(screen.getByText('Texto fixo conclusão', { exact: false })).toBeInTheDocument();
+            expect(screen.getByText('mensagem padrão conclusão', { exact: false })).toBeInTheDocument();
+        })
     });
 
-    it('renderiza textos fixos e o editor componente chave outros', () => {
+    it('renderiza textos fixos e o editor componente chave outros', async () => {
         const props = {
             ...baseProps,
             secaoKey: 'outros',
@@ -100,8 +103,11 @@ describe('RelSecaoTextos', () => {
             },
         };
         render(<RelSecaoTextos {...props} />);
-        expect(screen.getByText('Texto fixo outros', { exact: false })).toBeInTheDocument();
-        expect(screen.getByText('mensagem padrão outros', { exact: false })).toBeInTheDocument();
+        await waitFor(() => {
+            expect(screen.getByText('Texto fixo outros', { exact: false })).toBeInTheDocument();
+            // Somente as chave introducao e conclusao possuem textos fixos
+            expect(screen.queryByText('Mensagem padrão outros', { exact: false })).not.toBeInTheDocument();
+        })
     });
 
     it('chama ação limpar', () => {
