@@ -35,6 +35,8 @@ export const ResumoDosAcertos = () => {
 
     const prestacaoDeContas = useCarregaPrestacaoDeContasPorUuid(prestacao_conta_uuid)
 
+    const flagAjustesDespesasAnterioresAtiva = visoesService.featureFlagAtiva('ajustes-despesas-anteriores')
+
     const [dataLimiteDevolucao, setDataLimiteDevolucao] = useState('')
     const [showModalErroDevolverParaAcerto, setShowModalErroDevolverParaAcerto] = useState(false)
     const [textoErroDevolverParaAcerto, setTextoErroDevolverParaAcerto] = useState('')
@@ -184,6 +186,20 @@ export const ResumoDosAcertos = () => {
 
     // Necessario para exibir ou não o botão Histórico da Tabs
     const totalAnalisesDePcDevolvidas = useMemo(() => analisesDePcDevolvidas.length, [analisesDePcDevolvidas]);
+
+    const totalAnalisesDeContaDaPrestacao = useMemo(() => {
+        if (!analisesDeContaDaPrestacao || analisesDeContaDaPrestacao.length === 0) {
+            return 0;
+        }
+
+        return analisesDeContaDaPrestacao.reduce((contador, analise) => {
+            if (analise && analise.uuid) {
+                return contador + 1;
+            }
+
+            return contador;
+        }, 0);
+    }, [analisesDeContaDaPrestacao]);
 
     useEffect(() => {
         let mounted = true;
@@ -479,9 +495,28 @@ export const ResumoDosAcertos = () => {
         meapcservice.setAnaliseDrePorUsuario(visoesService.getUsuarioLogin(), objetoAnaliseDrePorUsuario)
     }
 
+    const possuiAcertosSelecionados = useMemo(() => {
+        if (flagAjustesDespesasAnterioresAtiva) {
+            return (totalLancamentosAjustes > 0) ||
+                (totalDocumentosAjustes > 0) ||
+                (totalAnalisesDeContaDaPrestacao > 0) ||
+                (totalDespesasPeriodosAnterioresAjustes > 0);
+        }
+
+        return (totalLancamentosAjustes > 0) ||
+            (totalDocumentosAjustes > 0) ||
+            (totalAnalisesDeContaDaPrestacao > 0);
+    }, [
+        flagAjustesDespesasAnterioresAtiva,
+        totalLancamentosAjustes,
+        totalDocumentosAjustes,
+        totalAnalisesDeContaDaPrestacao,
+        totalDespesasPeriodosAnterioresAjustes
+    ])
+
     const podeDevolver = useMemo(() => {
-        return prestacaoDeContas.pode_devolver && editavel && dataLimiteDevolucao && (totalLancamentosAjustes > 0 || totalDocumentosAjustes > 0 || totalExtratosAjustes > 0 || totalDespesasPeriodosAnterioresAjustes > 0) 
-    }, [prestacaoDeContas, editavel, dataLimiteDevolucao, totalLancamentosAjustes, totalDocumentosAjustes, totalExtratosAjustes, totalDespesasPeriodosAnterioresAjustes])
+        return editavel && dataLimiteDevolucao && possuiAcertosSelecionados;
+    }, [editavel, dataLimiteDevolucao, possuiAcertosSelecionados])
     
     const msgNaoExistemSolicitacoesDeAcerto = useMemo(() => {
         if ((totalLancamentosAjustes > 0 || totalDocumentosAjustes > 0 || totalExtratosAjustes > 0 || totalDespesasPeriodosAnterioresAjustes > 0)){   
