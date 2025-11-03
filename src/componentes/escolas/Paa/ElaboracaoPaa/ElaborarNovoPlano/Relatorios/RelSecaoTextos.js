@@ -13,7 +13,6 @@ export const RelSecaoTextos = ({
     const editorContainerRef = useRef(null);
     const tooltipIconRef = useRef(null);
 
-    const tooltipOffsetTop = 10;
 
     const handleLimparComProtecao = (textoAtual) => {
         return '<p><br></p>';
@@ -32,13 +31,22 @@ export const RelSecaoTextos = ({
             borderRadius: '2px',
             userSelect: 'none'
         }
+
+        const tooltipMsg = () => {
+            const s = secaoKey === 'introducao' ? 'no início do' :
+                        (secaoKey === 'conclusao' ? 'ao final do' : 'no');
+            return `Texto padrão inserido automaticamente ${s} documento`;
+        }
         return (
             <div style={stylesFixedTexts} className='mb-3'>
-                <div id={textoFixoId} dangerouslySetInnerHTML={{ __html: msg }}></div>
-                <Tooltip title="Texto padrão inserido automaticamente no documento" placement="top">
+                <div
+                    style={{paddingRight: 20}}
+                    id={textoFixoId}
+                    dangerouslySetInnerHTML={{ __html: msg }}></div>
+                <Tooltip title={tooltipMsg()} placement="topRight">
                     <span className="tooltip-icon-externo"
                         ref={tooltipIconRef}
-                        style={{ top: tooltipOffsetTop }}
+                        style={{ top: 10, right: 10 }}
                         >
                         <FontAwesomeIcon icon={faInfoCircle} />
                     </span>
