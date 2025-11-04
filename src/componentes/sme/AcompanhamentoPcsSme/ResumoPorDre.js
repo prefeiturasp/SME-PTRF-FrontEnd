@@ -7,9 +7,9 @@ import {Column} from 'primereact/column';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEye} from "@fortawesome/free-solid-svg-icons";
 
-import { Tooltip as ReactTooltip } from "react-tooltip";
 import { formataNomeDreParaTabelas } from "../../../utils/FormataNomeDreParaTabelas";
 import {faExclamationCircle} from "@fortawesome/free-solid-svg-icons";
+import { TooltipWrapper } from "../../Globais/UI/Tooltip";
 
 export const ResumoPorDre = ({resumoPorDre, statusPeriodo, periodoEscolhido}) => {
 
@@ -82,14 +82,13 @@ export const ResumoPorDre = ({resumoPorDre, statusPeriodo, periodoEscolhido}) =>
 
     const emAnaliseHeaderTemplate = () => {
         return (
-            <span data-html={true} data-tooltip-content={"Soma das PCs Não recebidas, Em análise e Devolvidas para acertos."} data-tooltip-id="em-analise-header-id">
+            <TooltipWrapper id="em-analise-header-id" content="Soma das PCs Não recebidas, Em análise e Devolvidas para acertos.">
                 <span>Em análise</span>
                 <FontAwesomeIcon
                     style={{ marginLeft: "4px", color: '#2B7D83' }}
                     icon={faExclamationCircle}
                 />
-                <ReactTooltip id="em-analise-header-id" html={true}/>
-            </span>
+            </TooltipWrapper>
         )
     }
 
@@ -97,10 +96,9 @@ export const ResumoPorDre = ({resumoPorDre, statusPeriodo, periodoEscolhido}) =>
         const quantidadeCardsEmAnalise = rowData.cards.EM_ANALISE + rowData.cards.NAO_RECEBIDA + rowData.cards.DEVOLVIDA;
 
         return (
-            <span data-html={true} data-tooltip-content={"Soma das PCs Não recebidas, Em análise e Devolvidas para acertos."} data-tooltip-id="em-analise-body-id">
+            <TooltipWrapper id="em-analise-body-id" content="Soma das PCs Não recebidas, Em análise e Devolvidas para acertos.">
                 <span style={estiloLinha}> {quantidadeCardsEmAnalise}</span>
-                <ReactTooltip html={true} id="em-analise-body-id"/>
-            </span>
+            </TooltipWrapper>
         )
     }
 

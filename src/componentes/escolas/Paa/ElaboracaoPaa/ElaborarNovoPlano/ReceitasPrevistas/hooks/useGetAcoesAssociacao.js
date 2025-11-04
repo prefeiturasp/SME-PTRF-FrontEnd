@@ -11,7 +11,7 @@ export const useGetAcoesAssociacao = (options = {}) => {
     refetch,
   } = useQuery(["acoes-associacao"], () => getAcoesAssociacao(null, 1000), {
     keepPreviousData: true,
-    staleTime: 5 * 60 * 1000,
+    staleTime: 5000,
     refetchOnWindowFocus: true,
     enabled: options.enabled !== false,
     ...options

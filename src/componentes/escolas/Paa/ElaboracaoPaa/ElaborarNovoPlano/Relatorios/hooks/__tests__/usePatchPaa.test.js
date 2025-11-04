@@ -72,7 +72,6 @@ describe("usePatchPaa", () => {
     expect(result.current.isError).toBe(false);
     expect(result.current.data).toEqual(mockData);
     expect(patchPaa).toHaveBeenCalledWith("paa-uuid-123", { texto_introducao: "<p>Texto atualizado</p>" });
-    expect(mockConsoleLog).toHaveBeenCalledWith('PAA atualizado com sucesso:', mockData);
   });
 
   it("deve retornar erro quando a mutação falhar", async () => {

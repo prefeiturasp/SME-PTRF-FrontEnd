@@ -133,6 +133,12 @@ export const patchReceitaPrevistaPDDE = async (uuid, payload) => {
   ).data;
 };
 
+export const getPaaReceitasPrevistas = async (uuid) => {
+  return (
+    await api.get(`api/paa/${uuid}/receitas-previstas/`, authHeader())
+  ).data;
+};
+
 export const postDesativarAtualizacaoSaldoPAA = async (uuid) => {
   return (
     await api.post(`api/paa/${uuid}/desativar-atualizacao-saldo/`, {}, authHeader())

@@ -239,13 +239,13 @@ export const  InfosContas = ({dadosDaAssociacao}) =>{
                                     <div className="col-12 col-md-3 form-group">
                                         <label>
                                             <strong>Data do encerramento</strong> 
-                                            <span data-html={true} data-tooltip-content="Data de encerramento da conta na agência.">
+                                            <span data-tooltip-id="data-encerramento" data-tooltip-content="Data de encerramento da conta na agência.">
                                                 <FontAwesomeIcon
                                                     style={{marginLeft: "10px", color: '#2B7D83'}}
                                                     icon={faExclamationCircle}
                                                 />
                                             </span>
-                                            <ReactTooltip html={true}/>
+                                            <ReactTooltip id="data-encerramento"/>
                                         </label>
                                         <input className="form-control" disabled value={conta.solicitacao_encerramento !== null ? formataData(conta.solicitacao_encerramento.data_de_encerramento_na_agencia)  : null}/>
                                     </div>

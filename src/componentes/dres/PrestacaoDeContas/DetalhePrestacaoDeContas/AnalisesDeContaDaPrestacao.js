@@ -136,7 +136,13 @@ export const AnalisesDeContaDaPrestacao = ({infoAta, analisesDeContaDaPrestacao,
         let permite = true;
 
         if(index > -1){
-            if(!analisesDeContaDaPrestacao[index].saldo_extrato && !analisesDeContaDaPrestacao[index].data_extrato && !analisesDeContaDaPrestacao[index].solicitar_envio_do_comprovante_do_saldo_da_conta && !analisesDeContaDaPrestacao[index].solicitar_correcao_da_data_do_saldo_da_conta){
+            if(
+                !analisesDeContaDaPrestacao[index].saldo_extrato &&
+                !analisesDeContaDaPrestacao[index].data_extrato &&
+                !analisesDeContaDaPrestacao[index].solicitar_envio_do_comprovante_do_saldo_da_conta &&
+                !analisesDeContaDaPrestacao[index].solicitar_correcao_da_data_do_saldo_da_conta &&
+                !analisesDeContaDaPrestacao[index].solicitar_correcao_de_justificativa_de_conciliacao
+            ){
                 permite = false;
             }
 
@@ -369,6 +375,22 @@ export const AnalisesDeContaDaPrestacao = ({infoAta, analisesDeContaDaPrestacao,
                                                     handleChangeAnalisesDeContaDaPrestacao(e.target.name, e.target.checked)
                                                 }}
                                                 name="solicitar_envio_do_comprovante_do_saldo_da_conta"
+                                                disabled={!editavel || !adicaoAjusteSaldo}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="row container-extrato-bancario ml-0 mr-0">
+                                        <div className="col-12">
+                                            <Form.Check
+                                                type="checkbox"
+                                                checked={analisesDeContaDaPrestacao[index].solicitar_correcao_de_justificativa_de_conciliacao}
+                                                label={"Solicitar inclusão de justificativa"}
+                                                key={index}
+                                                onChange={(e) => {
+                                                    handleChangeAnalisesDeContaDaPrestacao(e.target.name, e.target.checked)
+                                                }}
+                                                name="solicitar_correcao_de_justificativa_de_conciliacao"
                                                 disabled={!editavel || !adicaoAjusteSaldo}
                                             />
                                         </div>

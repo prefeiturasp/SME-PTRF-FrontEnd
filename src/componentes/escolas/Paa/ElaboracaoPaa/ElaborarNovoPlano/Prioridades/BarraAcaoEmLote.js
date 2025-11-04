@@ -53,6 +53,7 @@ export const BarraAcaoEmLote = ({
               |
             </div>
             <IconButton
+              className="botao-cancelar-selecao-lote"
               icon="faTimesCircle"
               label="Cancelar"
               variant=""

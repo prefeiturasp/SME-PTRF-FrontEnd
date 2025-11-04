@@ -97,6 +97,14 @@ export const Tabela = forwardRef(({ data, handleEditar, handleDuplicar, handleEx
                 sortable
                 body={(rowData) => (
                     <>
+                        {!rowData.acao_associacao && rowData.recurso === 'PTRF' &&
+                            <BadgeCustom
+                                badge={true}
+                                buttonColor='#62a9ad'
+                                buttonLabel='Informar Ação'
+                                handleClick={() => handleEditar(rowData, false, true)}
+                            />
+                        }
                         <div>{rowData.acao}</div>
                         {!rowData.prioridade &&
                             <BadgeCustom
@@ -137,7 +145,7 @@ export const Tabela = forwardRef(({ data, handleEditar, handleDuplicar, handleEx
                                 badge={true}
                                 buttonColor='#62a9ad'
                                 buttonLabel='Informar Valor'
-                                handleClick={() => handleEditar(rowData, true)}
+                                handleClick={() => handleEditar(rowData, true, false)}
                             />
                             :
                             <>{formatMoneyBRL(rowData.valor_total)}</>
