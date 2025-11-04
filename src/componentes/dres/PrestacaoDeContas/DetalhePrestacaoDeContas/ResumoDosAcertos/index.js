@@ -437,7 +437,7 @@ export const ResumoDosAcertos = () => {
     }, [contasSemComprovanteTexto])
 
     const textoJustificativaSaldoConciliacao = useMemo(() => {
-        return `<p><strong>Justificativa de saldo da conta</strong></p><p>A(s) conta(s) ${contasJustificativaConciliacaoTexto} não possuem justificativa de saldo da conta. Favor solicitar o acerto para inclusão da justificativa para que a PC possa ser devolvida.</p>`;
+        return `<p><strong>Justificativa de saldo da conta</strong></p><p>A(s) conta(s) ${contasJustificativaConciliacaoTexto} não possuem justificativa de diferença entre saldo reprogramado e saldo bancário. Favor solicitar o acerto para inclusão da justificativa para que a PC possa ser devolvida.</p>`;
     }, [contasJustificativaConciliacaoTexto])
 
     const textoModalLancamentosConciliacao = useMemo(() => {
