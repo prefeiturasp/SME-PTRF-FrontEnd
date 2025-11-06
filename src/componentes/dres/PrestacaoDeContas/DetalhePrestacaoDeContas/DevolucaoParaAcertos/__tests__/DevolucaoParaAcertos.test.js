@@ -284,7 +284,7 @@ describe("DevolucaoParaAcertos", () => {
 
     expect(
       within(modalJustificativaElement).getByText(
-        /A\(s\) conta\(s\) Conta Corrente não possuem justificativa de saldo da conta/i
+        /A\(s\) conta\(s\) Conta Corrente não possuem justificativa de diferença entre saldo reprogramado e saldo bancário/i
       )
     ).toBeInTheDocument();
     expect(
@@ -321,7 +321,7 @@ describe("DevolucaoParaAcertos", () => {
     expect(modalText).toBeInTheDocument();
     expect(
       within(modalUnificadoElement).getByText(
-        /A\(s\) conta\(s\) Poupança não possuem justificativa de saldo da conta/i
+        /A\(s\) conta\(s\) Poupança não possuem justificativa de diferença entre saldo reprogramado e saldo bancário/i
       )
     ).toBeInTheDocument();
 
