@@ -22,6 +22,10 @@ import { Tooltip as ReactTooltip } from "react-tooltip";
 import { visoesService } from "../../../../../services/visoes.service";
 import {useHandleDevolverParaAssociacao} from "../hooks/useHandleDevolverParaAssociacao";
 
+const TITULO_ACERTOS_CONCILIACAO = 'Acertos que alteram a conciliação bancária';
+const TITULO_COMPROVANTE_SALDO = 'Comprovante de saldo da conta';
+const TITULO_JUSTIFICATIVA_SALDO = 'Justificativa de saldo da conta';
+
 const DevolucaoParaAcertos = ({
     prestacaoDeContas, 
     analisesDeContaDaPrestacao, 
@@ -344,41 +348,53 @@ const DevolucaoParaAcertos = ({
         return formatarListaContas(contasJustificativaConciliacao);
     }, [formatarListaContas, contasJustificativaConciliacao]);
 
-    const textoSolicitacoesLancamentosConciliacao = useMemo(() => {
-        return `<p><strong>Acertos que alteram a conciliação bancária</strong></p><p>Foram indicados acertos de inclusão/exclusão de lançamento na(s) conta(s) ${contasLancamentosConciliacaoTexto} que alteram o saldo da conciliação bancária. Favor solicitar o acerto de saldo para que a PC possa ser devolvida.</p>`;
+    const descricaoSolicitacoesLancamentosConciliacao = useMemo(() => {
+        return `Foram indicados acertos de inclusão/exclusão de lançamento na(s) conta(s) ${contasLancamentosConciliacaoTexto} que alteram o saldo da conciliação bancária. Favor solicitar o acerto de saldo para que a PC possa ser devolvida.`;
     }, [contasLancamentosConciliacaoTexto]);
 
-    const textoComprovanteSaldoConciliacao = useMemo(() => {
-        return `<p><strong>Comprovante de saldo da conta</strong></p><p>A(s) conta(s) ${contasSemComprovanteTexto} não possuem comprovante de saldo. Favor solicitar o acerto para envio do comprovante para que a PC possa ser devolvida.</p>`;
+    const descricaoComprovanteSaldoConciliacao = useMemo(() => {
+        return `A(s) conta(s) ${contasSemComprovanteTexto} não possuem comprovante de saldo. Favor solicitar o acerto para envio do comprovante para que a PC possa ser devolvida.`;
     }, [contasSemComprovanteTexto]);
 
-    const textoJustificativaSaldoConciliacao = useMemo(() => {
-        return `<p><strong>Justificativa de saldo da conta</strong></p><p>A(s) conta(s) ${contasJustificativaConciliacaoTexto} não possuem justificativa de diferença entre saldo reprogramado e saldo bancário. Favor solicitar o acerto para inclusão da justificativa para que a PC possa ser devolvida.</p>`;
+    const descricaoJustificativaSaldoConciliacao = useMemo(() => {
+        return `A(s) conta(s) ${contasJustificativaConciliacaoTexto} não possuem justificativa de diferença entre saldo reprogramado e saldo bancário. Favor solicitar o acerto para inclusão da justificativa para que a PC possa ser devolvida.`;
     }, [contasJustificativaConciliacaoTexto]);
+
+    const blocoSolicitacoesLancamentosConciliacao = useMemo(() => {
+        return `<p><strong>${TITULO_ACERTOS_CONCILIACAO}</strong></p><p>${descricaoSolicitacoesLancamentosConciliacao}</p>`;
+    }, [descricaoSolicitacoesLancamentosConciliacao]);
+
+    const blocoComprovanteSaldoConciliacao = useMemo(() => {
+        return `<p><strong>${TITULO_COMPROVANTE_SALDO}</strong></p><p>${descricaoComprovanteSaldoConciliacao}</p>`;
+    }, [descricaoComprovanteSaldoConciliacao]);
+
+    const blocoJustificativaSaldoConciliacao = useMemo(() => {
+        return `<p><strong>${TITULO_JUSTIFICATIVA_SALDO}</strong></p><p>${descricaoJustificativaSaldoConciliacao}</p>`;
+    }, [descricaoJustificativaSaldoConciliacao]);
 
     const textoModalLancamentosConciliacao = useMemo(() => {
         if (mostrarModalLancamentosSomenteSolicitacoes) {
-            return textoSolicitacoesLancamentosConciliacao;
+            return blocoSolicitacoesLancamentosConciliacao;
         }
         const blocos = [];
         if (contasPendenciaLancamentosConciliacao.length > 0) {
-            blocos.push(textoSolicitacoesLancamentosConciliacao);
+            blocos.push(blocoSolicitacoesLancamentosConciliacao);
         }
         if (contasPendenciaConciliacao.length > 0) {
-            blocos.push(textoComprovanteSaldoConciliacao);
+            blocos.push(blocoComprovanteSaldoConciliacao);
         }
         if (contasJustificativaConciliacao.length > 0) {
-            blocos.push(textoJustificativaSaldoConciliacao);
+            blocos.push(blocoJustificativaSaldoConciliacao);
         }
         if (blocos.length === 0) {
-            return textoSolicitacoesLancamentosConciliacao;
+            return blocoSolicitacoesLancamentosConciliacao;
         }
         return blocos.join('');
     }, [
         mostrarModalLancamentosSomenteSolicitacoes,
-        textoSolicitacoesLancamentosConciliacao,
-        textoComprovanteSaldoConciliacao,
-        textoJustificativaSaldoConciliacao,
+        blocoSolicitacoesLancamentosConciliacao,
+        blocoComprovanteSaldoConciliacao,
+        blocoJustificativaSaldoConciliacao,
         contasPendenciaLancamentosConciliacao,
         contasPendenciaConciliacao,
         contasJustificativaConciliacao
@@ -505,7 +521,7 @@ const DevolucaoParaAcertos = ({
                                 handleClose={() => setShowModalJustificativaSaldoConta(false)}
                                 onConfirmar={handleIrParaJustificativaSaldoConta}
                                 titulo="Justificativa de saldo da conta"
-                                texto={textoJustificativaSaldoConciliacao}
+                                texto={descricaoJustificativaSaldoConciliacao}
                                 primeiroBotaoTexto="Fechar"
                                 primeiroBotaoCss="outline-success"
                                 segundoBotaoCss="success"
@@ -518,7 +534,7 @@ const DevolucaoParaAcertos = ({
                                 handleClose={() => setShowModalComprovanteSaldoConta(false)}
                                 onConfirmar={handleConfirmarComprovanteSaldo}
                                 titulo="Comprovante de saldo da conta"
-                                texto={`A(s) conta(s) ${contasSemComprovanteTexto} não possuem comprovante de saldo. Favor solicitar o acerto para envio do comprovante para que a PC possa ser devolvida.`}
+                                texto={descricaoComprovanteSaldoConciliacao}
                                 primeiroBotaoTexto="Fechar"
                                 primeiroBotaoCss="outline-success"
                                 segundoBotaoCss="success"
