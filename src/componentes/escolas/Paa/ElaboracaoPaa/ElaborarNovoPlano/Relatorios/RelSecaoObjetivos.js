@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Checkbox, Input, List } from "antd";
 import { useGetObjetivosPaa } from "./hooks/useGetObjetivosPaa";
 import { IconButton } from "../../../../../Globais/UI/Button/IconButton";
@@ -19,12 +19,23 @@ export const RelSecaoObjetivos = ({ paaVigente, onSalvarObjetivos, isSaving }) =
     setItems(novosItems);
   }, [data, paaVigente]);
 
-  const handleSave = () => {
+  const getPayload = useCallback(() => {
     const objetivosPayload = items
-      .filter((item) => item.checked || item._destroy)
+      .filter((item) => item.nome !== "" && (item.checked || item._destroy))
       .map((item) =>
         item.uuid ? { objetivo: item.uuid, nome: item.nome, _destroy: item._destroy || false } : { nome: item.nome }
       );
+    return objetivosPayload;
+  }, [items]);
+
+  const podeSalvar = useMemo(() => {
+    const objetivosPayload = getPayload();
+
+    return objetivosPayload.length > 0;
+  }, [getPayload]);
+
+  const handleSave = () => {
+    const objetivosPayload = getPayload();
 
     onSalvarObjetivos(objetivosPayload);
   };
@@ -133,7 +144,7 @@ export const RelSecaoObjetivos = ({ paaVigente, onSalvarObjetivos, isSaving }) =
       />
 
       <div className="d-flex  justify-content-end pb-3 mt-3">
-        <button className="btn btn btn-success" onClick={handleSave}>
+        <button className="btn btn btn-success" onClick={handleSave} disabled={!podeSalvar}>
           Salvar
         </button>
       </div>
