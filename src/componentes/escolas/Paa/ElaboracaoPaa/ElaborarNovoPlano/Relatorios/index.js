@@ -1,14 +1,13 @@
-import React, { useState } from 'react';
-import './styles.css';
+import React, { useState } from "react";
+import "./styles.css";
 
-import chevronUp from '../../../../../../assets/img/icone-chevron-up.svg';
-import chevronDown from '../../../../../../assets/img/icone-chevron-down.svg';
+import chevronUp from "../../../../../../assets/img/icone-chevron-up.svg";
+import chevronDown from "../../../../../../assets/img/icone-chevron-down.svg";
 
-import { useGetTextosPaa } from './hooks/useGetTextosPaa';
-import { useGetPaaVigente } from './hooks/useGetPaaVigente';
-import { ASSOCIACAO_UUID } from '../../../../../../services/auth.service';
-import { RenderSecao } from './RenderSecao';
-
+import { useGetTextosPaa } from "./hooks/useGetTextosPaa";
+import { useGetPaaVigente } from "./hooks/useGetPaaVigente";
+import { ASSOCIACAO_UUID } from "../../../../../../services/auth.service";
+import { RenderSecao } from "./RenderSecao";
 
 const Relatorios = ({ initialExpandedSections }) => {
   const defaultExpandedState = {
@@ -29,9 +28,9 @@ const Relatorios = ({ initialExpandedSections }) => {
   const { paaVigente, isLoading: isLoadingPaa } = useGetPaaVigente(associacaoUuid);
 
   const toggleSection = (sectionKey) => {
-    setExpandedSections(prev => ({
+    setExpandedSections((prev) => ({
       ...prev,
-      [sectionKey]: !prev[sectionKey]
+      [sectionKey]: !prev[sectionKey],
     }));
   };
 
@@ -62,7 +61,7 @@ const Relatorios = ({ initialExpandedSections }) => {
 
   const renderSecao = (secaoKey, config) => {
     const isExpanded = expandedSections[secaoKey];
-    
+
     return (
       <div className={`render-secao-${secaoKey}`}>
         <RenderSecao
@@ -102,10 +101,10 @@ const Relatorios = ({ initialExpandedSections }) => {
               <div className="documento-status">Documento pendente de geração</div>
             </div>
             <div className="documento-actions">
-              <button className="btn-dropdown" onClick={() => toggleSection('planoAnual')}>
-                <img 
-                  src={expandedSections.planoAnual ? chevronUp : chevronDown} 
-                  alt={expandedSections.planoAnual ? 'Fechar' : 'Abrir'} 
+              <button className="btn-dropdown" onClick={() => toggleSection("planoAnual")}>
+                <img
+                  src={expandedSections.planoAnual ? chevronUp : chevronDown}
+                  alt={expandedSections.planoAnual ? "Fechar" : "Abrir"}
                   className="chevron-icon"
                 />
               </button>
@@ -115,9 +114,7 @@ const Relatorios = ({ initialExpandedSections }) => {
           {/* Subseções do Plano anual */}
           {expandedSections.planoAnual && (
             <div className="plano-anual-subsecoes">
-              {Object.entries(secoesConfig).map(([secaoKey, config]) => 
-                renderSecao(secaoKey, config)
-              )}
+              {Object.entries(secoesConfig).map(([secaoKey, config]) => renderSecao(secaoKey, config))}
             </div>
           )}
         </div>

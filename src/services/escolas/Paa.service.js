@@ -199,3 +199,7 @@ export const deletePrioridade = async (uuid) => {
 export const deletePrioridadesEmLote = async (payload) => {
   return (await api.post(`api/prioridades-paa/excluir-lote/`, payload, authHeader())).data;
 }
+
+export const getObjetivosPaa = async () => {
+  return (await api.get(`api/paa/${localStorage.getItem("PAA")}/objetivos/`, authHeader())).data;
+}
