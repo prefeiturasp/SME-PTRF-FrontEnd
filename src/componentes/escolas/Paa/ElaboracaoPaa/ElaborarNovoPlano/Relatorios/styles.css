@@ -181,50 +181,50 @@
   flex: 1;
 }
 
-.textos-introducao {
+.textos-campo-1 {
   margin-top: 8px;
 }
 
-.texto-introducao {
+.texto-campo-1 {
   font-size: 14px;
   color: #42474A;
 }
 
-.texto-introducao p {
+.texto-campo-1 p {
   margin: 0 0 8px 0;
 }
 
-.texto-introducao p:last-child {
+.texto-campo-1 p:last-child {
   margin-bottom: 0;
 }
 
-.texto-introducao strong {
+.texto-campo-1 strong {
   font-weight: 600;
   color: #333;
 }
 
-.texto-introducao em {
+.texto-campo-1 em {
   font-style: italic;
 }
 
-.texto-introducao ul, .texto-introducao ol {
+.texto-campo-1 ul, .texto-campo-1 ol {
   margin: 8px 0;
   padding-left: 20px;
 }
 
-.texto-introducao li {
+.texto-campo-1 li {
   margin-bottom: 4px;
 }
 
-/* Estilos para o conteúdo da introdução dentro do header */
-.introducao-content {
+/* Estilos para o conteúdo da item expandido dentro do header */
+.expanded-item-content {
   margin-top: 12px;
   position: relative;
   z-index: 3;
 }
 
-/* Container dos textos de introdução com fundo azul */
-.textos-introducao {
+/* Container dos textos de campo 1 com fundo azul */
+.textos-campo-1 {
   background: #d3f1f3;
   padding: 12px;
   border-radius: 4px;

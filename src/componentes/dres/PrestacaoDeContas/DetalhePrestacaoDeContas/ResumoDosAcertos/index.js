@@ -35,6 +35,8 @@ export const ResumoDosAcertos = () => {
 
     const prestacaoDeContas = useCarregaPrestacaoDeContasPorUuid(prestacao_conta_uuid)
 
+    const flagAjustesDespesasAnterioresAtiva = visoesService.featureFlagAtiva('ajustes-despesas-anteriores')
+
     const [dataLimiteDevolucao, setDataLimiteDevolucao] = useState('')
     const [showModalErroDevolverParaAcerto, setShowModalErroDevolverParaAcerto] = useState(false)
     const [textoErroDevolverParaAcerto, setTextoErroDevolverParaAcerto] = useState('')
@@ -53,7 +55,11 @@ export const ResumoDosAcertos = () => {
     const [editavel, setEditavel] = useState(false)
     const [showModalConciliacaoBancaria, setShowModalConciliacaoBancaria] = useState(false)
     const [showModalComprovanteSaldoConta, setShowModalComprovanteSaldoConta] = useState(false)
+    const [showModalLancamentosConciliacao, setShowModalLancamentosConciliacao] = useState(false)
     const [contasPendenciaConciliacao, setContasPendenciaConciliacao] = useState([])
+    const [contasPendenciaLancamentosConciliacao, setContasPendenciaLancamentosConciliacao] = useState([])
+    const [showModalJustificativaSaldoConta, setShowModalJustificativaSaldoConta] = useState(false)
+    const [contasSolicitarCorrecaoJustificativaConciliacao, setContasSolicitarCorrecaoJustificativaConciliacao] = useState([])
     const [btnDevolverParaAcertoDisabled, setBtnDevolverParaAcertoDisabled] = useState(false)
 
     const handleDevolverParaAssociacao = useHandleDevolverParaAssociacao({
@@ -62,7 +68,11 @@ export const ResumoDosAcertos = () => {
         setShowModalComprovanteSaldoConta,
         setShowModalConciliacaoBancaria,
         setShowModalConfirmaDevolverParaAcerto,
-        setBtnDevolverParaAcertoDisabled
+        setBtnDevolverParaAcertoDisabled,
+        setContasPendenciaLancamentosConciliacao,
+        setShowModalLancamentosConciliacao,
+        setShowModalJustificativaSaldoConta,
+        setContasSolicitarCorrecaoJustificativaConciliacao
     });
 
     const carregaInfoAta = useCallback(async () =>{
@@ -176,6 +186,20 @@ export const ResumoDosAcertos = () => {
 
     // Necessario para exibir ou não o botão Histórico da Tabs
     const totalAnalisesDePcDevolvidas = useMemo(() => analisesDePcDevolvidas.length, [analisesDePcDevolvidas]);
+
+    const totalAnalisesDeContaDaPrestacao = useMemo(() => {
+        if (!analisesDeContaDaPrestacao || analisesDeContaDaPrestacao.length === 0) {
+            return 0;
+        }
+
+        return analisesDeContaDaPrestacao.reduce((contador, analise) => {
+            if (analise && analise.uuid) {
+                return contador + 1;
+            }
+
+            return contador;
+        }, 0);
+    }, [analisesDeContaDaPrestacao]);
 
     useEffect(() => {
         let mounted = true;
@@ -303,20 +327,142 @@ export const ResumoDosAcertos = () => {
         setShowModalConfirmaDevolverParaAcerto(true)
     }, [])
 
-    const handleConfirmarComprovanteSaldo = useCallback(() => {
-        setShowModalComprovanteSaldoConta(false)
+    const irParaExtratoBancario = useCallback(() => {
         navigate(`/dre-detalhe-prestacao-de-contas/${prestacao_conta_uuid}#collapse_sintese_por_realizacao_da_despesa`)
     }, [prestacao_conta_uuid, navigate])
+
+    const handleConfirmarComprovanteSaldo = useCallback(() => {
+        setShowModalComprovanteSaldoConta(false)
+        irParaExtratoBancario();
+    }, [irParaExtratoBancario])
+
+    const handleIrParaJustificativaSaldoConta = useCallback(() => {
+        setShowModalJustificativaSaldoConta(false);
+        irParaExtratoBancario();
+    }, [irParaExtratoBancario])
+
+    const handleIrParaExtratoLancamentosConciliacao = useCallback(() => {
+        setShowModalLancamentosConciliacao(false);
+        irParaExtratoBancario();
+    }, [irParaExtratoBancario])
+
+    const handleFecharModalLancamentosConciliacao = useCallback(() => {
+        setShowModalLancamentosConciliacao(false);
+    }, [])
+
+    const obterNomeContaPorUuid = useCallback((uuid) => {
+        if (!uuid || !infoAta?.contas) {
+            return null;
+        }
+
+        return infoAta.contas.find(_conta => _conta.conta_associacao.uuid === uuid)?.conta_associacao?.nome || null;
+    }, [infoAta]);
+
+    const obterNomeConta = useCallback((conta) => {
+        if (!conta) {
+            return 'N/E';
+        }
+
+        if (typeof conta === 'string') {
+            return obterNomeContaPorUuid(conta) || 'N/E';
+        }
+
+        if (typeof conta === 'object') {
+            return conta.nome ||
+                conta.nome_conta ||
+                conta.conta_nome ||
+                conta?.conta_associacao?.nome ||
+                obterNomeContaPorUuid(conta.uuid) ||
+                obterNomeContaPorUuid(conta.conta_uuid) ||
+                'N/E';
+        }
+
+        return 'N/E';
+    }, [obterNomeContaPorUuid]);
 
     const obterContasSemComprovanteSaldo = useCallback(() => {
         if (!contasPendenciaConciliacao || contasPendenciaConciliacao.length === 0) {
             return [];
         }
-        return contasPendenciaConciliacao.map(contaUuid => {
-            const contaNome = infoAta.contas.find(_conta => _conta.conta_associacao.uuid === contaUuid)?.conta_associacao?.nome;
-            return contaNome || 'N/E';
-        });
-    }, [contasPendenciaConciliacao, infoAta])
+        return contasPendenciaConciliacao.map(obterNomeConta);
+    }, [contasPendenciaConciliacao, obterNomeConta])
+
+    const obterContasLancamentosConciliacao = useCallback(() => {
+        if (!contasPendenciaLancamentosConciliacao || contasPendenciaLancamentosConciliacao.length === 0) {
+            return [];
+        }
+
+        return contasPendenciaLancamentosConciliacao.map(obterNomeConta);
+    }, [contasPendenciaLancamentosConciliacao, obterNomeConta])
+
+    const obterContasJustificativaConciliacao = useCallback(() => {
+        if (!contasSolicitarCorrecaoJustificativaConciliacao || contasSolicitarCorrecaoJustificativaConciliacao.length === 0) {
+            return [];
+        }
+
+        return contasSolicitarCorrecaoJustificativaConciliacao.map(obterNomeConta);
+    }, [contasSolicitarCorrecaoJustificativaConciliacao, obterNomeConta])
+
+    const formatarListaContas = useCallback((contas) => {
+        if (!contas || contas.length === 0) {
+            return 'nenhuma conta identificada';
+        }
+        return contas.join(', ');
+    }, [])
+
+    const contasSemComprovanteTexto = useMemo(() => {
+        const contas = obterContasSemComprovanteSaldo();
+        return formatarListaContas(contas);
+    }, [formatarListaContas, obterContasSemComprovanteSaldo])
+
+    const contasLancamentosConciliacaoTexto = useMemo(() => {
+        const contas = obterContasLancamentosConciliacao();
+        return formatarListaContas(contas);
+    }, [formatarListaContas, obterContasLancamentosConciliacao])
+
+    const contasJustificativaConciliacao = useMemo(() => {
+        return obterContasJustificativaConciliacao();
+    }, [obterContasJustificativaConciliacao])
+
+    const contasJustificativaConciliacaoTexto = useMemo(() => {
+        return formatarListaContas(contasJustificativaConciliacao);
+    }, [formatarListaContas, contasJustificativaConciliacao])
+
+    const textoSolicitacoesLancamentosConciliacao = useMemo(() => {
+        return `<p><strong>Acertos que alteram a conciliação bancária</strong></p><p>Foram indicados acertos de inclusão/exclusão de lançamento na(s) conta(s) ${contasLancamentosConciliacaoTexto} que alteram o saldo da conciliação bancária. Favor solicitar o acerto de saldo para que a PC possa ser devolvida.</p>`;
+    }, [contasLancamentosConciliacaoTexto])
+
+    const textoComprovanteSaldoConciliacao = useMemo(() => {
+        return `<p><strong>Comprovante de saldo da conta</strong></p><p>A(s) conta(s) ${contasSemComprovanteTexto} não possuem comprovante de saldo. Favor solicitar o acerto para envio do comprovante para que a PC possa ser devolvida.</p>`;
+    }, [contasSemComprovanteTexto])
+
+    const textoJustificativaSaldoConciliacao = useMemo(() => {
+        return `<p><strong>Justificativa de saldo da conta</strong></p><p>A(s) conta(s) ${contasJustificativaConciliacaoTexto} não possuem justificativa de diferença entre saldo reprogramado e saldo bancário. Favor solicitar o acerto para inclusão da justificativa para que a PC possa ser devolvida.</p>`;
+    }, [contasJustificativaConciliacaoTexto])
+
+    const textoModalLancamentosConciliacao = useMemo(() => {
+        const blocos = [];
+        if (contasPendenciaLancamentosConciliacao.length > 0) {
+            blocos.push(textoSolicitacoesLancamentosConciliacao);
+        }
+        if (contasPendenciaConciliacao.length > 0) {
+            blocos.push(textoComprovanteSaldoConciliacao);
+        }
+        if (contasJustificativaConciliacao.length > 0) {
+            blocos.push(textoJustificativaSaldoConciliacao);
+        }
+        if (blocos.length === 0) {
+            return textoSolicitacoesLancamentosConciliacao;
+        }
+        return blocos.join('');
+    }, [
+        contasPendenciaLancamentosConciliacao,
+        contasPendenciaConciliacao,
+        contasJustificativaConciliacao,
+        textoSolicitacoesLancamentosConciliacao,
+        textoComprovanteSaldoConciliacao,
+        textoJustificativaSaldoConciliacao
+    ])
 
 
     const valorTemplate = (valor) => {
@@ -349,9 +495,28 @@ export const ResumoDosAcertos = () => {
         meapcservice.setAnaliseDrePorUsuario(visoesService.getUsuarioLogin(), objetoAnaliseDrePorUsuario)
     }
 
+    const possuiAcertosSelecionados = useMemo(() => {
+        if (flagAjustesDespesasAnterioresAtiva) {
+            return (totalLancamentosAjustes > 0) ||
+                (totalDocumentosAjustes > 0) ||
+                (totalAnalisesDeContaDaPrestacao > 0) ||
+                (totalDespesasPeriodosAnterioresAjustes > 0);
+        }
+
+        return (totalLancamentosAjustes > 0) ||
+            (totalDocumentosAjustes > 0) ||
+            (totalAnalisesDeContaDaPrestacao > 0);
+    }, [
+        flagAjustesDespesasAnterioresAtiva,
+        totalLancamentosAjustes,
+        totalDocumentosAjustes,
+        totalAnalisesDeContaDaPrestacao,
+        totalDespesasPeriodosAnterioresAjustes
+    ])
+
     const podeDevolver = useMemo(() => {
-        return prestacaoDeContas.pode_devolver && editavel && dataLimiteDevolucao && (totalLancamentosAjustes > 0 || totalDocumentosAjustes > 0 || totalExtratosAjustes > 0 || totalDespesasPeriodosAnterioresAjustes > 0) 
-    }, [prestacaoDeContas, editavel, dataLimiteDevolucao, totalLancamentosAjustes, totalDocumentosAjustes, totalExtratosAjustes, totalDespesasPeriodosAnterioresAjustes])
+        return editavel && dataLimiteDevolucao && possuiAcertosSelecionados;
+    }, [editavel, dataLimiteDevolucao, possuiAcertosSelecionados])
     
     const msgNaoExistemSolicitacoesDeAcerto = useMemo(() => {
         if ((totalLancamentosAjustes > 0 || totalDocumentosAjustes > 0 || totalExtratosAjustes > 0 || totalDespesasPeriodosAnterioresAjustes > 0)){   
@@ -445,11 +610,37 @@ export const ResumoDosAcertos = () => {
                 </section>
                 <section>
                     <ModalComprovanteSaldoConta
+                        show={showModalLancamentosConciliacao}
+                        handleClose={handleFecharModalLancamentosConciliacao}
+                        onConfirmar={handleIrParaExtratoLancamentosConciliacao}
+                        titulo="Pendências da conciliação bancária"
+                        texto={textoModalLancamentosConciliacao}
+                        primeiroBotaoTexto="Fechar"
+                        primeiroBotaoCss="outline-success"
+                        segundoBotaoCss="success"
+                        segundoBotaoTexto="Ir para Extrato Bancário"
+                    />
+                </section>
+                <section>
+                    <ModalComprovanteSaldoConta
+                        show={showModalJustificativaSaldoConta}
+                        handleClose={() => setShowModalJustificativaSaldoConta(false)}
+                        onConfirmar={handleIrParaJustificativaSaldoConta}
+                        titulo="Justificativa de saldo da conta"
+                        texto={textoJustificativaSaldoConciliacao}
+                        primeiroBotaoTexto="Fechar"
+                        primeiroBotaoCss="outline-success"
+                        segundoBotaoCss="success"
+                        segundoBotaoTexto="Ir para Extrato Bancário"
+                    />
+                </section>
+                <section>
+                    <ModalComprovanteSaldoConta
                         show={showModalComprovanteSaldoConta}
                         handleClose={() => setShowModalComprovanteSaldoConta(false)}
                         onConfirmar={handleConfirmarComprovanteSaldo}
                         titulo="Comprovante de saldo da conta"
-                        texto={`A(s) conta(s) ${obterContasSemComprovanteSaldo().join(', ')} não possuem comprovante de saldo. Favor solicitar o acerto para envio do comprovante para que a PC possa ser devolvida.`}
+                        texto={`A(s) conta(s) ${contasSemComprovanteTexto} não possuem comprovante de saldo. Favor solicitar o acerto para envio do comprovante para que a PC possa ser devolvida.`}
                         primeiroBotaoTexto="Fechar"
                         primeiroBotaoCss="outline-success"
                         segundoBotaoCss="success"

@@ -8,7 +8,7 @@ export const usePostReceitasPrevistasPaa = (onClose) => {
     mutationFn: ({ payload }) => postReceitasPrevistasPaa(payload),
     onSuccess: (data) => {
       toastCustom.ToastCustomSuccess("Recurso criado com sucesso.");
-      queryClient.invalidateQueries(["acoes-associacao"]);
+      queryClient.invalidateQueries(["receitas-previstas-paa"]);
       onClose && onClose();
     },
     onError: (e) => {

@@ -13,7 +13,7 @@ import {
 } from "../../../../../../utils/money";
 
 
-const ModalFormAdicionarPrioridade = ({ open, onClose, tabelas, formModal, focusValor=false }) => {
+const ModalFormAdicionarPrioridade = ({ open, onClose, tabelas, formModal, focusValor=false, focusAcao=false }) => {
   const [form] = Form.useForm();
   const [selectedRecurso, setSelectedRecurso] = useState('');
   const [selectedTipoAplicacao, setSelectedTipoAplicacao] = useState('');
@@ -62,8 +62,8 @@ const ModalFormAdicionarPrioridade = ({ open, onClose, tabelas, formModal, focus
     value: item.id,
     label: item.nome
   })) : [];
-
-  const acoesAssociacaoOptions = Array.isArray(acoesAssociacao) ? acoesAssociacao.map(item => ({
+  // Exibem somente as acoes que possuem exibir_paa = true
+  const acoesAssociacaoOptions = Array.isArray(acoesAssociacao) ? acoesAssociacao.filter(item => item.acao.exibir_paa).map(item => ({
     value: item.uuid,
     label: item.acao.nome
   })) : [];
@@ -202,6 +202,24 @@ const ModalFormAdicionarPrioridade = ({ open, onClose, tabelas, formModal, focus
   };
 
   const valorTotalRef = useRef(null);
+  const AcaoPTRFRef = useRef(null);
+
+  const handleFocusValorTotal = () => {
+    setTimeout(() => {
+      valorTotalRef?.current?.focus();
+      form.setFields([{
+        name: 'valor_total', errors: ['Valor total é obrigatório!']
+      }]);
+    }, 500);
+  };
+  const handleFocusAcaoPTRF = () => {
+    setTimeout(() => {
+      AcaoPTRFRef?.current?.focus();
+      form.setFields([{
+          name: 'acao_associacao', errors: ['Ação é obrigatório!']
+        }]);
+    }, 500);
+  };
   useEffect(() => {
     if (formModal) {
       const tipo_despesa_custeio_id = (tabelas?.tipos_despesa_custeio||[]).find(item => item.uuid === formModal?.tipo_despesa_custeio);
@@ -225,15 +243,14 @@ const ModalFormAdicionarPrioridade = ({ open, onClose, tabelas, formModal, focus
       form.setFieldsValue(initial);
 
       if(formModal?.uuid && !formModal?.valor_total && focusValor){
-        form.setFields([{
-          name: 'valor_total', errors: ['Valor total é obrigatório!']
-        }]);
-        form.scrollToField('valor_total', {
-          behavior: 'smooth',
-          block: 'center',
-        });
-        valorTotalRef?.current?.focus();
+        handleFocusValorTotal();
       }
+
+      // Quando Acao associacao não for informada (por desativação de acao no PAA), focar no elemento para preenchimento
+      if(!!formModal?.uuid && !formModal?.acao_associacao && focusAcao){
+        handleFocusAcaoPTRF();
+      }
+
     } else {
       form.resetFields();
     }
@@ -302,6 +319,7 @@ const ModalFormAdicionarPrioridade = ({ open, onClose, tabelas, formModal, focus
                     style={{ marginBottom: 4 }}
                   >
                     <Select
+                      ref={AcaoPTRFRef}
                       placeholder="Selecione a ação"
                       style={{ width: "100%" }}
                       options={acoesAssociacaoOptions}

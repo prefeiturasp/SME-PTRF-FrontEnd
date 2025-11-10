@@ -104,6 +104,7 @@ import { TextosPaa } from "../componentes/sme/Parametrizacoes/PAA/TextosPaa";
 import { PeriodosPaa } from "../componentes/sme/Parametrizacoes/PAA/PeriodosPaa";
 import { ObjetivosPaa } from "../componentes/sme/Parametrizacoes/PAA/ObjetivosPaa";
 import { AtividadesEstatutarias } from "../componentes/sme/Parametrizacoes/PAA/AtividadesEstatutarias";
+import { AcoesPTRFPaa } from "../componentes/sme/Parametrizacoes/PAA/AcoesPTRF";
 import { ElaboracaoPaa } from "../componentes/escolas/Paa/ElaboracaoPaa";
 import { ElaborarNovoPlano } from "../componentes/escolas/Paa/ElaboracaoPaa/ElaborarNovoPlano";
 import { ExecucaoDoPaa } from "../componentes/escolas/Paa/ExecucaoDoPaa";
@@ -418,7 +419,7 @@ const routesConfig = [
     exact: true,
     path: "/extracoes-dados",
     component: ExtracaoDadosPage,
-    permissoes: ["access_gestao_perfis_dre", "access_extracao_de_dados_sme"],
+    permissoes: ["access_extracao_de_dados_dre", "access_extracao_de_dados_sme"],
   },
   {
     exact: true,
@@ -612,6 +613,16 @@ const routesConfig = [
     exact: true,
     path: "/parametro-atividades-estatutarias-paa",
     component: AtividadesEstatutarias,
+    permissoes: [
+      "access_painel_parametrizacoes",
+      "change_painel_parametrizacoes",
+    ],
+    featureFlag: "paa",
+  },
+  {
+    exact: true,
+    path: "/parametro-acoes-ptrf-paa",
+    component: AcoesPTRFPaa,
     permissoes: [
       "access_painel_parametrizacoes",
       "change_painel_parametrizacoes",

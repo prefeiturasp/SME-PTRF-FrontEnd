@@ -220,7 +220,7 @@ export const DetalhePrestacaoDeContas = () =>{
                             solicitar_correcao_da_data_do_saldo_da_conta: conta.solicitar_correcao_da_data_do_saldo_da_conta,
                             solicitar_envio_do_comprovante_do_saldo_da_conta: conta.solicitar_envio_do_comprovante_do_saldo_da_conta,
                             observacao_solicitar_envio_do_comprovante_do_saldo_da_conta: conta.observacao_solicitar_envio_do_comprovante_do_saldo_da_conta ? conta.observacao_solicitar_envio_do_comprovante_do_saldo_da_conta : "",
-                            
+                            solicitar_correcao_de_justificativa_de_conciliacao: conta.solicitar_correcao_de_justificativa_de_conciliacao,
                         })
                     });
                 setAnalisesDeContaDaPrestacao(arrayAnalises);
@@ -408,7 +408,8 @@ export const DetalhePrestacaoDeContas = () =>{
                 saldo_extrato: null,
                 solicitar_correcao_da_data_do_saldo_da_conta: false,
                 solicitar_envio_do_comprovante_do_saldo_da_conta: false,
-                observacao_solicitar_envio_do_comprovante_do_saldo_da_conta: ""
+                observacao_solicitar_envio_do_comprovante_do_saldo_da_conta: "",
+                solicitar_correcao_de_justificativa_de_conciliacao: false,
             })
 
             setAnalisesDeContaDaPrestacao(lista)
@@ -433,6 +434,7 @@ export const DetalhePrestacaoDeContas = () =>{
             solicitar_correcao_da_data_do_saldo_da_conta: analise.solicitar_correcao_da_data_do_saldo_da_conta,
             solicitar_envio_do_comprovante_do_saldo_da_conta: analise.solicitar_envio_do_comprovante_do_saldo_da_conta,
             observacao_solicitar_envio_do_comprovante_do_saldo_da_conta: analise.observacao_solicitar_envio_do_comprovante_do_saldo_da_conta !== null ? analise.observacao_solicitar_envio_do_comprovante_do_saldo_da_conta : "",
+            solicitar_correcao_de_justificativa_de_conciliacao: analise.solicitar_correcao_de_justificativa_de_conciliacao,
         })
 
         setAnalisesDeContaDaPrestacao(()=>[
@@ -447,7 +449,8 @@ export const DetalhePrestacaoDeContas = () =>{
         let solicitar_envio_do_comprovante_do_saldo_da_conta = null;
         let solicitar_correcao_da_data_do_saldo_da_conta = null;
         let observacao_solicitar_envio_do_comprovante_do_saldo_da_conta = null;
-
+        let solicitar_correcao_de_justificativa_de_conciliacao = null;
+                
         if(prestacaoDeContas && prestacaoDeContas.analise_atual && prestacaoDeContas.analise_atual.uuid){
             uuid_analise = prestacaoDeContas.analise_atual.uuid
         }
@@ -481,6 +484,10 @@ export const DetalhePrestacaoDeContas = () =>{
                     observacao_solicitar_envio_do_comprovante_do_saldo_da_conta = analise_de_conta.observacao_solicitar_envio_do_comprovante_do_saldo_da_conta;
                 }
             }
+
+            if(analise_de_conta.solicitar_correcao_de_justificativa_de_conciliacao !== null){
+                solicitar_correcao_de_justificativa_de_conciliacao = analise_de_conta.solicitar_correcao_de_justificativa_de_conciliacao
+            }
         }
 
         let payload = {
@@ -492,6 +499,7 @@ export const DetalhePrestacaoDeContas = () =>{
             solicitar_correcao_da_data_do_saldo_da_conta: solicitar_correcao_da_data_do_saldo_da_conta,
             solicitar_envio_do_comprovante_do_saldo_da_conta: solicitar_envio_do_comprovante_do_saldo_da_conta,
             observacao_solicitar_envio_do_comprovante_do_saldo_da_conta: observacao_solicitar_envio_do_comprovante_do_saldo_da_conta,
+            solicitar_correcao_de_justificativa_de_conciliacao: solicitar_correcao_de_justificativa_de_conciliacao,
         }
 
         try {
@@ -662,6 +670,7 @@ export const DetalhePrestacaoDeContas = () =>{
                         solicitar_correcao_da_data_do_saldo_da_conta: analise_encontrada.solicitar_correcao_da_data_do_saldo_da_conta,
                         solicitar_envio_do_comprovante_do_saldo_da_conta: analise_encontrada.solicitar_envio_do_comprovante_do_saldo_da_conta,
                         observacao_solicitar_envio_do_comprovante_do_saldo_da_conta: analise_encontrada.observacao_solicitar_envio_do_comprovante_do_saldo_da_conta ? analise_encontrada.observacao_solicitar_envio_do_comprovante_do_saldo_da_conta : "",
+                        solicitar_correcao_de_justificativa_de_conciliacao: analise_encontrada.solicitar_correcao_de_justificativa_de_conciliacao,
                     }
                 ])
             }

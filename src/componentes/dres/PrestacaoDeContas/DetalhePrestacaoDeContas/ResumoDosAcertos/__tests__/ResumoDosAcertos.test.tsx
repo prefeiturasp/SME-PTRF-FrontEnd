@@ -50,11 +50,34 @@ jest.mock('../../DevolucaoParaAcertos/ModalConciliacaoBancaria', () => ({
   ),
 }));
 
-jest.mock('../../DevolucaoParaAcertos/ModalComprovanteSaldoConta', () => ({
-  ModalComprovanteSaldoConta: ({ show }: { show: boolean }) => (
-    <div data-testid="modal-comprovante" data-visible={String(show)} />
-  ),
-}));
+jest.mock('../../DevolucaoParaAcertos/ModalComprovanteSaldoConta', () => {
+  const React = require('react');
+
+  const ModalComprovanteSaldoConta = ({
+    show,
+    titulo,
+    texto,
+  }: {
+    show: boolean;
+    titulo: string;
+    texto: string;
+  }) => {
+    let testId = 'modal-lancamentos-conciliacao';
+    if (titulo === 'Comprovante de saldo da conta') {
+      testId = 'modal-comprovante';
+    } else if (titulo === 'Justificativa de saldo da conta') {
+      testId = 'modal-justificativa';
+    }
+
+    return React.createElement('div', {
+      'data-testid': testId,
+      'data-visible': String(show),
+      'data-texto': texto,
+    });
+  };
+
+  return { ModalComprovanteSaldoConta };
+});
 
 jest.mock(
   '../../../../../../paginas/PaginasContainer',
@@ -169,6 +192,9 @@ const basePrestacao = {
     acertos_podem_alterar_saldo_conciliacao: false,
     tem_pendencia_conciliacao_sem_solicitacao_de_acerto_em_conta: false,
     contas_pendencia_conciliacao_sem_solicitacao_de_acerto_em_conta: [],
+    tem_solicitacoes_lancar_credito_ou_despesa_com_pendencia_conciliacao: false,
+    solicitacoes_lancar_credito_ou_despesa_com_pendencia_conciliacao: false,
+    contas_solicitacoes_lancar_credito_ou_despesa_com_pendencia_conciliacao: [],
   },
   analises_de_conta_da_prestacao: [],
 };
@@ -238,6 +264,7 @@ describe('ResumoDosAcertos - handleDevolverParaAssociacao', () => {
     await waitFor(() => {
       expect(screen.getByTestId('modal-comprovante')).toHaveAttribute('data-visible', 'true');
     });
+    expect(screen.getByTestId('modal-lancamentos-conciliacao')).toHaveAttribute('data-visible', 'false');
     expect(screen.getByTestId('modal-conciliacao')).toHaveAttribute('data-visible', 'false');
     expect(screen.getByTestId('modal-confirma')).toHaveAttribute('data-visible', 'false');
     expect(getPrestacaoDeContasDetalhe).toHaveBeenCalledTimes(1);
@@ -255,7 +282,46 @@ describe('ResumoDosAcertos - handleDevolverParaAssociacao', () => {
       expect(screen.getByTestId('modal-conciliacao')).toHaveAttribute('data-visible', 'true');
     });
     expect(screen.getByTestId('modal-comprovante')).toHaveAttribute('data-visible', 'false');
+    expect(screen.getByTestId('modal-lancamentos-conciliacao')).toHaveAttribute('data-visible', 'false');
     expect(screen.getByTestId('modal-confirma')).toHaveAttribute('data-visible', 'false');
+    expect(getPrestacaoDeContasDetalhe).toHaveBeenCalledTimes(1);
+  });
+
+  it('abre o modal de lançamentos que alteram a conciliação quando existem solicitações com pendência', async () => {
+    const { user, botao } = await setupComponent({
+      tem_solicitacoes_lancar_credito_ou_despesa_com_pendencia_conciliacao: true,
+      solicitacoes_lancar_credito_ou_despesa_com_pendencia_conciliacao: true,
+      contas_solicitacoes_lancar_credito_ou_despesa_com_pendencia_conciliacao: ['conta-1'],
+    });
+
+    await user.click(botao);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('modal-lancamentos-conciliacao')).toHaveAttribute('data-visible', 'true');
+    });
+    expect(screen.getByTestId('modal-comprovante')).toHaveAttribute('data-visible', 'false');
+    expect(screen.getByTestId('modal-conciliacao')).toHaveAttribute('data-visible', 'false');
+    expect(screen.getByTestId('modal-confirma')).toHaveAttribute('data-visible', 'false');
+    expect(getPrestacaoDeContasDetalhe).toHaveBeenCalledTimes(1);
+  });
+
+  it('abre o modal de lançamentos com alerta de comprovante quando também existe pendência de comprovante', async () => {
+    const { user, botao } = await setupComponent({
+      tem_solicitacoes_lancar_credito_ou_despesa_com_pendencia_conciliacao: true,
+      solicitacoes_lancar_credito_ou_despesa_com_pendencia_conciliacao: true,
+      contas_solicitacoes_lancar_credito_ou_despesa_com_pendencia_conciliacao: ['conta-1'],
+      tem_pendencia_conciliacao_sem_solicitacao_de_acerto_em_conta: true,
+      contas_pendencia_conciliacao_sem_solicitacao_de_acerto_em_conta: ['conta-1'],
+    });
+
+    await user.click(botao);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('modal-lancamentos-conciliacao')).toHaveAttribute('data-visible', 'true');
+    });
+    expect(screen.getByTestId('modal-conciliacao')).toHaveAttribute('data-visible', 'false');
+    expect(screen.getByTestId('modal-confirma')).toHaveAttribute('data-visible', 'false');
+    expect(screen.getByTestId('modal-comprovante')).toHaveAttribute('data-visible', 'false');
     expect(getPrestacaoDeContasDetalhe).toHaveBeenCalledTimes(1);
   });
 
@@ -272,6 +338,44 @@ describe('ResumoDosAcertos - handleDevolverParaAssociacao', () => {
     });
     expect(screen.getByTestId('modal-conciliacao')).toHaveAttribute('data-visible', 'false');
     expect(screen.getByTestId('modal-comprovante')).toHaveAttribute('data-visible', 'false');
+    expect(screen.getByTestId('modal-lancamentos-conciliacao')).toHaveAttribute('data-visible', 'false');
     expect(getPrestacaoDeContasDetalhe).toHaveBeenCalledTimes(1);
+  });
+
+  it('abre o modal específico de justificativa de saldo quando apenas essa pendência existe', async () => {
+    const { user, botao } = await setupComponent({
+      solicitar_correcao_de_justificativa_de_conciliacao: true,
+      contas_solicitar_correcao_de_justificativa_de_conciliacao: ['conta-1'],
+    });
+
+    await user.click(botao);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('modal-justificativa')).toHaveAttribute('data-visible', 'true');
+    });
+    expect(screen.getByTestId('modal-comprovante')).toHaveAttribute('data-visible', 'false');
+    expect(screen.getByTestId('modal-lancamentos-conciliacao')).toHaveAttribute('data-visible', 'false');
+    expect(screen.getByTestId('modal-conciliacao')).toHaveAttribute('data-visible', 'false');
+    expect(screen.getByTestId('modal-confirma')).toHaveAttribute('data-visible', 'false');
+  });
+
+  it('inclui o texto de justificativa no modal unificado quando há múltiplas pendências', async () => {
+    const { user, botao } = await setupComponent({
+      tem_pendencia_conciliacao_sem_solicitacao_de_acerto_em_conta: true,
+      contas_pendencia_conciliacao_sem_solicitacao_de_acerto_em_conta: ['conta-1'],
+      solicitar_correcao_de_justificativa_de_conciliacao: true,
+      contas_solicitar_correcao_de_justificativa_de_conciliacao: ['conta-1'],
+    });
+
+    await user.click(botao);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('modal-lancamentos-conciliacao')).toHaveAttribute('data-visible', 'true');
+    });
+    const modalLancamentos = screen.getByTestId('modal-lancamentos-conciliacao');
+    expect(modalLancamentos).toHaveAttribute('data-texto');
+    expect(modalLancamentos.getAttribute('data-texto')).toMatch(/Justificativa de saldo da conta/);
+    expect(screen.getByTestId('modal-comprovante')).toHaveAttribute('data-visible', 'false');
+    expect(screen.getByTestId('modal-justificativa')).toHaveAttribute('data-visible', 'false');
   });
 });

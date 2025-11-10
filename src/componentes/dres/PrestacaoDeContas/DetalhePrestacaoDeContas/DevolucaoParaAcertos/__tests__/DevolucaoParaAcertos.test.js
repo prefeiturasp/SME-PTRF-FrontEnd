@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor, within } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
 import DevolucaoParaAcertos from "../index";
 import * as service from "../../../../../../services/dres/PrestacaoDeContas.service";
@@ -57,6 +57,11 @@ const mockPrestacaoDeContas = {
     acertos_podem_alterar_saldo_conciliacao: false,
     tem_pendencia_conciliacao_sem_solicitacao_de_acerto_em_conta: false,
     contas_pendencia_conciliacao_sem_solicitacao_de_acerto_em_conta: [],
+    tem_solicitacoes_lancar_credito_ou_despesa_com_pendencia_conciliacao: false,
+    solicitacoes_lancar_credito_ou_despesa_com_pendencia_conciliacao: false,
+    contas_solicitacoes_lancar_credito_ou_despesa_com_pendencia_conciliacao: [],
+    solicitar_correcao_de_justificativa_de_conciliacao: false,
+    contas_solicitar_correcao_de_justificativa_de_conciliacao: [],
   },
 };
 
@@ -208,6 +213,7 @@ describe("DevolucaoParaAcertos", () => {
       // Verifica se os modais não estão sendo exibidos inicialmente
       expect(screen.queryByText("Acertos que podem alterar a conciliação bancária")).not.toBeInTheDocument();
       expect(screen.queryByText("Comprovante de saldo da conta")).not.toBeInTheDocument();
+      expect(screen.queryByText("Pendências da conciliação bancária")).not.toBeInTheDocument();
     });
   });
 
@@ -229,6 +235,7 @@ describe("DevolucaoParaAcertos", () => {
       screen.getByRole("button", { name: /devolver para associação/i })
     ).toBeInTheDocument();
   });
+
 
   it("exibe o modal de conciliação apenas quando não há pendência de conciliação", async () => {
     const primeiroRender = await acionarDevolucaoParaAssociacao({
@@ -257,5 +264,67 @@ describe("DevolucaoParaAcertos", () => {
       screen.queryByText("Acertos que podem alterar a conciliação bancária")
     ).not.toBeInTheDocument();
     segundoRender.unmount();
+  });
+
+  it("exibe o modal de justificativa de saldo quando apenas essa pendência existe", async () => {
+    const renderResult = await acionarDevolucaoParaAssociacao({
+      solicitar_correcao_de_justificativa_de_conciliacao: true,
+      contas_solicitar_correcao_de_justificativa_de_conciliacao: ["conta-uuid-1"],
+    });
+
+    const tituloModal = await screen.findByText("Justificativa de saldo da conta", {
+      selector: ".modal-title",
+    });
+    const modalJustificativa = tituloModal.closest(".modal");
+    expect(modalJustificativa).not.toBeNull();
+    if (!modalJustificativa) {
+      throw new Error("Modal de justificativa não encontrado");
+    }
+    const modalJustificativaElement = modalJustificativa;
+
+    expect(
+      within(modalJustificativaElement).getByText(
+        /A\(s\) conta\(s\) Conta Corrente não possuem justificativa de diferença entre saldo reprogramado e saldo bancário/i
+      )
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByText("Comprovante de saldo da conta")
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByText("Pendências da conciliação bancária")
+    ).not.toBeInTheDocument();
+
+    renderResult.unmount();
+  });
+
+  it("exibe o modal unificado com mensagem de justificativa quando há múltiplas pendências", async () => {
+    const renderResult = await acionarDevolucaoParaAssociacao({
+      tem_pendencia_conciliacao_sem_solicitacao_de_acerto_em_conta: true,
+      contas_pendencia_conciliacao_sem_solicitacao_de_acerto_em_conta: ["conta-uuid-1"],
+      solicitar_correcao_de_justificativa_de_conciliacao: true,
+      contas_solicitar_correcao_de_justificativa_de_conciliacao: ["conta-uuid-2"],
+    });
+
+    const tituloModal = await screen.findByText("Pendências da conciliação bancária", {
+      selector: ".modal-title",
+    });
+    const modalUnificado = tituloModal.closest(".modal");
+    expect(modalUnificado).not.toBeNull();
+    if (!modalUnificado) {
+      throw new Error("Modal unificado não encontrado");
+    }
+    const modalUnificadoElement = modalUnificado;
+
+    const modalText = within(modalUnificadoElement).getByText(
+      /A\(s\) conta\(s\) Conta Corrente não possuem comprovante de saldo/i
+    );
+    expect(modalText).toBeInTheDocument();
+    expect(
+      within(modalUnificadoElement).getByText(
+        /A\(s\) conta\(s\) Poupança não possuem justificativa de diferença entre saldo reprogramado e saldo bancário/i
+      )
+    ).toBeInTheDocument();
+
+    renderResult.unmount();
   });
 });

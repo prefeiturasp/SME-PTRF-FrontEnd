@@ -3,7 +3,7 @@ import {ModalFormParametrizacoesAcoes} from "../../../../Globais/ModalBootstrap"
 import {YupSignupSchemaTags} from "./YupSignupSchemaTags";
 import {Formik} from "formik";
 
-export const ModalFormAcoes = ({show, stateFormModal, handleSubmitModalFormAcoes, readOnly, handleClose, setShowModalConfirmDelete}) => {
+export const ModalFormAcoes = ({show, stateFormModal, handleSubmit, readOnly, handleClose, setShowModalConfirmDelete}) => {
 
     const bodyTextarea = () => {
 
@@ -15,7 +15,7 @@ export const ModalFormAcoes = ({show, stateFormModal, handleSubmitModalFormAcoes
                 validationSchema={YupSignupSchemaTags}
                 validateOnBlur={true}
                 enableReinitialize={true}
-                onSubmit={handleSubmitModalFormAcoes}
+                onSubmit={handleSubmit}
             >
                 {props => {
                     const { values, setFieldValue } = props;
@@ -190,6 +190,38 @@ export const ModalFormAcoes = ({show, stateFormModal, handleSubmitModalFormAcoes
                                             disabled={readOnly}
                                         />
                                         <label data-qa="label-e-recursos-proprios-false" className="form-check-label" htmlFor="e_recursos_proprios_false">Não</label>
+                                    </div>
+                                </div>
+
+                                <div className="form-group col-md-4 col-sm-6">
+                                    <p data-qa="legenda-exibir-paa" className="mb-0">Exibir no PAA?</p>
+                                    <div className="form-check form-check-inline mt-2">
+                                        <input
+                                            data-qa="campo-exibir-paa-true"
+                                            name="exibir_paa_true"
+                                            className={`form-check-input`}
+                                            type="radio"
+                                            id="exibir_paa_true"
+                                            value="True"
+                                            checked={values.exibir_paa === true}
+                                            onChange={() => setFieldValue("exibir_paa", true)}
+                                            disabled={readOnly}
+                                        />
+                                        <label data-qa="label-exibir-paa-true" className="form-check-label" htmlFor="exibir_paa_true">Sim</label>
+                                    </div>
+                                    <div className="form-check form-check-inline">
+                                        <input
+                                            data-qa="campo-exibir-paa-false"
+                                            name="exibir_paa_false"
+                                            className={`form-check-input`}
+                                            type="radio"
+                                            id="exibir_paa_false"
+                                            value="False"
+                                            checked={values.exibir_paa === false}
+                                            onChange={() => setFieldValue("exibir_paa", false)}
+                                            disabled={readOnly}
+                                        />
+                                        <label data-qa="label-exibir-paa-false" className="form-check-label" htmlFor="exibir_paa_false">Não</label>
                                     </div>
                                 </div>
                             </div>

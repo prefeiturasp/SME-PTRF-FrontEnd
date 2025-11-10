@@ -10,6 +10,7 @@ import {faEdit, faClipboardList, faTimesCircle, faCheckCircle } from "@fortaweso
 import Loading from "../../../../../utils/Loading";
 import {ModalFormAcoes} from "./ModalFormAcoes";
 import { ModalConfirmarExclusao } from "../../componentes/ModalConfirmarExclusao";
+import { ModalConfirmarExclusao as ModalConfirmarDesabilitarPTRF } from "../../componentes/ModalConfirmarExclusao";
 import {ModalInfoNaoPodeExcluir} from "./ModalInfoNaoPodeExcluir";
 import {ModalInfoNaoPodeGravar} from "./ModalInfoNaoPodeGravar";
 import { BtnAdd } from "./BtnAdd";
@@ -105,12 +106,14 @@ export const Acoes = () => {
         aceita_capital: false,
         aceita_custeio: false,
         aceita_livre: false,
+        exibir_paa: true,
         uuid: "",
         id: "",
         operacao: 'create',
     };
     const [showModalForm, setShowModalForm] = useState(false);
     const [showModalDeleteAcao, setShowModalDeleteAcao] = useState(false);
+    const [showModalConfirmarDesabilitarAcao, setShowModalConfirmarDesabilitarAcao] = useState({open: false, form: {}});
     const [showModalInfoNaoPodeExcluir, setShowModalInfoNaoPodeExcluir] = useState(false);
     const [mensagemModalInfoNaoPodeExcluir, setMensagemModalInfoNaoPodeExcluir] = useState("");
     const [showModalInfoNaoPodeGravar, setShowModalInfoNaoPodeGravar] = useState(false);
@@ -122,6 +125,9 @@ export const Acoes = () => {
     const onHandleClose = () => {
         setStateFormModal(initialStateFormModal);
         setShowModalForm(false)
+    };
+    const handleCloseConfirmarDesabilitarAcao = () => {
+        setShowModalConfirmarDesabilitarAcao({open: false, form: {}});
     };
     const handleCloseDeleteAcao = () => {
         setShowModalDeleteAcao(false)
@@ -152,10 +158,39 @@ export const Acoes = () => {
             aceita_capital: rowData.aceita_capital,
             aceita_custeio: rowData.aceita_custeio,
             aceita_livre: rowData.aceita_livre,
+            exibir_paa: rowData.exibir_paa,
+
+            // guarda para validação no submit
+            exibir_paa_original: rowData.exibir_paa,
+
+            // adicionados no serializer para validação na desativação da ação
+            tem_receitas_previstas_paa_em_elaboracao: rowData.tem_receitas_previstas_paa_em_elaboracao,
+            tem_prioridades_paa_em_elaboracao: rowData.tem_prioridades_paa_em_elaboracao,
+
             operacao: 'edit',
         });
         setShowModalForm(true)
     };
+
+    const handleSubmit = async (formModal) => {
+        // valida quando uma ação estiver sendo desabilitada
+        // verifica quando houver receitas previstas indicadas
+        const desabilitando_acao = (
+            formModal?.exibir_paa === false && formModal?.exibir_paa_original === true
+        )
+        const edicao = formModal.operacao === 'edit';
+        const tem_receitas_previstas_indicadas = formModal?.tem_receitas_previstas_paa_em_elaboracao;
+        const tem_prioridades = formModal?.tem_prioridades_paa_em_elaboracao;
+        if (edicao && desabilitando_acao && (tem_receitas_previstas_indicadas || tem_prioridades)) {
+            // Exibe Modal de confirmação da desativacão da ação,
+            // guardando o formModal para ser utilizado posteriormente na modal de
+            // confirmação sem a perda dos dados em edição
+            setShowModalConfirmarDesabilitarAcao({open: true, form: formModal});
+        } else {
+            // Fluxo normal
+            await handleSubmitModalFormAcoes(formModal);
+        }
+    }
     const handleSubmitModalFormAcoes = async (stateFormModal) => {
         const payload = {
             nome: stateFormModal.nome,
@@ -164,12 +199,14 @@ export const Acoes = () => {
             aceita_capital: stateFormModal.aceita_capital,
             aceita_custeio: stateFormModal.aceita_custeio,
             aceita_livre: stateFormModal.aceita_livre,
+            exibir_paa: stateFormModal.exibir_paa,
         };
 
         if (stateFormModal.operacao === 'create') {
             try {
                 await postAddAcao(payload);
                 setShowModalForm(false);
+                handleCloseConfirmarDesabilitarAcao();
                 console.log('Ação criada com sucesso');
                 toastCustom.ToastCustomSuccess('Ação criada com sucesso');
                 await carregaTodasAsAcoes();
@@ -187,6 +224,7 @@ export const Acoes = () => {
             try {
                 await putAtualizarAcao(stateFormModal.uuid, payload);
                 setShowModalForm(false);
+                handleCloseConfirmarDesabilitarAcao();
                 console.log('Ação alterada com sucesso');
                 toastCustom.ToastCustomSuccess('Ação alterada com sucesso');
                 await carregaTodasAsAcoes();
@@ -257,6 +295,9 @@ export const Acoes = () => {
     const recursosPropriosTemplate = (rowData) => {
         return booleanTemplate(rowData.e_recursos_proprios);
     };
+    const exibePaa = (rowData) => {
+        return booleanTemplate(rowData.exibir_paa);
+    };
 
     const readOnlyMemo = useMemo(() => readOnly || !TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES, [readOnly]);
 
@@ -299,6 +340,7 @@ export const Acoes = () => {
                                     aceitaCusteioTemplate={aceitaCusteioTemplate}
                                     aceitaLivreTemplate={aceitaLivreTemplate}
                                     recursosPropriosTemplate={recursosPropriosTemplate}
+                                    exibePaa={exibePaa}
                                 />
                             </>
                         ) : (
@@ -314,7 +356,7 @@ export const Acoes = () => {
                     <ModalFormAcoes
                         show={showModalForm}
                         handleClose={onHandleClose}
-                        handleSubmitModalFormAcoes={handleSubmitModalFormAcoes}
+                        handleSubmit={handleSubmit}
                         handleChangeFormModal={handleChangeFormModal}
                         setShowModalConfirmDelete={setShowModalDeleteAcao}
                         stateFormModal={stateFormModal}
@@ -358,6 +400,20 @@ export const Acoes = () => {
                         }
                     />
                     </section>
+                <section>
+                    <ModalConfirmarDesabilitarPTRF
+                        open={showModalConfirmarDesabilitarAcao?.open}
+                        onOk={() =>handleSubmitModalFormAcoes(showModalConfirmarDesabilitarAcao?.form)}
+                        okText="Confirmar"
+                        onCancel={handleCloseConfirmarDesabilitarAcao}
+                        cancelText="Cancelar"
+                        cancelButtonProps={{ className: "btn-base-verde-outline-desabilita-acao" }}
+                        titulo="Desabilitar ação PTRF"
+                        bodyText={
+                        <p>A acão PTRF que deseja desabilitar possui receitas previstas indicadas e/ou prioridades no PAA. Deseja continuar?</p>
+                        }
+                    />
+                </section>
             </div>
         </PaginasContainer>
     )

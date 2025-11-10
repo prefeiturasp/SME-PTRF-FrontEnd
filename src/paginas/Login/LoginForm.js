@@ -2,10 +2,10 @@ import React, {useState} from "react";
 import {Formik} from "formik";
 import {YupSignupSchemaLogin} from "../../utils/ValidacoesAdicionaisFormularios";
 import { authService } from "../../services/auth.service";
-import { Tooltip as ReactTooltip } from "react-tooltip";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faQuestionCircle, faEye, faEyeSlash} from '@fortawesome/free-solid-svg-icons'
 import Loading from "../../utils/Loading";
+import { TooltipWrapper } from "../../componentes/Globais/UI/Tooltip";
 
 export const LoginForm = ({redefinicaoDeSenha}) => {
     const [msgUsuario, setMsgUsuario] = useState('');
@@ -66,14 +66,13 @@ export const LoginForm = ({redefinicaoDeSenha}) => {
                         {props => (
                             <form onSubmit={props.handleSubmit}>
                                 <div className="form-group">
-                                    <label htmlFor="login">Usuário</label>
-                                    <span data-html={true} data-tooltip-content='Digite, sem ponto nem traço, </br>os 7 dígitos do RF para servidor,<br/> ou o CPF para usuário não servidor'>
+                                    <TooltipWrapper id="login" content={"Digite, sem ponto nem traço, </br>os 7 dígitos do RF para servidor,<br/> ou o CPF para usuário não servidor"}>
+                                        <label htmlFor="login">Usuário</label>
                                         <FontAwesomeIcon
                                             style={{fontSize: '18px', marginLeft: "3px", color:'#42474A'}}
                                             icon={faQuestionCircle}
                                         />
-                                    </span>
-                                    <ReactTooltip html={true}/>
+                                    </TooltipWrapper>
                                     <input
                                         type="text"
                                         value={props.values.login}
