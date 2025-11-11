@@ -15,6 +15,7 @@ const Relatorios = () => {
     planoAnual: false,
     introducao: false,
     conclusao: false,
+    componentes: false,
   });
 
   const associacaoUuid = localStorage.getItem(ASSOCIACAO_UUID);
@@ -43,6 +44,7 @@ const Relatorios = () => {
     componentes: {
       titulo: "III. Componentes",
       chave: "componentes",
+      temEditor: true,
     },
     conclusao: {
       titulo: "IV. Conclusão",

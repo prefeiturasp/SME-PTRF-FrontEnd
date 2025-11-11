@@ -139,6 +139,31 @@
   }
 }
 
+.subitem {
+  margin-top: 12px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+}
+
+.subitem:not(:last-child) {
+  border-bottom: 1px solid #DADADA;
+}
+
+.subitem-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.subitem-titulo {
+  font-size: 14px;
+  font-weight: 700;
+  color: #333;
+  flex: 1;
+}
+
 /* Estilos para as subseções do Plano anual */
 .plano-anual-subsecoes {
   background: #f8f9fa;
@@ -158,6 +183,17 @@
   }
 }
 
+.render-secao-introducao,
+.render-secao-objetivos,
+.render-secao-componentes,
+.render-secao-conclusao {
+  border-bottom: 1px solid #D8DBDB;
+  
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
 .subsecao-item-open {
   background-color: #f8f9fa;
 }
@@ -171,6 +207,10 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
+}
+
+.subsecao-item-open .subsecao-header {
+  margin-bottom: 16px;
 }
 
 .subsecao-titulo {
@@ -218,7 +258,6 @@
 
 /* Estilos para o conteúdo da item expandido dentro do header */
 .expanded-item-content {
-  margin-top: 12px;
   position: relative;
   z-index: 3;
 }

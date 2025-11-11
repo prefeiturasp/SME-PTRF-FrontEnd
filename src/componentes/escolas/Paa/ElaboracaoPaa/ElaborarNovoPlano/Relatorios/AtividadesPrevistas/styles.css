@@ -1,0 +1,17 @@
+.atividades-previstas-container {
+    padding-top: 1rem;
+}
+
+.atividades-previstas-card {
+    margin-top: 2rem;
+    padding: 2rem;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.atividades-previstas-description {
+    margin: 0;
+    font-size: 1rem;
+    color: #4a4a4a;
+}

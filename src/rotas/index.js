@@ -107,6 +107,7 @@ import { AtividadesEstatutarias } from "../componentes/sme/Parametrizacoes/PAA/A
 import { AcoesPTRFPaa } from "../componentes/sme/Parametrizacoes/PAA/AcoesPTRF";
 import { ElaboracaoPaa } from "../componentes/escolas/Paa/ElaboracaoPaa";
 import { ElaborarNovoPlano } from "../componentes/escolas/Paa/ElaboracaoPaa/ElaborarNovoPlano";
+import { AtividadesPrevistasRelatorio } from "../componentes/escolas/Paa/ElaboracaoPaa/ElaborarNovoPlano/Relatorios/AtividadesPrevistas";
 import { ExecucaoDoPaa } from "../componentes/escolas/Paa/ExecucaoDoPaa";
 import { CadastroTipoReceitaPage } from "../paginas/SME/Parametrizacoes/TiposReceita/CadastroTipoReceita";
 import { EdicaoTipoReceitaPage } from "../paginas/SME/Parametrizacoes/TiposReceita/EdicaoTipoReceita";
@@ -797,6 +798,13 @@ const routesConfig = [
     exact: true,
     path: "/elaborar-novo-paa",
     component: ElaborarNovoPlano,
+    permissoes: ["access_paa", "change_paa"],
+    featureFlag: "paa",
+  },
+  {
+    exact: true,
+    path: "/relatorios-componentes/atividades-previstas",
+    component: AtividadesPrevistasRelatorio,
     permissoes: ["access_paa", "change_paa"],
     featureFlag: "paa",
   },

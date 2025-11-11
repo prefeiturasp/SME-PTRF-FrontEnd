@@ -9,6 +9,7 @@ import { usePatchPaa } from './hooks/usePatchPaa';
 
 import { RelSecaoTextos as RelIntroducaoPaa } from './RelSecaoTextos';
 import { RelSecaoTextos as RelConclusaoPaa } from './RelSecaoTextos';
+import { RelSecaoComponentes } from './RelSecaoComponentes';
 
 export const RenderSecao = ({
     secaoKey,
@@ -89,6 +90,13 @@ export const RenderSecao = ({
                                         paaVigente={paaVigente}
                                         handleSalvarTexto={handleSalvarTexto}
                                         isSaving={isSaving}
+                                    />}
+
+                                {config.chave === 'componentes' && 
+                                    <RelSecaoComponentes
+                                        secaoKey={secaoKey}
+                                        config={config}
+                                        paaVigente={paaVigente}
                                     />}
                                 </>
                             )}
