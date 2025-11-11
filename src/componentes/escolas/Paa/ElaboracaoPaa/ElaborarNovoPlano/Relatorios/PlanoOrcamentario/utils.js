@@ -14,7 +14,7 @@ const numero = (valor) => {
     } else if (temVirgula) {
       normalizado = normalizado.replace(",", ".");
     } else {
-      normalizado = normalizado.replace(/[^0-9.\-]/g, "");
+      normalizado = normalizado.replace(/[^0-9.-]/g, "");
     }
 
     const parsed = Number(normalizado);
