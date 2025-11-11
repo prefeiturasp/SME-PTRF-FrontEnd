@@ -1,21 +1,26 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { patchPaa } from "../../../../../../../services/escolas/Paa.service";
+import { toastCustom } from "../../../../../../Globais/ToastCustom";
 
 export const usePatchPaa = () => {
   const queryClient = useQueryClient();
 
   const mutation = useMutation(
-    ({ uuid, payload }) => patchPaa(uuid, payload),
+    async ({ uuid, payload }) => {
+      return await patchPaa(uuid, payload);
+    },
     {
       onSuccess: (data, variables) => {
-        // Invalidar cache do PAA vigente para atualizar os dados
-        queryClient.invalidateQueries(["paaVigente"]);
-        
-        // Invalidar cache do PAA específico se necessário
-        queryClient.invalidateQueries(["paa", variables.uuid]);
+        toastCustom.ToastCustomSuccess("Sucesso!", "Item salvo com sucesso!");
+
+        // invalidar caches
+        queryClient.invalidateQueries({ queryKey: ["paaVigente"] });
+        queryClient.invalidateQueries({ queryKey: ["objetivosPaa"] });
+        queryClient.invalidateQueries({ queryKey: ["paa", variables.uuid] });
       },
       onError: (error) => {
-        console.error('Erro ao atualizar PAA:', error);
+        console.error("Erro ao atualizar PAA:", error);
+        toastCustom.ToastCustomError("Erro!", "Ops! Houve um erro ao tentar salvar.");
       },
     }
   );
