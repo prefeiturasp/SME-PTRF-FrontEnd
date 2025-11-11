@@ -1,4 +1,4 @@
-import { Tag, Typography } from "antd";
+import { Typography } from "antd";
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { formatMoneyBRL } from "../../../../../../../utils/money";

@@ -30,6 +30,7 @@ export const RelatorioVisualizacao = ({
 }) => {
   const containerRef = useRef(null);
   const [alturaDocumento, setAlturaDocumento] = useState(0);
+  const heightDepsKey = useMemo(() => JSON.stringify(heightDeps), [heightDeps]);
 
   const atualizarAlturaDocumento = useCallback(() => {
     if (containerRef.current) {
@@ -45,7 +46,7 @@ export const RelatorioVisualizacao = ({
 
   useEffect(() => {
     atualizarAlturaDocumento();
-  }, [atualizarAlturaDocumento, ...heightDeps]);
+  }, [atualizarAlturaDocumento, heightDepsKey]);
 
   const renderContent = useMemo(() => {
     if (error) {

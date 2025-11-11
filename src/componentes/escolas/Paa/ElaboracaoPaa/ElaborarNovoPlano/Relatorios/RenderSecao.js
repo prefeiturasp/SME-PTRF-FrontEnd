@@ -1,4 +1,3 @@
-import { toastCustom } from "../../../../../Globais/ToastCustom";
 import "./styles.css";
 
 import chevronUp from "../../../../../../assets/img/icone-chevron-up.svg";
@@ -25,10 +24,17 @@ export const RenderSecao = ({
   const { patchPaa, isLoading: isSaving } = usePatchPaa();
 
   const handleSalvarObjetivos = async (objetivos) => {
+    if (!paaVigente?.uuid) {
+      return;
+    }
     patchPaa({ uuid: paaVigente.uuid, payload: { objetivos } });
   };
 
   const handleSalvarTexto = async (campoPaa, texto) => {
+    if (!paaVigente?.uuid) {
+      return;
+    }
+
     const payload = {
       [campoPaa]: texto !== "" ? texto : "Comece a digitar aqui...",
     };
@@ -37,11 +43,6 @@ export const RenderSecao = ({
   };
 
   const contentClassName = `expanded-item-content`;
-
-  if (!paaVigente?.uuid) {
-    toastCustom.ToastCustomError("Erro!", "PAA vigente não encontrado.");
-    return;
-  }
 
   return (
     <div key={secaoKey} className={`subsecao-item ${isExpanded ? "subsecao-item-open" : ""}`}>
