@@ -10,12 +10,19 @@ import { ASSOCIACAO_UUID } from '../../../../../../services/auth.service';
 import { RenderSecao } from './RenderSecao';
 
 
-const Relatorios = () => {
-  const [expandedSections, setExpandedSections] = useState({
+const Relatorios = ({ initialExpandedSections }) => {
+  const defaultExpandedState = {
     planoAnual: false,
     introducao: false,
+    objetivos: false,
+    componentes: false,
     conclusao: false,
-  });
+  };
+
+  const [expandedSections, setExpandedSections] = useState(() => ({
+    ...defaultExpandedState,
+    ...(initialExpandedSections || {}),
+  }));
 
   const associacaoUuid = localStorage.getItem(ASSOCIACAO_UUID);
   const { textosPaa, isLoading, isError } = useGetTextosPaa();

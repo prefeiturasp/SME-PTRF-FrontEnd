@@ -1,6 +1,5 @@
 import { Fragment, useState, useCallback, useEffect } from "react";
 import { Checkbox, Flex, Spin } from "antd";
-import { useGetAcoesAssociacao } from "./hooks/useGetAcoesAssociacao";
 import { useGetReceitasPrevistas } from "./hooks/useGetReceitasPrevistas";
 import "./style.css";
 import ReceitasPrevistasModalForm from "./ReceitasPrevistasModalForm";
@@ -15,7 +14,18 @@ import TabelaReceitasPrevistas from "./TabelaReceitasPrevistas";
 import ModalConfirmaPararAtualizacaoSaldo from "./ModalConfirmarPararAtualizacaoSaldo";
 import { getPaaVigente } from "../../../../../../services/sme/Parametrizacoes.service";
 
-const ReceitasPrevistas = () => {
+const mapDestinoParaTab = (destino) => {
+  switch (destino) {
+    case "pdde":
+      return "detalhamento-das-acoes-pdde";
+    case "recursos-proprios":
+      return "detalhamento-de-recursos-proprios";
+    default:
+      return "receitas-previstas";
+  }
+};
+
+const ReceitasPrevistas = ({ receitasDestino = null }) => {
 
   const associacaoUUID = () => localStorage.getItem(ASSOCIACAO_UUID);
   const dadosPaaLocalStorage = () => JSON.parse(localStorage.getItem('DADOS_PAA'))
@@ -24,7 +34,9 @@ const ReceitasPrevistas = () => {
     !!dadosPaaLocalStorage()?.saldo_congelado_em);
 
   const [loadingPaa, setLoadingPaa] = useState(false);
-  const [activeTab, setActiveTab] = useState("receitas-previstas");
+  const [activeTab, setActiveTab] = useState(() =>
+    mapDestinoParaTab(receitasDestino)
+  );
   const [modalForm, setModalForm] = useState({ open: false, data: null });
   const [ showModalConfirmaPararAtualizacaoSaldo, setShowModalConfirmaPararAtualizacaoSaldo ] = useState(false)
 
@@ -83,6 +95,13 @@ const ReceitasPrevistas = () => {
     }
     loadPaa()
   }, [carregaPaa])
+
+  useEffect(() => {
+    if (receitasDestino) {
+      const tab = mapDestinoParaTab(receitasDestino);
+      setActiveTab(tab);
+    }
+  }, [receitasDestino]);
 
   const onTogglePararAtualizacoesSaldo = (e) => {
     setValorCheckPararAtualizacaoSaldo(e.target.checked);

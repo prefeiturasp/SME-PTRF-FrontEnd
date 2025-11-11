@@ -1,0 +1,43 @@
+.relatorio-plano-aplicacao {
+  &__content {
+    gap: 32px;
+  }
+
+  &__title {
+    color: #42474a !important;
+  }
+
+  &__edit-button {
+    min-width: 160px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    .relatorio-plano-aplicacao__edit-icon {
+      color: #ffffff;
+    }
+  }
+
+  &__table {
+    .ant-table-tbody > tr > td,
+    .ant-table-thead > tr > th {
+      border-color: #dadada;
+      padding: 8px 12px !important;
+    }
+
+    .ant-table-thead > tr > th {
+      background-color: #dadada !important;
+      font-size: 15px !important;
+      font-weight: 600 !important;
+      color: #42474a !important;
+    }
+  }
+
+  &__table-total-row {
+    .ant-table-cell {
+      background-color: #dadada !important;
+      font-weight: 600 !important;
+    }
+  }
+}
+

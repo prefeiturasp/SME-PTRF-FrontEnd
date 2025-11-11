@@ -7,8 +7,10 @@ import ReceitasPrevistas from './ReceitasPrevistas';
 import Prioridades from './Prioridades';
 import Relatorios from './Relatorios';
 import BarraTopoTitulo from './BarraTopoTitulo';
+import { useLocation } from 'react-router-dom';
 
 export const ElaborarNovoPlano = () => {
+  const location = useLocation();
   const itemsBreadCrumb = [
     { label: 'Plano Anual de Atividades', url: '/paa' },
     { label: 'Elaborar novo plano', active: true },
@@ -21,14 +23,31 @@ export const ElaborarNovoPlano = () => {
     { id: 'relatorios', label: 'Relatórios' },
   ];
 
-  const [activeTab, setActiveTab] = useState(tabs[0].id);
+  const getInitialTab = () => {
+    const requestedTab = location.state?.activeTab;
+    return tabs.some((tab) => tab.id === requestedTab) ? requestedTab : tabs[0].id;
+  };
+
+  const [activeTab, setActiveTab] = useState(getInitialTab);
+  const relatoriosInitialExpandedSections = location.state?.expandedSections;
+  const fromPlanoAplicacao = Boolean(location.state?.fromPlanoAplicacao);
+  const fromPlanoOrcamentario = Boolean(location.state?.fromPlanoOrcamentario);
+  const receitasDestino = location.state?.receitasDestino || null;
 
   return (
     <PaginasContainer>
       <BreadcrumbComponent items={itemsBreadCrumb}/>
       <h1 className="titulo-itens-painel mt-5">Plano Anual de Atividades</h1>
       <div className="page-content-inner">
-        <BarraTopoTitulo />
+        <BarraTopoTitulo
+          origem={
+            fromPlanoAplicacao
+              ? "plano-aplicacao"
+              : fromPlanoOrcamentario
+              ? "plano-orcamentario"
+              : null
+          }
+        />
 
         <TabSelector tabs={tabs} activeTab={activeTab} setActiveTab={setActiveTab} />
 
@@ -37,7 +56,7 @@ export const ElaborarNovoPlano = () => {
         )}
 
         {activeTab === 'receitas' && (
-          <ReceitasPrevistas />
+          <ReceitasPrevistas receitasDestino={receitasDestino} />
         )}
 
         {activeTab === 'prioridades-list' && (
@@ -45,7 +64,7 @@ export const ElaborarNovoPlano = () => {
         )}
 
         {activeTab === 'relatorios' && (
-          <Relatorios />
+          <Relatorios initialExpandedSections={relatoriosInitialExpandedSections} />
         )}
       </div>
     </PaginasContainer>
