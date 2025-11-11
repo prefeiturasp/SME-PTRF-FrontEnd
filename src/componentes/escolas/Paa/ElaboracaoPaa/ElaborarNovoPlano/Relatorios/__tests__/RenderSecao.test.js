@@ -1,10 +1,8 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { RenderSecao } from "../RenderSecao";
-import { toastCustom } from "../../../../../../Globais/ToastCustom";
 
 const mockPatchPaa = jest.fn();
 
-jest.mock("../../../../../../Globais/ToastCustom");
 jest.mock("../hooks/usePatchPaa", () => ({
   usePatchPaa: () => ({
     patchPaa: mockPatchPaa,
@@ -136,8 +134,8 @@ describe("RenderSecao", () => {
     });
   });
 
-  it("Valida PAA vigente não encontrado", async () => {
-    mockPatchPaa.mockRejectedValue({});
+  it("não tenta salvar quando paaVigente não possui uuid", async () => {
+    mockPatchPaa.mockResolvedValueOnce({});
 
     const props = {
       ...baseProps,
@@ -146,8 +144,11 @@ describe("RenderSecao", () => {
 
     render(<RenderSecao {...props} />);
 
+    const btn = screen.getByRole("button", { name: "Salvar mock" });
+    fireEvent.click(btn);
+
     await waitFor(() => {
-      expect(toastCustom.ToastCustomError).toHaveBeenCalledWith("Erro!", "PAA vigente não encontrado.");
+      expect(mockPatchPaa).not.toHaveBeenCalled();
     });
   });
 });

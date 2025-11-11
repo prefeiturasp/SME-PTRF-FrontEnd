@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./styles.css";
 
 import chevronUp from "../../../../../../assets/img/icone-chevron-up.svg";
@@ -8,6 +8,8 @@ import { useGetTextosPaa } from "./hooks/useGetTextosPaa";
 import { useGetPaaVigente } from "./hooks/useGetPaaVigente";
 import { ASSOCIACAO_UUID } from "../../../../../../services/auth.service";
 import { RenderSecao } from "./RenderSecao";
+import { toastCustom } from "../../../../../Globais/ToastCustom";
+import Loading from "../../../../../../utils/Loading";
 
 const Relatorios = ({ initialExpandedSections }) => {
   const defaultExpandedState = {
@@ -26,6 +28,19 @@ const Relatorios = ({ initialExpandedSections }) => {
   const associacaoUuid = localStorage.getItem(ASSOCIACAO_UUID);
   const { textosPaa, isLoading, isError } = useGetTextosPaa();
   const { paaVigente, isLoading: isLoadingPaa } = useGetPaaVigente(associacaoUuid);
+  const apresentouToastErroPaaNaoEncontrado = useRef(false);
+
+  useEffect(() => {
+    if (paaVigente?.uuid) {
+      apresentouToastErroPaaNaoEncontrado.current = false;
+      return;
+    }
+
+    if (!isLoadingPaa && !paaVigente?.uuid && !apresentouToastErroPaaNaoEncontrado.current) {
+      toastCustom.ToastCustomError("Erro!", "PAA vigente não encontrado.");
+      apresentouToastErroPaaNaoEncontrado.current = true;
+    }
+  }, [isLoadingPaa, paaVigente?.uuid]);
 
   const toggleSection = (sectionKey) => {
     setExpandedSections((prev) => ({
@@ -63,9 +78,8 @@ const Relatorios = ({ initialExpandedSections }) => {
     const isExpanded = expandedSections[secaoKey];
 
     return (
-      <div className={`render-secao-${secaoKey}`}>
+      <div key={secaoKey} className={`render-secao-${secaoKey}`}>
         <RenderSecao
-          key={secaoKey}
           secaoKey={secaoKey}
           config={config}
           isExpanded={isExpanded}
@@ -114,7 +128,15 @@ const Relatorios = ({ initialExpandedSections }) => {
           {/* Subseções do Plano anual */}
           {expandedSections.planoAnual && (
             <div className="plano-anual-subsecoes">
-              {Object.entries(secoesConfig).map(([secaoKey, config]) => renderSecao(secaoKey, config))}
+              {isLoadingPaa && (
+                <Loading corGrafico="black" corFonte="dark" marginTop="0" marginBottom="0" />
+              )}
+
+              {!isLoadingPaa && !paaVigente?.uuid && (
+                <div className="texto-error">PAA vigente não encontrado.</div>
+              )}
+
+              {paaVigente?.uuid && Object.entries(secoesConfig).map(([secaoKey, config]) => renderSecao(secaoKey, config))}
             </div>
           )}
         </div>
