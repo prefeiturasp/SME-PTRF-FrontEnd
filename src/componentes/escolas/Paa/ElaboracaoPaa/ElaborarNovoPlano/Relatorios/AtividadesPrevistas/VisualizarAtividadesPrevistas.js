@@ -16,7 +16,9 @@ import {
   updateAtividadeEstatutariaPaa,
   deleteAtividadeEstatutariaPaa,
   deleteRecursoProprioPaa,
+  linkAtividadeEstatutariaExistentePaa,
 } from "../../../../../../../services/escolas/Paa.service";
+import { ModalConfirmarExclusao } from "../../../../../../sme/Parametrizacoes/componentes/ModalConfirmarExclusao";
 import "./styles.scss";
 
 const formatarMesAno = (valor) => {
@@ -51,6 +53,8 @@ export const VisualizarAtividadesPrevistas = () => {
   const deveSincronizarTabela = useRef(false);
   const deveSincronizarRecursos = useRef(false);
   const [isSalvando, setIsSalvando] = useState(false);
+  const [modalExcluir, setModalExcluir] = useState({ aberto: false, atividade: null });
+  const [isExcluindoAtividade, setIsExcluindoAtividade] = useState(false);
   const paaUuid = localStorage.getItem("PAA");
 
   const tiposOptions = useMemo(() => {
@@ -271,6 +275,7 @@ export const VisualizarAtividadesPrevistas = () => {
           const atividadeEstatutariaUuid =
             atividade?.atividade_estatutaria?.uuid ||
             atividade?.atividade_estatutaria ||
+            atividade?.atividadeEstatutariaUuid ||
             atividade?.uuid;
 
           if (atividade._destroy) {
@@ -292,7 +297,20 @@ export const VisualizarAtividadesPrevistas = () => {
             data: atividade.data,
           };
 
-          if (atividade.isNovo) {
+          if (atividade.isGlobal && !atividade.vinculoUuid) {
+            if (!atividadeEstatutariaUuid) {
+              throw new Error("Identificador da atividade global não encontrado.");
+            }
+            // eslint-disable-next-line no-await-in-loop
+            await linkAtividadeEstatutariaExistentePaa(paaUuid, {
+              atividade_estatutaria: atividadeEstatutariaUuid,
+              data: atividade.data,
+            });
+            toastCustom.ToastCustomSuccess(
+              "Sucesso!",
+              "Atividade global vinculada com sucesso."
+            );
+          } else if (atividade.isNovo) {
             // eslint-disable-next-line no-await-in-loop
             await createAtividadeEstatutariaPaa(paaUuid, payloadBase);
             toastCustom.ToastCustomSuccess("Sucesso!", "Atividade criada com sucesso.");
@@ -394,17 +412,59 @@ export const VisualizarAtividadesPrevistas = () => {
   }, []);
 
   const handleExcluirAtividade = useCallback((atividade) => {
-    setAtividadesTabela((prev) => {
-      if (atividade.isNovo) {
-        return prev.filter((item) => item.uuid !== atividade.uuid);
-      }
+    setModalExcluir({ aberto: true, atividade });
+  }, []);
 
-      return prev.map((item) =>
-        item.uuid === atividade.uuid
-          ? { ...item, _destroy: true, needsSync: true }
-          : item
+  const confirmarExclusaoAtividade = useCallback(async () => {
+    if (isExcluindoAtividade) {
+      return;
+    }
+
+    const atividade = modalExcluir.atividade;
+    if (!atividade) {
+      return;
+    }
+
+    try {
+      setIsExcluindoAtividade(true);
+
+      if (atividade.isNovo || (atividade.isGlobal && !atividade.vinculoUuid)) {
+        setAtividadesTabela((prev) =>
+          prev.filter((item) => item.uuid !== atividade.uuid)
+        );
+      } else {
+        const atividadeEstatutariaUuid =
+          atividade?.atividade_estatutaria?.uuid ||
+          atividade?.atividade_estatutaria ||
+          atividade?.atividadeEstatutariaUuid ||
+          atividade?.uuid;
+
+        if (!atividadeEstatutariaUuid) {
+          throw new Error("Identificador da atividade não encontrado.");
+        }
+
+        await deleteAtividadeEstatutariaPaa(paaUuid, atividadeEstatutariaUuid);
+        toastCustom.ToastCustomSuccess("Sucesso!", "Atividade excluída com sucesso.");
+        setAtividadesTabela((prev) =>
+          prev.filter((item) => item.uuid !== atividade.uuid)
+        );
+        deveSincronizarTabela.current = true;
+        await refetch();
+      }
+    } catch (error) {
+      console.error("Erro ao excluir atividade:", error);
+      toastCustom.ToastCustomError(
+        "Erro!",
+        "Não foi possível excluir a atividade. Tente novamente."
       );
-    });
+    } finally {
+      setIsExcluindoAtividade(false);
+      setModalExcluir({ aberto: false, atividade: null });
+    }
+  }, [isExcluindoAtividade, modalExcluir.atividade, paaUuid, refetch]);
+
+  const cancelarExclusaoAtividade = useCallback(() => {
+    setModalExcluir({ aberto: false, atividade: null });
   }, []);
 
   const handleExcluirRecursoProprio = useCallback((recurso) => {
@@ -749,7 +809,8 @@ export const VisualizarAtividadesPrevistas = () => {
     recursosPropriosVisiveis.length === 0;
 
   return (
-    <RelatorioVisualizacao
+    <>
+      <RelatorioVisualizacao
       title="Atividades previstas"
       onBack={handleVoltar}
       isLoading={isLoading || isLoadingRecursos}
@@ -827,7 +888,20 @@ export const VisualizarAtividadesPrevistas = () => {
           ),
         }}
       />
-    </RelatorioVisualizacao>
+      </RelatorioVisualizacao>
+
+      <ModalConfirmarExclusao
+        open={modalExcluir.aberto}
+        onOk={confirmarExclusaoAtividade}
+        okText="Excluir"
+        okButtonProps="btn-base-vermelho"
+        onCancel={cancelarExclusaoAtividade}
+        cancelText="Voltar"
+        cancelButtonProps="btn-base-verde-outline"
+        titulo="Excluir atividade"
+        bodyText="Tem certeza que deseja excluir a atividade selecionada?"
+      />
+    </>
   );
 };
 
