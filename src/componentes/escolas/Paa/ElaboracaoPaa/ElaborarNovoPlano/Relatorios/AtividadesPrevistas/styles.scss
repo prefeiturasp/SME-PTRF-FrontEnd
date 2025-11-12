@@ -93,17 +93,6 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  opacity: 0;
-  transition: opacity 0.15s ease-in-out;
-  pointer-events: none;
-}
-
-.atividades-previstas__tabela
-  .ant-table-tbody
-  > tr:hover
-  .atividades-previstas__data-actions {
-  opacity: 1;
-  pointer-events: auto;
 }
 
 .atividades-previstas__data-actions--visible {
