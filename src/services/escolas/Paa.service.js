@@ -198,6 +198,16 @@ export const getAtividadesEstatutariasPrevistas = async (paaUuid) => {
   ).data;
 };
 
+export const getAtividadesEstatutariasDisponiveis = async (paaUuid) => {
+  if (!paaUuid) {
+    return { results: [] };
+  }
+
+  return (
+    await api.get(`api/paa/${paaUuid}/atividades-estatutarias-disponiveis/`, authHeader())
+  ).data;
+};
+
 const patchAtividadesEstatutarias = async (paaUuid, atividades = []) => {
   if (!paaUuid) {
     throw new Error("PAA UUID é obrigatório para atualizar atividades estatutárias.");
