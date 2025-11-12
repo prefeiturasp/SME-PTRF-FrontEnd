@@ -264,31 +264,46 @@ export const VisualizarAtividadesPrevistas = () => {
       return;
     }
 
-    const atividadesPendentes = atividadesTabela.filter((item) => item.needsSync);
-    const recursosPendentes = recursosPropriosTabela.filter((item) => item.needsSync);
+    const linhasAjustadas = [];
+    const linhasComErro = [];
 
-    if (atividadesPendentes.length === 0 && recursosPendentes.length === 0) {
-      return;
-    }
+    const atividadesPreparadas = atividadesTabela.map((item) => {
+      if (item.emEdicao && item.dirty) {
+        if (!item.tipoAtividadeKey || !item.descricao || !item.data) {
+          linhasComErro.push(item.uuid);
+        }
+        linhasAjustadas.push(item.uuid);
+        return {
+          ...item,
+          emEdicao: false,
+          dirty: false,
+          needsSync: true,
+        };
+      }
+      return item;
+    });
 
-    const registrosInvalidos = atividadesPendentes.filter(
-      (item) =>
-        !item._destroy &&
-        (!item.tipoAtividadeKey || !item.descricao || !item.data)
-    );
-
-    if (registrosInvalidos.length > 0) {
+    if (linhasComErro.length > 0) {
       toastCustom.ToastCustomError(
         "Erro!",
         "Preencha tipo, descrição e data para todas as atividades pendentes."
       );
       setAtividadesTabela((prev) =>
         prev.map((item) =>
-          registrosInvalidos.some((registro) => registro.uuid === item.uuid)
-            ? { ...item, emEdicao: true }
-            : item
+          linhasComErro.includes(item.uuid) ? { ...item, emEdicao: true } : item
         )
       );
+      return;
+    }
+
+    if (linhasAjustadas.length > 0) {
+      setAtividadesTabela(atividadesPreparadas);
+    }
+
+    const atividadesPendentes = atividadesPreparadas.filter((item) => item.needsSync);
+    const recursosPendentes = recursosPropriosTabela.filter((item) => item.needsSync);
+
+    if (atividadesPendentes.length === 0 && recursosPendentes.length === 0) {
       return;
     }
 
@@ -847,7 +862,7 @@ export const VisualizarAtividadesPrevistas = () => {
               icon="faEdit"
               iconProps={{ style: { marginRight: 8, color: "#FFFFFF" } }}
             />
-            Editar receitas de recurso próprio
+            Editar receitas de recursos próprios
           </button>
         }
         containerClassName="relatorio-tabela-grupo atividades-previstas__tabela mt-4"
