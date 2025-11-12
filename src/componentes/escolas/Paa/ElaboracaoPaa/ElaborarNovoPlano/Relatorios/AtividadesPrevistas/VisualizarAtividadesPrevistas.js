@@ -166,7 +166,7 @@ export const VisualizarAtividadesPrevistas = () => {
             updated.mesAno = "-";
           }
 
-          if (item.isGlobal && !item.emEdicao) {
+          if (!item.emEdicao) {
             updated.needsSync = Boolean(dataObj && !Number.isNaN(dataObj.getTime()));
           }
         }
@@ -513,7 +513,7 @@ export const VisualizarAtividadesPrevistas = () => {
             }
           };
 
-          const isDataEditable = record.isGlobal || record.emEdicao;
+          const isDataEditable = record.isGlobal || record.emEdicao || Boolean(record.vinculoUuid);
 
           if (isDataEditable) {
             return (
@@ -587,7 +587,10 @@ export const VisualizarAtividadesPrevistas = () => {
         title: "Mês/Ano",
         key: "mesAno",
         render: (_, record) => {
-          const mesAnoVisivel = record.emEdicao ? "" : formatarMesAno(record.data);
+          const mesAnoBase = record.isGlobal && !record.vinculoUuid
+            ? record.mesLabel || "-"
+            : formatarMesAno(record.data);
+          const mesAnoVisivel = record.emEdicao ? "" : mesAnoBase;
 
           return (
             <div className="atividades-previstas__data-wrapper">
