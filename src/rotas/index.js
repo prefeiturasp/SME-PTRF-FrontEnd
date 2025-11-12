@@ -122,6 +122,7 @@ import { CadastroTipoDeDespesaCusteioPage } from "../paginas/SME/Parametrizacoes
 import { EdicaoTipoDeDespesaCusteioPage } from "../paginas/SME/Parametrizacoes/Despesas/TiposDeDespesaCusteio/Edicao";
 import { VisualizarPlanoAplicacao } from "../componentes/escolas/Paa/ElaboracaoPaa/ElaborarNovoPlano/Relatorios/PlanoAplicacao/VisualizarPlanoAplicacao";
 import { VisualizarPlanoOrcamentario } from "../componentes/escolas/Paa/ElaboracaoPaa/ElaborarNovoPlano/Relatorios/PlanoOrcamentario/VisualizarPlanoOrcamentario";
+import { VisualizarAtividadesPrevistas } from "../componentes/escolas/Paa/ElaboracaoPaa/ElaborarNovoPlano/Relatorios/AtividadesPrevistas/VisualizarAtividadesPrevistas";
 
 const routesConfig = [
   {
@@ -820,6 +821,13 @@ const routesConfig = [
     exact: true,
     path: "/relatorios-componentes/plano-orcamentario",
     component: VisualizarPlanoOrcamentario,
+    permissoes: ["access_paa"],
+    featureFlag: "paa",
+  },
+  {
+    exact: true,
+    path: "/relatorios-componentes/atividades-previstas",
+    component: VisualizarAtividadesPrevistas,
     permissoes: ["access_paa"],
     featureFlag: "paa",
   },
