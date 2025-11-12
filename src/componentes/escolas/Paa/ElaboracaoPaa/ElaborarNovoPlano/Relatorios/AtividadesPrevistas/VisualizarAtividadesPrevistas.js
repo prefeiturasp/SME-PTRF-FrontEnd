@@ -19,41 +19,20 @@ import {
 } from "../../../../../../../services/escolas/Paa.service";
 import "./styles.scss";
 
-const MESES_PADRAO = [
-  { value: 1, label: "Janeiro" },
-  { value: 2, label: "Fevereiro" },
-  { value: 3, label: "Março" },
-  { value: 4, label: "Abril" },
-  { value: 5, label: "Maio" },
-  { value: 6, label: "Junho" },
-  { value: 7, label: "Julho" },
-  { value: 8, label: "Agosto" },
-  { value: 9, label: "Setembro" },
-  { value: 10, label: "Outubro" },
-  { value: 11, label: "Novembro" },
-  { value: 12, label: "Dezembro" },
-];
-
-const mesesMap = {
-  1: "Janeiro",
-  2: "Fevereiro",
-  3: "Março",
-  4: "Abril",
-  5: "Maio",
-  6: "Junho",
-  7: "Julho",
-  8: "Agosto",
-  9: "Setembro",
-  10: "Outubro",
-  11: "Novembro",
-  12: "Dezembro",
-};
-
-const buildMesAno = (mes, ano, mesLabel) => {
-  const label = mesLabel || mesesMap[mes] || "";
-  if (!label) return "";
-  if (!ano) return label;
-  return `${label}/${ano}`;
+const formatarMesAno = (valor) => {
+  if (!valor) {
+    return "-";
+  }
+  const data = new Date(valor);
+  if (Number.isNaN(data.getTime())) {
+    return "-";
+  }
+  const mes = data.toLocaleDateString("pt-BR", { month: "long" });
+  const ano = data.getFullYear();
+  if (!mes) {
+    return `${ano || ""}`;
+  }
+  return `${mes.charAt(0).toUpperCase()}${mes.slice(1)}/${ano}`;
 };
 
 export const VisualizarAtividadesPrevistas = () => {
@@ -80,16 +59,6 @@ export const VisualizarAtividadesPrevistas = () => {
       value: item.key,
       label: item.value,
     }));
-  }, [tabelasAtividades]);
-
-  const mesesOptions = useMemo(() => {
-    const meses = tabelasAtividades?.mes?.length
-      ? tabelasAtividades.mes.map((item) => ({
-          value: item.key,
-          label: item.value,
-        }))
-      : MESES_PADRAO;
-    return meses;
   }, [tabelasAtividades]);
 
   const handleVoltar = useCallback(() => {
@@ -153,9 +122,6 @@ export const VisualizarAtividadesPrevistas = () => {
       tipoAtividadeKey: "",
       data: "",
       descricao: "",
-      mes: "",
-      mesLabel: "",
-      mesAno: "",
       isNovo: true,
       emEdicao: true,
       needsSync: false,
@@ -192,27 +158,17 @@ export const VisualizarAtividadesPrevistas = () => {
           updated.tipoAtividade = extra.tipoAtividadeLabel;
         }
 
-        let mesLabelAtual =
-          typeof extra.mesLabel !== "undefined" ? extra.mesLabel : updated.mesLabel;
-
         if (campo === "data") {
           const dataObj = valor ? new Date(valor) : null;
           if (dataObj && !Number.isNaN(dataObj.getTime())) {
-            const mesNumero = dataObj.getMonth() + 1;
-            const ano = dataObj.getFullYear();
-            // Atualiza rótulo e valor se ainda não definido manualmente
-            updated.mes = updated.mes || mesNumero;
-            mesLabelAtual = mesesMap[updated.mes] || mesesMap[mesNumero] || mesLabelAtual;
-            updated.mesLabel = mesLabelAtual;
-            updated.mesAno = buildMesAno(updated.mes, ano, mesLabelAtual);
+            updated.mesAno = formatarMesAno(valor);
           } else {
-            updated.mesAno = mesLabelAtual ? buildMesAno(updated.mes, null, mesLabelAtual) : "";
+            updated.mesAno = "-";
           }
-        } else if (campo === "mes" || typeof extra.mesLabel !== "undefined") {
-          const anoReferencia = updated.data ? new Date(updated.data).getFullYear() : "";
-          updated.mesAno = mesLabelAtual
-            ? buildMesAno(updated.mes, anoReferencia, mesLabelAtual)
-            : "";
+
+          if (item.isGlobal && !item.emEdicao) {
+            updated.needsSync = Boolean(dataObj && !Number.isNaN(dataObj.getTime()));
+          }
         }
 
         return updated;
@@ -335,10 +291,6 @@ export const VisualizarAtividadesPrevistas = () => {
             tipo: atividade.tipoAtividadeKey,
             data: atividade.data,
           };
-
-          if (atividade.mes) {
-            payloadBase.mes = atividade.mes;
-          }
 
           if (atividade.isNovo) {
             // eslint-disable-next-line no-await-in-loop
@@ -561,7 +513,9 @@ export const VisualizarAtividadesPrevistas = () => {
             }
           };
 
-          if (record.emEdicao) {
+          const isDataEditable = record.isGlobal || record.emEdicao;
+
+          if (isDataEditable) {
             return (
               <div className="atividades-previstas__input-date">
                 <input
@@ -578,7 +532,10 @@ export const VisualizarAtividadesPrevistas = () => {
                   aria-label="Abrir calendário"
                   onClick={triggerNativePicker}
                 >
-                  <Icon icon="faCalendarAlt" iconProps={{ style: { color: "#A4A4A4" } }} />
+                  <Icon
+                    icon="faCalendarAlt"
+                    iconProps={{ style: { color: "#A4A4A4" } }}
+                  />
                 </button>
               </div>
             );
@@ -593,8 +550,14 @@ export const VisualizarAtividadesPrevistas = () => {
                 disabled
                 readOnly
               />
-              <span className="atividades-previstas__input-date-icon" aria-hidden="true">
-                <Icon icon="faCalendarAlt" iconProps={{ style: { color: "#A4A4A4" } }} />
+              <span
+                className="atividades-previstas__input-date-icon"
+                aria-hidden="true"
+              >
+                <Icon
+                  icon="faCalendarAlt"
+                  iconProps={{ style: { color: "#A4A4A4" } }}
+                />
               </span>
             </div>
           );
@@ -622,96 +585,72 @@ export const VisualizarAtividadesPrevistas = () => {
       },
       {
         title: "Mês/Ano",
-        dataIndex: "mesAno",
         key: "mesAno",
-        render: (_, record) =>
-          record.emEdicao ? (
+        render: (_, record) => {
+          const mesAnoVisivel = record.emEdicao ? "" : formatarMesAno(record.data);
+
+          return (
             <div className="atividades-previstas__data-wrapper">
-              <select
-                className="form-control form-control-sm atividades-previstas__input"
-                value={
-                  record.mes === 0 || record.mes
-                    ? String(record.mes)
-                    : ""
-                }
-                disabled={mesesOptions.length === 0}
-                onChange={(event) => {
-                  const valorSelecionado = event.target.value;
-                  const option = mesesOptions.find(
-                    (opt) => String(opt.value) === valorSelecionado
-                  );
-                  handleChangeAtividade(
-                    record.uuid,
-                    "mes",
-                    valorSelecionado ? Number(valorSelecionado) : "",
-                    {
-                      mesLabel: option?.label || "",
-                    }
-                  );
-                }}
-              >
-                <option value="">Selecione o mês</option>
-                {mesesOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-              <div className="atividades-previstas__data-actions atividades-previstas__data-actions--visible">
-                <IconButton
-                  className="p-0"
-                  icon="faSave"
-                  tooltipMessage="Concluir edição"
-                  iconProps={{
-                    style: { color: "#00585E" },
-                  }}
-                  aria-label="Concluir edição"
-                  disabled={isSalvando}
-                  onClick={() => handleSalvarLinha(record)}
-                />
-                <IconButton
-                  className="p-0"
-                  icon="faTrashCan"
-                  tooltipMessage="Excluir"
-                  iconProps={{
-                    style: { color: "#00585E" },
-                  }}
-                  aria-label="Excluir novo registro"
-                  onClick={() => handleExcluirAtividade(record)}
-                />
-              </div>
-            </div>
-          ) : (
-            <div className="atividades-previstas__data-wrapper">
-              <span>{record.mesAno || "-"}</span>
+              <span>{mesAnoVisivel}</span>
+            {!record.isGlobal && (
               <div className="atividades-previstas__data-actions">
-                <IconButton
-                  className="p-0"
-                  icon="faEdit"
-                  tooltipMessage="Editar"
-                  iconProps={{
-                    style: { color: "#00585E" },
-                  }}
-                  aria-label="Editar"
-                  onClick={() =>
-                    record.isNovo
-                      ? handleEditarLinha(record)
-                      : handleEditarAtividade(record)
-                  }
-                />
-                <IconButton
-                  className="p-0"
-                  icon="faTrashCan"
-                  tooltipMessage="Excluir"
-                  iconProps={{
-                    style: { color: "#00585E" },
-                  }}
-                  aria-label="Excluir"
-                  onClick={() => handleExcluirAtividade(record)}
-                />
+                {record.emEdicao ? (
+                  <>
+                    <IconButton
+                      className="p-0"
+                      icon="faSave"
+                      tooltipMessage="Concluir edição"
+                      iconProps={{
+                        style: { color: "#00585E" },
+                      }}
+                      aria-label="Concluir edição"
+                      disabled={isSalvando}
+                      onClick={() => handleSalvarLinha(record)}
+                    />
+                    <IconButton
+                      className="p-0"
+                      icon="faTrashCan"
+                      tooltipMessage="Excluir"
+                      iconProps={{
+                        style: { color: "#00585E" },
+                      }}
+                      aria-label="Excluir registro"
+                      onClick={() => handleExcluirAtividade(record)}
+                    />
+                  </>
+                ) : (
+                  <>
+                    <IconButton
+                      className="p-0"
+                      icon="faEdit"
+                      tooltipMessage="Editar"
+                      iconProps={{
+                        style: { color: "#00585E" },
+                      }}
+                      aria-label="Editar"
+                      onClick={() =>
+                        record.isNovo
+                          ? handleEditarLinha(record)
+                          : handleEditarAtividade(record)
+                      }
+                    />
+                    <IconButton
+                      className="p-0"
+                      icon="faTrashCan"
+                      tooltipMessage="Excluir"
+                      iconProps={{
+                        style: { color: "#00585E" },
+                      }}
+                      aria-label="Excluir"
+                      onClick={() => handleExcluirAtividade(record)}
+                    />
+                  </>
+                )}
               </div>
-            </div>
-          ),
+            )}
+          </div>
+          );
+        },
         width: 220,
       },
     ],
@@ -722,7 +661,6 @@ export const VisualizarAtividadesPrevistas = () => {
       handleExcluirAtividade,
       handleSalvarLinha,
       tiposOptions,
-      mesesOptions,
       isSalvando,
     ]
   );
