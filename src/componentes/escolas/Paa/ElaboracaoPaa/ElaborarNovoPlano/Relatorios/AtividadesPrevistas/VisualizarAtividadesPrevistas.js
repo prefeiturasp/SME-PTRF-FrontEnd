@@ -304,7 +304,7 @@ export const VisualizarAtividadesPrevistas = () => {
 
           if (atividade.isGlobal && !atividade.vinculoUuid) {
             if (!atividadeEstatutariaUuid) {
-              throw new Error("Identificador da atividade global não encontrado.");
+              throw new Error("Identificador da atividade não encontrado.");
             }
             // eslint-disable-next-line no-await-in-loop
             await linkAtividadeEstatutariaExistentePaa(paaUuid, {
@@ -313,7 +313,7 @@ export const VisualizarAtividadesPrevistas = () => {
             });
             toastCustom.ToastCustomSuccess(
               "Sucesso!",
-              "Atividade global vinculada com sucesso."
+              "Atividade criada com sucesso."
             );
           } else if (atividade.isNovo) {
             // eslint-disable-next-line no-await-in-loop
