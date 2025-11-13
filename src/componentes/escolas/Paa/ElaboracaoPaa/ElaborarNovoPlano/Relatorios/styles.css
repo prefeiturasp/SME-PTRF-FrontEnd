@@ -335,6 +335,37 @@
 }
 
 
+.componentes-secao-lista {
+  margin-top: 12px;
+  background: #ffffff;
+  border: 1px solid #E0E0E0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.componentes-secao-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #E0E0E0;
+}
+
+.componentes-secao-item.sem-borda {
+  border-bottom: none;
+}
+
+.componentes-secao-titulo {
+  font-size: 14px;
+  color: #42474A;
+  font-weight: 500;
+}
+
+.componentes-secao-botao {
+  min-width: 108px;
+}
+
+
 /* Estilos para o Dropdown do react-bootstrap */
 .dropdown-toggle::after {
   display: none !important;
