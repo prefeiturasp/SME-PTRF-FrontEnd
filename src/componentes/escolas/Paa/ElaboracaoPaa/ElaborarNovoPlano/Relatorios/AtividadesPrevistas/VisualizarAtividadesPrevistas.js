@@ -25,16 +25,38 @@ const formatarMesAno = (valor) => {
   if (!valor) {
     return "-";
   }
-  const data = new Date(valor);
-  if (Number.isNaN(data.getTime())) {
+  // Parse da string YYYY-MM-DD para evitar problemas de fuso horário
+  const partes = valor.split("-");
+  if (partes.length !== 3) {
+    const data = new Date(valor);
+    if (Number.isNaN(data.getTime())) {
+      return "-";
+    }
+    const mes = data.toLocaleDateString("pt-BR", { month: "long" });
+    const ano = data.getFullYear();
+    if (!mes) {
+      return `${ano || ""}`;
+    }
+    return `${mes.charAt(0).toUpperCase()}${mes.slice(1)}/${ano}`;
+  }
+  
+  const ano = parseInt(partes[0], 10);
+  const mes = parseInt(partes[1], 10);
+  const dia = parseInt(partes[2], 10);
+  
+  if (Number.isNaN(ano) || Number.isNaN(mes) || Number.isNaN(dia)) {
     return "-";
   }
-  const mes = data.toLocaleDateString("pt-BR", { month: "long" });
-  const ano = data.getFullYear();
-  if (!mes) {
-    return `${ano || ""}`;
+  
+  // Criar data no fuso horário local para evitar problemas de UTC
+  const data = new Date(ano, mes - 1, dia);
+  const mesFormatado = data.toLocaleDateString("pt-BR", { month: "long" });
+  const anoFormatado = data.getFullYear();
+  
+  if (!mesFormatado) {
+    return `${anoFormatado || ""}`;
   }
-  return `${mes.charAt(0).toUpperCase()}${mes.slice(1)}/${ano}`;
+  return `${mesFormatado.charAt(0).toUpperCase()}${mesFormatado.slice(1)}/${anoFormatado}`;
 };
 
 export const VisualizarAtividadesPrevistas = () => {
