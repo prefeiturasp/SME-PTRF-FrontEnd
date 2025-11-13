@@ -55,6 +55,11 @@ export const VisualizarAtividadesPrevistas = () => {
   const [isSalvando, setIsSalvando] = useState(false);
   const [modalExcluir, setModalExcluir] = useState({ aberto: false, atividade: null });
   const [isExcluindoAtividade, setIsExcluindoAtividade] = useState(false);
+  const [modalExcluirRecurso, setModalExcluirRecurso] = useState({
+    aberto: false,
+    recurso: null,
+  });
+  const [isExcluindoRecurso, setIsExcluindoRecurso] = useState(false);
   const paaUuid = localStorage.getItem("PAA");
 
   const tiposOptions = useMemo(() => {
@@ -468,18 +473,67 @@ export const VisualizarAtividadesPrevistas = () => {
   }, []);
 
   const handleExcluirRecursoProprio = useCallback((recurso) => {
-    setRecursosPropriosTabela((prev) => {
-      if (recurso.isNovo) {
-        return prev.filter((item) => item.uuid !== recurso.uuid);
-      }
-
-      return prev.map((item) =>
-        item.uuid === recurso.uuid
-          ? { ...item, _destroy: true, needsSync: true }
-          : item
-      );
-    });
+    setModalExcluirRecurso({ aberto: true, recurso });
   }, []);
+
+  const confirmarExclusaoRecursoProprio = useCallback(async () => {
+    if (isExcluindoRecurso) {
+      return;
+    }
+
+    const recurso = modalExcluirRecurso.recurso;
+    if (!recurso) {
+      return;
+    }
+
+    try {
+      setIsExcluindoRecurso(true);
+
+      if (recurso.isNovo) {
+        setRecursosPropriosTabela((prev) =>
+          prev.filter((item) => item.uuid !== recurso.uuid)
+        );
+        toastCustom.ToastCustomSuccess(
+          "Sucesso!",
+          "Recurso próprio excluído com sucesso."
+        );
+      } else {
+        if (!recurso.uuid) {
+          throw new Error("Identificador do recurso próprio não encontrado.");
+        }
+
+        await deleteRecursoProprioPaa(recurso.uuid);
+        toastCustom.ToastCustomSuccess(
+          "Sucesso!",
+          "Recurso próprio excluído com sucesso."
+        );
+
+        deveSincronizarRecursos.current = true;
+        await refetchRecursos();
+
+        setRecursosPropriosTabela((prev) =>
+          prev.filter((item) => item.uuid !== recurso.uuid)
+        );
+      }
+    } catch (error) {
+      console.error("Erro ao excluir recurso próprio:", error);
+      toastCustom.ToastCustomError(
+        "Erro!",
+        "Não foi possível excluir o recurso próprio. Tente novamente."
+      );
+    } finally {
+      setIsExcluindoRecurso(false);
+      setModalExcluirRecurso({ aberto: false, recurso: null });
+    }
+  }, [isExcluindoRecurso, modalExcluirRecurso.recurso, refetchRecursos]);
+
+  const cancelarExclusaoRecursoProprio = useCallback(() => {
+    if (isExcluindoRecurso) {
+      return;
+    }
+
+    setModalExcluirRecurso({ aberto: false, recurso: null });
+  }, [isExcluindoRecurso]);
 
   const formatarData = (valor) => {
     if (!valor) return "-";
@@ -900,6 +954,17 @@ export const VisualizarAtividadesPrevistas = () => {
         cancelButtonProps="btn-base-verde-outline"
         titulo="Excluir atividade"
         bodyText="Tem certeza que deseja excluir a atividade selecionada?"
+      />
+      <ModalConfirmarExclusao
+        open={modalExcluirRecurso.aberto}
+        onOk={confirmarExclusaoRecursoProprio}
+        okText="Excluir"
+        okButtonProps="btn-base-vermelho"
+        onCancel={cancelarExclusaoRecursoProprio}
+        cancelText="Voltar"
+        cancelButtonProps="btn-base-verde-outline"
+        titulo="Excluir recurso próprio"
+        bodyText="Tem certeza que deseja excluir o recurso próprio selecionado?"
       />
     </>
   );
