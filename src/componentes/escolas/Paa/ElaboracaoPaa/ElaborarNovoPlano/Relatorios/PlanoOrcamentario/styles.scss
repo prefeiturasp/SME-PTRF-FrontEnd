@@ -8,11 +8,16 @@
   }
 
   &__table {
+    table-layout: fixed;
+    width: 100%;
+
     .ant-table-tbody > tr > td,
     .ant-table-thead > tr > th {
       border-color: #dadada;
       padding: 12px 16px !important;
       vertical-align: top;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
     }
 
     .ant-table-thead > tr > th {
