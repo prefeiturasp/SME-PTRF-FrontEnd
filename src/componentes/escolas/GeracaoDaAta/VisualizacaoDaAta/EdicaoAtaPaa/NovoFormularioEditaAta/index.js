@@ -20,13 +20,14 @@ import { ModalAntDesignConfirmacao } from "../../../../../Globais/ModalAntDesign
 import {ModalNotificarRegeracaoAta} from "./ModalNotificarRegeracaoAta";
 import {getParecerSelecionado, isParecerReprovado} from "../utils";
 
-const adicionaProfessorGremioNaLista = (lista = [], ataUuid) => {
+const adicionaProfessorGremioNaLista = (lista = [], ataUuid, professorDefaults = {}) => {
     const existeProfessor = lista.some(participante => participante.professor_gremio);
     if (existeProfessor) {
         return lista.map(participante => participante.professor_gremio ? ({
             ...participante,
             id: participante.id || participante.uuid || 'professor-gremio',
             professor_gremio: true,
+            presente: participante.presente ?? true,
         }) : participante);
     }
 
@@ -35,13 +36,13 @@ const adicionaProfessorGremioNaLista = (lista = [], ataUuid) => {
         {
             id: ataUuid ? `${ataUuid}-professor-gremio` : 'professor-gremio',
             ata: ataUuid || "",
-            cargo: "",
-            identificacao: "",
-            nome: "",
+            cargo: professorDefaults.cargo || "",
+            identificacao: professorDefaults.identificacao || "",
+            nome: professorDefaults.nome || "",
             editavel: true,
             membro: false,
             adicao: false,
-            presente: false,
+            presente: professorDefaults.presente ?? true,
             presidente_da_reuniao: false,
             secretario_da_reuniao: false,
             professor_gremio: true,
@@ -51,6 +52,20 @@ const adicionaProfessorGremioNaLista = (lista = [], ataUuid) => {
 
 const listaPossuiParticipantesAssociacao = (lista = []) => {
     return lista.some(participante => !participante.professor_gremio);
+};
+
+const extraiProfessorDefaults = (lista = []) => {
+    const professor = lista.find(participante => participante.professor_gremio);
+    if (!professor) {
+        return null;
+    }
+
+    return {
+        nome: professor.nome || '',
+        cargo: professor.cargo || '',
+        identificacao: professor.identificacao || '',
+        presente: professor.presente ?? true,
+    };
 };
 
 export const NovoFormularioEditaAta = ({
@@ -80,6 +95,12 @@ export const NovoFormularioEditaAta = ({
     const professorLookupTimeouts = useRef({});
 
     const [listaParticipantes, setListaParticipantes] = useState([]);
+    const [professorDefaults, setProfessorDefaults] = useState({
+        nome: '',
+        cargo: '',
+        identificacao: '',
+        presente: true
+    });
     const [dataModalApagarParticipantesAta, setDataModalApagarParticipantesAta] = useState({
         show: false,
         name: null,
@@ -88,14 +109,20 @@ export const NovoFormularioEditaAta = ({
     });
     
     const associacaoUuid = localStorage.getItem(ASSOCIACAO_UUID);
-    const sincronizaListaParticipantes = (novaLista) => {
+    const sincronizaListaParticipantes = (novaLista, { atualizarInitialValues = true } = {}) => {
+        const professorInfo = extraiProfessorDefaults(novaLista);
+        if (professorInfo) {
+            setProfessorDefaults(professorInfo);
+        }
         if (formRef && formRef.current && typeof formRef.current.setFieldValue === "function") {
             formRef.current.setFieldValue("listaParticipantes", novaLista, false);
         }
-        setDadosForm((prevState) => ({
-            ...prevState,
-            listaParticipantes: novaLista,
-        }));
+        if (atualizarInitialValues) {
+            setDadosForm((prevState) => ({
+                ...prevState,
+                listaParticipantes: novaLista,
+            }));
+        }
     };
     useEffect(() => {
         return () => {
@@ -112,8 +139,9 @@ export const NovoFormularioEditaAta = ({
         const carregarComposicao = async () => {
             const lista_cargos_composicao = await getCargosComposicaoData(stateFormEditarAta.data_reuniao, associacaoUuid);
             const composicao_formatada = formatarListaCargoComposicaoParaFormatoDaListaParticipantes(lista_cargos_composicao);
-            const listaComProfessor = adicionaProfessorGremioNaLista(composicao_formatada, uuid_ata);
+            const listaComProfessor = adicionaProfessorGremioNaLista(composicao_formatada, uuid_ata, professorDefaults);
             setListaParticipantes(listaComProfessor);
+            sincronizaListaParticipantes(listaComProfessor);
         };
 
         const precisaCarregarComposicao = (
@@ -125,11 +153,7 @@ export const NovoFormularioEditaAta = ({
         if (precisaCarregarComposicao && stateFormEditarAta && stateFormEditarAta.data_reuniao && isValidDateString(stateFormEditarAta.data_reuniao)) {
             carregarComposicao();
         }
-    }, [associacaoUuid, listaParticipantes, stateFormEditarAta, uuid_ata]);
-
-    useEffect(() => {
-        sincronizaListaParticipantes(adicionaProfessorGremioNaLista(listaParticipantes, uuid_ata));
-    }, [listaParticipantes, uuid_ata]);
+    }, [associacaoUuid, listaParticipantes, stateFormEditarAta, uuid_ata, professorDefaults]);
 
     useEffect(() => {
         setDadosForm((prevState) => ({
@@ -142,8 +166,13 @@ export const NovoFormularioEditaAta = ({
         if (!uuid_ata) return;
         const fetchData = async () => {
             let listaPresentesAta = await getParticipantesOrdenadosPorCargoPaa(uuid_ata);
-            const listaComProfessor = adicionaProfessorGremioNaLista(listaPresentesAta, uuid_ata);
+            const professorInfo = extraiProfessorDefaults(listaPresentesAta);
+            if (professorInfo) {
+                setProfessorDefaults(professorInfo);
+            }
+            const listaComProfessor = adicionaProfessorGremioNaLista(listaPresentesAta, uuid_ata, professorInfo || professorDefaults);
             setListaParticipantes(listaComProfessor);
+            sincronizaListaParticipantes(listaComProfessor);
         }
         fetchData();
     }, [uuid_ata]);
@@ -379,6 +408,33 @@ export const NovoFormularioEditaAta = ({
         if (identificacao !== undefined) {
             setFieldValue(`listaParticipantes[${index}].identificacao`, identificacao);
         }
+
+        setDadosForm((prevState) => {
+            if (!prevState || !prevState.listaParticipantes) return prevState;
+            const novaLista = [...prevState.listaParticipantes];
+            if (novaLista[index]) {
+                novaLista[index] = {
+                    ...novaLista[index],
+                    nome,
+                    cargo,
+                    identificacao: identificacao !== undefined ? identificacao : novaLista[index].identificacao,
+                    membro: false,
+                    editavel: false,
+                    professor_gremio: true,
+                    presente: true,
+                };
+            }
+            return {
+                ...prevState,
+                listaParticipantes: novaLista
+            };
+        });
+        setProfessorDefaults({
+            nome,
+            cargo,
+            identificacao: identificacao || '',
+            presente: true
+        });
 
         const campoNome = document.getElementById(`listaParticipantes.nome_[${index}]`);
         const campoCargo = document.getElementById(`listaParticipantes.cargo_[${index}]`);
@@ -619,8 +675,9 @@ export const NovoFormularioEditaAta = ({
             const data_formatada = formatDate(value)
             const lista_cargos_composicao = await getCargosComposicaoData(data_formatada, associacaoUuid)
             const listaFormatada = formatarListaCargoComposicaoParaFormatoDaListaParticipantes(lista_cargos_composicao);
-            const listaComProfessor = adicionaProfessorGremioNaLista(listaFormatada, uuid_ata);
+            const listaComProfessor = adicionaProfessorGremioNaLista(listaFormatada, uuid_ata, professorDefaults);
             setListaParticipantes(listaComProfessor);
+            sincronizaListaParticipantes(listaComProfessor);
             setDadosForm((prevState) => ({
                 ...prevState,
                 stateFormEditarAta: {
@@ -651,8 +708,9 @@ export const NovoFormularioEditaAta = ({
     const handleConfirmarRemocaoParticipantes = () => {
         const {name, value, setFieldValue} = dataModalApagarParticipantesAta;
         setFieldValue(name, value);
-        const listaComProfessor = adicionaProfessorGremioNaLista([], uuid_ata);
+        const listaComProfessor = adicionaProfessorGremioNaLista([], uuid_ata, professorDefaults);
         setListaParticipantes(listaComProfessor);
+        sincronizaListaParticipantes(listaComProfessor);
 
         setDadosForm((prevState) => ({
             ...prevState,
@@ -670,8 +728,8 @@ export const NovoFormularioEditaAta = ({
         });
     }
 
-    const editaStatusDePresencaParticipante = (index) => {
-        let copiaListaParticipantes = [...dadosForm.listaParticipantes];
+    const editaStatusDePresencaParticipante = (index, listaAtual) => {
+        let copiaListaParticipantes = listaAtual.map(participante => ({...participante}));
 
         const participanteSelecionado = copiaListaParticipantes[index];
 
@@ -679,13 +737,19 @@ export const NovoFormularioEditaAta = ({
             participanteSelecionado.presidente_da_reuniao = false;
             participanteSelecionado.secretario_da_reuniao = false;
             participanteSelecionado.presente = !participanteSelecionado.presente;
+            if (participanteSelecionado.professor_gremio) {
+                setProfessorDefaults(prev => ({
+                    ...prev,
+                    presente: participanteSelecionado.presente
+                }));
+            }
         }
 
-        sincronizaListaParticipantes(copiaListaParticipantes);
+        sincronizaListaParticipantes(copiaListaParticipantes, { atualizarInitialValues: false });
     }
 
-    const editaStatusDePresidenteDaReuniao = (index) => {
-        const copiaListaParticipantes = [...dadosForm.listaParticipantes];
+    const editaStatusDePresidenteDaReuniao = (index, listaAtual) => {
+        const copiaListaParticipantes = listaAtual.map(participante => ({...participante}));
         const participanteSelecionado = copiaListaParticipantes[index];
     
         if (participanteSelecionado) {
@@ -695,11 +759,11 @@ export const NovoFormularioEditaAta = ({
             });
         }
 
-        sincronizaListaParticipantes(copiaListaParticipantes);
+        sincronizaListaParticipantes(copiaListaParticipantes, { atualizarInitialValues: false });
     }
 
-    const editaStatusDeSecretarioDaReuniao = (index) => {
-        const copiaListaParticipantes = [...dadosForm.listaParticipantes];
+    const editaStatusDeSecretarioDaReuniao = (index, listaAtual) => {
+        const copiaListaParticipantes = listaAtual.map(participante => ({...participante}));
         const participanteSelecionado = copiaListaParticipantes[index];
     
         if (participanteSelecionado) {
@@ -709,7 +773,7 @@ export const NovoFormularioEditaAta = ({
             });
         }
 
-        sincronizaListaParticipantes(copiaListaParticipantes);
+        sincronizaListaParticipantes(copiaListaParticipantes, { atualizarInitialValues: false });
     }
 
     return (
@@ -1006,7 +1070,7 @@ export const NovoFormularioEditaAta = ({
                                                                                         <div className="row">
                                                                                             <Switch
                                                                                                 style={{width: '100%'}}
-                                                                                                onChange={() => editaStatusDePresencaParticipante(index)}
+                                                                                                onChange={() => editaStatusDePresencaParticipante(index, values.listaParticipantes)}
                                                                                                 checked={membro.presente}
                                                                                                 name="statusPresencaSwitch"
                                                                                                 checkedChildren="Presente"
@@ -1025,7 +1089,7 @@ export const NovoFormularioEditaAta = ({
                                                                                             <div className="row">
                                                                                                 <Switch
                                                                                                     style={{width: '100%'}}
-                                                                                                    onChange={() => editaStatusDePresidenteDaReuniao(index)}
+                                                                                                    onChange={() => editaStatusDePresidenteDaReuniao(index, values.listaParticipantes)}
                                                                                                     checked={membro.presidente_da_reuniao}
                                                                                                     name="statusPresidenteSwitch"
                                                                                                     className={`mt-2 switch-status-presidente ${membro.presidente_da_reuniao ? "switch-status-presidente-checked" : ""}`}
@@ -1043,7 +1107,7 @@ export const NovoFormularioEditaAta = ({
                                                                                             <div className="row">
                                                                                                 <Switch
                                                                                                     style={{width: '100%'}}
-                                                                                                    onChange={() => editaStatusDeSecretarioDaReuniao(index)}
+                                                                                                    onChange={() => editaStatusDeSecretarioDaReuniao(index, values.listaParticipantes)}
                                                                                                     checked={membro.secretario_da_reuniao}
                                                                                                     name="statusSecretarioSwitch"
                                                                                                     className={`mt-2 switch-status-presidente ${membro.secretario_da_reuniao ? "switch-status-presidente-checked" : ""}`}
