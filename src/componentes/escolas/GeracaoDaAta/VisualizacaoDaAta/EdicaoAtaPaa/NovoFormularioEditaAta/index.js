@@ -670,50 +670,44 @@ export const NovoFormularioEditaAta = ({
         });
     }
 
-    const editaStatusDePresencaParticipante = (id) => {
-        let copiaListaParticipantes = [...(formRef.current?.values?.listaParticipantes || dadosForm.listaParticipantes || [])];
+    const editaStatusDePresencaParticipante = (index) => {
+        let copiaListaParticipantes = [...dadosForm.listaParticipantes];
 
-        const membroListaPresentesSelecionado = copiaListaParticipantes.find(membro => membro.id === id);
+        const participanteSelecionado = copiaListaParticipantes[index];
 
-        if (membroListaPresentesSelecionado) {
-            membroListaPresentesSelecionado.presidente_da_reuniao = false
-            membroListaPresentesSelecionado.secretario_da_reuniao = false
-            membroListaPresentesSelecionado.presente = !membroListaPresentesSelecionado.presente;
+        if (participanteSelecionado) {
+            participanteSelecionado.presidente_da_reuniao = false;
+            participanteSelecionado.secretario_da_reuniao = false;
+            participanteSelecionado.presente = !participanteSelecionado.presente;
         }
 
         sincronizaListaParticipantes(copiaListaParticipantes);
     }
 
-    const editaStatusDePresidenteDaReuniao = (id) => {
-        const copiaListaParticipantes = [...(formRef.current?.values?.listaParticipantes || dadosForm.listaParticipantes || [])];
-        const membroListaPresentesSelecionado = copiaListaParticipantes.find(membro => membro.id === id);
+    const editaStatusDePresidenteDaReuniao = (index) => {
+        const copiaListaParticipantes = [...dadosForm.listaParticipantes];
+        const participanteSelecionado = copiaListaParticipantes[index];
     
-        if (membroListaPresentesSelecionado) {
-            membroListaPresentesSelecionado.presidente_da_reuniao = !membroListaPresentesSelecionado.presidente_da_reuniao;
+        if (participanteSelecionado) {
+            const novoValor = !participanteSelecionado.presidente_da_reuniao;
+            copiaListaParticipantes.forEach((membro, idx) => {
+                membro.presidente_da_reuniao = idx === index ? novoValor : false;
+            });
         }
-    
-        copiaListaParticipantes.forEach(membro => {
-            if (membro.id !== id) {
-                membro.presidente_da_reuniao = false;
-            }
-        });
 
         sincronizaListaParticipantes(copiaListaParticipantes);
     }
 
-    const editaStatusDeSecretarioDaReuniao = (id) => {
-        const copiaListaParticipantes = [...(formRef.current?.values?.listaParticipantes || dadosForm.listaParticipantes || [])];
-        const membroListaPresentesSelecionado = copiaListaParticipantes.find(membro => membro.id === id);
+    const editaStatusDeSecretarioDaReuniao = (index) => {
+        const copiaListaParticipantes = [...dadosForm.listaParticipantes];
+        const participanteSelecionado = copiaListaParticipantes[index];
     
-        if (membroListaPresentesSelecionado) {
-            membroListaPresentesSelecionado.secretario_da_reuniao = !membroListaPresentesSelecionado.secretario_da_reuniao;
+        if (participanteSelecionado) {
+            const novoValor = !participanteSelecionado.secretario_da_reuniao;
+            copiaListaParticipantes.forEach((membro, idx) => {
+                membro.secretario_da_reuniao = idx === index ? novoValor : false;
+            });
         }
-    
-        copiaListaParticipantes.forEach(membro => {
-            if (membro.id !== id) {
-                membro.secretario_da_reuniao = false;
-            }
-        });
 
         sincronizaListaParticipantes(copiaListaParticipantes);
     }
@@ -1012,7 +1006,7 @@ export const NovoFormularioEditaAta = ({
                                                                                         <div className="row">
                                                                                             <Switch
                                                                                                 style={{width: '100%'}}
-                                                                                                onChange={() => editaStatusDePresencaParticipante(membro.id)}
+                                                                                                onChange={() => editaStatusDePresencaParticipante(index)}
                                                                                                 checked={membro.presente}
                                                                                                 name="statusPresencaSwitch"
                                                                                                 checkedChildren="Presente"
@@ -1031,7 +1025,7 @@ export const NovoFormularioEditaAta = ({
                                                                                             <div className="row">
                                                                                                 <Switch
                                                                                                     style={{width: '100%'}}
-                                                                                                    onChange={() => editaStatusDePresidenteDaReuniao(membro.id)}
+                                                                                                    onChange={() => editaStatusDePresidenteDaReuniao(index)}
                                                                                                     checked={membro.presidente_da_reuniao}
                                                                                                     name="statusPresidenteSwitch"
                                                                                                     className={`mt-2 switch-status-presidente ${membro.presidente_da_reuniao ? "switch-status-presidente-checked" : ""}`}
@@ -1049,7 +1043,7 @@ export const NovoFormularioEditaAta = ({
                                                                                             <div className="row">
                                                                                                 <Switch
                                                                                                     style={{width: '100%'}}
-                                                                                                    onChange={() => editaStatusDeSecretarioDaReuniao(membro.id)}
+                                                                                                    onChange={() => editaStatusDeSecretarioDaReuniao(index)}
                                                                                                     checked={membro.secretario_da_reuniao}
                                                                                                     name="statusSecretarioSwitch"
                                                                                                     className={`mt-2 switch-status-presidente ${membro.secretario_da_reuniao ? "switch-status-presidente-checked" : ""}`}
