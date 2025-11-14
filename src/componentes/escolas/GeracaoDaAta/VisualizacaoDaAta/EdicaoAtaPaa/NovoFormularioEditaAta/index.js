@@ -1,10 +1,16 @@
 import React, {useState, useEffect, useRef} from "react";
 import {DatePickerField} from "../../../../../Globais/DatePickerField";
+import {toastCustom} from "../../../../../Globais/ToastCustom";
 import {visoesService} from "../../../../../../services/visoes.service";
 import {FieldArray, Formik} from "formik";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTimesCircle, faCheckCircle, faEdit} from "@fortawesome/free-solid-svg-icons";
-import {getMembroPorIdentificadorPaa, getParticipantesOrdenadosPorCargoPaa, getProfessorGremioInfo} from "../../../../../../services/escolas/PresentesAtaPaa.service";
+import {
+    getListaPresentesPadraoPaa,
+    getMembroPorIdentificadorPaa,
+    getParticipantesOrdenadosPorCargoPaa,
+    getProfessorGremioInfo
+} from "../../../../../../services/escolas/PresentesAtaPaa.service";
 import {YupSignupSchemaAta} from "./YupSignupSchemaAta";
 import {valida_cpf_exportado} from "../../../../../../utils/ValidacoesAdicionaisFormularios";
 import TabelaRepassesPendentes from "../../TabelaRepassesPendentes";
@@ -68,6 +74,26 @@ const extraiProfessorDefaults = (lista = []) => {
     };
 };
 
+const constroiMapaDeMembrosAssociacao = (listaPadrao = []) => {
+    return new Set(
+        (listaPadrao || [])
+            .filter(participante => participante && participante.membro)
+            .map(participante => participante.identificacao)
+            .filter(identificacao => Boolean(identificacao))
+    );
+};
+
+const marcaParticipantesComoMembrosDaAssociacao = (listaParticipantes = [], listaPadrao = []) => {
+    const identificadoresMembros = constroiMapaDeMembrosAssociacao(listaPadrao);
+    return (listaParticipantes || []).map(participante => {
+        const ehMembro = Boolean(participante?.membro) || identificadoresMembros.has(participante?.identificacao);
+        return {
+            ...participante,
+            membro: ehMembro
+        };
+    });
+};
+
 export const NovoFormularioEditaAta = ({
                                        stateFormEditarAta,
                                        tabelas,
@@ -93,6 +119,10 @@ export const NovoFormularioEditaAta = ({
     const [ehEdicaoPresente, setEhEdicaoPresente] = useState([]);
     const [linhaEditada, setLinhaEditada] = useState({})
     const professorLookupTimeouts = useRef({});
+    const notificarErroComposicaoPorData = (error) => {
+        const mensagemErro = error?.response?.data?.erro || "Não foi possível carregar a composição por data.";
+        toastCustom.ToastCustomError("Erro ao carregar participantes", mensagemErro);
+    };
 
     const [listaParticipantes, setListaParticipantes] = useState([]);
     const [professorDefaults, setProfessorDefaults] = useState({
@@ -137,11 +167,15 @@ export const NovoFormularioEditaAta = ({
 
     useEffect(() => {
         const carregarComposicao = async () => {
-            const lista_cargos_composicao = await getCargosComposicaoData(stateFormEditarAta.data_reuniao, associacaoUuid);
-            const composicao_formatada = formatarListaCargoComposicaoParaFormatoDaListaParticipantes(lista_cargos_composicao);
-            const listaComProfessor = adicionaProfessorGremioNaLista(composicao_formatada, uuid_ata, professorDefaults);
-            setListaParticipantes(listaComProfessor);
-            sincronizaListaParticipantes(listaComProfessor);
+            try {
+                const lista_cargos_composicao = await getCargosComposicaoData(stateFormEditarAta.data_reuniao, associacaoUuid);
+                const composicao_formatada = formatarListaCargoComposicaoParaFormatoDaListaParticipantes(lista_cargos_composicao);
+                const listaComProfessor = adicionaProfessorGremioNaLista(composicao_formatada, uuid_ata, professorDefaults);
+                setListaParticipantes(listaComProfessor);
+                sincronizaListaParticipantes(listaComProfessor);
+            } catch (error) {
+                notificarErroComposicaoPorData(error);
+            }
         };
 
         const precisaCarregarComposicao = (
@@ -165,14 +199,25 @@ export const NovoFormularioEditaAta = ({
     useEffect(() => {
         if (!uuid_ata) return;
         const fetchData = async () => {
-            let listaPresentesAta = await getParticipantesOrdenadosPorCargoPaa(uuid_ata);
-            const professorInfo = extraiProfessorDefaults(listaPresentesAta);
-            if (professorInfo) {
-                setProfessorDefaults(professorInfo);
+            try {
+                const [listaPresentesAtaResponse, listaPadraoResponse] = await Promise.all([
+                    getParticipantesOrdenadosPorCargoPaa(uuid_ata),
+                    getListaPresentesPadraoPaa(uuid_ata).catch(() => []),
+                ]);
+                const listaPresentesAta = marcaParticipantesComoMembrosDaAssociacao(
+                    listaPresentesAtaResponse,
+                    listaPadraoResponse
+                );
+                const professorInfo = extraiProfessorDefaults(listaPresentesAta);
+                if (professorInfo) {
+                    setProfessorDefaults(professorInfo);
+                }
+                const listaComProfessor = adicionaProfessorGremioNaLista(listaPresentesAta, uuid_ata, professorInfo || professorDefaults);
+                setListaParticipantes(listaComProfessor);
+                sincronizaListaParticipantes(listaComProfessor);
+            } catch (error) {
+                console.error("Erro ao carregar participantes da ata PAA", error);
             }
-            const listaComProfessor = adicionaProfessorGremioNaLista(listaPresentesAta, uuid_ata, professorInfo || professorDefaults);
-            setListaParticipantes(listaComProfessor);
-            sincronizaListaParticipantes(listaComProfessor);
         }
         fetchData();
     }, [uuid_ata]);
@@ -230,6 +275,7 @@ export const NovoFormularioEditaAta = ({
     }
 
     const onClickConfirmar = (index, values, setFieldValue) => {
+        const participanteAtual = values.listaParticipantes ? values.listaParticipantes[index] : null;
         if(ehEdicaoPresente[index]){
             let presentes = values.listaParticipantes
             let nome = presentes[index].nome
@@ -310,6 +356,9 @@ export const NovoFormularioEditaAta = ({
                 setFormErrors(erros);
                 setFieldValue(`listaParticipantes[${index}].adicao`, false)
                 setEhAdicaoPresente(false);
+                if (participanteAtual && participanteAtual.adicao) {
+                    toastCustom.ToastCustomSuccess("Participante inserido com sucesso");
+                }
             } else {
                 setFieldValue(`listaParticipantes[${index}].editavel`, true)
                 setDisableBtnSalvar(true);
@@ -504,6 +553,9 @@ export const NovoFormularioEditaAta = ({
                     const professor = await getProfessorGremioInfo(identificador);
                     const encontrou = professor && professor.mensagem !== "servidor-nao-encontrado";
                     atualizarCamposProfessorGremio(index, setFieldValue, professor && professor.nome ? professor.nome : '', professor && professor.cargo ? professor.cargo : '', !!encontrou, identificador);
+                    if (encontrou) {
+                        toastCustom.ToastCustomSuccess("Participante inserido com sucesso");
+                    }
                 } catch (error) {
                     console.error("Erro ao buscar professor do grêmio", error);
                     atualizarCamposProfessorGremio(index, setFieldValue, '', '', false, identificador);
@@ -673,11 +725,15 @@ export const NovoFormularioEditaAta = ({
         if(isValidDate(value)) {
             setFieldValue(name, value);
             const data_formatada = formatDate(value)
-            const lista_cargos_composicao = await getCargosComposicaoData(data_formatada, associacaoUuid)
-            const listaFormatada = formatarListaCargoComposicaoParaFormatoDaListaParticipantes(lista_cargos_composicao);
-            const listaComProfessor = adicionaProfessorGremioNaLista(listaFormatada, uuid_ata, professorDefaults);
-            setListaParticipantes(listaComProfessor);
-            sincronizaListaParticipantes(listaComProfessor);
+            try {
+                const lista_cargos_composicao = await getCargosComposicaoData(data_formatada, associacaoUuid)
+                const listaFormatada = formatarListaCargoComposicaoParaFormatoDaListaParticipantes(lista_cargos_composicao);
+                const listaComProfessor = adicionaProfessorGremioNaLista(listaFormatada, uuid_ata, professorDefaults);
+                setListaParticipantes(listaComProfessor);
+                sincronizaListaParticipantes(listaComProfessor);
+            } catch (error) {
+                notificarErroComposicaoPorData(error);
+            }
             setDadosForm((prevState) => ({
                 ...prevState,
                 stateFormEditarAta: {
@@ -924,6 +980,13 @@ export const NovoFormularioEditaAta = ({
                                     {listaValores && listaValores.length > 0 && indicesOrdenados.map((index) => {
                                                             const membro = listaValores[index];
                                                             const isProfessorGremio = Boolean(membro.professor_gremio);
+                                                            const estaEmModoEdicao = Boolean(ehEdicaoPresente[index]);
+                                                            const estaEmModoAdicao = Boolean(membro.adicao);
+                                                            const estaEditavel = Boolean(membro.editavel);
+                                                            const linhaPersistida = !estaEmModoAdicao && !estaEditavel;
+                                                            const deveMostrarAcoesEdicao = !estaEmModoEdicao && !isProfessorGremio && !membro.membro && !linhaPersistida;
+                                                            const deveMostrarControlesPresenca = !estaEmModoEdicao && (membro.membro || isProfessorGremio || linhaPersistida);
+                                                            const ehParticipanteManualPersistido = linhaPersistida && !membro.membro && !isProfessorGremio;
                                                             return (
                                                                 <div key={index}>
                                                                     <div className={`form-row ${membro.adicao ? 'adicao-presente' : ''}`}>
@@ -1013,7 +1076,7 @@ export const NovoFormularioEditaAta = ({
                                                                                 </button>
                                                                             }
     
-                                                                            {(ehEdicaoPresente[index] === undefined || ehEdicaoPresente[index] === false) && membro.membro === false && !isProfessorGremio &&
+                                                                            {deveMostrarAcoesEdicao &&
                                                                                 <>     
                                                                                     <div className="row">
                                                                                         <div className="col-6 mt-5 d-flex justify-content-end">
@@ -1060,12 +1123,12 @@ export const NovoFormularioEditaAta = ({
                                                                                 </>
                                                                             }
     
-                                                                            {((ehEdicaoPresente[index] === undefined || ehEdicaoPresente[index] === false) && (membro.membro === true || isProfessorGremio) &&
+                                                                            {deveMostrarControlesPresenca &&
                                                                                 <>
                                                                                 <div className="row">
-                                                                                    <div className='col-3 mt-4 ml-4' style={{ opacity: `${ehAdicaoPresente || !podeEditarAta ? "30%" : '100%'}` }}>
-                                                                                        <div className="row">
-                                                                                            <span className='mr-3' style={{whiteSpace: 'nowrap'}}>Membro estava: </span>
+                                                                                   <div className='col-3 mt-4 ml-4' style={{ opacity: `${ehAdicaoPresente || !podeEditarAta ? "30%" : '100%'}` }}>
+                                                                                       <div className="row">
+                                                                                           <span className='mr-3' style={{whiteSpace: 'nowrap'}}>Membro estava: </span>
                                                                                         </div>
                                                                                         <div className="row">
                                                                                             <Switch
@@ -1081,7 +1144,7 @@ export const NovoFormularioEditaAta = ({
                                                                                         </div>
                                                                                     </div>
 
-                                                                                    {!isProfessorGremio && (
+                                                                                    {!isProfessorGremio && !ehParticipanteManualPersistido && (
                                                                                         <div className='col-3 mt-4 ml-4' style={{ opacity: `${ehAdicaoPresente || !podeEditarAta ? "30%" : '100%'}` }}>
                                                                                             <div className="row">
                                                                                                 <span className='mr-2'>Presidente: </span>
@@ -1099,7 +1162,7 @@ export const NovoFormularioEditaAta = ({
                                                                                         </div>
                                                                                     )}
 
-                                                                                    {!isProfessorGremio && (
+                                                                                    {!isProfessorGremio && !ehParticipanteManualPersistido && (
                                                                                         <div className='col-3 mt-4 ml-3' style={{ opacity: `${ehAdicaoPresente || !podeEditarAta ? "30%" : '100%'}` }}>
                                                                                             <div className="row">
                                                                                                 <span className='mr-2'>Secretário: </span>
@@ -1118,7 +1181,7 @@ export const NovoFormularioEditaAta = ({
                                                                                     )}
                                                                                 </div>
                                                                                 </>
-                                                                            )}
+                                                                            }
     
                                                                             {ehEdicaoPresente[index] &&
                                                                                 <>
