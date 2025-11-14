@@ -162,7 +162,7 @@ export const VisualizarAtividadesPrevistas = () => {
   }, []);
 
   const handleEditarRecursosProprios = useCallback(() => {
-    navigate("/elaborar-novo-paa", {
+    navigate("/elaborar-novo-paa?fromAtividadesPrevistas=1", {
       state: {
         activeTab: "receitas",
         receitasDestino: "recursos-proprios",

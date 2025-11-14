@@ -45,6 +45,14 @@ const BarraTopoTitulo = ({ origem = null }) => {
       };
     }
 
+    if (origem === "atividades-previstas") {
+      return {
+        className: "btn btn-outline-success btn-sm",
+        label: "Voltar para atividades previstas",
+        destino: "/relatorios-componentes/atividades-previstas",
+      };
+    }
+
     return {
       className: "btn btn-outline-success btn-sm",
       label: "Voltar",
