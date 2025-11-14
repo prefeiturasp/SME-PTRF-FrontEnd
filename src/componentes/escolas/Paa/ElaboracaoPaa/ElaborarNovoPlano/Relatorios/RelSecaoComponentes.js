@@ -16,6 +16,13 @@ const COMPONENTES_SECOES = [
         variante: 'secundaria',
         rota: '/relatorios-componentes/plano-orcamentario',
     },
+    {
+        key: 'atividades-previstas',
+        titulo: 'Atividades previstas',
+        acao: 'Editar',
+        variante: 'secundaria',
+        rota: '/relatorios-componentes/atividades-previstas',
+    },
 ];
 
 export const RelSecaoComponentes = () => {

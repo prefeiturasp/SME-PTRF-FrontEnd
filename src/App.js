@@ -30,7 +30,8 @@ export const App = () => {
                     pathName.match(/\/dre-relatorio-consolidado-em-tela\/[a-zA-Z0-9]/) ||
                     pathName.match(/\/dre-relatorio-consolidado-dados-das-ues\/[a-zA-Z0-9]/) ||
                     pathName.match(/\/relatorios-componentes\/plano-aplicacao/) ||
-                    pathName.match(/\/relatorios-componentes\/plano-orcamentario/) ? (
+                    pathName.match(/\/relatorios-componentes\/plano-orcamentario/) ||
+                    pathName.match(/\/relatorios-componentes\/atividades-previstas/) ? (
                         <>
                             <Cabecalho/>
                             <Rotas/>
