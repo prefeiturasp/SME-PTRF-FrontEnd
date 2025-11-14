@@ -1,4 +1,4 @@
-import { React, useState } from 'react';
+import { React, useState, useEffect } from 'react';
 import { PaginasContainer } from '../../../../../paginas/PaginasContainer';
 import BreadcrumbComponent from '../../../../Globais/Breadcrumb';
 import TabSelector from '../../../../Globais/TabSelector';
@@ -8,6 +8,7 @@ import Prioridades from './Prioridades';
 import Relatorios from './Relatorios';
 import BarraTopoTitulo from './BarraTopoTitulo';
 import { useLocation } from 'react-router-dom';
+import { iniciarAtaPaa } from '../../../../../services/escolas/AtasPaa.service';
 
 export const ElaborarNovoPlano = () => {
   const location = useLocation();
@@ -33,6 +34,16 @@ export const ElaborarNovoPlano = () => {
   const fromPlanoAplicacao = Boolean(location.state?.fromPlanoAplicacao);
   const fromPlanoOrcamentario = Boolean(location.state?.fromPlanoOrcamentario);
   const receitasDestino = location.state?.receitasDestino || null;
+
+  useEffect(() => {
+    const paaUuid = localStorage.getItem("PAA");
+    if (!paaUuid) {
+      return;
+    }
+    iniciarAtaPaa(paaUuid).catch((error) => {
+      console.error("Erro ao iniciar ata do PAA:", error);
+    });
+  }, []);
 
   return (
     <PaginasContainer>
