@@ -984,9 +984,11 @@ export const NovoFormularioEditaAta = ({
                                                             const estaEmModoAdicao = Boolean(membro.adicao);
                                                             const estaEditavel = Boolean(membro.editavel);
                                                             const linhaPersistida = !estaEmModoAdicao && !estaEditavel;
-                                                            const deveMostrarAcoesEdicao = !estaEmModoEdicao && !isProfessorGremio && !membro.membro && !linhaPersistida;
-                                                            const deveMostrarControlesPresenca = !estaEmModoEdicao && (membro.membro || isProfessorGremio || linhaPersistida);
-                                                            const ehParticipanteManualPersistido = linhaPersistida && !membro.membro && !isProfessorGremio;
+                                                            const possuiIdentificadorPersistencia = Boolean(membro?.id || membro?.uuid || membro?.participante_uuid);
+                                                            const registroSincronizado = linhaPersistida && possuiIdentificadorPersistencia;
+                                                            const deveMostrarAcoesEdicao = !estaEmModoEdicao && !isProfessorGremio && !membro.membro && !registroSincronizado;
+                                                            const deveMostrarControlesPresenca = !estaEmModoEdicao && (membro.membro || isProfessorGremio || registroSincronizado);
+                                                            const ehParticipanteManualPersistido = registroSincronizado && !membro.membro && !isProfessorGremio;
                                                             return (
                                                                 <div key={index}>
                                                                     <div className={`form-row ${membro.adicao ? 'adicao-presente' : ''}`}>
