@@ -1,4 +1,4 @@
-import { React, useState } from 'react';
+import { React, useState, useEffect, useMemo } from 'react';
 import { PaginasContainer } from '../../../../../paginas/PaginasContainer';
 import BreadcrumbComponent from '../../../../Globais/Breadcrumb';
 import TabSelector from '../../../../Globais/TabSelector';
@@ -8,6 +8,7 @@ import Prioridades from './Prioridades';
 import Relatorios from './Relatorios';
 import BarraTopoTitulo from './BarraTopoTitulo';
 import { useLocation } from 'react-router-dom';
+import { iniciarAtaPaa } from '../../../../../services/escolas/AtasPaa.service';
 
 export const ElaborarNovoPlano = () => {
   const location = useLocation();
@@ -33,21 +34,35 @@ export const ElaborarNovoPlano = () => {
   const fromPlanoAplicacao = Boolean(location.state?.fromPlanoAplicacao);
   const fromPlanoOrcamentario = Boolean(location.state?.fromPlanoOrcamentario);
   const receitasDestino = location.state?.receitasDestino || null;
+  const searchParams = useMemo(() => new URLSearchParams(location.search), [location.search]);
+  const fromAtividadesPrevistas = useMemo(() => {
+    const value = searchParams.get("fromAtividadesPrevistas");
+    return value === "1" || value === "true";
+  }, [searchParams]);
+  const origemBarra = fromAtividadesPrevistas
+    ? "atividades-previstas"
+    : fromPlanoAplicacao
+    ? "plano-aplicacao"
+    : fromPlanoOrcamentario
+    ? "plano-orcamentario"
+    : null;
+
+  useEffect(() => {
+    const paaUuid = localStorage.getItem("PAA");
+    if (!paaUuid) {
+      return;
+    }
+    iniciarAtaPaa(paaUuid).catch((error) => {
+      console.error("Erro ao iniciar ata do PAA:", error);
+    });
+  }, []);
 
   return (
     <PaginasContainer>
       <BreadcrumbComponent items={itemsBreadCrumb}/>
       <h1 className="titulo-itens-painel mt-5">Plano Anual de Atividades</h1>
       <div className="page-content-inner">
-        <BarraTopoTitulo
-          origem={
-            fromPlanoAplicacao
-              ? "plano-aplicacao"
-              : fromPlanoOrcamentario
-              ? "plano-orcamentario"
-              : null
-          }
-        />
+        <BarraTopoTitulo origem={origemBarra} />
 
         <TabSelector tabs={tabs} activeTab={activeTab} setActiveTab={setActiveTab} />
 
