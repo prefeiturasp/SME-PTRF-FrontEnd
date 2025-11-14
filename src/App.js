@@ -24,6 +24,7 @@ export const App = () => {
                 ) :
                 pathName.match(/\/visualizacao-da-ata\/[a-zA-Z0-9]/) ||
                     pathName.match(/\/edicao-da-ata\/[a-zA-Z0-9]/) ||
+                    pathName.match(/\/relatorios-paa\/edicao-ata\/[a-zA-Z0-9]/) ||
                     pathName.match(/\/visualizacao-da-ata-parecer-tecnico\/[a-zA-Z0-9]/) ||
                     pathName.match(/\/edicao-da-ata-parecer-tecnico\/[a-zA-Z0-9]/) ||
                     pathName.match(/\/dre-relatorio-consolidado-apuracao\/[a-zA-Z0-9]/) ||
