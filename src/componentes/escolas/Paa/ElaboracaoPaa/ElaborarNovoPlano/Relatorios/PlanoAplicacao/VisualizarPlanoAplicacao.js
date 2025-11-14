@@ -20,6 +20,7 @@ const columnsDefinition = () => [
     render: (_, record) => (
       <Text>{record.isTotal ? "TOTAL" : record.acao || "-"}</Text>
     ),
+    width: 200,
   },
   {
     title: "Tipo de aplicação",
@@ -43,6 +44,7 @@ const columnsDefinition = () => [
     key: "especificacao_material",
     render: (_, record) =>
       record.isTotal ? "" : record?.especificacao_material_objeto?.nome || "-",
+    width: 300,
   },
   {
     title: "Valor Total",

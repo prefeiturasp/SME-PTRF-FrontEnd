@@ -19,10 +19,15 @@
   }
 
   &__table {
+    table-layout: fixed;
+    width: 100%;
+
     .ant-table-tbody > tr > td,
     .ant-table-thead > tr > th {
       border-color: #dadada;
       padding: 8px 12px !important;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
     }
 
     .ant-table-thead > tr > th {
