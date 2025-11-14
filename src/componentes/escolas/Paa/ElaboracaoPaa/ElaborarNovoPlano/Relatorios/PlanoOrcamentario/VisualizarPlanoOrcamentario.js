@@ -35,6 +35,7 @@ const montarColunas = () => [
         {nome}
       </span>
     ),
+    width: 200,
   },
   {
     title: "",
@@ -48,6 +49,7 @@ const montarColunas = () => [
           <span>Livre Aplicação (R$)</span>
         </div>
       ),
+    width: 180,
   },
   {
     title: "Receitas",
@@ -68,6 +70,7 @@ const montarColunas = () => [
               hideCusteioCapital: linha.ocultarCusteioCapital,
             }
           ),
+    width: 220,
   },
   {
     title: "Despesas",
@@ -88,6 +91,7 @@ const montarColunas = () => [
               hideCusteioCapital: linha.ocultarCusteioCapital,
             }
           ),
+    width: 220,
   },
   {
     title: "Saldo",
@@ -100,6 +104,7 @@ const montarColunas = () => [
         : formatResumo(saldos, "relatorio-plano-orcamentario__saldos", {
             hideCusteioCapital: linha.ocultarCusteioCapital,
           }),
+    width: 220,
   },
 ];
 const agruparPrioridadesPorRecurso = prioridadesUtils.agruparPorRecurso;
