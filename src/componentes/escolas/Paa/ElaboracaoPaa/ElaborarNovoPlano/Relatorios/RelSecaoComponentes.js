@@ -4,21 +4,21 @@ import './styles.css';
 const COMPONENTES_SECOES = [
     {
         key: 'plano-aplicacao',
-        titulo: 'Plano de aplicação',
+        titulo: 'Plano de Aplicação',
         acao: 'Visualizar',
         variante: 'secundaria',
         rota: '/relatorios-componentes/plano-aplicacao',
     },
     {
         key: 'plano-orcamentario',
-        titulo: 'Plano orçamentário',
+        titulo: 'Plano Orçamentário',
         acao: 'Visualizar',
         variante: 'secundaria',
         rota: '/relatorios-componentes/plano-orcamentario',
     },
     {
         key: 'atividades-previstas',
-        titulo: 'Atividades previstas',
+        titulo: 'Atividades Previstas',
         acao: 'Editar',
         variante: 'secundaria',
         rota: '/relatorios-componentes/atividades-previstas',
