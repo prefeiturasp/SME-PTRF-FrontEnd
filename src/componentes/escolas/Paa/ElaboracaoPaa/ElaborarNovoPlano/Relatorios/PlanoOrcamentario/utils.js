@@ -46,12 +46,35 @@ const valoresCategorias = {
     destino.livre += numero(origem.livre);
     return destino;
   },
-  saldo: (receitas, despesas) =>
-    valoresCategorias.normalize({
-      custeio: numero(receitas.custeio) - numero(despesas.custeio),
-      capital: numero(receitas.capital) - numero(despesas.capital),
-      livre: numero(receitas.livre) - numero(despesas.livre),
-    }),
+  saldo: (receitas, despesas) => {
+    // Calcula saldos brutos
+    const saldo_custeio_bruto = numero(receitas.custeio) - numero(despesas.custeio);
+    const saldo_capital_bruto = numero(receitas.capital) - numero(despesas.capital);
+    const saldo_livre_bruto = numero(receitas.livre) - numero(despesas.livre);
+    
+    // Se custeio ficar negativo, deduz do saldo de livre aplicação
+    let saldo_custeio_final = saldo_custeio_bruto;
+    let saldo_livre_final = saldo_livre_bruto;
+    
+    if (saldo_custeio_bruto < 0) {
+      saldo_livre_final += saldo_custeio_bruto; // Adiciona o valor negativo (subtrai)
+      saldo_custeio_final = 0;
+    }
+    
+    // Se capital ficar negativo, deduz do saldo de livre aplicação
+    let saldo_capital_final = saldo_capital_bruto;
+    
+    if (saldo_capital_bruto < 0) {
+      saldo_livre_final += saldo_capital_bruto; // Adiciona o valor negativo (subtrai)
+      saldo_capital_final = 0;
+    }
+    
+    return valoresCategorias.normalize({
+      custeio: saldo_custeio_final,
+      capital: saldo_capital_final,
+      livre: saldo_livre_final,
+    });
+  },
   // Normaliza despesas garantindo que livre sempre seja 0
   normalizeDespesas: (valores = {}) => {
     const despesas = valoresCategorias.normalize(valores);
