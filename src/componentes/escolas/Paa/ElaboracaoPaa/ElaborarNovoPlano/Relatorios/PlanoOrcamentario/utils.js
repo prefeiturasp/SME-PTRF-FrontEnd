@@ -428,4 +428,3 @@ export const planoOrcamentarioUtils = {
   identificarGrupo,
   construirSecoes,
 };
-
