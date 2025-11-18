@@ -313,6 +313,17 @@ const construirSecoes = (
         saldos: saldo,
       };
     });
+  };
+
+  const calcularSecaoPTRF = (receitasPTRF, prioridadesPTRF) => {
+    if (!receitasPTRF.length) return null;
+
+    const linhas = receitasPTRF.map((item) => {
+      const receita = calcularReceitaBase(item);
+      const despesas = valoresCategorias.normalizeDespesas(
+        prioridadesPTRF.get(item.uuid)
+      );
+      const saldo = valoresCategorias.saldo(receita, despesas);
 
     adicionarLinhaTotal(linhas, "ptrf-total", "TOTAL");
     return { key: "ptrf", titulo: "PTRF", linhas };
