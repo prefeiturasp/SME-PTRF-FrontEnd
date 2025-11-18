@@ -129,8 +129,8 @@ const Relatorios = ({ initialExpandedSections }) => {
         <div className="documentos-header">
           <h3 className="documentos-title">Documentos</h3>
           <div className="documentos-buttons">
-            <button className="btn-previas">Prévias</button>
-            <button className="btn-gerar">Gerar</button>
+            <button className="btn btn-outline-success">Prévias</button>
+            <button className="btn btn-success">Gerar</button>
           </div>
         </div>
 
@@ -175,7 +175,7 @@ const Relatorios = ({ initialExpandedSections }) => {
               <div className="documento-status">Documento pendente de geração</div>
             </div>
             <div className="documento-actions">
-              <button className="btn-editar" onClick={handleEditarAta} disabled={!ataPaa?.uuid}>Editar</button>
+              <button className="btn btn-outline-success" onClick={handleEditarAta} disabled={!ataPaa?.uuid}>Editar</button>
             </div>
           </div>
         </div>

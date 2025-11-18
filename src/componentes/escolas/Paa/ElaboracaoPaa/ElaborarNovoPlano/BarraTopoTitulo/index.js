@@ -32,7 +32,7 @@ const BarraTopoTitulo = ({ origem = null }) => {
     if (origem === "plano-aplicacao") {
       return {
         className: "btn btn-success",
-        label: "Voltar ao plano de aplicação",
+        label: "Voltar ao Plano de Aplicação",
         destino: "/relatorios-componentes/plano-aplicacao",
       };
     }
@@ -40,21 +40,21 @@ const BarraTopoTitulo = ({ origem = null }) => {
     if (origem === "plano-orcamentario") {
       return {
         className: "btn btn-success",
-        label: "Voltar ao plano orçamentário",
+        label: "Voltar ao Plano Orçamentário",
         destino: "/relatorios-componentes/plano-orcamentario",
       };
     }
 
     if (origem === "atividades-previstas") {
       return {
-        className: "btn btn-outline-success btn-sm",
+        className: "btn btn-outline-success",
         label: "Voltar para atividades previstas",
         destino: "/relatorios-componentes/atividades-previstas",
       };
     }
 
     return {
-      className: "btn btn-outline-success btn-sm",
+      className: "btn btn-outline-success",
       label: "Voltar",
       destino: "/paa",
     };

@@ -101,7 +101,7 @@ export const RelatorioVisualizacao = ({
                 <button
                   type="button"
                   className={joinClassNames(
-                    "btn btn-outline-success relatorio-visualizacao__back-button",
+                    "btn btn-outline-success",
                     backButtonClassName
                   )}
                   onClick={onBack}
