@@ -89,6 +89,7 @@ const montarColunas = () => [
             {
               useStrong: false,
               hideCusteioCapital: linha.ocultarCusteioCapital,
+              isDespesa: true,
             }
           ),
     width: 220,
@@ -165,7 +166,17 @@ export const VisualizarPlanoOrcamentario = () => {
     ]
   );
 
-  const handleVoltar = () => navigate(-1);
+  const handleVoltar = () => {
+    navigate("/elaborar-novo-paa", {
+      state: {
+        activeTab: "relatorios",
+        expandedSections: {
+          planoAnual: true,
+          componentes: true,
+        },
+      },
+    });
+  };
 
   const handleIrParaReceitas = (destino) =>
     navigate("/elaborar-novo-paa", {
@@ -199,12 +210,13 @@ export const VisualizarPlanoOrcamentario = () => {
 
   const secoesComAcoes = new Set(["ptrf", "pdde", "recurso_proprio"]);
 
-  const obterDestinoReceitaPorSecao = (secaoKey) => {
-    if (secaoKey === "ptrf") return "ptrf";
-    if (secaoKey === "pdde") return "pdde";
-    if (secaoKey === "recurso_proprio") return "recursos-proprios";
-    return null;
+  const destinosReceitasPorSecao = {
+    ptrf: "ptrf",
+    pdde: "pdde",
+    recurso_proprio: "recursos-proprios",
   };
+
+  const obterDestinoReceitaPorSecao = (secaoKey) => destinosReceitasPorSecao[secaoKey] || null;
 
   const conteudo = secoes.length ? (
     <div className="relatorio-visualizacao__sections">
@@ -226,15 +238,14 @@ export const VisualizarPlanoOrcamentario = () => {
                   <div className="relatorio-plano-orcamentario__actions">
                     {destinoReceitas && (
                       <Button
-                        type="primary"
-                        className="btn-editar-receitas"
+                        className="btn btn-success"
                         onClick={() => handleIrParaReceitas(destinoReceitas)}
                       >
                         <FontAwesomeIcon icon={faEdit} />
                         Editar receitas
                       </Button>
                     )}
-                    <Button type="primary" onClick={handleIrParaPrioridades}>
+                    <Button className="btn btn-success" onClick={handleIrParaPrioridades}>
                       Editar prioridades
                     </Button>
                   </div>
@@ -255,13 +266,13 @@ export const VisualizarPlanoOrcamentario = () => {
 
   return (
     <RelatorioVisualizacao
-      title="Plano orçamentário"
+      title="Plano Orçamentário"
       onBack={handleVoltar}
       isLoading={carregando}
       error={erro}
       errorContent={
         <MsgImgCentralizada
-          texto="Não foi possível carregar o plano orçamentário."
+          texto="Não foi possível carregar o plano Orçamentário."
           img={Img404}
           dataQa="plano-orcamentario-erro"
         />

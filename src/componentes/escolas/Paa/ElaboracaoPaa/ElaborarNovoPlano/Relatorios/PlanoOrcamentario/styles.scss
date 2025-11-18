@@ -45,6 +45,20 @@
     display: flex;
     gap: 12px;
 
+    .ant-btn.btn.btn-success {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      height: auto;
+      padding: 0.375rem 0.75rem;
+      line-height: 1.5;
+      font-size: 1rem;
+
+      svg {
+        color: #ffffff;
+      }
+    }
+
     .btn-editar-receitas {
       display: inline-flex;
       align-items: center;
