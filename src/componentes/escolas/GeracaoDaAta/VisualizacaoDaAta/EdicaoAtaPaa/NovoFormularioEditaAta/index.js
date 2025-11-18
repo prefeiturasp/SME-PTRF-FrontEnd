@@ -1043,7 +1043,7 @@ export const NovoFormularioEditaAta = ({
                                                                                 name={`listaParticipantes[${index}].cargo`}
                                                                                 id={`listaParticipantes.cargo_[${index}]`}
                                                                                 className="form-control"
-                                                                                value={membro.cargo ? membro.cargo : ''}
+                                                                                value={isProfessorGremio ? (membro.cargo ? `${membro.cargo} / Professor Orientador` : 'Professor Orientador') : (membro.cargo ? membro.cargo : '')}
                                                                                 onChange={(e) => {
                                                                                     props.handleChange(e);
                                                                                 }}
@@ -1146,7 +1146,7 @@ export const NovoFormularioEditaAta = ({
                                                                                         </div>
                                                                                     </div>
 
-                                                                                    {!isProfessorGremio && !ehParticipanteManualPersistido && (
+                                                                                    {!ehParticipanteManualPersistido && (
                                                                                         <div className='col-3 mt-4 ml-4' style={{ opacity: `${ehAdicaoPresente || !podeEditarAta ? "30%" : '100%'}` }}>
                                                                                             <div className="row">
                                                                                                 <span className='mr-2'>Presidente: </span>
@@ -1164,7 +1164,7 @@ export const NovoFormularioEditaAta = ({
                                                                                         </div>
                                                                                     )}
 
-                                                                                    {!isProfessorGremio && !ehParticipanteManualPersistido && (
+                                                                                    {!ehParticipanteManualPersistido && (
                                                                                         <div className='col-3 mt-4 ml-3' style={{ opacity: `${ehAdicaoPresente || !podeEditarAta ? "30%" : '100%'}` }}>
                                                                                             <div className="row">
                                                                                                 <span className='mr-2'>Secretário: </span>
