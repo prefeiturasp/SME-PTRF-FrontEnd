@@ -1,0 +1,88 @@
+.relatorio-plano-orcamentario {
+  &__content {
+    gap: 32px;
+  }
+
+  &__title {
+    color: #42474a !important;
+  }
+
+  &__table {
+    table-layout: fixed;
+    width: 100%;
+
+    .ant-table-tbody > tr > td,
+    .ant-table-thead > tr > th {
+      border-color: #dadada;
+      padding: 12px 16px !important;
+      vertical-align: top;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    .ant-table-thead > tr > th {
+      background-color: #dadada !important;
+      font-size: 15px !important;
+      font-weight: 600 !important;
+      color: #42474a !important;
+    }
+  }
+
+  &__table-total-row {
+    .ant-table-cell {
+      background-color: #dadada !important;
+      font-weight: 600 !important;
+    }
+  }
+
+  &__receitas-despesas-labels {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 12px;
+
+    .ant-btn.btn.btn-success {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      height: auto;
+      padding: 0.375rem 0.75rem;
+      line-height: 1.5;
+      font-size: 1rem;
+
+      svg {
+        color: #ffffff;
+      }
+    }
+
+    .btn-editar-receitas {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+
+      svg {
+        color: #ffffff;
+      }
+    }
+  }
+
+  &__despesas,
+  &__saldos,
+  &__receitas {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    color: #42474a;
+    align-items: flex-end;
+
+    &--total {
+      align-items: flex-end;
+    }
+  }
+}
+
+

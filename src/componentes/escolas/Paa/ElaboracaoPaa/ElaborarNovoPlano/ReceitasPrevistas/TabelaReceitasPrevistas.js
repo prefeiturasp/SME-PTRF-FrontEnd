@@ -30,7 +30,8 @@ const TabelaReceitasPrevistas = ({ data, handleOpenEditar }) => {
     const saldo_congelado_receita_prevista = parseFloat(
       row?.receitas_previstas_paa?.[0]?.saldo_congelado_livre
     )
-    return saldo_congelado_receita_prevista || row?.saldos?.saldo_atual_livre
+    const valor_livre = saldo_congelado_receita_prevista || row?.saldos?.saldo_atual_livre
+    return valor_livre < 0 ? 0 : valor_livre
   }
 
   const dataTemplate = useCallback(

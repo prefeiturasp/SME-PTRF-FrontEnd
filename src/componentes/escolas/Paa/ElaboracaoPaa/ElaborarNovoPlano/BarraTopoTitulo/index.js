@@ -1,8 +1,7 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import dayjs from 'dayjs'
 
-const BarraTopoTitulo = () => {
+const BarraTopoTitulo = ({ origem = null }) => {
   const navigate = useNavigate();
 
   const [paa, setPaa] = useState(() => {
@@ -29,13 +28,52 @@ const BarraTopoTitulo = () => {
     };
   }, []);
 
+  const obterConfiguracaoVoltar = () => {
+    if (origem === "plano-aplicacao") {
+      return {
+        className: "btn btn-success",
+        label: "Voltar ao Plano de Aplicação",
+        destino: "/relatorios-componentes/plano-aplicacao",
+      };
+    }
+
+    if (origem === "plano-orcamentario") {
+      return {
+        className: "btn btn-success",
+        label: "Voltar ao Plano Orçamentário",
+        destino: "/relatorios-componentes/plano-orcamentario",
+      };
+    }
+
+    if (origem === "atividades-previstas") {
+      return {
+        className: "btn btn-outline-success",
+        label: "Voltar para atividades previstas",
+        destino: "/relatorios-componentes/atividades-previstas",
+      };
+    }
+
+    return {
+      className: "btn btn-outline-success",
+      label: "Voltar",
+      destino: "/paa",
+    };
+  };
+
+  const { className, label, destino } = obterConfiguracaoVoltar();
+
   return (
     <div className="barra-topo-lista-usuarios d-flex bd-highlight align-items-center">
       <div className="py-2 flex-grow-1 bd-highlight">
         <h2>{headerPaaReferencia()}</h2>
       </div>
       <div className="p-2 bd-highlight">
-        <button className="btn btn-outline-success btn-sm" onClick={() => navigate('/paa')}>Voltar</button>
+        <button
+          className={className}
+          onClick={() => navigate(destino)}
+        >
+          {label}
+        </button>
       </div>
     </div>
   );

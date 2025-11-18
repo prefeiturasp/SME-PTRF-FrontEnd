@@ -16,6 +16,7 @@ import { PrestacaoDeContasPage } from "../paginas/escolas/PrestacaoDeContas";
 import { DetalhedasPrestacoesPage } from "../paginas/escolas/DetalheDasPrestacoes";
 import { VisualizacaoDaAta } from "../componentes/escolas/GeracaoDaAta/VisualizacaoDaAta";
 import { EdicaoAta } from "../componentes/escolas/GeracaoDaAta/VisualizacaoDaAta/EdicaoAta";
+import { EdicaoAtaPaa } from "../componentes/escolas/GeracaoDaAta/VisualizacaoDaAta/EdicaoAtaPaa";
 import { MembrosDaAssociacaoPage } from "../paginas/escolas/MembrosDaAssociacao";
 import { PaginaMandatoVigente } from "../componentes/escolas/MembrosDaAssociacao/pages/PaginaMandatoVigente";
 import { ValoresReprogramados } from "../componentes/Globais/ValoresReprogramados";
@@ -120,6 +121,9 @@ import { CadastroBemProduzidoPage } from "../paginas/escolas/SituacaoPatrimonial
 import { EdicaoBemProduzidoPage } from "../paginas/escolas/SituacaoPatrimonial/EdicaoBemProduzido";
 import { CadastroTipoDeDespesaCusteioPage } from "../paginas/SME/Parametrizacoes/Despesas/TiposDeDespesaCusteio/Cadastro";
 import { EdicaoTipoDeDespesaCusteioPage } from "../paginas/SME/Parametrizacoes/Despesas/TiposDeDespesaCusteio/Edicao";
+import { VisualizarPlanoAplicacao } from "../componentes/escolas/Paa/ElaboracaoPaa/ElaborarNovoPlano/Relatorios/PlanoAplicacao/VisualizarPlanoAplicacao";
+import { VisualizarPlanoOrcamentario } from "../componentes/escolas/Paa/ElaboracaoPaa/ElaborarNovoPlano/Relatorios/PlanoOrcamentario/VisualizarPlanoOrcamentario";
+import { VisualizarAtividadesPrevistas } from "../componentes/escolas/Paa/ElaboracaoPaa/ElaborarNovoPlano/Relatorios/AtividadesPrevistas/VisualizarAtividadesPrevistas";
 
 const routesConfig = [
   {
@@ -802,8 +806,36 @@ const routesConfig = [
   },
   {
     exact: true,
+    path: "/relatorios-paa/edicao-ata/:uuid_paa",
+    component: EdicaoAtaPaa,
+    permissoes: ["access_paa", "change_paa"],
+    featureFlag: "paa",
+  },
+  {
+    exact: true,
     path: "/execucao-paa",
     component: ExecucaoDoPaa,
+    permissoes: ["access_paa"],
+    featureFlag: "paa",
+  },
+  {
+    exact: true,
+    path: "/relatorios-componentes/plano-aplicacao",
+    component: VisualizarPlanoAplicacao,
+    permissoes: ["access_paa"],
+    featureFlag: "paa",
+  },
+  {
+    exact: true,
+    path: "/relatorios-componentes/plano-orcamentario",
+    component: VisualizarPlanoOrcamentario,
+    permissoes: ["access_paa"],
+    featureFlag: "paa",
+  },
+  {
+    exact: true,
+    path: "/relatorios-componentes/atividades-previstas",
+    component: VisualizarAtividadesPrevistas,
     permissoes: ["access_paa"],
     featureFlag: "paa",
   },

@@ -170,6 +170,12 @@ export const getPrioridades = async (filtros, page=1, page_size=20) => {
   return (await api.get(`api/prioridades-paa/${queryString}`, authHeader())).data;
 };
 
+export const getPrioridadesRelatorio = async (filtros = {}) => {
+  let queryString = `?paa__uuid=${localStorage.getItem("PAA")}`;
+  queryString = addFiltersToQueryString(queryString, filtros);
+  return (await api.get(`api/prioridades-paa-relatorio/${queryString}`, authHeader())).data;
+};
+
 export const postPrioridade = async (payload) => {
   return (await api.post(`api/prioridades-paa/`, payload, authHeader())).data;
 }
@@ -182,6 +188,89 @@ export const getResumoPrioridades = async () => {
   return (await api.get(`api/paa/${localStorage.getItem("PAA")}/resumo-prioridades/`, authHeader())).data;
 }
 
+export const getAtividadesEstatutariasPrevistas = async (paaUuid) => {
+  if (!paaUuid) {
+    return { results: [] };
+  }
+
+  return (
+    await api.get(`api/paa/${paaUuid}/atividades-estatutarias-previstas/`, authHeader())
+  ).data;
+};
+
+export const getAtividadesEstatutariasDisponiveis = async (paaUuid) => {
+  if (!paaUuid) {
+    return { results: [] };
+  }
+
+  return (
+    await api.get(`api/paa/${paaUuid}/atividades-estatutarias-disponiveis/`, authHeader())
+  ).data;
+};
+
+const patchAtividadesEstatutarias = async (paaUuid, atividades = []) => {
+  if (!paaUuid) {
+    throw new Error("PAA UUID é obrigatório para atualizar atividades estatutárias.");
+  }
+
+  return (
+    await api.patch(
+      `api/paa/${paaUuid}/`,
+      { atividades_estatutarias: atividades },
+      authHeader()
+    )
+  ).data;
+};
+
+export const createAtividadeEstatutariaPaa = async (paaUuid, atividade) => {
+  return patchAtividadesEstatutarias(paaUuid, [
+    {
+      nome: atividade?.nome,
+      tipo: atividade?.tipo,
+      data: atividade?.data,
+    },
+  ]);
+};
+
+export const linkAtividadeEstatutariaExistentePaa = async (paaUuid, atividade) => {
+  return patchAtividadesEstatutarias(paaUuid, [
+    {
+      atividade_estatutaria: atividade?.atividade_estatutaria,
+      data: atividade?.data,
+    },
+  ]);
+};
+
+export const updateAtividadeEstatutariaPaa = async (paaUuid, atividade) => {
+  return patchAtividadesEstatutarias(paaUuid, [
+    {
+      atividade_estatutaria: atividade?.atividade_estatutaria,
+      nome: atividade?.nome,
+      tipo: atividade?.tipo,
+      data: atividade?.data,
+    },
+  ]);
+};
+
+export const deleteAtividadeEstatutariaPaa = async (paaUuid, atividadeUuid) => {
+  return patchAtividadesEstatutarias(paaUuid, [
+    {
+      atividade_estatutaria: atividadeUuid,
+      _destroy: true,
+    },
+  ]);
+};
+
+export const getRecursosPropriosPrevistos = async (paaUuid) => {
+  if (!paaUuid) {
+    return [];
+  }
+
+  return (
+    await api.get(`api/paa/${paaUuid}/recursos-proprios-previstos/`, authHeader())
+  ).data;
+};
+
 export const patchPrioridade = async (uuid, payload) => {
   return (await api.patch(`api/prioridades-paa/${uuid}/`, payload, authHeader())).data;
 }
@@ -192,4 +281,8 @@ export const deletePrioridade = async (uuid) => {
 
 export const deletePrioridadesEmLote = async (payload) => {
   return (await api.post(`api/prioridades-paa/excluir-lote/`, payload, authHeader())).data;
+}
+
+export const getObjetivosPaa = async () => {
+  return (await api.get(`api/paa/${localStorage.getItem("PAA")}/objetivos/`, authHeader())).data;
 }
