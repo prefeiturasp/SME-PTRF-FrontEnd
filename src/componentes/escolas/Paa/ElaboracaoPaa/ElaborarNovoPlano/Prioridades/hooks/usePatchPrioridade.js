@@ -9,8 +9,8 @@ export const usePatchPrioridade = (onClose) => {
     mutationFn: ({ uuid, payload }) => patchPrioridade(uuid, payload),
     onSuccess: () => {
       toastCustom.ToastCustomSuccess("Prioridade alterada com sucesso.");
-      queryClient.invalidateQueries(["prioridades"]);
-      queryClient.invalidateQueries(["prioridades-resumo"]);
+      queryClient.invalidateQueries("prioridades");
+      queryClient.invalidateQueries("prioridades-resumo");
       onClose && onClose();
     },
     onError: (e) => {
