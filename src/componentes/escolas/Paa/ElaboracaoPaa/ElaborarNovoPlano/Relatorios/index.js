@@ -1,31 +1,80 @@
-import React, { useState } from 'react';
-import './styles.css';
+import React, { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import "./styles.css";
 
-import chevronUp from '../../../../../../assets/img/icone-chevron-up.svg';
-import chevronDown from '../../../../../../assets/img/icone-chevron-down.svg';
+import chevronUp from "../../../../../../assets/img/icone-chevron-up.svg";
+import chevronDown from "../../../../../../assets/img/icone-chevron-down.svg";
 
-import { useGetTextosPaa } from './hooks/useGetTextosPaa';
-import { useGetPaaVigente } from './hooks/useGetPaaVigente';
-import { ASSOCIACAO_UUID } from '../../../../../../services/auth.service';
-import { RenderSecao } from './RenderSecao';
+import { useGetTextosPaa } from "./hooks/useGetTextosPaa";
+import { useGetPaaVigente } from "./hooks/useGetPaaVigente";
+import { useGetAtaPaaVigente } from "./hooks/useGetAtaPaaVigente";
+import { ASSOCIACAO_UUID } from "../../../../../../services/auth.service";
+import { RenderSecao } from "./RenderSecao";
+import { toastCustom } from "../../../../../Globais/ToastCustom";
+import Loading from "../../../../../../utils/Loading";
 
-
-const Relatorios = () => {
-  const [expandedSections, setExpandedSections] = useState({
+const Relatorios = ({ initialExpandedSections }) => {
+  const navigate = useNavigate();
+  const defaultExpandedState = {
     planoAnual: false,
     introducao: false,
+    objetivos: false,
+    componentes: false,
     conclusao: false,
-  });
+  };
+
+  const [expandedSections, setExpandedSections] = useState(() => ({
+    ...defaultExpandedState,
+    ...(initialExpandedSections || {}),
+  }));
 
   const associacaoUuid = localStorage.getItem(ASSOCIACAO_UUID);
   const { textosPaa, isLoading, isError } = useGetTextosPaa();
   const { paaVigente, isLoading: isLoadingPaa } = useGetPaaVigente(associacaoUuid);
+  const { ataPaa, isLoading: isLoadingAtaPaa } = useGetAtaPaaVigente(paaVigente?.uuid);
+  const apresentouToastErroPaaNaoEncontrado = useRef(false);
+  const apresentouToastErroAtaNaoEncontrada = useRef(false);
+
+  useEffect(() => {
+    if (paaVigente?.uuid) {
+      apresentouToastErroPaaNaoEncontrado.current = false;
+      return;
+    }
+
+    if (!isLoadingPaa && !paaVigente?.uuid && !apresentouToastErroPaaNaoEncontrado.current) {
+      toastCustom.ToastCustomError("Erro!", "PAA vigente não encontrado.");
+      apresentouToastErroPaaNaoEncontrado.current = true;
+    }
+  }, [isLoadingPaa, paaVigente?.uuid]);
+  useEffect(() => {
+    if (!paaVigente?.uuid) {
+      return;
+    }
+
+    if (ataPaa?.uuid) {
+      apresentouToastErroAtaNaoEncontrada.current = false;
+      return;
+    }
+
+    if (!isLoadingAtaPaa && !ataPaa?.uuid && !apresentouToastErroAtaNaoEncontrada.current) {
+      toastCustom.ToastCustomError("Erro!", "Ata do PAA não encontrada.");
+      apresentouToastErroAtaNaoEncontrada.current = true;
+    }
+  }, [isLoadingAtaPaa, ataPaa?.uuid, paaVigente?.uuid]);
 
   const toggleSection = (sectionKey) => {
-    setExpandedSections(prev => ({
+    setExpandedSections((prev) => ({
       ...prev,
-      [sectionKey]: !prev[sectionKey]
+      [sectionKey]: !prev[sectionKey],
     }));
+  };
+
+  const handleEditarAta = () => {
+    if (paaVigente?.uuid && ataPaa?.uuid) {
+      navigate(`/relatorios-paa/edicao-ata/${paaVigente.uuid}`);
+    } else {
+      toastCustom.ToastCustomError("Erro!", "Ata do PAA não encontrada.");
+    }
   };
 
   const secoesConfig = {
@@ -55,11 +104,10 @@ const Relatorios = () => {
 
   const renderSecao = (secaoKey, config) => {
     const isExpanded = expandedSections[secaoKey];
-    
+
     return (
-      <div className={`render-secao-${secaoKey}`}>
+      <div key={secaoKey} className={`render-secao-${secaoKey}`}>
         <RenderSecao
-          key={secaoKey}
           secaoKey={secaoKey}
           config={config}
           isExpanded={isExpanded}
@@ -81,8 +129,8 @@ const Relatorios = () => {
         <div className="documentos-header">
           <h3 className="documentos-title">Documentos</h3>
           <div className="documentos-buttons">
-            <button className="btn-previas">Prévias</button>
-            <button className="btn-gerar">Gerar</button>
+            <button className="btn btn-outline-success">Prévias</button>
+            <button className="btn btn-success">Gerar</button>
           </div>
         </div>
 
@@ -95,10 +143,10 @@ const Relatorios = () => {
               <div className="documento-status">Documento pendente de geração</div>
             </div>
             <div className="documento-actions">
-              <button className="btn-dropdown" onClick={() => toggleSection('planoAnual')}>
-                <img 
-                  src={expandedSections.planoAnual ? chevronUp : chevronDown} 
-                  alt={expandedSections.planoAnual ? 'Fechar' : 'Abrir'} 
+              <button className="btn-dropdown" onClick={() => toggleSection("planoAnual")}>
+                <img
+                  src={expandedSections.planoAnual ? chevronUp : chevronDown}
+                  alt={expandedSections.planoAnual ? "Fechar" : "Abrir"}
                   className="chevron-icon"
                 />
               </button>
@@ -108,11 +156,28 @@ const Relatorios = () => {
           {/* Subseções do Plano anual */}
           {expandedSections.planoAnual && (
             <div className="plano-anual-subsecoes">
-              {Object.entries(secoesConfig).map(([secaoKey, config]) => 
-                renderSecao(secaoKey, config)
+              {(isLoadingPaa || isLoadingAtaPaa) && (
+                <Loading corGrafico="black" corFonte="dark" marginTop="0" marginBottom="0" />
               )}
+
+              {!isLoadingPaa && !paaVigente?.uuid && (
+                <div className="texto-error">PAA vigente não encontrado.</div>
+              )}
+
+              {!isLoadingPaa && paaVigente?.uuid && Object.entries(secoesConfig).map(([secaoKey, config]) => renderSecao(secaoKey, config))}
             </div>
           )}
+
+          {/* Ata */}
+          <div className="documento-item">
+            <div className="documento-info">
+              <div className="documento-nome">Ata</div>
+              <div className="documento-status">Documento pendente de geração</div>
+            </div>
+            <div className="documento-actions">
+              <button className="btn btn-outline-success" onClick={handleEditarAta} disabled={!ataPaa?.uuid}>Editar</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
