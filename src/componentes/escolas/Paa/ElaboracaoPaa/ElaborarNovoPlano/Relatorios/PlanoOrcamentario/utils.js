@@ -86,6 +86,13 @@ const valoresCategorias = {
 const saldo = {
   base: (congelado, atual) =>
     congelado !== null && congelado !== undefined ? congelado : atual,
+  // Garante que valores negativos sejam tratados como 0
+  tratarNegativo: (valor) => {
+    if (valor !== null && valor !== undefined && valor < 0) {
+      return 0;
+    }
+    return valor;
+  },
 };
 
 const categoriaPorTipo = (prioridade) => {
@@ -243,18 +250,20 @@ const construirSecoes = (
 
   const calcularReceitaBase = (item) => {
     const receitaPrevista = item?.receitas_previstas_paa?.[0] || {};
+    
+    // Garantir que saldos negativos sejam tratados como 0
     const saldosBase = {
       custeio: saldo.base(
         receitaPrevista.saldo_congelado_custeio,
-        item?.saldos?.saldo_atual_custeio
+        saldo.tratarNegativo(item?.saldos?.saldo_atual_custeio)
       ),
       capital: saldo.base(
         receitaPrevista.saldo_congelado_capital,
-        item?.saldos?.saldo_atual_capital
+        saldo.tratarNegativo(item?.saldos?.saldo_atual_capital)
       ),
       livre: saldo.base(
         receitaPrevista.saldo_congelado_livre,
-        item?.saldos?.saldo_atual_livre
+        saldo.tratarNegativo(item?.saldos?.saldo_atual_livre)
       ),
     };
 

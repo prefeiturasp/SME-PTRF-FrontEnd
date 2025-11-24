@@ -12,7 +12,8 @@ export const useDeletePrioridadesEmLote = (onClose) => {
       } else {
         toastCustom.ToastCustomSuccess("Prioridades removidas com sucesso.");
       }
-      queryClient.invalidateQueries(["prioridades"]);
+      queryClient.invalidateQueries("prioridades");
+      queryClient.invalidateQueries("prioridades-resumo");
       onClose && onClose();
     },
     onError: (e) => {

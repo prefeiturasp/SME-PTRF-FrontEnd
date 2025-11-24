@@ -10,8 +10,6 @@ export const useGetResumoPrioridades = () => {
     error,
     refetch,
   } = useQuery(["prioridades-resumo"], () => getResumoPrioridades(), {
-    keepPreviousData: true,
-    staleTime: 5000, // 5 segundos
     refetchOnWindowFocus: true
   });
   return {
