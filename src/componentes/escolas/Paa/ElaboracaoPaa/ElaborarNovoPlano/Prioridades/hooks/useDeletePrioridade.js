@@ -8,7 +8,8 @@ export const useDeletePrioridade = (onClose) => {
     mutationFn: ({ uuid }) => deletePrioridade(uuid),
     onSuccess: () => {
       toastCustom.ToastCustomSuccess("Prioridade removida com sucesso.");
-      queryClient.invalidateQueries(["prioridades"]);
+      queryClient.invalidateQueries("prioridades");
+      queryClient.invalidateQueries("prioridades-resumo");
       onClose && onClose();
     },
     onError: (e) => {

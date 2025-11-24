@@ -176,7 +176,7 @@ const Prioridades = () => {
         <>
           <p className="mb-2 mt-4">
             <Flex justify="space-between" align="center">
-              { existePendencias().length && <Alert
+              { existePendencias().length > 0 && <Alert
                 showIcon
                 className="mr-2"
                 type="warning"
