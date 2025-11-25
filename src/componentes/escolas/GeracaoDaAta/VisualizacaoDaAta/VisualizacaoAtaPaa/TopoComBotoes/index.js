@@ -5,7 +5,7 @@ export const TopoComBotoes = ({dadosAta, handleClickEditarAta, handleClickFechar
     const podeEditarAta = [['change_paa']].some(visoesService.getPermissoes);
     const tituloAta = dadosAta?.tipo_ata === 'RETIFICACAO' 
         ? 'Visualização da Ata de Retificação do PAA' 
-        : 'Visualização da Ata de Apresentação do PAA';
+        : 'Visualização da prévia da Ata de Apresentação do PAA';
 
     return(
         <div className="row">
