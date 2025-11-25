@@ -168,13 +168,8 @@ export const VisualizacaoAtaPaa = () => {
                             return (
                                 <>
                                     <p style={{ fontWeight: 'bold' }}>
-                                        Diante ao exposto, o Plano Anual de Atividades foi rejeitado.
+                                        Diante ao exposto, o Plano Anual de Atividades foi <span style={{color: '#B40C02'}}>reprovado</span>. {dadosAta.justificativa && <>{dadosAta.justificativa}</>}
                                     </p>
-                                    {dadosAta.justificativa && (
-                                        <p className="mt-3">
-                                            {dadosAta.justificativa}
-                                        </p>
-                                    )}
                                 </>
                             );
                         }
