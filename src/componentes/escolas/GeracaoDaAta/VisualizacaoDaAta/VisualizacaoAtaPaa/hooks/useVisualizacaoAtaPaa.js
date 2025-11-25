@@ -136,10 +136,6 @@ export const useVisualizacaoAtaPaa = () => {
         return `${horaExtenso} horas e ${minutoExtenso} minutos`;
     };
 
-    const getHoraFim = () => {
-        return "____";
-    };
-
     const getTipoReuniao = () => {
         if (!dadosAta.tipo_reuniao) {
             return "__";
@@ -271,7 +267,6 @@ export const useVisualizacaoAtaPaa = () => {
         getLocalReuniao,
         getNomeUnidade,
         getHoraInicio,
-        getHoraFim,
         getTipoReuniao,
         getTipoUnidadeComNome,
         getPeriodoPaaFormatado,
