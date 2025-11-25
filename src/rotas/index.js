@@ -17,6 +17,7 @@ import { DetalhedasPrestacoesPage } from "../paginas/escolas/DetalheDasPrestacoe
 import { VisualizacaoDaAta } from "../componentes/escolas/GeracaoDaAta/VisualizacaoDaAta";
 import { EdicaoAta } from "../componentes/escolas/GeracaoDaAta/VisualizacaoDaAta/EdicaoAta";
 import { EdicaoAtaPaa } from "../componentes/escolas/GeracaoDaAta/VisualizacaoDaAta/EdicaoAtaPaa";
+import { VisualizacaoAtaPaa } from "../componentes/escolas/GeracaoDaAta/VisualizacaoDaAta/VisualizacaoAtaPaa";
 import { MembrosDaAssociacaoPage } from "../paginas/escolas/MembrosDaAssociacao";
 import { PaginaMandatoVigente } from "../componentes/escolas/MembrosDaAssociacao/pages/PaginaMandatoVigente";
 import { ValoresReprogramados } from "../componentes/Globais/ValoresReprogramados";
@@ -817,6 +818,13 @@ const routesConfig = [
     path: "/relatorios-paa/edicao-ata/:uuid_paa",
     component: EdicaoAtaPaa,
     permissoes: ["access_paa", "change_paa"],
+    featureFlag: "paa",
+  },
+  {
+    exact: true,
+    path: "/relatorios-paa/visualizacao-da-ata-paa/:uuid_paa",
+    component: VisualizacaoAtaPaa,
+    permissoes: ["access_paa"],
     featureFlag: "paa",
   },
   {
