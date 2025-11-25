@@ -25,7 +25,6 @@ export const VisualizacaoAtaPaa = () => {
         getLocalReuniao,
         getNomeUnidade,
         getHoraInicio,
-        getHoraFim,
         getTipoReuniao,
         getTipoUnidadeComNome,
         getPeriodoPaaFormatado,
@@ -59,7 +58,7 @@ export const VisualizacaoAtaPaa = () => {
                 </div>
                 <div className="col-12 mt-4">
                     <p>
-                        Aos <strong>{getDiaPorExtenso()}</strong> do mês de <strong>{getMesPorExtenso()}</strong> de <strong>{getAnoPorExtenso()}</strong>, no (a) <strong>{getLocalReuniao()}</strong>, da Unidade Educacional <strong>{getNomeUnidade()}</strong>, das <strong>{getHoraInicio()}</strong> às <strong>{getHoraFim()}</strong>, realizou-se a reunião <strong>{getTipoReuniao()}</strong> da Diretoria Executiva e Conselho Fiscal da Associação de Pais e Mestres do(a) <strong>{getTipoUnidadeComNome()}</strong>, com a participação dos membros do Conselho de Escola, em atendimento ao <span style={{color: '#B40C02'}}>inciso XIII do artigo 118, da Lei nº 14.660/2007</span>.
+                        Aos {getDiaPorExtenso()} do mês de {getMesPorExtenso()} de {getAnoPorExtenso()}, no (a) {getLocalReuniao()}, da Unidade Educacional {getNomeUnidade()}, às {getHoraInicio()}, realizou-se a reunião {getTipoReuniao()} da Diretoria Executiva e Conselho Fiscal da Associação de Pais e Mestres do(a) {getTipoUnidadeComNome()}, com a participação dos membros do Conselho de Escola, em atendimento ao <span style={{color: '#B40C02'}}>inciso XIII do artigo 118, da Lei nº 14.660/2007</span>.
                     </p>
                 </div>
                 <div className="col-12 mt-4">
