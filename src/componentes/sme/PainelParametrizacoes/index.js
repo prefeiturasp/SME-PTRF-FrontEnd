@@ -223,6 +223,13 @@ export const PainelParametrizacoes = () => {
             featureFlag: 'paa',
         },
         {
+            parametro: 'Outros Recursos',
+            url: 'parametro-outros-recursos-paa',
+            icone: IconeMotivosPagamentoAntecipado,
+            permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
+            featureFlag: 'paa',
+        },
+        {
             parametro: 'Ações PTRF',
             url: 'parametro-acoes-ptrf-paa',
             icone: IconeAcoesPTRFPaa,
