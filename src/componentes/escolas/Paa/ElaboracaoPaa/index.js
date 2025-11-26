@@ -96,7 +96,7 @@ export const ElaboracaoPaa = () => {
             <p>Confira a estrutura completa aqui.</p>
             <div className="d-flex justify-content-center">
               <button type="button" className="btn btn-success mt-2 mr-5" data-testid="elaborar-paa-button" onClick={handlePaa} disabled={!validMonthPaa}>{!notValidPaa ? "Continuar elaboração de PAA" : "Elaborar novo PAA"}</button>
-              <button type="button" className="btn btn-success mt-2 ml-5" onClick={() => {}}>PAA vigente e anteriores</button>
+              <button type="button" className="btn btn-success mt-2 ml-5" onClick={() => navigate('/paa-vigente-e-anteriores')}>PAA vigente e anteriores</button>
             </div>
           </div>
         </>
