@@ -42,7 +42,7 @@ export const OutrosRecursosPaaProvider = ({children}) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [firstPage, setFirstPage] = useState(0);
     // eslint-disable-next-line
-    const [rowsPerPage, setRowsPerPage] = useState(20);
+    const [rowsPerPage, setRowsPerPage] = useState(2);
 
     const [showModalForm, setShowModalForm] = useState(false);
     const [stateFormModal, setStateFormModal] = useState(initialStateFormModal);
