@@ -69,9 +69,9 @@ const Relatorios = ({ initialExpandedSections }) => {
     }));
   };
 
-  const handleEditarAta = () => {
+  const handleVisualizarAta = () => {
     if (paaVigente?.uuid && ataPaa?.uuid) {
-      navigate(`/relatorios-paa/edicao-ata/${paaVigente.uuid}`);
+      navigate(`/relatorios-paa/visualizacao-da-ata-paa/${paaVigente.uuid}`);
     } else {
       toastCustom.ToastCustomError("Erro!", "Ata do PAA não encontrada.");
     }
@@ -171,11 +171,13 @@ const Relatorios = ({ initialExpandedSections }) => {
           {/* Ata */}
           <div className="documento-item">
             <div className="documento-info">
-              <div className="documento-nome">Ata</div>
+              <div className="documento-nome">Ata de Apresentação do PAA</div>
               <div className="documento-status">Documento pendente de geração</div>
             </div>
             <div className="documento-actions">
-              <button className="btn btn-outline-success" onClick={handleEditarAta} disabled={!ataPaa?.uuid}>Editar</button>
+              <button className="btn btn-outline-success" onClick={handleVisualizarAta} disabled={!ataPaa?.uuid}>
+                Visualizar prévia da ata
+              </button>
             </div>
           </div>
         </div>
