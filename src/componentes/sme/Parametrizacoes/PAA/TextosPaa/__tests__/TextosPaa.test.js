@@ -6,6 +6,25 @@ import { getTextosPaaUe, patchTextosPaaUe } from '../../../../../../services/esc
 import { toastCustom } from '../../../../../Globais/ToastCustom';
 import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
 
+jest.mock('tinymce/tinymce', () => ({}));
+jest.mock('tinymce/themes/silver', () => ({}));
+jest.mock('tinymce/icons/default', () => ({}));
+jest.mock('tinymce/models/dom', () => ({}));
+jest.mock('tinymce/plugins/advlist', () => ({}));
+jest.mock('tinymce/plugins/lists', () => ({}));
+jest.mock('tinymce/plugins/link', () => ({}));
+jest.mock('tinymce/plugins/autolink', () => ({}));
+jest.mock('tinymce/plugins/preview', () => ({}));
+jest.mock('tinymce/plugins/anchor', () => ({}));
+jest.mock('tinymce/plugins/code', () => ({}));
+jest.mock('tinymce/plugins/charmap', () => ({}));
+jest.mock('tinymce/plugins/fullscreen', () => ({}));
+jest.mock('tinymce/plugins/visualblocks', () => ({}));
+jest.mock('tinymce/plugins/searchreplace', () => ({}));
+jest.mock('tinymce/plugins/insertdatetime', () => ({}));
+jest.mock('tinymce/plugins/table', () => ({}));
+jest.mock('tinymce/plugins/wordcount', () => ({}));
+
 jest.mock("../../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes", () => ({
   RetornaSeTemPermissaoEdicaoPainelParametrizacoes: jest.fn(),
 }));
@@ -25,6 +44,11 @@ jest.mock('../../../../../Globais/ToastCustom', () => ({
 describe('TextosPaa Component', () => {
     beforeEach(() => {
         jest.clearAllMocks();
+        window.matchMedia = jest.fn().mockImplementation((query) => ({
+            matches: false,
+            addListener: jest.fn(),
+            removeListener: jest.fn(),
+        }));
     });
 
     test('deve renderizar o título corretamente', async () => {

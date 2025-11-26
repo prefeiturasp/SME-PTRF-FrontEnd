@@ -36,7 +36,7 @@ describe('AtividadesEstatutarias', () => {
 
     test('Deve renderizar o título corretamente', () => {
         renderComponent();
-        expect(screen.getByText('Atividades Estatutárias')).toBeInTheDocument();
+        expect(screen.getByText('Atividades estatutárias')).toBeInTheDocument();
     });
 
     test('Deve renderizar os componentes filhos corretamente', () => {
@@ -53,7 +53,7 @@ describe('AtividadesEstatutarias', () => {
     test('Deve renderizar a estrutura correta da página', () => {
         renderComponent();
 
-        const pageContent = screen.getByText('Atividades Estatutárias');
+        const pageContent = screen.getByText('Atividades estatutárias');
         const pageInnerContent = screen.getByTestId('topo-com-botoes');
         const pageContainer = screen.getByTestId('paginas-container')
 
