@@ -198,6 +198,15 @@ export const getAtividadesEstatutariasPrevistas = async (paaUuid) => {
   ).data;
 };
 
+export const getPaaVigenteEAnteriores = async (associacaoUuid) => {
+  return (
+    await api.get(
+      `api/paa/paa-vigente-e-anteriores/?associacao_uuid=${associacaoUuid}`,
+      authHeader()
+    )
+  ).data;
+};
+
 export const getAtividadesEstatutariasDisponiveis = async (paaUuid) => {
   if (!paaUuid) {
     return { results: [] };
