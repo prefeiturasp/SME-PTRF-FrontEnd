@@ -106,6 +106,7 @@ import { TextosPaa } from "../componentes/sme/Parametrizacoes/PAA/TextosPaa";
 import { PeriodosPaa } from "../componentes/sme/Parametrizacoes/PAA/PeriodosPaa";
 import { ObjetivosPaa } from "../componentes/sme/Parametrizacoes/PAA/ObjetivosPaa";
 import { AtividadesEstatutarias } from "../componentes/sme/Parametrizacoes/PAA/AtividadesEstatutarias";
+import { OutrosRecursos } from "../componentes/sme/Parametrizacoes/PAA/OutrosRecursos";
 import { AcoesPTRFPaa } from "../componentes/sme/Parametrizacoes/PAA/AcoesPTRF";
 import { ElaboracaoPaa } from "../componentes/escolas/Paa/ElaboracaoPaa";
 import { ElaborarNovoPlano } from "../componentes/escolas/Paa/ElaboracaoPaa/ElaborarNovoPlano";
@@ -618,6 +619,16 @@ const routesConfig = [
     exact: true,
     path: "/parametro-atividades-estatutarias-paa",
     component: AtividadesEstatutarias,
+    permissoes: [
+      "access_painel_parametrizacoes",
+      "change_painel_parametrizacoes",
+    ],
+    featureFlag: "paa",
+  },
+  {
+    exact: true,
+    path: "/parametro-outros-recursos-paa",
+    component: OutrosRecursos,
     permissoes: [
       "access_painel_parametrizacoes",
       "change_painel_parametrizacoes",

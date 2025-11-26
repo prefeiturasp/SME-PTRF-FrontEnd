@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
-import { AtividadesEstatutarias } from '../index';
-import { AtividadesEstatutariasProvider } from '../context/index';
+import { OutrosRecursos } from '../index';
+import { OutrosRecursosPaaProvider } from '../context/index';
 import '@testing-library/jest-dom';
 
 // Mock dos componentes filhos para verificar se estão sendo renderizados
@@ -25,18 +25,18 @@ jest.mock("../Paginacao", () => ({
 }));
 
 
-describe('AtividadesEstatutarias', () => {
+describe('OutrosRecursos', () => {
     const renderComponent = () => {
         return render(
-            <AtividadesEstatutariasProvider>
-                <AtividadesEstatutarias />
-            </AtividadesEstatutariasProvider>
+            <OutrosRecursosPaaProvider>
+                <OutrosRecursos />
+            </OutrosRecursosPaaProvider>
         );
     };
 
     test('Deve renderizar o título corretamente', () => {
         renderComponent();
-        expect(screen.getByText('Atividades estatutárias')).toBeInTheDocument();
+        expect(screen.getByText('Outros Recursos')).toBeInTheDocument();
     });
 
     test('Deve renderizar os componentes filhos corretamente', () => {
@@ -53,7 +53,7 @@ describe('AtividadesEstatutarias', () => {
     test('Deve renderizar a estrutura correta da página', () => {
         renderComponent();
 
-        const pageContent = screen.getByText('Atividades estatutárias');
+        const pageContent = screen.getByText('Outros Recursos');
         const pageInnerContent = screen.getByTestId('topo-com-botoes');
         const pageContainer = screen.getByTestId('paginas-container')
 
