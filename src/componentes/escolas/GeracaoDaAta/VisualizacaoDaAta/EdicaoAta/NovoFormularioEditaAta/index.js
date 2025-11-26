@@ -19,6 +19,7 @@ import {
 import { ModalAntDesignConfirmacao } from "../../../../../Globais/ModalAntDesign";
 import {ModalNotificarRegeracaoAta} from "./ModalNotificarRegeracaoAta";
 import {getParticipantesOrdenadosPorCargo} from "../../../../../../services/escolas/PresentesAta.service";
+import {toastCustom} from "../../../../../Globais/ToastCustom";
 
 export const NovoFormularioEditaAta = ({
                                        stateFormEditarAta,
@@ -57,10 +58,20 @@ export const NovoFormularioEditaAta = ({
 
     useEffect(() => {
         const getComposicao = async () => {
-            const lista_cargos_composicao = await getCargosComposicaoData(stateFormEditarAta.data_reuniao, associacaoUuid);
-            const composicao_formatada = formatarListaCargoComposicaoParaFormatoDaListaParticipantes(lista_cargos_composicao);
-            setListaParticipantes(composicao_formatada);
-            return composicao_formatada;
+            try {
+                const lista_cargos_composicao = await getCargosComposicaoData(stateFormEditarAta.data_reuniao, associacaoUuid);
+                const composicao_formatada = formatarListaCargoComposicaoParaFormatoDaListaParticipantes(lista_cargos_composicao);
+                setListaParticipantes(composicao_formatada);
+                return composicao_formatada;
+            } catch (error) {
+                // Se a composição não existir (404), mostra erro
+                // Se a composição existir mas estiver vazia, não mostra erro (permite selecionar a data)
+                if (error?.response?.status === 404) {
+                    const mensagemErro = error?.response?.data?.erro || "Composição não encontrada.";
+                    toastCustom.ToastCustomError("Erro ao carregar participantes", mensagemErro);
+                }
+                return [];
+            }
         }
 
         if(listaParticipantes && listaParticipantes.length === 0 && stateFormEditarAta && stateFormEditarAta.data_reuniao && isValidDateString(stateFormEditarAta.data_reuniao)) {
@@ -459,15 +470,25 @@ export const NovoFormularioEditaAta = ({
     const handleChangeDate = async (value, name, setFieldValue) => {
         if(isValidDate(value)) {
             const data_formatada = formatDate(value)
-            const lista_cargos_composicao = await getCargosComposicaoData(data_formatada, associacaoUuid)
-            setListaParticipantes(formatarListaCargoComposicaoParaFormatoDaListaParticipantes(lista_cargos_composicao));
-            return setDadosForm({
-                listaParticipantes: formatarListaCargoComposicaoParaFormatoDaListaParticipantes(lista_cargos_composicao),
-                stateFormEditarAta: {
-                    ...formRef.current.values.stateFormEditarAta,
-                    data_reuniao: value
-                  }
-            });
+            try {
+                const lista_cargos_composicao = await getCargosComposicaoData(data_formatada, associacaoUuid)
+                setListaParticipantes(formatarListaCargoComposicaoParaFormatoDaListaParticipantes(lista_cargos_composicao));
+                return setDadosForm({
+                    listaParticipantes: formatarListaCargoComposicaoParaFormatoDaListaParticipantes(lista_cargos_composicao),
+                    stateFormEditarAta: {
+                        ...formRef.current.values.stateFormEditarAta,
+                        data_reuniao: value
+                      }
+                });
+            } catch (error) {
+                // Se a composição não existir (404), mostra erro
+                // Se a composição existir mas estiver vazia, não mostra erro (permite selecionar a data)
+                if (error?.response?.status === 404) {
+                    const mensagemErro = error?.response?.data?.erro || "Composição não encontrada.";
+                    toastCustom.ToastCustomError("Erro ao carregar participantes", mensagemErro);
+                }
+                return;
+            }
         }
         
         return setDataModalApagarParticipantesAta({
