@@ -90,12 +90,13 @@ describe("VisualizacaoAtaPaa", () => {
             },
         });
 
-        expect(
-            screen.getByText("Diante ao exposto, o Plano Anual de Atividades foi rejeitado.")
-        ).toBeInTheDocument();
-        expect(
-            screen.getByText("Desalinhado com os objetivos estratégicos.")
-        ).toBeInTheDocument();
+        const paragraph = screen.getByText((_, element) => {
+            return element.tagName === "P" && element.textContent.includes("Diante ao exposto, o Plano Anual de Atividades foi reprovado");
+        });
+
+        expect(paragraph).toBeInTheDocument();
+        expect(paragraph.textContent).toContain("Diante ao exposto, o Plano Anual de Atividades foi reprovado");
+        expect(paragraph.textContent).toContain("Desalinhado com os objetivos estratégicos.");
     });
 
     it("renderiza a lista de presentes quando existem participantes", () => {
