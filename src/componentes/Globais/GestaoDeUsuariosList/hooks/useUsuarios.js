@@ -22,7 +22,9 @@ export const useUsuarios = ()  => {
     }
   }
 
-  return useQuery(['usuarios-list', uuidUnidadeBase, filter, currentPage], getUsuariosList, {
+  return useQuery({
+    queryKey: ['usuarios-list', uuidUnidadeBase, filter, currentPage],
+    queryFn: getUsuariosList,
     keepPreviousData: true,
     staleTime: 5000, // 5 segundos
   });

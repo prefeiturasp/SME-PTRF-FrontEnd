@@ -1,6 +1,5 @@
 import {useMutation, useQueryClient} from "@tanstack/react-query";
 import { postLancamentosParaConferenciaMarcarComoCorreto } from "../../../../../../services/dres/PrestacaoDeContas.service";
-import { toastCustom } from "../../../../../Globais/ToastCustom";
 
 export const usePostMarcarComoCorreto = () => {
     const queryClient = useQueryClient()
@@ -11,7 +10,6 @@ export const usePostMarcarComoCorreto = () => {
         },
         onSuccess: (data) => {
             queryClient.invalidateQueries(['despesas-periodos-anteriores-para-conferencia']).then()
-            // toastCustom.ToastCustomSuccess('Ação realizada com sucesso.')
         },
         onError: (error) => {
             console.log("Erro ao marcar como correto ", error.response)

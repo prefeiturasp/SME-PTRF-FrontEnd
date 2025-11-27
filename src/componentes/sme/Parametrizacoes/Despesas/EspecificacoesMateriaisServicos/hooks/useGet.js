@@ -7,18 +7,16 @@ export const useGet = () => {
 
     const {filter, currentPage} = useContext(MateriaisServicosContext)
 
-    const { isLoading, isError, data = {count: 0, results: []}, error, refetch } = useQuery(
-        ['especificacoes-materiais-servicos-list', filter, currentPage],
-        ()=> getEspecificacoesMateriaisServicos(filter, currentPage),
-        {
-            keepPreviousData: true,
-            staleTime: 5000,
-            refetchOnWindowFocus: true,
-        }
-    );
+    const { status, isError, data = {count: 0, results: []}, error, refetch } = useQuery({
+        queryKey: ['especificacoes-materiais-servicos-list', filter, currentPage],
+        queryFn: ()=> getEspecificacoesMateriaisServicos(filter, currentPage),
+        keepPreviousData: true,
+        staleTime: 5000,
+        refetchOnWindowFocus: true,
+    });
 
     const total = useMemo(() => data.results.length, [data]);
     const count = useMemo(() => data.count, [data]);
 
-    return {isLoading, isError, data, error, refetch, total, count}
+    return {isLoading: status === 'loading', isError, data, error, refetch, total, count}
 }
