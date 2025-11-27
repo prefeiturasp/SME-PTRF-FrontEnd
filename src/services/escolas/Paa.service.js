@@ -207,6 +207,29 @@ export const getPaaVigenteEAnteriores = async (associacaoUuid) => {
   ).data;
 };
 
+export const downloadPreviaPaa = async (paaUuid, associacaoUuid) => {
+  const response = await api.get(
+    `api/paa/${paaUuid}/download-previa-paa/`,
+    {
+      params: {
+        associacao_uuid: associacaoUuid,
+      },
+      responseType: "blob",
+      timeout: 30000,
+      ...authHeader(),
+    }
+  );
+
+  const url = window.URL.createObjectURL(new Blob([response.data]));
+  const link = document.createElement("a");
+  link.href = url;
+  link.setAttribute("download", `plano_anual_${paaUuid}.pdf`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  window.URL.revokeObjectURL(url);
+};
+
 export const getAtividadesEstatutariasDisponiveis = async (paaUuid) => {
   if (!paaUuid) {
     return { results: [] };

@@ -7,11 +7,15 @@ import chevronDown from '../../../../assets/img/icone-chevron-down.svg';
 import { ASSOCIACAO_UUID } from '../../../../services/auth.service';
 import Loading from '../../../../utils/Loading';
 import { usePaaVigenteEAnteriores } from './hooks/usePaaVigenteEAnteriores';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircleNotch, faDownload } from '@fortawesome/free-solid-svg-icons';
+import { downloadPreviaPaa } from '../../../../services/escolas/Paa.service';
 
 export const PaaVigenteEAnteriores = () => {
   const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState(true);
   const [anterioresAberto, setAnterioresAberto] = useState({});
+  const [downloadEmAndamento, setDownloadEmAndamento] = useState(null);
   const associacaoUuid = useMemo(() => localStorage.getItem(ASSOCIACAO_UUID), []);
   const { data, isLoading, isError } = usePaaVigenteEAnteriores(associacaoUuid);
   const itemsBreadCrumb = [{ label: 'Plano Anual de Atividades', active: true }];
@@ -49,6 +53,18 @@ export const PaaVigenteEAnteriores = () => {
     navigate(`/relatorios-paa/visualizacao-da-ata-paa/${paaUuid}`);
   };
 
+  const handleDownloadPlano = async (paaUuid) => {
+    if (!paaUuid || !associacaoUuid) return;
+    try {
+      setDownloadEmAndamento(paaUuid);
+      await downloadPreviaPaa(paaUuid, associacaoUuid);
+    } catch (error) {
+      console.error("Erro ao baixar a prévia do PAA:", error);
+    } finally {
+      setDownloadEmAndamento(null);
+    }
+  };
+
   const renderPaaConteudo = (paaItem) => (
     <div className="border border-top-0 p-3">
       <h3 className="mb-4" style={{ fontSize: '18px', fontWeight: 700, color: '#3C4043' }}>
@@ -63,7 +79,19 @@ export const PaaVigenteEAnteriores = () => {
           <span style={{ color: '#0F7A6C', fontWeight: 700, fontSize: '14px' }}>
             Documento final gerado em 31/10/2025 às 15:41
           </span>
-          <i className="pi pi-download ml-3" style={{ color: '#0F7A6C', fontSize: '16px' }} />
+          <button
+            type="button"
+            className="ml-3 p-0 btn btn-link d-flex align-items-center"
+            onClick={() => handleDownloadPlano(paaItem?.uuid)}
+            disabled={!paaItem?.uuid}
+            style={{ color: '#0F7A6C' }}
+          >
+            <FontAwesomeIcon
+              style={{ fontSize: '16px' }}
+              icon={downloadEmAndamento === paaItem?.uuid ? faCircleNotch : faDownload}
+              spin={downloadEmAndamento === paaItem?.uuid}
+            />
+          </button>
           <i className="pi pi-eye ml-3" style={{ color: '#0F7A6C', fontSize: '16px' }} />
         </div>
       </div>
@@ -168,7 +196,7 @@ export const PaaVigenteEAnteriores = () => {
 
           {anteriores.length === 0 && !isLoading && (
             <p className="mt-3 mb-0" style={{ fontSize: '14px', color: '#60686A' }}>
-              Nenhum PAA anterior encontrado.
+              Não há PAAs anteriores registrados para esta unidade educacional.
             </p>
           )}
 
