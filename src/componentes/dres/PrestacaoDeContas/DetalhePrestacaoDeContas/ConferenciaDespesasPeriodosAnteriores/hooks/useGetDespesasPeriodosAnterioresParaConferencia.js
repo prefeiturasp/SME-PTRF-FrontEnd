@@ -20,8 +20,8 @@ export const useGetDespesasPeriodosAnterioresParaConferencia = (setLancamentosPa
         editavel = true
     } = params;
 
-    const { isLoading, isFetching, isError, data = [], error, refetch} = useQuery(
-        ['despesas-periodos-anteriores-para-conferencia', 
+    const { status, isFetching, isError, data = [], error, refetch} = useQuery({
+        queryKey: ['despesas-periodos-anteriores-para-conferencia', 
         prestacaoDeContasUUID,
         analiseUUID,
         conta_uuid,
@@ -37,7 +37,7 @@ export const useGetDespesasPeriodosAnterioresParaConferencia = (setLancamentosPa
         filtrar_por_informacoes,
         filtrar_por_conferencia,
         ],
-        async () => {
+        queryFn: async () => {
             let _analiseUUID = analiseUUID;
 
             if (!editavel) {
@@ -65,13 +65,11 @@ export const useGetDespesasPeriodosAnterioresParaConferencia = (setLancamentosPa
             setLancamentosParaConferencia(_despesas)
             return despesas
         },
-        {
-            keepPreviousData: true,
-            staleTime: 5000, // 5 segundos
-            refetchOnWindowFocus: true, // Caso saia da aba e voltar ele refaz a requisição
-            enabled: prestacaoDeContasUUID !== '' && conta_uuid !== ''
-        }
-    );
+        keepPreviousData: true,
+        staleTime: 5000, // 5 segundos
+        refetchOnWindowFocus: true, // Caso saia da aba e voltar ele refaz a requisição
+        enabled: prestacaoDeContasUUID !== '' && conta_uuid !== ''
+    });
 
-    return {isLoading, isFetching, isError, data, error, refetch}
+    return {isLoading: status === 'loading', isFetching, isError, data, error, refetch}
 }

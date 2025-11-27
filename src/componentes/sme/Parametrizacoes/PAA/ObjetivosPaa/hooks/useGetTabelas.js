@@ -3,16 +3,13 @@ import { useQuery } from "@tanstack/react-query";
 
 export const useGetTabelas = () => {
 
-    const { isLoading, isError, data = {}, error, refetch } = useQuery(
-        ['objetivos-tabelas-paa'],
-        ()=> getObjetivosTabelasPaa(),
-        {
-            keepPreviousData: true,
-            staleTime: 1000 * 60 * 60,
-            refetchOnWindowFocus: false,
-        }
-    );
+    const { status, isError, data = {}, error, refetch } = useQuery({
+        queryKey: ['objetivos-tabelas-paa'],
+        queryFn: ()=> getObjetivosTabelasPaa(),
+        keepPreviousData: true,
+        staleTime: 1000 * 60 * 60,
+        refetchOnWindowFocus: false,
+    });
 
-    return {isLoading, isError, data, error, refetch}
-
+    return { isLoading: status === 'loading', isError, data, error, refetch}
 }

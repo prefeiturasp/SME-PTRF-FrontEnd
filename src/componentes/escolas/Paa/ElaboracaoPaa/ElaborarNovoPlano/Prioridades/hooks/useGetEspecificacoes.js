@@ -3,14 +3,14 @@ import { getEspecificacoesCapital, getEspecificacoesCusteio } from "../../../../
 
 export const useGetEspecificacoes = (tipo, tipo_custeio = "") => {
   const {
-    isLoading,
+    status,
     isError,
     data = [],
     error,
     refetch,
-  } = useQuery(
-    ["especificacoes", tipo, tipo_custeio], 
-    () => {
+  } = useQuery({
+    queryKey: ["especificacoes", tipo, tipo_custeio], 
+    queryFn: () => {
       if (tipo === 'CAPITAL') {
         return getEspecificacoesCapital();
       } else if (tipo === 'CUSTEIO') {
@@ -19,13 +19,11 @@ export const useGetEspecificacoes = (tipo, tipo_custeio = "") => {
         throw new Error('Tipo inválido');
       }
     }, 
-    {
-      keepPreviousData: true,
-      staleTime: 5000,
-      refetchOnWindowFocus: true,
-      enabled: tipo === 'CAPITAL' || (tipo === 'CUSTEIO' && !!tipo_custeio), // Só executa se tipo for CAPITAL ou se for CUSTEIO com tipo_custeio preenchido
-    }
-  );
+    keepPreviousData: true,
+    staleTime: 5000,
+    refetchOnWindowFocus: true,
+    enabled: tipo === 'CAPITAL' || (tipo === 'CUSTEIO' && !!tipo_custeio), // Só executa se tipo for CAPITAL ou se for CUSTEIO com tipo_custeio preenchido
+  });
   
-  return { isLoading, isError, especificacoes: data, error, refetch };
+  return { isLoading: status === "loading", isError, especificacoes: data, error, refetch };
 };

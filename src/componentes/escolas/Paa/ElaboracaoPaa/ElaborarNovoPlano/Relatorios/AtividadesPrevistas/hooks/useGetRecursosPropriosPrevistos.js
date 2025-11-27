@@ -6,14 +6,12 @@ const getPaaUuid = () => localStorage.getItem("PAA");
 export const useGetRecursosPropriosPrevistos = () => {
   const paaUuid = getPaaUuid();
 
-  return useQuery(
-    ["recursos-proprios-previstos", paaUuid],
-    () => getRecursosPropriosPrevistos(paaUuid),
-    {
-      staleTime: 0,
-      cacheTime: 0,
-      refetchOnWindowFocus: true,
-      enabled: Boolean(paaUuid),
-    }
-  );
+  return useQuery({
+    queryKey: ["recursos-proprios-previstos", paaUuid],
+    queryFn: () => getRecursosPropriosPrevistos(paaUuid),
+    staleTime: 0,
+    cacheTime: 0,
+    refetchOnWindowFocus: true,
+    enabled: Boolean(paaUuid),
+  });
 };

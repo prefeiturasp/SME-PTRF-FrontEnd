@@ -8,12 +8,14 @@ export const useGetPAAsAnteriores = () => {
     data = {},
     error,
     refetch,
-  } = useQuery(["paas-anteriores"], () => getPAAsAnteriores(), {
+  } = useQuery({
+    queryKey: ["paas-anteriores"],
+    queryFn: () => getPAAsAnteriores(),
     keepPreviousData: true,
     staleTime: 5000, // 5 segundos
     refetchOnWindowFocus: true, // Caso saia da aba e voltar ele refaz a requisição
     enabled: true,
-  });
+});
 
   return { isFetching, isError, paas_anteriores: data, error, refetch };
 };

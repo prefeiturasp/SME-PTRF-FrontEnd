@@ -3,26 +3,24 @@ import { iniciarAtaPaa } from "../../../../../../../services/escolas/AtasPaa.ser
 
 export const useGetAtaPaaVigente = (paaUuid) => {
   const {
-    isLoading,
+    status,
     isFetching,
     isError,
     data = {},
     error,
     refetch,
-  } = useQuery(
-    ["ataPaaVigente", paaUuid],
-    () => iniciarAtaPaa(paaUuid),
-    {
-      keepPreviousData: false,
-      staleTime: 0,
-      cacheTime: 0,
-      refetchOnWindowFocus: false,
-      enabled: !!paaUuid,
-    }
-  );
+  } = useQuery({
+    queryKey: ["ataPaaVigente", paaUuid],
+    queryFn: () => iniciarAtaPaa(paaUuid),
+    keepPreviousData: false,
+    staleTime: 0,
+    cacheTime: 0,
+    refetchOnWindowFocus: false,
+    enabled: !!paaUuid,
+  });
 
   return {
-    isLoading,
+    isLoading: status === "loading",
     isFetching,
     isError,
     ataPaa: data,

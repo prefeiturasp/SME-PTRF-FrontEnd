@@ -35,9 +35,9 @@ const mapPrioridade = (item) => {
 };
 
 export const useGetPrioridadesAtaPaa = (uuid_paa) => {
-  const query = useQuery(
-    ["prioridades-ata-paa", uuid_paa],
-    async () => {
+  const query = useQuery({
+    queryKey: ["prioridades-ata-paa", uuid_paa],
+    queryFn: async () => {
       // Salvar temporariamente o PAA no localStorage para o serviço funcionar
       const paaAnterior = localStorage.getItem("PAA");
       try {
@@ -55,13 +55,11 @@ export const useGetPrioridadesAtaPaa = (uuid_paa) => {
         }
       }
     },
-    {
-      staleTime: 0,
-      cacheTime: 0,
-      refetchOnWindowFocus: false,
-      enabled: !!uuid_paa,
-    }
-  );
+    staleTime: 0,
+    cacheTime: 0,
+    refetchOnWindowFocus: false,
+    enabled: !!uuid_paa,
+  });
 
   const prioridadesAgrupadas = useMemo(() => {
     const lista = Array.isArray(query.data?.results)
