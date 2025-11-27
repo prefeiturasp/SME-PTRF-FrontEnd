@@ -7,15 +7,13 @@ export const useGet = () => {
 
     const {filter, currentPage, rowsPerPage} = useContext(ObjetivosPaaContext)
 
-    const { isLoading, isError, data = {count: 0, results: []}, error, refetch } = useQuery(
-        ['objetivos-paa', filter, currentPage, rowsPerPage],
-        ()=> getObjetivosPaa(filter, currentPage, rowsPerPage),
-        {
-            keepPreviousData: true,
-            staleTime: 5000, // 5 segundos
-            refetchOnWindowFocus: true,
-        }
-    );
+    const { isLoading, isError, data = {count: 0, results: []}, error, refetch } = useQuery({
+        queryKey: ['objetivos-paa', filter, currentPage, rowsPerPage],
+        queryFn: ()=> getObjetivosPaa(filter, currentPage, rowsPerPage),
+        keepPreviousData: true,
+        staleTime: 5000, // 5 segundos
+        refetchOnWindowFocus: true,
+    });
 
     const count = useMemo(() => data.count, [data]);
     const total = useMemo(() => data.results.length, [data]);

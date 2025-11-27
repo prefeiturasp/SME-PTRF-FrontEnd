@@ -3,17 +3,19 @@ import { getAcoesPDDE } from "../../../../../../../services/sme/Parametrizacoes.
 
 export const useGetAcoesPDDE = ({ enabled }) => {
   const {
-    isLoading,
+    status,
     isError,
     data = {},
     error,
     refetch,
-  } = useQuery(["acoes-pdde"], () => getAcoesPDDE("", "",1, 100), {
+  } = useQuery({
+    queryKey: ["acoes-pdde"],
+    queryFn: () => getAcoesPDDE("", "",1, 100),
     keepPreviousData: true,
     staleTime: 5000, // 5 segundos
     refetchOnWindowFocus: true, // Caso saia da aba e voltar ele refaz a requisição
-    enabled: enabled,
-  });
+    enabled: enabled
+});
 
-  return { isLoading, isError, acoesPdde: data, error, refetch };
+  return { isLoading: status === "loading", isError, acoesPdde: data, error, refetch };
 };

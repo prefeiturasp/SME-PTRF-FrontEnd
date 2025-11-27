@@ -7,19 +7,17 @@ export const useGet = () => {
 
     const {filter, currentPage, rowsPerPage} = useContext(AtividadesEstatutariasContext)
 
-    const { isLoading, isError, data = {count: 0, results: []}, error, refetch } = useQuery(
-        ['atividades-estatutarias', filter, currentPage, rowsPerPage],
-        ()=> getAtividadesEstatutarias(filter, currentPage, rowsPerPage),
-        {
-            keepPreviousData: true,
-            staleTime: 5000, // 5 segundos
-            refetchOnWindowFocus: true,
-        }
-    );
+    const { status, isError, data = {count: 0, results: []}, error, refetch } = useQuery({
+        queryKey: ['atividades-estatutarias', filter, currentPage, rowsPerPage],
+        queryFn: ()=> getAtividadesEstatutarias(filter, currentPage, rowsPerPage),
+        keepPreviousData: true,
+        staleTime: 5000, // 5 segundos
+        refetchOnWindowFocus: true,
+    });
 
     const count = useMemo(() => data.count, [data]);
     const total = useMemo(() => data.results.length, [data]);
 
-    return {isLoading, isError, data, error, refetch, count, total}
+    return {isLoading: status === 'loading', isError, data, error, refetch, count, total}
 
 }

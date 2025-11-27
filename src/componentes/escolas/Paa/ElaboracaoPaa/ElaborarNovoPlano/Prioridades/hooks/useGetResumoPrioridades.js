@@ -3,17 +3,19 @@ import { getResumoPrioridades } from "../../../../../../../services/escolas/Paa.
 
 export const useGetResumoPrioridades = () => {
   const {
-    isLoading,
+    status,
     isFetching,
     isError,
     data = [],
     error,
     refetch,
-  } = useQuery(["prioridades-resumo"], () => getResumoPrioridades(), {
+  } = useQuery({
+    queryKey: ["prioridades-resumo"],
+    queryFn: () => getResumoPrioridades(),
     refetchOnWindowFocus: true
   });
   return {
-    isLoading,
+    isLoading: status === 'loading',
     isFetching,
     isError,
     resumoPrioridades: data,

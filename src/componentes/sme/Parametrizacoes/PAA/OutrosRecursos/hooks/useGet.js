@@ -7,7 +7,7 @@ export const useGet = () => {
 
     const {filter, currentPage, rowsPerPage} = useContext(OutrosRecursosPaaContext)
 
-    const { isLoading, isError, data = {count: 0, results: []}, error, refetch } = useQuery({
+    const { status, isError, data = {count: 0, results: []}, error, refetch } = useQuery({
         queryKey: ['outros-recursos', filter, currentPage, rowsPerPage],
         queryFn: ()=> getOutrosRecursos(filter, currentPage, rowsPerPage),
         keepPreviousData: true,
@@ -18,6 +18,6 @@ export const useGet = () => {
     const count = useMemo(() => data.count, [data]);
     const total = useMemo(() => data.results.length, [data]);
 
-    return {isLoading, isError, data, error, refetch, count, total}
+    return {isLoading: status === 'loading', isError, data, error, refetch, count, total}
 
 }

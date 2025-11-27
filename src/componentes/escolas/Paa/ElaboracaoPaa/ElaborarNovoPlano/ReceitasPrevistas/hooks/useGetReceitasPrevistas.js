@@ -5,13 +5,15 @@ import { getPaaReceitasPrevistas } from "../../../../../../../services/escolas/P
 export const useGetReceitasPrevistas = (options = {}) => {
   const getPaaUUID = () => localStorage.getItem("PAA");
   const {
-    isLoading,
+    status,
     isFetching,
     isError,
     data = [],
     error,
     refetch,
-  } = useQuery(["receitas-previstas-paa"], () => getPaaReceitasPrevistas(getPaaUUID()), {
+  } = useQuery({
+    queryKey: ["receitas-previstas-paa"],
+    queryFn: () => getPaaReceitasPrevistas(getPaaUUID()),
     keepPreviousData: true,
     staleTime: 5000,
     refetchOnWindowFocus: true,
@@ -19,5 +21,5 @@ export const useGetReceitasPrevistas = (options = {}) => {
     ...options
   });
 
-  return { isLoading, isError, data, error, refetch, isFetching };
+  return { isLoading: status === "loading", isError, data, error, refetch, isFetching };
 };

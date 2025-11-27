@@ -3,18 +3,20 @@ import { getPrioridadesTabelas } from "../../../../../../../services/escolas/Paa
 
 export const useGetPrioridadeTabelas = () => {
   const {
-    isLoading,
+    status,
     isError,
     data = {},
     error,
     refetch,
-  } = useQuery(["prioridades-tabelas"], () => getPrioridadesTabelas(), {
+  } = useQuery({
+    queryKey: ["prioridades-tabelas"],
+    queryFn: () => getPrioridadesTabelas(),
     keepPreviousData: true,
     staleTime: 5000, // 5 segundos
     refetchOnWindowFocus: true, // Caso saia da aba e voltar ele refaz a requisição
   });
   return {
-    isLoading,
+    isLoading: status === "loading",
     isError,
     prioridadesTabelas: data.prioridades,
     recursos: data.recursos,

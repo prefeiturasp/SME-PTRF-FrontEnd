@@ -29,15 +29,13 @@ const mapPrioridade = (item) => {
 export const useGetPrioridadesRelatorio = (filtros = {}) => {
   const filtrosDependencia = useMemo(() => ({ ...filtros }), [filtros]);
 
-  const query = useQuery(
-    ["prioridades-relatorio", filtrosDependencia],
-    () => getPrioridadesRelatorio(filtrosDependencia),
-    {
-      staleTime: 0,
-      cacheTime: 0,
-      refetchOnWindowFocus: true,
-    }
-  );
+  const query = useQuery({
+    queryKey: ["prioridades-relatorio", filtrosDependencia],
+    queryFn: () => getPrioridadesRelatorio(filtrosDependencia),
+    staleTime: 0,
+    cacheTime: 0,
+    refetchOnWindowFocus: true,
+  });
 
   const prioridades = useMemo(() => {
     const lista = Array.isArray(query.data?.results)
