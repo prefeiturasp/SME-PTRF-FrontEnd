@@ -44,7 +44,12 @@ export const PaaVigenteEAnteriores = () => {
     }));
   };
 
-  const renderPaaConteudo = () => (
+  const handleVisualizarAta = (paaUuid) => {
+    if (!paaUuid) return;
+    navigate(`/relatorios-paa/visualizacao-da-ata-paa/${paaUuid}`);
+  };
+
+  const renderPaaConteudo = (paaItem) => (
     <div className="border border-top-0 p-3">
       <h3 className="mb-4" style={{ fontSize: '18px', fontWeight: 700, color: '#3C4043' }}>
         PAA Original
@@ -71,7 +76,12 @@ export const PaaVigenteEAnteriores = () => {
           <div style={{ color: '#C22D2D', fontWeight: 700, fontSize: '14px' }}>Documento pendente de geração</div>
         </div>
         <div className="d-flex mt-3 mt-md-0">
-          <button type="button" className="btn btn-outline-success mr-3">
+          <button
+            type="button"
+            className="btn btn-outline-success mr-3"
+            onClick={() => handleVisualizarAta(paaItem?.uuid)}
+            disabled={!paaItem?.uuid}
+          >
             Visualizar ata
           </button>
           <button type="button" className="btn btn-success">Gerar ata</button>
@@ -150,7 +160,7 @@ export const PaaVigenteEAnteriores = () => {
               </button>
             </div>
           </div>
-          {isDropdownOpen && renderPaaConteudo()}
+          {isDropdownOpen && renderPaaConteudo(vigente)}
         </div>
 
         <div className="mt-5">
@@ -199,9 +209,7 @@ export const PaaVigenteEAnteriores = () => {
                     />
                   </button>
                 </div>
-                {isOpen && (
-                  renderPaaConteudo()
-                )}
+                {isOpen && renderPaaConteudo(paaAnterior)}
               </div>
             );
           })}
