@@ -7,7 +7,7 @@ export const useGetMandatoVigente = () => {
 
     const associacao_uuid = visoesService.getItemUsuarioLogado('associacao_selecionada.uuid')
 
-    const { isPending, isError, data = {uuid: null, composicoes: [] }, error } = useQuery({
+    const { status, isError, data = {uuid: null, composicoes: [] }, error } = useQuery({
         queryKey: ['mandato-vigente', associacao_uuid],
         queryFn: ()=> getMandatoVigente(associacao_uuid),
         keepPreviousData: true,
