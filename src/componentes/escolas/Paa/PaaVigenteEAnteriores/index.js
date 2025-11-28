@@ -30,11 +30,8 @@ export const PaaVigenteEAnteriores = () => {
   const { data, isLoading, isError } = usePaaVigenteEAnteriores(associacaoUuid);
   const itemsBreadCrumb = [{ label: 'Plano Anual de Atividades', active: true }];
 
-  const vigente = useMemo(() => {
-    if (!data?.vigente) return null;
-    const possuiDocumento = Boolean(data.vigente?.documento_final_gerado || data.vigente?.status === "GERADO");
-    return possuiDocumento ? data.vigente : null;
-  }, [data?.vigente]);
+  const vigente = useMemo(() => data?.vigente || null, [data?.vigente]);
+  const vigenteUuidOriginal = data?.vigente?.uuid;
 
   const anteriores = useMemo(() => data?.anteriores || [], [data?.anteriores]);
 
@@ -92,15 +89,15 @@ export const PaaVigenteEAnteriores = () => {
   };
 
   useEffect(() => {
-    if (vigente?.uuid) {
-      carregarStatusDocumento(vigente.uuid);
+    if (vigenteUuidOriginal) {
+      carregarStatusDocumento(vigenteUuidOriginal);
     }
     anteriores?.forEach((paaAnterior) => {
       if (paaAnterior?.uuid) {
         carregarStatusDocumento(paaAnterior.uuid);
       }
     });
-  }, [vigente?.uuid, anteriores, carregarStatusDocumento]);
+  }, [vigenteUuidOriginal, anteriores, carregarStatusDocumento]);
 
   useEffect(() => {
     return () => {
@@ -130,7 +127,7 @@ export const PaaVigenteEAnteriores = () => {
             type="button"
             className="ml-3 p-0 btn btn-link d-flex align-items-center"
             onClick={() => handleDownloadPlano(paaItem?.uuid)}
-            disabled={!paaItem?.uuid}
+            disabled={!paaItem?.uuid || (statusDocumento[paaItem?.uuid]?.status !== "CONCLUIDO")}
             style={{ color: '#0F7A6C' }}
           >
             <FontAwesomeIcon
@@ -143,7 +140,7 @@ export const PaaVigenteEAnteriores = () => {
             type="button"
             className="ml-3 p-0 btn btn-link d-flex align-items-center"
             onClick={() => handleVisualizarPlano(paaItem)}
-            disabled={!paaItem?.uuid}
+            disabled={!paaItem?.uuid || (statusDocumento[paaItem?.uuid]?.status !== "CONCLUIDO")}
             style={{ color: '#0F7A6C' }}
           >
             <FontAwesomeIcon
