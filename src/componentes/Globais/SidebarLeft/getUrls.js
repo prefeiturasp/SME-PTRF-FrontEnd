@@ -145,6 +145,13 @@ const UrlsMenuEscolas = {
           icone: "",
           permissoes: ["access_paa"],
         },
+        {
+          label: "PAA vigente e anteriores",
+          url: "paa-vigente-e-anteriores",
+          dataFor: "paa-vigente-e-anteriores",
+          icone: "",
+          permissoes: ["access_paa"],
+        },
       ],
     },
     {

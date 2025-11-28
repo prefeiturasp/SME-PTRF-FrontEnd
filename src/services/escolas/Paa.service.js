@@ -250,6 +250,35 @@ export const getAtividadesEstatutariasPrevistas = async (paaUuid) => {
   ).data;
 };
 
+export const getPaaVigenteEAnteriores = async (associacaoUuid) => {
+  return (
+    await api.get(
+      `api/paa/paa-vigente-e-anteriores/?associacao_uuid=${associacaoUuid}`,
+      authHeader()
+    )
+  ).data;
+};
+
+export const downloadDocumentoFinalPaa = async (paaUuid) => {
+  const response = await api.get(
+    `api/paa/${paaUuid}/documento-final/`,
+    {
+      responseType: "blob",
+      timeout: 30000,
+      ...authHeader(),
+    }
+  );
+
+  const url = window.URL.createObjectURL(new Blob([response.data]));
+  const link = document.createElement("a");
+  link.href = url;
+  link.setAttribute("download", `plano_anual_${paaUuid}.pdf`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  window.URL.revokeObjectURL(url);
+};
+
 export const getAtividadesEstatutariasDisponiveis = async (paaUuid) => {
   if (!paaUuid) {
     return { results: [] };
