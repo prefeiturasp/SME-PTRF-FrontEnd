@@ -4,13 +4,11 @@ import {useQuery} from "@tanstack/react-query";
 
 export const useGetTabelasRepasse = () => {
 
-    const { isLoading, isError, data, refetch } = useQuery(
-        ['tabelas-repasse-list'],
-        ()=> getTabelasRepasse(),
-        {
-            keepPreviousData: true,
-        }
-    );
+    const { status, isError, data, refetch } = useQuery({
+        queryKey: ['tabelas-repasse-list'],
+        queryFn: ()=> getTabelasRepasse(),
+        keepPreviousData: true,
+    });
 
-    return {isLoading, isError, data, refetch}
+    return {isLoading: status === 'loading', isError, data, refetch}
 }

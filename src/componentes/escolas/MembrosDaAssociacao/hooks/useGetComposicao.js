@@ -11,17 +11,15 @@ export const useGetComposicao = (composicao_uuid='') => {
         composicaoUuid = composicao_uuid
     }
 
-    const { isLoading, isError, data, error } = useQuery(
-        ['retrieve-composicao', composicaoUuid],
-        ()=> getComposicao(composicaoUuid),
-        {
-            keepPreviousData: true,
-            staleTime: 5000, // 5 segundos
-            refetchOnWindowFocus: true, // Caso saia da aba e voltar ele refaz a requisição
-        }
-    );
+    const { status, isError, data, error } = useQuery({
+        queryKey: ['retrieve-composicao', composicaoUuid],
+        queryFn: ()=> getComposicao(composicaoUuid),
+        keepPreviousData: true,
+        staleTime: 5000, // 5 segundos
+        refetchOnWindowFocus: true, // Caso saia da aba e voltar ele refaz a requisição
+    });
 
-    return {isLoading, isError, data, error}
+    return {isLoading: status === 'loading', isError, data, error}
 
 
 }

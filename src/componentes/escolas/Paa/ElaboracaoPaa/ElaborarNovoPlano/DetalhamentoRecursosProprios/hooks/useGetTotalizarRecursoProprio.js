@@ -2,13 +2,11 @@ import { useQuery } from "@tanstack/react-query";
 import { getTotalizadorRecursoProprio } from "../../../../../../../services/escolas/Paa.service";
 
 export const useGetTotalizadorRecursoProprio = (associacaoUUID) => {
-  const { isLoading, isError, data, error, refetch } = useQuery(
-    ["totalizador-recurso-proprio", associacaoUUID],
-    () => getTotalizadorRecursoProprio(associacaoUUID),
-    {
-      enabled: !!associacaoUUID,
-    }
-  );
+  const { status, isError, data, error, refetch } = useQuery({
+    queryKey: ["totalizador-recurso-proprio", associacaoUUID],
+    queryFn: () => getTotalizadorRecursoProprio(associacaoUUID),
+    enabled: !!associacaoUUID,
+  });
 
-  return { isLoading, isError, data, error, refetch };
+  return { isLoading: status === "loading", isError, data, error, refetch };
 };

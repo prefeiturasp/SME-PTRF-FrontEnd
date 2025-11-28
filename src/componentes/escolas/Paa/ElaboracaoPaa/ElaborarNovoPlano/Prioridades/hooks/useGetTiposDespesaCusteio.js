@@ -3,15 +3,17 @@ import { getTodosTiposDeCusteio } from "../../../../../../../services/sme/Parame
 
 export const useGetTiposDespesaCusteio = () => {
   const {
-    isLoading,
+    status,
     isError,
     data = {},
     error,
     refetch,
-  } = useQuery(["tipos-despesa-custeio"], () => getTodosTiposDeCusteio(), {
+  } = useQuery({
+    queryKey: ["tipos-despesa-custeio"],
+    queryFn: () => getTodosTiposDeCusteio(),
     keepPreviousData: true,
     staleTime: 5000, // 5 segundos
     refetchOnWindowFocus: true, // Caso saia da aba e voltar ele refaz a requisição
   });
-  return { isLoading, isError, tipos_despesa_custeio: data, error, refetch };
+  return { isLoading: status === "loading", isError, tipos_despesa_custeio: data, error, refetch };
 };

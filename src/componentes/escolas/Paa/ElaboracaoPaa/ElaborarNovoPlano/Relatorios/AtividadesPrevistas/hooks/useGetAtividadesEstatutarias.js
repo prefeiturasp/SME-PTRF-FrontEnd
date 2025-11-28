@@ -150,22 +150,20 @@ export const useGetAtividadesEstatutarias = (filtros = {}) => {
   const filtrosMemo = useMemo(() => ({ ...filtros }), [filtros]);
   const paaUuid = getPaaUuid();
 
-  const query = useQuery(
-    ["atividades-estatutarias", paaUuid, filtrosMemo],
-    async () => {
+  const query = useQuery({
+    queryKey: ["atividades-estatutarias", paaUuid, filtrosMemo],
+    queryFn: async () => {
       const [disponiveisResp, previstasResp] = await Promise.all([
         getAtividadesEstatutariasDisponiveis(paaUuid),
         getAtividadesEstatutariasPrevistas(paaUuid),
       ]);
       return mergeAtividades(disponiveisResp, previstasResp);
     },
-    {
-      staleTime: 0,
-      cacheTime: 0,
-      refetchOnWindowFocus: true,
-      enabled: Boolean(paaUuid),
-    }
-  );
+    staleTime: 0,
+    cacheTime: 0,
+    refetchOnWindowFocus: true,
+    enabled: Boolean(paaUuid),
+  });
 
   const atividades = query.data ?? [];
   const quantidade = atividades.length;

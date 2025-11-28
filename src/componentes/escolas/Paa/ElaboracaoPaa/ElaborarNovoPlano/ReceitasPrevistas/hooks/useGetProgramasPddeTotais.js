@@ -3,15 +3,17 @@ import { getProgramasPddeTotais } from "../../../../../../../services/escolas/Pa
 
 export const useGetProgramasPddeTotais = () => {
   const {
-    isLoading,
+    status,
     isError,
     data = { programas: [], total: {} },
     error,
     refetch,
-  } = useQuery(["programas-pdde-totais"], () => getProgramasPddeTotais(1000), {
+  } = useQuery({
+    queryKey: ["programas-pdde-totais"],
+    queryFn: () => getProgramasPddeTotais(1000),
     keepPreviousData: true,
     staleTime: 5000, // 5 segundos
     refetchOnWindowFocus: true, // Caso saia da aba e voltar ele refaz a requisição
   });
-  return { isLoading, isError, programas: data.programas, total: data.total, error, refetch };
+  return { isLoading: status === "loading", isError, programas: data.programas, total: data.total, error, refetch };
 };
