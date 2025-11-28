@@ -168,10 +168,15 @@ export const PaaVigenteEAnteriores = () => {
             className="btn btn-outline-success mr-3"
             onClick={() => handleVisualizarAta(paaItem?.uuid)}
             disabled={!paaItem?.uuid}
+            style={{
+              fontWeight: 600,
+            }}
           >
             Visualizar ata
           </button>
-          <button type="button" className="btn btn-success">Gerar ata</button>
+          <button type="button" className="btn btn-success" style={{
+            fontWeight: 600,
+          }}>Gerar ata</button>
         </div>
       </div>
 
@@ -205,6 +210,9 @@ export const PaaVigenteEAnteriores = () => {
             type="button"
             className="btn btn-outline-success"
             onClick={() => navigate(-1)}
+            style={{
+              fontWeight: 600,
+            }}
           >
             Voltar
           </button>
@@ -224,7 +232,9 @@ export const PaaVigenteEAnteriores = () => {
               {vigente ? `PAA ${formatReferencia(vigente?.periodo_paa_objeto?.referencia)}` : 'PAA vigente'}
             </span>
             <div className="d-flex align-items-center">
-              <button type="button" className="btn btn-outline-success mr-3 bg-white">
+              <button type="button" className="btn btn-outline-success mr-3 bg-white" style={{
+                fontWeight: 600,
+              }}>
                 Retificar o PAA
               </button>
               <button
