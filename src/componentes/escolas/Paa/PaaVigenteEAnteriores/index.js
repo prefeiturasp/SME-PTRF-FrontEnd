@@ -8,20 +8,35 @@ import { ASSOCIACAO_UUID } from '../../../../services/auth.service';
 import Loading from '../../../../utils/Loading';
 import { usePaaVigenteEAnteriores } from './hooks/usePaaVigenteEAnteriores';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircleNotch, faDownload } from '@fortawesome/free-solid-svg-icons';
-import { downloadDocumentoFinalPaa } from '../../../../services/escolas/Paa.service';
+import { faCircleNotch, faDownload, faEye } from '@fortawesome/free-solid-svg-icons';
+import { ModalFormBodyTextCloseButtonCabecalho } from '../../../Globais/ModalBootstrap';
+import { useDocumentoFinalPaa } from './hooks/useDocumentoFinalPaa';
 
 export const PaaVigenteEAnteriores = () => {
   const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState(true);
   const [anterioresAberto, setAnterioresAberto] = useState({});
-  const [downloadEmAndamento, setDownloadEmAndamento] = useState(null);
+  const {
+    statusDocumento,
+    downloadEmAndamento,
+    visualizacaoEmAndamento,
+    carregarStatusDocumento,
+    baixarDocumentoFinal,
+    obterUrlDocumentoFinal,
+    revogarUrlDocumento,
+  } = useDocumentoFinalPaa();
+  const [modalPdf, setModalPdf] = useState({ show: false, url: null, titulo: "" });
   const associacaoUuid = useMemo(() => localStorage.getItem(ASSOCIACAO_UUID), []);
   const { data, isLoading, isError } = usePaaVigenteEAnteriores(associacaoUuid);
   const itemsBreadCrumb = [{ label: 'Plano Anual de Atividades', active: true }];
 
-  const vigente = data?.vigente;
-  const anteriores = data?.anteriores || [];
+  const vigente = useMemo(() => {
+    return data?.vigente && data.vigente.status === "GERADO" ? data.vigente : null;
+  }, [data?.vigente]);
+
+  const anteriores = useMemo(() => {
+    return (data?.anteriores || []).filter((paa) => paa?.status === "GERADO");
+  }, [data?.anteriores]);
 
   useEffect(() => {
     if (!anteriores.length) return;
@@ -55,15 +70,45 @@ export const PaaVigenteEAnteriores = () => {
 
   const handleDownloadPlano = async (paaUuid) => {
     if (!paaUuid) return;
-    try {
-      setDownloadEmAndamento(paaUuid);
-      await downloadDocumentoFinalPaa(paaUuid);
-    } catch (error) {
-      console.error("Erro ao baixar o documento final do PAA:", error);
-    } finally {
-      setDownloadEmAndamento(null);
-    }
+    await baixarDocumentoFinal(paaUuid);
   };
+
+  const handleVisualizarPlano = async (paaItem) => {
+    if (!paaItem?.uuid) return;
+    const url = await obterUrlDocumentoFinal(paaItem.uuid);
+    if (!url) return;
+    setModalPdf({
+      show: true,
+      url,
+      titulo: formatReferencia(paaItem?.periodo_paa_objeto?.referencia),
+    });
+  };
+
+  const handleFecharModalPdf = () => {
+    if (modalPdf.url) {
+      revogarUrlDocumento(modalPdf.url);
+    }
+    setModalPdf({ show: false, url: null, titulo: "" });
+  };
+
+  useEffect(() => {
+    if (vigente?.uuid) {
+      carregarStatusDocumento(vigente.uuid);
+    }
+    anteriores?.forEach((paaAnterior) => {
+      if (paaAnterior?.uuid) {
+        carregarStatusDocumento(paaAnterior.uuid);
+      }
+    });
+  }, [vigente?.uuid, anteriores, carregarStatusDocumento]);
+
+  useEffect(() => {
+    return () => {
+      if (modalPdf.url) {
+        revogarUrlDocumento(modalPdf.url);
+      }
+    };
+  }, [modalPdf.url, revogarUrlDocumento]);
 
   const renderPaaConteudo = (paaItem) => (
     <div className="border border-top-0 p-3">
@@ -76,9 +121,15 @@ export const PaaVigenteEAnteriores = () => {
           Plano anual
         </h4>
         <div className="d-flex align-items-center">
-          <span style={{ color: '#0F7A6C', fontWeight: 700, fontSize: '14px' }}>
-            Documento final gerado em 31/10/2025 às 15:41
-          </span>
+          {(() => {
+            const statusInfo = statusDocumento[paaItem?.uuid];
+            const corStatus = statusInfo?.status && statusInfo.status !== "CONCLUIDO" ? '#C22D2D' : '#0F7A6C';
+            return (
+              <span style={{ color: corStatus, fontWeight: 700, fontSize: '14px' }}>
+                {statusInfo?.mensagem || 'Documento final ainda não gerado'}
+              </span>
+            );
+          })()}
           <button
             type="button"
             className="ml-3 p-0 btn btn-link d-flex align-items-center"
@@ -92,7 +143,19 @@ export const PaaVigenteEAnteriores = () => {
               spin={downloadEmAndamento === paaItem?.uuid}
             />
           </button>
-          <i className="pi pi-eye ml-3" style={{ color: '#0F7A6C', fontSize: '16px' }} />
+          <button
+            type="button"
+            className="ml-3 p-0 btn btn-link d-flex align-items-center"
+            onClick={() => handleVisualizarPlano(paaItem)}
+            disabled={!paaItem?.uuid}
+            style={{ color: '#0F7A6C' }}
+          >
+            <FontAwesomeIcon
+              style={{ fontSize: '16px' }}
+              icon={visualizacaoEmAndamento === paaItem?.uuid ? faCircleNotch : faEye}
+              spin={visualizacaoEmAndamento === paaItem?.uuid}
+            />
+          </button>
         </div>
       </div>
 
@@ -123,6 +186,7 @@ export const PaaVigenteEAnteriores = () => {
   );
 
   return (
+    <>
     <PaginasContainer>
       <BreadcrumbComponent items={itemsBreadCrumb} />
       <h1 className="titulo-itens-painel mt-5">Plano Anual de Atividades</h1>
@@ -244,5 +308,27 @@ export const PaaVigenteEAnteriores = () => {
         </div>
       </div>
     </PaginasContainer>
+    <ModalFormBodyTextCloseButtonCabecalho
+      show={modalPdf.show}
+      onHide={handleFecharModalPdf}
+      titulo={`Documento final ${modalPdf.titulo ? `- ${modalPdf.titulo}` : ''}`}
+      size="xl"
+      bodyText={
+        modalPdf.url ? (
+          <div style={{ height: '70vh' }}>
+            <iframe
+              src={modalPdf.url}
+              title="Documento Final PAA"
+              width="100%"
+              height="100%"
+              style={{ border: 'none' }}
+            />
+          </div>
+        ) : (
+          <div className="text-danger">Não foi possível carregar o PDF.</div>
+        )
+      }
+    />
+    </>
   );
 };
