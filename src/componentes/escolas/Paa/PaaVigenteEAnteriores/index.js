@@ -232,11 +232,17 @@ export const PaaVigenteEAnteriores = () => {
               {vigente ? `PAA ${formatReferencia(vigente?.periodo_paa_objeto?.referencia)}` : 'PAA vigente'}
             </span>
             <div className="d-flex align-items-center">
-              <button type="button" className="btn btn-outline-success mr-3 bg-white" style={{
-                fontWeight: 600,
-              }}>
-                Retificar o PAA
-              </button>
+            <button
+            type="button"
+            className="btn btn-outline-success"
+            onClick={() => navigate(-1)}
+            style={{
+              fontWeight: 600,
+              marginRight: '10px',
+            }}
+          >
+            Retificar o PAA
+          </button>
               <button
                 type="button"
                 className="d-flex align-items-center justify-content-center"
