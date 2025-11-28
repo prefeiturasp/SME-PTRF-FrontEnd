@@ -30,13 +30,9 @@ export const PaaVigenteEAnteriores = () => {
   const { data, isLoading, isError } = usePaaVigenteEAnteriores(associacaoUuid);
   const itemsBreadCrumb = [{ label: 'Plano Anual de Atividades', active: true }];
 
-  const vigente = useMemo(() => {
-    return data?.vigente && data.vigente.status === "GERADO" ? data.vigente : null;
-  }, [data?.vigente]);
+  const vigente = useMemo(() => data?.vigente || null, [data?.vigente]);
 
-  const anteriores = useMemo(() => {
-    return (data?.anteriores || []).filter((paa) => paa?.status === "GERADO");
-  }, [data?.anteriores]);
+  const anteriores = useMemo(() => data?.anteriores || [], [data?.anteriores]);
 
   useEffect(() => {
     if (!anteriores.length) return;
