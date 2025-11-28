@@ -109,6 +109,7 @@ import { AtividadesEstatutarias } from "../componentes/sme/Parametrizacoes/PAA/A
 import { OutrosRecursos } from "../componentes/sme/Parametrizacoes/PAA/OutrosRecursos";
 import { AcoesPTRFPaa } from "../componentes/sme/Parametrizacoes/PAA/AcoesPTRF";
 import { ElaboracaoPaa } from "../componentes/escolas/Paa/ElaboracaoPaa";
+import { PaaVigenteEAnteriores } from "../componentes/escolas/Paa/PaaVigenteEAnteriores";
 import { ElaborarNovoPlano } from "../componentes/escolas/Paa/ElaboracaoPaa/ElaborarNovoPlano";
 import { ExecucaoDoPaa } from "../componentes/escolas/Paa/ExecucaoDoPaa";
 import { CadastroTipoReceitaPage } from "../paginas/SME/Parametrizacoes/TiposReceita/CadastroTipoReceita";
@@ -806,6 +807,13 @@ const routesConfig = [
     exact: true,
     path: "/paa",
     component: ElaboracaoPaa,
+    permissoes: ["access_paa"],
+    featureFlag: "paa",
+  },
+  {
+    exact: true,
+    path: "/paa-vigente-e-anteriores",
+    component: PaaVigenteEAnteriores,
     permissoes: ["access_paa"],
     featureFlag: "paa",
   },

@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import {ASSOCIACAO_UUID} from "../../../../services/auth.service";
 import { usePostPaa } from "./hooks/usePostPaa";
 import { getPaaVigente, getParametroPaa } from "../../../../services/sme/Parametrizacoes.service";
+import { getStatusGeracaoDocumentoPaa } from "../../../../services/escolas/Paa.service";
 
 export const ElaboracaoPaa = () => {
   const associacao_uuid = localStorage.getItem(ASSOCIACAO_UUID);
@@ -17,6 +18,7 @@ export const ElaboracaoPaa = () => {
   const [loadingPaa, setLoadingPaa] = useState(false);
   const [validMonthPaa, setValidMonthPaa] = useState('');
   const [textoPaa, setTextoPaa] = useState('');
+  const [paaGerado, setPaaGerado] = useState(false);
   const { mutationPost } = usePostPaa();
 
   const itemsBreadCrumb = [
@@ -31,12 +33,15 @@ export const ElaboracaoPaa = () => {
         localStorage.setItem("PAA", response.uuid);
         localStorage.setItem("DADOS_PAA", JSON.stringify(response));
         setNotValidPaa(false);
+        const statusDocumento = await getStatusGeracaoDocumentoPaa(response.uuid);
+        setPaaGerado(statusDocumento?.status === "CONCLUIDO");
     } catch (error) {
         console.error(error);
         setNotValidPaa(true);
+        setPaaGerado(false);
     }
     setLoadingPaa(false);
-  }, [])
+  }, [associacao_uuid])
 
     useEffect(()=>{
       carregaPaa()
@@ -67,6 +72,9 @@ export const ElaboracaoPaa = () => {
   }, []);
 
   const handlePaa = () => {
+    if (paaGerado) {
+      return;
+    }
     if (notValidPaa){
       const payload = {
         associacao: associacao_uuid
@@ -95,8 +103,17 @@ export const ElaboracaoPaa = () => {
             </div>
             <p>Confira a estrutura completa aqui.</p>
             <div className="d-flex justify-content-center">
-              <button type="button" className="btn btn-success mt-2 mr-5" data-testid="elaborar-paa-button" onClick={handlePaa} disabled={!validMonthPaa}>{!notValidPaa ? "Continuar elaboração de PAA" : "Elaborar novo PAA"}</button>
-              <button type="button" className="btn btn-success mt-2 ml-5" onClick={() => {}}>PAA vigente e anteriores</button>
+              <button
+                type="button"
+                className="btn btn-success mt-2 mr-5"
+                data-testid="elaborar-paa-button"
+                onClick={handlePaa}
+                disabled={!validMonthPaa || paaGerado}
+              >
+                {paaGerado
+                  ? "Elaborar novo PAA"
+                  : (!notValidPaa ? "Continuar elaboração de PAA" : "Elaborar novo PAA")}
+              </button>
             </div>
           </div>
         </>
