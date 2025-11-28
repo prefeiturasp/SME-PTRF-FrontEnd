@@ -52,7 +52,7 @@ export const PaaVigenteEAnteriores = () => {
   }, [anteriores]);
 
   const formatReferencia = (referencia) => {
-    if (!referencia) return '---';
+    if (!referencia) return '';
     return referencia.replace(/\s*a\s*/i, '/');
   };
 
@@ -112,10 +112,6 @@ export const PaaVigenteEAnteriores = () => {
 
   const renderPaaConteudo = (paaItem) => (
     <div className="border border-top-0 p-3">
-      <h3 className="mb-4" style={{ fontSize: '18px', fontWeight: 700, color: '#3C4043' }}>
-        {formatReferencia(paaItem?.periodo_paa_objeto?.referencia)}
-      </h3>
-
       <div>
         <h4 className="mb-2" style={{ fontSize: '14px', fontWeight: 700, color: '#3C4043' }}>
           Plano anual
