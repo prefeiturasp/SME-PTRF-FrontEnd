@@ -119,7 +119,7 @@ export const PaaVigenteEAnteriores = () => {
         <div className="d-flex align-items-center">
           {(() => {
             const statusInfo = statusDocumento[paaItem?.uuid];
-            const corStatus = statusInfo?.status && statusInfo.status !== "CONCLUIDO" ? '#C22D2D' : '#0F7A6C';
+            const corStatus = statusInfo?.status ? (statusInfo.status !== "CONCLUIDO" ? '#C22D2D' : '#0F7A6C') : '#C22D2D';
             return (
               <span style={{ color: corStatus, fontWeight: 700, fontSize: '14px' }}>
                 {statusInfo?.mensagem || 'Documento final ainda não gerado'}
