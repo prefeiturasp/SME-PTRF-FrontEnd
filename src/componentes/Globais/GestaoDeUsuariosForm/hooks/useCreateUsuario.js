@@ -15,9 +15,10 @@ export const useCreateUsuario = (payload)  => {
 
   const queryClient = useQueryClient();
 
-  return useMutation(payload => {
-    return createUsuario(payload)
-  }, {
+  return useMutation({
+    mutationFn: payload => {
+      return createUsuario(payload)
+    },
     onSuccess: () => {
       queryClient.invalidateQueries("usuarios-list");
     },

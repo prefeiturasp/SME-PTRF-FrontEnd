@@ -16,9 +16,10 @@ export const useRemoveAcessosUsuario = (callOnSuccess, callOnError, visao)  => {
 
   const queryClient = useQueryClient();
 
-  return useMutation( ({id, uuidUnidadeBase}) => {
-    return removeAcessoUsuario(id, uuidUnidadeBase)
-  }, {
+  return useMutation({
+    mutationFn: ({id, uuidUnidadeBase}) => {
+      return removeAcessoUsuario(id, uuidUnidadeBase)
+    },
     onSuccess: () => {
       queryClient.invalidateQueries("usuarios-list");
       console.log('Acessos removidos com sucesso!')
