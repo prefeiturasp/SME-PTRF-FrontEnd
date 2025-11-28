@@ -61,7 +61,7 @@ const listaPossuiParticipantesAssociacao = (lista = []) => {
 };
 
 const extraiProfessorDefaults = (lista = []) => {
-    const professor = lista.find(participante => participante.professor_gremio);
+    const professor = (lista || []).find(participante => participante.professor_gremio);
     if (!professor) {
         return null;
     }
@@ -166,15 +166,15 @@ export const NovoFormularioEditaAta = ({
     }, []);
 
     useEffect(() => {
-        const carregarComposicao = async () => {
-            try {
-                const lista_cargos_composicao = await getCargosComposicaoData(stateFormEditarAta.data_reuniao, associacaoUuid);
-                const composicao_formatada = formatarListaCargoComposicaoParaFormatoDaListaParticipantes(lista_cargos_composicao);
-                const listaComProfessor = adicionaProfessorGremioNaLista(composicao_formatada, uuid_ata, professorDefaults);
-                setListaParticipantes(listaComProfessor);
-                sincronizaListaParticipantes(listaComProfessor);
-            } catch (error) {
-                notificarErroComposicaoPorData(error);
+                const carregarComposicao = async () => {
+                    try {
+                        const lista_cargos_composicao = await getCargosComposicaoData(stateFormEditarAta.data_reuniao, associacaoUuid);
+                        const composicao_formatada = formatarListaCargoComposicaoParaFormatoDaListaParticipantes(lista_cargos_composicao);
+                        const listaComProfessor = adicionaProfessorGremioNaLista(composicao_formatada, uuid_ata, professorDefaults);
+                        setListaParticipantes(listaComProfessor);
+                        sincronizaListaParticipantes(listaComProfessor);
+                    } catch (error) {
+                        notificarErroComposicaoPorData(error);
             }
         };
 
@@ -208,7 +208,7 @@ export const NovoFormularioEditaAta = ({
                     listaPresentesAtaResponse,
                     listaPadraoResponse
                 );
-                const professorInfo = extraiProfessorDefaults(listaPresentesAta);
+                const professorInfo = extraiProfessorDefaults(listaPresentesAta) || extraiProfessorDefaults(listaPadraoResponse);
                 if (professorInfo) {
                     setProfessorDefaults(professorInfo);
                 }
@@ -458,26 +458,6 @@ export const NovoFormularioEditaAta = ({
             setFieldValue(`listaParticipantes[${index}].identificacao`, identificacao);
         }
 
-        setDadosForm((prevState) => {
-            if (!prevState || !prevState.listaParticipantes) return prevState;
-            const novaLista = [...prevState.listaParticipantes];
-            if (novaLista[index]) {
-                novaLista[index] = {
-                    ...novaLista[index],
-                    nome,
-                    cargo,
-                    identificacao: identificacao !== undefined ? identificacao : novaLista[index].identificacao,
-                    membro: false,
-                    editavel: false,
-                    professor_gremio: true,
-                    presente: true,
-                };
-            }
-            return {
-                ...prevState,
-                listaParticipantes: novaLista
-            };
-        });
         setProfessorDefaults({
             nome,
             cargo,
