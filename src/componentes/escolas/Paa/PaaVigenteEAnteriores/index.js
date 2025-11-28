@@ -116,7 +116,7 @@ export const PaaVigenteEAnteriores = () => {
           Plano anual
         </h4>
         {statusCarregando[paaItem?.uuid] && (
-          <div className="d-flex align-items-center mb-1" style={{ columnGap: '8px' }}>
+          <div className="d-flex align-items-center mb-1">
             <Spin size="small" />
           </div>
         )}
@@ -125,9 +125,10 @@ export const PaaVigenteEAnteriores = () => {
             const statusInfo = statusDocumento[paaItem?.uuid];
             const carregando = statusCarregando[paaItem?.uuid];
             const corStatus = statusInfo?.status ? (statusInfo.status !== "CONCLUIDO" ? '#C22D2D' : '#0F7A6C') : '#C22D2D';
-            return carregando ? (
-              <span style={{ color: '#0F7A6C', fontSize: '14px' }}>...</span>
-            ) : (
+            if (carregando) {
+              return null;
+            }
+            return (
               <span style={{ color: corStatus, fontWeight: 700, fontSize: '14px' }}>
                 {statusInfo?.mensagem || 'Documento final ainda não gerado'}
               </span>
