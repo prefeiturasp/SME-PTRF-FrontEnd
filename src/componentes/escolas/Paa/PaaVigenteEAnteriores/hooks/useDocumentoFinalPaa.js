@@ -12,12 +12,14 @@ const authHeader = () => ({
 
 export const useDocumentoFinalPaa = () => {
   const [statusDocumento, setStatusDocumento] = useState({});
+  const [statusCarregando, setStatusCarregando] = useState({});
   const [downloadEmAndamento, setDownloadEmAndamento] = useState(null);
   const [visualizacaoEmAndamento, setVisualizacaoEmAndamento] = useState(null);
 
   const carregarStatusDocumento = useCallback(async (paaUuid) => {
     if (!paaUuid) return;
     try {
+      setStatusCarregando((prev) => ({ ...prev, [paaUuid]: true }));
       const result = await getStatusGeracaoDocumentoPaa(paaUuid);
       setStatusDocumento((prev) => ({
         ...prev,
@@ -25,6 +27,8 @@ export const useDocumentoFinalPaa = () => {
       }));
     } catch (error) {
       console.error("Erro ao obter status do documento final do PAA:", error);
+    } finally {
+      setStatusCarregando((prev) => ({ ...prev, [paaUuid]: false }));
     }
   }, []);
 
@@ -68,6 +72,7 @@ export const useDocumentoFinalPaa = () => {
 
   return {
     statusDocumento,
+    statusCarregando,
     downloadEmAndamento,
     visualizacaoEmAndamento,
     carregarStatusDocumento,

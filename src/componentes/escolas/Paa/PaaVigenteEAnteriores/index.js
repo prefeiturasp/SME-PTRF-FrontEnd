@@ -10,6 +10,7 @@ import { usePaaVigenteEAnteriores } from './hooks/usePaaVigenteEAnteriores';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleNotch, faDownload, faEye } from '@fortawesome/free-solid-svg-icons';
 import { ModalFormBodyTextCloseButtonCabecalho } from '../../../Globais/ModalBootstrap';
+import { Spin } from 'antd';
 import { useDocumentoFinalPaa } from './hooks/useDocumentoFinalPaa';
 
 export const PaaVigenteEAnteriores = () => {
@@ -18,6 +19,7 @@ export const PaaVigenteEAnteriores = () => {
   const [anterioresAberto, setAnterioresAberto] = useState({});
   const {
     statusDocumento,
+    statusCarregando,
     downloadEmAndamento,
     visualizacaoEmAndamento,
     carregarStatusDocumento,
@@ -30,11 +32,8 @@ export const PaaVigenteEAnteriores = () => {
   const { data, isLoading, isError } = usePaaVigenteEAnteriores(associacaoUuid);
   const itemsBreadCrumb = [{ label: 'Plano Anual de Atividades', active: true }];
 
-  const vigente = useMemo(() => {
-    if (!data?.vigente) return null;
-    const possuiDocumento = Boolean(data.vigente?.documento_final_gerado || data.vigente?.status === "GERADO");
-    return possuiDocumento ? data.vigente : null;
-  }, [data?.vigente]);
+  const vigente = useMemo(() => data?.vigente || null, [data?.vigente]);
+  const vigenteUuidOriginal = data?.vigente?.uuid;
 
   const anteriores = useMemo(() => data?.anteriores || [], [data?.anteriores]);
 
@@ -92,15 +91,15 @@ export const PaaVigenteEAnteriores = () => {
   };
 
   useEffect(() => {
-    if (vigente?.uuid) {
-      carregarStatusDocumento(vigente.uuid);
+    if (vigenteUuidOriginal) {
+      carregarStatusDocumento(vigenteUuidOriginal);
     }
     anteriores?.forEach((paaAnterior) => {
       if (paaAnterior?.uuid) {
         carregarStatusDocumento(paaAnterior.uuid);
       }
     });
-  }, [vigente?.uuid, anteriores, carregarStatusDocumento]);
+  }, [vigenteUuidOriginal, anteriores, carregarStatusDocumento]);
 
   useEffect(() => {
     return () => {
@@ -116,10 +115,19 @@ export const PaaVigenteEAnteriores = () => {
         <h4 className="mb-2" style={{ fontSize: '14px', fontWeight: 700, color: '#3C4043' }}>
           Plano anual
         </h4>
+        {statusCarregando[paaItem?.uuid] && (
+          <div className="d-flex align-items-center mb-1">
+            <Spin size="small" />
+          </div>
+        )}
         <div className="d-flex align-items-center">
           {(() => {
             const statusInfo = statusDocumento[paaItem?.uuid];
+            const carregando = statusCarregando[paaItem?.uuid];
             const corStatus = statusInfo?.status ? (statusInfo.status !== "CONCLUIDO" ? '#C22D2D' : '#0F7A6C') : '#C22D2D';
+            if (carregando) {
+              return null;
+            }
             return (
               <span style={{ color: corStatus, fontWeight: 700, fontSize: '14px' }}>
                 {statusInfo?.mensagem || 'Documento final ainda não gerado'}
@@ -130,7 +138,11 @@ export const PaaVigenteEAnteriores = () => {
             type="button"
             className="ml-3 p-0 btn btn-link d-flex align-items-center"
             onClick={() => handleDownloadPlano(paaItem?.uuid)}
-            disabled={!paaItem?.uuid}
+            disabled={
+              !paaItem?.uuid ||
+              statusCarregando[paaItem?.uuid] ||
+              (statusDocumento[paaItem?.uuid]?.status !== "CONCLUIDO")
+            }
             style={{ color: '#0F7A6C' }}
           >
             <FontAwesomeIcon
@@ -143,7 +155,11 @@ export const PaaVigenteEAnteriores = () => {
             type="button"
             className="ml-3 p-0 btn btn-link d-flex align-items-center"
             onClick={() => handleVisualizarPlano(paaItem)}
-            disabled={!paaItem?.uuid}
+            disabled={
+              !paaItem?.uuid ||
+              statusCarregando[paaItem?.uuid] ||
+              (statusDocumento[paaItem?.uuid]?.status !== "CONCLUIDO")
+            }
             style={{ color: '#0F7A6C' }}
           >
             <FontAwesomeIcon

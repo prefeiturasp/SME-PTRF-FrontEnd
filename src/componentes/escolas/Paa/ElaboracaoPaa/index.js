@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import {ASSOCIACAO_UUID} from "../../../../services/auth.service";
 import { usePostPaa } from "./hooks/usePostPaa";
 import { getPaaVigente, getParametroPaa } from "../../../../services/sme/Parametrizacoes.service";
+import { getStatusGeracaoDocumentoPaa } from "../../../../services/escolas/Paa.service";
 
 export const ElaboracaoPaa = () => {
   const associacao_uuid = localStorage.getItem(ASSOCIACAO_UUID);
@@ -32,7 +33,8 @@ export const ElaboracaoPaa = () => {
         localStorage.setItem("PAA", response.uuid);
         localStorage.setItem("DADOS_PAA", JSON.stringify(response));
         setNotValidPaa(false);
-        setPaaGerado(response?.status === "GERADO");
+        const statusDocumento = await getStatusGeracaoDocumentoPaa(response.uuid);
+        setPaaGerado(statusDocumento?.status === "CONCLUIDO");
     } catch (error) {
         console.error(error);
         setNotValidPaa(true);
