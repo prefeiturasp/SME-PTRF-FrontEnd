@@ -8,10 +8,11 @@ import { ASSOCIACAO_UUID } from '../../../../services/auth.service';
 import Loading from '../../../../utils/Loading';
 import { usePaaVigenteEAnteriores } from './hooks/usePaaVigenteEAnteriores';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircleNotch, faDownload, faEye } from '@fortawesome/free-solid-svg-icons';
-import { ModalFormBodyTextCloseButtonCabecalho } from '../../../Globais/ModalBootstrap';
+import { faCircleNotch, faDownload, faEye as faEyeRegular } from '@fortawesome/free-solid-svg-icons';
 import { Spin } from 'antd';
 import { useDocumentoFinalPaa } from './hooks/useDocumentoFinalPaa';
+import { TooltipWrapper } from '../../../Globais/UI/Tooltip';
+import { ModalFormBodyTextCloseButtonCabecalho } from '../../../Globais/ModalBootstrap';
 
 export const PaaVigenteEAnteriores = () => {
   const navigate = useNavigate();
@@ -162,11 +163,16 @@ export const PaaVigenteEAnteriores = () => {
             }
             style={{ color: '#0F7A6C' }}
           >
-            <FontAwesomeIcon
-              style={{ fontSize: '16px' }}
-              icon={visualizacaoEmAndamento === paaItem?.uuid ? faCircleNotch : faEye}
-              spin={visualizacaoEmAndamento === paaItem?.uuid}
-            />
+            <TooltipWrapper
+              id={`tooltip-visualizar-plano-${paaItem?.uuid || 'sem-uuid'}`}
+              content="Visualizar Plano Anual"
+            >
+              <FontAwesomeIcon
+                style={{ fontSize: '16px' }}
+                icon={visualizacaoEmAndamento === paaItem?.uuid ? faCircleNotch : faEyeRegular}
+                spin={visualizacaoEmAndamento === paaItem?.uuid}
+              />
+            </TooltipWrapper>
           </button>
         </div>
       </div>
