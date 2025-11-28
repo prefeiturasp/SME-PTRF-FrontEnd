@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef, useCallback } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import moment from "moment";
 import { getAtaPaa, getTabelasAtasPaa } from "../../../../../../services/escolas/AtasPaa.service";
 import { getListaPresentesPaa } from "../../../../../../services/escolas/PresentesAtaPaa.service";
@@ -19,6 +19,7 @@ moment.updateLocale('pt', {
 
 export const useVisualizacaoAtaPaa = () => {
     const { uuid_paa } = useParams();
+    const navigate = useNavigate();
     const { ataPaa } = useGetAtaPaaVigente(uuid_paa);
     const ataUuid = ataPaa?.uuid;
     const [dadosAta, setDadosAta] = useState({});
@@ -71,12 +72,20 @@ export const useVisualizacaoAtaPaa = () => {
     };
 
     const handleClickFecharAta = () => {
-        let path = `/elaborar-novo-paa`;
-        window.location.assign(path);
+        navigate("/elaborar-novo-paa", {
+            state: {
+                activeTab: "relatorios",
+                expandedSections: {
+                    planoAnual: true,
+                    componentes: true,
+                },
+            },
+        });
     };
 
     const handleClickEditarAta = () => {
-        let path = `/relatorios-paa/edicao-ata/${uuid_paa}`;
+        const rotaAtual = `${window.location.pathname}${window.location.search || ""}`;
+        const path = `/relatorios-paa/edicao-ata/${uuid_paa}?returnUrl=${encodeURIComponent(rotaAtual)}`;
         window.location.assign(path);
     };
 
@@ -275,4 +284,3 @@ export const useVisualizacaoAtaPaa = () => {
         getNomeSecretario,
     };
 };
-
