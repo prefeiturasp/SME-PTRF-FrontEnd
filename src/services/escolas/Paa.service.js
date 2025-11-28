@@ -207,13 +207,10 @@ export const getPaaVigenteEAnteriores = async (associacaoUuid) => {
   ).data;
 };
 
-export const downloadPreviaPaa = async (paaUuid, associacaoUuid) => {
+export const downloadDocumentoFinalPaa = async (paaUuid) => {
   const response = await api.get(
-    `api/paa/${paaUuid}/download-previa-paa/`,
+    `api/paa/${paaUuid}/documento-final/`,
     {
-      params: {
-        associacao_uuid: associacaoUuid,
-      },
       responseType: "blob",
       timeout: 30000,
       ...authHeader(),

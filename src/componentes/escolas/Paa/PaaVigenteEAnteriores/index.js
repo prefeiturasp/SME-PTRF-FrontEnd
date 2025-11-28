@@ -9,7 +9,7 @@ import Loading from '../../../../utils/Loading';
 import { usePaaVigenteEAnteriores } from './hooks/usePaaVigenteEAnteriores';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleNotch, faDownload } from '@fortawesome/free-solid-svg-icons';
-import { downloadPreviaPaa } from '../../../../services/escolas/Paa.service';
+import { downloadDocumentoFinalPaa } from '../../../../services/escolas/Paa.service';
 
 export const PaaVigenteEAnteriores = () => {
   const navigate = useNavigate();
@@ -54,12 +54,12 @@ export const PaaVigenteEAnteriores = () => {
   };
 
   const handleDownloadPlano = async (paaUuid) => {
-    if (!paaUuid || !associacaoUuid) return;
+    if (!paaUuid) return;
     try {
       setDownloadEmAndamento(paaUuid);
-      await downloadPreviaPaa(paaUuid, associacaoUuid);
+      await downloadDocumentoFinalPaa(paaUuid);
     } catch (error) {
-      console.error("Erro ao baixar a prévia do PAA:", error);
+      console.error("Erro ao baixar o documento final do PAA:", error);
     } finally {
       setDownloadEmAndamento(null);
     }
@@ -68,7 +68,7 @@ export const PaaVigenteEAnteriores = () => {
   const renderPaaConteudo = (paaItem) => (
     <div className="border border-top-0 p-3">
       <h3 className="mb-4" style={{ fontSize: '18px', fontWeight: 700, color: '#3C4043' }}>
-        PAA Original
+        {formatReferencia(paaItem?.periodo_paa_objeto?.referencia)}
       </h3>
 
       <div>
