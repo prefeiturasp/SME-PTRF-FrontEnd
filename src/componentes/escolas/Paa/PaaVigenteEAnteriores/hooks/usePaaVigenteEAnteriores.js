@@ -4,25 +4,26 @@ import { getPaaVigenteEAnteriores } from "../../../../../services/escolas/Paa.se
 export const usePaaVigenteEAnteriores = (associacaoUuid) => {
   const {
     data = {},
-    isLoading,
+    isPending,
     isFetching,
     isError,
     error,
     refetch,
-  } = useQuery(
-    ["paaVigenteEAnteriores", associacaoUuid],
-    () => getPaaVigenteEAnteriores(associacaoUuid),
-    {
-      enabled: !!associacaoUuid,
-      refetchOnWindowFocus: false,
-      staleTime: 0,
-      cacheTime: 0,
-    }
-  );
+  } = useQuery({
+    queryKey: ["paaVigenteEAnteriores", associacaoUuid],
+    queryFn: () => getPaaVigenteEAnteriores(associacaoUuid),
+    enabled: !!associacaoUuid,
+    refetchOnWindowFocus: false,
+    staleTime: 0,
+    gcTime: 0,
+  });
+
+  let isLoading = isPending;
 
   return {
     data,
     isLoading,
+    isPending,
     isFetching,
     isError,
     error,
