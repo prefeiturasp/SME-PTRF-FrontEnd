@@ -228,16 +228,6 @@ export const PaaVigenteEAnteriores = () => {
           >
             Plano Vigente
           </h2>
-          <button
-            type="button"
-            className="btn btn-outline-success"
-            onClick={() => navigate(-1)}
-            style={{
-              fontWeight: 600,
-            }}
-          >
-            Voltar
-          </button>
         </div>
 
         <div className="mt-4">
