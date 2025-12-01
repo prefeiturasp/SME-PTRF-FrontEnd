@@ -138,23 +138,6 @@ export const PaaVigenteEAnteriores = () => {
           <button
             type="button"
             className="ml-3 p-0 btn btn-link d-flex align-items-center"
-            onClick={() => handleDownloadPlano(paaItem?.uuid)}
-            disabled={
-              !paaItem?.uuid ||
-              statusCarregando[paaItem?.uuid] ||
-              (statusDocumento[paaItem?.uuid]?.status !== "CONCLUIDO")
-            }
-            style={{ color: '#0F7A6C' }}
-          >
-            <FontAwesomeIcon
-              style={{ fontSize: '16px' }}
-              icon={downloadEmAndamento === paaItem?.uuid ? faCircleNotch : faDownload}
-              spin={downloadEmAndamento === paaItem?.uuid}
-            />
-          </button>
-          <button
-            type="button"
-            className="ml-1 p-0 btn btn-link d-flex align-items-center"
             onClick={() => handleVisualizarPlano(paaItem)}
             disabled={
               !paaItem?.uuid ||
@@ -174,6 +157,23 @@ export const PaaVigenteEAnteriores = () => {
               />
             </TooltipWrapper>
           </button>
+          <button
+            type="button"
+            className="ml-1 p-0 btn btn-link d-flex align-items-center"
+            onClick={() => handleDownloadPlano(paaItem?.uuid)}
+            disabled={
+              !paaItem?.uuid ||
+              statusCarregando[paaItem?.uuid] ||
+              (statusDocumento[paaItem?.uuid]?.status !== "CONCLUIDO")
+            }
+            style={{ color: '#0F7A6C' }}
+          >
+            <FontAwesomeIcon
+              style={{ fontSize: '16px' }}
+              icon={downloadEmAndamento === paaItem?.uuid ? faCircleNotch : faDownload}
+              spin={downloadEmAndamento === paaItem?.uuid}
+            />
+          </button>
         </div>
       </div>
 
@@ -185,9 +185,12 @@ export const PaaVigenteEAnteriores = () => {
           <div style={{ color: '#C22D2D', fontWeight: 700, fontSize: '14px' }}>Documento pendente de geração</div>
         </div>
         <div className="d-flex mt-3 mt-md-0">
+          <button type="button" className="btn btn-success mr-3" style={{
+            fontWeight: 600,
+          }}>Gerar ata</button>
           <button
             type="button"
-            className="btn btn-outline-success mr-3"
+            className="btn btn-outline-success"
             onClick={() => handleVisualizarAta(paaItem?.uuid)}
             disabled={!paaItem?.uuid}
             style={{
@@ -196,9 +199,6 @@ export const PaaVigenteEAnteriores = () => {
           >
             Visualizar ata
           </button>
-          <button type="button" className="btn btn-success" style={{
-            fontWeight: 600,
-          }}>Gerar ata</button>
         </div>
       </div>
 
