@@ -1,11 +1,8 @@
 import { useRef, useState } from 'react';
 import { Tooltip } from 'antd';
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
-import { Form, Button } from "antd";
-import { Formik } from "formik";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import './styles.css';
-import * as Yup from "yup";
 
 import EditorWysiwygCustom from '../../../../../Globais/EditorWysiwygCustom';
 
