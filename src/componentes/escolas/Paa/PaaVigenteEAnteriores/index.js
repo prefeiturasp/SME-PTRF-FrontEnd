@@ -154,7 +154,7 @@ export const PaaVigenteEAnteriores = () => {
           </button>
           <button
             type="button"
-            className="ml-3 p-0 btn btn-link d-flex align-items-center"
+            className="ml-1 p-0 btn btn-link d-flex align-items-center"
             onClick={() => handleVisualizarPlano(paaItem)}
             disabled={
               !paaItem?.uuid ||
