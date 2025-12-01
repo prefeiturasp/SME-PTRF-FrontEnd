@@ -154,7 +154,7 @@ export const PaaVigenteEAnteriores = () => {
           </button>
           <button
             type="button"
-            className="ml-3 p-0 btn btn-link d-flex align-items-center"
+            className="ml-1 p-0 btn btn-link d-flex align-items-center"
             onClick={() => handleVisualizarPlano(paaItem)}
             disabled={
               !paaItem?.uuid ||
@@ -228,16 +228,6 @@ export const PaaVigenteEAnteriores = () => {
           >
             Plano Vigente
           </h2>
-          <button
-            type="button"
-            className="btn btn-outline-success"
-            onClick={() => navigate(-1)}
-            style={{
-              fontWeight: 600,
-            }}
-          >
-            Voltar
-          </button>
         </div>
 
         <div className="mt-4">
