@@ -108,7 +108,7 @@ const ModalEdicaoReceitaPrevistaPDDE = ({ open, onClose, receitaPrevistaPDDE }) 
       bodyText={
         <Spin
           spinning={
-            isLoading || mutationPatch.isLoading
+            isLoading || mutationPatch.isPending
           }
         >
           <Form
