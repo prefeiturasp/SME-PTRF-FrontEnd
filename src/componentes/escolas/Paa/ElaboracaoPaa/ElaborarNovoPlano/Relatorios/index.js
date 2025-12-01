@@ -170,33 +170,6 @@ const Relatorios = ({ initialExpandedSections }) => {
     }
   };
 
-  useEffect(() => {
-    if (paaVigente?.uuid) {
-      apresentouToastErroPaaNaoEncontrado.current = false;
-      return;
-    }
-
-    if (!isLoadingPaa && !paaVigente?.uuid && !apresentouToastErroPaaNaoEncontrado.current) {
-      toastCustom.ToastCustomError("Erro!", "PAA vigente não encontrado.");
-      apresentouToastErroPaaNaoEncontrado.current = true;
-    }
-  }, [isLoadingPaa, paaVigente?.uuid]);
-  useEffect(() => {
-    if (!paaVigente?.uuid) {
-      return;
-    }
-
-    if (ataPaa?.uuid) {
-      apresentouToastErroAtaNaoEncontrada.current = false;
-      return;
-    }
-
-    if (!isLoadingAtaPaa && !ataPaa?.uuid && !apresentouToastErroAtaNaoEncontrada.current) {
-      toastCustom.ToastCustomError("Erro!", "Ata do PAA não encontrada.");
-      apresentouToastErroAtaNaoEncontrada.current = true;
-    }
-  }, [isLoadingAtaPaa, ataPaa?.uuid, paaVigente?.uuid]);
-
   const toggleSection = (sectionKey) => {
     setExpandedSections((prev) => ({
       ...prev,
