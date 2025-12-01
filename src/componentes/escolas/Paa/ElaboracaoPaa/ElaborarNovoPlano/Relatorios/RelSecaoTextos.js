@@ -1,21 +1,24 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { Tooltip } from 'antd';
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
+import { Form, Button } from "antd";
+import { Formik } from "formik";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import './styles.css';
+import * as Yup from "yup";
 
 import EditorWysiwygCustom from '../../../../../Globais/EditorWysiwygCustom';
 
 
 export const RelSecaoTextos = ({
     secaoKey, config, textosPaa, paaVigente, handleSalvarTexto, isSaving}) => {
+    const [erroField, setErroField] = useState(null);
 
     const editorContainerRef = useRef(null);
     const tooltipIconRef = useRef(null);
 
-
     const handleLimparComProtecao = (textoAtual) => {
-        return '<p><br></p>';
+        return "";
     };
 
     const mensagemFixa = (msg) => {
@@ -54,6 +57,15 @@ export const RelSecaoTextos = ({
             </div>
         )
     }
+    const validaHandleSalvar = (campo, texto) => {
+        setErroField(null)
+
+        if (!(texto||"").trim()) {
+            setErroField("Este campo é obrigatório")
+            return
+        }
+        handleSalvarTexto(campo, texto)
+    }
 
     return (
         <>
@@ -71,11 +83,12 @@ export const RelSecaoTextos = ({
                         return textoEditor;
                     })()}
                     tituloEditor=""
-                    handleSubmitEditor={(texto) => handleSalvarTexto(config.campoPaa, texto)}
+                    handleSubmitEditor={(texto) => validaHandleSalvar(config.campoPaa, texto)}
                     handleLimparEditor={(textoAtual) => handleLimparComProtecao(textoAtual)}
                     botaoCancelar={false}
                     disabled={isSaving}
                     isSaving={isSaving}
+                    mensagemErroForm={<span className="text-danger my-1">{erroField}</span>}
                     topExtraContent={secaoKey === "introducao" && mensagemFixa(textosPaa[config.textosPaa[1]])}
                     bottomExtraContent={secaoKey === "conclusao" && mensagemFixa(textosPaa[config.textosPaa[1]])}
                 />
