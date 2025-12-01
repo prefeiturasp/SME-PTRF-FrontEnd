@@ -34,7 +34,6 @@ export const ElaboracaoPaa = () => {
         localStorage.setItem("DADOS_PAA", JSON.stringify(response));
         setNotValidPaa(false);
         const statusDocumento = await getStatusGeracaoDocumentoPaa(response.uuid);
-        console.log({statusDocumento})
         setPaaGerado(statusDocumento?.status === "CONCLUIDO" && statusDocumento?.versao === "FINAL");
     } catch (error) {
         console.error(error);
