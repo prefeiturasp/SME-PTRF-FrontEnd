@@ -36,7 +36,7 @@ export const RenderSecao = ({
     }
 
     const payload = {
-      [campoPaa]: texto !== "" ? texto : "Comece a digitar aqui...",
+      [campoPaa]: texto,
     };
 
     patchPaa({ uuid: paaVigente.uuid, payload });
