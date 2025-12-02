@@ -26,7 +26,7 @@ export const usePatchPaa = () => {
   return {
     patchPaa: mutation.mutate,
     patchPaaAsync: mutation.mutateAsync,
-    isLoading: mutation.isLoading,
+    isLoading: mutation.isPending,
     isError: mutation.isError,
     error: mutation.error,
     isSuccess: mutation.isSuccess,

@@ -49,7 +49,7 @@ describe('ElaboracaoPaa Component', () => {
       }));
   
       usePostPaa.mockReturnValue({
-        mutationPost: { mutate: mockMutatePost, isLoading: false },
+        mutationPost: { mutate: mockMutatePost, isPending: false },
       });
       require('react-router-dom').useNavigate.mockReturnValue(mockNavigate);
     });

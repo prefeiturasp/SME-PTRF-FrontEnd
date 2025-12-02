@@ -39,20 +39,20 @@ const ModalConfirmaPararAtualizacaoSaldo = ({ open, onClose, check, paa, onSubmi
             okButtonProps={
               {
                 "data-testid": "botao-confirmar-congelamento",
-                disabled: mutationPostAtivar.isLoading ||
-                          mutationPostDesativar.isLoading
+                disabled: mutationPostAtivar.isPending ||
+                          mutationPostDesativar.isPending
               }}
             onCancel={onClose}
             cancelText="Cancelar"
             cancelButtonProps={
               {
                 "data-testid": "botao-cancelar-confirmar-congelamento",
-                disabled: mutationPostAtivar.isLoading ||
-                          mutationPostDesativar.isLoading
+                disabled: mutationPostAtivar.isPending ||
+                          mutationPostDesativar.isPending
               }}
             wrapClassName={'modal-ant-design'}
         >
-          <Spin spinning={mutationPostAtivar.isLoading || mutationPostDesativar.isLoading }>
+          <Spin spinning={mutationPostAtivar.isPending || mutationPostDesativar.isPending }>
             <Row justify="center">
               <img src={IconeAvisoVermelho} alt="" className="img-fluid my-3"/>
             </Row>

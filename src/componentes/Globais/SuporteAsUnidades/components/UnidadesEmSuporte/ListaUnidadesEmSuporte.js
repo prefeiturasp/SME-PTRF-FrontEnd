@@ -180,7 +180,7 @@ export const UnidadesEmSuporte = () => {
                 </div>
                 <div style={{position: 'relative'}}>
                     {
-                        mutationRemoverSuporteEmLote.isLoading || mutationRemoverSuporte.isLoading ? (
+                        mutationRemoverSuporteEmLote.isPending || mutationRemoverSuporte.isPending ? (
                             <Loading
                                 corGrafico="black"
                                 corFonte="dark"

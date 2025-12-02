@@ -230,7 +230,7 @@ export const VincularUnidades = ({tipoContaUUID}) => {
           setFiltros={setFiltros}
           filtros={filtros}
         />
-        <Spin spinning={mutationVincularUnidade.isLoading || mutationVincularUnidadeEmLote.isLoading}>
+        <Spin spinning={mutationVincularUnidade.isPending || mutationVincularUnidadeEmLote.isPending}>
         {selectedUnidades.length ? montarBarraAcoesEmLote() : null}
         {data.count > 0 ? (
             <>

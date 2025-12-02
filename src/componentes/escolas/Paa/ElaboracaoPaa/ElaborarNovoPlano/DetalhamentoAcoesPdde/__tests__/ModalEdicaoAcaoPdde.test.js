@@ -48,7 +48,7 @@ describe("ModalEdicaoAcaoPdde", () => {
     }));
 
     usePatchReceitaPrevistaPdde.mockReturnValue({
-      mutationPatch: { mutate: mutationPatch, isLoading: false },
+      mutationPatch: { mutate: mutationPatch, isPending: false },
     });
   });
 
