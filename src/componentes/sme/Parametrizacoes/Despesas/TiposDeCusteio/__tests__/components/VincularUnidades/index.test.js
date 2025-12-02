@@ -39,7 +39,7 @@ describe("VincularUnidades", () => {
     });
 
     useVincularUnidade.mockReturnValue({
-      mutationVincularUnidadeEmLote: { mutate: jest.fn(), isLoading: false },
+      mutationVincularUnidadeEmLote: { mutate: jest.fn(), isPending: false },
     });
   });
 

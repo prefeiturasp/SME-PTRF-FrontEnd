@@ -53,7 +53,7 @@ export const ListaUsuarios = ({usuarios, isLoading}) => {
     const [showModalConfirmaRemoverAcesso, setShowModalConfirmaRemoverAcesso] = useState(false)
     const [userIdParaRemoverAcesso, setUserIdParaRemoverAcesso] = useState(null)
 
-    const { mutate: removeAcessos, isLoading: isLoadingRemoveAcessos, error: errorOnRemoveAcessos, data: resultRemoveAcessos } = useRemoveAcessosUsuario(showMensagemSucessoAoRemoverAcesso, showMensagemErroAoRemoverAcesso, visaoBase)
+    const { mutate: removeAcessos, isPending: isLoadingRemoveAcessos, error: errorOnRemoveAcessos, data: resultRemoveAcessos } = useRemoveAcessosUsuario(showMensagemSucessoAoRemoverAcesso, showMensagemErroAoRemoverAcesso, visaoBase)
 
     const nomeUsuarioTemplate = (rowData) => {
 

@@ -30,7 +30,7 @@ const TestComponent = ({ payload }) => {
           <button onClick={() => mutationPost.mutate({ payload })}>
               Criar Motivo
           </button>
-          {mutationPost.isLoading && <p>Criando...</p>}
+          {mutationPost.isPending && <p>Criando...</p>}
           {mutationPost.isError && <p>Erro ao criar</p>}
           {mutationPost.isSuccess && <p>Criação concluída</p>}
       </div>

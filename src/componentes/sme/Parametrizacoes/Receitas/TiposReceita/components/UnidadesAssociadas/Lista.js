@@ -228,7 +228,7 @@ export const UnidadesVinculadas = ({tipoContaUUID}) => {
             setFiltros={setFiltros}
             filtros={filtros}
           />
-          <Spin spinning={mutationDesvincularUnidade.isLoading || mutationDesvincularUnidadeEmLote.isLoading}>
+          <Spin spinning={mutationDesvincularUnidade.isPending || mutationDesvincularUnidadeEmLote.isPending}>
           {
             data && data.count > 0 ? (
               <>

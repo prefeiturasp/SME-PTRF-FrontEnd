@@ -111,10 +111,10 @@ describe("FormularioBemProduzido - Verificar Período Aberto", () => {
 
     useGetBemProduzido.mockReturnValue({ data: null });
     usePostBemProduzido.mockReturnValue({
-      mutationPost: { mutateAsync: mockMutatePostAsync, isLoading: false },
+      mutationPost: { mutateAsync: mockMutatePostAsync, isPending: false },
     });
     usePatchBemProduzido.mockReturnValue({
-      mutationPatch: { mutateAsync: mockMutatePatchAsync, isLoading: false },
+      mutationPatch: { mutateAsync: mockMutatePatchAsync, isPending: false },
     });
     usePatchBemProduzidoRascunho.mockReturnValue({
       mutationPatch: {
