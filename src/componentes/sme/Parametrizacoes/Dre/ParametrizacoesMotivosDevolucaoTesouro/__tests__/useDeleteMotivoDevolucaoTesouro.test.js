@@ -30,7 +30,7 @@ const TestComponent = ({ uuidMotivoDevolucaoTesouro }) => {
           <button onClick={() => mutationDelete.mutate(uuidMotivoDevolucaoTesouro)}>
               Excluir Motivo
           </button>
-          {mutationDelete.isLoading && <p>Excluindo...</p>}
+          {mutationDelete.isPending && <p>Excluindo...</p>}
           {mutationDelete.isError && <p>Erro ao excluir</p>}
           {mutationDelete.isSuccess && <p>Exclusão concluída</p>}
       </div>

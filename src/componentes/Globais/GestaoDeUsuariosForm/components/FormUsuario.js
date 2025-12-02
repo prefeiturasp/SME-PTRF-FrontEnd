@@ -26,9 +26,9 @@ export const FormUsuario = ({usuario}) => {
     const TEM_PERMISSAO_EDICAO_GESTAO_USUARIOS = RetornaSeTemPermissaoEdicaoGestaoUsuarios()
 
     const { modo, Modos, uuidUnidadeBase, visaoBase} = useContext(GestaoDeUsuariosFormContext)
-    const { mutate: createUsuario, isLoading: isLoadingCreate, error: errorOnCreate, data: resultPost } = useCreateUsuario();
-    const { mutate: updateUsuario, isLoading: isLoadingUpdate, error: errorOnUpdate, data: resultPut } = useUpdateUsuario();
-    const { mutate: removeAcessos, isLoading: isLoadingRemoveAcessos, error: errorOnRemoveAcessos, data: resultRemoveAcessos } = useRemoveAcessosUsuario(showMensagemSucessoAoRemoverAcesso, showMensagemErroAoRemoverAcesso, visaoBase)
+    const { mutate: createUsuario, isPending: isLoadingCreate, error: errorOnCreate, data: resultPost } = useCreateUsuario();
+    const { mutate: updateUsuario, isPending: isLoadingUpdate, error: errorOnUpdate, data: resultPut } = useUpdateUsuario();
+    const { mutate: removeAcessos, isPending: isLoadingRemoveAcessos, error: errorOnRemoveAcessos, data: resultRemoveAcessos } = useRemoveAcessosUsuario(showMensagemSucessoAoRemoverAcesso, showMensagemErroAoRemoverAcesso, visaoBase)
 
     const navigate = useNavigate();
     const [formErrors, setFormErrors] = useState({});

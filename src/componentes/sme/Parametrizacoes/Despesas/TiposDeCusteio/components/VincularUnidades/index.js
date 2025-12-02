@@ -212,7 +212,7 @@ export const VincularUnidades = ({ UUID, podeEditar }) => {
           setFiltros={setFiltros}
           filtros={filtros}
         />
-        <Spin spinning={mutationVincularUnidadeEmLote.isLoading}>
+        <Spin spinning={mutationVincularUnidadeEmLote.isPending}>
           {selectedUnidades.length ? montarBarraAcoesEmLote() : null}
           {data.count > 0 ? (
             <>

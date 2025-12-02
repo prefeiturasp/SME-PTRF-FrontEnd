@@ -44,10 +44,10 @@ describe("ReceitasPrevistasModalForm", () => {
     }));
 
     usePostReceitasPrevistasPaa.mockReturnValue({
-      mutationPost: { mutate: mutationPost, isLoading: false },
+      mutationPost: { mutate: mutationPost, isPending: false },
     });
     usePatchReceitasPrevistasPaa.mockReturnValue({
-      mutationPatch: { mutate: mutationPatch, isLoading: false },
+      mutationPatch: { mutate: mutationPatch, isPending: false },
     });
   });
   test("renderiza o formulário corretamente", async () => {
