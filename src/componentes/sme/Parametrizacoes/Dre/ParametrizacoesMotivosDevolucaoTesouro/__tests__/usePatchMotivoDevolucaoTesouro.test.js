@@ -30,7 +30,7 @@ const TestComponent = ({ uuidMotivoDevolucaoTesouro, payload }) => {
           <button onClick={() => mutationPatch.mutate({ uuidMotivoDevolucaoTesouro, payload })}>
               Atualizar Motivo
           </button>
-          {mutationPatch.isLoading && <p>Atualizando...</p>}
+          {mutationPatch.isPending && <p>Atualizando...</p>}
           {mutationPatch.isError && <p>Erro ao atualizar</p>}
           {mutationPatch.isSuccess && <p>Atualização concluída</p>}
       </div>

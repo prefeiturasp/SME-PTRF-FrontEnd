@@ -9,7 +9,7 @@ export const useGetMandatoAnterior = () => {
     const {mandatoUuid} = useContext(MembrosDaAssociacaoContext)
     const associacao_uuid = visoesService.getItemUsuarioLogado('associacao_selecionada.uuid')
 
-    const {isLoading, isError, data = {uuid: null, composicoes: [] }, error} = useQuery({
+    const {status, isError, data = {uuid: null, composicoes: [] }, error} = useQuery({
         queryKey: ['retrieve-mandato-com-composicoes', mandatoUuid, associacao_uuid],
         queryFn: ()=> getMandatoAnterior(mandatoUuid, associacao_uuid),
         // The query will not execute until the mandatoUuid exists
@@ -21,5 +21,5 @@ export const useGetMandatoAnterior = () => {
 
     const count = useMemo(() => data.composicoes.length, [data]);
 
-    return {isLoading, isError, data, error, count}
+    return {isLoading: status === 'loading', isError, data, error, count}
 }

@@ -13,7 +13,9 @@ export const useUsuario = (id)  => {
     }
   }
 
-  return useQuery(['usuario-form', id], getUsuario, {
+  return useQuery({
+    queryKey: ['usuario-form', id],
+    queryFn: getUsuario,
     keepPreviousData: true,
     staleTime: 5000, // 5 segundos
   });

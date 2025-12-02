@@ -16,7 +16,8 @@ const EditorWysiwygCustom = ({
     isSaving=false,
     onEditorReady=()=>{},
     topExtraContent=undefined,
-    bottomExtraContent=undefined
+    bottomExtraContent=undefined,
+    mensagemErroForm=null,
 })=>{
 
     let REACT_APP_EDITOR_KEY = "EDITOR_KEY_REPLACE_ME";
@@ -92,6 +93,7 @@ const EditorWysiwygCustom = ({
                 }}
                 disabled={disabled}
             />
+            {mensagemErroForm}
             {bottomExtraContent}
             <div className={`d-flex pb-3 mt-3 ${botaoCancelar ? 'justify-content-between' : 'justify-content-end'}`}>
                 {botaoCancelar && (

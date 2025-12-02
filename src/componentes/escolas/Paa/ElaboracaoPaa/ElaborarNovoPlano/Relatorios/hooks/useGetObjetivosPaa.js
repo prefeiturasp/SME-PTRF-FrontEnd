@@ -3,13 +3,15 @@ import { getObjetivosPaa } from "../../../../../../../services/escolas/Paa.servi
 
 export const useGetObjetivosPaa = () => {
   const {
-    isLoading,
+    status,
     isFetching,
     isError,
     data = [],
     error,
     refetch,
-  } = useQuery(["objetivosPaa"], () => getObjetivosPaa(), {
+  } = useQuery({
+    queryKey: ["objetivosPaa"],
+    queryFn: () => getObjetivosPaa(),
     staleTime: 0,
     refetchOnWindowFocus: false,
     retry: 1,
@@ -17,7 +19,7 @@ export const useGetObjetivosPaa = () => {
   });
 
   return {
-    isLoading,
+    isLoading: status === "loading",
     isFetching,
     isError,
     data,

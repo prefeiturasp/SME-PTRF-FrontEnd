@@ -210,7 +210,7 @@ export const UnidadesVinculadas = ({ UUID, podeEditar }) => {
           setFiltros={setFiltros}
           filtros={filtros}
         />
-        <Spin spinning={mutationDesvincularUnidadeEmLote.isLoading}>
+        <Spin spinning={mutationDesvincularUnidadeEmLote.isPending}>
           {data && data.count > 0 ? (
             <>
               {selectedUnidades.length ? montarBarraAcoesEmLote() : null}
