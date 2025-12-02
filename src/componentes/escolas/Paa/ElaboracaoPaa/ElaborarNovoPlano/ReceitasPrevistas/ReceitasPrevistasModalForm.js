@@ -156,7 +156,7 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
       bodyText={
         <Spin
           spinning={
-            isLoading || mutationPatch.isLoading || mutationPost.isLoading
+            isLoading || mutationPatch.isPending || mutationPost.isPending
           }
         >
           <Form

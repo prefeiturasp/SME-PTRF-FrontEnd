@@ -16,9 +16,10 @@ export const useUpdateUsuario = (id, payload)  => {
 
   const queryClient = useQueryClient();
 
-  return useMutation( ({id, payload}) => {
-    return updateUsuario(id, payload)
-  }, {
+  return useMutation({
+    mutationFn: ({id, payload}) => {
+      return updateUsuario(id, payload)
+    },
     onSuccess: () => {
       queryClient.invalidateQueries("usuarios-list");
       console.log('Usuario atualizado com sucesso!')

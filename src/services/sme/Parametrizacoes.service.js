@@ -263,6 +263,24 @@ export const deleteObjetivosPaa = async (uuid) => {
   return await api.delete(`/api/objetivos-paa/${uuid}/`, authHeader());
 };
 
+// PAA - Outros Recursos
+export const getOutrosRecursos = async (filtros, page, page_size) => {
+  const result = (await api.get(`/api/outros-recursos-paa/`,{...authHeader(), params: {...filtros, page: page, page_size}})).data;
+  return result
+};
+
+export const postOutrosRecursos = async (payload) => {
+  return (await api.post(`/api/outros-recursos-paa/`, payload, authHeader())).data;
+};
+
+export const patchOutrosRecursos = async (uuid, payload) => {
+  return (await api.patch(`/api/outros-recursos-paa/${uuid}/`, payload, authHeader())).data;
+};
+
+export const deleteOutrosRecursos = async (uuid) => {
+  return await api.delete(`/api/outros-recursos-paa/${uuid}/`, authHeader());
+};
+
 // PAA - Atividades Estatutárias
 export const getAtividadesEstatutarias = async (filtros, page, page_size) => {
   const result = (await api.get(`/api/atividades-estatutarias/`,{...authHeader(), params: {...filtros, page: page, page_size}})).data;

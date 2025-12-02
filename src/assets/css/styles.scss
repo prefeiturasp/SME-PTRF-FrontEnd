@@ -128,6 +128,12 @@ body {
     background-color: #ffffff !important;
     border: 0;
     padding: 2.5em;
+
+    button.p-paginator-page.p-highlight {
+      background-color: #00585e !important;
+      color: #fff !important
+    }
+
   }
 
   .p-paginator-next {

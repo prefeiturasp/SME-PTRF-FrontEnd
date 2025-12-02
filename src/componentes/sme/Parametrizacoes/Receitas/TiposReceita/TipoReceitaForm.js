@@ -51,16 +51,16 @@ export const TipoReceitaForm = () => {
   const loading = useMemo(() => {
     return (
       (isLoading && !isNew) ||
-      mutationPost.isLoading ||
-      mutationPatch.isLoading ||
-      mutationDelete.isLoading
+      mutationPost.isPending ||
+      mutationPatch.isPending ||
+      mutationDelete.isPending
     );
   }, [
     isLoading,
     isNew,
-    mutationPost.isLoading,
-    mutationPatch.isLoading,
-    mutationDelete.isLoading,
+    mutationPost.isPending,
+    mutationPatch.isPending,
+    mutationDelete.isPending,
   ]);
 
   const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES =

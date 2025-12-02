@@ -13,7 +13,9 @@ export const useGruposAcesso = ()  => {
     }
   }
 
-  return useQuery(['grupos-acesso-list', visaoBase], getGruposAcesso, {
+  return useQuery({
+    queryKey: ['grupos-acesso-list', visaoBase],
+    queryFn: getGruposAcesso,
     keepPreviousData: true,
   });
 };

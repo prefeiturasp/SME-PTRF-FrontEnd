@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { Tooltip } from 'antd';
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -13,9 +13,8 @@ export const RelSecaoTextos = ({
     const editorContainerRef = useRef(null);
     const tooltipIconRef = useRef(null);
 
-
-    const handleLimparComProtecao = (textoAtual) => {
-        return '<p><br></p>';
+    const handleLimparComProtecao = () => {
+        return "<p></p>";
     };
 
     const mensagemFixa = (msg) => {
@@ -54,6 +53,13 @@ export const RelSecaoTextos = ({
             </div>
         )
     }
+    const validaHandleSalvar = (campo, texto) => {
+        if (!(texto||"").trim()) {
+            texto = handleLimparComProtecao()
+        }
+
+        handleSalvarTexto(campo, texto)
+    }
 
     return (
         <>
@@ -71,7 +77,7 @@ export const RelSecaoTextos = ({
                         return textoEditor;
                     })()}
                     tituloEditor=""
-                    handleSubmitEditor={(texto) => handleSalvarTexto(config.campoPaa, texto)}
+                    handleSubmitEditor={(texto) => validaHandleSalvar(config.campoPaa, texto)}
                     handleLimparEditor={(textoAtual) => handleLimparComProtecao(textoAtual)}
                     botaoCancelar={false}
                     disabled={isSaving}

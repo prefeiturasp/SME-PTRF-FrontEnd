@@ -10,6 +10,58 @@ const authHeader = () => ({
   },
 });
 
+export const postGerarDocumentoFinalPaa = async (paa_uuid, payload={}) => {
+  const result = await api.post(`/api/paa/${paa_uuid}/gerar-documento/`, payload, authHeader());
+  return result.data;
+};
+export const postGerarDocumentoPreviaPaa = async (paa_uuid) => {
+  const result = await api.post(`/api/paa/${paa_uuid}/gerar-previa-documento/`, {}, authHeader());
+  return result.data;
+};
+
+export const getStatusGeracaoDocumentoPaa = async (paa_uuid) => {
+  const result = await api.get(`/api/paa/${paa_uuid}/status-geracao/`, authHeader());
+  return result.data;
+};
+
+export const getDownloadArquivoPrevia = async (paa_uuid) => {
+    return ( await api.get(`/api/paa/${paa_uuid}/documento-previa/`, {
+            responseType: 'blob',
+            timeout: 30000,
+            ...authHeader()
+        })
+        .then((response) => {
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'Documento_Prévia_PAA.pdf');
+            document.body.appendChild(link);
+            link.click();
+        }).catch(error => {
+            return error.response;
+        })
+    )
+}
+
+export const getDownloadArquivoFinal = async (paa_uuid) => {
+    return ( await api.get(`/api/paa/${paa_uuid}/documento-final/`, {
+            responseType: 'blob',
+            timeout: 30000,
+            ...authHeader()
+        })
+        .then((response) => {
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'Documento_Final_PAA.pdf');
+            document.body.appendChild(link);
+            link.click();
+        }).catch(error => {
+            return error.response;
+        })
+    )
+}
+
 export const getSaldoAtualPorAcaoAssociacao = async (acaoAssociacaoUUID) => {
   return (
     await api.get(
@@ -196,6 +248,35 @@ export const getAtividadesEstatutariasPrevistas = async (paaUuid) => {
   return (
     await api.get(`api/paa/${paaUuid}/atividades-estatutarias-previstas/`, authHeader())
   ).data;
+};
+
+export const getPaaVigenteEAnteriores = async (associacaoUuid) => {
+  return (
+    await api.get(
+      `api/paa/paa-vigente-e-anteriores/?associacao_uuid=${associacaoUuid}`,
+      authHeader()
+    )
+  ).data;
+};
+
+export const downloadDocumentoFinalPaa = async (paaUuid) => {
+  const response = await api.get(
+    `api/paa/${paaUuid}/documento-final/`,
+    {
+      responseType: "blob",
+      timeout: 30000,
+      ...authHeader(),
+    }
+  );
+
+  const url = window.URL.createObjectURL(new Blob([response.data]));
+  const link = document.createElement("a");
+  link.href = url;
+  link.setAttribute("download", `plano_anual_${paaUuid}.pdf`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  window.URL.revokeObjectURL(url);
 };
 
 export const getAtividadesEstatutariasDisponiveis = async (paaUuid) => {

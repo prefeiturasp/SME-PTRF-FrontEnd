@@ -12,17 +12,15 @@ export const useUnidadesEmSuporte = (usuario, page=1) => {
         }
       }
 
-    const { isLoading, isError, data = {count: 0, results: []}, error, refetch } = useQuery(
-        ['unidades-em-suporte-list', page],
-        () => fetchUnidades(usuario, page),
-        {
-            keepPreviousData: true,
-            staleTime: 0,
-            enabled: !!usuario,
-            retry: false
-        }
-    );
+    const { status, isError, data = {count: 0, results: []}, error, refetch } = useQuery({
+        queryKey: ['unidades-em-suporte-list', page],
+        queryFn: () => fetchUnidades(usuario, page),
+        keepPreviousData: true,
+        staleTime: 0,
+        enabled: !!usuario,
+        retry: false
+    });
     
     const count = useMemo(() => data.count, [data]);
-    return {isLoading, isError, data, error, count, refetch};
+    return {isLoading: status === 'loading', isError, data, error, count, refetch};
 }

@@ -17,6 +17,7 @@ import { DetalhedasPrestacoesPage } from "../paginas/escolas/DetalheDasPrestacoe
 import { VisualizacaoDaAta } from "../componentes/escolas/GeracaoDaAta/VisualizacaoDaAta";
 import { EdicaoAta } from "../componentes/escolas/GeracaoDaAta/VisualizacaoDaAta/EdicaoAta";
 import { EdicaoAtaPaa } from "../componentes/escolas/GeracaoDaAta/VisualizacaoDaAta/EdicaoAtaPaa";
+import { VisualizacaoAtaPaa } from "../componentes/escolas/GeracaoDaAta/VisualizacaoDaAta/VisualizacaoAtaPaa";
 import { MembrosDaAssociacaoPage } from "../paginas/escolas/MembrosDaAssociacao";
 import { PaginaMandatoVigente } from "../componentes/escolas/MembrosDaAssociacao/pages/PaginaMandatoVigente";
 import { ValoresReprogramados } from "../componentes/Globais/ValoresReprogramados";
@@ -105,8 +106,10 @@ import { TextosPaa } from "../componentes/sme/Parametrizacoes/PAA/TextosPaa";
 import { PeriodosPaa } from "../componentes/sme/Parametrizacoes/PAA/PeriodosPaa";
 import { ObjetivosPaa } from "../componentes/sme/Parametrizacoes/PAA/ObjetivosPaa";
 import { AtividadesEstatutarias } from "../componentes/sme/Parametrizacoes/PAA/AtividadesEstatutarias";
+import { OutrosRecursos } from "../componentes/sme/Parametrizacoes/PAA/OutrosRecursos";
 import { AcoesPTRFPaa } from "../componentes/sme/Parametrizacoes/PAA/AcoesPTRF";
 import { ElaboracaoPaa } from "../componentes/escolas/Paa/ElaboracaoPaa";
+import { PaaVigenteEAnteriores } from "../componentes/escolas/Paa/PaaVigenteEAnteriores";
 import { ElaborarNovoPlano } from "../componentes/escolas/Paa/ElaboracaoPaa/ElaborarNovoPlano";
 import { ExecucaoDoPaa } from "../componentes/escolas/Paa/ExecucaoDoPaa";
 import { CadastroTipoReceitaPage } from "../paginas/SME/Parametrizacoes/TiposReceita/CadastroTipoReceita";
@@ -625,6 +628,16 @@ const routesConfig = [
   },
   {
     exact: true,
+    path: "/parametro-outros-recursos-paa",
+    component: OutrosRecursos,
+    permissoes: [
+      "access_painel_parametrizacoes",
+      "change_painel_parametrizacoes",
+    ],
+    featureFlag: "paa",
+  },
+  {
+    exact: true,
     path: "/parametro-acoes-ptrf-paa",
     component: AcoesPTRFPaa,
     permissoes: [
@@ -799,6 +812,13 @@ const routesConfig = [
   },
   {
     exact: true,
+    path: "/paa-vigente-e-anteriores",
+    component: PaaVigenteEAnteriores,
+    permissoes: ["access_paa"],
+    featureFlag: "paa",
+  },
+  {
+    exact: true,
     path: "/elaborar-novo-paa",
     component: ElaborarNovoPlano,
     permissoes: ["access_paa", "change_paa"],
@@ -809,6 +829,13 @@ const routesConfig = [
     path: "/relatorios-paa/edicao-ata/:uuid_paa",
     component: EdicaoAtaPaa,
     permissoes: ["access_paa", "change_paa"],
+    featureFlag: "paa",
+  },
+  {
+    exact: true,
+    path: "/relatorios-paa/visualizacao-da-ata-paa/:uuid_paa",
+    component: VisualizacaoAtaPaa,
+    permissoes: ["access_paa"],
     featureFlag: "paa",
   },
   {

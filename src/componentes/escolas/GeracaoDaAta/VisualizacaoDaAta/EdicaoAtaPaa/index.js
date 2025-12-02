@@ -4,7 +4,7 @@ import {TopoComBotoes} from "./TopoComBotoes";
 import {FormularioEditaAta} from "./FormularioEditaAta";
 import {NovoFormularioEditaAta} from "./NovoFormularioEditaAta";
 import {visoesService} from "../../../../../services/visoes.service";
-import {useParams} from "react-router-dom";
+import {useParams, useLocation} from "react-router-dom";
 import {useEffect, useState, useCallback, useRef} from "react";
 import {getMembrosCargos} from "../../../../../services/escolas/PrestacaoDeContas.service";
 import {
@@ -32,6 +32,7 @@ moment.updateLocale('pt', {
 export const EdicaoAtaPaa = () => {
     const formRef = useRef();
     const {uuid_paa} = useParams();
+    const location = useLocation();
     const { ataPaa } = useGetAtaPaaVigente(uuid_paa);
     const ataUuid = ataPaa?.uuid;
     let uuid_associacao = localStorage.getItem(ASSOCIACAO_UUID);
@@ -178,6 +179,12 @@ export const EdicaoAtaPaa = () => {
     }
 
     const handleClickFecharAta = () => {
+        const searchParams = new URLSearchParams(location.search);
+        const returnUrl = searchParams.get("returnUrl");
+        if (returnUrl && returnUrl.startsWith("/")) {
+            window.location.assign(returnUrl);
+            return;
+        }
         let path = `/elaborar-novo-paa`;
         window.location.assign(path)
     };

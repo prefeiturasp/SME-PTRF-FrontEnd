@@ -38,7 +38,7 @@ describe("UnidadesVinculadas", () => {
     });
 
     useDesvincularUnidade.mockReturnValue({
-      mutationDesvincularUnidadeEmLote: { mutate: jest.fn(), isLoading: false },
+      mutationDesvincularUnidadeEmLote: { mutate: jest.fn(), isPending: false },
     });
   });
 
