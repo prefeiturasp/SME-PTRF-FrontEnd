@@ -109,9 +109,13 @@ const Relatorios = ({ initialExpandedSections }) => {
     verificaStatusAteConcluirGeracao();
   }
 
-  const onErrorValidacoesPendentesDocumentoFinal = (pendencias) => {
-    setOpenModalValidacoesGeracaoFinal(true);
-    setPendenciasGeracaoFinal(pendencias);
+  const onErrorValidacoesPendentesDocumentoFinal = (data) => {
+    if (data?.confirmar) {
+      setOpenModalConfirmarGeracaoFinal(true);
+    }else{
+      setOpenModalValidacoesGeracaoFinal(true);
+      setPendenciasGeracaoFinal(data?.mensagem);
+    }
   }
 
   const downloadVersaoPrevia = async () => {
@@ -161,12 +165,15 @@ const Relatorios = ({ initialExpandedSections }) => {
     }
   };
 
-  const handleGerarDocumentoFinal = async () => {
+  const handleGerarDocumentoFinal = async (confirmar=0) => {
     setOpenModalConfirmarGeracaoFinal(false);
     if (paaVigente?.uuid) {
-      mutationGerarDocumentoFinal.mutate(paaVigente.uuid);
+      mutationGerarDocumentoFinal.mutate({
+        uuid: paaVigente.uuid,
+        payload: { confirmar }
+      });
     } else {
-      toastCustom.ToastCustomError("Erro!", "PAA vigente não identificado para geração de prévia.");
+      toastCustom.ToastCustomError("Erro!", "PAA vigente não identificado para geração final.");
     }
   };
 
@@ -303,7 +310,7 @@ const Relatorios = ({ initialExpandedSections }) => {
                   <button
                     className="btn btn-success"
                     disabled={botaoGeracaoFinalDesabilitado()}
-                    onClick={() => setOpenModalConfirmarGeracaoFinal(true)}>
+                    onClick={() => handleGerarDocumentoFinal(0)}>
                     Gerar
                   </button>
 
@@ -361,7 +368,7 @@ const Relatorios = ({ initialExpandedSections }) => {
       <ModalConfirmaGeracaoFinal
         open={openModalConfirmarGeracaoFinal}
         onClose={() => setOpenModalConfirmarGeracaoFinal(false)}
-        onConfirm={handleGerarDocumentoFinal}
+        onConfirm={() => handleGerarDocumentoFinal(1)}
       />
 
       <ModalInfoPendenciasGeracaoFinal
