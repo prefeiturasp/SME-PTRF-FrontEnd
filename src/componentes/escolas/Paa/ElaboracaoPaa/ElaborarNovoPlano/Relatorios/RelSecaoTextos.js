@@ -9,13 +9,12 @@ import EditorWysiwygCustom from '../../../../../Globais/EditorWysiwygCustom';
 
 export const RelSecaoTextos = ({
     secaoKey, config, textosPaa, paaVigente, handleSalvarTexto, isSaving}) => {
-    const [erroField, setErroField] = useState(null);
 
     const editorContainerRef = useRef(null);
     const tooltipIconRef = useRef(null);
 
-    const handleLimparComProtecao = (textoAtual) => {
-        return "";
+    const handleLimparComProtecao = () => {
+        return "<p></p>";
     };
 
     const mensagemFixa = (msg) => {
@@ -55,12 +54,10 @@ export const RelSecaoTextos = ({
         )
     }
     const validaHandleSalvar = (campo, texto) => {
-        setErroField(null)
-
         if (!(texto||"").trim()) {
-            setErroField("Este campo é obrigatório")
-            return
+            texto = handleLimparComProtecao()
         }
+
         handleSalvarTexto(campo, texto)
     }
 
@@ -85,7 +82,6 @@ export const RelSecaoTextos = ({
                     botaoCancelar={false}
                     disabled={isSaving}
                     isSaving={isSaving}
-                    mensagemErroForm={<span className="text-danger my-1">{erroField}</span>}
                     topExtraContent={secaoKey === "introducao" && mensagemFixa(textosPaa[config.textosPaa[1]])}
                     bottomExtraContent={secaoKey === "conclusao" && mensagemFixa(textosPaa[config.textosPaa[1]])}
                 />

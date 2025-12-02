@@ -10,8 +10,8 @@ const authHeader = () => ({
   },
 });
 
-export const postGerarDocumentoFinalPaa = async (paa_uuid) => {
-  const result = await api.post(`/api/paa/${paa_uuid}/gerar-documento/`, {}, authHeader());
+export const postGerarDocumentoFinalPaa = async (paa_uuid, payload={}) => {
+  const result = await api.post(`/api/paa/${paa_uuid}/gerar-documento/`, payload, authHeader());
   return result.data;
 };
 export const postGerarDocumentoPreviaPaa = async (paa_uuid) => {

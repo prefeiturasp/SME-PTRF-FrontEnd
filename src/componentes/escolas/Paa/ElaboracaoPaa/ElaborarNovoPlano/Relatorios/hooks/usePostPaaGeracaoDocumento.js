@@ -39,17 +39,17 @@ export const usePostPaaGeracaoDocumentoFinal = ({
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
-    mutationFn: async (uuid) => {
-      return await postGerarDocumentoFinalPaa(uuid);
+    mutationFn: async ({uuid, payload}) => {
+      return await postGerarDocumentoFinalPaa(uuid, payload);
     },
     onSuccess: (data, variables) => {
       queryClient.invalidateQueries({ queryKey: ["paaVigente"] });
       onSuccessGerarDocumento?.()
     },
     onError: (error) => {
-      if (error?.response?.data?.mensagem){
+      if (error?.response?.data?.mensagem || error?.response?.data?.confirmar) {
         /** Captura de validações */
-        onErrorGerarDocumento?.(error.response.data.mensagem)
+        onErrorGerarDocumento?.(error.response.data)
       } else {
         toastCustom.ToastCustomError(
           "Erro!", "Ops! Houve um erro ao tentar gerar o documento final."
