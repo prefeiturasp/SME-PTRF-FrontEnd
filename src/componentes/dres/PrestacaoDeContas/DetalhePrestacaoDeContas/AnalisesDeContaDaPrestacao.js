@@ -598,11 +598,7 @@ export const AnalisesDeContaDaPrestacao = ({
                               onClickDeletarAcertoSaldo();
                             }}
                           >
-                            Excluir acerto &nbsp;
-                            <FontAwesomeIcon
-                              style={{ color: "#FFF", cursor: "pointer" }}
-                              icon={faTrash}
-                            />
+                            Excluir acerto(s)
                           </button>
                         </div>
                       )}
@@ -622,11 +618,7 @@ export const AnalisesDeContaDaPrestacao = ({
                             );
                           }}
                         >
-                          Adicionar acerto &nbsp;
-                          <FontAwesomeIcon
-                            style={{ color: "#FFF", cursor: "pointer" }}
-                            icon={faAdd}
-                          />
+                          Adicionar acerto
                         </button>
                       </div>
                     </div>
