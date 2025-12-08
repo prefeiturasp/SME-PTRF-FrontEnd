@@ -1,13 +1,10 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deletePeriodosPaa } from "../../../../../../services/sme/Parametrizacoes.service";
-import { useContext } from "react";
-import { PeriodosPaaContext } from "../context/index";
 import { toastCustom } from "../../../../../Globais/ToastCustom";
 
 export const useDelete = () => {
 
     const queryClient = useQueryClient();
-    const { setShowModalForm, setBloquearBtnSalvarForm } = useContext(PeriodosPaaContext);
 
     const mutationDelete = useMutation({
         mutationFn: (uuid) => {
@@ -15,7 +12,6 @@ export const useDelete = () => {
         },
         onSuccess: (response) => {
             queryClient.invalidateQueries(['periodos-paa']).then();
-            setShowModalForm(false);
             toastCustom.ToastCustomSuccess(
                 "Remoção do período efetuada com sucesso.", 
                 response.mensagem || "O período foi removido com sucesso."
@@ -29,9 +25,6 @@ export const useDelete = () => {
             } else {
                 toastCustom.ToastCustomError('Erro ao remover período de PAA', `Não foi possível excluir o período de PAA`)
             }
-        },
-        onSettled: () => {
-            setBloquearBtnSalvarForm(false);
         },
     });
 

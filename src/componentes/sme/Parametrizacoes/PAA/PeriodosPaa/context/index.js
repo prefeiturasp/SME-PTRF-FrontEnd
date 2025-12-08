@@ -1,7 +1,8 @@
 import React, { createContext, useMemo, useState } from 'react';
 
 const initialFilter = {
-    referencia: ''
+    referencia: '',
+    outro_recurso: '',
 };
 
 const initialStateFormModal = {
