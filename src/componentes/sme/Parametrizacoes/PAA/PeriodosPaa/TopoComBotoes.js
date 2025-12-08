@@ -1,25 +1,16 @@
-import React, {useContext} from "react";
-import { PeriodosPaaContext } from "./context/index";
-import { IconButton } from "../../../../Globais/UI";
-import {RetornaSeTemPermissaoEdicaoPainelParametrizacoes} from "../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes"
+import { TopoComBotoes as TopoBotao} from "../../../../Globais/TopoComBotoes";
+import { useNavigate } from 'react-router-dom';
 
 export const TopoComBotoes = () => {
-    const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES = RetornaSeTemPermissaoEdicaoPainelParametrizacoes()
-    const {setShowModalForm, setStateFormModal, initialStateFormModal} = useContext(PeriodosPaaContext)
+    const navigate = useNavigate();
+
+    const handleAdicionar = () => {
+        navigate(`/cadastro-periodo-paa`);
+    }
 
     return(
         <div className="d-flex  justify-content-end pb-4 mt-2">
-            <IconButton
-                icon="faPlus"
-                iconProps={{ style: {fontSize: '15px', marginRight: "5", color:"#fff"} }}
-                label="Adicionar período de PAA"
-                onClick={()=>{
-                    setStateFormModal(initialStateFormModal);
-                    setShowModalForm(true);
-                }}
-                variant="success"
-                disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
-            />
+            <TopoBotao label='Adicionar período de PAA' onClick={handleAdicionar}/>
         </div>
     )
 
