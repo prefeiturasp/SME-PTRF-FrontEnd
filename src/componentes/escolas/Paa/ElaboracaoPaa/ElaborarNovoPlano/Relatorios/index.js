@@ -15,6 +15,7 @@ import { RenderSecao } from "./RenderSecao";
 import { toastCustom } from "../../../../../Globais/ToastCustom";
 import Loading from "../../../../../../utils/Loading";
 import { getDownloadArquivoPrevia, getDownloadArquivoFinal } from "../../../../../../services/escolas/Paa.service";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 
 import {
   usePostPaaGeracaoDocumentoPrevia,
@@ -344,13 +345,28 @@ const Relatorios = ({ initialExpandedSections }) => {
           <div className="documento-item">
             <div className="documento-info">
               <div className="documento-nome">Ata de Apresentação do PAA</div>
-              <div className="documento-status">Documento pendente de geração</div>
             </div>
             <div className="documento-actions">
-              <button className="btn btn-outline-success" onClick={handleVisualizarAta} disabled={!ataPaa?.uuid}>
-                Visualizar prévia da ata
-              </button>
+              <Space>
+                <button 
+                  className="btn btn-outline-success" 
+                  onClick={handleVisualizarAta} 
+                  disabled={!ataPaa?.uuid}>
+                  Visualizar prévia da ata
+                </button>
+                <button
+                  className="btn btn-success"
+                  disabled
+                  data-tooltip-content={"Quando todos os dados estiverem preenchidos, a opção fica habilitada."}
+                  data-tooltip-id="tooltip-gerar-ata">
+                  Gerar ata
+                </button>
+              </Space>
             </div>
+              <ReactTooltip 
+                id="tooltip-gerar-ata" 
+                place="top"
+              />
           </div>
         </div>
       </div>
