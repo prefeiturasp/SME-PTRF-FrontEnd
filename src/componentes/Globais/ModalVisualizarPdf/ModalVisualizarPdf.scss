@@ -1,0 +1,14 @@
+.modal-visualizar-pdf-dialog {
+  max-width: 95vw;
+  width: 95vw;
+  max-height: 90vh;
+}
+
+@media (min-width: 1200px) {
+  .modal-visualizar-pdf-dialog {
+    max-width: 90vw;
+    width: 90vw;
+    max-height: 90vh;
+  }
+}
+
