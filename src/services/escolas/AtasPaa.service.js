@@ -22,3 +22,23 @@ export const iniciarAtaPaa = async (paa_uuid) => {
     }
     return (await api.get(`api/atas-paa/iniciar-ata/?paa_uuid=${paa_uuid}`, authHeader())).data;
 };
+
+export const obterUrlAtaPaa = async (ata_paa_uuid) => {
+    if (!ata_paa_uuid) {
+        return null;
+    }
+    
+    try {
+        const response = await api.get(`/api/atas-paa/download-arquivo-ata-paa/?ata-paa-uuid=${ata_paa_uuid}`, {
+            responseType: "blob",
+            timeout: 30000,
+            ...authHeader()
+        });
+        const contentType = response?.headers?.["content-type"] || "application/pdf";
+        const blob = new Blob([response.data], { type: contentType });
+        return window.URL.createObjectURL(blob);
+    } catch (error) {
+        console.error("Erro ao visualizar a ata PAA:", error);
+        return null;
+    }
+};
