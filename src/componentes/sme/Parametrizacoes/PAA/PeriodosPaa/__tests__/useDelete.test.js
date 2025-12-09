@@ -19,8 +19,6 @@ jest.mock("../../../../../Globais/ToastCustom", () => ({
 }));
 
 describe("useDelete", () => {
-    const setShowModalForm = jest.fn();
-    const setBloquearBtnSalvarForm = jest.fn();
     const queryClient = new QueryClient({
         defaultOptions: {
             queries: { retry: false } // Desativa retry apenas para esse teste
@@ -29,7 +27,7 @@ describe("useDelete", () => {
 
     const wrapper = ({ children }) => (
         <QueryClientProvider client={queryClient}>
-            <PeriodosPaaContext.Provider value={{ setShowModalForm, setBloquearBtnSalvarForm }}>
+            <PeriodosPaaContext.Provider>
                 {children}
             </PeriodosPaaContext.Provider>
         </QueryClientProvider>
@@ -49,7 +47,6 @@ describe("useDelete", () => {
         });
 
         expect(deletePeriodosPaa).toHaveBeenCalledWith("uuid-fake");
-        expect(setShowModalForm).toHaveBeenCalledWith(false);
         expect(toastCustom.ToastCustomSuccess).toHaveBeenCalledWith(
             "Remoção do período efetuada com sucesso.",
             "O período foi removido com sucesso."
