@@ -63,7 +63,7 @@ export const VisualizacaoAtaPaa = () => {
                 </div>
                 <div className="col-12 mt-4">
                     <p>
-                        Dando atendimento à pauta, houve explanação sobre o Projeto Pedagógico da Unidade, o qual serviu de base para a elaboração do Plano acima citado, que conterá as atividades previstas as Atividades Previstas, Plano de Aplicação de Recursos e Plano Orçamentário. A seguir, foi apresentado o PAA, o qual contempla o levantamento das prioridades/atividades sugeridas pelos diferentes segmentos da comunidade escolar, procedendo-se à análise para consolidação das mesmas.
+                        Dando atendimento à pauta, houve explanação sobre o Projeto Pedagógico da Unidade, o qual serviu de base para a elaboração do Plano acima citado, que conterá as Atividades Previstas, Plano de Aplicação de Recursos e Plano Orçamentário. A seguir, foi apresentado o PAA, o qual contempla o levantamento das prioridades/atividades sugeridas pelos diferentes segmentos da comunidade escolar, procedendo-se à análise para consolidação das mesmas.
                     </p>
                 </div>
                 <div className="col-12 mt-4">
