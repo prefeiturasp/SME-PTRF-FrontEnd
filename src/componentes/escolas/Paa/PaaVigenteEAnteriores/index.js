@@ -664,7 +664,7 @@ export const PaaVigenteEAnteriores = () => {
           
           return (
             <p className="mt-4 mb-0" style={{ color: '#60686A', fontSize: '14px' }}>
-              Plano Anual de Atividades {parecer} em Assembleia Geral em {dataFormatada} à {horaFormatadaComH}.
+              Plano Anual de Atividades {parecer} em Assembleia Geral em {dataFormatada} às {horaFormatadaComH}.
             </p>
           );
         }
