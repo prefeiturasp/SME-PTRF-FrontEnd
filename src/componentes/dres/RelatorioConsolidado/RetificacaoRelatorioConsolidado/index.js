@@ -150,7 +150,7 @@ const RetificacaoRelatorioConsolidado = () => {
 
     const formataPeriodo = () => {
         if(relatorioConsolidado && relatorioConsolidado.periodo){
-            let periodo_formatado = `${relatorioConsolidado.periodo.referencia} - ${exibeDataPT_BR(relatorioConsolidado.periodo.data_inicio_realizacao_despesas)} à ${exibeDataPT_BR(relatorioConsolidado.periodo.data_fim_realizacao_despesas)}`;
+            let periodo_formatado = `${relatorioConsolidado.periodo.referencia} - ${exibeDataPT_BR(relatorioConsolidado.periodo.data_inicio_realizacao_despesas)} às ${exibeDataPT_BR(relatorioConsolidado.periodo.data_fim_realizacao_despesas)}`;
             return periodo_formatado;
         }
 
