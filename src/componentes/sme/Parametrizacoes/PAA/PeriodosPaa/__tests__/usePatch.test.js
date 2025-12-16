@@ -17,13 +17,15 @@ jest.mock("../../../../../Globais/ToastCustom", () => ({
     },
 }));
 
+const mockOnSuccess = jest.fn();
+const mockOnError = jest.fn();
+
 describe("usePatch", () => {
-    const setShowModalForm = jest.fn();
     const queryClient =  new QueryClient()
 
     const wrapper = ({ children }) => (
         <QueryClientProvider client={queryClient}>
-            <PeriodosPaaContext.Provider value={{ setShowModalForm }}>
+            <PeriodosPaaContext.Provider>
                 {children}
             </PeriodosPaaContext.Provider>
         </QueryClientProvider>
@@ -36,7 +38,7 @@ describe("usePatch", () => {
     it("deve editar um motivo com sucesso", async () => {
         patchPeriodosPaa.mockResolvedValueOnce({});
 
-        const { result } = renderHook(() => usePatch(), { wrapper });
+        const { result } = renderHook(() => usePatch({onSuccessPatch: mockOnSuccess, onErrorPatch: mockOnError}), { wrapper });
 
         await act(async () => {
             result.current.mutationPatch.mutate({
@@ -46,10 +48,11 @@ describe("usePatch", () => {
         });
 
         expect(patchPeriodosPaa).toHaveBeenCalled();
-        expect(setShowModalForm).toHaveBeenCalledWith(false);
         expect(toastCustom.ToastCustomSuccess).toHaveBeenCalledWith(
             "Edição do período realizada com sucesso."
         );
+        expect(mockOnSuccess).toHaveBeenCalled();
+        expect(mockOnError).not.toHaveBeenCalled();
     });
 
     it("deve exibir erro quando já existe um periodo com o mesmo nome", async () => {
@@ -57,7 +60,7 @@ describe("usePatch", () => {
             response: { data: { non_field_errors: "Já existe um periodo com esse nome" } },
         });
 
-        const { result } = renderHook(() => usePatch(), { wrapper });
+        const { result } = renderHook(() => usePatch({onSuccessPatch: mockOnSuccess, onErrorPatch: mockOnError}), { wrapper });
 
         await act(async () => {
             result.current.mutationPatch.mutate({
@@ -69,6 +72,8 @@ describe("usePatch", () => {
         expect(toastCustom.ToastCustomError).toHaveBeenCalledWith(
             "Erro ao atualizar período", "Já existe um periodo com esse nome"
         );
+        expect(mockOnSuccess).not.toHaveBeenCalled();
+        expect(mockOnError).toHaveBeenCalled();
     });
 
     it("deve exibir mensagem genérica quando ocorre outro erro", async () => {
@@ -76,7 +81,7 @@ describe("usePatch", () => {
             response: { data: {} },
         });
 
-        const { result } = renderHook(() => usePatch(), { wrapper });
+        const { result } = renderHook(() => usePatch({onSuccessPatch: mockOnSuccess, onErrorPatch: mockOnError}), { wrapper });
 
         await act(async () => {
             result.current.mutationPatch.mutate({
@@ -89,5 +94,7 @@ describe("usePatch", () => {
             "Erro ao atualizar período",
             "Não foi possível atualizar o período"
         );
+        expect(mockOnError).toHaveBeenCalled();
+        expect(mockOnSuccess).not.toHaveBeenCalled();
     });
 });

@@ -18,13 +18,15 @@ jest.mock("../../../../../Globais/ToastCustom", () => ({
     },
 }));
 
+const mockOnSuccess = jest.fn();
+const mockOnError = jest.fn();
+
 describe("usePost", () => {
-    const setShowModalForm = jest.fn();
     const queryClient = new QueryClient()
 
     const wrapper = ({ children }) => (
         <QueryClientProvider client={queryClient}>
-            <PeriodosPaaContext.Provider value={{ setShowModalForm }}>
+            <PeriodosPaaContext.Provider>
                 {children}
             </PeriodosPaaContext.Provider>
         </QueryClientProvider>
@@ -37,7 +39,7 @@ describe("usePost", () => {
     it("deve criar um período com sucesso", async () => {
         postPeriodosPaa.mockResolvedValueOnce({});
 
-        const { result } = renderHook(() => usePost(), { wrapper });
+        const { result } = renderHook(() => usePost({onSuccessPost: mockOnSuccess, onErrorPost: mockOnError}), { wrapper });
 
         await act(async () => {
             result.current.mutationPost.mutate({
@@ -46,10 +48,11 @@ describe("usePost", () => {
         });
 
         expect(postPeriodosPaa).toHaveBeenCalledWith({ referencia: "Novo Período" });
-        expect(setShowModalForm).toHaveBeenCalledWith(false);
         expect(toastCustom.ToastCustomSuccess).toHaveBeenCalledWith(
             "Inclusão de Período do PAA", "Período registrado na lista com sucesso."
         );
+        expect(mockOnSuccess).toHaveBeenCalled();
+        expect(mockOnError).not.toHaveBeenCalled();
     });
 
     it("deve exibir erro quando já existe um período com o mesmo nome", async () => {
@@ -57,7 +60,7 @@ describe("usePost", () => {
             response: { data: { non_field_errors: "Já existe um período com esse nome" } },
         });
 
-        const { result } = renderHook(() => usePost(), { wrapper });
+        const { result } = renderHook(() => usePost({onSuccessPost: mockOnSuccess, onErrorPost: mockOnError}), { wrapper });
 
         await act(async () => {
             result.current.mutationPost.mutate({
@@ -70,6 +73,8 @@ describe("usePost", () => {
             "Erro ao criar período",
             "Já existe um período com esse nome"
         );
+        expect(mockOnSuccess).not.toHaveBeenCalled();
+        expect(mockOnError).toHaveBeenCalled();
     });
 
     it("deve exibir mensagem genérica quando ocorre outro erro", async () => {
@@ -77,7 +82,7 @@ describe("usePost", () => {
             response: { data: {} },
         });
     
-        const { result } = renderHook(() => usePost(), { wrapper });
+        const { result } = renderHook(() => usePost({onSuccessPost: mockOnSuccess, onErrorPost: mockOnError}), { wrapper });
     
         await act(async () => {
             result.current.mutationPost.mutate({
@@ -89,5 +94,7 @@ describe("usePost", () => {
         expect(toastCustom.ToastCustomError).toHaveBeenCalledWith(
             "Erro ao criar período", "Não foi possível criar o período"
         );
+        expect(mockOnError).toHaveBeenCalled();
+        expect(mockOnSuccess).not.toHaveBeenCalled();
     });
 });

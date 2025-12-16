@@ -104,6 +104,8 @@ import { ParametrizacoesRepasses } from "../componentes/sme/Parametrizacoes/Rece
 import { MotivosPagamentoAntecipado } from "../componentes/sme/Parametrizacoes/Despesas/MotivosPagamentoAntecipado";
 import { TextosPaa } from "../componentes/sme/Parametrizacoes/PAA/TextosPaa";
 import { PeriodosPaa } from "../componentes/sme/Parametrizacoes/PAA/PeriodosPaa";
+import { CadastroPeriodoPAAPage } from "../paginas/escolas/PAA/PeriodoPAA/CadastroPeriodoPAA";
+import { EdicaoPeriodoPAAPage } from "../paginas/escolas/PAA/PeriodoPAA/EdicaoPeriodoPAA";
 import { ObjetivosPaa } from "../componentes/sme/Parametrizacoes/PAA/ObjetivosPaa";
 import { AtividadesEstatutarias } from "../componentes/sme/Parametrizacoes/PAA/AtividadesEstatutarias";
 import { OutrosRecursos } from "../componentes/sme/Parametrizacoes/PAA/OutrosRecursos";
@@ -608,6 +610,18 @@ const routesConfig = [
     component: PeriodosPaa,
     permissoes: ["access_painel_parametrizacoes", "change_painel_parametrizacoes"],
     featureFlag: "paa",
+  },
+  {
+    exact: true,
+    path: "/cadastro-periodo-paa/",
+    component: CadastroPeriodoPAAPage,
+    permissoes: ["access_painel_parametrizacoes", "change_painel_parametrizacoes"],
+  },
+  {
+    exact: true,
+    path: "/edicao-periodo-paa/:uuid/",
+    component: EdicaoPeriodoPAAPage,
+    permissoes: ["access_painel_parametrizacoes", "change_painel_parametrizacoes"],
   },
   {
     exact: true,
