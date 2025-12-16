@@ -1,8 +1,10 @@
 import React from 'react';
+import { MemoryRouter, useNavigate } from "react-router-dom";
 import { render, fireEvent } from '@testing-library/react';
 import { TopoComBotoes } from '../TopoComBotoes';
 import { PeriodosPaaContext } from '../context/index';
 import * as Permissao from '../../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes';
+
 
 jest.mock('../../../../../Globais/UI', () => ({
   IconButton: ({ onClick, label, disabled }) => (
@@ -12,27 +14,33 @@ jest.mock('../../../../../Globais/UI', () => ({
   )
 }));
 
+jest.mock("react-router-dom", () => ({
+  ...jest.requireActual("react-router-dom"),
+  useNavigate: jest.fn(),
+}));
+
+const mockNavigate = jest.fn();
+
 describe('TopoComBotoes', () => {
-  const mockSetShowModalForm = jest.fn();
-  const mockSetStateFormModal = jest.fn();
-  const initialStateFormModal = { referencia: '', ano: '' };
+  const initialStateFormModal = { referencia: '', outro_recurso: '' };
 
   const renderComponente = (temPermissao = true) => {
     jest.spyOn(Permissao, 'RetornaSeTemPermissaoEdicaoPainelParametrizacoes').mockReturnValue(temPermissao);
 
     return render(
-      <PeriodosPaaContext.Provider value={{
-        setShowModalForm: mockSetShowModalForm,
-        setStateFormModal: mockSetStateFormModal,
-        initialStateFormModal
-      }}>
-        <TopoComBotoes />
-      </PeriodosPaaContext.Provider>
+      <MemoryRouter>
+        <PeriodosPaaContext.Provider value={{
+          initialStateFormModal
+        }}>
+          <TopoComBotoes />
+        </PeriodosPaaContext.Provider>
+      </MemoryRouter>
     );
   };
 
   beforeEach(() => {
     jest.clearAllMocks();
+    useNavigate.mockReturnValue(mockNavigate);
   });
 
   it('renderiza o botão e chama as funções corretamente ao clicar', () => {
@@ -41,14 +49,8 @@ describe('TopoComBotoes', () => {
     const botao = getByTestId('botao-adicionar');
     fireEvent.click(botao);
 
-    expect(mockSetStateFormModal).toHaveBeenCalledWith(initialStateFormModal);
-    expect(mockSetShowModalForm).toHaveBeenCalledWith(true);
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith('/cadastro-periodo-paa');
   });
 
-  it('desabilita o botão quando não há permissão', () => {
-    const { getByTestId } = renderComponente(false);
-
-    const botao = getByTestId('botao-adicionar');
-    expect(botao).toBeDisabled();
-  });
 });

@@ -1,13 +1,13 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { postPeriodosPaa } from "../../../../../../services/sme/Parametrizacoes.service";
-import { useContext } from "react";
-import { PeriodosPaaContext } from "../context/index";
 import { toastCustom } from "../../../../../Globais/ToastCustom";
 
-export const usePost = () => {
+export const usePost = ({
+    onSuccessPost=()=>{},
+    onErrorPost=()=>{},
+}) => {
 
     const queryClient = useQueryClient()
-    const {setShowModalForm, setBloquearBtnSalvarForm} = useContext(PeriodosPaaContext)
 
     const mutationPost = useMutation({
         mutationFn: ({payload}) => {
@@ -15,7 +15,7 @@ export const usePost = () => {
         },
         onSuccess: (data) => {
             queryClient.invalidateQueries(['periodos-paa']).then()
-            setShowModalForm(false)
+            onSuccessPost?.(data)
             toastCustom.ToastCustomSuccess('Inclusão de Período do PAA', `Período registrado na lista com sucesso.`)
         },
         onError: (e) => {
@@ -24,9 +24,7 @@ export const usePost = () => {
             } else {
                 toastCustom.ToastCustomError('Erro ao criar período', `Não foi possível criar o período`)
             }
-        },
-        onSettled: () => {
-            setBloquearBtnSalvarForm(false)
+            onErrorPost?.(e)
         },
     })
     return {mutationPost}

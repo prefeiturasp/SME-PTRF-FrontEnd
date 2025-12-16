@@ -3,6 +3,7 @@ import { render, screen, fireEvent, userEvent } from '@testing-library/react';
 import { Filtros } from '../Filtros';
 import { PeriodosPaaContext } from '../context/index';
 import '@testing-library/jest-dom';
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const mockSetFilter = jest.fn();
 const mockSetCurrentPage = jest.fn();
@@ -19,15 +20,23 @@ const context = {
 describe('Filtros', () => {
 
   const renderComponent = () => {
+    const queryClient = new QueryClient();
     return render(
-      <PeriodosPaaContext.Provider value={context}>
-        <Filtros />
-      </PeriodosPaaContext.Provider>
+      <QueryClientProvider client={queryClient}>
+        <PeriodosPaaContext.Provider value={context}>
+          <Filtros />
+        </PeriodosPaaContext.Provider>
+      </QueryClientProvider>
     );
   };
 
   beforeEach(() => {
     jest.clearAllMocks();
+    window.matchMedia = jest.fn().mockImplementation((query) => ({
+      matches: false,
+      addListener: jest.fn(),
+      removeListener: jest.fn(),
+    }));
   });
 
   test('Deve renderizar os elementos corretamente', () => {

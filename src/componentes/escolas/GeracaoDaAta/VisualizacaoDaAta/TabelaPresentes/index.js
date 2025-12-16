@@ -19,7 +19,7 @@ export const TabelaPresentes = ({titulo, listaPresentes}) => {
                         ?
                             listaPresentes.map((presente, index) => 
                                 <tr key={`tr-presente-${index}`}>
-                                    <td><strong>{presente.nome}</strong> <br></br> {presente.cargo}</td>
+                                    <td><strong>{presente.nome}</strong> <br></br> {presente.cargo} {presente.professor_gremio ? ' / Professor Orientador' : ''}</td>
                                     <td>{!presente.presente && presente.membro ? "Ausente" : ""}</td>
                                 </tr>
                             )

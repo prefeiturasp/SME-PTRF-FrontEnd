@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef, useCallback } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import moment from "moment";
 import { getAtaPaa, getTabelasAtasPaa } from "../../../../../../services/escolas/AtasPaa.service";
 import { getListaPresentesPaa } from "../../../../../../services/escolas/PresentesAtaPaa.service";
@@ -20,6 +20,7 @@ moment.updateLocale('pt', {
 export const useVisualizacaoAtaPaa = () => {
     const { uuid_paa } = useParams();
     const navigate = useNavigate();
+    const location = useLocation();
     const { ataPaa } = useGetAtaPaaVigente(uuid_paa);
     const ataUuid = ataPaa?.uuid;
     const [dadosAta, setDadosAta] = useState({});
@@ -72,15 +73,19 @@ export const useVisualizacaoAtaPaa = () => {
     };
 
     const handleClickFecharAta = () => {
-        navigate("/elaborar-novo-paa", {
-            state: {
-                activeTab: "relatorios",
-                expandedSections: {
-                    planoAnual: true,
-                    componentes: true,
+        if (location.state?.origem === 'paa-vigente-e-anteriores') {
+            navigate("/paa-vigente-e-anteriores");
+        } else {
+            navigate("/elaborar-novo-paa", {
+                state: {
+                    activeTab: "relatorios",
+                    expandedSections: {
+                        planoAnual: true,
+                        componentes: true,
+                    },
                 },
-            },
-        });
+            });
+        }
     };
 
     const handleClickEditarAta = () => {

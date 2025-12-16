@@ -1,13 +1,13 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { patchPeriodosPaa } from "../../../../../../services/sme/Parametrizacoes.service";
-import { useContext } from "react";
-import { PeriodosPaaContext } from "../context/index";
 import { toastCustom } from "../../../../../Globais/ToastCustom";
 
-export const usePatch = () => {
+export const usePatch = ({
+    onSuccessPatch=()=>{},
+    onErrorPatch=()=>{},
+}) => {
 
     const queryClient = useQueryClient()
-    const {setShowModalForm, setBloquearBtnSalvarForm} = useContext(PeriodosPaaContext)
 
     const mutationPatch = useMutation({
         mutationFn: ({uuid, payload}) => {
@@ -15,7 +15,7 @@ export const usePatch = () => {
         },
         onSuccess: (data) => {
             queryClient.invalidateQueries(['periodos-paa']).then()
-            setShowModalForm(false)
+            onSuccessPatch?.(data)
             toastCustom.ToastCustomSuccess('Edição do período realizada com sucesso.');
         },
         onError: (e) => {
@@ -26,9 +26,7 @@ export const usePatch = () => {
             } else {
                 toastCustom.ToastCustomError('Erro ao atualizar período', `Não foi possível atualizar o período`)
             }
-        },
-        onSettled: () => {
-            setBloquearBtnSalvarForm(false)
+            onErrorPatch?.(e)
         },
     })
     return {mutationPatch}

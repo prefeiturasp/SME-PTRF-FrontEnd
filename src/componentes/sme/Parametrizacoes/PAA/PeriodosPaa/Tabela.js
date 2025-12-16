@@ -1,35 +1,18 @@
-import React, { useContext } from "react";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
-import { Tooltip } from "antd";
+import { Tooltip, Button } from "antd";
 import { IconButton } from "../../../../Globais/UI";
 import moment from "moment";
 import Loading from "../../../../../utils/Loading";
-import { PeriodosPaaContext } from './context/index';
 import { useGet } from "./hooks/useGet";
-import { usePost } from './hooks/usePost';
-import { usePatch } from './hooks/usePatch';
-import { useDelete } from './hooks/useDelete';
-import { ModalForm } from "./ModalForm";
 import {MsgImgCentralizada} from "../../../../Globais/Mensagens/MsgImgCentralizada";
 import Img404 from "../../../../../assets/img/img-404.svg";
-import { ModalConfirmarExclusao } from "../../componentes/ModalConfirmarExclusao"
+import { useNavigate } from 'react-router-dom';
 
 export const Tabela = () => {
+    const navigate = useNavigate();
 
-  const {
-    setShowModalForm,
-    stateFormModal,
-    setStateFormModal,
-    setBloquearBtnSalvarForm,
-    showModalForm,
-    showModalConfirmacaoExclusao,
-    setShowModalConfirmacaoExclusao
-    } = useContext(PeriodosPaaContext)
   const { isLoading, data, total, count } = useGet()
-  const { mutationPost } = usePost()
-  const { mutationPatch } = usePatch()
-  const { mutationDelete } = useDelete()
 
   // Necessária pela paginação
   const {results} = data;
@@ -61,42 +44,18 @@ export const Tabela = () => {
   };
 
   const handleEditFormModal = (rowData) => {
-    setStateFormModal({
-        ...stateFormModal,
-        referencia: rowData.referencia,
-        data_inicial: rowData.data_inicial,
-        data_final: rowData.data_final,
-        editavel: rowData.editavel,
-        uuid: rowData.uuid,
-        id: rowData.id,
-        operacao: 'edit'
-    });
-    setShowModalForm(true)
-  };
-
-  const handleSubmitFormModal = async (values) => {
-    // Libera o botão somente após ter resolvido a mutation em usePost e usePatch
-    setBloquearBtnSalvarForm(true)
-    let payload = {
-        referencia: values.referencia,
-        data_inicial: values.data_inicial,
-        data_final: values.data_final,
-    };
-
-    if (!values.uuid) {
-        mutationPost.mutate({payload: payload})
-    } else {
-        mutationPatch.mutate({uuid: values.uuid, payload: payload})
-    }
-  };
-
-  const handleExcluir = async (uuid) => {
-    if (!uuid) {
-        console.log("Período de PAA sem UUID. Não é possível excluir")
-    } else {
-        mutationDelete.mutate(uuid)
-        setShowModalConfirmacaoExclusao(false)
-    }
+    // setStateFormModal({
+    //     ...stateFormModal,
+    //     referencia: rowData.referencia,
+    //     data_inicial: rowData.data_inicial,
+    //     data_final: rowData.data_final,
+    //     editavel: rowData.editavel,
+    //     uuid: rowData.uuid,
+    //     id: rowData.id,
+    //     operacao: 'edit'
+    // });
+    navigate(`/edicao-periodo-paa/${rowData.uuid}`);
+    // setShowModalForm(true)
   };
 
   const dataTemplate = (rowData, column) => {
@@ -106,6 +65,26 @@ export const Tabela = () => {
             </div>
         )
     };
+
+  const outrosRecurosTemplate = (rowData, column) => {
+    const qtde = rowData[column.field]
+    // Cor de fundo
+    const corBg = qtde > 0 ? '#EDFFF3' : '#F3F4F6'
+    // cor de texto
+    const corTxt = qtde > 0 ? '#00585D' : '#42474A'
+    // legenda
+    const label = qtde === 1 ? `${qtde} habilitado` : `${qtde} habilitados`
+    return (
+      <Button
+          color="default"
+          variant="filled"
+          size="small"
+          shape="round"
+          style={{backgroundColor: corBg, color: corTxt, fontWeight: 600, fontSize: '12px'}}>
+          {label}
+      </Button>
+    )
+  };
 
   if (isLoading) {
     return (
@@ -120,14 +99,14 @@ export const Tabela = () => {
   return (
     <>
         {results && results.length > 0 ? (
-            <div className="p-2">
+            <div>
                 {!isLoading && total ? (
-                        <p className='p-2 mb-0'>
+                        <p className='pt-2 pb-0 mb-0'>
                             Exibindo 
                             <span className='total'> {total} </span> 
                             de
                             <span className='total'> {count} </span> 
-                            período{total == 1 ? '' : 's'} do PAA</p>
+                            período{total === 1 ? '' : 's'} do PAA</p>
                     ) :
                     null
                 }
@@ -145,6 +124,10 @@ export const Tabela = () => {
                         header="Data Final"
                         body={dataTemplate}/>
                     <Column
+                        field="qtd_outros_recursos_habilitados"
+                        header="Outros Recursos"
+                        body={outrosRecurosTemplate}/>
+                    <Column
                         field="acao"
                         header="Ações"
                         body={acoesTemplate}
@@ -158,25 +141,6 @@ export const Tabela = () => {
                 img={Img404}
             />
         }
-        <section>
-            <ModalForm
-                show={showModalForm}
-                handleSubmitFormModal={handleSubmitFormModal}
-            />
-        </section>
-        <section>
-            <ModalConfirmarExclusao
-                open={showModalConfirmacaoExclusao}
-                onOk={() => handleExcluir(stateFormModal.uuid)}
-                okText="Excluir"
-                onCancel={() => setShowModalConfirmacaoExclusao(false)}
-                cancelText="Cancelar"
-                cancelButtonProps={{ className: "btn-base-verde-outline" }}
-                titulo="Excluir Período PAA"
-                bodyText={<p>Tem certeza que deseja excluir este período?</p>}
-            />
-        </section>
-        
     </>
   )
 }

@@ -226,6 +226,10 @@ export const deleteTipoConta = async (tipo_conta_uuid) => {
 };
 
 // PAA - Períodos
+export const getPeriodoPaa = async (uuid) => {
+  const result = (await api.get(`/api/periodos-paa/${uuid}/`,{...authHeader()})).data;
+  return result
+};
 export const getPeriodosPaa = async (filtros, page, page_size) => {
   const result = (await api.get(`/api/periodos-paa/`,{...authHeader(), params: {...filtros, page: page, page_size}})).data;
   return result
@@ -238,6 +242,25 @@ export const patchPeriodosPaa = async (uuid, payload) => {
 };
 export const deletePeriodosPaa = async (uuid) => {
   return await api.delete(`/api/periodos-paa/${uuid}/`, authHeader());
+};
+// PAA - Outros Recursos/Período Paa
+export const getOutrosRecursosPeriodoPaa = async (filtros, page, page_size) => {
+  const result = (await api.get(`/api/outros-recursos-periodos-paa/`,
+    {
+      ...authHeader(),
+      params: {...filtros, page: page, page_size}
+    })).data;
+  return result
+};
+export const getOutroRecursoPeriodoPaa = async (uuid) => {
+  const result = (await api.get(`/api/outros-recursos-periodos-paa/${uuid}/`, {...authHeader()})).data;
+  return result
+};
+export const patchOutroRecursoPeriodoPaa = async (uuid, payload) => {
+  return (await api.patch(`/api/outros-recursos-periodos-paa/${uuid}/`, payload, authHeader())).data;
+};
+export const postOutroRecursoPeriodoPaa = async (payload) => {
+  return (await api.post(`/api/outros-recursos-periodos-paa/`, payload, authHeader())).data;
 };
 
 // PAA - Objetivos
