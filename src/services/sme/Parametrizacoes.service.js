@@ -262,6 +262,9 @@ export const patchOutroRecursoPeriodoPaa = async (uuid, payload) => {
 export const postOutroRecursoPeriodoPaa = async (payload) => {
   return (await api.post(`/api/outros-recursos-periodos-paa/`, payload, authHeader())).data;
 };
+export const postOutrosRecursosPeriodoPaaImportarUnidades = async (uuid, payload) => {
+  return (await api.post(`/api/outros-recursos-periodos-paa/${uuid}/importar-unidades/`, payload, authHeader())).data;
+};
 
 // PAA - Objetivos
 export const getObjetivosPaa = async (filtros, page, page_size) => {
