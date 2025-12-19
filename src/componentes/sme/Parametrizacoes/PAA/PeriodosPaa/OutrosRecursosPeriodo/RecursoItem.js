@@ -174,7 +174,7 @@ export const RecursoItem = ({recurso, periodoUuid}) => {
         <Collapse
             collapsible="icon"
             className="mb-3"
-            style={{ background: "transparent", pointerEvents: 'none' }}
+            style={{ background: "transparent" }}
             expandIconPosition="end"
             expandIcon={({ isActive }) => stateOutroRecursoPeriodo?.uuid ? <FontAwesomeIcon style={
                 { fontSize: "18px", position: 'absolute', top: 25, right: 20, pointerEvents: 'all' }} 
