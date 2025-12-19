@@ -206,6 +206,10 @@ export const getDres = async () => {
   return (await api.get(`/api/dres/`, authHeader())).data
 };
 
+export const getTiposUnidades = async () => {
+  return (await api.get(`/api/unidades/tipos-unidades/`, authHeader())).data
+};
+
 // Tipos de conta
 export const getTiposContas = async () => {
   return (await api.get(`/api/tipos-conta/`, authHeader())).data;
@@ -252,6 +256,26 @@ export const getOutrosRecursosPeriodoPaa = async (filtros, page, page_size) => {
     })).data;
   return result
 };
+export const getUnidadesVinculadasOutrosRecursosPeriodoPaa = async (uuid, params={}) => {
+  return (await api.get(`/api/outros-recursos-periodos-paa/${uuid}/unidades-vinculadas/`, {...authHeader(), params})).data;
+}
+export const getUnidadesNaoVinculadasOutrosRecursosPeriodoPaa = async (uuid, params={}) => {
+  return (await api.get(`/api/outros-recursos-periodos-paa/${uuid}/unidades-nao-vinculadas/`, {...authHeader(), params})).data;
+}
+
+export const postVincularUnidadeOutrosRecursosPeriodoPaa = async (uuid, unidade_uuid) => {
+  return (await api.post(`/api/outros-recursos-periodos-paa/${uuid}/unidade/${unidade_uuid}/vincular/`, {}, authHeader())).data;
+}
+export const postVincularUnidadeOutrosRecursosPeriodoPaaEmLote = async (uuid, payload) => {
+  return (await api.post(`/api/outros-recursos-periodos-paa/${uuid}/vincular-em-lote/`, payload, authHeader())).data;
+}
+export const postDesvincularUnidadeOutrosRecursosPeriodoPaa = async (uuid, unidadeUUID) => {
+  return (await api.post(`/api/outros-recursos-periodos-paa/${uuid}/unidade/${unidadeUUID}/desvincular/`, {}, authHeader())).data;
+}
+export const postDesvincularUnidadeOutrosRecursosPeriodoPaaEmLote = async (uuid, payload) => {
+  return (await api.post(`/api/outros-recursos-periodos-paa/${uuid}/desvincular-em-lote/`, payload, authHeader())).data;
+}
+
 export const getOutroRecursoPeriodoPaa = async (uuid) => {
   const result = (await api.get(`/api/outros-recursos-periodos-paa/${uuid}/`, {...authHeader()})).data;
   return result

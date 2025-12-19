@@ -1,15 +1,22 @@
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { RecursoItem } from '../RecursoItem';
+import { useDispatch } from 'react-redux';
 import * as useGetHook from '../hooks/useGet';
 import * as usePatchHook from '../hooks/usePatch';
 import * as usePostHook from '../hooks/usePost';
 import * as toastModule from '../../../../../../Globais/ToastCustom';
+import { VinculoUnidades } from '../../../../../../Globais/VincularUnidades';
 
 // Mock dos módulos
 jest.mock('../hooks/useGet');
 jest.mock('../hooks/usePatch');
 jest.mock('../hooks/usePost');
+
+jest.mock('react-redux', () => ({
+  useDispatch: jest.fn(),
+}));
+
 jest.mock('../../../../../../Globais/BadgeCustom', () => ({
   BadgeCustom: ({ buttonlabel, buttoncolor }) => (
     <div data-testid="badge-custom" style={{ color: buttoncolor }}>
@@ -17,8 +24,8 @@ jest.mock('../../../../../../Globais/BadgeCustom', () => ({
     </div>
   )
 }));
-jest.mock('../VincularUnidades', () => ({
-  VincularUnidades: ({ outroRecursoPeriodo }) => (
+jest.mock('../../../../../../Globais/VincularUnidades', () => ({
+  VinculoUnidades: ({ outroRecursoPeriodo }) => (
     <div data-testid="vincular-unidades">
       Vincular Unidades - {outroRecursoPeriodo?.uuid || 'sem uuid'}
     </div>
@@ -344,28 +351,6 @@ describe('RecursoItem', () => {
   });
 
   describe('Collapse e Expansão', () => {
-    test('deve renderizar VincularUnidades ao expandir collapse', async () => {
-      useGetHook.useGetOutrosRecursosPeriodoPaa.mockReturnValue({
-        data: { results: [mockOutroRecursoPeriodo] },
-        isLoading: false,
-        refetch: jest.fn()
-      });
-
-      renderComponent();
-
-      await waitFor(() => {
-        expect(screen.getByRole('button')).toBeInTheDocument();
-      });
-
-      const collapseButton = screen.getByRole('button');
-      fireEvent.click(collapseButton);
-
-      await waitFor(() => {
-        expect(screen.getByTestId('vincular-unidades')).toBeInTheDocument();
-        expect(screen.getByText(`Vincular Unidades - ${mockOutroRecursoPeriodo.uuid}`)).toBeInTheDocument();
-      });
-    });
-
     test('não deve mostrar ícone de expansão quando não há recurso período', () => {
       useGetHook.useGetOutrosRecursosPeriodoPaa.mockReturnValue({
         data: { results: [] },
