@@ -3,25 +3,24 @@ import {
   useState,
   useEffect,
   useMemo,
-  useContext,
-  useCallback,
 } from "react";
 import { Form, Row, Col, Flex, Spin, Select } from "antd";
 import { ModalFormBodyText } from "../../../../../Globais/ModalBootstrap";
 import { useGetTodos as useGetTodosPeriodosPAA } from "../hooks/useGet";
 import { usePostOutroRecursoPeriodoImportarUnidades } from "./hooks/usePost";
 import { toastCustom } from "../../../../../Globais/ToastCustom";
-import { OutrosRecursosPeriodosPaaContext } from "./context/index";
 
-const ModalImportarListaUes = ({ outroRecursoPeriodo, onSuccess = () => {} }) => {
+const ModalImportarListaUes = ({
+    showModalImportarUEs,
+    outroRecursoPeriodo,
+    onSuccess = () => {},
+    onCloseModal=() => {} }) => {
+
   const [form] = Form.useForm();
-  const { setShowModalImportarUEs, showModalImportarUEs } = useContext(
-    OutrosRecursosPeriodosPaaContext
-  );
-  const onClose = useCallback(
-    () => setShowModalImportarUEs(false),
-    [setShowModalImportarUEs]
-  );
+
+  const onClose = () => {
+    onCloseModal()
+  }
   const [recursos, setRecursos] = useState([]);
   const [ehModoConfirmacao, setEhModoConfirmacao] = useState(false);
   const mutationImportarUnidades = usePostOutroRecursoPeriodoImportarUnidades();  
@@ -31,6 +30,11 @@ const ModalImportarListaUes = ({ outroRecursoPeriodo, onSuccess = () => {} }) =>
     isLoading: isLoadingPeriodos,
     refetch: refetchPeriodos,
   } = useGetTodosPeriodosPAA();
+
+  const onImportSuccess = () => {
+    onClose()
+    onSuccess();
+  };
 
   useEffect(() => {
     if (showModalImportarUEs) {
@@ -98,14 +102,11 @@ const ModalImportarListaUes = ({ outroRecursoPeriodo, onSuccess = () => {} }) =>
         payload: { origem_uuid },
         uuid: destino_uuid,
       });
-      onClose();
-      onSuccess();
+      onImportSuccess();
     } catch (err) {
       console.error(err);
     }
   };
-
-  
 
   return (
     <ModalFormBodyText

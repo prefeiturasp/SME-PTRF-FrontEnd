@@ -36,9 +36,10 @@ jest.mock("../../../../../../Globais/ModalBootstrap", () => ({
 const renderComponent = ({
   periodosMock,
   mutationMock,
-  contextProps,
   outroRecursoPeriodo,
   onSuccess = jest.fn(),
+  onCloseModal = jest.fn(),
+  showModalImportarUEs = true,
 }) => {
   useGetTodos.mockReturnValue({
     data: { results: periodosMock },
@@ -49,10 +50,12 @@ const renderComponent = ({
   usePostOutroRecursoPeriodoImportarUnidades.mockReturnValue(mutationMock);
 
   return render(
-    <OutrosRecursosPeriodosPaaContext.Provider value={contextProps}>
+    <OutrosRecursosPeriodosPaaContext.Provider>
       <ModalImportarListaUes
+        showModalImportarUEs={showModalImportarUEs}
         outroRecursoPeriodo={outroRecursoPeriodo}
         onSuccess={onSuccess}
+        onCloseModal={onCloseModal}
       />
     </OutrosRecursosPeriodosPaaContext.Provider>
   );
@@ -93,10 +96,6 @@ describe("ModalImportarListaUes", () => {
     renderComponent({
       periodosMock,
       mutationMock: { mutateAsync: jest.fn(), isPending: false },
-      contextProps: {
-        showModalImportarUEs: true,
-        setShowModalImportarUEs: jest.fn(),
-      },
       outroRecursoPeriodo,
     });
 
@@ -108,7 +107,7 @@ describe("ModalImportarListaUes", () => {
     fireEvent.click(screen.getByText("2024"));
 
     expect(
-      await screen.getByLabelText(/Selecione o recurso/i)
+      screen.getByLabelText(/Selecione o recurso/i)
     ).toBeInTheDocument();
   });
 
@@ -128,10 +127,6 @@ describe("ModalImportarListaUes", () => {
     renderComponent({
       periodosMock: periodosSemUnidade,
       mutationMock: { mutateAsync: jest.fn(), isPending: false },
-      contextProps: {
-        showModalImportarUEs: true,
-        setShowModalImportarUEs: jest.fn(),
-      },
       outroRecursoPeriodo,
     });
 
@@ -152,10 +147,6 @@ describe("ModalImportarListaUes", () => {
     renderComponent({
       periodosMock,
       mutationMock: { mutateAsync: jest.fn(), isPending: false },
-      contextProps: {
-        showModalImportarUEs: true,
-        setShowModalImportarUEs: jest.fn(),
-      },
       outroRecursoPeriodo,
     });
 
@@ -179,10 +170,6 @@ describe("ModalImportarListaUes", () => {
     renderComponent({
       periodosMock,
       mutationMock: { mutateAsync, isPending: false },
-      contextProps: {
-        showModalImportarUEs: true,
-        setShowModalImportarUEs: jest.fn(),
-      },
       outroRecursoPeriodo,
       onSuccess,
     });

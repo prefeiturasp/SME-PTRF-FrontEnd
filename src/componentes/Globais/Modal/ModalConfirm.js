@@ -13,6 +13,7 @@ export function ModalConfirm({
   confirmText = "Confirmar",
   confirmButtonClass = "btn-success",
   onConfirm,
+  children = null
 }) {
 
 
@@ -41,7 +42,7 @@ export function ModalConfirm({
             <Modal.Title>{title}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <div dangerouslySetInnerHTML={{__html: message}}/>          
+          {message ? <div dangerouslySetInnerHTML={{__html: message}}/> : children}
         </Modal.Body>
         <Modal.Footer>
             <button data-qa={dataQa ? `${dataQa}-btn-${cancelText}` : ""} 

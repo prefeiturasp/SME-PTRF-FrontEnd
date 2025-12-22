@@ -44,18 +44,7 @@ export const Tabela = () => {
   };
 
   const handleEditFormModal = (rowData) => {
-    // setStateFormModal({
-    //     ...stateFormModal,
-    //     referencia: rowData.referencia,
-    //     data_inicial: rowData.data_inicial,
-    //     data_final: rowData.data_final,
-    //     editavel: rowData.editavel,
-    //     uuid: rowData.uuid,
-    //     id: rowData.id,
-    //     operacao: 'edit'
-    // });
     navigate(`/edicao-periodo-paa/${rowData.uuid}`);
-    // setShowModalForm(true)
   };
 
   const dataTemplate = (rowData, column) => {

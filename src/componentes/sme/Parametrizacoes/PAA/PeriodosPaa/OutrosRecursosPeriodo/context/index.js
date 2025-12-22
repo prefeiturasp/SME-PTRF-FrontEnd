@@ -29,9 +29,6 @@ export const OutrosRecursosPeriodosPaaContext = createContext({
     stateFormModal: initialStateFormModal,
     setStateFormModal: () => {},
 
-    showModalImportarUEs: false,
-    setShowModalImportarUEs: () => {},
-
 })
 
 export const OutrosRecursosPeriodosPaaProvider = ({children}) => {
