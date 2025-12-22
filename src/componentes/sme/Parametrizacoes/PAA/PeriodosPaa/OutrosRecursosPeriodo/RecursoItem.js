@@ -1,12 +1,23 @@
 import { useState, useEffect, useMemo } from "react";
-import { Row, Col, Typography, Switch, Card, Collapse, Spin } from "antd";
+import { Row, Col, Typography, Switch, Collapse, Spin, Divider, Button } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
 import { BadgeCustom } from "../../../../../Globais/BadgeCustom";
 import { useGetOutrosRecursosPeriodoPaa } from "./hooks/useGet";
 import { usePatchOutroRecursoPeriodo } from "./hooks/usePatch";
 import { usePostOutroRecursoPeriodo } from "./hooks/usePost";
-import { VincularUnidades } from "./VincularUnidades";
+import { VinculoUnidades } from "./../../../../../Globais/VincularUnidades";
+import { ImportarUnidades } from "./ImportarUnidades";
+import {
+    getUnidadesNaoVinculadasOutrosRecursosPeriodoPaa,
+    postVincularUnidadeOutrosRecursosPeriodoPaa,
+    postVincularUnidadeOutrosRecursosPeriodoPaaEmLote,
+
+    getUnidadesVinculadasOutrosRecursosPeriodoPaa,
+    postDesvincularUnidadeOutrosRecursosPeriodoPaa,
+    postDesvincularUnidadeOutrosRecursosPeriodoPaaEmLote,
+} from "../../../../../../services/sme/Parametrizacoes.service";
+
 import { toastCustom } from "../../../../../Globais/ToastCustom";
 
 export const RecursoItem = ({recurso, periodoUuid}) => {
@@ -26,6 +37,7 @@ export const RecursoItem = ({recurso, periodoUuid}) => {
         isLoading: isLoadingOutroRecursoPeriodo,
         refetch: refetchOutroRecursoPeriodo
     } = useGetOutrosRecursosPeriodoPaa(filtroOutroRecursoPeriodo)
+
     const outroRecursoPeriodo = outrosRecursosPeriodo?.results?.find(i => i.periodo_paa === periodoUuid && i.outro_recurso === recurso?.uuid)
     
     const mutationPatch = usePatchOutroRecursoPeriodo()
@@ -39,6 +51,14 @@ export const RecursoItem = ({recurso, periodoUuid}) => {
         mutationPost.isPending
     ,
     [mutationPatch.isPending, mutationPost.isPending])
+
+    const onVincularUnidades = ()=>{
+        refetchOutroRecursoPeriodo()
+    }
+
+    const onDesvincularUnidades = ()=>{
+        refetchOutroRecursoPeriodo()
+    }
 
     useEffect(() => {
         setStateOutroRecursoPeriodo(outroRecursoPeriodo || {})
@@ -153,11 +173,46 @@ export const RecursoItem = ({recurso, periodoUuid}) => {
         )
     }
 
-    const vinculoUnidades = () => {
+    const extraButtonFilters = <>
+        <ImportarUnidades outroRecursoPeriodo={outroRecursoPeriodo} />
+    </>
+
+    const headerUnidadesVinculadas = <div>
+        <Typography.Text level={5} strong>Unidades vinculadas ao {outroRecursoPeriodo?.outro_recurso_nome}</Typography.Text>
+    </div>
+
+    const headerVincularUnidades = <div>
+        <Typography.Text level={5} strong>Unidades não vinculadas ao {outroRecursoPeriodo?.outro_recurso_nome}</Typography.Text>
+    </div>;
+
+    const CollapseChildrenItemVinculoUnidades = () => {
         return (
-            <Spin spinning={isLoadingOutroRecursoPeriodo}>
-                <VincularUnidades outroRecursoPeriodo={stateOutroRecursoPeriodo} />
-            </Spin>
+            <div style={{ pointerEvents: 'all' /* mantem os componentes clicáveis (desativados no comportamento do Collapse) */ }}>
+                <Spin spinning={isLoadingOutroRecursoPeriodo}>
+                    <VinculoUnidades
+                        hooksKey={recurso?.uuid}
+                        instanceUUID={outroRecursoPeriodo?.uuid}
+                        instanceLabel={recurso?.nome}
+
+                        apiServiceGetUnidadesNaoVinculadas={getUnidadesNaoVinculadasOutrosRecursosPeriodoPaa}
+                        apiServiceVincularUnidade={postVincularUnidadeOutrosRecursosPeriodoPaa}
+                        apiServiceVincularUnidadeEmLote={postVincularUnidadeOutrosRecursosPeriodoPaaEmLote}
+
+                        apiServiceGetUnidadesVinculadas={getUnidadesVinculadasOutrosRecursosPeriodoPaa}
+                        apiServiceDesvincularUnidade={postDesvincularUnidadeOutrosRecursosPeriodoPaa}
+                        apiServiceDesvincularUnidadeEmLote={postDesvincularUnidadeOutrosRecursosPeriodoPaaEmLote}
+                        exibirUnidadesVinculadas={(outroRecursoPeriodo?.unidades||[]).length > 0}
+
+                        extraUnidadesVinculadasButtonFilters={null}
+                        extraVincularUnidadesButtonFilters={extraButtonFilters}
+                        headerUnidadesVinculadas={headerUnidadesVinculadas}
+                        headerVincularUnidades={headerVincularUnidades}
+
+                        onDesvincular={onDesvincularUnidades}
+                        onVincular={onVincularUnidades}
+                    />
+                </Spin>
+            </div>
         )
     }
 
@@ -165,7 +220,7 @@ export const RecursoItem = ({recurso, periodoUuid}) => {
         {
             key: recurso?.uuid,
             label: cardRecursoItem(),
-            children: vinculoUnidades(),
+            children: <CollapseChildrenItemVinculoUnidades />,
         },
     ];
         
@@ -174,7 +229,7 @@ export const RecursoItem = ({recurso, periodoUuid}) => {
         <Collapse
             collapsible="icon"
             className="mb-3"
-            style={{ background: "transparent", pointerEvents: 'none' }}
+            style={{ background: "transparent", pointerEvents: 'none'  }}
             expandIconPosition="end"
             expandIcon={({ isActive }) => stateOutroRecursoPeriodo?.uuid ? <FontAwesomeIcon style={
                 { fontSize: "18px", position: 'absolute', top: 25, right: 20, pointerEvents: 'all' }} 

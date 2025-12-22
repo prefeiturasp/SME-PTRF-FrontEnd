@@ -1,6 +1,5 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { ContasDasAssociacoes } from '..';
 import {
@@ -120,73 +119,6 @@ describe('Teste handleSubmitModalForm', () => {
         }
         getFiltrosDadosContasAssociacoes.mockResolvedValueOnce(mock_filtros);
     });
-
-    // it('teste criação sucesso', async() => {
-    //     const mock_contas_associacoes_full = { 
-    //         count: 21,
-    //         page: 1,
-    //         page_size: 20,
-    //         results: contasAssociacoes.slice(0, 20)};
-    //     getContasAssociacoesFiltros.mockResolvedValue(mock_contas_associacoes_full)
-    //     render(
-    //         <MemoryRouter initialEntries={["/parametro-contas-associacoes"]}>
-    //             <Route path="/parametro-contas-associacoes">
-    //                 <ContasDasAssociacoes />
-    //             </Route>
-    //         </MemoryRouter>
-    //     );
-
-    //     await waitFor(()=>{
-    //         const botaoAdicionar = screen.getByRole("button", { name: "Adicionar conta de associação" });
-    //         expect(botaoAdicionar).toBeInTheDocument();
-    //         expect(botaoAdicionar).toBeEnabled();
-    //         fireEvent.click(botaoAdicionar);
-    //         }
-    //     );
-
-    //     expect(screen.getByText("* Preenchimento obrigatório")).toBeInTheDocument();
-
-    //     const input_associacao = screen.getByLabelText("Associação *");
-    //     const input_tipo_conta = screen.getByLabelText("Tipos de conta *");
-    //     const input_status = screen.getByLabelText("Status *");
-    //     const input_data_inicio = screen.getByLabelText("Data de início *");
-    //     const input_banco = screen.getByLabelText("Banco");
-    //     const saveButton = screen.getByRole("button", { name: "Salvar" });
-
-    //     expect(input_associacao).toBeInTheDocument();
-    //     expect(input_associacao).toBeEnabled();
-    //     expect(input_tipo_conta).toBeInTheDocument();
-    //     expect(input_status).toBeInTheDocument();
-    //     expect(input_data_inicio).toBeInTheDocument();
-    //     expect(input_banco).toBeInTheDocument();
-    //     expect(input_banco).toBeEnabled();
-
-    //     expect(saveButton).toBeInTheDocument();
-    //     expect(saveButton).toBeEnabled();
-
-    //     fireEvent.change(input_associacao, { target: { value: "Assoc" } }); // Digitar um valor parcial ao populado
-    //     await waitFor(() => {
-    //         const associacaoSelecionada = screen.getByText("Associação 1", { selector: ".p-autocomplete-list-item"}); // buscar pelo título do elemento
-    //         expect(associacaoSelecionada).toBeInTheDocument();
-    //         fireEvent.click(associacaoSelecionada);
-    //     })
-    //     expect(input_associacao.value).toBe("Associação 1");
-    //     fireEvent.change(input_tipo_conta, { target: { value: "ba8b96ef-f05c-41f3-af10-73753490c542" } });
-    //     fireEvent.change(input_status, { target: { value: "ATIVA" } });
-
-    //     // Simular o click em uma Data
-    //     fireEvent.click(input_data_inicio); // clicar no campo data
-    //     const data = screen.getByText("10") // seleciona o dia 10
-    //     fireEvent.click(data); // clicar no dia
-
-    //     fireEvent.change(input_banco, { target: { value: "Santander" } });
-    //     fireEvent.click(saveButton);
-
-    //     await waitFor(()=>{
-    //         expect(postContasAssociacoes).toHaveBeenCalled();
-    //         expect(getContasAssociacoesFiltros).toHaveBeenCalledTimes(2);
-    //     });
-    // });
 
     it('teste criação falha duplicidade', async() => {
         postContasAssociacoes.mockRejectedValueOnce({response: {data: {non_field_errors: ["Esta conta de associacao já existe."]}}});

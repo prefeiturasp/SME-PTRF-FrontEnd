@@ -92,16 +92,13 @@ export const TextosPaa = () => {
         
         const textosPaaUe = ['texto_pagina_paa_ue', 'introducao_do_paa_ue_1', 'introducao_do_paa_ue_2', 'conclusao_do_paa_ue_1', 'conclusao_do_paa_ue_2'];
 
-        console.log("textosPaaUe", textosPaaUe);
-        console.log("tipoDeTexto", tipoDeTexto);
-        console.log("payload", payload);
         if (textosPaaUe.includes(tipoDeTexto)) {
             try {
                 await patchTextosPaaUe(payload);
                 toastCustom.ToastCustomSuccess('Edição do texto do PAA foi realizada com sucesso.', 'O texto do PAA foi editado no sistema com sucesso.')
                 await carregaTextos();
             } catch (e) {
-                console.log("Erro ao alterar texto ", e.response);
+                console.error("Erro ao alterar texto ", e.response);
                 toastCustom.ToastCustomError('Erro ao editar o texto do PAA.', 'O texto do PAA não foi editado.')
             }
         }

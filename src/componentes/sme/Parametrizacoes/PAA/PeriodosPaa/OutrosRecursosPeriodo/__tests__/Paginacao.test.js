@@ -1,99 +1,116 @@
-import React from 'react';
-import { render, fireEvent, waitFor, screen } from '@testing-library/react';
-import { Paginacao } from '../Paginacao';
-import { OutrosRecursosPeriodosPaaContext } from '../context/index';
-import * as useGetHook from '../hooks/useGet'; // para mockar o hook useGet
+import React from "react";
+import "@testing-library/jest-dom";
+import { render, screen, fireEvent } from "@testing-library/react";
+import { Paginacao } from "../Paginacao";
+import { useGetOutrosRecursos } from "../hooks/useGet";
+import { OutrosRecursosPeriodosPaaContext } from "../context/index";
 
-// jest.mock('primereact/paginator', () => ({
-//   Paginator: ({ onPageChange }) => (
-//     <button onClick={() => onPageChange({ page: 1, first: 10 })} data-testid="paginator">
-//       Próxima página
-//     </button>
-//   )
-// }));
+jest.mock("../hooks/useGet", () => ({
+  useGetOutrosRecursos: jest.fn(),
+}));
 
-describe('Paginacao component', () => {
-  // it('renderiza e executa onPageChange corretamente', () => {
-  //   const mockSetCurrentPage = jest.fn();
-  //   const mockSetFirstPage = jest.fn();
+jest.mock("antd", () => ({
+  Spin: ({ spinning, children }) => (
+    <div data-testid="spin" data-spinning={spinning}>
+      {children}
+    </div>
+  ),
+}));
 
-  //   // Mock do hook useGet
-  //   jest.spyOn(useGetHook, 'useGetOutrosRecursos').mockReturnValue({
-  //     isLoading: false,
-  //     total: true,
-  //     data: {
-  //       count: 50
-  //     }
-  //   });
-
-  //   const contextValues = {
-  //     setCurrentPage: mockSetCurrentPage,
-  //     setFirstPage: mockSetFirstPage,
-  //     firstPage: 0,
-  //     rowsPerPage: 10,
-  //   };
-
-  //   const { getByTestId } = render(
-  //     <OutrosRecursosPeriodosPaaContext.Provider value={contextValues}>
-  //       <Paginacao />
-  //     </OutrosRecursosPeriodosPaaContext.Provider>
-  //   );
-
-  //   const paginatorButton = getByTestId('paginator');
-  //   fireEvent.click(paginatorButton);
-
-  //   expect(mockSetCurrentPage).toHaveBeenCalledWith(2); // page 1 + 1
-  //   expect(mockSetFirstPage).toHaveBeenCalledWith(10);
-  // });
-
-  it('não renderiza se rowsperPage > count', async() => {
-    jest.spyOn(useGetHook, 'useGetOutrosRecursos').mockReturnValue({
-      isLoading: false,
-      total: 1,
-      data: {
-        count: 1
+jest.mock("primereact/paginator", () => ({
+  Paginator: ({ onPageChange }) => (
+    <button
+      data-testid="paginator"
+      onClick={() =>
+        onPageChange({
+          page: 1,
+          first: 10,
+        })
       }
-    });
+    >
+      paginator
+    </button>
+  ),
+}));
 
-    const contextValues = {
-      setCurrentPage: jest.fn(),
-      setFirstPage: jest.fn(),
-      firstPage: 0,
-      rowsPerPage: 10,
-    };
+const setCurrentPage = jest.fn();
+const setFirstPage = jest.fn();
 
-    render(
-      <OutrosRecursosPeriodosPaaContext.Provider value={contextValues}>
+const renderWithContext = ({
+  count = 0,
+  isLoading = false,
+  rowsPerPage = 10,
+} = {}) => {
+  return {
+    setCurrentPage,
+    setFirstPage,
+    ...render(
+      <OutrosRecursosPeriodosPaaContext.Provider
+        value={{
+          setCurrentPage,
+          setFirstPage,
+          firstPage: 0,
+          rowsPerPage,
+        }}
+      >
         <Paginacao />
       </OutrosRecursosPeriodosPaaContext.Provider>
-    );
+    ),
+  };
+};
 
-    const botaoPaginator = screen.queryByRole('button', { name: 'Page 2', selector: '.p-paginator-page' });
-    expect(botaoPaginator).not.toBeInTheDocument();
+describe("Paginacao", () => {
+  afterEach(() => {
+    jest.clearAllMocks();
   });
-  it('renderiza se rowsperPage <= count', async() => {
-    jest.spyOn(useGetHook, 'useGetOutrosRecursos').mockReturnValue({
+
+  it("não renderiza nada quando rowsPerPage >= count", () => {
+    useGetOutrosRecursos.mockReturnValue({
       isLoading: false,
-      total: 50,
-      data: {
-        count: 50
-      }
+      data: { count: 10, results: [] },
     });
 
-    const contextValues = {
-      setCurrentPage: jest.fn(),
-      setFirstPage: jest.fn(),
-      firstPage: 0,
-      rowsPerPage: 10,
-    };
+    const { container } = renderWithContext();
 
-    render(
-      <OutrosRecursosPeriodosPaaContext.Provider value={contextValues}>
-        <Paginacao />
-      </OutrosRecursosPeriodosPaaContext.Provider>
+    expect(container).toBeEmptyDOMElement();
+  });
+
+  it("renderiza Paginator quando rowsPerPage < count", () => {
+    useGetOutrosRecursos.mockReturnValue({
+      isLoading: false,
+      data: { count: 50 },
+    });
+
+    renderWithContext();
+
+    expect(screen.getByTestId("paginator")).toBeInTheDocument();
+  });
+
+  it("passa corretamente o estado de loading para o Spin", () => {
+    useGetOutrosRecursos.mockReturnValue({
+      isLoading: true,
+      data: { count: 50 },
+    });
+
+    renderWithContext();
+
+    expect(screen.getByTestId("spin")).toHaveAttribute(
+      "data-spinning",
+      "true"
     );
+  });
 
-    const botaoPaginator = screen.getByRole('button', { name: 'Page 2', selector: '.p-paginator-page' });
-    expect(botaoPaginator).toBeInTheDocument();
+  it("ao trocar a página chama setCurrentPage e setFirstPage corretamente", () => {
+    useGetOutrosRecursos.mockReturnValue({
+      isLoading: false,
+      data: { count: 50 },
+    });
+
+    renderWithContext();
+
+    fireEvent.click(screen.getByTestId("paginator"));
+
+    expect(setCurrentPage).toHaveBeenCalledWith(2); // page + 1
+    expect(setFirstPage).toHaveBeenCalledWith(10);
   });
 });
