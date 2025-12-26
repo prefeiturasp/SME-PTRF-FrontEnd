@@ -254,12 +254,12 @@ export const VincularUnidades = ({
                                 selection={selectedUnidades}
                                 onSelectionChange={(e) => setSelectedUnidades(e.value)}
                                 >
-                                <Column selectionMode="multiple" style={{ width: "3em" }} />
+                                <Column selectionMode="multiple" style={{ width: "3em", textAlign: 'center' }} />
                                 <Column
                                     field="codigo_eol"
-                                    header="Código Eol"
+                                    header="Código EOL"
                                     align="center"
-                                    style={{ width: "110px" }}
+                                    style={{ width: "110px" }}                                   
                                 />
                                 <Column
                                     field="nome_com_tipo"

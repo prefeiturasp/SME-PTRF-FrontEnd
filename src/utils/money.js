@@ -33,3 +33,15 @@ export const parseMoneyCentsBRL = (value) => {
 
   return isNaN(float) ? null : float;
 };
+
+export const parseMoneyBRLV2 = (value) => {
+  if (!value) return null;
+
+  const clean = value
+    .replace(/[^\d,.-]/g, "") // remove letras
+    .replace(/\./g, "")       // remove milhar
+    .replace(",", ".");       // vírgula → ponto
+
+  const number = Number(clean);
+  return isNaN(number) ? null : number;
+};
