@@ -650,7 +650,6 @@ export const CadastroFormFormik = ({
                                             onChange={(e) => {
                                                 props.handleChange(e);
                                                 aux.setaValoresCusteioCapital(e.target.value, values, setFieldValue);
-                                                aux.setValoresRateiosOriginal(e.target.value, values, setFieldValue);
                                             }}
                                             name='mais_de_um_tipo_despesa'
                                             id='mais_de_um_tipo_despesa'
@@ -751,7 +750,6 @@ export const CadastroFormFormik = ({
                                                                         aux.limpaTipoDespesaCusteio(setFieldValue, index)
                                                                         aux.handleAvisoCapital(e.target.value, setShowAvisoCapital);
                                                                         aux.setaValoresCusteioCapital(props.values.mais_de_um_tipo_despesa, values, setFieldValue);
-                                                                        aux.setValoresRateiosOriginal(props.values.mais_de_um_tipo_despesa, values, setFieldValue);
 
                                                                     }}
                                                                     name={`rateios[${index}].aplicacao_recurso`}
@@ -852,7 +850,7 @@ export const CadastroFormFormik = ({
                                                 )
                                             })}
 
-                                            {props.values.mais_de_um_tipo_despesa === "sim" &&
+                                            {props.values.mais_de_um_tipo_despesa === "sim" && 
                                                 <div className="d-flex  justify-content-start mt-3 mb-3">
                                                     <button
                                                         data-qa="cadastro-edicao-despesa-btn-adicionar-despesa-parcial"
@@ -862,8 +860,6 @@ export const CadastroFormFormik = ({
                                                         onChange={(e) => {
                                                             props.handleChange(e);
                                                             aux.handleAvisoCapital(e.target.value, setShowAvisoCapital);
-                                                            aux.setaValoresCusteioCapital(props.values.mais_de_um_tipo_despesa, values, setFieldValue);
-                                                            aux.setValoresRateiosOriginal(props.values.mais_de_um_tipo_despesa, values, setFieldValue);
                                                         }}
                                                         onClick={() => {
                                                             push(

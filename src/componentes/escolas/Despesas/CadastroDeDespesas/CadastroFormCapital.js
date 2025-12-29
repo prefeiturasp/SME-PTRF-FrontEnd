@@ -31,6 +31,7 @@ export const CadastroFormCapital = (propriedades) => {
     const handleChangeData = (quantidade, valor, setFieldValue) => {
         let val = calculaValorRateio(quantidade, trataNumericos(valor));
         setFieldValue(`rateios[${index}].valor_rateio`, val)
+        setFieldValue(`rateios[${index}].valor_original`, val)
     };
 
     const handleChangeQtdeItens = (valor, setFieldValue) => {
@@ -217,7 +218,7 @@ export const CadastroFormCapital = (propriedades) => {
                         prefix='R$'
                         decimalSeparator=","
                         thousandSeparator="."
-                        value={calculaValorRateio(rateio.valor_item_capital, rateio.quantidade_itens_capital)}
+                        value={rateio.valor_original}
                         name={`rateios[${index}].valor_original`}
                         id={`valor_original_form_capital_${index}`}
                         className={`${calculaValorRateio(rateio.valor_item_capital, rateio.quantidade_itens_capital) === 0 && verboHttp === "PUT" ? "is_invalid" : ""} ${calculaValorRateio(rateio.valor_item_capital, rateio.quantidade_itens_capital) === 0 && 'despesa_incompleta'} form-control`}
