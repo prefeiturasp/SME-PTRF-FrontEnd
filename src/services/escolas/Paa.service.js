@@ -84,6 +84,27 @@ export const postReceitasPrevistasPaa = async (payload) => {
     .data;
 };
 
+export const getReceitasPrevistasOutrosRecursosPeriodo = async (uuid, params = {}) => {
+  const response = await api.get(
+    `api/paa/${uuid}/outros-recursos-do-periodo`,
+    {
+      ...authHeader(),
+      params
+    }
+  );
+
+  return response.data;
+};
+
+export const postReceitasPrevistasOutrosRecursosPeriodo = async (payload) => {
+  return (await api.post(`api/receitas-previstas-outros-recursos-periodo/`, payload, authHeader()))
+    .data;
+};
+
+export const patchReceitasPrevistasOutrosRecursosPeriodo = async (uuid, payload) => {
+  return (await api.patch(`api/receitas-previstas-outros-recursos-periodo/${uuid}/`, payload, authHeader())).data;
+};
+
 export const patchReceitasPrevistasPaa = async (uuid, payload) => {
   return (
     await api.patch(
