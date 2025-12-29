@@ -116,14 +116,16 @@ const TabelaRecursosProprios = ({
   }, []);
 
   const formataValorRender = useCallback((campo, rowData) => {
+    const valorFormatado = formatMoneyBRL(rowData[campo]);
+
     return (
       <span
         style={{
           fontWeight: rowData.fixed ? "bold" : "normal",
-          fonSize: rowData.fixed ? "16px" : "14px",
+          fontSize: rowData.fixed ? "16px" : "14px",
         }}
       >
-        {rowData[campo] ? formatMoneyBRL(rowData[campo]) : "__"}
+        {valorFormatado !== null ? `R$ ${valorFormatado}` : "__"}
       </span>
     );
   }, []);

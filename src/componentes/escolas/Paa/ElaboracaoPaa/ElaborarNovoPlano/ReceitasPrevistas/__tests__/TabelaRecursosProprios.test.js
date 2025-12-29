@@ -1,23 +1,75 @@
 import React from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import TabelaRecursosProprios from "../TabelaRecursosProprios";
 
-jest.mock("../../../../../../../utils/money", () => ({
-  formatMoneyBRL: jest.fn((value) => `R$ ${value}`),
+jest.mock("../hooks/useGetReceitasPrevistasOutrosRecursosPeriodo", () => ({
+  useGetTodos: () => ({
+    isLoading: false,
+    data: [
+      {
+        uuid: "x1",
+        outro_recurso_objeto: {
+          nome: "Prêmio Excelência",
+          cor: "#111",
+          aceita_custeio: true,
+          aceita_capital: true,
+          aceita_livre_aplicacao: true,
+        },
+        receitas_previstas: [
+          {
+            previsao_valor_capital: 1000,
+            previsao_valor_custeio: 2000,
+            previsao_valor_livre: 3000,
+            saldo_capital: 1000,
+            saldo_custeio: 2000,
+            saldo_livre: 3000,
+          },
+        ],
+      },
+      {
+        uuid: "x2",
+        outro_recurso_objeto: {
+          nome: "Prêmio de Educação",
+          cor: "#222",
+          aceita_custeio: true,
+          aceita_capital: true,
+          aceita_livre_aplicacao: true,
+        },
+        receitas_previstas: [
+          {
+            previsao_valor_capital: 2000,
+            previsao_valor_custeio: 3000,
+            previsao_valor_livre: 4000,
+            saldo_capital: 1000,
+            saldo_custeio: 2000,
+            saldo_livre: 3000,
+          },
+        ],
+      },
+      {
+        uuid: "x3",
+        outro_recurso_objeto: {
+          nome: "Prêmio de Melhor escola",
+          cor: "#333",
+          aceita_custeio: true,
+          aceita_capital: true,
+          aceita_livre_aplicacao: true,
+        },
+        receitas_previstas: [],
+      },
+    ],
+  }),
 }));
 
-jest.mock(
-  "../../../../../../Globais/UI/Button/IconButton",
-  () => ({
-    IconButton: ({ onClick, "aria-label": ariaLabel }) => (
-      <button aria-label={ariaLabel} onClick={onClick}>
-        Editar
-      </button>
-    ),
-  })
-);
-
+jest.mock("../../../../../../Globais/UI/Button/IconButton", () => ({
+  IconButton: ({ onClick, "aria-label": ariaLabel }) => (
+    <button aria-label={ariaLabel} onClick={onClick}>
+      Editar
+    </button>
+  ),
+}));
 
 jest.mock("primereact/column", () => {
   const React = require("react");
@@ -40,11 +92,13 @@ jest.mock("primereact/datatable", () => {
             {value.map((row, rowIndex) => (
               <tr key={row.uuid || rowIndex}>
                 {columns.map((column, colIndex) => {
+                  if (!column?.props) return <td key={colIndex} />;
+
                   const { body, field } = column.props;
 
                   let content = null;
 
-                  if (body) {
+                  if (typeof body === "function") {
                     content = body(row, { rowIndex });
                   } else if (field) {
                     content = row[field];
@@ -61,6 +115,22 @@ jest.mock("primereact/datatable", () => {
   };
 });
 
+const createTestQueryClient = () =>
+  new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+    },
+  });
+
+const renderWithQueryClient = (ui) => {
+  const queryClient = createTestQueryClient();
+
+  return render(
+    <QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>
+  );
+};
 
 const renderComponent = (props = {}) => {
   const defaultProps = {
@@ -69,7 +139,9 @@ const renderComponent = (props = {}) => {
     handleOpenEditar: jest.fn(),
   };
 
-  return render(<TabelaRecursosProprios {...defaultProps} {...props} />);
+  return renderWithQueryClient(
+    <TabelaRecursosProprios {...defaultProps} {...props} />
+  );
 };
 
 describe("TabelaRecursosProprios", () => {
@@ -86,7 +158,7 @@ describe("TabelaRecursosProprios", () => {
   it("deve calcular e renderizar o total de saldos corretamente", () => {
     renderComponent();
 
-    expect(screen.getByText("R$ 21000")).toBeInTheDocument();
+    expect(screen.getByText("R$ 27.000,00")).toBeInTheDocument();
   });
 
   it("deve exibir '__' quando o campo for nulo", () => {
