@@ -178,11 +178,11 @@ export const RecursoItem = ({recurso, periodoUuid}) => {
     </>
 
     const headerUnidadesVinculadas = <div>
-        <Typography.Text level={5} strong>Unidades vinculadas ao {outroRecursoPeriodo?.outro_recurso_nome}</Typography.Text>
+        <Typography.Text level={5} strong>Unidades vinculadas ao {outroRecursoPeriodo?.outro_recurso_objeto?.nome}</Typography.Text>
     </div>
 
     const headerVincularUnidades = <div>
-        <Typography.Text level={5} strong>Unidades não vinculadas ao {outroRecursoPeriodo?.outro_recurso_nome}</Typography.Text>
+        <Typography.Text level={5} strong>Unidades não vinculadas ao {outroRecursoPeriodo?.outro_recurso_objeto?.nome}</Typography.Text>
     </div>;
 
     const CollapseChildrenItemVinculoUnidades = () => {
