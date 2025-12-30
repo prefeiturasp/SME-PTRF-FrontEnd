@@ -146,7 +146,6 @@ const mockMetodosAuxiliares = {
   mostraBotaoDeletar: jest.fn(() => true),
   ehOperacaoExclusao: jest.fn(() => false),
   setaValoresCusteioCapital: jest.fn(),
-  setValoresRateiosOriginal: jest.fn(),
   limpaTipoDespesaCusteio: jest.fn(),
   handleAvisoCapital: jest.fn(),
   onShowDeleteModal: jest.fn(),
