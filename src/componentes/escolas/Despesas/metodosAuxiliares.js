@@ -200,12 +200,6 @@ const setaValoresCusteioCapital = (mais_de_um_tipo_de_despesa = null, values, se
     }
 };
 
-const setValoresRateiosOriginal = (mais_de_um_tipo_de_despesa = null, values, setFieldValue) =>{
-    if (mais_de_um_tipo_de_despesa && mais_de_um_tipo_de_despesa === 'nao' ){
-        setFieldValue('rateios[0].valor_original', calculaValorOriginal(values));
-    }
-};
-
 const getErroValorOriginalRateios = (values) =>{
 
     let valor_ptfr_original;
@@ -504,7 +498,6 @@ export const metodosAuxiliares = {
     exibeDocumentoTransacao,
     setValorRealizado,
     setaValoresCusteioCapital,
-    setValoresRateiosOriginal,
     getErroValorOriginalRateios,
     getErroValorRealizadoRateios,
     onHandleChangeApenasNumero,

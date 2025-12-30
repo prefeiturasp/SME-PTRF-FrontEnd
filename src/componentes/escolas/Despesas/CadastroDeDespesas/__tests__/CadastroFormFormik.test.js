@@ -212,7 +212,6 @@ const createMockAux = (overrides = {}) => ({
   ehOperacaoExclusao: jest.fn(() => false),
   origemAnaliseLancamento: jest.fn(() => false),
   setaValoresCusteioCapital: jest.fn(),
-  setValoresRateiosOriginal: jest.fn(),
   limpaTipoDespesaCusteio: jest.fn(),
   handleAvisoCapital: jest.fn(),
   onShowDeleteModal: jest.fn(),
@@ -773,7 +772,6 @@ describe("Componente CadastroFormFormik", () => {
     fireEvent.change(select, { target: { value: "sim" } });
 
     expect(mockAux.setaValoresCusteioCapital).toHaveBeenCalled();
-    expect(mockAux.setValoresRateiosOriginal).toHaveBeenCalled();
   });
 
   it("deve chamar handleAvisoCapital ao alterar tipo de aplicação do recurso", () => {
