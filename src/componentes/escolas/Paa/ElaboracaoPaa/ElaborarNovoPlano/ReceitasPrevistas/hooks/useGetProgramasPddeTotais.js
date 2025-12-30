@@ -10,7 +10,7 @@ export const useGetProgramasPddeTotais = () => {
     refetch,
   } = useQuery({
     queryKey: ["programas-pdde-totais"],
-    queryFn: () => getProgramasPddeTotais(1000),
+    queryFn: () => getProgramasPddeTotais(),
     keepPreviousData: true,
     staleTime: 5000, // 5 segundos
     refetchOnWindowFocus: true, // Caso saia da aba e voltar ele refaz a requisição
