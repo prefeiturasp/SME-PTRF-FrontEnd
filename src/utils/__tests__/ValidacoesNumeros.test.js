@@ -22,6 +22,17 @@ describe("Ordinais", () => {
     });
 
     it("deve retornar a forma ordinal correta para números primários", () => {
+        expect(Ordinais(1)).toBe("Segunda");
+        expect(Ordinais(2)).toBe("Terceira");
+        expect(Ordinais(3)).toBe("Quarta");
+    });
+
+    it("deve retornar a forma ordinal correta para números de 0 a 9", () => {
         expect(Ordinais(0)).toBe("Primeira");
+        expect(Ordinais(4)).toBe("Quinta");
+        expect(Ordinais(5)).toBe("Sexta");
+        expect(Ordinais(6)).toBe("Sétima");
+        expect(Ordinais(7)).toBe("Oitava");
+        expect(Ordinais(8)).toBe("Nona");
     });
 });
