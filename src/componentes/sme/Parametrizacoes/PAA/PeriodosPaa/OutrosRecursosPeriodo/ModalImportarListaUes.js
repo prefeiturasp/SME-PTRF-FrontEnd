@@ -195,8 +195,7 @@ const ModalImportarListaUes = ({
                   unidade(s)
                 </b>{" "}
                 selecionadas ao recurso{" "}
-                <b className="texto-legenda-cor-4">
-                    {console.log(outroRecursoPeriodo)}
+                <b className="texto-legenda-cor-4">               
                   {outroRecursoPeriodo.outro_recurso_objeto.nome}
                 </b>
                 .
