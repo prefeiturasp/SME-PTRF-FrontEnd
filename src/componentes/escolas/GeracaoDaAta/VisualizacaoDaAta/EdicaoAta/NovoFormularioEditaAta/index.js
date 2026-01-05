@@ -87,6 +87,8 @@ export const NovoFormularioEditaAta = ({
 
   const associacaoUuid = localStorage.getItem(ASSOCIACAO_UUID);
 
+  const tentouCarregarComposicao = useRef(false);
+
   const sincronizaListaParticipantes = useCallback(
     (novaLista, { atualizarInitialValues = true } = {}) => {
       if (temProfessorGremio) {
@@ -147,6 +149,8 @@ export const NovoFormularioEditaAta = ({
 
         setListaParticipantes(listaComProfessor);
         sincronizaListaParticipantes(listaComProfessor);
+
+        tentouCarregarComposicao.current = true;
       } catch (error) {
         // Se a composição não existir (404), mostra erro
         // Se a composição existir mas estiver vazia, não mostra erro (permite selecionar a data)
@@ -167,6 +171,7 @@ export const NovoFormularioEditaAta = ({
       !listaPossuiParticipantesAssociacao(listaParticipantes);
 
     if (
+      !tentouCarregarComposicao.current &&
       precisaCarregarComposicao &&
       stateFormEditarAta &&
       stateFormEditarAta.data_reuniao &&
