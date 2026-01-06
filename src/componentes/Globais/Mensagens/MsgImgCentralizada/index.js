@@ -3,7 +3,7 @@ import "../../../../assets/img/img-404.svg"
 import "../../../../paginas/escolas/404/pagina-404.scss"
 
 export const MsgImgCentralizada = (props) => {
-    const {texto, img, dataQa='' } = props
+    const {texto, img, dataQa='', width } = props
     return(
         <div className="row justify-content-center container-404 mt-5">
             <div className="col-md-auto col-lg-7">
@@ -14,7 +14,7 @@ export const MsgImgCentralizada = (props) => {
 
             <div className="col-md-auto col-lg-12">
                 <div className="text-center">
-                    <img src={img} alt="" className="img-fluid"/>
+                    <img src={img} alt="" className="img-fluid" width={width}/>
                 </div>
             </div>
         </div>
