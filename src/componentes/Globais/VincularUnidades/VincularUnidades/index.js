@@ -81,7 +81,7 @@ export const VincularUnidades = ({
         const unidadeLabel = unidade.nome_com_tipo
         return <>
             <p style={{fontSize: "14px"}}>
-                Deseja realmente vincular unidade <span style={formatStyleTextModal}>{unidadeLabel}</span> ao <span style={formatStyleTextModal}>{instanceLabel}</span>?
+                Deseja realmente vincular unidade <span style={formatStyleTextModal}>{unidadeLabel}</span> ao recurso <span style={formatStyleTextModal}>{instanceLabel}</span>?
             </p>
         </>
     }
