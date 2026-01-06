@@ -3,6 +3,7 @@ import { Checkbox, Flex, Spin } from "antd";
 import { useGetReceitasPrevistas } from "./hooks/useGetReceitasPrevistas";
 import "./style.css";
 import ReceitasPrevistasModalForm from "./ReceitasPrevistasModalForm";
+import OutrosRecursosModalForm from "./OutrosRecursosModalForm";
 import { Icon } from "../../../../../Globais/UI/Icon";
 import DetalhamentoRecursosProprios from "../DetalhamentoRecursosProprios";
 import { useGetTotalizadorRecursoProprio } from "../DetalhamentoRecursosProprios/hooks/useGetTotalizarRecursoProprio";
@@ -38,6 +39,7 @@ const ReceitasPrevistas = ({ receitasDestino = null }) => {
     mapDestinoParaTab(receitasDestino)
   );
   const [modalForm, setModalForm] = useState({ open: false, data: null });
+  const [modalFormOutrosRecursos, setModalFormOutrosRecursos] = useState({ open: false, data: null });
   const [ showModalConfirmaPararAtualizacaoSaldo, setShowModalConfirmaPararAtualizacaoSaldo ] = useState(false)
 
   const {
@@ -75,6 +77,14 @@ const ReceitasPrevistas = ({ receitasDestino = null }) => {
   const handleCloseModalForm = () => {
     setModalForm({ open: false, data: null });
   };
+
+  const handleOpenEditarOutrosRecursos = useCallback((rowData) => {
+    setModalFormOutrosRecursos({open: true, data: rowData});
+  }, []);
+
+  const handleCloseOutrosRecursosModalForm = useCallback((rowData) => {
+    setModalFormOutrosRecursos({ open: false, data: null });
+  }, []);
 
   const carregaPaa = useCallback(async ()=>{
     setLoadingPaa(true);
@@ -129,6 +139,14 @@ const ReceitasPrevistas = ({ receitasDestino = null }) => {
           open={modalForm.open}
           acaoAssociacao={modalForm.data}
           onClose={handleCloseModalForm}
+        />
+      )}
+
+      {modalFormOutrosRecursos.open && (
+        <OutrosRecursosModalForm
+          open={modalFormOutrosRecursos.open}
+          data={modalFormOutrosRecursos.data}
+          onClose={handleCloseOutrosRecursosModalForm}
         />
       )}
 
@@ -208,6 +226,7 @@ const ReceitasPrevistas = ({ receitasDestino = null }) => {
               setActiveTab(TAB_DETALHAMENTO_RECURSOS_PROPRIOS)
             }
             totalRecursosProprios={totalRecursosProprios}
+            handleOpenEditar={handleOpenEditarOutrosRecursos}
           />
         </>
       ) : null}

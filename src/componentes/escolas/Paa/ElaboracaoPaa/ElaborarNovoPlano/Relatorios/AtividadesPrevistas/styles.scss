@@ -150,6 +150,7 @@
   font-weight: 600;
 }
 
+.btn-can-be-disabled:disabled,
 .atividades-previstas__salvar-botao:disabled,
 .atividades-previstas__salvar-botao:disabled:hover,
 .atividades-previstas__salvar-botao:disabled:focus {
@@ -157,4 +158,8 @@
   border-color: #a4a4a4 !important;
   color: #ffffff !important;
   cursor: not-allowed;
+}
+
+.btn-can-be-disabled:active, .btn-can-be-disabled:focus {
+    background: #00585E!important;
 }

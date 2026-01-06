@@ -39,6 +39,8 @@ export const OutrosRecursosPeriodosPaaProvider = ({children}) => {
     const [firstPage, setFirstPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [stateFormModal, setStateFormModal] = useState(initialStateFormModal);
+
+    const [showModalImportarUEs, setShowModalImportarUEs] = useState(false);
     
     const contextValue = useMemo(() => {
         return {
@@ -51,9 +53,12 @@ export const OutrosRecursosPeriodosPaaProvider = ({children}) => {
             firstPage,
             setFirstPage,
             stateFormModal,
-            setStateFormModal
+            setStateFormModal,
+
+            showModalImportarUEs, 
+            setShowModalImportarUEs,
         };
-    }, [filter, currentPage, firstPage, rowsPerPage, stateFormModal]);
+    }, [filter, currentPage, firstPage, rowsPerPage, stateFormModal, showModalImportarUEs]);
 
     return (
         <OutrosRecursosPeriodosPaaContext.Provider value={contextValue}>
