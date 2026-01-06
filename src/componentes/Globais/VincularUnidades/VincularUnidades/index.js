@@ -122,7 +122,7 @@ export const VincularUnidades = ({
         const selecao = `${qtde} unidade${qtde === 1 ? "" : "s"} selecionada${qtde === 1 ? "" : "s"}`;
         return <>
             <p style={{fontSize: "14px"}}>
-                Você está prestes a vincular <span style={formatStyleTextModal}>{selecao}</span> em <span style={formatStyleTextModal}>{instanceLabel}</span>.
+                Você está prestes a vincular <span style={formatStyleTextModal}>{selecao}</span> ao recurso <span style={formatStyleTextModal}>{instanceLabel}</span>.
             </p>
             <p>
                 Após confirmar, todas as unidades selecionadas terão acesso a ele, deseja prosseguir com a vinculação?
