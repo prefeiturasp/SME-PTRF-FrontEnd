@@ -313,7 +313,7 @@ export const ListaDeDespesas = () => {
             filtrosAtuais.data_inicio,
             filtrosAtuais.data_fim,
             filtrosAtuais.conta_associacao,
-            filtrosAtuais.vinculo_atividade,
+            filtrosAtuais.filtro_vinculo_atividades,
             filtrosAtuais.filtro_informacoes
         );
     
