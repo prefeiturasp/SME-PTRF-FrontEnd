@@ -350,6 +350,10 @@ export const patchAtividadesEstatutarias = async (uuid, payload) => {
   return (await api.patch(`/api/atividades-estatutarias/${uuid}/`, payload, authHeader())).data;
 };
 
+export const patchAtividadesEstatutariasOrdernar = async (uuid, destino_uuid) => {
+  return (await api.patch(`/api/atividades-estatutarias/${uuid}/ordenar/`, {destino: destino_uuid}, authHeader())).data;
+};
+
 export const deleteAtividadesEstatutarias = async (uuid) => {
   return await api.delete(`/api/atividades-estatutarias/${uuid}/`, authHeader());
 };

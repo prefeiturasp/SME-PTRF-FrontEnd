@@ -1,0 +1,13 @@
+.tabela-lista-atividades-estatutarias {
+  tr[draggable="true"] {
+    transform: scale(1.02);
+    box-shadow: 1px 1px 5px -1px rgba(0, 0, 0, 0.2);
+    transition: box-shadow 0.4s ease, transform 0.4s ease !important;
+  }
+}
+
+.box-explicativo {
+  border: 1px solid #00585d;
+  padding: 4px;
+  border-radius: 4px;
+}
