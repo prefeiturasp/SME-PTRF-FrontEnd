@@ -3,7 +3,6 @@ import { AtividadesEstatutariasProvider } from "./context/index";
 import { PaginasContainer } from "../../../../../paginas/PaginasContainer";
 import { TopoComBotoes } from "./TopoComBotoes";
 import { Tabela } from "./Tabela";
-import { Paginacao } from "./Paginacao";
 import { Filtros } from "./Filtros";
 
 export const AtividadesEstatutarias = () => {
@@ -15,8 +14,7 @@ export const AtividadesEstatutarias = () => {
                 <div className="page-content-inner">
                     <TopoComBotoes/>
                     <Filtros/>
-                    <Tabela/>
-                    <Paginacao/>
+                    <Tabela/>                   
                 </div>
             </PaginasContainer>
         </AtividadesEstatutariasProvider>   
