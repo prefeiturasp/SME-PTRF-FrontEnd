@@ -1,5 +1,6 @@
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Tabela } from "../Tabela";
 import { AtividadesEstatutariasContext } from "../context/index";
 import { useGet } from "../hooks/useGet";
@@ -7,8 +8,7 @@ import { useGetTabelas } from "../hooks/useGetTabelas";
 import { usePost } from "../hooks/usePost";
 import { usePatch } from "../hooks/usePatch";
 import { useDelete } from "../hooks/useDelete";
-import { ModalForm } from "../ModalForm";
-import { ModalConfirmarExclusao } from "../../../componentes/ModalConfirmarExclusao";
+import { usePatchOrdenar } from "../hooks/usePatchOrdenar";
 
 // Mock das hooks
 jest.mock("../hooks/useGet");
@@ -16,49 +16,61 @@ jest.mock("../hooks/useGetTabelas");
 jest.mock("../hooks/usePost");
 jest.mock("../hooks/usePatch");
 jest.mock("../hooks/useDelete");
+jest.mock("../hooks/usePatchOrdenar");
 
 const tabelas = {
   status: [
     { key: 1, value: "Ativo" },
     { key: 0, value: "Inativo" },
-  ]
+  ],
 };
 
 // Mock Form Modal para excluir
 jest.mock("../ModalForm", () => ({
   ModalForm: ({ handleSubmitFormModal }) => (
     <>
-      <div data-testid="modal-form-create"
-        onClick={() => handleSubmitFormModal && handleSubmitFormModal({
-          nome: "Novo",
-          status: "1",
-          uuid: null,
-          id: null
-        })}>
+      <div
+        data-testid="modal-form-create"
+        onClick={() =>
+          handleSubmitFormModal &&
+          handleSubmitFormModal({
+            nome: "Novo",
+            status: "1",
+            uuid: null,
+            id: null,
+          })
+        }
+      >
         ModalForm
       </div>
-      <div data-testid="modal-form-update"
-        onClick={() => handleSubmitFormModal && handleSubmitFormModal({
-          nome: "Teste",
-          status: "1",
-          uuid: "123",
-          id: 1
-        })}>
+      <div
+        data-testid="modal-form-update"
+        onClick={() =>
+          handleSubmitFormModal &&
+          handleSubmitFormModal({
+            nome: "Teste",
+            status: "1",
+            uuid: "123",
+            id: 1,
+          })
+        }
+      >
         ModalForm
       </div>
-      
     </>
   ),
 }));
+
 jest.mock("../../../componentes/ModalConfirmarExclusao", () => ({
   ModalConfirmarExclusao: ({ onOk, onCancel }) => (
     <>
-      <div data-testid="modal-form-delete"
-        onClick={() => onOk && onOk("123")}>
+      <div data-testid="modal-form-delete" onClick={() => onOk && onOk("123")}>
         ModalConfirmarExclusao
       </div>
-      <div data-testid="modal-form-delete-cancela"
-        onClick={() => onCancel && onCancel("123")}>
+      <div
+        data-testid="modal-form-delete-cancela"
+        onClick={() => onCancel && onCancel("123")}
+      >
         ModalConfirmarExclusao Cancela
       </div>
     </>
@@ -69,21 +81,25 @@ const mockMutationPostMutate = jest.fn();
 const mockMutationPatchMutate = jest.fn();
 const mockMutationDeleteMutate = jest.fn();
 
+const mockMutationPatchOrdenar = {
+  mutateAsync: jest.fn(),
+};
+
 const mockEdit = {
   id: 1,
   nome: "Teste 1",
   status: 1,
   uuid: "123",
   operacao: "edit",
-}
+};
 
 const mockCreate = {
-  id: '',
+  id: "",
   nome: "",
   status: 0,
   uuid: "",
   operacao: "create",
-}
+};
 
 const contexto = {
   setShowModalForm: jest.fn(),
@@ -92,7 +108,31 @@ const contexto = {
   setBloquearBtnSalvarForm: jest.fn(),
   handleEditFormModal: jest.fn(),
   handleExcluir: jest.fn(),
-}
+};
+
+const createTestQueryClient = () =>
+  new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+      mutations: {
+        retry: false,
+      },
+    },
+  });
+
+const renderWithProviders = (ui, contextValue = contexto) => {
+  const queryClient = createTestQueryClient();
+
+  return render(
+    <QueryClientProvider client={queryClient}>
+      <AtividadesEstatutariasContext.Provider value={contextValue}>
+        {ui}
+      </AtividadesEstatutariasContext.Provider>
+    </QueryClientProvider>
+  );
+};
 
 describe("Tabela", () => {
   beforeEach(() => {
@@ -117,35 +157,36 @@ describe("Tabela", () => {
     useDelete.mockReturnValue({
       mutationDelete: { mutate: mockMutationDeleteMutate },
     });
+
+    usePatchOrdenar.mockReturnValue({
+      mutationPatch: mockMutationPatchOrdenar,
+    });
   });
 
   it("deve renderizar o loading", () => {
-    
     useGet.mockReturnValue({
       isLoading: true,
       data: { results: [mockEdit] },
-    })
-    render(
-      <AtividadesEstatutariasContext.Provider value={contexto}>
-        <Tabela />
-      </AtividadesEstatutariasContext.Provider>
-    );
+    });
+    renderWithProviders(<Tabela />);
     expect(screen.getByText("Carregando...")).toBeInTheDocument();
   });
 
   it("deve renderizar a tabela com dados", () => {
-    
     useGet.mockReturnValue({
       isLoading: false,
       data: { results: [mockEdit] },
       total: 1,
-    })
-    render(
-      <AtividadesEstatutariasContext.Provider
-        value={{...contexto, stateFormModal: mockEdit}}>
+    });
+
+    renderWithProviders(
+      <>
         <Tabela />
-        <ModalForm handleSubmitFormModal={jest.fn()} />
-      </AtividadesEstatutariasContext.Provider>
+      </>,
+      {
+        ...contexto,
+        stateFormModal: mockEdit,
+      }
     );
     expect(screen.getByText(mockEdit.nome)).toBeInTheDocument();
   });
@@ -155,73 +196,85 @@ describe("Tabela", () => {
       isLoading: false,
       data: { results: [] },
     });
-
-    render(
-      <AtividadesEstatutariasContext.Provider
-        value={{...contexto, stateFormModal: mockCreate}}>
+    renderWithProviders(
+      <>
         <Tabela />
-      </AtividadesEstatutariasContext.Provider>
+      </>,
+      {
+        ...contexto,
+        stateFormModal: mockCreate,
+      }
     );
-
-    expect(screen.getByText("Nenhum resultado encontrado.")).toBeInTheDocument();
+    expect(
+      screen.getByText("Nenhum resultado encontrado.")
+    ).toBeInTheDocument();
   });
 
   it("deve abrir o modal de edição quando clicar no botão editar", async () => {
-    
-    render(
-      <AtividadesEstatutariasContext.Provider
-        value={{...contexto, stateFormModal: mockEdit}}>
+    renderWithProviders(
+      <>
         <Tabela />
-      </AtividadesEstatutariasContext.Provider>
+      </>,
+      {
+        ...contexto,
+        stateFormModal: mockEdit,
+      }
     );
 
-    const editButton = screen.getByRole("button", { selector: "btn-editar-membro" });
+    const editButton = screen.getByRole("button", {
+      selector: "btn-editar-membro",
+    });
     fireEvent.click(editButton);
 
-    expect(screen.getAllByRole("button", { selector: ".btn-editar-membro" })).toHaveLength(1);
+    expect(
+      screen.getAllByRole("button", { selector: ".btn-editar-membro" })
+    ).toHaveLength(1);
     expect(contexto.setStateFormModal).toHaveBeenCalledWith(mockEdit);
     expect(contexto.setShowModalForm).toHaveBeenCalledWith(true);
-
   });
 
   it("deve abrir o modal de visualização quando clicar no botão visualizar", async () => {
-    
-    render(
-      <AtividadesEstatutariasContext.Provider
-        value={{...contexto, stateFormModal: {...mockEdit}}}>
+    renderWithProviders(
+      <>
         <Tabela />
-      </AtividadesEstatutariasContext.Provider>
+      </>,
+      { ...contexto, stateFormModal: { ...mockEdit } }
     );
 
-    const editButton = screen.getByRole("button", { selector: ".btn-visualizar-periodo" });
+    const editButton = screen.getByRole("button", {
+      selector: ".btn-visualizar-periodo",
+    });
     fireEvent.click(editButton);
 
     expect(contexto.setStateFormModal).toHaveBeenCalledWith(mockEdit);
     expect(contexto.setShowModalForm).toHaveBeenCalledWith(true);
-
   });
 
   it("deve abrir o modal de edição quando clicar no botão editar", async () => {
     useGet.mockReturnValue({
       isLoading: false,
-      data: { results: [{...mockEdit}] },
+      data: { results: [{ ...mockEdit }] },
     });
-    render(
-      <AtividadesEstatutariasContext.Provider
-        value={{...contexto}}>
+
+    renderWithProviders(
+      <>
         <Tabela />
-      </AtividadesEstatutariasContext.Provider>
+      </>,
+      contexto
     );
-    expect(screen.getAllByRole("button", { selector: ".btn-visualizar-membro" })).toHaveLength(1);
-    
+
+    expect(
+      screen.getAllByRole("button", { selector: ".btn-visualizar-membro" })
+    ).toHaveLength(1);
   });
 
   it("Deve chamar mutationPost.mutate quando handleSubmitFormModal for chamado", async () => {
-    render(
-      <AtividadesEstatutariasContext.Provider value={contexto}>
+    renderWithProviders(
+      <>
         <Tabela />
-      </AtividadesEstatutariasContext.Provider>
-    )
+      </>,
+      { ...contexto }
+    );
 
     const modalForm = screen.getByTestId("modal-form-create");
     fireEvent.click(modalForm);
@@ -229,7 +282,9 @@ describe("Tabela", () => {
     expect(contexto.setBloquearBtnSalvarForm).toHaveBeenCalledTimes(1);
     expect(contexto.setBloquearBtnSalvarForm).toHaveBeenCalledWith(true);
     expect(mockMutationPostMutate).toHaveBeenCalledTimes(1);
-    expect(mockMutationPostMutate).toHaveBeenCalledWith({ payload: { nome: "Novo", status: "1" } });
+    expect(mockMutationPostMutate).toHaveBeenCalledWith({
+      payload: { nome: "Novo", status: "1" },
+    });
     expect(mockMutationPatchMutate).not.toHaveBeenCalled();
   });
 
@@ -239,11 +294,11 @@ describe("Tabela", () => {
       data: { results: [mockEdit] },
     });
 
-    render(
-      <AtividadesEstatutariasContext.Provider
-        value={{ ...contexto, stateFormModal: mockEdit }}>
+    renderWithProviders(
+      <>
         <Tabela />
-      </AtividadesEstatutariasContext.Provider>
+      </>,
+      { ...contexto, stateFormModal: mockEdit }
     );
 
     const modalForm = screen.getByTestId("modal-form-update");
@@ -251,11 +306,14 @@ describe("Tabela", () => {
     const payload = {
       nome: "Teste",
       status: "1",
-    }
+    };
     expect(contexto.setBloquearBtnSalvarForm).toHaveBeenCalledTimes(1);
     expect(contexto.setBloquearBtnSalvarForm).toHaveBeenCalledWith(true);
     expect(mockMutationPatchMutate).toHaveBeenCalledTimes(1);
-    expect(mockMutationPatchMutate).toHaveBeenCalledWith({ uuid: "123", payload: payload });
+    expect(mockMutationPatchMutate).toHaveBeenCalledWith({
+      uuid: "123",
+      payload: payload,
+    });
   });
 
   it("Deve chamar mutationDelete.mutate quando Excluir for chamado", async () => {
@@ -264,11 +322,11 @@ describe("Tabela", () => {
       data: { results: [mockEdit] },
     });
 
-    render(
-      <AtividadesEstatutariasContext.Provider
-        value={{ ...contexto, stateFormModal: mockEdit }}>
+    renderWithProviders(
+      <>
         <Tabela />
-      </AtividadesEstatutariasContext.Provider>
+      </>,
+      { ...contexto, stateFormModal: mockEdit }
     );
 
     const modalForm = screen.getByTestId("modal-form-delete");
@@ -284,11 +342,11 @@ describe("Tabela", () => {
       data: { results: [mockEdit] },
     });
 
-    render(
-      <AtividadesEstatutariasContext.Provider
-        value={{ ...contexto, stateFormModal: {...mockEdit, uuid: null} }}>
+    renderWithProviders(
+      <>
         <Tabela />
-      </AtividadesEstatutariasContext.Provider>
+      </>,
+      { ...contexto, stateFormModal: { ...mockEdit, uuid: null } }
     );
 
     const modalForm = screen.getByTestId("modal-form-delete");
@@ -304,18 +362,29 @@ describe("Tabela", () => {
       data: { results: [mockEdit] },
     });
 
-    render(
-      <AtividadesEstatutariasContext.Provider
-        value={{ ...contexto, stateFormModal: {...mockEdit, uuid: null} }}>
+    renderWithProviders(
+      <>
         <Tabela />
-      </AtividadesEstatutariasContext.Provider>
+      </>,
+      { ...contexto, stateFormModal: { ...mockEdit, uuid: null } }
     );
 
     const modalForm = screen.getByTestId("modal-form-delete-cancela");
     fireEvent.click(modalForm);
 
     expect(contexto.setShowModalConfirmacaoExclusao).toHaveBeenCalledTimes(1);
-    expect(contexto.setShowModalConfirmacaoExclusao).toHaveBeenCalledWith(false);
+    expect(contexto.setShowModalConfirmacaoExclusao).toHaveBeenCalledWith(
+      false
+    );
   });
 
+  it("deve renderizar a tabela com reorder habilitado", () => {
+    const { container } = renderWithProviders(<Tabela />);
+
+    const tabela = container.querySelector(
+      ".p-datatable-reorderable-rows, .p-datatable"
+    );
+
+    expect(tabela).toBeInTheDocument();
+  });
 });
