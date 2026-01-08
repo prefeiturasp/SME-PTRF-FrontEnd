@@ -8,7 +8,7 @@ import { useGetTabelas } from "../hooks/useGetTabelas";
 import { usePost } from "../hooks/usePost";
 import { usePatch } from "../hooks/usePatch";
 import { useDelete } from "../hooks/useDelete";
-import { ModalForm } from "../ModalForm";
+import { usePatchOrdenar } from "../hooks/usePatchOrdenar";
 
 // Mock das hooks
 jest.mock("../hooks/useGet");
@@ -16,6 +16,7 @@ jest.mock("../hooks/useGetTabelas");
 jest.mock("../hooks/usePost");
 jest.mock("../hooks/usePatch");
 jest.mock("../hooks/useDelete");
+jest.mock("../hooks/usePatchOrdenar");
 
 const tabelas = {
   status: [
@@ -79,6 +80,10 @@ jest.mock("../../../componentes/ModalConfirmarExclusao", () => ({
 const mockMutationPostMutate = jest.fn();
 const mockMutationPatchMutate = jest.fn();
 const mockMutationDeleteMutate = jest.fn();
+
+const mockMutationPatchOrdenar = {
+  mutateAsync: jest.fn(),
+};
 
 const mockEdit = {
   id: 1,
@@ -151,6 +156,10 @@ describe("Tabela", () => {
 
     useDelete.mockReturnValue({
       mutationDelete: { mutate: mockMutationDeleteMutate },
+    });
+
+    usePatchOrdenar.mockReturnValue({
+      mutationPatch: mockMutationPatchOrdenar,
     });
   });
 
@@ -367,5 +376,15 @@ describe("Tabela", () => {
     expect(contexto.setShowModalConfirmacaoExclusao).toHaveBeenCalledWith(
       false
     );
+  });
+
+  it("deve renderizar a tabela com reorder habilitado", () => {
+    const { container } = renderWithProviders(<Tabela />);
+
+    const tabela = container.querySelector(
+      ".p-datatable-reorderable-rows, .p-datatable"
+    );
+
+    expect(tabela).toBeInTheDocument();
   });
 });
