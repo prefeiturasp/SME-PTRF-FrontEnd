@@ -1,3 +1,5 @@
+@use "../../../../../assets/css/variaveis";
+
 .tabela-lista-atividades-estatutarias {
   tr[draggable="true"] {
     transform: scale(1.02);
@@ -7,7 +9,10 @@
 }
 
 .box-explicativo {
-  border: 1px solid #00585d;
+  border: 1px solid variaveis.$mainColor;
+  background-color: rgba(variaveis.$mainColor, 0.02);
   padding: 4px;
   border-radius: 4px;
+  display: flex;
+  align-items: center;
 }

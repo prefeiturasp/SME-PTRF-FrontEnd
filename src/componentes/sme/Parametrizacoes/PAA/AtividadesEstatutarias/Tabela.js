@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
-import { Tooltip } from "antd";
+import { Spin, Tooltip } from "antd";
 import { IconButton } from "../../../../Globais/UI";
 import Loading from "../../../../../utils/Loading";
 import { AtividadesEstatutariasContext } from "./context/index";
@@ -131,6 +131,10 @@ export const Tabela = () => {
       {results && results.length > 0 ? (
         <div className="p-2">
           <div className="box-explicativo mb-2 mt-2">
+            <i
+              className="pi pi-exclamation-circle mr-1"
+              style={{ fontSize: "18px" }}
+            ></i>
             <span>
               <b>Arrastar e Soltar:</b> Clique e arraste o ícone ao lado de cada
               atividade para reposicioná-la na ordem desejada.
@@ -145,33 +149,39 @@ export const Tabela = () => {
               estatutária{total === 1 ? "" : "s"}
             </p>
           ) : null}
-          <DataTable
-            value={results}
-            reorderableRows
-            onRowReorder={onRowReorder}
-            loading={isLoading}
-            className="tabela-lista-atividades-estatutarias"
-            data-qa="tabela-lista-atividades-estatutarias"
-          >
-            <Column
-              rowReorder
-              style={{ width: "3em", padding: "0.4rem .4rem 0.4rem .8rem" }}
-            />
-            <Column field="ordem" header="Orderm" />
-            <Column
-              field="tipo_label"
-              header="Tipo da atividade"
-              style={{ width: "200px" }}
-            />
-            <Column field="nome" header="Atividade Estatutária" />
-            <Column field="mes_label" header="Mês" style={{ width: "130px" }} />
-            <Column
-              field="acao"
-              header="Ação"
-              body={acoesTemplate}
-              style={{ width: "100px", justifyItems: "center" }}
-            />
-          </DataTable>
+
+          <Spin spinning={isLoading}>
+            <DataTable
+              value={results}
+              reorderableRows
+              onRowReorder={onRowReorder}
+              className="tabela-lista-atividades-estatutarias"
+              data-qa="tabela-lista-atividades-estatutarias"
+            >
+              <Column
+                rowReorder
+                style={{ width: "3em", padding: "0.4rem .4rem 0.4rem .8rem" }}
+              />
+              <Column field="ordem" header="Orderm" />
+              <Column
+                field="tipo_label"
+                header="Tipo da atividade"
+                style={{ width: "200px" }}
+              />
+              <Column field="nome" header="Atividade Estatutária" />
+              <Column
+                field="mes_label"
+                header="Mês"
+                style={{ width: "130px" }}
+              />
+              <Column
+                field="acao"
+                header="Ação"
+                body={acoesTemplate}
+                style={{ width: "100px", justifyItems: "center" }}
+              />
+            </DataTable>
+          </Spin>
         </div>
       ) : (
         <MsgImgCentralizada
