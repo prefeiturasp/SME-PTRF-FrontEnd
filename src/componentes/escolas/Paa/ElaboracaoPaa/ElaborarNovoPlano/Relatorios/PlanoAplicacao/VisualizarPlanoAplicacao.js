@@ -1,5 +1,5 @@
 import { Typography } from "antd";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { formatMoneyBRL } from "../../../../../../../utils/money";
 import { useGetPrioridadesRelatorio } from "./hooks/useGetPrioridadesRelatorio";
@@ -12,13 +12,17 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit } from "@fortawesome/free-solid-svg-icons";
 const { Text } = Typography;
 
-const columnsDefinition = () => [
+const columnsDefinition = (ehOutrosRecursos = false) => [
   {
-    title: "Ação",
+    title: !ehOutrosRecursos ? "Ação" : "Recursos",
     dataIndex: "acao",
     key: "acao",
     render: (_, record) => (
-      <Text>{record.isTotal ? "TOTAL" : record.acao || "-"}</Text>
+      <Text>
+        {record.isTotal
+          ? "TOTAL"
+          : record.acao || record?.outro_recurso_objeto?.nome || "-"}
+      </Text>
     ),
     width: 200,
   },
@@ -65,7 +69,13 @@ export const VisualizarPlanoAplicacao = () => {
   const navigate = useNavigate();
   const { isFetching, prioridades, isError } = useGetPrioridadesRelatorio();
 
-  const columns = useMemo(() => columnsDefinition(), []);
+  const columns = useCallback((grupo) => {
+    const ehOutrosRecursos = [
+      "prioridades-outros-recursos",
+      "nao-prioridades-outros-recursos",
+    ].includes(grupo.key);
+    return columnsDefinition(ehOutrosRecursos);
+  }, []);
 
   const grupos = useMemo(() => {
     const configuracoes = [
@@ -80,9 +90,11 @@ export const VisualizarPlanoAplicacao = () => {
         filtro: (item) => item.prioridade && item.recurso === "PDDE",
       },
       {
-        key: "prioridades-recurso-proprio",
-        titulo: "Prioridades Recursos próprios",
-        filtro: (item) => item.prioridade && item.recurso === "RECURSO_PROPRIO",
+        key: "prioridades-outros-recursos",
+        titulo: "Prioridades Outros Recursos",
+        filtro: (item) =>
+          item.prioridade &&
+          ["RECURSO_PROPRIO", "OUTRO_RECURSO"].includes(item.recurso),
       },
       {
         key: "nao-prioridades-ptrf",
@@ -95,38 +107,73 @@ export const VisualizarPlanoAplicacao = () => {
         filtro: (item) => !item.prioridade && item.recurso === "PDDE",
       },
       {
-        key: "nao-prioridades-recurso-proprio",
-        titulo: "Não Prioridades Recursos próprios",
-        filtro: (item) => !item.prioridade && item.recurso === "RECURSO_PROPRIO",
+        key: "nao-prioridades-outros-recursos",
+        titulo: "Não Prioridades Outros Recursos",
+        filtro: (item) =>
+          !item.prioridade &&
+          ["RECURSO_PROPRIO", "OUTRO_RECURSO"].includes(item.recurso),
       },
     ];
 
-    return configuracoes.map((config) => {
-      const itens = prioridades.filter(config.filtro);
-      if (!itens.length) {
-        return null;
-      }
-      const total = itens.reduce(
-        (acc, item) => acc + (item.valor_total ? Number(item.valor_total) : 0),
-        0
-      );
+    return configuracoes
+      .map((config) => {
+        const itens = prioridades.filter(config.filtro);
+        if (!itens.length) {
+          return null;
+        }
+        const total = itens.reduce(
+          (acc, item) =>
+            acc + (item.valor_total ? Number(item.valor_total) : 0),
+          0
+        );
 
-      const dados = [
-        ...itens,
-        {
-          key: `${config.key}-total`,
-          isTotal: true,
-          prioridade: true,
-          valor_total: total,
-        },
-      ];
+        const ehOutrosRecursos = [
+          "prioridades-outros-recursos",
+          "nao-prioridades-outros-recursos",
+        ].includes(config.key);
 
-      return {
-        ...config,
-        dados,
-      };
-    }).filter(Boolean);
+        let itensDataLista = itens;
+
+        if (ehOutrosRecursos) {
+          const primeiroDaLista = itensDataLista.filter(
+            (i) => i.recurso === "RECURSO_PROPRIO"
+          )[0];
+          const listaRecursoProprio = itensDataLista
+            .filter((i) => i.recurso === "OUTRO_RECURSO")
+            .sort((a, b) =>
+              a.outro_recurso_objeto.nome.localeCompare(
+                b.outro_recurso_objeto.nome,
+                "pt-BR",
+                { sensitivity: "base" }
+              )
+            );
+
+          itensDataLista = listaRecursoProprio;
+
+          if (primeiroDaLista) {
+            itensDataLista = [primeiroDaLista, ...itensDataLista];
+          }
+        }
+
+        const dados = [
+          ...itensDataLista,
+          {
+            key: `${config.key}-total`,
+            isTotal: true,
+            prioridade: true,
+            valor_total: total,
+          },
+        ];
+
+        return {
+          ...config,
+          dados,
+        };
+      })
+      .filter(Boolean);
   }, [prioridades]);
+
+  console.log("grupos: ", grupos);
 
   const handleVoltar = () => {
     navigate("/elaborar-novo-paa", {
@@ -158,7 +205,7 @@ export const VisualizarPlanoAplicacao = () => {
         <RelatorioTabelaGrupo
           key={grupo.key}
           title={grupo.titulo}
-          columns={columns}
+          columns={columns(grupo)}
           dataSource={grupo.dados}
           rowKey={(record) => record.uuid || record.key}
           tableProps={{
@@ -204,7 +251,10 @@ export const VisualizarPlanoAplicacao = () => {
           className="btn btn-success relatorio-plano-aplicacao__edit-button"
           onClick={handleEditarInformacoes}
         >
-          <FontAwesomeIcon icon={faEdit} className="relatorio-plano-aplicacao__edit-icon" />
+          <FontAwesomeIcon
+            icon={faEdit}
+            className="relatorio-plano-aplicacao__edit-icon"
+          />
           Editar informações
         </button>
       }
@@ -214,4 +264,3 @@ export const VisualizarPlanoAplicacao = () => {
     </RelatorioVisualizacao>
   );
 };
-
