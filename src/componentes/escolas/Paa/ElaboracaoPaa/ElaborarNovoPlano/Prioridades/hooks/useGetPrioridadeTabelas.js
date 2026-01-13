@@ -21,6 +21,7 @@ export const useGetPrioridadeTabelas = () => {
     prioridadesTabelas: data.prioridades,
     recursos: data.recursos,
     tipos_aplicacao: data.tipos_aplicacao,
+    outros_recursos: data.outros_recursos,
     error,
     refetch
   };

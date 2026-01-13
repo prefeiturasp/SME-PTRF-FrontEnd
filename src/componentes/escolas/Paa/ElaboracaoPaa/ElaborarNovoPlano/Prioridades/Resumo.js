@@ -17,20 +17,25 @@ export const Resumo = () => {
         const isPDDE = record.recurso === 'PDDE Total' || record.parent === 'PDDE';
         // Se for Recursos proprios ou filho de Recursos próprios, aplica a cor de RECURSO_PROPRIO
         const isRECURSO_PROPRIO = record.recurso === 'Recursos Próprios' || record.parent === 'RECURSO_PROPRIO';
+
         
         const CORES = {
             'PTRF': '#2B7D83',
             'PDDE': '#5151CF',
-            'RECURSO_PROPRIO': '#870051'
+            'RECURSO_PROPRIO': '#870051',
+            'OUTRO_RECURSO': '#870051'
         }
         // Define o índice da cor de acordo com o recurso e aplica no dicionário CORES
-        const tipoRecursoLinha = (
-            isPTRF ? 'PTRF' : (
-                isPDDE ? 'PDDE' : (
-                    isRECURSO_PROPRIO ? 'RECURSO_PROPRIO' : ''
-                )
-            )
-        );
+        const tipoRecursoLinha = isPTRF
+        ? 'PTRF'
+        : isPDDE
+            ? 'PDDE'
+            : isRECURSO_PROPRIO
+            ? 'RECURSO_PROPRIO'
+            : record.key === 'OUTRO_RECURSO'
+                ? 'OUTRO_RECURSO'
+                : '';
+
         const consideraNegrito = (
             // Considera negrito os recursos do primeiro e terceiro nível
             [0,2].includes(record.level) ||
@@ -39,7 +44,7 @@ export const Resumo = () => {
         );
         return (
             <span style={{
-                color: CORES[tipoRecursoLinha] || '#333333',
+                color: CORES[tipoRecursoLinha] || record.cor || '#333333',
                 fontWeight: consideraNegrito ? 'bold' : 'normal',
                 paddingLeft: `${record.level * 15}px`, // px por nível
                 // manter a quebra de linha identada à primeira linha (aplicação do padding acima)
@@ -195,8 +200,8 @@ export const Resumo = () => {
         /**
          * Função para definir o nível de cada linha
          * Isso facilita o controle de lógicas de cada nível para regras de negócio (cores, expandir, etc)
-         * level = 0: Recursos Próprios, PDDE Total e PTRF Total
-         * level = 1: itens de cada level 0 (Recursos Próprios, PDDE Total e PTRF Total)
+         * level = 0: Outros Recursos, PDDE Total e PTRF Total
+         * level = 1: itens de cada level 0 (Outros Recursos, PDDE Total e PTRF Total)
          * level = 2: resumo de valores de level 1 (receita, despesas previstas e saldo)
          */
         const niveis = nodes.map((node) => {
@@ -207,26 +212,7 @@ export const Resumo = () => {
             return newNode;
         });
 
-        // Considerar regra de negócio, exclusivamente, para não exibir itens de Recursos Próprios separadamente
-        // Agrupado pelo backend, em uma mesma linha chamada Total de Recursos Próprios
-        // Porém, para que não seja exibido na tabela com uma label redundante em relação ao titulo de level 0
-        // esta implementação oculta os filhos de Recursos Próprios, exibindo apenas os dados de valores
-        // do resumo de Recursos Próprios (receita, despesas previstas e saldo)
-        // Lógica aplicada após a definição do nível, para considerar o level correto (level 2)
-        const customDataSource = niveis
-            .map(item => {
-                const isRecursoProprio = (item.level === 0 && item.recurso === 'Recursos Próprios')
-                if (isRecursoProprio) {
-                    const filhosDiretos = item.children || [];
-                    return {
-                        ...item,
-                        children: filhosDiretos.flatMap(filho => filho.children || []),
-                    };
-                }
-                return item;
-            });
-
-        return customDataSource
+        return niveis
     };
 
     const overrideTableHeader = (props) => {

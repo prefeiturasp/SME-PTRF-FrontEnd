@@ -11,6 +11,7 @@ import {
   formatMoneyByCentsBRL,
   parseMoneyBRL,
 } from "../../../../../../utils/money";
+import { RECURSOS_PRIORIDADE } from "../../../../../../constantes/prioridades";
 
 
 const ModalFormAdicionarPrioridade = ({ open, onClose, tabelas, formModal, focusValor=false, focusAcao=false }) => {
@@ -48,10 +49,22 @@ const ModalFormAdicionarPrioridade = ({ open, onClose, tabelas, formModal, focus
     label: item.value
   })) : [];
 
-  const recursosOptions = Array.isArray(tabelas?.recursos) ? tabelas.recursos.map(item => ({
-    value: item.key,
-    label: item.value
-  })) : [];
+  const recursosOptions = [
+    ...(Array.isArray(tabelas?.recursos)
+      ? tabelas.recursos.filter((item) => item.key !== "OUTRO_RECURSO").map(item => ({
+          value: item.key,
+          label: item.value,
+        }))
+      : []),
+
+    ...(Array.isArray(tabelas?.outros_recursos)
+      ? tabelas.outros_recursos.map(item => ({
+          value: item.uuid,
+          label: item.nome,
+          parent: "OUTRO_RECURSO"
+        }))
+      : []),
+  ];
 
   const tiposAplicacaoOptions = Array.isArray(tabelas?.tipos_aplicacao) ? tabelas.tipos_aplicacao.map(item => ({
     value: item.key,
@@ -111,6 +124,19 @@ const ModalFormAdicionarPrioridade = ({ open, onClose, tabelas, formModal, focus
     label: item.descricao
   })) : [];
 
+  const getRecurso = (recurso) => {
+    const recursosPadrao = [
+      RECURSOS_PRIORIDADE.PTRF,
+      RECURSOS_PRIORIDADE.PDDE,
+      RECURSOS_PRIORIDADE.RECURSO_PROPRIO,
+    ]
+    if (!recursosPadrao.includes(recurso)){
+      return RECURSOS_PRIORIDADE.OUTRO_RECURSO
+    } else {
+      return recurso
+    }
+  };
+
   const onSubmit = async (values) => {
     try {
       const validationSchema = createValidationSchema(selectedRecurso, selectedTipoAplicacao);
@@ -122,6 +148,8 @@ const ModalFormAdicionarPrioridade = ({ open, onClose, tabelas, formModal, focus
         paa: localStorage.getItem("PAA"),
         ...values,
         ...(values.tipo_despesa_custeio && { tipo_despesa_custeio: tiposDespesaCusteioUuid.uuid }),
+        outro_recurso: getRecurso(values.recurso) === RECURSOS_PRIORIDADE.OUTRO_RECURSO ? values.recurso : null,
+        recurso: getRecurso(values.recurso),
         valor_total: values.valor_total / 100
       };
       if(formModal?.uuid){
@@ -229,7 +257,8 @@ const ModalFormAdicionarPrioridade = ({ open, onClose, tabelas, formModal, focus
         acao_associacao: formModal?.acao_associacao || undefined,
         acao_pdde: formModal?.acao_pdde || undefined,
         programa_pdde: formModal?.programa_pdde || undefined,
-        recurso: formModal?.recurso || undefined,
+        recurso: formModal?.recurso === RECURSOS_PRIORIDADE.OUTRO_RECURSO ? formModal?.outro_recurso : formModal?.recurso || undefined,
+        outro_recurso: formModal?.outro_recurso, 
         tipo_aplicacao: formModal?.tipo_aplicacao || undefined,
         tipo_despesa_custeio: tipo_despesa_custeio_id?.id || undefined,
         especificacao_material: formModal?.especificacao_material || undefined,

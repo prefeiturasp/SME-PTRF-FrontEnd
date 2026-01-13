@@ -3,6 +3,7 @@ import { Form, Row, Col, Select, Flex } from 'antd';
 import { useGetAcoesAssociacao } from '../ReceitasPrevistas/hooks/useGetAcoesAssociacao';
 import { useGetAcoesPDDE } from './hooks/useGetAcoesPDDE';
 import { useGetEspecificacoes } from './hooks/useGetEspecificacoes';
+import { RECURSOS_PRIORIDADE } from '../../../../../../constantes/prioridades';
 
 export const FormFiltros = ({
   tabelas= {},
@@ -36,10 +37,22 @@ export const FormFiltros = ({
     label: item.value
   }));
 
-  const recursosOptions = (tabelas?.recursos||[]).map(item => ({
-    value: item.key,
-    label: item.value
-  }));
+  const recursosOptions = [
+    ...(Array.isArray(tabelas?.recursos)
+      ? tabelas.recursos.filter((item) => item.key !== "OUTRO_RECURSO").map(item => ({
+          value: item.key,
+          label: item.value,
+        }))
+      : []),
+
+    ...(Array.isArray(tabelas?.outros_recursos)
+      ? tabelas.outros_recursos.map(item => ({
+          value: item.uuid,
+          label: item.nome,
+          parent: "OUTRO_RECURSO"
+        }))
+      : []),
+  ];
 
   const tiposAplicacaoOptions = (tabelas?.tipos_aplicacao||[]).map(item => ({
     value: item.key,
@@ -105,6 +118,19 @@ export const FormFiltros = ({
 
   const handleToggleFiltros = () => setShowAll(prev => !prev);
 
+  const ehOutroRecurso = (recurso) => {
+    const recursosPadrao = [
+      RECURSOS_PRIORIDADE.PTRF,
+      RECURSOS_PRIORIDADE.PDDE,
+      RECURSOS_PRIORIDADE.RECURSO_PROPRIO,
+    ]
+    if (!recursosPadrao.includes(recurso)){
+      return RECURSOS_PRIORIDADE.OUTRO_RECURSO
+    } else {
+      return recurso
+    }
+  };
+  
   const handleRecursoChange = (value) => {
     setSelectedRecurso(value);
     setSelectedProgramaPdde('');
@@ -118,7 +144,8 @@ export const FormFiltros = ({
       especificacao_material: undefined
     });
 
-    onFiltrosChange('recurso', value);
+    onFiltrosChange('outro_recurso__uuid', ehOutroRecurso(value) ===  RECURSOS_PRIORIDADE.OUTRO_RECURSO ? value : null);
+    onFiltrosChange('recurso', ehOutroRecurso(value));
   };
 
   const handleProgramaPddeChange = (value) => {
