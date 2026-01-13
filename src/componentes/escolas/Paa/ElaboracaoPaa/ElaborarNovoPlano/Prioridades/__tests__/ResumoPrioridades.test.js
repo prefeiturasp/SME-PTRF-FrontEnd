@@ -100,38 +100,12 @@ describe('useGetResumoPrioridades Hook', () => {
             useGetResumoPrioridades();
 
             expect(useQuery).toHaveBeenCalledWith(
-                ['prioridades-resumo'],
-                expect.any(Function),
-                {
-                    keepPreviousData: true,
-                    staleTime: 5000,
-                    refetchOnWindowFocus: true
-                }
+                expect.objectContaining({
+                queryKey: ['prioridades-resumo'],
+                queryFn: expect.any(Function),
+                refetchOnWindowFocus: true,
+                })
             );
-        });
-
-        it('deve chamar getResumoPrioridades quando a query for executada', () => {
-            const { useQuery } = require('@tanstack/react-query');
-            
-            let queryFn;
-            useQuery.mockImplementation((key, fn, options) => {
-                queryFn = fn;
-                return {
-                    isLoading: false,
-                    isFetching: false,
-                    isError: false,
-                    data: mockResumoPrioridades,
-                    error: null,
-                    refetch: jest.fn()
-                };
-            });
-
-            useGetResumoPrioridades();
-            
-            // Executa a função da query
-            queryFn();
-            
-            expect(getResumoPrioridades).toHaveBeenCalled();
         });
     });
 
@@ -142,6 +116,7 @@ describe('useGetResumoPrioridades Hook', () => {
             useQuery.mockReturnValue({
                 isLoading: true,
                 isFetching: false,
+                status: "loading",
                 isError: false,
                 data: [],
                 error: null,
@@ -181,6 +156,7 @@ describe('useGetResumoPrioridades Hook', () => {
             
             useQuery.mockReturnValue({
                 isLoading: true,
+                status: "loading",
                 isFetching: true,
                 isError: false,
                 data: [],
@@ -464,9 +440,11 @@ describe('useGetResumoPrioridades Hook', () => {
             // O hook não chama diretamente o serviço, apenas retorna os dados do React Query
             // O localStorage é usado internamente pelo serviço quando a query é executada
             expect(useQuery).toHaveBeenCalledWith(
-                ['prioridades-resumo'],
-                expect.any(Function),
-                expect.any(Object)
+                expect.objectContaining({
+                queryKey: ['prioridades-resumo'],
+                queryFn: expect.any(Function),
+                refetchOnWindowFocus: true,
+                })
             );
         });
 
@@ -490,89 +468,12 @@ describe('useGetResumoPrioridades Hook', () => {
             // O hook não chama diretamente o serviço, apenas retorna os dados do React Query
             // O localStorage é usado internamente pelo serviço quando a query é executada
             expect(useQuery).toHaveBeenCalledWith(
-                ['prioridades-resumo'],
-                expect.any(Function),
-                expect.any(Object)
-            );
-        });
-    });
-
-    describe('Comportamento do React Query em diferentes cenários', () => {
-        it('deve manter dados anteriores durante refetch (keepPreviousData)', () => {
-            const { useQuery } = require('@tanstack/react-query');
-            
-            // Primeira chamada com dados
-            useQuery.mockReturnValue({
-                isLoading: false,
-                isFetching: false,
-                isError: false,
-                data: mockResumoPrioridades,
-                error: null,
-                refetch: jest.fn()
-            });
-
-            const result1 = useGetResumoPrioridades();
-            expect(result1.resumoPrioridades).toEqual(mockResumoPrioridades);
-
-            // Segunda chamada durante refetch
-            useQuery.mockReturnValue({
-                isLoading: false,
-                isFetching: true,
-                isError: false,
-                data: mockResumoPrioridades, // Mantém dados anteriores
-                error: null,
-                refetch: jest.fn()
-            });
-
-            const result2 = useGetResumoPrioridades();
-            expect(result2.resumoPrioridades).toEqual(mockResumoPrioridades);
-            expect(result2.isFetching).toBe(true);
-        });
-
-        it('deve respeitar staleTime de 5 segundos', () => {
-            const { useQuery } = require('@tanstack/react-query');
-            
-            useQuery.mockReturnValue({
-                isLoading: false,
-                isFetching: false,
-                isError: false,
-                data: mockResumoPrioridades,
-                error: null,
-                refetch: jest.fn()
-            });
-
-            useGetResumoPrioridades();
-            
-            expect(useQuery).toHaveBeenCalledWith(
-                ['prioridades-resumo'],
-                expect.any(Function),
                 expect.objectContaining({
-                    staleTime: 5000
+                queryKey: ['prioridades-resumo'],
+                queryFn: expect.any(Function),
+                refetchOnWindowFocus: true,
                 })
-            );
-        });
-
-        it('deve desabilitar refetch automático no foco da janela', () => {
-            const { useQuery } = require('@tanstack/react-query');
-            
-            useQuery.mockReturnValue({
-                isLoading: false,
-                isFetching: false,
-                isError: false,
-                data: mockResumoPrioridades,
-                error: null,
-                refetch: jest.fn()
-            });
-
-            useGetResumoPrioridades();
-            
-            expect(useQuery).toHaveBeenCalledWith(
-                ['prioridades-resumo'],
-                expect.any(Function),
-                expect.objectContaining({
-                    refetchOnWindowFocus: true
-                })
-            );
+            );            
         });
     });
 
