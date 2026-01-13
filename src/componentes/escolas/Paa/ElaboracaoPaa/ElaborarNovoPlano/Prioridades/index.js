@@ -35,7 +35,7 @@ const Prioridades = () => {
   const [modalForm, setModalForm] = useState({ open: false, tabelas: null, formModal: null });
   const [modalExclusao, setModalExclusao] = useState({ open: false, item: null, tipo: 'individual' });
   const tabelaRef = useRef(null);
-  const { prioridadesTabelas, recursos, tipos_aplicacao } = useGetPrioridadeTabelas();
+  const { prioridadesTabelas, recursos, tipos_aplicacao, outros_recursos } = useGetPrioridadeTabelas();
   const { tipos_despesa_custeio } = useGetTiposDespesaCusteio();
   const { isFetching: isLoadingPrioridades, prioridades, quantidade, refetch } = useGetPrioridades(filtros, currentPage);
 
@@ -55,7 +55,8 @@ const Prioridades = () => {
     prioridades: prioridadesTabelas,
     recursos: recursos,
     tipos_aplicacao: tipos_aplicacao,
-    tipos_despesa_custeio: tipos_despesa_custeio
+    tipos_despesa_custeio: tipos_despesa_custeio,
+    outros_recursos:  outros_recursos
   }
 
   const onPageChange = (event) => {
