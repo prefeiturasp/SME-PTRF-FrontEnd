@@ -57,7 +57,8 @@ describe('ModalFormAdicionarPrioridade', () => {
       recursos: [
         { key: 'PTRF', value: 'PTRF' },
         { key: 'PDDE', value: 'PDDE' },
-        { key: 'recursos_proprios', value: 'Recursos Próprios' },
+        { key: 'RECURSO_PROPRIO', value: 'Recursos Próprios' },
+        { key: 'UUID-premio', value: 'Prêmio de Excelência' },
       ],
       tipos_aplicacao: [
         { key: 'CUSTEIO', value: 'Custeio' },
@@ -67,6 +68,9 @@ describe('ModalFormAdicionarPrioridade', () => {
         { id: 1, nome: 'Tipo 1', uuid: 'uuid-1' },
         { id: 2, nome: 'Tipo 2', uuid: 'uuid-2' },
       ],
+      outros_recursos: [
+        { uuid: 'UUID-premio', nome: 'Prêmio de Excelência'},
+      ]
     };
 
     // Mock do hook de ações da associação
@@ -323,6 +327,78 @@ describe('ModalFormAdicionarPrioridade', () => {
         expect(mockMutate).toHaveBeenCalled();
       });
     });
+
+    it('deve criar prioridade OUTRO_RECURSO', async () => {
+      const mockMutate = jest.fn();
+      usePostPrioridade.mockReturnValue({
+        mutationPost: {
+          mutate: mockMutate,
+          isLoading: false,
+        },
+      });
+
+      renderComponent();
+
+      let acaoSelect = null;
+      let antSelectTrigger = null;
+
+      const prioridadeSelect = screen.getByLabelText('Prioridade *');
+      antSelectTrigger = prioridadeSelect.closest('.ant-select').querySelector('.ant-select-selector');
+      fireEvent.mouseDown(antSelectTrigger);
+
+      await waitFor(() => {
+        const allPrioridadesElements = screen.getAllByText('Sim');
+        const prioridadeOptionElement = allPrioridadesElements.find(el => 
+          el.classList.contains('ant-select-item-option-content')
+        );
+        fireEvent.click(prioridadeOptionElement);
+      });
+
+      const recursoSelect = screen.getByLabelText('Recurso *');
+      antSelectTrigger = recursoSelect.closest('.ant-select').querySelector('.ant-select-selector');
+      fireEvent.mouseDown(antSelectTrigger);
+
+      await waitFor(() => {
+        const allElements = screen.getAllByText('Prêmio de Excelência');
+        const ptrfOptionElement = allElements.find(el => 
+          el.classList.contains('ant-select-item-option-content')
+        );
+        fireEvent.click(ptrfOptionElement);
+      });
+
+      const tipoAplicacaoSelect = screen.getByLabelText('Tipo de aplicação *');
+      antSelectTrigger = tipoAplicacaoSelect.closest('.ant-select').querySelector('.ant-select-selector');
+      fireEvent.mouseDown(antSelectTrigger);
+
+      await waitFor(() => {
+        const allTiposAplicacaoElements = screen.getAllByText('Capital');
+        const tipoAplicacaoOptionElement = allTiposAplicacaoElements.find(el => 
+          el.classList.contains('ant-select-item-option-content')
+        );
+        fireEvent.click(tipoAplicacaoOptionElement);
+      });
+
+      
+      const especificacaoMaterialInput = screen.getByLabelText('Especificação do Bem, Material ou Serviço *');
+      antSelectTrigger = especificacaoMaterialInput.closest('.ant-select').querySelector('.ant-select-selector');
+      fireEvent.mouseDown(antSelectTrigger);
+
+      await waitFor(() => {
+        const allEspecificacoesElements = screen.getAllByText('Especificação 1');
+        const especificacaoOptionElement = allEspecificacoesElements.find(el => 
+          el.classList.contains('ant-select-item-option-content')
+        );
+        fireEvent.click(especificacaoOptionElement);
+      });
+
+      fireEvent.change(document.getElementById("valor_total"), { target: { value: 1001 } });
+
+      fireEvent.submit(screen.getByRole("form"));
+
+      await waitFor(() => {
+        expect(mockMutate).toHaveBeenCalled();
+      });
+    });    
 
     it('deve chamar patch ao alterar um registro', async () => {
       const mockMutate = jest.fn();

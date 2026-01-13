@@ -232,7 +232,8 @@ export const postImportarPrioridades = async (uuid_paa_atual, uuid_paa_anterior,
 
 // Prioridades
 export const getPrioridadesTabelas = async () => {
-  return (await api.get(`api/prioridades-paa/tabelas/`, authHeader())).data;
+  let queryString = `?paa__uuid=${localStorage.getItem("PAA")}`;  
+  return (await api.get(`api/prioridades-paa/tabelas/${queryString}`, authHeader())).data;
 };
 
 export const getPrioridades = async (filtros, page=1, page_size=20) => {
