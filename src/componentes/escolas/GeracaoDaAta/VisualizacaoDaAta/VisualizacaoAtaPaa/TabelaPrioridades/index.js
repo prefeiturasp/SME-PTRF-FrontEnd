@@ -7,6 +7,8 @@ export const TabelaPrioridades = ({ titulo, prioridades, total }) => {
   }
 
   const getRecurso = (prioridade) => {
+    console.log('prioridade: ', prioridade)
+
     // Para PTRF
     if (prioridade?.acao_associacao_objeto?.nome) {
       return prioridade.acao_associacao_objeto.nome;
@@ -23,10 +25,18 @@ export const TabelaPrioridades = ({ titulo, prioridades, total }) => {
         return prioridade.acao_pdde_objeto.nome;
       }
     }
+    //Outros recursos
+    if(prioridade?.recurso === "OUTRO_RECURSO" || prioridade?.recurso_tipo === "OUTRO_RECURSO") {        
+        return prioridade?.outro_recurso_objeto?.nome;
+    }
+    
     // Para Recursos Próprios
     if (prioridade?.recurso === "RECURSO_PROPRIO" || prioridade?.recurso_tipo === "RECURSO_PROPRIO") {
       return "Recursos Próprios";
     }
+
+    
+    
     return "-";
   };
 
