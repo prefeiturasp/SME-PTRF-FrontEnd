@@ -135,9 +135,9 @@ export const VisualizarPlanoAplicacao = () => {
         let itensDataLista = itens;
 
         if (ehOutrosRecursos) {
-          const primeiroDaLista = itensDataLista.filter(
+          const primeirosDaLista = itensDataLista.filter(
             (i) => i.recurso === "RECURSO_PROPRIO"
-          )[0];
+          );
           const listaRecursoProprio = itensDataLista
             .filter((i) => i.recurso === "OUTRO_RECURSO")
             .sort((a, b) =>
@@ -150,8 +150,8 @@ export const VisualizarPlanoAplicacao = () => {
 
           itensDataLista = listaRecursoProprio;
 
-          if (primeiroDaLista) {
-            itensDataLista = [primeiroDaLista, ...itensDataLista];
+          if (primeirosDaLista.length) {
+            itensDataLista = [...primeirosDaLista, ...itensDataLista];
           }
         }
 
@@ -172,8 +172,6 @@ export const VisualizarPlanoAplicacao = () => {
       })
       .filter(Boolean);
   }, [prioridades]);
-
-  console.log("grupos: ", grupos);
 
   const handleVoltar = () => {
     navigate("/elaborar-novo-paa", {
