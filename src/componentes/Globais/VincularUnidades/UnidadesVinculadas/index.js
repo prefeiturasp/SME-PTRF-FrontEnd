@@ -295,16 +295,18 @@ export const UnidadesVinculadas = ({
     <>
     {exibirUnidadesVinculadas &&
         <>
-        <div style={{ display: "flex", alignItems: "center", gap: "16px", marginBottom: "16px" }}>
+        <div style={{ marginBottom: "16px" }}>
             { header }
             {apiServiceDesvincularUnidadeEmLote && (
-                <Checkbox
-                    checked={vincularTodas}
-                    onChange={handleVincularTodasChange}
-                    disabled={mutationDesvincularUnidadeEmLote?.isPending || isLoadingUnidadesVinculadas}
-                >
-                    <strong>Todas as unidades</strong>
-                </Checkbox>
+                <div style={{ marginTop: "8px" }}>
+                    <Checkbox
+                        checked={vincularTodas}
+                        onChange={handleVincularTodasChange}
+                        disabled={mutationDesvincularUnidadeEmLote?.isPending || isLoadingUnidadesVinculadas}
+                    >
+                        Todas as unidades
+                    </Checkbox>
+                </div>
             )}
         </div>
 
