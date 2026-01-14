@@ -144,8 +144,13 @@ export const FormFiltros = ({
       especificacao_material: undefined
     });
 
-    onFiltrosChange('outro_recurso__uuid', ehOutroRecurso(value) ===  RECURSOS_PRIORIDADE.OUTRO_RECURSO ? value : null);
-    onFiltrosChange('recurso', ehOutroRecurso(value));
+    if(value && ehOutroRecurso(value) ===  RECURSOS_PRIORIDADE.OUTRO_RECURSO) {
+      onFiltrosChange('outro_recurso__uuid', value);
+    } else {
+      onFiltrosChange('outro_recurso__uuid', undefined);
+    }
+
+    onFiltrosChange('recurso', value ? ehOutroRecurso(value) : null);
   };
 
   const handleProgramaPddeChange = (value) => {
