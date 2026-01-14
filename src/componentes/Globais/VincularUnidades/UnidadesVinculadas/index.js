@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { Spin, Button, Tooltip } from "antd";
+import { Spin, Button, Tooltip, Checkbox } from "antd";
 import { faPlusCircle, faTimesCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -37,6 +37,7 @@ export const UnidadesVinculadas = ({
     const rowsPerPage = 10
     
     const [selectedUnidades, setSelectedUnidades] = useState([]);
+    const [vincularTodas, setVincularTodas] = useState(false);
 
     const formatStyleTextModal = { color: "#00585E", fontWeight: "bold" };
 
@@ -75,7 +76,10 @@ export const UnidadesVinculadas = ({
     
     const mutationDesvincularUnidadeEmLote = useDesvincularUnidadeEmLote(
         apiServiceDesvincularUnidadeEmLote,
-        onDesvincular
+        () => {
+            setVincularTodas(true);
+            onDesvincular();
+        }
     );
 
     const textoModalDesvincularUnidade = (unidade) => {
@@ -145,6 +149,74 @@ export const UnidadesVinculadas = ({
             onConfirm: () => handleDesvincularEmLote(uuids),
         });
     };
+
+    const textoModalDesvincularTodas = () => {
+        return <>
+            <p style={{fontSize: "14px"}}>
+                Você está prestes a vincular <span style={formatStyleTextModal}>todas as unidades</span> ao recurso <span style={formatStyleTextModal}>{instanceLabel}</span>.
+            </p>
+            <p>
+                Ao marcar "Vincular todas", todas as unidades terão vínculo com este recurso. Deseja prosseguir?
+            </p>
+        </>
+    }
+
+    const handleDesvincularTodas = async () => {
+        try {
+            const response = await apiServiceGetUnidadesVinculadas(instanceUUID, { 
+                pagination: 'false'
+            });
+            const todasUnidadesLista = response?.results || [];
+            const uuids = todasUnidadesLista.map((unidade) => unidade.uuid);
+            
+            if (uuids.length === 0) {
+                setVincularTodas(true);
+                return;
+            }
+            mutationDesvincularUnidadeEmLote.mutate({uuid: instanceUUID, unidade_uuids: uuids});
+        } catch (error) {
+            console.error("Erro ao buscar unidades vinculadas:", error);
+        }
+    };
+
+    const handleConfirmarDesvincularTodas = () => {
+        const textoModal = textoModalDesvincularTodas();
+        ModalConfirm({
+            dispatch,
+            title: "Confirmação de vinculação",
+            children: <>{textoModal}</>,
+            cancelText: "Cancelar",
+            confirmText: "Confirmar vinculação",
+            confirmButtonClass: "btn-success",
+            dataQa: "modal-confirmar-desvincular-todas",
+            onConfirm: () => {
+                handleDesvincularTodas();
+            },
+            onCancel: () => {
+                setVincularTodas(unidadesVinculadas?.count === 0);
+            },
+        });
+    };
+
+    const handleVincularTodasChange = (e) => {
+        const checked = e.target.checked;
+        if (checked) {
+            handleConfirmarDesvincularTodas();
+        } else {
+            if (unidadesVinculadas?.count === 0) {
+                return;
+            }
+            setVincularTodas(false);
+        }
+    };
+
+    useEffect(() => {
+        if (unidadesVinculadas?.count === 0) {
+            setVincularTodas(true);
+        } else {
+            setVincularTodas(false);
+        }
+    }, [unidadesVinculadas?.count]);
 
     const unidadeEscolarTemplate = (rowData) => {
         return (
@@ -223,7 +295,20 @@ export const UnidadesVinculadas = ({
     <>
     {exibirUnidadesVinculadas &&
         <>
-        { header }
+        <div style={{ marginBottom: "16px" }}>
+            { header }
+            {apiServiceDesvincularUnidadeEmLote && (
+                <div style={{ marginTop: "8px" }}>
+                    <Checkbox
+                        checked={vincularTodas}
+                        onChange={handleVincularTodasChange}
+                        disabled={mutationDesvincularUnidadeEmLote?.isPending || isLoadingUnidadesVinculadas}
+                    >
+                        Todas as unidades
+                    </Checkbox>
+                </div>
+            )}
+        </div>
 
         <Filtros
             filtros={filtros}
