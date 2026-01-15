@@ -48,27 +48,29 @@ const valoresCategorias = {
   },
   saldo: (receitas, despesas) => {
     // Calcula saldos brutos
-    const saldo_custeio_bruto = numero(receitas.custeio) - numero(despesas.custeio);
-    const saldo_capital_bruto = numero(receitas.capital) - numero(despesas.capital);
+    const saldo_custeio_bruto =
+      numero(receitas.custeio) - numero(despesas.custeio);
+    const saldo_capital_bruto =
+      numero(receitas.capital) - numero(despesas.capital);
     const saldo_livre_bruto = numero(receitas.livre) - numero(despesas.livre);
-    
+
     // Se custeio ficar negativo, deduz do saldo de livre aplicação
     let saldo_custeio_final = saldo_custeio_bruto;
     let saldo_livre_final = saldo_livre_bruto;
-    
+
     if (saldo_custeio_bruto < 0) {
       saldo_livre_final += saldo_custeio_bruto; // Adiciona o valor negativo (subtrai)
       saldo_custeio_final = 0;
     }
-    
+
     // Se capital ficar negativo, deduz do saldo de livre aplicação
     let saldo_capital_final = saldo_capital_bruto;
-    
+
     if (saldo_capital_bruto < 0) {
       saldo_livre_final += saldo_capital_bruto; // Adiciona o valor negativo (subtrai)
       saldo_capital_final = 0;
     }
-    
+
     return valoresCategorias.normalize({
       custeio: saldo_custeio_final,
       capital: saldo_capital_final,
@@ -96,10 +98,11 @@ const saldo = {
 };
 
 const categoriaPorTipo = (prioridade) => {
-  const tipo =
-    (prioridade?.tipo_aplicacao ||
-      prioridade?.tipo_aplicacao_objeto?.name ||
-      "").toUpperCase();
+  const tipo = (
+    prioridade?.tipo_aplicacao ||
+    prioridade?.tipo_aplicacao_objeto?.name ||
+    ""
+  ).toUpperCase();
 
   if (tipo.includes("CUSTEIO")) return "custeio";
   if (tipo.includes("CAPITAL")) return "capital";
@@ -119,7 +122,8 @@ const identificarRecursoPrioridade = (prioridade) => {
   }
   const recursoRaw = prioridade?.recurso || "";
   const recursoUpper = recursoRaw.toUpperCase();
-  if (recursoUpper.includes("RECURSO")) return "RECURSO_PROPRIO";
+  if (recursoUpper.includes("RECURSO_PROPRIO")) return "RECURSO_PROPRIO";
+  if (recursoUpper.includes("OUTRO_RECURSO")) return "OUTRO_RECURSO";
   if (recursoUpper.includes("PDDE")) return "PDDE";
   if (recursoUpper.includes("PTRF")) return "PTRF";
   return prioridade?.recurso;
@@ -141,8 +145,8 @@ const agruparPrioridadesPTRF = (prioridadesLista) =>
     return acc;
   }, new Map());
 
-const agruparPrioridadesPDDE = (prioridadesLista) =>
-  prioridadesLista.reduce((acc, prioridade) => {
+const agruparPrioridadesPDDE = (prioridadesLista) => {
+  const lista = prioridadesLista.reduce((acc, prioridade) => {
     const recurso = identificarRecursoPrioridade(prioridade);
     if (recurso !== "PDDE") return acc;
 
@@ -154,8 +158,7 @@ const agruparPrioridadesPDDE = (prioridadesLista) =>
     const programaNome =
       prioridade?.programa_pdde_objeto?.nome ||
       prioridade?.acao_pdde_objeto?.nome;
-    const chavePrincipal =
-      programaUuid || programaNome || prioridade.recurso;
+    const chavePrincipal = programaUuid || programaNome || prioridade.recurso;
 
     const registro = acc.get(chavePrincipal) || valoresCategorias.empty();
     adicionarValorPorTipo(registro, prioridade, valor);
@@ -166,29 +169,19 @@ const agruparPrioridadesPDDE = (prioridadesLista) =>
     return acc;
   }, new Map());
 
-const agruparPrioridadesRecursosProprios = (prioridadesLista) =>
-  prioridadesLista.reduce((acc, prioridade) => {
-    const recurso = identificarRecursoPrioridade(prioridade);
-    if (recurso !== "RECURSO_PROPRIO") return acc;
-    
-    const valor = numero(prioridade.valor_total);
-    if (!valor) return acc;
-    
-    const registro = acc || valoresCategorias.empty();
-    adicionarValorPorTipo(registro, prioridade, valor);
-    return registro;
-  }, valoresCategorias.empty());
+  return lista;
+};
 
 const agruparPrioridadesPorRecurso = (prioridadesLista) => ({
   PTRF: agruparPrioridadesPTRF(prioridadesLista),
   PDDE: agruparPrioridadesPDDE(prioridadesLista),
-  RECURSO_PROPRIO: agruparPrioridadesRecursosProprios(prioridadesLista),
+  /* RECURSO_PROPRIO: agruparPrioridadesRecursosProprios(prioridadesLista), */
 });
 
 const prioridades = {
   agruparPTRF: agruparPrioridadesPTRF,
   agruparPDDE: agruparPrioridadesPDDE,
-  agruparRecursosProprios: agruparPrioridadesRecursosProprios,
+  /*  agruparRecursosProprios: agruparPrioridadesRecursosProprios, */
   agruparPorRecurso: agruparPrioridadesPorRecurso,
 };
 
@@ -202,7 +195,8 @@ const formatResumo = (
     if (isDespesa) {
       return formatMoneyBRL(valor);
     }
-    return hideCusteioCapital && (categoria === "custeio" || categoria === "capital")
+    return hideCusteioCapital &&
+      (categoria === "custeio" || categoria === "capital")
       ? "-"
       : formatMoneyBRL(valor);
   };
@@ -226,16 +220,48 @@ const formatResumoTotal = (valores, classeBase) => (
 
 const identificarGrupo = (acao) => {
   if (acao?.e_recursos_proprios) return "RECURSO_PROPRIO";
+
   const nome = acao?.nome?.toUpperCase() || "";
   if (nome.includes("PDDE")) return "PDDE";
   return "PTRF";
+};
+
+const adicionarLinhaTotal = (
+  linhas,
+  chaveTotal,
+  nomeTotal,
+  ocultarCusteioCapital = false
+) => {
+  const totais = linhas.reduce(
+    (acc, linha) => ({
+      receitas: valoresCategorias.sum(acc?.receitas, linha?.receitas),
+      despesas: valoresCategorias.sum(acc?.despesas, linha?.despesas),
+      saldos: valoresCategorias.sum(acc?.saldos, linha?.saldos),
+    }),
+    {
+      receitas: valoresCategorias.empty(),
+      despesas: valoresCategorias.empty(),
+      saldos: valoresCategorias.empty(),
+    }
+  );
+
+  linhas.push({
+    key: chaveTotal,
+    nome: nomeTotal,
+    receitas: valoresCategorias.normalize(totais.receitas),
+    despesas: valoresCategorias.normalizeDespesas(totais.despesas),
+    saldos: valoresCategorias.normalize(totais.saldos),
+    isTotal: true,
+    ocultarCusteioCapital,
+  });
 };
 
 const construirSecoes = (
   receitas,
   prioridadesAgrupadas,
   totalRecursosProprios = null,
-  programasPdde = []
+  programasPdde = [],
+  receitasOutrosRecursos = []
 ) => {
   const agruparReceitasPorGrupo = () =>
     receitas.reduce(
@@ -250,7 +276,7 @@ const construirSecoes = (
 
   const calcularReceitaBase = (item) => {
     const receitaPrevista = item?.receitas_previstas_paa?.[0] || {};
-    
+
     // Garantir que saldos negativos sejam tratados como 0
     const saldosBase = {
       custeio: saldo.base(
@@ -276,31 +302,6 @@ const construirSecoes = (
         numero(saldosBase.capital),
       livre:
         numero(receitaPrevista.previsao_valor_livre) + numero(saldosBase.livre),
-    });
-  };
-
-  const adicionarLinhaTotal = (linhas, chaveTotal, nomeTotal, ocultarCusteioCapital = false) => {
-    const totais = linhas.reduce(
-      (acc, linha) => ({
-        receitas: valoresCategorias.sum(acc.receitas, linha.receitas),
-        despesas: valoresCategorias.sum(acc.despesas, linha.despesas),
-        saldos: valoresCategorias.sum(acc.saldos, linha.saldos),
-      }),
-      {
-        receitas: valoresCategorias.empty(),
-        despesas: valoresCategorias.empty(),
-        saldos: valoresCategorias.empty(),
-      }
-    );
-
-    linhas.push({
-      key: chaveTotal,
-      nome: nomeTotal,
-      receitas: valoresCategorias.normalize(totais.receitas),
-      despesas: valoresCategorias.normalizeDespesas(totais.despesas),
-      saldos: valoresCategorias.normalize(totais.saldos),
-      isTotal: true,
-      ocultarCusteioCapital,
     });
   };
 
@@ -360,52 +361,89 @@ const construirSecoes = (
     return { key: "pdde", titulo: "PDDE", linhas };
   };
 
-  const calcularSecaoRecursosProprios = (
-    receitasRecursosProprios,
+  /* const calcularSecaoRecursosProprios = (
     totalRecursosProprios,
-    despesasRecursosProprios
+    prioridadesAgrupadas,
+    receitasOutrosRecursos
   ) => {
-    if (!receitasRecursosProprios.length) return null;
+    if (!prioridadesAgrupadas.length) return null;
 
-    const despesasNormalizadas = valoresCategorias.normalizeDespesas(
-      despesasRecursosProprios || valoresCategorias.empty()
-    );
+    const linhas = prioridadesAgrupadas.map((item) => {
+      if (item.tipo === "RECURSO_PROPRIO") {
+        const despesasNormalizadas = valoresCategorias.normalizeDespesas(
+          item || valoresCategorias.empty()
+        );
 
-    const linhas = receitasRecursosProprios.map((item) => {
-      const receita = valoresCategorias.normalize({
-        livre:
-          totalRecursosProprios !== null
-            ? totalRecursosProprios
-            : calcularReceitaBase(item).livre,
-      });
+        const receita = valoresCategorias.normalize({
+          livre:
+            totalRecursosProprios !== null
+              ? totalRecursosProprios
+              : calcularReceitaBase(item).livre,
+        });
 
-      const despesas = valoresCategorias.normalizeDespesas({
-        custeio: despesasNormalizadas.custeio,
-        capital: despesasNormalizadas.capital,
-      });
+        const despesas = valoresCategorias.normalizeDespesas({
+          custeio: despesasNormalizadas.custeio,
+          capital: despesasNormalizadas.capital,
+        });
 
-      const saldo = valoresCategorias.saldo(receita, despesas);
+        const saldo = valoresCategorias.saldo(receita, despesas);
+        return {
+          key: item.uuid,
+          nome: "Recursos Próprios",
+          receitas: receita,
+          despesas,
+          saldos: saldo,
+          ocultarCusteioCapital: true,
+        };
+      }
 
-      // Para recursos próprios, sempre usar "Recursos Próprios" como nome
-      const nome = item.acao?.e_recursos_proprios ? "Recursos Próprios" : (item.acao?.nome || "-");
+      const receitasOutroRecurso = receitasOutrosRecursos.filter(
+        (or) => or.outro_recurso === item.uuid
+      )[0];
+
+      let receitas = { custeio: 0, capital: 0, livre: 0 };
+      const despesas = valoresCategorias.normalizeDespesas(item);
+
+      if (receitasOutroRecurso && receitasOutroRecurso.receitas_previstas) {
+        receitas = receitasOutroRecurso.receitas_previstas.reduce(
+          (acc, current) => {
+            acc.custeio +=
+              numero(current.saldo_custeio) +
+              numero(current.previsao_valor_custeio);
+
+            acc.capital +=
+              numero(current.saldo_capital) +
+              numero(current.previsao_valor_capital);
+
+            acc.livre +=
+              numero(current.saldo_livre) +
+              numero(current.previsao_valor_livre);
+
+            return acc;
+          },
+          { custeio: 0, capital: 0, livre: 0 }
+        );
+      }
+
+      const saldo = valoresCategorias.saldo(receitas, despesas);
 
       return {
         key: item.uuid,
-        nome,
-        receitas: receita,
-        despesas,
+        nome: item?.nome || "-",
+        receitas: receitas,
+        despesas: despesas,
         saldos: saldo,
-        ocultarCusteioCapital: true,
+        ocultarCusteioCapital: false,
       };
     });
 
     adicionarLinhaTotal(linhas, "recurso_proprio-total", "TOTAL", true);
     return {
       key: "recurso_proprio",
-      titulo: "RECURSOS PRÓPRIOS",
+      titulo: "OUTROS RECURSOS",
       linhas,
     };
-  };
+  }; */
 
   const receitasAgrupadas = agruparReceitasPorGrupo();
 
@@ -414,14 +452,14 @@ const construirSecoes = (
     prioridadesAgrupadas.PTRF
   );
   const secaoPDDE = calcularSecaoPDDE(programasPdde);
-  const despesasRecursosProprios = prioridadesAgrupadas.RECURSO_PROPRIO || valoresCategorias.empty();
-  const secaoRecursosProprios = calcularSecaoRecursosProprios(
-    receitasAgrupadas.RECURSO_PROPRIO,
-    totalRecursosProprios,
-    despesasRecursosProprios
-  );
 
-  return [secaoPTRF, secaoPDDE, secaoRecursosProprios].filter(Boolean);
+  /* const secaoRecursosProprios = calcularSecaoRecursosProprios(
+    totalRecursosProprios,
+    prioridadesAgrupadas.RECURSO_PROPRIO,
+    receitasOutrosRecursos
+  ); */
+
+  return [secaoPTRF, secaoPDDE].filter(Boolean);
 };
 
 export const planoOrcamentarioUtils = {
@@ -430,6 +468,8 @@ export const planoOrcamentarioUtils = {
   prioridades,
   saldo,
   identificarRecursoPrioridade,
+  adicionarLinhaTotal,
+  adicionarValorPorTipo,
   format: {
     resumo: formatResumo,
     total: formatResumoTotal,

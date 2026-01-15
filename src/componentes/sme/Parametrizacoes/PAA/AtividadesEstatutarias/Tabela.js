@@ -162,7 +162,7 @@ export const Tabela = () => {
                 rowReorder
                 style={{ width: "3em", padding: "0.4rem .4rem 0.4rem .8rem" }}
               />
-              <Column field="ordem" header="Orderm" />
+              <Column field="ordem" header="Ordem" />
               <Column
                 field="tipo_label"
                 header="Tipo da atividade"

@@ -113,7 +113,7 @@ export const VisualizacaoAtaPaa = () => {
               total={prioridadesAgrupadas.PDDE.total}
             />
             <TabelaPrioridades
-              titulo="Prioridades Recursos próprios"
+              titulo="Prioridades Outros Recursos"
               prioridades={prioridadesAgrupadas.RECURSO_PROPRIO.prioridades}
               total={prioridadesAgrupadas.RECURSO_PROPRIO.total}
             />
