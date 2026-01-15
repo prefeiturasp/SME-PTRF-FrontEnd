@@ -13,6 +13,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit } from "@fortawesome/free-solid-svg-icons";
 import { ASSOCIACAO_UUID } from "../../../../../../../services/auth.service";
 import { planoOrcamentarioUtils } from "./utils";
+import SessaoOutrosRecursos from "./SessaoOutrosRecursos";
 import "./styles.scss";
 
 const {
@@ -29,7 +30,7 @@ const montarColunas = () => [
     render: (nome, linha) => (
       <span
         className={`relatorio-plano-orcamentario__recurso${
-          linha.isTotal ? " relatorio-plano-orcamentario__recurso--total" : ""
+          linha?.isTotal ? " relatorio-plano-orcamentario__recurso--total" : ""
         }`}
       >
         {nome}
@@ -42,7 +43,7 @@ const montarColunas = () => [
     key: "receitas-despesas-legendas",
     align: "left",
     render: (_, linha) =>
-      linha.isTotal ? null : (
+      linha?.isTotal ? null : (
         <div className="relatorio-plano-orcamentario__receitas-despesas-labels">
           <span>Custeio (R$)</span>
           <span>Capital (R$)</span>
@@ -57,19 +58,12 @@ const montarColunas = () => [
     key: "receitas",
     align: "right",
     render: (receitas, linha) =>
-      linha.isTotal
-        ? formatResumoTotal(
-            receitas,
-            "relatorio-plano-orcamentario__receitas"
-          )
-        : formatResumo(
-            receitas,
-            "relatorio-plano-orcamentario__receitas",
-            {
-              useStrong: false,
-              hideCusteioCapital: linha.ocultarCusteioCapital,
-            }
-          ),
+      linha?.isTotal
+        ? formatResumoTotal(receitas, "relatorio-plano-orcamentario__receitas")
+        : formatResumo(receitas, "relatorio-plano-orcamentario__receitas", {
+            useStrong: false,
+            hideCusteioCapital: linha.ocultarCusteioCapital,
+          }),
     width: 220,
   },
   {
@@ -78,20 +72,13 @@ const montarColunas = () => [
     key: "despesas",
     align: "right",
     render: (despesas, linha) =>
-      linha.isTotal
-        ? formatResumoTotal(
-            despesas,
-            "relatorio-plano-orcamentario__despesas"
-          )
-        : formatResumo(
-            despesas,
-            "relatorio-plano-orcamentario__despesas",
-            {
-              useStrong: false,
-              hideCusteioCapital: linha.ocultarCusteioCapital,
-              isDespesa: true,
-            }
-          ),
+      linha?.isTotal
+        ? formatResumoTotal(despesas, "relatorio-plano-orcamentario__despesas")
+        : formatResumo(despesas, "relatorio-plano-orcamentario__despesas", {
+            useStrong: false,
+            hideCusteioCapital: linha.ocultarCusteioCapital,
+            isDespesa: true,
+          }),
     width: 220,
   },
   {
@@ -100,7 +87,7 @@ const montarColunas = () => [
     key: "saldo",
     align: "right",
     render: (saldos, linha) =>
-      linha.isTotal
+      linha?.isTotal
         ? formatResumoTotal(saldos, "relatorio-plano-orcamentario__saldos")
         : formatResumo(saldos, "relatorio-plano-orcamentario__saldos", {
             hideCusteioCapital: linha.ocultarCusteioCapital,
@@ -158,12 +145,7 @@ export const VisualizarPlanoOrcamentario = () => {
         totalRecursosPropriosValor,
         programasPdde
       ),
-    [
-      receitas,
-      prioridadesAgrupadas,
-      totalRecursosPropriosValor,
-      programasPdde,
-    ]
+    [receitas, prioridadesAgrupadas, totalRecursosPropriosValor, programasPdde]
   );
 
   const handleVoltar = () => {
@@ -203,10 +185,7 @@ export const VisualizarPlanoOrcamentario = () => {
     isCarregandoTotalRecursos;
 
   const erro =
-    erroReceitas ||
-    erroPrioridades ||
-    erroProgramasPdde ||
-    erroTotalRecursos;
+    erroReceitas || erroPrioridades || erroProgramasPdde || erroTotalRecursos;
 
   const secoesComAcoes = new Set(["ptrf", "pdde", "recurso_proprio"]);
 
@@ -216,7 +195,8 @@ export const VisualizarPlanoOrcamentario = () => {
     recurso_proprio: "recursos-proprios",
   };
 
-  const obterDestinoReceitaPorSecao = (secaoKey) => destinosReceitasPorSecao[secaoKey] || null;
+  const obterDestinoReceitaPorSecao = (secaoKey) =>
+    destinosReceitasPorSecao[secaoKey] || null;
 
   const conteudo = secoes.length ? (
     <div className="relatorio-visualizacao__sections">
@@ -230,31 +210,32 @@ export const VisualizarPlanoOrcamentario = () => {
             title={secao.titulo}
             dataSource={secao.linhas}
             columns={colunas}
-            rowKey={(linha) => linha.key}
+            rowKey={(linha) => linha?.key}
             headerExtra={
-              !possuiAcoes
-                ? null
-                : (
-                  <div className="relatorio-plano-orcamentario__actions">
-                    {destinoReceitas && (
-                      <Button
-                        className="btn btn-success"
-                        onClick={() => handleIrParaReceitas(destinoReceitas)}
-                      >
-                        <FontAwesomeIcon icon={faEdit} />
-                        Editar receitas
-                      </Button>
-                    )}
-                    <Button className="btn btn-success" onClick={handleIrParaPrioridades}>
-                      Editar prioridades
+              !possuiAcoes ? null : (
+                <div className="relatorio-plano-orcamentario__actions">
+                  {destinoReceitas && (
+                    <Button
+                      className="btn btn-success"
+                      onClick={() => handleIrParaReceitas(destinoReceitas)}
+                    >
+                      <FontAwesomeIcon icon={faEdit} />
+                      Editar receitas
                     </Button>
-                  </div>
-                )
+                  )}
+                  <Button
+                    className="btn btn-success"
+                    onClick={handleIrParaPrioridades}
+                  >
+                    Editar prioridades
+                  </Button>
+                </div>
+              )
             }
             tableProps={{
               className: "relatorio-plano-orcamentario__table",
               rowClassName: (linha) =>
-                linha.isTotal
+                linha?.isTotal
                   ? "relatorio-plano-orcamentario__table-total-row"
                   : "",
             }}
@@ -292,8 +273,13 @@ export const VisualizarPlanoOrcamentario = () => {
       heightDeps={[secoes, carregando, erro]}
     >
       {conteudo}
+      <SessaoOutrosRecursos
+        colunas={colunas}
+        prioridades={prioridades}
+        totalRecursosProprios={totalRecursosPropriosValor}
+        handleIrParaPrioridades={handleIrParaPrioridades}
+        handleIrParaReceitas={handleIrParaReceitas}
+      />
     </RelatorioVisualizacao>
   );
 };
-
-

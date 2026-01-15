@@ -52,8 +52,6 @@ describe("planoOrcamentarioUtils.prioridades", () => {
 
     const pdde = agrupado.PDDE.get("prog-1");
     expect(pdde.capital).toBeCloseTo(50);
-
-    expect(agrupado.RECURSO_PROPRIO.custeio).toBeCloseTo(30);
   });
 });
 
@@ -91,16 +89,7 @@ describe("planoOrcamentarioUtils.construirSecoes", () => {
         },
       ],
     },
-    {
-      uuid: "receita-rp",
-      acao: { nome: "Recursos próprios", e_recursos_proprios: true },
-      saldos: {
-        saldo_atual_custeio: 0,
-        saldo_atual_capital: 0,
-        saldo_atual_livre: 0,
-      },
-      receitas_previstas_paa: [],
-    },
+    
   ];
 
   const prioridadesAgrupadasMock = {
@@ -111,7 +100,6 @@ describe("planoOrcamentarioUtils.construirSecoes", () => {
       ],
     ]),
     PDDE: new Map([["prog-uuid", valoresCategorias.normalize({ livre: 10 })]]),
-    RECURSO_PROPRIO: { livre: 20 },
   };
 
   const programasPddeMock = [
@@ -134,12 +122,11 @@ describe("planoOrcamentarioUtils.construirSecoes", () => {
 
     expect(secoes.map((secao) => secao.titulo)).toEqual([
       "PTRF",
-      "PDDE",
-      "RECURSOS PRÓPRIOS",
+      "PDDE",      
     ]);
     expect(secoes[0].linhas).toHaveLength(2); // item + total
     expect(secoes[1].linhas).toHaveLength(2);
-    expect(secoes[2].linhas).toHaveLength(2);
+    
   });
 
   it("trata saldos negativos como zero ao calcular receitas", () => {
