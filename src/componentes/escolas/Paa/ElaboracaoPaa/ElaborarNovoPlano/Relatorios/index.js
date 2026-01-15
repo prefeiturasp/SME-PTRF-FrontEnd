@@ -3,8 +3,8 @@ import { Space, Spin } from "antd";
 import { useNavigate } from "react-router-dom";
 import "./styles.css";
 import { useGetStatusGeracaoDocumentoPaa } from "./hooks/useGetStatusGeracaoDocumentoPaa";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faDownload} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faDownload } from "@fortawesome/free-solid-svg-icons";
 import chevronUp from "../../../../../../assets/img/icone-chevron-up.svg";
 import chevronDown from "../../../../../../assets/img/icone-chevron-down.svg";
 import { useGetTextosPaa } from "./hooks/useGetTextosPaa";
@@ -14,12 +14,16 @@ import { ASSOCIACAO_UUID } from "../../../../../../services/auth.service";
 import { RenderSecao } from "./RenderSecao";
 import { toastCustom } from "../../../../../Globais/ToastCustom";
 import Loading from "../../../../../../utils/Loading";
-import { getDownloadArquivoPrevia, getDownloadArquivoFinal } from "../../../../../../services/escolas/Paa.service";
+import {
+  getDownloadArquivoPrevia,
+  getDownloadArquivoFinal,
+} from "../../../../../../services/escolas/Paa.service";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 
 import {
   usePostPaaGeracaoDocumentoPrevia,
-  usePostPaaGeracaoDocumentoFinal } from "./hooks/usePostPaaGeracaoDocumento";
+  usePostPaaGeracaoDocumentoFinal,
+} from "./hooks/usePostPaaGeracaoDocumento";
 
 import {
   ModalInfoGeracaoDocumentoPrevia,
@@ -27,7 +31,6 @@ import {
   ModalConfirmaGeracaoFinal,
   ModalInfoPendenciasGeracaoFinal,
 } from "./ModalInfoGeracaoDocumento";
-
 
 const Relatorios = ({ initialExpandedSections }) => {
   const navigate = useNavigate();
@@ -46,8 +49,11 @@ const Relatorios = ({ initialExpandedSections }) => {
 
   const associacaoUuid = localStorage.getItem(ASSOCIACAO_UUID);
   const { textosPaa, isLoading, isError } = useGetTextosPaa();
-  const { paaVigente, isLoading: isLoadingPaa } = useGetPaaVigente(associacaoUuid);
-  const { ataPaa, isLoading: isLoadingAtaPaa } = useGetAtaPaaVigente(paaVigente?.uuid);
+  const { paaVigente, isLoading: isLoadingPaa } =
+    useGetPaaVigente(associacaoUuid);
+  const { ataPaa, isLoading: isLoadingAtaPaa } = useGetAtaPaaVigente(
+    paaVigente?.uuid
+  );
   const apresentouToastErroPaaNaoEncontrado = useRef(false);
   const apresentouToastErroAtaNaoEncontrada = useRef(false);
 
@@ -55,23 +61,21 @@ const Relatorios = ({ initialExpandedSections }) => {
 
   const [
     openModalInfoGeracaoDocumentoPrevia,
-    setOpenModalInfoGeracaoDocumentoPrevia] = useState(false);
+    setOpenModalInfoGeracaoDocumentoPrevia,
+  ] = useState(false);
 
-  const [
-    pendenciasGeracaoFinal,
-    setPendenciasGeracaoFinal] = useState('');
+  const [pendenciasGeracaoFinal, setPendenciasGeracaoFinal] = useState("");
 
   const [
     openModalInfoGeracaoDocumentoFinal,
-    setOpenModalInfoGeracaoDocumentoFinal] = useState(false);
+    setOpenModalInfoGeracaoDocumentoFinal,
+  ] = useState(false);
 
-  const [
-    openModalConfirmarGeracaoFinal,
-    setOpenModalConfirmarGeracaoFinal] = useState(false);
+  const [openModalConfirmarGeracaoFinal, setOpenModalConfirmarGeracaoFinal] =
+    useState(false);
 
-  const [
-    openModalValidacoesGeracaoFinal,
-    setOpenModalValidacoesGeracaoFinal] = useState(false);
+  const [openModalValidacoesGeracaoFinal, setOpenModalValidacoesGeracaoFinal] =
+    useState(false);
 
   const {
     data: statusDocumento,
@@ -80,21 +84,23 @@ const Relatorios = ({ initialExpandedSections }) => {
   } = useGetStatusGeracaoDocumentoPaa(paaVigente?.uuid);
 
   const verificaStatusAteConcluirGeracao = async () => {
-    await refetchStatusDoc()
+    await refetchStatusDoc();
 
-    setTimeout( () => {
+    setTimeout(() => {
       timerRef.current = setInterval(() => {
         refetchStatusDoc();
       }, 5000);
-    }, 2000)
-  }
+    }, 2000);
+  };
 
   useEffect(() => {
     if (statusDocumento?.status !== "EM_PROCESSAMENTO") {
       clearInterval(timerRef.current);
     }
-    if (statusDocumento?.status === "CONCLUIDO" &&
-      statusDocumento?.versao === "FINAL") {
+    if (
+      statusDocumento?.status === "CONCLUIDO" &&
+      statusDocumento?.versao === "FINAL"
+    ) {
       navigate("/paa-vigente-e-anteriores");
     }
   }, [statusDocumento]);
@@ -102,79 +108,92 @@ const Relatorios = ({ initialExpandedSections }) => {
   const checkStatusGeracaoDocumentoPrevia = async () => {
     setOpenModalInfoGeracaoDocumentoPrevia(true);
     verificaStatusAteConcluirGeracao();
-  }
+  };
 
   const checkStatusGeracaoDocumentoFinal = async () => {
     // Habilitar se necessário a Modal de informação (semelhante à Geração de Prévia)
     // setOpenModalInfoGeracaoDocumentoFinal(true);
     verificaStatusAteConcluirGeracao();
-  }
+  };
 
   const onErrorValidacoesPendentesDocumentoFinal = (data) => {
     if (data?.confirmar) {
       setOpenModalConfirmarGeracaoFinal(true);
-    }else{
+    } else {
       setOpenModalValidacoesGeracaoFinal(true);
       setPendenciasGeracaoFinal(data?.mensagem);
     }
-  }
+  };
 
   const downloadVersaoPrevia = async () => {
     try {
       await getDownloadArquivoPrevia(paaVigente?.uuid);
     } catch (e) {
-      toastCustom.ToastCustomError("Erro!", "Erro ao efetuar o download Prévia!");
+      toastCustom.ToastCustomError(
+        "Erro!",
+        "Erro ao efetuar o download Prévia!"
+      );
       console.error("Erro ao efetuar o download de versão Prévia", e);
     }
-  }
+  };
 
   const downloadVersaoFinal = async () => {
     try {
       await getDownloadArquivoFinal(paaVigente?.uuid);
     } catch (e) {
-      toastCustom.ToastCustomError("Erro!", "Erro ao efetuar o download Prévia!");
+      toastCustom.ToastCustomError(
+        "Erro!",
+        "Erro ao efetuar o download Prévia!"
+      );
       console.error("Erro ao efetuar o download de versão Final", e);
     }
-  }
+  };
 
   const handleDownloadArquivo = () => {
-    if(statusDocumento?.versao === 'FINAL') {
+    if (statusDocumento?.versao === "FINAL") {
       downloadVersaoFinal();
-    } else if(statusDocumento?.versao === 'PREVIA') {
+    } else if (statusDocumento?.versao === "PREVIA") {
       downloadVersaoPrevia();
     } else {
-      toastCustom.ToastCustomError("Erro!", "Versão de arquivo não identificada.");
+      toastCustom.ToastCustomError(
+        "Erro!",
+        "Versão de arquivo não identificada."
+      );
     }
-  }
+  };
 
-  const mutationGerarDocumentoPrevia = usePostPaaGeracaoDocumentoPrevia(
-    {
-      onSuccessGerarDocumento: checkStatusGeracaoDocumentoPrevia
-    });
+  const mutationGerarDocumentoPrevia = usePostPaaGeracaoDocumentoPrevia({
+    onSuccessGerarDocumento: checkStatusGeracaoDocumentoPrevia,
+  });
 
-  const mutationGerarDocumentoFinal = usePostPaaGeracaoDocumentoFinal(
-    {
-      onSuccessGerarDocumento: checkStatusGeracaoDocumentoFinal,
-      onErrorGerarDocumento: onErrorValidacoesPendentesDocumentoFinal
-    });
+  const mutationGerarDocumentoFinal = usePostPaaGeracaoDocumentoFinal({
+    onSuccessGerarDocumento: checkStatusGeracaoDocumentoFinal,
+    onErrorGerarDocumento: onErrorValidacoesPendentesDocumentoFinal,
+  });
 
   const handleGerarDocumentoPrevia = () => {
     if (paaVigente?.uuid) {
       mutationGerarDocumentoPrevia.mutate(paaVigente.uuid);
     } else {
-      toastCustom.ToastCustomError("Erro!", "PAA vigente não identificado para geração de prévia.");
+      toastCustom.ToastCustomError(
+        "Erro!",
+        "PAA vigente não identificado para geração de prévia."
+      );
     }
   };
 
-  const handleGerarDocumentoFinal = async (confirmar=0) => {
+  const handleGerarDocumentoFinal = async (confirmar = 0) => {
     setOpenModalConfirmarGeracaoFinal(false);
     if (paaVigente?.uuid) {
       mutationGerarDocumentoFinal.mutate({
         uuid: paaVigente.uuid,
-        payload: { confirmar }
+        payload: { confirmar },
       });
     } else {
-      toastCustom.ToastCustomError("Erro!", "PAA vigente não identificado para geração final.");
+      toastCustom.ToastCustomError(
+        "Erro!",
+        "PAA vigente não identificado para geração final."
+      );
     }
   };
 
@@ -239,20 +258,22 @@ const Relatorios = ({ initialExpandedSections }) => {
   };
 
   const botaoGeracaoPreviaDesabilitado = () => {
-    const validacoes =[
-      statusDocumento?.status === 'EM_PROCESSAMENTO',
-      statusDocumento?.status === 'CONCLUIDO' && statusDocumento?.versao === 'FINAL'
-    ]
-    return validacoes.includes(true)
-  }
+    const validacoes = [
+      statusDocumento?.status === "EM_PROCESSAMENTO",
+      statusDocumento?.status === "CONCLUIDO" &&
+        statusDocumento?.versao === "FINAL",
+    ];
+    return validacoes.includes(true);
+  };
 
   const botaoGeracaoFinalDesabilitado = () => {
-    const validacoes =[
-      statusDocumento?.status === 'EM_PROCESSAMENTO',
-      statusDocumento?.status === 'CONCLUIDO' && statusDocumento?.versao === 'FINAL'
-    ]
-    return validacoes.includes(true)
-  }
+    const validacoes = [
+      statusDocumento?.status === "EM_PROCESSAMENTO",
+      statusDocumento?.status === "CONCLUIDO" &&
+        statusDocumento?.versao === "FINAL",
+    ];
+    return validacoes.includes(true);
+  };
 
   return (
     <div className="relatorios-container">
@@ -268,60 +289,80 @@ const Relatorios = ({ initialExpandedSections }) => {
           <div className="documento-item">
             <div className="documento-info">
               <div className="documento-nome">Plano Anual</div>
-              <div className="documento-status"
-                style={{color: statusDocumento?.status === 'CONCLUIDO' ? '#297805' : '#dc3545'}}>
-
+              <div
+                className="documento-status"
+                style={{
+                  color:
+                    statusDocumento?.status === "CONCLUIDO"
+                      ? "#297805"
+                      : "#dc3545",
+                }}
+              >
                 <Spin size="small" spinning={isLoadingStatusDocumento}>
-
                   {/* Mensagem de status da geração */}
                   {statusDocumento?.mensagem}
 
                   {/* Loading de geração */}
-                  {statusDocumento?.status === 'EM_PROCESSAMENTO' &&
+                  {statusDocumento?.status === "EM_PROCESSAMENTO" && (
                     <span className="mx-2">
-                      <Spin size="small" spinning={statusDocumento?.status === 'EM_PROCESSAMENTO'}/>
+                      <Spin
+                        size="small"
+                        spinning={
+                          statusDocumento?.status === "EM_PROCESSAMENTO"
+                        }
+                      />
                     </span>
-                  }
+                  )}
 
                   {/* Botão de download */}
-                  {statusDocumento?.status === 'CONCLUIDO' &&
+                  {statusDocumento?.status === "CONCLUIDO" && (
                     <button
                       onClick={handleDownloadArquivo}
                       type="button"
                       title="Download"
-                      className="btn-editar-membro">
+                      className="btn-editar-membro"
+                    >
                       <FontAwesomeIcon
-                        style={{fontSize: '15px', marginRight: "0", color: "#00585E"}}
+                        style={{
+                          fontSize: "15px",
+                          marginRight: "0",
+                          color: "#00585E",
+                        }}
                         icon={faDownload}
                       />
                     </button>
-                  }
+                  )}
                 </Spin>
               </div>
             </div>
             <div className="documento-actions">
               <Space>
-                  <button
-                    className="btn btn-outline-success"
-                    disabled={botaoGeracaoPreviaDesabilitado()}
-                    onClick={handleGerarDocumentoPrevia}>
-                    Prévia
-                  </button>
+                <button
+                  className="btn btn-outline-success"
+                  disabled={botaoGeracaoPreviaDesabilitado()}
+                  onClick={handleGerarDocumentoPrevia}
+                >
+                  Prévia
+                </button>
 
-                  <button
-                    className="btn btn-success"
-                    disabled={botaoGeracaoFinalDesabilitado()}
-                    onClick={() => handleGerarDocumentoFinal(0)}>
-                    Gerar
-                  </button>
+                <button
+                  className="btn btn-success"
+                  disabled={botaoGeracaoFinalDesabilitado()}
+                  onClick={() => handleGerarDocumentoFinal(0)}
+                >
+                  Gerar
+                </button>
 
-                  <button className="btn-dropdown" onClick={() => toggleSection("planoAnual")}>
-                    <img
-                      src={expandedSections.planoAnual ? chevronUp : chevronDown}
-                      alt={expandedSections.planoAnual ? "Fechar" : "Abrir"}
-                      className="chevron-icon"
-                      />
-                  </button>
+                <button
+                  className="btn-dropdown"
+                  onClick={() => toggleSection("planoAnual")}
+                >
+                  <img
+                    src={expandedSections.planoAnual ? chevronUp : chevronDown}
+                    alt={expandedSections.planoAnual ? "Fechar" : "Abrir"}
+                    className="chevron-icon"
+                  />
+                </button>
               </Space>
             </div>
           </div>
@@ -330,14 +371,23 @@ const Relatorios = ({ initialExpandedSections }) => {
           {expandedSections.planoAnual && (
             <div className="plano-anual-subsecoes">
               {(isLoadingPaa || isLoadingAtaPaa) && (
-                <Loading corGrafico="black" corFonte="dark" marginTop="0" marginBottom="0" />
+                <Loading
+                  corGrafico="black"
+                  corFonte="dark"
+                  marginTop="0"
+                  marginBottom="0"
+                />
               )}
 
               {!isLoadingPaa && !paaVigente?.uuid && (
                 <div className="texto-error">PAA vigente não encontrado.</div>
               )}
 
-              {!isLoadingPaa && paaVigente?.uuid && Object.entries(secoesConfig).map(([secaoKey, config]) => renderSecao(secaoKey, config))}
+              {!isLoadingPaa &&
+                paaVigente?.uuid &&
+                Object.entries(secoesConfig).map(([secaoKey, config]) =>
+                  renderSecao(secaoKey, config)
+                )}
             </div>
           )}
 
@@ -348,25 +398,26 @@ const Relatorios = ({ initialExpandedSections }) => {
             </div>
             <div className="documento-actions">
               <Space>
-                <button 
-                  className="btn btn-outline-success" 
-                  onClick={handleVisualizarAta} 
-                  disabled={!ataPaa?.uuid}>
+                <button
+                  className="btn btn-outline-success"
+                  onClick={handleVisualizarAta}
+                  disabled={!ataPaa?.uuid}
+                >
                   Visualizar prévia da ata
                 </button>
                 <button
                   className="btn btn-success"
-                  disabled
-                  data-tooltip-content={"Quando todos os dados estiverem preenchidos, a opção fica habilitada."}
-                  data-tooltip-id="tooltip-gerar-ata">
+                  /* disabled */
+                  data-tooltip-content={
+                    "Quando todos os dados estiverem preenchidos, a opção fica habilitada."
+                  }
+                  data-tooltip-id="tooltip-gerar-ata"
+                >
                   Gerar ata
                 </button>
               </Space>
             </div>
-              <ReactTooltip 
-                id="tooltip-gerar-ata" 
-                place="top"
-              />
+            <ReactTooltip id="tooltip-gerar-ata" place="top" />
           </div>
         </div>
       </div>
