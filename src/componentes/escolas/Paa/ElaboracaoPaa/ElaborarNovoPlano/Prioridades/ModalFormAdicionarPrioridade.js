@@ -144,14 +144,18 @@ const ModalFormAdicionarPrioridade = ({ open, onClose, tabelas, formModal, focus
 
       const tiposDespesaCusteioUuid = tabelas?.tipos_despesa_custeio?.find(item => item.id === values.tipo_despesa_custeio);
 
-      const payload = {
+      let payload = {
         paa: localStorage.getItem("PAA"),
         ...values,
         ...(values.tipo_despesa_custeio && { tipo_despesa_custeio: tiposDespesaCusteioUuid.uuid }),
-        outro_recurso: getRecurso(values.recurso) === RECURSOS_PRIORIDADE.OUTRO_RECURSO ? values.recurso : null,
         recurso: getRecurso(values.recurso),
         valor_total: values.valor_total / 100
       };
+
+      if(getRecurso(values.recurso) === RECURSOS_PRIORIDADE.OUTRO_RECURSO ) {
+        payload['outro_recurso'] = values.recurso
+      }
+      
       if(formModal?.uuid){
         mutationPatch.mutate({ uuid: formModal.uuid, payload });
       } else {
