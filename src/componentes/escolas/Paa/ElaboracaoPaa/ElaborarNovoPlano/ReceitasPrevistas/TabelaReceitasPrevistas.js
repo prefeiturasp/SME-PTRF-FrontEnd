@@ -4,7 +4,7 @@ import { useCallback } from "react";
 import { formatMoneyBRL } from "../../../../../../utils/money";
 import { IconButton } from "../../../../../Globais/UI/Button/IconButton";
 
-const TabelaReceitasPrevistas = ({ data, handleOpenEditar }) => {
+const TabelaReceitasPrevistas = ({ data, handleOpenEditar, totalRecursosProprios }) => {
   const nomeTemplate = useCallback((rowData) => {
     return (
       <span style={{ color: "#00585E" }} className="font-weight-bold">
@@ -64,12 +64,14 @@ const TabelaReceitasPrevistas = ({ data, handleOpenEditar }) => {
           );
         }, 0);
 
-        const totalGeral = totalCapital + totalCusteio + totalLivre;
+        const totalLivreComRecursosProprios = totalLivre + (parseFloat(totalRecursosProprios?.total) || 0);
+
+        const totalGeral = totalCapital + totalCusteio + totalLivreComRecursosProprios;
 
         const fieldMapping = {
           valor_capital: totalCapital,
           valor_custeio: totalCusteio,
-          valor_livre: totalLivre,
+          valor_livre: totalLivreComRecursosProprios,
           total: totalGeral,
         };
 
@@ -123,7 +125,7 @@ const TabelaReceitasPrevistas = ({ data, handleOpenEditar }) => {
         </div>
       );
     },
-    [data]
+    [data, totalRecursosProprios]
   );
 
   const acoesTemplate = (rowData) => {
