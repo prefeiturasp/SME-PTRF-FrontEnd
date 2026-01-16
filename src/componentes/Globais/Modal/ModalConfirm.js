@@ -47,7 +47,7 @@ export function ModalConfirm({
         <Modal.Footer>
             <button data-qa={dataQa ? `${dataQa}-btn-${cancelText}` : ""} 
                     onClick={handleClose}
-                    className="btn btn-outline-success">
+                    className="btn btn-outline-success mt-2">
               {cancelText}
             </button>
             {onConfirm ? (
