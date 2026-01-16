@@ -126,4 +126,31 @@ describe("TabelaReceitasPrevistas Component", () => {
 
     expect(mockHandleOpenEditar).toHaveBeenCalled();
   });
+
+  it("deve incluir recursos próprios no total de Livre Aplicação", () => {
+    useGetAcoesAssociacao.mockReturnValue({
+      data: [
+        {
+          acao: { nome: "Total do PTRF" },
+          receitas_previstas_paa: [{ previsao_valor_livre: 1000 }],
+          saldos: { saldo_atual_livre: 500 },
+          fixed: true,
+        },
+      ],
+      isLoading: false,
+    });
+
+    const { result } = renderHook(() => useGetAcoesAssociacao());
+
+    render(
+      <TabelaReceitasPrevistas
+        data={result.current.data}
+        handleOpenEditar={mockHandleOpenEditar}
+        totalRecursosProprios={{ total: 2000 }}
+      />
+    );
+
+    const valoresLivreAplicacao = screen.getAllByText("3.500,00");
+    expect(valoresLivreAplicacao.length).toBeGreaterThan(0);
+  });
 });

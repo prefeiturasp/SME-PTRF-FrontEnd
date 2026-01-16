@@ -152,7 +152,7 @@ export const UnidadesVinculadas = ({
 
     const textoModalDesvincularTodas = () => {
         return <>
-            <p style={{fontSize: "14px"}}>
+            <p>
                 Você está prestes a vincular <span style={formatStyleTextModal}>todas as unidades</span> ao recurso <span style={formatStyleTextModal}>{instanceLabel}</span>.
             </p>
             <p>

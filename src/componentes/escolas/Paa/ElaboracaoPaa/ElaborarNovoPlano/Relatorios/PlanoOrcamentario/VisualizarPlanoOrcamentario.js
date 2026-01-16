@@ -119,11 +119,12 @@ export const VisualizarPlanoOrcamentario = () => {
     isLoading: isCarregandoProgramasPdde,
     isError: erroProgramasPdde,
   } = useGetProgramasPddeTotais();
+  const paaUUID = localStorage.getItem("PAA");
   const {
     data: totalRecursosPropriosData,
     isLoading: isCarregandoTotalRecursos,
     isError: erroTotalRecursos,
-  } = useGetTotalizadorRecursoProprio(associacaoUuid);
+  } = useGetTotalizadorRecursoProprio(associacaoUuid, paaUUID);
 
   const totalRecursosPropriosValor = useMemo(() => {
     const total = totalRecursosPropriosData?.total;

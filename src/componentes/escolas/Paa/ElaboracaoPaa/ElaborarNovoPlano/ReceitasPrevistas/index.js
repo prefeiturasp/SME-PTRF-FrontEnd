@@ -52,8 +52,9 @@ const ReceitasPrevistas = ({ receitasDestino = null }) => {
   // Exibir apenas Receitas previstas das acoes associadas com exibir_paa = true
   const dataReceitasPrevistas = (data||[]).filter(item => item.acao.exibir_paa)
 
+  const getPaaUUID = () => localStorage.getItem("PAA");
   const { data: totalRecursosProprios } =
-    useGetTotalizadorRecursoProprio(associacaoUUID());
+    useGetTotalizadorRecursoProprio(associacaoUUID(), getPaaUUID());
 
   const TAB_DETALHAMENTO_RECURSOS_PROPRIOS =
     "detalhamento-de-recursos-proprios";
@@ -212,6 +213,7 @@ const ReceitasPrevistas = ({ receitasDestino = null }) => {
             <TabelaReceitasPrevistas
               data={dataReceitasPrevistas}
               handleOpenEditar={handleOpenEditar}
+              totalRecursosProprios={totalRecursosProprios}
             />
           </Spin>
 

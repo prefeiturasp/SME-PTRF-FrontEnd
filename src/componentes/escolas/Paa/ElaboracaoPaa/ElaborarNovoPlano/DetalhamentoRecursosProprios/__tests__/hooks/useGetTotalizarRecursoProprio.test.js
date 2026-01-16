@@ -31,8 +31,11 @@ describe("useGetTotalizadorRecursoProprio", () => {
     const mockData = { total: 1000 };
     getTotalizadorRecursoProprio.mockResolvedValue(mockData);
 
+    const associacaoUUID = "uuid-fake";
+    const paaUUID = "paa-uuid-123";
+
     const { result } = renderHook(
-      () => useGetTotalizadorRecursoProprio("uuid-fake"),
+      () => useGetTotalizadorRecursoProprio(associacaoUUID, paaUUID),
       {
         wrapper,
       }
@@ -42,6 +45,7 @@ describe("useGetTotalizadorRecursoProprio", () => {
       expect(result.current.isLoading).toBe(false);
       expect(result.current.isError).toBe(false);
       expect(result.current.data).toEqual(mockData);
+      expect(getTotalizadorRecursoProprio).toHaveBeenCalledWith(associacaoUUID, paaUUID);
       expect(getTotalizadorRecursoProprio).toHaveBeenCalledTimes(1);
     });
   });
