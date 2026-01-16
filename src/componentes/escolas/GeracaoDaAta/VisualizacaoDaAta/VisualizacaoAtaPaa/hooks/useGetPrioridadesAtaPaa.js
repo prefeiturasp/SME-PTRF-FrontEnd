@@ -68,7 +68,9 @@ export const useGetPrioridadesAtaPaa = (uuid_paa) => {
       ? query.data
       : [];
 
-    const prioridadesMapeadas = lista.map(mapPrioridade);
+    const prioridadesMapeadas = lista
+      .filter((p) => p.prioridade)
+      .map(mapPrioridade);
 
     const agrupadas = {
       PTRF: [],
@@ -115,4 +117,3 @@ export const useGetPrioridadesAtaPaa = (uuid_paa) => {
     prioridadesAgrupadas,
   };
 };
-
