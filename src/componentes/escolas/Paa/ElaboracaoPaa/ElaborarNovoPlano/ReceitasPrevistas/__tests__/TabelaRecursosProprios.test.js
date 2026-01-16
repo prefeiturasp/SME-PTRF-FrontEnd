@@ -158,7 +158,8 @@ describe("TabelaRecursosProprios", () => {
   it("deve calcular e renderizar o total de saldos corretamente", () => {
     renderComponent();
 
-    expect(screen.getByText("R$ 27.000,00")).toBeInTheDocument();
+    // Total inclui recursos próprios (1000) + outros recursos (27000) = 28000
+    expect(screen.getByText("R$ 28.000,00")).toBeInTheDocument();
   });
 
   it("deve exibir '__' quando o campo for nulo", () => {
@@ -166,6 +167,20 @@ describe("TabelaRecursosProprios", () => {
 
     const placeholders = screen.getAllByText("__");
     expect(placeholders.length).toBeGreaterThan(0);
+  });
+
+  it("deve exibir traço para custeio e capital em Recursos Próprios", () => {
+    renderComponent({ totalRecursosProprios: { total: 5000 } });
+    
+    const tracos = screen.getAllByText("__");
+    expect(tracos.length).toBeGreaterThan(0);
+  });
+
+  it("deve exibir valor de livre aplicação em Recursos Próprios", () => {
+    renderComponent({ totalRecursosProprios: { total: 5000 } });
+
+    const valores = screen.getAllByText("R$ 5.000,00");
+    expect(valores.length).toBeGreaterThan(0);
   });
 
   it("não deve renderizar botão de ação para linha fixa (Total)", () => {

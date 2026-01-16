@@ -144,12 +144,13 @@ export const downloadPdfLevantamentoPrioridades = async (associacao_uuid) => {
 };
 
 // Recursos Próprios
-export const getRecursosProprios = async (associacaoUUID, page = 1) => {
+export const getRecursosProprios = async (associacaoUUID, page = 1, paaUUID = null) => {
+  let url = `api/recursos-proprios-paa/?associacao__uuid=${associacaoUUID}&page=${page}&page_size=20`;
+  if (paaUUID) {
+    url += `&paa__uuid=${paaUUID}`;
+  }
   return (
-    await api.get(
-      `api/recursos-proprios-paa/?associacao__uuid=${associacaoUUID}&page=${page}&page_size=20`,
-      authHeader()
-    )
+    await api.get(url, authHeader())
   ).data;
 };
 
@@ -169,12 +170,13 @@ export const deleteRecursoProprioPaa = async (uuid) => {
     .data;
 };
 
-export const getTotalizadorRecursoProprio = async (associacaoUUID) => {
+export const getTotalizadorRecursoProprio = async (associacaoUUID, paaUUID = null) => {
+  let url = `api/recursos-proprios-paa/total/?associacao__uuid=${associacaoUUID}`;
+  if (paaUUID) {
+    url += `&paa__uuid=${paaUUID}`;
+  }
   return (
-    await api.get(
-      `api/recursos-proprios-paa/total/?associacao__uuid=${associacaoUUID}`,
-      authHeader()
-    )
+    await api.get(url, authHeader())
   ).data;
 };
 
