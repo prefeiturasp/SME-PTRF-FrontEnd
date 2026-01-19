@@ -545,12 +545,29 @@ describe("Função slugify", () => {
     test("Remove acentos", () => {
         expect(slugify("coração")).toBe("coracao");
     });
+
+    test("Converte string para slug com diferentes formatos", () => {
+        expect(slugify("Hello World")).toBe("hello-world");
+        expect(slugify("Teste com Acentos")).toBe("teste-com-acentos");
+        expect(slugify("123 Test")).toBe("123-test");
+    });
+
+    test("Remove caracteres especiais corretamente", () => {
+        expect(slugify("Test@#$%")).toBe("testpct");
+        expect(slugify("Hello! World?")).toBe("hello-world");
+    });
 });
 
 describe("Função gerarUuid", () => {
     test("Gera um UUID válido", () => {
         const uuid = gerarUuid();
         expect(uuid).toMatch(/[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}/);
+    });
+
+    test("Gera UUIDs diferentes a cada chamada", () => {
+        const uuid1 = gerarUuid();
+        const uuid2 = gerarUuid();
+        expect(uuid1).not.toBe(uuid2);
     });
 });
 
@@ -602,6 +619,17 @@ describe("Apenas números", () => {
     test("Valor vazio", () => {
         expect(apenasNumero("")).toBe(true);
     });
+
+    test("Retorna true para strings apenas com números", () => {
+        expect(apenasNumero("123")).toBe(true);
+        expect(apenasNumero("123456789")).toBe(true);
+    });
+
+    test("Retorna false para strings com caracteres não numéricos", () => {
+        expect(apenasNumero("abc123def")).toBe(false);
+        expect(apenasNumero("123-456-789")).toBe(false);
+        expect(apenasNumero("R$ 1.234,56")).toBe(false);
+    });
 });
 
 describe("Formatação de Nome DRE", () => {
@@ -615,5 +643,14 @@ describe("Formatação de Nome DRE", () => {
     
     test("Nome DRE vazio", () => {
         expect(formataNomeDRE("")).toBe("");
-    }); 
+    });
+
+    test("Remove 'DIRETORIA REGIONAL DE EDUCACAO' de diferentes posições", () => {
+        expect(formataNomeDRE("DIRETORIA REGIONAL DE EDUCACAO BUTANTA")).toBe("BUTANTA");
+        expect(formataNomeDRE("DRE BUTANTA DIRETORIA REGIONAL DE EDUCACAO")).toBe("DRE BUTANTA");
+    });
+
+    test("Retorna nome quando não contém 'DIRETORIA REGIONAL DE EDUCACAO'", () => {
+        expect(formataNomeDRE("DRE BUTANTA")).toBe("DRE BUTANTA");
+    });
 });    
