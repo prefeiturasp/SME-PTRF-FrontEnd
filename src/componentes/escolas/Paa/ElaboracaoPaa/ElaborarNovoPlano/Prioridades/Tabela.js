@@ -92,7 +92,7 @@ export const Tabela = forwardRef(({ data, handleEditar, handleDuplicar, handleEx
                 }}
             />
             <Column 
-                header="Ação" 
+                header="Ação"
                 field="acao"
                 sortable
                 body={(rowData) => (

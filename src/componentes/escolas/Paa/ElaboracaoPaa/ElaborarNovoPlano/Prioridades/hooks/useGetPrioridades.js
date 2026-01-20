@@ -24,7 +24,8 @@ export const useGetPrioridades = (filtros, page) => {
     ...item,
     acao: item?.acao_associacao_objeto?.nome ||
           item?.acao_pdde_objeto?.nome ||
-          (item?.recurso === "RECURSO_PROPRIO" ? "Recurso Próprio": ''), /** Considera em branco quando há inativação de Ação no PAA, permitindo ficar em branco na tabela, apena para exibição do botão "Informar Ação" para preenchimento*/
+          item?.outro_recurso_objeto?.nome ||
+          (item?.recurso === "RECURSO_PROPRIO" ? "Recursos Próprios": ''), /** Considera em branco quando há inativação de Ação no PAA, permitindo ficar em branco na tabela, apena para exibição do botão "Informar Ação" para preenchimento*/
     valor_total: parseFloat(item.valor_total)
   }));
   return { isLoading: status === "loading", isFetching, isError, prioridades: dadosProcessados, quantidade: data.count, error, refetch };

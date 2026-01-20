@@ -1,7 +1,8 @@
 import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, within } from "@testing-library/react";
 import { useNavigate } from "react-router-dom";
 import { useGetPrioridadesRelatorio } from "../hooks/useGetPrioridadesRelatorio";
+import { VisualizarPlanoAplicacao } from "../VisualizarPlanoAplicacao";
 
 jest.mock("react-router-dom", () => ({
   ...jest.requireActual("react-router-dom"),
@@ -12,44 +13,25 @@ jest.mock("../hooks/useGetPrioridadesRelatorio", () => ({
   useGetPrioridadesRelatorio: jest.fn(),
 }));
 
-jest.mock("../../components/RelatorioTabelaGrupo", () => ({
-  __esModule: true,
-  RelatorioTabelaGrupo: ({ headerExtra }) => (
-    <div data-testid="relatorio-tabela-grupo">{headerExtra}</div>
-  ),
-}));
-
-jest.mock(
-  "../../components/RelatorioVisualizacao",
-  () => ({
-    __esModule: true,
-    RelatorioVisualizacao({
-      children,
-      headerActions,
-      onBack = () => {},
-    }) {
-      return (
-        <div>
-          <div>{headerActions}</div>
-          <button type="button" onClick={onBack}>
-            Voltar
-          </button>
-          <div>{children}</div>
-        </div>
-      );
-    },
-  })
-);
-
-let VisualizarPlanoAplicacao;
-
 describe("VisualizarPlanoAplicacao", () => {
   const navigateMock = jest.fn();
 
   beforeEach(() => {
     jest.clearAllMocks();
     useNavigate.mockReturnValue(navigateMock);
+    window.matchMedia = jest.fn().mockImplementation((query) => ({
+      matches: false,
+      media: query,
+      onchange: null,
+      addListener: jest.fn(),
+      removeListener: jest.fn(),
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
+      dispatchEvent: jest.fn(),
+    }));
+  });
 
+  it("redireciona corretamente ao clicar nos botões da tela", () => {
     useGetPrioridadesRelatorio.mockReturnValue({
       prioridades: [
         {
@@ -68,10 +50,7 @@ describe("VisualizarPlanoAplicacao", () => {
       isFetching: false,
       isError: false,
     });
-  });
 
-  it("redireciona corretamente ao clicar nos botões da tela", async () => {
-    ({ VisualizarPlanoAplicacao } = await import("../VisualizarPlanoAplicacao"));
     render(<VisualizarPlanoAplicacao />);
 
     const botaoEditarInformacoes = screen.getByRole("button", {
@@ -101,5 +80,45 @@ describe("VisualizarPlanoAplicacao", () => {
       },
     });
   });
-});
 
+  it("ordena outros recursos colocando recurso próprio primeiro", async () => {
+    useGetPrioridadesRelatorio.mockReturnValue({
+      isFetching: false,
+      isError: false,
+      prioridades: [
+        {
+          uuid: "rp",
+          prioridade: true,
+          recurso: "RECURSO_PROPRIO",
+          valor_total: 50,
+        },
+        {
+          uuid: "b",
+          prioridade: true,
+          recurso: "OUTRO_RECURSO",
+          outro_recurso_objeto: { nome: "B Recurso" },
+          valor_total: 30,
+        },
+        {
+          uuid: "a",
+          prioridade: true,
+          recurso: "OUTRO_RECURSO",
+          outro_recurso_objeto: { nome: "A Recurso" },
+          valor_total: 20,
+        },
+      ],
+    });
+
+    render(<VisualizarPlanoAplicacao />);
+
+    const tabela = await screen.findByRole("table");
+
+    const rows = within(tabela).getAllByRole("row");
+
+    // Ignora o header (row[0])
+    expect(rows[1]).toHaveAttribute("data-row-key", "rp");
+    expect(rows[2]).toHaveAttribute("data-row-key", "a");
+    expect(rows[3]).toHaveAttribute("data-row-key", "b");
+    expect(rows[4]).toHaveTextContent("TOTAL");
+  });
+});
