@@ -9,7 +9,7 @@ export const useGet = () => {
 
     const { status, isError, data = {count: 0, results: []}, error, refetch } = useQuery({
         queryKey: ['atividades-estatutarias', filter, currentPage, rowsPerPage],
-        queryFn: ()=> getAtividadesEstatutarias(filter, currentPage, rowsPerPage),
+        queryFn: ()=> getAtividadesEstatutarias({...filter, pagination: 'false'}),
         keepPreviousData: true,
         staleTime: 5000, // 5 segundos
         refetchOnWindowFocus: true,

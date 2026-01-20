@@ -14,14 +14,28 @@ const TabelaRecursosProprios = ({
   const { data: recursos, isLoading: loadingRecursos } = useGetTodos();
 
   const dataTodosRecursos = useMemo(() => {
-    if (!recursos) return [];
-
+    const valorRecursosProprios = parseFloat(totalRecursosProprios?.total || 0);
     const recursoProprio = {
       nome: "Recursos Próprios",
       previsao_valor_custeio: null,
       previsao_valor_capital: null,
-      previsao_valor_livre: totalRecursosProprios?.total || 0,
+      previsao_valor_livre: valorRecursosProprios,
+      previsao_valor_custeio_com_saldo: null,
+      previsao_valor_capital_com_saldo: null,
+      previsao_valor_livre_com_saldo: valorRecursosProprios,
     };
+
+    if (!recursos) {
+      return [recursoProprio, {
+        uuid: "total",
+        nome: "Total de Outros Recursos",
+        previsao_valor_custeio_com_saldo: 0,
+        previsao_valor_capital_com_saldo: 0,
+        previsao_valor_livre_com_saldo: valorRecursosProprios,
+        total_saldos: valorRecursosProprios,
+        fixed: true,
+      }];
+    }
 
     const outrosRecursosMapped = recursos.map((_r) => {
       const { receitas_previstas } = _r;
@@ -65,20 +79,20 @@ const TabelaRecursosProprios = ({
     const listaGeral = [recursoProprio, ...outrosRecursosMapped].map((row) => ({
       ...row,
       total_saldos:
-        (row.previsao_valor_custeio_com_saldo || 0) +
-        (row.previsao_valor_capital_com_saldo || 0) +
-        (row.previsao_valor_livre_com_saldo || 0),
+        (row.previsao_valor_custeio_com_saldo ?? 0) +
+        (row.previsao_valor_capital_com_saldo ?? 0) +
+        (row.previsao_valor_livre_com_saldo ?? 0),
     }));
 
     const totalizadores = listaGeral.reduce(
       (acc, item) => {
         acc.previsao_valor_custeio_com_saldo +=
-          item.previsao_valor_custeio_com_saldo || 0;
+          item.previsao_valor_custeio_com_saldo ?? 0;
         acc.previsao_valor_capital_com_saldo +=
-          item.previsao_valor_capital_com_saldo || 0;
+          item.previsao_valor_capital_com_saldo ?? 0;
         acc.previsao_valor_livre_com_saldo +=
-          item.previsao_valor_livre_com_saldo || 0;
-        acc.total_saldos += item.total_saldos || 0;
+          item.previsao_valor_livre_com_saldo ?? 0;
+        acc.total_saldos += item.total_saldos ?? 0;
         return acc;
       },
       {
@@ -116,7 +130,22 @@ const TabelaRecursosProprios = ({
   }, []);
 
   const formataValorRender = useCallback((campo, rowData) => {
-    const valorFormatado = formatMoneyBRL(rowData[campo]);
+    const valor = rowData[campo];
+
+    if (valor === null || valor === undefined) {
+      return (
+        <span
+          style={{
+            fontWeight: rowData.fixed ? "bold" : "normal",
+            fontSize: rowData.fixed ? "16px" : "14px",
+          }}
+        >
+          __
+        </span>
+      );
+    }
+    
+    const valorFormatado = formatMoneyBRL(valor);
 
     return (
       <span

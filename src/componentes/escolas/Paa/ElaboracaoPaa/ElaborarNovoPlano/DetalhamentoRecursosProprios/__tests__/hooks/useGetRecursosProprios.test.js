@@ -38,10 +38,11 @@ describe("useGetRecursosProprios", () => {
 
     const associacaoUUID = "test-uuid-123";
     const page = 2;
+    const paaUUID = "paa-uuid-456";
 
-    renderHook(() => useGetRecursosProprios(associacaoUUID, page), { wrapper });
+    renderHook(() => useGetRecursosProprios(associacaoUUID, page, paaUUID), { wrapper });
 
-    expect(getRecursosProprios).toHaveBeenCalledWith(associacaoUUID, page);
+    expect(getRecursosProprios).toHaveBeenCalledWith(associacaoUUID, page, paaUUID);
     expect(getRecursosProprios).toHaveBeenCalledTimes(1);
   });
 
@@ -53,9 +54,11 @@ describe("useGetRecursosProprios", () => {
       () => useGetRecursosProprios("test-uuid", 1),
       { wrapper }
     );
-    expect(result.current.isLoading).toBe(true);
 
-    await waitFor(() => expect(result.current.isError).toBe(true));
+    await waitFor(() => {
+      expect(result.current.isError).toBe(true);
+      expect(getRecursosProprios).toHaveBeenCalled();
+    });
   });
 
   test("deve retornar valores default quando não há dados", async () => {

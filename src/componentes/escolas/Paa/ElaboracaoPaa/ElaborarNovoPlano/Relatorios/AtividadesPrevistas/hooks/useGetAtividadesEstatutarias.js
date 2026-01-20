@@ -95,56 +95,61 @@ const mergeAtividades = (disponiveisPayload, previstasPayload) => {
   const disponiveis = toArray(disponiveisPayload).map(normalizaDisponivel);
   const previstas = toArray(previstasPayload).map(normalizaPrevista);
 
-  const mapa = new Map();
+  const previstasMap = new Map();
+  previstas.forEach((p) => {
+    const key = p.atividadeEstatutariaUuid || p.uuid;
+    previstasMap.set(key, p);
+  });
 
-  disponiveis.forEach((item) => {
-    mapa.set(item.uuid, {
-      ...item,
-      mesAno: montarMesAno(item.mesLabel, item.data),
-    });
+  const resultado = [];
+  const usados = new Set();
+
+  disponiveis.forEach((disp) => {
+    const key = disp.uuid;
+    const prevista = previstasMap.get(key);
+
+    if (prevista) {
+      usados.add(key);
+
+      resultado.push({
+        ...disp,
+        descricao: prevista.descricao || disp.descricao,
+        tipoAtividade: prevista.tipoAtividade || disp.tipoAtividade,
+        tipoAtividadeKey:
+          prevista.tipoAtividadeKey || disp.tipoAtividadeKey,
+        mes: prevista.mes ?? disp.mes,
+        mesLabel: prevista.mesLabel || disp.mesLabel,
+        status: prevista.status ?? disp.status,
+        statusLabel: prevista.statusLabel || disp.statusLabel,
+        data: prevista.data || disp.data,
+        vinculoUuid: prevista.vinculoUuid || disp.vinculoUuid,
+        mesAno: montarMesAno(
+          prevista.mesLabel || disp.mesLabel,
+          prevista.data || disp.data
+        ),
+      });
+    } else {
+      resultado.push({
+        ...disp,
+        mesAno: montarMesAno(disp.mesLabel, disp.data),
+      });
+    }
   });
 
   previstas.forEach((prevista) => {
     const key = prevista.atividadeEstatutariaUuid || prevista.uuid;
-    const existente = mapa.get(key);
 
-    if (existente) {
-      mapa.set(key, {
-        ...existente,
-        descricao: prevista.descricao || existente.descricao,
-        tipoAtividade: prevista.tipoAtividade || existente.tipoAtividade,
-        tipoAtividadeKey:
-          prevista.tipoAtividadeKey || existente.tipoAtividadeKey,
-        mes: prevista.mes ?? existente.mes,
-        mesLabel: prevista.mesLabel || existente.mesLabel,
-        status: prevista.status ?? existente.status,
-        statusLabel: prevista.statusLabel || existente.statusLabel,
-        data: prevista.data || existente.data,
-        mesAno: montarMesAno(
-          prevista.mesLabel || existente.mesLabel,
-          prevista.data || existente.data
-        ),
-        vinculoUuid: prevista.vinculoUuid || existente.vinculoUuid,
+    if (!usados.has(key)) {
+      resultado.push({
+        ...prevista,
+        mesAno: montarMesAno(prevista.mesLabel, prevista.data),
       });
-      return;
     }
-
-    mapa.set(key, {
-      ...prevista,
-      mesAno: montarMesAno(prevista.mesLabel, prevista.data),
-    });
   });
 
-  const lista = Array.from(mapa.values());
-  return lista.sort((a, b) => {
-    const aNaoVinculada = a.isGlobal && !a.vinculoUuid;
-    const bNaoVinculada = b.isGlobal && !b.vinculoUuid;
-
-    if (aNaoVinculada && !bNaoVinculada) return -1;
-    if (!aNaoVinculada && bNaoVinculada) return 1;
-    return (a.descricao || "").localeCompare(b.descricao || "");
-  });
+  return resultado;
 };
+
 
 export const useGetAtividadesEstatutarias = (filtros = {}) => {
   const filtrosMemo = useMemo(() => ({ ...filtros }), [filtros]);

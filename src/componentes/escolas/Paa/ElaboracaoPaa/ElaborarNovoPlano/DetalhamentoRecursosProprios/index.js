@@ -29,6 +29,7 @@ const { TextArea } = Input;
 const DetalhamentoRecursosProprios = () => {
   const dispatch = useDispatch();
   const associacaoUUID = localStorage.getItem(ASSOCIACAO_UUID);
+  const paaUUID = localStorage.getItem("PAA");
 
   const [items, setItems] = useState([]);
   const [currentItem, setCurrentItem] = useState(null);
@@ -37,11 +38,12 @@ const DetalhamentoRecursosProprios = () => {
 
   const { data, isLoading, count } = useGetRecursosProprios(
     associacaoUUID,
-    currentPage
+    currentPage,
+    paaUUID
   );
 
   const { data: totalRecursosProprios } =
-    useGetTotalizadorRecursoProprio(associacaoUUID);
+    useGetTotalizadorRecursoProprio(associacaoUUID, paaUUID);
   const { data: fontesRecursos, isLoading: isLoadingFontesRecursos } =
     useGetFontesRecursos();
 

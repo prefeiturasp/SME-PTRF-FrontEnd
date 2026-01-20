@@ -17,7 +17,7 @@ const mapPrioridade = (item) => {
   const acao =
     item?.acao_associacao_objeto?.nome ||
     item?.acao_pdde_objeto?.nome ||
-    (item?.recurso === "RECURSO_PROPRIO" ? "Recurso Próprio" : "");
+    (item?.recurso === "RECURSO_PROPRIO" ? "Recursos Próprios" : "");
 
   return {
     ...item,

@@ -92,6 +92,7 @@ export const ListaDeDespesas = () => {
         set_filtro_vinculo_atividades(filtrosCompletos?.filtro_vinculo_atividades || []);
 
         buscaDespesasOrdenacao('NAO', filtrosCompletos);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [previousPath]);
     
 
@@ -313,7 +314,7 @@ export const ListaDeDespesas = () => {
             filtrosAtuais.data_inicio,
             filtrosAtuais.data_fim,
             filtrosAtuais.conta_associacao,
-            filtrosAtuais.vinculo_atividade,
+            filtrosAtuais.filtro_vinculo_atividades,
             filtrosAtuais.filtro_informacoes
         );
     

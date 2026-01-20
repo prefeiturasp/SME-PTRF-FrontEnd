@@ -1,5 +1,5 @@
-import React from 'react';
-import { formatMoneyBRL } from '../../../../../../utils/money';
+import React from "react";
+import { formatMoneyBRL } from "../../../../../../utils/money";
 
 export const TabelaPrioridades = ({ titulo, prioridades, total }) => {
   if (!prioridades || prioridades.length === 0) {
@@ -13,7 +13,10 @@ export const TabelaPrioridades = ({ titulo, prioridades, total }) => {
     }
     // Para PDDE - pode ter programa e ação
     if (prioridade?.recurso === "PDDE" || prioridade?.recurso_tipo === "PDDE") {
-      if (prioridade?.programa_pdde_objeto?.nome && prioridade?.acao_pdde_objeto?.nome) {
+      if (
+        prioridade?.programa_pdde_objeto?.nome &&
+        prioridade?.acao_pdde_objeto?.nome
+      ) {
         return `${prioridade.programa_pdde_objeto.nome} - ${prioridade.acao_pdde_objeto.nome}`;
       }
       if (prioridade?.programa_pdde_objeto?.nome) {
@@ -23,10 +26,22 @@ export const TabelaPrioridades = ({ titulo, prioridades, total }) => {
         return prioridade.acao_pdde_objeto.nome;
       }
     }
+    //Outros recursos
+    if (
+      prioridade?.recurso === "OUTRO_RECURSO" ||
+      prioridade?.recurso_tipo === "OUTRO_RECURSO"
+    ) {
+      return prioridade?.outro_recurso_objeto?.nome;
+    }
+
     // Para Recursos Próprios
-    if (prioridade?.recurso === "RECURSO_PROPRIO" || prioridade?.recurso_tipo === "RECURSO_PROPRIO") {
+    if (
+      prioridade?.recurso === "RECURSO_PROPRIO" ||
+      prioridade?.recurso_tipo === "RECURSO_PROPRIO"
+    ) {
       return "Recursos Próprios";
     }
+
     return "-";
   };
 
@@ -43,22 +58,26 @@ export const TabelaPrioridades = ({ titulo, prioridades, total }) => {
   };
 
   const getValorTotal = (prioridade) => {
-    return prioridade?.valor_total ? formatMoneyBRL(prioridade.valor_total) : "-";
+    return prioridade?.valor_total
+      ? formatMoneyBRL(prioridade.valor_total)
+      : "-";
   };
 
   return (
     <div className="col-12 mt-4">
-      <h4 className="mb-3" style={{ fontWeight: 'bold', color: '#42474A' }}>
+      <h4 className="mb-3" style={{ fontWeight: "bold", color: "#42474A" }}>
         {titulo}
       </h4>
-      <table className="table table-bordered" style={{ width: '100%' }}>
-        <thead style={{ backgroundColor: '#dadada' }}>
+      <table className="table table-bordered" style={{ width: "100%" }}>
+        <thead style={{ backgroundColor: "#dadada" }}>
           <tr>
-            <th style={{ width: '20%' }}>Recursos</th>
-            <th style={{ width: '20%' }}>Tipo de aplicação</th>
-            <th style={{ width: '20%' }}>Tipo de despesa</th>
-            <th style={{ width: '30%' }}>Especificação do bem, material ou serviço</th>
-            <th style={{ width: '10%', textAlign: 'right' }}>Valor Total</th>
+            <th style={{ width: "20%" }}>Recursos</th>
+            <th style={{ width: "20%" }}>Tipo de aplicação</th>
+            <th style={{ width: "20%" }}>Tipo de despesa</th>
+            <th style={{ width: "30%" }}>
+              Especificação do bem, material ou serviço
+            </th>
+            <th style={{ width: "10%", textAlign: "right" }}>Valor Total</th>
           </tr>
         </thead>
         <tbody>
@@ -68,19 +87,20 @@ export const TabelaPrioridades = ({ titulo, prioridades, total }) => {
               <td>{getTipoAplicacao(prioridade)}</td>
               <td>{getTipoDespesa(prioridade)}</td>
               <td>{getEspecificacao(prioridade)}</td>
-              <td style={{ textAlign: 'right' }}>{getValorTotal(prioridade)}</td>
+              <td style={{ textAlign: "right" }}>
+                {getValorTotal(prioridade)}
+              </td>
             </tr>
           ))}
-          <tr style={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>
+          <tr style={{ fontWeight: "bold", backgroundColor: "#f5f5f5" }}>
             <td>TOTAL</td>
             <td></td>
             <td></td>
             <td></td>
-            <td style={{ textAlign: 'right' }}>{formatMoneyBRL(total)}</td>
+            <td style={{ textAlign: "right" }}>{formatMoneyBRL(total)}</td>
           </tr>
         </tbody>
       </table>
     </div>
   );
 };
-

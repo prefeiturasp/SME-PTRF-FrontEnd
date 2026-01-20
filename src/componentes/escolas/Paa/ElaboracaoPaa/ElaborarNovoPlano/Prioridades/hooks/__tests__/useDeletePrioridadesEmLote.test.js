@@ -53,7 +53,8 @@ describe("useDeletePrioridadesEmLote", () => {
       "Prioridades removidas com sucesso."
     );
 
-    expect(invalidateQueriesSpy).toHaveBeenCalledWith(["prioridades"]);
+    expect(invalidateQueriesSpy).toHaveBeenNthCalledWith(1, "prioridades");
+    expect(invalidateQueriesSpy).toHaveBeenNthCalledWith(2, "prioridades-resumo");
   });
 
   test("deve exibir toast de erro quando a API retorna mensagem de erro", async () => {
