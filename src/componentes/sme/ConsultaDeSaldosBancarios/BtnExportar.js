@@ -3,8 +3,8 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faDownload} from "@fortawesome/free-solid-svg-icons";
 
 export const BtnExportar = ({handleOnClickExportar}) => {
-    return(
-        <>
+    return (
+        <div style={{display: 'flex', paddingRight: 15}}>
             
             <button
                 onClick={handleOnClickExportar}
@@ -20,6 +20,6 @@ export const BtnExportar = ({handleOnClickExportar}) => {
             </button>
 
             
-        </>
+        </div>
     )
 };
