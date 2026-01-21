@@ -47,6 +47,7 @@ export const NovoFormularioEditaAta = ({
   erros,
   showModalAvisoRegeracaoAta,
   setShowModalAvisoRegeracaoAta,
+  precisaProfessorGremio = false,
 }) => {
   const podeEditarAta = [["change_ata_prestacao_contas"]].some(
     visoesService.getPermissoes
@@ -143,7 +144,8 @@ export const NovoFormularioEditaAta = ({
         const listaComProfessor = adicionaProfessorGremioNaLista(
           composicao_formatada,
           uuid_ata,
-          professorDefaults
+          professorDefaults,
+          precisaProfessorGremio
         );
         setListaParticipantes(listaComProfessor);
         sincronizaListaParticipantes(listaComProfessor);
@@ -202,7 +204,8 @@ export const NovoFormularioEditaAta = ({
         const listaComProfessor = adicionaProfessorGremioNaLista(
           listaPresentesAta,
           uuid_ata,
-          professorInfo || professorDefaults
+          professorInfo || professorDefaults,
+          precisaProfessorGremio
         );
         setListaParticipantes(listaComProfessor);
         sincronizaListaParticipantes(listaComProfessor);
@@ -929,7 +932,8 @@ export const NovoFormularioEditaAta = ({
         const listaComProfessor = adicionaProfessorGremioNaLista(
           listaFormatada,
           uuid_ata,
-          professorDefaults
+          professorDefaults,
+          precisaProfessorGremio
         );
         setListaParticipantes(listaComProfessor);
         sincronizaListaParticipantes(listaComProfessor);
@@ -969,7 +973,8 @@ export const NovoFormularioEditaAta = ({
     const listaComProfessor = adicionaProfessorGremioNaLista(
       [],
       uuid_ata,
-      professorDefaults
+      professorDefaults,
+      precisaProfessorGremio
     );
     setListaParticipantes(listaComProfessor);
     sincronizaListaParticipantes(listaComProfessor);
@@ -1290,6 +1295,11 @@ export const NovoFormularioEditaAta = ({
                                 registroSincronizado &&
                                 !membro.membro &&
                                 !isProfessorGremio;
+
+                              if (isProfessorGremio && !precisaProfessorGremio) {
+                                return null;
+                              }
+                              
                               return (
                                 <div key={index}>
                                   <div
