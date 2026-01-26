@@ -10,6 +10,7 @@ import Img404 from "../../../../assets/img/img-404.svg";
 import { MsgImgCentralizada } from "../../../Globais/Mensagens/MsgImgCentralizada";
 
 import { ModalConfirm } from "../../../Globais/Modal/ModalConfirm";
+import { CustomModalConfirm } from "../../../Globais/Modal/CustomModalConfirm";
 import { useGetUnidadesNaoVinculadas } from "../hooks/useGet";
 import { useVincularUnidade, useVincularUnidadeEmLote } from "../hooks/useVinculoUnidade";
 import { Filtros } from "../Filtros";
@@ -86,12 +87,36 @@ export const VincularUnidades = ({
         </>
     }
     
-    const handleVincular = async (unidade_uuid) => {
+    const handleVincular = async (unidade_uuid, confirmado=false) => {
         try {
-            mutationVincularUnidade.mutate({uuid: instanceUUID, unidade_uuid})
+            await mutationVincularUnidade.mutateAsync({uuid: instanceUUID, unidade_uuid, payload: {confirmado}})
             setSelectedUnidades([])
         } catch (error) {
-            console.error(error);
+            if (error?.response?.data?.confirmar) {
+                const confirmarVinculo = true
+                ModalConfirm({
+                    dispatch,
+                    title: "Confirmação de Vinculação",
+                    message: (error?.response?.data?.confirmar||'').replace('\n', '<br>'),
+                    cancelText: "Cancelar",
+                    confirmText: "Confirmar vinculação",
+                    confirmButtonClass: "btn-success",
+                    dataQa: "modal-confirmar-vincular-unidade",
+                    onConfirm: () => handleVincular(unidade_uuid, confirmarVinculo),
+                });
+            } else {
+                CustomModalConfirm({
+                    dispatch,
+                    title: "Erro ao vincular unidade",
+                    message: error?.response?.data?.mensagem ||
+                                error?.response?.data?.detail ||
+                                error?.response?.data?.non_field_errors ||
+                                error?.response?.data ||
+                                "Falha ao tentar vincular unidade",
+                    cancelText: "Ok",
+                    dataQa: "modal-vincular-unidade",
+                });
+            }
         }
     };
 
@@ -109,12 +134,38 @@ export const VincularUnidades = ({
         });
     };
 
-    const handleVincularEmLote = async (unidade_uuids) => {
+    const handleVincularEmLote = async (unidade_uuids, confirmado=false) => {
         try {
-            mutationVincularUnidadeEmLote.mutate({uuid: instanceUUID, unidade_uuids})
+            await mutationVincularUnidadeEmLote.mutateAsync({uuid: instanceUUID, unidade_uuids, payload: {confirmado}})
             setSelectedUnidades([]);
         } catch (error) {
-            console.error(error);
+            if (error?.response?.data?.confirmar) {
+                const confirmarVinculo = true
+                ModalConfirm({
+                    dispatch,
+                    title: "Confirmação de vinculação",
+                    message: (error?.response?.data?.confirmar||'').replace('\n', '<br>'),
+                    cancelText: "Cancelar",
+                    confirmText: "Confirmar vinculação",
+                    confirmButtonClass: "btn-success",
+                    dataQa: "modal-confirmar-vincular-unidades",
+                    onConfirm: () => handleVincularEmLote(unidade_uuids, confirmarVinculo),
+                });
+            } else {
+                CustomModalConfirm({
+                    dispatch,
+                    title: "Erro ao vincular unidades",
+                    message: <p>
+                        {error?.response?.data?.mensagem ||
+                        error?.response?.data?.detail ||
+                        error?.response?.data?.non_field_errors ||
+                        error?.response?.data ||
+                        "Falha ao tentar vincular unidades em lote"}
+                        </p>,
+                    cancelText: "Ok",
+                    dataQa: "modal-vincular-unidades-em-lote",
+                });
+            }
         }
     };
 
