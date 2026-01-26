@@ -14,7 +14,7 @@ import {
 import { RECURSOS_PRIORIDADE } from "../../../../../../constantes/prioridades";
 
 
-const ModalFormAdicionarPrioridade = ({ open, onClose, tabelas, formModal, focusValor=false, focusAcao=false }) => {
+const ModalFormAdicionarPrioridade = ({ open, onClose, tabelas, formModal, focusFields=[] }) => {
   const [form] = Form.useForm();
   const [selectedRecurso, setSelectedRecurso] = useState('');
   const [selectedTipoAplicacao, setSelectedTipoAplicacao] = useState('');
@@ -233,6 +233,7 @@ const ModalFormAdicionarPrioridade = ({ open, onClose, tabelas, formModal, focus
     ]);
   };
 
+  const recursoPrioridadeRef = useRef(null);
   const valorTotalRef = useRef(null);
   const AcaoPTRFRef = useRef(null);
 
@@ -241,6 +242,14 @@ const ModalFormAdicionarPrioridade = ({ open, onClose, tabelas, formModal, focus
       valorTotalRef?.current?.focus();
       form.setFields([{
         name: 'valor_total', errors: ['Valor total é obrigatório!']
+      }]);
+    }, 500);
+  };
+  const handleFocusRecursoPrioridade = () => {
+    setTimeout(() => {
+      recursoPrioridadeRef?.current?.focus();
+      form.setFields([{
+        name: 'recurso', errors: ['Recurso é obrigatório!']
       }]);
     }, 500);
   };
@@ -275,13 +284,18 @@ const ModalFormAdicionarPrioridade = ({ open, onClose, tabelas, formModal, focus
 
       form.setFieldsValue(initial);
 
-      if(formModal?.uuid && !formModal?.valor_total && focusValor){
+      if(formModal?.uuid && !formModal?.valor_total && (focusFields||[]).includes('valor_total')){
         handleFocusValorTotal();
       }
 
       // Quando Acao associacao não for informada (por desativação de acao no PAA), focar no elemento para preenchimento
-      if(!!formModal?.uuid && !formModal?.acao_associacao && focusAcao){
+      if(!!formModal?.uuid && !formModal?.acao_associacao && (focusFields||[]).includes('acao')){
         handleFocusAcaoPTRF();
+      }
+
+      // Quando Recurso não for informada (por desativação de outros recursos no PAA), focar no elemento para preenchimento
+      if(!!formModal?.uuid && !formModal?.outro_recurso && (focusFields||[]).includes('recurso')){
+        handleFocusRecursoPrioridade();
       }
 
     } else {

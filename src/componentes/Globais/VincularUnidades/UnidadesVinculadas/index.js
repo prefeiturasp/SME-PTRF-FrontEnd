@@ -8,8 +8,9 @@ import Img404 from "../../../../assets/img/img-404.svg";
 import { MsgImgCentralizada } from "../../../Globais/Mensagens/MsgImgCentralizada";
 
 import { ModalConfirm } from "../../../Globais/Modal/ModalConfirm";
+import { CustomModalConfirm } from "../../../Globais/Modal/CustomModalConfirm";
 import { useGetUnidadesVinculadas } from "../hooks/useGet";
-import { useDesvincularUnidade, useDesvincularUnidadeEmLote } from "../hooks/useVinculoUnidade";
+import { useDesvincularUnidade, useDesvincularUnidadeEmLote, useVincularTodasUnidades } from "../hooks/useVinculoUnidade";
 
 import { Filtros } from "../Filtros";
 import { Paginacao } from "../Paginacao";
@@ -23,6 +24,7 @@ export const UnidadesVinculadas = ({
     apiServiceGetUnidadesVinculadas,
     apiServiceDesvincularUnidade,
     apiServiceDesvincularUnidadeEmLote,
+    apiServiceVincularTodasUnidades,
     exibirUnidadesVinculadas=true,  /** Exibe a tabela de unidades vinculadas. Diferencia de data.results.length > 0 quando há filtros */
     header=null,
     onDesvincular=()=>{},
@@ -76,6 +78,11 @@ export const UnidadesVinculadas = ({
     
     const mutationDesvincularUnidadeEmLote = useDesvincularUnidadeEmLote(
         apiServiceDesvincularUnidadeEmLote,
+        onDesvincular
+    );
+
+    const mutationVincularTodasUnidades = useVincularTodasUnidades(
+        apiServiceVincularTodasUnidades,
         () => {
             setVincularTodas(true);
             onDesvincular();
@@ -91,12 +98,36 @@ export const UnidadesVinculadas = ({
         </>
     }
  
-    const handleDesvincular = async (unidade_uuid) => {
+    const handleDesvincular = async (unidade_uuid, confirmado=false) => {
         try {
-            mutationDesvincularUnidade.mutate({uuid: instanceUUID, unidade_uuid})
+            await mutationDesvincularUnidade.mutateAsync({uuid: instanceUUID, unidade_uuid, payload: {confirmado}})
             setSelectedUnidades([])
         } catch (error) {
-            console.error(error);
+            if (error?.response?.data?.confirmar) {
+                const confirmarDesvinculo = true
+                ModalConfirm({
+                    dispatch,
+                    title: "Confirmação de desvinculação",
+                    message: (error?.response?.data?.confirmar||'').replace('\n', '<br>'),
+                    cancelText: "Cancelar",
+                    confirmText: "Confirmar desvinculação",
+                    confirmButtonClass: "btn-success",
+                    dataQa: "modal-confirmar-desvincular-unidade",
+                    onConfirm: () => handleDesvincular(unidade_uuid, confirmarDesvinculo),
+                });
+            } else {
+                CustomModalConfirm({
+                    dispatch,
+                    title: "Erro ao desvincular unidade",
+                    message: error?.response?.data?.mensagem ||
+                                error?.response?.data?.detail ||
+                                error?.response?.data?.non_field_errors ||
+                                error?.response?.data ||
+                                "Falha ao tentar desvincular unidade",
+                    cancelText: "Ok",
+                    dataQa: "modal-erro-desvincular-unidade",
+                });
+            }
         }
     };
 
@@ -114,12 +145,36 @@ export const UnidadesVinculadas = ({
         });
     };
 
-    const handleDesvincularEmLote = async (unidade_uuids) => {
+    const handleDesvincularEmLote = async (unidade_uuids, confirmado=false) => {
         try {
-            mutationDesvincularUnidadeEmLote.mutate({uuid: instanceUUID, unidade_uuids})
+            await mutationDesvincularUnidadeEmLote.mutateAsync({uuid: instanceUUID, unidade_uuids, payload: {confirmado}})
             setSelectedUnidades([]);
         } catch (error) {
-            console.error(error);
+            if (error?.response?.data?.confirmar) {
+                const confirmarDesvinculo = true
+                ModalConfirm({
+                    dispatch,
+                    title: "Confirmação de desvinculação",
+                    message: (error?.response?.data?.confirmar||'').replace('\n', '<br>'),
+                    cancelText: "Cancelar",
+                    confirmText: "Confirmar desvinculação",
+                    confirmButtonClass: "btn-success",
+                    dataQa: "modal-confirmar-desvincular-unidade",
+                    onConfirm: () => handleDesvincularEmLote(unidade_uuids, confirmarDesvinculo),
+                });
+            } else {
+                CustomModalConfirm({
+                    dispatch,
+                    title: "Erro ao desvincular unidade",
+                    message: error?.response?.data?.mensagem ||
+                                error?.response?.data?.detail ||
+                                error?.response?.data?.non_field_errors ||
+                                error?.response?.data ||
+                                "Falha ao tentar desvincular unidades em lote",
+                    cancelText: "Ok",
+                    dataQa: "modal-erro-desvincular-unidade-em-lote",
+                });
+            }
         }
     };
 
@@ -161,7 +216,7 @@ export const UnidadesVinculadas = ({
         </>
     }
 
-    const handleDesvincularTodas = async () => {
+    const handleVincularTodasUnidades = async () => {
         try {
             const response = await apiServiceGetUnidadesVinculadas(instanceUUID, { 
                 pagination: 'false'
@@ -173,7 +228,7 @@ export const UnidadesVinculadas = ({
                 setVincularTodas(true);
                 return;
             }
-            mutationDesvincularUnidadeEmLote.mutate({uuid: instanceUUID, unidade_uuids: uuids});
+            mutationVincularTodasUnidades.mutate({uuid: instanceUUID});
         } catch (error) {
             console.error("Erro ao buscar unidades vinculadas:", error);
         }
@@ -190,7 +245,7 @@ export const UnidadesVinculadas = ({
             confirmButtonClass: "btn-success",
             dataQa: "modal-confirmar-desvincular-todas",
             onConfirm: () => {
-                handleDesvincularTodas();
+                handleVincularTodasUnidades();
             },
             onCancel: () => {
                 setVincularTodas(unidadesVinculadas?.count === 0);
@@ -209,14 +264,6 @@ export const UnidadesVinculadas = ({
             setVincularTodas(false);
         }
     };
-
-    useEffect(() => {
-        if (unidadesVinculadas?.count === 0) {
-            setVincularTodas(true);
-        } else {
-            setVincularTodas(false);
-        }
-    }, [unidadesVinculadas?.count]);
 
     const unidadeEscolarTemplate = (rowData) => {
         return (
@@ -297,12 +344,12 @@ export const UnidadesVinculadas = ({
         <>
         <div style={{ marginBottom: "16px" }}>
             { header }
-            {apiServiceDesvincularUnidadeEmLote && (
+            {apiServiceVincularTodasUnidades && (
                 <div style={{ marginTop: "8px" }}>
                     <Checkbox
                         checked={vincularTodas}
                         onChange={handleVincularTodasChange}
-                        disabled={mutationDesvincularUnidadeEmLote?.isPending || isLoadingUnidadesVinculadas}
+                        disabled={mutationVincularTodasUnidades?.isPending || isLoadingUnidadesVinculadas}
                     >
                         Todas as unidades
                     </Checkbox>

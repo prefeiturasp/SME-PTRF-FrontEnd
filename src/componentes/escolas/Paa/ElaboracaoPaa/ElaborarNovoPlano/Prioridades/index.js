@@ -91,8 +91,8 @@ const Prioridades = () => {
     setModalForm({ open: true, tabelas: dadosTabelas, formModal: null });
   };
 
-  const onEditar = (rowData, focusValor=false, focusAcao=true) => {
-    setModalForm({ open: true, tabelas: dadosTabelas, formModal: rowData, focusValor: focusValor, focusAcao: focusAcao });
+  const onEditar = (rowData, focusFields=[]) => {
+    setModalForm({ open: true, tabelas: dadosTabelas, formModal: rowData, focusFields });
   };
 
   const { mutationPost: mutationPostDuplicar } = usePostDuplicarPrioridade();
@@ -225,8 +225,7 @@ const Prioridades = () => {
           open={modalForm.open}
           tabelas={modalForm.tabelas}
           formModal={modalForm.formModal}
-          focusValor={modalForm.focusValor}
-          focusAcao={modalForm.focusAcao}
+          focusFields={modalForm.focusFields}
           onClose={() => setModalForm({
             open: false,
             tabelas: null,

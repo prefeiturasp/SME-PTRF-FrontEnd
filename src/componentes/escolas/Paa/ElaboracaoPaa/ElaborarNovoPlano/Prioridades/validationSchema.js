@@ -3,7 +3,7 @@ import * as Yup from "yup";
 export const createValidationSchema = (selectedRecurso, selectedTipoAplicacao) => {
   let schema = Yup.object().shape({
     prioridade: Yup.string().required('Prioridade é obrigatório'),
-    recurso: Yup.string().required('Recurso é obrigatório'),
+    recurso: Yup.string().nullable().required('Recurso é obrigatório'),
     tipo_aplicacao: Yup.string().required('Tipo de aplicação é obrigatório'),
     especificacao_material: Yup.string().required('Especificação de material é obrigatório'),
     valor_total: Yup.number()
