@@ -64,14 +64,12 @@ const TabelaReceitasPrevistas = ({ data, handleOpenEditar, totalRecursosProprios
           );
         }, 0);
 
-        const totalLivreComRecursosProprios = totalLivre + (parseFloat(totalRecursosProprios?.total) || 0);
-
-        const totalGeral = totalCapital + totalCusteio + totalLivreComRecursosProprios;
+        const totalGeral = totalCapital + totalCusteio + totalLivre;
 
         const fieldMapping = {
           valor_capital: totalCapital,
           valor_custeio: totalCusteio,
-          valor_livre: totalLivreComRecursosProprios,
+          valor_livre: totalLivre,
           total: totalGeral,
         };
 
