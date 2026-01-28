@@ -568,7 +568,12 @@ export const GestaoDePerfisForm = () =>{
                     if (e.response.data.username && e.response.data.username.length > 0) {
                         setTextoModalInfo(e.response.data.username[0])
                     } else {
-                        setTextoModalInfo('<p>Não foi possível atualizar o usuário, por favor, tente novamente</p>')
+                        const mensagemErro = e?.response?.data?.[0];
+                        const texto = mensagemErro
+                        ? `Não foi possível atualizar o usuário, por favor, tente novamente: ${mensagemErro}`
+                        : 'Não foi possível atualizar o usuário, por favor, tente novamente';
+                        setTextoModalInfo(`<p>${texto}</p>`);
+                        
                     }
                     resetForm()
                     setShowModalUsuarioNaoCadastrado(false)
