@@ -133,6 +133,15 @@ export const VisualizacaoDaAta = () => {
         setListaPresentes(lista_presentes);
     }
 
+    const filtrarProfessorGremioNaoPreenchido = (lista) => {
+        if (!lista || !Array.isArray(lista)) return lista;
+        return lista.filter(presente => {
+            if (!presente.professor_gremio) return true;
+            return (presente.nome && presente.nome.trim() !== '') || 
+                   (presente.identificacao && presente.identificacao.trim() !== '');
+        });
+    }
+
     const aprensentaWatermark = (dados_da_ata) => {
         if(dados_da_ata) {
             if(dados_da_ata.completa && dados_da_ata.status_geracao_pdf === 'CONCLUIDO') {
@@ -563,10 +572,10 @@ export const VisualizacaoDaAta = () => {
             {visoesService.featureFlagAtiva('historico-de-membros') ? (<div className="col-12">
                 {dadosAta && Object.entries(dadosAta).length > 0 &&
                     <div className="mt-4">
-                        {listaPresentes && listaPresentes.presentes_membros && listaPresentes.presentes_membros.length > 0 ?
+                        {listaPresentes && listaPresentes.presentes_membros && filtrarProfessorGremioNaoPreenchido(listaPresentes.presentes_membros).length > 0 ?
                         <TabelaPresentes
                             titulo="Membros da Diretoria Executiva e do Conselho Fiscal"
-                            listaPresentes={listaPresentes.presentes_membros}
+                            listaPresentes={filtrarProfessorGremioNaoPreenchido(listaPresentes.presentes_membros)}
                         /> : <BarraAvisoPreencerData/>}
                     </div>
                 }
@@ -574,11 +583,11 @@ export const VisualizacaoDaAta = () => {
                 {dadosAta && Object.entries(dadosAta).length > 0 &&
                     listaPresentes &&
                     listaPresentes.presentes_nao_membros &&
-                    listaPresentes.presentes_nao_membros.length > 0 &&
+                    filtrarProfessorGremioNaoPreenchido(listaPresentes.presentes_nao_membros).length > 0 &&
                     <div className="mt-4">
                         <TabelaPresentes
                             titulo="Demais presentes"
-                            listaPresentes={listaPresentes.presentes_nao_membros}
+                            listaPresentes={filtrarProfessorGremioNaoPreenchido(listaPresentes.presentes_nao_membros)}
                         />
                     </div>
                 }
@@ -588,9 +597,9 @@ export const VisualizacaoDaAta = () => {
                         <p style={{fontSize: '24px', color: '#42474A'}}><strong>Parecer do Conselho Fiscal</strong></p>
                         <p>{retornaDadosAtaFormatado("parecer_conselho")}</p>
                         <p className="mt-5">{retornaDadosAtaFormatado("data_reuniao_texto_inferior")}</p>
-                        {listaPresentes && listaPresentes.presentes_ata_conselho_fiscal && listaPresentes.presentes_ata_conselho_fiscal.length > 0 ? <TabelaPresentes
+                        {listaPresentes && listaPresentes.presentes_ata_conselho_fiscal && filtrarProfessorGremioNaoPreenchido(listaPresentes.presentes_ata_conselho_fiscal).length > 0 ? <TabelaPresentes
                             titulo="Membros do Conselho Fiscal"
-                            listaPresentes={listaPresentes.presentes_ata_conselho_fiscal}
+                            listaPresentes={filtrarProfessorGremioNaoPreenchido(listaPresentes.presentes_ata_conselho_fiscal)}
                         /> : <BarraAvisoPreencerData/>}
                     </div>
                 }
@@ -599,7 +608,7 @@ export const VisualizacaoDaAta = () => {
                     <div className="mt-4">
                         <TabelaPresentes
                             titulo="Membros da Diretoria Executiva e do Conselho Fiscal"
-                            listaPresentes={listaPresentes.presentes_membros}
+                            listaPresentes={filtrarProfessorGremioNaoPreenchido(listaPresentes?.presentes_membros || [])}
                         />
                     </div>
                 }
@@ -607,11 +616,11 @@ export const VisualizacaoDaAta = () => {
                 {dadosAta && Object.entries(dadosAta).length > 0 &&
                     listaPresentes &&
                     listaPresentes.presentes_nao_membros &&
-                    listaPresentes.presentes_nao_membros.length > 0 &&
+                    filtrarProfessorGremioNaoPreenchido(listaPresentes.presentes_nao_membros).length > 0 &&
                     <div className="mt-4">
                         <TabelaPresentes
                             titulo="Demais presentes"
-                            listaPresentes={listaPresentes.presentes_nao_membros}
+                            listaPresentes={filtrarProfessorGremioNaoPreenchido(listaPresentes.presentes_nao_membros)}
                         />
                     </div>
                 }
@@ -623,7 +632,7 @@ export const VisualizacaoDaAta = () => {
                         <p className="mt-5">{retornaDadosAtaFormatado("data_reuniao_texto_inferior")}</p>
                         <TabelaPresentes
                             titulo="Membros do Conselho Fiscal"
-                            listaPresentes={listaPresentes.presentes_ata_conselho_fiscal}
+                            listaPresentes={filtrarProfessorGremioNaoPreenchido(listaPresentes?.presentes_ata_conselho_fiscal || [])}
                         />
                     </div>
                 }

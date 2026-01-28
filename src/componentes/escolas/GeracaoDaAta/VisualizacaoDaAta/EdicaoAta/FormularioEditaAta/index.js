@@ -5,10 +5,16 @@ import {FieldArray, Formik} from "formik";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTimesCircle, faCheckCircle, faEdit} from "@fortawesome/free-solid-svg-icons";
 import {getMembroPorIdentificador} from "../../../../../../services/escolas/PresentesAta.service";
+import {getProfessorGremioInfo} from "../../../../../../services/escolas/PresentesAtaPaa.service";
 import {YupSignupSchemaAta} from "./YupSignupSchemaAta";
 import {valida_cpf_exportado} from "../../../../../../utils/ValidacoesAdicionaisFormularios";
 import TabelaRepassesPendentes from "../../TabelaRepassesPendentes";
 import { Switch } from 'antd';
+import {
+    adicionaProfessorGremioNaLista,
+    extraiProfessorDefaults,
+} from "../../EdicaoAtaPaa/utils";
+import { toastCustom } from "../../../../../Globais/ToastCustom";
 
 export const FormularioEditaAta = ({
                                        listaPresentesPadrao,
@@ -21,7 +27,8 @@ export const FormularioEditaAta = ({
                                        setDisableBtnSalvar,
                                        repassesPendentes,
                                        erros,
-                                       editaStatusDePresencaMembro
+                                       editaStatusDePresencaMembro,
+                                       precisaProfessorGremio = false,
                                    }) => {
 
     const podeEditarAta = [['change_ata_prestacao_contas']].some(visoesService.getPermissoes)
@@ -34,16 +41,40 @@ export const FormularioEditaAta = ({
     const [formErrors, setFormErrors] = useState({});
     const [ehAdicaoPresente, setEhAdicaoPresente] = useState(false);
     const [ehEdicaoPresente, setEhEdicaoPresente] = useState([]);
-    const [linhaEditada, setLinhaEditada] = useState({})
+    const [linhaEditada, setLinhaEditada] = useState({});
+    const [professorDefaults, setProfessorDefaults] = useState({
+        nome: "",
+        cargo: "",
+        identificacao: "",
+        presente: true,
+    });
 
     useEffect(() => {
         getDados();
-    }, [stateFormEditarAta, listaPresentesPadrao]);
+    }, [stateFormEditarAta, listaPresentesPadrao, precisaProfessorGremio]);
 
     const getDados = () => {
+        // Remove professor da lista se precisaProfessorGremio for false
+        let listaFiltrada = listaPresentesPadrao.filter(p => !p.professor_gremio);
+        
+        // Extrai informações do professor se existir na lista original
+        const professorInfo = extraiProfessorDefaults(listaPresentesPadrao);
+        if (professorInfo) {
+            setProfessorDefaults(professorInfo);
+        }
+        
+        // Adiciona professor se precisaProfessorGremio for true
+        const listaComProfessor = precisaProfessorGremio
+            ? adicionaProfessorGremioNaLista(
+                listaFiltrada,
+                uuid_ata,
+                professorInfo || professorDefaults,
+                precisaProfessorGremio
+            )
+            : listaFiltrada;
 
         let obj = {
-            listaPresentesPadrao: listaPresentesPadrao,
+            listaPresentesPadrao: listaComProfessor,
             stateFormEditarAta: stateFormEditarAta
         }
 
@@ -290,8 +321,83 @@ export const FormularioEditaAta = ({
         return !isNaN(parseFloat(n)) && isFinite(n);
     }
 
+    const atualizarCamposProfessorGremio = (
+        index,
+        setFieldValue,
+        nome = "",
+        cargo = "",
+        bloquearCampos = false,
+        identificacao
+    ) => {
+        setFieldValue(`listaPresentesPadrao[${index}].nome`, nome);
+        setFieldValue(`listaPresentesPadrao[${index}].cargo`, cargo);
+        setFieldValue(`listaPresentesPadrao[${index}].membro`, false);
+        setFieldValue(`listaPresentesPadrao[${index}].editavel`, false);
+        setFieldValue(`listaPresentesPadrao[${index}].professor_gremio`, true);
+
+        if (identificacao !== undefined) {
+            setFieldValue(
+                `listaPresentesPadrao[${index}].identificacao`,
+                identificacao
+            );
+        }
+
+        setProfessorDefaults({
+            nome,
+            cargo,
+            identificacao: identificacao || "",
+            presente: true,
+        });
+
+        const campoNome = document.getElementById(
+            `listaPresentesPadrao.nome_[${index}]`
+        );
+
+        const campoCargo = document.getElementById(
+            `listaPresentesPadrao.cargo_[${index}]`
+        );
+
+        if (campoNome) campoNome.disabled = true;
+        if (campoCargo) campoCargo.disabled = true;
+    };
+
     const handleBlurIdentificador = async (e, setFieldValue, index) => {
         let identificador = e.target.value
+        
+        // Verifica se é professor do grêmio
+        const participanteAtual = formRef && formRef.current && formRef.current.values && formRef.current.values.listaPresentesPadrao
+            ? formRef.current.values.listaPresentesPadrao[index]
+            : null;
+        const ehProfessorGremio = participanteAtual && participanteAtual.professor_gremio;
+
+        if (ehProfessorGremio && identificador.length === 7 && isNumber(identificador)) {
+            try {
+                const professor = await getProfessorGremioInfo(identificador);
+                const encontrou = professor && professor.mensagem !== "servidor-nao-encontrado";
+                atualizarCamposProfessorGremio(
+                    index,
+                    setFieldValue,
+                    professor && professor.nome ? professor.nome : "",
+                    professor && professor.cargo ? professor.cargo : "",
+                    !!encontrou,
+                    identificador
+                );
+                if (encontrou) {
+                    toastCustom.ToastCustomSuccess("Participante inserido com sucesso");
+                }
+            } catch (error) {
+                console.error("Erro ao buscar professor do grêmio", error);
+                atualizarCamposProfessorGremio(
+                    index,
+                    setFieldValue,
+                    "",
+                    "",
+                    false,
+                    identificador
+                );
+            }
+            return;
+        }
 
         if (identificador.length === 7 && isNumber(identificador)) {
             let membro = await getMembroPorIdentificador(uuid_ata, identificador)
@@ -349,7 +455,10 @@ export const FormularioEditaAta = ({
     };
 
 
-    const nomeCampoIdentificador = (identificador) => {
+    const nomeCampoIdentificador = (identificador, isProfessorGremio = false) => {
+        if (isProfessorGremio) {
+            return "RF Professor Orientador do Grêmio"
+        }
         if (identificador.length === 7 && isNumber(identificador)) {
             return "RF"
         } else if (identificador.length === 5 && isNumber(identificador)) {
@@ -361,7 +470,7 @@ export const FormularioEditaAta = ({
         }
     }
 
-    const nomeCampoCargo = (identificador) => {
+    const nomeCampoCargo = (identificador, isProfessorGremio = false) => {
         if (identificador.length === 7 && isNumber(identificador)) {
             return "Cargo"
         } else if (identificador.length === 5 && isNumber(identificador)) {
@@ -586,13 +695,14 @@ export const FormularioEditaAta = ({
                                         render={({remove, push}) => (
                                             <>
                                                 {values.listaPresentesPadrao && values.listaPresentesPadrao.length > 0 && values.listaPresentesPadrao.map((membro, index) => {
+                                                    const isProfessorGremio = Boolean(membro.professor_gremio);
                                                     return (
                                                         <div key={index}>
                                                             <div className={`form-row ${membro.adicao ? 'adicao-presente' : ''}`}>
                                                                 <div className="col-3">
                                                                     <label
                                                                         htmlFor={`listaPresentesPadrao.identificacao_[${index}]`}
-                                                                        className="mt-3">{nomeCampoIdentificador(membro.identificacao)}</label>
+                                                                        className="mt-3">{nomeCampoIdentificador(membro.identificacao, isProfessorGremio)}</label>
                                                                     <input
                                                                         name={`listaPresentesPadrao[${index}].identificacao`}
                                                                         id={`listaPresentesPadrao.identificacao_[${index}]`}
@@ -605,7 +715,7 @@ export const FormularioEditaAta = ({
                                                                         onBlur={(e) => {
                                                                             handleBlurIdentificador(e, setFieldValue, index)
                                                                         }}
-                                                                        disabled={!membro.editavel}
+                                                                        disabled={!membro.editavel && !isProfessorGremio}
                                                                     />
                                                                 </div>
 
@@ -617,34 +727,42 @@ export const FormularioEditaAta = ({
                                                                         name={`listaPresentesPadrao[${index}].nome`}
                                                                         id={`listaPresentesPadrao.nome_[${index}]`}
                                                                         className="form-control"
-                                                                        value={membro.nome}
+                                                                        value={membro.nome ? membro.nome : ''}
                                                                         onChange={(e) => {
                                                                             props.handleChange(e);
                                                                         }}
-                                                                        disabled={!membro.editavel}
+                                                                        disabled={isProfessorGremio ? true : !membro.editavel}
                                                                     />
-                                                                    <p className='mt-1 mb-0'><span
-                                                                        className="text-danger">{errors && errors.listaPresentesPadrao && errors.listaPresentesPadrao[index] && errors.listaPresentesPadrao[index].nome ? errors.listaPresentesPadrao[index].nome : ''}</span>
-                                                                    </p>
-                                                                    <p className='mt-1 mb-0'><span
-                                                                        className="text-danger">{formErrors && formErrors[index] ? formErrors[index] : null}</span>
-                                                                    </p>
+                                                                    {!isProfessorGremio && (
+                                                                        <p className='mt-1 mb-0'><span
+                                                                            className="text-danger">{errors && errors.listaPresentesPadrao && errors.listaPresentesPadrao[index] && errors.listaPresentesPadrao[index].nome ? errors.listaPresentesPadrao[index].nome : ''}</span>
+                                                                        </p>
+                                                                    )}
+                                                                    {!isProfessorGremio && (
+                                                                        <p className='mt-1 mb-0'><span
+                                                                            className="text-danger">{formErrors && formErrors[index] ? formErrors[index] : null}</span>
+                                                                        </p>
+                                                                    )}
 
                                                                 </div>
 
                                                                 <div className="col-3">
                                                                     <label
                                                                         htmlFor={`listaPresentesPadrao.cargo_[${index}]`}
-                                                                        className="mt-3">{nomeCampoCargo(membro.identificacao)}</label>
+                                                                        className="mt-3">{nomeCampoCargo(membro.identificacao, isProfessorGremio)}</label>
                                                                     <input
                                                                         name={`listaPresentesPadrao[${index}].cargo`}
                                                                         id={`listaPresentesPadrao.cargo_[${index}]`}
                                                                         className="form-control"
-                                                                        value={membro.cargo ? membro.cargo : ''}
+                                                                        value={isProfessorGremio
+                                                                            ? membro.cargo
+                                                                              ? `${membro.cargo} / Professor Orientador`
+                                                                              : ""
+                                                                            : membro.cargo ? membro.cargo : ''}
                                                                         onChange={(e) => {
                                                                             props.handleChange(e);
                                                                         }}
-                                                                        disabled={!membro.editavel}
+                                                                        disabled={isProfessorGremio ? true : !membro.editavel}
                                                                     />
                                                                 </div>
 
@@ -655,7 +773,7 @@ export const FormularioEditaAta = ({
                                                                             type="button"
                                                                             className={`btn btn-outline-success btn-confirmar mt-5`}
                                                                             
-                                                                            disabled={errors && errors.listaPresentesPadrao && errors.listaPresentesPadrao[index] && errors.listaPresentesPadrao[index].nome ? errors.listaPresentesPadrao[index].nome : ''}
+                                                                            disabled={!isProfessorGremio && errors && errors.listaPresentesPadrao && errors.listaPresentesPadrao[index] && errors.listaPresentesPadrao[index].nome ? errors.listaPresentesPadrao[index].nome : ''}
                                                                             onClick={() => {
                                                                                 
                                                                                 onClickConfirmar(index, values, setFieldValue);
@@ -675,7 +793,7 @@ export const FormularioEditaAta = ({
                                                                         </button>
                                                                     }
 
-                                                                    {(ehEdicaoPresente[index] === undefined || ehEdicaoPresente[index] === false) && membro.editavel === false && membro.membro === false &&
+                                                                    {(ehEdicaoPresente[index] === undefined || ehEdicaoPresente[index] === false) && membro.editavel === false && membro.membro === false && !isProfessorGremio &&
                                                                         <>     
                                                                             <div className="row">
                                                                                 <div className="col-6 mt-5 d-flex justify-content-end">
@@ -683,7 +801,7 @@ export const FormularioEditaAta = ({
                                                                                         id={`listaPresentesPadrao.btn_[${index}]`}
                                                                                         type="button"
                                                                                         className="btn btn-outline-danger btn-base-vermelho-outline"
-                                                                                        disabled={(errors && errors.listaPresentesPadrao && errors.listaPresentesPadrao[index] && errors.listaPresentesPadrao[index].nome ? errors.listaPresentesPadrao[index].nome : '') || disableBtnApagarPresente}
+                                                                                        disabled={(!isProfessorGremio && errors && errors.listaPresentesPadrao && errors.listaPresentesPadrao[index] && errors.listaPresentesPadrao[index].nome ? errors.listaPresentesPadrao[index].nome : '') || disableBtnApagarPresente}
                                                                                         onClick={() => {
                                                                                             onClickRemoverAdicionar(remove, index, membro.editavel, values, setFieldValue)
                                                                                         }}
@@ -702,7 +820,7 @@ export const FormularioEditaAta = ({
                                                                                         id={`listaPresentesPadrao.btn_[${index}]`}
                                                                                         type="button"
                                                                                         className="btn btn-outline-success btn-base-verde-outline"
-                                                                                        disabled={(errors && errors.listaPresentesPadrao && errors.listaPresentesPadrao[index] && errors.listaPresentesPadrao[index].nome ? errors.listaPresentesPadrao[index].nome : '') || disableBtnEditarPresente}
+                                                                                        disabled={(!isProfessorGremio && errors && errors.listaPresentesPadrao && errors.listaPresentesPadrao[index] && errors.listaPresentesPadrao[index].nome ? errors.listaPresentesPadrao[index].nome : '') || disableBtnEditarPresente}
                                                                                         onClick={() => {
                                                                                             onClickEditar(index, values, membro.membro, membro)
                                                                                         }}
@@ -772,7 +890,7 @@ export const FormularioEditaAta = ({
                                                                                 id={`listaPresentesPadrao.btn_[${index}]`}
                                                                                 type="button"
                                                                                 className="link-btn-ata btn-confirmar-edicao-presente mt-0 pt-0"
-                                                                                disabled={(errors && errors.listaPresentesPadrao && errors.listaPresentesPadrao[index] && errors.listaPresentesPadrao[index].nome ? errors.listaPresentesPadrao[index].nome : '') || disableBtnConfirmarEdicao}
+                                                                                disabled={(!isProfessorGremio && errors && errors.listaPresentesPadrao && errors.listaPresentesPadrao[index] && errors.listaPresentesPadrao[index].nome ? errors.listaPresentesPadrao[index].nome : '') || disableBtnConfirmarEdicao}
                                                                                 onClick={() => {
                                                                                     onClickConfirmar(index, values, setFieldValue);
                                                                                 }}

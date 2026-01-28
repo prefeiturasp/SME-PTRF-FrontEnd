@@ -241,13 +241,6 @@ export const EdicaoAtaPaa = () => {
             return
         }
         const listaParticipantes = dadosForm.listaParticipantes || [];
-        if (dadosAta?.precisa_professor_gremio) {
-            const professorGremio = listaParticipantes.find(participante => participante.professor_gremio);
-            if (!professorGremio || !professorGremio.nome || !professorGremio.identificacao) {
-                toastCustom.ToastCustomError("Erro!", "Preencha os dados do Professor Orientador do Grêmio antes de salvar.");
-                return;
-            }
-        }
         let data_da_reuniao = dadosForm.stateFormEditarAta.data_reuniao ? moment(dadosForm.stateFormEditarAta.data_reuniao).format("YYYY-MM-DD") : null;
         let hora_reuniao = dadosForm.stateFormEditarAta.hora_reuniao ? moment(dadosForm.stateFormEditarAta.hora_reuniao, 'HHmm').format('HH:mm') : "00:00"
 

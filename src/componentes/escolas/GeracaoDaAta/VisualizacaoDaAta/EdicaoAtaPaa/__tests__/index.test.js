@@ -25,38 +25,21 @@ describe("EdicaoAtaPaa - Validação Professor Grêmio", () => {
     precisa_professor_gremio: false,
   };
 
-  test("valida professor quando precisa_professor_gremio é true", () => {
+  test("não valida professor quando precisa_professor_gremio é true (professor nunca é obrigatório)", () => {
     const onSubmitFormEdicaoAta = () => {
       const dadosForm = mockFormRef.current.values;
       const listaParticipantes = dadosForm.listaParticipantes || [];
-      if (mockDadosAtaComProfessor?.precisa_professor_gremio) {
-        const professorGremio = listaParticipantes.find(
-          (p) => p.professor_gremio
-        );
-        if (!professorGremio || !professorGremio.nome || !professorGremio.identificacao) {
-          toastCustom.ToastCustomError("Erro!", "Preencha os dados do Professor Orientador do Grêmio antes de salvar.");
-          return;
-        }
-      }
     };
 
+    toastCustom.ToastCustomError.mockClear();
     onSubmitFormEdicaoAta();
-    expect(toastCustom.ToastCustomError).toHaveBeenCalled();
+    expect(toastCustom.ToastCustomError).not.toHaveBeenCalled();
   });
 
   test("não valida professor quando precisa_professor_gremio é false", () => {
     const onSubmitFormEdicaoAta = () => {
       const dadosForm = mockFormRef.current.values;
       const listaParticipantes = dadosForm.listaParticipantes || [];
-      if (mockDadosAtaSemProfessor?.precisa_professor_gremio) {
-        const professorGremio = listaParticipantes.find(
-          (p) => p.professor_gremio
-        );
-        if (!professorGremio || !professorGremio.nome || !professorGremio.identificacao) {
-          toastCustom.ToastCustomError("Erro!", "Preencha os dados do Professor Orientador do Grêmio antes de salvar.");
-          return;
-        }
-      }
     };
 
     toastCustom.ToastCustomError.mockClear();

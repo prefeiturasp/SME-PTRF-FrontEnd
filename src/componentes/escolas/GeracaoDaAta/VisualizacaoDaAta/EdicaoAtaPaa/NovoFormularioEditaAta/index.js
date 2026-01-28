@@ -1403,7 +1403,7 @@ export const NovoFormularioEditaAta = ({
                                           isProfessorGremio
                                             ? membro.cargo
                                               ? `${membro.cargo} / Professor Orientador`
-                                              : "Professor Orientador"
+                                              : ""
                                             : membro.cargo
                                             ? membro.cargo
                                             : ""
