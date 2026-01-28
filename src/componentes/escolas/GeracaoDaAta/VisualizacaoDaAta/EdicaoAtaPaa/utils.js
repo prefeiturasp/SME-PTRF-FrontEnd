@@ -21,8 +21,13 @@ export const isParecerReprovado = (parecer) => {
 export const adicionaProfessorGremioNaLista = (
   lista = [],
   ataUuid,
-  professorDefaults = {}
+  professorDefaults = {},
+  precisaProfessorGremio = true
 ) => {
+  if (!precisaProfessorGremio) {
+    return lista.filter((participante) => !participante.professor_gremio);
+  }
+
   const existeProfessor = lista.some(
     (participante) => participante.professor_gremio
   );
