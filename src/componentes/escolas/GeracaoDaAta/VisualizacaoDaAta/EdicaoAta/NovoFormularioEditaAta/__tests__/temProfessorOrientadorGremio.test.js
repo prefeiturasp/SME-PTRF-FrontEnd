@@ -11,43 +11,78 @@ jest.mock("../../../../../../../services/visoes.service", () => ({
 jest.mock("../../../EdicaoAtaPaa/utils", () => ({
   getParecerSelecionado: jest.fn(),
   isParecerReprovado: jest.fn(),
-  adicionaProfessorGremioNaLista: jest.fn(() => []),
+  adicionaProfessorGremioNaLista: jest.fn((lista, ataUuid, defaults, precisaProfessorGremio = true) => {
+    if (!precisaProfessorGremio) {
+      return lista.filter((p) => !p.professor_gremio);
+    }
+    const existeProfessor = lista.some((p) => p.professor_gremio);
+    if (existeProfessor) {
+      return lista.map((p) =>
+        p.professor_gremio
+          ? { ...p, id: p.id || p.uuid || "professor-gremio", professor_gremio: true, presente: p.presente ?? true }
+          : p
+      );
+    }
+    return [
+      ...lista,
+      {
+        id: ataUuid ? `${ataUuid}-professor-gremio` : "professor-gremio",
+        ata: ataUuid || "",
+        cargo: defaults.cargo || "",
+        identificacao: defaults.identificacao || "",
+        nome: defaults.nome || "",
+        editavel: true,
+        membro: false,
+        adicao: false,
+        presente: defaults.presente ?? true,
+        presidente_da_reuniao: false,
+        secretario_da_reuniao: false,
+        professor_gremio: true,
+      },
+    ];
+  }),
   extraiProfessorDefaults: jest.fn(() => null),
   listaPossuiParticipantesAssociacao: jest.fn(),
   marcaParticipantesComoMembrosDaAssociacao: jest.fn(),
   normalizaParaData: jest.fn(),
 }));
 
+let mockPrecisaProfessorGremio = true;
+
 jest.mock("formik", () => {
   const original = jest.requireActual("formik");
   return {
     ...original,
-    Formik: ({ children }) => (
-      <>
-        {typeof children === "function"
-          ? children({
-              values: {
-                listaParticipantes: [
-                  { id: 1, nome: "João", professor_gremio: true },
-                ],
-                stateFormEditarAta: {
-                  tipo_reuniao: "ORDINARIA",
-                  data_reuniao: "2025-12-18",
-                  hora_reuniao: "10:00",
-                  local_reuniao: "Sala X",
-                  convocacao: "PRIMEIRA",
-                  parecer_conselho: "APROVADA",
+    Formik: ({ children }) => {
+      const listaParticipantes = mockPrecisaProfessorGremio
+        ? [{ id: 1, nome: "João", professor_gremio: true }]
+        : [{ id: 1, nome: "João", professor_gremio: false }];
+      
+      return (
+        <>
+          {typeof children === "function"
+            ? children({
+                values: {
+                  listaParticipantes,
+                  stateFormEditarAta: {
+                    tipo_reuniao: "ORDINARIA",
+                    data_reuniao: "2025-12-18",
+                    hora_reuniao: "10:00",
+                    local_reuniao: "Sala X",
+                    convocacao: "PRIMEIRA",
+                    parecer_conselho: "APROVADA",
+                  },
                 },
-              },
-              errors: {},
-              touched: {},
-              handleChange: jest.fn(),
-              handleSubmit: jest.fn((e) => e?.preventDefault?.()),
-              setFieldValue: jest.fn(),
-            })
-          : children}
-      </>
-    ),
+                errors: {},
+                touched: {},
+                handleChange: jest.fn(),
+                handleSubmit: jest.fn((e) => e?.preventDefault?.()),
+                setFieldValue: jest.fn(),
+              })
+            : children}
+        </>
+      );
+    },
     FieldArray: ({ render }) => render({ push: jest.fn(), remove: jest.fn() }),
   };
 });
@@ -204,7 +239,9 @@ describe("NovoFormularioEditaAta - Possui Professor Orientador do Grêmio", () =
     };
   };
 
-  test("renderiza label 'RF Professor Orientador do Grêmio' ", async () => {
+  test("renderiza label 'RF Professor Orientador do Grêmio' quando precisaProfessorGremio é true", async () => {
+    mockPrecisaProfessorGremio = true;
+    
     const {
       stateFormEditarAta,
       tabelas,
@@ -224,6 +261,7 @@ describe("NovoFormularioEditaAta - Possui Professor Orientador do Grêmio", () =
         repassesPendentes={repassesPendentes}
         erros={erros}
         showModalAvisoRegeracaoAta={showModalAvisoRegeracaoAta}
+        precisaProfessorGremio={true}
       />
     );
 
@@ -232,5 +270,38 @@ describe("NovoFormularioEditaAta - Possui Professor Orientador do Grêmio", () =
     );
 
     expect(inputProf).toBeInTheDocument();
+  });
+
+  test("não renderiza campo professor quando precisaProfessorGremio é false", async () => {
+    mockPrecisaProfessorGremio = false;
+    
+    const {
+      stateFormEditarAta,
+      tabelas,
+      formRef,
+      uuid_ata,
+      repassesPendentes,
+      erros,
+      showModalAvisoRegeracaoAta,
+    } = baseProps();
+
+    render(
+      <NovoFormularioEditaAta
+        stateFormEditarAta={stateFormEditarAta}
+        tabelas={tabelas}
+        formRef={formRef}
+        uuid_ata={uuid_ata}
+        repassesPendentes={repassesPendentes}
+        erros={erros}
+        showModalAvisoRegeracaoAta={showModalAvisoRegeracaoAta}
+        precisaProfessorGremio={false}
+      />
+    );
+
+    const inputProf = screen.queryByLabelText(
+      /RF Professor Orientador do Grêmio/i
+    );
+
+    expect(inputProf).not.toBeInTheDocument();
   });
 });

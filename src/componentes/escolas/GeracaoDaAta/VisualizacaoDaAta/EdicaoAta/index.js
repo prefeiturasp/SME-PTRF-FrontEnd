@@ -244,23 +244,7 @@ export const EdicaoAta = () => {
 
     let payload = {};
 
-    if (visoesService.featureFlagAtiva("pc-com-professor-gremio-em-atas")) {
-      const listaParticipantes = dadosForm.listaParticipantes || [];
-      const professorGremio = listaParticipantes.find(
-        (participante) => participante.professor_gremio
-      );
-      if (
-        !professorGremio ||
-        !professorGremio.nome ||
-        !professorGremio.identificacao
-      ) {
-        toastCustom.ToastCustomError(
-          "Erro!",
-          "Preencha os dados do Professor Orientador do Grêmio antes de salvar."
-        );
-        return;
-      }
-    }
+    const listaParticipantes = dadosForm.listaParticipantes || [];
 
     if (visoesService.featureFlagAtiva("historico-de-membros")) {
       let result = getPresidenteAndSecretario(dadosForm.listaParticipantes);
@@ -352,6 +336,7 @@ export const EdicaoAta = () => {
               erros={erros}
               showModalAvisoRegeracaoAta={showModalAvisoRegeracaoAta}
               setShowModalAvisoRegeracaoAta={setShowModalAvisoRegeracaoAta}
+              precisaProfessorGremio={dadosAta?.precisa_professor_gremio ?? false}
             ></NovoFormularioEditaAta>
           ) : (
             <FormularioEditaAta
@@ -366,6 +351,7 @@ export const EdicaoAta = () => {
               repassesPendentes={repassesPendentes}
               erros={erros}
               editaStatusDePresencaMembro={editaStatusDePresencaMembro}
+              precisaProfessorGremio={dadosAta?.precisa_professor_gremio ?? false}
             ></FormularioEditaAta>
           )}
         </div>
