@@ -17,12 +17,17 @@ export const TabelaPresentes = ({titulo, listaPresentes}) => {
                 <tbody>
                     {listaPresentes && listaPresentes.length > 0
                         ?
-                            listaPresentes.map((presente, index) => 
-                                <tr key={`tr-presente-${index}`}>
-                                    <td><strong>{presente.nome}</strong> <br></br> {presente.cargo} {presente.professor_gremio ? ' / Professor Orientador' : ''}</td>
-                                    <td>{!presente.presente && presente.membro ? "Ausente" : ""}</td>
-                                </tr>
-                            )
+                            listaPresentes.map((presente, index) => {
+                                const cargoComProfessor = presente.professor_gremio 
+                                    ? (presente.cargo ? `${presente.cargo} / Professor Orientador` : '')
+                                    : presente.cargo;
+                                return (
+                                    <tr key={`tr-presente-${index}`}>
+                                        <td><strong>{presente.nome}</strong> {cargoComProfessor && <><br></br> {cargoComProfessor}</>}</td>
+                                        <td>{!presente.presente && presente.membro ? "Ausente" : ""}</td>
+                                    </tr>
+                                );
+                            })
                         :
                             <tr>
                                 <td><strong></strong> <br></br></td>
