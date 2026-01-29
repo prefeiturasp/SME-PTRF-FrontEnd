@@ -80,5 +80,27 @@ describe("TabelaPresentes", () => {
         expect(screen.getByText("Pessoa 3")).toBeInTheDocument();
         expect(screen.getByText("Ausente")).toBeInTheDocument();
     });
+
+    it("renderiza cargo com '/ Professor Orientador' quando for professor do grêmio", () => {
+        const presentes = [
+            { nome: "João Silva", cargo: "Professor", professor_gremio: true, presente: true }
+        ];
+        
+        render(<TabelaPresentes listaPresentes={presentes} />);
+        
+        expect(screen.getByText("João Silva")).toBeInTheDocument();
+        expect(screen.getByText("Professor / Professor Orientador")).toBeInTheDocument();
+    });
+
+    it("não renderiza cargo quando professor do grêmio não tem cargo", () => {
+        const presentes = [
+            { nome: "João Silva", cargo: "", professor_gremio: true, presente: true }
+        ];
+        
+        render(<TabelaPresentes listaPresentes={presentes} />);
+        
+        expect(screen.getByText("João Silva")).toBeInTheDocument();
+        expect(screen.queryByText("Professor Orientador")).not.toBeInTheDocument();
+    });
 });
 

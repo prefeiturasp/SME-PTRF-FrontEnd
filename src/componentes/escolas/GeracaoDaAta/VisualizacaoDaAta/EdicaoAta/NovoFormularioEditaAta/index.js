@@ -45,6 +45,7 @@ export const NovoFormularioEditaAta = ({
   erros,
   showModalAvisoRegeracaoAta,
   setShowModalAvisoRegeracaoAta,
+  precisaProfessorGremio = false,
 }) => {
   const podeEditarAta = [["change_ata_prestacao_contas"]].some(
     visoesService.getPermissoes
@@ -139,13 +140,16 @@ export const NovoFormularioEditaAta = ({
             lista_cargos_composicao
           );
 
-        const listaComProfessor = temProfessorGremio
+        let listaFiltrada = composicao_formatada.filter(p => !p.professor_gremio);
+
+        const listaComProfessor = precisaProfessorGremio
           ? adicionaProfessorGremioNaLista(
-              composicao_formatada,
+              listaFiltrada,
               uuid_ata,
-              professorDefaults
+              professorDefaults,
+              precisaProfessorGremio
             )
-          : composicao_formatada;
+          : listaFiltrada;
 
         setListaParticipantes(listaComProfessor);
         sincronizaListaParticipantes(listaComProfessor);
@@ -185,6 +189,7 @@ export const NovoFormularioEditaAta = ({
     listaParticipantes,
     associacaoUuid,
     professorDefaults,
+    precisaProfessorGremio,
   ]);
 
   useEffect(() => {
@@ -204,18 +209,51 @@ export const NovoFormularioEditaAta = ({
       if (professorInfo) {
         setProfessorDefaults(professorInfo);
       }
-      const listaComProfessor = temProfessorGremio
+      
+      // Remove professor da lista se precisaProfessorGremio for false
+      let listaFiltrada = listaPresentesAta.filter(p => !p.professor_gremio);
+      
+      const listaComProfessor = precisaProfessorGremio
         ? adicionaProfessorGremioNaLista(
-            listaPresentesAta,
+            listaFiltrada,
             uuid_ata,
-            professorInfo || professorDefaults
+            professorInfo || professorDefaults,
+            precisaProfessorGremio
           )
-        : listaPresentesAta;
+        : listaFiltrada;
       setListaParticipantes(listaComProfessor);
       sincronizaListaParticipantes(listaComProfessor);
     };
     fetchData();
-  }, [uuid_ata]);
+  }, [uuid_ata, precisaProfessorGremio]);
+
+  // Atualiza a lista quando precisaProfessorGremio mudar após o carregamento inicial
+  useEffect(() => {
+    if (!uuid_ata) return;
+    
+    // Se a lista ainda não foi carregada, não faz nada (o primeiro useEffect vai cuidar disso)
+    if (listaParticipantes.length === 0) return;
+    
+    const temProfessorNaLista = listaParticipantes.some(p => p.professor_gremio);
+    
+    // Se precisaProfessorGremio é true mas não tem professor na lista, adiciona
+    if (precisaProfessorGremio && !temProfessorNaLista) {
+      const listaComProfessor = adicionaProfessorGremioNaLista(
+        listaParticipantes,
+        uuid_ata,
+        professorDefaults,
+        precisaProfessorGremio
+      );
+      setListaParticipantes(listaComProfessor);
+      sincronizaListaParticipantes(listaComProfessor);
+    }
+    // Se precisaProfessorGremio é false mas tem professor na lista, remove
+    else if (!precisaProfessorGremio && temProfessorNaLista) {
+      const listaSemProfessor = listaParticipantes.filter(p => !p.professor_gremio);
+      setListaParticipantes(listaSemProfessor);
+      sincronizaListaParticipantes(listaSemProfessor);
+    }
+  }, [precisaProfessorGremio, uuid_ata, listaParticipantes.length]);
 
   const onClickCancelarAdicao = (remove, lista) => {
     if (lista.length > 0) {
@@ -942,13 +980,17 @@ export const NovoFormularioEditaAta = ({
           formatarListaCargoComposicaoParaFormatoDaListaParticipantes(
             lista_cargos_composicao
           );
-        const listaComProfessor = temProfessorGremio
+        // Remove professor da lista se precisaProfessorGremio for false
+        let listaFiltrada = listaFormatada.filter(p => !p.professor_gremio);
+        
+        const listaComProfessor = precisaProfessorGremio
           ? adicionaProfessorGremioNaLista(
-              listaFormatada,
+              listaFiltrada,
               uuid_ata,
-              professorDefaults
+              professorDefaults,
+              precisaProfessorGremio
             )
-          : listaFormatada;
+          : listaFiltrada;
         setListaParticipantes(listaComProfessor);
         sincronizaListaParticipantes(listaComProfessor);
       } catch (error) {
@@ -994,8 +1036,8 @@ export const NovoFormularioEditaAta = ({
   const handleConfirmarRemocaoParticipantes = () => {
     const { name, value, setFieldValue } = dataModalApagarParticipantesAta;
     setFieldValue(name, value);
-    const listaComProfessor = temProfessorGremio
-      ? adicionaProfessorGremioNaLista([], uuid_ata, professorDefaults)
+    const listaComProfessor = precisaProfessorGremio
+      ? adicionaProfessorGremioNaLista([], uuid_ata, professorDefaults, precisaProfessorGremio)
       : [];
     setListaParticipantes(listaComProfessor);
     sincronizaListaParticipantes(listaComProfessor);
@@ -1423,7 +1465,7 @@ export const NovoFormularioEditaAta = ({
                                           isProfessorGremio
                                             ? membro.cargo
                                               ? `${membro.cargo} / Professor Orientador`
-                                              : "Professor Orientador"
+                                              : ""
                                             : membro.cargo
                                             ? membro.cargo
                                             : ""
