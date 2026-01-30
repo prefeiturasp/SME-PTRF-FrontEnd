@@ -26,7 +26,6 @@ export function useMutationConfirmavel({
         : variables?.[confirmField];
 
       if (jaConfirmado) {
-        console.log("caiu aqui");
         mutationOptions?.onError?.(error, variables, context);
         return;
       }
@@ -38,16 +37,21 @@ export function useMutationConfirmavel({
         ...modalConfig,
 
         onConfirm: () => {
-          const nextVariables = variables?.payload
+          const normalizedVariables =
+            typeof variables === "string"
+              ? { uuid: variables }
+              : (variables ?? {});
+
+          const nextVariables = normalizedVariables.payload
             ? {
-                ...variables,
+                ...normalizedVariables,
                 payload: {
-                  ...variables.payload,
+                  ...normalizedVariables.payload,
                   [confirmField]: true,
                 },
               }
             : {
-                ...variables,
+                ...normalizedVariables,
                 [confirmField]: true,
               };
 
