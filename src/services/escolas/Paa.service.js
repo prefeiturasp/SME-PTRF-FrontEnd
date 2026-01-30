@@ -165,9 +165,14 @@ export const patchRecursoProprioPaa = async (uuid, payload) => {
   ).data;
 };
 
-export const deleteRecursoProprioPaa = async (uuid) => {
-  return (await api.delete(`api/recursos-proprios-paa/${uuid}/`, authHeader()))
-    .data;
+export const deleteRecursoProprioPaa = async (uuid, confirmaPrioridades = false) => {
+  let url = `api/recursos-proprios-paa/${uuid}/`;
+
+  if(confirmaPrioridades) {
+    url += '?confirmar_limpeza_prioridades_paa=true'
+  }
+
+  return (await api.delete(url, authHeader())).data;
 };
 
 export const getTotalizadorRecursoProprio = async (associacaoUUID, paaUUID = null) => {

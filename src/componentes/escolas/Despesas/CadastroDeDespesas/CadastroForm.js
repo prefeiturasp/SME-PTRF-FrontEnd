@@ -43,6 +43,7 @@ import { STATUS_CONTA_ASSOCIACAO, STATUS_SOLICITACAO_ENCERRAMENTO_CONTA_ASSOCIAC
 import {toastCustom} from "../../../Globais/ToastCustom";
 import {visoesService} from "../../../../services/visoes.service";
 import {getUuidAssociacao} from "../../../../utils/AssociacaoUtils";
+import {useMutationDespesaConfirmavel} from "./hooks/useMutationDespesaConfirmavel";
 
 export const CadastroForm = ({verbo_http, veioDeSituacaoPatrimonial}) => {
 
@@ -87,6 +88,24 @@ export const CadastroForm = ({verbo_http, veioDeSituacaoPatrimonial}) => {
     const [showDespesaIncompletaNaoPermitida, setShowDespesaIncompletaNaoPermitida] = useState(false);
 
     const visao_selecionada = visoesService.getItemUsuarioLogado('visao_selecionada.nome')
+
+    const handleSuccessDespesa = async (response) => {
+        console.log("Operação realizada com sucesso!");
+        aux.getPath(origem);
+    };
+
+    const handleErrorDespesa = (response) => {
+        setLoading(false);
+        setBtnSubmitDisable(false);
+        handleErroCriarDespesa(response);
+    };
+
+    const { mutationCreate, mutationUpdate } = useMutationDespesaConfirmavel(
+        (response) => handleSuccessDespesa(response, null),
+        handleErrorDespesa,
+        setLoading,
+        setBtnSubmitDisable
+    );
 
     const [contasIniciais, setContasIniciais] = useState([])
 
@@ -594,9 +613,9 @@ export const CadastroForm = ({verbo_http, veioDeSituacaoPatrimonial}) => {
         let erros_personalizados = await validacoesPersonalizadas(values, setFieldValue)
 
         if (enviarFormulario && Object.keys(erros_personalizados).length === 0) {
-            setLoading(true);
-
-            setBtnSubmitDisable(true);
+            // O loading será ativado apenas quando realmente for chamar a API
+            // (no caso de análise de lançamento) ou quando não houver modais de validação
+            // Para o fluxo normal, o loading será ativado dentro do onSubmit após passar todas as validações
 
             validaPayloadDespesas(values, despesasTabelas, parametroLocation);
 
@@ -689,36 +708,14 @@ export const CadastroForm = ({verbo_http, veioDeSituacaoPatrimonial}) => {
             }
             else{
                 // Caso não seja origem de analise lancamento (reabertura seletiva), deve seguir o fluxo normal
+                // O loading será ativado apenas quando a mutation realmente executar (após confirmação da modal se necessário)
+                // Não ativamos o loading aqui para evitar que apareça antes da modal de confirmação
 
                 if (despesaContext.verboHttp === "POST") {
-                    try {
-                        const response = await criarDespesa(values);
-                        if (response.status === HTTP_STATUS.CREATED) {
-                            console.log("Operação realizada com sucesso!");
-                            aux.getPath(origem);
-                        } else {
-                            setLoading(false);
-                            handleErroCriarDespesa(response);
-                        }
-                    } catch (error) {
-                        console.log(error);
-                        setLoading(false);
-                    }
+                    mutationCreate.mutate({ payload: values });
                 }
                 else if (despesaContext.verboHttp === "PUT") {
-                    try {
-                        const response = await alterarDespesa(values, despesaContext.idDespesa);
-                        if (response.status === 200) {
-                            console.log("Operação realizada com sucesso!");
-                            aux.getPath(origem);
-                        } else {
-                            setLoading(false);
-                            handleErroCriarDespesa(response);
-                        }
-                    } catch (error) {
-                        console.log(error);
-                        setLoading(false);
-                    }
+                    mutationUpdate.mutate({ payload: values, idDespesa: despesaContext.idDespesa });
                 }
             }
         }
