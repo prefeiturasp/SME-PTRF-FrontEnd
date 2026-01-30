@@ -21,16 +21,22 @@ export function useMutationConfirmavel({
         return;
       }
 
-      const jaConfirmado = variables?.payload
-        ? variables.payload?.[confirmField]
-        : variables?.[confirmField];
+      const normalizedVariables =
+        typeof variables === "string"
+          ? { uuid: variables }
+          : (variables ?? {});
+
+      const jaConfirmado = normalizedVariables?.payload
+        ? normalizedVariables.payload?.[confirmField]
+        : normalizedVariables?.[confirmField];
 
       if (jaConfirmado) {
-        console.log("caiu aqui");
         mutationOptions?.onError?.(error, variables, context);
         return;
       }
 
+      const onConfirmOriginal = modalConfig.onConfirm;
+      
       CustomModalConfirm({
         dispatch,
         title: "Confirmação necessária",
@@ -38,16 +44,21 @@ export function useMutationConfirmavel({
         ...modalConfig,
 
         onConfirm: () => {
-          const nextVariables = variables?.payload
+          // Chama o onConfirm do modalConfig se existir (para ativar loading, etc)
+          if (onConfirmOriginal) {
+            onConfirmOriginal();
+          }
+          
+          const nextVariables = normalizedVariables?.payload
             ? {
-                ...variables,
+                ...normalizedVariables,
                 payload: {
-                  ...variables.payload,
+                  ...normalizedVariables.payload,
                   [confirmField]: true,
                 },
               }
             : {
-                ...variables,
+                ...normalizedVariables,
                 [confirmField]: true,
               };
 
