@@ -9,7 +9,14 @@ export const useDeleteRecursoProprio = () => {
   const dispatch = useDispatch();
 
   const mutationDelete = useMutationConfirmavel({
-    mutationFn: (uuid) => deleteRecursoProprioPaa(uuid),
+    mutationFn: (data) => {
+      if (typeof data === "string") {
+        return deleteRecursoProprioPaa(data);
+      }
+      const { uuid, confirmar_limpeza_prioridades_paa } = data;
+      return deleteRecursoProprioPaa(uuid, confirmar_limpeza_prioridades_paa);
+    },
+
     dispatch,
     confirmField: "confirmar_limpeza_prioridades_paa",
     modalConfig: {
