@@ -205,7 +205,7 @@ export const RecursoItem = ({recurso, periodoUuid}) => {
                                 </div>
                             </Col>
                             <Col span={12}>
-                                {!!stateOutroRecursoPeriodo?.uuid && <>
+                                {!!stateOutroRecursoPeriodo?.uuid && stateOutroRecursoPeriodo?.ativo && <>
                                     <div className="my-1">
                                         <Typography.Text strong>Uso associação</Typography.Text>
                                     </div>
