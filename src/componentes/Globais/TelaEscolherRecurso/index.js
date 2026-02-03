@@ -1,12 +1,20 @@
-import { Card, Typography, Row, Col } from "antd";
+import { Card, Typography, Row, Col, Spin } from "antd";
 import { ArrowRightOutlined } from "@ant-design/icons";
 import useRecursoSelecionado from "../../../hooks/Globais/useRecursoSelecionado";
+import { useEffect } from "react";
 
 const { Title, Text } = Typography;
-export const EscolherRecurso = () => {
+
+export const TelaEscolherRecurso = () => {
   const { recursoSelecionado, recursos, handleChangeRecurso, isLoading } = useRecursoSelecionado();
 
-  if (recursoSelecionado || !recursos.length) return;
+  useEffect(() => {
+    if (recursos.length === 1) {
+      handleChangeRecurso(recursos[0]);
+    }
+  }, [recursos, handleChangeRecurso]);
+
+  if (recursoSelecionado || !recursos.length || recursos.length === 1) return;
 
   return (
     <div style={styles.overlay}>
@@ -34,13 +42,15 @@ export const EscolherRecurso = () => {
         <Row gutter={[16, 16]} align={"center"} style={styles.cardRow}>
           {recursos.map((recurso) => (
             <Col key={recurso.id} xs={24} md={6}>
-              <Card hoverable style={styles.card} onClick={() => handleChangeRecurso(recurso.uuid)} loading={isLoading}>
-                {recurso.icone && <img style={styles.icone} src={recurso.icone} alt="Logo"></img>}
-                <Text style={{ ...styles.cardTitle, color: recurso.cor }}>{recurso.nome}</Text>
-                <div style={styles.arrow}>
-                  <ArrowRightOutlined style={{ color: recurso.cor }} />
-                </div>
-              </Card>
+              <Spin spinning={isLoading}>
+                <Card hoverable style={styles.card} onClick={() => handleChangeRecurso(recurso)} loading={isLoading}>
+                  {recurso.icone && <img style={styles.icone} src={recurso.icone} alt="Logo"></img>}
+                  <Text style={{ ...styles.cardTitle, color: recurso.cor }}>{recurso.nome}</Text>
+                  <div style={styles.arrow}>
+                    <ArrowRightOutlined style={{ color: recurso.cor }} />
+                  </div>
+                </Card>
+              </Spin>
             </Col>
           ))}
         </Row>

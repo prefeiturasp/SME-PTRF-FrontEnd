@@ -33,8 +33,6 @@ const useRecursoSelecionado = () => {
       } else {
         localStorage.removeItem(storageKey);
       }
-
-      window.location.reload();
     } catch (error) {
       console.error("Erro ao salvar recurso no localStorage:", error);
       setError(error);
