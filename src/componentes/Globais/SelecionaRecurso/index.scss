@@ -4,7 +4,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 1rem;
+  gap: 0.5rem;
   padding: 1rem;
 }
 
@@ -12,41 +12,63 @@
   display: flex;
   justify-content: center;
   align-items: center;
-
-  img {
-    max-width: 200px;
-    height: auto;
-    border-radius: 27px;
-  }
-}
-
-.icone {
   padding: 10px;
   background-color: white;
+  border-radius: 100%;
+
+  img {
+    width: 100%;
+    height: 40px;
+    object-fit: contain;
+  }
 }
 
 .select-recurso-antd {
-  width: 210px;
+  width: 220px;
   font-family: "Roboto", sans-serif !important; 
 
   .ant-select-selector {
-    height: 30px !important;
+    background-color: transparent !important;
+    color: white;
+    height: 24px !important;
     border-radius: 15px !important;
     text-align: center !important;
-    font-family: "Roboto", sans-serif !important; 
+    font-family: "Roboto", sans-serif !important;
+    border: 2px solid #fff; 
+  }
+
+  .ant-select-selector:hover {
+    border: 1px solid #fff !important;
+    // color: white !important; 
   }
 }
 
-.ant-select-dropdown {
-  font-family: "Roboto", sans-serif !important; 
+// remove o focus após trocar recurso
+.ant-select-focused .ant-select-selector {
+  box-shadow: none !important;
+  border-color: inherit !important;
+}
 
-  .ant-select-item-option:hover {
-    background-color: #f0f0f0 !important;
-    cursor: pointer;
-  }
+// altera a cor do texto do select quando aberto
+.ant-select-open .ant-select-selection-item {
+  color: #fff !important;
+}
 
-  .ant-select-item-option-selected {
-    background-color: #b8b8b8 !important;
-    font-weight: 500;
-  }
+// altera a cor da seta do select quando aberto
+.ant-select .ant-select-arrow {
+  color: #fff !important;
+}
+
+// altera a cor do background das opções ao passar o mouse e ao selecionar
+.ant-select-item-option-active {
+  background-color: #dbdbdb !important;
+}
+
+// altera a cor do background da opção selecionada
+.ant-select-item-option-selected {
+  background-color: #8d8d8d !important;
+}
+
+.ant-select-selection-placeholder {
+  color: #fff !important;
 }

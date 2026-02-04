@@ -54,18 +54,21 @@ export const SelecionaRecurso = () => {
     <>
       { recursos.length > 1 && (
         <div className="container-seleciona-recurso">
-          <div className="imagem-container">
-            <img 
-              className='icone'
-              src={recursoSelecionado?.icone} 
-              alt="Seleciona Recurso" 
-            />
-          </div>
+          { localStorage.getItem('recursoSelecionado') && (
+            <div className="imagem-container">
+              <img 
+                src={recursoSelecionado?.icone} 
+                alt="Ícone do recurso selecionado" 
+              />
+            </div>
+          ) }
 
           <Select 
+            variant='outlined'
             className='select-recurso-antd'
             options={opcoes}
             value={recursoSelecionado?.uuid}
+            placeholder="Selecione o recurso"
             onChange={handleChangeOption}
           />
         </div>
