@@ -152,7 +152,7 @@ export const ConsultaDeSaldosBancarios = () => {
                         tiposConta={tiposDeConta}
                     />
 
-                    {selectPeriodo && selectTipoDeConta ? (
+                    {selectPeriodo && selectTipoDeConta ? (                      
                         <BtnExportar
                             handleOnClickExportar={handleOnClickExportar}
                         />

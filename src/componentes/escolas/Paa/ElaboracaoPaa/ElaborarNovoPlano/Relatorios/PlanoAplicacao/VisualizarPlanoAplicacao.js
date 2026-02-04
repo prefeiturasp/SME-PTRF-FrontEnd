@@ -141,8 +141,8 @@ export const VisualizarPlanoAplicacao = () => {
           const listaRecursoProprio = itensDataLista
             .filter((i) => i.recurso === "OUTRO_RECURSO")
             .sort((a, b) =>
-              a.outro_recurso_objeto.nome.localeCompare(
-                b.outro_recurso_objeto.nome,
+              a?.outro_recurso_objeto?.nome.localeCompare(
+                b?.outro_recurso_objeto?.nome,
                 "pt-BR",
                 { sensitivity: "base" }
               )

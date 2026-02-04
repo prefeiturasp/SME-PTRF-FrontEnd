@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { DatePickerField } from "../../../../../Globais/DatePickerField";
 import { toastCustom } from "../../../../../Globais/ToastCustom";
@@ -33,6 +34,7 @@ import {
   extraiProfessorDefaults,
   listaPossuiParticipantesAssociacao,
   marcaParticipantesComoMembrosDaAssociacao,
+  formatarListaCargoComposicaoParaFormatoDaListaParticipantes,
   normalizaParaData,
 } from "../utils";
 
@@ -50,40 +52,40 @@ export const NovoFormularioEditaAta = ({
   precisaProfessorGremio = false,
 }) => {
   const podeEditarAta = [["change_ata_prestacao_contas"]].some(
-    visoesService.getPermissoes
+    visoesService.getPermissoes,
   );
-  const [dadosForm, setDadosForm] = useState({});
+  const [initialValues, setInitialValues] = useState(null);
   const [disableBtnAdicionarPresente, setDisableBtnAdicionarPresente] =
     useState(false);
   const [disableBtnEditarPresente, setDisableBtnEditarPresente] =
     useState(false);
   const [disableBtnApagarPresente, setDisableBtnApagarPresente] =
     useState(false);
-  const [disableBtnConfirmarEdicao, setDisableConfirmarEdicao] =
-    useState(false);
-  const [disableBtnCancelarEdicao, setDisableCancelarEdicao] = useState(false);
+  const [disableBtnConfirmarEdicao] = useState(false);
+  const [disableBtnCancelarEdicao] = useState(false);
   const [formErrors, setFormErrors] = useState({});
   const [ehAdicaoPresente, setEhAdicaoPresente] = useState(false);
   const [ehEdicaoPresente, setEhEdicaoPresente] = useState([]);
   const [linhaEditada, setLinhaEditada] = useState({});
   const professorLookupTimeouts = useRef({});
+
   const notificarErroComposicaoPorData = (error) => {
     const mensagemErro =
       error?.response?.data?.erro ||
       "Não foi possível carregar a composição por data.";
     toastCustom.ToastCustomError(
       "Erro ao carregar participantes",
-      mensagemErro
+      mensagemErro,
     );
   };
 
-  const [listaParticipantes, setListaParticipantes] = useState([]);
   const [professorDefaults, setProfessorDefaults] = useState({
     nome: "",
     cargo: "",
     identificacao: "",
     presente: true,
   });
+
   const [dataModalApagarParticipantesAta, setDataModalApagarParticipantesAta] =
     useState({
       show: false,
@@ -94,8 +96,53 @@ export const NovoFormularioEditaAta = ({
 
   const associacaoUuid = localStorage.getItem(ASSOCIACAO_UUID);
 
+  const montarListaPorData = async (dataFormatada) => {
+    const lista_cargos_composicao = await getCargosComposicaoData(
+      dataFormatada || stateFormEditarAta.data_reuniao,
+      associacaoUuid,
+    );
+
+    const composicao_formatada =
+      formatarListaCargoComposicaoParaFormatoDaListaParticipantes(
+        lista_cargos_composicao,
+      );
+
+    const resetProfessor = {
+      nome: "",
+      cargo: "",
+      identificacao: "",
+      presente: true,
+    };
+
+    setProfessorDefaults(resetProfessor);
+
+    const listaComProfessor = adicionaProfessorGremioNaLista(
+      composicao_formatada,
+      uuid_ata,
+      resetProfessor,
+      precisaProfessorGremio,
+    );
+
+    return listaComProfessor;
+  };
+
+  useEffect(() => {
+    if (
+      (!initialValues ||
+        Object.keys(initialValues.stateFormEditarAta).length === 0 ||
+        !initialValues.stateFormEditarAta?.data_reuniao) &&
+      stateFormEditarAta &&
+      stateFormEditarAta?.data_reuniao
+    ) {
+      setInitialValues({
+        stateFormEditarAta,
+        listaParticipantes: initialValues?.listaParticipantes || [],
+      });
+    }
+  }, [initialValues, stateFormEditarAta]);
+
   const sincronizaListaParticipantes = useCallback(
-    (novaLista, { atualizarInitialValues = true } = {}) => {
+    (novaLista, { reinicializar = false, formValuesToSync = {} } = {}) => {
       const professorInfo = extraiProfessorDefaults(novaLista);
       if (professorInfo) {
         setProfessorDefaults(professorInfo);
@@ -107,14 +154,20 @@ export const NovoFormularioEditaAta = ({
       ) {
         formRef.current.setFieldValue("listaParticipantes", novaLista, false);
       }
-      if (atualizarInitialValues) {
-        setDadosForm((prevState) => ({
-          ...prevState,
+
+      // Só atualiza initialValues se FOR origem externa
+      if (reinicializar) {
+        setInitialValues((prev) => ({
+          ...prev,
+          stateFormEditarAta: {
+            ...prev?.stateFormEditarAta,
+            ...formValuesToSync,
+          },
           listaParticipantes: novaLista,
         }));
       }
     },
-    [formRef]
+    [formRef, initialValues],
   );
 
   useEffect(() => {
@@ -124,40 +177,34 @@ export const NovoFormularioEditaAta = ({
           if (timeoutId) {
             clearTimeout(timeoutId);
           }
-        }
+        },
       );
       professorLookupTimeouts.current = {};
     };
   }, []);
 
   useEffect(() => {
+    let precisaCarregarComposicao = false;
+
     const carregarComposicao = async () => {
       try {
-        const lista_cargos_composicao = await getCargosComposicaoData(
-          stateFormEditarAta.data_reuniao,
-          associacaoUuid
-        );
-        const composicao_formatada =
-          formatarListaCargoComposicaoParaFormatoDaListaParticipantes(
-            lista_cargos_composicao
-          );
-        const listaComProfessor = adicionaProfessorGremioNaLista(
-          composicao_formatada,
-          uuid_ata,
-          professorDefaults,
-          precisaProfessorGremio
-        );
-        setListaParticipantes(listaComProfessor);
-        sincronizaListaParticipantes(listaComProfessor);
+        const listaComProfessor = await montarListaPorData();
+
+        precisaCarregarComposicao =
+          !listaComProfessor ||
+          listaComProfessor.length === 0 ||
+          !listaPossuiParticipantesAssociacao(listaComProfessor);
+
+        sincronizaListaParticipantes(listaComProfessor, {
+          reinicializar: true,
+        });
       } catch (error) {
         notificarErroComposicaoPorData(error);
+        sincronizaListaParticipantes([], {
+          reinicializar: true,
+        });
       }
     };
-
-    const precisaCarregarComposicao =
-      !listaParticipantes ||
-      listaParticipantes.length === 0 ||
-      !listaPossuiParticipantesAssociacao(listaParticipantes);
 
     if (
       precisaCarregarComposicao &&
@@ -169,51 +216,51 @@ export const NovoFormularioEditaAta = ({
     }
   }, [
     associacaoUuid,
-    listaParticipantes,
     stateFormEditarAta,
     uuid_ata,
     professorDefaults,
+    precisaProfessorGremio,
   ]);
 
   useEffect(() => {
-    setDadosForm((prevState) => ({
-      ...prevState,
-      stateFormEditarAta: stateFormEditarAta,
-    }));
-  }, [stateFormEditarAta]);
-
-  useEffect(() => {
     if (!uuid_ata) return;
-    const fetchData = async () => {
+
+    const firstFetchData = async (uuidAta) => {
       try {
         const [listaPresentesAtaResponse, listaPadraoResponse] =
           await Promise.all([
-            getParticipantesOrdenadosPorCargoPaa(uuid_ata),
-            getListaPresentesPadraoPaa(uuid_ata).catch(() => []),
+            getParticipantesOrdenadosPorCargoPaa(uuidAta),
+            getListaPresentesPadraoPaa(uuidAta).catch(() => []),
           ]);
+
         const listaPresentesAta = marcaParticipantesComoMembrosDaAssociacao(
           listaPresentesAtaResponse,
-          listaPadraoResponse
+          listaPadraoResponse,
         );
+
         const professorInfo =
           extraiProfessorDefaults(listaPresentesAta) ||
           extraiProfessorDefaults(listaPadraoResponse);
+
         if (professorInfo) {
           setProfessorDefaults(professorInfo);
         }
+
         const listaComProfessor = adicionaProfessorGremioNaLista(
           listaPresentesAta,
-          uuid_ata,
+          uuidAta,
           professorInfo || professorDefaults,
-          precisaProfessorGremio
+          precisaProfessorGremio,
         );
-        setListaParticipantes(listaComProfessor);
-        sincronizaListaParticipantes(listaComProfessor);
+        sincronizaListaParticipantes(listaComProfessor, {
+          reinicializar: true,
+        });
       } catch (error) {
         console.error("Erro ao carregar participantes da ata PAA", error);
       }
     };
-    fetchData();
+
+    firstFetchData(uuid_ata);
   }, [uuid_ata]);
 
   const onClickCancelarAdicao = (remove, lista) => {
@@ -246,38 +293,34 @@ export const NovoFormularioEditaAta = ({
     if (membro) {
       // Na edição, em caso de participante membro da associação, apenas o identificador pode ser alterado.
       // O nome e o cargo devem ser trazidos do cadastro de membros da Associação
+      document.getElementById(`listaParticipantes.nome_[${index}]`).disabled =
+        true;
+      document.getElementById(`listaParticipantes.cargo_[${index}]`).disabled =
+        true;
       document.getElementById(
-        `listaParticipantes.nome_[${index}]`
-      ).disabled = true;
-      document.getElementById(
-        `listaParticipantes.cargo_[${index}]`
-      ).disabled = true;
-      document.getElementById(
-        `listaParticipantes.identificacao_[${index}]`
+        `listaParticipantes.identificacao_[${index}]`,
       ).disabled = false;
     } else {
       // Quando não for membro da associação
       if (identificador.length === 7 && isNumber(identificador)) {
         // identificador é de servidor = editar somente identificador
+        document.getElementById(`listaParticipantes.nome_[${index}]`).disabled =
+          true;
         document.getElementById(
-          `listaParticipantes.nome_[${index}]`
+          `listaParticipantes.cargo_[${index}]`,
         ).disabled = true;
         document.getElementById(
-          `listaParticipantes.cargo_[${index}]`
-        ).disabled = true;
-        document.getElementById(
-          `listaParticipantes.identificacao_[${index}]`
+          `listaParticipantes.identificacao_[${index}]`,
         ).disabled = false;
       } else {
         // Não é servidor, todos os campos editaveis
+        document.getElementById(`listaParticipantes.nome_[${index}]`).disabled =
+          false;
         document.getElementById(
-          `listaParticipantes.nome_[${index}]`
+          `listaParticipantes.cargo_[${index}]`,
         ).disabled = false;
         document.getElementById(
-          `listaParticipantes.cargo_[${index}]`
-        ).disabled = false;
-        document.getElementById(
-          `listaParticipantes.identificacao_[${index}]`
+          `listaParticipantes.identificacao_[${index}]`,
         ).disabled = false;
       }
     }
@@ -313,14 +356,13 @@ export const NovoFormularioEditaAta = ({
 
         // retirando o index do modo edição
         setEhEdicaoPresente((prevState) => ({ ...prevState, [index]: false }));
+        document.getElementById(`listaParticipantes.nome_[${index}]`).disabled =
+          true;
         document.getElementById(
-          `listaParticipantes.nome_[${index}]`
+          `listaParticipantes.cargo_[${index}]`,
         ).disabled = true;
         document.getElementById(
-          `listaParticipantes.cargo_[${index}]`
-        ).disabled = true;
-        document.getElementById(
-          `listaParticipantes.identificacao_[${index}]`
+          `listaParticipantes.identificacao_[${index}]`,
         ).disabled = true;
 
         erros = {
@@ -389,31 +431,29 @@ export const NovoFormularioEditaAta = ({
     setFieldValue(`listaParticipantes[${index}].editavel`, false);
     setFieldValue(
       `listaParticipantes[${index}].identificacao`,
-      linhaEditada.identificacao ? linhaEditada.identificacao : ""
+      linhaEditada.identificacao ? linhaEditada.identificacao : "",
     );
     setFieldValue(
       `listaParticipantes[${index}].nome`,
-      linhaEditada.nome ? linhaEditada.nome : ""
+      linhaEditada.nome ? linhaEditada.nome : "",
     );
     setFieldValue(
       `listaParticipantes[${index}].cargo`,
-      linhaEditada.cargo ? linhaEditada.cargo : ""
+      linhaEditada.cargo ? linhaEditada.cargo : "",
     );
     setFieldValue(
       `listaParticipantes[${index}].membro`,
-      linhaEditada.membro ? linhaEditada.membro : false
+      linhaEditada.membro ? linhaEditada.membro : false,
     );
 
     // retirando o index do modo edição
     setEhEdicaoPresente((prevState) => ({ ...prevState, [index]: false }));
+    document.getElementById(`listaParticipantes.nome_[${index}]`).disabled =
+      true;
+    document.getElementById(`listaParticipantes.cargo_[${index}]`).disabled =
+      true;
     document.getElementById(
-      `listaParticipantes.nome_[${index}]`
-    ).disabled = true;
-    document.getElementById(
-      `listaParticipantes.cargo_[${index}]`
-    ).disabled = true;
-    document.getElementById(
-      `listaParticipantes.identificacao_[${index}]`
+      `listaParticipantes.identificacao_[${index}]`,
     ).disabled = true;
 
     erros = {
@@ -433,7 +473,7 @@ export const NovoFormularioEditaAta = ({
     index,
     editavel,
     values,
-    setFieldValue
+    setFieldValue,
   ) => {
     let erros = {};
 
@@ -493,7 +533,7 @@ export const NovoFormularioEditaAta = ({
     nome = "",
     cargo = "",
     bloquearCampos = false,
-    identificacao
+    identificacao,
   ) => {
     setFieldValue(`listaParticipantes[${index}].nome`, nome);
     setFieldValue(`listaParticipantes[${index}].cargo`, cargo);
@@ -503,7 +543,7 @@ export const NovoFormularioEditaAta = ({
     if (identificacao !== undefined) {
       setFieldValue(
         `listaParticipantes[${index}].identificacao`,
-        identificacao
+        identificacao,
       );
     }
 
@@ -515,10 +555,10 @@ export const NovoFormularioEditaAta = ({
     });
 
     const campoNome = document.getElementById(
-      `listaParticipantes.nome_[${index}]`
+      `listaParticipantes.nome_[${index}]`,
     );
     const campoCargo = document.getElementById(
-      `listaParticipantes.cargo_[${index}]`
+      `listaParticipantes.cargo_[${index}]`,
     );
     if (campoNome) campoNome.disabled = true;
     if (campoCargo) campoCargo.disabled = true;
@@ -527,7 +567,7 @@ export const NovoFormularioEditaAta = ({
   const debouncedBuscarProfessorGremio = (
     identificador,
     index,
-    setFieldValue
+    setFieldValue,
   ) => {
     if (professorLookupTimeouts.current[index]) {
       clearTimeout(professorLookupTimeouts.current[index]);
@@ -544,7 +584,7 @@ export const NovoFormularioEditaAta = ({
         "",
         "",
         false,
-        identificador
+        identificador,
       );
       return;
     }
@@ -559,7 +599,7 @@ export const NovoFormularioEditaAta = ({
             professor.nome || "",
             professor.cargo || "",
             true,
-            identificador
+            identificador,
           );
         } else {
           atualizarCamposProfessorGremio(
@@ -568,7 +608,7 @@ export const NovoFormularioEditaAta = ({
             professor?.nome || "",
             professor?.cargo || "",
             false,
-            identificador
+            identificador,
           );
         }
       } catch (error) {
@@ -579,7 +619,7 @@ export const NovoFormularioEditaAta = ({
           "",
           "",
           false,
-          identificador
+          identificador,
         );
       }
     }, 500);
@@ -598,12 +638,10 @@ export const NovoFormularioEditaAta = ({
     setFieldValue(`listaParticipantes[${index}].nome`, "");
     setFieldValue(`listaParticipantes[${index}].cargo`, "");
 
-    document.getElementById(
-      `listaParticipantes.nome_[${index}]`
-    ).disabled = false;
-    document.getElementById(
-      `listaParticipantes.cargo_[${index}]`
-    ).disabled = false;
+    document.getElementById(`listaParticipantes.nome_[${index}]`).disabled =
+      false;
+    document.getElementById(`listaParticipantes.cargo_[${index}]`).disabled =
+      false;
   };
 
   const isNumber = (n) => {
@@ -614,11 +652,11 @@ export const NovoFormularioEditaAta = ({
     let identificador = e.target.value;
     let data_reuniao = null;
     if (
-      dadosForm &&
-      dadosForm.stateFormEditarAta &&
-      dadosForm.stateFormEditarAta.data_reuniao
+      initialValues &&
+      initialValues.stateFormEditarAta &&
+      initialValues.stateFormEditarAta.data_reuniao
     ) {
-      data_reuniao = dadosForm.stateFormEditarAta.data_reuniao;
+      data_reuniao = initialValues.stateFormEditarAta.data_reuniao;
     }
     const participanteAtual =
       formRef &&
@@ -642,7 +680,7 @@ export const NovoFormularioEditaAta = ({
             professor && professor.nome ? professor.nome : "",
             professor && professor.cargo ? professor.cargo : "",
             !!encontrou,
-            identificador
+            identificador,
           );
           if (encontrou) {
             toastCustom.ToastCustomSuccess("Participante inserido com sucesso");
@@ -655,7 +693,7 @@ export const NovoFormularioEditaAta = ({
             "",
             "",
             false,
-            identificador
+            identificador,
           );
         }
       } else {
@@ -665,7 +703,7 @@ export const NovoFormularioEditaAta = ({
           "",
           "",
           false,
-          identificador
+          identificador,
         );
       }
       return;
@@ -674,75 +712,76 @@ export const NovoFormularioEditaAta = ({
     const dataFormatada = formatDate(data_reuniao);
 
     if (identificador.length === 7 && isNumber(identificador)) {
-      let membro = await getMembroPorIdentificadorPaa(
-        uuid_ata,
-        identificador,
-        dataFormatada
-      );
+      try {
+        let membro = await getMembroPorIdentificadorPaa(
+          uuid_ata,
+          identificador,
+          dataFormatada,
+        );
 
-      if (membro.mensagem === "membro-encontrado") {
-        setFieldValue(
-          `listaParticipantes[${index}].nome`,
-          membro.nome ? membro.nome : ""
-        );
-        setFieldValue(
-          `listaParticipantes[${index}].cargo`,
-          membro.cargo ? membro.cargo : ""
-        );
-        setFieldValue(`listaParticipantes[${index}].membro`, true);
-      } else {
-        setFieldValue(
-          `listaParticipantes[${index}].nome`,
-          membro.nome ? membro.nome : ""
-        );
-        setFieldValue(
-          `listaParticipantes[${index}].cargo`,
-          membro.cargo ? membro.cargo : ""
-        );
-        setFieldValue(`listaParticipantes[${index}].membro`, false);
+        if (membro.mensagem === "membro-encontrado") {
+          setFieldValue(
+            `listaParticipantes[${index}].nome`,
+            membro.nome ? membro.nome : "",
+          );
+          setFieldValue(
+            `listaParticipantes[${index}].cargo`,
+            membro.cargo ? membro.cargo : "",
+          );
+          setFieldValue(`listaParticipantes[${index}].membro`, true);
+        } else {
+          setFieldValue(
+            `listaParticipantes[${index}].nome`,
+            membro.nome ? membro.nome : "",
+          );
+          setFieldValue(
+            `listaParticipantes[${index}].cargo`,
+            membro.cargo ? membro.cargo : "",
+          );
+          setFieldValue(`listaParticipantes[${index}].membro`, false);
+        }
+
+        document.getElementById(`listaParticipantes.nome_[${index}]`).disabled =
+          true;
+        document.getElementById(
+          `listaParticipantes.cargo_[${index}]`,
+        ).disabled = true;
+      } catch (err) {
+        console.error(err);
       }
-
-      document.getElementById(
-        `listaParticipantes.nome_[${index}]`
-      ).disabled = true;
-      document.getElementById(
-        `listaParticipantes.cargo_[${index}]`
-      ).disabled = true;
     } else if (identificador.length === 5 && isNumber(identificador)) {
       let membro = await getMembroPorIdentificadorPaa(
         uuid_ata,
         identificador,
-        dataFormatada
+        dataFormatada,
       );
 
       if (membro.mensagem === "membro-encontrado") {
         setFieldValue(
           `listaParticipantes[${index}].nome`,
-          membro.nome ? membro.nome : ""
+          membro.nome ? membro.nome : "",
         );
         setFieldValue(
           `listaParticipantes[${index}].cargo`,
-          membro.cargo ? membro.cargo : ""
+          membro.cargo ? membro.cargo : "",
         );
         setFieldValue(`listaParticipantes[${index}].membro`, true);
       } else {
         setFieldValue(
           `listaParticipantes[${index}].nome`,
-          membro.nome ? membro.nome : ""
+          membro.nome ? membro.nome : "",
         );
         setFieldValue(
           `listaParticipantes[${index}].cargo`,
-          membro.cargo ? membro.cargo : ""
+          membro.cargo ? membro.cargo : "",
         );
         setFieldValue(`listaParticipantes[${index}].membro`, false);
       }
 
-      document.getElementById(
-        `listaParticipantes.nome_[${index}]`
-      ).disabled = true;
-      document.getElementById(
-        `listaParticipantes.cargo_[${index}]`
-      ).disabled = true;
+      document.getElementById(`listaParticipantes.nome_[${index}]`).disabled =
+        true;
+      document.getElementById(`listaParticipantes.cargo_[${index}]`).disabled =
+        true;
     } else if (
       identificador.length === 14 &&
       valida_cpf_exportado(identificador)
@@ -750,48 +789,44 @@ export const NovoFormularioEditaAta = ({
       let membro = await getMembroPorIdentificadorPaa(
         uuid_ata,
         identificador,
-        dataFormatada
+        dataFormatada,
       );
 
       if (membro.mensagem === "membro-encontrado") {
         setFieldValue(
           `listaParticipantes[${index}].nome`,
-          membro.nome ? membro.nome : ""
+          membro.nome ? membro.nome : "",
         );
         setFieldValue(
           `listaParticipantes[${index}].cargo`,
-          membro.cargo ? membro.cargo : ""
+          membro.cargo ? membro.cargo : "",
         );
         setFieldValue(`listaParticipantes[${index}].membro`, true);
       } else {
         setFieldValue(
           `listaParticipantes[${index}].nome`,
-          membro.nome ? membro.nome : ""
+          membro.nome ? membro.nome : "",
         );
         setFieldValue(
           `listaParticipantes[${index}].cargo`,
-          membro.cargo ? membro.cargo : ""
+          membro.cargo ? membro.cargo : "",
         );
         setFieldValue(`listaParticipantes[${index}].membro`, false);
       }
 
-      document.getElementById(
-        `listaParticipantes.nome_[${index}]`
-      ).disabled = true;
-      document.getElementById(
-        `listaParticipantes.cargo_[${index}]`
-      ).disabled = true;
+      document.getElementById(`listaParticipantes.nome_[${index}]`).disabled =
+        true;
+      document.getElementById(`listaParticipantes.cargo_[${index}]`).disabled =
+        true;
     } else {
       setFieldValue(`listaParticipantes[${index}].nome`, "");
       setFieldValue(`listaParticipantes[${index}].cargo`, "");
       setFieldValue(`listaParticipantes[${index}].membro`, false);
 
-      document.getElementById(
-        `listaParticipantes.nome_[${index}]`
-      ).disabled = false;
-      document.getElementById(
-        `listaParticipantes.cargo_[${index}]`
-      ).disabled = false;
+      document.getElementById(`listaParticipantes.nome_[${index}]`).disabled =
+        false;
+      document.getElementById(`listaParticipantes.cargo_[${index}]`).disabled =
+        false;
     }
   };
 
@@ -873,80 +908,22 @@ export const NovoFormularioEditaAta = ({
     return `${ano}-${mes}-${dia}`;
   };
 
-  const formatarListaCargoComposicaoParaFormatoDaListaParticipantes = (
-    lista_cargos_composicao
-  ) => {
-    let lista_formatada = [];
-
-    if (
-      lista_cargos_composicao &&
-      lista_cargos_composicao.diretoria_executiva
-    ) {
-      lista_cargos_composicao.diretoria_executiva.forEach((membro) => {
-        lista_formatada.push({
-          id: membro.id,
-          cargo: membro.cargo,
-          identificacao: membro.identificacao,
-          membro: true,
-          nome: membro.nome,
-          presente: true,
-          presidente_da_reuniao: false,
-          secretario_da_reuniao: false,
-          professor_gremio: false,
-        });
-      });
-    }
-
-    if (lista_cargos_composicao && lista_cargos_composicao.conselho_fiscal) {
-      lista_cargos_composicao.conselho_fiscal.forEach((membro) => {
-        lista_formatada.push({
-          id: membro.id,
-          cargo: membro.cargo,
-          identificacao: membro.identificacao,
-          membro: true,
-          nome: membro.nome,
-          presente: true,
-          presidente_da_reuniao: false,
-          secretario_da_reuniao: false,
-          professor_gremio: false,
-        });
-      });
-    }
-
-    return lista_formatada;
-  };
-
   const handleChangeDate = async (value, name, setFieldValue) => {
     if (isValidDate(value)) {
       setFieldValue(name, value);
+
       const data_formatada = formatDate(value);
       try {
-        const lista_cargos_composicao = await getCargosComposicaoData(
-          data_formatada,
-          associacaoUuid
-        );
-        const listaFormatada =
-          formatarListaCargoComposicaoParaFormatoDaListaParticipantes(
-            lista_cargos_composicao
-          );
-        const listaComProfessor = adicionaProfessorGremioNaLista(
-          listaFormatada,
-          uuid_ata,
-          professorDefaults,
-          precisaProfessorGremio
-        );
-        setListaParticipantes(listaComProfessor);
-        sincronizaListaParticipantes(listaComProfessor);
+        const listaComProfessor = await montarListaPorData(data_formatada);
+
+        sincronizaListaParticipantes(listaComProfessor, {
+          reinicializar: true,
+          formValuesToSync: { data_reuniao: value },
+        });
       } catch (error) {
+        sincronizaListaParticipantes([], { reinicializar: true });
         notificarErroComposicaoPorData(error);
       }
-      setDadosForm((prevState) => ({
-        ...prevState,
-        stateFormEditarAta: {
-          ...formRef.current.values.stateFormEditarAta,
-          data_reuniao: value,
-        },
-      }));
       return;
     }
 
@@ -974,18 +951,9 @@ export const NovoFormularioEditaAta = ({
       [],
       uuid_ata,
       professorDefaults,
-      precisaProfessorGremio
+      precisaProfessorGremio,
     );
-    setListaParticipantes(listaComProfessor);
     sincronizaListaParticipantes(listaComProfessor);
-
-    setDadosForm((prevState) => ({
-      ...prevState,
-      stateFormEditarAta: {
-        ...formRef.current.values.stateFormEditarAta,
-        data_reuniao: value,
-      },
-    }));
 
     return setDataModalApagarParticipantesAta({
       show: false,
@@ -1014,27 +982,16 @@ export const NovoFormularioEditaAta = ({
       }
     }
 
-    sincronizaListaParticipantes(copiaListaParticipantes, {
-      atualizarInitialValues: false,
-    });
+    sincronizaListaParticipantes(copiaListaParticipantes);
   };
 
   const editaStatusDePresidenteDaReuniao = (index, listaAtual) => {
-    const copiaListaParticipantes = listaAtual.map((participante) => ({
-      ...participante,
+    const novaLista = listaAtual.map((p, idx) => ({
+      ...p,
+      presidente_da_reuniao: idx === index ? !p.presidente_da_reuniao : false,
     }));
-    const participanteSelecionado = copiaListaParticipantes[index];
 
-    if (participanteSelecionado) {
-      const novoValor = !participanteSelecionado.presidente_da_reuniao;
-      copiaListaParticipantes.forEach((membro, idx) => {
-        membro.presidente_da_reuniao = idx === index ? novoValor : false;
-      });
-    }
-
-    sincronizaListaParticipantes(copiaListaParticipantes, {
-      atualizarInitialValues: false,
-    });
+    sincronizaListaParticipantes(novaLista);
   };
 
   const editaStatusDeSecretarioDaReuniao = (index, listaAtual) => {
@@ -1050,16 +1007,14 @@ export const NovoFormularioEditaAta = ({
       });
     }
 
-    sincronizaListaParticipantes(copiaListaParticipantes, {
-      atualizarInitialValues: false,
-    });
+    sincronizaListaParticipantes(copiaListaParticipantes);
   };
 
   return (
     <div>
-      {dadosForm && dadosForm.stateFormEditarAta ? (
+      {initialValues && initialValues.stateFormEditarAta ? (
         <Formik
-          initialValues={dadosForm}
+          initialValues={initialValues}
           enableReinitialize={true}
           validateOnBlur={true}
           validateOnChange={true}
@@ -1072,20 +1027,20 @@ export const NovoFormularioEditaAta = ({
             const listaValores = values.listaParticipantes || [];
             const todosIndices = listaValores.map((_, idx) => idx);
             const indiceProfessorGremio = listaValores.findIndex(
-              (participante) => participante.professor_gremio
+              (participante) => participante.professor_gremio,
             );
             const indicesOrdenados =
               indiceProfessorGremio >= 0
                 ? [
                     ...todosIndices.filter(
-                      (idx) => idx !== indiceProfessorGremio
+                      (idx) => idx !== indiceProfessorGremio,
                     ),
                     indiceProfessorGremio,
                   ]
                 : todosIndices;
             const parecerSelecionado = getParecerSelecionado(
               tabelas?.pareceres,
-              values.stateFormEditarAta.parecer_conselho
+              values.stateFormEditarAta.parecer_conselho,
             );
             const deveExibirCampoMotivo =
               isParecerReprovado(parecerSelecionado);
@@ -1246,7 +1201,7 @@ export const NovoFormularioEditaAta = ({
                   values.stateFormEditarAta &&
                   values.stateFormEditarAta.data_reuniao &&
                   isValidDateOrDateString(
-                    values.stateFormEditarAta.data_reuniao
+                    values.stateFormEditarAta.data_reuniao,
                   ) ? (
                     <FieldArray
                       name={"listaParticipantes"}
@@ -1258,10 +1213,10 @@ export const NovoFormularioEditaAta = ({
                               const membro = listaValores[index];
 
                               const isProfessorGremio = Boolean(
-                                membro.professor_gremio
+                                membro.professor_gremio,
                               );
                               const estaEmModoEdicao = Boolean(
-                                ehEdicaoPresente[index]
+                                ehEdicaoPresente[index],
                               );
 
                               /* const estaEmModoAdicao = Boolean(membro.adicao);
@@ -1271,8 +1226,8 @@ export const NovoFormularioEditaAta = ({
 
                               const possuiIdentificadorPersistencia = Boolean(
                                 membro?.id ||
-                                  membro?.uuid ||
-                                  membro?.participante_uuid
+                                membro?.uuid ||
+                                membro?.participante_uuid,
                               );
 
                               /* const registroSincronizado =
@@ -1296,10 +1251,13 @@ export const NovoFormularioEditaAta = ({
                                 !membro.membro &&
                                 !isProfessorGremio;
 
-                              if (isProfessorGremio && !precisaProfessorGremio) {
+                              if (
+                                isProfessorGremio &&
+                                !precisaProfessorGremio
+                              ) {
                                 return null;
                               }
-                              
+
                               return (
                                 <div key={index}>
                                   <div
@@ -1315,7 +1273,7 @@ export const NovoFormularioEditaAta = ({
                                         {isProfessorGremio
                                           ? "RF Professor Orientador do Grêmio"
                                           : nomeCampoIdentificador(
-                                              membro.identificacao
+                                              membro.identificacao,
                                             )}
                                       </label>
                                       <input
@@ -1328,14 +1286,14 @@ export const NovoFormularioEditaAta = ({
                                           handleChangeIdentificador(
                                             e,
                                             setFieldValue,
-                                            index
+                                            index,
                                           );
                                         }}
                                         onBlur={(e) => {
                                           handleBlurIdentificador(
                                             e,
                                             setFieldValue,
-                                            index
+                                            index,
                                           );
                                         }}
                                         disabled={
@@ -1392,7 +1350,7 @@ export const NovoFormularioEditaAta = ({
                                       >
                                         {nomeCampoCargo(
                                           membro.identificacao,
-                                          isProfessorGremio
+                                          isProfessorGremio,
                                         )}
                                       </label>
                                       <input
@@ -1405,8 +1363,8 @@ export const NovoFormularioEditaAta = ({
                                               ? `${membro.cargo} / Professor Orientador`
                                               : ""
                                             : membro.cargo
-                                            ? membro.cargo
-                                            : ""
+                                              ? membro.cargo
+                                              : ""
                                         }
                                         onChange={(e) => {
                                           props.handleChange(e);
@@ -1439,7 +1397,7 @@ export const NovoFormularioEditaAta = ({
                                             onClickConfirmar(
                                               index,
                                               values,
-                                              setFieldValue
+                                              setFieldValue,
                                             );
                                           }}
                                         >
@@ -1489,7 +1447,7 @@ export const NovoFormularioEditaAta = ({
                                                     index,
                                                     membro.editavel,
                                                     values,
-                                                    setFieldValue
+                                                    setFieldValue,
                                                   );
                                                 }}
                                               >
@@ -1530,7 +1488,7 @@ export const NovoFormularioEditaAta = ({
                                                     index,
                                                     values,
                                                     membro.membro,
-                                                    membro
+                                                    membro,
                                                   );
                                                 }}
                                               >
@@ -1577,7 +1535,7 @@ export const NovoFormularioEditaAta = ({
                                                   onChange={() =>
                                                     editaStatusDePresencaParticipante(
                                                       index,
-                                                      values.listaParticipantes
+                                                      values.listaParticipantes,
                                                     )
                                                   }
                                                   checked={membro.presente}
@@ -1620,7 +1578,7 @@ export const NovoFormularioEditaAta = ({
                                                     onChange={() =>
                                                       editaStatusDePresidenteDaReuniao(
                                                         index,
-                                                        values.listaParticipantes
+                                                        values.listaParticipantes,
                                                       )
                                                     }
                                                     checked={
@@ -1666,7 +1624,7 @@ export const NovoFormularioEditaAta = ({
                                                     onChange={() =>
                                                       editaStatusDeSecretarioDaReuniao(
                                                         index,
-                                                        values.listaParticipantes
+                                                        values.listaParticipantes,
                                                       )
                                                     }
                                                     checked={
@@ -1702,7 +1660,7 @@ export const NovoFormularioEditaAta = ({
                                             onClick={() => {
                                               onClickCancelarEdicao(
                                                 index,
-                                                setFieldValue
+                                                setFieldValue,
                                               );
                                             }}
                                           >
@@ -1741,7 +1699,7 @@ export const NovoFormularioEditaAta = ({
                                               onClickConfirmar(
                                                 index,
                                                 values,
-                                                setFieldValue
+                                                setFieldValue,
                                               );
                                             }}
                                           >
@@ -1809,7 +1767,7 @@ export const NovoFormularioEditaAta = ({
                                     onClick={() => {
                                       onClickCancelarAdicao(
                                         remove,
-                                        values.listaParticipantes
+                                        values.listaParticipantes,
                                       );
                                     }}
                                   >
@@ -1895,16 +1853,16 @@ export const NovoFormularioEditaAta = ({
                         onChange={(event) => {
                           setFieldValue(
                             "stateFormEditarAta.parecer_conselho",
-                            event.target.value
+                            event.target.value,
                           );
                           const selecionado = getParecerSelecionado(
                             tabelas?.pareceres,
-                            event.target.value
+                            event.target.value,
                           );
                           if (!isParecerReprovado(selecionado)) {
                             setFieldValue(
                               "stateFormEditarAta.justificativa",
-                              ""
+                              "",
                             );
                           }
                         }}

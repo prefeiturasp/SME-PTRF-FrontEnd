@@ -851,7 +851,7 @@ export const FormularioEditaAta = ({
                                                                                         name="statusPresidenteSwitch"
                                                                                         checkedChildren="Presente"
                                                                                         unCheckedChildren="Ausente"
-                                                                                        className={`mt-2 switch-status-presidente form-control ${membro.presente ? "switch-status-presidente-checked" : ""}`}
+                                                                                        className={`mt-2 switch-status-presidente ${membro.presente ? "switch-status-presidente-checked" : ""}`}
                                                                                         style={{
                                                                                             maxWidth: '30%',
                                                                                         }}

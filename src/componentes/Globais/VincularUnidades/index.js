@@ -16,6 +16,7 @@ export const VinculoUnidades = ({
   apiServiceGetUnidadesNaoVinculadas,
   apiServiceVincularUnidade,
   apiServiceVincularUnidadeEmLote,
+  apiServiceVincularTodasUnidades,
 
   // Botoes extras
   extraUnidadesVinculadasButtonFilters=null,
@@ -40,6 +41,7 @@ export const VinculoUnidades = ({
   if (!apiServiceGetUnidadesNaoVinculadas) throw new Error("VinculoUnidades: Service API apiServiceGetUnidadesNaoVinculadas não informado");
   if (!apiServiceVincularUnidade) throw new Error("VinculoUnidades: Service API apiServiceVincularUnidade não informado");
   if (!apiServiceVincularUnidadeEmLote) throw new Error("VinculoUnidades: Service API apiServiceVincularUnidadeEmLote não informado");
+  if (!apiServiceVincularTodasUnidades) throw new Error("VinculoUnidades: Service API apiServiceVincularTodasUnidades não informado");
   
   return (
     <>
@@ -51,6 +53,7 @@ export const VinculoUnidades = ({
               apiServiceGetUnidadesVinculadas={apiServiceGetUnidadesVinculadas}
               apiServiceDesvincularUnidade={apiServiceDesvincularUnidade}
               apiServiceDesvincularUnidadeEmLote={apiServiceDesvincularUnidadeEmLote}
+              apiServiceVincularTodasUnidades={apiServiceVincularTodasUnidades}
               extraButtonFilters={extraUnidadesVinculadasButtonFilters}
               header={headerUnidadesVinculadas}
               onDesvincular={onDesvincular}

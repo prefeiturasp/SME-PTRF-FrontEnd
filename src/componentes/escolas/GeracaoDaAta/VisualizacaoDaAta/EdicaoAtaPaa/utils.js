@@ -22,14 +22,14 @@ export const adicionaProfessorGremioNaLista = (
   lista = [],
   ataUuid,
   professorDefaults = {},
-  precisaProfessorGremio = true
+  precisaProfessorGremio = true,
 ) => {
   if (!precisaProfessorGremio) {
     return lista.filter((participante) => !participante.professor_gremio);
   }
 
   const existeProfessor = lista.some(
-    (participante) => participante.professor_gremio
+    (participante) => participante.professor_gremio,
   );
   if (existeProfessor) {
     return lista.map((participante) =>
@@ -40,7 +40,7 @@ export const adicionaProfessorGremioNaLista = (
             professor_gremio: true,
             presente: participante.presente ?? true,
           }
-        : participante
+        : participante,
     );
   }
 
@@ -63,9 +63,49 @@ export const adicionaProfessorGremioNaLista = (
   ];
 };
 
+export const formatarListaCargoComposicaoParaFormatoDaListaParticipantes = (
+  lista_cargos_composicao,
+) => {
+  let lista_formatada = [];
+
+  if (lista_cargos_composicao && lista_cargos_composicao.diretoria_executiva) {
+    lista_cargos_composicao.diretoria_executiva.forEach((membro) => {
+      lista_formatada.push({
+        id: membro.id,
+        cargo: membro.cargo,
+        identificacao: membro.identificacao,
+        membro: true,
+        nome: membro.nome,
+        presente: true,
+        presidente_da_reuniao: false,
+        secretario_da_reuniao: false,
+        professor_gremio: false,
+      });
+    });
+  }
+
+  if (lista_cargos_composicao && lista_cargos_composicao.conselho_fiscal) {
+    lista_cargos_composicao.conselho_fiscal.forEach((membro) => {
+      lista_formatada.push({
+        id: membro.id,
+        cargo: membro.cargo,
+        identificacao: membro.identificacao,
+        membro: true,
+        nome: membro.nome,
+        presente: true,
+        presidente_da_reuniao: false,
+        secretario_da_reuniao: false,
+        professor_gremio: false,
+      });
+    });
+  }
+
+  return lista_formatada;
+};
+
 export const extraiProfessorDefaults = (lista = []) => {
   const professor = (lista || []).find(
-    (participante) => participante.professor_gremio
+    (participante) => participante.professor_gremio,
   );
   if (!professor) {
     return null;
@@ -88,13 +128,13 @@ export const constroiMapaDeMembrosAssociacao = (listaPadrao = []) => {
     (listaPadrao || [])
       .filter((participante) => participante && participante.membro)
       .map((participante) => participante.identificacao)
-      .filter((identificacao) => Boolean(identificacao))
+      .filter((identificacao) => Boolean(identificacao)),
   );
 };
 
 export const marcaParticipantesComoMembrosDaAssociacao = (
   listaParticipantes = [],
-  listaPadrao = []
+  listaPadrao = [],
 ) => {
   const identificadoresMembros = constroiMapaDeMembrosAssociacao(listaPadrao);
   return (listaParticipantes || []).map((participante) => {
