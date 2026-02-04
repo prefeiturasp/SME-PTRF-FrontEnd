@@ -177,7 +177,7 @@ export const ConsultaDeSaldosBancariosDetalhesAssociacoes = () =>{
 
     const carregaSaldosDetalhesAssociacoesFiltros = useCallback(async ()=>{
         if (selectPeriodo && selectTipoDeConta){
-            let saldos_detalhes_associacoes_filtros = await getSaldosDetalhesAssociacoes(selectPeriodo, selectTipoDeConta, dre_uuid, stateFiltros.filtrar_por_unidade, stateFiltros.filtrar_por_tipo_ue)
+            let saldos_detalhes_associacoes_filtros = await getSaldosDetalhesAssociacoes(selectPeriodo, selectTipoDeConta, dre_uuid, stateFiltros.filtrar_por_associacao, stateFiltros.filtrar_por_tipo_ue)
             setSaldosDetalhesAssociacoes(saldos_detalhes_associacoes_filtros)
         }
     }, [selectPeriodo, selectTipoDeConta, dre_uuid, stateFiltros])
@@ -228,7 +228,7 @@ export const ConsultaDeSaldosBancariosDetalhesAssociacoes = () =>{
                     <div className="flex-grow-1 bd-highlight">
                         <p className='nome-dre'>{exibeNomeDre(dre_uuid)}</p>
                     </div>
-                    <div className="row">
+                    <div className="d-flex flex-wrap">
                         <div className="bd-highlight">
                             <Link
                                 to={`/consulta-de-saldos-bancarios/${selectPeriodo}/${selectTipoDeConta}/`}
@@ -245,7 +245,7 @@ export const ConsultaDeSaldosBancariosDetalhesAssociacoes = () =>{
                     
                 </div>
                 {selectPeriodo && selectTipoDeConta ? (
-                <>    
+                <div className="mt-2">
                     <Filtros
                         stateFiltros={stateFiltros}
                         handleChangeFiltros={handleChangeFiltros}
@@ -261,7 +261,7 @@ export const ConsultaDeSaldosBancariosDetalhesAssociacoes = () =>{
                         acoesTemplate={acoesTemplate}
                         rowsPerPage={rowsPerPage}
                     />
-                </>
+                </div>
                     ):
                     <MsgImgCentralizada
                         texto='Selecione um período e um tipo de conta para consultar os saldos bancários'

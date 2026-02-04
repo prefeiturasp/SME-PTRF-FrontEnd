@@ -4,10 +4,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
 import { BadgeCustom } from "../../../../../Globais/BadgeCustom";
 import { useGetOutrosRecursosPeriodoPaa } from "./hooks/useGet";
-import { usePatchOutroRecursoPeriodo } from "./hooks/usePatch";
+import { usePatchOutroRecursoPeriodo, usePatchDesativarOutroRecursoPeriodo } from "./hooks/usePatch";
 import { usePostOutroRecursoPeriodo } from "./hooks/usePost";
 import { VinculoUnidades } from "./../../../../../Globais/VincularUnidades";
 import { ImportarUnidades } from "./ImportarUnidades";
+import { useDispatch } from "react-redux";
+import { ModalConfirm } from "../../../../../Globais/Modal/ModalConfirm";
 import {
     getUnidadesNaoVinculadasOutrosRecursosPeriodoPaa,
     postVincularUnidadeOutrosRecursosPeriodoPaa,
@@ -16,6 +18,7 @@ import {
     getUnidadesVinculadasOutrosRecursosPeriodoPaa,
     postDesvincularUnidadeOutrosRecursosPeriodoPaa,
     postDesvincularUnidadeOutrosRecursosPeriodoPaaEmLote,
+    postVincularTodasUnidadesOutrosRecursosPeriodoPaa,
 } from "../../../../../../services/sme/Parametrizacoes.service";
 
 import { toastCustom } from "../../../../../Globais/ToastCustom";
@@ -29,6 +32,8 @@ export const RecursoItem = ({recurso, periodoUuid}) => {
      * Caso contrário, ele cria um novo Objeto 'Outro Recurso do Período'.
      **/
 
+    const dispatch = useDispatch();
+
     // Filtro para buscar o Outro Recurso do Período (de acordo com o Outro Recurso Listado e Período PAA em edição)
     const filtroOutroRecursoPeriodo = { periodo_paa_uuid: periodoUuid, outro_recurso_uuid: recurso?.uuid}
 
@@ -41,6 +46,7 @@ export const RecursoItem = ({recurso, periodoUuid}) => {
     const outroRecursoPeriodo = outrosRecursosPeriodo?.results?.find(i => i.periodo_paa === periodoUuid && i.outro_recurso === recurso?.uuid)
     
     const mutationPatch = usePatchOutroRecursoPeriodo()
+    const mutationPatchDesativar = usePatchDesativarOutroRecursoPeriodo()
     const mutationPost = usePostOutroRecursoPeriodo()
     
     const [ stateOutroRecursoPeriodo, setStateOutroRecursoPeriodo ] = useState({})
@@ -48,9 +54,10 @@ export const RecursoItem = ({recurso, periodoUuid}) => {
 
     const mutateLoading = useMemo(() => 
         mutationPatch.isPending ||
+        mutationPatchDesativar.isPending ||
         mutationPost.isPending
     ,
-    [mutationPatch.isPending, mutationPost.isPending])
+    [mutationPatch.isPending, mutationPost.isPending, mutationPatchDesativar.isPending])
 
     const onVincularUnidades = ()=>{
         refetchOutroRecursoPeriodo()
@@ -72,14 +79,35 @@ export const RecursoItem = ({recurso, periodoUuid}) => {
                 payload: { ativo }
             })
             setStateCheckAtivo(ativo)
-            toastCustom.ToastCustomSuccess(`Recurso ${ativo ? 'ativado' : 'desativado'} com sucesso.`);
+            toastCustom.ToastCustomSuccess(`Recurso ativado com sucesso.`);
         } catch (e) {
             toastCustom.ToastCustomError(
-                `Erro ao ${ativo ? 'ativar' : 'desativar'} recurso`,
+                `Erro ao ativar recurso`,
                 e.response.data.non_field_errors ||
                 e.response.data.detail ||
                 e.response.data.mensagem ||
-                'Falha ao atualizar recurso'
+                'Falha ao ativar recurso'
+            )
+            console.error(e)
+        } finally {
+            await refetchOutroRecursoPeriodo()
+        }
+    }
+
+    const handleDesativarOutroRecursoPeriodo = async () => {
+        try {
+            await mutationPatchDesativar.mutateAsync({
+                uuid: outroRecursoPeriodo?.uuid
+            })
+            setStateCheckAtivo(false)
+            toastCustom.ToastCustomSuccess(`Recurso desativado com sucesso.`);
+        } catch (e) {
+            toastCustom.ToastCustomError(
+                `Erro ao desativar recurso`,
+                e.response.data.non_field_errors ||
+                e.response.data.detail ||
+                e.response.data.mensagem ||
+                'Falha ao desativar recurso'
             )
             console.error(e)
         } finally {
@@ -99,7 +127,27 @@ export const RecursoItem = ({recurso, periodoUuid}) => {
     const onChangeCheckAtivo = (e) => {
         if(stateOutroRecursoPeriodo?.uuid){
             /* Quando existe outroRecursoPeriodo já criado para o Outro Recurso do Período */
-            handleAtivarOutroRecursoPeriodo(e)
+            if (!e) {
+                ModalConfirm({
+                    dispatch,
+                    title: "Desvinculação de recurso no PAA",
+                    children: <>
+                        <p style={{fontSize: "14px", fontWeight: "bold"}}>
+                            As receitas previstas e prioridades serão removidas dos PAAs que estão em elaboração.
+                        </p>
+                        <p style={{fontSize: "14px"}}>
+                            Confirma a desvinculação do recurso para o período do PAA?
+                        </p>
+                    </>,
+                    cancelText: "Cancelar",
+                    confirmText: "Confirmar",
+                    confirmButtonClass: "btn-success",
+                    dataQa: "modal-confirmar-desativacao-recurso-periodo",
+                    onConfirm: () => handleDesativarOutroRecursoPeriodo(),
+                });
+            } else {
+                handleAtivarOutroRecursoPeriodo(e)
+            }
         } else {
             /* Quando não existe outroRecursoPeriodo cadastrado, então, somente criar */
             handleCriarOutroRecursoPeriodo()
@@ -157,7 +205,7 @@ export const RecursoItem = ({recurso, periodoUuid}) => {
                                 </div>
                             </Col>
                             <Col span={12}>
-                                {!!stateOutroRecursoPeriodo?.uuid && <>
+                                {!!stateOutroRecursoPeriodo?.uuid && stateOutroRecursoPeriodo?.ativo && <>
                                     <div className="my-1">
                                         <Typography.Text strong>Uso associação</Typography.Text>
                                     </div>
@@ -201,6 +249,7 @@ export const RecursoItem = ({recurso, periodoUuid}) => {
                         apiServiceGetUnidadesVinculadas={getUnidadesVinculadasOutrosRecursosPeriodoPaa}
                         apiServiceDesvincularUnidade={postDesvincularUnidadeOutrosRecursosPeriodoPaa}
                         apiServiceDesvincularUnidadeEmLote={postDesvincularUnidadeOutrosRecursosPeriodoPaaEmLote}
+                        apiServiceVincularTodasUnidades={postVincularTodasUnidadesOutrosRecursosPeriodoPaa}
                         exibirUnidadesVinculadas={(outroRecursoPeriodo?.unidades||[]).length > 0}
 
                         extraUnidadesVinculadasButtonFilters={null}

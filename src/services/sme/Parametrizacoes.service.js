@@ -263,14 +263,17 @@ export const getUnidadesNaoVinculadasOutrosRecursosPeriodoPaa = async (uuid, par
   return (await api.get(`/api/outros-recursos-periodos-paa/${uuid}/unidades-nao-vinculadas/`, {...authHeader(), params})).data;
 }
 
-export const postVincularUnidadeOutrosRecursosPeriodoPaa = async (uuid, unidade_uuid) => {
-  return (await api.post(`/api/outros-recursos-periodos-paa/${uuid}/unidade/${unidade_uuid}/vincular/`, {}, authHeader())).data;
+export const postVincularUnidadeOutrosRecursosPeriodoPaa = async (uuid, unidade_uuid, payload={}) => {
+  return (await api.post(`/api/outros-recursos-periodos-paa/${uuid}/unidade/${unidade_uuid}/vincular/`, payload, authHeader())).data;
 }
 export const postVincularUnidadeOutrosRecursosPeriodoPaaEmLote = async (uuid, payload) => {
   return (await api.post(`/api/outros-recursos-periodos-paa/${uuid}/vincular-em-lote/`, payload, authHeader())).data;
 }
-export const postDesvincularUnidadeOutrosRecursosPeriodoPaa = async (uuid, unidadeUUID) => {
-  return (await api.post(`/api/outros-recursos-periodos-paa/${uuid}/unidade/${unidadeUUID}/desvincular/`, {}, authHeader())).data;
+export const postDesvincularUnidadeOutrosRecursosPeriodoPaa = async (uuid, unidadeUUID, payload={}) => {
+  return (await api.post(`/api/outros-recursos-periodos-paa/${uuid}/unidade/${unidadeUUID}/desvincular/`, payload, authHeader())).data;
+}
+export const postVincularTodasUnidadesOutrosRecursosPeriodoPaa = async (uuid) => {
+  return (await api.post(`/api/outros-recursos-periodos-paa/${uuid}/vincular-todas-unidades/`, {}, authHeader())).data;
 }
 export const postDesvincularUnidadeOutrosRecursosPeriodoPaaEmLote = async (uuid, payload) => {
   return (await api.post(`/api/outros-recursos-periodos-paa/${uuid}/desvincular-em-lote/`, payload, authHeader())).data;
@@ -282,6 +285,9 @@ export const getOutroRecursoPeriodoPaa = async (uuid) => {
 };
 export const patchOutroRecursoPeriodoPaa = async (uuid, payload) => {
   return (await api.patch(`/api/outros-recursos-periodos-paa/${uuid}/`, payload, authHeader())).data;
+};
+export const patchDesativarOutroRecursoPeriodoPaa = async (uuid) => {
+  return (await api.patch(`/api/outros-recursos-periodos-paa/${uuid}/desabilitar/`, {}, authHeader())).data;
 };
 export const postOutroRecursoPeriodoPaa = async (payload) => {
   return (await api.post(`/api/outros-recursos-periodos-paa/`, payload, authHeader())).data;

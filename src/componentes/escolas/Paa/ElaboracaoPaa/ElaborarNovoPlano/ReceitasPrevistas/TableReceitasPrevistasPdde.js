@@ -37,7 +37,7 @@ const TableReceitasPrevistasPdde = ({ activeTab, tabs, setActiveTab }) => {
   };
 
   const acoesTemplate = (rowData) => {
-    return (
+    return !rowData["fixed"] ? (
       <IconButton
         icon="faEdit"
         tooltipMessage="Editar ações"
@@ -47,7 +47,7 @@ const TableReceitasPrevistasPdde = ({ activeTab, tabs, setActiveTab }) => {
         aria-label="Editar"
         onClick={() => handleChangeTab()}
       />
-    );
+    ) : null;
   };
 
   const totalRow = {

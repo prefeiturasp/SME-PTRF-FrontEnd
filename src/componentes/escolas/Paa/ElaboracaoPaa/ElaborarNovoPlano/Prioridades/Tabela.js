@@ -6,6 +6,7 @@ import { Space } from 'antd';
 import { formatMoneyBRL } from "../../../../../../utils/money";
 import { BadgeCustom } from './BadgeCustom';
 import { BarraAcaoEmLote } from './BarraAcaoEmLote';
+import { RECURSOS_PRIORIDADE } from "../../../../../../constantes/prioridades";
 
 
 export const Tabela = forwardRef(({ data, handleEditar, handleDuplicar, handleExcluir, handleExcluirEmLote }, ref) => {
@@ -97,12 +98,20 @@ export const Tabela = forwardRef(({ data, handleEditar, handleDuplicar, handleEx
                 sortable
                 body={(rowData) => (
                     <>
-                        {!rowData.acao_associacao && rowData.recurso === 'PTRF' &&
+                        {!rowData.acao_associacao && rowData.recurso === RECURSOS_PRIORIDADE.PTRF &&
                             <BadgeCustom
                                 badge={true}
                                 buttonColor='#62a9ad'
                                 buttonLabel='Informar Ação'
-                                handleClick={() => handleEditar(rowData, false, true)}
+                                handleClick={() => handleEditar(rowData, ['acao'])}
+                            />
+                        }
+                        {!rowData.acao && rowData.recurso === RECURSOS_PRIORIDADE.OUTRO_RECURSO &&
+                            <BadgeCustom
+                                badge={true}
+                                buttonColor='#62a9ad'
+                                buttonLabel='Informar Recurso'
+                                handleClick={() => handleEditar(rowData, ['recurso'])}
                             />
                         }
                         <div>{rowData.acao}</div>
@@ -145,7 +154,7 @@ export const Tabela = forwardRef(({ data, handleEditar, handleDuplicar, handleEx
                                 badge={true}
                                 buttonColor='#62a9ad'
                                 buttonLabel='Informar Valor'
-                                handleClick={() => handleEditar(rowData, true, false)}
+                                handleClick={() => handleEditar(rowData, ['valor_total'])}
                             />
                             :
                             <>{formatMoneyBRL(rowData.valor_total)}</>
@@ -167,7 +176,7 @@ export const Tabela = forwardRef(({ data, handleEditar, handleDuplicar, handleEx
                                 style: { color: "#00585E" },
                                 }}
                                 aria-label="Editar"
-                                onClick={() => handleEditar(rowData, false)}
+                                onClick={() => handleEditar(rowData, [])}
                             />
                             <IconButton
                                 className='p-2'
