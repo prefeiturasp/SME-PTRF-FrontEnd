@@ -56,7 +56,7 @@ const BarraTopoTitulo = ({ origem = null }) => {
     return {
       className: "btn btn-outline-success",
       label: "Voltar",
-      destino: "/paa",
+      destino: null,
     };
   };
 
@@ -67,14 +67,14 @@ const BarraTopoTitulo = ({ origem = null }) => {
       <div className="py-2 flex-grow-1 bd-highlight">
         <h2>{headerPaaReferencia()}</h2>
       </div>
-      <div className="p-2 bd-highlight">
+      {destino && <div className="p-2 bd-highlight">
         <button
           className={className}
           onClick={() => navigate(destino)}
         >
           {label}
         </button>
-      </div>
+      </div>}
     </div>
   );
 };

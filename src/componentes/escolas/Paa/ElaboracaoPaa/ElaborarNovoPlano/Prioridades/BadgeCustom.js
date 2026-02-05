@@ -28,13 +28,14 @@ export const BadgeCustom = ({
         badge=false,
         buttonColor='#a4a4a4',
         buttonLabel='',
-        handleClick=()=>{}
+        handleClick=()=>{},
+        offset=[-85, 0]
     }) => {
     return (
         <>
         {badge ?
             <>
-                <Badge color="#cda910" count={'!'} size='small' offset={[-85, 0]}>
+                <Badge color="#cda910" count={'!'} size='small' offset={offset}>
                     <ButtonCustom
                         buttonColor={buttonColor}
                         buttonLabel={buttonLabel}

@@ -145,18 +145,26 @@ export const SidebarLeft = () => {
                                             <img src={url.icone} alt=""/>
                                         </NavIcon>
                                         <NavText>{url.label}</NavText>
-                                        {url.subItens && url.subItens.length > 0 && url.subItens.map((subItem, index) =>
-                                            visoesService.getPermissoes(subItem.permissoes) ? (
-                                            <NavItem
-                                                key={index}
-                                                navitemClassName="sub-menu-item"
-                                                eventKey={subItem.url}
-                                                id={subItem.id}
-                                            >
-                                                <NavText>
-                                                    {subItem.label}
-                                                </NavText>
-                                            </NavItem>): null
+                                        {url.subItens && url.subItens.length > 0 && url.subItens.map((subItem, index) => {
+                                            const tem_permissao = visoesService.getPermissoes(subItem.permissoes)
+                                            // Permite adicionar feature-flag no subItem
+                                            let subItemFeatureFlag = true
+                                            if(subItem.featureFlag) {
+                                                subItemFeatureFlag = visoesService.featureFlagAtiva(subItem.featureFlag)
+                                            }
+
+                                            return tem_permissao && subItemFeatureFlag ? (
+                                                <NavItem
+                                                    key={index}
+                                                    navitemClassName="sub-menu-item"
+                                                    eventKey={subItem.url}
+                                                    id={subItem.id}
+                                                >
+                                                    <NavText>
+                                                        {subItem.label}
+                                                    </NavText>
+                                                </NavItem>): null
+                                            }
                                         )}
                                     </NavItem>
                                 ) : null

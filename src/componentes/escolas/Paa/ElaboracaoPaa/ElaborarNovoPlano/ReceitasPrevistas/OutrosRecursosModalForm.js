@@ -138,12 +138,6 @@ const OutrosRecursosModalForm = ({ open, onClose, data }) => {
     return toolTip(texto);
   };
 
-  const toolTipSaldoReprogramdo = () => {
-    const texto =
-      "Orienta-se somar todos os valores recebidos de Custeio, Capital e Livre Aplicação ao longo do último ano.";
-    return toolTip(texto);
-  };
-
   const ehCampoDesabilitado = useCallback(
     (campoNome) => {
       if (!recursoConfig) return false;
@@ -177,7 +171,7 @@ const OutrosRecursosModalForm = ({ open, onClose, data }) => {
               gutter={[16, 16]}
               style={{ marginBottom: 16, color: "rgba(66, 71, 74, 1)" }}
             >
-              <Col md={8}>Saldo reprogramado {toolTipSaldoReprogramdo()}</Col>
+              <Col md={8}>Saldo reprogramado</Col>
 
               <Col md={8}>
                 <Flex align="center">
@@ -208,6 +202,7 @@ const OutrosRecursosModalForm = ({ open, onClose, data }) => {
                       rules={inputRules}
                     >
                       <InputNumber
+                        className="input-number-right"
                         placeholder="00,00"
                         formatter={formatMoneyByCentsBRL}
                         parser={parseMoneyBRL}
@@ -233,6 +228,7 @@ const OutrosRecursosModalForm = ({ open, onClose, data }) => {
                       rules={inputRules}
                     >
                       <InputNumber
+                        className="input-number-right"
                         placeholder="00,00"
                         formatter={formatMoneyByCentsBRL}
                         parser={parseMoneyBRL}
@@ -257,6 +253,7 @@ const OutrosRecursosModalForm = ({ open, onClose, data }) => {
                     style={{ marginBottom: 8 }}
                   >
                     <InputNumber
+                      className="input-number-right"
                       placeholder="00,00"
                       formatter={formatMoneyBRL}
                       parser={parseMoneyBRL}
@@ -290,6 +287,7 @@ const OutrosRecursosModalForm = ({ open, onClose, data }) => {
                       rules={inputRules}
                     >
                       <InputNumber
+                        className="input-number-right"
                         placeholder="00,00"
                         formatter={formatMoneyByCentsBRL}
                         parser={parseMoneyBRL}
@@ -314,6 +312,7 @@ const OutrosRecursosModalForm = ({ open, onClose, data }) => {
                       rules={inputRules}
                     >
                       <InputNumber
+                        className="input-number-right"
                         placeholder="00,00"
                         formatter={formatMoneyByCentsBRL}
                         parser={parseMoneyBRL}
@@ -337,6 +336,7 @@ const OutrosRecursosModalForm = ({ open, onClose, data }) => {
                     style={{ marginBottom: 8 }}
                   >
                     <InputNumber
+                      className="input-number-right"
                       placeholder="00,00"
                       formatter={formatMoneyBRL}
                       parser={parseMoneyBRL}
@@ -370,6 +370,7 @@ const OutrosRecursosModalForm = ({ open, onClose, data }) => {
                       rules={inputRules}
                     >
                       <InputNumber
+                        className="input-number-right"
                         placeholder="00,00"
                         formatter={formatMoneyByCentsBRL}
                         parser={parseMoneyBRL}
@@ -394,6 +395,7 @@ const OutrosRecursosModalForm = ({ open, onClose, data }) => {
                       rules={inputRules}
                     >
                       <InputNumber
+                        className="input-number-right"
                         placeholder="00,00"
                         formatter={formatMoneyByCentsBRL}
                         parser={parseMoneyBRL}
@@ -417,6 +419,7 @@ const OutrosRecursosModalForm = ({ open, onClose, data }) => {
                     style={{ marginBottom: 8 }}
                   >
                     <InputNumber
+                      className="input-number-right"
                       placeholder="00,00"
                       formatter={formatMoneyBRL}
                       parser={parseMoneyBRL}

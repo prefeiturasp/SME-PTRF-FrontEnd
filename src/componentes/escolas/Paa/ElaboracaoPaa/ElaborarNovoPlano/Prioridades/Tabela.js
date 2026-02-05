@@ -110,6 +110,7 @@ export const Tabela = forwardRef(({ data, handleEditar, handleDuplicar, handleEx
                             <BadgeCustom
                                 badge={true}
                                 buttonColor='#62a9ad'
+                                offset={[-97, -2]}
                                 buttonLabel='Informar Recurso'
                                 handleClick={() => handleEditar(rowData, ['recurso'])}
                             />
@@ -145,8 +146,8 @@ export const Tabela = forwardRef(({ data, handleEditar, handleDuplicar, handleEx
                 field="valor_total"
                 header="Valor total"
                 sortable
-                style={{ width: "120px", textAlign: "center" }}
-                bodyStyle={{ textAlign: 'center' }}
+                align={'right'}
+                style={{ width: "120px" }}
                 body={(rowData) => (
                     <>
                         {!rowData.valor_total ?
@@ -164,7 +165,8 @@ export const Tabela = forwardRef(({ data, handleEditar, handleDuplicar, handleEx
             />
             <Column
                 header="Ações"
-                style={{ width: "75px", borderLeft: "none", textAlign: 'center' }}
+                style={{ width: "75px", borderLeft: "none" }}
+                align={'center'}
                 body={rowData => {
                     return (
                         <Space direction="horizontal" size={0}>

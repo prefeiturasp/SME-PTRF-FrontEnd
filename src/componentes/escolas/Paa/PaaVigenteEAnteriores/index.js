@@ -709,7 +709,7 @@ export const PaaVigenteEAnteriores = () => {
               {vigente ? `PAA ${formatReferencia(vigente?.periodo_paa_objeto?.referencia)}` : 'PAA vigente'}
             </span>
             <div className="d-flex align-items-center">
-            <button
+            {false && <button
               type="button"
               className="btn btn-outline-success"
               onClick={() => navigate(-1)}
@@ -720,7 +720,7 @@ export const PaaVigenteEAnteriores = () => {
               disabled
             >
               Retificar o PAA
-            </button>
+            </button>}
               <button
                 type="button"
                 className="d-flex align-items-center justify-content-center"

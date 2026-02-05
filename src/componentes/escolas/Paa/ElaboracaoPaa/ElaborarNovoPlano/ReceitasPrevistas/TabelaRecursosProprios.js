@@ -61,6 +61,9 @@ const TabelaRecursosProprios = ({
         receitas_previstas,
         nome: _r.outro_recurso_objeto.nome,
         cor: _r.outro_recurso_objeto.cor,
+        aceita_capital: _r.outro_recurso_objeto.aceita_capital,
+        aceita_custeio: _r.outro_recurso_objeto.aceita_custeio,
+        aceita_livre: _r.outro_recurso_objeto.aceita_livre_aplicacao,
         previsao_valor_capital,
         previsao_valor_custeio,
         previsao_valor_livre,
@@ -150,7 +153,7 @@ const TabelaRecursosProprios = ({
     return (
       <span
         style={{
-          fontWeight: rowData.fixed ? "bold" : "normal",
+          fontWeight: rowData.fixed || campo === "total_saldos" ? "bold" : "normal",
           fontSize: rowData.fixed ? "16px" : "14px",
         }}
       >
@@ -194,6 +197,25 @@ const TabelaRecursosProprios = ({
     return !rowData?.outro_recurso_objeto[colunaNome];
   }, []);
 
+  const renderValorCondicional = useCallback((campo, campoValidacao, rowData, rowIndex) => {
+    // Se a coluna está desabilitada, retorna "-"
+    if (ehColunaDesabilitada(rowData, rowIndex, campoValidacao)) {
+      return (
+        <span
+          style={{
+            fontWeight: rowData.fixed ? "bold" : "normal",
+            fontSize: rowData.fixed ? "16px" : "14px",
+          }}
+        >
+          -
+        </span>
+      );
+    }
+
+    // Caso contrário, formata normalmente
+    return formataValorRender(campo, rowData);
+  }, [ehColunaDesabilitada, formataValorRender]);
+
   return (
     <Spin spinning={loadingRecursos}>
       <DataTable
@@ -211,11 +233,16 @@ const TabelaRecursosProprios = ({
           header="Custeio (R$)"
           bodyClassName={(rowData, { rowIndex }) => {
             return ehColunaDesabilitada(rowData, rowIndex, "aceita_custeio")
-              ? "bg-cinza-claro text-right"
+              ? "cell-desativada text-right"
               : "text-right";
           }}
-          body={(rowData) =>
-            formataValorRender("previsao_valor_custeio_com_saldo", rowData)
+          body={(rowData, { rowIndex }) =>
+            renderValorCondicional(
+              "previsao_valor_custeio_com_saldo",
+              "aceita_custeio",
+              rowData,
+              rowIndex
+            )
           }
           style={{ width: "15%" }}
         />
@@ -224,19 +251,29 @@ const TabelaRecursosProprios = ({
           header="Capital (R$)"
           bodyClassName={(rowData, { rowIndex }) => {
             return ehColunaDesabilitada(rowData, rowIndex, "aceita_capital")
-              ? "bg-cinza-claro text-right"
+              ? "cell-desativada text-right"
               : "text-right";
           }}
-          body={(rowData) =>
-            formataValorRender("previsao_valor_capital_com_saldo", rowData)
+          body={(rowData, { rowIndex }) =>
+            renderValorCondicional(
+              "previsao_valor_capital_com_saldo",
+              "aceita_capital",
+              rowData,
+              rowIndex
+            )
           }
           style={{ width: "15%" }}
         />
         <Column
           field="saldo_livre"
           header="Livre Aplicação (R$)"
-          body={(rowData) =>
-            formataValorRender("previsao_valor_livre_com_saldo", rowData)
+          body={(rowData, { rowIndex }) =>
+            renderValorCondicional(
+              "previsao_valor_livre_com_saldo",
+              "aceita_livre_aplicacao",
+              rowData,
+              rowIndex
+            )
           }
           bodyClassName={(rowData, { rowIndex }) => {
             return ehColunaDesabilitada(
@@ -244,7 +281,7 @@ const TabelaRecursosProprios = ({
               rowIndex,
               "aceita_livre_aplicacao"
             )
-              ? "bg-cinza-claro text-right"
+              ? "cell-desativada text-right"
               : "text-right";
           }}
           style={{ width: "20%" }}

@@ -126,6 +126,11 @@ const ModalEdicaoReceitaPrevistaPDDE = ({ open, onClose, receitaPrevistaPDDE }) 
               <Col md={8}>
                 <Flex align="center">
                   Saldo reprogramado
+                </Flex>
+              </Col>
+              <Col md={8}>
+                <Flex align="center">
+                  Receita prevista
                   <Icon
                     tooltipMessage="Orienta-se somar todos os valores recebidos de Custeio, Capital e Livre Aplicação ao longo do último ano."
                     icon="faExclamationCircle"
@@ -137,11 +142,6 @@ const ModalEdicaoReceitaPrevistaPDDE = ({ open, onClose, receitaPrevistaPDDE }) 
                       },
                     }}
                   />
-                </Flex>
-              </Col>
-              <Col md={8}>
-                <Flex align="center">
-                  Receita prevista 
                 </Flex>
               </Col>
               <Col md={8}>Total</Col>
@@ -161,6 +161,7 @@ const ModalEdicaoReceitaPrevistaPDDE = ({ open, onClose, receitaPrevistaPDDE }) 
                       rules={receitaPrevistaPDDE && receitaPrevistaPDDE.aceita_custeio ? inputRules : null}
                     >
                       <InputNumber
+                        className="input-number-right"
                         placeholder="00,00"
                         formatter={formatMoneyByCentsBRL}
                         parser={parseMoneyBRL}
@@ -186,6 +187,7 @@ const ModalEdicaoReceitaPrevistaPDDE = ({ open, onClose, receitaPrevistaPDDE }) 
                       rules={receitaPrevistaPDDE && receitaPrevistaPDDE.aceita_custeio ? inputRules : null}
                     >
                       <InputNumber
+                        className="input-number-right"
                         placeholder="00,00"
                         formatter={formatMoneyByCentsBRL}
                         parser={parseMoneyBRL}
@@ -209,6 +211,7 @@ const ModalEdicaoReceitaPrevistaPDDE = ({ open, onClose, receitaPrevistaPDDE }) 
                     style={{ marginBottom: 8 }}
                   >
                     <InputNumber
+                      className="input-number-right"
                       placeholder="00,00"
                       formatter={formatMoneyBRL}
                       parser={parseMoneyBRL}
@@ -235,6 +238,7 @@ const ModalEdicaoReceitaPrevistaPDDE = ({ open, onClose, receitaPrevistaPDDE }) 
                       rules={receitaPrevistaPDDE && receitaPrevistaPDDE.aceita_capital ? inputRules : null}
                     >
                       <InputNumber
+                        className="input-number-right"
                         placeholder="00,00"
                         formatter={formatMoneyByCentsBRL}
                         parser={parseMoneyBRL}
@@ -259,6 +263,7 @@ const ModalEdicaoReceitaPrevistaPDDE = ({ open, onClose, receitaPrevistaPDDE }) 
                       rules={receitaPrevistaPDDE && receitaPrevistaPDDE.aceita_capital ? inputRules : null}
                     >
                       <InputNumber
+                        className="input-number-right"
                         placeholder="00,00"
                         formatter={formatMoneyByCentsBRL}
                         parser={parseMoneyBRL}
@@ -282,6 +287,7 @@ const ModalEdicaoReceitaPrevistaPDDE = ({ open, onClose, receitaPrevistaPDDE }) 
                     style={{ marginBottom: 8 }}
                   >
                     <InputNumber
+                      className="input-number-right"
                       placeholder="00,00"
                       formatter={formatMoneyBRL}
                       parser={parseMoneyBRL}
@@ -307,6 +313,7 @@ const ModalEdicaoReceitaPrevistaPDDE = ({ open, onClose, receitaPrevistaPDDE }) 
                       rules={receitaPrevistaPDDE && receitaPrevistaPDDE.aceita_livre_aplicacao ? inputRules : null}
                     >
                       <InputNumber
+                        className="input-number-right"
                         placeholder="00,00"
                         formatter={formatMoneyByCentsBRL}
                         parser={parseMoneyBRL}
@@ -331,6 +338,7 @@ const ModalEdicaoReceitaPrevistaPDDE = ({ open, onClose, receitaPrevistaPDDE }) 
                       rules={receitaPrevistaPDDE && receitaPrevistaPDDE.aceita_livre_aplicacao ? inputRules : null}
                     >
                       <InputNumber
+                        className="input-number-right"
                         placeholder="00,00"
                         formatter={formatMoneyByCentsBRL}
                         parser={parseMoneyBRL}
@@ -354,6 +362,7 @@ const ModalEdicaoReceitaPrevistaPDDE = ({ open, onClose, receitaPrevistaPDDE }) 
                     style={{ marginBottom: 8 }}
                   >
                     <InputNumber
+                      className="input-number-right"
                       placeholder="00,00"
                       formatter={formatMoneyBRL}
                       parser={parseMoneyBRL}
