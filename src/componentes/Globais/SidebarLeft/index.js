@@ -14,6 +14,9 @@ import {AmbientesApi} from "../AmbientesApi";
 
 import { useLocation } from 'react-router-dom'
 import { LogoSPHorizontalMonocromatica } from '../UI/LogoSP';
+import { SelecionaRecurso } from '../SelecionaRecurso'
+
+import { FEATURE_FLAGS } from '../../../constantes/featureFlags';
 
 export const SidebarLeft = () => {
     const sidebarStatus = useContext(SidebarContext);
@@ -121,6 +124,8 @@ export const SidebarLeft = () => {
             >
                 <SideNav.Toggle/>
                 {/* <SideNav.Nav defaultSelected={urls.dados_iniciais.default_selected}> */}
+                { sidebarStatus.sideBarStatus && visoesService.featureFlagAtiva(FEATURE_FLAGS.PREMIO_EXCELENCIA) && <SelecionaRecurso /> }
+                
                 <SideNav.Nav defaultSelected={getPathname()}>
                     {urls && urls.lista_de_urls.length > 0 && urls.lista_de_urls.map((url, index) => {
                             let featureFlag = true

@@ -1,0 +1,74 @@
+.container-seleciona-recurso {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem;
+}
+
+.imagem-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  background-color: white;
+  border-radius: 100%;
+
+  img {
+    width: 100%;
+    height: 40px;
+    object-fit: contain;
+  }
+}
+
+.select-recurso-antd {
+  width: 220px;
+  font-family: "Roboto", sans-serif !important; 
+
+  .ant-select-selector {
+    background-color: transparent !important;
+    color: white;
+    height: 24px !important;
+    border-radius: 15px !important;
+    text-align: center !important;
+    font-family: "Roboto", sans-serif !important;
+    border: 2px solid #fff; 
+  }
+
+  .ant-select-selector:hover {
+    border: 1px solid #fff !important;
+    // color: white !important; 
+  }
+}
+
+// remove o focus após trocar recurso
+.ant-select-focused .ant-select-selector {
+  box-shadow: none !important;
+  border-color: inherit !important;
+}
+
+// altera a cor do texto do select quando aberto
+.ant-select-open .ant-select-selection-item {
+  color: #fff !important;
+}
+
+// altera a cor da seta do select quando aberto
+.ant-select .ant-select-arrow {
+  color: #fff !important;
+}
+
+// altera a cor do background das opções ao passar o mouse e ao selecionar
+.ant-select-item-option-active {
+  background-color: #dbdbdb !important;
+}
+
+// altera a cor do background da opção selecionada
+.ant-select-item-option-selected {
+  background-color: #8d8d8d !important;
+}
+
+.ant-select-selection-placeholder {
+  color: #fff !important;
+}
