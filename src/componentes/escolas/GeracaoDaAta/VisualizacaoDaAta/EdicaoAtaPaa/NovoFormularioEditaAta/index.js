@@ -1078,6 +1078,7 @@ export const NovoFormularioEditaAta = ({
                       <label htmlFor="stateFormEditarAta.data_reuniao">
                         Data
                         <span
+                          data-tooltip-id="data-reuniao"
                           className="font-weight-normal"
                           data-tooltip-content={
                             "Preencha a data da reunião para visualização dos participantes."
@@ -1088,7 +1089,7 @@ export const NovoFormularioEditaAta = ({
                             style={{ marginLeft: "4px" }}
                             icon={faInfoCircle}
                           />
-                          <ReactTooltip />
+                          <ReactTooltip id="data-reuniao"/>
                         </span>
                       </label>
                       <DatePickerField

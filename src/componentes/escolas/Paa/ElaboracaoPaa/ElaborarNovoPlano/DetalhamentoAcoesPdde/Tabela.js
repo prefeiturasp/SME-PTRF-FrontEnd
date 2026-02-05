@@ -43,15 +43,7 @@ const Tabela = ({
     const moneyTemplate = (previsao, saldo, acceptsField) => {
         if (!acceptsField) {
             return (
-                <div style={{
-                    backgroundColor: '#DADADA',
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    margin: '-0.5rem -1rem'
-                }} />
+                <div className="cell-desativada"> - </div>
             );
         }
 

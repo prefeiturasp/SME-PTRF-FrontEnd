@@ -3,7 +3,6 @@ import { getAcoesAssociacao } from "../../../../../../../services/escolas/Associ
 
 export const useGetAcoesAssociacao = (options = {}) => {
   const {
-    status,
     isFetching,
     isError,
     data = { results: [] },
@@ -18,5 +17,5 @@ export const useGetAcoesAssociacao = (options = {}) => {
     enabled: options.enabled !== false,
     ...options
   });
-  return { isLoading: status === "loading", isError, data: data.results, error, refetch, isFetching };
+  return { isLoading: isFetching, isError, data: data.results, error, refetch, isFetching };
 };
