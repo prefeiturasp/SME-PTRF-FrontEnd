@@ -130,7 +130,7 @@ body {
     padding: 2.5em;
 
     button.p-paginator-page.p-highlight {
-      background-color: #00585e !important;
+      background-color: var(--color-primary) !important;
       color: #fff !important
     }
 
@@ -187,7 +187,7 @@ body {
     .p-datatable-tbody
     > tr:not(.p-highlight):not(.p-highlight-contextmenu):hover {
     cursor: pointer;
-    background-color: $hoverBackgroundColor;
+    background-color: var(--color-primary-lighten);
     color: #ffffff !important;
   }
 
@@ -240,7 +240,7 @@ body {
 
     .p-datatable-hoverable-rows & {
       &:hover {
-        background: $hoverBackgroundColor;
+        background: var(--color-primary-lighten);
 
         > td {
           color: #fff !important;
@@ -299,7 +299,7 @@ body {
 
 /* Página atual destacada */
 .p-paginator-page.p-highlight {
-  background-color: #00585e !important;
+  background-color: var(--color-primary) !important;
   color: #fff !important;
 }
 
@@ -312,7 +312,7 @@ body {
 /* Hover nos botões */
 .p-paginator-element:hover {
   background-color: #f0f0f0;
-  color: #00585e;
+  color: var(--color-primary);
 }
 
 /* Remove mensagem "No available options" das DataTables */
@@ -430,10 +430,10 @@ body {
   }
 
   &:hover {
-    background-color: $hoverBackgroundColor !important;
+    background-color: var(--color-primary-lighten) !important;
 
     .icon-btn-base-verde {
-      color: $hoverBackgroundColor;
+      color: var(--color-primary-lighten);
     }
   }
 
@@ -466,11 +466,11 @@ body {
   }
 
   &:hover {
-    border-color: $hoverBackgroundColor !important;
-    color: $hoverBackgroundColor !important;
+    border-color: var(--color-primary-lighten) !important;
+    color: var(--color-primary-lighten) !important;
 
     .icon-btn-base-verde-outline {
-      color: $hoverBackgroundColor;
+      color: var(--color-primary-lighten);
     }
   }
 
@@ -544,4 +544,8 @@ table {
     padding: 0 !important;
     background-color: #DADADA;
   }
+}
+
+table svg {
+  color: var(--color-primary-darker) !important;
 }

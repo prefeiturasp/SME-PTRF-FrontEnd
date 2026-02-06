@@ -9,11 +9,12 @@ import { Cabecalho } from "./componentes/Globais/Cabecalho";
 import { SidebarLeft } from "./componentes/Globais/SidebarLeft";
 import { ToastContainer } from "react-toastify";
 import Modal from "./componentes/Globais/Modal/Modal";
+import { ThemeProvider } from "./context/Tema";
 
 export const App = () => {
   const pathName = useLocation().pathname;
   return (
-    <>
+    <ThemeProvider>
       <ToastContainer />
       <section role="main" id="main" className="row">
         {pathName === "/login" ||
@@ -46,7 +47,7 @@ export const App = () => {
         )}
         <Modal />
       </section>
-    </>
+    </ThemeProvider>
   );
 };
 

@@ -1,5 +1,5 @@
 span.total {
-  color: #00585e;
+  color: var(--color-primary);
   font-weight: bold;
 }
 
@@ -9,16 +9,12 @@ span.total {
   min-height: calc(1.5em + 0.75rem + 2px);
 }
 
-.documentos-multiple-search
-  .ant-select-selector
-  .ant-select-selection-overflow {
+.documentos-multiple-search .ant-select-selector .ant-select-selection-overflow {
   height: 40px;
   min-height: calc(1.5em + 0.75rem + 2px);
 }
 
-.categorias-multiple-search
-  .ant-select-selector
-  .ant-select-selection-overflow {
+.categorias-multiple-search .ant-select-selector .ant-select-selection-overflow {
   height: 40px;
   min-height: calc(1.5em + 0.75rem + 2px);
 }

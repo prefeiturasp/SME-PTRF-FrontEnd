@@ -1,12 +1,12 @@
-.barra-de-status{
+.barra-de-status {
   padding-top: 1rem;
   padding-bottom: 1rem;
-  background-color: #2B7D83;
+  background-color: var(--color-primary-lighten);
   color: #fff;
 }
 
-.container-cards-dre-dashboard{
-  .card-header{
+.container-cards-dre-dashboard {
+  .card-header {
     height: 48%;
     font-weight: bold;
     font-size: 16px;
@@ -14,28 +14,26 @@
     border-bottom: none;
     line-height: 19px;
 
-    .borda-bottom{
-      border-bottom: 1px solid #DADADA;
+    .borda-bottom {
+      border-bottom: 1px solid #dadada;
       display: block;
     }
   }
-  .card-body{
-
-    .card-qtde-associacoes{
+  .card-body {
+    .card-qtde-associacoes {
       font-weight: bold;
       font-size: 28px;
-      color: #2B7D83;
+      color: var(--color-primary-lighten);
     }
   }
 
   .btn-ver-prestacoes:hover svg path {
     //filter: invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%);
-   fill: #fff;
+    fill: #fff;
   }
 }
 
-.btn-ver-todas-as-prestacoes{
+.btn-ver-todas-as-prestacoes {
   border-color: #fff !important;
   color: #fff !important;
 }
-

@@ -3,29 +3,28 @@
   li {
     border: none;
 
-    a{
+    a {
       font-weight: bold !important;
-      color: #A4A4A4;
+      color: #a4a4a4;
       padding-right: 0;
       padding-left: 0;
       padding-bottom: 1rem;
       margin-right: 2rem;
     }
 
-    a:hover{
-      color: #00585E !important;
+    a:hover {
+      color: var(--color-primary-darker) !important;
       text-decoration: none;
     }
 
-    .active{
+    .active {
       font-weight: bold !important;
-      color: #00585E;
-      border-bottom: solid #00585E 4px;
+      color: var(--color-primary);
+      border-bottom: solid var(--color-primary-darker) 4px;
     }
 
-    svg{
+    svg {
       fill: red !important;
     }
-
   }
 }

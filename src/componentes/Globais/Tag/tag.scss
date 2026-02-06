@@ -1,35 +1,35 @@
-@import 'src/assets/css/variaveis.scss';
+@import "src/assets/css/variaveis.scss";
 
 .custom-tag {
-    display: flex;
-    justify-content: center;
-    padding-left: 5px;
-    padding-right: 5px;
-    border-radius: 5px;
-    align-items: center;
+  display: flex;
+  justify-content: center;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-radius: 5px;
+  align-items: center;
 }
 
 .custom-tag-default {
-    background-color: $corCinza;  
-    color: $corBranco;
+  background-color: $corCinza;
+  color: $corBranco;
 }
 
 .custom-tag-parcial {
-    background-color: #F28A0D;
-    color: $corBranco;
+  background-color: #f28a0d;
+  color: $corBranco;
 }
 
 .custom-tag-todas {
-    background-color: #2B7D83;
-    color: $corBranco;
+  background-color: var(--color-primary-lighten);
+  color: $corBranco;
 }
 
 .custom-tag-bem-adquirido {
-    background-color: #00585D;
-    color: $corBranco;
+  background-color: #00585d;
+  color: $corBranco;
 }
 
 .custom-tag-bem-produzido {
-    background-color: #245EF5;
-    color: $corBranco;
+  background-color: #245ef5;
+  color: $corBranco;
 }

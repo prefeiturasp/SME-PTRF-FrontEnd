@@ -1,101 +1,100 @@
-@import 'src/assets/css/variaveis.scss';
+@import "src/assets/css/variaveis.scss";
 
 .text-wrap-tag {
-    overflow-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .tag-tabelas {
-    display: flex;
-    flex: 1;
-    max-width: 200px;
-    justify-content: center;
-    padding-left: 2px;
-    padding-right: 2px;
-    border-radius: 5px;
-    margin-bottom: 10px;
-    color: #fff;
+  display: flex;
+  flex: 1;
+  max-width: 200px;
+  justify-content: center;
+  padding-left: 2px;
+  padding-right: 2px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  color: #fff;
 }
 
 .tag-purple {
-    color: #fff;
-    background-color: $corTagRoxo;
+  color: #fff;
+  background-color: $corTagRoxo;
 }
 
 .tag-darkblue {
-    color: #fff;
-    background-color: $corTagRoxoClaro;
+  color: #fff;
+  background-color: $corTagRoxoClaro;
 }
 
 .tag-orange {
-    color: #fff;
-    background-color: $corTagLaranja;
+  color: #fff;
+  background-color: $corTagLaranja;
 }
 
 .tag-green {
-    color: #fff;
-    background-color: $corTagVerde;
+  color: #fff;
+  background-color: $corTagVerde;
 }
 
 .tag-blank {
-    border: 2px solid $corTagVerde;
-    color: $corTagVerde;
-    background: inherit;
+  border: 2px solid $corTagVerde;
+  color: $corTagVerde;
+  background: inherit;
 }
 
-.tag-red-white{
-    border: 2px solid $corTagCinzaClaro;
-    color: #424848;
-    background: $corTagCinzaClaro;
+.tag-red-white {
+  border: 2px solid $corTagCinzaClaro;
+  color: #424848;
+  background: $corTagCinzaClaro;
 }
 
 .tag-neutral-2 {
-    color: #fff;
-    background-color: $corTagNeutral2;
+  color: #fff;
+  background-color: $corTagNeutral2;
 }
 
 .tag-neutral-3 {
-    color: #fff;
-    background-color: $corTagNeutral3;
+  color: #fff;
+  background-color: $corTagNeutral3;
 }
 
 .tag-verde {
-    color: #fff;
-    background-color: $corTagVerde;
+  color: #fff;
+  background-color: $corTagVerde;
 }
 
 .tag-verde-claro {
-    color: #fff;
-    background-color: $corTagVerdeClaro;
+  color: #fff;
+  background-color: $corTagVerdeClaro;
 }
 
 .tag-light-purple {
-    color: #fff;
-    background-color: $corTagRoxoClaro;
+  color: #fff;
+  background-color: $corTagRoxoClaro;
 }
 
 .tag-blue {
-    color: #fff;
-    background-color: $corTagAzulEscuro;
+  color: #fff;
+  background-color: $corTagAzulEscuro;
 }
 
 .tag-blue-white {
-    border: 2px solid $corTagAzulEscuro;
-    color: $corTagAzulEscuro;
-    background: inherit;
+  border: 2px solid $corTagAzulEscuro;
+  color: $corTagAzulEscuro;
+  background: inherit;
 }
 
 .tag-red {
-    color: #fff;
-    background-color: $corTagVermelhoClaro;
+  color: #fff;
+  background-color: $corTagVermelhoClaro;
 }
 
 .tag-blue-support {
-    color: #fff;
-    background-color: $corTagAzul;
+  color: #fff;
+  background-color: $corTagAzul;
 }
 
 .tag-acesso-sme {
-    color: #fff;
-    background-color: #2B7D83;
+  color: #fff;
+  background-color: var(--color-primary-lighten);
 }
-

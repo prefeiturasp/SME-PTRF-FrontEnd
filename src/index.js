@@ -32,17 +32,51 @@ if (process.env.REACT_APP_NODE_ENV === "local") {
   REACT_QUERY_DEV_TOOLS = process.env.REACT_APP_REACT_QUERY_DEV_TOOLS;
 }
 
+// const antdTheme = {
+//   token: {
+//     colorPrimary: "#00585D",
+//     borderRadius: 4,
+//     colorError: "rgba(184, 0, 0, 1)",
+//   },
+//   components: {
+//     Alert: {
+//       defaultPadding: '2px 4px',
+//       withDescriptionIconSize: 18,
+//       withDescriptionPadding: '3px 6px'
+//     },
+//     Input: {
+//       controlHeight: 38,
+//     },
+//     InputNumber: {
+//       controlHeight: 38,
+//     },
+//     Select: {
+//       controlHeight: 38,
+//     },
+//     DatePicker: {
+//       controlHeight: 38,
+//     },
+//     Button: {
+//       colorPrimary: "#00585D",
+//       colorPrimaryHover: "#007B80",
+//       colorPrimaryActive: "#004245",
+//       colorBorder: "#00585D",
+//       colorText: "#00585D",
+//     },
+//   },
+// };
+
 const antdTheme = {
   token: {
-    colorPrimary: "#00585D",
+    colorPrimary: "orange",
     borderRadius: 4,
     colorError: "rgba(184, 0, 0, 1)",
   },
   components: {
     Alert: {
-      defaultPadding: '2px 4px',
+      defaultPadding: "2px 4px",
       withDescriptionIconSize: 18,
-      withDescriptionPadding: '3px 6px'
+      withDescriptionPadding: "3px 6px",
     },
     Input: {
       controlHeight: 38,
@@ -57,7 +91,7 @@ const antdTheme = {
       controlHeight: 38,
     },
     Button: {
-      colorPrimary: "#00585D",
+      colorPrimary: "orange",
       colorPrimaryHover: "#007B80",
       colorPrimaryActive: "#004245",
       colorBorder: "#00585D",
@@ -87,10 +121,8 @@ root.render(
           </DespesaContextProvider>
         </CentralDeDownloadContextProvider>
       </NotificacaoContextProvider>
-      {REACT_QUERY_DEV_TOOLS === "true" && (
-        <ReactQueryDevtools initialIsOpen={false} />
-      )}
+      {REACT_QUERY_DEV_TOOLS === "true" && <ReactQueryDevtools initialIsOpen={false} />}
     </QueryClientProvider>
-  </Provider>
+  </Provider>,
 );
 serviceWorker.unregister();

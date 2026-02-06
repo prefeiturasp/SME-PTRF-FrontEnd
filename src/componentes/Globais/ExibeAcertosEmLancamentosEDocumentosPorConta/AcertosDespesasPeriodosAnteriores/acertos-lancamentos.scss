@@ -1,26 +1,25 @@
-#dropdown-menu-tabela-acertos-lancamentos{
-
+#dropdown-menu-tabela-acertos-lancamentos {
 }
 
 #tabela-acertos-lancamentos .p-datatable-tbody tr:not([class]) {
-  background-color: #DADADA;
+  background-color: #dadada;
 }
 
-#tabela-acertos-lancamentos .p-datatable-wrapper{
+#tabela-acertos-lancamentos .p-datatable-wrapper {
   overflow: visible;
 }
 
-#tabela-em-retificacao .p-datatable-wrapper{
+#tabela-em-retificacao .p-datatable-wrapper {
   overflow: visible;
 }
 
-#tabela-retificaveis .p-datatable-wrapper{
+#tabela-retificaveis .p-datatable-wrapper {
   overflow: visible;
 }
 
-.texto-numero-do-item{
-  color: #00585E;
+.texto-numero-do-item {
+  color: var(--color-primary);
 }
-.container-categorias-acertos{
+.container-categorias-acertos {
   pointer-events: visible !important;
 }

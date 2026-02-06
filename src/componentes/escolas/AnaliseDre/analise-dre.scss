@@ -1,5 +1,5 @@
 .texto-legenda-cor-1 {
-  color: #DE9524;
+  color: #de9524;
 }
 
 .texto-legenda-cor-2 {
@@ -7,44 +7,48 @@
 }
 
 .texto-legenda-cor-3 {
-  color: #B40C02;
+  color: #b40c02;
 }
 
 .texto-legenda-cor-4 {
-  color: #2B7D83;
+  color: var(--color-primary-lighten);
 }
 
 .texto-legenda-cor-5 {
-  color: #289B00;
+  color: #289b00;
 }
 
-.texto-legenda-cor-1-icone, .texto-legenda-cor-2-icone, .texto-legenda-cor-3-icone, .texto-legenda-cor-4-icone, .texto-legenda-cor-5-icone{
+.texto-legenda-cor-1-icone,
+.texto-legenda-cor-2-icone,
+.texto-legenda-cor-3-icone,
+.texto-legenda-cor-4-icone,
+.texto-legenda-cor-5-icone {
   background-repeat: no-repeat;
   padding-left: 1.3rem;
   background-position: 0 80%;
 }
 
-.texto-legenda-cor-1-icone{
-  color: #C65D00;
+.texto-legenda-cor-1-icone {
+  color: #c65d00;
   background-image: url("../../../assets/img/icone-texto-legenda-cor-1.svg");
 }
 
-.texto-legenda-cor-2-icone{
+.texto-legenda-cor-2-icone {
   color: #086397;
   background-image: url("../../../assets/img/icone-texto-legenda-cor-2.svg");
 }
 
-.texto-legenda-cor-3-icone{
-  color: #B40C02;
+.texto-legenda-cor-3-icone {
+  color: #b40c02;
   background-image: url("../../../assets/img/icone-texto-legenda-cor-3.svg");
 }
 
-.texto-legenda-cor-4-icone{
-  color: #2B7D83;
+.texto-legenda-cor-4-icone {
+  color: var(--color-primary-lighten);
   background-image: url("../../../assets/img/icone-texto-legenda-cor-4.svg");
 }
 
-.texto-legenda-cor-5-icone{
-  color: #289B00;
+.texto-legenda-cor-5-icone {
+  color: #289b00;
   background-image: url("../../../assets/img/icone-texto-legenda-cor-5.svg");
 }

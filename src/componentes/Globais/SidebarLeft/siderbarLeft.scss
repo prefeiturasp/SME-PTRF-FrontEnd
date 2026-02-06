@@ -16,7 +16,7 @@
 }
 
 .sidenav---selected---1EK3y {
-  background-color: #003538 !important;
+  background-color: var(--color-primary-darker) !important;
   color: #fff !important;
 }
 
@@ -26,7 +26,7 @@
 }
 .sideNavCustomizado {
   position: fixed;
-  background-color: #00585e;
+  background-color: var(--color-primary);
   letter-spacing: 0.01em;
   font-weight: 500;
   margin-top: 77px;
@@ -43,12 +43,12 @@
   }
 
   .sidenav---sidenav-subnavitem---1cD47 {
-    color: #00585e;
+    color: var(--color-primary);
     font-weight: bold !important;
   }
 
   .sub-menu-item div {
-    color: #00585e !important;
+    color: var(--color-primary-darker) !important;
     font-weight: 500 !important;
   }
 
@@ -59,7 +59,7 @@
   .navItemCustomizado:hover,
   .navItemCustomizadoNome:hover,
   .navItemCustomizadoNome {
-    background-color: #00585e;
+    background-color: var(--color-primary);
     text-align: center !important;
   }
 

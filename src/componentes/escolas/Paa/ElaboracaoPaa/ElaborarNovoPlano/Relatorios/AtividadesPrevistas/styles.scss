@@ -113,7 +113,7 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background-color: #00585e;
+  background-color: var(--color-primary);
   color: #ffffff;
   border: 1px solid #00585e;
   border-radius: 4px;
@@ -160,6 +160,7 @@
   cursor: not-allowed;
 }
 
-.btn-can-be-disabled:active, .btn-can-be-disabled:focus {
-    background: #00585E!important;
+.btn-can-be-disabled:active,
+.btn-can-be-disabled:focus {
+  background: #00585e !important;
 }
