@@ -9,9 +9,6 @@ import { Cabecalho } from "./componentes/Globais/Cabecalho";
 import { SidebarLeft } from "./componentes/Globais/SidebarLeft";
 import { ToastContainer } from "react-toastify";
 import Modal from "./componentes/Globais/Modal/Modal";
-import { TelaEscolherRecurso } from "./componentes/Globais/TelaEscolherRecurso";
-import { FEATURE_FLAGS } from "./constantes/featureFlags";
-import { visoesService } from "./services/visoes.service";
 
 export const App = () => {
   const pathName = useLocation().pathname;
@@ -48,7 +45,6 @@ export const App = () => {
           </>
         )}
         <Modal />
-        {visoesService.featureFlagAtiva(FEATURE_FLAGS.PREMIO_EXCELENCIA) && <TelaEscolherRecurso />}
       </section>
     </>
   );

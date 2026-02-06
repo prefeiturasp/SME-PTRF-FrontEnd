@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { getRecursosDisponiveis } from "../../services/AlterarRecurso.service";
+import { useState, useEffect, useMemo } from "react";
+import { getRecursos, getRecursosPorUnidade } from "../../services/AlterarRecurso.service";
 
 /**
  * Hook para gerenciar recurso selecionado com persistência em localStorage
@@ -7,9 +7,9 @@ import { getRecursosDisponiveis } from "../../services/AlterarRecurso.service";
  * @param {Function} fetchFunction - Função para buscar recursos disponíveis
  * @returns {Object} - { recursoSelecionado, recursos, handleChangeRecurso, isLoading, error }
  */
-const useRecursoSelecionado = () => {
-  const storageKey = "recursoSelecionado";
-  const fetchFunction = getRecursosDisponiveis;
+const useRecursoSelecionado = ({ visoesService }) => {
+  const storageKey = "RECURSO_SELECIONADO";
+  const dadosUsuarioLogado = visoesService.getDadosDoUsuarioLogado();
 
   const [recursoSelecionado, setRecursoSelecionado] = useState(() => {
     try {
@@ -25,6 +25,14 @@ const useRecursoSelecionado = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  const mostrarSelecionarRecursos = useMemo(() => {
+    return recursos.length > 1;
+  }, [recursos]);
+
+  const mostrarOverlaySelecionarRecursos = useMemo(() => {
+    return recursoSelecionado === null && recursos.length > 1;
+  }, [recursoSelecionado, recursos]);
+
   const handleChangeRecurso = (recursoSelecionadoObj) => {
     try {
       setRecursoSelecionado(recursoSelecionadoObj);
@@ -34,7 +42,7 @@ const useRecursoSelecionado = () => {
         localStorage.removeItem(storageKey);
       }
 
-      window.location.reload();
+      window.location.href = "/";
     } catch (error) {
       console.error("Erro ao salvar recurso no localStorage:", error);
       setError(error);
@@ -47,14 +55,14 @@ const useRecursoSelecionado = () => {
   };
 
   useEffect(() => {
-    if (!fetchFunction) return;
+    if (!dadosUsuarioLogado) return;
 
-    const fetchRecursos = async () => {
+    const fetchRecursosPorUnidade = async () => {
       setIsLoading(true);
       setError(null);
 
       try {
-        const res = await fetchFunction();
+        const res = await getRecursosPorUnidade(dadosUsuarioLogado.unidade_selecionada.uuid);
         setRecursos(res);
       } catch (err) {
         console.error("Erro ao buscar recursos:", err);
@@ -64,8 +72,26 @@ const useRecursoSelecionado = () => {
       }
     };
 
-    fetchRecursos();
-  }, [fetchFunction]);
+    const fetchRecursos = async () => {
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        const res = await getRecursos();
+        setRecursos(res);
+      } catch (err) {
+        console.error("Erro ao buscar recursos:", err);
+        setError(err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    if (dadosUsuarioLogado.visao_selecionada.nome === "SME") {
+      fetchRecursos();
+    } else {
+      fetchRecursosPorUnidade();
+    }
+  }, []);
 
   return {
     recursoSelecionado,
@@ -74,6 +100,8 @@ const useRecursoSelecionado = () => {
     clearRecurso,
     isLoading,
     error,
+    mostrarSelecionarRecursos,
+    mostrarOverlaySelecionarRecursos,
   };
 };
 

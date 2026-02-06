@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import { TelaEscolherRecurso } from "../index";
+import { EscolherRecursoPage } from "../index";
 import useRecursoSelecionado from "../../../../hooks/Globais/useRecursoSelecionado";
 
 jest.mock("../../../../hooks/Globais/useRecursoSelecionado");
@@ -23,7 +23,7 @@ const mockRecursos = [
   },
 ];
 
-describe("TelaEscolherRecurso", () => {
+describe("EscolherRecursoPage", () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
@@ -42,7 +42,7 @@ describe("TelaEscolherRecurso", () => {
       isLoading: false,
     });
 
-    render(<TelaEscolherRecurso />);
+    render(<EscolherRecursoPage />);
 
     expect(screen.getByText("Deseja acessar os dados de qual recurso?")).toBeInTheDocument();
     expect(screen.getByText("Recurso A")).toBeInTheDocument();
@@ -57,35 +57,9 @@ describe("TelaEscolherRecurso", () => {
       isLoading: false,
     });
 
-    render(<TelaEscolherRecurso />);
+    render(<EscolherRecursoPage />);
 
     fireEvent.click(screen.getByText("Recurso A"));
-
-    expect(mockHandleChange).toHaveBeenCalledWith(mockRecursos[0]);
-  });
-
-  it("não renderiza se já existe recursoSelecionado", () => {
-    useRecursoSelecionado.mockReturnValue({
-      recursoSelecionado: mockRecursos[0],
-      recursos: mockRecursos,
-      handleChangeRecurso: mockHandleChange,
-      isLoading: false,
-    });
-
-    const { container } = render(<TelaEscolherRecurso />);
-
-    expect(container).toBeEmptyDOMElement();
-  });
-
-  it("seleciona automaticamente quando só existe 1 recurso", () => {
-    useRecursoSelecionado.mockReturnValue({
-      recursoSelecionado: null,
-      recursos: [mockRecursos[0]],
-      handleChangeRecurso: mockHandleChange,
-      isLoading: false,
-    });
-
-    render(<TelaEscolherRecurso />);
 
     expect(mockHandleChange).toHaveBeenCalledWith(mockRecursos[0]);
   });

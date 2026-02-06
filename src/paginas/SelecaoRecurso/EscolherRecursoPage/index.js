@@ -1,20 +1,12 @@
 import { Card, Typography, Row, Col, Spin } from "antd";
 import { ArrowRightOutlined } from "@ant-design/icons";
 import useRecursoSelecionado from "../../../hooks/Globais/useRecursoSelecionado";
-import { useEffect } from "react";
+import { visoesService } from "../../../services/visoes.service";
 
 const { Title, Text } = Typography;
 
-export const TelaEscolherRecurso = () => {
-  const { recursoSelecionado, recursos, handleChangeRecurso, isLoading } = useRecursoSelecionado();
-
-  useEffect(() => {
-    if (recursos.length === 1) {
-      handleChangeRecurso(recursos[0]);
-    }
-  }, [recursos, handleChangeRecurso]);
-
-  if (recursoSelecionado || !recursos.length || recursos.length === 1) return;
+export const EscolherRecursoPage = () => {
+  const { recursos, handleChangeRecurso, isLoading } = useRecursoSelecionado({ visoesService });
 
   return (
     <div style={styles.overlay}>

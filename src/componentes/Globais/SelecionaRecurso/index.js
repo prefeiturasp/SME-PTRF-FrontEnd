@@ -5,10 +5,12 @@ import { ModalConfirm } from "../Modal/ModalConfirm";
 import { useDispatch } from "react-redux";
 
 import useRecursoSelecionado from "../../../hooks/Globais/useRecursoSelecionado";
+import { visoesService } from "../../../services/visoes.service";
 
 export const SelecionaRecurso = () => {
   const dispatch = useDispatch();
-  const { recursoSelecionado, recursos, handleChangeRecurso, isLoading } = useRecursoSelecionado();
+
+  const { recursoSelecionado, recursos, handleChangeRecurso, isLoading, mostrarSelecionarRecursos } = useRecursoSelecionado({ visoesService });
 
   const handleChangeOption = (recursoUuid) => {
     const recursoSelecionadoObj = recursos.find((r) => r.uuid === recursoUuid);
@@ -36,7 +38,7 @@ export const SelecionaRecurso = () => {
 
   return (
     <>
-      {recursos.length > 1 && (
+      {mostrarSelecionarRecursos && (
         <div className="container-seleciona-recurso">
           {recursoSelecionado ? (
             <div className="imagem-container">
