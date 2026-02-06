@@ -74,7 +74,7 @@ const TabelaReceitasPrevistas = ({ data, handleOpenEditar, totalRecursosProprios
         };
 
         return (
-          <div className="text-right font-bold">
+          <div className="text-right font-weight-bold">
             {formatMoneyBRL(fieldMapping[column.field])}
           </div>
         );
@@ -154,7 +154,7 @@ const TabelaReceitasPrevistas = ({ data, handleOpenEditar, totalRecursosProprios
         body={dataTemplate}
         style={{width: '20%'}}
       />
-      <Column field="total" header="Total (R$)" body={dataTemplate} style={{width: '15%'}} />
+      <Column field="total" header="Total (R$)" body={dataTemplate} style={{width: '15%', fontWeight: 'bold'}} />
       <Column field="acoes" header="Ações" body={acoesTemplate} style={{width: '10%'}} />
     </DataTable>
   );

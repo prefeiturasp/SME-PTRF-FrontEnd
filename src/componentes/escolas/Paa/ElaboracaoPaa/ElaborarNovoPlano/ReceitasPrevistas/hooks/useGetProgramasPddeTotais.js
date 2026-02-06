@@ -3,7 +3,7 @@ import { getProgramasPddeTotais } from "../../../../../../../services/escolas/Pa
 
 export const useGetProgramasPddeTotais = () => {
   const {
-    status,
+    isFetching,
     isError,
     data = { programas: [], total: {} },
     error,
@@ -15,5 +15,5 @@ export const useGetProgramasPddeTotais = () => {
     staleTime: 5000, // 5 segundos
     refetchOnWindowFocus: true, // Caso saia da aba e voltar ele refaz a requisição
   });
-  return { isLoading: status === "loading", isError, programas: data.programas, total: data.total, error, refetch };
+  return { isLoading: isFetching, isError, programas: data.programas, total: data.total, error, refetch };
 };

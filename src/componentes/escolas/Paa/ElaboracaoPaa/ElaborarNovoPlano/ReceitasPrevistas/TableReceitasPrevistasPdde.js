@@ -33,7 +33,7 @@ const TableReceitasPrevistasPdde = ({ activeTab, tabs, setActiveTab }) => {
   };
 
   const rowClassName = (rowData) => {
-    return rowData.fixed ? "total-row" : "inactive-row";
+    return rowData.fixed ? "total-row font-weight-bold" : "inactive-row";
   };
 
   const acoesTemplate = (rowData) => {
@@ -95,7 +95,7 @@ const TableReceitasPrevistasPdde = ({ activeTab, tabs, setActiveTab }) => {
               header="Total (R$)"
               body={moneyTemplate("total")}
               align="right"
-              style={{width: '15%'}}
+              style={{width: '15%', fontWeight: 'bold'}}
             />
             <Column field="acoes" header="Ações" body={acoesTemplate} style={{width: '10%'}} />
           </DataTable>

@@ -14,6 +14,9 @@ import {AmbientesApi} from "../AmbientesApi";
 
 import { useLocation } from 'react-router-dom'
 import { LogoSPHorizontalMonocromatica } from '../UI/LogoSP';
+import { SelecionaRecurso } from '../SelecionaRecurso'
+
+import { FEATURE_FLAGS } from '../../../constantes/featureFlags';
 
 export const SidebarLeft = () => {
     const sidebarStatus = useContext(SidebarContext);
@@ -121,6 +124,8 @@ export const SidebarLeft = () => {
             >
                 <SideNav.Toggle/>
                 {/* <SideNav.Nav defaultSelected={urls.dados_iniciais.default_selected}> */}
+                { sidebarStatus.sideBarStatus && visoesService.featureFlagAtiva(FEATURE_FLAGS.PREMIO_EXCELENCIA) && <SelecionaRecurso /> }
+                
                 <SideNav.Nav defaultSelected={getPathname()}>
                     {urls && urls.lista_de_urls.length > 0 && urls.lista_de_urls.map((url, index) => {
                             let featureFlag = true
@@ -140,18 +145,26 @@ export const SidebarLeft = () => {
                                             <img src={url.icone} alt=""/>
                                         </NavIcon>
                                         <NavText>{url.label}</NavText>
-                                        {url.subItens && url.subItens.length > 0 && url.subItens.map((subItem, index) =>
-                                            visoesService.getPermissoes(subItem.permissoes) ? (
-                                            <NavItem
-                                                key={index}
-                                                navitemClassName="sub-menu-item"
-                                                eventKey={subItem.url}
-                                                id={subItem.id}
-                                            >
-                                                <NavText>
-                                                    {subItem.label}
-                                                </NavText>
-                                            </NavItem>): null
+                                        {url.subItens && url.subItens.length > 0 && url.subItens.map((subItem, index) => {
+                                            const tem_permissao = visoesService.getPermissoes(subItem.permissoes)
+                                            // Permite adicionar feature-flag no subItem
+                                            let subItemFeatureFlag = true
+                                            if(subItem.featureFlag) {
+                                                subItemFeatureFlag = visoesService.featureFlagAtiva(subItem.featureFlag)
+                                            }
+
+                                            return tem_permissao && subItemFeatureFlag ? (
+                                                <NavItem
+                                                    key={index}
+                                                    navitemClassName="sub-menu-item"
+                                                    eventKey={subItem.url}
+                                                    id={subItem.id}
+                                                >
+                                                    <NavText>
+                                                        {subItem.label}
+                                                    </NavText>
+                                                </NavItem>): null
+                                            }
                                         )}
                                     </NavItem>
                                 ) : null

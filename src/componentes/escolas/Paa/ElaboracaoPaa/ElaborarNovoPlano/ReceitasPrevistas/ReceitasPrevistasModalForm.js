@@ -202,6 +202,7 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                       style={{ marginBottom: 8 }}
                     >
                       <InputNumber
+                        className="input-number-right"
                         placeholder="00,00"
                         formatter={formatMoneyBRL}
                         parser={parseMoneyBRL}
@@ -226,6 +227,7 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                       rules={inputRules}
                     >
                       <InputNumber
+                        className="input-number-right"
                         placeholder="00,00"
                         formatter={formatMoneyByCentsBRL}
                         parser={parseMoneyBRL}
@@ -248,6 +250,7 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                     style={{ marginBottom: 8 }}
                   >
                     <InputNumber
+                      className="input-number-right"
                       placeholder="00,00"
                       formatter={formatMoneyBRL}
                       parser={parseMoneyBRL}
@@ -279,6 +282,7 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                       style={{ marginBottom: 8 }}
                     >
                       <InputNumber
+                        className="input-number-right"
                         placeholder="00,00"
                         formatter={formatMoneyBRL}
                         parser={parseMoneyBRL}
@@ -303,6 +307,7 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                       rules={inputRules}
                     >
                       <InputNumber
+                        className="input-number-right"
                         placeholder="00,00"
                         formatter={formatMoneyByCentsBRL}
                         parser={parseMoneyBRL}
@@ -325,6 +330,7 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                     style={{ marginBottom: 8 }}
                   >
                     <InputNumber
+                      className="input-number-right"
                       placeholder="00,00"
                       formatter={formatMoneyBRL}
                       parser={parseMoneyBRL}
@@ -356,6 +362,7 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                       style={{ marginBottom: 8 }}
                     >
                       <InputNumber
+                        className="input-number-right"
                         placeholder="00,00"
                         formatter={formatMoneyBRL}
                         parser={parseMoneyBRL}
@@ -380,6 +387,7 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                       rules={inputRules}
                     >
                       <InputNumber
+                        className="input-number-right"
                         placeholder="00,00"
                         formatter={formatMoneyByCentsBRL}
                         parser={parseMoneyBRL}
@@ -402,6 +410,7 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                     style={{ marginBottom: 8 }}
                   >
                     <InputNumber
+                      className="input-number-right"
                       placeholder="00,00"
                       formatter={formatMoneyBRL}
                       parser={parseMoneyBRL}

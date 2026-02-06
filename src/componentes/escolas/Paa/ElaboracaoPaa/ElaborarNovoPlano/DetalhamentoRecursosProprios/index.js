@@ -197,6 +197,7 @@ const DetalhamentoRecursosProprios = () => {
 
       return (
         <InputNumber
+          className="input-number-right"
           placeholder="00,00"
           formatter={formatMoneyByCentsBRL}
           parser={parseMoneyBRL}
@@ -360,7 +361,7 @@ const DetalhamentoRecursosProprios = () => {
             header="Descrição da atividade prevista"
             body={descricaoTemplate}
           />
-          <Column field="valor" header="Valor estimado" body={valorTemplate} />
+          <Column field="valor" header="Valor estimado" body={valorTemplate} align={'right'} />
           <Column field="acoes" header="Ações" body={acoesTemplate} />
         </DataTable>
 

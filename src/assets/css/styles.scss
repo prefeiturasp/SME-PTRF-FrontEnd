@@ -521,3 +521,27 @@ body {
 .btn-light-rose {
   background-color: #f8e7e6;
 }
+
+.input-number-right input {
+  text-align: right !important;
+}
+
+.p-datatable-tbody > tr > td:has(.cell-desativada){
+  padding: 0 !important;
+}
+
+.cell-desativada {
+  height: 100%;
+  padding: 0.75rem;
+}
+
+table {
+  tr > td:has(.cell-desativada){
+    padding: 0 !important;
+    background-color: #DADADA;
+  }
+  td.cell-desativada{
+    padding: 0 !important;
+    background-color: #DADADA;
+  }
+}

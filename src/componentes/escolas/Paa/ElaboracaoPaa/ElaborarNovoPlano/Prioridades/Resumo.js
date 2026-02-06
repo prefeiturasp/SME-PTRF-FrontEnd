@@ -235,6 +235,7 @@ export const Resumo = () => {
                 ...(props.style || {}), // dessa forma, mantemos o estilo original definido na const columns
                 borderColor: '#dadada', // Customizar a cor da borda para um tom mais contraste
                 padding: '6px', // definir um padding menor
+                textAlign: 'end',
             }} />
         );
     };
