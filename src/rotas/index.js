@@ -1,5 +1,5 @@
 import React from "react";
-import { Route, Routes, Navigate } from "react-router-dom";
+import { Route, Routes, Navigate, useLocation } from "react-router-dom";
 import { Login } from "../paginas/Login";
 import { LoginSuporte } from "../paginas/LoginSuporte";
 import { Pagina404 } from "../paginas/escolas/404";
@@ -129,6 +129,8 @@ import { EdicaoTipoDeDespesaCusteioPage } from "../paginas/SME/Parametrizacoes/D
 import { VisualizarPlanoAplicacao } from "../componentes/escolas/Paa/ElaboracaoPaa/ElaborarNovoPlano/Relatorios/PlanoAplicacao/VisualizarPlanoAplicacao";
 import { VisualizarPlanoOrcamentario } from "../componentes/escolas/Paa/ElaboracaoPaa/ElaborarNovoPlano/Relatorios/PlanoOrcamentario/VisualizarPlanoOrcamentario";
 import { VisualizarAtividadesPrevistas } from "../componentes/escolas/Paa/ElaboracaoPaa/ElaborarNovoPlano/Relatorios/AtividadesPrevistas/VisualizarAtividadesPrevistas";
+import { EscolherRecursoPage } from "../paginas/SelecaoRecurso/EscolherRecursoPage";
+import useRecursoSelecionado from "../hooks/Globais/useRecursoSelecionado";
 
 const routesConfig = [
   {
@@ -634,30 +636,21 @@ const routesConfig = [
     exact: true,
     path: "/parametro-atividades-estatutarias-paa",
     component: AtividadesEstatutarias,
-    permissoes: [
-      "access_painel_parametrizacoes",
-      "change_painel_parametrizacoes",
-    ],
+    permissoes: ["access_painel_parametrizacoes", "change_painel_parametrizacoes"],
     featureFlag: "paa",
   },
   {
     exact: true,
     path: "/parametro-outros-recursos-paa",
     component: OutrosRecursos,
-    permissoes: [
-      "access_painel_parametrizacoes",
-      "change_painel_parametrizacoes",
-    ],
+    permissoes: ["access_painel_parametrizacoes", "change_painel_parametrizacoes"],
     featureFlag: "paa",
   },
   {
     exact: true,
     path: "/parametro-acoes-ptrf-paa",
     component: AcoesPTRFPaa,
-    permissoes: [
-      "access_painel_parametrizacoes",
-      "change_painel_parametrizacoes",
-    ],
+    permissoes: ["access_painel_parametrizacoes", "change_painel_parametrizacoes"],
     featureFlag: "paa",
   },
   {
@@ -916,12 +909,20 @@ const routesConfig = [
     component: EdicaoBemProduzidoPage,
     permissoes: ["access_situacao_patrimonial", "change_situacao_patrimonial"],
   },
+  {
+    exact: true,
+    path: "/seleciona-recurso",
+    component: EscolherRecursoPage,
+    featureFlag: "premio-excelencia",
+  },
 ];
 
 const PrivateRoute = ({ element, permissoes, featureFlag }) => {
   const isLoggedIn = authService.isLoggedIn();
   const hasPerm = !permissoes || visoesService.getPermissoes(permissoes);
   const isFeatureEnabled = featureFlag === undefined || featureFlag;
+  const { mostrarOverlaySelecionarRecursos } = useRecursoSelecionado({ visoesService });
+  const location = useLocation();
 
   if (!isLoggedIn) {
     return <Navigate to="/login" replace />;
@@ -929,6 +930,10 @@ const PrivateRoute = ({ element, permissoes, featureFlag }) => {
   if (!hasPerm || !isFeatureEnabled) {
     return <PaginaSemPermissao />;
   }
+  if (location.pathname !== "/seleciona-recurso" && mostrarOverlaySelecionarRecursos) {
+    return <Navigate to="/seleciona-recurso" replace />;
+  }
+
   return element;
 };
 
