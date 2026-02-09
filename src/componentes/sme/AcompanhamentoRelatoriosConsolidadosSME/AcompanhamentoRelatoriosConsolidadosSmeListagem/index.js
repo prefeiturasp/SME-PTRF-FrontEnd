@@ -221,7 +221,7 @@ export const AcompanhamentoRelatorioConsolidadosSmeListagem = () => {
                             className="btn btn-link"
                         >
                             <FontAwesomeIcon
-                                style={{marginRight: "0", color: '#00585E'}}
+                                style={{marginRight: "0"}}
                                 icon={faEye}
                                 title="Visualizar"
                             />

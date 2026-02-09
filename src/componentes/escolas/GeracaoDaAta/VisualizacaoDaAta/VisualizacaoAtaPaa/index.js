@@ -205,7 +205,7 @@ export const VisualizacaoAtaPaa = () => {
               Lista de presentes
             </h4>
 
-            <p className="titulo-tabela-acoes mt-3" style={{ fontWeight: "bold", color: "#00585E", fontSize: 16 }}>
+            <p className="titulo-tabela-acoes mt-3" style={{ fontWeight: "bold", fontSize: 16 }}>
               Membros da Diretoria Executiva e do Conselho Fiscal
             </p>
 

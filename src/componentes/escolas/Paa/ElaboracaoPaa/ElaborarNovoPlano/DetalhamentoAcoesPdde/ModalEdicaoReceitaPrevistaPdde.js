@@ -137,8 +137,7 @@ const ModalEdicaoReceitaPrevistaPDDE = ({ open, onClose, receitaPrevistaPDDE }) 
                     iconProps={{
                       style: {
                         fontSize: "16px",
-                        marginLeft: 4,
-                        color: "#086397",
+                        marginLeft: 4
                       },
                     }}
                   />
@@ -172,7 +171,7 @@ const ModalEdicaoReceitaPrevistaPDDE = ({ open, onClose, receitaPrevistaPDDE }) 
                       />
                     </Form.Item>
                     <Icon
-                      icon="icone-soma-primary"
+                      icon="faPlus"
                       iconProps={{ className: "pb-3" }}
                     />
                   </Flex>
@@ -198,7 +197,7 @@ const ModalEdicaoReceitaPrevistaPDDE = ({ open, onClose, receitaPrevistaPDDE }) 
                       />
                     </Form.Item>
                     <Icon
-                      icon="icone-igual-primary"
+                      icon="faEquals"
                       iconProps={{ className: "pb-3" }}
                     />
                   </Flex>
@@ -248,7 +247,7 @@ const ModalEdicaoReceitaPrevistaPDDE = ({ open, onClose, receitaPrevistaPDDE }) 
                       />
                     </Form.Item>
                     <Icon
-                      icon="icone-soma-primary"
+                      icon="faPlus"
                       iconProps={{ className: "pb-3" }}
                     />
                   </Flex>
@@ -274,7 +273,7 @@ const ModalEdicaoReceitaPrevistaPDDE = ({ open, onClose, receitaPrevistaPDDE }) 
                       />
                     </Form.Item>
                     <Icon
-                      icon="icone-igual-primary"
+                      icon="faEquals"
                       iconProps={{ className: "pb-3" }}
                     />
                   </Flex>
@@ -323,7 +322,7 @@ const ModalEdicaoReceitaPrevistaPDDE = ({ open, onClose, receitaPrevistaPDDE }) 
                       />
                     </Form.Item>
                     <Icon
-                      icon="icone-soma-primary"
+                      icon="faPlus"
                       iconProps={{ className: "pb-3" }}
                     />
                   </Flex>
@@ -349,7 +348,7 @@ const ModalEdicaoReceitaPrevistaPDDE = ({ open, onClose, receitaPrevistaPDDE }) 
                       />
                     </Form.Item>
                     <Icon
-                      icon="icone-igual-primary"
+                      icon="faEquals"
                       iconProps={{ className: "pb-3" }}
                     />
                   </Flex>

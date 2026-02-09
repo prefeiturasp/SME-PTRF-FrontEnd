@@ -89,6 +89,7 @@ const ModalForm = ({show, stateFormModal, handleClose, handleSubmitModalForm, se
                                                 <Icon
                                                     tooltipMessage="(ex: 0,1,2,3,4)"
                                                     icon="faInfoCircle"
+                                                    iconProps={{className: "ml-1"}}
 
                                                 />
                                             </p>

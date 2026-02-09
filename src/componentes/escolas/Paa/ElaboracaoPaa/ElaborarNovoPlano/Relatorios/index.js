@@ -326,7 +326,6 @@ const Relatorios = ({ initialExpandedSections }) => {
                         style={{
                           fontSize: "15px",
                           marginRight: "0",
-                          color: "#00585E",
                         }}
                         icon={faDownload}
                       />

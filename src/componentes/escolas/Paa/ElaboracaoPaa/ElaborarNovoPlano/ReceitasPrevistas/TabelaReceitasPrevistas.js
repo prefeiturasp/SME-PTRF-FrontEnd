@@ -8,7 +8,7 @@ import { EditIconButton } from "../../../../../Globais/UI/Button";
 const TabelaReceitasPrevistas = ({ data, handleOpenEditar, totalRecursosProprios }) => {
   const nomeTemplate = useCallback((rowData) => {
     return (
-      <span style={{ color: "#00585E" }} className="font-weight-bold">
+      <span style={{ color: "var(--color-primary)" }} className="font-weight-bold">
         {rowData.acao.nome}
       </span>
     );

@@ -116,7 +116,7 @@
 
   .page-item.active .page-link {
     padding: 10px 15px;
-    border: 1px solid #00585e;
+    border: 1px solid var(--color-primary);
     background-color: var(--color-primary);
     color: #fff;
   }

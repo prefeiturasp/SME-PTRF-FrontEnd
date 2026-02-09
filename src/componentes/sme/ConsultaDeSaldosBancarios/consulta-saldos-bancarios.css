@@ -19,6 +19,10 @@
   border-bottom: none !important;
 }
 
+ .tab-saldos-bancarios:hover {
+  color: var(--color-primary-lighten);
+ }
+
 .nome-dre {
   font-size: 24px;
   font-weight: bold;

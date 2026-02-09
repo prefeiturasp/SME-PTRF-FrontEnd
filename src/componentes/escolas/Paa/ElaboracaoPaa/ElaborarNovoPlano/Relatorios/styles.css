@@ -33,7 +33,7 @@
 
 .btn-previas {
   background: white;
-  border: 1px solid #00585e;
+  border: 1px solid var(--color-primary);
   color: var(--color-primary);
   padding: 8px 16px;
   border-radius: 4px;
@@ -48,8 +48,8 @@
 }
 
 .btn-gerar {
-  background: #00585e;
-  border: 1px solid #00585e;
+  background: var(--color-primary);
+  border: 1px solid var(--color-primary);
   color: white;
   padding: 8px 16px;
   border-radius: 4px;
@@ -125,7 +125,7 @@
 
 .btn-editar {
   background: white;
-  border: 1px solid #00585e;
+  border: 1px solid var(--color-primary);
   color: var(--color-primary);
   padding: 6px 12px;
   border-radius: 4px;

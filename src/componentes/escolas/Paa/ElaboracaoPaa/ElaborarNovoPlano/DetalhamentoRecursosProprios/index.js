@@ -156,7 +156,7 @@ const DetalhamentoRecursosProprios = () => {
             icon="faSave"
             tooltipMessage="Salvar"
             iconProps={{
-              style: { fontSize: "20px", marginRight: "0", color: "#00585E" },
+              style: { fontSize: "20px", marginRight: "0"},
             }}
             disabled={!validFields(rowData)}
             aria-label="Salvar"

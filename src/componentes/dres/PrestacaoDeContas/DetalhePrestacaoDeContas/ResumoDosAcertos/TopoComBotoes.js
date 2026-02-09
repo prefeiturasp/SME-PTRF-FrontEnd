@@ -15,7 +15,7 @@ export const TopoComBotoes = ({onClickBtnVoltar, setShowModalConfirmaDevolverPar
             <div className="ml-auto p-2 bd-highlight">
                 <button onClick={onClickBtnVoltar} className="btn btn-outline-success mr-2" style={{ whiteSpace: 'nowrap' }}>
                     <FontAwesomeIcon
-                        style={{color: "#00585E", fontSize: '15px', marginRight: "3px"}}
+                        style={{fontSize: '15px', marginRight: "3px"}}
                         icon={faArrowLeft}
                     />
                     Voltar

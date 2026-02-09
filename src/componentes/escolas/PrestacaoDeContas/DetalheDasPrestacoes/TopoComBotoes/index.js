@@ -28,7 +28,7 @@ export const TopoComBotoes = ({contaConciliacao, periodoFechado, origem}) => {
                             className="btn btn-outline-success mr-2 mt-2"
                         >
                             <FontAwesomeIcon
-                                style={{color: "#00585E", fontSize: '15px', marginRight: "3px"}}
+                                style={{fontSize: '15px', marginRight: "3px"}}
                                 icon={faArrowLeft}
                             />                            
                             <strong>Voltar</strong>

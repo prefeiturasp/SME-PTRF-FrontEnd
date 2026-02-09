@@ -106,7 +106,7 @@ export const AnaliseDre = () =>{
             <>
                 {rowData.pode_habilitar_botao_ver_acertos_em_analise_da_dre ? (
                     <FontAwesomeIcon
-                        style={{fontSize: '20px', marginRight: "0", color: "#00585E", cursor: "pointer"}}
+                        style={{fontSize: '20px', marginRight: "0", color: "var(--color-primary)", cursor: "pointer"}}
                         icon={faEye}
                         onClick={() => {
                             limpaStorageAnaliseDre();

@@ -75,7 +75,7 @@
   &-button {
     color: var(--color-primary);
     padding: 8px;
-    border: 2px solid #00585e;
+    border: 2px solid var(--color-primary);
     border-radius: 3px;
     outline: none;
     background-color: inherit;
