@@ -7,7 +7,7 @@ import {DataTable} from "primereact/datatable";
 import useConferidoTemplate from "../../../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useConferidoTemplate";
 
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCheckCircle, faEdit, faInfoCircle} from "@fortawesome/free-solid-svg-icons";
+import {faCheckCircle, faInfoCircle} from "@fortawesome/free-solid-svg-icons";
 import Dropdown from "react-bootstrap/Dropdown";
 import {ModalCheckNaoPermitidoConfererenciaDeDocumentos} from "./ModalCheckNaoPermitidoConfererenciaDeDocumentos";
 import {postDocumentosParaConferenciaMarcarComoCorreto, postDocumentosParaConferenciaMarcarNaoConferido} from "../../../../../services/dres/PrestacaoDeContas.service";
@@ -17,6 +17,7 @@ import Loading from "../../../../../utils/Loading";
 import {useDispatch} from "react-redux";
 import {addDetalharAcertosDocumentos, limparDetalharAcertosDocumentos} from "../../../../../store/reducers/componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeDocumentos/DetalharAcertosDocumentos/actions";
 import {ModalLegendaConferenciaDocumentos} from "./Modais/ModalLegendaConferenciaDocumentos";
+import { EditIconButton } from "../../../../Globais/UI/Button";
 
 const TabelaConferenciaDeDocumentos = ({carregaListaDeDocumentosParaConferencia, setListaDeDocumentosParaConferencia, listaDeDocumentosParaConferencia, rowsPerPage, prestacaoDeContas, loadingDocumentosParaConferencia, editavel}) =>{
 
@@ -45,12 +46,11 @@ const TabelaConferenciaDeDocumentos = ({carregaListaDeDocumentosParaConferencia,
 
     const acoesTemplate = (rowData) => {
         return (
-            <button disabled={!editavel} onClick={()=>addDispatchRedireciona(rowData)} className="btn btn-link fonte-14" type="button">
-                <FontAwesomeIcon
-                    style={{fontSize: '18px', marginRight: "5px", color: "#00585E"}}
-                    icon={faEdit}
-                />
-            </button>
+            <EditIconButton
+                disabled={!editavel}
+                onClick={()=>addDispatchRedireciona(rowData)}
+
+            />
         )
     };
 

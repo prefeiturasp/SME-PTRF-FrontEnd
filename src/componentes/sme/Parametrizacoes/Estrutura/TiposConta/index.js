@@ -10,12 +10,13 @@ import {
 import Loading from "../../../../../utils/Loading";
 import TabelaTiposConta from "./TabelaTiposConta";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faEdit, faPlus} from "@fortawesome/free-solid-svg-icons";
+import {faPlus} from "@fortawesome/free-solid-svg-icons";
 import {BtnAddTipoConta} from "./BtnAddTipoConta";
 import {Filtros} from "./Filtros";
 import ModalAddEditTipoConta from "./ModalAddEditTipoConta";
 import { ModalConfirmDeleteTipoConta } from "./ModalConfirmDeleteTipoConta";
 import {toastCustom} from "../../../../Globais/ToastCustom";
+import { EditIconButton } from "../../../../Globais/UI/Button";
 
 export const TiposConta = () => {
 
@@ -93,14 +94,9 @@ export const TiposConta = () => {
     
     const acoesTemplate = useCallback((rowData) =>{
         return (
-            <div>
-                <button className="btn-editar-membro" onClick={()=>handleEditFormModalTiposConta(rowData)}>
-                    <FontAwesomeIcon
-                        style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
-                        icon={faEdit}
-                    />
-                </button>
-            </div>
+            <EditIconButton
+                onClick={() => handleEditFormModalTiposConta(rowData)}
+            />            
         )
     }, [handleEditFormModalTiposConta]);
 

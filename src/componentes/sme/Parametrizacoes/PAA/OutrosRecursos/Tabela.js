@@ -1,8 +1,6 @@
 import { useContext } from "react";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
-import { Tooltip } from "antd";
-import { IconButton } from "../../../../Globais/UI";
 import Loading from "../../../../../utils/Loading";
 import { OutrosRecursosPaaContext } from './context/index';
 import { useGet } from "./hooks/useGet";
@@ -15,6 +13,7 @@ import Img404 from "../../../../../assets/img/img-404.svg";
 import { ModalConfirmarExclusao } from "../../componentes/ModalConfirmarExclusao"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimesCircle, faCheckCircle } from "@fortawesome/free-solid-svg-icons";
+import { EditIconButton } from "../../../../Globais/UI/Button";
 
 export const Tabela = () => {
 
@@ -53,15 +52,9 @@ export const Tabela = () => {
     }
   const acoesTemplate = (rowData) => {
       return (
-        <Tooltip title="Editar Recurso">
-            <IconButton
-                icon="faEdit"
-                iconProps={{style: {fontSize: '20px', marginRight: "0", color: "#00585E"}}}
-                onClick={() => handleEditFormModal(rowData)}
-                aria-label="Editar"
-                className="btn-Editar-recurso"
-            />
-        </Tooltip>
+        <EditIconButton
+            onClick={() => handleEditFormModal(rowData)}
+        />
       )
   };
 

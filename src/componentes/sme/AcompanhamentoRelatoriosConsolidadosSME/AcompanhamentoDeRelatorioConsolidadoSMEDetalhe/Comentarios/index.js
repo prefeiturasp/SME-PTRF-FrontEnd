@@ -13,7 +13,6 @@ import {
     postNotificarComentariosDre
 } from "../../../../../services/sme/DashboardSme.service";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faEdit} from "@fortawesome/free-solid-svg-icons";
 
 import {
     DndContext,
@@ -30,6 +29,7 @@ import {
     useSortable
   } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { EditIconButton } from "../../../../Globais/UI/Button";
 
 const Comentarios = ({relatorioConsolidado, setHabilitaVerResumoComentariosNotificados}) => {
     // Comentários que NÃO foram notificados ainda e que podem ser alterados ou excluídos
@@ -247,12 +247,10 @@ const Comentarios = ({relatorioConsolidado, setHabilitaVerResumoComentariosNotif
                         {props.comentario.comentario}
                     </div>
                     <div className="p-2 bd-highlight">
-                        <button onClick={()=>{setComentarioParaEdicao(props.comentario)}} type="button" className={`btn-cancelar-comentario ml-2 ${comentariosReadOnly ? 'btn-cancelar-comentario-disabled': ''}`} disabled={comentariosReadOnly}>
-                            <FontAwesomeIcon
-                                style={{fontSize: '18px', marginRight: "5px", color: "#00585E"}}
-                                icon={faEdit}
-                            />
-                        </button>
+                        <EditIconButton
+                            onClick={()=>{setComentarioParaEdicao(props.comentario)}}
+                            disabled={comentariosReadOnly}
+                        />
                     </div>
                 </li>
             </div>

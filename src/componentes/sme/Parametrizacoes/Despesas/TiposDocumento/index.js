@@ -26,6 +26,7 @@ import Loading from "../../../../../utils/Loading";
 import { ModalInfoNaoPodeExcluir } from "../../Estrutura/Acoes/ModalInfoNaoPodeExcluir";
 import { toastCustom } from "../../../../Globais/ToastCustom";
 import { MsgImgCentralizada } from "../../../../Globais/Mensagens/MsgImgCentralizada";
+import { EditIconButton } from "../../../../Globais/UI/Button";
 
 export const TiposDocumento = () => {
   const [listaDeTipos, setListaDeTipos] = useState([]);
@@ -173,21 +174,9 @@ export const TiposDocumento = () => {
   const acoesTemplate = useCallback(
     (rowData) => {
       return (
-        <div>
-          <button
-            data-qa="botao-editar-tipo-documento"
-            className="btn-editar-membro"
-            onClick={() => handleEditFormModal(rowData)}
-          >
-            <div data-tooltip-content="Editar" data-tooltip-id={`tooltip-id-${rowData.uuid}`}>
-              <ReactTooltip id={`tooltip-id-${rowData.uuid}`} />
-              <FontAwesomeIcon
-                style={{ fontSize: "20px", marginRight: "0", color: "#00585E" }}
-                icon={faEdit}
-              />
-            </div>
-          </button>
-        </div>
+        <EditIconButton        
+          onClick={() => handleEditFormModal(rowData)}
+        />
       );
     },
     [handleEditFormModal]

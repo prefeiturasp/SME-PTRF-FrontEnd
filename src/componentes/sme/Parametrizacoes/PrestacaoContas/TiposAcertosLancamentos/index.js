@@ -11,7 +11,7 @@ import {
 import { Filtros } from "./Filtros";
 import { TabelaLancamentos } from "./TabelaLancamentos";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus, faEdit } from "@fortawesome/free-solid-svg-icons";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import Loading from "../../../../../utils/Loading";
 import { ModalFormLancamentos } from "./ModalFormLancamento";
 import { ModalConfirmarExclusao } from "../../componentes/ModalConfirmarExclusao";
@@ -22,6 +22,7 @@ import Img404 from "../../../../../assets/img/img-404.svg"
 import "../parametrizacoes-prestacao-contas.scss";
 import {RetornaSeTemPermissaoEdicaoPainelParametrizacoes} from "../../RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
 import {toastCustom} from "../../../../Globais/ToastCustom";
+import { EditIconButton } from "../../../../Globais/UI/Button";
 
 export const ParametrizacoesTiposAcertosLancamentos = () => {
 
@@ -104,17 +105,9 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
 
   const lancamentosTemplate = (rowData) => {
     return (
-      <div>
-        <button
-          onClick={() => handleEditarLancamentos(rowData)}
-          className="btn-editar-acertos"
-        >
-          <FontAwesomeIcon
-            style={{ fontSize: "20px", marginRight: "0", color: "#00585E" }}
-            icon={faEdit}
-          />
-        </button>
-      </div>
+      <EditIconButton
+        onClick={() => handleEditarLancamentos(rowData)}
+      />
     );
   };
 

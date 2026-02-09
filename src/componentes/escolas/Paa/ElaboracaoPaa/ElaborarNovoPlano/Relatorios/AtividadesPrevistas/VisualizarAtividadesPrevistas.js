@@ -9,7 +9,7 @@ import Img404 from "../../../../../../../assets/img/img-404.svg";
 import { useGetAtividadesEstatutarias } from "./hooks/useGetAtividadesEstatutarias";
 import { useGetAtividadesEstatutariasTabelas } from "./hooks/useGetAtividadesEstatutariasTabelas";
 import { useGetRecursosPropriosPrevistos } from "./hooks/useGetRecursosPropriosPrevistos";
-import { IconButton } from "../../../../../../Globais/UI/Button/IconButton";
+import { IconButton, EditIconButton } from "../../../../../../Globais/UI/Button";
 import { Icon } from "../../../../../../Globais/UI/Icon";
 import {
   createAtividadeEstatutariaPaa,
@@ -759,14 +759,8 @@ export const VisualizarAtividadesPrevistas = () => {
                   </>
                 ) : (
                   <>
-                    <IconButton
+                    <EditIconButton
                       className="p-0"
-                      icon="faEdit"
-                      tooltipMessage="Editar"
-                      iconProps={{
-                        style: { color: "#00585E" },
-                      }}
-                      aria-label="Editar"
                       onClick={() =>
                         record.isNovo
                           ? handleEditarLinha(record)
