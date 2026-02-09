@@ -2,9 +2,6 @@ import React, { useContext } from "react";
 import { useDispatch } from "react-redux";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye } from "@fortawesome/free-solid-svg-icons";
-import { Tooltip as ReactTooltip } from "react-tooltip";
 import { useGetMandatos } from "../hooks/useGetMandatos";
 import Loading from "../../../../utils/Loading";
 import useDataTemplate from "../../../../hooks/Globais/useDataTemplate";
@@ -16,7 +13,7 @@ import { ModalInfo } from "./ModalInfo";
 import { usePatchMandato } from "../hooks/usePatchMandato";
 import { useDeleteMandato } from "../hooks/useDeleteMandato";
 import { ModalConfirm } from "../../../Globais/Modal/ModalConfirm";
-import { EditIconButton } from "../../../Globais/UI/Button";
+import { EditIconButton, VisualizarIconButton } from "../../../Globais/UI/Button";
 
 export const Lista = () => {
   const dispatch = useDispatch();
@@ -35,14 +32,11 @@ export const Lista = () => {
     return (
       <div>
         {rowData && rowData.editavel ? (
-          <EditIconButton onClick={() => handleEditFormModal(rowData)} tooltipMessage="Editar mandato" />
+          <EditIconButton onClick={() => handleEditFormModal(rowData)}/>
         ) : (
-          <button className="btn-editar-membro" onClick={() => handleEditFormModal(rowData)}>
-            <div data-tooltip-content="Visualizar mandato" data-html={true}>
-              <FontAwesomeIcon style={{ fontSize: "20px", marginRight: "0", color: "#00585E" }} icon={faEye} />
-              <ReactTooltip />
-            </div>
-          </button>
+          <VisualizarIconButton
+            onClick={() => handleEditFormModal(rowData)}
+          />
         )}
       </div>
     );

@@ -34,6 +34,11 @@ body {
     border-color: $corBtnSuccess;
   }
 
+  .btn-primary {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);    
+  }
+
   .btn-disabled {
     background-color: $corBtnDisabled;
     border-color: $corBtnDisabled;
@@ -57,6 +62,22 @@ body {
     border: 0;
     border-top: 1px solid #dadada;
     display: block;
+  }
+
+  .btn-fallback {
+    background-color: var(--color-fallback);
+    border-color: var(--color-fallback);
+  }
+
+  .btn-outline-fallback {
+    border-color: var(--color-fallback);
+    color: var(--color-fallback);
+  }
+
+  .btn-outline-fallback:hover {
+    color: #fff;
+    background-color: var(--color-fallback);
+    border-color: var(--color-fallback);
   }
 
   /* ---------------------------------------------------
@@ -545,7 +566,3 @@ table {
     background-color: #DADADA;
   }
 }
-
-// table svg {
-//   color: var(--color-primary-darker) !important;
-// }

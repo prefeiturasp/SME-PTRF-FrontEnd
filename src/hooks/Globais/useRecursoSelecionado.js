@@ -20,10 +20,16 @@ const useRecursoSelecionado = ({ visoesService }) => {
       return null;
     }
   });
-
   const [recursos, setRecursos] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  useEffect(() => {
+    if (recursos?.length === 1) {
+      setRecursoSelecionado(recursos[0]);
+      localStorage.setItem(storageKey, JSON.stringify(recursos[0]));
+    }
+  }, [recursos, recursoSelecionado]);
 
   const mostrarSelecionarRecursos = useMemo(() => {
     return recursos.length > 1;

@@ -1,127 +1,121 @@
 import React from "react";
-import {Link} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-import {DataTable} from 'primereact/datatable';
-import {Column} from 'primereact/column';
+import { DataTable } from "primereact/datatable";
+import { Column } from "primereact/column";
 
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faEye} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { formataNomeDreParaTabelas } from "../../../utils/FormataNomeDreParaTabelas";
-import {faExclamationCircle} from "@fortawesome/free-solid-svg-icons";
+import { faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
 import { TooltipWrapper } from "../../Globais/UI/Tooltip";
+import { VisualizarIconButton } from "../../Globais/UI/Button";
 
-export const ResumoPorDre = ({resumoPorDre, statusPeriodo, periodoEscolhido}) => {
+export const ResumoPorDre = ({ resumoPorDre, statusPeriodo, periodoEscolhido }) => {
+  const navigate = useNavigate();
+  const periodoEmAndamento = statusPeriodo ? statusPeriodo.cor_idx == 1 : true;
 
-    const periodoEmAndamento = statusPeriodo ? statusPeriodo.cor_idx  == 1 : true;
+  const estiloLinha = {
+    font: "Roboto",
+    fontWeight: "normal",
+    fontSize: "14px",
+    lineHeight: "22px",
+  };
 
-    const estiloLinha = {
-        font: 'Roboto',
-        fontWeight: 'normal',
-        fontSize: '14px',
-        lineHeight: '22px',
-    };
+  const nomeDreColunaTemplate = (rowData) => {
+    let nomeSemPrefixo = formataNomeDreParaTabelas(rowData.dre.nome);
+    return (
+      <div>
+        <span style={estiloLinha}> {nomeSemPrefixo}</span>
+      </div>
+    );
+  };
 
-    const nomeDreColunaTemplate = (rowData) => {
-        let nomeSemPrefixo = formataNomeDreParaTabelas(rowData.dre.nome)
-        return (
-            <div>
-                <span style={estiloLinha}> {nomeSemPrefixo}</span>
-            </div>
-        )
-    };
-
-    const acoesTemplate = (rowData) => {
-        let url = `/acompanhamento-pcs-sme/${rowData.dre.uuid}/${periodoEscolhido}`;
-
-        return (
-            <div>
-                <Link
-                    to={url}
-                    state={{ nome_dre: rowData.dre.nome }}
-                    className={`btn btn-link`}
-                >
-                    <FontAwesomeIcon
-                        style={{marginRight: "0", color: '#00585E'}}
-                        icon={faEye}
-                    />
-                </Link>
-            </div>
-        )
-    };
-
-    const colunaTemplate = (valor) => {
-        return (
-            <span style={estiloLinha}> {valor}</span>
-        )
-    };
-
-    const totalUnidadesTemplate = (rowData) => {
-        return colunaTemplate(rowData.cards.TOTAL_UNIDADES)
-    };
-
-    const naoApresentadaTemplate = (rowData) => {
-        return colunaTemplate(rowData.cards.NAO_APRESENTADA)
-    };
-
-    const recebidaTemplate = (rowData) => {
-        return colunaTemplate(rowData.cards.RECEBIDA)
-    };
-
-    const aprovadaTemplate = (rowData) => {
-        return colunaTemplate(rowData.cards.APROVADA)
-    };
-
-    const aprovadaRessalvaTemplate = (rowData) => {
-        return colunaTemplate(rowData.cards.APROVADA_RESSALVA)
-    };
-
-    const reprovadaTemplate = (rowData) => {
-        return colunaTemplate(rowData.cards.REPROVADA)
-    };
-
-    const emAnaliseHeaderTemplate = () => {
-        return (
-            <TooltipWrapper id="em-analise-header-id" content="Soma das PCs Não recebidas, Em análise e Devolvidas para acertos.">
-                <span>Em análise</span>
-                <FontAwesomeIcon
-                    style={{ marginLeft: "4px", color: '#2B7D83' }}
-                    icon={faExclamationCircle}
-                />
-            </TooltipWrapper>
-        )
-    }
-
-    const emAnaliseBodyTemplate = (rowData) => {
-        const quantidadeCardsEmAnalise = rowData.cards.EM_ANALISE + rowData.cards.NAO_RECEBIDA + rowData.cards.DEVOLVIDA;
-
-        return (
-            <TooltipWrapper id="em-analise-body-id" content="Soma das PCs Não recebidas, Em análise e Devolvidas para acertos.">
-                <span style={estiloLinha}> {quantidadeCardsEmAnalise}</span>
-            </TooltipWrapper>
-        )
-    }
+  const acoesTemplate = (rowData) => {
+    const url = `/acompanhamento-pcs-sme/${rowData.dre.uuid}/${periodoEscolhido}`;
 
     return (
-        <>
-            <DataTable
-                value={resumoPorDre}
-                className="mt-3 datatable-footer-coad"
-                paginator={false}
-            >
-                <Column field='dre.sigla' header='DRE' body={nomeDreColunaTemplate} style={{width: '20%'}}/>
-                <Column field='cards.TOTAL_UNIDADES' header='Total de Associações' body={totalUnidadesTemplate}/>
+      <VisualizarIconButton
+        tooltipMessage="Visualizar"
+        onClick={() =>
+          navigate(url, {
+            state: { nome_dre: rowData.dre.nome },
+          })
+        }
+      />
+    );
+  };
 
-                <Column field='cards.NAO_APRESENTADA' header='Não apresentadas'  body={naoApresentadaTemplate}/>
-                {periodoEmAndamento && <Column field='cards.RECEBIDA' header='Aguardando análise' body={recebidaTemplate}/>}
-                {periodoEmAndamento && <Column field='cards.EM_ANALISE' header={emAnaliseHeaderTemplate()} body={emAnaliseBodyTemplate}/>}
+  const colunaTemplate = (valor) => {
+    return <span style={estiloLinha}> {valor}</span>;
+  };
 
-                <Column field='cards.APROVADA' header='Aprovadas' body={aprovadaTemplate}/>
-                <Column field='cards.APROVADA_RESSALVA' header='Aprovadas com ressalvas' body={aprovadaRessalvaTemplate}/>
-                <Column field='cards.REPROVADA' header='Reprovadas' body={reprovadaTemplate}/>
-                <Column field='acoes' header='Ações' body={acoesTemplate}/>
-            </DataTable>
+  const totalUnidadesTemplate = (rowData) => {
+    return colunaTemplate(rowData.cards.TOTAL_UNIDADES);
+  };
 
-        </>
-    )
-}
+  const naoApresentadaTemplate = (rowData) => {
+    return colunaTemplate(rowData.cards.NAO_APRESENTADA);
+  };
+
+  const recebidaTemplate = (rowData) => {
+    return colunaTemplate(rowData.cards.RECEBIDA);
+  };
+
+  const aprovadaTemplate = (rowData) => {
+    return colunaTemplate(rowData.cards.APROVADA);
+  };
+
+  const aprovadaRessalvaTemplate = (rowData) => {
+    return colunaTemplate(rowData.cards.APROVADA_RESSALVA);
+  };
+
+  const reprovadaTemplate = (rowData) => {
+    return colunaTemplate(rowData.cards.REPROVADA);
+  };
+
+  const emAnaliseHeaderTemplate = () => {
+    return (
+      <TooltipWrapper
+        id="em-analise-header-id"
+        content="Soma das PCs Não recebidas, Em análise e Devolvidas para acertos."
+      >
+        <span>Em análise</span>
+        <FontAwesomeIcon style={{ marginLeft: "4px", color: "#2B7D83" }} icon={faExclamationCircle} />
+      </TooltipWrapper>
+    );
+  };
+
+  const emAnaliseBodyTemplate = (rowData) => {
+    const quantidadeCardsEmAnalise = rowData.cards.EM_ANALISE + rowData.cards.NAO_RECEBIDA + rowData.cards.DEVOLVIDA;
+
+    return (
+      <TooltipWrapper
+        id="em-analise-body-id"
+        content="Soma das PCs Não recebidas, Em análise e Devolvidas para acertos."
+      >
+        <span style={estiloLinha}> {quantidadeCardsEmAnalise}</span>
+      </TooltipWrapper>
+    );
+  };
+
+  return (
+    <>
+      <DataTable value={resumoPorDre} className="mt-3 datatable-footer-coad" paginator={false}>
+        <Column field="dre.sigla" header="DRE" body={nomeDreColunaTemplate} style={{ width: "20%" }} />
+        <Column field="cards.TOTAL_UNIDADES" header="Total de Associações" body={totalUnidadesTemplate} />
+
+        <Column field="cards.NAO_APRESENTADA" header="Não apresentadas" body={naoApresentadaTemplate} />
+        {periodoEmAndamento && <Column field="cards.RECEBIDA" header="Aguardando análise" body={recebidaTemplate} />}
+        {periodoEmAndamento && (
+          <Column field="cards.EM_ANALISE" header={emAnaliseHeaderTemplate()} body={emAnaliseBodyTemplate} />
+        )}
+
+        <Column field="cards.APROVADA" header="Aprovadas" body={aprovadaTemplate} />
+        <Column field="cards.APROVADA_RESSALVA" header="Aprovadas com ressalvas" body={aprovadaRessalvaTemplate} />
+        <Column field="cards.REPROVADA" header="Reprovadas" body={reprovadaTemplate} />
+        <Column field="acoes" header="Ações" body={acoesTemplate} />
+      </DataTable>
+    </>
+  );
+};

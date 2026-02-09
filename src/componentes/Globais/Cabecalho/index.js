@@ -13,11 +13,14 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faBell, faChevronDown, faUser, faFileDownload} from "@fortawesome/free-solid-svg-icons";
 import {notificaDevolucaoPCService} from "../../../services/NotificacaDevolucaoPC.service";
 import { mantemEstadoAnaliseDre as meapcservice } from "../../../services/mantemEstadoAnaliseDre.service";
+import useRecursoSelecionado from "../../../hooks/Globais/useRecursoSelecionado";
+import { Skeleton } from "antd";
 
 
 export const Cabecalho = () => {
-
     const navigate = useNavigate();
+    const { recursoSelecionado, isLoading } = useRecursoSelecionado({visoesService});
+
     const logout = async () => {
         await authService.logout()
     };
@@ -146,16 +149,16 @@ export const Cabecalho = () => {
             {authService.isLoggedIn() &&
                 <>
                     <div className="col-12 cabecalho fixed-top pb-0">
-                        <div className="row">
-                            <div className='col col-md-2 col-lg-3 col-xl-2 '>
-                                <div className="p-3">
-                                    <img className="logo-cabecalho ml-3" src={LogoPtrf} alt=""/>
-                                </div>
+                        <div className="row d-flex align-items-center h-100">
+                            <div className='col col-md-2 text-center'>
+                                {isLoading ? (<Skeleton.Avatar active size={60} />) : (
+                                    <img className="logo-cabecalho" src={recursoSelecionado?.logo || LogoPtrf} alt="Logo do Sig-Escola"/>
+                                )}
                             </div>
-                            <div className="col col-md-3 col-lg-5 col-xl-6 mt-2 pl-lg-0 pl-xl-2">
+                            <div className="col col-md-6">
                                 {exibeMenu &&
-                                <div className="pt-2 container-select-visoes">
-                                    <div className="d-flex mb-3 w-100">
+                                <div className="container-select-visoes">
+                                    <div className="d-flex w-100">
                                         <div className="p-2 bd-highlight"><span className='span-label-visao-selecionada'>{visoesService.getItemUsuarioLogado('visao_selecionada.nome')}</span></div>
                                         <div className="p-0 bd-highlight w-100">
                                             <select
@@ -203,9 +206,9 @@ export const Cabecalho = () => {
                                 </div>
                                 }
                             </div>
-                            <div className="col col-md-5 col-lg-4">
-                                <div className="row">
-                                    <div className="col-3 p-0 m-0 text-right pt-4">
+                            <div className="col col-md-4">
+                                <div className="row d-flex row align-items-center">
+                                    <div className="col-3 p-0 m-0 text-right">
                                         <button
                                             onClick={()=>redirectCentralDeDownloads()}
                                             data-testid="botao-central-downloads"
@@ -234,7 +237,7 @@ export const Cabecalho = () => {
                                     </div>
 
 
-                                    <div className="col text-left pt-xl-3 m-0">
+                                    <div className="col text-left m-0">
                                     <li className="link-acoes nav-link dropdown">
                                         <a href="#" id="linkDropdownAcoes" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                             <button className="btn-sair">

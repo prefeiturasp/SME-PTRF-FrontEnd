@@ -12,7 +12,7 @@ export const ModalDesvincularLote = (propriedades) => {
                 <Modal.Body>
                     <div className="row">
                          <div className="col-12" style={{paddingBottom:"20px"}}>
-                            <strong>Você possui <span style={{color: "#00585E", fontWeight:"bold"}}>{propriedades.quantidadeSelecionada} {propriedades.quantidadeSelecionada === 1 ? "unidade" : "unidades"}</span> {propriedades.quantidadeSelecionada === 1 ? "selecionada" : "selecionadas"}</strong>
+                            <strong>Você possui <span style={{color: "var(--color-primary-darker)", fontWeight:"bold"}}>{propriedades.quantidadeSelecionada} {propriedades.quantidadeSelecionada === 1 ? "unidade" : "unidades"}</span> {propriedades.quantidadeSelecionada === 1 ? "selecionada" : "selecionadas"}</strong>
                          </div>
                     </div>
                 </Modal.Body>

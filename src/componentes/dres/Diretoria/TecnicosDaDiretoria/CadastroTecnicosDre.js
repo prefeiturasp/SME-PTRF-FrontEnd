@@ -3,7 +3,7 @@ import "./tecnicos.scss"
 import {DataTable} from "primereact/datatable";
 import {Column} from "primereact/column";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faTrash, faPlus, faClipboardList} from "@fortawesome/free-solid-svg-icons";
+import {faPlus, faClipboardList} from "@fortawesome/free-solid-svg-icons";
 import Img404 from "../../../../assets/img/img-404.svg";
 import Loading from "../../../../utils/Loading";
 import {MsgImgLadoDireito} from "../../../Globais/Mensagens/MsgImgLadoDireito";
@@ -19,7 +19,7 @@ import {ConfirmaDeleteTecnico} from "./ConfirmaDeleteTecnicoDialog";
 import {consultarRF} from "../../../../services/escolas/Associacao.service";
 import {Link} from "react-router-dom";
 import {visoesService} from "../../../../services/visoes.service";
-import { EditIconButton } from "../../../Globais/UI/Button";
+import { DeleteIconButton, EditIconButton } from "../../../Globais/UI/Button";
 
 export const CadastroTecnicosDre = ({dadosDaDre}) => {
 
@@ -228,16 +228,10 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
                 <EditIconButton
                     onClick={() => handleEditTecnicoAction(rowData)}
                 />
-                <button
-                    className="btn-editar-membro"
+                <DeleteIconButton
                     onClick={() => handleDeleteTecnicoAction(rowData)}
                     disabled={!visoesService.getPermissoes(['change_tecnicos_da_diretoria'])}
-                >
-                    <FontAwesomeIcon
-                        style={{fontSize: '20px', marginRight: "0", color: "red"}}
-                        icon={faTrash}
-                    />
-                </button>
+                />
             </div>
         )
     };
