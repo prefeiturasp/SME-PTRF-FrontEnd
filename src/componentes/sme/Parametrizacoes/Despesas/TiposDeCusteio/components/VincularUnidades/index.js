@@ -14,6 +14,7 @@ import { useGetUnidadesNaoVinculadas } from "./hooks/useGetUnidadesNaoVinculadas
 import { useVincularUnidade } from "./hooks/useVincularUnidade";
 import { Filtros } from "../Filtros";
 import { MsgImgCentralizada } from "../../../../../../Globais/Mensagens/MsgImgCentralizada";
+import {Icon} from "../../../../../../Globais/UI/Icon/";
 
 const filtroInicial = {
   nome_ou_codigo: "",
@@ -104,7 +105,7 @@ export const VincularUnidades = ({ UUID, podeEditar }) => {
         <div
           className="col-12"
           style={{
-            background: "#00585E",
+            background: "var(--color-primary)",
             color: "white",
             padding: "15px",
             margin: "0px 15px",
@@ -176,13 +177,8 @@ export const VincularUnidades = ({ UUID, podeEditar }) => {
           }}
           disabled={selectedUnidades.length > 0 || !podeEditar}
           icon={
-            <FontAwesomeIcon
-              style={{
-                fontSize: "20px",
-                marginRight: 3,
-                color: "#00585e",
-              }}
-              icon={faPlusCircle}
+            <Icon
+              icon="faPlusCircle"
             />
           }
         ></Button>

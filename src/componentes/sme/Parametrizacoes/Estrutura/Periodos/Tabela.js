@@ -2,7 +2,7 @@ import React, {memo, useCallback} from "react";
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import moment from "moment";
-import { IconButton } from "../../../../Globais/UI/Button/IconButton";
+import { EditIconButton, VisualizarIconButton} from "../../../../Globais/UI/Button";
 
 const Tabela = ({
     rowsPerPage, 
@@ -21,18 +21,12 @@ const Tabela = ({
     const acoesTemplate = (rowData) => {
         return (
             rowData.editavel ? (
-                <IconButton
-                    icon="faEdit"
-                    iconProps={{style: {fontSize: '20px', marginRight: "0", color: "#00585E"}}}
+                <EditIconButton
                     onClick={() => handleOpenModalForm(rowData)}
-                    aria-label="Editar"
                 />
             ) : (
-                <IconButton
-                    icon="faEye"
-                    iconProps={{style: {fontSize: '20px', marginRight: "0", color: "#00585E"}}}
+                <VisualizarIconButton
                     onClick={() => handleOpenModalForm(rowData)}
-                    aria-label="Visualizar"
                 />
             )
         )

@@ -1,11 +1,9 @@
-import React, {memo, useCallback} from "react";
+import React, {memo} from "react";
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-import moment from "moment";
-import { IconButton } from "../../../../Globais/UI/Button/IconButton";
-import {faEdit, faPlus, faTimesCircle, faCheckCircle} from "@fortawesome/free-solid-svg-icons";
+import {faTimesCircle, faCheckCircle} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import { Tooltip as ReactTooltip } from "react-tooltip";
+import { EditIconButton } from "../../../../Globais/UI/Button";
 
 const Tabela = ({
     rowsPerPage, 
@@ -39,17 +37,9 @@ const Tabela = ({
     }
     const acoesTemplate = (rowData) => {
         return (
-            <div>
-                <button onClick={() => handleOpenModalForm(rowData)} className="btn-editar-membro">
-                    <div data-tooltip-content="Editar" data-tooltip-id={`tooltip-id-${rowData.uuid}`}>
-                        <ReactTooltip id={`tooltip-id-${rowData.uuid}`}/>
-                        <FontAwesomeIcon
-                            style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
-                            icon={faEdit}
-                        />
-                    </div>
-                </button>
-            </div>
+            <EditIconButton
+                onClick={() => handleOpenModalForm(rowData)}
+            />
         )
     }
 

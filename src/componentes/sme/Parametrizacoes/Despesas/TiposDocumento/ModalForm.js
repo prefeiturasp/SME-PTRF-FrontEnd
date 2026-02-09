@@ -1,11 +1,9 @@
 import React, {memo} from "react";
 import {ModalFormBodyText} from "../../../../Globais/ModalBootstrap";
 import {Formik} from "formik";
-import { Tooltip as ReactTooltip } from "react-tooltip";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
 import {YupSignupSchemaTags} from "./YupSignupSchemaTags";
 import {RetornaSeTemPermissaoEdicaoPainelParametrizacoes} from "../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes"
+import { Icon } from "../../../../Globais/UI/Icon";
 
 const ModalForm = ({show, stateFormModal, handleClose, handleSubmitModalForm, setShowModalConfirmDelete}) => {
     const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES = RetornaSeTemPermissaoEdicaoPainelParametrizacoes()
@@ -88,14 +86,11 @@ const ModalForm = ({show, stateFormModal, handleClose, handleSubmitModalForm, se
                                     <div className="form-group col-md-6">
                                         <>
                                             <p data-qa="legenda-apenas-digitos" className="mb-0">No número do documento deve constar apenas dígitos?
-                                                <span data-qa="tooltip-apenas-digitos"
-                                                    data-tooltip-content="(ex: 0,1,2,3,4)" data-tooltip-id={`tooltip-id-apenas-digitos`}>
-                                                    <ReactTooltip id={`tooltip-id-apenas-digitos`}/>
-                                                    <FontAwesomeIcon
-                                                        style={{fontSize: '16px', marginLeft: "10px", color: "#00585E"}}
-                                                        icon={faInfoCircle}
-                                                    />
-                                                </span>
+                                                <Icon
+                                                    tooltipMessage="(ex: 0,1,2,3,4)"
+                                                    icon="faInfoCircle"
+
+                                                />
                                             </p>
                                         </>
                                         <div className="form-check form-check-inline mt-2">

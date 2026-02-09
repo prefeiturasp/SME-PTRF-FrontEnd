@@ -16,15 +16,15 @@
   color: #6c757d;
   display: inline-block;
   vertical-align: middle;
-  background: url('../../../assets/img/icone-breadcrumb.svg') no-repeat center center;
+  background: url("../../../assets/img/icone-breadcrumb.svg") no-repeat center center;
   background-size: contain;
   width: 0.6em;
   height: 0.6em;
 }
 
 .breadcrumb-item.active::before {
-  color: #00585E;
-  background: url('../../../assets/img/icone-breadcrumb-active.svg') no-repeat center center;
+  color: var(--color-primary);
+  background: url("../../../assets/img/icone-breadcrumb-active.svg") no-repeat center center;
   background-size: contain;
   width: 0.6em;
   height: 0.6em;
@@ -40,7 +40,7 @@
 }
 
 .breadcrumb-item.active {
-  color: #00585E;
+  color: var(--color-primary);
 }
 
 .breadcrumb-item i {

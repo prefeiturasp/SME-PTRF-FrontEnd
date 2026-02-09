@@ -1,27 +1,28 @@
 .container-faq-categorias {
-
   .btn-escolhe-categoria {
     background-color: transparent;
     border: solid 1px #ccc;
     outline: none;
   }
-  .btn-escolhe-categoria-active{
-    background-color: #2B7D83;
+  .btn-escolhe-categoria-active {
+    background-color: var(--color-primary-lighten);
     color: #fff;
     font-weight: 500;
   }
 }
 
-.btn-container-pergunta{
-  color: #00585E;
+.btn-container-pergunta {
+  color: var(--color-primary);
 }
 
-.btn-container-pergunta:hover, .btn-container-pergunta:active, .btn-container-pergunta:focus{
+.btn-container-pergunta:hover,
+.btn-container-pergunta:active,
+.btn-container-pergunta:focus {
   text-decoration: none;
-  color: #00585E;
+  color: var(--color-primary);
 }
 
-.span-icone-toogle{
+.span-icone-toogle {
   background-color: rgb(199, 201, 200);
   border-radius: 67px;
   border: 1px solid rgb(199, 201, 200);

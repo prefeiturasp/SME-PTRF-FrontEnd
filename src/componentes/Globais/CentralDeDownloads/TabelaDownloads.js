@@ -10,6 +10,7 @@ import {
 import "./central-de-downloads.scss";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import moment from "moment";
+import {DeleteIconButton, IconButton} from "../../Globais/UI/Button";
 
 export const TabelaDownloads = ({
   listaArquivos = [],
@@ -52,35 +53,23 @@ export const TabelaDownloads = ({
         {rowData.status === "EM_PROCESSAMENTO" ? (
           <span style={{ fontSize: "16pt" }}>-</span>
         ) : (
-          <>
+          <div className="d-flex">
             {rowData.status !== "ERRO" ? (
-              <button
-                className="btn btn-link"
-                onClick={(e) => {
-                  downloadArquivo(rowData.identificador, rowData.uuid);
-                }}
+              <IconButton
+                icon="faDownload"
                 aria-label="Botão download"
-              >
-                <FontAwesomeIcon
-                  style={{ marginRight: "0", color: "#00585E" }}
-                  icon={faDownload}
-                />
-              </button>
+                  onClick={(e) => {
+                    downloadArquivo(rowData.identificador, rowData.uuid);
+                  }}
+                  tooltipMessage="Baixar arquivo"
+              />
             ) : null}
-
-            <button
-              className="btn btn-link"
+            <DeleteIconButton
               onClick={(e) => {
                 excluirArquivo(rowData.uuid);
-              }}
-              aria-label="Botão excluir"
-            >
-              <FontAwesomeIcon
-                style={{ marginRight: "0", color: "#B40C02" }}
-                icon={faTrash}
-              />
-            </button>
-          </>
+              }}            
+            />
+          </div>
         )}
       </div>
     );

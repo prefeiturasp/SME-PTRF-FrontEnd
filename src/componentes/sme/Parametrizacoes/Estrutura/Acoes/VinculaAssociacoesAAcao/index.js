@@ -199,7 +199,7 @@ export const VinculaAssociacoesAAcao = () => {
         return (
             <div className="row">
                 <div className="col-12" style={{padding:"15px 0px", margin:"0px 15px", flex:"100%"}}>
-                    Exibindo <span style={{color: "#00585E", fontWeight:"bold"}}>{unidades.length}</span> unidades
+                    Exibindo <span style={{color: "var(--color-primary-darker)", fontWeight:"bold"}}>{unidades.length}</span> unidades
                 </div>
             </div>
         )
@@ -209,7 +209,7 @@ export const VinculaAssociacoesAAcao = () => {
         const disabled = !TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES;
         return (
             <div className="row">
-                <div className="col-12" style={{background: "#00585E", color: 'white', padding:"15px", margin:"0px 15px", flex:"100%"}}>
+                <div className="col-12" style={{background: "var(--color-primary-darker)", color: 'white', padding:"15px", margin:"0px 15px", flex:"100%"}}>
                     <div className="row">
                         <div className="col-5">
                             {quantidadeSelecionada} {quantidadeSelecionada === 1 ? "unidade selecionada" : "unidades selecionadas"}  / {unidades.length} totais

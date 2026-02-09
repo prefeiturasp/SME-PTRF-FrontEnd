@@ -1,7 +1,7 @@
-.titulo-editor-fique-de-olho{
+.titulo-editor-fique-de-olho {
   font-size: 20px;
   font-weight: bold;
-  color: #2B7D83;
+  color: var(--color-primary-lighten);
 }
 
 .btn-textos {
@@ -11,16 +11,16 @@
 }
 
 .btn-limpar-customizado {
-  border-color: #00585E !important;
-  color: #00585E !important;
+  border-color: var(--color-primary-darker) !important;
+  color: var(--color-primary-darker) !important;
   font-size: 14px !important;
   font-weight: bold !important;
-  
+
   &:hover {
-    background-color: #00585E !important;
+    background-color: var(--color-primary-darker) !important;
     color: white !important;
   }
-  
+
   &:focus {
     box-shadow: 0 0 0 0.2rem rgba(0, 88, 94, 0.25) !important;
   }

@@ -7,6 +7,7 @@ import { formatMoneyBRL } from "../../../../../../utils/money";
 import { BadgeCustom } from './BadgeCustom';
 import { BarraAcaoEmLote } from './BarraAcaoEmLote';
 import { RECURSOS_PRIORIDADE } from "../../../../../../constantes/prioridades";
+import { EditIconButton } from '../../../../../Globais/UI/Button';
 
 
 export const Tabela = forwardRef(({ data, handleEditar, handleDuplicar, handleExcluir, handleExcluirEmLote }, ref) => {
@@ -170,14 +171,8 @@ export const Tabela = forwardRef(({ data, handleEditar, handleDuplicar, handleEx
                 body={rowData => {
                     return (
                         <Space direction="horizontal" size={0}>
-                            <IconButton
+                            <EditIconButton
                                 className='p-2'
-                                icon="faEdit"
-                                tooltipMessage="Editar"
-                                iconProps={{
-                                style: { color: "#00585E" },
-                                }}
-                                aria-label="Editar"
                                 onClick={() => handleEditar(rowData, [])}
                             />
                             <IconButton

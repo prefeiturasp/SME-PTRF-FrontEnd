@@ -1,35 +1,27 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Tooltip as ReactTooltip } from "react-tooltip";
-import { faEdit } from "@fortawesome/free-solid-svg-icons";
 import Loading from "../../../../../../utils/Loading";
 import {Paginator} from 'primereact/paginator';
 import "./style.scss"; 
 import { Tag } from '../../../../../Globais/Tag';
 import { useNavigate } from 'react-router-dom';
+import { EditIconButton } from '../../../../../Globais/UI/Button';
+
 
 export const Lista = ({isLoading, tiposDeCredito, count, firstPage, onPageChange}) => {
     const navigate = useNavigate();
 
     const handleEditFormModal = (rowData) => {
+        
         navigate(`/edicao-tipo-de-credito/${rowData.uuid}`);
     };
 
     const acoesTemplate = (rowData) => {
         return (
-            <div>
-                <button className="btn-editar-membro" onClick={() => handleEditFormModal(rowData)}>
-                    <span data-tooltip-content="Editar tipo de crédito" data-html={true}>
-                        <FontAwesomeIcon
-                            style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
-                            icon={faEdit}
-                        />
-                        <ReactTooltip/>
-                    </span>
-                </button>
-            </div>
+            <EditIconButton
+                onClick={() => handleEditFormModal(rowData)}
+            />
         )
     };
 

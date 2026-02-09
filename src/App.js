@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { Rotas } from "./rotas";
 import "primereact/resources/themes/saga-blue/theme.css";
@@ -9,9 +9,23 @@ import { Cabecalho } from "./componentes/Globais/Cabecalho";
 import { SidebarLeft } from "./componentes/Globais/SidebarLeft";
 import { ToastContainer } from "react-toastify";
 import Modal from "./componentes/Globais/Modal/Modal";
+import { useTheme } from "./context/Tema";
+import useRecursoSelecionado from "./hooks/Globais/useRecursoSelecionado";
+import { visoesService } from "./services/visoes.service";
 
 export const App = () => {
   const pathName = useLocation().pathname;
+
+  const { recursoSelecionado } = useRecursoSelecionado({ visoesService });
+
+  const { theme, setTheme } = useTheme();
+
+  useEffect(() => {
+    if (recursoSelecionado?.cor && recursoSelecionado.cor !== theme) {
+      setTheme(recursoSelecionado.cor);
+    }
+  }, [recursoSelecionado, theme]);
+
   return (
     <>
       <ToastContainer />
@@ -46,7 +60,7 @@ export const App = () => {
         )}
         <Modal />
       </section>
-    </>
+      </>
   );
 };
 

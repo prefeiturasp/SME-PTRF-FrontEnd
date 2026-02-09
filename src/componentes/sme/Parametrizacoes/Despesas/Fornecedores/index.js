@@ -9,7 +9,6 @@ import {
 } from "../../../../../services/sme/Parametrizacoes.service";
 import TabelaFornecedores from "./TabelaFornecedores";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faEdit, faPlus} from "@fortawesome/free-solid-svg-icons";
 import Loading from "../../../../../utils/Loading";
 import {Filtros} from "./Filtros";
 import {BtnAddFornecedores} from "./BtnAddFornecedores";
@@ -19,6 +18,8 @@ import {ModalConfirmDeleteFornecedor} from "./ModalConfirmDeleteFornecedor";
 import {visoesService} from "../../../../../services/visoes.service";
 import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
 import { toastCustom } from "../../../../Globais/ToastCustom";
+import { EditIconButton } from "../../../../Globais/UI/Button";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
 
 export const Fornecedores = () =>{
     const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES = RetornaSeTemPermissaoEdicaoPainelParametrizacoes()
@@ -100,14 +101,9 @@ export const Fornecedores = () =>{
 
     const acoesTemplate = useCallback((rowData) =>{
         return (
-            <div>
-                <button className="btn-editar-membro" onClick={()=>handleEditFormModalFornecedores(rowData)}>
-                    <FontAwesomeIcon
-                        style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
-                        icon={faEdit}
-                    />
-                </button>
-            </div>
+            <EditIconButton
+                onClick={()=>handleEditFormModalFornecedores(rowData)}
+            />
         )
     }, [handleEditFormModalFornecedores]);
 

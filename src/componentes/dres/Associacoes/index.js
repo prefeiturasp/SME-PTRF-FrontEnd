@@ -10,8 +10,7 @@ import {MsgImgCentralizada} from "../../Globais/Mensagens/MsgImgCentralizada";
 import {MsgImgLadoDireito} from "../../Globais/Mensagens/MsgImgLadoDireito";
 import {DADOS_DA_ASSOCIACAO} from "../../../services/auth.service";
 import {visoesService} from "../../../services/visoes.service";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faEye} from "@fortawesome/free-solid-svg-icons";
+import { Icon } from "../../Globais/UI/Icon";
 
 export const Associacoes = () =>{
 
@@ -97,9 +96,9 @@ export const Associacoes = () =>{
                             visoesService.getPermissoes(['access_processo_sei'])? false : true
                         }
                     >
-                        <FontAwesomeIcon
-                            style={{marginRight: "0", color: '#00585E'}}
-                            icon={faEye}
+                        <Icon
+                            icon="faEye"
+                            iconProps={{ style: {marginRight: "0"}}}
                         />
 
                         {urlRedirect &&

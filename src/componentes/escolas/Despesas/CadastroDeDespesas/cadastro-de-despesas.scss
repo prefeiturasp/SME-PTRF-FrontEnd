@@ -13,58 +13,62 @@ input[data-state="invalid"] {
 }
 
 /* Show red borders when filled, but invalid */
-.is_invalid{
+.is_invalid {
   background-image: url("../../../../assets/img/icone-nao-conciliado.svg");
   background-repeat: no-repeat;
   //background-attachment: fixed;
   background-position: 93% 50%;
 }
 
-.barra-status-erros{
-  background-color: #C65D00;
+.barra-status-erros {
+  background-color: #c65d00;
   border-radius: 3px;
 }
 
-.link-exportar, .texto-link-exportar{
-  color: #00585E;
+.link-exportar,
+.texto-link-exportar {
+  color: var(--color-primary);
 }
-.link-exportar:hover{
+.link-exportar:hover {
   cursor: pointer;
 }
 
-.label-valor-realizado{
-  color: #A4A4A4;
+.label-valor-realizado {
+  color: #a4a4a4;
 }
 
-.input-valor-realizado-vazio{
-  color: #A4A4A4;
+.input-valor-realizado-vazio {
+  color: #a4a4a4;
 }
-.input-valor-realizado-preenchido{
+.input-valor-realizado-preenchido {
   color: #495057;
 }
 
-.btn-remover-despesa, .btn-remover-despesa:hover, .btn-remover-despesa:active, .btn-remover-despesa:focus, .btn-remover-despesa:visited{
-  color: #B40C02;
+.btn-remover-despesa,
+.btn-remover-despesa:hover,
+.btn-remover-despesa:active,
+.btn-remover-despesa:focus,
+.btn-remover-despesa:visited {
+  color: #b40c02;
   font-weight: bold;
 }
-.btn-remover-despesa:hover{
-
+.btn-remover-despesa:hover {
 }
 
-.esconde-especificacao-material-servico{
+.esconde-especificacao-material-servico {
   display: none !important;
 }
 
-.container-retencao-imposto{
-  .box-escolha-retencao-imposto{
-      background: rgba(43, 125, 131, 0.7);
-      padding: 1rem;
-      color: #fff;
-      font-weight: bold;
+.container-retencao-imposto {
+  .box-escolha-retencao-imposto {
+    background: var(--color-primary-lighten);
+    padding: 1rem;
+    color: #fff;
+    font-weight: bold;
   }
 
-  .form-retencao-imposto{
-    background: #F5F6F8;
+  .form-retencao-imposto {
+    background: #f5f6f8;
     padding: 1rem;
     margin-left: -5px;
     margin-right: -5px;
@@ -75,22 +79,22 @@ input[data-state="invalid"] {
   -webkit-appearance: none;
   -moz-appearance: none;
   text-indent: 1px;
-  text-overflow: '';
+  text-overflow: "";
 }
 
 .desabilita-link-estorno {
   pointer-events: none;
-  color: #B40C02 !important;
-  opacity: .65;
+  color: #b40c02 !important;
+  opacity: 0.65;
 }
 
 .texto-rateio-estornado-bloqueado {
-  color: #B40C02;
+  color: #b40c02;
   font-weight: bold;
 }
 
-.desabilita-link-remover-despesa{
-  color: #B40C02 !important;
+.desabilita-link-remover-despesa {
+  color: #b40c02 !important;
   font-weight: bold;
 }
 
