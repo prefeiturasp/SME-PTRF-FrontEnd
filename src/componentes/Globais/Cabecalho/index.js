@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from "react";
 import { useNavigate } from 'react-router-dom';
 import "./cabecalho.scss"
-import LogoPtrf from "../../../assets/img/logo-ptrf-verde.png"
+import LogoPtrf from "../../../assets/img/logo-ptrf-verde-v2.svg"
 import { authService, USUARIO_LOGIN } from '../../../services/auth.service';
 import {visoesService} from "../../../services/visoes.service";
 import {NotificacaoContext} from "../../../context/Notificacoes";
