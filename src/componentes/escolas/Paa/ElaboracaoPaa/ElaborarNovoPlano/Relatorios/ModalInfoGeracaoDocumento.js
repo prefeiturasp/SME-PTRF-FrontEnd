@@ -91,6 +91,7 @@ export const ModalInfoPendenciasGeracaoFinal = memo(({ open, onClose, pendencias
                 <ul>
                     {(pendencias||'').split('\n').map((pendencia, index) => (
                         <li key={index}>
+                            {pendencia.includes('Prioridades sem ação') ? 'Prioridades' : ''}
                             {pendencia.includes('introdução') ? 'Introdução' : ''}
                             {pendencia.includes('objetivo') ? 'Objetivos' : ''}
                             {pendencia.includes('conclusão') ? 'Conclusão' : ''}
