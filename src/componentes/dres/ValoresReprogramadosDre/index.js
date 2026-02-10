@@ -12,16 +12,16 @@ import {
     getTabelaAssociacoes,
 } from "../../../services/dres/Associacoes.service";
 import { getUnidade } from "../../../services/dres/Unidades.service";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faEdit} from "@fortawesome/free-solid-svg-icons";
 import Loading from "../../../utils/Loading";
 import Img404 from "../../../assets/img/img-404.svg";
 import {MsgImgCentralizada} from "../../Globais/Mensagens/MsgImgCentralizada";
 import {MsgImgLadoDireito} from "../../Globais/Mensagens/MsgImgLadoDireito";
-import {Link} from 'react-router-dom';
+import { EditIconButton } from "../../Globais/UI/Button";
+import { useNavigate } from "react-router-dom";
 
 
 export const ValoresReprogramadosDre = () =>{
+    const navigate = useNavigate();
     // Tabela Valores Reprogramados
     const rowsPerPage = 10;
     // Filtros
@@ -177,23 +177,18 @@ export const ValoresReprogramadosDre = () =>{
     
     const acoesTemplate = (rowData) => {
         return (
-            <div>
-                <Link
-                    to="/cadastro-de-valores-reprogramados/"
-                    state={{
+            <EditIconButton
+                tooltipMessage="Editar"
+                onClick={() =>
+                    navigate('/cadastro-de-valores-reprogramados/', {
+                    state: {
                         uuid_associacao: rowData.associacao.uuid,
-                    }}
-                    className="btn-editar-membro"
-                >
-                    <FontAwesomeIcon
-                        style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
-                        icon={faEdit}
-                    />
-                </Link>
-            </div>
+                    },
+                    })
+                }
+            />
         )
     }
-
 
     return(
         <>

@@ -24,7 +24,7 @@ export const TopoComBotoes = ({tituloPagina = ''}) =>{
                     <div className="bd-highlight">
                         <button onClick={() => goBack()} className="btn btn btn-outline-success mr-2">
                             <FontAwesomeIcon
-                                style={{color: "#00585E", fontSize: '15px', marginRight: "3px"}}
+                                style={{fontSize: '15px', marginRight: "3px"}}
                                 icon={faArrowLeft}
                             />
                             Voltar

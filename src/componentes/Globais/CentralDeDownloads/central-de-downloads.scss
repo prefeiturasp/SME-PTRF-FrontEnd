@@ -1,16 +1,15 @@
-.marcado-como-lido{
-    background-color: #B8D0CD !important;
-    
+.marcado-como-lido {
+  background-color: #b8d0cd !important;
 }
 
-.borda-coluna{
-    border: 1px solid #E0E0E0 !important
+.borda-coluna {
+  border: 1px solid #e0e0e0 !important;
 }
 
-.quantidade-arquivos{
-    margin-block-end: 0em;
+.quantidade-arquivos {
+  margin-block-end: 0em;
 }
 
-.quantidade-arquivos  > strong {
-    color: #00585E;
+.quantidade-arquivos > strong {
+  color: var(--color-primary);
 }

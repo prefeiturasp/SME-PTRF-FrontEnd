@@ -41,7 +41,7 @@ export const UnidadesVinculadas = ({
     const [selectedUnidades, setSelectedUnidades] = useState([]);
     const [vincularTodas, setVincularTodas] = useState(false);
 
-    const formatStyleTextModal = { color: "#00585E", fontWeight: "bold" };
+    const formatStyleTextModal = { color: "var(--color-primary)", fontWeight: "bold" };
 
     const {
         data: unidadesVinculadas,
@@ -281,7 +281,7 @@ export const UnidadesVinculadas = ({
     return (
       <div className="row mt-2">
         <div className="col-12" style={{
-            background: "#00585E",
+            background: "var(--color-primary)",
             color: "white",
             padding: "15px",
             margin: "0px 15px",

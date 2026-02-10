@@ -3,6 +3,7 @@ import { Checkbox, Input, List } from "antd";
 import { useGetObjetivosPaa } from "./hooks/useGetObjetivosPaa";
 import { IconButton } from "../../../../../Globais/UI/Button/IconButton";
 import "./styles.css";
+import { EditIconButton } from "../../../../../Globais/UI/Button";
 
 export const RelSecaoObjetivos = ({ paaVigente, onSalvarObjetivos, isSaving }) => {
   const { data, isLoading } = useGetObjetivosPaa();
@@ -91,12 +92,8 @@ export const RelSecaoObjetivos = ({ paaVigente, onSalvarObjetivos, isSaving }) =
 
                   {(item.key || item.paa) && (
                     <div className="d-flex">
-                      <IconButton
-                        icon="faEdit"
-                        tooltipMessage="Editar"
+                      <EditIconButton
                         onClick={(e) => handleEdit(item)}
-                        aria-label="Editar"
-                        type="button"
                         buttonStyle={{ padding: "0 12px" }}
                       />
 

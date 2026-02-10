@@ -22,6 +22,7 @@ import { useDispatch } from "react-redux";
 import { useDeleteRecursoProprio } from "./hooks/useDeleteRecursoProprio";
 import { usePostRecursoProprio } from "./hooks/usePostRecursoProprio";
 import { useGetTotalizadorRecursoProprio } from "./hooks/useGetTotalizarRecursoProprio";
+import { EditIconButton } from "../../../../../Globais/UI/Button";
 
 const DatePickerCustom = DatePicker.generatePicker(momentGenerateConfig);
 const { TextArea } = Input;
@@ -155,20 +156,15 @@ const DetalhamentoRecursosProprios = () => {
             icon="faSave"
             tooltipMessage="Salvar"
             iconProps={{
-              style: { fontSize: "20px", marginRight: "0", color: "#00585E" },
+              style: { fontSize: "20px", marginRight: "0"},
             }}
             disabled={!validFields(rowData)}
             aria-label="Salvar"
             onClick={() => handleSave(rowData)}
           />
         ) : (
-          <IconButton
-            icon="faEdit"
+          <EditIconButton
             tooltipMessage="Editar"
-            iconProps={{
-              style: { fontSize: "20px", marginRight: "0", color: "#00585E" },
-            }}
-            aria-label="Editar"
             onClick={() => handleOpenFieldsToEdit(rowData)}
           />
         )}

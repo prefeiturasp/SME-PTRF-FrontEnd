@@ -202,7 +202,7 @@ export const RegularidadeAssociacaoNoAno = ({ associacaoUuid, ano, apenasLeitura
             header={
               <div className="row w-100 align-items-center">
                 <div className="col-9">
-                  <span style={{ fontSize: "17px", color: "#00585e" }}>{obj.titulo}</span>
+                  <span style={{ fontSize: "17px", color: "var(--color-primary)" }}>{obj.titulo}</span>
                 </div>
                 <div className="col-2 d-flex align-items-center justify-content-end">
                   <FontAwesomeIcon

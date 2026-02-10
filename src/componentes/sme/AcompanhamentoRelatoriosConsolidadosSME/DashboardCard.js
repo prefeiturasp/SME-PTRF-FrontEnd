@@ -44,7 +44,7 @@ export const DashboardCard = ({itensDashboard, handleClickVerRelatorios, handleC
                                     onClick={() => handleClickVerDRE(card.status)}
                                     className="btn btn-outline-success btn-ver-prestacoes">
                                     <FontAwesomeIcon
-                                        style={{marginRight: "3px", color: '#2B7D83'}}
+                                        style={{marginRight: "3px"}}
                                         icon={faEye}
                                     />
                                     Ver DREs
@@ -54,7 +54,7 @@ export const DashboardCard = ({itensDashboard, handleClickVerRelatorios, handleC
                                         onClick={() => handleClickVerRelatorios(card.status)}
                                         className="btn btn-outline-success btn-ver-prestacoes">
                                         <FontAwesomeIcon
-                                            style={{marginRight: "3px", color: '#2B7D83'}}
+                                            style={{marginRight: "3px"}}
                                             icon={faEye}
                                         />
                                         Ver documentação

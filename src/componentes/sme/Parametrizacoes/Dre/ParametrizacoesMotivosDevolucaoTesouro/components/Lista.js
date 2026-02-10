@@ -1,9 +1,6 @@
 import React, { useContext } from "react";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Tooltip as ReactTooltip } from "react-tooltip";
-import { faEdit } from "@fortawesome/free-solid-svg-icons";
 import { useGetMotivosDevolucaoTesouro } from "../hooks/useGetMotivosDevolucaoTesouro";
 import Loading from "../../../../../../utils/Loading";
 import { MotivosDevolucaoTesouroContext } from '../context/MotivosDevolucaoTesouro';
@@ -14,6 +11,7 @@ import { ModalForm } from "./ModalForm";
 import { ModalConfirmacaoExclusao } from "./ModalConfirmacaoExclusao";
 import {MsgImgCentralizada} from "../../../../../Globais/Mensagens/MsgImgCentralizada";
 import Img404 from "../../../../../../assets/img/img-404.svg";
+import { EditIconButton } from "../../../../../Globais/UI/Button";
 
 export const Lista = () => {
 
@@ -28,17 +26,9 @@ export const Lista = () => {
 
   const acoesTemplate = (rowData) => {
       return (
-          <div>
-              <button className="btn-editar-membro" onClick={() => handleEditFormModal(rowData)} aria-label="editar motivo">
-                  <span data-tooltip-content="Editar motivo" data-html={true}>
-                      <FontAwesomeIcon
-                          style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
-                          icon={faEdit}
-                      />
-                      <ReactTooltip/>
-                  </span>
-              </button>
-          </div>
+        <EditIconButton
+            onClick={() => handleEditFormModal(rowData)}
+        />
       )
   };
 

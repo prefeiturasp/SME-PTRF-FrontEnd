@@ -441,7 +441,7 @@ export const TabelaAcertosDespesasPeriodosAnteriores = ({
         <div
           className="col-12"
           style={{
-            background: "#00585E",
+            background: "var(--color-primary)",
             color: "white",
             padding: "15px",
             margin: "0px 15px",
@@ -514,7 +514,7 @@ export const TabelaAcertosDespesasPeriodosAnteriores = ({
             style={{ padding: "15px 0px", margin: "0px 15px", flex: "100%" }}
           >
             Exibindo{" "}
-            <span style={{ color: "#00585E", fontWeight: "bold" }}>
+            <span style={{ color: "var(--color-primary)", fontWeight: "bold" }}>
               {totalDeAcertosDosLancamentos}
             </span>{" "}
             gastos de períodos anteriores pendentes de conciliação

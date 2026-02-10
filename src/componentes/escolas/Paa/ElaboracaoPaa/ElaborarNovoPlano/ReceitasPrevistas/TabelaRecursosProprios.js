@@ -5,6 +5,7 @@ import { DataTable } from "primereact/datatable";
 import { formatMoneyBRL } from "../../../../../../utils/money";
 import { IconButton } from "../../../../../Globais/UI/Button/IconButton";
 import { useGetTodos } from "./hooks/useGetReceitasPrevistasOutrosRecursosPeriodo";
+import { EditIconButton } from "../../../../../Globais/UI/Button";
 
 const TabelaRecursosProprios = ({
   totalRecursosProprios,
@@ -164,13 +165,7 @@ const TabelaRecursosProprios = ({
 
   const acoesRecursoProprioTemplate = (rowData) => {
     return !rowData["fixed"] ? (
-      <IconButton
-        icon="faEdit"
-        tooltipMessage="Editar"
-        iconProps={{
-          style: { fontSize: "20px", marginRight: "0", color: "#00585E" },
-        }}
-        aria-label="Editar"
+      <EditIconButton
         onClick={() => {
           if (rowData.nome === "Recursos Próprios") {
             setActiveTab();

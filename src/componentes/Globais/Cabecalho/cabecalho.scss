@@ -1,45 +1,46 @@
-.cabecalho{
+.cabecalho {
   box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.05);
   background-color: #fff;
   height: 80px;
-  .logo-cabecalho{
-    width: 100px;
+  .logo-cabecalho {
+    max-width: 60px;
   }
 
-  .btn-sair{
+  .btn-sair {
     background: transparent;
     border: none;
   }
 
-  .icone-sair{
+  .icone-sair {
     width: 25px;
   }
 
-  .span-icone-verde{
-    background-color: #2B7D83;
+  .span-icone-verde {
+    background-color: var(--color-primary-lighten);
     border-radius: 67px;
     border: 0px;
     padding: 8px 8px;
     font-size: 11px;
   }
 
-  .span-text-dropdown{
+  .span-text-dropdown {
     padding: 0px 5px;
   }
 
-  .container-select-visoes{
+  .container-select-visoes {
     width: 90%;
   }
 
-  .span-tipo-de-unidade{
+  .span-tipo-de-unidade {
     border-radius: 25px;
-    background-color: #2B7D83;
+    background-color: var(--color-primary-lighten);
   }
 
-  .span-notificacoes-menor-que-10, .span-notificacoes-maior-que-10{
+  .span-notificacoes-menor-que-10,
+  .span-notificacoes-maior-que-10 {
     position: absolute;
     //top: 0;
-    background-color: #B40C02;
+    background-color: #b40c02;
     border-radius: 67px;
     font-size: 11px;
     color: #fff;
@@ -48,34 +49,30 @@
     margin-top: -32px;
   }
 
-  .span-notificacoes-maior-que-10{
+  .span-notificacoes-maior-que-10 {
     padding: 3px 5px;
   }
 
-  .span-notificacoes-menor-que-10{
+  .span-notificacoes-menor-que-10 {
     padding: 2px 7px;
   }
 
-  .link-acoes{
+  .link-acoes {
     list-style-type: none;
 
-    .nav-link{
+    .nav-link {
       padding: 0 !important;
     }
 
-    .dropdown-menu-opcoes{
+    .dropdown-menu-opcoes {
       z-index: 1;
     }
-
   }
 }
 
-.span-label-visao-selecionada{
-  background: #2B7D83;
+.span-label-visao-selecionada {
+  background: var(--color-primary-lighten);
   border-radius: 25px;
   color: #fff;
   padding: 2px 0.8rem;
 }
-
-
-

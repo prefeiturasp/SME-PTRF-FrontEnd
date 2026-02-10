@@ -300,7 +300,6 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
                 <div className="col-12"
                      style={
                          {
-                             background: "#00585E",
                              color: 'white',
                              padding: "15px",
                              margin: "0px 15px",
@@ -413,7 +412,7 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
                          }
                      }>
                     Exibindo <span
-                    style={{color: "#00585E", fontWeight: "bold"}}> {totalDeDocumentosParaConferencia}</span> documentos
+                    style={{fontWeight: "bold"}}> {totalDeDocumentosParaConferencia}</span> documentos
                 </div>
             </div>
         )
@@ -514,7 +513,6 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
                                 {
                                     fontSize: '18px',
                                     marginRight: "5px",
-                                    color: "#00585E"
                                 }
                             }
                             icon={faEye}/>
@@ -532,7 +530,6 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
                                 {
                                     fontSize: '18px',
                                     marginRight: "5px",
-                                    color: "#00585E"
                                 }
                             }icon={faDownload}/>
                         </span>
@@ -569,8 +566,7 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
                 <FontAwesomeIcon style={
                     {
                         fontSize: '18px',
-                        marginRight: "5px",
-                        color: "#00585E"
+                        marginRight: "5px"
                     }
                 }
                                  icon={faEdit}/>

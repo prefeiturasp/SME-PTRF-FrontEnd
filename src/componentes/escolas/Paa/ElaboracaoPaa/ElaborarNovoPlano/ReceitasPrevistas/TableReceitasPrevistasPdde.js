@@ -5,6 +5,7 @@ import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import { IconButton } from "../../../../../Globais/UI/Button/IconButton";
 import { formatMoneyBRL } from "../../../../../../utils/money";
+import { EditIconButton } from "../../../../../Globais/UI/Button";
 
 const TableReceitasPrevistasPdde = ({ activeTab, tabs, setActiveTab }) => {
   const { programas, total, isLoading } = useGetProgramasPddeTotais();
@@ -38,13 +39,7 @@ const TableReceitasPrevistasPdde = ({ activeTab, tabs, setActiveTab }) => {
 
   const acoesTemplate = (rowData) => {
     return !rowData["fixed"] ? (
-      <IconButton
-        icon="faEdit"
-        tooltipMessage="Editar ações"
-        iconProps={{
-          style: { fontSize: "20px", marginRight: "0", color: "#00585E" },
-        }}
-        aria-label="Editar"
+      <EditIconButton
         onClick={() => handleChangeTab()}
       />
     ) : null;

@@ -478,7 +478,7 @@ const ArquivosDeCarga = () => {
                 style={{
                   fontSize: "15px",
                   marginRight: "5px",
-                  color: "#00585E",
+                  color: "var(--color-primary)",
                 }}
                 icon={faCogs}
               />
@@ -494,7 +494,7 @@ const ArquivosDeCarga = () => {
                 style={{
                   fontSize: "15px",
                   marginRight: "5px",
-                  color: "#00585E",
+                  color: "var(--color-primary)",
                 }}
                 icon={faEdit}
               />
@@ -510,7 +510,7 @@ const ArquivosDeCarga = () => {
                 style={{
                   fontSize: "15px",
                   marginRight: "5px",
-                  color: "#00585E",
+                  color: "var(--color-primary)",
                 }}
                 icon={faDownload}
               />

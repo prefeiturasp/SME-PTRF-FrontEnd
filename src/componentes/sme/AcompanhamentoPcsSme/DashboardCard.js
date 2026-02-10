@@ -40,7 +40,7 @@ export const DashboardCard = ({itensDashboard, statusPeriodo}) => {
         lineHeight: "37.5px",
         color: "#FFFFFF",
         textAlign: "left",
-        backgroundColor:"#2B7D83",
+        backgroundColor:"var(--color-primary-lighten)",
     };
 
     const idxStyle = statusPeriodo ? statusPeriodo.cor_idx : 1;

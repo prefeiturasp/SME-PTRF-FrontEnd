@@ -1,8 +1,6 @@
 import { useMemo, useEffect, useState } from "react";
-import { DatePicker, Tooltip, Spin, Form, Flex, Row, Col, Input, Typography, Divider } from "antd";
+import { DatePicker, Spin, Form, Flex, Row, Col, Input, Typography, Divider } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import { RodapeFormsID } from "../../../../Globais/RodapeFormsID";
 import {RetornaSeTemPermissaoEdicaoPainelParametrizacoes} from "../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes"
 import { ModalConfirmarExclusao } from "../../componentes/ModalConfirmarExclusao";
@@ -13,6 +11,7 @@ import { usePost } from "./hooks/usePost";
 import { usePatch } from "./hooks/usePatch";
 import { useDelete } from "./hooks/useDelete";
 import dayjs from 'dayjs'
+import { Icon } from "../../../../Globais/UI/Icon";
 
 export const PeriodoPAAForm = () => {
     const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES = RetornaSeTemPermissaoEdicaoPainelParametrizacoes()
@@ -121,12 +120,7 @@ export const PeriodoPAAForm = () => {
                                 label={
                                     <>
                                         Referência do período de PAA
-                                        <Tooltip title="Preencher com o período de vigência do PAA. Por exemplo: 2025 a 2026">
-                                            <FontAwesomeIcon
-                                                style={{fontSize: '16px', marginLeft: "10px", color: "#00585E", cursor: "pointer"}}
-                                                icon={faInfoCircle}
-                                            />
-                                        </Tooltip>
+                                        <Icon iconProps={{style: {marginLeft: 3} }} icon="faInfoCircle" tooltipMessage="Preencher com o período de vigência do PAA. Por exemplo: 2025 a 2026"/>
                                     </>
                                 }
                                 name="referencia"

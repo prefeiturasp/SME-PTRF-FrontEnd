@@ -114,7 +114,7 @@ export const UnidadesVinculadas = ({tipoContaUUID}) => {
         <div
           className="col-12"
           style={{
-            background: "#00585E",
+            background: "var(--color-primary)",
             color: "white",
             padding: "15px",
             margin: "0px 15px",

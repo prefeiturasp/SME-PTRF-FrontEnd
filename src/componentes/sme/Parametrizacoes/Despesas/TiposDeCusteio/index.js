@@ -10,6 +10,7 @@ import Loading from "../../../../../utils/Loading";
 
 import Tabela from "./Tabela";
 import { Filtros } from "./Filtros";
+import { EditIconButton } from "../../../../Globais/UI/Button";
 
 export const TiposDeCusteio = () => {
   const navigate = useNavigate();
@@ -67,14 +68,9 @@ export const TiposDeCusteio = () => {
 
   const acoesTemplate = useCallback((rowData) => {
     return (
-      <div>
-        <button
-          className="btn-editar-membro"
-          onClick={() => navigate("/edicao-tipo-de-despesa-custeio/" + rowData.uuid)}
-        >
-          <FontAwesomeIcon style={{ fontSize: "20px", marginRight: "0", color: "#00585E" }} icon={faEdit} />
-        </button>
-      </div>
+      <EditIconButton        
+        onClick={() => navigate("/edicao-tipo-de-despesa-custeio/" + rowData.uuid)}
+      />      
     );
   }, []);
 

@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { RepassesContext } from "../context/Repasse";
 
 import { getAssociacoes } from "../../../../../../services/sme/Parametrizacoes.service";
@@ -11,13 +10,13 @@ import { usePostRepasse } from "../hooks/usePostRepasse";
 import { usePatchRepasse } from "../hooks/usePatchRepasse";
 import { useDeleteRepasse } from "../hooks/useDeleteRepasse";
 
-import { Tooltip as ReactTooltip } from "react-tooltip";
 import { round, trataNumericos } from "../../../../../../utils/ValidacoesAdicionaisFormularios";
 
-import { faEdit } from "@fortawesome/free-solid-svg-icons";
 import Loading from "../../../../../../utils/Loading";
 import { ModalForm } from "./ModalForm";
 import { ModalConfirmacaoExclusao } from "./ModalConfirmacaoExclusao";
+
+import { EditIconButton } from "../../../../../Globais/UI/Button";
 
 export const Lista = () => {
 
@@ -120,17 +119,9 @@ export const Lista = () => {
 
     const acoesTemplate = (rowData) => {
         return (
-            <div>
-                <button className="btn-editar-membro" onClick={() => handleEditFormModal(rowData)}>
-                    <span data-tooltip-content="Editar repasse" data-html={true}>
-                        <FontAwesomeIcon
-                            style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
-                            icon={faEdit}
-                        />
-                        <ReactTooltip/>
-                    </span>
-                </button>
-            </div>
+            <EditIconButton 
+                onClick={() => handleEditFormModal(rowData)}
+            />
         )
     };
 

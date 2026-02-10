@@ -39,7 +39,7 @@ export const Acoes = ({
     return (
         <div className="row">
             <div className="col-12"
-                 style={{background: "#00585E", color: 'white', padding: "15px", margin: "0px 15px", flex: "100%"}}>
+                 style={{background: "var(--color-primary)", color: 'white', padding: "15px", margin: "0px 15px", flex: "100%"}}>
                 <div className="row">
                     <div className="col-5">
                         {totalLancamentosSelecionados} {totalLancamentosSelecionados === 1 ? "lançamento selecionado" : "lançamentos selecionados"} / {totalLancamentos} totais

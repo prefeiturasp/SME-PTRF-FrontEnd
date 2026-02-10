@@ -2,11 +2,10 @@ import React, {useState, useEffect, useCallback, useMemo} from "react";
 import {PaginasContainer} from "../../../../../paginas/PaginasContainer";
 import {getListaDeAcoes, getAcoesFiltradas, postAddAcao, putAtualizarAcao, deleteAcao} from "../../../../../services/sme/Parametrizacoes.service";
 import '../parametrizacoes-estrutura.scss'
-import { Tooltip as ReactTooltip } from "react-tooltip";
 import {Filtros} from "./Filtros";
 import {TabelaAcoes} from "./TabelaAcoes";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faEdit, faClipboardList, faTimesCircle, faCheckCircle } from "@fortawesome/free-solid-svg-icons";
+import {faClipboardList, faTimesCircle, faCheckCircle } from "@fortawesome/free-solid-svg-icons";
 import Loading from "../../../../../utils/Loading";
 import {ModalFormAcoes} from "./ModalFormAcoes";
 import { ModalConfirmarExclusao } from "../../componentes/ModalConfirmarExclusao";
@@ -19,6 +18,7 @@ import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../RetornaS
 import { toastCustom } from "../../../../Globais/ToastCustom";
 import { MsgImgCentralizada } from "../../../../Globais/Mensagens/MsgImgCentralizada";
 import Img404 from "../../../../../assets/img/img-404.svg";
+import { EditIconButton } from "../../../../Globais/UI/Button";
 
 export const Acoes = () => {
     const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES = RetornaSeTemPermissaoEdicaoPainelParametrizacoes()
@@ -68,19 +68,9 @@ export const Acoes = () => {
 
     const acoesTemplate = (rowData) => {
         return (
-            <div>
-                <button data-qa="botao-editar-acoes" className="btn-editar-membro"
-                    onClick={() => handleEditarAcoes(rowData)}
-                    >
-                    <div data-tooltip-content="Editar ação" data-tooltip-id={`tooltip-id-${rowData.uuid}`}>
-                        <ReactTooltip id={`tooltip-id-${rowData.uuid}`} />
-                        <FontAwesomeIcon
-                            style={{ fontSize: "20px", marginRight: "0", color: "#00585E" }}
-                            icon={faEdit}
-                        />
-                    </div>
-                </button>
-            </div>
+            <EditIconButton
+                onClick={() => handleEditarAcoes(rowData)}
+            />            
         )
     };
 

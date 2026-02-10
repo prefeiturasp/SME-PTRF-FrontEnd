@@ -1,9 +1,8 @@
 import React, {memo} from "react";
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import { Tooltip as ReactTooltip } from "react-tooltip";
+import { Icon } from "../../../../Globais/UI/Icon";
 
 const Tabela = (props)=>{
     const templateHeaderApenasDigito = ()=>{
@@ -14,9 +13,8 @@ const Tabela = (props)=>{
                 <span data-qa="col-tooltip-apenas-digitos"
                     data-tooltip-content="(ex: 0,1,2,3,4)" data-tooltip-id={` col-tooltip-id-apenas-digitos`}>
                     <ReactTooltip id={` col-tooltip-id-apenas-digitos`}/>
-                    <FontAwesomeIcon
-                        style={{fontSize: '16px', marginLeft: "10px", color: "#00585E"}}
-                        icon={faInfoCircle}
+                    <Icon
+                        icon="faInfoCircle"
                     />
                 </span>
             </p>

@@ -37,7 +37,7 @@ export const VincularUnidades = ({
     
     const [selectedUnidades, setSelectedUnidades] = useState([]);
 
-    const formatStyleTextModal = { color: "#00585E", fontWeight: "bold" };
+    const formatStyleTextModal = { color: "var(--color-primary)", fontWeight: "bold" };
 
     const {
         data: unidadesNaoVinculadas,
@@ -213,7 +213,7 @@ export const VincularUnidades = ({
             <div className="row mt-2">
                 <div className="col-12"
                     style={{
-                        background: "#00585E",
+                        background: "var(--color-primary)",
                         color: "white",
                         padding: "15px",
                         margin: "0px 15px",
@@ -270,7 +270,6 @@ export const VincularUnidades = ({
                     <FontAwesomeIcon style={{
                         fontSize: "20px",
                         marginRight: 3,
-                        color: "#00585e",
                     }}
                     icon={faPlusCircle}
                     />

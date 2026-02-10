@@ -124,9 +124,10 @@ export const SidebarLeft = () => {
             >
                 <SideNav.Toggle/>
                 {/* <SideNav.Nav defaultSelected={urls.dados_iniciais.default_selected}> */}
-                { sidebarStatus.sideBarStatus && visoesService.featureFlagAtiva(FEATURE_FLAGS.PREMIO_EXCELENCIA) && <SelecionaRecurso /> }
                 
                 <SideNav.Nav defaultSelected={getPathname()}>
+                    { sidebarStatus.sideBarStatus && visoesService.featureFlagAtiva(FEATURE_FLAGS.PREMIO_EXCELENCIA) && <SelecionaRecurso /> }
+
                     {urls && urls.lista_de_urls.length > 0 && urls.lista_de_urls.map((url, index) => {
                             let featureFlag = true
                             if(url.featureFlag) {

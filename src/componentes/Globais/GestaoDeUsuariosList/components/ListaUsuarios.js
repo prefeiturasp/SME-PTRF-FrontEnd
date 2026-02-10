@@ -4,8 +4,8 @@ import Loading from "../../../../utils/Loading";
 import {DataTable} from "primereact/datatable";
 import {Column} from "primereact/column";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faEdit, faTimesCircle} from "@fortawesome/free-solid-svg-icons";
-import {Link} from "react-router-dom";
+import {faTimesCircle} from "@fortawesome/free-solid-svg-icons";
+import {useNavigate} from "react-router-dom";
 import {GestaoDeUsuariosListContext} from "../context/GestaoDeUsuariosListProvider";
 import {TableTags} from "../../TableTags";
 import Img404 from "../../../../assets/img/img-404.svg";
@@ -19,6 +19,7 @@ import {
     showMensagemSucessoAoRemoverAcesso
 } from "../../GestaoDeUsuarios/utils/mensagens-remover-acesso";
 import { RetornaSeTemPermissaoEdicaoGestaoUsuarios } from "../../GestaoDeUsuarios/utils/RetornaSeTemPermissaoEdicaoGestaoUsuarios";
+import { EditIconButton } from "../../UI/Button";
 
 const corTagSuporte = {
           1: 'tag-blue-support',
@@ -44,6 +45,7 @@ const dataAcessoConcedidoSmeTag = {
 }
 
 export const ListaUsuarios = ({usuarios, isLoading}) => {
+    const navigate = useNavigate();
     const TEM_PERMISSAO_EDICAO_GESTAO_USUARIOS = RetornaSeTemPermissaoEdicaoGestaoUsuarios()
 
     const {uuidUnidadeBase, visaoBase} = useContext(GestaoDeUsuariosListContext);
@@ -105,23 +107,14 @@ export const ListaUsuarios = ({usuarios, isLoading}) => {
                 </span>
 
 
-                { ! unidadeEstaEmSuporte &&
-                <span data-tooltip-content="Editar usuário" data-html={true}>
-                    <Link
-                        className="botao-acao-lista"
-                        to={{
-                            pathname: `/gestao-de-usuarios-form/${rowData.id}`,
-                        }}
-                    >
-                        <FontAwesomeIcon
-                            style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
-                            icon={faEdit}
-                        />
-                    </Link>
-                    <ReactTooltip/>
-                </span>
+                {!unidadeEstaEmSuporte &&
+                    <EditIconButton
+                        tooltipMessage="Editar usuário"
+                        onClick={() =>
+                            navigate(`/gestao-de-usuarios-form/${rowData.id}`)
+                        }
+                    />
                 }
-
             </div>
 
         )
