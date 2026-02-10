@@ -6,13 +6,16 @@ export const BarraMensagemFixaContext = createContext({
   url: '',
   setUrl: () => {},
   txtBotao: '',
-  setTxtBotao: () => {}
+  setTxtBotao: () => {},
+  exibeBotao: true,
+  setExibeBotao: () => {}
 });
 
-export function BarraMensagemFixaProvider({children}) {
-  const [mensagem, setMensagem] = useState('Há um novo mandato em andamento. É necessário atualizar os novos membros.');
-  const [url, setUrl] = useState('/membros-da-associacao');
-  const [txtBotao, setTxtBotao] = useState('Ver informações');
+export function BarraMensagemFixaProvider({children, mensagem: mensagemProp, exibeBotao: exibeBotaoProp, url: urlProp, txtBotao: txtBotaoProp, fixed = false}) {
+  const [mensagem, setMensagem] = useState(mensagemProp ?? 'Há um novo mandato em andamento. É necessário atualizar os novos membros.');
+  const [url, setUrl] = useState(urlProp ?? '/membros-da-associacao');
+  const [txtBotao, setTxtBotao] = useState(txtBotaoProp ?? 'Ver informações');
+  const [exibeBotao, setExibeBotao] = useState(exibeBotaoProp ?? true);
 
   const contextValue = useMemo(() => {
     return {
@@ -21,13 +24,21 @@ export function BarraMensagemFixaProvider({children}) {
       url,
       setUrl,
       txtBotao,
-      setTxtBotao
+      setTxtBotao,
+      exibeBotao,
+      setExibeBotao
     };
-  }, [mensagem, url, txtBotao]);
+  }, [mensagem, url, txtBotao, exibeBotao]);
 
   return (
       <BarraMensagemFixaContext.Provider value={contextValue}>
-        {children}
+        {fixed ? (
+          <div className="barra-mensagem-fixa-container">
+            {children}
+          </div>
+        ) : (
+          children
+        )}
       </BarraMensagemFixaContext.Provider>
   );
 }
