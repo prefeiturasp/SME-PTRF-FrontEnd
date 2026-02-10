@@ -421,7 +421,7 @@ export const DetalheDasPrestacoes = () => {
             if (!documento_mestre){
                 await desconciliar(transacao_ou_rateio_uuid)
             }else {
-                await patchDesconciliarDespesa(periodoConta.conta, transacao_ou_rateio_uuid)
+                await patchDesconciliarDespesa(periodoConta.periodo, periodoConta.conta, transacao_ou_rateio_uuid)
             }
         }
         await carregaTransacoes()
