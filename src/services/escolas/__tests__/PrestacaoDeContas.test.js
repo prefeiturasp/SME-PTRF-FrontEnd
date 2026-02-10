@@ -218,11 +218,12 @@ describe('Testes para funções de análise', () => {
     
     test('patchDesconciliarDespesa deve chamar a API corretamente', async () => {
         api.patch.mockResolvedValue({ data: mockData })
+        const periodo_uuid = '1234';
         const conta_uuid = '1234';
         const transacao_uuid = '1234';
-        const result = await patchDesconciliarDespesa(conta_uuid, transacao_uuid);
+        const result = await patchDesconciliarDespesa(periodo_uuid, conta_uuid, transacao_uuid);
         expect(api.patch).toHaveBeenCalledWith(
-            `/api/conciliacoes/desconciliar-despesa/?conta_associacao=${conta_uuid}&transacao=${transacao_uuid}`,
+            `/api/conciliacoes/desconciliar-despesa/?periodo=${periodo_uuid}&conta_associacao=${conta_uuid}&transacao=${transacao_uuid}`,
             {},
             getAuthHeader()
         )
