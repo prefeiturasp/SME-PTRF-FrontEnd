@@ -222,7 +222,7 @@ export const Resumo = () => {
                 ...(props.style || {}), // dessa forma, mantemos o estilo original definido na const columns
                 borderColor: '#dadada', // Customizar a cor da borda para um tom mais contraste no header
                 fontWeight: 'bold', // define a fonte em negrito
-                color: '#00585E', // define a cor do header
+                color: 'var(--color-primary)', // define a cor do header
                 padding: '8px', // mantém padding original
             }} />
         );
@@ -244,7 +244,7 @@ export const Resumo = () => {
 
     return (
         <>
-            <Typography.Title level={5} style={{ color: '#00585E', fontWeight: 'bold' }} className='my-4'>
+            <Typography.Title level={5} className='my-4'>
                 Resumo de recursos
             </Typography.Title>
 

@@ -40,10 +40,10 @@ const styles = {
     borderBottom: '2px solid transparent',
     whiteSpace: 'nowrap',
     overflow: 'hidden',
-    border: '1px solid #00585e',
+    border: '1px solid var(--color-primary)',
   },
   activeTab: {
-    color: "#00585e",
+    color: "var(--color-primary)",
     backgroundColor: '#fff',
     fontWeight: 'bold',
   },

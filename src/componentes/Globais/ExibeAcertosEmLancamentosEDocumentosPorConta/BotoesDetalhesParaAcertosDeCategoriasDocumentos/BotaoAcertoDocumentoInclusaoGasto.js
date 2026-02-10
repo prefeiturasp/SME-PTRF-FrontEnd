@@ -38,7 +38,7 @@ const BotaoAcertosDocumentosInclusaoGasto = ({analise_documento, prestacaoDeCont
                 >
                     <>
                         <FontAwesomeIcon
-                            style={{fontSize: '16px', color: '#00585E'}}
+                            style={{fontSize: '16px'}}
                             icon={faCheckCircle}
                         />
                         <strong> Gasto incluído. <span className='clique-aqui-atualizada'>Clique aqui para editar</span></strong>
@@ -58,7 +58,7 @@ const BotaoAcertosDocumentosInclusaoGasto = ({analise_documento, prestacaoDeCont
                 >
                     <>
                         <FontAwesomeIcon
-                            style={{fontSize: '16px', color: '#00585E'}}
+                            style={{fontSize: '16px'}}
                             icon={faCheckCircle}
                         />
                         <strong> Gasto incluído. <span className='clique-aqui-atualizada'>Clique aqui para ver</span></strong>

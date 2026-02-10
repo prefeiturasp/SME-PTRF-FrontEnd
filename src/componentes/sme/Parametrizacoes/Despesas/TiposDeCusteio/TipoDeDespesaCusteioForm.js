@@ -1,12 +1,10 @@
 import { useEffect, useState } from "react";
-import { Form, Input, Row, Col, Divider, Flex, Checkbox, Spin, Tooltip } from "antd";
+import { Form, Input, Row, Col, Divider, Flex, Checkbox, Spin } from "antd";
 import { useDispatch } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { CustomModalConfirm } from "../../../../Globais/Modal/CustomModalConfirm";
 import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
-import { faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   deleteTipoDeCusteio,
   getTipoCusteio,
@@ -16,6 +14,7 @@ import {
 import { VincularUnidades } from "./components/VincularUnidades";
 import { UnidadesVinculadas } from "./components/UnidadesVinculadas";
 import { toastCustom } from "../../../../Globais/ToastCustom";
+import { Icon } from "../../../../Globais/UI/Icon";
 
 export const TipoDeDespesaCusteioForm = () => {
   const [form] = Form.useForm();
@@ -160,18 +159,13 @@ export const TipoDeDespesaCusteioForm = () => {
 
         <Divider />
 
-        <Flex gutter={8} align="end">
+        <Flex gutter={8} align="center">
           <h6 className="m-0">Unidades vinculadas ao tipo de despesa de custeio</h6>
-          <Tooltip title="Unidades vinculadas ao tipo de despesa de custeio">
-            <FontAwesomeIcon
-              style={{
-                fontSize: "16px",
-                marginLeft: 4,
-                color: "#086397",
-              }}
-              icon={faExclamationCircle}
-            />
-          </Tooltip>
+          <Icon
+            tooltipMessage="Unidades vinculadas ao tipo de despesa de custeio"
+            icon="faExclamationCircle"
+            iconProps={{style: { fontSize: "16px", marginLeft: 4}}}
+          />          
         </Flex>
 
         <Form.Item

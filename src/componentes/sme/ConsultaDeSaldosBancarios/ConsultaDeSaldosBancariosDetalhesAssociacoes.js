@@ -113,13 +113,13 @@ export const ConsultaDeSaldosBancariosDetalhesAssociacoes = () =>{
                     <>
                         <button className="btn-editar-membro mr-2" data-testid="botaoVerExtrato" onClick={()=>handleClickVerExtrato(rowData)}>
                             <FontAwesomeIcon
-                                style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
+                                style={{fontSize: '20px', marginRight: "0"}}
                                 icon={faSearch}
                             />
                         </button>
                         <button className="btn-editar-membro" data-testid="botaoDownloadExtrato" onClick={()=>handleClickDownloadExtrato(rowData)}>
                             <FontAwesomeIcon
-                                style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
+                                style={{fontSize: '20px', marginRight: "0"}}
                                 icon={faDownload}
                             />
                         </button>

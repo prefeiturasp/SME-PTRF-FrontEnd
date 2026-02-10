@@ -381,7 +381,7 @@ const TabelaAcertosDocumentos = ({
     const montagemSelecionar = () => {
         return (
             <div className="row">
-                <div className="col-12" style={{background: "#00585E", color: 'white', padding: "15px", margin: "0px 15px", flex: "100%"}}>
+                <div className="col-12" style={{background: "var(--color-primary)", color: 'white', padding: "15px", margin: "0px 15px", flex: "100%"}}>
                     <div className="row">
                         <div className="col-5">
                             {quantidadeSelecionada} {quantidadeSelecionada === 1 ? "documento selecionado" : "documentos selecionados"} / {totalDeAcertosDosDocumentos} totais
@@ -448,7 +448,7 @@ const TabelaAcertosDocumentos = ({
                 <div className="row">
                     <div className="col-12" style={{padding: "15px 0px", margin: "0px 15px", flex: "100%"}}>
                         Exibindo <span style={{
-                        color: "#00585E",
+                        color: "var(--color-primary)",
                         fontWeight: "bold"
                     }}
                     >

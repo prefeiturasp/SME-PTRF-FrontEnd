@@ -46,7 +46,7 @@ const ArquivosDeReferenciaVisualizacaoDownload = ({prestacaoDeContas, infoAta}) 
                 <button onClick={() => handleClickVisualizarArquivoDeReferencia(rowData)} className="btn-editar-membro">
                     <span data-html={true} data-tooltip-content="Visualização">
                         <FontAwesomeIcon
-                            style={{fontSize: '20px', marginRight: "0", marginTop: '2px', color: "#00585E"}}
+                            style={{fontSize: '20px', marginRight: "0", marginTop: '2px'}}
                             icon={faEye}
                         />
                     </span>
@@ -55,7 +55,7 @@ const ArquivosDeReferenciaVisualizacaoDownload = ({prestacaoDeContas, infoAta}) 
                 <span> | </span>
                 <button onClick={() => handleClickDownloadArquivoDeReferencia(rowData)} className="btn-editar-membro">
                     <FontAwesomeIcon
-                        style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
+                        style={{fontSize: '20px', marginRight: "0"}}
                         icon={faDownload}
                     />
                 </button>

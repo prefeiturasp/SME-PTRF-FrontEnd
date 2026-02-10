@@ -192,8 +192,7 @@ const ReceitasPrevistas = ({ receitasDestino = null }) => {
                     iconProps={{
                       style: {
                         fontSize: "16px",
-                        marginLeft: 4,
-                        color: "#086397",
+                        marginLeft: 4
                       },
                     }}
                   />

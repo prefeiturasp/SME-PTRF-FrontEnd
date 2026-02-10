@@ -189,9 +189,6 @@ export const Tabela = forwardRef(({ data, handleEditar, handleDuplicar, handleEx
                                 className='p-2'
                                 icon="faCopy"
                                 tooltipMessage="Duplicar"
-                                iconProps={{
-                                style: { color: "#00585E" },
-                                }}
                                 aria-label="Duplicar"
                                 onClick={() => handleDuplicar(rowData)}
                             />

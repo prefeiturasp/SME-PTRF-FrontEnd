@@ -26,6 +26,7 @@ import { UnidadesVinculadas } from "./components/UnidadesAssociadas/Lista";
 import { VincularUnidades } from "./components/VincularUnidades";
 import { faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Icon } from "../../../../Globais/UI/Icon";
 
 const { TextArea } = Input;
 
@@ -374,18 +375,13 @@ export const TipoReceitaForm = () => {
 
         <Divider />
 
-        <Flex gutter={8} align="end">
+        <Flex gutter={8} align="center">
           <h6 className="m-0">Unidades vinculadas ao tipo de crédito</h6>
-          <Tooltip title="Unidades vinculadas ao tipo de crédito">
-            <FontAwesomeIcon
-              style={{
-                fontSize: "16px",
-                marginLeft: 4,
-                color: "#086397",
-              }}
-              icon={faExclamationCircle}
-            />
-          </Tooltip>
+          <Icon
+            icon="faExclamationCircle"
+            tooltipMessage="Unidades vinculadas ao tipo de crédito"
+            iconProps={{ className: "ml-1" }}
+          />
         </Flex>
 
         <Form.Item

@@ -115,7 +115,7 @@
   gap: 8px;
   background-color: var(--color-primary);
   color: #ffffff;
-  border: 1px solid #00585e;
+  border: 1px solid var(--color-primary);
   border-radius: 4px;
   padding: 6px 12px;
   font-weight: 600;
@@ -162,5 +162,5 @@
 
 .btn-can-be-disabled:active,
 .btn-can-be-disabled:focus {
-  background: #00585e !important;
+  background: var(--color-primary) !important;
 }

@@ -96,7 +96,7 @@ export const UnidadesEmSuporte = () => {
     const montarBarraAcoesEmLote = () => {
         return (
             <div className="row">
-                <div className="col-12" style={{background: "#00585E", color: 'white', padding:"15px", margin:"0px 15px", flex:"100%"}}>
+                <div className="col-12" style={{background: "var(--color-primary)", color: 'white', padding:"15px", margin:"0px 15px", flex:"100%"}}>
                     <div className="row">
                         <div className="col-5">
                             <span><strong>{selectedUnidades.length}</strong> {selectedUnidades.length === 1 ? "unidade selecionada" : "unidades selecionadas"}</span>
