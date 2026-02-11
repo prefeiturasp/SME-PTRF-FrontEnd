@@ -92,8 +92,8 @@ const apiUrlWithParams = `${apiUrl}?${queryString}`;
 export const patchConciliarDespesa = async (periodo_uuid, conta_uuid, transacao_uuid) => {
   return (await api.patch(`/api/conciliacoes/conciliar-despesa/?periodo=${periodo_uuid}&conta_associacao=${conta_uuid}&transacao=${transacao_uuid}`, {}, authHeader())).data
 };
-export const patchDesconciliarDespesa = async (conta_uuid, transacao_uuid) => {
-  return (await api.patch(`/api/conciliacoes/desconciliar-despesa/?conta_associacao=${conta_uuid}&transacao=${transacao_uuid}`, {}, authHeader())).data
+export const patchDesconciliarDespesa = async (periodo_uuid, conta_uuid, transacao_uuid) => {
+  return (await api.patch(`/api/conciliacoes/desconciliar-despesa/?periodo=${periodo_uuid}&conta_associacao=${conta_uuid}&transacao=${transacao_uuid}`, {}, authHeader())).data
 };
 export const getConciliar = async (rateio_uuid, periodo_uuid) => {
   return (await api.patch(`/api/rateios-despesas/${rateio_uuid}/conciliar/?periodo=${periodo_uuid}`, {}, authHeader())).data
