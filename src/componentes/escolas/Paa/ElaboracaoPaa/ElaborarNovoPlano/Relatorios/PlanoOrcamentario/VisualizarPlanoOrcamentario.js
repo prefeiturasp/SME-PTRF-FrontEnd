@@ -3,24 +3,103 @@ import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { RelatorioTabelaGrupo } from "../components/RelatorioTabelaGrupo";
 import { RelatorioVisualizacao } from "../components/RelatorioVisualizacao";
-import { useGetReceitasPrevistas } from "../../ReceitasPrevistas/hooks/useGetReceitasPrevistas";
-import { useGetPrioridadesRelatorio } from "../PlanoAplicacao/hooks/useGetPrioridadesRelatorio";
-import { useGetProgramasPddeTotais } from "../../ReceitasPrevistas/hooks/useGetProgramasPddeTotais";
-import { useGetTotalizadorRecursoProprio } from "../../DetalhamentoRecursosProprios/hooks/useGetTotalizarRecursoProprio";
 import { MsgImgCentralizada } from "../../../../../../Globais/Mensagens/MsgImgCentralizada";
 import Img404 from "../../../../../../../assets/img/img-404.svg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit } from "@fortawesome/free-solid-svg-icons";
-import { ASSOCIACAO_UUID } from "../../../../../../../services/auth.service";
-import { planoOrcamentarioUtils } from "./utils";
-import SessaoOutrosRecursos from "./SessaoOutrosRecursos";
+import { formatMoneyBRL } from "../../../../../../../utils/money";
 import "./styles.scss";
+import { useGetPlanoOrcamentario } from "./hooks/useGetPlanoOrcamentario";
 
-const {
-  prioridades: prioridadesUtils,
-  format: { resumo: formatResumo, total: formatResumoTotal },
-  construirSecoes,
-} = planoOrcamentarioUtils;
+const formatResumo = (
+  valores,
+  classeBase,
+  {
+    useStrong = true,
+    hideCusteioCapital = false,
+    isDespesa = false,
+    linha = null,
+  } = {}
+) => {
+  if (!valores) return null;
+
+  const Wrapper = useStrong ? "strong" : "span";
+
+  const podeExibirCategoria = (categoria) => {
+    if (!linha) return true;
+
+    const mapaFlags = {
+      custeio: "exibirCusteio",
+      capital: "exibirCapital",
+      livre: "exibirLivre",
+    };
+
+    const flagKey = mapaFlags[categoria];
+    if (!flagKey) return true;
+
+    const flag = linha[flagKey];
+    if (flag === false) return false;
+    return true;
+  };
+
+  const formatCategoria = (valor, categoria) => {
+    if (!podeExibirCategoria(categoria)) {
+      return null;
+    }
+
+    if (isDespesa) {
+      return formatMoneyBRL(valor);
+    }
+
+    return hideCusteioCapital &&
+      (categoria === "custeio" || categoria === "capital")
+      ? "-"
+      : formatMoneyBRL(valor);
+  };
+
+  const valorLivre =
+    !podeExibirCategoria("livre")
+      ? null
+      : isDespesa
+      ? "-"
+      : formatMoneyBRL(valores.livre);
+
+  const elementos = [];
+
+  const valorCusteio = formatCategoria(valores.custeio, "custeio");
+  if (valorCusteio !== null) {
+    elementos.push(<Wrapper key="custeio">{valorCusteio}</Wrapper>);
+  }
+
+  const valorCapital = formatCategoria(valores.capital, "capital");
+  if (valorCapital !== null) {
+    elementos.push(<Wrapper key="capital">{valorCapital}</Wrapper>);
+  }
+
+  if (valorLivre !== null) {
+    elementos.push(<Wrapper key="livre">{valorLivre}</Wrapper>);
+  }
+
+  if (!elementos.length) {
+    return null;
+  }
+
+  return (
+    <div className={classeBase}>
+      {elementos}
+    </div>
+  );
+};
+
+const formatResumoTotal = (valores, classeBase) => {
+  if (!valores) return null;
+
+  return (
+    <div className={`${classeBase} ${classeBase}--total`}>
+      <span>{formatMoneyBRL(valores.total)}</span>
+    </div>
+  );
+};
 
 const montarColunas = () => [
   {
@@ -42,14 +121,34 @@ const montarColunas = () => [
     title: "",
     key: "receitas-despesas-legendas",
     align: "left",
-    render: (_, linha) =>
-      linha?.isTotal ? null : (
+    render: (_, linha) => {
+      if (linha?.isTotal) return null;
+
+      const labels = [];
+
+      const podeMostrar = (flagKey) => {
+        const flag = linha?.[flagKey];
+        return flag !== false;
+      };
+
+      if (podeMostrar("exibirCusteio")) {
+        labels.push(<span key="custeio">Custeio (R$)</span>);
+      }
+      if (podeMostrar("exibirCapital")) {
+        labels.push(<span key="capital">Capital (R$)</span>);
+      }
+      if (podeMostrar("exibirLivre")) {
+        labels.push(<span key="livre">Livre Aplicação (R$)</span>);
+      }
+
+      if (!labels.length) return null;
+
+      return (
         <div className="relatorio-plano-orcamentario__receitas-despesas-labels">
-          <span>Custeio (R$)</span>
-          <span>Capital (R$)</span>
-          <span>Livre Aplicação (R$)</span>
+          {labels}
         </div>
-      ),
+      );
+    },
     width: 180,
   },
   {
@@ -63,6 +162,7 @@ const montarColunas = () => [
         : formatResumo(receitas, "relatorio-plano-orcamentario__receitas", {
             useStrong: false,
             hideCusteioCapital: linha.ocultarCusteioCapital,
+            linha,
           }),
     width: 220,
   },
@@ -78,6 +178,7 @@ const montarColunas = () => [
             useStrong: false,
             hideCusteioCapital: linha.ocultarCusteioCapital,
             isDespesa: true,
+            linha,
           }),
     width: 220,
   },
@@ -91,63 +192,28 @@ const montarColunas = () => [
         ? formatResumoTotal(saldos, "relatorio-plano-orcamentario__saldos")
         : formatResumo(saldos, "relatorio-plano-orcamentario__saldos", {
             hideCusteioCapital: linha.ocultarCusteioCapital,
+            linha,
           }),
     width: 220,
   },
 ];
-const agruparPrioridadesPorRecurso = prioridadesUtils.agruparPorRecurso;
 
 export const VisualizarPlanoOrcamentario = () => {
   const navigate = useNavigate();
-  const associacaoUuid = localStorage.getItem(ASSOCIACAO_UUID);
-  const colunas = useMemo(montarColunas, []);
-  const {
-    data: receitas = [],
-    isLoading: isCarregandoReceitas,
-    isFetching: isBuscandoReceitas,
-    isError: erroReceitas,
-  } = useGetReceitasPrevistas();
-
-  const {
-    prioridades = [],
-    isFetching: carregandoPrioridades,
-    isError: erroPrioridades,
-  } = useGetPrioridadesRelatorio();
-
-  const {
-    programas: programasPdde = [],
-    isLoading: isCarregandoProgramasPdde,
-    isError: erroProgramasPdde,
-  } = useGetProgramasPddeTotais();
   const paaUUID = localStorage.getItem("PAA");
-  const {
-    data: totalRecursosPropriosData,
-    isLoading: isCarregandoTotalRecursos,
-    isError: erroTotalRecursos,
-  } = useGetTotalizadorRecursoProprio(associacaoUuid, paaUUID);
+  const colunas = useMemo(montarColunas, []);
+  
+  const { 
+    data: planoOrcamentarioData = {}, 
+    isLoading: isCarregandoPlanoOrcamentario, 
+    isFetching: isBuscandoPlanoOrcamentario,
+    isError: erroPlanoOrcamentario 
+  } = useGetPlanoOrcamentario(paaUUID);
 
-  const totalRecursosPropriosValor = useMemo(() => {
-    const total = totalRecursosPropriosData?.total;
-    return total === undefined || total === null
-      ? null
-      : planoOrcamentarioUtils.numero(total);
-  }, [totalRecursosPropriosData]);
-
-  const prioridadesAgrupadas = useMemo(
-    () => agruparPrioridadesPorRecurso(prioridades),
-    [prioridades]
-  );
-
-  const secoes = useMemo(
-    () =>
-      construirSecoes(
-        receitas,
-        prioridadesAgrupadas,
-        totalRecursosPropriosValor,
-        programasPdde
-      ),
-    [receitas, prioridadesAgrupadas, totalRecursosPropriosValor, programasPdde]
-  );
+  // Extrai seções do plano orçamentário retornado pelo backend
+  const secoes = useMemo(() => {
+    return planoOrcamentarioData?.secoes || [];
+  }, [planoOrcamentarioData]);
 
   const handleVoltar = () => {
     navigate("/elaborar-novo-paa", {
@@ -178,22 +244,15 @@ export const VisualizarPlanoOrcamentario = () => {
       },
     });
 
-  const carregando =
-    isCarregandoReceitas ||
-    isBuscandoReceitas ||
-    carregandoPrioridades ||
-    isCarregandoProgramasPdde ||
-    isCarregandoTotalRecursos;
+  const carregando = isCarregandoPlanoOrcamentario || isBuscandoPlanoOrcamentario;
+  const erro = erroPlanoOrcamentario;
 
-  const erro =
-    erroReceitas || erroPrioridades || erroProgramasPdde || erroTotalRecursos;
-
-  const secoesComAcoes = new Set(["ptrf", "pdde", "recurso_proprio"]);
+  const secoesComAcoes = new Set(["ptrf", "pdde", "outros_recursos"]);
 
   const destinosReceitasPorSecao = {
     ptrf: "ptrf",
     pdde: "pdde",
-    recurso_proprio: "recursos-proprios",
+    outros_recursos: "recursos-proprios",
   };
 
   const obterDestinoReceitaPorSecao = (secaoKey) =>
@@ -274,13 +333,6 @@ export const VisualizarPlanoOrcamentario = () => {
       heightDeps={[secoes, carregando, erro]}
     >
       {conteudo}
-      <SessaoOutrosRecursos
-        colunas={colunas}
-        prioridades={prioridades}
-        totalRecursosProprios={totalRecursosPropriosValor}
-        handleIrParaPrioridades={handleIrParaPrioridades}
-        handleIrParaReceitas={handleIrParaReceitas}
-      />
     </RelatorioVisualizacao>
   );
 };
