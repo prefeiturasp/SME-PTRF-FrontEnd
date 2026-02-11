@@ -8,6 +8,7 @@ import {ASSOCIACAO_UUID} from "../../../../services/auth.service";
 import { usePostPaa } from "./hooks/usePostPaa";
 import { getPaaVigente, getParametroPaa } from "../../../../services/sme/Parametrizacoes.service";
 import { getStatusGeracaoDocumentoPaa } from "../../../../services/escolas/Paa.service";
+import { EstruturaCompletaModeloPaa } from './EstruturaCompletaModeloPaa';
 
 export const ElaboracaoPaa = () => {
   const associacao_uuid = localStorage.getItem(ASSOCIACAO_UUID);
@@ -101,7 +102,9 @@ export const ElaboracaoPaa = () => {
             <div className="col-12 mb-4 mt-3">
               <div dangerouslySetInnerHTML={{__html: textoPaa}}/>
             </div>
-            <p>Confira a estrutura completa aqui.</p>
+
+            <EstruturaCompletaModeloPaa />
+
             <div className="d-flex justify-content-center">
               <button
                 type="button"
