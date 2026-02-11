@@ -39,12 +39,12 @@ export const PaginasContainer = ({children}) => {
 
     const podeExibirBarraRecurso = allowedPaths.some(path => location.pathname.includes(path))
     
-    const isRecursoLegado = recursoSelecionado.legado;
+    const isRecursoLegado = recursoSelecionado?.legado;
 
     return (
         <>
             <div className={`page-content  px-5 pt-0 pb-5 ${!sidebarStatus.sideBarStatus ? "active" : ""}`} id="content">
-                {visoesService.featureFlagAtiva(FEATURE_FLAGS.PREMIO_EXCELENCIA) && !isRecursoLegado && podeExibirBarraRecurso &&
+                { recursoSelecionado && visoesService.featureFlagAtiva(FEATURE_FLAGS.PREMIO_EXCELENCIA) && !isRecursoLegado && podeExibirBarraRecurso &&
                     <BarraMensagemFixaProvider 
                         mensagem={`Você está acessando essa funcionalidade com o recurso ${recursoSelecionado?.nome.toUpperCase()}.`} 
                         exibeBotao={false}
