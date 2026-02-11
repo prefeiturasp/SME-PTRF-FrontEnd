@@ -39,7 +39,7 @@ export const PaginasContainer = ({children}) => {
 
     const podeExibirBarraRecurso = allowedPaths.some(path => location.pathname.includes(path))
     
-    const isRecursoLegado = recursoSelecionado.legado;
+    const isRecursoLegado = recursoSelecionado?.legado;
 
     return (
         <>

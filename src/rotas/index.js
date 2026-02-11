@@ -131,6 +131,7 @@ import { VisualizarPlanoOrcamentario } from "../componentes/escolas/Paa/Elaborac
 import { VisualizarAtividadesPrevistas } from "../componentes/escolas/Paa/ElaboracaoPaa/ElaborarNovoPlano/Relatorios/AtividadesPrevistas/VisualizarAtividadesPrevistas";
 import { EscolherRecursoPage } from "../paginas/SelecaoRecurso/EscolherRecursoPage";
 import useRecursoSelecionado from "../hooks/Globais/useRecursoSelecionado";
+import { FEATURE_FLAGS } from "../constantes/featureFlags";
 
 const routesConfig = [
   {
@@ -927,11 +928,14 @@ const PrivateRoute = ({ element, permissoes, featureFlag }) => {
   if (!isLoggedIn) {
     return <Navigate to="/login" replace />;
   }
+  
+  if (location.pathname !== "/seleciona-recurso" && mostrarOverlaySelecionarRecursos 
+      && visoesService.featureFlagAtiva(FEATURE_FLAGS.PREMIO_EXCELENCIA)) {
+    return <Navigate to="/seleciona-recurso" replace />;
+  }
+
   if (!hasPerm || !isFeatureEnabled) {
     return <PaginaSemPermissao />;
-  }
-  if (location.pathname !== "/seleciona-recurso" && mostrarOverlaySelecionarRecursos) {
-    return <Navigate to="/seleciona-recurso" replace />;
   }
 
   return element;
