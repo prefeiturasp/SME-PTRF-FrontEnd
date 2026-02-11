@@ -427,3 +427,7 @@ export const getDownloadAtaPaa = async (ata_paa_uuid) => {
       })
   )
 }
+
+export const getPlanoOrcamentario = async (paaUuid) => {
+  return (await api.get(`api/paa/${paaUuid}/plano-orcamentario/`, authHeader())).data;
+};
