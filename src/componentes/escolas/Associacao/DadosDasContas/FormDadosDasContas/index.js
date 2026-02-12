@@ -65,6 +65,7 @@ export const FormDadosDasContas = ({
                                                 <div key={`recurso-${nomeRecurso}`} data-testid={`recurso-${nomeRecurso}`} className={indexRecurso > 0 ? "mt-5" : ""}>
                                                     <div className="row mt-3">
                                                         <div className="col-12">
+                                                            <hr className="mb-4" />
                                                             <h5 className="mb-3"><strong>{nomeRecurso}</strong></h5>
                                                         </div>
                                                     </div>
