@@ -186,7 +186,7 @@ const OutrosRecursosModalForm = ({ open, onClose, data }) => {
                       <InputNumber
                         className="input-number-right"
                         placeholder="00,00"
-                        formatter={formatMoneyByCentsBRL}
+                        formatter={ehCampoDesabilitado("aceita_custeio") ? () => "-" : formatMoneyByCentsBRL}
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
                         disabled={ehCampoDesabilitado("aceita_custeio")}
@@ -209,7 +209,7 @@ const OutrosRecursosModalForm = ({ open, onClose, data }) => {
                       <InputNumber
                         className="input-number-right"
                         placeholder="00,00"
-                        formatter={formatMoneyByCentsBRL}
+                        formatter={ehCampoDesabilitado("aceita_custeio") ? () => "-" : formatMoneyByCentsBRL}
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
                         min={0}
@@ -259,7 +259,7 @@ const OutrosRecursosModalForm = ({ open, onClose, data }) => {
                       <InputNumber
                         className="input-number-right"
                         placeholder="00,00"
-                        formatter={formatMoneyByCentsBRL}
+                        formatter={ehCampoDesabilitado("aceita_capital") ? () => "-" : formatMoneyByCentsBRL}
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
                         disabled={ehCampoDesabilitado("aceita_capital")}
@@ -281,7 +281,7 @@ const OutrosRecursosModalForm = ({ open, onClose, data }) => {
                       <InputNumber
                         className="input-number-right"
                         placeholder="00,00"
-                        formatter={formatMoneyByCentsBRL}
+                        formatter={ehCampoDesabilitado("aceita_capital") ? () => "-" : formatMoneyByCentsBRL}
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
                         min={0}
@@ -330,7 +330,7 @@ const OutrosRecursosModalForm = ({ open, onClose, data }) => {
                       <InputNumber
                         className="input-number-right"
                         placeholder="00,00"
-                        formatter={formatMoneyByCentsBRL}
+                        formatter={ehCampoDesabilitado("aceita_livre_aplicacao") ? () => "-" : formatMoneyByCentsBRL}
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
                         disabled={ehCampoDesabilitado("aceita_livre_aplicacao")}
@@ -352,7 +352,7 @@ const OutrosRecursosModalForm = ({ open, onClose, data }) => {
                       <InputNumber
                         className="input-number-right"
                         placeholder="00,00"
-                        formatter={formatMoneyByCentsBRL}
+                        formatter={ehCampoDesabilitado("aceita_livre_aplicacao") ? () => "-" : formatMoneyByCentsBRL}
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
                         min={0}

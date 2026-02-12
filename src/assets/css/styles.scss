@@ -557,12 +557,10 @@ body {
 }
 
 table {
-  tr > td:has(.cell-desativada){
-    padding: 0 !important;
-    background-color: #DADADA;
-  }
-  td.cell-desativada{
-    padding: 0 !important;
-    background-color: #DADADA;
+  tr {
+    td:has(.cell-desativada), td.cell-desativada{
+      padding: 10px !important;
+      background-color: #DADADA;
+    }
   }
 }
