@@ -31,10 +31,12 @@ export const SelecionaRecurso = () => {
     }
   };
 
-  const opcoes = recursos.map((recurso) => ({
-    label: recurso.nome_exibicao,
-    value: recurso.uuid,
-  }));
+  const opcoes = recursos
+    .filter((recurso) => recurso.uuid !== recursoSelecionado?.uuid)
+    .map((recurso) => ({
+      label: recurso.nome_exibicao,
+      value: recurso.uuid,
+    }));
 
   return (
     <>
@@ -52,7 +54,7 @@ export const SelecionaRecurso = () => {
             variant="outlined"
             className="select-recurso-antd"
             options={opcoes}
-            value={recursoSelecionado?.uuid}
+            value={recursoSelecionado?.nome_exibicao}
             placeholder="Selecione o recurso"
             onChange={handleChangeOption}
             loading={isLoading}
