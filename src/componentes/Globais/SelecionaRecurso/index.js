@@ -21,7 +21,7 @@ export const SelecionaRecurso = () => {
         title: "Trocar de Recurso",
         // eslint-disable-next-line no-multi-str
         message: `Deseja realmente trocar de recurso para ${recursoSelecionadoObj.nome_exibicao}? <br/> \
-        Ao trocar, os dados de Resumo de recursos, Créditos e Gastos da Escola e Prestação de \
+        Ao trocar, os dados de Resumo de recursos, Créditos, Gastos da Escola e Prestação de \
         contas serão exibidos conforme o recurso selecionado.`,
         cancelText: "Cancelar",
         confirmText: "Trocar",
@@ -42,7 +42,7 @@ export const SelecionaRecurso = () => {
     <>
       {mostrarSelecionarRecursos && (
         <div className="container-seleciona-recurso">
-          {recursoSelecionado ? (
+          {recursoSelecionado && recursoSelecionado.icone ? (
             <div className="imagem-container">
               <img src={recursoSelecionado?.icone} alt="Ícone do recurso selecionado" />
             </div>
