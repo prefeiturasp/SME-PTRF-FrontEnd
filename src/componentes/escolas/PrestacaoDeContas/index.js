@@ -28,6 +28,7 @@ import { ModalPendenciasCadastrais } from "./ModalPendenciasCadastrais";
 import { ModalAvisoAssinatura } from "./ModalAvisoAssinatura";
 import { setPersistenteUrlVoltar } from "../../../store/reducers/componentes/escolas/PrestacaoDeContas/PendenciaCadastro/actions";
 import { CustomModalConfirm } from "../../Globais/Modal/CustomModalConfirm";
+import { toastCustom } from "../../../componentes/Globais/ToastCustom";
 import { ModalDevolucaoNaoPermitida } from "./ModalDevolucaoNaoPermitida";
 
 export const PrestacaoDeContas = ({setStatusPC, registroFalhaGeracaoPc, setRegistroFalhaGeracaoPc, setApresentaBarraAvisoErroProcessamentoPc}) => {
@@ -296,6 +297,9 @@ export const PrestacaoDeContas = ({setStatusPC, registroFalhaGeracaoPc, setRegis
 
                     setMensagemDevolucaoNaoPermitida(mensagem);
                     setShowModalDevolucaoNaoPermitida(true);
+                    return;
+                } else if(response && response.status === 400 && data?.erro === "erro_de_validacao") {
+                    toastCustom.ToastCustomError(`${data?.mensagem || 'Erro ao concluir período!'}`);                   
                     return;
                 }
 

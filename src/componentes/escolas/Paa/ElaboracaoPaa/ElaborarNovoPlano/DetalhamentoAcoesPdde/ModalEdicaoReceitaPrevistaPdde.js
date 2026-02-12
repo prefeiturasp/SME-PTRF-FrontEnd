@@ -99,6 +99,10 @@ const ModalEdicaoReceitaPrevistaPDDE = ({ open, onClose, receitaPrevistaPDDE }) 
     },
   ];
 
+  const disabledCusteio = receitaPrevistaPDDE && !receitaPrevistaPDDE.aceita_custeio;
+  const disabledCapital = receitaPrevistaPDDE && !receitaPrevistaPDDE.aceita_capital;
+  const disabledLivre = receitaPrevistaPDDE && !receitaPrevistaPDDE.aceita_livre_aplicacao;
+
   return (
     <ModalFormBodyText
       show={open}
@@ -162,10 +166,10 @@ const ModalEdicaoReceitaPrevistaPDDE = ({ open, onClose, receitaPrevistaPDDE }) 
                       <InputNumber
                         className="input-number-right"
                         placeholder="00,00"
-                        formatter={formatMoneyByCentsBRL}
+                        formatter={disabledCusteio ? () => "-" : formatMoneyByCentsBRL}
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
-                        disabled={receitaPrevistaPDDE && !receitaPrevistaPDDE.aceita_custeio}
+                        disabled={disabledCusteio}
                         controls={false}
                         data-testid="saldo_custeio_input"
                       />
@@ -188,11 +192,11 @@ const ModalEdicaoReceitaPrevistaPDDE = ({ open, onClose, receitaPrevistaPDDE }) 
                       <InputNumber
                         className="input-number-right"
                         placeholder="00,00"
-                        formatter={formatMoneyByCentsBRL}
+                        formatter={disabledCusteio ? () => "-" : formatMoneyByCentsBRL}
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
                         min={0}
-                        disabled={receitaPrevistaPDDE && !receitaPrevistaPDDE.aceita_custeio}
+                        disabled={disabledCusteio}
                         controls={false}
                       />
                     </Form.Item>
@@ -239,10 +243,10 @@ const ModalEdicaoReceitaPrevistaPDDE = ({ open, onClose, receitaPrevistaPDDE }) 
                       <InputNumber
                         className="input-number-right"
                         placeholder="00,00"
-                        formatter={formatMoneyByCentsBRL}
+                        formatter={disabledCapital ? () => "-" : formatMoneyByCentsBRL}
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
-                        disabled={receitaPrevistaPDDE && !receitaPrevistaPDDE.aceita_capital}
+                        disabled={disabledCapital}
                         controls={false}
                       />
                     </Form.Item>
@@ -264,11 +268,11 @@ const ModalEdicaoReceitaPrevistaPDDE = ({ open, onClose, receitaPrevistaPDDE }) 
                       <InputNumber
                         className="input-number-right"
                         placeholder="00,00"
-                        formatter={formatMoneyByCentsBRL}
+                        formatter={disabledCapital ? () => "-" : formatMoneyByCentsBRL}
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
                         min={0}
-                        disabled={receitaPrevistaPDDE && !receitaPrevistaPDDE.aceita_capital}
+                        disabled={disabledCapital}
                         controls={false}
                       />
                     </Form.Item>
@@ -314,10 +318,10 @@ const ModalEdicaoReceitaPrevistaPDDE = ({ open, onClose, receitaPrevistaPDDE }) 
                       <InputNumber
                         className="input-number-right"
                         placeholder="00,00"
-                        formatter={formatMoneyByCentsBRL}
+                        formatter={disabledLivre ? () => "-" : formatMoneyByCentsBRL}
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
-                        disabled={receitaPrevistaPDDE && !receitaPrevistaPDDE.aceita_livre_aplicacao}
+                        disabled={disabledLivre}
                         controls={false}
                       />
                     </Form.Item>
@@ -339,11 +343,11 @@ const ModalEdicaoReceitaPrevistaPDDE = ({ open, onClose, receitaPrevistaPDDE }) 
                       <InputNumber
                         className="input-number-right"
                         placeholder="00,00"
-                        formatter={formatMoneyByCentsBRL}
+                        formatter={disabledLivre ? () => "-" : formatMoneyByCentsBRL}
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
                         min={0}
-                        disabled={receitaPrevistaPDDE && !receitaPrevistaPDDE.aceita_livre_aplicacao}
+                        disabled={disabledLivre}
                         controls={false}
                       />
                     </Form.Item>

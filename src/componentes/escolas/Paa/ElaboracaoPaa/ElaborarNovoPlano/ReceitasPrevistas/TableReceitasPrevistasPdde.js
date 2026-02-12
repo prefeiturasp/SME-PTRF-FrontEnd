@@ -68,28 +68,24 @@ const TableReceitasPrevistasPdde = ({ activeTab, tabs, setActiveTab }) => {
               field="total_valor_custeio"
               header="Custeio (R$)"
               body={moneyTemplate("total_valor_custeio")}
-              align="right"
               style={{width: '15%'}}
             />
             <Column
               field="total_valor_capital"
               header="Capital (R$)"
               body={moneyTemplate("total_valor_capital")}
-              align="right"
               style={{width: '15%'}}
             />
             <Column
               field="total_valor_livre_aplicacao"
               header="Livre Aplicação (R$)"
               body={moneyTemplate("total_valor_livre_aplicacao")}
-              align="right"
               style={{width: '20%'}}
             />
             <Column
               field="total"
               header="Total (R$)"
               body={moneyTemplate("total")}
-              align="right"
               style={{width: '15%', fontWeight: 'bold'}}
             />
             <Column field="acoes" header="Ações" body={acoesTemplate} style={{width: '10%'}} />

@@ -141,7 +141,7 @@ const TabelaRecursosProprios = ({
         <span
           style={{
             fontWeight: rowData.fixed ? "bold" : "normal",
-            fontSize: rowData.fixed ? "16px" : "14px",
+            fontSize: 14,
           }}
         >
           __
@@ -155,10 +155,10 @@ const TabelaRecursosProprios = ({
       <span
         style={{
           fontWeight: rowData.fixed || campo === "total_saldos" ? "bold" : "normal",
-          fontSize: rowData.fixed ? "16px" : "14px",
+          fontSize: 14,
         }}
       >
-        {valorFormatado !== null ? `R$ ${valorFormatado}` : "__"}
+        {valorFormatado !== null ? `${valorFormatado}` : "__"}
       </span>
     );
   }, []);
