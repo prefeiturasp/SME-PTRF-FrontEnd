@@ -27,7 +27,7 @@ export const EscolherRecursoPage = () => {
             marginRight: "auto",
           }}
         >
-          Os dados de Resumo de recursos, Créditos, Gastos da Escola e Prestação de contas serão exibidos conforme o
+          Os dados de Resumo de recursos, Créditos da escola, Gastos da escola e Prestação de contas serão exibidos conforme o
           recurso selecionado.
         </Title>
 
