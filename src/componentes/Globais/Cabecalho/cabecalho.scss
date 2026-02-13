@@ -1,3 +1,25 @@
+.logo {
+  --color-primary: var(--color-primary);
+  --color-primary-lighten: #6fbec4;
+  --color-primary-darker: #184649;
+}
+
+.logo .logo-primary {
+  fill: var(--color-primary);
+}
+
+.logo .logo-light {
+  fill: var(--color-primary-lighten);
+}
+
+.logo .logo-dark {
+  fill: var(--color-primary-darker);
+}
+
+.logo .logo-text path {
+  fill: #fff;
+}
+
 .cabecalho {
   box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.05);
   background-color: #fff;
@@ -5,7 +27,6 @@
   .logo-cabecalho {
     max-width: 60px;
   }
-
   .btn-sair {
     background: transparent;
     border: none;

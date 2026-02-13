@@ -15,6 +15,7 @@ import {notificaDevolucaoPCService} from "../../../services/NotificacaDevolucaoP
 import { mantemEstadoAnaliseDre as meapcservice } from "../../../services/mantemEstadoAnaliseDre.service";
 import useRecursoSelecionado from "../../../hooks/Globais/useRecursoSelecionado";
 import { Skeleton } from "antd";
+import { LogoSigEscola } from "../LogoSigEscola";
 
 
 export const Cabecalho = () => {
@@ -152,8 +153,9 @@ export const Cabecalho = () => {
                         <div className="row d-flex align-items-center h-100">
                             <div className='col col-md-2 text-center'>
                                 {isLoading ? (<Skeleton.Avatar active size={60} />) : (
-                                    <img className="logo-cabecalho" src={recursoSelecionado?.logo || LogoPtrf} alt="Logo do Sig-Escola"/>
-                                )}
+                                    <LogoSigEscola/>
+                                    )
+                                }
                             </div>
                             <div className="col col-md-6">
                                 {exibeMenu &&
