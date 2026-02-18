@@ -116,7 +116,7 @@ export const VincularUnidades = ({tipoContaUUID}) => {
         <div
           className="col-12"
           style={{
-            background: "#00585E",
+            background: "var(--color-primary)",
             color: "white",
             padding: "15px",
             margin: "0px 15px",
@@ -191,7 +191,7 @@ export const VincularUnidades = ({tipoContaUUID}) => {
               style={{
                 fontSize: "20px",
                 marginRight: 3,
-                color: "#00585e",
+                color: "var(--color-primary)",
               }}
               icon={faPlusCircle}
             />

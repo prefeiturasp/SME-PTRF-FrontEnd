@@ -2,14 +2,12 @@ import React, {useCallback, useEffect, useState} from "react";
 import {PaginasContainer} from "../../../../../paginas/PaginasContainer";
 import "../../EdicaoDeTextos/parametrizacoes-edicao-de-textos.scss"
 import TabelaTextosPaa from "./TabelaTextosPaa";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faEdit} from "@fortawesome/free-solid-svg-icons";
 import {getTextosPaaUe, patchTextosPaaUe} from "../../../../../services/escolas/PrestacaoDeContas.service";
 import EditorWysiwyg from "../../../../Globais/EditorWysiwyg";
 import Loading from "../../../../../utils/Loading";
 import {RetornaSeTemPermissaoEdicaoPainelParametrizacoes} from "../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes"
 import {toastCustom} from "../../../../Globais/ToastCustom";
-import { Tooltip as ReactTooltip } from "react-tooltip";
+import { EditIconButton } from "../../../../Globais/UI/Button";
 
 export const TextosPaa = () => {
 
@@ -65,17 +63,9 @@ export const TextosPaa = () => {
 
     const acoesTemplate = (tipo_texto) => {
         return (
-            <div>
-                <button aria-label="Editar" className="btn-editar-membro" onClick={() => handleEditarTextos(tipo_texto)}>
-                    <div data-tooltip-content="Editar" data-tooltip-id={`tooltip-id-${tipo_texto}`}>
-                     <ReactTooltip id={`tooltip-id-${tipo_texto}`}/>
-                    <FontAwesomeIcon
-                        style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
-                        icon={faEdit}
-                    />
-                    </div>
-                </button>
-            </div>
+            <EditIconButton
+                onClick={() => handleEditarTextos(tipo_texto)}
+            />
         )
     };
 

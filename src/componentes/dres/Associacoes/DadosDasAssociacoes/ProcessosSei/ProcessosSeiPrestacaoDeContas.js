@@ -7,7 +7,7 @@ import {DataTable} from "primereact/datatable";
 import {Column} from "primereact/column";
 
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faEdit, faPlus} from "@fortawesome/free-solid-svg-icons";
+import {faPlus} from "@fortawesome/free-solid-svg-icons";
 
 import Img404 from "../../../../../assets/img/img-404.svg";
 import Loading from "../../../../../utils/Loading";
@@ -26,6 +26,7 @@ import {ConfirmaDeleteProcesso} from "./ConfirmaDeleteProcessoDialog";
 import {visoesService} from "../../../../../services/visoes.service";
 import {ModalConfirm} from "../../../../Globais/Modal/ModalConfirm";
 import {toastCustom} from "../../../../Globais/ToastCustom";
+import { EditIconButton } from "../../../../Globais/UI/Button";
 
 export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao}) => {
     const dispatch = useDispatch();
@@ -271,12 +272,9 @@ export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao}) => {
     const tableActionsTemplate = (rowData) => {
         return (
             <div>
-                <button className="btn-editar-membro" onClick={() => handleEditProcessoAction(rowData)}>
-                    <FontAwesomeIcon
-                        style={{fontSize: '20px', marginRight: "0"}}
-                        icon={faEdit}
-                    />                   
-                </button>
+                <EditIconButton
+                    onClick={() => handleEditProcessoAction(rowData)}
+                />
                 <Tooltip title={rowData.permite_exclusao ? '' : rowData.tooltip_exclusao}>
                     <Button
                         type="text"

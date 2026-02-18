@@ -214,7 +214,7 @@ const TabelaConferenciaDeLancamentos = ({
         return (
             <div className="row">
                 <div className="col-12"
-                     style={{background: "#00585E", color: 'white', padding: "15px", margin: "0px 15px", flex: "100%"}}>
+                     style={{background: "var(--color-primary)", color: 'white', padding: "15px", margin: "0px 15px", flex: "100%"}}>
                     <div className="row">
                         <div className="col-5">
                             {quantidadeSelecionada} {quantidadeSelecionada === 1 ? "lançamento selecionado" : "lançamentos selecionados"} / {totalDelancamentosParaConferencia} totais
@@ -297,7 +297,7 @@ const TabelaConferenciaDeLancamentos = ({
             <div className="d-flex justify-content-between align-middle">
                 <div>
                     Exibindo <span style={{
-                    color: "#00585E",
+                    color: "var(--color-primary)",
                     fontWeight: "bold"
                 }}>{totalDelancamentosParaConferencia}</span> lançamentos
                 </div>

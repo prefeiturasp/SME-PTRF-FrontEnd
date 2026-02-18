@@ -310,7 +310,6 @@ export const AnalisesDeContaDaPrestacao = ({
                             fontSize: "20px",
                             marginRight: "0",
                             marginTop: "2px",
-                            color: "#00585E",
                           }}
                           icon={faEye}
                         />
@@ -329,7 +328,6 @@ export const AnalisesDeContaDaPrestacao = ({
                           style={{
                             fontSize: "20px",
                             marginRight: "0",
-                            color: "#00585E",
                           }}
                           icon={faDownload}
                         />

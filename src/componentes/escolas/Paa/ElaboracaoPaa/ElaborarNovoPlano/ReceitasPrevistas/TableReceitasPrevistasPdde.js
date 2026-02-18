@@ -5,6 +5,7 @@ import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import { IconButton } from "../../../../../Globais/UI/Button/IconButton";
 import { formatMoneyBRL } from "../../../../../../utils/money";
+import { EditIconButton } from "../../../../../Globais/UI/Button";
 
 const TableReceitasPrevistasPdde = ({ activeTab, tabs, setActiveTab }) => {
   const { programas, total, isLoading } = useGetProgramasPddeTotais();
@@ -33,18 +34,12 @@ const TableReceitasPrevistasPdde = ({ activeTab, tabs, setActiveTab }) => {
   };
 
   const rowClassName = (rowData) => {
-    return rowData.fixed ? "total-row" : "inactive-row";
+    return rowData.fixed ? "total-row font-weight-bold" : "inactive-row";
   };
 
   const acoesTemplate = (rowData) => {
     return !rowData["fixed"] ? (
-      <IconButton
-        icon="faEdit"
-        tooltipMessage="Editar ações"
-        iconProps={{
-          style: { fontSize: "20px", marginRight: "0", color: "#00585E" },
-        }}
-        aria-label="Editar"
+      <EditIconButton
         onClick={() => handleChangeTab()}
       />
     ) : null;
@@ -73,29 +68,25 @@ const TableReceitasPrevistasPdde = ({ activeTab, tabs, setActiveTab }) => {
               field="total_valor_custeio"
               header="Custeio (R$)"
               body={moneyTemplate("total_valor_custeio")}
-              align="right"
               style={{width: '15%'}}
             />
             <Column
               field="total_valor_capital"
               header="Capital (R$)"
               body={moneyTemplate("total_valor_capital")}
-              align="right"
               style={{width: '15%'}}
             />
             <Column
               field="total_valor_livre_aplicacao"
               header="Livre Aplicação (R$)"
               body={moneyTemplate("total_valor_livre_aplicacao")}
-              align="right"
               style={{width: '20%'}}
             />
             <Column
               field="total"
               header="Total (R$)"
               body={moneyTemplate("total")}
-              align="right"
-              style={{width: '15%'}}
+              style={{width: '15%', fontWeight: 'bold'}}
             />
             <Column field="acoes" header="Ações" body={acoesTemplate} style={{width: '10%'}} />
           </DataTable>

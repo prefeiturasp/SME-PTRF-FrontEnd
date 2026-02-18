@@ -21,6 +21,7 @@ import {faExclamationTriangle} from '@fortawesome/free-solid-svg-icons'
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import { mantemEstadoFiltrosUnidade } from "../../../../services/mantemEstadoFiltrosUnidade.service";
 import {filtrosAvancadosReceitas} from "../../../../services/escolas/Receitas.service";
+import useRecursoSelecionado from "../../../../hooks/Globais/useRecursoSelecionado";
 
 
 export const ListaDeReceitas = () => {
@@ -45,6 +46,8 @@ export const ListaDeReceitas = () => {
     const [loading, setLoading] = useState(true);
     const [previousPath, setPreviousPath] = useState(null);
     const [state, setState] = useState(initialState);
+
+    const { recursoSelecionado } = useRecursoSelecionado({ visoesService });
 
     useEffect(() => {
         if (!previousPath) {
@@ -183,7 +186,9 @@ export const ListaDeReceitas = () => {
                         </div>
                         <div className={`${btnMaisFiltros ? "col-12" : "col-12 col-md-5 mt-2"}`}>
                             <button disabled={!visoesService.getPermissoes(['add_receita'])} onClick={() => navigate('/cadastro-de-credito')} type="submit" className="btn btn btn-outline-success float-right">Cadastrar crédito</button>
-                            <button disabled={!visoesService.getPermissoes(['add_receita'])} onClick={() => navigate('/cadastro-de-valores-reprogramados')} type="submit" className="btn btn btn-outline-success float-right mr-2">Valores reprogramados</button>
+                            { recursoSelecionado?.legado && (
+                                <button disabled={!visoesService.getPermissoes(['add_receita'])} onClick={() => navigate('/cadastro-de-valores-reprogramados')} type="submit" className="btn btn btn-outline-success float-right mr-2">Valores reprogramados</button>
+                            ) }
                         </div>
                     </div>
 

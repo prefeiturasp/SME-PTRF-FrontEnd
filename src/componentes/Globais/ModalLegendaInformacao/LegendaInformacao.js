@@ -15,7 +15,7 @@ export const LegendaInformacao = ({
                 style={{
                     fontSize: '18px',
                     marginRight: "2px",
-                    color: '#00585D'
+                    color: "var(--color-primary-darker)"
             }}
                 icon={faInfoCircle}
             />
@@ -23,7 +23,7 @@ export const LegendaInformacao = ({
                 className='legendas-table text-md-start'
                 onClick={() => setShowModalLegendaInformacao(true)}
                 style={{
-                    color: '#00585D',
+                    color: "var(--color-primary-darker)",
                     outline: 'none',
                     border: 0,
                     background: 'inherit',

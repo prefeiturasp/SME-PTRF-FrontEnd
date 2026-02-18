@@ -157,7 +157,7 @@ export const RelatorioDosAcertos = ({prestacaoDeContasUuid, analiseAtualUuid, po
                                     className="btn-editar-membro"
                                 >
                                     <FontAwesomeIcon
-                                        style={{fontSize: '15px', marginRight: "0", color: "#00585E"}}
+                                        style={{fontSize: '15px', marginRight: "0"}}
                                         icon={faDownload}
                                     />
                                 </button>

@@ -335,9 +335,9 @@ export const InformarValores = ({
 
                 return (
                   <div key={rateioKey} className="mt-4">
-                    <h6 style={{ color: "#01585e", fontWeight: 600 }}>
+                    <h6 style={{ color: "var(--color-primary)", fontWeight: 600 }}>
                       Rateio {rateioIndex + 1}
-                      <hr style={{ border: "1px solid #01585e" }} />
+                      <hr style={{ border: "1px solid var(--color-primary)" }} />
                     </h6>
 
                     <div className="row">
@@ -438,9 +438,9 @@ export const InformarValores = ({
         {/* Seção de Recursos Próprios */}
         {data[index]?.recursos_proprios && (
           <div className="mt-4">
-            <h6 style={{ color: "#01585e", fontWeight: 600 }}>
+            <h6 style={{ color: "var(--color-primary)", fontWeight: 600 }}>
               Recursos Próprios
-              <hr style={{ border: "1px solid #01585e" }} />
+              <hr style={{ border: "1px solid var(--color-primary)" }} />
             </h6>
 
             <div className="row">

@@ -1,31 +1,31 @@
 // Cores
 
 $corBranco: #ffffff;
-$corFonte: #42474A;
-$corBtnSuccess: #00585E;
-$mainColor: #00585E;
+$corFonte: #42474a;
+$corBtnSuccess: var(--color-primary);
+$mainColor: var(--color-primary);
 $whiteColor: #ffffff;
-$hoverBackgroundColor: #2B7D83;
+$hoverBackgroundcolor: var(--color-primary-lighten);
 $verdeClaro: #29d612;
-$corCinza: #9B9C9C;
-$corBtnErrorPrimaria: #B40C02;
-$corBtnErrorSecundaria: #E65050;
-$corBtnDisabled: #9B9C9C;
+$corCinza: #9b9c9c;
+$corBtnErrorPrimaria: #b40c02;
+$corBtnErrorSecundaria: #e65050;
+$corBtnDisabled: #9b9c9c;
 
-$corPrimaria: #00585E;
+$corPrimaria: var(--color-primary);
 
 // Cores Tags
-$corTagRoxo: #9C33AD;
-$corTagRoxoClaro: #5F55A1;
-$corTagLaranja: #F28A0D;
-$corTagVerdeClaro: #4F8879;
-$corTagVerde: #03543F;
+$corTagRoxo: #9c33ad;
+$corTagRoxoClaro: #5f55a1;
+$corTagLaranja: #f28a0d;
+$corTagVerdeClaro: #4f8879;
+$corTagVerde: #03543f;
 $corTagNeutral2: #424848;
-$corTagNeutral3: #9B9C9C;
-$corTagCinzaClaro: #D8DBDB;
+$corTagNeutral3: #9b9c9c;
+$corTagCinzaClaro: #d8dbdb;
 $corTagAzul: #086397;
-$corTagAzulEscuro: #1D55CF;
-$corTagVermelhoClaro: #C2255C;
+$corTagAzulEscuro: #1d55cf;
+$corTagVermelhoClaro: #c2255c;
 
 $corTagSubstituto: #076397;
 $corTagSubstituido: #42474a;

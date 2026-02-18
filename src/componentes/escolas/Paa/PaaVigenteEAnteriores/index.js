@@ -652,12 +652,8 @@ export const PaaVigenteEAnteriores = () => {
         const statusGeracao = statusAta?.status_geracao_pdf;
         
         if (statusGeracao === STATUS_ATA.CONCLUIDO && statusAta?.parecer_conselho && statusAta?.data_reuniao) {
-          const dataReuniao = new Date(statusAta.data_reuniao);
-          const dataFormatada = dataReuniao.toLocaleDateString('pt-BR', { 
-            day: '2-digit', 
-            month: '2-digit', 
-            year: 'numeric' 
-          });
+          const [anoR, mesR, diaR] = statusAta.data_reuniao.split('-');
+          const dataFormatada = `${diaR}/${mesR}/${anoR}`;
           const horaFormatada = statusAta.hora_reuniao || '00:00';
           const horaFormatadaComH = horaFormatada.replace(':', 'h');
           const parecer = statusAta.parecer_conselho === 'APROVADA' ? 'aprovado' : 'rejeitado';
@@ -709,7 +705,7 @@ export const PaaVigenteEAnteriores = () => {
               {vigente ? `PAA ${formatReferencia(vigente?.periodo_paa_objeto?.referencia)}` : 'PAA vigente'}
             </span>
             <div className="d-flex align-items-center">
-            <button
+            {false && <button
               type="button"
               className="btn btn-outline-success"
               onClick={() => navigate(-1)}
@@ -720,7 +716,7 @@ export const PaaVigenteEAnteriores = () => {
               disabled
             >
               Retificar o PAA
-            </button>
+            </button>}
               <button
                 type="button"
                 className="d-flex align-items-center justify-content-center"

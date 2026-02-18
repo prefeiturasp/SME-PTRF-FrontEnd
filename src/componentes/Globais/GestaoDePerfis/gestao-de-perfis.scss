@@ -1,25 +1,26 @@
-.container-info-permissoes{
+.container-info-permissoes {
   background-color: #d5e5e6;
 }
 
-.tabela-lista-perfis{
-  th, td{
+.tabela-lista-perfis {
+  th,
+  td {
     width: calc(100% / 6) !important;
   }
 
-  .coluna-editar{
+  .coluna-editar {
     width: 60px !important;
     text-align: center;
   }
 }
 
-.grupo-nome{
-  color: #00585e;
+.grupo-nome {
+  color: var(--color-primary);
   font-weight: bold;
 }
 
-.titulo-gestao-de-perfis-form{
+.titulo-gestao-de-perfis-form {
   font-size: 20px;
-  color: #2B7D83;
+  color: var(--color-primary-lighten);
   font-weight: 700;
 }

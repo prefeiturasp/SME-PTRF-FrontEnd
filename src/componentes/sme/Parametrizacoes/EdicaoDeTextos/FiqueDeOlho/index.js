@@ -2,8 +2,6 @@ import React, {useCallback, useEffect, useState} from "react";
 import {PaginasContainer} from "../../../../../paginas/PaginasContainer";
 import "../parametrizacoes-edicao-de-textos.scss"
 import TabelaFiqueDeOlho from "./TabelaFiqueDeOlho";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faEdit} from "@fortawesome/free-solid-svg-icons";
 import {getFiqueDeOlhoPrestacoesDeContas} from "../../../../../services/escolas/PrestacaoDeContas.service";
 import {getFiqueDeOlhoRelatoriosConsolidados} from "../../../../../services/dres/RelatorioConsolidado.service";
 import {
@@ -15,6 +13,7 @@ import {ModalInfoFiqueDeOlho} from "./ModalInfoFiqueDeOlho";
 import Loading from "../../../../../utils/Loading";
 import {RetornaSeTemPermissaoEdicaoPainelParametrizacoes} from "../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes"
 import {toastCustom} from "../../../../Globais/ToastCustom";
+import { EditIconButton } from "../../../../Globais/UI/Button";
 
 export const FiqueDeOlho = () => {
 
@@ -62,14 +61,9 @@ export const FiqueDeOlho = () => {
 
     const acoesTemplate = (tipo_texto) => {
         return (
-            <div>
-                <button className="btn-editar-membro" onClick={() => handleEditarTextos(tipo_texto)}>
-                    <FontAwesomeIcon
-                        style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
-                        icon={faEdit}
-                    />
-                </button>
-            </div>
+            <EditIconButton
+                onClick={() => handleEditarTextos(tipo_texto)}
+            />
         )
     };
 

@@ -19,6 +19,7 @@ import { BtnExportar } from "./BtnExportar";
 
 import {ModalConfirmarExportacao} from "../../../utils/Modais"
 import { consultarCodEol } from "../../../services/escolas/Associacao.service";
+import { Icon } from "../../Globais/UI/Icon";
 
 export const ConsultaDeSaldosBancariosDetalhesAssociacoes = () =>{
 
@@ -112,13 +113,13 @@ export const ConsultaDeSaldosBancariosDetalhesAssociacoes = () =>{
                     <>
                         <button className="btn-editar-membro mr-2" data-testid="botaoVerExtrato" onClick={()=>handleClickVerExtrato(rowData)}>
                             <FontAwesomeIcon
-                                style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
+                                style={{fontSize: '20px', marginRight: "0"}}
                                 icon={faSearch}
                             />
                         </button>
                         <button className="btn-editar-membro" data-testid="botaoDownloadExtrato" onClick={()=>handleClickDownloadExtrato(rowData)}>
                             <FontAwesomeIcon
-                                style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
+                                style={{fontSize: '20px', marginRight: "0"}}
                                 icon={faDownload}
                             />
                         </button>
@@ -234,9 +235,9 @@ export const ConsultaDeSaldosBancariosDetalhesAssociacoes = () =>{
                                 to={`/consulta-de-saldos-bancarios/${selectPeriodo}/${selectTipoDeConta}/`}
                                 className='btn btn-outline-success ml-2'
                             >
-                                <FontAwesomeIcon
-                                    style={{fontSize: '15px', marginRight: "3px", color: "#00585E"}}
+                                <Icon
                                     icon={faArrowLeft}
+                                    iconProps={{style: {fontSize: '15px', marginRight: "3px"}}}
                                 />
                                 Voltar
                             </Link>

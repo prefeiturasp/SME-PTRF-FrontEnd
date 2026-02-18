@@ -200,7 +200,7 @@ export const RelatorioAposAcertos = ({prestacaoDeContasUuid, prestacaoDeContas, 
                             disabled={disableBtnDownload} type="button" title="Download"
                             className="btn-editar-membro">
                                 <FontAwesomeIcon
-                                    style={{fontSize: '15px', marginRight: "0", color: "#00585E"}}
+                                    style={{fontSize: '15px', marginRight: "0"}}
                                     icon={faDownload}
                                 />
                             </button>

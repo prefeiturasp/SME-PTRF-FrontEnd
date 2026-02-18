@@ -99,6 +99,10 @@ const ModalEdicaoReceitaPrevistaPDDE = ({ open, onClose, receitaPrevistaPDDE }) 
     },
   ];
 
+  const disabledCusteio = receitaPrevistaPDDE && !receitaPrevistaPDDE.aceita_custeio;
+  const disabledCapital = receitaPrevistaPDDE && !receitaPrevistaPDDE.aceita_capital;
+  const disabledLivre = receitaPrevistaPDDE && !receitaPrevistaPDDE.aceita_livre_aplicacao;
+
   return (
     <ModalFormBodyText
       show={open}
@@ -126,22 +130,21 @@ const ModalEdicaoReceitaPrevistaPDDE = ({ open, onClose, receitaPrevistaPDDE }) 
               <Col md={8}>
                 <Flex align="center">
                   Saldo reprogramado
+                </Flex>
+              </Col>
+              <Col md={8}>
+                <Flex align="center">
+                  Receita prevista
                   <Icon
                     tooltipMessage="Orienta-se somar todos os valores recebidos de Custeio, Capital e Livre Aplicação ao longo do último ano."
                     icon="faExclamationCircle"
                     iconProps={{
                       style: {
                         fontSize: "16px",
-                        marginLeft: 4,
-                        color: "#086397",
+                        marginLeft: 4
                       },
                     }}
                   />
-                </Flex>
-              </Col>
-              <Col md={8}>
-                <Flex align="center">
-                  Receita prevista 
                 </Flex>
               </Col>
               <Col md={8}>Total</Col>
@@ -161,17 +164,18 @@ const ModalEdicaoReceitaPrevistaPDDE = ({ open, onClose, receitaPrevistaPDDE }) 
                       rules={receitaPrevistaPDDE && receitaPrevistaPDDE.aceita_custeio ? inputRules : null}
                     >
                       <InputNumber
+                        className="input-number-right"
                         placeholder="00,00"
-                        formatter={formatMoneyByCentsBRL}
+                        formatter={disabledCusteio ? () => "-" : formatMoneyByCentsBRL}
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
-                        disabled={receitaPrevistaPDDE && !receitaPrevistaPDDE.aceita_custeio}
+                        disabled={disabledCusteio}
                         controls={false}
                         data-testid="saldo_custeio_input"
                       />
                     </Form.Item>
                     <Icon
-                      icon="icone-soma-primary"
+                      icon="faPlus"
                       iconProps={{ className: "pb-3" }}
                     />
                   </Flex>
@@ -186,17 +190,18 @@ const ModalEdicaoReceitaPrevistaPDDE = ({ open, onClose, receitaPrevistaPDDE }) 
                       rules={receitaPrevistaPDDE && receitaPrevistaPDDE.aceita_custeio ? inputRules : null}
                     >
                       <InputNumber
+                        className="input-number-right"
                         placeholder="00,00"
-                        formatter={formatMoneyByCentsBRL}
+                        formatter={disabledCusteio ? () => "-" : formatMoneyByCentsBRL}
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
                         min={0}
-                        disabled={receitaPrevistaPDDE && !receitaPrevistaPDDE.aceita_custeio}
+                        disabled={disabledCusteio}
                         controls={false}
                       />
                     </Form.Item>
                     <Icon
-                      icon="icone-igual-primary"
+                      icon="faEquals"
                       iconProps={{ className: "pb-3" }}
                     />
                   </Flex>
@@ -209,6 +214,7 @@ const ModalEdicaoReceitaPrevistaPDDE = ({ open, onClose, receitaPrevistaPDDE }) 
                     style={{ marginBottom: 8 }}
                   >
                     <InputNumber
+                      className="input-number-right"
                       placeholder="00,00"
                       formatter={formatMoneyBRL}
                       parser={parseMoneyBRL}
@@ -235,16 +241,17 @@ const ModalEdicaoReceitaPrevistaPDDE = ({ open, onClose, receitaPrevistaPDDE }) 
                       rules={receitaPrevistaPDDE && receitaPrevistaPDDE.aceita_capital ? inputRules : null}
                     >
                       <InputNumber
+                        className="input-number-right"
                         placeholder="00,00"
-                        formatter={formatMoneyByCentsBRL}
+                        formatter={disabledCapital ? () => "-" : formatMoneyByCentsBRL}
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
-                        disabled={receitaPrevistaPDDE && !receitaPrevistaPDDE.aceita_capital}
+                        disabled={disabledCapital}
                         controls={false}
                       />
                     </Form.Item>
                     <Icon
-                      icon="icone-soma-primary"
+                      icon="faPlus"
                       iconProps={{ className: "pb-3" }}
                     />
                   </Flex>
@@ -259,17 +266,18 @@ const ModalEdicaoReceitaPrevistaPDDE = ({ open, onClose, receitaPrevistaPDDE }) 
                       rules={receitaPrevistaPDDE && receitaPrevistaPDDE.aceita_capital ? inputRules : null}
                     >
                       <InputNumber
+                        className="input-number-right"
                         placeholder="00,00"
-                        formatter={formatMoneyByCentsBRL}
+                        formatter={disabledCapital ? () => "-" : formatMoneyByCentsBRL}
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
                         min={0}
-                        disabled={receitaPrevistaPDDE && !receitaPrevistaPDDE.aceita_capital}
+                        disabled={disabledCapital}
                         controls={false}
                       />
                     </Form.Item>
                     <Icon
-                      icon="icone-igual-primary"
+                      icon="faEquals"
                       iconProps={{ className: "pb-3" }}
                     />
                   </Flex>
@@ -282,6 +290,7 @@ const ModalEdicaoReceitaPrevistaPDDE = ({ open, onClose, receitaPrevistaPDDE }) 
                     style={{ marginBottom: 8 }}
                   >
                     <InputNumber
+                      className="input-number-right"
                       placeholder="00,00"
                       formatter={formatMoneyBRL}
                       parser={parseMoneyBRL}
@@ -307,16 +316,17 @@ const ModalEdicaoReceitaPrevistaPDDE = ({ open, onClose, receitaPrevistaPDDE }) 
                       rules={receitaPrevistaPDDE && receitaPrevistaPDDE.aceita_livre_aplicacao ? inputRules : null}
                     >
                       <InputNumber
+                        className="input-number-right"
                         placeholder="00,00"
-                        formatter={formatMoneyByCentsBRL}
+                        formatter={disabledLivre ? () => "-" : formatMoneyByCentsBRL}
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
-                        disabled={receitaPrevistaPDDE && !receitaPrevistaPDDE.aceita_livre_aplicacao}
+                        disabled={disabledLivre}
                         controls={false}
                       />
                     </Form.Item>
                     <Icon
-                      icon="icone-soma-primary"
+                      icon="faPlus"
                       iconProps={{ className: "pb-3" }}
                     />
                   </Flex>
@@ -331,17 +341,18 @@ const ModalEdicaoReceitaPrevistaPDDE = ({ open, onClose, receitaPrevistaPDDE }) 
                       rules={receitaPrevistaPDDE && receitaPrevistaPDDE.aceita_livre_aplicacao ? inputRules : null}
                     >
                       <InputNumber
+                        className="input-number-right"
                         placeholder="00,00"
-                        formatter={formatMoneyByCentsBRL}
+                        formatter={disabledLivre ? () => "-" : formatMoneyByCentsBRL}
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
                         min={0}
-                        disabled={receitaPrevistaPDDE && !receitaPrevistaPDDE.aceita_livre_aplicacao}
+                        disabled={disabledLivre}
                         controls={false}
                       />
                     </Form.Item>
                     <Icon
-                      icon="icone-igual-primary"
+                      icon="faEquals"
                       iconProps={{ className: "pb-3" }}
                     />
                   </Flex>
@@ -354,6 +365,7 @@ const ModalEdicaoReceitaPrevistaPDDE = ({ open, onClose, receitaPrevistaPDDE }) 
                     style={{ marginBottom: 8 }}
                   >
                     <InputNumber
+                      className="input-number-right"
                       placeholder="00,00"
                       formatter={formatMoneyBRL}
                       parser={parseMoneyBRL}

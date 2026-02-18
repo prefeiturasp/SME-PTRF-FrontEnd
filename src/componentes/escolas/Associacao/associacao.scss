@@ -1,19 +1,19 @@
-.svg-inline--fa{
-  color: #00585E;
+.svg-inline--fa {
+  color: var(--color-primary-darker);
 }
 
-.tabela-membros{
-  .cabecalho{
-    background-color: #F3F3F3;
+.tabela-membros {
+  .cabecalho {
+    background-color: #f3f3f3;
   }
 
-  td{
+  td {
     width: calc(120% / 4) !important;
   }
-
 }
 
-.btn-editar-membro,.btn-editar-membro:focus {
+.btn-editar-membro,
+.btn-editar-membro:focus {
   border: none;
   background-color: transparent;
   outline: none;
@@ -23,46 +23,50 @@
   display: none !important;
 }
 
-.texto-dados-adicionais-tabela-membros{
+.texto-dados-adicionais-tabela-membros {
   font-size: 14px;
   margin-bottom: 0;
 }
 
-.link-exportar, .link-exportar:focus{
-  color: #00585E !important;
+.link-exportar,
+.link-exportar:focus {
+  color: var(--color-primary-darker) !important;
   background-color: transparent;
   outline: 0;
   border: none !important;
   text-decoration: underline;
 }
 
-.link-exportar-disabled, .link-exportar-disabled:focus, .link-exportar-disabled:hover, .link-exportar-disabled img svg path{
-  color: #7D7D7D !important;
+.link-exportar-disabled,
+.link-exportar-disabled:focus,
+.link-exportar-disabled:hover,
+.link-exportar-disabled img svg path {
+  color: #7d7d7d !important;
 }
 
-.link-exportar:hover{
+.link-exportar:hover {
   cursor: pointer;
 }
 
-.link-green{
-  color: #00585E !important;
+.link-green {
+  color: var(--color-primary-darker) !important;
 }
 
-.link-green:hover{
+.link-green:hover {
   cursor: pointer;
 }
 
-.switch-status-presidente:focus{
+.switch-status-presidente:focus {
   background-color: #00000040;
 }
 
-.switch-status-presidente-checked{
-  background-color: #307D83 !important;
+.switch-status-presidente-checked {
+  background-color: #307d83 !important;
   color: #fff !important;
 }
 
-.texto-green{
-  color: #00585E !important;
+.texto-green {
+  color: var(--color-primary-darker) !important;
 }
 
 .cursor-not-allowed {

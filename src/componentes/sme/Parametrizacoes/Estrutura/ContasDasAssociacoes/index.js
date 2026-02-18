@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { PaginasContainer } from "../../../../../paginas/PaginasContainer";
-import { Tooltip as ReactTooltip } from "react-tooltip";
 import { ModalConfirmarExclusao } from "../../componentes/ModalConfirmarExclusao";
 import {
   postContasAssociacoes,
@@ -17,7 +16,7 @@ import { BtnAdd } from "./BtnAdd";
 import { Tabela } from "./Tabela";
 import { UrlsMenuInterno } from "./UrlsMenuInterno";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus, faEdit } from "@fortawesome/free-solid-svg-icons";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import Loading from "../../../../../utils/Loading";
 import ModalForm from "./ModalForm";
 import { ModalInfoUpdateNaoPermitido } from "./ModalInfoUpdateNaoPermitido";
@@ -25,6 +24,7 @@ import { ModalInfoNaoPodeExcluir } from "../../Estrutura/Acoes/ModalInfoNaoPodeE
 import { toastCustom } from "../../../../Globais/ToastCustom";
 import Img404 from "../../../../../assets/img/img-404.svg";
 import { MsgImgCentralizada } from "../../../../Globais/Mensagens/MsgImgCentralizada";
+import { EditIconButton } from "../../../../Globais/UI/Button";
 
 export const ContasDasAssociacoes = () => {
   const initialStateFiltros = {
@@ -137,20 +137,9 @@ export const ContasDasAssociacoes = () => {
   };
   const acoesTemplate = (rowData) => {
     return (
-      <div>
-        <button
-          onClick={() => handleEditarAcoes(rowData)}
-          className="btn-editar-membro"
-        >
-          <div data-tooltip-content="Editar" data-tooltip-id={`tooltip-id-${rowData.uuid}`}>
-            <ReactTooltip id={`tooltip-id-${rowData.uuid}`} />
-            <FontAwesomeIcon
-              style={{ fontSize: "20px", marginRight: "0", color: "#00585E" }}
-              icon={faEdit}
-            />
-          </div>
-        </button>
-      </div>
+      <EditIconButton
+        onClick={() => handleEditarAcoes(rowData)}
+      />
     );
   };
 

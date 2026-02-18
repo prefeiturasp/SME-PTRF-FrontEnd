@@ -201,7 +201,7 @@ export const ClassificarBem = ({
                   }}
                 >
                   <Flex justify="space-between" align="center">
-                    <h6 style={{ color: "#01585e", fontWeight: 600 }}>
+                    <h6 style={{ color: "var(--color-primary)", fontWeight: 600 }}>
                       Item {index + 1}
                     </h6>
                     <Button
@@ -218,7 +218,7 @@ export const ClassificarBem = ({
 
                   <hr
                     style={{
-                      border: "1px solid #01585e",
+                      border: "1px solid var(--color-primary)",
                       marginTop: "8px",
                     }}
                   />

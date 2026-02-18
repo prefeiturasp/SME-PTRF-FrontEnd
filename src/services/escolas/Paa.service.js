@@ -143,6 +143,21 @@ export const downloadPdfLevantamentoPrioridades = async (associacao_uuid) => {
   }
 };
 
+export const ObterUrlModeloArquivoPlanoAnual = async (tipo_carga='MODELO_PLANO_ANUAL') => {
+  const response = await api.get(
+    `/api/modelos-cargas-paa/${tipo_carga}/download/`,
+    {
+      responseType: "blob",
+      timeout: 30000,
+      ...authHeader(),
+    }
+  );
+
+  const contentType = response?.headers?.["content-type"] || "application/pdf";
+  const blob = new Blob([response.data], { type: contentType });
+  return window.URL.createObjectURL(blob);
+};
+
 // Recursos Próprios
 export const getRecursosProprios = async (associacaoUUID, page = 1, paaUUID = null) => {
   let url = `api/recursos-proprios-paa/?associacao__uuid=${associacaoUUID}&page=${page}&page_size=20`;
@@ -427,3 +442,7 @@ export const getDownloadAtaPaa = async (ata_paa_uuid) => {
       })
   )
 }
+
+export const getPlanoOrcamentario = async (paaUuid) => {
+  return (await api.get(`api/paa/${paaUuid}/plano-orcamentario/`, authHeader())).data;
+};

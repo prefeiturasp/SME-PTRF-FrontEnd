@@ -28,7 +28,7 @@ const cardTitleStyle = {
     fontWeight: "bold",
     fontSize: "15px",
     lineHeight: "18px",
-    color: "#2B7D83",
+    color: "var(--color-primary-lighten)",
     textAlign:"center"
 };
 
@@ -38,7 +38,7 @@ const cardSubTitleStyle = {
     fontWeight: "bold",
     fontSize: "15px",
     lineHeight: "18px",
-    color: "#2B7D83",
+    color: "var(--color-primary-lighten)",
     textAlign:"right"
 };
 
@@ -49,7 +49,7 @@ const GrupoTituloStyle = {
     fontWeight: "bold",
     fontSize: "20px",
     lineHeight: "23px",
-    color: "#2B7D83",
+    color: "var(--color-primary-lighten)",
 };
 
 

@@ -10,13 +10,14 @@ import {
 import TabelaTags from "./TabelaTags";
 import {Filtros} from "./Filtros";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faEdit, faPlus} from "@fortawesome/free-solid-svg-icons";
+import {faPlus} from "@fortawesome/free-solid-svg-icons";
 import ModalFormTags from "./ModalFormTags";
 import {ModalInfoNaoPermitido} from "./ModalInfoNaoPermitido";
 import {ModalConfirmDeleteTag} from "./ModalConfirmDeleteTag";
 import {BtnAddTags} from "./BtnAddTags";
 import Loading from "../../../../../utils/Loading";
 import { toastCustom } from "../../../../Globais/ToastCustom";
+import { EditIconButton } from "../../../../Globais/UI/Button";
 
 export const Tags = ()=>{
 
@@ -100,14 +101,9 @@ export const Tags = ()=>{
 
     const acoesTemplate = useCallback((rowData) =>{
         return (
-            <div>
-                <button className="btn-editar-membro" onClick={()=>handleEditFormModalTags(rowData)}>
-                    <FontAwesomeIcon
-                        style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
-                        icon={faEdit}
-                    />
-                </button>
-            </div>
+            <EditIconButton
+                onClick={()=>handleEditFormModalTags(rowData)}
+            />
         )
     }, [handleEditFormModalTags]);
 

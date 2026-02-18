@@ -1,84 +1,84 @@
-.ant-modal-footer{
-    text-align: center !important;
+.ant-modal-footer {
+  text-align: center !important;
 }
 
-.modal-ant-design{
-    .ant-modal-footer{
-        .ant-btn-default{
-            color: #00585E;
-            background-color: #FFFFFF;
-            border: 1px solid #00585E;
-            border-radius: 3px;
-            font-weight: 700;
-        }
-
-        .ant-btn-primary{
-            color: #FFFFFF;
-            background-color: #00585E;
-            border: 1px solid #00585E;
-            border-radius: 3px;
-            font-weight: 700;
-        }
+.modal-ant-design {
+  .ant-modal-footer {
+    .ant-btn-default {
+      color: var(--color-primary);
+      background-color: #ffffff;
+      border: 1px solid var(--color-primary);
+      border-radius: 3px;
+      font-weight: 700;
     }
 
-    .title-modal-antdesign-aviso{
-        font-weight: 700;
-        font-size: 20px;
-        line-height: 28px;
-        color: #42474A;
+    .ant-btn-primary {
+      color: #ffffff;
+      background-color: var(--color-primary);
+      border: 1px solid var(--color-primary);
+      border-radius: 3px;
+      font-weight: 700;
     }
+  }
 
-    .text-modal-antdesign-aviso{
-        font-weight: 400;
-        font-size: 16px;
-        line-height: 24px;
-        color: #B40C02;
-    }
+  .title-modal-antdesign-aviso {
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 28px;
+    color: #42474a;
+  }
 
-    .observacao-modal{
-        background-color: #F4F4F4;
-    }
+  .text-modal-antdesign-aviso {
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 24px;
+    color: #b40c02;
+  }
 
-    .title-observacao-modal-antdesign-aviso {
-        font-weight: 700;
-        font-size: 14px;
-    }
+  .observacao-modal {
+    background-color: #f4f4f4;
+  }
+
+  .title-observacao-modal-antdesign-aviso {
+    font-weight: 700;
+    font-size: 14px;
+  }
 }
 
-.modal-ant-design.modal-conclusao-analise-nao-permitida{
-    font-family: "Roboto";
+.modal-ant-design.modal-conclusao-analise-nao-permitida {
+  font-family: "Roboto";
 
-    .title-modal-antdesign-aviso{
-        font-weight: 700;
-        font-size: 24px;
-        line-height: 28px;
-        color: #42474A;
-    }
+  .title-modal-antdesign-aviso {
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 28px;
+    color: #42474a;
+  }
 
-    .body-text-modal-antdesign-aviso{
-        font-weight: 400;
-        font-size: 18px;
-        line-height: 24px;
-        color: #000000;
-    } 
+  .body-text-modal-antdesign-aviso {
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 24px;
+    color: #000000;
+  }
 }
 
 .modal-ant-design.modal-notifica-erro-concluir-pc {
-    font-family: "Roboto";
+  font-family: "Roboto";
 
-    .title-modal-antdesign-notifica-erro-pc {
-        font-size: 20px;
-        font-weight: 700;
-        line-height: 32px;
-        letter-spacing: 0px;
-        text-align: center;
-    }
+  .title-modal-antdesign-notifica-erro-pc {
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 32px;
+    letter-spacing: 0px;
+    text-align: center;
+  }
 
-    .body-text-modal-antdesign-notifica-erro-pc {
-        font-size: 16px;
-        font-weight: 400;
-        line-height: 24px;
-        letter-spacing: 0.15px;
-        text-align: center;
-    }
+  .body-text-modal-antdesign-notifica-erro-pc {
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 24px;
+    letter-spacing: 0.15px;
+    text-align: center;
+  }
 }

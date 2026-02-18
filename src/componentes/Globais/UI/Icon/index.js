@@ -20,7 +20,7 @@ export const Icon = ({ icon, tooltipMessage = "", iconProps = {} }) => {
 
   return tooltipMessage ? (
     <Tooltip title={tooltipMessage}>
-      <span>{renderIcon()}</span>
+      <span style={{ color: "var(--color-primary)" }}>{renderIcon()}</span>
     </Tooltip>
   ) : (
     renderIcon()
