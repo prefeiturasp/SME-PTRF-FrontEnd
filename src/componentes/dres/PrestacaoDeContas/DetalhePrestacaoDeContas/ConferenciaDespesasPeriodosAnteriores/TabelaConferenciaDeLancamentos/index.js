@@ -357,7 +357,7 @@ const TabelaConferenciaDeLancamentos = ({
             <div className="d-flex justify-content-between align-middle">
                 <div>
                     Exibindo <span style={{
-                    color: "#00585E",
+                    color: "var(--color-primary)",
                     fontWeight: "bold"
                 }}>{totalLancamentos}</span> lançamentos
                 </div>

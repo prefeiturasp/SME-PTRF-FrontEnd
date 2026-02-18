@@ -118,7 +118,7 @@ export const LoginSuporteForm = ({redefinicaoDeSenha}) => {
                                     {props.touched.login && props.errors.senha && <span className="span_erro text-danger mt-1"> {props.errors.senha} </span>}
                                     {msgSenha && !props.errors.login && <span className="span_erro text-danger mt-1">{msgSenha}</span>}
                                 </div>
-                                <button type="submit" className="btn btn-success  btn-block  mt-2">Acessar</button>
+                                <button type="submit" className="btn btn-success btn-fallback btn-block mt-2">Acessar</button>
                             </form>
                         )}
                     </Formik>
@@ -129,7 +129,7 @@ export const LoginSuporteForm = ({redefinicaoDeSenha}) => {
 
                     <button 
                         type="submit" 
-                        className="btn btn-block btn-outline-success mt-2" 
+                        className="btn btn-block btn-outline-fallback mt-2" 
                         onClick={()=>window.location.assign('/login')} 
                     >
                         Retornar para a página principal

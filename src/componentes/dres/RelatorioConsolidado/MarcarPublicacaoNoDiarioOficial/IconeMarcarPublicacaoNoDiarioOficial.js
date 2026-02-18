@@ -1,10 +1,8 @@
 import React, {memo, useState} from "react";
 import {ModalMarcarPublicacaoNoDiarioOficial} from "../ModalMarcarPublicacaoNoDiarioOficial";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faEdit} from '@fortawesome/free-solid-svg-icons'
-import { Tooltip as ReactTooltip } from "react-tooltip";
 import moment from "moment";
 import {visoesService} from "../../../../services/visoes.service";
+import { EditIconButton } from "../../../Globais/UI/Button";
 
 const IconeMarcarPublicacaoNoDiarioOficial = ({consolidadoDre, carregaConsolidadosDreJaPublicadosProximaPublicacao}) => {
     const [showModalMarcarPublicacaoNoDiarioOficial, setShowModalMarcarPublicacaoNoDiarioOficial] = useState(false)
@@ -24,22 +22,12 @@ const IconeMarcarPublicacaoNoDiarioOficial = ({consolidadoDre, carregaConsolidad
     return (
         <>
             {consolidadoDre && consolidadoDre.ja_publicado && consolidadoDre.data_publicacao &&
-                <div data-tooltip-content={retornaMsgToolTip()} data-html={true} style={{display:'inline'}} data-tooltip-id={`tooltip-id-${consolidadoDre.uuid}`}>
-                    <button
-                        disabled={!visoesService.getPermissoes(['change_relatorio_consolidado_dre'])}
-                        onClick={() => setShowModalMarcarPublicacaoNoDiarioOficial(true)}
-                        className="btn btn-link pt-1 pb-1 pl-2 pr-0"
-                    >
+                <EditIconButton
+                    tooltipMessage={retornaMsgToolTip()}
+                    disabled={!visoesService.getPermissoes(['change_relatorio_consolidado_dre'])}
+                    onClick={() => setShowModalMarcarPublicacaoNoDiarioOficial(true)}
 
-                        <FontAwesomeIcon
-                            style={{marginRight: "0", color: '#00585E', fontSize: '18px'}}
-                            icon={faEdit}
-                        />
-
-
-                    </button>
-                    <ReactTooltip id={`tooltip-id-${consolidadoDre.uuid}`} html={true}/>
-                </div>
+                />
             }
             <section>
                 <ModalMarcarPublicacaoNoDiarioOficial

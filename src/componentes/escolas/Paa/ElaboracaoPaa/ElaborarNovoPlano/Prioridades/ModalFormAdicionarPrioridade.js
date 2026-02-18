@@ -481,6 +481,7 @@ const ModalFormAdicionarPrioridade = ({ open, onClose, tabelas, formModal, focus
                   style={{ marginBottom: 4 }}
                 >
                   <InputNumber
+                    className="input-number-right"
                     ref={valorTotalRef}
                     placeholder="00,00"
                     formatter={formatMoneyByCentsBRL}

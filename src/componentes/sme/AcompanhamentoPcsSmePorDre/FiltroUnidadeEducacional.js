@@ -185,7 +185,7 @@ return (
         </div>
         <div className="col-md-1 pl-0">
             <div className="d-flex flex-column">
-                <Button type="submit" className="h-50" style={{marginTop: '30px', background: '#00585D'}}>Filtrar</Button>
+                <Button type="submit" className="h-50 btn-primary" style={{marginTop: '30px'}}>Filtrar</Button>
             </div>
         </div>
     </div>

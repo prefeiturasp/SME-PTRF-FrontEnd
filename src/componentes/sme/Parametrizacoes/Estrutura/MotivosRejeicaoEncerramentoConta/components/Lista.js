@@ -1,17 +1,15 @@
 import React, { useContext } from "react";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { MotivosRejeicaoContext } from "../context/MotivosRejeicao";
 import { useGetMotivosRejeicao } from "../hooks/useGetMotivosRejeicao";
 import { usePostMotivoRejeicao } from "../hooks/usePostMotivoRejeicao";
 import { usePatchMotivoRejeicao } from "../hooks/usePatchMotivoRejeicao";
-import { Tooltip as ReactTooltip } from "react-tooltip";
-import { faEdit } from "@fortawesome/free-solid-svg-icons";
 import Loading from "../../../../../../utils/Loading";
 import {ModalForm} from "./ModalForm";
 import { ModalConfirmacaoExclusao } from "./ModalConfirmacaoExclusao";
 import { useDeleteMotivoRejeicao } from "../hooks/useDeleteMotivoRejeicao";
+import { EditIconButton } from "../../../../../Globais/UI/Button";
 
 export const Lista = () => {
 
@@ -25,17 +23,9 @@ export const Lista = () => {
     const {results} = data
     const acoesTemplate = (rowData) => {
         return (
-            <div>
-                <button className="btn-editar-membro" onClick={() => handleEditFormModal(rowData)}>
-                    <span data-tooltip-content="Editar motivo" data-html={true}>
-                        <FontAwesomeIcon
-                            style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
-                            icon={faEdit}
-                        />
-                        <ReactTooltip/>
-                    </span>
-                </button>
-            </div>
+            <EditIconButton
+                onClick={()=> handleEditFormModal(rowData)}
+            />            
         )
     };
 

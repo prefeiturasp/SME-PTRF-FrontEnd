@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState} from "react";
-import {Link, useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import "./consulta-saldos-bancarios.css"
 import {PaginasContainer} from "../../../paginas/PaginasContainer";
 import {getPeriodos, getTiposDeConta, getSaldosPorTipoDeUnidade, getSaldosPorDre, getSaldosPorUeDre, getSaldosDetalhesAssociacoesExportar} from "../../../services/sme/ConsultaDeSaldosBancarios.service";
@@ -11,14 +11,14 @@ import Img404 from "../../../assets/img/img-404.svg"
 import {TabelaSaldosPorTipoDeUnidade} from "./TabelaSaldosPorTipoDeUnidade";
 import {TabelaSaldosPorDre} from "./TabelaSaldosPorDre";
 import {TabelaSaldosPorUeDre} from "./TabelaSaldosPorUeDre";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faEye} from "@fortawesome/free-solid-svg-icons";
 import { BtnExportar } from "./BtnExportar";
 import {ModalConfirmarExportacao} from "../../../utils/Modais"
+import {VisualizarIconButton} from "../../Globais/UI/Button";
 
 export const ConsultaDeSaldosBancarios = () => {
 
     let {periodo_uuid, conta_uuid} = useParams();
+    const navigate = useNavigate();
 
     const [periodos, setPeriodos] = useState([])
     const [selectPeriodo, setSelectPeriodo] = useState(periodo_uuid);
@@ -113,16 +113,9 @@ export const ConsultaDeSaldosBancarios = () => {
 
     const acoesTemplate = (dre_uuid) =>{
         return (
-            <div>
-                <Link
-                    to={`/consulta-de-saldos-bancarios-detalhes-associacoes/${selectPeriodo}/${selectTipoDeConta}/${dre_uuid}`}
-                >
-                    <FontAwesomeIcon
-                        style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
-                        icon={faEye}
-                    />
-                </Link>
-            </div>
+            <VisualizarIconButton
+                onClick={() => navigate(`/consulta-de-saldos-bancarios-detalhes-associacoes/${selectPeriodo}/${selectTipoDeConta}/${dre_uuid}`)}
+            />
         )
     };
 

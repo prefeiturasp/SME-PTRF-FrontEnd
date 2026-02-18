@@ -14,6 +14,7 @@ import { ModalForm } from "./ModalForm";
 import {MsgImgCentralizada} from "../../../../Globais/Mensagens/MsgImgCentralizada";
 import Img404 from "../../../../../assets/img/img-404.svg";
 import { ModalConfirmarExclusao } from "../../componentes/ModalConfirmarExclusao"
+import { EditIconButton } from "../../../../Globais/UI/Button";
 
 export const Tabela = () => {
 
@@ -38,12 +39,8 @@ export const Tabela = () => {
   const acoesTemplate = (rowData) => {
       return (
         <Tooltip title="Editar objetivo do PAA">
-            <IconButton
-                icon="faEdit"
-                iconProps={{style: {fontSize: '20px', marginRight: "0", color: "#00585E"}}}
+            <EditIconButton
                 onClick={() => handleEditFormModal(rowData)}
-                aria-label="Editar"
-                className="btn-Editar-objetivo"
             />
         </Tooltip>
       )

@@ -143,6 +143,7 @@ const UrlsMenuEscolas = {
           url: "execucao-paa",
           dataFor: "execucao-paa",
           icone: "",
+          featureFlag: "execucao-paa",
           permissoes: ["access_paa"],
         },
         {

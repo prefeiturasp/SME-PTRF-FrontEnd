@@ -9,7 +9,7 @@ export const TabelaDevolucoesContaPtrf = ({devolucoesContaPtrf, valorTemplate, o
                 <div className='col-12'>
                     <p className='titulo-devolucoes'>
                         <FontAwesomeIcon
-                            style={{fontSize: '20px', marginRight: "3px", color: "#00585e"}}
+                            style={{fontSize: '20px', marginRight: "3px", color: "var(--color-primary)"}}
                             icon={faWallet}
                         />
                         Devoluções a conta PTRF

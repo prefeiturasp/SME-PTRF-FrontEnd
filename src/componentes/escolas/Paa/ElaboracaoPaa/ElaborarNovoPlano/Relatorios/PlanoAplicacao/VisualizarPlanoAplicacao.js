@@ -60,7 +60,7 @@ const columnsDefinition = (ehOutrosRecursos = false) => [
         : record.isTotal
         ? formatMoneyBRL(0)
         : "-",
-    align: "center",
+    align: "end",
     width: 160,
   },
 ];

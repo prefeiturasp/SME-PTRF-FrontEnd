@@ -784,7 +784,6 @@ export const FormularioEditaAta = ({
                                                                                     style={{
                                                                                         fontSize: '12px',
                                                                                         marginRight: "4px",
-                                                                                        color: "#00585E"
                                                                                     }}
                                                                                     icon={faCheckCircle}
                                                                                 />

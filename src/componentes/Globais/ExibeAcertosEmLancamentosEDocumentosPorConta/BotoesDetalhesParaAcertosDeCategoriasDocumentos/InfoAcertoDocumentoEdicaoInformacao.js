@@ -13,7 +13,7 @@ const InfoAcertoDocumentoEdicaoInformacao = ({analise_documento}) => {
                     >
                         <>
                             <FontAwesomeIcon
-                                style={{fontSize: '16px', color: '#00585E'}}
+                                style={{fontSize: '16px'}}
                                 icon={faCheckCircle}
                             />
                             <strong> Justificativas e informações adicionais atualizada </strong>

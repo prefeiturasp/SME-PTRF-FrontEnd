@@ -3,7 +3,7 @@ import { getEspecificacoesCapital, getEspecificacoesCusteio } from "../../../../
 
 export const useGetEspecificacoes = (tipo, tipo_custeio = "") => {
   const {
-    status,
+    isFetching,
     isError,
     data = [],
     error,
@@ -25,5 +25,5 @@ export const useGetEspecificacoes = (tipo, tipo_custeio = "") => {
     enabled: tipo === 'CAPITAL' || (tipo === 'CUSTEIO' && !!tipo_custeio), // Só executa se tipo for CAPITAL ou se for CUSTEIO com tipo_custeio preenchido
   });
   
-  return { isLoading: status === "loading", isError, especificacoes: data, error, refetch };
+  return { isLoading: isFetching, isError, especificacoes: data, error, refetch };
 };

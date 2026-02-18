@@ -386,7 +386,7 @@ const RetificacaoRelatorioConsolidado = () => {
                 return (
                     <div className="row">
                         <div className="col-12" style={{padding:"15px 0px", margin:"0px 15px", flex:"100%"}}>
-                            Exibindo <span style={{color: "#00585E", fontWeight:"bold"}}>{pcsEmRetificacao.length}</span> unidade
+                            Exibindo <span style={{color: "var(--color-primary)", fontWeight:"bold"}}>{pcsEmRetificacao.length}</span> unidade
                         </div>
                     </div>
                 )
@@ -395,7 +395,7 @@ const RetificacaoRelatorioConsolidado = () => {
                 return (
                     <div className="row">
                         <div className="col-12" style={{padding:"15px 0px", margin:"0px 15px", flex:"100%"}}>
-                            Exibindo <span style={{color: "#00585E", fontWeight:"bold"}}>{pcsEmRetificacao.length}</span> unidades
+                            Exibindo <span style={{color: "var(--color-primary)", fontWeight:"bold"}}>{pcsEmRetificacao.length}</span> unidades
                         </div>
                     </div>
                 )
@@ -406,7 +406,7 @@ const RetificacaoRelatorioConsolidado = () => {
                 return (
                     <div className="row">
                         <div className="col-12" style={{padding:"15px 0px", margin:"0px 15px", flex:"100%"}}>
-                            Exibindo <span style={{color: "#00585E", fontWeight:"bold"}}>{pcsDoConsolidado.length}</span> unidade
+                            Exibindo <span style={{color: "var(--color-primary)", fontWeight:"bold"}}>{pcsDoConsolidado.length}</span> unidade
                         </div>
                     </div>
                 )
@@ -415,7 +415,7 @@ const RetificacaoRelatorioConsolidado = () => {
                 return (
                     <div className="row">
                         <div className="col-12" style={{padding:"15px 0px", margin:"0px 15px", flex:"100%"}}>
-                            Exibindo <span style={{color: "#00585E", fontWeight:"bold"}}>{pcsDoConsolidado.length}</span> unidades
+                            Exibindo <span style={{color: "var(--color-primary)", fontWeight:"bold"}}>{pcsDoConsolidado.length}</span> unidades
                         </div>
                     </div>
                 )
@@ -426,7 +426,7 @@ const RetificacaoRelatorioConsolidado = () => {
     const montagemRetificar = () => {
         return(
             <div className="row">
-                <div className="col-12" style={{background: "#00585E", color: 'white', padding:"15px", margin:"0px 15px", flex:"100%"}}>
+                <div className="col-12" style={{background: "var(--color-primary)", color: 'white', padding:"15px", margin:"0px 15px", flex:"100%"}}>
                     <div className="row">
                         <div className="col-5">
                             {quantidadeSelecionada} {quantidadeSelecionada === 1 ? "unidade selecionada" : "unidades selecionadas"}  / {pcsDoConsolidado.length} totais
@@ -462,7 +462,7 @@ const RetificacaoRelatorioConsolidado = () => {
     const montagemDesfazerRetificacao = () => {
         return(
             <div className="row">
-                <div className="col-12" style={{background: "#00585E", color: 'white', padding:"15px", margin:"0px 15px", flex:"100%"}}>
+                <div className="col-12" style={{background: "var(--color-primary)", color: 'white', padding:"15px", margin:"0px 15px", flex:"100%"}}>
                     <div className="row">
                         <div className="col-5">
                             {quantidadeSelecionadaEmRetificacao} {quantidadeSelecionadaEmRetificacao === 1 ? "unidade selecionada" : "unidades selecionadas"}  / {pcsEmRetificacao.length} totais

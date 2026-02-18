@@ -1,6 +1,5 @@
 import React, {useCallback, useEffect, useMemo, useState} from "react";
 import {PaginasContainer} from "../../../../../paginas/PaginasContainer";
-import { Tooltip as ReactTooltip } from "react-tooltip";
 import {
     getTiposDeTransacao,
     getFiltrosTiposDeTransacao,
@@ -11,7 +10,7 @@ import {
 import Tabela from "./Tabela";
 import {Filtros} from "./Filtros";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faEdit, faPlus, faClose, faCheck} from "@fortawesome/free-solid-svg-icons";
+import {faPlus, faClose, faCheck} from "@fortawesome/free-solid-svg-icons";
 import ModalForm from "./ModalForm";
 import {ModalInfoUpdateNaoPermitido} from "./ModalInfoUpdateNaoPermitido";
 import Img404 from "../../../../../assets/img/img-404.svg"
@@ -22,6 +21,7 @@ import Loading from "../../../../../utils/Loading";
 import {ModalInfoNaoPodeExcluir} from "../../Estrutura/Acoes/ModalInfoNaoPodeExcluir";
 import {toastCustom} from "../../../../Globais/ToastCustom";
 import './tipo_transacao.scss'
+import { EditIconButton } from "../../../../Globais/UI/Button";
 
 
 export const TiposDeTransacao = ()=>{
@@ -121,17 +121,9 @@ export const TiposDeTransacao = ()=>{
 
     const acoesTemplate = useCallback((rowData) =>{
         return (
-            <div>
-                <button className="btn-editar-membro" onClick={()=>handleEditFormModal(rowData)}>
-                    <div data-tooltip-content="Editar" data-tooltip-id={`tooltip-id-${rowData.uuid}`}>
-                        <ReactTooltip id={`tooltip-id-${rowData.uuid}`}/>
-                        <FontAwesomeIcon
-                            style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
-                            icon={faEdit}
-                        />
-                    </div>
-                </button>
-            </div>
+            <EditIconButton
+                onClick={()=>handleEditFormModal(rowData)}
+            />
         )
     }, [handleEditFormModal]);
 

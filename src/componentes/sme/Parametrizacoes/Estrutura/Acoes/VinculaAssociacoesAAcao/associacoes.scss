@@ -1,47 +1,47 @@
-#dropdown-basic{
-    background: none;
-    color: black;
-    border: none;
+#dropdown-basic {
+  background: none;
+  color: black;
+  border: none;
 }
 
 #dropdown-basic:hover {
-    border: none;
+  border: none;
 }
 
-.show>.btn-primary.dropdown-toggle {
-    color: none;
-    background: none;
-    border: none;
-    border-color: none;
+.show > .btn-primary.dropdown-toggle {
+  color: none;
+  background: none;
+  border: none;
+  border-color: none;
 }
 #dropdown-basic:focus {
-    border-color: none;
-    box-shadow: none;
+  border-color: none;
+  box-shadow: none;
 }
 
 // Para o botão do Toast
 .close {
-    float: right;
-    font-size: 1.5rem;
-    font-weight: 700;
-    line-height: 1;
-    color:#fff;
-    text-shadow: 0 1px 0 #fff;
-    opacity: .5;
+  float: right;
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1;
+  color: #fff;
+  text-shadow: 0 1px 0 #fff;
+  opacity: 0.5;
 }
 
-.link-green{
-  color: #00585E !important;
+.link-green {
+  color: var(--color-primary) !important;
 }
 
-.link-green:hover{
+.link-green:hover {
   cursor: pointer;
 }
 
-.link-red{
-  color: #B40C02 !important;
+.link-red {
+  color: #b40c02 !important;
 }
 
-.link-red:hover{
+.link-red:hover {
   cursor: pointer;
 }

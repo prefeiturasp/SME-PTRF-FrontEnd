@@ -3,11 +3,12 @@ import { DataTable } from "primereact/datatable";
 import { useCallback } from "react";
 import { formatMoneyBRL } from "../../../../../../utils/money";
 import { IconButton } from "../../../../../Globais/UI/Button/IconButton";
+import { EditIconButton } from "../../../../../Globais/UI/Button";
 
 const TabelaReceitasPrevistas = ({ data, handleOpenEditar, totalRecursosProprios }) => {
   const nomeTemplate = useCallback((rowData) => {
     return (
-      <span style={{ color: "#00585E" }} className="font-weight-bold">
+      <span style={{ color: "var(--color-primary)" }} className="font-weight-bold">
         {rowData.acao.nome}
       </span>
     );
@@ -74,7 +75,7 @@ const TabelaReceitasPrevistas = ({ data, handleOpenEditar, totalRecursosProprios
         };
 
         return (
-          <div className="text-right font-bold">
+          <div className="text-right font-weight-bold">
             {formatMoneyBRL(fieldMapping[column.field])}
           </div>
         );
@@ -128,13 +129,7 @@ const TabelaReceitasPrevistas = ({ data, handleOpenEditar, totalRecursosProprios
 
   const acoesTemplate = (rowData) => {
     return !rowData["fixed"] ? (
-      <IconButton
-        icon="faEdit"
-        tooltipMessage="Editar"
-        iconProps={{
-          style: { fontSize: "20px", marginRight: "0", color: "#00585E" },
-        }}
-        aria-label="Editar"
+      <EditIconButton
         onClick={() => handleOpenEditar(rowData)}
       />
     ) : null;
@@ -154,7 +149,7 @@ const TabelaReceitasPrevistas = ({ data, handleOpenEditar, totalRecursosProprios
         body={dataTemplate}
         style={{width: '20%'}}
       />
-      <Column field="total" header="Total (R$)" body={dataTemplate} style={{width: '15%'}} />
+      <Column field="total" header="Total (R$)" body={dataTemplate} style={{width: '15%', fontWeight: 'bold'}} />
       <Column field="acoes" header="Ações" body={acoesTemplate} style={{width: '10%'}} />
     </DataTable>
   );

@@ -3,20 +3,21 @@ import "./gestao-de-perfis.scss"
 import {AccordionInfo} from "./AccordionInfo";
 import {FormFiltros} from "./FormFiltros";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faEdit, faKey, faPlus} from "@fortawesome/free-solid-svg-icons";
+import {faKey, faPlus} from "@fortawesome/free-solid-svg-icons";
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import {getGrupos, getUsuarios, getUsuariosFiltros} from "../../../services/GestaoDePerfis.service";
 import {visoesService} from "../../../services/visoes.service";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {UrlsMenuInterno} from "./UrlsMenuInterno";
 import {MenuInterno} from "../MenuInterno";
 import Loading from "../../../utils/Loading";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import {barraMensagemCustom} from "../BarraMensagem";
+import { EditIconButton } from "../UI/Button/EditIconButton";
 
 export const GestaoDePerfis = () => {
-
+    const navigate = useNavigate();
     const visao_selecionada = visoesService.getItemUsuarioLogado('visao_selecionada.nome');
     const unidade_selecionada = visoesService.getItemUsuarioLogado('unidade_selecionada.uuid');
 
@@ -140,17 +141,9 @@ export const GestaoDePerfis = () => {
 
     const acoesTemplate = (rowData) =>{
         return (
-            <Link
-                className="link-green text-center"
-                to={{
-                    pathname: `/gestao-de-perfis-form/${rowData.id}`,
-                }}
-            >
-                <FontAwesomeIcon
-                    style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
-                    icon={faEdit}
-                />
-            </Link>
+            <EditIconButton
+                onClick={() => navigate(`/gestao-de-perfis-form/${rowData.id}`)}
+            />
         )
     };
 

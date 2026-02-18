@@ -23,6 +23,7 @@ import {ModalConfirmDeleteAcaoAssociacao} from "./ModalConfirmDeleteAcaoAssociac
 import {ModalInfoQtdeRateiosReceitasAcao} from "./ModalInfoQtdeRateiosReceitasAcao";
 import { getTabelaAssociacoes } from "../../../../../services/dres/Associacoes.service";
 import { toastCustom } from "../../../../Globais/ToastCustom";
+import { EditIconButton } from "../../../../Globais/UI/Button";
 
 export const AcoesDasAssociacoes = () => {
 
@@ -133,14 +134,9 @@ export const AcoesDasAssociacoes = () => {
     };
     const acoesTemplate = (rowData) => {
         return (
-            <div>
-                <button onClick={() => handleEditarAcoes(rowData)} className="btn-editar-membro">
-                    <FontAwesomeIcon
-                        style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
-                        icon={faEdit}
-                    />
-                </button>
-            </div>
+            <EditIconButton
+                onClick={() => handleEditarAcoes(rowData)}
+            />
         )
     };
 

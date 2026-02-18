@@ -19,7 +19,7 @@ export const Cabecalho = ({relatorioConsolidado}) => {
                     className="btn btn-outline-success btn-ir-para-listagem ml-2"
                     >
                     <FontAwesomeIcon
-                        style={{marginRight: "5px", color: '#00585E'}}
+                        style={{marginRight: "5px"}}
                         icon={faArrowLeft}
                         />
                     Ir para a listagem

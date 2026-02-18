@@ -7,6 +7,7 @@ import { formatMoneyBRL } from "../../../../../../utils/money";
 import { BadgeCustom } from './BadgeCustom';
 import { BarraAcaoEmLote } from './BarraAcaoEmLote';
 import { RECURSOS_PRIORIDADE } from "../../../../../../constantes/prioridades";
+import { EditIconButton } from '../../../../../Globais/UI/Button';
 
 
 export const Tabela = forwardRef(({ data, handleEditar, handleDuplicar, handleExcluir, handleExcluirEmLote }, ref) => {
@@ -110,6 +111,7 @@ export const Tabela = forwardRef(({ data, handleEditar, handleDuplicar, handleEx
                             <BadgeCustom
                                 badge={true}
                                 buttonColor='#62a9ad'
+                                offset={[-97, -2]}
                                 buttonLabel='Informar Recurso'
                                 handleClick={() => handleEditar(rowData, ['recurso'])}
                             />
@@ -145,8 +147,8 @@ export const Tabela = forwardRef(({ data, handleEditar, handleDuplicar, handleEx
                 field="valor_total"
                 header="Valor total"
                 sortable
-                style={{ width: "120px", textAlign: "center" }}
-                bodyStyle={{ textAlign: 'center' }}
+                align={'right'}
+                style={{ width: "120px" }}
                 body={(rowData) => (
                     <>
                         {!rowData.valor_total ?
@@ -164,18 +166,13 @@ export const Tabela = forwardRef(({ data, handleEditar, handleDuplicar, handleEx
             />
             <Column
                 header="Ações"
-                style={{ width: "75px", borderLeft: "none", textAlign: 'center' }}
+                style={{ width: "75px", borderLeft: "none" }}
+                align={'center'}
                 body={rowData => {
                     return (
                         <Space direction="horizontal" size={0}>
-                            <IconButton
+                            <EditIconButton
                                 className='p-2'
-                                icon="faEdit"
-                                tooltipMessage="Editar"
-                                iconProps={{
-                                style: { color: "#00585E" },
-                                }}
-                                aria-label="Editar"
                                 onClick={() => handleEditar(rowData, [])}
                             />
                             <IconButton
@@ -192,9 +189,6 @@ export const Tabela = forwardRef(({ data, handleEditar, handleDuplicar, handleEx
                                 className='p-2'
                                 icon="faCopy"
                                 tooltipMessage="Duplicar"
-                                iconProps={{
-                                style: { color: "#00585E" },
-                                }}
                                 aria-label="Duplicar"
                                 onClick={() => handleDuplicar(rowData)}
                             />

@@ -7,6 +7,7 @@ import { Tooltip as ReactTooltip } from "react-tooltip";
 import {Paginacao} from "./Paginacao";
 import { formatMoneyBRL } from '../../../../../../utils/money';
 import ModalEdicaoReceitaPrevistaPDDE from './ModalEdicaoReceitaPrevistaPdde';
+import {EditIconButton} from "../../../../../Globais/UI/Button";
 
 const Tabela = ({
     rowsPerPage, 
@@ -26,32 +27,16 @@ const Tabela = ({
 
     const acoesTemplate = (rowData) => {
         return (
-            <div style={{ display: 'flex', justifyContent: 'center' }}>
-                <button onClick={() => handleOpenModalForm(rowData)} className="btn-editar-membro" data-testid="botao-editar" aria-label="Editar ação">
-                    <div data-tooltip-content="Editar ação" data-tooltip-id={`tooltip-id-${rowData.uuid}`}>
-                        <ReactTooltip id={`tooltip-id-${rowData.uuid}`}/>
-                        <FontAwesomeIcon
-                            style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
-                            icon={faEdit}
-                        />
-                    </div>
-                </button>
-            </div>
+            <EditIconButton
+                onClick={() => handleOpenModalForm(rowData)}
+            />
         )
     }
 
     const moneyTemplate = (previsao, saldo, acceptsField) => {
         if (!acceptsField) {
             return (
-                <div style={{
-                    backgroundColor: '#DADADA',
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    margin: '-0.5rem -1rem'
-                }} />
+                <div className="cell-desativada"> - </div>
             );
         }
 

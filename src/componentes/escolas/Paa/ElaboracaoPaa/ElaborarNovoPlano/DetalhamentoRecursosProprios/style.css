@@ -11,7 +11,7 @@
   height: initial !important;
 }
 .tabela-recursos-proprios-lista .p-datatable-row:last-child {
-  background-color: rgba(43, 125, 131, 1) !important;
+  background-color: var(--color-primary) !important;
 }
 .tabela-recursos-proprios-lista .p-datatable-row:last-child td {
   color: white !important;
@@ -22,66 +22,66 @@
 }
 
 .tabela-recursos-proprios-lista .p-datatable .p-datatable-tbody > tr:last-child {
-  background-color: rgba(43, 125, 131, 1) !important;
+  background-color: var(--color-primary) !important;
 }
 
 .tabela-recursos-proprios-lista .p-datatable .p-datatable-tbody > tr:last-child > td {
-  background-color: rgba(43, 125, 131, 1) !important;
+  background-color: var(--color-primary) !important;
   color: white !important;
   font-weight: 600 !important;
   border: none !important;
 }
 
 .tabela-recursos-proprios-lista .p-datatable .p-datatable-tbody > tr:last-child:hover > td {
-  background-color: rgba(43, 125, 131, 1) !important;
+  background-color: var(--color-primary) !important;
   color: white !important;
 }
 
 .tabela-recursos-proprios-lista .p-datatable .p-datatable-tbody > tr[data-pc-section="row"]:last-child {
-  background-color: rgba(43, 125, 131, 1) !important;
+  background-color: var(--color-primary) !important;
 }
 
 .tabela-recursos-proprios-lista .p-datatable .p-datatable-tbody > tr[data-pc-section="row"]:last-child > td {
-  background-color: rgba(43, 125, 131, 1) !important;
+  background-color: var(--color-primary) !important;
   color: white !important;
   font-weight: 600 !important;
   border: none !important;
 }
 
 .tabela-recursos-proprios-lista .p-datatable .p-datatable-tbody > tr:has([data-fixed="true"]) {
-  background-color: rgba(43, 125, 131, 1) !important;
+  background-color: var(--color-primary) !important;
 }
 
 .tabela-recursos-proprios-lista .p-datatable .p-datatable-tbody > tr:has([data-fixed="true"]) > td {
-  background-color: rgba(43, 125, 131, 1) !important;
+  background-color: var(--color-primary) !important;
   color: white !important;
   font-weight: 600 !important;
   border: none !important;
 }
 
 .tabela-recursos-proprios-lista .p-datatable .p-datatable-tbody > tr:has(td:contains("TOTAL")) {
-  background-color: rgba(43, 125, 131, 1) !important;
+  background-color: var(--color-primary) !important;
 }
 
 .tabela-recursos-proprios-lista .p-datatable .p-datatable-tbody > tr:has(td:contains("TOTAL")) > td {
-  background-color: rgba(43, 125, 131, 1) !important;
+  background-color: var(--color-primary) !important;
   color: white !important;
   font-weight: 600 !important;
   border: none !important;
 }
 
 .tabela-recursos-proprios-lista.total-row {
-  background-color: rgba(43, 125, 131, 1) !important;
+  background-color: var(--color-primary) !important;
 }
 
 .tabela-recursos-proprios-lista .total-row td {
-  background-color: rgba(43, 125, 131, 1) !important;
+  background-color: var(--color-primary) !important;
   color: white !important;
   font-weight: 600 !important;
   border: none !important;
 }
 
 .tabela-recursos-proprios-lista .total-row:hover td {
-  background-color: rgba(43, 125, 131, 1) !important;
+  background-color: var(--color-primary) !important;
   color: white !important;
 }

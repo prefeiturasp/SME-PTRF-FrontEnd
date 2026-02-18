@@ -1,11 +1,11 @@
 .text-resumo {
-    color: #00585e;
-    font-size: 24px;
-    font-weight: bold;
+  color: var(--color-primary);
+  font-size: 24px;
+  font-weight: bold;
 }
 
 .container-botoes {
-    :first-child {
-        margin-right: 10px;
-    }
+  :first-child {
+    margin-right: 10px;
+  }
 }

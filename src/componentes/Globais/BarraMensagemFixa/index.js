@@ -8,7 +8,7 @@ export const BarraMensagemFixa = () => {
   const navigate = useNavigate();
 
   const { data_status_cadastro_associacao } = useGetStatusCadastroAssociacao();
-  const { mensagem, txtBotao, url } = useContext(BarraMensagemFixaContext);
+  const { mensagem, txtBotao, url, exibeBotao } = useContext(BarraMensagemFixaContext);
 
   const exibeBarra = () => {
     if (
@@ -30,9 +30,9 @@ export const BarraMensagemFixa = () => {
       {exibeBarra() &&
         barraMensagemCustom.BarraMensagemSucessLaranja(
           mensagem,
-          txtBotao,
-          goTo,
-          true
+          exibeBotao ? txtBotao : null,
+          exibeBotao ? goTo : null,
+          exibeBotao
         )}
     </>
   );

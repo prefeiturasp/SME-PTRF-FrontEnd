@@ -3,7 +3,7 @@ import { getAcoesPDDE } from "../../../../../../../services/sme/Parametrizacoes.
 
 export const useGetAcoesPDDE = ({ enabled }) => {
   const {
-    status,
+    isFetching,
     isError,
     data = {},
     error,
@@ -17,5 +17,5 @@ export const useGetAcoesPDDE = ({ enabled }) => {
     enabled: enabled
 });
 
-  return { isLoading: status === "loading", isError, acoesPdde: data, error, refetch };
+  return { isLoading: isFetching, isError, acoesPdde: data, error, refetch };
 };

@@ -13,6 +13,7 @@ import { usePostMotivoEstorno } from "./hooks/usePostMotivoEstorno";
 import { usePatchMotivoEstorno } from "./hooks/usePatchMotivoEstorno";
 import { useDeleteMotivoEstorno } from "./hooks/useDeleteMotivoEstorno";
 import Tabela from "./Tabela";
+import { EditIconButton } from "../../../../Globais/UI/Button";
 
 export const Lista = () => {
   const { isLoading, data: results, count } = useGetMotivosEstorno();
@@ -50,13 +51,8 @@ export const Lista = () => {
   const acoesTemplate = useCallback(
     (rowData) => {
       return (
-        <IconButton
-          icon="faEdit"
-          iconProps={{
-            style: { fontSize: "20px", marginRight: "0", color: "#00585E" },
-          }}
+        <EditIconButton
           onClick={() => handleEditFormModal(rowData)}
-          aria-label="Editar"
         />
       );
     },

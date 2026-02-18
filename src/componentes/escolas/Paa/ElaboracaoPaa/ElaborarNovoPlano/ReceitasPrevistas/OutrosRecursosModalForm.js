@@ -4,11 +4,7 @@ import { ModalFormBodyText } from "../../../../../Globais/ModalBootstrap";
 import { Icon } from "../../../../../Globais/UI/Icon";
 import { usePostReceitasPrevistasOutrosRecursos } from "./hooks/usePostReceitasPrevistasOutrosRecursosPeriodo";
 import { usePatchReceitasPrevistasOutrosRecursosPeriodo } from "./hooks/usePatchReceitasPrevistasOutrosRecursosPeriodo";
-import {
-  formatMoneyBRL,
-  formatMoneyByCentsBRL,
-  parseMoneyBRL,
-} from "../../../../../../utils/money";
+import { formatMoneyBRL, formatMoneyByCentsBRL, parseMoneyBRL } from "../../../../../../utils/money";
 import "./style.css";
 
 const initialValues = {
@@ -25,8 +21,7 @@ const OutrosRecursosModalForm = ({ open, onClose, data }) => {
   const recursoConfig = useMemo(() => data?.outro_recurso_objeto, [data]);
   const isLoading = false;
   const { mutationPost } = usePostReceitasPrevistasOutrosRecursos(onClose);
-  const { mutationPatch } =
-    usePatchReceitasPrevistasOutrosRecursosPeriodo(onClose);
+  const { mutationPatch } = usePatchReceitasPrevistasOutrosRecursosPeriodo(onClose);
 
   Form.useWatch("saldo_capital", form);
   Form.useWatch("saldo_custeio", form);
@@ -60,10 +55,8 @@ const OutrosRecursosModalForm = ({ open, onClose, data }) => {
         previsao_valor_livre: previsao_valor_livre * 100,
 
         // TOTAIS
-        total_custeio:
-          previsao_valor_custeio + valorZeroOuPositivo(saldo_custeio),
-        total_capital:
-          previsao_valor_capital + valorZeroOuPositivo(saldo_capital),
+        total_custeio: previsao_valor_custeio + valorZeroOuPositivo(saldo_custeio),
+        total_capital: previsao_valor_capital + valorZeroOuPositivo(saldo_capital),
         total_livre: previsao_valor_livre + valorZeroOuPositivo(saldo_livre),
       });
     }
@@ -121,24 +114,17 @@ const OutrosRecursosModalForm = ({ open, onClose, data }) => {
       tooltipMessage={texto}
       icon="faExclamationCircle"
       iconProps={{
-        style: { fontSize: "16px", marginLeft: 4, color: "#086397" },
+        style: { fontSize: "16px", marginLeft: 4},
       }}
     />
   );
 
   const toolTipValorNegativo = () => {
-    const texto =
-      "O saldo negativo não será computado para o cálculo, será considerado o valor R$0,00.";
+    const texto = "O saldo negativo não será computado para o cálculo, será considerado o valor R$0,00.";
     return toolTip(texto);
   };
 
   const toolTipReceitaPrevistaOrientacao = () => {
-    const texto =
-      "Orienta-se somar todos os valores recebidos de Custeio, Capital e Livre Aplicação ao longo do último ano.";
-    return toolTip(texto);
-  };
-
-  const toolTipSaldoReprogramdo = () => {
     const texto =
       "Orienta-se somar todos os valores recebidos de Custeio, Capital e Livre Aplicação ao longo do último ano.";
     return toolTip(texto);
@@ -150,7 +136,7 @@ const OutrosRecursosModalForm = ({ open, onClose, data }) => {
 
       return !recursoConfig[campoNome];
     },
-    [recursoConfig]
+    [recursoConfig],
   );
 
   return (
@@ -160,11 +146,7 @@ const OutrosRecursosModalForm = ({ open, onClose, data }) => {
       onHide={onClose}
       size="lg"
       bodyText={
-        <Spin
-          spinning={
-            isLoading || mutationPatch.isPending || mutationPost.isPending
-          }
-        >
+        <Spin spinning={isLoading || mutationPatch.isPending || mutationPost.isPending}>
           <Form
             form={form}
             onFinish={onSubmit}
@@ -173,16 +155,11 @@ const OutrosRecursosModalForm = ({ open, onClose, data }) => {
             role="form"
             className="p-2"
           >
-            <Row
-              gutter={[16, 16]}
-              style={{ marginBottom: 16, color: "rgba(66, 71, 74, 1)" }}
-            >
-              <Col md={8}>Saldo reprogramado {toolTipSaldoReprogramdo()}</Col>
+            <Row gutter={[16, 16]} style={{ marginBottom: 16, color: "rgba(66, 71, 74, 1)" }}>
+              <Col md={8}>Saldo reprogramado</Col>
 
               <Col md={8}>
-                <Flex align="center">
-                  Receita Prevista {toolTipReceitaPrevistaOrientacao()}
-                </Flex>
+                <Flex align="center">Receita Prevista {toolTipReceitaPrevistaOrientacao()}</Flex>
               </Col>
               <Col md={8}>Total</Col>
             </Row>
@@ -197,8 +174,7 @@ const OutrosRecursosModalForm = ({ open, onClose, data }) => {
                           Custeio{" "}
                           {
                             /* Exibe tooltip quando o valor for negativo */
-                            (form?.getFieldsValue()?.saldo_custeio || 0) < 0 &&
-                              toolTipValorNegativo()
+                            (form?.getFieldsValue()?.saldo_custeio || 0) < 0 && toolTipValorNegativo()
                           }
                         </>
                       }
@@ -208,18 +184,16 @@ const OutrosRecursosModalForm = ({ open, onClose, data }) => {
                       rules={inputRules}
                     >
                       <InputNumber
+                        className="input-number-right"
                         placeholder="00,00"
-                        formatter={formatMoneyByCentsBRL}
+                        formatter={ehCampoDesabilitado("aceita_custeio") ? () => "-" : formatMoneyByCentsBRL}
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
                         disabled={ehCampoDesabilitado("aceita_custeio")}
                         controls={false}
                       />
                     </Form.Item>
-                    <Icon
-                      icon="icone-soma-primary"
-                      iconProps={{ className: "pb-3" }}
-                    />
+                    <Icon icon="faPlus" iconProps={{ className: "pb-3" }} />
                   </Flex>
                 </Col>
 
@@ -233,8 +207,9 @@ const OutrosRecursosModalForm = ({ open, onClose, data }) => {
                       rules={inputRules}
                     >
                       <InputNumber
+                        className="input-number-right"
                         placeholder="00,00"
-                        formatter={formatMoneyByCentsBRL}
+                        formatter={ehCampoDesabilitado("aceita_custeio") ? () => "-" : formatMoneyByCentsBRL}
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
                         min={0}
@@ -242,21 +217,14 @@ const OutrosRecursosModalForm = ({ open, onClose, data }) => {
                         disabled={ehCampoDesabilitado("aceita_custeio")}
                       />
                     </Form.Item>
-                    <Icon
-                      icon="icone-igual-primary"
-                      iconProps={{ className: "pb-3" }}
-                    />
+                    <Icon icon="faEquals" iconProps={{ className: "pb-3" }} />
                   </Flex>
                 </Col>
 
                 <Col md={8}>
-                  <Form.Item
-                    label="Custeio"
-                    name="total_custeio"
-                    labelCol={{ span: 24 }}
-                    style={{ marginBottom: 8 }}
-                  >
+                  <Form.Item label="Custeio" name="total_custeio" labelCol={{ span: 24 }} style={{ marginBottom: 8 }}>
                     <InputNumber
+                      className="input-number-right"
                       placeholder="00,00"
                       formatter={formatMoneyBRL}
                       parser={parseMoneyBRL}
@@ -279,8 +247,7 @@ const OutrosRecursosModalForm = ({ open, onClose, data }) => {
                           Capital{" "}
                           {
                             /* Exibe tooltip quando o valor for negativo */
-                            (form?.getFieldsValue()?.saldo_capital || 0) < 0 &&
-                              toolTipValorNegativo()
+                            (form?.getFieldsValue()?.saldo_capital || 0) < 0 && toolTipValorNegativo()
                           }
                         </>
                       }
@@ -290,18 +257,16 @@ const OutrosRecursosModalForm = ({ open, onClose, data }) => {
                       rules={inputRules}
                     >
                       <InputNumber
+                        className="input-number-right"
                         placeholder="00,00"
-                        formatter={formatMoneyByCentsBRL}
+                        formatter={ehCampoDesabilitado("aceita_capital") ? () => "-" : formatMoneyByCentsBRL}
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
                         disabled={ehCampoDesabilitado("aceita_capital")}
                         controls={false}
                       />
                     </Form.Item>
-                    <Icon
-                      icon="icone-soma-primary"
-                      iconProps={{ className: "pb-3" }}
-                    />
+                    <Icon icon="faPlus" iconProps={{ className: "pb-3" }} />
                   </Flex>
                 </Col>
                 <Col md={8}>
@@ -314,8 +279,9 @@ const OutrosRecursosModalForm = ({ open, onClose, data }) => {
                       rules={inputRules}
                     >
                       <InputNumber
+                        className="input-number-right"
                         placeholder="00,00"
-                        formatter={formatMoneyByCentsBRL}
+                        formatter={ehCampoDesabilitado("aceita_capital") ? () => "-" : formatMoneyByCentsBRL}
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
                         min={0}
@@ -323,20 +289,13 @@ const OutrosRecursosModalForm = ({ open, onClose, data }) => {
                         disabled={ehCampoDesabilitado("aceita_capital")}
                       />
                     </Form.Item>
-                    <Icon
-                      icon="icone-igual-primary"
-                      iconProps={{ className: "pb-3" }}
-                    />
+                    <Icon icon="faEquals" iconProps={{ className: "pb-3" }} />
                   </Flex>
                 </Col>
                 <Col md={8}>
-                  <Form.Item
-                    label="Capital"
-                    name="total_capital"
-                    labelCol={{ span: 24 }}
-                    style={{ marginBottom: 8 }}
-                  >
+                  <Form.Item label="Capital" name="total_capital" labelCol={{ span: 24 }} style={{ marginBottom: 8 }}>
                     <InputNumber
+                      className="input-number-right"
                       placeholder="00,00"
                       formatter={formatMoneyBRL}
                       parser={parseMoneyBRL}
@@ -359,8 +318,7 @@ const OutrosRecursosModalForm = ({ open, onClose, data }) => {
                           Livre Aplicação{" "}
                           {
                             /* Exibe tooltip quando o valor for negativo */
-                            (form?.getFieldsValue()?.saldo_livre || 0) < 0 &&
-                              toolTipValorNegativo()
+                            (form?.getFieldsValue()?.saldo_livre || 0) < 0 && toolTipValorNegativo()
                           }
                         </>
                       }
@@ -370,18 +328,16 @@ const OutrosRecursosModalForm = ({ open, onClose, data }) => {
                       rules={inputRules}
                     >
                       <InputNumber
+                        className="input-number-right"
                         placeholder="00,00"
-                        formatter={formatMoneyByCentsBRL}
+                        formatter={ehCampoDesabilitado("aceita_livre_aplicacao") ? () => "-" : formatMoneyByCentsBRL}
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
                         disabled={ehCampoDesabilitado("aceita_livre_aplicacao")}
                         controls={false}
                       />
                     </Form.Item>
-                    <Icon
-                      icon="icone-soma-primary"
-                      iconProps={{ className: "pb-3" }}
-                    />
+                    <Icon icon="faPlus" iconProps={{ className: "pb-3" }} />
                   </Flex>
                 </Col>
                 <Col md={8}>
@@ -394,8 +350,9 @@ const OutrosRecursosModalForm = ({ open, onClose, data }) => {
                       rules={inputRules}
                     >
                       <InputNumber
+                        className="input-number-right"
                         placeholder="00,00"
-                        formatter={formatMoneyByCentsBRL}
+                        formatter={ehCampoDesabilitado("aceita_livre_aplicacao") ? () => "-" : formatMoneyByCentsBRL}
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
                         min={0}
@@ -403,10 +360,7 @@ const OutrosRecursosModalForm = ({ open, onClose, data }) => {
                         disabled={ehCampoDesabilitado("aceita_livre_aplicacao")}
                       />
                     </Form.Item>
-                    <Icon
-                      icon="icone-igual-primary"
-                      iconProps={{ className: "pb-3" }}
-                    />
+                    <Icon icon="faEquals" iconProps={{ className: "pb-3" }} />
                   </Flex>
                 </Col>
                 <Col md={8}>
@@ -417,6 +371,7 @@ const OutrosRecursosModalForm = ({ open, onClose, data }) => {
                     style={{ marginBottom: 8 }}
                   >
                     <InputNumber
+                      className="input-number-right"
                       placeholder="00,00"
                       formatter={formatMoneyBRL}
                       parser={parseMoneyBRL}
@@ -430,11 +385,7 @@ const OutrosRecursosModalForm = ({ open, onClose, data }) => {
             </Row>
 
             <Flex gap={16} justify="end" className="mt-3">
-              <button
-                type="button"
-                className="btn btn-outline-success"
-                onClick={onClose}
-              >
+              <button type="button" className="btn btn-outline-success" onClick={onClose}>
                 Cancelar
               </button>
 

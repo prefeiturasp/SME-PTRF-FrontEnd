@@ -1,7 +1,8 @@
 import React, {Fragment} from "react";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {faAngleDown, faAngleUp, faEdit, faTimesCircle} from '@fortawesome/free-solid-svg-icons'
+import {faAngleDown, faAngleUp, faTimesCircle} from '@fortawesome/free-solid-svg-icons'
 import {useNavigate} from "react-router-dom";
+import { EditIconButton } from "../../../Globais/UI/Button";
 
 export const TabelaMembros = ({titulo, clickIconeToogle, toggleIcon, cargos, converteNomeRepresentacao, retornaDadosAdicionaisTabela, onDeleteMembro, verificaSeExibeToolTip=null, visoesService}) => {
     const navigate = useNavigate();
@@ -44,7 +45,7 @@ export const TabelaMembros = ({titulo, clickIconeToogle, toggleIcon, cargos, con
                                 <td><span>{item.infos && item.infos.representacao ? converteNomeRepresentacao(item.infos.representacao) : ""}</span></td>
                                 <td>
                                     <div className="d-flex justify-content-center">
-                                        <button
+                                        <EditIconButton
                                             onClick={() => {
                                                 navigate(`/cadastro-de-membros-da-associacao/${item && item.infos && item.infos.uuid ? item.infos.uuid : ''}`, {
                                                     state: {
@@ -52,14 +53,7 @@ export const TabelaMembros = ({titulo, clickIconeToogle, toggleIcon, cargos, con
                                                     }
                                                 });
                                             }}
-                                            className="btn-editar-membro"
-                                        >
-                                            <FontAwesomeIcon
-                                                style={{fontSize: '20px', marginRight: "0"}}
-                                                icon={faEdit}
-                                            />
-                                        </button>
-
+                                        />
                                         {podeEditarDadosMembros(item) &&
                                             <button
                                                 disabled={!podeEditarDadosMembros(item)}

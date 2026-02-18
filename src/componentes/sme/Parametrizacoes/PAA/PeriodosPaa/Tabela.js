@@ -1,13 +1,13 @@
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
-import { Tooltip, Button } from "antd";
-import { IconButton } from "../../../../Globais/UI";
+import { Button } from "antd";
 import moment from "moment";
 import Loading from "../../../../../utils/Loading";
 import { useGet } from "./hooks/useGet";
 import {MsgImgCentralizada} from "../../../../Globais/Mensagens/MsgImgCentralizada";
 import Img404 from "../../../../../assets/img/img-404.svg";
 import { useNavigate } from 'react-router-dom';
+import { EditIconButton, VisualizarIconButton } from "../../../../Globais/UI/Button";
 
 export const Tabela = () => {
     const navigate = useNavigate();
@@ -20,25 +20,13 @@ export const Tabela = () => {
   const acoesTemplate = (rowData) => {
       return (
           rowData?.editavel ? (
-            <Tooltip title="Editar período do PAA">
-                <IconButton
-                    icon="faEdit"
-                    iconProps={{style: {fontSize: '20px', marginRight: "0", color: "#00585E"}}}
-                    onClick={() => handleEditFormModal(rowData)}
-                    aria-label="Editar"
-                    className="btn-Editar-periodo"
-                />
-            </Tooltip>
+            <EditIconButton
+                onClick={() => handleEditFormModal(rowData)}
+            />
         ) : (
-            <Tooltip title="Visualizar período do PAA">
-                <IconButton
-                    icon="faEye"
-                    iconProps={{style: {fontSize: '20px', marginRight: "0", color: "#00585E"}}}
-                    onClick={() => handleEditFormModal(rowData)}
-                    aria-label="Visualizar"
-                    className="btn-visualizar-periodo"
-                />
-            </Tooltip>
+            <VisualizarIconButton
+                onClick={() => handleEditFormModal(rowData)}
+            />
         )
       )
   };

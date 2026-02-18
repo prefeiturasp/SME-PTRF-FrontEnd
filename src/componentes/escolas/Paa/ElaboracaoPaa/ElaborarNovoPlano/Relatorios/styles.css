@@ -5,13 +5,13 @@
   border-bottom-left-radius: 8px;
   border-bottom-right-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  border: 1px solid #DADADA;
+  border: 1px solid #dadada;
   margin-top: 20px;
   overflow: hidden;
 }
 
 .documentos-header {
-  background: #F3F3F3;
+  background: #f3f3f3;
   padding: 16px 20px;
   display: flex;
   justify-content: space-between;
@@ -23,7 +23,7 @@
   margin: 0;
   font-size: 18px;
   font-weight: bold;
-  color: #42474A;
+  color: #42474a;
 }
 
 .documentos-buttons {
@@ -33,8 +33,8 @@
 
 .btn-previas {
   background: white;
-  border: 1px solid #00585E;
-  color: #00585E;
+  border: 1px solid var(--color-primary);
+  color: var(--color-primary);
   padding: 8px 16px;
   border-radius: 4px;
   font-size: 14px;
@@ -48,8 +48,8 @@
 }
 
 .btn-gerar {
-  background: #00585E;
-  border: 1px solid #00585E;
+  background: var(--color-primary);
+  border: 1px solid var(--color-primary);
   color: white;
   padding: 8px 16px;
   border-radius: 4px;
@@ -101,7 +101,7 @@
 }
 
 .btn-dropdown {
-  background: #DADADA;
+  background: #dadada;
   border: none;
   width: 32px;
   height: 32px;
@@ -125,8 +125,8 @@
 
 .btn-editar {
   background: white;
-  border: 1px solid #00585E;
-  color: #00585E;
+  border: 1px solid var(--color-primary);
+  color: var(--color-primary);
   padding: 6px 12px;
   border-radius: 4px;
   font-size: 14px;
@@ -187,7 +187,7 @@
 
 .texto-campo-1 {
   font-size: 14px;
-  color: #42474A;
+  color: #42474a;
 }
 
 .texto-campo-1 p {
@@ -207,7 +207,8 @@
   font-style: italic;
 }
 
-.texto-campo-1 ul, .texto-campo-1 ol {
+.texto-campo-1 ul,
+.texto-campo-1 ol {
   margin: 8px 0;
   padding-left: 20px;
 }
@@ -230,7 +231,6 @@
   border-radius: 4px;
   margin-bottom: 0;
 }
-
 
 /* Estilos para o editor dentro do dropdown */
 .editor-dropdown-container {
@@ -263,7 +263,6 @@
   color: #40a9ff;
 }
 
-
 .editor-dropdown-container .editor-section {
   margin-bottom: 20px;
   /* padding-bottom: 15px; */
@@ -277,7 +276,7 @@
 }
 
 .editor-dropdown-container h5 {
-  color: #42474A;
+  color: #42474a;
   font-size: 14px;
   font-weight: 600;
   margin-bottom: 10px;
@@ -312,7 +311,7 @@
   background: white;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  border: 1px solid #DADADA;
+  border: 1px solid #dadada;
 }
 
 .editor-section {
@@ -328,17 +327,16 @@
 }
 
 .editor-section h4 {
-  color: #42474A;
+  color: #42474a;
   font-size: 16px;
   font-weight: 600;
   margin-bottom: 15px;
 }
 
-
 .componentes-secao-lista {
   margin-top: 12px;
   background: #ffffff;
-  border: 1px solid #E0E0E0;
+  border: 1px solid #e0e0e0;
   border-radius: 4px;
   overflow: hidden;
 }
@@ -348,7 +346,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 16px 20px;
-  border-bottom: 1px solid #E0E0E0;
+  border-bottom: 1px solid #e0e0e0;
 }
 
 .componentes-secao-item.sem-borda {
@@ -357,14 +355,13 @@
 
 .componentes-secao-titulo {
   font-size: 14px;
-  color: #42474A;
+  color: #42474a;
   font-weight: 500;
 }
 
 .componentes-secao-botao {
   min-width: 108px;
 }
-
 
 /* Estilos para o Dropdown do react-bootstrap */
 .dropdown-toggle::after {

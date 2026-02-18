@@ -14,6 +14,7 @@ import { ModalForm } from "./ModalForm";
 import { ModalConfirmacaoExclusao } from "./ModalConfirmacaoExclusao";
 import {MsgImgCentralizada} from "../../../../../Globais/Mensagens/MsgImgCentralizada";
 import Img404 from "../../../../../../assets/img/img-404.svg";
+import { EditIconButton } from "../../../../../Globais/UI/Button";
 
 export const Lista = () => {
 
@@ -28,17 +29,9 @@ export const Lista = () => {
 
   const acoesTemplate = (rowData) => {
       return (
-          <div>
-              <button className="btn-editar-membro" onClick={() => handleEditFormModal(rowData)}>
-                  <span data-tooltip-content="Editar motivo" data-html={true}>
-                      <FontAwesomeIcon
-                          style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
-                          icon={faEdit}
-                      />
-                      <ReactTooltip/>
-                  </span>
-              </button>
-          </div>
+        <EditIconButton
+            onClick={() => handleEditFormModal(rowData)}
+        />
       )
   };
 

@@ -17,7 +17,7 @@ import {
 } from "../../../../../services/sme/Parametrizacoes.service";
 import {TabelaAssociacoes} from "./TabelaAssociacoes";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faEdit, faPlus} from "@fortawesome/free-solid-svg-icons";
+import {faPlus} from "@fortawesome/free-solid-svg-icons";
 import {Filtros} from "./Filtros";
 import ModalFormAssociacoes from "./ModalFormAssociacoes";
 import {BtnAddAssociacoes} from "./BtnAddAssociacoes";
@@ -27,6 +27,7 @@ import { ModalConfirmUpdateObservacao } from "./ModalConfirmUpdateObservacao";
 import Loading from "../../../../../utils/Loading";
 import { toastCustom } from "../../../../Globais/ToastCustom";
 import { validarDAC11A } from "../../../../../utils/validators";
+import { EditIconButton } from "../../../../Globais/UI/Button";
 
 export const Associacoes = () => {
 
@@ -369,14 +370,9 @@ export const Associacoes = () => {
 
     const acoesTemplate = useCallback((rowData) =>{
         return (
-            <div>
-                <button className="btn-editar-membro" onClick={()=>handleEditFormModalAssociacoes(rowData)}>
-                    <FontAwesomeIcon
-                        style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
-                        icon={faEdit}
-                    />
-                </button>
-            </div>
+            <EditIconButton
+                onClick={()=>handleEditFormModalAssociacoes(rowData)}
+            />
         )
     }, [handleEditFormModalAssociacoes]);
     

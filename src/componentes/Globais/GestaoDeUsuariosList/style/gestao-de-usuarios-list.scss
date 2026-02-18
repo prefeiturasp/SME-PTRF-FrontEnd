@@ -1,25 +1,23 @@
-.barra-topo-lista-usuarios{
-
+.barra-topo-lista-usuarios {
   h2 {
     font-size: 20px;
-    color: #2B7D83;
+    color: var(--color-primary-lighten);
     font-weight: 700;
     line-height: 22px;
   }
 
   padding: 16px 0;
-
 }
 
-.barra-botoes-filtro{
+.barra-botoes-filtro {
   padding: 16px 0;
 }
 
-.botao-acao-lista{
+.botao-acao-lista {
   padding: 0 4px;
 }
 
-.check-apenas-usuarios-da-unidade{
+.check-apenas-usuarios-da-unidade {
   margin-left: 20px;
   padding: 0 16px;
 }

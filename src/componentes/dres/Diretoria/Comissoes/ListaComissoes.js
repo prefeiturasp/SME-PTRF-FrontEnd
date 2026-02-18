@@ -3,11 +3,11 @@ import {DataTable} from "primereact/datatable";
 import {Column} from "primereact/column";
 import Loading from "../../../../utils/Loading";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faEdit} from "@fortawesome/free-solid-svg-icons";
 import { visoesService } from "../../../../services/visoes.service";
 import { MsgImgLadoDireito } from "../../../Globais/Mensagens/MsgImgLadoDireito";
 
 import Img404 from "../../../../assets/img/img-404.svg";
+import { EditIconButton } from "../../../Globais/UI/Button";
 
 export const ListaComissoes = ({membrosComissao, loadingMembrosComissao, handleOnShowModalEdicao}) => {
     const rowsPerPage = 10;
@@ -27,16 +27,10 @@ export const ListaComissoes = ({membrosComissao, loadingMembrosComissao, handleO
 
     const acoesTemplate = (rowData) => {
         return (
-            <button
+            <EditIconButton
                 disabled={!visoesService.getPermissoes(['change_comissoes_dre'])}
-                className="btn-editar-membro"
                 onClick={() => handleOnShowModalEdicao(rowData)}
-            >
-                <FontAwesomeIcon
-                    style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
-                    icon={faEdit}
-                />
-            </button>
+            />
         )
     }
     return (

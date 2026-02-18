@@ -159,7 +159,7 @@ export const RelatorioConsolidadoDadosDasUes = () => {
             <div>
                 <button onClick={()=>handleClickAssociacoesNaoRegularizadas(rowData)} className="btn-editar-membro">
                     <FontAwesomeIcon
-                        style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
+                        style={{fontSize: '20px', marginRight: "0"}}
                         icon={faEye}
                     />
                 </button>
