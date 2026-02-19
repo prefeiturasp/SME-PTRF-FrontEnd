@@ -1,6 +1,10 @@
 import React from "react";
+import useRecursoSelecionado from "../../../../../hooks/Globais/useRecursoSelecionado";
+import { visoesService } from "../../../../../services/visoes.service";
 
 export const TextoDinamicoSuperior = ({dadosAta, retornaDadosAtaFormatado, prestacaoDeContasDetalhe}) => {
+    const { recursoSelecionado } = useRecursoSelecionado({ visoesService });
+
     let primeiro_paragrafo = `ATA DA REUNIÃO ${retornaDadosAtaFormatado("tipo_reuniao")} DA Associação ${dadosAta.associacao.nome ? dadosAta.associacao.nome : "___"} DO(A) Unidade Educacional ${dadosAta.associacao.unidade.nome ? dadosAta.associacao.unidade.nome : "___"}`.toUpperCase();
     const textoAlertaPrevia = 'Atenção! Essa é apenas uma prévia da ata. As informações aqui exibidas podem mudar até a conclusão da prestação de contas. A ata final só poderá ser criada após a conclusão do período.'
 
@@ -14,7 +18,7 @@ export const TextoDinamicoSuperior = ({dadosAta, retornaDadosAtaFormatado, prest
 
         textoObjeto = 'as alterações realizadas, conforme solicitado pela DRE, resultando nos dados consolidados'
     } else {
-        textoPauta = ` Apresentação ao Conselho Fiscal da prestação de contas da verba do PTRF e suas ações agregadas, 
+        textoPauta = ` Apresentação ao Conselho Fiscal da prestação de contas da verba do ${recursoSelecionado ? recursoSelecionado.nome_exibicao : ""} e suas ações agregadas, 
         do período de ${retornaDadosAtaFormatado("periodo.data_inicio_realizacao_despesas")} a 
         ${retornaDadosAtaFormatado("periodo.data_fim_realizacao_despesas")}, 
         referente ao ${retornaDadosAtaFormatado("periodo.referencia")}.`
