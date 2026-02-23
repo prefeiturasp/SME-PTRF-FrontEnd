@@ -87,6 +87,7 @@ export const CadastroForm = ({verbo_http, veioDeSituacaoPatrimonial}) => {
     const [objetoParaComparacao, setObjetoParaComparacao] = useState({});
     const [showDespesaIncompletaNaoPermitida, setShowDespesaIncompletaNaoPermitida] = useState(false);
 
+
     const visao_selecionada = visoesService.getItemUsuarioLogado('visao_selecionada.nome')
 
     const handleSuccessDespesa = async (response) => {
@@ -109,7 +110,8 @@ export const CadastroForm = ({verbo_http, veioDeSituacaoPatrimonial}) => {
 
     const [contasIniciais, setContasIniciais] = useState([])
 
-    useEffect(() => {
+
+    useEffect(() => {    
         let contasJaExistentesEmAlgumRateioOuImpostoNoInicioDoFormulario = new Set();
 
         if(despesaContext && despesaContext.initialValues && despesaContext.initialValues.rateios) {
@@ -129,7 +131,9 @@ export const CadastroForm = ({verbo_http, veioDeSituacaoPatrimonial}) => {
         }
 
         setContasIniciais(contasJaExistentesEmAlgumRateioOuImpostoNoInicioDoFormulario);
-    }, [despesaContext])
+    }, [despesaContext]);
+
+   
 
     const isEditing = () => {
         return despesaContext.verboHttp === "PUT";
@@ -216,7 +220,7 @@ export const CadastroForm = ({verbo_http, veioDeSituacaoPatrimonial}) => {
           let desativarSelecaoOption = false;
       
           if (item.status === STATUS_CONTA_ASSOCIACAO.ATIVA) {
-            return <option {...defaultProps}>{item.nome}</option>;
+            return <option {...defaultProps} key={item.uuid}>{item.nome}</option>;
           }
       
           if (item.solicitacao_encerramento) {
@@ -272,7 +276,7 @@ export const CadastroForm = ({verbo_http, veioDeSituacaoPatrimonial}) => {
         }
         if (despesaContext.initialValues.data_transacao && verbo_http === "PUT") {
             if(aux.origemAnaliseLancamento(parametroLocation)){
-                validateFormDespesas(initialValues());
+                validateFormDespesas(despesaContext.initialValues);
                 aux.bloqueiaCamposDespesaPrincipal(parametroLocation, setReadOnlyCampos, setReadOnlyBtnAcao)
             }
             else{
@@ -280,8 +284,8 @@ export const CadastroForm = ({verbo_http, veioDeSituacaoPatrimonial}) => {
             }
 
             if (despesaContext && despesaContext.initialValues && despesaContext.initialValues.despesas_impostos){
-                if(aux.origemAnaliseLancamento(parametroLocation)){
-                    validateFormDespesas(initialValues());
+                if(aux.origemAnaliseLancamento(parametroLocation)){                  
+                    validateFormDespesas(despesaContext.initialValues);
                     aux.bloqueiaCamposDespesaImposto(
                         parametroLocation, setReadOnlyCamposImposto,
                         setDisableBtnAdicionarImposto, despesaContext
@@ -1263,7 +1267,7 @@ export const CadastroForm = ({verbo_http, veioDeSituacaoPatrimonial}) => {
                 />
                 :
                 <>
-                    <CadastroFormFormik
+                    <CadastroFormFormik            
                         initialValues={initialValues}
                         onSubmit={onSubmit}
                         validateFormDespesas={validateFormDespesas}
