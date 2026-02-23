@@ -1,7 +1,8 @@
-import React, {useContext, useEffect} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {PaginasContainer} from "../../../PaginasContainer";
 import {useParams, useLocation, useNavigate} from 'react-router-dom'
 import {DespesaContext} from "../../../../context/Despesa";
+import Loading from "../../../../utils/Loading";
 import {getDespesa} from "../../../../services/escolas/Despesas.service";
 import {CadastroDeDespesas} from "../../../../componentes/escolas/Despesas/CadastroDeDespesas";
 import {ASSOCIACAO_UUID} from "../../../../services/auth.service";
@@ -34,21 +35,23 @@ export const tituloPagina = (parametroLocation, veioDeSituacaoPatrimonial) => {
 }
 
 
-export const EdicaoDeDespesa = ()=>{
+export const EdicaoDeDespesa = () =>{
 
     const despesaContext = useContext(DespesaContext)
-
+    const [carregandoDespesa, setCarregandoDespesa] = useState(false);
     let {associacao} = useParams();    
     const parametroLocation = useLocation();
     const navigate = useNavigate();
     const veioDeSituacaoPatrimonial = parametroLocation.state?.origem === 'situacao_patrimonial';
-    const visao_selecionada = visoesService.getItemUsuarioLogado('visao_selecionada.nome')
+    const visao_selecionada = visoesService.getItemUsuarioLogado('visao_selecionada.nome');
 
-    useEffect(() => {
+    useEffect(() => {       
+        setCarregandoDespesa(true);
         (async function setValoresIniciais() {
             await despesaContext.setVerboHttp("PUT");
-            await despesaContext.setIdDespesa(associacao);
-            const resp = await getDespesa(associacao)
+            await despesaContext.setIdDespesa(associacao);           
+           
+            await getDespesa(associacao)
             .then(response =>{
                 const resp = response;
 
@@ -147,12 +150,12 @@ export const EdicaoDeDespesa = ()=>{
                         style: 'currency',
                         currency: 'BRL'
                     }) : "",
-
-                }
+                }               
                 despesaContext.setInitialValues(init)
-            }).catch(error => {
+            }).catch(error => {         
                 console.log(error);
             });
+            setCarregandoDespesa(false);
         })();
     }, []);
 
@@ -171,10 +174,17 @@ export const EdicaoDeDespesa = ()=>{
                         </button>
                     )}
                 </div>
-                <CadastroDeDespesas
-                    veioDeSituacaoPatrimonial={veioDeSituacaoPatrimonial}
-                    verbo_http={"PUT"}
-                />
+                {carregandoDespesa ? <>
+                    <Loading 
+                        corGrafico="black"
+                        corFonte="dark"
+                        marginTop="50"
+                        marginBottom="0"/>
+                    </> :
+                    <CadastroDeDespesas
+                        veioDeSituacaoPatrimonial={veioDeSituacaoPatrimonial}
+                        verbo_http={"PUT"}
+                    /> }
                 <hr />
                 {veioDeSituacaoPatrimonial && (
                     <div className="d-flex justify-content-end mb-4">

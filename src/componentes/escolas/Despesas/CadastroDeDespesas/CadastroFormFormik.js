@@ -164,6 +164,7 @@ export const CadastroFormFormik = ({
                 validateOnBlur={true}
                 onSubmit={onSubmit}
                 enableReinitialize={true}
+                validateOnMount={true}
                 validate={validateFormDespesas}
             >
                 {props => {
