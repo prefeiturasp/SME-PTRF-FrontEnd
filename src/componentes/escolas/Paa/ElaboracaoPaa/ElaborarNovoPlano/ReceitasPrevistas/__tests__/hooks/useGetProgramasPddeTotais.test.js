@@ -1,141 +1,125 @@
 import { renderHook, waitFor } from "@testing-library/react";
-import { useQuery } from "@tanstack/react-query";
-import { useGetProgramasPddeTotais } from "../../hooks/useGetProgramasPddeTotais";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { getProgramasPddeTotais } from "../../../../../../../../services/escolas/Paa.service";
+import { useGetProgramasPddeTotais } from "../../hooks/useGetProgramasPddeTotais";
 
-jest.mock("@tanstack/react-query");
-jest.mock("../../../../../../../../services/escolas/Paa.service");
+jest.mock("../../../../../../../../services/escolas/Paa.service", () => ({
+  getProgramasPddeTotais: jest.fn(),
+}));
 
-describe('useGetProgramasPddeTotais', () => {
+const mockResponse = {
+  programas: [{ id: 1, nome: "Programa 1" }],
+  total: { valorTotal: 1000 },
+};
+
+describe("useGetProgramasPddeTotais", () => {
+  let queryClient;
+
   beforeEach(() => {
     jest.clearAllMocks();
-  });
-
-  it('deve retornar os valores iniciais corretamente', () => {
-    (useQuery).mockReturnValue({
-      isLoading: true,
-      isError: false,
-      data: undefined,
-      error: null,
-      refetch: jest.fn(),
-    });
-
-    const { result } = renderHook(() => useGetProgramasPddeTotais());
-
-    expect(result.current).toEqual({
-      isLoading: true,
-      isError: false,
-      programas: [],
-      total: {},
-      error: null,
-      refetch: expect.any(Function),
+    queryClient = new QueryClient({
+      defaultOptions: {
+        queries: { retry: false },
+      },
     });
   });
 
-  it("deve chamar getProgramasPddeTotais com os parâmetros corretos", () => {
-    (useQuery).mockReturnValue({
-      isLoading: false,
-      isError: false,
-      data: { programas: [], total: {} },
-      error: null,
-      refetch: jest.fn(),
+  const wrapper = ({ children }) => (
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  );
+
+  it("retorna dados corretamente após requisição bem-sucedida", async () => {
+    getProgramasPddeTotais.mockResolvedValueOnce(mockResponse);
+
+    const { result } = renderHook(() => useGetProgramasPddeTotais(), {
+      wrapper,
     });
 
-    renderHook(() => useGetProgramasPddeTotais());
-
-    expect(useQuery).toHaveBeenCalledWith(
-      ["programas-pdde-totais"],
-      expect.any(Function),
-      {
-        keepPreviousData: true,
-        staleTime: 5000,
-        refetchOnWindowFocus: true,
-      }
+    await waitFor(() =>
+      expect(result.current.programas).toEqual(mockResponse.programas)
     );
 
-    const queryFn = (useQuery).mock.calls[0][1];
-    queryFn();
-    expect(getProgramasPddeTotais).toHaveBeenCalled();
+    expect(result.current.isError).toBe(false);
+    expect(result.current.total).toEqual(mockResponse.total);
   });
 
-  it("deve retornar dados quando a requisição for bem-sucedida", () => {
-    const mockData = {
-      programas: [{ id: 1, nome: "programa 1" }],
-      total: { valorTotal: 1000 },
-    };
+  it("chama getProgramasPddeTotais sem parâmetros", async () => {
+    getProgramasPddeTotais.mockResolvedValueOnce(mockResponse);
 
-    (useQuery).mockReturnValue({
-      isLoading: false,
-      isError: false,
-      data: mockData,
-      error: null,
-      refetch: jest.fn(),
-    });
+    renderHook(() => useGetProgramasPddeTotais(), { wrapper });
 
-    const { result } = renderHook(() => useGetProgramasPddeTotais());
-
-    expect(result.current).toEqual({
-      isLoading: false,
-      isError: false,
-      programas: mockData.programas,
-      total: mockData.total,
-      error: null,
-      refetch: expect.any(Function),
-    });
+    await waitFor(() => expect(getProgramasPddeTotais).toHaveBeenCalled());
+    expect(getProgramasPddeTotais).toHaveBeenCalledWith();
   });
 
-  it("deve retornar erro quando a requisição falhar", () => {
-    const mockError = new Error("Erro na requisição");
+  it("retorna programas e total do response corretamente", async () => {
+    getProgramasPddeTotais.mockResolvedValueOnce(mockResponse);
 
-    (useQuery).mockReturnValue({
-      isLoading: false,
-      isError: true,
-      data: undefined,
-      error: mockError,
-      refetch: jest.fn(),
+    const { result } = renderHook(() => useGetProgramasPddeTotais(), {
+      wrapper,
     });
 
-    const { result } = renderHook(() => useGetProgramasPddeTotais());
+    await waitFor(() =>
+      expect(result.current.programas).toEqual(mockResponse.programas)
+    );
 
-    expect(result.current).toEqual({
-      isLoading: false,
-      isError: true,
-      programas: [],
-      total: {},
-      error: mockError,
-      refetch: expect.any(Function),
-    });
+    expect(result.current.total).toEqual(mockResponse.total);
   });
 
-  it("deve fornecer valores padrão quando data for undefined", () => {
-    (useQuery).mockReturnValue({
-      isLoading: false,
-      isError: false,
-      data: undefined,
-      error: null,
-      refetch: jest.fn(),
-    });
+  it("retorna programas=[] e total={} no estado inicial (antes de resolver)", () => {
+    getProgramasPddeTotais.mockReturnValue(new Promise(() => {})); // nunca resolve
 
-    const { result } = renderHook(() => useGetProgramasPddeTotais());
+    const { result } = renderHook(() => useGetProgramasPddeTotais(), {
+      wrapper,
+    });
 
     expect(result.current.programas).toEqual([]);
     expect(result.current.total).toEqual({});
   });
 
-  it("deve expor a função refetch corretamente", async () => {
-    const mockRefetch = jest.fn();
+  it("retorna isError true quando a API falha", async () => {
+    getProgramasPddeTotais.mockRejectedValueOnce(new Error("Erro na API"));
 
-    (useQuery).mockReturnValue({
-      isLoading: false,
-      isError: false,
-      data: { programas: [], total: {} },
-      error: null,
-      refetch: mockRefetch,
+    const { result } = renderHook(() => useGetProgramasPddeTotais(), {
+      wrapper,
     });
 
-    const { result } = renderHook(() => useGetProgramasPddeTotais());
+    await waitFor(() => expect(result.current.isError).toBe(true));
 
-    result.current.refetch();
-    expect(mockRefetch).toHaveBeenCalled();
+    expect(result.current.programas).toEqual([]);
+    expect(result.current.total).toEqual({});
+    expect(result.current.error).toBeInstanceOf(Error);
+  });
+
+  it("retorna isLoading true enquanto a requisição está em andamento", async () => {
+    let resolve;
+    getProgramasPddeTotais.mockReturnValue(
+      new Promise((res) => {
+        resolve = res;
+      })
+    );
+
+    const { result } = renderHook(() => useGetProgramasPddeTotais(), {
+      wrapper,
+    });
+
+    expect(result.current.isLoading).toBe(true);
+
+    resolve(mockResponse);
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+  });
+
+  it("expõe função refetch", async () => {
+    getProgramasPddeTotais.mockResolvedValueOnce(mockResponse);
+
+    const { result } = renderHook(() => useGetProgramasPddeTotais(), {
+      wrapper,
+    });
+
+    await waitFor(() =>
+      expect(result.current.programas).toEqual(mockResponse.programas)
+    );
+
+    expect(typeof result.current.refetch).toBe("function");
   });
 });
