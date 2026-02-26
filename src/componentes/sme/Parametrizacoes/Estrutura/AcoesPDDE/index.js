@@ -115,7 +115,7 @@ export const AcoesPDDE = ()=>{
                     cancelText="Cancelar"
                     cancelButtonProps={{className: "btn-base-verde-outline"}}
                     titulo="Excluir Ação PDDE"
-                    bodyText={<p>Tem certeza que deseja excluir essa Ação PDDE?</p>}
+                    bodyText={<p>Em caso de vínculo com PAA, as ações PDDE serão removidas dos PAAs que estão em elaboração. Tem certeza que deseja excluir essa Ação PDDE?</p>}
                 />
 
                 <ModalBootstrap
