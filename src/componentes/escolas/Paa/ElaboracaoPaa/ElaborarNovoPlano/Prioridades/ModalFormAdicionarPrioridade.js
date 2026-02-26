@@ -302,7 +302,7 @@ const ModalFormAdicionarPrioridade = ({ open, onClose, tabelas, formModal, focus
         handleFocusAcaoPTRF();
       }
 
-      // Quando Acao associacao não for informada (por desativação de acao no PAA), focar no elemento para preenchimento
+      // Quando Acao PDDE não for informada (por exclusao/desativação de acao no PAA), focar no elemento para preenchimento
       if(!!formModal?.uuid && !formModal?.acao_pdde && (focusFields||[]).includes('acao_pdde')){
         handleFocusAcaoPDDE();
       }
