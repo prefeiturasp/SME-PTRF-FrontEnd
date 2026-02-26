@@ -191,7 +191,7 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                       <InputNumber
                         className="input-number-right"
                         placeholder="00,00"
-                        formatter={formatMoneyBRL}
+                        formatter={ehCampoDesabilitado("aceita_custeio") ? () => "-" : formatMoneyBRL}
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
                         disabled
@@ -261,7 +261,7 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                       <InputNumber
                         className="input-number-right"
                         placeholder="00,00"
-                        formatter={formatMoneyBRL}
+                        formatter={ehCampoDesabilitado("aceita_capital") ? () => "-" : formatMoneyBRL}
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
                         disabled
@@ -331,7 +331,7 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                       <InputNumber
                         className="input-number-right"
                         placeholder="00,00"
-                        formatter={formatMoneyBRL}
+                        formatter={ehCampoDesabilitado("aceita_livre") ? () => "-" : formatMoneyBRL}
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
                         disabled
