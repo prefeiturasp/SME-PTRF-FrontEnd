@@ -113,13 +113,24 @@ const TabelaReceitasPrevistas = ({ data, handleOpenEditar, totalRecursosProprios
           parseFloat(valor_capital) +
           parseFloat(valor_livre),
       };
+      const aceitaValorMapping = {
+        valor_capital: 'aceita_capital',
+        valor_custeio: 'aceita_custeio',
+        valor_livre: 'aceita_livre',
+      };
 
       return (
         <div className="text-right">
           {fieldMapping[column.field] > 0 ? (
             formatMoneyBRL(fieldMapping[column.field])
           ) : (
-            <div className="text-right">__</div>
+            <>
+              {rowData?.acao?.[aceitaValorMapping?.[column.field]] ?
+                formatMoneyBRL(fieldMapping[column.field])
+              :
+                <div className="text-right">-</div>
+              }
+            </>
           )}
         </div>
       );
@@ -134,6 +145,12 @@ const TabelaReceitasPrevistas = ({ data, handleOpenEditar, totalRecursosProprios
       />
     ) : null;
   };
+  const ehColunaDesabilitada = useCallback((rowData, rowIndex, colunaNome) => {
+    if (rowData.fixed) return false;
+
+
+    return !rowData?.acao[colunaNome];
+  }, []);
 
   return (
     <DataTable
@@ -141,13 +158,27 @@ const TabelaReceitasPrevistas = ({ data, handleOpenEditar, totalRecursosProprios
       value={[...data, { acao: { nome: "Total do PTRF" }, fixed: true }]}
     >
       <Column field="nome" header="Recursos" body={nomeTemplate} style={{width: '15%'}} />
-      <Column field="valor_custeio" header="Custeio (R$)" body={dataTemplate} style={{width: '15%'}} />
-      <Column field="valor_capital" header="Capital (R$)" body={dataTemplate} style={{width: '15%'}} />
+      <Column field="valor_custeio" header="Custeio (R$)" body={dataTemplate} style={{width: '15%'}}
+        bodyClassName={(rowData, { rowIndex }) => {
+            return ehColunaDesabilitada(rowData, rowIndex, "aceita_custeio")
+              ? "cell-desativada": "";
+          }}
+      />
+      <Column field="valor_capital" header="Capital (R$)" body={dataTemplate} style={{width: '15%'}}
+        bodyClassName={(rowData, { rowIndex }) => {
+            return ehColunaDesabilitada(rowData, rowIndex, "aceita_capital")
+              ? "cell-desativada": "";
+          }}
+      />
       <Column
         field="valor_livre"
         header="Livre Aplicação (R$)"
         body={dataTemplate}
         style={{width: '20%'}}
+        bodyClassName={(rowData, { rowIndex }) => {
+          return ehColunaDesabilitada(rowData, rowIndex, "aceita_livre")
+            ? "cell-desativada": "";
+        }}
       />
       <Column field="total" header="Total (R$)" body={dataTemplate} style={{width: '15%', fontWeight: 'bold'}} />
       <Column field="acoes" header="Ações" body={acoesTemplate} style={{width: '10%'}} />
