@@ -160,17 +160,17 @@ describe('ModalConfirmaPararAtualizacaoSaldo', () => {
     expect(propsMockCheckTrue.onClose).toHaveBeenCalled();
   });
 
-  it('desabilita botões quando `isLoading=true`', () => {
+  it('desabilita botões quando `isPending=true`', () => {
     useAtivarSaldoPAA.mockReturnValue({
       mutationPost: {
         mutate: mockMutateAtivar,
-        isLoading: true
+        isPending: true
       }
     });
     useDesativarSaldoPAA.mockReturnValue({
       mutationPost: {
         mutate: mockMutateDesativar,
-        isLoading: false
+        isPending: false
       }
     });
 
