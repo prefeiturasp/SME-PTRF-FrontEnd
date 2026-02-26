@@ -107,6 +107,14 @@ export const Tabela = forwardRef(({ data, handleEditar, handleDuplicar, handleEx
                                 handleClick={() => handleEditar(rowData, ['acao'])}
                             />
                         }
+                        {!rowData.acao_pdde && rowData.recurso === RECURSOS_PRIORIDADE.PDDE &&
+                            <BadgeCustom
+                                badge={true}
+                                buttonColor='#62a9ad'
+                                buttonLabel='Informar Ação'
+                                handleClick={() => handleEditar(rowData, ['acao_pdde'])}
+                            />
+                        }
                         {!rowData.acao && rowData.recurso === RECURSOS_PRIORIDADE.OUTRO_RECURSO &&
                             <BadgeCustom
                                 badge={true}

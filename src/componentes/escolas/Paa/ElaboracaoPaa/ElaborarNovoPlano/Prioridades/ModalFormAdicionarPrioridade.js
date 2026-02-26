@@ -236,6 +236,7 @@ const ModalFormAdicionarPrioridade = ({ open, onClose, tabelas, formModal, focus
   const recursoPrioridadeRef = useRef(null);
   const valorTotalRef = useRef(null);
   const AcaoPTRFRef = useRef(null);
+  const AcaoPDDERef = useRef(null);
 
   const handleFocusValorTotal = () => {
     setTimeout(() => {
@@ -258,6 +259,14 @@ const ModalFormAdicionarPrioridade = ({ open, onClose, tabelas, formModal, focus
       AcaoPTRFRef?.current?.focus();
       form.setFields([{
           name: 'acao_associacao', errors: ['Ação é obrigatório!']
+        }]);
+    }, 500);
+  };
+  const handleFocusAcaoPDDE = () => {
+    setTimeout(() => {
+      AcaoPDDERef?.current?.focus();
+      form.setFields([{
+          name: 'acao_pdde', errors: ['Ação PDDE é obrigatório!']
         }]);
     }, 500);
   };
@@ -291,6 +300,11 @@ const ModalFormAdicionarPrioridade = ({ open, onClose, tabelas, formModal, focus
       // Quando Acao associacao não for informada (por desativação de acao no PAA), focar no elemento para preenchimento
       if(!!formModal?.uuid && !formModal?.acao_associacao && (focusFields||[]).includes('acao')){
         handleFocusAcaoPTRF();
+      }
+
+      // Quando Acao PDDE não for informada (por exclusao/desativação de acao no PAA), focar no elemento para preenchimento
+      if(!!formModal?.uuid && !formModal?.acao_pdde && (focusFields||[]).includes('acao_pdde')){
+        handleFocusAcaoPDDE();
       }
 
       // Quando Recurso não for informada (por desativação de outros recursos no PAA), focar no elemento para preenchimento
