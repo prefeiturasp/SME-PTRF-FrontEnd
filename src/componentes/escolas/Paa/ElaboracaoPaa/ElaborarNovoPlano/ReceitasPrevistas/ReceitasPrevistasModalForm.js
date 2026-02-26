@@ -1,4 +1,4 @@
-import React, { memo, useEffect } from "react";
+import React, { memo, useEffect, useCallback } from "react";
 import { Form, Row, Col, Flex, InputNumber, Spin } from "antd";
 import { ModalFormBodyText } from "../../../../../Globais/ModalBootstrap";
 import { Icon } from "../../../../../Globais/UI/Icon";
@@ -136,6 +136,15 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
       : formataData(new Date());
   };
 
+  const ehCampoDesabilitado = useCallback(
+      (campoAceitaValor, campoNome) => {
+        if (!acaoAssociacao) return false;
+
+        return !acaoAssociacao?.acao?.[campoAceitaValor];
+      },
+      [acaoAssociacao],
+    );
+
   return (
     <ModalFormBodyText
       show={open}
@@ -204,7 +213,8 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                       <InputNumber
                         className="input-number-right"
                         placeholder="00,00"
-                        formatter={formatMoneyByCentsBRL}
+                        formatter={ehCampoDesabilitado("aceita_custeio") ? () => "-" : formatMoneyByCentsBRL}
+                        disabled={ehCampoDesabilitado("aceita_custeio")}
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
                         min={0}
@@ -273,7 +283,8 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                       <InputNumber
                         className="input-number-right"
                         placeholder="00,00"
-                        formatter={formatMoneyByCentsBRL}
+                        formatter={ehCampoDesabilitado("aceita_capital") ? () => "-" : formatMoneyByCentsBRL}
+                        disabled={ehCampoDesabilitado("aceita_capital")}
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
                         min={0}
@@ -342,7 +353,8 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                       <InputNumber
                         className="input-number-right"
                         placeholder="00,00"
-                        formatter={formatMoneyByCentsBRL}
+                        formatter={ehCampoDesabilitado("aceita_livre") ? () => "-" : formatMoneyByCentsBRL}
+                        disabled={ehCampoDesabilitado("aceita_livre")}
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
                         min={0}
