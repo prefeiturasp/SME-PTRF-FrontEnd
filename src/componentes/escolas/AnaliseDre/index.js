@@ -139,7 +139,7 @@ export const AnaliseDre = () =>{
         <PaginasContainer>
             <h1 className="titulo-itens-painel mt-5">Análise DRE</h1>
             {loading ? (
-                    <Loading
+                    <Loading                        
                         corGrafico="black"
                         corFonte="dark"
                         marginTop="0"
