@@ -723,9 +723,7 @@ export const VisualizarAtividadesPrevistas = () => {
         title: "Mês/Ano",
         key: "mesAno",
         render: (_, record) => {
-          const mesAnoBase = record.isGlobal && !record.vinculoUuid
-            ? record.mesLabel || "-"
-            : formatarMesAno(record.data);
+          const mesAnoBase = record.isGlobal ? record.mesLabel || "-" : formatarMesAno(record.data);
           const mesAnoVisivel = record.emEdicao ? "" : mesAnoBase;
 
           return (
