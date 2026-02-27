@@ -40,9 +40,8 @@ export const ThemeProvider = ({ children }) => {
     return "#" + toHex(lighten(r)) + toHex(lighten(g)) + toHex(lighten(b));
   };
 
-    const antdTheme = {
+  const antdTheme = {
     token: {
-      colorPrimary: "orange",
       borderRadius: 4,
       colorError: "rgba(184, 0, 0, 1)",
     },
@@ -67,13 +66,15 @@ export const ThemeProvider = ({ children }) => {
       Button: {
         colorPrimary: theme,
         colorPrimaryHover: lightenColor(theme, 0.2),
-        colorPrimaryActive:  darkenColor(theme, 0.2),
+        colorPrimaryActive: darkenColor(theme, 0.2),
         colorBorder: theme,
         colorText: theme,
       },
+      Switch: {
+        colorPrimary: theme,
+      },
     },
   };
-
 
   const applyTheme = (color = "#01585e") => {
     const themes = {
