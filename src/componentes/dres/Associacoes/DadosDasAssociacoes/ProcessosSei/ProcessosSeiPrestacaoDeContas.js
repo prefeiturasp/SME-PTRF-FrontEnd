@@ -271,19 +271,19 @@ export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao}) => {
 
     const tableActionsTemplate = (rowData) => {
         return (
-            <div>
+            <div className="d-flex align-items-center justify-content-center">
                 <EditIconButton
                     onClick={() => handleEditProcessoAction(rowData)}
                 />
                 <Tooltip title={rowData.permite_exclusao ? '' : rowData.tooltip_exclusao}>
                     <Button
                         type="text"
-                            icon={<DeleteFilled style={{fontSize: '20px'}}/>}
-                            disabled={!visoesService.getPermissoes(['change_processo_sei']) || !rowData.permite_exclusao}
-                            danger={visoesService.getPermissoes(['change_processo_sei']) && rowData.permite_exclusao}
-                            onClick={() => handleDeleteProcessoAction(rowData)}
+                        icon={<DeleteFilled style={{fontSize: '20px'}}/>}
+                        disabled={!visoesService.getPermissoes(['change_processo_sei']) || !rowData.permite_exclusao}
+                        danger={visoesService.getPermissoes(['change_processo_sei']) && rowData.permite_exclusao}
+                        onClick={() => handleDeleteProcessoAction(rowData)}
                     />
-                </Tooltip>                
+                </Tooltip>
             </div>
         )
     };
