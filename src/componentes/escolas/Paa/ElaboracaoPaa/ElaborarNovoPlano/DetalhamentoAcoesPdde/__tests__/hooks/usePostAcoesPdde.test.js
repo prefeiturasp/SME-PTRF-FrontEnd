@@ -1,83 +1,172 @@
-import { renderHook, waitFor } from "@testing-library/react";
 import { act } from "react";
+import { renderHook, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { usePostReceitaPrevistaPdde } from "../../hooks/usePostReceitaPrevistaPdde";
 import { postReceitaPrevistaPDDE } from "../../../../../../../../services/escolas/Paa.service";
 import { toastCustom } from "../../../../../../../Globais/ToastCustom";
 
-jest.mock("../../../../../../../../services/escolas/Paa.service");
-jest.mock("../../../../../../../Globais/ToastCustom");
+jest.mock("../../../../../../../../services/escolas/Paa.service", () => ({
+  postReceitaPrevistaPDDE: jest.fn(),
+}));
 
-localStorage.setItem("PAA", "fake-uuid-paa")
+jest.mock("../../../../../../../Globais/ToastCustom", () => ({
+  toastCustom: {
+    ToastCustomSuccess: jest.fn(),
+    ToastCustomError: jest.fn(),
+  },
+}));
 
-const createWrapper = () => {
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-      },
-    },
-  });
+jest.mock("react-redux", () => ({
+  useDispatch: jest.fn(),
+}));
 
-  return ({ children }) => (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-  );
+const mockPayload = {
+  paa: "fake-uuid-paa",
+  acao_pdde: "acao-pdde-uuid-1234",
+  saldo_custeio: 100.0,
+  saldo_capital: 200.0,
+  saldo_livre: 300.0,
+  previsao_valor_custeio: 50.0,
+  previsao_valor_capital: 60.0,
+  previsao_valor_livre: 70.0,
 };
 
 describe("usePostReceitaPrevistaPdde", () => {
+  let queryClient;
   const setModalForm = jest.fn();
 
   beforeEach(() => {
     jest.clearAllMocks();
+    localStorage.setItem("PAA", "fake-uuid-paa");
+    queryClient = new QueryClient({
+      defaultOptions: {
+        queries: { retry: false },
+        mutations: { retry: false },
+      },
+    });
   });
 
-  it("deve executar patch com sucesso", async () => {
-    const mockPayload = {
-      paa: localStorage.getItem("PAA"),
-      acao_pdde: "acao-pdde-uuid-1234",
-      saldo_custeio: 100.00,
-      saldo_capital: 200.00,
-      saldo_livre: 300.00,
-      previsao_valor_custeio: 50.00,
-      previsao_valor_capital: 60.00,
-      previsao_valor_livre: 70.00,
-    };
+  const wrapper = ({ children }) => (
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  );
+
+  it("retorna mutationPost com função mutate", () => {
+    const { result } = renderHook(
+      () => usePostReceitaPrevistaPdde(setModalForm),
+      { wrapper }
+    );
+
+    expect(result.current.mutationPost).toBeDefined();
+    expect(typeof result.current.mutationPost.mutate).toBe("function");
+  });
+
+  it("chama o serviço postReceitaPrevistaPDDE com o payload correto", async () => {
     postReceitaPrevistaPDDE.mockResolvedValueOnce({ status: 201 });
 
-    const { result } = renderHook(() => usePostReceitaPrevistaPdde(setModalForm), {
-      wrapper: createWrapper(),
-    });
+    const { result } = renderHook(
+      () => usePostReceitaPrevistaPdde(setModalForm),
+      { wrapper }
+    );
 
     act(() => {
       result.current.mutationPost.mutate(mockPayload);
     });
 
-    await waitFor(() => expect(postReceitaPrevistaPDDE).toHaveBeenCalledWith(mockPayload));
-    await waitFor(() => expect(setModalForm).toHaveBeenCalledWith({ open: false }));
-    expect(toastCustom.ToastCustomSuccess).toHaveBeenCalledWith(
-      'Sucesso',
-      'Criação de Receita Prevista PDDE realizada com sucesso.'
+    await waitFor(() =>
+      expect(postReceitaPrevistaPDDE).toHaveBeenCalledWith(mockPayload)
     );
   });
 
-  it("deve lidar com erro no post", async () => {
-    const mockPayload = {
-      paa: localStorage.getItem("PAA")
-    };
-    postReceitaPrevistaPDDE.mockRejectedValueOnce(new Error("Erro"));
+  it("chama setModalForm com { open: false } após sucesso", async () => {
+    postReceitaPrevistaPDDE.mockResolvedValueOnce({ status: 201 });
 
-    const { result } = renderHook(() => usePostReceitaPrevistaPdde(setModalForm), {
-      wrapper: createWrapper(),
-    });
+    const { result } = renderHook(
+      () => usePostReceitaPrevistaPdde(setModalForm),
+      { wrapper }
+    );
 
     act(() => {
       result.current.mutationPost.mutate(mockPayload);
     });
 
-    await waitFor(() => expect(result.current.mutationPost.isError).toBe(true));
-    expect(toastCustom.ToastCustomError).toHaveBeenCalledWith(
-      "Ops!",
-      "Não foi possível criar a Receita Prevista PDDE"
+    await waitFor(() =>
+      expect(setModalForm).toHaveBeenCalledWith({ open: false })
     );
+  });
+
+  it("exibe toast de sucesso após mutação bem-sucedida", async () => {
+    postReceitaPrevistaPDDE.mockResolvedValueOnce({ status: 201 });
+
+    const { result } = renderHook(
+      () => usePostReceitaPrevistaPdde(setModalForm),
+      { wrapper }
+    );
+
+    act(() => {
+      result.current.mutationPost.mutate(mockPayload);
+    });
+
+    await waitFor(() =>
+      expect(toastCustom.ToastCustomSuccess).toHaveBeenCalledWith(
+        "Sucesso",
+        "Criação de Receita Prevista PDDE realizada com sucesso."
+      )
+    );
+  });
+
+  it("exibe toast de erro quando o serviço falha", async () => {
+    postReceitaPrevistaPDDE.mockRejectedValueOnce(new Error("Erro na API"));
+
+    const { result } = renderHook(
+      () => usePostReceitaPrevistaPdde(setModalForm),
+      { wrapper }
+    );
+
+    act(() => {
+      result.current.mutationPost.mutate(mockPayload);
+    });
+
+    await waitFor(() =>
+      expect(toastCustom.ToastCustomError).toHaveBeenCalledWith(
+        "Ops!",
+        "Não foi possível criar a Receita Prevista PDDE"
+      )
+    );
+  });
+
+  it("coloca mutationPost em estado de erro quando o serviço falha", async () => {
+    postReceitaPrevistaPDDE.mockRejectedValueOnce(new Error("Erro na API"));
+
+    const { result } = renderHook(
+      () => usePostReceitaPrevistaPdde(setModalForm),
+      { wrapper }
+    );
+
+    act(() => {
+      result.current.mutationPost.mutate(mockPayload);
+    });
+
+    await waitFor(() =>
+      expect(result.current.mutationPost.isError).toBe(true)
+    );
+  });
+
+  it("não chama setModalForm quando o serviço falha", async () => {
+    postReceitaPrevistaPDDE.mockRejectedValueOnce(new Error("Erro na API"));
+
+    const { result } = renderHook(
+      () => usePostReceitaPrevistaPdde(setModalForm),
+      { wrapper }
+    );
+
+    act(() => {
+      result.current.mutationPost.mutate(mockPayload);
+    });
+
+    await waitFor(() =>
+      expect(result.current.mutationPost.isError).toBe(true)
+    );
+
+    expect(setModalForm).not.toHaveBeenCalled();
   });
 });

@@ -121,7 +121,15 @@ describe('PaaVigenteEAnteriores', () => {
         createMockHookReturn({ data: { vigente: mockVigente, anteriores: [] } })
       );
       renderComponent();
-      expect(screen.getByText(/Não há PAAs anteriores/)).toBeInTheDocument();
+      expect(screen.getByText(/A sua unidade ainda não possui Planos anteriores/)).toBeInTheDocument();
+    });
+    
+    it('deve renderizar mensagem quando não há Plano vigente', () => {
+      usePaaVigenteEAnteriores.mockReturnValue(
+        createMockHookReturn({ data: { vigente: null, anteriores: [] } })
+      );
+      renderComponent();
+      expect(screen.getByText(/A sua unidade ainda não possui Plano Vigente/)).toBeInTheDocument();
     });
   });
 

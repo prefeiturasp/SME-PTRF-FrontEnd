@@ -31,6 +31,7 @@ import ModalMotivosPagamentoAntecipado from "./ModalMotivosPagamentoAntecipado";
 import ExibeMotivosPagamentoAntecipadoNoForm from "./ExibeMotivosPagamentoAntecipadoNoForm";
 import { RetemImposto } from "../RetemImposto";
 import { ReactNumberFormatInput as CurrencyInput } from "../../../Globais/ReactNumberFormatInput";
+import { FEATURE_FLAGS } from "../../../../constantes/featureFlags";
 
 
 export const CadastroFormFormik = ({
@@ -164,6 +165,7 @@ export const CadastroFormFormik = ({
                 validateOnBlur={true}
                 onSubmit={onSubmit}
                 enableReinitialize={true}
+                validateOnMount={true}
                 validate={validateFormDespesas}
             >
                 {props => {
@@ -452,7 +454,13 @@ export const CadastroFormFormik = ({
                                     </div>
 
                                     <div className="col-12 col-md-3 mt-4">
-                                        <label htmlFor="valor_recursos_proprios">Valor do recurso próprio</label>
+                                        <label htmlFor="valor_recursos_proprios">
+                                            { 
+                                                visoesService.featureFlagAtiva(FEATURE_FLAGS.PREMIO_EXCELENCIA) 
+                                                    ? 'Valor de outros recursos'
+                                                    : 'Valor do recurso próprio'
+                                            }
+                                        </label>
                                         <CurrencyInput
                                             data-qa="cadastro-edicao-despesa-valor-recurso-proprio"
                                             allowNegative={false}
@@ -475,7 +483,13 @@ export const CadastroFormFormik = ({
                                     </div>
 
                                     <div className="col-12 col-md-3 mt-4">
-                                        <label htmlFor="valor_recusos_acoes">Valor do PTRF</label>
+                                        <label htmlFor="valor_recusos_acoes">
+                                            {
+                                                visoesService.featureFlagAtiva(FEATURE_FLAGS.PREMIO_EXCELENCIA)
+                                                    ? 'Valor do recurso selecionado'
+                                                    : 'Valor do PTRF'
+                                            }
+                                        </label>
                                         <Field name="valor_recusos_acoes">
                                             {({field, form, meta}) => (
                                                 <CurrencyInput
