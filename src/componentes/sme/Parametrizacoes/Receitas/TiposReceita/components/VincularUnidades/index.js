@@ -19,7 +19,8 @@ import { MsgImgCentralizada } from "../../../../../../Globais/Mensagens/MsgImgCe
 
 const filtroInicial ={
   nome_ou_codigo: "",
-  dre: ""
+  dre: "",
+  tipo_unidade: "",
 }
 
 export const VincularUnidades = ({tipoContaUUID}) => {
@@ -34,7 +35,8 @@ export const VincularUnidades = ({tipoContaUUID}) => {
     tipoContaUUID,
     currentPage,
     filtros.nome_ou_codigo,
-    filtros.dre
+    filtros.dre,
+    filtros.tipo_unidade,
   );
 
   useEffect(() => {
@@ -232,7 +234,7 @@ export const VincularUnidades = ({tipoContaUUID}) => {
         />
         <Spin spinning={mutationVincularUnidade.isPending || mutationVincularUnidadeEmLote.isPending}>
         {selectedUnidades.length ? montarBarraAcoesEmLote() : null}
-        {data.count > 0 ? (
+        {data && data?.count > 0 ? (
             <>
               <p className='mb-2'>Exibindo <span className='total'>{ data.count }</span> unidades</p>
               <DataTable
