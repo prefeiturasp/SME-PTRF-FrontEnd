@@ -159,27 +159,31 @@ describe("TabelaRecursosProprios", () => {
     renderComponent();
 
     // Total inclui recursos próprios (1000) + outros recursos (27000) = 28000
-    expect(screen.getByText("R$ 28.000,00")).toBeInTheDocument();
+    // formatMoneyBRL retorna o valor sem prefixo "R$ "
+    expect(screen.getByText("28.000,00")).toBeInTheDocument();
   });
 
-  it("deve exibir '__' quando o campo for nulo", () => {
+  it("deve exibir '-' quando a coluna está desabilitada para a linha de Recursos Próprios", () => {
     renderComponent();
 
-    const placeholders = screen.getAllByText("__");
-    expect(placeholders.length).toBeGreaterThan(0);
+    // Custeio e capital de Recursos Próprios são colunas desabilitadas → renderizam "-"
+    const tracos = screen.getAllByText("-");
+    expect(tracos.length).toBeGreaterThan(0);
   });
 
   it("deve exibir traço para custeio e capital em Recursos Próprios", () => {
     renderComponent({ totalRecursosProprios: { total: 5000 } });
-    
-    const tracos = screen.getAllByText("__");
+
+    // Colunas desabilitadas para Recursos Próprios renderizam "-"
+    const tracos = screen.getAllByText("-");
     expect(tracos.length).toBeGreaterThan(0);
   });
 
   it("deve exibir valor de livre aplicação em Recursos Próprios", () => {
     renderComponent({ totalRecursosProprios: { total: 5000 } });
 
-    const valores = screen.getAllByText("R$ 5.000,00");
+    // formatMoneyBRL retorna o valor sem prefixo "R$ "
+    const valores = screen.getAllByText("5.000,00");
     expect(valores.length).toBeGreaterThan(0);
   });
 

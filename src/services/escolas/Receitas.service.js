@@ -1,6 +1,6 @@
 import api from '../api'
 import { TOKEN_ALIAS } from '../auth.service.js';
-import { ASSOCIACAO_UUID, RECURSO_SELECIONADO } from "../auth.service";
+import { ASSOCIACAO_UUID } from "../auth.service";
 
 const authHeader = ()=>({
     headers: {
@@ -11,13 +11,8 @@ const authHeader = ()=>({
 
 
 export const getTabelasReceita = async () => {
-    let url = `api/receitas/tabelas/?associacao_uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`;
-    if (localStorage.getItem(RECURSO_SELECIONADO)) {
-        const recurso_uuid = JSON.parse(localStorage.getItem(RECURSO_SELECIONADO)).uuid
-        url += `&recurso_uuid=${recurso_uuid}`;
-    }
     return api
-        .get(url, authHeader())
+        .get(`api/receitas/tabelas/?associacao_uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader())
         .then(response => {
             return response;
         })
@@ -28,12 +23,7 @@ export const getTabelasReceita = async () => {
 
 export const getTabelasReceitaReceita = async (associacao=null) => {
     let associacao_uuid = associacao ? associacao : localStorage.getItem(ASSOCIACAO_UUID);
-    let url = `api/receitas/tabelas/?associacao_uuid=${associacao_uuid}`;
-    if (localStorage.getItem(RECURSO_SELECIONADO)) {
-        const recurso_uuid = JSON.parse(localStorage.getItem(RECURSO_SELECIONADO)).uuid
-        url += `&recurso_uuid=${recurso_uuid}`;
-    }
-    return (await api.get(url, authHeader())).data
+    return (await api.get(`api/receitas/tabelas/?associacao_uuid=${associacao_uuid}`, authHeader())).data
 };
 
 
@@ -43,14 +33,9 @@ export const criarReceita = async (payload) => {
 
 export const getReceita = async (uuid, associacao=null) => {
     let associacao_uuid = associacao ? associacao : localStorage.getItem(ASSOCIACAO_UUID)
-    let url = `api/receitas/${uuid}/?associacao_uuid=${associacao_uuid}`;
-    if (localStorage.getItem(RECURSO_SELECIONADO)) {
-        const recurso_uuid = JSON.parse(localStorage.getItem(RECURSO_SELECIONADO)).uuid
-        url += `&recurso_uuid=${recurso_uuid}`;
-    }
 
     return api
-        .get(url, authHeader())
+        .get(`api/receitas/${uuid}/?associacao_uuid=${associacao_uuid}`, authHeader())
         .then(response => {
             return response;
         })
@@ -69,57 +54,27 @@ export const deletarReceita = async uuid => {
 };
 
 export const getListaReceitas = async () => {
-    let url = `api/receitas/?associacao_uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`;
-    if (localStorage.getItem(RECURSO_SELECIONADO)) {
-        const recurso_uuid = JSON.parse(localStorage.getItem(RECURSO_SELECIONADO)).uuid
-        url += `&recurso_uuid=${recurso_uuid}`;
-    }
-    return (await api.get(url, authHeader())).data
+    return (await api.get(`api/receitas/?associacao_uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader())).data
 };
 
 export const getTotaisReceitas = async (tipo_receita, acao_associacao__uuid, conta_associacao__uuid, data_inicio, data_fim) => {
-    let url = `api/receitas/totais/?associacao_uuid=${localStorage.getItem(ASSOCIACAO_UUID)}&tipo_receita=${tipo_receita}&acao_associacao__uuid=${acao_associacao__uuid}&conta_associacao__uuid=${conta_associacao__uuid}${data_inicio ? '&data_inicio='+data_inicio : ""}${data_fim ? '&data_fim='+data_fim : ""}`;
-    if (localStorage.getItem(RECURSO_SELECIONADO)) {
-        const recurso_uuid = JSON.parse(localStorage.getItem(RECURSO_SELECIONADO)).uuid
-        url += `&recurso_uuid=${recurso_uuid}`;
-    }
-    return (await api.get(url, authHeader())).data
+    return (await api.get(`api/receitas/totais/?associacao_uuid=${localStorage.getItem(ASSOCIACAO_UUID)}&tipo_receita=${tipo_receita}&acao_associacao__uuid=${acao_associacao__uuid}&conta_associacao__uuid=${conta_associacao__uuid}${data_inicio ? '&data_inicio='+data_inicio : ""}${data_fim ? '&data_fim='+data_fim : ""}`, authHeader())).data
 };
 
 export const filtroPorPalavraReceitas = async (palavra) => {
-    let url = `api/receitas/?search=${palavra}&associacao__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`;
-    if (localStorage.getItem(RECURSO_SELECIONADO)) {
-        const recurso_uuid = JSON.parse(localStorage.getItem(RECURSO_SELECIONADO)).uuid
-        url += `&recurso_uuid=${recurso_uuid}`;
-    }
-    return (await api.get(url, authHeader())).data
+    return (await api.get(`api/receitas/?search=${palavra}&associacao__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader())).data
 };
 
 export const filtrosAvancadosReceitas = async (palavra, tipo_receita, acao_associacao__uuid, conta_associacao__uuid, data_inicio, data_fim) => {
-    let url = `api/receitas/?search=${palavra}&associacao__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}&tipo_receita=${tipo_receita}&acao_associacao__uuid=${acao_associacao__uuid}&conta_associacao__uuid=${conta_associacao__uuid}${data_inicio ? '&data_inicio='+data_inicio : ""}${data_fim ? '&data_fim='+data_fim : ""}`;
-    if (localStorage.getItem(RECURSO_SELECIONADO)) {
-        const recurso_uuid = JSON.parse(localStorage.getItem(RECURSO_SELECIONADO)).uuid
-        url += `&recurso_uuid=${recurso_uuid}`;
-    }
-    return (await api.get(url, authHeader())).data
+    return (await api.get(`api/receitas/?search=${palavra}&associacao__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}&tipo_receita=${tipo_receita}&acao_associacao__uuid=${acao_associacao__uuid}&conta_associacao__uuid=${conta_associacao__uuid}${data_inicio ? '&data_inicio='+data_inicio : ""}${data_fim ? '&data_fim='+data_fim : ""}`, authHeader())).data
 };
 
 export const getRepasse = async (acao_associacao_uuid, data_receita, uuid="") => {
-    let url = `/api/repasses/pendentes/?acao-associacao=${acao_associacao_uuid}&data=${data_receita}&uuid-receita=${uuid}`;
-    if (localStorage.getItem(RECURSO_SELECIONADO)) {
-        const recurso_uuid = JSON.parse(localStorage.getItem(RECURSO_SELECIONADO)).uuid
-        url += `&recurso_uuid=${recurso_uuid}`;
-    }
-    return (await api.get(url, authHeader())).data
+    return (await api.get(`/api/repasses/pendentes/?acao-associacao=${acao_associacao_uuid}&data=${data_receita}&uuid-receita=${uuid}`, authHeader())).data
 };
 
 export const getRepasses = async () => {
-    let url = `/api/repasses/pendentes/?associacao=${localStorage.getItem(ASSOCIACAO_UUID)}`;
-    if (localStorage.getItem(RECURSO_SELECIONADO)) {
-        const recurso_uuid = JSON.parse(localStorage.getItem(RECURSO_SELECIONADO)).uuid
-        url += `&recurso_uuid=${recurso_uuid}`;
-    }
-    return (await api.get(url, authHeader())).data
+    return (await api.get(`/api/repasses/pendentes/?associacao=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader())).data
 };
 
 export const getPeriodoFechadoReceita = async (palavra, aplicacao_recurso, acao_associacao__uuid, despesa__status) => {
@@ -147,10 +102,5 @@ export const getValidarDataDaReceita = async (associacao_uuid, data_da_receita) 
 };
 
 export const getPeriodosValidosAssociacaoEncerrada = async (associacao_uuid) => {
-    let url = `/api/receitas/periodos-validos-associacao-encerrada/?associacao_uuid=${associacao_uuid}`;
-    if (localStorage.getItem(RECURSO_SELECIONADO)) {
-        const recurso_uuid = JSON.parse(localStorage.getItem(RECURSO_SELECIONADO)).uuid
-        url += `&recurso_uuid=${recurso_uuid}`;
-    }
-    return (await api.get(url, authHeader())).data
+    return (await api.get(`/api/receitas/periodos-validos-associacao-encerrada/?associacao_uuid=${associacao_uuid}`, authHeader())).data
 };

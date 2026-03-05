@@ -103,8 +103,16 @@ describe("ReceitasPrevistasModalForm", () => {
           previsao_valor_capital: "0.00",
           previsao_valor_custeio: "0.00",
           previsao_valor_livre: "0.00",
+          saldo_congelado_capital: 0,
+          saldo_congelado_custeio: 0,
+          saldo_congelado_livre: 0,
         },
       ],
+      saldos: {
+        saldo_atual_capital: 0,
+        saldo_atual_custeio: 0,
+        saldo_atual_livre: 0,
+      },
       fixed: false,
     };
 

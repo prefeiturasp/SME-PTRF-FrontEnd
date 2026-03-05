@@ -4,6 +4,7 @@ import { PaginasContainer } from '../../../../paginas/PaginasContainer';
 import BreadcrumbComponent from '../../../Globais/Breadcrumb';
 import chevronUp from '../../../../assets/img/icone-chevron-up.svg';
 import chevronDown from '../../../../assets/img/icone-chevron-down.svg';
+import ListaVaziaImg from '../../../../assets/img/lista-vazia.svg';
 import { ASSOCIACAO_UUID } from '../../../../services/auth.service';
 import Loading from '../../../../utils/Loading';
 import { usePaaVigenteEAnteriores } from './hooks/usePaaVigenteEAnteriores';
@@ -680,119 +681,138 @@ export const PaaVigenteEAnteriores = () => {
           {isError && <div style={{ color: '#C22D2D' }}>Não foi possível carregar os dados do PAA.</div>}
         </div>
       )}
-
-      <div className="page-content-inner rounded">
-        <div className="d-flex justify-content-between align-items-center pt-2">
-          <h2
-            className="mb-0"
-            style={{ fontSize: '20px', fontWeight: 700, color: '#42474A' }}
-          >
-            Plano Vigente
-          </h2>
-        </div>
-
-        <div className="mt-4">
-          <div
-            className="d-flex justify-content-between align-items-center w-100"
-            style={{
-              backgroundColor: '#F3F3F3',
-              padding: '12px',
-              borderRadius: '4px',
-              border: '1px solid #DADADA',
-            }}
-          >
-            <span style={{ fontSize: '18px', fontWeight: 700, color: '#42474A' }}>
-              {vigente ? `PAA ${formatReferencia(vigente?.periodo_paa_objeto?.referencia)}` : 'PAA vigente'}
-            </span>
-            <div className="d-flex align-items-center">
-            {false && <button
-              type="button"
-              className="btn btn-outline-success"
-              onClick={() => navigate(-1)}
-              style={{
-                fontWeight: 600,
-                marginRight: '10px',
-              }}
-              disabled
+      
+      {!isLoading &&
+        <div className="page-content-inner rounded">
+            <div className="d-flex justify-content-between align-items-center pt-2">
+            <h2
+                className="mb-0"
+                style={{ fontSize: '20px', fontWeight: 700, color: '#42474A' }}
             >
-              Retificar o PAA
-            </button>}
-              <button
-                type="button"
-                className="d-flex align-items-center justify-content-center"
-                onClick={() => setIsDropdownOpen((prev) => !prev)}
-                style={{
-                  backgroundColor: '#DADADA',
-                  border: '1px solid #DADADA',
-                  borderRadius: '50%',
-                  width: '32px',
-                  height: '32px',
-                  padding: 0,
-                }}
-              >
-                <img
-                  src={isDropdownOpen ? chevronUp : chevronDown}
-                  alt={isDropdownOpen ? 'Fechar' : 'Abrir'}
-                  style={{ width: '12px', height: '8px' }}
-                />
-              </button>
+                Plano Vigente
+            </h2>
             </div>
-          </div>
-          {isDropdownOpen && renderPaaConteudo(vigente)}
-        </div>
 
-        <div className="mt-5">
-          <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#3C4043' }}>Planos anteriores</h3>
+            {!vigente && !isLoading ? 
+                <>
+                    <h4 className="mt-3 text-center" style={{fontSize: '18px', color: '#42474A', fontWeight: 700 }}>
+                        A sua unidade ainda não possui Plano Vigente. <br/> Clique no menu "Elaboração" para iniciar o Plano Anual Vigente
+                    </h4>
+                    <div className='d-flex justify-content-center'>
+                        <img src={ListaVaziaImg} alt="Lista vazia" className='img-fluid'/>
+                    </div>
+                </> : null            
+            }
 
-          {anteriores.length === 0 && !isLoading && (
-            <p className="mt-3 mb-0" style={{ fontSize: '14px', color: '#60686A' }}>
-              Não há PAAs anteriores registrados para esta unidade educacional.
-            </p>
-          )}
+            {vigente && 
+                <div className="mt-4">
+                    <div
+                        className="d-flex justify-content-between align-items-center w-100"
+                        style={{
+                        backgroundColor: '#F3F3F3',
+                        padding: '12px',
+                        borderRadius: '4px',
+                        border: '1px solid #DADADA',
+                        }}
+                    >
+                        <span style={{ fontSize: '18px', fontWeight: 700, color: '#42474A' }}>
+                        {vigente ? `PAA ${formatReferencia(vigente?.periodo_paa_objeto?.referencia)}` : 'PAA vigente'}
+                        </span>
+                        <div className="d-flex align-items-center">
+                        {false && <button
+                        type="button"
+                        className="btn btn-outline-success"
+                        onClick={() => navigate(-1)}
+                        style={{
+                            fontWeight: 600,
+                            marginRight: '10px',
+                        }}
+                        disabled
+                        >
+                        Retificar o PAA
+                        </button>}
+                        <button
+                            type="button"
+                            className="d-flex align-items-center justify-content-center"
+                            onClick={() => setIsDropdownOpen((prev) => !prev)}
+                            style={{
+                            backgroundColor: '#DADADA',
+                            border: '1px solid #DADADA',
+                            borderRadius: '50%',
+                            width: '32px',
+                            height: '32px',
+                            padding: 0,
+                            }}
+                        >
+                            <img
+                            src={isDropdownOpen ? chevronUp : chevronDown}
+                            alt={isDropdownOpen ? 'Fechar' : 'Abrir'}
+                            style={{ width: '12px', height: '8px' }}
+                            />
+                        </button>
+                        </div>
+                    </div>
+                    {isDropdownOpen && renderPaaConteudo(vigente)}
+                </div> }
 
-          {anteriores.map((paaAnterior) => {
-            const isOpen = anterioresAberto[paaAnterior.uuid];
-            const titulo = formatReferencia(paaAnterior?.periodo_paa_objeto?.referencia);
-            return (
-              <div className="mt-3" key={paaAnterior.uuid}>
-                <div
-                  className="d-flex justify-content-between align-items-center w-100"
-                  style={{
-                    backgroundColor: '#F3F3F3',
-                    padding: '12px',
-                    borderRadius: '4px',
-                    border: '1px solid #DADADA',
-                  }}
-                >
-                  <span style={{ fontSize: '18px', fontWeight: 700, color: '#42474A' }}>
-                    {titulo ? `PAA ${titulo}` : 'PAA anterior'}
-                  </span>
-                  <button
-                    type="button"
-                    className="d-flex align-items-center justify-content-center"
-                    onClick={() => toggleAnterior(paaAnterior.uuid)}
+            <div className="mt-5">
+            <h3 style={{ fontSize: '20px', fontWeight: 700, color: '#42474A' }}>Planos anteriores</h3>
+
+            {anteriores.length === 0 && !isLoading && (
+                <>
+                    <h4 className="mt-3 text-center" style={{fontSize: '18px', color: '#42474A', fontWeight: 700 }}>
+                        A sua unidade ainda não possui Planos anteriores.
+                    </h4>
+                    <div className='d-flex justify-content-center'>
+                        <img src={ListaVaziaImg} alt="Lista vazia" className='img-fluid'/>
+                    </div>
+                </>
+            )}
+
+            {anteriores.map((paaAnterior) => {
+                const isOpen = anterioresAberto[paaAnterior.uuid];
+                const titulo = formatReferencia(paaAnterior?.periodo_paa_objeto?.referencia);
+                return (
+                <div className="mt-3" key={paaAnterior.uuid}>
+                    <div
+                    className="d-flex justify-content-between align-items-center w-100"
                     style={{
-                      backgroundColor: '#DADADA',
-                      border: '1px solid #DADADA',
-                      borderRadius: '50%',
-                      width: '32px',
-                      height: '32px',
-                      padding: 0,
+                        backgroundColor: '#F3F3F3',
+                        padding: '12px',
+                        borderRadius: '4px',
+                        border: '1px solid #DADADA',
                     }}
-                  >
-                    <img
-                      src={isOpen ? chevronUp : chevronDown}
-                      alt={isOpen ? 'Fechar' : 'Abrir'}
-                      style={{ width: '12px', height: '8px' }}
-                    />
-                  </button>
+                    >
+                    <span style={{ fontSize: '18px', fontWeight: 700, color: '#42474A' }}>
+                        {titulo ? `PAA ${titulo}` : 'PAA anterior'}
+                    </span>
+                    <button
+                        type="button"
+                        className="d-flex align-items-center justify-content-center"
+                        onClick={() => toggleAnterior(paaAnterior.uuid)}
+                        style={{
+                        backgroundColor: '#DADADA',
+                        border: '1px solid #DADADA',
+                        borderRadius: '50%',
+                        width: '32px',
+                        height: '32px',
+                        padding: 0,
+                        }}
+                    >
+                        <img
+                        src={isOpen ? chevronUp : chevronDown}
+                        alt={isOpen ? 'Fechar' : 'Abrir'}
+                        style={{ width: '12px', height: '8px' }}
+                        />
+                    </button>
+                    </div>
+                    {isOpen && renderPaaConteudo(paaAnterior)}
                 </div>
-                {isOpen && renderPaaConteudo(paaAnterior)}
-              </div>
-            );
-          })}
-        </div>
-      </div>
+                );
+            })}
+            </div>
+        </div> }
+
     </PaginasContainer>
     <ModalVisualizarPdf
       show={modalPdf.show}
