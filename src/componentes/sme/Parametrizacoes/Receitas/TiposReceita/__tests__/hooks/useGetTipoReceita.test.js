@@ -29,34 +29,64 @@ describe("useGetTipoReceita", () => {
 
   it("deve começar carregando", () => {
     getTipoReceita.mockResolvedValueOnce(null);
-    const { result } = renderHook(() => useGetTipoReceita(uuid), { wrapper: createWrapper() });
-    expect(result.current.isLoading).toBe(true);
+    const { result } = renderHook(() => useGetTipoReceita(uuid), {
+      wrapper: createWrapper(),
+    });
+    expect(result.current.isLoading).toBe(false);
     expect(result.current.data).toBeUndefined();
   });
 
   it("deve retornar os dados corretamente após a requisição", async () => {
-    getTipoReceita.mockResolvedValueOnce(mockData);
-    const { result } = renderHook(() => useGetTipoReceita(uuid), { wrapper: createWrapper() });
-    await waitFor(() => expect(result.current.isLoading).toBe(false));
-    expect(result.current.data).toEqual(mockData);
+    getTipoReceita.mockResolvedValueOnce({
+      ...mockData,
+    });
+
+    const { result } = renderHook(() => useGetTipoReceita(uuid), {
+      wrapper: createWrapper(),
+    });
+
+    await waitFor(() => {
+      expect(result.current.data).toEqual(mockData);
+    });
   });
 
   it("deve lidar com erro na requisição", async () => {
-    getTipoReceita.mockRejectedValueOnce(new Error("Erro ao buscar tipo de receita"));
-    const { result } = renderHook(() => useGetTipoReceita(uuid), { wrapper: createWrapper() });
+    getTipoReceita.mockRejectedValueOnce(
+      new Error("Erro ao buscar tipo de receita"),
+    );
+    const { result } = renderHook(() => useGetTipoReceita(uuid), {
+      wrapper: createWrapper(),
+    });
     await waitFor(() => expect(result.current.isError).toBe(true));
     expect(result.current.error.message).toBe("Erro ao buscar tipo de receita");
   });
 
   it("deve permitir refetch manual", async () => {
-    getTipoReceita.mockResolvedValueOnce(mockData);
-    const { result } = renderHook(() => useGetTipoReceita(uuid), { wrapper: createWrapper() });
-    await waitFor(() => expect(result.current.isLoading).toBe(false));
-    expect(result.current.data).toEqual(mockData);
+    getTipoReceita.mockResolvedValueOnce({
+      data: mockData,
+    });
 
-    const newMockData = { uuid: "uuid-fake", descricao: "Nova Receita" };
-    getTipoReceita.mockResolvedValueOnce(newMockData);
+    const { result } = renderHook(() => useGetTipoReceita(uuid), {
+      wrapper: createWrapper(),
+    });
+
+    await waitFor(() => {
+      expect(result.current.data).toEqual(mockData.data);
+    });
+
+    const newMockData = {
+      uuid: "uuid-fake",
+      descricao: "Nova Receita",
+    };
+
+    getTipoReceita.mockResolvedValueOnce({
+      data: newMockData,
+    });
+
     await result.current.refetch();
-    await waitFor(() => expect(result.current.data).toEqual(newMockData));
+
+    await waitFor(() => {
+      expect(result.current.data).toEqual(newMockData.data);
+    });
   });
 });

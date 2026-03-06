@@ -173,17 +173,21 @@ export const deleteTipoReceita = async (uuid) => {
   return (await api.delete(`/api/tipos-receitas/${uuid}/`, authHeader())).data;
 };
 
+export const postTipoReceitaVincularTodasUnidades = async (uuid) => {
+  return (await api.post(`/api/tipos-receitas/${uuid}/vincular-todas-unidades/`, {}, authHeader())).data;
+};
+
 export const getFiltrosTipoReceita = async () => {
   return (await api.get(`/api/tipos-receitas/filtros/`, authHeader())).data;
 };
 
 // Unidades tipo de receita
-export const getUnidadesTipoReceita = async (uuid, nome_ou_codigo, dre, page) => {
-  return (await api.get(`/api/tipos-receitas/${uuid}/unidades-vinculadas/?nome_ou_codigo=${nome_ou_codigo}&dre=${dre}&page=${page}`, authHeader())).data;
+export const getUnidadesTipoReceita = async (uuid, nome_ou_codigo, dre, tipo_unidade, page) => {
+  return (await api.get(`/api/tipos-receitas/${uuid}/unidades-vinculadas/?nome_ou_codigo=${nome_ou_codigo}&dre=${dre}&tipo_unidade=${tipo_unidade}&page=${page}`, authHeader())).data;
 }
 
-export const getUnidadesNaoVinculadasTipoReceita = async (uuid, nome_ou_codigo, dre, page) => {
-  return (await api.get(`/api/tipos-receitas/${uuid}/unidades-nao-vinculadas/?nome_ou_codigo=${nome_ou_codigo}&dre=${dre}&page=${page}`, authHeader())).data;
+export const getUnidadesNaoVinculadasTipoReceita = async (uuid, nome_ou_codigo, dre, tipo_unidade, page) => {
+  return (await api.get(`/api/tipos-receitas/${uuid}/unidades-nao-vinculadas/?nome_ou_codigo=${nome_ou_codigo}&dre=${dre}&tipo_unidade=${tipo_unidade}&page=${page}`, authHeader())).data;
 }
 
 export const vincularUnidadeTipoReceita = async (uuid, unidadeUUID) => {
