@@ -4,56 +4,66 @@ import { getFiltrosTipoReceita } from "../../../../../../../services/sme/Paramet
 import { useGetFiltrosTiposReceita } from "../../hooks/useGetFiltrosTiposReceita";
 
 jest.mock("../../../../../../../services/sme/Parametrizacoes.service", () => ({
-    getFiltrosTipoReceita: jest.fn(),
+  getFiltrosTipoReceita: jest.fn(),
 }));
 
 describe("useGetFiltrosTiposReceita", () => {
-    let queryClient;
+  let queryClient;
 
-    beforeEach(() => {
-        queryClient = new QueryClient({
-            defaultOptions: {
-                queries: {
-                    retry: false,
-                },
-            },
-        });
+  beforeEach(() => {
+    queryClient = new QueryClient({
+      defaultOptions: {
+        queries: {
+          retry: false,
+        },
+      },
+    });
+  });
+
+  const wrapper = ({ children }) => (
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  );
+
+  it("deve retornar os dados corretamente quando a requisição for bem-sucedida", async () => {
+    const mockData = {
+      tipos_contas: ["Conta A", "Conta B"],
+      tipos: ["Tipo 1", "Tipo 2"],
+      aceita: ["Sim", "Não"],
+      detalhes: ["Detalhe 1", "Detalhe 2"],
+    };
+
+    getFiltrosTipoReceita.mockResolvedValueOnce(mockData);
+
+    const { result } = renderHook(() => useGetFiltrosTiposReceita(), {
+      wrapper,
     });
 
-    const wrapper = ({ children }) => (
-        <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    await waitFor(() => {
+      expect(result.current.data.tipos_contas.length).toBeGreaterThan(0);
+    });
+
+    expect(result.current.data).toEqual(mockData);
+    expect(result.current.isError).toBe(false);
+  });
+
+  it("deve lidar corretamente com erro na requisição", async () => {
+    getFiltrosTipoReceita.mockRejectedValueOnce(
+      new Error("Erro ao buscar filtros"),
     );
 
-    it("deve retornar os dados corretamente quando a requisição for bem-sucedida", async () => {
-        const mockData = {
-            tipos_contas: ["Conta A", "Conta B"],
-            tipos: ["Tipo 1", "Tipo 2"],
-            aceita: ["Sim", "Não"],
-            detalhes: ["Detalhe 1", "Detalhe 2"],
-        };
-        getFiltrosTipoReceita.mockResolvedValueOnce(mockData);
-
-        const { result } = renderHook(() => useGetFiltrosTiposReceita(), { wrapper });
-
-        await waitFor(() => expect(result.current.isLoading).toBe(false));
-
-        expect(result.current.data).toEqual(mockData);
-        expect(result.current.isError).toBe(false);
+    const { result } = renderHook(() => useGetFiltrosTiposReceita(), {
+      wrapper,
     });
 
-    it("deve lidar corretamente com erro na requisição", async () => {
-        getFiltrosTipoReceita.mockRejectedValueOnce(new Error("Erro ao buscar filtros"));
-
-        const { result } = renderHook(() => useGetFiltrosTiposReceita(), { wrapper });
-
-        await waitFor(() => expect(result.current.isLoading).toBe(false));
-
-        expect(result.current.isError).toBe(true);
-        expect(result.current.data).toEqual({
-            tipos_contas: [],
-            tipos: [],
-            aceita: [],
-            detalhes: [],
-        });
+    await waitFor(() => {
+      expect(result.current.isError).toBe(true);
     });
+
+    expect(result.current.data).toEqual({
+      tipos_contas: [],
+      tipos: [],
+      aceita: [],
+      detalhes: [],
+    });
+  });
 });
