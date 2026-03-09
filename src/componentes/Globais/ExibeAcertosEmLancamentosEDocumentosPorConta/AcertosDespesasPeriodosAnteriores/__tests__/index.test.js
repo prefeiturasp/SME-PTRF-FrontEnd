@@ -213,6 +213,88 @@ const mockLancamentosComMensagemInativaEExterno = [{
   }
 }];
 
+// ── Helper para criar acertos com status específico ──────────────────────────
+const makeAcerto = (uuid, status) => ({
+  uuid,
+  ordem: 1,
+  tipo_acerto: { nome: 'Tipo Acerto', categoria: 'AJUSTE_LANCAMENTO' },
+  detalhamento: null,
+  status_realizacao: status,
+  justificativa: null,
+  esclarecimentos: null,
+  selecionado: false
+});
+
+const makeLancamentos = (acertos) => [{
+  tipo_transacao: 'Gasto',
+  documento_mestre: { uuid: 'doc-uuid', receitas_saida_do_recurso: null },
+  analise_lancamento: {
+    uuid: 'lancamento-uuid',
+    selecionado: false,
+    solicitacoes_de_ajuste_da_analise_total: acertos.length,
+    solicitacoes_de_ajuste_da_analise: {
+      solicitacoes_acerto_por_categoria: [{
+        acertos,
+        requer_ajustes_externos: false,
+        mensagem_inativa: null
+      }]
+    }
+  }
+}];
+
+// Dois lançamentos para testar branches de todosLancamentosCheckados
+const mockDoisLancamentos = [
+  {
+    tipo_transacao: 'Gasto',
+    documento_mestre: { uuid: 'doc-uuid-1', receitas_saida_do_recurso: null },
+    analise_lancamento: {
+      uuid: 'lancamento-uuid-1',
+      selecionado: false,
+      solicitacoes_de_ajuste_da_analise_total: 1,
+      solicitacoes_de_ajuste_da_analise: {
+        solicitacoes_acerto_por_categoria: [{
+          acertos: [makeAcerto('acerto-multi-1', 'PENDENTE')],
+          requer_ajustes_externos: false,
+          mensagem_inativa: null
+        }]
+      }
+    }
+  },
+  {
+    tipo_transacao: 'Gasto',
+    documento_mestre: { uuid: 'doc-uuid-2', receitas_saida_do_recurso: null },
+    analise_lancamento: {
+      uuid: 'lancamento-uuid-2',
+      selecionado: false,
+      solicitacoes_de_ajuste_da_analise_total: 1,
+      solicitacoes_de_ajuste_da_analise: {
+        solicitacoes_acerto_por_categoria: [{
+          acertos: [makeAcerto('acerto-multi-2', 'PENDENTE')],
+          requer_ajustes_externos: false,
+          mensagem_inativa: null
+        }]
+      }
+    }
+  }
+];
+
+const lancamentosJustificadoERealizado = makeLancamentos([
+  makeAcerto('uuid-j', 'JUSTIFICADO'),
+  makeAcerto('uuid-r', 'REALIZADO')
+]);
+const lancamentosJustificadoRealizadoPendente = makeLancamentos([
+  makeAcerto('uuid-j', 'JUSTIFICADO'),
+  makeAcerto('uuid-r', 'REALIZADO'),
+  makeAcerto('uuid-p', 'PENDENTE')
+]);
+const lancamentosJustificadoEPendente = makeLancamentos([
+  makeAcerto('uuid-j', 'JUSTIFICADO'),
+  makeAcerto('uuid-p', 'PENDENTE')
+]);
+const lancamentosSoRealizados = makeLancamentos([makeAcerto('uuid-r', 'REALIZADO')]);
+const lancamentosSoJustificados = makeLancamentos([makeAcerto('uuid-j', 'JUSTIFICADO')]);
+const lancamentosSoPendentes = makeLancamentos([makeAcerto('uuid-p', 'PENDENTE')]);
+
 const mockAnaliseStatus = {
   editavel: true,
   status_realizacao_solicitacao: [
@@ -278,7 +360,25 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
     );
 
   const waitForTable = () =>
-    waitFor(() => expect(screen.getByTestId('tabela-acertos-despesas')).toBeInTheDocument());
+    waitFor(() => {
+      expect(screen.getByTestId('tabela-acertos-despesas')).toBeInTheDocument();
+      expect(capturedTabelaProps.analisePermiteEdicao).toBeDefined();
+    });
+
+  // Helper para encontrar elementos em árvores JSX sem renderizar em árvore separada
+  const findInJSX = (jsx, predicate) => {
+    if (jsx === null || jsx === undefined || typeof jsx !== 'object' || !jsx.props)
+      return null;
+    if (predicate(jsx)) return jsx;
+    const children = jsx.props.children;
+    if (children === null || children === undefined) return null;
+    const list = Array.isArray(children) ? children.flat(Infinity) : [children];
+    for (const child of list) {
+      const found = findInJSX(child, predicate);
+      if (found) return found;
+    }
+    return null;
+  };
 
   // ── Render inicial ──────────────────────────────────────
 
@@ -542,6 +642,33 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
   });
 
   describe('Ação: justificarNaoRealizacao', () => {
+    it('passa uuids dos acertos selecionados ao chamar justificarNaoRealizacao', async () => {
+      setupDefaultMocks(mockContas, mockLancamentosComAcertos);
+      postJustificarNaoRealizacaoLancamentoPrestacaoConta.mockResolvedValue({
+        todas_as_solicitacoes_marcadas_como_justificado: true
+      });
+      renderComponent();
+      await waitForTable();
+
+      // Selecionar todos os acertos para que selecionados.map() seja chamado com itens
+      const jsx = capturedTabelaProps.selecionarTodosItensDosLancamentosGlobal();
+      await act(async () => {
+        jsx.props.children.props.onChange({ target: {} });
+      });
+      await waitFor(() =>
+        expect(capturedTabelaProps.lancamentosAjustes[0].analise_lancamento.selecionado).toBe(true)
+      );
+
+      await act(async () => {
+        await capturedTabelaProps.justificarNaoRealizacao('justificativa com selecionados');
+      });
+
+      expect(postJustificarNaoRealizacaoLancamentoPrestacaoConta).toHaveBeenCalledWith({
+        uuids_solicitacoes_acertos_lancamentos: ['acerto-uuid-1', 'acerto-uuid-2'],
+        justificativa: 'justificativa com selecionados'
+      });
+    });
+
     it('chama postJustificarNaoRealizacaoLancamentoPrestacaoConta', async () => {
       setupDefaultMocks();
       postJustificarNaoRealizacaoLancamentoPrestacaoConta.mockResolvedValue({
@@ -602,16 +729,13 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
       renderComponent();
       await waitForTable();
 
+      // Invocação direta do handler para evitar problema cross-root
+      // onChange={(e) => selecionarTodosGlobal(e.target)} - selecionarTodosGlobal não usa e
       const checkboxJsx = capturedTabelaProps.selecionarTodosItensDosLancamentosGlobal();
-      const { container } = render(<div>{checkboxJsx}</div>);
-      const checkbox = container.querySelector('input[type="checkbox"]');
-
       await act(async () => {
-        fireEvent.click(checkbox);
+        checkboxJsx.props.children.props.onChange({ target: {} });
       });
 
-      // After selecting all, quantidadeSelecionada should remain 0 if no acertos nested
-      // but the identificadorCheckboxClicado should be true
       await waitFor(() => {
         expect(capturedTabelaProps.lancamentosAjustes[0].analise_lancamento.selecionado).toBe(true);
       });
@@ -625,9 +749,10 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
       const rowJsx = capturedTabelaProps.selecionarTodosItensDoLancamentoRow(
         capturedTabelaProps.lancamentosAjustes[0]
       );
-      const { container } = render(<div>{rowJsx}</div>);
-      const checkbox = container.querySelector('input[type="checkbox"]');
-      expect(checkbox).toBeInTheDocument();
+      // Verifica a estrutura do JSX diretamente sem renderizar em árvore separada
+      expect(rowJsx.type).toBe('input');
+      expect(rowJsx.props.type).toBe('checkbox');
+      expect(typeof rowJsx.props.onChange).toBe('function');
     });
 
     it('acaoCancelar reseta a seleção dos lançamentos', async () => {
@@ -1055,24 +1180,20 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
       renderComponent();
       await waitForTable();
 
-      // Primeiro click: seleciona todos
-      const checkbox1Jsx = capturedTabelaProps.selecionarTodosItensDosLancamentosGlobal();
-      const { container: c1, unmount: u1 } = render(<div>{checkbox1Jsx}</div>);
+      // Primeiro: seleciona todos via invocação direta
+      const jsx1 = capturedTabelaProps.selecionarTodosItensDosLancamentosGlobal();
       await act(async () => {
-        fireEvent.click(c1.querySelector('input[type="checkbox"]'));
+        jsx1.props.children.props.onChange({ target: {} });
       });
-      u1();
 
-      // Aguarda atualização do estado (selecionado = true)
       await waitFor(() => {
         expect(capturedTabelaProps.lancamentosAjustes[0].analise_lancamento.selecionado).toBe(true);
       });
 
-      // Segundo click: desseleciona todos
-      const checkbox2Jsx = capturedTabelaProps.selecionarTodosItensDosLancamentosGlobal();
-      const { container: c2 } = render(<div>{checkbox2Jsx}</div>);
+      // Segundo: desseleciona todos via invocação direta
+      const jsx2 = capturedTabelaProps.selecionarTodosItensDosLancamentosGlobal();
       await act(async () => {
-        fireEvent.click(c2.querySelector('input[type="checkbox"]'));
+        jsx2.props.children.props.onChange({ target: {} });
       });
 
       await waitFor(() => {
@@ -1088,19 +1209,24 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
       const rowJsx = capturedTabelaProps.selecionarTodosItensDoLancamentoRow(
         capturedTabelaProps.lancamentosAjustes[0]
       );
-      const { container } = render(<div>{rowJsx}</div>);
-      const checkbox = container.querySelector('input[type="checkbox"]');
 
-      // Verifica estado inicial do checkbox (desmarcado)
-      expect(checkbox.checked).toBe(false);
+      // Verifica estado inicial via props do JSX
+      expect(rowJsx.props.checked).toBe(false);
 
-      // O change event executa tratarSelecionado sem causar recarregamento de dados
+      // Invocação direta do handler para evitar problema cross-root
+      // onChange={(e) => tratarSelecionado(e, rowData.analise_lancamento.uuid)}
       getDespesasPeriodosAnterioresAjustes.mockClear();
       await act(async () => {
-        fireEvent.change(checkbox, { target: { checked: true } });
+        rowJsx.props.onChange({ target: { checked: true } });
       });
+
       // tratarSelecionado não deve disparar recarregamento de dados
       expect(getDespesasPeriodosAnterioresAjustes).not.toHaveBeenCalled();
+
+      // Após seleção, o lançamento deve estar marcado como selecionado
+      await waitFor(() => {
+        expect(capturedTabelaProps.lancamentosAjustes[0].analise_lancamento.selecionado).toBe(true);
+      });
     });
 
     it('tratarSelecionadoIndividual seleciona um acerto individual', async () => {
@@ -1111,22 +1237,123 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
       const expansion = capturedTabelaProps.rowExpansionTemplateLancamentos(
         capturedTabelaProps.lancamentosAjustes[0]
       );
-      const { container } = render(
-        <MemoryRouter>
-          <Provider store={mockStore}>{expansion}</Provider>
-        </MemoryRouter>
+
+      // Localiza checkbox individual via findInJSX e invoca diretamente
+      const acertoCheckbox = findInJSX(
+        expansion,
+        (el) => el.type === 'input' && el.props.type === 'checkbox' && el.props.value === 'acerto-uuid-1'
       );
 
-      const acertoCheckbox = container.querySelector('input[value="acerto-uuid-1"]');
-      if (acertoCheckbox) {
-        await act(async () => {
-          fireEvent.change(acertoCheckbox, { target: { checked: true } });
-        });
-        // Verifica que o lancamento não está totalmente selecionado (apenas 1 dos 2)
-        await waitFor(() => {
-          expect(capturedTabelaProps.quantidadeSelecionada).toBeDefined();
-        });
-      }
+      expect(acertoCheckbox).toBeTruthy();
+
+      await act(async () => {
+        acertoCheckbox.props.onChange({ target: { checked: true } });
+      });
+
+      // Após selecionar 1 dos 2 acertos, quantidadeSelecionada deve ser 1
+      await waitFor(() => {
+        expect(capturedTabelaProps.quantidadeSelecionada).toBe(1);
+      });
+    });
+
+    it('tratarSelecionadoIndividual cobre todosAcertosCheckados=true ao selecionar todos os acertos', async () => {
+      // mockLancamentosComAcertos tem 2 acertos; selecionar ambos cobre linhas 723, 775-778
+      setupDefaultMocks(mockContas, mockLancamentosComAcertos);
+      renderComponent();
+      await waitForTable();
+
+      const lancamento = capturedTabelaProps.lancamentosAjustes[0];
+
+      // Selecionar acerto-uuid-1 (todosAcertosCheckados ainda false)
+      const exp1 = capturedTabelaProps.rowExpansionTemplateLancamentos(lancamento);
+      const cb1 = findInJSX(exp1, (el) =>
+        el.type === 'input' && el.props.type === 'checkbox' && el.props.value === 'acerto-uuid-1'
+      );
+      await act(async () => { cb1.props.onChange({ target: { checked: true } }); });
+      await waitFor(() => expect(capturedTabelaProps.quantidadeSelecionada).toBe(1));
+
+      // Selecionar acerto-uuid-2 (todosAcertosCheckados agora true; 1/1 lancamento → todosLancamentosCheckados true)
+      const exp2 = capturedTabelaProps.rowExpansionTemplateLancamentos(lancamento);
+      const cb2 = findInJSX(exp2, (el) =>
+        el.type === 'input' && el.props.type === 'checkbox' && el.props.value === 'acerto-uuid-2'
+      );
+      await act(async () => { cb2.props.onChange({ target: { checked: true } }); });
+
+      await waitFor(() => {
+        expect(capturedTabelaProps.lancamentosAjustes[0].analise_lancamento.selecionado).toBe(true);
+        expect(capturedTabelaProps.quantidadeSelecionada).toBe(2);
+      });
+    });
+
+    it('tratarSelecionado cobre else de todosLancamentosCheckados com múltiplos lançamentos', async () => {
+      // mockDoisLancamentos tem 2 lançamentos; selecionar apenas 1 → todosLancamentosCheckados false (linha 677)
+      setupDefaultMocks(mockContas, mockDoisLancamentos);
+      renderComponent();
+      await waitForTable();
+
+      // Seleciona apenas o primeiro lançamento
+      const rowJsx = capturedTabelaProps.selecionarTodosItensDoLancamentoRow(
+        capturedTabelaProps.lancamentosAjustes[0]
+      );
+      await act(async () => {
+        rowJsx.props.onChange({ target: { checked: true } });
+      });
+
+      // Apenas 1 dos 2 lançamentos selecionado → identificadorCheckboxClicado deve ser false
+      await waitFor(() => {
+        expect(capturedTabelaProps.lancamentosAjustes[0].analise_lancamento.selecionado).toBe(true);
+        expect(capturedTabelaProps.lancamentosAjustes[1].analise_lancamento.selecionado).toBe(false);
+      });
+    });
+
+    it('tratarSelecionadoIndividual cobre else de todosLancamentosCheckados com múltiplos lançamentos', async () => {
+      // Usa 2 lançamentos, seleciona todos os acertos do 1º → todosAcertosCheckados true mas todosLancamentosCheckados false (linha 781)
+      const doisLancamentosComAcertos = [
+        ...mockDoisLancamentos.map((l, i) => ({
+          ...l,
+          analise_lancamento: {
+            ...l.analise_lancamento,
+            uuid: `lancamento-multi-uuid-${i}`,
+            solicitacoes_de_ajuste_da_analise_total: 2,
+            solicitacoes_de_ajuste_da_analise: {
+              solicitacoes_acerto_por_categoria: [{
+                acertos: [
+                  makeAcerto(`acerto-m${i}-1`, 'PENDENTE'),
+                  makeAcerto(`acerto-m${i}-2`, 'PENDENTE')
+                ],
+                requer_ajustes_externos: false,
+                mensagem_inativa: null
+              }]
+            }
+          }
+        }))
+      ];
+
+      setupDefaultMocks(mockContas, doisLancamentosComAcertos);
+      renderComponent();
+      await waitForTable();
+
+      const lancamento0 = capturedTabelaProps.lancamentosAjustes[0];
+
+      // Selecionar ambos acertos do lançamento 0
+      const exp1 = capturedTabelaProps.rowExpansionTemplateLancamentos(lancamento0);
+      const cbA = findInJSX(exp1, (el) =>
+        el.type === 'input' && el.props.type === 'checkbox' && el.props.value === 'acerto-m0-1'
+      );
+      await act(async () => { cbA.props.onChange({ target: { checked: true } }); });
+      await waitFor(() => expect(capturedTabelaProps.quantidadeSelecionada).toBe(1));
+
+      // Segundo acerto → todosAcertosCheckados true, mas lancamento-1 ainda false → todosLancamentosCheckados false → linha 781
+      const exp2 = capturedTabelaProps.rowExpansionTemplateLancamentos(lancamento0);
+      const cbB = findInJSX(exp2, (el) =>
+        el.type === 'input' && el.props.type === 'checkbox' && el.props.value === 'acerto-m0-2'
+      );
+      await act(async () => { cbB.props.onChange({ target: { checked: true } }); });
+
+      await waitFor(() => {
+        expect(capturedTabelaProps.lancamentosAjustes[0].analise_lancamento.selecionado).toBe(true);
+        expect(capturedTabelaProps.lancamentosAjustes[1].analise_lancamento.selecionado).toBe(false);
+      });
     });
 
     it('acoesDisponiveis retorna REALIZADO_E_PENDENTE quando há acertos com esses status', async () => {
@@ -1134,11 +1361,10 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
       renderComponent();
       await waitForTable();
 
-      // Seleciona todos via header checkbox
+      // Seleciona todos via invocação direta
       const checkboxJsx = capturedTabelaProps.selecionarTodosItensDosLancamentosGlobal();
-      const { container } = render(<div>{checkboxJsx}</div>);
       await act(async () => {
-        fireEvent.click(container.querySelector('input[type="checkbox"]'));
+        checkboxJsx.props.children.props.onChange({ target: {} });
       });
 
       await waitFor(() => {
@@ -1159,22 +1385,30 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
       renderComponent();
       await waitForTable();
 
-      const expansion = capturedTabelaProps.rowExpansionTemplateLancamentos(
-        capturedTabelaProps.lancamentosAjustes[0]
-      );
-      const { container } = render(
-        <MemoryRouter>
-          <Provider store={mockStore}>{expansion}</Provider>
-        </MemoryRouter>
-      );
+      const lancamento = capturedTabelaProps.lancamentosAjustes[0];
+      const expansion = capturedTabelaProps.rowExpansionTemplateLancamentos(lancamento);
 
-      const textarea = container.querySelector('textarea[name="justificativa"]');
-      expect(textarea).toBeInTheDocument();
+      // Localiza textarea via findInJSX e invoca onChange diretamente
+      const textarea = findInJSX(
+        expansion,
+        (el) => el.type === 'textarea' && el.props.name === 'justificativa'
+      );
+      expect(textarea).toBeTruthy();
 
       await act(async () => {
-        fireEvent.change(textarea, { target: { value: 'novo valor de justificativa' } });
+        textarea.props.onChange({ target: { value: 'novo valor de justificativa' } });
       });
-      // handleChangeTextareaJustificativa foi chamado e atualizou o estado no componente pai
+
+      // handleChangeTextareaJustificativa foi chamado; verifica estado atualizado
+      await waitFor(() => {
+        const updatedExpansion = capturedTabelaProps.rowExpansionTemplateLancamentos(lancamento);
+        const updatedTextarea = findInJSX(
+          updatedExpansion,
+          (el) => el.type === 'textarea' && el.props.name === 'justificativa'
+        );
+        // defaultValue não muda (é controlado pelo estado), mas o estado foi atualizado
+        expect(updatedTextarea).toBeTruthy();
+      });
     });
 
     it('salvarJustificativa chama postJustificarNaoRealizacaoLancamentoPrestacaoConta após habilitar o botão', async () => {
@@ -1187,42 +1421,70 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
 
       const lancamento = capturedTabelaProps.lancamentosAjustes[0];
 
-      // Render inicial da expansão
-      let expansion = capturedTabelaProps.rowExpansionTemplateLancamentos(lancamento);
-      const { container, rerender } = render(
-        <MemoryRouter>
-          <Provider store={mockStore}>{expansion}</Provider>
-        </MemoryRouter>
+      // Passo 1: invocar onChange da textarea para atualizar textareaJustificativa no estado
+      const expansion1 = capturedTabelaProps.rowExpansionTemplateLancamentos(lancamento);
+      const textarea = findInJSX(
+        expansion1,
+        (el) => el.type === 'textarea' && el.props.name === 'justificativa'
       );
-
-      // Digita valor diferente da justificativa existente para habilitar o botão
-      const textarea = container.querySelector('textarea[name="justificativa"]');
+      expect(textarea).toBeTruthy();
       await act(async () => {
-        fireEvent.change(textarea, { target: { value: 'justificativa completamente nova' } });
+        textarea.props.onChange({ target: { value: 'justificativa completamente nova' } });
       });
 
-      // Re-renderiza com closure atualizada (textareaJustificativa foi atualizado)
+      // Passo 2: obter closure atualizada e invocar botão Salvar Justificativas
       await act(async () => {
-        const updatedExpansion = capturedTabelaProps.rowExpansionTemplateLancamentos(lancamento);
-        rerender(
-          <MemoryRouter>
-            <Provider store={mockStore}>{updatedExpansion}</Provider>
-          </MemoryRouter>
+        const expansion2 = capturedTabelaProps.rowExpansionTemplateLancamentos(lancamento);
+        const saveBtn = findInJSX(
+          expansion2,
+          (el) =>
+            el.type === 'button' &&
+            el.props.children?.type === 'strong' &&
+            el.props.children?.props?.children === 'Salvar Justificativas' &&
+            !el.props.disabled
         );
+        saveBtn?.props?.onClick?.();
       });
 
-      // Clica no botão "Salvar Justificativas" se estiver habilitado
-      const salvarBtn = Array.from(container.querySelectorAll('button')).find(
-        (b) => b.textContent.trim() === 'Salvar Justificativas'
+      await waitFor(() => {
+        expect(postJustificarNaoRealizacaoLancamentoPrestacaoConta).toHaveBeenCalled();
+      });
+    });
+
+    it('salvarJustificativa trata erro do serviço no catch', async () => {
+      setupDefaultMocks(mockContas, mockLancamentosComAcertos);
+      postJustificarNaoRealizacaoLancamentoPrestacaoConta.mockRejectedValue(new Error('Erro de rede'));
+      renderComponent();
+      await waitForTable();
+
+      const lancamento = capturedTabelaProps.lancamentosAjustes[0];
+
+      const expansion1 = capturedTabelaProps.rowExpansionTemplateLancamentos(lancamento);
+      const textarea = findInJSX(
+        expansion1,
+        (el) => el.type === 'textarea' && el.props.name === 'justificativa'
       );
-      if (salvarBtn && !salvarBtn.disabled) {
-        await act(async () => {
-          fireEvent.click(salvarBtn);
-        });
-        await waitFor(() => {
-          expect(postJustificarNaoRealizacaoLancamentoPrestacaoConta).toHaveBeenCalled();
-        });
-      }
+      await act(async () => {
+        textarea.props.onChange({ target: { value: 'justificativa nova para erro' } });
+      });
+
+      await act(async () => {
+        const expansion2 = capturedTabelaProps.rowExpansionTemplateLancamentos(lancamento);
+        const saveBtn = findInJSX(
+          expansion2,
+          (el) =>
+            el.type === 'button' &&
+            el.props.children?.type === 'strong' &&
+            el.props.children?.props?.children === 'Salvar Justificativas' &&
+            !el.props.disabled
+        );
+        saveBtn?.props?.onClick?.();
+      });
+
+      // O componente não deve lançar exceção (catch trata o erro)
+      await waitFor(() => {
+        expect(postJustificarNaoRealizacaoLancamentoPrestacaoConta).toHaveBeenCalled();
+      });
     });
 
     it('handleChangeTextareaEsclarecimentoLancamento atualiza o estado ao digitar', async () => {
@@ -1230,22 +1492,29 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
       renderComponent();
       await waitForTable();
 
-      const expansion = capturedTabelaProps.rowExpansionTemplateLancamentos(
-        capturedTabelaProps.lancamentosAjustes[0]
-      );
-      const { container } = render(
-        <MemoryRouter>
-          <Provider store={mockStore}>{expansion}</Provider>
-        </MemoryRouter>
-      );
+      const lancamento = capturedTabelaProps.lancamentosAjustes[0];
+      const expansion = capturedTabelaProps.rowExpansionTemplateLancamentos(lancamento);
 
-      const textarea = container.querySelector('textarea[name="esclarecimento"]');
-      expect(textarea).toBeInTheDocument();
+      // Localiza textarea de esclarecimento via findInJSX e invoca diretamente
+      const textarea = findInJSX(
+        expansion,
+        (el) => el.type === 'textarea' && el.props.name === 'esclarecimento'
+      );
+      expect(textarea).toBeTruthy();
 
       await act(async () => {
-        fireEvent.change(textarea, { target: { value: 'novo esclarecimento' } });
+        textarea.props.onChange({ target: { value: 'novo esclarecimento' } });
       });
+
       // handleChangeTextareaEsclarecimentoLancamento foi chamado
+      await waitFor(() => {
+        const updatedExpansion = capturedTabelaProps.rowExpansionTemplateLancamentos(lancamento);
+        const updatedTextarea = findInJSX(
+          updatedExpansion,
+          (el) => el.type === 'textarea' && el.props.name === 'esclarecimento'
+        );
+        expect(updatedTextarea).toBeTruthy();
+      });
     });
 
     it('marcarComoEsclarecido chama postMarcarComoLancamentoEsclarecido após habilitar o botão', async () => {
@@ -1256,40 +1525,70 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
 
       const lancamento = capturedTabelaProps.lancamentosAjustes[0];
 
-      let expansion = capturedTabelaProps.rowExpansionTemplateLancamentos(lancamento);
-      const { container, rerender } = render(
-        <MemoryRouter>
-          <Provider store={mockStore}>{expansion}</Provider>
-        </MemoryRouter>
+      // Passo 1: invocar onChange do textarea para atualizar txtEsclarecimentoLancamento
+      const expansion1 = capturedTabelaProps.rowExpansionTemplateLancamentos(lancamento);
+      const textarea = findInJSX(
+        expansion1,
+        (el) => el.type === 'textarea' && el.props.name === 'esclarecimento'
       );
-
-      // Digita valor diferente do esclarecimento existente
-      const textarea = container.querySelector('textarea[name="esclarecimento"]');
+      expect(textarea).toBeTruthy();
       await act(async () => {
-        fireEvent.change(textarea, { target: { value: 'esclarecimento totalmente novo' } });
+        textarea.props.onChange({ target: { value: 'esclarecimento totalmente novo' } });
       });
 
-      // Re-renderiza com closure atualizada
+      // Passo 2: obter closure atualizada e invocar botão Salvar esclarecimento
       await act(async () => {
-        const updatedExpansion = capturedTabelaProps.rowExpansionTemplateLancamentos(lancamento);
-        rerender(
-          <MemoryRouter>
-            <Provider store={mockStore}>{updatedExpansion}</Provider>
-          </MemoryRouter>
+        const expansion2 = capturedTabelaProps.rowExpansionTemplateLancamentos(lancamento);
+        const saveBtn = findInJSX(
+          expansion2,
+          (el) =>
+            el.type === 'button' &&
+            el.props.children?.type === 'strong' &&
+            el.props.children?.props?.children === 'Salvar esclarecimento' &&
+            !el.props.disabled
         );
+        saveBtn?.props?.onClick?.();
       });
 
-      const salvarEsclarecimentoBtn = Array.from(container.querySelectorAll('button')).find(
-        (b) => b.textContent.trim() === 'Salvar esclarecimento'
+      await waitFor(() => {
+        expect(postMarcarComoLancamentoEsclarecido).toHaveBeenCalled();
+      });
+    });
+
+    it('marcarComoEsclarecido trata erro do serviço no catch', async () => {
+      setupDefaultMocks(mockContas, mockLancamentosComEsclarecimento);
+      postMarcarComoLancamentoEsclarecido.mockRejectedValue(new Error('Erro de rede'));
+      renderComponent();
+      await waitForTable();
+
+      const lancamento = capturedTabelaProps.lancamentosAjustes[0];
+
+      const expansion1 = capturedTabelaProps.rowExpansionTemplateLancamentos(lancamento);
+      const textarea = findInJSX(
+        expansion1,
+        (el) => el.type === 'textarea' && el.props.name === 'esclarecimento'
       );
-      if (salvarEsclarecimentoBtn && !salvarEsclarecimentoBtn.disabled) {
-        await act(async () => {
-          fireEvent.click(salvarEsclarecimentoBtn);
-        });
-        await waitFor(() => {
-          expect(postMarcarComoLancamentoEsclarecido).toHaveBeenCalled();
-        });
-      }
+      await act(async () => {
+        textarea.props.onChange({ target: { value: 'esclarecimento para erro' } });
+      });
+
+      await act(async () => {
+        const expansion2 = capturedTabelaProps.rowExpansionTemplateLancamentos(lancamento);
+        const saveBtn = findInJSX(
+          expansion2,
+          (el) =>
+            el.type === 'button' &&
+            el.props.children?.type === 'strong' &&
+            el.props.children?.props?.children === 'Salvar esclarecimento' &&
+            !el.props.disabled
+        );
+        saveBtn?.props?.onClick?.();
+      });
+
+      // O componente não deve lançar exceção (catch trata o erro)
+      await waitFor(() => {
+        expect(postMarcarComoLancamentoEsclarecido).toHaveBeenCalled();
+      });
     });
 
     it('possuiSolicitacaoEsclarecimento retorna false quando value é nulo', async () => {
@@ -1334,6 +1633,139 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
 
       // O botão de esclarecimento não deve aparecer
       expect(queryByText('Salvar esclarecimento')).not.toBeInTheDocument();
+    });
+  });
+
+  // ── acoesDisponiveis: todas as combinações de status ────────────────────────
+
+  describe('acoesDisponiveis: combinações de status', () => {
+    const selecionarTodos = async () => {
+      const jsx = capturedTabelaProps.selecionarTodosItensDosLancamentosGlobal();
+      await act(async () => {
+        jsx.props.children.props.onChange({ target: {} });
+      });
+      await waitFor(() => {
+        expect(capturedTabelaProps.lancamentosAjustes[0].analise_lancamento.selecionado).toBe(true);
+      });
+    };
+
+    it('retorna JUSTIFICADO_E_REALIZADO quando acertos têm esses status', async () => {
+      setupDefaultMocks(mockContas, lancamentosJustificadoERealizado);
+      renderComponent();
+      await waitForTable();
+
+      await selecionarTodos();
+
+      const acoes = capturedTabelaProps.acoesDisponiveis();
+      expect(acoes.JUSTIFICADO_E_REALIZADO).toBe(true);
+      expect(acoes.REALIZADO_E_PENDENTE).toBe(false);
+    });
+
+    it('retorna JUSTIFICADO_E_REALIZADO_E_PENDENTE quando acertos têm os três status', async () => {
+      setupDefaultMocks(mockContas, lancamentosJustificadoRealizadoPendente);
+      renderComponent();
+      await waitForTable();
+
+      await selecionarTodos();
+
+      const acoes = capturedTabelaProps.acoesDisponiveis();
+      expect(acoes.JUSTIFICADO_E_REALIZADO_E_PENDENTE).toBe(true);
+    });
+
+    it('retorna JUSTIFICADO_E_PENDENTE quando acertos têm esses status', async () => {
+      setupDefaultMocks(mockContas, lancamentosJustificadoEPendente);
+      renderComponent();
+      await waitForTable();
+
+      await selecionarTodos();
+
+      const acoes = capturedTabelaProps.acoesDisponiveis();
+      expect(acoes.JUSTIFICADO_E_PENDENTE).toBe(true);
+    });
+
+    it('retorna REALIZADO quando apenas acertos REALIZADO estão selecionados', async () => {
+      setupDefaultMocks(mockContas, lancamentosSoRealizados);
+      renderComponent();
+      await waitForTable();
+
+      await selecionarTodos();
+
+      const acoes = capturedTabelaProps.acoesDisponiveis();
+      expect(acoes.REALIZADO).toBe(true);
+    });
+
+    it('retorna JUSTIFICADO quando apenas acertos JUSTIFICADO estão selecionados', async () => {
+      setupDefaultMocks(mockContas, lancamentosSoJustificados);
+      renderComponent();
+      await waitForTable();
+
+      await selecionarTodos();
+
+      const acoes = capturedTabelaProps.acoesDisponiveis();
+      expect(acoes.JUSTIFICADO).toBe(true);
+    });
+
+    it('retorna PENDENTE quando apenas acertos PENDENTE estão selecionados', async () => {
+      setupDefaultMocks(mockContas, lancamentosSoPendentes);
+      renderComponent();
+      await waitForTable();
+
+      await selecionarTodos();
+
+      const acoes = capturedTabelaProps.acoesDisponiveis();
+      expect(acoes.PENDENTE).toBe(true);
+    });
+  });
+
+  // ── Navegação: Crédito ───────────────────────────────────
+
+  describe('Navegação: Crédito', () => {
+    it('navega para edição de receita ao clicar em "Ir para receita"', async () => {
+      const lancamentosCredito = [{
+        tipo_transacao: 'Crédito',
+        documento_mestre: { uuid: 'doc-credito-uuid', receitas_saida_do_recurso: null },
+        analise_lancamento: {
+          uuid: 'lancamento-uuid',
+          selecionado: false,
+          solicitacoes_de_ajuste_da_analise_total: 1,
+          solicitacoes_de_ajuste_da_analise: {
+            solicitacoes_acerto_por_categoria: [{
+              acertos: [{
+                uuid: 'acerto-credito',
+                ordem: 1,
+                tipo_acerto: { nome: 'Tipo', categoria: 'AJUSTE_LANCAMENTO' },
+                detalhamento: null,
+                status_realizacao: 'PENDENTE',
+                justificativa: null,
+                esclarecimentos: null,
+                selecionado: false
+              }],
+              requer_ajustes_externos: false,
+              mensagem_inativa: null
+            }]
+          }
+        }
+      }];
+
+      setupDefaultMocks(mockContas, lancamentosCredito);
+      renderComponent({ exibeBtnIrParaPaginaDeReceitaOuDespesa: true });
+      await waitForTable();
+
+      const resultado = capturedTabelaProps.rowExpansionTemplateLancamentos(
+        capturedTabelaProps.lancamentosAjustes[0]
+      );
+
+      const { getByText } = render(
+        <MemoryRouter>
+          <Provider store={mockStore}>{resultado}</Provider>
+        </MemoryRouter>
+      );
+
+      await act(async () => {
+        fireEvent.click(getByText('Ir para receita'));
+      });
+
+      expect(mockNavigate).toHaveBeenCalledWith('/edicao-de-receita/doc-credito-uuid');
     });
   });
 

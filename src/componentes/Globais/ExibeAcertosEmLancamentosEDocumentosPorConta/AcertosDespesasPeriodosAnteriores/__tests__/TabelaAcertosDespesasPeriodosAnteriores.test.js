@@ -8,10 +8,12 @@ import { visoesService } from "../../../../../services/visoes.service";
 
 let mockCapturedColumnProps = [];
 let mockCapturedDataTableOnPage = null;
+let mockCapturedDataTableOnRowToggle = null;
 
 jest.mock("primereact/datatable", () => ({
-  DataTable: ({ children, onPage }) => {
+  DataTable: ({ children, onPage, onRowToggle }) => {
     mockCapturedDataTableOnPage = onPage;
+    mockCapturedDataTableOnRowToggle = onRowToggle;
     return <div>{children}</div>;
   },
 }));
@@ -42,9 +44,12 @@ jest.mock("../../../../../services/mantemEstadoAnaliseDre.service", () => ({
 jest.mock(
   "../../../../dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeLancamentos/Modais/ModalCheckNaoPermitidoConfererenciaDeLancamentos",
   () => ({
-    ModalCheckNaoPermitidoConfererenciaDeLancamentos: ({ show, titulo }) =>
+    ModalCheckNaoPermitidoConfererenciaDeLancamentos: ({ show, titulo, handleClose }) =>
       show ? (
-        <div data-testid="modal-check-nao-permitido">{titulo}</div>
+        <div data-testid="modal-check-nao-permitido">
+          {titulo}
+          <button data-testid="modal-check-close" onClick={handleClose}>Fechar check</button>
+        </div>
       ) : null,
   })
 );
@@ -52,10 +57,12 @@ jest.mock(
 jest.mock(
   "../../../../dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeLancamentos/Modais/ModalJustificarNaoRealizacao",
   () => ({
-    ModalJustificarNaoRealizacao: ({ show, titulo, segundoBotaoOnclick }) =>
+    ModalJustificarNaoRealizacao: ({ show, titulo, bodyText, primeiroBotaoOnClick, segundoBotaoOnclick }) =>
       show ? (
         <div>
           <span>{titulo}</span>
+          {bodyText}
+          <button data-testid="modal-justificar-cancelar" onClick={primeiroBotaoOnClick}>Cancelar justificar</button>
           <button onClick={segundoBotaoOnclick}>Confirmar</button>
         </div>
       ) : null,
@@ -65,9 +72,12 @@ jest.mock(
 jest.mock(
   "../../../../dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeLancamentos/Modais/ModalJustificadaApagada",
   () => ({
-    ModalJustificadaApagada: ({ show, primeiroBotaoOnclick }) =>
+    ModalJustificadaApagada: ({ show, primeiroBotaoOnclick, handleClose }) =>
       show ? (
-        <button onClick={primeiroBotaoOnclick}>Confirmar apagar</button>
+        <>
+          <button onClick={primeiroBotaoOnclick}>Confirmar apagar</button>
+          <button data-testid="modal-apagada-close" onClick={handleClose}>Fechar apagada</button>
+        </>
       ) : null,
   })
 );
@@ -140,6 +150,7 @@ beforeEach(() => {
   visoesService.getPermissoes.mockReturnValue(true);
   mockCapturedColumnProps = [];
   mockCapturedDataTableOnPage = null;
+  mockCapturedDataTableOnRowToggle = null;
 });
 
 describe("TabelaAcertosDespesasPeriodosAnteriores", () => {
@@ -593,6 +604,19 @@ describe("TabelaAcertosDespesasPeriodosAnteriores", () => {
     ).toBe("-");
   });
 
+  it("tagJustificativa renderiza '-' quando statusId não é encontrado nas opções", () => {
+    setup();
+
+    const statusCol = mockCapturedColumnProps.find((p) => p.header === "Status");
+    const { container } = render(
+      statusCol.body({ analise_lancamento: { status_realizacao: "STATUS_DESCONHECIDO" } })
+    );
+
+    expect(
+      container.querySelector(".tag-justificativa").textContent
+    ).toBe("-");
+  });
+
   // --- demonstradoTemplate (via mockCapturedColumnProps) ---
 
   it("demonstradoTemplate renderiza checkbox para tipo_transacao Gasto", () => {
@@ -671,5 +695,81 @@ describe("TabelaAcertosDespesasPeriodosAnteriores", () => {
     });
 
     expect(screen.getByText("Selecionar")).toBeInTheDocument();
+  });
+
+  // --- Callbacks de fechamento / uncovered arrow functions ---
+
+  it("onRowToggle do DataTable chama setExpandedRowsLancamentos com os dados", () => {
+    const setExpandedRowsLancamentos = jest.fn();
+
+    setup({ setExpandedRowsLancamentos });
+
+    act(() => {
+      mockCapturedDataTableOnRowToggle({ data: ["row1", "row2"] });
+    });
+
+    expect(setExpandedRowsLancamentos).toHaveBeenCalledWith(["row1", "row2"]);
+  });
+
+  it("handleClose de ModalCheckNaoPermitido chama setShowModalCheckNaoPermitido com false", () => {
+    const setShowModalCheckNaoPermitido = jest.fn();
+
+    setup({ showModalCheckNaoPermitido: true, setShowModalCheckNaoPermitido });
+
+    fireEvent.click(screen.getByTestId("modal-check-close"));
+
+    expect(setShowModalCheckNaoPermitido).toHaveBeenCalledWith(false);
+  });
+
+  it("primeiroBotaoOnClick de ModalJustificarNaoRealizacao fecha o modal", () => {
+    setup({
+      quantidadeSelecionada: 1,
+      acoesDisponiveis: jest.fn(() => ({ PENDENTE: true })),
+    });
+
+    fireEvent.click(
+      screen.getByText("Justificar não realização").closest("button")
+    );
+    expect(screen.getByTestId("modal-justificar-cancelar")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByTestId("modal-justificar-cancelar"));
+
+    expect(
+      screen.queryByTestId("modal-justificar-cancelar")
+    ).not.toBeInTheDocument();
+  });
+
+  it("textarea onChange em modalBodyHTML atualiza textoConfirmadoJustificado", () => {
+    setup({
+      quantidadeSelecionada: 1,
+      acoesDisponiveis: jest.fn(() => ({ PENDENTE: true })),
+    });
+
+    fireEvent.click(
+      screen.getByText("Justificar não realização").closest("button")
+    );
+
+    const textarea = screen.getByRole("textbox");
+    fireEvent.change(textarea, { target: { value: "nova justificativa" } });
+
+    expect(textarea.value).toBe("nova justificativa");
+  });
+
+  it("handleClose de ModalJustificadaApagada fecha o modal", () => {
+    setup({
+      quantidadeSelecionada: 1,
+      acoesDisponiveis: jest.fn(() => ({ JUSTIFICADO: true })),
+    });
+
+    fireEvent.click(
+      screen.getByText("Limpar Status").closest("button")
+    );
+    expect(screen.getByTestId("modal-apagada-close")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByTestId("modal-apagada-close"));
+
+    expect(
+      screen.queryByTestId("modal-apagada-close")
+    ).not.toBeInTheDocument();
   });
 });
