@@ -3,13 +3,13 @@ import { render, screen, waitFor, fireEvent, act } from '@testing-library/react'
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import { useNavigate, MemoryRouter } from 'react-router-dom';
-import AcertosDespesasPeriodosAnteriores from '../index';
+import AcertosLancamentos from '../index';
 import { visoesService } from '../../../../../services/visoes.service';
 import { mantemEstadoAnaliseDre as meapcservice } from '../../../../../services/mantemEstadoAnaliseDre.service';
 import {
   getAnaliseLancamentosPrestacaoConta,
-  getContasDaAssociacaoComAcertosEmDespesasPeriodosAnteriores,
-  getDespesasPeriodosAnterioresAjustes,
+  getContasDaAssociacaoComAcertosEmLancamentos,
+  getLancamentosAjustes,
   postJustificarNaoRealizacaoLancamentoPrestacaoConta,
   postLimparStatusLancamentoPrestacaoConta,
   postMarcarComoLancamentoEsclarecido,
@@ -24,24 +24,18 @@ jest.mock('react-router-dom', () => ({
 
 // Capture props from mocked child components
 let capturedTabelaProps = {};
-let capturedTabsProps = {};
 
 // Mock components
-jest.mock('../TabelaAcertosDespesasPeriodosAnteriores', () => ({
-  TabelaAcertosDespesasPeriodosAnteriores: (props) => {
+jest.mock('../TabelaAcertosLancamentos', () => ({
+  TabelaAcertosLancamentos: (props) => {
     capturedTabelaProps = props;
-    return <div data-testid="tabela-acertos-despesas" />;
+    return <div data-testid="tabela-acertos-lancamentos" />;
   }
 }));
 
 jest.mock('../../../../../utils/Loading', () => () => (
   <div data-testid="loading" />
 ));
-
-jest.mock('../../../UI/Tabs', () => (props) => {
-  capturedTabsProps = props;
-  return <div data-testid="tabs" />;
-});
 
 jest.mock('../../../BarraMensagem', () => ({
   barraMensagemCustom: {
@@ -53,6 +47,10 @@ jest.mock('../../../BarraMensagem', () => ({
 jest.mock('../../BotoesDetalhesParaAcertosDeCategorias', () => () => (
   <div data-testid="botoes-detalhes" />
 ));
+
+jest.mock('../../../../dres/PrestacaoDeContas/RetornaSeTemPermissaoEdicaoAcompanhamentoDePc', () => ({
+  RetornaSeTemPermissaoEdicaoAcompanhamentoDePc: () => true
+}));
 
 // Mock services
 jest.mock('../../../../../services/visoes.service', () => ({
@@ -72,15 +70,15 @@ jest.mock('../../../../../services/mantemEstadoAnaliseDre.service', () => ({
 
 jest.mock('../../../../../services/dres/PrestacaoDeContas.service', () => ({
   getAnaliseLancamentosPrestacaoConta: jest.fn(),
-  getContasDaAssociacaoComAcertosEmDespesasPeriodosAnteriores: jest.fn(),
-  getDespesasPeriodosAnterioresAjustes: jest.fn(),
+  getContasDaAssociacaoComAcertosEmLancamentos: jest.fn(),
+  getLancamentosAjustes: jest.fn(),
   postJustificarNaoRealizacaoLancamentoPrestacaoConta: jest.fn(),
   postLimparStatusLancamentoPrestacaoConta: jest.fn(),
   postMarcarComoLancamentoEsclarecido: jest.fn(),
   postMarcarComoRealizadoLancamentoPrestacaoConta: jest.fn()
 }));
 
-// Mock Redux store with thunk-like reducer to accept dispatched actions
+// Mock Redux store
 const mockStore = createStore((state = {}, action) => {
   switch (action.type) {
     case 'ADD_DETALHAR_ACERTOS':
@@ -305,7 +303,7 @@ const mockAnaliseStatus = {
 };
 
 const mockEstadoAnaliseDre = {
-  conferencia_de_despesas_periodos_anteriores: {
+  conferencia_de_lancamentos: {
     conta_uuid: 'conta-uuid',
     expanded: [],
     paginacao_atual: 0
@@ -313,9 +311,9 @@ const mockEstadoAnaliseDre = {
 };
 
 function setupDefaultMocks(contas = mockContas, lancamentos = mockLancamentos, analise = mockAnaliseStatus) {
-  getContasDaAssociacaoComAcertosEmDespesasPeriodosAnteriores.mockResolvedValue(contas);
+  getContasDaAssociacaoComAcertosEmLancamentos.mockResolvedValue(contas);
   getAnaliseLancamentosPrestacaoConta.mockResolvedValue(analise);
-  getDespesasPeriodosAnterioresAjustes.mockResolvedValue(lancamentos);
+  getLancamentosAjustes.mockResolvedValue(lancamentos);
   visoesService.getPermissoes.mockReturnValue(true);
   visoesService.getItemUsuarioLogado.mockReturnValue('UE');
   visoesService.getUsuarioLogin.mockReturnValue('usuario-login');
@@ -323,12 +321,11 @@ function setupDefaultMocks(contas = mockContas, lancamentos = mockLancamentos, a
   meapcservice.setAnaliseDrePorUsuario.mockReturnValue(undefined);
 }
 
-// Mock Redux store
 const mockNavigate = jest.fn();
 
 // ───────────────────────── tests ─────────────────────────
 
-describe('AcertosDespesasPeriodosAnteriores', () => {
+describe('AcertosLancamentos', () => {
   const defaultProps = {
     analiseAtualUuid: 'analise-uuid',
     prestacaoDeContas: {
@@ -345,7 +342,6 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     capturedTabelaProps = {};
-    capturedTabsProps = {};
     useNavigate.mockReturnValue(mockNavigate);
     localStorage.clear();
   });
@@ -354,14 +350,14 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
     render(
       <MemoryRouter>
         <Provider store={mockStore}>
-          <AcertosDespesasPeriodosAnteriores {...defaultProps} {...props} />
+          <AcertosLancamentos {...defaultProps} {...props} />
         </Provider>
       </MemoryRouter>
     );
 
   const waitForTable = () =>
     waitFor(() => {
-      expect(screen.getByTestId('tabela-acertos-despesas')).toBeInTheDocument();
+      expect(screen.getByTestId('tabela-acertos-lancamentos')).toBeInTheDocument();
       expect(capturedTabelaProps.analisePermiteEdicao).toBeDefined();
     });
 
@@ -392,7 +388,7 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
     it('exibe o título correto', async () => {
       setupDefaultMocks();
       renderComponent();
-      expect(screen.getByText('Acertos nas despesas de períodos anteriores')).toBeInTheDocument();
+      expect(screen.getByText('Acertos nos lançamentos')).toBeInTheDocument();
     });
 
     it('renderiza a tabela de acertos após carregar os dados', async () => {
@@ -413,13 +409,13 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
       renderComponent({
         prestacaoDeContas: { uuid: 'prestacao-uuid', status: 'DEVOLVIDA' }
       });
-      expect(getContasDaAssociacaoComAcertosEmDespesasPeriodosAnteriores).not.toHaveBeenCalled();
+      expect(getContasDaAssociacaoComAcertosEmLancamentos).not.toHaveBeenCalled();
     });
 
     it('não chama serviços quando analiseAtualUuid está ausente', () => {
       setupDefaultMocks();
       renderComponent({ analiseAtualUuid: null });
-      expect(getContasDaAssociacaoComAcertosEmDespesasPeriodosAnteriores).not.toHaveBeenCalled();
+      expect(getContasDaAssociacaoComAcertosEmLancamentos).not.toHaveBeenCalled();
     });
   });
 
@@ -430,7 +426,7 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
       setupDefaultMocks();
       renderComponent();
       await waitFor(() => {
-        expect(getDespesasPeriodosAnterioresAjustes).toHaveBeenCalledWith(
+        expect(getLancamentosAjustes).toHaveBeenCalledWith(
           defaultProps.analiseAtualUuid,
           'conta-uuid',
           null,
@@ -442,7 +438,7 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
     it('usa primeira conta quando não há conta_uuid salva no estado', async () => {
       setupDefaultMocks(mockContasMultiplas);
       meapcservice.getAnaliseDreUsuarioLogado.mockReturnValue({
-        conferencia_de_despesas_periodos_anteriores: {
+        conferencia_de_lancamentos: {
           conta_uuid: null,
           expanded: [],
           paginacao_atual: 0
@@ -452,7 +448,7 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(getDespesasPeriodosAnterioresAjustes).toHaveBeenCalledWith(
+        expect(getLancamentosAjustes).toHaveBeenCalledWith(
           defaultProps.analiseAtualUuid,
           'conta-uuid-1',
           null,
@@ -473,7 +469,7 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
     it('define clickBtnEscolheConta quando conta_uuid salva coincide com uma das contas', async () => {
       setupDefaultMocks(mockContasMultiplas);
       meapcservice.getAnaliseDreUsuarioLogado.mockReturnValue({
-        conferencia_de_despesas_periodos_anteriores: {
+        conferencia_de_lancamentos: {
           conta_uuid: 'conta-uuid-2',
           expanded: [],
           paginacao_atual: 0
@@ -483,7 +479,7 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(getDespesasPeriodosAnterioresAjustes).toHaveBeenCalledWith(
+        expect(getLancamentosAjustes).toHaveBeenCalledWith(
           defaultProps.analiseAtualUuid,
           'conta-uuid-2',
           null,
@@ -495,11 +491,11 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
 
   // ── Troca de aba ────────────────────────────────────────
 
-  describe('Troca de aba (Tabs)', () => {
-    it('renderiza Tabs com as contas como abas', async () => {
+  describe('Troca de aba (abas nativas)', () => {
+    it('renderiza abas nativas com as contas', async () => {
       setupDefaultMocks(mockContasMultiplas);
       meapcservice.getAnaliseDreUsuarioLogado.mockReturnValue({
-        conferencia_de_despesas_periodos_anteriores: {
+        conferencia_de_lancamentos: {
           conta_uuid: 'conta-uuid-1',
           expanded: [],
           paginacao_atual: 0
@@ -507,20 +503,16 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
       });
 
       renderComponent();
+      await waitForTable();
 
-      await waitFor(() => {
-        expect(screen.getByTestId('tabs')).toBeInTheDocument();
-      });
-
-      expect(capturedTabsProps.tabs).toHaveLength(2);
-      expect(capturedTabsProps.tabs[0].label).toBe('Conta Cheque');
-      expect(capturedTabsProps.tabs[1].label).toBe('Conta Poupança');
+      expect(screen.getByText('Conta Cheque')).toBeInTheDocument();
+      expect(screen.getByText('Conta Poupança')).toBeInTheDocument();
     });
 
     it('chama carregaAcertosLancamentos ao clicar numa aba diferente', async () => {
       setupDefaultMocks(mockContasMultiplas);
       meapcservice.getAnaliseDreUsuarioLogado.mockReturnValue({
-        conferencia_de_despesas_periodos_anteriores: {
+        conferencia_de_lancamentos: {
           conta_uuid: 'conta-uuid-1',
           expanded: [],
           paginacao_atual: 0
@@ -528,19 +520,16 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
       });
 
       renderComponent();
+      await waitForTable();
 
-      await waitFor(() => {
-        expect(screen.getByTestId('tabs')).toBeInTheDocument();
-      });
-
-      getDespesasPeriodosAnterioresAjustes.mockClear();
+      getLancamentosAjustes.mockClear();
 
       await act(async () => {
-        capturedTabsProps.onTabClick('conta-uuid-2', 1);
+        fireEvent.click(screen.getByText('Conta Poupança'));
       });
 
       await waitFor(() => {
-        expect(getDespesasPeriodosAnterioresAjustes).toHaveBeenCalledWith(
+        expect(getLancamentosAjustes).toHaveBeenCalledWith(
           defaultProps.analiseAtualUuid,
           'conta-uuid-2',
           null,
@@ -574,13 +563,13 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
       renderComponent();
       await waitForTable();
 
-      getDespesasPeriodosAnterioresAjustes.mockClear();
+      getLancamentosAjustes.mockClear();
 
       await act(async () => {
         await capturedTabelaProps.limparStatus();
       });
 
-      expect(getDespesasPeriodosAnterioresAjustes).toHaveBeenCalled();
+      expect(getLancamentosAjustes).toHaveBeenCalled();
     });
   });
 
@@ -631,13 +620,13 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
       renderComponent();
       await waitForTable();
 
-      getDespesasPeriodosAnterioresAjustes.mockClear();
+      getLancamentosAjustes.mockClear();
 
       await act(async () => {
         await capturedTabelaProps.marcarComoRealizado();
       });
 
-      expect(getDespesasPeriodosAnterioresAjustes).toHaveBeenCalled();
+      expect(getLancamentosAjustes).toHaveBeenCalled();
     });
   });
 
@@ -729,8 +718,6 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
       renderComponent();
       await waitForTable();
 
-      // Invocação direta do handler para evitar problema cross-root
-      // onChange={(e) => selecionarTodosGlobal(e.target)} - selecionarTodosGlobal não usa e
       const checkboxJsx = capturedTabelaProps.selecionarTodosItensDosLancamentosGlobal();
       await act(async () => {
         checkboxJsx.props.children.props.onChange({ target: {} });
@@ -749,7 +736,6 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
       const rowJsx = capturedTabelaProps.selecionarTodosItensDoLancamentoRow(
         capturedTabelaProps.lancamentosAjustes[0]
       );
-      // Verifica a estrutura do JSX diretamente sem renderizar em árvore separada
       expect(rowJsx.type).toBe('input');
       expect(rowJsx.props.type).toBe('checkbox');
       expect(typeof rowJsx.props.onChange).toBe('function');
@@ -760,7 +746,6 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
       renderComponent();
       await waitForTable();
 
-      // First select all
       await act(async () => {
         capturedTabelaProps.selecionarTodosGlobal?.({ target: {} }) ||
           capturedTabelaProps.acaoCancelar();
@@ -1039,8 +1024,7 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
       });
 
       expect(mockNavigate).toHaveBeenCalledWith(
-        expect.stringContaining('/dre-detalhe-prestacao-de-contas-detalhar-acertos/'),
-        expect.objectContaining({ replace: true })
+        expect.stringContaining('/dre-detalhe-prestacao-de-contas-detalhar-acertos/')
       );
     });
 
@@ -1100,7 +1084,7 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
 
   // ── Props passadas para componentes filhos ───────────────
 
-  describe('Props passadas para TabelaAcertosDespesasPeriodosAnteriores', () => {
+  describe('Props passadas para TabelaAcertosLancamentos', () => {
     it('passa lancamentosAjustes corretamente', async () => {
       setupDefaultMocks();
       renderComponent();
@@ -1180,7 +1164,6 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
       renderComponent();
       await waitForTable();
 
-      // Primeiro: seleciona todos via invocação direta
       const jsx1 = capturedTabelaProps.selecionarTodosItensDosLancamentosGlobal();
       await act(async () => {
         jsx1.props.children.props.onChange({ target: {} });
@@ -1190,7 +1173,6 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
         expect(capturedTabelaProps.lancamentosAjustes[0].analise_lancamento.selecionado).toBe(true);
       });
 
-      // Segundo: desseleciona todos via invocação direta
       const jsx2 = capturedTabelaProps.selecionarTodosItensDosLancamentosGlobal();
       await act(async () => {
         jsx2.props.children.props.onChange({ target: {} });
@@ -1210,20 +1192,15 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
         capturedTabelaProps.lancamentosAjustes[0]
       );
 
-      // Verifica estado inicial via props do JSX
       expect(rowJsx.props.checked).toBe(false);
 
-      // Invocação direta do handler para evitar problema cross-root
-      // onChange={(e) => tratarSelecionado(e, rowData.analise_lancamento.uuid)}
-      getDespesasPeriodosAnterioresAjustes.mockClear();
+      getLancamentosAjustes.mockClear();
       await act(async () => {
         rowJsx.props.onChange({ target: { checked: true } });
       });
 
-      // tratarSelecionado não deve disparar recarregamento de dados
-      expect(getDespesasPeriodosAnterioresAjustes).not.toHaveBeenCalled();
+      expect(getLancamentosAjustes).not.toHaveBeenCalled();
 
-      // Após seleção, o lançamento deve estar marcado como selecionado
       await waitFor(() => {
         expect(capturedTabelaProps.lancamentosAjustes[0].analise_lancamento.selecionado).toBe(true);
       });
@@ -1238,7 +1215,6 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
         capturedTabelaProps.lancamentosAjustes[0]
       );
 
-      // Localiza checkbox individual via findInJSX e invoca diretamente
       const acertoCheckbox = findInJSX(
         expansion,
         (el) => el.type === 'input' && el.props.type === 'checkbox' && el.props.value === 'acerto-uuid-1'
@@ -1250,21 +1226,18 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
         acertoCheckbox.props.onChange({ target: { checked: true } });
       });
 
-      // Após selecionar 1 dos 2 acertos, quantidadeSelecionada deve ser 1
       await waitFor(() => {
         expect(capturedTabelaProps.quantidadeSelecionada).toBe(1);
       });
     });
 
     it('tratarSelecionadoIndividual cobre todosAcertosCheckados=true ao selecionar todos os acertos', async () => {
-      // mockLancamentosComAcertos tem 2 acertos; selecionar ambos cobre linhas 723, 775-778
       setupDefaultMocks(mockContas, mockLancamentosComAcertos);
       renderComponent();
       await waitForTable();
 
       const lancamento = capturedTabelaProps.lancamentosAjustes[0];
 
-      // Selecionar acerto-uuid-1 (todosAcertosCheckados ainda false)
       const exp1 = capturedTabelaProps.rowExpansionTemplateLancamentos(lancamento);
       const cb1 = findInJSX(exp1, (el) =>
         el.type === 'input' && el.props.type === 'checkbox' && el.props.value === 'acerto-uuid-1'
@@ -1272,7 +1245,6 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
       await act(async () => { cb1.props.onChange({ target: { checked: true } }); });
       await waitFor(() => expect(capturedTabelaProps.quantidadeSelecionada).toBe(1));
 
-      // Selecionar acerto-uuid-2 (todosAcertosCheckados agora true; 1/1 lancamento → todosLancamentosCheckados true)
       const exp2 = capturedTabelaProps.rowExpansionTemplateLancamentos(lancamento);
       const cb2 = findInJSX(exp2, (el) =>
         el.type === 'input' && el.props.type === 'checkbox' && el.props.value === 'acerto-uuid-2'
@@ -1286,12 +1258,10 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
     });
 
     it('tratarSelecionado cobre else de todosLancamentosCheckados com múltiplos lançamentos', async () => {
-      // mockDoisLancamentos tem 2 lançamentos; selecionar apenas 1 → todosLancamentosCheckados false (linha 677)
       setupDefaultMocks(mockContas, mockDoisLancamentos);
       renderComponent();
       await waitForTable();
 
-      // Seleciona apenas o primeiro lançamento
       const rowJsx = capturedTabelaProps.selecionarTodosItensDoLancamentoRow(
         capturedTabelaProps.lancamentosAjustes[0]
       );
@@ -1299,7 +1269,6 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
         rowJsx.props.onChange({ target: { checked: true } });
       });
 
-      // Apenas 1 dos 2 lançamentos selecionado → identificadorCheckboxClicado deve ser false
       await waitFor(() => {
         expect(capturedTabelaProps.lancamentosAjustes[0].analise_lancamento.selecionado).toBe(true);
         expect(capturedTabelaProps.lancamentosAjustes[1].analise_lancamento.selecionado).toBe(false);
@@ -1307,7 +1276,6 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
     });
 
     it('tratarSelecionadoIndividual cobre else de todosLancamentosCheckados com múltiplos lançamentos', async () => {
-      // Usa 2 lançamentos, seleciona todos os acertos do 1º → todosAcertosCheckados true mas todosLancamentosCheckados false (linha 781)
       const doisLancamentosComAcertos = [
         ...mockDoisLancamentos.map((l, i) => ({
           ...l,
@@ -1335,7 +1303,6 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
 
       const lancamento0 = capturedTabelaProps.lancamentosAjustes[0];
 
-      // Selecionar ambos acertos do lançamento 0
       const exp1 = capturedTabelaProps.rowExpansionTemplateLancamentos(lancamento0);
       const cbA = findInJSX(exp1, (el) =>
         el.type === 'input' && el.props.type === 'checkbox' && el.props.value === 'acerto-m0-1'
@@ -1343,7 +1310,6 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
       await act(async () => { cbA.props.onChange({ target: { checked: true } }); });
       await waitFor(() => expect(capturedTabelaProps.quantidadeSelecionada).toBe(1));
 
-      // Segundo acerto → todosAcertosCheckados true, mas lancamento-1 ainda false → todosLancamentosCheckados false → linha 781
       const exp2 = capturedTabelaProps.rowExpansionTemplateLancamentos(lancamento0);
       const cbB = findInJSX(exp2, (el) =>
         el.type === 'input' && el.props.type === 'checkbox' && el.props.value === 'acerto-m0-2'
@@ -1361,7 +1327,6 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
       renderComponent();
       await waitForTable();
 
-      // Seleciona todos via invocação direta
       const checkboxJsx = capturedTabelaProps.selecionarTodosItensDosLancamentosGlobal();
       await act(async () => {
         checkboxJsx.props.children.props.onChange({ target: {} });
@@ -1371,7 +1336,6 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
         expect(capturedTabelaProps.lancamentosAjustes[0].analise_lancamento.selecionado).toBe(true);
       });
 
-      // Verifica acoesDisponiveis com acertos PENDENTE e REALIZADO selecionados
       const acoes = capturedTabelaProps.acoesDisponiveis();
       expect(acoes.REALIZADO_E_PENDENTE).toBe(true);
     });
@@ -1388,7 +1352,6 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
       const lancamento = capturedTabelaProps.lancamentosAjustes[0];
       const expansion = capturedTabelaProps.rowExpansionTemplateLancamentos(lancamento);
 
-      // Localiza textarea via findInJSX e invoca onChange diretamente
       const textarea = findInJSX(
         expansion,
         (el) => el.type === 'textarea' && el.props.name === 'justificativa'
@@ -1399,14 +1362,12 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
         textarea.props.onChange({ target: { value: 'novo valor de justificativa' } });
       });
 
-      // handleChangeTextareaJustificativa foi chamado; verifica estado atualizado
       await waitFor(() => {
         const updatedExpansion = capturedTabelaProps.rowExpansionTemplateLancamentos(lancamento);
         const updatedTextarea = findInJSX(
           updatedExpansion,
           (el) => el.type === 'textarea' && el.props.name === 'justificativa'
         );
-        // defaultValue não muda (é controlado pelo estado), mas o estado foi atualizado
         expect(updatedTextarea).toBeTruthy();
       });
     });
@@ -1421,7 +1382,6 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
 
       const lancamento = capturedTabelaProps.lancamentosAjustes[0];
 
-      // Passo 1: invocar onChange da textarea para atualizar textareaJustificativa no estado
       const expansion1 = capturedTabelaProps.rowExpansionTemplateLancamentos(lancamento);
       const textarea = findInJSX(
         expansion1,
@@ -1432,7 +1392,6 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
         textarea.props.onChange({ target: { value: 'justificativa completamente nova' } });
       });
 
-      // Passo 2: obter closure atualizada e invocar botão Salvar Justificativas
       await act(async () => {
         const expansion2 = capturedTabelaProps.rowExpansionTemplateLancamentos(lancamento);
         const saveBtn = findInJSX(
@@ -1481,7 +1440,6 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
         saveBtn?.props?.onClick?.();
       });
 
-      // O componente não deve lançar exceção (catch trata o erro)
       await waitFor(() => {
         expect(postJustificarNaoRealizacaoLancamentoPrestacaoConta).toHaveBeenCalled();
       });
@@ -1495,7 +1453,6 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
       const lancamento = capturedTabelaProps.lancamentosAjustes[0];
       const expansion = capturedTabelaProps.rowExpansionTemplateLancamentos(lancamento);
 
-      // Localiza textarea de esclarecimento via findInJSX e invoca diretamente
       const textarea = findInJSX(
         expansion,
         (el) => el.type === 'textarea' && el.props.name === 'esclarecimento'
@@ -1506,7 +1463,6 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
         textarea.props.onChange({ target: { value: 'novo esclarecimento' } });
       });
 
-      // handleChangeTextareaEsclarecimentoLancamento foi chamado
       await waitFor(() => {
         const updatedExpansion = capturedTabelaProps.rowExpansionTemplateLancamentos(lancamento);
         const updatedTextarea = findInJSX(
@@ -1525,7 +1481,6 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
 
       const lancamento = capturedTabelaProps.lancamentosAjustes[0];
 
-      // Passo 1: invocar onChange do textarea para atualizar txtEsclarecimentoLancamento
       const expansion1 = capturedTabelaProps.rowExpansionTemplateLancamentos(lancamento);
       const textarea = findInJSX(
         expansion1,
@@ -1536,7 +1491,6 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
         textarea.props.onChange({ target: { value: 'esclarecimento totalmente novo' } });
       });
 
-      // Passo 2: obter closure atualizada e invocar botão Salvar esclarecimento
       await act(async () => {
         const expansion2 = capturedTabelaProps.rowExpansionTemplateLancamentos(lancamento);
         const saveBtn = findInJSX(
@@ -1585,7 +1539,6 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
         saveBtn?.props?.onClick?.();
       });
 
-      // O componente não deve lançar exceção (catch trata o erro)
       await waitFor(() => {
         expect(postMarcarComoLancamentoEsclarecido).toHaveBeenCalled();
       });
@@ -1596,7 +1549,6 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
       renderComponent();
       await waitForTable();
 
-      // Cria um lancamento com acertos vazios para cobrir o branch falso
       const lancamentoSemEsclarecimento = {
         ...capturedTabelaProps.lancamentosAjustes[0],
         analise_lancamento: {
@@ -1631,7 +1583,6 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
         </MemoryRouter>
       );
 
-      // O botão de esclarecimento não deve aparecer
       expect(queryByText('Salvar esclarecimento')).not.toBeInTheDocument();
     });
   });
@@ -1774,16 +1725,16 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
   describe('Estado de linhas expandidas', () => {
     it('restaura linhas expandidas do localStorage ao carregar lancamentos', async () => {
       const estadoComExpanded = {
-        conferencia_de_despesas_periodos_anteriores: {
+        conferencia_de_lancamentos: {
           conta_uuid: 'conta-uuid',
           expanded: ['lancamento-uuid'],
           paginacao_atual: 0
         }
       };
       meapcservice.getAnaliseDreUsuarioLogado.mockReturnValue(estadoComExpanded);
-      getContasDaAssociacaoComAcertosEmDespesasPeriodosAnteriores.mockResolvedValue(mockContas);
+      getContasDaAssociacaoComAcertosEmLancamentos.mockResolvedValue(mockContas);
       getAnaliseLancamentosPrestacaoConta.mockResolvedValue(mockAnaliseStatus);
-      getDespesasPeriodosAnterioresAjustes.mockResolvedValue(mockLancamentos);
+      getLancamentosAjustes.mockResolvedValue(mockLancamentos);
       visoesService.getPermissoes.mockReturnValue(true);
       visoesService.getItemUsuarioLogado.mockReturnValue('UE');
       visoesService.getUsuarioLogin.mockReturnValue('usuario-login');

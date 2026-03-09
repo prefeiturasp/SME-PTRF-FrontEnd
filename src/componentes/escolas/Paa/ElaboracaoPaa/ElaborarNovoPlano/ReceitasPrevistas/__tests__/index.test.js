@@ -1,5 +1,6 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { getPaaVigente } from "../../../../../../../services/sme/Parametrizacoes.service";
+import { postDesativarAtualizacaoSaldoPAA, postAtivarAtualizacaoSaldoPAA } from "../../../../../../../services/escolas/Paa.service";
 import { useGetAcoesAssociacao } from "../hooks/useGetAcoesAssociacao";
 import { useGetTotalizadorRecursoProprio } from "../../DetalhamentoRecursosProprios/hooks/useGetTotalizarRecursoProprio";
 import ReceitasPrevistas from "../index";
@@ -11,6 +12,10 @@ jest.mock(
 );
 
 jest.mock("../../../../../../../services/sme/Parametrizacoes.service");
+jest.mock("../../../../../../../services/escolas/Paa.service", () => ({
+  postDesativarAtualizacaoSaldoPAA: jest.fn(),
+  postAtivarAtualizacaoSaldoPAA: jest.fn(),
+}));
 
 describe("ReceitasPrevistas Component", () => {
   let queryClient;
@@ -36,6 +41,9 @@ describe("ReceitasPrevistas Component", () => {
       data: { total: 0 },
       isLoading: false,
     });
+
+    postDesativarAtualizacaoSaldoPAA.mockReturnValue(new Promise(() => {}));
+    postAtivarAtualizacaoSaldoPAA.mockReturnValue(new Promise(() => {}));
   });
 
   it("deve renderizar corretamente", () => {

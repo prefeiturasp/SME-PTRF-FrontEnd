@@ -64,7 +64,7 @@ const ModalConfirmaPararAtualizacaoSaldo = ({ open, onClose, check, paa, onSubmi
                   {check ? 
                     <>O saldo reprogramado do PTRF será bloqueado na data e hora atual para a realização do cálculo das receitas previstas no PAA.</>
                     :
-                    <>O saldo reprogramado do PTRF será desbloqueado e atualizado  para a realização do cálculo das receitas previstas no PAA.</>
+                    <>O saldo reprogramado do PTRF será desbloqueado e atualizado para a realização do cálculo das receitas previstas no PAA. Em caso de prioridades indicadas no PAA, impactadas pela atualização do saldo, será necessária a atualização do campo valor.</>
                   }
                 </div>
             </Row>
