@@ -33,6 +33,13 @@ export const deleteProcessoAssociacao = async (uuid_processo) => {
     });
 };
 
-export const getPeriodosDisponiveis = async (associacao_uuid, ano, processo_uuid='') => {
-    return (await api.get(`api/processos-associacao/periodos-disponiveis/?associacao_uuid=${associacao_uuid}&ano=${ano}${processo_uuid ? "&processo_uuid="+processo_uuid : ""}`, authHeader())).data
+export const getPeriodosDisponiveis = async (associacao_uuid, ano, processo_uuid='', recurso_uuid='') => {
+    let url = `api/processos-associacao/periodos-disponiveis/?associacao_uuid=${associacao_uuid}&ano=${ano}`;
+    if (processo_uuid) {
+        url += `&processo_uuid=${processo_uuid}`;
+    }
+    if (recurso_uuid) {
+        url += `&recurso_uuid=${recurso_uuid}`;
+    }
+    return (await api.get(url, authHeader())).data
 };
