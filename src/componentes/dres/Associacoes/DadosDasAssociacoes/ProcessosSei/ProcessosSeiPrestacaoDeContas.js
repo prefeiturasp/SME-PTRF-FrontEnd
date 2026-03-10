@@ -388,7 +388,7 @@ export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao, recurso_uuid, 
                                 setCustomNumeroProcessoError={setCustomNumeroProcessoError}
                                 loadingPeriodos={loadingPeriodos}
                                 recursoNome={recurso_nome}
-                                showRecursoField={recursos && recursos.length > 1}
+                                showRecursoField={recursos && recursos.length > 1 && visoesService.featureFlagAtiva('premio-excelencia-processo-sei') }
                             />
                         </section>
 
