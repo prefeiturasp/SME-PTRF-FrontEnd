@@ -72,8 +72,8 @@ export const DetalhesDaAssociacao = () => {
 
     let recurso_tabs = recursos
         .sort((a, b) => {
-            if (a.nome_exibicao === "PTRF") return -1;
-            if (b.nome_exibicao === "PTRF") return 1;
+            if (a.legado) return -1;
+            if (b.legado) return 1;
             
             return a.nome_exibicao.localeCompare(b.nome_exibicao);
         })
