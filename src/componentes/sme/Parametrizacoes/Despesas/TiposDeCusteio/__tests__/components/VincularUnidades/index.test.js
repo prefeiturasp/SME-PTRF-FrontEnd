@@ -1,6 +1,5 @@
 import React from "react";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { Provider } from "react-redux";
+import { screen, fireEvent, waitFor } from "@testing-library/react";
 import { useVincularUnidade } from "../../../components/VincularUnidades/hooks/useVincularUnidade";
 import { useGetUnidadesNaoVinculadas } from "../../../components/VincularUnidades/hooks/useGetUnidadesNaoVinculadas";
 import { VincularUnidades } from "../../../components/VincularUnidades";
