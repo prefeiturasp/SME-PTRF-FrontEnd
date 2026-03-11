@@ -16,6 +16,7 @@ import { Filtros } from "../Filtros";
 const filtroInicial = {
   nome_ou_codigo: "",
   dre: "",
+  tipo_unidade: "",
 };
 
 export const UnidadesVinculadas = ({ UUID, podeEditar }) => {
@@ -30,7 +31,8 @@ export const UnidadesVinculadas = ({ UUID, podeEditar }) => {
     UUID,
     currentPage,
     filtros.nome_ou_codigo,
-    filtros.dre
+    filtros.dre,
+    filtros.tipo_unidade,
   );
 
   useEffect(() => {
@@ -53,13 +55,19 @@ export const UnidadesVinculadas = ({ UUID, podeEditar }) => {
   };
 
   function handleDesvincular(rowData) {
-    mutationDesvincularUnidadeEmLote.mutate({ uuid: UUID, unidadeUUID: [rowData["uuid"]] });
+    mutationDesvincularUnidadeEmLote.mutate({
+      uuid: UUID,
+      unidadeUUID: [rowData["uuid"]],
+    });
   }
 
   const handleDesvincularEmLote = async (rowData = null) => {
     try {
       const uuids = selectedUnidades.map((item) => item.uuid);
-      mutationDesvincularUnidadeEmLote.mutate({ uuid: UUID, unidadeUUID: uuids });
+      mutationDesvincularUnidadeEmLote.mutate({
+        uuid: UUID,
+        unidadeUUID: uuids,
+      });
       setSelectedUnidades([]);
     } catch (error) {
       console.error(error);
@@ -70,7 +78,8 @@ export const UnidadesVinculadas = ({ UUID, podeEditar }) => {
     ModalConfirm({
       dispatch,
       title: "Confirmação desvincular unidade ao tipo de despesa de custeio",
-      message: "<p>Deseja realmente desvincular a unidade selecionada ao tipo de despesa de custeio?</p>",
+      message:
+        "<p>Deseja realmente desvincular a unidade selecionada ao tipo de despesa de custeio?</p>",
       cancelText: "Não",
       confirmText: "Sim",
       confirmButtonClass: "btn-danger",
@@ -83,17 +92,27 @@ export const UnidadesVinculadas = ({ UUID, podeEditar }) => {
     ModalConfirm({
       dispatch,
       title: "Confirmação desvincular unidades ao tipo de despesa de custeio",
-      message: "<p>Deseja realmente desvincular as unidades selecionadas ao tipo de despesa de custeio?</p>",
+      message:
+        "<p>Deseja realmente desvincular as unidades selecionadas ao tipo de despesa de custeio?</p>",
       cancelText: "Não",
       confirmText: "Sim",
       confirmButtonClass: "btn-danger",
-      dataQa: "modal-confirmar-desvincular-unidade-ao-tipo-de-despesa-custeio-em-lote",
+      dataQa:
+        "modal-confirmar-desvincular-unidade-ao-tipo-de-despesa-custeio-em-lote",
       onConfirm: () => handleDesvincularEmLote(),
     });
   };
 
   const unidadeEscolarTemplate = (rowData) => {
-    return <div>{rowData["nome_com_tipo"] ? <strong>{rowData["nome_com_tipo"]}</strong> : ""}</div>;
+    return (
+      <div>
+        {rowData["nome_com_tipo"] ? (
+          <strong>{rowData["nome_com_tipo"]}</strong>
+        ) : (
+          ""
+        )}
+      </div>
+    );
   };
 
   const montarBarraAcoesEmLote = () => {
@@ -113,7 +132,9 @@ export const UnidadesVinculadas = ({ UUID, podeEditar }) => {
             <div className="col-5">
               <span>
                 <strong>{selectedUnidades.length}</strong>{" "}
-                {selectedUnidades.length === 1 ? "unidade selecionada" : "unidades selecionadas"}
+                {selectedUnidades.length === 1
+                  ? "unidade selecionada"
+                  : "unidades selecionadas"}
               </span>
             </div>
             <div className="col-7">
@@ -198,7 +219,14 @@ export const UnidadesVinculadas = ({ UUID, podeEditar }) => {
   };
 
   if (isLoading) {
-    return <Loading corGrafico="black" corFonte="dark" marginTop="0" marginBottom="0" />;
+    return (
+      <Loading
+        corGrafico="black"
+        corFonte="dark"
+        marginTop="0"
+        marginBottom="0"
+      />
+    );
   }
 
   return (
@@ -211,7 +239,7 @@ export const UnidadesVinculadas = ({ UUID, podeEditar }) => {
           filtros={filtros}
         />
         <Spin spinning={mutationDesvincularUnidadeEmLote.isPending}>
-          {data && data.count > 0 ? (
+          {data && data?.count > 0 ? (
             <>
               {selectedUnidades.length ? montarBarraAcoesEmLote() : null}
               <p className="mb-2">
@@ -224,9 +252,20 @@ export const UnidadesVinculadas = ({ UUID, podeEditar }) => {
                 onSelectionChange={(e) => setSelectedUnidades(e.value)}
                 disabled
               >
-                {podeEditar && <Column selectionMode="multiple" style={{ width: "3em" }} />}
-                <Column field="codigo_eol" header="Código Eol" className="text-center" style={{ width: "15%" }} />
-                <Column field="nome_com_tipo" header="Unidade educacional" body={unidadeEscolarTemplate} />
+                {podeEditar && (
+                  <Column selectionMode="multiple" style={{ width: "3em" }} />
+                )}
+                <Column
+                  field="codigo_eol"
+                  header="Código Eol"
+                  className="text-center"
+                  style={{ width: "15%" }}
+                />
+                <Column
+                  field="nome_com_tipo"
+                  header="Unidade educacional"
+                  body={unidadeEscolarTemplate}
+                />
                 {podeEditar && (
                   <Column
                     field="uuid"
