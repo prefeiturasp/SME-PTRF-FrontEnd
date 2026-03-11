@@ -94,10 +94,10 @@ export const TipoDeDespesaCusteioForm = () => {
         }
       }
     } catch (e) {
-      if(!values.nome) {
+      if (!values.nome) {
         form.setFieldValue("selecionar_todas", true);
         return;
-      };
+      }
 
       if (e?.response?.data && e?.response?.data?.non_field_errors) {
         toastCustom.ToastCustomError(
@@ -168,7 +168,7 @@ export const TipoDeDespesaCusteioForm = () => {
     navigate("/parametro-tipos-custeio");
   };
 
-  const handleTodasUnidades = (e) => {   
+  const handleTodasUnidades = (e) => {
     if (e.target.checked === false && isNew) {
       handleSubmit(form.getFieldsValue());
     }
@@ -194,7 +194,7 @@ export const TipoDeDespesaCusteioForm = () => {
             vincular = false;
           },
         });
-       
+
         form.setFieldValue("selecionar_todas", vincular);
         return;
       }
@@ -211,7 +211,6 @@ export const TipoDeDespesaCusteioForm = () => {
       <Form
         form={form}
         onFinish={handleSubmit}
-        
         disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
         role="form"
       >
@@ -222,7 +221,7 @@ export const TipoDeDespesaCusteioForm = () => {
               name="nome"
               labelCol={{ span: 24 }}
               wrapperCol={{ span: 24 }}
-              rules={[{ required: true, message: "Campo obrigatório" }]}              
+              rules={[{ required: true, message: "Campo obrigatório" }]}
               disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
             >
               <Input name="nome" placeholder="Nome" />
