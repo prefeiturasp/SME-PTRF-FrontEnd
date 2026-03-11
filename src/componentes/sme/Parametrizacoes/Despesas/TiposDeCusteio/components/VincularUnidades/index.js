@@ -14,11 +14,12 @@ import { useGetUnidadesNaoVinculadas } from "./hooks/useGetUnidadesNaoVinculadas
 import { useVincularUnidade } from "./hooks/useVincularUnidade";
 import { Filtros } from "../Filtros";
 import { MsgImgCentralizada } from "../../../../../../Globais/Mensagens/MsgImgCentralizada";
-import {Icon} from "../../../../../../Globais/UI/Icon/";
+import { Icon } from "../../../../../../Globais/UI/Icon/";
 
 const filtroInicial = {
   nome_ou_codigo: "",
   dre: "",
+  tipo_unidade: "",
 };
 
 export const VincularUnidades = ({ UUID, podeEditar }) => {
@@ -29,12 +30,14 @@ export const VincularUnidades = ({ UUID, podeEditar }) => {
   const [selectedUnidades, setSelectedUnidades] = useState([]);
   const [filtros, setFiltros] = useState(filtroInicial);
 
-  const { data, refetch, isLoading, error, isError } = useGetUnidadesNaoVinculadas(
-    UUID,
-    currentPage,
-    filtros.nome_ou_codigo,
-    filtros.dre
-  );
+  const { data, refetch, isLoading, error, isError } =
+    useGetUnidadesNaoVinculadas(
+      UUID,
+      currentPage,
+      filtros.nome_ou_codigo,
+      filtros.dre,
+      filtros.tipo_unidade,
+    );
 
   useEffect(() => {
     // tratamento para cenário de remover acesso do último item da página.
@@ -56,7 +59,10 @@ export const VincularUnidades = ({ UUID, podeEditar }) => {
   };
 
   function handleVincular(rowData) {
-    mutationVincularUnidadeEmLote.mutate({ uuid: UUID, unidadeUUID: [rowData["uuid"]] });
+    mutationVincularUnidadeEmLote.mutate({
+      uuid: UUID,
+      unidadeUUID: [rowData["uuid"]],
+    });
   }
 
   const handleVincularUnidades = async (rowData) => {
@@ -73,7 +79,8 @@ export const VincularUnidades = ({ UUID, podeEditar }) => {
     ModalConfirm({
       dispatch,
       title: "Confirmação vincular unidade",
-      message: "<p>Deseja realmente vincular a unidade selecionada ao tipo de despesa de custeio?</p>",
+      message:
+        "<p>Deseja realmente vincular a unidade selecionada ao tipo de despesa de custeio?</p>",
       cancelText: "Não",
       confirmText: "Sim",
       confirmButtonClass: "btn-danger",
@@ -86,17 +93,27 @@ export const VincularUnidades = ({ UUID, podeEditar }) => {
     ModalConfirm({
       dispatch,
       title: "Confirmação vincular unidades em lote",
-      message: "<p>Deseja realmente vincular as unidades selecionadas ao tipo de despesa de custeio?</p>",
+      message:
+        "<p>Deseja realmente vincular as unidades selecionadas ao tipo de despesa de custeio?</p>",
       cancelText: "Não",
       confirmText: "Sim",
       confirmButtonClass: "btn-danger",
-      dataQa: "modal-confirmar-vincular-unidade-ao-tipo-de-despesa-custeio-em-lote",
+      dataQa:
+        "modal-confirmar-vincular-unidade-ao-tipo-de-despesa-custeio-em-lote",
       onConfirm: () => handleVincularUnidades(),
     });
   };
 
   const unidadeEscolarTemplate = (rowData) => {
-    return <div>{rowData["nome_com_tipo"] ? <strong>{rowData["nome_com_tipo"]}</strong> : ""}</div>;
+    return (
+      <div>
+        {rowData["nome_com_tipo"] ? (
+          <strong>{rowData["nome_com_tipo"]}</strong>
+        ) : (
+          ""
+        )}
+      </div>
+    );
   };
 
   const montarBarraAcoesEmLote = () => {
@@ -116,7 +133,9 @@ export const VincularUnidades = ({ UUID, podeEditar }) => {
             <div className="col-5">
               <span>
                 <strong>{selectedUnidades.length}</strong>{" "}
-                {selectedUnidades.length === 1 ? "unidade selecionada" : "unidades selecionadas"}
+                {selectedUnidades.length === 1
+                  ? "unidade selecionada"
+                  : "unidades selecionadas"}
               </span>
             </div>
             <div className="col-7">
@@ -176,11 +195,7 @@ export const VincularUnidades = ({ UUID, podeEditar }) => {
             handleConfirmarVincularUnidade(rowData);
           }}
           disabled={selectedUnidades.length > 0 || !podeEditar}
-          icon={
-            <Icon
-              icon="faPlusCircle"
-            />
-          }
+          icon={<Icon icon="faPlusCircle" />}
         ></Button>
       </Tooltip>
     );
@@ -196,7 +211,14 @@ export const VincularUnidades = ({ UUID, podeEditar }) => {
   };
 
   if (isLoading) {
-    return <Loading corGrafico="black" corFonte="dark" marginTop="0" marginBottom="0" />;
+    return (
+      <Loading
+        corGrafico="black"
+        corFonte="dark"
+        marginTop="0"
+        marginBottom="0"
+      />
+    );
   }
 
   return (
@@ -210,7 +232,7 @@ export const VincularUnidades = ({ UUID, podeEditar }) => {
         />
         <Spin spinning={mutationVincularUnidadeEmLote.isPending}>
           {selectedUnidades.length ? montarBarraAcoesEmLote() : null}
-          {data.count > 0 ? (
+          {data?.count > 0 ? (
             <>
               <p className="mb-2">
                 Exibindo <span className="total">{data.count}</span> unidades
@@ -221,9 +243,20 @@ export const VincularUnidades = ({ UUID, podeEditar }) => {
                 selection={selectedUnidades}
                 onSelectionChange={(e) => setSelectedUnidades(e.value)}
               >
-                {podeEditar && <Column selectionMode="multiple" style={{ width: "3em" }} />}
-                <Column field="codigo_eol" header="Código Eol" className="text-center" style={{ width: "15%" }} />
-                <Column field="nome_com_tipo" header="Unidade educacional" body={unidadeEscolarTemplate} />
+                {podeEditar && (
+                  <Column selectionMode="multiple" style={{ width: "3em" }} />
+                )}
+                <Column
+                  field="codigo_eol"
+                  header="Código Eol"
+                  className="text-center"
+                  style={{ width: "15%" }}
+                />
+                <Column
+                  field="nome_com_tipo"
+                  header="Unidade educacional"
+                  body={unidadeEscolarTemplate}
+                />
                 {podeEditar && (
                   <Column
                     field="uuid"
@@ -246,7 +279,9 @@ export const VincularUnidades = ({ UUID, podeEditar }) => {
             </>
           ) : (
             <MsgImgCentralizada
-              texto={"Use os filtros para localizar a unidade que será vinculada ao tipo de despesa de custeio."}
+              texto={
+                "Use os filtros para localizar a unidade que será vinculada ao tipo de despesa de custeio."
+              }
               img={Img404}
             />
           )}
