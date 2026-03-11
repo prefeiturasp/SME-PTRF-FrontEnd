@@ -20,7 +20,6 @@ import {
 } from "../../../../../../services/sme/Parametrizacoes.service";
 import { toastCustom } from "../../../../../Globais/ToastCustom";
 import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
-import * as service from "../../../../../../services/sme/Parametrizacoes.service";
 import { mockData, renderWithProviders } from "../__fixtures__/mockData";
 
 jest.mock("../../../../../../services/sme/Parametrizacoes.service", () => ({
