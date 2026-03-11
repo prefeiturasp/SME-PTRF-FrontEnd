@@ -27,9 +27,11 @@ import {visoesService} from "../../../../../services/visoes.service";
 import {ModalConfirm} from "../../../../Globais/Modal/ModalConfirm";
 import {toastCustom} from "../../../../Globais/ToastCustom";
 import { EditIconButton } from "../../../../Globais/UI/Button";
+import useRecursoSelecionado from "../../../../../hooks/Globais/useRecursoSelecionado";
 
-export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao}) => {
+export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao, recurso_uuid, recurso_nome}) => {
     const dispatch = useDispatch();
+    const { recursos } = useRecursoSelecionado({ visoesService });
 
     const rowsPerPage = 7;
 
@@ -59,7 +61,7 @@ export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao}) => {
     const [loadingPeriodos, setLoadingPeriodos] = useState(false);
 
     const carregaProcessos = async () => {
-        let processos = await getProcessosAssociacao(associacaoUuid);
+        let processos = await getProcessosAssociacao(associacaoUuid, recurso_uuid);
         setProcessosList(processos)
     };
 
@@ -69,7 +71,7 @@ export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao}) => {
     }, []);
 
     const carregaPeriodosDisponiveis = async () => {
-        let periodosDisponiveis = await getPeriodosDisponiveis(associacaoUuid, stateProcessoForm.ano, stateProcessoForm.uuid)
+        let periodosDisponiveis = await getPeriodosDisponiveis(associacaoUuid, stateProcessoForm.ano, stateProcessoForm.uuid, recurso_uuid)
         setPeriodosDisponiveis(periodosDisponiveis)
         setLoadingPeriodos(false);
     }
@@ -148,13 +150,15 @@ export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao}) => {
                 'associacao': associacaoUuid,
                 'numero_processo': stateProcessoForm.numero_processo,
                 'ano': stateProcessoForm.ano,
-                'periodos': stateProcessoForm.periodos
+                'periodos': stateProcessoForm.periodos,
+                'recurso': recurso_uuid
             };
         }else {
             payload = {
                 'associacao': associacaoUuid,
                 'numero_processo': stateProcessoForm.numero_processo,
                 'ano': stateProcessoForm.ano,
+                'recurso': recurso_uuid
             };
         }
 
@@ -227,7 +231,7 @@ export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao}) => {
             let lista_uuids_periodos_pre_selecao = []
 
             if (associacaoUuid && value && value.replaceAll("_","").length >= 4){
-                let periodosDisponiveis = await getPeriodosDisponiveis(associacaoUuid, value, stateProcessoForm.uuid)
+                let periodosDisponiveis = await getPeriodosDisponiveis(associacaoUuid, value, stateProcessoForm.uuid, recurso_uuid)
                 for(let i= 0; i<= periodosDisponiveis.length-1; i++){
                     lista_uuids_periodos_pre_selecao.push(periodosDisponiveis[i].uuid)
                 }
@@ -315,6 +319,18 @@ export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao}) => {
                             <div className="col-10">
                                 <label><strong>Processos SEI de prestação de contas</strong></label>
                             </div>
+
+                            { recursos.length > 1 && visoesService.featureFlagAtiva('premio-excelencia-processo-sei') && (
+                                <>
+                                    <div className="col-12">
+                                        <hr className="mb-4" />
+                                    </div>
+                                    <div className="col-10">
+                                        <label><strong>{ recurso_nome }</strong></label>
+                                    </div>
+                                </>
+                            ) }
+
                             <div className="col-2">
                                 <button className="link-green float-right btn-sem-borda-fundo" onClick={visoesService.getPermissoes(['change_processo_sei']) ? () => handleAddProcessoAction() : null}>
                                     <FontAwesomeIcon
@@ -371,6 +387,8 @@ export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao}) => {
                                 customNumeroProcessoError={customNumeroProcessoError}
                                 setCustomNumeroProcessoError={setCustomNumeroProcessoError}
                                 loadingPeriodos={loadingPeriodos}
+                                recursoNome={recurso_nome}
+                                showRecursoField={recursos && recursos.length > 1 && visoesService.featureFlagAtiva('premio-excelencia-processo-sei') }
                             />
                         </section>
 

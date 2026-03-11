@@ -2,7 +2,7 @@ import React from "react";
 import { render, screen, fireEvent, act } from "@testing-library/react";
 import "@testing-library/jest-dom";
 
-import { TabelaAcertosDespesasPeriodosAnteriores } from "../TabelaAcertosDespesasPeriodosAnteriores";
+import { TabelaAcertosLancamentos } from "../TabelaAcertosLancamentos";
 import { mantemEstadoAnaliseDre } from "../../../../../services/mantemEstadoAnaliseDre.service";
 import { visoesService } from "../../../../../services/visoes.service";
 
@@ -83,7 +83,7 @@ jest.mock(
 );
 
 const mockAnaliseDre = {
-  conferencia_de_despesas_periodos_anteriores: {
+  conferencia_de_lancamentos: {
     paginacao_atual: 0,
     expanded: [],
   },
@@ -96,9 +96,6 @@ const lancamentosMock = [
     tipo_transacao: "Gasto",
     conferido: true,
     analise_lancamento: { status_realizacao: "PENDENTE" },
-    conferencia_de_despesas_periodos_anteriores: {
-      status_realizacao: "PENDENTE",
-    },
   },
 ];
 
@@ -139,13 +136,11 @@ const setup = (override = {}) => {
     ...override,
   };
 
-  return render(<TabelaAcertosDespesasPeriodosAnteriores {...props} />);
+  return render(<TabelaAcertosLancamentos {...props} />);
 };
 
 beforeEach(() => {
-  mantemEstadoAnaliseDre.getAnaliseDreUsuarioLogado.mockReturnValue(
-    mockAnaliseDre
-  );
+  mantemEstadoAnaliseDre.getAnaliseDreUsuarioLogado.mockReturnValue(mockAnaliseDre);
   visoesService.getItemUsuarioLogado.mockReturnValue("UE");
   visoesService.getPermissoes.mockReturnValue(true);
   mockCapturedColumnProps = [];
@@ -153,7 +148,7 @@ beforeEach(() => {
   mockCapturedDataTableOnRowToggle = null;
 });
 
-describe("TabelaAcertosDespesasPeriodosAnteriores", () => {
+describe("TabelaAcertosLancamentos", () => {
   it("renderiza estrutura da tabela", () => {
     setup();
 
@@ -167,7 +162,7 @@ describe("TabelaAcertosDespesasPeriodosAnteriores", () => {
 
     expect(
       screen.getByText(
-        "Não foram solicitados acertos nas despesas de períodos anteriores nessa análise da PC."
+        "Não foram solicitados acertos nos lançamentos nessa análise da PC."
       )
     ).toBeInTheDocument();
   });
@@ -175,9 +170,7 @@ describe("TabelaAcertosDespesasPeriodosAnteriores", () => {
   it("exibe mensagem de contagem quando há lançamentos e nenhum está selecionado", () => {
     setup({ quantidadeSelecionada: 0, totalDeAcertosDosLancamentos: 3 });
 
-    expect(
-      screen.getByText(/gastos de períodos anteriores pendentes de conciliação/)
-    ).toBeInTheDocument();
+    expect(screen.getByText(/lançamentos/)).toBeInTheDocument();
   });
 
   it("exibe ações quando há seleção", () => {
@@ -192,9 +185,7 @@ describe("TabelaAcertosDespesasPeriodosAnteriores", () => {
     setup({ quantidadeSelecionada: 2 });
 
     expect(
-      screen.getByText((content) =>
-        content.includes("lançamentos selecionados")
-      )
+      screen.getByText((content) => content.includes("lançamentos selecionados"))
     ).toBeInTheDocument();
   });
 
@@ -204,30 +195,19 @@ describe("TabelaAcertosDespesasPeriodosAnteriores", () => {
       acoesDisponiveis: jest.fn(() => ({ REALIZADO_E_PENDENTE: true })),
     });
 
-    const justificarBtn = screen
-      .getByText(/Justificar não realização/i)
-      .closest("button");
-
+    const justificarBtn = screen.getByText(/Justificar não realização/i).closest("button");
     expect(justificarBtn).toBeInTheDocument();
 
     fireEvent.click(justificarBtn);
 
-    expect(
-      screen.getAllByText(/Justificar não realização/i).length
-    ).toBeGreaterThan(1);
-
-    expect(
-      screen.getByRole("button", { name: /Confirmar/i })
-    ).toBeInTheDocument();
+    expect(screen.getAllByText(/Justificar não realização/i).length).toBeGreaterThan(1);
+    expect(screen.getByRole("button", { name: /Confirmar/i })).toBeInTheDocument();
   });
 
   it("chama justificarNaoRealizacao ao confirmar", () => {
     const justificarNaoRealizacao = jest.fn();
 
-    setup({
-      quantidadeSelecionada: 1,
-      justificarNaoRealizacao,
-    });
+    setup({ quantidadeSelecionada: 1, justificarNaoRealizacao });
 
     fireEvent.click(screen.getByText("Justificar não realização"));
     fireEvent.click(screen.getByText("Confirmar"));
@@ -262,7 +242,6 @@ describe("TabelaAcertosDespesasPeriodosAnteriores", () => {
     });
 
     fireEvent.click(screen.getByText("Cancelar").closest("button"));
-
     expect(acaoCancelar).toHaveBeenCalled();
   });
 
@@ -279,7 +258,6 @@ describe("TabelaAcertosDespesasPeriodosAnteriores", () => {
     expect(screen.getByText("Confirmar apagar")).toBeInTheDocument();
 
     fireEvent.click(screen.getByText("Confirmar apagar"));
-
     expect(limparStatus).toHaveBeenCalled();
   });
 
@@ -295,7 +273,6 @@ describe("TabelaAcertosDespesasPeriodosAnteriores", () => {
     });
 
     fireEvent.click(screen.getByText("Cancelar").closest("button"));
-
     expect(acaoCancelar).toHaveBeenCalled();
   });
 
@@ -309,7 +286,6 @@ describe("TabelaAcertosDespesasPeriodosAnteriores", () => {
     });
 
     fireEvent.click(screen.getByText("Limpar Status").closest("button"));
-
     expect(limparStatus).toHaveBeenCalled();
     expect(screen.queryByText("Confirmar apagar")).not.toBeInTheDocument();
   });
@@ -322,13 +298,10 @@ describe("TabelaAcertosDespesasPeriodosAnteriores", () => {
     setup({
       quantidadeSelecionada: 1,
       acaoCancelar,
-      acoesDisponiveis: jest.fn(() => ({
-        JUSTIFICADO_E_REALIZADO_E_PENDENTE: true,
-      })),
+      acoesDisponiveis: jest.fn(() => ({ JUSTIFICADO_E_REALIZADO_E_PENDENTE: true })),
     });
 
     fireEvent.click(screen.getByText("Cancelar").closest("button"));
-
     expect(acaoCancelar).toHaveBeenCalled();
   });
 
@@ -338,14 +311,11 @@ describe("TabelaAcertosDespesasPeriodosAnteriores", () => {
     setup({
       quantidadeSelecionada: 1,
       limparStatus,
-      acoesDisponiveis: jest.fn(() => ({
-        JUSTIFICADO_E_REALIZADO_E_PENDENTE: true,
-      })),
+      acoesDisponiveis: jest.fn(() => ({ JUSTIFICADO_E_REALIZADO_E_PENDENTE: true })),
     });
 
     fireEvent.click(screen.getByText("Limpar Status").closest("button"));
     fireEvent.click(screen.getByText("Confirmar apagar"));
-
     expect(limparStatus).toHaveBeenCalled();
   });
 
@@ -361,7 +331,6 @@ describe("TabelaAcertosDespesasPeriodosAnteriores", () => {
     });
 
     fireEvent.click(screen.getByText("Cancelar").closest("button"));
-
     expect(acaoCancelar).toHaveBeenCalled();
   });
 
@@ -376,7 +345,6 @@ describe("TabelaAcertosDespesasPeriodosAnteriores", () => {
 
     fireEvent.click(screen.getByText("Limpar Status").closest("button"));
     fireEvent.click(screen.getByText("Confirmar apagar"));
-
     expect(limparStatus).toHaveBeenCalled();
   });
 
@@ -389,11 +357,8 @@ describe("TabelaAcertosDespesasPeriodosAnteriores", () => {
       acoesDisponiveis: jest.fn(() => ({ JUSTIFICADO_E_PENDENTE: true })),
     });
 
-    fireEvent.click(
-      screen.getByText("Marcar como realizado").closest("button")
-    );
+    fireEvent.click(screen.getByText("Marcar como realizado").closest("button"));
     fireEvent.click(screen.getByText("Confirmar apagar"));
-
     expect(marcarComoRealizado).toHaveBeenCalled();
   });
 
@@ -409,7 +374,6 @@ describe("TabelaAcertosDespesasPeriodosAnteriores", () => {
     });
 
     fireEvent.click(screen.getByText("Cancelar").closest("button"));
-
     expect(acaoCancelar).toHaveBeenCalled();
   });
 
@@ -423,7 +387,6 @@ describe("TabelaAcertosDespesasPeriodosAnteriores", () => {
     });
 
     fireEvent.click(screen.getByText("Limpar Status").closest("button"));
-
     expect(limparStatus).toHaveBeenCalled();
     expect(screen.queryByText("Confirmar apagar")).not.toBeInTheDocument();
   });
@@ -434,13 +397,9 @@ describe("TabelaAcertosDespesasPeriodosAnteriores", () => {
       acoesDisponiveis: jest.fn(() => ({ REALIZADO: true })),
     });
 
-    fireEvent.click(
-      screen.getByText("Justificar não realização").closest("button")
-    );
+    fireEvent.click(screen.getByText("Justificar não realização").closest("button"));
 
-    expect(
-      screen.getAllByText(/Justificar não realização/i).length
-    ).toBeGreaterThan(1);
+    expect(screen.getAllByText(/Justificar não realização/i).length).toBeGreaterThan(1);
     expect(screen.getByRole("button", { name: /Confirmar/i })).toBeInTheDocument();
   });
 
@@ -456,7 +415,6 @@ describe("TabelaAcertosDespesasPeriodosAnteriores", () => {
     });
 
     fireEvent.click(screen.getByText("Cancelar").closest("button"));
-
     expect(acaoCancelar).toHaveBeenCalled();
   });
 
@@ -469,11 +427,8 @@ describe("TabelaAcertosDespesasPeriodosAnteriores", () => {
       acoesDisponiveis: jest.fn(() => ({ JUSTIFICADO: true })),
     });
 
-    fireEvent.click(
-      screen.getByText("Marcar como realizado").closest("button")
-    );
+    fireEvent.click(screen.getByText("Marcar como realizado").closest("button"));
     fireEvent.click(screen.getByText("Confirmar apagar"));
-
     expect(marcarComoRealizado).toHaveBeenCalled();
   });
 
@@ -489,7 +444,6 @@ describe("TabelaAcertosDespesasPeriodosAnteriores", () => {
     });
 
     fireEvent.click(screen.getByText("Cancelar").closest("button"));
-
     expect(acaoCancelar).toHaveBeenCalled();
   });
 
@@ -502,10 +456,7 @@ describe("TabelaAcertosDespesasPeriodosAnteriores", () => {
       acoesDisponiveis: jest.fn(() => ({ PENDENTE: true })),
     });
 
-    fireEvent.click(
-      screen.getByText("Marcar como realizado").closest("button")
-    );
-
+    fireEvent.click(screen.getByText("Marcar como realizado").closest("button"));
     expect(marcarComoRealizado).toHaveBeenCalled();
     expect(screen.queryByText("Confirmar apagar")).not.toBeInTheDocument();
   });
@@ -516,13 +467,9 @@ describe("TabelaAcertosDespesasPeriodosAnteriores", () => {
       acoesDisponiveis: jest.fn(() => ({ PENDENTE: true })),
     });
 
-    fireEvent.click(
-      screen.getByText("Justificar não realização").closest("button")
-    );
+    fireEvent.click(screen.getByText("Justificar não realização").closest("button"));
 
-    expect(
-      screen.getAllByText(/Justificar não realização/i).length
-    ).toBeGreaterThan(1);
+    expect(screen.getAllByText(/Justificar não realização/i).length).toBeGreaterThan(1);
   });
 
   // --- ModalCheckNaoPermitido ---
@@ -533,20 +480,14 @@ describe("TabelaAcertosDespesasPeriodosAnteriores", () => {
       tituloModalCheckNaoPermitido: "Título da modal de verificação",
     });
 
-    expect(
-      screen.getByTestId("modal-check-nao-permitido")
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText("Título da modal de verificação")
-    ).toBeInTheDocument();
+    expect(screen.getByTestId("modal-check-nao-permitido")).toBeInTheDocument();
+    expect(screen.getByText("Título da modal de verificação")).toBeInTheDocument();
   });
 
   it("não exibe ModalCheckNaoPermitido quando showModalCheckNaoPermitido é false", () => {
     setup({ showModalCheckNaoPermitido: false });
 
-    expect(
-      screen.queryByTestId("modal-check-nao-permitido")
-    ).not.toBeInTheDocument();
+    expect(screen.queryByTestId("modal-check-nao-permitido")).not.toBeInTheDocument();
   });
 
   // --- tagJustificativa (via mockCapturedColumnProps) ---
@@ -571,9 +512,7 @@ describe("TabelaAcertosDespesasPeriodosAnteriores", () => {
       statusCol.body({ analise_lancamento: { status_realizacao: "REALIZADO" } })
     );
 
-    expect(
-      container.querySelector(".tag-justificativa").textContent
-    ).toBe("Realizado");
+    expect(container.querySelector(".tag-justificativa").textContent).toBe("Realizado");
   });
 
   it("tagJustificativa renderiza nome do status para JUSTIFICADO", () => {
@@ -581,14 +520,10 @@ describe("TabelaAcertosDespesasPeriodosAnteriores", () => {
 
     const statusCol = mockCapturedColumnProps.find((p) => p.header === "Status");
     const { container } = render(
-      statusCol.body({
-        analise_lancamento: { status_realizacao: "JUSTIFICADO" },
-      })
+      statusCol.body({ analise_lancamento: { status_realizacao: "JUSTIFICADO" } })
     );
 
-    expect(
-      container.querySelector(".tag-justificativa").textContent
-    ).toBe("Justificado");
+    expect(container.querySelector(".tag-justificativa").textContent).toBe("Justificado");
   });
 
   it("tagJustificativa renderiza '-' quando statusId é undefined", () => {
@@ -599,9 +534,7 @@ describe("TabelaAcertosDespesasPeriodosAnteriores", () => {
       statusCol.body({ analise_lancamento: { status_realizacao: undefined } })
     );
 
-    expect(
-      container.querySelector(".tag-justificativa").textContent
-    ).toBe("-");
+    expect(container.querySelector(".tag-justificativa").textContent).toBe("-");
   });
 
   it("tagJustificativa renderiza '-' quando statusId não é encontrado nas opções", () => {
@@ -612,9 +545,7 @@ describe("TabelaAcertosDespesasPeriodosAnteriores", () => {
       statusCol.body({ analise_lancamento: { status_realizacao: "STATUS_DESCONHECIDO" } })
     );
 
-    expect(
-      container.querySelector(".tag-justificativa").textContent
-    ).toBe("-");
+    expect(container.querySelector(".tag-justificativa").textContent).toBe("-");
   });
 
   // --- demonstradoTemplate (via mockCapturedColumnProps) ---
@@ -622,9 +553,7 @@ describe("TabelaAcertosDespesasPeriodosAnteriores", () => {
   it("demonstradoTemplate renderiza checkbox para tipo_transacao Gasto", () => {
     setup();
 
-    const demonstradoCol = mockCapturedColumnProps.find(
-      (p) => p.header === "Demonstrado"
-    );
+    const demonstradoCol = mockCapturedColumnProps.find((p) => p.header === "Demonstrado");
     const { container } = render(
       demonstradoCol.body({ tipo_transacao: "Gasto", conferido: true })
     );
@@ -640,9 +569,7 @@ describe("TabelaAcertosDespesasPeriodosAnteriores", () => {
   it("demonstradoTemplate renderiza '-' para tipos de transação que não são Gasto", () => {
     setup();
 
-    const demonstradoCol = mockCapturedColumnProps.find(
-      (p) => p.header === "Demonstrado"
-    );
+    const demonstradoCol = mockCapturedColumnProps.find((p) => p.header === "Demonstrado");
     const { container } = render(
       demonstradoCol.body({ tipo_transacao: "Receita", conferido: false })
     );
@@ -727,16 +654,12 @@ describe("TabelaAcertosDespesasPeriodosAnteriores", () => {
       acoesDisponiveis: jest.fn(() => ({ PENDENTE: true })),
     });
 
-    fireEvent.click(
-      screen.getByText("Justificar não realização").closest("button")
-    );
+    fireEvent.click(screen.getByText("Justificar não realização").closest("button"));
     expect(screen.getByTestId("modal-justificar-cancelar")).toBeInTheDocument();
 
     fireEvent.click(screen.getByTestId("modal-justificar-cancelar"));
 
-    expect(
-      screen.queryByTestId("modal-justificar-cancelar")
-    ).not.toBeInTheDocument();
+    expect(screen.queryByTestId("modal-justificar-cancelar")).not.toBeInTheDocument();
   });
 
   it("textarea onChange em modalBodyHTML atualiza textoConfirmadoJustificado", () => {
@@ -745,9 +668,7 @@ describe("TabelaAcertosDespesasPeriodosAnteriores", () => {
       acoesDisponiveis: jest.fn(() => ({ PENDENTE: true })),
     });
 
-    fireEvent.click(
-      screen.getByText("Justificar não realização").closest("button")
-    );
+    fireEvent.click(screen.getByText("Justificar não realização").closest("button"));
 
     const textarea = screen.getByRole("textbox");
     fireEvent.change(textarea, { target: { value: "nova justificativa" } });
@@ -761,15 +682,11 @@ describe("TabelaAcertosDespesasPeriodosAnteriores", () => {
       acoesDisponiveis: jest.fn(() => ({ JUSTIFICADO: true })),
     });
 
-    fireEvent.click(
-      screen.getByText("Limpar Status").closest("button")
-    );
+    fireEvent.click(screen.getByText("Limpar Status").closest("button"));
     expect(screen.getByTestId("modal-apagada-close")).toBeInTheDocument();
 
     fireEvent.click(screen.getByTestId("modal-apagada-close"));
 
-    expect(
-      screen.queryByTestId("modal-apagada-close")
-    ).not.toBeInTheDocument();
+    expect(screen.queryByTestId("modal-apagada-close")).not.toBeInTheDocument();
   });
 });

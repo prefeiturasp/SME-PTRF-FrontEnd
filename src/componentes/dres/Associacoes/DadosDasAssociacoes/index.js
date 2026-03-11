@@ -11,9 +11,11 @@ import { SituacaoFinanceiraUnidadeEducacional } from "./SituacaoFinanceiraUnidad
 import {visoesService} from "../../../../services/visoes.service"
 import { SituacaoPatrimonialUnidadeEducacional } from "./SituacaoPatrimonial";
 import "../associacoes.scss"
+import useRecursoSelecionado from "../../../../hooks/Globais/useRecursoSelecionado";
 
 export const DetalhesDaAssociacao = () => {
     const { origem } = useParams();
+    const { recursos, recursoSelecionado } = useRecursoSelecionado({ visoesService });
 
     const [clickBtnEscolheOpcao, setClickBtnEscolheOpcao] = useState({
         dados_unidade: true,
@@ -67,6 +69,20 @@ export const DetalhesDaAssociacao = () => {
             permissao: visoesService.getPermissoes(["access_situacao_patrimonial_dre"])
         },
     ]
+
+    let recurso_tabs = recursos
+        .sort((a, b) => {
+            if (a.legado) return -1;
+            if (b.legado) return 1;
+            
+            return a.nome_exibicao.localeCompare(b.nome_exibicao);
+        })
+        .map((recurso) => ({
+            id: recurso.uuid,
+            nome: recurso.nome,
+            nome_exibicao: recurso.nome_exibicao,
+            permissao: visoesService.getPermissoes(["access_dados_unidade_dre"])
+        }))
 
     let conteudo_tab = {
         dados_unidade : {
@@ -197,10 +213,22 @@ export const DetalhesDaAssociacao = () => {
         
     }
 
-    const toggleBtnEscolheOpcao= (id) => {
+    const toggleBtnEscolheOpcao = (id) => {
         setClickBtnEscolheOpcao({
             [id]: !clickBtnEscolheOpcao[id]
         });
+    };
+
+    const handleTabClick = (id) => {
+        toggleBtnEscolheOpcao(id);
+        
+        // Se for a aba de processos_sei e houver mais de 1 recurso, seleciona a primeira aba de recurso
+        if (id === "processos_sei" && recursos.length > 1 && recurso_tabs.length > 0) {
+            setClickBtnEscolheOpcao(prev => ({
+                ...prev,
+                [recurso_tabs[0].id]: true
+            }));
+        }
     };
 
     return (
@@ -210,8 +238,6 @@ export const DetalhesDaAssociacao = () => {
                         <TopoComBotoes
                             dadosDaAssociacao={dadosDaAssociacao}
                         />
-
-                        
                         <nav>
                             <div className="nav nav-tabs mb-3 mt-5 menu-interno-dre-detalhes" id="nav-tab" role="tablist">
                                 {tabs.map((tab, index) => {
@@ -220,8 +246,7 @@ export const DetalhesDaAssociacao = () => {
                                             <Fragment key={index}>
                                                 <a
                                                     onClick={() => {
-                                                        toggleBtnEscolheOpcao(tab.id);
-                                                        
+                                                        handleTabClick(tab.id);
                                                     }}
                                                     className={`nav-link btn-escolhe-aba ${clickBtnEscolheOpcao[tab.id] ? "btn-escolhe-aba-active" : ""}`}
                                                     id={`nav-${tab.id}-tab`}
@@ -308,9 +333,70 @@ export const DetalhesDaAssociacao = () => {
                                             <ProcessoSeiRegularidade
                                                 dadosDaAssociacao={dadosDaAssociacao}
                                             />
-                                            <ProcessosSeiPrestacaoDeContas
-                                                dadosDaAssociacao={dadosDaAssociacao}
-                                            />
+
+                                            { visoesService.featureFlagAtiva('premio-excelencia-processo-sei') && recursos.length > 1 ? (
+                                                <>
+                                                    <nav>
+                                                        <div className="nav nav-tabs mb-3 mt-3 menu-interno-dre-detalhes" id="nav-tab" role="tablist">
+                                                            {recurso_tabs.map((tab, index) => {
+                                                                return tab.permissao 
+                                                                    ?
+                                                                        <Fragment key={index}>
+                                                                            <a onClick={() => {
+                                                                                    // Ativa aba de recurso e mantém a aba de Processos SEI ativa.
+                                                                                    setClickBtnEscolheOpcao({
+                                                                                        [tab.id]: true,
+                                                                                        processos_sei: true
+                                                                                    });
+                                                                                }}
+                                                                                className={`nav-link btn-escolhe-aba ${clickBtnEscolheOpcao[tab.id] ? "btn-escolhe-aba-active" : ""}`}
+                                                                                id={`nav-${tab.id}-tab`}
+                                                                                data-toggle="tab"
+                                                                                href={`#nav-${tab.id}`}
+                                                                                role="tab"
+                                                                                aria-controls={`nav-${tab.id}`}
+                                                                                aria-selected="true"
+                                                                            >
+                                                                                {tab.nome_exibicao}
+                                                                            </a>
+                                                                        </Fragment>
+
+                                                                    : 
+                                                                        null
+                                                            })}                                 
+                                                        </div>
+                                                    </nav>
+
+                                                    <div className="tab-content" id="nav-recurso-tabContent">
+                                                        {recurso_tabs.map((tab, index) => {
+                                                            return tab.permissao 
+                                                                ?
+                                                                    <div
+                                                                        key={index}
+                                                                        className={`tab-pane fade show ${clickBtnEscolheOpcao[tab.id] ? "active" : ""}`}
+                                                                        id={`nav-${tab.id}`}
+                                                                        role="tabpanel"
+                                                                        aria-labelledby={`nav-${tab.id}-tab`}
+                                                                    >
+                                                                        <div className="page-content-inner">
+                                                                            <ProcessosSeiPrestacaoDeContas
+                                                                                dadosDaAssociacao={dadosDaAssociacao}
+                                                                                recurso_uuid={tab.id}
+                                                                                recurso_nome={tab.nome}
+                                                                            />
+                                                                        </div>
+                                                                    </div>
+                                                                :
+                                                                    null
+                                                        })}
+                                                    </div>
+                                                </>
+                                            ) : (
+                                                <ProcessosSeiPrestacaoDeContas
+                                                    dadosDaAssociacao={dadosDaAssociacao}
+                                                    recurso_uuid={recursoSelecionado?.uuid || ''}
+                                                />
+                                            )}
                                         </div>
                                     </div>
                                 :

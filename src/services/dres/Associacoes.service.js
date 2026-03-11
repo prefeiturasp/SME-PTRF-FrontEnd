@@ -63,8 +63,12 @@ export const updateAssociacao = async (uuid_associacao, payload) => {
     });
 };
 
-export const getProcessosAssociacao = async (uuid_associacao) => {
-    return (await api.get(`api/associacoes/${uuid_associacao}/processos`, authHeader())).data
+export const getProcessosAssociacao = async (uuid_associacao, recurso_uuid) => {
+    let url = `api/associacoes/${uuid_associacao}/processos`;
+    if (recurso_uuid){
+        url += `?recurso_uuid=${recurso_uuid}`
+    }
+    return (await api.get(url, authHeader())).data
 };
 
 export const aprovarSolicitacaoEncerramentoConta = async (id_solicitacao) => {
