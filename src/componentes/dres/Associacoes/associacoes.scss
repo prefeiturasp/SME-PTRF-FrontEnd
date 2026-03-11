@@ -104,7 +104,7 @@
 
   .btn-escolhe-aba-active {
     font-weight: bold !important;
-    color: var(--color-primary-lighten);
+    color: var(--color-primary-lighten) !important;
     background-color: #f3f3f3;
     border-bottom: 1px solid #fff;
     margin-bottom: -1px;
