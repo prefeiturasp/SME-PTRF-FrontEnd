@@ -4,12 +4,21 @@ import locale from "antd/locale/pt_BR";
 
 const ThemeContext = createContext();
 
+const FALLBACK_COLOR = "#01585e";
+const STORAGE_KEY = "TEMA_SIGESCOLA";
+
+const isValidHexColor = (value) => /^#[0-9A-Fa-f]{6}$/.test(value);
+
+const getStoredTheme = () => {
+  const stored = localStorage.getItem(STORAGE_KEY);
+  return isValidHexColor(stored) ? stored : FALLBACK_COLOR;
+};
+
 export const ThemeProvider = ({ children }) => {
-  const [theme, setTheme] = useState(localStorage.getItem("theme") || "#01585e");
+  const [theme, setTheme] = useState(getStoredTheme);
 
   useEffect(() => {
     applyTheme(theme);
-    localStorage.setItem("theme", theme);
   }, [theme]);
 
   const darkenColor = (hex, amount = 0.4) => {
@@ -76,10 +85,12 @@ export const ThemeProvider = ({ children }) => {
     },
   };
 
-  const applyTheme = (color = "#01585e") => {
+  const applyTheme = (color = FALLBACK_COLOR) => {
+    localStorage.setItem(STORAGE_KEY, color);
+
     const themes = {
       default: {
-        "--color-fallback": "#01585e",
+        "--color-fallback": FALLBACK_COLOR,
         "--color-primary": color,
         "--color-primary-darker": `${darkenColor(color, 0.2)}`,
         "--color-primary-lighten": `${lightenColor(color, 0.2)}`,
