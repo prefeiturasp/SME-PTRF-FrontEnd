@@ -1,12 +1,11 @@
 import { Card, Typography, Row, Col, Spin } from "antd";
 import { ArrowRightOutlined } from "@ant-design/icons";
-import useRecursoSelecionado from "../../../hooks/Globais/useRecursoSelecionado";
-import { visoesService } from "../../../services/visoes.service";
+import { useRecursoSelecionadoContext } from "../../../context/RecursoSelecionado";
 
 const { Title, Text } = Typography;
 
 export const EscolherRecursoPage = () => {
-  const { recursos, handleChangeRecurso, isLoading } = useRecursoSelecionado({ visoesService });
+  const { recursos, handleChangeRecurso, isLoading } = useRecursoSelecionadoContext();
 
   return (
     <div style={styles.overlay}>

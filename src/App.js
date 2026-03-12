@@ -10,13 +10,12 @@ import { SidebarLeft } from "./componentes/Globais/SidebarLeft";
 import { ToastContainer } from "react-toastify";
 import Modal from "./componentes/Globais/Modal/Modal";
 import { useTheme } from "./context/Tema";
-import useRecursoSelecionado from "./hooks/Globais/useRecursoSelecionado";
-import { visoesService } from "./services/visoes.service";
+import { useRecursoSelecionadoContext } from "./context/RecursoSelecionado";
 
 export const App = () => {
   const pathName = useLocation().pathname;
 
-  const { recursoSelecionado } = useRecursoSelecionado({ visoesService });
+  const { recursoSelecionado } = useRecursoSelecionadoContext();
 
   const { theme, setTheme } = useTheme();
 

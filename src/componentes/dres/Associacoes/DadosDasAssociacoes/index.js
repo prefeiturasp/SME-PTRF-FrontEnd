@@ -11,11 +11,11 @@ import { SituacaoFinanceiraUnidadeEducacional } from "./SituacaoFinanceiraUnidad
 import {visoesService} from "../../../../services/visoes.service"
 import { SituacaoPatrimonialUnidadeEducacional } from "./SituacaoPatrimonial";
 import "../associacoes.scss"
-import useRecursoSelecionado from "../../../../hooks/Globais/useRecursoSelecionado";
+import { useRecursoSelecionadoContext } from "../../../../context/RecursoSelecionado";
 
 export const DetalhesDaAssociacao = () => {
     const { origem } = useParams();
-    const { recursos, recursoSelecionado } = useRecursoSelecionado({ visoesService });
+    const { recursos, recursoSelecionado } = useRecursoSelecionadoContext();
 
     const [clickBtnEscolheOpcao, setClickBtnEscolheOpcao] = useState({
         dados_unidade: true,
