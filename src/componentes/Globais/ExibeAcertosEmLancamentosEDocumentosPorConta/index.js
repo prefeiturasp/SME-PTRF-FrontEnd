@@ -92,12 +92,16 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
             let periodo_conta_ajustes_extratos_bancarios = JSON.parse(localStorage.getItem('periodoContaAcertosEmExtratosBancarios'));
             let dados_analise_dre_user_logado = meapcservice.getAnaliseDreUsuarioLogado()
             if (periodo_conta_ajustes_extratos_bancarios && periodo_conta_ajustes_extratos_bancarios.conta){
-                carregarAjustesExtratosBancarios(periodo_conta_ajustes_extratos_bancarios.conta);
-                toggleBtnEscolheContaExtratosBancarios(periodo_conta_ajustes_extratos_bancarios.conta)
+                const contaExistente = contasAssociacao.find(c => c.uuid === periodo_conta_ajustes_extratos_bancarios.conta);
+                const contaUuid = contaExistente ? periodo_conta_ajustes_extratos_bancarios.conta : contasAssociacao[0].uuid;
+                carregarAjustesExtratosBancarios(contaUuid);
+                toggleBtnEscolheContaExtratosBancarios(contaUuid)
             }
             else if(dados_analise_dre_user_logado && dados_analise_dre_user_logado.conferencia_extrato_bancario && dados_analise_dre_user_logado.conferencia_extrato_bancario.conta_uuid){
-                carregarAjustesExtratosBancarios(dados_analise_dre_user_logado.conferencia_extrato_bancario.conta_uuid);
-                toggleBtnEscolheContaExtratosBancarios(dados_analise_dre_user_logado.conferencia_extrato_bancario.conta_uuid)
+                const contaExistente = contasAssociacao.find(c => c.uuid === dados_analise_dre_user_logado.conferencia_extrato_bancario.conta_uuid);
+                const contaUuid = contaExistente ? dados_analise_dre_user_logado.conferencia_extrato_bancario.conta_uuid : contasAssociacao[0].uuid;
+                carregarAjustesExtratosBancarios(contaUuid);
+                toggleBtnEscolheContaExtratosBancarios(contaUuid)
             }
             else {
                 carregarAjustesExtratosBancarios(contasAssociacao[0].uuid);

@@ -105,8 +105,8 @@ export class DemonstrativoFinanceiro extends Component {
         }
 
         this.props.setLoading(true);
-        const periodo_uuid = JSON.parse(localStorage.getItem('periodoPrestacaoDeConta')).periodo_uuid;
-        const conta_uuid = JSON.parse(localStorage.getItem('contaPrestacaoDeConta')).conta_uuid;
+        const periodo_uuid = this.props.periodoPrestacaoDeConta.periodo_uuid;
+        const conta_uuid = this.props.contaPrestacaoDeContas.conta_uuid;
 
         await previa(this.state.acaoUuid, conta_uuid, periodo_uuid, this.state.data_inicio, this.state.data_fim);
         this.props.setLoading(false);
@@ -114,8 +114,8 @@ export class DemonstrativoFinanceiro extends Component {
 
     gerarDocumentoFinal = async (acaoUuid) => {
         this.props.setLoading(true);
-        const periodo_uuid = JSON.parse(localStorage.getItem('periodoPrestacaoDeConta')).periodo_uuid;
-        const conta_uuid = JSON.parse(localStorage.getItem('contaPrestacaoDeConta')).conta_uuid;
+        const periodo_uuid = this.props.periodoPrestacaoDeConta.periodo_uuid;
+        const conta_uuid = this.props.contaPrestacaoDeContas.conta_uuid;
         await documentoFinal(acaoUuid, conta_uuid, periodo_uuid);
         await this.buscaAcoes();
         this.props.setLoading(false);

@@ -4,7 +4,6 @@ import {useDispatch} from "react-redux";
 import {TopoSelectPeriodoBotaoConcluir} from "./TopoSelectPeriodoBotaoConcluir";
 import {getPeriodosDePrestacaoDeContasDaAssociacao, getDataPreenchimentoPreviaAta, getContasAtivasDaAssociacaoNoPeriodo} from "../../../services/escolas/Associacao.service"
 import {getStatusPeriodoPorData, postConcluirPeriodo, getDataPreenchimentoAta, getIniciarAta, getIniciarPreviaAta} from "../../../services/escolas/PrestacaoDeContas.service";
-import {getTabelasReceita} from "../../../services/escolas/Receitas.service";
 import {BarraDeStatusPrestacaoDeContas} from "./BarraDeStatusPrestacaoDeContas";
 import DemonstrativoFinanceiroPorConta from "./DemonstrativoFinanceiroPorConta";
 import RelacaoDeBens from "./RelacaoDeBens";
@@ -94,24 +93,27 @@ export const PrestacaoDeContas = ({setStatusPC, registroFalhaGeracaoPc, setRegis
             return () => clearInterval(timer);
         }
     });
+    useEffect(() => {
+        const carregar = async () => {
+            await carregaTabelas();
+            await carregaPeriodos();
+            getStatusPrestacaoDeConta();
+            getUuidPrestacaoDeConta();
+            getContaPrestacaoDeConta();
+            setConfBoxAtaApresentacao();
+        };
+        carregar();
+    }, []);
 
     useEffect(() => {
-        getPeriodoPrestacaoDeConta();
-        carregaPeriodos();
-        carregaTabelas();
-        getStatusPrestacaoDeConta();
-        getUuidPrestacaoDeConta();
-        getContaPrestacaoDeConta();
-        setConfBoxAtaApresentacao()
-    }, []);
+        if (periodosAssociacao?.length) {
+            getPeriodoPrestacaoDeConta();
+        }
+    }, [periodosAssociacao]);
 
     useEffect(() => {
     setLoading(false);
     }, []);
-
-    useEffect(() => {
-        localStorage.setItem('periodoPrestacaoDeConta', JSON.stringify(periodoPrestacaoDeConta));
-    }, [periodoPrestacaoDeConta]);
 
     useEffect(() => {
         localStorage.setItem('statusPrestacaoDeConta', JSON.stringify(statusPrestacaoDeConta));
@@ -235,12 +237,13 @@ export const PrestacaoDeContas = ({setStatusPC, registroFalhaGeracaoPc, setRegis
         setLoading(true);
         if (value){
             let valor = JSON.parse(value);
-            setPeriodoPrestacaoDeConta(valor);
+            localStorage.setItem('periodoPrestacaoDeConta', value);               
+            setPeriodoPrestacaoDeConta(valor);            
             let status = await getStatusPeriodoPorData(localStorage.getItem(ASSOCIACAO_UUID), valor.data_inicial);
             setUuidPrestacaoConta(status.prestacao_conta);
             setStatusPrestacaoDeConta(status);
             setStatusPC(status)
-            await setConfBoxAtaApresentacao()
+            await setConfBoxAtaApresentacao()         
         }
         setLoading(false);
     };
