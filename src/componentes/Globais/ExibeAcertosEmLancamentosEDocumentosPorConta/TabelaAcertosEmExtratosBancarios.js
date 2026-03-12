@@ -9,6 +9,7 @@ import { useCarregaPrestacaoDeContasPorUuid } from "../../../hooks/dres/Prestaca
 import {AcertoComprovanteSaldoDaConta} from "./AcertoComprovanteSaldoDaConta";
 import { AcertoCorrecaoDataSaldoConta } from "./AcertoCorrecaoDataSaldoConta";
 import { AcertoJustificativaSaldoDaConta } from "./AcertoJustificativaSaldoDaConta";
+import { conciliacaoStorageService } from "../../../services/storages/Conciliacao.storage.service";
 
 
 const TabelaAcertosEmExtratosBancarios = ({extratosBancariosAjustes, contaUuidAjustesExtratosBancarios, prestacaoDeContasUuid}) => {
@@ -35,7 +36,7 @@ const TabelaAcertosEmExtratosBancarios = ({extratosBancariosAjustes, contaUuidAj
 
     useEffect(() => {
         localStorage.setItem('periodoContaAcertosEmExtratosBancarios', JSON.stringify({'periodo': uuidPeriodo, 'conta': contaUuidAjustesExtratosBancarios}))
-        localStorage.setItem('periodoConta', JSON.stringify({'periodo': uuidPeriodo, 'conta': contaUuidAjustesExtratosBancarios}))
+        conciliacaoStorageService.setPeriodoConta({'periodo': uuidPeriodo, 'conta': contaUuidAjustesExtratosBancarios});
     }, [uuidPeriodo, contaUuidAjustesExtratosBancarios])
 
     const formataValor = (valor) => {

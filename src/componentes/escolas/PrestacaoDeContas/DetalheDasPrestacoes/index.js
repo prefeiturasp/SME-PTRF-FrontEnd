@@ -1,762 +1,836 @@
-import React, {useCallback, useEffect, useState, useContext, useMemo} from "react";
-import {useLocation, useParams, useNavigate} from "react-router-dom";
+import React, { useCallback, useEffect, useState, useContext, useMemo } from "react";
+import { useLocation, useParams, useNavigate } from "react-router-dom";
 import moment from "moment";
-import {TopoComBotoes} from "./TopoComBotoes";
+import { TopoComBotoes } from "./TopoComBotoes";
 import TabelaValoresPendentesPorAcao from "./TabelaValoresPendentesPorAcao";
-import {Justificativa} from "./Justivicativa";
-import {getTabelasReceita} from "../../../../services/escolas/Receitas.service";
+import { Justificativa } from "./Justivicativa";
+import { getTabelasReceita } from "../../../../services/escolas/Receitas.service";
 import {
-    getConciliar,
-    getDesconciliar,
-    getObservacoes,
-    getStatusPeriodoPorData,
-    getTransacoes,
-    patchConciliarDespesa,
-    patchDesconciliarDespesa,
-    getDownloadExtratoBancario,
-    pathSalvarJustificativaPrestacaoDeConta,
-    pathExtratoBancarioPrestacaoDeConta    
+  getConciliar,
+  getDesconciliar,
+  getObservacoes,
+  getStatusPeriodoPorData,
+  getTransacoes,
+  patchConciliarDespesa,
+  patchDesconciliarDespesa,
+  getDownloadExtratoBancario,
+  pathSalvarJustificativaPrestacaoDeConta,
+  pathExtratoBancarioPrestacaoDeConta,
 } from "../../../../services/escolas/PrestacaoDeContas.service";
-import {getContas, getPeriodosDePrestacaoDeContasDaAssociacao} from "../../../../services/escolas/Associacao.service";
+import { getContas, getPeriodosDePrestacaoDeContasDaAssociacao } from "../../../../services/escolas/Associacao.service";
 import Loading from "../../../../utils/Loading";
-import {SelectPeriodoConta} from "../SelectPeriodoConta";
-import {MsgImgCentralizada} from "../../../Globais/Mensagens/MsgImgCentralizada";
+import { SelectPeriodoConta } from "../SelectPeriodoConta";
+import { MsgImgCentralizada } from "../../../Globais/Mensagens/MsgImgCentralizada";
 import Img404 from "../../../../assets/img/img-404.svg";
-import {ASSOCIACAO_UUID} from "../../../../services/auth.service";
-import {tabelaValoresPendentes} from "../../../../services/escolas/TabelaValoresPendentesPorAcao.service";
+import { ASSOCIACAO_UUID } from "../../../../services/auth.service";
+import { tabelaValoresPendentes } from "../../../../services/escolas/TabelaValoresPendentesPorAcao.service";
 import DataSaldoBancario from "./DataSaldoBancario";
 import TabelaTransacoes from "./TabelaTransacoes";
-import {getDespesasTabelas} from "../../../../services/escolas/Despesas.service";
-import {FiltrosTransacoes} from "./FiltrosTransacoes";
+import { getDespesasTabelas } from "../../../../services/escolas/Despesas.service";
+import { FiltrosTransacoes } from "./FiltrosTransacoes";
 import { SidebarLeftService } from "../../../../services/SideBarLeft.service";
 import { SidebarContext } from "../../../../context/Sidebar";
-import {toastCustom} from "../../../Globais/ToastCustom";
+import { toastCustom } from "../../../Globais/ToastCustom";
 import { ModalSalvarDataSaldoExtrato } from "../ModalSalvarDataSaldoExtrato";
-import {criarPayloadExtratoBancario} from "../../../../utils/PayloadExtratoBancario";
+import { criarPayloadExtratoBancario } from "../../../../utils/PayloadExtratoBancario";
 import { visoesService } from "../../../../services/visoes.service";
+import { conciliacaoStorageService } from "../../../../services/storages/Conciliacao.storage.service";
 
 export const DetalheDasPrestacoes = () => {
-    let {periodo_uuid, conta_uuid} = useParams();
-    const contextSideBar = useContext(SidebarContext);
-    const navigate = useNavigate();
-    const origem = (new URLSearchParams(window.location.search)).get("origem")
+  let { periodo_uuid, conta_uuid } = useParams();
+  const contextSideBar = useContext(SidebarContext);
+  const navigate = useNavigate();
+  const origem = new URLSearchParams(window.location.search).get("origem");
 
-    // Alteracoes
-    const [loading, setLoading] = useState(true);
-    const [loadingConciliadas, setLoadingConciliadas] = useState(true);
-    const [loadingNaoConciliadas, setLoadingNaoConciliadas] = useState(true);
+  // Alteracoes
+  const [loading, setLoading] = useState(true);
+  const [loadingConciliadas, setLoadingConciliadas] = useState(true);
+  const [loadingNaoConciliadas, setLoadingNaoConciliadas] = useState(true);
 
-    const [observacaoUuid, setObservacaoUuid] = useState("");
-    const [periodoConta, setPeriodoConta] = useState("");
-    const [periodoFechado, setPeriodoFechado] = useState(true);
-    const [permiteEditarCamposExtrato, setPermiteEditarCamposExtrato] = useState(false);
-    const [contasAssociacao, setContasAssociacao] = useState(false);
-    const [periodosAssociacao, setPeriodosAssociacao] = useState(false);
-    const [contaConciliacao, setContaConciliacao] = useState("");
-    const [acaoLancamento, setAcaoLancamento] = useState("");
-    const [acoesAssociacao, setAcoesAssociacao] = useState(false);
+  const [observacaoUuid, setObservacaoUuid] = useState("");
+  const [periodoConta, setPeriodoConta] = useState("");
+  const [periodoFechado, setPeriodoFechado] = useState(true);
+  const [permiteEditarCamposExtrato, setPermiteEditarCamposExtrato] = useState(false);
+  const [contasAssociacao, setContasAssociacao] = useState(false);
+  const [periodosAssociacao, setPeriodosAssociacao] = useState(false);
+  const [contaConciliacao, setContaConciliacao] = useState("");
+  const [acaoLancamento, setAcaoLancamento] = useState("");
+  const [acoesAssociacao, setAcoesAssociacao] = useState(false);
 
-    const [textareaJustificativa, setTextareaJustificativa] = useState("");
-    const [btnSalvarJustificativaDisable, setBtnSalvarJustificativaDisable] = useState(true);
-    const [classBtnSalvarJustificativa, setClassBtnSalvarJustificativa] = useState("secondary");
-    const [checkSalvarJustificativa, setCheckSalvarJustificativa] = useState(false);
+  const [textareaJustificativa, setTextareaJustificativa] = useState("");
+  const [btnSalvarJustificativaDisable, setBtnSalvarJustificativaDisable] = useState(true);
+  const [classBtnSalvarJustificativa, setClassBtnSalvarJustificativa] = useState("secondary");
+  const [checkSalvarJustificativa, setCheckSalvarJustificativa] = useState(false);
 
-    const [btnSalvarExtratoBancarioDisable, setBtnSalvarExtratoBancarioDisable] = useState(true);
-    const [classBtnSalvarExtratoBancario, setClassBtnSalvarExtratoBancario] = useState("secondary");
-    const [checkSalvarExtratoBancario, setCheckSalvarExtratoBancario] = useState(false);
+  const [btnSalvarExtratoBancarioDisable, setBtnSalvarExtratoBancarioDisable] = useState(true);
+  const [classBtnSalvarExtratoBancario, setClassBtnSalvarExtratoBancario] = useState("secondary");
+  const [checkSalvarExtratoBancario, setCheckSalvarExtratoBancario] = useState(false);
 
-    const [showModalLegendaInformacao, setShowModalLegendaInformacao] = useState(false);
-    const [pendenciaSaldoBancario, setPendenciaSaldoBancario] = useState(false);
-    const parametros = useLocation();
+  const [showModalLegendaInformacao, setShowModalLegendaInformacao] = useState(false);
+  const [pendenciaSaldoBancario, setPendenciaSaldoBancario] = useState(false);
+  const parametros = useLocation();
 
-    const associacaoUuid = localStorage.getItem(ASSOCIACAO_UUID)
+  const associacaoUuid = localStorage.getItem(ASSOCIACAO_UUID);
 
-    const permissaoEditarConciliacao = visoesService.getPermissoes(["change_conciliacao_bancaria"]);
+  const permissaoEditarConciliacao = visoesService.getPermissoes(["change_conciliacao_bancaria"]);
 
-    useEffect(()=>{
-        getPeriodoConta();
-        getAcaoLancamento();
-        carregaTabelas();
-        carregaPeriodos();
-    }, []);
-
-    useEffect(() => {
-        if(periodoConta) {
-            localStorage.setItem('periodoConta', JSON.stringify(periodoConta));
-            carregaContas();
-        }
-    }, [periodoConta]);
-
-    useEffect(()=>{
-        if(periodoConta) {
-            carregaObservacoes();
-        }
-    }, [periodosAssociacao, periodoConta, acoesAssociacao, acaoLancamento]);
-
-    useEffect(()=>{
-        setLoading(false)
-    }, []);
-
-    useEffect(() => {
-        if(periodoConta) {
-            verificaSePeriodoEstaAberto(periodoConta.periodo);
-        }
-    }, [periodoConta, periodosAssociacao]);
-
-    const getPeriodoConta = () => {
-        if(periodo_uuid){
-            setPeriodoConta({periodo: periodo_uuid, conta: conta_uuid ? conta_uuid : ""});
-        } else if (localStorage.getItem('periodoConta')) {
-            const periodoConta = JSON.parse(localStorage.getItem('periodoConta'));
-            setPeriodoConta(periodoConta)
-        } else {
-            setPeriodoConta({periodo: "", conta: ""})
-        }
+  useEffect(() => {
+    const carregar = async () => {
+      getAcaoLancamento();
+      await carregaTabelas();
+      await carregaPeriodos();
     };
+    carregar();
+  }, []);
 
-    const getAcaoLancamento = () => {
-        let acao_lancamento = JSON.parse(localStorage.getItem('acaoLancamento'));
-        if (acao_lancamento) {
-            const files = JSON.parse(localStorage.getItem('acaoLancamento'));
-            setAcaoLancamento(files);
-        } else {
-            setAcaoLancamento({acao: "", lancamento: ""})
-        }
-    };
+  useEffect(() => {
+    if (periodosAssociacao?.length) {
+      getPeriodoConta();
+    }
+  }, [periodosAssociacao]);
 
-    const carregaTabelas = async () => {
-        await getTabelasReceita().then(response => {
-            setAcoesAssociacao(response.data.acoes_associacao);
-        }).catch(error => {
-            console.log(error);
-        });
-    };
+  useEffect(() => {
+    if (periodoConta) {
+      carregaObservacoes();
+    }
+  }, [periodosAssociacao, periodoConta, acoesAssociacao, acaoLancamento]);
 
-    const carregaPeriodos = async () => {
-        const ignorar_devolvidas = false
-        let periodos = await getPeriodosDePrestacaoDeContasDaAssociacao(ignorar_devolvidas);
-        setPeriodosAssociacao(periodos);
-    };
+  useEffect(() => {
+    setLoading(false);
+  }, []);
 
-    const carregaContas = async () => {
-        setLoading(true);
-        let period_uuid = periodoConta ? periodoConta.periodo : '';
-        await getContas(period_uuid).then(response => {
-            setContasAssociacao(response);
-            const files = JSON.parse(localStorage.getItem('periodoConta'));
-            if (files && files.conta !== "") {
-                const conta = response.find(conta => conta.uuid === files.conta);
-                setContaConciliacao(conta.tipo_conta.nome);
-            }
-        }).catch(error => {
-            console.log(error);
-        }).finally(() => setLoading(false))
-    };
+  useEffect(() => {
+    if (periodoConta) {
+      verificaSePeriodoEstaAberto(periodoConta.periodo);
+    }
+  }, [periodoConta, periodosAssociacao]);
 
-    const conciliar = useCallback(async (rateio_uuid) => {
-        await getConciliar(rateio_uuid, periodoConta.periodo);
-    }, [periodoConta.periodo]) ;
+  useEffect(() => {
+    if (periodoConta) {
+      verificaSePeriodoEstaAberto(periodoConta.periodo);
+    }
+  }, [periodoConta]);
 
-    const desconciliar = useCallback(async (rateio_uuid) => {
-        await getDesconciliar(rateio_uuid, periodoConta.periodo);
-    }, [periodoConta.periodo]) ;
+  useEffect(() => {
+    if (periodoConta?.periodo) {
+      carregaContas();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [periodoConta?.periodo]);
 
+  const getContaByUUID = (uuid) => {
+    return uuid && contasAssociacao ? contasAssociacao.find((conta) => conta.uuid === uuid) : null;
+  };
 
-    const handleChangePeriodoConta = (name, value, periodoOuConta) => {
-        setCheckSalvarJustificativa(false);
-        setCheckSalvarExtratoBancario(false);
-        setBtnSalvarExtratoBancarioDisable(true);
-        setExibeBtnDownload(false);
+  const getPeriodoByUUID = (uuid) => {
+    return uuid && periodosAssociacao ? periodosAssociacao.find((periodo) => periodo.uuid === uuid) : null;
+  };
 
-        if(periodoOuConta === 'periodo') {
-            setPeriodoConta({
-                conta: '',
-                [name]: value
+  const getPeriodoConta = () => {
+    if (periodo_uuid) {
+      const periodo = getPeriodoByUUID(periodo_uuid);
+      const conta = getContaByUUID(conta_uuid);
+      if (periodo) {
+        setPeriodoConta({ periodo: periodo.uuid, conta: conta ? conta.uuid : "" });
+      }
+    } else if (conciliacaoStorageService.getPeriodoConta()) {
+      const periodoConta = conciliacaoStorageService.getPeriodoConta();
+      const periodo = getPeriodoByUUID(periodoConta.periodo);
+      const conta = getPeriodoByUUID(periodoConta.conta);
+      if (periodo) {
+        setPeriodoConta({ periodo: periodo.uuid, conta: conta ? conta.uuid : "" });
+      }
+    } else {
+      setPeriodoConta({ periodo: "", conta: "" });
+    }
+  };
+
+  const getAcaoLancamento = () => {
+    let acao_lancamento = JSON.parse(localStorage.getItem("acaoLancamento"));
+    if (acao_lancamento) {
+      const files = JSON.parse(localStorage.getItem("acaoLancamento"));
+      setAcaoLancamento(files);
+    } else {
+      setAcaoLancamento({ acao: "", lancamento: "" });
+    }
+  };
+
+  const carregaTabelas = async () => {
+    await getTabelasReceita()
+      .then((response) => {
+        setAcoesAssociacao(response.data.acoes_associacao);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const carregaPeriodos = async () => {
+    const ignorar_devolvidas = false;
+    setLoading(true);
+    try {
+      const periodos = await getPeriodosDePrestacaoDeContasDaAssociacao(ignorar_devolvidas);
+      setPeriodosAssociacao(periodos);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const carregaContas = async () => {
+    setLoading(true);
+    let period_uuid = periodoConta ? periodoConta.periodo : "";
+    await getContas(period_uuid)
+      .then((response) => {
+        setContasAssociacao(response);
+        const stored = conciliacaoStorageService.getPeriodoConta();
+        if (stored && stored.conta) {
+          const conta = response.find((c) => c.uuid === stored.conta);
+          if (conta) {
+            setContaConciliacao(conta.tipo_conta.nome);
+            setPeriodoConta((prev) => {
+              const updated = { ...prev, conta: conta.uuid };
+              conciliacaoStorageService.setPeriodoConta(updated);
+              return updated;
             });
-        } else {
-            setPeriodoConta({
-                ...periodoConta,
-                [name]: value
-            });
-        } 
-    };
-
-    const handleChangeTextareaJustificativa = (event) => {
-        setTextareaJustificativa(event.target.value);
-        setBtnSalvarJustificativaDisable(false);
-        setCheckSalvarJustificativa(false);
-        setClassBtnSalvarJustificativa("success");
-    };
-
-    const parseLocalDate = (dateStr) => {
-        if (!dateStr) return null;
-        const [year, month, day] = dateStr.split('-').map(Number);
-        return new Date(year, month - 1, day);
-    };
-
-    const carregaObservacoes = async () => {
-        if (periodosAssociacao && periodoConta.periodo && periodoConta.conta) {
-            const periodo_uuid = periodoConta.periodo;
-            const conta_uuid = periodoConta.conta;
-
-            const periodo = periodosAssociacao.find(o => o.uuid === periodo_uuid);
-
-            const observacao = await getObservacoes(periodo_uuid, conta_uuid, associacaoUuid);
-
-            if(observacao) {
-                setPermiteEditarCamposExtrato(observacao.permite_editar_campos_extrato)
-            }
-
-            try {
-                const response =  await fetchStatusPeriodo(periodo.data_inicio_realizacao_despesas)
-                if(response.prestacao_contas_status && 
-                    (!response.prestacao_contas_status.periodo_bloqueado || response.prestacao_contas_status.requer_acertos_em_extrato)){
-                    setBtnSalvarExtratoBancarioDisable(false);
-                    setCheckSalvarExtratoBancario(false);
-                    setClassBtnSalvarExtratoBancario("success");
-                }
-            } catch (error) {
-                //
-            }
-
-            if(observacao && observacao.possui_solicitacao_encerramento){
-                
-                setDataSaldoBancario({
-                    data_extrato: observacao.data_extrato ? parseLocalDate(observacao.data_extrato) : null,
-                    saldo_extrato: observacao.saldo_extrato ? observacao.saldo_extrato : 0,
-                })
-
-                setDataSaldoBancarioSolicitacaoEncerramento({
-                    data_extrato: observacao.data_extrato ? observacao.data_extrato : '',
-                    saldo_extrato: observacao.saldo_extrato ? observacao.saldo_extrato : 0,
-                    possui_solicitacao_encerramento: true,
-                    data_encerramento: observacao.data_encerramento ? observacao.data_encerramento : '',
-                    saldo_encerramento: observacao.saldo_encerramento ? observacao.saldo_encerramento : 0,
-                })
-
-                if(observacao.observacao_uuid){
-                    setObservacaoUuid(observacao.observacao_uuid)
-
-                    setTextareaJustificativa(observacao.observacao ? observacao.observacao : '');
-
-                    setNomeComprovanteExtrato(observacao.comprovante_extrato ? observacao.comprovante_extrato : '')
-                    setDataAtualizacaoComprovanteExtrato(moment(observacao.data_atualizacao_comprovante_extrato).format("YYYY-MM-DD HH:mm:ss"))
-                    setDataAtualizacaoComprovanteExtratoView(moment(observacao.data_atualizacao_comprovante_extrato).format("DD/MM/YYYY HH:mm:ss"))
-                    if (observacao.comprovante_extrato && observacao.data_extrato){
-                        setExibeBtnDownload(true)
-                    }
-                    else if(!observacao.comprovante_extrato){
-                        setExibeBtnDownload(false)
-                    }
-                }
-            }
-            else{
-                setObservacaoUuid(observacao.observacao_uuid)
-
-                setTextareaJustificativa(observacao.observacao ? observacao.observacao : '');
-                setDataSaldoBancario({
-                    data_extrato: observacao.data_extrato ? parseLocalDate(observacao.data_extrato) : null,
-                    saldo_extrato: observacao.saldo_extrato ? observacao.saldo_extrato : 0,
-                })
-                setNomeComprovanteExtrato(observacao.comprovante_extrato ? observacao.comprovante_extrato : '')
-                setDataAtualizacaoComprovanteExtrato(moment(observacao.data_atualizacao_comprovante_extrato).format("YYYY-MM-DD HH:mm:ss"))
-                setDataAtualizacaoComprovanteExtratoView(moment(observacao.data_atualizacao_comprovante_extrato).format("DD/MM/YYYY HH:mm:ss"))
-                if (observacao.comprovante_extrato && observacao.data_extrato){
-                    setExibeBtnDownload(true)
-                }
-                else if(!observacao.comprovante_extrato){
-                    setExibeBtnDownload(false)
-                }
-
-                setDataSaldoBancarioSolicitacaoEncerramento({})
-            }
+          } else {
+            conciliacaoStorageService.setPeriodoConta({ periodo: period_uuid, conta: "" });
+          }
         }
-    };
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+      .finally(() => setLoading(false));
+  };
 
-    const salvarJustificativa = async () => {
-        let payload;
+  const conciliar = useCallback(
+    async (rateio_uuid) => {
+      await getConciliar(rateio_uuid, periodoConta.periodo);
+    },
+    [periodoConta.periodo],
+  );
 
-        payload = {
-            "periodo_uuid": periodoConta.periodo,
-            "conta_associacao_uuid": periodoConta.conta,
-            "observacao": textareaJustificativa,
-        }
+  const desconciliar = useCallback(
+    async (rateio_uuid) => {
+      await getDesconciliar(rateio_uuid, periodoConta.periodo);
+    },
+    [periodoConta.periodo],
+  );
 
-        try {
-            await pathSalvarJustificativaPrestacaoDeConta(payload);
-            toastCustom.ToastCustomSuccess('Edição salva', 'A edição foi salva com sucesso!')
-            await carregaObservacoes();
-            await getPendenciasConciliacao()
-        } catch (e) {
-            console.log("Erro: ", e.message)
-        }
+  const handleChangePeriodoConta = (name, value, periodoOuConta) => {
+    setCheckSalvarJustificativa(false);
+    setCheckSalvarExtratoBancario(false);
+    setBtnSalvarExtratoBancarioDisable(true);
+    setExibeBtnDownload(false);
+
+    if (periodoOuConta === "periodo") {
+      // Preserva a conta no storage para tentativa de pré-seleção após carregar as contas do novo período
+      const stored = conciliacaoStorageService.getPeriodoConta() || {};
+      conciliacaoStorageService.setPeriodoConta({ ...stored, [name]: value });
+      // Reseta a conta no estado; carregaContas tentará pré-selecionar a conta do storage
+      setPeriodoConta({ conta: "", [name]: value });
+    } else {
+      const updated = { ...periodoConta, [name]: value };
+      conciliacaoStorageService.setPeriodoConta(updated);
+      setPeriodoConta(updated);
     }
+  };
 
-    const salvarExtratoBancario = async () => {
-        setBtnSalvarExtratoBancarioDisable(true);
-        setCheckSalvarExtratoBancario(true);
-        setClassBtnSalvarExtratoBancario("secondary");
+  const handleChangeTextareaJustificativa = (event) => {
+    setTextareaJustificativa(event.target.value);
+    setBtnSalvarJustificativaDisable(false);
+    setCheckSalvarJustificativa(false);
+    setClassBtnSalvarJustificativa("success");
+  };
 
-        const payload = criarPayloadExtratoBancario({
-            periodoConta,
-            dataSaldoBancario,
-            selectedFile,
-            dataAtualizacaoComprovanteExtrato,
-        });
+  const parseLocalDate = (dateStr) => {
+    if (!dateStr) return null;
+    const [year, month, day] = dateStr.split("-").map(Number);
+    return new Date(year, month - 1, day);
+  };
 
-        try {
-            await pathExtratoBancarioPrestacaoDeConta(payload);
-            setShowModalSalvarDataSaldoExtrato(false);
-            verificaSePeriodoEstaAberto(periodoConta.periodo);
-            toastCustom.ToastCustomSuccess('Edição salva', 'A edição foi salva com sucesso!')
-            setDataAtualizacaoComprovanteExtrato('')
-            setDataAtualizacaoComprovanteExtratoView('')
-            setSelectedFile(null)
-            setMsgErroExtensaoArquivo('')
-            await carregaObservacoes();
-        } catch (e) {
-            console.log("Erro: ", e.message)
+  const carregaObservacoes = async () => {
+    if (periodosAssociacao && periodoConta.periodo && periodoConta.conta) {
+      const periodo_uuid = periodoConta.periodo;
+      const conta_uuid = periodoConta.conta;
+
+      const periodo = periodosAssociacao.find((o) => o.uuid === periodo_uuid);
+
+      const observacao = await getObservacoes(periodo_uuid, conta_uuid, associacaoUuid);
+
+      if (observacao) {
+        setPermiteEditarCamposExtrato(observacao.permite_editar_campos_extrato);
+      }
+
+      try {
+        const response = await fetchStatusPeriodo(periodo.data_inicio_realizacao_despesas);
+        if (
+          response.prestacao_contas_status &&
+          (!response.prestacao_contas_status.periodo_bloqueado ||
+            response.prestacao_contas_status.requer_acertos_em_extrato)
+        ) {
+          setBtnSalvarExtratoBancarioDisable(false);
+          setCheckSalvarExtratoBancario(false);
+          setClassBtnSalvarExtratoBancario("success");
         }
-    }
+      } catch (error) {
+        //
+      }
 
-    const checaPendenciaSaldoBancario =  (statusPeriodo) => {
-        const pendenciaCadastral = statusPeriodo.pendencias_cadastrais;
-        const contaPendente = pendenciaCadastral?.conciliacao_bancaria?.contas_pendentes?.includes(periodoConta.conta);
-        setPendenciaSaldoBancario(contaPendente);
-    };
-
-    const  getPendenciasConciliacao = async () => {
-        if(periodosAssociacao && periodoConta.periodo) {
-            const periodo = periodosAssociacao.find(o => o.uuid === periodoConta.periodo);
-            try {
-                const response =  await fetchStatusPeriodo(periodo.data_inicio_realizacao_despesas)
-                checaPendenciaSaldoBancario(response)   
-            } catch (error) {
-                //  
-            }
-        }
-    }      
-
-    const fetchStatusPeriodo = async (data_inicio_realizacao_despesas) => {
-        return await getStatusPeriodoPorData(associacaoUuid, data_inicio_realizacao_despesas)
-    }
-
-    const verificaSePeriodoEstaAberto = async (periodoUuid) => {
-        if (periodosAssociacao) {
-            const periodo = periodosAssociacao.find(o => o.uuid === periodoUuid);
-            if (periodo) {
-                try {
-                    const response = await fetchStatusPeriodo(periodo.data_inicio_realizacao_despesas);   
-                    checaPendenciaSaldoBancario(response);
-                    setPeriodoFechado(response.prestacao_contas_status ? response.prestacao_contas_status.periodo_bloqueado : true)                     
-                } catch (error) {
-                 console.log(error);   
-                }
-            }
-        }
-    };
-
-    // Tabela Valores Pendentes por Ação
-    const [valoresPendentes, setValoresPendentes] = useState({});
-
-    const carregaValoresPendentes = useCallback(async ()=>{
-        let valores_pendentes = await tabelaValoresPendentes(periodoConta.periodo, periodoConta.conta);
-        setValoresPendentes(valores_pendentes)
-    }, [periodoConta.periodo, periodoConta.conta]);
-
-    useEffect(()=>{
-        if (periodoConta.periodo && periodoConta.conta){
-            carregaValoresPendentes()
-        }
-
-    }, [periodoConta.periodo, periodoConta.conta, carregaValoresPendentes]);
-
-    const valorTemplate = (valor) => {
-        let valor_formatado = Number(valor).toLocaleString('pt-BR', {
-            style: 'currency',
-            currency: 'BRL'
-        });
-        valor_formatado = valor_formatado.replace(/R/, "").replace(/\$/, "");
-        return valor_formatado
-    };
-
-    // Transacoes Conciliadas e Não Conciliadas
-    const [transacoesConciliadas, setTransacoesConciliadas] = useState([]);
-    const [transacoesNaoConciliadas, setTransacoesNaoConciliadas] = useState([]);
-    const [checkboxTransacoes, setCheckboxTransacoes] = useState(false);
-    const [tabelasDespesa, setTabelasDespesa] = useState([]);
-
-    const carregaTransacoes = useCallback(async ()=>{
-        setLoading(true)
-        if (periodoConta.periodo && periodoConta.conta){
-            handleTransacoesConciliadas();
-            handleTransacoesNaoConciliadas();
-        }
-        setLoading(false)
-    }, [periodoConta]);
-
-    useEffect(()=>{
-        carregaTransacoes();
-    }, [carregaTransacoes]);
-
-    useEffect(() => {
-        const carregaTabelasDespesa = async () => {
-            const resp = await getDespesasTabelas();
-            setTabelasDespesa(resp);
-        };
-        carregaTabelasDespesa();
-    }, []);
-
-
-    const handleChangeCheckboxTransacoes = useCallback(async (event, transacao_ou_rateio_uuid, documento_mestre=null, tipo_transacao) => {
-
-        setCheckboxTransacoes(event.target.checked);
-        if (event.target.checked) {
-            if (!documento_mestre){
-                await conciliar(transacao_ou_rateio_uuid);
-            }else {
-                await patchConciliarDespesa(periodoConta.periodo, periodoConta.conta, transacao_ou_rateio_uuid)
-            }
-        } else if (!event.target.checked) {
-            if (!documento_mestre){
-                await desconciliar(transacao_ou_rateio_uuid)
-            }else {
-                await patchDesconciliarDespesa(periodoConta.periodo, periodoConta.conta, transacao_ou_rateio_uuid)
-            }
-        }
-        await carregaTransacoes()
-        await carregaValoresPendentes()
-
-    }, [periodoConta, carregaTransacoes, conciliar, desconciliar, carregaValoresPendentes]);
-
-    // Filtros Transacoes
-    const [stateFiltros, setStateFiltros] = useState({});
-
-    const handleChangeFiltros = useCallback((name, value) => {
-        setStateFiltros({
-            ...stateFiltros,
-            [name]: value
-        });
-    }, [stateFiltros]);
-
-    // Data Saldo Bancário
-    const [dataSaldoBancario, setDataSaldoBancario]= useState({});
-    const [dataSaldoBancarioSolicitacaoEncerramento, setDataSaldoBancarioSolicitacaoEncerramento]= useState({});
-    const [showModalSalvarDataSaldoExtrato, setShowModalSalvarDataSaldoExtrato] = useState(false)
-    const [selectedFile, setSelectedFile] = useState(null);
-    const [nomeComprovanteExtrato, setNomeComprovanteExtrato] = useState('');
-    const [dataAtualizacaoComprovanteExtrato, setDataAtualizacaoComprovanteExtrato] = useState('');
-    const [dataAtualizacaoComprovanteExtratoView, setDataAtualizacaoComprovanteExtratoView] = useState('');
-    const [exibeBtnDownload, setExibeBtnDownload] = useState(false);
-    const [msgErroExtensaoArquivo, setMsgErroExtensaoArquivo] = useState('');
-
-    const validaUploadExtrato = (event) =>{
-        let ext = event.file.type
-        let tamanho = event.file.size
-        let array_extensoes = ['image/jpeg','image/jpg','image/bmp','image/png', 'image/tif', 'application/pdf' ]
-        if (tamanho <= 500395){
-            let result = array_extensoes.filter(item => ext.indexOf(item) > -1);
-            if (result <=0){
-                setMsgErroExtensaoArquivo(`A extensão ${ext} não é permitida, tente novamente`)
-                return false
-            }else {
-                setMsgErroExtensaoArquivo('')
-                return true
-            }
-        }else {
-            setMsgErroExtensaoArquivo('O tamanho do arquivo excede o limite de 500kb, tente novamente.')
-            return false
-        }
-    }
-
-    const changeUploadExtrato = (event) => {
-        if (validaUploadExtrato(event)){
-            setBtnSalvarExtratoBancarioDisable(false);
-            setCheckSalvarExtratoBancario(false);
-            setClassBtnSalvarExtratoBancario("success");
-            setSelectedFile(event.file);
-            setNomeComprovanteExtrato(event.file.name)
-            setDataAtualizacaoComprovanteExtrato(moment().format("YYYY-MM-DD HH:mm:ss"))
-            setDataAtualizacaoComprovanteExtratoView(moment().format("DD/MM/YYYY HH:mm:ss"))
-            setExibeBtnDownload(false)
-            setMsgErroExtensaoArquivo('')
-        }else {
-            reiniciaUploadExtrato()
-        }
-    };
-
-    const reiniciaUploadExtrato =()=>{
-
-        if(nomeComprovanteExtrato !== ""){
-            setBtnSalvarExtratoBancarioDisable(false);
-            setCheckSalvarExtratoBancario(false);
-            setClassBtnSalvarExtratoBancario("success");
-        }
-
-        setSelectedFile(null)
-        setDataAtualizacaoComprovanteExtrato('')
-        setDataAtualizacaoComprovanteExtratoView('')
-        setExibeBtnDownload(false)
-        setNomeComprovanteExtrato('')
-    }
-
-    const downloadComprovanteExtrato = useCallback(async ()=>{
-        try {
-            await getDownloadExtratoBancario(nomeComprovanteExtrato, observacaoUuid);
-            console.log("Download efetuado com sucesso");
-        }catch (e) {
-            console.log("Erro ao efetuar o download ", e.response);
-        }
-    }, [nomeComprovanteExtrato, observacaoUuid])
-
-    const [erroDataSaldo, setErroDataSaldo] = useState('')
-
-    const handleChangaDataSaldo = useCallback((name, value) => {
-        if (name === 'data_extrato'){
-            let hoje = moment(new Date());
-            let data_digitada = moment(value);
-            if (data_digitada > hoje){
-                setErroDataSaldo("Data do crédito não pode ser maior que a data de hoje")
-                setDataSaldoBancario(prevState => ({ ...prevState,  [name]: ''}));
-                return
-            }else {
-                setErroDataSaldo('')
-            }
-        }
-
-        setBtnSalvarExtratoBancarioDisable(false);
-        setCheckSalvarExtratoBancario(false);
-        setClassBtnSalvarExtratoBancario("success");
-
+      if (observacao && observacao.possui_solicitacao_encerramento) {
         setDataSaldoBancario({
-            ...dataSaldoBancario,
-            [name]: value
+          data_extrato: observacao.data_extrato ? parseLocalDate(observacao.data_extrato) : null,
+          saldo_extrato: observacao.saldo_extrato ? observacao.saldo_extrato : 0,
         });
-    }, [dataSaldoBancario]);
 
-    const irParaAnaliseDre = async() => {
-        // Ao setar para false, quando a função a seguir setar o click do item do menu
-        // a pagina não ira automaticamente para a url do item
+        setDataSaldoBancarioSolicitacaoEncerramento({
+          data_extrato: observacao.data_extrato ? observacao.data_extrato : "",
+          saldo_extrato: observacao.saldo_extrato ? observacao.saldo_extrato : 0,
+          possui_solicitacao_encerramento: true,
+          data_encerramento: observacao.data_encerramento ? observacao.data_encerramento : "",
+          saldo_encerramento: observacao.saldo_encerramento ? observacao.saldo_encerramento : 0,
+        });
 
-        await contextSideBar.setIrParaUrl(false)
-        SidebarLeftService.setItemActive("analise_dre")
+        if (observacao.observacao_uuid) {
+          setObservacaoUuid(observacao.observacao_uuid);
 
-        // Necessário voltar o estado para true, para clicks nos itens do menu continuarem funcionando corretamente
-        contextSideBar.setIrParaUrl(true)
-    }
-    
-    const handleTransacoesConciliadas = async (ordenacao) => {
-        setLoadingConciliadas(true);
-        let transacoes_conciliadas = await getTransacoes(
-            periodoConta.periodo, 
-            periodoConta.conta, 
-            'True',
-            stateFiltros.filtrar_por_acao_CONCILIADO, 
-            ordenacao && ordenacao.ordenar_por_numero_do_documento ? ordenacao.ordenar_por_numero_do_documento : '',
-            ordenacao && ordenacao.ordenar_por_data_especificacao ? ordenacao.ordenar_por_data_especificacao : '',
-            ordenacao && ordenacao.ordenar_por_valor ? ordenacao.ordenar_por_valor : '',
-            ordenacao && ordenacao.ordenar_por_imposto ? ordenacao.ordenar_por_imposto : '',
+          setTextareaJustificativa(observacao.observacao ? observacao.observacao : "");
+
+          setNomeComprovanteExtrato(observacao.comprovante_extrato ? observacao.comprovante_extrato : "");
+          setDataAtualizacaoComprovanteExtrato(
+            moment(observacao.data_atualizacao_comprovante_extrato).format("YYYY-MM-DD HH:mm:ss"),
+          );
+          setDataAtualizacaoComprovanteExtratoView(
+            moment(observacao.data_atualizacao_comprovante_extrato).format("DD/MM/YYYY HH:mm:ss"),
+          );
+          if (observacao.comprovante_extrato && observacao.data_extrato) {
+            setExibeBtnDownload(true);
+          } else if (!observacao.comprovante_extrato) {
+            setExibeBtnDownload(false);
+          }
+        }
+      } else {
+        setObservacaoUuid(observacao.observacao_uuid);
+
+        setTextareaJustificativa(observacao.observacao ? observacao.observacao : "");
+        setDataSaldoBancario({
+          data_extrato: observacao.data_extrato ? parseLocalDate(observacao.data_extrato) : null,
+          saldo_extrato: observacao.saldo_extrato ? observacao.saldo_extrato : 0,
+        });
+        setNomeComprovanteExtrato(observacao.comprovante_extrato ? observacao.comprovante_extrato : "");
+        setDataAtualizacaoComprovanteExtrato(
+          moment(observacao.data_atualizacao_comprovante_extrato).format("YYYY-MM-DD HH:mm:ss"),
         );
-        setTransacoesConciliadas(transacoes_conciliadas);
-        setLoadingConciliadas(false);
+        setDataAtualizacaoComprovanteExtratoView(
+          moment(observacao.data_atualizacao_comprovante_extrato).format("DD/MM/YYYY HH:mm:ss"),
+        );
+        if (observacao.comprovante_extrato && observacao.data_extrato) {
+          setExibeBtnDownload(true);
+        } else if (!observacao.comprovante_extrato) {
+          setExibeBtnDownload(false);
+        }
+
+        setDataSaldoBancarioSolicitacaoEncerramento({});
+      }
+    }
+  };
+
+  const salvarJustificativa = async () => {
+    let payload;
+
+    payload = {
+      periodo_uuid: periodoConta.periodo,
+      conta_associacao_uuid: periodoConta.conta,
+      observacao: textareaJustificativa,
     };
 
-    const handleTransacoesNaoConciliadas = async (ordenacao) => {
-        setLoadingNaoConciliadas(true);
-        let transacoes_nao_conciliadas = await getTransacoes(
-            periodoConta.periodo, 
-            periodoConta.conta, 
-            'False',
-            stateFiltros.filtrar_por_acao_NAO_CONCILIADO, 
-            ordenacao && ordenacao.ordenar_por_numero_do_documento ? ordenacao.ordenar_por_numero_do_documento : '',
-            ordenacao && ordenacao.ordenar_por_data_especificacao ? ordenacao.ordenar_por_data_especificacao : '',
-            ordenacao && ordenacao.ordenar_por_valor ? ordenacao.ordenar_por_valor : '',
-            ordenacao && ordenacao.ordenar_por_imposto ? ordenacao.ordenar_por_imposto : '',
-        );
-        setTransacoesNaoConciliadas(transacoes_nao_conciliadas);
-        setLoadingNaoConciliadas(false);
-    };
+    try {
+      await pathSalvarJustificativaPrestacaoDeConta(payload);
+      toastCustom.ToastCustomSuccess("Edição salva", "A edição foi salva com sucesso!");
+      await carregaObservacoes();
+      await getPendenciasConciliacao();
+    } catch (e) {
+      console.log("Erro: ", e.message);
+    }
+  };
 
-    const onHandleCancelarModalSalvarDataSaldoExtrato = () => {
-        setShowModalSalvarDataSaldoExtrato(false);
-        // window.location.assign('/dados-das-contas-da-associacao')
+  const salvarExtratoBancario = async () => {
+    setBtnSalvarExtratoBancarioDisable(true);
+    setCheckSalvarExtratoBancario(true);
+    setClassBtnSalvarExtratoBancario("secondary");
+
+    const payload = criarPayloadExtratoBancario({
+      periodoConta,
+      dataSaldoBancario,
+      selectedFile,
+      dataAtualizacaoComprovanteExtrato,
+    });
+
+    try {
+      await pathExtratoBancarioPrestacaoDeConta(payload);
+      setShowModalSalvarDataSaldoExtrato(false);
+      verificaSePeriodoEstaAberto(periodoConta.periodo);
+      toastCustom.ToastCustomSuccess("Edição salva", "A edição foi salva com sucesso!");
+      setDataAtualizacaoComprovanteExtrato("");
+      setDataAtualizacaoComprovanteExtratoView("");
+      setSelectedFile(null);
+      setMsgErroExtensaoArquivo("");
+      await carregaObservacoes();
+    } catch (e) {
+      console.log("Erro: ", e.message);
+    }
+  };
+
+  const checaPendenciaSaldoBancario = (statusPeriodo) => {
+    const pendenciaCadastral = statusPeriodo.pendencias_cadastrais;
+    const contaPendente = pendenciaCadastral?.conciliacao_bancaria?.contas_pendentes?.includes(periodoConta.conta);
+    setPendenciaSaldoBancario(contaPendente);
+  };
+
+  const getPendenciasConciliacao = async () => {
+    if (periodosAssociacao && periodoConta.periodo) {
+      const periodo = periodosAssociacao.find((o) => o.uuid === periodoConta.periodo);
+      try {
+        const response = await fetchStatusPeriodo(periodo.data_inicio_realizacao_despesas);
+        checaPendenciaSaldoBancario(response);
+      } catch (error) {
+        //
+      }
+    }
+  };
+
+  const fetchStatusPeriodo = async (data_inicio_realizacao_despesas) => {
+    return await getStatusPeriodoPorData(associacaoUuid, data_inicio_realizacao_despesas);
+  };
+
+  const verificaSePeriodoEstaAberto = async (periodoUuid) => {
+    if (periodosAssociacao) {
+      const periodo = periodosAssociacao.find((o) => o.uuid === periodoUuid);
+      if (periodo) {
+        try {
+          const response = await fetchStatusPeriodo(periodo.data_inicio_realizacao_despesas);
+          checaPendenciaSaldoBancario(response);
+          setPeriodoFechado(
+            response.prestacao_contas_status ? response.prestacao_contas_status.periodo_bloqueado : true,
+          );
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    }
+  };
+
+  // Tabela Valores Pendentes por Ação
+  const [valoresPendentes, setValoresPendentes] = useState({});
+
+  const carregaValoresPendentes = useCallback(async () => {
+    let valores_pendentes = await tabelaValoresPendentes(periodoConta.periodo, periodoConta.conta);
+    setValoresPendentes(valores_pendentes);
+  }, [periodoConta.periodo, periodoConta.conta]);
+
+  useEffect(() => {
+    if (periodoConta.periodo && periodoConta.conta) {
+      carregaValoresPendentes();
+    }
+  }, [periodoConta.periodo, periodoConta.conta, carregaValoresPendentes]);
+
+  const valorTemplate = (valor) => {
+    let valor_formatado = Number(valor).toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    });
+    valor_formatado = valor_formatado.replace(/R/, "").replace(/\$/, "");
+    return valor_formatado;
+  };
+
+  // Transacoes Conciliadas e Não Conciliadas
+  const [transacoesConciliadas, setTransacoesConciliadas] = useState([]);
+  const [transacoesNaoConciliadas, setTransacoesNaoConciliadas] = useState([]);
+  const [checkboxTransacoes, setCheckboxTransacoes] = useState(false);
+  const [tabelasDespesa, setTabelasDespesa] = useState([]);
+
+  const carregaTransacoes = useCallback(async () => {
+    setLoading(true);
+    if (periodoConta.periodo && periodoConta.conta) {
+      handleTransacoesConciliadas();
+      handleTransacoesNaoConciliadas();
+    }
+    setLoading(false);
+  }, [periodoConta]);
+
+  useEffect(() => {
+    carregaTransacoes();
+  }, [carregaTransacoes]);
+
+  useEffect(() => {
+    const carregaTabelasDespesa = async () => {
+      const resp = await getDespesasTabelas();
+      setTabelasDespesa(resp);
+    };
+    carregaTabelasDespesa();
+  }, []);
+
+  const handleChangeCheckboxTransacoes = useCallback(
+    async (event, transacao_ou_rateio_uuid, documento_mestre = null, tipo_transacao) => {
+      setCheckboxTransacoes(event.target.checked);
+      if (event.target.checked) {
+        if (!documento_mestre) {
+          await conciliar(transacao_ou_rateio_uuid);
+        } else {
+          await patchConciliarDespesa(periodoConta.periodo, periodoConta.conta, transacao_ou_rateio_uuid);
+        }
+      } else if (!event.target.checked) {
+        if (!documento_mestre) {
+          await desconciliar(transacao_ou_rateio_uuid);
+        } else {
+          await patchDesconciliarDespesa(periodoConta.periodo, periodoConta.conta, transacao_ou_rateio_uuid);
+        }
+      }
+      await carregaTransacoes();
+      await carregaValoresPendentes();
+    },
+    [periodoConta, carregaTransacoes, conciliar, desconciliar, carregaValoresPendentes],
+  );
+
+  // Filtros Transacoes
+  const [stateFiltros, setStateFiltros] = useState({});
+
+  const handleChangeFiltros = useCallback(
+    (name, value) => {
+      setStateFiltros({
+        ...stateFiltros,
+        [name]: value,
+      });
+    },
+    [stateFiltros],
+  );
+
+  // Data Saldo Bancário
+  const [dataSaldoBancario, setDataSaldoBancario] = useState({});
+  const [dataSaldoBancarioSolicitacaoEncerramento, setDataSaldoBancarioSolicitacaoEncerramento] = useState({});
+  const [showModalSalvarDataSaldoExtrato, setShowModalSalvarDataSaldoExtrato] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [nomeComprovanteExtrato, setNomeComprovanteExtrato] = useState("");
+  const [dataAtualizacaoComprovanteExtrato, setDataAtualizacaoComprovanteExtrato] = useState("");
+  const [dataAtualizacaoComprovanteExtratoView, setDataAtualizacaoComprovanteExtratoView] = useState("");
+  const [exibeBtnDownload, setExibeBtnDownload] = useState(false);
+  const [msgErroExtensaoArquivo, setMsgErroExtensaoArquivo] = useState("");
+
+  const validaUploadExtrato = (event) => {
+    let ext = event.file.type;
+    let tamanho = event.file.size;
+    let array_extensoes = ["image/jpeg", "image/jpg", "image/bmp", "image/png", "image/tif", "application/pdf"];
+    if (tamanho <= 500395) {
+      let result = array_extensoes.filter((item) => ext.indexOf(item) > -1);
+      if (result <= 0) {
+        setMsgErroExtensaoArquivo(`A extensão ${ext} não é permitida, tente novamente`);
+        return false;
+      } else {
+        setMsgErroExtensaoArquivo("");
+        return true;
+      }
+    } else {
+      setMsgErroExtensaoArquivo("O tamanho do arquivo excede o limite de 500kb, tente novamente.");
+      return false;
+    }
+  };
+
+  const changeUploadExtrato = (event) => {
+    if (validaUploadExtrato(event)) {
+      setBtnSalvarExtratoBancarioDisable(false);
+      setCheckSalvarExtratoBancario(false);
+      setClassBtnSalvarExtratoBancario("success");
+      setSelectedFile(event.file);
+      setNomeComprovanteExtrato(event.file.name);
+      setDataAtualizacaoComprovanteExtrato(moment().format("YYYY-MM-DD HH:mm:ss"));
+      setDataAtualizacaoComprovanteExtratoView(moment().format("DD/MM/YYYY HH:mm:ss"));
+      setExibeBtnDownload(false);
+      setMsgErroExtensaoArquivo("");
+    } else {
+      reiniciaUploadExtrato();
+    }
+  };
+
+  const reiniciaUploadExtrato = () => {
+    if (nomeComprovanteExtrato !== "") {
+      setBtnSalvarExtratoBancarioDisable(false);
+      setCheckSalvarExtratoBancario(false);
+      setClassBtnSalvarExtratoBancario("success");
     }
 
-    const justificativaObrigatoria = useMemo(
-      () =>
-        transacoesNaoConciliadas && transacoesNaoConciliadas.length === 0 &&
-        valoresPendentes.saldo_posterior_total - dataSaldoBancario.saldo_extrato !== 0,
-      [dataSaldoBancario, valoresPendentes, transacoesNaoConciliadas]
+    setSelectedFile(null);
+    setDataAtualizacaoComprovanteExtrato("");
+    setDataAtualizacaoComprovanteExtratoView("");
+    setExibeBtnDownload(false);
+    setNomeComprovanteExtrato("");
+  };
+
+  const downloadComprovanteExtrato = useCallback(async () => {
+    try {
+      await getDownloadExtratoBancario(nomeComprovanteExtrato, observacaoUuid);
+      console.log("Download efetuado com sucesso");
+    } catch (e) {
+      console.log("Erro ao efetuar o download ", e.response);
+    }
+  }, [nomeComprovanteExtrato, observacaoUuid]);
+
+  const [erroDataSaldo, setErroDataSaldo] = useState("");
+
+  const handleChangaDataSaldo = useCallback(
+    (name, value) => {
+      if (name === "data_extrato") {
+        let hoje = moment(new Date());
+        let data_digitada = moment(value);
+        if (data_digitada > hoje) {
+          setErroDataSaldo("Data do crédito não pode ser maior que a data de hoje");
+          setDataSaldoBancario((prevState) => ({ ...prevState, [name]: "" }));
+          return;
+        } else {
+          setErroDataSaldo("");
+        }
+      }
+
+      setBtnSalvarExtratoBancarioDisable(false);
+      setCheckSalvarExtratoBancario(false);
+      setClassBtnSalvarExtratoBancario("success");
+
+      setDataSaldoBancario({
+        ...dataSaldoBancario,
+        [name]: value,
+      });
+    },
+    [dataSaldoBancario],
+  );
+
+  const irParaAnaliseDre = async () => {
+    // Ao setar para false, quando a função a seguir setar o click do item do menu
+    // a pagina não ira automaticamente para a url do item
+
+    await contextSideBar.setIrParaUrl(false);
+    SidebarLeftService.setItemActive("analise_dre");
+
+    // Necessário voltar o estado para true, para clicks nos itens do menu continuarem funcionando corretamente
+    contextSideBar.setIrParaUrl(true);
+  };
+
+  const handleTransacoesConciliadas = async (ordenacao) => {
+    setLoadingConciliadas(true);
+    let transacoes_conciliadas = await getTransacoes(
+      periodoConta.periodo,
+      periodoConta.conta,
+      "True",
+      stateFiltros.filtrar_por_acao_CONCILIADO,
+      ordenacao && ordenacao.ordenar_por_numero_do_documento ? ordenacao.ordenar_por_numero_do_documento : "",
+      ordenacao && ordenacao.ordenar_por_data_especificacao ? ordenacao.ordenar_por_data_especificacao : "",
+      ordenacao && ordenacao.ordenar_por_valor ? ordenacao.ordenar_por_valor : "",
+      ordenacao && ordenacao.ordenar_por_imposto ? ordenacao.ordenar_por_imposto : "",
     );
-    
-    return (
-        <>
-        <div className="detalhe-das-prestacoes-container mb-5 mt-5">
-            <div className="row">
-                <div className="col-12 d-flex bd-highlight mt-4">
-                    <div className="flex-grow-1 bd-highlight align-self-center detalhe-das-prestacoes-texto-cabecalho pl-0"><h3>Conciliação Bancária</h3></div>
+    setTransacoesConciliadas(transacoes_conciliadas);
+    setLoadingConciliadas(false);
+  };
 
-                    {parametros && parametros.state && parametros.state && parametros.state && parametros.state.origem === 'ir_para_conciliacao_bancaria' &&
-                        <div className="bd-highlight detalhe-das-prestacoes-texto-cabecalho">
-                            <button
-                                className="btn btn-outline-success"
-                                onClick={() => {
-                                    irParaAnaliseDre();
-                                    navigate(`/consulta-detalhamento-analise-da-dre/${parametros.state.prestacaoDeContasUuid}/`, {
-                                        state: {
-                                            origem: 'ir_para_conciliacao_bancaria',
-                                            periodoFormatado: parametros && parametros.state && parametros.state.periodoFormatado ? parametros.state.periodoFormatado : ""
-                                        }
-                                    });
-                                }}
-                            >
-                                Voltar para Análise DRE
-                            </button>
-                        </div>
-                    }
-                </div>
+  const handleTransacoesNaoConciliadas = async (ordenacao) => {
+    setLoadingNaoConciliadas(true);
+    let transacoes_nao_conciliadas = await getTransacoes(
+      periodoConta.periodo,
+      periodoConta.conta,
+      "False",
+      stateFiltros.filtrar_por_acao_NAO_CONCILIADO,
+      ordenacao && ordenacao.ordenar_por_numero_do_documento ? ordenacao.ordenar_por_numero_do_documento : "",
+      ordenacao && ordenacao.ordenar_por_data_especificacao ? ordenacao.ordenar_por_data_especificacao : "",
+      ordenacao && ordenacao.ordenar_por_valor ? ordenacao.ordenar_por_valor : "",
+      ordenacao && ordenacao.ordenar_por_imposto ? ordenacao.ordenar_por_imposto : "",
+    );
+    setTransacoesNaoConciliadas(transacoes_nao_conciliadas);
+    setLoadingNaoConciliadas(false);
+  };
+
+  const onHandleCancelarModalSalvarDataSaldoExtrato = () => {
+    setShowModalSalvarDataSaldoExtrato(false);
+    // window.location.assign('/dados-das-contas-da-associacao')
+  };
+
+  const justificativaObrigatoria = useMemo(
+    () =>
+      transacoesNaoConciliadas &&
+      transacoesNaoConciliadas.length === 0 &&
+      valoresPendentes.saldo_posterior_total - dataSaldoBancario.saldo_extrato !== 0,
+    [dataSaldoBancario, valoresPendentes, transacoesNaoConciliadas],
+  );
+
+  return (
+    <>
+      <div className="detalhe-das-prestacoes-container mb-5 mt-5">
+        <div className="row">
+          <div className="col-12 d-flex bd-highlight mt-4">
+            <div className="flex-grow-1 bd-highlight align-self-center detalhe-das-prestacoes-texto-cabecalho pl-0">
+              <h3>Conciliação Bancária</h3>
             </div>
-            {loading ? (
-                    <Loading
-                        corGrafico="black"
-                        corFonte="dark"
-                        marginTop="0"
-                        marginBottom="0"
-                    />
-                ) :
-                <>
-                    <SelectPeriodoConta
-                        periodoConta={periodoConta}
-                        handleChangePeriodoConta={handleChangePeriodoConta}
-                        periodosAssociacao={periodosAssociacao}
-                        contasAssociacao={contasAssociacao}
-                    />
 
-                    {periodoConta.periodo && periodoConta.conta ? (
-                        <>
-                            <TopoComBotoes
-                                contaConciliacao={contaConciliacao}
-                                periodoFechado={periodoFechado}
-                                origem={origem}
-                            />
-
-                            <TabelaValoresPendentesPorAcao
-                                valoresPendentes={valoresPendentes}
-                                valorTemplate={valorTemplate}
-                            />
-
-                            <DataSaldoBancario
-                                valoresPendentes={valoresPendentes}
-                                dataSaldoBancario={dataSaldoBancario}
-                                handleChangaDataSaldo={handleChangaDataSaldo}
-                                periodoFechado={periodoFechado}
-                                nomeComprovanteExtrato={nomeComprovanteExtrato}
-                                dataAtualizacaoComprovanteExtrato={dataAtualizacaoComprovanteExtratoView}
-                                exibeBtnDownload={exibeBtnDownload}
-                                msgErroExtensaoArquivo={msgErroExtensaoArquivo}
-                                changeUploadExtrato={changeUploadExtrato}
-                                reiniciaUploadExtrato={reiniciaUploadExtrato}
-                                downloadComprovanteExtrato={downloadComprovanteExtrato}
-                                salvarExtratoBancario={salvarExtratoBancario}
-                                btnSalvarExtratoBancarioDisable={btnSalvarExtratoBancarioDisable}
-                                setBtnSalvarExtratoBancarioDisable={setBtnSalvarExtratoBancarioDisable}
-                                classBtnSalvarExtratoBancario={classBtnSalvarExtratoBancario}
-                                setClassBtnSalvarExtratoBancario={setClassBtnSalvarExtratoBancario}
-                                checkSalvarExtratoBancario={checkSalvarExtratoBancario}
-                                setCheckSalvarExtratoBancario={setCheckSalvarExtratoBancario}
-                                erroDataSaldo={erroDataSaldo}
-                                permiteEditarCamposExtrato={permiteEditarCamposExtrato}
-                                pendenciaSaldoBancario={pendenciaSaldoBancario}
-                                dataSaldoBancarioSolicitacaoEncerramento={dataSaldoBancarioSolicitacaoEncerramento}
-                                setShowModalSalvarDataSaldoExtrato={setShowModalSalvarDataSaldoExtrato}
-                            />
-
-                            <p className="detalhe-das-prestacoes-titulo-lancamentos mt-3 mb-3">Gastos pendentes de conciliação</p>
-                            <FiltrosTransacoes
-                                conciliado='NAO_CONCILIADO'
-                                stateFiltros={stateFiltros}
-                                tabelasDespesa={tabelasDespesa}
-                                handleChangeFiltros={handleChangeFiltros}
-                                handleSubmitFiltros={handleTransacoesNaoConciliadas}
-                            />
-
-                            <TabelaTransacoes
-                                transacoes={transacoesNaoConciliadas}
-                                checkboxTransacoes={checkboxTransacoes}
-                                periodoFechado={periodoFechado}
-                                handleChangeCheckboxTransacoes={handleChangeCheckboxTransacoes}
-                                tabelasDespesa={tabelasDespesa}
-                                showModalLegendaInformacao={showModalLegendaInformacao}
-                                setShowModalLegendaInformacao={setShowModalLegendaInformacao}
-                                handleCallbackOrdernar={handleTransacoesNaoConciliadas}
-                                loading={loadingNaoConciliadas}
-                                emptyListComponent={<p className="mt-2"><strong>Não existem gastos não conciliados...</strong></p>}
-                            />                            
-
-                            <p className="detalhe-das-prestacoes-titulo-lancamentos mt-5 mb-3">Gastos conciliados</p>
-                            <FiltrosTransacoes
-                                conciliado='CONCILIADO'
-                                stateFiltros={stateFiltros}
-                                tabelasDespesa={tabelasDespesa}
-                                handleChangeFiltros={handleChangeFiltros}
-                                handleSubmitFiltros={handleTransacoesConciliadas}
-                            />
-
-                            <TabelaTransacoes
-                                transacoes={transacoesConciliadas}
-                                checkboxTransacoes={checkboxTransacoes}
-                                periodoFechado={periodoFechado}
-                                handleChangeCheckboxTransacoes={handleChangeCheckboxTransacoes}
-                                tabelasDespesa={tabelasDespesa}
-                                showModalLegendaInformacao={showModalLegendaInformacao}
-                                setShowModalLegendaInformacao={setShowModalLegendaInformacao}
-                                handleCallbackOrdernar={handleTransacoesConciliadas}
-                                loading={loadingConciliadas}
-                                emptyListComponent={<p className="mt-2"><strong>Não existem gastos conciliados...</strong></p>}
-                            />                            
-
-                            <Justificativa
-                                justificativaObrigatoria={justificativaObrigatoria}
-                                textareaJustificativa={textareaJustificativa}
-                                handleChangeTextareaJustificativa={handleChangeTextareaJustificativa}
-                                periodoFechado={periodoFechado}
-                                btnSalvarJustificativaDisable={btnSalvarJustificativaDisable}
-                                setBtnJustificativaSalvarDisable={setBtnSalvarJustificativaDisable}
-                                checkSalvarJustificativa={checkSalvarJustificativa}
-                                setCheckSalvarJustificativa={setCheckSalvarJustificativa}
-                                salvarJustificativa={salvarJustificativa}
-                                classBtnSalvarJustificativa={classBtnSalvarJustificativa}
-                                setClassBtnSalvarJustificativa={setClassBtnSalvarJustificativa}
-                                permiteEditarCamposExtrato={permiteEditarCamposExtrato}
-                                permissaoEditarConciliacao={permissaoEditarConciliacao}
-
-                            />
-                        </>
-                    ):
-                        <MsgImgCentralizada
-                            texto='Selecione um período e uma conta acima para visualizar os demonstrativos'
-                            img={Img404}
-                        />
-                    }
-                </>
-            }
+            {parametros &&
+              parametros.state &&
+              parametros.state &&
+              parametros.state &&
+              parametros.state.origem === "ir_para_conciliacao_bancaria" && (
+                <div className="bd-highlight detalhe-das-prestacoes-texto-cabecalho">
+                  <button
+                    className="btn btn-outline-success"
+                    onClick={() => {
+                      irParaAnaliseDre();
+                      navigate(`/consulta-detalhamento-analise-da-dre/${parametros.state.prestacaoDeContasUuid}/`, {
+                        state: {
+                          origem: "ir_para_conciliacao_bancaria",
+                          periodoFormatado:
+                            parametros && parametros.state && parametros.state.periodoFormatado
+                              ? parametros.state.periodoFormatado
+                              : "",
+                        },
+                      });
+                    }}
+                  >
+                    Voltar para Análise DRE
+                  </button>
+                </div>
+              )}
+          </div>
         </div>
-
-        <section>
-            <ModalSalvarDataSaldoExtrato
-                show={showModalSalvarDataSaldoExtrato}
-                titulo="Salvar alterações."
-                texto='Os campos "data" e "saldo" foram alterados e podem não ser mais os mesmos cadastrados na solicitação de encerramento da conta. Confirma a alteração?'
-                segundoBotaoTexto="Confirmar"
-                segundoBotaoOnclick={salvarExtratoBancario}
-                segundoBotaoCss="success"
-                primeiroBotaoCss="outline-success"
-                primeiroBotaoTexto="Cancelar"
-                handleClose={onHandleCancelarModalSalvarDataSaldoExtrato}
-                primeiroBotaoOnclick={onHandleCancelarModalSalvarDataSaldoExtrato}
+        {loading ? (
+          <Loading corGrafico="black" corFonte="dark" marginTop="0" marginBottom="0" />
+        ) : (
+          <>
+            <SelectPeriodoConta
+              periodoConta={periodoConta}
+              handleChangePeriodoConta={handleChangePeriodoConta}
+              periodosAssociacao={periodosAssociacao}
+              contasAssociacao={contasAssociacao}
             />
-        </section>
 
-        </>
-    )
+            {periodoConta.periodo && periodoConta.conta ? (
+              <>
+                <TopoComBotoes contaConciliacao={contaConciliacao} periodoFechado={periodoFechado} origem={origem} />
+
+                <TabelaValoresPendentesPorAcao valoresPendentes={valoresPendentes} valorTemplate={valorTemplate} />
+
+                <DataSaldoBancario
+                  valoresPendentes={valoresPendentes}
+                  dataSaldoBancario={dataSaldoBancario}
+                  handleChangaDataSaldo={handleChangaDataSaldo}
+                  periodoFechado={periodoFechado}
+                  nomeComprovanteExtrato={nomeComprovanteExtrato}
+                  dataAtualizacaoComprovanteExtrato={dataAtualizacaoComprovanteExtratoView}
+                  exibeBtnDownload={exibeBtnDownload}
+                  msgErroExtensaoArquivo={msgErroExtensaoArquivo}
+                  changeUploadExtrato={changeUploadExtrato}
+                  reiniciaUploadExtrato={reiniciaUploadExtrato}
+                  downloadComprovanteExtrato={downloadComprovanteExtrato}
+                  salvarExtratoBancario={salvarExtratoBancario}
+                  btnSalvarExtratoBancarioDisable={btnSalvarExtratoBancarioDisable}
+                  setBtnSalvarExtratoBancarioDisable={setBtnSalvarExtratoBancarioDisable}
+                  classBtnSalvarExtratoBancario={classBtnSalvarExtratoBancario}
+                  setClassBtnSalvarExtratoBancario={setClassBtnSalvarExtratoBancario}
+                  checkSalvarExtratoBancario={checkSalvarExtratoBancario}
+                  setCheckSalvarExtratoBancario={setCheckSalvarExtratoBancario}
+                  erroDataSaldo={erroDataSaldo}
+                  permiteEditarCamposExtrato={permiteEditarCamposExtrato}
+                  pendenciaSaldoBancario={pendenciaSaldoBancario}
+                  dataSaldoBancarioSolicitacaoEncerramento={dataSaldoBancarioSolicitacaoEncerramento}
+                  setShowModalSalvarDataSaldoExtrato={setShowModalSalvarDataSaldoExtrato}
+                />
+
+                <p className="detalhe-das-prestacoes-titulo-lancamentos mt-3 mb-3">Gastos pendentes de conciliação</p>
+                <FiltrosTransacoes
+                  conciliado="NAO_CONCILIADO"
+                  stateFiltros={stateFiltros}
+                  tabelasDespesa={tabelasDespesa}
+                  handleChangeFiltros={handleChangeFiltros}
+                  handleSubmitFiltros={handleTransacoesNaoConciliadas}
+                />
+
+                <TabelaTransacoes
+                  transacoes={transacoesNaoConciliadas}
+                  checkboxTransacoes={checkboxTransacoes}
+                  periodoFechado={periodoFechado}
+                  handleChangeCheckboxTransacoes={handleChangeCheckboxTransacoes}
+                  tabelasDespesa={tabelasDespesa}
+                  showModalLegendaInformacao={showModalLegendaInformacao}
+                  setShowModalLegendaInformacao={setShowModalLegendaInformacao}
+                  handleCallbackOrdernar={handleTransacoesNaoConciliadas}
+                  loading={loadingNaoConciliadas}
+                  emptyListComponent={
+                    <p className="mt-2">
+                      <strong>Não existem gastos não conciliados...</strong>
+                    </p>
+                  }
+                />
+
+                <p className="detalhe-das-prestacoes-titulo-lancamentos mt-5 mb-3">Gastos conciliados</p>
+                <FiltrosTransacoes
+                  conciliado="CONCILIADO"
+                  stateFiltros={stateFiltros}
+                  tabelasDespesa={tabelasDespesa}
+                  handleChangeFiltros={handleChangeFiltros}
+                  handleSubmitFiltros={handleTransacoesConciliadas}
+                />
+
+                <TabelaTransacoes
+                  transacoes={transacoesConciliadas}
+                  checkboxTransacoes={checkboxTransacoes}
+                  periodoFechado={periodoFechado}
+                  handleChangeCheckboxTransacoes={handleChangeCheckboxTransacoes}
+                  tabelasDespesa={tabelasDespesa}
+                  showModalLegendaInformacao={showModalLegendaInformacao}
+                  setShowModalLegendaInformacao={setShowModalLegendaInformacao}
+                  handleCallbackOrdernar={handleTransacoesConciliadas}
+                  loading={loadingConciliadas}
+                  emptyListComponent={
+                    <p className="mt-2">
+                      <strong>Não existem gastos conciliados...</strong>
+                    </p>
+                  }
+                />
+
+                <Justificativa
+                  justificativaObrigatoria={justificativaObrigatoria}
+                  textareaJustificativa={textareaJustificativa}
+                  handleChangeTextareaJustificativa={handleChangeTextareaJustificativa}
+                  periodoFechado={periodoFechado}
+                  btnSalvarJustificativaDisable={btnSalvarJustificativaDisable}
+                  setBtnJustificativaSalvarDisable={setBtnSalvarJustificativaDisable}
+                  checkSalvarJustificativa={checkSalvarJustificativa}
+                  setCheckSalvarJustificativa={setCheckSalvarJustificativa}
+                  salvarJustificativa={salvarJustificativa}
+                  classBtnSalvarJustificativa={classBtnSalvarJustificativa}
+                  setClassBtnSalvarJustificativa={setClassBtnSalvarJustificativa}
+                  permiteEditarCamposExtrato={permiteEditarCamposExtrato}
+                  permissaoEditarConciliacao={permissaoEditarConciliacao}
+                />
+              </>
+            ) : (
+              <MsgImgCentralizada
+                texto="Selecione um período e uma conta acima para visualizar os demonstrativos"
+                img={Img404}
+              />
+            )}
+          </>
+        )}
+      </div>
+
+      <section>
+        <ModalSalvarDataSaldoExtrato
+          show={showModalSalvarDataSaldoExtrato}
+          titulo="Salvar alterações."
+          texto='Os campos "data" e "saldo" foram alterados e podem não ser mais os mesmos cadastrados na solicitação de encerramento da conta. Confirma a alteração?'
+          segundoBotaoTexto="Confirmar"
+          segundoBotaoOnclick={salvarExtratoBancario}
+          segundoBotaoCss="success"
+          primeiroBotaoCss="outline-success"
+          primeiroBotaoTexto="Cancelar"
+          handleClose={onHandleCancelarModalSalvarDataSaldoExtrato}
+          primeiroBotaoOnclick={onHandleCancelarModalSalvarDataSaldoExtrato}
+        />
+      </section>
+    </>
+  );
 };
