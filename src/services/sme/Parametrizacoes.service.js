@@ -833,8 +833,16 @@ export const getTodosTiposDeCusteio = async () => {
 export const getTipoCusteio = async (uuid) => {
   return (await api.get(`/api/tipos-custeio/${uuid}`, authHeader())).data;
 };
-export const getFiltrosTiposDeCusteio = async (nome, status) => {
+/* export const getFiltrosTiposDeCusteio = async (nome, status) => {
   return (await api.get(`/api/tipos-custeio/?nome=${nome}`, authHeader())).data;
+}; */
+export const getFiltrosTiposDeCusteio = async (filter) => {
+    return (await api.get(`/api/tipos-custeio/`,{
+        ...authHeader(),
+        params: {  
+            ...filter
+        }
+    })).data
 };
 export const postCreateTipoDeCusteio = async (payload) => {
   return (await api.post(`/api/tipos-custeio/`, payload, authHeader())).data;
