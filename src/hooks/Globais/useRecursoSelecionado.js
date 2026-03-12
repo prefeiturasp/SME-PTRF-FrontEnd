@@ -26,8 +26,19 @@ const useRecursoSelecionado = ({ visoesService }) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (recursos?.length === 1) {
-        handleChangeRecurso(recursos[0]);
+    if (!recursos?.length) return;
+
+    const recursoValido = recursoSelecionado
+      ? recursos.some((r) => r.uuid === recursoSelecionado.uuid)
+      : false;
+
+    const deveAutoSelecionar = recursos.length === 1 && !recursoSelecionado;
+    const recursoInvalido = recursoSelecionado && !recursoValido;
+
+    if (deveAutoSelecionar || recursoInvalido) {
+      setRecursoSelecionado(recursos[0]);
+      localStorage.setItem(storageKey, JSON.stringify(recursos[0]));
+      authService.limparStorageAoTrocarRecurso();
     }
   }, [recursos, recursoSelecionado]);
 

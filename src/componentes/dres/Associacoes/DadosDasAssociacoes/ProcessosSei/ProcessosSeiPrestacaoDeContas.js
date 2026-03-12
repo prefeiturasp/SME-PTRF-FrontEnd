@@ -27,11 +27,11 @@ import {visoesService} from "../../../../../services/visoes.service";
 import {ModalConfirm} from "../../../../Globais/Modal/ModalConfirm";
 import {toastCustom} from "../../../../Globais/ToastCustom";
 import { EditIconButton } from "../../../../Globais/UI/Button";
-import useRecursoSelecionado from "../../../../../hooks/Globais/useRecursoSelecionado";
+import { useRecursoSelecionadoContext } from "../../../../../context/RecursoSelecionado";
 
 export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao, recurso_uuid, recurso_nome}) => {
     const dispatch = useDispatch();
-    const { recursos } = useRecursoSelecionado({ visoesService });
+    const { recursos } = useRecursoSelecionadoContext();
 
     const rowsPerPage = 7;
 
