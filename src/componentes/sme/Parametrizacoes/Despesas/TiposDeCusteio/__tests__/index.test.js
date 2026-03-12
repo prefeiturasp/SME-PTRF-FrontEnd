@@ -86,7 +86,7 @@ describe("Carrega página de Tipos", () => {
     fireEvent.click(screen.getByRole("button", { name: /filtrar/i }));
 
     await waitFor(() => {
-      expect(getFiltrosTiposDeCusteio).toHaveBeenCalledWith({"nome": "Tipo 1", "unidades__uuid": ""});
+      expect(getFiltrosTiposDeCusteio).toHaveBeenCalledWith({ nome: "Tipo 1" });
     });
   });
 
