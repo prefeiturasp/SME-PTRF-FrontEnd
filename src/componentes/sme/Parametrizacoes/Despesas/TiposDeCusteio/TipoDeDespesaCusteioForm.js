@@ -11,6 +11,7 @@ import {
   postCreateTipoDeCusteio,
 } from "../../../../../services/sme/Parametrizacoes.service";
 import { usePostTipoCusteioVincularTodasUnidades } from "./hooks/usePostTipoCusteioVincularTodasUnidades";
+import { usePostTipoCusteioDesvincularTodasUnidades } from "./hooks/usePostTipoCusteioDesvincularTodasUnidades";
 import { useGetTipoCusteio } from "./hooks/useGetTipoCusteio";
 import { VincularUnidades } from "./components/VincularUnidades";
 import { UnidadesVinculadas } from "./components/UnidadesVinculadas";
@@ -30,6 +31,9 @@ export const TipoDeDespesaCusteioForm = () => {
 
   const { mutationPost: mutationPostvincularTodasUnidades } =
     usePostTipoCusteioVincularTodasUnidades();
+
+  const { mutationPost: mutationPostdesvincularTodasUnidades} = 
+    usePostTipoCusteioDesvincularTodasUnidades();
 
   const { uuid } = useParams();
 
@@ -198,6 +202,8 @@ export const TipoDeDespesaCusteioForm = () => {
         form.setFieldValue("selecionar_todas", vincular);
         return;
       }
+    } else if (e.target.checked === false && !isNew) {
+        mutationPostdesvincularTodasUnidades.mutate(uuid);
     }
 
     form.setFieldValue("selecionar_todas", e.target.checked);
