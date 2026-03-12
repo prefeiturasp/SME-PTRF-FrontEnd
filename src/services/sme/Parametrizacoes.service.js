@@ -177,6 +177,11 @@ export const postTipoReceitaVincularTodasUnidades = async (uuid) => {
   return (await api.post(`/api/tipos-receitas/${uuid}/vincular-todas-unidades/`, {}, authHeader())).data;
 };
 
+export const postTipoReceitaDesvincularTodasUnidades = async (uuid) => {
+  return (await api.post(`/api/tipos-receitas/${uuid}/desvincular-todas-unidades/`, {}, authHeader())).data;
+};
+
+
 export const getFiltrosTipoReceita = async () => {
   return (await api.get(`/api/tipos-receitas/filtros/`, authHeader())).data;
 };
@@ -828,8 +833,16 @@ export const getTodosTiposDeCusteio = async () => {
 export const getTipoCusteio = async (uuid) => {
   return (await api.get(`/api/tipos-custeio/${uuid}`, authHeader())).data;
 };
-export const getFiltrosTiposDeCusteio = async (nome, status) => {
+/* export const getFiltrosTiposDeCusteio = async (nome, status) => {
   return (await api.get(`/api/tipos-custeio/?nome=${nome}`, authHeader())).data;
+}; */
+export const getFiltrosTiposDeCusteio = async (filter) => {
+    return (await api.get(`/api/tipos-custeio/`,{
+        ...authHeader(),
+        params: {  
+            ...filter
+        }
+    })).data
 };
 export const postCreateTipoDeCusteio = async (payload) => {
   return (await api.post(`/api/tipos-custeio/`, payload, authHeader())).data;
@@ -857,8 +870,13 @@ export const vincularUnidadesTipoCusteio = async (uuid, payload) => {
 export const desvincularUnidadesTipoCusteio = async (uuid, payload) => {
   return (await api.post(`/api/tipos-custeio/${uuid}/desvincular-unidades/`, payload, authHeader())).data;
 }
+
 export const postTipoCusteioVincularTodasUnidades = async (uuid) => {
   return (await api.post(`/api/tipos-custeio/${uuid}/vincular-todas-unidades/`, {}, authHeader())).data;
+};
+
+export const postTipoCusteioDesvincularTodasUnidades = async (uuid) => {
+  return (await api.post(`/api/tipos-custeio/${uuid}/desvincular-todas-unidades/`, {}, authHeader())).data;
 };
 
 // Tipos de Documento

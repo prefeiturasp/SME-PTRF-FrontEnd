@@ -17,6 +17,7 @@ import { useParams } from "react-router-dom";
 import { useGetFiltrosTiposReceita } from "./hooks/useGetFiltrosTiposReceita";
 import { usePostTipoReceita } from "./hooks/usePostTipoReceita";
 import { usePostTipoReceitaVincularTodasUnidades } from "./hooks/usePostTipoReceitaVincularTodasUnidades";
+import { usePostTipoReceitaDesvincularTodasUnidades } from "./hooks/usePostTipoReceitaDesvincularTodasUnidades";
 import { usePatchTipoReceita } from "./hooks/usePatchTipoReceita";
 import { useGetTipoReceita } from "./hooks/useGetTipoReceita";
 import { useDeleteTipoReceita } from "./hooks/useDeleteTipoReceita";
@@ -48,6 +49,9 @@ export const TipoReceitaForm = () => {
   const { mutationDelete } = useDeleteTipoReceita();
   const { mutationPost: mutationPostvincularTodasUnidades } =
     usePostTipoReceitaVincularTodasUnidades();
+  
+  const { mutationPost: mutationPostdesvincularTodasUnidades } =
+    usePostTipoReceitaDesvincularTodasUnidades();
 
   const { data, isLoading } = useGetTipoReceita(uuid);
 
@@ -247,6 +251,8 @@ export const TipoReceitaForm = () => {
         form.setFieldValue("selecionar_todas", vincular);
         return;
       }
+    }else if (e.target.checked === false && !isNew) {
+        mutationPostdesvincularTodasUnidades.mutate(uuid);
     }
 
     form.setFieldValue("selecionar_todas", e.target.checked);
