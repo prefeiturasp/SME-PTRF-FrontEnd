@@ -54,18 +54,21 @@ export const TiposDeCusteio = () => {
   const handleSubmitFiltros = async () => {
     setLoading(true);
 
-    const {unidades__uuid} = stateFiltros;
-    const filtrosTratados = {
-      nome: stateFiltros.filtrar_por_nome,
-      unidades__uuid: stateFiltros.unidades__uuid,
-    };
+    try {
+      const { filtrar_por_nome, unidades__uuid } = stateFiltros;
 
-    if (unidades__uuid && typeof unidades__uuid === "object" && Object.keys(unidades__uuid).length > 0 && unidades__uuid.uuid) {
-      filtrosTratados.unidades__uuid = unidades__uuid.unidade.uuid;
+      const filtrosTratados = {
+        nome: filtrar_por_nome,
+        ...(unidades__uuid?.unidade?.uuid && {
+          unidades__uuid: unidades__uuid.unidade.uuid,
+        }),
+      };
+
+      const filtrados = await getFiltrosTiposDeCusteio(filtrosTratados);
+      setListaDeTipos(filtrados);
+    } finally {
+      setLoading(false);
     }
-    let filtrados = await getFiltrosTiposDeCusteio(filtrosTratados);
-    setListaDeTipos(filtrados);
-    setLoading(false);
   };
 
   const limpaFiltros = async () => {

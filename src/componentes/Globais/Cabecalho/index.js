@@ -12,13 +12,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell, faChevronDown, faUser, faFileDownload } from "@fortawesome/free-solid-svg-icons";
 import { notificaDevolucaoPCService } from "../../../services/NotificacaDevolucaoPC.service";
 import { mantemEstadoAnaliseDre as meapcservice } from "../../../services/mantemEstadoAnaliseDre.service";
-import useRecursoSelecionado from "../../../hooks/Globais/useRecursoSelecionado";
+import { useRecursoSelecionadoContext } from "../../../context/RecursoSelecionado";
 import { Skeleton } from "antd";
 import { LogoSigEscola } from "../LogoSigEscola";
 
 export const Cabecalho = () => {
   const navigate = useNavigate();
-  const { isLoading } = useRecursoSelecionado({ visoesService });
+  const { isLoading } = useRecursoSelecionadoContext();
 
   const logout = async () => {
     await authService.logout();

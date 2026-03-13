@@ -1,4 +1,4 @@
-import React, {useCallback, useContext, useEffect, useState} from "react";
+import React, {useContext} from "react";
 import {SidebarContext} from "../context/Sidebar";
 import {NotificacaoContext} from "../context/Notificacoes";
 import {useLocation, useNavigate} from 'react-router-dom';
@@ -10,7 +10,7 @@ import { BarraMensagemFixa } from "../componentes/Globais/BarraMensagemFixa";
 import { BarraMensagemFixaRecurso } from "../componentes/Globais/BarraMensagemFixaRecurso";
 import { BarraMensagemFixaProvider } from "../componentes/Globais/BarraMensagemFixa/context/BarraMensagemFixaProvider";
 import { FEATURE_FLAGS } from '../constantes/featureFlags';
-import useRecursoSelecionado from "../hooks/Globais/useRecursoSelecionado";
+import { useRecursoSelecionadoContext } from "../context/RecursoSelecionado";
 
 export const PaginasContainer = ({children}) => {
     const navigate = useNavigate();
@@ -22,7 +22,7 @@ export const PaginasContainer = ({children}) => {
         notificaDevolucaoPCService.marcaNotificacaoComoLidaERedirecianaParaVerAcertos(navigate)
     };
 
-    const { recursoSelecionado } = useRecursoSelecionado({ visoesService });
+    const { recursoSelecionado } = useRecursoSelecionadoContext();
     const location = useLocation();
 
     // Caminhos em que a barra de recurso pode ser exibida
