@@ -251,7 +251,21 @@ describe('ModalInfoPendenciasGeracaoFinal', () => {
             />
         );
         
-        expect(screen.getByText('Prioridades')).toBeInTheDocument();
+        expect(screen.getByText('Prioridades sem ação e/ou valor total')).toBeInTheDocument();
+    });
+
+    it('deve renderizar pendência de Prioridades com saldo corretamente', () => {
+        const pendencias = 'Prioridades - há recurso com saldo.';
+        
+        render(
+            <ModalInfoPendenciasGeracaoFinal 
+                open={true} 
+                onClose={mockOnClose} 
+                pendencias={pendencias} 
+            />
+        );
+        
+        expect(screen.getByText('Prioridades - há recurso com saldo.')).toBeInTheDocument();
     });
 
     it('deve renderizar pendências de introdução corretamente', () => {
@@ -307,7 +321,7 @@ describe('ModalInfoPendenciasGeracaoFinal', () => {
             />
         );
         
-        expect(screen.getByText('Prioridades')).toBeInTheDocument();
+        expect(screen.getByText('Prioridades sem ação e/ou valor total')).toBeInTheDocument();
         expect(screen.getByText('Introdução')).toBeInTheDocument();
         expect(screen.getByText('Objetivos')).toBeInTheDocument();
     });
