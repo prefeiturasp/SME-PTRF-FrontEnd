@@ -322,8 +322,8 @@ export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao, recurso_uuid, 
 
                             { recursos.length > 1 && visoesService.featureFlagAtiva('premio-excelencia-processo-sei') && (
                                 <>
-                                    <div className="col-12">
-                                        <hr className="mb-4" />
+                                    <div className="col-12 mb-2">
+                                        <hr className="my-2" />
                                     </div>
                                     <div className="col-10">
                                         <label><strong>{ recurso_nome }</strong></label>
