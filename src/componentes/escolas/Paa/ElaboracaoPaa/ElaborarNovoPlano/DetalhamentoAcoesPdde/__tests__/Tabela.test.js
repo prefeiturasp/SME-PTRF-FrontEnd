@@ -89,7 +89,7 @@ describe("Tabela", () => {
 
   it("abre e fecha modal ao clicar no botão de editar", () => {
     render(<Tabela {...defaultProps} />);
-    const botaoEditar = screen.getByTestId("botao-editar");
+    const botaoEditar = screen.getByRole("button", { name: /editar/i });
     fireEvent.click(botaoEditar);
 
     expect(screen.getByTestId("modal-edicao")).toHaveTextContent("Modal aberto para Ação Teste");

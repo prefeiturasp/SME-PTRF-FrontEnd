@@ -126,10 +126,10 @@ describe("useGetPaaVigente", () => {
 
     expect(result.current.isLoading).toBe(true);
 
-    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    await waitFor(() => expect(result.current.isError).toBe(true));
 
     expect(result.current.paaVigente).toEqual({});
-    expect(result.current.isError).toBe(true);
+    expect(result.current.isLoading).toBe(false);
   });
 
   it("deve expor a função refetch", async () => {

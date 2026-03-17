@@ -96,10 +96,10 @@ describe("useGetTextosPaa", () => {
 
     expect(result.current.isLoading).toBe(true);
 
-    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    await waitFor(() => expect(result.current.isError).toBe(true));
 
     expect(result.current.textosPaa).toEqual({});
-    expect(result.current.isError).toBe(true);
+    expect(result.current.isLoading).toBe(false);
   });
 
   it("deve expor a função refetch", async () => {

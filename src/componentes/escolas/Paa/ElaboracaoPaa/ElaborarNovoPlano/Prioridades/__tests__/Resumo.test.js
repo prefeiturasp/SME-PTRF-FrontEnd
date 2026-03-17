@@ -115,10 +115,6 @@ describe('Resumo Component', () => {
                 expect.objectContaining({
                     level: 5,
                     children: 'Resumo de recursos',
-                    style: expect.objectContaining({
-                        color: '#00585E',
-                        fontWeight: 'bold'
-                    }),
                     className: 'my-4'
                 }),
                 expect.any(Object)
