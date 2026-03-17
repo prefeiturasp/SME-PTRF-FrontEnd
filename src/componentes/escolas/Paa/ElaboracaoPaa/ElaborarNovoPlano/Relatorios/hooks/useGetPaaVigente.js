@@ -3,7 +3,6 @@ import { getPaaVigente } from '../../../../../../../services/sme/Parametrizacoes
 
 export const useGetPaaVigente = (associacaoUuid) => {
   const {
-    status,
     isFetching,
     isError,
     data = {},
@@ -12,19 +11,18 @@ export const useGetPaaVigente = (associacaoUuid) => {
   } = useQuery({
     queryKey: ["paaVigente", associacaoUuid],
     queryFn: () => getPaaVigente(associacaoUuid),
-    keepPreviousData: false,
     staleTime: 0,
-    cacheTime: 0,
+    gcTime: 0,
     refetchOnWindowFocus: false,
     enabled: !!associacaoUuid,
   });
 
-  return { 
-    isLoading: status === "loading",
-    isFetching, 
-    isError, 
-    paaVigente: data, 
-    error, 
-    refetch 
+  return {
+    isLoading: isFetching,
+    isFetching,
+    isError,
+    paaVigente: data,
+    error,
+    refetch
   };
 };
