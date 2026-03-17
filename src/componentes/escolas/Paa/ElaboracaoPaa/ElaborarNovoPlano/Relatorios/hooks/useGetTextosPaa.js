@@ -3,7 +3,6 @@ import { getTextosPaaUe } from '../../../../../../../services/escolas/PrestacaoD
 
 export const useGetTextosPaa = () => {
   const {
-    status,
     isFetching,
     isError,
     data = {},
@@ -11,20 +10,19 @@ export const useGetTextosPaa = () => {
     refetch,
   } = useQuery({
     queryKey: ["textosPaaUe"],
-    queryFn: () => getTextosPaaUe(), 
-    keepPreviousData: false,
+    queryFn: () => getTextosPaaUe(),
     staleTime: 0,
-    cacheTime: 0,
+    gcTime: 0,
     refetchOnWindowFocus: false,
     enabled: true,
   });
 
-  return { 
-    isLoading: status === "loading", 
-    isFetching, 
-    isError, 
-    textosPaa: data, 
-    error, 
-    refetch 
+  return {
+    isLoading: isFetching,
+    isFetching,
+    isError,
+    textosPaa: data,
+    error,
+    refetch
   };
 };

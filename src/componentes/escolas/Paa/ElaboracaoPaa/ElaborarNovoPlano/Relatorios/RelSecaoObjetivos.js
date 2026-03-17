@@ -21,8 +21,11 @@ export const RelSecaoObjetivos = ({ paaVigente, onSalvarObjetivos, isSaving }) =
   }, [data, paaVigente]);
 
   const getPayload = useCallback(() => {
+    // Desconsiderar itens adicionados e removidos localmente (antes de salvar)
+    const removidos_locais = items
+      .filter((item) => !item?.uuid && (item._destroy))
     const objetivosPayload = items
-      .filter((item) => item.nome !== "" && (item.checked || item._destroy))
+      .filter((item) => (item.nome !== "" && (item.checked || item._destroy)) && !removidos_locais.includes(item))
       .map((item) =>
         item.uuid ? { objetivo: item.uuid, nome: item.nome, _destroy: item._destroy || false } : { nome: item.nome }
       );

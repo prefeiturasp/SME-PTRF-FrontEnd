@@ -77,14 +77,24 @@ describe("BarraTopoTitulo", () => {
     );
   });
 
-  it("navega para /paa ao clicar no botão Voltar", () => {
+  it("navega corretamente ao clicar no botão Voltar com origem definida", () => {
+    render(
+      <MemoryRouter>
+        <BarraTopoTitulo origem="plano-aplicacao" />
+      </MemoryRouter>
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: /voltar ao plano de aplicação/i }));
+    expect(mockNavigate).toHaveBeenCalledWith("/relatorios-componentes/plano-aplicacao");
+  });
+
+  it("não renderiza botão Voltar quando origem não é informada", () => {
     render(
       <MemoryRouter>
         <BarraTopoTitulo />
       </MemoryRouter>
     );
 
-    fireEvent.click(screen.getByRole("button", { name: /voltar/i }));
-    expect(mockNavigate).toHaveBeenCalledWith("/paa");
+    expect(screen.queryByRole("button")).not.toBeInTheDocument();
   });
 });
