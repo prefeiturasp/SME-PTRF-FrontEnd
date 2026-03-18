@@ -42,7 +42,7 @@ export const Filtros = () => {
         <>
             <form onSubmit={handleSubmitFormFilter} onKeyDown={onKeyDown} data-testid="form-filtros">
                 <Row gutter={16} className="mb-2">
-                    <Col span={11}>
+                    <Col span={9}>
                         <label htmlFor="nome">Filtrar por nome da atividade estatutária</label>
                         <input
                             data-qa="input-filtro-nome"
@@ -58,7 +58,7 @@ export const Filtros = () => {
                             style={{display: 'inline-block'}}
                         />
                     </Col>
-                    <Col span={7}>
+                    <Col span={5}>
                         <label htmlFor="tipo">Filtrar por tipo</label>
                         <select
                             value={formFilter.tipo}
@@ -75,7 +75,24 @@ export const Filtros = () => {
                             ))}
                         </select>
                     </Col>
-                    <Col span={6}>
+                    <Col span={5}>
+                        <label htmlFor="mes">Filtrar por ano</label>
+                        <select
+                            value={formFilter.ano}
+                            onChange={(e) => handleChangeFormFilter(e.target.name, e.target.value)}
+                            name="ano"
+                            id="ano"
+                            className="form-control"
+                        >
+                            <option value="">Selecione o ano</option>
+                            {atividadesEstatutariasTabelas?.ano?.map((item) => (
+                                <option key={item.key} value={item.key}>
+                                    {item.value}
+                                </option>
+                            ))}
+                        </select>
+                    </Col>
+                    <Col span={5}>
                         <label htmlFor="mes">Filtrar por mês</label>
                         <select
                             value={formFilter.mes}
