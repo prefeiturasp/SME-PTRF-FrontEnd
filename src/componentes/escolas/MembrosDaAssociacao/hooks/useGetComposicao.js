@@ -11,7 +11,7 @@ export const useGetComposicao = (composicao_uuid='') => {
         composicaoUuid = composicao_uuid
     }
 
-    const { status, isError, data, error } = useQuery({
+    const { isFetching, isError, data, error } = useQuery({
         queryKey: ['retrieve-composicao', composicaoUuid],
         queryFn: ()=> getComposicao(composicaoUuid),
         keepPreviousData: true,
@@ -19,7 +19,7 @@ export const useGetComposicao = (composicao_uuid='') => {
         refetchOnWindowFocus: true, // Caso saia da aba e voltar ele refaz a requisição
     });
 
-    return {isLoading: status === 'loading', isError, data, error}
+    return {isLoading: isFetching, isError, data, error}
 
 
 }

@@ -6,7 +6,7 @@ import { getUnidadesDisponiveisInclusao } from "../../../../services/GestaoDeUsu
 export const useUnidadesDisponiveisInclusao = (usuario) => {
     const { search, submitFiltro, currentPage } = useContext(GestaoDeUsuariosAdicionarUnidadeContext);
     
-    const { status, isError, data = {count: 0, results: []}, error, refetch, isFetching } = useQuery({
+    const { isError, data = {count: 0, results: []}, error, refetch, isFetching } = useQuery({
         queryKey: ['unidades-disponiveis-inclusao', currentPage],
         queryFn: () => getUnidadesDisponiveisInclusao(usuario.username, search, currentPage),
         keepPreviousData: true,
@@ -16,5 +16,5 @@ export const useUnidadesDisponiveisInclusao = (usuario) => {
     });
 
     const count = useMemo(() => data.count, [data]);
-    return {isLoading: status === 'loading', isError, isFetching, data, error, count};
+    return {isLoading: isFetching, isError, isFetching, data, error, count};
 }

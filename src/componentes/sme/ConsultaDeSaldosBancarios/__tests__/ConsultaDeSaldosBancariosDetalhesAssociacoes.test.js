@@ -17,6 +17,10 @@ jest.mock('react-router-dom', () => ({
   useParams: jest.fn(),
 }));
 
+jest.mock('../../../../paginas/PaginasContainer', () => ({
+  PaginasContainer: ({ children }) => <>{children}</>,
+}));
+
 jest.mock('../../../../services/sme/ConsultaDeSaldosBancarios.service', () => ({
   getPeriodos: jest.fn(),
   getTiposDeConta: jest.fn(),

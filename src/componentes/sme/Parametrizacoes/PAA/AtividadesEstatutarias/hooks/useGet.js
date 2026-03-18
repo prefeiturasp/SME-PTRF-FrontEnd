@@ -7,7 +7,7 @@ export const useGet = () => {
 
     const {filter, currentPage, rowsPerPage} = useContext(AtividadesEstatutariasContext)
 
-    const { status, isError, data = {count: 0, results: []}, error, refetch } = useQuery({
+    const { isFetching, isError, data = {count: 0, results: []}, error, refetch } = useQuery({
         queryKey: ['atividades-estatutarias', filter, currentPage, rowsPerPage],
         queryFn: ()=> getAtividadesEstatutarias({...filter, pagination: 'false'}),
         keepPreviousData: true,
@@ -18,6 +18,6 @@ export const useGet = () => {
     const count = useMemo(() => data.count, [data]);
     const total = useMemo(() => data.results.length, [data]);
 
-    return {isLoading: status === 'loading', isError, data, error, refetch, count, total}
+    return {isLoading: isFetching, isError, data, error, refetch, count, total}
 
 }

@@ -13,9 +13,28 @@ import { usePatchTipoReceita } from "../hooks/usePatchTipoReceita";
 import { useDeleteTipoReceita } from "../hooks/useDeleteTipoReceita";
 import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../../RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
 import { useGetTipoReceita } from "../hooks/useGetTipoReceita";
+import { useGetUnidadesVinculadas } from "../components/UnidadesAssociadas/hooks/useGetUnidadesVinculadas";
+import { useGetUnidadesNaoVinculadas } from "../components/VincularUnidades/hooks/useGetUnidadesNaoVinculadas";
 
 jest.mock("../../../../../Globais/Modal/CustomModalConfirm", () => ({
   CustomModalConfirm: jest.fn(),
+}));
+
+jest.mock("../components/UnidadesAssociadas/hooks/useGetUnidadesVinculadas", () => ({
+  useGetUnidadesVinculadas: jest.fn(),
+}));
+
+jest.mock("../components/VincularUnidades/hooks/useGetUnidadesNaoVinculadas", () => ({
+  useGetUnidadesNaoVinculadas: jest.fn(),
+}));
+
+// Componentes filhos que fazem chamadas HTTP internas (getDres, useGetTiposUnidades)
+jest.mock("../components/VincularUnidades", () => ({
+  VincularUnidades: () => null,
+}));
+
+jest.mock("../components/UnidadesAssociadas/Lista", () => ({
+  UnidadesVinculadas: () => null,
 }));
 
 jest.mock("../hooks/useGetTipoReceita");
@@ -86,6 +105,13 @@ describe("TipoReceitaForm", () => {
     });
 
     useGetTipoReceita.mockReturnValue({ data: null, isLoading: false });
+
+    useGetUnidadesVinculadas.mockReturnValue({
+      isLoading: false, isError: false, data: { results: [], count: 0 }, error: null, refetch: jest.fn(),
+    });
+    useGetUnidadesNaoVinculadas.mockReturnValue({
+      isLoading: false, isError: false, data: { results: [], count: 0 }, error: null, refetch: jest.fn(),
+    });
 
     RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
     useLocation.mockReturnValue({

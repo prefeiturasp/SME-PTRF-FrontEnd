@@ -5,11 +5,11 @@ import {useQuery} from "@tanstack/react-query";
 
 export const useGetTabelas = () => {
 
-    const { status, isError, data, refetch } = useQuery({
+    const { isFetching, isError, data, refetch } = useQuery({
         queryKey: ['tabelas-especificacoes-materiais-servicos-list'],
         queryFn: ()=> getTabelasEspecificacoesMateriaisServicos(),
         keepPreviousData: true,
     });
 
-    return {isLoading: status === 'loading', isError, data, refetch}
+    return {isLoading: isFetching, isError, data, refetch}
 }

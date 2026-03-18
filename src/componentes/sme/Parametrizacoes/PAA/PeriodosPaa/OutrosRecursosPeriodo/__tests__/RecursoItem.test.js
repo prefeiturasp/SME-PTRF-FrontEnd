@@ -1,4 +1,4 @@
-import { render, screen, waitFor, fireEvent } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent, act } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { RecursoItem } from '../RecursoItem';
 import { useDispatch } from 'react-redux';
@@ -38,8 +38,19 @@ jest.mock('../../../../../../Globais/ToastCustom', () => ({
   }
 }));
 
+const findInJSX = (jsx, predicate) => {
+  if (!jsx || typeof jsx !== 'object' || !jsx.props) return null;
+  if (predicate(jsx)) return jsx;
+  const children = jsx.props.children;
+  if (!children) return null;
+  const list = Array.isArray(children) ? children.flat(Infinity) : [children];
+  for (const child of list) { const f = findInJSX(child, predicate); if (f) return f; }
+  return null;
+};
+
 describe('RecursoItem', () => {
   let queryClient;
+  let capturedModalChildren;
 
   const mockRecurso = {
     uuid: 'recurso-123',
@@ -60,6 +71,15 @@ describe('RecursoItem', () => {
   const periodoUuid = 'periodo-789';
 
   beforeEach(() => {
+    jest.clearAllMocks();
+    capturedModalChildren = null;
+    const mockDispatch = jest.fn().mockImplementation((action) => {
+      if (action?.type === 'OPEN_MODAL') {
+        capturedModalChildren = action?.payload?.children;
+      }
+    });
+    useDispatch.mockReturnValue(mockDispatch);
+
     queryClient = new QueryClient({
       defaultOptions: {
         queries: { retry: false },
@@ -84,12 +104,15 @@ describe('RecursoItem', () => {
       isPending: false
     });
 
-    usePostHook.usePostOutroRecursoPeriodo.mockReturnValue({
+    usePatchHook.usePatchDesativarOutroRecursoPeriodo.mockReturnValue({
       mutateAsync: jest.fn(),
       isPending: false
     });
 
-    jest.clearAllMocks();
+    usePostHook.usePostOutroRecursoPeriodo.mockReturnValue({
+      mutateAsync: jest.fn(),
+      isPending: false
+    });
   });
 
   const renderComponent = (props = {}) => {
@@ -259,7 +282,7 @@ describe('RecursoItem', () => {
       const mockMutateAsync = jest.fn().mockResolvedValue({});
       const mockRefetch = jest.fn();
 
-      usePatchHook.usePatchOutroRecursoPeriodo.mockReturnValue({
+      usePatchHook.usePatchDesativarOutroRecursoPeriodo.mockReturnValue({
         mutateAsync: mockMutateAsync,
         isPending: false
       });
@@ -279,10 +302,15 @@ describe('RecursoItem', () => {
       const switchElement = screen.getByRole('switch');
       fireEvent.click(switchElement);
 
+      await waitFor(() => expect(capturedModalChildren).not.toBeNull());
+      const confirmBtn = findInJSX(capturedModalChildren, (el) =>
+        el.type === 'button' && el.props?.children === 'Confirmar'
+      );
+      await act(async () => { confirmBtn.props.onClick(); });
+
       await waitFor(() => {
         expect(mockMutateAsync).toHaveBeenCalledWith({
-          uuid: mockOutroRecursoPeriodo.uuid,
-          payload: { ativo: false }
+          uuid: mockOutroRecursoPeriodo.uuid
         });
         expect(mockRefetch).toHaveBeenCalled();
       });
@@ -455,7 +483,7 @@ describe('RecursoItem', () => {
 
       const mockMutateAsync = jest.fn().mockRejectedValue(errorResponse);
 
-      usePatchHook.usePatchOutroRecursoPeriodo.mockReturnValue({
+      usePatchHook.usePatchDesativarOutroRecursoPeriodo.mockReturnValue({
         mutateAsync: mockMutateAsync,
         isPending: false
       });
@@ -470,6 +498,12 @@ describe('RecursoItem', () => {
 
       const switchElement = screen.getByRole('switch');
       fireEvent.click(switchElement);
+
+      await waitFor(() => expect(capturedModalChildren).not.toBeNull());
+      const confirmBtn = findInJSX(capturedModalChildren, (el) =>
+        el.type === 'button' && el.props?.children === 'Confirmar'
+      );
+      await act(async () => { confirmBtn.props.onClick(); });
 
       await waitFor(() => {
         expect(toastModule.toastCustom.ToastCustomError).toHaveBeenCalledWith(
@@ -490,7 +524,7 @@ describe('RecursoItem', () => {
 
       const mockMutateAsync = jest.fn().mockRejectedValue(errorResponse);
 
-      usePatchHook.usePatchOutroRecursoPeriodo.mockReturnValue({
+      usePatchHook.usePatchDesativarOutroRecursoPeriodo.mockReturnValue({
         mutateAsync: mockMutateAsync,
         isPending: false
       });
@@ -505,6 +539,12 @@ describe('RecursoItem', () => {
 
       const switchElement = screen.getByRole('switch');
       fireEvent.click(switchElement);
+
+      await waitFor(() => expect(capturedModalChildren).not.toBeNull());
+      const confirmBtn = findInJSX(capturedModalChildren, (el) =>
+        el.type === 'button' && el.props?.children === 'Confirmar'
+      );
+      await act(async () => { confirmBtn.props.onClick(); });
 
       await waitFor(() => {
         expect(toastModule.toastCustom.ToastCustomError).toHaveBeenCalledWith(
@@ -523,7 +563,7 @@ describe('RecursoItem', () => {
 
       const mockMutateAsync = jest.fn().mockRejectedValue(errorResponse);
 
-      usePatchHook.usePatchOutroRecursoPeriodo.mockReturnValue({
+      usePatchHook.usePatchDesativarOutroRecursoPeriodo.mockReturnValue({
         mutateAsync: mockMutateAsync,
         isPending: false
       });
@@ -539,10 +579,16 @@ describe('RecursoItem', () => {
       const switchElement = screen.getByRole('switch');
       fireEvent.click(switchElement);
 
+      await waitFor(() => expect(capturedModalChildren).not.toBeNull());
+      const confirmBtn = findInJSX(capturedModalChildren, (el) =>
+        el.type === 'button' && el.props?.children === 'Confirmar'
+      );
+      await act(async () => { confirmBtn.props.onClick(); });
+
       await waitFor(() => {
         expect(toastModule.toastCustom.ToastCustomError).toHaveBeenCalledWith(
           'Erro ao desativar recurso',
-          'Falha ao atualizar recurso'
+          'Falha ao desativar recurso'
         );
       });
     });

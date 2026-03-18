@@ -1,10 +1,16 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { ResumoPorDre } from '../ResumoPorDre';
 
 jest.mock('../../../../utils/FormataNomeDreParaTabelas', () => ({
     formataNomeDreParaTabelas: (nome) => nome.replace('DRE ', '')
+}));
+
+const mockNavigate = jest.fn();
+jest.mock('react-router-dom', () => ({
+    ...jest.requireActual('react-router-dom'),
+    useNavigate: jest.fn(),
 }));
 
 const resumoMock = [
@@ -24,6 +30,12 @@ const resumoMock = [
     }
 ];
 describe('ResumoPorDre', () => {
+
+    beforeEach(() => {
+        jest.clearAllMocks();
+        const { useNavigate } = require('react-router-dom');
+        useNavigate.mockReturnValue(mockNavigate);
+    });
 
     const renderComponent = (cor_idx = 1) => {
         return render(
@@ -75,7 +87,12 @@ describe('ResumoPorDre', () => {
     it('renderiza corretamente o link de ação com o UUID e período', () => {
         renderComponent(1);
 
-        const link = screen.getByRole('link');
-        expect(link).toHaveAttribute('href', '/acompanhamento-pcs-sme/1234/2024-2');
+        const btn = screen.getByRole('button', { name: /visualizar/i });
+        fireEvent.click(btn);
+
+        expect(mockNavigate).toHaveBeenCalledWith(
+            '/acompanhamento-pcs-sme/1234/2024-2',
+            expect.objectContaining({ state: { nome_dre: 'DRE Teste' } })
+        );
     });
 });

@@ -261,6 +261,8 @@ describe("DetalheDasPrestacoes - alteração de período e conta", () => {
             const contaSelect = screen.getByLabelText("Conta:");
 
             await waitFor(() => expect(periodoSelect.value).toBe("periodo-1"));
+            // Aguarda carregaContas terminar (pré-seleciona conta-1 do storage) antes de limpar o spy
+            await waitFor(() => expect(contaSelect.value).toBe("conta-1"));
 
             conciliacaoStorageService.setPeriodoConta.mockClear();
 

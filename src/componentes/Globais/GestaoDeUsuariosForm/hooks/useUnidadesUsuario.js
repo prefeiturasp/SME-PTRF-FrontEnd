@@ -4,7 +4,7 @@ import { getUnidadesUsuario } from "../../../../services/GestaoDeUsuarios.servic
 
 export const useUnidadesUsuario = (usuario, visao_base, uuid_unidade) => {
 
-    const { status, isError, data = [], error, refetch } = useQuery({
+    const { isFetching, isError, data = [], error, refetch } = useQuery({
         queryKey: ['unidades-usuario-list'],
         queryFn: () => getUnidadesUsuario(usuario.username, visao_base, uuid_unidade),
         keepPreviousData: true,
@@ -13,5 +13,5 @@ export const useUnidadesUsuario = (usuario, visao_base, uuid_unidade) => {
     });
     
     const count = useMemo(() => data.length, [data]);
-    return {isLoading: status === 'loading', isError, data, error, count, refetch};
+    return {isLoading: isFetching, isError, data, error, count, refetch};
 }

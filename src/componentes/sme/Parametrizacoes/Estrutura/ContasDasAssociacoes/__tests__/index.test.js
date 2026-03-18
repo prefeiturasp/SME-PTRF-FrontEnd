@@ -28,7 +28,11 @@ jest.mock("../../../../../../services/sme/Parametrizacoes.service", ()=>({
 
 jest.mock("../../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes", () => ({
     RetornaSeTemPermissaoEdicaoPainelParametrizacoes: jest.fn(),
-  }));
+}));
+
+jest.mock('../../../../../../context/RecursoSelecionado', () => ({
+    useRecursoSelecionadoContext: () => ({ recursoSelecionado: null }),
+}));
 
 describe("Carrega página de Contas de Associações", () => {
     beforeEach(() => {

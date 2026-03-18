@@ -6,6 +6,10 @@ import { getTextosPaaUe, patchTextosPaaUe } from '../../../../../../services/esc
 import { toastCustom } from '../../../../../Globais/ToastCustom';
 import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
 
+jest.mock('../../../../../../context/RecursoSelecionado', () => ({
+    useRecursoSelecionadoContext: () => ({ recursoSelecionado: null }),
+}));
+
 jest.mock('tinymce/tinymce', () => ({}));
 jest.mock('tinymce/themes/silver', () => ({}));
 jest.mock('tinymce/icons/default', () => ({}));

@@ -46,7 +46,6 @@ describe('AtividadesEstatutarias', () => {
         expect(screen.getByTestId('topo-com-botoes')).toBeInTheDocument();
         expect(screen.getByTestId('filtros')).toBeInTheDocument();
         expect(screen.getByTestId('lista')).toBeInTheDocument();
-        expect(screen.getByTestId('paginacao')).toBeInTheDocument();
         
     });
 

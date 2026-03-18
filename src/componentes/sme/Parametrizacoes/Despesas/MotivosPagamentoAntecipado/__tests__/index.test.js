@@ -27,6 +27,10 @@ jest.mock("../../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametr
     RetornaSeTemPermissaoEdicaoPainelParametrizacoes: jest.fn(),
 }));
 
+jest.mock('../../../../../../context/RecursoSelecionado', () => ({
+    useRecursoSelecionadoContext: () => ({ recursoSelecionado: null }),
+}));
+
 jest.mock("../../../../../Globais/ToastCustom", () => ({
     toastCustom: {
       ToastCustomSuccess: jest.fn(),

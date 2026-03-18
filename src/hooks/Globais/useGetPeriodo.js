@@ -4,7 +4,7 @@ import { getTodosPeriodos } from "../../services/sme/Parametrizacoes.service";
 
 export const useGetPeriodos = (filters) => {
   const {
-    status,
+    isFetching,
     isError,
     data = [],
     error,
@@ -17,5 +17,5 @@ export const useGetPeriodos = (filters) => {
     refetchOnWindowFocus: true, // Caso saia da aba e voltar ele refaz a requisição
   });
   const count = useMemo(() => data.length, [data]);
-  return { isLoading: status === "loading", isError, data, error, refetch, count };
+  return { isLoading: isFetching, isError, data, error, refetch, count };
 };

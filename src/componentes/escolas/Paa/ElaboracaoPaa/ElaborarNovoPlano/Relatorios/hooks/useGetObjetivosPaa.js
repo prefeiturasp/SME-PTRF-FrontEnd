@@ -3,7 +3,6 @@ import { getObjetivosPaa } from "../../../../../../../services/escolas/Paa.servi
 
 export const useGetObjetivosPaa = () => {
   const {
-    status,
     isFetching,
     isError,
     data = [],
@@ -19,7 +18,7 @@ export const useGetObjetivosPaa = () => {
   });
 
   return {
-    isLoading: status === "loading",
+    isLoading: isFetching,
     isFetching,
     isError,
     data,

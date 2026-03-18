@@ -12,6 +12,10 @@ import {
 import {mockAcoes} from "../__fixtures__/mockData";
 import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
 
+jest.mock("../../../../../../paginas/PaginasContainer", () => ({
+    PaginasContainer: ({ children }) => <>{children}</>,
+}));
+
 jest.mock("../../../../../../services/sme/Parametrizacoes.service", ()=>({
     getListaDeAcoes: jest.fn(),
     getAcoesFiltradas: jest.fn(),
@@ -179,7 +183,7 @@ describe('Teste handleSubmitModalForm', () => {
             const linhas = tabela.querySelectorAll('tbody tr');
             const linha = linhas[0];
             const coluna = linha.querySelectorAll('td');
-            const btnAlterar = coluna[6].querySelector('button');
+            const btnAlterar = coluna[7].querySelector('button');
             expect(btnAlterar).toBeInTheDocument();
             fireEvent.click(btnAlterar);
         });
@@ -213,7 +217,7 @@ describe('Teste handleSubmitModalForm', () => {
             const linhas = tabela.querySelectorAll('tbody tr');
             const linha = linhas[0];
             const coluna = linha.querySelectorAll('td');
-            const btnAlterar = coluna[6].querySelector('button');
+            const btnAlterar = coluna[7].querySelector('button');
             expect(btnAlterar).toBeInTheDocument();
             fireEvent.click(btnAlterar);
         });
@@ -245,7 +249,7 @@ describe('Teste handleSubmitModalForm', () => {
             const linhas = tabela.querySelectorAll('tbody tr');
             const linha = linhas[0];
             const coluna = linha.querySelectorAll('td');
-            const btnAlterar = coluna[6].querySelector('button');
+            const btnAlterar = coluna[7].querySelector('button');
             expect(btnAlterar).toBeInTheDocument();
             fireEvent.click(btnAlterar);
         });
@@ -275,7 +279,7 @@ describe('Teste handleSubmitModalForm', () => {
             const linhas = tabela.querySelectorAll('tbody tr');
             const linha = linhas[0];
             const coluna = linha.querySelectorAll('td');
-            const btnAlterar = coluna[6].querySelector('button');
+            const btnAlterar = coluna[7].querySelector('button');
             expect(btnAlterar).toBeInTheDocument();
             fireEvent.click(btnAlterar);
         });
@@ -309,7 +313,7 @@ describe('Teste handleSubmitModalForm', () => {
             const linhas = tabela.querySelectorAll('tbody tr');
             const linha = linhas[0];
             const coluna = linha.querySelectorAll('td');
-            const btnAlterar = coluna[6].querySelector('button');
+            const btnAlterar = coluna[7].querySelector('button');
             expect(btnAlterar).toBeInTheDocument();
             fireEvent.click(btnAlterar);
         });
@@ -347,7 +351,7 @@ describe('Teste handleSubmitModalForm', () => {
             const linhas = tabela.querySelectorAll('tbody tr');
             const linha = linhas[0];
             const coluna = linha.querySelectorAll('td');
-            const btnAlterar = coluna[6].querySelector('button');
+            const btnAlterar = coluna[7].querySelector('button');
             expect(btnAlterar).toBeInTheDocument();
             fireEvent.click(btnAlterar);
         });

@@ -63,8 +63,8 @@ describe("Tabela Component", () => {
         expect(rows).toHaveLength(20);
         const row = rows[0]
         const cells = row.querySelectorAll("td");
-        expect(cells).toHaveLength(7); // todas as colunas da tabela
-        const actionsCell = cells[6]
+        expect(cells).toHaveLength(8); // todas as colunas da tabela
+        const actionsCell = cells[7]
         expect(actionsCell).not.toBeEmptyDOMElement(); // Ações não está vazia
         const botaoEditar = actionsCell.querySelector("button");
         expect(botaoEditar).toBeInTheDocument();

@@ -9,6 +9,10 @@ import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../../../Pa
 import * as service from "../../../../../../services/sme/Parametrizacoes.service";
 import { mockData } from '../__fixtures__/mockData';
 
+jest.mock("../../../../../../paginas/PaginasContainer", () => ({
+    PaginasContainer: ({ children }) => <>{children}</>,
+}));
+
 jest.mock("../../../../../../services/sme/Parametrizacoes.service", ()=>({
     getTodosTiposDeDocumento: jest.fn(),
     postCreateTipoDeDocumento: jest.fn(),

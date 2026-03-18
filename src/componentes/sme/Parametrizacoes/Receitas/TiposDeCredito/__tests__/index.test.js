@@ -12,6 +12,10 @@ jest.mock('react-router-dom', () => ({
     useNavigate: jest.fn()
 }));
 
+jest.mock("../../../../../../paginas/PaginasContainer", () => ({
+    PaginasContainer: ({ children }) => <>{children}</>,
+}));
+
 jest.mock("../../../../../../services/sme/Parametrizacoes.service", ()=>({
     getTiposDeCredito: jest.fn(),
     getFiltrosTiposDeCredito: jest.fn()

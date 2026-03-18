@@ -8,7 +8,7 @@ export const useGetUnidadesNaoVinculadas = (
   dre = "",
   tipo_unidade = "",
 ) => {
-  const { status, isFetching, isError, data, error, refetch } = useQuery({
+  const { isFetching, isError, data, error, refetch } = useQuery({
     queryKey: ["unidades-nao-vinculadas-tipo-custeio", uuid],
     queryFn: () =>
       getUnidadesNaoVinculadasTipoCusteio(
@@ -25,7 +25,5 @@ export const useGetUnidadesNaoVinculadas = (
     enabled: uuid !== null && uuid !== undefined,
   });
 
-  const isLoadingOrFetching = status === "loading" || isFetching;
-
-  return { isLoading: isLoadingOrFetching, isError, data, error, refetch };
+  return { isLoading: isFetching, isError, data, error, refetch };
 };

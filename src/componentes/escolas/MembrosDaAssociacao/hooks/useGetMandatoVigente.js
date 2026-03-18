@@ -7,7 +7,7 @@ export const useGetMandatoVigente = () => {
 
     const associacao_uuid = visoesService.getItemUsuarioLogado('associacao_selecionada.uuid')
 
-    const { status, isError, data = {uuid: null, composicoes: [] }, error } = useQuery({
+    const { isFetching, isError, data = {uuid: null, composicoes: [] }, error } = useQuery({
         queryKey: ['mandato-vigente', associacao_uuid],
         queryFn: ()=> getMandatoVigente(associacao_uuid),
         keepPreviousData: true,
@@ -18,6 +18,6 @@ export const useGetMandatoVigente = () => {
 
     const count = useMemo(() => data.composicoes.length, [data]);
 
-    return {isLoading: status === 'loading', isError, data, error, count}
+    return {isLoading: isFetching, isError, data, error, count}
 
 }

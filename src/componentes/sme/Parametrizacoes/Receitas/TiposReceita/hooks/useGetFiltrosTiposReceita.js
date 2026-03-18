@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 
 export const useGetFiltrosTiposReceita = () => {
   const {
-    status,
+    isFetching,
     isError,
     data = {
       tipos_contas: [],
@@ -22,5 +22,5 @@ export const useGetFiltrosTiposReceita = () => {
     refetchOnWindowFocus: false, // Evita refazer a requisição ao trocar de aba
   });
 
-  return { isLoading: status === "loading", isError, data, error, refetch };
+  return { isLoading: isFetching, isError, data, error, refetch };
 };

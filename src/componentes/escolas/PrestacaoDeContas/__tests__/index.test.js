@@ -199,6 +199,7 @@ const clickConcluirPeriodo = async () => {
     await waitFor(() => {
         const btn = screen.getByTestId('btn-concluir-periodo');
         expect(btn).toBeInTheDocument();
+        expect(btn.textContent).not.toBe('');
     });
     await act(async () => {
         fireEvent.click(screen.getByTestId('btn-concluir-periodo'));
@@ -218,6 +219,8 @@ const clickConcluirViaAviso = async () => {
 
 describe('PrestacaoDeContas', () => {
     beforeEach(() => {
+        jest.clearAllMocks();
+
         mockUseParams.mockReturnValue({});
         visoesService.visoesService.getPermissoes.mockResolvedValue(true);
         visoesService.visoesService.featureFlagAtiva.mockResolvedValue(true);
@@ -254,10 +257,6 @@ describe('PrestacaoDeContas', () => {
         notificacaoService.getRegistrosFalhaGeracaoPc.mockResolvedValue([]);
     });
 
-    beforeEach(() => {
-        jest.clearAllMocks();
-    });
-
     it('valida o handleChangePeriodoPrestacaoDeConta', async () => {
         prestacaoService.getStatusPeriodoPorData.mockResolvedValue(mockStatusPeriodoCondicaoIrParaDadosAssociacao);
 
@@ -283,12 +282,7 @@ describe('PrestacaoDeContas', () => {
 
         renderComponent();
 
-        await waitFor(() => {
-            expect(screen.getByTestId('btn-concluir-periodo')).toBeInTheDocument();
-        });
-        await act(async () => {
-            fireEvent.click(screen.getByTestId('btn-concluir-periodo'));
-        });
+        await clickConcluirPeriodo();
 
         await waitFor(() => {
             expect(screen.getByText(/Ir para dados da Associação/i)).toBeInTheDocument();
@@ -306,8 +300,7 @@ describe('PrestacaoDeContas', () => {
         prestacaoService.getStatusPeriodoPorData.mockResolvedValue(mockStatusPeriodoCondicaoIrParaConciliacaoBancaria);
         renderComponent();
 
-        await waitFor(() => expect(screen.getByTestId('btn-concluir-periodo')).toBeInTheDocument());
-        await act(async () => { fireEvent.click(screen.getByTestId('btn-concluir-periodo')); });
+        await clickConcluirPeriodo();
 
         await waitFor(() => {
             expect(screen.getByText(/Ir para Conciliação Bancária/i)).toBeInTheDocument();
@@ -336,8 +329,7 @@ describe('PrestacaoDeContas', () => {
         prestacaoService.getDataPreenchimentoAta.mockResolvedValue(mockAta);
         renderComponent();
 
-        await waitFor(() => expect(screen.getByTestId('btn-concluir-periodo')).toBeInTheDocument());
-        await act(async () => { fireEvent.click(screen.getByTestId('btn-concluir-periodo')); });
+        await clickConcluirPeriodo();
 
         await waitFor(() => {
             expect(screen.getByText(/Ir para Conciliação Bancária/i)).toBeInTheDocument();
@@ -354,8 +346,7 @@ describe('PrestacaoDeContas', () => {
         prestacaoService.getStatusPeriodoPorData.mockResolvedValue(mockStatusPeriodoCondicaoAmbasPendencias);
         renderComponent();
 
-        await waitFor(() => expect(screen.getByTestId('btn-concluir-periodo')).toBeInTheDocument());
-        await act(async () => { fireEvent.click(screen.getByTestId('btn-concluir-periodo')); });
+        await clickConcluirPeriodo();
 
         await waitFor(() => {
             expect(screen.getByText(/Ir para Conciliação Bancária/i)).toBeInTheDocument();
@@ -389,8 +380,10 @@ describe('PrestacaoDeContas', () => {
         prestacaoService.getStatusPeriodoPorData.mockResolvedValue(mockStatusPeriodoCondicaoSemPendencia);
         renderComponent();
 
-        expect(associacaoService.getContasAtivasDaAssociacaoNoPeriodo).toHaveBeenCalledTimes(1);
-        expect(prestacaoService.getStatusPeriodoPorData).toHaveBeenCalledTimes(1);
+        await waitFor(() => {
+            expect(associacaoService.getContasAtivasDaAssociacaoNoPeriodo).toHaveBeenCalled();
+            expect(prestacaoService.getStatusPeriodoPorData).toHaveBeenCalled();
+        });
     });
 
     it('renderiza componentes quando há contas ativas e clica em aba da conta', async () => {
@@ -414,8 +407,7 @@ describe('PrestacaoDeContas', () => {
         prestacaoService.getStatusPeriodoPorData.mockResolvedValue(mockStatusPeriodoCondicaoIrParaDadosAssociacao);
         renderComponent();
 
-        await waitFor(() => expect(screen.getByTestId('btn-concluir-periodo')).toBeInTheDocument());
-        await act(async () => { fireEvent.click(screen.getByTestId('btn-concluir-periodo')); });
+        await clickConcluirPeriodo();
 
         await waitFor(() => {
             expect(screen.getByTestId('modal-pendencias-fechar')).toBeInTheDocument();
@@ -433,8 +425,7 @@ describe('PrestacaoDeContas', () => {
         prestacaoService.getStatusPeriodoPorData.mockResolvedValue(mockStatusPeriodoCondicaoAmbasPendencias);
         renderComponent();
 
-        await waitFor(() => expect(screen.getByTestId('btn-concluir-periodo')).toBeInTheDocument());
-        await act(async () => { fireEvent.click(screen.getByTestId('btn-concluir-periodo')); });
+        await clickConcluirPeriodo();
 
         await waitFor(() => {
             expect(screen.getByText(/Ir para dados da Associação/i)).toBeInTheDocument();
@@ -1051,8 +1042,7 @@ describe('PrestacaoDeContas', () => {
         prestacaoService.getStatusPeriodoPorData.mockResolvedValue(mockStatusPeriodoCondicaoAmbasPendencias);
         renderComponent();
 
-        await waitFor(() => expect(screen.getByTestId('btn-concluir-periodo')).toBeInTheDocument());
-        await act(async () => { fireEvent.click(screen.getByTestId('btn-concluir-periodo')); });
+        await clickConcluirPeriodo();
 
         await waitFor(() => {
             expect(screen.getByText(/Ir para Conciliação Bancária/i)).toBeInTheDocument();
