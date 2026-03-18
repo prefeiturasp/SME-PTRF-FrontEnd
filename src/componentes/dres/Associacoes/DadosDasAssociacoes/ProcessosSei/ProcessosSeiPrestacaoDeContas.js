@@ -27,11 +27,9 @@ import {visoesService} from "../../../../../services/visoes.service";
 import {ModalConfirm} from "../../../../Globais/Modal/ModalConfirm";
 import {toastCustom} from "../../../../Globais/ToastCustom";
 import { EditIconButton } from "../../../../Globais/UI/Button";
-import { useRecursoSelecionadoContext } from "../../../../../context/RecursoSelecionado";
 
 export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao, recurso_uuid, recurso_nome}) => {
     const dispatch = useDispatch();
-    const { recursos } = useRecursoSelecionadoContext();
 
     const rowsPerPage = 7;
 
@@ -59,6 +57,8 @@ export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao, recurso_uuid, 
     const associacaoUuid = dadosDaAssociacao.dados_da_associacao.uuid;
 
     const [loadingPeriodos, setLoadingPeriodos] = useState(false);
+
+    const { recursos_da_associacao } = dadosDaAssociacao.dados_da_associacao;
 
     const carregaProcessos = async () => {
         let processos = await getProcessosAssociacao(associacaoUuid, recurso_uuid);
@@ -320,7 +320,7 @@ export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao, recurso_uuid, 
                                 <label><strong>Processos SEI de prestação de contas</strong></label>
                             </div>
 
-                            { recursos.length > 1 && visoesService.featureFlagAtiva('premio-excelencia-processo-sei') && (
+                            { recursos_da_associacao.length > 1 && visoesService.featureFlagAtiva('premio-excelencia-processo-sei') && (
                                 <>
                                     <div className="col-12 mb-2">
                                         <hr className="my-2" />
@@ -388,7 +388,7 @@ export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao, recurso_uuid, 
                                 setCustomNumeroProcessoError={setCustomNumeroProcessoError}
                                 loadingPeriodos={loadingPeriodos}
                                 recursoNome={recurso_nome}
-                                showRecursoField={recursos && recursos.length > 1 && visoesService.featureFlagAtiva('premio-excelencia-processo-sei') }
+                                showRecursoField={recursos_da_associacao && recursos_da_associacao.length > 1 && visoesService.featureFlagAtiva('premio-excelencia-processo-sei') }
                             />
                         </section>
 

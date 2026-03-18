@@ -17,7 +17,6 @@ jest.mock('primereact/datatable', () => ({
 jest.mock('../../../../../../services/dres/Associacoes.service');
 jest.mock('../../../../../../services/dres/ProcessosAssociacao.service');
 jest.mock('../../../../../../services/visoes.service');
-jest.mock('../../../../../../hooks/Globais/useRecursoSelecionado');
 
 /* eslint-disable-next-line import/first */
 import { ProcessosSeiPrestacaoDeContas } from '../ProcessosSeiPrestacaoDeContas';
@@ -29,10 +28,20 @@ const mockStore = {
   replaceReducer: jest.fn(),
 };
 
+const globalProps = {
+  dadosDaAssociacao: { 
+    dados_da_associacao: { 
+      uuid: 'a1',
+      recursos_da_associacao: [{ uuid: 'r1', nome: 'Recurso 1' }]
+    } 
+  },
+  recurso_uuid: 'r1',
+  recurso_nome: 'Recurso 1',
+};
+
 const setupMocks = () => {
   const { getProcessosAssociacao } = require('../../../../../../services/dres/Associacoes.service');
   const { visoesService } = require('../../../../../../services/visoes.service');
-  const useRecursoSelecionado = require('../../../../../../hooks/Globais/useRecursoSelecionado').default;
 
   getProcessosAssociacao.mockResolvedValue([
     {
@@ -49,10 +58,6 @@ const setupMocks = () => {
     visoesService.featureFlagAtiva = jest.fn().mockReturnValue(false);
     visoesService.getPermissoes = jest.fn().mockReturnValue(true);
   }
-
-  useRecursoSelecionado.mockReturnValue({
-    recursos: [{ uuid: 'r1', nome: 'Recurso 1' }],
-  });
 };
 
 describe('ProcessosSeiPrestacaoDeContas Testes', () => {
@@ -62,15 +67,9 @@ describe('ProcessosSeiPrestacaoDeContas Testes', () => {
   });
 
   test('1. Renderiza sem erros', () => {
-    const props = {
-      dadosDaAssociacao: { dados_da_associacao: { uuid: 'a1' } },
-      recurso_uuid: 'r1',
-      recurso_nome: 'Recurso 1',
-    };
-
     const { container } = render(
       <Provider store={mockStore}>
-        <ProcessosSeiPrestacaoDeContas {...props} />
+        <ProcessosSeiPrestacaoDeContas {...globalProps} />
       </Provider>
     );
 
@@ -78,15 +77,9 @@ describe('ProcessosSeiPrestacaoDeContas Testes', () => {
   });
 
   test('2. Exibe o título', async () => {
-    const props = {
-      dadosDaAssociacao: { dados_da_associacao: { uuid: 'a1' } },
-      recurso_uuid: 'r1',
-      recurso_nome: 'Recurso 1',
-    };
-
     render(
       <Provider store={mockStore}>
-        <ProcessosSeiPrestacaoDeContas {...props} />
+        <ProcessosSeiPrestacaoDeContas {...globalProps} />
       </Provider>
     );
 
@@ -95,15 +88,9 @@ describe('ProcessosSeiPrestacaoDeContas Testes', () => {
   });
 
   test('3. Renderiza a tabela', async () => {
-    const props = {
-      dadosDaAssociacao: { dados_da_associacao: { uuid: 'a1' } },
-      recurso_uuid: 'r1',
-      recurso_nome: 'Recurso 1',
-    };
-
     render(
       <Provider store={mockStore}>
-        <ProcessosSeiPrestacaoDeContas {...props} />
+        <ProcessosSeiPrestacaoDeContas {...globalProps} />
       </Provider>
     );
 
@@ -112,15 +99,9 @@ describe('ProcessosSeiPrestacaoDeContas Testes', () => {
   });
 
   test('4. Renderiza o formulário', () => {
-    const props = {
-      dadosDaAssociacao: { dados_da_associacao: { uuid: 'a1' } },
-      recurso_uuid: 'r1',
-      recurso_nome: 'Recurso 1',
-    };
-
     render(
       <Provider store={mockStore}>
-        <ProcessosSeiPrestacaoDeContas {...props} />
+        <ProcessosSeiPrestacaoDeContas {...globalProps} />
       </Provider>
     );
 
@@ -130,15 +111,10 @@ describe('ProcessosSeiPrestacaoDeContas Testes', () => {
 
   test('5. Chama serviço ao montar', async () => {
     const { getProcessosAssociacao } = require('../../../../../../services/dres/Associacoes.service');
-    const props = {
-      dadosDaAssociacao: { dados_da_associacao: { uuid: 'a1' } },
-      recurso_uuid: 'r1',
-      recurso_nome: 'Recurso 1',
-    };
 
     render(
       <Provider store={mockStore}>
-        <ProcessosSeiPrestacaoDeContas {...props} />
+        <ProcessosSeiPrestacaoDeContas {...globalProps} />
       </Provider>
     );
 
@@ -148,15 +124,14 @@ describe('ProcessosSeiPrestacaoDeContas Testes', () => {
   });
 
   test('6. Não renderiza sem UUID', () => {
-    const props = {
+    const customProps = {
+      ...globalProps,
       dadosDaAssociacao: { dados_da_associacao: { uuid: undefined } },
-      recurso_uuid: 'r1',
-      recurso_nome: 'Recurso 1',
     };
 
     render(
       <Provider store={mockStore}>
-        <ProcessosSeiPrestacaoDeContas {...props} />
+        <ProcessosSeiPrestacaoDeContas {...customProps} />
       </Provider>
     );
 
@@ -165,15 +140,21 @@ describe('ProcessosSeiPrestacaoDeContas Testes', () => {
   });
 
   test('7. Funciona com props válidas', () => {
-    const props = {
-      dadosDaAssociacao: { dados_da_associacao: { uuid: 'associacao-123' } },
+    const customProps = {
+      ...globalProps,
+      dadosDaAssociacao: {
+        dados_da_associacao: {
+          uuid: 'associacao-123',
+          recursos_da_associacao: [{ uuid: 'recurso-1', nome: 'Recurso Teste' }],
+        },
+      },
       recurso_uuid: 'recurso-1',
       recurso_nome: 'Recurso Teste',
     };
 
     const { container } = render(
       <Provider store={mockStore}>
-        <ProcessosSeiPrestacaoDeContas {...props} />
+        <ProcessosSeiPrestacaoDeContas {...customProps} />
       </Provider>
     );
 
@@ -182,16 +163,6 @@ describe('ProcessosSeiPrestacaoDeContas Testes', () => {
 
   test('8. Exibe sub-aba de recurso quando usuário tem múltiplos recursos', async () => {
     const { visoesService } = require('../../../../../../services/visoes.service');
-    const useRecursoSelecionado = require('../../../../../../hooks/Globais/useRecursoSelecionado').default;
-
-    // Mock com múltiplos recursos e feature flag ativa
-    useRecursoSelecionado.mockReturnValue({
-      recursos: [
-        { uuid: 'r1', nome: 'Recurso 1' },
-        { uuid: 'r2', nome: 'Recurso 2' },
-        { uuid: 'r3', nome: 'Recurso 3' },
-      ],
-    });
 
     visoesService.featureFlagAtiva = jest.fn((flag) => {
       if (flag === 'premio-excelencia-processo-sei') {
@@ -200,81 +171,78 @@ describe('ProcessosSeiPrestacaoDeContas Testes', () => {
       return false;
     });
 
-    const props = {
-      dadosDaAssociacao: { dados_da_associacao: { uuid: 'a1' } },
-      recurso_uuid: 'r1',
+    const customProps = {
+      ...globalProps,
+      dadosDaAssociacao: {
+        dados_da_associacao: {
+          uuid: 'a1',
+          recursos_da_associacao: [
+            { uuid: 'r1', nome: 'Recurso 1' },
+            { uuid: 'r2', nome: 'Recurso 2' },
+            { uuid: 'r3', nome: 'Recurso 3' },
+          ],
+        },
+      },
       recurso_nome: 'Prêmio Excelência',
     };
 
     render(
       <Provider store={mockStore}>
-        <ProcessosSeiPrestacaoDeContas {...props} />
+        <ProcessosSeiPrestacaoDeContas {...customProps} />
       </Provider>
     );
 
-    // Valida que o nome do recurso é exibido
     const recursoLabel = await screen.findByText('Prêmio Excelência');
     expect(recursoLabel).toBeInTheDocument();
 
-    // Valida que a feature flag foi verificada
     expect(visoesService.featureFlagAtiva).toHaveBeenCalledWith('premio-excelencia-processo-sei');
   });
 
   test('9. Não exibe sub-aba de recurso quando feature flag está inativa', async () => {
     const { visoesService } = require('../../../../../../services/visoes.service');
-    const useRecursoSelecionado = require('../../../../../../hooks/Globais/useRecursoSelecionado').default;
-
-    // Mock com múltiplos recursos mas feature flag inativa
-    useRecursoSelecionado.mockReturnValue({
-      recursos: [
-        { uuid: 'r1', nome: 'Recurso 1' },
-        { uuid: 'r2', nome: 'Recurso 2' },
-      ],
-    });
 
     visoesService.featureFlagAtiva = jest.fn().mockReturnValue(false);
 
-    const props = {
-      dadosDaAssociacao: { dados_da_associacao: { uuid: 'a1' } },
-      recurso_uuid: 'r1',
+    const customProps = {
+      ...globalProps,
+      dadosDaAssociacao: {
+        dados_da_associacao: {
+          uuid: 'a1',
+          recursos_da_associacao: [
+            { uuid: 'r1', nome: 'Recurso 1' },
+            { uuid: 'r2', nome: 'Recurso 2' },
+          ],
+        },
+      },
       recurso_nome: 'Prêmio Excelência',
     };
 
     render(
       <Provider store={mockStore}>
-        <ProcessosSeiPrestacaoDeContas {...props} />
+        <ProcessosSeiPrestacaoDeContas {...customProps} />
       </Provider>
     );
 
-    // Com feature flag inativa, o label do recurso não deve ser exibido
     const recursoLabel = screen.queryByText('Prêmio Excelência');
     expect(recursoLabel).not.toBeInTheDocument();
   });
 
   test('10. Não exibe sub-aba quando usuário tem apenas um recurso', async () => {
     const { visoesService } = require('../../../../../../services/visoes.service');
-    const useRecursoSelecionado = require('../../../../../../hooks/Globais/useRecursoSelecionado').default;
-
-    // Mock com um único recurso
-    useRecursoSelecionado.mockReturnValue({
-      recursos: [{ uuid: 'r1', nome: 'Recurso 1' }],
-    });
 
     visoesService.featureFlagAtiva = jest.fn().mockReturnValue(true);
 
-    const props = {
-      dadosDaAssociacao: { dados_da_associacao: { uuid: 'a1' } },
-      recurso_uuid: 'r1',
+    const customProps = {
+      ...globalProps,
       recurso_nome: 'Prêmio Excelência',
     };
 
     render(
       <Provider store={mockStore}>
-        <ProcessosSeiPrestacaoDeContas {...props} />
+        <ProcessosSeiPrestacaoDeContas {...customProps} />
       </Provider>
     );
 
-    // Com um único recurso, o label não deve ser exibido mesmo com feature flag ativa
     const recursoLabel = screen.queryByText('Prêmio Excelência');
     expect(recursoLabel).not.toBeInTheDocument();
   });
