@@ -2,7 +2,6 @@ import {
   USUARIO_NOME,
   ASSOCIACAO_NOME_ESCOLA,
   ASSOCIACAO_TIPO_ESCOLA,
-  RECURSO_SELECIONADO,
 } from "../../../services/auth.service";
 import { visoesService } from "../../../services/visoes.service";
 import IconeMenuPainel from "../../../assets/img/icone-menu-painel.svg";
@@ -23,7 +22,7 @@ import IconeMenuSuporteUnidades from "../../../assets/img/icone-menu-suporte-uni
 import IconeMenuExtracaoDados from "../../../assets/img/icone-dados-da-diretoria.svg";
 import IconePaa from "../../../assets/img/icone-paa.svg";
 import IconeMenuSituacaoPatrimonial from "../../../assets/img/icones-menu/icone-menu-situacao-patrimonial.svg";
-import { FEATURE_FLAGS } from "../../../constantes/featureFlags";
+import { FLAGS_KEY_CONTEXT } from "../../../context/Sidebar";
 
 const getDadosUsuario = () => {
   let usuario = localStorage.getItem(USUARIO_NOME);
@@ -346,23 +345,28 @@ const UrlsMenuSME = {
   ],
 };
 
-// TODO: REMOVER ESSA FUNÇÃO APÓS HABILITAR FLAG EM PRODUÇÃO
-// FLAG NECESSÁRIA PARA NÃO MOSTRAR MENU DE PRESTAÇÃO DE CONTAS PARA RECURSO DIFERENTE DE PTRF
-const ChecarSePodeMostrarPrestacaoContas = (menu) => {
-  const recursoSelecionado = JSON.parse(localStorage.getItem(RECURSO_SELECIONADO));
-  const flagAtiva = visoesService.featureFlagAtiva(FEATURE_FLAGS.PREMIO_EXCELENCIA_PRESTACAO_CONTAS);
+const ChecarSePodeMostrarItemMenuPorRecurso = (menu, listItensNavegacaoAtivadaViaFlag = undefined) => {
+  // TODO: REMOVER ESSAS FLAGS APÓS HABILITAR FLAG EM PRODUÇÃO
+  const existeFlagPrestacaoContas = listItensNavegacaoAtivadaViaFlag && listItensNavegacaoAtivadaViaFlag.hasOwnProperty(FLAGS_KEY_CONTEXT.PRESTACAO_DE_CONTAS);
+  const existeFlagAcompanhamentoPC = listItensNavegacaoAtivadaViaFlag && listItensNavegacaoAtivadaViaFlag.hasOwnProperty(FLAGS_KEY_CONTEXT.ACOMPANHAMENTO_DE_PC);
+
   return {
     ...menu,
     lista_de_urls: menu.lista_de_urls.filter((item) => {
       if (item.label === "Prestação de contas" || item.label === "Prestação de Contas") {
-        return recursoSelecionado?.legado === true || flagAtiva || recursoSelecionado === null;
+        return existeFlagPrestacaoContas ? listItensNavegacaoAtivadaViaFlag[FLAGS_KEY_CONTEXT.PRESTACAO_DE_CONTAS] : true;
       }
+
+      if (item.label === "Acompanhamento de PC" || item.label === "Acompanhamento de PC") {
+        return existeFlagAcompanhamentoPC ? listItensNavegacaoAtivadaViaFlag[FLAGS_KEY_CONTEXT.ACOMPANHAMENTO_DE_PC] : true;
+      }
+      
       return true;
     }),
   };
 };
 
-const GetUrls = () => {
+const GetUrls = (itensNavegacaoAtivadaViaFlag = null) => {
   let dados_usuario_logado = visoesService.getDadosDoUsuarioLogado();
 
   if (
@@ -371,42 +375,42 @@ const GetUrls = () => {
     dados_usuario_logado.visao_selecionada.nome &&
     dados_usuario_logado.visao_selecionada.nome === "SME"
   ) {
-    return ChecarSePodeMostrarPrestacaoContas(UrlsMenuSME);
+    return ChecarSePodeMostrarItemMenuPorRecurso(UrlsMenuSME, itensNavegacaoAtivadaViaFlag);
   } else if (
     dados_usuario_logado &&
     dados_usuario_logado.visao_selecionada &&
     dados_usuario_logado.visao_selecionada.nome &&
     dados_usuario_logado.visao_selecionada.nome === "DRE"
   ) {
-    return ChecarSePodeMostrarPrestacaoContas(UrlsMenuDres);
+    return ChecarSePodeMostrarItemMenuPorRecurso(UrlsMenuDres, itensNavegacaoAtivadaViaFlag);
   } else if (
     dados_usuario_logado &&
     dados_usuario_logado.visao_selecionada &&
     dados_usuario_logado.visao_selecionada.nome &&
     dados_usuario_logado.visao_selecionada.nome === "UE"
   ) {
-    return ChecarSePodeMostrarPrestacaoContas(UrlsMenuEscolas);
+    return ChecarSePodeMostrarItemMenuPorRecurso(UrlsMenuEscolas, itensNavegacaoAtivadaViaFlag);
   } else {
     if (
       dados_usuario_logado &&
       dados_usuario_logado.visoes &&
       dados_usuario_logado.visoes.find((visao) => visao.tipo === "SME")
     ) {
-      return ChecarSePodeMostrarPrestacaoContas(UrlsMenuSME);
+      return ChecarSePodeMostrarItemMenuPorRecurso(UrlsMenuSME, itensNavegacaoAtivadaViaFlag);
     } else if (
       dados_usuario_logado &&
       dados_usuario_logado.visoes &&
       dados_usuario_logado.visoes.find((visao) => visao.tipo === "DRE")
     ) {
-      return ChecarSePodeMostrarPrestacaoContas(UrlsMenuDres);
+      return ChecarSePodeMostrarItemMenuPorRecurso(UrlsMenuDres, itensNavegacaoAtivadaViaFlag);
     } else if (
       dados_usuario_logado &&
       dados_usuario_logado.visoes &&
       dados_usuario_logado.visoes.find((visao) => visao.tipo === "UE")
     ) {
-      return ChecarSePodeMostrarPrestacaoContas(UrlsMenuEscolas);
+      return ChecarSePodeMostrarItemMenuPorRecurso(UrlsMenuEscolas, itensNavegacaoAtivadaViaFlag);
     } else {
-      return ChecarSePodeMostrarPrestacaoContas(UrlsMenuEscolas);
+      return ChecarSePodeMostrarItemMenuPorRecurso(UrlsMenuEscolas, itensNavegacaoAtivadaViaFlag);
     }
   }
 };
