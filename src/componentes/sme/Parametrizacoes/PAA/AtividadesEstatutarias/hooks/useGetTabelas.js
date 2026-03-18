@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 
 export const useGetTabelas = () => {
 
-    const { status, isError, data = {}, error, refetch } = useQuery({
+    const { isFetching, isError, data = {}, error, refetch } = useQuery({
         queryKey: ['atividades-estatutarias-tabelas'],
         queryFn: ()=> getAtividadesEstatutariasTabelas(),
         keepPreviousData: true,
@@ -11,6 +11,6 @@ export const useGetTabelas = () => {
         refetchOnWindowFocus: false,
     });
 
-    return {isLoading: status === 'loading', isError, data, error, refetch}
+    return {isLoading: isFetching, isError, data, error, refetch}
 
 }

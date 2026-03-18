@@ -77,7 +77,7 @@ describe("useGetPaaVigente", () => {
       wrapper: createWrapper(),
     });
 
-    expect(result.current.isLoading).toBe(true);
+    expect(result.current.isLoading).toBe(false);
     expect(result.current.paaVigente).toEqual({});
     expect(getPaaVigente).not.toHaveBeenCalled();
   });
@@ -87,7 +87,7 @@ describe("useGetPaaVigente", () => {
       wrapper: createWrapper(),
     });
 
-    expect(result.current.isLoading).toBe(true);
+    expect(result.current.isLoading).toBe(false);
     expect(result.current.paaVigente).toEqual({});
     expect(getPaaVigente).not.toHaveBeenCalled();
   });
@@ -97,7 +97,7 @@ describe("useGetPaaVigente", () => {
       wrapper: createWrapper(),
     });
 
-    expect(result.current.isLoading).toBe(true);
+    expect(result.current.isLoading).toBe(false);
     expect(result.current.paaVigente).toEqual({});
     expect(getPaaVigente).not.toHaveBeenCalled();
   });

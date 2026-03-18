@@ -4,7 +4,7 @@ import {useMemo} from "react";
 import {getGruposDisponiveisAcessoUsuario} from '../../../../services/GestaoDeUsuarios.service';
 
 export const useGruposDisponiveisAcesso = (usuario, visao_base, uuid_unidade)  => {
-  const { status, isError, data = [], error, refetch } = useQuery({
+  const { isFetching, isError, data = [], error, refetch } = useQuery({
     queryKey: ['grupos-disponiveis-acesso-usuario'],
     queryFn: () => getGruposDisponiveisAcessoUsuario(usuario.username, visao_base, uuid_unidade),
     keepPreviousData: true,
@@ -13,5 +13,5 @@ export const useGruposDisponiveisAcesso = (usuario, visao_base, uuid_unidade)  =
   });
 
   const count = useMemo(() => data.length, [data]);
-  return {isLoading: status === 'loading', isError, data, error, count, refetch};
+  return {isLoading: isFetching, isError, data, error, count, refetch};
 };

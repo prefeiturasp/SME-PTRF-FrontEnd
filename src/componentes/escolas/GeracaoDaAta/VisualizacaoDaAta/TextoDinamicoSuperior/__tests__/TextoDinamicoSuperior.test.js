@@ -3,18 +3,13 @@ import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { TextoDinamicoSuperior } from '../index';
 
-// Mock do hook useRecursoSelecionado
-jest.mock('../../../../../../hooks/Globais/useRecursoSelecionado', () => ({
-  __esModule: true,
-  default: jest.fn()
-}));
-
-jest.mock('../../../../../../services/visoes.service', () => ({
-  visoesService: {}
+// Mock do contexto useRecursoSelecionadoContext
+jest.mock('../../../../../../context/RecursoSelecionado', () => ({
+  useRecursoSelecionadoContext: jest.fn(),
 }));
 
 describe('TextoDinamicoSuperior - Verificação de Nome do Recurso', () => {
-  const mockUseRecursoSelecionado = require('../../../../../../hooks/Globais/useRecursoSelecionado').default;
+  const mockUseRecursoSelecionadoContext = require('../../../../../../context/RecursoSelecionado').useRecursoSelecionadoContext;
 
   const dadosAtaMock = {
     tipo_ata: 'APRESENTACAO',
@@ -41,7 +36,7 @@ describe('TextoDinamicoSuperior - Verificação de Nome do Recurso', () => {
   };
 
   it('deve renderizar o nome do recurso selecionado no texto', () => {
-    mockUseRecursoSelecionado.mockReturnValue({
+    mockUseRecursoSelecionadoContext.mockReturnValue({
       recursoSelecionado: {
         nome_exibicao: 'PTRF'
       }
@@ -59,7 +54,7 @@ describe('TextoDinamicoSuperior - Verificação de Nome do Recurso', () => {
   });
 
   it('deve atualizar o nome do recurso quando o recurso é alterado', () => {
-    mockUseRecursoSelecionado.mockReturnValue({
+    mockUseRecursoSelecionadoContext.mockReturnValue({
       recursoSelecionado: {
         nome_exibicao: 'PTRF'
       }
@@ -76,7 +71,7 @@ describe('TextoDinamicoSuperior - Verificação de Nome do Recurso', () => {
     expect(screen.getByText(/PTRF/)).toBeInTheDocument();
 
     // Alterar o recurso
-    mockUseRecursoSelecionado.mockReturnValue({
+    mockUseRecursoSelecionadoContext.mockReturnValue({
       recursoSelecionado: {
         nome_exibicao: 'PEE'
       }

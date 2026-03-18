@@ -18,6 +18,7 @@ jest.mock("react-redux", () => ({
 describe('<DadosDaAssociacaoPage>', () => {
   test('Deve renderizar o componente', async () => {
     useSelector.mockReturnValue(true);
+    useLocation.mockReturnValue({ pathname: '/', state: null });
     render(
       <MemoryRouter>
         <DadosDaAssociacaoPage/>

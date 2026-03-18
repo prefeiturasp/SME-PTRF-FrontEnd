@@ -671,8 +671,6 @@ export const DetalheDasPrestacoes = () => {
 
             {parametros &&
               parametros.state &&
-              parametros.state &&
-              parametros.state &&
               parametros.state.origem === "ir_para_conciliacao_bancaria" && (
                 <div className="bd-highlight detalhe-das-prestacoes-texto-cabecalho">
                   <button

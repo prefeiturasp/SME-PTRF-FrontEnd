@@ -7,3 +7,8 @@ import '@testing-library/jest-dom';
 
 // Redefine o timeout para 60 segundos, evitar erros de timeout durante a execução de todos os testes
 jest.setTimeout(60000); // 60 segundos
+
+// montado em testes unitários — retorna valor padrão seguro para todos os testes.
+jest.mock('./context/RecursoSelecionado', () => ({
+    useRecursoSelecionadoContext: () => ({ recursoSelecionado: null }),
+}));

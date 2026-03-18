@@ -4,7 +4,7 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { UnidadesVinculadas } from "../UnidadesVinculadas";
 import { ModalConfirm } from "../../../Globais/Modal/ModalConfirm";
 import { useGetUnidadesVinculadas } from "../hooks/useGet";
-import { useDesvincularUnidade, useDesvincularUnidadeEmLote } from "../hooks/useVinculoUnidade";
+import { useDesvincularUnidade, useDesvincularUnidadeEmLote, useVincularTodasUnidades } from "../hooks/useVinculoUnidade";
 
 jest.mock("react-redux", () => ({
   useDispatch: () => jest.fn(),
@@ -17,6 +17,7 @@ jest.mock("../hooks/useGet", () => ({
 jest.mock("../hooks/useVinculoUnidade", () => ({
   useDesvincularUnidade: jest.fn(),
   useDesvincularUnidadeEmLote: jest.fn(),
+  useVincularTodasUnidades: jest.fn(),
 }));
 
 jest.mock("../../../Globais/Modal/ModalConfirm", () => ({
@@ -96,12 +97,16 @@ const baseProps = {
   apiServiceGetUnidadesVinculadas: jest.fn(),
   apiServiceDesvincularUnidade: jest.fn(),
   apiServiceDesvincularUnidadeEmLote: jest.fn(),
+  apiServiceVincularTodasUnidades: jest.fn(),
   onDesvincular: jest.fn(),
 };
 
 describe("UnidadesVinculadas", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    useDesvincularUnidade.mockReturnValue({ mutateAsync: jest.fn(), isPending: false });
+    useDesvincularUnidadeEmLote.mockReturnValue({ mutateAsync: jest.fn(), mutate: jest.fn(), isPending: false });
+    useVincularTodasUnidades.mockReturnValue({ mutate: jest.fn(), isPending: false });
   });
 
   test("renderiza mensagem quando não há unidades vinculadas", () => {
@@ -160,10 +165,13 @@ describe("UnidadesVinculadas", () => {
     beforeEach(() => {
       jest.clearAllMocks();
       ModalConfirm.mockClear();
+      useDesvincularUnidade.mockReturnValue({ mutateAsync: jest.fn(), isPending: false });
       useDesvincularUnidadeEmLote.mockReturnValue({
         mutate: mockMutate,
+        mutateAsync: jest.fn(),
         isPending: false,
       });
+      useVincularTodasUnidades.mockReturnValue({ mutate: jest.fn(), isPending: false });
     });
 
     test("renderiza checkbox quando apiServiceDesvincularUnidadeEmLote está disponível", () => {
@@ -178,7 +186,7 @@ describe("UnidadesVinculadas", () => {
       expect(screen.getByText("Todas as unidades")).toBeInTheDocument();
     });
 
-    test("checkbox marcado quando não há unidades vinculadas", () => {
+    test("checkbox desmarcado inicialmente mesmo quando não há unidades vinculadas", () => {
       useGetUnidadesVinculadas.mockReturnValue({
         data: { count: 0, results: [] },
         isLoading: false,
@@ -187,7 +195,7 @@ describe("UnidadesVinculadas", () => {
       render(<UnidadesVinculadas {...baseProps} />);
 
       const checkbox = screen.getByTestId("checkbox-input");
-      expect(checkbox).toBeChecked();
+      expect(checkbox).not.toBeChecked();
     });
 
     test("checkbox desmarcado quando há unidades vinculadas", () => {
@@ -222,8 +230,8 @@ describe("UnidadesVinculadas", () => {
     });
 
     test("desvincula todas unidades ao confirmar modal", async () => {
-      mockMutate.mockClear();
-      
+      const mockVincularMutate = jest.fn();
+
       const mockApiService = jest.fn().mockResolvedValue({
         results: [{ uuid: "u1" }, { uuid: "u2" }],
       });
@@ -233,8 +241,8 @@ describe("UnidadesVinculadas", () => {
         isLoading: false,
       });
 
-      useDesvincularUnidadeEmLote.mockReturnValue({
-        mutate: mockMutate,
+      useVincularTodasUnidades.mockReturnValue({
+        mutate: mockVincularMutate,
         isPending: false,
       });
 
@@ -250,7 +258,7 @@ describe("UnidadesVinculadas", () => {
 
       expect(ModalConfirm).toHaveBeenCalled();
       const modalCall = ModalConfirm.mock.calls[ModalConfirm.mock.calls.length - 1][0];
-      
+
       await modalCall.onConfirm();
 
       await waitFor(() => {
@@ -260,9 +268,8 @@ describe("UnidadesVinculadas", () => {
       });
 
       await waitFor(() => {
-        expect(mockMutate).toHaveBeenCalledWith({
+        expect(mockVincularMutate).toHaveBeenCalledWith({
           uuid: "inst-1",
-          unidade_uuids: ["u1", "u2"],
         });
       });
     });
@@ -280,7 +287,7 @@ describe("UnidadesVinculadas", () => {
     });
 
     test("checkbox desabilitado durante mutation pendente", () => {
-      useDesvincularUnidadeEmLote.mockReturnValue({
+      useVincularTodasUnidades.mockReturnValue({
         mutate: mockMutate,
         isPending: true,
       });

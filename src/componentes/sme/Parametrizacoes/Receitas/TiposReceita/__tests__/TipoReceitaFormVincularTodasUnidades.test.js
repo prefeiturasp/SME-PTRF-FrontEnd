@@ -17,6 +17,12 @@ jest.mock("../../../../../Globais/Modal/CustomModalConfirm", () => ({
 jest.mock("../hooks/useGetTipoReceita", () => ({
   useGetTipoReceita: jest.fn(),
 }));
+jest.mock("../components/UnidadesAssociadas/Lista", () => ({
+  UnidadesVinculadas: () => null,
+}));
+jest.mock("../components/VincularUnidades", () => ({
+  VincularUnidades: () => null,
+}));
 jest.mock("../../../RetornaSeTemPermissaoEdicaoPainelParametrizacoes", () => ({
   RetornaSeTemPermissaoEdicaoPainelParametrizacoes: jest.fn(),
 }));

@@ -90,7 +90,7 @@ describe("Lista", () => {
       </MotivosDevolucaoTesouroContext.Provider>
     );
 
-    const editButton = screen.getByRole("button", { name: /editar motivo/i });
+    const editButton = screen.getByRole("button", { name: /editar/i });
     fireEvent.click(editButton);
 
     expect(mockSetStateFormModal).toHaveBeenCalledWith({

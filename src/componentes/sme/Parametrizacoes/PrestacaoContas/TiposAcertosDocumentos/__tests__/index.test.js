@@ -27,6 +27,10 @@ jest.mock("../../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametr
     RetornaSeTemPermissaoEdicaoPainelParametrizacoes: jest.fn(),
 }));
 
+jest.mock('../../../../../../context/RecursoSelecionado', () => ({
+    useRecursoSelecionadoContext: () => ({ recursoSelecionado: null }),
+}));
+
 describe("Carrega página de Tipos de acertos em documentos", () => {
     beforeEach(() => {
         getListaDeAcertosDocumentos.mockReturnValue(mockTiposAcertosDocumentos);

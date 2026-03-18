@@ -2,7 +2,7 @@ import { getTipoCusteio } from "../../../../../../services/sme/Parametrizacoes.s
 import { useQuery } from "@tanstack/react-query";
 
 export const useGetTipoCusteio = (uuid) => {
-  const { status, isError, data, error, refetch } = useQuery({
+  const { isFetching, isError, data, error, refetch } = useQuery({
     queryKey: ["tipos-custeio", uuid],
     queryFn: () => getTipoCusteio(uuid),
     cacheTime: 0,
@@ -13,5 +13,5 @@ export const useGetTipoCusteio = (uuid) => {
     enabled: !!uuid,
   });
 
-  return { isLoading: status === "loading", isError, data, error, refetch };
+  return { isLoading: isFetching, isError, data, error, refetch };
 };

@@ -5,7 +5,7 @@ import { MotivosEstornoContext } from "../context/MotivosEstorno";
 
 export const useGetMotivosEstorno = () => {
     const {filter} = useContext(MotivosEstornoContext)
-    const { status, isError, data = [], error, refetch } = useQuery({
+    const { isFetching, isError, data = [], error, refetch } = useQuery({
         queryKey: ['motivos-estorno', filter],
         queryFn: ()=> getMotivosEstorno(filter.motivo),
         keepPreviousData: true,
@@ -15,6 +15,6 @@ export const useGetMotivosEstorno = () => {
 
     const count = useMemo(() => data.length, [data]);
 
-    return {isLoading: status === 'loading', isError, data, error, refetch, count}
+    return {isLoading: isFetching, isError, data, error, refetch, count}
 
 }

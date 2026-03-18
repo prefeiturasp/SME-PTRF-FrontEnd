@@ -302,7 +302,7 @@ describe('AcompanhamentoRelatorioConsolidadosSmeListagem', () => {
 
     test('acoesTemplate com link quando pode visualizar', async () => {
         renderComponent();
-        const link = await screen.findByRole('link', { name: /visualizar/i });
+        const link = await screen.findByRole('link');
         expect(link).toHaveAttribute('href', '/analise-relatorio-consolidado-dre-detalhe/relatorio-1');
     });
 

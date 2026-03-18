@@ -13,6 +13,10 @@ import {
 import {mockTiposConta} from "../__fixtures__/mockData";
 import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
 
+jest.mock("../../../../../../paginas/PaginasContainer", () => ({
+    PaginasContainer: ({ children }) => <>{children}</>,
+}));
+
 jest.mock("../../../../../../services/sme/Parametrizacoes.service", ()=>({
     deleteTipoConta: jest.fn(),
     getFiltroTiposContas: jest.fn(),
