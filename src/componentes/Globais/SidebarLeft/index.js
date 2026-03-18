@@ -1,4 +1,4 @@
-import React, {useContext} from 'react'
+import React, {useContext, useMemo} from 'react'
 import SideNav, {NavItem, NavIcon, NavText} from '@trendmicro/react-sidenav'
 import '@trendmicro/react-sidenav/dist/react-sidenav.css'
 import './siderbarLeft.scss'
@@ -30,7 +30,7 @@ export const SidebarLeft = () => {
         sidebarStatus.setSideBarStatus(!sidebarStatus.sideBarStatus)
     };
 
-    let urls = getUrls.GetUrls();
+    let urls = useMemo(() => getUrls.GetUrls(sidebarStatus.itensNavegacaoAtivadaViaFlag), [sidebarStatus.itensNavegacaoAtivadaViaFlag]);
 
     const qtdeNotificacoesNaoLidas = async () => {
         await notificacaoContext.getQtdeNotificacoesNaoLidas()
