@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getBemProduzido } from "../../../../../services/escolas/BensProduzidos.service";
 
 export const useGetBemProduzido = (uuid) => {
-  const { status, isError, data, error, refetch } = useQuery({
+  const { isFetching, isError, data, error, refetch } = useQuery({
     queryKey: ["bem-produzido-detail", uuid],
     queryFn: () => getBemProduzido(uuid),
     cacheTime: 0,
@@ -12,5 +12,5 @@ export const useGetBemProduzido = (uuid) => {
     refetchOnReconnect: false,
     enabled: !!uuid,
   });
-  return { isLoading: status === "loading", isError, data, error, refetch };
+  return { isLoading: isFetching, isError, data, error, refetch };
 };

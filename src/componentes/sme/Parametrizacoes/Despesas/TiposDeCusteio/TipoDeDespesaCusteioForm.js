@@ -1,16 +1,18 @@
 import { useEffect, useState } from "react";
 import { Form, Input, Row, Col, Divider, Flex, Checkbox, Spin } from "antd";
 import { useDispatch } from "react-redux";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { CustomModalConfirm } from "../../../../Globais/Modal/CustomModalConfirm";
 import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
 import {
   deleteTipoDeCusteio,
-  getTipoCusteio,
   patchAlterarTipoDeCusteio,
   postCreateTipoDeCusteio,
 } from "../../../../../services/sme/Parametrizacoes.service";
+import { usePostTipoCusteioVincularTodasUnidades } from "./hooks/usePostTipoCusteioVincularTodasUnidades";
+import { usePostTipoCusteioDesvincularTodasUnidades } from "./hooks/usePostTipoCusteioDesvincularTodasUnidades";
+import { useGetTipoCusteio } from "./hooks/useGetTipoCusteio";
 import { VincularUnidades } from "./components/VincularUnidades";
 import { UnidadesVinculadas } from "./components/UnidadesVinculadas";
 import { toastCustom } from "../../../../Globais/ToastCustom";
@@ -18,34 +20,40 @@ import { Icon } from "../../../../Globais/UI/Icon";
 
 export const TipoDeDespesaCusteioForm = () => {
   const [form] = Form.useForm();
-  const [loading, setLoading] = useState(true);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const location = useLocation();
-  const selecionarTodasState = location.state?.selecionar_todas;
+
+  const formatStyleTextModal = {
+    color: "var(--color-primary)",
+    fontWeight: "bold",
+  };
+
+  const { mutationPost: mutationPostvincularTodasUnidades } =
+    usePostTipoCusteioVincularTodasUnidades();
+
+  const { mutationPost: mutationPostdesvincularTodasUnidades} = 
+    usePostTipoCusteioDesvincularTodasUnidades();
 
   const { uuid } = useParams();
 
   const isNew = uuid === undefined;
 
-  const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES = RetornaSeTemPermissaoEdicaoPainelParametrizacoes();
+  const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES =
+    RetornaSeTemPermissaoEdicaoPainelParametrizacoes();
 
   Form.useWatch("selecionar_todas", form);
 
-  const fetchTipoCusteio = async () => {
-    try {
-      const respData = await getTipoCusteio(uuid);
+  const { data, isLoading: loading, refetch } = useGetTipoCusteio(uuid);
+
+  useEffect(() => {
+    if (data) {
       form.setFieldsValue({
-        ...respData,
-        selecionar_todas:
-          selecionarTodasState !== undefined ? selecionarTodasState : respData.todas_unidades_selecionadas,
+        ...data,
+        selecionar_todas: data.uso_associacao === "Todas",
       });
-    } catch (error) {
-    } finally {
-      setLoading(false);
     }
-  };
+  }, [data]);
 
   useEffect(() => {
     if (isNew) {
@@ -53,9 +61,8 @@ export const TipoDeDespesaCusteioForm = () => {
         nome: "",
         selecionar_todas: true,
       });
-      setLoading(false);
     } else {
-      fetchTipoCusteio();
+      refetch();
     }
   }, [uuid]);
 
@@ -70,12 +77,18 @@ export const TipoDeDespesaCusteioForm = () => {
 
       if (uuid) {
         await patchAlterarTipoDeCusteio(uuid, payload);
-        toastCustom.ToastCustomSuccess("Sucesso!", "Edição do tipo de despesa de custeio realizado com sucesso.");
+        toastCustom.ToastCustomSuccess(
+          "Sucesso!",
+          "Edição do tipo de despesa de custeio realizado com sucesso.",
+        );
         goToParametroTiposCusteio();
       } else {
         const resp = await postCreateTipoDeCusteio(payload);
 
-        toastCustom.ToastCustomSuccess("Sucesso!", "Cadastro do tipo de despesa de custeio realizado com sucesso.");
+        toastCustom.ToastCustomSuccess(
+          "Sucesso!",
+          "Cadastro do tipo de despesa de custeio realizado com sucesso.",
+        );
         if (values.selecionar_todas) {
           goToParametroTiposCusteio();
         } else {
@@ -85,13 +98,21 @@ export const TipoDeDespesaCusteioForm = () => {
         }
       }
     } catch (e) {
-      if (e.response.data && e.response.data.non_field_errors) {
+      if (!values.nome) {
+        form.setFieldValue("selecionar_todas", true);
+        return;
+      }
+
+      if (e?.response?.data && e?.response?.data?.non_field_errors) {
         toastCustom.ToastCustomError(
           uuid ? "Alteração não permitida" : "Inclusão não permitida",
-          "Já existe um tipo de despesa de custeio com esse nome."
+          "Já existe um tipo de despesa de custeio com esse nome.",
         );
       } else {
-        toastCustom.ToastCustomError("Erro!", "Houve um erro ao tentar realizar operação.");
+        toastCustom.ToastCustomError(
+          "Erro!",
+          "Houve um erro ao tentar realizar operação.",
+        );
         form.setFieldValue("selecionar_todas", true);
       }
     }
@@ -100,14 +121,19 @@ export const TipoDeDespesaCusteioForm = () => {
   const handleDelete = async () => {
     try {
       await deleteTipoDeCusteio(uuid);
-      toastCustom.ToastCustomSuccess("Sucesso!", "O tipo de despesa de custeio foi removido do sistema com sucesso.");
+      toastCustom.ToastCustomSuccess(
+        "Sucesso!",
+        "O tipo de despesa de custeio foi removido do sistema com sucesso.",
+      );
       goToParametroTiposCusteio();
     } catch (e) {
       if (e.response && e.response.data && e.response.data.mensagem) {
         const errorMsg = e.response.data.mensagem;
         toastCustom.ToastCustomError("Exclusão não permitida", errorMsg);
       } else {
-        toastCustom.ToastCustomError("Houve um erro ao tentar excluir tipo de despesa de custeio.");
+        toastCustom.ToastCustomError(
+          "Houve um erro ao tentar excluir tipo de despesa de custeio.",
+        );
       }
     }
   };
@@ -116,13 +142,30 @@ export const TipoDeDespesaCusteioForm = () => {
     CustomModalConfirm({
       dispatch,
       title: "Excluir tipo de despesa de custeio",
-      message: "Tem certeza que deseja excluir esse tipo de despesa de custeio?",
+      message:
+        "Tem certeza que deseja excluir esse tipo de despesa de custeio?",
       cancelText: "Voltar",
       confirmText: "Excluir",
       dataQa: "modal-confirmar-excluir-tipo-de-despesa-custeio",
       isDanger: true,
       onConfirm: () => handleDelete(),
     });
+  };
+
+  const textoModalDesvincularTodas = () => {
+    return (
+      <>
+        <p>
+          Você está prestes a vincular{" "}
+          <span style={formatStyleTextModal}>todas as unidades</span> a este
+          tipo de custeio.
+        </p>
+        <p>
+          Ao marcar "Vincular todas", todas as unidades terão vínculo com este
+          tipo de custeio. Deseja prosseguir?
+        </p>
+      </>
+    );
   };
 
   const goToParametroTiposCusteio = () => {
@@ -133,6 +176,36 @@ export const TipoDeDespesaCusteioForm = () => {
     if (e.target.checked === false && isNew) {
       handleSubmit(form.getFieldsValue());
     }
+
+    if (e.target.checked === true && !isNew) {
+      if (data?.unidades.length > 0) {
+        let vincular = false;
+        const textoModal = textoModalDesvincularTodas();
+
+        CustomModalConfirm({
+          dispatch,
+          title: "Confirmação de vinculação",
+          message: textoModal,
+          cancelText: "Cancelar",
+          confirmText: "Confirmar vinculação",
+          dataQa: "tipo-custeio",
+          isDanger: false,
+          onConfirm: () => {
+            mutationPostvincularTodasUnidades.mutate(uuid);
+            return;
+          },
+          onCancel: () => {
+            vincular = false;
+          },
+        });
+
+        form.setFieldValue("selecionar_todas", vincular);
+        return;
+      }
+    } else if (e.target.checked === false && !isNew) {
+        mutationPostdesvincularTodasUnidades.mutate(uuid);
+    }
+
     form.setFieldValue("selecionar_todas", e.target.checked);
   };
 
@@ -141,7 +214,12 @@ export const TipoDeDespesaCusteioForm = () => {
       <Flex justify="flex-end">
         <span>* Preenchimento obrigatório</span>
       </Flex>
-      <Form form={form} onFinish={handleSubmit} disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES} role="form">
+      <Form
+        form={form}
+        onFinish={handleSubmit}
+        disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
+        role="form"
+      >
         <Row>
           <Col md={24}>
             <Form.Item
@@ -160,12 +238,14 @@ export const TipoDeDespesaCusteioForm = () => {
         <Divider />
 
         <Flex gutter={8} align="center">
-          <h6 className="m-0">Unidades vinculadas ao tipo de despesa de custeio</h6>
+          <h6 className="m-0">
+            Unidades vinculadas ao tipo de despesa de custeio
+          </h6>
           <Icon
             tooltipMessage="Unidades vinculadas ao tipo de despesa de custeio"
             icon="faExclamationCircle"
-            iconProps={{style: { fontSize: "16px", marginLeft: 4}}}
-          />          
+            iconProps={{ style: { fontSize: "16px", marginLeft: 4 } }}
+          />
         </Flex>
 
         <Form.Item
@@ -178,11 +258,19 @@ export const TipoDeDespesaCusteioForm = () => {
           <Checkbox onChange={handleTodasUnidades}>Todas as unidades</Checkbox>
         </Form.Item>
 
-        {uuid && form.getFieldValue("selecionar_todas") === false ? (
+        {uuid && !form?.getFieldValue("selecionar_todas") ? (
           <>
-            <UnidadesVinculadas UUID={uuid} podeEditar={TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}/>
-            <h6 className="my-5">Vincular unidades ao tipo de despesa de custeio</h6>
-            <VincularUnidades UUID={uuid} podeEditar={TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}/>
+            <UnidadesVinculadas
+              UUID={uuid}
+              podeEditar={TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
+            />
+            <h6 className="my-5">
+              Vincular unidades ao tipo de despesa de custeio
+            </h6>
+            <VincularUnidades
+              UUID={uuid}
+              podeEditar={TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
+            />
           </>
         ) : null}
 
@@ -201,7 +289,11 @@ export const TipoDeDespesaCusteioForm = () => {
           ) : null}
           <Flex gap={16}>
             <div className="p-Y bd-highlight">
-              <button type="button" className="btn btn-outline-success" onClick={goToParametroTiposCusteio}>
+              <button
+                type="button"
+                className="btn btn-outline-success"
+                onClick={goToParametroTiposCusteio}
+              >
                 Cancelar
               </button>
             </div>

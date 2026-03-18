@@ -13,6 +13,29 @@ import { usePatchTipoReceita } from "../hooks/usePatchTipoReceita";
 import { useDeleteTipoReceita } from "../hooks/useDeleteTipoReceita";
 import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../../RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
 import { useGetTipoReceita } from "../hooks/useGetTipoReceita";
+import { useGetUnidadesVinculadas } from "../components/UnidadesAssociadas/hooks/useGetUnidadesVinculadas";
+import { useGetUnidadesNaoVinculadas } from "../components/VincularUnidades/hooks/useGetUnidadesNaoVinculadas";
+
+jest.mock("../../../../../Globais/Modal/CustomModalConfirm", () => ({
+  CustomModalConfirm: jest.fn(),
+}));
+
+jest.mock("../components/UnidadesAssociadas/hooks/useGetUnidadesVinculadas", () => ({
+  useGetUnidadesVinculadas: jest.fn(),
+}));
+
+jest.mock("../components/VincularUnidades/hooks/useGetUnidadesNaoVinculadas", () => ({
+  useGetUnidadesNaoVinculadas: jest.fn(),
+}));
+
+// Componentes filhos que fazem chamadas HTTP internas (getDres, useGetTiposUnidades)
+jest.mock("../components/VincularUnidades", () => ({
+  VincularUnidades: () => null,
+}));
+
+jest.mock("../components/UnidadesAssociadas/Lista", () => ({
+  UnidadesVinculadas: () => null,
+}));
 
 jest.mock("../hooks/useGetTipoReceita");
 jest.mock("../hooks/useGetFiltrosTiposReceita");
@@ -83,10 +106,21 @@ describe("TipoReceitaForm", () => {
 
     useGetTipoReceita.mockReturnValue({ data: null, isLoading: false });
 
+    useGetUnidadesVinculadas.mockReturnValue({
+      isLoading: false, isError: false, data: { results: [], count: 0 }, error: null, refetch: jest.fn(),
+    });
+    useGetUnidadesNaoVinculadas.mockReturnValue({
+      isLoading: false, isError: false, data: { results: [], count: 0 }, error: null, refetch: jest.fn(),
+    });
+
     RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
     useLocation.mockReturnValue({
       state: { selecionar_todas: undefined },
     });
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
   test("renderiza o formulário corretamente", () => {
@@ -97,7 +131,7 @@ describe("TipoReceitaForm", () => {
             <TipoReceitaForm />
           </QueryClientProvider>
         </Provider>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(screen.getByLabelText(/Nome/i)).toBeInTheDocument();
@@ -112,11 +146,11 @@ describe("TipoReceitaForm", () => {
             <TipoReceitaForm />
           </QueryClientProvider>
         </Provider>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(screen.getByPlaceholderText("Nome do tipo de crédito")).toHaveValue(
-      ""
+      "",
     );
   });
 
@@ -151,6 +185,7 @@ describe("TipoReceitaForm", () => {
       ],
       unidades: [],
       todas_unidades_selecionadas: true,
+      uso_associacao: "Todas",
     };
     useGetTipoReceita.mockReturnValue({ data: data });
     useParams.mockReturnValue({ uuid: "1234" });
@@ -162,11 +197,11 @@ describe("TipoReceitaForm", () => {
             <TipoReceitaForm />
           </QueryClientProvider>
         </Provider>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(screen.getByPlaceholderText("Nome do tipo de crédito")).toHaveValue(
-      "todas"
+      "todas",
     );
     expect(screen.getByLabelText("Todas as unidades")).toBeChecked();
   });
@@ -179,7 +214,7 @@ describe("TipoReceitaForm", () => {
             <TipoReceitaForm />
           </QueryClientProvider>
         </Provider>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     const checkbox = screen.getByLabelText("Todas as unidades");
@@ -201,7 +236,7 @@ describe("TipoReceitaForm", () => {
             <TipoReceitaForm />
           </QueryClientProvider>
         </Provider>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     const nome = screen.getByPlaceholderText("Nome do tipo de crédito");
@@ -226,7 +261,7 @@ describe("TipoReceitaForm", () => {
     const salvarButton = await screen.findByRole("button", { name: /Salvar/i });
     expect(salvarButton).toBeEnabled();
 
-    await userEvent.click(salvarButton);
+    await userEvent.click(salvarButton, { pointerEventsCheck: 0 });
 
     await waitFor(() => {
       expect(mockMutateAsyncPost).toHaveBeenCalledTimes(1);
@@ -275,7 +310,7 @@ describe("TipoReceitaForm", () => {
             <TipoReceitaForm />
           </QueryClientProvider>
         </Provider>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     const nome = screen.getByPlaceholderText("Nome do tipo de crédito");
@@ -302,7 +337,7 @@ describe("TipoReceitaForm", () => {
             <TipoReceitaForm />
           </QueryClientProvider>
         </Provider>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(screen.getByLabelText(/Nome/i)).toBeDisabled();
@@ -320,7 +355,7 @@ describe("TipoReceitaForm", () => {
             <TipoReceitaForm />
           </QueryClientProvider>
         </Provider>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
     const cancelarButton = screen.getByRole("button", { name: "Cancelar" });
     fireEvent.click(cancelarButton);

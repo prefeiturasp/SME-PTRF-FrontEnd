@@ -102,8 +102,8 @@ describe("VisualizacaoAtaPaa", () => {
     it("renderiza a lista de presentes quando existem participantes", () => {
         renderComponent({
             listaPresentes: [
-                { uuid: "1", nome: "João Silva", cargo: "Professor" },
-                { uuid: "2", nome: "Ana Costa", cargo: "Gestora" },
+                { uuid: "1", nome: "João Silva", cargo: "Professor", membro: true, presente: true },
+                { uuid: "2", nome: "Ana Costa", cargo: "Gestora", membro: true, presente: true },
             ],
         });
 

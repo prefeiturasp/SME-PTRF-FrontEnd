@@ -5,7 +5,10 @@ import { faEdit } from "@fortawesome/free-solid-svg-icons";
 
 import { PaginasContainer } from "../../../../../paginas/PaginasContainer";
 import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
-import { getTodosTiposDeCusteio, getFiltrosTiposDeCusteio } from "../../../../../services/sme/Parametrizacoes.service";
+import {
+  getTodosTiposDeCusteio,
+  getFiltrosTiposDeCusteio,
+} from "../../../../../services/sme/Parametrizacoes.service";
 import Loading from "../../../../../utils/Loading";
 
 import Tabela from "./Tabela";
@@ -14,7 +17,8 @@ import { EditIconButton } from "../../../../Globais/UI/Button";
 
 export const TiposDeCusteio = () => {
   const navigate = useNavigate();
-  const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES = RetornaSeTemPermissaoEdicaoPainelParametrizacoes();
+  const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES =
+    RetornaSeTemPermissaoEdicaoPainelParametrizacoes();
   const [listaDeTipos, setListaDeTipos] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -33,6 +37,7 @@ export const TiposDeCusteio = () => {
 
   const initialStateFiltros = {
     filtrar_por_nome: "",
+    unidades__uuid: "",
   };
   const [stateFiltros, setStateFiltros] = useState(initialStateFiltros);
 
@@ -43,14 +48,27 @@ export const TiposDeCusteio = () => {
         [name]: value,
       });
     },
-    [stateFiltros]
+    [stateFiltros],
   );
 
   const handleSubmitFiltros = async () => {
     setLoading(true);
-    let filtrados = await getFiltrosTiposDeCusteio(stateFiltros.filtrar_por_nome);
-    setListaDeTipos(filtrados);
-    setLoading(false);
+
+    try {
+      const { filtrar_por_nome, unidades__uuid } = stateFiltros;
+
+      const filtrosTratados = {
+        nome: filtrar_por_nome,
+        ...(unidades__uuid?.unidade?.uuid && {
+          unidades__uuid: unidades__uuid.unidade.uuid,
+        }),
+      };
+
+      const filtrados = await getFiltrosTiposDeCusteio(filtrosTratados);
+      setListaDeTipos(filtrados);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const limpaFiltros = async () => {
@@ -68,9 +86,11 @@ export const TiposDeCusteio = () => {
 
   const acoesTemplate = useCallback((rowData) => {
     return (
-      <EditIconButton        
-        onClick={() => navigate("/edicao-tipo-de-despesa-custeio/" + rowData.uuid)}
-      />      
+      <EditIconButton
+        onClick={() =>
+          navigate("/edicao-tipo-de-despesa-custeio/" + rowData.uuid)
+        }
+      />
     );
   }, []);
 
@@ -79,7 +99,12 @@ export const TiposDeCusteio = () => {
       <h1 className="titulo-itens-painel mt-5">Tipo de despesa de custeio</h1>
       {loading ? (
         <div className="mt-5">
-          <Loading corGrafico="black" corFonte="dark" marginTop="0" marginBottom="0" />
+          <Loading
+            corGrafico="black"
+            corFonte="dark"
+            marginTop="0"
+            marginBottom="0"
+          />
         </div>
       ) : (
         <>
@@ -99,12 +124,14 @@ export const TiposDeCusteio = () => {
 
             <Filtros
               stateFiltros={stateFiltros}
+              setStateFilter={setStateFiltros}
               handleChangeFiltros={handleChangeFiltros}
               handleSubmitFiltros={handleSubmitFiltros}
               limpaFiltros={limpaFiltros}
             />
             <p>
-              Exibindo <span className="total-acoes">{totalDeTipos}</span> tipo(s) de despesa de custeio
+              Exibindo <span className="total-acoes">{totalDeTipos}</span>{" "}
+              tipo(s) de despesa de custeio
             </p>
             <Tabela
               rowsPerPage={rowsPerPage}

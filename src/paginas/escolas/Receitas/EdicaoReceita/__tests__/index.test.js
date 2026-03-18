@@ -29,7 +29,7 @@ jest.mock('../../../../../componentes/Globais/ReactNumberFormatInput', () => ({
 describe('<EdicaoDeReceita>', () => {
   it('Deve renderizar o componente', async () => {
     useParams.mockReturnValue({ origem: "teste-origem" });
-    useLocation.mockReturnValue({ state: null });
+    useLocation.mockReturnValue({ state: null, pathname: '/' });
     visoesService.getItemUsuarioLogado.mockReturnValue('visao_selecionada.nome');
     visoesService.featureFlagAtiva.mockReturnValue(true);
     visoesService.getDadosDoUsuarioLogado.mockReturnValue({unidades: []});

@@ -65,6 +65,7 @@ const outroRecursoPeriodo = {
   uuid: "destino-uuid",
   outro_recurso: "X",
   outro_recurso_nome: "Recurso Destino",
+  outro_recurso_objeto: { nome: "Recurso Destino" },
 };
 
 const periodosMock = [
@@ -76,6 +77,7 @@ const periodosMock = [
         uuid: "recurso-1",
         outro_recurso: "Y",
         outro_recurso_nome: "Recurso Origem",
+        outro_recurso_objeto: { nome: "Recurso Origem" },
         unidades: [{ id: 1 }, { id: 2 }],
       },
     ],

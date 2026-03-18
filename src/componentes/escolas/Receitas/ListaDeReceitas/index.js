@@ -21,7 +21,7 @@ import {faExclamationTriangle} from '@fortawesome/free-solid-svg-icons'
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import { mantemEstadoFiltrosUnidade } from "../../../../services/mantemEstadoFiltrosUnidade.service";
 import {filtrosAvancadosReceitas} from "../../../../services/escolas/Receitas.service";
-import useRecursoSelecionado from "../../../../hooks/Globais/useRecursoSelecionado";
+import { useRecursoSelecionadoContext } from "../../../../context/RecursoSelecionado";
 
 
 export const ListaDeReceitas = () => {
@@ -47,7 +47,7 @@ export const ListaDeReceitas = () => {
     const [previousPath, setPreviousPath] = useState(null);
     const [state, setState] = useState(initialState);
 
-    const { recursoSelecionado } = useRecursoSelecionado({ visoesService });
+    const { recursoSelecionado } = useRecursoSelecionadoContext();
 
     useEffect(() => {
         if (!previousPath) {

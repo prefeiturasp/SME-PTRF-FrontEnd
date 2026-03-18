@@ -130,7 +130,7 @@ import { VisualizarPlanoAplicacao } from "../componentes/escolas/Paa/ElaboracaoP
 import { VisualizarPlanoOrcamentario } from "../componentes/escolas/Paa/ElaboracaoPaa/ElaborarNovoPlano/Relatorios/PlanoOrcamentario/VisualizarPlanoOrcamentario";
 import { VisualizarAtividadesPrevistas } from "../componentes/escolas/Paa/ElaboracaoPaa/ElaborarNovoPlano/Relatorios/AtividadesPrevistas/VisualizarAtividadesPrevistas";
 import { EscolherRecursoPage } from "../paginas/SelecaoRecurso/EscolherRecursoPage";
-import useRecursoSelecionado from "../hooks/Globais/useRecursoSelecionado";
+import { useRecursoSelecionadoContext } from "../context/RecursoSelecionado";
 import { FEATURE_FLAGS } from "../constantes/featureFlags";
 
 const routesConfig = [
@@ -922,7 +922,7 @@ const PrivateRoute = ({ element, permissoes, featureFlag }) => {
   const isLoggedIn = authService.isLoggedIn();
   const hasPerm = !permissoes || visoesService.getPermissoes(permissoes);
   const isFeatureEnabled = featureFlag === undefined || featureFlag;
-  const { mostrarOverlaySelecionarRecursos } = useRecursoSelecionado({ visoesService });
+  const { mostrarOverlaySelecionarRecursos } = useRecursoSelecionadoContext();
   const location = useLocation();
 
   if (!isLoggedIn) {

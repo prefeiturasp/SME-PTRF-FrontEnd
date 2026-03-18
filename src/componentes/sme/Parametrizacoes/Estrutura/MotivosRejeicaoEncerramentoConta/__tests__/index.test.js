@@ -9,6 +9,10 @@ import { usePatchMotivoRejeicao } from "../hooks/usePatchMotivoRejeicao";
 import { useDeleteMotivoRejeicao } from "../hooks/useDeleteMotivoRejeicao";
 import { MemoryRouter } from 'react-router-dom';
 
+jest.mock('../../../../../../context/RecursoSelecionado', () => ({
+    useRecursoSelecionadoContext: () => ({ recursoSelecionado: null }),
+}));
+
 jest.mock("../hooks/useGetMotivosRejeicao");
 jest.mock("../hooks/usePostMotivoRejeicao");
 jest.mock("../hooks/usePatchMotivoRejeicao");
@@ -21,80 +25,6 @@ const queryClient = new QueryClient({
         },
     },
 });
-// jest.mock("../index", () => ({
-//     MotivosRejeicaoEncerramentoConta: ({children}) => {children}
-// }));
-// // Mock dos componentes filhos para verificar se estão sendo renderizados
-// jest.mock("../../../../../../paginas/PaginasContainer", () => ({
-//     PaginasContainer: ({ children }) => <div>{children}</div>,
-// }));
-
-
-// // Mock dos componentes filhos para verificar se estão sendo renderizados
-// jest.mock("../../../../../../paginas/PaginasContainer", () => ({
-//     PaginasContainer: ({ children }) => <div>{children}</div>,
-// }));
-
-// jest.mock("../components/TopoComBotoes", () => ({
-//     TopoComBotoes: () => <div>TopoComBotoes</div>,
-// }));
-
-// jest.mock("../components/Filtros", () => ({
-//     Filtros: () => <div>Filtros</div>,
-// }));
-
-// jest.mock("../components/ExibicaoQuantidade", () => ({
-//     ExibicaoQuantidade: () => <div>ExibicaoQuantidade</div>,
-// }));
-
-// jest.mock("../components/Lista", () => ({
-//     Lista: () => <div>Lista</div>,
-// }));
-
-// jest.mock("../components/Paginacao", () => ({
-//     Paginacao: () => <div>Paginacao</div>,
-// }));
-
-// describe('MotivosRejeicaoEncerramentoConta', () => {
-//     test('Deve renderizar o título corretamente', () => {
-//         render(
-//             <MotivosRejeicaoContext.Provider>
-//                 <MotivosRejeicaoEncerramentoConta />
-//             </MotivosRejeicaoContext.Provider>
-//         );
-
-//         expect(screen.getByText('Motivos Rejeição (encerramento conta)')).toBeInTheDocument();
-//     });
-
-//     test('Deve renderizar os componentes filhos corretamente', () => {
-//         render(
-//             <MotivosRejeicaoContext.Provider>
-//                 <MotivosRejeicaoEncerramentoConta />
-//             </MotivosRejeicaoContext.Provider>
-//         );
-
-//         // Verifica se cada componente está sendo renderizado
-//         expect(screen.getByText('TopoComBotoes')).toBeInTheDocument();
-//         expect(screen.getByText('Filtros')).toBeInTheDocument();
-//         expect(screen.getByText('ExibicaoQuantidade')).toBeInTheDocument();
-//         expect(screen.getByText('Lista')).toBeInTheDocument();
-//         expect(screen.getByText('Paginacao')).toBeInTheDocument();
-//     });
-
-//     test('Deve renderizar a estrutura correta da página', () => {
-//         render(
-//             <MotivosRejeicaoContext.Provider>
-//                 <MotivosRejeicaoEncerramentoConta />
-//             </MotivosRejeicaoContext.Provider>
-//         );
-
-//         const pageContent = screen.getByText('Motivos Rejeição (encerramento conta)');
-//         const pageInnerContent = screen.getByText('TopoComBotoes');
-        
-//         expect(pageContent).toBeInTheDocument();
-//         expect(pageInnerContent).toBeInTheDocument();
-//     });
-// });
 const itemMock = { id: 1, nome: "Motivo 1", uuid: "123" }
 const mockContext = {
     setShowModalForm: jest.fn(),
@@ -132,19 +62,6 @@ describe('MotivosRejeicaoEncerramentoConta', () => {
                 </QueryClientProvider>
             </MemoryRouter>
         )
-        // return render(
-        //     <QueryClientProvider client={queryClient}>
-        //         <MotivosRejeicaoContext.Provider value={mockContext}>
-        //             <MotivosRejeicaoEncerramentoConta>
-        //                 <PaginasContainer>
-        //                     <h1 className="titulo-itens-painel mt-5">Motivos Rejeição (encerramento conta)</h1>
-        //                     <div className="page-content-inner"></div>
-        //                     <Lista />
-        //                 </PaginasContainer>
-        //             </MotivosRejeicaoEncerramentoConta>
-        //         </MotivosRejeicaoContext.Provider>
-        //     </QueryClientProvider>
-        // )
     }
     test('Deve renderizar o título corretamente', async () => {
         renderComponent();

@@ -7,7 +7,7 @@ export const useGetMotivosAprovacaoPcRessalva = () => {
 
     const {filter, currentPage} = useContext(MotivosAprovacaoPcRessalvaContext)
 
-    const { status, isError, data = {count: 0, results: []}, error, refetch } = useQuery({
+    const { isFetching, isError, data = {count: 0, results: []}, error, refetch } = useQuery({
         queryKey: ['motivos-aprovacao-pc-ressalva', filter, currentPage],
         queryFn: ()=> getMotivosAprovacaoPcRessalva(filter, currentPage),
         keepPreviousData: true,
@@ -18,6 +18,6 @@ export const useGetMotivosAprovacaoPcRessalva = () => {
     const totalMotivosAprovacaoPcRessalva = useMemo(() => data.count, [data]);
     const count = useMemo(() => data.count, [data]);
 
-    return {isLoading: status === 'loading', isError, data, error, refetch, totalMotivosAprovacaoPcRessalva, count}
+    return {isLoading: isFetching, isError, data, error, refetch, totalMotivosAprovacaoPcRessalva, count}
 
 }

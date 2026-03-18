@@ -112,10 +112,10 @@ describe('useGetResumoPrioridades Hook', () => {
     describe('Estados de loading', () => {
         it('deve retornar isLoading true quando estiver carregando inicialmente', () => {
             const { useQuery } = require('@tanstack/react-query');
-            
+
             useQuery.mockReturnValue({
                 isLoading: true,
-                isFetching: false,
+                isFetching: true,
                 status: "loading",
                 isError: false,
                 data: [],
@@ -124,9 +124,9 @@ describe('useGetResumoPrioridades Hook', () => {
             });
 
             const result = useGetResumoPrioridades();
-            
+
             expect(result.isLoading).toBe(true);
-            expect(result.isFetching).toBe(false);
+            expect(result.isFetching).toBe(true);
             expect(result.isError).toBe(false);
             expect(result.resumoPrioridades).toEqual([]);
         });
@@ -144,8 +144,8 @@ describe('useGetResumoPrioridades Hook', () => {
             });
 
             const result = useGetResumoPrioridades();
-            
-            expect(result.isLoading).toBe(false);
+
+            expect(result.isLoading).toBe(true);
             expect(result.isFetching).toBe(true);
             expect(result.isError).toBe(false);
             expect(result.resumoPrioridades).toEqual(mockResumoPrioridades);

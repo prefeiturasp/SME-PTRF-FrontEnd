@@ -17,7 +17,8 @@ import { Filtros } from "../Filtros";
 
 const filtroInicial ={
   nome_ou_codigo: "",
-  dre: ""
+  dre: "",
+  tipo_unidade: ""
 }
 
 export const UnidadesVinculadas = ({tipoContaUUID}) => {
@@ -32,7 +33,8 @@ export const UnidadesVinculadas = ({tipoContaUUID}) => {
     tipoContaUUID,
     currentPage,
     filtros.nome_ou_codigo,
-    filtros.dre
+    filtros.dre,
+    filtros.tipo_unidade,
   );
 
   useEffect(() => {
@@ -230,7 +232,7 @@ export const UnidadesVinculadas = ({tipoContaUUID}) => {
           />
           <Spin spinning={mutationDesvincularUnidade.isPending || mutationDesvincularUnidadeEmLote.isPending}>
           {
-            data && data.count > 0 ? (
+            data && data?.count > 0 ? (
               <>
                 {selectedUnidades.length ? montarBarraAcoesEmLote() : null}
                 <p className='mb-2'>Exibindo <span className='total'>{ data.count }</span> unidades</p>

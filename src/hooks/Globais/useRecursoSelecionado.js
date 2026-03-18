@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { getRecursos, getRecursosPorUnidade } from "../../services/AlterarRecurso.service";
+import { authService } from "../../services/auth.service";
 
 /**
  * Hook para gerenciar recurso selecionado com persistência em localStorage
@@ -25,9 +26,19 @@ const useRecursoSelecionado = ({ visoesService }) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (recursos?.length === 1) {
+    if (!recursos?.length) return;
+
+    const recursoValido = recursoSelecionado
+      ? recursos.some((r) => r.uuid === recursoSelecionado.uuid)
+      : false;
+
+    const deveAutoSelecionar = recursos.length === 1 && !recursoSelecionado;
+    const recursoInvalido = recursoSelecionado && !recursoValido;
+
+    if (deveAutoSelecionar || recursoInvalido) {
       setRecursoSelecionado(recursos[0]);
       localStorage.setItem(storageKey, JSON.stringify(recursos[0]));
+      authService.limparStorageAoTrocarRecurso();
     }
   }, [recursos, recursoSelecionado]);
 
@@ -44,6 +55,11 @@ const useRecursoSelecionado = ({ visoesService }) => {
       setRecursoSelecionado(recursoSelecionadoObj);
       if (recursoSelecionadoObj) {
         localStorage.setItem(storageKey, JSON.stringify(recursoSelecionadoObj));
+        // TODO: Ao invés de limpar as informações do storage, tratar as informações por recurso selecionado
+        // A separação de storage por recurso foi feita para a tela de conciliação apenas
+        // Onde foi possível guardar informações do último período/conta na tela por recurso
+        // Ver services/storages/Conciliacao.storage.service
+        authService.limparStorageAoTrocarRecurso();
       } else {
         localStorage.removeItem(storageKey);
       }

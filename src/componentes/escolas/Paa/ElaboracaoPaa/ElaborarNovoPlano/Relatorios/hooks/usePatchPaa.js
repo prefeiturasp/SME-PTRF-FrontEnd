@@ -19,7 +19,11 @@ export const usePatchPaa = () => {
     },
     onError: (error) => {
       console.error("Erro ao atualizar PAA:", error);
-      toastCustom.ToastCustomError("Erro!", "Ops! Houve um erro ao tentar salvar.");
+      toastCustom.ToastCustomError(
+        "Erro!",
+        error?.response?.data?.mensagem ||
+        error?.response?.data?.non_fields_errors ||
+        "Ops! Houve um erro ao tentar salvar.");
     },
   });
 

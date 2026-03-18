@@ -4,7 +4,7 @@ import { useMemo } from "react";
 
 export const useGetRecursosProprios = (associacaoUUID, page, paaUUID = null) => {
   const {
-    status,
+    isFetching,
     isError,
     data = { count: 0, results: [] },
     error,
@@ -19,5 +19,5 @@ export const useGetRecursosProprios = (associacaoUUID, page, paaUUID = null) => 
     enabled: !!associacaoUUID,
   });
   const count = useMemo(() => data.count, [data]);
-  return { isLoading: status === "loading", isError, data, error, count, refetch };
+  return { isLoading: isFetching, isError, data, error, count, refetch };
 };

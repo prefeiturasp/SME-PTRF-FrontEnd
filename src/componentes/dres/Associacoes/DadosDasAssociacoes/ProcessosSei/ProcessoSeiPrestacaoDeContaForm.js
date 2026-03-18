@@ -22,7 +22,7 @@ export const YupSignupSchemaProcesso = yup.object().shape({
             }),
 });
 
-export const ProcessoSeiPrestacaoDeContaForm = ({show, handleClose, onSubmit, handleChange, handleChangeSelectPeriodos, validateForm, initialValues, periodosDisponiveis, customNumeroProcessoError, setCustomNumeroProcessoError, loadingPeriodos}) => {
+export const ProcessoSeiPrestacaoDeContaForm = ({show, handleClose, onSubmit, handleChange, handleChangeSelectPeriodos, validateForm, initialValues, periodosDisponiveis, customNumeroProcessoError, setCustomNumeroProcessoError, loadingPeriodos, recursoNome, showRecursoField}) => {
 
     const { Option } = Select;
 
@@ -49,8 +49,6 @@ export const ProcessoSeiPrestacaoDeContaForm = ({show, handleClose, onSubmit, ha
                         onSubmit={onSubmit}
                     >
                         {props => {
-                            const {
-                            } = props;
                             return (
                                 <form method="POST" id="membrosForm" onSubmit={props.handleSubmit}>
 
@@ -58,6 +56,22 @@ export const ProcessoSeiPrestacaoDeContaForm = ({show, handleClose, onSubmit, ha
                                         <div className='col-12'>
                                             <p>* Preenchimento obrigatório</p>
                                         </div>
+                                        {showRecursoField && (
+                                            <div className="col-12">
+                                                <div className="form-group">
+                                                    <label htmlFor="recurso">Recurso *</label>
+                                                    <input
+                                                        type="text"
+                                                        className="form-control"
+                                                        id="recurso"
+                                                        name="recurso"
+                                                        value={recursoNome || ""}
+                                                        readOnly={true}
+                                                        disabled={true}
+                                                    />
+                                                </div>
+                                            </div>
+                                        )}
                                         <div className="col-12 col-md-6">
                                             <div className="form-group">
                                                 <label htmlFor="cargo_associacao">Número do processo SEI *</label>

@@ -8,7 +8,6 @@ import {
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { toastCustom } from '../../../Globais/ToastCustom';
-import { CustomModalConfirm } from '../../../Globais/Modal/CustomModalConfirm';
 import { useDispatch } from 'react-redux';
 
 jest.mock('react-redux', () => ({
@@ -23,9 +22,6 @@ jest.mock("../../../Globais/ToastCustom", () => ({
   },
 }));
 
-jest.mock("../../../Globais/Modal/CustomModalConfirm", () => ({
-  CustomModalConfirm: jest.fn(),
-}));
 
 const createWrapper = () => {
   const queryClient = new QueryClient({
@@ -73,7 +69,7 @@ describe('Hooks de vínculo/desvínculo de unidade', () => {
     });
 
     await waitFor(() => {
-      expect(apiService).toHaveBeenCalledWith('123', 'u1');
+      expect(apiService).toHaveBeenCalledWith('123', 'u1', undefined);
     });
 
     expect(queryClient.invalidateQueries).toHaveBeenCalledWith(
@@ -101,14 +97,10 @@ describe('Hooks de vínculo/desvínculo de unidade', () => {
     });
 
     await waitFor(() => {
-      expect(CustomModalConfirm).toHaveBeenCalledWith(
-        expect.objectContaining({
-          title: 'Erro ao vincular unidade',
-          dataQa: 'modal-vincular-unidade',
-          dispatch: dispatchMock,
-        })
-      );
+      expect(result.current.isError).toBe(true);
     });
+
+    expect(toastCustom.ToastCustomSuccess).not.toHaveBeenCalled();
   });
 
   test('useVincularUnidadeEmLote - sucesso', async () => {
@@ -153,7 +145,7 @@ describe('Hooks de vínculo/desvínculo de unidade', () => {
     });
 
     await waitFor(() => {
-      expect(CustomModalConfirm).toHaveBeenCalled();
+      expect(result.current.isError).toBe(true);
     });
 
     expect(queryClient.invalidateQueries).toHaveBeenCalledWith(
@@ -178,11 +170,9 @@ describe('Hooks de vínculo/desvínculo de unidade', () => {
     });
 
     await waitFor(() => {
-      expect(CustomModalConfirm).toHaveBeenCalledWith(
-        expect.objectContaining({
-          dataQa: 'modal-erro-desvincular-unidade-em-lote',
-        })
-      );
+      expect(result.current.isError).toBe(true);
     });
+
+    expect(toastCustom.ToastCustomSuccess).not.toHaveBeenCalled();
   });
 });

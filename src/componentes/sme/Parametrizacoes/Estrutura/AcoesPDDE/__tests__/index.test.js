@@ -74,7 +74,7 @@ describe("Ações PDDE", () => {
   
       // Verifica se o modal de confirmação de exclusão está no documento
       expect(screen.getByText("Excluir Ação PDDE")).toBeInTheDocument();
-      expect(screen.getByText("Tem certeza que deseja excluir essa Ação PDDE?")).toBeInTheDocument();
+      expect(screen.getByText(/Tem certeza que deseja excluir essa Ação PDDE\?/)).toBeInTheDocument();
       expect(screen.getByText("Cancelar")).toBeInTheDocument();
       expect(screen.getByText("Excluir")).toBeInTheDocument();
   

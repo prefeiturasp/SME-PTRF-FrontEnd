@@ -64,6 +64,10 @@ jest.mock(
   })
 );
 
+jest.mock('../../../../../../context/RecursoSelecionado', () => ({
+  useRecursoSelecionadoContext: () => ({ recursoSelecionado: null }),
+}));
+
 describe("Carrega página de Associações", () => {
   beforeEach(() => {
     getTabelaAssociacoes.mockReturnValue(mockTabelaAssociacoes);

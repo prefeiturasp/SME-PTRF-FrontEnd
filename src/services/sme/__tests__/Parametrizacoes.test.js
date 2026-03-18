@@ -643,9 +643,10 @@ describe('Testes para funções de análise', () => {
         api.get.mockResolvedValue({ data: mockData })
         const nome_ou_codigo = '1234'
         const dre = '1234'
+        const tipo_unidade = '1'
         const page= 1
-        const result = await getUnidadesTipoReceita(uuid, nome_ou_codigo, dre, page);
-        const url = `/api/tipos-receitas/${uuid}/unidades-vinculadas/?nome_ou_codigo=${nome_ou_codigo}&dre=${dre}&page=${page}`
+        const result = await getUnidadesTipoReceita(uuid, nome_ou_codigo, dre, tipo_unidade, page);
+        const url = `/api/tipos-receitas/${uuid}/unidades-vinculadas/?nome_ou_codigo=${nome_ou_codigo}&dre=${dre}&tipo_unidade=${tipo_unidade}&page=${page}`
         expect(api.get).toHaveBeenCalledWith(url, authHeader())
         expect(result).toEqual(mockData);
     });
@@ -654,9 +655,10 @@ describe('Testes para funções de análise', () => {
         api.get.mockResolvedValue({ data: mockData })
         const nome_ou_codigo = '1234'
         const dre = '1234'
+        const tipo_unidade = '1'
         const page= 1
-        const result = await getUnidadesNaoVinculadasTipoReceita(uuid, nome_ou_codigo, dre, page);
-        const url = `/api/tipos-receitas/${uuid}/unidades-nao-vinculadas/?nome_ou_codigo=${nome_ou_codigo}&dre=${dre}&page=${page}`
+        const result = await getUnidadesNaoVinculadasTipoReceita(uuid, nome_ou_codigo, dre, tipo_unidade, page);
+        const url = `/api/tipos-receitas/${uuid}/unidades-nao-vinculadas/?nome_ou_codigo=${nome_ou_codigo}&dre=${dre}&tipo_unidade=${tipo_unidade}&page=${page}`
         expect(api.get).toHaveBeenCalledWith(url, authHeader())
         expect(result).toEqual(mockData);
     });
@@ -1324,10 +1326,10 @@ describe('Testes para funções de análise', () => {
 
     test('getFiltrosTiposDeCusteio deve chamar a API corretamente', async () => {
         api.get.mockResolvedValue({ data: mockData });
-        const nome = 'Custeio Teste';
-        const result = await getFiltrosTiposDeCusteio(nome);
-        const url = `/api/tipos-custeio/?nome=${nome}`;
-        expect(api.get).toHaveBeenCalledWith(url, authHeader());
+        const filter = { nome: 'Custeio Teste' };
+        const result = await getFiltrosTiposDeCusteio(filter);
+        const url = `/api/tipos-custeio/`;
+        expect(api.get).toHaveBeenCalledWith(url, { ...authHeader(), params: { ...filter } });
         expect(result).toEqual(mockData);
     });
 

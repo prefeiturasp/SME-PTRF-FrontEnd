@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getListaDespesasSituacaoPatrimonial } from "../../../../../../services/escolas/Despesas.service";
 
 export const useGetDespesas = (filtros, page) => {
-  const { status, isFetching, isError, data, error, refetch } = useQuery({
+  const { isFetching, isError, data, error, refetch } = useQuery({
     queryKey: ["despesas-situacao-patrimonial", page],
     queryFn: () => getListaDespesasSituacaoPatrimonial(filtros, page),
     keepPreviousData: false,
@@ -11,7 +11,5 @@ export const useGetDespesas = (filtros, page) => {
     refetchOnWindowFocus: false, // Evita refazer a requisição ao trocar de aba
   });
 
-  const isLoadingOrFetching = status === "loading" || isFetching;
-
-  return { isLoading: isLoadingOrFetching, isError, data, error, refetch };
+  return { isLoading: isFetching, isError, data, error, refetch };
 };

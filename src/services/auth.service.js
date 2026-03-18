@@ -134,8 +134,22 @@ const getToken = () => {
     if (token) {
       return token;
     }
-  };
-  
+};
+
+const limparStorageAoTrocarRecurso = () => {
+    // Limpar dados do storage ao trocar recurso para que não sejam 
+    // carregados dados inconsistentes ao recurso selecionado
+    localStorage.removeItem('periodoConta');
+    localStorage.removeItem('uuidPrestacaoConta');
+    localStorage.removeItem('periodoPrestacaoDeConta');
+    localStorage.removeItem('statusPrestacaoDeConta');
+    localStorage.removeItem('contaPrestacaoDeConta');
+    localStorage.removeItem('acaoLancamento');
+    localStorage.removeItem('uuidAta');
+    localStorage.removeItem('prestacao_de_contas_nao_apresentada');
+    localStorage.removeItem(PERIODO_RELATORIO_CONSOLIDADO_DRE);
+};
+
 const logout = () => {
     localStorage.removeItem(TOKEN_ALIAS);
     localStorage.removeItem(USUARIO_NOME);
@@ -208,6 +222,7 @@ export const authService = {
     getToken,
     isLoggedIn,
     esqueciMinhaSenha,
+    limparStorageAoTrocarRecurso
 };
 
 

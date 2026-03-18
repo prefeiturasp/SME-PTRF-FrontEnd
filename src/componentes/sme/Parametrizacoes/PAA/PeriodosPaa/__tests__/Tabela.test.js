@@ -116,7 +116,7 @@ describe("Tabela", () => {
     
     renderComponent();
 
-    const editButton = document.querySelector('.btn-Editar-periodo');
+    const editButton = screen.getByRole('button', { name: /editar/i });
     fireEvent.click(editButton);
 
     expect(mockNavigate).toHaveBeenCalledTimes(1);

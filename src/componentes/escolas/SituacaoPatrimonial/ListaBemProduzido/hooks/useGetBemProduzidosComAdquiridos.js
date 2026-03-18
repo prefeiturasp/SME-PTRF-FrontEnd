@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getBemProduzidosComAdquiridos } from "../../../../../services/escolas/BensProduzidos.service";
 
 export const useGetBemProduzidosComAdquiridos = (filtros, page, visao_dre = false) => {
-  const { status, isFetching, isError, data, error, refetch } = useQuery({
+  const { isFetching, isError, data, error, refetch } = useQuery({
     queryKey: ["list-bemproduzidos-e-adquiridos", page, visao_dre],
     queryFn: () => getBemProduzidosComAdquiridos(filtros, page, visao_dre),
     keepPreviousData: false,
@@ -12,7 +12,5 @@ export const useGetBemProduzidosComAdquiridos = (filtros, page, visao_dre = fals
     enabled: true,
   });
 
-  const isLoadingOrFetching = status === "loading" || isFetching;
-
-  return { isLoading: isLoadingOrFetching, isError, data, error, refetch };
+  return { isLoading: isFetching, isError, data, error, refetch };
 };

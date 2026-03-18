@@ -194,6 +194,22 @@ describe('ModalConfirmaGeracaoFinal', () => {
         expect(cancelarButton).toHaveClass('btn', 'btn-outline-success', 'btn-sm');
         expect(continuarButton).toHaveClass('btn', 'btn-success', 'btn-sm');
     });
+
+    it('não deve chamar callbacks quando o modal está fechado', () => {
+        render(
+            <ModalConfirmaGeracaoFinal
+                open={false}
+                onClose={mockOnClose}
+                onConfirm={mockOnConfirm}
+            />
+        );
+
+        expect(screen.queryByRole('button', { name: /cancelar/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole('button', { name: /continuar/i })).not.toBeInTheDocument();
+
+        expect(mockOnClose).not.toHaveBeenCalled();
+        expect(mockOnConfirm).not.toHaveBeenCalled();
+    });
 });
 
 describe('ModalInfoPendenciasGeracaoFinal', () => {
@@ -251,7 +267,21 @@ describe('ModalInfoPendenciasGeracaoFinal', () => {
             />
         );
         
-        expect(screen.getByText('Prioridades')).toBeInTheDocument();
+        expect(screen.getByText('Prioridades sem ação e/ou valor total')).toBeInTheDocument();
+    });
+
+    it('deve renderizar pendência de Prioridades com saldo corretamente', () => {
+        const pendencias = 'Prioridades - há recurso com saldo.';
+        
+        render(
+            <ModalInfoPendenciasGeracaoFinal 
+                open={true} 
+                onClose={mockOnClose} 
+                pendencias={pendencias} 
+            />
+        );
+        
+        expect(screen.getByText('Prioridades - há recurso com saldo')).toBeInTheDocument();
     });
 
     it('deve renderizar pendências de introdução corretamente', () => {
@@ -307,7 +337,7 @@ describe('ModalInfoPendenciasGeracaoFinal', () => {
             />
         );
         
-        expect(screen.getByText('Prioridades')).toBeInTheDocument();
+        expect(screen.getByText('Prioridades sem ação e/ou valor total')).toBeInTheDocument();
         expect(screen.getByText('Introdução')).toBeInTheDocument();
         expect(screen.getByText('Objetivos')).toBeInTheDocument();
     });
@@ -365,5 +395,20 @@ describe('ModalInfoPendenciasGeracaoFinal', () => {
         
         const listItems = screen.queryAllByRole('listitem');
         expect(listItems).toHaveLength(1);
+    });
+
+    it('deve ignorar linhas vazias ao processar pendencias com quebras de linha no início e fim', () => {
+        const pendencias = '\nPrioridades sem ação\n\nFalta objetivo\n';
+
+        render(
+            <ModalInfoPendenciasGeracaoFinal
+                open={true}
+                onClose={mockOnClose}
+                pendencias={pendencias}
+            />
+        );
+
+        expect(screen.getByText('Prioridades sem ação e/ou valor total')).toBeInTheDocument();
+        expect(screen.getByText('Objetivos')).toBeInTheDocument();
     });
 });

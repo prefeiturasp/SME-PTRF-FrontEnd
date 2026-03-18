@@ -4,7 +4,6 @@ import { getPrioridades } from "../../../../../../../services/escolas/Paa.servic
 
 export const useGetPrioridades = (filtros, page) => {
   const {
-    status,
     isFetching,
     isError,
     data = {},
@@ -12,10 +11,9 @@ export const useGetPrioridades = (filtros, page) => {
     refetch,
   } = useQuery({
     queryKey: ["prioridades", page],
-    queryFn: () => getPrioridades(filtros, page), 
-    keepPreviousData: false,
+    queryFn: () => getPrioridades(filtros, page),
     staleTime: 0,
-    cacheTime: 0,
+    gcTime: 0,
     refetchOnWindowFocus: true,
     enabled: true,
   });
@@ -28,5 +26,5 @@ export const useGetPrioridades = (filtros, page) => {
           (item?.recurso === "RECURSO_PROPRIO" ? "Recursos Próprios": ''), /** Considera em branco quando há inativação de Ação no PAA, permitindo ficar em branco na tabela, apena para exibição do botão "Informar Ação" para preenchimento*/
     valor_total: parseFloat(item.valor_total)
   }));
-  return { isLoading: status === "loading", isFetching, isError, prioridades: dadosProcessados, quantidade: data.count, error, refetch };
+  return { isLoading: isFetching, isFetching, isError, prioridades: dadosProcessados, quantidade: data.count, error, refetch };
 };

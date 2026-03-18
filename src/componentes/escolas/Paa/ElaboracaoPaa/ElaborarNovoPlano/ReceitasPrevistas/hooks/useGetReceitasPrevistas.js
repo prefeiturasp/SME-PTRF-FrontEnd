@@ -5,7 +5,6 @@ import { getPaaReceitasPrevistas } from "../../../../../../../services/escolas/P
 export const useGetReceitasPrevistas = (options = {}) => {
   const getPaaUUID = () => localStorage.getItem("PAA");
   const {
-    status,
     isFetching,
     isError,
     data = [],
@@ -21,5 +20,5 @@ export const useGetReceitasPrevistas = (options = {}) => {
     ...options
   });
 
-  return { isLoading: status === "loading", isError, data, error, refetch, isFetching };
+  return { isLoading: isFetching, isError, data, error, refetch, isFetching };
 };
