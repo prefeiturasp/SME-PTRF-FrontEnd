@@ -7,7 +7,7 @@ export const useGetMotivosDevolucaoTesouro = () => {
 
     const {filter, currentPage} = useContext(MotivosDevolucaoTesouroContext)
 
-    const { status, isError, data = {count: 0, results: []}, error, refetch } = useQuery({
+    const { isFetching, isError, data = {count: 0, results: []}, error, refetch } = useQuery({
         queryKey: ['motivos-devolucao-tesouro-list', filter, currentPage],
         queryFn: ()=> getMotivosDevolucaoTesouro(filter, currentPage),
         keepPreviousData: true,
@@ -18,6 +18,6 @@ export const useGetMotivosDevolucaoTesouro = () => {
     const totalMotivosDevolucaoTesouro = useMemo(() => data.count, [data]);
     const count = useMemo(() => data.count, [data]);
 
-    return {isLoading: status === 'loading', isError, data, error, refetch, totalMotivosDevolucaoTesouro, count}
+    return {isLoading: isFetching, isError, data, error, refetch, totalMotivosDevolucaoTesouro, count}
 
 }

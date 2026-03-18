@@ -3,7 +3,6 @@ import { iniciarAtaPaa } from "../../../../../../../services/escolas/AtasPaa.ser
 
 export const useGetAtaPaaVigente = (paaUuid) => {
   const {
-    status,
     isFetching,
     isError,
     data = {},
@@ -20,7 +19,7 @@ export const useGetAtaPaaVigente = (paaUuid) => {
   });
 
   return {
-    isLoading: status === "loading",
+    isLoading: isFetching,
     isFetching,
     isError,
     ataPaa: data,

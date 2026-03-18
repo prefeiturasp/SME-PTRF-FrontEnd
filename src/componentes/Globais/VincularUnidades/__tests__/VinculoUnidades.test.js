@@ -37,6 +37,7 @@ const baseProps = {
   apiServiceGetUnidadesNaoVinculadas: jest.fn(),
   apiServiceVincularUnidade: jest.fn(),
   apiServiceVincularUnidadeEmLote: jest.fn(),
+  apiServiceVincularTodasUnidades: jest.fn(),
 
   headerUnidadesVinculadas: <div data-testid="header-unidades-vinculadas" />,
   headerVincularUnidades: <div data-testid="header-vincular-unidades" />,

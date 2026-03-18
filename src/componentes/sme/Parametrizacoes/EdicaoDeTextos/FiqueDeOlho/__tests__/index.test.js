@@ -25,6 +25,17 @@ jest.mock("../../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametr
     RetornaSeTemPermissaoEdicaoPainelParametrizacoes: jest.fn(),
 }));
 
+jest.mock('../../../../../../context/RecursoSelecionado', () => ({
+    useRecursoSelecionadoContext: () => ({ recursoSelecionado: null }),
+}));
+
+jest.mock('../../../../../Globais/EditorWysiwyg', () => ({
+    __esModule: true,
+    default: ({ handleSubmitEditor }) => (
+        <button onClick={() => handleSubmitEditor('')}>Salvar</button>
+    ),
+}));
+
 jest.mock("../../../../../Globais/ToastCustom", () => ({
   toastCustom: {
     ToastCustomSuccess: jest.fn(),

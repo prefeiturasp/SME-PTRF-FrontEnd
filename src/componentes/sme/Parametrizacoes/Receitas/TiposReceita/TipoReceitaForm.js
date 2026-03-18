@@ -10,13 +10,14 @@ import {
   Flex,
   Checkbox,
   Spin,
-  Tooltip,
 } from "antd";
 import { useDispatch } from "react-redux";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { useGetFiltrosTiposReceita } from "./hooks/useGetFiltrosTiposReceita";
 import { usePostTipoReceita } from "./hooks/usePostTipoReceita";
+import { usePostTipoReceitaVincularTodasUnidades } from "./hooks/usePostTipoReceitaVincularTodasUnidades";
+import { usePostTipoReceitaDesvincularTodasUnidades } from "./hooks/usePostTipoReceitaDesvincularTodasUnidades";
 import { usePatchTipoReceita } from "./hooks/usePatchTipoReceita";
 import { useGetTipoReceita } from "./hooks/useGetTipoReceita";
 import { useDeleteTipoReceita } from "./hooks/useDeleteTipoReceita";
@@ -24,8 +25,6 @@ import { CustomModalConfirm } from "../../../../Globais/Modal/CustomModalConfirm
 import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
 import { UnidadesVinculadas } from "./components/UnidadesAssociadas/Lista";
 import { VincularUnidades } from "./components/VincularUnidades";
-import { faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Icon } from "../../../../Globais/UI/Icon";
 
 const { TextArea } = Input;
@@ -35,9 +34,11 @@ export const TipoReceitaForm = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const location = useLocation();
-  const selecionarTodasState = location.state?.selecionar_todas;
 
+  const formatStyleTextModal = {
+    color: "var(--color-primary)",
+    fontWeight: "bold",
+  };
   const { uuid } = useParams();
 
   const isNew = uuid === undefined;
@@ -46,6 +47,11 @@ export const TipoReceitaForm = () => {
   const { mutationPost } = usePostTipoReceita();
   const { mutationPatch } = usePatchTipoReceita();
   const { mutationDelete } = useDeleteTipoReceita();
+  const { mutationPost: mutationPostvincularTodasUnidades } =
+    usePostTipoReceitaVincularTodasUnidades();
+  
+  const { mutationPost: mutationPostdesvincularTodasUnidades } =
+    usePostTipoReceitaDesvincularTodasUnidades();
 
   const { data, isLoading } = useGetTipoReceita(uuid);
 
@@ -89,10 +95,8 @@ export const TipoReceitaForm = () => {
         }),
         detalhes: data.detalhes.map((detalhe) => detalhe.id),
         detalhesOpcoes: data.detalhes,
-        selecionar_todas:
-          selecionarTodasState !== undefined
-            ? selecionarTodasState
-            : data.todas_unidades_selecionadas,
+        selecionar_todas: data.uso_associacao === "Todas",
+        uso_associacao: data.uso_associacao,
       });
     }
 
@@ -108,6 +112,7 @@ export const TipoReceitaForm = () => {
         possui_detalhamento: undefined,
         e_recursos_proprios: false,
         selecionar_todas: true,
+        uso_associacao: "Todas",
       });
     }
   }, [data]);
@@ -197,6 +202,22 @@ export const TipoReceitaForm = () => {
     });
   };
 
+  const textoModalDesvincularTodas = () => {
+    return (
+      <>
+        <p>
+          Você está prestes a vincular{" "}
+          <span style={formatStyleTextModal}>todas as unidades</span> a este
+          tipo de receita.
+        </p>
+        <p>
+          Ao marcar "Vincular todas", todas as unidades terão vínculo com este
+          tipo de receita. Deseja prosseguir?
+        </p>
+      </>
+    );
+  };
+
   const handleCancelar = () => {
     navigate("/parametro-tipos-receita");
   };
@@ -205,6 +226,35 @@ export const TipoReceitaForm = () => {
     if (e.target.checked === false && isNew) {
       handleSubmit(form.getFieldsValue());
     }
+
+    if (e.target.checked === true && !isNew) {
+      if (data.unidades.length > 0) {
+        let vincular = false;
+        const textoModal = textoModalDesvincularTodas();
+
+        CustomModalConfirm({
+          dispatch,
+          title: "Confirmação de vinculação",
+          message: textoModal,
+          cancelText: "Cancelar",
+          confirmText: "Confirmar vinculação",
+          dataQa: "tipo-receita",
+          isDanger: false,
+          onConfirm: () => {
+            mutationPostvincularTodasUnidades.mutate(uuid);
+            vincular = true;
+          },
+          onCancel: () => {
+            vincular = false;
+          },
+        });
+        form.setFieldValue("selecionar_todas", vincular);
+        return;
+      }
+    }else if (e.target.checked === false && !isNew) {
+        mutationPostdesvincularTodasUnidades.mutate(uuid);
+    }
+
     form.setFieldValue("selecionar_todas", e.target.checked);
   };
 
@@ -394,7 +444,7 @@ export const TipoReceitaForm = () => {
           <Checkbox onChange={handleTodasUnidades}>Todas as unidades</Checkbox>
         </Form.Item>
 
-        {uuid && form.getFieldValue("selecionar_todas") === false ? (
+        {uuid && !form?.getFieldValue("selecionar_todas") ? (
           <>
             <UnidadesVinculadas tipoContaUUID={data?.uuid} />
             <h6 className="my-5">Vincular unidades ao tipo de crédito</h6>

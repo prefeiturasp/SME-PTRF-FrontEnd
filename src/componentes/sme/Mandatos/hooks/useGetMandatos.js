@@ -7,7 +7,7 @@ export const useGetMandatos = () => {
 
     const {filter, currentPage} = useContext(MandatosContext)
 
-    const { status, isError, data = {count: 0, results: []}, error, refetch, isFetching } = useQuery({
+    const { isError, data = {count: 0, results: []}, error, refetch, isFetching } = useQuery({
         queryKey: ['mandatos-list', filter, currentPage],
         queryFn: ()=> getMandatos(filter, currentPage),
         keepPreviousData: true,
@@ -18,6 +18,6 @@ export const useGetMandatos = () => {
     const totalMandatos = useMemo(() => data.results.length, [data]);
     const count = useMemo(() => data.count, [data]);
 
-    return {isLoading: status === 'loading', isError, data, error, refetch, totalMandatos, count, isFetching}
+    return {isLoading: isFetching, isError, data, error, refetch, totalMandatos, count, isFetching}
 
 }

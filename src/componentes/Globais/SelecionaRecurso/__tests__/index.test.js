@@ -6,9 +6,14 @@ import { ModalConfirm } from '../../Modal/ModalConfirm';
 
 import { visoesService } from '../../../../services/visoes.service';
 import { getRecursosDisponiveis } from '../../../../services/AlterarRecurso.service';
+import { useRecursoSelecionadoContext } from '../../../../context/RecursoSelecionado';
 
 jest.mock('react-redux', () => ({
-  useDispatch: jest.fn(),
+  useDispatch: jest.fn(() => jest.fn()),
+}));
+
+jest.mock('../../../../context/RecursoSelecionado', () => ({
+  useRecursoSelecionadoContext: jest.fn(),
 }));
 
 jest.mock('../../Modal/ModalConfirm', () => ({
@@ -46,9 +51,18 @@ describe('SelecionaRecurso', () => {
     { uuid: '2', nome_exibicao: 'Recurso B', icone: 'b.png' },
   ];
 
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   test('não renderiza select quando há apenas um recurso', async () => {
-    visoesService.featureFlagAtiva.mockReturnValue(true);
-    getRecursosDisponiveis.mockResolvedValue([recursosMock[0]]);
+    useRecursoSelecionadoContext.mockReturnValue({
+      recursoSelecionado: recursosMock[0],
+      recursos: [recursosMock[0]],
+      handleChangeRecurso: jest.fn(),
+      isLoading: false,
+      mostrarSelecionarRecursos: false,
+    });
 
     render(<SelecionaRecurso />);
 
@@ -58,8 +72,13 @@ describe('SelecionaRecurso', () => {
   });
 
   test('renderiza select quando há mais de um recurso', async () => {
-    visoesService.featureFlagAtiva.mockReturnValue(true);
-    getRecursosDisponiveis.mockResolvedValue(recursosMock);
+    useRecursoSelecionadoContext.mockReturnValue({
+      recursoSelecionado: recursosMock[0],
+      recursos: recursosMock,
+      handleChangeRecurso: jest.fn(),
+      isLoading: false,
+      mostrarSelecionarRecursos: true,
+    });
 
     render(<SelecionaRecurso />);
 
@@ -67,8 +86,13 @@ describe('SelecionaRecurso', () => {
   });
 
   test('abre modal ao trocar recurso', async () => {
-    visoesService.featureFlagAtiva.mockReturnValue(true);
-    getRecursosDisponiveis.mockResolvedValue(recursosMock);
+    useRecursoSelecionadoContext.mockReturnValue({
+      recursoSelecionado: recursosMock[0],
+      recursos: recursosMock,
+      handleChangeRecurso: jest.fn(),
+      isLoading: false,
+      mostrarSelecionarRecursos: true,
+    });
 
     render(<SelecionaRecurso />);
 
@@ -84,8 +108,17 @@ describe('SelecionaRecurso', () => {
   });
 
   test('salva recurso no localStorage ao confirmar a troca', async () => {
-    visoesService.featureFlagAtiva.mockReturnValue(true);
-    getRecursosDisponiveis.mockResolvedValue(recursosMock);
+    const handleChangeRecurso = jest.fn(recurso =>
+      localStorage.setItem('recursoSelecionado', JSON.stringify(recurso))
+    );
+
+    useRecursoSelecionadoContext.mockReturnValue({
+      recursoSelecionado: recursosMock[0],
+      recursos: recursosMock,
+      handleChangeRecurso,
+      isLoading: false,
+      mostrarSelecionarRecursos: true,
+    });
 
     render(<SelecionaRecurso />);
 

@@ -23,6 +23,7 @@ import {
 import { useParams } from "react-router-dom";
 import { getPeriodos } from "../../../../services/dres/Dashboard.service";
 import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../../sme/Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
+import { useRecursoSelecionadoContext } from "../../../../context/RecursoSelecionado";
 
 // Mockando useParams
 jest.mock("react-router-dom", () => ({
@@ -62,8 +63,16 @@ jest.mock("../../../../services/visoes.service", () => ({
   }
 }));
 
+jest.mock("../../../../context/RecursoSelecionado", () => ({
+  useRecursoSelecionadoContext: jest.fn(() => ({ recursoSelecionado: null })),
+}));
+
 describe("Renderiza Tipos de Carga existentes", () => {
-  
+  beforeEach(() => {
+    jest.clearAllMocks();
+    useRecursoSelecionadoContext.mockReturnValue({ recursoSelecionado: null });
+  });
+
   it("renderiza CARGA_ASSOCIACOES", async () => {
     useParams.mockReturnValue({ tipo_de_carga: "CARGA_ASSOCIACOES" });
     render(
@@ -156,6 +165,7 @@ describe("Renderiza Tipos de Carga existentes", () => {
 describe("ArquivosDeCarga Componente", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    useRecursoSelecionadoContext.mockReturnValue({ recursoSelecionado: null });
   });
   
   test("Carrega os elementos na página", async () => {
@@ -289,6 +299,7 @@ describe("ArquivosDeCarga Componente", () => {
 describe("Listagem de Arquivos Carga", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    useRecursoSelecionadoContext.mockReturnValue({ recursoSelecionado: null });
     RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
     getTabelaArquivosDeCarga.mockResolvedValue(tabelaArquivos);
     getArquivosDeCargaFiltros.mockResolvedValue(listaArquivos);
@@ -319,6 +330,7 @@ describe("Listagem de Arquivos Carga", () => {
 describe("Ações dos botões", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    useRecursoSelecionadoContext.mockReturnValue({ recursoSelecionado: null });
     RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
     getTabelaArquivosDeCarga.mockResolvedValue(tabelaArquivos);
     getArquivosDeCargaFiltros.mockResolvedValue(listaArquivos);

@@ -4,13 +4,12 @@ import { Select, Skeleton } from "antd";
 import { ModalConfirm } from "../Modal/ModalConfirm";
 import { useDispatch } from "react-redux";
 
-import useRecursoSelecionado from "../../../hooks/Globais/useRecursoSelecionado";
-import { visoesService } from "../../../services/visoes.service";
+import { useRecursoSelecionadoContext } from "../../../context/RecursoSelecionado";
 
 export const SelecionaRecurso = () => {
   const dispatch = useDispatch();
 
-  const { recursoSelecionado, recursos, handleChangeRecurso, isLoading, mostrarSelecionarRecursos } = useRecursoSelecionado({ visoesService });
+  const { recursoSelecionado, recursos, handleChangeRecurso, isLoading, mostrarSelecionarRecursos } = useRecursoSelecionadoContext();
 
   const handleChangeOption = (recursoUuid) => {
     const recursoSelecionadoObj = recursos.find((r) => r.uuid === recursoUuid);

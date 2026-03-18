@@ -7,6 +7,10 @@ import { toastCustom } from "../../../../../Globais/ToastCustom";
 import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
 import { mockData } from '../__fixtures__/mockData';
 
+jest.mock("../../../../../../paginas/PaginasContainer", () => ({
+    PaginasContainer: ({ children }) => <>{children}</>,
+}));
+
 jest.mock("../../../../../../services/sme/Parametrizacoes.service", ()=>({
     getTiposDeTransacao: jest.fn(),
     getFiltrosTiposDeTransacao: jest.fn(),

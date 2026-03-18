@@ -49,14 +49,14 @@ describe("AcompanhamentoPcsSme Component", () => {
     });
 
     it("renders loading state initially", async () => {
-        render(<AcompanhamentoPcsSme />);
+        render(<MemoryRouter><AcompanhamentoPcsSme /></MemoryRouter>);
         expect(screen.getByText(/0 unidades/i)).toBeInTheDocument();
     });
 
     it("loads and displays periodos", async () => {
         DashboardSmeService.getPeriodos.mockResolvedValue(mockPeriodos);
 
-        render(<AcompanhamentoPcsSme />);
+        render(<MemoryRouter><AcompanhamentoPcsSme /></MemoryRouter>);
         
         await waitFor(() => {
             expect(screen.getByText(exibeOpcao)).toBeInTheDocument();
@@ -90,7 +90,7 @@ describe("AcompanhamentoPcsSme Component", () => {
         DashboardSmeService.getPeriodos.mockResolvedValue(mockPeriodos);
         DashboardSmeService.getItensDashboardSme.mockResolvedValue(mockItensDashboard);
 
-        render(<AcompanhamentoPcsSme />);
+        render(<MemoryRouter><AcompanhamentoPcsSme /></MemoryRouter>);
 
         await waitFor(() => {
             expect(screen.getByText(exibeOpcao)).toBeInTheDocument();

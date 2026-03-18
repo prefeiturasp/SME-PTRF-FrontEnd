@@ -20,7 +20,7 @@ export const useGetDespesasPeriodosAnterioresParaConferencia = (setLancamentosPa
         editavel = true
     } = params;
 
-    const { status, isFetching, isError, data = [], error, refetch} = useQuery({
+    const { isFetching, isError, data = [], error, refetch} = useQuery({
         queryKey: ['despesas-periodos-anteriores-para-conferencia', 
         prestacaoDeContasUUID,
         analiseUUID,
@@ -71,5 +71,5 @@ export const useGetDespesasPeriodosAnterioresParaConferencia = (setLancamentosPa
         enabled: prestacaoDeContasUUID !== '' && conta_uuid !== ''
     });
 
-    return {isLoading: status === 'loading', isFetching, isError, data, error, refetch}
+    return {isLoading: isFetching, isFetching, isError, data, error, refetch}
 }

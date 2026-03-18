@@ -12,8 +12,10 @@ import { combineReducers, createStore } from "redux";
 import { usePostBemProduzido } from "../hooks/usePostBemProduzido";
 import { usePatchBemProduzido } from "../hooks/usePatchBemProduzido";
 import { usePatchBemProduzidoRascunho } from "../hooks/usePatchBemProduzidoRascunho";
+import { usePostBemProduzidoRascunho } from "../hooks/usePostBemProduzidoRascunho";
 import { useGetDespesas } from "../VincularDespesas/hooks/useGetDespesas";
 import { useGetPeriodos } from "../../../../../hooks/Globais/useGetPeriodo";
+import * as BensProduzidosService from "../../../../../services/escolas/BensProduzidos.service";
 
 const mockUseNavigate = jest.fn();
 
@@ -30,14 +32,14 @@ jest.mock("react-router-dom", () => ({
 const mockMutatePostAsync = jest.fn();
 const mockMutatePatchAsync = jest.fn();
 const mockMutationPatchBemProduzidoItemsRascunhoAsync = jest.fn();
-
-// }));
+const mockMutationPostRascunhoAsync = jest.fn();
 
 jest.mock("../VincularDespesas/hooks/useGetDespesas");
 jest.mock("../hooks/useGetBemProduzido");
 jest.mock("../hooks/usePostBemProduzido");
 jest.mock("../hooks/usePatchBemProduzido");
 jest.mock("../hooks/usePatchBemProduzidoRascunho");
+jest.mock("../hooks/usePostBemProduzidoRascunho");
 jest.mock("../../../../../hooks/Globais/useGetPeriodo");
 jest.mock("../../../../../hooks/Globais/useCarregaTabelaDespesa", () => ({
   useCarregaTabelaDespesa: () => ({
@@ -109,12 +111,18 @@ describe("Componente FormularioBemProduzido", () => {
         isLoading: false,
       },
     });
+    usePostBemProduzidoRascunho.mockReturnValue({
+      mutationPost: { mutateAsync: mockMutationPostRascunhoAsync, isPending: false },
+    });
 
     mockSearchParams.get.mockImplementation((key) => {
       if (key === "step") return "1";
       return null;
     });
     useParams.mockReturnValue({ uuid: undefined });
+
+    jest.spyOn(BensProduzidosService, "postVerificarSePodeInformarValores")
+      .mockResolvedValue({ pode_informar_valores: true });
 
     window.matchMedia = jest.fn().mockImplementation((query) => ({
       matches: false,
@@ -172,23 +180,6 @@ describe("Componente FormularioBemProduzido", () => {
     });
   });
 
-  it("deve navegar para Informar valores ao clicar no botão 'Informar valores'", async () => {
-    renderComponent();
-
-    const checkbox = screen.getAllByRole("checkbox", { checked: false });
-    await userEvent.click(checkbox[0]);
-
-    const buttonInformarValores = screen.getByRole("button", {
-      name: /Informar valores/,
-    });
-
-    await fireEvent.click(buttonInformarValores);
-
-    await waitFor(() => {
-      expect(screen.getByText("Informar valores utilizados na produção do bem")).toBeInTheDocument();
-    });
-  });
-
   it("deve desabilitar o botão 'Classificar o bem' se pelo menos 1 rateio por despesa não foi preenchido", async () => {
     renderComponent();
 
@@ -201,12 +192,8 @@ describe("Componente FormularioBemProduzido", () => {
 
     await fireEvent.click(buttonInformarValores);
 
-    const buttonClassificarBem = screen.getByRole("button", {
-      name: /Classificar o bem/,
-    });
-
     await waitFor(() => {
-      expect(buttonClassificarBem).toBeDisabled();
+      expect(screen.getByRole("button", { name: /Classificar o bem/ })).toBeDisabled();
     });
   });
 });

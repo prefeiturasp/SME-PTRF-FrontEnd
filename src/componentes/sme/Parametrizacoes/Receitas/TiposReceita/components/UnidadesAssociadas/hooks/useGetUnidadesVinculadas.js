@@ -1,10 +1,10 @@
 import { getUnidadesTipoReceita } from "../../../../../../../../services/sme/Parametrizacoes.service";
 import { useQuery } from "@tanstack/react-query";
 
-export const useGetUnidadesVinculadas = (uuid, page, nome_ou_codigo = '', dre = '') => {
-  const { status, isFetching, isError, data, error, refetch } = useQuery({
+export const useGetUnidadesVinculadas = (uuid, page, nome_ou_codigo = '', dre = '', tipo_unidade = '') => {
+  const { isFetching, isError, data, error, refetch } = useQuery({
     queryKey: ["unidades-vinculadas-tipo-receita", uuid],
-    queryFn: () => getUnidadesTipoReceita(uuid, nome_ou_codigo, dre, page),
+    queryFn: () => getUnidadesTipoReceita(uuid, nome_ou_codigo, dre, tipo_unidade, page),
     keepPreviousData: false,
     staleTime: 5 * 60 * 1000, // 5 minutos antes de ser considerado "stale"
     cacheTime: 10 * 60 * 1000, // 10 minutos antes de ser removido do cache
@@ -12,7 +12,5 @@ export const useGetUnidadesVinculadas = (uuid, page, nome_ou_codigo = '', dre = 
     enabled: uuid !== null && uuid !== undefined,
   });
   
-  const isLoadingOrFetching = status === "loading" || isFetching;
-
-  return { isLoading: isLoadingOrFetching, isError, data, error, refetch };
+  return { isLoading: isFetching, isError, data, error, refetch };
 };

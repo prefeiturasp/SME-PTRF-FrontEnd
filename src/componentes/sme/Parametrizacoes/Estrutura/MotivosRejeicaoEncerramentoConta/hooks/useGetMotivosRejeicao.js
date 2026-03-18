@@ -7,7 +7,7 @@ export const useGetMotivosRejeicao = () => {
 
     const {filter, currentPage} = useContext(MotivosRejeicaoContext)
 
-    const { status, isError, data = {count: 0, results: []}, error, refetch } = useQuery({
+    const { isFetching, isError, data = {count: 0, results: []}, error, refetch } = useQuery({
         queryKey: ['motivos-rejeicao-list', filter, currentPage],
         queryFn: ()=> getMotivosRejeicaoEncerramentoConta(filter, currentPage),
         keepPreviousData: true,
@@ -18,6 +18,6 @@ export const useGetMotivosRejeicao = () => {
     const totalMotivosRejeicao = useMemo(() => data.results.length, [data]);
     const count = useMemo(() => data.count, [data]);
 
-    return {isLoading: status === 'loading', isError, data, error, refetch, totalMotivosRejeicao, count}
+    return {isLoading: isFetching, isError, data, error, refetch, totalMotivosRejeicao, count}
 
 }

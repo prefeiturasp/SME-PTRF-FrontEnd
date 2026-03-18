@@ -12,7 +12,7 @@ export const useUnidadesEmSuporte = (usuario, page=1) => {
         }
       }
 
-    const { status, isError, data = {count: 0, results: []}, error, refetch } = useQuery({
+    const { isFetching, isError, data = {count: 0, results: []}, error, refetch } = useQuery({
         queryKey: ['unidades-em-suporte-list', page],
         queryFn: () => fetchUnidades(usuario, page),
         keepPreviousData: true,
@@ -22,5 +22,5 @@ export const useUnidadesEmSuporte = (usuario, page=1) => {
     });
     
     const count = useMemo(() => data.count, [data]);
-    return {isLoading: status === 'loading', isError, data, error, count, refetch};
+    return {isLoading: isFetching, isError, data, error, count, refetch};
 }

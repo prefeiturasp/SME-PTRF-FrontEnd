@@ -152,7 +152,7 @@ describe("TabelaDownloads", () => {
       />
     );
 
-    const button = screen.getByRole("button", { name: /Botão excluir/i });
+    const button = screen.getByRole("button", { name: /^Excluir$/i });
     fireEvent.click(button);
 
     expect(excluirArquivo).toHaveBeenCalled();

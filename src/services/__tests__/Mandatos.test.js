@@ -133,7 +133,7 @@ describe('Testes para funções de análise', () => {
         const associacao_uuid = '1234'
         const data = '2025-01-01'
         const result = await getCargosComposicaoData(data, associacao_uuid);
-        const url = `/api/cargos-composicao/composicao-por-data?data=${data}&associacao_uuid=${associacao_uuid}`
+        const url = `/api/cargos-composicao/composicao-por-data/?data=${data}&associacao_uuid=${associacao_uuid}`
         expect(api.get).toHaveBeenCalledWith(url, authHeader())
         expect(result).toEqual(result);
     });

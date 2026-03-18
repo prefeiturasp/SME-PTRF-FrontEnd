@@ -5,8 +5,13 @@ import { useLocation, useNavigate, MemoryRouter } from 'react-router-dom';
 import { marcarDevolucaoTesouro, desmarcarDevolucaoTesouro, getSalvarDevoulucoesAoTesouro, deleteDevolucaoAoTesouro } from '../../../../services/dres/PrestacaoDeContas.service.js';
 import { toastCustom } from "../../ToastCustom";
 import moment from 'moment';
+import { useRecursoSelecionadoContext } from '../../../../context/RecursoSelecionado';
 
 // Mock the required modules
+jest.mock('../../../../context/RecursoSelecionado', () => ({
+  useRecursoSelecionadoContext: jest.fn(),
+}));
+
 jest.mock('react-router-dom', () => {
   const actual = jest.requireActual('react-router-dom');
   return {
@@ -51,8 +56,9 @@ describe('DevolucaoAoTesouroAjuste Component', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    useLocation.mockReturnValue({ state: mockState });
+    useLocation.mockReturnValue({ state: mockState, pathname: '/' });
     useNavigate.mockReturnValue(mockNavigate);
+    useRecursoSelecionadoContext.mockReturnValue({ recursoSelecionado: null });
   });
 
   it('should import the component correctly', () => {
@@ -150,7 +156,7 @@ describe('DevolucaoAoTesouroAjuste Component', () => {
       ...mockState,
       tem_permissao_de_edicao: false
     };
-    useLocation.mockReturnValue({ state: mockStateWithoutPermission });
+    useLocation.mockReturnValue({ state: mockStateWithoutPermission, pathname: '/' });
 
     render(
       <MemoryRouter>

@@ -15,6 +15,10 @@ import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../../../Pa
 import * as service from "../../../../../../services/sme/Parametrizacoes.service";
 import { mockAcoes, mockSelectAcoes, mockSelectAssociacoes, tabelas } from '../__fixtures__/mockData';
 
+jest.mock("../../../../../../paginas/PaginasContainer", () => ({
+    PaginasContainer: ({ children }) => <>{children}</>,
+}));
+
 jest.mock("../TabelaAcoesDasAssociacoes", () => ({
     TabelaAcoesDasAssociacoes: () => <div>TabelaAcoesDasAssociacoes</div>,
   }));
@@ -57,7 +61,7 @@ describe("Carrega página de Acoes das Associações", () => {
         getParametrizacoesAcoesAssociacoes.mockResolvedValue(mockAcoes);
         getTabelaAssociacoes.mockResolvedValue(tabelas);
         getListaDeAcoes.mockResolvedValue(mockSelectAcoes);
-        getTabelaAssociacoesDres.mockResolvedValue(tabelas);
+        getTabelaAssociacoes.mockResolvedValue(tabelas);
     });
 
     it("Testa a chamada de get de Filtros", async () => {
