@@ -21,6 +21,10 @@ jest.mock('./componentes/Globais/Modal/Modal', () => ({
     default: () => <div data-testid="modal" />
 }));
 
+jest.mock('./context/Tema', () => ({
+    useTheme: () => ({ theme: '#01585e', setTheme: jest.fn() }),
+}));
+
 describe('App Component', () => {
 
     const renderWithRouter = (route) => {

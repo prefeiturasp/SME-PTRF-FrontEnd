@@ -11,7 +11,7 @@ jest.mock("react-router-dom", () => ({
 
 describe('<DreDashboardPage>', () => {
   test('Deve renderizar o componente', async () => {
-    useLocation.mockReturnValue({ state: { acessadoPelaSidebar: true }});
+    useLocation.mockReturnValue({ state: { acessadoPelaSidebar: true }, pathname: '/' });
     render(
       <MemoryRouter>
         <DreDashboardPage/>

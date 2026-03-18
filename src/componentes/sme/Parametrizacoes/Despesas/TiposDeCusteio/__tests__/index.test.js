@@ -44,6 +44,10 @@ jest.mock("../../../../../Globais/ToastCustom", () => ({
   },
 }));
 
+jest.mock('../../../../../../context/RecursoSelecionado', () => ({
+    useRecursoSelecionadoContext: () => ({ recursoSelecionado: null }),
+}));
+
 Object.defineProperty(window, "matchMedia", {
   writable: true,
   value: jest.fn().mockImplementation((query) => ({
@@ -314,7 +318,7 @@ describe("Testes Operacao EDIT", () => {
     const input = screen.getByLabelText(/nome/i);
 
     expect(input).toBeInTheDocument();
-    await userEvent.type(input, "Tipo Custeio8f71");
+    fireEvent.change(input, { target: { value: "Tipo Custeio8f71" } });
     expect(input.value).toBe("Tipo Custeio8f71");
 
     const btnSalvar = screen.getByRole("button", { name: "Salvar" });
@@ -362,7 +366,7 @@ describe("Testes Operacao EDIT", () => {
     const input = screen.getByLabelText(/nome/i);
 
     expect(input).toBeInTheDocument();
-    await userEvent.type(input, "Tipo Custeio8f71");
+    fireEvent.change(input, { target: { value: "Tipo Custeio8f71" } });
     expect(input.value).toBe("Tipo Custeio8f71");
 
     const btnSalvar = screen.getByRole("button", { name: "Salvar" });
@@ -411,7 +415,7 @@ describe("Testes Operacao EDIT", () => {
     const input = screen.getByLabelText(/nome/i);
 
     expect(input).toBeInTheDocument();
-    await userEvent.type(input, "Tipo Custeio8f71");
+    fireEvent.change(input, { target: { value: "Tipo Custeio8f71" } });
     expect(input.value).toBe("Tipo Custeio8f71");
 
     const btnSalvar = screen.getByRole("button", { name: "Salvar" });
@@ -465,7 +469,7 @@ describe("Testes Operacao DELETE", () => {
 
     expect(botoesExcluir.length).toBeGreaterThan(0);
 
-    await userEvent.click(botoesExcluir[0]);
+    fireEvent.click(botoesExcluir[0]);
 
     const texto = await screen.findByText("Excluir tipo de despesa de custeio");
     expect(texto).toBeInTheDocument();
@@ -474,7 +478,7 @@ describe("Testes Operacao DELETE", () => {
       '[data-qa="btn-Excluir-modal-confirmar-excluir-tipo-de-despesa-custeio"]',
     );
 
-    await userEvent.click(btnExcluir);
+    fireEvent.click(btnExcluir);
 
     await waitFor(() => {
       expect(deleteTipoDeCusteio).toHaveBeenCalled();
@@ -511,7 +515,7 @@ describe("Testes Operacao DELETE", () => {
 
     expect(botoesExcluir.length).toBeGreaterThan(0);
 
-    await userEvent.click(botoesExcluir[0]);
+    fireEvent.click(botoesExcluir[0]);
 
     const texto = await screen.findByText("Excluir tipo de despesa de custeio");
     expect(texto).toBeInTheDocument();
@@ -520,7 +524,7 @@ describe("Testes Operacao DELETE", () => {
       '[data-qa="btn-Excluir-modal-confirmar-excluir-tipo-de-despesa-custeio"]',
     );
 
-    await userEvent.click(btnExcluir);
+    fireEvent.click(btnExcluir);
 
     await waitFor(() => {
       expect(deleteTipoDeCusteio).toHaveBeenCalled();
@@ -558,7 +562,7 @@ describe("Testes Operacao DELETE", () => {
 
     expect(botoesExcluir.length).toBeGreaterThan(0);
 
-    await userEvent.click(botoesExcluir[0]);
+    fireEvent.click(botoesExcluir[0]);
 
     const texto = await screen.findByText("Excluir tipo de despesa de custeio");
     expect(texto).toBeInTheDocument();
@@ -567,7 +571,7 @@ describe("Testes Operacao DELETE", () => {
       '[data-qa="btn-Excluir-modal-confirmar-excluir-tipo-de-despesa-custeio"]',
     );
 
-    await userEvent.click(btnExcluir);
+    fireEvent.click(btnExcluir);
 
     await waitFor(() => {
       expect(deleteTipoDeCusteio).toHaveBeenCalled();

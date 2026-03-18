@@ -7,6 +7,11 @@ import {NotificacaoContext} from "../../../../context/Notificacoes";
 import { Cabecalho } from '../index';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { mantemEstadoAnaliseDre } from "../../../../services/mantemEstadoAnaliseDre.service";
+import { useRecursoSelecionadoContext } from "../../../../context/RecursoSelecionado";
+
+jest.mock("../../../../context/RecursoSelecionado", () => ({
+    useRecursoSelecionadoContext: jest.fn(),
+}));
 
 jest.mock("../../../../services/mantemEstadoAnaliseDre.service", () => ({
     mantemEstadoAnaliseDre:{
@@ -58,8 +63,8 @@ describe('Cabeçalho', () => {
         queryClient.clear();
         visoesService.getItemUsuarioLogado.mockReturnValue("James Bond");
         authService.isLoggedIn.mockReturnValue(true);
-        visoesService.getDadosDoUsuarioLogado.mockReturnValue(mockDadosUsuarioLogado)
-
+        visoesService.getDadosDoUsuarioLogado.mockReturnValue(mockDadosUsuarioLogado);
+        useRecursoSelecionadoContext.mockReturnValue({ isLoading: false });
     })
     const renderComponent = () => {
         return render(

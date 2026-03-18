@@ -25,6 +25,10 @@ jest.mock("../../../../services/mantemEstadoAnaliseDre.service", () => ({
 }));
 jest.mock("../../../../services/visoes.service");
 
+jest.mock("../../../../paginas/PaginasContainer", () => ({
+  PaginasContainer: ({ children }) => <div>{children}</div>,
+}));
+
 const renderComponent = () => {
   return render(
     <BrowserRouter>

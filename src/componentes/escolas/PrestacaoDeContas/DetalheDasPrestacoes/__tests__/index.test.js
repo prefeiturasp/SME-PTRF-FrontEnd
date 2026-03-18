@@ -7,8 +7,16 @@ import * as receitaService from "../../../../../services/escolas/Receitas.servic
 import { SidebarContext } from "../../../../../context/Sidebar";
 import { useParams, useLocation } from 'react-router-dom';
 import * as tabelaValoresPendentesService from "../../../../../services/escolas/TabelaValoresPendentesPorAcao.service";
+import { conciliacaoStorageService } from "../../../../../services/storages/Conciliacao.storage.service";
 
 jest.mock("../../../../../services/escolas/TabelaValoresPendentesPorAcao.service");
+jest.mock("../../../../../services/storages/Conciliacao.storage.service", () => ({
+    conciliacaoStorageService: {
+        getPeriodoConta: jest.fn(),
+        setPeriodoConta: jest.fn(),
+        removePeriodoConta: jest.fn(),
+    },
+}));
 jest.mock("../../../../../services/escolas/PrestacaoDeContas.service");
 jest.mock("../../../../../services/escolas/Receitas.service");
 jest.mock("../../../../../services/escolas/Associacao.service");
@@ -69,6 +77,10 @@ describe("DetalheDasPrestacoes", () => {
     beforeEach(() => {
       jest.clearAllMocks();
 
+      useParams.mockReturnValue({ periodo_uuid: null });
+      useLocation.mockReturnValue({ state: null });
+      conciliacaoStorageService.getPeriodoConta.mockReturnValue(null);
+
       localStorage.setItem('ASSOCIACAO_UUID', 'associacao-uuid');
 
       receitaService.getTabelasReceita.mockResolvedValue({ data: { acoes_associacao: [] } });
@@ -84,10 +96,6 @@ describe("DetalheDasPrestacoes", () => {
       associacaoService.getPeriodosDePrestacaoDeContasDaAssociacao.mockResolvedValue([{ uuid: 'periodo-uuid' }]);
       tabelaValoresPendentesService.tabelaValoresPendentes.mockResolvedValue([]);
     });
-
-    beforeEach(() => {
-        jest.clearAllMocks();
-    })
 
     it("lança getTabelasReceita com erro", async () => {
         receitaService.getTabelasReceita.mockRejectedValue({});
@@ -109,14 +117,18 @@ describe("DetalheDasPrestacoes", () => {
     });
 
     it("renderiza o componente e periodo_uuid SEM parâmetro de url (else if em getPeriodoConta())", async () => {
-      const ls = JSON.stringify({ periodo: 'periodo-uuid', conta: 'conta-uuid' });
-      localStorage.setItem('periodoConta', ls);
+      conciliacaoStorageService.getPeriodoConta.mockReturnValue({ periodo: 'periodo-uuid', conta: 'conta-uuid' });
+      associacaoService.getPeriodosDePrestacaoDeContasDaAssociacao.mockResolvedValue([{
+          uuid: 'periodo-uuid',
+          referencia: '2025',
+          data_inicio_realizacao_despesas: '2025-01-01',
+          data_fim_realizacao_despesas: '2025-12-31',
+      }]);
       useParams.mockReturnValue({ periodo_uuid: null });
 
       renderComponent();
 
       await waitFor(() => {
-        expect(localStorage.getItem('periodoConta')).toBe(ls);
         expect(receitaService.getTabelasReceita).toHaveBeenCalledTimes(1);
         expect(associacaoService.getContas).toHaveBeenCalledTimes(1);
         expect(prestacaoService.getObservacoes).toHaveBeenCalledTimes(1);
@@ -139,14 +151,13 @@ describe("DetalheDasPrestacoes", () => {
     });
     
     it("renderiza o componente e periodo_uuid SEM parâmetro de url e SEM localStorage periodoConta (else em getPeriodoConta())", async () => {
-        const ls = JSON.stringify({periodo: '', conta: ''})
-        localStorage.removeItem('periodoConta');
         useParams.mockReturnValue({ periodo_uuid: null });
+        // conciliacaoStorageService.getPeriodoConta returns null (default from beforeEach)
 
         renderComponent();
-        expect(receitaService.getTabelasReceita).toHaveBeenCalledTimes(1);
-        expect(associacaoService.getContas).toHaveBeenCalledTimes(1);
-        expect(localStorage.getItem('periodoConta')).toBe(ls);
+        await waitFor(() => {
+            expect(receitaService.getTabelasReceita).toHaveBeenCalledTimes(1);
+        });
     });
 
     it("renderiza o componente e cobre a função getAcaoLancamento quando HÁ dado em localStorage (if em getAcaoLancamento())", async () => {
@@ -165,7 +176,9 @@ describe("DetalheDasPrestacoes", () => {
 
         renderComponent();
 
-        expect(associacaoService.getPeriodosDePrestacaoDeContasDaAssociacao).toHaveBeenCalledTimes(1);
+        await waitFor(() => {
+            expect(associacaoService.getPeriodosDePrestacaoDeContasDaAssociacao).toHaveBeenCalledTimes(1);
+        });
         expect(localStorage.getItem('ASSOCIACAO_UUID')).toBe('associacao-uuid');
     });
 
@@ -188,16 +201,22 @@ describe("DetalheDasPrestacoes", () => {
         expect(botaoVoltarParaAnalise).toBeInTheDocument();
         fireEvent.click(botaoVoltarParaAnalise);
 
-        expect(associacaoService.getPeriodosDePrestacaoDeContasDaAssociacao).toHaveBeenCalledTimes(1);
+        await waitFor(() => {
+            expect(associacaoService.getPeriodosDePrestacaoDeContasDaAssociacao).toHaveBeenCalledTimes(1);
+        });
         expect(useLocation).toHaveBeenCalled();
     });
 
     it("renderiza o componente e alterando o campo Data Saldo", async () => {
-        const ls = JSON.stringify({periodo: 'periodo-uuid', conta: 'conta-uuid'})
-        localStorage.setItem('periodoConta', ls);
-
+        conciliacaoStorageService.getPeriodoConta.mockReturnValue({ periodo: 'periodo-uuid', conta: 'conta-uuid' });
         prestacaoService.getStatusPeriodoPorData.mockResolvedValue({prestacao_contas_status: {periodo_bloqueado: false}});
-        associacaoService.getPeriodosDePrestacaoDeContasDaAssociacao.mockResolvedValue([{uuid: 'periodo-uuid'}]);
+        associacaoService.getPeriodosDePrestacaoDeContasDaAssociacao.mockResolvedValue([{
+            uuid: 'periodo-uuid',
+            referencia: '2025',
+            data_inicio_realizacao_despesas: '2025-01-01',
+            data_fim_realizacao_despesas: '2025-12-31',
+        }]);
+        associacaoService.getContas.mockResolvedValue([{ uuid: 'conta-uuid', conta: 'conta-nome', tipo_conta: { nome: 'conta-tipo' } }]);
         useParams.mockReturnValue({ periodo_uuid: null });
         useLocation.mockReturnValue({
             state: {

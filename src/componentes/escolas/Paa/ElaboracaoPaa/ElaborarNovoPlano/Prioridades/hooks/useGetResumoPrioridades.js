@@ -3,7 +3,6 @@ import { getResumoPrioridades } from "../../../../../../../services/escolas/Paa.
 
 export const useGetResumoPrioridades = () => {
   const {
-    status,
     isFetching,
     isError,
     data = [],
@@ -15,7 +14,7 @@ export const useGetResumoPrioridades = () => {
     refetchOnWindowFocus: true
   });
   return {
-    isLoading: status === 'loading',
+    isLoading: isFetching,
     isFetching,
     isError,
     resumoPrioridades: data,

@@ -3,6 +3,10 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { ClassificarBem } from "../index";
 
+jest.mock("../../../../../../services/escolas/Despesas.service", () => ({
+  getEspecificacoesCapital: jest.fn().mockResolvedValue([]),
+}));
+
 describe("ClassificarBem - Transformação de especificação", () => {
   beforeEach(() => {
     window.matchMedia = jest.fn().mockImplementation((query) => ({
@@ -15,7 +19,7 @@ describe("ClassificarBem - Transformação de especificação", () => {
   it("deve transformar especificação do bem de objeto para UUID corretamente", async () => {
     const mockSetBemProduzidoItems = jest.fn();
     const mockSetHabilitaCadastrarBem = jest.fn();
-    
+
     render(
       <MemoryRouter>
         <ClassificarBem
@@ -30,7 +34,7 @@ describe("ClassificarBem - Transformação de especificação", () => {
                 aplicacao_recurso: "CAPITAL",
                 tipo_custeio: null,
                 tipo_custeio_objeto: null,
-                ativa: false
+                ativa: false,
               },
               quantidade: 2,
               valor_individual: 7200,
@@ -46,13 +50,21 @@ describe("ClassificarBem - Transformação de especificação", () => {
       </MemoryRouter>
     );
 
-    // Aguardar o componente carregar
+    // Aguarda o useEffect([items, form]) executar e setar os valores no form (inclui transformação objeto → UUID)
+    await waitFor(() => {
+      expect(screen.getByText("Item 1")).toBeInTheDocument();
+    });
+
+    // Clicar em "Adicionar item" dispara onValuesChange com todos os valores atuais do form,
+    // o que faz handleValuesChange chamar setBemProduzidoItems com especificacao_do_bem já como UUID
+    fireEvent.click(screen.getByText("Adicionar item"));
+
     await waitFor(() => {
       expect(mockSetBemProduzidoItems).toHaveBeenCalledWith(
         expect.arrayContaining([
           expect.objectContaining({
-            especificacao_do_bem: "2de99664-4453-4c3b-9847-5bfc0567344b"
-          })
+            especificacao_do_bem: "2de99664-4453-4c3b-9847-5bfc0567344b",
+          }),
         ])
       );
     });
@@ -61,7 +73,7 @@ describe("ClassificarBem - Transformação de especificação", () => {
   it("deve manter UUID quando especificação já é string", async () => {
     const mockSetBemProduzidoItems = jest.fn();
     const mockSetHabilitaCadastrarBem = jest.fn();
-    
+
     render(
       <MemoryRouter>
         <ClassificarBem
@@ -84,15 +96,22 @@ describe("ClassificarBem - Transformação de especificação", () => {
       </MemoryRouter>
     );
 
-    // Aguardar o componente carregar
+    // Aguarda o useEffect([items, form]) executar
+    await waitFor(() => {
+      expect(screen.getByText("Item 1")).toBeInTheDocument();
+    });
+
+    // Clicar em "Adicionar item" dispara onValuesChange → handleValuesChange → setBemProduzidoItems
+    fireEvent.click(screen.getByText("Adicionar item"));
+
     await waitFor(() => {
       expect(mockSetBemProduzidoItems).toHaveBeenCalledWith(
         expect.arrayContaining([
           expect.objectContaining({
-            especificacao_do_bem: "2de99664-4453-4c3b-9847-5bfc0567344b"
-          })
+            especificacao_do_bem: "2de99664-4453-4c3b-9847-5bfc0567344b",
+          }),
         ])
       );
     });
   });
-}); 
+});

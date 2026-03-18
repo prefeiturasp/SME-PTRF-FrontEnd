@@ -17,7 +17,7 @@ describe('<AcompanhamentoPcsPorDre>', () => {
         periodo_uuid: 'uuid-teste',
         dre_uuid: 'uuid-teste'
     });
-    useLocation.mockReturnValue({ state: {} });
+    useLocation.mockReturnValue({ state: {}, pathname: '/' });
     render(
         <MemoryRouter>
           <AcompanhamentoPcsPorDre/>

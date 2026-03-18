@@ -842,7 +842,7 @@ describe("Componente CadastroFormFormik", () => {
       exibeMsgErroValorRecursos: true,
     });
 
-    expect(screen.getByText("Valor do PTRF")).toBeInTheDocument();
+    expect(screen.getByText("Valor do recurso selecionado")).toBeInTheDocument();
   });
 
   it("deve chamar setaValorRealizado ao alterar valor original", () => {

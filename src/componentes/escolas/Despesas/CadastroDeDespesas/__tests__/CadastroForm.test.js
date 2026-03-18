@@ -6,6 +6,14 @@ import { DespesaContext } from "../../../../../context/Despesa";
 import * as DespesasService from "../../../../../services/escolas/Despesas.service";
 import { metodosAuxiliares } from "../../metodosAuxiliares";
 
+// Mock do hook que usa useDispatch (react-redux)
+jest.mock("../hooks/useMutationDespesaConfirmavel", () => ({
+  useMutationDespesaConfirmavel: () => ({
+    mutationCreate: { mutate: jest.fn(), isPending: false },
+    mutationUpdate: { mutate: jest.fn(), isPending: false },
+  }),
+}));
+
 // Mock dos serviços
 jest.mock("../../../../../services/escolas/Despesas.service");
 

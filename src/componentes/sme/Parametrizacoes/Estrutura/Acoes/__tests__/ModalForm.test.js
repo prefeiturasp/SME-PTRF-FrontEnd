@@ -36,7 +36,7 @@ const defaultProps = {
   stateFormModal: mockCreate,
   // readOnly:
   handleClose: jest.fn(),
-  handleSubmitModalFormAcoes: jest.fn(),
+  handleSubmit: jest.fn(),
   setShowModalConfirmDelete: jest.fn(),
   setFieldValue: jest.fn()
 };
@@ -136,8 +136,8 @@ describe("Componente ModalForm", () => {
     expect(screen.getByLabelText("Nome *")).toHaveValue("");
     expect(screen.queryByRole("button", { name: "Excluir" })).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Cancelar" })).toBeInTheDocument();
-    expect(screen.getAllByLabelText("Sim").length).toEqual(4);
-    expect(screen.getAllByLabelText("Não").length).toEqual(4);
+    expect(screen.getAllByLabelText("Sim").length).toEqual(5);
+    expect(screen.getAllByLabelText("Não").length).toEqual(5);
 
     expect(screen.getByRole("button", { name: "Salvar" })).toBeEnabled();
     const camposTextos = screen.getAllByRole("textbox");
@@ -164,8 +164,8 @@ describe("Componente ModalForm", () => {
     expect(screen.getByLabelText("Nome *")).toHaveValue("");
     expect(screen.queryByRole("button", { name: "Excluir" })).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Cancelar" })).toBeInTheDocument();
-    expect(screen.getAllByLabelText("Sim").length).toEqual(4);
-    expect(screen.getAllByLabelText("Não").length).toEqual(4);
+    expect(screen.getAllByLabelText("Sim").length).toEqual(5);
+    expect(screen.getAllByLabelText("Não").length).toEqual(5);
 
     expect(screen.getByRole("button", { name: "Salvar" })).toBeDisabled();
     const camposTextos = screen.getAllByRole("textbox");
@@ -199,7 +199,7 @@ describe("Componente ModalForm", () => {
     fireEvent.click(saveButton);
 
     await waitFor(() => {
-        expect(defaultProps.handleSubmitModalFormAcoes).toHaveBeenCalledTimes(1);
+        expect(defaultProps.handleSubmit).toHaveBeenCalledTimes(1);
     });
   });
 

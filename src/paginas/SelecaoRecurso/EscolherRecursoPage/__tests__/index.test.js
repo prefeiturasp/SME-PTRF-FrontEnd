@@ -2,9 +2,11 @@ import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { EscolherRecursoPage } from "../index";
-import useRecursoSelecionado from "../../../../hooks/Globais/useRecursoSelecionado";
+import { useRecursoSelecionadoContext } from "../../../../context/RecursoSelecionado";
 
-jest.mock("../../../../hooks/Globais/useRecursoSelecionado");
+jest.mock("../../../../context/RecursoSelecionado", () => ({
+  useRecursoSelecionadoContext: jest.fn(),
+}));
 
 const mockHandleChange = jest.fn();
 
@@ -35,7 +37,7 @@ describe("EscolherRecursoPage", () => {
   });
 
   it("renderiza overlay quando existem múltiplos recursos", () => {
-    useRecursoSelecionado.mockReturnValue({
+    useRecursoSelecionadoContext.mockReturnValue({
       recursoSelecionado: null,
       recursos: mockRecursos,
       handleChangeRecurso: mockHandleChange,
@@ -50,7 +52,7 @@ describe("EscolherRecursoPage", () => {
   });
 
   it("chama handleChangeRecurso ao clicar no card", () => {
-    useRecursoSelecionado.mockReturnValue({
+    useRecursoSelecionadoContext.mockReturnValue({
       recursoSelecionado: null,
       recursos: mockRecursos,
       handleChangeRecurso: mockHandleChange,

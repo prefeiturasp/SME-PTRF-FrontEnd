@@ -3,7 +3,6 @@ import { getPlanoOrcamentario } from "../../../../../../../../services/escolas/P
 
 export const useGetPlanoOrcamentario = (paaUuid, options = {}) => {
   const {
-    status,
     isFetching,
     isError,
     data = {},
@@ -20,7 +19,7 @@ export const useGetPlanoOrcamentario = (paaUuid, options = {}) => {
   });
 
   return {
-    isLoading: status === "loading",
+    isLoading: isFetching,
     isFetching,
     isError,
     data,

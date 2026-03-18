@@ -2,7 +2,7 @@ import { getTipoReceita } from "../../../../../../services/sme/Parametrizacoes.s
 import { useQuery } from "@tanstack/react-query";
 
 export const useGetTipoReceita = (uuid) => {
-  const { status, isError, data, error, refetch } = useQuery({
+  const { isFetching, isError, data, error, refetch } = useQuery({
     queryKey: ["tipo-receita", uuid],
     queryFn: () => getTipoReceita(uuid),
     cacheTime: 0,
@@ -13,5 +13,5 @@ export const useGetTipoReceita = (uuid) => {
     enabled: !!uuid,
   });
 
-  return { isLoading: status === "loading", isError, data, error, refetch };
+  return { isLoading: isFetching, isError, data, error, refetch };
 };

@@ -14,6 +14,13 @@ jest.mock("../../../../../services/escolas/Despesas.service", () => ({
   getEspecificacoesCusteio: jest.fn(),
 }));
 
+jest.mock("../../../../../componentes/escolas/Despesas/CadastroDeDespesas/hooks/useMutationDespesaConfirmavel", () => ({
+  useMutationDespesaConfirmavel: () => ({
+    mutationCreate: { mutate: jest.fn(), isPending: false },
+    mutationUpdate: { mutate: jest.fn(), isPending: false },
+  }),
+}));
+
 jest.mock("../../../../../componentes/escolas/Despesas/metodosAuxiliares", () => ({
   metodosAuxiliares: {
     origemAnaliseLancamento: jest.fn(),
@@ -100,7 +107,7 @@ beforeEach(() => {
 
   test('Deve renderizar o componente', async () => {
     useParams.mockReturnValue({ associacao: '' });
-    useLocation.mockReturnValue({ state: null });
+    useLocation.mockReturnValue({ state: null, pathname: '/' });
     render(
       <MemoryRouter>
         <DespesaContext.Provider value={contexto}>
@@ -113,7 +120,7 @@ beforeEach(() => {
 
   test('Deve renderizar o componente na visao DRE', async () => {
     useParams.mockReturnValue({ associacao: '' });
-    useLocation.mockReturnValue({ state: null });
+    useLocation.mockReturnValue({ state: null, pathname: '/' });
     visoesService.getItemUsuarioLogado.mockReturnValue('DRE');
     render(
       <MemoryRouter>
@@ -131,7 +138,8 @@ beforeEach(() => {
         operacao: 'requer_exclusao_lancamento_gasto',
         origem_visao: 'UE',
         origem: '/consulta-detalhamento-analise-da-dre'
-      }
+      },
+      pathname: '/'
     }
     useParams.mockReturnValue({ associacao: '1234' });
     useLocation.mockReturnValue(parametroLocation);
@@ -153,7 +161,8 @@ beforeEach(() => {
         operacao: 'teste',
         origem_visao: 'UE',
         origem: '/consulta-detalhamento-analise-da-dre'
-      }
+      },
+      pathname: '/'
     }
     useParams.mockReturnValue({ associacao: '1234' });
     useLocation.mockReturnValue(parametroLocation);
@@ -175,7 +184,8 @@ beforeEach(() => {
         operacao: 'requer_exclusao_lancamento_gasto',
         origem_visao: 'UE',
         origem: '/consulta-detalhamento-analise-da-dre'
-      }
+      },
+      pathname: '/'
     }
     useParams.mockReturnValue({ associacao: '1234' });
     useLocation.mockReturnValue(parametroLocation);
@@ -196,7 +206,8 @@ beforeEach(() => {
     const parametroLocation = {
       state: {
         origem: 'situacao_patrimonial'
-      }
+      },
+      pathname: '/'
     };
     useParams.mockReturnValue({ associacao: '1234' });
     useLocation.mockReturnValue(parametroLocation);
@@ -219,7 +230,8 @@ beforeEach(() => {
     const parametroLocation = {
       state: {
         origem: 'situacao_patrimonial'
-      }
+      },
+      pathname: '/'
     };
     useParams.mockReturnValue({ associacao: '1234' });
     useLocation.mockReturnValue(parametroLocation);
@@ -243,7 +255,8 @@ beforeEach(() => {
     const parametroLocation = {
       state: {
         origem: 'situacao_patrimonial'
-      }
+      },
+      pathname: '/'
     };
     useParams.mockReturnValue({ associacao: '1234' });
     useLocation.mockReturnValue(parametroLocation);
@@ -267,7 +280,8 @@ beforeEach(() => {
     const parametroLocation = {
       state: {
         origem: 'outra_origem'
-      }
+      },
+      pathname: '/'
     };
     useParams.mockReturnValue({ associacao: '1234' });
     useLocation.mockReturnValue(parametroLocation);

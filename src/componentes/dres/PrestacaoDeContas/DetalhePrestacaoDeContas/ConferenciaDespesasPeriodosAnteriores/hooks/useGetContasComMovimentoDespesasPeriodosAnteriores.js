@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getContasComMovimentoDespesasPeriodosAnteriores } from "../../../../../../services/dres/PrestacaoDeContas.service";
 
 export const useGetContasComMovimentoDespesasPeriodosAnteriores = (prestacaoDeContasUUID) => {
-    const { status, isError, data = [], error, refetch} = useQuery({
+    const { isFetching, isError, data = [], error, refetch} = useQuery({
         queryKey: [
             'contas-com-movimentos-despesas-periodos-anteriores-para-conferencia',
             prestacaoDeContasUUID
@@ -13,5 +13,5 @@ export const useGetContasComMovimentoDespesasPeriodosAnteriores = (prestacaoDeCo
         refetchOnWindowFocus: true, // Caso saia da aba e voltar ele refaz a requisição
     });
 
-    return {isLoading: status === 'loading', isError, data, error, refetch}
+    return {isLoading: isFetching, isError, data, error, refetch}
 }

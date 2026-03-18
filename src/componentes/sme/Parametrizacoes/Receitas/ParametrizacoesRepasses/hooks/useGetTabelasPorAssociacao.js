@@ -7,7 +7,7 @@ import { RepassesContext } from "../context/Repasse";
 export const useGetTabelasPorAssociacao = () => {
     const {stateFormModal} = useContext(RepassesContext)
 
-    const { status, isFetching, isError, data, refetch } = useQuery({
+    const { isFetching, isError, data, refetch } = useQuery({
         queryKey: ['tabelas-repasse-associacao-list', stateFormModal.associacao],
         queryFn: ()=> getTabelasRepassePorAssociacao(stateFormModal.associacao),
         keepPreviousData: true,
@@ -15,5 +15,5 @@ export const useGetTabelasPorAssociacao = () => {
         staleTime: 1000 * 60 * 1 // 1 minutos
     });
 
-    return {isLoading: status === 'loading', isFetching, isError, data, refetch}
+    return {isLoading: isFetching, isFetching, isError, data, refetch}
 }

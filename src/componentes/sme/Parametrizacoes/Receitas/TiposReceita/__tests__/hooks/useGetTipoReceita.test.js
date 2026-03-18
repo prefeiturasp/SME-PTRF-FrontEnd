@@ -32,7 +32,7 @@ describe("useGetTipoReceita", () => {
     const { result } = renderHook(() => useGetTipoReceita(uuid), {
       wrapper: createWrapper(),
     });
-    expect(result.current.isLoading).toBe(false);
+    expect(result.current.isLoading).toBe(true);
     expect(result.current.data).toBeUndefined();
   });
 

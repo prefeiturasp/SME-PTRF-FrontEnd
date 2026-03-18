@@ -54,6 +54,7 @@ describe("Componente BarraMensagemFixa", () => {
         mensagem: "Mensagem importante",
         txtBotao: "Acessar",
         url: "/cadastro",
+        exibeBotao: true,
       },
       { pendencia_novo_mandato: true }
     );
