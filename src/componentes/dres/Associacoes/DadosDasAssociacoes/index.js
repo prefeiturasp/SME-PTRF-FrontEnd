@@ -11,11 +11,9 @@ import { SituacaoFinanceiraUnidadeEducacional } from "./SituacaoFinanceiraUnidad
 import {visoesService} from "../../../../services/visoes.service"
 import { SituacaoPatrimonialUnidadeEducacional } from "./SituacaoPatrimonial";
 import "../associacoes.scss"
-import { useRecursoSelecionadoContext } from "../../../../context/RecursoSelecionado";
 
 export const DetalhesDaAssociacao = () => {
     const { origem } = useParams();
-    const { recursos, recursoSelecionado } = useRecursoSelecionadoContext();
 
     const [clickBtnEscolheOpcao, setClickBtnEscolheOpcao] = useState({
         dados_unidade: true,
@@ -35,6 +33,8 @@ export const DetalhesDaAssociacao = () => {
         situacao_patrimonial: false
     });
     let dadosDaAssociacao = JSON.parse(localStorage.getItem(DADOS_DA_ASSOCIACAO));
+
+    let { recursos_da_associacao } = dadosDaAssociacao.dados_da_associacao;
 
     let tabs = [
         {
@@ -70,7 +70,7 @@ export const DetalhesDaAssociacao = () => {
         },
     ]
 
-    let recurso_tabs = recursos
+    let recurso_tabs = recursos_da_associacao
         .sort((a, b) => {
             if (a.legado) return -1;
             if (b.legado) return 1;
@@ -223,7 +223,7 @@ export const DetalhesDaAssociacao = () => {
         toggleBtnEscolheOpcao(id);
         
         // Se for a aba de processos_sei e houver mais de 1 recurso, seleciona a primeira aba de recurso
-        if (id === "processos_sei" && recursos.length > 1 && recurso_tabs.length > 0) {
+        if (id === "processos_sei" && recursos_da_associacao.length > 1 && recurso_tabs.length > 0) {
             setClickBtnEscolheOpcao(prev => ({
                 ...prev,
                 [recurso_tabs[0].id]: true
@@ -334,7 +334,7 @@ export const DetalhesDaAssociacao = () => {
                                                 dadosDaAssociacao={dadosDaAssociacao}
                                             />
 
-                                            { visoesService.featureFlagAtiva('premio-excelencia-processo-sei') && recursos.length > 1 ? (
+                                            { visoesService.featureFlagAtiva('premio-excelencia-processo-sei') && recursos_da_associacao.length > 1 ? (
                                                 <>
                                                     <nav>
                                                         <div className="nav nav-tabs mb-3 mt-3 menu-interno-dre-detalhes" id="nav-tab" role="tablist">
@@ -392,9 +392,9 @@ export const DetalhesDaAssociacao = () => {
                                                     </div>
                                                 </>
                                             ) : (
+                                                // busca processos sei por padrão (recurso legado), para o caso de não exibir as abas de recurso.
                                                 <ProcessosSeiPrestacaoDeContas
                                                     dadosDaAssociacao={dadosDaAssociacao}
-                                                    recurso_uuid={recursoSelecionado?.uuid || ''}
                                                 />
                                             )}
                                         </div>
