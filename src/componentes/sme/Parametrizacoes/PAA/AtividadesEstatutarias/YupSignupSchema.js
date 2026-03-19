@@ -15,5 +15,8 @@ export const YupSignupSchema = () =>
       mes: yup
         .string()
         .required("Mês da atividade estatutária é obrigatório"),
+      ano: yup
+        .string()
+        .required("Ano da atividade estatutária é obrigatório"),
     });
   

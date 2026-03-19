@@ -31,6 +31,7 @@ const normalizaDisponivel = (item) => ({
   descricao: item.nome || "",
   tipoAtividade: item.tipo_label || "",
   tipoAtividadeKey: item.tipo || "",
+  ano: item.ano ??"",
   mes: item.mes ?? "",
   mesLabel: item.mes_label || "",
   status: item.status ?? null,

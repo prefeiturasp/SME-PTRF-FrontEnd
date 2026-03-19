@@ -2,7 +2,6 @@ import { useContext } from "react";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import { Spin, Tooltip } from "antd";
-import { IconButton } from "../../../../Globais/UI";
 import Loading from "../../../../../utils/Loading";
 import { AtividadesEstatutariasContext } from "./context/index";
 import { useGetTabelas } from "./hooks/useGetTabelas";
@@ -52,6 +51,7 @@ export const Tabela = () => {
       ...stateFormModal,
       nome: rowData.nome,
       status: rowData.status ? 1 : 0,
+      ano: rowData.ano,
       mes: rowData.mes,
       tipo: rowData.tipo,
       uuid: rowData.uuid,
@@ -68,6 +68,7 @@ export const Tabela = () => {
       nome: values.nome,
       status: values.status,
       tipo: values.tipo,
+      ano: values.ano,
       mes: values.mes,
     };
 
@@ -168,6 +169,12 @@ export const Tabela = () => {
                 field="mes_label"
                 header="Mês"
                 style={{ width: "130px" }}
+              />
+              <Column
+                field="ano_label"
+                header="Ano"
+                style={{ width: "130px" }}
+                body={(rowData) => rowData.ano_label || "--"}
               />
               <Column
                 field="acao"
