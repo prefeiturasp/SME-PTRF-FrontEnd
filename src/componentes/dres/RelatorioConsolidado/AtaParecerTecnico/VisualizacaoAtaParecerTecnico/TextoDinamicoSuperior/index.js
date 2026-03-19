@@ -1,6 +1,9 @@
 import React from "react";
+import { useRecursoSelecionadoContext } from "../../../../../../context/RecursoSelecionado";
 
 export const TextoDinamicoSuperior = ({retornaDadosAtaFormatado, retornaTituloCorpoAta, ehPrevia, ehRetificacao, motivoRetificacao}) => {
+
+    const { recursoSelecionado } = useRecursoSelecionadoContext();
 
     const getTexto = (ehRetificacao) => {
         const baseLegal = "conforme incisos III e IV do art. 34 da Portaria SME nº 6.634/2021"
@@ -11,7 +14,7 @@ export const TextoDinamicoSuperior = ({retornaDadosAtaFormatado, retornaTituloCo
          nº ${retornaDadosAtaFormatado("numero_portaria")} de ${retornaDadosAtaFormatado("data_portaria")},`
 
         const textoObjetivo = `para análise das prestações de contas ${ehRetificacao ? "RETIFICADAS" : ""} 
-        dos recursos transferidos pelo programa de Transferência de Recursos Financeiros - PTRF, 
+        dos recursos transferidos pelo ${recursoSelecionado?.nome}, 
         período de ${retornaDadosAtaFormatado("periodo.data_inicio_realizacao_despesas")} a 
         ${retornaDadosAtaFormatado("periodo.data_fim_realizacao_despesas")}, 
         ${ehRetificacao ? "em virtude dos seguintes motivos:" : `${baseLegal} e deliberou:`}`
