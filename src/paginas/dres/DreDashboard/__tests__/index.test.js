@@ -3,6 +3,7 @@ import { render, screen } from "@testing-library/react";
 import { useLocation } from "react-router-dom";
 import { DreDashboardPage } from "../index";
 import { MemoryRouter } from "react-router-dom";
+import { SidebarContextProvider } from "../../../../context/Sidebar";
 
 jest.mock("react-router-dom", () => ({
   ...jest.requireActual("react-router-dom"),
@@ -14,7 +15,9 @@ describe('<DreDashboardPage>', () => {
     useLocation.mockReturnValue({ state: { acessadoPelaSidebar: true }, pathname: '/' });
     render(
       <MemoryRouter>
-        <DreDashboardPage/>
+        <SidebarContextProvider>
+          <DreDashboardPage/>
+        </SidebarContextProvider>
       </MemoryRouter>
     )
     expect(useLocation).toHaveBeenCalled()
