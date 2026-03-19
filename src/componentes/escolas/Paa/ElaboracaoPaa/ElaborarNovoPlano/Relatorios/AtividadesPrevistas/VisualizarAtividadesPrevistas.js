@@ -9,7 +9,10 @@ import Img404 from "../../../../../../../assets/img/img-404.svg";
 import { useGetAtividadesEstatutarias } from "./hooks/useGetAtividadesEstatutarias";
 import { useGetAtividadesEstatutariasTabelas } from "./hooks/useGetAtividadesEstatutariasTabelas";
 import { useGetRecursosPropriosPrevistos } from "./hooks/useGetRecursosPropriosPrevistos";
-import { IconButton, EditIconButton } from "../../../../../../Globais/UI/Button";
+import {
+  IconButton,
+  EditIconButton,
+} from "../../../../../../Globais/UI/Button";
 import { Icon } from "../../../../../../Globais/UI/Icon";
 import {
   createAtividadeEstatutariaPaa,
@@ -19,6 +22,8 @@ import {
   linkAtividadeEstatutariaExistentePaa,
 } from "../../../../../../../services/escolas/Paa.service";
 import { ModalConfirmarExclusao } from "../../../../../../sme/Parametrizacoes/componentes/ModalConfirmarExclusao";
+import { parseISO, getYear, addYears } from "date-fns";
+
 import "./styles.scss";
 
 const formatarMesAno = (valor) => {
@@ -39,20 +44,20 @@ const formatarMesAno = (valor) => {
     }
     return `${mes.charAt(0).toUpperCase()}${mes.slice(1)}/${ano}`;
   }
-  
+
   const ano = parseInt(partes[0], 10);
   const mes = parseInt(partes[1], 10);
   const dia = parseInt(partes[2], 10);
-  
+
   if (Number.isNaN(ano) || Number.isNaN(mes) || Number.isNaN(dia)) {
     return "-";
   }
-  
+
   // Criar data no fuso horário local para evitar problemas de UTC
   const data = new Date(ano, mes - 1, dia);
   const mesFormatado = data.toLocaleDateString("pt-BR", { month: "long" });
   const anoFormatado = data.getFullYear();
-  
+
   if (!mesFormatado) {
     return `${anoFormatado || ""}`;
   }
@@ -61,7 +66,8 @@ const formatarMesAno = (valor) => {
 
 export const VisualizarAtividadesPrevistas = () => {
   const navigate = useNavigate();
-  const { atividades, isLoading, isError, refetch } = useGetAtividadesEstatutarias();
+  const { atividades, isLoading, isError, refetch } =
+    useGetAtividadesEstatutarias();
   const { data: tabelasAtividades } = useGetAtividadesEstatutariasTabelas();
   const {
     data: recursosProprios = [],
@@ -75,7 +81,10 @@ export const VisualizarAtividadesPrevistas = () => {
   const deveSincronizarTabela = useRef(false);
   const deveSincronizarRecursos = useRef(false);
   const [isSalvando, setIsSalvando] = useState(false);
-  const [modalExcluir, setModalExcluir] = useState({ aberto: false, atividade: null });
+  const [modalExcluir, setModalExcluir] = useState({
+    aberto: false,
+    atividade: null,
+  });
   const [isExcluindoAtividade, setIsExcluindoAtividade] = useState(false);
   const [modalExcluirRecurso, setModalExcluirRecurso] = useState({
     aberto: false,
@@ -161,6 +170,35 @@ export const VisualizarAtividadesPrevistas = () => {
     setAtividadesTabela((prev) => [...prev, novaAtividade]);
   }, []);
 
+  const obterMesAno = useCallback((dados) => {
+    let mesAnoLabel = dados?.mesLabel || "";
+
+    if (!dados?.ano) {
+      return mesAnoLabel;
+    }
+
+    const dadosPaaLocalStorage = JSON.parse(localStorage.getItem("DADOS_PAA"));
+
+    if (dadosPaaLocalStorage) {
+      const { periodo_paa_objeto } = dadosPaaLocalStorage;
+
+      if (!periodo_paa_objeto) return mesAnoLabel;
+
+      const dataInicial = parseISO(periodo_paa_objeto.data_inicial);
+
+      if (dados.ano === "VIGENTE") {
+        const ano = getYear(dataInicial);
+        mesAnoLabel += `/${ano}`;
+      }
+
+      if (dados.ano === "POSTERIOR") {
+        const ano = getYear(addYears(dataInicial, 1));
+        mesAnoLabel += `/${ano}`;
+      }
+    }
+    return mesAnoLabel;
+  }, []);
+
   const handleEditarRecursosProprios = useCallback(() => {
     navigate("/elaborar-novo-paa?fromAtividadesPrevistas=1", {
       state: {
@@ -171,79 +209,85 @@ export const VisualizarAtividadesPrevistas = () => {
     });
   }, [navigate]);
 
-  const handleChangeAtividade = useCallback((uuid, campo, valor, extra = {}) => {
-    setAtividadesTabela((prev) =>
-      prev.map((item) => {
-        if (item.uuid !== uuid) {
-          return item;
-        }
-
-        const updated = {
-          ...item,
-          [campo]: valor,
-          ...extra,
-          dirty: true,
-        };
-
-        if (extra.tipoAtividadeLabel) {
-          updated.tipoAtividade = extra.tipoAtividadeLabel;
-        }
-
-        if (campo === "data") {
-          const dataObj = valor ? new Date(valor) : null;
-          if (dataObj && !Number.isNaN(dataObj.getTime())) {
-            updated.mesAno = formatarMesAno(valor);
-          } else {
-            updated.mesAno = "-";
+  const handleChangeAtividade = useCallback(
+    (uuid, campo, valor, extra = {}) => {
+      setAtividadesTabela((prev) =>
+        prev.map((item) => {
+          if (item.uuid !== uuid) {
+            return item;
           }
 
-          if (!item.emEdicao) {
-            updated.needsSync = Boolean(dataObj && !Number.isNaN(dataObj.getTime()));
-          }
-        }
+          const updated = {
+            ...item,
+            [campo]: valor,
+            ...extra,
+            dirty: true,
+          };
 
-        return updated;
-      })
-    );
-  }, []);
+          if (extra.tipoAtividadeLabel) {
+            updated.tipoAtividade = extra.tipoAtividadeLabel;
+          }
+
+          if (campo === "data") {
+            const dataObj = valor ? new Date(valor) : null;
+            if (dataObj && !Number.isNaN(dataObj.getTime())) {
+              updated.mesAno = formatarMesAno(valor);
+            } else {
+              updated.mesAno = "-";
+            }
+
+            if (!item.emEdicao) {
+              updated.needsSync = Boolean(
+                dataObj && !Number.isNaN(dataObj.getTime()),
+              );
+            }
+          }
+
+          return updated;
+        }),
+      );
+    },
+    [],
+  );
 
   const handleEditarAtividade = useCallback((atividade) => {
     setAtividadesTabela((prev) =>
       prev.map((item) =>
-        item.uuid === atividade.uuid ? { ...item, emEdicao: true } : item
-      )
+        item.uuid === atividade.uuid ? { ...item, emEdicao: true } : item,
+      ),
     );
   }, []);
 
-  const handleSalvarLinha = useCallback(
-    (atividade) => {
-      if (!atividade.tipoAtividadeKey || !atividade.descricao || !atividade.data) {
-        toastCustom.ToastCustomError(
-          "Erro!",
-          "Preencha todos os campos obrigatórios."
-        );
-        return;
-      }
-
-      setAtividadesTabela((prev) =>
-        prev.map((item) => {
-          if (item.uuid !== atividade.uuid) {
-            return item;
-          }
-
-          const shouldSync = item.isNovo || item.dirty || item._destroy;
-
-          return {
-            ...item,
-            emEdicao: false,
-            dirty: false,
-            needsSync: shouldSync,
-          };
-        })
+  const handleSalvarLinha = useCallback((atividade) => {
+    if (
+      !atividade.tipoAtividadeKey ||
+      !atividade.descricao ||
+      !atividade.data
+    ) {
+      toastCustom.ToastCustomError(
+        "Erro!",
+        "Preencha todos os campos obrigatórios.",
       );
-    },
-    []
-  );
+      return;
+    }
+
+    setAtividadesTabela((prev) =>
+      prev.map((item) => {
+        if (item.uuid !== atividade.uuid) {
+          return item;
+        }
+
+        const shouldSync = item.isNovo || item.dirty || item._destroy;
+
+        return {
+          ...item,
+          emEdicao: false,
+          dirty: false,
+          needsSync: shouldSync,
+        };
+      }),
+    );
+  }, []);
 
   const handleSalvarAtividades = useCallback(async () => {
     if (!paaUuid) {
@@ -273,12 +317,14 @@ export const VisualizarAtividadesPrevistas = () => {
     if (linhasComErro.length > 0) {
       toastCustom.ToastCustomError(
         "Erro!",
-        "Preencha tipo, descrição e data para todas as atividades pendentes."
+        "Preencha tipo, descrição e data para todas as atividades pendentes.",
       );
       setAtividadesTabela((prev) =>
         prev.map((item) =>
-          linhasComErro.includes(item.uuid) ? { ...item, emEdicao: true } : item
-        )
+          linhasComErro.includes(item.uuid)
+            ? { ...item, emEdicao: true }
+            : item,
+        ),
       );
       return;
     }
@@ -287,8 +333,12 @@ export const VisualizarAtividadesPrevistas = () => {
       setAtividadesTabela(atividadesPreparadas);
     }
 
-    const atividadesPendentes = atividadesPreparadas.filter((item) => item.needsSync);
-    const recursosPendentes = recursosPropriosTabela.filter((item) => item.needsSync);
+    const atividadesPendentes = atividadesPreparadas.filter(
+      (item) => item.needsSync,
+    );
+    const recursosPendentes = recursosPropriosTabela.filter(
+      (item) => item.needsSync,
+    );
 
     if (atividadesPendentes.length === 0 && recursosPendentes.length === 0) {
       return;
@@ -313,8 +363,14 @@ export const VisualizarAtividadesPrevistas = () => {
               throw new Error("Identificador da atividade não encontrado.");
             }
             // eslint-disable-next-line no-await-in-loop
-            await deleteAtividadeEstatutariaPaa(paaUuid, atividadeEstatutariaUuid);
-            toastCustom.ToastCustomSuccess("Sucesso!", "Atividade excluída com sucesso.");
+            await deleteAtividadeEstatutariaPaa(
+              paaUuid,
+              atividadeEstatutariaUuid,
+            );
+            toastCustom.ToastCustomSuccess(
+              "Sucesso!",
+              "Atividade excluída com sucesso.",
+            );
             continue;
           }
 
@@ -335,12 +391,15 @@ export const VisualizarAtividadesPrevistas = () => {
             });
             toastCustom.ToastCustomSuccess(
               "Sucesso!",
-              "Atividade criada com sucesso."
+              "Atividade criada com sucesso.",
             );
           } else if (atividade.isNovo) {
             // eslint-disable-next-line no-await-in-loop
             await createAtividadeEstatutariaPaa(paaUuid, payloadBase);
-            toastCustom.ToastCustomSuccess("Sucesso!", "Atividade criada com sucesso.");
+            toastCustom.ToastCustomSuccess(
+              "Sucesso!",
+              "Atividade criada com sucesso.",
+            );
           } else {
             if (!atividadeEstatutariaUuid) {
               throw new Error("Identificador da atividade não encontrado.");
@@ -350,7 +409,10 @@ export const VisualizarAtividadesPrevistas = () => {
               atividade_estatutaria: atividadeEstatutariaUuid,
               ...payloadBase,
             });
-            toastCustom.ToastCustomSuccess("Sucesso!", "Atividade editada com sucesso.");
+            toastCustom.ToastCustomSuccess(
+              "Sucesso!",
+              "Atividade editada com sucesso.",
+            );
           }
         }
 
@@ -358,13 +420,13 @@ export const VisualizarAtividadesPrevistas = () => {
         await refetch();
 
         const atividadesProcessadas = new Set(
-          atividadesPendentes.map((item) => item.uuid)
+          atividadesPendentes.map((item) => item.uuid),
         );
         setAtividadesTabela((prev) =>
           prev
             .filter(
               (item) =>
-                !(atividadesProcessadas.has(item.uuid) && item._destroy)
+                !(atividadesProcessadas.has(item.uuid) && item._destroy),
             )
             .map((item) =>
               atividadesProcessadas.has(item.uuid)
@@ -375,8 +437,8 @@ export const VisualizarAtividadesPrevistas = () => {
                     _destroy: false,
                     dirty: false,
                   }
-                : item
-            )
+                : item,
+            ),
         );
       }
 
@@ -387,11 +449,16 @@ export const VisualizarAtividadesPrevistas = () => {
               continue;
             }
             if (!recurso.uuid) {
-              throw new Error("Identificador do recurso próprio não encontrado.");
+              throw new Error(
+                "Identificador do recurso próprio não encontrado.",
+              );
             }
             // eslint-disable-next-line no-await-in-loop
             await deleteRecursoProprioPaa(recurso.uuid);
-            toastCustom.ToastCustomSuccess("Sucesso!", "Recurso próprio excluído com sucesso.");
+            toastCustom.ToastCustomSuccess(
+              "Sucesso!",
+              "Recurso próprio excluído com sucesso.",
+            );
           }
         }
 
@@ -399,13 +466,12 @@ export const VisualizarAtividadesPrevistas = () => {
         await refetchRecursos();
 
         const recursosProcessados = new Set(
-          recursosPendentes.map((item) => item.uuid)
+          recursosPendentes.map((item) => item.uuid),
         );
         setRecursosPropriosTabela((prev) =>
           prev
             .filter(
-              (item) =>
-                !(recursosProcessados.has(item.uuid) && item._destroy)
+              (item) => !(recursosProcessados.has(item.uuid) && item._destroy),
             )
             .map((item) =>
               recursosProcessados.has(item.uuid)
@@ -415,26 +481,32 @@ export const VisualizarAtividadesPrevistas = () => {
                     isNovo: false,
                     _destroy: false,
                   }
-                : item
-            )
+                : item,
+            ),
         );
       }
     } catch (error) {
       console.error("Erro ao salvar alterações:", error);
       toastCustom.ToastCustomError(
         "Erro!",
-        "Não foi possível salvar as alterações. Tente novamente."
+        "Não foi possível salvar as alterações. Tente novamente.",
       );
     } finally {
       setIsSalvando(false);
     }
-  }, [atividadesTabela, recursosPropriosTabela, paaUuid, refetch, refetchRecursos]);
+  }, [
+    atividadesTabela,
+    recursosPropriosTabela,
+    paaUuid,
+    refetch,
+    refetchRecursos,
+  ]);
 
   const handleEditarLinha = useCallback((atividade) => {
     setAtividadesTabela((prev) =>
       prev.map((item) =>
-        item.uuid === atividade.uuid ? { ...item, emEdicao: true } : item
-      )
+        item.uuid === atividade.uuid ? { ...item, emEdicao: true } : item,
+      ),
     );
   }, []);
 
@@ -457,7 +529,7 @@ export const VisualizarAtividadesPrevistas = () => {
 
       if (atividade.isNovo || (atividade.isGlobal && !atividade.vinculoUuid)) {
         setAtividadesTabela((prev) =>
-          prev.filter((item) => item.uuid !== atividade.uuid)
+          prev.filter((item) => item.uuid !== atividade.uuid),
         );
       } else {
         const atividadeEstatutariaUuid =
@@ -471,9 +543,12 @@ export const VisualizarAtividadesPrevistas = () => {
         }
 
         await deleteAtividadeEstatutariaPaa(paaUuid, atividadeEstatutariaUuid);
-        toastCustom.ToastCustomSuccess("Sucesso!", "Atividade excluída com sucesso.");
+        toastCustom.ToastCustomSuccess(
+          "Sucesso!",
+          "Atividade excluída com sucesso.",
+        );
         setAtividadesTabela((prev) =>
-          prev.filter((item) => item.uuid !== atividade.uuid)
+          prev.filter((item) => item.uuid !== atividade.uuid),
         );
         deveSincronizarTabela.current = true;
         await refetch();
@@ -482,7 +557,7 @@ export const VisualizarAtividadesPrevistas = () => {
       console.error("Erro ao excluir atividade:", error);
       toastCustom.ToastCustomError(
         "Erro!",
-        "Não foi possível excluir a atividade. Tente novamente."
+        "Não foi possível excluir a atividade. Tente novamente.",
       );
     } finally {
       setIsExcluindoAtividade(false);
@@ -513,11 +588,11 @@ export const VisualizarAtividadesPrevistas = () => {
 
       if (recurso.isNovo) {
         setRecursosPropriosTabela((prev) =>
-          prev.filter((item) => item.uuid !== recurso.uuid)
+          prev.filter((item) => item.uuid !== recurso.uuid),
         );
         toastCustom.ToastCustomSuccess(
           "Sucesso!",
-          "Recurso próprio excluído com sucesso."
+          "Recurso próprio excluído com sucesso.",
         );
       } else {
         if (!recurso.uuid) {
@@ -527,21 +602,21 @@ export const VisualizarAtividadesPrevistas = () => {
         await deleteRecursoProprioPaa(recurso.uuid);
         toastCustom.ToastCustomSuccess(
           "Sucesso!",
-          "Recurso próprio excluído com sucesso."
+          "Recurso próprio excluído com sucesso.",
         );
 
         deveSincronizarRecursos.current = true;
         await refetchRecursos();
 
         setRecursosPropriosTabela((prev) =>
-          prev.filter((item) => item.uuid !== recurso.uuid)
+          prev.filter((item) => item.uuid !== recurso.uuid),
         );
       }
     } catch (error) {
       console.error("Erro ao excluir recurso próprio:", error);
       toastCustom.ToastCustomError(
         "Erro!",
-        "Não foi possível excluir o recurso próprio. Tente novamente."
+        "Não foi possível excluir o recurso próprio. Tente novamente.",
       );
     } finally {
       setIsExcluindoRecurso(false);
@@ -573,28 +648,28 @@ export const VisualizarAtividadesPrevistas = () => {
 
   const atividadesVisiveis = useMemo(
     () => atividadesTabela.filter((item) => !item._destroy),
-    [atividadesTabela]
+    [atividadesTabela],
   );
 
   const recursosPropriosVisiveis = useMemo(
     () => recursosPropriosTabela.filter((item) => !item._destroy),
-    [recursosPropriosTabela]
+    [recursosPropriosTabela],
   );
 
   const totalRecursosProprios = useMemo(
     () =>
       recursosPropriosVisiveis.reduce(
         (acc, item) => acc + (Number(item.valor) || 0),
-        0
+        0,
       ),
-    [recursosPropriosVisiveis]
+    [recursosPropriosVisiveis],
   );
 
   const temAlteracaoPendente = useMemo(
     () =>
       atividadesTabela.some((item) => item.needsSync) ||
       recursosPropriosTabela.some((item) => item.needsSync),
-    [atividadesTabela, recursosPropriosTabela]
+    [atividadesTabela, recursosPropriosTabela],
   );
 
   const colunas = useMemo(
@@ -611,11 +686,16 @@ export const VisualizarAtividadesPrevistas = () => {
               onChange={(event) => {
                 const valorSelecionado = event.target.value;
                 const option = tiposOptions.find(
-                  (opt) => String(opt.value) === valorSelecionado
+                  (opt) => String(opt.value) === valorSelecionado,
                 );
-                handleChangeAtividade(record.uuid, "tipoAtividadeKey", valorSelecionado, {
-                  tipoAtividadeLabel: option?.label || "",
-                });
+                handleChangeAtividade(
+                  record.uuid,
+                  "tipoAtividadeKey",
+                  valorSelecionado,
+                  {
+                    tipoAtividadeLabel: option?.label || "",
+                  },
+                );
               }}
             >
               <option value="">Selecione o tipo</option>
@@ -640,7 +720,7 @@ export const VisualizarAtividadesPrevistas = () => {
 
           const triggerNativePicker = () => {
             const input = document.querySelector(
-              `input[data-calendar-picker='${record.uuid}']`
+              `input[data-calendar-picker='${record.uuid}']`,
             );
             if (input && input.showPicker) {
               input.showPicker();
@@ -649,7 +729,8 @@ export const VisualizarAtividadesPrevistas = () => {
             }
           };
 
-          const isDataEditable = record.isGlobal || record.emEdicao || Boolean(record.vinculoUuid);
+          const isDataEditable =
+            record.isGlobal || record.emEdicao || Boolean(record.vinculoUuid);
 
           if (isDataEditable) {
             return (
@@ -711,7 +792,11 @@ export const VisualizarAtividadesPrevistas = () => {
               className="form-control form-control-sm atividades-previstas__input"
               value={record.descricao || ""}
               onChange={(event) =>
-                handleChangeAtividade(record.uuid, "descricao", event.target.value)
+                handleChangeAtividade(
+                  record.uuid,
+                  "descricao",
+                  event.target.value,
+                )
               }
               placeholder="Descreva a atividade estatutária"
             />
@@ -723,63 +808,65 @@ export const VisualizarAtividadesPrevistas = () => {
         title: "Mês/Ano",
         key: "mesAno",
         render: (_, record) => {
-          const mesAnoBase = record.isGlobal ? record.mesLabel || "-" : formatarMesAno(record.data);
+          const mesAnoBase = record.isGlobal
+            ? obterMesAno(record) || "-"
+            : formatarMesAno(record.data);
           const mesAnoVisivel = record.emEdicao ? "" : mesAnoBase;
 
           return (
             <div className="atividades-previstas__data-wrapper">
               <span>{mesAnoVisivel}</span>
-            {!record.isGlobal && (
-              <div className="atividades-previstas__data-actions">
-                {record.emEdicao ? (
-                  <>
-                    <IconButton
-                      className="p-0"
-                      icon="faSave"
-                      tooltipMessage="Concluir edição"
-                      iconProps={{
-                        style: { color: "#00585E" },
-                      }}
-                      aria-label="Concluir edição"
-                      disabled={isSalvando}
-                      onClick={() => handleSalvarLinha(record)}
-                    />
-                    <IconButton
-                      className="p-0"
-                      icon="faTrashCan"
-                      tooltipMessage="Excluir"
-                      iconProps={{
-                        style: { color: "#00585E" },
-                      }}
-                      aria-label="Excluir registro"
-                      onClick={() => handleExcluirAtividade(record)}
-                    />
-                  </>
-                ) : (
-                  <>
-                    <EditIconButton
-                      className="p-0"
-                      onClick={() =>
-                        record.isNovo
-                          ? handleEditarLinha(record)
-                          : handleEditarAtividade(record)
-                      }
-                    />
-                    <IconButton
-                      className="p-0"
-                      icon="faTrashCan"
-                      tooltipMessage="Excluir"
-                      iconProps={{
-                        style: { color: "#00585E" },
-                      }}
-                      aria-label="Excluir"
-                      onClick={() => handleExcluirAtividade(record)}
-                    />
-                  </>
-                )}
-              </div>
-            )}
-          </div>
+              {!record.isGlobal && (
+                <div className="atividades-previstas__data-actions">
+                  {record.emEdicao ? (
+                    <>
+                      <IconButton
+                        className="p-0"
+                        icon="faSave"
+                        tooltipMessage="Concluir edição"
+                        iconProps={{
+                          style: { color: "#00585E" },
+                        }}
+                        aria-label="Concluir edição"
+                        disabled={isSalvando}
+                        onClick={() => handleSalvarLinha(record)}
+                      />
+                      <IconButton
+                        className="p-0"
+                        icon="faTrashCan"
+                        tooltipMessage="Excluir"
+                        iconProps={{
+                          style: { color: "#00585E" },
+                        }}
+                        aria-label="Excluir registro"
+                        onClick={() => handleExcluirAtividade(record)}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <EditIconButton
+                        className="p-0"
+                        onClick={() =>
+                          record.isNovo
+                            ? handleEditarLinha(record)
+                            : handleEditarAtividade(record)
+                        }
+                      />
+                      <IconButton
+                        className="p-0"
+                        icon="faTrashCan"
+                        tooltipMessage="Excluir"
+                        iconProps={{
+                          style: { color: "#00585E" },
+                        }}
+                        aria-label="Excluir"
+                        onClick={() => handleExcluirAtividade(record)}
+                      />
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
           );
         },
         width: 220,
@@ -793,7 +880,7 @@ export const VisualizarAtividadesPrevistas = () => {
       handleSalvarLinha,
       tiposOptions,
       isSalvando,
-    ]
+    ],
   );
 
   const recursosColumns = useMemo(
@@ -844,7 +931,7 @@ export const VisualizarAtividadesPrevistas = () => {
         ),
       },
     ],
-    [handleExcluirRecursoProprio]
+    [handleExcluirRecursoProprio],
   );
 
   const botoesHeader = (
@@ -879,83 +966,83 @@ export const VisualizarAtividadesPrevistas = () => {
   return (
     <>
       <RelatorioVisualizacao
-      title="Atividades previstas"
-      onBack={handleVoltar}
-      isLoading={isLoading || isLoadingRecursos}
-      error={isError}
-      errorContent={
-        <MsgImgCentralizada
-          texto="Não foi possível carregar as atividades estatutárias."
-          img={Img404}
-          dataQa="atividades-previstas-erro"
-        />
-      }
-      isEmpty={shouldShowEmpty}
-      emptyContent={
-        <MsgImgCentralizada
-          texto="Utilize o registro de prioridades para manter as atividades previstas do PAA atualizadas."
-          img={Img404}
-          dataQa="atividades-previstas-sem-dados"
-        />
-      }
-      showWatermark={true}
-      heightDeps={[
-        atividadesTabela,
-        recursosPropriosTabela,
-        isLoading,
-        isLoadingRecursos,
-        isError,
-      ]}
-    >
-      {!shouldShowEmpty && !isError && (
-        <RelatorioTabelaGrupo
-          title="Atividades Estatutárias"
-          columns={colunas}
-          dataSource={atividadesVisiveis}
-          rowKey={(item) => item.uuid}
-          headerExtra={botoesHeader}
-          containerClassName="relatorio-tabela-grupo atividades-previstas__tabela"
-        />
-      )}
-      <RelatorioTabelaGrupo
-        title="Recursos próprios"
-        columns={recursosColumns}
-        dataSource={recursosPropriosVisiveis}
-        rowKey={(item) => item.uuid}
-        headerExtra={
-          <button
-            type="button"
-            className="atividades-previstas__btn-editar-recursos"
-            onClick={handleEditarRecursosProprios}
-          >
-            <Icon
-              icon="faEdit"
-              iconProps={{ style: { marginRight: 8, color: "#FFFFFF" } }}
-            />
-            Editar receitas de recursos próprios
-          </button>
+        title="Atividades previstas"
+        onBack={handleVoltar}
+        isLoading={isLoading || isLoadingRecursos}
+        error={isError}
+        errorContent={
+          <MsgImgCentralizada
+            texto="Não foi possível carregar as atividades estatutárias."
+            img={Img404}
+            dataQa="atividades-previstas-erro"
+          />
         }
-        containerClassName="relatorio-tabela-grupo atividades-previstas__tabela mt-4"
-        tableProps={{
-          summary: () => (
-            <Table.Summary.Row className="atividades-previstas__tabela-resumo">
-              <Table.Summary.Cell index={0}>
-                <span className="atividades-previstas__resumo-label">
-                  Tipo de Atividades
-                </span>
-              </Table.Summary.Cell>
-              <Table.Summary.Cell index={1} />
-              <Table.Summary.Cell index={2} />
-              <Table.Summary.Cell index={3} align="right">
-                <span className="atividades-previstas__resumo-valor">
-                  {formatarValor(totalRecursosProprios)}
-                </span>
-              </Table.Summary.Cell>
-              <Table.Summary.Cell index={4} />
-            </Table.Summary.Row>
-          ),
-        }}
-      />
+        isEmpty={shouldShowEmpty}
+        emptyContent={
+          <MsgImgCentralizada
+            texto="Utilize o registro de prioridades para manter as atividades previstas do PAA atualizadas."
+            img={Img404}
+            dataQa="atividades-previstas-sem-dados"
+          />
+        }
+        showWatermark={true}
+        heightDeps={[
+          atividadesTabela,
+          recursosPropriosTabela,
+          isLoading,
+          isLoadingRecursos,
+          isError,
+        ]}
+      >
+        {!shouldShowEmpty && !isError && (
+          <RelatorioTabelaGrupo
+            title="Atividades Estatutárias"
+            columns={colunas}
+            dataSource={atividadesVisiveis}
+            rowKey={(item) => item.uuid}
+            headerExtra={botoesHeader}
+            containerClassName="relatorio-tabela-grupo atividades-previstas__tabela"
+          />
+        )}
+        <RelatorioTabelaGrupo
+          title="Recursos próprios"
+          columns={recursosColumns}
+          dataSource={recursosPropriosVisiveis}
+          rowKey={(item) => item.uuid}
+          headerExtra={
+            <button
+              type="button"
+              className="atividades-previstas__btn-editar-recursos"
+              onClick={handleEditarRecursosProprios}
+            >
+              <Icon
+                icon="faEdit"
+                iconProps={{ style: { marginRight: 8, color: "#FFFFFF" } }}
+              />
+              Editar receitas de recursos próprios
+            </button>
+          }
+          containerClassName="relatorio-tabela-grupo atividades-previstas__tabela mt-4"
+          tableProps={{
+            summary: () => (
+              <Table.Summary.Row className="atividades-previstas__tabela-resumo">
+                <Table.Summary.Cell index={0}>
+                  <span className="atividades-previstas__resumo-label">
+                    Tipo de Atividades
+                  </span>
+                </Table.Summary.Cell>
+                <Table.Summary.Cell index={1} />
+                <Table.Summary.Cell index={2} />
+                <Table.Summary.Cell index={3} align="right">
+                  <span className="atividades-previstas__resumo-valor">
+                    {formatarValor(totalRecursosProprios)}
+                  </span>
+                </Table.Summary.Cell>
+                <Table.Summary.Cell index={4} />
+              </Table.Summary.Row>
+            ),
+          }}
+        />
       </RelatorioVisualizacao>
 
       <ModalConfirmarExclusao
