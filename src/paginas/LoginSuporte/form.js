@@ -1,5 +1,6 @@
-import React, {useState} from "react";
+import React, {useRef, useState} from "react";
 import {Formik} from "formik";
+import ReCAPTCHA from "react-google-recaptcha";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faQuestionCircle, faEye, faEyeSlash} from '@fortawesome/free-solid-svg-icons';
@@ -13,6 +14,8 @@ export const LoginSuporteForm = ({redefinicaoDeSenha}) => {
     const [showPassword, setShowPassword] = useState("password");
     const [iconShowPassword, setIconShowPassword] = useState(faEyeSlash);
     const [loading, setLoading] = useState(false);
+    const [captchaToken, setCaptchaToken] = useState(null);
+    const captchaRef = useRef(null);
 
     const initialValues = () => (
         {login: "", senha: ""}
@@ -23,6 +26,8 @@ export const LoginSuporteForm = ({redefinicaoDeSenha}) => {
         let msg = await authService.login(values.login, values.senha, true);
         setLoading(false)
         if(msg && msg.detail){
+            captchaRef.current?.reset();
+            setCaptchaToken(null);
             if (msg.detail === 'Senha inválida!'){
                 setMsgSenha('Senha incorreta')
             }else {
@@ -118,7 +123,21 @@ export const LoginSuporteForm = ({redefinicaoDeSenha}) => {
                                     {props.touched.login && props.errors.senha && <span className="span_erro text-danger mt-1"> {props.errors.senha} </span>}
                                     {msgSenha && !props.errors.login && <span className="span_erro text-danger mt-1">{msgSenha}</span>}
                                 </div>
-                                <button type="submit" className="btn btn-success btn-fallback btn-block mt-2">Acessar</button>
+                                <div className="d-flex justify-content-center mt-3">
+                                    <ReCAPTCHA
+                                        ref={captchaRef}
+                                        sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY}
+                                        onChange={setCaptchaToken}
+                                        onExpired={() => setCaptchaToken(null)}
+                                    />
+                                </div>
+                                <button
+                                    type="submit"
+                                    className="btn btn-success btn-fallback btn-block mt-2"
+                                    disabled={!captchaToken}
+                                >
+                                    Acessar
+                                </button>
                             </form>
                         )}
                     </Formik>
