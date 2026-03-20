@@ -12,7 +12,7 @@ import moment from "moment";
 import './../../../componentes/escolas/GeracaoDaAta/geracao-da-ata.scss'
 
 export const DevolucaoAoTesouroAjuste = () => {
-    const { state } = useLocation();
+    const { state } = useLocation();    
 
     const navigate = useNavigate();
     const [devolucao, setDevolucao] = useState([]);
@@ -86,10 +86,20 @@ export const DevolucaoAoTesouroAjuste = () => {
                 }
             ]
         }
-        await getSalvarDevoulucoesAoTesouro(state.uuid_pc, payload);
-        await marcarDevolucaoTesouro(state.uuid_analise_lancamento);
-        toastCustom.ToastCustomSuccess('Data de devolução ao tesouro alterada com sucesso.')
+        try {
+            await getSalvarDevoulucoesAoTesouro(state.uuid_pc, payload);
+            await marcarDevolucaoTesouro(state.uuid_analise_lancamento);
+            toastCustom.ToastCustomSuccess('Data de devolução ao tesouro alterada com sucesso.')
         navigate(`${state.origem}/${state.uuid_pc}`)
+        } catch(error) {
+            const data = error?.response?.data;
+
+            if(data?.mensagem){
+                toastCustom.ToastCustomError(data?.mensagem);
+            }else {
+                toastCustom.ToastCustomError('Ocorreu ao alterar data');
+            }
+        }
     }
 
     return(
@@ -130,6 +140,7 @@ export const DevolucaoAoTesouroAjuste = () => {
                                 placeholderText='dd/mm/aaaa'
                                 value={dateDevolucao}
                                 onChange={handleChangeDataDevolucao}
+                                maxDate={new Date()}
                                 disabled={!state.tem_permissao_de_edicao}
                                 required={true}
                             />
