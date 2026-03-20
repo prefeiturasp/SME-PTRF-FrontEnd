@@ -168,4 +168,28 @@ describe('DevolucaoAoTesouroAjuste Component', () => {
     expect(screen.getByText('Desfazer dev. tesouro')).toBeDisabled();
   });
 
+  it('salva devolução ao tesouro com erro', async () => {
+    const mockError = {
+        response: {
+            data: {mensagem: 'Erro ao salvar' }
+        }
+    };
+     getSalvarDevoulucoesAoTesouro.mockRejectedValue(mockError);
+    marcarDevolucaoTesouro.mockResolvedValue({});
+
+    render(
+      <MemoryRouter>
+        <DevolucaoAoTesouroAjuste />
+      </MemoryRouter>
+    );
+    
+    const saveButton = screen.getByText('Salvar');
+    fireEvent.click(saveButton);
+
+    await waitFor(() => {
+      expect(getSalvarDevoulucoesAoTesouro).toHaveBeenCalled();      
+      expect(toastCustom.ToastCustomError).toHaveBeenCalledWith(mockError.response.data.mensagem);
+    });
+  });
+
 });
