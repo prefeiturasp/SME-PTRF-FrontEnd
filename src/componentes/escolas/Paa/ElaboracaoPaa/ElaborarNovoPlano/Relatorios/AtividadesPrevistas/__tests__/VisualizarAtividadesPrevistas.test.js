@@ -1337,7 +1337,8 @@ describe('VisualizarAtividadesPrevistas', () => {
 
       localStorage.setItem("DADOS_PAA", JSON.stringify({
         periodo_paa_objeto: {
-            data_inicial: '2025-01-10'
+            data_inicial: '2025-01-10',
+            data_final: '2026-01-10'
         }
       }))
     
