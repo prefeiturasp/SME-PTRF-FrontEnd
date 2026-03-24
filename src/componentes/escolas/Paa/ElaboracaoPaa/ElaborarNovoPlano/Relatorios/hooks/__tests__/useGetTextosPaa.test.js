@@ -1,11 +1,11 @@
 import React from "react";
 import { waitFor, renderHook } from '@testing-library/react';
 import { useGetTextosPaa } from "../useGetTextosPaa";
-import { getTextosPaaUe } from "../../../../../../../../services/escolas/PrestacaoDeContas.service";
+import { getTextosPaaUe } from "../../../../../../../../services/escolas/Paa.service";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 // Mock da função
-jest.mock("../../../../../../../../services/escolas/PrestacaoDeContas.service", () => ({
+jest.mock("../../../../../../../../services/escolas/Paa.service", () => ({
   getTextosPaaUe: jest.fn(),
 }));
 

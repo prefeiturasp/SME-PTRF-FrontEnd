@@ -281,18 +281,6 @@ export const getFiqueDeOlhoPrestacoesDeContas = async () => {
   return (await api.get(`/api/prestacoes-contas/fique-de-olho/`,authHeader())).data
 };
 
-export const getTextosPaaUe = async () => {
-  return (await api.get(`/api/parametros-paa/textos-paa-ue/`,authHeader())).data
-};
-
-export const patchTextosPaaUe = async (payload) => {
-  return (await api.patch(`/api/parametros-paa/update-textos-paa-ue/`, {
-          ...payload
-      },
-      authHeader(),
-  ))
-};
-
 export const getAtaRetificadora = async (prestacao_uuid) => {
   return (await api.get(`/api/prestacoes-contas/${prestacao_uuid}/ata-retificacao/`,authHeader())).data
 };
