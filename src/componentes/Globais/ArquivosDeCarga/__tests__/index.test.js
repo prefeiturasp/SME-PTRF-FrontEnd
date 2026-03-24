@@ -109,7 +109,8 @@ describe("Renderiza Tipos de Carga existentes", () => {
         </Routes>
       </MemoryRouter>
     );
-    expect(await screen.findByText("Usuários")).toBeInTheDocument();
+    const textUsers = await screen.findByText("Usuários")
+    expect(textUsers).toBeInTheDocument();
   });
 
   it("renderiza CARGA_USUARIOS V2", async () => {
@@ -121,7 +122,10 @@ describe("Renderiza Tipos de Carga existentes", () => {
         </Routes>
       </MemoryRouter>
     );
-    expect(await screen.findByText("Usuários")).toBeInTheDocument();
+
+    const textUsers = await screen.findByText("Usuários");
+
+    expect(textUsers).toBeInTheDocument();
   });
 
   it("renderiza CARGA_MATERIAIS_SERVICOS", async () => {
@@ -150,6 +154,7 @@ describe("Renderiza Tipos de Carga existentes", () => {
 
   it("renderiza REPASSE_REALIZADO", async () => {
     useParams.mockReturnValue({ tipo_de_carga: "REPASSE_REALIZADO" });
+    
     render(
       <MemoryRouter initialEntries={["/parametro-arquivos-de-carga/REPASSE_REALIZADO"]}>
         <Routes>
@@ -157,7 +162,9 @@ describe("Renderiza Tipos de Carga existentes", () => {
         </Routes>
       </MemoryRouter>
     );
-    expect(await screen.findByText("Cargas de repasses realizados")).toBeInTheDocument();
+
+    const elemento = await screen.findByText("Cargas de repasses realizados");
+    expect(elemento).toBeInTheDocument();
   });
 
 });
@@ -169,8 +176,6 @@ describe("ArquivosDeCarga Componente", () => {
   });
   
   test("Carrega os elementos na página", async () => {
-    getArquivosDeCargaFiltros.mockResolvedValue(tabelaArquivos);
-    getTabelaArquivosDeCarga.mockResolvedValue(listaArquivos);
     useParams.mockReturnValue({ tipo_de_carga: "CARGA_CONTAS_ASSOCIACOES" });
     render(
       <MemoryRouter initialEntries={["/parametro-arquivos-de-carga/CARGA_CONTAS_ASSOCIACOES"]}>
@@ -179,17 +184,26 @@ describe("ArquivosDeCarga Componente", () => {
         </Routes>
       </MemoryRouter>
     );
+
     await waitFor(() => {
       const table = screen.getByRole("table");
       expect(table).toBeInTheDocument();
     });
-    expect(screen.getByLabelText(/Filtrar por identificador/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Filtrar por status/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/data de execução/i)).toBeInTheDocument();
+
+    const input = screen.getByLabelText(/Filtrar por identificador/i);
+    expect(input).toBeInTheDocument();
+
+    const inputFiltrarPorStatus = screen.getByLabelText(/Filtrar por status/i)
+    expect(inputFiltrarPorStatus).toBeInTheDocument();
+
+    const inputFiltrarPorDataDeExecucao = screen.getByLabelText(/data de execução/i)
+    expect(inputFiltrarPorDataDeExecucao).toBeInTheDocument();
+    
     expect(screen.getByText("Filtrar")).toBeInTheDocument();
     expect(screen.getByText("Limpar")).toBeInTheDocument();
     expect(screen.getByText(/Adicionar carga/i)).toBeInTheDocument();
     expect(screen.getByText(/Baixar modelo de planilha/i)).toBeInTheDocument();
+    
     expect(getTabelaArquivosDeCarga).toHaveBeenCalledTimes(1);
     expect(getArquivosDeCargaFiltros).toHaveBeenCalledTimes(1);
   });

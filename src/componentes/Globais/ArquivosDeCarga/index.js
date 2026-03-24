@@ -304,8 +304,10 @@ const ArquivosDeCarga = () => {
   const rowsPerPage = 20;
 
   const conteudoTemplate = (rowData) => {
+    const conteudo = rowData.conteudo ? rowData.conteudo.split("/").pop() : "-";
+
     return (
-      <div className="quebra-palavra">{rowData.conteudo.split("/").pop()}</div>
+      <div className="quebra-palavra">{conteudo}</div>
     );
   };
 
@@ -634,7 +636,7 @@ const ArquivosDeCarga = () => {
   const onDeleteArquivoDeCargaTrue = async () => {
     try {
       await deleteArquivoDeCarga(stateFormModal.uuid);
-      console.log("Arquivo de Carga excluído com sucesso");
+      
       setShowModalConfirmDeleteArquivosDeCarga(false);
       setShowModalForm(false);
       toastCustom.ToastCustomSuccess(

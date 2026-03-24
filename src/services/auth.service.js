@@ -22,6 +22,7 @@ export const USUARIO_LOGIN = "LOGIN";
 export const USUARIO_INFO_PERDEU_ACESSO = "INFO_PERDEU_ACESSO";
 export const DADOS_DA_ASSOCIACAO = "DADOS_DA_ASSOCIACAO";
 export const PERIODO_RELATORIO_CONSOLIDADO_DRE = "PERIODO_RELATORIO_CONSOLIDADO_DRE";
+export const PERIODO_SELECIONADO_DRE_ACOMPANHAMENTO = "PERIODO_SELECIONADO_DRE_ACOMPANHAMENTO"
 export const ACESSO_MODO_SUPORTE = "ACESSO_MODO_SUPORTE";
 export const RECURSO_SELECIONADO = "RECURSO_SELECIONADO";
 
@@ -50,6 +51,7 @@ const setDataLogin = async ()=>{
             localStorage.removeItem(ACOMPANHAMENTO_PC_UNIDADE);
             localStorage.removeItem(ANALISE_DRE);
             localStorage.removeItem(PERIODO_RELATORIO_CONSOLIDADO_DRE);
+            localStorage.removeItem(PERIODO_SELECIONADO_DRE_ACOMPANHAMENTO);
             localStorage.setItem(DATA_LOGIN, moment(new Date(), "YYYY-MM-DD").format("YYYY-MM-DD"));
             localStorage.setItem(DATA_HORA_USUARIO_LOGADO, data_hora_atual);
             await logout();
@@ -148,6 +150,7 @@ const limparStorageAoTrocarRecurso = () => {
     localStorage.removeItem('uuidAta');
     localStorage.removeItem('prestacao_de_contas_nao_apresentada');
     localStorage.removeItem(PERIODO_RELATORIO_CONSOLIDADO_DRE);
+    localStorage.removeItem(PERIODO_SELECIONADO_DRE_ACOMPANHAMENTO);
 };
 
 const logout = () => {
@@ -170,6 +173,7 @@ const logout = () => {
     localStorage.removeItem(USUARIO_CPF);
     localStorage.removeItem(DADOS_DA_ASSOCIACAO);
     localStorage.removeItem(PERIODO_RELATORIO_CONSOLIDADO_DRE);
+    localStorage.removeItem(PERIODO_SELECIONADO_DRE_ACOMPANHAMENTO);
     window.location.assign("/login")
 };
 
@@ -194,6 +198,7 @@ const logoutToSuporte = () => {
     localStorage.removeItem(USUARIO_CPF);
     localStorage.removeItem(DADOS_DA_ASSOCIACAO);
     localStorage.removeItem(PERIODO_RELATORIO_CONSOLIDADO_DRE);
+    localStorage.removeItem(PERIODO_SELECIONADO_DRE_ACOMPANHAMENTO);
     window.location.assign("/login-suporte")
 };
 
