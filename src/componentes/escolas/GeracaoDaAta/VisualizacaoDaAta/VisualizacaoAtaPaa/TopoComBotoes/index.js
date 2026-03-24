@@ -2,7 +2,7 @@ import React from "react";
 import { visoesService } from "../../../../../../services/visoes.service";
 
 export const TopoComBotoes = ({dadosAta, handleClickEditarAta, handleClickFecharAta}) => {
-    const podeEditarAta = [['change_paa']].some(visoesService.getPermissoes);
+    const podeEditarAta = visoesService.getPermissoes(["custom_change_paa"]);
     const tituloAta = dadosAta?.tipo_ata === 'RETIFICACAO' 
         ? 'Visualização da Ata de Retificação do PAA' 
         : 'Visualização da prévia da Ata de Apresentação do PAA';
