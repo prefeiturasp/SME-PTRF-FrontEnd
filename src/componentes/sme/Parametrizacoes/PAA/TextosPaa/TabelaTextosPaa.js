@@ -14,6 +14,10 @@ const TabelaTextosPaa = ({acoesTemplate}) => {
                     <td>Explicação sobre o PAA</td>
                     <td>{acoesTemplate('texto_pagina_paa_ue')}</td>
                 </tr>
+                    <tr>
+                    <td>Atividades previstas:</td>
+                    <td>{acoesTemplate('texto_atividades_previstas')}</td>
+                </tr>
                 <tr>
                     <td>Introdução da aba Relatórios</td>
                     <td>

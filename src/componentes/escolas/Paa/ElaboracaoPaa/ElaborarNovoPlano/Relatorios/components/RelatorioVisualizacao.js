@@ -2,7 +2,8 @@ import { Spin, Typography } from "antd";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import WatermarkPrevia from "../../../../../../Globais/WatermarkPrevia/WatermarkPrevia";
 import "./RelatorioVisualizacao.scss";
-
+import { TextoParametroPaa } from "../components/TextoParametroPaa";
+import { useLocation } from "react-router-dom";
 const { Title } = Typography;
 
 const joinClassNames = (...classes) => classes.filter(Boolean).join(" ");
@@ -31,6 +32,9 @@ export const RelatorioVisualizacao = ({
   const containerRef = useRef(null);
   const [alturaDocumento, setAlturaDocumento] = useState(0);
   const heightDepsKey = useMemo(() => JSON.stringify(heightDeps), [heightDeps]);
+
+  const {pathname} = useLocation()
+  const rotaAtividadesPrevistas = '/relatorios-componentes/atividades-previstas';
 
   const atualizarAlturaDocumento = useCallback(() => {
     if (containerRef.current) {
@@ -112,6 +116,10 @@ export const RelatorioVisualizacao = ({
             </div>
           )}
         </div>
+
+        {pathname === rotaAtividadesPrevistas &&
+          <TextoParametroPaa campo='texto_atividades_previstas'/>        
+        }
 
         <div
           className={joinClassNames(
