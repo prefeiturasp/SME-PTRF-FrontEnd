@@ -99,6 +99,7 @@ const Tabela = ({
             setFirstPage={setFirstPage}
             isLoading={isLoading}
             count={count}
+            rowsPerPage={rowsPerPage}
         />
 
         <ModalEdicaoReceitaPrevistaPDDE

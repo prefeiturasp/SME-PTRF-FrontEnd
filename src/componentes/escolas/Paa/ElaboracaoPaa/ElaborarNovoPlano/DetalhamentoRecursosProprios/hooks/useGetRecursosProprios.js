@@ -2,11 +2,14 @@ import { useQuery } from "@tanstack/react-query";
 import { getRecursosProprios } from "../../../../../../../services/escolas/Paa.service";
 import { useMemo } from "react";
 
+// evita loop em cada renderização quando data(nos parâmetros) recebe estaticamente o dicionário abaixo
+const DEFAULT_DATA = { count: 0, results: [] };
+
 export const useGetRecursosProprios = (associacaoUUID, page, paaUUID = null) => {
   const {
     isFetching,
     isError,
-    data = { count: 0, results: [] },
+    data = DEFAULT_DATA,
     error,
     refetch,
   } = useQuery({
