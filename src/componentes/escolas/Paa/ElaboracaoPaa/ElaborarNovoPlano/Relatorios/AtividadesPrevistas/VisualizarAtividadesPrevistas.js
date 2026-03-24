@@ -22,7 +22,7 @@ import {
   linkAtividadeEstatutariaExistentePaa,
 } from "../../../../../../../services/escolas/Paa.service";
 import { ModalConfirmarExclusao } from "../../../../../../sme/Parametrizacoes/componentes/ModalConfirmarExclusao";
-import { parseISO, getYear, addYears } from "date-fns";
+import { parseISO, getYear } from "date-fns";
 
 import "./styles.scss";
 
@@ -185,6 +185,7 @@ export const VisualizarAtividadesPrevistas = () => {
       if (!periodo_paa_objeto) return mesAnoLabel;
 
       const dataInicial = parseISO(periodo_paa_objeto.data_inicial);
+      const dataFinal = parseISO(periodo_paa_objeto.data_final);
 
       if (dados.ano === "VIGENTE") {
         const ano = getYear(dataInicial);
@@ -192,7 +193,7 @@ export const VisualizarAtividadesPrevistas = () => {
       }
 
       if (dados.ano === "POSTERIOR") {
-        const ano = getYear(addYears(dataInicial, 1));
+        const ano = getYear(dataFinal);
         mesAnoLabel += `/${ano}`;
       }
     }
