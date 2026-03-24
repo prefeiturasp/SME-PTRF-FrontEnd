@@ -6,6 +6,12 @@ import { useGetTotalizadorRecursoProprio } from "../../DetalhamentoRecursosPropr
 import ReceitasPrevistas from "../index";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
+jest.mock("../../../../../../../services/visoes.service", () => ({
+  visoesService: {
+    getPermissoes: () => true,
+  },
+}));
+
 jest.mock("../hooks/useGetAcoesAssociacao");
 jest.mock(
   "../../DetalhamentoRecursosProprios/hooks/useGetTotalizarRecursoProprio"

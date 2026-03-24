@@ -19,6 +19,7 @@ import { iniciarAtaPaa, obterUrlAtaPaa } from '../../../../services/escolas/Atas
 import { toastCustom } from '../../../Globais/ToastCustom';
 import { ModalConfirmaGeracaoAta } from './ModalConfirmaGeracaoAta';
 import { Tooltip as ReactTooltip } from "react-tooltip";
+import { visoesService } from '../../../../services/visoes.service';
 
 // Constantes
 const STATUS_ATA = {
@@ -38,6 +39,7 @@ const DELAY_INICIO_POLLING = 2000; // 2 segundos
 
 export const PaaVigenteEAnteriores = () => {
   const navigate = useNavigate();
+  const podeEditar = visoesService.getPermissoes(["custom_change_paa"]);
   const associacaoUuid = useMemo(() => localStorage.getItem(ASSOCIACAO_UUID), []);
   const { data, isLoading, isError } = usePaaVigenteEAnteriores(associacaoUuid);
   
@@ -282,6 +284,7 @@ export const PaaVigenteEAnteriores = () => {
   }, [atasPaa, statusDocumento, statusAtasPaa]);
 
   const botaoGerarAtaDesabilitado = useCallback((paaUuid) => {
+    if (!podeEditar) return true;
     if (!paaUuid || !atasPaa[paaUuid]?.uuid) {
       return true;
     }
@@ -294,17 +297,19 @@ export const PaaVigenteEAnteriores = () => {
     }
     
     return !validarGeracaoAta(paaUuid).isValid;
-  }, [atasPaa, statusAtasPaa, validarGeracaoAta]);
+  }, [podeEditar, atasPaa, statusAtasPaa, validarGeracaoAta]);
 
   const getMensagemTooltipGerarAta = useCallback((paaUuid) => {
-    return botaoGerarAtaDesabilitado(paaUuid) 
+    if (!podeEditar) return "Sem permissão para gerar ata.";
+    return botaoGerarAtaDesabilitado(paaUuid)
       ? "Quando todos os dados estiverem preenchidos, a opção fica habilitada."
       : "";
-  }, [botaoGerarAtaDesabilitado]);
+  }, [podeEditar, botaoGerarAtaDesabilitado]);
 
   // ========== Funções de ações da ata ==========
   
   const handleGerarAta = useCallback((paaUuid) => {
+    if (!podeEditar) return;
     if (!paaUuid || !atasPaa[paaUuid]?.uuid) {
       toastCustom.ToastCustomError("Erro!", "PAA ou Ata não identificados.");
       return;
@@ -320,9 +325,10 @@ export const PaaVigenteEAnteriores = () => {
       ...prev,
       [paaUuid]: true,
     }));
-  }, [atasPaa, validarGeracaoAta]);
+  }, [podeEditar, atasPaa, validarGeracaoAta]);
 
   const handleConfirmarGeracaoAta = useCallback(async (paaUuid) => {
+    if (!podeEditar) return;
     setOpenModalConfirmarGeracaoAta((prev) => ({
       ...prev,
       [paaUuid]: false,
@@ -341,7 +347,7 @@ export const PaaVigenteEAnteriores = () => {
       const mensagem = error?.response?.data?.mensagem || "Erro ao iniciar geração da ata.";
       toastCustom.ToastCustomError("Erro!", mensagem);
     }
-  }, [iniciarMonitoramentoAta]);
+  }, [podeEditar, iniciarMonitoramentoAta]);
 
   const handleDownloadAta = useCallback(async (paaUuid) => {
     if (!atasPaa[paaUuid]?.uuid) {

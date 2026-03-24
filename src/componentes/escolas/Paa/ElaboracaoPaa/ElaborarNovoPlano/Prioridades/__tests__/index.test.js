@@ -7,6 +7,12 @@ import { useGetPrioridades } from '../hooks/useGetPrioridades';
 import { useGetTiposDespesaCusteio } from '../hooks/useGetTiposDespesaCusteio';
 
 // Mock dos hooks
+jest.mock('../../../../../../../services/visoes.service', () => ({
+  visoesService: {
+    getPermissoes: () => true,
+  },
+}));
+
 jest.mock('../hooks/useGetPrioridadeTabelas', () => ({
   useGetPrioridadeTabelas: jest.fn(),
 }));

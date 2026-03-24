@@ -31,6 +31,12 @@ jest.mock('../../../../Globais/ModalVisualizarPdf', () => ({
   ModalVisualizarPdf: ({ show, onHide, titulo }) => 
     show ? <div data-testid="modal-pdf">{titulo}</div> : null,
 }));
+jest.mock('../../../../../services/visoes.service', () => ({
+  visoesService: {
+    getPermissoes: () => true,
+  },
+}));
+
 jest.mock('../ModalConfirmaGeracaoAta', () => ({
   ModalConfirmaGeracaoAta: ({ open, onConfirm }) => 
     open ? <button data-testid="modal-confirmar" onClick={onConfirm}>Confirmar</button> : null,
