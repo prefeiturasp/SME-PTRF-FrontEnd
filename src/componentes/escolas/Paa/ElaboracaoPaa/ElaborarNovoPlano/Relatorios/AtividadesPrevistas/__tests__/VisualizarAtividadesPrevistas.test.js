@@ -50,6 +50,13 @@ jest.mock('../../../../../../../../services/escolas/Paa.service', () => ({
   linkAtividadeEstatutariaExistentePaa: jest.fn(),
 }));
 
+// ── visoesService (podeEditar) ─────────────────────────────────────────────────
+jest.mock('../../../../../../../../services/visoes.service', () => ({
+  visoesService: {
+    getPermissoes: () => true,
+  },
+}));
+
 // ── Toast ─────────────────────────────────────────────────────────────────────
 jest.mock('../../../../../../../Globais/ToastCustom', () => ({
   toastCustom: {

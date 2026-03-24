@@ -20,18 +20,19 @@ export const RenderSecao = ({
   isError,
   isLoadingPaa,
   paaVigente,
+  podeEditar = true,
 }) => {
   const { patchPaa, isLoading: isSaving } = usePatchPaa();
 
   const handleSalvarObjetivos = async (objetivos) => {
-    if (!paaVigente?.uuid) {
+    if (!podeEditar || !paaVigente?.uuid) {
       return;
     }
     patchPaa({ uuid: paaVigente.uuid, payload: { objetivos } });
   };
 
   const handleSalvarTexto = async (campoPaa, texto) => {
-    if (!paaVigente?.uuid) {
+    if (!podeEditar || !paaVigente?.uuid) {
       return;
     }
 
@@ -78,6 +79,7 @@ export const RenderSecao = ({
                         paaVigente={paaVigente}
                         handleSalvarTexto={handleSalvarTexto}
                         isSaving={isSaving}
+                        podeEditar={podeEditar}
                       />
                     )}
 
@@ -89,6 +91,7 @@ export const RenderSecao = ({
                         paaVigente={paaVigente}
                         handleSalvarTexto={handleSalvarTexto}
                         isSaving={isSaving}
+                        podeEditar={podeEditar}
                       />
                     )}
                   </>
@@ -101,6 +104,7 @@ export const RenderSecao = ({
                     paaVigente={paaVigente}
                     onSalvarObjetivos={handleSalvarObjetivos}
                     isSaving={isSaving}
+                    podeEditar={podeEditar}
                   />
                 )}
               </>

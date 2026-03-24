@@ -10,7 +10,7 @@ import { RECURSOS_PRIORIDADE } from "../../../../../../constantes/prioridades";
 import { EditIconButton } from '../../../../../Globais/UI/Button';
 
 
-export const Tabela = forwardRef(({ data, handleEditar, handleDuplicar, handleExcluir, handleExcluirEmLote }, ref) => {
+export const Tabela = forwardRef(({ data, podeEditar = true, handleEditar, handleDuplicar, handleExcluir, handleExcluirEmLote }, ref) => {
     const [selectedItems, setSelectedItems] = useState([]);
 
     useImperativeHandle(ref, () => ({
@@ -51,7 +51,7 @@ export const Tabela = forwardRef(({ data, handleEditar, handleDuplicar, handleEx
 
     return (
         <>
-            {selectedItems.length > 0 && (
+            {podeEditar && selectedItems.length > 0 && (
                 <BarraAcaoEmLote
                     setPrioridadesSelecionadas={setSelectedItems}
                     prioridadesSelecionadas={selectedItems}
@@ -65,6 +65,7 @@ export const Tabela = forwardRef(({ data, handleEditar, handleDuplicar, handleEx
             className="no-stripe mt-3 no-hover"
             key={`table-${selectedItems.length}`}
             >
+            {podeEditar && (
             <Column 
                 header={
                     <input 
@@ -93,6 +94,7 @@ export const Tabela = forwardRef(({ data, handleEditar, handleDuplicar, handleEx
                     );
                 }}
             />
+            )}
             <Column 
                 header="Ação"
                 field="acao"
@@ -181,25 +183,30 @@ export const Tabela = forwardRef(({ data, handleEditar, handleDuplicar, handleEx
                         <Space direction="horizontal" size={0}>
                             <EditIconButton
                                 className='p-2'
+                                tooltipMessage={podeEditar ? "Editar" : "Visualizar"}
                                 onClick={() => handleEditar(rowData, [])}
                             />
-                            <IconButton
-                                className='p-2'
-                                icon="faTrashCan"
-                                tooltipMessage="Excluir"
-                                iconProps={{
-                                style: { color: "#B40C02" },
-                                }}
-                                aria-label="Excluir"
-                                onClick={() => onExcluir(rowData)}
-                            />
-                            <IconButton
-                                className='p-2'
-                                icon="faCopy"
-                                tooltipMessage="Duplicar"
-                                aria-label="Duplicar"
-                                onClick={() => handleDuplicar(rowData)}
-                            />
+                            {podeEditar && (
+                                <>
+                                    <IconButton
+                                        className='p-2'
+                                        icon="faTrashCan"
+                                        tooltipMessage="Excluir"
+                                        iconProps={{
+                                        style: { color: "#B40C02" },
+                                        }}
+                                        aria-label="Excluir"
+                                        onClick={() => onExcluir(rowData)}
+                                    />
+                                    <IconButton
+                                        className='p-2'
+                                        icon="faCopy"
+                                        tooltipMessage="Duplicar"
+                                        aria-label="Duplicar"
+                                        onClick={() => handleDuplicar(rowData)}
+                                    />
+                                </>
+                            )}
                         </Space>
                     );
                 }}

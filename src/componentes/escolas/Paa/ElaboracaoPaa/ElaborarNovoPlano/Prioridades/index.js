@@ -16,6 +16,7 @@ import Img404 from "../../../../../../assets/img/img-404.svg";
 import { Tabela } from './Tabela';
 import { Resumo } from './Resumo';
 import ModalImportarPrioridades from './ModalImportarPrioridades';
+import { visoesService } from "../../../../../../services/visoes.service";
 
 
 const filtroInicial = {
@@ -29,6 +30,7 @@ const filtroInicial = {
 };
 
 const Prioridades = () => {
+  const podeEditar = visoesService.getPermissoes(["custom_change_paa"]);
   const [filtros, setFiltros] = useState(filtroInicial);
   const [currentPage, setCurrentPage] = useState(1);
   const [firstPage, setFirstPage] = useState(0);
@@ -84,10 +86,12 @@ const Prioridades = () => {
   };
 
   const abrirModalImportarPAAsAnteriores = async () => {
+    if (!podeEditar) return;
     setModalImportarPrioridades({ open: true, paas: paas_anteriores });
   };
 
   const abrirModalNovaPrioridade = async () => {
+    if (!podeEditar) return;
     setModalForm({ open: true, tabelas: dadosTabelas, formModal: null });
   };
 
@@ -98,18 +102,22 @@ const Prioridades = () => {
   const { mutationPost: mutationPostDuplicar } = usePostDuplicarPrioridade();
 
   const onDuplicar = (rowData) => {
+    if (!podeEditar) return;
     mutationPostDuplicar.mutate({uuid: rowData.uuid});
   };
 
   const onExcluir = (rowData) => {
+    if (!podeEditar) return;
     setModalExclusao({ open: true, item: rowData, tipo: 'individual' });
   };
 
   const onExcluirEmLote = (listaUuids) => {
+    if (!podeEditar) return;
     setModalExclusao({ open: true, item: { lista_uuids: listaUuids }, tipo: 'lote' });
   };
 
   const handleConfirmarExclusao = () => {
+    if (!podeEditar) return;
     if (modalExclusao.tipo === 'individual') {
       mutationDelete.mutate({ uuid: modalExclusao.item.uuid });
     } else {
@@ -144,22 +152,24 @@ const Prioridades = () => {
             Registro de prioridades
         </Typography.Title>
 
-        <Flex>
-          <Spin spinning={isLoadingPAAsAnteriores}>
+        {podeEditar && (
+          <Flex>
+            <Spin spinning={isLoadingPAAsAnteriores}>
+              <button
+                className="btn btn-outline-success btn-sm mx-2"
+                onClick={abrirModalImportarPAAsAnteriores}
+                type="button">
+                  Importar PAAs anteriores
+              </button>
+            </Spin>
             <button
-              className="btn btn-outline-success btn-sm mx-2"
-              onClick={abrirModalImportarPAAsAnteriores}
-              type="button">
-                Importar PAAs anteriores
+                className="btn btn-success btn-sm"
+                onClick={abrirModalNovaPrioridade}
+                type="button">
+                Adicionar prioridade
             </button>
-          </Spin>
-          <button
-              className="btn btn-success btn-sm"
-              onClick={abrirModalNovaPrioridade}
-              type="button">
-              Adicionar prioridade
-          </button>
-        </Flex>
+          </Flex>
+        )}
       </Flex>
 
       {/* Bloco de filtros com 7 selects */}
@@ -194,6 +204,7 @@ const Prioridades = () => {
           <Tabela
             ref={tabelaRef}
             data={prioridades}
+            podeEditar={podeEditar}
             handleEditar={onEditar}
             handleDuplicar={onDuplicar}
             handleExcluir={onExcluir}
@@ -226,6 +237,7 @@ const Prioridades = () => {
           tabelas={modalForm.tabelas}
           formModal={modalForm.formModal}
           focusFields={modalForm.focusFields}
+          podeEditar={podeEditar}
           onClose={() => setModalForm({
             open: false,
             tabelas: null,
@@ -240,6 +252,7 @@ const Prioridades = () => {
         <ModalImportarPrioridades
           open={modalImportarPrioridades.open}
           paas={modalImportarPrioridades.paas}
+          podeEditar={podeEditar}
           onClose={() => setModalImportarPrioridades({
             open: false,
             paas: []})}
