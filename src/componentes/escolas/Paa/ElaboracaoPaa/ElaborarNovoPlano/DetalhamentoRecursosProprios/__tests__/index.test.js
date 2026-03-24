@@ -10,11 +10,20 @@ import { Modal as modalReducer } from "../../../../../../../store/reducers/compo
 import { usePostRecursoProprio } from "../hooks/usePostRecursoProprio";
 import { usePatchRecursoProprio } from "../hooks/usePatchRecursoProprio";
 import { useGetFontesRecursos } from "../hooks/useGetFontesRecursos";
+import { useGetTotalizadorRecursoProprio } from "../hooks/useGetTotalizarRecursoProprio";
+import { useDeleteRecursoProprio } from "../hooks/useDeleteRecursoProprio";
 
 jest.mock("../hooks/useGetRecursosProprios");
+jest.mock("../hooks/useGetTotalizarRecursoProprio");
+jest.mock("../hooks/useDeleteRecursoProprio");
 jest.mock("../hooks/usePostRecursoProprio");
 jest.mock("../hooks/usePatchRecursoProprio");
 jest.mock("../hooks/useGetFontesRecursos");
+jest.mock("../../../../../../../services/visoes.service", () => ({
+  visoesService: {
+    getPermissoes: () => true,
+  },
+}));
 
 let queryClient;
 
@@ -34,6 +43,8 @@ describe("DetalhamentoRecursosProprios Component", () => {
         queries: { retry: false },
       },
     });
+    localStorage.setItem("ASSOCIACAO_UUID", "assoc-test");
+    localStorage.setItem("PAA", "paa-test");
 
     usePostRecursoProprio.mockReturnValue({
       mutationPost: { mutate: mockMutatePost },
@@ -49,7 +60,11 @@ describe("DetalhamentoRecursosProprios Component", () => {
           nome: "Doações",
         },
       ],
-      isLoading: true,
+      isLoading: false,
+    });
+    useGetTotalizadorRecursoProprio.mockReturnValue({ data: {} });
+    useDeleteRecursoProprio.mockReturnValue({
+      mutationDelete: { mutate: jest.fn() },
     });
   });
 
@@ -57,7 +72,7 @@ describe("DetalhamentoRecursosProprios Component", () => {
     useGetRecursosProprios.mockReturnValue({
       data: { results: [] },
       count: 0,
-      isLoading: true,
+      isLoading: false,
     });
 
     render(
@@ -68,9 +83,7 @@ describe("DetalhamentoRecursosProprios Component", () => {
       </Provider>
     );
 
-    const botaoAdd = screen.getByRole("button", {
-      name: /Adicionar fonte de recurso/,
-    });
+    const botaoAdd = await screen.findByText("Adicionar fonte de recurso");
     fireEvent.click(botaoAdd);
 
     const textboxes = screen.getAllByRole("textbox");
@@ -92,7 +105,7 @@ describe("DetalhamentoRecursosProprios Component", () => {
     useGetRecursosProprios.mockReturnValue({
       data: { results: [] },
       count: 0,
-      isLoading: true,
+      isLoading: false,
     });
 
     render(
@@ -103,9 +116,7 @@ describe("DetalhamentoRecursosProprios Component", () => {
       </Provider>
     );
 
-    const botaoAdd = screen.getByRole("button", {
-      name: /Adicionar fonte de recurso/,
-    });
+    const botaoAdd = await screen.findByText("Adicionar fonte de recurso");
     fireEvent.click(botaoAdd);
 
     const combobox = screen.getByRole("combobox");
@@ -138,7 +149,7 @@ describe("DetalhamentoRecursosProprios Component", () => {
         ],
       },
       count: 1,
-      isLoading: true,
+      isLoading: false,
     });
 
     render(
@@ -189,7 +200,7 @@ describe("DetalhamentoRecursosProprios Component", () => {
         ],
       },
       count: 1,
-      isLoading: true,
+      isLoading: false,
     });
 
     render(
@@ -238,7 +249,7 @@ describe("DetalhamentoRecursosProprios Component", () => {
         ],
       },
       count: 1,
-      isLoading: true,
+      isLoading: false,
     });
 
     render(
@@ -270,7 +281,7 @@ describe("DetalhamentoRecursosProprios Component", () => {
         results: [],
       },
       count: 1,
-      isLoading: true,
+      isLoading: false,
     });
 
     render(
@@ -281,9 +292,7 @@ describe("DetalhamentoRecursosProprios Component", () => {
       </Provider>
     );
 
-    const botaoAdd = screen.getByRole("button", {
-      name: /Adicionar fonte de recurso/,
-    });
+    const botaoAdd = await screen.findByText("Adicionar fonte de recurso");
     fireEvent.click(botaoAdd);
 
     const selects = await screen.findAllByRole("combobox");

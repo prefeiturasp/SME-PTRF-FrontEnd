@@ -8,7 +8,7 @@ import EditorWysiwygCustom from '../../../../../Globais/EditorWysiwygCustom';
 
 
 export const RelSecaoTextos = ({
-    secaoKey, config, textosPaa, paaVigente, handleSalvarTexto, isSaving}) => {
+    secaoKey, config, textosPaa, paaVigente, handleSalvarTexto, isSaving, podeEditar = true }) => {
 
     const editorContainerRef = useRef(null);
     const tooltipIconRef = useRef(null);
@@ -54,6 +54,7 @@ export const RelSecaoTextos = ({
         )
     }
     const validaHandleSalvar = (campo, texto) => {
+        if (!podeEditar) return;
         if (!(texto||"").trim()) {
             texto = handleLimparComProtecao()
         }
@@ -80,7 +81,7 @@ export const RelSecaoTextos = ({
                     handleSubmitEditor={(texto) => validaHandleSalvar(config.campoPaa, texto)}
                     handleLimparEditor={(textoAtual) => handleLimparComProtecao(textoAtual)}
                     botaoCancelar={false}
-                    disabled={isSaving}
+                    disabled={!podeEditar || isSaving}
                     isSaving={isSaving}
                     topExtraContent={secaoKey === "introducao" && mensagemFixa(textosPaa[config.textosPaa[1]])}
                     bottomExtraContent={secaoKey === "conclusao" && mensagemFixa(textosPaa[config.textosPaa[1]])}
