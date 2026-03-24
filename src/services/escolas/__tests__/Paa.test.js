@@ -14,7 +14,7 @@ import {
     deleteRecursoProprioPaa,
  } from '../Paa.service.js';
 import { TOKEN_ALIAS } from '../../auth.service.js';
-
+import { getTextosPaaUe, patchTextosPaaUe } from '../Paa.service';
 
 jest.mock('../../api', () => ({
     get: jest.fn(),
@@ -216,6 +216,28 @@ describe('Testes para funções de análise', () => {
             `api/recursos-proprios-paa/${uuid}/`,
             getAuthHeader()
         );
+        expect(result).toEqual(mockData);
+    });
+
+    test('getTextosPaaUe deve chamar a API corretamente', async () => {
+        api.get.mockResolvedValue({ data: mockData })
+        const result = await getTextosPaaUe();
+        expect(api.get).toHaveBeenCalledWith(
+            `/api/parametros-paa/textos-paa-ue/`,
+            getAuthHeader()
+        )
+        expect(result).toEqual(mockData);
+    });
+    
+    test('patchTextosPaaUe deve chamar a API corretamente', async () => {
+        api.patch.mockResolvedValue({ data: mockData })
+        const payload = { teste: 'testes' }
+        const result = await patchTextosPaaUe(payload);
+        expect(api.patch).toHaveBeenCalledWith(
+            `/api/parametros-paa/update-textos-paa-ue/`,
+            payload,
+            getAuthHeader()
+        )
         expect(result).toEqual(mockData);
     });
 

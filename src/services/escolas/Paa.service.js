@@ -463,3 +463,15 @@ export const getDownloadAtaPaa = async (ata_paa_uuid) => {
 export const getPlanoOrcamentario = async (paaUuid) => {
   return (await api.get(`api/paa/${paaUuid}/plano-orcamentario/`, authHeader())).data;
 };
+
+export const getTextosPaaUe = async () => {
+  return (await api.get(`/api/parametros-paa/textos-paa-ue/`,authHeader())).data
+};
+
+export const patchTextosPaaUe = async (payload) => {
+  return (await api.patch(
+    `/api/parametros-paa/update-textos-paa-ue/`,
+    payload,
+    authHeader()
+  )).data;
+};

@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getTextosPaaUe } from '../../../../../../../services/escolas/PrestacaoDeContas.service';
+import { getTextosPaaUe } from '../../../../../../../services/escolas/Paa.service';
 
 export const useGetTextosPaa = () => {
   const {

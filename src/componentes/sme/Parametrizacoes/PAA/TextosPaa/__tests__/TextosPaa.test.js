@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { TextosPaa } from '../index.js';
-import { getTextosPaaUe, patchTextosPaaUe } from '../../../../../../services/escolas/PrestacaoDeContas.service';
+import { getTextosPaaUe, patchTextosPaaUe } from '../../../../../../services/escolas/Paa.service';
 import { toastCustom } from '../../../../../Globais/ToastCustom';
 import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
 
@@ -33,7 +33,7 @@ jest.mock("../../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametr
   RetornaSeTemPermissaoEdicaoPainelParametrizacoes: jest.fn(),
 }));
 
-jest.mock('../../../../../../services/escolas/PrestacaoDeContas.service', () => ({
+jest.mock('../../../../../../services/escolas/Paa.service.js', () => ({
     getTextosPaaUe: jest.fn(),
     patchTextosPaaUe: jest.fn()
 }));
@@ -58,6 +58,7 @@ describe('TextosPaa Component', () => {
     test('deve renderizar o título corretamente', async () => {
         getTextosPaaUe.mockResolvedValue({ 
             texto_pagina_paa_ue: 'Texto de exemplo',
+            texto_atividades_previstas: '',
             introducao_do_paa_ue_1: '',
             introducao_do_paa_ue_2: '',
             conclusao_do_paa_ue_1: '',
@@ -74,6 +75,7 @@ describe('TextosPaa Component', () => {
     test('deve exibir a tabela de textos após o carregamento', async () => {
         getTextosPaaUe.mockResolvedValue({ 
             texto_pagina_paa_ue: 'Texto de exemplo',
+            texto_atividades_previstas: '',
             introducao_do_paa_ue_1: '',
             introducao_do_paa_ue_2: '',
             conclusao_do_paa_ue_1: '',
@@ -90,6 +92,7 @@ describe('TextosPaa Component', () => {
     test('deve abrir o editor ao clicar no botão de edição', async () => {
         getTextosPaaUe.mockResolvedValue({ 
             texto_pagina_paa_ue: 'Texto de exemplo',
+            texto_atividades_previstas: '',
             introducao_do_paa_ue_1: '',
             introducao_do_paa_ue_2: '',
             conclusao_do_paa_ue_1: '',
@@ -113,6 +116,7 @@ describe('TextosPaa Component', () => {
 
       getTextosPaaUe.mockResolvedValue({ 
           texto_pagina_paa_ue: 'Texto de exemplo',
+          texto_atividades_previstas: '',
           introducao_do_paa_ue_1: '',
           introducao_do_paa_ue_2: '',
           conclusao_do_paa_ue_1: '',
@@ -142,6 +146,7 @@ describe('TextosPaa Component', () => {
   
       getTextosPaaUe.mockResolvedValue({ 
           texto_pagina_paa_ue: 'Texto de exemplo',
+          texto_atividades_previstas: '',
           introducao_do_paa_ue_1: '',
           introducao_do_paa_ue_2: '',
           conclusao_do_paa_ue_1: '',
