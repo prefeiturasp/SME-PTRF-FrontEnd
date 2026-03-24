@@ -6,6 +6,7 @@ import { usePostReceitasPrevistasPaa } from "./hooks/usePostReceitasPrevistasPaa
 import { usePatchReceitasPrevistasPaa } from "./hooks/usePatchReceitasPrevistasPaa";
 import { formataData } from "../../../../../../utils/FormataData";
 import { formatMoneyBRL, formatMoneyByCentsBRL, parseMoneyBRL } from "../../../../../../utils/money";
+import { visoesService } from "../../../../../../services/visoes.service";
 import "./style.css";
 
 const initialValues = {
@@ -19,6 +20,7 @@ const initialValues = {
 
 const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
   const [form] = Form.useForm();
+  const podeEditar = visoesService.getPermissoes(["custom_change_paa"]);
 
   const dadosPaaLocalStorage = () => JSON.parse(localStorage.getItem("DADOS_PAA"));
 
@@ -214,7 +216,7 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                         className="input-number-right"
                         placeholder="00,00"
                         formatter={ehCampoDesabilitado("aceita_custeio") ? () => "-" : formatMoneyByCentsBRL}
-                        disabled={ehCampoDesabilitado("aceita_custeio")}
+                        disabled={ehCampoDesabilitado("aceita_custeio") || !podeEditar}
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
                         min={0}
@@ -284,7 +286,7 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                         className="input-number-right"
                         placeholder="00,00"
                         formatter={ehCampoDesabilitado("aceita_capital") ? () => "-" : formatMoneyByCentsBRL}
-                        disabled={ehCampoDesabilitado("aceita_capital")}
+                        disabled={ehCampoDesabilitado("aceita_capital") || !podeEditar}
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
                         min={0}
@@ -354,7 +356,7 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                         className="input-number-right"
                         placeholder="00,00"
                         formatter={ehCampoDesabilitado("aceita_livre") ? () => "-" : formatMoneyByCentsBRL}
-                        disabled={ehCampoDesabilitado("aceita_livre")}
+                        disabled={ehCampoDesabilitado("aceita_livre") || !podeEditar}
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
                         min={0}
@@ -390,7 +392,7 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
                 Cancelar
               </button>
 
-              <button type="submit" className="btn btn btn-success">
+              <button type="submit" className={`btn ${podeEditar ? "btn-success" : "btn-secondary"}`} disabled={!podeEditar}>
                 Salvar
               </button>
             </Flex>

@@ -11,6 +11,12 @@ let mockStatusDocumento = {
 // 🔹 Mocks
 const mockNavigate = jest.fn();
 
+jest.mock("../../../../../../../services/visoes.service", () => ({
+  visoesService: {
+    getPermissoes: () => true,
+  },
+}));
+
 jest.mock("react-router-dom", () => ({
   ...jest.requireActual("react-router-dom"),
   useNavigate: () => mockNavigate,
@@ -73,7 +79,7 @@ jest.mock("../hooks/usePostPaaGeracaoDocumento", () => ({
 const mockDownloadPrevia = jest.fn();
 const mockDownloadFinal = jest.fn();
 
-jest.mock(".../../../../../../services/escolas/Paa.service", () => ({
+jest.mock("../../../../../../../services/escolas/Paa.service", () => ({
   getDownloadArquivoPrevia: (...args) => mockDownloadPrevia(...args),
   getDownloadArquivoFinal: (...args) => mockDownloadFinal(...args),
 }));
@@ -81,7 +87,7 @@ jest.mock(".../../../../../../services/escolas/Paa.service", () => ({
 // Toast
 const mockToastError = jest.fn();
 
-jest.mock(".../../../../../Globais/ToastCustom", () => ({
+jest.mock("../../../../../../Globais/ToastCustom", () => ({
   toastCustom: {
     ToastCustomError: (...args) => mockToastError(...args),
   },

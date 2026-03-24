@@ -829,14 +829,14 @@ const routesConfig = [
     exact: true,
     path: "/elaborar-novo-paa",
     component: ElaborarNovoPlano,
-    permissoes: ["access_paa", "change_paa"],
+    permissoes: ["access_paa", "custom_change_paa"],
     featureFlag: "paa",
   },
   {
     exact: true,
     path: "/relatorios-paa/edicao-ata/:uuid_paa",
     component: EdicaoAtaPaa,
-    permissoes: ["access_paa", "change_paa"],
+    permissoes: ["access_paa", "custom_change_paa"],
     featureFlag: "paa",
   },
   {

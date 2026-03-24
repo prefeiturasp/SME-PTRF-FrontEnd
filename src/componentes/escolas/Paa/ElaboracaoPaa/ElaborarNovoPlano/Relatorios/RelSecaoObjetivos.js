@@ -5,7 +5,7 @@ import { IconButton } from "../../../../../Globais/UI/Button/IconButton";
 import "./styles.css";
 import { EditIconButton } from "../../../../../Globais/UI/Button";
 
-export const RelSecaoObjetivos = ({ paaVigente, onSalvarObjetivos, isSaving }) => {
+export const RelSecaoObjetivos = ({ paaVigente, onSalvarObjetivos, isSaving, podeEditar = true }) => {
   const { data, isLoading } = useGetObjetivosPaa();
   const [items, setItems] = useState(data);
 
@@ -39,12 +39,14 @@ export const RelSecaoObjetivos = ({ paaVigente, onSalvarObjetivos, isSaving }) =
   }, [getPayload]);
 
   const handleSave = () => {
+    if (!podeEditar) return;
     const objetivosPayload = getPayload();
 
     onSalvarObjetivos(objetivosPayload);
   };
 
   const onChangeObjetivos = ({ target: { checked, value, ...props } }) => {
+    if (!podeEditar) return;
     setItems((prev) => prev.map((item) => ((item.uuid || item.key) === value ? { ...item, checked } : item)));
   };
 
@@ -54,22 +56,27 @@ export const RelSecaoObjetivos = ({ paaVigente, onSalvarObjetivos, isSaving }) =
   };
 
   const handleAddNew = () => {
+    if (!podeEditar) return;
     setItems((prev) => [...prev, { key: crypto.randomUUID(), nome: "", checked: true, inputOpen: true }]);
   };
 
   const handleEdit = (item) => {
+    if (!podeEditar) return;
     setItems((prev) => prev.map((it) => (isSameItem(it, item) ? { ...it, inputOpen: true } : it)));
   };
 
   const handleCloseEdit = (item) => {
+    if (!podeEditar) return;
     setItems((prev) => prev.map((it) => (isSameItem(it, item) ? { ...it, inputOpen: false } : it)));
   };
 
   const handleRemove = (item) => {
+    if (!podeEditar) return;
     setItems((prev) => prev.map((it) => (isSameItem(it, item) ? { ...it, _destroy: true } : it)));
   };
 
   const handleNameChange = (item, nome) => {
+    if (!podeEditar) return;
     setItems((prev) => prev.map((it) => (isSameItem(it, item) ? { ...it, nome } : it)));
   };
 
@@ -78,9 +85,11 @@ export const RelSecaoObjetivos = ({ paaVigente, onSalvarObjetivos, isSaving }) =
       <List
         size="small"
         footer={
-          <button className="btn btn-outline-success" onClick={handleAddNew}>
-            Adicionar mais objetivos
-          </button>
+          podeEditar && (
+            <button className="btn btn-outline-success" onClick={handleAddNew}>
+              Adicionar mais objetivos
+            </button>
+          )
         }
         loading={isLoading || isSaving}
         bordered
@@ -88,12 +97,17 @@ export const RelSecaoObjetivos = ({ paaVigente, onSalvarObjetivos, isSaving }) =
         renderItem={(item) => (
           <List.Item>
             <div className="d-flex w-100">
-              <Checkbox onChange={onChangeObjetivos} value={item.uuid || item.key} checked={item.checked} />
+              <Checkbox
+                onChange={onChangeObjetivos}
+                value={item.uuid || item.key}
+                checked={item.checked}
+                disabled={!podeEditar}
+              />
               {!item.inputOpen ? (
                 <div className="d-flex align-items-center justify-content-between w-100 ml-2">
                   {item.nome}
 
-                  {(item.key || item.paa) && (
+                  {podeEditar && (item.key || item.paa) && (
                     <div className="d-flex">
                       <EditIconButton
                         onClick={(e) => handleEdit(item)}
@@ -118,24 +132,29 @@ export const RelSecaoObjetivos = ({ paaVigente, onSalvarObjetivos, isSaving }) =
                     placeholder="Digite o objetivo"
                     value={item.nome}
                     onChange={(e) => handleNameChange(item, e.target.value)}
+                    disabled={!podeEditar}
                   />
 
-                  <IconButton
-                    icon="faSave"
-                    tooltipMessage="Salvar"
-                    aria-label="Salvar"
-                    disabled={!item.nome}
-                    onClick={() => handleCloseEdit(item)}
-                    type="button"
-                  />
+                  {podeEditar && (
+                    <>
+                      <IconButton
+                        icon="faSave"
+                        tooltipMessage="Salvar"
+                        aria-label="Salvar"
+                        disabled={!item.nome}
+                        onClick={() => handleCloseEdit(item)}
+                        type="button"
+                      />
 
-                  <IconButton
-                    icon="faTrash"
-                    tooltipMessage="Excluir"
-                    onClick={() => handleRemove(item)}
-                    aria-label="Excluir"
-                    type="button"
-                  />
+                      <IconButton
+                        icon="faTrash"
+                        tooltipMessage="Excluir"
+                        onClick={() => handleRemove(item)}
+                        aria-label="Excluir"
+                        type="button"
+                      />
+                    </>
+                  )}
                 </div>
               )}
             </div>
@@ -143,11 +162,13 @@ export const RelSecaoObjetivos = ({ paaVigente, onSalvarObjetivos, isSaving }) =
         )}
       />
 
-      <div className="d-flex  justify-content-end pb-3 mt-3">
-        <button className="btn btn btn-success" onClick={handleSave} disabled={!podeSalvar}>
-          Salvar
-        </button>
-      </div>
+      {podeEditar && (
+        <div className="d-flex  justify-content-end pb-3 mt-3">
+          <button className="btn btn-success" onClick={handleSave} disabled={!podeSalvar}>
+            Salvar
+          </button>
+        </div>
+      )}
     </>
   );
 };

@@ -5,6 +5,7 @@ import { Icon } from "../../../../../Globais/UI/Icon";
 import { usePostReceitasPrevistasOutrosRecursos } from "./hooks/usePostReceitasPrevistasOutrosRecursosPeriodo";
 import { usePatchReceitasPrevistasOutrosRecursosPeriodo } from "./hooks/usePatchReceitasPrevistasOutrosRecursosPeriodo";
 import { formatMoneyBRL, formatMoneyByCentsBRL, parseMoneyBRL } from "../../../../../../utils/money";
+import { visoesService } from "../../../../../../services/visoes.service";
 import "./style.css";
 
 const initialValues = {
@@ -18,6 +19,7 @@ const initialValues = {
 
 const OutrosRecursosModalForm = ({ open, onClose, data }) => {
   const [form] = Form.useForm();
+  const podeEditar = visoesService.getPermissoes(["custom_change_paa"]);
   const recursoConfig = useMemo(() => data?.outro_recurso_objeto, [data]);
   const isLoading = false;
   const { mutationPost } = usePostReceitasPrevistasOutrosRecursos(onClose);
@@ -189,7 +191,7 @@ const OutrosRecursosModalForm = ({ open, onClose, data }) => {
                         formatter={ehCampoDesabilitado("aceita_custeio") ? () => "-" : formatMoneyByCentsBRL}
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
-                        disabled={ehCampoDesabilitado("aceita_custeio")}
+                        disabled={ehCampoDesabilitado("aceita_custeio") || !podeEditar}
                         controls={false}
                       />
                     </Form.Item>
@@ -214,7 +216,7 @@ const OutrosRecursosModalForm = ({ open, onClose, data }) => {
                         style={{ width: "100%" }}
                         min={0}
                         controls={false}
-                        disabled={ehCampoDesabilitado("aceita_custeio")}
+                        disabled={ehCampoDesabilitado("aceita_custeio") || !podeEditar}
                       />
                     </Form.Item>
                     <Icon icon="faEquals" iconProps={{ className: "pb-3" }} />
@@ -262,7 +264,7 @@ const OutrosRecursosModalForm = ({ open, onClose, data }) => {
                         formatter={ehCampoDesabilitado("aceita_capital") ? () => "-" : formatMoneyByCentsBRL}
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
-                        disabled={ehCampoDesabilitado("aceita_capital")}
+                        disabled={ehCampoDesabilitado("aceita_capital") || !podeEditar}
                         controls={false}
                       />
                     </Form.Item>
@@ -286,7 +288,7 @@ const OutrosRecursosModalForm = ({ open, onClose, data }) => {
                         style={{ width: "100%" }}
                         min={0}
                         controls={false}
-                        disabled={ehCampoDesabilitado("aceita_capital")}
+                        disabled={ehCampoDesabilitado("aceita_capital") || !podeEditar}
                       />
                     </Form.Item>
                     <Icon icon="faEquals" iconProps={{ className: "pb-3" }} />
@@ -333,7 +335,7 @@ const OutrosRecursosModalForm = ({ open, onClose, data }) => {
                         formatter={ehCampoDesabilitado("aceita_livre_aplicacao") ? () => "-" : formatMoneyByCentsBRL}
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
-                        disabled={ehCampoDesabilitado("aceita_livre_aplicacao")}
+                        disabled={ehCampoDesabilitado("aceita_livre_aplicacao") || !podeEditar}
                         controls={false}
                       />
                     </Form.Item>
@@ -357,7 +359,7 @@ const OutrosRecursosModalForm = ({ open, onClose, data }) => {
                         style={{ width: "100%" }}
                         min={0}
                         controls={false}
-                        disabled={ehCampoDesabilitado("aceita_livre_aplicacao")}
+                        disabled={ehCampoDesabilitado("aceita_livre_aplicacao") || !podeEditar}
                       />
                     </Form.Item>
                     <Icon icon="faEquals" iconProps={{ className: "pb-3" }} />
@@ -389,7 +391,7 @@ const OutrosRecursosModalForm = ({ open, onClose, data }) => {
                 Cancelar
               </button>
 
-              <button type="submit" className="btn btn btn-success">
+              <button type="submit" className={`btn ${podeEditar ? "btn-success" : "btn-secondary"}`} disabled={!podeEditar}>
                 Salvar
               </button>
             </Flex>

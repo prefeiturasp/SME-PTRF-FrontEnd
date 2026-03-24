@@ -14,7 +14,7 @@ import {
 import { RECURSOS_PRIORIDADE } from "../../../../../../constantes/prioridades";
 
 
-const ModalFormAdicionarPrioridade = ({ open, onClose, tabelas, formModal, focusFields=[] }) => {
+const ModalFormAdicionarPrioridade = ({ open, onClose, tabelas, formModal, focusFields=[], podeEditar = true }) => {
   const [form] = Form.useForm();
   const [selectedRecurso, setSelectedRecurso] = useState('');
   const [selectedTipoAplicacao, setSelectedTipoAplicacao] = useState('');
@@ -138,6 +138,7 @@ const ModalFormAdicionarPrioridade = ({ open, onClose, tabelas, formModal, focus
   };
 
   const onSubmit = async (values) => {
+    if (!podeEditar) return;
     try {
       const validationSchema = createValidationSchema(selectedRecurso, selectedTipoAplicacao);
       await validationSchema.validate(values, { abortEarly: false });
@@ -350,6 +351,7 @@ const ModalFormAdicionarPrioridade = ({ open, onClose, tabelas, formModal, focus
                     options={prioridadesOptions}
                     onChange={() => form.setFields([{ name: 'prioridade', errors: [] }])}
                     allowClear
+                    disabled={!podeEditar}
                   />
                 </Form.Item>
               </Col>
@@ -367,6 +369,7 @@ const ModalFormAdicionarPrioridade = ({ open, onClose, tabelas, formModal, focus
                     options={recursosOptions}
                     onChange={handleRecursoChange}
                     allowClear
+                    disabled={!podeEditar}
                   />
                 </Form.Item>
               </Col>
@@ -387,6 +390,7 @@ const ModalFormAdicionarPrioridade = ({ open, onClose, tabelas, formModal, focus
                       loading={isLoadingAcoes}
                       onChange={() => form.setFields([{ name: 'acao_associacao', errors: [] }])}
                       allowClear
+                      disabled={!podeEditar}
                     />
                   </Form.Item>
                 </Col>
@@ -407,6 +411,7 @@ const ModalFormAdicionarPrioridade = ({ open, onClose, tabelas, formModal, focus
                       onChange={handleProgramaPddeChange}
                       loading={isLoadingAcoesPdde}
                       allowClear
+                      disabled={!podeEditar}
                     />
                   </Form.Item>
                 </Col>
@@ -426,6 +431,7 @@ const ModalFormAdicionarPrioridade = ({ open, onClose, tabelas, formModal, focus
                       options={acoesPddeFiltradas}
                       onChange={() => form.setFields([{ name: 'acao_pdde', errors: [] }])}
                       allowClear
+                      disabled={!podeEditar}
                     />
                   </Form.Item>
                 </Col>
@@ -444,6 +450,7 @@ const ModalFormAdicionarPrioridade = ({ open, onClose, tabelas, formModal, focus
                     options={tiposAplicacaoOptions}
                     onChange={handleTipoAplicacaoChange}
                     allowClear
+                    disabled={!podeEditar}
                   />
                 </Form.Item>
               </Col>
@@ -462,6 +469,7 @@ const ModalFormAdicionarPrioridade = ({ open, onClose, tabelas, formModal, focus
                       options={tiposDespesaCusteioOptions}
                       onChange={handleTipoDespesaCusteioChange}
                       allowClear
+                      disabled={!podeEditar}
                     />
                   </Form.Item>
                 </Col>
@@ -474,16 +482,17 @@ const ModalFormAdicionarPrioridade = ({ open, onClose, tabelas, formModal, focus
                   labelCol={{ span: 24 }}
                   style={{ marginBottom: 4 }}
                 >
-                  <Select
-                    placeholder="Selecione a especificação do bem, material ou serviço"
-                    showSearch
-                    optionFilterProp="label"
-                    style={{ width: "100%" }}
-                    options={especificacoesOptions}
-                    loading={isLoadingEspecificacoes}
-                    onChange={() => form.setFields([{ name: 'especificacao_material', errors: [] }])}
-                    allowClear
-                  />
+                    <Select
+                      placeholder="Selecione a especificação do bem, material ou serviço"
+                      showSearch
+                      optionFilterProp="label"
+                      style={{ width: "100%" }}
+                      options={especificacoesOptions}
+                      loading={isLoadingEspecificacoes}
+                      onChange={() => form.setFields([{ name: 'especificacao_material', errors: [] }])}
+                      allowClear
+                      disabled={!podeEditar}
+                    />
                 </Form.Item>
               </Col>
 
@@ -504,6 +513,7 @@ const ModalFormAdicionarPrioridade = ({ open, onClose, tabelas, formModal, focus
                     controls={false}
                     style={{ width: "100%" }}
                     onChange={() => form.setFields([{ name: 'valor_total', errors: [] }])}
+                    disabled={!podeEditar}
                   />
                 </Form.Item>
               </Col>
@@ -518,7 +528,7 @@ const ModalFormAdicionarPrioridade = ({ open, onClose, tabelas, formModal, focus
                 Cancelar
               </button>
               <Spin spinning={mutationPatch.isPending || mutationPost.isPending}>
-                <button type="submit" className="btn btn btn-success">
+                <button type="submit" className={`btn ${podeEditar ? "btn-success" : "btn-secondary"}`} disabled={!podeEditar}>
                   Salvar
                 </button>
               </Spin>

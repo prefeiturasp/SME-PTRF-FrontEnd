@@ -19,6 +19,7 @@ import {
   linkAtividadeEstatutariaExistentePaa,
 } from "../../../../../../../services/escolas/Paa.service";
 import { ModalConfirmarExclusao } from "../../../../../../sme/Parametrizacoes/componentes/ModalConfirmarExclusao";
+import { visoesService } from "../../../../../../../services/visoes.service";
 import "./styles.scss";
 
 const formatarMesAno = (valor) => {
@@ -61,6 +62,7 @@ const formatarMesAno = (valor) => {
 
 export const VisualizarAtividadesPrevistas = () => {
   const navigate = useNavigate();
+  const podeEditar = visoesService.getPermissoes(["custom_change_paa"]);
   const { atividades, isLoading, isError, refetch } = useGetAtividadesEstatutarias();
   const { data: tabelasAtividades } = useGetAtividadesEstatutariasTabelas();
   const {
@@ -147,6 +149,7 @@ export const VisualizarAtividadesPrevistas = () => {
   }, [recursosProprios, isLoadingRecursos]);
 
   const handleAdicionarAtividade = useCallback(() => {
+    if (!podeEditar) return;
     const novaAtividade = {
       uuid: `novo-${Date.now()}`,
       tipoAtividade: "",
@@ -172,6 +175,7 @@ export const VisualizarAtividadesPrevistas = () => {
   }, [navigate]);
 
   const handleChangeAtividade = useCallback((uuid, campo, valor, extra = {}) => {
+    if (!podeEditar) return;
     setAtividadesTabela((prev) =>
       prev.map((item) => {
         if (item.uuid !== uuid) {
@@ -205,18 +209,20 @@ export const VisualizarAtividadesPrevistas = () => {
         return updated;
       })
     );
-  }, []);
+  }, [podeEditar]);
 
   const handleEditarAtividade = useCallback((atividade) => {
+    if (!podeEditar) return;
     setAtividadesTabela((prev) =>
       prev.map((item) =>
         item.uuid === atividade.uuid ? { ...item, emEdicao: true } : item
       )
     );
-  }, []);
+  }, [podeEditar]);
 
   const handleSalvarLinha = useCallback(
     (atividade) => {
+      if (!podeEditar) return;
       if (!atividade.tipoAtividadeKey || !atividade.descricao || !atividade.data) {
         toastCustom.ToastCustomError(
           "Erro!",
@@ -242,10 +248,11 @@ export const VisualizarAtividadesPrevistas = () => {
         })
       );
     },
-    []
+    [podeEditar]
   );
 
   const handleSalvarAtividades = useCallback(async () => {
+    if (!podeEditar) return;
     if (!paaUuid) {
       toastCustom.ToastCustomError("Erro!", "PAA vigente não encontrado.");
       return;
@@ -428,22 +435,24 @@ export const VisualizarAtividadesPrevistas = () => {
     } finally {
       setIsSalvando(false);
     }
-  }, [atividadesTabela, recursosPropriosTabela, paaUuid, refetch, refetchRecursos]);
+  }, [atividadesTabela, recursosPropriosTabela, paaUuid, refetch, refetchRecursos, podeEditar]);
 
   const handleEditarLinha = useCallback((atividade) => {
+    if (!podeEditar) return;
     setAtividadesTabela((prev) =>
       prev.map((item) =>
         item.uuid === atividade.uuid ? { ...item, emEdicao: true } : item
       )
     );
-  }, []);
+  }, [podeEditar]);
 
   const handleExcluirAtividade = useCallback((atividade) => {
+    if (!podeEditar) return;
     setModalExcluir({ aberto: true, atividade });
-  }, []);
+  }, [podeEditar]);
 
   const confirmarExclusaoAtividade = useCallback(async () => {
-    if (isExcluindoAtividade) {
+    if (!podeEditar || isExcluindoAtividade) {
       return;
     }
 
@@ -488,18 +497,19 @@ export const VisualizarAtividadesPrevistas = () => {
       setIsExcluindoAtividade(false);
       setModalExcluir({ aberto: false, atividade: null });
     }
-  }, [isExcluindoAtividade, modalExcluir.atividade, paaUuid, refetch]);
+  }, [isExcluindoAtividade, modalExcluir.atividade, paaUuid, refetch, podeEditar]);
 
   const cancelarExclusaoAtividade = useCallback(() => {
     setModalExcluir({ aberto: false, atividade: null });
   }, []);
 
   const handleExcluirRecursoProprio = useCallback((recurso) => {
+    if (!podeEditar) return;
     setModalExcluirRecurso({ aberto: true, recurso });
-  }, []);
+  }, [podeEditar]);
 
   const confirmarExclusaoRecursoProprio = useCallback(async () => {
-    if (isExcluindoRecurso) {
+    if (!podeEditar || isExcluindoRecurso) {
       return;
     }
 
@@ -547,7 +557,7 @@ export const VisualizarAtividadesPrevistas = () => {
       setIsExcluindoRecurso(false);
       setModalExcluirRecurso({ aberto: false, recurso: null });
     }
-  }, [isExcluindoRecurso, modalExcluirRecurso.recurso, refetchRecursos]);
+  }, [isExcluindoRecurso, modalExcluirRecurso.recurso, refetchRecursos, podeEditar]);
 
   const cancelarExclusaoRecursoProprio = useCallback(() => {
     if (isExcluindoRecurso) {
@@ -607,7 +617,7 @@ export const VisualizarAtividadesPrevistas = () => {
             <select
               className="form-control form-control-sm atividades-previstas__input"
               value={record.tipoAtividadeKey || ""}
-              disabled={tiposOptions.length === 0}
+              disabled={tiposOptions.length === 0 || !podeEditar}
               onChange={(event) => {
                 const valorSelecionado = event.target.value;
                 const option = tiposOptions.find(
@@ -661,6 +671,7 @@ export const VisualizarAtividadesPrevistas = () => {
                   value={record.data || ""}
                   placeholder="Selecione a data"
                   onChange={handleDateChange}
+                  disabled={!podeEditar}
                 />
                 <button
                   type="button"
@@ -714,6 +725,7 @@ export const VisualizarAtividadesPrevistas = () => {
                 handleChangeAtividade(record.uuid, "descricao", event.target.value)
               }
               placeholder="Descreva a atividade estatutária"
+              disabled={!podeEditar}
             />
           ) : (
             record.descricao || "-"
@@ -729,7 +741,7 @@ export const VisualizarAtividadesPrevistas = () => {
           return (
             <div className="atividades-previstas__data-wrapper">
               <span>{mesAnoVisivel}</span>
-            {!record.isGlobal && (
+            {!record.isGlobal && podeEditar && (
               <div className="atividades-previstas__data-actions">
                 {record.emEdicao ? (
                   <>
@@ -793,6 +805,7 @@ export const VisualizarAtividadesPrevistas = () => {
       handleSalvarLinha,
       tiposOptions,
       isSalvando,
+      podeEditar,
     ]
   );
 
@@ -828,42 +841,47 @@ export const VisualizarAtividadesPrevistas = () => {
         title: "Ações",
         key: "acoes",
         width: 80,
-        render: (_, record) => (
-          <div className="atividades-previstas__acoes-recursos">
-            <IconButton
-              className="p-0"
-              icon="faTrashCan"
-              tooltipMessage="Excluir"
-              iconProps={{
-                style: { color: "#00585E" },
-              }}
-              aria-label="Excluir recurso próprio"
-              onClick={() => handleExcluirRecursoProprio(record)}
-            />
-          </div>
-        ),
+        render: (_, record) =>
+          podeEditar ? (
+            <div className="atividades-previstas__acoes-recursos">
+              <IconButton
+                className="p-0"
+                icon="faTrashCan"
+                tooltipMessage="Excluir"
+                iconProps={{
+                  style: { color: "#00585E" },
+                }}
+                aria-label="Excluir recurso próprio"
+                onClick={() => handleExcluirRecursoProprio(record)}
+              />
+            </div>
+          ) : null,
       },
     ],
-    [handleExcluirRecursoProprio]
+    [handleExcluirRecursoProprio, podeEditar]
   );
 
   const botoesHeader = (
     <div className="atividades-previstas__header-actions">
-      <button
-        type="button"
-        className="btn btn-success"
-        onClick={handleAdicionarAtividade}
-      >
-        Adicionar Atividade Estatutária
-      </button>
-      <button
-        type="button"
-        className={`btn btn-success atividades-previstas__salvar-botao`}
-        disabled={!temAlteracaoPendente || isSalvando}
-        onClick={handleSalvarAtividades}
-      >
-        Salvar
-      </button>
+      {podeEditar && (
+        <>
+          <button
+            type="button"
+            className="btn btn-success"
+            onClick={handleAdicionarAtividade}
+          >
+            Adicionar Atividade Estatutária
+          </button>
+          <button
+            type="button"
+            className="btn btn-success atividades-previstas__salvar-botao"
+            disabled={!temAlteracaoPendente || isSalvando}
+            onClick={handleSalvarAtividades}
+          >
+            Salvar
+          </button>
+        </>
+      )}
     </div>
   );
 

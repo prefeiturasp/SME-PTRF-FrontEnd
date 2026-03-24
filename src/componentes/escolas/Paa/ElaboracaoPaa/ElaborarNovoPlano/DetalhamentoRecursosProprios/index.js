@@ -23,12 +23,14 @@ import { useDeleteRecursoProprio } from "./hooks/useDeleteRecursoProprio";
 import { usePostRecursoProprio } from "./hooks/usePostRecursoProprio";
 import { useGetTotalizadorRecursoProprio } from "./hooks/useGetTotalizarRecursoProprio";
 import { EditIconButton } from "../../../../../Globais/UI/Button";
+import { visoesService } from "../../../../../../services/visoes.service";
 
 const DatePickerCustom = DatePicker.generatePicker(momentGenerateConfig);
 const { TextArea } = Input;
 
 const DetalhamentoRecursosProprios = () => {
   const dispatch = useDispatch();
+  const podeEditar = visoesService.getPermissoes(["custom_change_paa"]);
   const associacaoUUID = localStorage.getItem(ASSOCIACAO_UUID);
   const paaUUID = localStorage.getItem("PAA");
 
@@ -62,6 +64,7 @@ const DetalhamentoRecursosProprios = () => {
   }, [data.results]);
 
   const handleOpenFieldsToEdit = (item) => {
+    if (!podeEditar) return;
     if (currentItem) {
       updateValue(currentItem, "edit", false);
     }
@@ -70,6 +73,7 @@ const DetalhamentoRecursosProprios = () => {
   };
 
   const handleRemoveItem = (rowData, column) => {
+    if (!podeEditar) return;
     if (rowData.uuid && !rowData["new"]) {
       CustomModalConfirm({
         dispatch,
@@ -88,6 +92,7 @@ const DetalhamentoRecursosProprios = () => {
   };
 
   const handleAddNewItem = () => {
+    if (!podeEditar) return;
     const newItem = {
       descricao: "",
       fonte_recurso: null,
@@ -122,6 +127,7 @@ const DetalhamentoRecursosProprios = () => {
   };
 
   const handleSave = (rowData) => {
+    if (!podeEditar) return;
     const payload = {
       paa: localStorage.getItem("PAA"),
       associacao: associacaoUUID,
@@ -149,7 +155,8 @@ const DetalhamentoRecursosProprios = () => {
   }, [totalRecursosProprios]);
 
   const acoesTemplate = (rowData, column) => {
-    return !rowData["fixed"] ? (
+    if (rowData["fixed"] || !podeEditar) return null;
+    return (
       <Flex>
         {rowData["edit"] ? (
           <IconButton
@@ -182,7 +189,7 @@ const DetalhamentoRecursosProprios = () => {
           onClick={() => handleRemoveItem(rowData, column)}
         />
       </Flex>
-    ) : null;
+    );
   };
 
   const valorTemplate = (rowData) => {
@@ -316,23 +323,25 @@ const DetalhamentoRecursosProprios = () => {
         <Flex gutter={8} justify="space-between" className="mb-4">
           <h5 className="mb-0">Detalhamento de Recursos Próprios</h5>
 
-          {currentRowData ? (
-            <button
-              type="button"
-              className="btn btn-success"
-              disabled={!validFields(currentRowData)}
-              onClick={() => handleSave(currentRowData)}
-            >
-              Salvar fonte de recurso
-            </button>
-          ) : (
-            <button
-              type="button"
-              className="btn btn-success"
-              onClick={() => handleAddNewItem()}
-            >
-              Adicionar fonte de recurso
-            </button>
+          {podeEditar && (
+            currentRowData ? (
+              <button
+                type="button"
+                className="btn btn-success"
+                disabled={!validFields(currentRowData)}
+                onClick={() => handleSave(currentRowData)}
+              >
+                Salvar fonte de recurso
+              </button>
+            ) : (
+              <button
+                type="button"
+                className="btn btn-success"
+                onClick={() => handleAddNewItem()}
+              >
+                Adicionar fonte de recurso
+              </button>
+            )
           )}
         </Flex>
 
