@@ -190,6 +190,7 @@ const setValorRealizado = (setFieldValue, valor) =>{
 
 const limpaTipoDespesaCusteio = (setFieldValue, index) => {
     setFieldValue(`rateios[${index}].tipo_custeio`, null)
+    setFieldValue(`rateios[${index}].especificacao_material_servico`, "")
 }
 
 const setaValoresCusteioCapital = (mais_de_um_tipo_de_despesa = null, values, setFieldValue) =>{

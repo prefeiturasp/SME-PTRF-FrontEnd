@@ -31,8 +31,10 @@ import {
   ModalConfirmaGeracaoFinal,
   ModalInfoPendenciasGeracaoFinal,
 } from "./ModalInfoGeracaoDocumento";
+import { visoesService } from "../../../../../../services/visoes.service";
 
 const Relatorios = ({ initialExpandedSections }) => {
+  const podeEditar = visoesService.getPermissoes(["custom_change_paa"]);
   const navigate = useNavigate();
   const defaultExpandedState = {
     planoAnual: false,
@@ -183,6 +185,7 @@ const Relatorios = ({ initialExpandedSections }) => {
   };
 
   const handleGerarDocumentoFinal = async (confirmar = 0) => {
+    if (!podeEditar) return;
     setOpenModalConfirmarGeracaoFinal(false);
     if (paaVigente?.uuid) {
       mutationGerarDocumentoFinal.mutate({
@@ -237,7 +240,7 @@ const Relatorios = ({ initialExpandedSections }) => {
     },
   };
 
-  const renderSecao = (secaoKey, config) => {
+  const renderSecao = (secaoKey, config, podeEditar) => {
     const isExpanded = expandedSections[secaoKey];
 
     return (
@@ -252,6 +255,7 @@ const Relatorios = ({ initialExpandedSections }) => {
           isError={isError}
           isLoadingPaa={isLoadingPaa}
           paaVigente={paaVigente}
+          podeEditar={podeEditar}
         />
       </div>
     );
@@ -268,6 +272,7 @@ const Relatorios = ({ initialExpandedSections }) => {
 
   const botaoGeracaoFinalDesabilitado = () => {
     const validacoes = [
+      !podeEditar,
       statusDocumento?.status === "EM_PROCESSAMENTO",
       statusDocumento?.status === "CONCLUIDO" &&
         statusDocumento?.versao === "FINAL",
@@ -385,7 +390,7 @@ const Relatorios = ({ initialExpandedSections }) => {
               {!isLoadingPaa &&
                 paaVigente?.uuid &&
                 Object.entries(secoesConfig).map(([secaoKey, config]) =>
-                  renderSecao(secaoKey, config)
+                  renderSecao(secaoKey, config, podeEditar)
                 )}
             </div>
           )}
@@ -405,10 +410,12 @@ const Relatorios = ({ initialExpandedSections }) => {
                   Visualizar prévia da ata
                 </button>
                 <button
-                  className="btn btn-success"
-                  /* disabled */
+                  className={`btn ${podeEditar ? "btn-success" : "btn-secondary"}`}
+                  disabled={!podeEditar}
                   data-tooltip-content={
-                    "Quando todos os dados estiverem preenchidos, a opção fica habilitada."
+                    !podeEditar
+                      ? "Sem permissão para gerar ata."
+                      : "Quando todos os dados estiverem preenchidos, a opção fica habilitada."
                   }
                   data-tooltip-id="tooltip-gerar-ata"
                 >

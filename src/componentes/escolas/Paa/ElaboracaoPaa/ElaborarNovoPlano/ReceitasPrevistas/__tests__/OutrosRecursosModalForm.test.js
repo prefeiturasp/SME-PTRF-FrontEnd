@@ -35,6 +35,12 @@ jest.mock("../hooks/usePostReceitasPrevistasOutrosRecursosPeriodo", () => {
   };
 });
 
+jest.mock("../../../../../../../services/visoes.service", () => ({
+  visoesService: {
+    getPermissoes: jest.fn(() => true),
+  },
+}));
+
 jest.mock("../hooks/usePatchReceitasPrevistasOutrosRecursosPeriodo", () => {
   mockMutatePatch = jest.fn();
 
@@ -83,8 +89,11 @@ describe("OutrosRecursosModalForm", () => {
     );
 
     await waitFor(() => {
-      fireEvent.click(screen.getByRole("button", { name: /salvar/i }));
+      expect(screen.getByDisplayValue("220")).toBeInTheDocument();
     });
+
+    const form = screen.getByRole("form");
+    fireEvent.submit(form);
 
     await waitFor(() => {
       expect(mockMutatePost).toHaveBeenCalledTimes(1);
@@ -104,8 +113,11 @@ describe("OutrosRecursosModalForm", () => {
     );
 
     await waitFor(() => {
-      fireEvent.click(screen.getByRole("button", { name: /salvar/i }));
+      expect(screen.getByDisplayValue("220")).toBeInTheDocument();
     });
+
+    const form = screen.getByRole("form");
+    fireEvent.submit(form);
 
     await waitFor(() => {
       expect(mockMutatePatch).toHaveBeenCalledTimes(1);

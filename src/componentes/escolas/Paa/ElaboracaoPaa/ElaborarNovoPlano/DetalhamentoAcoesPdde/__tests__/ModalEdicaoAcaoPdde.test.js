@@ -7,6 +7,11 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 jest.mock("../hooks/usePatchReceitaPrevistaPdde");
 jest.mock("../hooks/usePostReceitaPrevistaPdde");
+jest.mock("../../../../../../../services/visoes.service", () => ({
+  visoesService: {
+    getPermissoes: () => true,
+  },
+}));
 
 const mockMutatePatch = jest.fn();
 const mockMutatePost = jest.fn();
@@ -252,7 +257,8 @@ describe("ModalEdicaoAcaoPdde", () => {
         expect(screen.getByText("Salvar")).toBeInTheDocument();
       });
 
-      fireEvent.click(screen.getByText("Salvar"));
+      const form = screen.getByRole("form");
+      fireEvent.submit(form);
 
       await waitFor(() => {
         expect(mockMutatePost).toHaveBeenCalledWith({
@@ -276,7 +282,12 @@ describe("ModalEdicaoAcaoPdde", () => {
         },
       });
 
-      fireEvent.click(screen.getByText("Salvar"));
+      await waitFor(() => {
+        expect(screen.getByText("Salvar")).toBeInTheDocument();
+      });
+
+      const form = screen.getByRole("form");
+      fireEvent.submit(form);
 
       await waitFor(() => {
         expect(mockMutatePost).toHaveBeenCalled();
