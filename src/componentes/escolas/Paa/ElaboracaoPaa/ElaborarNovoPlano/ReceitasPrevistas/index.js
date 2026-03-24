@@ -44,14 +44,11 @@ const ReceitasPrevistas = ({ receitasDestino = null }) => {
   const [ showModalConfirmaPararAtualizacaoSaldo, setShowModalConfirmaPararAtualizacaoSaldo ] = useState(false)
 
   const {
-    data,
+    data: dataReceitasPrevistas,
     isLoading: isLoadingReceitasPrevistas,
     refetch: refetchReceitasPrevistas,
     isFetching: isFetchingReceitasPrevistas,
   } = useGetReceitasPrevistas();
-
-  // Exibir apenas Receitas previstas das acoes associadas com exibir_paa = true
-  const dataReceitasPrevistas = (data||[]).filter(item => item.acao.exibir_paa)
 
   const getPaaUUID = () => localStorage.getItem("PAA");
   const { data: totalRecursosProprios } =

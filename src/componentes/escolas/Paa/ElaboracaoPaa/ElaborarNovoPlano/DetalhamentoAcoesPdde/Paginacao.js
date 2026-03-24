@@ -1,7 +1,7 @@
 import React from "react";
 import {Paginator} from 'primereact/paginator';
 
-export const Paginacao = ({acoes, setCurrentPage, firstPage, setFirstPage, isLoading, count}) => {
+export const Paginacao = ({acoes, setCurrentPage, firstPage, setFirstPage, isLoading, count, rowsPerPage=20}) => {
     const onPageChange = (event) => {
         setCurrentPage(event.page + 1)
         setFirstPage(event.first)
@@ -12,7 +12,7 @@ export const Paginacao = ({acoes, setCurrentPage, firstPage, setFirstPage, isLoa
             {!isLoading && acoes && acoes.length > 0 ? (
                     <Paginator
                         first={firstPage}
-                        rows={20}
+                        rows={rowsPerPage}
                         totalRecords={count}
                         template="PrevPageLink PageLinks NextPageLink"
                         onPageChange={onPageChange}
