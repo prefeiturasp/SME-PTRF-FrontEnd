@@ -6,6 +6,7 @@ import "./dashboard.scss"
 import {BarraDeStatus} from "./BarraDeStatus";
 import {DashboardCard} from "./DashboardCard";
 import Loading from "../../../utils/Loading";
+import { PERIODO_SELECIONADO_DRE_ACOMPANHAMENTO } from "../../../services/auth.service";
 
 export const DreDashboard = () => {
 
@@ -25,7 +26,7 @@ export const DreDashboard = () => {
     useEffect(() => {
         carregaItensDashboard();
         if (periodoEscolhido) {
-            localStorage.setItem('PERIODO_SELECIONADO_DRE_ACOMPANHAMENTO', periodoEscolhido);
+            localStorage.setItem(PERIODO_SELECIONADO_DRE_ACOMPANHAMENTO, periodoEscolhido);
         }
     }, [periodoEscolhido]);
 
@@ -34,7 +35,7 @@ export const DreDashboard = () => {
         let periodos = await getPeriodos();
         setPeriodos(periodos);
 
-        const storedPeriodo = localStorage.getItem('PERIODO_SELECIONADO_DRE_ACOMPANHAMENTO');
+        const storedPeriodo = localStorage.getItem(PERIODO_SELECIONADO_DRE_ACOMPANHAMENTO);
         if (periodos && periodos.length > 0){
             if(storedPeriodo && !acessadoPelaSidebar) {
                 setPeriodoEsolhido(storedPeriodo);
