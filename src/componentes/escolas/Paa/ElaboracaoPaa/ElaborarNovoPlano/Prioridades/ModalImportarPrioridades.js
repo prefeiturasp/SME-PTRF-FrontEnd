@@ -7,7 +7,7 @@ import { importaPrioridadesValidationSchema } from "./validationSchema";
 import { CustomModalConfirm } from "../../../../../Globais/Modal/CustomModalConfirm";
 import { toastCustom } from "../../../../../Globais/ToastCustom";
 
-const ModalImportarPrioridades = ({ open, onClose, paas }) => {
+const ModalImportarPrioridades = ({ open, onClose, paas, podeEditar = true }) => {
   const [form] = Form.useForm();
 
   const dispatch = useDispatch();
@@ -25,6 +25,7 @@ const ModalImportarPrioridades = ({ open, onClose, paas }) => {
   })) : [];
 
   const onSubmit = async (values) => {
+    if (!podeEditar) return;
     try {
       const validationSchema = importaPrioridadesValidationSchema();
       await validationSchema.validate(values, { abortEarly: false });
@@ -110,6 +111,7 @@ const ModalImportarPrioridades = ({ open, onClose, paas }) => {
                     style={{ width: "100%" }}
                     options={paasOptions}
                     onChange={() => form.setFields([{ name: 'uuid_paa_anterior', errors: [] }])}
+                    disabled={!podeEditar}
                   />
                 </Form.Item>
               </Col>
@@ -128,7 +130,8 @@ const ModalImportarPrioridades = ({ open, onClose, paas }) => {
               <Spin spinning={mutationImportarPrioridades.isPending}>
                 <button
                   type="submit"
-                  className="btn btn btn-success btn-sm">
+                  className={`btn btn-sm ${podeEditar ? "btn-success" : "btn-secondary"}`}
+                  disabled={!podeEditar}>
                   Importar
                 </button>
               </Spin>

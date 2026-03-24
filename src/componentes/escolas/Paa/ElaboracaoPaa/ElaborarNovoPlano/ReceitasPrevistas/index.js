@@ -14,6 +14,7 @@ import TabelaRecursosProprios from "./TabelaRecursosProprios";
 import TabelaReceitasPrevistas from "./TabelaReceitasPrevistas";
 import ModalConfirmaPararAtualizacaoSaldo from "./ModalConfirmarPararAtualizacaoSaldo";
 import { getPaaVigente } from "../../../../../../services/sme/Parametrizacoes.service";
+import { visoesService } from "../../../../../../services/visoes.service";
 
 const mapDestinoParaTab = (destino) => {
   switch (destino) {
@@ -180,6 +181,7 @@ const ReceitasPrevistas = ({ receitasDestino = null }) => {
                     checked={!!dadosPaaLocalStorage()?.saldo_congelado_em}
                     onChange={(e) => onTogglePararAtualizacoesSaldo(e)}
                     disabled={
+                      !visoesService.getPermissoes(['custom_change_paa']) ||
                       isLoadingReceitasPrevistas ||
                       isFetchingReceitasPrevistas ||
                       loadingPaa

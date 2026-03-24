@@ -9,6 +9,7 @@ import {
   formatMoneyByCentsBRL,
   parseMoneyBRL,
 } from "../../../../../../utils/money";
+import { visoesService } from "../../../../../../services/visoes.service";
 
 const initialValues = {
   saldo_capital: 0,
@@ -24,6 +25,7 @@ const initialValues = {
 
 const ModalEdicaoReceitaPrevistaPDDE = ({ open, onClose, receitaPrevistaPDDE }) => {
   const [form] = Form.useForm();
+  const podeEditar = visoesService.getPermissoes(["custom_change_paa"]);
 
   const isLoading = false;
   const { mutationPatch } = usePatchReceitaPrevistaPdde(onClose);
@@ -99,9 +101,9 @@ const ModalEdicaoReceitaPrevistaPDDE = ({ open, onClose, receitaPrevistaPDDE }) 
     },
   ];
 
-  const disabledCusteio = receitaPrevistaPDDE && !receitaPrevistaPDDE.aceita_custeio;
-  const disabledCapital = receitaPrevistaPDDE && !receitaPrevistaPDDE.aceita_capital;
-  const disabledLivre = receitaPrevistaPDDE && !receitaPrevistaPDDE.aceita_livre_aplicacao;
+  const disabledCusteio = (receitaPrevistaPDDE && !receitaPrevistaPDDE.aceita_custeio) || !podeEditar;
+  const disabledCapital = (receitaPrevistaPDDE && !receitaPrevistaPDDE.aceita_capital) || !podeEditar;
+  const disabledLivre = (receitaPrevistaPDDE && !receitaPrevistaPDDE.aceita_livre_aplicacao) || !podeEditar;
 
   return (
     <ModalFormBodyText
@@ -389,8 +391,8 @@ const ModalEdicaoReceitaPrevistaPDDE = ({ open, onClose, receitaPrevistaPDDE }) 
 
               <button 
                 type="submit" 
-                className="btn btn btn-success"
-                disabled={receitaPrevistaPDDE && !receitaPrevistaPDDE.aceita_livre_aplicacao && !receitaPrevistaPDDE.aceita_capital && !receitaPrevistaPDDE.aceita_custeio}
+                className={`btn ${podeEditar && (!receitaPrevistaPDDE || receitaPrevistaPDDE.aceita_livre_aplicacao || receitaPrevistaPDDE.aceita_capital || receitaPrevistaPDDE.aceita_custeio) ? "btn-success" : "btn-secondary"}`}
+                disabled={!podeEditar || (receitaPrevistaPDDE && !receitaPrevistaPDDE.aceita_livre_aplicacao && !receitaPrevistaPDDE.aceita_capital && !receitaPrevistaPDDE.aceita_custeio)}
               >
                 Salvar
               </button>
