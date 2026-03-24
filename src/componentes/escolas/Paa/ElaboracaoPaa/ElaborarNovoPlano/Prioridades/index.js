@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useMemo } from 'react';
 import { Flex, Button, Spin, Alert, Typography } from 'antd';
 import { Paginator } from "primereact/paginator";
 import ModalFormAdicionarPrioridade from './ModalFormAdicionarPrioridade';
@@ -37,7 +37,12 @@ const Prioridades = () => {
   const [modalForm, setModalForm] = useState({ open: false, tabelas: null, formModal: null });
   const [modalExclusao, setModalExclusao] = useState({ open: false, item: null, tipo: 'individual' });
   const tabelaRef = useRef(null);
-  const { prioridadesTabelas, recursos, tipos_aplicacao, outros_recursos } = useGetPrioridadeTabelas();
+
+  const paa_uuid = useMemo(() => localStorage.getItem("PAA"), []);
+
+  const { prioridadesTabelas, recursos, tipos_aplicacao, outros_recursos } = useGetPrioridadeTabelas({
+    paa_uuid
+  });
   const { tipos_despesa_custeio } = useGetTiposDespesaCusteio();
   const { isFetching: isLoadingPrioridades, prioridades, quantidade, refetch } = useGetPrioridades(filtros, currentPage);
 

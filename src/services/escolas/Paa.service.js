@@ -204,10 +204,28 @@ export const getTotalizadorRecursoProprio = async (associacaoUUID, paaUUID = nul
 export const getFontesRecursos = async () => {
   return (await api.get(`api/fontes-recursos-paa/`, authHeader())).data;
 };
+export const getAcoesPTRFPrioridades = async (paa_uuid) => {
+  return (
+    await api.get(
+      `/api/acoes-associacoes/acoes-ptrf-paa/?pagination=false&paa_uuid=${paa_uuid}`,
+      authHeader()
+    )
+  ).data;
+};
+
 export const getAcoesPDDE = async (currentPage = 1, rowsPerPage = 20) => {
   return (
     await api.get(
       `/api/acoes-pdde/receitas-previstas-pdde/?page=${currentPage}&page_size=${rowsPerPage}&paa_uuid=${localStorage.getItem("PAA")}`,
+      authHeader()
+    )
+  ).data;
+};
+
+export const getAcoesPDDEPrioridades = async (paa_uuid) => {
+  return (
+    await api.get(
+      `/api/acoes-pdde/acoes-pdde-paa/?paa_uuid=${paa_uuid}`,
       authHeader()
     )
   ).data;
@@ -253,9 +271,8 @@ export const postImportarPrioridades = async (uuid_paa_atual, uuid_paa_anterior,
 }
 
 // Prioridades
-export const getPrioridadesTabelas = async () => {
-  let queryString = `?paa__uuid=${localStorage.getItem("PAA")}`;  
-  return (await api.get(`api/prioridades-paa/tabelas/${queryString}`, authHeader())).data;
+export const getPrioridadesTabelas = async (paa_uuid) => {
+  return (await api.get(`api/prioridades-paa/tabelas/?paa__uuid=${paa_uuid}`, authHeader())).data;
 };
 
 export const getPrioridades = async (filtros, page=1, page_size=20) => {

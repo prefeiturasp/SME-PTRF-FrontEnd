@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { FormFiltros } from '../FormFiltros';
 import { useGetAcoesAssociacao } from '../../ReceitasPrevistas/hooks/useGetAcoesAssociacao';
-import { useGetAcoesPDDE } from '../hooks/useGetAcoesPDDE';
+import { useGetAcoesPDDEPrioridades } from '../hooks/useGetAcoesPDDEPrioridades';
 import { useGetEspecificacoes } from '../hooks/useGetEspecificacoes';
 import { useGetPrioridades } from '../hooks/useGetPrioridades';
 
@@ -13,8 +13,8 @@ jest.mock('../../ReceitasPrevistas/hooks/useGetAcoesAssociacao', () => ({
   useGetAcoesAssociacao: jest.fn(),
 }));
 
-jest.mock('../hooks/useGetAcoesPDDE', () => ({
-  useGetAcoesPDDE: jest.fn(),
+jest.mock('../hooks/useGetAcoesPDDEPrioridades', () => ({
+  useGetAcoesPDDEPrioridades: jest.fn(),
 }));
 
 jest.mock('../hooks/useGetEspecificacoes', () => ({
@@ -108,7 +108,7 @@ describe('FormFiltros', () => {
       isError: false,
     });
 
-    useGetAcoesPDDE.mockReturnValue({
+    useGetAcoesPDDEPrioridades.mockReturnValue({
       acoesPdde: mockAcoesPDDE,
       isLoading: false,
       isError: false,

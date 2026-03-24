@@ -34,7 +34,7 @@ describe("useGetPrioridadeTabelas", () => {
 
     getPrioridadesTabelas.mockResolvedValueOnce(mockData);
 
-    const { result } = renderHook(() => useGetPrioridadeTabelas(), {
+    const { result } = renderHook(() => useGetPrioridadeTabelas({paa_uuid: '1234'}), {
       wrapper: createWrapper(),
     });
 
@@ -46,13 +46,13 @@ describe("useGetPrioridadeTabelas", () => {
     expect(result.current.recursos).toEqual(mockData.recursos);
     expect(result.current.tipos_aplicacao).toEqual(mockData.tipos_aplicacao);
     expect(result.current.isError).toBe(false);
-    expect(getPrioridadesTabelas).toHaveBeenCalledWith();
+    expect(getPrioridadesTabelas).toHaveBeenCalledWith('1234');
   });
     
   it("deve retornar erro quando a API falhar", async () => {
     getPrioridadesTabelas.mockRejectedValueOnce(new Error("Erro na API"));
     
-    const { result } = renderHook(() => useGetPrioridadeTabelas(), {
+    const { result } = renderHook(() => useGetPrioridadeTabelas({paa_uuid: '1234'}), {
       wrapper: createWrapper(),
     });
     
@@ -61,6 +61,6 @@ describe("useGetPrioridadeTabelas", () => {
     await waitFor(() => expect(result.current.isError).toBe(true));
     
     expect(result.current.error).toBeInstanceOf(Error);
-    expect(getPrioridadesTabelas).toHaveBeenCalledWith();
+    expect(getPrioridadesTabelas).toHaveBeenCalledWith('1234');
   });
 });

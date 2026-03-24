@@ -12,7 +12,7 @@ export const DetalhamentoAcoesPdde = () => {
   return (
     <Spin spinning={isLoading}>
       <Tabela
-        rowsPerPage={20}
+        rowsPerPage={rowsPerPage}
         data={data}
         isLoading={isLoading}
         setCurrentPage={setCurrentPage}
