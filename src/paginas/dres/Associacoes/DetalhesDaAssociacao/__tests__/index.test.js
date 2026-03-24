@@ -2,6 +2,7 @@ import { render, screen } from "@testing-library/react";
 import React  from "react";
 import { MemoryRouter, useLocation, useParams } from "react-router-dom";
 import { DetalhesDaAssociacaoDrePage } from "../index";
+import { DADOS_DA_ASSOCIACAO } from "../../../../../services/auth.service";
 
 jest.mock("react-router-dom", () => ({
   ...jest.requireActual("react-router-dom"),
@@ -23,6 +24,17 @@ jest.mock("../../../../../context/RecursoSelecionado", () => ({
 }));
 
 describe('<DetalhesDaAssociacaoDrePage>', () => {
+
+  beforeEach(() => {
+    const mockDadosDaAssociacao = {
+      dados_da_associacao: {
+        recursos_da_associacao: [
+          { uuid: "uuid-1", nome: "Recurso 1", nome_exibicao: "Recurso 1", legado: false },
+        ],
+      },
+    };
+    localStorage.setItem(DADOS_DA_ASSOCIACAO, JSON.stringify(mockDadosDaAssociacao));
+  });
 
   test('Deve renderizar o componente', async () => {
     useLocation.mockReturnValue({ state: null, pathname: '/' });
