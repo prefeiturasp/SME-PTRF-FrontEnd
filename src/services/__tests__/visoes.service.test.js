@@ -581,6 +581,8 @@ describe('Visoes Service', () => {
             localStorageMock.setItem('uuidAta', 'test');
             localStorageMock.setItem('prestacao_de_contas_nao_apresentada', 'test');
             localStorageMock.setItem(PERIODO_RELATORIO_CONSOLIDADO_DRE, 'test');
+            localStorageMock.setItem('PAA', 'uuid-paa-anterior');
+            localStorageMock.setItem('DADOS_PAA', '{"uuid":"uuid-paa-anterior"}');
 
             visoesService.alternaVisoes('DRE', 'dre1', 'dre1', 'DRE 1', 'DRE', 'DRE 1', null, null, null);
 
@@ -593,6 +595,8 @@ describe('Visoes Service', () => {
             expect(localStorageMock.getItem('uuidAta')).toBeNull();
             expect(localStorageMock.getItem('prestacao_de_contas_nao_apresentada')).toBeNull();
             expect(localStorageMock.getItem(PERIODO_RELATORIO_CONSOLIDADO_DRE)).toBeNull();
+            expect(localStorageMock.getItem('PAA')).toBeNull();
+            expect(localStorageMock.getItem('DADOS_PAA')).toBeNull();
         });
 
         it('Deve chamar salva_dados_ultimo_acesso com os parâmetros corretos', () => {
