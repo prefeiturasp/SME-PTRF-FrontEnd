@@ -7,11 +7,13 @@ import ReceitasPrevistas from './ReceitasPrevistas';
 import Prioridades from './Prioridades';
 import Relatorios from './Relatorios';
 import BarraTopoTitulo from './BarraTopoTitulo';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { iniciarAtaPaa } from '../../../../../services/escolas/AtasPaa.service';
+import { visoesService } from '../../../../../services/visoes.service';
 
 export const ElaborarNovoPlano = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const itemsBreadCrumb = [
     { label: 'Plano Anual de Atividades', url: '/paa' },
     { label: 'Elaborar novo plano', active: true },
@@ -48,6 +50,14 @@ export const ElaborarNovoPlano = () => {
     : null;
 
   useEffect(() => {
+    const temPermissaoIniciar = Boolean(
+      visoesService.getPermissoes(["custom_change_paa"])
+    );
+    const temPaaEmAndamento = Boolean(localStorage.getItem("PAA"));
+    if (!temPermissaoIniciar && !temPaaEmAndamento) {
+      navigate("/paa", { replace: true });
+      return;
+    }
     const paaUuid = localStorage.getItem("PAA");
     if (!paaUuid) {
       return;
@@ -55,7 +65,7 @@ export const ElaborarNovoPlano = () => {
     iniciarAtaPaa(paaUuid).catch((error) => {
       console.error("Erro ao iniciar ata do PAA:", error);
     });
-  }, []);
+  }, [navigate]);
 
   return (
     <PaginasContainer>
