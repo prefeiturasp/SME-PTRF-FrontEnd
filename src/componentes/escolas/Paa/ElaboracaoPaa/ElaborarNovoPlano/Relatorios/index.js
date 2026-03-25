@@ -299,7 +299,7 @@ const Relatorios = ({ initialExpandedSections }) => {
     }
     if (!ataPaa?.uuid) return "Ata do PAA não encontrada.";
     if (!ataPaa?.completa) {
-      return "Preencha todos os dados obrigatórios da ata.";
+      return "Quando todos os dados estiverem preenchidos, a opção fica habilitada.";
     }
     return "";
   };
