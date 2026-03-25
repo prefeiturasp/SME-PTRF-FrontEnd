@@ -1,12 +1,15 @@
 import React, {useRef, useState} from "react";
 import {Formik} from "formik";
 import ReCAPTCHA from "react-google-recaptcha";
+
 import {YupSignupSchemaLogin} from "../../utils/ValidacoesAdicionaisFormularios";
 import { authService } from "../../services/auth.service";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faQuestionCircle, faEye, faEyeSlash} from '@fortawesome/free-solid-svg-icons'
 import Loading from "../../utils/Loading";
 import { TooltipWrapper } from "../../componentes/Globais/UI/Tooltip";
+
+const RECAPTCHA_SITE_KEY = process.env.REACT_APP_RECAPTCHA_SITE_KEY;
 
 export const LoginForm = ({redefinicaoDeSenha}) => {
     const [msgUsuario, setMsgUsuario] = useState('');
@@ -123,18 +126,20 @@ export const LoginForm = ({redefinicaoDeSenha}) => {
                                     {props.touched.login && props.errors.senha && <span className="span_erro text-danger mt-1"> {props.errors.senha} </span>}
                                     {msgSenha && !props.errors.login && <span className="span_erro text-danger mt-1">{msgSenha}</span>}
                                 </div>
-                                <div className="d-flex justify-content-center mt-3">
-                                    <ReCAPTCHA
-                                        ref={captchaRef}
-                                        sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY}
-                                        onChange={setCaptchaToken}
-                                        onExpired={() => setCaptchaToken(null)}
-                                    />
-                                </div>
+                                {RECAPTCHA_SITE_KEY && (
+                                    <div className="d-flex justify-content-center mt-3">
+                                        <ReCAPTCHA
+                                            ref={captchaRef}
+                                            sitekey={RECAPTCHA_SITE_KEY}
+                                            onChange={setCaptchaToken}
+                                            onExpired={() => setCaptchaToken(null)}
+                                        />
+                                    </div>
+                                )}
                                 <button
                                     type="submit"
                                     className="btn btn-success btn-fallback btn-block mt-2"
-                                    disabled={!captchaToken}
+                                    disabled={RECAPTCHA_SITE_KEY && !captchaToken}
                                 >
                                     Acessar
                                 </button>

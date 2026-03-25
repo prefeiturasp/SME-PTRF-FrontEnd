@@ -1,5 +1,4 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import React  from "react";
 import { LoginSuporteForm } from "../form";
 import { authService } from "../../../services/auth.service";
 
@@ -8,6 +7,20 @@ jest.mock("../../../services/auth.service", () => ({
     login: jest.fn()
   }
 }));
+
+jest.mock('react-tooltip', () => ({
+  Tooltip: ({ id }) => <div data-testid={`tooltip-${id}`} />
+}));
+
+jest.mock("react-google-recaptcha", () => {
+  const mockReact = require("react");
+  const MockRecaptcha = mockReact.forwardRef(({ onChange }, ref) => {
+    mockReact.useImperativeHandle(ref, () => ({ reset: jest.fn() }));
+    mockReact.useEffect(() => { onChange && onChange("test-captcha-token"); }, []);
+    return mockReact.createElement("div", { "data-testid": "recaptcha-mock" });
+  });
+  return MockRecaptcha;
+});
 
 describe('<LoginSuporteForm>', () => {
   beforeAll(() => {
