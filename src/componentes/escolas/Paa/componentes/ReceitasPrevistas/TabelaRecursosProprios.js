@@ -26,15 +26,18 @@ const TabelaRecursosProprios = ({
     };
 
     if (!recursos) {
-      return [recursoProprio, {
-        uuid: "total",
-        nome: "Total de Outros Recursos",
-        previsao_valor_custeio_com_saldo: 0,
-        previsao_valor_capital_com_saldo: 0,
-        previsao_valor_livre_com_saldo: valorRecursosProprios,
-        total_saldos: valorRecursosProprios,
-        fixed: true,
-      }];
+      return [
+        recursoProprio,
+        {
+          uuid: "total",
+          nome: "Total de Outros Recursos",
+          previsao_valor_custeio_com_saldo: 0,
+          previsao_valor_capital_com_saldo: 0,
+          previsao_valor_livre_com_saldo: valorRecursosProprios,
+          total_saldos: valorRecursosProprios,
+          fixed: true,
+        },
+      ];
     }
 
     const outrosRecursosMapped = recursos.map((_r) => {
@@ -44,13 +47,13 @@ const TabelaRecursosProprios = ({
         : {};
 
       const previsao_valor_capital = parseFloat(
-        receitaPrevista?.previsao_valor_capital || 0
+        receitaPrevista?.previsao_valor_capital || 0,
       );
       const previsao_valor_custeio = parseFloat(
-        receitaPrevista?.previsao_valor_custeio || 0
+        receitaPrevista?.previsao_valor_custeio || 0,
       );
       const previsao_valor_livre = parseFloat(
-        receitaPrevista?.previsao_valor_livre || 0
+        receitaPrevista?.previsao_valor_livre || 0,
       );
       const saldo_capital = parseFloat(receitaPrevista?.saldo_capital || 0);
       const saldo_custeio = parseFloat(receitaPrevista?.saldo_custeio || 0);
@@ -103,7 +106,7 @@ const TabelaRecursosProprios = ({
         previsao_valor_capital_com_saldo: 0,
         previsao_valor_livre_com_saldo: 0,
         total_saldos: 0,
-      }
+      },
     );
 
     const linhaTotal = {
@@ -147,13 +150,14 @@ const TabelaRecursosProprios = ({
         </span>
       );
     }
-    
+
     const valorFormatado = formatMoneyBRL(valor);
 
     return (
       <span
         style={{
-          fontWeight: rowData.fixed || campo === "total_saldos" ? "bold" : "normal",
+          fontWeight:
+            rowData.fixed || campo === "total_saldos" ? "bold" : "normal",
           fontSize: 14,
         }}
       >
@@ -191,29 +195,32 @@ const TabelaRecursosProprios = ({
     return !rowData?.outro_recurso_objeto[colunaNome];
   }, []);
 
-  const renderValorCondicional = useCallback((campo, campoValidacao, rowData, rowIndex) => {
-    // Se a coluna está desabilitada, retorna "-"
-    if (ehColunaDesabilitada(rowData, rowIndex, campoValidacao)) {
-      return (
-        <span
-          style={{
-            fontWeight: rowData.fixed ? "bold" : "normal",
-            fontSize: rowData.fixed ? "16px" : "14px",
-          }}
-        >
-          -
-        </span>
-      );
-    }
+  const renderValorCondicional = useCallback(
+    (campo, campoValidacao, rowData, rowIndex) => {
+      // Se a coluna está desabilitada, retorna "-"
+      if (ehColunaDesabilitada(rowData, rowIndex, campoValidacao)) {
+        return (
+          <span
+            style={{
+              fontWeight: rowData.fixed ? "bold" : "normal",
+              fontSize: rowData.fixed ? "16px" : "14px",
+            }}
+          >
+            -
+          </span>
+        );
+      }
 
-    // Caso contrário, formata normalmente
-    return formataValorRender(campo, rowData);
-  }, [ehColunaDesabilitada, formataValorRender]);
+      // Caso contrário, formata normalmente
+      return formataValorRender(campo, rowData);
+    },
+    [ehColunaDesabilitada, formataValorRender],
+  );
 
   return (
     <Spin spinning={loadingRecursos}>
       <DataTable
-        className="tabela-recursos-proprios mt-5 no-hover"
+        className="tabela-recursos-proprios mt-4 no-hover"
         value={dataTodosRecursos}
       >
         <Column
@@ -235,7 +242,7 @@ const TabelaRecursosProprios = ({
               "previsao_valor_custeio_com_saldo",
               "aceita_custeio",
               rowData,
-              rowIndex
+              rowIndex,
             )
           }
           style={{ width: "15%" }}
@@ -253,7 +260,7 @@ const TabelaRecursosProprios = ({
               "previsao_valor_capital_com_saldo",
               "aceita_capital",
               rowData,
-              rowIndex
+              rowIndex,
             )
           }
           style={{ width: "15%" }}
@@ -266,14 +273,14 @@ const TabelaRecursosProprios = ({
               "previsao_valor_livre_com_saldo",
               "aceita_livre_aplicacao",
               rowData,
-              rowIndex
+              rowIndex,
             )
           }
           bodyClassName={(rowData, { rowIndex }) => {
             return ehColunaDesabilitada(
               rowData,
               rowIndex,
-              "aceita_livre_aplicacao"
+              "aceita_livre_aplicacao",
             )
               ? "cell-desativada text-right"
               : "text-right";

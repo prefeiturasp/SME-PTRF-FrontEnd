@@ -18,6 +18,7 @@ import { getStatusAtaPaa, postGerarAtaPaa, getDownloadAtaPaa } from '../../../..
 import { iniciarAtaPaa, obterUrlAtaPaa } from '../../../../services/escolas/AtasPaa.service';
 import { toastCustom } from '../../../Globais/ToastCustom';
 import { ModalConfirmaGeracaoAta } from './ModalConfirmaGeracaoAta';
+import { ModalRetificarPAA } from './ModalRetificarPaa';
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import { visoesService } from '../../../../services/visoes.service';
 
@@ -69,6 +70,7 @@ export const PaaVigenteEAnteriores = () => {
   const [isLoadingStatusAtaPaa, setIsLoadingStatusAtaPaa] = useState({});
   const [visualizacaoAtaEmAndamento, setVisualizacaoAtaEmAndamento] = useState({});
   const [openModalConfirmarGeracaoAta, setOpenModalConfirmarGeracaoAta] = useState({});
+  const [abrirRetificacao, setAbrirRetificacao] = useState(false);
   const timerAtaRef = useRef({});
 
   // Dados derivados
@@ -725,15 +727,14 @@ export const PaaVigenteEAnteriores = () => {
                         {vigente ? `PAA ${formatReferencia(vigente?.periodo_paa_objeto?.referencia)}` : 'PAA vigente'}
                         </span>
                         <div className="d-flex align-items-center">
-                        {false && <button
+                        {["GERADO", "GERADO_PARCIALMENTE"].includes(vigente?.status_andamento) && <button
                         type="button"
                         className="btn btn-outline-success"
-                        onClick={() => navigate(-1)}
+                        onClick={() => { setAbrirRetificacao(true); }}
                         style={{
                             fontWeight: 600,
                             marginRight: '10px',
                         }}
-                        disabled
                         >
                         Retificar o PAA
                         </button>}
@@ -852,6 +853,14 @@ export const PaaVigenteEAnteriores = () => {
         />
       )
     ))}
+    {/* Modais de Retificação */}
+    {vigenteUuidOriginal && (
+        <ModalRetificarPAA 
+            open={abrirRetificacao} 
+            onClose={() => setAbrirRetificacao(false)}
+            paaData={vigente}
+            onConfirm={() => {navigate(`/retificacao-paa/${vigenteUuidOriginal}`)}}
+        />)}
     </>
   );
 };
