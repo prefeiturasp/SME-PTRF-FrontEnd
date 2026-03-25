@@ -9,12 +9,8 @@ import Relatorios from './Relatorios';
 import BarraTopoTitulo from './BarraTopoTitulo';
 import { useLocation } from 'react-router-dom';
 import { iniciarAtaPaa } from '../../../../../services/escolas/AtasPaa.service';
-import { Paa } from '../../Paa';
-import { ElaborarPaa } from './ElaborarPaa';
 
 export const ElaborarNovoPlano = () => {
-  // Trocar pelo parametro de URL
-  const paa_uuid_storage = () => localStorage.getItem('PAA');
   const location = useLocation();
   const itemsBreadCrumb = [
     { label: 'Plano Anual de Atividades', url: '/paa' },
@@ -63,12 +59,6 @@ export const ElaborarNovoPlano = () => {
 
   return (
     <PaginasContainer>
-      <Paa paaUuid={paa_uuid_storage()}>
-        {({ paa }) => (
-          <>
-            <ElaborarPaa paa={paa} />
-
-
       <BreadcrumbComponent items={itemsBreadCrumb}/>
       <h1 className="titulo-itens-painel mt-5">Plano Anual de Atividades</h1>
       <div className="page-content-inner">
@@ -92,9 +82,6 @@ export const ElaborarNovoPlano = () => {
           <Relatorios initialExpandedSections={relatoriosInitialExpandedSections} />
         )}
       </div>
-          </>
-        )}
-      </Paa>
     </PaginasContainer>
   );
 };

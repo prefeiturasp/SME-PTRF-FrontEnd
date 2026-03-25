@@ -7,7 +7,7 @@ import { IconButton } from "../../../../../Globais/UI/Button/IconButton";
 import { formatMoneyBRL } from "../../../../../../utils/money";
 import { EditIconButton } from "../../../../../Globais/UI/Button";
 
-const TableReceitasPrevistasPdde = ({ activeTab, tabs, setActiveTab }) => {
+const TableReceitasPrevistasPdde = ({ setActiveTab }) => {
   const { programas, total, isLoading } = useGetProgramasPddeTotais();
 
   const nomeTemplate = (rowData, column) => {
@@ -29,10 +29,6 @@ const TableReceitasPrevistasPdde = ({ activeTab, tabs, setActiveTab }) => {
     );
   };
 
-  const handleChangeTab = () => {
-    setActiveTab("detalhamento-das-acoes-pdde");
-  };
-
   const rowClassName = (rowData) => {
     return rowData.fixed ? "total-row font-weight-bold" : "inactive-row";
   };
@@ -40,7 +36,7 @@ const TableReceitasPrevistasPdde = ({ activeTab, tabs, setActiveTab }) => {
   const acoesTemplate = (rowData) => {
     return !rowData["fixed"] ? (
       <EditIconButton
-        onClick={() => handleChangeTab()}
+        onClick={() => setActiveTab?.("detalhamento-das-acoes-pdde")}
       />
     ) : null;
   };
@@ -56,7 +52,8 @@ const TableReceitasPrevistasPdde = ({ activeTab, tabs, setActiveTab }) => {
 
   return (
     <>
-      {tabs.length > 0 && activeTab === tabs[0].id ? (
+      {/* {(tabs.length > 0 && activeTab === tabs[0].id) */}
+      { true ? (
         <Spin spinning={isLoading}>
           <DataTable
             className="tabela-receitas-previstas mt-4 no-hover"

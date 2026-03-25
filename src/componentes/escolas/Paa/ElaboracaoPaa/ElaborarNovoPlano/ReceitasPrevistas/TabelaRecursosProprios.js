@@ -214,7 +214,7 @@ const TabelaRecursosProprios = ({
   return (
     <Spin spinning={loadingRecursos}>
       <DataTable
-        className="tabela-recursos-proprios mt-5 no-hover"
+        className="tabela-recursos-proprios mt-4 no-hover"
         value={dataTodosRecursos}
       >
         <Column
