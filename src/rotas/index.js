@@ -113,6 +113,7 @@ import { AcoesPTRFPaa } from "../componentes/sme/Parametrizacoes/PAA/AcoesPTRF";
 import { ElaboracaoPaa } from "../componentes/escolas/Paa/ElaboracaoPaa";
 import { PaaVigenteEAnteriores } from "../componentes/escolas/Paa/PaaVigenteEAnteriores";
 import { ElaborarNovoPlano } from "../componentes/escolas/Paa/ElaboracaoPaa/ElaborarNovoPlano";
+import { RetificacaoPaa } from "../componentes/escolas/Paa/RetificacaoPaa";
 import { ExecucaoDoPaa } from "../componentes/escolas/Paa/ExecucaoDoPaa";
 import { CadastroTipoReceitaPage } from "../paginas/SME/Parametrizacoes/TiposReceita/CadastroTipoReceita";
 import { EdicaoTipoReceitaPage } from "../paginas/SME/Parametrizacoes/TiposReceita/EdicaoTipoReceita";
@@ -831,6 +832,13 @@ const routesConfig = [
     component: ElaborarNovoPlano,
     permissoes: ["access_paa"],
     featureFlag: "paa",
+  },
+  {
+    exact: true,
+    path: "/retificacao-paa/:uuid_paa",
+    component: RetificacaoPaa,
+    permissoes: ["access_paa", "custom_change_paa"],
+    featureFlag: "paa-retificacao",
   },
   {
     exact: true,
