@@ -34,6 +34,7 @@ jest.mock('../../../../Globais/ModalVisualizarPdf', () => ({
 jest.mock('../../../../../services/visoes.service', () => ({
   visoesService: {
     getPermissoes: () => true,
+    featureFlagAtiva: () => true
   },
 }));
 
