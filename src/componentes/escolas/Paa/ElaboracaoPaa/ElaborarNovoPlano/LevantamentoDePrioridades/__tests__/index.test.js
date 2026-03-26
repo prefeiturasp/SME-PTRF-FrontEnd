@@ -7,6 +7,7 @@ import { ASSOCIACAO_UUID } from '../../../../../../../services/auth.service';
 // Mock dos serviços externos
 jest.mock('../../../../../../../services/escolas/Paa.service', () => ({
   downloadPdfLevantamentoPrioridades: jest.fn(),
+  getTextosPaaUe: jest.fn(),
 }));
 
 jest.mock('../../../../../../../services/auth.service', () => ({
@@ -21,17 +22,25 @@ jest.mock('@fortawesome/react-fontawesome', () => ({
 }));
 
 describe('LevantamentoDePrioridades', () => {
+  const textosPaaMock = {
+    texto_levantamento_prioridades: '<p>A etapa do levantamento de atividades e prioridades</p><p>Após esta etapa, a APM realiza um trabalho de previsão</p>',
+  };
+
   beforeEach(() => {
     jest.clearAllMocks();
     localStorage.setItem('ASSOCIACAO_UUID', 'uuid-mockado');
+    require('../../../../../../../services/escolas/Paa.service').getTextosPaaUe.mockResolvedValue(textosPaaMock);
   });
 
-  it('renderiza corretamente o conteúdo estático e o botão de download', () => {
+  it('renderiza corretamente o conteúdo estático e o botão de download', async () => {
     render(<LevantamentoDePrioridades />);
 
-    expect(
-      screen.getByText(/A etapa do levantamento de atividades e prioridades/i)
-    ).toBeInTheDocument();
+    await waitFor(() => {
+      expect(
+        screen.getByText(/A etapa do levantamento de atividades e prioridades/i)
+      ).toBeInTheDocument();
+    });
+
     expect(
       screen.getByText(/Após esta etapa, a APM realiza um trabalho de previsão/i)
     ).toBeInTheDocument();
