@@ -829,7 +829,7 @@ const routesConfig = [
     exact: true,
     path: "/elaborar-novo-paa",
     component: ElaborarNovoPlano,
-    permissoes: ["access_paa", "custom_change_paa"],
+    permissoes: ["access_paa"],
     featureFlag: "paa",
   },
   {

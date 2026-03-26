@@ -7,8 +7,15 @@ import { usePostPaa } from "../hooks/usePostPaa";
 import { getPaaVigente, getParametroPaa } from "../../../../../services/sme/Parametrizacoes.service";
 import { getStatusGeracaoDocumentoPaa } from "../../../../../services/escolas/Paa.service";
 import { ElaboracaoPaa } from '../index';
+import { visoesService } from '../../../../../services/visoes.service';
 
 jest.mock("../hooks/usePostPaa");
+
+jest.mock('../../../../../services/visoes.service', () => ({
+  visoesService: {
+    getPermissoes: jest.fn(),
+  },
+}));
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -35,7 +42,7 @@ jest.mock('../EstruturaCompletaModeloPaa', () => ({
 
 const mockNavigate = jest.fn();
 let queryClient;
-const mockMutatePost = jest.fn();
+const mockMutateAsync = jest.fn();
 
 describe('ElaboracaoPaa Component', () => {
   beforeEach(() => {
@@ -51,16 +58,22 @@ describe('ElaboracaoPaa Component', () => {
       removeListener: jest.fn(),
     }));
 
+    mockMutateAsync.mockResolvedValue({ uuid: 'novo-uuid-paa' });
+
     usePostPaa.mockReturnValue({
-      mutationPost: { mutate: mockMutatePost, isPending: false },
+      mutationPost: { mutateAsync: mockMutateAsync, isPending: false },
     });
 
     require('react-router-dom').useNavigate.mockReturnValue(mockNavigate);
 
     jest.clearAllMocks();
 
+    visoesService.getPermissoes.mockReturnValue(true);
+
+    mockMutateAsync.mockResolvedValue({ uuid: 'novo-uuid-paa' });
+
     usePostPaa.mockReturnValue({
-      mutationPost: { mutate: mockMutatePost, isPending: false },
+      mutationPost: { mutateAsync: mockMutateAsync, isPending: false },
     });
     require('react-router-dom').useNavigate.mockReturnValue(mockNavigate);
   });
@@ -98,7 +111,72 @@ describe('ElaboracaoPaa Component', () => {
 
     fireEvent.click(screen.getByTestId('elaborar-paa-button'));
 
-    expect(mockMutatePost).toHaveBeenCalled();
+    await waitFor(() => {
+      expect(mockMutateAsync).toHaveBeenCalled();
+    });
+    expect(mockNavigate).toHaveBeenCalledWith('/elaborar-novo-paa');
+  });
+
+  it('desabilita o botão Elaborar novo PAA quando não há custom_change_paa e não existe PAA vigente', async () => {
+    visoesService.getPermissoes.mockReturnValue(false);
+    getTextosPaaUe.mockResolvedValue({
+      texto_pagina_paa_ue: 'Texto ABC',
+      introducao_do_paa_ue_1: '',
+      introducao_do_paa_ue_2: '',
+      conclusao_do_paa_ue_1: '',
+      conclusao_do_paa_ue_2: '',
+    });
+    getPaaVigente.mockRejectedValue(new Error('PAA não encontrado'));
+    getParametroPaa.mockResolvedValue({ detail: new Date().getMonth() + 1 });
+
+    render(
+      <MemoryRouter>
+        <QueryClientProvider client={queryClient}>
+          <ElaboracaoPaa />
+        </QueryClientProvider>
+      </MemoryRouter>
+    );
+
+    await waitFor(() =>
+      expect(screen.getByTestId('elaborar-paa-button')).toBeInTheDocument()
+    );
+
+    expect(screen.getByTestId('elaborar-paa-button')).toBeDisabled();
+    expect(screen.getByTestId('elaborar-paa-button')).toHaveTextContent('Elaborar novo PAA');
+  });
+
+  it('habilita Continuar elaboração de PAA sem custom_change_paa quando já existe PAA vigente', async () => {
+    visoesService.getPermissoes.mockReturnValue(false);
+    getTextosPaaUe.mockResolvedValue({
+      texto_pagina_paa_ue: 'Texto ABC',
+      introducao_do_paa_ue_1: '',
+      introducao_do_paa_ue_2: '',
+      conclusao_do_paa_ue_1: '',
+      conclusao_do_paa_ue_2: '',
+    });
+    getPaaVigente.mockResolvedValue({ uuid: 'paa-existente' });
+    getStatusGeracaoDocumentoPaa.mockResolvedValue({ status: 'PENDENTE', versao: 'RASCUNHO' });
+    getParametroPaa.mockResolvedValue({ detail: new Date().getMonth() + 1 });
+
+    render(
+      <MemoryRouter>
+        <QueryClientProvider client={queryClient}>
+          <ElaboracaoPaa />
+        </QueryClientProvider>
+      </MemoryRouter>
+    );
+
+    await waitFor(() =>
+      expect(screen.getByTestId('elaborar-paa-button')).toBeInTheDocument()
+    );
+
+    const btn = screen.getByTestId('elaborar-paa-button');
+    expect(btn).toBeEnabled();
+    expect(btn).toHaveTextContent('Continuar elaboração de PAA');
+
+    fireEvent.click(btn);
+
+    expect(mockMutateAsync).not.toHaveBeenCalled();
     expect(mockNavigate).toHaveBeenCalledWith('/elaborar-novo-paa');
   });
 

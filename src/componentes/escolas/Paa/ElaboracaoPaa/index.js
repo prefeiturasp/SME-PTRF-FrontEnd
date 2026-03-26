@@ -9,10 +9,12 @@ import { usePostPaa } from "./hooks/usePostPaa";
 import { getPaaVigente, getParametroPaa } from "../../../../services/sme/Parametrizacoes.service";
 import { getStatusGeracaoDocumentoPaa } from "../../../../services/escolas/Paa.service";
 import { EstruturaCompletaModeloPaa } from './EstruturaCompletaModeloPaa';
+import { visoesService } from '../../../../services/visoes.service';
 
 export const ElaboracaoPaa = () => {
   const associacao_uuid = localStorage.getItem(ASSOCIACAO_UUID);
   const navigate = useNavigate();
+  const podeIniciarPaa = visoesService.getPermissoes(['custom_change_paa']);
 
   const [notValidPaa, setNotValidPaa] = useState(true);
   const [loading, setLoading] = useState(true);
@@ -72,18 +74,23 @@ export const ElaboracaoPaa = () => {
     });
   }, []);
 
-  const handlePaa = () => {
+  const handlePaa = async () => {
     if (paaGerado) {
       return;
     }
-    if (notValidPaa){
-      const payload = {
-        associacao: associacao_uuid
+    if (notValidPaa) {
+      if (!podeIniciarPaa) {
+        return;
       }
-      mutationPost.mutate({payload: payload})
+      const payload = { associacao: associacao_uuid };
+      try {
+        await mutationPost.mutateAsync({ payload });
+      } catch {
+        return;
+      }
     }
     navigate('/elaborar-novo-paa');
-};
+  };
 
   return (
     <>
@@ -111,7 +118,11 @@ export const ElaboracaoPaa = () => {
                 className="btn btn-success mt-2 mr-5"
                 data-testid="elaborar-paa-button"
                 onClick={handlePaa}
-                disabled={!validMonthPaa || paaGerado}
+                disabled={
+                  !validMonthPaa ||
+                  paaGerado ||
+                  (notValidPaa && !podeIniciarPaa)
+                }
               >
                 {paaGerado
                   ? "Elaborar novo PAA"
