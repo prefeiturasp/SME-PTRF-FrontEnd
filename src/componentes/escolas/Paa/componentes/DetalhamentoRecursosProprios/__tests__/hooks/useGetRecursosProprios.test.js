@@ -1,9 +1,9 @@
 import { renderHook, waitFor } from "@testing-library/react";
 import { useGetRecursosProprios } from "../../hooks/useGetRecursosProprios";
-import { getRecursosProprios } from "../../../../../../../../services/escolas/Paa.service";
+import { getRecursosProprios } from "../../../../../../../services/escolas/Paa.service";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-jest.mock("../../../../../../../../services/escolas/Paa.service");
+jest.mock("../../../../../../../services/escolas/Paa.service");
 
 describe("useGetRecursosProprios", () => {
   let queryClient;

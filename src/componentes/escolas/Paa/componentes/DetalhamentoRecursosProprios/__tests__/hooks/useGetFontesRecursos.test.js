@@ -1,9 +1,9 @@
 import { renderHook, waitFor } from "@testing-library/react";
 import { useGetFontesRecursos } from "../../hooks/useGetFontesRecursos";
-import { getFontesRecursos } from "../../../../../../../../services/escolas/Paa.service";
+import { getFontesRecursos } from "../../../../../../../services/escolas/Paa.service";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-jest.mock("../../../../../../../../services/escolas/Paa.service");
+jest.mock("../../../../../../../services/escolas/Paa.service");
 
 describe("useGetFontesRecursos", () => {
   let queryClient;

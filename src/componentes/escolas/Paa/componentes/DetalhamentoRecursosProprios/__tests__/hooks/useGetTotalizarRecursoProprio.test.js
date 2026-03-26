@@ -1,10 +1,10 @@
 import { renderHook, waitFor } from "@testing-library/react";
 import { useGetTotalizadorRecursoProprio } from "../../hooks/useGetTotalizarRecursoProprio";
 
-import { getTotalizadorRecursoProprio } from "../../../../../../../../services/escolas/Paa.service";
+import { getTotalizadorRecursoProprio } from "../../../../../../../services/escolas/Paa.service";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-jest.mock("../../../../../../../../services/escolas/Paa.service");
+jest.mock("../../../../../../../services/escolas/Paa.service");
 
 describe("useGetTotalizadorRecursoProprio", () => {
   let queryClient;

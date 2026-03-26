@@ -1,13 +1,18 @@
-import { memo, useState } from "react";
+import { memo, useState, useEffect } from "react";
 import { Modal } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 
-export const ModalRetificarPAA = memo(({ open, onClose, onConfirm, paaData }) => {
+export const ModalRetificarPAA = memo(({ open, onClose, onConfirm, paaData, statusDocumento }) => {
   const [justificativa, setJustificativa] = useState("");
 
+  useEffect(() => {
+    if(open) setJustificativa("");
+
+  }, [open])
+
   return (
-    <Modal centered show={open} onHide={onClose}>
+    <Modal centered show={open} onHide={onClose} size="lg">
       <Modal.Header>
         <Modal.Title>Retificar o PAA</Modal.Title>
         <button
@@ -22,7 +27,7 @@ export const ModalRetificarPAA = memo(({ open, onClose, onConfirm, paaData }) =>
       <Modal.Body>
         {paaData ?
         <p>
-          O PAA atual foi gerado no dia 28/11/2025 à 13h00.
+          {statusDocumento?.mensagem}
           <br />
           Deseja prosseguir com a retificação?
         </p>

@@ -7,7 +7,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 jest.mock("../hooks/usePatchReceitaPrevistaPdde");
 jest.mock("../hooks/usePostReceitaPrevistaPdde");
-jest.mock("../../../../../../../services/visoes.service", () => ({
+jest.mock("../../../../../../services/visoes.service", () => ({
   visoesService: {
     getPermissoes: () => true,
   },

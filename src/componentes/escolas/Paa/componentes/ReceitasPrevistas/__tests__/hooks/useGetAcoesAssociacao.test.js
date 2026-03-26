@@ -1,9 +1,9 @@
 import { renderHook, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { getAcoesAssociacao } from "../../../../../../../../services/escolas/Associacao.service";
+import { getAcoesAssociacao } from "../../../../../../../services/escolas/Associacao.service";
 import { useGetAcoesAssociacao } from "../../hooks/useGetAcoesAssociacao";
 
-jest.mock("../../../../../../../../services/escolas/Associacao.service");
+jest.mock("../../../../../../../services/escolas/Associacao.service");
 
 const createWrapper = () => {
   const queryClient = new QueryClient({

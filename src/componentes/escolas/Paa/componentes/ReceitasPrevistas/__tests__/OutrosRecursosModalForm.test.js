@@ -35,7 +35,7 @@ jest.mock("../hooks/usePostReceitasPrevistasOutrosRecursosPeriodo", () => {
   };
 });
 
-jest.mock("../../../../../../../services/visoes.service", () => ({
+jest.mock("../../../../../../services/visoes.service", () => ({
   visoesService: {
     getPermissoes: jest.fn(() => true),
   },

@@ -727,17 +727,22 @@ export const PaaVigenteEAnteriores = () => {
                         {vigente ? `PAA ${formatReferencia(vigente?.periodo_paa_objeto?.referencia)}` : 'PAA vigente'}
                         </span>
                         <div className="d-flex align-items-center">
-                        {["GERADO", "GERADO_PARCIALMENTE"].includes(vigente?.status_andamento) && <button
-                        type="button"
-                        className="btn btn-outline-success"
-                        onClick={() => { setAbrirRetificacao(true); }}
-                        style={{
-                            fontWeight: 600,
-                            marginRight: '10px',
-                        }}
-                        >
-                        Retificar o PAA
-                        </button>}
+                        
+                        
+                        {visoesService.featureFlagAtiva('paa-retificacao') &&
+                        ["GERADO", "GERADO_PARCIALMENTE"].includes(vigente?.status_andamento) && 
+                            <button
+                                type="button"
+                                className="btn btn-outline-success"
+                                onClick={() => { setAbrirRetificacao(true); }}
+                                style={{
+                                    fontWeight: 600,
+                                    marginRight: '10px',
+                                }}
+                            >
+                                Retificar o PAA
+                            </button>}
+
                         <button
                             type="button"
                             className="d-flex align-items-center justify-content-center"
@@ -859,6 +864,7 @@ export const PaaVigenteEAnteriores = () => {
             open={abrirRetificacao} 
             onClose={() => setAbrirRetificacao(false)}
             paaData={vigente}
+            statusDocumento={statusDocumento[vigente?.uuid]}
             onConfirm={() => {navigate(`/retificacao-paa/${vigenteUuidOriginal}`)}}
         />)}
     </>

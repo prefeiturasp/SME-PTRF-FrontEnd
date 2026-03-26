@@ -19,7 +19,7 @@ jest.mock("../hooks/useDeleteRecursoProprio");
 jest.mock("../hooks/usePostRecursoProprio");
 jest.mock("../hooks/usePatchRecursoProprio");
 jest.mock("../hooks/useGetFontesRecursos");
-jest.mock("../../../../../../../services/visoes.service", () => ({
+jest.mock("../../../../../../services/visoes.service", () => ({
   visoesService: {
     getPermissoes: () => true,
   },

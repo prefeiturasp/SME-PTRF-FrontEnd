@@ -2,14 +2,14 @@ import { act } from "react";
 import { renderHook, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { usePostReceitaPrevistaPdde } from "../../hooks/usePostReceitaPrevistaPdde";
-import { postReceitaPrevistaPDDE } from "../../../../../../../../services/escolas/Paa.service";
-import { toastCustom } from "../../../../../../../Globais/ToastCustom";
+import { postReceitaPrevistaPDDE } from "../../../../../../../services/escolas/Paa.service";
+import { toastCustom } from "../../../../../../Globais/ToastCustom";
 
-jest.mock("../../../../../../../../services/escolas/Paa.service", () => ({
+jest.mock("../../../../../../../services/escolas/Paa.service", () => ({
   postReceitaPrevistaPDDE: jest.fn(),
 }));
 
-jest.mock("../../../../../../../Globais/ToastCustom", () => ({
+jest.mock("../../../../../../Globais/ToastCustom", () => ({
   toastCustom: {
     ToastCustomSuccess: jest.fn(),
     ToastCustomError: jest.fn(),

@@ -2,14 +2,14 @@ import { renderHook, waitFor } from "@testing-library/react";
 import { act } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { usePatchReceitasPrevistasPaa } from "../../hooks/usePatchReceitasPrevistasPaa";
-import { patchReceitasPrevistasPaa } from "../../../../../../../../services/escolas/Paa.service";
-import { toastCustom } from "../../../../../../../Globais/ToastCustom";
+import { patchReceitasPrevistasPaa } from "../../../../../../../services/escolas/Paa.service";
+import { toastCustom } from "../../../../../../Globais/ToastCustom";
 
-jest.mock("../../../../../../../../services/escolas/Paa.service", () => ({
+jest.mock("../../../../../../../services/escolas/Paa.service", () => ({
   patchReceitasPrevistasPaa: jest.fn(),
 }));
 
-jest.mock("../../../../../../../Globais/ToastCustom", () => ({
+jest.mock("../../../../../../Globais/ToastCustom", () => ({
   toastCustom: {
     ToastCustomSuccess: jest.fn(),
     ToastCustomError: jest.fn(),

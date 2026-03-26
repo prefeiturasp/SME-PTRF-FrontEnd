@@ -2,14 +2,14 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import ModalConfirmaPararAtualizacaoSaldo from '../ModalConfirmarPararAtualizacaoSaldo';
 import { useAtivarSaldoPAA, useDesativarSaldoPAA } from '../hooks/usePararAtualizacaoSaldoPaa';
-import { postAtivarAtualizacaoSaldoPAA } from '../../../../../../../services/escolas/Paa.service';
+import { postAtivarAtualizacaoSaldoPAA } from '../../../../../../services/escolas/Paa.service';
 
 jest.mock('../hooks/usePararAtualizacaoSaldoPaa', () => ({
   useAtivarSaldoPAA: jest.fn(),
   useDesativarSaldoPAA: jest.fn(),
 }));
 
-jest.mock("../../../../../../../services/escolas/Paa.service", () => ({
+jest.mock("../../../../../../services/escolas/Paa.service", () => ({
   postDesativarAtualizacaoSaldoPAA: jest.fn(),
   postAtivarAtualizacaoSaldoPAA: jest.fn(),
 }));

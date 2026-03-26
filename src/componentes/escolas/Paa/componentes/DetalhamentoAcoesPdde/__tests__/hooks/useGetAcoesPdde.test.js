@@ -1,9 +1,9 @@
 import { renderHook, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { getAcoesPDDE } from "../../../../../../../../services/escolas/Paa.service";
+import { getAcoesPDDE } from "../../../../../../../services/escolas/Paa.service";
 import { useGetAcoesPdde } from "../../hooks/useGetAcoesPdde";
 
-jest.mock("../../../../../../../../services/escolas/Paa.service", () => ({
+jest.mock("../../../../../../../services/escolas/Paa.service", () => ({
   getAcoesPDDE: jest.fn(),
 }));
 

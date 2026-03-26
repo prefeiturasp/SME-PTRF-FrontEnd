@@ -63,7 +63,7 @@ jest.mock("../hooks/useGetReceitasPrevistasOutrosRecursosPeriodo", () => ({
   }),
 }));
 
-jest.mock("../../../../../../Globais/UI/Button/IconButton", () => ({
+jest.mock("../../../../../Globais/UI/Button/IconButton", () => ({
   IconButton: ({ onClick, "aria-label": ariaLabel }) => (
     <button aria-label={ariaLabel} onClick={onClick}>
       Editar

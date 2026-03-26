@@ -2,15 +2,15 @@ import { act } from "react";
 import { renderHook } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useAtivarSaldoPAA, useDesativarSaldoPAA } from "../../hooks/usePararAtualizacaoSaldoPaa";
-import { toastCustom } from "../../../../../../../Globais/ToastCustom";
-import { postDesativarAtualizacaoSaldoPAA, postAtivarAtualizacaoSaldoPAA } from "../../../../../../../../services/escolas/Paa.service";
+import { toastCustom } from "../../../../../../Globais/ToastCustom";
+import { postDesativarAtualizacaoSaldoPAA, postAtivarAtualizacaoSaldoPAA } from "../../../../../../../services/escolas/Paa.service";
 
-jest.mock("../../../../../../../../services/escolas/Paa.service", () => ({
+jest.mock("../../../../../../../services/escolas/Paa.service", () => ({
   postDesativarAtualizacaoSaldoPAA: jest.fn(),
   postAtivarAtualizacaoSaldoPAA: jest.fn(),
 }));
 
-jest.mock("../../../../../../../Globais/ToastCustom", () => ({
+jest.mock("../../../../../../Globais/ToastCustom", () => ({
   toastCustom: {
     ToastCustomSuccess: jest.fn(),
     ToastCustomError: jest.fn(),
