@@ -17,6 +17,8 @@ export const TextoParametroPaa  = ({campo})=>{
 
 
     return (
-        <div dangerouslySetInnerHTML={{__html: textosPaa?.[campo]}}></div>
+        <div className="text-break">
+            <div dangerouslySetInnerHTML={{__html: textosPaa?.[campo]}}></div>            
+        </div>
     )
 }

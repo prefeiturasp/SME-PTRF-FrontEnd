@@ -16,6 +16,7 @@ export const TextosPaa = () => {
     const titulos = {
         'texto_pagina_paa_ue': 'Explicação sobre o PAA',
         'texto_atividades_previstas': 'Atividades previstas',
+        'texto_levantamento_prioridades': 'Levantamento de prioridades',
         'introducao_do_paa_ue_1': 'Introdução do PAA 1',
         'introducao_do_paa_ue_2': 'Introdução do PAA 2',
         'conclusao_do_paa_ue_1': 'Conclusão do PAA 1',
@@ -25,6 +26,7 @@ export const TextosPaa = () => {
     const initalTextos = {
         texto_pagina_paa_ue: '',
         texto_atividades_previstas: '',
+        texto_levantamento_prioridades: '',
         introducao_do_paa_ue_1: '',
         introducao_do_paa_ue_2: '',
         conclusao_do_paa_ue_1: '',
@@ -45,6 +47,7 @@ export const TextosPaa = () => {
         setTextosPaa({
             texto_pagina_paa_ue: textosPaa.texto_pagina_paa_ue,
             texto_atividades_previstas: textosPaa.texto_atividades_previstas,
+            texto_levantamento_prioridades: textosPaa.texto_levantamento_prioridades,
             introducao_do_paa_ue_1: textosPaa.introducao_do_paa_ue_1,
             introducao_do_paa_ue_2: textosPaa.introducao_do_paa_ue_2,
             conclusao_do_paa_ue_1: textosPaa.conclusao_do_paa_ue_1,
@@ -74,7 +77,8 @@ export const TextosPaa = () => {
     };
 
     const handleSubmitEditor = useCallback(async (textoEditor) => {
-        const textosPaaUe = ['texto_pagina_paa_ue', 'texto_atividades_previstas', 'introducao_do_paa_ue_1', 'introducao_do_paa_ue_2', 'conclusao_do_paa_ue_1', 'conclusao_do_paa_ue_2'];
+        const textosPaaUe = ['texto_pagina_paa_ue', 'texto_atividades_previstas', 'texto_levantamento_prioridades', 'introducao_do_paa_ue_1', 
+                             'introducao_do_paa_ue_2', 'conclusao_do_paa_ue_1', 'conclusao_do_paa_ue_2'];
 
         if (textosPaaUe.includes(tipoDeTexto)) {
             const payload = { [tipoDeTexto]: textoEditor };
@@ -83,6 +87,9 @@ export const TextosPaa = () => {
                 const tituloCampo = titulos[tipoDeTexto] || 'Texto do PAA';
                 toastCustom.ToastCustomSuccess(`Edição do Textos do PAA foi realizada com sucesso.`, `O campo ${tituloCampo} foi editado no sistema com sucesso.`)
                 await carregaTextos();
+                setTextoInicialEditor('');
+                setTituloEditor('');
+                setExibeEditor(false);
             } catch (e) {
                 console.error("Erro ao alterar texto ", e.response);
                 let mensagemErro = 'Não foi possível editar o texto do PAA.';
@@ -95,9 +102,6 @@ export const TextosPaa = () => {
                 toastCustom.ToastCustomError('Erro ao editar o texto do PAA.', mensagemErro);
             }
         }
-        setTextoInicialEditor('');
-        setTituloEditor('');
-        setExibeEditor(false);
     }, [tipoDeTexto, carregaTextos]);
 
     return (
