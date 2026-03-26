@@ -280,6 +280,32 @@ const Relatorios = ({ initialExpandedSections }) => {
     return validacoes.includes(true);
   };
 
+  const planoAnualDocumentoFinalGerado =
+    statusDocumento?.status === "CONCLUIDO" &&
+    statusDocumento?.versao === "FINAL";
+
+  const botaoGerarAtaDesabilitado = () => {
+    if (!podeEditar) return true;
+    if (!planoAnualDocumentoFinalGerado) return true;
+    if (!ataPaa?.uuid) return true;
+    if (!ataPaa?.completa) return true;
+    return false;
+  };
+
+  const mensagemTooltipGerarAta = () => {
+    if (!podeEditar) return "Sem permissão para gerar ata.";
+    if (!planoAnualDocumentoFinalGerado) {
+      return "Gere o Plano Anual antes de gerar a ata";
+    }
+    if (!ataPaa?.uuid) return "Ata do PAA não encontrada.";
+    if (!ataPaa?.completa) {
+      return "Quando todos os dados estiverem preenchidos, a opção fica habilitada.";
+    }
+    return "";
+  };
+
+  const gerarAtaDisabled = botaoGerarAtaDesabilitado();
+
   return (
     <div className="relatorios-container">
       <div className="documentos-card">
@@ -411,19 +437,20 @@ const Relatorios = ({ initialExpandedSections }) => {
                 </button>
                 <button
                   className={`btn ${podeEditar ? "btn-success" : "btn-secondary"}`}
-                  disabled={!podeEditar}
-                  data-tooltip-content={
-                    !podeEditar
-                      ? "Sem permissão para gerar ata."
-                      : "Quando todos os dados estiverem preenchidos, a opção fica habilitada."
-                  }
-                  data-tooltip-id="tooltip-gerar-ata"
+                  type="button"
+                  disabled={gerarAtaDisabled}
+                  {...(gerarAtaDisabled && {
+                    "data-tooltip-content": mensagemTooltipGerarAta(),
+                    "data-tooltip-id": "tooltip-gerar-ata",
+                  })}
                 >
                   Gerar ata
                 </button>
               </Space>
             </div>
-            <ReactTooltip id="tooltip-gerar-ata" place="top" />
+            {gerarAtaDisabled && (
+              <ReactTooltip id="tooltip-gerar-ata" place="top" />
+            )}
           </div>
         </div>
       </div>
