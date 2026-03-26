@@ -1,11 +1,14 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { ElaborarNovoPlano } from '../index';
 import { iniciarAtaPaa } from '../../../../../../services/escolas/AtasPaa.service';
+import { visoesService } from '../../../../../../services/visoes.service';
 
 const mockUseLocation = jest.fn();
+const mockNavigate = jest.fn();
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useLocation: () => mockUseLocation(),
+  useNavigate: () => mockNavigate,
 }));
 
 jest.mock('../../../../../../paginas/PaginasContainer', () => ({
@@ -79,6 +82,12 @@ jest.mock('../../../../../../services/escolas/AtasPaa.service', () => ({
   iniciarAtaPaa: jest.fn(),
 }));
 
+jest.mock('../../../../../../services/visoes.service', () => ({
+  visoesService: {
+    getPermissoes: jest.fn(),
+  },
+}));
+
 const defaultLocation = { state: null, search: '' };
 
 describe('ElaborarNovoPlano', () => {
@@ -87,6 +96,7 @@ describe('ElaborarNovoPlano', () => {
     localStorage.clear();
     mockUseLocation.mockReturnValue(defaultLocation);
     iniciarAtaPaa.mockResolvedValue();
+    visoesService.getPermissoes.mockReturnValue(true);
   });
 
   describe('Renderização básica', () => {
@@ -298,6 +308,28 @@ describe('ElaborarNovoPlano', () => {
         'data-expanded',
         JSON.stringify(expandedSections)
       );
+    });
+  });
+
+  describe('Acesso à rota', () => {
+    it('redireciona para /paa quando não tem custom_change_paa nem PAA em andamento', async () => {
+      visoesService.getPermissoes.mockReturnValue(false);
+
+      render(<ElaborarNovoPlano />);
+
+      await waitFor(() => {
+        expect(mockNavigate).toHaveBeenCalledWith('/paa', { replace: true });
+      });
+    });
+
+    it('não redireciona sem custom_change_paa quando há PAA no localStorage (continuar elaboração)', () => {
+      visoesService.getPermissoes.mockReturnValue(false);
+      localStorage.setItem('PAA', 'uuid-continuar');
+
+      render(<ElaborarNovoPlano />);
+
+      expect(mockNavigate).not.toHaveBeenCalled();
+      expect(screen.getByTestId('paginas-container')).toBeInTheDocument();
     });
   });
 
