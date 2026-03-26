@@ -525,6 +525,8 @@ const alternaVisoes = (visao, uuid_unidade, uuid_associacao, nome_associacao, un
         localStorage.removeItem('prestacao_de_contas_nao_apresentada');
         localStorage.removeItem(PERIODO_RELATORIO_CONSOLIDADO_DRE);
         localStorage.removeItem(PERIODO_SELECIONADO_DRE_ACOMPANHAMENTO);
+        localStorage.removeItem('PAA');
+        localStorage.removeItem('DADOS_PAA');
 
         localStorage.setItem("NOTIFICAR_DEVOLUCAO_REFERENCIA", notificar_devolucao_referencia)
 
