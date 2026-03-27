@@ -151,12 +151,12 @@ describe("FormDadosDasContas - Agrupamento por Recurso", () => {
       const recursoBDiv = container.querySelector('[data-testid="recurso-Recurso B"]');
       const recursoCDiv = container.querySelector('[data-testid="recurso-Recurso C"]');
 
-      // Recurso A não deve ter mt-5
-      expect(recursoADiv).not.toHaveClass("mt-5");
+      // Recurso A não deve ter mt-3
+      expect(recursoADiv).not.toHaveClass("mt-3");
 
-      // Recurso B e C devem ter mt-5
-      expect(recursoBDiv).toHaveClass("mt-5");
-      expect(recursoCDiv).toHaveClass("mt-5");
+      // Recurso B e C devem ter mt-3
+      expect(recursoBDiv).toHaveClass("mt-3");
+      expect(recursoCDiv).toHaveClass("mt-3");
     });
 
     it("deve manter numeração sequencial das contas entre recursos", () => {

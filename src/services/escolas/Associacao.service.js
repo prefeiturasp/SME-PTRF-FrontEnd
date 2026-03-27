@@ -183,12 +183,24 @@ export const consultarCpfResponsavel = async (cpf) => {
   );
 };
 
-export const getContas = async (periodo_uuid = "") => {
+export const getContas = async (periodo_uuid = "", getAllContas = false) => {
+  let url = `/api/associacoes/${localStorage.getItem(ASSOCIACAO_UUID)}/contas/`;
+  const params = new URLSearchParams();
+
+  if (periodo_uuid) {
+    params.append('periodo_uuid', periodo_uuid);
+  }
+  if (getAllContas) {
+    params.append('all', 'true');
+  }
+
+  if (params.toString()) {
+    url = `${url}?${params.toString()}`;
+  }
+
   return (
     await api.get(
-      `/api/associacoes/${localStorage.getItem(
-        ASSOCIACAO_UUID
-      )}/contas/?periodo_uuid=${periodo_uuid}`,
+      url,
       authHeader()
     )
   ).data;
