@@ -62,7 +62,7 @@ export const FormDadosDasContas = ({
                                     return (
                                         <>
                                             {Object.entries(contasAgrupadasPorRecurso).map(([nomeRecurso, contasDoRecurso], indexRecurso) => (
-                                                <div key={`recurso-${nomeRecurso}`} data-testid={`recurso-${nomeRecurso}`} className={indexRecurso > 0 ? "mt-5" : ""}>
+                                                <div key={`recurso-${nomeRecurso}`} data-testid={`recurso-${nomeRecurso}`} className={indexRecurso > 0 ? "mt-3" : ""}>
                                                     <div className="row mt-3">
                                                         <div className="col-12">
                                                             <hr className="mb-4" />
@@ -147,6 +147,7 @@ export const FormDadosDasContas = ({
                                                                 errosDataEncerramentoConta={errosDataEncerramentoConta} 
                                                                 inicioPeriodo={inicioPeriodo}
                                                                 handleCancelarEncerramento={handleCancelarEncerramento} 
+                                                                groupIndex={index}
                                                             />
                                                         </div>
                                                     ))}
