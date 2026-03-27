@@ -9,10 +9,12 @@ import Relatorios from "../../ElaboracaoPaa/ElaborarNovoPlano/Relatorios";
 import BarraTopoTitulo from "../BarraTopoTitulo";
 import { useLocation, useNavigate } from "react-router-dom";
 import { iniciarAtaPaa } from "../../../../../services/escolas/AtasPaa.service";
+import { visoesService } from "../../../../../services/visoes.service";
 
 const ConteudoBase = ({ paa, itemsBreadCrumb }) => {
   const navigate = useNavigate();
   const location = useLocation();
+
   const [activeTab, setActiveTab] = useState("prioridades");
   const relatoriosInitialExpandedSections = location.state?.expandedSections;
   const fromPlanoAplicacao = Boolean(location.state?.fromPlanoAplicacao);
@@ -41,7 +43,7 @@ const ConteudoBase = ({ paa, itemsBreadCrumb }) => {
         {
           id: "prioridades",
           label: "Levantamento de Prioridades",
-          exibir: paa?.status_andamento !== "EM_RETIFICACAO",
+          exibir: paa?.status !== "EM_RETIFICACAO",
           component: <LevantamentoDePrioridades paa={paa} />,
         },
         {
@@ -73,13 +75,42 @@ const ConteudoBase = ({ paa, itemsBreadCrumb }) => {
   );
 
   useEffect(() => {
+    if (paa?.status === "EM_RETIFICACAO") {
+      navigate(`/retificacao-paa/${paa?.uuid}`);
+    }
+  }, [paa]);
+
+  useEffect(() => {
+    const obterAbaInicial = () => {
+      const requestedTab = location.state?.activeTab;
+      return tabs.some((tab) => tab.id === requestedTab)
+        ? requestedTab
+        : tabs[0].id;
+    };
+    setActiveTab(obterAbaInicial());
+  }, []);
+
+  useEffect(() => {
+    const temPermissaoIniciar = Boolean(
+      visoesService.getPermissoes(["custom_change_paa"]),
+    );
+    const temPaaEmAndamento = Boolean(localStorage.getItem("PAA"));
+    if (!temPermissaoIniciar && !temPaaEmAndamento) {
+      navigate("/paa", { replace: true });
+      return;
+    }
+
     if (!paa.uuid) {
       return;
     }
     iniciarAtaPaa(paa.uuid).catch((error) => {
       console.error("Erro ao iniciar ata do PAA:", error);
     });
-  }, [paa]);
+
+    if (paa.status === "EM_RETIFICACAO") {
+      setActiveTab("receitas");
+    }
+  }, [paa, navigate]);
 
   return (
     <>
@@ -87,9 +118,9 @@ const ConteudoBase = ({ paa, itemsBreadCrumb }) => {
       <h1 className="titulo-itens-painel mt-5">Plano Anual de Atividades</h1>
       <div className="page-content-inner">
         <div className="d-flex justify-content-between align-items-center mb-2">
-          <BarraTopoTitulo origem={origemBarra} />
+          <BarraTopoTitulo origem={origemBarra} paa={paa} />
 
-          {paa?.status_andamento === "EM_RETIFICACAO" && (
+          {paa?.status === "EM_RETIFICACAO" && (
             <button
               className="btn btn-success d-flex align-items-center"
               onClick={() => {

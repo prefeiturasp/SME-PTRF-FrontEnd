@@ -1,32 +1,15 @@
-import React, { useCallback, useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 
-const BarraTopoTitulo = ({ origem = null }) => {
+const BarraTopoTitulo = ({ paa, origem = null }) => {
   const navigate = useNavigate();
-
-  const [paa, setPaa] = useState(() => {
-    // inicializar valor padrão
-    const stored = localStorage.getItem("DADOS_PAA");
-    return stored ? JSON.parse(stored) : null;
-  });
 
   const headerPaaReferencia = useCallback(() => {
     // retornar o texto completo(com referência de período) do header
-    return `Plano Anual ${paa?.periodo_paa_objeto?.referencia}`;
+    const rotulo =
+      paa?.status === "EM_RETIFICACAO" ? "Retificação" : "Plano Anual";
+    return `${rotulo} ${paa?.periodo_paa_objeto?.referencia}`;
   }, [paa]);
-
-  useEffect(() => {
-    // Incluído para reflexo direto no header quando houver alteração no PAA
-    const handleStorageChange = () => {
-      const stored = localStorage.getItem("DADOS_PAA");
-      setPaa(stored ? JSON.parse(stored) : null);
-    };
-
-    window.addEventListener("storage", handleStorageChange);
-    return () => {
-      window.removeEventListener("storage", handleStorageChange);
-    };
-  }, []);
 
   const obterConfiguracaoVoltar = () => {
     if (origem === "plano-aplicacao") {
@@ -67,14 +50,13 @@ const BarraTopoTitulo = ({ origem = null }) => {
       <div className="py-2 flex-grow-1 bd-highlight">
         <h2>{headerPaaReferencia()}</h2>
       </div>
-      {destino && <div className="p-2 bd-highlight">
-        <button
-          className={className}
-          onClick={() => navigate(destino)}
-        >
-          {label}
-        </button>
-      </div>}
+      {destino && (
+        <div className="p-2 bd-highlight">
+          <button className={className} onClick={() => navigate(destino)}>
+            {label}
+          </button>
+        </div>
+      )}
     </div>
   );
 };
