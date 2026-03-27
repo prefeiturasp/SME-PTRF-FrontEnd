@@ -396,7 +396,7 @@ export const postPaa = async (payload) => {
 
 // PAA - Acoes PTRF
 export const getAcoesPTRFPaa = async () => {
-  const result = await api.get(`/api/acoes/`, authHeader());
+  const result = await api.get(`/api/acoes/acoes-recurso-legado/`, authHeader());
   return result.data;
 };
 export const patchExibirAcoesPTRFPaa = async (uuid, payload) => {
