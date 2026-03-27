@@ -27,9 +27,11 @@ import {ModalAtaNaoPreenchida} from "../../../utils/Modais";
 import PreviaDocumentos from "./PreviaDocumento";
 import {PERIODO_RELATORIO_CONSOLIDADO_DRE} from "../../../services/auth.service";
 import BlocoPublicacaoParcial from "./BlocoPublicacaoParcial"
+import useUnidadeSelecionada from "../../../hooks/Globais/useUnidadeSelecionada";
 
 const RelatorioConsolidado = () => {
-
+    const { getUUIDUnidadeSelecionadaTipoDRE } = useUnidadeSelecionada(visoesService)
+    
     const dre_uuid = visoesService.getItemUsuarioLogado('associacao_selecionada.uuid');
     const periodo_relatorio_consolidado_localstorage = localStorage.getItem(PERIODO_RELATORIO_CONSOLIDADO_DRE)
 
@@ -56,7 +58,7 @@ const RelatorioConsolidado = () => {
 
     const carregaPeriodos = useCallback(async () => {
         try {
-            let periodos = await getPeriodos();
+            let periodos = await getPeriodos(getUUIDUnidadeSelecionadaTipoDRE());
             setPeriodos(periodos);
             if (periodos && periodos.length > 0){
                 //Caso exista mais de um período seleciona por default o anterior ao corrente.
@@ -71,7 +73,7 @@ const RelatorioConsolidado = () => {
         } catch (e) {
             console.log("Erro ao buscar períodos ", e)
         }
-    }, [periodo_relatorio_consolidado_localstorage]);
+    }, [periodo_relatorio_consolidado_localstorage, getUUIDUnidadeSelecionadaTipoDRE]);
 
     useEffect(() => {
         carregaPeriodos()
