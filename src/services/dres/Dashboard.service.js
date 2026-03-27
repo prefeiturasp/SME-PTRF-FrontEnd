@@ -9,8 +9,10 @@ const authHeader = ()=>({
     }
 });
 
-export const getPeriodos = async () => {
-    return (await api.get(`/api/periodos/`, authHeader())).data
+export const getPeriodos = async (dre_uuid = "") => {
+    const queryParams = dre_uuid ? `?dre_uuid=${dre_uuid}` : '';
+
+    return (await api.get(`/api/periodos/${queryParams}`, authHeader())).data
 };
 
 export const getItensDashboard = async (uuid_periodo) => {
