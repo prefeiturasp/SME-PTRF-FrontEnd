@@ -13,6 +13,7 @@ export const CardSaldoEncerramentoConta = ({
   errosDataEncerramentoConta,
   inicioPeriodo,
   handleCancelarEncerramento,
+  groupIndex
 }) => {
   const statusSolicitacao = {
     PENDENTE: "PENDENTE",
@@ -55,7 +56,7 @@ export const CardSaldoEncerramentoConta = ({
         <div className="row">
           <div className="col-3">
             <div>
-              <label className="textos-card-saldos">Saldo de Recursos da Conta {index + 1}</label>
+              <label className="textos-card-saldos">Saldo de Recursos da Conta {groupIndex + 1}</label>
             </div>
             <div>
               <span className="saldo-recursos-conta">
