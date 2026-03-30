@@ -42,7 +42,7 @@ export const DadosDasContas = () => {
 
     const buscaContas = async ()=>{
         setLoading(true);
-        let contas = await getContas();
+        let contas = await getContas(null, true);
         let contasEncerradas = await getContasEncerradas();
         setContasEncerradas(contasEncerradas);
         setIntialValues(contas)
