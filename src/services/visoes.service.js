@@ -154,7 +154,7 @@ const setDadosPrimeiroAcesso = async (resp, suporte) =>{
     let dados_acesso_suporte = getDadosDoUsuarioLogadoSuporte();
 
     const temAcessoAUnidadeSelecionada = () => {
-        return !!usuario_logado.unidades.find(unidade => unidade.uuid === usuario_logado.unidade_selecionada.uuid)
+        return !!usuario_logado.unidades.find(unidade => unidade.uuid === usuario_logado?.unidade_selecionada?.uuid)
     };
 
     if (usuario_logado && usuario_logado.associacao_selecionada.uuid && temAcessoAUnidadeSelecionada() ){
