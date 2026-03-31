@@ -730,7 +730,8 @@ export const PaaVigenteEAnteriores = () => {
                         
                         
                         {visoesService.featureFlagAtiva('paa-retificacao') &&
-                        ["GERADO", "GERADO_PARCIALMENTE"].includes(vigente?.status_andamento) && 
+                        (["GERADO"].includes(vigente?.status_andamento)
+                        || (vigente?.status_andamento === "GERADO_PARCIALMENTE" && vigente.status === "EM_RETIFICACAO")) && 
                             <button
                                 type="button"
                                 className="btn btn-outline-success"
@@ -865,7 +866,10 @@ export const PaaVigenteEAnteriores = () => {
             onClose={() => setAbrirRetificacao(false)}
             paaData={vigente}
             statusDocumento={statusDocumento[vigente?.uuid]}
-            onConfirm={() => {navigate(`/retificacao-paa/${vigenteUuidOriginal}`)}}
+            onConfirm={() => {
+                navigate(`/retificacao-paa/${vigenteUuidOriginal}`)
+                toastCustom.ToastCustomSuccess("Retificação", "Retificação criada com sucesso");
+            }}
         />)}
     </>
   );
