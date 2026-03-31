@@ -62,10 +62,10 @@ const TabelaConferenciaDeDocumentos = ({carregaListaDeDocumentosParaConferencia,
 
     const selecionarHeader = () => {
         return (
-            <div className="align-middle text-center">
+            <div className="align-middle d-flex align-center justify-content-center">
                 {editavel &&
                 <Dropdown>
-                    <Dropdown.Toggle id="dropdown-basic">
+                    <Dropdown.Toggle className="p-0" id="dropdown-basic" style={{ background: 'inherit'}}>
                         <input
                             checked={false}
                             type="checkbox"
@@ -74,6 +74,7 @@ const TabelaConferenciaDeDocumentos = ({carregaListaDeDocumentosParaConferencia,
                             name="checkHeaderDocumentos"
                             id="checkHeaderDocumentos"
                             disabled={!editavel}
+                            style={{ cursor: 'pointer' }}
                         />
                     </Dropdown.Toggle>
 
@@ -292,10 +293,10 @@ const TabelaConferenciaDeDocumentos = ({carregaListaDeDocumentosParaConferencia,
                 <div>
                     <span>
                     <FontAwesomeIcon
-                        style={{fontSize: '18px', marginRight: "8px", marginLeft: "8px", color: '#00585D'}}
+                        style={{fontSize: '18px', marginRight: "8px", marginLeft: "8px", color: 'var(--color-primary-darker)'}}
                         icon={faInfoCircle}
                     />
-                        <button className='legendas-table text-md-start' onClick={() => setShowModalLegendaConferenciaDocumento(true)} style={{color: '#00585D', outline: 'none', border: 0, background: 'inherit', padding: '4px'}} >Legenda conferência</button>
+                        <button className='legendas-table text-md-start' onClick={() => setShowModalLegendaConferenciaDocumento(true)} style={{color: 'var(--color-primary-darker)', outline: 'none', border: 0, background: 'inherit', padding: '4px'}} >Legenda conferência</button>
                     </span>
 
                 </div>
