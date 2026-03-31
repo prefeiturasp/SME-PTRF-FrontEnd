@@ -368,10 +368,10 @@ const TabelaConferenciaDeLancamentos = ({
                         setShowModalLegendaInformacao={setShowModalLegendaInformacao}
                     />
                     <FontAwesomeIcon
-                        style={{fontSize: '18px', marginRight: "8px", marginLeft: "8px", color: '#00585D'}}
+                        style={{fontSize: '18px', marginRight: "8px", marginLeft: "8px", color: 'var(--color-primary-darker)'}}
                         icon={faInfoCircle}
                     />
-                        <button className='legendas-table text-md-start' onClick={() => setShowModalLegendaConferenciaLancamento(true)} style={{color: '#00585D', outline: 'none', border: 0, background: 'inherit', padding: '4px'}} >Legenda conferência</button>
+                        <button className='legendas-table text-md-start' onClick={() => setShowModalLegendaConferenciaLancamento(true)} style={{color: 'var(--color-primary-darker)', outline: 'none', border: 0, background: 'inherit', padding: '4px'}} >Legenda conferência</button>
                     </span>
 
                 </div>
