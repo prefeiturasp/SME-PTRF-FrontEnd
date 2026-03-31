@@ -253,7 +253,10 @@ const TabelaConferenciaDeLancamentos = ({
     const addDispatchRedireciona = (lancamentos) => {
         dispatch(limparDetalharAcertos())
         dispatch(addDetalharAcertos(lancamentos))
-        navigate(`/dre-detalhe-prestacao-de-contas-detalhar-acertos/${prestacaoDeContas.uuid}`, {replace: true})
+        navigate(
+            `/dre-detalhe-prestacao-de-contas-detalhar-acertos/${prestacaoDeContas.uuid}`,
+            {replace: true, state: {aplicavel_despesas_periodos_anteriores: true}}
+        )
     }
 
     const detalharAcertos = () => {
