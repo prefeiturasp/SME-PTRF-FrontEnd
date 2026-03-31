@@ -132,7 +132,7 @@ describe("TabsConferenciaAtualHistorico", () => {
   });
 
   it("quando msgNaoExistemSolicitacoesDeAcerto é fornecida exibe mensagem de vazio", () => {
-    setup({ msgNaoExistemSolicitacoesDeAcerto: "Sem acertos" });
+    setup({ msgNaoExistemSolicitacoesDeAcerto: "Sem acertos", abaAtiva: 'conferencia-atual' });
 
     expect(
       screen.getByTestId("msg-img-centralizada-mock")
@@ -143,7 +143,7 @@ describe("TabsConferenciaAtualHistorico", () => {
   });
 
   it("renderiza componentes da aba Conferência atual", async () => {
-    setup();
+    setup({ abaAtiva: 'conferencia-atual' });
 
     await waitFor(() =>
       expect(
@@ -161,7 +161,7 @@ describe("TabsConferenciaAtualHistorico", () => {
       versao_pdf_apresentacao_apos_acertos: "FINAL",
     });
 
-    setup();
+    setup({ abaAtiva: 'historico' });
 
     // deve existir RelatorioDosAcertos na aba histórico
     expect(
