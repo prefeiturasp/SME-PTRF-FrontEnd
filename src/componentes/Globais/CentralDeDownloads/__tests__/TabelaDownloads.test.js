@@ -165,4 +165,26 @@ describe("TabelaDownloads", () => {
 
     expect(screen.queryByTestId("checkbox-visto")).toBeNull();
   });
+
+  it("usa o padrão de lista vazia quando listaArquivos não é passado", () => {
+    render(<TabelaDownloads />);
+
+    expect(screen.getByText(/Exibindo/i)).toBeInTheDocument();
+    expect(screen.getByText("0")).toBeInTheDocument();
+  });
+
+  it("não exibe texto de status para status desconhecido", () => {
+    const mockListaArquivos = [
+      {
+        ...arquivoConcluido,
+        status: "DESCONHECIDO",
+      },
+    ];
+
+    render(<TabelaDownloads listaArquivos={mockListaArquivos} />);
+
+    expect(screen.queryByText("Concluído")).not.toBeInTheDocument();
+    expect(screen.queryByText("Erro")).not.toBeInTheDocument();
+    expect(screen.queryByText("Em processamento")).not.toBeInTheDocument();
+  });
 });

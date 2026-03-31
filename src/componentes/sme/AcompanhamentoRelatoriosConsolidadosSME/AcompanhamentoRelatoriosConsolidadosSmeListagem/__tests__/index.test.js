@@ -239,15 +239,17 @@ describe('AcompanhamentoRelatorioConsolidadosSmeListagem', () => {
     test('deve alterar período quando selecionado', async () => {
         renderComponent();
 
+        // Aguarda o carregamento inicial terminar (loading desaparece quando a primeira
+        // chamada ao serviço retorna e setLoading(false) é chamado)
         await waitFor(() => {
-            expect(screen.getByTestId('select-periodo')).toBeInTheDocument();
+            expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
         });
 
         const selectPeriodo = screen.getByTestId('select-periodo');
         fireEvent.change(selectPeriodo, { target: { value: 'periodo-2' } });
 
         await waitFor(() => {
-            expect(getListaRelatoriosConsolidados).toHaveBeenCalledWith('periodo-2', null ?? undefined);;
+            expect(getListaRelatoriosConsolidados).toHaveBeenCalledWith('periodo-2', undefined);
         });
     });
 

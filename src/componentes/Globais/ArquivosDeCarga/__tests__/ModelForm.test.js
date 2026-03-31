@@ -1,4 +1,3 @@
-import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import ModalFormArquivosDeCarga from "../ModalFormArquivosDeCarga";
 import { waitFor } from '@testing-library/react';
