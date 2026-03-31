@@ -4,6 +4,11 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import BarraTopoTitulo from "../index";
 
+const paaMock = {
+  status: "EM_ELABORACAO",
+  periodo_paa_objeto: { referencia: "Teste Referência" },
+};
+
 // mock do useNavigate
 const mockNavigate = jest.fn();
 jest.mock("react-router-dom", () => ({
@@ -17,82 +22,50 @@ describe("BarraTopoTitulo", () => {
     jest.clearAllMocks();
   });
 
-  it("renderiza o título vazio quando não há DADOS_PAA no localStorage", () => {
+  it("renderiza o título vazio quando não há na prop", () => {
     render(
       <MemoryRouter>
-        <BarraTopoTitulo />
-      </MemoryRouter>
+        <BarraTopoTitulo paa={{}} />
+      </MemoryRouter>,
     );
 
     expect(screen.getByRole("heading", { level: 2 })).toHaveTextContent(
-      "Plano Anual"
+      "Plano Anual",
     );
   });
 
-  it("renderiza o título com a data formatada do localStorage", () => {
-    localStorage.setItem(
-      "DADOS_PAA",
-      JSON.stringify({
-        periodo_paa_objeto: { referencia: "Teste Referência" },
-      })
-    );
-
+  it("renderiza o título com a data formatada da prop", () => {
     render(
       <MemoryRouter>
-        <BarraTopoTitulo />
-      </MemoryRouter>
+        <BarraTopoTitulo paa={paaMock} />
+      </MemoryRouter>,
     );
 
     expect(screen.getByRole("heading", { level: 2 })).toHaveTextContent(
-      "Plano Anual Teste Referência"
-    );
-  });
-
-  it("atualiza o título quando o localStorage é alterado via evento storage", () => {
-    render(
-      <MemoryRouter>
-        <BarraTopoTitulo />
-      </MemoryRouter>
-    );
-
-    // dispara evento de storage
-    localStorage.setItem(
-      "DADOS_PAA",
-      JSON.stringify({
-        periodo_paa_objeto: { referencia: "Teste Referência" },
-      })
-    );
-    fireEvent(
-      window,
-      new StorageEvent("storage", {
-        key: "DADOS_PAA",
-        newValue: JSON.stringify({
-          periodo_paa_objeto: { referencia: "Teste Referência" },
-        }),
-      })
-    );
-
-    expect(screen.getByRole("heading", { level: 2 })).toHaveTextContent(
-      "Plano Anual Teste Referência"
+      "Plano Anual Teste Referência",
     );
   });
 
   it("navega corretamente ao clicar no botão Voltar com origem definida", () => {
     render(
       <MemoryRouter>
-        <BarraTopoTitulo origem="plano-aplicacao" />
-      </MemoryRouter>
+        <BarraTopoTitulo origem="plano-aplicacao" paa={paaMock} />
+      </MemoryRouter>,
     );
 
-    fireEvent.click(screen.getByRole("button", { name: /voltar ao plano de aplicação/i }));
-    expect(mockNavigate).toHaveBeenCalledWith("/relatorios-componentes/plano-aplicacao");
+    fireEvent.click(
+      screen.getByRole("button", { name: /voltar ao plano de aplicação/i }),
+    );
+    expect(mockNavigate).toHaveBeenCalledWith(
+      "/relatorios-componentes/plano-aplicacao",
+    );
   });
 
   it("não renderiza botão Voltar quando origem não é informada", () => {
     render(
       <MemoryRouter>
-        <BarraTopoTitulo />
-      </MemoryRouter>
+        <BarraTopoTitulo paa={paaMock} />
+      </MemoryRouter>,
     );
 
     expect(screen.queryByRole("button")).not.toBeInTheDocument();

@@ -1,97 +1,21 @@
-import { React, useState, useEffect, useMemo } from 'react';
-import { PaginasContainer } from '../../../../../paginas/PaginasContainer';
-import BreadcrumbComponent from '../../../../Globais/Breadcrumb';
-import TabSelector from '../../../../Globais/TabSelector';
-import LevantamentoDePrioridades from './LevantamentoDePrioridades';
-import ReceitasPrevistas from './ReceitasPrevistas';
-import Prioridades from './Prioridades';
-import Relatorios from './Relatorios';
-import BarraTopoTitulo from './BarraTopoTitulo';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { iniciarAtaPaa } from '../../../../../services/escolas/AtasPaa.service';
-import { visoesService } from '../../../../../services/visoes.service';
+import { useCallback, useMemo } from "react";
+import PaaBase from "../../componentes/PaaBase";
 
 export const ElaborarNovoPlano = () => {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const itemsBreadCrumb = [
+  const paa_uuid_storage = localStorage.getItem('PAA');
+
+  const itemsBreadCrumb = useMemo(() => {
+    return [
     { label: 'Plano Anual de Atividades', url: '/paa' },
     { label: 'Elaborar novo plano', active: true },
   ];
+  }, []);
 
-  const tabs = [
-    { id: 'prioridades', label: 'Levantamento de Prioridades' },
-    { id: 'receitas', label: 'Receitas previstas' },
-    { id: 'prioridades-list', label: 'Prioridades' },
-    { id: 'relatorios', label: 'Relatórios' },
-  ];
+  const renderizar = useCallback(() => {
+    if (!paa_uuid_storage) return <></>;
 
-  const getInitialTab = () => {
-    const requestedTab = location.state?.activeTab;
-    return tabs.some((tab) => tab.id === requestedTab) ? requestedTab : tabs[0].id;
-  };
+    return <PaaBase paaUuid={paa_uuid_storage} itemsBreadCrumb={itemsBreadCrumb} />;
+  }, [paa_uuid_storage, itemsBreadCrumb]);
 
-  const [activeTab, setActiveTab] = useState(getInitialTab);
-  const relatoriosInitialExpandedSections = location.state?.expandedSections;
-  const fromPlanoAplicacao = Boolean(location.state?.fromPlanoAplicacao);
-  const fromPlanoOrcamentario = Boolean(location.state?.fromPlanoOrcamentario);
-  const receitasDestino = location.state?.receitasDestino || null;
-  const searchParams = useMemo(() => new URLSearchParams(location.search), [location.search]);
-  const fromAtividadesPrevistas = useMemo(() => {
-    const value = searchParams.get("fromAtividadesPrevistas");
-    return value === "1" || value === "true";
-  }, [searchParams]);
-  const origemBarra = fromAtividadesPrevistas
-    ? "atividades-previstas"
-    : fromPlanoAplicacao
-    ? "plano-aplicacao"
-    : fromPlanoOrcamentario
-    ? "plano-orcamentario"
-    : null;
-
-  useEffect(() => {
-    const temPermissaoIniciar = Boolean(
-      visoesService.getPermissoes(["custom_change_paa"])
-    );
-    const temPaaEmAndamento = Boolean(localStorage.getItem("PAA"));
-    if (!temPermissaoIniciar && !temPaaEmAndamento) {
-      navigate("/paa", { replace: true });
-      return;
-    }
-    const paaUuid = localStorage.getItem("PAA");
-    if (!paaUuid) {
-      return;
-    }
-    iniciarAtaPaa(paaUuid).catch((error) => {
-      console.error("Erro ao iniciar ata do PAA:", error);
-    });
-  }, [navigate]);
-
-  return (
-    <PaginasContainer>
-      <BreadcrumbComponent items={itemsBreadCrumb}/>
-      <h1 className="titulo-itens-painel mt-5">Plano Anual de Atividades</h1>
-      <div className="page-content-inner">
-        <BarraTopoTitulo origem={origemBarra} />
-
-        <TabSelector tabs={tabs} activeTab={activeTab} setActiveTab={setActiveTab} />
-
-        {activeTab === 'prioridades' && (
-          <LevantamentoDePrioridades />
-        )}
-
-        {activeTab === 'receitas' && (
-          <ReceitasPrevistas receitasDestino={receitasDestino} />
-        )}
-
-        {activeTab === 'prioridades-list' && (
-          <Prioridades />
-        )}
-
-        {activeTab === 'relatorios' && (
-          <Relatorios initialExpandedSections={relatoriosInitialExpandedSections} />
-        )}
-      </div>
-    </PaginasContainer>
-  );
+  return renderizar();
 };
