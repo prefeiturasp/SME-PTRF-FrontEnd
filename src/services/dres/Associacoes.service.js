@@ -79,8 +79,19 @@ export const rejeitarSolicitacaoEncerramentoConta = async (payloadMotivos,id_sol
     return (await api.patch(`/api/solicitacoes-encerramento-conta/${id_solicitacao}/rejeitar/`, payloadMotivos, authHeader()))
 };
 
-export const getContas = async (id_associacao) => {
-    return (await api.get(`/api/associacoes/${id_associacao}/contas/`, authHeader())).data
+export const getContas = async (id_associacao, getAllContas = false) => {
+    let url = `/api/associacoes/${id_associacao}/contas/`;
+    const params = new URLSearchParams();
+    
+    if (getAllContas) {
+        params.append('all', 'true');
+    }
+
+    if (params.toString()) {
+        url = `${url}?${params.toString()}`;
+    }
+    
+    return (await api.get(url, authHeader())).data
 };
 
 export const getMotivosRejeicaoEncerramentoContas = async () => {
