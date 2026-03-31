@@ -34,14 +34,12 @@ export const BadgeCustom = ({
     return (
         <>
         {badge ?
-            <>
-                <Badge color="#cda910" count={'!'} size='small' offset={offset}>
-                    <ButtonCustom
-                        buttonColor={buttonColor}
-                        buttonLabel={buttonLabel}
-                        handleClick={handleClick}/>
-                </Badge>
-            </>
+            <Badge color="#cda910" count={'!'} size='small' offset={offset}>
+                <ButtonCustom
+                    buttonColor={buttonColor}
+                    buttonLabel={buttonLabel}
+                    handleClick={handleClick}/>
+            </Badge>
         :
             <ButtonCustom
                 buttonColor={buttonColor}

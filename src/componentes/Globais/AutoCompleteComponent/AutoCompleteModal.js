@@ -1,8 +1,7 @@
-import React, {useState, memo, useRef, useEffect} from 'react';
+import React, { memo, useRef, useEffect} from 'react';
 import {AutoComplete} from 'primereact/autocomplete';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faSearch} from "@fortawesome/free-solid-svg-icons";
-import { Tag } from '../Tag';
 
 const AutoCompleteModal = ({
     value,

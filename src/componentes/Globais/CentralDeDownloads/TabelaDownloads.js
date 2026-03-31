@@ -3,8 +3,6 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faDownload,
-  faTrash,
   faInfoCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import "./central-de-downloads.scss";
