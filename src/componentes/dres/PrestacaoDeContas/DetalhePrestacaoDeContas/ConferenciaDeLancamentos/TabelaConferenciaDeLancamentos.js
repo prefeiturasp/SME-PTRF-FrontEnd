@@ -179,10 +179,10 @@ const TabelaConferenciaDeLancamentos = ({
 
     const selecionarHeader = () => {
         return (
-            <div className="align-middle">
+            <div className="align-middle d-flex align-center justify-content-center">
                 {editavel &&
                     <Dropdown>
-                        <Dropdown.Toggle id="dropdown-basic" className="p-0">
+                        <Dropdown.Toggle id="dropdown-basic" className="p-0" style={{ background: 'inherit'}}>
                             <input
                                 checked={false}
                                 type="checkbox"
@@ -191,6 +191,7 @@ const TabelaConferenciaDeLancamentos = ({
                                 name="checkHeader"
                                 id="checkHeader"
                                 disabled={!editavel}
+                                style={{ cursor: "pointer" }}
                             />
                         </Dropdown.Toggle>
 
@@ -308,10 +309,10 @@ const TabelaConferenciaDeLancamentos = ({
                         setShowModalLegendaInformacao={setShowModalLegendaInformacao}
                     />
                     <FontAwesomeIcon
-                        style={{fontSize: '18px', marginRight: "8px", marginLeft: "8px", color: '#00585D'}}
+                        style={{fontSize: '18px', marginRight: "8px", marginLeft: "8px", color: 'var(--color-primary-darker)'}}
                         icon={faInfoCircle}
                     />
-                        <button className='legendas-table text-md-start' onClick={() => setShowModalLegendaConferenciaLancamento(true)} style={{color: '#00585D', outline: 'none', border: 0, background: 'inherit', padding: '4px'}} >Legenda conferência</button>
+                        <button className='legendas-table text-md-start' onClick={() => setShowModalLegendaConferenciaLancamento(true)} style={{color: 'var(--color-primary-darker)', outline: 'none', border: 0, background: 'inherit', padding: '4px'}} >Legenda conferência</button>
                     </span>
 
                 </div>
