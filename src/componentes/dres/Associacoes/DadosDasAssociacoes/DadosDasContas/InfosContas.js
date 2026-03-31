@@ -19,6 +19,7 @@ import Loading from "../../../../../utils/Loading";
 import { toastCustom } from "../../../../Globais/ToastCustom";
 import { BarraStatusEncerramentoConta } from "./BarraStatusEncerramentoConta/index";
 import { visoesService } from "../../../../../services/visoes.service";
+import { agrupaContasPorRecurso, ordenaGrupos } from "../../../../escolas/Associacao/DadosDasContas/utils/AgrupaEOrdenaContasPorRecurso";
 
 export const InfosContas = ({ dadosDaAssociacao }) => {
   const [dataModalConfirmarEncerramentoConta, setDataModalConfirmarEncerramentoConta] = useState({
@@ -58,7 +59,7 @@ export const InfosContas = ({ dadosDaAssociacao }) => {
   }, []);
 
   const getContasAssociacao = async (id_associacao) => {
-    const response = await getContas(id_associacao);
+    const response = await getContas(id_associacao, true);
     setContasDasAssociacoes(response);
     setLoading(false);
   };
@@ -201,6 +202,9 @@ export const InfosContas = ({ dadosDaAssociacao }) => {
     return "Não encontramos nenhuma conta, tente novamente.";
   };
 
+  const contasAgrupadasPorRecurso = agrupaContasPorRecurso(contasDaAssociacao);
+  const contasAgrupadasPorRecursoOrdenadas = ordenaGrupos(contasAgrupadasPorRecurso);
+
   return (
     <>
       {loading ? (
@@ -217,106 +221,116 @@ export const InfosContas = ({ dadosDaAssociacao }) => {
 
           <div className="row">
             {contasDaAssociacao && contasDaAssociacao.length > 0 ? (
-              contasDaAssociacao.map((conta, index) => (
-                <Fragment key={index}>
-                  <div className={`col-12 mt-${index === 0 ? "2" : 4} mb-xs-4 mb-md-4 mb-xl-3 ml-0`}>
-                    <p className="mb-0">
-                      <span className="contador-conta">
-                        <strong>Conta {index + 1}</strong>
-                      </span>{" "}
-                      <span className="divisor"></span>
-                    </p>
+              contasAgrupadasPorRecursoOrdenadas.map(([nomeRecurso, contasDoRecurso], indexRecurso) => (
+                <Fragment key={`recurso-${nomeRecurso}`}>
+                  <div className="col-12 mt-3" key={`header-recurso-${nomeRecurso}`}>
+                    <hr className="mb-4" />
+                    <h5 className="mb-3"><strong>{nomeRecurso}</strong></h5>
                   </div>
-                  <div className={`col-12 col-md-${apresentaDataDeEncerramentoDeConta(conta) ? "2" : "3"}`}>
-                    <p>
-                      <strong>Banco</strong>
-                    </p>
-                    <p>{conta.banco_nome}</p>
-                  </div>
-                  <div className={`col-12 col-md-${apresentaDataDeEncerramentoDeConta(conta) ? "2" : "3"}`}>
-                    <p>
-                      <strong>Tipo de conta</strong>
-                    </p>
-                    <p>{conta.tipo_conta.nome}</p>
-                  </div>
-                  <div className={`col-12 col-md-${apresentaDataDeEncerramentoDeConta(conta) ? "2" : "3"}`}>
-                    <p>
-                      <strong>Agência</strong>
-                    </p>
-                    <p>{conta.agencia}</p>
-                  </div>
-                  <div className="col-12 col-md-3">
-                    <p>
-                      <strong>Nº da conta com o dígito</strong>
-                    </p>
-                    <p>{conta.numero_conta}</p>
-                  </div>
-
-                  {apresentaDataDeEncerramentoDeConta(conta) && conta.tipo_conta.permite_inativacao && (
-                    <>
-                      <div className="col-12 col-md-3 form-group">
-                        <label>
-                          <strong>Data do encerramento</strong>
-                          <span
-                            data-tooltip-id="data-encerramento"
-                            data-tooltip-content="Data de encerramento da conta na agência."
-                          >
-                            <FontAwesomeIcon style={{ marginLeft: "10px" }} icon={faExclamationCircle} />
-                          </span>
-                          <ReactTooltip id="data-encerramento" />
-                        </label>
-                        <input
-                          className="form-control"
-                          disabled
-                          value={
-                            conta.solicitacao_encerramento !== null
-                              ? formataData(conta.solicitacao_encerramento.data_de_encerramento_na_agencia)
-                              : null
-                          }
-                        />
+                  {contasDoRecurso.map((conta, index) => (
+                    <Fragment key={`conta-${conta.indexOriginal}`}>
+                      <div className={`col-12 mt-${index === 0 ? "2" : 4} mb-xs-4 mb-md-4 mb-xl-3 ml-0`}>
+                        <p className="mb-0">
+                          <span className="contador-conta">
+                            <strong>Conta {index + 1}</strong>
+                          </span>{" "}
+                          <span className="divisor"></span>
+                        </p>
                       </div>
-                    </>
-                  )}
 
-                  <div className="card h-100 w-100 mx-3">
-                    <div className="card-body">
-                      {conta.solicitacao_encerramento &&
-                        conta.solicitacao_encerramento.status === "REJEITADA" &&
-                        conta.tipo_conta.permite_inativacao && <BarraStatusEncerramentoConta conta={conta} />}
-                      <div className="row">
-                        <div className="col-5">
-                          <div>
-                            <label className="textos-card-saldos">Saldo de Recursos da Conta {index + 1}</label>
+                      <div className={`col-12 col-md-${apresentaDataDeEncerramentoDeConta(conta) ? "2" : "3"}`}>
+                        <p>
+                          <strong>Banco</strong>
+                        </p>
+                        <p>{conta.banco_nome}</p>
+                      </div>
+                      <div className={`col-12 col-md-${apresentaDataDeEncerramentoDeConta(conta) ? "2" : "3"}`}>
+                        <p>
+                          <strong>Tipo de conta</strong>
+                        </p>
+                        <p>{conta.tipo_conta.nome}</p>
+                      </div>
+                      <div className={`col-12 col-md-${apresentaDataDeEncerramentoDeConta(conta) ? "2" : "3"}`}>
+                        <p>
+                          <strong>Agência</strong>
+                        </p>
+                        <p>{conta.agencia}</p>
+                      </div>
+                      <div className="col-12 col-md-3">
+                        <p>
+                          <strong>Nº da conta com o dígito</strong>
+                        </p>
+                        <p>{conta.numero_conta}</p>
+                      </div>
+
+                      {apresentaDataDeEncerramentoDeConta(conta) && conta.tipo_conta.permite_inativacao && (
+                        <>
+                          <div className="col-12 col-md-3 form-group">
+                            <label>
+                              <strong>Data do encerramento</strong>
+                              <span
+                                data-tooltip-id="data-encerramento"
+                                data-tooltip-content="Data de encerramento da conta na agência."
+                              >
+                                <FontAwesomeIcon style={{ marginLeft: "10px" }} icon={faExclamationCircle} />
+                              </span>
+                              <ReactTooltip id="data-encerramento" />
+                            </label>
+                            <input
+                              className="form-control"
+                              disabled
+                              value={
+                                conta.solicitacao_encerramento !== null
+                                  ? formataData(conta.solicitacao_encerramento.data_de_encerramento_na_agencia)
+                                  : null
+                              }
+                            />
                           </div>
-                          <div>
-                            <span className="saldo-recursos-conta">
-                              R$ {conta.saldo_atual_conta ? conta.saldo_atual_conta.toLocaleString("pt-BR") : 0}
-                            </span>
+                        </>
+                      )}
+
+                      <div className="card h-100 w-100 mx-3">
+                        <div className="card-body">
+                          {conta.solicitacao_encerramento &&
+                            conta.solicitacao_encerramento.status === "REJEITADA" &&
+                            conta.tipo_conta.permite_inativacao && <BarraStatusEncerramentoConta conta={conta} />}
+                          <div className="row">
+                            <div className="col-5">
+                              <div>
+                                <label className="textos-card-saldos">Saldo de Recursos da Conta {index + 1}</label>
+                              </div>
+                              <div>
+                                <span className="saldo-recursos-conta">
+                                  R$ {conta.saldo_atual_conta ? conta.saldo_atual_conta.toLocaleString("pt-BR") : 0}
+                                </span>
+                              </div>
+                            </div>
+                            {apresentaDataDeEncerramentoDeConta(conta) && conta.tipo_conta.permite_inativacao && (
+                              <div className="col-7 text-right mt-3">
+                                <button
+                                  type="button"
+                                  className="btn btn-base-verde-outline mr-3"
+                                  onClick={() => handleOpenModalConfirmarEncerramentoConta(conta)}
+                                  disabled={!habilitaBotoesEncerramento(conta)}
+                                >
+                                  Confirmar encerramento
+                                </button>
+                                <button
+                                  type="button"
+                                  className="btn btn-base-verde-outline"
+                                  onClick={() => handleOpenModalRejeitarEncerramentoConta(conta)}
+                                  disabled={!habilitaBotoesEncerramento(conta)}
+                                >
+                                  Rejeitar encerramento
+                                </button>
+                              </div>
+                            )}
                           </div>
                         </div>
-                        {apresentaDataDeEncerramentoDeConta(conta) && conta.tipo_conta.permite_inativacao && (
-                          <div className="col-7 text-right mt-3">
-                            <button
-                              type="button"
-                              className="btn btn-base-verde-outline mr-3"
-                              onClick={() => handleOpenModalConfirmarEncerramentoConta(conta)}
-                              disabled={!habilitaBotoesEncerramento(conta)}
-                            >
-                              Confirmar encerramento
-                            </button>
-                            <button
-                              type="button"
-                              className="btn btn-base-verde-outline"
-                              onClick={() => handleOpenModalRejeitarEncerramentoConta(conta)}
-                              disabled={!habilitaBotoesEncerramento(conta)}
-                            >
-                              Rejeitar encerramento
-                            </button>
-                          </div>
-                        )}
                       </div>
-                    </div>
-                  </div>
+                    </Fragment>
+                    ))
+                  }
                 </Fragment>
               ))
             ) : (

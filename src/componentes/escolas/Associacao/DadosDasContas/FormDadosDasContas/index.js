@@ -4,6 +4,7 @@ import {Formik, FieldArray} from "formik";
 
 import { BarraStatusEncerramentoConta } from "./BarraStatusEncerramentoConta";
 import { CardSaldoEncerramentoConta } from "./CardSaldoEncerramentoConta";
+import { agrupaContasPorRecurso, ordenaGrupos } from "../utils/AgrupaEOrdenaContasPorRecurso";
 
 export const FormDadosDasContas = ({
     intialValues, 
@@ -28,16 +29,6 @@ export const FormDadosDasContas = ({
         return false;
     }
 
-    const agrupaContasPorRecurso = (contas) => {
-        return contas.reduce((grupos, conta, index) => {
-            const recurso = conta.nome_recurso;
-            if (!grupos[recurso]) {
-                grupos[recurso] = [];
-            }
-            grupos[recurso].push({ ...conta, indexOriginal: index });
-            return grupos;
-        }, {});
-    };
 
     return (
         <>
@@ -57,11 +48,12 @@ export const FormDadosDasContas = ({
                             <FieldArray
                                 name="contas"
                                 render={() => {
-                                    const contasAgrupadasPorRecurso = agrupaContasPorRecurso(values.contas)
+                                    const contasAgrupadasPorRecurso = agrupaContasPorRecurso(values.contas);
+                                    const contasAgrupadasPorRecursoOrdenadas = ordenaGrupos(contasAgrupadasPorRecurso);
 
                                     return (
                                         <>
-                                            {Object.entries(contasAgrupadasPorRecurso).map(([nomeRecurso, contasDoRecurso], indexRecurso) => (
+                                            {contasAgrupadasPorRecursoOrdenadas.map(([nomeRecurso, contasDoRecurso], indexRecurso) => (
                                                 <div key={`recurso-${nomeRecurso}`} data-testid={`recurso-${nomeRecurso}`} className={indexRecurso > 0 ? "mt-3" : ""}>
                                                     <div className="row mt-3">
                                                         <div className="col-12">
