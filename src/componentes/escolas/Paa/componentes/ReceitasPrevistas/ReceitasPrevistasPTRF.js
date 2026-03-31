@@ -82,7 +82,7 @@ const ReceitasPrevistasPTRF = ({ paa }) => {
         <Flex gutter={8} justify="space-between" className="mb-4">
           <h4 className="mb-0">Receitas Previstas</h4>
           <Flex align="center">
-            {!!paa?.uuid && paa.status !== "EM_RETIFICACAO" && (
+            {!!paa?.uuid && paa?.status !== "EM_RETIFICACAO" && (
               <>
                 <Checkbox
                   data-testid="checkbox-parar-atualizacoes-saldo"

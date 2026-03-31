@@ -54,7 +54,7 @@ const Relatorios = ({ initialExpandedSections }) => {
   const { paaVigente, isLoading: isLoadingPaa } =
     useGetPaaVigente(associacaoUuid);
   const { ataPaa, isLoading: isLoadingAtaPaa } = useGetAtaPaaVigente(
-    paaVigente?.uuid
+    paaVigente?.uuid,
   );
   const apresentouToastErroPaaNaoEncontrado = useRef(false);
   const apresentouToastErroAtaNaoEncontrada = useRef(false);
@@ -100,6 +100,7 @@ const Relatorios = ({ initialExpandedSections }) => {
       clearInterval(timerRef.current);
     }
     if (
+      paaVigente?.status !== "EM_RETIFICACAO" &&
       statusDocumento?.status === "CONCLUIDO" &&
       statusDocumento?.versao === "FINAL"
     ) {
@@ -133,7 +134,7 @@ const Relatorios = ({ initialExpandedSections }) => {
     } catch (e) {
       toastCustom.ToastCustomError(
         "Erro!",
-        "Erro ao efetuar o download Prévia!"
+        "Erro ao efetuar o download Prévia!",
       );
       console.error("Erro ao efetuar o download de versão Prévia", e);
     }
@@ -145,7 +146,7 @@ const Relatorios = ({ initialExpandedSections }) => {
     } catch (e) {
       toastCustom.ToastCustomError(
         "Erro!",
-        "Erro ao efetuar o download Prévia!"
+        "Erro ao efetuar o download Prévia!",
       );
       console.error("Erro ao efetuar o download de versão Final", e);
     }
@@ -159,7 +160,7 @@ const Relatorios = ({ initialExpandedSections }) => {
     } else {
       toastCustom.ToastCustomError(
         "Erro!",
-        "Versão de arquivo não identificada."
+        "Versão de arquivo não identificada.",
       );
     }
   };
@@ -179,7 +180,7 @@ const Relatorios = ({ initialExpandedSections }) => {
     } else {
       toastCustom.ToastCustomError(
         "Erro!",
-        "PAA vigente não identificado para geração de prévia."
+        "PAA vigente não identificado para geração de prévia.",
       );
     }
   };
@@ -195,7 +196,7 @@ const Relatorios = ({ initialExpandedSections }) => {
     } else {
       toastCustom.ToastCustomError(
         "Erro!",
-        "PAA vigente não identificado para geração final."
+        "PAA vigente não identificado para geração final.",
       );
     }
   };
@@ -416,7 +417,7 @@ const Relatorios = ({ initialExpandedSections }) => {
               {!isLoadingPaa &&
                 paaVigente?.uuid &&
                 Object.entries(secoesConfig).map(([secaoKey, config]) =>
-                  renderSecao(secaoKey, config, podeEditar)
+                  renderSecao(secaoKey, config, podeEditar),
                 )}
             </div>
           )}
