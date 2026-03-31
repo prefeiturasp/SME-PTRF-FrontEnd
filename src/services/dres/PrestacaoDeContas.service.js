@@ -239,7 +239,16 @@ export const getTiposDeAcertoLancamentos = async () => {
 };
 
 export const getTiposDeAcertoLancamentosAgrupadoCategoria = async (aplicavel_despesas_periodos_anteriores=null, is_repasse=null) => {
-    return (await api.get(`/api/tipos-acerto-lancamento/tabelas/${aplicavel_despesas_periodos_anteriores ? `?aplicavel_despesas_periodos_anteriores=${aplicavel_despesas_periodos_anteriores}` : ''}${is_repasse ? `?is_repasse=${is_repasse}` : ''}`, authHeader())).data
+    const params = new URLSearchParams();
+    if (aplicavel_despesas_periodos_anteriores) {
+        params.set('aplicavel_despesas_periodos_anteriores', String(aplicavel_despesas_periodos_anteriores));
+    }
+    if (is_repasse) {
+        params.set('is_repasse', String(is_repasse));
+    }
+    const query = params.toString();
+    const url = `/api/tipos-acerto-lancamento/tabelas/${query ? `?${query}` : ''}`;
+    return (await api.get(url, authHeader())).data;
 };
 
 export const getListaDeSolicitacaoDeAcertos = async (prestacao_de_contas_uuid, analise_lancamento_uuid) => {

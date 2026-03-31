@@ -125,7 +125,7 @@ export const DetalharAcertos = () => {
             mounted = false;
         }
 
-    }, [verificaSeTemLancamentosDoTipoGasto, verificaSeEhRepasse])
+    }, [verificaSeTemLancamentosDoTipoGasto, verificaSeEhRepasse, aplicavelDespesasPeriodosAnteriores])
 
     useEffect(() => {
         let mounted = true;

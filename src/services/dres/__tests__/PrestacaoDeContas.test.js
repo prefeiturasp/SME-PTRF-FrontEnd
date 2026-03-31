@@ -349,7 +349,7 @@ describe('Testes para funções de análise', () => {
         let aplicavel_despesas_periodos_anteriores='1234'
         let is_repasse=null
         const result = await getTiposDeAcertoLancamentosAgrupadoCategoria(aplicavel_despesas_periodos_anteriores, is_repasse);
-        const url = `/api/tipos-acerto-lancamento/tabelas/${aplicavel_despesas_periodos_anteriores ? `?aplicavel_despesas_periodos_anteriores=${aplicavel_despesas_periodos_anteriores}` : ''}${is_repasse ? `?is_repasse=${is_repasse}` : ''}`
+        const url = `/api/tipos-acerto-lancamento/tabelas/?aplicavel_despesas_periodos_anteriores=1234`
         expect(api.get).toHaveBeenCalledWith(url, authHeader())
         expect(result).toEqual(mockData);
     });
