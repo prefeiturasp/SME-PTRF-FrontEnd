@@ -24,12 +24,10 @@ export const BadgeCustom = (props) => {
     return (
         <>
         {props.badge ?
-            <>
-                <Badge color="#cda910" count={'!'} size='small' offset={[-85, 0]}>
-                    <ButtonCustom
-                        {...props}/>
-                </Badge>
-            </>
+            <Badge color="#cda910" count={'!'} size='small' offset={[-85, 0]}>
+                <ButtonCustom
+                    {...props}/>
+            </Badge>
         :
             <ButtonCustom
                 {...props}/>
