@@ -46,7 +46,7 @@ export const TabelaExecucaoFinanceira = ({execucaoFinanceira, valorTemplate, haD
                         <td>{execucaoFinanceira.receitas_rendimento_no_periodo_total ? valorTemplate(execucaoFinanceira.receitas_rendimento_no_periodo_total) :'-'}</td>
                     </tr>
                     <tr>
-                        <td>Devolução à conta PTRF</td>
+                        <td>Devolução à conta</td>
                         <td>{execucaoFinanceira.receitas_devolucao_no_periodo_custeio ? valorTemplate(execucaoFinanceira.receitas_devolucao_no_periodo_custeio) :'-'}</td>
                         <td>{execucaoFinanceira.receitas_devolucao_no_periodo_capital ? valorTemplate(execucaoFinanceira.receitas_devolucao_no_periodo_capital) :'-'}</td>
                         <td>{execucaoFinanceira.receitas_devolucao_no_periodo_livre ? valorTemplate(execucaoFinanceira.receitas_devolucao_no_periodo_livre) :'-'}</td>
