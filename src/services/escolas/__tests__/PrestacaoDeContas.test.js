@@ -33,13 +33,12 @@ import {
     downloadDocumentPdfAposAcertos,
     getConcluirPrestacaoDeConta,
     getFiqueDeOlhoPrestacoesDeContas,
-    getTextosPaaUe,
-    patchTextosPaaUe,
     getAtaRetificadora,
     getIniciarAtaRetificadora,
     getMembrosCargos,
     getStatusPresidente
  } from '../PrestacaoDeContas.service.js';
+
 import { TOKEN_ALIAS, ASSOCIACAO_UUID } from '../../auth.service.js';
 
 jest.mock('../../visoes.service.js', () => ({
@@ -543,28 +542,6 @@ describe('Testes para funções de análise', () => {
             getAuthHeader()
         )
         expect(result).toEqual(mockData);
-    });
-    
-    test('getTextosPaaUe deve chamar a API corretamente', async () => {
-        api.get.mockResolvedValue({ data: mockData })
-        const result = await getTextosPaaUe();
-        expect(api.get).toHaveBeenCalledWith(
-            `/api/parametros-paa/textos-paa-ue/`,
-            getAuthHeader()
-        )
-        expect(result).toEqual(mockData);
-    });
-    
-    test('patchTextosPaaUe deve chamar a API corretamente', async () => {
-        api.patch.mockResolvedValue({ data: mockData })
-        const payload = { teste: 'testes' }
-        const result = await patchTextosPaaUe(payload);
-        expect(api.patch).toHaveBeenCalledWith(
-            `/api/parametros-paa/update-textos-paa-ue/`,
-            payload,
-            getAuthHeader()
-        )
-        expect(result).toEqual({ data: mockData });
     });
     
     test('getAtaRetificadora deve chamar a API corretamente', async () => {

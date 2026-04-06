@@ -24,21 +24,29 @@ export const RelatorioConsolidadoEmTela = () => {
     const jaPublicado = eval(ja_publicado)
 
     const dre_uuid = visoesService.getItemUsuarioLogado('associacao_selecionada.uuid');
+    const contaUuidParam = conta_uuid && conta_uuid !== 'null' ? conta_uuid : null;
 
     const initJustificativa = {
         uuid: '',
         dre: dre_uuid,
         periodo: periodo_uuid,
-        tipo_conta: conta_uuid,
+        tipo_conta: '',
         texto: ''
     };
 
     const [periodoNome, setPeriodoNome] = useState('');
     const [execucaoFinanceira, setExecucaoFinanceira] = useState(false);
-    const [justificativaDiferencaCheque, setJustificativaDiferencaCheque] = useState(initJustificativa);
-    const [justificativaDiferencaCartao, setJustificativaDiferencaCartao] = useState(initJustificativa);
-    const [btnSalvarJustificativaDisableCheque, setBtnSalvarJustificativaDisableCheque] = useState(true);
-    const [btnSalvarJustificativaDisableCartao, setBtnSalvarJustificativaDisableCartao] = useState(true);
+    const [justificativasDiferenca, setJustificativasDiferenca] = useState(() => (
+        contaUuidParam ? {
+            [contaUuidParam]: {
+                ...initJustificativa,
+                tipo_conta: contaUuidParam
+            }
+        } : {}
+    ));
+    const [btnSalvarJustificativaDisablePorConta, setBtnSalvarJustificativaDisablePorConta] = useState(() => (
+        contaUuidParam ? {[contaUuidParam]: true} : {}
+    ));
     const [loading, setLoading] = useState(false);
     const [consolidadoDre, setConsolidadoDre] = useState({})
 
@@ -83,22 +91,23 @@ export const RelatorioConsolidadoEmTela = () => {
 
     const carregaJustificativas = (execucao) => {
         if (execucao) {
-            execucao.por_tipo_de_conta.map((conta) => {
-                const justificativa = {
+            const justificativasPorConta = {};
+            const btnDisablePorConta = {};
+
+            execucao.por_tipo_de_conta.forEach((conta) => {
+                justificativasPorConta[conta.tipo_conta_uuid] = {
                     uuid: conta.justificativa_uuid,
                     dre: dre_uuid,
                     periodo: periodo_uuid,
                     tipo_conta: conta.tipo_conta_uuid,
                     texto: conta.justificativa_texto,
                     eh_retificacao: conta.eh_retificacao
-                }
-                if (conta.tipo_conta === 'Cheque'){
-                    setJustificativaDiferencaCheque(justificativa)
-                }
-                else if (conta.tipo_conta === 'Cartão'){
-                    setJustificativaDiferencaCartao(justificativa)
-                }
-            })
+                };
+                btnDisablePorConta[conta.tipo_conta_uuid] = true;
+            });
+
+            setJustificativasDiferenca(justificativasPorConta);
+            setBtnSalvarJustificativaDisablePorConta(btnDisablePorConta);
         }
     }
 
@@ -111,38 +120,34 @@ export const RelatorioConsolidadoEmTela = () => {
         return valor_formatado
     };
 
-    const comparaValores = (execucaoFinanceiraConta) => {
-        if (execucaoFinanceiraConta) {
-            return execucaoFinanceiraConta.repasses_previstos_sme_custeio !== execucaoFinanceiraConta.repasses_no_periodo_custeio ||
-                execucaoFinanceiraConta.repasses_previstos_sme_capital !== execucaoFinanceiraConta.repasses_no_periodo_capital ||
-                execucaoFinanceiraConta.repasses_previstos_sme_livre !== execucaoFinanceiraConta.repasses_no_periodo_livre ||
-                execucaoFinanceiraConta.repasses_previstos_sme_total !== execucaoFinanceiraConta.repasses_no_periodo_total;
-        }
+    const onChangeJustificativaDiferenca = (justificativa_texto, tipo_conta_uuid) => {
+        setBtnSalvarJustificativaDisablePorConta((prevState) => ({
+            ...prevState,
+            [tipo_conta_uuid]: false
+        }));
+        setJustificativasDiferenca((prevState) => ({
+            ...prevState,
+            [tipo_conta_uuid]: {
+                ...(prevState[tipo_conta_uuid] || initJustificativa),
+                tipo_conta: tipo_conta_uuid,
+                texto: justificativa_texto
+            }
+        }));
     };
 
-    const onChangeJustificativaDiferenca = (justificativa_texto, tipo_conta) => {
-        if (tipo_conta === 'Cheque'){
-            setBtnSalvarJustificativaDisableCheque(false)
-            setJustificativaDiferencaCheque({...justificativaDiferencaCheque, texto:justificativa_texto})
-        }
-        else if (tipo_conta === 'Cartão'){
-            setBtnSalvarJustificativaDisableCartao(false)
-            setJustificativaDiferencaCartao({...justificativaDiferencaCartao, texto:justificativa_texto})
-        }
-
-    };
-
-    const onSubmitJustificativaDiferencaCheque = async () => {
-        await atualizaJustificativaDiferenca(justificativaDiferencaCheque)
-        setBtnSalvarJustificativaDisableCheque(true)
-    };
-
-    const onSubmitJustificativaDiferencaCartao = async () => {
-        await atualizaJustificativaDiferenca(justificativaDiferencaCartao)
-        setBtnSalvarJustificativaDisableCartao(true)
-    };
+    const onSubmitJustificativaDiferenca = async (tipo_conta_uuid) => {
+        const justificativaDiferenca = justificativasDiferenca[tipo_conta_uuid];
+        await atualizaJustificativaDiferenca(justificativaDiferenca)
+        setBtnSalvarJustificativaDisablePorConta((prevState) => ({
+            ...prevState,
+            [tipo_conta_uuid]: true
+        }));
+    }
 
     const atualizaJustificativaDiferenca = async (justificativaDiferenca) => {
+        if (!justificativaDiferenca) {
+            return;
+        }
         if (justificativaDiferenca && justificativaDiferenca.uuid) {
             let payload = {
                 texto: justificativaDiferenca.texto,
@@ -151,8 +156,8 @@ export const RelatorioConsolidadoEmTela = () => {
             await patchJustificativa(justificativaDiferenca.uuid, payload)
             toastCustom.ToastCustomSuccess('Demonstrativo da Execução Físico-Financeira alterado com sucesso', 'Justificativa da diferença entre o valor previsto pela SME e o transferido pela DRE no período registrada com sucesso.')
         } else {
-            delete justificativaDiferenca.uuid;
-            await postJustificativa(justificativaDiferenca)
+            const {uuid, ...payload} = justificativaDiferenca;
+            await postJustificativa(payload)
             toastCustom.ToastCustomSuccess('Demonstrativo da Execução Físico-Financeira alterado com sucesso', 'Justificativa da diferença entre o valor previsto pela SME e o transferido pela DRE no período registrada com sucesso.')
         }
     };
@@ -179,6 +184,12 @@ export const RelatorioConsolidadoEmTela = () => {
                                 referencia={execucaoFinanceira.titulo_parcial}
                             />
                             {execucaoFinanceira && execucaoFinanceira.por_tipo_de_conta.map((execucaoFinanceiraConta) => {
+                                const justificativaDiferencaConta = justificativasDiferenca[execucaoFinanceiraConta.tipo_conta_uuid] || {
+                                    ...initJustificativa,
+                                    tipo_conta: execucaoFinanceiraConta.tipo_conta_uuid
+                                };
+                                const btnSalvarJustificativaDisable = btnSalvarJustificativaDisablePorConta[execucaoFinanceiraConta.tipo_conta_uuid] ?? true;
+
                                 return <div key={execucaoFinanceiraConta.tipo_conta}>
                                     <TabelaExecucaoFinanceira
                                         execucaoFinanceira={execucaoFinanceiraConta.valores}
@@ -189,12 +200,12 @@ export const RelatorioConsolidadoEmTela = () => {
                                     <JustificativaDiferenca
                                         execucaoFinanceira={execucaoFinanceiraConta}
                                         haDiferencaPrevisaoExecucaoRepasse={haDiferencaPrevisaoExecucaoRepasse}
-                                        justificativaDiferenca={execucaoFinanceiraConta.tipo_conta === 'Cheque' ? justificativaDiferencaCheque : justificativaDiferencaCartao}
-                                        setJustificativaDiferenca={execucaoFinanceiraConta.tipo_conta === 'Cheque' ? setJustificativaDiferencaCheque : setJustificativaDiferencaCartao}
+                                        justificativaDiferenca={justificativaDiferencaConta}
+                                        setJustificativaDiferenca={setJustificativasDiferenca}
                                         onChangeJustificativaDiferenca={onChangeJustificativaDiferenca}
-                                        onSubmitJustificativaDiferenca={execucaoFinanceiraConta.tipo_conta === 'Cheque' ? onSubmitJustificativaDiferencaCheque : onSubmitJustificativaDiferencaCartao}
-                                        btnSalvarJustificativaDisable={execucaoFinanceiraConta.tipo_conta === 'Cheque' ? btnSalvarJustificativaDisableCheque : btnSalvarJustificativaDisableCartao}
-                                        setBtnSalvarJustificativaDisable={execucaoFinanceiraConta.tipo_conta === 'Cheque' ? setBtnSalvarJustificativaDisableCheque : setBtnSalvarJustificativaDisableCartao}
+                                        onSubmitJustificativaDiferenca={() => onSubmitJustificativaDiferenca(execucaoFinanceiraConta.tipo_conta_uuid)}
+                                        btnSalvarJustificativaDisable={btnSalvarJustificativaDisable}
+                                        setBtnSalvarJustificativaDisable={setBtnSalvarJustificativaDisablePorConta}
                                         jaPublicado={jaPublicado}
                                     />
                                 </div>

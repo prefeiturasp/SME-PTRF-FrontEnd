@@ -1,6 +1,5 @@
 import React from "react";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { FormularioBemProduzido } from "../index";
 import { MemoryRouter } from "react-router-dom";
 import { Provider } from "react-redux";
@@ -46,6 +45,58 @@ jest.mock("../../../../../hooks/Globais/useCarregaTabelaDespesa", () => ({
     contas_associacao: [],
   }),
 }));
+jest.mock("../hooks/usePostExluirDespesaBemProduzidoEmLote", () => ({
+  usePostExluirDespesaBemProduzidoEmLote: () => ({
+    mutationPost: { mutate: jest.fn(), isPending: false },
+  }),
+}));
+
+// --- PrimeReact mocks ---
+let capturedOnSelectionChange = null;
+
+jest.mock("primereact/datatable", () => ({
+  DataTable: ({ value, selection, onSelectionChange, children }) => {
+    if (onSelectionChange) {
+      capturedOnSelectionChange = onSelectionChange;
+    }
+    return (
+      <div data-testid="datatable">
+        {(value || []).map((item, idx) => (
+          <div key={item.uuid || idx}>
+            <input
+              type="checkbox"
+              data-testid={`checkbox-row-${idx}`}
+              checked={
+                Array.isArray(selection) &&
+                selection.some((s) => s && s.uuid === item.uuid)
+              }
+              onChange={(e) => {
+                if (!onSelectionChange) return;
+                if (e.target.checked) {
+                  onSelectionChange({ value: [...(selection || []), item] });
+                } else {
+                  onSelectionChange({
+                    value: (selection || []).filter((s) => s.uuid !== item.uuid),
+                  });
+                }
+              }}
+            />
+          </div>
+        ))}
+        {children}
+      </div>
+    );
+  },
+}));
+
+jest.mock("primereact/column", () => ({
+  Column: () => null,
+}));
+
+jest.mock("primereact/paginator", () => ({
+  Paginator: () => null,
+}));
+// --- end PrimeReact mocks ---
 
 beforeAll(() => {
   global.IntersectionObserver = class {
@@ -75,6 +126,7 @@ describe("Componente FormularioBemProduzido", () => {
   };
 
   beforeEach(() => {
+    capturedOnSelectionChange = null;
     mockUseNavigate.mockClear();
     queryClient = new QueryClient({
       defaultOptions: {
@@ -121,7 +173,8 @@ describe("Componente FormularioBemProduzido", () => {
     });
     useParams.mockReturnValue({ uuid: undefined });
 
-    jest.spyOn(BensProduzidosService, "postVerificarSePodeInformarValores")
+    jest
+      .spyOn(BensProduzidosService, "postVerificarSePodeInformarValores")
       .mockResolvedValue({ pode_informar_valores: true });
 
     window.matchMedia = jest.fn().mockImplementation((query) => ({
@@ -151,8 +204,9 @@ describe("Componente FormularioBemProduzido", () => {
   it("deve habilitar o botão 'Informar valores' ao selecionar uma despesa no cadastro", async () => {
     renderComponent();
 
-    const checkbox = screen.getAllByRole("checkbox", { checked: false });
-    await userEvent.click(checkbox[0]);
+    act(() => {
+      capturedOnSelectionChange({ value: [mockItemDespesa] });
+    });
 
     const buttonInformarValores = screen.getByRole("button", {
       name: /Informar valores/,
@@ -166,34 +220,40 @@ describe("Componente FormularioBemProduzido", () => {
   it("deve navegar para Informar valores ao clicar no botão 'Informar valores'", async () => {
     renderComponent();
 
-    const checkbox = screen.getAllByRole("checkbox", { checked: false });
-    await userEvent.click(checkbox[0]);
+    act(() => {
+      capturedOnSelectionChange({ value: [mockItemDespesa] });
+    });
 
     const buttonInformarValores = screen.getByRole("button", {
       name: /Informar valores/,
     });
 
-    await fireEvent.click(buttonInformarValores);
+    fireEvent.click(buttonInformarValores);
 
     await waitFor(() => {
-      expect(screen.getByText("Informar valores utilizados na produção do bem")).toBeInTheDocument();
+      expect(
+        screen.getByText("Informar valores utilizados na produção do bem")
+      ).toBeInTheDocument();
     });
   });
 
   it("deve desabilitar o botão 'Classificar o bem' se pelo menos 1 rateio por despesa não foi preenchido", async () => {
     renderComponent();
 
-    const checkbox = screen.getAllByRole("checkbox", { checked: false });
-    await userEvent.click(checkbox[0]);
+    act(() => {
+      capturedOnSelectionChange({ value: [mockItemDespesa] });
+    });
 
     const buttonInformarValores = screen.getByRole("button", {
       name: /Informar valores/,
     });
 
-    await fireEvent.click(buttonInformarValores);
+    fireEvent.click(buttonInformarValores);
 
     await waitFor(() => {
-      expect(screen.getByRole("button", { name: /Classificar o bem/ })).toBeDisabled();
+      expect(
+        screen.getByRole("button", { name: /Classificar o bem/ })
+      ).toBeDisabled();
     });
   });
 });

@@ -1,6 +1,5 @@
 import { render, fireEvent, screen } from "@testing-library/react";
 import { BadgeCustom } from "../BadgeCustom";
-import { Button } from "antd";
 
 jest.mock("antd", () => {
   const original = jest.requireActual("antd");

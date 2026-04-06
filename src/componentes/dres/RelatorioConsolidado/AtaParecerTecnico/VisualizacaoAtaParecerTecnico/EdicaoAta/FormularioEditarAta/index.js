@@ -166,7 +166,7 @@ export const FormularioEditaAta = ({
                           icon={faInfoCircle}
                           id="numero-ata-tooltip"
                         />
-                        <ReactTooltip id="numero-ata-tooltip" html={true} />
+                        <ReactTooltip id="numero-ata-tooltip" children={true} />
                       </label>
                       <input
                         value={values.stateFormEditarAta.numero_ata ? values.stateFormEditarAta.numero_ata : ""}

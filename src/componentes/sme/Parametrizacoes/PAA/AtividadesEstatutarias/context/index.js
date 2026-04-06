@@ -3,6 +3,7 @@ import { createContext, useMemo, useState } from 'react';
 const initialFilter = {
     nome: '',
     tipo: '',
+    ano: '',
     mes: '',
 };
 
@@ -13,6 +14,7 @@ const initialStateFormModal = {
     status: undefined,
     mes: undefined,
     tipo: undefined,
+    ano: undefined,
 };
 
 export const AtividadesEstatutariasContext = createContext({

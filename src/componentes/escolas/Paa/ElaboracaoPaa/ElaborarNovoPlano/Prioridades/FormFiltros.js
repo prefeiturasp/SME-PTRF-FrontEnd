@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { Form, Row, Col, Select, Flex } from 'antd';
-import { useGetAcoesAssociacao } from '../ReceitasPrevistas/hooks/useGetAcoesAssociacao';
-import { useGetAcoesPDDE } from './hooks/useGetAcoesPDDE';
+import { useGetAcoesPTRFPrioridades } from './hooks/useGetAcoesPTRFPrioridades';
+import { useGetAcoesPDDEPrioridades } from './hooks/useGetAcoesPDDEPrioridades';
 import { useGetEspecificacoes } from './hooks/useGetEspecificacoes';
 import { RECURSOS_PRIORIDADE } from '../../../../../../constantes/prioridades';
 
@@ -17,11 +17,22 @@ export const FormFiltros = ({
   const [selectedTipoAplicacao, setSelectedTipoAplicacao] = useState('');
   const [selectedTipoDespesaCusteio, setSelectedTipoDespesaCusteio] = useState('');
   const [selectedProgramaPdde, setSelectedProgramaPdde] = useState('');
-  const [selectedAcaoPdde, setSelectedAcaoPdde] = useState('');
 
-  // Hooks para buscar ações
-  const { data: acoesAssociacao } = useGetAcoesAssociacao({ enabled: selectedRecurso === 'PTRF' });
-  const { acoesPdde } = useGetAcoesPDDE({ enabled: selectedRecurso === 'PDDE' });
+  const paa_uuid = useMemo(() =>localStorage.getItem("PAA"), [])
+
+  const { data: acoesAssociacao } = useGetAcoesPTRFPrioridades(
+    {
+      paa_uuid,
+      options: { enabled: selectedRecurso === 'PTRF' && !!paa_uuid }
+    }
+  );
+
+  const { acoesPdde } = useGetAcoesPDDEPrioridades(
+    {
+      paa_uuid,
+      options: { enabled: selectedRecurso === 'PDDE' && !!paa_uuid }
+    }
+  );
   const { especificacoes } = useGetEspecificacoes(
     selectedTipoAplicacao, 
     selectedTipoAplicacao === 'CUSTEIO' ? selectedTipoDespesaCusteio : ""
@@ -134,7 +145,6 @@ export const FormFiltros = ({
   const handleRecursoChange = (value) => {
     setSelectedRecurso(value);
     setSelectedProgramaPdde('');
-    setSelectedAcaoPdde('');
 
     form.setFieldsValue({
       acao_associacao: undefined,
@@ -158,13 +168,11 @@ export const FormFiltros = ({
     form.setFieldsValue({
       acao_pdde: undefined
     });
-    setSelectedAcaoPdde('');
     onFiltrosChange('programa_pdde__uuid', value);
     onFiltrosChange('acao_pdde__uuid', undefined);
   };
 
   const handleAcaoPddeChange = (value) => {
-    setSelectedAcaoPdde(value);
     onFiltrosChange('acao_pdde__uuid', value);
   };
 
@@ -210,7 +218,6 @@ export const FormFiltros = ({
     });
     setSelectedRecurso('');
     setSelectedProgramaPdde('');
-    setSelectedAcaoPdde('');
     setSelectedTipoAplicacao('');
     setSelectedTipoDespesaCusteio('');
     onLimparFiltros && onLimparFiltros();

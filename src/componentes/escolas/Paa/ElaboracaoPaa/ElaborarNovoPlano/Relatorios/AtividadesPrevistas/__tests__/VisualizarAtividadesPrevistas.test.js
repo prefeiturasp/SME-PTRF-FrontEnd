@@ -228,7 +228,8 @@ describe('VisualizarAtividadesPrevistas', () => {
   afterEach(() => {
     localStorage.removeItem('PAA');
   });
-
+  
+  
   // ── Renderização básica ──────────────────────────────────────────────────────
   describe('renderização básica', () => {
     it('renderiza o título e botão Voltar', () => {
@@ -1335,6 +1336,56 @@ describe('VisualizarAtividadesPrevistas', () => {
       await waitFor(() => {
         expect(deleteAtividadeEstatutariaPaa).toHaveBeenCalledWith(PAA_UUID, 'ae-ex');
       });
+    });
+  });
+
+  describe('Lista Atividades', () => {
+    it('renderiza Atividade ano Vigente e Posterior', async () => {
+
+      localStorage.setItem("DADOS_PAA", JSON.stringify({
+        periodo_paa_objeto: {
+            data_inicial: '2025-01-10',
+            data_final: '2026-01-10'
+        }
+      }))
+    
+      const atividadeVigente = {
+        uuid: 'a1-existing',
+        tipoAtividade: 'T',
+        tipoAtividadeKey: '1',   
+        descricao: 'D1',
+        ano: 'VIGENTE',
+        mesLabel: 'Janeiro',
+        isNovo: false,
+        emEdicao: false,
+        isGlobal: true,
+        needsSync: false,
+        dirty: false,
+        _destroy: false,
+        atividade_estatutaria: { uuid: 'ae1-ex' },
+      };
+
+      const atividadePosteior = {
+        uuid: 'a2-existing',
+        tipoAtividade: 'T',
+        tipoAtividadeKey: '1',       
+        descricao: 'D2',
+        ano: 'POSTERIOR',
+        mesLabel: 'Janeiro',
+        isNovo: false,
+        emEdicao: false,
+        isGlobal: true,
+        needsSync: false,
+        dirty: false,
+        _destroy: false,
+        atividade_estatutaria: { uuid: 'ae2-ex' },
+      };
+      setupDefaultMocks({ atividades: [atividadeVigente, atividadePosteior] });
+      renderComponent();    
+
+      expect(screen.getByText('Janeiro/2025')).toBeInTheDocument();
+      expect(screen.getByText('Janeiro/2026')).toBeInTheDocument();    
+
     });
   });
 });

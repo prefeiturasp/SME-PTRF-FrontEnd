@@ -16,7 +16,7 @@ const TabelaArquivosDeCarga = ({
 
   useEffect(() => {
     setPage(0); 
-    setFilteredArquivos(arquivos);  
+    setFilteredArquivos(arquivos);
   }, [arquivos]);
 
   const onPageChange = (event) => {
@@ -28,7 +28,7 @@ const TabelaArquivosDeCarga = ({
       className="container-tabela-associacoes"
       value={filteredArquivos} 
       rows={rowsPerPage}
-      paginator={filteredArquivos.length > rowsPerPage} 
+      paginator={(filteredArquivos ? filteredArquivos.length : 0) > rowsPerPage} 
       paginatorTemplate="PrevPageLink PageLinks NextPageLink"
       autoLayout={true}
       onPage={onPageChange}

@@ -2,7 +2,7 @@ import React from "react";
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { getTextosPaaUe } from '../../../../../services/escolas/PrestacaoDeContas.service';
+import { getTextosPaaUe } from '../../../../../services/escolas/Paa.service';
 import { usePostPaa } from "../hooks/usePostPaa";
 import { getPaaVigente, getParametroPaa } from "../../../../../services/sme/Parametrizacoes.service";
 import { getStatusGeracaoDocumentoPaa } from "../../../../../services/escolas/Paa.service";
@@ -27,11 +27,8 @@ jest.mock('../../../../../services/sme/Parametrizacoes.service', () => ({
   getParametroPaa: jest.fn(),
 }));
 
-jest.mock('../../../../../services/escolas/PrestacaoDeContas.service', () => ({
-  getTextosPaaUe: jest.fn(),
-}));
-
 jest.mock('../../../../../services/escolas/Paa.service', () => ({
+  getTextosPaaUe: jest.fn(),
   getStatusGeracaoDocumentoPaa: jest.fn(),
 }));
 
@@ -84,6 +81,7 @@ describe('ElaboracaoPaa Component', () => {
   it('renderiza a página com botão habilitado e cria novo PAA ao clicar', async () => {
     getTextosPaaUe.mockResolvedValue({
       texto_pagina_paa_ue: "Texto ABC",
+      texto_atividades_previstas: '',
       introducao_do_paa_ue_1: '',
       introducao_do_paa_ue_2: '',
       conclusao_do_paa_ue_1: '',
@@ -185,6 +183,7 @@ describe('ElaboracaoPaa Component', () => {
   it('renderiza a página com botão desabilitado fora do mês válido', async () => {
     getTextosPaaUe.mockResolvedValue({
       texto_pagina_paa_ue: "Texto ABC",
+      texto_atividades_previstas: '',
       introducao_do_paa_ue_1: '',
       introducao_do_paa_ue_2: '',
       conclusao_do_paa_ue_1: '',

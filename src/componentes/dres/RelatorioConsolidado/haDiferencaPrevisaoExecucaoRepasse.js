@@ -1,5 +1,3 @@
-import React from "react";
-
 export const haDiferencaPrevisaoExecucaoRepasse = (execucaoFinanceiraConta) => {
     if (execucaoFinanceiraConta) {
         return execucaoFinanceiraConta.repasses_previstos_sme_custeio !== execucaoFinanceiraConta.repasses_no_periodo_custeio ||

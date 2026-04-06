@@ -36,6 +36,7 @@ const ASSOCIACAO_NOME_ESCOLA = "ASSOCIACAO_NOME_ESCOLA";
 const ASSOCIACAO_NOME = "ASSOCIACAO_NOME";
 const DATA_LOGIN = "DATA_LOGIN";
 const PERIODO_RELATORIO_CONSOLIDADO_DRE = "PERIODO_RELATORIO_CONSOLIDADO_DRE";
+const PERIODO_SELECIONADO_DRE_ACOMPANHAMENTO = "PERIODO_SELECIONADO_DRE_ACOMPANHAMENTO";
 const DADOS_USUARIO_LOGADO = "DADOS_USUARIO_LOGADO";
 const DADOS_USUARIO_LOGADO_NORMAL = "DADOS_USUARIO_LOGADO_NORMAL";
 const DADOS_USUARIO_LOGADO_SUPORTE = "DADOS_USUARIO_LOGADO_SUPORTE";
@@ -57,6 +58,7 @@ jest.mock('../auth.service', () => ({
   ASSOCIACAO_NOME: "ASSOCIACAO_NOME",
   DATA_LOGIN: "DATA_LOGIN",
   PERIODO_RELATORIO_CONSOLIDADO_DRE: "PERIODO_RELATORIO_CONSOLIDADO_DRE",
+  PERIODO_SELECIONADO_DRE_ACOMPANHAMENTO: "PERIODO_SELECIONADO_DRE_ACOMPANHAMENTO"
 }));
 
 jest.mock('../../utils/redirect', () => ({
@@ -161,6 +163,7 @@ describe('Visoes Service', () => {
             localStorageMock.setItem(ACOMPANHAMENTO_PC_UNIDADE, '{}');
             localStorageMock.setItem(ANALISE_DRE, '{}');
             localStorageMock.setItem(PERIODO_RELATORIO_CONSOLIDADO_DRE, '{}');
+            localStorageMock.setItem(PERIODO_SELECIONADO_DRE_ACOMPANHAMENTO, '{}');
 
             moment().diff.mockReturnValue(1500); // 25 * 60 (maior que 24 horas)
 
@@ -173,6 +176,7 @@ describe('Visoes Service', () => {
             expect(localStorageMock.getItem(ACOMPANHAMENTO_PC_UNIDADE)).toBeNull();
             expect(localStorageMock.getItem(ANALISE_DRE)).toBeNull();
             expect(localStorageMock.getItem(PERIODO_RELATORIO_CONSOLIDADO_DRE)).toBeNull();
+            expect(localStorageMock.getItem(PERIODO_SELECIONADO_DRE_ACOMPANHAMENTO)).toBeNull();
             expect(localStorageMock.getItem(DATA_LOGIN)).toBe(moment(new Date(), "YYYY-MM-DD").format("YYYY-MM-DD"));
         });
     });
@@ -581,6 +585,7 @@ describe('Visoes Service', () => {
             localStorageMock.setItem('uuidAta', 'test');
             localStorageMock.setItem('prestacao_de_contas_nao_apresentada', 'test');
             localStorageMock.setItem(PERIODO_RELATORIO_CONSOLIDADO_DRE, 'test');
+            localStorageMock.setItem(PERIODO_SELECIONADO_DRE_ACOMPANHAMENTO, 'test');
             localStorageMock.setItem('PAA', 'uuid-paa-anterior');
             localStorageMock.setItem('DADOS_PAA', '{"uuid":"uuid-paa-anterior"}');
 
@@ -595,6 +600,7 @@ describe('Visoes Service', () => {
             expect(localStorageMock.getItem('uuidAta')).toBeNull();
             expect(localStorageMock.getItem('prestacao_de_contas_nao_apresentada')).toBeNull();
             expect(localStorageMock.getItem(PERIODO_RELATORIO_CONSOLIDADO_DRE)).toBeNull();
+            expect(localStorageMock.getItem(PERIODO_SELECIONADO_DRE_ACOMPANHAMENTO)).toBeNull();
             expect(localStorageMock.getItem('PAA')).toBeNull();
             expect(localStorageMock.getItem('DADOS_PAA')).toBeNull();
         });

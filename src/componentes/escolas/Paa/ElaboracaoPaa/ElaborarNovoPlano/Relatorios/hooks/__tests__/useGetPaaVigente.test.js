@@ -1,13 +1,16 @@
 import React from "react";
-import { waitFor, renderHook } from '@testing-library/react';
+import { waitFor, renderHook } from "@testing-library/react";
 import { useGetPaaVigente } from "../useGetPaaVigente";
 import { getPaaVigente } from "../../../../../../../../services/sme/Parametrizacoes.service";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 // Mock da função
-jest.mock("../../../../../../../../services/sme/Parametrizacoes.service", () => ({
-  getPaaVigente: jest.fn(),
-}));
+jest.mock(
+  "../../../../../../../../services/sme/Parametrizacoes.service",
+  () => ({
+    getPaaVigente: jest.fn(),
+  }),
+);
 
 // Cria um wrapper com QueryClientProvider
 const createWrapper = () => {
@@ -35,7 +38,7 @@ describe("useGetPaaVigente", () => {
       texto_introducao: "<p>Texto de introdução do PAA</p>",
       associacao_uuid: "assoc-uuid-456",
       ano: 2024,
-      status: "em_elaboracao"
+      status: "em_elaboracao",
     };
     getPaaVigente.mockResolvedValueOnce(mockData);
 
@@ -135,7 +138,7 @@ describe("useGetPaaVigente", () => {
   it("deve expor a função refetch", async () => {
     const mockData = {
       uuid: "paa-uuid-123",
-      texto_introducao: "<p>Texto de introdução do PAA</p>"
+      texto_introducao: "<p>Texto de introdução do PAA</p>",
     };
     getPaaVigente.mockResolvedValueOnce(mockData);
 
@@ -152,12 +155,12 @@ describe("useGetPaaVigente", () => {
   it("deve retornar isFetching como true durante a requisição", async () => {
     const mockData = {
       uuid: "paa-uuid-123",
-      texto_introducao: "<p>Texto de introdução do PAA</p>"
+      texto_introducao: "<p>Texto de introdução do PAA</p>",
     };
-    
+
     // Simula uma requisição que demora um pouco
-    getPaaVigente.mockImplementation(() => 
-      new Promise(resolve => setTimeout(() => resolve(mockData), 100))
+    getPaaVigente.mockImplementation(
+      () => new Promise((resolve) => setTimeout(() => resolve(mockData), 100)),
     );
 
     const { result } = renderHook(() => useGetPaaVigente("assoc-uuid-456"), {
@@ -176,11 +179,11 @@ describe("useGetPaaVigente", () => {
   it("deve fazer nova requisição quando associacaoUuid muda", async () => {
     const mockData1 = {
       uuid: "paa-uuid-123",
-      texto_introducao: "<p>PAA 1</p>"
+      texto_introducao: "<p>PAA 1</p>",
     };
     const mockData2 = {
       uuid: "paa-uuid-456",
-      texto_introducao: "<p>PAA 2</p>"
+      texto_introducao: "<p>PAA 2</p>",
     };
 
     getPaaVigente
@@ -191,8 +194,8 @@ describe("useGetPaaVigente", () => {
       ({ uuid }) => useGetPaaVigente(uuid),
       {
         wrapper: createWrapper(),
-        initialProps: { uuid: "assoc-uuid-1" }
-      }
+        initialProps: { uuid: "assoc-uuid-1" },
+      },
     );
 
     await waitFor(() => expect(result.current.isLoading).toBe(false));

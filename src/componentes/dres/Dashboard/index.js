@@ -6,8 +6,12 @@ import "./dashboard.scss"
 import {BarraDeStatus} from "./BarraDeStatus";
 import {DashboardCard} from "./DashboardCard";
 import Loading from "../../../utils/Loading";
+import { PERIODO_SELECIONADO_DRE_ACOMPANHAMENTO } from "../../../services/auth.service";
+import { visoesService } from "../../../services/visoes.service";
+import useUnidadeSelecionada from "../../../hooks/Globais/useUnidadeSelecionada";
 
 export const DreDashboard = () => {
+    const { getUUIDUnidadeSelecionadaTipoDRE } = useUnidadeSelecionada(visoesService)
 
     const [periodos, setPeriodos] = useState(false);
     const [periodoEscolhido, setPeriodoEsolhido] = useState(false);
@@ -25,16 +29,17 @@ export const DreDashboard = () => {
     useEffect(() => {
         carregaItensDashboard();
         if (periodoEscolhido) {
-            localStorage.setItem('PERIODO_SELECIONADO_DRE_ACOMPANHAMENTO', periodoEscolhido);
+            localStorage.setItem(PERIODO_SELECIONADO_DRE_ACOMPANHAMENTO, periodoEscolhido);
         }
     }, [periodoEscolhido]);
 
     const carregaPeriodos = async () => {
         setLoading(true);
-        let periodos = await getPeriodos();
+
+        let periodos = await getPeriodos(getUUIDUnidadeSelecionadaTipoDRE());
         setPeriodos(periodos);
 
-        const storedPeriodo = localStorage.getItem('PERIODO_SELECIONADO_DRE_ACOMPANHAMENTO');
+        const storedPeriodo = localStorage.getItem(PERIODO_SELECIONADO_DRE_ACOMPANHAMENTO);
         if (periodos && periodos.length > 0){
             if(storedPeriodo && !acessadoPelaSidebar) {
                 setPeriodoEsolhido(storedPeriodo);

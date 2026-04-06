@@ -1,77 +1,84 @@
-import { React, useEffect, useState, useCallback } from 'react'
-import { PaginasContainer } from '../../../../paginas/PaginasContainer'
+import { React, useEffect, useState, useCallback } from "react";
+import { PaginasContainer } from "../../../../paginas/PaginasContainer";
 import Loading from "../../../../utils/Loading";
-import { getTextosPaaUe } from '../../../../services/escolas/PrestacaoDeContas.service';
-import BreadcrumbComponent from '../../../Globais/Breadcrumb';
-import { useNavigate } from 'react-router-dom';
-import {ASSOCIACAO_UUID} from "../../../../services/auth.service";
+import { getTextosPaaUe } from "../../../../services/escolas/Paa.service";
+import BreadcrumbComponent from "../../../Globais/Breadcrumb";
+import { useNavigate } from "react-router-dom";
+import { ASSOCIACAO_UUID } from "../../../../services/auth.service";
 import { usePostPaa } from "./hooks/usePostPaa";
-import { getPaaVigente, getParametroPaa } from "../../../../services/sme/Parametrizacoes.service";
+import {
+  getPaaVigente,
+  getParametroPaa,
+} from "../../../../services/sme/Parametrizacoes.service";
 import { getStatusGeracaoDocumentoPaa } from "../../../../services/escolas/Paa.service";
-import { EstruturaCompletaModeloPaa } from './EstruturaCompletaModeloPaa';
-import { visoesService } from '../../../../services/visoes.service';
+import { EstruturaCompletaModeloPaa } from "./EstruturaCompletaModeloPaa";
+import { visoesService } from "../../../../services/visoes.service";
 
 export const ElaboracaoPaa = () => {
   const associacao_uuid = localStorage.getItem(ASSOCIACAO_UUID);
   const navigate = useNavigate();
-  const podeIniciarPaa = visoesService.getPermissoes(['custom_change_paa']);
+  const podeIniciarPaa = visoesService.getPermissoes(["custom_change_paa"]);
 
   const [notValidPaa, setNotValidPaa] = useState(true);
   const [loading, setLoading] = useState(true);
   const [loadingPaa, setLoadingPaa] = useState(false);
-  const [validMonthPaa, setValidMonthPaa] = useState('');
-  const [textoPaa, setTextoPaa] = useState('');
+  const [validMonthPaa, setValidMonthPaa] = useState("");
+  const [textoPaa, setTextoPaa] = useState("");
   const [paaGerado, setPaaGerado] = useState(false);
   const { mutationPost } = usePostPaa();
 
   const itemsBreadCrumb = [
-    { label: 'Plano Anual de Atividades', active: true },
+    { label: "Plano Anual de Atividades", active: true },
   ];
   const dataAtual = new Date();
 
-  const carregaPaa = useCallback(async ()=>{
+  const carregaPaa = useCallback(async () => {
     setLoadingPaa(true);
     try {
-        let response = await getPaaVigente(associacao_uuid)
-        localStorage.setItem("PAA", response.uuid);
-        localStorage.setItem("DADOS_PAA", JSON.stringify(response));
-        setNotValidPaa(false);
-        const statusDocumento = await getStatusGeracaoDocumentoPaa(response.uuid);
-        setPaaGerado(statusDocumento?.status === "CONCLUIDO" && statusDocumento?.versao === "FINAL");
+      let response = await getPaaVigente(associacao_uuid);
+      localStorage.setItem("PAA", response.uuid);
+      localStorage.setItem("DADOS_PAA", JSON.stringify(response));
+      setNotValidPaa(false);
+      const statusDocumento = await getStatusGeracaoDocumentoPaa(response.uuid);
+      setPaaGerado(
+        statusDocumento?.status === "CONCLUIDO" &&
+          statusDocumento?.versao === "FINAL",
+      );
     } catch (error) {
-        console.error(error);
-        setNotValidPaa(true);
-        setPaaGerado(false);
+      console.error(error);
+      setNotValidPaa(true);
+      setPaaGerado(false);
     }
     setLoadingPaa(false);
-  }, [associacao_uuid])
+  }, [associacao_uuid]);
 
-    useEffect(()=>{
-      carregaPaa()
-    }, [carregaPaa])
+  useEffect(() => {
+    carregaPaa();
+  }, [carregaPaa]);
 
-  const carregaParametroPaa = useCallback(async ()=>{
+  const carregaParametroPaa = useCallback(async () => {
     try {
-        let response = await getParametroPaa();
-        setValidMonthPaa((dataAtual.getMonth() + 1) >= response.detail);
+      let response = await getParametroPaa();
+      setValidMonthPaa(dataAtual.getMonth() + 1 >= response.detail);
     } catch (error) {
       console.error(error);
     }
-    }, [])
-
-    useEffect(()=>{
-      carregaParametroPaa()
-    }, [carregaParametroPaa])
+  }, []);
 
   useEffect(() => {
-    getTextosPaaUe().then((response) => {
-      setTextoPaa(response.texto_pagina_paa_ue);
-      setLoading(false);
-    }
-    ).catch((error) => {
-      setLoading(false);
-      console.error(error);
-    });
+    carregaParametroPaa();
+  }, [carregaParametroPaa]);
+
+  useEffect(() => {
+    getTextosPaaUe()
+      .then((response) => {
+        setTextoPaa(response.texto_pagina_paa_ue);
+        setLoading(false);
+      })
+      .catch((error) => {
+        setLoading(false);
+        console.error(error);
+      });
   }, []);
 
   const handlePaa = async () => {
@@ -89,50 +96,54 @@ export const ElaboracaoPaa = () => {
         return;
       }
     }
-    navigate('/elaborar-novo-paa');
+
+    navigate("/elaborar-novo-paa");
   };
 
   return (
     <>
-    <PaginasContainer>
-      <BreadcrumbComponent items={itemsBreadCrumb}/>
-      <h1 className="titulo-itens-painel mt-5">Plano Anual de Atividades</h1>
-      {(loading || loadingPaa) ? (
-        <Loading
+      <PaginasContainer>
+        <BreadcrumbComponent items={itemsBreadCrumb} />
+        <h1 className="titulo-itens-painel mt-5">Plano Anual de Atividades</h1>
+        {loading || loadingPaa ? (
+          <Loading
             corGrafico="black"
             corFonte="dark"
             marginTop="50"
             marginBottom="0"
-        />
-        ) : <>
-          <div className="page-content-inner">
-            <div className="col-12 mb-4 mt-3">
-              <div dangerouslySetInnerHTML={{__html: textoPaa}}/>
-            </div>
+          />
+        ) : (
+          <>
+            <div className="page-content-inner">
+              <div className="col-12 mb-4 mt-3">
+                <div dangerouslySetInnerHTML={{ __html: textoPaa }} />
+              </div>
 
-            <EstruturaCompletaModeloPaa />
+              <EstruturaCompletaModeloPaa />
 
-            <div className="d-flex justify-content-center">
-              <button
-                type="button"
-                className="btn btn-success mt-2 mr-5"
-                data-testid="elaborar-paa-button"
-                onClick={handlePaa}
-                disabled={
-                  !validMonthPaa ||
-                  paaGerado ||
-                  (notValidPaa && !podeIniciarPaa)
-                }
-              >
-                {paaGerado
-                  ? "Elaborar novo PAA"
-                  : (!notValidPaa ? "Continuar elaboração de PAA" : "Elaborar novo PAA")}
-              </button>
+              <div className="d-flex justify-content-center">
+                <button
+                  type="button"
+                  className="btn btn-success mt-2 mr-5"
+                  data-testid="elaborar-paa-button"
+                  onClick={handlePaa}
+                  disabled={
+                    !validMonthPaa ||
+                    paaGerado ||
+                    (notValidPaa && !podeIniciarPaa)
+                  }
+                >
+                  {paaGerado
+                    ? "Elaborar novo PAA"
+                    : !notValidPaa
+                      ? "Continuar elaboração de PAA"
+                      : "Elaborar novo PAA"}
+                </button>
+              </div>
             </div>
-          </div>
-        </>
-      }
-    </PaginasContainer>
+          </>
+        )}
+      </PaginasContainer>
     </>
-  )
-}
+  );
+};
