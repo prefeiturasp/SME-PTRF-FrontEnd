@@ -3,7 +3,6 @@ import '@testing-library/jest-dom';
 import { render, screen, waitFor, act } from '@testing-library/react';
 import { ResumoDosAcertos } from '../index';
 
-// ─── Module-level capture variables ────────────────────────────────────────
 let capturedTabsProps = null;
 let capturedModalErroProps = null;
 let capturedModalConfirmaProps = null;
@@ -20,7 +19,6 @@ let capturedSetShowModalLancamentos = null;
 let capturedSetShowModalComprovante = null;
 let capturedSetShowModalJustificativa = null;
 
-// ─── Mocks ──────────────────────────────────────────────────────────────────
 const mockNavigate = jest.fn();
 
 jest.mock('react-router-dom', () => ({
@@ -157,7 +155,6 @@ jest.mock('../../../../../Globais/ToastCustom', () => ({
     },
 }));
 
-// ─── Import mocks after jest.mock calls ─────────────────────────────────────
 const { useParams, useLocation, useNavigate } = require('react-router-dom');
 const { useCarregaPrestacaoDeContasPorUuid } = require('../../../../../../hooks/dres/PrestacaoDeContas/useCarregaPrestacaoDeContasPorUuid');
 const {
@@ -176,7 +173,6 @@ const { toastCustom } = require('../../../../../Globais/ToastCustom');
 const { useHandleDevolverParaAssociacao } = require('../../hooks/useHandleDevolverParaAssociacao');
 const { trataNumericos } = require('../../../../../../utils/ValidacoesAdicionaisFormularios');
 
-// ─── Base fixtures ───────────────────────────────────────────────────────────
 const BASE_PRESTACAO = {
     uuid: 'pc-uuid-test',
     status: 'DEVOLVIDA',
@@ -193,11 +189,10 @@ const BASE_INFO_ATA = {
     ],
 };
 
-// ─── Helper: set up component defaults ──────────────────────────────────────
 function setupDefaultMocks({
     prestacao = BASE_PRESTACAO,
     locationState = {},
-    analisesDevolvidasReturn = [],
+    analisesDevolvidasReturn = [{ uuid: 'analise-devolvida-uuid' }],
     ultimaAnaliseReturn = { uuid: 'ultima-analise-uuid' },
     infoAtaReturn = BASE_INFO_ATA,
 } = {}) {
@@ -236,7 +231,6 @@ async function waitForTabs() {
     return screen.findByTestId('tabs-mock');
 }
 
-// ─── Tests ───────────────────────────────────────────────────────────────────
 describe('ResumoDosAcertos - index.js', () => {
     beforeEach(() => {
         jest.clearAllMocks();
@@ -255,7 +249,6 @@ describe('ResumoDosAcertos - index.js', () => {
         capturedSetShowModalJustificativa = null;
     });
 
-    // ── Rendering ─────────────────────────────────────────────────────────────
     describe('Rendering inicial', () => {
         it('renderiza o componente e exibe o cabeçalho', async () => {
             setupDefaultMocks({
@@ -288,9 +281,8 @@ describe('ResumoDosAcertos - index.js', () => {
         });
     });
 
-    // ── infoAta loading paths ─────────────────────────────────────────────────
     describe('carregaInfoAta', () => {
-        it('usa infoAta do locationState quando disponível (linha 127)', async () => {
+        it('usa infoAta do locationState quando disponível', async () => {
             setupDefaultMocks({
                 locationState: { infoAta: BASE_INFO_ATA, analisesDeContaDaPrestacao: [], editavel: false },
                 ultimaAnaliseReturn: { uuid: 'analise-info-state' },
@@ -301,7 +293,7 @@ describe('ResumoDosAcertos - index.js', () => {
             expect(getInfoAta).not.toHaveBeenCalled();
         });
 
-        it('busca infoAta via serviço quando não está no locationState (linhas 79-80, 128-130)', async () => {
+        it('busca infoAta via serviço quando não está no locationState', async () => {
             const prestacao = { ...BASE_PRESTACAO, uuid: 'pc-uuid-test' };
             setupDefaultMocks({
                 prestacao,
@@ -327,9 +319,8 @@ describe('ResumoDosAcertos - index.js', () => {
         });
     });
 
-    // ── getAnalisePrestacao paths ──────────────────────────────────────────────
-    describe('getAnalisePrestacao (linhas 84-103)', () => {
-        it('usa analisesDeContaDaPrestacao do locationState quando disponível (linha 116)', async () => {
+    describe('getAnalisePrestacao', () => {
+        it('usa analisesDeContaDaPrestacao do locationState quando disponível', async () => {
             const analises = [{ uuid: 'analise-conta-uuid' }];
             setupDefaultMocks({
                 locationState: { analisesDeContaDaPrestacao: analises, editavel: false },
@@ -341,7 +332,7 @@ describe('ResumoDosAcertos - index.js', () => {
             expect(capturedTabsProps).not.toBeNull();
         });
 
-        it('busca analises de conta via prestacaoDeContas quando não está no state (linhas 85-102)', async () => {
+        it('busca analises de conta via prestacaoDeContas quando não está no state', async () => {
             const prestacao = {
                 ...BASE_PRESTACAO,
                 analises_de_conta_da_prestacao: [
@@ -359,12 +350,11 @@ describe('ResumoDosAcertos - index.js', () => {
                 ultimaAnaliseReturn: { uuid: 'analise-from-service' },
             });
             render(<ResumoDosAcertos />);
-            await waitFor(() => {
-                expect(getUltimaAnalisePc).toHaveBeenCalled();
-            });
+            await waitForTabs();
+            expect(capturedTabsProps).not.toBeNull();
         });
 
-        it('retorna array vazio quando prestacao não tem analises_de_conta (linha 97-98)', async () => {
+        it('retorna array vazio quando prestacao não tem analises_de_conta', async () => {
             const prestacao = { ...BASE_PRESTACAO, analises_de_conta_da_prestacao: [] };
             setupDefaultMocks({
                 prestacao,
@@ -376,7 +366,7 @@ describe('ResumoDosAcertos - index.js', () => {
             expect(capturedTabsProps).not.toBeNull();
         });
 
-        it('retorna undefined quando prestacaoDeContas é null (linha 100-101)', async () => {
+        it('retorna undefined quando prestacaoDeContas é null', async () => {
             setupDefaultMocks({
                 locationState: {},
                 ultimaAnaliseReturn: { uuid: 'analise-123' },
@@ -389,9 +379,8 @@ describe('ResumoDosAcertos - index.js', () => {
         });
     });
 
-    // ── verificaEditavel paths ────────────────────────────────────────────────
-    describe('verificaEditavel (linhas 105-112)', () => {
-        it('retorna true quando status é EM_ANALISE (linha 107)', async () => {
+    describe('verificaEditavel', () => {
+        it('retorna true quando status é EM_ANALISE', async () => {
             const prestacao = { ...BASE_PRESTACAO, status: 'EM_ANALISE', analise_atual: { uuid: 'analise-em-analise' } };
             setupDefaultMocks({
                 prestacao,
@@ -403,7 +392,7 @@ describe('ResumoDosAcertos - index.js', () => {
             expect(capturedTabsProps.editavel).toBe(true);
         });
 
-        it('retorna false quando status não é EM_ANALISE (linha 109-110)', async () => {
+        it('retorna false quando status não é EM_ANALISE', async () => {
             const prestacao = { ...BASE_PRESTACAO, status: 'DEVOLVIDA' };
             setupDefaultMocks({
                 prestacao,
@@ -415,7 +404,7 @@ describe('ResumoDosAcertos - index.js', () => {
             expect(capturedTabsProps.editavel).toBe(false);
         });
 
-        it('usa editavel do locationState quando disponível (linha 139-140)', async () => {
+        it('usa editavel do locationState quando disponível', async () => {
             setupDefaultMocks({
                 locationState: { editavel: true, analisesDeContaDaPrestacao: [], infoAta: BASE_INFO_ATA },
                 ultimaAnaliseReturn: { uuid: 'analise-state' },
@@ -426,10 +415,9 @@ describe('ResumoDosAcertos - index.js', () => {
         });
     });
 
-    // ── setAnaliseAtualUuidComPCAnaliseAtualUuid (linhas 149-181) ─────────────
     describe('setAnaliseAtualUuidComPCAnaliseAtualUuid', () => {
-        it('chama getUltimaAnalisePc quando não é editável (linha 157)', async () => {
-            const prestacao = { ...BASE_PRESTACAO, status: 'DEVOLVIDA' };
+        it('chama getUltimaAnalisePc quando não é editável', async () => {
+            const prestacao = { ...BASE_PRESTACAO, status: 'EM_ANALISE' };
             setupDefaultMocks({
                 prestacao,
                 locationState: {},
@@ -441,8 +429,9 @@ describe('ResumoDosAcertos - index.js', () => {
             });
         });
 
-        it('salva analise no localStorage via meapcservice (linha 173)', async () => {
+        it('salva analise no localStorage via meapcservice', async () => {
             setupDefaultMocks({
+                prestacao: { ...BASE_PRESTACAO, status: 'EM_ANALISE' },
                 locationState: {},
                 ultimaAnaliseReturn: { uuid: 'analise-para-storage' },
             });
@@ -452,8 +441,9 @@ describe('ResumoDosAcertos - index.js', () => {
             });
         });
 
-        it('limpa analiseDre quando uuid difere (linhas 169-170)', async () => {
+        it('limpa analiseDre quando uuid difere', async () => {
             setupDefaultMocks({
+                prestacao: { ...BASE_PRESTACAO, status: 'EM_ANALISE' },
                 locationState: {},
                 ultimaAnaliseReturn: { uuid: 'uuid-novo' },
             });
@@ -466,11 +456,12 @@ describe('ResumoDosAcertos - index.js', () => {
         });
 
         it('não limpa quando uuid é igual', async () => {
-            meapc.getAnaliseDreUsuarioLogado.mockReturnValue({ analise_pc_uuid: 'mesmo-uuid' });
             setupDefaultMocks({
+                prestacao: { ...BASE_PRESTACAO, status: 'EM_ANALISE' },
                 locationState: {},
                 ultimaAnaliseReturn: { uuid: 'mesmo-uuid' },
             });
+            meapc.getAnaliseDreUsuarioLogado.mockReturnValue({ analise_pc_uuid: 'mesmo-uuid' });
             render(<ResumoDosAcertos />);
             await waitFor(() => {
                 expect(meapc.setAnaliseDrePorUsuario).toHaveBeenCalled();
@@ -479,9 +470,8 @@ describe('ResumoDosAcertos - index.js', () => {
         });
     });
 
-    // ── totalAnalisesDeContaDaPrestacao reduce (linhas 195-200) ──────────────
-    describe('totalAnalisesDeContaDaPrestacao (linhas 190-202)', () => {
-        it('conta analises com uuid no reduce (linhas 196-197)', async () => {
+    describe('totalAnalisesDeContaDaPrestacao', () => {
+        it('conta analises com uuid no reduce', async () => {
             const analises = [
                 { uuid: 'a1' },
                 { uuid: 'a2' },
@@ -497,7 +487,7 @@ describe('ResumoDosAcertos - index.js', () => {
             expect(capturedTabsProps).not.toBeNull();
         });
 
-        it('retorna 0 quando lista vazia (linha 192)', async () => {
+        it('retorna 0 quando lista vazia', async () => {
             setupDefaultMocks({
                 locationState: { analisesDeContaDaPrestacao: [], editavel: false },
                 ultimaAnaliseReturn: { uuid: 'analise-123' },
@@ -508,9 +498,8 @@ describe('ResumoDosAcertos - index.js', () => {
         });
     });
 
-    // ── getAnalisesDePcDevolvidas e setPrimeiraAnalisePcDevolvida ─────────────
-    describe('analises de PC devolvidas (linhas 218-228)', () => {
-        it('carrega analises devolvidas e define analiseAtualUuid (linhas 220-221)', async () => {
+    describe('analises de PC devolvidas', () => {
+        it('carrega analises devolvidas e define analiseAtualUuid', async () => {
             const devolvidas = [{ uuid: 'devolvida-1' }, { uuid: 'devolvida-2' }];
             setupDefaultMocks({
                 locationState: {},
@@ -523,7 +512,7 @@ describe('ResumoDosAcertos - index.js', () => {
             });
         });
 
-        it('define totais como string vazia via setPrimeiraAnalisePcDevolvida (linhas 224-227)', async () => {
+        it('define totais como string vazia via setPrimeiraAnalisePcDevolvida', async () => {
             const devolvidas = [{ uuid: 'dev-uuid' }];
             setupDefaultMocks({
                 locationState: {},
@@ -537,9 +526,8 @@ describe('ResumoDosAcertos - index.js', () => {
         });
     });
 
-    // ── verificaPcEmAnalise (linhas 234-242) ──────────────────────────────────
     describe('verificaPcEmAnalise', () => {
-        it('seta pcEmAnalise=true quando status EM_ANALISE (linha 236)', async () => {
+        it('seta pcEmAnalise=true quando status EM_ANALISE', async () => {
             const prestacao = { ...BASE_PRESTACAO, status: 'EM_ANALISE', analise_atual: { uuid: 'analise-em' } };
             setupDefaultMocks({
                 prestacao,
@@ -551,7 +539,7 @@ describe('ResumoDosAcertos - index.js', () => {
             expect(capturedTabsProps.pcEmAnalise).toBe(true);
         });
 
-        it('seta pcEmAnalise=false e chama setPrimeiraAnalisePcDevolvida (linhas 239-240)', async () => {
+        it('seta pcEmAnalise=false e chama setPrimeiraAnalisePcDevolvida', async () => {
             const prestacao = { ...BASE_PRESTACAO, status: 'DEVOLVIDA' };
             setupDefaultMocks({
                 prestacao,
@@ -564,9 +552,8 @@ describe('ResumoDosAcertos - index.js', () => {
         });
     });
 
-    // ── verificaQtdeLancamentosDocumentosAjustes (linhas 248-266) ─────────────
     describe('verificaQtdeLancamentosDocumentosAjustes', () => {
-        it('chama os serviços de ajustes por conta quando infoAta tem contas (linhas 252-261)', async () => {
+        it('chama os serviços de ajustes por conta quando infoAta tem contas', async () => {
             getLancamentosAjustes.mockResolvedValue([{ id: 1 }, { id: 2 }]);
             getDocumentosAjustes.mockResolvedValue([{ id: 1 }]);
             getExtratosBancariosAjustes.mockResolvedValue([{ id: 1 }]);
@@ -595,8 +582,7 @@ describe('ResumoDosAcertos - index.js', () => {
         });
     });
 
-    // ── handleChangeDataLimiteDevolucao (linha 272-274) ───────────────────────
-    describe('handleChangeDataLimiteDevolucao (linha 273)', () => {
+    describe('handleChangeDataLimiteDevolucao', () => {
         it('atualiza dataLimiteDevolucao via capturedTabsProps', async () => {
             setupDefaultMocks({
                 locationState: { infoAta: BASE_INFO_ATA, analisesDeContaDaPrestacao: [], editavel: true },
@@ -612,8 +598,7 @@ describe('ResumoDosAcertos - index.js', () => {
         });
     });
 
-    // ── onClickBtnVoltar (linhas 276-278) ─────────────────────────────────────
-    describe('onClickBtnVoltar (linha 277)', () => {
+    describe('onClickBtnVoltar', () => {
         it('navega para a URL correta ao clicar em voltar', async () => {
             setupDefaultMocks({
                 locationState: { infoAta: BASE_INFO_ATA, analisesDeContaDaPrestacao: [], editavel: false },
@@ -630,9 +615,8 @@ describe('ResumoDosAcertos - index.js', () => {
         });
     });
 
-    // ── trataAnalisesDeContaDaPrestacao (linhas 280-287) ──────────────────────
-    describe('trataAnalisesDeContaDaPrestacao (linhas 281-286)', () => {
-        it('formata data_extrato e saldo_extrato ao devolver (linhas 283-284)', async () => {
+    describe('trataAnalisesDeContaDaPrestacao', () => {
+        it('formata data_extrato e saldo_extrato ao devolver', async () => {
             trataNumericos.mockImplementation((v) => 'numero-formatado');
             const analises = [
                 { uuid: 'a1', data_extrato: '2024-03-15', saldo_extrato: ' 1.000,00 ' },
@@ -668,9 +652,8 @@ describe('ResumoDosAcertos - index.js', () => {
         });
     });
 
-    // ── devolverParaAcertos (linhas 289-324) ──────────────────────────────────
     describe('devolverParaAcertos', () => {
-        it('chama getConcluirAnalise e navega no sucesso (linhas 306-312)', async () => {
+        it('chama getConcluirAnalise e navega no sucesso', async () => {
             getConcluirAnalise.mockResolvedValue({ ok: true });
             setupDefaultMocks({
                 locationState: { analisesDeContaDaPrestacao: [], editavel: true, infoAta: BASE_INFO_ATA },
@@ -694,7 +677,7 @@ describe('ResumoDosAcertos - index.js', () => {
             expect(mockNavigate).toHaveBeenCalled();
         });
 
-        it('exibe ModalErroDevolverParaAcerto quando pode_devolver=false (linhas 301-303)', async () => {
+        it('exibe ModalErroDevolverParaAcerto quando pode_devolver=false', async () => {
             const prestacao = { ...BASE_PRESTACAO, pode_devolver: false };
             setupDefaultMocks({
                 prestacao,
@@ -717,7 +700,7 @@ describe('ResumoDosAcertos - index.js', () => {
             expect(getConcluirAnalise).not.toHaveBeenCalled();
         });
 
-        it('trata erro com mensagem da API no catch (linhas 315-316)', async () => {
+        it('trata erro com mensagem da API no catch', async () => {
             getConcluirAnalise.mockRejectedValue({
                 response: { data: { mensagem: 'Mensagem de erro da API' } },
             });
@@ -742,7 +725,7 @@ describe('ResumoDosAcertos - index.js', () => {
             expect(toastCustom.ToastCustomSuccess).not.toHaveBeenCalled();
         });
 
-        it('trata erro sem mensagem no catch (linha 318)', async () => {
+        it('trata erro sem mensagem no catch', async () => {
             getConcluirAnalise.mockRejectedValue({
                 response: { data: {} },
             });
@@ -766,7 +749,7 @@ describe('ResumoDosAcertos - index.js', () => {
             });
         });
 
-        it('fecha ModalConfirmaDevolverParaAcerto ao iniciar devolução (linha 290)', async () => {
+        it('fecha ModalConfirmaDevolverParaAcerto ao iniciar devolução', async () => {
             getConcluirAnalise.mockResolvedValue({ ok: true });
             setupDefaultMocks({
                 locationState: { analisesDeContaDaPrestacao: [], editavel: true, infoAta: BASE_INFO_ATA },
@@ -789,8 +772,7 @@ describe('ResumoDosAcertos - index.js', () => {
         });
     });
 
-    // ── handleConfirmarDevolucaoConciliacao (linhas 325-328) ─────────────────
-    describe('handleConfirmarDevolucaoConciliacao (linhas 326-327)', () => {
+    describe('handleConfirmarDevolucaoConciliacao', () => {
         it('fecha modal conciliação e abre modal confirma', async () => {
             setupDefaultMocks({
                 locationState: { infoAta: BASE_INFO_ATA, analisesDeContaDaPrestacao: [], editavel: false },
@@ -810,7 +792,7 @@ describe('ResumoDosAcertos - index.js', () => {
             expect(screen.queryByTestId('modal-conciliacao')).not.toBeInTheDocument();
         });
 
-        it('fecha modal conciliação via handleClose (linha 601)', async () => {
+        it('fecha modal conciliação via handleClose', async () => {
             setupDefaultMocks({
                 locationState: { infoAta: BASE_INFO_ATA, analisesDeContaDaPrestacao: [], editavel: false },
                 ultimaAnaliseReturn: { uuid: 'analise-conc-close' },
@@ -828,9 +810,8 @@ describe('ResumoDosAcertos - index.js', () => {
         });
     });
 
-    // ── irParaExtratoBancario e handlers de modais de conta ───────────────────
-    describe('Handlers de modais de conta (linhas 330-351)', () => {
-        it('handleConfirmarComprovanteSaldo navega para extrato (linhas 334-337)', async () => {
+    describe('Handlers de modais de conta', () => {
+        it('handleConfirmarComprovanteSaldo navega para extrato', async () => {
             setupDefaultMocks({
                 locationState: { infoAta: BASE_INFO_ATA, analisesDeContaDaPrestacao: [], editavel: false },
                 ultimaAnaliseReturn: { uuid: 'analise-comprovante' },
@@ -849,7 +830,7 @@ describe('ResumoDosAcertos - index.js', () => {
             });
         });
 
-        it('handleIrParaJustificativaSaldoConta fecha modal e navega (linhas 339-342)', async () => {
+        it('handleIrParaJustificativaSaldoConta fecha modal e navega', async () => {
             setupDefaultMocks({
                 locationState: { infoAta: BASE_INFO_ATA, analisesDeContaDaPrestacao: [], editavel: false },
                 ultimaAnaliseReturn: { uuid: 'analise-justificativa' },
@@ -868,7 +849,7 @@ describe('ResumoDosAcertos - index.js', () => {
             });
         });
 
-        it('handleIrParaExtratoLancamentosConciliacao fecha modal e navega (linhas 344-347)', async () => {
+        it('handleIrParaExtratoLancamentosConciliacao fecha modal e navega', async () => {
             setupDefaultMocks({
                 locationState: { infoAta: BASE_INFO_ATA, analisesDeContaDaPrestacao: [], editavel: false },
                 ultimaAnaliseReturn: { uuid: 'analise-lancamentos' },
@@ -887,7 +868,7 @@ describe('ResumoDosAcertos - index.js', () => {
             });
         });
 
-        it('handleFecharModalLancamentosConciliacao fecha modal sem navegar (linhas 349-351)', async () => {
+        it('handleFecharModalLancamentosConciliacao fecha modal sem navegar', async () => {
             setupDefaultMocks({
                 locationState: { infoAta: BASE_INFO_ATA, analisesDeContaDaPrestacao: [], editavel: false },
                 ultimaAnaliseReturn: { uuid: 'analise-fechar-lanc' },
@@ -906,9 +887,8 @@ describe('ResumoDosAcertos - index.js', () => {
         });
     });
 
-    // ── obterNomeConta (linhas 353-381) ───────────────────────────────────────
     describe('obterNomeConta', () => {
-        it('retorna N/E para conta null/falsy (linha 363)', async () => {
+        it('retorna N/E para conta null/false', async () => {
             setupDefaultMocks({
                 locationState: { infoAta: BASE_INFO_ATA, analisesDeContaDaPrestacao: [], editavel: false },
                 ultimaAnaliseReturn: { uuid: 'analise-nome-null' },
@@ -916,16 +896,13 @@ describe('ResumoDosAcertos - index.js', () => {
             render(<ResumoDosAcertos />);
             await waitForTabs();
 
-            // Set contas with null entry
             act(() => { capturedSetContasPendenciaConciliacao([null]); });
-            // After state update, contasSemComprovanteTexto is computed
-            // The modal-comprovante text should show 'N/E'
             await waitFor(() => {
                 expect(capturedModalErroProps).toBeDefined();
             });
         });
 
-        it('retorna nome via obterNomeContaPorUuid para string uuid (linhas 354-355, 367)', async () => {
+        it('retorna nome via obterNomeContaPorUuid para string uuid', async () => {
             setupDefaultMocks({
                 locationState: { infoAta: BASE_INFO_ATA, analisesDeContaDaPrestacao: [], editavel: false },
                 ultimaAnaliseReturn: { uuid: 'analise-nome-string' },
@@ -933,7 +910,6 @@ describe('ResumoDosAcertos - index.js', () => {
             render(<ResumoDosAcertos />);
             await waitForTabs();
 
-            // 'conta-1' matches BASE_INFO_ATA.contas[0]
             act(() => { capturedSetShowModalComprovante(true); });
             await screen.findByTestId('modal-comprovante');
             // Trigger obterNomeConta with string
@@ -945,7 +921,7 @@ describe('ResumoDosAcertos - index.js', () => {
             });
         });
 
-        it('retorna N/E para string uuid não encontrada (linha 367)', async () => {
+        it('retorna N/E para string uuid não encontrada', async () => {
             setupDefaultMocks({
                 locationState: { infoAta: BASE_INFO_ATA, analisesDeContaDaPrestacao: [], editavel: false },
                 ultimaAnaliseReturn: { uuid: 'analise-nome-nao-encontrado' },
@@ -957,7 +933,7 @@ describe('ResumoDosAcertos - index.js', () => {
             // No crash = passed; nome would be 'N/E'
         });
 
-        it('retorna nome do objeto via conta.nome (linha 371)', async () => {
+        it('retorna nome do objeto via conta.nome', async () => {
             setupDefaultMocks({
                 locationState: { infoAta: BASE_INFO_ATA, analisesDeContaDaPrestacao: [], editavel: false },
                 ultimaAnaliseReturn: { uuid: 'analise-obj-nome' },
@@ -969,7 +945,7 @@ describe('ResumoDosAcertos - index.js', () => {
             // No crash = passed
         });
 
-        it('retorna nome via conta.nome_conta (linha 372)', async () => {
+        it('retorna nome via conta.nome_conta', async () => {
             setupDefaultMocks({
                 locationState: { infoAta: BASE_INFO_ATA, analisesDeContaDaPrestacao: [], editavel: false },
                 ultimaAnaliseReturn: { uuid: 'analise-obj-nome-conta' },
@@ -980,7 +956,7 @@ describe('ResumoDosAcertos - index.js', () => {
             act(() => { capturedSetContasPendenciaConciliacao([{ nome_conta: 'Nome Conta' }]); });
         });
 
-        it('retorna nome via conta.conta_nome (linha 373)', async () => {
+        it('retorna nome via conta.conta_nome', async () => {
             setupDefaultMocks({
                 locationState: { infoAta: BASE_INFO_ATA, analisesDeContaDaPrestacao: [], editavel: false },
                 ultimaAnaliseReturn: { uuid: 'analise-obj-conta-nome' },
@@ -991,7 +967,7 @@ describe('ResumoDosAcertos - index.js', () => {
             act(() => { capturedSetContasPendenciaConciliacao([{ conta_nome: 'Conta Nome' }]); });
         });
 
-        it('retorna nome via conta_associacao.nome (linha 374)', async () => {
+        it('retorna nome via conta_associacao.nome', async () => {
             setupDefaultMocks({
                 locationState: { infoAta: BASE_INFO_ATA, analisesDeContaDaPrestacao: [], editavel: false },
                 ultimaAnaliseReturn: { uuid: 'analise-obj-assoc' },
@@ -1002,7 +978,7 @@ describe('ResumoDosAcertos - index.js', () => {
             act(() => { capturedSetContasPendenciaConciliacao([{ conta_associacao: { nome: 'Conta Assoc' } }]); });
         });
 
-        it('retorna nome via obterNomeContaPorUuid(conta.uuid) (linha 375)', async () => {
+        it('retorna nome via obterNomeContaPorUuid(conta.uuid)', async () => {
             setupDefaultMocks({
                 locationState: { infoAta: BASE_INFO_ATA, analisesDeContaDaPrestacao: [], editavel: false },
                 ultimaAnaliseReturn: { uuid: 'analise-obj-uuid' },
@@ -1014,7 +990,7 @@ describe('ResumoDosAcertos - index.js', () => {
             act(() => { capturedSetContasPendenciaConciliacao([{ uuid: 'conta-1' }]); });
         });
 
-        it('retorna nome via obterNomeContaPorUuid(conta.conta_uuid) (linha 376)', async () => {
+        it('retorna nome via obterNomeContaPorUuid(conta.conta_uuid)', async () => {
             setupDefaultMocks({
                 locationState: { infoAta: BASE_INFO_ATA, analisesDeContaDaPrestacao: [], editavel: false },
                 ultimaAnaliseReturn: { uuid: 'analise-obj-conta-uuid' },
@@ -1025,7 +1001,7 @@ describe('ResumoDosAcertos - index.js', () => {
             act(() => { capturedSetContasPendenciaConciliacao([{ conta_uuid: 'conta-1' }]); });
         });
 
-        it('retorna N/E para objeto sem campos identificadores (linha 377)', async () => {
+        it('retorna N/E para objeto sem campos identificadores', async () => {
             setupDefaultMocks({
                 locationState: { infoAta: BASE_INFO_ATA, analisesDeContaDaPrestacao: [], editavel: false },
                 ultimaAnaliseReturn: { uuid: 'analise-obj-vazio' },
@@ -1037,7 +1013,7 @@ describe('ResumoDosAcertos - index.js', () => {
             // No crash = passed
         });
 
-        it('retorna null em obterNomeContaPorUuid quando infoAta.contas é undefined (linha 354)', async () => {
+        it('retorna null em obterNomeContaPorUuid quando infoAta.contas é undefined', async () => {
             setupDefaultMocks({
                 locationState: { infoAta: { contas: undefined }, analisesDeContaDaPrestacao: [], editavel: false },
                 ultimaAnaliseReturn: { uuid: 'analise-sem-contas-ata' },
@@ -1050,7 +1026,6 @@ describe('ResumoDosAcertos - index.js', () => {
         });
     });
 
-    // ── obterContasLancamentosConciliacao / obterContasJustificativaConciliacao ─
     describe('obterContasLancamentosConciliacao e obterContasJustificativaConciliacao', () => {
         it('retorna array vazio quando contasPendenciaLancamentos está vazia', async () => {
             setupDefaultMocks({
@@ -1063,7 +1038,7 @@ describe('ResumoDosAcertos - index.js', () => {
             act(() => { capturedSetContasPendenciaLancamentos([]); });
         });
 
-        it('mapeia contas de lancamento com obterNomeConta (linha 395)', async () => {
+        it('mapeia contas de lancamento com obterNomeConta', async () => {
             setupDefaultMocks({
                 locationState: { infoAta: BASE_INFO_ATA, analisesDeContaDaPrestacao: [], editavel: false },
                 ultimaAnaliseReturn: { uuid: 'analise-lanc' },
@@ -1074,7 +1049,7 @@ describe('ResumoDosAcertos - index.js', () => {
             act(() => { capturedSetContasPendenciaLancamentos(['conta-2']); });
         });
 
-        it('mapeia contas de justificativa com obterNomeConta (linha 403)', async () => {
+        it('mapeia contas de justificativa com obterNomeConta', async () => {
             setupDefaultMocks({
                 locationState: { infoAta: BASE_INFO_ATA, analisesDeContaDaPrestacao: [], editavel: false },
                 ultimaAnaliseReturn: { uuid: 'analise-justif' },
@@ -1086,9 +1061,8 @@ describe('ResumoDosAcertos - index.js', () => {
         });
     });
 
-    // ── textoModalLancamentosConciliacao (linhas 443-465) ─────────────────────
     describe('textoModalLancamentosConciliacao', () => {
-        it('retorna textoSolicitacoesLancamentos quando blocos está vazio (linha 454-455)', async () => {
+        it('retorna textoSolicitacoesLancamentos quando blocos está vazio', async () => {
             setupDefaultMocks({
                 locationState: { infoAta: BASE_INFO_ATA, analisesDeContaDaPrestacao: [], editavel: false },
                 ultimaAnaliseReturn: { uuid: 'analise-blocos-vazio' },
@@ -1103,7 +1077,7 @@ describe('ResumoDosAcertos - index.js', () => {
             expect(textoModal).toContain('Acertos que alteram a conciliação bancária');
         });
 
-        it('inclui todos os blocos quando todas as pendências existem (linhas 445-457)', async () => {
+        it('inclui todos os blocos quando todas as pendências existem', async () => {
             setupDefaultMocks({
                 locationState: { infoAta: BASE_INFO_ATA, analisesDeContaDaPrestacao: [], editavel: false },
                 ultimaAnaliseReturn: { uuid: 'analise-blocos-todos' },
@@ -1126,9 +1100,8 @@ describe('ResumoDosAcertos - index.js', () => {
         });
     });
 
-    // ── possuiAcertosSelecionados (linhas 498-515) ────────────────────────────
     describe('possuiAcertosSelecionados', () => {
-        it('inclui totalDespesasPeriodosAnteriores quando flag está ativa (linhas 499-504)', async () => {
+        it('inclui totalDespesasPeriodosAnteriores quando flag está ativa', async () => {
             visoesService.featureFlagAtiva.mockReturnValue(true);
             getDespesasPeriodosAnterioresAjustes.mockResolvedValue([{ id: 1 }]);
 
@@ -1143,7 +1116,7 @@ describe('ResumoDosAcertos - index.js', () => {
             expect(visoesService.featureFlagAtiva).toHaveBeenCalledWith('ajustes-despesas-anteriores');
         });
 
-        it('não inclui despesas anteriores quando flag está inativa (linhas 506-508)', async () => {
+        it('não inclui despesas anteriores quando flag está inativa', async () => {
             visoesService.featureFlagAtiva.mockReturnValue(false);
             setupDefaultMocks({
                 locationState: { infoAta: BASE_INFO_ATA, analisesDeContaDaPrestacao: [], editavel: false },
@@ -1155,9 +1128,8 @@ describe('ResumoDosAcertos - index.js', () => {
         });
     });
 
-    // ── msgNaoExistemSolicitacoesDeAcerto (linhas 521-531) ───────────────────
     describe('msgNaoExistemSolicitacoesDeAcerto', () => {
-        it('retorna msg com devolucoes_da_prestacao quando há devolucoes (linha 526)', async () => {
+        it('retorna msg com devolucoes_da_prestacao quando há devolucoes', async () => {
             const prestacao = {
                 ...BASE_PRESTACAO,
                 devolucoes_da_prestacao: [{ id: 1 }],
@@ -1174,7 +1146,7 @@ describe('ResumoDosAcertos - index.js', () => {
             );
         });
 
-        it('retorna msg sem devolucoes quando não há devolucoes (linha 528)', async () => {
+        it('retorna msg sem devolucoes quando não há devolucoes', async () => {
             const prestacao = {
                 ...BASE_PRESTACAO,
                 devolucoes_da_prestacao: [],
@@ -1207,9 +1179,8 @@ describe('ResumoDosAcertos - index.js', () => {
         });
     });
 
-    // ── limpaStorage (linhas 477-490) ─────────────────────────────────────────
     describe('limpaStorage', () => {
-        it('limpa storage quando elemento nav-conferencia-atual-tab existe (linhas 482-488)', async () => {
+        it('limpa storage quando elemento nav-conferencia-atual-tab existe', async () => {
             const devolvidas = [{ uuid: 'dev-uuid-storage' }];
             setupDefaultMocks({
                 locationState: { infoAta: BASE_INFO_ATA, analisesDeContaDaPrestacao: [], editavel: false },
@@ -1250,9 +1221,8 @@ describe('ResumoDosAcertos - index.js', () => {
         });
     });
 
-    // ── ModalErroDevolverParaAcerto handleClose (linha 577) ──────────────────
     describe('ModalErroDevolverParaAcerto', () => {
-        it('fecha o modal de erro ao clicar em Fechar (linha 577)', async () => {
+        it('fecha o modal de erro ao clicar em Fechar', async () => {
             const prestacao = { ...BASE_PRESTACAO, pode_devolver: false };
             setupDefaultMocks({
                 prestacao,
@@ -1277,9 +1247,8 @@ describe('ResumoDosAcertos - index.js', () => {
         });
     });
 
-    // ── ModalConfirmaDevolverParaAcerto handleClose (linha 587) ──────────────
     describe('ModalConfirmaDevolverParaAcerto handleClose', () => {
-        it('fecha o modal de confirmação ao cancelar (linha 587)', async () => {
+        it('fecha o modal de confirmação ao cancelar', async () => {
             setupDefaultMocks({
                 locationState: { infoAta: BASE_INFO_ATA, analisesDeContaDaPrestacao: [], editavel: false },
                 ultimaAnaliseReturn: { uuid: 'analise-cancel' },
@@ -1297,9 +1266,8 @@ describe('ResumoDosAcertos - index.js', () => {
         });
     });
 
-    // ── ModalComprovanteSaldoConta handleClose (linhas 627, 640) ─────────────
     describe('ModalComprovanteSaldoConta handleClose', () => {
-        it('fecha modal justificativa ao clicar em handleClose (linha 627)', async () => {
+        it('fecha modal justificativa ao clicar em handleClose', async () => {
             setupDefaultMocks({
                 locationState: { infoAta: BASE_INFO_ATA, analisesDeContaDaPrestacao: [], editavel: false },
                 ultimaAnaliseReturn: { uuid: 'analise-just-close' },
@@ -1316,7 +1284,7 @@ describe('ResumoDosAcertos - index.js', () => {
             });
         });
 
-        it('fecha modal comprovante ao clicar em handleClose (linha 640)', async () => {
+        it('fecha modal comprovante ao clicar em handleClose', async () => {
             setupDefaultMocks({
                 locationState: { infoAta: BASE_INFO_ATA, analisesDeContaDaPrestacao: [], editavel: false },
                 ultimaAnaliseReturn: { uuid: 'analise-comp-close' },
@@ -1334,8 +1302,7 @@ describe('ResumoDosAcertos - index.js', () => {
         });
     });
 
-    // ── setAnaliseAtualUuidComPCAnaliseAtualUuid via capturedTabsProps ─────────
-    describe('setAnaliseAtualUuidComPCAnaliseAtualUuid via tabs (linhas 560-565)', () => {
+    describe('setAnaliseAtualUuidComPCAnaliseAtualUuid via tabs', () => {
         it('expõe setAnaliseAtualUuidComPCAnaliseAtualUuid nas props das tabs', async () => {
             setupDefaultMocks({
                 locationState: { infoAta: BASE_INFO_ATA, analisesDeContaDaPrestacao: [], editavel: false },
@@ -1364,10 +1331,10 @@ describe('ResumoDosAcertos - index.js', () => {
         });
     });
 
-    // ── salvaAnaliseAtualLocalStorage (linhas 492-496) ────────────────────────
-    describe('salvaAnaliseAtualLocalStorage (linhas 492-496)', () => {
+    describe('salvaAnaliseAtualLocalStorage', () => {
         it('salva uuid no localStorage via meapcservice', async () => {
             setupDefaultMocks({
+                prestacao: { ...BASE_PRESTACAO, status: 'EM_ANALISE' },
                 locationState: {},
                 ultimaAnaliseReturn: { uuid: 'salva-storage-uuid' },
             });

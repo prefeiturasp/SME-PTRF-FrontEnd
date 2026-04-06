@@ -1,6 +1,5 @@
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { Associacoes } from "..";
 import {
@@ -18,9 +17,7 @@ import {
 } from "../../../../../../services/sme/Parametrizacoes.service";
 import { getTagInformacaoAssociacao } from "../../../../../../services/escolas/Associacao.service";
 import { visoesService } from "../../../../../../services/visoes.service";
-import { toastCustom } from "../../../../../Globais/ToastCustom";
 import * as service from "../../../../../../services/sme/Parametrizacoes.service";
-import { Filtros } from "../Filtros";
 import {
   mockListaAssociacoes,
   mockTabelaAssociacoes,
@@ -242,8 +239,12 @@ describe("Teste handleSubmitModalForm", () => {
     });
 
     fireEvent.click(input_data_encerramento);
-    const data = screen.getAllByText(new Date().getDate())[0];
-    fireEvent.click(data);
+    const hoje = String(new Date().getDate());
+    const hojeClasse = hoje.padStart(3, "0");
+    const data = screen.getAllByText(hoje, {
+      selector: `.react-datepicker__day.react-datepicker__day--${hojeClasse}`,
+    });
+    fireEvent.click(data[0]);
 
     fireEvent.click(saveButton);
 
