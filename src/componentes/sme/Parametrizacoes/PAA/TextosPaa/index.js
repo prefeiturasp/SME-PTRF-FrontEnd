@@ -2,7 +2,7 @@ import React, {useCallback, useEffect, useState} from "react";
 import {PaginasContainer} from "../../../../../paginas/PaginasContainer";
 import "../../EdicaoDeTextos/parametrizacoes-edicao-de-textos.scss"
 import TabelaTextosPaa from "./TabelaTextosPaa";
-import {getTextosPaaUe, patchTextosPaaUe} from "../../../../../services/escolas/PrestacaoDeContas.service";
+import {getTextosPaaUe, patchTextosPaaUe} from "../../../../../services/escolas/Paa.service";
 import EditorWysiwyg from "../../../../Globais/EditorWysiwyg";
 import Loading from "../../../../../utils/Loading";
 import {RetornaSeTemPermissaoEdicaoPainelParametrizacoes} from "../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes"
@@ -12,8 +12,21 @@ import { EditIconButton } from "../../../../Globais/UI/Button";
 export const TextosPaa = () => {
 
     const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES = RetornaSeTemPermissaoEdicaoPainelParametrizacoes()
+
+    const titulos = {
+        'texto_pagina_paa_ue': 'Explicação sobre o PAA',
+        'texto_atividades_previstas': 'Atividades previstas',
+        'texto_levantamento_prioridades': 'Levantamento de prioridades',
+        'introducao_do_paa_ue_1': 'Introdução do PAA 1',
+        'introducao_do_paa_ue_2': 'Introdução do PAA 2',
+        'conclusao_do_paa_ue_1': 'Conclusão do PAA 1',
+        'conclusao_do_paa_ue_2': 'Conclusão do PAA 2'
+    };
+
     const initalTextos = {
         texto_pagina_paa_ue: '',
+        texto_atividades_previstas: '',
+        texto_levantamento_prioridades: '',
         introducao_do_paa_ue_1: '',
         introducao_do_paa_ue_2: '',
         conclusao_do_paa_ue_1: '',
@@ -33,6 +46,8 @@ export const TextosPaa = () => {
 
         setTextosPaa({
             texto_pagina_paa_ue: textosPaa.texto_pagina_paa_ue,
+            texto_atividades_previstas: textosPaa.texto_atividades_previstas,
+            texto_levantamento_prioridades: textosPaa.texto_levantamento_prioridades,
             introducao_do_paa_ue_1: textosPaa.introducao_do_paa_ue_1,
             introducao_do_paa_ue_2: textosPaa.introducao_do_paa_ue_2,
             conclusao_do_paa_ue_1: textosPaa.conclusao_do_paa_ue_1,
@@ -49,14 +64,6 @@ export const TextosPaa = () => {
         setTipoDeTexto(tipo_texto);
         setExibeEditor(true);
         
-        const titulos = {
-            'texto_pagina_paa_ue': 'Explicação sobre o PAA',
-            'introducao_do_paa_ue_1': 'Introdução do PAA 1',
-            'introducao_do_paa_ue_2': 'Introdução do PAA 2',
-            'conclusao_do_paa_ue_1': 'Conclusão do PAA 1',
-            'conclusao_do_paa_ue_2': 'Conclusão do PAA 2'
-        };
-        
         setTextoInicialEditor(textosPaa[tipo_texto] || '');
         setTituloEditor(titulos[tipo_texto] || '');
     }, [textosPaa]);
@@ -70,32 +77,32 @@ export const TextosPaa = () => {
     };
 
     const handleSubmitEditor = useCallback(async (textoEditor) => {
-        let payload = {
-            texto_pagina_paa_ue: textosPaa.texto_pagina_paa_ue,
-            introducao_do_paa_ue_1: textosPaa.introducao_do_paa_ue_1,
-            introducao_do_paa_ue_2: textosPaa.introducao_do_paa_ue_2,
-            conclusao_do_paa_ue_1: textosPaa.conclusao_do_paa_ue_1,
-            conclusao_do_paa_ue_2: textosPaa.conclusao_do_paa_ue_2,
-        };
-        
-        payload[tipoDeTexto] = textoEditor;
-        
-        const textosPaaUe = ['texto_pagina_paa_ue', 'introducao_do_paa_ue_1', 'introducao_do_paa_ue_2', 'conclusao_do_paa_ue_1', 'conclusao_do_paa_ue_2'];
+        const textosPaaUe = ['texto_pagina_paa_ue', 'texto_atividades_previstas', 'texto_levantamento_prioridades', 'introducao_do_paa_ue_1', 
+                             'introducao_do_paa_ue_2', 'conclusao_do_paa_ue_1', 'conclusao_do_paa_ue_2'];
 
         if (textosPaaUe.includes(tipoDeTexto)) {
+            const payload = { [tipoDeTexto]: textoEditor };
             try {
                 await patchTextosPaaUe(payload);
-                toastCustom.ToastCustomSuccess('Edição do texto do PAA foi realizada com sucesso.', 'O texto do PAA foi editado no sistema com sucesso.')
+                const tituloCampo = titulos[tipoDeTexto] || 'Texto do PAA';
+                toastCustom.ToastCustomSuccess(`Edição do Textos do PAA foi realizada com sucesso.`, `O campo ${tituloCampo} foi editado no sistema com sucesso.`)
                 await carregaTextos();
+                setTextoInicialEditor('');
+                setTituloEditor('');
+                setExibeEditor(false);
             } catch (e) {
                 console.error("Erro ao alterar texto ", e.response);
-                toastCustom.ToastCustomError('Erro ao editar o texto do PAA.', 'O texto do PAA não foi editado.')
+                let mensagemErro = 'Não foi possível editar o texto do PAA.';
+                if (e.response?.status === 400) {
+                    const fieldErrors = e.response.data?.[tipoDeTexto];
+                    if (fieldErrors && Array.isArray(fieldErrors) && fieldErrors.length > 0) {
+                        mensagemErro = fieldErrors[0];
+                    }
+                }
+                toastCustom.ToastCustomError('Erro ao editar o texto do PAA.', mensagemErro);
             }
         }
-        setTextoInicialEditor('');
-        setTituloEditor('');
-        setExibeEditor(false);
-    }, [tipoDeTexto, carregaTextos, textosPaa]);
+    }, [tipoDeTexto, carregaTextos]);
 
     return (
         <PaginasContainer>

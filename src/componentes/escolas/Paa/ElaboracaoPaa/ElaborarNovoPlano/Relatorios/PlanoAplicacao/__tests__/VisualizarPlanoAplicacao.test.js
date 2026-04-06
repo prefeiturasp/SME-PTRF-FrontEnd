@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen, fireEvent, within } from "@testing-library/react";
-import { useNavigate } from "react-router-dom";
+import { MemoryRouter, useNavigate } from "react-router-dom";
 import { useGetPrioridadesRelatorio } from "../hooks/useGetPrioridadesRelatorio";
 import { VisualizarPlanoAplicacao } from "../VisualizarPlanoAplicacao";
 
@@ -51,7 +51,9 @@ describe("VisualizarPlanoAplicacao", () => {
       isError: false,
     });
 
-    render(<VisualizarPlanoAplicacao />);
+    render(
+        <MemoryRouter><VisualizarPlanoAplicacao /></MemoryRouter>
+      );
 
     const botaoEditarInformacoes = screen.getByRole("button", {
       name: /editar informações/i,
@@ -109,7 +111,7 @@ describe("VisualizarPlanoAplicacao", () => {
       ],
     });
 
-    render(<VisualizarPlanoAplicacao />);
+    render(<MemoryRouter><VisualizarPlanoAplicacao /></MemoryRouter>);
 
     const tabela = await screen.findByRole("table");
 

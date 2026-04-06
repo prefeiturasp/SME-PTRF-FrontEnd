@@ -1,15 +1,21 @@
-import React from "react";
+import PropTypes from "prop-types";
 import {visoesService} from "../../../../services/visoes.service";
 
 
 export const JustificativaDiferenca = ({execucaoFinanceira, haDiferencaPrevisaoExecucaoRepasse, justificativaDiferenca, setJustificativaDiferenca, onChangeJustificativaDiferenca, onSubmitJustificativaDiferenca, btnSalvarJustificativaDisable, setBtnSalvarJustificativaDisable, jaPublicado}) => {
     
     const onClickBtnLimpar = () => {
-        setJustificativaDiferenca({
-            ...justificativaDiferenca,
-            texto: ""
-        })
-        setBtnSalvarJustificativaDisable(false);
+        setJustificativaDiferenca((prevState) => ({
+            ...prevState,
+            [execucaoFinanceira.tipo_conta_uuid]: {
+                ...(prevState[execucaoFinanceira.tipo_conta_uuid] || justificativaDiferenca),
+                texto: ""
+            }
+        }));
+        setBtnSalvarJustificativaDisable((prevState) => ({
+            ...prevState,
+            [execucaoFinanceira.tipo_conta_uuid]: false
+        }));
     }
     return(
         <>
@@ -22,7 +28,7 @@ export const JustificativaDiferenca = ({execucaoFinanceira, haDiferencaPrevisaoE
                                 jaPublicado ||
                                 !visoesService.getPermissoes(['change_relatorio_consolidado_dre'])
                             }
-                            onChange={(e) => onChangeJustificativaDiferenca(e.target.value, execucaoFinanceira.tipo_conta)}
+                            onChange={(e) => onChangeJustificativaDiferenca(e.target.value, execucaoFinanceira.tipo_conta_uuid)}
                             className="form-control" id="justificativaDiferenca"
                             rows="3"
                             value={justificativaDiferenca.texto}
@@ -30,7 +36,7 @@ export const JustificativaDiferenca = ({execucaoFinanceira, haDiferencaPrevisaoE
                         >
                         </textarea>
                     </div>
-                    {justificativaDiferenca.texto < 1 && 
+                    {!justificativaDiferenca.texto?.trim() &&
                     <span className="span_erro text-danger mt-1">
                         O campo justificativa da diferença é obrigatório para a geração do consolidado
                     </span>
@@ -52,8 +58,7 @@ export const JustificativaDiferenca = ({execucaoFinanceira, haDiferencaPrevisaoE
                             disabled={
                                 jaPublicado ||
                                 btnSalvarJustificativaDisable ||
-                                !justificativaDiferenca ||
-                                justificativaDiferenca.texto < 1 ||
+                                !justificativaDiferenca?.texto?.trim() ||
                                 !visoesService.getPermissoes(['change_relatorio_consolidado_dre'])
                         }
                             type="submit"
@@ -66,4 +71,16 @@ export const JustificativaDiferenca = ({execucaoFinanceira, haDiferencaPrevisaoE
             }
         </>
     )
+};
+
+JustificativaDiferenca.propTypes = {
+    execucaoFinanceira: PropTypes.object.isRequired,
+    haDiferencaPrevisaoExecucaoRepasse: PropTypes.func.isRequired,
+    justificativaDiferenca: PropTypes.object.isRequired,
+    setJustificativaDiferenca: PropTypes.func.isRequired,
+    onChangeJustificativaDiferenca: PropTypes.func.isRequired,
+    onSubmitJustificativaDiferenca: PropTypes.func.isRequired,
+    btnSalvarJustificativaDisable: PropTypes.bool.isRequired,
+    setBtnSalvarJustificativaDisable: PropTypes.func.isRequired,
+    jaPublicado: PropTypes.bool.isRequired
 };

@@ -378,6 +378,10 @@ export const getPaaVigente = async (associacao_uuid) => {
   const result = await api.get(`/api/associacoes/${associacao_uuid}/paa-vigente/`, authHeader());
   return result.data;
 };
+export const getPaa = async (paa_uuid, associacao_uuid) => {
+  const result = await api.get(`/api/paa/${paa_uuid}?associacao__uuid=${associacao_uuid}/`, authHeader());
+  return result.data;
+};
 
 export const getPAAsAnteriores = async () => {
   return (await api.get(`/api/paa/${localStorage.getItem('PAA')}/paas-anteriores/`, authHeader())).data;
@@ -392,7 +396,7 @@ export const postPaa = async (payload) => {
 
 // PAA - Acoes PTRF
 export const getAcoesPTRFPaa = async () => {
-  const result = await api.get(`/api/acoes/`, authHeader());
+  const result = await api.get(`/api/acoes/acoes-recurso-legado/`, authHeader());
   return result.data;
 };
 export const patchExibirAcoesPTRFPaa = async (uuid, payload) => {

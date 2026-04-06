@@ -1,12 +1,12 @@
 import React from "react";
 import { waitFor, renderHook } from '@testing-library/react';
-import { useGetAcoesPDDE } from "../useGetAcoesPDDE"; // ajuste o path conforme sua estrutura
-import { getAcoesPDDE } from "../../../../../../../../services/sme/Parametrizacoes.service";
+import { useGetAcoesPDDEPrioridades } from "../useGetAcoesPDDEPrioridades";
+import { getAcoesPDDEPrioridades } from "../../../../../../../../services/escolas/Paa.service";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 // Mock da função
-jest.mock("../../../../../../../../services/sme/Parametrizacoes.service", () => ({
-  getAcoesPDDE: jest.fn(),
+jest.mock("../../../../../../../../services/escolas/Paa.service", () => ({
+  getAcoesPDDEPrioridades: jest.fn(),
 }));
 
 // Cria um wrapper com QueryClientProvider
@@ -24,14 +24,14 @@ const createWrapper = () => {
   );
 };
 
-describe("useGetAcoesPDDE", () => {
+describe("useGetAcoesPDDEPrioridades", () => {
   it("deve retornar os dados corretamente quando a API retorna sucesso", async () => {
       const mockData = {
         results: [],
       };
-      getAcoesPDDE.mockResolvedValueOnce(mockData);
-  
-      const { result } = renderHook(() => useGetAcoesPDDE({enabled: true}), {
+      getAcoesPDDEPrioridades.mockResolvedValueOnce(mockData);
+
+      const { result } = renderHook(() => useGetAcoesPDDEPrioridades({paa_uuid: '1234', options: { enabled: true }}), {
         wrapper: createWrapper(),
       });
   
@@ -44,17 +44,17 @@ describe("useGetAcoesPDDE", () => {
     });
   
     it("deve retornar erro quando a API falhar", async () => {
-      getAcoesPDDE.mockRejectedValueOnce(new Error("Erro na API"));
-  
-      const { result } = renderHook(() => useGetAcoesPDDE({ enabled: true }), {
+      getAcoesPDDEPrioridades.mockRejectedValueOnce(new Error("Erro na API"));
+
+      const { result } = renderHook(() => useGetAcoesPDDEPrioridades({paa_uuid: '1234', options: { enabled: true }}), {
         wrapper: createWrapper(),
       });
-  
+
       expect(result.current.isLoading).toBe(true);
-  
+
       await waitFor(() => expect(result.current.isError).toBe(true));
-  
-      expect(result.current.acoesPdde).toEqual({});
+
+      expect(result.current.acoesPdde).toBeUndefined();
       expect(result.current.error).toBeInstanceOf(Error);
     });
 });

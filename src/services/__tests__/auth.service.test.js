@@ -24,7 +24,8 @@ import {
     esqueciMinhaSenha,
     redefinirMinhaSenha,
     alterarMeuEmail,
-    alterarMinhaSenha
+    alterarMinhaSenha,
+    PERIODO_SELECIONADO_DRE_ACOMPANHAMENTO
 } from '../auth.service';
 import { ACOMPANHAMENTO_DE_PC } from "../mantemEstadoAcompanhamentoDePc.service";
 import { ACOMPANHAMENTO_PC_UNIDADE } from "../mantemEstadoAcompanhamentoDePcUnidadeEducacional.service";
@@ -261,6 +262,7 @@ describe('Auth Service', () => {
             expect(localStorageMock.getItem(ACOMPANHAMENTO_PC_UNIDADE)).toBeNull();
             expect(localStorageMock.getItem(ANALISE_DRE)).toBeNull();
             expect(localStorageMock.getItem(PERIODO_RELATORIO_CONSOLIDADO_DRE)).toBeNull();
+            expect(localStorageMock.getItem(PERIODO_SELECIONADO_DRE_ACOMPANHAMENTO)).toBeNull();
             expect(localStorageMock.getItem(DATA_LOGIN)).toBe('2025-10-25');
 
             expect(window.location.href).toBe('');

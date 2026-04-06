@@ -1,9 +1,9 @@
 import { memo, useState, useMemo, useEffect, useRef } from "react";
 import { Form, Row, Col, Flex, InputNumber, Spin, Select } from "antd";
 import { ModalFormBodyText } from "../../../../../Globais/ModalBootstrap";
-import { useGetAcoesAssociacao } from "../ReceitasPrevistas/hooks/useGetAcoesAssociacao";
+import{ useGetAcoesPTRFPrioridades } from "./hooks/useGetAcoesPTRFPrioridades";
 import { useGetEspecificacoes } from "./hooks/useGetEspecificacoes";
-import { useGetAcoesPDDE } from "./hooks/useGetAcoesPDDE";
+import { useGetAcoesPDDEPrioridades } from "./hooks/useGetAcoesPDDEPrioridades";
 import { usePostPrioridade } from "./hooks/usePostPrioridade";
 import { usePatchPrioridade } from "./hooks/usePatchPrioridade";
 import { createValidationSchema } from "./validationSchema";
@@ -20,13 +20,21 @@ const ModalFormAdicionarPrioridade = ({ open, onClose, tabelas, formModal, focus
   const [selectedTipoAplicacao, setSelectedTipoAplicacao] = useState('');
   const [selectedTipoDespesaCusteio, setSelectedTipoDespesaCusteio] = useState('');
   const [selectedProgramaPdde, setSelectedProgramaPdde] = useState('');
+
+  const paa_uuid = useMemo(() =>localStorage.getItem("PAA"), [])
   
-  const { data: acoesAssociacao, isLoading: isLoadingAcoes } = useGetAcoesAssociacao({
-    enabled: selectedRecurso === 'PTRF'
-  });
-  const { acoesPdde, isLoading: isLoadingAcoesPdde } = useGetAcoesPDDE({
-    enabled: selectedRecurso === 'PDDE'
-  });
+  const { data: acoesAssociacao, isLoading: isLoadingAcoes } = useGetAcoesPTRFPrioridades(
+    {
+      paa_uuid,
+      options: { enabled: selectedRecurso === 'PTRF' && !!paa_uuid }
+    }
+  );
+  const { acoesPdde, isLoading: isLoadingAcoesPdde } = useGetAcoesPDDEPrioridades(
+    {
+      paa_uuid,
+      options: { enabled: selectedRecurso === 'PDDE' && !!paa_uuid }
+    }
+  );
   const { especificacoes, isLoading: isLoadingEspecificacoes } = useGetEspecificacoes(
     selectedTipoAplicacao, 
     selectedTipoAplicacao === 'CUSTEIO' ? selectedTipoDespesaCusteio : ""
@@ -75,8 +83,8 @@ const ModalFormAdicionarPrioridade = ({ open, onClose, tabelas, formModal, focus
     value: item.id,
     label: item.nome
   })) : [];
-  // Exibem somente as acoes que possuem exibir_paa = true
-  const acoesAssociacaoOptions = Array.isArray(acoesAssociacao) ? acoesAssociacao.filter(item => item.acao.exibir_paa).map(item => ({
+
+  const acoesAssociacaoOptions = Array.isArray(acoesAssociacao) ? acoesAssociacao.map(item => ({
     value: item.uuid,
     label: item.acao.nome
   })) : [];

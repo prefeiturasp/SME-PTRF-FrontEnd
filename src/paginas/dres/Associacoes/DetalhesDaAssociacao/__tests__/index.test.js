@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render } from "@testing-library/react";
 import React  from "react";
 import { MemoryRouter, useLocation, useParams } from "react-router-dom";
 import { DetalhesDaAssociacaoDrePage } from "../index";
@@ -23,11 +23,21 @@ jest.mock("../../../../../context/RecursoSelecionado", () => ({
   useRecursoSelecionadoContext: () => ({ recursoSelecionado: null, recursos: [] }),
 }));
 
-describe('<DetalhesDaAssociacaoDrePage>', () => {
+jest.mock("../../../../PaginasContainer", () => ({
+  PaginasContainer: ({ children }) => <div data-testid="paginas-container">{children}</div>,
+}));
 
+jest.mock("../../../../../componentes/dres/Associacoes/DadosDasAssociacoes", () => ({
+  DetalhesDaAssociacao: () => <div data-testid="detalhes-da-associacao">DetalhesDaAssociacao</div>,
+}));
+
+describe('<DetalhesDaAssociacaoDrePage>', () => {
   beforeEach(() => {
+    jest.clearAllMocks();
     const mockDadosDaAssociacao = {
       dados_da_associacao: {
+        uuid: "test-uuid",
+        nome: "Associação Teste",
         recursos_da_associacao: [
           { uuid: "uuid-1", nome: "Recurso 1", nome_exibicao: "Recurso 1", legado: false },
         ],
@@ -43,7 +53,8 @@ describe('<DetalhesDaAssociacaoDrePage>', () => {
       <MemoryRouter>
         <DetalhesDaAssociacaoDrePage/>
       </MemoryRouter>
-    )
+    );
+    expect(screen.getByTestId('detalhes-da-associacao')).toBeInTheDocument();
   });
 
 });

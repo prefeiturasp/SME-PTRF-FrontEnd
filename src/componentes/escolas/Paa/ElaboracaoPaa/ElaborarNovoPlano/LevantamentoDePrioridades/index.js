@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDownload, faCircleNotch } from "@fortawesome/free-solid-svg-icons";
-import { downloadPdfLevantamentoPrioridades } from '../../../../../../services/escolas/Paa.service';
+import { downloadPdfLevantamentoPrioridades, getTextosPaaUe } from '../../../../../../services/escolas/Paa.service';
 import { ASSOCIACAO_UUID } from "../../../../../../services/auth.service";
 
 const LevantamentoDePrioridades = () => {
   const [isDownloading, setIsDownloading] = useState(false);
+  const [textosLevantamentoPrioridades, setTextosLevantamentoPrioridades] = useState();
 
   const handleDownload = async () => {
     setIsDownloading(true);
@@ -19,16 +20,25 @@ const LevantamentoDePrioridades = () => {
     }
   };
 
+  useEffect(() => {
+    const carregaTextos = (async () => {
+      let textosPaaResponse = await getTextosPaaUe();
+
+      setTextosLevantamentoPrioridades({
+          texto_levantamento_prioridades: textosPaaResponse.texto_levantamento_prioridades,
+      });
+    });
+
+    carregaTextos();
+  }, []);
+
   return (
     <div className="container-fluid">
       <br />
-      <p>
-        A etapa do levantamento de atividades e prioridades é um momento em que todos os segmentos das Unidades Educacionais realizam uma escuta junto às equipes técnicas, de apoio e corpo docente sobre aquisições e serviços considerados fundamentais para a melhoria das condições de trabalho durante o próximo ano letivo.
-      </p>
 
-      <p>
-        Após esta etapa, a APM realiza um trabalho de previsão de atividades e receitas e constrói um Plano Anual de Atividades, que priorizará as aquisições e serviços listados a partir de uma análise das necessidades da unidade e dos recursos previstos.
-      </p>
+      <div className="text-break">
+        <div dangerouslySetInnerHTML={{__html:textosLevantamentoPrioridades?.texto_levantamento_prioridades}}></div>
+      </div>
       
       <div className="d-flex justify-content-end w-100">
         <button

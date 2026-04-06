@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Paginator } from "primereact/paginator";
 
 export const Paginacao = ({ data={}, onPageChange=()=>{}, firstPage=0, rowsPerPage=10}) => {

@@ -21,5 +21,15 @@ export const getTabelas = async (associacao_uuid) =>{
 };
 
 export const getContas = async (associacao_uuid, periodo_uuid = '') => {
-    return (await api.get(`/api/associacoes/${associacao_uuid}/contas/?periodo_uuid=${periodo_uuid}`, authHeader())).data
+    let url = `/api/associacoes/${associacao_uuid}/contas/`;
+    const params = new URLSearchParams();
+    if (periodo_uuid) {
+        params.append('periodo_uuid', periodo_uuid);
+    }
+
+    if (params.toString()) {
+        url += `?${params.toString()}`;
+    }
+    
+    return (await api.get(url, authHeader())).data
 };

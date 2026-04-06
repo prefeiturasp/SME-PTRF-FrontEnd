@@ -4,7 +4,8 @@ import {
     ASSOCIACAO_TIPO_ESCOLA,
     ASSOCIACAO_NOME_ESCOLA,
     ASSOCIACAO_NOME,
-    authService, DATA_LOGIN, PERIODO_RELATORIO_CONSOLIDADO_DRE
+    authService, DATA_LOGIN, PERIODO_RELATORIO_CONSOLIDADO_DRE,
+    PERIODO_SELECIONADO_DRE_ACOMPANHAMENTO
 } from "./auth.service";
 import {redirect} from "../utils/redirect";
 import moment from "moment";
@@ -35,6 +36,7 @@ const forcarNovoLogin = ()=>{
             localStorage.removeItem(ACOMPANHAMENTO_PC_UNIDADE);
             localStorage.removeItem(ANALISE_DRE);
             localStorage.removeItem(PERIODO_RELATORIO_CONSOLIDADO_DRE);
+            localStorage.removeItem(PERIODO_SELECIONADO_DRE_ACOMPANHAMENTO);
             localStorage.setItem(DATA_LOGIN, moment(new Date(), "YYYY-MM-DD").format("YYYY-MM-DD"));
             authService.logout();
         }else if (diferenca >= 600 && diferenca <= 1339){ // Equivale a 10 horas e menos que 24 horas
@@ -152,7 +154,7 @@ const setDadosPrimeiroAcesso = async (resp, suporte) =>{
     let dados_acesso_suporte = getDadosDoUsuarioLogadoSuporte();
 
     const temAcessoAUnidadeSelecionada = () => {
-        return !!usuario_logado.unidades.find(unidade => unidade.uuid === usuario_logado.unidade_selecionada.uuid)
+        return !!usuario_logado.unidades.find(unidade => unidade.uuid === usuario_logado?.unidade_selecionada?.uuid)
     };
 
     if (usuario_logado && usuario_logado.associacao_selecionada.uuid && temAcessoAUnidadeSelecionada() ){
@@ -522,6 +524,7 @@ const alternaVisoes = (visao, uuid_unidade, uuid_associacao, nome_associacao, un
         localStorage.removeItem('uuidAta');
         localStorage.removeItem('prestacao_de_contas_nao_apresentada');
         localStorage.removeItem(PERIODO_RELATORIO_CONSOLIDADO_DRE);
+        localStorage.removeItem(PERIODO_SELECIONADO_DRE_ACOMPANHAMENTO);
         localStorage.removeItem('PAA');
         localStorage.removeItem('DADOS_PAA');
 
