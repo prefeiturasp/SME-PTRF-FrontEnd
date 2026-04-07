@@ -86,6 +86,13 @@ const useRecursoSelecionado = ({ visoesService }) => {
       try {
         const res = await getRecursosPorUnidade(dadosUsuarioLogado.unidade_selecionada.uuid);
         setRecursos(res);
+
+        // previne cenário onde o recurso selecionado pode ter sido atualizado, buscando o recurso atualizado na lista retornada
+        const recursoAtualizado = res.find((r) => r.uuid === recursoSelecionado?.uuid);
+        if (recursoAtualizado) {
+          setRecursoSelecionado(recursoAtualizado);
+          localStorage.setItem(storageKey, JSON.stringify(recursoAtualizado));
+        }
       } catch (err) {
         console.error("Erro ao buscar recursos:", err);
         setError(err);
