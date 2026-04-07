@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { authService } from "../../../../services/auth.service";
 import { MemoryRouter } from 'react-router-dom';
 import {visoesService} from "../../../../services/visoes.service";
@@ -123,6 +123,32 @@ describe('Cabeçalho', () => {
         fireEvent.change(select, { target: { value: obj_unidade } });
         expect(visoesService.getItemUsuarioLogado).toHaveBeenCalledTimes(1);
         expect(mantemEstadoAnaliseDre.limpaAnaliseDreUsuarioLogado).toHaveBeenCalledTimes(1);
+
+    });
+
+    it('Deve chamar função para remover recurso selecionado', async () => {
+        jest.spyOn(Storage.prototype, 'removeItem')
+
+        useRecursoSelecionadoContext.mockReturnValue({ mostrarSelecionarRecursos: false });
+
+        renderComponent();
+        const obj_unidade = '{"uuid_unidade":"fake-uuid-2","uuid_associacao":"fake-uuid-2","nome_associacao":"Support Unit 2","unidade_tipo":"CEI","unidade_nome":"Unit 2","notificar_devolucao_referencia":true,"notificar_devolucao_pc_uuid":"fake-uuid-2","notificacao_uuid":"fake-uuid-2"}'
+        const select = screen.getByTestId('select-unidade');
+        fireEvent.change(select, { target: { value: obj_unidade } });
+        expect(localStorage.removeItem).toHaveBeenCalledTimes(1);
+
+    });
+
+    it('Não deve chamar função para remover recurso selecionado', async () => {
+        jest.spyOn(Storage.prototype, 'removeItem')
+
+        useRecursoSelecionadoContext.mockReturnValue({ mostrarSelecionarRecursos: true });
+
+        renderComponent();
+        const obj_unidade = '{"uuid_unidade":"fake-uuid-2","uuid_associacao":"fake-uuid-2","nome_associacao":"Support Unit 2","unidade_tipo":"CEI","unidade_nome":"Unit 2","notificar_devolucao_referencia":true,"notificar_devolucao_pc_uuid":"fake-uuid-2","notificacao_uuid":"fake-uuid-2"}'
+        const select = screen.getByTestId('select-unidade');
+        fireEvent.change(select, { target: { value: obj_unidade } });
+        expect(localStorage.removeItem).not.toHaveBeenCalled();
 
     });
 
