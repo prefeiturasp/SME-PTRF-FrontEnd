@@ -29,6 +29,7 @@ import { setPersistenteUrlVoltar } from "../../../store/reducers/componentes/esc
 import { CustomModalConfirm } from "../../Globais/Modal/CustomModalConfirm";
 import { toastCustom } from "../../../componentes/Globais/ToastCustom";
 import { ModalDevolucaoNaoPermitida } from "./ModalDevolucaoNaoPermitida";
+import { geracaoDocumentosStorageService } from "../../../services/storages/GeracaoDeDocumentos.storage.service";
 
 export const PrestacaoDeContas = ({setStatusPC, registroFalhaGeracaoPc, setRegistroFalhaGeracaoPc, setApresentaBarraAvisoErroProcessamentoPc}) => {
     const navigate = useNavigate();
@@ -186,32 +187,33 @@ export const PrestacaoDeContas = ({setStatusPC, registroFalhaGeracaoPc, setRegis
     }, [toggleBtnEscolheContaAoTrocarPeriodo])
 
     const getPeriodoPrestacaoDeConta = async () => {
-        if (localStorage.getItem('periodoPrestacaoDeConta')) {
-            const periodo_prestacao_de_contas = JSON.parse(localStorage.getItem('periodoPrestacaoDeConta'));
+        const periodoPrestacaoDeContaStorage = geracaoDocumentosStorageService.getPeriodo();
+
+        if (periodoPrestacaoDeContaStorage?.periodoPrestacaoDeConta) {
+            const periodo_prestacao_de_contas = periodoPrestacaoDeContaStorage.periodoPrestacaoDeConta;
             setPeriodoPrestacaoDeConta(periodo_prestacao_de_contas)
+            localStorage.setItem('periodoPrestacaoDeConta', JSON.stringify(periodo_prestacao_de_contas));
         } else {
             setPeriodoPrestacaoDeConta({})
         }
     };
 
     const getStatusPrestacaoDeConta = async () => {
-        let periodo_prestacao_de_contas = JSON.parse(localStorage.getItem("periodoPrestacaoDeConta"));
+        let periodo_prestacao_de_contas = geracaoDocumentosStorageService.getPeriodo();
 
-        if (periodo_prestacao_de_contas && periodo_prestacao_de_contas.periodo_uuid){
-            let data_inicial = periodo_prestacao_de_contas.data_inicial;
+        if (periodo_prestacao_de_contas?.periodoPrestacaoDeConta?.data_inicial){
+            let data_inicial = periodo_prestacao_de_contas.periodoPrestacaoDeConta.data_inicial;
             let status = await getStatusPeriodoPorData(localStorage.getItem(ASSOCIACAO_UUID), data_inicial);
             setUuidPrestacaoConta(status.prestacao_conta);
             setStatusPrestacaoDeConta(status)
             setStatusPC(status)
-        }else {
-            if (localStorage.getItem('statusPrestacaoDeConta')) {
-                const status_prestacao_de_contas = JSON.parse(localStorage.getItem('statusPrestacaoDeConta'));
-                setStatusPrestacaoDeConta(status_prestacao_de_contas)
-                setStatusPC(status_prestacao_de_contas)
-            } else {
-                setStatusPrestacaoDeConta({})
-                setStatusPC({})
-            }
+        }else if (localStorage.getItem('statusPrestacaoDeConta')) {
+            const status_prestacao_de_contas = JSON.parse(localStorage.getItem('statusPrestacaoDeConta'));
+            setStatusPrestacaoDeConta(status_prestacao_de_contas)
+            setStatusPC(status_prestacao_de_contas)
+        } else {
+            setStatusPrestacaoDeConta({})
+            setStatusPC({})
         }
     };
 
@@ -237,6 +239,7 @@ export const PrestacaoDeContas = ({setStatusPC, registroFalhaGeracaoPc, setRegis
         setLoading(true);
         if (value){
             let valor = JSON.parse(value);
+            geracaoDocumentosStorageService.setPeriodo({ 'periodoPrestacaoDeConta': valor });
             localStorage.setItem('periodoPrestacaoDeConta', value);               
             setPeriodoPrestacaoDeConta(valor);            
             let status = await getStatusPeriodoPorData(localStorage.getItem(ASSOCIACAO_UUID), valor.data_inicial);
@@ -427,7 +430,7 @@ export const PrestacaoDeContas = ({setStatusPC, registroFalhaGeracaoPc, setRegis
                     setdataBoxAtaApresentacao("Último preenchimento em "+exibeDateTimePT_BR_Ata(data_preenchimento.alterado_em));   
                 }
 
-            }catch (e) {
+            } catch {
                 data_preenchimento = await getIniciarAta(uuid_prestacao_de_contas);
                 localStorage.setItem("uuidAta", data_preenchimento.uuid);
                 setUuidAtaApresentacao(data_preenchimento.uuid)
@@ -438,9 +441,11 @@ export const PrestacaoDeContas = ({setStatusPC, registroFalhaGeracaoPc, setRegis
             }
         }
 
-        if (!uuid_prestacao_de_contas && localStorage.getItem('periodoPrestacaoDeConta')) {
-            const periodo_prestacao_de_contas = JSON.parse(localStorage.getItem('periodoPrestacaoDeConta'));
-            if (periodo_prestacao_de_contas.periodo_uuid) {
+        const periodoPrestacaoDeContaStorage = geracaoDocumentosStorageService.getPeriodo();
+
+        if (!uuid_prestacao_de_contas && periodoPrestacaoDeContaStorage?.periodoPrestacaoDeConta) {
+            const periodo_prestacao_de_contas = periodoPrestacaoDeContaStorage.periodoPrestacaoDeConta;
+            if (periodo_prestacao_de_contas?.periodo_uuid) {
                 try {
                     data_preenchimento = await getDataPreenchimentoPreviaAta(periodo_prestacao_de_contas.periodo_uuid);
                     localStorage.setItem("uuidAta", data_preenchimento.uuid);
