@@ -15,13 +15,15 @@ import {AmbientesApi} from "../AmbientesApi";
 import { useLocation } from 'react-router-dom'
 import { LogoSPHorizontalMonocromatica } from '../UI/LogoSP';
 import { SelecionaRecurso } from '../SelecionaRecurso'
+import { useRecursoSelecionadoContext } from '../../../context/RecursoSelecionado'
 
 import { FEATURE_FLAGS } from '../../../constantes/featureFlags';
 
 export const SidebarLeft = () => {
     const sidebarStatus = useContext(SidebarContext);
     const notificacaoContext = useContext(NotificacaoContext);
-    const centralDeDownloadContext = useContext(CentralDeDownloadContext)
+    const centralDeDownloadContext = useContext(CentralDeDownloadContext);
+    const { recursoSelecionado } = useRecursoSelecionadoContext();
     let navigate = useNavigate();
 
     const location = useLocation();
@@ -98,6 +100,14 @@ export const SidebarLeft = () => {
         }
     }
 
+    const deve_exibir_valores_reprogramados = (url) => {
+        // "Valores reprogramados" só é exibido se recursoSelecionado.exibe_valores_reprogramados for true
+        if(url.dataFor === 'dre-valores-reprogramados') {
+            return recursoSelecionado?.exibe_valores_reprogramados === true;
+        }
+        return true;
+    }
+
     return (
         <>
             <SideNav
@@ -135,7 +145,7 @@ export const SidebarLeft = () => {
                             }
 
                             return (
-                                featureFlag && validaPermissao(url) ? (
+                                featureFlag && validaPermissao(url) && deve_exibir_valores_reprogramados(url) ? (
                                     <NavItem
                                         key={index}
                                         navitemClassName={`d-flex align-items-end ${url.subItens && url.subItens.length > 0 ? "sub-menu" : ""}`}
