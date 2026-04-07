@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./cabecalho.scss";
-import { authService, USUARIO_LOGIN } from "../../../services/auth.service";
+import { authService, RECURSO_SELECIONADO, USUARIO_LOGIN } from "../../../services/auth.service";
 import { visoesService } from "../../../services/visoes.service";
 import { NotificacaoContext } from "../../../context/Notificacoes";
 import { CentralDeDownloadContext } from "../../../context/CentralDeDownloads";
@@ -18,7 +18,7 @@ import { LogoSigEscola } from "../LogoSigEscola";
 
 export const Cabecalho = () => {
   const navigate = useNavigate();
-  const { isLoading } = useRecursoSelecionadoContext();
+  const { isLoading, mostrarSelecionarRecursos } = useRecursoSelecionadoContext();
 
   const logout = async () => {
     await authService.logout();
@@ -61,6 +61,13 @@ export const Cabecalho = () => {
       obj.notificacao_uuid,
     );
     meapcservice.limpaAnaliseDreUsuarioLogado(visoesService.getUsuarioLogin());
+    
+    // Ao trocar de unidade, se a unidade atual possuir apenas um recurso,
+    // a variável RECURSO_SELECIONADO é removida do localStorage, permitindo que 
+    // o usuário selecione um recurso na nova unidade, caso haja mais de um disponível.
+    if (!mostrarSelecionarRecursos) {
+        localStorage.removeItem(RECURSO_SELECIONADO)
+    }
   };
 
   const retornaVisaoConvertida = (
