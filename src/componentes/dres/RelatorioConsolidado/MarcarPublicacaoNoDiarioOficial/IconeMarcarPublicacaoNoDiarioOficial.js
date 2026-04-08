@@ -10,12 +10,10 @@ const IconeMarcarPublicacaoNoDiarioOficial = ({consolidadoDre, carregaConsolidad
     const retornaMsgToolTip = () => {
         let data_de_publicacao = moment(consolidadoDre.data_publicacao).format("DD/MM/YYYY")
         return (
-            `
             <div>
-                <p class='mb-1'>Data publicação: ${data_de_publicacao}</p>
-                <p class='mb-1'>Página publicação: ${consolidadoDre.pagina_publicacao}</p>
+                <p class='mb-1'>Data publicação: {data_de_publicacao}</p>
+                <p class='mb-1'>Página publicação: {consolidadoDre.pagina_publicacao}</p>
             </div>
-            `
         )
     }
 
