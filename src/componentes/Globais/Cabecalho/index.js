@@ -18,9 +18,11 @@ import { LogoSigEscola } from "../LogoSigEscola";
 
 export const Cabecalho = () => {
   const navigate = useNavigate();
-  const { isLoading, mostrarSelecionarRecursos } = useRecursoSelecionadoContext();
+  const { isLoading, clearRecursoNaSessao } = useRecursoSelecionadoContext();
 
   const logout = async () => {
+    clearRecursoNaSessao();
+
     await authService.logout();
   };
   let login_usuario = localStorage.getItem(USUARIO_LOGIN);
@@ -61,13 +63,6 @@ export const Cabecalho = () => {
       obj.notificacao_uuid,
     );
     meapcservice.limpaAnaliseDreUsuarioLogado(visoesService.getUsuarioLogin());
-    
-    // Ao trocar de unidade, se a unidade atual possuir apenas um recurso,
-    // a variável RECURSO_SELECIONADO é removida do localStorage, permitindo que 
-    // o usuário selecione um recurso na nova unidade, caso haja mais de um disponível.
-    if (!mostrarSelecionarRecursos) {
-        localStorage.removeItem(RECURSO_SELECIONADO)
-    }
   };
 
   const retornaVisaoConvertida = (

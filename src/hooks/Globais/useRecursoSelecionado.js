@@ -10,6 +10,7 @@ import { authService } from "../../services/auth.service";
  */
 const useRecursoSelecionado = ({ visoesService }) => {
   const storageKey = "RECURSO_SELECIONADO";
+  const RECURSO_EXIBIDO_NA_SESSAO = "RECURSO_EXIBIDO_NA_SESSAO";
   const dadosUsuarioLogado = visoesService.getDadosDoUsuarioLogado();
 
   const [recursoSelecionado, setRecursoSelecionado] = useState(() => {
@@ -19,6 +20,14 @@ const useRecursoSelecionado = ({ visoesService }) => {
     } catch (error) {
       console.error("Erro ao carregar recurso do localStorage:", error);
       return null;
+    }
+  });
+  const [recursoSelecionadoNaSessao, setRecursoSelecionadoNaSessao] = useState(() => {
+    try {
+      const recursoExibido = localStorage.getItem(RECURSO_EXIBIDO_NA_SESSAO);
+      return recursoExibido ? JSON.parse(recursoExibido) : false;
+    } catch {
+      return false;
     }
   });
   const [recursos, setRecursos] = useState([]);
@@ -47,14 +56,16 @@ const useRecursoSelecionado = ({ visoesService }) => {
   }, [recursos]);
 
   const mostrarOverlaySelecionarRecursos = useMemo(() => {
-    return recursoSelecionado === null && recursos.length > 1;
+    return (recursoSelecionado === null && recursos.length > 1) || (!recursoSelecionadoNaSessao && recursos.length > 1);
   }, [recursoSelecionado, recursos]);
 
   const handleChangeRecurso = (recursoSelecionadoObj) => {
     try {
       setRecursoSelecionado(recursoSelecionadoObj);
+      setRecursoSelecionadoNaSessao(true);
       if (recursoSelecionadoObj) {
         localStorage.setItem(storageKey, JSON.stringify(recursoSelecionadoObj));
+        localStorage.setItem(RECURSO_EXIBIDO_NA_SESSAO, JSON.stringify(true));
         // TODO: Ao invés de limpar as informações do storage, tratar as informações por recurso selecionado
         // A separação de storage por recurso foi feita para a tela de conciliação apenas
         // Onde foi possível guardar informações do último período/conta na tela por recurso
@@ -62,6 +73,7 @@ const useRecursoSelecionado = ({ visoesService }) => {
         authService.limparStorageAoTrocarRecurso();
       } else {
         localStorage.removeItem(storageKey);
+        localStorage.removeItem(RECURSO_EXIBIDO_NA_SESSAO);
       }
 
       window.location.href = "/";
@@ -74,6 +86,11 @@ const useRecursoSelecionado = ({ visoesService }) => {
   const clearRecurso = () => {
     setRecursoSelecionado(null);
     localStorage.removeItem(storageKey);
+  };
+
+  const clearRecursoNaSessao = () => {
+    setRecursoSelecionadoNaSessao(false);
+    localStorage.removeItem(RECURSO_EXIBIDO_NA_SESSAO);
   };
 
   useEffect(() => {
@@ -131,6 +148,8 @@ const useRecursoSelecionado = ({ visoesService }) => {
     error,
     mostrarSelecionarRecursos,
     mostrarOverlaySelecionarRecursos,
+    setRecursoSelecionadoNaSessao,
+    clearRecursoNaSessao,
   };
 };
 
