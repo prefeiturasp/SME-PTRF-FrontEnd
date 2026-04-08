@@ -11,6 +11,7 @@ import { ValidarParcialTesouro } from '../../../../../../context/DetalharAcertos
 export const FormularioAcertos = ({solicitacoes_acerto, listaTiposDeAcertoLancamentosAgrupado, setListaTiposDeAcertoLancamentosAgrupado, formRef, handleChangeTipoDeAcertoLancamento, exibeCamposCategoriaDevolucao, tiposDevolucao, bloqueiaSelectTipoDeAcerto, removeBloqueiaSelectTipoDeAcertoJaCadastrado, textoCategoria, corTextoCategoria, removeTextoECorCategoriaTipoDeAcertoJaCadastrado, adicionaTextoECorCategoriaVazio, ehSolicitacaoCopiada, valorDocumento, lancamentosParaAcertos, validaContaAoSalvar}) => {
 
     useEffect(() => {
+        if(lancamentosParaAcertos && lancamentosParaAcertos.length > 0){
         let statusAcerto = lancamentosParaAcertos[0].documento_mestre.status
         if(statusAcerto === 'INATIVO'){
             setListaTiposDeAcertoLancamentosAgrupado(listaTiposDeAcertoLancamentosAgrupado.filter(
@@ -19,6 +20,7 @@ export const FormularioAcertos = ({solicitacoes_acerto, listaTiposDeAcertoLancam
                 }
             ));
         }
+    }
     }, [lancamentosParaAcertos])
 
     const uuidDevolucaoTesouro = listaTiposDeAcertoLancamentosAgrupado.find(item => item.id === "DEVOLUCAO")?.tipos_acerto_lancamento[0].uuid
