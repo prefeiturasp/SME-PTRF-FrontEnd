@@ -263,9 +263,9 @@ const RetificacaoRelatorioConsolidado = () => {
 
     const selecionarHeader = (listaEmRetificacao=false) => {
         return (
-            <div className="align-middle">
+            <div className="align-middle d-flex align-center justify-content-center">
                 <Dropdown>
-                    <Dropdown.Toggle id="dropdown-basic" className="p-0">
+                    <Dropdown.Toggle id="dropdown-basic" className="p-0" style={{background: 'inherit'}}>
                         <input
                             checked={listaEmRetificacao ? identificadorCheckboxClicadoPcsEmRetificacao : identificadorCheckboxClicado}
                             type="checkbox"
