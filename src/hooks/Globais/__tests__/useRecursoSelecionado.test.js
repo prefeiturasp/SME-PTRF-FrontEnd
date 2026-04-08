@@ -18,6 +18,7 @@ jest.mock("../../../services/auth.service", () => ({
 }));
 
 const STORAGE_KEY = "RECURSO_SELECIONADO";
+const RECURSO_EXIBIDO_NA_SESSAO = "RECURSO_EXIBIDO_NA_SESSAO";
 
 const recursoA = { uuid: "rec-a", nome: "Recurso A" };
 const recursoB = { uuid: "rec-b", nome: "Recurso B" };
@@ -353,6 +354,7 @@ describe("useRecursoSelecionado - mostrarOverlaySelecionarRecursos", () => {
 
   it("é false quando recursoSelecionado está definido", async () => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(recursoA));
+    localStorage.setItem(RECURSO_EXIBIDO_NA_SESSAO, JSON.stringify(true));
     getRecursosPorUnidade.mockResolvedValue([recursoA, recursoB]);
 
     const { result } = renderHook(() =>
