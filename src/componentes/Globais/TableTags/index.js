@@ -41,8 +41,8 @@ export const TableTags = ({data, coresTags, excludeTags = [], showPeriodoConcili
                         </div>
                                                     
                         { showPeriodoConciliacao && tag.tag_nome == 'Conciliada' && 
-                            <div data-testid={`td-periodo-conciliacao-${index}`} className="px-2 compact-top">
-                                <small className="ptrf-despesa-status-ativo">
+                            <div data-testid={`td-periodo-conciliacao-${index}`} className="px-2 tag-margin-top">
+                                <small className="tag-periodo-conciliacao">
                                     Período: {data.rateios[0]?.periodo_conciliacao}
                                 </small>                                                    
                             </div>                                  
