@@ -17,15 +17,7 @@ const TabelaDespesas = ({ despesas, onClickDespesa, tipoLancamentoTemplate, espe
                         </td>
                     
                         <td data-qa={`td-despesa-informacoes-${index}`} rowSpan={despesa.rateios.length > 0 ? despesa.rateios.length + 1 : 2}>
-                            {<TableTags data={despesa} coresTags={coresTagsDespesas} />}
-                            
-                            { despesa.rateios[0]?.periodo_conciliacao && 
-                                <div data-testid={`td-periodo-conciliacao-${index}`} className="p-2">
-                                    <span className="ptrf-despesa-status-ativo">
-                                        Período: {despesa.rateios[0]?.periodo_conciliacao}
-                                    </span>                                                    
-                                </div>                                  
-                            }     
+                            {<TableTags data={despesa} coresTags={coresTagsDespesas} showPeriodoConciliacao={true} />} 
                         </td>
                     </tr>
 
