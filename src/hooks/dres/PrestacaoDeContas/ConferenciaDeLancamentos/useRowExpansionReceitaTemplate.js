@@ -8,6 +8,10 @@ const useRowExpansionDespesaTemplate = (prestacaoDeContas) =>{
 
     const tabelaReceita = useCarregaTabelaReceita()
     return (data) => {
+        const categoriaReceita = data?.documento_mestre?.categoria_receita
+            ? tabelaReceita?.categorias_receita?.find(elemnt => elemnt.id === data.documento_mestre.categoria_receita)
+            : null;
+
         return (
             <div className='col-12 px-4 py-2'>
                 {data.documento_mestre.mensagem_inativa &&
@@ -24,7 +28,7 @@ const useRowExpansionDespesaTemplate = (prestacaoDeContas) =>{
                     </div>
                     <div className='col-4 border-top border-bottom border-right'>
                         <p className='mt-2 mb-0'><strong>Classificação do crédito</strong></p>
-                        <p className='mb-2'>{data.documento_mestre && data.documento_mestre.categoria_receita ? tabelaReceita.categorias_receita.find(elemnt => elemnt.id === data.documento_mestre.categoria_receita).nome : ''}</p>
+                        <p className='mb-2'>{categoriaReceita?.nome || ''}</p>
                     </div>
                     <div className='col-4 border-top border-bottom border-right'>
                         <p className='mt-2 mb-0'><strong>Tipo de ação</strong></p>

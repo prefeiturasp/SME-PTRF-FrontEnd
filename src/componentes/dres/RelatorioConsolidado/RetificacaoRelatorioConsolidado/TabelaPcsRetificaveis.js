@@ -28,7 +28,7 @@ export const TabelaPcsRetificaveis = ({pcsDoConsolidado, rowsPerPage, nomeComTip
                                 stripedRows
                                 id="tabela-retificaveis"
                             >
-                                <Column header={selecionarHeader()} body={selecionarTemplate} style={{width: '4%', borderRight: 'none'}}/>
+                                <Column header={selecionarHeader()} body={selecionarTemplate} style={{width: '5%', borderRight: 'none'}}/>
                                 <Column body={nomeComTipoTemplate} header='Nome da Unidade'/>
                                 
                             </DataTable>
