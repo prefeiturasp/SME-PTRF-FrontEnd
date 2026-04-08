@@ -30,6 +30,13 @@ describe("ListaDeDespesas", () => {
                 numero_documento: "123",
                 status: "COMPLETO",
                 data_documento: "2024-01-15",
+                informacoes: [
+                    {
+                        tag_id: "conciliada",
+                        tag_nome: "Conciliada",
+                        tag_hint: "Período: 2024.1"
+                    }
+                ],
                 rateios: [
                     {
                         especificacao_material_servico: { descricao: "Material 1" },
@@ -302,7 +309,7 @@ describe("ListaDeDespesas", () => {
     });
 
     it("deve exibir o período de conciliação quando disponível", async () => {
-        render(<ListaDeDespesas />);
+        render(<ListaDeDespesas showPeriodoConciliacao={true}/>);
 
         await waitFor(() => {
             expect(screen.queryByTestId('td-periodo-conciliacao-0')).toBeInTheDocument();
