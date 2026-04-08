@@ -2,7 +2,7 @@ import React from 'react';
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import './tableTags.scss';
 
-export const TableTags = ({data, coresTags, excludeTags = []}) => {
+export const TableTags = ({data, coresTags, excludeTags = [], showPeriodoConciliacao = false}) => {
     return (
         <>
             {data.informacoes ? data.informacoes?.map((tag, index) => {
@@ -21,23 +21,33 @@ export const TableTags = ({data, coresTags, excludeTags = []}) => {
                 const tooltipId = `tooltip-tag-${index}`;
 
                 return (
-                    <div key={index} className='p-2 text-wrap-tag'>
-                        <div 
-                            data-qa={`tooltip-tag-${index}`} 
-                            data-tooltip-id={tooltipId}
-                            data-tooltip-html={toolTip}
-                            className={`${coresTags[tag.tag_id]} tag-tabelas mb-0`} 
-                            key={index}
-                        >
-                            <span data-qa={`span-tag-${index}`} key={index}>{tag.tag_nome}</span>
+                    <>
+                        <div key={index} className='p-2 text-wrap-tag'>
+                            <div 
+                                data-qa={`tooltip-tag-${index}`} 
+                                data-tooltip-id={tooltipId}
+                                data-tooltip-html={toolTip}
+                                className={`${coresTags[tag.tag_id]} tag-tabelas mb-0`} 
+                                key={index}
+                            >
+                                <span data-qa={`span-tag-${index}`} key={index}>{tag.tag_nome}</span>
+                            </div>
+                            <ReactTooltip 
+                                id={tooltipId}
+                                html={toolTip}
+                                place="top"
+                                style={{ maxWidth: '200px' }}
+                            />
                         </div>
-                        <ReactTooltip 
-                            id={tooltipId}
-                            html={toolTip}
-                            place="top"
-                            style={{ maxWidth: '200px' }}
-                        />
-                    </div>
+                                                    
+                        { showPeriodoConciliacao && tag.tag_nome == 'Conciliada' && 
+                            <div data-testid={`td-periodo-conciliacao-${index}`} className="px-2 compact-top">
+                                <small className="ptrf-despesa-status-ativo">
+                                    Período: {data.rateios[0]?.periodo_conciliacao}
+                                </small>                                                    
+                            </div>                                  
+                        }    
+                    </>
                 )
             }) : '-'}
         </>
