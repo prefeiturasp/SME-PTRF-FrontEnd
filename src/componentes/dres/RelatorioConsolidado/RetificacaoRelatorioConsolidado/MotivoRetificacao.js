@@ -6,11 +6,9 @@ import {faCheck} from "@fortawesome/free-solid-svg-icons";
 export const MotivoRetificacao = ({relatorioConsolidado, handleEditarMotivoRetificacao, estadoBotaoSalvarMotivo, mudarEstadoBotaoSalvarMotivo, ehEdicaoRetificacao, formRef}) => {
     const [mostrarCheckSalvo, setMostrarCheckSalvo] = useState(false)
 
-    const handleChangeTextareaMotivoRetificacao = (props, motivo, event) => {
-        if(motivo) {
-            mudarEstadoBotaoSalvarMotivo(true);
-        }
-        
+    const handleChangeTextareaMotivoRetificacao = (props, event) => {
+        const motivo = event.target.value;
+        mudarEstadoBotaoSalvarMotivo(!!motivo);
         props.handleChange(event);
         setMostrarCheckSalvo(false);
     }
@@ -18,7 +16,11 @@ export const MotivoRetificacao = ({relatorioConsolidado, handleEditarMotivoRetif
     return (
         <div className="row pt-2">
             <Formik
-                initialValues={relatorioConsolidado}
+                initialValues={{
+                    motivo_retificacao: ehEdicaoRetificacao
+                        ? (relatorioConsolidado?.motivo_retificacao || '')
+                        : ''
+                }}
                 enableReinitialize={true}
                 validateOnBlur={true}
                 validateOnChange={true}
@@ -35,7 +37,7 @@ export const MotivoRetificacao = ({relatorioConsolidado, handleEditarMotivoRetif
                                 <textarea
                                     name='motivo_retificacao'
                                     value={values.motivo_retificacao ? values.motivo_retificacao : ''}
-                                    onChange={(event) => handleChangeTextareaMotivoRetificacao(props, values.motivo_retificacao, event)}
+                                    onChange={(event) => handleChangeTextareaMotivoRetificacao(props, event)}
                                     className={`form-control`}
                                     rows="4"
 
