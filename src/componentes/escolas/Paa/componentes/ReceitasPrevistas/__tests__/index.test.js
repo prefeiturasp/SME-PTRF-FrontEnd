@@ -4,10 +4,10 @@ import {
   postDesativarAtualizacaoSaldoPAA,
   postAtivarAtualizacaoSaldoPAA,
 } from "../../../../../../services/escolas/Paa.service";
-import { useGetAcoesAssociacao } from "../hooks/useGetAcoesAssociacao";
 import { useGetTotalizadorRecursoProprio } from "../../DetalhamentoRecursosProprios/hooks/useGetTotalizarRecursoProprio";
 import ReceitasPrevistas from "../index";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { PaaContext } from "../../PaaContext";
 
 jest.mock("../../../../../../services/visoes.service", () => ({
   visoesService: {
@@ -15,7 +15,6 @@ jest.mock("../../../../../../services/visoes.service", () => ({
   },
 }));
 
-jest.mock("../hooks/useGetAcoesAssociacao");
 jest.mock(
   "../../DetalhamentoRecursosProprios/hooks/useGetTotalizarRecursoProprio",
 );
@@ -24,14 +23,19 @@ jest.mock("../../../../../../services/sme/Parametrizacoes.service");
 jest.mock("../../../../../../services/escolas/Paa.service", () => ({
   postDesativarAtualizacaoSaldoPAA: jest.fn(),
   postAtivarAtualizacaoSaldoPAA: jest.fn(),
+  getPaaReceitasPrevistas: jest.fn().mockResolvedValue([]),
+  getProgramasPddeTotais: jest.fn().mockResolvedValue([]),
 }));
+
+const paaMock = {
+  uuid: "123",
+  associacao: 999,
+  status: "EM_ELABORACAO",
+  saldo_congelado_em: null,
+};
 
 describe("ReceitasPrevistas Component", () => {
   let queryClient;
-
-  const wrapper = ({ children }) => (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-  );
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -55,19 +59,16 @@ describe("ReceitasPrevistas Component", () => {
     postAtivarAtualizacaoSaldoPAA.mockReturnValue(new Promise(() => {}));
   });
 
+  const wrapper = ({ children }) => (
+    <QueryClientProvider client={queryClient}>
+      <PaaContext.Provider value={{ paa: paaMock, refetch: jest.fn() }}>
+        {children}
+      </PaaContext.Provider>
+    </QueryClientProvider>
+  );
+
   it("deve renderizar corretamente", () => {
-    useGetAcoesAssociacao.mockReturnValue({
-      data: [],
-      isLoading: false,
-    });
-
-    const paaMock = {
-      uuid: "123",
-      associacao: 999,
-      status: "EM_ELABORACAO",
-    };
-
-    render(<ReceitasPrevistas paa={paaMock} />, { wrapper });
+    render(<ReceitasPrevistas />, { wrapper });
 
     const titulo = screen.getByRole("heading", {
       level: 4,
@@ -88,17 +89,8 @@ describe("ReceitasPrevistas Component", () => {
       JSON.stringify({ uuid: "fake-uuid-paa", saldo_congelado_em: null }),
     );
     getPaaVigente.mockResolvedValue({ uuid: "fake-uuid-paa" });
-    useGetAcoesAssociacao.mockReturnValue({
-      data: [],
-      isLoading: false,
-    });
-    const paaMock = {
-      uuid: "123",
-      associacao: 999,
-      status: "EM_ELABORACAO",
-    };
 
-    render(<ReceitasPrevistas paa={paaMock} />, { wrapper });
+    render(<ReceitasPrevistas />, { wrapper });
 
     const checkbox = screen.getByTestId("checkbox-parar-atualizacoes-saldo");
     await waitFor(() => {
@@ -117,17 +109,8 @@ describe("ReceitasPrevistas Component", () => {
       "DADOS_PAA",
       JSON.stringify({ uuid: "fake-uuid-paa", saldo_congelado_em: null }),
     );
-    useGetAcoesAssociacao.mockReturnValue({
-      data: [],
-      isLoading: false,
-    });
-    const paaMock = {
-      uuid: "123",
-      associacao: 999,
-      status: "EM_ELABORACAO",
-    };
 
-    render(<ReceitasPrevistas paa={paaMock} />, { wrapper });
+    render(<ReceitasPrevistas />, { wrapper });
 
     await waitFor(() => {
       const checkbox = screen.getByTestId("checkbox-parar-atualizacoes-saldo");
@@ -152,17 +135,8 @@ describe("ReceitasPrevistas Component", () => {
       "DADOS_PAA",
       JSON.stringify({ uuid: "fake-uuid-paa", saldo_congelado_em: null }),
     );
-    useGetAcoesAssociacao.mockReturnValue({
-      data: [],
-      isLoading: false,
-    });
-    const paaMock = {
-      uuid: "123",
-      associacao: 999,
-      status: "EM_ELABORACAO",
-    };
 
-    render(<ReceitasPrevistas paa={paaMock} />, { wrapper });
+    render(<ReceitasPrevistas />, { wrapper });
 
     await waitFor(() => {
       const checkbox = screen.getByTestId("checkbox-parar-atualizacoes-saldo");

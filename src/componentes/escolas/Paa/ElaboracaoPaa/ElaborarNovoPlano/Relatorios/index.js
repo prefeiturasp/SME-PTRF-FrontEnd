@@ -56,8 +56,6 @@ const Relatorios = ({ initialExpandedSections }) => {
   const { ataPaa, isLoading: isLoadingAtaPaa } = useGetAtaPaaVigente(
     paaVigente?.uuid,
   );
-  const apresentouToastErroPaaNaoEncontrado = useRef(false);
-  const apresentouToastErroAtaNaoEncontrada = useRef(false);
 
   const timerRef = useRef(null);
 
@@ -286,6 +284,9 @@ const Relatorios = ({ initialExpandedSections }) => {
     statusDocumento?.versao === "FINAL";
 
   const botaoGerarAtaDesabilitado = () => {
+    // TODO: Remover: Desabilitar provisoriamente geração de Ata quando Paa está em retificação
+    // até a implementação de geração de documentos de retificação
+    if (paaVigente?.status === 'EM_RETIFICACAO' ) return true;
     if (!podeEditar) return true;
     if (!planoAnualDocumentoFinalGerado) return true;
     if (!ataPaa?.uuid) return true;
@@ -294,6 +295,11 @@ const Relatorios = ({ initialExpandedSections }) => {
   };
 
   const mensagemTooltipGerarAta = () => {
+    // TODO: Remover: Desabilitar provisoriamente geração de Ata quando Paa está em retificação
+    // até a implementação de geração de documentos de retificação
+    if (paaVigente?.status === 'EM_RETIFICACAO' ) {
+      return "Geração de Ata bloqueada para PAA Em Retificação. Implementação Pendente.";
+    }
     if (!podeEditar) return "Sem permissão para gerar ata.";
     if (!planoAnualDocumentoFinalGerado) {
       return "Gere o Plano Anual antes de gerar a ata";

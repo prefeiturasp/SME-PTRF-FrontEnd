@@ -1,5 +1,4 @@
-import { act } from "react";
-import { renderHook } from "@testing-library/react";
+import { renderHook, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { usePostImportarPrioridades } from "../usePostImportarPrioridades";
 import { toastCustom } from "../../../../../../../Globais/ToastCustom";
@@ -47,7 +46,7 @@ describe("usePostImportarPrioridadess", () => {
       () => usePostImportarPrioridades(mockOnClose), { wrapper }
     );
 
-    await act(async () => {
+    await waitFor(async () => {
       result.current.mutationImportarPrioridades.mutate(params);
     });
 
@@ -66,7 +65,7 @@ describe("usePostImportarPrioridadess", () => {
       wrapper,
     });
 
-    await act(async () => {
+    await waitFor(async () => {
       result.current.mutationImportarPrioridades.mutate({
         uuid_paa_atual: "123",
         uuid_paa_anterior: "456",
@@ -86,7 +85,7 @@ describe("usePostImportarPrioridadess", () => {
       wrapper,
     });
 
-    await act(async () => {
+    await waitFor(async () => {
       result.current.mutationImportarPrioridades.mutate(
         { uuid_paa_atual: "123", uuid_paa_anterior: "456", confirmar: 1 },
       );
@@ -95,8 +94,8 @@ describe("usePostImportarPrioridadess", () => {
     expect(toastCustom.ToastCustomSuccess).toHaveBeenCalledWith(
       "Importado com sucesso"
     );
-    expect(invalidateQueriesSpy).toHaveBeenCalledWith(["prioridades"]);
-    expect(invalidateQueriesSpy).toHaveBeenCalledWith(["prioridades-resumo"]);
+    expect(invalidateQueriesSpy).toHaveBeenCalledWith({ queryKey: ["prioridades"], exact: false });
+    expect(invalidateQueriesSpy).toHaveBeenCalledWith({ queryKey: ["prioridades-resumo"] });
     expect(onClose).toHaveBeenCalled();
   });
 
@@ -108,7 +107,7 @@ describe("usePostImportarPrioridadess", () => {
       wrapper,
     });
 
-    await act(async () => {
+    await waitFor(async () => {
       result.current.mutationImportarPrioridades.mutate(
         { uuid_paa_atual: "1", uuid_paa_anterior: "2", confirmar: 1 },
       );

@@ -3,6 +3,7 @@ import { getUuidAssociacao } from '../../../utils/AssociacaoUtils';
 import {
     getAssociacao,
     getAssociacaoByUUID,
+    getAcoesAssociacao,
     getContasAtivasDaAssociacaoNoPeriodo,
     alterarAssociacao,
     getPeriodoFechado,
@@ -490,5 +491,110 @@ describe('Testes para funções de análise', () => {
             getAuthHeader()
         );
         expect(result).toEqual(mockData);
+    });
+
+    test('getAcoesAssociacao deve chamar a API sem page_size quando não fornecido', async () => {
+        api.get.mockResolvedValue({ data: mockData });
+        const result = await getAcoesAssociacao();
+
+        expect(api.get).toHaveBeenCalledWith(
+            `api/acoes-associacoes/?associacao__uuid=${associacao_uuid}`,
+            getAuthHeader()
+        );
+        expect(result).toEqual(mockData);
+    });
+
+    test('getAcoesAssociacao deve incluir page_size na URL quando fornecido', async () => {
+        api.get.mockResolvedValue({ data: mockData });
+        const result = await getAcoesAssociacao(undefined, 50);
+
+        expect(api.get).toHaveBeenCalledWith(
+            `api/acoes-associacoes/?associacao__uuid=${associacao_uuid}&page_size=50`,
+            getAuthHeader()
+        );
+        expect(result).toEqual(mockData);
+    });
+
+    test('getContas deve chamar a API sem query string quando nenhum parâmetro é fornecido', async () => {
+        api.get.mockResolvedValue({ data: mockData });
+        const result = await getContas();
+
+        expect(api.get).toHaveBeenCalledWith(
+            `/api/associacoes/${associacao_uuid}/contas/`,
+            getAuthHeader()
+        );
+        expect(result).toEqual(mockData);
+    });
+
+    test('getContas deve incluir all=true quando getAllContas=true', async () => {
+        api.get.mockResolvedValue({ data: mockData });
+        const result = await getContas("", true);
+
+        expect(api.get).toHaveBeenCalledWith(
+            `/api/associacoes/${associacao_uuid}/contas/?all=true`,
+            getAuthHeader()
+        );
+        expect(result).toEqual(mockData);
+    });
+
+    test('getContas deve incluir periodo_uuid e all quando ambos fornecidos', async () => {
+        api.get.mockResolvedValue({ data: mockData });
+        const result = await getContas(periodo_uuid, true);
+
+        expect(api.get).toHaveBeenCalledWith(
+            `/api/associacoes/${associacao_uuid}/contas/?periodo_uuid=${periodo_uuid}&all=true`,
+            getAuthHeader()
+        );
+        expect(result).toEqual(mockData);
+    });
+
+    it('exportarDadosAssociacao deve executar click no link ao baixar com sucesso', async () => {
+        const mockBlob = new Blob(['content'], { type: 'application/xlsx' });
+        api.get.mockResolvedValue({ data: mockBlob });
+        window.URL.createObjectURL = jest.fn(() => 'blob:assoc-url');
+        const mockLink = { setAttribute: jest.fn(), click: jest.fn(), href: '' };
+        jest.spyOn(document, 'createElement').mockReturnValue(mockLink);
+        jest.spyOn(document.body, 'appendChild').mockImplementation(() => {});
+
+        await exportarDadosAssociacao();
+
+        expect(mockLink.setAttribute).toHaveBeenCalledWith('download', 'associacao.xlsx');
+        expect(mockLink.click).toHaveBeenCalled();
+
+        jest.restoreAllMocks();
+    });
+
+    it('exportarDadosAssociacao deve retornar erro quando a API falha', async () => {
+        const mockError = { response: { status: 500 } };
+        api.get.mockRejectedValue(mockError);
+
+        const result = await exportarDadosAssociacao();
+
+        expect(result).toEqual(mockError.response);
+    });
+
+    it('exportarDadosAssociacaoPdf deve executar click no link ao baixar com sucesso', async () => {
+        const mockBlob = new Blob(['content'], { type: 'application/pdf' });
+        api.get.mockResolvedValue({ data: mockBlob });
+        window.URL.createObjectURL = jest.fn(() => 'blob:assoc-pdf-url');
+        const mockLink = { setAttribute: jest.fn(), click: jest.fn(), href: '' };
+        jest.spyOn(document, 'createElement').mockReturnValue(mockLink);
+        jest.spyOn(document.body, 'appendChild').mockImplementation(() => {});
+
+        await exportarDadosAssociacaoPdf();
+
+        expect(mockLink.setAttribute).toHaveBeenCalledWith('download', 'associacao.pdf');
+        expect(mockLink.click).toHaveBeenCalled();
+
+        jest.restoreAllMocks();
+    });
+
+    it('exportarDadosAssociacaoPdf deve retornar erro quando a API falha', async () => {
+        const mockError = { response: { status: 500 } };
+        api.get.mockRejectedValue(mockError);
+
+        const result = await exportarDadosAssociacaoPdf();
+
+        expect(result).toEqual(mockError.response);
     });
 });

@@ -115,9 +115,15 @@ export const NotificacaoContextProvider = ({children}) => {
 
 
     const getQtdeNotificacoesNaoLidas = async () =>{
-        let qtde = await getQuantidadeNaoLidas();
-        setQtdeNotificacoesNaoLidas(qtde.quantidade_nao_lidos);
-        return qtde.quantidade_nao_lidos;
+        try{
+            let qtde = await getQuantidadeNaoLidas();
+            setQtdeNotificacoesNaoLidas(qtde.quantidade_nao_lidos);
+            return qtde.quantidade_nao_lidos;
+        } catch (e) {
+            console.error("Erro ao obter notificações não lidas: ", e)
+            // Evita erro de atualização de página quando status de request é 401
+            return 0
+        }
     };
 
     return (

@@ -26,8 +26,8 @@ export const useDeleteRecursoProprio = () => {
     mutationOptions: {
       onSuccess: () => {
         toastCustom.ToastCustomSuccess("Recurso próprio excluído com sucesso.");
-        queryClient.invalidateQueries(["recursos-proprios"]);
-        queryClient.invalidateQueries(["totalizador-recurso-proprio"]);
+        queryClient.invalidateQueries({ queryKey: ["recursos-proprios"] });
+        queryClient.invalidateQueries({ queryKey: ["totalizador-recurso-proprio"] });
       },
       onError: (e) => {
         if (e.response && e.response.data && e.response.data.mensagem) {

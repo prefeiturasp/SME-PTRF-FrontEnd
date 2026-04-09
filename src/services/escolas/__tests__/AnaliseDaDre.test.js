@@ -53,4 +53,21 @@ describe('Testes para funções de análise', () => {
         );
         expect(result).toEqual(mockData);
     });
+
+    test('getListaDeAnalises deve usar string vazia no header quando token não está no localStorage', async () => {
+        localStorage.removeItem(TOKEN_ALIAS);
+        api.get.mockResolvedValue({ data: mockData });
+
+        await getListaDeAnalises(associacao_uuid);
+
+        expect(api.get).toHaveBeenCalledWith(
+            `api/associacoes/${associacao_uuid}/status-prestacoes/`,
+            {
+                headers: {
+                    'Authorization': 'JWT ',
+                    'Content-Type': 'application/json',
+                },
+            }
+        );
+    });
 });

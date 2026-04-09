@@ -1,12 +1,12 @@
 import { renderHook, waitFor } from "@testing-library/react";
 import { act } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { usePostReceitasPrevistasOutrosRecursos } from "../../hooks/usePostReceitasPrevistasOutrosRecursosPeriodo";
-import { postReceitasPrevistasOutrosRecursosPeriodo } from "../../../../../../../services/escolas/Paa.service";
+import { usePostReceitasPrevistasPaa } from "../../hooks/usePostReceitasPrevistasPaa";
+import { postReceitasPrevistasPaa } from "../../../../../../../services/escolas/Paa.service";
 import { toastCustom } from "../../../../../../Globais/ToastCustom";
 
 jest.mock("../../../../../../../services/escolas/Paa.service", () => ({
-  postReceitasPrevistasOutrosRecursosPeriodo: jest.fn(),
+  postReceitasPrevistasPaa: jest.fn(),
 }));
 
 jest.mock("../../../../../../Globais/ToastCustom", () => ({
@@ -20,7 +20,7 @@ jest.mock("react-redux", () => ({
   useDispatch: jest.fn(),
 }));
 
-describe("usePostReceitasPrevistasOutrosRecursos", () => {
+describe("usePostReceitasPrevistasPaa", () => {
   let queryClient;
   let wrapper;
   let mockOnClose;
@@ -45,7 +45,7 @@ describe("usePostReceitasPrevistasOutrosRecursos", () => {
   describe("Estrutura do retorno", () => {
     it("retorna mutationPost com função mutate", () => {
       const { result } = renderHook(
-        () => usePostReceitasPrevistasOutrosRecursos(mockOnClose),
+        () => usePostReceitasPrevistasPaa(mockOnClose),
         { wrapper }
       );
 
@@ -55,7 +55,7 @@ describe("usePostReceitasPrevistasOutrosRecursos", () => {
 
     it("inicia com isPending false", () => {
       const { result } = renderHook(
-        () => usePostReceitasPrevistasOutrosRecursos(mockOnClose),
+        () => usePostReceitasPrevistasPaa(mockOnClose),
         { wrapper }
       );
 
@@ -64,7 +64,7 @@ describe("usePostReceitasPrevistasOutrosRecursos", () => {
 
     it("inicia com isError false", () => {
       const { result } = renderHook(
-        () => usePostReceitasPrevistasOutrosRecursos(mockOnClose),
+        () => usePostReceitasPrevistasPaa(mockOnClose),
         { wrapper }
       );
 
@@ -73,15 +73,16 @@ describe("usePostReceitasPrevistasOutrosRecursos", () => {
   });
 
   describe("mutationFn", () => {
-    it("chama postReceitasPrevistasOutrosRecursosPeriodo com o payload correto", async () => {
-      postReceitasPrevistasOutrosRecursosPeriodo.mockResolvedValueOnce({});
+    it("chama postReceitasPrevistasPaa com o payload correto", async () => {
+      postReceitasPrevistasPaa.mockResolvedValueOnce({});
 
       const { result } = renderHook(
-        () => usePostReceitasPrevistasOutrosRecursos(mockOnClose),
+        () => usePostReceitasPrevistasPaa(mockOnClose),
         { wrapper }
       );
 
       const payload = {
+        acao_associacao: "UUID-1234",
         previsao_valor_custeio: 200,
         previsao_valor_capital: 400,
         previsao_valor_livre: 600,
@@ -89,53 +90,49 @@ describe("usePostReceitasPrevistasOutrosRecursos", () => {
 
       await result.current.mutationPost.mutateAsync({ payload });
 
-      expect(
-        postReceitasPrevistasOutrosRecursosPeriodo
-      ).toHaveBeenCalledWith(payload);
-      expect(
-        postReceitasPrevistasOutrosRecursosPeriodo
-      ).toHaveBeenCalledTimes(1);
+      expect(postReceitasPrevistasPaa).toHaveBeenCalledWith(payload);
+      expect(postReceitasPrevistasPaa).toHaveBeenCalledTimes(1);
     });
   });
 
   describe("onSuccess", () => {
     it("exibe toast de sucesso após criação bem-sucedida", async () => {
-      postReceitasPrevistasOutrosRecursosPeriodo.mockResolvedValueOnce({});
+      postReceitasPrevistasPaa.mockResolvedValueOnce({});
 
       const { result } = renderHook(
-        () => usePostReceitasPrevistasOutrosRecursos(mockOnClose),
+        () => usePostReceitasPrevistasPaa(mockOnClose),
         { wrapper }
       );
 
       await result.current.mutationPost.mutateAsync({ payload: {} });
 
       expect(toastCustom.ToastCustomSuccess).toHaveBeenCalledWith(
-        "Recurso editado com sucesso."
+        "Recurso criado com sucesso."
       );
       expect(toastCustom.ToastCustomSuccess).toHaveBeenCalledTimes(1);
     });
 
-    it("invalida a query 'receitas-previstas-outros-recursos-periodo' após criação bem-sucedida", async () => {
-      postReceitasPrevistasOutrosRecursosPeriodo.mockResolvedValueOnce({});
+    it("invalida a query 'receitas-previstas-paa' após criação bem-sucedida", async () => {
+      postReceitasPrevistasPaa.mockResolvedValueOnce({});
       const invalidateQueriesSpy = jest.spyOn(queryClient, "invalidateQueries");
 
       const { result } = renderHook(
-        () => usePostReceitasPrevistasOutrosRecursos(mockOnClose),
+        () => usePostReceitasPrevistasPaa(mockOnClose),
         { wrapper }
       );
 
       await result.current.mutationPost.mutateAsync({ payload: {} });
 
-      expect(invalidateQueriesSpy).toHaveBeenCalledWith(
-        "receitas-previstas-outros-recursos-periodo"
-      );
+      expect(invalidateQueriesSpy).toHaveBeenCalledWith({ queryKey: [
+        "receitas-previstas-paa",
+      ]});
     });
 
     it("chama onClose após criação bem-sucedida", async () => {
-      postReceitasPrevistasOutrosRecursosPeriodo.mockResolvedValueOnce({});
+      postReceitasPrevistasPaa.mockResolvedValueOnce({});
 
       const { result } = renderHook(
-        () => usePostReceitasPrevistasOutrosRecursos(mockOnClose),
+        () => usePostReceitasPrevistasPaa(mockOnClose),
         { wrapper }
       );
 
@@ -145,10 +142,10 @@ describe("usePostReceitasPrevistasOutrosRecursos", () => {
     });
 
     it("não lança erro quando onClose não é fornecido", async () => {
-      postReceitasPrevistasOutrosRecursosPeriodo.mockResolvedValueOnce({});
+      postReceitasPrevistasPaa.mockResolvedValueOnce({});
 
       const { result } = renderHook(
-        () => usePostReceitasPrevistasOutrosRecursos(undefined),
+        () => usePostReceitasPrevistasPaa(undefined),
         { wrapper }
       );
 
@@ -158,10 +155,10 @@ describe("usePostReceitasPrevistasOutrosRecursos", () => {
     });
 
     it("não exibe toast de erro após criação bem-sucedida", async () => {
-      postReceitasPrevistasOutrosRecursosPeriodo.mockResolvedValueOnce({});
+      postReceitasPrevistasPaa.mockResolvedValueOnce({});
 
       const { result } = renderHook(
-        () => usePostReceitasPrevistasOutrosRecursos(mockOnClose),
+        () => usePostReceitasPrevistasPaa(mockOnClose),
         { wrapper }
       );
 
@@ -173,12 +170,12 @@ describe("usePostReceitasPrevistasOutrosRecursos", () => {
 
   describe("onError", () => {
     it("exibe toast de erro quando a API falha", async () => {
-      postReceitasPrevistasOutrosRecursosPeriodo.mockRejectedValueOnce(
+      postReceitasPrevistasPaa.mockRejectedValueOnce(
         new Error("Erro desconhecido")
       );
 
       const { result } = renderHook(
-        () => usePostReceitasPrevistasOutrosRecursos(mockOnClose),
+        () => usePostReceitasPrevistasPaa(mockOnClose),
         { wrapper }
       );
 
@@ -188,18 +185,18 @@ describe("usePostReceitasPrevistasOutrosRecursos", () => {
 
       await waitFor(() =>
         expect(toastCustom.ToastCustomError).toHaveBeenCalledWith(
-          "Houve um erro ao editar recurso."
+          "Houve um erro ao criar recurso."
         )
       );
     });
 
     it("coloca mutationPost em estado de erro quando a API falha", async () => {
-      postReceitasPrevistasOutrosRecursosPeriodo.mockRejectedValueOnce(
+      postReceitasPrevistasPaa.mockRejectedValueOnce(
         new Error("Erro desconhecido")
       );
 
       const { result } = renderHook(
-        () => usePostReceitasPrevistasOutrosRecursos(mockOnClose),
+        () => usePostReceitasPrevistasPaa(mockOnClose),
         { wrapper }
       );
 
@@ -213,12 +210,12 @@ describe("usePostReceitasPrevistasOutrosRecursos", () => {
     });
 
     it("não chama onClose quando a API falha", async () => {
-      postReceitasPrevistasOutrosRecursosPeriodo.mockRejectedValueOnce(
+      postReceitasPrevistasPaa.mockRejectedValueOnce(
         new Error("Erro desconhecido")
       );
 
       const { result } = renderHook(
-        () => usePostReceitasPrevistasOutrosRecursos(mockOnClose),
+        () => usePostReceitasPrevistasPaa(mockOnClose),
         { wrapper }
       );
 
@@ -234,13 +231,13 @@ describe("usePostReceitasPrevistasOutrosRecursos", () => {
     });
 
     it("não invalida as queries quando ocorre erro", async () => {
-      postReceitasPrevistasOutrosRecursosPeriodo.mockRejectedValueOnce(
+      postReceitasPrevistasPaa.mockRejectedValueOnce(
         new Error("Erro desconhecido")
       );
       const invalidateQueriesSpy = jest.spyOn(queryClient, "invalidateQueries");
 
       const { result } = renderHook(
-        () => usePostReceitasPrevistasOutrosRecursos(mockOnClose),
+        () => usePostReceitasPrevistasPaa(mockOnClose),
         { wrapper }
       );
 
@@ -256,12 +253,12 @@ describe("usePostReceitasPrevistasOutrosRecursos", () => {
     });
 
     it("não exibe toast de sucesso quando a API falha", async () => {
-      postReceitasPrevistasOutrosRecursosPeriodo.mockRejectedValueOnce(
+      postReceitasPrevistasPaa.mockRejectedValueOnce(
         new Error("Erro desconhecido")
       );
 
       const { result } = renderHook(
-        () => usePostReceitasPrevistasOutrosRecursos(mockOnClose),
+        () => usePostReceitasPrevistasPaa(mockOnClose),
         { wrapper }
       );
 

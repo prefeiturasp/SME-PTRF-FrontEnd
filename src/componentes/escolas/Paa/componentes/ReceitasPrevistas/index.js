@@ -29,12 +29,9 @@ const ReceitasPrevistas = ({ receitasDestino = null, paa }) => {
       label: "Receitas Previstas",
       component: (
         <>
-          <ReceitasPrevistasPTRF paa={paa} />
+          <ReceitasPrevistasPTRF />
           <ReceitasPrevistasPDDE setActiveTab={setActiveTab} />
-          <ReceitasPrevistasOutrosRecursos
-            setActiveTab={setActiveTab}
-            paa={paa}
-          />
+          <ReceitasPrevistasOutrosRecursos setActiveTab={setActiveTab}/>
         </>
       ),
     },
