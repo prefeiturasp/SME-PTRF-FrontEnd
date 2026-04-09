@@ -1,6 +1,7 @@
 import React from 'react';
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import './tableTags.scss';
+import TagPeriodoConciliacao from '../TagPeriodoConciliacao';
 
 export const TableTags = ({data, coresTags, excludeTags = [], showPeriodoConciliacao = false}) => {
     return (
@@ -41,11 +42,11 @@ export const TableTags = ({data, coresTags, excludeTags = [], showPeriodoConcili
                         </div>
                                                     
                         { showPeriodoConciliacao && tag.tag_nome == 'Conciliada' && 
-                            <div data-testid={`td-periodo-conciliacao-${index}`} className="px-2 tag-margin-top">
-                                <small className="tag-periodo-conciliacao">
-                                    Período: {data.rateios[0]?.periodo_conciliacao}
-                                </small>                                                    
-                            </div>                                  
+                            <TagPeriodoConciliacao 
+                                periodo={data.rateios[0]?.periodo_conciliacao} 
+                                index={index} 
+                                classExtra={'px-2 tag-margin-top'}
+                            />                               
                         }    
                     </>
                 )
