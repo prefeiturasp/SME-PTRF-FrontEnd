@@ -10,8 +10,8 @@ export const usePostImportarPrioridades = (onClose) => {
                                                                         uuid_paa_atual, uuid_paa_anterior, confirmar),
     onSuccess: (data) => {
       toastCustom.ToastCustomSuccess(data?.mensagem || `Prioridades importadas com sucesso.`);
-      queryClient.invalidateQueries(["prioridades"]);
-      queryClient.invalidateQueries(["prioridades-resumo"]);
+      queryClient.invalidateQueries({ queryKey: ["prioridades"], exact: false });
+      queryClient.invalidateQueries({ queryKey: ["prioridades-resumo"] });
       onClose && onClose();
     },
   });

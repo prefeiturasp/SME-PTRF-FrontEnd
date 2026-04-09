@@ -1,12 +1,12 @@
 import { renderHook, waitFor } from "@testing-library/react";
 import { act } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { usePatchReceitasPrevistasOutrosRecursosPeriodo } from "../../hooks/usePatchReceitasPrevistasOutrosRecursosPeriodo";
-import { patchReceitasPrevistasOutrosRecursosPeriodo } from "../../../../../../../services/escolas/Paa.service";
+import { usePatchReceitasPrevistasPaa } from "../../hooks/usePatchReceitasPrevistasPaa";
+import { patchReceitasPrevistasPaa } from "../../../../../../../services/escolas/Paa.service";
 import { toastCustom } from "../../../../../../Globais/ToastCustom";
 
 jest.mock("../../../../../../../services/escolas/Paa.service", () => ({
-  patchReceitasPrevistasOutrosRecursosPeriodo: jest.fn(),
+  patchReceitasPrevistasPaa: jest.fn(),
 }));
 
 jest.mock("../../../../../../Globais/ToastCustom", () => ({
@@ -20,7 +20,7 @@ jest.mock("react-redux", () => ({
   useDispatch: jest.fn(),
 }));
 
-describe("usePatchReceitasPrevistasOutrosRecursosPeriodo", () => {
+describe("usePatchReceitasPrevistasPaa", () => {
   let queryClient;
   let wrapper;
   let mockOnClose;
@@ -45,7 +45,7 @@ describe("usePatchReceitasPrevistasOutrosRecursosPeriodo", () => {
   describe("Estrutura do retorno", () => {
     it("retorna mutationPatch com função mutate", () => {
       const { result } = renderHook(
-        () => usePatchReceitasPrevistasOutrosRecursosPeriodo(mockOnClose),
+        () => usePatchReceitasPrevistasPaa(mockOnClose),
         { wrapper }
       );
 
@@ -55,7 +55,7 @@ describe("usePatchReceitasPrevistasOutrosRecursosPeriodo", () => {
 
     it("inicia com isPending false", () => {
       const { result } = renderHook(
-        () => usePatchReceitasPrevistasOutrosRecursosPeriodo(mockOnClose),
+        () => usePatchReceitasPrevistasPaa(mockOnClose),
         { wrapper }
       );
 
@@ -64,7 +64,7 @@ describe("usePatchReceitasPrevistasOutrosRecursosPeriodo", () => {
 
     it("inicia com isError false", () => {
       const { result } = renderHook(
-        () => usePatchReceitasPrevistasOutrosRecursosPeriodo(mockOnClose),
+        () => usePatchReceitasPrevistasPaa(mockOnClose),
         { wrapper }
       );
 
@@ -73,16 +73,17 @@ describe("usePatchReceitasPrevistasOutrosRecursosPeriodo", () => {
   });
 
   describe("mutationFn", () => {
-    it("chama patchReceitasPrevistasOutrosRecursosPeriodo com uuid e payload corretos", async () => {
-      patchReceitasPrevistasOutrosRecursosPeriodo.mockResolvedValueOnce({});
+    it("chama patchReceitasPrevistasPaa com uuid e payload corretos", async () => {
+      patchReceitasPrevistasPaa.mockResolvedValueOnce({});
 
       const { result } = renderHook(
-        () => usePatchReceitasPrevistasOutrosRecursosPeriodo(mockOnClose),
+        () => usePatchReceitasPrevistasPaa(mockOnClose),
         { wrapper }
       );
 
       const uuid = "uuid-teste";
       const payload = {
+        acao_associacao: "UUID-1234",
         previsao_valor_custeio: 200,
         previsao_valor_capital: 400,
         previsao_valor_livre: 600,
@@ -90,22 +91,17 @@ describe("usePatchReceitasPrevistasOutrosRecursosPeriodo", () => {
 
       await result.current.mutationPatch.mutateAsync({ uuid, payload });
 
-      expect(patchReceitasPrevistasOutrosRecursosPeriodo).toHaveBeenCalledWith(
-        uuid,
-        payload
-      );
-      expect(patchReceitasPrevistasOutrosRecursosPeriodo).toHaveBeenCalledTimes(
-        1
-      );
+      expect(patchReceitasPrevistasPaa).toHaveBeenCalledWith(uuid, payload);
+      expect(patchReceitasPrevistasPaa).toHaveBeenCalledTimes(1);
     });
   });
 
   describe("onSuccess", () => {
     it("exibe toast de sucesso após edição bem-sucedida", async () => {
-      patchReceitasPrevistasOutrosRecursosPeriodo.mockResolvedValueOnce({});
+      patchReceitasPrevistasPaa.mockResolvedValueOnce({});
 
       const { result } = renderHook(
-        () => usePatchReceitasPrevistasOutrosRecursosPeriodo(mockOnClose),
+        () => usePatchReceitasPrevistasPaa(mockOnClose),
         { wrapper }
       );
 
@@ -120,12 +116,12 @@ describe("usePatchReceitasPrevistasOutrosRecursosPeriodo", () => {
       expect(toastCustom.ToastCustomSuccess).toHaveBeenCalledTimes(1);
     });
 
-    it("invalida a query 'receitas-previstas-outros-recursos-periodo' após edição bem-sucedida", async () => {
-      patchReceitasPrevistasOutrosRecursosPeriodo.mockResolvedValueOnce({});
+    it("invalida a query 'receitas-previstas-paa' após edição bem-sucedida", async () => {
+      patchReceitasPrevistasPaa.mockResolvedValueOnce({});
       const invalidateQueriesSpy = jest.spyOn(queryClient, "invalidateQueries");
 
       const { result } = renderHook(
-        () => usePatchReceitasPrevistasOutrosRecursosPeriodo(mockOnClose),
+        () => usePatchReceitasPrevistasPaa(mockOnClose),
         { wrapper }
       );
 
@@ -134,16 +130,16 @@ describe("usePatchReceitasPrevistasOutrosRecursosPeriodo", () => {
         payload: {},
       });
 
-      expect(invalidateQueriesSpy).toHaveBeenCalledWith(
-        "receitas-previstas-outros-recursos-periodo"
-      );
+      expect(invalidateQueriesSpy).toHaveBeenCalledWith({ queryKey: [
+        "receitas-previstas-paa",
+      ]});
     });
 
     it("chama onClose após edição bem-sucedida", async () => {
-      patchReceitasPrevistasOutrosRecursosPeriodo.mockResolvedValueOnce({});
+      patchReceitasPrevistasPaa.mockResolvedValueOnce({});
 
       const { result } = renderHook(
-        () => usePatchReceitasPrevistasOutrosRecursosPeriodo(mockOnClose),
+        () => usePatchReceitasPrevistasPaa(mockOnClose),
         { wrapper }
       );
 
@@ -156,10 +152,10 @@ describe("usePatchReceitasPrevistasOutrosRecursosPeriodo", () => {
     });
 
     it("não lança erro quando onClose não é fornecido", async () => {
-      patchReceitasPrevistasOutrosRecursosPeriodo.mockResolvedValueOnce({});
+      patchReceitasPrevistasPaa.mockResolvedValueOnce({});
 
       const { result } = renderHook(
-        () => usePatchReceitasPrevistasOutrosRecursosPeriodo(undefined),
+        () => usePatchReceitasPrevistasPaa(undefined),
         { wrapper }
       );
 
@@ -172,10 +168,10 @@ describe("usePatchReceitasPrevistasOutrosRecursosPeriodo", () => {
     });
 
     it("não exibe toast de erro após edição bem-sucedida", async () => {
-      patchReceitasPrevistasOutrosRecursosPeriodo.mockResolvedValueOnce({});
+      patchReceitasPrevistasPaa.mockResolvedValueOnce({});
 
       const { result } = renderHook(
-        () => usePatchReceitasPrevistasOutrosRecursosPeriodo(mockOnClose),
+        () => usePatchReceitasPrevistasPaa(mockOnClose),
         { wrapper }
       );
 
@@ -190,12 +186,12 @@ describe("usePatchReceitasPrevistasOutrosRecursosPeriodo", () => {
 
   describe("onError", () => {
     it("exibe toast de erro quando a API falha", async () => {
-      patchReceitasPrevistasOutrosRecursosPeriodo.mockRejectedValueOnce(
+      patchReceitasPrevistasPaa.mockRejectedValueOnce(
         new Error("Erro desconhecido")
       );
 
       const { result } = renderHook(
-        () => usePatchReceitasPrevistasOutrosRecursosPeriodo(mockOnClose),
+        () => usePatchReceitasPrevistasPaa(mockOnClose),
         { wrapper }
       );
 
@@ -214,12 +210,12 @@ describe("usePatchReceitasPrevistasOutrosRecursosPeriodo", () => {
     });
 
     it("coloca mutationPatch em estado de erro quando a API falha", async () => {
-      patchReceitasPrevistasOutrosRecursosPeriodo.mockRejectedValueOnce(
+      patchReceitasPrevistasPaa.mockRejectedValueOnce(
         new Error("Erro desconhecido")
       );
 
       const { result } = renderHook(
-        () => usePatchReceitasPrevistasOutrosRecursosPeriodo(mockOnClose),
+        () => usePatchReceitasPrevistasPaa(mockOnClose),
         { wrapper }
       );
 
@@ -236,12 +232,12 @@ describe("usePatchReceitasPrevistasOutrosRecursosPeriodo", () => {
     });
 
     it("não chama onClose quando a API falha", async () => {
-      patchReceitasPrevistasOutrosRecursosPeriodo.mockRejectedValueOnce(
+      patchReceitasPrevistasPaa.mockRejectedValueOnce(
         new Error("Erro desconhecido")
       );
 
       const { result } = renderHook(
-        () => usePatchReceitasPrevistasOutrosRecursosPeriodo(mockOnClose),
+        () => usePatchReceitasPrevistasPaa(mockOnClose),
         { wrapper }
       );
 
@@ -260,13 +256,13 @@ describe("usePatchReceitasPrevistasOutrosRecursosPeriodo", () => {
     });
 
     it("não invalida as queries quando ocorre erro", async () => {
-      patchReceitasPrevistasOutrosRecursosPeriodo.mockRejectedValueOnce(
+      patchReceitasPrevistasPaa.mockRejectedValueOnce(
         new Error("Erro desconhecido")
       );
       const invalidateQueriesSpy = jest.spyOn(queryClient, "invalidateQueries");
 
       const { result } = renderHook(
-        () => usePatchReceitasPrevistasOutrosRecursosPeriodo(mockOnClose),
+        () => usePatchReceitasPrevistasPaa(mockOnClose),
         { wrapper }
       );
 
@@ -285,12 +281,12 @@ describe("usePatchReceitasPrevistasOutrosRecursosPeriodo", () => {
     });
 
     it("não exibe toast de sucesso quando a API falha", async () => {
-      patchReceitasPrevistasOutrosRecursosPeriodo.mockRejectedValueOnce(
+      patchReceitasPrevistasPaa.mockRejectedValueOnce(
         new Error("Erro desconhecido")
       );
 
       const { result } = renderHook(
-        () => usePatchReceitasPrevistasOutrosRecursosPeriodo(mockOnClose),
+        () => usePatchReceitasPrevistasPaa(mockOnClose),
         { wrapper }
       );
 

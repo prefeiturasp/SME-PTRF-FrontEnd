@@ -19,8 +19,8 @@ export const usePostRecursoProprio = (handleCloseFieldsToEdit) => {
     mutationOptions: {
       onSuccess: (data) => {
         toastCustom.ToastCustomSuccess("Recurso Próprio criado com sucesso.");
-        queryClient.invalidateQueries(["recursos-proprios"]);
-        queryClient.invalidateQueries(["totalizador-recurso-proprio"]);
+        queryClient.invalidateQueries({ queryKey: ["recursos-proprios"] });
+        queryClient.invalidateQueries({ queryKey: ["totalizador-recurso-proprio"] });
         handleCloseFieldsToEdit(data);
       },
       onError: () => {

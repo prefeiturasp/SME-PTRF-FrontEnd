@@ -4,7 +4,6 @@ import {ModalFormAcoesDaAssociacao as ModalForm} from "../ModalFormAcoesDasAssoc
 import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
 import { waitFor } from '@testing-library/react';
 import { mockSelectAcoes, mockSelectAssociacoes  } from "../__fixtures__/mockData";
-import { read } from "fs";
 
 jest.mock("../../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes", () => ({
   RetornaSeTemPermissaoEdicaoPainelParametrizacoes: jest.fn(),
@@ -52,81 +51,6 @@ const defaultPropsEdicao = {
   stateFormModal: mockEdit
 };
 
-// describe("Controle Condicional de radio button", () => {
-
-//   beforeEach(() => {
-//     RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
-//   });
-
-  // test("Desabilitar radio #apenas_digitos_true e #apenas_digitos_false quando #numero_documento_digitado_false for selecionado",
-  //   async () => {
-  //     render(
-  //         <ModalForm {...defaultPropsEdicao}/>
-  //     );
-
-  //     const radioNumeroDocumentoNao = screen.getByLabelText("Não", { selector: 'input[name="numero_documento_digitado_false"]' });
-  //     const radioApenasDigitosSim = screen.getByLabelText("Sim", { selector: 'input[name="apenas_digitos_true"]' });
-  //     const radioApenasDigitosNao = screen.getByLabelText("Não", { selector: 'input[name="apenas_digitos_false"]' });
-      
-  //     fireEvent.click(radioNumeroDocumentoNao);
-  //     expect(radioApenasDigitosSim).not.toBeChecked()
-  //     expect(radioApenasDigitosNao).toBeChecked()
-  //     expect(radioApenasDigitosSim).toBeDisabled();
-  //     expect(radioApenasDigitosNao).toBeDisabled();
-  //   }
-  // );
-
-//   test("Habilitar radio #apenas_digitos_true e #apenas_digitos_false quando #numero_documento_digitado_true for selecionado",
-//     async () => {
-//       render(
-//           <ModalForm {...defaultPropsEdicao}/>
-//       );
-
-//       const radioNumeroDocumentoSim = screen.getByLabelText("Sim", { selector: 'input[name="numero_documento_digitado_true"]' });
-//       const radioApenasDigitosSim = screen.getByLabelText("Sim", { selector: 'input[name="apenas_digitos_true"]' });
-//       const radioApenasDigitosNao = screen.getByLabelText("Não", { selector: 'input[name="apenas_digitos_false"]' });
-      
-//       fireEvent.click(radioNumeroDocumentoSim);
-//       expect(radioApenasDigitosSim).not.toBeChecked();
-//       expect(radioApenasDigitosNao).toBeChecked();
-//       expect(radioApenasDigitosSim).toBeEnabled();
-//       expect(radioApenasDigitosNao).toBeEnabled();
-//     }
-//   );
-
-//   test("Desabilitar radio #pode_reter_imposto_true e #pode_reter_imposto_false quando #documento_comprobatorio_de_despesa_false for selecionado",
-//     async () => {
-//       render(
-//           <ModalForm {...defaultProps}/>
-//       );
-
-//       const radioDocumentoComprobatorioNao = screen.getByLabelText("Não", { selector: 'input[name="documento_comprobatorio_de_despesa_false"]' });
-//       const radioPodeRetirarImpostoSim = screen.getByLabelText("Sim", { selector: 'input[name="pode_reter_imposto_true"]' });
-//       const radioPodeRetirarImpostoNao = screen.getByLabelText("Não", { selector: 'input[name="pode_reter_imposto_false"]' });
-
-//       fireEvent.click(radioDocumentoComprobatorioNao);
-//       expect(radioPodeRetirarImpostoSim).toBeDisabled();
-//       expect(radioPodeRetirarImpostoNao).toBeDisabled();
-
-//     }
-//   );
-//   test("Habilitar radio #pode_reter_imposto_true e #pode_reter_imposto_false quando #documento_comprobatorio_de_despesa_true for selecionado",
-//     async () => {
-//       render(
-//           <ModalForm {...defaultProps}/>
-//       );
-
-//       const radioDocumentoComprobatorioSim = screen.getByLabelText("Sim", { selector: 'input[name="documento_comprobatorio_de_despesa_true"]' });
-//       const radioPodeRetirarImpostoSim = screen.getByLabelText("Sim", { selector: 'input[name="pode_reter_imposto_true"]' });
-//       const radioPodeRetirarImpostoNao = screen.getByLabelText("Não", { selector: 'input[name="pode_reter_imposto_false"]' });
-
-//       fireEvent.click(radioDocumentoComprobatorioSim);
-//       expect(radioPodeRetirarImpostoSim).toBeEnabled();
-//       expect(radioPodeRetirarImpostoNao).toBeEnabled();
-//     }
-//   );
-// });
-
 describe("Componente ModalForm", () => {
 
   beforeEach(() => {
@@ -151,7 +75,6 @@ describe("Componente ModalForm", () => {
 
   it("Renderiza a Modal quando a operação é Edição e Permissão False", () => {
     RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(false);
-    // mockRetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(false);
     render(<ModalForm {...defaultPropsEdicao} />);
 
     expect(screen.getByLabelText("Unidade Educacional *")).toHaveAttribute('readonly');

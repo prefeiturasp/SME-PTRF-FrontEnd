@@ -9,7 +9,6 @@ let capturedModalConfirmaProps = null;
 let capturedModalConciliacaoProps = null;
 let capturedTopoProps = null;
 
-// Captures for useHandleDevolverParaAssociacao args
 let capturedSetContasPendenciaConciliacao = null;
 let capturedSetContasPendenciaLancamentos = null;
 let capturedSetContasSolicitarCorrecao = null;
@@ -81,7 +80,6 @@ jest.mock('../../DevolucaoParaAcertos/ModalConciliacaoBancaria', () => ({
     },
 }));
 
-// ModalComprovanteSaldoConta is reused for 3 different modals differentiated by titulo
 jest.mock('../../DevolucaoParaAcertos/ModalComprovanteSaldoConta', () => ({
     ModalComprovanteSaldoConta: (props) => {
         let testId;
@@ -213,7 +211,6 @@ function setupDefaultMocks({
     visoesService.getUsuarioLogin.mockReturnValue('usuario-teste');
     visoesService.featureFlagAtiva.mockReturnValue(false);
 
-    // Default hook: captures setters and returns a jest.fn()
     useHandleDevolverParaAssociacao.mockImplementation((args) => {
         capturedSetContasPendenciaConciliacao = args.setContasPendenciaConciliacao;
         capturedSetContasPendenciaLancamentos = args.setContasPendenciaLancamentosConciliacao;
@@ -266,9 +263,10 @@ describe('ResumoDosAcertos - index.js', () => {
             });
             render(<ResumoDosAcertos />);
             expect(screen.getByTestId('loading')).toBeInTheDocument();
-            await waitForTabs();
-            expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
-            expect(screen.getByTestId('tabs-mock')).toBeInTheDocument();
+            await waitFor(() => {
+                expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
+                expect(screen.getByTestId('tabs-mock')).toBeInTheDocument();
+            });
         });
 
         it('renderiza TopoComBotoes', async () => {
@@ -289,7 +287,7 @@ describe('ResumoDosAcertos - index.js', () => {
             });
             render(<ResumoDosAcertos />);
             await waitForTabs();
-            // getInfoAta should NOT be called when infoAta is in state
+
             expect(getInfoAta).not.toHaveBeenCalled();
         });
 
@@ -328,7 +326,7 @@ describe('ResumoDosAcertos - index.js', () => {
             });
             render(<ResumoDosAcertos />);
             await waitForTabs();
-            // tabs should receive the analises count influencing totalAnalisesDeContaDaPrestacao
+
             expect(capturedTabsProps).not.toBeNull();
         });
 
@@ -371,10 +369,10 @@ describe('ResumoDosAcertos - index.js', () => {
                 locationState: {},
                 ultimaAnaliseReturn: { uuid: 'analise-123' },
             });
-            // temporarily make hook return null
+
             useCarregaPrestacaoDeContasPorUuid.mockReturnValue(null);
             render(<ResumoDosAcertos />);
-            // Should not crash
+
             expect(screen.getByTestId('loading')).toBeInTheDocument();
         });
     });
@@ -447,7 +445,7 @@ describe('ResumoDosAcertos - index.js', () => {
                 locationState: {},
                 ultimaAnaliseReturn: { uuid: 'uuid-novo' },
             });
-            // Override after setupDefaultMocks so the mock is used during render
+
             meapc.getAnaliseDreUsuarioLogado.mockReturnValue({ analise_pc_uuid: 'uuid-antigo' });
             render(<ResumoDosAcertos />);
             await waitFor(() => {
@@ -483,7 +481,7 @@ describe('ResumoDosAcertos - index.js', () => {
             });
             render(<ResumoDosAcertos />);
             await waitForTabs();
-            // possuiAcertosSelecionados depende deste valor
+
             expect(capturedTabsProps).not.toBeNull();
         });
 
@@ -521,7 +519,6 @@ describe('ResumoDosAcertos - index.js', () => {
             });
             render(<ResumoDosAcertos />);
             await waitForTabs();
-            // If tabs appear, setPrimeiraAnalisePcDevolvida set analiseAtualUuid to 'dev-uuid'
             expect(screen.getByTestId('tabs-mock')).toBeInTheDocument();
         });
     });
@@ -594,7 +591,6 @@ describe('ResumoDosAcertos - index.js', () => {
             act(() => {
                 capturedTabsProps.handleChangeDataLimiteDevolucao('data', '2024-06-01');
             });
-            // No crash = passed
         });
     });
 
@@ -631,7 +627,6 @@ describe('ResumoDosAcertos - index.js', () => {
             render(<ResumoDosAcertos />);
             await waitForTabs();
 
-            // Trigger devolverParaAcertos via modal confirma
             act(() => {
                 capturedSetShowModalConfirma(true);
             });
@@ -645,9 +640,9 @@ describe('ResumoDosAcertos - index.js', () => {
                 expect(getConcluirAnalise).toHaveBeenCalled();
             });
             const payload = getConcluirAnalise.mock.calls[0][1];
-            // saldo_extrato with value calls trataNumericos
+
             expect(trataNumericos).toHaveBeenCalledWith(' 1.000,00 ');
-            // saldo_extrato null becomes 0
+
             expect(payload.analises_de_conta_da_prestacao[1].saldo_extrato).toBe(0);
         });
     });
@@ -912,10 +907,9 @@ describe('ResumoDosAcertos - index.js', () => {
 
             act(() => { capturedSetShowModalComprovante(true); });
             await screen.findByTestId('modal-comprovante');
-            // Trigger obterNomeConta with string
+
             act(() => { capturedSetContasPendenciaConciliacao(['conta-1']); });
             await waitFor(() => {
-                // The texto prop of the modal should include the conta name
                 const modal = screen.getByTestId('modal-comprovante');
                 expect(modal).toBeInTheDocument();
             });
@@ -930,7 +924,7 @@ describe('ResumoDosAcertos - index.js', () => {
             await waitForTabs();
 
             act(() => { capturedSetContasPendenciaConciliacao(['uuid-inexistente']); });
-            // No crash = passed; nome would be 'N/E'
+
         });
 
         it('retorna nome do objeto via conta.nome', async () => {
@@ -942,7 +936,7 @@ describe('ResumoDosAcertos - index.js', () => {
             await waitForTabs();
 
             act(() => { capturedSetContasPendenciaConciliacao([{ nome: 'Conta Direta' }]); });
-            // No crash = passed
+
         });
 
         it('retorna nome via conta.nome_conta', async () => {
@@ -1010,7 +1004,7 @@ describe('ResumoDosAcertos - index.js', () => {
             await waitForTabs();
 
             act(() => { capturedSetContasPendenciaConciliacao([{}]); });
-            // No crash = passed
+
         });
 
         it('retorna null em obterNomeContaPorUuid quando infoAta.contas é undefined', async () => {
@@ -1022,7 +1016,7 @@ describe('ResumoDosAcertos - index.js', () => {
             await waitForTabs();
 
             act(() => { capturedSetContasPendenciaConciliacao(['conta-1']); });
-            // Should not crash
+
         });
     });
 
@@ -1034,7 +1028,7 @@ describe('ResumoDosAcertos - index.js', () => {
             });
             render(<ResumoDosAcertos />);
             await waitForTabs();
-            // contasPendenciaLancamentos starts empty
+
             act(() => { capturedSetContasPendenciaLancamentos([]); });
         });
 
@@ -1070,7 +1064,6 @@ describe('ResumoDosAcertos - index.js', () => {
             render(<ResumoDosAcertos />);
             await waitForTabs();
 
-            // All state variables empty -> blocos = [] -> return textoSolicitacoesLancamentosConciliacao
             act(() => { capturedSetShowModalLancamentos(true); });
             await screen.findByTestId('modal-lancamentos');
             const textoModal = screen.getByTestId('modal-lancamentos').getAttribute('data-texto');
@@ -1342,8 +1335,6 @@ describe('ResumoDosAcertos - index.js', () => {
             await waitFor(() => {
                 expect(meapc.setAnaliseDrePorUsuario).toHaveBeenCalled();
             });
-            // setAnaliseDrePorUsuario(login, objeto) — login comes from visoesService.getUsuarioLogin()
-            // which returns 'usuario-teste', but the call order may vary; check any call has analise_pc_uuid
             const allCalls = meapc.setAnaliseDrePorUsuario.mock.calls;
             const hasAnaliseUuid = allCalls.some(
                 (args) => args[1] && typeof args[1].analise_pc_uuid !== 'undefined'

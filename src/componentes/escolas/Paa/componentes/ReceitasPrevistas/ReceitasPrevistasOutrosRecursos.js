@@ -3,10 +3,12 @@ import "./style.css";
 import OutrosRecursosModalForm from "./OutrosRecursosModalForm";
 import TabelaRecursosProprios from "./TabelaRecursosProprios";
 import { useGetTotalizadorRecursoProprio } from "../DetalhamentoRecursosProprios/hooks/useGetTotalizarRecursoProprio";
-
+import { usePaaContext } from "../PaaContext";
 const TAB_DETALHAMENTO_RECURSOS_PROPRIOS = "detalhamento-de-recursos-proprios";
 
-const ReceitasPrevistasOutrosRecursos = ({ paa, setActiveTab }) => {
+const ReceitasPrevistasOutrosRecursos = ({ setActiveTab }) => {
+  const { paa } = usePaaContext();
+
   const [modalFormOutrosRecursos, setModalFormOutrosRecursos] = useState({
     open: false,
     data: null,
