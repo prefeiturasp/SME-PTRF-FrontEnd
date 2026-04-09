@@ -10,9 +10,11 @@ import BarraTopoTitulo from "../BarraTopoTitulo";
 import { useLocation, useNavigate } from "react-router-dom";
 import { iniciarAtaPaa } from "../../../../../services/escolas/AtasPaa.service";
 import { visoesService } from "../../../../../services/visoes.service";
+import { usePaaContext } from "../PaaContext";
 
-const ConteudoBase = ({ paa, itemsBreadCrumb }) => {
+const ConteudoBase = ({ itemsBreadCrumb }) => {
   const navigate = useNavigate();
+  const { paa, refetch } = usePaaContext();
   const location = useLocation();
 
   const [activeTab, setActiveTab] = useState("prioridades");
@@ -44,14 +46,14 @@ const ConteudoBase = ({ paa, itemsBreadCrumb }) => {
           id: "prioridades",
           label: "Levantamento de Prioridades",
           exibir: paa?.status !== "EM_RETIFICACAO",
-          component: <LevantamentoDePrioridades paa={paa} />,
+          component: <LevantamentoDePrioridades />,
         },
         {
           id: "receitas",
           label: "Receitas previstas",
           exibir: true,
           component: (
-            <ReceitasPrevistas receitasDestino={receitasDestino} paa={paa} />
+            <ReceitasPrevistas receitasDestino={receitasDestino} />
           ),
         },
         {
@@ -71,14 +73,14 @@ const ConteudoBase = ({ paa, itemsBreadCrumb }) => {
           ),
         },
       ].filter((tab) => tab.exibir),
-    [paa],
+    [paa, receitasDestino, relatoriosInitialExpandedSections],
   );
 
   useEffect(() => {
     if (paa?.status === "EM_RETIFICACAO") {
       navigate(`/retificacao-paa/${paa?.uuid}`);
     }
-  }, [paa]);
+  }, [paa, navigate]);
 
   useEffect(() => {
     const obterAbaInicial = () => {
@@ -88,7 +90,7 @@ const ConteudoBase = ({ paa, itemsBreadCrumb }) => {
         : tabs[0].id;
     };
     setActiveTab(obterAbaInicial());
-  }, []);
+  }, [tabs]);
 
   useEffect(() => {
     const temPermissaoIniciar = Boolean(
@@ -112,6 +114,11 @@ const ConteudoBase = ({ paa, itemsBreadCrumb }) => {
     }
   }, [paa, navigate]);
 
+  const handleCancelarRetificacaoPaa = () => {
+    alert('Em desenvolvimento')
+    navigate('/paa-vigente-e-anteriores');
+  }
+
   return (
     <>
       <BreadcrumbComponent items={itemsBreadCrumb} />
@@ -123,9 +130,7 @@ const ConteudoBase = ({ paa, itemsBreadCrumb }) => {
           {paa?.status === "EM_RETIFICACAO" && (
             <button
               className="btn btn-success d-flex align-items-center"
-              onClick={() => {
-                navigate("/paa-vigente-e-anteriores");
-              }}
+              onClick={handleCancelarRetificacaoPaa}
               style={{ minWidth: "180px", justifyContent: "center" }}
             >
               Cancelar Retificação

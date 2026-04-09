@@ -20,9 +20,7 @@ export const usePostReceitasPrevistasOutrosRecursos = (onClose) => {
     mutationOptions: {
       onSuccess: () => {
         toastCustom.ToastCustomSuccess("Recurso editado com sucesso.");
-        queryClient.invalidateQueries(
-          "receitas-previstas-outros-recursos-periodo",
-        );
+        queryClient.invalidateQueries({ queryKey: ["receitas-previstas-outros-recursos-periodo"]});
         onClose && onClose();
       },
       onError: () => {

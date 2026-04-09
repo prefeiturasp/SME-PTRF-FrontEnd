@@ -18,9 +18,9 @@ import { getStatusAtaPaa, postGerarAtaPaa, getDownloadAtaPaa } from '../../../..
 import { iniciarAtaPaa, obterUrlAtaPaa } from '../../../../services/escolas/AtasPaa.service';
 import { toastCustom } from '../../../Globais/ToastCustom';
 import { ModalConfirmaGeracaoAta } from './ModalConfirmaGeracaoAta';
-import { ModalRetificarPAA } from './ModalRetificarPaa';
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import { visoesService } from '../../../../services/visoes.service';
+import { BotaoRetificarPaa } from './BotaoRetificarPaa';
 
 // Constantes
 const STATUS_ATA = {
@@ -70,7 +70,6 @@ export const PaaVigenteEAnteriores = () => {
   const [isLoadingStatusAtaPaa, setIsLoadingStatusAtaPaa] = useState({});
   const [visualizacaoAtaEmAndamento, setVisualizacaoAtaEmAndamento] = useState({});
   const [openModalConfirmarGeracaoAta, setOpenModalConfirmarGeracaoAta] = useState({});
-  const [abrirRetificacao, setAbrirRetificacao] = useState(false);
   const timerAtaRef = useRef({});
 
   // Dados derivados
@@ -727,22 +726,12 @@ export const PaaVigenteEAnteriores = () => {
                         {vigente ? `PAA ${formatReferencia(vigente?.periodo_paa_objeto?.referencia)}` : 'PAA vigente'}
                         </span>
                         <div className="d-flex align-items-center">
-                        
-                        
+
                         {visoesService.featureFlagAtiva('paa-retificacao') &&
-                        (["GERADO"].includes(vigente?.status_andamento)
-                        || (vigente?.status_andamento === "GERADO_PARCIALMENTE" && vigente.status === "EM_RETIFICACAO")) && 
-                            <button
-                                type="button"
-                                className="btn btn-outline-success"
-                                onClick={() => { setAbrirRetificacao(true); }}
-                                style={{
-                                    fontWeight: 600,
-                                    marginRight: '10px',
-                                }}
-                            >
-                                Retificar o PAA
-                            </button>}
+                          (["GERADO"].includes(vigente?.status_andamento)
+                          || (vigente?.status_andamento === "GERADO_PARCIALMENTE" && vigente.status === "EM_RETIFICACAO")) && 
+                            <BotaoRetificarPaa paa={vigente} statusDocumento={statusDocumento[vigente.uuid]}/>
+                        }
 
                         <button
                             type="button"
@@ -859,18 +848,6 @@ export const PaaVigenteEAnteriores = () => {
         />
       )
     ))}
-    {/* Modais de Retificação */}
-    {vigenteUuidOriginal && (
-        <ModalRetificarPAA 
-            open={abrirRetificacao} 
-            onClose={() => setAbrirRetificacao(false)}
-            paaData={vigente}
-            statusDocumento={statusDocumento[vigente?.uuid]}
-            onConfirm={() => {
-                navigate(`/retificacao-paa/${vigenteUuidOriginal}`)
-                toastCustom.ToastCustomSuccess("Retificação", "Retificação criada com sucesso");
-            }}
-        />)}
     </>
   );
 };
