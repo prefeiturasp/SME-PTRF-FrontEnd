@@ -23,7 +23,7 @@ const mockNavigate = jest.fn();
 jest.mock("react-router-dom", () => ({
   ...jest.requireActual("react-router-dom"),
   useLocation: () => mockUseLocation(),
-  useNavigate: () => mockNavigate(),
+  useNavigate: () => mockNavigate,
 }));
 
 jest.mock("../../../../../../paginas/PaginasContainer", () => ({

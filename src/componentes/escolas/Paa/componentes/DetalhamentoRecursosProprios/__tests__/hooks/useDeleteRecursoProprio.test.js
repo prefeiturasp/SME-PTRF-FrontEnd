@@ -139,7 +139,7 @@ describe("useDeleteRecursoProprio", () => {
       const { result } = renderHook(() => useDeleteRecursoProprio(), { wrapper });
       await result.current.mutationDelete.mutateAsync("test-uuid");
 
-      expect(invalidateQueriesSpy).toHaveBeenCalledWith(["recursos-proprios"]);
+      expect(invalidateQueriesSpy).toHaveBeenCalledWith({"queryKey": ["recursos-proprios"]});
     });
 
     it("invalida a query 'totalizador-recurso-proprio' após exclusão bem-sucedida", async () => {
@@ -149,9 +149,7 @@ describe("useDeleteRecursoProprio", () => {
       const { result } = renderHook(() => useDeleteRecursoProprio(), { wrapper });
       await result.current.mutationDelete.mutateAsync("test-uuid");
 
-      expect(invalidateQueriesSpy).toHaveBeenCalledWith([
-        "totalizador-recurso-proprio",
-      ]);
+      expect(invalidateQueriesSpy).toHaveBeenCalledWith({"queryKey": ["totalizador-recurso-proprio"]});
     });
 
     it("invalida as duas queries após exclusão bem-sucedida", async () => {
@@ -162,10 +160,8 @@ describe("useDeleteRecursoProprio", () => {
       await result.current.mutationDelete.mutateAsync("test-uuid");
 
       expect(invalidateQueriesSpy).toHaveBeenCalledTimes(2);
-      expect(invalidateQueriesSpy).toHaveBeenCalledWith(["recursos-proprios"]);
-      expect(invalidateQueriesSpy).toHaveBeenCalledWith([
-        "totalizador-recurso-proprio",
-      ]);
+      expect(invalidateQueriesSpy).toHaveBeenCalledWith({"queryKey": ["recursos-proprios"]});
+      expect(invalidateQueriesSpy).toHaveBeenCalledWith({"queryKey": ["totalizador-recurso-proprio"]});
     });
 
     it("não exibe toast de erro após exclusão bem-sucedida", async () => {
