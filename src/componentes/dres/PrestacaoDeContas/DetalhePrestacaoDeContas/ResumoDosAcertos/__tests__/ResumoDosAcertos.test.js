@@ -263,9 +263,10 @@ describe('ResumoDosAcertos - index.js', () => {
             });
             render(<ResumoDosAcertos />);
             expect(screen.getByTestId('loading')).toBeInTheDocument();
-            await waitForTabs();
-            expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
-            expect(screen.getByTestId('tabs-mock')).toBeInTheDocument();
+            await waitFor(() => {
+                expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
+                expect(screen.getByTestId('tabs-mock')).toBeInTheDocument();
+            });
         });
 
         it('renderiza TopoComBotoes', async () => {
