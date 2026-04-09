@@ -6,6 +6,7 @@ import { getListaPresentesPaa } from "../../../../../../services/escolas/Present
 import { useGetAtaPaaVigente } from "../../../../Paa/ElaboracaoPaa/ElaborarNovoPlano/Relatorios/hooks/useGetAtaPaaVigente";
 import { ASSOCIACAO_NOME_ESCOLA, ASSOCIACAO_TIPO_ESCOLA } from "../../../../../../services/auth.service";
 import { useGetPrioridadesAtaPaa } from "./useGetPrioridadesAtaPaa";
+import { useGetPaa } from "../../../../Paa/componentes/hooks/useGetPaa";
 import { useGetAtividadesEstatutarias } from "../../../../Paa/ElaboracaoPaa/ElaborarNovoPlano/Relatorios/AtividadesPrevistas/hooks/useGetAtividadesEstatutarias";
 
 const numero = require('numero-por-extenso');
@@ -22,6 +23,7 @@ export const useVisualizacaoAtaPaa = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { ataPaa } = useGetAtaPaaVigente(uuid_paa);
+    const { data: paaCorrente } = useGetPaa(uuid_paa);
     const ataUuid = ataPaa?.uuid;
     const [dadosAta, setDadosAta] = useState({});
     const [tabelas, setTabelas] = useState({});
@@ -173,16 +175,17 @@ export const useVisualizacaoAtaPaa = () => {
     };
 
     const getPeriodoPaaFormatado = () => {
-        if (!ataPaa?.periodo_paa_objeto?.data_inicial || !ataPaa?.periodo_paa_objeto?.data_final) {
-            return "1º de maio de 2025 a 30 de abril de 2026";
+        if (!paaCorrente?.periodo_paa_objeto?.data_inicial || !paaCorrente?.periodo_paa_objeto?.data_final) {
+            // return "1º de maio de 2025 a 30 de abril de 2026";
+            return "";
         }
 
-        const dataInicial = moment(ataPaa.periodo_paa_objeto.data_inicial);
+        const dataInicial = moment(paaCorrente.periodo_paa_objeto.data_inicial);
         const diaInicial = "1º";
         const mesInicial = dataInicial.format("MMMM");
         const anoInicial = dataInicial.year();
 
-        const dataFinal = moment(ataPaa.periodo_paa_objeto.data_final);
+        const dataFinal = moment(paaCorrente.periodo_paa_objeto.data_final);
         const ultimoDia = dataFinal.daysInMonth();
         const diaFinal = ultimoDia;
         const mesFinal = dataFinal.format("MMMM");
