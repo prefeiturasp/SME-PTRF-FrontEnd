@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Navigate, useLocation} from 'react-router-dom'
+import {Navigate} from 'react-router-dom'
 import {getPeriodos, getItensDashboard} from "../../../services/dres/Dashboard.service";
 import {SelectPeriodo} from "./SelectPeriodo";
 import "./dashboard.scss"
@@ -18,9 +18,6 @@ export const DreDashboard = () => {
     const [itensDashboard, setItensDashboard] = useState(false);
     const [statusPrestacao, setStatusPrestacao] = useState(false);
     const [loading, setLoading] = useState(false);
-
-    const location = useLocation();
-    const acessadoPelaSidebar = location.state?.acessadoPelaSidebar || false;
 
     useEffect(() => {
         carregaPeriodos();
@@ -41,7 +38,7 @@ export const DreDashboard = () => {
 
         const storedPeriodo = localStorage.getItem(PERIODO_SELECIONADO_DRE_ACOMPANHAMENTO);
         if (periodos && periodos.length > 0){
-            if(storedPeriodo && !acessadoPelaSidebar) {
+            if(storedPeriodo) {
                 setPeriodoEsolhido(storedPeriodo);
             } else {
                 //Caso exista mais de um período seleciona por default o anterior ao corrente.
