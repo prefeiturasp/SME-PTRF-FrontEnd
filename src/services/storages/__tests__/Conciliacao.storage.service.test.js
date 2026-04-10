@@ -1,14 +1,14 @@
 import { conciliacaoStorageService } from '../Conciliacao.storage.service';
+import { recursoSelecionadoStorageService, STORAGE_KEY_RECURSO_SELECIONADO_POR_UNIDADE } from '../RecursoSelecionado.storage.service';
 
 jest.mock('../../auth.service', () => ({
     RECURSO_SELECIONADO: 'RECURSO_SELECIONADO',
 }));
 
-const RECURSO_KEY = 'RECURSO_SELECIONADO';
 const STORAGE_KEY = 'PERIODO_CONTA_CONCILIACAO';
 
 const setRecurso = (uuid) =>
-    localStorage.setItem(RECURSO_KEY, JSON.stringify({ uuid, nome: `Recurso ${uuid}` }));
+    recursoSelecionadoStorageService.setRecursoSelecionado({ uuid, nome: `Recurso ${uuid}` });
 
 describe('conciliacaoStorageService', () => {
     beforeEach(() => {
@@ -37,7 +37,7 @@ describe('conciliacaoStorageService', () => {
             conciliacaoStorageService.setPeriodoConta({ periodo: 'p-x', conta: 'c-x' });
 
             // Remove o recurso para simular sessão sem recurso
-            localStorage.removeItem(RECURSO_KEY);
+            localStorage.removeItem(STORAGE_KEY_RECURSO_SELECIONADO_POR_UNIDADE);
 
             // Não há dado em "sem_recurso", portanto retorna null
             expect(conciliacaoStorageService.getPeriodoConta()).toBeNull();
@@ -149,8 +149,9 @@ describe('conciliacaoStorageService', () => {
             expect(() => conciliacaoStorageService.getPeriodoConta()).not.toThrow();
         });
 
-        it('getPeriodoConta não lança exceção quando RECURSO_SELECIONADO tem JSON inválido', () => {
-            localStorage.setItem(RECURSO_KEY, 'nao-e-json');
+        it('getPeriodoConta não lança exceção quando STORAGE_KEY_RECURSO_SELECIONADO_POR_UNIDADE tem JSON inválido', () => {
+            localStorage.setItem(STORAGE_KEY_RECURSO_SELECIONADO_POR_UNIDADE, 'nao-e-json');
+
             expect(() => conciliacaoStorageService.getPeriodoConta()).not.toThrow();
         });
 
