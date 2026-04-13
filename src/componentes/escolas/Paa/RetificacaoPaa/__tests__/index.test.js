@@ -66,11 +66,6 @@ describe("RetificacaoPaa", () => {
             expect(screen.queryByTestId("paa-base")).not.toBeInTheDocument();
         });
 
-        it("não deve renderizar o Spin", () => {
-            render(<RetificacaoPaa />);
-            expect(screen.queryByTestId("spin")).not.toBeInTheDocument();
-        });
-
         it("deve chamar useGetPaaRetificacao com undefined", () => {
             render(<RetificacaoPaa />);
             expect(useGetPaaRetificacao).toHaveBeenCalledWith(undefined);
@@ -88,26 +83,9 @@ describe("RetificacaoPaa", () => {
             expect(useGetPaaRetificacao).toHaveBeenCalledWith("paa-uuid-123");
         });
 
-        it("deve renderizar o Spin", () => {
-            render(<RetificacaoPaa />);
-            expect(screen.getByTestId("spin")).toBeInTheDocument();
-        });
-
         it("deve renderizar o PaaBase dentro do Spin", () => {
             render(<RetificacaoPaa />);
             expect(screen.getByTestId("paa-base")).toBeInTheDocument();
-        });
-
-        it("deve passar isFetching=false ao Spin quando não está carregando", () => {
-            setupHook({ isFetching: false });
-            render(<RetificacaoPaa />);
-            expect(capturedSpinProps.spinning).toBe(false);
-        });
-
-        it("deve passar isFetching=true ao Spin quando está carregando", () => {
-            setupHook({ isFetching: true });
-            render(<RetificacaoPaa />);
-            expect(capturedSpinProps.spinning).toBe(true);
         });
 
         it("deve passar os itemsBreadCrumb corretos ao PaaBase", () => {

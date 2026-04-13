@@ -130,6 +130,7 @@ export const RelSecaoObjetivos = ({ paaVigente, onSalvarObjetivos, isSaving, pod
                   <Input
                     size="small"
                     placeholder="Digite o objetivo"
+                    maxLength={160}
                     value={item.nome}
                     onChange={(e) => handleNameChange(item, e.target.value)}
                     disabled={!podeEditar}
