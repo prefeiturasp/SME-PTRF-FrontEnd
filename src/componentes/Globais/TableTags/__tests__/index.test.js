@@ -54,26 +54,26 @@ describe('TableTags', () => {
     expect(container.querySelector('.tag-verde')).toBeInTheDocument();
   });
 
-  it('deve exibir o período de conciliação quando showPeriodoConciliacao=true', () => {
+  it('deve exibir o período de conciliação quando tag é "Conciliada"', () => {
     const mockDataConciliada = {
       informacoes: [{ tag_id: 1, tag_nome: 'Conciliada', tag_hint: 'Período: 2024.1' }],
       rateios: [{ periodo_conciliacao: '2024.1' }]
     };
 
-    render(<TableTags data={mockDataConciliada} coresTags={mockCoresTags} showPeriodoConciliacao={true} />);
+    render(<TableTags data={mockDataConciliada} coresTags={mockCoresTags} />);
 
-    expect(screen.getByTestId('td-periodo-conciliacao-0')).toBeInTheDocument();
+    expect(screen.getByTestId('tag-label-0')).toBeInTheDocument();
   });
 
-  it('não deve exibir o período de conciliação quando showPeriodoConciliacao=false', () => {
-    const mockDataConciliada = {
-      informacoes: [{ tag_id: 1, tag_nome: 'Conciliada', tag_hint: 'Período: 2024.1' }],
+  it('não deve exibir o período de conciliação quando a tag não é "Conciliada"', () => {
+    const mockDataNaoConciliada = {
+      informacoes: [{ tag_id: 1, tag_nome: 'Outra Tag', tag_hint: 'Período: 2024.1' }],
       rateios: [{ periodo_conciliacao: '2024.1' }]
     };
 
-    render(<TableTags data={mockDataConciliada} coresTags={mockCoresTags} showPeriodoConciliacao={false} />);
+    render(<TableTags data={mockDataNaoConciliada} coresTags={mockCoresTags} />);
 
-    expect(screen.queryByTestId('td-periodo-conciliacao-0')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('tag-label-0')).not.toBeInTheDocument();
   });
 });
 

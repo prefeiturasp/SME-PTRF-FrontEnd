@@ -17,7 +17,7 @@ const TabelaDespesas = ({ despesas, onClickDespesa, tipoLancamentoTemplate, espe
                         </td>
                     
                         <td data-qa={`td-despesa-informacoes-${index}`} rowSpan={despesa.rateios.length > 0 ? despesa.rateios.length + 1 : 2}>
-                            {<TableTags data={despesa} coresTags={coresTagsDespesas} showPeriodoConciliacao={true} />} 
+                            <TableTags data={despesa} coresTags={coresTagsDespesas} />
                         </td>
                     </tr>
 

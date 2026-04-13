@@ -308,21 +308,26 @@ describe("ListaDeDespesas", () => {
         }, { timeout: 1000 });
     });
 
-    it("deve exibir o período de conciliação quando disponível", async () => {
-        render(<ListaDeDespesas showPeriodoConciliacao={true}/>);
+    it("deve exibir o período de conciliação quando a tag é 'Conciliada'", async () => {
+        render(<ListaDeDespesas />);
 
         await waitFor(() => {
-            expect(screen.queryByTestId('td-periodo-conciliacao-0')).toBeInTheDocument();
+            expect(screen.getByTestId('tag-label-0')).toBeInTheDocument();
         }, { timeout: 3000 });
-    })
+    });
 
-    it("não deve exibir o período de conciliação quando não disponível", async () => {
-        const despesaComPeriodo = {
+    it("não deve exibir o período de conciliação quando a tag não é 'Conciliada'", async () => {
+        const despesaSemConciliada = {
             results: [{
                 uuid: "uuid-periodo",
                 numero_documento: "321",
                 status: "INCOMPLETO",
                 data_documento: "2024-02-10",
+                informacoes: [{
+                    tag_id: "outra",
+                    tag_nome: "Outra Tag",
+                    tag_hint: "Dica"
+                }],
                 rateios: [{
                     especificacao_material_servico: { descricao: "Material X" },
                     valor_rateio: "50.00",
@@ -332,14 +337,14 @@ describe("ListaDeDespesas", () => {
                 }]
             }],
             count: 1
-        };        
+        };
 
-        ordenacaoDespesas.mockResolvedValue(despesaComPeriodo);
+        ordenacaoDespesas.mockResolvedValue(despesaSemConciliada);
 
         render(<ListaDeDespesas />);
         
         await waitFor(() => {
-            expect(screen.queryByTestId('td-periodo-conciliacao-0')).not.toBeInTheDocument();
+            expect(screen.queryByTestId('tag-label-0')).not.toBeInTheDocument();
         }, { timeout: 3000 });
     });
 
