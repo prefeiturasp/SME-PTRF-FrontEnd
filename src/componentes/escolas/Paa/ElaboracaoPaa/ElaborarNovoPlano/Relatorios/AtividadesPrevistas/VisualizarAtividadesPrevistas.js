@@ -792,6 +792,7 @@ export const VisualizarAtividadesPrevistas = () => {
         render: (_, record) =>
           record.emEdicao ? (
             <input
+              maxLength={160}
               type="text"
               className="form-control form-control-sm atividades-previstas__input"
               value={record.descricao || ""}

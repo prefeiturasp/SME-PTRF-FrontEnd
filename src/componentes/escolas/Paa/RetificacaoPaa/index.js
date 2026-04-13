@@ -9,7 +9,7 @@ import { PaaContext } from "../componentes/PaaContext";
 export const RetificacaoPaa = () => {
   const { uuid_paa } = useParams();
 
-  const { data: paa, isFetching, refetch } = useGetPaaRetificacao(uuid_paa);
+  const { data: paa, refetch } = useGetPaaRetificacao(uuid_paa);
 
   const itemsBreadCrumb = useMemo(() => {
     return [
@@ -25,12 +25,10 @@ export const RetificacaoPaa = () => {
     return (
       // Provider para Retificação Paa, adiciona o (paa e refetch) de Paa Retificado
       <PaaContext.Provider value={{ paa, refetch }}>
-        <Spin spinning={isFetching}>
-          <PaaBase itemsBreadCrumb={itemsBreadCrumb} />
-        </Spin>
+        <PaaBase itemsBreadCrumb={itemsBreadCrumb} />
       </PaaContext.Provider>
     )
-  }, [paa, refetch, isFetching, uuid_paa, itemsBreadCrumb]);
+  }, [paa, refetch, uuid_paa, itemsBreadCrumb]);
 
   return renderizar();
 };

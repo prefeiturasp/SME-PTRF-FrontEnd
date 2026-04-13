@@ -1,5 +1,5 @@
 import { useState, useRef, useMemo } from 'react';
-import { Flex, Button, Spin, Alert, Typography } from 'antd';
+import { Flex, Spin, Alert, Typography } from 'antd';
 import { Paginator } from "primereact/paginator";
 import ModalFormAdicionarPrioridade from './ModalFormAdicionarPrioridade';
 import { useGetPrioridadeTabelas } from "./hooks/useGetPrioridadeTabelas";
@@ -17,7 +17,7 @@ import { Tabela } from './Tabela';
 import { Resumo } from './Resumo';
 import ModalImportarPrioridades from './ModalImportarPrioridades';
 import { visoesService } from "../../../../../../services/visoes.service";
-
+import { usePaaContext } from "../../../componentes/PaaContext";
 
 const filtroInicial = {
   prioridade: "",
@@ -30,6 +30,7 @@ const filtroInicial = {
 };
 
 const Prioridades = () => {
+  const { paa } = usePaaContext();
   const podeEditar = visoesService.getPermissoes(["custom_change_paa"]);
   const [filtros, setFiltros] = useState(filtroInicial);
   const [currentPage, setCurrentPage] = useState(1);
@@ -159,14 +160,16 @@ const Prioridades = () => {
 
         {podeEditar && (
           <Flex>
-            <Spin spinning={isLoadingPAAsAnteriores}>
-              <button
-                className="btn btn-outline-success btn-sm mx-2"
-                onClick={abrirModalImportarPAAsAnteriores}
-                type="button">
-                  Importar PAAs anteriores
-              </button>
-            </Spin>
+            {paa?.status === "EM_ELABORACAO" && (
+              <Spin spinning={isLoadingPAAsAnteriores}>
+                <button
+                  className="btn btn-outline-success btn-sm mx-2"
+                  onClick={abrirModalImportarPAAsAnteriores}
+                  type="button">
+                    Importar PAAs anteriores
+                </button>
+              </Spin>
+            )}
             <button
                 className="btn btn-success btn-sm"
                 onClick={abrirModalNovaPrioridade}

@@ -5,6 +5,11 @@ import Prioridades from '../index';
 import { useGetPrioridadeTabelas } from '../hooks/useGetPrioridadeTabelas';
 import { useGetPrioridades } from '../hooks/useGetPrioridades';
 import { useGetTiposDespesaCusteio } from '../hooks/useGetTiposDespesaCusteio';
+import { usePaaContext } from '../../../../componentes/PaaContext';
+import { useGetPAAsAnteriores } from '../hooks/useGetPAAsAnteriores';
+import { usePostDuplicarPrioridade } from '../hooks/usePostPrioridade';
+import { useDeletePrioridade } from '../hooks/useDeletePrioridade';
+import { useDeletePrioridadesEmLote } from '../hooks/useDeletePrioridadesEmLote';
 
 // Mock dos hooks
 jest.mock('../../../../../../../services/visoes.service', () => ({
@@ -27,6 +32,45 @@ jest.mock('../hooks/useGetPrioridades', () => ({
 
 jest.mock('../hooks/useGetTiposDespesaCusteio', () => ({
   useGetTiposDespesaCusteio: jest.fn(),
+}));
+
+jest.mock('../../../../componentes/PaaContext', () => ({
+  usePaaContext: jest.fn(),
+}));
+
+jest.mock('../hooks/useGetPAAsAnteriores', () => ({
+  useGetPAAsAnteriores: jest.fn(),
+}));
+
+jest.mock('../hooks/usePostPrioridade', () => ({
+  usePostDuplicarPrioridade: jest.fn(),
+}));
+
+jest.mock('../hooks/useDeletePrioridade', () => ({
+  useDeletePrioridade: jest.fn(),
+}));
+
+jest.mock('../hooks/useDeletePrioridadesEmLote', () => ({
+  useDeletePrioridadesEmLote: jest.fn(),
+}));
+
+jest.mock('../ModalImportarPrioridades', () => ({
+  __esModule: true,
+  default: ({ open, onClose }) =>
+    open ? (
+      <div>
+        <span className="modal-title">Importação de PAA anterior</span>
+        <button onClick={onClose}>Fechar Importar</button>
+      </div>
+    ) : null,
+}));
+
+jest.mock('../Resumo', () => ({
+  Resumo: () => <div data-testid="resumo">Resumo de recursos</div>,
+}));
+
+jest.mock('../../../../../../sme/Parametrizacoes/componentes/ModalConfirmarExclusao', () => ({
+  ModalConfirmarExclusao: () => null,
 }));
 
 // Mock do ModalFormAdicionarPrioridade
@@ -150,6 +194,7 @@ describe('Prioridades', () => {
         removeListener: jest.fn(),
       }));
     // Mock dos hooks
+    usePaaContext.mockReturnValue({ paa: { status: 'EM_ELABORACAO' } });
     useGetPrioridadeTabelas.mockReturnValue(mockPrioridadeTabelas);
     useGetTiposDespesaCusteio.mockReturnValue({
       tipos_despesa_custeio: mockTiposDespesaCusteio
@@ -159,6 +204,19 @@ describe('Prioridades', () => {
       prioridades: mockPrioridades,
       quantidade: 2,
       refetch: jest.fn()
+    });
+    useGetPAAsAnteriores.mockReturnValue({
+      paas_anteriores: [],
+      isFetching: false,
+    });
+    usePostDuplicarPrioridade.mockReturnValue({
+      mutationPost: { mutate: jest.fn() },
+    });
+    useDeletePrioridade.mockReturnValue({
+      mutationDelete: { mutate: jest.fn() },
+    });
+    useDeletePrioridadesEmLote.mockReturnValue({
+      mutationDeleteEmLote: { mutate: jest.fn() },
     });
   });
 
