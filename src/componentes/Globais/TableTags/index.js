@@ -1,9 +1,14 @@
 import React from 'react';
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import './tableTags.scss';
-import TagPeriodoConciliacao from '../TagPeriodoConciliacao';
+import TagLabel from '../TagLabel';
 
-export const TableTags = ({data, coresTags, excludeTags = [], showPeriodoConciliacao = false}) => {
+const tagLabelMap = {
+    'Conciliada': (tag, index) => <TagLabel label={`Período: ${tag.periodo_conciliacao}`} index={index} className={'px-2 tag-table-label-margin-top tag-table-label-color'} />,
+};
+
+export const TableTags = ({data, coresTags, excludeTags = []}) => {
+
     return (
         <>
             {data.informacoes ? data.informacoes?.map((tag, index) => {
@@ -41,13 +46,7 @@ export const TableTags = ({data, coresTags, excludeTags = [], showPeriodoConcili
                             />
                         </div>
                                                     
-                        { showPeriodoConciliacao && tag.tag_nome == 'Conciliada' && 
-                            <TagPeriodoConciliacao 
-                                periodo={data.rateios[0]?.periodo_conciliacao} 
-                                index={index} 
-                                classExtra={'px-2 tag-margin-top'}
-                            />                               
-                        }    
+                        {tagLabelMap[tag.tag_nome]?.(tag, index)}
                     </>
                 )
             }) : '-'}

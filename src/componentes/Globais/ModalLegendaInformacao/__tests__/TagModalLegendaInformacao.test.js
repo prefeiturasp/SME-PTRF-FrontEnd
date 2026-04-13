@@ -5,7 +5,7 @@ import { TagModalLegendaInformacao } from '../TagModalLegendaInformacao';
 import { coresTagsDespesas } from '../../../../utils/CoresTags';
 
 jest.mock('../scss/tagModalLegendaInformacao.scss', () => {});
-jest.mock('../../TagPeriodoConciliacao/scss/TagPeriodoConciliacao.scss', () => {});
+jest.mock('../../TagLabel/scss/TagLabel.scss', () => {});
 
 describe('TagModalLegendaInformacao', () => {
   it('renderiza tag com texto e descrição', () => {
@@ -45,7 +45,7 @@ describe('TagModalLegendaInformacao', () => {
 
     render(<TagModalLegendaInformacao data={data} coresTags={coresTagsDespesas} />);
 
-    expect(screen.getByTestId('td-periodo-conciliacao-2')).toBeInTheDocument();
+    expect(screen.getByTestId('tag-label-2')).toBeInTheDocument();
     expect(screen.getByText('Período: XXXX.X')).toBeInTheDocument();
   });
 
@@ -59,7 +59,7 @@ describe('TagModalLegendaInformacao', () => {
 
     render(<TagModalLegendaInformacao data={data} coresTags={coresTagsDespesas} />);
 
-    expect(screen.queryByTestId('td-periodo-conciliacao-1')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('tag-label-1')).not.toBeInTheDocument();
     expect(screen.queryByText(/Período:/)).not.toBeInTheDocument();
   });
 });
