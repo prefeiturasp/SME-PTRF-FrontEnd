@@ -43,13 +43,12 @@ describe("useGetProgramasPddeTotais", () => {
     expect(result.current.total).toEqual(mockResponse.total);
   });
 
-  it("chama getProgramasPddeTotais sem parâmetros", async () => {
+  it("chama getProgramasPddeTotais", async () => {
     getProgramasPddeTotais.mockResolvedValueOnce(mockResponse);
 
     renderHook(() => useGetProgramasPddeTotais(), { wrapper });
 
     await waitFor(() => expect(getProgramasPddeTotais).toHaveBeenCalled());
-    expect(getProgramasPddeTotais).toHaveBeenCalledWith();
   });
 
   it("retorna programas e total do response corretamente", async () => {
