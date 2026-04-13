@@ -1,7 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { getProgramasPddeTotais } from "../../../../../../services/escolas/Paa.service";
 
-export const useGetProgramasPddeTotais = () => {
+export const useGetProgramasPddeTotais = (paa_uuid) => {
+
   const {
     isFetching,
     isError,
@@ -10,7 +11,7 @@ export const useGetProgramasPddeTotais = () => {
     refetch,
   } = useQuery({
     queryKey: ["programas-pdde-totais"],
-    queryFn: () => getProgramasPddeTotais(),
+    queryFn: () => getProgramasPddeTotais(paa_uuid),
     keepPreviousData: true,
     staleTime: 5000, // 5 segundos
     refetchOnWindowFocus: true, // Caso saia da aba e voltar ele refaz a requisição

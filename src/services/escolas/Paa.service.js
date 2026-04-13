@@ -232,8 +232,8 @@ export const getAcoesPDDEPrioridades = async (paa_uuid) => {
 };
 
 // PDDE
-export const getProgramasPddeTotais = async () => {
-  return (await api.get(`api/programas-pdde/totais/?paa_uuid=${localStorage.getItem("PAA")}&pagination=false`, authHeader())).data;
+export const getProgramasPddeTotais = async (paa_uuid) => {
+  return (await api.get(`api/programas-pdde/totais/?paa_uuid=${paa_uuid || localStorage.getItem("PAA")}&pagination=false`, authHeader())).data;
 };
 
 export const postReceitaPrevistaPDDE = async (payload) => {

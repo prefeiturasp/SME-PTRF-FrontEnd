@@ -30,7 +30,10 @@ const ReceitasPrevistas = ({ receitasDestino = null, paa }) => {
       component: (
         <>
           <ReceitasPrevistasPTRF paa={paa} />
-          <ReceitasPrevistasPDDE setActiveTab={setActiveTab} />
+          <ReceitasPrevistasPDDE
+            setActiveTab={setActiveTab}
+            paa={paa}
+          />
           <ReceitasPrevistasOutrosRecursos
             setActiveTab={setActiveTab}
             paa={paa}

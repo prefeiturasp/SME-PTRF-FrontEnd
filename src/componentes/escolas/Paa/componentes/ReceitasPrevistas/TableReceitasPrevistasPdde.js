@@ -6,8 +6,8 @@ import { DataTable } from "primereact/datatable";
 import { formatMoneyBRL } from "../../../../../utils/money";
 import { EditIconButton } from "../../../../Globais/UI/Button";
 
-const TableReceitasPrevistasPdde = ({ setActiveTab }) => {
-  const { programas, total, isLoading } = useGetProgramasPddeTotais();
+const TableReceitasPrevistasPdde = ({ setActiveTab, paa }) => {
+  const { programas, total, isLoading } = useGetProgramasPddeTotais(paa?.uuid);
 
   const nomeTemplate = (rowData, column) => {
     return (
