@@ -79,6 +79,8 @@ const Relatorios = ({ initialExpandedSections }) => {
   const [openModalValidacoesGeracaoFinal, setOpenModalValidacoesGeracaoFinal] =
     useState(false);
 
+  const [gerandoDocFinal, setGerandoDocFinal] = useState(false);
+
   const {
     data: statusDocumento,
     isFetching: isLoadingStatusDocumento,
@@ -186,18 +188,27 @@ const Relatorios = ({ initialExpandedSections }) => {
   };
 
   const handleGerarDocumentoFinal = async (confirmar = 0) => {
-    if (!podeEditar) return;
+    if (!podeEditar) return;   
     setOpenModalConfirmarGeracaoFinal(false);
-    if (paaVigente?.uuid) {
-      mutationGerarDocumentoFinal.mutate({
-        uuid: paaVigente.uuid,
-        payload: { confirmar },
-      });
-    } else {
-      toastCustom.ToastCustomError(
-        "Erro!",
-        "PAA vigente não identificado para geração final.",
-      );
+  
+    try {
+        setGerandoDocFinal(true);
+        if (paaVigente?.uuid) {
+            await mutationGerarDocumentoFinal.mutateAsync({
+                uuid: paaVigente.uuid,
+                payload: { confirmar },
+            });
+         
+        } else {
+            toastCustom.ToastCustomError(
+                "Erro!",
+                "PAA vigente não identificado para geração final.",
+            );
+        }       
+    
+    } catch(err) {} 
+    finally {
+       setGerandoDocFinal(false);
     }
   };
 
@@ -366,6 +377,7 @@ const Relatorios = ({ initialExpandedSections }) => {
                 </Spin>
               </div>
             </div>
+            
             <div className="documento-actions">
               <Space>
                 <button
@@ -375,10 +387,10 @@ const Relatorios = ({ initialExpandedSections }) => {
                 >
                   Prévia
                 </button>
-
+               
                 <button
                   className="btn btn-success"
-                  disabled={botaoGeracaoFinalDesabilitado()}
+                  disabled={gerandoDocFinal || botaoGeracaoFinalDesabilitado()}
                   onClick={() => handleGerarDocumentoFinal(0)}
                 >
                   Gerar
@@ -468,13 +480,19 @@ const Relatorios = ({ initialExpandedSections }) => {
 
       <ModalConfirmaGeracaoFinal
         open={openModalConfirmarGeracaoFinal}
-        onClose={() => setOpenModalConfirmarGeracaoFinal(false)}
+        onClose={() => {
+            setGerandoDocFinal(false);
+            setOpenModalConfirmarGeracaoFinal(false);
+        }}
         onConfirm={() => handleGerarDocumentoFinal(1)}
       />
 
       <ModalInfoPendenciasGeracaoFinal
         open={openModalValidacoesGeracaoFinal}
-        onClose={() => setOpenModalValidacoesGeracaoFinal(false)}
+        onClose={() => {
+            setGerandoDocFinal(false);
+            setOpenModalValidacoesGeracaoFinal(false)
+        }}
         pendencias={pendenciasGeracaoFinal}
       />
     </div>

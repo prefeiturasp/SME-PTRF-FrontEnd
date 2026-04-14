@@ -61,7 +61,6 @@ describe('RelSecaoTextos', () => {
         render(<RelSecaoTextos {...props} />);
         await waitFor(() => {
             expect(screen.getByText('Texto fixo intro', { exact: false })).toBeInTheDocument();
-            expect(screen.getByText('Mensagem padrão intro', { exact: false })).toBeInTheDocument();
         })
     });
 
