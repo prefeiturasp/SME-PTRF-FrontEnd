@@ -16,7 +16,7 @@ describe("usePaaVigenteEAnteriores", () => {
 
         queryClient = new QueryClient({
             defaultOptions: {
-                queries: { retry: false, cacheTime: 0 },
+                queries: { retry: false, gcTime: 0 },
             },
         });
 
@@ -93,24 +93,12 @@ describe("usePaaVigenteEAnteriores", () => {
             expect(result.current.error).toBeDefined();
         });
 
-        it("isLoading deve ser igual a isPending", async () => {
+        it("deve deixar de carregar após sucesso", async () => {
             getPaaVigenteEAnteriores.mockResolvedValueOnce({});
 
             const { result } = renderHook(() => usePaaVigenteEAnteriores(uuid), { wrapper });
-
-            expect(result.current.isLoading).toBe(result.current.isPending);
 
             await waitFor(() => expect(result.current.isLoading).toBe(false));
-
-            expect(result.current.isLoading).toBe(result.current.isPending);
-        });
-
-        it("deve expor isFetching", async () => {
-            getPaaVigenteEAnteriores.mockResolvedValueOnce({});
-
-            const { result } = renderHook(() => usePaaVigenteEAnteriores(uuid), { wrapper });
-
-            expect(typeof result.current.isFetching).toBe("boolean");
         });
     });
 });

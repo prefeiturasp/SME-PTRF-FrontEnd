@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from "@testing-library/react";
-import { ModalRetificarPAA } from "../ModalRetificarPaa";
+import { ModalRetificarPAA } from "../components/ModalRetificarPaa/ModalRetificarPaa";
 
 
 describe("ModalRetificarPAA", () => {
