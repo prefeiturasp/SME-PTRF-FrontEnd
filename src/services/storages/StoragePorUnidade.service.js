@@ -1,12 +1,14 @@
+const ONE_MONTH = 30 * 24 * 60 * 60 * 1000;
+
 const getUnidadeKey = () => {
     try {
         // Carrega sob demanda para evitar ciclo de import na inicializacao dos storages.
         const { visoesService } = require('../visoes.service');
         const dados_usuario_logado = visoesService.getDadosDoUsuarioLogado()
         
-        if (!dados_usuario_logado.unidade_selecionada.uuid) return 'sem_unidade';
+        if (!dados_usuario_logado.unidade_selecionada.uuid || !dados_usuario_logado?.usuario_logado?.login) return 'sem_unidade';
 
-        return `unidade_${dados_usuario_logado.unidade_selecionada.uuid}`;
+        return `unidade_${dados_usuario_logado.unidade_selecionada.uuid}_${dados_usuario_logado?.usuario_logado?.login}`;
     } catch {
         return 'sem_unidade';
     }
@@ -40,7 +42,7 @@ export const criarStoragePorUnidade = ({ storageKey } = {}) => {
         const unidadeKey = getUnidadeKey();
         const todos = _parseTodos();
         const { legado, ...resto } = todos;
-        const atualizado = { ...resto, [unidadeKey]: value };
+        const atualizado = { ...resto, [unidadeKey]: { ...value, ultimoAcesso: Date.now() } };
         localStorage.setItem(storageKey, JSON.stringify(atualizado));
     };
 
@@ -55,5 +57,26 @@ export const criarStoragePorUnidade = ({ storageKey } = {}) => {
         }
     };
 
-    return { getItem, setItem, removeItem };
+    const deleteStorage = () => {
+        localStorage.removeItem(storageKey);
+    }
+
+    const clearAutomaticallyDataExpired = () => {
+        const all = _parseTodos();
+        const now = Date.now();
+        let atualizado = { ...all };
+        let hasChanges = false;
+
+        Object.keys(all).forEach(unidadeKey => {
+            const item = all[unidadeKey];
+            if (item?.ultimoAcesso && now - item.ultimoAcesso > ONE_MONTH) {
+                delete atualizado[unidadeKey];
+                hasChanges = true;
+            }
+        });
+
+        if (hasChanges) localStorage.setItem(storageKey, JSON.stringify(atualizado));
+    };
+
+    return { getItem, setItem, removeItem, deleteStorage, clearAutomaticallyDataExpired };
 };

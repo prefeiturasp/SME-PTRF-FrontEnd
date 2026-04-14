@@ -6,10 +6,14 @@ const {
     getItem: getRecursoSelecionado,
     setItem: setRecursoSelecionado,
     removeItem: removeRecursoSelecionado,
+    deleteStorage: deleteRecursoSelecionadoStorage,
+    clearAutomaticallyDataExpired: clearAutomaticallyDataExpiredRecursoSelecionado
 } = criarStoragePorUnidade({ storageKey: STORAGE_KEY_RECURSO_SELECIONADO_POR_UNIDADE});
 
 export const recursoSelecionadoStorageService = {
     getRecursoSelecionado,
     setRecursoSelecionado,
     removeRecursoSelecionado,
+    deleteRecursoSelecionadoStorage,
+    clearAutomaticallyDataExpiredRecursoSelecionado
 };
