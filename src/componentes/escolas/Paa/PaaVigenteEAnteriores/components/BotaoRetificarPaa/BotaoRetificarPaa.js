@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Spin } from 'antd';
-import { ModalRetificarPAA } from './ModalRetificarPaa';
+import { ModalRetificarPAA } from '../ModalRetificarPaa/ModalRetificarPaa';
 import { useNavigate } from 'react-router-dom';
-import { toastCustom } from '../../../Globais/ToastCustom';
-import { usePostIniciarRetificacaoPaa } from '../componentes/hooks/usePostIniciarRetificacaoPaa';
+import { toastCustom } from '../../../../../Globais/ToastCustom';
+import { usePostIniciarRetificacaoPaa } from '../../../componentes/hooks/usePostIniciarRetificacaoPaa';
 
 export const BotaoRetificarPaa = ({paa, statusDocumento}) => {
     const navigate = useNavigate();
@@ -16,9 +16,10 @@ export const BotaoRetificarPaa = ({paa, statusDocumento}) => {
 
     const handleAbrirModal = () => {
         if (paa.status === "EM_RETIFICACAO") {
-            // Apenas redireciona sem exigir Justifitiva
-            navigate(`/retificacao-paa/${paa.uuid}`)
-            return
+            navigate(`/retificacao-paa/${paa.uuid}`, {
+                state: { origem: 'paa-vigente-e-anteriores' },
+            });
+            return;
         }
 
         setAbrirRetificacao(true);
@@ -41,7 +42,9 @@ export const BotaoRetificarPaa = ({paa, statusDocumento}) => {
             handleFecharModal();
 
             // Redireciona o Paa para Tela de Retificação
-            navigate(`/retificacao-paa/${paa.uuid}`)
+            navigate(`/retificacao-paa/${paa.uuid}`, {
+                state: { origem: 'paa-vigente-e-anteriores' },
+            })
         } catch (error) {
             toastCustom.ToastCustomError(
                 "Retificação",

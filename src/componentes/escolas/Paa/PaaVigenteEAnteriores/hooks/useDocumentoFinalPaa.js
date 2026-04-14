@@ -1,7 +1,6 @@
 import { useCallback, useState } from "react";
 import api from "../../../../../services/api";
 import { TOKEN_ALIAS } from "../../../../../services/auth.service";
-import { getDownloadArquivoFinal, getStatusGeracaoDocumentoPaa } from "../../../../../services/escolas/Paa.service";
 
 const authHeader = () => ({
   headers: {
@@ -11,53 +10,55 @@ const authHeader = () => ({
 });
 
 export const useDocumentoFinalPaa = () => {
-  const [statusDocumento, setStatusDocumento] = useState({});
-  const [statusCarregando, setStatusCarregando] = useState({});
-  const [downloadEmAndamento, setDownloadEmAndamento] = useState(null);
   const [visualizacaoEmAndamento, setVisualizacaoEmAndamento] = useState(null);
 
-  const carregarStatusDocumento = useCallback(async (paaUuid) => {
-    if (!paaUuid) return;
-    try {
-      setStatusCarregando((prev) => ({ ...prev, [paaUuid]: true }));
-      const result = await getStatusGeracaoDocumentoPaa(paaUuid);
-      setStatusDocumento((prev) => ({
-        ...prev,
-        [paaUuid]: result,
-      }));
-    } catch (error) {
-      console.error("Erro ao obter status do documento final do PAA:", error);
-    } finally {
-      setStatusCarregando((prev) => ({ ...prev, [paaUuid]: false }));
-    }
-  }, []);
-
-  const baixarDocumentoFinal = useCallback(async (paaUuid) => {
-    if (!paaUuid) return;
-    try {
-      setDownloadEmAndamento(paaUuid);
-      await getDownloadArquivoFinal(paaUuid);
-    } catch (error) {
-      console.error("Erro ao baixar o documento final do PAA:", error);
-    } finally {
-      setDownloadEmAndamento(null);
-    }
-  }, []);
-
-  const obterUrlDocumentoFinal = useCallback(async (paaUuid) => {
+  const chaveVisualizacaoDocumento = useCallback((paaUuid, ehRetificacao) => {
     if (!paaUuid) return null;
-    setVisualizacaoEmAndamento(paaUuid);
+    return `doc:${paaUuid}:${ehRetificacao ? "True" : "False"}`;
+  }, []);
+
+  const obterUrlDocumentoFinal = useCallback(
+    async (paaUuid, ehRetificacao = false) => {
+      if (!paaUuid) return null;
+      const chave = chaveVisualizacaoDocumento(paaUuid, ehRetificacao);
+      setVisualizacaoEmAndamento(chave);
+      try {
+        const response = await api.get(`/api/paa/${paaUuid}/documento-final/`, {
+          responseType: "blob",
+          timeout: 30000,
+          params: { retificacao: ehRetificacao ? "true" : "false" },
+          ...authHeader(),
+        });
+        const contentType = response?.headers?.["content-type"] || "application/pdf";
+        const blob = new Blob([response.data], { type: contentType });
+        return window.URL.createObjectURL(blob);
+      } catch (error) {
+        console.error("Erro ao visualizar o documento final do PAA:", error);
+        return null;
+      } finally {
+        setVisualizacaoEmAndamento(null);
+      }
+    },
+    [chaveVisualizacaoDocumento]
+  );
+
+  const obterUrlArquivoAtaPaa = useCallback(async (ataUuid) => {
+    if (!ataUuid) return null;
+    setVisualizacaoEmAndamento(`ata:${ataUuid}`);
     try {
-      const response = await api.get(`/api/paa/${paaUuid}/documento-final/`, {
-        responseType: "blob",
-        timeout: 30000,
-        ...authHeader(),
-      });
+      const response = await api.get(
+        `/api/atas-paa/download-arquivo-ata-paa/?ata-paa-uuid=${ataUuid}`,
+        {
+          responseType: "blob",
+          timeout: 30000,
+          ...authHeader(),
+        }
+      );
       const contentType = response?.headers?.["content-type"] || "application/pdf";
       const blob = new Blob([response.data], { type: contentType });
       return window.URL.createObjectURL(blob);
     } catch (error) {
-      console.error("Erro ao visualizar o documento final do PAA:", error);
+      console.error("Erro ao visualizar a ata do PAA:", error);
       return null;
     } finally {
       setVisualizacaoEmAndamento(null);
@@ -71,13 +72,10 @@ export const useDocumentoFinalPaa = () => {
   }, []);
 
   return {
-    statusDocumento,
-    statusCarregando,
-    downloadEmAndamento,
     visualizacaoEmAndamento,
-    carregarStatusDocumento,
-    baixarDocumentoFinal,
     obterUrlDocumentoFinal,
+    obterUrlArquivoAtaPaa,
+    chaveVisualizacaoDocumento,
     revogarUrlDocumento,
   };
 };
