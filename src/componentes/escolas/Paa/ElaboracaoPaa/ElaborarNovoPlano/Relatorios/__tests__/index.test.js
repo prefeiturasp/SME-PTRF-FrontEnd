@@ -71,6 +71,7 @@ jest.mock("../hooks/usePostPaaGeracaoDocumento", () => ({
 
     return {
       mutate: mockMutateFinal,
+      mutateAsync: mockMutateFinal,
     };
   },
 }));
@@ -185,9 +186,7 @@ describe("Relatorios", () => {
 
   test("expande seção Plano Anual ao clicar no dropdown", () => {
     render(<Relatorios />);
-    const dropdownBtn = document.querySelector(
-      'button.btn-dropdown'
-    )
+    const dropdownBtn = document.querySelector("button.btn-dropdown");
     fireEvent.click(dropdownBtn);
 
     expect(screen.getByTestId("secao-introducao")).toBeInTheDocument();
@@ -197,7 +196,7 @@ describe("Relatorios", () => {
     render(<Relatorios />);
     fireEvent.click(screen.getByText("Visualizar prévia da ata"));
     expect(mockNavigate).toHaveBeenCalledWith(
-      "/relatorios-paa/visualizacao-da-ata-paa/paa-uuid-1"
+      "/relatorios-paa/visualizacao-da-ata-paa/paa-uuid-1",
     );
   });
 
@@ -211,9 +210,7 @@ describe("Relatorios", () => {
     render(<Relatorios />);
 
     await waitFor(() => {
-      expect(mockNavigate).toHaveBeenCalledWith(
-        "/paa-vigente-e-anteriores"
-      );
+      expect(mockNavigate).toHaveBeenCalledWith("/paa-vigente-e-anteriores");
     });
   });
 
@@ -250,9 +247,7 @@ describe("Relatorios", () => {
     });
 
     await waitFor(() => {
-      expect(
-        screen.queryByText("Modal Prévia")
-      ).not.toBeInTheDocument();
+      expect(screen.queryByText("Modal Prévia")).not.toBeInTheDocument();
     });
   });
 
@@ -263,16 +258,13 @@ describe("Relatorios", () => {
 
     await waitFor(() => {
       expect(screen.getByText("Modal Confirmar")).toBeInTheDocument();
-    
-      fireEvent.click(screen.getByText("Fechar Confirmar"));
-    })
 
-    await waitFor(() => {
-      expect(
-        screen.queryByText("Modal Confirmar")
-      ).not.toBeInTheDocument();
+      fireEvent.click(screen.getByText("Fechar Confirmar"));
     });
 
+    await waitFor(() => {
+      expect(screen.queryByText("Modal Confirmar")).not.toBeInTheDocument();
+    });
   });
 
   test("fecha modal de pendências ao clicar em fechar", async () => {
@@ -284,18 +276,15 @@ describe("Relatorios", () => {
     });
 
     await waitFor(() => {
-
-      expect(
-        screen.getByText("Pendências encontradas")
-      ).toBeInTheDocument();
+      expect(screen.getByText("Pendências encontradas")).toBeInTheDocument();
 
       fireEvent.click(screen.getByText("Fechar Pendencias"));
-    })
+    });
 
     await waitFor(() => {
       expect(
-        screen.queryByText("Pendências encontradas")
+        screen.queryByText("Pendências encontradas"),
       ).not.toBeInTheDocument();
-    })
+    });
   });
 });
