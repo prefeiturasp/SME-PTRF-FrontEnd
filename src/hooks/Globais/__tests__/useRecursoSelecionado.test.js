@@ -50,7 +50,7 @@ describe("useRecursoSelecionado - inicialização", () => {
       useRecursoSelecionado({ visoesService: makeVisoesService() })
     );
 
-    expect(result.current.recursoSelecionado).toEqual(recursoA);
+    expect(result.current.recursoSelecionado).toEqual({...recursoA, ultimoAcesso: result.current.recursoSelecionado.ultimoAcesso});
   });
 
   it("inicializa recursoSelecionado como null quando localStorage está vazio", () => {
