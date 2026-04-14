@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent, act, waitFor } from '@testing-library/react';
-import { BotaoRetificarPaa } from '../BotaoRetificarPaa';
+import { BotaoRetificarPaa } from '../components/BotaoRetificarPaa/BotaoRetificarPaa';
 import { usePostIniciarRetificacaoPaa } from '../../componentes/hooks/usePostIniciarRetificacaoPaa';
 import { toastCustom } from '../../../../Globais/ToastCustom';
 
@@ -20,7 +20,7 @@ jest.mock('../../../../Globais/ToastCustom', () => ({
 jest.mock('../../componentes/hooks/usePostIniciarRetificacaoPaa');
 
 let capturedModalProps = null;
-jest.mock('../ModalRetificarPaa', () => ({
+jest.mock('../components/ModalRetificarPaa/ModalRetificarPaa', () => ({
     ModalRetificarPAA: (props) => {
         capturedModalProps = props;
         if (!props.open) return null;
@@ -81,7 +81,9 @@ describe('BotaoRetificarPaa', () => {
 
         fireEvent.click(screen.getByRole('button', { name: /retificar o paa/i }));
 
-        expect(mockNavigate).toHaveBeenCalledWith('/retificacao-paa/paa-uuid-123');
+        expect(mockNavigate).toHaveBeenCalledWith('/retificacao-paa/paa-uuid-123', {
+            state: { origem: 'paa-vigente-e-anteriores' },
+        });
         expect(screen.queryByTestId('modal-retificar')).not.toBeInTheDocument();
     });
 
@@ -172,7 +174,9 @@ describe('BotaoRetificarPaa', () => {
                 fireEvent.click(screen.getByTestId('modal-confirmar'));
             });
 
-            expect(mockNavigate).toHaveBeenCalledWith('/retificacao-paa/paa-uuid-123');
+            expect(mockNavigate).toHaveBeenCalledWith('/retificacao-paa/paa-uuid-123', {
+                state: { origem: 'paa-vigente-e-anteriores' },
+            });
         });
     });
 

@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { ModalConfirmaGeracaoAta } from '../ModalConfirmaGeracaoAta';
+import { ModalConfirmaGeracaoAta } from '../components/ModalConfirmaGeracaoAta/ModalConfirmaGeracaoAta';
 
 const defaultProps = {
     open: true,
