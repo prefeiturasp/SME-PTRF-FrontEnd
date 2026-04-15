@@ -17,6 +17,9 @@ jest.mock('primereact/datatable', () => ({
 jest.mock('../../../../../../services/dres/Associacoes.service');
 jest.mock('../../../../../../services/dres/ProcessosAssociacao.service');
 jest.mock('../../../../../../services/visoes.service');
+jest.mock('../../../../../../context/RecursoSelecionado', () => ({
+  useRecursoSelecionadoContext: jest.fn(),
+}));
 
 /* eslint-disable-next-line import/first */
 import { ProcessosSeiPrestacaoDeContas } from '../ProcessosSeiPrestacaoDeContas';
@@ -42,6 +45,7 @@ const globalProps = {
 const setupMocks = () => {
   const { getProcessosAssociacao } = require('../../../../../../services/dres/Associacoes.service');
   const { visoesService } = require('../../../../../../services/visoes.service');
+  const { useRecursoSelecionadoContext } = require('../../../../../../context/RecursoSelecionado');
 
   getProcessosAssociacao.mockResolvedValue([
     {
@@ -58,6 +62,10 @@ const setupMocks = () => {
     visoesService.featureFlagAtiva = jest.fn().mockReturnValue(false);
     visoesService.getPermissoes = jest.fn().mockReturnValue(true);
   }
+
+  useRecursoSelecionadoContext.mockReturnValue({
+    recursos: [{ uuid: 'r1', nome: 'Recurso 1' }],
+  });
 };
 
 describe('ProcessosSeiPrestacaoDeContas Testes', () => {
@@ -163,6 +171,16 @@ describe('ProcessosSeiPrestacaoDeContas Testes', () => {
 
   test('8. Exibe sub-aba de recurso quando usuário tem múltiplos recursos', async () => {
     const { visoesService } = require('../../../../../../services/visoes.service');
+    const { useRecursoSelecionadoContext } = require('../../../../../../context/RecursoSelecionado');
+
+    // Mock com múltiplos recursos e feature flag ativa
+    useRecursoSelecionadoContext.mockReturnValue({
+      recursos: [
+        { uuid: 'r1', nome: 'Recurso 1' },
+        { uuid: 'r2', nome: 'Recurso 2' },
+        { uuid: 'r3', nome: 'Recurso 3' },
+      ],
+    });
 
     visoesService.featureFlagAtiva = jest.fn((flag) => {
       if (flag === 'premio-excelencia-processo-sei') {
@@ -200,6 +218,15 @@ describe('ProcessosSeiPrestacaoDeContas Testes', () => {
 
   test('9. Não exibe sub-aba de recurso quando feature flag está inativa', async () => {
     const { visoesService } = require('../../../../../../services/visoes.service');
+    const { useRecursoSelecionadoContext } = require('../../../../../../context/RecursoSelecionado');
+
+    // Mock com múltiplos recursos mas feature flag inativa
+    useRecursoSelecionadoContext.mockReturnValue({
+      recursos: [
+        { uuid: 'r1', nome: 'Recurso 1' },
+        { uuid: 'r2', nome: 'Recurso 2' },
+      ],
+    });
 
     visoesService.featureFlagAtiva = jest.fn().mockReturnValue(false);
 
@@ -229,6 +256,12 @@ describe('ProcessosSeiPrestacaoDeContas Testes', () => {
 
   test('10. Não exibe sub-aba quando usuário tem apenas um recurso', async () => {
     const { visoesService } = require('../../../../../../services/visoes.service');
+    const { useRecursoSelecionadoContext } = require('../../../../../../context/RecursoSelecionado');
+
+    // Mock com um único recurso
+    useRecursoSelecionadoContext.mockReturnValue({
+      recursos: [{ uuid: 'r1', nome: 'Recurso 1' }],
+    });
 
     visoesService.featureFlagAtiva = jest.fn().mockReturnValue(true);
 

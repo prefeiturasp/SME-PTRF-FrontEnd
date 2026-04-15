@@ -231,9 +231,7 @@ describe("Componente FormularioBemProduzido", () => {
     fireEvent.click(buttonInformarValores);
 
     await waitFor(() => {
-      expect(
-        screen.getByText("Informar valores utilizados na produção do bem")
-      ).toBeInTheDocument();
+      expect(screen.getByText("Informar valores utilizados na produção do bem")).toBeInTheDocument();
     });
   });
 
@@ -251,9 +249,7 @@ describe("Componente FormularioBemProduzido", () => {
     fireEvent.click(buttonInformarValores);
 
     await waitFor(() => {
-      expect(
-        screen.getByRole("button", { name: /Classificar o bem/ })
-      ).toBeDisabled();
+      expect(screen.getByRole("button", { name: /Classificar o bem/ })).toBeDisabled();
     });
   });
 });
