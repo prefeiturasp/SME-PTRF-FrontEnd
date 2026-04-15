@@ -201,6 +201,8 @@ export const PrestacaoDeContas = ({setStatusPC, registroFalhaGeracaoPc, setRegis
     const getStatusPrestacaoDeConta = async () => {
         let periodo_prestacao_de_contas = geracaoDocumentosStorageService.getPeriodo();
 
+        console.log('***** 1', periodo_prestacao_de_contas)
+
         if (periodo_prestacao_de_contas?.periodoPrestacaoDeConta?.data_inicial){
             let data_inicial = periodo_prestacao_de_contas.periodoPrestacaoDeConta.data_inicial;
             let status = await getStatusPeriodoPorData(localStorage.getItem(ASSOCIACAO_UUID), data_inicial);
@@ -237,6 +239,7 @@ export const PrestacaoDeContas = ({setStatusPC, registroFalhaGeracaoPc, setRegis
 
     const handleChangePeriodoPrestacaoDeConta = async (name, value) => {
         setLoading(true);
+        console.log('****** 2')
         if (value){
             let valor = JSON.parse(value);
             geracaoDocumentosStorageService.setPeriodo({ 'periodoPrestacaoDeConta': valor });
@@ -280,6 +283,7 @@ export const PrestacaoDeContas = ({setStatusPC, registroFalhaGeracaoPc, setRegis
     };
 
     const concluirPeriodo = useCallback( async (justificativaPendencia='') =>{
+        console.log('****** 3')
         if (periodoPrestacaoDeConta && periodoPrestacaoDeConta.periodo_uuid){
             try {
                 let status_concluir_periodo = await postConcluirPeriodo(periodoPrestacaoDeConta.periodo_uuid, justificativaPendencia);
