@@ -186,7 +186,7 @@ export const ListaDeReceitas = () => {
                         </div>
                         <div className={`${btnMaisFiltros ? "col-12" : "col-12 col-md-5 mt-2"}`}>
                             <button disabled={!visoesService.getPermissoes(['add_receita'])} onClick={() => navigate('/cadastro-de-credito')} type="submit" className="btn btn btn-outline-success float-right">Cadastrar crédito</button>
-                            { recursoSelecionado?.legado && (
+                            { recursoSelecionado?.exibe_valores_reprogramados && (
                                 <button disabled={!visoesService.getPermissoes(['add_receita'])} onClick={() => navigate('/cadastro-de-valores-reprogramados')} type="submit" className="btn btn btn-outline-success float-right mr-2">Valores reprogramados</button>
                             ) }
                         </div>

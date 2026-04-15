@@ -86,7 +86,7 @@ beforeEach(() => {
   jest.clearAllMocks();
 
   useRecursoSelecionadoContext.mockReturnValue({
-    recursoSelecionado: { legado: true },
+    recursoSelecionado: { legado: true, exibe_valores_reprogramados: true },
   });
 
   visoesService.getPermissoes.mockReturnValue(true);

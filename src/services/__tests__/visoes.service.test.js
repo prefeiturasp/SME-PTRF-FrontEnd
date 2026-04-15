@@ -2,6 +2,7 @@ import { visoesService } from '../visoes.service';
 import { authService } from '../auth.service';
 import { redirect } from '../../utils/redirect';
 import moment from 'moment';
+import { STORAGE_KEY_PERIODO_CONTA_GERACAO_DOCUMENTOS } from '../storages/GeracaoDeDocumentos.storage.service';
 
 const localStorageMock = (() => {
   let store = {};
@@ -584,6 +585,7 @@ describe('Visoes Service', () => {
             localStorageMock.setItem('uuidPrestacaoConta', 'test');
             localStorageMock.setItem('uuidAta', 'test');
             localStorageMock.setItem('prestacao_de_contas_nao_apresentada', 'test');
+            localStorageMock.setItem(STORAGE_KEY_PERIODO_CONTA_GERACAO_DOCUMENTOS, '{}');
             localStorageMock.setItem(PERIODO_RELATORIO_CONSOLIDADO_DRE, 'test');
             localStorageMock.setItem(PERIODO_SELECIONADO_DRE_ACOMPANHAMENTO, 'test');
             localStorageMock.setItem('PAA', 'uuid-paa-anterior');
@@ -599,6 +601,7 @@ describe('Visoes Service', () => {
             expect(localStorageMock.getItem('uuidPrestacaoConta')).toBeNull();
             expect(localStorageMock.getItem('uuidAta')).toBeNull();
             expect(localStorageMock.getItem('prestacao_de_contas_nao_apresentada')).toBeNull();
+            expect(localStorageMock.getItem(STORAGE_KEY_PERIODO_CONTA_GERACAO_DOCUMENTOS)).toBeNull();
             expect(localStorageMock.getItem(PERIODO_RELATORIO_CONSOLIDADO_DRE)).toBeNull();
             expect(localStorageMock.getItem(PERIODO_SELECIONADO_DRE_ACOMPANHAMENTO)).toBeNull();
             expect(localStorageMock.getItem('PAA')).toBeNull();

@@ -30,6 +30,7 @@ import {
 } from '../../../../../services/escolas/AtasAssociacao.service';
 import { getPeriodoFechado } from '../../../../../services/escolas/Associacao.service';
 import { visoesService } from '../../../../../services/visoes.service';
+import { geracaoDocumentosStorageService } from '../../../../../services/storages/GeracaoDeDocumentos.storage.service';
 
 type StatusGeracao = 'EM_PROCESSAMENTO' | 'CONCLUIDO' | null;
 type DadosAta = {
@@ -49,6 +50,7 @@ describe('GeracaoAtaApresentacao - habilitação do botão "gerar ata"', () => {
     beforeEach(() => {
         jest.clearAllMocks();
         const periodo = { data_inicial: '2025-01-01' };
+        geracaoDocumentosStorageService.setPeriodo({ 'periodoPrestacaoDeConta': JSON.stringify(periodo) });
         window.localStorage.setItem('periodoPrestacaoDeConta', JSON.stringify(periodo));
     });
 

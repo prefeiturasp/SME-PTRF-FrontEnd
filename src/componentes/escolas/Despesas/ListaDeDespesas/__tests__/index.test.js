@@ -35,7 +35,8 @@ describe("ListaDeDespesas", () => {
                         especificacao_material_servico: { descricao: "Material 1" },
                         valor_rateio: "100.50",
                         aplicacao_recurso: "Capital",
-                        acao_associacao: { acao: { nome: "Ação 1" } }
+                        acao_associacao: { acao: { nome: "Ação 1" } },
+                        periodo_conciliacao: "2024.1"
                     }
                 ]
             }
@@ -299,5 +300,41 @@ describe("ListaDeDespesas", () => {
             expect(redirect).toHaveBeenCalledWith('/cadastro-de-despesa-recurso-proprio/receita-123/uuid-recurso');
         }, { timeout: 1000 });
     });
+
+    it("deve exibir o período de conciliação quando disponível", async () => {
+        render(<ListaDeDespesas />);
+
+        await waitFor(() => {
+            expect(screen.queryByTestId('td-periodo-conciliacao-0')).toBeInTheDocument();
+        }, { timeout: 3000 });
+    })
+
+    it("não deve exibir o período de conciliação quando não disponível", async () => {
+        const despesaComPeriodo = {
+            results: [{
+                uuid: "uuid-periodo",
+                numero_documento: "321",
+                status: "INCOMPLETO",
+                data_documento: "2024-02-10",
+                rateios: [{
+                    especificacao_material_servico: { descricao: "Material X" },
+                    valor_rateio: "50.00",
+                    aplicacao_recurso: "Custeio",
+                    acao_associacao: { acao: { nome: "Ação 1" } },
+                    periodo_conciliacao: ""
+                }]
+            }],
+            count: 1
+        };        
+
+        ordenacaoDespesas.mockResolvedValue(despesaComPeriodo);
+
+        render(<ListaDeDespesas />);
+        
+        await waitFor(() => {
+            expect(screen.queryByTestId('td-periodo-conciliacao-0')).not.toBeInTheDocument();
+        }, { timeout: 3000 });
+    });
+
 });
 
