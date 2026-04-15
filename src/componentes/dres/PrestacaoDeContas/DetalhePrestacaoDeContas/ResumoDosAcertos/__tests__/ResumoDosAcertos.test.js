@@ -519,7 +519,9 @@ describe('ResumoDosAcertos - index.js', () => {
             });
             render(<ResumoDosAcertos />);
             await waitForTabs();
-            expect(screen.getByTestId('tabs-mock')).toBeInTheDocument();
+            await waitFor(() => {
+                expect(screen.getByTestId('tabs-mock')).toBeInTheDocument();
+            })
         });
     });
 
