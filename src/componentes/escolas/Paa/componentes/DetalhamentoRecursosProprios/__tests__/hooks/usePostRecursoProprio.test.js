@@ -137,7 +137,7 @@ describe("usePostRecursoProprio", () => {
 
       await result.current.mutationPost.mutateAsync({ payload: {} });
 
-      expect(invalidateQueriesSpy).toHaveBeenCalledWith(["recursos-proprios"]);
+      expect(invalidateQueriesSpy).toHaveBeenCalledWith({ queryKey: ["recursos-proprios"]});
     });
 
     it("invalida a query 'totalizador-recurso-proprio' após criação bem-sucedida", async () => {
@@ -151,9 +151,9 @@ describe("usePostRecursoProprio", () => {
 
       await result.current.mutationPost.mutateAsync({ payload: {} });
 
-      expect(invalidateQueriesSpy).toHaveBeenCalledWith([
+      expect(invalidateQueriesSpy).toHaveBeenCalledWith({ queryKey: [
         "totalizador-recurso-proprio",
-      ]);
+      ]});
     });
 
     it("invalida as duas queries após criação bem-sucedida", async () => {
@@ -168,10 +168,10 @@ describe("usePostRecursoProprio", () => {
       await result.current.mutationPost.mutateAsync({ payload: {} });
 
       expect(invalidateQueriesSpy).toHaveBeenCalledTimes(2);
-      expect(invalidateQueriesSpy).toHaveBeenCalledWith(["recursos-proprios"]);
-      expect(invalidateQueriesSpy).toHaveBeenCalledWith([
+      expect(invalidateQueriesSpy).toHaveBeenCalledWith({queryKey: ["recursos-proprios"]});
+      expect(invalidateQueriesSpy).toHaveBeenCalledWith({ queryKey: [
         "totalizador-recurso-proprio",
-      ]);
+      ]});
     });
 
     it("chama handleCloseFieldsToEdit com o dado retornado pela API", async () => {

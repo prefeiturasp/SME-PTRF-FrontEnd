@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { authService } from "../../../../services/auth.service";
 import { MemoryRouter } from 'react-router-dom';
 import {visoesService} from "../../../../services/visoes.service";
@@ -64,7 +64,7 @@ describe('Cabeçalho', () => {
         visoesService.getItemUsuarioLogado.mockReturnValue("James Bond");
         authService.isLoggedIn.mockReturnValue(true);
         visoesService.getDadosDoUsuarioLogado.mockReturnValue(mockDadosUsuarioLogado);
-        useRecursoSelecionadoContext.mockReturnValue({ isLoading: false });
+        useRecursoSelecionadoContext.mockReturnValue({ isLoading: false, clearRecursoNaSessao: jest.fn() });
     })
     const renderComponent = () => {
         return render(

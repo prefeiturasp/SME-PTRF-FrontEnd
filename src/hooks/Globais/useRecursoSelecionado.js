@@ -1,24 +1,32 @@
 import { useState, useEffect, useMemo } from "react";
 import { getRecursos, getRecursosPorUnidade } from "../../services/AlterarRecurso.service";
 import { authService } from "../../services/auth.service";
+import { recursoSelecionadoStorageService } from "../../services/storages/RecursoSelecionado.storage.service";
 
 /**
  * Hook para gerenciar recurso selecionado com persistência em localStorage
- * @param {string} storageKey - Chave para armazenar no localStorage
  * @param {Function} fetchFunction - Função para buscar recursos disponíveis
  * @returns {Object} - { recursoSelecionado, recursos, handleChangeRecurso, isLoading, error }
  */
 const useRecursoSelecionado = ({ visoesService }) => {
-  const storageKey = "RECURSO_SELECIONADO";
+  const RECURSO_EXIBIDO_NA_SESSAO = "RECURSO_EXIBIDO_NA_SESSAO";
   const dadosUsuarioLogado = visoesService.getDadosDoUsuarioLogado();
 
   const [recursoSelecionado, setRecursoSelecionado] = useState(() => {
     try {
-      const recursoStorage = localStorage.getItem(storageKey);
-      return recursoStorage ? JSON.parse(recursoStorage) : null;
+      const recursoStorage = recursoSelecionadoStorageService.getRecursoSelecionado();
+      return recursoStorage ?? null;
     } catch (error) {
       console.error("Erro ao carregar recurso do localStorage:", error);
       return null;
+    }
+  });
+  const [recursoSelecionadoNaSessao, setRecursoSelecionadoNaSessao] = useState(() => {
+    try {
+      const recursoExibido = localStorage.getItem(RECURSO_EXIBIDO_NA_SESSAO);
+      return recursoExibido ? JSON.parse(recursoExibido) : false;
+    } catch {
+      return false;
     }
   });
   const [recursos, setRecursos] = useState([]);
@@ -37,7 +45,7 @@ const useRecursoSelecionado = ({ visoesService }) => {
 
     if (deveAutoSelecionar || recursoInvalido) {
       setRecursoSelecionado(recursos[0]);
-      localStorage.setItem(storageKey, JSON.stringify(recursos[0]));
+      recursoSelecionadoStorageService.setRecursoSelecionado(recursos[0]);
       authService.limparStorageAoTrocarRecurso();
     }
   }, [recursos, recursoSelecionado]);
@@ -47,21 +55,25 @@ const useRecursoSelecionado = ({ visoesService }) => {
   }, [recursos]);
 
   const mostrarOverlaySelecionarRecursos = useMemo(() => {
-    return recursoSelecionado === null && recursos.length > 1;
+    return (recursoSelecionado === null && recursos.length > 1) || (!recursoSelecionadoNaSessao && recursos.length > 1);
   }, [recursoSelecionado, recursos]);
 
   const handleChangeRecurso = (recursoSelecionadoObj) => {
     try {
       setRecursoSelecionado(recursoSelecionadoObj);
+      setRecursoSelecionadoNaSessao(true);
+
       if (recursoSelecionadoObj) {
-        localStorage.setItem(storageKey, JSON.stringify(recursoSelecionadoObj));
+        recursoSelecionadoStorageService.setRecursoSelecionado(recursoSelecionadoObj);
+        localStorage.setItem(RECURSO_EXIBIDO_NA_SESSAO, JSON.stringify(true));
         // TODO: Ao invés de limpar as informações do storage, tratar as informações por recurso selecionado
         // A separação de storage por recurso foi feita para a tela de conciliação apenas
         // Onde foi possível guardar informações do último período/conta na tela por recurso
         // Ver services/storages/Conciliacao.storage.service
         authService.limparStorageAoTrocarRecurso();
       } else {
-        localStorage.removeItem(storageKey);
+        recursoSelecionadoStorageService.removeRecursoSelecionado();
+        localStorage.removeItem(RECURSO_EXIBIDO_NA_SESSAO);
       }
 
       window.location.href = "/";
@@ -73,7 +85,12 @@ const useRecursoSelecionado = ({ visoesService }) => {
 
   const clearRecurso = () => {
     setRecursoSelecionado(null);
-    localStorage.removeItem(storageKey);
+    recursoSelecionadoStorageService.removeRecursoSelecionado();
+  };
+
+  const clearRecursoNaSessao = () => {
+    setRecursoSelecionadoNaSessao(false);
+    localStorage.removeItem(RECURSO_EXIBIDO_NA_SESSAO);
   };
 
   useEffect(() => {
@@ -91,7 +108,7 @@ const useRecursoSelecionado = ({ visoesService }) => {
         const recursoAtualizado = res.find((r) => r.uuid === recursoSelecionado?.uuid);
         if (recursoAtualizado) {
           setRecursoSelecionado(recursoAtualizado);
-          localStorage.setItem(storageKey, JSON.stringify(recursoAtualizado));
+          recursoSelecionadoStorageService.setRecursoSelecionado(recursoAtualizado);
         }
       } catch (err) {
         console.error("Erro ao buscar recursos:", err);
@@ -131,6 +148,8 @@ const useRecursoSelecionado = ({ visoesService }) => {
     error,
     mostrarSelecionarRecursos,
     mostrarOverlaySelecionarRecursos,
+    setRecursoSelecionadoNaSessao,
+    clearRecursoNaSessao,
   };
 };
 

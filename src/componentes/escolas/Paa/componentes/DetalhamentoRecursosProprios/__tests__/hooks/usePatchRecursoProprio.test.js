@@ -145,7 +145,7 @@ describe("usePatchRecursoProprio", () => {
         payload: {},
       });
 
-      expect(invalidateQueriesSpy).toHaveBeenCalledWith(["recursos-proprios"]);
+      expect(invalidateQueriesSpy).toHaveBeenCalledWith({ queryKey: ["recursos-proprios"]});
     });
 
     it("invalida a query 'totalizador-recurso-proprio' após edição bem-sucedida", async () => {
@@ -162,9 +162,9 @@ describe("usePatchRecursoProprio", () => {
         payload: {},
       });
 
-      expect(invalidateQueriesSpy).toHaveBeenCalledWith([
+      expect(invalidateQueriesSpy).toHaveBeenCalledWith({ queryKey: [
         "totalizador-recurso-proprio",
-      ]);
+      ]});
     });
 
     it("invalida as duas queries após edição bem-sucedida", async () => {
@@ -182,10 +182,10 @@ describe("usePatchRecursoProprio", () => {
       });
 
       expect(invalidateQueriesSpy).toHaveBeenCalledTimes(2);
-      expect(invalidateQueriesSpy).toHaveBeenCalledWith(["recursos-proprios"]);
-      expect(invalidateQueriesSpy).toHaveBeenCalledWith([
+      expect(invalidateQueriesSpy).toHaveBeenCalledWith({ queryKey: ["recursos-proprios"]});
+      expect(invalidateQueriesSpy).toHaveBeenCalledWith({ queryKey: [
         "totalizador-recurso-proprio",
-      ]);
+      ]});
     });
 
     it("chama handleCloseFieldsToEdit com o dado retornado pela API", async () => {

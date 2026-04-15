@@ -20,7 +20,8 @@ describe('TableTags', () => {
         tag_nome: 'Tag 2',
         tag_hint: ['Dica 1', 'Dica 2']
       }
-    ]
+    ],
+    rateios: [{ periodo_conciliacao: '2024.1' }]
   };
 
   const mockCoresTags = {
@@ -51,6 +52,28 @@ describe('TableTags', () => {
     const { container } = render(<TableTags data={mockData} coresTags={mockCoresTags} />);
     expect(container.querySelector('.tag-azul')).toBeInTheDocument();
     expect(container.querySelector('.tag-verde')).toBeInTheDocument();
+  });
+
+  it('deve exibir o período de conciliação quando tag é "Conciliada"', () => {
+    const mockDataConciliada = {
+      informacoes: [{ tag_id: 1, tag_nome: 'Conciliada', tag_hint: 'Período: 2024.1' }],
+      rateios: [{ periodo_conciliacao: '2024.1' }]
+    };
+
+    render(<TableTags data={mockDataConciliada} coresTags={mockCoresTags} />);
+
+    expect(screen.getByTestId('tag-label-0')).toBeInTheDocument();
+  });
+
+  it('não deve exibir o período de conciliação quando a tag não é "Conciliada"', () => {
+    const mockDataNaoConciliada = {
+      informacoes: [{ tag_id: 1, tag_nome: 'Outra Tag', tag_hint: 'Período: 2024.1' }],
+      rateios: [{ periodo_conciliacao: '2024.1' }]
+    };
+
+    render(<TableTags data={mockDataNaoConciliada} coresTags={mockCoresTags} />);
+
+    expect(screen.queryByTestId('tag-label-0')).not.toBeInTheDocument();
   });
 });
 

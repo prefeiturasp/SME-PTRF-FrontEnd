@@ -89,7 +89,11 @@ const useRowExpansionDespesaTemplate = (prestacaoDeContas) =>{
                                     </div>
                                     <div className='col border-left p-2'>
                                         <p className='mb-0 font-weight-bold'>Tipo de aplicação</p>
-                                        {rateio.aplicacao_recurso ? tabelaDespesa.tipos_aplicacao_recurso.find(element => element.id === rateio.aplicacao_recurso).nome : ''}
+                                        {rateio.aplicacao_recurso
+                                            ? (tabelaDespesa?.tipos_aplicacao_recurso?.find(
+                                                element => element.id === rateio.aplicacao_recurso
+                                            )?.nome || '')
+                                            : ''}
                                     </div>
 
                                     <div className='col border-left p-2'>

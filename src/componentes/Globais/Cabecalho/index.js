@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./cabecalho.scss";
-import { authService, USUARIO_LOGIN } from "../../../services/auth.service";
+import { authService, RECURSO_SELECIONADO, USUARIO_LOGIN } from "../../../services/auth.service";
 import { visoesService } from "../../../services/visoes.service";
 import { NotificacaoContext } from "../../../context/Notificacoes";
 import { CentralDeDownloadContext } from "../../../context/CentralDeDownloads";
@@ -18,9 +18,11 @@ import { LogoSigEscola } from "../LogoSigEscola";
 
 export const Cabecalho = () => {
   const navigate = useNavigate();
-  const { isLoading } = useRecursoSelecionadoContext();
+  const { isLoading, clearRecursoNaSessao } = useRecursoSelecionadoContext();
 
   const logout = async () => {
+    clearRecursoNaSessao();
+
     await authService.logout();
   };
   let login_usuario = localStorage.getItem(USUARIO_LOGIN);
