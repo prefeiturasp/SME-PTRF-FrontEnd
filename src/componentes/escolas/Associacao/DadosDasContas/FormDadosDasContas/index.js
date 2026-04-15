@@ -58,7 +58,7 @@ export const FormDadosDasContas = ({
                                                     <div className="row mt-3">
                                                         <div className="col-12">
                                                             <hr className="mb-4" />
-                                                            <h5 className="mb-3"><strong>{nomeRecurso}</strong></h5>
+                                                            <h5 className="mb-3"><strong style={{ color: "var(--color-primary-lighten)" }}>{nomeRecurso}</strong></h5>
                                                         </div>
                                                     </div>
                                                     {contasDoRecurso.map((conta, index) => (
