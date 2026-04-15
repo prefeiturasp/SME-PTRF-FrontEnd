@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { RECURSO_SELECIONADO } from '../auth.service';
+import { recursoSelecionadoStorageService } from '../storages/RecursoSelecionado.storage.service';
 
 let API_URL = "API_URL_REPLACE_ME";
 
@@ -19,11 +19,11 @@ Api.interceptors.request.use(
       return config;
     }
     
-    const recursoSelecionado = localStorage.getItem(RECURSO_SELECIONADO);
+    const recursoSelecionado = recursoSelecionadoStorageService.getRecursoSelecionado();
     
     if (recursoSelecionado) {
       try {
-        const recurso = JSON.parse(recursoSelecionado);
+        const recurso = recursoSelecionado;
         if (recurso.uuid) {
           config.headers['X-Recurso-Selecionado'] = recurso.uuid;
         }

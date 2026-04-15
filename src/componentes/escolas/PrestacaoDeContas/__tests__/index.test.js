@@ -22,6 +22,7 @@ import {
     mockAta
 } from '../__fixtures__/mockData';
 import { geracaoDocumentosStorageService, STORAGE_KEY_PERIODO_CONTA_GERACAO_DOCUMENTOS } from '../../../../services/storages/GeracaoDeDocumentos.storage.service';
+import { STORAGE_KEY_RECURSO_SELECIONADO_POR_UNIDADE } from '../../../../services/storages/RecursoSelecionado.storage.service';
 
 
 const mockSetStatusPC = jest.fn();
@@ -225,6 +226,7 @@ describe('PrestacaoDeContas', () => {
         mockUseParams.mockReturnValue({});
         visoesService.visoesService.getPermissoes.mockResolvedValue(true);
         visoesService.visoesService.featureFlagAtiva.mockResolvedValue(true);
+        visoesService.visoesService.getDadosDoUsuarioLogado.mockReturnValue({ unidade_selecionada: { uuid: 'mock_unidade_uuid' }, usuario_logado: { login: 'mock_login' } });
 
         Storage.prototype.getItem = jest.fn((key) => {
             if (key === STORAGE_KEY_PERIODO_CONTA_GERACAO_DOCUMENTOS) {
@@ -238,8 +240,12 @@ describe('PrestacaoDeContas', () => {
                     }
                 })
             }
-            if (key === 'RECURSO_SELECIONADO') {
-                return JSON.stringify({ uuid: 'mock_recurso_uuid' });
+            if (key === STORAGE_KEY_RECURSO_SELECIONADO_POR_UNIDADE) {
+                return JSON.stringify({ 
+                    unidade_mock_unidade_uuid_mock_login: {
+                        uuid: 'mock_recurso_uuid'
+                    }
+                 });
             }
             if (key === 'periodoPrestacaoDeConta') {
                 return JSON.stringify({
@@ -785,8 +791,12 @@ describe('PrestacaoDeContas', () => {
                     }
                 })
             }
-            if (key === 'RECURSO_SELECIONADO') {
-                return JSON.stringify({ uuid: 'mock_recurso_uuid' });
+            if (key === STORAGE_KEY_RECURSO_SELECIONADO_POR_UNIDADE) {
+                return JSON.stringify({ 
+                    unidade_mock_unidade_uuid_mock_login: {
+                        uuid: 'mock_recurso_uuid'
+                    }
+                 });
             }
             if (key === 'associacao') return 'mock-uuid-associacao';
             return null;
@@ -817,8 +827,12 @@ describe('PrestacaoDeContas', () => {
                     }
                 })
             }
-            if (key === 'RECURSO_SELECIONADO') {
-                return JSON.stringify({ uuid: 'mock_recurso_uuid' });
+            if (key === STORAGE_KEY_RECURSO_SELECIONADO_POR_UNIDADE) {
+                return JSON.stringify({ 
+                    unidade_mock_unidade_uuid_mock_login: {
+                        uuid: 'mock_recurso_uuid'
+                    }
+                 });
             }
             if (key === 'associacao') return 'mock-uuid-associacao';
             return null;
@@ -849,11 +863,13 @@ describe('PrestacaoDeContas', () => {
                     }
                 })
             }
-
-            if (key === 'RECURSO_SELECIONADO') {
-                return JSON.stringify({ uuid: 'mock_recurso_uuid' });
+            if (key === STORAGE_KEY_RECURSO_SELECIONADO_POR_UNIDADE) {
+                return JSON.stringify({ 
+                    unidade_mock_unidade_uuid_mock_login: {
+                        uuid: 'mock_recurso_uuid'
+                    }
+                 });
             }
-
             if (key === 'associacao') return 'mock-uuid-associacao';
             return null;
         });
@@ -879,8 +895,12 @@ describe('PrestacaoDeContas', () => {
                     }
                 })
             }
-            if (key === 'RECURSO_SELECIONADO') {
-                return JSON.stringify({ uuid: 'mock_recurso_uuid' });
+            if (key === STORAGE_KEY_RECURSO_SELECIONADO_POR_UNIDADE) {
+                return JSON.stringify({ 
+                    unidade_mock_unidade_uuid_mock_login: {
+                        uuid: 'mock_recurso_uuid'
+                    }
+                 });
             }
             if (key === 'associacao') return 'mock-uuid-associacao';
             if (key === 'token') return 'mock-token';
@@ -903,8 +923,12 @@ describe('PrestacaoDeContas', () => {
                     }
                 })
             }
-            if (key === 'RECURSO_SELECIONADO') {
-                return JSON.stringify({ uuid: 'mock_recurso_uuid' });
+            if (key === STORAGE_KEY_RECURSO_SELECIONADO_POR_UNIDADE) {
+                return JSON.stringify({ 
+                    unidade_mock_unidade_uuid_mock_login: {
+                        uuid: 'mock_recurso_uuid'
+                    }
+                 });
             }
             if (key === 'associacao') return 'mock-uuid-associacao';
             if (key === 'token') return 'mock-token';
@@ -1073,8 +1097,12 @@ describe('PrestacaoDeContas', () => {
                     }
                 })
             }
-            if (key === 'RECURSO_SELECIONADO') {
-                return JSON.stringify({ uuid: 'mock_recurso_uuid' });
+            if (key === STORAGE_KEY_RECURSO_SELECIONADO_POR_UNIDADE) {
+                return JSON.stringify({ 
+                    unidade_mock_unidade_uuid_mock_login: {
+                        uuid: 'mock_recurso_uuid'
+                    }
+                 });
             }
             if (key === 'contaPrestacaoDeConta') {
                 return JSON.stringify({ conta_uuid: 'uuid-nao-existente' });
@@ -1175,8 +1203,12 @@ describe('PrestacaoDeContas', () => {
                     }
                 })
             }
-            if (key === 'RECURSO_SELECIONADO') {
-                return JSON.stringify({ uuid: 'mock_recurso_uuid' });
+            if (key === STORAGE_KEY_RECURSO_SELECIONADO_POR_UNIDADE) {
+                return JSON.stringify({ 
+                    unidade_mock_unidade_uuid_mock_login: {
+                        uuid: 'mock_recurso_uuid'
+                    }
+                 });
             }
             if (key === 'associacao') return 'mock-uuid-associacao';
             return null;

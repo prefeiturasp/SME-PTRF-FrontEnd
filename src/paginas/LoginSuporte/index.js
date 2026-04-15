@@ -1,12 +1,15 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { LoginSuporteForm } from "./form";
 import LogoPtrf from "../../assets/img/logo-ptrf-verde.png";
 import { LogoSPHorizontalColorida } from "../../componentes/Globais/UI/LogoSP";
 import { useLocation } from "react-router-dom";
+import { recursoSelecionadoStorageService } from "../../services/storages/RecursoSelecionado.storage.service";
 import "./login-suporte.scss";
 
 export const LoginSuporte = (props) => {
   const location = useLocation();
+
+  useEffect(() => recursoSelecionadoStorageService.clearAutomaticallyDataExpiredRecursoSelecionado(), [])
 
   return (
     <div className="login-suporte-container">
