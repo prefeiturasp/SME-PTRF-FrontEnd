@@ -601,13 +601,15 @@ const TabelaConferenciaDeLancamentos = ({
             let texto_tooltip = `Esse estorno está vinculado <br/> à despesa do dia ${data_rateio}.`
             return (
                 <>
-                    <div data-tooltip-content={texto_tooltip} data-html={true}>
+                    <div
+                        data-tooltip-id={`tooltip-id-${rowData.uuid}`}
+                        data-tooltip-html={texto_tooltip}>
                         <span>{rowData.tipo_transacao}</span>
                         <FontAwesomeIcon
                             style={{fontSize: '18px', marginLeft: "4px", color: '#2A6397'}}
                             icon={faInfoCircle}
                         />
-                        <ReactTooltip/>
+                        <ReactTooltip id={`tooltip-id-${rowData.uuid}`}/>
                     </div>
                 </>
             )

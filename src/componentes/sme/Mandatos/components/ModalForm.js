@@ -46,10 +46,10 @@ export const ModalForm = ({handleSubmitFormModal, handleConfirmDeleteMandato}) =
                                         <p className='text-right mb-0'>* Preenchimento obrigatório</p>
                                         <div className="form-group">
                                             <span
-                                                data-tooltip-content="Preencher com o período total do mandato. </br>Por exemplo: 2023 a 2025."
-                                                data-html={true}>
+                                                data-tooltip-id="tooltip-id-referencia"
+                                                data-tooltip-content="Preencher com o período total do mandato. </br>Por exemplo: 2023 a 2025.">
                                                 <label htmlFor="referencia">Referência do mandato *</label>
-                                                <ReactTooltip/>
+                                                <ReactTooltip id="tooltip-id-referencia"/>
                                             </span>
 
                                             <input

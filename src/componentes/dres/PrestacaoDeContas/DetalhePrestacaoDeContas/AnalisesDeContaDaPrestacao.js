@@ -262,13 +262,15 @@ export const AnalisesDeContaDaPrestacao = ({
 
                   {temDiferencaUe() && (
                     <>
-                      <span data-html={true} data-tooltip-content={tooltip_1}>
+                      <span
+                        data-tooltip-id="diferenca-tooltip"
+                        data-tooltip-html={tooltip_1}>
                         <FontAwesomeIcon
                           style={{ marginLeft: "10px", color: "#2B7D83" }}
                           icon={faExclamationCircle}
                         />
                       </span>
-                      <ReactTooltip html={true} />
+                      <ReactTooltip id="diferenca-tooltip"/>
                     </>
                   )}
 
@@ -429,15 +431,15 @@ export const AnalisesDeContaDaPrestacao = ({
                       {temDiferencaAjusteDre() && (
                         <>
                           <span
-                            data-html={true}
-                            data-tooltip-content={tooltip_1}
+                            data-tooltip-id="diferenca-ajuste-dre-tooltip"
+                            data-tooltip-html={tooltip_1}
                           >
                             <FontAwesomeIcon
                               style={{ marginLeft: "10px", color: "#2B7D83" }}
                               icon={faExclamationCircle}
                             />
                           </span>
-                          <ReactTooltip html={true} />
+                          <ReactTooltip id="diferenca-ajuste-dre-tooltip" />
                         </>
                       )}
 

@@ -85,7 +85,9 @@ export const AtaParecerTecnico = ({consolidadoDre, podeAcessarInfoConsolidado}) 
                             </button>
                             ):
                             <>
-                                <span data-html={true} data-tooltip-content={!podeAcessarInfoConsolidado(consolidadoDre) ? "Não é possível preencher a ata. A análise da(s) prestação(ões) de contas em retificação ainda não foi concluída." : ""}>
+                                <span
+                                    data-tooltip-id={`tooltip-id-${consolidadoDre.uuid}`}
+                                    data-tooltip-html={!podeAcessarInfoConsolidado(consolidadoDre) ? "Não é possível preencher a ata. A análise da(s) prestação(ões) de contas em retificação ainda não foi concluída." : ""}>
                                 <button
                                     onClick={() => criarAtaAtrelarAoConsolidado(consolidadoDre.dre_uuid, consolidadoDre.periodo_uuid, consolidadoDre.uuid ? consolidadoDre.uuid : null)}
                                     type="button"
@@ -95,7 +97,7 @@ export const AtaParecerTecnico = ({consolidadoDre, podeAcessarInfoConsolidado}) 
                                     Preencher ata
                                 </button>
                                 </span>
-                                <ReactTooltip html={true}/>
+                                <ReactTooltip id={`tooltip-id-${consolidadoDre.uuid}`}/>
                             </>
                         }
                     </div>

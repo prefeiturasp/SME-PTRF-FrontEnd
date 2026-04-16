@@ -24,12 +24,14 @@ const useRowExpansionDespesaTemplate = (prestacaoDeContas) =>{
             let data_estorno = dataTemplate(null, null, rateio.estorno.data)
             let texto_tooltip = `O estorno do dia ${data_estorno} <br/> esta vinculado a essa despesa.`
             return (
-                <span className='font-weight-normal' data-tooltip-content={texto_tooltip} data-html={true}>
+                <span className='font-weight-normal'
+                    data-tooltip-id={`tooltip-id-${rateio.uuid}`}
+                    data-tooltip-html={texto_tooltip}>
                     <FontAwesomeIcon
                         style={{fontSize: '18px', marginLeft: "4px", color: '#2A6397'}}
                         icon={faInfoCircle}
                     />
-                    <ReactTooltip/>
+                    <ReactTooltip id={`tooltip-id-${rateio.uuid}`}/>
                 </span>
             )
         }

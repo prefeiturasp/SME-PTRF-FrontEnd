@@ -458,10 +458,12 @@ const DevolucaoParaAcertos = ({
                                     onClick={handleDevolverParaAssociacao}
                                     className="btn btn-success"
                                 >
-                                    <span data-tooltip-content={!possuiAcertosSelecionados() ? 'Não é permitido devolver PC sem acertos indicados.' : ''}>
+                                    <span
+                                        data-tooltip-id="btn-devolver-para-associacao"
+                                        data-tooltip-html={!possuiAcertosSelecionados() ? 'Não é permitido devolver PC sem acertos indicados.' : ''}>
                                         Devolver para Associação
                                     </span>                                         
-                                    <ReactTooltip/>
+                                    <ReactTooltip id="btn-devolver-para-associacao"/>
                                 </button>
                             </div>                            
                         </div>
