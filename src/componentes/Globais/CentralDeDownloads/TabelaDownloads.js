@@ -87,13 +87,15 @@ export const TabelaDownloads = ({
     return (
       <div className="align-middle text-center">
         {rowData.status === "ERRO" ? (
-          <div data-tooltip-content={rowData.msg_erro} data-html={true}>
+          <div
+            data-tooltip-id={`tooltip-id-${rowData.uuid}`}
+            data-tooltip-html={rowData.msg_erro}>
             <span>{opcoesStatus(rowData.status)}</span>
             <FontAwesomeIcon
               style={{ fontSize: "18px", marginLeft: "3px", color: "#B40C02" }}
               icon={faInfoCircle}
             />
-            <ReactTooltip />
+            <ReactTooltip id={`tooltip-id-${rowData.uuid}`}/>
           </div>
         ) : (
           <>{opcoesStatus(rowData.status)}</>

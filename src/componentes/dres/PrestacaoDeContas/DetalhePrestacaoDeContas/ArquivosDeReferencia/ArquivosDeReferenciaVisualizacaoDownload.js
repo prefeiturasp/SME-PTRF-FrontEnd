@@ -44,13 +44,15 @@ const ArquivosDeReferenciaVisualizacaoDownload = ({prestacaoDeContas, infoAta}) 
         return (
             <div className="d-flex align-items-center justify-content-start">
                 <button onClick={() => handleClickVisualizarArquivoDeReferencia(rowData)} className="btn-editar-membro">
-                    <span data-html={true} data-tooltip-content="Visualização">
+                    <span
+                        data-tooltip-id={`btn-visualizar-${rowData.uuid}`}
+                        data-tooltip-html="Visualização">
                         <FontAwesomeIcon
                             style={{fontSize: '20px', marginRight: "0", marginTop: '2px'}}
                             icon={faEye}
                         />
                     </span>
-                    <ReactTooltip html={true}/>
+                    <ReactTooltip id={`btn-visualizar-${rowData.uuid}`}/>
                 </button>
                 <span> | </span>
                 <button onClick={() => handleClickDownloadArquivoDeReferencia(rowData)} className="btn-editar-membro">

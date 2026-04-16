@@ -103,13 +103,15 @@ export const ListaDeReceitas = () => {
                 return(
                     <div>
                         {rowData.tipo_receita.nome}
-                        <span data-html={true} data-tooltip-content='A saída desse crédito ainda <br/> não foi registrada!'>
+                        <span
+                            data-tooltip-id={`tipo-receita-${rowData.tipo_receita.uuid}`}
+                            data-tooltip-html='A saída desse crédito ainda <br/> não foi registrada!'>
                         <FontAwesomeIcon
                             style={{marginLeft: "3px", color: '#b41d00'}}
                             icon={faExclamationTriangle}
                         />
                         </span>
-                        <ReactTooltip html={true}/>
+                        <ReactTooltip id={`tipo-receita-${rowData.tipo_receita.uuid}`}/>
                     </div>
                 )
             }else {

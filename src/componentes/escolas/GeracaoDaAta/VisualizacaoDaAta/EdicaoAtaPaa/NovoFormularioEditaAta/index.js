@@ -1083,7 +1083,6 @@ export const NovoFormularioEditaAta = ({
                           data-tooltip-content={
                             "Preencha a data da reunião para visualização dos participantes."
                           }
-                          data-html={true}
                         >
                           <FontAwesomeIcon
                             style={{ marginLeft: "4px" }}

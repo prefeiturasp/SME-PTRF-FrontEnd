@@ -20,7 +20,8 @@ export const DashboardCard = ({ itensDashboard, handleClickVerPrestacaoes }) => 
                     <span>{card.quantidade_prestacoes}</span>
                     {card.quantidade_retornadas >= 1 && (
                       <span
-                        data-tooltip-content={
+                        data-tooltip-id={`tooltip-card-${index}`}
+                        data-tooltip-html={
                           card.quantidade_retornadas > 1
                             ? '<p class="mb-0">Existem ' +
                               card.quantidade_retornadas +
@@ -29,29 +30,28 @@ export const DashboardCard = ({ itensDashboard, handleClickVerPrestacaoes }) => 
                               card.quantidade_retornadas +
                               ' prestação</p><p class="mb-0"> retornada das U.Es</p>'
                         }
-                        data-html={true}
                       >
                         <FontAwesomeIcon
                           style={{ fontSize: "18px", marginLeft: "3px", color: "#C65D00" }}
                           icon={faInfoCircle}
                         />
-                        <ReactTooltip />
+                        <ReactTooltip id={`tooltip-card-${index}`}/>
                       </span>
                     )}
                     {card.quantidade_nao_recebida >= 1 && (
                       <span
-                        data-tooltip-content={
+                        data-tooltip-id={`tooltip-card-${index}`}
+                        data-tooltip-html={
                           card.quantidade_nao_recebida > 1
                             ? '<p class="mb-0">' + card.quantidade_nao_recebida + " novas prestações não recebidas</p>"
                             : '<p class="mb-0">' + card.quantidade_nao_recebida + " nova prestação não recebida</p>"
                         }
-                        data-html={true}
                       >
                         <FontAwesomeIcon
                           style={{ fontSize: "18px", marginLeft: "3px", color: "#C65D00" }}
                           icon={faInfoCircle}
                         />
-                        <ReactTooltip />
+                        <ReactTooltip id={`tooltip-card-${index}`}/>
                       </span>
                     )}
                   </div>
