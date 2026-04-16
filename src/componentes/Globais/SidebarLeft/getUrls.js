@@ -106,21 +106,6 @@ const UrlsMenuEscolas = {
       ],
     },
     {
-      label: "Gestão de perfis",
-      url: "gestao-de-perfis",
-      dataFor: "gestao_de_perfis",
-      icone: IconeGestaoDePerfis,
-      permissoes: ["access_gestao_perfis_ue"],
-    },
-    {
-      label: "Gestão de usuários",
-      url: "gestao-de-usuarios-list",
-      dataFor: "gestao_de_usuarios",
-      icone: IconeGestaoDePerfis,
-      permissoes: ["access_gestao_usuarios_ue", "change_gestao_usuarios_ue"],
-      featureFlag: "gestao-usuarios",
-    },
-    {
       label: "Plano Anual de Atividades",
       url: "paa",
       dataFor: "paa",
@@ -159,6 +144,21 @@ const UrlsMenuEscolas = {
       icone: IconeMenuSituacaoPatrimonial,
       permissoes: ["access_situacao_patrimonial"],
       featureFlag: "situacao-patrimonial",
+    },
+    {
+      label: "Gestão de perfis",
+      url: "gestao-de-perfis",
+      dataFor: "gestao_de_perfis",
+      icone: IconeGestaoDePerfis,
+      permissoes: ["access_gestao_perfis_ue"],
+    },
+    {
+      label: "Gestão de usuários",
+      url: "gestao-de-usuarios-list",
+      dataFor: "gestao_de_usuarios",
+      icone: IconeGestaoDePerfis,
+      permissoes: ["access_gestao_usuarios_ue", "change_gestao_usuarios_ue"],
+      featureFlag: "gestao-usuarios",
     },
   ],
 };

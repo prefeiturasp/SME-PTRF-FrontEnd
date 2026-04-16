@@ -51,6 +51,7 @@ describe('ElaboracaoPaa Component', () => {
         queries: { retry: false },
       },
     });
+    jest.clearAllMocks();
 
     window.matchMedia = jest.fn().mockImplementation(() => ({
       matches: false,
@@ -58,24 +59,16 @@ describe('ElaboracaoPaa Component', () => {
       removeListener: jest.fn(),
     }));
 
-    mockMutateAsync.mockResolvedValue({ uuid: 'novo-uuid-paa' });
-
     usePostPaa.mockReturnValue({
       mutationPost: { mutateAsync: mockMutateAsync, isPending: false },
     });
 
-    require('react-router-dom').useNavigate.mockReturnValue(mockNavigate);
-
-    jest.clearAllMocks();
-
+    mockMutateAsync.mockResolvedValue({ uuid: 'novo-uuid-paa' });
+  
     visoesService.getPermissoes.mockReturnValue(true);
-
-    mockMutateAsync.mockResolvedValue({ uuid: 'novo-uuid-paa' });
-
-    usePostPaa.mockReturnValue({
-      mutationPost: { mutateAsync: mockMutateAsync, isPending: false },
-    });
+    
     require('react-router-dom').useNavigate.mockReturnValue(mockNavigate);
+
   });
 
   it('renderiza a página com botão habilitado e cria novo PAA ao clicar', async () => {
@@ -110,15 +103,13 @@ describe('ElaboracaoPaa Component', () => {
     expect(getParametroPaa).toHaveBeenCalled();
 
     fireEvent.click(screen.getByTestId('elaborar-paa-button'));
-
     await waitFor(() => {
       expect(mockMutateAsync).toHaveBeenCalled();
+      expect(mockNavigate).toHaveBeenCalledWith('/elaborar-novo-paa');
     });
-    expect(mockNavigate).toHaveBeenCalledWith('/elaborar-novo-paa');
   });
 
-  it('desabilita o botão Elaborar novo PAA quando não há custom_change_paa e não existe PAA vigente', async () => {
-    visoesService.getPermissoes.mockReturnValue(false);
+  it('renderiza a página com botão desabilitado fora do mês válido', async () => {
     getTextosPaaUe.mockResolvedValue({
       texto_pagina_paa_ue: 'Texto ABC',
       introducao_do_paa_ue_1: '',
@@ -126,8 +117,9 @@ describe('ElaboracaoPaa Component', () => {
       conclusao_do_paa_ue_1: '',
       conclusao_do_paa_ue_2: '',
     });
-    getPaaVigente.mockRejectedValue(new Error('PAA não encontrado'));
-    getParametroPaa.mockResolvedValue({ detail: new Date().getMonth() + 1 });
+    getPaaVigente.mockResolvedValue({});
+    getStatusGeracaoDocumentoPaa.mockResolvedValue({ status: null, versao: null });
+    getParametroPaa.mockResolvedValue({ detail: new Date().getMonth() + 2 });
 
     render(
       <MemoryRouter>
@@ -142,7 +134,6 @@ describe('ElaboracaoPaa Component', () => {
     );
 
     expect(screen.getByTestId('elaborar-paa-button')).toBeDisabled();
-    expect(screen.getByTestId('elaborar-paa-button')).toHaveTextContent('Elaborar novo PAA');
   });
 
   it('habilita Continuar elaboração de PAA sem custom_change_paa quando já existe PAA vigente', async () => {
@@ -205,10 +196,12 @@ describe('ElaboracaoPaa Component', () => {
       expect(screen.getByTestId('elaborar-paa-button')).toBeInTheDocument()
     );
 
+
     expect(screen.getByText('Texto ABC')).toBeInTheDocument();
     expect(screen.getByTestId('elaborar-paa-button')).toBeDisabled();
     expect(getTextosPaaUe).toHaveBeenCalled();
     expect(getPaaVigente).toHaveBeenCalled();
     expect(getParametroPaa).toHaveBeenCalled();
   });
+  
 });

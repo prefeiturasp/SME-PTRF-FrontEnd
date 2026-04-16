@@ -12,6 +12,7 @@ import moment from "moment";
 import {ACOMPANHAMENTO_DE_PC} from "./mantemEstadoAcompanhamentoDePc.service";
 import { ANALISE_DRE } from './mantemEstadoAnaliseDre.service';
 import { ACOMPANHAMENTO_PC_UNIDADE } from "./mantemEstadoAcompanhamentoDePcUnidadeEducacional.service";
+import { STORAGE_KEY_PERIODO_CONTA_GERACAO_DOCUMENTOS } from "./storages/GeracaoDeDocumentos.storage.service";
 
 export const DADOS_USUARIO_LOGADO = "DADOS_USUARIO_LOGADO";
 export const DADOS_USUARIO_LOGADO_NORMAL = "DADOS_USUARIO_LOGADO_NORMAL";
@@ -523,6 +524,7 @@ const alternaVisoes = (visao, uuid_unidade, uuid_associacao, nome_associacao, un
         localStorage.removeItem('uuidPrestacaoConta');
         localStorage.removeItem('uuidAta');
         localStorage.removeItem('prestacao_de_contas_nao_apresentada');
+        localStorage.removeItem(STORAGE_KEY_PERIODO_CONTA_GERACAO_DOCUMENTOS);
         localStorage.removeItem(PERIODO_RELATORIO_CONSOLIDADO_DRE);
         localStorage.removeItem(PERIODO_SELECIONADO_DRE_ACOMPANHAMENTO);
         localStorage.removeItem('PAA');

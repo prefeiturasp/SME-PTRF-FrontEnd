@@ -32,9 +32,11 @@ export const ModalForm = ({handleSubmitFormModal}) => {
                                     <div className='col-12'>
                                         <p className='text-right mb-0'><small> * Preenchimento obrigatório</small></p>
                                         <div className="form-group">
-                                            <span data-tooltip-content="Preencher com um motivo de devolução ao tesouro" data-html={true}>
+                                            <span
+                                                data-tooltip-id="tooltip-id-motivo"
+                                                data-tooltip-content="Preencher com um motivo de devolução ao tesouro">
                                                 <label htmlFor="nome">Motivo *</label>
-                                                <ReactTooltip/>
+                                                <ReactTooltip id="tooltip-id-motivo"/>
                                             </span>
 
                                             <input

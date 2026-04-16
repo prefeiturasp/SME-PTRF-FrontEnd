@@ -19,7 +19,6 @@ export const BotoesAvancarRetroceder = ({
   setShowModalConcluirPcNaoApresentada = null,
 }) => {
   const FLAG_ATIVA = RetornaSeFlagAtiva();
-  console.log(tooltipAvancar);
   return (
     <>
       {Object.entries(prestacaoDeContas).length > 0 && (

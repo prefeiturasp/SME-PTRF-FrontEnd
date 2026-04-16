@@ -8,8 +8,8 @@ export const usePostPrioridade = (onClose) => {
     mutationFn: ({ payload }) => postPrioridade(payload),
     onSuccess: (data) => {
       toastCustom.ToastCustomSuccess("Prioridade criada com sucesso.");
-      queryClient.invalidateQueries(["prioridades"]);
-      queryClient.invalidateQueries(["prioridades-resumo"]);
+      queryClient.invalidateQueries({ queryKey: ["prioridades"], exact: false });
+      queryClient.invalidateQueries({ queryKey: ["prioridades-resumo"] });
       onClose && onClose();
     },
     onError: (e) => {

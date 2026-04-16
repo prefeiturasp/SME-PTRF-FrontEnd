@@ -6,6 +6,7 @@ import {haDiferencaPrevisaoExecucaoRepasse} from "./haDiferencaPrevisaoExecucaoR
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faDownload} from "@fortawesome/free-solid-svg-icons";
 import Spinner from "../../../assets/img/spinner.gif"
+import { Tooltip as ReactTooltip } from "react-tooltip";
 
 const DemonstrativoDaExecucaoFisicoFinanceira = ({consolidadoDre, periodoEscolhido, execucaoFinanceira, podeAcessarInfoConsolidado}) => {
     const retornaClasseMensagem = (texto) => {
@@ -90,7 +91,9 @@ const DemonstrativoDaExecucaoFisicoFinanceira = ({consolidadoDre, periodoEscolhi
                     </div>
                     {!consolidadoDre.eh_consolidado_de_publicacoes_parciais &&
                         <div className="col-12 col-md-4 align-self-center text-right">
-                        <span data-html={true} data-tooltip-content={!podeAcessarInfoConsolidado(consolidadoDre) ? "Não é possível consultar/preencher o resumo. A análise da(s) prestação(ões) de contas em retificação ainda não foi concluída." : ""}>
+                        <span
+                            data-tooltip-id={`tooltip-id-${consolidadoDre?.uuid}`}
+                            data-tooltip-html={!podeAcessarInfoConsolidado(consolidadoDre) ? "Não é possível consultar/preencher o resumo. A análise da(s) prestação(ões) de contas em retificação ainda não foi concluída." : ""}>
                             <button
                                 onClick={() => onClickPreencherRelatorio()}
                                 type="button"
@@ -99,6 +102,7 @@ const DemonstrativoDaExecucaoFisicoFinanceira = ({consolidadoDre, periodoEscolhi
                             >
                                 {isDiferencaValores() ? 'Preencher resumo' : 'Consultar resumo'}
                             </button>
+                            <ReactTooltip id={`tooltip-id-${consolidadoDre?.uuid}`} />
                         </span>
                         </div>
                     }

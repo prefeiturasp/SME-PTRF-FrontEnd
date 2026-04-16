@@ -14,6 +14,15 @@ export const postGerarDocumentoFinalPaa = async (paa_uuid, payload={}) => {
   const result = await api.post(`/api/paa/${paa_uuid}/gerar-documento/`, payload, authHeader());
   return result.data;
 };
+export const getPaaRetificacao = async (paa_uuid) => {
+  const result = await api.get(`/api/paa/${paa_uuid}/paa-retificacao/`, authHeader());
+  return result.data;
+};
+
+export const postIniciarRetificacaoPaa = async (paa_uuid, payload={}) => {
+  const result = await api.post(`/api/paa/${paa_uuid}/iniciar-retificacao/`, payload, authHeader());
+  return result.data;
+};
 export const postGerarDocumentoPreviaPaa = async (paa_uuid) => {
   const result = await api.post(`/api/paa/${paa_uuid}/gerar-previa-documento/`, {}, authHeader());
   return result.data;
@@ -320,15 +329,16 @@ export const getPaaVigenteEAnteriores = async (associacaoUuid) => {
   ).data;
 };
 
-export const downloadDocumentoFinalPaa = async (paaUuid) => {
-  const response = await api.get(
-    `api/paa/${paaUuid}/documento-final/`,
-    {
-      responseType: "blob",
-      timeout: 30000,
-      ...authHeader(),
-    }
-  );
+export const downloadDocumentoFinalPaa = async (paaUuid, opts = {}) => {
+  const requestConfig = {
+    responseType: "blob",
+    timeout: 30000,
+    ...authHeader(),
+  };
+  if (opts.retificacao !== undefined) {
+    requestConfig.params = { retificacao: opts.retificacao ? "true" : "false" };
+  }
+  const response = await api.get(`api/paa/${paaUuid}/documento-final/`, requestConfig);
 
   const url = window.URL.createObjectURL(new Blob([response.data]));
   const link = document.createElement("a");

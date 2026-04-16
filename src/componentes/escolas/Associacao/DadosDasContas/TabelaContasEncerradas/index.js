@@ -27,6 +27,7 @@ export const TabelaContasEncerradas = ({
                         paginatorTemplate="PrevPageLink PageLinks NextPageLink"
                         autoLayout={true}
                     >
+                        <Column field="nome_exibicao_recurso" header="Recurso"/>
                         <Column field="tipo_conta.nome" header="Tipo de Conta"/>
                         <Column field="banco_nome" header="Banco"/>
                         <Column field="agencia" header="Agência"/>

@@ -21,6 +21,8 @@ import {
     mockContasAtivas,
     mockAta
 } from '../__fixtures__/mockData';
+import { geracaoDocumentosStorageService, STORAGE_KEY_PERIODO_CONTA_GERACAO_DOCUMENTOS } from '../../../../services/storages/GeracaoDeDocumentos.storage.service';
+import { STORAGE_KEY_RECURSO_SELECIONADO_POR_UNIDADE } from '../../../../services/storages/RecursoSelecionado.storage.service';
 
 
 const mockSetStatusPC = jest.fn();
@@ -224,8 +226,27 @@ describe('PrestacaoDeContas', () => {
         mockUseParams.mockReturnValue({});
         visoesService.visoesService.getPermissoes.mockResolvedValue(true);
         visoesService.visoesService.featureFlagAtiva.mockResolvedValue(true);
+        visoesService.visoesService.getDadosDoUsuarioLogado.mockReturnValue({ unidade_selecionada: { uuid: 'mock_unidade_uuid' }, usuario_logado: { login: 'mock_login' } });
 
         Storage.prototype.getItem = jest.fn((key) => {
+            if (key === STORAGE_KEY_PERIODO_CONTA_GERACAO_DOCUMENTOS) {
+                return JSON.stringify({
+                    recurso_mock_recurso_uuid: {
+                        periodoPrestacaoDeConta: {
+                            periodo_uuid: 'mock-periodo',
+                            data_inicial: '2025-01-01',
+                            data_final: '2025-12-31',
+                        },
+                    }
+                })
+            }
+            if (key === STORAGE_KEY_RECURSO_SELECIONADO_POR_UNIDADE) {
+                return JSON.stringify({ 
+                    unidade_mock_unidade_uuid_mock_login: {
+                        uuid: 'mock_recurso_uuid'
+                    }
+                 });
+            }
             if (key === 'periodoPrestacaoDeConta') {
                 return JSON.stringify({
                     periodo_uuid: 'mock-periodo',
@@ -309,7 +330,7 @@ describe('PrestacaoDeContas', () => {
         });
         fireEvent.click(screen.getByText(/Ir para Conciliação Bancária/i));
 
-        const periodo = JSON.parse(Storage.prototype.getItem('periodoPrestacaoDeConta')).periodo_uuid;
+        const periodo = geracaoDocumentosStorageService.getPeriodo()?.periodoPrestacaoDeConta?.periodo_uuid;
         expect(mockNavigate).toHaveBeenCalledWith(`/detalhe-das-prestacoes/${periodo}/?origem=concluir-periodo`);
         expect(prestacaoService.getStatusPeriodoPorData).toHaveBeenCalledTimes(1);
     });
@@ -337,7 +358,7 @@ describe('PrestacaoDeContas', () => {
         });
         fireEvent.click(screen.getByText(/Ir para Conciliação Bancária/i));
 
-        const periodo = JSON.parse(Storage.prototype.getItem('periodoPrestacaoDeConta')).periodo_uuid;
+        const periodo = geracaoDocumentosStorageService.getPeriodo()?.periodoPrestacaoDeConta?.periodo_uuid;
         expect(mockNavigate).toHaveBeenCalledWith(`/detalhe-das-prestacoes/${periodo}/${mockAta.ata_uuid}/?origem=concluir-periodo`);
         expect(prestacaoService.getStatusPeriodoPorData).toHaveBeenCalledTimes(1);
     });
@@ -759,12 +780,23 @@ describe('PrestacaoDeContas', () => {
 
     it('setConfBoxAtaApresentacao sem uuid_prestacao_de_contas usa getDataPreenchimentoPreviaAta', async () => {
         Storage.prototype.getItem = jest.fn((key) => {
-            if (key === 'periodoPrestacaoDeConta') {
+            if (key === STORAGE_KEY_PERIODO_CONTA_GERACAO_DOCUMENTOS) {
                 return JSON.stringify({
-                    periodo_uuid: 'mock-periodo',
-                    data_inicial: '2025-01-01',
-                    data_final: '2025-12-31',
-                });
+                    recurso_mock_recurso_uuid: {
+                        periodoPrestacaoDeConta: {
+                            periodo_uuid: 'mock-periodo',
+                            data_inicial: '2025-01-01',
+                            data_final: '2025-12-31',
+                        },
+                    }
+                })
+            }
+            if (key === STORAGE_KEY_RECURSO_SELECIONADO_POR_UNIDADE) {
+                return JSON.stringify({ 
+                    unidade_mock_unidade_uuid_mock_login: {
+                        uuid: 'mock_recurso_uuid'
+                    }
+                 });
             }
             if (key === 'associacao') return 'mock-uuid-associacao';
             return null;
@@ -784,12 +816,23 @@ describe('PrestacaoDeContas', () => {
 
     it('setConfBoxAtaApresentacao sem uuid e getDataPreenchimentoPreviaAta com alterado_em null', async () => {
         Storage.prototype.getItem = jest.fn((key) => {
-            if (key === 'periodoPrestacaoDeConta') {
+            if (key === STORAGE_KEY_PERIODO_CONTA_GERACAO_DOCUMENTOS) {
                 return JSON.stringify({
-                    periodo_uuid: 'mock-periodo',
-                    data_inicial: '2025-01-01',
-                    data_final: '2025-12-31',
-                });
+                    recurso_mock_recurso_uuid: {
+                        periodoPrestacaoDeConta: {
+                            periodo_uuid: 'mock-periodo',
+                            data_inicial: '2025-01-01',
+                            data_final: '2025-12-31',
+                        },
+                    }
+                })
+            }
+            if (key === STORAGE_KEY_RECURSO_SELECIONADO_POR_UNIDADE) {
+                return JSON.stringify({ 
+                    unidade_mock_unidade_uuid_mock_login: {
+                        uuid: 'mock_recurso_uuid'
+                    }
+                 });
             }
             if (key === 'associacao') return 'mock-uuid-associacao';
             return null;
@@ -809,12 +852,23 @@ describe('PrestacaoDeContas', () => {
 
     it('setConfBoxAtaApresentacao sem uuid e getDataPreenchimentoPreviaAta lançando erro chama getIniciarPreviaAta', async () => {
         Storage.prototype.getItem = jest.fn((key) => {
-            if (key === 'periodoPrestacaoDeConta') {
+            if (key === STORAGE_KEY_PERIODO_CONTA_GERACAO_DOCUMENTOS) {
                 return JSON.stringify({
-                    periodo_uuid: 'mock-periodo',
-                    data_inicial: '2025-01-01',
-                    data_final: '2025-12-31',
-                });
+                    recurso_mock_recurso_uuid: {
+                        periodoPrestacaoDeConta: {
+                            periodo_uuid: 'mock-periodo',
+                            data_inicial: '2025-01-01',
+                            data_final: '2025-12-31',
+                        },
+                    }
+                })
+            }
+            if (key === STORAGE_KEY_RECURSO_SELECIONADO_POR_UNIDADE) {
+                return JSON.stringify({ 
+                    unidade_mock_unidade_uuid_mock_login: {
+                        uuid: 'mock_recurso_uuid'
+                    }
+                 });
             }
             if (key === 'associacao') return 'mock-uuid-associacao';
             return null;
@@ -834,6 +888,20 @@ describe('PrestacaoDeContas', () => {
 
     it('localStorage sem periodoPrestacaoDeConta e sem statusPrestacaoDeConta define estados vazios', async () => {
         Storage.prototype.getItem = jest.fn((key) => {
+            if (key === STORAGE_KEY_PERIODO_CONTA_GERACAO_DOCUMENTOS) {
+                return JSON.stringify({
+                    recurso_mock_recurso_uuid: {
+                        periodoPrestacaoDeConta: null
+                    }
+                })
+            }
+            if (key === STORAGE_KEY_RECURSO_SELECIONADO_POR_UNIDADE) {
+                return JSON.stringify({ 
+                    unidade_mock_unidade_uuid_mock_login: {
+                        uuid: 'mock_recurso_uuid'
+                    }
+                 });
+            }
             if (key === 'associacao') return 'mock-uuid-associacao';
             if (key === 'token') return 'mock-token';
             return null;
@@ -848,8 +916,19 @@ describe('PrestacaoDeContas', () => {
 
     it('localStorage com statusPrestacaoDeConta e sem periodoPrestacaoDeConta', async () => {
         Storage.prototype.getItem = jest.fn((key) => {
-            if (key === 'statusPrestacaoDeConta') {
-                return JSON.stringify(mockStatusPeriodoCondicaoSemPendencia);
+            if (key === STORAGE_KEY_PERIODO_CONTA_GERACAO_DOCUMENTOS) {
+                return JSON.stringify({
+                    recurso_mock_recurso_uuid: {
+                        periodoPrestacaoDeConta: null
+                    }
+                })
+            }
+            if (key === STORAGE_KEY_RECURSO_SELECIONADO_POR_UNIDADE) {
+                return JSON.stringify({ 
+                    unidade_mock_unidade_uuid_mock_login: {
+                        uuid: 'mock_recurso_uuid'
+                    }
+                 });
             }
             if (key === 'associacao') return 'mock-uuid-associacao';
             if (key === 'token') return 'mock-token';
@@ -1007,12 +1086,23 @@ describe('PrestacaoDeContas', () => {
 
     it('toggleBtnEscolheContaAoTrocarPeriodo usa fallback para index 0 quando conta não encontrada', async () => {
         Storage.prototype.getItem = jest.fn((key) => {
-            if (key === 'periodoPrestacaoDeConta') {
+            if (key === STORAGE_KEY_PERIODO_CONTA_GERACAO_DOCUMENTOS) {
                 return JSON.stringify({
-                    periodo_uuid: 'mock-periodo',
-                    data_inicial: '2025-01-01',
-                    data_final: '2025-12-31',
-                });
+                    recurso_mock_recurso_uuid: {
+                        periodoPrestacaoDeConta: {
+                            periodo_uuid: 'mock-periodo',
+                            data_inicial: '2025-01-01',
+                            data_final: '2025-12-31',
+                        },
+                    }
+                })
+            }
+            if (key === STORAGE_KEY_RECURSO_SELECIONADO_POR_UNIDADE) {
+                return JSON.stringify({ 
+                    unidade_mock_unidade_uuid_mock_login: {
+                        uuid: 'mock_recurso_uuid'
+                    }
+                 });
             }
             if (key === 'contaPrestacaoDeConta') {
                 return JSON.stringify({ conta_uuid: 'uuid-nao-existente' });
@@ -1052,7 +1142,7 @@ describe('PrestacaoDeContas', () => {
         });
 
         // ambasPendencias has contas_pendentes: ['uuid-1', 'uuid-2'] (length > 1) → URL without conta
-        const periodo = JSON.parse(Storage.prototype.getItem('periodoPrestacaoDeConta')).periodo_uuid;
+        const periodo = geracaoDocumentosStorageService.getPeriodo()?.periodoPrestacaoDeConta?.periodo_uuid;
         expect(mockNavigate).toHaveBeenCalledWith(`/detalhe-das-prestacoes/${periodo}/?origem=concluir-periodo`);
     });
 
@@ -1102,12 +1192,23 @@ describe('PrestacaoDeContas', () => {
 
     it('setConfBoxAtaApresentacao sem uuid e ambas previaAta falham cobre linha 466', async () => {
         Storage.prototype.getItem = jest.fn((key) => {
-            if (key === 'periodoPrestacaoDeConta') {
+            if (key === STORAGE_KEY_PERIODO_CONTA_GERACAO_DOCUMENTOS) {
                 return JSON.stringify({
-                    periodo_uuid: 'mock-periodo',
-                    data_inicial: '2025-01-01',
-                    data_final: '2025-12-31',
-                });
+                    recurso_mock_recurso_uuid: {
+                        periodoPrestacaoDeConta: {
+                            periodo_uuid: 'mock-periodo',
+                            data_inicial: '2025-01-01',
+                            data_final: '2025-12-31',
+                        },
+                    }
+                })
+            }
+            if (key === STORAGE_KEY_RECURSO_SELECIONADO_POR_UNIDADE) {
+                return JSON.stringify({ 
+                    unidade_mock_unidade_uuid_mock_login: {
+                        uuid: 'mock_recurso_uuid'
+                    }
+                 });
             }
             if (key === 'associacao') return 'mock-uuid-associacao';
             return null;

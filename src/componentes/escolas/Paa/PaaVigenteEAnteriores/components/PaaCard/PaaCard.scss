@@ -1,0 +1,22 @@
+.paa-card {
+  &__titulo-versao {
+    font-size: 16px;
+    font-weight: 700;
+    color: #42474a;
+  }
+
+  &__col-ata {
+    min-width: 200px;
+  }
+
+  &__separador {
+    border-color: #dadada;
+  }
+
+  &__resumo-assembleia {
+    font-size: 12px;
+    line-height: 1.45;
+    color: #60686A;
+    font-weight: 400;
+  }
+}

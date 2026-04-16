@@ -53,8 +53,8 @@ describe("useDeletePrioridade", () => {
       "Prioridade removida com sucesso."
     );
 
-    expect(invalidateQueriesSpy).toHaveBeenNthCalledWith(1, "prioridades");
-    expect(invalidateQueriesSpy).toHaveBeenNthCalledWith(2, "prioridades-resumo");
+    expect(invalidateQueriesSpy).toHaveBeenNthCalledWith(1, { queryKey: ["prioridades"], exact: false });
+    expect(invalidateQueriesSpy).toHaveBeenNthCalledWith(2, { queryKey: ["prioridades-resumo"] });
   });
 
   test("deve exibir toast de erro quando a API retorna mensagem de erro", async () => {

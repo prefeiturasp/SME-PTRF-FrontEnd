@@ -1,5 +1,10 @@
 import React from 'react';
 import './scss/tagModalLegendaInformacao.scss';
+import TagLabel from '../TagLabel';
+
+const tagLabelMap = {
+    'Conciliada': (index) => <TagLabel label="Período: XXXX.X" index={index} className={"tag-modal-label-color tag-modal-label-margin-top"}/>,
+};
 
 export const TagModalLegendaInformacao = ({data, coresTags}) => {
     return (
@@ -8,6 +13,7 @@ export const TagModalLegendaInformacao = ({data, coresTags}) => {
                 <span className={`${coresTags[data.id]} tag-modal-legenda-informacoes`} data-qa={`span-tag-${data.id}-texto-legenda-info`}>
                     {data.texto}
                 </span>
+                {tagLabelMap[data.texto]?.(data.index)}
             </div>
 
             <div className="col">

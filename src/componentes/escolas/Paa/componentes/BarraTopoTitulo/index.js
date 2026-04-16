@@ -46,7 +46,7 @@ const BarraTopoTitulo = ({ paa, origem = null }) => {
   const { className, label, destino } = obterConfiguracaoVoltar();
 
   return (
-    <div className="barra-topo-lista-usuarios d-flex bd-highlight align-items-center">
+    <span className="barra-topo-lista-usuarios d-flex bd-highlight align-items-center w-100">
       <div className="py-2 flex-grow-1 bd-highlight">
         <h2>{headerPaaReferencia()}</h2>
       </div>
@@ -57,7 +57,7 @@ const BarraTopoTitulo = ({ paa, origem = null }) => {
           </button>
         </div>
       )}
-    </div>
+    </span>
   );
 };
 

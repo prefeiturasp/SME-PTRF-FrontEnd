@@ -1,0 +1,26 @@
+.paa-linha-documento {
+  &__titulo {
+    font-size: 14px;
+    font-weight: 700;
+    color: #3c4043;
+  }
+
+  &__mensagem {
+    font-weight: 700;
+    font-size: 14px;
+  }
+
+  &__btn-acao {
+    color: #0f7a6c;
+  }
+
+  &__icone {
+    font-size: 16px;
+  }
+
+  &__spin-geracao {
+    .ant-spin-dot {
+      font-size: 14px;
+    }
+  }
+}

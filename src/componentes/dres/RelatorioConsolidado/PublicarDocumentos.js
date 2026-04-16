@@ -70,7 +70,9 @@ const PublicarDocumentos = ({publicarConsolidadoDre, podeGerarPrevia, children, 
                             ):
 
                             (!consolidadoDre.eh_consolidado_de_publicacoes_parciais &&
-                                (<div className="p-2 bd-highlight font-weight-normal" data-html={true} data-tooltip-content={consolidadoDre.texto_tool_tip_botao_gerar}>
+                                (<div className="p-2 bd-highlight font-weight-normal"
+                                    data-tooltip-id={`tooltip-gerar-${consolidadoDre.uuid}`}
+                                    data-tooltip-html={consolidadoDre.texto_tool_tip_botao_gerar}>
                                     <button
                                         onClick={() => setShowPublicarRelatorioConsolidado(true)}
                                         className="btn btn btn btn-success"
@@ -78,7 +80,7 @@ const PublicarDocumentos = ({publicarConsolidadoDre, podeGerarPrevia, children, 
                                     >
                                         Gerar
                                     </button>
-                                    <ReactTooltip html={true}/>
+                                    <ReactTooltip id={`tooltip-gerar-${consolidadoDre.uuid}`}/>
                                 </div>)
                             )
                         }
