@@ -34,10 +34,13 @@ function useTagInformacaoAssociacaoEncerradaTemplate(){
 
         return (
             <>
-                <div data-tooltip-content={tooltip_data_encerramento} data-html={true} className="tag-informacoes-associacao-encerrada fundo-cor-cinza-neutral-03 texto-cor-branco" key={associacao_uuid}>
+                <div
+                    data-tooltip-id={`tooltip-encerramento-associacao-${associacao_uuid}`}
+                    data-tooltip-content={tooltip_data_encerramento}
+                    className="tag-informacoes-associacao-encerrada fundo-cor-cinza-neutral-03 texto-cor-branco" key={associacao_uuid}>
                     <span>Associação encerrada</span>
                 </div>
-                <ReactTooltip/>
+                <ReactTooltip id={`tooltip-encerramento-associacao-${associacao_uuid}`}/>
             </>
         )
     }

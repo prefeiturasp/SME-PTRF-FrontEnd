@@ -508,7 +508,9 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
                         type="button"
                         onClick={() => handleShowPdf(rowData)}
                     >
-                        <span data-html={true} data-tooltip-content="Visualização">
+                        <span
+                            data-tooltip-id={`btn-visualizar-${rowData.uuid}`}
+                            data-tooltip-html="Visualização">
                             <FontAwesomeIcon style={
                                 {
                                     fontSize: '18px',
@@ -517,7 +519,7 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
                             }
                             icon={faEye}/>
                         </span>
-                        <ReactTooltip html={true}/>
+                        <ReactTooltip id={`btn-visualizar-${rowData.uuid}`}/>
                     </button>
                     <button disabled={
                         !editavel
@@ -525,15 +527,17 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
                             onClick={() => getDownloadDocumentoRelatorio(rowData)}
                             className="btn btn-link fonte-14"
                             type="button">
-                        <span data-html={true} data-tooltip-content="Download">
+                        <span
+                            data-tooltip-id={`btn-download-${rowData.uuid}`}
+                            data-tooltip-html="Download">
                             <FontAwesomeIcon style={
                                 {
                                     fontSize: '18px',
                                     marginRight: "5px",
                                 }
-                            }icon={faDownload}/>
+                            } icon={faDownload}/>
                         </span>
-                        <ReactTooltip html={true}/>
+                        <ReactTooltip id={`btn-download-${rowData.uuid}`}/>
                     </button>
                 </div>
                 </>

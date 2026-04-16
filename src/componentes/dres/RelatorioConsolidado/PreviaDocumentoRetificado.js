@@ -80,7 +80,10 @@ const PreviaDocumentoRetificado = ({consolidadoDre, todasAsPcsDaRetificacaoConcl
             {consolidadoDre && consolidadoDre.eh_retificacao &&
                 <>
                     {!consolidadoDre.ja_publicado &&
-                        <span data-html={true} data-tooltip-content={!todasAsPcsDaRetificacaoConcluidas(consolidadoDre) ? "A análise da(s) prestação(ões) de contas em retificação ainda não foi concluída." : ""}>
+                        <>
+                        <span
+                            data-tooltip-id={`tooltip-gerar-${consolidadoDre.uuid}`}
+                            data-tooltip-html={!todasAsPcsDaRetificacaoConcluidas(consolidadoDre) ? "A análise da(s) prestação(ões) de contas em retificação ainda não foi concluída." : ""}>
                             <button
                                 onClick={() => gerarPreviaRetificacao(consolidadoDre)}
                                 className="btn btn-outline-success"
@@ -89,12 +92,16 @@ const PreviaDocumentoRetificado = ({consolidadoDre, todasAsPcsDaRetificacaoConcl
                                 Prévias
                             </button>
                         </span>
+                        <ReactTooltip id={`tooltip-gerar-${consolidadoDre.uuid}`}/>
+                        </>
                     }
 
                     {consolidadoDre.habilita_botao_gerar &&
 
-                        <div className="p-2 bd-highlight font-weight-normal" data-html={true}>
-                            <span data-html={true} data-tooltip-content={!todasAsPcsDaRetificacaoConcluidas(consolidadoDre) ? "Os documentos ainda não podem ser gerados, pois se encontra em análise prestação(ões) de contas a ser(em) retificada(s)." : ""}>
+                        <div className="p-2 bd-highlight font-weight-normal">
+                            <span
+                                data-tooltip-id={`tooltip-gerar-${consolidadoDre.uuid}`}
+                                data-tooltip-html={!todasAsPcsDaRetificacaoConcluidas(consolidadoDre) ? "Os documentos ainda não podem ser gerados, pois se encontra em análise prestação(ões) de contas a ser(em) retificada(s)." : ""}>
                                 <Button
                                     className="btn btn btn btn-success botao-carregar"
                                     type="primary"
@@ -105,7 +112,7 @@ const PreviaDocumentoRetificado = ({consolidadoDre, todasAsPcsDaRetificacaoConcl
                                 >
                                     Gerar
                                 </Button>
-                                <ReactTooltip html={true}/>
+                                <ReactTooltip id={`tooltip-gerar-${consolidadoDre.uuid}`}/>
                             </span>
                         </div>
                     }
