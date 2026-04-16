@@ -8,6 +8,7 @@ import {ACOMPANHAMENTO_DE_PC} from "./mantemEstadoAcompanhamentoDePc.service";
 import {ACOMPANHAMENTO_PC_UNIDADE} from "./mantemEstadoAcompanhamentoDePcUnidadeEducacional.service";
 import { ANALISE_DRE } from './mantemEstadoAnaliseDre.service';
 import moment from "moment";
+import { STORAGE_KEY_PERIODO_CONTA_GERACAO_DOCUMENTOS } from './storages/GeracaoDeDocumentos.storage.service';
 
 export const TOKEN_ALIAS = "TOKEN";
 export const DATA_LOGIN = "DATA_LOGIN";
@@ -168,6 +169,7 @@ const logout = () => {
     localStorage.removeItem('acaoLancamento');
     localStorage.removeItem('uuidAta');
     localStorage.removeItem('prestacao_de_contas_nao_apresentada');
+    localStorage.removeItem(STORAGE_KEY_PERIODO_CONTA_GERACAO_DOCUMENTOS);
     localStorage.removeItem(USUARIO_EMAIL);
     localStorage.removeItem(USUARIO_LOGIN);
     localStorage.removeItem(USUARIO_CPF);
@@ -193,6 +195,7 @@ const logoutToSuporte = () => {
     localStorage.removeItem('acaoLancamento');
     localStorage.removeItem('uuidAta');
     localStorage.removeItem('prestacao_de_contas_nao_apresentada');
+    localStorage.removeItem(STORAGE_KEY_PERIODO_CONTA_GERACAO_DOCUMENTOS);
     localStorage.removeItem(USUARIO_EMAIL);
     localStorage.removeItem(USUARIO_LOGIN);
     localStorage.removeItem(USUARIO_CPF);

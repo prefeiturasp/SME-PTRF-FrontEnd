@@ -10,7 +10,7 @@ export const TextoDinamicoSuperior = ({dadosAta, retornaDadosAtaFormatado, prest
     let textoPauta = ''
     let textoObjeto = ''
     if (dadosAta.tipo_ata === 'RETIFICACAO') {
-        textoPauta = ` Retificação da Prestação de Contas do PTRF e suas ações agregadas, 
+        textoPauta = ` Retificação da Prestação de Contas do ${recursoSelecionado?.nome} e suas ações agregadas, 
         do período de ${retornaDadosAtaFormatado("periodo.data_inicio_realizacao_despesas")} a 
         ${retornaDadosAtaFormatado("periodo.data_fim_realizacao_despesas")}, 
         referente ao ${retornaDadosAtaFormatado("periodo.referencia")}.`

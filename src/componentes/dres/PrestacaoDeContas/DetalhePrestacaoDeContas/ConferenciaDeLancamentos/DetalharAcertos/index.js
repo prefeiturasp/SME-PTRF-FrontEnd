@@ -234,10 +234,10 @@ export const DetalharAcertos = () => {
 
     const onClickBtnVoltar = () => {
         if(origem && origem === "dre-detalhe-prestacao-de-contas-resumo-acertos"){
-            navigate(`/dre-detalhe-prestacao-de-contas-resumo-acertos/${prestacao_conta_uuid}#tabela-acertos-lancamentos`)
+            navigate(`/dre-detalhe-prestacao-de-contas-resumo-acertos/${prestacao_conta_uuid}/#tabela-acertos-lancamentos`)
         }
         else{
-            navigate(`/dre-detalhe-prestacao-de-contas/${prestacao_conta_uuid}#conferencia_de_lancamentos`)
+            navigate(`/dre-detalhe-prestacao-de-contas/${prestacao_conta_uuid}/#conferencia_de_lancamentos`)
         }
         
     }

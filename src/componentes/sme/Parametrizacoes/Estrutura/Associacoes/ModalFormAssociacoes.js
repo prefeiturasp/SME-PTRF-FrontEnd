@@ -217,11 +217,11 @@ const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitMo
                                         Período inicial*
                                     </label>
                                        <div
-                                           data-tooltip-content={
+                                           data-tooltip-html={
                                             values.pode_editar_periodo_inicial && !values.pode_editar_periodo_inicial?.pode_editar_periodo_inicial
                                                 ? values.pode_editar_periodo_inicial?.mensagem_pode_editar_periodo_inicial?.reduce((hint, text) => (hint + `${text}<br/>`), '<p>') + '</p>'
                                                 : ''
-                                           } data-html={true} style={{display:'inline'}} data-tooltip-id={`tooltip-id-${values.uuid}`}
+                                           } style={{display:'inline'}} data-tooltip-id={`tooltip-id-${values.uuid}`}
                                        >
                                        <select
                                             value={values.periodo_inicial && values.periodo_inicial ? values.periodo_inicial : ""}
@@ -236,7 +236,7 @@ const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitMo
                                                 <option key={periodo.uuid} value={periodo.uuid}>{`${periodo.referencia} - ${periodo.data_inicio_realizacao_despesas ? exibeDataPT_BR(periodo.data_inicio_realizacao_despesas) : "-"} até ${periodo.data_fim_realizacao_despesas ? exibeDataPT_BR(periodo.data_fim_realizacao_despesas) : "-"}`}</option>
                                             )}
                                         </select>
-                                        <ReactTooltip id={`tooltip-id-${values.uuid}`} html={true}/>
+                                        <ReactTooltip id={`tooltip-id-${values.uuid}`}/>
                                        </div>
                                         <small className="form-text text-muted">
                                             <FontAwesomeIcon

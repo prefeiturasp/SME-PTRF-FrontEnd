@@ -3,7 +3,7 @@ import { Modal } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 
-export const ModalRetificarPAA = memo(({ open, onClose, onConfirm, paaData, statusDocumento }) => {
+export const ModalRetificarPAA = memo(({ open, onClose, onConfirm, paaData, statusDocumento, isLoading }) => {
   const [justificativa, setJustificativa] = useState("");
 
   useEffect(() => {
@@ -56,8 +56,8 @@ export const ModalRetificarPAA = memo(({ open, onClose, onConfirm, paaData, stat
         <button
           type="button"
           className="btn btn-primary"
-          onClick={onConfirm}
-          disabled={justificativa === ""}
+          onClick={() => onConfirm(justificativa)}
+          disabled={justificativa === "" || isLoading}
         >
           Retificar
         </button>

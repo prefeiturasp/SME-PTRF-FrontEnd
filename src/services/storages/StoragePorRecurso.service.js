@@ -1,11 +1,10 @@
-const RECURSO_SELECIONADO = 'RECURSO_SELECIONADO';
+import { recursoSelecionadoStorageService } from "./RecursoSelecionado.storage.service";
 
 const getRecursoKey = () => {
     try {
-        const raw = localStorage.getItem(RECURSO_SELECIONADO);
+        const raw = recursoSelecionadoStorageService.getRecursoSelecionado(); // deve mudar para buscar do service que será criado ou do hook
         if (!raw) return 'sem_recurso';
-        const recurso = JSON.parse(raw);
-        return recurso?.uuid ? `recurso_${recurso.uuid}` : 'sem_recurso';
+        return raw?.uuid ? `recurso_${raw.uuid}` : 'sem_recurso';
     } catch {
         return 'sem_recurso';
     }

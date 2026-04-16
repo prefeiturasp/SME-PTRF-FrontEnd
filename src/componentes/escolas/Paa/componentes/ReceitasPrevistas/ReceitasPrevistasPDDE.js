@@ -1,10 +1,10 @@
 import "./style.css";
 import TableReceitasPrevistasPdde from "./TableReceitasPrevistasPdde";
 
-const ReceitasPrevistasPDDE = ({ setActiveTab, paa }) => {
+const ReceitasPrevistasPDDE = ({ setActiveTab }) => {
   return (
     <div>
-      <TableReceitasPrevistasPdde setActiveTab={setActiveTab} paa={paa}/>
+      <TableReceitasPrevistasPdde setActiveTab={setActiveTab} />
     </div>
   );
 };

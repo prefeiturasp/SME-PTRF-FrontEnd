@@ -9,9 +9,12 @@ import TabelaReceitasPrevistas from "./TabelaReceitasPrevistas";
 import ModalConfirmaPararAtualizacaoSaldo from "./ModalConfirmarPararAtualizacaoSaldo";
 import { visoesService } from "../../../../../services/visoes.service";
 import { useQueryClient } from "@tanstack/react-query";
+import { usePaaContext } from "../PaaContext";
 
-const ReceitasPrevistasPTRF = ({ paa }) => {
+const ReceitasPrevistasPTRF = () => {
   const queryClient = useQueryClient();
+
+  const { paa } = usePaaContext();
 
   const [checkPararAtualizacaoSaldo, setValorCheckPararAtualizacaoSaldo] =
     useState(!!paa?.saldo_congelado_em);

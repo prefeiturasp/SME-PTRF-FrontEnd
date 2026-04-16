@@ -19,7 +19,7 @@ export const usePatchReceitasPrevistasPaa = (onClose) => {
     mutationOptions: {
       onSuccess: () => {
         toastCustom.ToastCustomSuccess("Recurso editado com sucesso.");
-        queryClient.invalidateQueries(["receitas-previstas-paa"]);
+        queryClient.invalidateQueries({ queryKey: ["receitas-previstas-paa"]});
         onClose && onClose();
       },
       onError: () => {

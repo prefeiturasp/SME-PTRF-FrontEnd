@@ -157,7 +157,6 @@ export const FormularioEditaAta = ({
                       <label
                         htmlFor="stateFormEditarAta.numero_ata"
                         data-tooltip-content={"Informar apenas o número da ata."}
-                        data-html={true}
                         data-tooltip-id="numero-ata-tooltip"
                       >
                         <span>Número da Ata</span>

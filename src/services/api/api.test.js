@@ -1,4 +1,4 @@
-import { RECURSO_SELECIONADO } from '../auth.service';
+import { recursoSelecionadoStorageService } from '../storages/RecursoSelecionado.storage.service';
 
 const localStorageMock = (() => {
   let store = {};
@@ -31,7 +31,7 @@ describe('API Request Interceptor - X-Recurso-Selecionado Header', () => {
       nome: 'Recurso Teste'
     };
 
-    localStorage.setItem(RECURSO_SELECIONADO, JSON.stringify(mockRecurso));
+    recursoSelecionadoStorageService.setRecursoSelecionado(mockRecurso);
 
     const config = {
       url: '/api/endpoint',
@@ -39,9 +39,9 @@ describe('API Request Interceptor - X-Recurso-Selecionado Header', () => {
     };
 
     // Simular o comportamento do interceptor
-    const recursoSelecionado = localStorage.getItem(RECURSO_SELECIONADO);
+    const recursoSelecionado = recursoSelecionadoStorageService.getRecursoSelecionado();
     if (recursoSelecionado) {
-      const recurso = JSON.parse(recursoSelecionado);
+      const recurso = recursoSelecionado;
       if (recurso.uuid) {
         config.headers['X-Recurso-Selecionado'] = recurso.uuid;
       }
@@ -56,9 +56,9 @@ describe('API Request Interceptor - X-Recurso-Selecionado Header', () => {
       headers: {}
     };
 
-    const recursoSelecionado = localStorage.getItem(RECURSO_SELECIONADO);
+    const recursoSelecionado = recursoSelecionadoStorageService.getRecursoSelecionado();
     if (recursoSelecionado) {
-      const recurso = JSON.parse(recursoSelecionado);
+      const recurso = recursoSelecionado;
       if (recurso.uuid) {
         config.headers['X-Recurso-Selecionado'] = recurso.uuid;
       }
@@ -73,7 +73,7 @@ describe('API Request Interceptor - X-Recurso-Selecionado Header', () => {
       nome: 'Recurso Teste'
     };
 
-    localStorage.setItem(RECURSO_SELECIONADO, JSON.stringify(mockRecurso));
+    recursoSelecionadoStorageService.setRecursoSelecionado(mockRecurso);
 
     const config = {
       url: '/login',
@@ -84,9 +84,9 @@ describe('API Request Interceptor - X-Recurso-Selecionado Header', () => {
     if (config.url && (config.url.includes('/login') || config.url.includes('/logout'))) {
       // Retorna config sem adicionar header
     } else {
-      const recursoSelecionado = localStorage.getItem(RECURSO_SELECIONADO);
+      const recursoSelecionado = recursoSelecionadoStorageService.getRecursoSelecionado();
       if (recursoSelecionado) {
-        const recurso = JSON.parse(recursoSelecionado);
+        const recurso = recursoSelecionado;
         if (recurso.uuid) {
           config.headers['X-Recurso-Selecionado'] = recurso.uuid;
         }
@@ -102,7 +102,7 @@ describe('API Request Interceptor - X-Recurso-Selecionado Header', () => {
       nome: 'Recurso Teste'
     };
 
-    localStorage.setItem(RECURSO_SELECIONADO, JSON.stringify(mockRecurso));
+    recursoSelecionadoStorageService.setRecursoSelecionado(mockRecurso);
 
     const config = {
       url: '/api/endpoint?page=1&limit=10',
@@ -113,9 +113,9 @@ describe('API Request Interceptor - X-Recurso-Selecionado Header', () => {
     if (config.url && (config.url.includes('/login') || config.url.includes('/logout'))) {
       // Retorna config sem adicionar header
     } else {
-      const recursoSelecionado = localStorage.getItem(RECURSO_SELECIONADO);
+      const recursoSelecionado = recursoSelecionadoStorageService.getRecursoSelecionado();
       if (recursoSelecionado) {
-        const recurso = JSON.parse(recursoSelecionado);
+        const recurso = recursoSelecionado;
         if (recurso.uuid) {
           config.headers['X-Recurso-Selecionado'] = recurso.uuid;
         }

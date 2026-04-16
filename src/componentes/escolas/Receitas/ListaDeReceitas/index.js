@@ -103,13 +103,15 @@ export const ListaDeReceitas = () => {
                 return(
                     <div>
                         {rowData.tipo_receita.nome}
-                        <span data-html={true} data-tooltip-content='A saída desse crédito ainda <br/> não foi registrada!'>
+                        <span
+                            data-tooltip-id={`tipo-receita-${rowData.tipo_receita.uuid}`}
+                            data-tooltip-html='A saída desse crédito ainda <br/> não foi registrada!'>
                         <FontAwesomeIcon
                             style={{marginLeft: "3px", color: '#b41d00'}}
                             icon={faExclamationTriangle}
                         />
                         </span>
-                        <ReactTooltip html={true}/>
+                        <ReactTooltip id={`tipo-receita-${rowData.tipo_receita.uuid}`}/>
                     </div>
                 )
             }else {
@@ -186,7 +188,7 @@ export const ListaDeReceitas = () => {
                         </div>
                         <div className={`${btnMaisFiltros ? "col-12" : "col-12 col-md-5 mt-2"}`}>
                             <button disabled={!visoesService.getPermissoes(['add_receita'])} onClick={() => navigate('/cadastro-de-credito')} type="submit" className="btn btn btn-outline-success float-right">Cadastrar crédito</button>
-                            { recursoSelecionado?.legado && (
+                            { recursoSelecionado?.exibe_valores_reprogramados && (
                                 <button disabled={!visoesService.getPermissoes(['add_receita'])} onClick={() => navigate('/cadastro-de-valores-reprogramados')} type="submit" className="btn btn btn-outline-success float-right mr-2">Valores reprogramados</button>
                             ) }
                         </div>

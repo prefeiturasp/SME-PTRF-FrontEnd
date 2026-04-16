@@ -88,7 +88,9 @@ export const ListaUsuarios = ({usuarios, isLoading}) => {
     const acoesTemplate = (rowData) =>{
         return (
             <div>
-                <span data-tooltip-content="Remover acesso" data-html={true}>
+                <span
+                    data-tooltip-id={`tooltip-id-${rowData.id}`}
+                    data-tooltip-content="Remover acesso">
                     <button
                         onClick={() => {
                             setUserIdParaRemoverAcesso(rowData.id)
@@ -103,7 +105,7 @@ export const ListaUsuarios = ({usuarios, isLoading}) => {
                             icon={faTimesCircle}
                         />
                     </button>
-                    <ReactTooltip/>
+                    <ReactTooltip id={`tooltip-id-${rowData.id}`}/>
                 </span>
 
 

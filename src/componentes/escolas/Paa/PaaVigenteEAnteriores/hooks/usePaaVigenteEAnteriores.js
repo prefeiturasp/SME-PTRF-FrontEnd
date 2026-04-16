@@ -5,7 +5,6 @@ export const usePaaVigenteEAnteriores = (associacaoUuid) => {
   const {
     data = {},
     isPending,
-    isFetching,
     isError,
     error,
     refetch,
@@ -18,13 +17,9 @@ export const usePaaVigenteEAnteriores = (associacaoUuid) => {
     gcTime: 0,
   });
 
-  let isLoading = isPending;
-
   return {
     data,
-    isLoading,
-    isPending,
-    isFetching,
+    isLoading: isPending,
     isError,
     error,
     refetch,

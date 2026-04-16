@@ -18,21 +18,25 @@ export const DashboardCard = ({itensDashboard, handleClickVerRelatorios, handleC
                                 <div className="card-text card-qtde-associacoes  mb-0 pb-3 d-flex justify-content-between">
                                     <span>{card.quantidade_de_relatorios}</span>
                                     {card.quantidade_retornadas >= 1 &&
-                                        <span data-tooltip-content={card.quantidade_retornadas > 1 ? '<p class="mb-0">Existem ' + card.quantidade_retornadas + ' relatórios</p> <p class="mb-0">retornadas das U.Es</p>' : '<p class="mb-0">Existe ' + card.quantidade_retornadas + ' relatório </p><p class="mb-0"> retornada das U.Es</p>' } data-html={true}>
+                                        <span
+                                            data-tooltip-id={`tooltip-card-retornadas-${index}`}
+                                            data-tooltip-html={card.quantidade_retornadas > 1 ? '<p class="mb-0">Existem ' + card.quantidade_retornadas + ' relatórios</p> <p class="mb-0">retornadas das U.Es</p>' : '<p class="mb-0">Existe ' + card.quantidade_retornadas + ' relatório </p><p class="mb-0"> retornada das U.Es</p>' }>
                                             <FontAwesomeIcon
                                                 style={{fontSize: '18px', marginLeft: "3px", color: '#C65D00'}}
                                                 icon={faInfoCircle}
                                             />
-                                            <ReactTooltip/>
+                                            <ReactTooltip id={`tooltip-card-retornadas-${index}`}/>
                                         </span>
                                     }
                                     {card.quantidade_nao_recebida >= 1 &&
-                                        <span data-tooltip-content={card.quantidade_nao_recebida > 1 ? '<p class="mb-0">'+ card.quantidade_nao_recebida + ' novas relatórios não recebidas</p>' : '<p class="mb-0">' + card.quantidade_nao_recebida + ' nova relatório não recebida</p>' } data-html={true}>
+                                        <span
+                                            data-tooltip-id={`tooltip-card-naorecebidas-${index}`}
+                                            data-tooltip-html={card.quantidade_nao_recebida > 1 ? '<p class="mb-0">'+ card.quantidade_nao_recebida + ' novas relatórios não recebidas</p>' : '<p class="mb-0">' + card.quantidade_nao_recebida + ' nova relatório não recebida</p>' }>
                                             <FontAwesomeIcon
                                                 style={{fontSize: '18px', marginLeft: "3px", color: '#C65D00'}}
                                                 icon={faInfoCircle}
                                             />
-                                            <ReactTooltip/>
+                                            <ReactTooltip id={`tooltip-card-naorecebidas-${index}`}/>
                                         </span>
                                     }
                                 </div>

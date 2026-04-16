@@ -30,12 +30,20 @@ describe("ListaDeDespesas", () => {
                 numero_documento: "123",
                 status: "COMPLETO",
                 data_documento: "2024-01-15",
+                informacoes: [
+                    {
+                        tag_id: "conciliada",
+                        tag_nome: "Conciliada",
+                        tag_hint: "Período: 2024.1"
+                    }
+                ],
                 rateios: [
                     {
                         especificacao_material_servico: { descricao: "Material 1" },
                         valor_rateio: "100.50",
                         aplicacao_recurso: "Capital",
-                        acao_associacao: { acao: { nome: "Ação 1" } }
+                        acao_associacao: { acao: { nome: "Ação 1" } },
+                        periodo_conciliacao: "2024.1"
                     }
                 ]
             }
@@ -299,5 +307,46 @@ describe("ListaDeDespesas", () => {
             expect(redirect).toHaveBeenCalledWith('/cadastro-de-despesa-recurso-proprio/receita-123/uuid-recurso');
         }, { timeout: 1000 });
     });
+
+    it("deve exibir o período de conciliação quando a tag é 'Conciliada'", async () => {
+        render(<ListaDeDespesas />);
+
+        await waitFor(() => {
+            expect(screen.getByTestId('tag-label-0')).toBeInTheDocument();
+        }, { timeout: 3000 });
+    });
+
+    it("não deve exibir o período de conciliação quando a tag não é 'Conciliada'", async () => {
+        const despesaSemConciliada = {
+            results: [{
+                uuid: "uuid-periodo",
+                numero_documento: "321",
+                status: "INCOMPLETO",
+                data_documento: "2024-02-10",
+                informacoes: [{
+                    tag_id: "outra",
+                    tag_nome: "Outra Tag",
+                    tag_hint: "Dica"
+                }],
+                rateios: [{
+                    especificacao_material_servico: { descricao: "Material X" },
+                    valor_rateio: "50.00",
+                    aplicacao_recurso: "Custeio",
+                    acao_associacao: { acao: { nome: "Ação 1" } },
+                    periodo_conciliacao: ""
+                }]
+            }],
+            count: 1
+        };
+
+        ordenacaoDespesas.mockResolvedValue(despesaSemConciliada);
+
+        render(<ListaDeDespesas />);
+        
+        await waitFor(() => {
+            expect(screen.queryByTestId('tag-label-0')).not.toBeInTheDocument();
+        }, { timeout: 3000 });
+    });
+
 });
 

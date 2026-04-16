@@ -225,13 +225,13 @@ export const InfosContas = ({ dadosDaAssociacao }) => {
                 <Fragment key={`recurso-${nomeRecurso}`}>
                   <div className="col-12 mt-3" key={`header-recurso-${nomeRecurso}`}>
                     <hr className="mb-4" />
-                    <h5 className="mb-3"><strong>{nomeRecurso}</strong></h5>
+                    <h5 className="mb-3"><strong style={{ color: "var(--color-primary-lighten)" }}>{nomeRecurso}</strong></h5>
                   </div>
                   {contasDoRecurso.map((conta, index) => (
                     <Fragment key={`conta-${conta.indexOriginal}`}>
                       <div className={`col-12 mt-${index === 0 ? "2" : 4} mb-xs-4 mb-md-4 mb-xl-3 ml-0`}>
                         <p className="mb-0">
-                          <span className="contador-conta">
+                          <span>
                             <strong>Conta {index + 1}</strong>
                           </span>{" "}
                           <span className="divisor"></span>

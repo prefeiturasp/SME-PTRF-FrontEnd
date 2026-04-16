@@ -160,10 +160,12 @@ const RetificacaoRelatorioConsolidado = () => {
     const nomeComTipoTemplate = (rowData) => {
         return(
             <>
-                <span data-tooltip-content={rowData.tooltip_nao_pode_retificar}>{`${rowData.unidade_tipo_unidade} ${rowData.unidade_nome}`}</span>
+                <span
+                    data-tooltip-id={`tooltip-id-${rowData.uuid}`}
+                    data-tooltip-html={rowData.tooltip_nao_pode_retificar}>{`${rowData.unidade_tipo_unidade} ${rowData.unidade_nome}`}</span>
                 
                 {rowData.tooltip_nao_pode_retificar &&
-                    <ReactTooltip/>
+                    <ReactTooltip id={`tooltip-id-${rowData.uuid}`}/>
                 }     
             </>
         )
@@ -172,10 +174,12 @@ const RetificacaoRelatorioConsolidado = () => {
     const nomeComTipoTemplateRetificacao = (rowData) => {
         return(
             <>
-                <span data-tooltip-content={rowData.tooltip_nao_pode_desfazer_retificacao}>{`${rowData.unidade_tipo_unidade} ${rowData.unidade_nome}`}</span>
+                <span
+                    data-tooltip-id={`tooltip-retificacao-id-${rowData.uuid}`}
+                    data-tooltip-html={rowData.tooltip_nao_pode_desfazer_retificacao}>{`${rowData.unidade_tipo_unidade} ${rowData.unidade_nome}`}</span>
                 
                 {rowData.tooltip_nao_pode_desfazer_retificacao &&
-                    <ReactTooltip/>
+                    <ReactTooltip id={`tooltip-retificacao-id-${rowData.uuid}`}/>
                 }     
             </>
         )
@@ -263,9 +267,9 @@ const RetificacaoRelatorioConsolidado = () => {
 
     const selecionarHeader = (listaEmRetificacao=false) => {
         return (
-            <div className="align-middle">
+            <div className="align-middle d-flex align-center justify-content-center">
                 <Dropdown>
-                    <Dropdown.Toggle id="dropdown-basic" className="p-0">
+                    <Dropdown.Toggle id="dropdown-basic" className="p-0" style={{background: 'inherit'}}>
                         <input
                             checked={listaEmRetificacao ? identificadorCheckboxClicadoPcsEmRetificacao : identificadorCheckboxClicado}
                             type="checkbox"

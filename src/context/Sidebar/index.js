@@ -1,8 +1,8 @@
 import React, {useState, createContext} from "react";
 
 import { FEATURE_FLAGS } from "../../constantes/featureFlags";
-import { RECURSO_SELECIONADO } from "../../services/auth.service";
 import { visoesService } from "../../services/visoes.service";
+import { recursoSelecionadoStorageService } from "../../services/storages/RecursoSelecionado.storage.service";
 
 export const FLAGS_KEY_CONTEXT = {
     PRESTACAO_DE_CONTAS: "prestacao-de-contas",
@@ -20,7 +20,7 @@ export const SidebarContext = createContext( {
 
 // TODO: REMOVER ESSAS FLAGS APÓS HABILITAR EM PRODUÇÃO
 const verificaAtivacaoItemNavegacaoViaFlags = () => {
-    const recursoSelecionado = JSON.parse(localStorage.getItem(RECURSO_SELECIONADO));
+    const recursoSelecionado = recursoSelecionadoStorageService.getRecursoSelecionado();
     
     // FLAG NECESSÁRIA PARA NÃO MOSTRAR MENU DE PRESTAÇÃO DE CONTAS PARA RECURSO DIFERENTE DE PTRF
     const flagAtivaPEPrestacaoContas = visoesService.featureFlagAtiva(FEATURE_FLAGS.PREMIO_EXCELENCIA_PRESTACAO_CONTAS);

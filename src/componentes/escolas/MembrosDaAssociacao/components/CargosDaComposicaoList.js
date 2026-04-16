@@ -36,9 +36,11 @@ export const CargosDaComposicaoList = ({ escopo }) => {
             className="btn-editar-membro"
             data-qa="editar-membro"
           >
-            <span data-tooltip-content="Visualizar membro" data-html={true}>
+            <span
+              data-tooltip-id={`tooltip-id-${rowData.uuid}`}
+              data-tooltip-content="Visualizar membro">
               <FontAwesomeIcon style={{ fontSize: "20px", marginRight: "0", color: "#00585E" }} icon={faEye} />
-              <ReactTooltip />
+              <ReactTooltip id={`tooltip-id-${rowData.uuid}`}/>
             </span>
           </button>
         )}

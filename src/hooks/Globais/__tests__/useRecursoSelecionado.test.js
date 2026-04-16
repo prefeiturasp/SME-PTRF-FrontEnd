@@ -5,6 +5,7 @@ import {
   getRecursosPorUnidade,
 } from "../../../services/AlterarRecurso.service";
 import { authService } from "../../../services/auth.service";
+import { recursoSelecionadoStorageService, STORAGE_KEY_RECURSO_SELECIONADO_POR_UNIDADE } from "../../../services/storages/RecursoSelecionado.storage.service";
 
 jest.mock("../../../services/AlterarRecurso.service", () => ({
   getRecursos: jest.fn(),
@@ -17,7 +18,7 @@ jest.mock("../../../services/auth.service", () => ({
   },
 }));
 
-const STORAGE_KEY = "RECURSO_SELECIONADO";
+const RECURSO_EXIBIDO_NA_SESSAO = "RECURSO_EXIBIDO_NA_SESSAO";
 
 const recursoA = { uuid: "rec-a", nome: "Recurso A" };
 const recursoB = { uuid: "rec-b", nome: "Recurso B" };
@@ -42,14 +43,14 @@ beforeEach(() => {
 
 describe("useRecursoSelecionado - inicialização", () => {
   it("inicializa recursoSelecionado com o valor do localStorage", () => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(recursoA));
+    recursoSelecionadoStorageService.setRecursoSelecionado(recursoA);
     getRecursosPorUnidade.mockResolvedValue([recursoA, recursoB]);
 
     const { result } = renderHook(() =>
       useRecursoSelecionado({ visoesService: makeVisoesService() })
     );
 
-    expect(result.current.recursoSelecionado).toEqual(recursoA);
+    expect(result.current.recursoSelecionado).toEqual({...recursoA, ultimoAcesso: result.current.recursoSelecionado.ultimoAcesso});
   });
 
   it("inicializa recursoSelecionado como null quando localStorage está vazio", () => {
@@ -63,7 +64,7 @@ describe("useRecursoSelecionado - inicialização", () => {
   });
 
   it("inicializa recursoSelecionado como null quando localStorage contém JSON inválido", () => {
-    localStorage.setItem(STORAGE_KEY, "json-invalido{{{");
+    localStorage.setItem(STORAGE_KEY_RECURSO_SELECIONADO_POR_UNIDADE, "json-invalido{{{");
     getRecursosPorUnidade.mockResolvedValue([recursoA, recursoB]);
 
     const { result } = renderHook(() =>
@@ -184,12 +185,12 @@ describe("useRecursoSelecionado - auto-seleção com 1 recurso", () => {
       expect(result.current.recursoSelecionado).toEqual(recursoA);
     });
 
-    expect(localStorage.getItem(STORAGE_KEY)).toBe(JSON.stringify(recursoA));
+    expect(recursoSelecionadoStorageService.getRecursoSelecionado().uuid).toBe(recursoA.uuid);
     expect(authService.limparStorageAoTrocarRecurso).toHaveBeenCalledTimes(1);
   });
 
   it("seleciona o primeiro recurso quando o recurso salvo não está mais na lista", async () => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ uuid: "rec-removido", nome: "Removido" }));
+    recursoSelecionadoStorageService.setRecursoSelecionado({ uuid: "rec-removido", nome: "Removido" });
     getRecursosPorUnidade.mockResolvedValue([recursoA, recursoB]);
 
     const { result } = renderHook(() =>
@@ -200,7 +201,7 @@ describe("useRecursoSelecionado - auto-seleção com 1 recurso", () => {
       expect(result.current.recursoSelecionado).toEqual(recursoA);
     });
 
-    expect(localStorage.getItem(STORAGE_KEY)).toBe(JSON.stringify(recursoA));
+    expect(recursoSelecionadoStorageService.getRecursoSelecionado().uuid).toBe(recursoA.uuid);
     expect(authService.limparStorageAoTrocarRecurso).toHaveBeenCalledTimes(1);
   });
 
@@ -245,13 +246,13 @@ describe("useRecursoSelecionado - handleChangeRecurso", () => {
     });
 
     expect(result.current.recursoSelecionado).toEqual(recursoB);
-    expect(localStorage.getItem(STORAGE_KEY)).toBe(JSON.stringify(recursoB));
+    expect(recursoSelecionadoStorageService.getRecursoSelecionado().uuid).toBe(recursoB.uuid);
     expect(authService.limparStorageAoTrocarRecurso).toHaveBeenCalledTimes(1);
     expect(window.location.href).toBe("/");
   });
 
   it("remove recurso do localStorage e redireciona quando chamado com null", () => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(recursoA));
+    recursoSelecionadoStorageService.setRecursoSelecionado(recursoA);
     getRecursosPorUnidade.mockResolvedValue([recursoA, recursoB]);
 
     const { result } = renderHook(() =>
@@ -262,7 +263,7 @@ describe("useRecursoSelecionado - handleChangeRecurso", () => {
       result.current.handleChangeRecurso(null);
     });
 
-    expect(localStorage.getItem(STORAGE_KEY)).toBeNull();
+    expect(recursoSelecionadoStorageService.getRecursoSelecionado()).toBeNull();
     expect(authService.limparStorageAoTrocarRecurso).not.toHaveBeenCalled();
     expect(window.location.href).toBe("/");
   });
@@ -270,7 +271,7 @@ describe("useRecursoSelecionado - handleChangeRecurso", () => {
 
 describe("useRecursoSelecionado - clearRecurso", () => {
   it("limpa recursoSelecionado e remove do localStorage", () => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(recursoA));
+    recursoSelecionadoStorageService.setRecursoSelecionado(recursoA);
     getRecursosPorUnidade.mockResolvedValue([recursoA, recursoB]);
 
     const { result } = renderHook(() =>
@@ -282,7 +283,7 @@ describe("useRecursoSelecionado - clearRecurso", () => {
     });
 
     expect(result.current.recursoSelecionado).toBeNull();
-    expect(localStorage.getItem(STORAGE_KEY)).toBeNull();
+    expect(recursoSelecionadoStorageService.getRecursoSelecionado()).toBeNull();
   });
 
   it("não redireciona ao limpar recurso", () => {
@@ -352,7 +353,8 @@ describe("useRecursoSelecionado - mostrarOverlaySelecionarRecursos", () => {
   });
 
   it("é false quando recursoSelecionado está definido", async () => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(recursoA));
+    recursoSelecionadoStorageService.setRecursoSelecionado(recursoA);
+    localStorage.setItem(RECURSO_EXIBIDO_NA_SESSAO, JSON.stringify(true));
     getRecursosPorUnidade.mockResolvedValue([recursoA, recursoB]);
 
     const { result } = renderHook(() =>

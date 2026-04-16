@@ -96,13 +96,15 @@ export const GestaoDePerfis = () => {
                         <p key={index} className='mb-0'>
                         {unidade.acesso_de_suporte &&
                         <>
-                            <span data-html={true} data-tooltip-content='Acesso de suporte'>
+                            <span
+                                data-tooltip-id={`tooltip-id-${index}`}
+                                data-tooltip-html='Acesso de suporte'>
                                 <FontAwesomeIcon
                                     style={{marginLeft: "3px", marginRight: "3px", color: '#086397'}}
                                     icon={faKey}
                                 />
                             </span>
-                            <ReactTooltip html={true}/>
+                            <ReactTooltip id={`tooltip-id-${index}`}/>
                         </>
                         }
                         {unidade.tipo_unidade} {unidade.nome} </p>
@@ -121,13 +123,15 @@ export const GestaoDePerfis = () => {
             <div>
                 {unidadeLogada.acesso_de_suporte &&
                 <>
-                    <span data-html={true} data-tooltip-content='Acesso de suporte'>
+                    <span
+                        data-tooltip-id={`tooltip-id-${unidadeLogada?.uuid}`}
+                        data-tooltip-html='Acesso de suporte'>
                         <FontAwesomeIcon
                             style={{marginLeft: "3px", marginRight: "3px", color: '#086397'}}
                             icon={faKey}
                         />
                     </span>
-                    <ReactTooltip html={true}/>
+                    <ReactTooltip id={`tooltip-id-${unidadeLogada?.uuid}`}/>
                 </>
                 }
                 {rowData["name"]}
