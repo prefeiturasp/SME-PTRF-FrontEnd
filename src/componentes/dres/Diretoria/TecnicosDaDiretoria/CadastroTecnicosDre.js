@@ -224,7 +224,7 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
 
     const tableActionsTemplate = (rowData, column) => {
         return (
-            <div>
+            <div className="d-flex">
                 <EditIconButton
                     onClick={() => handleEditTecnicoAction(rowData)}
                 />
