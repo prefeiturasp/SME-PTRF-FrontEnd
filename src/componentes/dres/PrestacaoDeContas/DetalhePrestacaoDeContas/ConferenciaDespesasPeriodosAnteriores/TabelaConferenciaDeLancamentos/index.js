@@ -306,7 +306,7 @@ const TabelaConferenciaDeLancamentos = ({
         return (
             <div className="align-middle">
                 {editavel &&
-                    <Dropdown>
+                    <Dropdown className="text-center" >
                         <Dropdown.Toggle id="dropdown-basic" className="p-0">
                             <input
                                 checked={false}
@@ -316,6 +316,7 @@ const TabelaConferenciaDeLancamentos = ({
                                 name="checkHeader"
                                 id="checkHeader"
                                 disabled={!editavel}
+                                style={{cursor: editavel ? 'pointer' : ''}}
                             />
                         </Dropdown.Toggle>
 

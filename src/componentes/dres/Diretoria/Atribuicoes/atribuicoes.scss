@@ -1,7 +1,9 @@
 #dropdown-basic{
-    background: none;
+    background: none!important;
     color: black;
-    border: none;
+    border: none!important;
+    cursor: pointer!important;
+    text-align: center;
 }
 
 #dropdown-basic:hover {

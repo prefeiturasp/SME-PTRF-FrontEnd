@@ -208,7 +208,7 @@ export const UnidadesEmSuporte = () => {
                         selection={selectedUnidades} onSelectionChange={e => setSelectedUnidades(e.value)}
                         disabled
                     >
-                        <Column selectionMode="multiple" style={{width:'3em'}}/>
+                        <Column selectionMode="multiple" style={{textAlign: 'center', width: 50}} className="reactprime-multiple-fix-column"/>
                         <Column
                             field="codigo_eol"
                             header="Código Eol"

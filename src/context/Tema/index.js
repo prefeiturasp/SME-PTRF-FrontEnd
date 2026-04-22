@@ -68,6 +68,10 @@ export const ThemeProvider = ({ children }) => {
       },
       Select: {
         controlHeight: 38,
+          multipleItemBg: theme,
+          multipleItemBorderColor: theme,
+          multipleItemColor: '#fff',
+
       },
       DatePicker: {
         controlHeight: 38,
