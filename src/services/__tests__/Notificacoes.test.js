@@ -130,8 +130,9 @@ describe('Testes para funções de análise', () => {
         let page = '1'
         let data_inicio='2025-04-08'
         let data_fim='2025-04-08'
-        const result = await getNotificacoesFiltrosPaginacao(tipo, remetente, categoria, lido, data_inicio, data_fim, page);
-        const url = `/api/notificacoes/?${tipo ? 'tipo=' + tipo : ""}${remetente ? '&remetente='+remetente: ""}${categoria ? '&categoria='+categoria : ""}${lido ? '&lido='+lido : ""}${data_inicio ? '&data_inicio='+data_inicio : ""}${data_fim ? '&data_fim='+data_fim : ""}&page=${page}`
+        let recurso = 1
+        const result = await getNotificacoesFiltrosPaginacao(tipo, remetente, categoria, lido, data_inicio, data_fim, page, recurso);
+        const url = `/api/notificacoes/?${tipo ? 'tipo=' + tipo : ""}${remetente ? '&remetente='+remetente: ""}${categoria ? '&categoria='+categoria : ""}${lido ? '&lido='+lido : ""}${data_inicio ? '&data_inicio='+data_inicio : ""}${data_fim ? '&data_fim='+data_fim : ""}&recurso=${recurso}&page=${page}`
         expect(api.get).toHaveBeenCalledWith(url, authHeader())
         expect(result).toEqual(result);
     });
