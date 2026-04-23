@@ -7,6 +7,12 @@ const authHeader = ()=>({
     "Content-Type": "application/json",
   },
 });
+const authHeaderArquivos = ()=>({
+  headers: {
+    Authorization: `JWT ${localStorage.getItem(TOKEN_ALIAS)}`,
+    "Content-Type": "multipart/form-data",
+  },
+});
 
 // ***** Cargas Associacoes *****
 export const getTabelaArquivosDeCarga = async () => {
@@ -42,7 +48,7 @@ export const postCreateArquivoDeCarga = async (payload) => {
   if (payload.tipo_de_conta) {
     formData.append("tipo_de_conta", payload.tipo_de_conta);
   }
-  return (await api.post(`/api/arquivos/`, formData, authHeader())).data;
+  return (await api.post(`/api/arquivos/`, formData, authHeaderArquivos())).data;
 };
 export const patchAlterarArquivoDeCarga = async (
   uuid_arquivo_de_carga,
@@ -65,7 +71,7 @@ export const patchAlterarArquivoDeCarga = async (
     await api.patch(
       `/api/arquivos/${uuid_arquivo_de_carga}/`,
       formData,
-      authHeader()
+      authHeaderArquivos()
     )
   ).data;
 };

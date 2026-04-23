@@ -188,6 +188,14 @@ describe('Testes para funções de análise', () => {
             }
         };
     };
+    const authHeaderArquivos = () => {
+        return {
+            headers: {
+                'Authorization': `JWT ${mockToken}`,
+                'Content-Type': 'multipart/form-data'
+            }
+        };
+    };
 
     test('getTabelaArquivosDeCarga  deve chamar a API corretamente', async () => {
         api.get.mockResolvedValue({ data: mockData })
@@ -236,7 +244,7 @@ describe('Testes para funções de análise', () => {
         expect(api.post).toHaveBeenCalledWith(
             `/api/arquivos/`,
             formData,
-            authHeader()
+            authHeaderArquivos()
         )
         expect(result).toEqual(mockData);
     });
@@ -265,7 +273,7 @@ describe('Testes para funções de análise', () => {
         expect(api.patch).toHaveBeenCalledWith(
             `/api/arquivos/${uuid_arquivo_de_carga}/`,
             formData,
-            authHeader()
+            authHeaderArquivos()
         )
         expect(result).toEqual(mockData);
     });
