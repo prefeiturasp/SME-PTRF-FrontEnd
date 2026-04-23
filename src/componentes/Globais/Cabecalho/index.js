@@ -19,7 +19,7 @@ import { notificaDevolucaoPCStorageService } from "../../../services/storages/No
 
 export const Cabecalho = () => {
   const navigate = useNavigate();
-  const { isLoading, clearRecursoNaSessao } = useRecursoSelecionadoContext();
+  const { isLoading, clearRecursoNaSessao, recursoSelecionado } = useRecursoSelecionadoContext();
 
   const logout = async () => {
     clearRecursoNaSessao();
@@ -310,7 +310,12 @@ export const Cabecalho = () => {
               onVerAcertos={onVerAcertos}
               onVerAcertosDepois={onVerAcertosDepois}
               titulo="Atenção"
-              texto={`<p>A prestação de contas ${notificaDevolucaoPCStorageService.retornaNotificarDevolucaoUnidadeRecursoSelecionado()?.notificar_devolucao_referencia} foi devolvida para acertos pela DRE.</p>`}
+              texto={`
+                <p>
+                  A prestação de contas ${notificaDevolucaoPCStorageService.retornaNotificarDevolucaoUnidadeRecursoSelecionado()?.notificar_devolucao_referencia} foi devolvida para acertos pela DRE.<br/>
+                  <b>Recurso: ${recursoSelecionado?.nome_exibicao}</b>
+                </p>
+              `}
             />
           </section>
 
