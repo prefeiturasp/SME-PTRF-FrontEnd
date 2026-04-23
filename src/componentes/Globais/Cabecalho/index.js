@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./cabecalho.scss";
-import { authService, RECURSO_SELECIONADO, USUARIO_LOGIN } from "../../../services/auth.service";
+import { authService, USUARIO_LOGIN } from "../../../services/auth.service";
 import { visoesService } from "../../../services/visoes.service";
 import { NotificacaoContext } from "../../../context/Notificacoes";
 import { CentralDeDownloadContext } from "../../../context/CentralDeDownloads";
@@ -15,6 +15,7 @@ import { mantemEstadoAnaliseDre as meapcservice } from "../../../services/mantem
 import { useRecursoSelecionadoContext } from "../../../context/RecursoSelecionado";
 import { Skeleton } from "antd";
 import { LogoSigEscola } from "../LogoSigEscola";
+import { notificaDevolucaoPCStorageService } from "../../../services/storages/NotificarDevolucao.storage.service";
 
 export const Cabecalho = () => {
   const navigate = useNavigate();
@@ -58,9 +59,7 @@ export const Cabecalho = () => {
       obj.nome_associacao,
       obj.unidade_tipo,
       obj.unidade_nome,
-      obj.notificar_devolucao_referencia,
-      obj.notificar_devolucao_pc_uuid,
-      obj.notificacao_uuid,
+      obj.notificar_devolucao_por_recurso
     );
     meapcservice.limpaAnaliseDreUsuarioLogado(visoesService.getUsuarioLogin());
   };
@@ -72,9 +71,7 @@ export const Cabecalho = () => {
     nome_associacao,
     unidade_tipo,
     unidade_nome,
-    notificar_devolucao_referencia,
-    notificar_devolucao_pc_uuid,
-    notificacao_uuid,
+    notificar_devolucao_por_recurso
   ) => {
     let visao_convertida = visoesService.converteNomeVisao(visao);
     let obj;
@@ -86,9 +83,7 @@ export const Cabecalho = () => {
         nome_associacao: nome_associacao,
         unidade_tipo: unidade_tipo,
         unidade_nome: unidade_nome,
-        notificar_devolucao_referencia: null,
-        notificar_devolucao_pc_uuid: null,
-        notificacao_uuid: null,
+        notificar_devolucao_por_recurso: null
       });
     } else {
       obj = JSON.stringify({
@@ -98,9 +93,7 @@ export const Cabecalho = () => {
         nome_associacao: nome_associacao,
         unidade_tipo: unidade_tipo,
         unidade_nome: unidade_nome,
-        notificar_devolucao_referencia: notificar_devolucao_referencia,
-        notificar_devolucao_pc_uuid: notificar_devolucao_pc_uuid,
-        notificacao_uuid: notificacao_uuid,
+        notificar_devolucao_por_recurso: notificar_devolucao_por_recurso
       });
     }
     return obj;
@@ -180,9 +173,7 @@ export const Cabecalho = () => {
                           dados_usuario_logado.associacao_selecionada.nome,
                           dados_usuario_logado.unidade_selecionada.tipo_unidade,
                           dados_usuario_logado.unidade_selecionada.nome,
-                          dados_usuario_logado.unidade_selecionada.notificar_devolucao_referencia,
-                          dados_usuario_logado.unidade_selecionada.notificar_devolucao_pc_uuid,
-                          dados_usuario_logado.unidade_selecionada.notificacao_uuid,
+                          dados_usuario_logado.unidade_selecionada.notificar_devolucao_por_recurso
                         )}
                         onChange={(e) => {
                           onChangeVisao(e);
@@ -203,9 +194,7 @@ export const Cabecalho = () => {
                                 : unidade.associacao.nome,
                               unidade.tipo_unidade,
                               unidade.nome,
-                              unidade.notificar_devolucao_referencia,
-                              unidade.notificar_devolucao_pc_uuid,
-                              unidade.notificacao_uuid,
+                              unidade.notificar_devolucao_por_recurso
                             )}
                           >
                             {unidade.tipo_unidade} - {unidade.nome}
@@ -321,7 +310,7 @@ export const Cabecalho = () => {
               onVerAcertos={onVerAcertos}
               onVerAcertosDepois={onVerAcertosDepois}
               titulo="Atenção"
-              texto={`<p>A prestação de contas ${dados_usuario_logado.unidade_selecionada.notificar_devolucao_referencia} foi devolvida para acertos pela DRE.</p>`}
+              texto={`<p>A prestação de contas ${notificaDevolucaoPCStorageService.retornaNotificarDevolucaoUnidadeRecursoSelecionado()?.notificar_devolucao_referencia} foi devolvida para acertos pela DRE.</p>`}
             />
           </section>
 

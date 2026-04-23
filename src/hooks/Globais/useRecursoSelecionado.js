@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { getRecursos, getRecursosPorUnidade } from "../../services/AlterarRecurso.service";
 import { authService } from "../../services/auth.service";
 import { recursoSelecionadoStorageService } from "../../services/storages/RecursoSelecionado.storage.service";
+import { notificaDevolucaoPCStorageService } from "../../services/storages/NotificarDevolucao.storage.service";
 
 /**
  * Hook para gerenciar recurso selecionado com persistência em localStorage
@@ -71,6 +72,7 @@ const useRecursoSelecionado = ({ visoesService }) => {
         // Onde foi possível guardar informações do último período/conta na tela por recurso
         // Ver services/storages/Conciliacao.storage.service
         authService.limparStorageAoTrocarRecurso();
+        notificaDevolucaoPCStorageService.atualizaNotificarDevolucaoLocalStorage(recursoSelecionadoObj.uuid, dadosUsuarioLogado.unidade_selecionada.notificar_devolucao_por_recurso);
       } else {
         recursoSelecionadoStorageService.removeRecursoSelecionado();
         localStorage.removeItem(RECURSO_EXIBIDO_NA_SESSAO);
