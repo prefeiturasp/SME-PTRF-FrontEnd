@@ -11,16 +11,18 @@ import { BarraMensagemFixaRecurso } from "../componentes/Globais/BarraMensagemFi
 import { BarraMensagemFixaProvider } from "../componentes/Globais/BarraMensagemFixa/context/BarraMensagemFixaProvider";
 import { FEATURE_FLAGS } from '../constantes/featureFlags';
 import { useRecursoSelecionadoContext } from "../context/RecursoSelecionado";
+import { notificaDevolucaoPCStorageService } from "../services/storages/NotificarDevolucao.storage.service";
 
 export const PaginasContainer = ({children}) => {
     const navigate = useNavigate();
     const sidebarStatus = useContext(SidebarContext);
     const notificacaoContext = useContext(NotificacaoContext);
     const { recursoSelecionado } = useRecursoSelecionadoContext();
+    const notificaDevolucao = notificaDevolucaoPCStorageService.retornaNotificarDevolucaoUnidadeRecursoSelecionado();
 
     const mensagem = (
         <span>
-            A prestação de contas {localStorage.getItem("NOTIFICAR_DEVOLUCAO_REFERENCIA")} foi devolvida para acertos pela DRE. <br/>
+            A prestação de contas {notificaDevolucao?.notificar_devolucao_referencia} foi devolvida para acertos pela DRE. <br/>
             <b>Recurso: {recursoSelecionado?.nome_exibicao}</b>
         </span>
     )
