@@ -16,13 +16,19 @@ export const PaginasContainer = ({children}) => {
     const navigate = useNavigate();
     const sidebarStatus = useContext(SidebarContext);
     const notificacaoContext = useContext(NotificacaoContext);
-    const mensagem = `A prestação de contas ${localStorage.getItem("NOTIFICAR_DEVOLUCAO_REFERENCIA")} foi devolvida para acertos pela DRE.`
+    const { recursoSelecionado } = useRecursoSelecionadoContext();
+
+    const mensagem = (
+        <span>
+            A prestação de contas {localStorage.getItem("NOTIFICAR_DEVOLUCAO_REFERENCIA")} foi devolvida para acertos pela DRE. <br/>
+            <b>Recurso: {recursoSelecionado?.nome_exibicao}</b>
+        </span>
+    )
     const onVerAcertos = () => {
         notificacaoContext.setExibeMensagemFixaTemDevolucao(false)
         notificaDevolucaoPCService.marcaNotificacaoComoLidaERedirecianaParaVerAcertos(navigate)
     };
 
-    const { recursoSelecionado } = useRecursoSelecionadoContext();
     const location = useLocation();
 
     // Caminhos em que a barra de recurso pode ser exibida

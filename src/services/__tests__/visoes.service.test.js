@@ -3,6 +3,7 @@ import { authService } from '../auth.service';
 import { redirect } from '../../utils/redirect';
 import moment from 'moment';
 import { STORAGE_KEY_PERIODO_CONTA_GERACAO_DOCUMENTOS } from '../storages/GeracaoDeDocumentos.storage.service';
+import { recursoSelecionadoStorageService } from '../storages/RecursoSelecionado.storage.service';
 
 const localStorageMock = (() => {
   let store = {};
@@ -117,8 +118,17 @@ const testUser = 'testuser123';
 const mockNow = '2023-10-27T12:00:00.000Z';
 const mockNowFormatted = '2023-10-27 12:00:00';
 
-describe('Visoes Service', () => {
+const recursoA = { uuid: 'recurso-a', nome: 'Recurso A' };
+        
+const mockNotificarDevolucaoPorRecurso = {
+    [`recurso_${recursoA.uuid}`]: {
+        notificar_devolucao_referencia: 'REF02',
+        notificar_devolucao_pc_uuid: 'PC02',
+        notificacao_uuid: 'NOTIF02',
+    }
+};
 
+describe('Visoes Service', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     localStorageMock.clear();
@@ -543,20 +553,21 @@ describe('Visoes Service', () => {
         const baseUserData = {
             usuario_logado: { login: testUser, nome: 'Test' },
             visoes: ['UE', 'DRE'],
-            unidades: [{ uuid: 'ue1', nome: 'UE 1', tipo_unidade: 'CEI' }, { uuid: 'dre1', nome: 'DRE 1', tipo_unidade: 'DRE' }],
+            unidades: [{ uuid: 'ue1', nome: 'UE 1', tipo_unidade: 'CEI', notificar_devolucao_por_recurso: {} }, { uuid: 'dre1', nome: 'DRE 1', tipo_unidade: 'DRE', notificar_devolucao_por_recurso: mockNotificarDevolucaoPorRecurso }],
             visao_selecionada: { nome: 'UE' },
-            unidade_selecionada: { uuid: 'ue1', tipo_unidade: 'CEI', nome: 'UE 1' },
+            unidade_selecionada: { uuid: 'ue1', tipo_unidade: 'CEI', nome: 'UE 1', notificar_devolucao_por_recurso: {} },
             associacao_selecionada: { uuid: 'assoc1', nome: 'Assoc 1' },
             permissoes: [], feature_flags: []
         };
 
         beforeEach(() => {
             setUserData(DADOS_USUARIO_LOGADO, baseUserData);
+            recursoSelecionadoStorageService.setRecursoSelecionado(recursoA);
             localStorageMock.setItem(ACESSO_MODO_SUPORTE, "false"); 
         });
 
         it('Deve atualizar DADOS_USUARIO_LOGADO com a nova seleção', () => {
-            visoesService.alternaVisoes('DRE', 'dre1', 'dre1', 'DRE 1', 'DRE', 'DRE 1', null, null, null);
+            visoesService.alternaVisoes('DRE', 'dre1', 'dre1', 'DRE 1', 'DRE', 'DRE 1', null);
             const updatedData = visoesService.getDadosDoUsuarioLogado();
             expect(updatedData.visao_selecionada.nome).toBe('DRE');
             expect(updatedData.unidade_selecionada.uuid).toBe('dre1');
@@ -564,16 +575,21 @@ describe('Visoes Service', () => {
             expect(updatedData.unidade_selecionada.nome).toBe('DRE 1');
             expect(updatedData.associacao_selecionada.uuid).toBe('dre1');
             expect(updatedData.associacao_selecionada.nome).toBe('DRE 1');
-            expect(updatedData.unidade_selecionada.notificar_devolucao_referencia).toBeNull();
+            expect(updatedData.unidade_selecionada.notificar_devolucao_por_recurso).toBeNull();
         });
 
         it('Deve atualizar itens específicos do localStorage', () => {
-            visoesService.alternaVisoes('DRE', 'dre1', 'dre1', 'DRE 1', 'DRE', 'DRE 1', 'REF02', 'PC02', 'NOTIF02');
-            expect(localStorageMock.getItem(ASSOCIACAO_UUID)).toBe('dre1');
-            expect(localStorageMock.getItem(ASSOCIACAO_NOME)).toBe('DRE 1');
-            expect(localStorageMock.getItem(ASSOCIACAO_TIPO_ESCOLA)).toBe('DRE');
-            expect(localStorageMock.getItem(ASSOCIACAO_NOME_ESCOLA)).toBe('DRE 1');
+            visoesService.alternaVisoes('UE', 'ue1', 'ue1', 'UE 1', 'CEI', 'UE 1', mockNotificarDevolucaoPorRecurso);
+            expect(localStorageMock.getItem(ASSOCIACAO_UUID)).toBe('ue1');
+            expect(localStorageMock.getItem(ASSOCIACAO_NOME)).toBe('UE 1');
+            expect(localStorageMock.getItem(ASSOCIACAO_TIPO_ESCOLA)).toBe('CEI');
+            expect(localStorageMock.getItem(ASSOCIACAO_NOME_ESCOLA)).toBe('UE 1');
             expect(localStorageMock.getItem("NOTIFICAR_DEVOLUCAO_REFERENCIA")).toBe('REF02');
+        });
+
+        it('Não deve setar a variável NOTIFICAR_DEVOLUCAO_REFERENCIA ao mudar para uma visão que não tem notificação por recurso', () => {
+            visoesService.alternaVisoes('DRE', 'dre1', 'dre1', 'DRE 1', 'DRE', 'DRE 1', mockNotificarDevolucaoPorRecurso);
+            expect(localStorageMock.getItem("NOTIFICAR_DEVOLUCAO_REFERENCIA")).toBeNull();
         });
 
         it('Deve remover itens específicos do localStorage', () => {
@@ -661,7 +677,7 @@ describe('Visoes Service', () => {
             expect(updatedData.unidade_selecionada.nome).toBe('New UE');
             expect(updatedData.associacao_selecionada.uuid).toBe('new-assoc');
             expect(updatedData.associacao_selecionada.nome).toBe('New Assoc');
-            expect(updatedData.unidade_selecionada.notificar_devolucao_referencia).toBeNull();
+            expect(updatedData.unidade_selecionada.notificar_devolucao_por_recurso).toEqual({});
         });
 
         it('Deve atualizar DADOS_USUARIO_LOGADO para a seleção de DRE (a associação usa dados da unidade)', () => {
@@ -807,9 +823,7 @@ describe('setDadosPrimeiroAcesso', () => {
                     uuid: 'assoc-uuid',
                     nome: 'APM Teste'
                 },
-                notificar_devolucao_referencia: 'REF01',
-                notificar_devolucao_pc_uuid: 'PCUUID01',
-                notificacao_uuid: 'NOTIFUUID01'
+                notificar_devolucao_por_recurso: mockNotificarDevolucaoPorRecurso
             }
         ],
         permissoes: [], feature_flags: []
@@ -824,7 +838,7 @@ describe('setDadosPrimeiroAcesso', () => {
         const existingUserData = {
             ...visoesService.getDadosDoUsuarioLogado(),
             visao_selecionada: { nome: 'UE' },
-            unidade_selecionada: {"uuid":"ue-uuid","tipo_unidade":"CEI","nome":"Escola Teste","notificar_devolucao_referencia":"REF01","notificar_devolucao_pc_uuid":"PCUUID01","notificacao_uuid":"NOTIFUUID01"},
+            unidade_selecionada: {"uuid":"ue-uuid","tipo_unidade":"CEI","nome":"Escola Teste","notificar_devolucao_por_recurso":mockNotificarDevolucaoPorRecurso},
             associacao_selecionada: { uuid: 'assoc-uuid', nome: 'APM Teste' },
             unidades: respUE.unidades
         };
