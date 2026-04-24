@@ -1,29 +1,13 @@
-import {visoesService} from "./visoes.service";
 import {setNotificacaoMarcarDesmarcarLida} from "./Notificacoes.service";
 import {getPeriodoPorReferencia} from "./sme/Parametrizacoes.service";
+import { notificaDevolucaoPCStorageService } from "./storages/NotificarDevolucao.storage.service";
 
 const marcaNotificacaoComoLida = async () => {
-        let dados_usuario_logado = visoesService.getDadosDoUsuarioLogado();
+        const notificar_devolucao = notificaDevolucaoPCStorageService.retornaNotificarDevolucaoUnidadeRecursoSelecionado();
 
-        let notificacaoUuid = dados_usuario_logado.unidade_selecionada.notificacao_uuid;
+        let notificacaoUuid = notificar_devolucao?.notificacao_uuid;
 
-        let unidades_updated = []
-        dados_usuario_logado.unidades.forEach(unidade => {
-            if (unidade.uuid === dados_usuario_logado.unidade_selecionada.uuid) {
-                unidade.notificar_devolucao_referencia = null
-                unidade.notificar_devolucao_pc_uuid = null
-                unidade.notificacao_uuid = null
-            }
-            unidades_updated.push(unidade)
-        })
-        dados_usuario_logado.unidades = unidades_updated
-
-        dados_usuario_logado.unidade_selecionada.notificar_devolucao_referencia = null
-        dados_usuario_logado.unidade_selecionada.notificar_devolucao_pc_uuid = null
-        dados_usuario_logado.unidade_selecionada.notificacao_uuid = null
-
-        visoesService.setDadosDoUsuarioLogado(dados_usuario_logado)
-        localStorage.removeItem("NOTIFICAR_DEVOLUCAO_REFERENCIA")
+        notificaDevolucaoPCStorageService.removerNotificacaoPorRecursoLidaLocalStorage();
 
         await setNotificacaoMarcarDesmarcarLida({
             uuid: notificacaoUuid,
@@ -50,9 +34,9 @@ const redirectVerAcertos = (navigate, periodoReferencia, pcUuid) => {
 };
 
 const marcaNotificacaoComoLidaERedirecianaParaVerAcertos = (navigate) => {
-    let dados_usuario_logado = visoesService.getDadosDoUsuarioLogado();
-    let periodoReferencia = dados_usuario_logado.unidade_selecionada.notificar_devolucao_referencia
-    let pcUuid = dados_usuario_logado.unidade_selecionada.notificar_devolucao_pc_uuid
+    const notificar_devolucao = notificaDevolucaoPCStorageService.retornaNotificarDevolucaoUnidadeRecursoSelecionado();
+    let periodoReferencia = notificar_devolucao?.notificar_devolucao_referencia;
+    let pcUuid = notificar_devolucao?.notificar_devolucao_pc_uuid;
     marcaNotificacaoComoLida();
     redirectVerAcertos(navigate, periodoReferencia, pcUuid);
 }

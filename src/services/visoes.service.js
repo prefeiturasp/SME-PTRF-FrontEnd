@@ -13,6 +13,8 @@ import {ACOMPANHAMENTO_DE_PC} from "./mantemEstadoAcompanhamentoDePc.service";
 import { ANALISE_DRE } from './mantemEstadoAnaliseDre.service';
 import { ACOMPANHAMENTO_PC_UNIDADE } from "./mantemEstadoAcompanhamentoDePcUnidadeEducacional.service";
 import { STORAGE_KEY_PERIODO_CONTA_GERACAO_DOCUMENTOS } from "./storages/GeracaoDeDocumentos.storage.service";
+import { recursoSelecionadoStorageService } from "./storages/RecursoSelecionado.storage.service";
+import { notificaDevolucaoPCStorageService } from "./storages/NotificarDevolucao.storage.service";
 
 export const DADOS_USUARIO_LOGADO = "DADOS_USUARIO_LOGADO";
 export const DADOS_USUARIO_LOGADO_NORMAL = "DADOS_USUARIO_LOGADO_NORMAL";
@@ -142,7 +144,7 @@ const salva_dados_ultimo_acesso = (
 const setDadosPrimeiroAcesso = async (resp, suporte) =>{
     
     // Dados visão acesso atual
-    let visao, uuid_unidade, uuid_associacao, nome_associacao, unidade_tipo, unidade_nome, notificar_devolucao_referencia, notificar_devolucao_pc_uuid, notificacao_uuid;
+    let visao, uuid_unidade, uuid_associacao, nome_associacao, unidade_tipo, unidade_nome, notificar_devolucao_por_recurso;
 
     // Dados visão de acesso normal
     let visao_acesso_normal, uuid_unidade_normal, uuid_associacao_normal, nome_associacao_normal, unidade_tipo_normal, unidade_nome_normal;
@@ -167,13 +169,9 @@ const setDadosPrimeiroAcesso = async (resp, suporte) =>{
         // Atualiza as variáveis de informação sobre devolução de PC com as informações da lista de unidades.
         let unidade_update = resp.unidades.find(unidade => unidade.uuid === uuid_unidade);
         if (unidade_update) {
-            notificar_devolucao_referencia = unidade_update.notificar_devolucao_referencia;
-            notificar_devolucao_pc_uuid = unidade_update.notificar_devolucao_pc_uuid;
-            notificacao_uuid = unidade_update.notificacao_uuid;
+            notificar_devolucao_por_recurso = unidade_update.notificar_devolucao_por_recurso;
         } else {
-            notificar_devolucao_referencia = usuario_logado.unidade_selecionada.notificar_devolucao_referencia;
-            notificar_devolucao_pc_uuid = usuario_logado.unidade_selecionada.notificar_devolucao_pc_uuid;
-            notificacao_uuid = usuario_logado.unidade_selecionada.notificacao_uuid;
+            notificar_devolucao_por_recurso = usuario_logado.unidade_selecionada.notificar_devolucao_por_recurso;
         }
 
         if (suporte) {
@@ -205,9 +203,7 @@ const setDadosPrimeiroAcesso = async (resp, suporte) =>{
             uuid_unidade = unidade.uuid;
             uuid_associacao = unidade.uuid;
             nome_associacao = unidade.nome;
-            notificar_devolucao_referencia = null;
-            notificar_devolucao_pc_uuid = null;
-            notificacao_uuid = null;
+            notificar_devolucao_por_recurso = {}
 
             uuid_unidade_normal = uuid_unidade;
             uuid_associacao_normal = uuid_associacao;
@@ -223,9 +219,7 @@ const setDadosPrimeiroAcesso = async (resp, suporte) =>{
             uuid_unidade = unidade.uuid;
             uuid_associacao = unidade.uuid;
             nome_associacao = unidade.nome;
-            notificar_devolucao_referencia = null;
-            notificar_devolucao_pc_uuid = null;
-            notificacao_uuid = null;
+            notificar_devolucao_por_recurso = {}
 
             if (suporte) {
                 uuid_unidade_normal = dados_acesso_normal ? dados_acesso_normal.unidade_selecionada.uuid : "";
@@ -251,9 +245,7 @@ const setDadosPrimeiroAcesso = async (resp, suporte) =>{
             uuid_unidade = unidade.uuid;
             uuid_associacao = unidade.associacao.uuid;
             nome_associacao = unidade.associacao.nome;
-            notificar_devolucao_referencia = unidade.notificar_devolucao_referencia;
-            notificar_devolucao_pc_uuid = unidade.notificar_devolucao_pc_uuid;
-            notificacao_uuid = unidade.notificacao_uuid;
+            notificar_devolucao_por_recurso = unidade.notificar_devolucao_por_recurso;
 
             if (suporte) {
                 uuid_unidade_normal = dados_acesso_normal ? dados_acesso_normal.unidade_selecionada.uuid : "";
@@ -361,14 +353,11 @@ const setDadosPrimeiroAcesso = async (resp, suporte) =>{
         unidade_tipo, unidade_tipo_normal, unidade_tipo_suporte, 
         unidade_nome, unidade_nome_normal, unidade_nome_suporte, 
         uuid_associacao, uuid_associacao_normal, uuid_associacao_suporte, 
-        nome_associacao, nome_associacao_normal, nome_associacao_suporte, 
-        notificar_devolucao_referencia, 
-        notificar_devolucao_pc_uuid, 
-        notificacao_uuid, 
+        nome_associacao, nome_associacao_normal, nome_associacao_suporte,
         atualizar_dados_alternancia_unidade: false
     })
     
-    alternaVisoes(visao, uuid_unidade, uuid_associacao, nome_associacao, unidade_tipo, unidade_nome, notificar_devolucao_referencia, notificar_devolucao_pc_uuid, notificacao_uuid)
+    alternaVisoes(visao, uuid_unidade, uuid_associacao, nome_associacao, unidade_tipo, unidade_nome, notificar_devolucao_por_recurso)
 };
 
 const getPermissoes = (permissao) =>{
@@ -440,10 +429,7 @@ const setDadosUsuariosLogados = async (resp, suporte) => {
                 uuid: unidade_selecionada_uuid,
                 tipo_unidade: unidade_selecionada_tipo_unidade,
                 nome: unidade_selecionada_nome,
-                notificar_devolucao_referencia: usuario_logado ? usuario_logado.unidade_selecionada.notificar_devolucao_referencia : "",
-                notificar_devolucao_pc_uuid: usuario_logado ? usuario_logado.unidade_selecionada.notificar_devolucao_pc_uuid : "",
-                notificacao_uuid: usuario_logado ? usuario_logado.unidade_selecionada.notificacao_uuid : "",
-
+                notificar_devolucao_por_recurso: usuario_logado ? usuario_logado.unidade_selecionada.notificar_devolucao_por_recurso : {}
             },
 
             associacao_selecionada: {
@@ -468,12 +454,14 @@ const converteNomeVisao = (visao) => {
     }
 };
 
-const alternaVisoes = (visao, uuid_unidade, uuid_associacao, nome_associacao, unidade_tipo, unidade_nome, notificar_devolucao_referencia, notificar_devolucao_pc_uuid, notificacao_uuid) => {
+const alternaVisoes = (visao, uuid_unidade, uuid_associacao, nome_associacao, unidade_tipo, unidade_nome, notificar_devolucao_por_recurso) => {
 
     let todos_os_dados_usuario_logado = localStorage.getItem(DADOS_USUARIO_LOGADO) ? JSON.parse(localStorage.getItem(DADOS_USUARIO_LOGADO)) : null;
     let dados_usuario_logado = getDadosDoUsuarioLogado();
 
     if (dados_usuario_logado) {
+        const recursoSelecionado = recursoSelecionadoStorageService.getRecursoSelecionadoWithParameters(uuid_unidade, dados_usuario_logado.usuario_logado.login);
+
         let alternar_visao = {
             ...todos_os_dados_usuario_logado,
             [`usuario_${getUsuarioLogin()}`]: {
@@ -485,9 +473,7 @@ const alternaVisoes = (visao, uuid_unidade, uuid_associacao, nome_associacao, un
                     uuid: uuid_unidade,
                     tipo_unidade:unidade_tipo,
                     nome:unidade_nome,
-                    notificar_devolucao_referencia:notificar_devolucao_referencia,
-                    notificar_devolucao_pc_uuid:notificar_devolucao_pc_uuid,
-                    notificacao_uuid: notificacao_uuid,
+                    notificar_devolucao_por_recurso:notificar_devolucao_por_recurso
                 },
 
                 associacao_selecionada: {
@@ -504,9 +490,6 @@ const alternaVisoes = (visao, uuid_unidade, uuid_associacao, nome_associacao, un
             unidade_nome,
             uuid_associacao,
             nome_associacao,
-            notificar_devolucao_referencia, 
-            notificar_devolucao_pc_uuid, 
-            notificacao_uuid, 
             atualizar_dados_alternancia_unidade: true
         })
         
@@ -530,7 +513,7 @@ const alternaVisoes = (visao, uuid_unidade, uuid_associacao, nome_associacao, un
         localStorage.removeItem('PAA');
         localStorage.removeItem('DADOS_PAA');
 
-        localStorage.setItem("NOTIFICAR_DEVOLUCAO_REFERENCIA", notificar_devolucao_referencia)
+        notificaDevolucaoPCStorageService.atualizaNotificarDevolucaoLocalStorage(recursoSelecionado?.uuid, notificar_devolucao_por_recurso);
 
         redirectVisao(visao)
     }
@@ -553,9 +536,7 @@ export const setarUnidadeProximoLoginAcessoSuporte = (visao, uuid_unidade, uuid_
                     uuid: uuid_unidade,
                     tipo_unidade:unidade_tipo,
                     nome:unidade_nome,
-                    notificar_devolucao_referencia:null,
-                    notificar_devolucao_pc_uuid:null,
-                    notificacao_uuid: null,
+                    notificar_devolucao_por_recurso: {}
                 },
 
                 associacao_selecionada: {
