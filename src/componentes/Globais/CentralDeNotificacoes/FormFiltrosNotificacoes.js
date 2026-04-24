@@ -1,7 +1,28 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {DatePickerField} from "../DatePickerField";
+import { getRecursos } from "../../../services/AlterarRecurso.service";
 
 export const FormFiltrosNotificacoes = ({tabelaNotificacoes, stateFormFiltros, handleChangeFormFiltros, handleSubmitFormFiltros, limpaFormulario}) => {
+
+    const [recursos, setRecursos] = useState([]);
+
+    useEffect(() => {
+        const fetchRecursos = async () => {
+            try {
+                const recursosData = await getRecursos();
+                
+                // Verifica se recursosData.results existe, senão usa recursosData diretamente
+                const data = Array.isArray(recursosData) ? recursosData : (recursosData?.results || []);
+                setRecursos(data);
+            }
+            catch (error) {
+                console.error("Erro ao buscar recursos:", error);
+                setRecursos([]);
+            }
+        }
+        fetchRecursos();
+    }, [])
+
     return (
         <>
             {tabelaNotificacoes &&
@@ -79,21 +100,37 @@ export const FormFiltrosNotificacoes = ({tabelaNotificacoes, stateFormFiltros, h
                                 </div>
 
                             </div>
-                            <div className="d-flex justify-content-end mt-3">
-                                <button
-                                    onClick={(e) => {
-                                        limpaFormulario()
-                                    }
-                                    }
-                                    className="btn btn-outline-success mr-2"
-                                    type="reset"
-                                >
-                                    Limpar Filtros
-                                </button>
-                                <button className="btn btn-success">Filtrar</button>
-                            </div>
                         </div>
 
+                        <div className="col-12 col-md-6">
+                            <label htmlFor="recurso">Por recurso</label>
+                            <select
+                                value={stateFormFiltros.recurso}
+                                onChange={(e) => handleChangeFormFiltros(e.target.name, e.target.value)}
+                                name="recurso"
+                                id="recurso"
+                                className="form-control"
+                            >
+                                <option value="">Selecione o recurso</option>
+                                { recursos && recursos.length > 0 && recursos.map((recurso, index) =>
+                                    <option key={index} value={recurso.uuid}>{recurso.nome_exibicao}</option>
+                                )}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div className="d-flex justify-content-end mt-3 w-100">
+                        <button
+                            onClick={(e) => {
+                                limpaFormulario()
+                            }
+                            }
+                            className="btn btn-outline-success mr-2"
+                            type="reset"
+                        >
+                            Limpar Filtros
+                        </button>
+                        <button className="btn btn-success">Filtrar</button>
                     </div>
                 </form>
             </div>

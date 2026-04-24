@@ -30,7 +30,16 @@ export const CardNotificacoes = ({notificacoes, toggleBtnNotificacoes, clickBtnN
                                                 </div>
                                                 <div className="col-md-8 ">
                                                     <p className="mb-0 titulo-notificacao">{info.titulo}</p>
-                                                    <p className="mb-0"><span className="remetente-categoria"><FontAwesomeIcon style={{marginRight: "3px", color: '#7D7D7D'}} icon={faUser}/>Remetente: {info.remetente}</span> | <span className="remetente-categoria">Categoria: {info.categoria}</span></p>
+                                                    <p className="mb-0">
+                                                        <span className="remetente-categoria">
+                                                            <FontAwesomeIcon style={{marginRight: "3px", color: '#7D7D7D'}} icon={faUser}/>
+                                                            Remetente: {info.remetente}
+                                                        </span> 
+                                                        { info.recurso && <span className="remetente-categoria"> | Recurso: {info.recurso}</span> } |&nbsp;
+                                                        <span className="remetente-categoria">
+                                                            Categoria: {info.categoria}
+                                                        </span>
+                                                    </p>
                                                 </div>
                                             </div>
                                         </div>
