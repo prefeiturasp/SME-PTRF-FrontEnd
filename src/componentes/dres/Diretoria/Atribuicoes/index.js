@@ -96,7 +96,6 @@ export const Atribuicoes = () => {
                     filtrosUnidadesParaAtribuir(response.dre, response.periodo, 
                         estadoFiltros.filtar_por_tipo_unidade, estadoFiltros.filtrar_por_termo, 
                         estadoFiltros.filtrar_por_rf, tecnico_uuid).then(resultado_filtros => {
-                            console.log(resultado_filtros);
                             let unis = resultado_filtros.map(obj => {
                                 return {
                                     ...obj,
@@ -110,9 +109,10 @@ export const Atribuicoes = () => {
                 }
                 carregaTecnicos(response.dre);
             }
-        );
+        ).finally(() => {
+            setLoading(false);
+        });
         buscaTabelaAssociacoes();
-        setLoading(false);
     }, []);
 
     const buscaDadosDiretoriaEPeriodos = async () => {
