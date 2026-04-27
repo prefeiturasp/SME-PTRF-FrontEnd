@@ -3,6 +3,8 @@ import { useDispatch } from "react-redux";
 import { postReceitasPrevistasPaa } from "../../../../../../services/escolas/Paa.service";
 import { toastCustom } from "../../../../../Globais/ToastCustom";
 import { useMutationConfirmavel } from "../../../../../../hooks/Globais/useMutationConfirmavel";
+import { getErrorMessage } from "../../../../../../utils/obtemMsgErroAxios";
+
 
 export const usePostReceitasPrevistasPaa = (onClose) => {
   const queryClient = useQueryClient();
@@ -22,8 +24,9 @@ export const usePostReceitasPrevistasPaa = (onClose) => {
         queryClient.invalidateQueries({ queryKey: ["receitas-previstas-paa"]});
         onClose && onClose();
       },
-      onError: () => {
-        toastCustom.ToastCustomError("Houve um erro ao criar recurso.");
+      onError: (err) => {
+          const mensagemErro = getErrorMessage(err, "Houve um erro ao criar recurso.");
+          toastCustom.ToastCustomError(mensagemErro);
       },
     },
   });
