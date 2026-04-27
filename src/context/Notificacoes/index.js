@@ -42,7 +42,7 @@ export const NotificacaoContextProvider = ({children}) => {
 
         let storage = notificaDevolucao?.notificar_devolucao_referencia;
 
-        if(storage === null || storage === "null"){
+        if(!storage || storage === null || storage === "null"){
             return false;
         }
         else {
