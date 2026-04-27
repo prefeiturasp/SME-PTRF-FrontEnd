@@ -133,6 +133,7 @@ export const UnidadesEmSuporte = () => {
         return (
             <Tooltip title="Encerrar suporte">
                 <Button type="text" className='link-red'
+                    aria-label="Remover Suporte"
                     onClick={() => handleConfirmarRemoverSuporte(rowData)}
                     disabled={selectedUnidades.length > 0}
                     icon={
