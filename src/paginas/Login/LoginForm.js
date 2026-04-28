@@ -1,7 +1,6 @@
 import React, {useRef, useState, useEffect} from "react";
 import {Formik} from "formik";
 import ReCAPTCHA from "react-google-recaptcha";
-import { visoesService } from "../../services/visoes.service";
 import {YupSignupSchemaLogin} from "../../utils/ValidacoesAdicionaisFormularios";
 import { authService } from "../../services/auth.service";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
@@ -10,7 +9,11 @@ import Loading from "../../utils/Loading";
 import { getFeatureFlags } from "../../services/Core.service";
 import { TooltipWrapper } from "../../componentes/Globais/UI/Tooltip";
 
-const RECAPTCHA_SITE_KEY = process.env.REACT_APP_RECAPTCHA_SITE_KEY;
+let RECAPTCHA_SITE_KEY = "RECAPTCHA_SITE_KEY_REPLACE_ME";
+
+if (process.env.REACT_APP_NODE_ENV === "local") {
+  RECAPTCHA_SITE_KEY = process.env.REACT_APP_RECAPTCHA_SITE_KEY;
+}
 
 export const LoginForm = ({redefinicaoDeSenha}) => {
     const [msgUsuario, setMsgUsuario] = useState('');
