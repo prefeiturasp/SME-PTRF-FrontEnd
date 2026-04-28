@@ -1,22 +1,38 @@
-import React, {useState} from "react";
+import React, {useRef, useState, useEffect} from "react";
 import {Formik} from "formik";
+import ReCAPTCHA from "react-google-recaptcha";
+import { visoesService } from "../../services/visoes.service";
 import {YupSignupSchemaLogin} from "../../utils/ValidacoesAdicionaisFormularios";
 import { authService } from "../../services/auth.service";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faQuestionCircle, faEye, faEyeSlash} from '@fortawesome/free-solid-svg-icons'
 import Loading from "../../utils/Loading";
+import { getFeatureFlags } from "../../services/Core.service";
 import { TooltipWrapper } from "../../componentes/Globais/UI/Tooltip";
+
+const RECAPTCHA_SITE_KEY = process.env.REACT_APP_RECAPTCHA_SITE_KEY;
 
 export const LoginForm = ({redefinicaoDeSenha}) => {
     const [msgUsuario, setMsgUsuario] = useState('');
     const [msgSenha, setMsgSenha] = useState('');
     const [showPassword, setShowPassword] = useState("password");
+    const [flagRecaptchaActive, setFlagRecaptchaActive] = useState(false);
     const [iconShowPassword, setIconShowPassword] = useState(faEyeSlash);
     const [loading, setLoading] = useState(false);
+    const [captchaToken, setCaptchaToken] = useState(null);
+    const captchaRef = useRef(null);
 
     const initialValues = () => (
         {login: "", senha: ""}
     );
+
+    useEffect(() => {
+        async function fetchFlags(){
+            const response = await getFeatureFlags();
+            setFlagRecaptchaActive(response?.recaptcha);
+        }
+        fetchFlags();
+    }, []);
 
     const onSubmit = async (values) => {
         setLoading(true);
@@ -24,6 +40,8 @@ export const LoginForm = ({redefinicaoDeSenha}) => {
         console.log('MSG: ', msg)
         setLoading(false)
         if(msg && msg.detail){
+            captchaRef.current?.reset();
+            setCaptchaToken(null);
             if (msg.detail === 'Senha inválida!'){
                 setMsgSenha('Senha incorreta')
             }else {
@@ -114,11 +132,26 @@ export const LoginForm = ({redefinicaoDeSenha}) => {
                                             </span>
                                         </div>      
                                     </div>
-                                    
                                     {props.touched.login && props.errors.senha && <span className="span_erro text-danger mt-1"> {props.errors.senha} </span>}
                                     {msgSenha && !props.errors.login && <span className="span_erro text-danger mt-1">{msgSenha}</span>}
                                 </div>
-                                <button type="submit" className="btn btn-success btn-fallback btn-block  mt-2">Acessar</button>
+                                {RECAPTCHA_SITE_KEY && flagRecaptchaActive && (
+                                    <div className="d-flex justify-content-center mt-3">
+                                        <ReCAPTCHA
+                                            ref={captchaRef}
+                                            sitekey={RECAPTCHA_SITE_KEY}
+                                            onChange={setCaptchaToken}
+                                            onExpired={() => setCaptchaToken(null)}
+                                        />
+                                    </div>
+                                )}
+                                <button
+                                    type="submit"
+                                    className="btn btn-success btn-fallback btn-block mt-2"
+                                    disabled={RECAPTCHA_SITE_KEY && !captchaToken && flagRecaptchaActive}
+                                >
+                                    Acessar
+                                </button>
                             </form>
                         )}
                     </Formik>

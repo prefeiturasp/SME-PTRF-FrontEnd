@@ -1,7 +1,8 @@
 import api from '../api';
 import {
     getVersaoApi,
-    getAmbientes
+    getAmbientes,
+    getFeatureFlags,
 } from '../Core.service.js';
 import { TOKEN_ALIAS, ASSOCIACAO_UUID } from '../auth.service.js';
 
@@ -16,6 +17,7 @@ jest.mock('../api', () => ({
 
 const mockToken = 'fake-token';
 const mockData = [{ id: 1, nome: 'Teste 1' }];
+const mockFeatureFlags = [{ "flag-teste": true }];
 const associacao_uuid = '1234'
 const payload = { teste: 'teste' }
 
@@ -52,6 +54,14 @@ describe('Testes para funções de análise', () => {
         const url = `api/ambientes/`
         expect(api.get).toHaveBeenCalledWith(url, authHeader())
         expect(result).toEqual(mockData);
+    });
+
+    test('getFeatureFlags deve chamar a API corretamente', async () => {
+        api.get.mockResolvedValue({ data: mockFeatureFlags })
+        const result = await getFeatureFlags();
+        const url = `api/feature-flags`
+        expect(api.get).toHaveBeenCalledWith(url, {headers: { 'Content-Type': 'application/json' }})
+        expect(result).toEqual(mockFeatureFlags);
     });
 
 });
