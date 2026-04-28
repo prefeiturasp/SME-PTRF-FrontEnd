@@ -1,4 +1,3 @@
-import React from "react";
 import { PaginasContainer } from "../../../../../paginas/PaginasContainer";
 import ModalFormPeriodos from "./ModalFormPeriodos";
 import { Filtros } from "./Filtros";
@@ -7,8 +6,11 @@ import { IconButton } from "../../../../Globais/UI/Button/IconButton";
 import Loading from "../../../../../utils/Loading";
 import { ModalBootstrap } from "../../../../Globais/ModalBootstrap";
 import { usePeriodos } from "./hooks/usePeriodos";
+import { AbasPorRecurso } from "../../componentes/AbasPorRecurso";
+import { RecursosProvider } from "../../componentes/AbasPorRecurso/context/Recursos";
 
 export const Periodos = ()=>{
+    
     const {
         modalForm,
         showModalConfirmDeletePeriodo,
@@ -32,7 +34,6 @@ export const Periodos = ()=>{
         setShowModalInfoExclusaoNaoPermitida,
         setErroDatasAtendemRegras
     } = usePeriodos();
-
     return(
         <PaginasContainer>
             <h1 className="titulo-itens-painel mt-5">Períodos</h1>
@@ -66,12 +67,16 @@ export const Periodos = ()=>{
                     limpaFiltros={limpaFiltros}
                 />
 
-                <Tabela 
-                    rowsPerPage={20} 
-                    data={results} 
-                    count={count}
-                    handleOpenModalForm={handleOpenModalForm}
-                />
+                <RecursosProvider>
+                    <AbasPorRecurso />
+
+                    <Tabela 
+                        rowsPerPage={20} 
+                        data={results} 
+                        count={count}
+                        handleOpenModalForm={handleOpenModalForm}
+                    />
+                </RecursosProvider>
 
                 <ModalFormPeriodos
                     show={modalForm.open}
