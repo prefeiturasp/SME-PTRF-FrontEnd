@@ -21,6 +21,14 @@ jest.mock("../ModalFormPeriodos", () => ({
     default: () => <div data-testid="modal-form-periodos"></div>,
 }));
 
+jest.mock("../../../componentes/AbasPorRecurso", () => ({
+    AbasPorRecurso: () => <div data-testid="abas-por-recurso"></div>,
+}));
+
+jest.mock("../../../componentes/AbasPorRecurso/context/Recursos", () => ({
+    RecursosProvider: ({ children }) => <div data-testid="recursos-provider">{children}</div>,
+}));
+
   
 const mockSetShowModalConfirmDeletePeriodo = jest.fn();
 const mockHandleDelete = jest.fn();

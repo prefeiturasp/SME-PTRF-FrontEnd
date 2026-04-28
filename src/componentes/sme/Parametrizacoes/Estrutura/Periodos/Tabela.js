@@ -1,8 +1,9 @@
-import React, {memo, useCallback} from "react";
+import {memo, useCallback, useContext} from "react";
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import moment from "moment";
 import { EditIconButton, VisualizarIconButton} from "../../../../Globais/UI/Button";
+import { RecursosContext } from "../../componentes/AbasPorRecurso/context/Recursos";
 
 const Tabela = ({
     rowsPerPage, 
@@ -17,6 +18,8 @@ const Tabela = ({
             </div>
         )
     }, []);
+
+    const { selectedRecurso, setSelectedRecurso } = useContext(RecursosContext);
 
     const acoesTemplate = (rowData) => {
         return (
@@ -34,6 +37,7 @@ const Tabela = ({
 
     return(
         <>
+        <p>Recurso selecionado: {selectedRecurso?.nome}</p>
         <p>Exibindo <span data-qa="total-acoes" className='total-acoes'>{count}</span> períodos</p>        
         <DataTable  
             value={data}
