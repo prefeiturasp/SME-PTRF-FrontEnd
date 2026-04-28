@@ -9,7 +9,12 @@ import {YupSignupSchemaLogin} from "../../utils/ValidacoesAdicionaisFormularios"
 import { authService } from "../../services/auth.service";
 import { getFeatureFlags } from "../../services/Core.service";
 import Loading from "../../utils/Loading";
-const RECAPTCHA_SITE_KEY = process.env.REACT_APP_RECAPTCHA_SITE_KEY;
+
+let RECAPTCHA_SITE_KEY = "RECAPTCHA_SITE_KEY_REPLACE_ME";
+
+if (process.env.REACT_APP_NODE_ENV === "local") {
+  RECAPTCHA_SITE_KEY = process.env.REACT_APP_RECAPTCHA_SITE_KEY;
+}
 
 export const LoginSuporteForm = ({redefinicaoDeSenha}) => {
     const [msgUsuario, setMsgUsuario] = useState('');

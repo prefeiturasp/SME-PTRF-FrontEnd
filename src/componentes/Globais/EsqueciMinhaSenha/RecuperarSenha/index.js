@@ -3,7 +3,11 @@ import {Formik} from "formik";
 import ReCAPTCHA from "react-google-recaptcha";
 import { getFeatureFlags } from "../../../../services/Core.service";
 
-const RECAPTCHA_SITE_KEY = process.env.REACT_APP_RECAPTCHA_SITE_KEY;
+let RECAPTCHA_SITE_KEY = "RECAPTCHA_SITE_KEY_REPLACE_ME";
+
+if (process.env.REACT_APP_NODE_ENV === "local") {
+  RECAPTCHA_SITE_KEY = process.env.REACT_APP_RECAPTCHA_SITE_KEY;
+}
 
 export const RecuperarMinhaSenha = ({initialValuesRecuperarSenha, onSubmitReuperarSenha, YupSignupSchemaRecuperarSenha}) => {
     const [captchaToken, setCaptchaToken] = useState(null);
