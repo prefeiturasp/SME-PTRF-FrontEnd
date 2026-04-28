@@ -2,6 +2,20 @@ import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
 import '@testing-library/jest-dom';
 import { RecuperarMinhaSenha } from '../index';
 
+jest.mock("react-google-recaptcha", () => {
+  const mockReact = require("react");
+  const MockRecaptcha = mockReact.forwardRef(({ onChange }, ref) => {
+    mockReact.useImperativeHandle(ref, () => ({ reset: jest.fn() }));
+    mockReact.useEffect(() => { onChange?.("test-captcha-token"); }, []);
+    return mockReact.createElement("div", { "data-testid": "recaptcha-mock" });
+  });
+  return MockRecaptcha;
+});
+
+jest.mock("../../../../../services/Core.service", () => ({
+  getFeatureFlags: jest.fn().mockResolvedValue({ recaptcha: false }),
+}));
+
 const yup = jest.requireActual('yup');
 const schemaUsuario = yup.object().shape({
     usuario: yup.string().required('Usuário obrigatório'),
@@ -154,7 +168,6 @@ describe('RecuperarMinhaSenha', () => {
             await waitFor(() => {
                 expect(mockOnSubmit).toHaveBeenCalledWith(
                     { usuario: '1234567' },
-                    expect.any(Object)
                 );
             });
         });
