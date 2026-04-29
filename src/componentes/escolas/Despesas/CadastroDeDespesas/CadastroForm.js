@@ -609,14 +609,17 @@ export const CadastroForm = ({verbo_http, veioDeSituacaoPatrimonial}) => {
         setBtnSubmitDisable(false)
     }
 
+    const existeErrosPersonalizadosComMensagem = (erros) =>
+        Object.values(erros).some((msg) => msg !== null && msg !== undefined && String(msg).length > 0)
+
     const onSubmit = async (values, setFieldValue) => {
         // Inclusão de validações personalizadas para reduzir o numero de requisições a API Campo: cpf_cnpj_fornecedor
         // Agora o campo cpf_cnpj_fornecedor, é validado no onBlur e quando o form tenta ser submetido
         // A chamada a api /api/fornecedores/?uuid=&cpf_cnpj=${cpf_cnpj}, só é realizada quando um cpf for válido
-        setFormErrors(await validacoesPersonalizadas(values, setFieldValue));
-        let erros_personalizados = await validacoesPersonalizadas(values, setFieldValue)
+        const erros_personalizados = await validacoesPersonalizadas(values, setFieldValue, "despesa_principal");
+        setFormErrors(erros_personalizados)
 
-        if (enviarFormulario && Object.keys(erros_personalizados).length === 0) {
+        if (enviarFormulario && !existeErrosPersonalizadosComMensagem(erros_personalizados)) {
             // O loading será ativado apenas quando realmente for chamar a API
             // (no caso de análise de lançamento) ou quando não houver modais de validação
             // Para o fluxo normal, o loading será ativado dentro do onSubmit após passar todas as validações

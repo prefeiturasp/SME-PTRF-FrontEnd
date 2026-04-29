@@ -4,6 +4,8 @@ import { CadastroForm } from "../CadastroForm";
 import { MemoryRouter } from "react-router-dom";
 import { DespesaContext } from "../../../../../context/Despesa";
 import * as DespesasService from "../../../../../services/escolas/Despesas.service";
+import { getPeriodoFechado } from "../../../../../services/escolas/Associacao.service";
+import { validaPayloadDespesas } from "../../../../../utils/ValidacoesAdicionaisFormularios";
 import { metodosAuxiliares } from "../../metodosAuxiliares";
 
 // Mock do hook que usa useDispatch (react-redux)
@@ -178,6 +180,24 @@ const mockDespesaContext = {
   idDespesa: null,
 };
 
+const contextSubmitComDataValida = {
+  ...mockDespesaContext,
+  verboHttp: "POST",
+  initialValues: {
+    ...mockDespesaContext.initialValues,
+    cpf_cnpj_fornecedor: "12345678901",
+    nome_fornecedor: "Fornecedor Teste",
+    data_transacao: "2024-05-01",
+    numero_boletim_de_ocorrencia: "123/2024",
+    tipo_documento: { id: 1 },
+    numero_documento: "12345",
+    data_documento: "2024-05-01",
+    rateios: [
+      { conta_associacao: { uuid: "c1" }, acao_associacao: { uuid: "a1" }, aplicacao_recurso: "CUSTEIO", valor_rateio: 100 },
+    ],
+  },
+};
+
 const renderComponent = (props = {}) => {
   return render(
     <MemoryRouter>
@@ -214,6 +234,7 @@ describe("Componente CadastroForm", () => {
     jest.spyOn(DespesasService, 'marcarLancamentoExcluido').mockResolvedValue({});
     jest.spyOn(DespesasService, 'marcarGastoIncluido').mockResolvedValue({});
     jest.spyOn(DespesasService, 'getValidarDataDaDespesa').mockResolvedValue({});
+    getPeriodoFechado.mockResolvedValue({ aceita_alteracoes: true, periodo_referencia: "2024.1" });
   });
 
   it("deve renderizar o componente com loading inicial", () => {
@@ -2355,5 +2376,36 @@ describe("Componente CadastroForm", () => {
     await waitFor(() => {
       expect(screen.getByTestId("cadastro-form-formik")).toBeInTheDocument();
     });
+  });
+
+  it("onSubmit revalida data principal com uma chamada a getPeriodoFechado", async () => {
+    render(
+      <MemoryRouter>
+        <DespesaContext.Provider value={contextSubmitComDataValida}>
+          <CadastroForm verbo_http="POST" veioDeSituacaoPatrimonial={false} />
+        </DespesaContext.Provider>
+      </MemoryRouter>
+    );
+    await waitFor(() => expect(screen.getByText("Submit")).toBeInTheDocument());
+    fireEvent.click(screen.getByText("Submit"));
+    await waitFor(() => {
+      expect(getPeriodoFechado).toHaveBeenCalledTimes(1);
+      expect(getPeriodoFechado).toHaveBeenCalledWith("2024-05-01");
+    });
+  });
+
+  it("onSubmit com período fechado não chama validaPayloadDespesas", async () => {
+    getPeriodoFechado.mockResolvedValue({ aceita_alteracoes: false });
+    render(
+      <MemoryRouter>
+        <DespesaContext.Provider value={contextSubmitComDataValida}>
+          <CadastroForm verbo_http="POST" veioDeSituacaoPatrimonial={false} />
+        </DespesaContext.Provider>
+      </MemoryRouter>
+    );
+    await waitFor(() => expect(screen.getByText("Submit")).toBeInTheDocument());
+    fireEvent.click(screen.getByText("Submit"));
+    await waitFor(() => expect(getPeriodoFechado).toHaveBeenCalled());
+    expect(validaPayloadDespesas).not.toHaveBeenCalled();
   });
 }); 
