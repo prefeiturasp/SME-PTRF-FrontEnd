@@ -3,6 +3,8 @@ import { useDispatch } from "react-redux";
 import { patchReceitasPrevistasOutrosRecursosPeriodo } from "../../../../../../services/escolas/Paa.service";
 import { toastCustom } from "../../../../../Globais/ToastCustom";
 import { useMutationConfirmavel } from "../../../../../../hooks/Globais/useMutationConfirmavel";
+import { getErrorMessage } from "../../../../../../utils/obtemMsgErroAxios";
+
 
 export const usePatchReceitasPrevistasOutrosRecursosPeriodo = (onClose) => {
   const dispatch = useDispatch();
@@ -23,8 +25,9 @@ export const usePatchReceitasPrevistasOutrosRecursosPeriodo = (onClose) => {
         queryClient.invalidateQueries({ queryKey: ["receitas-previstas-outros-recursos-periodo"]});
         onClose && onClose();
       },
-      onError: () => {
-        toastCustom.ToastCustomError("Houve um erro ao editar recurso.");
+      onError: (err) => {
+        const mensagemErro = getErrorMessage(err, "Ocorreu um erro ao editar o recurso.");
+        toastCustom.ToastCustomError(mensagemErro);
       },
     },
   });
