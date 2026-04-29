@@ -48,6 +48,7 @@ export const FiltrosPaa = ({
         />
 
         <SelectFiltro
+          showSearch
           label="Filtrar por tipo de unidade"
           name="tipo_unidade"
           value={filtros.tipo_unidade}

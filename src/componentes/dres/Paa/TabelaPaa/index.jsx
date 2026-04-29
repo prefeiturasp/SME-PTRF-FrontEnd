@@ -33,7 +33,7 @@ export const TabelaPaa = ({
             />
 
             <Column
-                header="Período"
+                header="Vigência do PAA"
                 body={(rowData) => rowData?.periodo_paa?.referencia || "-"}
             />
 
@@ -43,7 +43,7 @@ export const TabelaPaa = ({
             />
 
             <Column
-                header="Documento"
+                header="Visualizar documentos"
                 body={acaoTemplatePdf}
                 style={{ textAlign: 'center' }}
             />
