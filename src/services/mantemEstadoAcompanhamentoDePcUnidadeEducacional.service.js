@@ -20,7 +20,6 @@ const setAcompanhamentoPcUnidadePorUsuario = async (usuario, objeto) => {
                 filtra_por_devolucao_tesouro: '',
                 filtra_por_status: '',
                 paginacao_atual: '',
-                paginacao_atual: ''
             }
         }
     } else {
@@ -38,17 +37,17 @@ const setAcompanhamentoPcUnidadePorUsuario = async (usuario, objeto) => {
                 return acumulador;
             }, {})
             dados_acompanhamentos_pc_unidade_update = {
-                ... todos_acompanhamentos_pc_unidade ?? {},
+                ...todos_acompanhamentos_pc_unidade ?? {},
                 [`usuario_${usuario}`]: {
-                    ... todos_acompanhamentos_pc_unidade ?. [`usuario_${usuario}`] ?? {},
-                    ... updateDocuments
+                    ...todos_acompanhamentos_pc_unidade?.[`usuario_${usuario}`] ?? {},
+                    ...updateDocuments
                 }
             };
         } else {
             dados_acompanhamentos_pc_unidade_update = {
-                ... todos_acompanhamentos_pc_unidade ?? {},
+                ...todos_acompanhamentos_pc_unidade ?? {},
                 [`usuario_${usuario}`]: {
-                    ... todos_acompanhamentos_pc_unidade ?. [`usuario_${usuario}`] ?? {},
+                    ...todos_acompanhamentos_pc_unidade?.[`usuario_${usuario}`] ?? {},
                     ...objeto
                 }
             };
@@ -61,7 +60,7 @@ const getAcompanhamentoDePcUnidadeUsuarioLogado = (dre__uuid) => {
     let acompanhamento_de_pc_unidade_usuario_logado = localStorage.getItem(ACOMPANHAMENTO_PC_UNIDADE) && localStorage.getItem(ACOMPANHAMENTO_PC_UNIDADE) !== undefined ? JSON.parse(localStorage.getItem(ACOMPANHAMENTO_PC_UNIDADE)) : null;
     // eslint-disable-next-line no-eval
     const filtro_de_usuario_logado = acompanhamento_de_pc_unidade_usuario_logado ? eval('acompanhamento_de_pc_unidade_usuario_logado.usuario_' + visoesService.getUsuarioLogin()) : null
-    return filtro_de_usuario_logado ?. [dre__uuid] ?? null
+    return filtro_de_usuario_logado?.[dre__uuid] ?? null
 };
 
 const getTodosAcompanhamentosPcUnidade = () => {

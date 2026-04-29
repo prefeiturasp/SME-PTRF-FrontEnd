@@ -26,6 +26,7 @@ import { EsqueciMinhaSenhaPage } from "../paginas/Login/EsqueciMinhaSenha";
 import { RedefinirSenhaPage } from "../paginas/Login/RedefinirMinhaSenha";
 import { MeusDadosPage } from "../paginas/escolas/MeusDados";
 import { AssociacoesPage } from "../paginas/dres/Associacoes";
+import { PaaPage } from "../paginas/dres/Paa";
 import { DetalhesDaAssociacaoDrePage } from "../paginas/dres/Associacoes/DetalhesDaAssociacao";
 import { CentralDeNotificacoesPage } from "../paginas/CentralDeNotificacoes";
 import { CentralDeDownloadsPage } from "../paginas/CentralDeDownloads";
@@ -332,6 +333,12 @@ const routesConfig = [
     path: "/dre-dashboard",
     component: DreDashboardPage,
     permissoes: ["access_acompanhamento_pcs_dre"],
+  },
+  {
+    exact: true,
+    path: "/paa-dre",
+    component: PaaPage,
+    permissoes: ["custom_access_paa_dre"],
   },
   {
     exact: true,
