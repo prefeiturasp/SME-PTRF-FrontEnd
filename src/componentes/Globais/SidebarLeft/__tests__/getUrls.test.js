@@ -103,4 +103,23 @@ describe('GetUrls', () => {
     expect(itemAcompanhamentoPC).toBeUndefined();
   });
 
+  it('deve retornar a lista de URL`s com o item Plano Anual de Atividades (DRE) se a flag estiver ativa', () => {
+    visoesService.getDadosDoUsuarioLogado.mockReturnValue({
+      visao_selecionada: { nome: 'DRE' },
+      visoes: [],
+    });
+
+    const itemsNavegacaoAtivadaViaFlag = {
+      'paa-dre': true,
+    };
+
+    const resultado = GetUrls(itemsNavegacaoAtivadaViaFlag);
+
+    const itemPaaDre = resultado.lista_de_urls.find(
+      item => item.label === "Plano Anual de Atividades"
+    );
+
+    expect(resultado.lista_de_urls).toContain(itemPaaDre);
+  });
+
 });

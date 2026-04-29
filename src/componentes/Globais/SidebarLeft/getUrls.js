@@ -200,6 +200,14 @@ const UrlsMenuDres = {
       permissoes: ["access_dados_diretoria"],
     },
     {
+      label: "Plano Anual de Atividades",
+      url: "paa-dre",
+      dataFor: "paa-dre",
+      icone: IconePaa,
+      permissoes: ["custom_access_paa_dre"],
+      featureFlag: "paa-dre",
+    },
+    {
       label: "Consolidado das PCs",
       url: "dre-relatorio-consolidado",
       dataFor: "dre_relatorio_consolidado",
