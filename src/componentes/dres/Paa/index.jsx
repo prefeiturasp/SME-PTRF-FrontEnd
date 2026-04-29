@@ -115,14 +115,23 @@ export const Paa = () => {
     }, [uuidRecurso]);
 
     const renderizarConteudo = () => {
-        if (carregando) return <Loading />;
+        if (carregando){
+           return( 
+            <Loading
+                corGrafico="black"
+                corFonte="dark"
+                marginTop="0"
+                marginBottom="0"
+            />)
+        }                      
 
         if (listaPaa?.results?.length > 0) {
             return (
                 <TabelaPaa
+                
                     listaPaa={listaPaa}
                     linhasPorPagina={LINHAS_POR_PAGINA}
-                    unidadeEscolarTemplate={(row) => <strong>{row?.unidade?.nome || "-"}</strong>}
+                    unidadeEscolarTemplate={(row) => <strong>{row?.unidade?.unidade_educacional || "-"}</strong>}
                     acaoTemplatePdf={() => (
                         <button className="btn btn-link" disabled>
                             <Icon icon="faFileLines" />
