@@ -94,6 +94,7 @@ describe("usePeriodos", () => {
                 data_fim_realizacao_despesas: "2023-01-31",
                 operacao: "create",
                 uuid: "",
+                recurso: { uuid: "fake-recurso-uuid" }
             });
         });
         
@@ -113,6 +114,7 @@ describe("usePeriodos", () => {
                 data_fim_realizacao_despesas: "2023-01-31",
                 operacao: "edit",
                 uuid: "fake-uuid",
+                recurso: { uuid: "fake-recurso-uuid" }
             });
         });
         
@@ -133,6 +135,7 @@ describe("usePeriodos", () => {
                 data_fim_realizacao_despesas: "2023-01-31",
                 operacao: "create",
                 uuid: "",
+                recurso: { uuid: "fake-recurso-uuid" }
             });
         });
 

@@ -2,25 +2,20 @@ import { PaginasContainer } from "../../../../../paginas/PaginasContainer";
 import ModalFormPeriodos from "./ModalFormPeriodos";
 import { Filtros } from "./Filtros";
 import Tabela from "./Tabela";
-import { IconButton } from "../../../../Globais/UI/Button/IconButton";
 import Loading from "../../../../../utils/Loading";
-import { ModalBootstrap } from "../../../../Globais/ModalBootstrap";
 import { usePeriodos } from "./hooks/usePeriodos";
 import { AbasPorRecurso } from "../../componentes/AbasPorRecurso";
 import { RecursosProvider } from "../../componentes/AbasPorRecurso/context/Recursos";
+import { ModalConfirmarExclusao } from "../../../../Globais/ModalAntDesign/ModalConfirmarExclusao";
 
-export const Periodos = ()=>{
-    
+export const Periodos = () => {
     const {
         modalForm,
         showModalConfirmDeletePeriodo,
-        showModalInfoExclusaoNaoPermitida,
         erroDatasAtendemRegras,
-        erroExclusaoNaoPermitida,
         stateFiltros,
         isLoading,
         results,
-        count,
         TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES,
         handleOpenCreateModal,
         handleClose,
@@ -31,92 +26,72 @@ export const Periodos = ()=>{
         handleSubmitFiltros,
         limpaFiltros,
         setShowModalConfirmDeletePeriodo,
-        setShowModalInfoExclusaoNaoPermitida,
-        setErroDatasAtendemRegras
+        setErroDatasAtendemRegras,
+        handleCloseModalConfirmDeletePeriodo,
     } = usePeriodos();
     return(
         <PaginasContainer>
-            <h1 className="titulo-itens-painel mt-5">Períodos</h1>
-            {isLoading ? (
-                <div className="mt-5">
-                    <Loading
-                        corGrafico="black"
-                        corFonte="dark"
-                        marginTop="0"
-                        marginBottom="0"
+            <RecursosProvider>
+                <h1 className="titulo-itens-painel mt-5">Períodos</h1>
+                {isLoading ? (
+                    <div className="mt-5">
+                        <Loading
+                            corGrafico="black"
+                            corFonte="dark"
+                            marginTop="0"
+                            marginBottom="0"
+                        />
+                    </div>
+                ) : (
+                    <div className="page-content-inner">
+
+                    <Filtros
+                        stateFiltros={stateFiltros}
+                        handleChangeFiltros={handleChangeFiltros}
+                        handleSubmitFiltros={handleSubmitFiltros}
+                        limpaFiltros={limpaFiltros}
                     />
-                </div>
-            ) : (
-                <div className="page-content-inner">
 
-                <div className="d-flex  justify-content-end pb-4 mt-2">
-                    <IconButton
-                        icon="faPlus"
-                        iconProps={{ style: {fontSize: '15px', marginRight: "5", color:"#fff"} }}
-                        label="Adicionar período"
-                        onClick={handleOpenCreateModal}
-                        variant="success"
-                        disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
+                    
+                    <AbasPorRecurso
+                        handleChangeFiltros={handleChangeFiltros}
                     />
-                </div>
-
-                <Filtros
-                    stateFiltros={stateFiltros}
-                    handleChangeFiltros={handleChangeFiltros}
-                    handleSubmitFiltros={handleSubmitFiltros}
-                    limpaFiltros={limpaFiltros}
-                />
-
-                <RecursosProvider>
-                    <AbasPorRecurso />
 
                     <Tabela 
-                        rowsPerPage={20} 
-                        data={results} 
-                        count={count}
+                        rowsPerPage={10} 
+                        data={results}
                         handleOpenModalForm={handleOpenModalForm}
+                        handleOpenCreateModal={handleOpenCreateModal}
+                        tem_permissao_edicao_painel_parametrizacoes={TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                     />
-                </RecursosProvider>
 
-                <ModalFormPeriodos
-                    show={modalForm.open}
-                    stateFormModal={modalForm}
-                    onHandleClose={handleClose}
-                    onSubmit={handleSubmitFormModal}
-                    deveValidarPeriodoAnterior={results.length > 0 ? true : false}
-                    periodos={results}
-                    setErroDatasAtendemRegras={setErroDatasAtendemRegras}
-                    erroDatasAtendemRegras={erroDatasAtendemRegras}
-                    setShowModalConfirmDeletePeriodo={setShowModalConfirmDeletePeriodo}
-                />
+                    <ModalFormPeriodos
+                        show={modalForm.open}
+                        stateFormModal={modalForm}
+                        onHandleClose={handleClose}
+                        onSubmit={handleSubmitFormModal}
+                        deveValidarPeriodoAnterior={results.length > 1 ? true : false}
+                        periodos={results}
+                        setErroDatasAtendemRegras={setErroDatasAtendemRegras}
+                        erroDatasAtendemRegras={erroDatasAtendemRegras}
+                        setShowModalConfirmDeletePeriodo={setShowModalConfirmDeletePeriodo}
+                    />
 
-                <ModalBootstrap
-                    show={showModalConfirmDeletePeriodo}
-                    // onHide={() => setShowModalConfirmDeletePeriodo(false)}
-                    primeiroBotaoOnclick={() => setShowModalConfirmDeletePeriodo(false)}
-                    segundoBotaoOnclick={()=> {
-                        setShowModalConfirmDeletePeriodo(false)
-                        handleDelete(modalForm.uuid)
-                    }}
-                    titulo="Excluir Período"
-                    bodyText="<p>Deseja realmente excluir este período?</p>"
-                    primeiroBotaoTexto="Cancelar"
-                    primeiroBotaoCss="outline-success"
-                    segundoBotaoCss="danger"
-                    segundoBotaoTexto="Excluir"
-                />
-
-                <ModalBootstrap
-                    show={showModalInfoExclusaoNaoPermitida}
-                    // onHide={() => setShowModalInfoExclusaoNaoPermitida(false)}
-                    titulo="Exclusão não permitida"
-                    bodyText={`<p class="mb-0"> ${erroExclusaoNaoPermitida}</p>`}
-                    primeiroBotaoTexto="Fechar"
-                    primeiroBotaoCss="success"
-                    primeiroBotaoOnclick={() => setShowModalInfoExclusaoNaoPermitida(false)}
-                />
-            </div>
-            )}
+                    <ModalConfirmarExclusao
+                        open={showModalConfirmDeletePeriodo.open}
+                        onOk={()=> {
+                            handleDelete(showModalConfirmDeletePeriodo.periodo_uuid)
+                            handleCloseModalConfirmDeletePeriodo()
+                        }}
+                        okText="Excluir"
+                        onCancel={() => handleCloseModalConfirmDeletePeriodo()}
+                        cancelText="Cancelar"
+                        titulo="Excluir Período"
+                        bodyText="Deseja realmente excluir este período?"
+                    />
+                </div>
+                )}
+            </RecursosProvider>
         </PaginasContainer>
     )
 }

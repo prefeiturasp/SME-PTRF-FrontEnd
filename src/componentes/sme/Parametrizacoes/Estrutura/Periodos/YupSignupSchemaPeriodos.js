@@ -2,11 +2,15 @@ import * as yup from "yup";
 
 export const YupSignupSchemaPeriodos = (deveValidarPeriodoAnterior) =>
     yup.object().shape({
+      recurso: yup.object({
+        uuid: yup.string().required("Recurso é obrigatório"),
+      }).required("Recurso é obrigatório"),
+
       referencia: yup.string().required("Referência é obrigatória"),
-  
+
       periodo_anterior: deveValidarPeriodoAnterior
-        ? yup.string().required("Período anterior é obrigatório")
-        : yup.string().nullable(),
+        ? yup.mixed().required("Período anterior é obrigatório")
+        : yup.mixed().nullable(),
   
       data_inicio_realizacao_despesas: yup
         .string()

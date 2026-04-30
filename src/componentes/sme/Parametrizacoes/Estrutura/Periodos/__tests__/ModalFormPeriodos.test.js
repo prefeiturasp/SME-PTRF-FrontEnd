@@ -28,6 +28,7 @@ describe('ModalFormPeriodos Component', () => {
       uuid: "periodo-uuid-fake-1",
       editavel: true,
       operacao: 'edit',
+      recurso: {uuid: 'recurso-uuid-fake', nome: 'Recurso Fake'},
     },
     deveValidarPeriodoAnterior: true,
     erroDatasAtendemRegras: '',
@@ -121,7 +122,7 @@ describe('ModalFormPeriodos Component', () => {
       <ModalFormPeriodos {...initialProps} />
     );
 
-    fireEvent.click(screen.getByText(/Apagar/i));
+    fireEvent.click(screen.getByText(/Excluir/i));
     expect(mockSetShowModalConfirmDeletePeriodo).toHaveBeenCalled();
   });
 
@@ -164,7 +165,7 @@ describe('ModalFormPeriodos Component', () => {
     );
 
     const options = screen.getAllByRole("option");
-    expect(options.length).toBe(2);
+    expect(options.length).toBe(3); // 2 períodos + opção "Selecione um período"
 
     const option2024_3 = screen.getByRole("option", { name: "2024.3 - 01/09/2024 até 31/12/2024" });
     expect(option2024_3).toBeInTheDocument();
