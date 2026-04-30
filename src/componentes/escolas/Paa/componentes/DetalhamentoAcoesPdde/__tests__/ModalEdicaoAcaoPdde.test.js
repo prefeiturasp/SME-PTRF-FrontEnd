@@ -1,8 +1,8 @@
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import ModalEdicaoReceitaPrevistaPDDE from "../ModalEdicaoReceitaPrevistaPdde";
-import { usePatchReceitaPrevistaPdde } from '../hooks/usePatchReceitaPrevistaPdde';
-import { usePostReceitaPrevistaPdde } from '../hooks/usePostReceitaPrevistaPdde';
+import { usePatchReceitaPrevistaPdde } from "../hooks/usePatchReceitaPrevistaPdde";
+import { usePostReceitaPrevistaPdde } from "../hooks/usePostReceitaPrevistaPdde";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 jest.mock("../hooks/usePatchReceitaPrevistaPdde");
@@ -74,7 +74,7 @@ describe("ModalEdicaoAcaoPdde", () => {
     return render(
       <QueryClientProvider client={queryClient}>
         <ModalEdicaoReceitaPrevistaPDDE {...defaultProps} {...props} />
-      </QueryClientProvider>
+      </QueryClientProvider>,
     );
   };
 
@@ -82,7 +82,7 @@ describe("ModalEdicaoAcaoPdde", () => {
     it("renderiza o título com o nome do recurso", () => {
       renderComponent();
       expect(
-        screen.getByText(`Editar Recurso ${receitaPrevisaPdde.nome}`)
+        screen.getByText(`Editar Recurso ${receitaPrevisaPdde.nome}`),
       ).toBeInTheDocument();
     });
 
@@ -109,7 +109,7 @@ describe("ModalEdicaoAcaoPdde", () => {
     it("não exibe o modal quando open é false", () => {
       renderComponent({ open: false });
       expect(
-        screen.queryByText(`Editar Recurso ${receitaPrevisaPdde.nome}`)
+        screen.queryByText(`Editar Recurso ${receitaPrevisaPdde.nome}`),
       ).not.toBeInTheDocument();
     });
   });
@@ -211,22 +211,25 @@ describe("ModalEdicaoAcaoPdde", () => {
           uuid: receitaPrevisaPdde.receitas_previstas_pdde_valores.uuid,
           payload: {
             saldo_custeio: parseFloat(
-              receitaPrevisaPdde.receitas_previstas_pdde_valores.saldo_custeio
+              receitaPrevisaPdde.receitas_previstas_pdde_valores.saldo_custeio,
             ),
             saldo_capital: parseFloat(
-              receitaPrevisaPdde.receitas_previstas_pdde_valores.saldo_capital
+              receitaPrevisaPdde.receitas_previstas_pdde_valores.saldo_capital,
             ),
             saldo_livre: parseFloat(
-              receitaPrevisaPdde.receitas_previstas_pdde_valores.saldo_livre
+              receitaPrevisaPdde.receitas_previstas_pdde_valores.saldo_livre,
             ),
             previsao_valor_custeio: parseFloat(
-              receitaPrevisaPdde.receitas_previstas_pdde_valores.previsao_valor_custeio
+              receitaPrevisaPdde.receitas_previstas_pdde_valores
+                .previsao_valor_custeio,
             ),
             previsao_valor_capital: parseFloat(
-              receitaPrevisaPdde.receitas_previstas_pdde_valores.previsao_valor_capital
+              receitaPrevisaPdde.receitas_previstas_pdde_valores
+                .previsao_valor_capital,
             ),
             previsao_valor_livre: parseFloat(
-              receitaPrevisaPdde.receitas_previstas_pdde_valores.previsao_valor_livre
+              receitaPrevisaPdde.receitas_previstas_pdde_valores
+                .previsao_valor_livre,
             ),
           },
         });
@@ -294,6 +297,18 @@ describe("ModalEdicaoAcaoPdde", () => {
       });
 
       expect(mockMutatePatch).not.toHaveBeenCalled();
+    });
+
+    it("desabilita o botão Salvar enquanto está carregando (edição)", () => {
+      usePatchReceitaPrevistaPdde.mockReturnValue({
+        mutationPatch: { mutate: mockMutatePatch, isPending: true },
+      });
+
+      renderComponent();
+
+      const botaoSalvar = screen.getByText("Salvar");
+
+      expect(botaoSalvar).toBeDisabled();
     });
   });
 });
