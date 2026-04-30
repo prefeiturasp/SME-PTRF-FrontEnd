@@ -1,4 +1,4 @@
-import React, { memo, useEffect } from "react";
+import React, { memo, useEffect, useMemo } from "react";
 import { Form, Row, Col, Flex, InputNumber, Spin } from "antd";
 import { ModalFormBodyText } from "../../../../Globais/ModalBootstrap";
 import { Icon } from "../../../../Globais/UI/Icon";
@@ -27,9 +27,12 @@ const ModalEdicaoReceitaPrevistaPDDE = ({ open, onClose, receitaPrevistaPDDE }) 
   const [form] = Form.useForm();
   const podeEditar = visoesService.getPermissoes(["custom_change_paa"]);
 
-  const isLoading = false;
   const { mutationPatch } = usePatchReceitaPrevistaPdde(onClose);
   const { mutationPost } = usePostReceitaPrevistaPdde(onClose);
+
+  const isLoading = useMemo(() => {
+    return mutationPatch.isPending || mutationPost.isPending
+  }, [mutationPatch, mutationPost]);
 
   Form.useWatch("saldo_capital", form);
   Form.useWatch("saldo_custeio", form);
@@ -113,9 +116,7 @@ const ModalEdicaoReceitaPrevistaPDDE = ({ open, onClose, receitaPrevistaPDDE }) 
       size="lg"
       bodyText={
         <Spin
-          spinning={
-            isLoading || mutationPatch.isPending
-          }
+          spinning={isLoading}
         >
           <Form
             form={form}
@@ -392,7 +393,7 @@ const ModalEdicaoReceitaPrevistaPDDE = ({ open, onClose, receitaPrevistaPDDE }) 
               <button 
                 type="submit" 
                 className={`btn ${podeEditar && (!receitaPrevistaPDDE || receitaPrevistaPDDE.aceita_livre_aplicacao || receitaPrevistaPDDE.aceita_capital || receitaPrevistaPDDE.aceita_custeio) ? "btn-success" : "btn-secondary"}`}
-                disabled={!podeEditar || (receitaPrevistaPDDE && !receitaPrevistaPDDE.aceita_livre_aplicacao && !receitaPrevistaPDDE.aceita_capital && !receitaPrevistaPDDE.aceita_custeio)}
+                disabled={isLoading || !podeEditar || (receitaPrevistaPDDE && !receitaPrevistaPDDE.aceita_livre_aplicacao && !receitaPrevistaPDDE.aceita_capital && !receitaPrevistaPDDE.aceita_custeio)}
               >
                 Salvar
               </button>
