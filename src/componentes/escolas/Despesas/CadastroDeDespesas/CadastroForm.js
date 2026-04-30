@@ -1,4 +1,4 @@
-import React, {useCallback, useContext, useEffect, useState} from "react";
+import React, {useCallback, useContext, useEffect, useRef, useState} from "react";
 import {
     validaPayloadDespesas,
     periodoFechado,
@@ -64,6 +64,16 @@ export const CadastroForm = ({verbo_http, veioDeSituacaoPatrimonial}) => {
     const [especificaoes_capital, set_especificaoes_capital] = useState("");
     const [especificacoes_custeio, set_especificacoes_custeio] = useState([]);
     const [btnSubmitDisable, setBtnSubmitDisable] = useState(false);
+    const salvandoDespesaRef = useRef(false);
+
+    const setSubmitDisabled = useCallback((disabled) => {
+        salvandoDespesaRef.current = disabled;
+        setBtnSubmitDisable(disabled);
+    }, []);
+
+    const desabilitaBtnSalvar = useCallback(() => setSubmitDisabled(true), [setSubmitDisabled]);
+    const habilitaBtnSalvar = useCallback(() => setSubmitDisabled(false), [setSubmitDisabled]);
+
     const [saldosInsuficientesDaAcao, setSaldosInsuficientesDaAcao] = useState([]);
     const [saldosInsuficientesDaConta, setSaldosInsuficientesDaConta] = useState([]);
     const [readOnlyBtnAcao, setReadOnlyBtnAcao] = useState(false);
@@ -97,7 +107,7 @@ export const CadastroForm = ({verbo_http, veioDeSituacaoPatrimonial}) => {
 
     const handleErrorDespesa = (response) => {
         setLoading(false);
-        setBtnSubmitDisable(false);
+        habilitaBtnSalvar();
         handleErroCriarDespesa(response);
     };
 
@@ -105,7 +115,7 @@ export const CadastroForm = ({verbo_http, veioDeSituacaoPatrimonial}) => {
         (response) => handleSuccessDespesa(response, null),
         handleErrorDespesa,
         setLoading,
-        setBtnSubmitDisable
+        setSubmitDisabled
     );
 
     const [contasIniciais, setContasIniciais] = useState([])
@@ -320,14 +330,16 @@ export const CadastroForm = ({verbo_http, veioDeSituacaoPatrimonial}) => {
 
             setDespesasTabelas(resp);
 
-            const array_tipos_custeio = resp.tipos_custeio;
+            const array_tipos_custeio = resp.tipos_custeio || [];
             let let_especificacoes_custeio = [];
 
-            array_tipos_custeio.map(async (tipoCusteio) => {
-                const resposta = await getEspecificacoesCusteio(tipoCusteio.id);
-                let_especificacoes_custeio[tipoCusteio.id] = await resposta
-            });
-            set_especificacoes_custeio(let_especificacoes_custeio);
+            await Promise.all(
+                array_tipos_custeio.map(async (tipoCusteio) => {
+                    const resposta = await getEspecificacoesCusteio(tipoCusteio.id);
+                    let_especificacoes_custeio[tipoCusteio.id] = resposta;
+                })
+            );
+            set_especificacoes_custeio([...let_especificacoes_custeio]);
             setLoading(false);
         };
         carregaTabelasDespesas();   
@@ -373,7 +385,9 @@ export const CadastroForm = ({verbo_http, veioDeSituacaoPatrimonial}) => {
         }
         else{
             setEnviarFormulario(true)
-            setBtnSubmitDisable(false)
+            if (!salvandoDespesaRef.current) {
+                setBtnSubmitDisable(false)
+            }
         }
         
         if (!cpf_cnpj_valido) {
@@ -385,7 +399,9 @@ export const CadastroForm = ({verbo_http, veioDeSituacaoPatrimonial}) => {
         } else {
             aux.get_nome_razao_social(values.cpf_cnpj_fornecedor, setFieldValue, values.nome_fornecedor);
             setEnviarFormulario(true)
-            setBtnSubmitDisable(false)
+            if (!salvandoDespesaRef.current) {
+                setBtnSubmitDisable(false)
+            }
         }
 
         if(aux.origemAnaliseLancamento(parametroLocation)){
@@ -473,7 +489,9 @@ export const CadastroForm = ({verbo_http, veioDeSituacaoPatrimonial}) => {
                 // logica periodo fechado
                 else{
                     setEnviarFormulario(true)
-                    setBtnSubmitDisable(false)
+                    if (!salvandoDespesaRef.current) {
+                        setBtnSubmitDisable(false)
+                    }
 
                     if(!aux.origemAnaliseLancamento(parametroLocation)){
                         try{
@@ -601,22 +619,17 @@ export const CadastroForm = ({verbo_http, veioDeSituacaoPatrimonial}) => {
         return mensagens;
     }
 
-    const desabilitaBtnSalvar = () => {
-        setBtnSubmitDisable(true)
-    }
-
-    const habilitaBtnSalvar = () => {
-        setBtnSubmitDisable(false)
-    }
+    const existeErrosPersonalizadosComMensagem = (erros) =>
+        Object.values(erros).some((msg) => msg !== null && msg !== undefined && String(msg).length > 0)
 
     const onSubmit = async (values, setFieldValue) => {
         // Inclusão de validações personalizadas para reduzir o numero de requisições a API Campo: cpf_cnpj_fornecedor
         // Agora o campo cpf_cnpj_fornecedor, é validado no onBlur e quando o form tenta ser submetido
         // A chamada a api /api/fornecedores/?uuid=&cpf_cnpj=${cpf_cnpj}, só é realizada quando um cpf for válido
-        setFormErrors(await validacoesPersonalizadas(values, setFieldValue));
-        let erros_personalizados = await validacoesPersonalizadas(values, setFieldValue)
+        const erros_personalizados = await validacoesPersonalizadas(values, setFieldValue, "despesa_principal");
+        setFormErrors(erros_personalizados)
 
-        if (enviarFormulario && Object.keys(erros_personalizados).length === 0) {
+        if (enviarFormulario && !existeErrosPersonalizadosComMensagem(erros_personalizados)) {
             // O loading será ativado apenas quando realmente for chamar a API
             // (no caso de análise de lançamento) ou quando não houver modais de validação
             // Para o fluxo normal, o loading será ativado dentro do onSubmit após passar todas as validações
@@ -629,7 +642,7 @@ export const CadastroForm = ({verbo_http, veioDeSituacaoPatrimonial}) => {
             if(aux.origemAnaliseLancamento(parametroLocation)){
                 if(document.getElementsByClassName("despesa_incompleta").length > 0){
                     setLoading(false);
-                    setBtnSubmitDisable(false);
+                    habilitaBtnSalvar();
                     setShowDespesaIncompletaNaoPermitida(true);
                 }
                 else{
@@ -665,11 +678,13 @@ export const CadastroForm = ({verbo_http, veioDeSituacaoPatrimonial}) => {
                                 aux.getPath(origem, parametroLocation);
                             } else {
                                 setLoading(false);
+                                habilitaBtnSalvar();
                                 handleErroCriarDespesa(response);
                             }
                         } catch (error) {
                             console.log(error);
                             setLoading(false);
+                            habilitaBtnSalvar();
                         }
                     }
                     else if (despesaContext.verboHttp === "PUT"){
@@ -693,6 +708,7 @@ export const CadastroForm = ({verbo_http, veioDeSituacaoPatrimonial}) => {
                                     }
                                     else{
                                         setLoading(false);
+                                        habilitaBtnSalvar();
                                     }
                                 }
 
@@ -702,10 +718,12 @@ export const CadastroForm = ({verbo_http, veioDeSituacaoPatrimonial}) => {
                             else {
                                 handleErroCriarDespesa(response);
                                 setLoading(false);
+                                habilitaBtnSalvar();
                             }
                         } catch (error) {
                             console.log(error);
                             setLoading(false);
+                            habilitaBtnSalvar();
                         }
                     }
                 }
@@ -722,6 +740,8 @@ export const CadastroForm = ({verbo_http, veioDeSituacaoPatrimonial}) => {
                     mutationUpdate.mutate({ payload: values, idDespesa: despesaContext.idDespesa });
                 }
             }
+        } else {
+            habilitaBtnSalvar();
         }
     };
 
@@ -1157,8 +1177,9 @@ export const CadastroForm = ({verbo_http, veioDeSituacaoPatrimonial}) => {
 
         if (Object.entries(errors).length === 0) {
             await verificaSaldoInsuficienteConta(values, errors, setFieldValue)
+        } else {
+            habilitaBtnSalvar()
         }
-        setBtnSubmitDisable(false)
     }
 
     const serviceSubmitModais = async (values, setFieldValue, errors, msg) =>{

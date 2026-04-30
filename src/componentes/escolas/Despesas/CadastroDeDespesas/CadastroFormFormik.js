@@ -964,7 +964,10 @@ export const CadastroFormFormik = ({
                                     <SaldoInsuficienteConta
                                         saldosInsuficientesDaConta={saldosInsuficientesDaConta}
                                         show={modalState === 'saldo-insuficiente-conta'}
-                                        handleClose={()=>setModalState("close")}
+                                        handleClose={() => {
+                                            setModalState("close");
+                                            habilitaBtnSalvar();
+                                        }}
                                         onSaldoInsuficienteContaTrue={() => {
                                             serviceSubmitModais(values, setFieldValue, errors, 'saldo_insuficiente_conta_validado')
                                         }}
@@ -978,7 +981,10 @@ export const CadastroFormFormik = ({
                                         onSalvarTipoRecursoNaoAceito={() => {
                                             serviceSubmitModais(values, setFieldValue, errors, 'acao_nao_aceita_tipo_de_aplicacao_validado')
                                         }}
-                                        handleClose={()=>setModalState("close")}
+                                        handleClose={() => {
+                                            setModalState("close");
+                                            habilitaBtnSalvar();
+                                        }}
                                     />
                                 </section>
 
@@ -986,7 +992,10 @@ export const CadastroFormFormik = ({
                                     <SaldoInsuficiente
                                         saldosInsuficientesDaAcao={saldosInsuficientesDaAcao}
                                         show={modalState === 'saldo-insuficiente-acao'}
-                                        handleClose={()=>setModalState("close")}
+                                        handleClose={() => {
+                                            setModalState("close");
+                                            habilitaBtnSalvar();
+                                        }}
                                         onSaldoInsuficienteTrue={() => {
                                             serviceSubmitModais(values, setFieldValue, errors, 'saldo_insuficiente_acao_validado')
                                         }}
@@ -996,7 +1005,10 @@ export const CadastroFormFormik = ({
                                 <section>
                                     <ModalDespesaConferida
                                         show={modalState === 'despesa-ja-demonstrada'}
-                                        handleClose={()=>setModalState("close")}
+                                        handleClose={() => {
+                                            setModalState("close");
+                                            habilitaBtnSalvar();
+                                        }}
                                         onSalvarDespesaConferida={() => {
                                             serviceSubmitModais(values, setFieldValue, errors, 'despesa_ja_demonstrada_validado')
                                         }}
@@ -1008,7 +1020,10 @@ export const CadastroFormFormik = ({
                                 <section>
                                     <ChecarDespesaExistente
                                         show={modalState === 'despesa-ja-cadastrada'}
-                                        handleClose={()=>setModalState("close")}
+                                        handleClose={() => {
+                                            setModalState("close");
+                                            habilitaBtnSalvar();
+                                        }}
                                         onSalvarDespesaCadastradaTrue={() => {
                                             serviceSubmitModais(values, setFieldValue, errors, 'despesa_ja_cadastrada_validado')
                                         }}
@@ -1018,7 +1033,10 @@ export const CadastroFormFormik = ({
                                 <section>
                                     <ModalMotivosPagamentoAntecipado
                                         show={modalState === 'pagamento-antecipado'}
-                                        handleClose={()=>setModalState("close")}
+                                        handleClose={() => {
+                                            setModalState("close");
+                                            habilitaBtnSalvar();
+                                        }}
                                         listaDemotivosPagamentoAntecipado={listaDemotivosPagamentoAntecipado}
                                         selectMotivosPagamentoAntecipado={selectMotivosPagamentoAntecipado}
                                         setSelectMotivosPagamentoAntecipado={setSelectMotivosPagamentoAntecipado}
@@ -1035,7 +1053,10 @@ export const CadastroFormFormik = ({
                                 <section>
                                     <ModalDespesaIncompleta
                                         show={modalState === 'despesa-imcompleta'}
-                                        handleClose={()=>setModalState("close")}
+                                        handleClose={() => {
+                                            setModalState("close");
+                                            habilitaBtnSalvar();
+                                        }}
                                         onSalvarDespesaIncompleta={() => {
                                             serviceSubmitModais(values, setFieldValue, errors, 'despesa_incompleta_validado')
                                         }}
