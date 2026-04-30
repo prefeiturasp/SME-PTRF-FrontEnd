@@ -2,14 +2,15 @@ import {memo, useCallback, useContext} from "react";
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import moment from "moment";
-import { EditIconButton, VisualizarIconButton} from "../../../../Globais/UI/Button";
+import { EditIconButton, IconButton, VisualizarIconButton} from "../../../../Globais/UI/Button";
 import { RecursosContext } from "../../componentes/AbasPorRecurso/context/Recursos";
 
 const Tabela = ({
     rowsPerPage, 
-    data, 
-    count,
-    handleOpenModalForm
+    data,
+    handleOpenModalForm,
+    handleOpenCreateModal,
+    tem_permissao_edicao_painel_parametrizacoes
 }) =>{
     const dataTemplate = useCallback((rowData, column) => {
         return (
@@ -37,8 +38,21 @@ const Tabela = ({
 
     return(
         <>
-        <p>Recurso selecionado: {selectedRecurso?.nome}</p>
-        <p>Exibindo <span data-qa="total-acoes" className='total-acoes'>{count}</span> períodos</p>        
+        <div className="d-flex justify-content-between align-items-end mb-3">
+            <div>
+                <h5 className="font-weight-bold">{selectedRecurso?.nome}</h5>
+                <p className="m-0">Confira abaixo os prazos de repasse e execução do {selectedRecurso?.nome_exibicao}.</p>
+            </div>
+
+            <IconButton
+                icon="faPlus"
+                iconProps={{ style: {fontSize: '15px', marginRight: "5", color:"#fff"} }}
+                label="Adicionar período"
+                onClick={() => handleOpenCreateModal(selectedRecurso)}
+                variant="success"
+                disabled={!tem_permissao_edicao_painel_parametrizacoes}
+            />
+        </div>
         <DataTable  
             value={data}
             rows={rowsPerPage}

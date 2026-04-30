@@ -511,8 +511,8 @@ export const validarDataDeEncerramento = async (
 };
 
 // Periodos
-export const getTodosPeriodos = async (referencia = "") => {
-  return (await api.get(`/api/periodos/?referencia=${referencia}`, authHeader()))
+export const getTodosPeriodos = async (referencia = "", recurso_uuid = "") => {
+  return (await api.get(`/api/periodos/?referencia=${referencia}&recurso_uuid=${recurso_uuid}`, authHeader()))
     .data;
 };
 export const getPeriodoPorReferencia = async (referencia) => {
@@ -523,7 +523,8 @@ export const getDatasAtendemRegras = async (
   data_inicio_realizacao_despesas,
   data_fim_realizacao_despesas,
   periodo_anterior_uuid,
-  periodo_uuid
+  periodo_uuid,
+  recurso_uuid,
 ) => {
   const queryParams = new URLSearchParams({
     data_inicio_realizacao_despesas,
@@ -537,6 +538,12 @@ export const getDatasAtendemRegras = async (
   }
   if (periodo_uuid) {
     queryParams.append("periodo_uuid", periodo_uuid);
+  }
+  if(recurso_uuid) {
+    queryParams.append(
+      "recurso_uuid",
+      recurso_uuid
+    );
   }
   return (
     await api.get(

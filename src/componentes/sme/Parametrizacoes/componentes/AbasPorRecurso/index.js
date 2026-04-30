@@ -1,13 +1,15 @@
 import React, { Fragment, useMemo, useRef, useEffect, useContext } from "react";
-import { useGetRecursos } from "./hooks/useGetRecursos";
 import { RecursosContext } from "./context/Recursos";
 import "../../../../../componentes/Globais/MenuInterno";
 import "../../../../../componentes/dres/Associacoes/associacoes.scss";
 import Loading from "../../../../../utils/Loading";
+import { useRecursoSelecionadoContext } from "../../../../../context/RecursoSelecionado";
 
-export const AbasPorRecurso = () => {
+export const AbasPorRecurso = ({
+    handleChangeFiltros,
+}) => {
     const { selectedRecurso, setSelectedRecurso, clickBtnEscolheOpcao, setClickBtnEscolheOpcao } = useContext(RecursosContext);
-    const { data: recursos, isLoading, isError, error } = useGetRecursos();
+    const { isLoading, recursos } = useRecursoSelecionadoContext();
     // Ref para garantir que a inicialização da aba ativa ocorra apenas uma vez
     const inicializado = useRef(false);
 
@@ -24,9 +26,25 @@ export const AbasPorRecurso = () => {
         }));
     }, [recursos]);
 
+    const filteredRecursoTabs = (recursoUUID) => {
+        handleChangeFiltros('recurso_uuid', recursoUUID);
+    }
+
+    const handleChangeTab = (tab_id) => {
+        // Ativa aba de recurso
+        setClickBtnEscolheOpcao({
+            [tab_id]: true,
+        });
+        // Atualiza o recurso selecionado no contexto
+        const recursoSelecionado = recursos.find(r => r.uuid === tab_id);
+        setSelectedRecurso(recursoSelecionado);
+
+        filteredRecursoTabs(recursoSelecionado ? recursoSelecionado.uuid : '');
+    }
+
     // Inicializa primeira aba como ativa - executa apenas uma vez com a primeira aba
     useEffect(() => {
-        if (recurso_tabs.length > 0 && !inicializado.current) {
+        if (recurso_tabs.length > 0 && !inicializado.current && !selectedRecurso) {
             const primeiroRecurso = recursos.find(r => r.uuid === recurso_tabs[0].id);
             setClickBtnEscolheOpcao({
                 [recurso_tabs[0].id]: true,
@@ -39,7 +57,7 @@ export const AbasPorRecurso = () => {
     // Sincroniza o recurso selecionado quando a aba ativa muda
     useEffect(() => {
         const abaAtivaId = Object.keys(clickBtnEscolheOpcao).find(key => clickBtnEscolheOpcao[key]);
-        if (abaAtivaId) {
+        if (abaAtivaId && !selectedRecurso) {
             const recursoAtivo = recursos.find(r => r.uuid === abaAtivaId);
             if (recursoAtivo) {
                 setSelectedRecurso(recursoAtivo);
@@ -60,46 +78,30 @@ export const AbasPorRecurso = () => {
         );
     }
 
-    if (isError) {
-        return (
-            <div className="alert alert-danger mt-3">
-                Erro ao carregar recursos: {error?.message || "Erro desconhecido"}
-            </div>
-        );
-    }
-
     if (recurso_tabs.length === 0) {
         return <div className="alert alert-info mt-3">Nenhum recurso disponível</div>;
     }
 
     return (
-        <nav className="nav mb-4 mt-2 menu-interno">
-            {recurso_tabs.map((tab, index) => {
+        <nav className="nav mt-2 menu-interno">
+            {recurso_tabs.map((tab) => {
                 return tab.permissao ? (
-                    <Fragment key={index}>
+                    <Fragment key={tab.id}>
                         <li>
-                        <a
-                            onClick={() => {
-                                // Ativa aba de recurso
-                                setClickBtnEscolheOpcao({
-                                    [tab.id]: true,
-                                });
-                                // Atualiza o recurso selecionado no contexto
-                                const recursoSelecionado = recursos.find(r => r.uuid === tab.id);
-                                setSelectedRecurso(recursoSelecionado);
-                            }}
-                            className={`nav-link btn-escolhe-aba ${
-                                clickBtnEscolheOpcao[tab.id] ? "btn-escolhe-aba-active" : ""
-                            }`}
-                            id={`nav-${tab.id}-tab`}
-                            data-toggle="tab"
-                            href={`#nav-${tab.id}`}
-                            role="tab"
-                            aria-controls={`nav-${tab.id}`}
-                            aria-selected={clickBtnEscolheOpcao[tab.id] ? "true" : "false"}
-                        >
-                            {tab.nome_exibicao}
-                        </a>
+                            <a
+                                onClick={() => handleChangeTab(tab.id)}
+                                className={`nav-link btn-escolhe-aba ${
+                                    clickBtnEscolheOpcao[tab.id] ? "btn-escolhe-aba-active" : ""
+                                }`}
+                                id={`nav-${tab.id}-tab`}
+                                data-toggle="tab"
+                                href={`#nav-${tab.id}`}
+                                role="tab"
+                                aria-controls={`nav-${tab.id}`}
+                                aria-selected={clickBtnEscolheOpcao[tab.id] ? "true" : "false"}
+                            >
+                                {tab.nome_exibicao}
+                            </a>
                         </li>
                     </Fragment>
                 ) : null;

@@ -2,6 +2,7 @@ import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import '@testing-library/jest-dom';
 import Tabela from "../Tabela";
+import { RecursosContext } from "../../../componentes/AbasPorRecurso/context/Recursos";
 
 describe("Tabela", () => {
     const mockHandleOpenModalForm = jest.fn();
@@ -33,14 +34,37 @@ describe("Tabela", () => {
         jest.clearAllMocks();
     });
 
+    const renderWithRecursosContext = (ui, contextValue = {}) => {
+        const defaultContextValue = {
+            selectedRecurso: {
+                nome: "PTRF Básico",
+                nome_exibicao: "PTRF Básico",
+            },
+            setSelectedRecurso: jest.fn(),
+            clickBtnEscolheOpcao: {},
+            setClickBtnEscolheOpcao: jest.fn(),
+            ...contextValue,
+        };
+
+        return render(
+            <RecursosContext.Provider value={defaultContextValue}>
+                {ui}
+            </RecursosContext.Provider>
+        );
+    };
+
     it("deve renderizar corretamente o número de períodos", () => {
-        render(<Tabela rowsPerPage={5} data={mockData} count={mockData.length} handleOpenModalForm={mockHandleOpenModalForm} />);
+        renderWithRecursosContext(
+            <Tabela rowsPerPage={5} data={mockData} count={mockData.length} handleOpenModalForm={mockHandleOpenModalForm} />
+        );
         
-        expect(screen.getByText((_, element) => element.textContent === `Exibindo ${mockData.length} períodos`)).toBeInTheDocument();
+        expect(screen.getByText("Confira abaixo os prazos de repasse e execução do PTRF Básico.")).toBeInTheDocument();
     });
 
     it("deve exibir os dados corretamente formatados", () => {
-        render(<Tabela rowsPerPage={5} data={mockData} count={mockData.length} handleOpenModalForm={mockHandleOpenModalForm} />);
+        renderWithRecursosContext(
+            <Tabela rowsPerPage={5} data={mockData} count={mockData.length} handleOpenModalForm={mockHandleOpenModalForm} />
+        );
 
         const headerNames = [
             "Referência",
@@ -60,7 +84,9 @@ describe("Tabela", () => {
     });
 
     it("deve chamar handleOpenModalForm ao clicar no botão de ação editar", () => {
-        render(<Tabela rowsPerPage={5} data={mockData} count={mockData.length} handleOpenModalForm={mockHandleOpenModalForm} />);
+        renderWithRecursosContext(
+            <Tabela rowsPerPage={5} data={mockData} count={mockData.length} handleOpenModalForm={mockHandleOpenModalForm} />
+        );
 
         const actionButton = screen.getByRole("button", { name: /editar/i });
         fireEvent.click(actionButton);
@@ -70,7 +96,9 @@ describe("Tabela", () => {
     });
 
     it("deve chamar handleOpenModalForm ao clicar no botão de ação visualizar", () => {
-        render(<Tabela rowsPerPage={5} data={mockDataVisualizacao} count={mockDataVisualizacao.length} handleOpenModalForm={mockHandleOpenModalForm} />);
+        renderWithRecursosContext(
+            <Tabela rowsPerPage={5} data={mockDataVisualizacao} count={mockDataVisualizacao.length} handleOpenModalForm={mockHandleOpenModalForm} />
+        );
 
         const actionButton = screen.getByRole("button", { name: /visualizar/i });
         fireEvent.click(actionButton);
