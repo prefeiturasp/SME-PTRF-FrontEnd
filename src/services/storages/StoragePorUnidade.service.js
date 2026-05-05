@@ -1,5 +1,9 @@
 const ONE_MONTH = 30 * 24 * 60 * 60 * 1000;
 
+const getUnidadeKeyWithParameters = (unidade_uuid, usuario_login) => {
+    return `unidade_${unidade_uuid}_${usuario_login}`;
+}
+
 const getUnidadeKey = () => {
     try {
         // Carrega sob demanda para evitar ciclo de import na inicializacao dos storages.
@@ -8,7 +12,7 @@ const getUnidadeKey = () => {
         
         if (!dados_usuario_logado.unidade_selecionada.uuid || !dados_usuario_logado?.usuario_logado?.login) return 'sem_unidade';
 
-        return `unidade_${dados_usuario_logado.unidade_selecionada.uuid}_${dados_usuario_logado?.usuario_logado?.login}`;
+        return getUnidadeKeyWithParameters(dados_usuario_logado.unidade_selecionada.uuid, dados_usuario_logado?.usuario_logado?.login);
     } catch {
         return 'sem_unidade';
     }
@@ -37,6 +41,13 @@ export const criarStoragePorUnidade = ({ storageKey } = {}) => {
         if (todos[unidadeKey]) return todos[unidadeKey];
         return null;
     };
+
+    const getItemWithParameters = (unidade_uuid, usuario_login) => {
+        const unidadeKey = getUnidadeKeyWithParameters(unidade_uuid, usuario_login);
+        const todos = _parseTodos();
+        if (todos[unidadeKey]) return todos[unidadeKey];
+        return null;
+    }
 
     const setItem = (value) => {
         const unidadeKey = getUnidadeKey();
@@ -78,5 +89,5 @@ export const criarStoragePorUnidade = ({ storageKey } = {}) => {
         if (hasChanges) localStorage.setItem(storageKey, JSON.stringify(atualizado));
     };
 
-    return { getItem, setItem, removeItem, deleteStorage, clearAutomaticallyDataExpired };
+    return { getItem, getItemWithParameters, setItem, removeItem, deleteStorage, clearAutomaticallyDataExpired };
 };

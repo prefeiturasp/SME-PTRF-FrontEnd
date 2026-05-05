@@ -4,6 +4,7 @@ import { notificaDevolucaoPCService } from '../NotificacaDevolucaoPC.service';
 import { visoesService } from "../visoes.service";
 import { setNotificacaoMarcarDesmarcarLida } from "../Notificacoes.service";
 import { getPeriodoPorReferencia } from "../sme/Parametrizacoes.service";
+import { recursoSelecionadoStorageService } from '../storages/RecursoSelecionado.storage.service';
 
 const localStorageMock = (() => {
     let store = {};
@@ -42,30 +43,34 @@ describe('NotificaDevolucaoPC Service', () => {
 
   const mockNavigate = jest.fn();
 
+  const recursoA = { uuid: "rec-a", nome: "Recurso A" };
+
   const mockNotificacaoUuid = 'notif-uuid-123';
   const mockPcUuid = 'pc-uuid-456';
   const mockPeriodoRef = '2023-10';
   const mockUnitUuid = 'unit-uuid-789';
 
-  const mockUserData = {
-    unidade_selecionada: {
-      uuid: mockUnitUuid,
+  const mockNoficarDevolucaoPorRecurso = {
+    [`recurso_${recursoA.uuid}`]: {
       notificar_devolucao_referencia: mockPeriodoRef,
       notificar_devolucao_pc_uuid: mockPcUuid,
       notificacao_uuid: mockNotificacaoUuid,
+    }
+  };
+  
+  const mockUserData = {
+    unidade_selecionada: {
+      uuid: mockUnitUuid,
+      notificar_devolucao_por_recurso: mockNoficarDevolucaoPorRecurso
     },
     unidades: [
       {
         uuid: mockUnitUuid,
-        notificar_devolucao_referencia: mockPeriodoRef,
-        notificar_devolucao_pc_uuid: mockPcUuid,
-        notificacao_uuid: mockNotificacaoUuid,
+        notificar_devolucao_por_recurso: mockNoficarDevolucaoPorRecurso,
       },
       {
         uuid: 'other-unit-uuid',
-        notificar_devolucao_referencia: 'other-ref',
-        notificar_devolucao_pc_uuid: 'other-pc',
-        notificacao_uuid: 'other-notif',
+        notificar_devolucao_por_recurso: {},
       }
     ],
 };
@@ -82,6 +87,7 @@ describe('NotificaDevolucaoPC Service', () => {
     jest.clearAllMocks();
     localStorageMock.clear();
 
+    recursoSelecionadoStorageService.setRecursoSelecionado(recursoA);
     visoesService.getDadosDoUsuarioLogado.mockReturnValue(JSON.parse(JSON.stringify(mockUserData)));
     setNotificacaoMarcarDesmarcarLida.mockResolvedValue({});
     getPeriodoPorReferencia.mockResolvedValue(mockPeriodoData);

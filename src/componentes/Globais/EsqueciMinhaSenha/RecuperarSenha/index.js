@@ -1,7 +1,33 @@
-import React from "react";
+import React, {useRef, useState, useEffect} from "react";
 import {Formik} from "formik";
+import ReCAPTCHA from "react-google-recaptcha";
+import { getFeatureFlags } from "../../../../services/Core.service";
+
+let RECAPTCHA_SITE_KEY = "RECAPTCHA_SITE_KEY_REPLACE_ME";
+
+if (process.env.REACT_APP_NODE_ENV === "local") {
+  RECAPTCHA_SITE_KEY = process.env.REACT_APP_RECAPTCHA_SITE_KEY;
+}
 
 export const RecuperarMinhaSenha = ({initialValuesRecuperarSenha, onSubmitReuperarSenha, YupSignupSchemaRecuperarSenha}) => {
+    const [captchaToken, setCaptchaToken] = useState(null);
+    const [flagRecaptchaActive, setFlagRecaptchaActive] = useState(false);
+    const captchaRef = useRef(null);
+
+    useEffect(() => {
+        async function fetchFlags(){
+            const response = await getFeatureFlags();
+            setFlagRecaptchaActive(response?.recaptcha);
+        }
+        fetchFlags();
+    }, []);
+
+    const handleSubmit = async (values) => {
+        await onSubmitReuperarSenha(values);
+        captchaRef.current?.reset();
+        setCaptchaToken(null);
+    };
+
     return (
         <>
         <div className="esqueci-minha-senha-inner-texto">
@@ -15,13 +41,9 @@ export const RecuperarMinhaSenha = ({initialValuesRecuperarSenha, onSubmitReuper
                 validationSchema={YupSignupSchemaRecuperarSenha}
                 validateOnBlur={true}
                 enableReinitialize={true}
-                onSubmit={onSubmitReuperarSenha}
+                onSubmit={handleSubmit}
             >
-                {props => {
-                    const {
-                        reset,
-                    } = props;
-                    return(
+                {props => (
                     <form onSubmit={props.handleSubmit}>
                         <div className="form-group">
                             <label htmlFor="usuario">Usuário</label>
@@ -36,14 +58,26 @@ export const RecuperarMinhaSenha = ({initialValuesRecuperarSenha, onSubmitReuper
                             />
                             {props.touched.usuario && props.errors.usuario && <span className="span_erro text-danger mt-1"> {props.errors.usuario} </span>}
                         </div>
+                        {RECAPTCHA_SITE_KEY && flagRecaptchaActive && (
+                            <div className="d-flex justify-content-center mt-3">
+                                <ReCAPTCHA
+                                    ref={captchaRef}
+                                    sitekey={RECAPTCHA_SITE_KEY}
+                                    onChange={setCaptchaToken}
+                                    onExpired={() => setCaptchaToken(null)}
+                                />
+                            </div>
+                        )}
                         <div className="d-flex  justify-content-end pb-3 mt-3">
                             <button onClick={() => window.location.assign("/login")} type="reset" className="btn btn btn-outline-success mt-2 mr-2">Voltar</button>
                             <button onClick={() => props.resetForm()} type="reset" className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>
-                            <button disabled={!props.values.usuario} type="submit" className="btn btn-success mt-2">Continuar</button>
+                            <button
+                                disabled={!props.values.usuario || (RECAPTCHA_SITE_KEY && !captchaToken && flagRecaptchaActive)}
+                                type="submit"
+                                className="btn btn-success mt-2">Continuar</button>
                         </div>
                     </form>
-                    );
-                }}
+                )}
             </Formik>
         </div>
         </>

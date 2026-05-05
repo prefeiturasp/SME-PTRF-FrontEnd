@@ -22,10 +22,14 @@ set -xe
 set -xe
   : "${SENTRY_ENVIRONMENT?Precisa de uma variavel de ambiente SENTRY_ENVIRONMENT}"
 
+set -xe
+  : "${RECAPTCHA_SITE_KEY?Precisa de uma variavel de ambiente RECAPTCHA_SITE_KEY}"
+
 sed -i "s,API_URL_REPLACE_ME,$API_URL,g" /usr/share/nginx/html/static/js/main*.js
 sed -i "s,EDITOR_KEY_REPLACE_ME,$REACT_APP_EDITOR_KEY,g" /usr/share/nginx/html/static/js/main*.js
 sed -i "s,SENTRY_URL_REPLACE_ME,$SENTRY_URL,g" /usr/share/nginx/html/static/js/main*.js
 sed -i "s,SENTRY_ENVIRONMENT_REPLACE_ME,$SENTRY_ENVIRONMENT,g" /usr/share/nginx/html/static/js/main*.js
+sed -i "s,RECAPTCHA_SITE_KEY_REPLACE_ME,$RECAPTCHA_SITE_KEY,g" /usr/share/nginx/html/static/js/main*.js
 sed -i "s,SERVER_NAME,$SERVER_NAME,g" /etc/nginx/conf.d/default.conf
 
 exec "$@"

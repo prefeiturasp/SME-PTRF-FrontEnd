@@ -7,11 +7,28 @@ const mockProps = {
   redefinicaoDeSenha: true
 }
 
-
 jest.mock("../../../services/auth.service", () => ({
   authService:{
     login: jest.fn()
   }
+}));
+
+jest.mock('react-tooltip', () => ({
+  Tooltip: ({ id }) => <div data-testid={`tooltip-${id}`} />
+}));
+
+jest.mock("react-google-recaptcha", () => {
+  const mockReact = require("react");
+  const MockRecaptcha = mockReact.forwardRef(({ onChange }, ref) => {
+    mockReact.useImperativeHandle(ref, () => ({ reset: jest.fn() }));
+    mockReact.useEffect(() => { onChange && onChange("test-captcha-token"); }, []);
+    return mockReact.createElement("div", { "data-testid": "recaptcha-mock" });
+  });
+  return MockRecaptcha;
+});
+
+jest.mock("../../../services/Core.service", () => ({
+  getFeatureFlags: jest.fn().mockResolvedValue({ recaptcha: false }),
 }));
 
 describe('<LoginForm>', () => {

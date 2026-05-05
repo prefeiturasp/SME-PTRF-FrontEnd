@@ -1,17 +1,19 @@
 #dropdown-basic {
-  background: none;
+  background: none!important;
   color: black;
-  border: none;
+  border: none!important;
+  cursor: pointer!important;
+  text-align: center;
 }
 
 #dropdown-basic:hover {
-  border: none;
+   border: none!important;
 }
 
 .show > .btn-primary.dropdown-toggle {
   color: none;
   background: none;
-  border: none;
+  border: none!important;
   border-color: none;
 }
 #dropdown-basic:focus {

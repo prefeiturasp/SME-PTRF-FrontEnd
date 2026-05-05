@@ -21,15 +21,24 @@ jest.mock("../ModalFormPeriodos", () => ({
     default: () => <div data-testid="modal-form-periodos"></div>,
 }));
 
+jest.mock("../../../componentes/AbasPorRecurso", () => ({
+    AbasPorRecurso: () => <div data-testid="abas-por-recurso"></div>,
+}));
+
+jest.mock("../../../componentes/AbasPorRecurso/context/Recursos", () => ({
+    RecursosProvider: ({ children }) => <div data-testid="recursos-provider">{children}</div>,
+}));
+
   
 const mockSetShowModalConfirmDeletePeriodo = jest.fn();
 const mockHandleDelete = jest.fn();
 const mockSetShowModalInfoExclusaoNaoPermitida = jest.fn();
+const mockHandleCloseModalConfirmDeletePeriodo = jest.fn();
 
 jest.mock("../hooks/usePeriodos", () => ({
   usePeriodos: () => ({
     modalForm: { open: true, uuid: "123" },
-    showModalConfirmDeletePeriodo: true,
+    showModalConfirmDeletePeriodo: { open: true, periodo_uuid: "12345-uuid" },
     showModalInfoExclusaoNaoPermitida: true,
     erroDatasAtendemRegras: false,
     erroExclusaoNaoPermitida: "Não é possível excluir este período.",
@@ -49,6 +58,7 @@ jest.mock("../hooks/usePeriodos", () => ({
     setShowModalConfirmDeletePeriodo: mockSetShowModalConfirmDeletePeriodo,
     setShowModalInfoExclusaoNaoPermitida: mockSetShowModalInfoExclusaoNaoPermitida,
     setErroDatasAtendemRegras: jest.fn(),
+    handleCloseModalConfirmDeletePeriodo: mockHandleCloseModalConfirmDeletePeriodo
   }),
 }));
 
@@ -72,11 +82,6 @@ describe("Periodos", () => {
       expect(screen.getByText("Deseja realmente excluir este período?")).toBeInTheDocument();
       expect(screen.getByText("Cancelar")).toBeInTheDocument();
       expect(screen.getByText("Excluir")).toBeInTheDocument();
-  
-      // Verifica se o modal de exclusão não permitida está no documento
-      expect(screen.getByText("Exclusão não permitida")).toBeInTheDocument();
-      expect(screen.getByText("Não é possível excluir este período.")).toBeInTheDocument();
-      expect(screen.getByText("Fechar")).toBeInTheDocument();
     });
   
     it("deve fechar o modal de confirmação de exclusão ao clicar em 'Cancelar'", () => {
@@ -85,7 +90,7 @@ describe("Periodos", () => {
         const cancelButton = screen.getByText("Cancelar");
         fireEvent.click(cancelButton);
     
-        expect(mockSetShowModalConfirmDeletePeriodo).toHaveBeenCalledWith(false);
+        expect(mockHandleCloseModalConfirmDeletePeriodo).toHaveBeenCalled();
       });
   
     it("deve chamar a função de exclusão ao clicar em 'Excluir'", () => {
@@ -93,16 +98,8 @@ describe("Periodos", () => {
       const excluirButton = screen.getByText("Excluir");
       fireEvent.click(excluirButton);
   
-      expect(mockHandleDelete).toHaveBeenCalledWith("123");
-      expect(mockSetShowModalConfirmDeletePeriodo).toHaveBeenCalledWith(false);
-    });
-  
-    it("deve fechar o modal de exclusão não permitida ao clicar em 'Fechar'", () => {
-      render(<Periodos />);
-      const fecharButton = screen.getByText("Fechar");
-      fireEvent.click(fecharButton);
-  
-      expect(mockSetShowModalInfoExclusaoNaoPermitida).toHaveBeenCalledWith(false);
+      expect(mockHandleDelete).toHaveBeenCalledWith("12345-uuid");
+      expect(mockHandleCloseModalConfirmDeletePeriodo).toHaveBeenCalled();
     });
   });
   

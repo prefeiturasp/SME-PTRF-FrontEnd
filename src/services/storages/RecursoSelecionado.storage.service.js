@@ -4,6 +4,7 @@ export const STORAGE_KEY_RECURSO_SELECIONADO_POR_UNIDADE = 'RECURSO_SELECIONADO_
 
 const {
     getItem: getRecursoSelecionado,
+    getItemWithParameters: getRecursoSelecionadoWithParameters,
     setItem: setRecursoSelecionado,
     removeItem: removeRecursoSelecionado,
     deleteStorage: deleteRecursoSelecionadoStorage,
@@ -12,6 +13,7 @@ const {
 
 export const recursoSelecionadoStorageService = {
     getRecursoSelecionado,
+    getRecursoSelecionadoWithParameters,
     setRecursoSelecionado,
     removeRecursoSelecionado,
     deleteRecursoSelecionadoStorage,

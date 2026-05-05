@@ -3,6 +3,7 @@ import {getQuantidadeNaoLidas, getRegistrosFalhaGeracaoPc} from "../../services/
 import {visoesService} from "../../services/visoes.service";
 import {ModalNotificaErroConcluirPC} from "../../componentes/Globais/ModalAntDesign/ModalNotificaErroConcluirPC";
 import {authService} from "../../services/auth.service";
+import { notificaDevolucaoPCStorageService } from "../../services/storages/NotificarDevolucao.storage.service";
 
 export const NotificacaoContext = createContext( {
     qtdeNotificacoesNaoLidas: '',
@@ -37,9 +38,11 @@ export const NotificacaoContextProvider = ({children}) => {
     const [registroFalhaGeracaoPc, setRegistroFalhaGeracaoPc] = useState([]);
 
     const deveExibirModalDevolucao = () => {
-        let storage = localStorage.getItem("NOTIFICAR_DEVOLUCAO_REFERENCIA");
+        const notificaDevolucao = notificaDevolucaoPCStorageService.retornaNotificarDevolucaoUnidadeRecursoSelecionado()
 
-        if(storage === null || storage === "null"){
+        let storage = notificaDevolucao?.notificar_devolucao_referencia;
+
+        if(!storage || storage === null || storage === "null"){
             return false;
         }
         else {
