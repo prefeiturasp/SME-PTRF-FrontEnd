@@ -3,20 +3,60 @@ import { render, screen, waitFor } from "@testing-library/react";
 import { NotificacaoContextProvider, NotificacaoContext } from "../index";
 import * as notificacoesService from "../../../services/Notificacoes.service";
 import * as authService from "../../../services/auth.service";
+import { useRecursoSelecionadoContext } from "../../RecursoSelecionado";
+import { recursoSelecionadoStorageService } from "../../../services/storages/RecursoSelecionado.storage.service";
 import * as visoesService from "../../../services/visoes.service";
 
 jest.mock("../../../services/Notificacoes.service");
 jest.mock("../../../services/auth.service");
 jest.mock("../../../services/visoes.service");
+jest.mock("../../RecursoSelecionado", () => ({
+    useRecursoSelecionadoContext: jest.fn(),
+}));
 
 const mockNotificacoes = {
   quantidade_nao_lidos: 5,
 };
 
 describe("NotificacaoContextProvider", () => {
+  const recursoA = { uuid: "rec-a", nome: "Recurso A" };
+  
+  const notificar_devolucao_referencia = 2026.1
+  const notificar_devolucao_pc_uuid = 'fake-uuid-2'
+  const notificacao_uuid = 'fake-uuid-2'
+
+  const mockNoficarDevolucaoPorRecurso = {
+      [`recurso_${recursoA.uuid}`]: {
+          notificar_devolucao_referencia,
+          notificar_devolucao_pc_uuid,
+          notificacao_uuid,
+      }
+  }
+
+  const mockDadosUsuarioLogado = {
+    usuario_logado: {
+        nome: "James Bond",
+        uuid: "fake-uuid",
+        login: "james.bond",
+    },
+    unidade_selecionada: { 
+      uuid: 'fake-uuid-2',
+      nome: 'Unit 2',
+      tipo_unidade: 'CEI',
+      associacao: {
+          uuid: 'fake-uuid-2',
+          nome: 'Support Unit 2',
+      },
+      notificar_devolucao_por_recurso: mockNoficarDevolucaoPorRecurso
+    },
+  }
+
   beforeEach(() => {
     jest.resetAllMocks();
     localStorage.clear();
+    visoesService.visoesService.getDadosDoUsuarioLogado.mockReturnValue(mockDadosUsuarioLogado);
+    recursoSelecionadoStorageService.setRecursoSelecionado(recursoA);
+    useRecursoSelecionadoContext.mockReturnValue({ isLoading: false, clearRecursoNaSessao: jest.fn() });
   });
 
   it("deve fornecer valores de contexto padrão", async () => {

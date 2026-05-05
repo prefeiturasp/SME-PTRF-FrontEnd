@@ -58,6 +58,20 @@ const queryClient = new QueryClient({
 });
 
 describe('Cabeçalho', () => {
+    const recursoA = { uuid: "rec-a", nome: "Recurso A" };
+
+    const notificar_devolucao_referencia = 2026.1
+    const notificar_devolucao_pc_uuid = 'fake-uuid-2'
+    const notificacao_uuid = 'fake-uuid-2'
+
+    const mockNoficarDevolucaoPorRecurso = {
+        [`recurso_${recursoA.uuid}`]: {
+            notificar_devolucao_referencia,
+            notificar_devolucao_pc_uuid,
+            notificacao_uuid,
+        }
+    }
+
     beforeEach(() => {
         jest.clearAllMocks();
         queryClient.clear();
@@ -92,9 +106,7 @@ describe('Cabeçalho', () => {
             uuid: 'fake-uuid',
             tipo_unidade: 'DRE',
             nome: 'Support Unit',
-            notificar_devolucao_referencia: true,
-            notificar_devolucao_pc_uuid: 'fake-uuid',
-            notificacao_uuid: 'fake-uuid'
+            notificar_devolucao_por_recurso: {}
         },
         associacao_selecionada: {
             uuid: 'fake-uuid',
@@ -104,21 +116,30 @@ describe('Cabeçalho', () => {
             { 
                 uuid: 'fake-uuid-2',
                 nome: 'Unit 2',
-                tipo_unidade: 'CEI', 
-                notificar_devolucao_referencia: true,
-                notificar_devolucao_pc_uuid: 'fake-uuid-2',
-                notificacao_uuid: 'fake-uuid-2',
+                tipo_unidade: 'CEI',
                 associacao: {
                     uuid: 'fake-uuid-2',
                     nome: 'Support Unit 2',
-                } 
-        }],
+                },
+                notificar_devolucao_por_recurso: mockNoficarDevolucaoPorRecurso
+            },
+            { 
+                uuid: 'fake-uuid',
+                nome: 'Support Unit',
+                tipo_unidade: 'DRE',
+                associacao: {
+                    uuid: 'fake-uuid',
+                    nome: 'Support Unit',
+                },
+                notificar_devolucao_por_recurso: {}
+            }
+        ],
     }
 
     it('Deve renderizar o Cabeçalho', async () => {
         
         renderComponent();
-        const obj_unidade = '{"uuid_unidade":"fake-uuid-2","uuid_associacao":"fake-uuid-2","nome_associacao":"Support Unit 2","unidade_tipo":"CEI","unidade_nome":"Unit 2","notificar_devolucao_referencia":true,"notificar_devolucao_pc_uuid":"fake-uuid-2","notificacao_uuid":"fake-uuid-2"}'
+        const obj_unidade = '{"uuid_unidade":"fake-uuid-2","uuid_associacao":"fake-uuid-2","nome_associacao":"Support Unit 2","unidade_tipo":"CEI","unidade_nome":"Unit 2","notificar_devolucao_por_recurso":{"recurso_rec-a":{"notificar_devolucao_referencia":2026.1,"notificar_devolucao_pc_uuid":"fake-uuid-2","notificacao_uuid":"fake-uuid-2"}}}';
         const select = screen.getByTestId('select-unidade');
         fireEvent.change(select, { target: { value: obj_unidade } });
         expect(visoesService.getItemUsuarioLogado).toHaveBeenCalledTimes(1);

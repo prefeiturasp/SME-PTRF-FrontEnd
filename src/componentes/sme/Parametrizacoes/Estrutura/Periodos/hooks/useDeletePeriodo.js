@@ -3,9 +3,7 @@ import { deletePeriodo } from "../../../../../../services/sme/Parametrizacoes.se
 import { toastCustom } from "../../../../../Globais/ToastCustom";
 
 export const useDeletePeriodo = (
-    setModalForm,
-    setErroExclusaoNaoPermitida,
-    setShowModalInfoExclusaoNaoPermitida
+    setModalForm
 ) => {
     const queryClient = useQueryClient();
 
@@ -23,8 +21,7 @@ export const useDeletePeriodo = (
         },
         onError: (e) => {
             if (e.response && e.response.data && e.response.data.mensagem){
-                setErroExclusaoNaoPermitida(e.response.data.mensagem);
-                setShowModalInfoExclusaoNaoPermitida(true)
+                toastCustom.ToastCustomError("Exclusão não permitida", e.response.data.mensagem);
             } else {
                 toastCustom.ToastCustomError("Ops!", "Houve um erro ao tentar completar ação.");
             }

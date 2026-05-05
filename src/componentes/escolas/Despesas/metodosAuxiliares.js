@@ -125,7 +125,7 @@ const get_nome_razao_social = async (cpf_cnpj, setFieldValue, nome_fornecedor=""
 const exibeDocumentoTransacao = (valor, setCssEscondeDocumentoTransacao, setLabelDocumentoTransacao, despesasTabelas) => {
     if (valor && despesasTabelas && despesasTabelas.tipos_transacao){
         let exibe_documento_transacao =  despesasTabelas.tipos_transacao.find(element => element.id === Number(valor));
-        if (exibe_documento_transacao.tem_documento){
+        if (exibe_documento_transacao && exibe_documento_transacao.tem_documento){
             setCssEscondeDocumentoTransacao("");
             setLabelDocumentoTransacao(exibe_documento_transacao.nome);
         }else {
@@ -139,7 +139,7 @@ const exibeDocumentoTransacao = (valor, setCssEscondeDocumentoTransacao, setLabe
 const exibeDocumentoTransacaoImposto = (valor, setLabelDocumentoTransacao, labelDocumentoTransacaoImposto, setCssEscondeDocumentoTransacaoImposto, cssEscondeDocumentoTransacaoImposto, despesasTabelas, index) => {
     if(valor && despesasTabelas && despesasTabelas.tipos_transacao){
         let exibe_documento_transacao =  despesasTabelas.tipos_transacao.find(element => element.id === Number(valor));
-        if (exibe_documento_transacao.tem_documento){
+        if (exibe_documento_transacao && exibe_documento_transacao.tem_documento){
             setCssEscondeDocumentoTransacaoImposto({
                 ...cssEscondeDocumentoTransacaoImposto,
                 [index]: ""
@@ -168,7 +168,7 @@ const exibeDocumentoTransacaoImpostoUseEffect = (despesas_impostos, setLabelDocu
     despesas_impostos.map((despesa_imposto, index_imposto) => {
         if(despesa_imposto.tipo_transacao && despesasTabelas && despesasTabelas.tipos_transacao){
             let exibe_documento_transacao =  despesasTabelas.tipos_transacao.find(element => element.id === Number(despesa_imposto.tipo_transacao));
-            if(exibe_documento_transacao.tem_documento){
+            if (exibe_documento_transacao && exibe_documento_transacao.tem_documento){
                 setCssEscondeDocumentoTransacaoImposto(prevState => ([...prevState, ""]))
                 setLabelDocumentoTransacao(prevState => ([...prevState, exibe_documento_transacao.nome]))
             }

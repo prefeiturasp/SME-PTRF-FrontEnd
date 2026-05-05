@@ -30,6 +30,7 @@ import { CustomModalConfirm } from "../../Globais/Modal/CustomModalConfirm";
 import { toastCustom } from "../../../componentes/Globais/ToastCustom";
 import { ModalDevolucaoNaoPermitida } from "./ModalDevolucaoNaoPermitida";
 import { geracaoDocumentosStorageService } from "../../../services/storages/GeracaoDeDocumentos.storage.service";
+import { notificaDevolucaoPCStorageService } from "../../../services/storages/NotificarDevolucao.storage.service";
 
 export const PrestacaoDeContas = ({setStatusPC, registroFalhaGeracaoPc, setRegistroFalhaGeracaoPc, setApresentaBarraAvisoErroProcessamentoPc}) => {
     const navigate = useNavigate();
@@ -497,6 +498,7 @@ export const PrestacaoDeContas = ({setStatusPC, registroFalhaGeracaoPc, setRegis
         concluirPeriodo();
         if (statusPrestacaoDeConta.prestacao_contas_status.status_prestacao === "DEVOLVIDA") {
             localStorage.removeItem("NOTIFICAR_DEVOLUCAO_REFERENCIA")
+            notificaDevolucaoPCStorageService.removerNotificacaoPorRecursoLidaLocalStorage()
             notificacaoContext.setExibeModalTemDevolucao(false)
             notificacaoContext.setExibeMensagemFixaTemDevolucao(false)
         }

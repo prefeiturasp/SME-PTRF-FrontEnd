@@ -15,3 +15,7 @@ export const getVersaoApi = async () => {
 export const getAmbientes = async () => {
   return (await api.get(`api/ambientes/`, authHeader())).data
 }
+
+export const getFeatureFlags = async () => {
+  return (await api.get(`api/feature-flags`, {headers: { 'Content-Type': 'application/json' }})).data
+}

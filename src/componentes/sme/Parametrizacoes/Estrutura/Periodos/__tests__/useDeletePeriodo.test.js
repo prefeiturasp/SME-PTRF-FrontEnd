@@ -58,14 +58,13 @@ describe("useDeletePeriodo", () => {
         const erro = { response: { data: { mensagem: "Exclusão não permitida." } } };
         deletePeriodo.mockRejectedValueOnce(erro);
 
-        const { result } = renderHook(() => useDeletePeriodo(setModalForm, setErroExclusaoNaoPermitida, setShowModalInfoExclusaoNaoPermitida), { wrapper });
+        const { result } = renderHook(() => useDeletePeriodo(setModalForm), { wrapper });
 
         await act(async () => {
             result.current.mutationDelete.mutate("uuid-teste");
         });
 
-        expect(setErroExclusaoNaoPermitida).toHaveBeenCalledWith("Exclusão não permitida.");
-        expect(setShowModalInfoExclusaoNaoPermitida).toHaveBeenCalledWith(true);
+        expect(toastCustom.ToastCustomError).toHaveBeenCalledWith("Exclusão não permitida", "Exclusão não permitida.");
     });
 
     it("deve lidar com erro genérico na exclusão", async () => {

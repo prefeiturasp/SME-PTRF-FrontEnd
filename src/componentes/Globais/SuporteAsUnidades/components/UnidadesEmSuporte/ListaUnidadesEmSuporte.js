@@ -133,6 +133,7 @@ export const UnidadesEmSuporte = () => {
         return (
             <Tooltip title="Encerrar suporte">
                 <Button type="text" className='link-red'
+                    aria-label="Remover Suporte"
                     onClick={() => handleConfirmarRemoverSuporte(rowData)}
                     disabled={selectedUnidades.length > 0}
                     icon={
@@ -208,7 +209,7 @@ export const UnidadesEmSuporte = () => {
                         selection={selectedUnidades} onSelectionChange={e => setSelectedUnidades(e.value)}
                         disabled
                     >
-                        <Column selectionMode="multiple" style={{width:'3em'}}/>
+                        <Column selectionMode="multiple" style={{textAlign: 'center', width: 50}} className="reactprime-multiple-fix-column"/>
                         <Column
                             field="codigo_eol"
                             header="Código Eol"

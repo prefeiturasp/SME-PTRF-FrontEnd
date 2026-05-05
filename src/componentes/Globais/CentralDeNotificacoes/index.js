@@ -21,6 +21,7 @@ export const CentralDeNotificacoes = () => {
         lido: "",
         data_inicio: "",
         data_fim: "",
+        recurso: "",
     };
 
     const [clickBtnNotificacoes, setClickBtnNotificacoes] = useState(false);
@@ -80,7 +81,7 @@ export const CentralDeNotificacoes = () => {
     const trazerNotificacoesFiltros = async () =>{
         let data_inicio = stateFormFiltros.data_inicio ? moment(new Date(stateFormFiltros.data_inicio), "YYYY-MM-DD").format("YYYY-MM-DD") : null;
         let data_fim = stateFormFiltros.data_fim ? moment(new Date(stateFormFiltros.data_fim), "YYYY-MM-DD").format("YYYY-MM-DD") : null;
-        let lista_retorno_filtros = await getNotificacoesFiltros(stateFormFiltros.tipo_notificacao, stateFormFiltros.remetente, stateFormFiltros.categoria, stateFormFiltros.lido, data_inicio, data_fim);
+        let lista_retorno_filtros = await getNotificacoesFiltros(stateFormFiltros.tipo_notificacao, stateFormFiltros.remetente, stateFormFiltros.categoria, stateFormFiltros.lido, data_inicio, data_fim, stateFormFiltros.recurso);
         setNotificacoes(lista_retorno_filtros.results);
         let numeroDePaginas = lista_retorno_filtros.count;
         setTotalDePaginas(Math.ceil((numeroDePaginas)/10));
@@ -90,7 +91,7 @@ export const CentralDeNotificacoes = () => {
         setPaginacaoAtual(page);
         let data_inicio = stateFormFiltros.data_inicio ? moment(new Date(stateFormFiltros.data_inicio), "YYYY-MM-DD").format("YYYY-MM-DD") : null;
         let data_fim = stateFormFiltros.data_fim ? moment(new Date(stateFormFiltros.data_fim), "YYYY-MM-DD").format("YYYY-MM-DD") : null;
-        let lista_retorno_filtros = await getNotificacoesFiltrosPaginacao(stateFormFiltros.tipo_notificacao, stateFormFiltros.remetente, stateFormFiltros.categoria, stateFormFiltros.lido, data_inicio, data_fim, page);
+        let lista_retorno_filtros = await getNotificacoesFiltrosPaginacao(stateFormFiltros.tipo_notificacao, stateFormFiltros.remetente, stateFormFiltros.categoria, stateFormFiltros.lido, data_inicio, data_fim, stateFormFiltros.recurso, page);
         setNotificacoes(lista_retorno_filtros.results);
         let numeroDePaginas = lista_retorno_filtros.count;
         setTotalDePaginas(Math.ceil((numeroDePaginas)/10));

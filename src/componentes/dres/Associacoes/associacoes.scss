@@ -111,6 +111,13 @@
   }
 }
 
+.btn-escolhe-aba-active {
+  font-weight: bold !important;
+  color: var(--color-primary-darker) !important;
+  border-bottom: 4px solid var(--color-primary-darker);
+  margin-bottom: -1px;
+}
+
 .titulo-explicativo-dre-detalhes {
   font-size: 24px;
   color: var(--color-primary-lighten);

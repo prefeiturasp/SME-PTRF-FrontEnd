@@ -280,9 +280,14 @@ export const CadastroForm = ({verbo_http, veioDeSituacaoPatrimonial}) => {
       
 
     useEffect(() => {
-        if (despesaContext.initialValues.tipo_transacao && verbo_http === "PUT") {
-            aux.exibeDocumentoTransacao(despesaContext.initialValues.tipo_transacao.id, setCssEscondeDocumentoTransacao, setLabelDocumentoTransacao, despesasTabelas);
-            aux.exibeDocumentoTransacaoImpostoUseEffect(despesaContext.initialValues.despesas_impostos, setLabelDocumentoTransacaoImposto, labelDocumentoTransacaoImposto, setCssEscondeDocumentoTransacaoImposto, cssEscondeDocumentoTransacaoImposto, despesasTabelas);
+        const tipoTransacaoIni = despesaContext.initialValues.tipo_transacao;
+        const tipoTransacaoId =
+            tipoTransacaoIni != null
+                ? (typeof tipoTransacaoIni === "object" ? tipoTransacaoIni.id : tipoTransacaoIni)
+                : null;
+        if (tipoTransacaoId != null && verbo_http === "PUT") {
+            aux.exibeDocumentoTransacao(tipoTransacaoId, setCssEscondeDocumentoTransacao, setLabelDocumentoTransacao, despesasTabelas);
+            aux.exibeDocumentoTransacaoImpostoUseEffect(despesaContext.initialValues.despesas_impostos || [], setLabelDocumentoTransacaoImposto, labelDocumentoTransacaoImposto, setCssEscondeDocumentoTransacaoImposto, cssEscondeDocumentoTransacaoImposto, despesasTabelas);
         }
         if (despesaContext.initialValues.data_transacao && verbo_http === "PUT") {
             if(aux.origemAnaliseLancamento(parametroLocation)){
@@ -309,7 +314,7 @@ export const CadastroForm = ({verbo_http, veioDeSituacaoPatrimonial}) => {
         if (verbo_http === "PUT") {
             setObjetoParaComparacao(despesaContext.initialValues)
         }
-    }, [despesaContext.initialValues]);
+    }, [despesaContext.initialValues, despesasTabelas]);
 
     useEffect(() => {
         const carregaTabelasDespesas = async () => {

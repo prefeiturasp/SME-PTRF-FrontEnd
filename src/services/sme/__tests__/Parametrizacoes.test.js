@@ -188,6 +188,14 @@ describe('Testes para funções de análise', () => {
             }
         };
     };
+    const authHeaderArquivos = () => {
+        return {
+            headers: {
+                'Authorization': `JWT ${mockToken}`,
+                'Content-Type': 'multipart/form-data'
+            }
+        };
+    };
 
     test('getTabelaArquivosDeCarga  deve chamar a API corretamente', async () => {
         api.get.mockResolvedValue({ data: mockData })
@@ -236,7 +244,7 @@ describe('Testes para funções de análise', () => {
         expect(api.post).toHaveBeenCalledWith(
             `/api/arquivos/`,
             formData,
-            authHeader()
+            authHeaderArquivos()
         )
         expect(result).toEqual(mockData);
     });
@@ -265,7 +273,7 @@ describe('Testes para funções de análise', () => {
         expect(api.patch).toHaveBeenCalledWith(
             `/api/arquivos/${uuid_arquivo_de_carga}/`,
             formData,
-            authHeader()
+            authHeaderArquivos()
         )
         expect(result).toEqual(mockData);
     });
@@ -859,7 +867,7 @@ describe('Testes para funções de análise', () => {
     test('getTodosPeriodos deve chamar a API corretamente sem referencia', async () => {
         api.get.mockResolvedValue({ data: mockData })
         const result = await getTodosPeriodos();
-        const url = `/api/periodos/?referencia=`
+        const url = `/api/periodos/?referencia=&recurso_uuid=`
         expect(api.get).toHaveBeenCalledWith(url, authHeader())
         expect(result).toEqual(mockData);
     });
@@ -868,7 +876,7 @@ describe('Testes para funções de análise', () => {
         api.get.mockResolvedValue({ data: mockData })
         const referencia = '2023'
         const result = await getTodosPeriodos(referencia);
-        const url = `/api/periodos/?referencia=${referencia}`
+        const url = `/api/periodos/?referencia=${referencia}&recurso_uuid=`
         expect(api.get).toHaveBeenCalledWith(url, authHeader())
         expect(result).toEqual(mockData);
     });

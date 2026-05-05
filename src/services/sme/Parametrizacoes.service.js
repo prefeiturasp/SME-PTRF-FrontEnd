@@ -7,6 +7,12 @@ const authHeader = ()=>({
     "Content-Type": "application/json",
   },
 });
+const authHeaderArquivos = ()=>({
+  headers: {
+    Authorization: `JWT ${localStorage.getItem(TOKEN_ALIAS)}`,
+    "Content-Type": "multipart/form-data",
+  },
+});
 
 // ***** Cargas Associacoes *****
 export const getTabelaArquivosDeCarga = async () => {
@@ -42,7 +48,7 @@ export const postCreateArquivoDeCarga = async (payload) => {
   if (payload.tipo_de_conta) {
     formData.append("tipo_de_conta", payload.tipo_de_conta);
   }
-  return (await api.post(`/api/arquivos/`, formData, authHeader())).data;
+  return (await api.post(`/api/arquivos/`, formData, authHeaderArquivos())).data;
 };
 export const patchAlterarArquivoDeCarga = async (
   uuid_arquivo_de_carga,
@@ -65,7 +71,7 @@ export const patchAlterarArquivoDeCarga = async (
     await api.patch(
       `/api/arquivos/${uuid_arquivo_de_carga}/`,
       formData,
-      authHeader()
+      authHeaderArquivos()
     )
   ).data;
 };
@@ -505,8 +511,8 @@ export const validarDataDeEncerramento = async (
 };
 
 // Periodos
-export const getTodosPeriodos = async (referencia = "") => {
-  return (await api.get(`/api/periodos/?referencia=${referencia}`, authHeader()))
+export const getTodosPeriodos = async (referencia = "", recurso_uuid = "") => {
+  return (await api.get(`/api/periodos/?referencia=${referencia}&recurso_uuid=${recurso_uuid}`, authHeader()))
     .data;
 };
 export const getPeriodoPorReferencia = async (referencia) => {
@@ -517,7 +523,8 @@ export const getDatasAtendemRegras = async (
   data_inicio_realizacao_despesas,
   data_fim_realizacao_despesas,
   periodo_anterior_uuid,
-  periodo_uuid
+  periodo_uuid,
+  recurso_uuid,
 ) => {
   const queryParams = new URLSearchParams({
     data_inicio_realizacao_despesas,
@@ -531,6 +538,12 @@ export const getDatasAtendemRegras = async (
   }
   if (periodo_uuid) {
     queryParams.append("periodo_uuid", periodo_uuid);
+  }
+  if(recurso_uuid) {
+    queryParams.append(
+      "recurso_uuid",
+      recurso_uuid
+    );
   }
   return (
     await api.get(
