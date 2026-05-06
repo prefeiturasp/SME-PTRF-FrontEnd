@@ -1,14 +1,12 @@
-import React, { Fragment, useMemo, useRef, useEffect, useContext } from "react";
-import { RecursosContext } from "./context/Recursos";
+import React, { Fragment, useMemo, useRef, useEffect } from "react";
 import "../../../../../componentes/Globais/MenuInterno";
 import "../../../../../componentes/dres/Associacoes/associacoes.scss";
 import Loading from "../../../../../utils/Loading";
 import { useRecursoSelecionadoContext } from "../../../../../context/RecursoSelecionado";
+import { useAbasPorRecursoContext } from "./hooks/useAbasPorRecursoContext";
 
-export const AbasPorRecurso = ({
-    handleChangeFiltros,
-}) => {
-    const { selectedRecurso, setSelectedRecurso, clickBtnEscolheOpcao, setClickBtnEscolheOpcao } = useContext(RecursosContext);
+export const AbasPorRecurso = () => {
+    const { selectedRecurso, setSelectedRecurso, clickBtnEscolheOpcao, setClickBtnEscolheOpcao } = useAbasPorRecursoContext();
     const { isLoading, recursos } = useRecursoSelecionadoContext();
     // Ref para garantir que a inicialização da aba ativa ocorra apenas uma vez
     const inicializado = useRef(false);
@@ -26,10 +24,6 @@ export const AbasPorRecurso = ({
         }));
     }, [recursos]);
 
-    const filteredRecursoTabs = (recursoUUID) => {
-        handleChangeFiltros('recurso_uuid', recursoUUID);
-    }
-
     const handleChangeTab = (tab_id) => {
         // Ativa aba de recurso
         setClickBtnEscolheOpcao({
@@ -38,8 +32,6 @@ export const AbasPorRecurso = ({
         // Atualiza o recurso selecionado no contexto
         const recursoSelecionado = recursos.find(r => r.uuid === tab_id);
         setSelectedRecurso(recursoSelecionado);
-
-        filteredRecursoTabs(recursoSelecionado ? recursoSelecionado.uuid : '');
     }
 
     // Inicializa primeira aba como ativa - executa apenas uma vez com a primeira aba

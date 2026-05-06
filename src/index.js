@@ -17,6 +17,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { ThemeProvider } from "./context/Tema";
 import { RecursoSelecionadoProvider } from "./context/RecursoSelecionado";
+import { AbasPorRecursoProvider } from "./componentes/sme/Parametrizacoes/componentes/AbasPorRecurso/context/Recursos";
 
 if (process.env.NODE_ENV === "production") {
   const SENTRY_URL = "SENTRY_URL_REPLACE_ME";
@@ -44,7 +45,9 @@ root.render(
                 <BrowserRouter>
                   <ThemeProvider>
                     <RecursoSelecionadoProvider>
-                      <App />
+                      <AbasPorRecursoProvider>
+                        <App />
+                      </AbasPorRecursoProvider>
                     </RecursoSelecionadoProvider>
                   </ThemeProvider>
                 </BrowserRouter>
