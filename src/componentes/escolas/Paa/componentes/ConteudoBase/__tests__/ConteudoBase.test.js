@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
-import ConteudoBase from "../ConteudoBase";
+import ConteudoBase from "../index";
 import { iniciarAtaPaa } from "../../../../../../services/escolas/AtasPaa.service";
 import { visoesService } from "../../../../../../services/visoes.service";
 import { PaaContext } from "../../PaaContext";
