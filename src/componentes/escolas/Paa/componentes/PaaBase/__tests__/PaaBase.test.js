@@ -3,7 +3,7 @@ import { MemoryRouter } from "react-router-dom";
 import PaaBase from "../index";
 import { ASSOCIACAO_UUID } from "../../../../../../services/auth.service";
 import { PaaContext } from "../../PaaContext";
-
+import {} from '../../ConteudoBase'
 jest.mock("../../../../../../services/auth.service", () => ({
   ASSOCIACAO_UUID: "UUID",
 }));
@@ -14,7 +14,7 @@ jest.mock("../../../../../../paginas/PaginasContainer", () => ({
   ),
 }));
 
-jest.mock("../ConteudoBase", () => ({
+jest.mock("../../ConteudoBase", () => ({
   __esModule: true,
   default: (props) => (
     <div data-testid="conteudo-base" data-props={JSON.stringify(props)}>
