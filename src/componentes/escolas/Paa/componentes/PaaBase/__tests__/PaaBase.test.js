@@ -14,7 +14,7 @@ jest.mock("../../../../../../paginas/PaginasContainer", () => ({
   ),
 }));
 
-jest.mock("../ConteudoBase", () => ({
+jest.mock("../../ConteudoBase", () => ({
   __esModule: true,
   default: (props) => (
     <div data-testid="conteudo-base" data-props={JSON.stringify(props)}>
