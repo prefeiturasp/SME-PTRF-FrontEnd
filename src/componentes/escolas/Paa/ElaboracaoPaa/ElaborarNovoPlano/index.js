@@ -6,7 +6,7 @@ import { PaaContext } from "../../componentes/PaaContext";
 export const ElaborarNovoPlano = () => {
   const paa_uuid_storage = localStorage.getItem('PAA');
 
-  const { data: paa, refetch } = useGetPaa(paa_uuid_storage);
+  const { data: paa, refetch, isFetching } = useGetPaa(paa_uuid_storage);
 
   const itemsBreadCrumb = useMemo(() => {
     return [
@@ -19,7 +19,7 @@ export const ElaborarNovoPlano = () => {
 
     return (
       // Provider para Paa, adiciona o (paa e refetch) de Paa Original
-      <PaaContext.Provider value={{ paa, refetch }}>
+      <PaaContext.Provider value={{ paa, refetch, isFetching }}>
         <PaaBase itemsBreadCrumb={itemsBreadCrumb} />
       </PaaContext.Provider>
     )

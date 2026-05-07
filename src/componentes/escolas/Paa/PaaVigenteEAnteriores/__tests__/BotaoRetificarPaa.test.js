@@ -79,7 +79,7 @@ describe('BotaoRetificarPaa', () => {
         const paaEmRetificacao = { uuid: 'paa-uuid-123', status: 'EM_RETIFICACAO' };
         renderComponent(paaEmRetificacao);
 
-        fireEvent.click(screen.getByRole('button', { name: /retificar o paa/i }));
+        fireEvent.click(screen.getByRole('button', { name: /continuar retificação/i }));
 
         expect(mockNavigate).toHaveBeenCalledWith('/retificacao-paa/paa-uuid-123', {
             state: { origem: 'paa-vigente-e-anteriores' },

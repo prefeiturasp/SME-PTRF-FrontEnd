@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import BreadcrumbComponent from "../../../../Globais/Breadcrumb";
 import TabSelector from "../../../../Globais/TabSelector";
 
@@ -18,6 +18,7 @@ const ConteudoBase = ({ itemsBreadCrumb }) => {
   const location = useLocation();
 
   const [activeTab, setActiveTab] = useState("prioridades");
+  const hasInitializedTab = useRef(false);
   const relatoriosInitialExpandedSections = location.state?.expandedSections;
   const fromPlanoAplicacao = Boolean(location.state?.fromPlanoAplicacao);
   const fromPlanoOrcamentario = Boolean(location.state?.fromPlanoOrcamentario);
@@ -83,14 +84,13 @@ const ConteudoBase = ({ itemsBreadCrumb }) => {
   }, [paa, navigate]);
 
   useEffect(() => {
-    const obterAbaInicial = () => {
-      const requestedTab = location.state?.activeTab;
-      return tabs.some((tab) => tab.id === requestedTab)
-        ? requestedTab
-        : tabs[0].id;
-    };
-    setActiveTab(obterAbaInicial());
-  }, [tabs]);
+    if (hasInitializedTab.current || tabs.length === 0) return;
+    hasInitializedTab.current = true;
+    const requestedTab = location.state?.activeTab;
+    setActiveTab(
+      tabs.some((tab) => tab.id === requestedTab) ? requestedTab : tabs[0].id,
+    );
+  }, [tabs, location.state?.activeTab]);
 
   useEffect(() => {
     const temPermissaoIniciar = Boolean(

@@ -14,7 +14,7 @@ import { usePaaContext } from "../PaaContext";
 const ReceitasPrevistasPTRF = () => {
   const queryClient = useQueryClient();
 
-  const { paa } = usePaaContext();
+  const { paa, refetch: refetchPaa, isFetching: isFetchingPaa } = usePaaContext();
 
   const [checkPararAtualizacaoSaldo, setValorCheckPararAtualizacaoSaldo] =
     useState(!!paa?.saldo_congelado_em);
@@ -62,8 +62,10 @@ const ReceitasPrevistasPTRF = () => {
   };
 
   const onSubmitParadaSaldo = async () => {
-    await recarregarAcoesAssociacoes();
-    await carregaPaa();
+    await Promise.all([
+      refetchReceitasPrevistas(),
+      refetchPaa(),
+    ]);
     setShowModalConfirmaPararAtualizacaoSaldo(false);
   };
 
@@ -94,7 +96,8 @@ const ReceitasPrevistasPTRF = () => {
                   disabled={
                     !visoesService.getPermissoes(["custom_change_paa"]) ||
                     isLoadingReceitasPrevistas ||
-                    isFetchingReceitasPrevistas
+                    isFetchingReceitasPrevistas ||
+                    isFetchingPaa
                   }
                 >
                   Parar atualizações do saldo
@@ -122,7 +125,12 @@ const ReceitasPrevistasPTRF = () => {
           onSubmitParadaSaldo={onSubmitParadaSaldo}
         />
         <Spin
-          spinning={isLoadingReceitasPrevistas || isFetchingReceitasPrevistas}
+          spinning={
+            isLoadingReceitasPrevistas ||
+            isFetchingReceitasPrevistas ||
+            isFetchingPaa ||
+            showModalConfirmaPararAtualizacaoSaldo
+          }
         >
           <TabelaReceitasPrevistas
             data={dataReceitasPrevistas}
