@@ -9,6 +9,7 @@ import Img404 from "../../../../../../../assets/img/img-404.svg";
 import { useGetAtividadesEstatutarias } from "./hooks/useGetAtividadesEstatutarias";
 import { useGetAtividadesEstatutariasTabelas } from "./hooks/useGetAtividadesEstatutariasTabelas";
 import { useGetRecursosPropriosPrevistos } from "./hooks/useGetRecursosPropriosPrevistos";
+import { getErrorMessage } from "../../../../../../../utils/obtemMsgErroAxios";
 import {
   IconButton,
   EditIconButton,
@@ -254,22 +255,29 @@ export const VisualizarAtividadesPrevistas = () => {
     [podeEditar],
   );
 
-  const handleEditarAtividade = useCallback((atividade) => {
-    if (!podeEditar) return;
-    setAtividadesTabela((prev) =>
-      prev.map((item) =>
-        item.uuid === atividade.uuid ? { ...item, emEdicao: true } : item,
-      ),
-    );
-  }, [podeEditar]);
+  const handleEditarAtividade = useCallback(
+    (atividade) => {
+      if (!podeEditar) return;
+      setAtividadesTabela((prev) =>
+        prev.map((item) =>
+          item.uuid === atividade.uuid ? { ...item, emEdicao: true } : item,
+        ),
+      );
+    },
+    [podeEditar],
+  );
 
   const handleSalvarLinha = useCallback(
     (atividade) => {
       if (!podeEditar) return;
-      if (!atividade.tipoAtividadeKey || !atividade.descricao || !atividade.data) {
+      if (
+        !atividade.tipoAtividadeKey ||
+        !atividade.descricao ||
+        !atividade.data
+      ) {
         toastCustom.ToastCustomError(
           "Erro!",
-          "Preencha todos os campos obrigatórios."
+          "Preencha todos os campos obrigatórios.",
         );
         return;
       }
@@ -288,10 +296,10 @@ export const VisualizarAtividadesPrevistas = () => {
             dirty: false,
             needsSync: shouldSync,
           };
-        })
+        }),
       );
     },
-    [podeEditar]
+    [podeEditar],
   );
 
   const handleSalvarAtividades = useCallback(async () => {
@@ -493,28 +501,42 @@ export const VisualizarAtividadesPrevistas = () => {
       }
     } catch (error) {
       console.error("Erro ao salvar alterações:", error);
-      toastCustom.ToastCustomError(
-        "Erro!",
+      const mensagem = getErrorMessage(
+        error,
         "Não foi possível salvar as alterações. Tente novamente.",
       );
+      toastCustom.ToastCustomError("Erro!", mensagem);
     } finally {
       setIsSalvando(false);
     }
-  }, [atividadesTabela, recursosPropriosTabela, paaUuid, refetch, refetchRecursos, podeEditar]);
+  }, [
+    atividadesTabela,
+    recursosPropriosTabela,
+    paaUuid,
+    refetch,
+    refetchRecursos,
+    podeEditar,
+  ]);
 
-  const handleEditarLinha = useCallback((atividade) => {
-    if (!podeEditar) return;
-    setAtividadesTabela((prev) =>
-      prev.map((item) =>
-        item.uuid === atividade.uuid ? { ...item, emEdicao: true } : item,
-      ),
-    );
-  }, [podeEditar]);
+  const handleEditarLinha = useCallback(
+    (atividade) => {
+      if (!podeEditar) return;
+      setAtividadesTabela((prev) =>
+        prev.map((item) =>
+          item.uuid === atividade.uuid ? { ...item, emEdicao: true } : item,
+        ),
+      );
+    },
+    [podeEditar],
+  );
 
-  const handleExcluirAtividade = useCallback((atividade) => {
-    if (!podeEditar) return;
-    setModalExcluir({ aberto: true, atividade });
-  }, [podeEditar]);
+  const handleExcluirAtividade = useCallback(
+    (atividade) => {
+      if (!podeEditar) return;
+      setModalExcluir({ aberto: true, atividade });
+    },
+    [podeEditar],
+  );
 
   const confirmarExclusaoAtividade = useCallback(async () => {
     if (!podeEditar || isExcluindoAtividade) {
@@ -565,16 +587,25 @@ export const VisualizarAtividadesPrevistas = () => {
       setIsExcluindoAtividade(false);
       setModalExcluir({ aberto: false, atividade: null });
     }
-  }, [isExcluindoAtividade, modalExcluir.atividade, paaUuid, refetch, podeEditar]);
+  }, [
+    isExcluindoAtividade,
+    modalExcluir.atividade,
+    paaUuid,
+    refetch,
+    podeEditar,
+  ]);
 
   const cancelarExclusaoAtividade = useCallback(() => {
     setModalExcluir({ aberto: false, atividade: null });
   }, []);
 
-  const handleExcluirRecursoProprio = useCallback((recurso) => {
-    if (!podeEditar) return;
-    setModalExcluirRecurso({ aberto: true, recurso });
-  }, [podeEditar]);
+  const handleExcluirRecursoProprio = useCallback(
+    (recurso) => {
+      if (!podeEditar) return;
+      setModalExcluirRecurso({ aberto: true, recurso });
+    },
+    [podeEditar],
+  );
 
   const confirmarExclusaoRecursoProprio = useCallback(async () => {
     if (!podeEditar || isExcluindoRecurso) {
@@ -625,7 +656,12 @@ export const VisualizarAtividadesPrevistas = () => {
       setIsExcluindoRecurso(false);
       setModalExcluirRecurso({ aberto: false, recurso: null });
     }
-  }, [isExcluindoRecurso, modalExcluirRecurso.recurso, refetchRecursos, podeEditar]);
+  }, [
+    isExcluindoRecurso,
+    modalExcluirRecurso.recurso,
+    refetchRecursos,
+    podeEditar,
+  ]);
 
   const cancelarExclusaoRecursoProprio = useCallback(() => {
     if (isExcluindoRecurso) {
@@ -887,7 +923,7 @@ export const VisualizarAtividadesPrevistas = () => {
       tiposOptions,
       isSalvando,
       podeEditar,
-    ]
+    ],
   );
 
   const recursosColumns = useMemo(
@@ -939,7 +975,7 @@ export const VisualizarAtividadesPrevistas = () => {
           ) : null,
       },
     ],
-    [handleExcluirRecursoProprio, podeEditar]
+    [handleExcluirRecursoProprio, podeEditar],
   );
 
   const botoesHeader = (
