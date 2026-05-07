@@ -10,6 +10,7 @@ import { faEdit } from "@fortawesome/free-solid-svg-icons";
 import { formatMoneyBRL } from "../../../../../../../utils/money";
 import "./styles.scss";
 import { useGetPlanoOrcamentario } from "./hooks/useGetPlanoOrcamentario";
+import { TagRetificacao } from "../../../../componentes/TagRetificacao";
 
 const formatResumo = (
   valores,
@@ -113,6 +114,7 @@ const montarColunas = () => [
         }`}
       >
         {nome}
+        {linha?.historicos && <div><TagRetificacao /></div>}
       </span>
     ),
     width: 200,
