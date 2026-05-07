@@ -64,7 +64,7 @@ export const BotaoRetificarPaa = ({paa, statusDocumento}) => {
                     className="btn btn-outline-success"
                     onClick={handleAbrirModal}
                     style={{ fontWeight: 600, marginRight: '10px' }}>
-                    Retificar o PAA
+                    {paa.status === "EM_RETIFICACAO" ? 'Continuar Retificação' : 'Retificar o PAA'}
                 </button>
                 
                 <ModalRetificarPAA 

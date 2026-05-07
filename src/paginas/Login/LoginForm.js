@@ -88,11 +88,11 @@ export const LoginForm = ({redefinicaoDeSenha}) => {
                             <form onSubmit={props.handleSubmit}>
                                 <div className="form-group">
                                     <TooltipWrapper id="login" content={"Digite, sem ponto nem traço, </br>os 7 dígitos do RF para servidor,<br/> ou o CPF para usuário não servidor"}>
-                                        <label htmlFor="login">Usuário</label>
-                                        <FontAwesomeIcon
-                                            style={{fontSize: '18px', marginLeft: "3px", color:'#42474A'}}
-                                            icon={faQuestionCircle}
-                                        />
+                                        <label htmlFor="login">
+                                            Usuário <FontAwesomeIcon
+                                                        style={{fontSize: '18px', marginLeft: "3px", color:'#42474A'}}
+                                                        icon={faQuestionCircle}/>
+                                        </label>
                                     </TooltipWrapper>
                                     <input
                                         type="text"

@@ -85,16 +85,18 @@ export const LoginSuporteForm = ({redefinicaoDeSenha}) => {
                         {props => (
                             <form onSubmit={props.handleSubmit}>
                                 <div className="form-group">
-                                    <label htmlFor="login">Usuário</label>
-                                    <span
-                                        data-tooltip-id="username-help"
-                                        data-tooltip-html='Digite, sem ponto nem traço, </br>os 7 dígitos do RF para servidor,<br/> ou o CPF para usuário não servidor'>
-                                        <FontAwesomeIcon
-                                            style={{fontSize: '18px', marginLeft: "3px", color:'#42474A'}}
-                                            icon={faQuestionCircle}
-                                        />
-                                    </span>
-                                    <ReactTooltip id="username-help" />
+                                    <label htmlFor="login">
+                                        Usuário
+                                        <span
+                                            data-tooltip-id="username-help"
+                                            data-tooltip-html='Digite, sem ponto nem traço, </br>os 7 dígitos do RF para servidor,<br/> ou o CPF para usuário não servidor'>
+                                            <FontAwesomeIcon
+                                                style={{fontSize: '18px', marginLeft: "3px", color:'#42474A'}}
+                                                icon={faQuestionCircle}
+                                            />
+                                        </span>
+                                        <ReactTooltip id="username-help" />
+                                    </label>
                                     <input
                                         data-testid="usuario-input"
                                         type="text"
