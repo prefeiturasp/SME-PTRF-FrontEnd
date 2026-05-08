@@ -3,7 +3,7 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import moment from "moment";
 import { EditIconButton, IconButton, VisualizarIconButton} from "../../../../Globais/UI/Button";
-import { RecursosContext } from "../../componentes/AbasPorRecurso/context/Recursos";
+import { AbasPorRecursosContext } from "../../componentes/AbasPorRecurso/context/Recursos";
 
 const Tabela = ({
     rowsPerPage, 
@@ -20,7 +20,7 @@ const Tabela = ({
         )
     }, []);
 
-    const { selectedRecurso, setSelectedRecurso } = useContext(RecursosContext);
+    const { selectedRecurso } = useContext(AbasPorRecursosContext);
 
     const acoesTemplate = (rowData) => {
         return (

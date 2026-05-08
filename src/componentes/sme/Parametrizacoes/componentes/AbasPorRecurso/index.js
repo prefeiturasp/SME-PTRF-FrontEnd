@@ -1,5 +1,5 @@
 import React, { Fragment, useMemo, useRef, useEffect, useContext } from "react";
-import { RecursosContext } from "./context/Recursos";
+import { AbasPorRecursosContext } from "./context/Recursos";
 import "../../../../../componentes/Globais/MenuInterno";
 import "../../../../../componentes/dres/Associacoes/associacoes.scss";
 import Loading from "../../../../../utils/Loading";
@@ -8,7 +8,7 @@ import { useRecursoSelecionadoContext } from "../../../../../context/RecursoSele
 export const AbasPorRecurso = ({
     handleChangeFiltros,
 }) => {
-    const { selectedRecurso, setSelectedRecurso, clickBtnEscolheOpcao, setClickBtnEscolheOpcao } = useContext(RecursosContext);
+    const { selectedRecurso, setSelectedRecurso, clickBtnEscolheOpcao, setClickBtnEscolheOpcao } = useContext(AbasPorRecursosContext);
     const { isLoading, recursos } = useRecursoSelecionadoContext();
     // Ref para garantir que a inicialização da aba ativa ocorra apenas uma vez
     const inicializado = useRef(false);

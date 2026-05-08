@@ -51,7 +51,11 @@ export const usePeriodos = () => {
     const { isLoading, data: results, count, refetch } = useGetPeriodos(stateFiltros);
 
     useEffect(() => {
-        const initialValueWithInitialRecurso = {...initialStateFiltros, recurso_uuid: recursos?.length > 0 ? recursos[0].uuid : '' }
+        const legado = recursos?.find(recurso => recurso.legado) || recursos?.[0];
+        const initialValueWithInitialRecurso = {
+            ...initialStateFiltros, 
+            recurso_uuid: legado?.uuid || '' 
+        }
 
         setStateFiltros(initialValueWithInitialRecurso)
     }, [recursos])
