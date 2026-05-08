@@ -29,7 +29,9 @@ export const useDesativarSaldoPAA = (onSuccess, onError) => {
       onSuccess && onSuccess(data);
     },
     onError: (e) => {
-      toastCustom.ToastCustomError("Houve um erro ao desativar o saldo.");
+      toastCustom.ToastCustomError(
+      e?.response?.data?.mensagem ||  "Houve um erro ao desativar o saldo."
+      );
       onError && onError(e);
       console.error(e)
     },
