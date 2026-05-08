@@ -4,7 +4,7 @@ export const FormularioAcertosBasico = ({formikProps, acerto, index, label, plac
     return (
         <>
             <div className="col-12 mt-3">
-                <label htmlFor={`form-control[${index}]`}>{label}</label>
+                <label htmlFor={`detalhamento[${index}]`}>{label}</label>
                 <textarea
                     value={acerto.detalhamento}
                     name={`solicitacoes_acerto[${index}].detalhamento`}

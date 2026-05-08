@@ -373,7 +373,7 @@ export const DetalharAcertos = () => {
             let tipo_acerto_uuid = solicitacoes_acerto[index_solicitacao_acerto].tipo_acerto
             let categoria = retornaCategoriaTipoAcerto(tipo_acerto_uuid);
 
-            if(categoriasQuePodemAlterarSaldoDaConta.includes(categoria.id)){
+            if(categoria && categoriasQuePodemAlterarSaldoDaConta.includes(categoria.id)){
                 possui_acerto_que_altera_saldo = true;
                 break;
             }
