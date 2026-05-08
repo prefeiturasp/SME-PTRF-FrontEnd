@@ -37,7 +37,7 @@ export const FormularioAcertosDevolucaoAoTesouro = ({formikProps, acerto, index,
         <>
             <div className='col-12 col-md-9 mt-3'>
 
-                <label htmlFor={`devolucao_tesouro[${index}]`}>Tipo de devolução</label>
+                <label htmlFor={`devolucao_tesouro[${index}.tipo]`}>Tipo de devolução</label>
                 <select
                     value={acerto.devolucao_tesouro.tipo && acerto.devolucao_tesouro.tipo.uuid ? acerto.devolucao_tesouro.tipo.uuid : acerto.devolucao_tesouro.tipo}
                     name={`solicitacoes_acerto[${index}].devolucao_tesouro.tipo`}
