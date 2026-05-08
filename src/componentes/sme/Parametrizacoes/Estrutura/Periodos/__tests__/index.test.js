@@ -26,7 +26,7 @@ jest.mock("../../../componentes/AbasPorRecurso", () => ({
 }));
 
 jest.mock("../../../componentes/AbasPorRecurso/context/Recursos", () => ({
-    RecursosProvider: ({ children }) => <div data-testid="recursos-provider">{children}</div>,
+    AbasPorRecursoProvider: ({ children }) => <div data-testid="recursos-provider">{children}</div>,
 }));
 
   
