@@ -638,7 +638,7 @@ export const ModalFormBodyText = (props) => {
                     props.size
             }>
                 <Modal.Header>
-                    <Modal.Title>{
+                    <Modal.Title style={{ fontWeight: "bold" }}>{
                         props.titulo
                     }</Modal.Title>
                 </Modal.Header>

@@ -5,10 +5,12 @@ import {YupSchemaTipoConta} from "./YupSchemaTipoConta";
 import {RetornaSeTemPermissaoEdicaoPainelParametrizacoes} from "../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes"
 import { Switch } from 'antd';
 import { useRecursoSelecionadoContext } from "../../../../../context/RecursoSelecionado";
+import {faXmark} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 const ModalAddEditTipoConta = ({show, stateFormModal, handleClose, handleSubmitModalFormTiposConta, setShowModalConfirmDeleteTipoConta}) => {
     const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES = RetornaSeTemPermissaoEdicaoPainelParametrizacoes()
-    const { recursos } = useRecursoSelecionadoContext();
+    const { recursos, recursoSelecionado } = useRecursoSelecionadoContext();
 
     const bodyTextarea = () => {
         return (
@@ -28,7 +30,7 @@ const ModalAddEditTipoConta = ({show, stateFormModal, handleClose, handleSubmitM
                             <form onSubmit={props.handleSubmit}>
                                 <div className='row'>
                                     <div className='col-12'>
-                                        <p>* Preenchimento obrigatório</p>
+                                        <p style={{ textAlign: "right" }}>* Preenchimento obrigatório</p>
                                     </div>
 
                                     <div className='col-12 mb-2'>
@@ -59,7 +61,7 @@ const ModalAddEditTipoConta = ({show, stateFormModal, handleClose, handleSubmitM
                                 <div className='row'>
                                     <div className='col'>
                                         <div className="form-group">
-                                            <label htmlFor="nome">Nome do tipo de conta *</label>
+                                            <label htmlFor="nome" style={{ marginTop: "10px" }}>Nome do tipo de conta *</label>
                                             <input
                                                 type="text"
                                                 value={props.values.nome}
@@ -76,7 +78,7 @@ const ModalAddEditTipoConta = ({show, stateFormModal, handleClose, handleSubmitM
 
                                 <div className='row'>
                                     <div className='col ml-4'>
-                                        <div className="form-group">
+                                        <div className="form-group" style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                                             <input
                                                 checked={props.values.permite_inativacao}
                                                 type="checkbox"
@@ -85,10 +87,10 @@ const ModalAddEditTipoConta = ({show, stateFormModal, handleClose, handleSubmitM
                                                 className="form-check-input"
                                                 onChange={props.handleChange}
                                                 disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
+                                                style={{ accentColor: recursoSelecionado?.cor, width: "20px", height: "20px", cursor: "pointer" }}
                                             />
                                             <label className="form-check-label marcar-como-lida"
-                                                style={{ color: "#42474A" }}
-                                                htmlFor="permite_inativacao">Conta permite encerramento</label>
+                                                style={{ color: "#42474A", marginLeft: "10px", marginTop: "5px", cursor: "default" }}>Conta permite encerramento</label>
                                         </div>
                                     </div>
                                 </div>
@@ -98,7 +100,7 @@ const ModalAddEditTipoConta = ({show, stateFormModal, handleClose, handleSubmitM
                                         <div className="form-group d-flex align-items-start justify-content-between">
                                             <div className="flex-grow-1">
                                                 <strong className="mb-2">Tipo de conta vinculado a todas as unidades?</strong>
-                                                <p className="text-muted mb-0" style={{ fontSize: "0.875rem" }}>
+                                                <p className="text-muted mb-0" style={{ marginTop: "0.5rem", fontSize: "0.95rem" }}>
                                                     Ative esta opção se os dados bancários forem iguais para todas as unidades
                                                     educacionais. Se forem diferentes, desative para informar apenas o nome do tipo de
                                                     conta e preencher os dados por unidade.
@@ -109,6 +111,7 @@ const ModalAddEditTipoConta = ({show, stateFormModal, handleClose, handleSubmitM
                                                     checked={props.values.apenas_leitura}
                                                     onChange={(checked) => props.setFieldValue('apenas_leitura', checked)}
                                                     disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
+                                                    style={{ marginTop: '1.5rem' }}
                                                 />
                                             </div>
                                         </div>
@@ -196,7 +199,14 @@ const ModalAddEditTipoConta = ({show, stateFormModal, handleClose, handleSubmitM
                                 <div className="d-flex bd-highlight mt-2">
                                     <div className="p-Y flex-grow-1 bd-highlight">
                                         {values.operacao === 'edit' ? (
-                                            <button onClick={()=>setShowModalConfirmDeleteTipoConta(true)} type="button" className="btn btn-base-vermelho mt-2 mr-2" disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}>
+                                            <button 
+                                                onClick={()=>setShowModalConfirmDeleteTipoConta(true)} 
+                                                type="button" 
+                                                className="btn btn-base-vermelho mt-2 mr-2" 
+                                                disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
+                                                style={{ fontSize: 15, textAlign: "center", display: "flex", alignItems: "center", justifyContent: "center" }}    
+                                            >
+                                                <FontAwesomeIcon icon={faXmark} style={{ marginRight: "8px", color: "white", fontWeight: "bold" }} />
                                                 Excluir
                                             </button>
                                         ): null}

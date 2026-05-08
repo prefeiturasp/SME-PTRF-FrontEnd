@@ -2,6 +2,7 @@ import React from "react";
 import { fireEvent, render, screen, renderHook } from "@testing-library/react";
 import { Periodos } from "../index"; 
 import { usePeriodos } from "../hooks/usePeriodos";
+import { AbasPorRecursosProvider } from "../../../componentes/AbasPorRecurso/context/Recursos";
 
 jest.mock("../../../../../../paginas/PaginasContainer", () => ({
     PaginasContainer: (({ children }) => <div data-testid="paginas-container">{children}</div>)
@@ -26,7 +27,7 @@ jest.mock("../../../componentes/AbasPorRecurso", () => ({
 }));
 
 jest.mock("../../../componentes/AbasPorRecurso/context/Recursos", () => ({
-    RecursosProvider: ({ children }) => <div data-testid="recursos-provider">{children}</div>,
+    AbasPorRecursosProvider: ({ children }) => <div data-testid="recursos-provider">{children}</div>,
 }));
 
   
