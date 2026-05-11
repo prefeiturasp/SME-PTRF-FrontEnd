@@ -2,14 +2,14 @@ import { createContext, useMemo, useState } from 'react';
 
 const initialSelectedRecurso = null;
 
-export const AbasPorRecursosContext = createContext({
+export const AbasPorRecursoContext = createContext({
   selectedRecurso: initialSelectedRecurso,
   setSelectedRecurso: () => {},
   clickBtnEscolheOpcao: {},
   setClickBtnEscolheOpcao: () => {}
 })
 
-export const AbasPorRecursosProvider = ({children}) => {
+export const AbasPorRecursoProvider = ({children}) => {
 
   const [selectedRecurso, setSelectedRecurso] = useState(initialSelectedRecurso)
   const [clickBtnEscolheOpcao, setClickBtnEscolheOpcao] = useState({});
@@ -24,9 +24,9 @@ export const AbasPorRecursosProvider = ({children}) => {
   }, [selectedRecurso, clickBtnEscolheOpcao]);
 
   return (
-    <AbasPorRecursosContext.Provider value={contextValue}>
+    <AbasPorRecursoContext.Provider value={contextValue}>
       {children}
-    </AbasPorRecursosContext.Provider>
+    </AbasPorRecursoContext.Provider>
   )
 
 }

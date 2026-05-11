@@ -1,11 +1,11 @@
-import React, { memo, useContext } from "react";
+import React, { memo } from "react";
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-import { AbasPorRecursosContext } from "../../componentes/AbasPorRecurso/context/Recursos";
+import { useAbasPorRecursoContext } from "../../componentes/AbasPorRecurso/hooks/useAbasPorRecursoContext";
 import { IconButton } from "../../../../Globais/UI/Button";
 
 const TabelaTiposContas = ({rowsPerPage, listaDeTiposContas, acoesTemplate, handleOpenCreateModal, tem_permissao_edicao_painel_parametrizacoes })=>{
-    const { selectedRecurso } = useContext(AbasPorRecursosContext);
+    const { selectedRecurso } = useAbasPorRecursoContext();
 
     return(
         <>

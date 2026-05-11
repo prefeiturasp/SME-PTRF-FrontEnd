@@ -7,6 +7,7 @@ import { useDeletePeriodo } from "./useDeletePeriodo";
 import { getDatasAtendemRegras } from "../../../../../../services/sme/Parametrizacoes.service";
 import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../../RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
 import { useRecursoSelecionadoContext } from "../../../../../../context/RecursoSelecionado";
+import { useAbasPorRecursoContext } from "../../../componentes/AbasPorRecurso/hooks/useAbasPorRecursoContext";
 
 const initialStateFormModal = {
     referencia: "",
@@ -26,7 +27,6 @@ const initialStateFormModal = {
 const initialStateFiltros = {
     filtrar_por_referencia: "",
     is_required_recurso_uuid: true,
-    recurso_uuid: "",
 };
 
 const initialStateModalConfirmDeletePeriodo = {
@@ -36,6 +36,7 @@ const initialStateModalConfirmDeletePeriodo = {
 
 export const usePeriodos = () => {
     const { recursos } = useRecursoSelecionadoContext()
+    const { selectedRecurso } = useAbasPorRecursoContext();
     
     const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES = RetornaSeTemPermissaoEdicaoPainelParametrizacoes();
     const [modalForm, setModalForm] = useState(initialStateFormModal);
@@ -48,17 +49,7 @@ export const usePeriodos = () => {
     const { mutationPatch } = usePatchPeriodo(setModalForm);
     const { mutationPost } = usePostPeriodo(setModalForm);
     const { mutationDelete } = useDeletePeriodo(setModalForm);
-    const { isLoading, data: results, count, refetch } = useGetPeriodos(stateFiltros);
-
-    useEffect(() => {
-        const legado = recursos?.find(recurso => recurso.legado) || recursos?.[0];
-        const initialValueWithInitialRecurso = {
-            ...initialStateFiltros, 
-            recurso_uuid: legado?.uuid || '' 
-        }
-
-        setStateFiltros(initialValueWithInitialRecurso)
-    }, [recursos])
+    const { isLoading, data: results, count, refetch } = useGetPeriodos({...stateFiltros, recurso_uuid: selectedRecurso?.uuid });
 
     const handleOpenCreateModal = (recursoSelecionadoAba) => {
         setModalForm({ ...initialStateFormModal, open: true, recurso: { uuid: recursoSelecionadoAba?.uuid } })

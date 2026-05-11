@@ -16,8 +16,8 @@ jest.mock("../../../../../../paginas/PaginasContainer", () => ({
     PaginasContainer: ({ children }) => <>{children}</>,
 }));
 
-jest.mock("../../../componentes/AbasPorRecurso/hooks/useRecursosContext", () => ({
-    useAbasPorRecursosContext: () => ({
+jest.mock("../../../componentes/AbasPorRecurso/hooks/useAbasPorRecursoContext", () => ({
+    useAbasPorRecursoContext: () => ({
         selectedRecurso: { uuid: "test-uuid", nome: "Test Recurso" },
         setSelectedRecurso: jest.fn(),
     }),

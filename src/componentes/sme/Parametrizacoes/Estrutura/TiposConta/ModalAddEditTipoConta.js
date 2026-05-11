@@ -89,7 +89,7 @@ const ModalAddEditTipoConta = ({show, stateFormModal, handleClose, handleSubmitM
                                                 disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                                 style={{ accentColor: recursoSelecionado?.cor, width: "20px", height: "20px", cursor: "pointer" }}
                                             />
-                                            <label className="form-check-label marcar-como-lida"
+                                            <label htmlFor="permite_inativacao" className="form-check-label marcar-como-lida"
                                                 style={{ color: "#42474A", marginLeft: "10px", marginTop: "5px", cursor: "default" }}>Conta permite encerramento</label>
                                         </div>
                                     </div>

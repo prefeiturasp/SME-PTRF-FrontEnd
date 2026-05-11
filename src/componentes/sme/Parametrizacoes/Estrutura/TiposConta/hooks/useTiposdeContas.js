@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { useAbasPorRecursosContext } from "../../../componentes/AbasPorRecurso/hooks/useRecursosContext";
+import { useAbasPorRecursoContext } from "../../../componentes/AbasPorRecurso/hooks/useAbasPorRecursoContext";
 import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../../RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
 import { EditIconButton } from "../../../../../Globais/UI/Button";
 import { useGetTiposContas } from "./useGetTiposdeConta";
@@ -31,7 +31,7 @@ export const useTiposContas = () => {
   const [showModalForm, setShowModalForm] = useState(false);
   const [stateFormModal, setStateFormModal] = useState(initialStateFormModal);
 
-  const { selectedRecurso } = useAbasPorRecursosContext();
+  const { selectedRecurso } = useAbasPorRecursoContext();
 
   const [showModalConfirmDeleteTipoConta, setShowModalConfirmDeleteTipoConta] = useState(false);
 

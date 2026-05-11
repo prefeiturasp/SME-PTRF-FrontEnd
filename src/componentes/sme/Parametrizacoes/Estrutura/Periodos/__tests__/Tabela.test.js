@@ -2,7 +2,7 @@ import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import '@testing-library/jest-dom';
 import Tabela from "../Tabela";
-import { AbasPorRecursosContext } from "../../../componentes/AbasPorRecurso/context/Recursos";
+import { AbasPorRecursoContext } from "../../../componentes/AbasPorRecurso/context/Recursos";
 
 describe("Tabela", () => {
     const mockHandleOpenModalForm = jest.fn();
@@ -47,9 +47,9 @@ describe("Tabela", () => {
         };
 
         return render(
-            <AbasPorRecursosContext.Provider value={defaultContextValue}>
+            <AbasPorRecursoContext.Provider value={defaultContextValue}>
                 {ui}
-            </AbasPorRecursosContext.Provider>
+            </AbasPorRecursoContext.Provider>
         );
     };
 
