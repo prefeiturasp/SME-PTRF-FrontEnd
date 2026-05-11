@@ -118,7 +118,7 @@ export const FormDadosDasContas = ({
                                                                 </div>
                                                                 <div className='col-12 col-md-3'>
                                                                     <div className="form-group">
-                                                                        <label className='mt-md-n5' htmlFor="numero_conta">Nº da conta {setaCampoReadonly(conta) ? 'do Programa' : ""} com o dígito</label>
+                                                                        <label htmlFor="numero_conta">Nº da conta {setaCampoReadonly(conta) ? 'do Programa' : ""} com o dígito</label>
                                                                         <input
                                                                             disabled={!podeEditarDadosMembros() || !verificaSeContaEstaAtiva(conta.status)}
                                                                             readOnly={setaCampoReadonly(conta)}

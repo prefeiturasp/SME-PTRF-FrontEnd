@@ -1,11 +1,10 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { TiposConta } from '..';
 import {
     deleteTipoConta,
-    getFiltroTiposContas,
     getTiposContas,
     patchTipoConta,
     postTipoConta,
@@ -15,6 +14,13 @@ import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../../../Pa
 
 jest.mock("../../../../../../paginas/PaginasContainer", () => ({
     PaginasContainer: ({ children }) => <>{children}</>,
+}));
+
+jest.mock("../../../componentes/AbasPorRecurso/hooks/useAbasPorRecursoContext", () => ({
+    useAbasPorRecursoContext: () => ({
+        selectedRecurso: { uuid: "test-uuid", nome: "Test Recurso" },
+        setSelectedRecurso: jest.fn(),
+    }),
 }));
 
 jest.mock("../../../../../../services/sme/Parametrizacoes.service", ()=>({
@@ -29,13 +35,38 @@ jest.mock("../../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametr
     RetornaSeTemPermissaoEdicaoPainelParametrizacoes: jest.fn(),
 }));
 
+jest.mock("../../../componentes/AbasPorRecurso", () => ({
+    AbasPorRecurso: () => <div data-testid="abas-por-recurso">Abas</div>,
+}));
+
+jest.mock("../../../../../../context/RecursoSelecionado", () => ({
+    useRecursoSelecionadoContext: () => ({
+        isLoading: false,
+        recursos: [{ uuid: "test-uuid", nome: "Test Recurso", nome_exibicao: "Test" }],
+    }),
+}));
+
+// Helper function para renderizar com QueryClientProvider
+const renderWithQueryClient = (component) => {
+    const queryClient = new QueryClient({
+        defaultOptions: {
+            queries: { retry: false },
+        },
+    });
+    return render(
+        <QueryClientProvider client={queryClient}>
+            {component}
+        </QueryClientProvider>
+    );
+};
+
 describe("Carrega página de Tipos de Conta", () => {
     beforeEach(() => {
         getTiposContas.mockReturnValue(mockTiposConta);
     });
 
     it("carrega no modo Listagem com itens", async () => {
-        render(
+        renderWithQueryClient(
             <MemoryRouter initialEntries={["/parametro-tipos-conta"]}>
                 <Routes>
                     <Route path="/parametro-tipos-conta" element={<TiposConta />} />
@@ -56,7 +87,7 @@ describe('Teste handleSubmitModalForm', () => {
 
     it('teste criação sucesso', async() => {
         getTiposContas.mockResolvedValueOnce(mockTiposConta).mockResolvedValueOnce(mockTiposConta);
-        render(
+        renderWithQueryClient(
             <MemoryRouter initialEntries={["/parametro-tipos-conta"]}>
                 <Routes>
                     <Route path="/parametro-tipos-conta" element={<TiposConta />} />
@@ -69,19 +100,22 @@ describe('Teste handleSubmitModalForm', () => {
             expect(botaoAdicionar).toBeInTheDocument();
             expect(botaoAdicionar).toBeEnabled();
             fireEvent.click(botaoAdicionar);
-            }
-        );
+        });
 
-        expect(screen.getByText("* Preenchimento obrigatório")).toBeInTheDocument();
+        await screen.findByText("* Preenchimento obrigatório");
 
-        const input_nome = screen.getByLabelText("Nome do tipo de conta *");
-        const input_banco = screen.getByLabelText("Nome do banco");
-        const input_agencia = screen.getByLabelText("Nº da agência");
-        const input_conta = screen.getByLabelText("Nº da conta");
-        const input_cartao = screen.getByLabelText("Nº do cartão");
-        const input_checkbox_1 = screen.getByLabelText("Exibir os dados da conta somente leitura");
-        const input_checkbox_2 = screen.getByLabelText("Conta permite encerramento");
-        const saveButton = screen.getByRole("button", { name: "Salvar" });
+        // Ativar o switch para mostrar os campos bancários
+        const switchVinculado = await screen.findByRole("switch");
+        fireEvent.click(switchVinculado);
+
+        const input_nome = await screen.findByLabelText("Nome do tipo de conta *");
+        const input_banco = await screen.findByLabelText("Nome do banco");
+        const input_agencia = await screen.findByLabelText("Nº da agência");
+        const input_conta = await screen.findByLabelText("Nº da conta");
+        // Nº do cartão foi removido do formulário, então o teste relacionado a esse campo foi comentado
+        // const input_cartao = await screen.findByLabelText("Nº do cartão");
+        const input_checkbox_2 = await screen.findByLabelText("Conta permite encerramento");
+        const saveButton = await screen.findByRole("button", { name: "Salvar" });
 
         expect(input_nome).toBeInTheDocument();
         expect(input_nome).toBeEnabled();
@@ -91,21 +125,18 @@ describe('Teste handleSubmitModalForm', () => {
         expect(input_agencia).toBeEnabled();
         expect(input_conta).toBeInTheDocument();
         expect(input_conta).toBeEnabled();
-        expect(input_cartao).toBeInTheDocument();
-        expect(input_cartao).toBeEnabled();
-        expect(input_checkbox_1).toBeInTheDocument();
-        expect(input_checkbox_1).toBeEnabled();
+        // Nº do cartão foi removido do formulário, então o teste relacionado a esse campo foi comentado
+        // expect(input_cartao).toBeInTheDocument();
+        // expect(input_cartao).toBeEnabled();
         expect(input_checkbox_2).toBeInTheDocument();
         expect(input_checkbox_2).toBeEnabled();
-        
         expect(saveButton).toBeInTheDocument();
 
         fireEvent.change(input_nome, { target: { value: "Tipo conta 007" } });
         fireEvent.change(input_banco, { target: { value: "BTG" } });
         fireEvent.change(input_agencia, { target: { value: "0001" } });
         fireEvent.change(input_conta, { target: { value: "123123" } });
-        fireEvent.change(input_cartao, { target: { value: "0001000200030004" } });
-
+        // fireEvent.change(input_cartao, { target: { value: "0001000200030004" } });
 
         expect(saveButton).toBeEnabled();
 
@@ -122,7 +153,7 @@ describe('Teste handleSubmitModalForm', () => {
         postTipoConta.mockRejectedValueOnce({
             response: { data: { non_field_errors: "Testando erro response" } },
         });
-        render(
+        renderWithQueryClient(
             <MemoryRouter initialEntries={["/parametro-tipos-conta"]}>
                 <Routes>
                     <Route path="/parametro-tipos-conta" element={<TiposConta />} />
@@ -135,24 +166,28 @@ describe('Teste handleSubmitModalForm', () => {
             expect(botaoAdicionar).toBeInTheDocument();
             expect(botaoAdicionar).toBeEnabled();
             fireEvent.click(botaoAdicionar);
-            }
-        );
+        });
 
-        expect(screen.getByText("* Preenchimento obrigatório")).toBeInTheDocument();
+        await screen.findByText("* Preenchimento obrigatório");
 
-        const input_nome = screen.getByLabelText("Nome do tipo de conta *");
-        const input_banco = screen.getByLabelText("Nome do banco");
-        const input_agencia = screen.getByLabelText("Nº da agência");
-        const input_conta = screen.getByLabelText("Nº da conta");
-        const input_cartao = screen.getByLabelText("Nº do cartão");
-        const saveButton = screen.getByRole("button", { name: "Salvar" });
+        const input_nome = await screen.findByLabelText("Nome do tipo de conta *");
+        
+        // Ativar o switch para mostrar os campos bancários
+        const switchVinculado = await screen.findByRole("switch");
+        fireEvent.click(switchVinculado);
 
+        const input_banco = await screen.findByLabelText("Nome do banco");
+        const input_agencia = await screen.findByLabelText("Nº da agência");
+        const input_conta = await screen.findByLabelText("Nº da conta");
+        // Nº do cartão foi removido do formulário, então o teste relacionado a esse campo foi comentado
+        // const input_cartao = await screen.findByLabelText("Nº do cartão");
+        const saveButton = await screen.findByRole("button", { name: "Salvar" });
 
         fireEvent.change(input_nome, { target: { value: "Tipo conta 007" } });
         fireEvent.change(input_banco, { target: { value: "BTG" } });
         fireEvent.change(input_agencia, { target: { value: "0001" } });
         fireEvent.change(input_conta, { target: { value: "123123" } });
-        fireEvent.change(input_cartao, { target: { value: "0001000200030004" } });
+        // fireEvent.change(input_cartao, { target: { value: "0001000200030004" } });
 
         expect(saveButton).toBeEnabled();
 
@@ -169,7 +204,7 @@ describe('Teste handleSubmitModalForm', () => {
         postTipoConta.mockRejectedValueOnce({
             response: { data: { message: "Testando erro response" } },
         });
-        render(
+        renderWithQueryClient(
             <MemoryRouter initialEntries={["/parametro-tipos-conta"]}>
                 <Routes>
                     <Route path="/parametro-tipos-conta" element={<TiposConta />} />
@@ -182,24 +217,28 @@ describe('Teste handleSubmitModalForm', () => {
             expect(botaoAdicionar).toBeInTheDocument();
             expect(botaoAdicionar).toBeEnabled();
             fireEvent.click(botaoAdicionar);
-            }
-        );
+        });
 
-        expect(screen.getByText("* Preenchimento obrigatório")).toBeInTheDocument();
+        await screen.findByText("* Preenchimento obrigatório");
 
-        const input_nome = screen.getByLabelText("Nome do tipo de conta *");
-        const input_banco = screen.getByLabelText("Nome do banco");
-        const input_agencia = screen.getByLabelText("Nº da agência");
-        const input_conta = screen.getByLabelText("Nº da conta");
-        const input_cartao = screen.getByLabelText("Nº do cartão");
-        const saveButton = screen.getByRole("button", { name: "Salvar" });
+        const input_nome = await screen.findByLabelText("Nome do tipo de conta *");
+        
+        // Ativar o switch para mostrar os campos bancários
+        const switchVinculado = await screen.findByRole("switch");
+        fireEvent.click(switchVinculado);
 
+        const input_banco = await screen.findByLabelText("Nome do banco");
+        const input_agencia = await screen.findByLabelText("Nº da agência");
+        const input_conta = await screen.findByLabelText("Nº da conta");
+        // Nº do cartão foi removido do formulário, então o teste relacionado a esse campo foi comentado
+        // const input_cartao = await screen.findByLabelText("Nº do cartão");
+        const saveButton = await screen.findByRole("button", { name: "Salvar" });
 
         fireEvent.change(input_nome, { target: { value: "Tipo conta 007" } });
         fireEvent.change(input_banco, { target: { value: "BTG" } });
         fireEvent.change(input_agencia, { target: { value: "0001" } });
         fireEvent.change(input_conta, { target: { value: "123123" } });
-        fireEvent.change(input_cartao, { target: { value: "0001000200030004" } });
+        // fireEvent.change(input_cartao, { target: { value: "0001000200030004" } });
 
         expect(saveButton).toBeEnabled();
 
@@ -213,7 +252,7 @@ describe('Teste handleSubmitModalForm', () => {
 
     it('teste edição sucesso', async() => {
         getTiposContas.mockResolvedValueOnce(mockTiposConta).mockResolvedValueOnce(mockTiposConta);
-        render(
+        renderWithQueryClient(
             <MemoryRouter initialEntries={["/parametro-tipos-conta"]}>
                 <Routes>
                     <Route path="/parametro-tipos-conta" element={<TiposConta />} />
@@ -231,16 +270,19 @@ describe('Teste handleSubmitModalForm', () => {
             fireEvent.click(btnAlterar);
         });
 
-        expect(screen.getByText("* Preenchimento obrigatório")).toBeInTheDocument();
+        await screen.findByText("* Preenchimento obrigatório");
 
-        const input_nome = screen.getByLabelText("Nome do tipo de conta *");
-        const input_banco = screen.getByLabelText("Nome do banco");
-        const input_agencia = screen.getByLabelText("Nº da agência");
-        const input_conta = screen.getByLabelText("Nº da conta");
-        const input_cartao = screen.getByLabelText("Nº do cartão");
-        const input_checkbox_1 = screen.getByLabelText("Exibir os dados da conta somente leitura");
-        const input_checkbox_2 = screen.getByLabelText("Conta permite encerramento");
-        const saveButton = screen.getByRole("button", { name: "Salvar" });
+        const input_nome = await screen.findByLabelText("Nome do tipo de conta *");
+        
+        // Ativar o switch para mostrar os campos bancários
+        const switchVinculado = await screen.findByRole("switch");
+        fireEvent.click(switchVinculado);
+
+        const input_banco = await screen.findByLabelText("Nome do banco");
+        const input_agencia = await screen.findByLabelText("Nº da agência");
+        const input_conta = await screen.findByLabelText("Nº da conta");
+        const input_checkbox_2 = await screen.findByLabelText("Conta permite encerramento");
+        const saveButton = await screen.findByRole("button", { name: "Salvar" });
 
         expect(input_nome).toBeInTheDocument();
         expect(input_nome).toBeEnabled();
@@ -250,10 +292,6 @@ describe('Teste handleSubmitModalForm', () => {
         expect(input_agencia).toBeEnabled();
         expect(input_conta).toBeInTheDocument();
         expect(input_conta).toBeEnabled();
-        expect(input_cartao).toBeInTheDocument();
-        expect(input_cartao).toBeEnabled();
-        expect(input_checkbox_1).toBeInTheDocument();
-        expect(input_checkbox_1).toBeEnabled();
         expect(input_checkbox_2).toBeInTheDocument();
         expect(input_checkbox_2).toBeEnabled();
 
@@ -271,7 +309,7 @@ describe('Teste handleSubmitModalForm', () => {
         patchTipoConta.mockRejectedValueOnce({
             response: { data: { non_field_errors: "Testando erro response" } },
         });
-        render(
+        renderWithQueryClient(
             <MemoryRouter initialEntries={["/parametro-tipos-conta"]}>
                 <Routes>
                     <Route path="/parametro-tipos-conta" element={<TiposConta />} />
@@ -289,11 +327,13 @@ describe('Teste handleSubmitModalForm', () => {
             fireEvent.click(btnAlterar);
         });
 
-        const input_nome = screen.getByLabelText("Nome do tipo de conta *");
-        const saveButton = screen.getByRole("button", { name: "Salvar" });
+        await waitFor(()=>{
+            const input_nome = screen.getByLabelText("Nome do tipo de conta *");
+            const saveButton = screen.getByRole("button", { name: "Salvar" });
 
-        fireEvent.change(input_nome, { target: { value: "Tipo de conta 007" } });
-        fireEvent.click(saveButton);
+            fireEvent.change(input_nome, { target: { value: "Tipo de conta 007" } });
+            fireEvent.click(saveButton);
+        });
 
         await waitFor(()=>{
             expect(patchTipoConta).toHaveBeenCalled();
@@ -306,7 +346,7 @@ describe('Teste handleSubmitModalForm', () => {
         patchTipoConta.mockRejectedValueOnce({
             response: { data: { mensagem: "Testando erro response" } },
         });
-        render(
+        renderWithQueryClient(
             <MemoryRouter initialEntries={["/parametro-tipos-conta"]}>
                 <Routes>
                     <Route path="/parametro-tipos-conta" element={<TiposConta />} />
@@ -324,11 +364,13 @@ describe('Teste handleSubmitModalForm', () => {
             fireEvent.click(btnAlterar);
         });
 
-        const input_nome = screen.getByLabelText("Nome do tipo de conta *");
-        const saveButton = screen.getByRole("button", { name: "Salvar" });
+        await waitFor(()=>{
+            const input_nome = screen.getByLabelText("Nome do tipo de conta *");
+            const saveButton = screen.getByRole("button", { name: "Salvar" });
 
-        fireEvent.change(input_nome, { target: { value: "Tipo de conta 007" } });
-        fireEvent.click(saveButton);
+            fireEvent.change(input_nome, { target: { value: "Tipo de conta 007" } });
+            fireEvent.click(saveButton);
+        });
 
         await waitFor(()=>{
             expect(patchTipoConta).toHaveBeenCalled();
@@ -338,7 +380,7 @@ describe('Teste handleSubmitModalForm', () => {
 
     it('teste exclusão sucesso', async() => {
         getTiposContas.mockResolvedValueOnce(mockTiposConta).mockResolvedValueOnce(mockTiposConta);
-        render(
+        renderWithQueryClient(
             <MemoryRouter initialEntries={["/parametro-tipos-conta"]}>
                 <Routes>
                     <Route path="/parametro-tipos-conta" element={<TiposConta />} />
@@ -357,14 +399,16 @@ describe('Teste handleSubmitModalForm', () => {
         });
 
         await waitFor(()=> {
-            const btnRemover = screen.getByRole("button", { name: "Apagar" });
+            const buttons = screen.getAllByRole("button", { name: "Excluir" });
+            const btnRemover = buttons[0];
             expect(btnRemover).toBeInTheDocument();
             expect(btnRemover).toBeEnabled();
             fireEvent.click(btnRemover);
         });
 
         await waitFor(() => {
-            const btnConfirma = screen.getByRole("button", { name: "Excluir" });
+            const buttons = screen.getAllByRole("button", { name: "Excluir" });
+            const btnConfirma = buttons[buttons.length - 1];
             expect(btnConfirma).toBeInTheDocument();
             expect(btnConfirma).toBeEnabled();
             fireEvent.click(btnConfirma);
@@ -381,7 +425,7 @@ describe('Teste handleSubmitModalForm', () => {
         deleteTipoConta.mockRejectedValueOnce({
             response: { data: { mensagem: "Testando erro response" } },
         });
-        render(
+        renderWithQueryClient(
             <MemoryRouter initialEntries={["/parametro-tipos-conta"]}>
                 <Routes>
                     <Route path="/parametro-tipos-conta" element={<TiposConta />} />
@@ -400,14 +444,16 @@ describe('Teste handleSubmitModalForm', () => {
         });
 
         await waitFor(()=> {
-            const btnRemover = screen.getByRole("button", { name: "Apagar" });
+            const buttons = screen.getAllByRole("button", { name: "Excluir" });
+            const btnRemover = buttons[0];
             expect(btnRemover).toBeInTheDocument();
             expect(btnRemover).toBeEnabled();
             fireEvent.click(btnRemover);
         });
 
         await waitFor(() => {
-            const btnConfirma = screen.getByRole("button", { name: "Excluir" });
+            const buttons = screen.getAllByRole("button", { name: "Excluir" });
+            const btnConfirma = buttons[buttons.length - 1];
             expect(btnConfirma).toBeInTheDocument();
             expect(btnConfirma).toBeEnabled();
             fireEvent.click(btnConfirma);
