@@ -7,9 +7,11 @@ import {BarraTotalUnidades} from "./BarraTotalUnidades";
 import {DashboardCard} from "./DashboardCard";
 import {ResumoPorDre} from "./ResumoPorDre";
 import Loading from "../../../utils/Loading";
+import useUnidadeSelecionada from "../../../hooks/Globais/useUnidadeSelecionada";
+import { visoesService } from "../../../services/visoes.service";
 
 export const AcompanhamentoPcsSme = () => {
-
+    const { isSME } = useUnidadeSelecionada(visoesService);
     const [periodos, setPeriodos] = useState(false);
     const [periodoEscolhido, setPeriodoEsolhido] = useState(false);
     const [itensDashboard, setItensDashboard] = useState(false);
@@ -28,7 +30,7 @@ export const AcompanhamentoPcsSme = () => {
 
     const carregaPeriodos = async () => {
         setLoading(true);
-        let periodos = await getPeriodos();
+        let periodos = await getPeriodos({ solicitacao_sme: isSME() });
         setPeriodos(periodos);
         if (periodos && periodos.length > 0){
             setPeriodoEsolhido(periodos[0].uuid)

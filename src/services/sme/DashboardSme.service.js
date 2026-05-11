@@ -8,8 +8,20 @@ const authHeader = ()=>({
     }
 });
 
-export const getPeriodos = async () => {
-    return (await api.get(`/api/periodos/`, authHeader())).data
+export const getPeriodos = async (parameters = {}) => {
+    const params = new URLSearchParams();
+
+    if (parameters.solicitacao_sme) {
+        params.append('solicitacao_sme', parameters.solicitacao_sme);
+    }
+
+    if (parameters.dre_uuid) {
+        params.append('dre_uuid', parameters.dre_uuid);
+    }
+
+    const paramsToString = params.toString() ? `?${params.toString()}` : '';
+
+    return (await api.get(`/api/periodos/${paramsToString}`, authHeader())).data
 };
 
 export const getItensDashboard = async (uuid_periodo) => {
