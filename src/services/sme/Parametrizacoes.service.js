@@ -226,11 +226,16 @@ export const getTiposUnidades = async () => {
 };
 
 // Tipos de conta
-export const getTiposContas = async () => {
-  return (await api.get(`/api/tipos-conta/`, authHeader())).data;
+export const getTiposContas = async (recurso_uuid = "") => {
+  const url = recurso_uuid ? `/api/tipos-conta/?recurso_uuid=${recurso_uuid}` : `/api/tipos-conta/`;
+  return (await api.get(url, authHeader())).data;
 };
-export const getFiltroTiposContas = async (nome) => {
-  return (await api.get(`/api/tipos-conta/?nome=${nome}`, authHeader())).data;
+export const getFiltroTiposContas = async (nome, recurso_uuid = "") => {
+  let url = `/api/tipos-conta/?nome=${nome}`;
+  if (recurso_uuid) {
+    url += `&recurso_uuid=${recurso_uuid}`;
+  }
+  return (await api.get(url, authHeader())).data;
 };
 export const postTipoConta = async (payload) => {
   return (await api.post(`/api/tipos-conta/`, payload, authHeader())).data;

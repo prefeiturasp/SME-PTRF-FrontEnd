@@ -1,9 +1,13 @@
 import { act } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { renderHook } from "@testing-library/react";
+import { renderHook, waitFor } from "@testing-library/react";
 import { patchUpdatePeriodo } from "../../../../../../services/sme/Parametrizacoes.service";
 import { toastCustom } from "../../../../../Globais/ToastCustom";
 import { usePatchPeriodo } from "../hooks/usePatchPeriodo";
+
+jest.mock("../../../componentes/AbasPorRecurso/context/Recursos", () => ({
+  AbasPorRecursoProvider: ({ children }) => <div data-testid="recursos-provider">{children}</div>,
+}));
 
 jest.mock("../../../../../../services/sme/Parametrizacoes.service", () => ({
   patchUpdatePeriodo: jest.fn(),
@@ -44,14 +48,16 @@ describe("usePatchPeriodo", () => {
       });
     });
 
-    expect(patchUpdatePeriodo).toHaveBeenCalledWith(
-      "d9bc43e3-cfd5-4969-bada-af78d96e8faf",
-      { referencia: "2025.1" }
-    );
-    expect(setModalForm).toHaveBeenCalledWith({ open: false });
-    expect(toastCustom.ToastCustomSuccess).toHaveBeenCalledWith(
-      "Edição do período realizado com sucesso."
-    );
+    await waitFor(() => {
+      expect(patchUpdatePeriodo).toHaveBeenCalledWith(
+        "d9bc43e3-cfd5-4969-bada-af78d96e8faf",
+        { referencia: "2025.1" }
+      );
+      expect(setModalForm).toHaveBeenCalledWith({ open: false });
+      expect(toastCustom.ToastCustomSuccess).toHaveBeenCalledWith(
+        "Edição do período realizado com sucesso."
+      );
+    });
   });
 
   it("deve exibir erro ao falhar na atualização", async () => {
@@ -67,9 +73,11 @@ describe("usePatchPeriodo", () => {
       });
     });
 
-    expect(toastCustom.ToastCustomError).toHaveBeenCalledWith(
-      "Erro ao atualizar período",
-      "Não foi possível atualizar o período"
-    );
+    await waitFor(() => {
+      expect(toastCustom.ToastCustomError).toHaveBeenCalledWith(
+        "Erro ao atualizar período",
+        "Não foi possível atualizar o período"
+      );
+    });
   });
 });

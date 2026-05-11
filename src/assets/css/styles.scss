@@ -572,3 +572,21 @@ table {
 .reactprime-multiple-fix-column {
     .p-column-title { display: none;}
 }
+
+/* Modais Bootstrap - z-index reduzido para permitir modais filhos */
+.modal-backdrop {
+    z-index: 1040 !important;
+}
+
+.modal {
+    z-index: 1050 !important;
+}
+
+/* Modais Ant Design - z-index alto para aparecer acima de modais Bootstrap */
+.ant-modal-wrap {
+    z-index: 1060 !important;
+}
+
+.ant-modal-mask {
+    z-index: 1059 !important;
+}
