@@ -33,15 +33,18 @@ export const ResumoPorDre = ({ resumoPorDre, statusPeriodo, periodoEscolhido }) 
 
   const acoesTemplate = (rowData) => {
     const url = `/acompanhamento-pcs-sme/${rowData.dre.uuid}/${periodoEscolhido}`;
+    const noHasUnidadesAssociadas = rowData.cards.TOTAL_UNIDADES <= 0;
+    const tooltipMessage = noHasUnidadesAssociadas ? "Não há unidades que possuem este recurso" : "Visualizar";
 
     return (
       <VisualizarIconButton
-        tooltipMessage="Visualizar"
+        tooltipMessage={tooltipMessage}
         onClick={() =>
           navigate(url, {
             state: { nome_dre: rowData.dre.nome },
           })
         }
+        disabled={noHasUnidadesAssociadas}
       />
     );
   };
