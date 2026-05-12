@@ -28,6 +28,8 @@ export const useDeleteRecursoProprio = () => {
         toastCustom.ToastCustomSuccess("Recurso próprio excluído com sucesso.");
         queryClient.invalidateQueries({ queryKey: ["recursos-proprios"] });
         queryClient.invalidateQueries({ queryKey: ["totalizador-recurso-proprio"] });
+        // Quando Volta via recurso de location para Atividades previstas, o hook não dispara automaticamente
+        queryClient.refetchQueries({ queryKey: ["recursos-proprios-previstos"], exact: false });
       },
       onError: (e) => {
         if (e.response && e.response.data && e.response.data.mensagem) {
