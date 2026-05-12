@@ -167,6 +167,12 @@ export const PainelParametrizacoes = () => {
             icone: IconeMotivosAprovacaoPcRessalva,
             permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
         },
+        {
+            parametro: 'Motivos de reprovação de PC',
+            url: 'parametro-motivos-reprovacao-pc',
+            icone: IconeMotivosAprovacaoPcRessalva,
+            permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
+        },
     ];
 
     const itensParametrizacaoPrestacaoContas = [
