@@ -14,7 +14,7 @@ const BarraTopoTitulo = ({ paa, origem = null }) => {
   const obterConfiguracaoVoltar = () => {
     if (origem === "plano-aplicacao") {
       return {
-        className: "btn btn-success",
+        className: "btn btn-outline-success",
         label: "Voltar ao Plano de Aplicação",
         destino: "/relatorios-componentes/plano-aplicacao",
       };
@@ -22,7 +22,7 @@ const BarraTopoTitulo = ({ paa, origem = null }) => {
 
     if (origem === "plano-orcamentario") {
       return {
-        className: "btn btn-success",
+        className: "btn btn-outline-success",
         label: "Voltar ao Plano Orçamentário",
         destino: "/relatorios-componentes/plano-orcamentario",
       };

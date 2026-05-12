@@ -5,7 +5,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { getTextosPaaUe } from '../../../../../services/escolas/Paa.service';
 import { usePostPaa } from "../hooks/usePostPaa";
 import { getPaaVigente, getParametroPaa } from "../../../../../services/sme/Parametrizacoes.service";
-import { getStatusGeracaoDocumentoPaa } from "../../../../../services/escolas/Paa.service";
 import { ElaboracaoPaa } from '../index';
 import { visoesService } from '../../../../../services/visoes.service';
 
@@ -29,7 +28,6 @@ jest.mock('../../../../../services/sme/Parametrizacoes.service', () => ({
 
 jest.mock('../../../../../services/escolas/Paa.service', () => ({
   getTextosPaaUe: jest.fn(),
-  getStatusGeracaoDocumentoPaa: jest.fn(),
 }));
 
 jest.mock('../../../../../paginas/PaginasContainer', () => ({
@@ -118,7 +116,6 @@ describe('ElaboracaoPaa Component', () => {
       conclusao_do_paa_ue_2: '',
     });
     getPaaVigente.mockResolvedValue({});
-    getStatusGeracaoDocumentoPaa.mockResolvedValue({ status: null, versao: null });
     getParametroPaa.mockResolvedValue({ detail: new Date().getMonth() + 2 });
 
     render(
@@ -145,8 +142,7 @@ describe('ElaboracaoPaa Component', () => {
       conclusao_do_paa_ue_1: '',
       conclusao_do_paa_ue_2: '',
     });
-    getPaaVigente.mockResolvedValue({ uuid: 'paa-existente' });
-    getStatusGeracaoDocumentoPaa.mockResolvedValue({ status: 'PENDENTE', versao: 'RASCUNHO' });
+    getPaaVigente.mockResolvedValue({ uuid: 'paa-existente', status: 'EM_ELABORACAO' });
     getParametroPaa.mockResolvedValue({ detail: new Date().getMonth() + 1 });
 
     render(
@@ -181,7 +177,6 @@ describe('ElaboracaoPaa Component', () => {
       conclusao_do_paa_ue_2: '',
     });
     getPaaVigente.mockResolvedValue({});
-    getStatusGeracaoDocumentoPaa.mockResolvedValue({ status: null, versao: null });
     getParametroPaa.mockResolvedValue({ detail: new Date().getMonth() + 2 });
 
     render(
@@ -195,7 +190,6 @@ describe('ElaboracaoPaa Component', () => {
     await waitFor(() =>
       expect(screen.getByTestId('elaborar-paa-button')).toBeInTheDocument()
     );
-
 
     expect(screen.getByText('Texto ABC')).toBeInTheDocument();
     expect(screen.getByTestId('elaborar-paa-button')).toBeDisabled();
