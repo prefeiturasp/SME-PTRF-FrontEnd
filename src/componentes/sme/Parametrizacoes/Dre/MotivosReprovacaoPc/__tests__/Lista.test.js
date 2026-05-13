@@ -42,7 +42,7 @@ const contexto = {
   handleExcluirMotivo: jest.fn(),
   showModalConfirmacaoExclusao: { is_open: false, motivo_uuid: '' }
 }
-const itemMock = { id: 1, motivo: "Motivo 1", uuid: "123", recurso_uuid: "r1", recurso: { uuid: "r1", nome: "Recurso 1", nome_exibicao: "Recurso 1" } };
+const itemMock = { id: 1, motivo: "Motivo 1", uuid: "123", recurso_uuid: "r1", recurso: "r1" };
 
 describe("Lista", () => {
   beforeEach(() => {
@@ -127,7 +127,7 @@ describe("Lista", () => {
     expect(contexto.setBloquearBtnSalvarForm).toHaveBeenCalledTimes(1);
     expect(contexto.setBloquearBtnSalvarForm).toHaveBeenCalledWith(true);
     expect(mockMutationPostMutate).toHaveBeenCalledTimes(1);
-    expect(mockMutationPostMutate).toHaveBeenCalledWith({ payload: { motivo: "Teste", recurso_uuid: "r1" } });
+    expect(mockMutationPostMutate).toHaveBeenCalledWith({ payload: { motivo: "Teste", recurso: "r1" } });
     expect(mockMutationPatchMutate).not.toHaveBeenCalled();
   });
 
@@ -150,7 +150,7 @@ describe("Lista", () => {
     expect(contexto.setBloquearBtnSalvarForm).toHaveBeenCalledTimes(1);
     expect(contexto.setBloquearBtnSalvarForm).toHaveBeenCalledWith(true);
     expect(mockMutationPatchMutate).toHaveBeenCalledTimes(1);
-    expect(mockMutationPatchMutate).toHaveBeenCalledWith({ uuidMotivoReprovacaoPc: "123", payload: { motivo: "Teste1", recurso_uuid: "r1" } });
+    expect(mockMutationPatchMutate).toHaveBeenCalledWith({ uuidMotivoReprovacaoPc: "123", payload: { motivo: "Teste1", recurso: "r1" } });
     expect(mockMutationPostMutate).not.toHaveBeenCalled();
   });
 
