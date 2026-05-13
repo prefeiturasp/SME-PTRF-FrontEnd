@@ -43,6 +43,7 @@ const normalizaDisponivel = (item) => ({
   vinculoUuid: null,
   isNovo: false,
   emEdicao: false,
+  alteracao: item?.alteracao,
 });
 
 const normalizaPrevista = (item) => {
@@ -89,6 +90,7 @@ const normalizaPrevista = (item) => {
     origem: item?.atividade_estatutaria?.paa ? "local" : "global",
     isNovo: false,
     emEdicao: false,
+    alteracao: item?.alteracao,
   };
 };
 

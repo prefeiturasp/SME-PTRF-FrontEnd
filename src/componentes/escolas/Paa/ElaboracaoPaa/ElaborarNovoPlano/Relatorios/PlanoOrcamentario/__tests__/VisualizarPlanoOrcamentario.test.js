@@ -3,6 +3,7 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import { VisualizarPlanoOrcamentario } from "../VisualizarPlanoOrcamentario";
 import { useNavigate } from "react-router-dom";
 import { useGetPlanoOrcamentario } from "../hooks/useGetPlanoOrcamentario";
+import { useGetPaa } from "../../../../../componentes/hooks/useGetPaa";
 
 jest.mock("react-router-dom", () => ({
   ...jest.requireActual("react-router-dom"),
@@ -11,6 +12,10 @@ jest.mock("react-router-dom", () => ({
 
 jest.mock("../hooks/useGetPlanoOrcamentario", () => ({
   useGetPlanoOrcamentario: jest.fn(),
+}));
+
+jest.mock("../../../../../componentes/hooks/useGetPaa", () => ({
+  useGetPaa: jest.fn(),
 }));
 
 let mockCapturedTabelaProps = [];
@@ -73,6 +78,8 @@ beforeAll(() => {
 describe("VisualizarPlanoOrcamentario", () => {
   const navigateMock = jest.fn();
 
+  const defaultPaa = { uuid: "paa-123", status: "EM_ELABORACAO" };
+
   const defaultSecoes = [
     { key: "ptrf", titulo: "PTRF", linhas: [] },
     { key: "pdde", titulo: "PDDE", linhas: [] },
@@ -83,12 +90,23 @@ describe("VisualizarPlanoOrcamentario", () => {
     jest.clearAllMocks();
     mockCapturedTabelaProps = [];
     useNavigate.mockReturnValue(navigateMock);
+    useGetPaa.mockReturnValue({
+      data: defaultPaa,
+      refetch: jest.fn(),
+      isFetching: false,
+    });
     useGetPlanoOrcamentario.mockReturnValue({
       data: { secoes: defaultSecoes },
       isLoading: false,
       isFetching: false,
       isError: false,
     });
+  });
+
+  it("não renderiza nada quando paa não está disponível", () => {
+    useGetPaa.mockReturnValue({ data: undefined, refetch: jest.fn(), isFetching: false });
+    const { container } = render(<VisualizarPlanoOrcamentario />);
+    expect(container.innerHTML).toBe("");
   });
 
   it("redireciona corretamente ao clicar nos botões de editar receitas e prioridades", () => {
@@ -126,7 +144,7 @@ describe("VisualizarPlanoOrcamentario", () => {
     expect(navigateMock).toHaveBeenNthCalledWith(3, "/elaborar-novo-paa", {
       state: {
         activeTab: "receitas",
-        receitasDestino: "recursos-proprios",
+        receitasDestino: "outros-recursos",
         fromPlanoOrcamentario: true,
       },
     });
@@ -151,6 +169,63 @@ describe("VisualizarPlanoOrcamentario", () => {
           componentes: true,
         },
       },
+    });
+  });
+
+  describe("navegação em modo EM_RETIFICACAO", () => {
+    const paaRetificacao = { uuid: "paa-retif-456", status: "EM_RETIFICACAO" };
+
+    beforeEach(() => {
+      useGetPaa.mockReturnValue({
+        data: paaRetificacao,
+        refetch: jest.fn(),
+        isFetching: false,
+      });
+    });
+
+    it("Voltar navega para rota de retificação", () => {
+      render(<VisualizarPlanoOrcamentario />);
+      fireEvent.click(screen.getByRole("button", { name: /voltar/i }));
+      expect(navigateMock).toHaveBeenCalledWith(
+        `/retificacao-paa/${paaRetificacao.uuid}`,
+        {
+          state: {
+            activeTab: "relatorios",
+            expandedSections: { planoAnual: true, componentes: true },
+          },
+        }
+      );
+    });
+
+    it("Editar receitas navega para rota de retificação", () => {
+      render(<VisualizarPlanoOrcamentario />);
+      const botoesReceitas = screen.getAllByRole("button", { name: /editar receitas/i });
+      fireEvent.click(botoesReceitas[0]);
+      expect(navigateMock).toHaveBeenCalledWith(
+        `/retificacao-paa/${paaRetificacao.uuid}`,
+        {
+          state: {
+            activeTab: "receitas",
+            receitasDestino: "ptrf",
+            fromPlanoOrcamentario: true,
+          },
+        }
+      );
+    });
+
+    it("Editar prioridades navega para rota de retificação", () => {
+      render(<VisualizarPlanoOrcamentario />);
+      const botoesPrioridades = screen.getAllByRole("button", { name: /editar prioridades/i });
+      fireEvent.click(botoesPrioridades[0]);
+      expect(navigateMock).toHaveBeenCalledWith(
+        `/retificacao-paa/${paaRetificacao.uuid}`,
+        {
+          state: {
+            activeTab: "prioridades-list",
+            fromPlanoOrcamentario: true,
+          },
+        }
+      );
     });
   });
 

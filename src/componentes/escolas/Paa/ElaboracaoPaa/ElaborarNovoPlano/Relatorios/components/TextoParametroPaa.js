@@ -9,10 +9,8 @@ export const TextoParametroPaa  = ({campo})=>{
         const carregaTextos = async () => {
             let responseTextoPaa = await getTextosPaaUe();
             setTextosPaa(responseTextoPaa)
-            console.log(responseTextoPaa)
         }
         carregaTextos()
-        console.log(textosPaa)
     }, [campo]);
 
 

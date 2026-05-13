@@ -1,4 +1,4 @@
-import { Spin, Typography } from "antd";
+import { Typography } from "antd";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import WatermarkPrevia from "../../../../../../Globais/WatermarkPrevia/WatermarkPrevia";
 import "./RelatorioVisualizacao.scss";
@@ -50,7 +50,7 @@ export const RelatorioVisualizacao = ({
 
   useEffect(() => {
     atualizarAlturaDocumento();
-  }, [atualizarAlturaDocumento, heightDepsKey]);
+  }, [atualizarAlturaDocumento]);
 
   const renderContent = useMemo(() => {
     if (error) {
@@ -127,7 +127,7 @@ export const RelatorioVisualizacao = ({
             bodyClassName
           )}
         >
-          <Spin {...mergedSpinProps}>{renderContent}</Spin>
+          {renderContent}
         </div>
       </div>
     </div>

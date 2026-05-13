@@ -257,26 +257,26 @@ describe("ConteudoBase", () => {
       expect(screen.getByTestId("barra-topo")).toHaveAttribute("data-origem", "plano-orcamentario");
     });
 
-    it("passa origem 'atividades-previstas' quando fromAtividadesPrevistas=1 na query", () => {
-      renderConteudoBase({}, { search: "?fromAtividadesPrevistas=1" });
+    it("passa origem 'atividades-previstas' quando fromAtividadesPrevistas é true no state", () => {
+      renderConteudoBase({}, { state: { fromAtividadesPrevistas: true } });
 
       expect(screen.getByTestId("barra-topo")).toHaveAttribute("data-origem", "atividades-previstas");
     });
 
-    it("passa origem 'atividades-previstas' quando fromAtividadesPrevistas=true na query", () => {
-      renderConteudoBase({}, { search: "?fromAtividadesPrevistas=true" });
+    it("passa origem 'atividades-previstas' quando fromAtividadesPrevistas é valor truthy (1) no state", () => {
+      renderConteudoBase({}, { state: { fromAtividadesPrevistas: 1 } });
 
       expect(screen.getByTestId("barra-topo")).toHaveAttribute("data-origem", "atividades-previstas");
     });
 
     it("'atividades-previstas' tem prioridade sobre 'plano-aplicacao'", () => {
-      renderConteudoBase({}, { state: { fromPlanoAplicacao: true }, search: "?fromAtividadesPrevistas=1" });
+      renderConteudoBase({}, { state: { fromPlanoAplicacao: true, fromAtividadesPrevistas: true } });
 
       expect(screen.getByTestId("barra-topo")).toHaveAttribute("data-origem", "atividades-previstas");
     });
 
     it("'atividades-previstas' tem prioridade sobre 'plano-orcamentario'", () => {
-      renderConteudoBase({}, { state: { fromPlanoOrcamentario: true }, search: "?fromAtividadesPrevistas=1" });
+      renderConteudoBase({}, { state: { fromPlanoOrcamentario: true, fromAtividadesPrevistas: true } });
 
       expect(screen.getByTestId("barra-topo")).toHaveAttribute("data-origem", "atividades-previstas");
     });

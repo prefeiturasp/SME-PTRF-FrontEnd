@@ -14,23 +14,18 @@ import { usePaaContext } from "../PaaContext";
 
 const ConteudoBase = ({ itemsBreadCrumb }) => {
   const navigate = useNavigate();
-  const { paa, refetch } = usePaaContext();
+  const { paa } = usePaaContext();
   const location = useLocation();
 
   const [activeTab, setActiveTab] = useState("prioridades");
   const hasInitializedTab = useRef(false);
-  const relatoriosInitialExpandedSections = location.state?.expandedSections;
-  const fromPlanoAplicacao = Boolean(location.state?.fromPlanoAplicacao);
-  const fromPlanoOrcamentario = Boolean(location.state?.fromPlanoOrcamentario);
-  const receitasDestino = location.state?.receitasDestino || null;
-  const searchParams = useMemo(
-    () => new URLSearchParams(location.search),
-    [location.search],
-  );
-  const fromAtividadesPrevistas = useMemo(() => {
-    const value = searchParams.get("fromAtividadesPrevistas");
-    return value === "1" || value === "true";
-  }, [searchParams]);
+  const initialStateRef = useRef(location.state);
+  const relatoriosInitialExpandedSections = initialStateRef.current?.expandedSections;
+
+  const fromPlanoAplicacao = Boolean(initialStateRef.current?.fromPlanoAplicacao);
+  const fromPlanoOrcamentario = Boolean(initialStateRef.current?.fromPlanoOrcamentario);
+  const fromAtividadesPrevistas = Boolean(initialStateRef.current?.fromAtividadesPrevistas);
+  const receitasDestino = initialStateRef.current?.receitasDestino || null;
 
   const origemBarra = fromAtividadesPrevistas
     ? "atividades-previstas"
@@ -86,11 +81,11 @@ const ConteudoBase = ({ itemsBreadCrumb }) => {
   useEffect(() => {
     if (hasInitializedTab.current || tabs.length === 0) return;
     hasInitializedTab.current = true;
-    const requestedTab = location.state?.activeTab;
+    const requestedTab = initialStateRef.current?.activeTab;
     setActiveTab(
       tabs.some((tab) => tab.id === requestedTab) ? requestedTab : tabs[0].id,
     );
-  }, [tabs, location.state?.activeTab]);
+  }, [tabs]);
 
   useEffect(() => {
     const temPermissaoIniciar = Boolean(
@@ -110,7 +105,11 @@ const ConteudoBase = ({ itemsBreadCrumb }) => {
     });
 
     if (paa.status === "EM_RETIFICACAO") {
-      setActiveTab("receitas");
+      // reativa a tab em caso de retificacao
+      // Se em retificação levantamento de prioridades(prioridades) estiver selecionada,
+      // considera o ref de location, caso contrário, considera tab de receitas por padrão
+      const tabAtiva = initialStateRef.current?.activeTab === "prioridades" ? "receitas" : initialStateRef.current?.activeTab || "receitas";
+      setActiveTab(tabAtiva);
     }
   }, [paa, navigate]);
 
