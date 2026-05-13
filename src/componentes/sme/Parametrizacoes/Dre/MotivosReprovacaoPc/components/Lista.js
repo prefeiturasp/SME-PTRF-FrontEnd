@@ -45,7 +45,7 @@ export const Lista = () => {
         uuid: rowData.uuid,
         id: rowData.id,
         isOpen: true,
-        recurso_uuid: rowData?.recurso?.uuid
+        recurso_uuid: rowData?.recurso
     });
   };
 
@@ -54,7 +54,7 @@ export const Lista = () => {
     setBloquearBtnSalvarForm(true)
     let payload = {
         motivo: values.motivo,
-        recurso_uuid: values.recurso_uuid,
+        recurso: values.recurso_uuid
     };
 
     if (values.uuid) {
