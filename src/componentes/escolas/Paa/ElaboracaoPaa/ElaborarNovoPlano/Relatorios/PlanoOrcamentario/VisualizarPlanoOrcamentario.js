@@ -1,5 +1,5 @@
-import { Button } from "antd";
-import { useMemo } from "react";
+import { Spin, Button } from "antd";
+import { useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { RelatorioTabelaGrupo } from "../components/RelatorioTabelaGrupo";
 import { RelatorioVisualizacao } from "../components/RelatorioVisualizacao";
@@ -11,6 +11,8 @@ import { formatMoneyBRL } from "../../../../../../../utils/money";
 import "./styles.scss";
 import { useGetPlanoOrcamentario } from "./hooks/useGetPlanoOrcamentario";
 import { TagRetificacao } from "../../../../componentes/TagRetificacao";
+import { useGetPaa } from "../../../../componentes/hooks/useGetPaa";
+import { PaaContext, usePaaContext } from "../../../../componentes/PaaContext";
 
 const formatResumo = (
   valores,
@@ -200,8 +202,10 @@ const montarColunas = () => [
   },
 ];
 
-export const VisualizarPlanoOrcamentario = () => {
+const VisualizarPlanoOrcamentarioContent = () => {
   const navigate = useNavigate();
+  const { paa, isFetching: isLoadingPaa } = usePaaContext();
+  
   const paaUUID = localStorage.getItem("PAA");
   const colunas = useMemo(montarColunas, []);
   
@@ -218,7 +222,12 @@ export const VisualizarPlanoOrcamentario = () => {
   }, [planoOrcamentarioData]);
 
   const handleVoltar = () => {
-    navigate("/elaborar-novo-paa", {
+    let voltarRota = "/elaborar-novo-paa";
+
+    if (paa?.status === "EM_RETIFICACAO") {
+      voltarRota =`/retificacao-paa/${paa?.uuid}`;
+    }
+    navigate(voltarRota, {
       state: {
         activeTab: "relatorios",
         expandedSections: {
@@ -229,22 +238,35 @@ export const VisualizarPlanoOrcamentario = () => {
     });
   };
 
-  const handleIrParaReceitas = (destino) =>
-    navigate("/elaborar-novo-paa", {
+  const handleIrParaReceitas = (destino) => {
+    let voltarRota = "/elaborar-novo-paa";
+
+    if (paa?.status === "EM_RETIFICACAO") {
+      voltarRota =`/retificacao-paa/${paa?.uuid}`;
+    }
+    navigate(voltarRota, {
       state: {
         activeTab: "receitas",
         receitasDestino: destino,
         fromPlanoOrcamentario: true,
       },
     });
+  }
 
-  const handleIrParaPrioridades = () =>
-    navigate("/elaborar-novo-paa", {
+  const handleIrParaPrioridades = () => {
+    
+    let voltarRota = "/elaborar-novo-paa";
+
+    if (paa?.status === "EM_RETIFICACAO") {
+      voltarRota =`/retificacao-paa/${paa?.uuid}`;
+    }
+    navigate(voltarRota, {
       state: {
         activeTab: "prioridades-list",
         fromPlanoOrcamentario: true,
       },
     });
+  }
 
   const carregando = isCarregandoPlanoOrcamentario || isBuscandoPlanoOrcamentario;
   const erro = erroPlanoOrcamentario;
@@ -254,7 +276,7 @@ export const VisualizarPlanoOrcamentario = () => {
   const destinosReceitasPorSecao = {
     ptrf: "ptrf",
     pdde: "pdde",
-    outros_recursos: "recursos-proprios",
+    outros_recursos: "outros-recursos",
   };
 
   const obterDestinoReceitaPorSecao = (secaoKey) =>
@@ -334,7 +356,27 @@ export const VisualizarPlanoOrcamentario = () => {
       backButtonClassName="relatorio-plano-orcamentario__back-button"
       heightDeps={[secoes, carregando, erro]}
     >
-      {conteudo}
+      <Spin spinning={isLoadingPaa}>
+        {conteudo}
+      </Spin>
     </RelatorioVisualizacao>
   );
+};
+
+export const VisualizarPlanoOrcamentario = () => {
+  const paa_uuid_storage = localStorage.getItem('PAA');
+  
+  const { data: paa, refetch, isFetching } = useGetPaa(paa_uuid_storage);
+
+  const renderizar = useCallback(() => {
+    if (!paa) return <></>;
+
+    return (
+      <PaaContext.Provider value={{ paa, refetch, isFetching }}>
+        <VisualizarPlanoOrcamentarioContent />
+      </PaaContext.Provider>
+    )
+  }, [paa, refetch, isFetching]);
+
+  return renderizar();
 };

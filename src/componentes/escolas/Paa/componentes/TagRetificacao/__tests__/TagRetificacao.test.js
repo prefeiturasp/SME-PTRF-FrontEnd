@@ -32,4 +32,10 @@ describe("TagRetificacao", () => {
     const tag = screen.getByTestId("tag-retificacao");
     expect(tag).toHaveStyle({ border: "2px solid #01585E" });
   });
+
+  it("renderiza o texto da prop label quando fornecida", () => {
+    render(<TagRetificacao label="Texto customizado" />);
+    expect(screen.getByText("Texto customizado")).toBeInTheDocument();
+    expect(screen.queryByText("Em retificação")).not.toBeInTheDocument();
+  });
 });
