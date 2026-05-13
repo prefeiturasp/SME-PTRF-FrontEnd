@@ -11,14 +11,14 @@ import { usePostMotivoAprovacaoPcRessalva } from '../hooks/usePostMotivoAprovaca
 import { usePatchMotivoAprovacaoPcRessalva } from '../hooks/usePatchMotivoAprovacaoPcRessalva';
 import { useDeleteMotivoAprovacaoPcRessalva } from '../hooks/useDeleteMotivoAprovacaoPcRessalva';
 import { ModalForm } from "./ModalForm";
-import { ModalConfirmacaoExclusao } from "./ModalConfirmacaoExclusao";
 import {MsgImgCentralizada} from "../../../../../Globais/Mensagens/MsgImgCentralizada";
 import Img404 from "../../../../../../assets/img/img-404.svg";
 import { EditIconButton } from "../../../../../Globais/UI/Button";
+import { ModalConfirmarExclusao } from "../../../../../Globais/ModalAntDesign/ModalConfirmarExclusao";
 
 export const Lista = () => {
 
-  const { setShowModalForm, stateFormModal, setStateFormModal, setBloquearBtnSalvarForm } = useContext(MotivosAprovacaoPcRessalvaContext)
+  const { showModalConfirmacaoExclusao, setShowModalConfirmacaoExclusao, setShowModalForm, stateFormModal, setStateFormModal, setBloquearBtnSalvarForm } = useContext(MotivosAprovacaoPcRessalvaContext)
   const { isLoading, data } = useGetMotivosAprovacaoPcRessalva()
   const { mutationPost } = usePostMotivoAprovacaoPcRessalva()
   const { mutationPatch } = usePatchMotivoAprovacaoPcRessalva()
@@ -41,6 +41,7 @@ export const Lista = () => {
         motivo: rowData.motivo,
         uuid: rowData.uuid,
         id: rowData.id,
+        recurso: rowData.recurso ? rowData.recurso : '',
     });
     setShowModalForm(true)
   };
@@ -50,6 +51,7 @@ export const Lista = () => {
     setBloquearBtnSalvarForm(true)
     let payload = {
         motivo: values.motivo,
+        recurso: values.recurso,
     };
 
     if (!values.uuid) {
@@ -111,8 +113,17 @@ export const Lista = () => {
             />
         </section>
         <section>
-            <ModalConfirmacaoExclusao
-                handleExcluirMotivo={handleExcluirMotivo}
+            <ModalConfirmarExclusao
+                open={showModalConfirmacaoExclusao.open}
+                onOk={()=> {
+                    handleExcluirMotivo(showModalConfirmacaoExclusao.uuid)
+                    setShowModalConfirmacaoExclusao({open: false, uuid: ''})
+                }}
+                okText="Excluir"
+                onCancel={()=> setShowModalConfirmacaoExclusao({open: false, uuid: ''})}
+                cancelText="Cancelar"
+                titulo="Confirmação de exclusão"
+                bodyText="Deseja realmente excluir este motivo de aprovação de PC com ressalva?"
             />
         </section>
     </>

@@ -35,11 +35,14 @@ import {ModalAlterarSEI} from "../../../Globais/ModalAntDesign/modalAlterarSEI"
 import {ModalNaoPodeVoltarParaAnalise} from "../ModalNaoPodeVoltarParaAnalise";
 import { getPeriodoPorUuid } from "../../../../services/sme/Parametrizacoes.service";
 import IconeAvisoVermelho from "../../../../assets/img/icone-modal-aviso-vermelho.svg"
+import { useRecursoSelecionadoContext } from "../../../../context/RecursoSelecionado";
 
 require("ordinal-pt-br");
 
 export const DetalhePrestacaoDeContas = () =>{
     let {prestacao_conta_uuid} = useParams();
+
+    const { recursoSelecionado } = useRecursoSelecionadoContext();
 
     const { hash } = useLocation();
 
@@ -181,19 +184,19 @@ export const DetalhePrestacaoDeContas = () =>{
 
     useEffect(() => {
         const carregaMotivosAprovadoComRessalva = async () => {
-            const resp = await getMotivosAprovadoComRessalva();
+            const resp = await getMotivosAprovadoComRessalva(recursoSelecionado?.uuid);
             setMotivosAprovadoComRessalva(resp);
         };
         carregaMotivosAprovadoComRessalva();
-    }, []);
+    }, [recursoSelecionado]);
 
     useEffect(() => {
         const carregaMotivosReprovacao = async () => {
-            const resp = await getMotivosReprovacao();
+            const resp = await getMotivosReprovacao(recursoSelecionado?.uuid);
             setMotivosReprovacao(resp);
         };
         carregaMotivosReprovacao();
-    }, []);
+    }, [recursoSelecionado]);
 
     useEffect(() => {
         const retornaPeriodo = async () => {
