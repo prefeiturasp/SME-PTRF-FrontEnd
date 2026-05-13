@@ -150,7 +150,7 @@ describe("RecursosProprios", () => {
     setupDefaultMocks();
   });
 
-  // ─── Renderização básica ───────────────────────────────────────────────────
+  // Renderização básica
 
   describe("renderização básica", () => {
     it("renderiza a tabela de recursos próprios", () => {
@@ -183,7 +183,7 @@ describe("RecursosProprios", () => {
     });
   });
 
-  // ─── Estado de carregamento ────────────────────────────────────────────────
+  // Estado de carregamento
 
   describe("estado de carregamento", () => {
     it("exibe Spin ativo quando isLoadingRecursos=true", () => {
@@ -199,7 +199,7 @@ describe("RecursosProprios", () => {
     });
   });
 
-  // ─── useEffect: inicialização da tabela ───────────────────────────────────
+  // useEffect: inicialização da tabela
 
   describe("useEffect: inicialização da tabela", () => {
     it("popula a tabela ao receber dados do hook", async () => {
@@ -247,7 +247,7 @@ describe("RecursosProprios", () => {
     });
   });
 
-  // ─── Colunas: render de células ───────────────────────────────────────────
+  // Colunas: render de células
 
   describe("colunas: render de células", () => {
     beforeEach(async () => {
@@ -351,7 +351,7 @@ describe("RecursosProprios", () => {
     });
   });
 
-  // ─── podeEditar=false ─────────────────────────────────────────────────────
+  // podeEditar=false
 
   describe("quando podeEditar=false", () => {
     beforeEach(() => {
@@ -375,7 +375,7 @@ describe("RecursosProprios", () => {
     });
   });
 
-  // ─── Summary row: totalRecursosProprios ───────────────────────────────────
+  // Summary row: totalRecursosProprios
 
   describe("linha de resumo (summary)", () => {
     it("exibe o total dos recursos próprios formatado", async () => {
@@ -408,7 +408,7 @@ describe("RecursosProprios", () => {
     });
   });
 
-  // ─── handleEditarRecursosProprios ─────────────────────────────────────────
+  // handleEditarRecursosProprios
 
   describe("handleEditarRecursosProprios", () => {
     it("navega para /elaborar-novo-paa com state correto quando status é ABERTO", async () => {
@@ -442,7 +442,7 @@ describe("RecursosProprios", () => {
     });
   });
 
-  // ─── handleExcluirRecursoProprio ──────────────────────────────────────────
+  // handleExcluirRecursoProprio
 
   describe("handleExcluirRecursoProprio", () => {
     const setup = async () => {
@@ -472,7 +472,7 @@ describe("RecursosProprios", () => {
     });
   });
 
-  // ─── cancelarExclusaoRecursoProprio ───────────────────────────────────────
+  // cancelarExclusaoRecursoProprio
 
   describe("cancelarExclusaoRecursoProprio", () => {
     it("fecha o modal ao clicar em Cancelar", async () => {
@@ -491,7 +491,7 @@ describe("RecursosProprios", () => {
     });
   });
 
-  // ─── confirmarExclusaoRecursoProprio: recurso existente ───────────────────
+  // confirmarExclusaoRecursoProprio: recurso existente
 
   describe("confirmarExclusaoRecursoProprio: recurso existente (isNovo=false)", () => {
     const openModal = async () => {
@@ -578,7 +578,7 @@ describe("RecursosProprios", () => {
     });
   });
 
-  // ─── confirmarExclusaoRecursoProprio: recurso sem uuid ───────────────────
+  // confirmarExclusaoRecursoProprio: recurso sem uuid
 
   describe("confirmarExclusaoRecursoProprio: recurso sem uuid", () => {
     it("exibe toast de erro quando o recurso não possui uuid", async () => {
@@ -608,7 +608,7 @@ describe("RecursosProprios", () => {
     });
   });
 
-  // ─── guardsde estado concurrent (isExcluindoRecurso) ─────────────────────
+  // guardsde estado concurrent (isExcluindoRecurso)
 
   describe("guards de estado concorrente", () => {
     it("não inicia nova exclusão enquanto já está excluindo (linha 84)", async () => {

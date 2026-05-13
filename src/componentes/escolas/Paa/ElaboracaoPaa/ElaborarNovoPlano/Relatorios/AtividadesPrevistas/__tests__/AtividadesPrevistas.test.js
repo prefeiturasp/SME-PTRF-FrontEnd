@@ -117,8 +117,6 @@ jest.mock("../../../../../../../../utils/obtemMsgErroAxios", () => ({
   getErrorMessage: jest.fn((err, fallback) => fallback),
 }));
 
-// ---------------------------------------------------------------------------
-
 const PAA_UUID = "uuid-paa-test";
 const mockRefetch = jest.fn();
 
@@ -159,7 +157,6 @@ const setupDefaultMocks = ({
 
 const renderComponent = () => render(<AtividadesPrevistas />);
 
-// ---------------------------------------------------------------------------
 
 describe("AtividadesPrevistas", () => {
   beforeEach(() => {
@@ -181,7 +178,6 @@ describe("AtividadesPrevistas", () => {
     localStorage.removeItem("DADOS_PAA");
   });
 
-  // -------------------------------------------------------------------------
   describe("renderização básica", () => {
     it("renderiza a tabela de atividades estatutárias", () => {
       renderComponent();
@@ -241,7 +237,6 @@ describe("AtividadesPrevistas", () => {
     });
   });
 
-  // -------------------------------------------------------------------------
   describe("permissões", () => {
     it("exibe botões de adicionar e salvar quando podeEditar=true", () => {
       renderComponent();
@@ -266,7 +261,6 @@ describe("AtividadesPrevistas", () => {
     });
   });
 
-  // -------------------------------------------------------------------------
   describe("adicionar atividade", () => {
     it("clique em Adicionar adiciona nova linha em modo de edição", async () => {
       renderComponent();
@@ -326,7 +320,6 @@ describe("AtividadesPrevistas", () => {
     });
   });
 
-  // -------------------------------------------------------------------------
   describe("edição de linha", () => {
     it("handleChangeAtividade: alterar tipo atualiza tipoAtividadeKey e label", async () => {
       renderComponent();
@@ -387,7 +380,6 @@ describe("AtividadesPrevistas", () => {
     });
   });
 
-  // -------------------------------------------------------------------------
   describe("concluir edição (handleSalvarLinha)", () => {
     it("concluir edição sem campos obrigatórios exibe toast de erro", async () => {
       renderComponent();
@@ -435,7 +427,6 @@ describe("AtividadesPrevistas", () => {
     });
   });
 
-  // -------------------------------------------------------------------------
   describe("salvar atividades (handleSalvarAtividades)", () => {
     const addAndCompleteNewAtividade = async () => {
       fireEvent.click(screen.getByText("Adicionar Atividade Estatutária"));
@@ -641,7 +632,6 @@ describe("AtividadesPrevistas", () => {
     });
   });
 
-  // -------------------------------------------------------------------------
   describe("excluir atividade via modal", () => {
     it("clicar Excluir em linha abre modal de confirmação", async () => {
       renderComponent();
@@ -785,7 +775,6 @@ describe("AtividadesPrevistas", () => {
     });
   });
 
-  // -------------------------------------------------------------------------
   describe("colunas - renderização", () => {
     it("célula de tipoAtividade em modo leitura exibe texto", () => {
       renderComponent();
@@ -872,7 +861,6 @@ describe("AtividadesPrevistas", () => {
     });
   });
 
-  // -------------------------------------------------------------------------
   describe("obterMesAno", () => {
     const dadosPaa = {
       periodo_paa_objeto: {
@@ -944,7 +932,6 @@ describe("AtividadesPrevistas", () => {
     });
   });
 
-  // -------------------------------------------------------------------------
   describe("formatarMesAno", () => {
     it("exibe '-' para data vazia", () => {
       setupDefaultMocks({
@@ -963,7 +950,6 @@ describe("AtividadesPrevistas", () => {
     });
   });
 
-  // -------------------------------------------------------------------------
   describe("handleEditar para linha isNovo", () => {
     it("clicar Editar em linha isNovo coloca em emEdicao", async () => {
       // Usa atividade isGlobal como placeholder: mantém a tabela visível mas não gera botão Editar
@@ -995,7 +981,6 @@ describe("AtividadesPrevistas", () => {
     });
   });
 
-  // -------------------------------------------------------------------------
   describe("isSalvando", () => {
     it("botão Concluir edição fica desabilitado durante salvamento", async () => {
       let resolveSave;
