@@ -1248,6 +1248,50 @@ export const deleteMotivoAprovacaoPcRessalva = async (uuidMotivoAprovacaoPcRessa
     return (await api.delete(`api/motivos-aprovacao-ressalva-parametrizacao/${uuidMotivoAprovacaoPcRessalva}/`, authHeader()));
 };
 
+export const getMotivosReprovacaoPc = async (filter, currentPage) => {
+  const { motivo, recurso_uuid } = filter;
+  return (
+    await api.get(
+      `/api/motivos-reprovacao-parametrizacao/?page_size=${10}`,
+      {
+        ...authHeader(),
+        params: {
+          motivo: motivo,
+          recurso_uuid: recurso_uuid,
+          page: currentPage,
+        },
+      }
+    )
+  ).data;
+};
+
+export const postMotivoReprovacaoPc = async (payload) => {
+  return await api.post(
+    `api/motivos-reprovacao-parametrizacao/`,
+    {
+      ...payload,
+    },
+    authHeader()
+  );
+};
+
+export const patchMotivosReprovacaoPc = async (
+  uuidMotivoReprovacaoPc,
+  payload
+) => {
+  return await api.patch(
+    `api/motivos-reprovacao-parametrizacao/${uuidMotivoReprovacaoPc}/`,
+    {
+      ...payload,
+    },
+    authHeader()
+  );
+};
+
+export const deleteMotivoReprovacaoPc = async (uuidMotivoReprovacaoPc) => {
+    return (await api.delete(`api/motivos-reprovacao-parametrizacao/${uuidMotivoReprovacaoPc}/`, authHeader()));
+};
+
 // Tipo de receita
 export const getTiposDeCredito = async (filter, currentPage) => {
     return (await api.get(`/api/tipos-receitas/?page_size=${20}`,{
