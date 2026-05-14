@@ -16,7 +16,7 @@ export const usePatchTiposDeConta = (setShowModalForm) => {
         },
         onError: (e) => {
             if (e.response.data && e.response.data.non_field_errors) {
-                toastCustom.ToastCustomError('Erro ao editar tipo de conta.', 'Já existe um tipo de conta com esse nome.')
+                toastCustom.ToastCustomError('Erro ao editar tipo de conta.', e.response.data.non_field_errors)
             } else {
                 toastCustom.ToastCustomError('Erro ao editar tipo de conta.', 'Houve um erro ao tentar editar o tipo de conta.')
             }
