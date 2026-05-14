@@ -134,12 +134,20 @@ export const postNotificarPendenciaGeracaoAtaRetificacao = async (prestacao_cont
     return (await api.post(`/api/prestacoes-contas/${prestacao_conta_uuid}/notificar/pendencia_geracao_ata_retificacao/`, null, authHeader())).data
 };
 
-export const getMotivosAprovadoComRessalva = async () => {
-    return (await api.get(`/api/motivos-aprovacao-ressalva/`, authHeader())).data
+export const getMotivosAprovadoComRessalva = async (recurso_uuid = "") => {
+    let url = `/api/motivos-aprovacao-ressalva/`;
+    if (recurso_uuid) {
+        url += `?recurso_uuid=${recurso_uuid}`;
+    }
+    return (await api.get(url, authHeader())).data
 };
 
-export const getMotivosReprovacao = async () => {
-    return (await api.get(`/api/motivos-reprovacao/`, authHeader())).data
+export const getMotivosReprovacao = async (recurso_uuid = "") => {
+    let url = `/api/motivos-reprovacao/`;
+    if (recurso_uuid) {
+        url += `?recurso_uuid=${recurso_uuid}`;
+    }
+    return (await api.get(url, authHeader())).data
 };
 
 export const getVisualizarArquivoDeReferencia = async (nome_do_arquivo, uuid, tipo) => {

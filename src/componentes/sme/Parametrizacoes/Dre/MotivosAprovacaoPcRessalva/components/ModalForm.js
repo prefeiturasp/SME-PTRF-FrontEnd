@@ -5,10 +5,15 @@ import { ModalFormBodyText } from "../../../../../Globais/ModalBootstrap";
 import { MotivosAprovacaoPcRessalvaContext } from "../context/MotivosAprovacaoPcRessalva";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import {RetornaSeTemPermissaoEdicaoPainelParametrizacoes} from "../../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes"
+import { useRecursoSelecionadoContext } from "../../../../../../context/RecursoSelecionado";
+
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
 
 export const ModalForm = ({handleSubmitFormModal}) => {
     const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES = RetornaSeTemPermissaoEdicaoPainelParametrizacoes()
     const {showModalForm, setShowModalForm, stateFormModal, bloquearBtnSalvarForm, setShowModalConfirmacaoExclusao} = useContext(MotivosAprovacaoPcRessalvaContext)
+    const { recursos } = useRecursoSelecionadoContext();
 
     const bodyTextarea = () => {
         return (
@@ -31,6 +36,32 @@ export const ModalForm = ({handleSubmitFormModal}) => {
                                 <div className='row'>
                                     <div className='col-12'>
                                         <p className='text-right mb-0'><small> * Preenchimento obrigatório</small></p>
+
+                                        <div className='form-group'>
+                                            <label htmlFor="recurso">Recurso *</label>
+                                            <select
+                                                data-qa="input-recurso"
+                                                value={values.recurso || ""}
+                                                disabled
+                                                name="recurso"
+                                                id="recurso"
+                                                className="form-control"
+                                                required
+                                            >
+                                                <option data-qa="option-recurso-vazio" value=''>Selecione um recurso</option>
+                                                {recursos?.map((recurso) =>
+                                                    <option
+                                                        data-qa={`option-recurso-${recurso.uuid}`}
+                                                        key={recurso.uuid}
+                                                        value={recurso.uuid}
+                                                    >
+                                                        {recurso.nome}
+                                                    </option>
+                                                )}
+                                            </select>
+                                            {props.touched.recurso && props.errors.recurso && <span className="span_erro text-danger mt-1"> {props.errors.recurso} </span>}
+                                        </div>
+
                                         <div className="form-group">
                                             <span
                                                 data-tooltip-id="tooltip-id-motivo"
@@ -64,11 +95,12 @@ export const ModalForm = ({handleSubmitFormModal}) => {
                                     <div className="p-Y flex-grow-1 bd-highlight">
                                         {values.uuid &&
                                             <button
-                                                onClick={()=>setShowModalConfirmacaoExclusao(true)}
+                                                onClick={()=>setShowModalConfirmacaoExclusao({open: true, uuid: values.uuid})}
                                                 type="button"
                                                 className="btn btn btn-danger mt-2 mr-2"
                                                 disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                             >
+                                                <FontAwesomeIcon icon={faXmark} style={{ marginRight: "8px", color: "white", fontWeight: "bold" }} />
                                                 Excluir
                                             </button>
                                         }

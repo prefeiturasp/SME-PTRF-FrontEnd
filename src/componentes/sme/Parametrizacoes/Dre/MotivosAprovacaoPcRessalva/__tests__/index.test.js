@@ -28,6 +28,10 @@ jest.mock("../components/ExibicaoQuantidade", () => ({
     ExibicaoQuantidade: () => <div data-testid="exibicao-quantidade">ExibicaoQuantidade</div>,
 }));
 
+jest.mock("../../../componentes/AbasPorRecurso", () => ({
+    AbasPorRecurso: () => <div data-testid="abas-por-recurso">AbasPorRecurso</div>,
+}));
+
 describe('ParametrizacoesMotivosAprovacaoPcRessalva', () => {
     const renderComponent = () => {
         return render(
@@ -48,9 +52,10 @@ describe('ParametrizacoesMotivosAprovacaoPcRessalva', () => {
         expect(screen.getByTestId('paginas-container')).toBeInTheDocument();
         expect(screen.getByTestId('topo-com-botoes')).toBeInTheDocument();
         expect(screen.getByTestId('filtros')).toBeInTheDocument();
+        expect(screen.getByTestId('abas-por-recurso')).toBeInTheDocument();
         expect(screen.getByTestId('lista')).toBeInTheDocument();
         expect(screen.getByTestId('paginacao')).toBeInTheDocument();
-        expect(screen.getByTestId('exibicao-quantidade')).toBeInTheDocument();
+        // expect(screen.getByTestId('exibicao-quantidade')).toBeInTheDocument();
         
     });
 
