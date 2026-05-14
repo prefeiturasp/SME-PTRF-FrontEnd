@@ -19,7 +19,7 @@ export const usePostTipoConta = (setShowModalForm) => {
     },
     onError: (e) => {
       if (e.response.data && e.response.data.non_field_errors) {
-        toastCustom.ToastCustomError('Erro ao criar tipo de conta.', 'Já existe um tipo de conta com esse nome.')
+        toastCustom.ToastCustomError('Erro ao criar tipo de conta.', e.response.data.non_field_errors)
       } else {
         toastCustom.ToastCustomError('Erro ao criar tipo de conta.', 'Houve um erro ao tentar criar o tipo de conta.')
       }
