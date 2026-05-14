@@ -6,6 +6,12 @@ export const Filtros = ({
     handleSubmitFiltros, 
     limpaFiltros
 }) => {
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        handleSubmitFiltros();
+    }
+
     return (
         <>
             <div className="mb-4">
@@ -15,7 +21,7 @@ export const Filtros = ({
                 </p>
             </div>
 
-            <form>
+            <form onSubmit={handleSubmit} id="form-filtros-periodos">
                 <div className="d-flex bd-highlight mt-2 mb-3">
                     <div className="p-Y d-flex flex-column flex-grow-1 bd-highlight mr-4">
                         <label htmlFor="filtrar_por_referencia">Filtre por referência</label>
@@ -37,15 +43,17 @@ export const Filtros = ({
                             data-qa="btn-limpar-filtros"
                             onClick={() => limpaFiltros()}
                             type="button"
-                            className="btn btn btn-outline-success mr-2">
+                            className="btn btn btn-outline-success mr-2"
+                        >
                             Limpar
                         </button>
                         
                         <button
                             data-qa="btn-filtrar"
-                            onClick={handleSubmitFiltros}
-                            type="button"
-                            className="btn btn-success">
+                            type="submit"
+                            className="btn btn-success"
+                            form="form-filtros-periodos"
+                        >
                             Filtrar
                         </button>
                     </div>
