@@ -1787,7 +1787,7 @@ describe('Testes para funções de análise', () => {
             motivo: filter.motivo,
             page: currentPage,
         };
-        expect(api.get).toHaveBeenCalledWith(`/api/motivos-aprovacao-ressalva-parametrizacao/?page_size=20`, {
+        expect(api.get).toHaveBeenCalledWith(`/api/motivos-aprovacao-ressalva-parametrizacao/?page_size=10`, {
             ...authHeader(),
             params: expectedParams,
         });

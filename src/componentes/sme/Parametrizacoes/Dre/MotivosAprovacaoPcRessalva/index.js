@@ -7,6 +7,7 @@ import { Lista } from "./components/Lista";
 import { Paginacao } from "./components/Paginacao";
 import { Filtros } from "./components/Filtros";
 import { ExibicaoQuantidade } from "./components/ExibicaoQuantidade";
+import { AbasPorRecurso } from "../../componentes/AbasPorRecurso";
 
 
 
@@ -16,9 +17,10 @@ export const ParametrizacoesMotivosAprovacaoPcRessalva = () => {
             <PaginasContainer>
                 <h1 className="titulo-itens-painel mt-5">Motivos de aprovação de PC com ressalvas</h1>
                 <div className="page-content-inner">
-                    <TopoComBotoes/>
                     <Filtros/>
-                    <ExibicaoQuantidade/>
+                    <AbasPorRecurso />
+                    <TopoComBotoes/>
+                    {/* <ExibicaoQuantidade/> */}
                     <Lista/>
                     <Paginacao/>
                 </div>

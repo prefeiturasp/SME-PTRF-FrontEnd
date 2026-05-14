@@ -2,13 +2,23 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { Filtros } from '../components/Filtros';
 import { MotivosAprovacaoPcRessalvaContext } from '../context/MotivosAprovacaoPcRessalva';
+import { useAbasPorRecursoContext } from '../../../componentes/AbasPorRecurso/hooks/useAbasPorRecursoContext';
 import '@testing-library/jest-dom';
+
+jest.mock('../../../componentes/AbasPorRecurso/hooks/useAbasPorRecursoContext', () => ({
+  useAbasPorRecursoContext: jest.fn(),
+}));
 
 describe('Filtros', () => {
   const mockSetFilter = jest.fn();
   const mockSetCurrentPage = jest.fn();
   const mockSetFirstPage = jest.fn();
   const initialFilter = { motivo: '' };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    useAbasPorRecursoContext.mockReturnValue({ selectedRecurso: { uuid: "123", nome: "Recurso Test" } });
+  });
 
   const renderComponent = () => {
     return render(
@@ -25,36 +35,32 @@ describe('Filtros', () => {
     );
   };
 
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
   test('Deve renderizar os elementos corretamente', () => {
     renderComponent();
 
     expect(screen.getByLabelText('Filtrar por motivo de aprovação de PC com ressalvas')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('Busque por motivo')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Digite o motivo de aprovação de PC com ressalvas')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Limpar' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Filtrar' })).toBeInTheDocument();
   });
 
   test('Deve atualizar o estado do filtro quando o input muda', () => {
     renderComponent();
-    const input = screen.getByPlaceholderText('Busque por motivo');
+    const input = screen.getByPlaceholderText('Digite o motivo de aprovação de PC com ressalvas');
     fireEvent.change(input, { target: { name: 'motivo', value: 'Teste' } });
     expect(input.value).toBe('Teste');
   });
 
   test('Deve chamar setFilter, setCurrentPage e setFirstPage com os valores corretos quando o botão "Filtrar" é clicado', () => {
     renderComponent();
-    const input = screen.getByPlaceholderText('Busque por motivo');
+    const input = screen.getByPlaceholderText('Digite o motivo de aprovação de PC com ressalvas');
     fireEvent.change(input, { target: { name: 'motivo', value: 'Teste' } });
 
     const filtrarButton = screen.getByRole('button', { name: 'Filtrar' });
     fireEvent.click(filtrarButton);
 
     expect(mockSetFilter).toHaveBeenCalledTimes(1);
-    expect(mockSetFilter).toHaveBeenCalledWith({ motivo: 'Teste' });
+    expect(mockSetFilter).toHaveBeenCalledWith({ motivo: 'Teste', recurso: '123' });
     expect(mockSetCurrentPage).toHaveBeenCalledTimes(1);
     expect(mockSetCurrentPage).toHaveBeenCalledWith(1);
     expect(mockSetFirstPage).toHaveBeenCalledTimes(1);
@@ -63,14 +69,14 @@ describe('Filtros', () => {
 
   test('Deve chamar setFilter, setCurrentPage e setFirstPage com o valor inicial quando o botão "Limpar" é clicado', () => {
     renderComponent();
-    const input = screen.getByPlaceholderText('Busque por motivo');
+    const input = screen.getByPlaceholderText('Digite o motivo de aprovação de PC com ressalvas');
     fireEvent.change(input, { target: { name: 'motivo', value: 'Teste' } });
 
     const limparButton = screen.getByRole('button', { name: 'Limpar' });
     fireEvent.click(limparButton);
 
     expect(mockSetFilter).toHaveBeenCalledTimes(1);
-    expect(mockSetFilter).toHaveBeenCalledWith(initialFilter);
+    expect(mockSetFilter).toHaveBeenCalledWith({ motivo: '', recurso: '123' });
     expect(mockSetCurrentPage).toHaveBeenCalledTimes(1);
     expect(mockSetCurrentPage).toHaveBeenCalledWith(1);
     expect(mockSetFirstPage).toHaveBeenCalledTimes(1);
@@ -81,7 +87,7 @@ describe('Filtros', () => {
   test("Verifica se as classes estão corretas", () => {
         renderComponent()
         const divPrincipal = screen.getByRole('button', { name: 'Filtrar' }).parentElement.parentElement
-        const input = screen.getByPlaceholderText('Busque por motivo')
+        const input = screen.getByPlaceholderText('Digite o motivo de aprovação de PC com ressalvas')
         const form = input.parentElement
 
         expect(divPrincipal).toHaveClass('d-flex')

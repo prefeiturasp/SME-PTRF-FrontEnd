@@ -48,8 +48,12 @@ const contexto = {
   setBloquearBtnSalvarForm: jest.fn(),
   handleEditFormModal: jest.fn(),
   handleExcluirMotivo: jest.fn(),
+  showModalConfirmacaoExclusao: { open: false, uuid: '' },
+  setShowModalConfirmacaoExclusao: jest.fn(),
+  stateFormModal: {},
+  showModalForm: false,
 }
-const itemMock = { id: 1, motivo: "Motivo 1", uuid: "123" }
+const itemMock = { id: 1, motivo: "Motivo 1", uuid: "123", recurso: "" }
 
 describe("Lista", () => {
   beforeEach(() => {
