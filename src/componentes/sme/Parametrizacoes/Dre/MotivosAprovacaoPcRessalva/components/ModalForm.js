@@ -85,10 +85,11 @@ export const ModalForm = ({handleSubmitFormModal}) => {
                                     </div>
                                 </div>
                                 <div className='row mt-3'>
-                                    <div className='col-6'>
-                                        <p className='mb-2'>ID</p>
-                                        <p id='id'>{values.id}</p>
-                                    </div>
+                                    { values.id && (
+                                        <div className='col-6'>
+                                            <p className='mb-2'>ID: {values.id}</p>
+                                        </div>
+                                    ) }
                                 </div>
 
                                 <div className="d-flex bd-highlight mt-2">

@@ -191,8 +191,7 @@ const ModalAddEditTipoConta = ({show, stateFormModal, handleClose, handleSubmitM
                                     values.id && 
                                     <div className='row mt-3'>   
                                         <div className='col'>
-                                            <p className='mb-2'>ID</p>
-                                            <p className='mb-2'>{values.id}</p>
+                                            <p className='mb-2'>ID: {values.id}</p>
                                         </div>
                                     </div>
                                 }
