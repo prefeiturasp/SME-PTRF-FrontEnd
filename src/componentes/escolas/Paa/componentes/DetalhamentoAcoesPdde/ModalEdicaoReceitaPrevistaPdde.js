@@ -106,9 +106,9 @@ const ModalEdicaoReceitaPrevistaPDDE = ({ open, onClose, receitaPrevistaPDDE }) 
   
   const aceitaCusteio = receitaPrevistaPDDE?.aceita_custeio === true;
   const disabledCusteio = !aceitaCusteio || !podeEditar;
-  const aceitaCapital = receitaPrevistaPDDE.aceita_capital === true;
+  const aceitaCapital = receitaPrevistaPDDE?.aceita_capital === true;
   const disabledCapital = !aceitaCapital || !podeEditar;
-  const aceitaLivre = receitaPrevistaPDDE.aceita_livre_aplicacao === true;
+  const aceitaLivre = receitaPrevistaPDDE?.aceita_livre_aplicacao === true;
   const disabledLivre = !aceitaLivre || !podeEditar;
 
   return (
