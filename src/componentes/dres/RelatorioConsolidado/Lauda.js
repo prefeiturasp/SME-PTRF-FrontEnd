@@ -18,15 +18,12 @@ const Lauda = ({consolidadoDre}) => {
     }
 
     const downloadLauda = async (lauda) => {
-        let nome_dre = "";
+        const slugDre = consolidadoDre?.dre_nome
+            ? formataNomeDRE(consolidadoDre.dre_nome).toLowerCase()
+            : '';
+        const arquivoFallback = slugDre ? `Lauda_${slugDre}.pdf` : 'Lauda.pdf';
 
-        if (consolidadoDre && consolidadoDre.dre_nome) {
-            nome_dre = formataNomeDRE(consolidadoDre.dre_nome).toLowerCase();
-        }
-
-        const filename = `Lauda_${nome_dre}.pdf`;
-
-        await getDownloadLauda(lauda.uuid, filename);
+        await getDownloadLauda(lauda.uuid, arquivoFallback);
     };
 
     return (
