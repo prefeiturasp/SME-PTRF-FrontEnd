@@ -103,10 +103,13 @@ const ModalEdicaoReceitaPrevistaPDDE = ({ open, onClose, receitaPrevistaPDDE }) 
       message: "O valor deve ser maior ou igual a zero",
     },
   ];
-
-  const disabledCusteio = (receitaPrevistaPDDE && !receitaPrevistaPDDE.aceita_custeio) || !podeEditar;
-  const disabledCapital = (receitaPrevistaPDDE && !receitaPrevistaPDDE.aceita_capital) || !podeEditar;
-  const disabledLivre = (receitaPrevistaPDDE && !receitaPrevistaPDDE.aceita_livre_aplicacao) || !podeEditar;
+  
+  const aceitaCusteio = receitaPrevistaPDDE?.aceita_custeio === true;
+  const disabledCusteio = !aceitaCusteio || !podeEditar;
+  const aceitaCapital = receitaPrevistaPDDE?.aceita_capital === true;
+  const disabledCapital = !aceitaCapital || !podeEditar;
+  const aceitaLivre = receitaPrevistaPDDE?.aceita_livre_aplicacao === true;
+  const disabledLivre = !aceitaLivre || !podeEditar;
 
   return (
     <ModalFormBodyText
@@ -169,7 +172,7 @@ const ModalEdicaoReceitaPrevistaPDDE = ({ open, onClose, receitaPrevistaPDDE }) 
                       <InputNumber
                         className="input-number-right"
                         placeholder="00,00"
-                        formatter={disabledCusteio ? () => "-" : formatMoneyByCentsBRL}
+                        formatter={!aceitaCusteio ? () => "-" : formatMoneyByCentsBRL}
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
                         disabled={disabledCusteio}
@@ -195,7 +198,7 @@ const ModalEdicaoReceitaPrevistaPDDE = ({ open, onClose, receitaPrevistaPDDE }) 
                       <InputNumber
                         className="input-number-right"
                         placeholder="00,00"
-                        formatter={disabledCusteio ? () => "-" : formatMoneyByCentsBRL}
+                        formatter={!aceitaCusteio ? () => "-" : formatMoneyByCentsBRL}
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
                         min={0}
@@ -246,7 +249,7 @@ const ModalEdicaoReceitaPrevistaPDDE = ({ open, onClose, receitaPrevistaPDDE }) 
                       <InputNumber
                         className="input-number-right"
                         placeholder="00,00"
-                        formatter={disabledCapital ? () => "-" : formatMoneyByCentsBRL}
+                        formatter={!aceitaCapital ? () => "-" : formatMoneyByCentsBRL}
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
                         disabled={disabledCapital}
@@ -271,7 +274,7 @@ const ModalEdicaoReceitaPrevistaPDDE = ({ open, onClose, receitaPrevistaPDDE }) 
                       <InputNumber
                         className="input-number-right"
                         placeholder="00,00"
-                        formatter={disabledCapital ? () => "-" : formatMoneyByCentsBRL}
+                        formatter={!aceitaCapital ? () => "-" : formatMoneyByCentsBRL}
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
                         min={0}
@@ -316,7 +319,7 @@ const ModalEdicaoReceitaPrevistaPDDE = ({ open, onClose, receitaPrevistaPDDE }) 
                       name="saldo_livre"
                       labelCol={{ span: 24 }}
                       style={{ marginBottom: 8 }}
-                      rules={receitaPrevistaPDDE && receitaPrevistaPDDE.aceita_livre_aplicacao ? inputRules : null}
+                      rules={aceitaLivre ? inputRules : null}
                     >
                       <InputNumber
                         className="input-number-right"
@@ -346,7 +349,7 @@ const ModalEdicaoReceitaPrevistaPDDE = ({ open, onClose, receitaPrevistaPDDE }) 
                       <InputNumber
                         className="input-number-right"
                         placeholder="00,00"
-                        formatter={disabledLivre ? () => "-" : formatMoneyByCentsBRL}
+                        formatter={!aceitaLivre ? () => "-" : formatMoneyByCentsBRL}
                         parser={parseMoneyBRL}
                         style={{ width: "100%" }}
                         min={0}
