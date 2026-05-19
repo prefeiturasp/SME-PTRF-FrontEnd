@@ -302,6 +302,15 @@ describe('Testes para funções de análise', () => {
         expect(result).toEqual(mockData);
     });
 
+    test('getTiposContas com recurso_uuid deve chamar a API corretamente', async () => {
+        api.get.mockResolvedValue({ data: mockData })
+        const recurso_uuid = 'test-uuid-123';
+        const result = await getTiposContas(recurso_uuid);
+        const url = `/api/tipos-conta/?recurso_uuid=${recurso_uuid}`
+        expect(api.get).toHaveBeenCalledWith(url, authHeader())
+        expect(result).toEqual(mockData);
+    });
+
     test('getTodasTags  deve chamar a API corretamente', async () => {
         api.get.mockResolvedValue({ data: mockData })
         const result = await getTodasTags();
@@ -704,6 +713,7 @@ describe('Testes para funções de análise', () => {
         expect(api.post).toHaveBeenCalledWith(url, payload, authHeader())
         expect(result).toEqual(mockData);
     });
+
     test('getFiltroTiposContas deve chamar a API corretamente', async () => {
         api.get.mockResolvedValue({ data: mockData })
         const nome = 'teste'
@@ -712,6 +722,17 @@ describe('Testes para funções de análise', () => {
         expect(api.get).toHaveBeenCalledWith(url, authHeader())
         expect(result).toEqual(mockData);
     });
+
+    test('getFiltroTiposContas com recurso_uuid deve chamar a API corretamente', async () => {
+        api.get.mockResolvedValue({ data: mockData })
+        const nome = 'teste'
+        const recurso_uuid = 'uuid-123'
+        const result = await getFiltroTiposContas(nome, recurso_uuid);
+        const url = `/api/tipos-conta/?nome=${nome}&recurso_uuid=${recurso_uuid}`
+        expect(api.get).toHaveBeenCalledWith(url, authHeader())
+        expect(result).toEqual(mockData);
+    });
+
     test('postTipoConta deve chamar a API corretamente', async () => {
         api.post.mockResolvedValue({ data: mockData })
         const result = await postTipoConta(payload);
@@ -719,6 +740,7 @@ describe('Testes para funções de análise', () => {
         expect(api.post).toHaveBeenCalledWith(url, payload, authHeader())
         expect(result).toEqual(mockData);
     });
+
     test('patchTipoConta deve chamar a API corretamente', async () => {
         api.patch.mockResolvedValue({ data: mockData })
         const tipo_conta_uuid = '1234'
@@ -727,6 +749,7 @@ describe('Testes para funções de análise', () => {
         expect(api.patch).toHaveBeenCalledWith(url, payload, authHeader())
         expect(result).toEqual(mockData);
     });
+
     test('deleteTipoConta deve chamar a API corretamente', async () => {
         api.delete.mockResolvedValue({ data: mockData })
         const tipo_conta_uuid = '1234'
@@ -1764,7 +1787,7 @@ describe('Testes para funções de análise', () => {
             motivo: filter.motivo,
             page: currentPage,
         };
-        expect(api.get).toHaveBeenCalledWith(`/api/motivos-aprovacao-ressalva-parametrizacao/?page_size=20`, {
+        expect(api.get).toHaveBeenCalledWith(`/api/motivos-aprovacao-ressalva-parametrizacao/?page_size=10`, {
             ...authHeader(),
             params: expectedParams,
         });

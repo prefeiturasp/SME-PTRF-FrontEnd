@@ -134,6 +134,7 @@ import { VisualizarAtividadesPrevistas } from "../componentes/escolas/Paa/Elabor
 import { EscolherRecursoPage } from "../paginas/SelecaoRecurso/EscolherRecursoPage";
 import { useRecursoSelecionadoContext } from "../context/RecursoSelecionado";
 import { FEATURE_FLAGS } from "../constantes/featureFlags";
+import { ParametrizacoesMotivosReprovacaoPc } from "../componentes/sme/Parametrizacoes/Dre/MotivosReprovacaoPc";
 
 const routesConfig = [
   {
@@ -751,6 +752,12 @@ const routesConfig = [
     exact: true,
     path: "/parametro-motivos-pc-aprovada-ressalva",
     component: ParametrizacoesMotivosAprovacaoPcRessalva,
+    permissoes: ["access_painel_parametrizacoes", "change_painel_parametrizacoes"],
+  },
+    {
+    exact: true,
+    path: "/parametro-motivos-reprovacao-pc",
+    component: ParametrizacoesMotivosReprovacaoPc,
     permissoes: ["access_painel_parametrizacoes", "change_painel_parametrizacoes"],
   },
   {

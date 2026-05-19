@@ -1,4 +1,4 @@
-import { Typography } from "antd";
+import { Spin, Typography } from "antd";
 import { useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { formatMoneyBRL } from "../../../../../../../utils/money";
@@ -10,6 +10,8 @@ import { RelatorioVisualizacao } from "../components/RelatorioVisualizacao";
 import "./styles.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit } from "@fortawesome/free-solid-svg-icons";
+import { useGetPaa } from "../../../../componentes/hooks/useGetPaa";
+import { PaaContext, usePaaContext } from "../../../../componentes/PaaContext";
 const { Text } = Typography;
 
 const columnsDefinition = (ehOutrosRecursos = false) => [
@@ -65,8 +67,10 @@ const columnsDefinition = (ehOutrosRecursos = false) => [
   },
 ];
 
-export const VisualizarPlanoAplicacao = () => {
+const VisualizarPlanoAplicacaoContent = () => {
   const navigate = useNavigate();
+  const { paa, isFetching: isLoadingPaa } = usePaaContext();
+
   const { isFetching, prioridades, isError } = useGetPrioridadesRelatorio();
 
   const columns = useCallback((grupo) => {
@@ -174,7 +178,12 @@ export const VisualizarPlanoAplicacao = () => {
   }, [prioridades]);
 
   const handleVoltar = () => {
-    navigate("/elaborar-novo-paa", {
+    let voltarRota = "/elaborar-novo-paa";
+
+    if (paa?.status === "EM_RETIFICACAO") {
+      voltarRota =`/retificacao-paa/${paa?.uuid}`;
+    }
+    navigate(voltarRota, {
       state: {
         activeTab: "relatorios",
         expandedSections: {
@@ -186,7 +195,12 @@ export const VisualizarPlanoAplicacao = () => {
   };
 
   const handleEditarInformacoes = () => {
-    navigate("/elaborar-novo-paa", {
+    let voltarRota = "/elaborar-novo-paa";
+
+    if (paa?.status === "EM_RETIFICACAO") {
+      voltarRota =`/retificacao-paa/${paa?.uuid}`;
+    }
+    navigate(voltarRota, {
       state: {
         activeTab: "prioridades-list",
         fromPlanoAplicacao: true,
@@ -258,7 +272,27 @@ export const VisualizarPlanoAplicacao = () => {
       }
       heightDeps={[grupos, isFetching, isError]}
     >
-      {conteudo}
+      <Spin spinning={isLoadingPaa} size="large">
+        {conteudo}
+      </Spin>
     </RelatorioVisualizacao>
   );
+};
+
+export const VisualizarPlanoAplicacao = () => {
+  const paa_uuid_storage = localStorage.getItem('PAA');
+  
+  const { data: paa, refetch, isFetching } = useGetPaa(paa_uuid_storage);
+
+  const renderizar = useCallback(() => {
+    if (!paa) return <></>;
+
+    return (
+      <PaaContext.Provider value={{ paa, refetch, isFetching }}>
+        <VisualizarPlanoAplicacaoContent />
+      </PaaContext.Provider>
+    )
+  }, [paa, refetch, isFetching]);
+
+  return renderizar();
 };

@@ -168,7 +168,7 @@ describe("Comissoes Component DRE", () => {
 
     render(<Comissoes />);
 
-    expect(await screen.findByText(/loading/i)).toBeInTheDocument();
+    expect(screen.getByText(/loading/i)).toBeInTheDocument();
   });
 });
 

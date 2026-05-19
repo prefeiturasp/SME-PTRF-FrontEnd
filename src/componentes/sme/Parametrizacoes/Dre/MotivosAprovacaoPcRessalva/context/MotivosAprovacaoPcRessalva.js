@@ -1,13 +1,16 @@
-import React, { createContext, useMemo, useState } from 'react';
+import React, { createContext, useMemo, useState, useEffect } from 'react';
+import { useAbasPorRecursoContext } from '../../../componentes/AbasPorRecurso/hooks/useAbasPorRecursoContext';
 
 const initialFilter = {
-    motivo:''
+    motivo: '',
+    recurso: '',
 };
 
 const initialStateFormModal = {
     id: '',
     uuid: '',
     motivo: '',
+    recurso: '',
 };
 
 export const MotivosAprovacaoPcRessalvaContext = createContext({
@@ -25,7 +28,7 @@ export const MotivosAprovacaoPcRessalvaContext = createContext({
     stateFormModal: initialStateFormModal,
     setStateFormModal: () => {},
 
-    showModalConfirmacaoExclusao: false,
+    showModalConfirmacaoExclusao: { open: false, uuid: '' },
     setShowModalConfirmacaoExclusao: () => {},
 
     bloquearBtnSalvarForm: '',
@@ -33,6 +36,8 @@ export const MotivosAprovacaoPcRessalvaContext = createContext({
 })
 
 export const MotivosAprovacaoPcRessalvaProvider = ({children}) => {
+
+    const { selectedRecurso } = useAbasPorRecursoContext();
 
     const [filter, setFilter] = useState(initialFilter);
 
@@ -42,9 +47,20 @@ export const MotivosAprovacaoPcRessalvaProvider = ({children}) => {
     const [showModalForm, setShowModalForm] = useState(false);
     const [stateFormModal, setStateFormModal] = useState(initialStateFormModal);
 
-    const [showModalConfirmacaoExclusao, setShowModalConfirmacaoExclusao] = useState(false);
+    const [showModalConfirmacaoExclusao, setShowModalConfirmacaoExclusao] = useState({ open: false, uuid: '' });
 
     const [bloquearBtnSalvarForm, setBloquearBtnSalvarForm] = useState(false);
+
+    // Monitora mudanças no recurso selecionado e atualiza o filtro
+    useEffect(() => {
+        setFilter(prevFilter => ({
+            ...prevFilter,
+            recurso: selectedRecurso ? selectedRecurso.uuid : ''
+        }));
+        // Reseta para a primeira página quando muda de aba
+        setCurrentPage(1);
+        setFirstPage(0);
+    }, [selectedRecurso]);
 
     const contextValue = useMemo(() => {
         return {

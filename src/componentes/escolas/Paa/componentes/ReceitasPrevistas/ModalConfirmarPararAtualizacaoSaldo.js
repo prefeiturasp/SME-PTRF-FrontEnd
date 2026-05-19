@@ -50,6 +50,8 @@ const ModalConfirmaPararAtualizacaoSaldo = ({ open, onClose, check, paa, onSubmi
                 disabled: mutationPostAtivar.isPending ||
                           mutationPostDesativar.isPending
               }}
+            maskClosable={false}
+            keyboard={false}
             wrapClassName={'modal-ant-design'}
         >
           <Spin spinning={mutationPostAtivar.isPending || mutationPostDesativar.isPending }>

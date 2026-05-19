@@ -25,8 +25,11 @@ import Loading from "../../../../utils/Loading";
 import { MsgImgLadoDireito } from "../../../Globais/Mensagens/MsgImgLadoDireito";
 import Img404 from "../../../../assets/img/img-404.svg";
 import { gerarUuid } from "../../../../utils/ValidacoesAdicionaisFormularios";
+import useUnidadeSelecionada from "../../../../hooks/Globais/useUnidadeSelecionada";
+import { visoesService } from "../../../../services/visoes.service";
 
 export const ListaPrestacaoDeContas = () => {
+  const { getUUIDUnidadeSelecionadaTipoDRE } = useUnidadeSelecionada(visoesService)
   let { periodo_uuid, status_prestacao } = useParams();
 
   const rowsPerPage = 10;
@@ -55,7 +58,7 @@ export const ListaPrestacaoDeContas = () => {
   const [selectedStatusPc, setSelectedStatusPc] = useState([]);
 
   const carregaPeriodos = useCallback(async () => {
-    let periodos = await getPeriodos();
+    let periodos = await getPeriodos(getUUIDUnidadeSelecionadaTipoDRE());
     setPeriodos(periodos);
     if (periodo_uuid) {
       setPeriodoEsolhido(periodo_uuid);

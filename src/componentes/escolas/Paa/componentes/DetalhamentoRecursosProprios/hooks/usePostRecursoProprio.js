@@ -21,6 +21,8 @@ export const usePostRecursoProprio = (handleCloseFieldsToEdit) => {
         toastCustom.ToastCustomSuccess("Recurso Próprio criado com sucesso.");
         queryClient.invalidateQueries({ queryKey: ["recursos-proprios"] });
         queryClient.invalidateQueries({ queryKey: ["totalizador-recurso-proprio"] });
+        // Quando Volta via recurso de location para Atividades previstas, o hook não dispara automaticamente
+        queryClient.refetchQueries({ queryKey: ["recursos-proprios-previstos"], exact: false });
         handleCloseFieldsToEdit(data);
       },
       onError: () => {

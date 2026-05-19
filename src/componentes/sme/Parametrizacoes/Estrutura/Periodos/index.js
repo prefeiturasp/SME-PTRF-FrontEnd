@@ -5,7 +5,6 @@ import Tabela from "./Tabela";
 import Loading from "../../../../../utils/Loading";
 import { usePeriodos } from "./hooks/usePeriodos";
 import { AbasPorRecurso } from "../../componentes/AbasPorRecurso";
-import { RecursosProvider } from "../../componentes/AbasPorRecurso/context/Recursos";
 import { ModalConfirmarExclusao } from "../../../../Globais/ModalAntDesign/ModalConfirmarExclusao";
 
 export const Periodos = () => {
@@ -31,8 +30,7 @@ export const Periodos = () => {
     } = usePeriodos();
     return(
         <PaginasContainer>
-            <RecursosProvider>
-                <h1 className="titulo-itens-painel mt-5">Períodos</h1>
+            <h1 className="titulo-itens-painel mt-5">Períodos</h1>
                 {isLoading ? (
                     <div className="mt-5">
                         <Loading
@@ -52,10 +50,8 @@ export const Periodos = () => {
                         limpaFiltros={limpaFiltros}
                     />
 
-                    
-                    <AbasPorRecurso
-                        handleChangeFiltros={handleChangeFiltros}
-                    />
+
+                    <AbasPorRecurso />
 
                     <Tabela 
                         rowsPerPage={10} 
@@ -91,7 +87,6 @@ export const Periodos = () => {
                     />
                 </div>
                 )}
-            </RecursosProvider>
         </PaginasContainer>
     )
 }

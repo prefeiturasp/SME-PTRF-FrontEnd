@@ -2,6 +2,7 @@ import React from "react";
 import { render, screen, fireEvent, within } from "@testing-library/react";
 import { MemoryRouter, useNavigate } from "react-router-dom";
 import { useGetPrioridadesRelatorio } from "../hooks/useGetPrioridadesRelatorio";
+import { useGetPaa } from "../../../../../componentes/hooks/useGetPaa";
 import { VisualizarPlanoAplicacao } from "../VisualizarPlanoAplicacao";
 
 jest.mock("react-router-dom", () => ({
@@ -13,12 +14,39 @@ jest.mock("../hooks/useGetPrioridadesRelatorio", () => ({
   useGetPrioridadesRelatorio: jest.fn(),
 }));
 
-describe("VisualizarPlanoAplicacao", () => {
-  const navigateMock = jest.fn();
+jest.mock("../../../../../componentes/hooks/useGetPaa", () => ({
+  useGetPaa: jest.fn(),
+}));
 
+const mockNavigate = jest.fn();
+const mockRefetch = jest.fn();
+
+const defaultPaa = {
+  uuid: "paa-uuid-123",
+  status: "EM_ELABORACAO",
+  associacao: "assoc-uuid-123",
+};
+
+describe("VisualizarPlanoAplicacao", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    useNavigate.mockReturnValue(navigateMock);
+    localStorage.clear();
+    localStorage.setItem("PAA", "paa-uuid-123");
+
+    useNavigate.mockReturnValue(mockNavigate);
+
+    useGetPaa.mockReturnValue({
+      data: defaultPaa,
+      refetch: mockRefetch,
+      isFetching: false,
+    });
+
+    useGetPrioridadesRelatorio.mockReturnValue({
+      prioridades: [],
+      isFetching: false,
+      isError: false,
+    });
+
     window.matchMedia = jest.fn().mockImplementation((query) => ({
       matches: false,
       media: query,
@@ -31,96 +59,126 @@ describe("VisualizarPlanoAplicacao", () => {
     }));
   });
 
-  it("redireciona corretamente ao clicar nos botões da tela", () => {
-    useGetPrioridadesRelatorio.mockReturnValue({
-      prioridades: [
-        {
-          uuid: "prioridade-1",
-          prioridade: true,
-          recurso: "PTRF",
-          valor_total: 100,
-        },
-        {
-          uuid: "prioridade-2",
-          prioridade: false,
-          recurso: "PTRF",
-          valor_total: 50,
-        },
-      ],
-      isFetching: false,
-      isError: false,
-    });
-
+  const renderComponent = () =>
     render(
-        <MemoryRouter><VisualizarPlanoAplicacao /></MemoryRouter>
-      );
+      <MemoryRouter>
+        <VisualizarPlanoAplicacao />
+      </MemoryRouter>,
+    );
 
-    const botaoEditarInformacoes = screen.getByRole("button", {
-      name: /editar informações/i,
+  it("não renderiza nada quando paa não está disponível", () => {
+    useGetPaa.mockReturnValue({ data: null, refetch: mockRefetch, isFetching: false });
+    const { container } = renderComponent();
+    expect(container).toBeEmptyDOMElement();
+  });
+
+  describe("Navegação dos botões", () => {
+    it("redireciona para prioridades-list ao clicar em 'Editar informações'", () => {
+      useGetPrioridadesRelatorio.mockReturnValue({
+        prioridades: [
+          { uuid: "p1", prioridade: true, recurso: "PTRF", valor_total: 100 },
+        ],
+        isFetching: false,
+        isError: false,
+      });
+
+      renderComponent();
+
+      fireEvent.click(screen.getByRole("button", { name: /editar informações/i }));
+
+      expect(mockNavigate).toHaveBeenCalledWith("/elaborar-novo-paa", {
+        state: { activeTab: "prioridades-list", fromPlanoAplicacao: true },
+      });
     });
 
-    fireEvent.click(botaoEditarInformacoes);
-    expect(navigateMock).toHaveBeenNthCalledWith(1, "/elaborar-novo-paa", {
-      state: {
-        activeTab: "prioridades-list",
-        fromPlanoAplicacao: true,
-      },
-    });
+    it("redireciona para relatorios ao clicar em 'Voltar'", () => {
+      renderComponent();
 
-    const botaoVoltar = screen.getByRole("button", {
-      name: /voltar/i,
-    });
+      fireEvent.click(screen.getByRole("button", { name: /voltar/i }));
 
-    fireEvent.click(botaoVoltar);
-    expect(navigateMock).toHaveBeenNthCalledWith(2, "/elaborar-novo-paa", {
-      state: {
-        activeTab: "relatorios",
-        expandedSections: {
-          planoAnual: true,
-          componentes: true,
+      expect(mockNavigate).toHaveBeenCalledWith("/elaborar-novo-paa", {
+        state: {
+          activeTab: "relatorios",
+          expandedSections: { planoAnual: true, componentes: true },
         },
-      },
+      });
+    });
+
+    it("redireciona para rota de retificação ao clicar em 'Editar informações' quando status é EM_RETIFICACAO", () => {
+      useGetPaa.mockReturnValue({
+        data: { ...defaultPaa, status: "EM_RETIFICACAO", uuid: "ret-uuid" },
+        refetch: mockRefetch,
+        isFetching: false,
+      });
+
+      renderComponent();
+
+      fireEvent.click(screen.getByRole("button", { name: /editar informações/i }));
+
+      expect(mockNavigate).toHaveBeenCalledWith("/retificacao-paa/ret-uuid", {
+        state: { activeTab: "prioridades-list", fromPlanoAplicacao: true },
+      });
+    });
+
+    it("redireciona para rota de retificação ao clicar em 'Voltar' quando status é EM_RETIFICACAO", () => {
+      useGetPaa.mockReturnValue({
+        data: { ...defaultPaa, status: "EM_RETIFICACAO", uuid: "ret-uuid" },
+        refetch: mockRefetch,
+        isFetching: false,
+      });
+
+      renderComponent();
+
+      fireEvent.click(screen.getByRole("button", { name: /voltar/i }));
+
+      expect(mockNavigate).toHaveBeenCalledWith("/retificacao-paa/ret-uuid", {
+        state: {
+          activeTab: "relatorios",
+          expandedSections: { planoAnual: true, componentes: true },
+        },
+      });
     });
   });
 
-  it("ordena outros recursos colocando recurso próprio primeiro", async () => {
-    useGetPrioridadesRelatorio.mockReturnValue({
-      isFetching: false,
-      isError: false,
-      prioridades: [
-        {
-          uuid: "rp",
-          prioridade: true,
-          recurso: "RECURSO_PROPRIO",
-          valor_total: 50,
-        },
-        {
-          uuid: "b",
-          prioridade: true,
-          recurso: "OUTRO_RECURSO",
-          outro_recurso_objeto: { nome: "B Recurso" },
-          valor_total: 30,
-        },
-        {
-          uuid: "a",
-          prioridade: true,
-          recurso: "OUTRO_RECURSO",
-          outro_recurso_objeto: { nome: "A Recurso" },
-          valor_total: 20,
-        },
-      ],
+  describe("Ordenação de outros recursos", () => {
+    it("ordena outros recursos colocando recurso próprio primeiro e demais por nome", async () => {
+      useGetPrioridadesRelatorio.mockReturnValue({
+        isFetching: false,
+        isError: false,
+        prioridades: [
+          {
+            uuid: "rp",
+            prioridade: true,
+            recurso: "RECURSO_PROPRIO",
+            valor_total: 50,
+          },
+          {
+            uuid: "b",
+            prioridade: true,
+            recurso: "OUTRO_RECURSO",
+            outro_recurso_objeto: { nome: "B Recurso" },
+            valor_total: 30,
+          },
+          {
+            uuid: "a",
+            prioridade: true,
+            recurso: "OUTRO_RECURSO",
+            outro_recurso_objeto: { nome: "A Recurso" },
+            valor_total: 20,
+          },
+        ],
+      });
+
+      renderComponent();
+
+      const tabela = await screen.findByRole("table");
+      const rows = within(tabela).getAllByRole("row");
+
+      // rows[0] é o header da tabela
+      expect(rows[1]).toHaveAttribute("data-row-key", "rp");
+      expect(rows[2]).toHaveAttribute("data-row-key", "a");
+      expect(rows[3]).toHaveAttribute("data-row-key", "b");
+      expect(rows[4]).toHaveTextContent("TOTAL");
     });
-
-    render(<MemoryRouter><VisualizarPlanoAplicacao /></MemoryRouter>);
-
-    const tabela = await screen.findByRole("table");
-
-    const rows = within(tabela).getAllByRole("row");
-
-    // Ignora o header (row[0])
-    expect(rows[1]).toHaveAttribute("data-row-key", "rp");
-    expect(rows[2]).toHaveAttribute("data-row-key", "a");
-    expect(rows[3]).toHaveAttribute("data-row-key", "b");
-    expect(rows[4]).toHaveTextContent("TOTAL");
   });
 });

@@ -38,7 +38,7 @@ export const AcompanhamentoPcsSmePorDre = (params) => {
 
     const carregaPeriodos = async () => {
         setLoading(true);
-        let periodos = await getPeriodos();
+        let periodos = await getPeriodos({ dre_uuid: params.dre_uuid });
         setPeriodos(periodos);
         if (params.periodo_uuid){
             setPeriodoEsolhido(params.periodo_uuid)
