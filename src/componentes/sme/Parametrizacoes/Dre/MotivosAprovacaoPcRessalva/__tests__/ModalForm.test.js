@@ -4,11 +4,21 @@ import { ModalForm } from "../components/ModalForm";
 import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
 import { MotivosAprovacaoPcRessalvaContext } from "../context/MotivosAprovacaoPcRessalva";
 import { useGetMotivosAprovacaoPcRessalva } from "../hooks/useGetMotivosAprovacaoPcRessalva";
+import { useRecursoSelecionadoContext } from "../../../../../../context/RecursoSelecionado";
+import { useAbasPorRecursoContext } from "../../../componentes/AbasPorRecurso/hooks/useAbasPorRecursoContext";
 
 jest.mock("../hooks/useGetMotivosAprovacaoPcRessalva");
 
 jest.mock("../../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes", () => ({
   RetornaSeTemPermissaoEdicaoPainelParametrizacoes: jest.fn(),
+}));
+
+jest.mock("../../../../../../context/RecursoSelecionado", () => ({
+  useRecursoSelecionadoContext: jest.fn(),
+}));
+
+jest.mock("../../../componentes/AbasPorRecurso/hooks/useAbasPorRecursoContext", () => ({
+  useAbasPorRecursoContext: jest.fn(),
 }));
 
 const contexto = {
@@ -18,13 +28,16 @@ const contexto = {
   setBloquearBtnSalvarForm: jest.fn(),
   handleEditFormModal: jest.fn(),
   setShowModalConfirmacaoExclusao: jest.fn(),
+  showModalConfirmacaoExclusao: { open: false, uuid: '' },
+  stateFormModal: {},
 }
 
 const mockEdit = {
   motivo: "Nome do motivo",
   id: 1,
   uuid: "12345",
-  operacao: "edit"
+  operacao: "edit",
+  recurso: "abc"
 };
 
 const mockCreate = { 
@@ -32,12 +45,15 @@ const mockCreate = {
   id: null,
   uuid: null,
   operacao: "create",
+  recurso: "abc"
 };
 
 describe("Componente ModalForm", () => {
   beforeEach(() => {
     RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
     useGetMotivosAprovacaoPcRessalva.mockReturnValue({ isLoading: false, data: [], count: 0 });
+    useRecursoSelecionadoContext.mockReturnValue({ recursos: [], isLoading: false });
+    useAbasPorRecursoContext.mockReturnValue({ selectedRecurso: { uuid: "12345", nome: "Recurso Test" } });
   });
 
   it("Renderiza a Modal quando a operação é Cadastro e Permissão True", () => {
@@ -65,7 +81,7 @@ describe("Componente ModalForm", () => {
 
     render(
       <MotivosAprovacaoPcRessalvaContext.Provider value={{
-        showModalForm: true,
+        ...contexto,
         stateFormModal: mockCreate
       }}>
         <ModalForm />
@@ -129,7 +145,7 @@ describe("Componente ModalForm", () => {
       </MotivosAprovacaoPcRessalvaContext.Provider>
     )
     const saveButton = screen.getByRole("button", { name: "Salvar" });
-    fireEvent.submit(saveButton);
+    fireEvent.click(saveButton);
 
     await waitFor(() => {
       expect(contexto.handleEditFormModal).toHaveBeenCalledTimes(1);
@@ -164,7 +180,10 @@ describe("Componente ModalForm", () => {
     const button = screen.getByRole('button', { name: /Excluir/i });
     fireEvent.click(button);
 
-    expect(contexto.setShowModalConfirmacaoExclusao).toHaveBeenCalledWith(true);
+    expect(contexto.setShowModalConfirmacaoExclusao).toHaveBeenCalledWith({
+      "open": true,
+      "uuid": "12345",
+    });
   });
 
   it("Lancar erro ao tentar salvar motivo vazio", async () => {

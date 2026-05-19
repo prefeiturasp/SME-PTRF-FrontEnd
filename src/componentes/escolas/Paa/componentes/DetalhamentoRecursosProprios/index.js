@@ -233,6 +233,7 @@ const DetalhamentoRecursosProprios = () => {
           style={{ width: "100%" }}
           value={rowData?.descricao}
           autoSize
+          maxLength={255}
           onChange={handleChange}
         />
       );

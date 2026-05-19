@@ -226,11 +226,16 @@ export const getTiposUnidades = async () => {
 };
 
 // Tipos de conta
-export const getTiposContas = async () => {
-  return (await api.get(`/api/tipos-conta/`, authHeader())).data;
+export const getTiposContas = async (recurso_uuid = "") => {
+  const url = recurso_uuid ? `/api/tipos-conta/?recurso_uuid=${recurso_uuid}` : `/api/tipos-conta/`;
+  return (await api.get(url, authHeader())).data;
 };
-export const getFiltroTiposContas = async (nome) => {
-  return (await api.get(`/api/tipos-conta/?nome=${nome}`, authHeader())).data;
+export const getFiltroTiposContas = async (nome, recurso_uuid = "") => {
+  let url = `/api/tipos-conta/?nome=${nome}`;
+  if (recurso_uuid) {
+    url += `&recurso_uuid=${recurso_uuid}`;
+  }
+  return (await api.get(url, authHeader())).data;
 };
 export const postTipoConta = async (payload) => {
   return (await api.post(`/api/tipos-conta/`, payload, authHeader())).data;
@@ -1201,14 +1206,19 @@ export const deleteMotivoDevolucaoTesouro = async (
 
 // Motivos de Aprovação de PC com ressalva
 export const getMotivosAprovacaoPcRessalva = async (filter, currentPage) => {
-  const { motivo } = filter;
+  const { motivo, recurso } = filter;
+  let url = `/api/motivos-aprovacao-ressalva-parametrizacao/?page_size=${10}`;
+  if (recurso) {
+    url += `&recurso_uuid=${recurso}`;
+  }
   return (
     await api.get(
-      `/api/motivos-aprovacao-ressalva-parametrizacao/?page_size=${20}`,
+      url,
       {
         ...authHeader(),
         params: {
           motivo: motivo,
+          recurso: recurso,
           page: currentPage,
         },
       }
@@ -1241,6 +1251,50 @@ export const patchMotivosAprovacaoPcRessalva = async (
 
 export const deleteMotivoAprovacaoPcRessalva = async (uuidMotivoAprovacaoPcRessalva) => {
     return (await api.delete(`api/motivos-aprovacao-ressalva-parametrizacao/${uuidMotivoAprovacaoPcRessalva}/`, authHeader()));
+};
+
+export const getMotivosReprovacaoPc = async (filter, currentPage) => {
+  const { motivo, recurso_uuid } = filter;
+  return (
+    await api.get(
+      `/api/motivos-reprovacao-parametrizacao/?page_size=${10}`,
+      {
+        ...authHeader(),
+        params: {
+          motivo: motivo,
+          recurso_uuid: recurso_uuid,
+          page: currentPage,
+        },
+      }
+    )
+  ).data;
+};
+
+export const postMotivoReprovacaoPc = async (payload) => {
+  return await api.post(
+    `api/motivos-reprovacao-parametrizacao/`,
+    {
+      ...payload,
+    },
+    authHeader()
+  );
+};
+
+export const patchMotivosReprovacaoPc = async (
+  uuidMotivoReprovacaoPc,
+  payload
+) => {
+  return await api.patch(
+    `api/motivos-reprovacao-parametrizacao/${uuidMotivoReprovacaoPc}/`,
+    {
+      ...payload,
+    },
+    authHeader()
+  );
+};
+
+export const deleteMotivoReprovacaoPc = async (uuidMotivoReprovacaoPc) => {
+    return (await api.delete(`api/motivos-reprovacao-parametrizacao/${uuidMotivoReprovacaoPc}/`, authHeader()));
 };
 
 // Tipo de receita

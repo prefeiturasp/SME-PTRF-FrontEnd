@@ -7,6 +7,9 @@ import {YupSignupSchemaPeriodos} from "./YupSignupSchemaPeriodos";
 import {RetornaSeTemPermissaoEdicaoPainelParametrizacoes} from "../../RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
 import { useRecursoSelecionadoContext } from "../../../../../context/RecursoSelecionado";
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
+
 const ModalFormPeriodos = ({
     show, 
     stateFormModal, 
@@ -225,6 +228,7 @@ const ModalFormPeriodos = ({
                                             className="btn btn btn-danger mt-2 mr-2"
                                             disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                         >
+                                            <FontAwesomeIcon icon={faXmark} style={{ marginRight: "8px", color: "white", fontWeight: "bold" }} />
                                             Excluir
                                         </button>
                                     ): null}

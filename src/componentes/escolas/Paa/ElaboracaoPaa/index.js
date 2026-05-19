@@ -1,4 +1,4 @@
-import { React, useEffect, useState, useCallback } from "react";
+import { React, useEffect, useState, useCallback, useMemo } from "react";
 import { PaginasContainer } from "../../../../paginas/PaginasContainer";
 import Loading from "../../../../utils/Loading";
 import { getTextosPaaUe } from "../../../../services/escolas/Paa.service";
@@ -10,7 +10,6 @@ import {
   getPaaVigente,
   getParametroPaa,
 } from "../../../../services/sme/Parametrizacoes.service";
-import { getStatusGeracaoDocumentoPaa } from "../../../../services/escolas/Paa.service";
 import { EstruturaCompletaModeloPaa } from "./EstruturaCompletaModeloPaa";
 import { visoesService } from "../../../../services/visoes.service";
 
@@ -19,7 +18,7 @@ export const ElaboracaoPaa = () => {
   const navigate = useNavigate();
   const podeIniciarPaa = visoesService.getPermissoes(["custom_change_paa"]);
 
-  const [notValidPaa, setNotValidPaa] = useState(true);
+  const [paaNaoIniciado, setPaaNaoIniciado] = useState(true);
   const [loading, setLoading] = useState(true);
   const [loadingPaa, setLoadingPaa] = useState(false);
   const [validMonthPaa, setValidMonthPaa] = useState("");
@@ -35,19 +34,19 @@ export const ElaboracaoPaa = () => {
   const carregaPaa = useCallback(async () => {
     setLoadingPaa(true);
     try {
-      let response = await getPaaVigente(associacao_uuid);
-      localStorage.setItem("PAA", response.uuid);
-      localStorage.setItem("DADOS_PAA", JSON.stringify(response));
-      setNotValidPaa(false);
-      const statusDocumento = await getStatusGeracaoDocumentoPaa(response.uuid);
+      let responsePAA = await getPaaVigente(associacao_uuid);
+      localStorage.setItem("PAA", responsePAA.uuid);
+      localStorage.setItem("DADOS_PAA", JSON.stringify(responsePAA));
+
+      setPaaNaoIniciado(false);
      
       setPaaGerado(
-        statusDocumento?.status === "CONCLUIDO" &&
-          statusDocumento?.versao === "FINAL",
+        responsePAA.status !== "EM_ELABORACAO" ||
+        responsePAA.status_andamento === "GERADO_PARCIALMENTE"
       );
     } catch (error) {
       console.error(error);
-      setNotValidPaa(true);
+      setPaaNaoIniciado(true);
       setPaaGerado(false);
     }
     setLoadingPaa(false);
@@ -86,7 +85,7 @@ export const ElaboracaoPaa = () => {
     if (paaGerado) {
       return;
     }
-    if (notValidPaa) {
+    if (paaNaoIniciado) {
       if (!podeIniciarPaa) {
         return;
       }
@@ -101,50 +100,54 @@ export const ElaboracaoPaa = () => {
     navigate("/elaborar-novo-paa");
   };
 
+  const paa = useMemo(() => {
+    return localStorage.getItem("DADOS_PAA");
+  }, []);
+
+  const botaoTexto = () => {
+    if (paaGerado) return "Elaborar novo PAA";
+    else if (paaNaoIniciado)
+      return "Elaborar novo PAA";
+    else
+      return "Continuar elaboração de PAA";
+  };
+
   return (
-    <>
-      <PaginasContainer>
-        <BreadcrumbComponent items={itemsBreadCrumb} />
-        <h1 className="titulo-itens-painel mt-5">Plano Anual de Atividades</h1>
-        {loading || loadingPaa ? (
-          <Loading
-            corGrafico="black"
-            corFonte="dark"
-            marginTop="50"
-            marginBottom="0"
-          />
-        ) : (
-          <>
-            <div className="page-content-inner">
-              <div className="col-12 mb-4 mt-3">
-                <div dangerouslySetInnerHTML={{ __html: textoPaa }} />
-              </div>
+    <PaginasContainer>
+      <BreadcrumbComponent items={itemsBreadCrumb} />
+      <h1 className="titulo-itens-painel mt-5">Plano Anual de Atividades</h1>
+      {loading || loadingPaa ? (
+        <Loading
+          corGrafico="black"
+          corFonte="dark"
+          marginTop="50"
+          marginBottom="0"
+        />
+      ) : (
+        <div className="page-content-inner">
+          <div className="col-12 mb-4 mt-3">
+            <div dangerouslySetInnerHTML={{ __html: textoPaa }} />
+          </div>
 
-              <EstruturaCompletaModeloPaa />
+          <EstruturaCompletaModeloPaa />
 
-              <div className="d-flex justify-content-center">
-                <button
-                  type="button"
-                  className="btn btn-success mt-2 mr-5"
-                  data-testid="elaborar-paa-button"
-                  onClick={handlePaa}
-                  disabled={
-                    !validMonthPaa ||
-                    paaGerado ||
-                    (notValidPaa && !podeIniciarPaa)
-                  }
-                >
-                  {paaGerado
-                    ? "Elaborar novo PAA"
-                    : !notValidPaa
-                      ? "Continuar elaboração de PAA"
-                      : "Elaborar novo PAA"}
-                </button>
-              </div>
-            </div>
-          </>
-        )}
-      </PaginasContainer>
-    </>
+          <div className="d-flex justify-content-center">
+            <button
+              type="button"
+              className="btn btn-success mt-2 mr-5"
+              data-testid="elaborar-paa-button"
+              onClick={handlePaa}
+              disabled={
+                !validMonthPaa ||
+                paaGerado ||
+                (paaNaoIniciado && !podeIniciarPaa)
+              }
+            >
+              {botaoTexto()}
+            </button>
+          </div>
+        </div>
+      )}
+    </PaginasContainer>
   );
 };

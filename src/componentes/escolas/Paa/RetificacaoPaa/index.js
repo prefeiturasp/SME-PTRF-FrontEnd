@@ -9,7 +9,7 @@ import { PaaContext } from "../componentes/PaaContext";
 export const RetificacaoPaa = () => {
   const { uuid_paa } = useParams();
 
-  const { data: paa, refetch } = useGetPaaRetificacao(uuid_paa);
+  const { data: paa, refetch, isFetching } = useGetPaaRetificacao(uuid_paa);
 
   const itemsBreadCrumb = useMemo(() => {
     return [

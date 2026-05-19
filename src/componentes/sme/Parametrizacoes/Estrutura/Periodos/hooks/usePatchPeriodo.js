@@ -17,7 +17,11 @@ export const usePatchPeriodo = (setModalForm) => {
             );
         },
         onError: (e) => {
-            toastCustom.ToastCustomError('Erro ao atualizar período', 'Não foi possível atualizar o período')
+            if (e.response?.data?.non_field_errors) {
+                toastCustom.ToastCustomError('Erro ao editar período.', 'Já existe um período com esse nome.')
+            } else {
+                toastCustom.ToastCustomError('Erro ao atualizar período', 'Não foi possível atualizar o período')
+            }
         },
     })
     return {mutationPatch}
