@@ -57,8 +57,7 @@ describe("usePostTipoReceita", () => {
 
     expect(postTipoReceita).toHaveBeenCalledWith({ nome: "Receita Teste" });
     expect(toastCustom.ToastCustomSuccess).toHaveBeenCalledWith(
-      "Inclusão de tipo de crédito realizado com sucesso.",
-      "O tipo de crédito foi adicionado ao sistema com sucesso."
+      "Tipo de receita adicionada!", "O tipo de receita foi adicionada ao sistema com sucesso."
     );
 
     expect(navigate).toHaveBeenCalledWith(
@@ -79,7 +78,7 @@ describe("usePostTipoReceita", () => {
     });
 
     expect(toastCustom.ToastCustomError).toHaveBeenCalledWith(
-      "Houve um erro ao tentar fazer essa atualização."
+      "Erro ao adicionar tipo de receita", "Houve um erro ao tentar fazer essa adição."
     );
   });
 });
