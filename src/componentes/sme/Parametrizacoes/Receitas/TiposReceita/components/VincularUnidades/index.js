@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import {
   Spin,
+  Button,
+  Tooltip
 } from "antd";
 import Img404 from "../../../../../../../assets/img/img-404.svg";
 import { faPlusCircle, faTimesCircle } from "@fortawesome/free-solid-svg-icons";
-import { Button, Tooltip } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
@@ -16,6 +17,7 @@ import { useGetUnidadesNaoVinculadas } from "./hooks/useGetUnidadesNaoVinculadas
 import { useVincularUnidade } from "./hooks/useVincularUnidade";
 import { Filtros } from "../Filtros";
 import { MsgImgCentralizada } from "../../../../../../Globais/Mensagens/MsgImgCentralizada";
+import { toastCustom } from "../../../../../../Globais/ToastCustom";
 
 const filtroInicial ={
   nome_ou_codigo: "",
@@ -23,7 +25,7 @@ const filtroInicial ={
   tipo_unidade: "",
 }
 
-export const VincularUnidades = ({tipoContaUUID}) => {
+export const VincularUnidades = ({ tipoContaUUID, recurso_uuid }) => {
   const dispatch = useDispatch();
   
   const [currentPage, setCurrentPage] = useState(1);
@@ -37,6 +39,10 @@ export const VincularUnidades = ({tipoContaUUID}) => {
     filtros.nome_ou_codigo,
     filtros.dre,
     filtros.tipo_unidade,
+    {
+      is_required_recurso_uuid: true,
+      recurso_uuid
+    }
   );
 
   useEffect(() => {
@@ -67,8 +73,10 @@ export const VincularUnidades = ({tipoContaUUID}) => {
       const uuids = selectedUnidades.map((item) => item.uuid);
       mutationVincularUnidadeEmLote.mutate({uuid: tipoContaUUID, unidadeUUID: uuids})
       setSelectedUnidades([]);
-    } catch (error) {
-      console.error(error);
+    } catch {
+      toastCustom.ToastCustomError(
+        "Houve um erro ao tentar vincular unidades em lote."
+      );
     }
   };
 

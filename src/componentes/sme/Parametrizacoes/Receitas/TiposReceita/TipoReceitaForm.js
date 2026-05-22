@@ -12,8 +12,7 @@ import {
   Spin,
 } from "antd";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useGetFiltrosTiposReceita } from "./hooks/useGetFiltrosTiposReceita";
 import { usePostTipoReceita } from "./hooks/usePostTipoReceita";
 import { usePostTipoReceitaVincularTodasUnidades } from "./hooks/usePostTipoReceitaVincularTodasUnidades";
@@ -26,6 +25,11 @@ import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../RetornaS
 import { UnidadesVinculadas } from "./components/UnidadesAssociadas/Lista";
 import { VincularUnidades } from "./components/VincularUnidades";
 import { Icon } from "../../../../Globais/UI/Icon";
+import { useAbasPorRecursoContext } from "../../componentes/AbasPorRecurso/hooks/useAbasPorRecursoContext";
+import { useRecursoSelecionadoContext } from "../../../../../context/RecursoSelecionado";
+import Loading from "../../../../../utils/Loading";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
 
 const { TextArea } = Input;
 
@@ -34,6 +38,8 @@ export const TipoReceitaForm = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { selectedRecurso } = useAbasPorRecursoContext();
+  const { recursos } = useRecursoSelecionadoContext();
 
   const formatStyleTextModal = {
     color: "var(--color-primary)",
@@ -43,7 +49,17 @@ export const TipoReceitaForm = () => {
 
   const isNew = uuid === undefined;
 
-  const { data: filtros } = useGetFiltrosTiposReceita();
+  useEffect(() => {
+    if (isNew && !selectedRecurso?.uuid) {
+      navigate("/parametro-tipos-receita");
+    }
+  }, []);
+
+  const { data, isLoading } = useGetTipoReceita(uuid);
+
+  const recursoUUID = isNew ? selectedRecurso?.uuid : data?.recurso?.uuid;
+
+  const { data: filtros } = useGetFiltrosTiposReceita({ recurso_uuid: recursoUUID });
   const { mutationPost } = usePostTipoReceita();
   const { mutationPatch } = usePatchTipoReceita();
   const { mutationDelete } = useDeleteTipoReceita();
@@ -52,8 +68,6 @@ export const TipoReceitaForm = () => {
   
   const { mutationPost: mutationPostdesvincularTodasUnidades } =
     usePostTipoReceitaDesvincularTodasUnidades();
-
-  const { data, isLoading } = useGetTipoReceita(uuid);
 
   const loading = useMemo(() => {
     return (
@@ -81,6 +95,7 @@ export const TipoReceitaForm = () => {
     if (data) {
       form.setFieldsValue({
         ...data,
+        recurso: data?.recurso?.uuid,
         tipos_conta: data.tipos_conta.map((tipoConta) => tipoConta.uuid),
         tipo: getValorCategoria({
           e_rendimento: data.e_rendimento,
@@ -102,6 +117,7 @@ export const TipoReceitaForm = () => {
 
     if (isNew) {
       form.setFieldsValue({
+        recurso: selectedRecurso?.uuid,
         nome: "",
         tipos_conta: [],
         tipo: [],
@@ -156,19 +172,20 @@ export const TipoReceitaForm = () => {
       await form.validateFields();
 
       let payload = {
+        recurso: values.recurso,
         nome: values.nome,
         tipos_conta: values.tipos_conta,
         detalhes: values.detalhes,
         mensagem_usuario: values.mensagem_usuario,
         possui_detalhamento: values.possui_detalhamento,
         e_recursos_proprios: values.e_recursos_proprios,
-        e_rendimento: values.tipo === "e_rendimento" ? true : false,
-        e_devolucao: values.tipo === "e_devolucao" ? true : false,
-        e_estorno: values.tipo === "e_estorno" ? true : false,
-        e_repasse: values.tipo === "e_repasse" ? true : false,
-        aceita_capital: values.aceita.includes("aceita_capital") ? true : false,
-        aceita_custeio: values.aceita.includes("aceita_custeio") ? true : false,
-        aceita_livre: values.aceita.includes("aceita_livre") ? true : false,
+        e_rendimento: values.tipo === "e_rendimento",
+        e_devolucao: values.tipo === "e_devolucao",
+        e_estorno: values.tipo === "e_estorno",
+        e_repasse: values.tipo === "e_repasse",
+        aceita_capital: !!values.aceita.includes("aceita_capital"),
+        aceita_custeio: !!values.aceita.includes("aceita_custeio"),
+        aceita_livre: !!values.aceita.includes("aceita_livre"),
         selecionar_todas: values.selecionar_todas,
       };
 
@@ -180,7 +197,7 @@ export const TipoReceitaForm = () => {
             payload,
             selecionar_todas: form.getFieldValue("selecionar_todas"),
           });
-        } catch (error) {
+        } catch {
           form.setFieldValue("selecionar_todas", true);
         }
       }
@@ -262,8 +279,21 @@ export const TipoReceitaForm = () => {
     return ["e_rendimento", "e_devolucao"].includes(form.getFieldValue("tipo"));
   };
 
+  if (isLoading || loading) {
+    return (
+      <div className="mt-5">
+        <Loading
+            corGrafico="black"
+            corFonte="dark"
+            marginTop="0"
+            marginBottom="0"
+        />
+      </div>
+    )
+  }
+
   return (
-    <Spin spinning={loading}>
+    <>
       <Flex justify="flex-end">
         <span>* Preenchimento obrigatório</span>
       </Flex>
@@ -273,8 +303,29 @@ export const TipoReceitaForm = () => {
         disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
         role="form"
       >
-        <Row>
-          <Col md={24}>
+        <Row gutter={16}>
+          <Col sm={24} md={12}>
+            <Form.Item
+              label="Recurso"
+              name="recurso"
+              labelCol={{ span: 24 }}
+              rules={[{ required: true, message: "Campo obrigatório" }]}
+              disabled
+            >
+              <Select
+                placeholder="Selecione"
+                disabled
+                options={recursos?.map((tipo) => {
+                  return {
+                    value: tipo.uuid,
+                    label: tipo.nome,
+                  };
+                })}
+              />
+            </Form.Item>
+          </Col>
+
+          <Col sm={24} md={12}>
             <Form.Item
               label="Nome"
               name="nome"
@@ -299,7 +350,7 @@ export const TipoReceitaForm = () => {
             >
               <Select
                 placeholder="Selecione"
-                options={categoriaOpcoes.map((tipo) => {
+                options={categoriaOpcoes?.map((tipo) => {
                   return {
                     value: tipo.field_name,
                     label: tipo.name,
@@ -319,7 +370,7 @@ export const TipoReceitaForm = () => {
               <Select
                 placeholder="Selecione"
                 mode="multiple"
-                options={aceitaOpcoes.map((aceita) => {
+                options={aceitaOpcoes?.map((aceita) => {
                   return {
                     value: aceita.field_name,
                     label: aceita.name,
@@ -402,7 +453,7 @@ export const TipoReceitaForm = () => {
               <Select
                 placeholder="Selecione"
                 mode="multiple"
-                options={tiposContaOpcoes.map((tipoConta) => {
+                options={tiposContaOpcoes?.map((tipoConta) => {
                   return { label: tipoConta.nome, value: tipoConta.uuid };
                 })}
               />
@@ -448,19 +499,25 @@ export const TipoReceitaForm = () => {
           <>
             <UnidadesVinculadas tipoContaUUID={data?.uuid} />
             <h6 className="my-5">Vincular unidades ao tipo de crédito</h6>
-            <VincularUnidades tipoContaUUID={data?.uuid} />
+            <VincularUnidades tipoContaUUID={data?.uuid} recurso_uuid={recursoUUID} />
           </>
         ) : null}
 
         <Divider />
+        
+        {
+          data?.id && (
+            <>
+              <Row>
+                <Col xs={24}>
+                  <span className="mt-5">ID: {data?.id}</span>
+                </Col>
+              </Row>
 
-        <Row>
-          <Col xs={24}>
-            <span className="mt-5">ID {data?.id}</span>
-          </Col>
-        </Row>
-
-        <Divider />
+              <Divider />
+            </>
+          )
+        }
 
         <Flex gap="small" justify={uuid ? "space-between" : "flex-end"}>
           {uuid ? (
@@ -470,6 +527,7 @@ export const TipoReceitaForm = () => {
               className="btn btn btn-danger mt-2 mr-2"
               disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
             >
+              <FontAwesomeIcon icon={faXmark} style={{ marginRight: "8px", color: "white", fontWeight: "bold" }} />
               Excluir
             </button>
           ) : null}
@@ -489,6 +547,7 @@ export const TipoReceitaForm = () => {
                 type="submit"
                 className="btn btn btn-success"
                 disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
+                data-testid="salvar-tipo-receita"
               >
                 Salvar
               </button>
@@ -496,6 +555,6 @@ export const TipoReceitaForm = () => {
           </Flex>
         </Flex>
       </Form>
-    </Spin>
+    </>
   );
 };

@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import {
   Spin,
+  Button,
+  Tooltip
 } from "antd";
 import { faTimesCircle } from "@fortawesome/free-solid-svg-icons";
-import { Button, Tooltip } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
@@ -14,6 +15,7 @@ import { ModalConfirm } from "../../../../../../Globais/Modal/ModalConfirm";
 import { useGetUnidadesVinculadas } from "./hooks/useGetUnidadesVinculadas";
 import { useDesvincularUnidade } from "./hooks/useDesvincularUnidade";
 import { Filtros } from "../Filtros";
+import { toastCustom } from "../../../../../../Globais/ToastCustom";
 
 const filtroInicial ={
   nome_ou_codigo: "",
@@ -65,8 +67,10 @@ export const UnidadesVinculadas = ({tipoContaUUID}) => {
       const uuids = selectedUnidades.map((item) => item.uuid);
       mutationDesvincularUnidadeEmLote.mutate({uuid: tipoContaUUID, unidadeUUID: uuids})
       setSelectedUnidades([]);
-    } catch (error) {
-      console.error(error);
+    } catch {
+      toastCustom.ToastCustomError(
+        "Houve um erro ao tentar desvincular unidades em lote."
+      );
     }
   };
 
