@@ -3,7 +3,7 @@ import SelectMultiFiltro from '../../../Globais/SelectMultiFiltro';
 import SelectFiltro from '../../../Globais/SelectFiltro';
 import './scss/FiltrosPaa.scss';
 
-import type { IFiltrosPaa, ITabelaPaaResponse } from '../../../../interface/dre/Paa/paa.interface';
+import { IFiltrosPaa, ITabelaPaaResponse } from '../../../../interface/dre/Paa/paa.interface';
 
 interface IFiltrosPaaProps {
     tabelaPaa?: ITabelaPaaResponse;
@@ -30,6 +30,7 @@ export const FiltrosPaa: React.FC<IFiltrosPaaProps> = ({
     const unidadesFiltradas = (tabelaPaa.unidades || [])
         .filter((u) => {
             if (!tipoUnidadeManual || !filtros.tipo_unidade) return true;
+
             return u.tipo_unidade === filtros.tipo_unidade;
         })
         .sort((a, b) => a.unidade_educacional.localeCompare(b.unidade_educacional, 'pt-BR'))
@@ -82,6 +83,7 @@ export const FiltrosPaa: React.FC<IFiltrosPaaProps> = ({
                     placeholder='Escreva o nome da unidade'
                     data={unidadesFiltradas}
                     optionLabel='unidade_educacional'
+                    searchFields={['unidade_educacional', 'codigo_eol']}
                     className='col-12 col-sm-6 col-md-4 mb-3'
                 />
 
