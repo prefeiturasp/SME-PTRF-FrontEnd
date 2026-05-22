@@ -114,7 +114,7 @@ export const Lista = ({isLoading, tiposDeCredito, count, firstPage, onPageChange
                   </div>
                   <Paginator
                       first={firstPage}
-                      rows={20}
+                      rows={10}
                       totalRecords={count}
                       template="PrevPageLink PageLinks NextPageLink"
                       onPageChange={onPageChange}

@@ -22,9 +22,10 @@ export const useDeleteTipoReceita = () => {
     onError: (e) => {
       if (e.response && e.response.data && e.response.data.mensagem) {
         const errorMsg = e.response.data.mensagem;
-        toastCustom.ToastCustomError(errorMsg);
+        toastCustom.ToastCustomError("Erro ao excluir tipo de crédito", errorMsg);
       } else {
         toastCustom.ToastCustomError(
+          "Erro ao excluir tipo de crédito",
           "Houve um erro ao tentar excluir tipo de crédito."
         );
       }

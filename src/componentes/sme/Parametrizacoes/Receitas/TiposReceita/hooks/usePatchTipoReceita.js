@@ -20,9 +20,14 @@ export const usePatchTipoReceita = () => {
       navigate("/parametro-tipos-receita");
     },
     onError: (e) => {
-      toastCustom.ToastCustomError(
-        "Houve um erro ao tentar fazer essa atualização."
-      );
+      if (e.response?.data?.non_field_errors) {
+        toastCustom.ToastCustomError("Erro ao alterar tipo de receita", e.response.data.non_field_errors);
+      } else {
+        toastCustom.ToastCustomError(
+          "Erro ao alterar tipo de receita",
+          "Houve um erro ao tentar fazer essa atualização."
+        );
+      }
     },
   });
   return { mutationPatch };

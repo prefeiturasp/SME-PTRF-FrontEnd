@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import { AutoComplete } from "primereact/autocomplete";
-import { getAssociacoesPeloNome } from "../../../../../../services/sme/Parametrizacoes.service";
+import { useAbasPorRecursoContext } from "../../../componentes/AbasPorRecurso/hooks/useAbasPorRecursoContext";
+import { useGetAssociacoesPorNomeERecurso } from "../hooks/useGetAssociacoesPorNomeERecurso";
 
 export const Filtros = ({ filter, setFilter, handleSubmitFormFilter, clearFormFilter, dadosDosFiltros }) => {
-    const [loading, setLoading] = useState(false);
+    const { selectedRecurso } = useAbasPorRecursoContext();
+
     const [debounceTimeout, setDebounceTimeout] = useState(null);
-    const [filteredAssociacoes, setFilteredAssociacoes] = useState([]);
+
+    const { data: filteredAssociacoes, refetch } = useGetAssociacoesPorNomeERecurso({ nome: filter.unidades__uuid, recurso_uuid: selectedRecurso?.uuid });
 
     const handleChangeFormFilter = (name, value) => {
         setFilter({
@@ -23,30 +26,25 @@ export const Filtros = ({ filter, setFilter, handleSubmitFormFilter, clearFormFi
         }
 
         const newTimeout = setTimeout(() => {
-            fetchAssociacoes(query);
+            refetch();
         }, 2000);
 
         setDebounceTimeout(newTimeout);
     };
 
-    const fetchAssociacoes = async (nomeBusca) => {
-        if (!nomeBusca) return;
-        setLoading(true);
-        try {
-            const response = await getAssociacoesPeloNome(nomeBusca);
-            setFilteredAssociacoes(response);
-        } catch (error) {
-            console.error("Erro ao buscar associações:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
+    const handleSubmitFormFilterTiposDeCredito = (e) => {
+        e.preventDefault();
+
+        handleSubmitFormFilter(filter)
+    }
+
+    const suggestionsAssociacoes = filteredAssociacoes && filteredAssociacoes.length > 0 ? filteredAssociacoes : []
 
     return (
-        <>
-            <div className="d-flex flex-column bd-highlight my-3 pl-2">
+        <form onSubmit={handleSubmitFormFilterTiposDeCredito} id="form-filtros-tipos-de-credito">
+            <div className="d-flex flex-column bd-highlight my-3">
                 <div className="row">
-                    <form className="col-4">
+                    <div className="col-4">
                         <label htmlFor="nome">Filtrar por nome de crédito</label>
                         <input
                             value={filter.nome}
@@ -57,7 +55,7 @@ export const Filtros = ({ filter, setFilter, handleSubmitFormFilter, clearFormFi
                             className="form-control"
                             placeholder="Busque pelo nome do crédito"
                         />
-                    </form>
+                    </div>
 
                     <div className="col-4">
                         <label htmlFor="tipo">Filtrar por tipo</label>
@@ -77,7 +75,7 @@ export const Filtros = ({ filter, setFilter, handleSubmitFormFilter, clearFormFi
                         </select>
                     </div>
 
-                    <form className="col-4">
+                    <div className="col-4">
                         <label htmlFor="classificacao">Filtrar por classificação</label>
                         <select
                             value={filter.classificacao}
@@ -93,7 +91,7 @@ export const Filtros = ({ filter, setFilter, handleSubmitFormFilter, clearFormFi
                                 </option>
                             ))}
                         </select>
-                    </form>
+                    </div>
                 </div>
 
                 <div className="row align-items-end mt-3">
@@ -116,37 +114,38 @@ export const Filtros = ({ filter, setFilter, handleSubmitFormFilter, clearFormFi
                     </div>
 
                     <div className="col-4">
-                      <div className='row'>
+                        <div className='row'>
                         <label className='col-12' htmlFor="unidades__uuid">Uso associação</label>
                         <AutoComplete
-                          className='col-12'
-                          value={filter.unidades__uuid}
-                          suggestions={filteredAssociacoes}
-                          completeMethod={searchAssociacao}
-                          field="unidade.nome_com_tipo"
-                          onChange={(e) => handleChangeFormFilter("unidades__uuid", e.value)}
-                          inputClassName="form-control"
-                          inputStyle={{
-                              borderColor: "#d3d3d3",
-                              paddingLeft: "15px",
-                          }}
-                          placeholder='Digite e selecione'
+                            className='col-12'
+                            value={filter.unidades__uuid}
+                            suggestions={suggestionsAssociacoes}
+                            completeMethod={searchAssociacao}
+                            field="unidade.nome_com_tipo"
+                            onChange={(e) => handleChangeFormFilter("unidades__uuid", e.value)}
+                            inputClassName="form-control"
+                            inputStyle={{
+                                borderColor: "#d3d3d3",
+                                paddingLeft: "15px",
+                            }}
+                            placeholder='Digite e selecione'
                         />
-                      </div>
+                        </div>
                     </div>
 
                     <div className="col-4 text-end">
                         <div className="d-flex gap-2 justify-content-end">
-                            <button onClick={clearFormFilter} className="btn btn-outline-success mr-2">
+                            <button type="button" onClick={clearFormFilter} className="btn btn-outline-success mr-2" data-testid="btn-limpar-filtros-tipos-de-credito">
                                 Limpar
                             </button>
-                            <button onClick={() => handleSubmitFormFilter(filter)} className="btn btn-success">
+
+                            <button type="submit" form="form-filtros-tipos-de-credito" className="btn btn-success" data-testid="btn-filtrar-tipos-de-credito">
                                 Filtrar
                             </button>
                         </div>
                     </div>
                 </div>
             </div>
-        </>
+        </form>
     );
 };
