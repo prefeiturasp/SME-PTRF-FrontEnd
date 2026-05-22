@@ -22,6 +22,7 @@ export interface IPeriodoPaa {
 
 export interface IUnidadePaa {
     uuid: string;
+    codigo_eol: string;
     nome: string;
     tipo_unidade: string;
     unidade_educacional: string;
@@ -92,4 +93,51 @@ export interface IPaaQueryParams {
     status: string;
     page: number;
     page_size: number;
+}
+
+// Visualizar Documentos
+export interface IStatusDocumentoPaa {
+    status_geracao: string;
+    mensagem: string;
+    cor_mensagem: string;
+    versao_documento: number;
+    retificacao: boolean;
+}
+
+export interface IDocumentoPaa {
+    uuid: string | null;
+    existe_arquivo: boolean;
+    status: IStatusDocumentoPaa;
+    url: string;
+}
+export interface IAtaPaa {
+    uuid: string | null;
+    existe_arquivo: boolean;
+    status: IStatusDocumentoPaa;
+    justificativa: string;
+    pode_gerar_ata: boolean;
+    apresenta_botoes_acao: boolean;
+    url: string;
+    resumo_assembleia: string;
+}
+export interface IBlocoDocumentosPaa {
+    documento: IDocumentoPaa;
+    ata: IAtaPaa;
+}
+export interface IUnidadeVisualizacaoPaa {
+    nome: string;
+    tipo: string;
+    codigo_eol: number;
+}
+export interface IVigentePaa {
+    uuid: string;
+    referencia: string;
+    pode_retificar: boolean;
+    esta_em_retificacao: boolean;
+    unidade: IUnidadeVisualizacaoPaa;
+    original: IBlocoDocumentosPaa;
+    retificacao: IBlocoDocumentosPaa;
+}
+export interface IVisualizarDocumentosPaaResponse {
+    vigente: IVigentePaa;
 }
