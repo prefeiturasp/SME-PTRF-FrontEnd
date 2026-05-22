@@ -15,6 +15,7 @@ type SelectFiltroProps = {
     onChange?: (name: string, value: any) => void;
     optionValue?: string;
     optionLabel?: string;
+    searchFields?: string[];
     allowClear?: boolean;
     className?: string;
 } & Omit<SelectProps, 'value' | 'onChange'>;
@@ -28,6 +29,7 @@ const SelectFiltro: React.FC<SelectFiltroProps> = ({
     onChange,
     optionValue = 'id',
     optionLabel = 'nome',
+    searchFields,
     allowClear = true,
     className = '',
     ...rest
@@ -40,6 +42,16 @@ const SelectFiltro: React.FC<SelectFiltroProps> = ({
 
     const handleFilter: SelectProps['filterOption'] = (input, option) => {
         const children = option?.children ?? '';
+        const currentDataItem = option?.['data-item'];
+        
+        if (searchFields && searchFields.length > 0 && currentDataItem) {
+            return searchFields.some((field) =>
+                String(currentDataItem[field] ?? '')
+                    .toLowerCase()
+                    .includes(input.toLowerCase())
+            );
+        }
+        
         return children.toString().toLowerCase().includes(input.toLowerCase());
     };
 
@@ -66,7 +78,7 @@ const SelectFiltro: React.FC<SelectFiltroProps> = ({
                 </Option>
 
                 {(data || []).map((item, index) => (
-                    <Option key={item?.[optionValue] ?? index} value={item?.[optionValue]}>
+                    <Option key={item?.[optionValue] ?? index} value={item?.[optionValue]} data-item={item}>
                         {item?.[optionLabel]}
                     </Option>
                 ))}

@@ -5,6 +5,7 @@ import {
     IPaaQueryParams,
     IPaaResponse,
     ITabelaPaaResponse,
+    IVisualizarDocumentosPaaResponse,
 } from '../../interface/dre/Paa/paa.interface';
 
 const authHeader = (uuidRecursoSelecionado?: string) => ({
@@ -40,6 +41,22 @@ export const getPaaPorDre = async (
     };
 
     const { data } = await api.get<IPaaResponse>(`/api/paa-dre/${dreUuid}/`, config);
+
+    return data;
+};
+
+export const getVisualizarDocumentosPaa = async (
+    uuidDre: string,
+    uuidRecursoSelecionado?: string,
+): Promise<IVisualizarDocumentosPaaResponse> => {
+    const config = {
+        ...authHeader(uuidRecursoSelecionado),
+    };
+
+    const { data } = await api.get<IVisualizarDocumentosPaaResponse>(
+        `/api/paa-dre/${uuidDre}/visualizar-documentos-paa/`,
+        config,
+    );
 
     return data;
 };

@@ -27,6 +27,7 @@ import { RedefinirSenhaPage } from "../paginas/Login/RedefinirMinhaSenha";
 import { MeusDadosPage } from "../paginas/escolas/MeusDados";
 import { AssociacoesPage } from "../paginas/dres/Associacoes";
 import { PaaPage } from "../paginas/dres/Paa";
+import { VisualizarDocumentosPage } from '../paginas/dres/Paa/VisualizarDocumentos';
 import { DetalhesDaAssociacaoDrePage } from "../paginas/dres/Associacoes/DetalhesDaAssociacao";
 import { CentralDeNotificacoesPage } from "../paginas/CentralDeNotificacoes";
 import { CentralDeDownloadsPage } from "../paginas/CentralDeDownloads";
@@ -340,6 +341,14 @@ const routesConfig = [
     path: "/paa-dre",
     component: PaaPage,
     permissoes: ["custom_access_paa_dre"],
+    featureFlag: "paa-dre",
+  },
+  {
+    exact: true,
+    path: "/paa-dre/visualizar-documentos/:uuid_paa",
+    component: VisualizarDocumentosPage,
+    permissoes: ["custom_access_paa_dre"],
+    featureFlag: "paa-dre",
   },
   {
     exact: true,
