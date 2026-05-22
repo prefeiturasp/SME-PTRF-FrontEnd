@@ -76,7 +76,7 @@ describe("useDeleteTipoReceita", () => {
     });
 
     expect(toastCustom.ToastCustomError).toHaveBeenCalledWith(
-      "Erro ao excluir tipo de receita."
+      "Erro ao excluir tipo de crédito", "Erro ao excluir tipo de receita."
     );
   });
 
@@ -90,7 +90,7 @@ describe("useDeleteTipoReceita", () => {
     });
 
     expect(toastCustom.ToastCustomError).toHaveBeenCalledWith(
-      "Houve um erro ao tentar excluir tipo de crédito."
+      "Erro ao excluir tipo de crédito", "Houve um erro ao tentar excluir tipo de crédito."
     );
   });
 });

@@ -1,7 +1,7 @@
 import { getFiltrosTipoReceita } from "../../../../../../services/sme/Parametrizacoes.service";
 import { useQuery } from "@tanstack/react-query";
 
-export const useGetFiltrosTiposReceita = () => {
+export const useGetFiltrosTiposReceita = (params) => {
   const {
     isFetching,
     isError,
@@ -14,8 +14,14 @@ export const useGetFiltrosTiposReceita = () => {
     error,
     refetch,
   } = useQuery({
-    queryKey: ["filtros-tipo-de-credito"],
-    queryFn: () => getFiltrosTipoReceita(),
+    queryKey: ["filtros-tipo-de-credito", params?.recurso_uuid],
+    queryFn: () => {
+      if (!params?.recurso_uuid) {
+          return Promise.resolve({count: 0, results: []});
+      }
+      
+      return getFiltrosTipoReceita(params?.recurso_uuid);
+    },
     keepPreviousData: true,
     staleTime: 5 * 60 * 1000, // 5 minutos antes de ser considerado "stale"
     cacheTime: 10 * 60 * 1000, // 10 minutos antes de ser removido do cache

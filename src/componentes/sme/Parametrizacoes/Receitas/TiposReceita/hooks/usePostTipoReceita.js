@@ -12,8 +12,8 @@ export const usePostTipoReceita = () => {
     onSuccess: (data, variables) => {
       queryClient.invalidateQueries(["tipos-receita"]);
       toastCustom.ToastCustomSuccess(
-        "Inclusão de tipo de crédito realizado com sucesso.",
-        "O tipo de crédito foi adicionado ao sistema com sucesso."
+        "Tipo de receita adicionada!",
+        "O tipo de receita foi adicionada ao sistema com sucesso."
       );
 
       if (variables.selecionar_todas) {
@@ -26,10 +26,11 @@ export const usePostTipoReceita = () => {
     },
     onError: (e) => {
       if (e.response?.data?.non_field_errors) {
-        toastCustom.ToastCustomError(e.response.data.non_field_errors);
+        toastCustom.ToastCustomError("Erro ao adicionar tipo de receita", e.response.data.non_field_errors);
       } else {
         toastCustom.ToastCustomError(
-          "Houve um erro ao tentar fazer essa atualização."
+          "Erro ao adicionar tipo de receita",
+          "Houve um erro ao tentar fazer essa adição."
         );
       }
     },

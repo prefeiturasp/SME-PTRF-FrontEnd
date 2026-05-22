@@ -188,8 +188,13 @@ export const postTipoReceitaDesvincularTodasUnidades = async (uuid) => {
 };
 
 
-export const getFiltrosTipoReceita = async () => {
-  return (await api.get(`/api/tipos-receitas/filtros/`, authHeader())).data;
+export const getFiltrosTipoReceita = async (recurso_uuid) => {
+  return (await api.get(`/api/tipos-receitas/filtros/`, {
+    ...authHeader(),
+    params: {
+      recurso_uuid: recurso_uuid
+    }
+  })).data;
 };
 
 // Unidades tipo de receita
@@ -197,8 +202,17 @@ export const getUnidadesTipoReceita = async (uuid, nome_ou_codigo, dre, tipo_uni
   return (await api.get(`/api/tipos-receitas/${uuid}/unidades-vinculadas/?nome_ou_codigo=${nome_ou_codigo}&dre=${dre}&tipo_unidade=${tipo_unidade}&page=${page}`, authHeader())).data;
 }
 
-export const getUnidadesNaoVinculadasTipoReceita = async (uuid, nome_ou_codigo, dre, tipo_unidade, page) => {
-  return (await api.get(`/api/tipos-receitas/${uuid}/unidades-nao-vinculadas/?nome_ou_codigo=${nome_ou_codigo}&dre=${dre}&tipo_unidade=${tipo_unidade}&page=${page}`, authHeader())).data;
+export const getUnidadesNaoVinculadasTipoReceita = async (uuid, nome_ou_codigo, dre, tipo_unidade, page, recurso_uuid = '') => {
+  return (await api.get(`/api/tipos-receitas/${uuid}/unidades-nao-vinculadas/`, {
+    ...authHeader(),
+    params: {
+      nome_ou_codigo,
+      dre,
+      tipo_unidade,
+      page,
+      recurso_uuid
+    }
+  })).data;
 }
 
 export const vincularUnidadeTipoReceita = async (uuid, unidadeUUID) => {
@@ -1299,9 +1313,10 @@ export const deleteMotivoReprovacaoPc = async (uuidMotivoReprovacaoPc) => {
 
 // Tipo de receita
 export const getTiposDeCredito = async (filter, currentPage) => {
-    return (await api.get(`/api/tipos-receitas/?page_size=${20}`,{
+    return (await api.get(`/api/tipos-receitas/`,{
         ...authHeader(),
         params: {
+            page_size: 10,
             page: currentPage,
             ...filter
         }
@@ -1314,6 +1329,12 @@ export const getFiltrosTiposDeCredito = async () => {
     })).data
 };
 
-export const getAssociacoesPeloNome = async (nome) => {
-    return (await api.get(`/api/associacoes/?nome=${nome}`, authHeader())).data
+export const getAssociacoesPeloNome = async (nome, recurso_uuid = '') => {
+    return (await api.get(`/api/associacoes/`, {
+      ...authHeader(),
+      params: {
+        nome,
+        recurso_uuid
+      }
+    })).data
 };
