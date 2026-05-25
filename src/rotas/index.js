@@ -136,6 +136,7 @@ import { EscolherRecursoPage } from "../paginas/SelecaoRecurso/EscolherRecursoPa
 import { useRecursoSelecionadoContext } from "../context/RecursoSelecionado";
 import { FEATURE_FLAGS } from "../constantes/featureFlags";
 import { ParametrizacoesMotivosReprovacaoPc } from "../componentes/sme/Parametrizacoes/Dre/MotivosReprovacaoPc";
+import { ParametrizacoesDetalhesTiposCredito } from "../componentes/sme/Parametrizacoes/Receitas/DetalhesTiposCredito";
 
 const routesConfig = [
   {
@@ -921,6 +922,12 @@ const routesConfig = [
     exact: true,
     path: "/parametro-tipos-receita",
     component: TiposDeCredito,
+    permissoes: ["access_painel_parametrizacoes", "change_painel_parametrizacoes"],
+  },
+  {
+    exact: true,
+    path: "/parametro-detalhes-tipos-receita",
+    component: ParametrizacoesDetalhesTiposCredito,
     permissoes: ["access_painel_parametrizacoes", "change_painel_parametrizacoes"],
   },
   {
