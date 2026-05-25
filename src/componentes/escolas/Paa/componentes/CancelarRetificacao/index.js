@@ -77,7 +77,7 @@ const CancelarRetificacao = ({ paa }) => {
           >
             {mutationPost.isPending ? (
               <>
-                <Spinner animation="border" size="sm" className="me-2" />
+                <Spinner animation="border" size="sm" className="me-2" /> &nbsp;
                 Cancelando...
               </>
             ) : (
