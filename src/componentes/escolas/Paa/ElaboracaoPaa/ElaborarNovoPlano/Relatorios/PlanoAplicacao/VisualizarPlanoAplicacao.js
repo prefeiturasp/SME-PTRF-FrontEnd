@@ -1,8 +1,8 @@
 import { Spin, Typography } from "antd";
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { formatMoneyBRL } from "../../../../../../../utils/money";
-import { useGetPrioridadesRelatorio } from "./hooks/useGetPrioridadesRelatorio";
+import { useGetPlanoAplicacao } from "./hooks/useGetPlanoAplicacao";
 import { MsgImgCentralizada } from "../../../../../../Globais/Mensagens/MsgImgCentralizada";
 import Img404 from "../../../../../../../assets/img/img-404.svg";
 import { RelatorioTabelaGrupo } from "../components/RelatorioTabelaGrupo";
@@ -12,18 +12,18 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit } from "@fortawesome/free-solid-svg-icons";
 import { useGetPaa } from "../../../../componentes/hooks/useGetPaa";
 import { PaaContext, usePaaContext } from "../../../../componentes/PaaContext";
+import { TagRetificacao } from "../../../../componentes/TagRetificacao";
 const { Text } = Typography;
 
 const columnsDefinition = (ehOutrosRecursos = false) => [
   {
-    title: !ehOutrosRecursos ? "Ação" : "Recursos",
+    title: ehOutrosRecursos ? "Recursos" : "Ação",
     dataIndex: "acao",
     key: "acao",
     render: (_, record) => (
       <Text>
-        {record.isTotal
-          ? "TOTAL"
-          : record.acao || record?.outro_recurso_objeto?.nome || "-"}
+        {record.isTotal ? "TOTAL" : record.acao || "-"}
+        {record?.alteracao && <div><TagRetificacao /></div>}
       </Text>
     ),
     width: 200,
@@ -56,12 +56,10 @@ const columnsDefinition = (ehOutrosRecursos = false) => [
     title: "Valor Total",
     dataIndex: "valor_total",
     key: "valor_total",
-    render: (valor, record) =>
-      valor || valor === 0
-        ? formatMoneyBRL(valor)
-        : record.isTotal
-        ? formatMoneyBRL(0)
-        : "-",
+    render: (valor, record) => {
+      if (valor || valor === 0) return formatMoneyBRL(valor);
+      return record.isTotal ? formatMoneyBRL(0) : "-";
+    },
     align: "end",
     width: 160,
   },
@@ -71,111 +69,12 @@ const VisualizarPlanoAplicacaoContent = () => {
   const navigate = useNavigate();
   const { paa, isFetching: isLoadingPaa } = usePaaContext();
 
-  const { isFetching, prioridades, isError } = useGetPrioridadesRelatorio();
+  const { isFetching, data: grupos, isError } = useGetPlanoAplicacao(paa?.uuid);
 
-  const columns = useCallback((grupo) => {
-    const ehOutrosRecursos = [
-      "prioridades-outros-recursos",
-      "nao-prioridades-outros-recursos",
-    ].includes(grupo.key);
-    return columnsDefinition(ehOutrosRecursos);
-  }, []);
-
-  const grupos = useMemo(() => {
-    const configuracoes = [
-      {
-        key: "prioridades-ptrf",
-        titulo: "Prioridades PTRF",
-        filtro: (item) => item.prioridade && item.recurso === "PTRF",
-      },
-      {
-        key: "prioridades-pdde",
-        titulo: "Prioridades PDDE",
-        filtro: (item) => item.prioridade && item.recurso === "PDDE",
-      },
-      {
-        key: "prioridades-outros-recursos",
-        titulo: "Prioridades Outros Recursos",
-        filtro: (item) =>
-          item.prioridade &&
-          ["RECURSO_PROPRIO", "OUTRO_RECURSO"].includes(item.recurso),
-      },
-      {
-        key: "nao-prioridades-ptrf",
-        titulo: "Não Prioridades PTRF",
-        filtro: (item) => !item.prioridade && item.recurso === "PTRF",
-      },
-      {
-        key: "nao-prioridades-pdde",
-        titulo: "Não Prioridades PDDE",
-        filtro: (item) => !item.prioridade && item.recurso === "PDDE",
-      },
-      {
-        key: "nao-prioridades-outros-recursos",
-        titulo: "Não Prioridades Outros Recursos",
-        filtro: (item) =>
-          !item.prioridade &&
-          ["RECURSO_PROPRIO", "OUTRO_RECURSO"].includes(item.recurso),
-      },
-    ];
-
-    return configuracoes
-      .map((config) => {
-        const itens = prioridades.filter(config.filtro);
-        if (!itens.length) {
-          return null;
-        }
-        const total = itens.reduce(
-          (acc, item) =>
-            acc + (item.valor_total ? Number(item.valor_total) : 0),
-          0
-        );
-
-        const ehOutrosRecursos = [
-          "prioridades-outros-recursos",
-          "nao-prioridades-outros-recursos",
-        ].includes(config.key);
-
-        let itensDataLista = itens;
-
-        if (ehOutrosRecursos) {
-          const primeirosDaLista = itensDataLista.filter(
-            (i) => i.recurso === "RECURSO_PROPRIO"
-          );
-          const listaRecursoProprio = itensDataLista
-            .filter((i) => i.recurso === "OUTRO_RECURSO")
-            .sort((a, b) =>
-              a?.outro_recurso_objeto?.nome.localeCompare(
-                b?.outro_recurso_objeto?.nome,
-                "pt-BR",
-                { sensitivity: "base" }
-              )
-            );
-
-          itensDataLista = listaRecursoProprio;
-
-          if (primeirosDaLista.length) {
-            itensDataLista = [...primeirosDaLista, ...itensDataLista];
-          }
-        }
-
-        const dados = [
-          ...itensDataLista,
-          {
-            key: `${config.key}-total`,
-            isTotal: true,
-            prioridade: true,
-            valor_total: total,
-          },
-        ];
-
-        return {
-          ...config,
-          dados,
-        };
-      })
-      .filter(Boolean);
-  }, [prioridades]);
+  const columns = useCallback(
+    (grupo) => columnsDefinition(grupo.ehOutrosRecursos),
+    []
+  );
 
   const handleVoltar = () => {
     let voltarRota = "/elaborar-novo-paa";

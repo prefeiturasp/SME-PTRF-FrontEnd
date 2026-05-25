@@ -432,6 +432,10 @@ export const getPlanoOrcamentario = async (paaUuid) => {
   return (await api.get(`api/paa/${paaUuid}/plano-orcamentario/`, authHeader())).data;
 };
 
+export const getPlanoAplicacao = async (paaUuid) => {
+  return (await api.get(`api/paa/${paaUuid}/plano-aplicacao/`, authHeader())).data;
+};
+
 export const getTextosPaaUe = async () => {
   return (await api.get(`/api/parametros-paa/textos-paa-ue/`,authHeader())).data
 };

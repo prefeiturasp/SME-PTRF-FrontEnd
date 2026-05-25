@@ -56,6 +56,7 @@ import {
     postGerarAtaPaa,
     getStatusAtaPaa,
     getPlanoOrcamentario,
+    getPlanoAplicacao,
 } from '../Paa.service.js';
 import { TOKEN_ALIAS } from '../../auth.service.js';
 
