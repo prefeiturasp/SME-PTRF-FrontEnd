@@ -27,6 +27,7 @@ const CancelarRetificacao = ({ paa }) => {
       });
 
       navigate("/paa-vigente-e-anteriores");
+      setTimeout(() => window.location.reload(), 1500);
     } catch (err) {
       console.error(err);
     }
