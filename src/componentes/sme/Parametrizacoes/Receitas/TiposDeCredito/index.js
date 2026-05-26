@@ -10,6 +10,7 @@ import { useAbasPorRecursoContext } from "../../componentes/AbasPorRecurso/hooks
 import { useGetFiltrosTiposReceita } from "../TiposReceita/hooks/useGetFiltrosTiposReceita";
 
 export const TiposDeCredito = () => {
+  const ROWS_PER_PAGE = 10;
   const { selectedRecurso } = useAbasPorRecursoContext();
 
   const initialFilter = {
@@ -19,42 +20,40 @@ export const TiposDeCredito = () => {
     tipos_conta__uuid: '',
     unidades__uuid: '',
     recurso_uuid: selectedRecurso ? selectedRecurso.uuid : null,
+    currentPage: 1,
   };
 
   const [draftFilters, setDraftFilters] = useState(initialFilter);
   const [appliedFilters, setAppliedFilters] = useState(initialFilter);
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const [firstPage, setFirstPage] = useState(1);
-
   const { data: dadosDosFiltros } = useGetFiltrosTiposReceita({recurso_uuid: selectedRecurso ? selectedRecurso.uuid : null, });
-  const { results: tiposDeCredito, count, isLoading } = useGetTiposCredito({ filters: appliedFilters, currentPage });
+  const { results: tiposDeCredito, count, isLoading } = useGetTiposCredito({ filters: appliedFilters });
+
+  const fisrtPage = (appliedFilters.currentPage - 1) * ROWS_PER_PAGE;
 
   useEffect(() => {
-    const initalFilterWithRecurso = { ...initialFilter, recurso_uuid: selectedRecurso ? selectedRecurso.uuid : null };
+    const initalFilterWithRecurso = { ...initialFilter, currentPage: 1, recurso_uuid: selectedRecurso ? selectedRecurso.uuid : null };
 
     setDraftFilters(initalFilterWithRecurso)
     setAppliedFilters(initalFilterWithRecurso);
   }, [selectedRecurso?.uuid]);
 
+  const changePageFilters = (currentPage) => {
+    setAppliedFilters((prevState) => ({...prevState, currentPage}));
+  }
+
   const onPageChange = (event) => {
-    setCurrentPage(event.page + 1)
-    setFirstPage(event.first)
+    const currentPage = event.page + 1;
+    changePageFilters(currentPage);
   };
 
   const handleSubmitFormFilter = () => {
-    setCurrentPage(1);
-    setFirstPage(1);
-
     setAppliedFilters(draftFilters);
   };
 
   const clearFormFilter = () => {
     setDraftFilters(initialFilter);
     setAppliedFilters(initialFilter);
-
-    setFirstPage(0);
-    setCurrentPage(1);
   };
 
     return (
@@ -77,8 +76,9 @@ export const TiposDeCredito = () => {
                 isLoading={isLoading}
                 tiposDeCredito={tiposDeCredito}
                 count={count}
-                firstPage={firstPage}
+                firstPage={fisrtPage}
                 onPageChange={onPageChange}
+                rowsPerPage={ROWS_PER_PAGE}
               />
           </div>
       </PaginasContainer>

@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { EditIconButton } from '../../../../../Globais/UI/Button';
 
 
-export const Lista = ({isLoading, tiposDeCredito, count, firstPage, onPageChange}) => {
+export const Lista = ({isLoading, tiposDeCredito, count, firstPage, onPageChange, rowsPerPage}) => {
     const navigate = useNavigate();
 
     const handleEditFormModal = (rowData) => {
@@ -114,7 +114,7 @@ export const Lista = ({isLoading, tiposDeCredito, count, firstPage, onPageChange
                   </div>
                   <Paginator
                       first={firstPage}
-                      rows={10}
+                      rows={rowsPerPage}
                       totalRecords={count}
                       template="PrevPageLink PageLinks NextPageLink"
                       onPageChange={onPageChange}

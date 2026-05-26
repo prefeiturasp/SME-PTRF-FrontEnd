@@ -6,6 +6,7 @@ const tratarFiltros = (valoresFiltros) => {
     const { e_repasse, e_estorno, e_devolucao, e_rendimento, tipo, unidades__uuid, classificacao, ...restoFiltros } = valoresFiltros;
 
     let filtrosTratados = { ...restoFiltros };
+    delete filtrosTratados.currentPage;
 
     if (unidades__uuid && typeof unidades__uuid === "object" && Object.keys(unidades__uuid).length > 0 && unidades__uuid.uuid) {
       filtrosTratados.unidades__uuid = unidades__uuid.unidade.uuid;
@@ -36,13 +37,13 @@ const tratarFiltros = (valoresFiltros) => {
 
 export const useGetTiposCredito = (params) => {
     const { isFetching, isError, data = {count: 0, results: []}, error, refetch } = useQuery({
-        queryKey: ['tipos-creditos', params?.filters, params?.currentPage, params?.filters?.recurso_uuid],
+        queryKey: ['tipos-creditos', params?.filters, params?.filters?.currentPage, params?.filters?.recurso_uuid],
         queryFn: ()=> {
             if (!params?.filters?.recurso_uuid) {
                 return Promise.resolve({count: 0, results: []});
             }
             
-            return getTiposDeCredito(tratarFiltros({...params?.filters, recurso_uuid: params?.filters?.recurso_uuid}), params?.currentPage)
+            return getTiposDeCredito(tratarFiltros({...params?.filters, recurso_uuid: params?.filters?.recurso_uuid}), params?.filters?.currentPage)
         },
         keepPreviousData: true,
         staleTime: 5000, // 5 segundos
