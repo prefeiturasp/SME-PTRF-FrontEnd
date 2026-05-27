@@ -78,7 +78,6 @@ export const Lista = ({isLoading, tiposDeCredito, count, firstPage, onPageChange
         <>
             {!isLoading && tiposDeCredito && tiposDeCredito.length > 0 ? (
               <>
-                  <p className='pl-2 mb-0'>Exibindo <span className='total'>{count}</span> tipos de crédito</p>
                   <div className="p-2">
                       <DataTable
                           value={tiposDeCredito}

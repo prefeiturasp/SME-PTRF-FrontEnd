@@ -1323,10 +1323,64 @@ export const getTiposDeCredito = async (filter, currentPage) => {
     })).data
 };
 
+export const getTiposDeCreditoQueAceitamDetalhamento = async (recurso_uuid) => {
+    return (await api.get(`/api/detalhes-tipos-receitas-parametrizacao/tipo_receita_possui_detalhamento/`,{
+        ...authHeader(),
+        params: {
+            recurso_uuid
+        }
+    })).data
+};
+
 export const getFiltrosTiposDeCredito = async () => {
     return (await api.get(`/api/tipos-receitas/filtros/`,{
         ...authHeader()
     })).data
+};
+
+export const getDetalhesTiposCredito = async (filter, currentPage) => {
+  const { nome, tipo_credito, recurso_uuid } = filter;
+  return (
+    await api.get(
+      `/api/detalhes-tipos-receitas-parametrizacao/?page_size=${10}`,
+      {
+        ...authHeader(),
+        params: {
+          nome: nome,
+          tipo_credito: tipo_credito,
+          recurso_uuid: recurso_uuid,
+          page: currentPage,
+        },
+      }
+    )
+  ).data;
+};
+
+export const postDetalheTipoCredito = async (payload) => {
+  return await api.post(
+    `api/detalhes-tipos-receitas-parametrizacao/`,
+    {
+      ...payload,
+    },
+    authHeader()
+  );
+};
+
+export const patchDetalheTipoCredito = async (
+  uuidDetalheTipoCredito,
+  payload
+) => {
+  return await api.patch(
+    `api/detalhes-tipos-receitas-parametrizacao/${uuidDetalheTipoCredito}/`,
+    {
+      ...payload,
+    },
+    authHeader()
+  );
+};
+
+export const deleteDetalheTipoCredito = async (uuidDetalheTipoCredito) => {
+    return (await api.delete(`api/detalhes-tipos-receitas-parametrizacao/${uuidDetalheTipoCredito}/`, authHeader()));
 };
 
 export const getAssociacoesPeloNome = async (nome, recurso_uuid = '') => {
