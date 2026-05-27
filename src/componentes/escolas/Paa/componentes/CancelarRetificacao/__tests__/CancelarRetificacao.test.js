@@ -102,7 +102,9 @@ describe("CancelarRetificacao", () => {
       }),
     );
 
-    expect(screen.getByText(/ao cancelar, as alterações/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/As alterações da retificação serão apagadas/i),
+    ).toBeInTheDocument();
   });
 
   it("deve fechar modal ao clicar em voltar", async () => {
@@ -122,7 +124,7 @@ describe("CancelarRetificacao", () => {
 
     await waitFor(() => {
       expect(
-        screen.queryByText(/ao cancelar, as alterações/i),
+        screen.queryByText(/As alterações da retificação serão apagadas/i),
       ).not.toBeInTheDocument();
     });
   });
@@ -230,7 +232,9 @@ describe("CancelarRetificacao", () => {
       }),
     );
 
-    expect(screen.getByText(/ao cancelar, as alterações/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/As alterações da retificação serão apagadas/i),
+    ).toBeInTheDocument();
   });
 
   it("deve tratar erro da mutation sem quebrar componente", async () => {
