@@ -1,4 +1,4 @@
-import { Spin, Typography } from "antd";
+import { Typography } from "antd";
 import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { formatMoneyBRL } from "../../../../../../../utils/money";
@@ -108,9 +108,9 @@ const VisualizarPlanoAplicacaoContent = () => {
   };
 
   const shouldShowError = !isFetching && isError;
-  const shouldShowEmpty = !isFetching && !isError && !grupos.length;
+  const shouldShowEmpty = !isFetching && !isError && !grupos?.length;
 
-  const conteudo = grupos.length ? (
+  const conteudo = grupos?.length ? (
     <div className="relatorio-visualizacao__sections">
       {grupos.map((grupo) => (
         <RelatorioTabelaGrupo
@@ -135,7 +135,7 @@ const VisualizarPlanoAplicacaoContent = () => {
     <RelatorioVisualizacao
       title="Plano de Aplicação"
       onBack={handleVoltar}
-      isLoading={isFetching}
+      isLoading={isFetching || isLoadingPaa}
       error={shouldShowError}
       errorContent={
         <MsgImgCentralizada
@@ -171,9 +171,7 @@ const VisualizarPlanoAplicacaoContent = () => {
       }
       heightDeps={[grupos, isFetching, isError]}
     >
-      <Spin spinning={isLoadingPaa} size="large">
-        {conteudo}
-      </Spin>
+      {conteudo}
     </RelatorioVisualizacao>
   );
 };
