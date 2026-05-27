@@ -7,6 +7,8 @@ import {RetornaSeTemPermissaoEdicaoPainelParametrizacoes} from "../../../../Para
 import { useDetalhesTiposCreditoContext } from "../hooks/useDetalhesTiposCreditoContext";
 import { useRecursoSelecionadoContext } from "../../../../../../context/RecursoSelecionado";
 import { useGetTiposCreditoQuePossuemDetalhamento } from "../../TiposDeCredito/hooks/useGetTiposCredito";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
 
 export const ModalForm = ({handleSubmitFormModal}) => {
     const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES = RetornaSeTemPermissaoEdicaoPainelParametrizacoes()
@@ -135,6 +137,7 @@ export const ModalForm = ({handleSubmitFormModal}) => {
                                             disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                             data-testid="btn-excluir-detalhe-tipo-credito"
                                         >
+                                            <FontAwesomeIcon icon={faXmark} style={{ marginRight: "8px", color: "white", fontWeight: "bold" }} />
                                             Excluir
                                         </button>
                                     }
