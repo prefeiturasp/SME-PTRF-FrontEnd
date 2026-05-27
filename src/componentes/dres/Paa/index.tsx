@@ -12,6 +12,7 @@ import { useGetTabelaPaaDre } from '../../../hooks/dres/Paa/useGetTabelaPaaDre';
 import { useGetPaaPorDre } from '../../../hooks/dres/Paa/useGetPaaPorDre';
 import { toast } from 'react-toastify';
 import type { IFiltrosPaa, IPaaItem } from '../../../interface/dre/Paa/paa.interface';
+import { Tooltip as ReactTooltip } from 'react-tooltip';
 import { useNavigate } from 'react-router-dom';
 import './scss/paa.scss';
 
@@ -103,13 +104,21 @@ export const Paa = () => {
     };
 
     const acaoTemplatePdf = (row: IPaaItem) => (
-        <button
-            className='btn btn-link'
-            disabled={!row?.tem_documentos}
-            onClick={() => handleVisualizarPdf(row)}
-        >
-            <Icon icon='faEye' />
-        </button>
+        <>
+            <button
+                className='btn btn-link'
+                disabled={!row?.tem_documentos}
+                onClick={() => handleVisualizarPdf(row)}
+                data-tooltip-id={`btn-visualizar-${row.uuid}`}
+                data-tooltip-html='Visualização'
+            >
+                <Icon icon='faEye' />
+            </button>
+            <ReactTooltip 
+                id={`btn-visualizar-${row.uuid}`}     
+                style={{ zIndex: 9999 }}
+            />
+        </>
     );
 
     const renderizarConteudo = () => {
