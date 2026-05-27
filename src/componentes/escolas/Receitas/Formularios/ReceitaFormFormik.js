@@ -124,7 +124,7 @@ export const ReceitaFormFormik = ({
                                     <select
                                         id="tipo_receita"
                                         name="tipo_receita"
-                                        disabled={(idTipoReceitaEstorno === props.values.tipo_receita) || readOnlyEstorno || readOnlyCampos || readOnlyTipoReceita || ![['add_receita'], ['change_receita']].some(visoesService.getPermissoes)}
+                                        disabled={(!!idTipoReceitaEstorno && idTipoReceitaEstorno === props.values.tipo_receita) || readOnlyEstorno || readOnlyCampos || readOnlyTipoReceita || ![['add_receita'], ['change_receita']].some(visoesService.getPermissoes)}
                                         value={props.values.tipo_receita}
                                         onChange={(e) => {
                                             props.handleChange(e);

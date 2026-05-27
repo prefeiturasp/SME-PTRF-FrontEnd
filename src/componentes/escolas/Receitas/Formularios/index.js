@@ -140,14 +140,16 @@ export const ReceitaForm = () => {
     const carregaTabelas = useCallback(async ()=>{
         let tabelas_receitas;
 
+        // TODO remover ignorar_filtro_recurso após criado e executado script
+        // para atualizar as receitas criada com o tipo de credito sem vinculo com Recurso
         if(parametros && parametros.state && parametros.state.uuid_associacao){
-            tabelas_receitas = await getTabelasReceitaReceita(parametros.state.uuid_associacao)
+            tabelas_receitas = await getTabelasReceitaReceita(parametros.state.uuid_associacao, !!uuid);
         }
         else{
-            tabelas_receitas = await getTabelasReceitaReceita()
+            tabelas_receitas = await getTabelasReceitaReceita(null, !!uuid);
         }
         setTabelas(tabelas_receitas)
-    }, [parametros])
+    }, [parametros, uuid])
 
     useEffect(()=>{
         carregaTabelas()
