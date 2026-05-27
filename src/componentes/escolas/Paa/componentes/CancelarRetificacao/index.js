@@ -56,9 +56,8 @@ const CancelarRetificacao = ({ paa }) => {
         </Modal.Header>
         <Modal.Body>
           <p>
-            Ao cancelar, as alterações da retificação serão perdidas e não{" "}
-            <br />
-            poderão ser recuperadas. Deseja continuar?
+            As alterações da retificação serão apagadas e não poderão ser <br />
+            recuperadas. Deseja continuar?
           </p>
         </Modal.Body>
         <Modal.Footer id="main">
