@@ -1,4 +1,4 @@
-import { Typography } from "antd";
+import { Typography, Spin } from "antd";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import WatermarkPrevia from "../../../../../../Globais/WatermarkPrevia/WatermarkPrevia";
 import "./RelatorioVisualizacao.scss";
@@ -127,7 +127,9 @@ export const RelatorioVisualizacao = ({
             bodyClassName
           )}
         >
-          {renderContent}
+          <Spin {...mergedSpinProps}>
+              {renderContent}
+          </Spin>
         </div>
       </div>
     </div>
