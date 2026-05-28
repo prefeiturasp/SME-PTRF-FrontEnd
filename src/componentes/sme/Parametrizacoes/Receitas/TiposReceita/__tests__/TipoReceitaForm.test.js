@@ -170,7 +170,7 @@ describe("TipoReceitaForm", () => {
       e_estorno: false,
       mensagem_usuario: "",
       possui_detalhamento: true,
-      detalhes: [],
+      detalhes_tipo_receita: [],
       tipos_conta: [
         {
           uuid: "1234",
@@ -300,7 +300,7 @@ describe("TipoReceitaForm", () => {
       e_estorno: false,
       mensagem_usuario: "",
       possui_detalhamento: false,
-      detalhes: [],
+      detalhes_tipo_receita: [],
       tipos_conta: [
         {
           uuid: "1234",
