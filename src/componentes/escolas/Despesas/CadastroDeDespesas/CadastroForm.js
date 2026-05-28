@@ -692,7 +692,7 @@ export const CadastroForm = ({verbo_http, veioDeSituacaoPatrimonial}) => {
                         } catch (error) {
                             console.log(error);
                             setLoading(false);
-                            habilitaBtnSalvar();                            
+                            habilitaBtnSalvar();
                         }
                     }
                     else if (despesaContext.verboHttp === "PUT"){
@@ -721,7 +721,7 @@ export const CadastroForm = ({verbo_http, veioDeSituacaoPatrimonial}) => {
                                 }
 
                                 aux.getPath(origem, parametroLocation);
-                                
+
                             }
                             else {
                                 handleErroCriarDespesa(response);
@@ -740,7 +740,7 @@ export const CadastroForm = ({verbo_http, veioDeSituacaoPatrimonial}) => {
                 // Caso não seja origem de analise lancamento (reabertura seletiva), deve seguir o fluxo normal
                 // O loading será ativado apenas quando a mutation realmente executar (após confirmação da modal se necessário)
                 // Não ativamos o loading aqui para evitar que apareça antes da modal de confirmação
-                
+
                 if (despesaContext.verboHttp === "POST") {
                     mutationCreate.mutate({ payload: values });
                 }
