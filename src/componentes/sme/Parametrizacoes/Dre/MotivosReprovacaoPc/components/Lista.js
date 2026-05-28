@@ -6,10 +6,9 @@ import { ModalForm } from "./ModalForm";
 import { ModalConfirmarExclusao } from "../../../../../Globais/ModalAntDesign/ModalConfirmarExclusao";
 import {MsgImgCentralizada} from "../../../../../Globais/Mensagens/MsgImgCentralizada";
 import Img404 from "../../../../../../assets/img/img-404.svg";
-import { EditIconButton, IconButton } from "../../../../../Globais/UI/Button";
+import { EditIconButton } from "../../../../../Globais/UI/Button";
 import { toastCustom } from "../../../../../Globais/ToastCustom";
-import { useAbasPorRecursoContext } from "../../../componentes/AbasPorRecurso/hooks/useAbasPorRecursoContext";
-import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../../RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
+import { Paginacao } from './Paginacao';
 import { useMotivosReprovacaoPcContext } from "../hooks/useMotivoReprovacaoContext";
 import { useGetMotivosReprovacaoPc } from "../hooks/useGetMotivosReprovacaoPc";
 import { usePostMotivoReprovacaoPc } from "../hooks/usePostMotivoReprovacaoPc";
@@ -18,11 +17,8 @@ import { useDeleteMotivoReprovacaoPc } from "../hooks/useDeleteMotivoReprovacaoP
 
 
 export const Lista = () => {
-  const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES = RetornaSeTemPermissaoEdicaoPainelParametrizacoes()
-  const { selectedRecurso } = useAbasPorRecursoContext();
-
-  const { stateFormModal, setStateFormModal, setBloquearBtnSalvarForm, handleOpenCreateModal, showModalConfirmacaoExclusao, handleCloseModalConfirmacaoExclusao } = useMotivosReprovacaoPcContext();
-  const { isLoading, data } = useGetMotivosReprovacaoPc({ is_required_recurso_uuid: true, recurso_uuid: selectedRecurso?.uuid })
+  const { stateFormModal, setStateFormModal, setBloquearBtnSalvarForm, showModalConfirmacaoExclusao, handleCloseModalConfirmacaoExclusao } = useMotivosReprovacaoPcContext();
+  const { isLoading, data, total } = useGetMotivosReprovacaoPc()
   const { mutationPost } = usePostMotivoReprovacaoPc()
   const { mutationPatch } = usePatchMotivoReprovacaoPc()
   const { mutationDelete } = useDeleteMotivoReprovacaoPc()
@@ -34,6 +30,7 @@ export const Lista = () => {
       return (
         <EditIconButton
             onClick={() => handleEditFormModal(rowData)}
+            data-testid="btn-editar-motivo-reprovacao-pc"
         />
       )
   };
@@ -84,22 +81,6 @@ export const Lista = () => {
   }
   return (
     <>
-        <div className="d-flex justify-content-between align-items-end mb-3">
-            <div>
-                <h5 className="font-weight-bold">{selectedRecurso?.nome}</h5>
-                <p className="m-0">Confira abaixo os motivos de reprovação do {selectedRecurso?.nome_exibicao}.</p>
-            </div>
-
-            <IconButton
-                icon="faPlus"
-                iconProps={{ style: {fontSize: '15px', marginRight: "5", color:"#fff"} }}
-                label="Adicionar motivo de reprovação"
-                onClick={() => handleOpenCreateModal(selectedRecurso)}
-                variant="success"
-                disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
-            />
-        </div>
-
         {results && results.length > 0 ? (
             <DataTable
                 value={results}
@@ -124,6 +105,11 @@ export const Lista = () => {
                 img={Img404}
             />
         }
+
+        <Paginacao
+            isLoading={isLoading}
+            total={total}
+        />
       
         <ModalForm
             handleSubmitFormModal={handleSubmitFormModal}

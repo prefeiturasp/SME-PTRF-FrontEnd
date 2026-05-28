@@ -1,7 +1,12 @@
-import React, { createContext, useMemo, useState } from 'react';
+import React, { createContext, useEffect, useMemo, useState } from 'react';
+import { useAbasPorRecursoContext } from '../../../componentes/AbasPorRecurso/hooks/useAbasPorRecursoContext';
 
 const initialFilter = {
-    motivo:''
+    motivo:'',
+    page: 1,
+    page_size: 10,
+    recurso_uuid: '',
+    is_required_recurso_uuid: true,
 };
 
 const initialStateFormModal = {
@@ -42,7 +47,8 @@ export const MotivosReprovacaoPcContext = createContext({
     handleCloseModalForm: () => {},
 })
 
-export const MotivosReprovacaoPcProvider = ({children}) => {    
+export const MotivosReprovacaoPcProvider = ({children}) => {
+    const { selectedRecurso } = useAbasPorRecursoContext();
     const [filter, setFilter] = useState(initialFilter);
 
     const [currentPage, setCurrentPage] = useState(1);
@@ -70,6 +76,15 @@ export const MotivosReprovacaoPcProvider = ({children}) => {
     const handleCloseModalConfirmacaoExclusao = () => {
         setShowModalConfirmacaoExclusao({ is_open: false, motivo_uuid: '' });
     }
+
+    useEffect(() => {
+        const initialFilterWithRecurso = {
+            ...initialFilter,
+            recurso_uuid: selectedRecurso?.uuid || '',
+        }
+        
+        setFilter(initialFilterWithRecurso);
+    }, [selectedRecurso?.uuid])
 
     const contextValue = useMemo(() => {
         return {
