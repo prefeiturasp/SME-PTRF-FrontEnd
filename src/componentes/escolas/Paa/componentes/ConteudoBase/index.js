@@ -110,16 +110,6 @@ const ConteudoBase = ({ itemsBreadCrumb }) => {
       console.error("Erro ao iniciar ata do PAA:", error);
     });
 
-    if (paa.status === "EM_RETIFICACAO") {
-      // reativa a tab em caso de retificacao
-      // Se em retificação levantamento de prioridades(prioridades) estiver selecionada,
-      // considera o ref de location, caso contrário, considera tab de receitas por padrão
-      const tabAtiva =
-        initialStateRef.current?.activeTab === "prioridades"
-          ? "receitas"
-          : initialStateRef.current?.activeTab || "receitas";
-      setActiveTab(tabAtiva);
-    }
   }, [paa, navigate]);
 
   return (

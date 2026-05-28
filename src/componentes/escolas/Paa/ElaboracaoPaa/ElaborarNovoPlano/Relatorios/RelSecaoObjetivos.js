@@ -18,7 +18,7 @@ export const RelSecaoObjetivos = ({ paaVigente, onSalvarObjetivos, isSaving, pod
     }));
 
     setItems(novosItems);
-  }, [data, paaVigente]);
+  }, [data, paaVigente?.objetivos]);
 
   const getPayload = useCallback(() => {
     // Desconsiderar itens adicionados e removidos localmente (antes de salvar)
