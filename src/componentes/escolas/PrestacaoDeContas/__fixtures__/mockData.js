@@ -33,6 +33,7 @@ const statusPeriodo = {
         legenda_cor: 3,
         prestacao_de_contas_uuid: null,
         requer_retificacao: false,
+        possui_ata_retificacao: false,
         tem_acertos_pendentes: false
     },
     prestacao_conta: "",
