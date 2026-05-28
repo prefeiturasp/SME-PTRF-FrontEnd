@@ -1,4 +1,4 @@
-import { getTiposDeCredito } from "../../../../../../services/sme/Parametrizacoes.service";
+import { getTiposDeCredito, getTiposDeCreditoQueAceitamDetalhamento } from "../../../../../../services/sme/Parametrizacoes.service";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 
@@ -55,5 +55,27 @@ export const useGetTiposCredito = (params) => {
     const results = useMemo(() => data.results, [data]);
 
     return {isLoading: isFetching, isError, data, error, refetch, total, count, results}
+
+}
+
+
+export const useGetTiposCreditoQuePossuemDetalhamento = (params) => {
+    const { isFetching, isError, data = [], error, refetch } = useQuery({
+        queryKey: ['tipos-creditos-detalhamento', params?.recurso_uuid],
+        queryFn: ()=> {
+            if (!params?.recurso_uuid) {
+                return Promise.resolve([]);
+            }
+            
+            return getTiposDeCreditoQueAceitamDetalhamento(params?.recurso_uuid)
+        },
+        keepPreviousData: true,
+        staleTime: 5000, // 5 segundos
+        refetchOnWindowFocus: true, // Caso saia da aba e voltar ele refaz a requisição
+    });
+
+    const results = useMemo(() => data, [data]);
+
+    return {isLoading: isFetching, isError, data, error, refetch, results}
 
 }
