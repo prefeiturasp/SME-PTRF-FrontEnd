@@ -1,95 +1,265 @@
-import React, {memo, useCallback, useEffect, useState} from "react";
-import {DataTable} from 'primereact/datatable';
-import {Column} from 'primereact/column';
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faDownload, faEye} from "@fortawesome/free-solid-svg-icons";
-import {getDownloadArquivoDeReferencia} from "../../../../../services/dres/PrestacaoDeContas.service";
-import ModalVisualizarArquivoDeReferencia from "../ModalVisualizarArquivoDeReferencia";
-import { Tooltip as ReactTooltip } from "react-tooltip";
+import React, { memo, useCallback, useEffect, useState } from 'react';
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faDownload, faEye } from '@fortawesome/free-solid-svg-icons';
+import {
+    getDownloadArquivoDeReferencia,
+    getDocumentosPaa,
+} from '../../../../../services/dres/PrestacaoDeContas.service';
+import ModalVisualizarArquivoDeReferencia from '../ModalVisualizarArquivoDeReferencia';
+import { Tooltip as ReactTooltip } from 'react-tooltip';
+import { useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import './scss/ArquivosDeReferenciaVisualizacaoDownload.scss';
 
-const ArquivosDeReferenciaVisualizacaoDownload = ({prestacaoDeContas, infoAta}) => {
-
-    const {arquivos_referencia} = prestacaoDeContas
+const ArquivosDeReferenciaVisualizacaoDownload = ({ prestacaoDeContas, infoAta }) => {
+    const { arquivos_referencia } = prestacaoDeContas;
+    const { prestacao_conta_uuid } = useParams();
 
     const rowsPerPage = 10;
 
-    const [showModalVisualizarArquivoDeRerefencia, setShowModalVisualizarArquivoDeRerefencia] = useState(false)
-    const [uuidArquivoReferencia, setUuidArquivoReferencia] = useState('')
-    const [tipoArquivoReferencia, setTipoArquivoReferencia] = useState('')
-    const [nomeArquivoReferencia, setNomeArquivoReferencia] = useState('')
-    const [arquivoReferenciaPorConta, setArquivoReferenciaPorConta] = useState([])
+    const [showModalVisualizarArquivoDeRerefencia, setShowModalVisualizarArquivoDeRerefencia] =
+        useState(false);
+    const [uuidArquivoReferencia, setUuidArquivoReferencia] = useState('');
+    const [tipoArquivoReferencia, setTipoArquivoReferencia] = useState('');
+    const [nomeArquivoReferencia, setNomeArquivoReferencia] = useState('');
+    const [arquivoReferenciaPorConta, setArquivoReferenciaPorConta] = useState([]);
+
+    const [documentos, setDocumentos] = useState([]);
+
+    const formatarData = (data) => {
+        if (!data) return '';
+
+        if (data.includes('-') && data.length === 10 && data[4] === '-') {
+            const [ano, mes, dia] = data.split('-');
+            return `${dia}/${mes}/${ano}`;
+        }
+
+        return data;
+    };
 
     const handleClickDownloadArquivoDeReferencia = useCallback(async (rowData) => {
-        let nome_do_arquivo = `${rowData.nome}`
+        let nome_do_arquivo = `${rowData.nome}`;
         try {
             await getDownloadArquivoDeReferencia(nome_do_arquivo, rowData.uuid, rowData.tipo);
-            console.log("Download efetuado com sucesso");
         } catch (e) {
-            console.log("Erro ao efetuar o download ", e.response);
+            toast.error(`O download do arquivo falhou.`);
         }
-    }, [])
-
-    const handleClickVisualizarArquivoDeReferencia = useCallback((rowData) => {
-        setUuidArquivoReferencia(rowData.uuid)
-        setTipoArquivoReferencia(rowData.tipo)
-        setNomeArquivoReferencia(rowData.nome)
-        setShowModalVisualizarArquivoDeRerefencia(true)
-    }, [])
-
-    const handleCloseModalVisualizarArquivoDeRerefencia = useCallback(() => {
-        setShowModalVisualizarArquivoDeRerefencia(false)
     }, []);
 
-    const acoesTemplate = useCallback((rowData) => {
-        return (
-            <div className="d-flex align-items-center justify-content-start">
-                <button onClick={() => handleClickVisualizarArquivoDeReferencia(rowData)} className="btn-editar-membro">
-                    <span
-                        data-tooltip-id={`btn-visualizar-${rowData.uuid}`}
-                        data-tooltip-html="Visualização">
+    const handleClickVisualizarArquivoDeReferencia = useCallback((rowData) => {
+        setUuidArquivoReferencia(rowData.uuid);
+        setTipoArquivoReferencia(rowData.tipo);
+        setNomeArquivoReferencia(rowData.nome);
+        setShowModalVisualizarArquivoDeRerefencia(true);
+    }, []);
+
+    const handleCloseModalVisualizarArquivoDeRerefencia = useCallback(() => {
+        setShowModalVisualizarArquivoDeRerefencia(false);
+    }, []);
+
+    const acoesTemplate = useCallback(
+        (rowData) => {
+            let disabled = true;
+            if (rowData.uuid) disabled = false;
+            return (
+                <div className='d-flex align-items-center justify-content-start'>
+                    <button
+                        onClick={() => handleClickVisualizarArquivoDeReferencia(rowData)}
+                        className='btn-editar-membro'
+                        disabled={disabled}
+                    >
+                        <span
+                            data-tooltip-id={`btn-visualizar-${rowData.uuid}`}
+                            data-tooltip-html='Visualização'
+                        >
+                            <FontAwesomeIcon
+                                style={{ 
+                                    fontSize: '20px', 
+                                    marginRight: '0',
+                                    marginTop: '2px',
+                                    opacity: disabled ? 0.4 : 1,
+                                }}
+                                icon={faEye}
+                            />
+                        </span>
+                        <ReactTooltip id={`btn-visualizar-${rowData.uuid}`} />
+                    </button>
+                    <span> | </span>
+                    <button
+                        onClick={() => handleClickDownloadArquivoDeReferencia(rowData)}
+                        className='btn-editar-membro'
+                        disabled={disabled}
+                    >
+                        <span
+                            data-tooltip-id={`btn-download-${rowData.uuid}`}
+                            data-tooltip-html='Download'
+                        >
                         <FontAwesomeIcon
-                            style={{fontSize: '20px', marginRight: "0", marginTop: '2px'}}
-                            icon={faEye}
+                            style={{
+                                fontSize: '20px',
+                                marginRight: '0',
+                                opacity: disabled ? 0.4 : 1,
+                            }}
+                            icon={faDownload}
                         />
-                    </span>
-                    <ReactTooltip id={`btn-visualizar-${rowData.uuid}`}/>
-                </button>
-                <span> | </span>
-                <button onClick={() => handleClickDownloadArquivoDeReferencia(rowData)} className="btn-editar-membro">
-                    <FontAwesomeIcon
-                        style={{fontSize: '20px', marginRight: "0"}}
-                        icon={faDownload}
-                    />
-                </button>
-            </div>
-        )
-    }, [handleClickDownloadArquivoDeReferencia, handleClickVisualizarArquivoDeReferencia])
+                        </span>
+                        <ReactTooltip id={`btn-download-${rowData.uuid}`} />
+                    </button>
+                </div>
+            );
+        },
+        [handleClickDownloadArquivoDeReferencia, handleClickVisualizarArquivoDeReferencia],
+    );
 
     const getArquivosApresentadosEmTodasAsContas = useCallback(() => {
         if (arquivos_referencia && arquivos_referencia.length > 0 && infoAta) {
-            let arquivos_apresentados_em_todas_as_contas = arquivos_referencia.filter(element => element.arquivo_apresentado_em_todas_as_contas)
+            let arquivos_apresentados_em_todas_as_contas = arquivos_referencia.filter(
+                (element) => element.arquivo_apresentado_em_todas_as_contas,
+            );
 
             return arquivos_apresentados_em_todas_as_contas;
         }
 
         return [];
-    }, [arquivos_referencia, infoAta])
+    }, [arquivos_referencia, infoAta]);
 
     const getArquivosReferenciaPorConta = useCallback(() => {
         let arquivos_apresentados_em_todas_as_contas = getArquivosApresentadosEmTodasAsContas();
 
-        if (arquivos_referencia && arquivos_referencia.length > 0 && infoAta && infoAta.conta_associacao && infoAta.conta_associacao.uuid) {
-            let arquivos = arquivos_referencia.filter(element => element.conta_uuid === infoAta.conta_associacao.uuid)
-            arquivos = arquivos.filter(element => element.tipo !== "EB")
+        if (
+            arquivos_referencia &&
+            arquivos_referencia.length > 0 &&
+            infoAta &&
+            infoAta.conta_associacao &&
+            infoAta.conta_associacao.uuid
+        ) {
+            let arquivos = arquivos_referencia.filter(
+                (element) => element.conta_uuid === infoAta.conta_associacao.uuid,
+            );
+            arquivos = arquivos.filter((element) => element.tipo !== 'EB');
 
             arquivos = arquivos.concat(arquivos_apresentados_em_todas_as_contas);
-            setArquivoReferenciaPorConta(arquivos)
+            arquivos.push(...(documentos || []));
+            setArquivoReferenciaPorConta(arquivos);
         }
-    }, [arquivos_referencia, infoAta])
+    }, [arquivos_referencia, infoAta, documentos]);
+
+    function nomeDocumentoTemplate(rowData) {
+        const dataHora = rowData.nome.match(
+            /\d{2}[\/-]\d{2}[\/-]\d{4}\s\d{2}:\d{2}/
+        )?.[0];
+
+        const somenteData = rowData.nome.match(
+            /\d{2}[\/-]\d{2}[\/-]\d{4}/
+        )?.[0];
+        
+        const retificacao = /retific/i.test(rowData.nome);
+
+        if (
+            rowData.nome.includes('Documento PAA') &&
+            !retificacao
+        ) {
+            let textoGeracao = '';
+
+            if (dataHora) {
+                const [data, hora] = dataHora.split(' ');
+                textoGeracao = `Documento final gerado em ${data} às ${hora}`;
+            } else if (somenteData) {
+                textoGeracao = `Documento final gerado em ${somenteData}`;
+            }
+
+            return (
+                <div className="documento-paa">
+                    <span>Plano Anual </span>
+                    <small>
+                        {textoGeracao}
+                    </small>
+                </div>
+            );
+        } else if (
+            rowData.nome.includes('Documento PAA') &&
+            retificacao
+        ) {
+            const partes = rowData.nome.split(/gerado dia/i);
+            const dataEHora = partes[1]?.trim();
+
+            return (
+                <div className="documento-paa">
+                    <span>Plano Anual </span>
+                    <small>
+                        {`Documento retificado gerado em ${dataEHora}`}
+                    </small>
+                </div>
+            );
+        } else if (
+            rowData.nome.toLowerCase().includes('ata paa') &&
+            !rowData.nome.toLowerCase().includes('retificação')
+        ) {
+            const data =
+                rowData.nome.match(/\d{4}-\d{2}-\d{2}/)?.[0] ||
+                rowData.nome.match(/\d{2}[\/-]\d{2}[\/-]\d{4}/)?.[0] ||
+                '';
+
+            return (
+                <div className="documento-paa">
+                    <span>Ata de Apresentação do PAA </span>
+                    <small>
+                        {`Documento final gerado em ${formatarData(data)}`}
+                    </small>
+                </div>
+            );
+        } else if (
+            rowData.nome.toLowerCase().includes('ata') &&
+            rowData.nome.toLowerCase().includes('retificação')
+        ) {
+            const data =
+                rowData.nome.match(/\d{4}-\d{2}-\d{2}/)?.[0] ||
+                rowData.nome.match(/\d{2}[\/-]\d{2}[\/-]\d{4}/)?.[0] ||
+                '';
+
+            return (
+                <div className="documento-paa">
+                    <span>Ata de Retificação do PAA </span>
+                    <small>
+                        {`Documento retificado gerado em ${formatarData(data)}`}
+                    </small>
+                </div>
+            );
+        } else if (
+            rowData.nome === 'Plano Anual'
+        ) {
+            return (
+                <div className="documento-paa">
+                    <span>Documento PAA </span>
+                    <small>
+                        {`Documento pendente de geração.`}
+                    </small>
+                </div>
+            );
+        }
+
+        return <span>{rowData.nome}</span>;
+    }
+    useEffect(() => {
+        getArquivosReferenciaPorConta();
+    }, [getArquivosReferenciaPorConta]);
 
     useEffect(() => {
-        getArquivosReferenciaPorConta()
-    }, [getArquivosReferenciaPorConta])
+        async function carregarDocumentos() {
+            try {
+                const response = await getDocumentosPaa(prestacao_conta_uuid);
+                setDocumentos(response);
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        if (prestacao_conta_uuid) {
+            carregarDocumentos();
+        }
+    }, [prestacao_conta_uuid]);
 
     return (
         <>
@@ -99,15 +269,15 @@ const ArquivosDeReferenciaVisualizacaoDownload = ({prestacaoDeContas, infoAta}) 
                         value={arquivoReferenciaPorConta}
                         rows={rowsPerPage}
                         paginator={arquivos_referencia.length > rowsPerPage}
-                        paginatorTemplate="PrevPageLink PageLinks NextPageLink"
+                        paginatorTemplate='PrevPageLink PageLinks NextPageLink'
                         className='mt-4'
                     >
-                        <Column field="nome" header="Nome do arquivo"/>
+                        <Column field='nome' header='Nome do arquivo' body={nomeDocumentoTemplate} />
                         <Column
-                            field="acoes"
-                            header="Ações"
+                            field='acoes'
+                            header='Ações'
                             body={acoesTemplate}
-                            style={{width: '150px'}}
+                            style={{ width: '150px' }}
                         />
                     </DataTable>
                     <section>
@@ -120,11 +290,13 @@ const ArquivosDeReferenciaVisualizacaoDownload = ({prestacaoDeContas, infoAta}) 
                         />
                     </section>
                 </>
-            ) :
-                <p className='fonte-18 mt-3'><strong>Não existem arquivos de referência para serem exibidos</strong></p>
-            }
+            ) : (
+                <small className='fonte-18 mt-3'>
+                    <strong>Não existem arquivos de referência para serem exibidos</strong>
+                </small>
+            )}
         </>
-    )
-}
+    );
+};
 
-export default memo(ArquivosDeReferenciaVisualizacaoDownload)
+export default memo(ArquivosDeReferenciaVisualizacaoDownload);

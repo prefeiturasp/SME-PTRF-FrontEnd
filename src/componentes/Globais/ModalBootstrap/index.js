@@ -665,11 +665,19 @@ export const ModalFormBodyTextCloseButtonCabecalho = (props) => {
                 }
                 dialogClassName="custom-modal-width"
             >
-                <Modal.Header closeButton>
-                    <Modal.Title>{
-                        props.titulo
-                    }</Modal.Title>
-                </Modal.Header>
+            <Modal.Header>
+                <Modal.Title>
+                    {props.titulo}
+                </Modal.Title>
+
+            <button
+                type="button"
+                className="close"
+                aria-label="Fechar"
+                onClick={props.onHide}
+            ><FontAwesomeIcon icon={faTimes} /></button>
+        
+            </Modal.Header>
                 <Modal.Body> {
                     props.bodyText
                 } </Modal.Body>
