@@ -309,11 +309,16 @@ const Relatorios = ({ initialExpandedSections }) => {
   };
 
   const botaoGeracaoPreviaDesabilitado = () => {
+    const informacoes_usuario = visoesService.getPermissoes(["custom_change_paa"])
+
     const validacoes = [
       statusDocumento?.status === "EM_PROCESSAMENTO",
       statusDocumento?.status === "CONCLUIDO" &&
         statusDocumento?.versao === "FINAL",
     ];
+
+    if(informacoes_usuario) return false
+    
     return validacoes.includes(true);
   };
 
