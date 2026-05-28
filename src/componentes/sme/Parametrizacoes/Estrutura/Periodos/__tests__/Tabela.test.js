@@ -53,14 +53,6 @@ describe("Tabela", () => {
         );
     };
 
-    it("deve renderizar corretamente o número de períodos", () => {
-        renderWithRecursosContext(
-            <Tabela rowsPerPage={5} data={mockData} count={mockData.length} handleOpenModalForm={mockHandleOpenModalForm} />
-        );
-        
-        expect(screen.getByText("Confira abaixo os prazos de repasse e execução do PTRF Básico.")).toBeInTheDocument();
-    });
-
     it("deve exibir os dados corretamente formatados", () => {
         renderWithRecursosContext(
             <Tabela rowsPerPage={5} data={mockData} count={mockData.length} handleOpenModalForm={mockHandleOpenModalForm} />

@@ -1,5 +1,6 @@
 import {act} from "react";
 import { renderHook } from "@testing-library/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { usePeriodos } from "../hooks/usePeriodos";
 import { usePatchPeriodo } from "../hooks/usePatchPeriodo";
 import { useGetPeriodos } from "../hooks/useGetPeriodos";
@@ -19,6 +20,20 @@ const mockPatchMutation = { mutate: jest.fn() };
 const mockPostMutation = { mutate: jest.fn() };
 const mockDeleteMutation = { mutate: jest.fn() };
 
+const createWrapper = () => {
+    const queryClient = new QueryClient({
+        defaultOptions: {
+            queries: {
+                retry: false,
+            },
+        },
+    });
+
+    return ({ children }) => (
+        <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    );
+};
+
 describe("usePeriodos", () => {
     beforeEach(() => {
         usePatchPeriodo.mockReturnValue({ mutationPatch: mockPatchMutation });
@@ -28,7 +43,7 @@ describe("usePeriodos", () => {
     })
 
     it("deve abrir e fechar o modal de criar corretamente", () => {
-        const { result } = renderHook(() => usePeriodos());
+        const { result } = renderHook(() => usePeriodos(), { wrapper: createWrapper() });
         
         act(() => {
             result.current.handleOpenCreateModal();
@@ -42,7 +57,7 @@ describe("usePeriodos", () => {
     });
 
     it("deve abrir e fechar o modal de editar corretamente", () => {
-        const { result } = renderHook(() => usePeriodos());
+        const { result } = renderHook(() => usePeriodos(), { wrapper: createWrapper() });
         
         act(() => {
             result.current.handleOpenModalForm();
@@ -57,21 +72,21 @@ describe("usePeriodos", () => {
     });
 
     it("deve definir e limpar filtros corretamente", () => {
-        const { result } = renderHook(() => usePeriodos());
+        const { result } = renderHook(() => usePeriodos(), { wrapper: createWrapper() });
         
         act(() => {
             result.current.handleChangeFiltros("filtrar_por_referencia", "2023");
         });
-        expect(result.current.stateFiltros.filtrar_por_referencia).toBe("2023");
+        expect(result.current.draftFilters.filtrar_por_referencia).toBe("2023");
         
         act(() => {
             result.current.limpaFiltros();
         });
-        expect(result.current.stateFiltros.filtrar_por_referencia).toBe("");
+        expect(result.current.draftFilters.filtrar_por_referencia).toBe("");
     });
 
     it("deve chamar a mutação de delete ao clicar no handleDelete", async () => {
-        const { result } = renderHook(() => usePeriodos());
+        const { result } = renderHook(() => usePeriodos(), { wrapper: createWrapper() });
         
         await act(async () => {
             await result.current.handleDelete("fake-uuid");
@@ -84,7 +99,7 @@ describe("usePeriodos", () => {
     it("deve chamar a mutação de post quando as datas atenderem as regras", async () => {
         getDatasAtendemRegras.mockResolvedValue({ valido: true });
         
-        const { result } = renderHook(() => usePeriodos());
+        const { result } = renderHook(() => usePeriodos(), { wrapper: createWrapper() });
         
         await act(async () => {
             await result.current.handleSubmitFormModal({
@@ -104,7 +119,7 @@ describe("usePeriodos", () => {
     it("deve chamar a mutação de patch quando as datas atenderem as regras", async () => {
         getDatasAtendemRegras.mockResolvedValue({ valido: true });
         
-        const { result } = renderHook(() => usePeriodos());
+        const { result } = renderHook(() => usePeriodos(), { wrapper: createWrapper() });
         
         await act(async () => {
             await result.current.handleSubmitFormModal({
@@ -125,7 +140,7 @@ describe("usePeriodos", () => {
         const retornoInvalidoMock = { valido: false, mensagem: "Datas não atendem as regras" }
         getDatasAtendemRegras.mockResolvedValue(retornoInvalidoMock);
         
-        const { result } = renderHook(() => usePeriodos());
+        const { result } = renderHook(() => usePeriodos(), { wrapper: createWrapper() });
         
         await act(async () => {
             await result.current.handleSubmitFormModal({
