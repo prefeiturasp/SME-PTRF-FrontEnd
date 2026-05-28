@@ -2,19 +2,20 @@ import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getTodosPeriodos } from "../../../../../../services/sme/Parametrizacoes.service";
 
-export const useGetPeriodos = ({ filters }) => {
+export const useGetPeriodosForm = ({ filters, is_enabled = false }) => {
     const { isFetching, isError, data = [], error, refetch } = useQuery({
-        queryKey: ['periodos', filters?.recurso_uuid, filters?.filtrar_por_referencia],
+        queryKey: ['periodos-form'],
         queryFn: ()=> {
             if (filters?.is_required_recurso_uuid && !filters?.recurso_uuid) {
                 return Promise.resolve([]);
             }
 
-            return getTodosPeriodos(filters?.filtrar_por_referencia, filters?.recurso_uuid)
+            return getTodosPeriodos('', filters?.recurso_uuid)
         },
         keepPreviousData: true,
         staleTime: 5000, // 5 segundos
-        refetchOnWindowFocus: true, // Caso saia da aba e voltar ele refaz a requisição
+        refetchOnWindowFocus: false, // Caso saia da aba e voltar ele refaz a requisição
+        enabled: is_enabled
     });
     const count = useMemo(() => data.length, [data]);
     return {isLoading: isFetching, isError, data, error, refetch, count}
