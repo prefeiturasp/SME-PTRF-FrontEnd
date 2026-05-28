@@ -2,8 +2,7 @@ import {memo, useCallback } from "react";
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import moment from "moment";
-import { EditIconButton, IconButton, VisualizarIconButton} from "../../../../Globais/UI/Button";
-import { useAbasPorRecursoContext } from "../../componentes/AbasPorRecurso/hooks/useAbasPorRecursoContext";
+import { EditIconButton, VisualizarIconButton} from "../../../../Globais/UI/Button";
 
 const Tabela = ({
     rowsPerPage, 
@@ -20,8 +19,6 @@ const Tabela = ({
         )
     }, []);
 
-    const { selectedRecurso } = useAbasPorRecursoContext();
-
     const acoesTemplate = (rowData) => {
         return (
             rowData.editavel ? (
@@ -37,22 +34,6 @@ const Tabela = ({
     }
 
     return(
-        <>
-        <div className="d-flex justify-content-between align-items-end mb-3">
-            <div>
-                <h5 className="font-weight-bold">{selectedRecurso?.nome}</h5>
-                <p className="m-0">Confira abaixo os prazos de repasse e execução do {selectedRecurso?.nome_exibicao}.</p>
-            </div>
-
-            <IconButton
-                icon="faPlus"
-                iconProps={{ style: {fontSize: '15px', marginRight: "5", color:"#fff"} }}
-                label="Adicionar período"
-                onClick={() => handleOpenCreateModal(selectedRecurso)}
-                variant="success"
-                disabled={!tem_permissao_edicao_painel_parametrizacoes}
-            />
-        </div>
         <DataTable  
             value={data}
             rows={rowsPerPage}
@@ -92,7 +73,6 @@ const Tabela = ({
                 body={acoesTemplate}
             />
         </DataTable>
-        </>
 
     );
 };

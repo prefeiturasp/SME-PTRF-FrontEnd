@@ -6,13 +6,14 @@ import Loading from "../../../../../utils/Loading";
 import { usePeriodos } from "./hooks/usePeriodos";
 import { AbasPorRecurso } from "../../componentes/AbasPorRecurso";
 import { ModalConfirmarExclusao } from "../../../../Globais/ModalAntDesign/ModalConfirmarExclusao";
+import { TopoComBotoes } from "./TopoComBotoes";
 
 export const Periodos = () => {
     const {
         modalForm,
         showModalConfirmDeletePeriodo,
         erroDatasAtendemRegras,
-        stateFiltros,
+        draftFilters,
         isLoading,
         results,
         TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES,
@@ -27,6 +28,7 @@ export const Periodos = () => {
         setShowModalConfirmDeletePeriodo,
         setErroDatasAtendemRegras,
         handleCloseModalConfirmDeletePeriodo,
+        resultsPeriodosForm,
     } = usePeriodos();
     return(
         <PaginasContainer>
@@ -43,15 +45,16 @@ export const Periodos = () => {
                 ) : (
                     <div className="page-content-inner">
 
+                    <AbasPorRecurso />
+
+                    <TopoComBotoes handleOpenCreateModal={handleOpenCreateModal} />
+
                     <Filtros
-                        stateFiltros={stateFiltros}
+                        stateFiltros={draftFilters}
                         handleChangeFiltros={handleChangeFiltros}
                         handleSubmitFiltros={handleSubmitFiltros}
                         limpaFiltros={limpaFiltros}
                     />
-
-
-                    <AbasPorRecurso />
 
                     <Tabela 
                         rowsPerPage={10} 
@@ -66,8 +69,8 @@ export const Periodos = () => {
                         stateFormModal={modalForm}
                         onHandleClose={handleClose}
                         onSubmit={handleSubmitFormModal}
-                        deveValidarPeriodoAnterior={results.length > 1 ? true : false}
-                        periodos={results}
+                        deveValidarPeriodoAnterior={results.length > 1}
+                        periodos={resultsPeriodosForm ?? []}
                         setErroDatasAtendemRegras={setErroDatasAtendemRegras}
                         erroDatasAtendemRegras={erroDatasAtendemRegras}
                         setShowModalConfirmDeletePeriodo={setShowModalConfirmDeletePeriodo}

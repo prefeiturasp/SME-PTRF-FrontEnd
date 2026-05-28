@@ -2,6 +2,7 @@ import React from "react";
 import { fireEvent, render, screen, renderHook } from "@testing-library/react";
 import { Periodos } from "../index"; 
 import { usePeriodos } from "../hooks/usePeriodos";
+import { AbasPorRecursoContext } from "../../../componentes/AbasPorRecurso/context/Recursos";
 
 jest.mock("../../../../../../paginas/PaginasContainer", () => ({
     PaginasContainer: (({ children }) => <div data-testid="paginas-container">{children}</div>)
@@ -23,10 +24,6 @@ jest.mock("../ModalFormPeriodos", () => ({
 
 jest.mock("../../../componentes/AbasPorRecurso", () => ({
     AbasPorRecurso: () => <div data-testid="abas-por-recurso"></div>,
-}));
-
-jest.mock("../../../componentes/AbasPorRecurso/context/Recursos", () => ({
-    AbasPorRecursoProvider: ({ children }) => <div data-testid="recursos-provider">{children}</div>,
 }));
 
   
@@ -63,8 +60,27 @@ jest.mock("../hooks/usePeriodos", () => ({
 }));
 
 describe("Periodos", () => {
+
+  const defaultContextValue = {
+        selectedRecurso: {
+            nome: "Programa de Transferência de Recursos Financeiros (PTRF) - Básico",
+            nome_exibicao: "PTRF Básico",
+        },
+        setSelectedRecurso: jest.fn(),
+        clickBtnEscolheOpcao: {},
+        setClickBtnEscolheOpcao: jest.fn(),
+    };
+
+    const renderComponent = () => {
+        return render(
+            <AbasPorRecursoContext.Provider value={defaultContextValue}>
+                <Periodos />
+            </AbasPorRecursoContext.Provider>
+        );
+    };
+    
   it("deve renderizar o título e os componentes principais", () => {
-    render(<Periodos />);
+    renderComponent();
     
     expect(screen.getByTestId("paginas-container")).toBeInTheDocument();
     expect(screen.getByText("Períodos")).toBeInTheDocument();
@@ -75,7 +91,7 @@ describe("Periodos", () => {
 
   describe("Periodos", () => {
     it("deve exibir os modais de exclusão quando os estados estiverem ativos", () => {
-      render(<Periodos />);
+      renderComponent();
   
       // Verifica se o modal de confirmação de exclusão está no documento
       expect(screen.getByText("Excluir Período")).toBeInTheDocument();
@@ -85,7 +101,7 @@ describe("Periodos", () => {
     });
   
     it("deve fechar o modal de confirmação de exclusão ao clicar em 'Cancelar'", () => {
-        render(<Periodos />);
+        renderComponent();
     
         const cancelButton = screen.getByText("Cancelar");
         fireEvent.click(cancelButton);
@@ -94,7 +110,7 @@ describe("Periodos", () => {
       });
   
     it("deve chamar a função de exclusão ao clicar em 'Excluir'", () => {
-      render(<Periodos />);
+      renderComponent();
       const excluirButton = screen.getByText("Excluir");
       fireEvent.click(excluirButton);
   
