@@ -317,7 +317,7 @@ const Relatorios = ({ initialExpandedSections }) => {
         statusDocumento?.versao === "FINAL",
     ];
 
-    if(informacoes_usuario) return false
+    if(!informacoes_usuario) return true
     
     return validacoes.includes(true);
   };
