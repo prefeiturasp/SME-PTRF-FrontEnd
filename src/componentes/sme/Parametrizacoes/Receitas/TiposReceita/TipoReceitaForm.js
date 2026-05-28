@@ -108,8 +108,8 @@ export const TipoReceitaForm = () => {
           aceita_custeio: data.aceita_custeio,
           aceita_livre: data.aceita_livre,
         }),
-        detalhes: data.detalhes.map((detalhe) => detalhe.id),
-        detalhesOpcoes: data.detalhes,
+        detalhes: data.detalhes_tipo_receita.map((detalhe) => detalhe.id),
+        detalhesOpcoes: data.detalhes_tipo_receita,
         selecionar_todas: data.uso_associacao === "Todas",
         uso_associacao: data.uso_associacao,
       });
