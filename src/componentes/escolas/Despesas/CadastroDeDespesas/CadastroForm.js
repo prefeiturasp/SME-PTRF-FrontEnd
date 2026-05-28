@@ -6,6 +6,9 @@ import {
     periodoFechadoImposto
 } from "../../../../utils/ValidacoesAdicionaisFormularios";
 import {
+    getErrorMessage
+} from "../../../../utils/obtemMsgErroAxios";
+import {
     getDespesasTabelas,
     criarDespesa,
     alterarDespesa,
@@ -718,7 +721,7 @@ export const CadastroForm = ({verbo_http, veioDeSituacaoPatrimonial}) => {
                                 }
 
                                 aux.getPath(origem, parametroLocation);
-                                
+
                             }
                             else {
                                 handleErroCriarDespesa(response);
@@ -757,14 +760,13 @@ export const CadastroForm = ({verbo_http, veioDeSituacaoPatrimonial}) => {
             if (response.data.hasOwnProperty("rateios")) {
                 const rateios = response.data.rateios[0];
                 mensagemErro += " Rateios: " + rateios.mensagem.map((msg) => msg).join(", ")
-            }
-            if(response.data.hasOwnProperty("mensagem")){
-                if(response.data.mensagem.length){
-                    mensagemErro = response.data.mensagem[0];
-                }
+            } else {
+                const error = {response};
+                mensagemErro = getErrorMessage(error, "Ocorreu um erro criar/editar despesa.");
             }
         }
-        toastCustom.ToastCustomError('Erro ao tentar salvar despesa.', mensagemErro)                            
+        
+        toastCustom.ToastCustomError('Erro ao tentar salvar despesa.', mensagemErro)
     };
 
     const validateFormDespesas = async (values) => {
