@@ -13,6 +13,7 @@ export const usePatchPaa = () => {
       toastCustom.ToastCustomSuccess("Sucesso!", "Item salvo com sucesso!");
 
       // invalidar caches
+      queryClient.invalidateQueries({ queryKey: ["retrieve-paa"] });
       queryClient.invalidateQueries({ queryKey: ["paaVigente"] });
       queryClient.invalidateQueries({ queryKey: ["objetivosPaa"] });
       queryClient.invalidateQueries({ queryKey: ["paa", variables.uuid] });

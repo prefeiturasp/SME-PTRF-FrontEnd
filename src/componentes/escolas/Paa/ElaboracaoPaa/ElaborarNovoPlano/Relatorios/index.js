@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Space, Spin } from "antd";
 import { useNavigate } from "react-router-dom";
 import "./styles.css";
@@ -14,6 +14,7 @@ import { ASSOCIACAO_UUID } from "../../../../../../services/auth.service";
 import { RenderSecao } from "./RenderSecao";
 import { toastCustom } from "../../../../../Globais/ToastCustom";
 import Loading from "../../../../../../utils/Loading";
+import { TagRetificacao } from "../../../componentes/TagRetificacao";
 import {
   getDownloadArquivoPrevia,
   getDownloadArquivoFinal,
@@ -25,6 +26,7 @@ import {
   usePostPaaGeracaoDocumentoFinal,
 } from "./hooks/usePostPaaGeracaoDocumento";
 
+import { usePaaContext } from "../../../componentes/PaaContext";
 import {
   ModalInfoGeracaoDocumentoPrevia,
   ModalInfoGeracaoDocumentoFinal,
@@ -34,7 +36,9 @@ import {
 import { visoesService } from "../../../../../../services/visoes.service";
 
 const Relatorios = ({ initialExpandedSections }) => {
-  const podeEditar = visoesService.getPermissoes(["custom_change_paa"]);
+  const { paa, refetch } = usePaaContext();
+  const { alteracoes: historicoAlteracoes } = paa;
+  const podeEditar = useMemo(() => visoesService.getPermissoes(["custom_change_paa"]), []);
   const navigate = useNavigate();
   const defaultExpandedState = {
     planoAnual: false,
@@ -49,7 +53,7 @@ const Relatorios = ({ initialExpandedSections }) => {
     ...(initialExpandedSections || {}),
   }));
 
-  const associacaoUuid = localStorage.getItem(ASSOCIACAO_UUID);
+  const associacaoUuid = useMemo(() => localStorage.getItem(ASSOCIACAO_UUID), []);
   const { textosPaa, isLoading, isError } = useGetTextosPaa();
   const { paaVigente, isLoading: isLoadingPaa } =
     useGetPaaVigente(associacaoUuid);
@@ -58,6 +62,19 @@ const Relatorios = ({ initialExpandedSections }) => {
   );
 
   const timerRef = useRef(null);
+  const timeoutRef = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      clearTimeout(timeoutRef.current);
+      clearInterval(timerRef.current);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!paaVigente?.uuid) return;
+    refetch();
+  }, [paaVigente, refetch]);
 
   const [
     openModalInfoGeracaoDocumentoPrevia,
@@ -88,7 +105,7 @@ const Relatorios = ({ initialExpandedSections }) => {
   const verificaStatusAteConcluirGeracao = async () => {
     await refetchStatusDoc();
 
-    setTimeout(() => {
+    timeoutRef.current = setTimeout(() => {
       timerRef.current = setInterval(() => {
         refetchStatusDoc();
       }, 5000);
@@ -106,7 +123,7 @@ const Relatorios = ({ initialExpandedSections }) => {
     ) {
       navigate("/paa-vigente-e-anteriores");
     }
-  }, [statusDocumento]);
+  }, [statusDocumento, paaVigente?.status, navigate]);
 
   const checkStatusGeracaoDocumentoPrevia = async () => {
     setOpenModalInfoGeracaoDocumentoPrevia(true);
@@ -225,16 +242,26 @@ const Relatorios = ({ initialExpandedSections }) => {
     }
   };
 
-  const secoesConfig = {
+  const secoesConfig = useMemo(() => ({
     introducao: {
-      titulo: "I. Introdução",
+      titulo: (
+        <>
+          <span className="mr-2">I. Introdução</span>
+          {!!historicoAlteracoes?.texto_introducao && <TagRetificacao />}
+        </>
+      ),
       chave: "introducao",
       campoPaa: "texto_introducao",
       textosPaa: ["introducao_do_paa_ue_1", "introducao_do_paa_ue_2"],
       temEditor: true,
     },
     objetivos: {
-      titulo: "II. Objetivos",
+      titulo: (
+        <>
+          <span className="mr-2">II. Objetivos</span>
+          {(!!historicoAlteracoes?.objetivos_paa || !!historicoAlteracoes?.objetivos_globais) && <TagRetificacao />}
+        </>
+      ),
       chave: "objetivos",
     },
     componentes: {
@@ -242,13 +269,23 @@ const Relatorios = ({ initialExpandedSections }) => {
       chave: "componentes",
     },
     conclusao: {
-      titulo: "IV. Conclusão",
+      titulo: (
+        <>
+          <span className="mr-2">IV. Conclusão</span>
+          {!!historicoAlteracoes?.texto_conclusao && <TagRetificacao />}
+        </>
+      ),
       chave: "conclusao",
       campoPaa: "texto_conclusao",
       textosPaa: ["conclusao_do_paa_ue_1", "conclusao_do_paa_ue_2"],
       temEditor: true,
     },
-  };
+  }), [
+    historicoAlteracoes?.texto_introducao,
+    historicoAlteracoes?.objetivos_paa,
+    historicoAlteracoes?.objetivos_globais,
+    historicoAlteracoes?.texto_conclusao,
+  ]);
 
   const renderSecao = (secaoKey, config, podeEditar) => {
     const isExpanded = expandedSections[secaoKey];
@@ -443,7 +480,9 @@ const Relatorios = ({ initialExpandedSections }) => {
           {/* Ata */}
           <div className="documento-item">
             <div className="documento-info">
-              <div className="documento-nome">Ata de Apresentação do PAA</div>
+              <div className="documento-nome">
+                {paa.status === "EM_RETIFICACAO" ? "Ata de Retificação do PAA" : "Ata de Apresentação do PAA"}
+              </div>
             </div>
             <div className="documento-actions">
               <Space>
