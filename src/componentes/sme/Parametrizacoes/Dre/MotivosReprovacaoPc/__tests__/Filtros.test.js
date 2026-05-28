@@ -8,7 +8,7 @@ describe('Filtros', () => {
   const mockSetFilter = jest.fn();
   const mockSetCurrentPage = jest.fn();
   const mockSetFirstPage = jest.fn();
-  const initialFilter = { motivo: '' };
+  const initialFilter = { motivo: '', page: 1, page_size: 10 };
 
   const renderComponent = () => {
     return render(
@@ -45,7 +45,7 @@ describe('Filtros', () => {
     expect(input.value).toBe('Teste');
   });
 
-  test('Deve chamar setFilter, setCurrentPage e setFirstPage com os valores corretos quando o botão "Filtrar" é clicado', () => {
+  test('Deve chamar setFilter com os valores corretos quando o botão "Filtrar" é clicado', () => {
     renderComponent();
     const input = screen.getByPlaceholderText('Busque por motivo');
     fireEvent.change(input, { target: { name: 'motivo', value: 'Teste' } });
@@ -54,14 +54,18 @@ describe('Filtros', () => {
     fireEvent.click(filtrarButton);
 
     expect(mockSetFilter).toHaveBeenCalledTimes(1);
-    expect(mockSetFilter).toHaveBeenCalledWith({ motivo: 'Teste' });
-    expect(mockSetCurrentPage).toHaveBeenCalledTimes(1);
-    expect(mockSetCurrentPage).toHaveBeenCalledWith(1);
-    expect(mockSetFirstPage).toHaveBeenCalledTimes(1);
-    expect(mockSetFirstPage).toHaveBeenCalledWith(0);
+    
+    const updater = mockSetFilter.mock.calls[0][0];
+    
+    expect(typeof updater).toBe('function');
+    expect(updater({ recurso_uuid: 'abc' })).toEqual({
+      ...initialFilter,
+      motivo: "Teste",
+      recurso_uuid: 'abc',
+    });
   });
 
-  test('Deve chamar setFilter, setCurrentPage e setFirstPage com o valor inicial quando o botão "Limpar" é clicado', () => {
+  test('Deve chamar setFilter com o valor inicial quando o botão "Limpar" é clicado', () => {
     renderComponent();
     const input = screen.getByPlaceholderText('Busque por motivo');
     fireEvent.change(input, { target: { name: 'motivo', value: 'Teste' } });
@@ -70,11 +74,15 @@ describe('Filtros', () => {
     fireEvent.click(limparButton);
 
     expect(mockSetFilter).toHaveBeenCalledTimes(1);
-    expect(mockSetFilter).toHaveBeenCalledWith(initialFilter);
-    expect(mockSetCurrentPage).toHaveBeenCalledTimes(1);
-    expect(mockSetCurrentPage).toHaveBeenCalledWith(1);
-    expect(mockSetFirstPage).toHaveBeenCalledTimes(1);
-    expect(mockSetFirstPage).toHaveBeenCalledWith(0);
+    // expect(mockSetFilter).toHaveBeenCalledWith((prevState) => ({...initialFilter, recurso_uuid: prevState.recurso_uuid}));
+
+    const updater = mockSetFilter.mock.calls[0][0];
+    
+    expect(typeof updater).toBe('function');
+    expect(updater({ recurso_uuid: 'abc' })).toEqual({
+      ...initialFilter,
+      recurso_uuid: 'abc',
+    });
     expect(input.value).toBe("");
   });
 
@@ -87,7 +95,8 @@ describe('Filtros', () => {
         expect(divPrincipal).toHaveClass('d-flex')
         expect(divPrincipal).toHaveClass('bd-highlight')
         expect(divPrincipal).toHaveClass('align-items-end')
-        expect(divPrincipal).toHaveClass('mt-2')
+        expect(divPrincipal).toHaveClass('mt-4')
+        expect(divPrincipal).toHaveClass('mb-4')
 
         expect(form).toBeInTheDocument()
         expect(form).toBeInstanceOf(HTMLFormElement)
