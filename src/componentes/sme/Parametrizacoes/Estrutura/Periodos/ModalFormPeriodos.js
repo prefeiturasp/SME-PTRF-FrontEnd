@@ -187,7 +187,7 @@ const ModalFormPeriodos = ({
                                         className="form-control"
                                     >
                                         <option data-qa="option-periodo-anterior-vazio" value=''>Selecione um período</option>
-                                        {periodos && periodos.filter(element=> element.uuid !== values.uuid).map((periodo) =>
+                                        {periodos?.filter(element=> element.uuid !== values.uuid).map((periodo) =>
                                             <option
                                                 data-qa={`option-periodo-anterior-${periodo.uuid}`}
                                                 key={periodo.uuid}
