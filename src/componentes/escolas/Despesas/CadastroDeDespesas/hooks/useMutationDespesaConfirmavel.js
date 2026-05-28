@@ -50,7 +50,7 @@ export const useMutationDespesaConfirmavel = (onSuccess, onError, setLoading, se
         } else {
           // Se for erro de confirmação, não ativa loading ainda
           // O loading será ativado apenas quando o usuário confirmar
-          // Não precisa desativar porque nunca foi ativado na primeira chamada          
+          // Não precisa desativar porque nunca foi ativado na primeira chamada
         }
       },
     },
@@ -98,7 +98,7 @@ export const useMutationDespesaConfirmavel = (onSuccess, onError, setLoading, se
         } else {
           // Se for erro de confirmação, não ativa loading ainda
           // O loading será ativado apenas quando o usuário confirmar
-          // Não precisa desativar porque nunca foi ativado na primeira          
+          // Não precisa desativar porque nunca foi ativado na primeira chamada
         }
       },
     },
