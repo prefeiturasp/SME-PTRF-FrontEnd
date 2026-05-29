@@ -1,10 +1,16 @@
-import React, { useState} from "react";
+import React, { useEffect, useState} from "react";
 import { useMotivosReprovacaoPcContext } from "../hooks/useMotivoReprovacaoContext"
+import { useAbasPorRecursoContext } from "../../../componentes/AbasPorRecurso/hooks/useAbasPorRecursoContext";
 
 export const Filtros = () => {
+    const { selectedRecurso } = useAbasPorRecursoContext();
 
-    const {setFilter, initialFilter, setCurrentPage, setFirstPage} = useMotivosReprovacaoPcContext();
+    const { setFilter, initialFilter } = useMotivosReprovacaoPcContext();
     const [formFilter, setFormFilter] = useState(initialFilter);
+
+    useEffect(() => {
+        setFormFilter(initialFilter)
+    }, [selectedRecurso?.uuid])
 
     const handleChangeFormFilter = (name, value) => {
         setFormFilter({
@@ -14,16 +20,18 @@ export const Filtros = () => {
     };
 
     const handleSubmitFormFilter = () => {
-        setCurrentPage(1)
-        setFirstPage(0)
-        setFilter(formFilter);
+        setFilter(prevState => ({
+            ...formFilter,
+            recurso_uuid: prevState?.recurso_uuid
+        }));
     };
 
     const clearFilter = () => {
-        setCurrentPage(1)
-        setFirstPage(0)
         setFormFilter(initialFilter);
-        setFilter(initialFilter);
+        setFilter(prevState => ({
+            ...initialFilter,
+            recurso_uuid: prevState?.recurso_uuid
+        }));
     };
 
     const handleSubmitForm = (e) => {
@@ -33,7 +41,7 @@ export const Filtros = () => {
     }
     
     return (
-        <div className="d-flex bd-highlight align-items-end mt-2">
+        <div className="d-flex bd-highlight align-items-end mt-4 mb-4">
             <div className="flex-grow-1 bd-highlight mr-4">
                 <form onSubmit={handleSubmitForm} id="form-filtros-motivos-reprovacao-pc" data-qa="form-filtros-motivos-reprovacao-pc">
                     <label htmlFor="motivo">Filtrar por motivo de reprovação de PC</label>

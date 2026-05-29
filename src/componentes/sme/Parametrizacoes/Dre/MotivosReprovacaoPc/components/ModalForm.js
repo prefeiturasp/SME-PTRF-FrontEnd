@@ -7,6 +7,9 @@ import {RetornaSeTemPermissaoEdicaoPainelParametrizacoes} from "../../../../Para
 import { useMotivosReprovacaoPcContext } from "../hooks/useMotivoReprovacaoContext";
 import { useRecursoSelecionadoContext } from "../../../../../../context/RecursoSelecionado";
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
+
 export const ModalForm = ({handleSubmitFormModal}) => {
     const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES = RetornaSeTemPermissaoEdicaoPainelParametrizacoes()
     const { stateFormModal, bloquearBtnSalvarForm, handleOpenModalConfirmacaoExclusao, handleCloseModalForm} = useMotivosReprovacaoPcContext();
@@ -105,6 +108,7 @@ export const ModalForm = ({handleSubmitFormModal}) => {
                                             disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                             data-testid="btn-excluir-motivo"
                                         >
+                                            <FontAwesomeIcon icon={faXmark} style={{ marginRight: "8px", color: "white", fontWeight: "bold" }} />
                                             Excluir
                                         </button>
                                     }
