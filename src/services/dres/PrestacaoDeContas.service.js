@@ -151,77 +151,86 @@ export const getMotivosReprovacao = async (recurso_uuid = "") => {
 };
 
 export const getVisualizarArquivoDeReferencia = async (nome_do_arquivo, uuid, tipo) => {
-
     let url;
-    if (tipo === "DF"){
-        url = `/api/demonstrativo-financeiro/${uuid}/pdf`
-    }else if(tipo === "RB"){
-        url = `/api/relacao-bens/${uuid}/pdf`
-    }else if(tipo === "EB"){
-        url = `/api/conciliacoes/${uuid}/extrato-bancario`
-    } else if(tipo === "AP" || tipo === "APR"){
-        url = `api/atas-associacao/download-arquivo-ata/?ata-uuid=${uuid}`
+    if (tipo === 'DF') {
+        url = `/api/demonstrativo-financeiro/${uuid}/pdf`;
+    } else if (tipo === 'RB') {
+        url = `/api/relacao-bens/${uuid}/pdf`;
+    } else if (tipo === 'EB') {
+        url = `/api/conciliacoes/${uuid}/extrato-bancario`;
+    } else if (tipo === 'AP' || tipo === 'APR') {
+        url = `api/atas-associacao/download-arquivo-ata/?ata-uuid=${uuid}`;
+    } else if (tipo === 'PDF' && nome_do_arquivo.toLowerCase().includes('ata paa')) {
+        url = `api/atas-paa/download-arquivo-ata-paa/?ata-paa-uuid=${uuid}`;
+    } else if (tipo === 'PDF' && nome_do_arquivo.toLowerCase().includes('documento paa')) {
+        url = `/api/documentos-paa/${uuid}/download/`;
     }
 
-    return (await api
-            .get(url, {
-                responseType: 'blob',
-                timeout: 30000,
-                headers: {
-                    'Authorization': `JWT ${localStorage.getItem(TOKEN_ALIAS)}`,
-                    'Content-Type': 'application/json',
-                }
-            })
-            .then((response) => {
-                //Create a Blob from the arquivo Stream
-                const file = new Blob([response.data], {type: response.data.type});
-                //Build a URL from the file
-                const fileURL = URL.createObjectURL(file);
-                let objeto = document.querySelector( "#visualizar_arquivo_de_referencia" );
-                objeto.data = fileURL;
-            }).catch(error => {
-                return error.response;
-            })
-    )
+    return await api
+        .get(url, {
+            responseType: 'blob',
+            timeout: 30000,
+            headers: {
+                Authorization: `JWT ${localStorage.getItem(TOKEN_ALIAS)}`,
+                'Content-Type': 'application/json',
+            },
+        })
+        .then((response) => {
+            //Create a Blob from the arquivo Stream
+            const file = new Blob([response.data], { type: response.data.type });
+            //Build a URL from the file
+            const fileURL = URL.createObjectURL(file);
+            let objeto = document.querySelector('#visualizar_arquivo_de_referencia');
+            objeto.data = fileURL;
+        })
+        .catch((error) => {
+            return error.response;
+        });
 };
 
 export const getDownloadArquivoDeReferencia = async (nome_do_arquivo, uuid, tipo) => {
     let url;
-    if (tipo === "DF"){
-        url = `/api/demonstrativo-financeiro/${uuid}/pdf`
-    }else if(tipo === "RB"){
-        url = `/api/relacao-bens/${uuid}/pdf`
-    }else if(tipo === "EB"){
-        url = `/api/conciliacoes/${uuid}/extrato-bancario`
-    }else if(tipo === "AP" || tipo === "APR"){
-        url = `api/atas-associacao/download-arquivo-ata/?ata-uuid=${uuid}`
+    if (tipo === 'DF') {
+        url = `/api/demonstrativo-financeiro/${uuid}/pdf`;
+    } else if (tipo === 'RB') {
+        url = `/api/relacao-bens/${uuid}/pdf`;
+    } else if (tipo === 'EB') {
+        url = `/api/conciliacoes/${uuid}/extrato-bancario`;
+    } else if (tipo === 'AP' || tipo === 'APR') {
+        url = `api/atas-associacao/download-arquivo-ata/?ata-uuid=${uuid}`;
+    } else if (tipo === 'PDF' && nome_do_arquivo.toLowerCase().includes('ata paa')) {
+        url = `api/atas-paa/download-arquivo-ata-paa/?ata-paa-uuid=${uuid}`;
+    } else if (tipo === 'PDF' && nome_do_arquivo.toLowerCase().includes('documento paa')) {
+        url = `/api/documentos-paa/${uuid}/download/`;
     }
+    return await api
+        .get(url, {
+            responseType: 'blob',
+            timeout: 30000,
+            headers: {
+                Authorization: `JWT ${localStorage.getItem(TOKEN_ALIAS)}`,
+                'Content-Type': 'application/json',
+            },
+        })
+        .then((response) => {
+            const nomeArquivoFinal = nome_do_arquivo?.toLowerCase().endsWith('.pdf')
+                ? nome_do_arquivo
+                : `${nome_do_arquivo}.pdf`;
 
-    return (await api
-            .get(url, {
-                responseType: 'blob',
-                timeout: 30000,
-                headers: {
-                    'Authorization': `JWT ${localStorage.getItem(TOKEN_ALIAS)}`,
-                    'Content-Type': 'application/json',
-                }
-            })
-            .then((response) => {
-                //Create a Blob from the arquivo Stream
-                const file = new Blob([response.data], {type: response.data.type});
-                //Build a URL from the file
-                const url = URL.createObjectURL(file);
-                const link = document.createElement('a');
-                link.href = url;
-                link.setAttribute('download', nome_do_arquivo);
-                document.body.appendChild(link);
-                link.click();
-            }).catch(error => {
-                return error.response;
-            })
-    )
+            //Create a Blob from the arquivo Stream
+            const file = new Blob([response.data], { type: response.data.type });
+            //Build a URL from the file
+            const url = URL.createObjectURL(file);
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', nomeArquivoFinal);
+            document.body.appendChild(link);
+            link.click();
+        })
+        .catch((error) => {
+            return error.response;
+        });
 };
-
 export const getLancamentosParaConferencia = async (prestacao_de_contas_uuid, analise_atual_uuid, conta_uuid, acao_associacao_uuid=null, tipo_lancamento=null, ordenar_por_imposto=null, filtrar_por_data_inicio=null, filtrar_por_data_fim=null, filtrar_por_nome_fornecedor=null, filtrar_por_numero_de_documento=null, filtrar_por_tipo_de_documento=null, filtrar_por_tipo_de_pagamento=null, filtrar_por_informacoes= [], filtrar_por_conferencia = []) => {
     return (await api.get(`/api/prestacoes-contas/${prestacao_de_contas_uuid}/lancamentos/?analise_prestacao=${analise_atual_uuid}&conta_associacao=${conta_uuid}${acao_associacao_uuid ? '&acao_associacao='+acao_associacao_uuid : ''}${tipo_lancamento ? '&tipo='+tipo_lancamento : ''}${ordenar_por_imposto ? '&ordenar_por_imposto='+ordenar_por_imposto : ''}${filtrar_por_data_inicio ? '&filtrar_por_data_inicio='+filtrar_por_data_inicio : ''}${filtrar_por_data_fim ? '&filtrar_por_data_fim='+filtrar_por_data_fim : ''}${filtrar_por_nome_fornecedor ? '&filtrar_por_nome_fornecedor='+filtrar_por_nome_fornecedor : ''}${filtrar_por_numero_de_documento ? '&filtrar_por_numero_de_documento='+filtrar_por_numero_de_documento : ''}${filtrar_por_tipo_de_documento ? '&filtrar_por_tipo_de_documento='+filtrar_por_tipo_de_documento : ''}${filtrar_por_tipo_de_pagamento ? '&filtrar_por_tipo_de_pagamento='+filtrar_por_tipo_de_pagamento : ''}${filtrar_por_informacoes ? '&filtrar_por_informacoes='+filtrar_por_informacoes : ''}${filtrar_por_conferencia ? '&filtrar_por_conferencia='+filtrar_por_conferencia : ''}`, authHeader())).data
 };
@@ -465,3 +474,12 @@ export const getTagsConferenciaDocumento = async () => {
 export const getStatusPeriodo = async (uuid_associacao, data_incial_periodo) => {
     return(await api.get(`/api/associacoes/${uuid_associacao}/status-periodo/?data=${data_incial_periodo}`, authHeader())).data
   };
+
+export const getDocumentosPaa = async (uuid_prestacao_de_contas) => {
+    return (
+        await api.get(
+            `/api/prestacoes-contas/${uuid_prestacao_de_contas}/obter-documentos-paa/`,
+            authHeader(),
+        )
+    ).data;
+};
