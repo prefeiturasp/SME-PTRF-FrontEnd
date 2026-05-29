@@ -28,17 +28,6 @@ const ArquivosDeReferenciaVisualizacaoDownload = ({ prestacaoDeContas, infoAta }
 
     const [documentos, setDocumentos] = useState([]);
 
-    const formatarData = (data) => {
-        if (!data) return '';
-
-        if (data.includes('-') && data.length === 10 && data[4] === '-') {
-            const [ano, mes, dia] = data.split('-');
-            return `${dia}/${mes}/${ano}`;
-        }
-
-        return data;
-    };
-
     const handleClickDownloadArquivoDeReferencia = useCallback(async (rowData) => {
         let nome_do_arquivo = `${rowData.nome}`;
         try {
