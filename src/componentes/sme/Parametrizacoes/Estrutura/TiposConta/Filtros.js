@@ -8,14 +8,6 @@ export const Filtros = ({ stateFiltros, handleChangeFiltros, handleSubmitFiltros
     };
 
     return (
-        <>
-            <div className="mb-4">
-                <h4 className="font-weight-bold mb-0">Refine sua busca</h4>
-                <p>
-                    Utilize o filtro para localizar tipos de conta específicos de todos os recursos.
-                </p>
-            </div>
-
             <form onSubmit={handleFormSubmit}>
                 <div className="d-flex bd-highlight mt-2 mb-3">
                     <div className="p-Y d-flex flex-column flex-grow-1 bd-highlight mr-4">
@@ -53,6 +45,5 @@ export const Filtros = ({ stateFiltros, handleChangeFiltros, handleSubmitFiltros
                     </div>
                 </div>
             </form>
-        </>
     );
 };
