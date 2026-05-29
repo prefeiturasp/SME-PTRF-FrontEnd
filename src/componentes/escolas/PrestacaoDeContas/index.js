@@ -537,7 +537,10 @@ export const PrestacaoDeContas = ({setStatusPC, registroFalhaGeracaoPc, setRegis
 
     const exibeBoxAtaRetificadora = useCallback(() => {
            return statusPrestacaoDeConta &&
-            statusPrestacaoDeConta.prestacao_contas_status && statusPrestacaoDeConta.prestacao_contas_status.requer_retificacao
+            statusPrestacaoDeConta.prestacao_contas_status && (
+                statusPrestacaoDeConta.prestacao_contas_status.requer_retificacao ||
+                statusPrestacaoDeConta.prestacao_contas_status.possui_ata_retificacao
+            )
     }, [statusPrestacaoDeConta])
 
     useEffect(()=>{

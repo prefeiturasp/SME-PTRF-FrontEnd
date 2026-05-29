@@ -6,6 +6,9 @@ import {
     periodoFechadoImposto
 } from "../../../../utils/ValidacoesAdicionaisFormularios";
 import {
+    getErrorMessage
+} from "../../../../utils/obtemMsgErroAxios";
+import {
     getDespesasTabelas,
     criarDespesa,
     alterarDespesa,
@@ -689,7 +692,7 @@ export const CadastroForm = ({verbo_http, veioDeSituacaoPatrimonial}) => {
                         } catch (error) {
                             console.log(error);
                             setLoading(false);
-                            habilitaBtnSalvar();
+                            habilitaBtnSalvar();                            
                         }
                     }
                     else if (despesaContext.verboHttp === "PUT"){
@@ -737,7 +740,7 @@ export const CadastroForm = ({verbo_http, veioDeSituacaoPatrimonial}) => {
                 // Caso não seja origem de analise lancamento (reabertura seletiva), deve seguir o fluxo normal
                 // O loading será ativado apenas quando a mutation realmente executar (após confirmação da modal se necessário)
                 // Não ativamos o loading aqui para evitar que apareça antes da modal de confirmação
-
+                
                 if (despesaContext.verboHttp === "POST") {
                     mutationCreate.mutate({ payload: values });
                 }
@@ -757,14 +760,13 @@ export const CadastroForm = ({verbo_http, veioDeSituacaoPatrimonial}) => {
             if (response.data.hasOwnProperty("rateios")) {
                 const rateios = response.data.rateios[0];
                 mensagemErro += " Rateios: " + rateios.mensagem.map((msg) => msg).join(", ")
-            }
-            if(response.data.hasOwnProperty("mensagem")){
-                if(response.data.mensagem.length){
-                    mensagemErro = response.data.mensagem[0];
-                }
+            } else {
+                const error = {response};
+                mensagemErro = getErrorMessage(error, "Ocorreu um erro criar/editar despesa.");
             }
         }
-        toastCustom.ToastCustomError('Erro ao tentar salvar despesa.', mensagemErro)                            
+        
+        toastCustom.ToastCustomError('Erro ao tentar salvar despesa.', mensagemErro)
     };
 
     const validateFormDespesas = async (values) => {
