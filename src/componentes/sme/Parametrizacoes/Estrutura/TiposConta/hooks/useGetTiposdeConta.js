@@ -4,7 +4,7 @@ import { getTiposContas, getFiltroTiposContas } from "../../../../../../services
 
 export const useGetTiposContas = (filters) => {
     const { isFetching, isError, data = [], error, refetch } = useQuery({
-        queryKey: ['tiposContas', filters.recurso_uuid],
+        queryKey: ['tiposContas', filters?.recurso_uuid, filters?.nome],
         queryFn: ()=> {
             // Se não houver recurso_uuid, retorna vazio
             if (!filters.recurso_uuid) {

@@ -31,6 +31,6 @@ describe("TopoComBotoes", () => {
         renderWithRecursosContext();
         
         expect(screen.getByText(defaultContextValue.selectedRecurso.nome)).toBeInTheDocument();
-        expect(screen.getByText("Confira abaixo os prazos de repasse e execução do PTRF Básico.")).toBeInTheDocument();
+        expect(screen.getByText("Confira abaixo os tipos de conta do PTRF Básico.")).toBeInTheDocument();
     });
 });
