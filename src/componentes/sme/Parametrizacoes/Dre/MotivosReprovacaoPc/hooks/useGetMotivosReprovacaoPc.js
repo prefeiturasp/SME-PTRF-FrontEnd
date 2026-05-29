@@ -3,18 +3,18 @@ import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { useMotivosReprovacaoPcContext } from "./useMotivoReprovacaoContext";
 
-export const useGetMotivosReprovacaoPc = (params) => {
+export const useGetMotivosReprovacaoPc = () => {
 
-    const {filter, currentPage} = useMotivosReprovacaoPcContext();
+    const { filter } = useMotivosReprovacaoPcContext();
 
     const { isFetching, isError, data = {count: 0, results: []}, error, refetch } = useQuery({
-        queryKey: ['motivos-reprovacao-pc', filter, currentPage, params?.recurso_uuid],
+        queryKey: ['motivos-reprovacao-pc', filter?.recurso_uuid, filter?.motivo, filter?.page],
         queryFn: ()=> {
-            if (params?.is_required_recurso_uuid && !params?.recurso_uuid) {
+            if (filter?.is_required_recurso_uuid && !filter?.recurso_uuid) {
                 return Promise.resolve({count: 0, results: []});
             }
 
-            return getMotivosReprovacaoPc({...filter, recurso_uuid: params?.recurso_uuid}, currentPage)
+            return getMotivosReprovacaoPc({ ...filter }, filter?.page)
         },
         keepPreviousData: true,
         staleTime: 5000, // 5 segundos
