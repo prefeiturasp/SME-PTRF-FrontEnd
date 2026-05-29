@@ -147,101 +147,18 @@ const ArquivosDeReferenciaVisualizacaoDownload = ({ prestacaoDeContas, infoAta }
     }, [arquivos_referencia, infoAta, documentos]);
 
     function nomeDocumentoTemplate(rowData) {
-        const dataHora = rowData.nome.match(
-            /\d{2}[\/-]\d{2}[\/-]\d{4}\s\d{2}:\d{2}/
-        )?.[0];
+        const [tipo, nome] = rowData.nome.split('-')
 
-        const somenteData = rowData.nome.match(
-            /\d{2}[\/-]\d{2}[\/-]\d{4}/
-        )?.[0];
-        
-        const retificacao = /retific/i.test(rowData.nome);
-
-        if (
-            rowData.nome.includes('Documento PAA') &&
-            !retificacao
-        ) {
-            let textoGeracao = '';
-
-            if (dataHora) {
-                const [data, hora] = dataHora.split(' ');
-                textoGeracao = `Documento final gerado em ${data} às ${hora}`;
-            } else if (somenteData) {
-                textoGeracao = `Documento final gerado em ${somenteData}`;
-            }
-
-            return (
-                <div className="documento-paa">
-                    <span>Plano Anual </span>
-                    <small>
-                        {textoGeracao}
-                    </small>
-                </div>
-            );
-        } else if (
-            rowData.nome.includes('Documento PAA') &&
-            retificacao
-        ) {
-            const partes = rowData.nome.split(/gerado dia/i);
-            const dataEHora = partes[1]?.trim();
-
-            return (
-                <div className="documento-paa">
-                    <span>Plano Anual </span>
-                    <small>
-                        {`Documento retificado gerado em ${dataEHora}`}
-                    </small>
-                </div>
-            );
-        } else if (
-            rowData.nome.toLowerCase().includes('ata paa') &&
-            !rowData.nome.toLowerCase().includes('retificação')
-        ) {
-            const data =
-                rowData.nome.match(/\d{4}-\d{2}-\d{2}/)?.[0] ||
-                rowData.nome.match(/\d{2}[\/-]\d{2}[\/-]\d{4}/)?.[0] ||
-                '';
-
-            return (
-                <div className="documento-paa">
-                    <span>Ata de Apresentação do PAA </span>
-                    <small>
-                        {`Documento final gerado em ${formatarData(data)}`}
-                    </small>
-                </div>
-            );
-        } else if (
-            rowData.nome.toLowerCase().includes('ata') &&
-            rowData.nome.toLowerCase().includes('retificação')
-        ) {
-            const data =
-                rowData.nome.match(/\d{4}-\d{2}-\d{2}/)?.[0] ||
-                rowData.nome.match(/\d{2}[\/-]\d{2}[\/-]\d{4}/)?.[0] ||
-                '';
-
-            return (
-                <div className="documento-paa">
-                    <span>Ata de Retificação do PAA </span>
-                    <small>
-                        {`Documento retificado gerado em ${formatarData(data)}`}
-                    </small>
-                </div>
-            );
-        } else if (
-            rowData.nome === 'Plano Anual'
-        ) {
-            return (
-                <div className="documento-paa">
-                    <span>Documento PAA </span>
-                    <small>
-                        {`Documento pendente de geração.`}
-                    </small>
-                </div>
-            );
-        }
-
-        return <span>{rowData.nome}</span>;
+        return (
+            <div className="documento-paa">
+                <span>{`${tipo} `}</span>
+                <small>
+                    {nome}
+                </small>
+            </div>
+        )
     }
+    
     useEffect(() => {
         getArquivosReferenciaPorConta();
     }, [getArquivosReferenciaPorConta]);

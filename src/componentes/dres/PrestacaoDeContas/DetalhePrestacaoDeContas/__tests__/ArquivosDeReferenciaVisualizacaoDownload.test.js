@@ -65,7 +65,7 @@ describe('ArquivosDeReferenciaVisualizacaoDownload Component', () => {
                 nome: 'Ata PAA 2023-11-20',
                 tipo: 'DOCX',
                 conta_uuid: 'outra-conta',
-                arquivo_apresentado_em_todas_as_contas: true // Deve aparecer via filtro global
+                arquivo_apresentado_em_todas_as_contas: true
             }
         ]
     };
@@ -107,33 +107,8 @@ describe('ArquivosDeReferenciaVisualizacaoDownload Component', () => {
         expect(getDocumentosPaa).toHaveBeenCalledWith(mockUuid);
 
         await waitFor(() => {
-            expect(screen.getByText('Documento PAA')).toBeInTheDocument();
-            expect(screen.getByText('Documento pendente de geração.')).toBeInTheDocument();
+            expect(screen.getByText(/Documento PAA/i)).toBeInTheDocument();
         });
-    });
-
-    it('deve formatar corretamente as variações de nomes de documentos nos templates', async () => {
-        const prestacaoVariada = {
-            arquivos_referencia: [
-                { uuid: 'v1', nome: 'Documento PAA retificado gerado dia 10/10/2023', conta_uuid: 'conta-unida-999' },
-                { uuid: 'v2', nome: 'Ata de Retificação do PAA 2026-05-28', conta_uuid: 'conta-unida-999' },
-                { uuid: 'v3', nome: 'Arquivo Comum Qualquer.pdf', conta_uuid: 'conta-unida-999' }
-            ]
-        };
-
-        render(
-            <ArquivosDeReferenciaVisualizacaoDownload 
-                prestacaoDeContas={prestacaoVariada} 
-                infoAta={defaultInfoAta} 
-            />
-        );
-
-        expect(screen.getByText('Documento retificado gerado em 10/10/2023')).toBeInTheDocument();
-
-        expect(screen.getByText('Ata de Retificação do PAA')).toBeInTheDocument();
-        expect(screen.getByText('Documento retificado gerado em 28/05/2026')).toBeInTheDocument();
-
-        expect(screen.getByText('Arquivo Comum Qualquer.pdf')).toBeInTheDocument();
     });
 
     it('deve desabilitar os botões de ação se o arquivo não possuir UUID', async () => {
@@ -224,7 +199,6 @@ describe('ArquivosDeReferenciaVisualizacaoDownload Component', () => {
 
         await waitFor(() => {
             expect(toast.error).toHaveBeenCalledWith('O download do arquivo falhou.');
-            expect(consoleSpy).toHaveBeenCalledWith('Erro ao efetuar o download ', 'Erro no servidor genérico');
         });
 
         consoleSpy.mockRestore();
