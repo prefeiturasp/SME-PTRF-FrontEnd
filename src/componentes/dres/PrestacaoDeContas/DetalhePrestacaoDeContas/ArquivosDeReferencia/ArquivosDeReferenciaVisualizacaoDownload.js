@@ -137,7 +137,6 @@ const ArquivosDeReferenciaVisualizacaoDownload = ({ prestacaoDeContas, infoAta }
 
     function nomeDocumentoTemplate(rowData) {
         const [tipo, nome] = rowData.nome.split('-')
-
         return (
             <div className="documento-paa">
                 <span>{`${tipo} `}</span>
