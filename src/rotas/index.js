@@ -137,6 +137,7 @@ import { useRecursoSelecionadoContext } from "../context/RecursoSelecionado";
 import { FEATURE_FLAGS } from "../constantes/featureFlags";
 import { ParametrizacoesMotivosReprovacaoPc } from "../componentes/sme/Parametrizacoes/Dre/MotivosReprovacaoPc";
 import { ParametrizacoesDetalhesTiposCredito } from "../componentes/sme/Parametrizacoes/Receitas/DetalhesTiposCredito";
+import { ParametrizacoesComissoes } from "../componentes/sme/Parametrizacoes/Dre/Comissoes";
 
 const routesConfig = [
   {
@@ -764,10 +765,16 @@ const routesConfig = [
     component: ParametrizacoesMotivosAprovacaoPcRessalva,
     permissoes: ["access_painel_parametrizacoes", "change_painel_parametrizacoes"],
   },
-    {
+  {
     exact: true,
     path: "/parametro-motivos-reprovacao-pc",
     component: ParametrizacoesMotivosReprovacaoPc,
+    permissoes: ["access_painel_parametrizacoes", "change_painel_parametrizacoes"],
+  },
+  {
+    exact: true,
+    path: "/parametro-comissoes",
+    component: ParametrizacoesComissoes,
     permissoes: ["access_painel_parametrizacoes", "change_painel_parametrizacoes"],
   },
   {
