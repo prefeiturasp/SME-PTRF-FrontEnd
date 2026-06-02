@@ -92,7 +92,6 @@ describe("RetificacaoPaa", () => {
             render(<RetificacaoPaa />);
             expect(capturedPaaBaseProps.itemsBreadCrumb).toEqual([
                 { label: "Plano Anual de Atividades", url: "/retificacao-paa" },
-                { label: "Elaboração e histórico", active: false },
                 { label: "PAA Vigente e Anteriores", active: true },
             ]);
         });

@@ -8,11 +8,12 @@ import ModalAddEditTipoConta from "./ModalAddEditTipoConta";
 import { AbasPorRecurso } from "../../componentes/AbasPorRecurso";
 import { ModalConfirmarExclusao } from "../../../../../componentes/Globais/ModalAntDesign/ModalConfirmarExclusao";
 import { useTiposContas } from "./hooks/useTiposdeContas";
+import { TopoComBotoes } from "./TopoComBotoes";
 
 export const TiposConta = () => {
 
     const {
-        stateFiltros, 
+        draftFiltros, 
         handleChangeFiltros, 
         handleSubmitFiltros, 
         handleLimparFiltros, 
@@ -47,24 +48,24 @@ export const TiposConta = () => {
             ) :
             <>
                 <div className="page-content-inner">
+                    <AbasPorRecurso />
+
+                    <TopoComBotoes
+                        handleOpenCreateModal={handleOpenCreateModal}
+                        tem_permissao_edicao_painel_parametrizacoes={TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
+                    />
+                    
                     <Filtros
-                        stateFiltros={stateFiltros}
+                        stateFiltros={draftFiltros}
                         handleChangeFiltros={handleChangeFiltros}
                         handleSubmitFiltros={handleSubmitFiltros}
                         handleLimparFiltros={handleLimparFiltros}
                     />
 
-                    <AbasPorRecurso
-                        handleChangeFiltros={handleChangeFiltros}
-                    />
-
-                    {/* <p>Exibindo <span className='total-acoes'>{totalTiposDeConta}</span> tipos de conta</p> */}
                     <TabelaTiposConta
                         rowsPerPage={rowsPerPage}
                         listaDeTiposContas={results}
                         acoesTemplate={acoesTemplate}
-                        handleOpenCreateModal={handleOpenCreateModal}
-                        tem_permissao_edicao_painel_parametrizacoes={TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                     />
                 </div>
                 <section>

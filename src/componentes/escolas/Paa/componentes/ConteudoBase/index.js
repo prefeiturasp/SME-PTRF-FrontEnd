@@ -7,6 +7,7 @@ import ReceitasPrevistas from "../ReceitasPrevistas";
 import Prioridades from "../../ElaboracaoPaa/ElaborarNovoPlano/Prioridades";
 import Relatorios from "../../ElaboracaoPaa/ElaborarNovoPlano/Relatorios";
 import BarraTopoTitulo from "../BarraTopoTitulo";
+import CancelarRetificacao from "../CancelarRetificacao";
 import { useLocation, useNavigate } from "react-router-dom";
 import { iniciarAtaPaa } from "../../../../../services/escolas/AtasPaa.service";
 import { visoesService } from "../../../../../services/visoes.service";
@@ -20,11 +21,18 @@ const ConteudoBase = ({ itemsBreadCrumb }) => {
   const [activeTab, setActiveTab] = useState("prioridades");
   const hasInitializedTab = useRef(false);
   const initialStateRef = useRef(location.state);
-  const relatoriosInitialExpandedSections = initialStateRef.current?.expandedSections;
+  const relatoriosInitialExpandedSections =
+    initialStateRef.current?.expandedSections;
 
-  const fromPlanoAplicacao = Boolean(initialStateRef.current?.fromPlanoAplicacao);
-  const fromPlanoOrcamentario = Boolean(initialStateRef.current?.fromPlanoOrcamentario);
-  const fromAtividadesPrevistas = Boolean(initialStateRef.current?.fromAtividadesPrevistas);
+  const fromPlanoAplicacao = Boolean(
+    initialStateRef.current?.fromPlanoAplicacao,
+  );
+  const fromPlanoOrcamentario = Boolean(
+    initialStateRef.current?.fromPlanoOrcamentario,
+  );
+  const fromAtividadesPrevistas = Boolean(
+    initialStateRef.current?.fromAtividadesPrevistas,
+  );
   const receitasDestino = initialStateRef.current?.receitasDestino || null;
 
   const origemBarra = fromAtividadesPrevistas
@@ -48,9 +56,7 @@ const ConteudoBase = ({ itemsBreadCrumb }) => {
           id: "receitas",
           label: "Receitas previstas",
           exibir: true,
-          component: (
-            <ReceitasPrevistas receitasDestino={receitasDestino} />
-          ),
+          component: <ReceitasPrevistas receitasDestino={receitasDestino} />,
         },
         {
           id: "prioridades-list",
@@ -104,19 +110,7 @@ const ConteudoBase = ({ itemsBreadCrumb }) => {
       console.error("Erro ao iniciar ata do PAA:", error);
     });
 
-    if (paa.status === "EM_RETIFICACAO") {
-      // reativa a tab em caso de retificacao
-      // Se em retificação levantamento de prioridades(prioridades) estiver selecionada,
-      // considera o ref de location, caso contrário, considera tab de receitas por padrão
-      const tabAtiva = initialStateRef.current?.activeTab === "prioridades" ? "receitas" : initialStateRef.current?.activeTab || "receitas";
-      setActiveTab(tabAtiva);
-    }
   }, [paa, navigate]);
-
-  const handleCancelarRetificacaoPaa = () => {
-    alert('Em desenvolvimento')
-    navigate('/paa-vigente-e-anteriores');
-  }
 
   return (
     <>
@@ -126,15 +120,8 @@ const ConteudoBase = ({ itemsBreadCrumb }) => {
         <div className="d-flex justify-content-between align-items-center mb-2">
           <BarraTopoTitulo origem={origemBarra} paa={paa} />
 
-          {paa?.status === "EM_RETIFICACAO" && (
-            <button
-              className="btn btn-success d-flex align-items-center"
-              onClick={handleCancelarRetificacaoPaa}
-              style={{ minWidth: "180px", justifyContent: "center" }}
-            >
-              Cancelar Retificação
-            </button>
-          )}
+          {/* Cancelar retifição */}
+          <CancelarRetificacao paa={paa} />
         </div>
 
         <TabSelector

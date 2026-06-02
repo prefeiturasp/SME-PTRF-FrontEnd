@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen, fireEvent, within } from "@testing-library/react";
 import { MemoryRouter, useNavigate } from "react-router-dom";
-import { useGetPrioridadesRelatorio } from "../hooks/useGetPrioridadesRelatorio";
+import { useGetPlanoAplicacao } from "../hooks/useGetPlanoAplicacao";
 import { useGetPaa } from "../../../../../componentes/hooks/useGetPaa";
 import { VisualizarPlanoAplicacao } from "../VisualizarPlanoAplicacao";
 
@@ -10,8 +10,8 @@ jest.mock("react-router-dom", () => ({
   useNavigate: jest.fn(),
 }));
 
-jest.mock("../hooks/useGetPrioridadesRelatorio", () => ({
-  useGetPrioridadesRelatorio: jest.fn(),
+jest.mock("../hooks/useGetPlanoAplicacao", () => ({
+  useGetPlanoAplicacao: jest.fn(),
 }));
 
 jest.mock("../../../../../componentes/hooks/useGetPaa", () => ({
@@ -41,8 +41,8 @@ describe("VisualizarPlanoAplicacao", () => {
       isFetching: false,
     });
 
-    useGetPrioridadesRelatorio.mockReturnValue({
-      prioridades: [],
+    useGetPlanoAplicacao.mockReturnValue({
+      data: [],
       isFetching: false,
       isError: false,
     });
@@ -74,14 +74,6 @@ describe("VisualizarPlanoAplicacao", () => {
 
   describe("Navegação dos botões", () => {
     it("redireciona para prioridades-list ao clicar em 'Editar informações'", () => {
-      useGetPrioridadesRelatorio.mockReturnValue({
-        prioridades: [
-          { uuid: "p1", prioridade: true, recurso: "PTRF", valor_total: 100 },
-        ],
-        isFetching: false,
-        isError: false,
-      });
-
       renderComponent();
 
       fireEvent.click(screen.getByRole("button", { name: /editar informações/i }));
@@ -140,31 +132,22 @@ describe("VisualizarPlanoAplicacao", () => {
     });
   });
 
-  describe("Ordenação de outros recursos", () => {
-    it("ordena outros recursos colocando recurso próprio primeiro e demais por nome", async () => {
-      useGetPrioridadesRelatorio.mockReturnValue({
+  describe("Renderização dos grupos", () => {
+    it("renderiza os itens na ordem recebida da API", async () => {
+      useGetPlanoAplicacao.mockReturnValue({
         isFetching: false,
         isError: false,
-        prioridades: [
+        data: [
           {
-            uuid: "rp",
-            prioridade: true,
-            recurso: "RECURSO_PROPRIO",
-            valor_total: 50,
-          },
-          {
-            uuid: "b",
-            prioridade: true,
-            recurso: "OUTRO_RECURSO",
-            outro_recurso_objeto: { nome: "B Recurso" },
-            valor_total: 30,
-          },
-          {
-            uuid: "a",
-            prioridade: true,
-            recurso: "OUTRO_RECURSO",
-            outro_recurso_objeto: { nome: "A Recurso" },
-            valor_total: 20,
+            key: "prioridades-outros-recursos",
+            titulo: "Prioridades Outros Recursos",
+            ehOutrosRecursos: true,
+            dados: [
+              { uuid: "rp", acao: "Recursos Próprios", prioridade: true, recurso: "RECURSO_PROPRIO", valor_total: "50.00" },
+              { uuid: "a",  acao: "A Recurso",          prioridade: true, recurso: "OUTRO_RECURSO",  valor_total: "20.00" },
+              { uuid: "b",  acao: "B Recurso",          prioridade: true, recurso: "OUTRO_RECURSO",  valor_total: "30.00" },
+              { key: "prioridades-outros-recursos-total", isTotal: true, valor_total: 100 },
+            ],
           },
         ],
       });

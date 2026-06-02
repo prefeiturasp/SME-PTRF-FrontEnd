@@ -280,9 +280,13 @@ describe('Testes para funções de análise', () => {
 
     test('getFiltrosTipoReceita  deve chamar a API corretamente', async () => {
         api.get.mockResolvedValue({ data: mockData })
-        const result = await getFiltrosTipoReceita();
+        const recurso_uuid = "test-uuid";
+        const result = await getFiltrosTipoReceita(recurso_uuid);
         const url = `/api/tipos-receitas/filtros/`
-        expect(api.get).toHaveBeenCalledWith(url, authHeader())
+        expect(api.get).toHaveBeenCalledWith(url, {
+            ...authHeader(),
+            params: { recurso_uuid }
+        })
         expect(result).toEqual(mockData);
     });
 
@@ -674,9 +678,19 @@ describe('Testes para funções de análise', () => {
         const dre = '1234'
         const tipo_unidade = '1'
         const page= 1
-        const result = await getUnidadesNaoVinculadasTipoReceita(uuid, nome_ou_codigo, dre, tipo_unidade, page);
-        const url = `/api/tipos-receitas/${uuid}/unidades-nao-vinculadas/?nome_ou_codigo=${nome_ou_codigo}&dre=${dre}&tipo_unidade=${tipo_unidade}&page=${page}`
-        expect(api.get).toHaveBeenCalledWith(url, authHeader())
+        const recurso_uuid = 'test-uuid-123';
+        const result = await getUnidadesNaoVinculadasTipoReceita(uuid, nome_ou_codigo, dre, tipo_unidade, page, recurso_uuid);
+        const url = `/api/tipos-receitas/${uuid}/unidades-nao-vinculadas/`
+        expect(api.get).toHaveBeenCalledWith(url, {
+            ...authHeader(),
+            params: {
+                nome_ou_codigo,
+                dre,
+                tipo_unidade,
+                page,
+                recurso_uuid
+            }
+        })
         expect(result).toEqual(mockData);
     });
 
@@ -1826,10 +1840,11 @@ describe('Testes para funções de análise', () => {
         const currentPage = 1;
         const result = await getTiposDeCredito(filter, currentPage);
         const expectedParams = {
+            page_size: 10,
             page: currentPage,
             ...filter,
         };
-        expect(api.get).toHaveBeenCalledWith(`/api/tipos-receitas/?page_size=20`, {
+        expect(api.get).toHaveBeenCalledWith(`/api/tipos-receitas/`, {
             ...authHeader(),
             params: expectedParams,
         });
@@ -1840,8 +1855,8 @@ describe('Testes para funções de análise', () => {
         api.get.mockResolvedValue({ data: mockData });
         const nome = 'Assoc Nome Teste';
         const result = await getAssociacoesPeloNome(nome);
-        const url = `/api/associacoes/?nome=${nome}`;
-        expect(api.get).toHaveBeenCalledWith(url, authHeader());
+        const url = `/api/associacoes/`;
+        expect(api.get).toHaveBeenCalledWith(url, {...authHeader(), params: { nome, recurso_uuid: '' }});
         expect(result).toEqual(mockData);
     });
 

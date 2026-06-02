@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { EditIconButton } from '../../../../../Globais/UI/Button';
 
 
-export const Lista = ({isLoading, tiposDeCredito, count, firstPage, onPageChange}) => {
+export const Lista = ({isLoading, tiposDeCredito, count, firstPage, onPageChange, rowsPerPage}) => {
     const navigate = useNavigate();
 
     const handleEditFormModal = (rowData) => {
@@ -78,7 +78,6 @@ export const Lista = ({isLoading, tiposDeCredito, count, firstPage, onPageChange
         <>
             {!isLoading && tiposDeCredito && tiposDeCredito.length > 0 ? (
               <>
-                  <p className='pl-2 mb-0'>Exibindo <span className='total'>{count}</span> tipos de crédito</p>
                   <div className="p-2">
                       <DataTable
                           value={tiposDeCredito}
@@ -114,7 +113,7 @@ export const Lista = ({isLoading, tiposDeCredito, count, firstPage, onPageChange
                   </div>
                   <Paginator
                       first={firstPage}
-                      rows={20}
+                      rows={rowsPerPage}
                       totalRecords={count}
                       template="PrevPageLink PageLinks NextPageLink"
                       onPageChange={onPageChange}

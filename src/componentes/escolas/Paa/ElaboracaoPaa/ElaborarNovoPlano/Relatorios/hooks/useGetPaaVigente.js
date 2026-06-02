@@ -19,7 +19,6 @@ export const useGetPaaVigente = (associacaoUuid) => {
 
   return {
     isLoading: isFetching,
-    isFetching,
     isError,
     paaVigente: data,
     error,

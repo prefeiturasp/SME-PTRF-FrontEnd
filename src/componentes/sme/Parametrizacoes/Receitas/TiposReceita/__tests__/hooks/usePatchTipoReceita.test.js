@@ -80,7 +80,7 @@ describe("usePatchTipoReceita", () => {
     });
 
     expect(toastCustom.ToastCustomError).toHaveBeenCalledWith(
-      "Houve um erro ao tentar fazer essa atualização."
+      "Erro ao alterar tipo de receita", "Houve um erro ao tentar fazer essa atualização."
     );
   });
 });

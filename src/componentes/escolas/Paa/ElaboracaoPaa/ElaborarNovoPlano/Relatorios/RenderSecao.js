@@ -5,8 +5,7 @@ import chevronDown from "../../../../../../assets/img/icone-chevron-down.svg";
 
 import { usePatchPaa } from "./hooks/usePatchPaa";
 
-import { RelSecaoTextos as RelIntroducaoPaa } from "./RelSecaoTextos";
-import { RelSecaoTextos as RelConclusaoPaa } from "./RelSecaoTextos";
+import { RelSecaoTextos } from "./RelSecaoTextos";
 import { RelSecaoObjetivos } from "./RelSecaoObjetivos";
 import { RelSecaoComponentes } from "./RelSecaoComponentes";
 
@@ -71,20 +70,8 @@ export const RenderSecao = ({
               <>
                 {config.temEditor && (
                   <>
-                    {config.chave === "introducao" && (
-                      <RelIntroducaoPaa
-                        secaoKey={secaoKey}
-                        config={config}
-                        textosPaa={textosPaa}
-                        paaVigente={paaVigente}
-                        handleSalvarTexto={handleSalvarTexto}
-                        isSaving={isSaving}
-                        podeEditar={podeEditar}
-                      />
-                    )}
-
-                    {config.chave === "conclusao" && (
-                      <RelConclusaoPaa
+                    {["introducao", "conclusao"].includes(config.chave) && (
+                      <RelSecaoTextos
                         secaoKey={secaoKey}
                         config={config}
                         textosPaa={textosPaa}

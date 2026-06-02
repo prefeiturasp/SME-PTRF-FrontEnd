@@ -10,6 +10,19 @@ let mockStatusDocumento = {
 
 // 🔹 Mocks
 const mockNavigate = jest.fn();
+const mockRefetchPaaContext = jest.fn();
+let mockPaaContextValue = {
+  paa: { alteracoes: {}, status: "EM_ELABORACAO" },
+  refetch: mockRefetchPaaContext,
+};
+
+jest.mock("../../../../componentes/PaaContext", () => ({
+  usePaaContext: () => mockPaaContextValue,
+}));
+
+jest.mock("../../../../componentes/TagRetificacao", () => ({
+  TagRetificacao: () => <span>Em retificação</span>,
+}));
 
 jest.mock("../../../../../../../services/visoes.service", () => ({
   visoesService: {
@@ -139,6 +152,10 @@ jest.mock("../ModalInfoGeracaoDocumento", () => ({
 beforeEach(() => {
   jest.clearAllMocks();
   localStorage.setItem("ASSOCIACAO_UUID", "assoc-1");
+  mockPaaContextValue = {
+    paa: { alteracoes: {}, status: "EM_ELABORACAO" },
+    refetch: mockRefetchPaaContext,
+  };
 });
 
 describe("Relatorios", () => {
@@ -285,6 +302,29 @@ describe("Relatorios", () => {
       expect(
         screen.queryByText("Pendências encontradas"),
       ).not.toBeInTheDocument();
+    });
+  });
+
+  test("exibe 'Ata de Apresentação do PAA' quando status não é EM_RETIFICACAO", () => {
+    render(<Relatorios />);
+    expect(screen.getByText("Ata de Apresentação do PAA")).toBeInTheDocument();
+  });
+
+  test("exibe 'Ata de Retificação do PAA' quando status é EM_RETIFICACAO", () => {
+    mockPaaContextValue = {
+      paa: { alteracoes: {}, status: "EM_RETIFICACAO" },
+      refetch: mockRefetchPaaContext,
+    };
+
+    render(<Relatorios />);
+    expect(screen.getByText("Ata de Retificação do PAA")).toBeInTheDocument();
+  });
+
+  test("chama refetch do contexto quando paaVigente tem uuid", async () => {
+    render(<Relatorios />);
+
+    await waitFor(() => {
+      expect(mockRefetchPaaContext).toHaveBeenCalled();
     });
   });
 });
