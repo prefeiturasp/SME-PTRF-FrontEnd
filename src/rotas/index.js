@@ -27,6 +27,7 @@ import { RedefinirSenhaPage } from "../paginas/Login/RedefinirMinhaSenha";
 import { MeusDadosPage } from "../paginas/escolas/MeusDados";
 import { AssociacoesPage } from "../paginas/dres/Associacoes";
 import { PaaPage } from "../paginas/dres/Paa";
+import { VisualizarDocumentosPage } from '../paginas/dres/Paa/VisualizarDocumentos';
 import { DetalhesDaAssociacaoDrePage } from "../paginas/dres/Associacoes/DetalhesDaAssociacao";
 import { CentralDeNotificacoesPage } from "../paginas/CentralDeNotificacoes";
 import { CentralDeDownloadsPage } from "../paginas/CentralDeDownloads";
@@ -135,6 +136,7 @@ import { EscolherRecursoPage } from "../paginas/SelecaoRecurso/EscolherRecursoPa
 import { useRecursoSelecionadoContext } from "../context/RecursoSelecionado";
 import { FEATURE_FLAGS } from "../constantes/featureFlags";
 import { ParametrizacoesMotivosReprovacaoPc } from "../componentes/sme/Parametrizacoes/Dre/MotivosReprovacaoPc";
+import { ParametrizacoesDetalhesTiposCredito } from "../componentes/sme/Parametrizacoes/Receitas/DetalhesTiposCredito";
 
 const routesConfig = [
   {
@@ -340,6 +342,14 @@ const routesConfig = [
     path: "/paa-dre",
     component: PaaPage,
     permissoes: ["custom_access_paa_dre"],
+    featureFlag: "paa-dre",
+  },
+  {
+    exact: true,
+    path: "/paa-dre/visualizar-documentos/:uuid_paa",
+    component: VisualizarDocumentosPage,
+    permissoes: ["custom_access_paa_dre"],
+    featureFlag: "paa-dre",
   },
   {
     exact: true,
@@ -912,6 +922,12 @@ const routesConfig = [
     exact: true,
     path: "/parametro-tipos-receita",
     component: TiposDeCredito,
+    permissoes: ["access_painel_parametrizacoes", "change_painel_parametrizacoes"],
+  },
+  {
+    exact: true,
+    path: "/parametro-detalhes-tipos-receita",
+    component: ParametrizacoesDetalhesTiposCredito,
     permissoes: ["access_painel_parametrizacoes", "change_painel_parametrizacoes"],
   },
   {

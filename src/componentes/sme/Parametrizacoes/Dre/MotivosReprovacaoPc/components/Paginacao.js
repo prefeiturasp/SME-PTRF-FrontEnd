@@ -1,18 +1,19 @@
 import React from "react";
 import {Paginator} from 'primereact/paginator';
-import { useGetMotivosReprovacaoPc } from "../hooks/useGetMotivosReprovacaoPc";
 import { useMotivosReprovacaoPcContext } from "../hooks/useMotivoReprovacaoContext";
 
 
-export const Paginacao = () => {
-    const {isLoading, data, total} = useGetMotivosReprovacaoPc()
-    const {count} = data
-    const {setCurrentPage, firstPage,setFirstPage} = useMotivosReprovacaoPcContext();
-
+export const Paginacao = ({ isLoading, total }) => {
+    const { setFilter, filter } = useMotivosReprovacaoPcContext();
+    const firstPage = (filter.page - 1) * filter.page_size;
 
     const onPageChange = (event) => {
-        setCurrentPage(event.page + 1)
-        setFirstPage(event.first)
+        const currentPage = event.page + 1;
+
+        setFilter((prev) => ({
+            ...prev,
+            page: currentPage
+        }))
     };
 
     return (
@@ -20,8 +21,8 @@ export const Paginacao = () => {
             {!isLoading && total ? (
                     <Paginator
                         first={firstPage}
-                        rows={20}
-                        totalRecords={count}
+                        rows={filter.page_size}
+                        totalRecords={total}
                         template="PrevPageLink PageLinks NextPageLink"
                         onPageChange={onPageChange}
                     />

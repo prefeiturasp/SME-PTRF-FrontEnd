@@ -11,9 +11,10 @@ import { RecursoSelecionadoContextLocal } from '../../../interface/Globais/recur
 import { useGetTabelaPaaDre } from '../../../hooks/dres/Paa/useGetTabelaPaaDre';
 import { useGetPaaPorDre } from '../../../hooks/dres/Paa/useGetPaaPorDre';
 import { toast } from 'react-toastify';
-import './scss/paa.scss';
-
 import type { IFiltrosPaa, IPaaItem } from '../../../interface/dre/Paa/paa.interface';
+import { Tooltip as ReactTooltip } from 'react-tooltip';
+import { useNavigate } from 'react-router-dom';
+import './scss/paa.scss';
 
 const LINHAS_POR_PAGINA = 10;
 
@@ -32,6 +33,8 @@ export const Paa = () => {
 
     const [utilizandoFiltros, setUtilizandoFiltros] = useState<boolean>(false);
     const [tipoUnidadeManual, setTipoUnidadeManual] = useState<boolean>(false);
+
+    const navigate = useNavigate();
 
     const context = useRecursoSelecionadoContext() as unknown as RecursoSelecionadoContextLocal;
 
@@ -94,6 +97,30 @@ export const Paa = () => {
         setPagina((event.page ?? 0) + 1);
     };
 
+    const handleVisualizarPdf = (row: IPaaItem) => {
+        if (!row?.tem_documentos) return;
+
+        navigate(`/paa-dre/visualizar-documentos/${row.uuid}`);
+    };
+
+    const acaoTemplatePdf = (row: IPaaItem) => (
+        <>
+            <button
+                className='btn btn-link'
+                disabled={!row?.tem_documentos}
+                onClick={() => handleVisualizarPdf(row)}
+                data-tooltip-id={`btn-visualizar-${row.uuid}`}
+                data-tooltip-html='Visualização'
+            >
+                <Icon icon='faEye' />
+            </button>
+            <ReactTooltip 
+                id={`btn-visualizar-${row.uuid}`}     
+                style={{ zIndex: 9999 }}
+            />
+        </>
+    );
+
     const renderizarConteudo = () => {
         if (carregando) {
             return <Loading corGrafico='black' corFonte='dark' marginTop='0' marginBottom='0' />;
@@ -107,11 +134,7 @@ export const Paa = () => {
                     unidadeEscolarTemplate={(row: IPaaItem) => (
                         <strong>{row?.unidade?.unidade_educacional || '-'}</strong>
                     )}
-                    acaoTemplatePdf={() => (
-                        <button className='btn btn-link' disabled>
-                            <Icon icon='faEye' />
-                        </button>
-                    )}
+                    acaoTemplatePdf={acaoTemplatePdf}
                     aoMudarPagina={aoMudarPagina}
                     paginaAtual={pagina}
                 />

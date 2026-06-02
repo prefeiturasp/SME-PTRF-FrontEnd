@@ -23,6 +23,10 @@ export const postIniciarRetificacaoPaa = async (paa_uuid, payload={}) => {
   const result = await api.post(`/api/paa/${paa_uuid}/iniciar-retificacao/`, payload, authHeader());
   return result.data;
 };
+export const postCancelarRetificacaoPaa = async (paa_uuid) => {
+  const result = await api.post(`/api/paa/${paa_uuid}/cancelar-retificacao/`, {}, authHeader());
+  return result.data;
+};
 export const postGerarDocumentoPreviaPaa = async (paa_uuid) => {
   const result = await api.post(`/api/paa/${paa_uuid}/gerar-previa-documento/`, {}, authHeader());
   return result.data;
@@ -329,27 +333,6 @@ export const getPaaVigenteEAnteriores = async (associacaoUuid) => {
   ).data;
 };
 
-export const downloadDocumentoFinalPaa = async (paaUuid, opts = {}) => {
-  const requestConfig = {
-    responseType: "blob",
-    timeout: 30000,
-    ...authHeader(),
-  };
-  if (opts.retificacao !== undefined) {
-    requestConfig.params = { retificacao: opts.retificacao ? "true" : "false" };
-  }
-  const response = await api.get(`api/paa/${paaUuid}/documento-final/`, requestConfig);
-
-  const url = window.URL.createObjectURL(new Blob([response.data]));
-  const link = document.createElement("a");
-  link.href = url;
-  link.setAttribute("download", `plano_anual_${paaUuid}.pdf`);
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  window.URL.revokeObjectURL(url);
-};
-
 export const getAtividadesEstatutariasDisponiveis = async (paaUuid) => {
   if (!paaUuid) {
     return { results: [] };
@@ -449,29 +432,12 @@ export const getStatusAtaPaa = async (ata_paa_uuid) => {
   return result.data;
 };
 
-export const getDownloadAtaPaa = async (ata_paa_uuid) => {
-  return ( await api.get(`/api/atas-paa/download-arquivo-ata-paa/?ata-paa-uuid=${ata_paa_uuid}`, {
-          responseType: 'blob',
-          timeout: 30000,
-          ...authHeader()
-      })
-      .then((response) => {
-          const url = window.URL.createObjectURL(new Blob([response.data]));
-          const link = document.createElement('a');
-          link.href = url;
-          link.setAttribute('download', 'Ata_Apresentacao_PAA.pdf');
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-          window.URL.revokeObjectURL(url);
-      }).catch(error => {
-          return error.response;
-      })
-  )
-}
-
 export const getPlanoOrcamentario = async (paaUuid) => {
   return (await api.get(`api/paa/${paaUuid}/plano-orcamentario/`, authHeader())).data;
+};
+
+export const getPlanoAplicacao = async (paaUuid) => {
+  return (await api.get(`api/paa/${paaUuid}/plano-aplicacao/`, authHeader())).data;
 };
 
 export const getTextosPaaUe = async () => {

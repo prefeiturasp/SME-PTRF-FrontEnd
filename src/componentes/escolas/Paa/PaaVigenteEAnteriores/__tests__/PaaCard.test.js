@@ -1,13 +1,13 @@
 import React from 'react';
 import { render, screen, fireEvent, act, within } from '@testing-library/react';
 import { PaaCard } from '../components/PaaCard/PaaCard';
-import { useDocumentoFinalPaa } from '../hooks/useDocumentoFinalPaa';
-import { downloadDocumentoFinalPaa, getDownloadAtaPaa } from '../../../../../services/escolas/Paa.service';
+import { useDocumentoFinalPaa } from '../../../../../hooks/Globais/useDocumentoFinalPaa';
+import { downloadDocumentoFinalPaa, getDownloadAtaPaa } from '../../../../../services/Paa.service';
 
-jest.mock('../hooks/useDocumentoFinalPaa');
+jest.mock('../../../../../hooks/Globais/useDocumentoFinalPaa');
 
-jest.mock('../../../../../services/escolas/Paa.service', () => {
-  const actual = jest.requireActual('../../../../../services/escolas/Paa.service');
+jest.mock('../../../../../services/Paa.service', () => {
+  const actual = jest.requireActual('../../../../../services/Paa.service');
   return {
     ...actual,
     downloadDocumentoFinalPaa: jest.fn().mockResolvedValue(undefined),

@@ -141,6 +141,12 @@ export const PainelParametrizacoes = () => {
             permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
         },
         {
+            parametro: 'Detalhes de Tipos de Crédito',
+            url: 'parametro-detalhes-tipos-receita',
+            icone: IconeTiposReceita,
+            permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
+        },
+        {
             parametro: 'Motivos de Estorno',
             url: 'parametro-motivos-estorno',
             icone: IconeTiposConta,

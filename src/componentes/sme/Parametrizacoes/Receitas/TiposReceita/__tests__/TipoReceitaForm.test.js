@@ -15,6 +15,7 @@ import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../../Retor
 import { useGetTipoReceita } from "../hooks/useGetTipoReceita";
 import { useGetUnidadesVinculadas } from "../components/UnidadesAssociadas/hooks/useGetUnidadesVinculadas";
 import { useGetUnidadesNaoVinculadas } from "../components/VincularUnidades/hooks/useGetUnidadesNaoVinculadas";
+import { AbasPorRecursoContext } from "../../../componentes/AbasPorRecurso/context/Recursos";
 
 jest.mock("../../../../../Globais/Modal/CustomModalConfirm", () => ({
   CustomModalConfirm: jest.fn(),
@@ -169,7 +170,7 @@ describe("TipoReceitaForm", () => {
       e_estorno: false,
       mensagem_usuario: "",
       possui_detalhamento: true,
-      detalhes: [],
+      detalhes_tipo_receita: [],
       tipos_conta: [
         {
           uuid: "1234",
@@ -229,11 +230,24 @@ describe("TipoReceitaForm", () => {
   });
 
   test("submete o formulário de cadastro com valores preenchidos corretamente", async () => {
+    const defaultContextValue = {
+      selectedRecurso: {
+          uuid: "recurso-uuid",
+          nome: "PTRF Básico",
+          nome_exibicao: "PTRF Básico",
+      },
+      setSelectedRecurso: jest.fn(),
+      clickBtnEscolheOpcao: {},
+      setClickBtnEscolheOpcao: jest.fn(),
+    };
+
     render(
       <MemoryRouter>
         <Provider store={mockStore}>
           <QueryClientProvider client={queryClient}>
-            <TipoReceitaForm />
+            <AbasPorRecursoContext.Provider value={defaultContextValue}>
+              <TipoReceitaForm />
+            </AbasPorRecursoContext.Provider>
           </QueryClientProvider>
         </Provider>
       </MemoryRouter>,
@@ -243,24 +257,24 @@ describe("TipoReceitaForm", () => {
     fireEvent.change(nome, { target: { value: "Novo Tipo" } });
 
     const selects = await screen.findAllByRole("combobox");
-    selects[0].style.pointerEvents = "auto";
-    await userEvent.click(selects[0]);
+    selects[1].style.pointerEvents = "auto";
+    await userEvent.click(selects[1]);
     const optionTipo = await screen.findByText("Rendimento");
     await userEvent.click(optionTipo);
 
-    selects[1].style.pointerEvents = "auto";
-    await userEvent.click(selects[1]);
+    selects[2].style.pointerEvents = "auto";
+    await userEvent.click(selects[2]);
     const optionAceita = await screen.findByText("Capital");
     await userEvent.click(optionAceita);
 
-    selects[2].style.pointerEvents = "auto";
-    await userEvent.click(selects[2]);
+    selects[3].style.pointerEvents = "auto";
+    await userEvent.click(selects[3]);
     const optionContas = await screen.findByText("Conta 1");
     await userEvent.click(optionContas);
 
     const salvarButton = await screen.findByRole("button", { name: /Salvar/i });
     expect(salvarButton).toBeEnabled();
-
+    
     await userEvent.click(salvarButton, { pointerEventsCheck: 0 });
 
     await waitFor(() => {
@@ -271,6 +285,9 @@ describe("TipoReceitaForm", () => {
   test("submete o formulário de edição com valores preenchidos corretamente", async () => {
     const data = {
       id: 1,
+      recurso: {
+        uuid: "1234"
+      },
       uuid: "1234",
       nome: "todas",
       aceita_capital: true,
@@ -283,7 +300,7 @@ describe("TipoReceitaForm", () => {
       e_estorno: false,
       mensagem_usuario: "",
       possui_detalhamento: false,
-      detalhes: [],
+      detalhes_tipo_receita: [],
       tipos_conta: [
         {
           uuid: "1234",

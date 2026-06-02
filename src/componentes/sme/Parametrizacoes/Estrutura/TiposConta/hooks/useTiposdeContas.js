@@ -22,7 +22,14 @@ const initialStateFormModal = {
   recurso: ""
 };
 
+// Filtros
+  const initialStateFiltros = {
+    nome: "",
+    recurso_uuid: "",
+  };
+
 export const useTiposContas = () => {
+  const { selectedRecurso } = useAbasPorRecursoContext();
 
   const rowsPerPage = 10;
   const [listaDeTiposContas, setListaDeTiposContas] = useState([]);
@@ -31,27 +38,22 @@ export const useTiposContas = () => {
   const [showModalForm, setShowModalForm] = useState(false);
   const [stateFormModal, setStateFormModal] = useState(initialStateFormModal);
 
-  const { selectedRecurso } = useAbasPorRecursoContext();
-
   const [showModalConfirmDeleteTipoConta, setShowModalConfirmDeleteTipoConta] = useState(false);
 
   const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES = RetornaSeTemPermissaoEdicaoPainelParametrizacoes();
 
-  // Filtros
-  const initialStateFiltros = {
-      nome: "",
-      recurso_uuid: selectedRecurso?.uuid || "",
-  };
+  const [draftFiltros, setDraftFiltros] = useState(initialStateFiltros);
   const [stateFiltros, setStateFiltros] = useState(initialStateFiltros);
   
   // Sincroniza o filtro de recurso_uuid quando selectedRecurso muda
   useEffect(() => {
-    if (selectedRecurso?.uuid) {
-      setStateFiltros(prevState => ({
-        ...prevState,
-        recurso_uuid: selectedRecurso?.uuid
-      }));
-    }
+    const initialFilterWithRecurso = {
+      ...initialStateFiltros,
+      recurso_uuid: selectedRecurso?.uuid || ""
+    };
+
+    setDraftFiltros(initialFilterWithRecurso);
+    setStateFiltros(initialFilterWithRecurso);
   }, [selectedRecurso?.uuid]);
   
   const { isLoading, data: results, refetch } = useGetTiposContas(stateFiltros);
@@ -60,14 +62,14 @@ export const useTiposContas = () => {
   const { mutationPost  } = usePostTipoConta(setShowModalForm);
 
   const handleChangeFiltros = useCallback((nome, value) => {
-    setStateFiltros({
-      ...stateFiltros,
+    setDraftFiltros(prevState => ({
+      ...prevState,
       [nome]: value
-    });
-  }, [stateFiltros]);
+    }));
+  }, []);
 
   const handleSubmitFiltros = async () => {
-    refetch();
+    setStateFiltros(draftFiltros);
   };
 
   const handleOpenCreateModal = () => {
@@ -134,9 +136,8 @@ export const useTiposContas = () => {
   }, []);
 
   const handleLimparFiltros = () => {
-    setStateFiltros(prevState => ({...prevState, nome: "" }))
-
-    setTimeout(() => refetch(), 100);
+    setDraftFiltros(prevState => ({...initialStateFiltros, recurso_uuid: prevState?.recurso_uuid }));
+    setStateFiltros(prevState => ({...initialStateFiltros, recurso_uuid: prevState?.recurso_uuid }));
   }
 
   return {
@@ -152,6 +153,7 @@ export const useTiposContas = () => {
     handleChangeFiltros,
     handleSubmitFiltros,
     showModalForm,
+    draftFiltros,
     stateFormModal,
     handleOpenCreateModal,
     acoesTemplate,

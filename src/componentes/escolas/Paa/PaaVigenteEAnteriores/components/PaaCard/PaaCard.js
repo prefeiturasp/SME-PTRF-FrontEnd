@@ -1,7 +1,10 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { ModalVisualizarPdf } from '../../../../../Globais/ModalVisualizarPdf';
-import { downloadDocumentoFinalPaa, getDownloadAtaPaa } from '../../../../../../services/escolas/Paa.service';
-import { useDocumentoFinalPaa } from '../../hooks/useDocumentoFinalPaa';
+import {
+    downloadDocumentoFinalPaa,
+    getDownloadAtaPaa,
+} from '../../../../../../services/Paa.service';
+import { useDocumentoFinalPaa } from '../../../../../../hooks/Globais/useDocumentoFinalPaa';
 import { PaaSecaoPlanoEAta } from './PaaSecaoPlanoEAta/PaaSecaoPlanoEAta';
 import './PaaCard.scss';
 

@@ -63,7 +63,7 @@ describe("TipoReceitaForm", () => {
         unidades: [{ uuid: "1" }, { uuid: "2" }],
         uso_associacao: "Parcial",
         tipos_conta: [],
-        detalhes: [],
+        detalhes_tipo_receita: [],
       },
       isLoading: false,
     });

@@ -1,5 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { postPrioridade, postDuplicarPrioridade } from "../../../../../../../services/escolas/Paa.service";
+import {
+  postPrioridade,
+  postDuplicarPrioridade,
+} from "../../../../../../../services/escolas/Paa.service";
 import { toastCustom } from "../../../../../../Globais/ToastCustom";
 
 export const usePostPrioridade = (onClose) => {
@@ -8,12 +11,16 @@ export const usePostPrioridade = (onClose) => {
     mutationFn: ({ payload }) => postPrioridade(payload),
     onSuccess: (data) => {
       toastCustom.ToastCustomSuccess("Prioridade criada com sucesso.");
-      queryClient.invalidateQueries({ queryKey: ["prioridades"], exact: false });
+      queryClient.invalidateQueries({
+        queryKey: ["prioridades"],
+        exact: false,
+      });
       queryClient.invalidateQueries({ queryKey: ["prioridades-resumo"] });
       onClose && onClose();
     },
     onError: (e) => {
-      const mensagemDeErro = e?.response?.data?.mensagem || "Houve um erro ao criar a prioridade.";
+      const mensagemDeErro =
+        e?.response?.data?.mensagem || "Houve um erro ao criar a prioridade.";
       toastCustom.ToastCustomError(mensagemDeErro);
     },
   });
@@ -27,10 +34,15 @@ export const usePostDuplicarPrioridade = () => {
     mutationFn: ({ uuid }) => postDuplicarPrioridade(uuid),
     onSuccess: () => {
       toastCustom.ToastCustomSuccess("Prioridade duplicada com sucesso.");
-      queryClient.invalidateQueries(["prioridades"]);
+      queryClient.invalidateQueries({
+        queryKey: ["prioridades"],
+        exact: false,
+      });
     },
     onError: (e) => {
-      toastCustom.ToastCustomError(e?.response?.data?.mensagem || "Houve um erro ao duplicar prioridade.");
+      toastCustom.ToastCustomError(
+        e?.response?.data?.mensagem || "Houve um erro ao duplicar prioridade.",
+      );
     },
   });
 

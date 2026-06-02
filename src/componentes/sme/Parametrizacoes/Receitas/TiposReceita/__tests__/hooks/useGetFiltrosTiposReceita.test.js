@@ -34,7 +34,7 @@ describe("useGetFiltrosTiposReceita", () => {
 
     getFiltrosTipoReceita.mockResolvedValueOnce(mockData);
 
-    const { result } = renderHook(() => useGetFiltrosTiposReceita(), {
+    const { result } = renderHook(() => useGetFiltrosTiposReceita({ recurso_uuid: 'recurso-uuid' }), {
       wrapper,
     });
 
@@ -51,7 +51,7 @@ describe("useGetFiltrosTiposReceita", () => {
       new Error("Erro ao buscar filtros"),
     );
 
-    const { result } = renderHook(() => useGetFiltrosTiposReceita(), {
+    const { result } = renderHook(() => useGetFiltrosTiposReceita({ recurso_uuid: 'recurso-uuid' }), {
       wrapper,
     });
 

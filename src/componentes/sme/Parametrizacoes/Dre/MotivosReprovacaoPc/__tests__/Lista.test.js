@@ -40,9 +40,10 @@ const contexto = {
   setBloquearBtnSalvarForm: jest.fn(),
   handleEditFormModal: jest.fn(),
   handleExcluirMotivo: jest.fn(),
-  showModalConfirmacaoExclusao: { is_open: false, motivo_uuid: '' }
+  showModalConfirmacaoExclusao: { is_open: false, motivo_uuid: '' },
+  filter: { page: 1, page_size: 10  }
 }
-const itemMock = { id: 1, motivo: "Motivo 1", uuid: "123", recurso_uuid: "r1", recurso: "r1" };
+const itemMock = { id: 1, motivo: "Motivo 1", uuid: "123", recurso_uuid: "r1", recurso: "r1", page: 1 };
 
 describe("Lista", () => {
   beforeEach(() => {
@@ -107,8 +108,8 @@ describe("Lista", () => {
       </MotivosReprovacaoPcContext.Provider>
     );
 
-    const editButton = screen.getAllByRole("button", { selector: "btn-editar-membro" });
-    fireEvent.click(editButton[1]);
+    const editButton = screen.getByTestId("btn-editar-motivo-reprovacao-pc");
+    fireEvent.click(editButton);
 
     expect(contexto.setStateFormModal).toHaveBeenCalledWith({ ...itemMock, isOpen: true });
   });

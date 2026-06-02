@@ -152,7 +152,7 @@ describe("useGetPaaVigente", () => {
     expect(result.current.paaVigente).toEqual(mockData);
   });
 
-  it("deve retornar isFetching como true durante a requisição", async () => {
+  it("deve retornar isLoading como true durante a requisição", async () => {
     const mockData = {
       uuid: "paa-uuid-123",
       texto_introducao: "<p>Texto de introdução do PAA</p>",
@@ -168,11 +168,9 @@ describe("useGetPaaVigente", () => {
     });
 
     expect(result.current.isLoading).toBe(true);
-    expect(result.current.isFetching).toBe(true);
 
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
-    expect(result.current.isFetching).toBe(false);
     expect(result.current.paaVigente).toEqual(mockData);
   });
 

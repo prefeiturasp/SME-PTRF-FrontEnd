@@ -1,11 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import { getObjetivosPaa } from "../../../../../../../services/escolas/Paa.service";
 
+const EMPTY_ARRAY = [];
+
 export const useGetObjetivosPaa = () => {
   const {
     isFetching,
     isError,
-    data = [],
+    data = EMPTY_ARRAY,
     error,
     refetch,
   } = useQuery({

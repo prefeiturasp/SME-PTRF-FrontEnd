@@ -1,0 +1,102 @@
+@import '../../../../../../../assets/css/variaveis.scss';
+
+.header-documentos {
+    border-bottom: 1px solid #dadada;
+    padding-bottom: 1rem;
+    margin-bottom: 1.5rem;
+
+    &__titulo {
+        @include roboto-sans;
+
+        color: $corPrimaria;
+        font-size: 20px;
+        font-weight: 700;
+        margin-bottom: 0.75rem;
+        line-height: 1.3;
+    }
+
+    &__informacoes {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+
+        color: $corCinza;
+        font-size: 14px;
+
+        div {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        strong {
+            color: $corFonte;
+            font-weight: 700;
+            margin-right: 0.35rem;
+        }
+
+        span {
+            color: $corFonte;
+        }
+    }
+
+    &__acoes {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+    }
+
+    &__btn-voltar {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+
+        border: 1px solid $mainColor !important;
+        color: $mainColor !important;
+        background-color: transparent !important;
+
+        font-weight: 700;
+        border-radius: 4px;
+        padding: 0.45rem 1rem;
+        width: 94px;
+        min-width: 94px;
+        height: 40px;
+        transition: all 0.2s ease;
+
+        &:hover {
+            background-color: var(--color-primary-lighten) !important;
+            border-color: var(--color-primary-lighten) !important;
+            color: #fff !important;
+        }
+
+        svg {
+            font-size: 14px;
+        }
+    }
+
+    @media (max-width: 740px) {
+        flex-direction: column;
+
+        &__informacoes-container {
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+
+        &__acoes {
+            width: 100%;
+            justify-content: flex-start;
+        }
+    }
+
+    @media (max-width: 576px) {
+        &__informacoes {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        &__acoes {
+            width: 100%;
+        }
+    }
+}

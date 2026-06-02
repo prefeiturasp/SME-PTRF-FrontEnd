@@ -6,8 +6,8 @@ import { useGetPeriodos } from "./useGetPeriodos";
 import { useDeletePeriodo } from "./useDeletePeriodo";
 import { getDatasAtendemRegras } from "../../../../../../services/sme/Parametrizacoes.service";
 import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../../RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
-import { useRecursoSelecionadoContext } from "../../../../../../context/RecursoSelecionado";
 import { useAbasPorRecursoContext } from "../../../componentes/AbasPorRecurso/hooks/useAbasPorRecursoContext";
+import { useGetPeriodosForm } from "./useGetPeriodosForm";
 
 const initialStateFormModal = {
     referencia: "",
@@ -27,6 +27,7 @@ const initialStateFormModal = {
 const initialStateFiltros = {
     filtrar_por_referencia: "",
     is_required_recurso_uuid: true,
+    recurso_uuid: '',
 };
 
 const initialStateModalConfirmDeletePeriodo = {
@@ -35,12 +36,12 @@ const initialStateModalConfirmDeletePeriodo = {
 }
 
 export const usePeriodos = () => {
-    const { recursos } = useRecursoSelecionadoContext()
     const { selectedRecurso } = useAbasPorRecursoContext();
     
     const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES = RetornaSeTemPermissaoEdicaoPainelParametrizacoes();
     const [modalForm, setModalForm] = useState(initialStateFormModal);
     const [erroDatasAtendemRegras, setErroDatasAtendemRegras] = useState("");
+    const [draftFilters, setDraftFilters] = useState(initialStateFiltros);
     const [stateFiltros, setStateFiltros] = useState(initialStateFiltros);
     const [showModalConfirmDeletePeriodo, setShowModalConfirmDeletePeriodo] = useState(initialStateModalConfirmDeletePeriodo);
     const [showModalInfoExclusaoNaoPermitida, setShowModalInfoExclusaoNaoPermitida] = useState(false);
@@ -49,7 +50,20 @@ export const usePeriodos = () => {
     const { mutationPatch } = usePatchPeriodo(setModalForm);
     const { mutationPost } = usePostPeriodo(setModalForm);
     const { mutationDelete } = useDeletePeriodo(setModalForm);
-    const { isLoading, data: results, count, refetch } = useGetPeriodos({...stateFiltros, recurso_uuid: selectedRecurso?.uuid });
+    const { isLoading, data: results, count, refetch } = useGetPeriodos({ filters: stateFiltros });
+    const { data: resultsPeriodosForm } = useGetPeriodosForm({
+        filters: {
+            ...initialStateFiltros,
+            recurso_uuid: selectedRecurso?.uuid
+        },
+        is_enabled: modalForm.open
+    });
+
+    useEffect(() => {
+        const initialFilterWithRecurso = { ...initialStateFiltros, recurso_uuid: selectedRecurso?.uuid };
+        setStateFiltros(initialFilterWithRecurso);
+        setDraftFilters(initialFilterWithRecurso);
+    }, [selectedRecurso?.uuid]);
 
     const handleOpenCreateModal = (recursoSelecionadoAba) => {
         setModalForm({ ...initialStateFormModal, open: true, recurso: { uuid: recursoSelecionadoAba?.uuid } })
@@ -103,9 +117,19 @@ export const usePeriodos = () => {
     }
 
     const handleLimparFiltros = () => {
-        setStateFiltros(prevState => ({...prevState, filtrar_por_referencia: "" }))
+        setStateFiltros(prevState => ({
+            ...initialStateFiltros,
+            recurso_uuid: prevState.recurso_uuid
+        }))
 
-        setTimeout(() => refetch(), 100);
+        setDraftFilters((prevState) => ({
+            ...initialStateFiltros,
+            recurso_uuid: prevState.recurso_uuid
+        }));
+    }
+
+    const handleSubmitFiltros = () => {
+        setStateFiltros(draftFilters);
     }
 
     return {
@@ -113,7 +137,8 @@ export const usePeriodos = () => {
         showModalConfirmDeletePeriodo, 
         showModalInfoExclusaoNaoPermitida,
         erroDatasAtendemRegras, 
-        erroExclusaoNaoPermitida, 
+        erroExclusaoNaoPermitida,
+        draftFilters,
         stateFiltros, 
         isLoading,
         results, 
@@ -125,12 +150,13 @@ export const usePeriodos = () => {
         handleOpenModalForm, 
         handleDelete,
         handleSubmitFormModal, 
-        handleChangeFiltros: useCallback((name, value) => setStateFiltros((prev) => ({ ...prev, [name]: value })), []),
-        handleSubmitFiltros: refetch, 
+        handleChangeFiltros: useCallback((name, value) => setDraftFilters((prev) => ({ ...prev, [name]: value })), []),
+        handleSubmitFiltros, 
         limpaFiltros: handleLimparFiltros,
         setShowModalConfirmDeletePeriodo, 
         setShowModalInfoExclusaoNaoPermitida,
         setErroDatasAtendemRegras,
-        handleCloseModalConfirmDeletePeriodo
+        handleCloseModalConfirmDeletePeriodo,
+        resultsPeriodosForm
     };
 };
