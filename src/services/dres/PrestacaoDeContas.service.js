@@ -160,9 +160,9 @@ export const getVisualizarArquivoDeReferencia = async (nome_do_arquivo, uuid, ti
         url = `/api/conciliacoes/${uuid}/extrato-bancario`;
     } else if (tipo === 'AP' || tipo === 'APR') {
         url = `api/atas-associacao/download-arquivo-ata/?ata-uuid=${uuid}`;
-    } else if (tipo === 'PDF' && nome_do_arquivo.toLowerCase().includes('ata de apresentação do paa')) {
+    } else if (tipo === 'ATA-PAA') {
         url = `api/atas-paa/download-arquivo-ata-paa/?ata-paa-uuid=${uuid}`;
-    } else if (tipo === 'PDF' && nome_do_arquivo.toLowerCase().includes('plano anual-documento final')) {
+    } else if (tipo === 'DOC-PAA') {
         url = `/api/documentos-paa/${uuid}/download/`;
     }
 
@@ -198,9 +198,9 @@ export const getDownloadArquivoDeReferencia = async (nome_do_arquivo, uuid, tipo
         url = `/api/conciliacoes/${uuid}/extrato-bancario`;
     } else if (tipo === 'AP' || tipo === 'APR') {
         url = `api/atas-associacao/download-arquivo-ata/?ata-uuid=${uuid}`;
-    } else if (tipo === 'PDF' && nome_do_arquivo.toLowerCase().includes('ata de apresentação do paa')) {
+    } else if (tipo === 'ATA-PAA') {
         url = `api/atas-paa/download-arquivo-ata-paa/?ata-paa-uuid=${uuid}`;
-    } else if (tipo === 'PDF' && nome_do_arquivo.toLowerCase().includes('plano anual-documento final')) {
+    } else if (tipo === 'DOC-PAA') {
         url = `/api/documentos-paa/${uuid}/download/`;
     }
     return await api
