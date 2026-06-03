@@ -26,6 +26,7 @@ import IconeMotivosDevolucaoTesouro from "../../../assets/img/icone-parametro-de
 import IconeMotivosAprovacaoPcRessalva from "../../../assets/img/icone-parametro-motivos-aprovacao-pc-ressalva.svg"
 import IconeAcoesPDDE from "../../../assets/img/icone-parametro-acoes-pdde.svg"
 import IconeAcoesPTRFPaa from "../../../assets/img/icone-parametro-acoes-ptrf-paa.svg"
+import IconeParametroComissoes from "../../../assets/img/icone-parametro-comissoes.svg"
 
 
 export const PainelParametrizacoes = () => {
@@ -177,6 +178,12 @@ export const PainelParametrizacoes = () => {
             parametro: 'Motivos de reprovação de PC',
             url: 'parametro-motivos-reprovacao-pc',
             icone: IconeMotivosAprovacaoPcRessalva,
+            permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
+        },
+        {
+            parametro: 'Comissões',
+            url: 'parametro-comissoes',
+            icone: IconeParametroComissoes,
             permissoes: ['access_painel_parametrizacoes', 'change_painel_parametrizacoes'],
         },
     ];
