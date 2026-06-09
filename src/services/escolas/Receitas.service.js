@@ -21,15 +21,9 @@ export const getTabelasReceita = async () => {
         });
 };
 
-export const getTabelasReceitaReceita = async (associacao=null, ignorar_filtro_recurso=false) => {
-    // TODO remover ignorar_filtro_recurso após criado e executado script
-    // para atualizar as receitas criada com o tipo de credito sem vinculo com Recurso
+export const getTabelasReceitaReceita = async (associacao=null) => {
     let associacao_uuid = associacao ? associacao : localStorage.getItem(ASSOCIACAO_UUID);
-    let url = `api/receitas/tabelas/?associacao_uuid=${associacao_uuid}`;
-    if (ignorar_filtro_recurso) {
-        url += `&ignorar_filtro_recurso=${ignorar_filtro_recurso}`;
-    }
-    return (await api.get(url, authHeader())).data
+    return (await api.get(`api/receitas/tabelas/?associacao_uuid=${associacao_uuid}`, authHeader())).data
 };
 
 
