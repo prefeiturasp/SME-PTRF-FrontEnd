@@ -174,7 +174,7 @@ body {
   }
 
   .p-highlight {
-    background-color: #e9ecec !important;
+    background-color: var(--color-primary) !important;
   }
 
   .p-checkbox .p-checkbox-box.p-highlight {

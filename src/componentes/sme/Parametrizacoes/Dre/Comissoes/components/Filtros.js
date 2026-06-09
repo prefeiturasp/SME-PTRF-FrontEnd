@@ -4,7 +4,7 @@ import { AutoComplete } from "primereact/autocomplete";
 import { useComissoesContext } from "../hooks/useComissoesContext";
 import { useRecursoSelecionadoContext } from "../../../../../../context/RecursoSelecionado";
 import { getComissoesPorNome } from "../../../../../../services/sme/Parametrizacoes.service";
-import "../styles/filtros.scss";
+import "./styles/filtros.scss";
 
 export const Filtros = ({ stateFiltros, handleChangeFiltros, handleSubmitFiltros, handleLimparFiltros }) => {
     const { recursos } = useRecursoSelecionadoContext();
@@ -59,9 +59,8 @@ export const Filtros = ({ stateFiltros, handleChangeFiltros, handleSubmitFiltros
                 style={{
                     backgroundColor: 'var(--color-primary)',
                     color: 'white',
-                    padding: '2px 6px',
-                    borderRadius: '4px',
-                    display: 'inline-block'
+                    display: 'inline-block',
+                    fontSize: '0.875rem',
                 }}
             >
                 {value.nome || value}
@@ -103,15 +102,18 @@ export const Filtros = ({ stateFiltros, handleChangeFiltros, handleSubmitFiltros
                         </div>
 
                         <div className="col-md-6">
-                            <label htmlFor="recurso">Filtre por recurso</label>
+                            <label htmlFor="recursos">Filtre por recurso</label>
                             <Select
-                                value={formFilter.recursos_uuid || []}
+                                value={formFilter.recursos_uuid && formFilter.recursos_uuid.length > 0 ? formFilter.recursos_uuid : undefined}
                                 onChange={(values) => handleChangeFormFilter('recursos_uuid', values)}
                                 options={recursos?.map(r => ({ label: r.nome, value: r.uuid }))}
                                 mode="multiple"
                                 id="recursos"
-                                placeholder="Selecione um ou mais recursos"
-                                style={{ width: '100%', color: 'white' }}
+                                className="select-recursos"
+                                placeholder="Selecione"
+                                allowClear
+                                notFoundContent="Nenhum recurso encontrado"
+                                style={{ width: '100%' }}
                             />
                             <small className="text-muted d-block mt-2">
                                 Se necessário, selecione mais de uma opção.
