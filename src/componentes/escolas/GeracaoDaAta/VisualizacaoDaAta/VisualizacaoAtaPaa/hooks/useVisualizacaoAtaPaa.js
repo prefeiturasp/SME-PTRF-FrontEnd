@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import moment from "moment";
 import { getAtaPaa, getTabelasAtasPaa } from "../../../../../../services/escolas/AtasPaa.service";
@@ -106,30 +106,62 @@ export const useVisualizacaoAtaPaa = () => {
         return nomeUnidade || tipoUnidade || "";
     };
 
-    const getDiaPorExtenso = () => {
+    const getDiaReuniao = useCallback(() => {
+        if (!dadosAta.data_reuniao) {
+            return "__";
+        }
+        return moment(new Date(dadosAta.data_reuniao), "YYYY-MM-DD").add(1, 'days').format("DD");
+    }, [dadosAta.data_reuniao]);
+
+    const getAnoReuniao = useCallback(() => {
+        if (!dadosAta.data_reuniao) {
+            return "____";
+        }
+        return moment(new Date(dadosAta.data_reuniao), "YYYY-MM-DD").add(1, 'days').format("YYYY");
+    }, [dadosAta.data_reuniao]);
+
+    const getMesPorExtenso = useCallback(() => {
+        if (!dadosAta.data_reuniao) {
+            return "__";
+        }
+        return moment(new Date(dadosAta.data_reuniao), "YYYY-MM-DD").add(1, 'days').format("MMMM");
+    }, [dadosAta.data_reuniao]);
+
+    const getDataReuniaoFormatada = useCallback(() => {
+        if (!dadosAta.data_reuniao) {
+            return "____";
+        }
+
+        return `${getDiaReuniao()} de ${getMesPorExtenso()} de ${getAnoReuniao()}`;
+    }, [dadosAta.data_reuniao, getDiaReuniao, getMesPorExtenso, getAnoReuniao]);
+
+    // Otimização estendida para as demais funções baseadas em dadosAta.data_reuniao
+    const getDiaPorExtenso = useCallback(() => {
         if (!dadosAta.data_reuniao) {
             return "__";
         }
         const dia = moment(new Date(dadosAta.data_reuniao), "YYYY-MM-DD").add(1, 'days').format("DD");
         const diaExtenso = numero.porExtenso(dia);
         return diaExtenso === 'um' ? 'primeiro' : diaExtenso;
-    };
+    }, [dadosAta.data_reuniao]);
 
-    const getMesPorExtenso = () => {
-        if (!dadosAta.data_reuniao) {
-            return "__";
-        }
-        return moment(new Date(dadosAta.data_reuniao), "YYYY-MM-DD").add(1, 'days').format("MMMM");
-    };
-
-    const getAnoPorExtenso = () => {
+    const getAnoPorExtenso = useCallback(() => {
         if (!dadosAta.data_reuniao) {
             return "dois mil e vinte e cinco";
         }
         const ano = moment(new Date(dadosAta.data_reuniao), "YYYY-MM-DD").add(1, 'days').year();
         return numero.porExtenso(ano);
-    };
+    }, [dadosAta.data_reuniao]);
 
+    const getDataFormatada = (data) => {
+        if (!data) {
+            return "____";
+        }
+        var dia = moment(new Date(data), "YYYY-MM-DD").add(1, 'days').format("DD");
+        var mes = moment(new Date(data), "YYYY-MM-DD").add(1, 'days').format("MMMM");
+        var ano = moment(new Date(data), "YYYY-MM-DD").add(1, 'days').format("YYYY");
+        return `${dia} de ${mes} de ${ano}`;
+    }
     const getLocalReuniao = () => {
         return dadosAta.local_reuniao || "______";
     };
@@ -238,15 +270,37 @@ export const useVisualizacaoAtaPaa = () => {
             : new Intl.DateTimeFormat("pt-BR").format(date);
     };
 
-    const getNomeSecretario = () => {
-        const secretario = listaCompletaParticipantes.find(p => 
-            p.cargo && (
-                p.cargo.toLowerCase().includes("secretário") || 
-                p.cargo.toLowerCase().includes("secretaria")
-            )
-        );
-        return secretario && secretario.nome ? secretario.nome : "_____";
-    };
+    const getNomeSecretario = useMemo(() => {
+        return () => {
+            const secretario = listaCompletaParticipantes.find(p => 
+                p.cargo && (
+                    p.cargo.toLowerCase().includes("secretário") || 
+                    p.cargo.toLowerCase().includes("secretaria")
+                )
+            );
+            return secretario && secretario.nome ? secretario.nome : "_____";
+        };
+    }, [listaCompletaParticipantes]);
+
+    const getNomePresidente = useMemo(() => {
+        return () => {
+            const presidente = listaCompletaParticipantes.find(p => 
+                p.cargo && (
+                    p.cargo.toLowerCase().includes("presidente da diretoria executiva")
+                )
+            );
+            return presidente && presidente.nome ? presidente.nome : "_____";
+        };
+    }, [listaCompletaParticipantes]);
+
+    const getNomeSecretarioReuniao = useMemo(() => {
+        return () => {
+            const secretarioReuniao = listaCompletaParticipantes.find(p => 
+                p.secretario_reuniao
+            );
+            return secretarioReuniao && secretarioReuniao.nome ? secretarioReuniao.nome : "_____";
+        };
+    }, [listaCompletaParticipantes]);
 
     const atualizarAlturaDocumento = useCallback(() => {
         if (referenciaDocumento.current) {
@@ -281,6 +335,7 @@ export const useVisualizacaoAtaPaa = () => {
         getDiaPorExtenso,
         getMesPorExtenso,
         getAnoPorExtenso,
+        getDataFormatada,
         getLocalReuniao,
         getNomeUnidade,
         getHoraInicio,
@@ -289,6 +344,9 @@ export const useVisualizacaoAtaPaa = () => {
         getPeriodoPaaFormatado,
         formatarMesAno,
         formatarData,
+        getDataReuniaoFormatada,
         getNomeSecretario,
+        getNomeSecretarioReuniao,
+        getNomePresidente,
     };
 };
