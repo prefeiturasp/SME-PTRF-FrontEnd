@@ -55,8 +55,8 @@ export const VisualizacaoAtaPaa = () => {
   const { uuid_paa } = useParams();
 
   const { data: paaRetificacao, isLoading } = useGetPaaRetificacao(uuid_paa); 
-  const dataReuniaoElaboracao = paaRetificacao?.get_ata_elaboracao?.data_reuniao;
-
+  const dataReuniaoElaboracao = paaRetificacao?.ata_elaboracao?.data_reuniao;
+  
   return (
     <>
       <div className="col-12 container-visualizacao-da-ata mb-5" ref={referenciaDocumento}>
