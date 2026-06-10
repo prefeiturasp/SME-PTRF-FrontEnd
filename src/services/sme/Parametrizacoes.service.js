@@ -1392,3 +1392,64 @@ export const getAssociacoesPeloNome = async (nome, recurso_uuid = '') => {
       }
     })).data
 };
+
+export const getComissoes = async (filter, currentPage) => {
+  const { comissoes_uuid, recursos_uuid, responsavel_analise_pc } = filter;
+  console.log('comissoes', comissoes_uuid)
+  return (
+    await api.get(
+      `/api/comissoes-parametrizacao/`,
+      {
+        ...authHeader(),
+        params: {
+          comissoes_uuid: comissoes_uuid.map(comissao => comissao.uuid).join(','),
+          recursos_uuid: recursos_uuid.join(','),
+          responsavel_analise_pc: responsavel_analise_pc || '',
+          page: currentPage,
+          page_size: 10
+        },
+      }
+    )
+  ).data;
+};
+
+export const getComissoesPorNome = async (nome) => {
+  return (
+    await api.get(
+      `/api/comissoes-parametrizacao/filtro-por-nome`,
+      {
+        ...authHeader(),
+        params: {
+          nome
+        },
+      }
+    )
+  ).data;
+};
+
+export const postComissao = async (payload) => {
+  return await api.post(
+    `api/comissoes-parametrizacao/`,
+    {
+      ...payload,
+    },
+    authHeader()
+  );
+};
+
+export const patchComissao = async (
+  uuidComissao,
+  payload
+) => {
+  return await api.patch(
+    `api/comissoes-parametrizacao/${uuidComissao}/`,
+    {
+      ...payload,
+    },
+    authHeader()
+  );
+};
+
+export const deleteComissao = async (uuidComissao) => {
+    return (await api.delete(`api/comissoes-parametrizacao/${uuidComissao}/`, authHeader()));
+};
