@@ -9,7 +9,7 @@ import {faExclamationCircle} from '@fortawesome/free-solid-svg-icons'
 import { visoesService } from "../../../../../services/visoes.service";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
-import { getCCMMask } from "../../../../../utils/Mascaras";
+import { getCCMMask, getCnpjMask } from "../../../../../utils/Mascaras";
 
 const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitModalFormAssociacoes, listaDePeriodos, tabelaAssociacoes, carregaUnidadePeloCodigoEol, errosCodigoEol, onDeleteAssocicacaoTratamento}) => {
 
@@ -150,7 +150,7 @@ const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitMo
                                         <div className="form-group">
                                             <label htmlFor="cnpj">CNPJ</label>
                                             <MaskedInput
-                                                mask={[/\d/, /\d/, '.', /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '/', /\d/, /\d/, /\d/, /\d/, '-', /\d/,/\d/]}
+                                                mask={getCnpjMask()}
                                                 value={props.values.cnpj}
                                                 name="cnpj"
                                                 id="cnpj"
