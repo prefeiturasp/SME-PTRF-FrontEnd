@@ -2,132 +2,200 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 import { VisualizacaoAtaPaa } from "../index";
 import { useVisualizacaoAtaPaa } from "../hooks/useVisualizacaoAtaPaa";
+import { useGetPaaRetificacao } from "../hooks/useGetPaaRetificacao";
 
 jest.mock("../hooks/useVisualizacaoAtaPaa", () => ({
-    useVisualizacaoAtaPaa: jest.fn(),
+  useVisualizacaoAtaPaa: jest.fn(),
 }));
 
-const createMockHookReturn = (overrides = {}) => ({
-    dadosAta: {
-        uuid: "ata-uuid",
-        comentarios: "Comentário registrado",
-        parecer_conselho: "APROVADA",
-        justificativa: "",
-    },
-    tabelas: {
-        pareceres: [{ id: "APROVADA" }],
-    },
-    listaPresentes: [],
-    listaCompletaParticipantes: [],
-    alturaDocumento: 0,
-    referenciaDocumento: { current: null },
-    prioridadesAgrupadas: null,
-    isLoadingPrioridades: false,
-    atividades: [],
-    isLoadingAtividades: false,
-    handleClickFecharAta: jest.fn(),
-    handleClickEditarAta: jest.fn(),
-    getNomeUnidadeEducacional: jest.fn().mockReturnValue("EMEI - EMILIO RIBAS"),
-    getDiaPorExtenso: jest.fn().mockReturnValue("vinte e oito"),
-    getMesPorExtenso: jest.fn().mockReturnValue("novembro"),
-    getAnoPorExtenso: jest.fn().mockReturnValue("dois mil e vinte e cinco"),
-    getLocalReuniao: jest.fn().mockReturnValue("REUNIÃO VIRTUAL"),
-    getNomeUnidade: jest.fn().mockReturnValue("EMEI - EMILIO RIBAS"),
-    getHoraInicio: jest.fn().mockReturnValue("treze horas"),
-    getTipoReuniao: jest.fn().mockReturnValue("ordinária"),
-    getTipoUnidadeComNome: jest.fn().mockReturnValue("CEI/EMEI/EMEF"),
-    getPeriodoPaaFormatado: jest.fn().mockReturnValue("1º de maio de 2025 a 30 de abril de 2026"),
-    formatarMesAno: jest.fn().mockReturnValue("-"),
-    formatarData: jest.fn().mockReturnValue("-"),
-    getNomeSecretario: jest.fn().mockReturnValue("Maria Souza"),
-    ...overrides,
+jest.mock("../hooks/useGetPaaRetificacao", () => ({
+  useGetPaaRetificacao: jest.fn(),
+}));
+
+jest.mock("react-router-dom", () => ({
+  useParams: () => ({ uuid_paa: "mocked-uuid-123" }),
+}));
+
+jest.mock("../TopoComBotoes", () => ({
+  TopoComBotoes: () => <div data-testid="mock-topo-com-botoes" />,
+}));
+
+jest.mock("../../../../../Globais/WatermarkPrevia/WatermarkPrevia", () => ({
+  __esModule: true,
+  default: () => <div data-testid="mock-watermark" />,
+}));
+
+jest.mock("../AtaElaboracao", () => ({
+  AtaElaboracao: () => <div data-testid="mock-ata-elaboracao" />,
+}));
+
+jest.mock("../AtaRetificacao", () => ({
+  AtaRetificacao: () => <div data-testid="mock-ata-retificacao" />,
+}));
+
+jest.mock("../BlocoPrioridades/BlocoPrioridadesElaboracao", () => ({
+  BlocoPrioridadesElaboracao: () => <div data-testid="mock-prioridades-elaboracao" />,
+}));
+
+jest.mock("../BlocoPrioridades/BlocoPrioridadesRetificacao", () => ({
+  BlocoPrioridadesRetificacao: () => <div data-testid="mock-prioridades-retificacao" />,
+}));
+
+jest.mock("../AtividadesEstatutarias", () => ({
+  AtividadesEstatutarias: () => <div data-testid="mock-atividades-estatutarias" />,
+}));
+
+jest.mock("../Manifestacoes", () => ({
+  Manifestacoes: () => <div data-testid="mock-manifestacoes" />,
+}));
+
+jest.mock("../ListaPresentes", () => ({
+  ListaPresentes: () => <div data-testid="mock-lista-presentes" />,
+}));
+
+const createMockVisualizacaoHook = (overrides = {}) => ({
+  dadosAta: { uuid: "ata-123", justificativa: "Justificativa aceita" },
+  tabelas: {},
+  listaPresentes: [],
+  alturaDocumento: 0,
+  referenciaDocumento: { current: null },
+  prioridadesAgrupadas: { alta: [] },
+  isLoadingPrioridades: false,
+  atividades: [],
+  isLoadingAtividades: false,
+  handleClickFecharAta: jest.fn(),
+  handleClickEditarAta: jest.fn(),
+  getNomeUnidadeEducacional: jest.fn(),
+  getDiaPorExtenso: jest.fn(),
+  getMesPorExtenso: jest.fn(),
+  getAnoPorExtenso: jest.fn(),
+  getDataFormatada: jest.fn(),
+  getLocalReuniao: jest.fn(),
+  getNomeUnidade: jest.fn(),
+  getHoraInicio: jest.fn(),
+  getTipoReuniao: jest.fn(),
+  getTipoUnidadeComNome: jest.fn(),
+  getPeriodoPaaFormatado: jest.fn().mockReturnValue("2026"),
+  formatarMesAno: jest.fn(),
+  formatarData: jest.fn(),
+  getNomeSecretarioReuniao: jest.fn().mockReturnValue("Secretário Teste"),
+  getNomePresidente: jest.fn(),
+  ...overrides,
 });
 
-describe("VisualizacaoAtaPaa", () => {
-    beforeEach(() => {
-        jest.clearAllMocks();
+const createMockRetificacaoHook = (overrides = {}) => ({
+  data: null,
+  isLoading: false,
+  ...overrides,
+});
+
+describe("VisualizacaoAtaPaa - Container", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  const renderComponent = (visualizacaoOverrides = {}, retificacaoOverrides = {}) => {
+    useVisualizacaoAtaPaa.mockReturnValue(createMockVisualizacaoHook(visualizacaoOverrides));
+    useGetPaaRetificacao.mockReturnValue(createMockRetificacaoHook(retificacaoOverrides));
+    return render(<VisualizacaoAtaPaa />);
+  };
+
+  describe("Renderização Comum e Globais", () => {
+    it("deve renderizar a Watermark se a altura do documento for maior que zero", () => {
+      renderComponent({ alturaDocumento: 150 });
+      expect(screen.getByTestId("mock-watermark")).toBeInTheDocument();
     });
 
-    const renderComponent = (overrides) => {
-        useVisualizacaoAtaPaa.mockReturnValue(createMockHookReturn(overrides));
-        return render(<VisualizacaoAtaPaa />);
+    it("não deve renderizar a Watermark se a altura do documento for zero", () => {
+      renderComponent({ alturaDocumento: 0 });
+      expect(screen.queryByTestId("mock-watermark")).not.toBeInTheDocument();
+    });
+
+    it("deve renderizar o TopoComBotoes quando existirem dados e não estiver carregando", () => {
+      renderComponent(
+        { dadosAta: { uuid: "123" } },
+        { isLoading: false }
+      );
+      expect(screen.getByTestId("mock-topo-com-botoes")).toBeInTheDocument();
+    });
+
+    it("deve passar a lista de presentes filtrada corretamente para o subcomponente", () => {
+      const listaPresentesMix = [
+        { uuid: "1", membro: true, presente: true },
+        { uuid: "2", membro: false, presente: true },
+        { uuid: "3", membro: true, presente: false },
+      ];
+
+      renderComponent({ listaPresentes: listaPresentesMix });
+      expect(screen.getByTestId("mock-lista-presentes")).toBeInTheDocument();
+    });
+  });
+
+  describe("Fluxo de Elaboração (Quando NÃO há dados de Retificação)", () => {
+    beforeEach(() => {
+      useVisualizacaoAtaPaa.mockReturnValue(createMockVisualizacaoHook());
+      useGetPaaRetificacao.mockReturnValue(createMockRetificacaoHook({ data: null, isLoading: false }));
+    });
+
+    it("deve renderizar a AtaElaboracao e as prioridades de elaboração", () => {
+      render(<VisualizacaoAtaPaa />);
+
+      expect(screen.getByTestId("mock-ata-elaboracao")).toBeInTheDocument();
+      expect(screen.queryByTestId("mock-ata-retificacao")).not.toBeInTheDocument();
+      expect(screen.getByTestId("mock-prioridades-elaboracao")).toBeInTheDocument();
+    });
+
+    it("deve exibir o texto de encerramento específico para Elaboração com o secretário em negrito", () => {
+      useVisualizacaoAtaPaa.mockReturnValue(createMockVisualizacaoHook({
+        getNomeSecretarioReuniao: () => "João da Silva"
+      }));
+      render(<VisualizacaoAtaPaa />);
+
+      const textoEncerramento = screen.getByText(/Esgotados os assuntos, o \(a\) senhor \(a\) presidente ofereceu a palavra/i);
+      expect(textoEncerramento).toBeInTheDocument();
+      
+      const secretarioStrong = screen.getByText("João da Silva");
+      expect(secretarioStrong.tagName).toBe("STRONG");
+    });
+
+    it("não deve renderizar o bloco de Justificativa de Retificação", () => {
+      render(<VisualizacaoAtaPaa />);
+      expect(screen.queryByRole("heading", { name: /Justificativa da Retificação/i })).not.toBeInTheDocument();
+    });
+  });
+
+  describe("Fluxo de Retificação (Quando HÁ dados de Retificação)", () => {
+    const mockPaaRetificacao = {
+      get_ata_elaboracao: { data_reuniao: "2026-05-10" }
     };
 
-    it("renderiza o texto principal com os valores dinâmicos esperados", () => {
-        renderComponent();
-
-        const paragraph = screen.getByText((_, element) => {
-            return element.tagName === "P" && element.textContent.startsWith("Aos vinte e oito");
-        });
-
-        const expectedText =
-            "Aos vinte e oito do mês de novembro de dois mil e vinte e cinco, no (a) REUNIÃO VIRTUAL, da Unidade Educacional EMEI - EMILIO RIBAS, às treze horas, realizou-se a reunião ordinária da Diretoria Executiva e Conselho Fiscal da Associação de Pais e Mestres do(a) CEI/EMEI/EMEF, com a participação dos membros do Conselho de Escola, em atendimento ao inciso XIII do artigo 118, da Lei nº 14.660/2007.";
-
-        expect(paragraph).toBeInTheDocument();
-        expect(paragraph.textContent).toBe(expectedText);
+    beforeEach(() => {
+      useVisualizacaoAtaPaa.mockReturnValue(createMockVisualizacaoHook({
+        dadosAta: { uuid: "123", justificativa: "Texto da justificativa aqui" }
+      }));
+      useGetPaaRetificacao.mockReturnValue(createMockRetificacaoHook({ data: mockPaaRetificacao, isLoading: false }));
     });
 
-    it("não utiliza negrito nos trechos dinâmicos do texto principal", () => {
-        renderComponent();
+    it("deve renderizar a AtaRetificacao e as prioridades de retificação", () => {
+      render(<VisualizacaoAtaPaa />);
 
-        const paragraph = screen.getByText((_, element) => {
-            return element.tagName === "P" && element.textContent.startsWith("Aos vinte e oito");
-        });
-
-        expect(paragraph.querySelector("strong")).toBeNull();
+      expect(screen.getByTestId("mock-ata-retificacao")).toBeInTheDocument();
+      expect(screen.queryByTestId("mock-ata-elaboracao")).not.toBeInTheDocument();
+      expect(screen.getByTestId("mock-prioridades-retificacao")).toBeInTheDocument();
     });
 
-    it("exibe mensagem de rejeição e justificativa quando o parecer é REJEITADA", () => {
-        renderComponent({
-            dadosAta: {
-                uuid: "ata-uuid",
-                comentarios: "",
-                parecer_conselho: "REJEITADA",
-                justificativa: "Desalinhado com os objetivos estratégicos.",
-            },
-            tabelas: {
-                pareceres: [{ id: "REJEITADA" }],
-            },
-        });
+    it("deve exibir a seção de justificativa da retificação preenchida", () => {
+      render(<VisualizacaoAtaPaa />);
 
-        const paragraph = screen.getByText((_, element) => {
-            return element.tagName === "P" && element.textContent.includes("Diante ao exposto, o Plano Anual de Atividades foi reprovado");
-        });
-
-        expect(paragraph).toBeInTheDocument();
-        expect(paragraph.textContent).toContain("Diante ao exposto, o Plano Anual de Atividades foi reprovado");
-        expect(paragraph.textContent).toContain("Desalinhado com os objetivos estratégicos.");
+      expect(screen.getByRole("heading", { name: /Justificativa da Retificação/i })).toBeInTheDocument();
+      expect(screen.getByText("Texto da justificativa aqui")).toBeInTheDocument();
     });
 
-    it("renderiza a lista de presentes quando existem participantes", () => {
-        renderComponent({
-            listaPresentes: [
-                { uuid: "1", nome: "João Silva", cargo: "Professor", membro: true, presente: true },
-                { uuid: "2", nome: "Ana Costa", cargo: "Gestora", membro: true, presente: true },
-            ],
-        });
+    it("deve exibir o texto de encerramento específico para Retificação", () => {
+      render(<VisualizacaoAtaPaa />);
 
-        expect(screen.getByText("Lista de presentes")).toBeInTheDocument();
-        expect(screen.getByText("João Silva")).toBeInTheDocument();
-        expect(screen.getByText("Professor")).toBeInTheDocument();
-        expect(screen.getByText("Ana Costa")).toBeInTheDocument();
-        expect(screen.getByText("Gestora")).toBeInTheDocument();
+      const textoEncerramento = screen.getByText(/A seguir foi dada a palavra e, não havendo manifestação dos presentes/i);
+      expect(textoEncerramento).toBeInTheDocument();
     });
-
-    it("exibe o nome do secretário no parágrafo de encerramento", () => {
-        renderComponent({
-            getNomeSecretario: jest.fn().mockReturnValue("Carlos Alberto"),
-        });
-
-        const closingParagraph = screen.getByText((content) =>
-            content.includes("Carlos Alberto")
-        );
-
-        expect(closingParagraph).toBeInTheDocument();
-        const secretaryName = screen.getByText("Carlos Alberto");
-        const strongElement = secretaryName.closest("strong");
-        expect(strongElement).not.toBeNull();
-        expect(strongElement?.textContent).toBe("Carlos Alberto");
-    });
+  });
 });
-

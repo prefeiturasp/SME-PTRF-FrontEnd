@@ -1,7 +1,7 @@
-import React from "react";
+import React, { memo } from "react";
 import { formatMoneyBRL } from "../../../../../../utils/money";
 
-export const TabelaPrioridades = ({ titulo, prioridades, total }) => {
+export const TabelaPrioridades = memo(({ titulo, prioridades, total }) => {
   if (!prioridades || prioridades.length === 0) {
     return null;
   }
@@ -103,4 +103,4 @@ export const TabelaPrioridades = ({ titulo, prioridades, total }) => {
       </table>
     </div>
   );
-};
+});
