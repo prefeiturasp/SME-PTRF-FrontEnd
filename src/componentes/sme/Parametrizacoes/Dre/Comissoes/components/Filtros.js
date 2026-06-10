@@ -87,6 +87,7 @@ export const Filtros = ({ stateFiltros, handleChangeFiltros, handleSubmitFiltros
                         <div className="col-md-6">
                             <label htmlFor="filtro-nome">Filtre por comissão</label>
                             <AutoComplete
+                                id="filtro-nome"
                                 multiple
                                 className='col-12'
                                 value={formFilter.comissoes_uuid}
