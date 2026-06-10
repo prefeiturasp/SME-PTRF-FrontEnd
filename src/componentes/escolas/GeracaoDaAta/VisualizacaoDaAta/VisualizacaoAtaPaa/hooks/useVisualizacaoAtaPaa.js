@@ -296,7 +296,7 @@ export const useVisualizacaoAtaPaa = () => {
     const getNomeSecretarioReuniao = useMemo(() => {
         return () => {
             const secretarioReuniao = listaCompletaParticipantes.find(p => 
-                p.secretario_reuniao
+                p.secretario_da_reuniao
             );
             return secretarioReuniao && secretarioReuniao.nome ? secretarioReuniao.nome : "_____";
         };
