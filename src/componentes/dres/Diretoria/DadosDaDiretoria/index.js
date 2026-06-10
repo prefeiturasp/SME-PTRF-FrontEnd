@@ -6,6 +6,7 @@ import {Formik} from "formik";
 import MaskedInput from 'react-text-mask'
 import {salvaDadosDiretoria} from "../../../../services/dres/Unidades.service";
 import {YupSignupSchemaDreDadosDiretoria} from "../../../../utils/ValidacoesAdicionaisFormularios";
+import {getCnpjMask} from "../../../../utils/Mascaras";
 import {consultarRF} from "../../../../services/escolas/Associacao.service";
 import Loading from "../../../../utils/Loading";
 import {CancelarModalDiretoria, SalvarModalDiretoria} from "../../../../utils/Modais";
@@ -152,7 +153,7 @@ export const DadosDaDiretoria = () => {
                                                 <div className="form-group col-12">
                                                     <label htmlFor="dre_cnpj">Número do CNPJ</label>
                                                     <MaskedInput
-                                                        mask = {[/\d/, /\d/, '.', /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '/', /\d/, /\d/, /\d/, /\d/, '-', /\d/,/\d/]}
+                                                        mask={getCnpjMask()}
                                                         type="text"
                                                         value={props.values.dre_cnpj}
                                                         name="dre_cnpj"
