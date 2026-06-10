@@ -121,8 +121,7 @@ export const VisualizacaoAtaPaa = () => {
           formatarData={formatarData}
         />        
        )}
-
-
+       
         { paaRetificacao && !isLoading && (
           <div className="col-12 mt-4">
             <h4 style={{ fontWeight: "bold", fontSize: "20px", color: "#42474A" }}>Justificativa da Retificação</h4>
