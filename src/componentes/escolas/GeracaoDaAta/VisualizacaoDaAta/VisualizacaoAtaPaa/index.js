@@ -125,7 +125,7 @@ export const VisualizacaoAtaPaa = () => {
         { paaRetificacao && !isLoading && (
           <div className="col-12 mt-4">
             <h4 style={{ fontWeight: "bold", fontSize: "20px", color: "#42474A" }}>Justificativa da Retificação</h4>
-            <p className="mt-3">{dadosAta.justificativa}</p>
+            <p className="mt-3">{dadosAta.justificativa_retificacao}</p>
           </div>
         )}
 

@@ -171,7 +171,7 @@ describe("VisualizacaoAtaPaa - Container", () => {
 
     beforeEach(() => {
       useVisualizacaoAtaPaa.mockReturnValue(createMockVisualizacaoHook({
-        dadosAta: { uuid: "123", justificativa: "Texto da justificativa aqui" }
+        dadosAta: { uuid: "123", justificativa_retificacao: "Texto da justificativa aqui" }
       }));
       useGetPaaRetificacao.mockReturnValue(createMockRetificacaoHook({ data: mockPaaRetificacao, isLoading: false }));
     });

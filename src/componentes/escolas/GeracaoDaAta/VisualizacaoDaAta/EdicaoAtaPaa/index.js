@@ -47,6 +47,7 @@ export const EdicaoAtaPaa = () => {
         comentarios: "",
         parecer_conselho: "",
         justificativa: "",
+        justificativa_retificacao: "",
         tipo_reuniao: "ORDINARIA",
         local_reuniao: "",
         presidente_reuniao: "",
@@ -138,6 +139,7 @@ export const EdicaoAtaPaa = () => {
             tipo_ata: dados_ata.tipo_ata,
             justificativa_repasses_pendentes: dados_ata.justificativa_repasses_pendentes,
             justificativa: dados_ata.justificativa || "",
+            justificativa_retificacao: dados_ata.justificativa_retificacao || "",
         });
         setDadosAta(dados_ata);
     };
@@ -198,6 +200,10 @@ export const EdicaoAtaPaa = () => {
     const getPresidenteAndSecretario = (participantes) => {
         let presidente = null;
         let secretario = null;
+        
+        if (!participantes || !Array.isArray(participantes)) {
+            return;
+        }
 
         participantes.forEach(participante => {
             if(participante.presidente_da_reuniao) {
@@ -220,6 +226,9 @@ export const EdicaoAtaPaa = () => {
     };
 
     const adicionaAtaUuidAosParticipantes = (listaParticipantes) => {
+        if (!listaParticipantes || !Array.isArray(listaParticipantes)) {
+            return;
+        }
         listaParticipantes.forEach(participante => {
             participante.ata = ataUuid;
         });
@@ -228,14 +237,23 @@ export const EdicaoAtaPaa = () => {
     };
 
     const onSubmitFormEdicaoAta = async () => {
-
         if (!ataUuid) {
             return;
         }
 
         let dadosForm = formRef.current.values
-
         let retorno_erros = temErros(dadosForm)
+
+        
+        if(
+            dadosForm.stateFormEditarAta.tipo_ata === "RETIFICACAO" &&
+            dadosForm.stateFormEditarAta.justificativa_retificacao.trim() === ''
+        ) 
+        {
+            toastCustom.ToastCustomError('O preenchimento do campo Justificativa da retificação é obrigatório')
+            return;
+        }
+
 
         if (Object.entries(retorno_erros).length > 0){
             return
@@ -262,8 +280,8 @@ export const EdicaoAtaPaa = () => {
                 local_reuniao: dadosForm.stateFormEditarAta.local_reuniao,
                 parecer_conselho: dadosForm.stateFormEditarAta.parecer_conselho,
                 justificativa: dadosForm.stateFormEditarAta.justificativa,
+                justificativa_retificacao: dadosForm.stateFormEditarAta.justificativa_retificacao,
                 presidente_reuniao: presidente ? presidente.nome : "",
-                retificacoes: dadosForm.stateFormEditarAta.retificacoes,
                 secretario_reuniao: secretario ? secretario.nome : "",
                 tipo_reuniao: dadosForm.stateFormEditarAta.tipo_reuniao,
                 presentes_na_ata_paa: listaParticipantes,
@@ -280,8 +298,8 @@ export const EdicaoAtaPaa = () => {
                 local_reuniao: dadosForm.stateFormEditarAta.local_reuniao,
                 parecer_conselho: dadosForm.stateFormEditarAta.parecer_conselho,
                 justificativa: dadosForm.stateFormEditarAta.justificativa,
+                justificativa_retificacao: dadosForm.stateFormEditarAta.justificativa_retificacao,
                 presidente_reuniao: dadosForm.stateFormEditarAta.presidente_reuniao,
-                retificacoes: dadosForm.stateFormEditarAta.retificacoes,
                 secretario_reuniao: dadosForm.stateFormEditarAta.secretario_reuniao,
                 tipo_reuniao: dadosForm.stateFormEditarAta.tipo_reuniao,
                 presentes_na_ata_paa: dadosForm.listaPresentesPadrao,
