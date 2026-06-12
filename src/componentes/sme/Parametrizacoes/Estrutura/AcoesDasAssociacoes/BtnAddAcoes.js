@@ -7,7 +7,7 @@ import { useAcoesDasAssociacoesContext } from "./hooks/useAcoesDasAssociacoesCon
 
 export const BtnAddAcoes = () =>{
     const { selectedRecurso } = useAbasPorRecursoContext();
-    const { handleOpenFormModalCreate, isLoadingAssociacoes } = useAcoesDasAssociacoesContext();
+    const { handleOpenFormModalCreate } = useAcoesDasAssociacoesContext();
     const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES = RetornaSeTemPermissaoEdicaoPainelParametrizacoes()
 
     return(
@@ -23,7 +23,7 @@ export const BtnAddAcoes = () =>{
                 label="Adicionar ação de associação"
                 onClick={handleOpenFormModalCreate}
                 variant="success"
-                disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES || isLoadingAssociacoes}
+                disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
             />
         </div>
     );
