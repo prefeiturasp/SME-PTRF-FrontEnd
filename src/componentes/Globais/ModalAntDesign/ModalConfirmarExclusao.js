@@ -5,7 +5,7 @@ import IconeAvisoVermelho from "../../../assets/img/icone-modal-aviso-vermelho.s
 
 export const ModalConfirmarExclusao = (props) => {
   return (
-    <div className="modal-ant-design">
+    <div className="modal-ant-design" data-testid="modal-confirmar-exclusao-ant-design">
         <Modal 
             open={props.open}
             onOk={props.onOk}

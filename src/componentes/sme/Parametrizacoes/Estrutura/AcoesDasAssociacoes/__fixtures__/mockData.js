@@ -196,6 +196,9 @@ export const mockAcoes = {
                 "encerrada": false,
                 "informacoes": []
             },
+            "recurso": {
+                "uuid": "00000000-0000-0000-0000-000000000000",
+            },
             "data_de_encerramento_associacao": null,
             "tooltip_associacao_encerrada": null,
             "acao": {
@@ -230,6 +233,9 @@ export const mockAcoes = {
                 },
                 "encerrada": false,
                 "informacoes": []
+            },
+            "recurso": {
+                "uuid": "00000000-0000-0000-0000-000000000000",
             },
             "data_de_encerramento_associacao": null,
             "tooltip_associacao_encerrada": null,
@@ -266,6 +272,9 @@ export const mockAcoes = {
                 "encerrada": false,
                 "informacoes": []
             },
+            "recurso": {
+                "uuid": "00000000-0000-0000-0000-000000000000",
+            },
             "data_de_encerramento_associacao": null,
             "tooltip_associacao_encerrada": null,
             "acao": {
@@ -300,6 +309,9 @@ export const mockAcoes = {
                 },
                 "encerrada": false,
                 "informacoes": []
+            },
+            "recurso": {
+                "uuid": "00000000-0000-0000-0000-000000000000",
             },
             "data_de_encerramento_associacao": null,
             "tooltip_associacao_encerrada": null,
@@ -348,6 +360,9 @@ export const mockAcoes = {
                 "aceita_custeio": true,
                 "aceita_livre": true
             },
+            "recurso": {
+                "uuid": "00000000-0000-0000-0000-000000000000",
+            },
             "status": "ATIVA",
             "criado_em": "2021-06-10T11:37:18.957341"
         },
@@ -370,6 +385,9 @@ export const mockAcoes = {
                 },
                 "encerrada": false,
                 "informacoes": []
+            },
+            "recurso": {
+                "uuid": "00000000-0000-0000-0000-000000000000",
             },
             "data_de_encerramento_associacao": null,
             "tooltip_associacao_encerrada": null,
@@ -406,6 +424,9 @@ export const mockAcoes = {
                 "encerrada": false,
                 "informacoes": []
             },
+            "recurso": {
+                "uuid": "00000000-0000-0000-0000-000000000000",
+            },
             "data_de_encerramento_associacao": null,
             "tooltip_associacao_encerrada": null,
             "acao": {
@@ -440,6 +461,9 @@ export const mockAcoes = {
                 },
                 "encerrada": false,
                 "informacoes": []
+            },
+            "recurso": {
+                "uuid": "00000000-0000-0000-0000-000000000000",
             },
             "data_de_encerramento_associacao": null,
             "tooltip_associacao_encerrada": null,
@@ -476,6 +500,9 @@ export const mockAcoes = {
                 "encerrada": false,
                 "informacoes": []
             },
+            "recurso": {
+                "uuid": "00000000-0000-0000-0000-000000000000",
+            },
             "data_de_encerramento_associacao": null,
             "tooltip_associacao_encerrada": null,
             "acao": {
@@ -510,6 +537,9 @@ export const mockAcoes = {
                 },
                 "encerrada": false,
                 "informacoes": []
+            },
+            "recurso": {
+                "uuid": "00000000-0000-0000-0000-000000000000",
             },
             "data_de_encerramento_associacao": null,
             "tooltip_associacao_encerrada": null,
@@ -546,6 +576,9 @@ export const mockAcoes = {
                 "encerrada": false,
                 "informacoes": []
             },
+            "recurso": {
+                "uuid": "00000000-0000-0000-0000-000000000000",
+            },
             "data_de_encerramento_associacao": null,
             "tooltip_associacao_encerrada": null,
             "acao": {
@@ -580,6 +613,9 @@ export const mockAcoes = {
                 },
                 "encerrada": false,
                 "informacoes": []
+            },
+            "recurso": {
+                "uuid": "00000000-0000-0000-0000-000000000000",
             },
             "data_de_encerramento_associacao": null,
             "tooltip_associacao_encerrada": null,
@@ -616,6 +652,9 @@ export const mockAcoes = {
                 "encerrada": false,
                 "informacoes": []
             },
+            "recurso": {
+                "uuid": "00000000-0000-0000-0000-000000000000",
+            },
             "data_de_encerramento_associacao": null,
             "tooltip_associacao_encerrada": null,
             "acao": {
@@ -650,6 +689,9 @@ export const mockAcoes = {
                 },
                 "encerrada": false,
                 "informacoes": []
+            },
+            "recurso": {
+                "uuid": "00000000-0000-0000-0000-000000000000",
             },
             "data_de_encerramento_associacao": null,
             "tooltip_associacao_encerrada": null,
@@ -686,6 +728,9 @@ export const mockAcoes = {
                 "encerrada": false,
                 "informacoes": []
             },
+            "recurso": {
+                "uuid": "00000000-0000-0000-0000-000000000000",
+            },
             "data_de_encerramento_associacao": null,
             "tooltip_associacao_encerrada": null,
             "acao": {
@@ -720,6 +765,9 @@ export const mockAcoes = {
                 },
                 "encerrada": false,
                 "informacoes": []
+            },
+            "recurso": {
+                "uuid": "00000000-0000-0000-0000-000000000000",
             },
             "data_de_encerramento_associacao": null,
             "tooltip_associacao_encerrada": null,
@@ -756,6 +804,9 @@ export const mockAcoes = {
                 "encerrada": false,
                 "informacoes": []
             },
+            "recurso": {
+                "uuid": "00000000-0000-0000-0000-000000000000",
+            },
             "data_de_encerramento_associacao": null,
             "tooltip_associacao_encerrada": null,
             "acao": {
@@ -790,6 +841,9 @@ export const mockAcoes = {
                 },
                 "encerrada": false,
                 "informacoes": []
+            },
+            "recurso": {
+                "uuid": "00000000-0000-0000-0000-000000000000",
             },
             "data_de_encerramento_associacao": null,
             "tooltip_associacao_encerrada": null,
@@ -826,6 +880,9 @@ export const mockAcoes = {
                 "encerrada": false,
                 "informacoes": []
             },
+            "recurso": {
+                "uuid": "00000000-0000-0000-0000-000000000000",
+            },
             "data_de_encerramento_associacao": null,
             "tooltip_associacao_encerrada": null,
             "acao": {
@@ -860,6 +917,9 @@ export const mockAcoes = {
                 },
                 "encerrada": false,
                 "informacoes": []
+            },
+            "recurso": {
+                "uuid": "00000000-0000-0000-0000-000000000000",
             },
             "data_de_encerramento_associacao": null,
             "tooltip_associacao_encerrada": null,

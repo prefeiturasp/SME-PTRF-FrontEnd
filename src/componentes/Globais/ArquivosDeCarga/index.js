@@ -2,7 +2,7 @@ import React, { memo, useMemo, useCallback, useEffect, useState } from "react";
 import "./arquivos-de-carga.scss";
 import "../../dres/Associacoes/associacoes.scss";
 import { ModalConfirmarExclusao } from "../../../componentes/sme/Parametrizacoes/componentes/ModalConfirmarExclusao";
-import { Navigate, useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { BotoesTopo } from "./BotoesTopo";
 import { PaginasContainer } from "../../../paginas/PaginasContainer";
 import {
@@ -32,14 +32,18 @@ import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../sme/Para
 import { RetornaSeTemPermissaoEdicaoGestaoUsuarios } from "../GestaoDeUsuarios/utils/RetornaSeTemPermissaoEdicaoGestaoUsuarios";
 import { toastCustom } from "../ToastCustom";
 import { getPeriodos } from "../../../services/dres/Dashboard.service";
+import { AbasPorRecurso } from "../../sme/Parametrizacoes/componentes/AbasPorRecurso";
 
 const ArquivosDeCarga = () => {
+  const navigate = useNavigate();
+
   const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES =
     RetornaSeTemPermissaoEdicaoPainelParametrizacoes();
   const TEM_PERMISSAO_EDICAO_GESTAO_USUARIOS =
     RetornaSeTemPermissaoEdicaoGestaoUsuarios();
 
   const url_params = useParams();
+  const is_acoes_associacoes = url_params.tipo_de_carga === "CARGA_ACOES_ASSOCIACOES";
   const dadosDeOrigem = useMemo(() => {
     let obj = {
       titulo: "",
@@ -64,14 +68,10 @@ const ArquivosDeCarga = () => {
       };
     } else if (url_params.tipo_de_carga === "CARGA_ACOES_ASSOCIACOES") {
       obj = {
-        titulo: "Ações das Associações",
+        titulo: "Ações das Associações egergergegr",
         titulo_modal: "ações das associações",
         acesso_permitido: true,
         UrlsMenuInterno: [
-          {
-            label: "Ações das associações",
-            url: "parametro-acoes-associacoes",
-          },
           {
             label: "Cargas de arquivo",
             url: "parametro-arquivos-de-carga",
@@ -708,9 +708,23 @@ const ArquivosDeCarga = () => {
           <>
             <h1 className="titulo-itens-painel mt-5">{dadosDeOrigem.titulo}</h1>
             <div className="page-content-inner">
-              <MenuInterno
-                caminhos_menu_interno={dadosDeOrigem.UrlsMenuInterno}
-              />
+              {
+                is_acoes_associacoes ? (
+                  <AbasPorRecurso
+                    extra_abas={dadosDeOrigem.UrlsMenuInterno}
+                    tab_initial_active="extra-tab-0"
+                    extra_handle_click_tab_recurso={() => {
+                      navigate("/parametro-acoes-associacoes/");
+                    }}
+                  />
+                ) : (
+                  <MenuInterno
+                    caminhos_menu_interno={dadosDeOrigem.UrlsMenuInterno}
+                  />
+                )
+              }
+
+              
               <BotoesTopo
                 setShowModalForm={setShowModalForm}
                 setStateFormModal={setStateFormModal}
