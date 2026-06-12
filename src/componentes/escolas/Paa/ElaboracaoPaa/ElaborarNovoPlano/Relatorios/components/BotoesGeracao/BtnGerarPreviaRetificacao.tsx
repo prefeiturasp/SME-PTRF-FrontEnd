@@ -54,7 +54,6 @@ export const BtnGerarPreviaRetificacao = ({ paa }: IGerarDocumentoProps) => {
             !podeEditar,
             mutateGerar.isPending,
             isLoadingStatusDocumento,
-            //TODO: considerar !paa????
         ];
     
         return validacoes.includes(true);
