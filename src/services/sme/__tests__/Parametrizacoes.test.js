@@ -167,7 +167,7 @@ jest.mock('../../api', () => ({
 const mockToken = 'fake-token';
 const mockData = [{ id: 1, nome: 'Teste 1' }];
 const associacao_uuid = '1234'
-const payload = { teste: 'teste', recurso: 'recurso-uuid' }
+const payload = { teste: 'teste', recurso_uuid: 'recurso-uuid' }
 const uuid = '1234'
 
 describe('Testes para funções de análise', () => {
@@ -1125,7 +1125,7 @@ describe('Testes para funções de análise', () => {
         const result = await putAtualizarAcaoAssociacao(acao_associacao_uuid, payload);
 
         const url = `/api/acoes-associacoes/${acao_associacao_uuid}/`;
-        expect(api.put).toHaveBeenCalledWith(url, payload, { ...authHeader(), params: { recurso_uuid: payload.recurso } });
+        expect(api.put).toHaveBeenCalledWith(url, payload, { ...authHeader(), params: { recurso_uuid: payload.recurso_uuid } });
         expect(result).toEqual(mockData);
     });
 
