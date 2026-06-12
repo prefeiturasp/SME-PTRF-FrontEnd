@@ -27,6 +27,7 @@ import {visoesService} from "../../../../../services/visoes.service";
 import {ModalConfirm} from "../../../../Globais/Modal/ModalConfirm";
 import {toastCustom} from "../../../../Globais/ToastCustom";
 import { EditIconButton } from "../../../../Globais/UI/Button";
+import { recursoSelecionadoStorageService } from "../../../../../services/storages/RecursoSelecionado.storage.service";
 
 export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao, recurso_uuid, recurso_nome}) => {
     const dispatch = useDispatch();
@@ -60,18 +61,29 @@ export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao, recurso_uuid, 
 
     const { recursos_da_associacao } = dadosDaAssociacao.dados_da_associacao;
 
+    const premioExcelenciaAtivo = visoesService.featureFlagAtiva('premio-excelencia-processo-sei');
+
+    useEffect(() => {
+        if (recurso_uuid) {
+            const recurso = recursos_da_associacao?.find((item) => item.uuid === recurso_uuid);
+            if (recurso) {
+                recursoSelecionadoStorageService.setRecursoSelecionado(recurso);
+            }
+        }
+    }, [recurso_uuid, recursos_da_associacao]);
+
     const carregaProcessos = async () => {
-        let processos = await getProcessosAssociacao(associacaoUuid, recurso_uuid);
+        let processos = await getProcessosAssociacao(associacaoUuid);
         setProcessosList(processos)
     };
 
     useEffect(() => {
         carregaProcessos()
         setLoading(false)
-    }, []);
+    }, [recurso_uuid]);
 
     const carregaPeriodosDisponiveis = async () => {
-        let periodosDisponiveis = await getPeriodosDisponiveis(associacaoUuid, stateProcessoForm.ano, stateProcessoForm.uuid, recurso_uuid)
+        let periodosDisponiveis = await getPeriodosDisponiveis(associacaoUuid, stateProcessoForm.ano, stateProcessoForm.uuid)
         setPeriodosDisponiveis(periodosDisponiveis)
         setLoadingPeriodos(false);
     }
@@ -144,22 +156,14 @@ export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao, recurso_uuid, 
     const handleSubmitProcesso = async () => {
         setLoading(true);
         setCustomNumeroProcessoError('');
-        let payload
-        if (visoesService.featureFlagAtiva('periodos-processo-sei')){
-            payload = {
-                'associacao': associacaoUuid,
-                'numero_processo': stateProcessoForm.numero_processo,
-                'ano': stateProcessoForm.ano,
-                'periodos': stateProcessoForm.periodos,
-                'recurso': recurso_uuid
-            };
-        }else {
-            payload = {
-                'associacao': associacaoUuid,
-                'numero_processo': stateProcessoForm.numero_processo,
-                'ano': stateProcessoForm.ano,
-                'recurso': recurso_uuid
-            };
+        let payload = {
+            'associacao': associacaoUuid,
+            'numero_processo': stateProcessoForm.numero_processo,
+            'ano': stateProcessoForm.ano,
+        };
+
+        if (visoesService.featureFlagAtiva('periodos-processo-sei')) {
+            payload.periodos = stateProcessoForm.periodos;
         }
 
         if (stateProcessoForm.uuid) {
@@ -231,7 +235,7 @@ export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao, recurso_uuid, 
             let lista_uuids_periodos_pre_selecao = []
 
             if (associacaoUuid && value && value.replaceAll("_","").length >= 4){
-                let periodosDisponiveis = await getPeriodosDisponiveis(associacaoUuid, value, stateProcessoForm.uuid, recurso_uuid)
+                let periodosDisponiveis = await getPeriodosDisponiveis(associacaoUuid, value, stateProcessoForm.uuid)
                 for(let i= 0; i<= periodosDisponiveis.length-1; i++){
                     lista_uuids_periodos_pre_selecao.push(periodosDisponiveis[i].uuid)
                 }
@@ -320,7 +324,7 @@ export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao, recurso_uuid, 
                                 <label><strong>Processos SEI de prestação de contas</strong></label>
                             </div>
 
-                            { recursos_da_associacao.length > 1 && visoesService.featureFlagAtiva('premio-excelencia-processo-sei') && (
+                            { recursos_da_associacao.length > 1 && premioExcelenciaAtivo && (
                                 <>
                                     <div className="col-12 mb-2">
                                         <hr className="my-2" />
@@ -388,7 +392,7 @@ export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao, recurso_uuid, 
                                 setCustomNumeroProcessoError={setCustomNumeroProcessoError}
                                 loadingPeriodos={loadingPeriodos}
                                 recursoNome={recurso_nome}
-                                showRecursoField={recursos_da_associacao && recursos_da_associacao.length > 1 && visoesService.featureFlagAtiva('premio-excelencia-processo-sei') }
+                                showRecursoField={recursos_da_associacao && recursos_da_associacao.length > 1 && premioExcelenciaAtivo }
                             />
                         </section>
 
