@@ -54,7 +54,18 @@ export const NovoFormularioEditaAta = ({
   const podeEditarAta = [["change_ata_prestacao_contas"]].some(
     visoesService.getPermissoes,
   );
-  const [initialValues, setInitialValues] = useState(null);
+  const [initialValues, setInitialValues] = useState({
+    stateFormEditarAta: {
+      justificativa_retificacao: "",
+      hora_reuniao: "",
+      local_reuniao: "",
+      comentarios: "",
+      justificativa: "",
+      justificativa_repasses_pendentes: "",
+      data_reuniao: null,
+    },
+    listaParticipantes: [],
+  });
   const [disableBtnAdicionarPresente, setDisableBtnAdicionarPresente] =
     useState(false);
   const [disableBtnEditarPresente, setDisableBtnEditarPresente] =
@@ -138,8 +149,33 @@ export const NovoFormularioEditaAta = ({
         stateFormEditarAta,
         listaParticipantes: initialValues?.listaParticipantes || [],
       });
-    }
+     } 
   }, [initialValues, stateFormEditarAta]);
+
+  useEffect(() => {
+    if (
+      stateFormEditarAta &&
+      !stateFormEditarAta?.data_reuniao
+    ) {
+      setInitialValues(prev => {
+        if (
+          prev?.stateFormEditarAta?.justificativa_retificacao ===
+          stateFormEditarAta.justificativa_retificacao
+        ) {
+          return prev;
+        }
+
+        return {
+          ...prev,
+          stateFormEditarAta: {
+            ...prev?.stateFormEditarAta,
+            justificativa_retificacao:
+              stateFormEditarAta.justificativa_retificacao ?? "",
+          },
+        };
+      });
+    }
+  }, [stateFormEditarAta]);
 
   const sincronizaListaParticipantes = useCallback(
     (novaLista, { reinicializar = false, formValuesToSync = {} } = {}) => {
@@ -1787,31 +1823,28 @@ export const NovoFormularioEditaAta = ({
                   {/*So exibe o campo retificações em atas de retificação*/}
                   {stateFormEditarAta &&
                     stateFormEditarAta.tipo_ata === "RETIFICACAO" && (
-                      <div>
-                        <p className="titulo mt-4">
-                          <strong>Retificações</strong>
-                        </p>
-                        <div className="form-row">
-                          <div className="col-12">
-                            <label
-                              htmlFor="stateFormEditarAta.retificacoes"
-                              className="mb-0"
-                            >
-                              Utilize esse campo para registrar as retificações
-                              da Prestação de Contas.
-                            </label>
-                            <textarea
-                              rows="3"
-                              placeholder="Escreva seu texto aqui"
-                              value={values.stateFormEditarAta.retificacoes}
-                              onChange={props.handleChange}
-                              name="stateFormEditarAta.retificacoes"
-                              className="form-control mt-2"
-                              disabled={!podeEditarAta}
-                            />
+                      <>
+                        <div>
+                          <p className="titulo mt-4">
+                            <strong>Justificativa da retificação <span style={{color: '#b40c02'}}>*</span></strong>
+                          </p>
+                          <div className="form-row">
+                            <div className="col-12">
+                              <textarea
+                                required
+                                rows="3"
+                                placeholder="Escreva seu texto aqui"
+                                value={values.stateFormEditarAta.justificativa_retificacao}
+                                onChange={props.handleChange}
+                                name="stateFormEditarAta.justificativa_retificacao"
+                                className="form-control mt-2"
+                                disabled={!podeEditarAta}
+                              />
+                            </div>
                           </div>
-                        </div>
-                      </div>
+                        </div>                   
+                      </>
+
                     )}
 
                   <p className="titulo mt-4">
@@ -1843,7 +1876,7 @@ export const NovoFormularioEditaAta = ({
                     <div className="col-12">
                       <p className="titulo mb-2">
                         <strong>
-                          Como os presentes se posicionam ao PAA apresentado?
+                          Como os presentes se posicionam ao PAA {stateFormEditarAta && stateFormEditarAta.tipo_ata === "RETIFICACAO" ? 'retificado' : 'apresentado'}?
                         </strong>
                       </p>
                     </div>
