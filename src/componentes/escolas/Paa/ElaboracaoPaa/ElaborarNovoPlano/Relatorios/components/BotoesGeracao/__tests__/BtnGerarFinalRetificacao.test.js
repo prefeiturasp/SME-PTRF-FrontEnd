@@ -4,7 +4,7 @@ import '@testing-library/jest-dom';
 import { BtnGerarFinalRetificacao } from '../BtnGerarFinalRetificacao';
 import { visoesService } from '../../../../../../../../../services/visoes.service';
 
-// ─── variáveis de controle dos mocks ─────────────────────────────────────────
+//  variáveis de controle dos mocks
 const mockNavigate = jest.fn();
 const mockMutateAsync = jest.fn();
 const mockIniciarPolling = jest.fn();
@@ -17,7 +17,7 @@ let capturedOnError;
 let capturedOnSuccess;
 let capturedOnConcluidoFinal;
 
-// ─── mocks de módulos ─────────────────────────────────────────────────────────
+//  mocks de módulos
 jest.mock('react-router-dom', () => ({
     ...jest.requireActual('react-router-dom'),
     useNavigate: () => mockNavigate,
@@ -80,7 +80,7 @@ jest.mock('../../../ModalInfoGeracaoDocumento', () => ({
         ) : null,
 }));
 
-// ─── dados padrão ────────────────────────────────────────────────────────────
+//  dados padrão
 const DEFAULT_PAA = { uuid: 'uuid-final-retif-321', status: 'RETIFICACAO' };
 
 describe('BtnGerarFinalRetificacao', () => {
@@ -96,7 +96,7 @@ describe('BtnGerarFinalRetificacao', () => {
         mockMutateAsync.mockResolvedValue({});
     });
 
-    // ── renderização ──────────────────────────────────────────────────────────
+    //  renderização
     it('renderiza o botão com texto "Gerar"', () => {
         render(<BtnGerarFinalRetificacao paa={DEFAULT_PAA} />);
         expect(screen.getByRole('button', { name: 'Gerar' })).toBeInTheDocument();
@@ -115,7 +115,7 @@ describe('BtnGerarFinalRetificacao', () => {
         expect(screen.getByRole('button', { name: 'Gerar' })).not.toBeDisabled();
     });
 
-    // ── estados desabilitados ─────────────────────────────────────────────────
+    //  estados desabilitados
     it('botão fica desabilitado quando sem permissão (podeEditar=false)', () => {
         visoesService.getPermissoes.mockReturnValue(false);
         render(<BtnGerarFinalRetificacao paa={DEFAULT_PAA} />);
@@ -146,7 +146,7 @@ describe('BtnGerarFinalRetificacao', () => {
         expect(screen.getByRole('button', { name: 'Gerar' })).toBeDisabled();
     });
 
-    // ── interações de clique ──────────────────────────────────────────────────
+    //  interações de clique
     it('clicar no botão chama mutateAsync com confirmar=0', async () => {
         render(<BtnGerarFinalRetificacao paa={DEFAULT_PAA} />);
 
@@ -174,7 +174,7 @@ describe('BtnGerarFinalRetificacao', () => {
         expect(mockMutateAsync).not.toHaveBeenCalled();
     });
 
-    // ── callback de erro – branch confirmar ──────────────────────────────────
+    //  callback de erro – branch confirmar
     it('onError com confirmar=true abre o modal de confirmação de retificação', async () => {
         render(<BtnGerarFinalRetificacao paa={DEFAULT_PAA} />);
 
@@ -187,7 +187,7 @@ describe('BtnGerarFinalRetificacao', () => {
         expect(screen.getByTestId('modal-confirmar-retif')).toBeInTheDocument();
     });
 
-    // ── callback de erro – branch else (pendências) ──────────────────────────
+    //  callback de erro – branch else (pendências)
     it('onError com confirmar=false abre modal de pendências com a mensagem', async () => {
         render(<BtnGerarFinalRetificacao paa={DEFAULT_PAA} />);
 
@@ -203,7 +203,7 @@ describe('BtnGerarFinalRetificacao', () => {
         );
     });
 
-    // ── modal de confirmação ──────────────────────────────────────────────────
+    //  modal de confirmação
     it('cancelar no modal de confirmação fecha o modal', async () => {
         render(<BtnGerarFinalRetificacao paa={DEFAULT_PAA} />);
 
@@ -235,7 +235,7 @@ describe('BtnGerarFinalRetificacao', () => {
         });
     });
 
-    // ── modal de pendências ───────────────────────────────────────────────────
+    //  modal de pendências
     it('fechar o modal de pendências fecha o modal', async () => {
         render(<BtnGerarFinalRetificacao paa={DEFAULT_PAA} />);
 
@@ -250,7 +250,7 @@ describe('BtnGerarFinalRetificacao', () => {
         expect(screen.queryByTestId('modal-pendencias-retif')).not.toBeInTheDocument();
     });
 
-    // ── callback de sucesso ───────────────────────────────────────────────────
+    //  callback de sucesso
     it('onSuccessGerarDocumentoRetificacao chama iniciarPolling', () => {
         render(<BtnGerarFinalRetificacao paa={DEFAULT_PAA} />);
 
@@ -261,7 +261,7 @@ describe('BtnGerarFinalRetificacao', () => {
         expect(mockIniciarPolling).toHaveBeenCalledTimes(1);
     });
 
-    // ── navegação pós-conclusão ───────────────────────────────────────────────
+    //  navegação pós-conclusão
     it('navega para /paa-vigente-e-anteriores quando onConcluidoFinal é chamado', () => {
         render(<BtnGerarFinalRetificacao paa={DEFAULT_PAA} />);
 

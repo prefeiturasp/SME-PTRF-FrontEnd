@@ -4,7 +4,7 @@ import '@testing-library/jest-dom';
 import { BtnGerarPreviaRetificacao } from '../BtnGerarPreviaRetificacao';
 import { visoesService } from '../../../../../../../../../services/visoes.service';
 
-// ─── variáveis de controle dos mocks ─────────────────────────────────────────
+// variáveis de controle dos mocks
 const mockNavigate = jest.fn();
 const mockMutate = jest.fn();
 const mockIniciarPolling = jest.fn();
@@ -15,7 +15,7 @@ let mockIsLoading = false;
 let mockIsPending = false;
 let capturedOnSuccess;
 
-// ─── mocks de módulos ─────────────────────────────────────────────────────────
+// mocks de módulos
 jest.mock('react-router-dom', () => ({
     ...jest.requireActual('react-router-dom'),
     useNavigate: () => mockNavigate,
@@ -59,7 +59,7 @@ jest.mock('../../../ModalInfoGeracaoDocumento', () => ({
         ) : null,
 }));
 
-// ─── dados padrão ────────────────────────────────────────────────────────────
+// dados padrão
 const DEFAULT_PAA = { uuid: 'uuid-previa-retif-456', status: 'RETIFICACAO' };
 
 describe('BtnGerarPreviaRetificacao', () => {
@@ -72,7 +72,7 @@ describe('BtnGerarPreviaRetificacao', () => {
         capturedOnSuccess = undefined;
     });
 
-    // ── renderização ──────────────────────────────────────────────────────────
+    // renderização
     it('renderiza o botão com texto "Prévia"', () => {
         render(<BtnGerarPreviaRetificacao paa={DEFAULT_PAA} />);
         expect(screen.getByRole('button', { name: 'Prévia' })).toBeInTheDocument();
@@ -91,7 +91,7 @@ describe('BtnGerarPreviaRetificacao', () => {
         expect(screen.getByRole('button', { name: 'Prévia' })).not.toBeDisabled();
     });
 
-    // ── estados desabilitados ─────────────────────────────────────────────────
+    // estados desabilitados
     it('botão fica desabilitado quando sem permissão (podeEditar=false)', () => {
         visoesService.getPermissoes.mockReturnValue(false);
         render(<BtnGerarPreviaRetificacao paa={DEFAULT_PAA} />);
@@ -128,7 +128,7 @@ describe('BtnGerarPreviaRetificacao', () => {
         expect(screen.getByRole('button', { name: 'Prévia' })).not.toBeDisabled();
     });
 
-    // ── interações de clique ──────────────────────────────────────────────────
+    // interações de clique
     it('clicar no botão chama mutate com o uuid do paa', () => {
         render(<BtnGerarPreviaRetificacao paa={DEFAULT_PAA} />);
         fireEvent.click(screen.getByRole('button', { name: 'Prévia' }));
@@ -145,7 +145,7 @@ describe('BtnGerarPreviaRetificacao', () => {
         expect(mockMutate).not.toHaveBeenCalled();
     });
 
-    // ── callback de sucesso ───────────────────────────────────────────────────
+    // callback de sucesso
     it('onSuccessGerarDocumentoRetificacao abre o modal e chama iniciarPolling', async () => {
         render(<BtnGerarPreviaRetificacao paa={DEFAULT_PAA} />);
         expect(screen.queryByTestId('modal-info-previa-retif')).not.toBeInTheDocument();

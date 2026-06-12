@@ -46,7 +46,7 @@ const createWrapper = () => {
     );
 };
 
-// ── usePostPaaGeracaoDocumentoPreviaRetificacao ──────────────────────────────
+// usePostPaaGeracaoDocumentoPreviaRetificacao
 
 describe('usePostPaaGeracaoDocumentoPreviaRetificacao', () => {
     beforeEach(() => {
@@ -219,7 +219,7 @@ describe('usePostPaaGeracaoDocumentoPreviaRetificacao', () => {
     });
 });
 
-// ── usePostPaaGeracaoDocumentoFinalRetificacao ───────────────────────────────
+// usePostPaaGeracaoDocumentoFinalRetificacao
 
 describe('usePostPaaGeracaoDocumentoFinalRetificacao', () => {
     beforeEach(() => {
@@ -428,7 +428,7 @@ describe('usePostPaaGeracaoDocumentoFinalRetificacao', () => {
     });
 });
 
-// ── usePostPaaGeracaoDocumentoPrevia ─────────────────────────────────────────
+// usePostPaaGeracaoDocumentoPrevia
 
 describe('usePostPaaGeracaoDocumentoPrevia', () => {
     beforeEach(() => {
@@ -578,7 +578,7 @@ describe('usePostPaaGeracaoDocumentoPrevia', () => {
     });
 });
 
-// ── usePostPaaGeracaoDocumentoFinal ──────────────────────────────────────────
+// usePostPaaGeracaoDocumentoFinal
 
 describe('usePostPaaGeracaoDocumentoFinal', () => {
     beforeEach(() => {

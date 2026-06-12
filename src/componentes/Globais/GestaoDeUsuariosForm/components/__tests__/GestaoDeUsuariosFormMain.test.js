@@ -3,18 +3,18 @@ import { render, screen } from '@testing-library/react';
 import { GestaoDeUsuariosFormMain } from '../GestaoDeUsuariosFormMain';
 import { GestaoDeUsuariosFormContext } from '../../context/GestaoDeUsuariosFormProvider';
 
-// ── Router mock ───────────────────────────────────────────────────────────────
+// Router mock
 jest.mock('react-router-dom', () => ({
     ...jest.requireActual('react-router-dom'),
     useParams: jest.fn(),
 }));
 
-// ── Hooks mocks ───────────────────────────────────────────────────────────────
+// Hooks mocks
 jest.mock('../../hooks/useUsuario', () => ({
     useUsuario: jest.fn(),
 }));
 
-// ── Child components mocks ────────────────────────────────────────────────────
+// Child components mocks
 jest.mock('../BarraTopoForm', () => ({
     BarraTopoForm: () => <div data-testid="barra-topo-form" />,
 }));

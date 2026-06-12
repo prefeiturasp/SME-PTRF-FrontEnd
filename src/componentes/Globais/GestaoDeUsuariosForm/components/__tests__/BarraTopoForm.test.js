@@ -3,13 +3,13 @@ import { render, screen } from '@testing-library/react';
 import { BarraTopoForm } from '../BarraTopoForm';
 import { GestaoDeUsuariosFormContext } from '../../context/GestaoDeUsuariosFormProvider';
 
-// ── Navegação mock ────────────────────────────────────────────────────────────
+// Navegação mock
 jest.mock('react-router-dom', () => ({
     ...jest.requireActual('react-router-dom'),
     useNavigate: () => jest.fn(),
 }));
 
-// ── BtnVoltar mock ────────────────────────────────────────────────────────────
+// BtnVoltar mock
 jest.mock('../BtnVoltar', () => ({
     BtnVoltar: () => <button data-testid="btn-voltar">Voltar</button>,
 }));

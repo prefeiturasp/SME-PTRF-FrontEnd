@@ -4,7 +4,7 @@ import { UnidadesUsuario } from '../UnidadesUsuario';
 import { GestaoDeUsuariosFormContext } from '../../context/GestaoDeUsuariosFormProvider';
 import { UnidadesUsuarioContext } from '../../context/UnidadesUsuarioProvider';
 
-// ── PrimeReact DataTable mock — invoca body de cada Column para cobrir templates ─
+// PrimeReact DataTable mock — invoca body de cada Column para cobrir templates
 jest.mock('primereact/datatable', () => ({
     DataTable: ({ children, value }) => {
         // Normaliza children para array sem depender de React.Children (não permitido em factories)
@@ -30,7 +30,7 @@ jest.mock('primereact/column', () => ({
     Column: () => null,
 }));
 
-// ── FontAwesome mock ──────────────────────────────────────────────────────────
+// FontAwesome mock
 jest.mock('@fortawesome/react-fontawesome', () => ({
     FontAwesomeIcon: ({ icon }) => <span data-testid={`icon-${icon?.iconName || 'icon'}`} />,
 }));
@@ -39,7 +39,7 @@ jest.mock('@fortawesome/free-solid-svg-icons', () => ({
     faCheckCircle: { iconName: 'check-circle' },
 }));
 
-// ── Ant Design Switch mock ────────────────────────────────────────────────────
+// Ant Design Switch mock
 jest.mock('antd', () => ({
     Switch: ({ checked, onChange, disabled, className, name }) => (
         <input
@@ -55,28 +55,28 @@ jest.mock('antd', () => ({
     ),
 }));
 
-// ── react-tooltip mock ────────────────────────────────────────────────────────
+// react-tooltip mock
 jest.mock('react-tooltip', () => ({
     Tooltip: ({ id }) => <div data-testid={`tooltip-${id}`} />,
 }));
 
-// ── Loading mock ──────────────────────────────────────────────────────────────
+// Loading mock
 jest.mock('../../../../../utils/Loading', () => ({
     __esModule: true,
     default: () => <div data-testid="loading" />,
 }));
 
-// ── MsgImgCentralizada mock ───────────────────────────────────────────────────
+// MsgImgCentralizada mock
 jest.mock('../../../Mensagens/MsgImgCentralizada', () => ({
     MsgImgCentralizada: ({ texto }) => <div data-testid="msg-img-centralizada">{texto}</div>,
 }));
 
-// ── BarraTopoListagem mock ────────────────────────────────────────────────────
+// BarraTopoListagem mock
 jest.mock('../BarraTopoListagem', () => ({
     BarraTopoListagem: () => <div data-testid="barra-topo-listagem" />,
 }));
 
-// ── ModalConfirmacao mock ─────────────────────────────────────────────────────
+// ModalConfirmacao mock
 jest.mock('../ModalConfirmacao', () => ({
     ModalConfirmacao: ({ show, botaoCancelarHandle, botaoConfirmarHandle, titulo }) =>
         show ? (
@@ -88,12 +88,12 @@ jest.mock('../ModalConfirmacao', () => ({
         ) : null,
 }));
 
-// ── Permissão mock ────────────────────────────────────────────────────────────
+// Permissão mock
 jest.mock('../../../GestaoDeUsuarios/utils/RetornaSeTemPermissaoEdicaoGestaoUsuarios', () => ({
     RetornaSeTemPermissaoEdicaoGestaoUsuarios: jest.fn(),
 }));
 
-// ── Hooks mocks ───────────────────────────────────────────────────────────────
+// Hooks mocks
 jest.mock('../../hooks/useUnidadesUsuario', () => ({
     useUnidadesUsuario: jest.fn(),
 }));
@@ -104,7 +104,7 @@ jest.mock('../../hooks/useDesabilitarAcesso', () => ({
     useDesabilitarAcesso: jest.fn(),
 }));
 
-// ── SVG mock ──────────────────────────────────────────────────────────────────
+// SVG mock
 jest.mock('../../../../../assets/img/img-404.svg', () => 'img-404.svg');
 
 import { RetornaSeTemPermissaoEdicaoGestaoUsuarios } from '../../../GestaoDeUsuarios/utils/RetornaSeTemPermissaoEdicaoGestaoUsuarios';
@@ -112,7 +112,7 @@ import { useUnidadesUsuario } from '../../hooks/useUnidadesUsuario';
 import { useHabilitarAcesso } from '../../hooks/useHabilitarAcesso';
 import { useDesabilitarAcesso } from '../../hooks/useDesabilitarAcesso';
 
-// ── Dados de teste ────────────────────────────────────────────────────────────
+// Dados de teste
 const USUARIO_MOCK = { username: 'joao', id: 1, e_servidor: false };
 const USUARIO_SERVIDOR = { username: 'maria', id: 2, e_servidor: true };
 
@@ -166,7 +166,7 @@ const ROW_SERVIDOR_MEMBRO_INATIVO = {
 
 const UNIDADES_COMPLETAS = [ROW_MEMBRO_COM_ACESSO, ROW_NAO_MEMBRO_SEM_ACESSO, ROW_ACESSO_SME];
 
-// ── Helpers de contexto ───────────────────────────────────────────────────────
+// Helpers de contexto
 const buildFormContext = (overrides = {}) => ({
     visaoBase: 'DRE',
     uuidUnidadeBase: 'uuid-dre',
@@ -219,14 +219,13 @@ const renderComponent = (
     );
 };
 
-// ─────────────────────────────────────────────────────────────────────────────
 describe('UnidadesUsuario', () => {
     beforeEach(() => {
         jest.clearAllMocks();
         setupDefaultMocks();
     });
 
-    // ── Visibilidade geral ────────────────────────────────────────────────────
+    // Visibilidade geral
     describe('visibilidade geral', () => {
         it('retorna null (não renderiza nada) quando visaoBase é "UE"', () => {
             useUnidadesUsuario.mockReturnValue({ isLoading: false, data: [] });
@@ -249,7 +248,7 @@ describe('UnidadesUsuario', () => {
         });
     });
 
-    // ── Loading ───────────────────────────────────────────────────────────────
+    // Loading
     describe('estado de carregamento', () => {
         it('exibe loading quando modo é "Editar Usuário" e isLoading=true', () => {
             useUnidadesUsuario.mockReturnValue({ isLoading: true, data: [] });
@@ -264,7 +263,7 @@ describe('UnidadesUsuario', () => {
         });
     });
 
-    // ── DataTable e estado vazio ──────────────────────────────────────────────
+    // DataTable e estado vazio
     describe('DataTable e estado vazio', () => {
         it('exibe DataTable quando modo é "Editar Usuário", há dados e usuario', () => {
             useUnidadesUsuario.mockReturnValue({ isLoading: false, data: UNIDADES_COMPLETAS });
@@ -292,7 +291,7 @@ describe('UnidadesUsuario', () => {
         });
     });
 
-    // ── membroTemplate ────────────────────────────────────────────────────────
+    // membroTemplate
     describe('membroTemplate (coluna Membro)', () => {
         it('exibe ícone check quando membro=true', () => {
             useUnidadesUsuario.mockReturnValue({ isLoading: false, data: [ROW_MEMBRO_COM_ACESSO] });
@@ -310,7 +309,7 @@ describe('UnidadesUsuario', () => {
         });
     });
 
-    // ── unidadeEscolarTemplate ────────────────────────────────────────────────
+    // unidadeEscolarTemplate
     describe('unidadeEscolarTemplate (coluna Nome)', () => {
         it('exibe o nome da unidade', () => {
             useUnidadesUsuario.mockReturnValue({ isLoading: false, data: [ROW_MEMBRO_COM_ACESSO] });
@@ -332,7 +331,7 @@ describe('UnidadesUsuario', () => {
         });
     });
 
-    // ── temAcessoTemplate e disableSwitchTemAcesso ────────────────────────────
+    // temAcessoTemplate e disableSwitchTemAcesso
     describe('temAcessoTemplate (coluna Acesso)', () => {
         it('switch fica marcado (checked) quando tem_acesso=true', () => {
             useUnidadesUsuario.mockReturnValue({ isLoading: false, data: [ROW_MEMBRO_COM_ACESSO] });
@@ -379,7 +378,7 @@ describe('UnidadesUsuario', () => {
         });
     });
 
-    // ── handleChangeSwitchTemAcesso ───────────────────────────────────────────
+    // handleChangeSwitchTemAcesso
     describe('handleChangeSwitchTemAcesso', () => {
         it('abre o modal quando acesso_concedido_sme=true ao clicar no switch', () => {
             useUnidadesUsuario.mockReturnValue({ isLoading: false, data: [ROW_ACESSO_SME] });
@@ -432,7 +431,7 @@ describe('UnidadesUsuario', () => {
         });
     });
 
-    // ── acaoSwitchTemAcesso via modal ─────────────────────────────────────────
+    // acaoSwitchTemAcesso via modal
     describe('acaoSwitchTemAcesso via modal de confirmação', () => {
         it('chama mutationDesabilitarAcesso ao confirmar o modal (tem_acesso padrão=true)', () => {
             useUnidadesUsuario.mockReturnValue({ isLoading: false, data: [] });

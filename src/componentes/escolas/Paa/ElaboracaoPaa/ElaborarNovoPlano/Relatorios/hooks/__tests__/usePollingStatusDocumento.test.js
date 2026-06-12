@@ -1,7 +1,7 @@
 import { renderHook, act } from '@testing-library/react';
 import { usePollingStatusDocumento } from '../usePollingStatusDocumento';
 
-// ─── mock de useGetStatusGeracaoDocumentoPaa ──────────────────────────────────
+// mock de useGetStatusGeracaoDocumentoPaa
 const mockRefetch = jest.fn();
 let mockData = undefined;
 let mockIsFetching = false;
@@ -26,7 +26,7 @@ describe('usePollingStatusDocumento', () => {
         jest.useRealTimers();
     });
 
-    // ── shape retornada ───────────────────────────────────────────────────────
+    // shape retornada
     it('retorna statusDocumento, isLoadingStatusDocumento e iniciarPolling', () => {
         const { result } = renderHook(() =>
             usePollingStatusDocumento({ paaUuid: 'test-uuid' })
@@ -57,7 +57,7 @@ describe('usePollingStatusDocumento', () => {
         expect(result.current.isLoadingStatusDocumento).toBe(true);
     });
 
-    // ── efeito de status ─────────────────────────────────────────────────────
+    // efeito de status
     it('chama onConcluidoFinal quando status=CONCLUIDO e versao=FINAL', () => {
         mockData = { status: 'CONCLUIDO', versao: 'FINAL' };
         const onConcluidoFinal = jest.fn();
@@ -110,7 +110,7 @@ describe('usePollingStatusDocumento', () => {
         ).not.toThrow();
     });
 
-    // ── iniciarPolling ────────────────────────────────────────────────────────
+    // iniciarPolling
     it('iniciarPolling chama refetchStatusDoc imediatamente', async () => {
         const { result } = renderHook(() =>
             usePollingStatusDocumento({ paaUuid: 'test-uuid' })
@@ -183,7 +183,7 @@ describe('usePollingStatusDocumento', () => {
         expect(mockRefetch).toHaveBeenCalledTimes(3);
     });
 
-    // ── cleanup na desmontagem ────────────────────────────────────────────────
+    // cleanup na desmontagem
     it('cancela os timers ao desmontar o hook', async () => {
         jest.useFakeTimers();
 

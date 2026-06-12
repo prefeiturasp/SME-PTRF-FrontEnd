@@ -4,7 +4,7 @@ import '@testing-library/jest-dom';
 import { BtnGerarFinalOriginal } from '../BtnGerarFinalOriginal';
 import { visoesService } from '../../../../../../../../../services/visoes.service';
 
-// ─── variáveis de controle dos mocks ─────────────────────────────────────────
+// variáveis de controle dos mocks
 const mockNavigate = jest.fn();
 const mockMutateAsync = jest.fn();
 const mockIniciarPolling = jest.fn();
@@ -17,7 +17,7 @@ let capturedOnError;
 let capturedOnSuccess;
 let capturedOnConcluidoFinal;
 
-// ─── mocks de módulos ─────────────────────────────────────────────────────────
+// mocks de módulos
 jest.mock('react-router-dom', () => ({
     ...jest.requireActual('react-router-dom'),
     useNavigate: () => mockNavigate,
@@ -77,7 +77,7 @@ jest.mock('../../../ModalInfoGeracaoDocumento', () => ({
         ) : null,
 }));
 
-// ─── dados padrão ────────────────────────────────────────────────────────────
+// dados padrão
 const DEFAULT_PAA = { uuid: 'uuid-final-orig-789', status: 'EM_ELABORACAO' };
 
 describe('BtnGerarFinalOriginal', () => {
@@ -93,7 +93,7 @@ describe('BtnGerarFinalOriginal', () => {
         mockMutateAsync.mockResolvedValue({});
     });
 
-    // ── renderização ──────────────────────────────────────────────────────────
+    // renderização
     it('renderiza o botão com texto "Gerar"', () => {
         render(<BtnGerarFinalOriginal paa={DEFAULT_PAA} />);
         expect(screen.getByRole('button', { name: 'Gerar' })).toBeInTheDocument();
@@ -112,7 +112,7 @@ describe('BtnGerarFinalOriginal', () => {
         expect(screen.getByRole('button', { name: 'Gerar' })).not.toBeDisabled();
     });
 
-    // ── estados desabilitados ─────────────────────────────────────────────────
+    // estados desabilitados
     it('botão fica desabilitado quando sem permissão (podeEditar=false)', () => {
         visoesService.getPermissoes.mockReturnValue(false);
         render(<BtnGerarFinalOriginal paa={DEFAULT_PAA} />);
@@ -143,7 +143,7 @@ describe('BtnGerarFinalOriginal', () => {
         expect(screen.getByRole('button', { name: 'Gerar' })).toBeDisabled();
     });
 
-    // ── interações de clique ──────────────────────────────────────────────────
+    // interações de clique
     it('clicar no botão chama mutateAsync com confirmar=0', async () => {
         render(<BtnGerarFinalOriginal paa={DEFAULT_PAA} />);
 
@@ -171,7 +171,7 @@ describe('BtnGerarFinalOriginal', () => {
         expect(mockMutateAsync).not.toHaveBeenCalled();
     });
 
-    // ── callback de erro – branch confirmar ──────────────────────────────────
+    // callback de erro – branch confirmar
     it('onError com confirmar=true abre o modal de confirmação', async () => {
         render(<BtnGerarFinalOriginal paa={DEFAULT_PAA} />);
 
@@ -184,7 +184,7 @@ describe('BtnGerarFinalOriginal', () => {
         expect(screen.getByTestId('modal-confirmar-final')).toBeInTheDocument();
     });
 
-    // ── callback de erro – branch valida_gerar_documento_final ───────────────
+    // callback de erro – branch valida_gerar_documento_final
     it('onError com error=valida_gerar_documento_final exibe toast de validação', async () => {
         render(<BtnGerarFinalOriginal paa={DEFAULT_PAA} />);
 
@@ -204,7 +204,7 @@ describe('BtnGerarFinalOriginal', () => {
         expect(screen.queryByTestId('modal-pendencias-final')).not.toBeInTheDocument();
     });
 
-    // ── callback de erro – branch else (pendências) ──────────────────────────
+    // callback de erro – branch else (pendências)
     it('onError sem confirmar e sem error específico abre modal de pendências', async () => {
         render(<BtnGerarFinalOriginal paa={DEFAULT_PAA} />);
 
@@ -219,7 +219,7 @@ describe('BtnGerarFinalOriginal', () => {
         expect(screen.getByTestId('texto-pendencias').textContent).toContain('objetivo');
     });
 
-    // ── modal de confirmação ──────────────────────────────────────────────────
+    // modal de confirmação
     it('cancelar no modal de confirmação fecha o modal', async () => {
         render(<BtnGerarFinalOriginal paa={DEFAULT_PAA} />);
 
@@ -253,7 +253,7 @@ describe('BtnGerarFinalOriginal', () => {
         });
     });
 
-    // ── modal de pendências ───────────────────────────────────────────────────
+    // modal de pendências
     it('fechar o modal de pendências fecha o modal', async () => {
         render(<BtnGerarFinalOriginal paa={DEFAULT_PAA} />);
 
@@ -268,7 +268,7 @@ describe('BtnGerarFinalOriginal', () => {
         expect(screen.queryByTestId('modal-pendencias-final')).not.toBeInTheDocument();
     });
 
-    // ── callback de sucesso ───────────────────────────────────────────────────
+    // callback de sucesso
     it('onSuccessGerarDocumento chama iniciarPolling', () => {
         render(<BtnGerarFinalOriginal paa={DEFAULT_PAA} />);
 
@@ -279,7 +279,7 @@ describe('BtnGerarFinalOriginal', () => {
         expect(mockIniciarPolling).toHaveBeenCalledTimes(1);
     });
 
-    // ── navegação pós-conclusão ───────────────────────────────────────────────
+    // navegação pós-conclusão
     it('navega para /paa-vigente-e-anteriores quando onConcluidoFinal é chamado', () => {
         render(<BtnGerarFinalOriginal paa={DEFAULT_PAA} />);
 
