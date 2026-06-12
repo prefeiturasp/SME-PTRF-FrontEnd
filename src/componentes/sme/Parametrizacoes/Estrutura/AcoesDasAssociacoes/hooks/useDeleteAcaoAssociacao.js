@@ -20,8 +20,8 @@ export const useDeleteAcaoAssociacao = (
             )
         },
         onError: (e) => {
-            if (e.response?.data?.non_field_errors) {
-                toastCustom.ToastCustomError("Exclusão não permitida", e.response?.data?.non_field_errors);
+            if (e.response?.data?.mensagem) {
+                toastCustom.ToastCustomError("Exclusão não permitida", e.response?.data?.mensagem);
             } else {
                 toastCustom.ToastCustomError("Exclusão não permitida", "Houve um erro ao tentar completar ação.");
             }

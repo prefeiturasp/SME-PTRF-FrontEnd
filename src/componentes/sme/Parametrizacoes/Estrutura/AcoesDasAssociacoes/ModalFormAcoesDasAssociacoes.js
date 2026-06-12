@@ -6,6 +6,9 @@ import Spinner from "../../../../../assets/img/spinner.gif"
 import { useAcoesDasAssociacoesContext } from "./hooks/useAcoesDasAssociacoesContext";
 import { useRecursoSelecionadoContext } from "../../../../../context/RecursoSelecionado";
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
+
 export const ModalFormAcoesDaAssociacao = (props) => {
     const { recursos } = useRecursoSelecionadoContext()
     const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES = RetornaSeTemPermissaoEdicaoPainelParametrizacoes()
@@ -156,7 +159,9 @@ export const ModalFormAcoesDaAssociacao = (props) => {
                                 onClick={handleOpenConfirmDelete}
                                 type="button"
                                 className="btn btn btn-danger mt-2 mr-2 botao-excluir-acao"
-                                disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}>
+                                disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
+                            >
+                                <FontAwesomeIcon icon={faXmark} style={{ marginRight: "8px", color: "white", fontWeight: "bold" }} />
                                 Excluir
                             </button>
                             }

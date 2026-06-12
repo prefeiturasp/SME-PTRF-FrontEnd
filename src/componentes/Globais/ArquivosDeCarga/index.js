@@ -68,7 +68,7 @@ const ArquivosDeCarga = () => {
       };
     } else if (url_params.tipo_de_carga === "CARGA_ACOES_ASSOCIACOES") {
       obj = {
-        titulo: "Ações das Associações egergergegr",
+        titulo: "Ações das Associações",
         titulo_modal: "ações das associações",
         acesso_permitido: true,
         UrlsMenuInterno: [
