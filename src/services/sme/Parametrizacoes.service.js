@@ -672,7 +672,7 @@ export const putAtualizarAcaoAssociacao = async (
   acao_associacao_uuid,
   payload
 ) => {
-  const recurso_uuid = payload?.recurso ?? null;
+  const recurso_uuid = payload?.recurso_uuid ?? null;
 
   return (
     await api.put(
