@@ -1,8 +1,7 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { PaginasContainer } from '../../../../paginas/PaginasContainer';
 import BreadcrumbComponent from '../../../Globais/Breadcrumb';
 import { ASSOCIACAO_UUID } from '../../../../services/auth.service';
-import { visoesService } from '../../../../services/visoes.service';
 import Loading from '../../../../utils/Loading';
 import { usePaaVigenteEAnteriores } from './hooks/usePaaVigenteEAnteriores';
 import { PaaCardBarraTitulo } from './components/PaaCardBarraTitulo/PaaCardBarraTitulo';
@@ -45,12 +44,7 @@ export const PaaVigenteEAnteriores = () => {
     ? { mensagem: vigente.original.documento.status.mensagem }
     : undefined;
 
-  const PaaRetificacaoFeatureFlag = visoesService.featureFlagAtiva('paa-retificacao');
-
-  const exibirBotaoRetificar =
-    Boolean(vigente)
-    && PaaRetificacaoFeatureFlag
-    && (podeExibirBotaoRetificar(vigente) || vigente.esta_em_retificacao);
+  const exibirBotaoRetificar = useMemo(() => podeExibirBotaoRetificar(vigente));
 
   return (
     <PaginasContainer>
