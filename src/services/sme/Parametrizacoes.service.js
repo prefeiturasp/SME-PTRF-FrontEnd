@@ -1243,18 +1243,19 @@ export const deleteMotivoDevolucaoTesouro = async (
 // Motivos de Aprovação de PC com ressalva
 export const getMotivosAprovacaoPcRessalva = async (filter, currentPage) => {
   const { motivo, recurso } = filter;
-  let url = `/api/motivos-aprovacao-ressalva-parametrizacao/?page_size=${10}`;
-  if (recurso) {
-    url += `&recurso_uuid=${recurso}`;
-  }
+  const motivoTrimmed = motivo.trim();
+
+  let url = "/api/motivos-aprovacao-ressalva-parametrizacao/";
+
   return (
     await api.get(
       url,
       {
         ...authHeader(),
         params: {
-          motivo: motivo,
-          recurso: recurso,
+          page_size: 10,
+          motivo: motivoTrimmed,
+          recurso_uuid: recurso,
           page: currentPage,
         },
       }
