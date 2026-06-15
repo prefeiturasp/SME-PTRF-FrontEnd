@@ -2,6 +2,13 @@ import {
   ataRetificacaoGerada,
   podeExibirBotaoRetificar,
 } from '../exibirBotaoRetificarPaa';
+import { visoesService } from '../../../../../../services/visoes.service';
+
+jest.mock('../../../../../../services/visoes.service', () => ({
+  visoesService: {
+    featureFlagAtiva: jest.fn(),
+  },
+}));
 
 const vigenteBase = {
   uuid: 'u',
@@ -11,6 +18,10 @@ const vigenteBase = {
 };
 
 describe('podeExibirBotaoRetificar', () => {
+  beforeEach(() => {
+    visoesService.featureFlagAtiva.mockReturnValue(true);
+  });
+
   it('fora de retificação: usa pode_retificar', () => {
     expect(
       podeExibirBotaoRetificar({
@@ -28,34 +39,41 @@ describe('podeExibirBotaoRetificar', () => {
     ).toBe(false);
   });
 
-  it('em retificação: só true quando a ata de retificação está gerada (CONCLUIDO + arquivo)', () => {
+  it('sem feature flag: retorna false independente dos demais campos', () => {
+    visoesService.featureFlagAtiva.mockReturnValue(false);
     expect(
       podeExibirBotaoRetificar({
         ...vigenteBase,
+        pode_retificar: true,
         esta_em_retificacao: true,
-        pode_retificar: false,
-        retificacao: {
-          ata: {
-            existe_arquivo: false,
-            status: { status_geracao: 'EM_PROCESSAMENTO' },
-          },
-        },
       })
     ).toBe(false);
+  });
 
+  it('em retificação: true quando documento não está em versão FINAL', () => {
     expect(
       podeExibirBotaoRetificar({
         ...vigenteBase,
         esta_em_retificacao: true,
         pode_retificar: false,
         retificacao: {
-          ata: {
-            existe_arquivo: true,
-            status: { status_geracao: 'CONCLUIDO' },
-          },
+          documento: { status: { versao: 'PRELIMINAR' } },
         },
       })
     ).toBe(true);
+  });
+
+  it('em retificação: false quando documento está em versão FINAL', () => {
+    expect(
+      podeExibirBotaoRetificar({
+        ...vigenteBase,
+        esta_em_retificacao: true,
+        pode_retificar: false,
+        retificacao: {
+          documento: { status: { versao: 'FINAL' } },
+        },
+      })
+    ).toBe(false);
   });
 });
 
@@ -63,5 +81,25 @@ describe('ataRetificacaoGerada', () => {
   it('retorna false sem retificacao.ata', () => {
     expect(ataRetificacaoGerada({ retificacao: null })).toBe(false);
     expect(ataRetificacaoGerada({ retificacao: {} })).toBe(false);
+  });
+
+  it('retorna false quando ata não tem arquivo ou status diferente de CONCLUIDO', () => {
+    expect(
+      ataRetificacaoGerada({
+        retificacao: {
+          ata: { existe_arquivo: false, status: { status_geracao: 'EM_PROCESSAMENTO' } },
+        },
+      })
+    ).toBe(false);
+  });
+
+  it('retorna true quando ata tem arquivo e status CONCLUIDO', () => {
+    expect(
+      ataRetificacaoGerada({
+        retificacao: {
+          ata: { existe_arquivo: true, status: { status_geracao: 'CONCLUIDO' } },
+        },
+      })
+    ).toBe(true);
   });
 });
