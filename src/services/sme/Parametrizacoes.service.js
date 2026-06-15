@@ -447,8 +447,8 @@ export const deleteTag = async (tag_uuid) => {
 };
 
 // Associacoes
-export const getAssociacoes = async () => {
-  return (await api.get(`/api/associacoes/`, authHeader())).data;
+export const getAssociacoes = async (recurso_uuid = '') => {
+  return (await api.get(`/api/associacoes/`, {...authHeader(), params: { recurso_uuid }})).data;
 };
 export const getParametrizacoesAssociacoes = async (
   page,
@@ -464,8 +464,8 @@ export const getParametrizacoesAssociacoes = async (
     )
   ).data;
 };
-export const getTabelaAssociacoes = async () => {
-  return (await api.get(`/api/associacoes/tabelas/`, authHeader())).data;
+export const getTabelaAssociacoes = async (recurso_uuid = null) => {
+  return (await api.get(`/api/associacoes/tabelas/`, {...authHeader(), params: { recurso_uuid }})).data;
 };
 export const getFiltrosAssociacoes = async (
   tipo_unidade,
@@ -595,18 +595,32 @@ export const getParametrizacoesAcoesAssociacoes = async (
   nome_cod_eol,
   acao__uuid,
   status,
-  filtro_informacoes
+  filtro_informacoes,
+  recurso_uuid = null,
 ) => {
+  const filtro_informacoes_str = filtro_informacoes.join(",");
+
   return (
     await api.get(
-      `/api/parametrizacoes-acoes-associacoes/?page=${page}&page_size=${20}&nome=${nome_cod_eol}&acao__uuid=${acao__uuid}&status=${status}&filtro_informacoes=${filtro_informacoes}`,
-      authHeader()
+      `/api/parametrizacoes-acoes-associacoes/`,
+      {
+        ...authHeader(),
+        params: {
+          page_size: 10,
+          page,
+          nome: nome_cod_eol,
+          acao__uuid,
+          status,
+          filtro_informacoes: filtro_informacoes_str,
+          recurso_uuid
+        }
+      }
     )
   ).data;
 };
 
-export const getListaDeAcoes = async () => {
-  return (await api.get(`/api/acoes/`, authHeader())).data;
+export const getListaDeAcoes = async (recurso_uuid = null) => {
+  return (await api.get(`/api/acoes/`, { ...authHeader(), params: { recurso_uuid } })).data;
 };
 
 export const getListaDeAcertosLancamentos = async () => {
@@ -658,11 +672,16 @@ export const putAtualizarAcaoAssociacao = async (
   acao_associacao_uuid,
   payload
 ) => {
+  const recurso_uuid = payload?.recurso_uuid ?? null;
+
   return (
     await api.put(
       `/api/acoes-associacoes/${acao_associacao_uuid}/`,
       payload,
-      authHeader()
+      {
+        ...authHeader(),
+        params: { recurso_uuid }
+      }
     )
   ).data;
 };
@@ -728,10 +747,13 @@ export const putAtualizarAcertosDocumentos = async (
   ).data;
 };
 
-export const deleteAcaoAssociacao = async (acao_associacao_uuid) => {
+export const deleteAcaoAssociacao = async (acao_associacao_uuid, recurso_uuid = null) => {
   return await api.delete(
     `/api/acoes-associacoes/${acao_associacao_uuid}/`,
-    authHeader()
+    {
+      ...authHeader(),
+      params: { recurso_uuid }
+    }
   );
 };
 

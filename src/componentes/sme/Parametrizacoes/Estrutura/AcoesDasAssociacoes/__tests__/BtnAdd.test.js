@@ -3,49 +3,69 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { BtnAddAcoes } from '../BtnAddAcoes';
 
-const mockCreate = {
-
-}
-
 jest.mock('../../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes', () => ({
   RetornaSeTemPermissaoEdicaoPainelParametrizacoes: jest.fn(),
 }));
 
+jest.mock('../../../componentes/AbasPorRecurso/hooks/useAbasPorRecursoContext', () => ({
+  useAbasPorRecursoContext: jest.fn(),
+}));
+
+jest.mock('../hooks/useAcoesDasAssociacoesContext', () => ({
+  useAcoesDasAssociacoesContext: jest.fn(),
+}));
+
+jest.mock('../../../../../Globais/UI/Button', () => ({
+  IconButton: ({ icon, label, onClick, disabled }) => (
+    <button type="button" onClick={onClick} disabled={disabled} aria-label={label}>
+      <span>{icon}</span>
+      {label}
+    </button>
+  ),
+}));
+
 const mockRetornaSeTemPermissaoEdicaoPainelParametrizacoes = require('../../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes').RetornaSeTemPermissaoEdicaoPainelParametrizacoes;
-const mockSetShowModalForm = jest.fn();
-const mockSetStateFormModal = jest.fn();
-const mockInitialStateFormModal = mockCreate
+const mockUseAbasPorRecursoContext = require('../../../componentes/AbasPorRecurso/hooks/useAbasPorRecursoContext').useAbasPorRecursoContext;
+const mockUseAcoesDasAssociacoesContext = require('../hooks/useAcoesDasAssociacoesContext').useAcoesDasAssociacoesContext;
+const mockHandleOpenFormModalCreate = jest.fn();
+
+const defaultSelectedRecurso = {
+  nome: 'Programa de Transferência de Recursos Financeiros (PTRF) - Básico',
+  nome_exibicao: 'PTRF Básico',
+};
 
 describe('Componente BtnAddAcoes', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+
+    mockUseAbasPorRecursoContext.mockReturnValue({
+      selectedRecurso: defaultSelectedRecurso,
+    });
+
+    mockUseAcoesDasAssociacoesContext.mockReturnValue({
+      handleOpenFormModalCreate: mockHandleOpenFormModalCreate,
+      isLoadingAssociacoes: false,
+    });
+  });
+
   it('deve renderizar o botão com o texto e ícone corretamente', () => {
     mockRetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
 
     render(
-      <BtnAddAcoes
-        FontAwesomeIcon={({ icon }) => <span>{icon}</span>}
-        faPlus="faPlusMock"
-        setShowModalForm={mockSetShowModalForm}
-        initialStateFormModal={{}}
-        setStateFormModal={mockSetStateFormModal}
-      />
+      <BtnAddAcoes />
     );
 
     const button = screen.getByRole('button', { name: /adicionar ação de associação/i });
     expect(button).toBeInTheDocument();
-    expect(screen.getByText('faPlusMock')).toBeInTheDocument();
+    expect(screen.getByText('faPlus')).toBeInTheDocument();
+    expect(screen.getByText(/Programa de Transferência de Recursos Financeiros/i)).toBeInTheDocument();
   });
 
   it('deve habilitar o botão quando houver permissão', () => {
     mockRetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
 
     render(
-      <BtnAddAcoes
-        FontAwesomeIcon={({ icon }) => <span>{icon}</span>}
-        faPlus="faPlusMock"
-        setShowModalForm={() => {}}
-        initialStateFormModal={{}}
-        setStateFormModal={() => {}}
-      />
+      <BtnAddAcoes />
     );
 
     const button = screen.getByRole('button', { name: /adicionar ação de associação/i });
@@ -56,13 +76,7 @@ describe('Componente BtnAddAcoes', () => {
     mockRetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(false);
 
     render(
-      <BtnAddAcoes
-        FontAwesomeIcon={({ icon }) => <span>{icon}</span>}
-        faPlus="faPlusMock"
-        setShowModalForm={() => {}}
-        initialStateFormModal={{}}
-        setStateFormModal={() => {}}
-      />
+      <BtnAddAcoes />
     );
 
     const button = screen.getByRole('button', { name: /adicionar ação de associação/i });
@@ -73,19 +87,12 @@ describe('Componente BtnAddAcoes', () => {
     mockRetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
 
     render(
-      <BtnAddAcoes
-        FontAwesomeIcon={({ icon }) => <span>{icon}</span>}
-        faPlus="faPlusMock"
-        setShowModalForm={mockSetShowModalForm}
-        initialStateFormModal={mockInitialStateFormModal}
-        setStateFormModal={mockSetStateFormModal}
-      />
+      <BtnAddAcoes />
     );
 
     const button = screen.getByRole('button', { name: /adicionar ação de associação/i });
     fireEvent.click(button);
 
-    expect(mockSetStateFormModal).toHaveBeenCalledWith(mockInitialStateFormModal);
-    expect(mockSetShowModalForm).toHaveBeenCalledWith(true);
+    expect(mockHandleOpenFormModalCreate).toHaveBeenCalledTimes(1);
   });
 });

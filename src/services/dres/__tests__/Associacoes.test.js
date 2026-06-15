@@ -62,7 +62,12 @@ describe('Testes para funções de análise', () => {
         const result = await getTabelaAssociacoes();
         expect(api.get).toHaveBeenCalledWith(
             `/api/associacoes/tabelas`,
-            authHeader()
+            {
+                ...authHeader(),
+                params: {
+                    recurso_uuid: null
+                }
+            }
         )
         expect(result).toEqual(mockData);
     });

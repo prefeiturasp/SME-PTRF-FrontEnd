@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import { ParametrizacoesMotivosReprovacaoPc } from '../index';
 import { MotivosReprovacaoPcProvider } from '../context/MotivosReprovacaoPc';
 import '@testing-library/jest-dom';
@@ -31,9 +32,11 @@ jest.mock('../../../../../../context/RecursoSelecionado', () => ({
 describe('ParametrizacoesMotivosReprovacaoPc', () => {
     const renderComponent = () => {
         return render(
-            <MotivosReprovacaoPcProvider>
-                <ParametrizacoesMotivosReprovacaoPc />
-            </MotivosReprovacaoPcProvider>
+            <MemoryRouter>
+                <MotivosReprovacaoPcProvider>
+                    <ParametrizacoesMotivosReprovacaoPc />
+                </MotivosReprovacaoPcProvider>
+            </MemoryRouter>
         );
     };
 

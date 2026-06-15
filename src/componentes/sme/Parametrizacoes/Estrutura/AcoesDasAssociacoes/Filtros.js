@@ -1,16 +1,86 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+
 import { Select } from 'antd';
+import Loading from "../../../../../utils/Loading";
+
+import { useAcoesDasAssociacoesContext } from "./hooks/useAcoesDasAssociacoesContext";
+import { useAbasPorRecursoContext } from "../../componentes/AbasPorRecurso/hooks/useAbasPorRecursoContext";
+
 const { Option } = Select;
 
-export const Filtros = ({stateFiltros, handleChangeFiltros, handleSubmitFiltros, limpaFiltros, listaTiposDeAcao, handleOnChangeMultipleSelectStatus, tabelaAssociacoes}) =>{
+export const Filtros = () => {
+    const { selectedRecurso } = useAbasPorRecursoContext();
+    const {
+        setFilters,
+        initialFilters,
+        
+        tabelaAssociacoes,
+        isLoadingTabela,
+
+        listaTiposDeAcao,
+        isLoadingTiposDeAcao,
+    } = useAcoesDasAssociacoesContext();
+
+    const [formFilters, setFormFilters] = useState(initialFilters);
+
+    const isLoading = isLoadingTabela || isLoadingTiposDeAcao;
+
+    const handleChangeFiltros = (name, value) => {
+        setFormFilters(prevState => ({
+            ...prevState,
+            [name]: value
+        }));
+    }
+
+    const handleOnChangeMultipleSelectStatus =  async (value) => {
+        let name = "filtro_informacoes"
+
+        handleChangeFiltros(name, value);
+    };
+
+    const handleSubmitFiltros = (event) => {
+        event.preventDefault();
+
+        setFilters(prevState => ({
+            ...formFilters,
+            recurso_uuid: prevState?.recurso_uuid
+        }));
+    }
+
+    const handleClearFilters = () => {
+        setFormFilters(prevState => ({
+            ...initialFilters,
+            recurso_uuid: prevState?.recurso_uuid
+        }));
+        setFilters(prevState => ({
+            ...initialFilters,
+            recurso_uuid: prevState?.recurso_uuid
+        }));
+    }
+
+    useEffect(() => {
+        setFormFilters(initialFilters);
+    }, [selectedRecurso])
+
+    if (isLoading) {
+        return (
+            <Loading
+                corGrafico="black"
+                corFonte="dark"
+                marginTop="0"
+                marginBottom="0"
+            />
+        );
+    }
+
+
     return(
-        <>
-            <form>
+            <form onSubmit={handleSubmitFiltros} id="form-filtros-acoes-associacoes">
                 <div className="form-row">
                     <div className="form-group col-md-3">
                         <label htmlFor="filtrar_por_nome_cod_eol">Filtrar por nome ou código EOL</label>
                         <input
-                            value={stateFiltros.filtrar_por_nome_cod_eol}
+                            value={formFilters.filtrar_por_nome_cod_eol}
                             onChange={(e) => handleChangeFiltros(e.target.name, e.target.value)}
                             name='filtrar_por_nome_cod_eol'
                             id="filtrar_por_nome_cod_eol"
@@ -21,7 +91,7 @@ export const Filtros = ({stateFiltros, handleChangeFiltros, handleSubmitFiltros,
                     <div className="form-group col-md-3">
                         <label htmlFor="filtrar_por_acao">Filtrar por ação</label>
                         <select
-                            value={stateFiltros.filtrar_por_acao}
+                            value={formFilters.filtrar_por_acao}
                             onChange={(e) => handleChangeFiltros(e.target.name, e.target.value)}
                             name='filtrar_por_acao'
                             id="filtrar_por_acao"
@@ -36,7 +106,7 @@ export const Filtros = ({stateFiltros, handleChangeFiltros, handleSubmitFiltros,
                     <div className="form-group col-md-3">
                         <label htmlFor="filtrar_por_status">Filtrar por status</label>
                         <select
-                            value={stateFiltros.filtrar_por_status}
+                            value={formFilters.filtrar_por_status}
                             onChange={(e) => handleChangeFiltros(e.target.name, e.target.value)}
                             name='filtrar_por_status'
                             id="filtrar_por_status"
@@ -56,7 +126,7 @@ export const Filtros = ({stateFiltros, handleChangeFiltros, handleSubmitFiltros,
                             placeholder="Selecione as informações"
                             name="filtro_informacoes"
                             id="filtro_informacoes"
-                            value={stateFiltros.filtro_informacoes}
+                            value={formFilters.filtro_informacoes}
                             onChange={handleOnChangeMultipleSelectStatus}
                             className='multiselect-lista-valores-reprogramados'
                         >
@@ -67,10 +137,13 @@ export const Filtros = ({stateFiltros, handleChangeFiltros, handleSubmitFiltros,
                     </div>                    
                 </div>
                 <div className="d-flex  justify-content-end mt-n2">
-                    <button onClick={()=>limpaFiltros()} type="button" className="btn btn btn-outline-success mt-2 mr-2">Limpar</button>
-                    <button onClick={handleSubmitFiltros} type="button" className="btn btn-success mt-2">Filtrar</button>
+                    <button onClick={handleClearFilters} type="button" className="btn btn btn-outline-success mt-2 mr-2" data-testid="btn-limpar-filtros-acao-associacao">
+                        Limpar
+                    </button>
+                    <button type="submit" form="form-filtros-acoes-associacoes" className="btn btn-success mt-2" data-testid="btn-filtrar-acao-associacao">
+                        Filtrar
+                    </button>
                 </div>
             </form>
-        </>
     );
 };
