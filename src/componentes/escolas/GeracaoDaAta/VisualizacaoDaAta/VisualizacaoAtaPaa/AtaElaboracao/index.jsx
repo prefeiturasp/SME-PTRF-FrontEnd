@@ -16,7 +16,7 @@ export const AtaElaboracao = memo((
             <>
                 <div className="col-12 mt-3">
                     <p style={{ color: "#42474A", fontWeight: 400, fontSize: "18px", textTransform: "uppercase" }}>
-                    Ata de Reunião Conjunta Ordinária/Extraordinária do Conselho de Escola e da Associação de Pais e Mestres
+                    Ata de Reunião Conjunta {getTipoReuniao()} do Conselho de Escola e da Associação de Pais e Mestres
                     da(o) {getNomeUnidadeEducacional()}
                     </p>
                 </div>
