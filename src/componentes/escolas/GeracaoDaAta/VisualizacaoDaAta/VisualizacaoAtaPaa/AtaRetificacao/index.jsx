@@ -10,6 +10,7 @@ export const AtaRetificacao = memo(({
     getHoraInicio,
     getPeriodoPaaFormatado,
     getDataFormatada,
+    getTipoReuniao,
     dataReuniaoElaboracao,
     getNomePresidente,
     getTipoUnidadeComNome
@@ -18,7 +19,7 @@ export const AtaRetificacao = memo(({
         <>
             <div className="col-12 mt-3">
                 <p style={{ color: "#42474A", fontWeight: 400, fontSize: "18px", textTransform: "uppercase" }}>
-                    Ata da Reunião conjunta ordinária da Associação de {getNomeUnidadeEducacional()} para retificação
+                    Ata da Reunião conjunta {getTipoReuniao()} da Associação de {getNomeUnidadeEducacional()} para retificação
                     do Plano  Anual de Atividades da Associação.
                 </p>
                 </div>
@@ -26,7 +27,7 @@ export const AtaRetificacao = memo(({
                 <div className="col-12 mt-4">
                 <p> {/**Alterar as datas para a data da reunião de retificação */}
                     Aos {getDiaPorExtenso()} do mês de {getMesPorExtenso()} de {getAnoPorExtenso()}, na(o) {getLocalReuniao()},
-                    da Unidade Educacional {getNomeUnidade()}, às {getHoraInicio()}, realizou-se Reunião ordinária conjunta dos
+                    da Unidade Educacional {getNomeUnidade()}, às {getHoraInicio()}, realizou-se Reunião {getTipoReuniao()} conjunta dos
                     membros da Associação de {getTipoUnidadeComNome()} e Conselho de Escola, como determina o
                     inciso XIII do artigo 118, da Lei nº 14.660/2007.
                 </p>

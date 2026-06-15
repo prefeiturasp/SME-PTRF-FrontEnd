@@ -143,19 +143,19 @@ export const Filtros = ({ stateFiltros, handleChangeFiltros, handleSubmitFiltros
             </div>
             <div className="d-flex justify-content-end mt-3">
                 <button
-                    type="submit"
-                    form="form-filtros-motivos-reprovacao-pc"
-                    className="btn btn-success mr-2"
-                >
-                    Filtrar
-                </button>
-                
-                <button
                     type="button"
                     onClick={clearFilter}
                     className="btn btn-outline-success mr-3"
                 >
                     Limpar
+                </button>
+                
+                <button
+                    type="submit"
+                    form="form-filtros-motivos-reprovacao-pc"
+                    className="btn btn-success mr-2"
+                >
+                    Filtrar
                 </button>
             </div>
         </div>
