@@ -9,8 +9,8 @@ const authHeader = ()=>({
     }
 });
 
-export const getTabelaAssociacoes = async () => {
-    return (await api.get(`/api/associacoes/tabelas`, authHeader())).data
+export const getTabelaAssociacoes = async (recurso_uuid = null) => {
+    return (await api.get(`/api/associacoes/tabelas`, { ...authHeader(), params: { recurso_uuid } })).data
 };
 
 export const getTabelaAssociacoesDre = async () => {
