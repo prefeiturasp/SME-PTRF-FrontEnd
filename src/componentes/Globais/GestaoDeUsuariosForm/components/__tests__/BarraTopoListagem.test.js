@@ -4,7 +4,7 @@ import { BarraTopoListagem } from '../BarraTopoListagem';
 import { GestaoDeUsuariosFormContext } from '../../context/GestaoDeUsuariosFormProvider';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-// ── Router mock ───────────────────────────────────────────────────────────────
+// Router mock
 jest.mock('react-router-dom', () => ({
     ...jest.requireActual('react-router-dom'),
     Link: ({ to, children, className, onClick }) => (
@@ -14,7 +14,7 @@ jest.mock('react-router-dom', () => ({
     ),
 }));
 
-// ── FontAwesome mock ──────────────────────────────────────────────────────────
+// FontAwesome mock
 jest.mock('@fortawesome/react-fontawesome', () => ({
     FontAwesomeIcon: ({ icon }) => <span data-testid={`icon-${icon?.iconName || 'icon'}`} />,
 }));
@@ -23,7 +23,7 @@ jest.mock('@fortawesome/free-solid-svg-icons', () => ({
     faPlus: { iconName: 'plus' },
 }));
 
-// ── Permissão mock ────────────────────────────────────────────────────────────
+// Permissão mock
 jest.mock('../../../GestaoDeUsuarios/utils/RetornaSeTemPermissaoEdicaoGestaoUsuarios', () => ({
     RetornaSeTemPermissaoEdicaoGestaoUsuarios: jest.fn(),
 }));

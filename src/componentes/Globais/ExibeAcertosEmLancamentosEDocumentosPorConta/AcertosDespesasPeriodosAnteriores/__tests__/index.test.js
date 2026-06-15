@@ -92,7 +92,7 @@ const mockStore = createStore((state = {}, action) => {
   }
 });
 
-// ───────────────────────── helpers ─────────────────────────
+// helpers
 
 const mockContas = [{ uuid: 'conta-uuid', tipo_conta: { nome: 'Cheque' } }];
 const mockContasMultiplas = [
@@ -213,7 +213,7 @@ const mockLancamentosComMensagemInativaEExterno = [{
   }
 }];
 
-// ── Helper para criar acertos com status específico ──────────────────────────
+// Helper para criar acertos com status específico
 const makeAcerto = (uuid, status) => ({
   uuid,
   ordem: 1,
@@ -326,7 +326,7 @@ function setupDefaultMocks(contas = mockContas, lancamentos = mockLancamentos, a
 // Mock Redux store
 const mockNavigate = jest.fn();
 
-// ───────────────────────── tests ─────────────────────────
+// tests
 
 describe('AcertosDespesasPeriodosAnteriores', () => {
   const defaultProps = {
@@ -380,7 +380,7 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
     return null;
   };
 
-  // ── Render inicial ──────────────────────────────────────
+  // Render inicial
 
   describe('Render e carregamento inicial', () => {
     it('renderiza o loading inicialmente', () => {
@@ -423,7 +423,7 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
     });
   });
 
-  // ── Seleção de conta ────────────────────────────────────
+  // Seleção de conta
 
   describe('Seleção de conta', () => {
     it('usa conta salva no estado quando disponível', async () => {
@@ -493,7 +493,7 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
     });
   });
 
-  // ── Troca de aba ────────────────────────────────────────
+  // Troca de aba
 
   describe('Troca de aba (Tabs)', () => {
     it('renderiza Tabs com as contas como abas', async () => {
@@ -550,7 +550,7 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
     });
   });
 
-  // ── Ações na tabela ─────────────────────────────────────
+  // Ações na tabela
 
   describe('Ação: limparStatus', () => {
     it('chama postLimparStatusLancamentoPrestacaoConta', async () => {
@@ -709,7 +709,7 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
     });
   });
 
-  // ── Checkboxes e seleção ────────────────────────────────
+  // Checkboxes e seleção
 
   describe('Checkboxes e seleção', () => {
     it('selecionarTodosItensDosLancamentosGlobal retorna um checkbox', async () => {
@@ -792,7 +792,7 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
     });
   });
 
-  // ── rowExpansionTemplateLancamentos ─────────────────────
+  // rowExpansionTemplateLancamentos
 
   describe('rowExpansionTemplateLancamentos', () => {
     it('retorna undefined quando não há acertos na solicitacao', async () => {
@@ -1016,7 +1016,7 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
     });
   });
 
-  // ── Navegação ───────────────────────────────────────────
+  // Navegação
 
   describe('Navegação', () => {
     it('navega para detalhe ao clicar em "Editar acertos solicitados"', async () => {
@@ -1098,7 +1098,7 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
     });
   });
 
-  // ── Props passadas para componentes filhos ───────────────
+  // Props passadas para componentes filhos
 
   describe('Props passadas para TabelaAcertosDespesasPeriodosAnteriores', () => {
     it('passa lancamentosAjustes corretamente', async () => {
@@ -1159,7 +1159,7 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
     });
   });
 
-  // ── Permissões ──────────────────────────────────────────
+  // Permissões
 
   describe('Permissões', () => {
     it('não permite edição quando usuário não tem permissão (editavel false)', async () => {
@@ -1172,7 +1172,7 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
     });
   });
 
-  // ── Interações com checkboxes (detalhe) ─────────────────
+  // Interações com checkboxes (detalhe)
 
   describe('Interações avançadas com checkboxes', () => {
     it('selecionarTodosGlobal desseleciona todos quando todos já estavam selecionados', async () => {
@@ -1377,7 +1377,7 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
     });
   });
 
-  // ── Interações na expansão (textareas e botões de salvar) ─
+  // Interações na expansão (textareas e botões de salvar)
 
   describe('Interações na expansão: justificativa e esclarecimento', () => {
     it('handleChangeTextareaJustificativa atualiza o estado ao digitar na textarea', async () => {
@@ -1636,7 +1636,7 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
     });
   });
 
-  // ── acoesDisponiveis: todas as combinações de status ────────────────────────
+  // acoesDisponiveis: todas as combinações de status
 
   describe('acoesDisponiveis: combinações de status', () => {
     const selecionarTodos = async () => {
@@ -1717,7 +1717,7 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
     });
   });
 
-  // ── Navegação: Crédito ───────────────────────────────────
+  // Navegação: Crédito
 
   describe('Navegação: Crédito', () => {
     it('navega para edição de receita ao clicar em "Ir para receita"', async () => {
@@ -1769,7 +1769,7 @@ describe('AcertosDespesasPeriodosAnteriores', () => {
     });
   });
 
-  // ── Rows expandidas ─────────────────────────────────────
+  // Rows expandidas
 
   describe('Estado de linhas expandidas', () => {
     it('restaura linhas expandidas do localStorage ao carregar lancamentos', async () => {

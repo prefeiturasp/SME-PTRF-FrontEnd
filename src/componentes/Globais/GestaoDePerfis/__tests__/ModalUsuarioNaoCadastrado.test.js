@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { ModalUsuarioNaoCadastrado } from '../ModalUsuarioNaoCadastrado';
 
-// ── Mocks ──────────────────────────────────────────────────────────────────────
+// Mocks
 jest.mock('../../ModalBootstrap', () => ({
     ModalBootstrap: ({
         show,
@@ -41,7 +41,7 @@ jest.mock('../../ModalBootstrap', () => ({
         ) : null,
 }));
 
-// ── Helpers ────────────────────────────────────────────────────────────────────
+// Helpers
 const renderComponent = (overrides = {}) => {
     const props = {
         show: true,
@@ -59,13 +59,13 @@ const renderComponent = (overrides = {}) => {
     return { props, ...result };
 };
 
-// ── Tests ──────────────────────────────────────────────────────────────────────
+// Tests
 describe('<ModalUsuarioNaoCadastrado>', () => {
     beforeEach(() => {
         jest.clearAllMocks();
     });
 
-    // ── Renderização básica ────────────────────────────────────────────────────
+    // Renderização básica
     describe('Renderização básica', () => {
         it('renderiza o modal quando show=true', () => {
             renderComponent();
@@ -108,7 +108,7 @@ describe('<ModalUsuarioNaoCadastrado>', () => {
         });
     });
 
-    // ── Interações ─────────────────────────────────────────────────────────────
+    // Interações
     describe('Interações', () => {
         it('chama handleClose ao clicar no primeiro botão', () => {
             const { props } = renderComponent();

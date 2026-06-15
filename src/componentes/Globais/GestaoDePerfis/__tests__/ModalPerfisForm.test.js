@@ -4,7 +4,7 @@ import { ModalPerfisForm } from '../ModalPerfisForm';
 import { visoesService } from '../../../../services/visoes.service';
 import { getConsultarUsuario } from '../../../../services/GestaoDePerfis.service';
 
-// ── Mocks ──────────────────────────────────────────────────────────────────────
+// Mocks
 jest.mock('../../ModalBootstrap', () => ({
     ModalBootstrapFormPerfis: ({ show, titulo, bodyText }) =>
         show ? (
@@ -31,7 +31,7 @@ jest.mock('@fortawesome/free-solid-svg-icons', () => ({
     faTrash: 'faTrash',
 }));
 
-// ── Test data ──────────────────────────────────────────────────────────────────
+// Test data
 const DEFAULT_GRUPOS = [
     { id: 1, nome: 'Grupo SME' },
     { id: 2, nome: 'Grupo DRE' },
@@ -46,7 +46,7 @@ const makeStatePerfisForm = (overrides = {}) => ({
     ...overrides,
 });
 
-// ── Helpers ────────────────────────────────────────────────────────────────────
+// Helpers
 const renderComponent = (overrides = {}) => {
     const props = {
         show: true,
@@ -63,7 +63,7 @@ const renderComponent = (overrides = {}) => {
     return { props, ...result };
 };
 
-// ── Tests ──────────────────────────────────────────────────────────────────────
+// Tests
 describe('<ModalPerfisForm>', () => {
     beforeEach(() => {
         jest.clearAllMocks();
@@ -74,7 +74,7 @@ describe('<ModalPerfisForm>', () => {
         });
     });
 
-    // ── Renderização básica ────────────────────────────────────────────────────
+    // Renderização básica
     describe('Renderização básica', () => {
         it('não renderiza nada quando show=false', () => {
             renderComponent({ show: false });
@@ -167,7 +167,7 @@ describe('<ModalPerfisForm>', () => {
         });
     });
 
-    // ── Interações de botão ────────────────────────────────────────────────────
+    // Interações de botão
     describe('Interações de botão', () => {
         it('chama handleClose ao clicar em "Cancelar"', () => {
             const { props } = renderComponent();
@@ -182,7 +182,7 @@ describe('<ModalPerfisForm>', () => {
         });
     });
 
-    // ── Mudanças de campos ─────────────────────────────────────────────────────
+    // Mudanças de campos
     describe('Mudanças de campos (handleChange)', () => {
         it('chama handleChange ao alterar tipo_usuario', async () => {
             const { props } = renderComponent();
@@ -227,7 +227,7 @@ describe('<ModalPerfisForm>', () => {
         });
     });
 
-    // ── validateFormPerfis ─────────────────────────────────────────────────────
+    // validateFormPerfis
     describe('validateFormPerfis', () => {
         // Helper: trigger Formik's validate by changing a field value.
         // We change nome_usuario to a known value and await the async cycle.
@@ -360,7 +360,7 @@ describe('<ModalPerfisForm>', () => {
         });
     });
 
-    // ── Validações Yup ─────────────────────────────────────────────────────────
+    // Validações Yup
     describe('Validações Yup', () => {
         it('exibe erro de tipo_usuario ao submeter sem preenchê-lo', async () => {
             // nome_usuario and grupo_acesso provided so only tipo_usuario fails Yup
@@ -413,7 +413,7 @@ describe('<ModalPerfisForm>', () => {
         });
     });
 
-    // ── Submissão do formulário ────────────────────────────────────────────────
+    // Submissão do formulário
     describe('Submissão do formulário', () => {
         it('chama onSubmit ao submeter formulário com dados válidos', async () => {
             visoesService.getItemUsuarioLogado.mockReturnValue('SME');

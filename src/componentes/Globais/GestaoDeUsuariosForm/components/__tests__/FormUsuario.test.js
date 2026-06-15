@@ -10,14 +10,14 @@ import { toastCustom } from '../../../ToastCustom';
 import { valida_cpf_cnpj } from '../../../../../utils/ValidacoesAdicionaisFormularios';
 import { RetornaSeTemPermissaoEdicaoGestaoUsuarios } from '../../../GestaoDeUsuarios/utils/RetornaSeTemPermissaoEdicaoGestaoUsuarios';
 
-// ── Router mock ───────────────────────────────────────────────────────────────
+// Router mock
 const mockNavigate = jest.fn();
 jest.mock('react-router-dom', () => ({
     ...jest.requireActual('react-router-dom'),
     useNavigate: () => mockNavigate,
 }));
 
-// ── Hooks mocks ───────────────────────────────────────────────────────────────
+// Hooks mocks
 jest.mock('../../hooks/useCreateUsuario', () => ({ useCreateUsuario: jest.fn() }));
 jest.mock('../../hooks/useUpdateUsuario', () => ({ useUpdateUsuario: jest.fn() }));
 jest.mock('../../hooks/useUsuarioStatus', () => ({ useUsuarioStatus: jest.fn() }));
@@ -25,17 +25,17 @@ jest.mock('../../../GestaoDeUsuarios/hooks/useRemoveAcessosUsuario', () => ({
     useRemoveAcessosUsuario: jest.fn(),
 }));
 
-// ── Service mock ──────────────────────────────────────────────────────────────
+// Service mock
 jest.mock('../../../../../services/GestaoDeUsuarios.service', () => ({
     removerAcessosUnidadeBase: jest.fn(),
 }));
 
-// ── Permission mock ───────────────────────────────────────────────────────────
+// Permission mock
 jest.mock('../../../GestaoDeUsuarios/utils/RetornaSeTemPermissaoEdicaoGestaoUsuarios', () => ({
     RetornaSeTemPermissaoEdicaoGestaoUsuarios: jest.fn(),
 }));
 
-// ── Toast mock ────────────────────────────────────────────────────────────────
+// Toast mock
 jest.mock('../../../ToastCustom', () => ({
     toastCustom: {
         ToastCustomSuccess: jest.fn(),
@@ -43,24 +43,24 @@ jest.mock('../../../ToastCustom', () => ({
     },
 }));
 
-// ── Loading mock ──────────────────────────────────────────────────────────────
+// Loading mock
 jest.mock('../../../../../utils/Loading', () => ({
     __esModule: true,
     default: () => <div data-testid="loading" />,
 }));
 
-// ── MaskedInput mock ──────────────────────────────────────────────────────────
+// MaskedInput mock
 jest.mock('react-text-mask', () => ({
     __esModule: true,
     default: ({ mask, guide, showMask, ...props }) => <input {...props} />,
 }));
 
-// ── Validation mock ───────────────────────────────────────────────────────────
+// Validation mock
 jest.mock('../../../../../utils/ValidacoesAdicionaisFormularios', () => ({
     valida_cpf_cnpj: jest.fn(),
 }));
 
-// ── Modal mocks ───────────────────────────────────────────────────────────────
+// Modal mocks
 jest.mock('../ModalConfirmacao', () => ({
     ModalConfirmacao: ({ show, botaoCancelarHandle, botaoConfirmarHandle }) =>
         show ? (
@@ -103,7 +103,7 @@ jest.mock('../../../GestaoDeUsuarios/utils/mensagens-remover-acesso', () => ({
     showMensagemErroAoRemoverAcesso: jest.fn(),
 }));
 
-// ── Context / Render helpers ──────────────────────────────────────────────────
+// Context / Render helpers
 const Modos = {
     INSERT: 'Adicionar Usuário',
     EDIT: 'Editar Usuário',
@@ -136,7 +136,7 @@ const renderComponent = (contextOverrides = {}, props = {}) =>
         </GestaoDeUsuariosFormContext.Provider>
     );
 
-// ── Tests ─────────────────────────────────────────────────────────────────────
+// Tests
 describe('FormUsuario', () => {
     beforeEach(() => {
         jest.clearAllMocks();
@@ -148,7 +148,7 @@ describe('FormUsuario', () => {
         valida_cpf_cnpj.mockReturnValue(true);
     });
 
-    // ── Renderização básica ───────────────────────────────────────────────────
+    // Renderização básica
     describe('renderização básica', () => {
         it('renderiza o formulário com campos principais', () => {
             const { container } = renderComponent();
@@ -221,7 +221,7 @@ describe('FormUsuario', () => {
         });
     });
 
-    // ── Prop usuario → popula formulário ─────────────────────────────────────
+    // Prop usuario → popula formulário
     describe('useEffect: popula valores a partir do prop usuario', () => {
         it('preenche o formulário quando usuario.e_servidor=true', async () => {
             const usuario = {
@@ -253,7 +253,7 @@ describe('FormUsuario', () => {
         });
     });
 
-    // ── Navigate após INSERT ──────────────────────────────────────────────────
+    // Navigate após INSERT
     describe('useEffect: navega para novo usuário após INSERT', () => {
         it('navega quando modo=INSERT e resultPost.id existe', async () => {
             useCreateUsuario.mockReturnValue({
@@ -281,7 +281,7 @@ describe('FormUsuario', () => {
         });
     });
 
-    // ── useEffect: usuarioStatus ──────────────────────────────────────────────
+    // useEffect: usuarioStatus
     describe('useEffect: usuarioStatus', () => {
         it('não faz nada quando usuarioStatus é null', async () => {
             renderComponent();
@@ -417,7 +417,7 @@ describe('FormUsuario', () => {
         });
     });
 
-    // ── Modal CoreSSO ─────────────────────────────────────────────────────────
+    // Modal CoreSSO
     describe('modal CoreSSO', () => {
         const setupCoreSSOModal = () => {
             useUsuarioStatus.mockReturnValue({
@@ -494,7 +494,7 @@ describe('FormUsuario', () => {
         });
     });
 
-    // ── Modal Validação de Acesso ─────────────────────────────────────────────
+    // Modal Validação de Acesso
     describe('modal Validação de Acesso', () => {
         it('fecha o modal de validação ao clicar em Fechar', async () => {
             useUsuarioStatus.mockReturnValue({
@@ -518,7 +518,7 @@ describe('FormUsuario', () => {
         });
     });
 
-    // ── Modal Remover Acesso ──────────────────────────────────────────────────
+    // Modal Remover Acesso
     describe('modal Remover Acesso', () => {
         it('abre modal ao clicar em "Remover acesso"', async () => {
             renderComponent({ modo: Modos.EDIT });
@@ -566,7 +566,7 @@ describe('FormUsuario', () => {
         });
     });
 
-    // ── validacoesPersonalizadas ──────────────────────────────────────────────
+    // validacoesPersonalizadas
     describe('validacoesPersonalizadas', () => {
         it('exibe erro quando username está vazio ao blur do select', async () => {
             renderComponent();
@@ -641,7 +641,7 @@ describe('FormUsuario', () => {
         });
     });
 
-    // ── idUsuarioCondicionalMask (via placeholder) ────────────────────────────
+    // idUsuarioCondicionalMask (via placeholder)
     describe('idUsuarioCondicionalMask: placeholder indica máscara correta', () => {
         it('RF placeholder (default) quando e_servidor está vazio', () => {
             renderComponent();
@@ -669,7 +669,7 @@ describe('FormUsuario', () => {
         });
     });
 
-    // ── handleSubmitUsuarioForm ───────────────────────────────────────────────
+    // handleSubmitUsuarioForm
     describe('handleSubmitUsuarioForm', () => {
         const usuarioValido = {
             id: 1,
@@ -800,7 +800,7 @@ describe('FormUsuario', () => {
         });
     });
 
-    // ── onClick nos campos limpa erros ────────────────────────────────────────
+    // onClick nos campos limpa erros
     describe('onClick nos campos: limpa erros', () => {
         it('click no select e_servidor não lança erro', async () => {
             renderComponent();
@@ -825,7 +825,7 @@ describe('FormUsuario', () => {
         });
     });
 
-    // ── Erros de validação Yup no submit ─────────────────────────────────────
+    // Erros de validação Yup no submit
     describe('erros de validação yup no submit', () => {
         it('exibe erro yup quando e_servidor não preenchido ao submeter', async () => {
             renderComponent({ modo: Modos.INSERT });

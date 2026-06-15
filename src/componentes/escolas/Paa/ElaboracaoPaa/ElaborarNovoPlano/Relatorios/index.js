@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Space, Spin } from "antd";
 import { useNavigate } from "react-router-dom";
 import "./styles.css";
@@ -17,23 +17,16 @@ import Loading from "../../../../../../utils/Loading";
 import { TagRetificacao } from "../../../componentes/TagRetificacao";
 import {
   getDownloadArquivoPrevia,
+  getDownloadArquivoPreviaRetificacao,
   getDownloadArquivoFinal,
 } from "../../../../../../services/escolas/Paa.service";
 import { Tooltip as ReactTooltip } from "react-tooltip";
-
-import {
-  usePostPaaGeracaoDocumentoPrevia,
-  usePostPaaGeracaoDocumentoFinal,
-} from "./hooks/usePostPaaGeracaoDocumento";
-
 import { usePaaContext } from "../../../componentes/PaaContext";
-import {
-  ModalInfoGeracaoDocumentoPrevia,
-  ModalInfoGeracaoDocumentoFinal,
-  ModalConfirmaGeracaoFinal,
-  ModalInfoPendenciasGeracaoFinal,
-} from "./ModalInfoGeracaoDocumento";
 import { visoesService } from "../../../../../../services/visoes.service";
+import { BtnGerarFinalOriginal } from "./components/BotoesGeracao/BtnGerarFinalOriginal";
+import { BtnGerarPreviaOriginal } from "./components/BotoesGeracao/BtnGerarPreviaOriginal";
+import { BtnGerarFinalRetificacao } from "./components/BotoesGeracao/BtnGerarFinalRetificacao";
+import { BtnGerarPreviaRetificacao } from "./components/BotoesGeracao/BtnGerarPreviaRetificacao";
 
 const Relatorios = ({ initialExpandedSections }) => {
   const { paa, refetch } = usePaaContext();
@@ -61,89 +54,15 @@ const Relatorios = ({ initialExpandedSections }) => {
     paaVigente?.uuid,
   );
 
-  const timerRef = useRef(null);
-  const timeoutRef = useRef(null);
-
-  useEffect(() => {
-    return () => {
-      clearTimeout(timeoutRef.current);
-      clearInterval(timerRef.current);
-    };
-  }, []);
-
   useEffect(() => {
     if (!paaVigente?.uuid) return;
     refetch();
   }, [paaVigente, refetch]);
 
-  const [
-    openModalInfoGeracaoDocumentoPrevia,
-    setOpenModalInfoGeracaoDocumentoPrevia,
-  ] = useState(false);
-
-  const [pendenciasGeracaoFinal, setPendenciasGeracaoFinal] = useState("");
-
-  const [
-    openModalInfoGeracaoDocumentoFinal,
-    setOpenModalInfoGeracaoDocumentoFinal,
-  ] = useState(false);
-
-  const [openModalConfirmarGeracaoFinal, setOpenModalConfirmarGeracaoFinal] =
-    useState(false);
-
-  const [openModalValidacoesGeracaoFinal, setOpenModalValidacoesGeracaoFinal] =
-    useState(false);
-
-  const [gerandoDocFinal, setGerandoDocFinal] = useState(false);
-
   const {
     data: statusDocumento,
     isFetching: isLoadingStatusDocumento,
-    refetch: refetchStatusDoc,
   } = useGetStatusGeracaoDocumentoPaa(paaVigente?.uuid);
-
-  const verificaStatusAteConcluirGeracao = async () => {
-    await refetchStatusDoc();
-
-    timeoutRef.current = setTimeout(() => {
-      timerRef.current = setInterval(() => {
-        refetchStatusDoc();
-      }, 5000);
-    }, 2000);
-  };
-
-  useEffect(() => {
-    if (statusDocumento?.status !== "EM_PROCESSAMENTO") {
-      clearInterval(timerRef.current);
-    }
-    if (
-      paaVigente?.status !== "EM_RETIFICACAO" &&
-      statusDocumento?.status === "CONCLUIDO" &&
-      statusDocumento?.versao === "FINAL"
-    ) {
-      navigate("/paa-vigente-e-anteriores");
-    }
-  }, [statusDocumento, paaVigente?.status, navigate]);
-
-  const checkStatusGeracaoDocumentoPrevia = async () => {
-    setOpenModalInfoGeracaoDocumentoPrevia(true);
-    verificaStatusAteConcluirGeracao();
-  };
-
-  const checkStatusGeracaoDocumentoFinal = async () => {
-    // Habilitar se necessário a Modal de informação (semelhante à Geração de Prévia)
-    // setOpenModalInfoGeracaoDocumentoFinal(true);
-    verificaStatusAteConcluirGeracao();
-  };
-
-  const onErrorValidacoesPendentesDocumentoFinal = (data) => {
-    if (data?.confirmar) {
-      setOpenModalConfirmarGeracaoFinal(true);
-    } else {
-      setOpenModalValidacoesGeracaoFinal(true);
-      setPendenciasGeracaoFinal(data?.mensagem);
-    }
-  };
 
   const downloadVersaoPrevia = async () => {
     try {
@@ -163,9 +82,21 @@ const Relatorios = ({ initialExpandedSections }) => {
     } catch (e) {
       toastCustom.ToastCustomError(
         "Erro!",
-        "Erro ao efetuar o download Prévia!",
+        "Erro ao efetuar o download da versão final!",
       );
       console.error("Erro ao efetuar o download de versão Final", e);
+    }
+  };
+
+  const downloadVersaoPreviaRetificacao = async () => {
+    try {
+      await getDownloadArquivoPreviaRetificacao(paaVigente?.uuid);
+    } catch (e) {
+      toastCustom.ToastCustomError(
+        "Erro!",
+        "Erro ao efetuar o download da Prévia de Retificação!",
+      );
+      console.error("Erro ao efetuar o download de prévia de retificação", e);
     }
   };
 
@@ -173,57 +104,16 @@ const Relatorios = ({ initialExpandedSections }) => {
     if (statusDocumento?.versao === "FINAL") {
       downloadVersaoFinal();
     } else if (statusDocumento?.versao === "PREVIA") {
-      downloadVersaoPrevia();
+      if (statusDocumento?.retificacao) {
+        downloadVersaoPreviaRetificacao();
+      } else {
+        downloadVersaoPrevia();
+      }
     } else {
       toastCustom.ToastCustomError(
         "Erro!",
         "Versão de arquivo não identificada.",
       );
-    }
-  };
-
-  const mutationGerarDocumentoPrevia = usePostPaaGeracaoDocumentoPrevia({
-    onSuccessGerarDocumento: checkStatusGeracaoDocumentoPrevia,
-  });
-
-  const mutationGerarDocumentoFinal = usePostPaaGeracaoDocumentoFinal({
-    onSuccessGerarDocumento: checkStatusGeracaoDocumentoFinal,
-    onErrorGerarDocumento: onErrorValidacoesPendentesDocumentoFinal,
-  });
-
-  const handleGerarDocumentoPrevia = () => {
-    if (paaVigente?.uuid) {
-      mutationGerarDocumentoPrevia.mutate(paaVigente.uuid);
-    } else {
-      toastCustom.ToastCustomError(
-        "Erro!",
-        "PAA vigente não identificado para geração de prévia.",
-      );
-    }
-  };
-
-  const handleGerarDocumentoFinal = async (confirmar = 0) => {
-    if (!podeEditar) return;   
-    setOpenModalConfirmarGeracaoFinal(false);
-  
-    try {
-        setGerandoDocFinal(true);
-        if (paaVigente?.uuid) {
-            await mutationGerarDocumentoFinal.mutateAsync({
-                uuid: paaVigente.uuid,
-                payload: { confirmar },
-            });
-         
-        } else {
-            toastCustom.ToastCustomError(
-                "Erro!",
-                "PAA vigente não identificado para geração final.",
-            );
-        }       
-    
-    } catch(err) {} 
-    finally {
-       setGerandoDocFinal(false);
     }
   };
 
@@ -287,7 +177,7 @@ const Relatorios = ({ initialExpandedSections }) => {
     historicoAlteracoes?.texto_conclusao,
   ]);
 
-  const renderSecao = (secaoKey, config, podeEditar) => {
+  const renderSecao = (secaoKey, config) => {
     const isExpanded = expandedSections[secaoKey];
 
     return (
@@ -307,64 +197,6 @@ const Relatorios = ({ initialExpandedSections }) => {
       </div>
     );
   };
-
-  const botaoGeracaoPreviaDesabilitado = () => {
-    const informacoes_usuario = visoesService.getPermissoes(["custom_change_paa"])
-
-    const validacoes = [
-      statusDocumento?.status === "EM_PROCESSAMENTO",
-      statusDocumento?.status === "CONCLUIDO" &&
-        statusDocumento?.versao === "FINAL",
-    ];
-
-    if(!informacoes_usuario) return true
-    
-    return validacoes.includes(true);
-  };
-
-  const botaoGeracaoFinalDesabilitado = () => {
-    const validacoes = [
-      !podeEditar,
-      statusDocumento?.status === "EM_PROCESSAMENTO",
-      statusDocumento?.status === "CONCLUIDO" &&
-        statusDocumento?.versao === "FINAL",
-    ];
-    return validacoes.includes(true);
-  };
-
-  const planoAnualDocumentoFinalGerado =
-    statusDocumento?.status === "CONCLUIDO" &&
-    statusDocumento?.versao === "FINAL";
-
-  const botaoGerarAtaDesabilitado = () => {
-    // TODO: Remover: Desabilitar provisoriamente geração de Ata quando Paa está em retificação
-    // até a implementação de geração de documentos de retificação
-    if (paaVigente?.status === 'EM_RETIFICACAO' ) return true;
-    if (!podeEditar) return true;
-    if (!planoAnualDocumentoFinalGerado) return true;
-    if (!ataPaa?.uuid) return true;
-    if (!ataPaa?.completa) return true;
-    return false;
-  };
-
-  const mensagemTooltipGerarAta = () => {
-    // TODO: Remover: Desabilitar provisoriamente geração de Ata quando Paa está em retificação
-    // até a implementação de geração de documentos de retificação
-    if (paaVigente?.status === 'EM_RETIFICACAO' ) {
-      return "Geração de Ata bloqueada para PAA Em Retificação. Implementação Pendente.";
-    }
-    if (!podeEditar) return "Sem permissão para gerar ata.";
-    if (!planoAnualDocumentoFinalGerado) {
-      return "Gere o Plano Anual antes de gerar a ata";
-    }
-    if (!ataPaa?.uuid) return "Ata do PAA não encontrada.";
-    if (!ataPaa?.completa) {
-      return "Quando todos os dados estiverem preenchidos, a opção fica habilitada.";
-    }
-    return "";
-  };
-
-  const gerarAtaDisabled = botaoGerarAtaDesabilitado();
 
   return (
     <div className="relatorios-container">
@@ -428,21 +260,23 @@ const Relatorios = ({ initialExpandedSections }) => {
             
             <div className="documento-actions">
               <Space>
-                <button
-                  className="btn btn-outline-success"
-                  disabled={botaoGeracaoPreviaDesabilitado()}
-                  onClick={handleGerarDocumentoPrevia}
-                >
-                  Prévia
-                </button>
-               
-                <button
-                  className="btn btn-success"
-                  disabled={gerandoDocFinal || botaoGeracaoFinalDesabilitado()}
-                  onClick={() => handleGerarDocumentoFinal(0)}
-                >
-                  Gerar
-                </button>
+                {paaVigente?.uuid && (
+                  paaVigente.status === "EM_RETIFICACAO" ? (
+                      <>
+                        <BtnGerarPreviaRetificacao paa={paaVigente} />
+
+                        <BtnGerarFinalRetificacao paa={paaVigente} />
+
+                      </>
+                    ) : (
+                      <>
+                        <BtnGerarPreviaOriginal paa={paaVigente} />
+
+                        <BtnGerarFinalOriginal paa={paaVigente} />
+
+                      </>
+                    )
+                )}
 
                 <button
                   className="btn-dropdown"
@@ -477,7 +311,7 @@ const Relatorios = ({ initialExpandedSections }) => {
               {!isLoadingPaa &&
                 paaVigente?.uuid &&
                 Object.entries(secoesConfig).map(([secaoKey, config]) =>
-                  renderSecao(secaoKey, config, podeEditar),
+                  renderSecao(secaoKey, config),
                 )}
             </div>
           )}
@@ -486,7 +320,7 @@ const Relatorios = ({ initialExpandedSections }) => {
           <div className="documento-item">
             <div className="documento-info">
               <div className="documento-nome">
-                {paa.status === "EM_RETIFICACAO" ? "Ata de Retificação do PAA" : "Ata de Apresentação do PAA"}
+                {paaVigente?.status === "EM_RETIFICACAO" ? "Ata de Retificação do PAA" : "Ata de Apresentação do PAA"}
               </div>
             </div>
             <div className="documento-actions">
@@ -498,53 +332,25 @@ const Relatorios = ({ initialExpandedSections }) => {
                 >
                   Visualizar prévia da ata
                 </button>
+
+                {/* Apenas botão informativo */}
                 <button
-                  className={`btn ${podeEditar ? "btn-success" : "btn-secondary"}`}
+                  className="btn btn-success"
                   type="button"
-                  disabled={gerarAtaDisabled}
-                  {...(gerarAtaDisabled && {
-                    "data-tooltip-content": mensagemTooltipGerarAta(),
+                  disabled={true}
+                  {...{
+                    "data-tooltip-content": "Gere o Plano anual antes de gerar a Ata",
                     "data-tooltip-id": "tooltip-gerar-ata",
-                  })}
+                  }}
                 >
                   Gerar ata
                 </button>
               </Space>
             </div>
-            {gerarAtaDisabled && (
-              <ReactTooltip id="tooltip-gerar-ata" place="top" />
-            )}
+            <ReactTooltip id="tooltip-gerar-ata" place="top" />
           </div>
         </div>
       </div>
-
-      <ModalInfoGeracaoDocumentoPrevia
-        open={openModalInfoGeracaoDocumentoPrevia}
-        onClose={() => setOpenModalInfoGeracaoDocumentoPrevia(false)}
-      />
-
-      <ModalInfoGeracaoDocumentoFinal
-        open={openModalInfoGeracaoDocumentoFinal}
-        onClose={() => setOpenModalInfoGeracaoDocumentoFinal(false)}
-      />
-
-      <ModalConfirmaGeracaoFinal
-        open={openModalConfirmarGeracaoFinal}
-        onClose={() => {
-            setGerandoDocFinal(false);
-            setOpenModalConfirmarGeracaoFinal(false);
-        }}
-        onConfirm={() => handleGerarDocumentoFinal(1)}
-      />
-
-      <ModalInfoPendenciasGeracaoFinal
-        open={openModalValidacoesGeracaoFinal}
-        onClose={() => {
-            setGerandoDocFinal(false);
-            setOpenModalValidacoesGeracaoFinal(false)
-        }}
-        pendencias={pendenciasGeracaoFinal}
-      />
     </div>
   );
 };
