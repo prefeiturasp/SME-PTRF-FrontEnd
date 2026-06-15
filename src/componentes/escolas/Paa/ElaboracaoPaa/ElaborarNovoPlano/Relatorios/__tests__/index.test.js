@@ -48,9 +48,10 @@ jest.mock("../hooks/useGetTextosPaa", () => ({
   }),
 }));
 
+let mockPaaVigenteValue = { uuid: "paa-uuid-1" };
 jest.mock("../hooks/useGetPaaVigente", () => ({
   useGetPaaVigente: () => ({
-    paaVigente: { uuid: "paa-uuid-1" },
+    paaVigente: mockPaaVigenteValue,
     isLoading: false,
   }),
 }));
@@ -114,6 +115,14 @@ jest.mock("../RenderSecao", () => ({
   ),
 }));
 
+jest.mock("../components/BotoesGeracao/BtnGerarPreviaRetificacao", () => ({
+  BtnGerarPreviaRetificacao: () => <button>Prévia</button>,
+}));
+
+jest.mock("../components/BotoesGeracao/BtnGerarFinalRetificacao", () => ({
+  BtnGerarFinalRetificacao: () => <button>Gerar</button>,
+}));
+
 jest.mock("../ModalInfoGeracaoDocumento", () => ({
   ModalInfoGeracaoDocumentoPrevia: ({ open, onClose }) =>
     open ? (
@@ -156,6 +165,7 @@ beforeEach(() => {
     paa: { alteracoes: {}, status: "EM_ELABORACAO" },
     refetch: mockRefetchPaaContext,
   };
+  mockPaaVigenteValue = { uuid: "paa-uuid-1" };
 });
 
 describe("Relatorios", () => {
@@ -311,10 +321,7 @@ describe("Relatorios", () => {
   });
 
   test("exibe 'Ata de Retificação do PAA' quando status é EM_RETIFICACAO", () => {
-    mockPaaContextValue = {
-      paa: { alteracoes: {}, status: "EM_RETIFICACAO" },
-      refetch: mockRefetchPaaContext,
-    };
+    mockPaaVigenteValue = { uuid: "paa-uuid-1", status: "EM_RETIFICACAO" };
 
     render(<Relatorios />);
     expect(screen.getByText("Ata de Retificação do PAA")).toBeInTheDocument();
