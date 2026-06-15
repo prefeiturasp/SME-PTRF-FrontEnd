@@ -1809,8 +1809,9 @@ describe('Testes para funções de análise', () => {
         const expectedParams = {
             motivo: filter.motivo,
             page: currentPage,
+            page_size: 10,
         };
-        expect(api.get).toHaveBeenCalledWith(`/api/motivos-aprovacao-ressalva-parametrizacao/?page_size=10`, {
+        expect(api.get).toHaveBeenCalledWith(`/api/motivos-aprovacao-ressalva-parametrizacao/`, {
             ...authHeader(),
             params: expectedParams,
         });
