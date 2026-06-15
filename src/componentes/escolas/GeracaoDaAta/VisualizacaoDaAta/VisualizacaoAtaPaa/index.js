@@ -95,6 +95,7 @@ export const VisualizacaoAtaPaa = () => {
             getHoraInicio={getHoraInicio}
             getPeriodoPaaFormatado={getPeriodoPaaFormatado}
             getDataFormatada={getDataFormatada}
+            getTipoReuniao={getTipoReuniao}
             dataReuniaoElaboracao={dataReuniaoElaboracao}
             getNomePresidente={getNomePresidente}
             getTipoUnidadeComNome={getTipoUnidadeComNome}
