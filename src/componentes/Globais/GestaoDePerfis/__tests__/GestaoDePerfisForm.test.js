@@ -22,10 +22,10 @@ import {
 import { getTabelaAssociacoes } from '../../../../services/dres/Associacoes.service';
 import { valida_cpf_cnpj } from '../../../../utils/ValidacoesAdicionaisFormularios';
 
-// ── Capture props passed to child ──────────────────────────────────────────────
+// Capture props passed to child
 let capturedFormikProps = null;
 
-// ── Mocks ──────────────────────────────────────────────────────────────────────
+// Mocks
 jest.mock('../../../../services/visoes.service', () => ({
     visoesService: { getItemUsuarioLogado: jest.fn() },
 }));
@@ -68,7 +68,7 @@ jest.mock('../GestaoDePerfisFormFormik', () => ({
     },
 }));
 
-// ── Test data ──────────────────────────────────────────────────────────────────
+// Test data
 const MOCK_VISOES_API = [
     { id: '1', nome: 'SME' },
     { id: '2', nome: 'DRE' },
@@ -97,7 +97,7 @@ const MOCK_USUARIO = {
     visoes: [{ nome: 'SME' }],
 };
 
-// ── Helpers ────────────────────────────────────────────────────────────────────
+// Helpers
 const setVisoesService = (visao = 'SME') => {
     visoesService.getItemUsuarioLogado.mockImplementation((key) => {
         if (key === 'visao_selecionada.nome') return visao;
@@ -152,7 +152,7 @@ const renderComponent = (visao = 'SME', idUsuario = null) => {
 const waitForRender = () =>
     waitFor(() => expect(screen.getByTestId('gestao-perfis-formik')).toBeInTheDocument());
 
-// ── Tests ──────────────────────────────────────────────────────────────────────
+// Tests
 describe('<GestaoDePerfisForm>', () => {
     beforeEach(() => {
         jest.clearAllMocks();
@@ -161,7 +161,7 @@ describe('<GestaoDePerfisForm>', () => {
         window.location = { assign: jest.fn() };
     });
 
-    // ── Renderização básica ────────────────────────────────────────────────────
+    // Renderização básica
     describe('Renderização básica', () => {
         it('renderiza título e formik para visão SME', async () => {
             setupDefaultMocks('SME');
@@ -204,7 +204,7 @@ describe('<GestaoDePerfisForm>', () => {
         });
     });
 
-    // ── exibeGrupos ───────────────────────────────────────────────────────────
+    // exibeGrupos
     describe('exibeGrupos', () => {
         it('chama getGrupos com a visão atual para SME', async () => {
             setupDefaultMocks('SME');
@@ -276,7 +276,7 @@ describe('<GestaoDePerfisForm>', () => {
         });
     });
 
-    // ── exibeVisoes ───────────────────────────────────────────────────────────
+    // exibeVisoes
     describe('exibeVisoes', () => {
         it('configura visões corretamente para SME sem unidades vinculadas', async () => {
             setupDefaultMocks('SME');
@@ -313,7 +313,7 @@ describe('<GestaoDePerfisForm>', () => {
         });
     });
 
-    // ── pesquisaPermissaoExibicaoVisao ────────────────────────────────────────
+    // pesquisaPermissaoExibicaoVisao
     describe('pesquisaPermissaoExibicaoVisao', () => {
         it('retorna editavel correto para visão SME (todas editáveis)', async () => {
             setupDefaultMocks('SME');
@@ -343,7 +343,7 @@ describe('<GestaoDePerfisForm>', () => {
         });
     });
 
-    // ── serviceTemUnidade ─────────────────────────────────────────────────────
+    // serviceTemUnidade
     describe('serviceTemUnidadeDre / serviceTemUnidadeUE', () => {
         it('serviceTemUnidadeDre retorna unidade DRE quando existe', async () => {
             setupDefaultMocks('SME');
@@ -385,7 +385,7 @@ describe('<GestaoDePerfisForm>', () => {
         });
     });
 
-    // ── carregaDadosUsuario ───────────────────────────────────────────────────
+    // carregaDadosUsuario
     describe('carregaDadosUsuario', () => {
         it('carrega dados do usuário quando id_usuario está presente', async () => {
             setupDefaultMocks('SME');
@@ -430,7 +430,7 @@ describe('<GestaoDePerfisForm>', () => {
         });
     });
 
-    // ── handleCloseUsuarioNaoCadastrado ───────────────────────────────────────
+    // handleCloseUsuarioNaoCadastrado
     describe('handleCloseUsuarioNaoCadastrado', () => {
         it('chama resetForm e fecha o modal', async () => {
             setupDefaultMocks('SME');
@@ -445,7 +445,7 @@ describe('<GestaoDePerfisForm>', () => {
         });
     });
 
-    // ── handleCloseDeletePerfil ───────────────────────────────────────────────
+    // handleCloseDeletePerfil
     describe('handleCloseDeletePerfil', () => {
         it('fecha o modal de confirmação de delete', async () => {
             setupDefaultMocks('SME');
@@ -458,7 +458,7 @@ describe('<GestaoDePerfisForm>', () => {
         });
     });
 
-    // ── onDeletePerfilTrue ────────────────────────────────────────────────────
+    // onDeletePerfilTrue
     describe('onDeletePerfilTrue', () => {
         it('chama deleteUsuario e redireciona ao sucesso', async () => {
             setupDefaultMocks('SME');
@@ -484,7 +484,7 @@ describe('<GestaoDePerfisForm>', () => {
         });
     });
 
-    // ── handleChangeTipoUnidade ───────────────────────────────────────────────
+    // handleChangeTipoUnidade
     describe('handleChangeTipoUnidade', () => {
         const emptyValues = { unidades_vinculadas: [] };
 
@@ -554,7 +554,7 @@ describe('<GestaoDePerfisForm>', () => {
         });
     });
 
-    // ── vinculaUnidadeUsuario ─────────────────────────────────────────────────
+    // vinculaUnidadeUsuario
     describe('vinculaUnidadeUsuario', () => {
         it('vincula unidade ao usuário com sucesso', async () => {
             setupDefaultMocks('SME');
@@ -602,7 +602,7 @@ describe('<GestaoDePerfisForm>', () => {
         });
     });
 
-    // ── desvinculaUnidadeUsuario ──────────────────────────────────────────────
+    // desvinculaUnidadeUsuario
     describe('desvinculaUnidadeUsuario', () => {
         it('desvincula unidade do usuário com sucesso', async () => {
             setupDefaultMocks('SME');
@@ -640,7 +640,7 @@ describe('<GestaoDePerfisForm>', () => {
         });
     });
 
-    // ── handleChangeGrupo ─────────────────────────────────────────────────────
+    // handleChangeGrupo
     describe('handleChangeGrupo', () => {
         it('adiciona grupo quando checked=true', async () => {
             setupDefaultMocks('SME');
@@ -673,7 +673,7 @@ describe('<GestaoDePerfisForm>', () => {
         });
     });
 
-    // ── idUsuarioCondicionalMask ──────────────────────────────────────────────
+    // idUsuarioCondicionalMask
     describe('idUsuarioCondicionalMask', () => {
         it('retorna mask de 7 dígitos para servidor', async () => {
             setupDefaultMocks('SME');
@@ -690,7 +690,7 @@ describe('<GestaoDePerfisForm>', () => {
         });
     });
 
-    // ── evitaDuplicacao ───────────────────────────────────────────────────────
+    // evitaDuplicacao
     describe('evitaDuplicacao', () => {
         it('remove grupos duplicados combinando visões', async () => {
             setupDefaultMocks('SME');
@@ -725,7 +725,7 @@ describe('<GestaoDePerfisForm>', () => {
         });
     });
 
-    // ── buscaTipoUnidadeVisaoUE ───────────────────────────────────────────────
+    // buscaTipoUnidadeVisaoUE
     describe('buscaTipoUnidadeVisaoUE', () => {
         it('trata erro ao buscar unidade UE sem lançar exceção', async () => {
             setupDefaultMocks('UE');
@@ -736,7 +736,7 @@ describe('<GestaoDePerfisForm>', () => {
         });
     });
 
-    // ── validacoesPersonalizadas ──────────────────────────────────────────────
+    // validacoesPersonalizadas
     describe('validacoesPersonalizadas', () => {
         it('retorna erro quando username está vazio', async () => {
             setupDefaultMocks('SME');
@@ -978,7 +978,7 @@ describe('<GestaoDePerfisForm>', () => {
         });
     });
 
-    // ── handleSubmitPerfisForm ────────────────────────────────────────────────
+    // handleSubmitPerfisForm
     describe('handleSubmitPerfisForm', () => {
         it('edita usuário com sucesso quando values.id existe', async () => {
             setupDefaultMocks('SME');
@@ -1250,7 +1250,7 @@ describe('<GestaoDePerfisForm>', () => {
         });
     });
 
-    // ── serviceUsuarioCadastrado com info_core_sso (linhas 365-367) ───────────
+    // serviceUsuarioCadastrado com info_core_sso (linhas 365-367)
     describe('serviceUsuarioCadastrado com info_core_sso preenchido', () => {
         it('SME: preenche name e email quando info_core_sso existe', async () => {
             setupDefaultMocks('SME');
@@ -1332,7 +1332,7 @@ describe('<GestaoDePerfisForm>', () => {
         });
     });
 
-    // ── serviceVisaoUE branches ───────────────────────────────────────────────
+    // serviceVisaoUE branches
     describe('serviceVisaoUE branches adicionais', () => {
         it('não-servidor + não membro da associação exibe modal (linhas 397-401)', async () => {
             setupDefaultMocks('UE');
@@ -1433,7 +1433,7 @@ describe('<GestaoDePerfisForm>', () => {
         });
     });
 
-    // ── getEstadoInicialVisoesChecked e acessoCadastrarUnidade ────────────────
+    // getEstadoInicialVisoesChecked e acessoCadastrarUnidade
     describe('getEstadoInicialVisoesChecked / getEstadoInicialGruposChecked / acessoCadastrarUnidade', () => {
         it('getEstadoInicialVisoesChecked percorre elementos name=visoes (linhas 717-718)', async () => {
             setupDefaultMocks('SME');

@@ -57,7 +57,7 @@ export const BotaoRetificarPaa = ({paa, statusDocumento}) => {
     }
 
     return (
-        <>
+        <span>
             <Spin spinning={isLoading}>
                 <button
                     type="button"
@@ -76,6 +76,6 @@ export const BotaoRetificarPaa = ({paa, statusDocumento}) => {
                     isLoading={isLoading}
                 />
             </Spin>
-        </>
+        </span>
     );
 };

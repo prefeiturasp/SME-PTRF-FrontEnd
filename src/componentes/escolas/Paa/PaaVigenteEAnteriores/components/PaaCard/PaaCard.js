@@ -7,6 +7,7 @@ import {
 import { useDocumentoFinalPaa } from '../../../../../../hooks/Globais/useDocumentoFinalPaa';
 import { PaaSecaoPlanoEAta } from './PaaSecaoPlanoEAta/PaaSecaoPlanoEAta';
 import './PaaCard.scss';
+import { toastCustom } from '../../../../../../componentes/Globais/ToastCustom';
 
 export const PaaCard = ({ dados, onDadosAtualizados }) => {
   const original = dados?.original;
@@ -50,7 +51,14 @@ export const PaaCard = ({ dados, onDadosAtualizados }) => {
 
   const onDownloadDocumento = useCallback(
     async (bloco) => {
-      await downloadDocumentoFinalPaa(paaUuid, { retificacao: bloco.status.retificacao });
+      try{
+        await downloadDocumentoFinalPaa(paaUuid, { retificacao: bloco.status.retificacao });
+      }catch (error) {
+        if (error.status === 404) {
+          toastCustom.ToastCustomError(
+                'Documento não encontrado', 'Não foi possível encontrar documento para visualização.');
+        }
+      }
     },
     [paaUuid]
   );

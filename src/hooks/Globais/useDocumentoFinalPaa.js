@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react';
 import api from '../../services/api';
 import { TOKEN_ALIAS } from '../../services/auth.service';
+import { toastCustom } from '../../componentes/Globais/ToastCustom';
 
 const authHeader = () => ({
     headers: {
@@ -34,6 +35,10 @@ export const useDocumentoFinalPaa = () => {
                 return window.URL.createObjectURL(blob);
             } catch (error) {
                 console.error('Erro ao visualizar o documento final do PAA:', error);
+                if (error.status === 404) {
+                    toastCustom.ToastCustomError(
+                        'Documento não encontrado', 'Não foi possível carregar o documento.');
+                }
                 return null;
             } finally {
                 setVisualizacaoEmAndamento(null);
