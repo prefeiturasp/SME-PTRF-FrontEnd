@@ -17,11 +17,14 @@ export const ParametrizacoesMotivosAprovacaoPcRessalva = () => {
             <PaginasContainer>
                 <h1 className="titulo-itens-painel mt-5">Motivos de aprovação de PC com ressalvas</h1>
                 <div className="page-content-inner">
-                    <Filtros/>
                     <AbasPorRecurso />
+
                     <TopoComBotoes/>
-                    {/* <ExibicaoQuantidade/> */}
+
+                    <Filtros/>
+                    
                     <Lista/>
+                    
                     <Paginacao/>
                 </div>
             </PaginasContainer>

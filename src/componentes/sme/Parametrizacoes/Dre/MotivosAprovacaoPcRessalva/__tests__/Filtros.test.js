@@ -51,7 +51,7 @@ describe('Filtros', () => {
     expect(input.value).toBe('Teste');
   });
 
-  test('Deve chamar setFilter, setCurrentPage e setFirstPage com os valores corretos quando o botão "Filtrar" é clicado', () => {
+  test('Deve chamar setFilter com os valores corretos quando o botão "Filtrar" é clicado', () => {
     renderComponent();
     const input = screen.getByPlaceholderText('Digite o motivo de aprovação de PC com ressalvas');
     fireEvent.change(input, { target: { name: 'motivo', value: 'Teste' } });
@@ -60,14 +60,17 @@ describe('Filtros', () => {
     fireEvent.click(filtrarButton);
 
     expect(mockSetFilter).toHaveBeenCalledTimes(1);
-    expect(mockSetFilter).toHaveBeenCalledWith({ motivo: 'Teste', recurso: '123' });
-    expect(mockSetCurrentPage).toHaveBeenCalledTimes(1);
-    expect(mockSetCurrentPage).toHaveBeenCalledWith(1);
-    expect(mockSetFirstPage).toHaveBeenCalledTimes(1);
-    expect(mockSetFirstPage).toHaveBeenCalledWith(0);
+
+    const updater = mockSetFilter.mock.calls[0][0];
+    
+    expect(typeof updater).toBe('function');
+    expect(updater({ recurso: '123' })).toEqual({
+      motivo: 'Teste',
+      recurso: '123',
+    });
   });
 
-  test('Deve chamar setFilter, setCurrentPage e setFirstPage com o valor inicial quando o botão "Limpar" é clicado', () => {
+  test('Deve chamar setFilter com o valor inicial quando o botão "Limpar" é clicado', () => {
     renderComponent();
     const input = screen.getByPlaceholderText('Digite o motivo de aprovação de PC com ressalvas');
     fireEvent.change(input, { target: { name: 'motivo', value: 'Teste' } });
@@ -76,11 +79,14 @@ describe('Filtros', () => {
     fireEvent.click(limparButton);
 
     expect(mockSetFilter).toHaveBeenCalledTimes(1);
-    expect(mockSetFilter).toHaveBeenCalledWith({ motivo: '', recurso: '123' });
-    expect(mockSetCurrentPage).toHaveBeenCalledTimes(1);
-    expect(mockSetCurrentPage).toHaveBeenCalledWith(1);
-    expect(mockSetFirstPage).toHaveBeenCalledTimes(1);
-    expect(mockSetFirstPage).toHaveBeenCalledWith(0);
+
+    const updater = mockSetFilter.mock.calls[0][0];
+    
+    expect(typeof updater).toBe('function');
+    expect(updater({ recurso: '123' })).toEqual({
+      ...initialFilter,
+      recurso: '123',
+    });
     expect(input.value).toBe("");
   });
 
