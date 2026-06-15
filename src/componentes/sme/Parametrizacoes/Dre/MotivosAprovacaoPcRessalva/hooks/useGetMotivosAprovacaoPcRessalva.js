@@ -5,11 +5,17 @@ import { MotivosAprovacaoPcRessalvaContext } from "../context/MotivosAprovacaoPc
 
 export const useGetMotivosAprovacaoPcRessalva = () => {
 
-    const {filter, currentPage} = useContext(MotivosAprovacaoPcRessalvaContext)
+    const {filter} = useContext(MotivosAprovacaoPcRessalvaContext)
 
     const { isFetching, isError, data = {count: 0, results: []}, error, refetch } = useQuery({
-        queryKey: ['motivos-aprovacao-pc-ressalva', filter, currentPage],
-        queryFn: ()=> getMotivosAprovacaoPcRessalva(filter, currentPage),
+        queryKey: ['motivos-aprovacao-pc-ressalva', filter],
+        queryFn: ()=> {
+            if (filter?.is_required_recurso_uuid && !filter?.recurso) {
+                return {count: 0, results: []}
+            }
+
+            return getMotivosAprovacaoPcRessalva(filter, filter.page)
+        },
         keepPreviousData: true,
         staleTime: 5000, // 5 segundos
         refetchOnWindowFocus: true, // Caso saia da aba e voltar ele refaz a requisição

@@ -4,6 +4,9 @@ import { useAbasPorRecursoContext } from '../../../componentes/AbasPorRecurso/ho
 const initialFilter = {
     motivo: '',
     recurso: '',
+    page: 1,
+    page_size: 10,
+    is_required_recurso_uuid: true,
 };
 
 const initialStateFormModal = {
@@ -17,11 +20,6 @@ export const MotivosAprovacaoPcRessalvaContext = createContext({
     initialFilter: initialFilter,
     filter: initialFilter,
     setFilter: () => {},
-
-    currentPage: 1,
-    setCurrentPage: () => {},
-    firstPage: 0,
-    setFirstPage: () => {},
 
     showModalForm: false,
     setShowModalForm: () => {},
@@ -41,9 +39,6 @@ export const MotivosAprovacaoPcRessalvaProvider = ({children}) => {
 
     const [filter, setFilter] = useState(initialFilter);
 
-    const [currentPage, setCurrentPage] = useState(1);
-    const [firstPage, setFirstPage] = useState(1);
-
     const [showModalForm, setShowModalForm] = useState(false);
     const [stateFormModal, setStateFormModal] = useState(initialStateFormModal);
 
@@ -53,13 +48,10 @@ export const MotivosAprovacaoPcRessalvaProvider = ({children}) => {
 
     // Monitora mudanças no recurso selecionado e atualiza o filtro
     useEffect(() => {
-        setFilter(prevFilter => ({
-            ...prevFilter,
+        setFilter({
+            ...initialFilter,
             recurso: selectedRecurso ? selectedRecurso.uuid : ''
-        }));
-        // Reseta para a primeira página quando muda de aba
-        setCurrentPage(1);
-        setFirstPage(0);
+        });
     }, [selectedRecurso]);
 
     const contextValue = useMemo(() => {
@@ -67,10 +59,6 @@ export const MotivosAprovacaoPcRessalvaProvider = ({children}) => {
             initialFilter,
             filter,
             setFilter,
-            currentPage,
-            setCurrentPage,
-            firstPage,
-            setFirstPage,
             showModalForm,
             setShowModalForm,
             initialStateFormModal,
@@ -81,7 +69,7 @@ export const MotivosAprovacaoPcRessalvaProvider = ({children}) => {
             bloquearBtnSalvarForm,
             setBloquearBtnSalvarForm,
         };
-    }, [filter, currentPage, firstPage, showModalForm, stateFormModal, showModalConfirmacaoExclusao, bloquearBtnSalvarForm]);
+    }, [filter, showModalForm, stateFormModal, showModalConfirmacaoExclusao, bloquearBtnSalvarForm]);
 
     return (
         <MotivosAprovacaoPcRessalvaContext.Provider value={contextValue}>
