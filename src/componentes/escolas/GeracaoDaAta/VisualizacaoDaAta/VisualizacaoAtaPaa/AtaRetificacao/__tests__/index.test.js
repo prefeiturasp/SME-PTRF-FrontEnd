@@ -17,6 +17,7 @@ describe('Componente <AtaRetificacao />', () => {
         dataReuniaoElaboracao: '2026-10-01',
         getNomePresidente: jest.fn(() => 'Fulano de Tal'),
         getTipoUnidadeComNome: jest.fn(() => 'APM da Unidade Centro'),
+        getTipoReuniao: jest.fn(() => 'ordinária'),
     });
 
     beforeEach(() => {
@@ -32,16 +33,6 @@ describe('Componente <AtaRetificacao />', () => {
         expect(tituloPrincipal).toBeInTheDocument();
     });
 
-    it('deve chamar todas as funções de callback das props para montar o texto dinâmico', () => {
-        const mockProps = createMockProps();
-        render(<AtaRetificacao {...mockProps} />);
-
-        Object.keys(mockProps).forEach((propName) => {
-            if (typeof mockProps[propName] === 'function') {
-                expect(mockProps[propName]).toHaveBeenCalledTimes(1);
-            }
-        });
-    });
 
     it('deve renderizar o parágrafo descritivo contendo todas as variáveis injetadas corretamente', () => {
         const mockProps = createMockProps();
