@@ -430,6 +430,16 @@ describe("Máscaras de CPF/CNPJ", () => {
         ]);
     });
 
+    test("Aplica máscara de CNPJ ao digitar letra manualmente", () => {
+        expect(cpfMaskContitional("AB123")).toEqual([
+        /[A-Za-z0-9]/, /[A-Za-z0-9]/, '.',
+        /[A-Za-z0-9]/, /[A-Za-z0-9]/, /[A-Za-z0-9]/, '.',
+        /[A-Za-z0-9]/, /[A-Za-z0-9]/, /[A-Za-z0-9]/, '/',
+        /[A-Za-z0-9]/, /[A-Za-z0-9]/, /[A-Za-z0-9]/, /[A-Za-z0-9]/, '-',
+        /\d/, /\d/
+        ]);
+    });
+
     test("Aplica máscara de processo incorporação", () => {
         expect(processoIncorporacaoMask("12345678000195")).toEqual([
         /\d/, /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, /\d/, '/', /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, '-', /\d/
