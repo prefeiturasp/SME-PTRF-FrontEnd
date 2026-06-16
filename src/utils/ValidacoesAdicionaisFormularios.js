@@ -511,11 +511,11 @@ const calculaDvCnpj = (base12) => {
 export const cpfMaskContitional = (value) => {
   const cpfCnpj = value.replace(/[^A-Za-z0-9]+/g, "").toUpperCase();
 
-  if (cpfCnpj.length <= 11) {
-    return [/\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '-', /\d/, /\d/];
+  if (cpfCnpj.length > 11 || /[A-Za-z]/.test(cpfCnpj)) {
+    return CNPJ_MASK;
   }
 
-  return CNPJ_MASK;
+  return [/\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '-', /\d/, /\d/];
 };
 
 export const processoIncorporacaoMask = (value) => {
