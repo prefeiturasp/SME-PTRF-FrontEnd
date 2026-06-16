@@ -5,6 +5,7 @@ import Spinner from "../../../../assets/img/spinner.gif";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faDownload} from "@fortawesome/free-solid-svg-icons";
 import {getPeriodoFechado} from "../../../../services/escolas/Associacao.service";
+import {visoesService} from "../../../../services/visoes.service";
 
 export const BoxAtaRetificadora = ({
                                        corBoxAtaRetificadora,
@@ -19,6 +20,10 @@ export const BoxAtaRetificadora = ({
     const [docPrestacaoConta, setDocPrestacaoConta] = useState({});
     const [showNaoPodeGerarAta, setShowNaoPodeGerarAta] = useState(false);
     const [textoModalAta, setTextoModalAta] = useState('<p>Você não pode gerar o PDF de uma ata incompleta.</p>');
+    const temPermissao = visoesService.getPermissoes(["change_ata_prestacao_contas"]);
+    const btGerarDesabilitado =
+        !docPrestacaoConta?.gerar_ou_editar_ata_retificacao ||
+        !temPermissao;
 
     useEffect(() => {
         if (uuidAtaRetificacao && dadosAtaRetificadora && dadosAtaRetificadora.status_geracao_pdf && dadosAtaRetificadora.status_geracao_pdf === 'EM_PROCESSAMENTO'){
@@ -120,7 +125,7 @@ export const BoxAtaRetificadora = ({
                                     onClick={() => gerarAtaPDF()}
                                     type="button"
                                     className="btn btn-outline-success float-right mr-2"
-                                    disabled={!docPrestacaoConta?.gerar_ou_editar_ata_retificacao}
+                                    disabled={btGerarDesabilitado}
                                     title={!(docPrestacaoConta?.gerar_ou_editar_ata_retificacao) ? 'A ata de retificação só pode ser gerada enquanto o status da PC for "Retornada após acertos".': ''}
                                     data-qa="btn-gerar-ata-retificacao"
                                 >
