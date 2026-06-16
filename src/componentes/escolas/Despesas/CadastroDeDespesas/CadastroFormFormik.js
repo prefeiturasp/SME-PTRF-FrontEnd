@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/react";
 import React, {useEffect, useState} from "react";
 import {Formik, FieldArray, Field} from "formik";
 import MaskedInput from 'react-text-mask'
@@ -938,6 +939,17 @@ export const CadastroFormFormik = ({
                                                             desabilitaBtnSalvar();
                                                             await serviceIniciaEncadeamentoDosModais(props.values, props.errors, props.setFieldValue, {resetForm: props.resetForm});
                                                         } catch (err) {
+                                                            Sentry.withScope((scope) => {
+                                                                scope.setTag("tela", "edicao-de-despesa");
+                                                            
+                                                                scope.setContext("despesa", {
+                                                                    uuid_despesa: despesaContext.idDespesa,
+                                                                    associacao: localStorage.getItem(ASSOCIACAO_UUID),
+                                                                    numero_documento: props?.values?.numero_documento,
+                                                                });
+                                                            
+                                                                Sentry.captureException(err);
+                                                            });
                                                             habilitaBtnSalvar(); 
                                                         }
                                                     }}
