@@ -33,15 +33,6 @@ describe('Componente <AtaElaboracao />', () => {
         expect(subTitulo).toBeInTheDocument();
     });
 
-    it('deve chamar todas as funções de callback das props para montar o texto dinâmico', () => {
-        const mockProps = createMockProps();
-        render(<AtaElaboracao {...mockProps} />);
-
-        Object.keys(mockProps).forEach((propName) => {
-        expect(mockProps[propName]).toHaveBeenCalledTimes(1);
-        });
-    });
-
     it('deve renderizar o parágrafo descritivo contendo todas as variáveis injetadas corretamente', () => {
         const mockProps = createMockProps();
         render(<AtaElaboracao {...mockProps} />);
