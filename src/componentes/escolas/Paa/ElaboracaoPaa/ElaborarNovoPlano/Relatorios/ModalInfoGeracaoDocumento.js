@@ -165,7 +165,7 @@ export const ModalInfoPendenciasGeracaoFinalRetificacao = memo(({ open, onClose,
                             {pendencia.includes('introdução') ? 'Introdução' : ''}
                             {pendencia.includes('objetivo') ? 'Objetivos' : ''}
                             {pendencia.includes('conclusão') ? 'Conclusão' : ''}
-                            {pendencia.includes('Nenhuma alteração encontrada') ? 'Retificação sem alterações' : ''}
+                            {pendencia.includes('Nenhuma alteração encontrada') ? 'Não foram realizadas as edições da retificação.' : ''}
                         </li>
                     ))}
                 </ul>
