@@ -5,7 +5,9 @@ import {
     ModalInfoGeracaoDocumentoPrevia,
     ModalInfoGeracaoDocumentoFinal,
     ModalConfirmaGeracaoFinal,
-    ModalInfoPendenciasGeracaoFinal
+    ModalConfirmaGeracaoFinalRetificacao,
+    ModalInfoPendenciasGeracaoFinal,
+    ModalInfoPendenciasGeracaoFinalRetificacao,
 } from '../ModalInfoGeracaoDocumento';
 
 // Mock do componente ModalFormBodyText
@@ -410,5 +412,240 @@ describe('ModalInfoPendenciasGeracaoFinal', () => {
 
         expect(screen.getByText('Prioridades sem ação e/ou valor total')).toBeInTheDocument();
         expect(screen.getByText('Objetivos')).toBeInTheDocument();
+    });
+});
+
+describe('ModalConfirmaGeracaoFinalRetificacao', () => {
+    const mockOnClose = jest.fn();
+    const mockOnConfirm = jest.fn();
+
+    beforeEach(() => {
+        jest.clearAllMocks();
+    });
+
+    it('deve renderizar o modal quando open é true', () => {
+        render(
+            <ModalConfirmaGeracaoFinalRetificacao
+                open={true}
+                onClose={mockOnClose}
+                onConfirm={mockOnConfirm}
+            />
+        );
+
+        expect(screen.getByTestId('modal-form-body-text')).toBeInTheDocument();
+        expect(screen.getByTestId('modal-title')).toHaveTextContent('Retificação do PAA');
+    });
+
+    it('não deve renderizar o modal quando open é false', () => {
+        render(
+            <ModalConfirmaGeracaoFinalRetificacao
+                open={false}
+                onClose={mockOnClose}
+                onConfirm={mockOnConfirm}
+            />
+        );
+
+        expect(screen.queryByTestId('modal-form-body-text')).not.toBeInTheDocument();
+    });
+
+    it('deve exibir a mensagem de aviso sobre conclusão', () => {
+        render(
+            <ModalConfirmaGeracaoFinalRetificacao
+                open={true}
+                onClose={mockOnClose}
+                onConfirm={mockOnConfirm}
+            />
+        );
+
+        expect(screen.getByText(/Após a conclusão do PAA, não será possível realizar edições/i)).toBeInTheDocument();
+    });
+
+    it('deve chamar onClose ao clicar no botão Cancelar', () => {
+        render(
+            <ModalConfirmaGeracaoFinalRetificacao
+                open={true}
+                onClose={mockOnClose}
+                onConfirm={mockOnConfirm}
+            />
+        );
+
+        fireEvent.click(screen.getByRole('button', { name: /cancelar/i }));
+
+        expect(mockOnClose).toHaveBeenCalledTimes(1);
+        expect(mockOnConfirm).not.toHaveBeenCalled();
+    });
+
+    it('deve chamar onConfirm ao clicar no botão Continuar', () => {
+        render(
+            <ModalConfirmaGeracaoFinalRetificacao
+                open={true}
+                onClose={mockOnClose}
+                onConfirm={mockOnConfirm}
+            />
+        );
+
+        fireEvent.click(screen.getByRole('button', { name: /continuar/i }));
+
+        expect(mockOnConfirm).toHaveBeenCalledTimes(1);
+        expect(mockOnClose).not.toHaveBeenCalled();
+    });
+});
+
+describe('ModalInfoPendenciasGeracaoFinalRetificacao', () => {
+    const mockOnClose = jest.fn();
+
+    beforeEach(() => {
+        jest.clearAllMocks();
+    });
+
+    it('deve renderizar o modal quando open é true', () => {
+        render(
+            <ModalInfoPendenciasGeracaoFinalRetificacao
+                open={true}
+                onClose={mockOnClose}
+                pendencias="Falta introdução"
+            />
+        );
+
+        expect(screen.getByTestId('modal-form-body-text')).toBeInTheDocument();
+        expect(screen.getByTestId('modal-title')).toHaveTextContent('Pendências para geração do PAA em retificação');
+    });
+
+    it('não deve renderizar o modal quando open é false', () => {
+        render(
+            <ModalInfoPendenciasGeracaoFinalRetificacao
+                open={false}
+                onClose={mockOnClose}
+                pendencias=""
+            />
+        );
+
+        expect(screen.queryByTestId('modal-form-body-text')).not.toBeInTheDocument();
+    });
+
+    it('deve exibir mensagem sobre preenchimento de seções quando há pendências', () => {
+        render(
+            <ModalInfoPendenciasGeracaoFinalRetificacao
+                open={true}
+                onClose={mockOnClose}
+                pendencias="Falta introdução"
+            />
+        );
+
+        expect(screen.getByText(/É necessário preenchimento nas seguintes seções/i)).toBeInTheDocument();
+    });
+
+    it('deve renderizar pendência de Prioridades com saldo corretamente', () => {
+        render(
+            <ModalInfoPendenciasGeracaoFinalRetificacao
+                open={true}
+                onClose={mockOnClose}
+                pendencias="Prioridades - há recurso com saldo."
+            />
+        );
+
+        expect(screen.getByText('Prioridades - há recurso com saldo')).toBeInTheDocument();
+    });
+
+    it('deve renderizar pendência de Prioridades sem ação corretamente', () => {
+        render(
+            <ModalInfoPendenciasGeracaoFinalRetificacao
+                open={true}
+                onClose={mockOnClose}
+                pendencias="Prioridades sem ação"
+            />
+        );
+
+        expect(screen.getByText('Prioridades sem ação e/ou valor total')).toBeInTheDocument();
+    });
+
+    it('deve renderizar pendência de introdução corretamente', () => {
+        render(
+            <ModalInfoPendenciasGeracaoFinalRetificacao
+                open={true}
+                onClose={mockOnClose}
+                pendencias="Falta introdução"
+            />
+        );
+
+        expect(screen.getByText('Introdução')).toBeInTheDocument();
+    });
+
+    it('deve renderizar pendência de objetivo corretamente', () => {
+        render(
+            <ModalInfoPendenciasGeracaoFinalRetificacao
+                open={true}
+                onClose={mockOnClose}
+                pendencias="Falta objetivo"
+            />
+        );
+
+        expect(screen.getByText('Objetivos')).toBeInTheDocument();
+    });
+
+    it('deve renderizar pendência de conclusão corretamente', () => {
+        render(
+            <ModalInfoPendenciasGeracaoFinalRetificacao
+                open={true}
+                onClose={mockOnClose}
+                pendencias="Falta conclusão"
+            />
+        );
+
+        expect(screen.getByText('Conclusão')).toBeInTheDocument();
+    });
+
+    it('deve renderizar pendência de Nenhuma alteração encontrada corretamente', () => {
+        render(
+            <ModalInfoPendenciasGeracaoFinalRetificacao
+                open={true}
+                onClose={mockOnClose}
+                pendencias="Nenhuma alteração encontrada"
+            />
+        );
+
+        expect(screen.getByText('Não foram realizadas as edições da retificação.')).toBeInTheDocument();
+    });
+
+    it('deve renderizar múltiplas pendências separadas por quebra de linha', () => {
+        const pendencias = 'Falta introdução\nFalta objetivo\nNenhuma alteração encontrada';
+
+        render(
+            <ModalInfoPendenciasGeracaoFinalRetificacao
+                open={true}
+                onClose={mockOnClose}
+                pendencias={pendencias}
+            />
+        );
+
+        expect(screen.getByText('Introdução')).toBeInTheDocument();
+        expect(screen.getByText('Objetivos')).toBeInTheDocument();
+        expect(screen.getByText('Não foram realizadas as edições da retificação.')).toBeInTheDocument();
+    });
+
+    it('deve lidar com pendencias undefined', () => {
+        render(
+            <ModalInfoPendenciasGeracaoFinalRetificacao
+                open={true}
+                onClose={mockOnClose}
+                pendencias={undefined}
+            />
+        );
+
+        expect(screen.getByTestId('modal-form-body-text')).toBeInTheDocument();
+    });
+
+    it('deve chamar onClose ao clicar no botão Ok', () => {
+        render(
+            <ModalInfoPendenciasGeracaoFinalRetificacao
+                open={true}
+                onClose={mockOnClose}
+                pendencias="Falta introdução"
+            />
+        );
+
+        fireEvent.click(screen.getByRole('button', { name: /ok/i }));
+
+        expect(mockOnClose).toHaveBeenCalledTimes(1);
     });
 });
