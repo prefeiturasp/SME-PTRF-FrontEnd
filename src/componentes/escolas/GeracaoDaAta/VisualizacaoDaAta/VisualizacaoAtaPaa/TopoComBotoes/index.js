@@ -1,12 +1,12 @@
-import React from "react";
+import React, { memo } from "react";
 import { visoesService } from "../../../../../../services/visoes.service";
 
-export const TopoComBotoes = ({dadosAta, handleClickEditarAta, handleClickFecharAta}) => {
+export const TopoComBotoes = memo(({dadosAta, paaRetificacao, handleClickEditarAta, handleClickFecharAta}) => {
     const podeEditarAta = visoesService.getPermissoes(["custom_change_paa"]);
-    const tituloAta = dadosAta?.tipo_ata === 'RETIFICACAO' 
+    const tituloAta = paaRetificacao
         ? 'Visualização da Ata de Retificação do PAA' 
         : 'Visualização da prévia da Ata de Apresentação do PAA';
-
+        
     return(
         <div className="row">
             <div className='col-12 col-md-5 mt-2'>
@@ -25,5 +25,5 @@ export const TopoComBotoes = ({dadosAta, handleClickEditarAta, handleClickFechar
             </div>
         </div>
     )
-};
+});
 

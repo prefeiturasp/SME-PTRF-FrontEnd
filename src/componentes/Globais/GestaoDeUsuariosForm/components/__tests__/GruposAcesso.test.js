@@ -3,10 +3,10 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { GrupoAcesso } from '../GruposAcesso';
 import { GestaoDeUsuariosFormContext } from '../../context/GestaoDeUsuariosFormProvider';
 
-// ── SCSS mock ─────────────────────────────────────────────────────────────────
+// SCSS mock
 jest.mock('../../style/grupos-acesso.scss', () => ({}));
 
-// ── FontAwesome mock ──────────────────────────────────────────────────────────
+// FontAwesome mock
 jest.mock('@fortawesome/react-fontawesome', () => ({
     FontAwesomeIcon: () => <span data-testid="icon-exclamation" />,
 }));
@@ -14,12 +14,12 @@ jest.mock('@fortawesome/free-solid-svg-icons', () => ({
     faExclamationCircle: {},
 }));
 
-// ── Permissão mock ────────────────────────────────────────────────────────────
+// Permissão mock
 jest.mock('../../../GestaoDeUsuarios/utils/RetornaSeTemPermissaoEdicaoGestaoUsuarios', () => ({
     RetornaSeTemPermissaoEdicaoGestaoUsuarios: jest.fn(),
 }));
 
-// ── Hooks mocks ───────────────────────────────────────────────────────────────
+// Hooks mocks
 jest.mock('../../hooks/useGruposDisponiveisAcesso', () => ({
     useGruposDisponiveisAcesso: jest.fn(),
 }));

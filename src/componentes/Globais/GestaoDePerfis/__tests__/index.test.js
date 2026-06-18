@@ -6,11 +6,11 @@ import { getGrupos, getUsuarios, getUsuariosFiltros } from '../../../../services
 import { visoesService } from '../../../../services/visoes.service';
 import { barraMensagemCustom } from '../../BarraMensagem';
 
-// ── Captured props ─────────────────────────────────────────────────────────────
+// Captured props
 let mockFormFiltrosProps = null;
 let mockBodyFns = {};
 
-// ── Mocks ─────────────────────────────────────────────────────────────────────
+// Mocks
 jest.mock('../../../../services/GestaoDePerfis.service', () => ({
     getGrupos: jest.fn(),
     getUsuarios: jest.fn(),
@@ -87,7 +87,7 @@ jest.mock('../../UI/Button/EditIconButton', () => ({
     ),
 }));
 
-// ── Test data ──────────────────────────────────────────────────────────────────
+// Test data
 const UNIDADE_UUID = 'unidade-uuid-123';
 
 const GRUPOS_MOCK = [
@@ -108,7 +108,7 @@ const USUARIOS_MOCK = [
     },
 ];
 
-// ── Helpers ────────────────────────────────────────────────────────────────────
+// Helpers
 const renderComponent = (visao = 'UE') => {
     visoesService.getItemUsuarioLogado.mockImplementation((key) => {
         if (key === 'visao_selecionada.nome') return visao;
@@ -130,7 +130,7 @@ const renderAndWaitForLoad = async (visao = 'UE', usuarios = USUARIOS_MOCK) => {
     return result;
 };
 
-// ── Tests ──────────────────────────────────────────────────────────────────────
+// Tests
 describe('GestaoDePerfis', () => {
     beforeEach(() => {
         jest.clearAllMocks();

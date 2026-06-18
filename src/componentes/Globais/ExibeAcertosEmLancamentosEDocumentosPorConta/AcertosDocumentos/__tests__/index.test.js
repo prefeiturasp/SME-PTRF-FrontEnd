@@ -83,7 +83,7 @@ jest.mock("../../../../../services/dres/PrestacaoDeContas.service", () => ({
   postRestaurarJustificativasAdicionais: jest.fn(),
 }));
 
-// ── Dados de mock ──
+// Dados de mock
 
 const mockAnaliseDocumentos = {
   editavel: true,
@@ -140,7 +140,7 @@ const defaultProps = {
 const setup = (props = {}) =>
   render(<AcertosDocumentos {...defaultProps} {...props} />);
 
-// ── Configuração padrão dos mocks ──
+// Configuração padrão dos mocks
 
 beforeEach(() => {
   capturedTabelaProps = {};
@@ -168,7 +168,7 @@ beforeEach(() => {
 });
 
 describe("AcertosDocumentos", () => {
-  // ── Estado de carregamento ──
+  // Estado de carregamento
 
   it("exibe Loading enquanto os dados estão sendo carregados", () => {
     getAnaliseDocumentosPrestacaoConta.mockReturnValue(new Promise(() => {}));
@@ -201,7 +201,7 @@ describe("AcertosDocumentos", () => {
     );
   });
 
-  // ── Props passadas para TabelaAcertosDocumentos ──
+  // Props passadas para TabelaAcertosDocumentos
 
   it("passa analisePermiteEdicao correto para TabelaAcertosDocumentos", async () => {
     setup();
@@ -268,7 +268,7 @@ describe("AcertosDocumentos", () => {
     });
   });
 
-  // ── selecionarTodosItensDosDocumentosGlobal ──
+  // selecionarTodosItensDosDocumentosGlobal
 
   it("selecionarTodosItensDosDocumentosGlobal retorna checkbox", async () => {
     setup();
@@ -283,7 +283,7 @@ describe("AcertosDocumentos", () => {
     expect(container.querySelector("input[type='checkbox']")).toBeInTheDocument();
   });
 
-  // ── selecionarTodosItensDoDocumentoRow ──
+  // selecionarTodosItensDoDocumentoRow
 
   it("selecionarTodosItensDoDocumentoRow retorna checkbox para a linha", async () => {
     setup();
@@ -298,7 +298,7 @@ describe("AcertosDocumentos", () => {
     expect(container.querySelector("input[type='checkbox']")).toBeInTheDocument();
   });
 
-  // ── rowExpansionTemplateDocumentos ──
+  // rowExpansionTemplateDocumentos
 
   it("rowExpansionTemplateDocumentos retorna undefined para data sem solicitacoes", async () => {
     setup();
@@ -566,7 +566,7 @@ describe("AcertosDocumentos", () => {
     expect(getByTestId("botoes-detalhes")).toBeInTheDocument();
   });
 
-  // ── tagJustificativa no rowExpansionTemplateDocumentos ──
+  // tagJustificativa no rowExpansionTemplateDocumentos
 
   it("rowExpansionTemplateDocumentos usa tagJustificativa para exibir status do acerto", async () => {
     setup();
@@ -602,7 +602,7 @@ describe("AcertosDocumentos", () => {
     expect(tagElements[0].textContent).toBe("Realizado");
   });
 
-  // ── limparDocumentoStatus ──
+  // limparDocumentoStatus
 
   it("limparDocumentoStatus chama postLimparStatusDocumentoPrestacaoConta", async () => {
     setup();
@@ -620,7 +620,7 @@ describe("AcertosDocumentos", () => {
     });
   });
 
-  // ── marcarDocumentoComoRealizado ──
+  // marcarDocumentoComoRealizado
 
   it("marcarDocumentoComoRealizado chama postMarcarComoRealizadoDocumentoPrestacaoConta", async () => {
     setup();
@@ -659,7 +659,7 @@ describe("AcertosDocumentos", () => {
     );
   });
 
-  // ── justificarNaoRealizacaoDocumentos ──
+  // justificarNaoRealizacaoDocumentos
 
   it("justificarNaoRealizacaoDocumentos chama postJustificarNaoRealizacaoDocumentoPrestacaoConta", async () => {
     setup();
@@ -698,7 +698,7 @@ describe("AcertosDocumentos", () => {
     );
   });
 
-  // ── acaoCancelar ──
+  // acaoCancelar
 
   it("acaoCancelar redefine quantidadeSelecionada para 0", async () => {
     setup();
@@ -716,7 +716,7 @@ describe("AcertosDocumentos", () => {
     );
   });
 
-  // ── ModalRestaurarJustificativa ──
+  // ModalRestaurarJustificativa
 
   it("ModalRestaurarJustificativa não está visível inicialmente", async () => {
     setup();
@@ -871,7 +871,7 @@ describe("AcertosDocumentos", () => {
     });
   });
 
-  // ── acoesDisponiveis ──
+  // acoesDisponiveis
 
   it("acoesDisponiveis retorna PENDENTE=true quando todos selecionados têm status PENDENTE", async () => {
     setup();
@@ -887,7 +887,7 @@ describe("AcertosDocumentos", () => {
     expect(acoes).toHaveProperty("REALIZADO");
   });
 
-  // ── expanded rows e localStorage ──
+  // expanded rows e localStorage
 
   it("salvaEstadoExpandedRowsDocumentosLocalStorage é chamado ao setar expandedRows", async () => {
     setup();
@@ -907,7 +907,7 @@ describe("AcertosDocumentos", () => {
     );
   });
 
-  // ── JSX tree helper ──
+  // JSX tree helper
   // Traverses a React JSX tree and returns the first element matching predicate
   const findInJSX = (jsx, predicate) => {
     if (jsx === null || jsx === undefined || typeof jsx !== "object" || !jsx.props)
@@ -923,7 +923,7 @@ describe("AcertosDocumentos", () => {
     return null;
   };
 
-  // ── Seleção global ──
+  // Seleção global
 
   it("selecionarTodosItensDosDocumentosGlobal retorna input com checked=false inicialmente", async () => {
     setup();
@@ -941,7 +941,7 @@ describe("AcertosDocumentos", () => {
     expect(checkbox.checked).toBe(false);
   });
 
-  // ── selecionarTodosGlobal ──
+  // selecionarTodosGlobal
 
   it("selecionarTodosGlobal seleciona todos os acertos ao ativar o checkbox global", async () => {
     setup();
@@ -989,7 +989,7 @@ describe("AcertosDocumentos", () => {
     );
   });
 
-  // ── tratarSelecionado (checkbox de linha da tabela) ──
+  // tratarSelecionado (checkbox de linha da tabela)
 
   it("tratarSelecionado incrementa quantidadeSelecionada ao marcar uma linha", async () => {
     setup();
@@ -1037,7 +1037,7 @@ describe("AcertosDocumentos", () => {
     );
   });
 
-  // ── tratarSelecionadoIndividual (checkbox de acerto individual na expansão) ──
+  // tratarSelecionadoIndividual (checkbox de acerto individual na expansão)
 
   it("tratarSelecionadoIndividual incrementa quantidadeSelecionada ao marcar acerto individual", async () => {
     setup();
@@ -1063,7 +1063,7 @@ describe("AcertosDocumentos", () => {
     );
   });
 
-  // ── acoesDisponiveis - todas as combinações de status ──
+  // acoesDisponiveis - todas as combinações de status
 
   const makeDocumento = (statuses) => ({
     uuid: "doc-uuid",
@@ -1150,7 +1150,7 @@ describe("AcertosDocumentos", () => {
     await selecionarTodosECheckarAcoes("JUSTIFICADO_E_PENDENTE");
   });
 
-  // ── acaoCancelar reseta seleção ──
+  // acaoCancelar reseta seleção
 
   it("acaoCancelar zera quantidadeSelecionada após seleção", async () => {
     setup();
@@ -1178,7 +1178,7 @@ describe("AcertosDocumentos", () => {
     );
   });
 
-  // ── handleChangeTextareaJustificativa + salvarJustificativa ──
+  // handleChangeTextareaJustificativa + salvarJustificativa
 
   it("handleChangeTextareaJustificativa atualiza estado ao digitar na textarea de justificativa", async () => {
     setup();
@@ -1277,7 +1277,7 @@ describe("AcertosDocumentos", () => {
     );
   });
 
-  // ── handleChangeTextareaEsclarecimentoDocumento + marcarComoEsclarecido ──
+  // handleChangeTextareaEsclarecimentoDocumento + marcarComoEsclarecido
 
   it("handleChangeTextareaEsclarecimentoDocumento atualiza estado ao digitar esclarecimento", async () => {
     setup();
@@ -1376,7 +1376,7 @@ describe("AcertosDocumentos", () => {
     );
   });
 
-  // ── handleChangeTextareaJustificativaAdicionais + salvarJustificativasAdicionais ──
+  // handleChangeTextareaJustificativaAdicionais + salvarJustificativasAdicionais
 
   it("handleChangeTextareaJustificativaAdicionais atualiza estado ao digitar", async () => {
     setup();
@@ -1479,7 +1479,7 @@ describe("AcertosDocumentos", () => {
     );
   });
 
-  // ── Tratamento de erros nos serviços ──
+  // Tratamento de erros nos serviços
 
   it("limparDocumentoStatus não quebra quando postLimparStatusDocumentoPrestacaoConta rejeita", async () => {
     postLimparStatusDocumentoPrestacaoConta.mockRejectedValue(new Error("falha"));
@@ -1528,7 +1528,7 @@ describe("AcertosDocumentos", () => {
     ).resolves.not.toThrow();
   });
 
-  // ── possuiSolicitacaoEsclarecimento / possuiSolicitacaoEdicaoInformacao com null ──
+  // possuiSolicitacaoEsclarecimento / possuiSolicitacaoEdicaoInformacao com null
 
   it("rowExpansionTemplateDocumentos não exibe esclarecimento para acerto com tipo null", async () => {
     setup();
@@ -1560,7 +1560,7 @@ describe("AcertosDocumentos", () => {
     expect(queryByText("Justificativas e informações adicionais")).not.toBeInTheDocument();
   });
 
-  // ── verificaDisableRestaurarJustificativa branches ──
+  // verificaDisableRestaurarJustificativa branches
 
   it("botão Restaurar Justificativas está desabilitado quando justificativa é igual à original", async () => {
     setup();
@@ -1640,7 +1640,7 @@ describe("AcertosDocumentos", () => {
     expect(queryByText("Restaurar Justificativas")).not.toBeInTheDocument();
   });
 
-  // ── useEffect: expanded rows a partir do localStorage ──
+  // useEffect: expanded rows a partir do localStorage
 
   it("expande linhas conforme expanded salvo no localStorage quando correspondem aos documentos", async () => {
     meapcservice.getAnaliseDreUsuarioLogado.mockReturnValue({
@@ -1662,7 +1662,7 @@ describe("AcertosDocumentos", () => {
     });
   });
 
-  // ── limparDocumentoStatus com selecionados ──
+  // limparDocumentoStatus com selecionados
 
   it("limparDocumentoStatus envia uuids dos acertos selecionados", async () => {
     setup();

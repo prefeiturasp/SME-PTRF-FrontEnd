@@ -473,16 +473,50 @@ export const calculaValorOriginal = (values) => {
   return valor_total;
 };
 
-export const cpfMaskContitional = (value) => {
-  let cpfCnpj = value.replace(/[^\d]+/g, "");
-  let mask = [];
-  if (cpfCnpj.length <= 11 ) {
-    mask = [/\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '-', /\d/, /\d/]
-  }else if (cpfCnpj.length > 11){
-    mask = [/\d/, /\d/, '.', /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '/', /\d/, /\d/, /\d/, /\d/, '-', /\d/,/\d/]
+const PESOS_DV_CNPJ = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+const CNPJ_ZERADO = "00000000000000";
+const CNPJ_MASK = [
+  /[A-Za-z0-9]/, /[A-Za-z0-9]/, '.',
+  /[A-Za-z0-9]/, /[A-Za-z0-9]/, /[A-Za-z0-9]/, '.',
+  /[A-Za-z0-9]/, /[A-Za-z0-9]/, /[A-Za-z0-9]/, '/',
+  /[A-Za-z0-9]/, /[A-Za-z0-9]/, /[A-Za-z0-9]/, /[A-Za-z0-9]/, '-',
+  /\d/, /\d/
+];
+
+const removeMascaraCnpj = (valor) => {
+  return valor.replace(/[.\-/]/g, "").toUpperCase();
+};
+
+const charValueCnpj = (caractere) => {
+  return caractere.toUpperCase().charCodeAt(0) - 48;
+};
+
+const calculaDvCnpj = (base12) => {
+  let somatorioDv1 = 0;
+  let somatorioDv2 = 0;
+
+  for (let i = 0; i < 12; i++) {
+    const valorCaractere = charValueCnpj(base12[i]);
+    somatorioDv1 += valorCaractere * PESOS_DV_CNPJ[i + 1];
+    somatorioDv2 += valorCaractere * PESOS_DV_CNPJ[i];
   }
-  return mask
-}
+
+  const dv1 = somatorioDv1 % 11 < 2 ? 0 : 11 - (somatorioDv1 % 11);
+  somatorioDv2 += dv1 * PESOS_DV_CNPJ[12];
+  const dv2 = somatorioDv2 % 11 < 2 ? 0 : 11 - (somatorioDv2 % 11);
+
+  return `${dv1}${dv2}`;
+};
+
+export const cpfMaskContitional = (value) => {
+  const cpfCnpj = value.replace(/[^A-Za-z0-9]+/g, "").toUpperCase();
+
+  if (cpfCnpj.length > 11 || /[A-Za-z]/.test(cpfCnpj)) {
+    return CNPJ_MASK;
+  }
+
+  return [/\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '-', /\d/, /\d/];
+};
 
 export const processoIncorporacaoMask = (value) => {
   // 0000.0000/0000000-0
@@ -493,153 +527,105 @@ export const processoIncorporacaoMask = (value) => {
   return mask
 }
 
-export function valida_cpf_cnpj_permitindo_cnpj_zerado ( valor ) {
+const limpaCpf = (valor) => {
+  return valor ? valor.replace(/[^0-9]/g, '') : '';
+};
 
-  // Remove caracteres inválidos do valor
-  if (valor){
-    valor = valor.replace(/[^0-9]/g, '');
+const limpaCpfCnpj = (valor) => {
+  return valor ? valor.replace(/[^A-Za-z0-9]/g, '').toUpperCase() : '';
+};
+
+const possuiSequenciaInvalida = (valor, permitirCnpjZerado = false) => {
+  const sequenciasInvalidas = [
+    "00000000000",
+    "11111111111",
+    "11111111111111",
+    "22222222222",
+    "22222222222222",
+    "33333333333",
+    "33333333333333",
+    "44444444444",
+    "44444444444444",
+    "55555555555",
+    "55555555555555",
+    "66666666666",
+    "66666666666666",
+    "77777777777",
+    "77777777777777",
+    "88888888888",
+    "88888888888888",
+    "99999999999",
+    "99999999999999",
+  ];
+
+  if (!permitirCnpjZerado) {
+    sequenciasInvalidas.push("00000000000000");
   }
 
-  if (
-      !valor ||
-      (valor.length < 11 && valor.length > 14) ||
-      valor === "00000000000" ||
-      valor === "11111111111" ||
-      valor === "11111111111111" ||
-      valor === "22222222222" ||
-      valor === "22222222222222" ||
-      valor === "33333333333" ||
-      valor === "33333333333333" ||
-      valor === "44444444444" ||
-      valor === "44444444444444" ||
-      valor === "55555555555" ||
-      valor === "55555555555555" ||
-      valor === "66666666666" ||
-      valor === "66666666666666" ||
-      valor === "77777777777" ||
-      valor === "77777777777777" ||
-      valor === "88888888888" ||
-      valor === "88888888888888" ||
-      valor === "99999999999" ||
-      valor === "99999999999999"
-  ){
-    return false
-  }
+  return sequenciasInvalidas.includes(valor);
+};
 
+function verifica_cpf_cnpj(valor) {
+  const valorCpf = limpaCpf(valor);
+  const valorCpfCnpj = limpaCpfCnpj(valor);
 
-  // Verifica se é CPF ou CNPJ
-  let valida = verifica_cpf_cnpj( valor );
-
-  // Garante que o valor é uma string
-  valor = valor.toString();
-
-
-
-  // Valida CPF
-  if ( valida === 'CPF' ) {
-    // Retorna true para cpf válido
-    return valida_cpf( valor );
-  }
-
-  // Valida CNPJ
-  else if ( valida === 'CNPJ' ) {
-    // Retorna true para CNPJ válido
-    return valida_cnpj( valor );
-  }
-
-  // Não retorna nada
-  else {
-    return false;
-  }
-
-} // valida_cpf_cnpj
-
-export function valida_cpf_cnpj ( valor ) {
-
-  // Remove caracteres inválidos do valor
-  if (valor){
-    valor = valor.replace(/[^0-9]/g, '');
-  }
-
-  if (
-      !valor ||
-      (valor.length < 11 && valor.length > 14) ||
-      valor === "00000000000" ||
-      valor === "00000000000000" ||
-      valor === "11111111111" ||
-      valor === "11111111111111" ||
-      valor === "22222222222" ||
-      valor === "22222222222222" ||
-      valor === "33333333333" ||
-      valor === "33333333333333" ||
-      valor === "44444444444" ||
-      valor === "44444444444444" ||
-      valor === "55555555555" ||
-      valor === "55555555555555" ||
-      valor === "66666666666" ||
-      valor === "66666666666666" ||
-      valor === "77777777777" ||
-      valor === "77777777777777" ||
-      valor === "88888888888" ||
-      valor === "88888888888888" ||
-      valor === "99999999999" ||
-      valor === "99999999999999"
-  ){
-    return false
-  }
-
-
-  // Verifica se é CPF ou CNPJ
-  let valida = verifica_cpf_cnpj( valor );
-
-  // Garante que o valor é uma string
-  valor = valor.toString();
-
-
-
-  // Valida CPF
-  if ( valida === 'CPF' ) {
-    // Retorna true para cpf válido
-    return valida_cpf( valor );
-  }
-
-  // Valida CNPJ
-  else if ( valida === 'CNPJ' ) {
-    // Retorna true para CNPJ válido
-    return valida_cnpj( valor );
-  }
-
-  // Não retorna nada
-  else {
-    return false;
-  }
-
-} // valida_cpf_cnpj
-
-function verifica_cpf_cnpj ( valor ) {
-
-  // Garante que o valor é uma string
-  valor = valor.toString();
-
-  // Remove caracteres inválidos do valor
-  valor = valor.replace(/[^0-9]/g, '');
-
-  // Verifica CPF
-  if ( valor.length === 11 ) {
+  if (valorCpf.length === 11 && /^\d+$/.test(valorCpf)) {
     return 'CPF';
   }
 
-  // Verifica CNPJ
-  else if ( valor.length === 14 ) {
+  if (valorCpfCnpj.length === 14) {
     return 'CNPJ';
   }
 
-  // Não retorna nada
-  else {
+  return false;
+}
+
+export function valida_cpf_cnpj_permitindo_cnpj_zerado(valor) {
+  const tipoDocumento = verifica_cpf_cnpj(valor);
+
+  if (!tipoDocumento) {
     return false;
   }
 
-} // verifica_cpf_cnpj
+  if (tipoDocumento === 'CPF') {
+    const cpf = limpaCpf(valor);
+    if (possuiSequenciaInvalida(cpf, true)) {
+      return false;
+    }
+    return valida_cpf(cpf);
+  }
+
+  const cnpj = limpaCpfCnpj(valor);
+  if (cnpj === CNPJ_ZERADO) {
+    return true;
+  }
+  if (possuiSequenciaInvalida(cnpj, true)) {
+    return false;
+  }
+  return valida_cnpj(cnpj);
+}
+
+export function valida_cpf_cnpj(valor) {
+  const tipoDocumento = verifica_cpf_cnpj(valor);
+
+  if (!tipoDocumento) {
+    return false;
+  }
+
+  if (tipoDocumento === 'CPF') {
+    const cpf = limpaCpf(valor);
+    if (possuiSequenciaInvalida(cpf)) {
+      return false;
+    }
+    return valida_cpf(cpf);
+  }
+
+  const cnpj = limpaCpfCnpj(valor);
+  if (possuiSequenciaInvalida(cnpj)) {
+    return false;
+  }
+  return valida_cnpj(cnpj);
+}
 
 function calc_digitos_posicoes( digitos, posicoes = 10, soma_digitos = 0 ) {
 
@@ -687,28 +673,23 @@ function valida_cpf( valor ) {
 
 } // valida_cpf
 
-function valida_cnpj ( valor ) {
-  valor = valor.toString();
-
-  valor = valor.replace(/[^0-9]/g, '');
-
-  let cnpj_original = valor;
-
-  let primeiros_numeros_cnpj = valor.substr( 0, 12 );
-
-  let primeiro_calculo = calc_digitos_posicoes( primeiros_numeros_cnpj, 5 );
-
-  let segundo_calculo = calc_digitos_posicoes( primeiro_calculo, 6 );
-
-  let cnpj = segundo_calculo;
-
-  if ( cnpj === cnpj_original ) {
-    return true;
+export function valida_cnpj(valor) {
+  if (!valor) {
+    return false;
   }
 
-  return false;
+  const cnpj = removeMascaraCnpj(valor.toString());
 
-} // valida_cnpj
+  if (cnpj === CNPJ_ZERADO) {
+    return false;
+  }
+
+  if (!/^[A-Z0-9]{12}\d{2}$/.test(cnpj)) {
+    return false;
+  }
+
+  return cnpj.slice(-2) === calculaDvCnpj(cnpj.slice(0, 12));
+}
 
 export const getTextoStatusPeriodo = (statusId) => {
   if (statusId === 'EM_ANDAMENTO') {

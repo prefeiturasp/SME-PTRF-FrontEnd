@@ -1,33 +1,33 @@
 import React from "react";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor, cleanup } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { getDres } from "../../../../../../../../services/sme/Parametrizacoes.service";
 import { Filtros } from "../../../components/Filtros";
 
-// Mock do service
 jest.mock(
   "../../../../../../../../services/sme/Parametrizacoes.service",
   () => ({
     getDres: jest.fn(),
+    getTiposUnidades: jest.fn(),
   }),
 );
 
-jest.mock("../../../hooks/useGetTipoReceita", () => ({
-  useGetTipoReceita: jest.fn(),
-}));
+jest.mock(
+  "../../../../../../../../componentes/Globais/VincularUnidades/hooks/useGet",
+  () => {
+    const stableData = [];
+    return {
+      useGetTiposUnidades: () => ({ data: stableData }),
+    };
+  },
+);
 
-// helper para renderizar com React Query
 const renderWithQuery = (component) => {
   const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-      },
-    },
+    defaultOptions: { queries: { retry: false } },
   });
-
   return render(
     <QueryClientProvider client={queryClient}>{component}</QueryClientProvider>,
   );
@@ -41,7 +41,7 @@ describe("Filtros", () => {
     limpaFiltros: jest.fn(),
   };
 
-  beforeEach(() => {
+  beforeEach(async () => {
     jest.clearAllMocks();
 
     getDres.mockResolvedValue([
@@ -50,6 +50,7 @@ describe("Filtros", () => {
     ]);
 
     renderWithQuery(<Filtros {...propsMock} />);
+    await screen.findByText("DRE 1");
   });
 
   it("testa as labels e botões", () => {
@@ -58,9 +59,7 @@ describe("Filtros", () => {
     ).toBeInTheDocument();
     expect(screen.getByLabelText(/Filtrar por DRE/i)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /limpar/i })).toBeInTheDocument();
-    expect(
-      screen.getByRole("button", { name: /filtrar/i }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /filtrar/i })).toBeInTheDocument();
   });
 
   it("testa a reatividade ao alterar o campo de filtro", () => {
@@ -80,10 +79,7 @@ describe("Filtros", () => {
   });
 
   it("testa a chamada de LimpaFiltros ao clicar em Limpar", () => {
-    const limparButton = screen.getByRole("button", { name: /limpar/i });
-
-    fireEvent.click(limparButton);
-
+    fireEvent.click(screen.getByRole("button", { name: /limpar/i }));
     expect(propsMock.limpaFiltros).toHaveBeenCalled();
   });
 
@@ -96,15 +92,13 @@ describe("Filtros", () => {
       target: { name: "nome_ou_codigo", value: "Teste" },
     });
 
-    const button = screen.getByRole("button", { name: /filtrar/i });
-
-    fireEvent.click(button);
+    fireEvent.click(screen.getByRole("button", { name: /filtrar/i }));
 
     expect(propsMock.onFilterChange).toHaveBeenCalled();
   });
 
-  it("testa o comportamento ao selecionar uma DRE", async () => {
-    const select = await screen.findByLabelText(/Filtrar por DRE/i);
+  it("testa o comportamento ao selecionar uma DRE", () => {
+    const select = screen.getByLabelText(/Filtrar por DRE/i);
 
     fireEvent.change(select, { target: { value: "1" } });
 
@@ -115,19 +109,18 @@ describe("Filtros", () => {
     });
   });
 
-  it("testa o carregamento das DREs e renderização da lista", async () => {
-    const select = await screen.findByLabelText(/Filtrar por DRE/i);
-
+  it("testa o carregamento das DREs e renderização da lista", () => {
+    const select = screen.getByLabelText(/Filtrar por DRE/i);
     expect(select.children.length).toBeGreaterThan(1);
   });
 
   it("testa quando a lista de DREs estiver vazia", async () => {
-    getDres.mockResolvedValueOnce([]);
+    cleanup();
+    getDres.mockResolvedValue([]);
 
     renderWithQuery(<Filtros {...propsMock} />);
 
-    const select = await screen.findByLabelText(/Filtrar por DRE/i);
-
-    expect(select.children.length).toBe(3);
+    const select = screen.getByLabelText(/Filtrar por DRE/i);
+    await waitFor(() => expect(select.children.length).toBe(1));
   });
 });

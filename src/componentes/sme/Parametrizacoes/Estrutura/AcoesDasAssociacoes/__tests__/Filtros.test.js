@@ -2,34 +2,50 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { Filtros } from '../Filtros';
-import { tabelas } from '../__fixtures__/mockData';
+import { tabelas, mockSelectAcoes } from '../__fixtures__/mockData';
 
+jest.mock('../hooks/useAcoesDasAssociacoesContext', () => ({
+  useAcoesDasAssociacoesContext: jest.fn(),
+}));
+
+jest.mock('../../../componentes/AbasPorRecurso/hooks/useAbasPorRecursoContext', () => ({
+  useAbasPorRecursoContext: jest.fn(),
+}));
+
+const mockUseAcoesContext = require('../hooks/useAcoesDasAssociacoesContext').useAcoesDasAssociacoesContext;
+const mockUseAbasContext = require('../../../componentes/AbasPorRecurso/hooks/useAbasPorRecursoContext').useAbasPorRecursoContext;
 
 describe('Componente Filtros', () => {
-    const mockHandleChangeFiltros = jest.fn();
-    const mockHandleSubmitFiltros = jest.fn();
-    const mockLimpaFiltros = jest.fn();
+    const mockSetFilters = jest.fn();
 
-    const initialStateFiltros = {
+    const initialFilters = {
+        page: 1,
+        is_required_recurso_uuid: true,
+        recurso_uuid: '',
         filtrar_por_nome_cod_eol: '',
-        filtro_informacoes: []
+        filtrar_por_acao: '',
+        filtrar_por_status: '',
+        filtro_informacoes: [],
     };
-    const mockPropsFiltros = {
-        stateFiltros: initialStateFiltros,
-        handleChangeFiltros: mockHandleChangeFiltros,
-        handleSubmitFiltros: mockHandleSubmitFiltros,
-        limpaFiltros: mockLimpaFiltros,
-        tabelaAssociacoes: tabelas
-    };
-
 
     beforeEach(() => {
         jest.clearAllMocks();
+
+        mockUseAbasContext.mockReturnValue({ selectedRecurso: { uuid: 'r1' } });
+
+        mockUseAcoesContext.mockReturnValue({
+            setFilters: mockSetFilters,
+            initialFilters,
+            tabelaAssociacoes: tabelas,
+            isLoadingTabela: false,
+            listaTiposDeAcao: mockSelectAcoes,
+            isLoadingTiposDeAcao: false,
+        });
     });
 
-    it('testa a as labels e botões', () => {
+    it('testa as labels e botões', () => {
         render(
-            <Filtros {...mockPropsFiltros} />
+            <Filtros />
         );
 
         expect(screen.getByLabelText(/Filtrar por nome ou código EOL/i)).toBeInTheDocument();
@@ -37,25 +53,33 @@ describe('Componente Filtros', () => {
         expect(screen.getByRole('button', { name: /filtrar/i })).toBeInTheDocument();
     });
 
-    it('testa a reatividade ao alterar o campo de filtro', () => {
+    it('testa a reatividade ao alterar o campo de filtro', async () => {
         render(
-            <Filtros {...mockPropsFiltros} />
+            <Filtros />
         );
 
         const input = screen.getByLabelText(/Filtrar por nome ou código EOL/i);
-        fireEvent.change(input, { target: { name: 'filtrar_por_nome_cod_eol', value: 'Teste' } });
+        fireEvent.change(input, { target: { value: 'Teste' } });
 
-        expect(mockHandleChangeFiltros).toHaveBeenCalledWith('filtrar_por_nome_cod_eol', 'Teste');
+        await waitFor(() => {
+            expect(input.value).toBe('Teste');
+        });
     });
 
-    it('testa a chamada de LimpaFiltros ao clicar em Limpar', () => {
+    it('testa a chamada de limpar Filtros ao clicar em Limpar', async () => {
         render(
-            <Filtros {...mockPropsFiltros} />
+            <Filtros />
         );
+
+        const input = screen.getByLabelText(/Filtrar por nome ou código EOL/i);
+        fireEvent.change(input, { target: { value: 'Valor' } });
 
         const limparButton = screen.getByRole('button', { name: /limpar/i });
         fireEvent.click(limparButton);
 
-        expect(mockLimpaFiltros).toHaveBeenCalledTimes(1);
+        await waitFor(() => {
+            expect(mockSetFilters).toHaveBeenCalled();
+            expect(input.value).toBe('');
+        });
     });
 });

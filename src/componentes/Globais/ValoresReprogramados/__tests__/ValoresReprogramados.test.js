@@ -14,13 +14,13 @@ import {
 import { trataNumericos, exibeDataPT_BR } from '../../../../utils/ValidacoesAdicionaisFormularios';
 import { toastCustom } from '../../ToastCustom';
 
-// ── Captured props ─────────────────────────────────────────────────────────────
+// Captured props
 let capturedFormikProps = null;
 let capturedFormRef     = null;
 let capturedBotoesProps = null;
 let capturedCabecalhoProps = null;
 
-// ── Mocks ──────────────────────────────────────────────────────────────────────
+// Mocks
 jest.mock('../../../../services/visoes.service', () => ({
     visoesService: {
         getItemUsuarioLogado: jest.fn(),
@@ -117,7 +117,7 @@ jest.mock('../TextoExplicativoDaPagina', () => ({
     ),
 }));
 
-// ── Test data ──────────────────────────────────────────────────────────────────
+// Test data
 const makeAcao = ({ valor_ue = 100, valor_dre = 100 } = {}) => ({
     custeio: { valor_ue, valor_dre, status_conferencia: 'correto', nome: 'custeio' },
     capital: { valor_ue, valor_dre, status_conferencia: 'correto', nome: 'capital' },
@@ -145,7 +145,7 @@ const MOCK_STATUS_FECHADO = { status: { texto: 'Fechado',      cor: 2, periodo_f
 const MOCK_TEXTO_UE  = { detail: 'Texto explicativo UE'  };
 const MOCK_TEXTO_DRE = { detail: 'Texto explicativo DRE' };
 
-// ── Helpers ────────────────────────────────────────────────────────────────────
+// Helpers
 const setupVisoesService = (visao = 'UE') => {
     visoesService.getItemUsuarioLogado.mockImplementation(key => {
         if (key === 'visao_selecionada.nome')     return visao;
@@ -183,7 +183,7 @@ const setFormValues = (values) => {
     if (capturedFormRef) capturedFormRef.current = { values };
 };
 
-// ── Tests ──────────────────────────────────────────────────────────────────────
+// Tests
 describe('<ValoresReprogramados>', () => {
     beforeEach(() => {
         jest.clearAllMocks();
@@ -198,7 +198,7 @@ describe('<ValoresReprogramados>', () => {
         window.location = { assign: jest.fn() };
     });
 
-    // ── Renderização ──────────────────────────────────────────────────────────
+    // Renderização
     describe('Renderização', () => {
         it('mostra loading inicialmente', async () => {
             setupVisoesService('UE');
@@ -245,7 +245,7 @@ describe('<ValoresReprogramados>', () => {
         });
     });
 
-    // ── carregaUuidAssociacao ─────────────────────────────────────────────────
+    // carregaUuidAssociacao
     describe('carregaUuidAssociacao', () => {
         it('UE: define uuidAssociacao a partir de associacao_selecionada', async () => {
             setupDefaultMocks('UE');
@@ -273,7 +273,7 @@ describe('<ValoresReprogramados>', () => {
         });
     });
 
-    // ── carregaValoresReprogramados ───────────────────────────────────────────
+    // carregaValoresReprogramados
     describe('carregaValoresReprogramados', () => {
         it('seta falso quando API retorna null', async () => {
             setupDefaultMocks('UE');
@@ -293,7 +293,7 @@ describe('<ValoresReprogramados>', () => {
         });
     });
 
-    // ── carregaStatusValoresReprogramados ─────────────────────────────────────
+    // carregaStatusValoresReprogramados
     describe('carregaStatusValoresReprogramados', () => {
         it('seta falso quando status retorna null', async () => {
             setupDefaultMocks('UE');
@@ -313,7 +313,7 @@ describe('<ValoresReprogramados>', () => {
         });
     });
 
-    // ── carregaTextoExplicativo ───────────────────────────────────────────────
+    // carregaTextoExplicativo
     describe('carregaTextoExplicativo', () => {
         it('chama getTextoExplicativoUe para visão UE', async () => {
             setupDefaultMocks('UE');
@@ -332,7 +332,7 @@ describe('<ValoresReprogramados>', () => {
         });
     });
 
-    // ── editavelUE ────────────────────────────────────────────────────────────
+    // editavelUE
     describe('editavelUE', () => {
         it('retorna true para NAO_FINALIZADO com permissão', async () => {
             setupDefaultMocks('UE');
@@ -386,7 +386,7 @@ describe('<ValoresReprogramados>', () => {
         });
     });
 
-    // ── editavelDRE ───────────────────────────────────────────────────────────
+    // editavelDRE
     describe('editavelDRE', () => {
         it('retorna true para EM_CONFERENCIA_DRE com permissão', async () => {
             setupDefaultMocks('DRE');
@@ -442,7 +442,7 @@ describe('<ValoresReprogramados>', () => {
         });
     });
 
-    // ── permiteSalvarOuConcluir / defineCorBarraStatus ────────────────────────
+    // permiteSalvarOuConcluir / defineCorBarraStatus
     describe('permiteSalvarOuConcluir / defineCorBarraStatus', () => {
         it('retorna resultado de editavelUE para visão UE', async () => {
             setupDefaultMocks('UE');
@@ -477,7 +477,7 @@ describe('<ValoresReprogramados>', () => {
         });
     });
 
-    // ── exibeAcao ─────────────────────────────────────────────────────────────
+    // exibeAcao
     describe('exibeAcao', () => {
         it('retorna false quando acao não tem custeio, capital nem livre', async () => {
             setupDefaultMocks('UE');
@@ -508,7 +508,7 @@ describe('<ValoresReprogramados>', () => {
         });
     });
 
-    // ── rowSpan ───────────────────────────────────────────────────────────────
+    // rowSpan
     describe('rowSpan', () => {
         it('retorna 1 quando sem tipos', async () => {
             setupDefaultMocks('UE');
@@ -546,7 +546,7 @@ describe('<ValoresReprogramados>', () => {
         });
     });
 
-    // ── valoresSomadosUE ──────────────────────────────────────────────────────
+    // valoresSomadosUE
     describe('valoresSomadosUE', () => {
         it('soma corretamente capital + custeio + livre', async () => {
             setupDefaultMocks('UE');
@@ -584,7 +584,7 @@ describe('<ValoresReprogramados>', () => {
         });
     });
 
-    // ── valoresSomadosDRE ─────────────────────────────────────────────────────
+    // valoresSomadosDRE
     describe('valoresSomadosDRE', () => {
         it('soma corretamente para DRE', async () => {
             setupDefaultMocks('UE');
@@ -612,7 +612,7 @@ describe('<ValoresReprogramados>', () => {
         });
     });
 
-    // ── handleOnKeyDown ───────────────────────────────────────────────────────
+    // handleOnKeyDown
     describe('handleOnKeyDown', () => {
         const backspaceEvent = { keyCode: 8 };
         const otherKeyEvent  = { keyCode: 65 };
@@ -688,7 +688,7 @@ describe('<ValoresReprogramados>', () => {
         });
     });
 
-    // ── handleChangeStatusConferencia ─────────────────────────────────────────
+    // handleChangeStatusConferencia
     describe('handleChangeStatusConferencia', () => {
         it('DRE: valores iguais → status correto', async () => {
             setupDefaultMocks('UE');
@@ -766,7 +766,7 @@ describe('<ValoresReprogramados>', () => {
         });
     });
 
-    // ── handleClickEstaCorreto ────────────────────────────────────────────────
+    // handleClickEstaCorreto
     describe('handleClickEstaCorreto', () => {
         it('copia valor_ue para valor_dre e seta status correto', async () => {
             setupDefaultMocks('UE');
@@ -789,7 +789,7 @@ describe('<ValoresReprogramados>', () => {
         });
     });
 
-    // ── textoPeriodo ──────────────────────────────────────────────────────────
+    // textoPeriodo
     describe('textoPeriodo', () => {
         it('retorna texto completo com referência e datas', async () => {
             setupDefaultMocks('UE');
@@ -836,7 +836,7 @@ describe('<ValoresReprogramados>', () => {
         });
     });
 
-    // ── validaPayload ─────────────────────────────────────────────────────────
+    // validaPayload
     describe('validaPayload (via handleOnClickConcluirValoresReprogramados)', () => {
         it('UE: payload válido abre modal concluir', async () => {
             setupDefaultMocks('UE');
@@ -978,7 +978,7 @@ describe('<ValoresReprogramados>', () => {
         });
     });
 
-    // ── handleSalvarValoresReprogramados ──────────────────────────────────────
+    // handleSalvarValoresReprogramados
     describe('handleSalvarValoresReprogramados', () => {
         it('salva com sucesso e exibe toast', async () => {
             setupDefaultMocks('UE');
@@ -1010,7 +1010,7 @@ describe('<ValoresReprogramados>', () => {
         });
     });
 
-    // ── handleConcluirValoresReprogramados ────────────────────────────────────
+    // handleConcluirValoresReprogramados
     describe('handleConcluirValoresReprogramados', () => {
         it('conclui com sucesso e exibe toast', async () => {
             setupDefaultMocks('UE');
@@ -1056,7 +1056,7 @@ describe('<ValoresReprogramados>', () => {
         });
     });
 
-    // ── objetosDiferentes / handleVoltar ──────────────────────────────────────
+    // objetosDiferentes / handleVoltar
     describe('handleVoltar', () => {
         it('redireciona diretamente quando objetos são iguais (UE)', async () => {
             setupDefaultMocks('UE');
@@ -1130,7 +1130,7 @@ describe('<ValoresReprogramados>', () => {
         });
     });
 
-    // ── objetosDiferentes (capital / livre diferente) ─────────────────────────
+    // objetosDiferentes (capital / livre diferente)
     describe('objetosDiferentes — diferença em capital e livre', () => {
         it('detecta diferença no capital', async () => {
             setupDefaultMocks('UE');
@@ -1157,7 +1157,7 @@ describe('<ValoresReprogramados>', () => {
         });
     });
 
-    // ── Modal conclusão não permitida ─────────────────────────────────────────
+    // Modal conclusão não permitida
     describe('Modal conclusão não permitida', () => {
         it('fechar o modal esconde ele', async () => {
             setupDefaultMocks('UE');
@@ -1179,7 +1179,7 @@ describe('<ValoresReprogramados>', () => {
         });
     });
 
-    // ── Modal concluir: fechar ────────────────────────────────────────────────
+    // Modal concluir: fechar
     describe('Modal concluir', () => {
         it('fechar o modal esconde ele', async () => {
             setupDefaultMocks('UE');
@@ -1198,7 +1198,7 @@ describe('<ValoresReprogramados>', () => {
         });
     });
 
-    // ── Cobertura de branches adicionais ──────────────────────────────────────
+    // Cobertura de branches adicionais
     describe('editavelUE — sem associacao carregada', () => {
         it('retorna false quando valoresReprogramados não tem associacao', async () => {
             setupDefaultMocks('UE');

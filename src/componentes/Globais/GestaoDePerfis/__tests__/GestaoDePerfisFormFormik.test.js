@@ -1,7 +1,7 @@
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import { GestaoDePerfisFormFormik } from '../GestaoDePerfisFormFormik';
 
-// ── FontAwesome ────────────────────────────────────────────────────────────────
+// FontAwesome
 jest.mock('@fortawesome/react-fontawesome', () => ({
     FontAwesomeIcon: () => null,
 }));
@@ -10,16 +10,16 @@ jest.mock('@fortawesome/free-solid-svg-icons', () => ({
     faTrashAlt: 'faTrashAlt',
 }));
 
-// ── react-text-mask → input simples ───────────────────────────────────────────
+// react-text-mask → input simples
 jest.mock('react-text-mask', () =>
     // eslint-disable-next-line react/prop-types
     ({ mask, guide, showMask, ...props }) => <input {...props} />
 );
 
-// ── Autocomplete ──────────────────────────────────────────────────────────────
+// Autocomplete
 jest.mock('../GestaoDePerfisFormAutocomplete', () => () => <div data-testid="autocomplete" />);
 
-// ── Modais — expostos com botões de teste ─────────────────────────────────────
+// Modais — expostos com botões de teste
 jest.mock('../ModalUsuarioNaoCadastrado', () => ({
     // eslint-disable-next-line react/prop-types
     ModalUsuarioNaoCadastrado: ({ show, handleClose, onCadastrarTrue }) =>
@@ -58,7 +58,7 @@ jest.mock('../ModalInfo', () => ({
         ) : null,
 }));
 
-// ── Dados base ─────────────────────────────────────────────────────────────────
+// Dados base
 const VISOES_MOCK = [
     { nome: 'DRE', id: 'visao-dre-id', editavel: true },
     { nome: 'SME', id: 'visao-sme-id', editavel: true },
@@ -121,7 +121,7 @@ const STATE_WITH_ID_UE = {
     ],
 };
 
-// ── Factory de props ───────────────────────────────────────────────────────────
+// Factory de props
 const makeProps = (overrides = {}) => ({
     initPerfisForm: DEFAULT_INIT,
     setStatePerfisForm: jest.fn(),
@@ -168,7 +168,7 @@ const makeProps = (overrides = {}) => ({
     ...overrides,
 });
 
-// ── Setup ──────────────────────────────────────────────────────────────────────
+// Setup
 beforeEach(() => {
     delete window.location;
     window.location = { assign: jest.fn() };
@@ -177,7 +177,7 @@ beforeEach(() => {
 // ══════════════════════════════════════════════════════════════════════════════
 describe('GestaoDePerfisFormFormik', () => {
 
-    // ── Título ─────────────────────────────────────────────────────────────────
+    // Título
     describe('título do formulário', () => {
         it('exibe "Adicionar usuário" quando statePerfisForm.id é nulo', () => {
             render(<GestaoDePerfisFormFormik {...makeProps()} />);
@@ -190,7 +190,7 @@ describe('GestaoDePerfisFormFormik', () => {
         });
     });
 
-    // ── Botões fixos ───────────────────────────────────────────────────────────
+    // Botões fixos
     describe('botões Salvar e Voltar', () => {
         it('sempre exibe o botão Salvar', () => {
             render(<GestaoDePerfisFormFormik {...makeProps()} />);
@@ -209,7 +209,7 @@ describe('GestaoDePerfisFormFormik', () => {
         });
     });
 
-    // ── Botão Desvincular ──────────────────────────────────────────────────────
+    // Botão Desvincular
     describe('botão Desvincular', () => {
         it('não exibe o botão Desvincular quando statePerfisForm.id é nulo', () => {
             render(<GestaoDePerfisFormFormik {...makeProps()} />);
@@ -290,7 +290,7 @@ describe('GestaoDePerfisFormFormik', () => {
         });
     });
 
-    // ── Botão Deletar usuário ──────────────────────────────────────────────────
+    // Botão Deletar usuário
     describe('botão Deletar usuário', () => {
         it('não exibe quando statePerfisForm.id é nulo', () => {
             render(<GestaoDePerfisFormFormik {...makeProps()} />);
@@ -345,7 +345,7 @@ describe('GestaoDePerfisFormFormik', () => {
         });
     });
 
-    // ── Campo tipo de usuário ──────────────────────────────────────────────────
+    // Campo tipo de usuário
     describe('campo tipo de usuário (e_servidor)', () => {
         it('renderiza as opções de tipo de usuário', () => {
             render(<GestaoDePerfisFormFormik {...makeProps()} />);
@@ -387,7 +387,7 @@ describe('GestaoDePerfisFormFormik', () => {
         });
     });
 
-    // ── Campo username ─────────────────────────────────────────────────────────
+    // Campo username
     describe('campo username (MaskedInput)', () => {
         it('está desabilitado quando e_servidor está vazio', () => {
             render(<GestaoDePerfisFormFormik {...makeProps()} />);
@@ -437,7 +437,7 @@ describe('GestaoDePerfisFormFormik', () => {
         });
     });
 
-    // ── Campo Nome ─────────────────────────────────────────────────────────────
+    // Campo Nome
     describe('campo Nome', () => {
         it('é readOnly quando bloquearCampoName é true', () => {
             const { container } = render(<GestaoDePerfisFormFormik {...makeProps({ bloquearCampoName: true })} />);
@@ -458,7 +458,7 @@ describe('GestaoDePerfisFormFormik', () => {
         });
     });
 
-    // ── Campo Email ────────────────────────────────────────────────────────────
+    // Campo Email
     describe('campo Email', () => {
         it('renderiza o campo de email com placeholder', () => {
             render(<GestaoDePerfisFormFormik {...makeProps()} />);
@@ -474,7 +474,7 @@ describe('GestaoDePerfisFormFormik', () => {
         });
     });
 
-    // ── Checkboxes de Visões ───────────────────────────────────────────────────
+    // Checkboxes de Visões
     describe('checkboxes de visões', () => {
         it('renderiza um checkbox por visão', () => {
             render(<GestaoDePerfisFormFormik {...makeProps()} />);
@@ -515,7 +515,7 @@ describe('GestaoDePerfisFormFormik', () => {
         });
     });
 
-    // ── Checkboxes de Grupos ───────────────────────────────────────────────────
+    // Checkboxes de Grupos
     describe('checkboxes de grupos', () => {
         it('renderiza checkboxes de grupos filtrados por evitaDuplicacao', () => {
             const evitaDuplicacao = jest.fn((g) => g);
@@ -555,7 +555,7 @@ describe('GestaoDePerfisFormFormik', () => {
         });
     });
 
-    // ── Seção de unidades ──────────────────────────────────────────────────────
+    // Seção de unidades
     describe('seção de unidades vinculadas', () => {
         it('exibe "Salve o usuário..." quando visao não é UE e id é nulo', () => {
             render(<GestaoDePerfisFormFormik {...makeProps()} />);
@@ -581,7 +581,7 @@ describe('GestaoDePerfisFormFormik', () => {
         });
     });
 
-    // ── FieldArray ─────────────────────────────────────────────────────────────
+    // FieldArray
     describe('FieldArray de unidades vinculadas', () => {
         it('exibe o botão "+ Adicionar" quando id existe e visao não é UE', () => {
             render(<GestaoDePerfisFormFormik {...makeProps({ statePerfisForm: STATE_WITH_ID })} />);
@@ -740,7 +740,7 @@ describe('GestaoDePerfisFormFormik', () => {
         });
     });
 
-    // ── Erros Yup na submissão ─────────────────────────────────────────────────
+    // Erros Yup na submissão
     describe('erros de validação Yup', () => {
         it('exibe erro de e_servidor obrigatório ao submeter formulário vazio', async () => {
             render(<GestaoDePerfisFormFormik {...makeProps()} />);
@@ -797,7 +797,7 @@ describe('GestaoDePerfisFormFormik', () => {
         });
     });
 
-    // ── Modais ─────────────────────────────────────────────────────────────────
+    // Modais
     describe('ModalUsuarioNaoCadastrado', () => {
         it('não exibe quando showModalUsuarioNaoCadastrado é false', () => {
             render(<GestaoDePerfisFormFormik {...makeProps()} />);

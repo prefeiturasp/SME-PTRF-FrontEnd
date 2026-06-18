@@ -3,8 +3,7 @@ import { visoesService } from "../../../../../../services/visoes.service";
 
 export const TopoComBotoes = ({dadosAta, onSubmitFormEdicaoAta, handleClickFecharAta, disableBtnSalvar}) =>{
     const podeEditarAta = [['custom_change_paa']].some(visoesService.getPermissoes);
-    const tituloAta = dadosAta?.tipo_ata === 'RETIFICACAO' ? 'Edição da Ata de Retificação do PAA' : 'Edição da Ata de Apresentação do PAA';
-
+    const tituloAta = dadosAta?.nome;
     return(
         <div className="row">
             <div className='col-12 col-md-5 mt-2'>

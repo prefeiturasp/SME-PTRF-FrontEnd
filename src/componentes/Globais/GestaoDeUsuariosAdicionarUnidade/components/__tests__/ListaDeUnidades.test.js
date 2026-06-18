@@ -6,13 +6,13 @@ import { useUnidadesDisponiveisInclusao } from '../../hooks/useUnidadesDisponive
 import { useIncluirUnidade } from '../../hooks/useIncluirUnidade';
 import { useUsuario } from '../../../GestaoDeUsuariosForm/hooks/useUsuario';
 
-// ── Router ────────────────────────────────────────────────────────────────────
+// Router
 jest.mock('react-router-dom', () => ({
     ...jest.requireActual('react-router-dom'),
     useParams: () => ({ id_usuario: '42' }),
 }));
 
-// ── Hooks ─────────────────────────────────────────────────────────────────────
+// Hooks
 jest.mock('../../hooks/useUnidadesDisponiveisInclusao', () => ({
     useUnidadesDisponiveisInclusao: jest.fn(),
 }));
@@ -25,7 +25,7 @@ jest.mock('../../../GestaoDeUsuariosForm/hooks/useUsuario', () => ({
     useUsuario: jest.fn(),
 }));
 
-// ── PrimeReact ────────────────────────────────────────────────────────────────
+// PrimeReact
 jest.mock('primereact/datatable', () => ({
     DataTable: (props) => {
         const mockReact = require('react');
@@ -52,7 +52,7 @@ jest.mock('primereact/column', () => ({
     Column: () => null,
 }));
 
-// ── Globais ───────────────────────────────────────────────────────────────────
+// Globais
 jest.mock('../../../../../utils/Loading', () => ({
     __esModule: true,
     default: () => <div data-testid="loading" />,
@@ -80,7 +80,7 @@ jest.mock('../Paginacao', () => ({
 
 jest.mock('../../../../assets/img/img-404.svg', () => 'img-404-mock', { virtual: true });
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
+// Helpers
 const buildContext = (overrides = {}) => ({
     search: '',
     setSearch: jest.fn(),

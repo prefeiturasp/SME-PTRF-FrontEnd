@@ -74,8 +74,7 @@ describe('Filtros', () => {
     fireEvent.click(limparButton);
 
     expect(mockSetFilter).toHaveBeenCalledTimes(1);
-    // expect(mockSetFilter).toHaveBeenCalledWith((prevState) => ({...initialFilter, recurso_uuid: prevState.recurso_uuid}));
-
+    
     const updater = mockSetFilter.mock.calls[0][0];
     
     expect(typeof updater).toBe('function');

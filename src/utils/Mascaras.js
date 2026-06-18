@@ -17,6 +17,18 @@ export const parsetFormattedProcessoIncorporacao = (value) => {
   return value.replace(/\D/g, "").slice(0, 16);
 };
 
+export const cnpjMask = [
+  /[A-Za-z0-9]/, /[A-Za-z0-9]/, '.',
+  /[A-Za-z0-9]/, /[A-Za-z0-9]/, /[A-Za-z0-9]/, '.',
+  /[A-Za-z0-9]/, /[A-Za-z0-9]/, /[A-Za-z0-9]/, '/',
+  /[A-Za-z0-9]/, /[A-Za-z0-9]/, /[A-Za-z0-9]/, /[A-Za-z0-9]/, '-',
+  /\d/, /\d/
+];
+
+export function getCnpjMask() {
+  return cnpjMask;
+}
+
 export function getCCMMask(value) {
   const digits = value.replace(/\D/g, "");
   if (digits.length > 8) {
