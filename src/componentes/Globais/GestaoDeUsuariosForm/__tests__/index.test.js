@@ -2,22 +2,22 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { GestaoDeUsuariosFormPage } from '../index';
 
-// ── SCSS mock ─────────────────────────────────────────────────────────────────
+// SCSS mock
 jest.mock('../style/gestao-de-usuarios-form.scss', () => ({}));
 
-// ── PaginasContainer mock ─────────────────────────────────────────────────────
+// PaginasContainer mock
 jest.mock('../../../../paginas/PaginasContainer', () => ({
     PaginasContainer: ({ children }) => <div data-testid="paginas-container">{children}</div>,
 }));
 
-// ── GestaoDeUsuariosFormProvider mock ─────────────────────────────────────────
+// GestaoDeUsuariosFormProvider mock
 jest.mock('../context/GestaoDeUsuariosFormProvider', () => ({
     GestaoDeUsuariosFormProvider: ({ children }) => (
         <div data-testid="gestao-usuarios-form-provider">{children}</div>
     ),
 }));
 
-// ── GestaoDeUsuariosFormMain mock ─────────────────────────────────────────────
+// GestaoDeUsuariosFormMain mock
 jest.mock('../components/GestaoDeUsuariosFormMain', () => ({
     GestaoDeUsuariosFormMain: () => <div data-testid="gestao-usuarios-form-main" />,
 }));

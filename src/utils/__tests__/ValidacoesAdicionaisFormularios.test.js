@@ -15,6 +15,7 @@ import {
     cpfMaskContitional, 
     processoIncorporacaoMask, 
     valida_cpf_cnpj, 
+    valida_cnpj,
     valida_cpf_cnpj_permitindo_cnpj_zerado,
     getTextoStatusPeriodo, 
     getCorStatusPeriodo, 
@@ -421,7 +422,21 @@ describe("Máscaras de CPF/CNPJ", () => {
 
     test("Aplica máscara de CNPJ corretamente", () => {
         expect(cpfMaskContitional("12345678000195")).toEqual([
-        /\d/, /\d/, '.', /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '/', /\d/, /\d/, /\d/, /\d/, '-', /\d/, /\d/
+        /[A-Za-z0-9]/, /[A-Za-z0-9]/, '.',
+        /[A-Za-z0-9]/, /[A-Za-z0-9]/, /[A-Za-z0-9]/, '.',
+        /[A-Za-z0-9]/, /[A-Za-z0-9]/, /[A-Za-z0-9]/, '/',
+        /[A-Za-z0-9]/, /[A-Za-z0-9]/, /[A-Za-z0-9]/, /[A-Za-z0-9]/, '-',
+        /\d/, /\d/
+        ]);
+    });
+
+    test("Aplica máscara de CNPJ ao digitar letra manualmente", () => {
+        expect(cpfMaskContitional("AB123")).toEqual([
+        /[A-Za-z0-9]/, /[A-Za-z0-9]/, '.',
+        /[A-Za-z0-9]/, /[A-Za-z0-9]/, /[A-Za-z0-9]/, '.',
+        /[A-Za-z0-9]/, /[A-Za-z0-9]/, /[A-Za-z0-9]/, '/',
+        /[A-Za-z0-9]/, /[A-Za-z0-9]/, /[A-Za-z0-9]/, /[A-Za-z0-9]/, '-',
+        /\d/, /\d/
         ]);
     });
 
@@ -476,6 +491,15 @@ describe("Validação de CPF/CNPJ", () => {
 
     test("Valida CNPJ zerado não permitido", () => {
         expect(valida_cpf_cnpj("00000000000000")).toBe(false);
+    });
+
+    test("Valida CNPJ alfanumérico válido", () => {
+        expect(valida_cnpj("AB.12C.D34/EF56-02")).toBe(true);
+        expect(valida_cpf_cnpj("AB.12C.D34/EF56-02")).toBe(true);
+    });
+
+    test("Valida CNPJ alfanumérico inválido", () => {
+        expect(valida_cnpj("AB.12C.D34/EF56-99")).toBe(false);
     });
 });
 

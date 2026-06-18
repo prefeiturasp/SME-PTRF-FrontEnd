@@ -167,7 +167,7 @@ jest.mock('../../api', () => ({
 const mockToken = 'fake-token';
 const mockData = [{ id: 1, nome: 'Teste 1' }];
 const associacao_uuid = '1234'
-const payload = { teste: 'teste' }
+const payload = { teste: 'teste', recurso_uuid: 'recurso-uuid' }
 const uuid = '1234'
 
 describe('Testes para funções de análise', () => {
@@ -325,17 +325,19 @@ describe('Testes para funções de análise', () => {
 
     test('getAssociacoes  deve chamar a API corretamente', async () => {
         api.get.mockResolvedValue({ data: mockData })
-        const result = await getAssociacoes();
+        const recurso_uuid = 'recurso-uuid';
+        const result = await getAssociacoes(recurso_uuid);
         const url = `/api/associacoes/`
-        expect(api.get).toHaveBeenCalledWith(url, authHeader())
+        expect(api.get).toHaveBeenCalledWith(url, {...authHeader(), params: { recurso_uuid } })
         expect(result).toEqual(mockData);
     });
 
     test('getTabelaAssociacoes  deve chamar a API corretamente', async () => {
         api.get.mockResolvedValue({ data: mockData })
-        const result = await getTabelaAssociacoes();
+        const recurso_uuid = 'recurso-uuid';
+        const result = await getTabelaAssociacoes(recurso_uuid);
         const url = `/api/associacoes/tabelas/`
-        expect(api.get).toHaveBeenCalledWith(url, authHeader())
+        expect(api.get).toHaveBeenCalledWith(url, {...authHeader(), params: { recurso_uuid } })
         expect(result).toEqual(mockData);
     });
 
@@ -349,9 +351,10 @@ describe('Testes para funções de análise', () => {
 
     test('getListaDeAcoes  deve chamar a API corretamente', async () => {
         api.get.mockResolvedValue({ data: mockData })
-        const result = await getListaDeAcoes();
+        const recurso_uuid = 'recurso-uuid';
+        const result = await getListaDeAcoes(recurso_uuid);
         const url = `/api/acoes/`
-        expect(api.get).toHaveBeenCalledWith(url, authHeader())
+        expect(api.get).toHaveBeenCalledWith(url, { ...authHeader(), params: { recurso_uuid } })
         expect(result).toEqual(mockData);
     });
 
@@ -1059,19 +1062,21 @@ describe('Testes para funções de análise', () => {
         const nome_cod_eol = 'teste-nome';
         const acao__uuid = 'uuid-acao-123';
         const status = 'ativo';
-        const filtro_informacoes = 'info1,info2';
+        const filtro_informacoes = ['info1','info2'];
+        const recurso_uuid = 'recurso-uuid';
 
         const result = await getParametrizacoesAcoesAssociacoes(
             page,
             nome_cod_eol,
             acao__uuid,
             status,
-            filtro_informacoes
+            filtro_informacoes,
+            recurso_uuid
         );
 
-        const url = `/api/parametrizacoes-acoes-associacoes/?page=${page}&page_size=20&nome=${nome_cod_eol}&acao__uuid=${acao__uuid}&status=${status}&filtro_informacoes=${filtro_informacoes}`;
+        const url = "/api/parametrizacoes-acoes-associacoes/";
 
-        expect(api.get).toHaveBeenCalledWith(url, authHeader());
+        expect(api.get).toHaveBeenCalledWith(url, {...authHeader(), params: { page, page_size: 10, nome: nome_cod_eol, acao__uuid, status, filtro_informacoes: filtro_informacoes.join(','), recurso_uuid } });
         expect(result).toEqual(mockData);
     });
 
@@ -1081,13 +1086,14 @@ describe('Testes para funções de análise', () => {
         const nome_cod_eol = ''
         const acao__uuid = ''
         const status = ''
-        const filtro_informacoes = ''
+        const filtro_informacoes = []
+        const recurso_uuid = 'recurso-uuid';
 
-        const result = await getParametrizacoesAcoesAssociacoes(page, nome_cod_eol, acao__uuid, status, filtro_informacoes);
+        const result = await getParametrizacoesAcoesAssociacoes(page, nome_cod_eol, acao__uuid, status, filtro_informacoes, recurso_uuid);
 
-        const url = `/api/parametrizacoes-acoes-associacoes/?page=${page}&page_size=20&nome=${nome_cod_eol}&acao__uuid=${acao__uuid}&status=${status}&filtro_informacoes=${filtro_informacoes}`;
+        const url = `/api/parametrizacoes-acoes-associacoes/`;
 
-        expect(api.get).toHaveBeenCalledWith(url, authHeader());
+        expect(api.get).toHaveBeenCalledWith(url, { ...authHeader(), params: { page, page_size: 10, nome: nome_cod_eol, acao__uuid, status, filtro_informacoes: '', recurso_uuid } });
         expect(result).toEqual(mockData);
     });
 
@@ -1116,11 +1122,10 @@ describe('Testes para funções de análise', () => {
     test('putAtualizarAcaoAssociacao deve chamar a API corretamente', async () => {
         const acao_associacao_uuid = '1234';
         api.put.mockResolvedValue({ data: mockData });
-
         const result = await putAtualizarAcaoAssociacao(acao_associacao_uuid, payload);
 
         const url = `/api/acoes-associacoes/${acao_associacao_uuid}/`;
-        expect(api.put).toHaveBeenCalledWith(url, payload, authHeader());
+        expect(api.put).toHaveBeenCalledWith(url, payload, { ...authHeader(), params: { recurso_uuid: payload.recurso_uuid } });
         expect(result).toEqual(mockData);
     });
 
@@ -1192,11 +1197,15 @@ describe('Testes para funções de análise', () => {
     test('deleteAcaoAssociacao deve chamar a API corretamente', async () => {
         const acao_associacao_uuid = '1234';
         api.delete.mockResolvedValue(mockData);
+        const recurso_uuid = 'recurso-uuid';
 
-        const result = await deleteAcaoAssociacao(acao_associacao_uuid);
+        const result = await deleteAcaoAssociacao(acao_associacao_uuid, recurso_uuid);
 
         const url = `/api/acoes-associacoes/${acao_associacao_uuid}/`;
-        expect(api.delete).toHaveBeenCalledWith(url, authHeader());
+        expect(api.delete).toHaveBeenCalledWith(url, {
+            ...authHeader(),
+            params: { recurso_uuid }
+        });
         expect(result).toEqual(mockData);
     });
 
@@ -1800,8 +1809,9 @@ describe('Testes para funções de análise', () => {
         const expectedParams = {
             motivo: filter.motivo,
             page: currentPage,
+            page_size: 10,
         };
-        expect(api.get).toHaveBeenCalledWith(`/api/motivos-aprovacao-ressalva-parametrizacao/?page_size=10`, {
+        expect(api.get).toHaveBeenCalledWith(`/api/motivos-aprovacao-ressalva-parametrizacao/`, {
             ...authHeader(),
             params: expectedParams,
         });

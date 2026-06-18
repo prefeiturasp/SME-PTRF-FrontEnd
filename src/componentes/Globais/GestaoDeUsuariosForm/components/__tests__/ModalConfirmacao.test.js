@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { ModalConfirmacao } from '../ModalConfirmacao';
 
-// ── ModalBootstrap mock ───────────────────────────────────────────────────────
+// ModalBootstrap mock
 jest.mock('../../../ModalBootstrap', () => ({
     ModalBootstrap: ({
         show,

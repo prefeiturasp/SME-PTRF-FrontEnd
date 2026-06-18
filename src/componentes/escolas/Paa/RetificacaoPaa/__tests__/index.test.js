@@ -1,15 +1,15 @@
 import { render, screen } from "@testing-library/react";
-import { useContext } from "react";
 import { RetificacaoPaa } from "../index";
 import { useGetPaaRetificacao } from "../../componentes/hooks/useGetPaaRetificacao";
-import { PaaContext } from "../../componentes/PaaContext";
 
 // --- Mocks ---
 
 const mockUseParams = jest.fn();
+const mockNavigate = jest.fn();
 jest.mock("react-router-dom", () => ({
     ...jest.requireActual("react-router-dom"),
     useParams: () => mockUseParams(),
+    useNavigate: () => mockNavigate,
 }));
 
 jest.mock("../../componentes/hooks/useGetPaaRetificacao");

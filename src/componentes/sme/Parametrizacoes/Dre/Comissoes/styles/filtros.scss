@@ -1,0 +1,55 @@
+.p-autocomplete {
+    width: 100% !important;
+    margin-left: -15px;
+}
+
+.p-autocomplete-multiple-container {
+    width: 100% !important;
+}
+
+// Estilo para o ícone de remover do Select Ant Design
+#recursos .ant-select-selection-item-remove svg {
+    color: white !important;
+}
+
+#recursos .ant-select-selection-item-remove {
+    color: white !important;
+    opacity: 1 !important;
+}
+
+#recursos .ant-select-selection-item-remove .anticon {
+    color: white !important;
+    font-weight: bold !important;
+}
+
+// Forçar cor branca com mais especificidade
+.ant-select-selection-item-remove svg path {
+    stroke: white !important;
+    fill: white !important;
+}
+
+// Auto-expand do Select de recursos
+#recursos.ant-select {
+    height: auto !important;
+}
+
+#recursos .ant-select-selector {
+    height: auto !important;
+    min-height: 42px !important;
+    padding: 6px 11px !important;
+}
+
+#recursos .ant-select-selection-item {
+    margin-bottom: 4px !important;
+}
+
+// Placeholder visível
+#recursos .ant-select-selection-placeholder {
+    color: rgba(0, 0, 0, 0.45) !important;
+    opacity: 1 !important;
+}
+
+// Colorir texto dos items selecionados em branco
+#recursos .ant-select-selection-item-content {
+    color: white !important;
+}

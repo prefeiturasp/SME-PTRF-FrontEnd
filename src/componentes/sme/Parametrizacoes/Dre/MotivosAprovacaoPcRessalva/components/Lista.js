@@ -1,12 +1,8 @@
-import React, { useContext } from "react";
+import React from "react";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Tooltip as ReactTooltip } from "react-tooltip";
-import { faEdit } from "@fortawesome/free-solid-svg-icons";
 import { useGetMotivosAprovacaoPcRessalva } from "../hooks/useGetMotivosAprovacaoPcRessalva";
 import Loading from "../../../../../../utils/Loading";
-import { MotivosAprovacaoPcRessalvaContext } from '../context/MotivosAprovacaoPcRessalva';
 import { usePostMotivoAprovacaoPcRessalva } from '../hooks/usePostMotivoAprovacaoPcRessalva';
 import { usePatchMotivoAprovacaoPcRessalva } from '../hooks/usePatchMotivoAprovacaoPcRessalva';
 import { useDeleteMotivoAprovacaoPcRessalva } from '../hooks/useDeleteMotivoAprovacaoPcRessalva';
@@ -15,10 +11,11 @@ import {MsgImgCentralizada} from "../../../../../Globais/Mensagens/MsgImgCentral
 import Img404 from "../../../../../../assets/img/img-404.svg";
 import { EditIconButton } from "../../../../../Globais/UI/Button";
 import { ModalConfirmarExclusao } from "../../../../../Globais/ModalAntDesign/ModalConfirmarExclusao";
+import { useMotivosAprovacaoPcRessalvaContext } from "../hooks/useMotivoAprovacaoComRessalvaContext";
 
 export const Lista = () => {
 
-  const { showModalConfirmacaoExclusao, setShowModalConfirmacaoExclusao, setShowModalForm, stateFormModal, setStateFormModal, setBloquearBtnSalvarForm } = useContext(MotivosAprovacaoPcRessalvaContext)
+  const { showModalConfirmacaoExclusao, setShowModalConfirmacaoExclusao, setShowModalForm, stateFormModal, setStateFormModal, setBloquearBtnSalvarForm } = useMotivosAprovacaoPcRessalvaContext();
   const { isLoading, data } = useGetMotivosAprovacaoPcRessalva()
   const { mutationPost } = usePostMotivoAprovacaoPcRessalva()
   const { mutationPatch } = usePatchMotivoAprovacaoPcRessalva()
@@ -80,26 +77,24 @@ export const Lista = () => {
     );
   }
   return (
-    <>
+    <div className="mt-4">
       {results && results.length > 0 ? (
-          <div className="p-2">
-              <DataTable
-                  value={results}
-                  className='tabela-lista-motivos-aprovacao-pc-ressalva'
-                  data-qa='tabela-lista-motivos-aprovacao-pc-ressalva'
-              >
-                  <Column
-                      field="motivo"
-                      header="Motivos de PC aprovada com ressalva"
-                  />
-                  <Column
-                      field="acao"
-                      header="Ação"
-                      body={acoesTemplate}
-                      style={{width: '10%', textAlign: "center",}}
-                  />
-              </DataTable>
-          </div>
+            <DataTable
+                value={results}
+                className='tabela-lista-motivos-aprovacao-pc-ressalva'
+                data-qa='tabela-lista-motivos-aprovacao-pc-ressalva'
+            >
+                <Column
+                    field="motivo"
+                    header="Motivos de PC aprovada com ressalva"
+                />
+                <Column
+                    field="acao"
+                    header="Ação"
+                    body={acoesTemplate}
+                    style={{width: '10%', textAlign: "center",}}
+                />
+            </DataTable>
       ) :
       <MsgImgCentralizada
             data-qa="imagem-lista-sem-motivos-pagamento-antecipado"
@@ -126,6 +121,6 @@ export const Lista = () => {
                 bodyText="Deseja realmente excluir este motivo de aprovação de PC com ressalva?"
             />
         </section>
-    </>
+    </div>
   )
 }

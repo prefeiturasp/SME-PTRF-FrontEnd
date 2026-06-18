@@ -352,7 +352,7 @@ export const CadastroSaidaForm = () => {
                                                 }}
                                                 name="cpf_cnpj_fornecedor" id="cpf_cnpj_fornecedor" type="text"
                                                 className={`${!props.values.cpf_cnpj_fornecedor && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
-                                                placeholder="Digite o número do CNPJ ou CPF (apenas algarismos)"
+                                                placeholder="Digite o número do CNPJ ou CPF"
                                             />
                                             {/* Validações personalizadas */}
                                             {formErrors.cpf_cnpj_fornecedor && <p className='mb-0'><span className="span_erro text-danger mt-1">{formErrors.cpf_cnpj_fornecedor}</span></p>}

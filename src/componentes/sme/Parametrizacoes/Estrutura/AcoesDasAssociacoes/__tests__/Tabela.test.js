@@ -5,46 +5,55 @@ import { Tooltip as ReactTooltip } from "react-tooltip";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import { faEdit } from '@fortawesome/free-solid-svg-icons';
  import { mockAcoes } from "../__fixtures__/mockData";
+// Mock useAcoesDasAssociacoesContext to provide table data and spies
+jest.mock('../hooks/useAcoesDasAssociacoesContext', () => ({
+  useAcoesDasAssociacoesContext: jest.fn(),
+}));
 
-// Mock da função handleEditFormModal
-const mockHandleEditFormModal = jest.fn();
+// Mock tag template hook
+jest.mock('../../../../../../hooks/Globais/TagsInformacoesAssociacoes/useTagInformacaoAssociacaoEncerradaTemplate', () => ({
+  __esModule: true,
+  default: () => (rowData) => rowData.informacao || '',
+}));
 
-// Mock da callback acoesTemplate
-const mockAcoesTemplate = (rowData) => {
-    return (
-        <div>
-            <button onClick={() => mockHandleEditFormModal(rowData)}>
-                <div data-tooltip-content="Editar" data-tooltip-id={`tooltip-id-${rowData.uuid}`}>
-                    <ReactTooltip id={`tooltip-id-${rowData.uuid}`} />
-                    <FontAwesomeIcon
-                        style={{ fontSize: '20px', marginRight: "0", color: "#00585E" }}
-                        icon={faEdit}
-                    />
-                </div>
-            </button>
-        </div>
-    );
-};
+// Mock EditIconButton to render a button we can click
+jest.mock('../../../../../Globais/UI/Button', () => ({
+  EditIconButton: ({ onClick }) => <button onClick={onClick}>Edit</button>,
+}));
+
+const mockUseAcoes = require('../hooks/useAcoesDasAssociacoesContext').useAcoesDasAssociacoesContext;
 
 describe("Tabela Componente", () => {
 
-    it('deve renderizar a tabela com os dados fornecidos', () => {
-        render(<Tabela rowsPerPage={20} todasAsAcoes={mockAcoes} acoesTemplate={mockAcoesTemplate} 
-            firstPage={1}
-        />);
+    it('deve renderizar a tabela com os dados fornecidos e reagir ao clique de editar', () => {
+        const mockSetStateFormModal = jest.fn();
+        const mockSetIsOpenModalForm = jest.fn();
+        const mockSetFormReadOnly = jest.fn();
 
-        const tabela = screen.getByRole("table");
-        const rows = tabela.querySelectorAll("tbody tr");
-        expect(rows).toHaveLength(20);
-        const row = rows[0]
-        const cells = row.querySelectorAll("td");
-        expect(cells).toHaveLength(7); // todas as colunas da tabela
-        const actionsCell = cells[6]
-        expect(actionsCell).not.toBeEmptyDOMElement(); // Ações não está vazia
-        const botaoEditar = actionsCell.querySelector("button");
-        expect(botaoEditar).toBeInTheDocument();
-        fireEvent.click(botaoEditar);
-        expect(mockHandleEditFormModal).toHaveBeenCalled()
+        mockUseAcoes.mockReturnValue({
+            filters: { page: 1 },
+            setFilters: jest.fn(),
+            acoesAssociacoes: mockAcoes.results,
+            isLoadingAcoesAssociacoes: false,
+            countAcoesAssociacoes: mockAcoes.results.length,
+            setFormReadOnly: mockSetFormReadOnly,
+            setStateFormModal: mockSetStateFormModal,
+            setIsOpenModalForm: mockSetIsOpenModalForm,
+            isOpenModalConfirmDelete: false,
+            handleCloseModalConfirmDelete: jest.fn(),
+            handleDeleteAcaoAssociacao: jest.fn(),
+        });
+
+        render(<Tabela />);
+
+        // Expect an Edit button for each row
+        const editButtons = screen.getAllByText('Edit');
+        expect(editButtons.length).toBe(mockAcoes.results.length);
+
+        // Click first edit and expect context setters called
+        fireEvent.click(editButtons[0]);
+        expect(mockSetStateFormModal).toHaveBeenCalledTimes(1);
+        expect(mockSetIsOpenModalForm).toHaveBeenCalledTimes(1);
     });
 
 });

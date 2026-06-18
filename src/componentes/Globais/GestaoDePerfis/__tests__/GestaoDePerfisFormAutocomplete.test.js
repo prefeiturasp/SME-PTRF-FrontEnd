@@ -1,7 +1,7 @@
 import { render, act } from '@testing-library/react';
 import GestaoDePerfisFormAutocomplete from '../GestaoDePerfisFormAutocomplete';
 
-// ── Captura de props do AutoComplete ───────────────────────────────────────────
+// Captura de props do AutoComplete
 let capturedAutoCompleteProps = null;
 
 jest.mock('primereact/autocomplete', () => ({
@@ -27,7 +27,7 @@ jest.mock('@fortawesome/free-solid-svg-icons', () => ({
     faSearch: 'faSearch',
 }));
 
-// ── Dados ──────────────────────────────────────────────────────────────────────
+// Dados
 const ACOES_MOCK = [
     { nome: 'Escola Alfa', id: 1 },
     { nome: 'Escola Beta', id: 2 },
@@ -42,7 +42,7 @@ const makeProps = (overrides = {}) => ({
     ...overrides,
 });
 
-// ── Setup ──────────────────────────────────────────────────────────────────────
+// Setup
 beforeEach(() => {
     capturedAutoCompleteProps = null;
     jest.useFakeTimers();
@@ -55,7 +55,7 @@ afterEach(() => {
 // ══════════════════════════════════════════════════════════════════════════════
 describe('GestaoDePerfisFormAutocomplete', () => {
 
-    // ── Renderização ───────────────────────────────────────────────────────────
+    // Renderização
     describe('renderização', () => {
         it('renderiza sem erros e expõe props ao AutoComplete', () => {
             render(<GestaoDePerfisFormAutocomplete {...makeProps()} />);
@@ -93,7 +93,7 @@ describe('GestaoDePerfisFormAutocomplete', () => {
         });
     });
 
-    // ── disabled e placeholder ─────────────────────────────────────────────────
+    // disabled e placeholder
     describe('disabled e placeholder', () => {
         it('disabled=false quando todasAsAcoesAutoComplete tem itens', () => {
             render(<GestaoDePerfisFormAutocomplete {...makeProps()} />);
@@ -118,7 +118,7 @@ describe('GestaoDePerfisFormAutocomplete', () => {
         });
     });
 
-    // ── searchAcao (completeMethod) ────────────────────────────────────────────
+    // searchAcao (completeMethod)
     describe('searchAcao (completeMethod com setTimeout de 250ms)', () => {
         it('não atualiza suggestions antes de 250ms', () => {
             render(<GestaoDePerfisFormAutocomplete {...makeProps()} />);
@@ -200,7 +200,7 @@ describe('GestaoDePerfisFormAutocomplete', () => {
         });
     });
 
-    // ── onChange ───────────────────────────────────────────────────────────────
+    // onChange
     describe('onChange', () => {
         it('atualiza selectedAcao quando onChange é chamado com um objeto', () => {
             render(<GestaoDePerfisFormAutocomplete {...makeProps()} />);
@@ -228,7 +228,7 @@ describe('GestaoDePerfisFormAutocomplete', () => {
         });
     });
 
-    // ── onSelect ───────────────────────────────────────────────────────────────
+    // onSelect
     describe('onSelect', () => {
         it('chama recebeAcaoAutoComplete com o valor e o setFieldValue corretos', () => {
             const recebeAcaoAutoComplete = jest.fn();

@@ -849,26 +849,27 @@ export const FormularioEditaAta = ({
 
                                     {/*So exibe o campo retificações em atas de retificação*/}
                                     {stateFormEditarAta && stateFormEditarAta.tipo_ata === 'RETIFICACAO' &&
+                                    <>
                                         <div>
-                                            <p className="titulo mt-4"><strong>Retificações</strong></p>
+                                            <p className="titulo mt-4">
+                                                <strong>Justificativa da retificação <span style={{color: '#b40c02'}}>*</span></strong>
+                                            </p>
                                             <div className="form-row">
                                                 <div className="col-12">
-                                                    <label htmlFor="stateFormEditarAta.retificacoes"
-                                                           className="mb-0">Utilize
-                                                        esse campo para registrar as retificações da Prestação
-                                                        de Contas.</label>
-                                                    <textarea
-                                                        rows="3"
-                                                        placeholder="Escreva seu texto aqui"
-                                                        value={values.stateFormEditarAta.retificacoes}
-                                                        onChange={props.handleChange}
-                                                        name="stateFormEditarAta.retificacoes"
-                                                        className="form-control mt-2"
-                                                        disabled={!podeEditarAta}
-                                                    />
+                                                <textarea
+                                                    required
+                                                    rows="3"
+                                                    placeholder="Escreva seu texto aqui"
+                                                    value={values.stateFormEditarAta.justificativa_retificacao}
+                                                    onChange={props.handleChange}
+                                                    name="stateFormEditarAta.justificativa_retificacao"
+                                                    className="form-control mt-2"
+                                                    disabled={!podeEditarAta}
+                                                />
                                                 </div>
                                             </div>
                                         </div>
+                                    </>
                                     }
 
                                     <p className="titulo mt-4"><strong>Manifestações, Comentários e Justificativas</strong></p>

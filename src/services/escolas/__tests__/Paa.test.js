@@ -15,11 +15,15 @@ import {
     getTextosPaaUe,
     patchTextosPaaUe,
     postGerarDocumentoFinalPaa,
+    postGerarDocumentoFinalRetificacaoPaa,
     getPaaRetificacao,
     postIniciarRetificacaoPaa,
+    postCancelarRetificacaoPaa,
     postGerarDocumentoPreviaPaa,
+    postGerarDocumentoPreviaRetificacaoPaa,
     getStatusGeracaoDocumentoPaa,
     getDownloadArquivoPrevia,
+    getDownloadArquivoPreviaRetificacao,
     getDownloadArquivoFinal,
     getPaa,
     patchPaa,
@@ -1004,6 +1008,98 @@ describe('Testes para funções de análise', () => {
             getAuthHeader()
         );
         expect(result).toEqual(mockData);
+    });
+
+    test('getPlanoAplicacao deve chamar a API corretamente', async () => {
+        api.get.mockResolvedValue({ data: mockData });
+        const paaUuid = 'paa-uuid';
+        const result = await getPlanoAplicacao(paaUuid);
+
+        expect(api.get).toHaveBeenCalledWith(
+            `api/paa/${paaUuid}/plano-aplicacao/`,
+            getAuthHeader()
+        );
+        expect(result).toEqual(mockData);
+    });
+
+    test('postGerarDocumentoFinalRetificacaoPaa deve chamar a API corretamente', async () => {
+        api.post.mockResolvedValue({ data: mockData });
+        const paa_uuid = 'paa-uuid';
+        const payload = { formato: 'pdf' };
+        const result = await postGerarDocumentoFinalRetificacaoPaa(paa_uuid, payload);
+
+        expect(api.post).toHaveBeenCalledWith(
+            `/api/paa/${paa_uuid}/gerar-documento-retificacao/`,
+            payload,
+            getAuthHeader()
+        );
+        expect(result).toEqual(mockData);
+    });
+
+    test('postGerarDocumentoFinalRetificacaoPaa deve usar payload vazio por padrão', async () => {
+        api.post.mockResolvedValue({ data: mockData });
+        await postGerarDocumentoFinalRetificacaoPaa('paa-uuid');
+
+        expect(api.post).toHaveBeenCalledWith(
+            `/api/paa/paa-uuid/gerar-documento-retificacao/`,
+            {},
+            getAuthHeader()
+        );
+    });
+
+    test('postCancelarRetificacaoPaa deve chamar a API corretamente', async () => {
+        api.post.mockResolvedValue({ data: mockData });
+        const paa_uuid = 'paa-uuid';
+        const result = await postCancelarRetificacaoPaa(paa_uuid);
+
+        expect(api.post).toHaveBeenCalledWith(
+            `/api/paa/${paa_uuid}/cancelar-retificacao/`,
+            {},
+            getAuthHeader()
+        );
+        expect(result).toEqual(mockData);
+    });
+
+    test('postGerarDocumentoPreviaRetificacaoPaa deve chamar a API corretamente', async () => {
+        api.post.mockResolvedValue({ data: mockData });
+        const paa_uuid = 'paa-uuid';
+        const result = await postGerarDocumentoPreviaRetificacaoPaa(paa_uuid);
+
+        expect(api.post).toHaveBeenCalledWith(
+            `/api/paa/${paa_uuid}/gerar-previa-retificacao/`,
+            {},
+            getAuthHeader()
+        );
+        expect(result).toEqual(mockData);
+    });
+
+    it('getDownloadArquivoPreviaRetificacao deve baixar o arquivo corretamente', async () => {
+        const mockBlob = new Blob(['content'], { type: 'application/pdf' });
+        api.get.mockResolvedValue({ data: mockBlob });
+        window.URL.createObjectURL = jest.fn(() => 'blob:previa-retificacao-url');
+        const mockLink = { setAttribute: jest.fn(), click: jest.fn(), href: '' };
+        jest.spyOn(document, 'createElement').mockReturnValue(mockLink);
+        jest.spyOn(document.body, 'appendChild').mockImplementation(() => {});
+
+        await getDownloadArquivoPreviaRetificacao('paa-uuid');
+
+        expect(api.get).toHaveBeenCalledWith(
+            `/api/paa/paa-uuid/documento-previa/?retificacao=true`,
+            expect.objectContaining({ responseType: 'blob', timeout: 30000 })
+        );
+        expect(mockLink.setAttribute).toHaveBeenCalledWith('download', 'Documento_Prévia_Retificação_PAA.pdf');
+        expect(mockLink.click).toHaveBeenCalled();
+
+        jest.restoreAllMocks();
+    });
+
+    it('getDownloadArquivoPreviaRetificacao deve retornar erro quando a API falha', async () => {
+        const mockError = { response: { status: 500 } };
+        api.get.mockRejectedValue(mockError);
+
+        const result = await getDownloadArquivoPreviaRetificacao('paa-uuid');
+
+        expect(result).toEqual(mockError.response);
     });
 
 });

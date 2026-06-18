@@ -447,8 +447,8 @@ export const deleteTag = async (tag_uuid) => {
 };
 
 // Associacoes
-export const getAssociacoes = async () => {
-  return (await api.get(`/api/associacoes/`, authHeader())).data;
+export const getAssociacoes = async (recurso_uuid = '') => {
+  return (await api.get(`/api/associacoes/`, {...authHeader(), params: { recurso_uuid }})).data;
 };
 export const getParametrizacoesAssociacoes = async (
   page,
@@ -464,8 +464,8 @@ export const getParametrizacoesAssociacoes = async (
     )
   ).data;
 };
-export const getTabelaAssociacoes = async () => {
-  return (await api.get(`/api/associacoes/tabelas/`, authHeader())).data;
+export const getTabelaAssociacoes = async (recurso_uuid = null) => {
+  return (await api.get(`/api/associacoes/tabelas/`, {...authHeader(), params: { recurso_uuid }})).data;
 };
 export const getFiltrosAssociacoes = async (
   tipo_unidade,
@@ -595,18 +595,32 @@ export const getParametrizacoesAcoesAssociacoes = async (
   nome_cod_eol,
   acao__uuid,
   status,
-  filtro_informacoes
+  filtro_informacoes,
+  recurso_uuid = null,
 ) => {
+  const filtro_informacoes_str = filtro_informacoes.join(",");
+
   return (
     await api.get(
-      `/api/parametrizacoes-acoes-associacoes/?page=${page}&page_size=${20}&nome=${nome_cod_eol}&acao__uuid=${acao__uuid}&status=${status}&filtro_informacoes=${filtro_informacoes}`,
-      authHeader()
+      `/api/parametrizacoes-acoes-associacoes/`,
+      {
+        ...authHeader(),
+        params: {
+          page_size: 10,
+          page,
+          nome: nome_cod_eol,
+          acao__uuid,
+          status,
+          filtro_informacoes: filtro_informacoes_str,
+          recurso_uuid
+        }
+      }
     )
   ).data;
 };
 
-export const getListaDeAcoes = async () => {
-  return (await api.get(`/api/acoes/`, authHeader())).data;
+export const getListaDeAcoes = async (recurso_uuid = null) => {
+  return (await api.get(`/api/acoes/`, { ...authHeader(), params: { recurso_uuid } })).data;
 };
 
 export const getListaDeAcertosLancamentos = async () => {
@@ -658,11 +672,16 @@ export const putAtualizarAcaoAssociacao = async (
   acao_associacao_uuid,
   payload
 ) => {
+  const recurso_uuid = payload?.recurso_uuid ?? null;
+
   return (
     await api.put(
       `/api/acoes-associacoes/${acao_associacao_uuid}/`,
       payload,
-      authHeader()
+      {
+        ...authHeader(),
+        params: { recurso_uuid }
+      }
     )
   ).data;
 };
@@ -728,10 +747,13 @@ export const putAtualizarAcertosDocumentos = async (
   ).data;
 };
 
-export const deleteAcaoAssociacao = async (acao_associacao_uuid) => {
+export const deleteAcaoAssociacao = async (acao_associacao_uuid, recurso_uuid = null) => {
   return await api.delete(
     `/api/acoes-associacoes/${acao_associacao_uuid}/`,
-    authHeader()
+    {
+      ...authHeader(),
+      params: { recurso_uuid }
+    }
   );
 };
 
@@ -1221,18 +1243,19 @@ export const deleteMotivoDevolucaoTesouro = async (
 // Motivos de Aprovação de PC com ressalva
 export const getMotivosAprovacaoPcRessalva = async (filter, currentPage) => {
   const { motivo, recurso } = filter;
-  let url = `/api/motivos-aprovacao-ressalva-parametrizacao/?page_size=${10}`;
-  if (recurso) {
-    url += `&recurso_uuid=${recurso}`;
-  }
+  const motivoTrimmed = motivo.trim();
+
+  let url = "/api/motivos-aprovacao-ressalva-parametrizacao/";
+
   return (
     await api.get(
       url,
       {
         ...authHeader(),
         params: {
-          motivo: motivo,
-          recurso: recurso,
+          page_size: 10,
+          motivo: motivoTrimmed,
+          recurso_uuid: recurso,
           page: currentPage,
         },
       }
@@ -1391,4 +1414,65 @@ export const getAssociacoesPeloNome = async (nome, recurso_uuid = '') => {
         recurso_uuid
       }
     })).data
+};
+
+export const getComissoes = async (filter, currentPage) => {
+  const { comissoes_uuid, recursos_uuid, responsavel_analise_pc } = filter;
+  console.log('comissoes', comissoes_uuid)
+  return (
+    await api.get(
+      `/api/comissoes-parametrizacao/`,
+      {
+        ...authHeader(),
+        params: {
+          comissoes_uuid: comissoes_uuid.map(comissao => comissao.uuid).join(','),
+          recursos_uuid: recursos_uuid.join(','),
+          responsavel_analise_pc: responsavel_analise_pc || '',
+          page: currentPage,
+          page_size: 10
+        },
+      }
+    )
+  ).data;
+};
+
+export const getComissoesPorNome = async (nome) => {
+  return (
+    await api.get(
+      `/api/comissoes-parametrizacao/filtro-por-nome`,
+      {
+        ...authHeader(),
+        params: {
+          nome
+        },
+      }
+    )
+  ).data;
+};
+
+export const postComissao = async (payload) => {
+  return await api.post(
+    `api/comissoes-parametrizacao/`,
+    {
+      ...payload,
+    },
+    authHeader()
+  );
+};
+
+export const patchComissao = async (
+  uuidComissao,
+  payload
+) => {
+  return await api.patch(
+    `api/comissoes-parametrizacao/${uuidComissao}/`,
+    {
+      ...payload,
+    },
+    authHeader()
+  );
+};
+
+export const deleteComissao = async (uuidComissao) => {
+    return (await api.delete(`api/comissoes-parametrizacao/${uuidComissao}/`, authHeader()));
 };

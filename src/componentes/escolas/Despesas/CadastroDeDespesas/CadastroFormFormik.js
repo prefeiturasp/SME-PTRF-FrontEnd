@@ -222,7 +222,7 @@ export const CadastroFormFormik = ({
                                                     ? "form-control"
                                                     : `${!props.values.cpf_cnpj_fornecedor && despesaContext.verboHttp === "PUT" && "is_invalid "} ${!props.values.cpf_cnpj_fornecedor && 'despesa_incompleta'} form-control`
                                             }
-                                            placeholder="Digite o número do CNPJ ou CPF (apenas algarismos)"
+                                            placeholder="Digite o número do CNPJ ou CPF"
                                         />
                                         {/* Validações personalizadas */}
                                         {formErrors.cpf_cnpj_fornecedor && <p className='mb-0'><span

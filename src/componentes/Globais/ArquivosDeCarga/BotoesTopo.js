@@ -1,35 +1,38 @@
 import React from "react";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faUpload, faDownload} from "@fortawesome/free-solid-svg-icons";
+import { IconButton } from "../UI/Button";
 
 export const BotoesTopo = ({setShowModalForm, setStateFormModal, initialStateFormModal, handleClickDownloadModeloArquivoDeCarga, temPermissaoEditarCarga}) =>{
     
     return(
-        <>
-            <div className="d-flex  justify-content-end pb-3">
-                <button
-                    type="reset"
-                    className="btn btn btn-success mt-2"
+        <div className="d-flex justify-content-between align-items-end mb-4">
+            <div>
+                <h5 className="font-weight-bold">Carga de Arquivos</h5>
+                <p className="m-0">Realize a carga de arquivo conforme o recurso necessário.</p>
+            </div>
+
+            <div className="d-flex align-items-end justify-content-end">
+                <IconButton
+                    icon="faUpload"
+                    iconProps={{ style: {fontSize: '15px', marginRight: "5", color:"#fff"} }}
+                    label="Adicionar carga"
+                    variant="success"
                     onClick={()=>{
                         setStateFormModal(initialStateFormModal);
                         setShowModalForm(true);
                     }}
                     disabled={!temPermissaoEditarCarga()}
-                >
-                    <FontAwesomeIcon
-                        style={{fontSize: '15px', marginRight: "3px", color:"#fff"}}
-                        icon={faUpload}
-                    />
-                    Adicionar carga
-                </button>
-                <button onClick={()=>handleClickDownloadModeloArquivoDeCarga()} type="submit" className="btn btn-outline-success mt-2 ml-2"  disabled={!temPermissaoEditarCarga()}>
-                    <FontAwesomeIcon
-                        style={{fontSize: '15px', marginRight: "3px"}}
-                        icon={faDownload}
-                    />
-                    Baixar modelo de planilha
-                </button>
+                />
+
+                <IconButton
+                    icon="faDownload"
+                    iconProps={{ style: {fontSize: '15px', marginRight: "5" } }}
+                    label="Baixar modelo de planilha"
+                    variant="outline-success"
+                    onClick={()=> handleClickDownloadModeloArquivoDeCarga()}
+                    disabled={!temPermissaoEditarCarga()}
+                    className="ml-2"
+                />
             </div>
-        </>
+        </div>
     );
 };

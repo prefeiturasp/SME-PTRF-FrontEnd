@@ -14,6 +14,10 @@ export const postGerarDocumentoFinalPaa = async (paa_uuid, payload={}) => {
   const result = await api.post(`/api/paa/${paa_uuid}/gerar-documento/`, payload, authHeader());
   return result.data;
 };
+export const postGerarDocumentoFinalRetificacaoPaa = async (paa_uuid, payload={}) => {
+  const result = await api.post(`/api/paa/${paa_uuid}/gerar-documento-retificacao/`, payload, authHeader());
+  return result.data;
+};
 export const getPaaRetificacao = async (paa_uuid) => {
   const result = await api.get(`/api/paa/${paa_uuid}/paa-retificacao/`, authHeader());
   return result.data;
@@ -29,6 +33,11 @@ export const postCancelarRetificacaoPaa = async (paa_uuid) => {
 };
 export const postGerarDocumentoPreviaPaa = async (paa_uuid) => {
   const result = await api.post(`/api/paa/${paa_uuid}/gerar-previa-documento/`, {}, authHeader());
+  return result.data;
+};
+
+export const postGerarDocumentoPreviaRetificacaoPaa = async (paa_uuid) => {
+  const result = await api.post(`/api/paa/${paa_uuid}/gerar-previa-retificacao/`, {}, authHeader());
   return result.data;
 };
 
@@ -48,6 +57,25 @@ export const getDownloadArquivoPrevia = async (paa_uuid) => {
             const link = document.createElement('a');
             link.href = url;
             link.setAttribute('download', 'Documento_Prévia_PAA.pdf');
+            document.body.appendChild(link);
+            link.click();
+        }).catch(error => {
+            return error.response;
+        })
+    )
+}
+
+export const getDownloadArquivoPreviaRetificacao = async (paa_uuid) => {
+    return ( await api.get(`/api/paa/${paa_uuid}/documento-previa/?retificacao=true`, {
+            responseType: 'blob',
+            timeout: 30000,
+            ...authHeader()
+        })
+        .then((response) => {
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'Documento_Prévia_Retificação_PAA.pdf');
             document.body.appendChild(link);
             link.click();
         }).catch(error => {
