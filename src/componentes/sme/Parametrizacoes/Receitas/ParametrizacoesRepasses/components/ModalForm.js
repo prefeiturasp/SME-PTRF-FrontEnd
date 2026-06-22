@@ -13,12 +13,15 @@ import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../../../Pa
 import { YupSchemaRepasse } from "../YupSchemaRepasse";
 import AutoCompleteAssociacoes from "./AutoCompleteAssociacoes";
 
+import { useRecursoSelecionadoContext } from "../../../../../../context/RecursoSelecionado";
+
 export const ModalForm = ({handleSubmitFormModal, todasAsAssociacoesAutoComplete, loadingAssociacoes}) => {
     const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES = RetornaSeTemPermissaoEdicaoPainelParametrizacoes()
-    const {showModalForm, setShowModalForm, stateFormModal, bloquearBtnSalvarForm, setShowModalConfirmacaoExclusao, setStateFormModal} = useContext(RepassesContext)
+    const { filter, showModalForm, setShowModalForm, stateFormModal, bloquearBtnSalvarForm, setShowModalConfirmacaoExclusao, setStateFormModal} = useContext(RepassesContext)
     
-    const { data: tabelas } = useGetTabelasRepasse();
-    const { data: tabelas_por_associacao, isFetching: isFetchingTabelaPorAssociacao } = useGetTabelasPorAssociacao();
+    const { data: tabelas } = useGetTabelasRepasse({filters: filter});
+    const { data: tabelas_por_associacao, isFetching: isFetchingTabelaPorAssociacao } = useGetTabelasPorAssociacao({ filters: filter });
+    const { recursos } = useRecursoSelecionadoContext();
 
     const campo_editavel = (campo) => {
         if(!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES){
@@ -55,6 +58,31 @@ export const ModalForm = ({handleSubmitFormModal, todasAsAssociacoesAutoComplete
                                     ? 
                                         <div className='form-group col-md-12'>
                                             <p className='text-right mb-0'>* Preenchimento obrigatório</p>
+
+                                            <div className='mb-3'>
+                                                <label htmlFor="recurso">Recurso *</label>
+                                                <select
+                                                    data-qa="input-recurso"
+                                                    value={stateFormModal.recurso ? stateFormModal.recurso : ""}
+                                                    disabled
+                                                    name="recurso"
+                                                    id="recurso"
+                                                    className="form-control"
+                                                    required
+                                                >
+                                                    <option data-qa="option-recurso-vazio" value=''>Selecione um recurso</option>
+                                                    {recursos?.map((recurso) =>
+                                                        <option
+                                                            data-qa={`option-recurso-${recurso.uuid}`}
+                                                            key={recurso.uuid}
+                                                            value={recurso.uuid}
+                                                        >
+                                                            {recurso.nome}
+                                                        </option>
+                                                    )}
+                                                </select>
+                                            </div>
+                                            
                                             <label htmlFor="unidade_educacional">Unidade Educacional *</label>
                                             <input
                                                 value={values.nome_unidade}
@@ -69,14 +97,41 @@ export const ModalForm = ({handleSubmitFormModal, todasAsAssociacoesAutoComplete
                                     :
                                         <div className="form-group col-md-12">
                                             <p className='text-right mb-0'>* Preenchimento obrigatório</p>
+
+                                            <div className='mb-3'>
+                                                <label htmlFor="recurso">Recurso *</label>
+                                                <select
+                                                    data-qa="input-recurso"
+                                                    value={stateFormModal.recurso ? stateFormModal.recurso : ""}
+                                                    disabled
+                                                    name="recurso"
+                                                    id="recurso"
+                                                    className="form-control"
+                                                    required
+                                                >
+                                                    <option data-qa="option-recurso-vazio" value=''>Selecione um recurso</option>
+                                                    {recursos?.map((recurso) =>
+                                                        <option
+                                                            data-qa={`option-recurso-${recurso.uuid}`}
+                                                            key={recurso.uuid}
+                                                            value={recurso.uuid}
+                                                        >
+                                                            {recurso.nome}
+                                                        </option>
+                                                    )}
+                                                </select>
+                                            </div>
+
                                             <label htmlFor="unidade_educacional">Unidade Educacional *{loadingAssociacoes && <img alt="" src={Spinner} style={{height: "22px"}}/>}</label>
-                                            <AutoCompleteAssociacoes
-                                                todasAsAssociacoesAutoComplete={todasAsAssociacoesAutoComplete}
-                                                setFieldValue={setFieldValue}
-                                                disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
-                                                loadingAssociacoes={loadingAssociacoes}
-                                                
-                                            />
+                                            <div style={{marginLeft: '16px'}}>
+                                                <AutoCompleteAssociacoes
+                                                    todasAsAssociacoesAutoComplete={todasAsAssociacoesAutoComplete}
+                                                    setFieldValue={setFieldValue}
+                                                    disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
+                                                    loadingAssociacoes={loadingAssociacoes}
+                                                    
+                                                />
+                                            </div>
                                             {props.touched.associacao && props.errors.associacao && <span className="span_erro text-danger mt-1"> {props.errors.associacao}</span>}
                                         </div>
                                     }  
@@ -324,11 +379,11 @@ export const ModalForm = ({handleSubmitFormModal, todasAsAssociacoesAutoComplete
                                             </div>
                                         </div>
 
-                                        <div className="form-row">
+                                        {/* <div className="form-row">
                                             <div className="form-group col-md-12">
                                                 <p className="mb-0">Uuid: <span>{values.uuid}</span></p>
                                             </div>
-                                        </div>
+                                        </div> */}
 
                                         <div className="form-row">
                                             <div className="form-group col-md-12">

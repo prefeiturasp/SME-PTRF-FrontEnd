@@ -79,8 +79,10 @@ export const Lista = () => {
             carga_origem: rowData.carga_origem,
             id_linha_carga: rowData.carga_origem_linha_id,
             id: rowData.id,
-            campos_editaveis: rowData.campos_editaveis
+            campos_editaveis: rowData.campos_editaveis,            
+            recurso: rowData.recurso.uuid
         });
+
         setShowModalForm(true)
     };
 
@@ -99,6 +101,7 @@ export const Lista = () => {
             valor_capital: round(trataNumericos(values.valor_capital), 2),
             valor_custeio: round(trataNumericos(values.valor_custeio), 2),
             valor_livre: round(trataNumericos(values.valor_livre), 2),
+            recurso: values.recurso,
         };
 
         if(!values.uuid){
@@ -175,7 +178,7 @@ export const Lista = () => {
         <>
             {results && results.length > 0 ? (
                     <>
-                    <p className='mb-0'>Exibindo <span className='total'>{count}</span> repasses</p>
+                    {/* <p className='mb-0'>Exibindo <span className='total'>{count}</span> repasses</p> */}
                     <div className="mt-2">
                         <DataTable
                             value={results}
