@@ -58,7 +58,6 @@ export const VisualizacaoAtaPaa = () => {
   const dataReuniaoElaboracao = paaRetificacao?.ata_elaboracao?.data_reuniao;
   
   return (
-    <>
       <div className="col-12 container-visualizacao-da-ata mb-5" ref={referenciaDocumento}>
         {alturaDocumento > 0 && <WatermarkPrevia alturaDocumento={alturaDocumento} icon="rascunho" />}
         <div className="col-12 mt-4">
@@ -162,6 +161,5 @@ export const VisualizacaoAtaPaa = () => {
           />
         )}
       </div>
-    </>
   );
 };
