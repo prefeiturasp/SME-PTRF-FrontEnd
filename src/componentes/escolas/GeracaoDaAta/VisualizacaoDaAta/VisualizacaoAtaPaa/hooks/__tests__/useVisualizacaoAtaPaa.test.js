@@ -94,4 +94,28 @@ describe('useVisualizacaoAtaPaa', () => {
       ).toBe('_____');
     });
   });
+
+  it('deve formatar uma data válida corretamente no padrão pt-BR', async () => {
+    const { result } = renderHook(() => useVisualizacaoAtaPaa());
+
+    const dataFormatada = result.current.formatarData('2026-06-23');
+
+    expect(dataFormatada).toBe('23/06/2026');
+  });
+
+  it('deve retornar "-" se o valor fornecido for nulo, indefinido ou vazio', async () => {
+    const { result } = renderHook(() => useVisualizacaoAtaPaa());
+
+    expect(result.current.formatarData(null)).toBe('-');
+    expect(result.current.formatarData(undefined)).toBe('-');
+    expect(result.current.formatarData('')).toBe('-');
+  });
+
+  it('deve retornar "-" se o valor fornecido for uma data inválida', async () => {
+    const { result } = renderHook(() => useVisualizacaoAtaPaa());
+
+    const dataFormatada = result.current.formatarData('data-invalida');
+
+    expect(dataFormatada).toBe('-');
+  });
 });

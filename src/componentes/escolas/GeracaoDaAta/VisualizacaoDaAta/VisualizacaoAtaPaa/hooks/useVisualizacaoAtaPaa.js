@@ -264,7 +264,7 @@ export const useVisualizacaoAtaPaa = () => {
 
     const formatarData = (valor) => {
         if (!valor) return "-";
-        const date = new Date(valor);
+        const date = new Date(valor + 'T00:00:00');
         return Number.isNaN(date.getTime())
             ? "-"
             : new Intl.DateTimeFormat("pt-BR").format(date);
