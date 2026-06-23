@@ -120,7 +120,7 @@ const mockRefetchRecursos = jest.fn();
 const DUMMY_RECURSO = {
   uuid: "recurso-uuid-1",
   fonte_recurso: { nome: "Fonte A" },
-  data_prevista: "2024-03-15T12:00:00.000Z",
+  data_prevista: "2024-03-15",
   valor: "1500.50",
   descricao: "Descrição do recurso",
 };
@@ -348,6 +348,58 @@ describe("RecursosProprios", () => {
       expect(
         screen.getByRole("button", { name: "Excluir recurso próprio" }),
       ).toBeInTheDocument();
+    });
+
+    it("deve exibir a data formatada corretamente no padrão pt-BR (DD/MM/YYYY) para datas válidas em formato ISO simplificado", async () => {
+      setupDefaultMocks({
+        recursos: [{ ...DUMMY_RECURSO, uuid: "r-valid-date", data_prevista: "2026-06-23" }],
+      });
+      const { unmount } = renderComponent();
+      await waitFor(() =>
+        expect(screen.getByTestId("row-r-valid-date")).toBeInTheDocument(),
+      );
+      
+      const cell = screen.getByTestId("cell-data-r-valid-date");
+      expect(cell.textContent).toBe("23/06/2026");
+      unmount();
+    });
+
+    it("deve exibir a data formatada corretamente removendo o timestamp completo", async () => {
+      setupDefaultMocks({
+        recursos: [{ ...DUMMY_RECURSO, uuid: "r-iso-date", data_prevista: "2024-03-15" }],
+      });
+      const { unmount } = renderComponent();
+      await waitFor(() =>
+        expect(screen.getByTestId("row-r-iso-date")).toBeInTheDocument(),
+      );
+      
+      const cell = screen.getByTestId("cell-data-r-iso-date");
+      expect(cell.textContent).toBe("15/03/2024");
+      unmount();
+    });
+
+    it("deve exibir '-' na coluna data quando o valor é vazio, nulo ou indefinido", async () => {
+      setupDefaultMocks({
+        recursos: [{ ...DUMMY_RECURSO, uuid: "r-nodate", data_prevista: "" }],
+      });
+      const { unmount } = renderComponent();
+      await waitFor(() =>
+        expect(screen.getByTestId("row-r-nodate")).toBeInTheDocument(),
+      );
+      expect(screen.getByTestId("cell-data-r-nodate")).toHaveTextContent("-");
+      unmount();
+    });
+
+    it("deve exibir '-' na coluna data quando o valor passado é uma string de data inválida", async () => {
+      setupDefaultMocks({
+        recursos: [{ ...DUMMY_RECURSO, uuid: "r-baddate", data_prevista: "not-a-date" }],
+      });
+      const { unmount } = renderComponent();
+      await waitFor(() =>
+        expect(screen.getByTestId("row-r-baddate")).toBeInTheDocument(),
+      );
+      expect(screen.getByTestId("cell-data-r-baddate")).toHaveTextContent("-");
+      unmount();
     });
   });
 
