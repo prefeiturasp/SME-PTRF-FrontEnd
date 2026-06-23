@@ -24,6 +24,10 @@ jest.mock("../components/Paginacao", () => ({
     Paginacao: () => <div>Paginacao</div>,
 }));
 
+jest.mock("../../../componentes/AbasPorRecurso", () => ({
+    AbasPorRecurso: () => <div>AbasPorRecurso</div>,
+}));
+
 describe("Carrega página de Repasses", () => {
     const renderComponent = (()=>{
         return render(
@@ -43,6 +47,7 @@ describe("Carrega página de Repasses", () => {
     it('Deve renderizar os componentes filhos corretamente', () => {
         renderComponent();
 
+        expect(screen.getByText('AbasPorRecurso')).toBeInTheDocument();
         expect(screen.getByText('TopoComBotoes')).toBeInTheDocument();
         expect(screen.getByText('Filtros')).toBeInTheDocument();
         expect(screen.getByText('Lista')).toBeInTheDocument();
