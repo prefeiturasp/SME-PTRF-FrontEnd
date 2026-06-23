@@ -450,6 +450,7 @@ export const deleteTag = async (tag_uuid) => {
 export const getAssociacoes = async (recurso_uuid = '') => {
   return (await api.get(`/api/associacoes/`, {...authHeader(), params: { recurso_uuid }})).data;
 };
+
 export const getParametrizacoesAssociacoes = async (
   page,
   tipo_unidade,

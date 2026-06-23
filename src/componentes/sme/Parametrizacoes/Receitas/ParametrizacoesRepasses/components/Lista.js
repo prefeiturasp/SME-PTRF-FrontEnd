@@ -10,12 +10,13 @@ import { usePostRepasse } from "../hooks/usePostRepasse";
 import { usePatchRepasse } from "../hooks/usePatchRepasse";
 import { useDeleteRepasse } from "../hooks/useDeleteRepasse";
 
+import { useAbasPorRecursoContext } from "../../../componentes/AbasPorRecurso/hooks/useAbasPorRecursoContext";
+
 import { round, trataNumericos } from "../../../../../../utils/ValidacoesAdicionaisFormularios";
 
 import Loading from "../../../../../../utils/Loading";
 import { ModalForm } from "./ModalForm";
 import { ModalConfirmacaoExclusao } from "./ModalConfirmacaoExclusao";
-
 import { EditIconButton } from "../../../../../Globais/UI/Button";
 
 export const Lista = () => {
@@ -25,21 +26,25 @@ export const Lista = () => {
 
     const { mutationPost } = usePostRepasse();
     const { mutationPatch } = usePatchRepasse();
-    const { mutationDelete } = useDeleteRepasse()
+    const { mutationDelete } = useDeleteRepasse();
 
     // Este trecho é responsável pelo auto complete de unidades
     const [todasAsAssociacoesAutoComplete, setTodasAsAssociacoesAutoComplete] = useState([]);
     const [loadingAssociacoes, setLoadingAssociacoes] = useState(true);
 
+    const { selectedRecurso } = useAbasPorRecursoContext();
+
     const fetchAssociacoes = async () => {
-        let todas_associacoes = await getAssociacoes();
+        let todas_associacoes = await getAssociacoes(selectedRecurso.uuid);
         setLoadingAssociacoes(false);
         setTodasAsAssociacoesAutoComplete(todas_associacoes);
     };
 
     useEffect(() => {
-        fetchAssociacoes();
-    }, [])
+        if (selectedRecurso) {
+            fetchAssociacoes();
+        }
+    }, [selectedRecurso])
     // Fim trecho auto complete de unidades
 
     // Necessária pela paginação
