@@ -605,8 +605,7 @@ describe("RecursosProprios", () => {
       });
       await waitFor(() => {
         expect(toastCustom.ToastCustomError).toHaveBeenCalledWith(
-          "Erro!",
-          "Não foi possível excluir o recurso próprio. Tente novamente.",
+          "Ocorreu um erro inesperado."
         );
       });
     });
@@ -652,8 +651,7 @@ describe("RecursosProprios", () => {
 
       await waitFor(() => {
         expect(toastCustom.ToastCustomError).toHaveBeenCalledWith(
-          "Erro!",
-          "Não foi possível excluir o recurso próprio. Tente novamente.",
+          "Ocorreu um erro inesperado."
         );
       });
       expect(deleteRecursoProprioPaa).not.toHaveBeenCalled();

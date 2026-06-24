@@ -17,6 +17,7 @@ import {ASSOCIACAO_UUID} from "../../../../../services/auth.service";
 import moment from "moment";
 import {toastCustom} from "../../../../Globais/ToastCustom"
 import {useGetAtaPaaVigente} from "../../../Paa/ElaboracaoPaa/ElaborarNovoPlano/Relatorios/hooks/useGetAtaPaaVigente";
+import { getErrorMessage } from "../../../../../utils/obtemMsgErroAxios";
 
 // Hooks Personalizados
 import {useCarregaRepassesPendentesPorPeriodoAteAgora} from "../../../../../hooks/Globais/useCarregaRepassesPendentesPorPeriodoAteAgora";
@@ -317,6 +318,9 @@ export const EdicaoAtaPaa = () => {
             toastCustom.ToastCustomSuccess('Ata salva com sucesso', `As edições da ata de ${tipo_ata} foram salvas com sucesso.`)
         } catch (e) {
             console.log("Erro ao fazer edição da Ata ", e.response)
+            const mensagemErro = getErrorMessage(e);
+            toastCustom.ToastCustomError(mensagemErro);
+            
         }
     }
     return (

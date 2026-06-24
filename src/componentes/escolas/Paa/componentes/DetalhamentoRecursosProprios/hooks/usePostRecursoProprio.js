@@ -3,6 +3,8 @@ import { useDispatch } from "react-redux";
 import { postRecursoProprioPaa } from "../../../../../../services/escolas/Paa.service";
 import { toastCustom } from "../../../../../Globais/ToastCustom";
 import { useMutationConfirmavel } from "../../../../../../hooks/Globais/useMutationConfirmavel";
+import { getErrorMessage } from "../../../../../../utils/obtemMsgErroAxios";
+
 
 export const usePostRecursoProprio = (handleCloseFieldsToEdit) => {
   const queryClient = useQueryClient();
@@ -25,8 +27,9 @@ export const usePostRecursoProprio = (handleCloseFieldsToEdit) => {
         queryClient.refetchQueries({ queryKey: ["recursos-proprios-previstos"], exact: false });
         handleCloseFieldsToEdit(data);
       },
-      onError: () => {
-        toastCustom.ToastCustomError("Houve um erro ao criar recurso.");
+      onError: (err) => {
+        const mensagemErro = getErrorMessage(err, "Houve um erro ao criar recurso.");
+        toastCustom.ToastCustomError(mensagemErro);
       },
     },
   });
