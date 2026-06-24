@@ -4,12 +4,14 @@ import { getTabelasRepassePorAssociacao } from "../../../../../../services/sme/P
 import { RepassesContext } from "../context/Repasse";
 
 
-export const useGetTabelasPorAssociacao = () => {
+export const useGetTabelasPorAssociacao = ({ filters }) => {
     const {stateFormModal} = useContext(RepassesContext)
 
     const { isFetching, isError, data, refetch } = useQuery({
-        queryKey: ['tabelas-repasse-associacao-list', stateFormModal.associacao],
-        queryFn: ()=> getTabelasRepassePorAssociacao(stateFormModal.associacao),
+        queryKey: ['tabelas-repasse-associacao-list', stateFormModal.associacao, filters?.recurso_uuid],
+        queryFn: () => {
+            return getTabelasRepassePorAssociacao(stateFormModal.associacao, filters?.recurso_uuid);
+        },
         keepPreviousData: true,
         enabled: !!stateFormModal.associacao,
         staleTime: 1000 * 60 * 1 // 1 minutos

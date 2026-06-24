@@ -90,14 +90,34 @@ describe("Filtros Componentes", () => {
 
         expect(mockSetCurrentPage).toHaveBeenCalledWith(1);
         expect(mockSetFirstPage).toHaveBeenCalledWith(0);
-        expect(mockSetFilter).toHaveBeenCalledWith(mockInitialFilter);
+        expect(mockSetFilter).toHaveBeenCalled();
+        const filterCall = mockSetFilter.mock.calls[0][0];
+        const result = filterCall({});
+        expect(result).toMatchObject({
+            search: '',
+            periodo: '',
+            conta: '',
+            acao: '',
+            status: ''
+        });
+
+        jest.clearAllMocks();
 
         const limparBtn = screen.getByRole("button", { name: "Limpar"});
         fireEvent.click(limparBtn);
 
         expect(mockSetCurrentPage).toHaveBeenCalledWith(1);
         expect(mockSetFirstPage).toHaveBeenCalledWith(0);
-        expect(mockSetFilter).toHaveBeenCalledWith(mockInitialFilter);
+        expect(mockSetFilter).toHaveBeenCalled();
+        const filterCall2 = mockSetFilter.mock.calls[0][0];
+        const result2 = filterCall2({});
+        expect(result2).toMatchObject({
+            search: '',
+            periodo: '',
+            conta: '',
+            acao: '',
+            status: ''
+        });
     });
 
 });

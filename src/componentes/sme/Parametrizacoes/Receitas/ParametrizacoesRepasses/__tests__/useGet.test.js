@@ -24,7 +24,17 @@ describe("useGetRepasses", () => {
         return renderHook(() => useGetRepasses(), {
             wrapper: ({ children }) => (
                 <QueryClientProvider client={queryClient}>
-                    <RepassesContext.Provider value={{}}>
+                    <RepassesContext.Provider value={{
+                        filter: {
+                            search: '',
+                            periodo: '',
+                            conta: '',
+                            acao: '',
+                            status: '',
+                            recurso_uuid: 'test-recurso-id'
+                        },
+                        currentPage: 1
+                    }}>
                         {children}
                     </RepassesContext.Provider>
                 </QueryClientProvider>

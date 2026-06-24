@@ -1,6 +1,10 @@
-import React, { createContext, useMemo, useState } from 'react';
+import React, { createContext, useMemo, useState, useEffect } from 'react';
+import { useAbasPorRecursoContext } from '../../../componentes/AbasPorRecurso/hooks/useAbasPorRecursoContext';
 
 const initialFilter = {
+    page: 1,
+    is_required_recurso_uuid: true,
+    recurso_uuid: '',
     search: '',
     periodo: '',
     conta: '',
@@ -27,7 +31,7 @@ const initialStateFormModal = {
     id: '',
     campos_editaveis: {
         campos_de_realizacao: false
-    }
+    },
 };
 
 export const RepassesContext = createContext({
@@ -53,6 +57,7 @@ export const RepassesContext = createContext({
 })
 
 export const RepassesProvider = ({children}) => {
+    const { selectedRecurso } = useAbasPorRecursoContext();
 
     const [filter, setFilter] = useState(initialFilter);
 
@@ -65,6 +70,17 @@ export const RepassesProvider = ({children}) => {
     const [showModalConfirmacaoExclusao, setShowModalConfirmacaoExclusao] = useState(false);
 
     const [bloquearBtnSalvarForm, setBloquearBtnSalvarForm] = useState(false);
+
+    useEffect(() => {
+        const initialFilterWithRecursoUuid = {
+            ...initialFilter,
+            recurso_uuid: selectedRecurso?.uuid || '',
+            page: 1,
+        };
+        setFilter(initialFilterWithRecursoUuid);
+        setCurrentPage(1);
+        setFirstPage(1);
+    }, [selectedRecurso]);
 
     const contextValue = useMemo(() => {
         return {

@@ -1,12 +1,15 @@
-import React, {useContext, useState} from "react";
+import React, {useContext, useState, useEffect} from "react";
 import { RepassesContext } from "../context/Repasse";
 import { useGetTabelasRepasse } from "../hooks/useGetTabelasRepasse";
+import { useAbasPorRecursoContext } from "../../../componentes/AbasPorRecurso/hooks/useAbasPorRecursoContext";
+import Loading from "../../../../../../utils/Loading";
 
 export const Filtros = () => {
-    const {setFilter, initialFilter, setCurrentPage, setFirstPage} = useContext(RepassesContext);
+    const {filter, setFilter, initialFilter, setCurrentPage, setFirstPage} = useContext(RepassesContext);
     const [formFilter, setFormFilter] = useState(initialFilter);
+    const { selectedRecurso } = useAbasPorRecursoContext();
 
-    const { data: tabelas } = useGetTabelasRepasse();
+    const { data: tabelas, isLoading } = useGetTabelasRepasse({ filters: filter });
 
     const handleChangeFormFilter = (name, value) => {
         setFormFilter({
@@ -15,18 +18,44 @@ export const Filtros = () => {
         });
     };
 
-    const handleSubmitFormFilter = () => {
-        setCurrentPage(1)
-        setFirstPage(0)
-        setFilter(formFilter);
-    };
+    const handleSubmitFiltros = (event) => {
+        event.preventDefault();
 
-    const clearFilter = () => {
         setCurrentPage(1)
         setFirstPage(0)
+        setFilter(prevState => ({
+            ...formFilter,
+            recurso_uuid: prevState?.recurso_uuid
+        }));
+    }
+
+    const handleClearFilters = () => {
+        setCurrentPage(1)
+        setFirstPage(0)
+        setFormFilter(prevState => ({
+            ...initialFilter,
+            recurso_uuid: prevState?.recurso_uuid
+        }));
+        setFilter(prevState => ({
+            ...initialFilter,
+            recurso_uuid: prevState?.recurso_uuid
+        }));
+    }
+
+    useEffect(() => {
         setFormFilter(initialFilter);
-        setFilter(initialFilter);
-    };
+    }, [selectedRecurso])
+
+    if (isLoading) {
+        return (
+            <Loading
+                corGrafico="black"
+                corFonte="dark"
+                marginTop="0"
+                marginBottom="0"
+            />
+        );
+    }
     
     return (
         <>
@@ -114,7 +143,7 @@ export const Filtros = () => {
                     <div className="from-group col-md-3">
                         <div className="d-flex bd-highlight justify-content-end mt-4">
                             <button 
-                                onClick={clearFilter}
+                                onClick={handleClearFilters}
                                 type="button" 
                                 className="btn btn-outline-success mt-2 mr-2"
                             >
@@ -122,7 +151,7 @@ export const Filtros = () => {
                             </button>
 
                             <button 
-                                onClick={handleSubmitFormFilter}
+                                onClick={handleSubmitFiltros}
                                 type="button" 
                                 className="btn btn-success mt-2"
                             >

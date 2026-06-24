@@ -21,7 +21,7 @@ describe("useGetTabelasPorAssociacao", () => {
     });
 
     const renderCustomHook = () => {
-        return renderHook(() => useGetTabelasPorAssociacao(), {
+        return renderHook(() => useGetTabelasPorAssociacao({ filters: { recurso_uuid: 'test-recurso-id' } }), {
             wrapper: ({ children }) => (
                 <QueryClientProvider client={queryClient}>
                     <RepassesContext.Provider value={{stateFormModal: {associacao: 'test-id'}}}>

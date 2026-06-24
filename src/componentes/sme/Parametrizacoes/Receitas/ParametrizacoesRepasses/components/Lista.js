@@ -10,12 +10,13 @@ import { usePostRepasse } from "../hooks/usePostRepasse";
 import { usePatchRepasse } from "../hooks/usePatchRepasse";
 import { useDeleteRepasse } from "../hooks/useDeleteRepasse";
 
+import { useAbasPorRecursoContext } from "../../../componentes/AbasPorRecurso/hooks/useAbasPorRecursoContext";
+
 import { round, trataNumericos } from "../../../../../../utils/ValidacoesAdicionaisFormularios";
 
 import Loading from "../../../../../../utils/Loading";
 import { ModalForm } from "./ModalForm";
 import { ModalConfirmacaoExclusao } from "./ModalConfirmacaoExclusao";
-
 import { EditIconButton } from "../../../../../Globais/UI/Button";
 
 export const Lista = () => {
@@ -25,21 +26,25 @@ export const Lista = () => {
 
     const { mutationPost } = usePostRepasse();
     const { mutationPatch } = usePatchRepasse();
-    const { mutationDelete } = useDeleteRepasse()
+    const { mutationDelete } = useDeleteRepasse();
 
     // Este trecho é responsável pelo auto complete de unidades
     const [todasAsAssociacoesAutoComplete, setTodasAsAssociacoesAutoComplete] = useState([]);
     const [loadingAssociacoes, setLoadingAssociacoes] = useState(true);
 
+    const { selectedRecurso } = useAbasPorRecursoContext();
+
     const fetchAssociacoes = async () => {
-        let todas_associacoes = await getAssociacoes();
+        let todas_associacoes = await getAssociacoes(selectedRecurso.uuid);
         setLoadingAssociacoes(false);
         setTodasAsAssociacoesAutoComplete(todas_associacoes);
     };
 
     useEffect(() => {
-        fetchAssociacoes();
-    }, [])
+        if (selectedRecurso) {
+            fetchAssociacoes();
+        }
+    }, [selectedRecurso])
     // Fim trecho auto complete de unidades
 
     // Necessária pela paginação
@@ -79,8 +84,10 @@ export const Lista = () => {
             carga_origem: rowData.carga_origem,
             id_linha_carga: rowData.carga_origem_linha_id,
             id: rowData.id,
-            campos_editaveis: rowData.campos_editaveis
+            campos_editaveis: rowData.campos_editaveis,            
+            recurso: rowData.recurso.uuid
         });
+
         setShowModalForm(true)
     };
 
@@ -99,6 +106,7 @@ export const Lista = () => {
             valor_capital: round(trataNumericos(values.valor_capital), 2),
             valor_custeio: round(trataNumericos(values.valor_custeio), 2),
             valor_livre: round(trataNumericos(values.valor_livre), 2),
+            recurso: values.recurso,
         };
 
         if(!values.uuid){
@@ -175,7 +183,7 @@ export const Lista = () => {
         <>
             {results && results.length > 0 ? (
                     <>
-                    <p className='mb-0'>Exibindo <span className='total'>{count}</span> repasses</p>
+                    {/* <p className='mb-0'>Exibindo <span className='total'>{count}</span> repasses</p> */}
                     <div className="mt-2">
                         <DataTable
                             value={results}
