@@ -64,13 +64,23 @@ jest.mock("../../../../services/visoes.service", () => ({
 }));
 
 jest.mock("../../../../context/RecursoSelecionado", () => ({
-  useRecursoSelecionadoContext: jest.fn(() => ({ recursoSelecionado: null })),
+  useRecursoSelecionadoContext: jest.fn(() => ({ 
+    recursoSelecionado: null,
+    recursos: [],
+    isLoading: false,
+    setSelectedRecurso: jest.fn(),
+  })),
 }));
 
 describe("Renderiza Tipos de Carga existentes", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    useRecursoSelecionadoContext.mockReturnValue({ recursoSelecionado: null });
+    useRecursoSelecionadoContext.mockReturnValue({ 
+      recursoSelecionado: null,
+      recursos: [],
+      isLoading: false,
+      setSelectedRecurso: jest.fn(),
+    });
   });
 
   it("renderiza CARGA_ASSOCIACOES", async () => {
@@ -149,7 +159,7 @@ describe("Renderiza Tipos de Carga existentes", () => {
         </Routes>
       </MemoryRouter>
     );
-    expect(await screen.findByText("Cargas de repasses previstos")).toBeInTheDocument();
+    expect(await screen.findByText("Repasses")).toBeInTheDocument();
   });
 
   it("renderiza REPASSE_REALIZADO", async () => {
@@ -163,7 +173,7 @@ describe("Renderiza Tipos de Carga existentes", () => {
       </MemoryRouter>
     );
 
-    const elemento = await screen.findByText("Cargas de repasses realizados");
+    const elemento = await screen.findByText("Repasses");
     expect(elemento).toBeInTheDocument();
   });
 
@@ -172,7 +182,12 @@ describe("Renderiza Tipos de Carga existentes", () => {
 describe("ArquivosDeCarga Componente", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    useRecursoSelecionadoContext.mockReturnValue({ recursoSelecionado: null });
+    useRecursoSelecionadoContext.mockReturnValue({ 
+      recursoSelecionado: null,
+      recursos: [],
+      isLoading: false,
+      setSelectedRecurso: jest.fn(),
+    });
   });
   
   test("Carrega os elementos na página", async () => {
@@ -313,7 +328,12 @@ describe("ArquivosDeCarga Componente", () => {
 describe("Listagem de Arquivos Carga", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    useRecursoSelecionadoContext.mockReturnValue({ recursoSelecionado: null });
+    useRecursoSelecionadoContext.mockReturnValue({ 
+      recursoSelecionado: null,
+      recursos: [],
+      isLoading: false,
+      setSelectedRecurso: jest.fn(),
+    });
     RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
     getTabelaArquivosDeCarga.mockResolvedValue(tabelaArquivos);
     getArquivosDeCargaFiltros.mockResolvedValue(listaArquivos);
@@ -344,7 +364,12 @@ describe("Listagem de Arquivos Carga", () => {
 describe("Ações dos botões", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    useRecursoSelecionadoContext.mockReturnValue({ recursoSelecionado: null });
+    useRecursoSelecionadoContext.mockReturnValue({ 
+      recursoSelecionado: null,
+      recursos: [],
+      isLoading: false,
+      setSelectedRecurso: jest.fn(),
+    });
     RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
     getTabelaArquivosDeCarga.mockResolvedValue(tabelaArquivos);
     getArquivosDeCargaFiltros.mockResolvedValue(listaArquivos);
@@ -457,7 +482,7 @@ describe("Ações dos botões", () => {
         const botaoAcao = Array.from(botoes).filter(btn => btn.textContent.trim() === "Editar")[0];
         fireEvent.click(botaoAcao);
 
-        expect(screen.getByText('Editar conta de associação')).toBeInTheDocument;
+        expect(screen.getByText('Editar conta de associação')).toBeInTheDocument();
 
         const botaoSalvarEnviar = screen.getByText('Salvar e enviar')
         expect(botaoSalvarEnviar).toBeInTheDocument()
@@ -470,7 +495,7 @@ describe("Ações dos botões", () => {
   test("Botão de Ação Editar REPASSE PREVISTO", async () => {
     // Testar Edição quando a condição
     useParams.mockReturnValue({ tipo_de_carga: "REPASSE_PREVISTO" });
-    getArquivosDeCargaFiltros.mockReturnValue(listaArquivos);
+    getArquivosDeCargaFiltros.mockResolvedValue(listaArquivos);
     render(
       <MemoryRouter initialEntries={["/parametro-arquivos-de-carga/REPASSE_PREVISTO"]}>
         <Routes>

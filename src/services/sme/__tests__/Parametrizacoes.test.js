@@ -1632,7 +1632,7 @@ describe('Testes para funções de análise', () => {
             conta: filter.conta,
             acao: filter.acao,
             status: filter.status,
-            page_size: 20,
+            page_size: 10,
             page: currentPage,
         };
         expect(api.get).toHaveBeenCalledWith(`/api/repasses/`, {
