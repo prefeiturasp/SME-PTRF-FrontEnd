@@ -3,6 +3,8 @@ import { useDispatch } from "react-redux";
 import { postReceitaPrevistaPDDE } from "../../../../../../services/escolas/Paa.service";
 import { toastCustom } from "../../../../../Globais/ToastCustom";
 import { useMutationConfirmavel } from "../../../../../../hooks/Globais/useMutationConfirmavel";
+import { getErrorMessage } from "../../../../../../utils/obtemMsgErroAxios";
+
 
 export const usePostReceitaPrevistaPdde = (setModalForm) => {
   const queryClient = useQueryClient();
@@ -25,11 +27,9 @@ export const usePostReceitaPrevistaPdde = (setModalForm) => {
           "Criação de Receita Prevista PDDE realizada com sucesso.",
         );
       },
-      onError: () => {
-        toastCustom.ToastCustomError(
-          "Ops!",
-          "Não foi possível criar a Receita Prevista PDDE",
-        );
+      onError: (err) => {
+        const mensagemErro = getErrorMessage(err, "Não foi possível criar a Receita Prevista PDDE");
+        toastCustom.ToastCustomError(mensagemErro);
       },
     },
   });

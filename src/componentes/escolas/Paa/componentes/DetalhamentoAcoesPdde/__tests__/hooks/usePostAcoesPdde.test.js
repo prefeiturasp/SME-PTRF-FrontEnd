@@ -128,8 +128,7 @@ describe("usePostReceitaPrevistaPdde", () => {
 
     await waitFor(() =>
       expect(toastCustom.ToastCustomError).toHaveBeenCalledWith(
-        "Ops!",
-        "Não foi possível criar a Receita Prevista PDDE"
+        "Ocorreu um erro inesperado."
       )
     );
   });
