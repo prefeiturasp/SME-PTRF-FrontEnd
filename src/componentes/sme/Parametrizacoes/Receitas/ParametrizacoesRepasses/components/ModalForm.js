@@ -15,6 +15,9 @@ import AutoCompleteAssociacoes from "./AutoCompleteAssociacoes";
 
 import { useRecursoSelecionadoContext } from "../../../../../../context/RecursoSelecionado";
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
+
 export const ModalForm = ({handleSubmitFormModal, todasAsAssociacoesAutoComplete, loadingAssociacoes}) => {
     const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES = RetornaSeTemPermissaoEdicaoPainelParametrizacoes()
     const { filter, showModalForm, setShowModalForm, stateFormModal, bloquearBtnSalvarForm, setShowModalConfirmacaoExclusao, setStateFormModal} = useContext(RepassesContext)
@@ -404,6 +407,7 @@ export const ModalForm = ({handleSubmitFormModal, todasAsAssociacoesAutoComplete
                                                         className="btn btn btn-danger mt-2 mr-2"
                                                         disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                                     >
+                                                        <FontAwesomeIcon icon={faXmark} style={{ marginRight: "8px", color: "white", fontWeight: "bold" }} />
                                                         Excluir
                                                     </button>
                                                 }
