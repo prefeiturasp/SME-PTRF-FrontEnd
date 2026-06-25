@@ -13,6 +13,8 @@ import {FormAlterarSenha} from "../componentes/Globais/EdicaoDeSenha/FormAlterar
 import {TextoValidacaoSenha} from "../componentes/Globais/MedidorForcaSenha/textoValidacaoSenha";
 import {FormAlterarEmail} from "../componentes/Globais/FormAlterarEmail";
 import {Button} from "react-bootstrap";
+import { useRecursoSelecionadoContext } from "../context/RecursoSelecionado";
+import { TextoDocumentoConsolidadoPC } from "./TextoDocumentoConsolidadoPC";
 
 
 export const AvisoCapitalModal = (propriedades) => {
@@ -606,12 +608,18 @@ export const ModalConfirmarExportacao = (propriedades) => {
 };
 
 export const ModalAtaNaoPreenchida = (propriedades) => {
+    const { recursoSelecionado } = useRecursoSelecionadoContext();
+
+    const texto_documento_consolidado_pc = new TextoDocumentoConsolidadoPC(recursoSelecionado?.habilita_exibicao_lauda)
+    
+    const text_fazer = texto_documento_consolidado_pc.texto_acao_concreta();
+
     return (
         <ModalBootstrap
             show={propriedades.show}
             onHide={propriedades.handleClose}
             titulo="Ata não preenchida"
-            bodyText="Para fazer a publicação você precisa preencher as informações da ata."
+            bodyText={`Para ${text_fazer} você precisa preencher as informações da ata.`}
             primeiroBotaoOnclick={propriedades.handleClose}
             primeiroBotaoTexto="Fechar"
             primeiroBotaoCss="success"
