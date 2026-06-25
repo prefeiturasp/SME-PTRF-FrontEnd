@@ -7,8 +7,11 @@ import { useGetRepasses } from "../hooks/useGetRepasses";
 import { usePostRepasse } from "../hooks/usePostRepasse";
 import { usePatchRepasse } from "../hooks/usePatchRepasse";
 import { useDeleteRepasse } from "../hooks/useDeleteRepasse";
+import { useGetTabelasRepasse } from "../hooks/useGetTabelasRepasse";
+import { useGetTabelasPorAssociacao } from "../hooks/useGetTabelasPorAssociacao";
 import { mockRepasses } from "../__fixtures__/mockData";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useRecursoSelecionadoContext } from "../../../../../../context/RecursoSelecionado";
 
 const queryClient = new QueryClient();
 
@@ -17,6 +20,11 @@ jest.mock("../hooks/useGetRepasses");
 jest.mock("../hooks/usePostRepasse");
 jest.mock("../hooks/usePatchRepasse");
 jest.mock("../hooks/useDeleteRepasse");
+jest.mock("../hooks/useGetTabelasRepasse");
+jest.mock("../hooks/useGetTabelasPorAssociacao");
+jest.mock("../../../../../../context/RecursoSelecionado", () => ({
+  useRecursoSelecionadoContext: jest.fn(),
+}));
 
 
 const mockSetStateFormModal = jest.fn();
@@ -52,6 +60,10 @@ const context = {
     stateFormModal: stateFormCreate,
     setStateFormModal: mockSetStateFormModal,
     handleExcluir: mockHandleExcluir,
+    filter: { recurso_uuid: 'test-uuid' },
+    showModalForm: false,
+    bloquearBtnSalvarForm: false,
+    setShowModalConfirmacaoExclusao: jest.fn(),
 }
 
 describe("Lista", () => {
@@ -61,13 +73,16 @@ describe("Lista", () => {
     beforeEach(() => {
         useGetRepasses.mockReturnValue({
             isLoading: false,
-      refetch: jest.fn(),
-      data: mockRepasses
-    });
+            refetch: jest.fn(),
+            data: mockRepasses
+        });
 
-    usePostRepasse.mockReturnValue({ mutationPost: mockMutationPost});
-    usePatchRepasse.mockReturnValue({ mutationPatch: mockMutationPatch });
-    useDeleteRepasse.mockReturnValue({ mutationDelete: mockMutationDelete });
+        usePostRepasse.mockReturnValue({ mutationPost: mockMutationPost});
+        usePatchRepasse.mockReturnValue({ mutationPatch: mockMutationPatch });
+        useDeleteRepasse.mockReturnValue({ mutationDelete: mockMutationDelete });
+        useGetTabelasRepasse.mockReturnValue({ data: { results: [] }, isLoading: false, isError: false, refetch: jest.fn() });
+        useGetTabelasPorAssociacao.mockReturnValue({ data: { results: [] }, isFetching: false, isError: false, refetch: jest.fn() });
+        useRecursoSelecionadoContext.mockReturnValue({ recursos: [] });
   });
 
   const renderComponent = () => {
