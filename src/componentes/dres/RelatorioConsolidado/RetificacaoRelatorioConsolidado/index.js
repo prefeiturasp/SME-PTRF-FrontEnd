@@ -19,8 +19,17 @@ import { ModalAntDesignConfirmacao } from "../../../Globais/ModalAntDesign";
 import { TituloTabela } from "./TituloTabela";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import { toastCustom } from "../../../Globais/ToastCustom";
+import { useRecursoSelecionadoContext } from "../../../../context/RecursoSelecionado";
+import { TextoDocumentoConsolidadoPC } from "../../../../utils/TextoDocumentoConsolidadoPC";
 
 const RetificacaoRelatorioConsolidado = () => {
+    const { recursoSelecionado } = useRecursoSelecionadoContext();
+
+    const texto_documento_consolidado_pc = new TextoDocumentoConsolidadoPC(recursoSelecionado?.habilita_exibicao_lauda)
+
+    const text_possessive = texto_documento_consolidado_pc.possessivo();
+    const text_info_lauda_future = texto_documento_consolidado_pc.texto_lauda_a_ser_publicada();
+
     const initialValuesFiltros = {
         filtro_por_nome: '',
         filtro_por_tipo: ''
@@ -632,7 +641,7 @@ const RetificacaoRelatorioConsolidado = () => {
         }
         else{
             await postRetificarPcs(relatorio_consolidado_uuid, payload)
-            toastCustom.ToastCustomSuccess('Retificação criada com sucesso.', 'A retificação da publicação foi criada com sucesso.')
+            toastCustom.ToastCustomSuccess('Retificação criada com sucesso.', `A retificação ${text_possessive} foi criada com sucesso.`)
             onClickVoltar();
         }    
     }
@@ -655,7 +664,7 @@ const RetificacaoRelatorioConsolidado = () => {
         await postDesfazerRetificacaoPcs(relatorio_consolidado_uuid, payload)
 
         if(deve_apagar_retificacao){
-            toastCustom.ToastCustomSuccess('Retificação removida com sucesso.', 'A retificação da publicação foi removida com sucesso.')
+            toastCustom.ToastCustomSuccess('Retificação removida com sucesso.', `A retificação ${text_possessive} foi removida com sucesso.`)
             onClickVoltar();
         }
         else{
@@ -665,7 +674,7 @@ const RetificacaoRelatorioConsolidado = () => {
             setLoadingPcsDoConsolidado(true);
             setLoadingPcsEmRetificacao(true);
 
-            toastCustom.ToastCustomSuccess('Remoção de PCs efetuada com sucesso.', 'PCs removidas da retificação com sucesso.')
+            toastCustom.ToastCustomSuccess('Remoção de PCs efetuada com sucesso.', `PCs removidas da retificação ${text_possessive} com sucesso.`)
             
             await carregaPcsDoConsolidado();
             await carregaPcsEmRetificacao();
@@ -717,8 +726,7 @@ const RetificacaoRelatorioConsolidado = () => {
 
     return (
         <PaginasContainer>
-            <h1 className="titulo-itens-painel mt-5">Retificação da publicação</h1>
-            <>
+            <h1 className="titulo-itens-painel mt-5">Retificação {text_possessive}</h1>
                 <div className="page-content-inner pt-0">
                     {loading ? (
                         <div className="mt-5">
@@ -827,7 +835,7 @@ const RetificacaoRelatorioConsolidado = () => {
                             <ModalAntDesignConfirmacao
                                 handleShow={showModal}
                                 titulo={"Confirmar Retificação"}
-                                bodyText="Lembre-se que apenas as prestações de contas selecionadas serão reabertas para edição e gerarão novos documentos e nova lauda a ser publicada."
+                                bodyText={`Lembre-se que apenas as prestações de contas selecionadas serão reabertas para edição e gerarão novos documentos${text_info_lauda_future}.`}
                                 handleOk={(e) => handleRetificar()}
                                 okText="Continuar"
                                 handleCancel={(e) => setShowModal(false)}
@@ -847,7 +855,7 @@ const RetificacaoRelatorioConsolidado = () => {
                             <ModalAntDesignConfirmacao
                                 handleShow={showModalDeveApagarRetificacao}
                                 titulo={"Cancelar retificação"}
-                                bodyText="Você confirma que deseja cancelar a retificação de todas as PCs retificadas? Esta ação apagará a retificação da publicação."
+                                bodyText={`Você confirma que deseja cancelar a retificação de todas as PCs retificadas? Esta ação apagará a retificação ${text_possessive}.`}
                                 handleOk={(e) => handleDesfazerRetificao(true)}
                                 okText="Confirmar"
                                 handleCancel={(e) => setShowModalDeveApagarRetificacao(false)}
@@ -857,7 +865,6 @@ const RetificacaoRelatorioConsolidado = () => {
                         </>
                     }
                 </div>
-            </>
         </PaginasContainer>
     )
 }

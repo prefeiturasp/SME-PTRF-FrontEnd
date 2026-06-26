@@ -1,9 +1,13 @@
 import React from "react";
 import { useRecursoSelecionadoContext } from "../../../../../../context/RecursoSelecionado";
+import { TextoDocumentoConsolidadoPC } from "../../../../../../utils/TextoDocumentoConsolidadoPC";
 
 export const TextoDinamicoSuperior = ({retornaDadosAtaFormatado, retornaTituloCorpoAta, ehPrevia, ehRetificacao, motivoRetificacao}) => {
-
     const { recursoSelecionado } = useRecursoSelecionadoContext();
+
+    const texto_documento_consolidado_pc = new TextoDocumentoConsolidadoPC(recursoSelecionado?.habilita_exibicao_de_lauda);
+    const texto_publicacao = texto_documento_consolidado_pc.texto_artigo_a();
+    const texto_emissao = texto_documento_consolidado_pc.texto_emissao();
 
     const getTexto = (ehRetificacao) => {
         const baseLegal = "conforme incisos III e IV do art. 34 da Portaria SME nº 6.634/2021"
@@ -34,9 +38,9 @@ export const TextoDinamicoSuperior = ({retornaDadosAtaFormatado, retornaTituloCo
             <p className="titulo-texto-dinamico-superior mb-2">{retornaTituloCorpoAta()} {retornaDadosAtaFormatado("numero_ata")}</p>
             {ehPrevia() &&
                 <p className="texto-atencao">
-                    Atenção! Essa é uma versão prévia da ata. As informações aqui exibidas podem ser alteradas até a
-                    publicação do consolidado das PCs. A ata final só poderá ser gerada após a publicação do
-                    consolidado.
+                    {`Atenção! Essa é uma versão prévia da ata. As informações aqui exibidas podem ser alteradas até ${texto_publicacao}
+                    do Consolidado das PCs. A ata final só poderá ser ${texto_emissao} do
+                    Consolidado das PCs.`}
                 </p>
             }
 

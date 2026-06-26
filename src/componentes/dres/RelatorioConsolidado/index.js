@@ -28,9 +28,11 @@ import PreviaDocumentos from "./PreviaDocumento";
 import {PERIODO_RELATORIO_CONSOLIDADO_DRE} from "../../../services/auth.service";
 import BlocoPublicacaoParcial from "./BlocoPublicacaoParcial"
 import useUnidadeSelecionada from "../../../hooks/Globais/useUnidadeSelecionada";
+import { useRecursoSelecionadoContext } from "../../../context/RecursoSelecionado";
 
 const RelatorioConsolidado = () => {
     const { getUUIDUnidadeSelecionadaTipoDRE } = useUnidadeSelecionada(visoesService)
+    const { recursoSelecionado } = useRecursoSelecionadoContext();
     
     const dre_uuid = visoesService.getItemUsuarioLogado('associacao_selecionada.uuid');
     const periodo_relatorio_consolidado_localstorage = localStorage.getItem(PERIODO_RELATORIO_CONSOLIDADO_DRE)
@@ -373,6 +375,8 @@ const RelatorioConsolidado = () => {
         }
     };
 
+    const isShowLaudaPróximaPublicacao = !consolidadoDreProximaPublicacao?.eh_consolidado_de_publicacoes_parciais && recursoSelecionado?.habilita_exibicao_de_lauda;
+
     return (
         <PaginasContainer>
             <h1 className="titulo-itens-painel mt-5">Consolidado das PCs</h1>
@@ -416,7 +420,6 @@ const RelatorioConsolidado = () => {
                                     ) :
                                     <>
                                         {podeExibirProximaPublicacao() &&
-                                            <>
                                                 <div className='mt-3'>
                                                     <PublicarDocumentos
                                                         publicarConsolidadoDre={publicarConsolidadoDre}
@@ -448,13 +451,12 @@ const RelatorioConsolidado = () => {
                                                             podeAcessarInfoConsolidado={podeAcessarInfoConsolidado}
                                                         />
                                                     }
-                                                    {!consolidadoDreProximaPublicacao.eh_consolidado_de_publicacoes_parciais &&
+                                                    {isShowLaudaPróximaPublicacao &&
                                                         <Lauda
                                                             consolidadoDre={consolidadoDreProximaPublicacao}
                                                         />
                                                     }
                                                 </div>
-                                            </>
                                         }
 
                                         {consolidadosDreJaPublicados && consolidadosDreJaPublicados.map((consolidadoDre) =>
@@ -473,6 +475,7 @@ const RelatorioConsolidado = () => {
                                                 gerarPreviaConsolidadoDre={gerarPreviaConsolidadoDre}
                                                 podeAcessarInfoConsolidado={podeAcessarInfoConsolidado}
                                                 podeGerarPreviaRetificacao={podeGerarPreviaRetificacao}
+                                                isShowLauda={recursoSelecionado?.habilita_exibicao_de_lauda}
                                             />
                                         )}
                                     </>
