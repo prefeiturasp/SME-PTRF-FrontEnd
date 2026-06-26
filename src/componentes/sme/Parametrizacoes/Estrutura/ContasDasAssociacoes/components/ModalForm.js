@@ -11,6 +11,9 @@ import {RetornaSeTemPermissaoEdicaoPainelParametrizacoes} from "../../../../Para
 import Spinner from "../../../../../../assets/img/spinner.gif";
 import { YupSchemaContasAssociacoes } from "../FormValidacao";
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
+
 const ModalForm = ({handleSubmitFormModal}) => {
     const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES = RetornaSeTemPermissaoEdicaoPainelParametrizacoes();
     const { recursos } = useRecursoSelecionadoContext();
@@ -228,6 +231,7 @@ const ModalForm = ({handleSubmitFormModal}) => {
                                             className="btn btn btn-danger mt-2 mr-2"
                                             disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
                                         >
+                                            <FontAwesomeIcon icon={faXmark} style={{ marginRight: "8px", color: "white", fontWeight: "bold" }} />
                                             Excluir
                                         </button>
                                     }
