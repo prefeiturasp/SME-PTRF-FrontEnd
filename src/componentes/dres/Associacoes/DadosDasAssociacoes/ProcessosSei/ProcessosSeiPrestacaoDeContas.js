@@ -63,36 +63,17 @@ export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao, recurso_uuid, 
 
     const premioExcelenciaAtivo = visoesService.featureFlagAtiva('premio-excelencia-processo-sei');
 
-    useEffect(() => {
-        if (recurso_uuid) {
-            const recurso = recursos_da_associacao?.find((item) => item.uuid === recurso_uuid);
-            if (recurso) {
-                recursoSelecionadoStorageService.setRecursoSelecionado(recurso);
-            }
-        }
-    }, [recurso_uuid, recursos_da_associacao]);
-
     const carregaProcessos = async () => {
-        let processos = await getProcessosAssociacao(associacaoUuid);
+        let processos = await getProcessosAssociacao(associacaoUuid, recurso_uuid);
         setProcessosList(processos)
     };
 
-    useEffect(() => {
-        carregaProcessos()
-        setLoading(false)
-    }, [recurso_uuid]);
-
     const carregaPeriodosDisponiveis = async () => {
-        let periodosDisponiveis = await getPeriodosDisponiveis(associacaoUuid, stateProcessoForm.ano, stateProcessoForm.uuid)
+        setLoadingPeriodos(true);
+        let periodosDisponiveis = await getPeriodosDisponiveis(associacaoUuid, stateProcessoForm.ano, stateProcessoForm.uuid, recurso_uuid)
         setPeriodosDisponiveis(periodosDisponiveis)
         setLoadingPeriodos(false);
     }
-
-    useEffect(() => {
-        if (associacaoUuid && stateProcessoForm && stateProcessoForm.ano && stateProcessoForm.ano.replaceAll("_","").length >= 4){
-            carregaPeriodosDisponiveis()
-        }
-    }, [associacaoUuid, stateProcessoForm]);
 
     const deleteProcesso = async () => {
         setLoading(true);
@@ -121,7 +102,6 @@ export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao, recurso_uuid, 
     };
 
     const handleEditProcessoAction = (processo) => {
-        setLoadingPeriodos(true);
         let lista_uuids_periodos = []
         for(let i=0; i<=processo.periodos.length-1; i++){
             lista_uuids_periodos.push(processo.periodos[i].uuid)
@@ -160,6 +140,7 @@ export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao, recurso_uuid, 
             'associacao': associacaoUuid,
             'numero_processo': stateProcessoForm.numero_processo,
             'ano': stateProcessoForm.ano,
+            'recurso': recurso_uuid,
         };
 
         if (visoesService.featureFlagAtiva('periodos-processo-sei')) {
@@ -228,30 +209,19 @@ export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao, recurso_uuid, 
         }
     };
 
-    const handleChangesInProcessoForm = async (name, value) => {
-        // Limpando o campo Período quando alterar o campo Ano
-        if (name ==='ano'){
-
-            let lista_uuids_periodos_pre_selecao = []
-
-            if (associacaoUuid && value && value.replaceAll("_","").length >= 4){
-                let periodosDisponiveis = await getPeriodosDisponiveis(associacaoUuid, value, stateProcessoForm.uuid)
-                for(let i= 0; i<= periodosDisponiveis.length-1; i++){
-                    lista_uuids_periodos_pre_selecao.push(periodosDisponiveis[i].uuid)
-                }
-            }
+    const handleChangesInProcessoForm = (name, value) => {
+        if (name === 'ano') {
             setStateProcessoForm({
                 ...stateProcessoForm,
                 [name]: value,
-                periodos: lista_uuids_periodos_pre_selecao
+                periodos: []
             });
-        }else {
+        } else {
             setStateProcessoForm({
                 ...stateProcessoForm,
                 [name]: value
             });
         }
-
     };
 
     const handleChangeSelectPeriodos =  async (value) => {
@@ -306,6 +276,30 @@ export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao, recurso_uuid, 
         }
     }
 
+    useEffect(() => {
+        carregaProcessos()
+        setLoading(false)
+    }, [recurso_uuid]);
+
+    useEffect(() => {
+        if (associacaoUuid && stateProcessoForm && stateProcessoForm.ano && stateProcessoForm.ano.replaceAll("_","").length >= 4){
+            carregaPeriodosDisponiveis()
+        }
+    }, [associacaoUuid, stateProcessoForm.ano]);
+
+    useEffect(() => {
+        if (periodosDisponiveis && periodosDisponiveis.length > 0 && stateProcessoForm.periodos.length === 0) {
+            let lista_uuids_periodos = []
+            for(let i = 0; i < periodosDisponiveis.length; i++){
+                lista_uuids_periodos.push(periodosDisponiveis[i].uuid)
+            }
+            setStateProcessoForm(prev => ({
+                ...prev,
+                periodos: lista_uuids_periodos
+            }));
+        }
+    }, [periodosDisponiveis]);
+
     return (
         <>
             {loading ? (
@@ -347,7 +341,8 @@ export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao, recurso_uuid, 
                         </div>
                         <div className="row">
                             <div className="col-12">
-                                {processosList.length > 0 ? (<DataTable
+                                {processosList.length > 0 ? (
+                                    <DataTable
                                         value={processosList}
                                         className="mt-3 datatable-footer-coad"
                                         paginator={processosList.length > rowsPerPage}

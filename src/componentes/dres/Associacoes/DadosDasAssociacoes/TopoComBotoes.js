@@ -1,9 +1,9 @@
 import React, {useCallback} from "react";
-import {Link, useParams} from "react-router-dom";
-import {visoesService} from "../../../../services/visoes.service"
+import {useParams, useNavigate} from "react-router-dom";
 
 export const TopoComBotoes = ({dadosDaAssociacao}) => {
     let {origem, periodo_uuid, conta_uuid} = useParams();
+    const navigate = useNavigate();
 
     const getPath = useCallback(() => {
         let path;
@@ -12,8 +12,9 @@ export const TopoComBotoes = ({dadosDaAssociacao}) => {
         } else if (origem === 'dre-relatorio-consolidado' && periodo_uuid && conta_uuid) {
             path = `/dre-relatorio-consolidado-dados-das-ues/${periodo_uuid}/${conta_uuid}/`;
         }
-        window.location.assign(path)
-    }, [origem, periodo_uuid, conta_uuid]);
+        // O recurso atual é mantido através do recursoSelecionadoStorageService
+        navigate(path);
+    }, [origem, periodo_uuid, conta_uuid, navigate]);
 
     return (
         <>
