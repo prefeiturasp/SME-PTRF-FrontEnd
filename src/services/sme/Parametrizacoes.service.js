@@ -450,6 +450,7 @@ export const deleteTag = async (tag_uuid) => {
 export const getAssociacoes = async (recurso_uuid = '') => {
   return (await api.get(`/api/associacoes/`, {...authHeader(), params: { recurso_uuid }})).data;
 };
+
 export const getParametrizacoesAssociacoes = async (
   page,
   tipo_unidade,
@@ -1055,7 +1056,7 @@ export const deleteMotivoEstorno = async (motivo_uuid) => {
 // Repasses
 
 export const getRepasses = async (filter, currentPage) => {
-  const { search, periodo, conta, acao, status } = filter;
+  const { search, periodo, conta, acao, status, recurso_uuid } = filter;
   return (
     await api.get(`/api/repasses/`, {
       ...authHeader(),
@@ -1065,23 +1066,31 @@ export const getRepasses = async (filter, currentPage) => {
         conta: conta,
         acao: acao,
         status: status,
-        page_size: 20,
+        page_size: 10,
         page: currentPage,
+        recurso_uuid: recurso_uuid
       },
     })
   ).data;
 };
 
-export const getTabelasRepasse = async () => {
-  return (await api.get(`/api/repasses/tabelas/`, authHeader())).data;
+export const getTabelasRepasse = async (recurso_uuid) => {
+  console.log('recurso_uuid', recurso_uuid)
+  let url = `/api/repasses/tabelas/`;
+  if (recurso_uuid) {
+    url += `?recurso_uuid=${recurso_uuid}`;
+  }
+  return (await api.get(url, authHeader())).data;
 };
 
-export const getTabelasRepassePorAssociacao = async (associacao_uuid) => {
+export const getTabelasRepassePorAssociacao = async (associacao_uuid, recurso_uuid) => {
+  let url = `/api/repasses/tabelas-por-associacao/?associacao_uuid=${associacao_uuid}`;
+  if (recurso_uuid) {
+    url += `&recurso_uuid=${recurso_uuid}`;
+  }
+  
   return (
-    await api.get(
-      `/api/repasses/tabelas-por-associacao/?associacao_uuid=${associacao_uuid}`,
-      authHeader()
-    )
+    await api.get(url, authHeader())
   ).data;
 };
 

@@ -264,7 +264,7 @@ export const useVisualizacaoAtaPaa = () => {
 
     const formatarData = (valor) => {
         if (!valor) return "-";
-        const date = new Date(valor);
+        const date = new Date(valor + 'T00:00:00');
         return Number.isNaN(date.getTime())
             ? "-"
             : new Intl.DateTimeFormat("pt-BR").format(date);
@@ -295,12 +295,11 @@ export const useVisualizacaoAtaPaa = () => {
 
     const getNomeSecretarioReuniao = useMemo(() => {
         return () => {
-            const secretarioReuniao = listaCompletaParticipantes.find(p => 
-                p.secretario_da_reuniao
-            );
-            return secretarioReuniao && secretarioReuniao.nome ? secretarioReuniao.nome : "_____";
+            const secretarioReuniao = dadosAta.secretario_reuniao
+
+            return secretarioReuniao ? secretarioReuniao : "_____";
         };
-    }, [listaCompletaParticipantes]);
+    }, [dadosAta.secretario_reuniao]);
 
     const atualizarAlturaDocumento = useCallback(() => {
         if (referenciaDocumento.current) {

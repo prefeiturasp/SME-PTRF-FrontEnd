@@ -45,6 +45,8 @@ const ArquivosDeCarga = () => {
   const url_params = useParams();
   const is_acoes_associacoes = url_params.tipo_de_carga === "CARGA_ACOES_ASSOCIACOES";
   const is_contas_associacoes = url_params.tipo_de_carga === "CARGA_CONTAS_ASSOCIACOES";
+  const is_repasse_previsto = url_params.tipo_de_carga === "REPASSE_PREVISTO";
+  const is_repasse_realizado = url_params.tipo_de_carga === "REPASSE_REALIZADO";
   const dadosDeOrigem = useMemo(() => {
     let obj = {
       titulo: "",
@@ -72,11 +74,12 @@ const ArquivosDeCarga = () => {
         titulo: "Ações das Associações",
         titulo_modal: "ações das associações",
         acesso_permitido: true,
+        url_go_back: "/parametro-acoes-associacoes/",
         UrlsMenuInterno: [
           {
             label: "Cargas de arquivo",
             url: "parametro-arquivos-de-carga",
-            origem: "CARGA_ACOES_ASSOCIACOES",
+            origem: "CARGA_ACOES_ASSOCIACOES"
           },
         ],
       };
@@ -147,8 +150,8 @@ const ArquivosDeCarga = () => {
         titulo: "Repasses",
         titulo_modal: "repasse previsto",
         acesso_permitido: true,
+        url_go_back: "/parametro-repasse/",
         UrlsMenuInterno: [
-          { label: "Repasses", url: "parametro-repasse" },
           {
             label: "Cargas de repasses previstos",
             url: "parametro-arquivos-de-carga",
@@ -161,13 +164,14 @@ const ArquivosDeCarga = () => {
           },
         ],
       };
-    } else if (url_params.tipo_de_carga === "REPASSE_REALIZADO") {
+    } 
+    else if (url_params.tipo_de_carga === "REPASSE_REALIZADO") {
       obj = {
         titulo: "Repasses",
         titulo_modal: "repasse realizado",
         acesso_permitido: true,
+        url_go_back: "/parametro-repasse/",
         UrlsMenuInterno: [
-          { label: "Repasses", url: "parametro-repasse" },
           {
             label: "Cargas de repasses previstos",
             url: "parametro-arquivos-de-carga",
@@ -707,7 +711,8 @@ const ArquivosDeCarga = () => {
             <h1 className="titulo-itens-painel mt-5">{dadosDeOrigem.titulo}</h1>
             <div className="page-content-inner">
               {
-                is_acoes_associacoes || is_contas_associacoes ? (
+
+                is_acoes_associacoes || is_contas_associacoes || is_repasse_previsto || is_repasse_realizado ? (
                   <AbasPorRecurso
                     extra_abas={dadosDeOrigem.UrlsMenuInterno}
                     tab_initial_active="extra-tab-0"
@@ -715,6 +720,7 @@ const ArquivosDeCarga = () => {
                       if (dadosDeOrigem.url_go_back) {
                         navigate(dadosDeOrigem.url_go_back);
                       } 
+
                     }}
                   />
                 ) : (
@@ -723,7 +729,6 @@ const ArquivosDeCarga = () => {
                   />
                 )
               }
-
               
               <BotoesTopo
                 setShowModalForm={setShowModalForm}

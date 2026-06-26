@@ -44,6 +44,7 @@ const mockRecursoSelecionadoContext = {
   recursoSelecionado: null,
   isLoading: false,
   recursos: mockRecursos,
+  setSelectedRecurso: jest.fn(),
 };
 
 // Mockando useParams
@@ -169,7 +170,7 @@ describe("Renderiza Tipos de Carga existentes", () => {
         </Routes>
       </MemoryRouter>
     );
-    expect(await screen.findByText("Cargas de repasses previstos")).toBeInTheDocument();
+    expect(await screen.findByText("Repasses")).toBeInTheDocument();
   });
 
   it("renderiza REPASSE_REALIZADO", async () => {
@@ -183,7 +184,7 @@ describe("Renderiza Tipos de Carga existentes", () => {
       </MemoryRouter>
     );
 
-    const elemento = await screen.findByText("Cargas de repasses realizados");
+    const elemento = await screen.findByText("Repasses");
     expect(elemento).toBeInTheDocument();
   });
 
@@ -478,7 +479,7 @@ describe("Ações dos botões", () => {
         fireEvent.click(botaoAcao);
 
         expect(screen.getByText('Editar conta de associação')).toBeInTheDocument();
-        
+
         const botaoSalvarEnviar = screen.getByText('Salvar e enviar')
         expect(botaoSalvarEnviar).toBeInTheDocument()
         fireEvent.click(botaoSalvarEnviar)
@@ -490,7 +491,7 @@ describe("Ações dos botões", () => {
   test("Botão de Ação Editar REPASSE PREVISTO", async () => {
     // Testar Edição quando a condição
     useParams.mockReturnValue({ tipo_de_carga: "REPASSE_PREVISTO" });
-    getArquivosDeCargaFiltros.mockReturnValue(listaArquivos);
+    getArquivosDeCargaFiltros.mockResolvedValue(listaArquivos);
     render(
       <MemoryRouter initialEntries={["/parametro-arquivos-de-carga/REPASSE_PREVISTO"]}>
         <Routes>

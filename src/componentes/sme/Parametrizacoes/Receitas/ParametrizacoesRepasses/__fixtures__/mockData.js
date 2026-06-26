@@ -314,6 +314,9 @@ export const mockRepasses = {
                 "valor_custeio": true,
                 "valor_livre": true,
                 "campos_de_realizacao": false
+            },
+            "recurso": {
+                "uuid": "3fa4d2b5-0e3f-4a1c-8e2a-5c9e3f4b2a1d"
             }
         },
         {
@@ -460,6 +463,9 @@ export const mockRepasses = {
                 "valor_custeio": true,
                 "valor_livre": true,
                 "campos_de_realizacao": false
+            },
+            "recurso": {
+                "uuid": "5e8a3c4d-2f1e-4b3a-9e5c-6d7f8a9b0c1d"
             }
         },
         {

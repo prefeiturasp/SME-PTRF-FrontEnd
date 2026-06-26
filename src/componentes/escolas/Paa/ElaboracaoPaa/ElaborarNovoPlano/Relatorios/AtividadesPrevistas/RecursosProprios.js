@@ -10,6 +10,7 @@ import { Icon } from "../../../../../../Globais/UI/Icon";
 import { deleteRecursoProprioPaa } from "../../../../../../../services/escolas/Paa.service";
 import { ModalConfirmarExclusao } from "../../../../../../sme/Parametrizacoes/componentes/ModalConfirmarExclusao";
 import { visoesService } from "../../../../../../../services/visoes.service";
+import { getErrorMessage } from "../../../../../../../utils/obtemMsgErroAxios";
 import "./styles.scss";
 
 
@@ -120,10 +121,8 @@ export const RecursosProprios = ({paa}) => {
       }
     } catch (error) {
       console.error("Erro ao excluir recurso próprio:", error);
-      toastCustom.ToastCustomError(
-        "Erro!",
-        "Não foi possível excluir o recurso próprio. Tente novamente.",
-      );
+      const mensagemErro = getErrorMessage(error, "Não foi possível excluir o recurso próprio. Tente novamente.");
+      toastCustom.ToastCustomError(mensagemErro);
     } finally {
       setIsExcluindoRecurso(false);
       setModalExcluirRecurso({ aberto: false, recurso: null });
@@ -145,7 +144,7 @@ export const RecursosProprios = ({paa}) => {
 
   const formatarData = (valor) => {
     if (!valor) return "-";
-    const date = new Date(valor);
+    const date = new Date(valor + 'T00:00:00');
     return Number.isNaN(date.getTime())
       ? "-"
       : new Intl.DateTimeFormat("pt-BR").format(date);
