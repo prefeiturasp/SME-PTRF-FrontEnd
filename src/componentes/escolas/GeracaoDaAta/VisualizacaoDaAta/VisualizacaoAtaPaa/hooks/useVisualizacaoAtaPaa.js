@@ -157,9 +157,9 @@ export const useVisualizacaoAtaPaa = () => {
         if (!data) {
             return "____";
         }
-        var dia = moment(new Date(data), "YYYY-MM-DD").add(1, 'days').format("DD");
-        var mes = moment(new Date(data), "YYYY-MM-DD").add(1, 'days').format("MMMM");
-        var ano = moment(new Date(data), "YYYY-MM-DD").add(1, 'days').format("YYYY");
+        let dia = moment(new Date(data), "YYYY-MM-DD").add(1, 'days').format("DD");
+        let mes = moment(new Date(data), "YYYY-MM-DD").add(1, 'days').format("MMMM");
+        let ano = moment(new Date(data), "YYYY-MM-DD").add(1, 'days').format("YYYY");
         return `${dia} de ${mes} de ${ano}`;
     }
     const getLocalReuniao = () => {
@@ -207,8 +207,8 @@ export const useVisualizacaoAtaPaa = () => {
     };
 
     const getPeriodoPaaFormatado = () => {
+        // Exemplo de formato retornado: 1º de maio de 2025 a 30 de abril de 2026
         if (!paaCorrente?.periodo_paa_objeto?.data_inicial || !paaCorrente?.periodo_paa_objeto?.data_final) {
-            // return "1º de maio de 2025 a 30 de abril de 2026";
             return "";
         }
 
@@ -244,9 +244,9 @@ export const useVisualizacaoAtaPaa = () => {
             return `${mes.charAt(0).toUpperCase()}${mes.slice(1)}/${ano}`;
         }
         
-        const ano = parseInt(partes[0], 10);
-        const mes = parseInt(partes[1], 10);
-        const dia = parseInt(partes[2], 10);
+        const ano = Number.parseInt(partes[0], 10);
+        const mes = Number.parseInt(partes[1], 10);
+        const dia = Number.parseInt(partes[2], 10);
         
         if (Number.isNaN(ano) || Number.isNaN(mes) || Number.isNaN(dia)) {
             return "-";
@@ -278,18 +278,18 @@ export const useVisualizacaoAtaPaa = () => {
                     p.cargo.toLowerCase().includes("secretaria")
                 )
             );
-            return secretario && secretario.nome ? secretario.nome : "_____";
+
+            return secretario?.nome ?? "_____";
         };
     }, [listaCompletaParticipantes]);
 
     const getNomePresidente = useMemo(() => {
         return () => {
             const presidente = listaCompletaParticipantes.find(p => 
-                p.cargo && (
-                    p.cargo.toLowerCase().includes("presidente da diretoria executiva")
-                )
+                p.cargo?.toLowerCase().includes("presidente da diretoria executiva")
             );
-            return presidente && presidente.nome ? presidente.nome : "_____";
+            
+            return presidente?.nome ?? "_____";
         };
     }, [listaCompletaParticipantes]);
 
@@ -297,7 +297,7 @@ export const useVisualizacaoAtaPaa = () => {
         return () => {
             const secretarioReuniao = dadosAta.secretario_reuniao
 
-            return secretarioReuniao ? secretarioReuniao : "_____";
+            return secretarioReuniao ?? "_____";
         };
     }, [dadosAta.secretario_reuniao]);
 

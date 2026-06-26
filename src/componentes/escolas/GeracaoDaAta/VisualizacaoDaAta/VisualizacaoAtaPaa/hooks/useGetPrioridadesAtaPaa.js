@@ -23,7 +23,7 @@ const mapPrioridade = (item) => {
             typeof item.valor_total === "number"
               ? item.valor_total
               : parseMoneyCentsBRL(String(item.valor_total));
-          return parsed !== null ? parsed : Number(item.valor_total);
+          return parsed ?? Number(item.valor_total);
         })()
       : null;
 
@@ -62,11 +62,13 @@ export const useGetPrioridadesAtaPaa = (uuid_paa) => {
   });
 
   const prioridadesAgrupadas = useMemo(() => {
-    const lista = Array.isArray(query.data?.results)
-      ? query.data.results
-      : Array.isArray(query.data)
-      ? query.data
-      : [];
+    let lista = [];
+
+    if (Array.isArray(query.data?.results)) {
+      lista = query.data.results;
+    } else if (Array.isArray(query.data)) {
+      lista = query.data;
+    }
 
     const prioridadesMapeadas = lista
       .filter((p) => p.prioridade)
