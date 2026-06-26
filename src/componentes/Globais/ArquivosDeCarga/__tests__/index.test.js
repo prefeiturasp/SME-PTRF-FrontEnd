@@ -25,6 +25,27 @@ import { getPeriodos } from "../../../../services/dres/Dashboard.service";
 import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../../sme/Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
 import { useRecursoSelecionadoContext } from "../../../../context/RecursoSelecionado";
 
+const mockRecursos = [
+  {
+    uuid: "recurso-ptrf",
+    nome: "PTRF",
+    nome_exibicao: "PTRF",
+    legado: false,
+  },
+  {
+    uuid: "recurso-legado",
+    nome: "Legado",
+    nome_exibicao: "Legado",
+    legado: true,
+  },
+];
+
+const mockRecursoSelecionadoContext = {
+  recursoSelecionado: null,
+  isLoading: false,
+  recursos: mockRecursos,
+};
+
 // Mockando useParams
 jest.mock("react-router-dom", () => ({
   ...jest.requireActual("react-router-dom"),
@@ -64,13 +85,13 @@ jest.mock("../../../../services/visoes.service", () => ({
 }));
 
 jest.mock("../../../../context/RecursoSelecionado", () => ({
-  useRecursoSelecionadoContext: jest.fn(() => ({ recursoSelecionado: null })),
+  useRecursoSelecionadoContext: jest.fn(() => mockRecursoSelecionadoContext),
 }));
 
 describe("Renderiza Tipos de Carga existentes", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    useRecursoSelecionadoContext.mockReturnValue({ recursoSelecionado: null });
+    useRecursoSelecionadoContext.mockReturnValue(mockRecursoSelecionadoContext);
   });
 
   it("renderiza CARGA_ASSOCIACOES", async () => {
@@ -95,9 +116,8 @@ describe("Renderiza Tipos de Carga existentes", () => {
         </Routes>
       </MemoryRouter>
     );
-    const elementos = await screen.findAllByText("Contas de Associações");
-    expect(elementos[0]).toBeInTheDocument();
-    expect(elementos[1]).toBeInTheDocument();
+    expect(await screen.findByText("Contas das Associações")).toBeInTheDocument();
+    expect(await screen.findByText("Cargas de arquivo")).toBeInTheDocument();
   });
 
   it("renderiza CARGA_USUARIOS", async () => {
@@ -172,7 +192,7 @@ describe("Renderiza Tipos de Carga existentes", () => {
 describe("ArquivosDeCarga Componente", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    useRecursoSelecionadoContext.mockReturnValue({ recursoSelecionado: null });
+    useRecursoSelecionadoContext.mockReturnValue(mockRecursoSelecionadoContext);
   });
   
   test("Carrega os elementos na página", async () => {
@@ -313,7 +333,7 @@ describe("ArquivosDeCarga Componente", () => {
 describe("Listagem de Arquivos Carga", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    useRecursoSelecionadoContext.mockReturnValue({ recursoSelecionado: null });
+    useRecursoSelecionadoContext.mockReturnValue(mockRecursoSelecionadoContext);
     RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
     getTabelaArquivosDeCarga.mockResolvedValue(tabelaArquivos);
     getArquivosDeCargaFiltros.mockResolvedValue(listaArquivos);
@@ -344,7 +364,7 @@ describe("Listagem de Arquivos Carga", () => {
 describe("Ações dos botões", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    useRecursoSelecionadoContext.mockReturnValue({ recursoSelecionado: null });
+    useRecursoSelecionadoContext.mockReturnValue(mockRecursoSelecionadoContext);
     RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
     getTabelaArquivosDeCarga.mockResolvedValue(tabelaArquivos);
     getArquivosDeCargaFiltros.mockResolvedValue(listaArquivos);
@@ -457,8 +477,8 @@ describe("Ações dos botões", () => {
         const botaoAcao = Array.from(botoes).filter(btn => btn.textContent.trim() === "Editar")[0];
         fireEvent.click(botaoAcao);
 
-        expect(screen.getByText('Editar conta de associação')).toBeInTheDocument;
-
+        expect(screen.getByText('Editar conta de associação')).toBeInTheDocument();
+        
         const botaoSalvarEnviar = screen.getByText('Salvar e enviar')
         expect(botaoSalvarEnviar).toBeInTheDocument()
         fireEvent.click(botaoSalvarEnviar)

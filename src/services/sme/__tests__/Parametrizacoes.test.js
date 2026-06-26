@@ -1136,7 +1136,7 @@ describe('Testes para funções de análise', () => {
         const tipo_conta_uuid = '1234';
         const status = 'ativo';
         const result = await getContasAssociacoesFiltros(page, associacao_nome, tipo_conta_uuid, status);
-        const url = `/api/contas-associacoes/?page=${page}&page_size=20&associacao_nome=${associacao_nome}&tipo_conta_uuid=${tipo_conta_uuid}&status=${status}`;
+        const url = `/api/contas-associacoes/?page=${page}&page_size=10&associacao_nome=${associacao_nome}&tipo_conta_uuid=${tipo_conta_uuid}&status=${status}`;
 
         expect(api.get).toHaveBeenCalledWith(url, authHeader());
         expect(result).toEqual(mockData);
