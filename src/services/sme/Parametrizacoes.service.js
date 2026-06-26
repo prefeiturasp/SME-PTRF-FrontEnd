@@ -694,13 +694,14 @@ export const getContasAssociacoesFiltros = async (
   page = 1,
   associacao_nome = "",
   tipo_conta_uuid,
-  status
+  status,
+  recurso_uuid = ""
 ) => {
   return (
     await api.get(
-      `/api/contas-associacoes/?page=${page}&page_size=${20}&associacao_nome=${associacao_nome}${
+      `/api/contas-associacoes/?page=${page}&page_size=${10}&associacao_nome=${associacao_nome}${
         tipo_conta_uuid ? "&tipo_conta_uuid=" + tipo_conta_uuid : ""
-      }${status ? "&status=" + status : ""}`,
+      }${status ? "&status=" + status : ""}${recurso_uuid ? "&recurso_uuid=" + recurso_uuid : ""}`,
       authHeader()
     )
   ).data;
