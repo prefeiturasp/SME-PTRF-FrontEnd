@@ -50,7 +50,7 @@ export const Filtros = () => {
     }
     
     return (
-        <form>
+        <form onSubmit={handleSubmitForm} id="form-filtro-contas-associacoes">
                 <div className="form-row">
                     <div className="form-group col-md-4">
                         <label htmlFor="filtrar_por_associacao_nome">Filtrar por Unidade Educacional</label>
@@ -97,7 +97,7 @@ export const Filtros = () => {
                 </div>
                 <div className="d-flex  justify-content-end mt-n2">
                     <button onClick={clearFilter} type="button" className="btn btn btn-outline-success mt-2 mr-2">Limpar</button>
-                    <button onClick={(e) => handleSubmitForm(e)} type="button" className="btn btn-success mt-2">Filtrar</button>
+                    <button type="submit" form="form-filtro-contas-associacoes" className="btn btn-success mt-2">Filtrar</button>
                 </div>
             </form>
     );
