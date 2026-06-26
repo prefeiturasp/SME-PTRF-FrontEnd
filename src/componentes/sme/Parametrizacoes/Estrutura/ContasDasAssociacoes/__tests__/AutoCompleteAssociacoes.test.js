@@ -4,9 +4,30 @@ import userEvent from '@testing-library/user-event';
 import AutoCompleteAssociacoes from '../AutoCompleteAssociacoes';
 
 const mockAssociacoes = [
-  { nome: 'Associação AAA', uuid: "ba8b96ef-f05c-41f3-af10-73753490c545" },
-  { nome: 'Associação BBB', uuid: "ba8b96ef-f05c-41f3-af10-73753490c544"},
-  { nome: 'Associação CCCC', uuid: "ba8b96ef-f05c-41f3-af10-73753490c543"}
+  {
+    nome: 'Associação AAA',
+    uuid: "ba8b96ef-f05c-41f3-af10-73753490c545",
+    unidade: {
+      nome_com_tipo: 'EMEF AAA',
+      codigo_eol: '100001',
+    },
+  },
+  {
+    nome: 'Associação BBB',
+    uuid: "ba8b96ef-f05c-41f3-af10-73753490c544",
+    unidade: {
+      nome_com_tipo: 'EMEF BBB',
+      codigo_eol: '100002',
+    },
+  },
+  {
+    nome: 'Associação CCCC',
+    uuid: "ba8b96ef-f05c-41f3-af10-73753490c543",
+    unidade: {
+      nome_com_tipo: 'EMEF CCCC',
+      codigo_eol: '100003',
+    },
+  }
 ];
 
 const mockRecebeAutoComplete = jest.fn();
@@ -23,7 +44,7 @@ describe('AutoCompleteAssociacoes', () => {
     expect(screen.getByPlaceholderText('')).toBeInTheDocument(); // Verifica se o componente está renderizado
   });
 
-  it('filtrar associações ao iniciar a digitação o nome da associação', async () => {
+  it('filtrar associações ao iniciar a digitação o nome da unidade', async () => {
     render(
       <AutoCompleteAssociacoes
         todasAsAssociacoesAutoComplete={mockAssociacoes}
@@ -39,6 +60,8 @@ describe('AutoCompleteAssociacoes', () => {
       const listbox = document.querySelector('[role="listbox"]');
       expect(listbox).toBeInTheDocument();
     }, { timeout: 3000 });
+
+    expect(screen.getByText('EMEF AAA')).toBeInTheDocument();
   });
 
 });

@@ -44,6 +44,7 @@ const ArquivosDeCarga = () => {
 
   const url_params = useParams();
   const is_acoes_associacoes = url_params.tipo_de_carga === "CARGA_ACOES_ASSOCIACOES";
+  const is_contas_associacoes = url_params.tipo_de_carga === "CARGA_CONTAS_ASSOCIACOES";
   const is_repasse_previsto = url_params.tipo_de_carga === "REPASSE_PREVISTO";
   const is_repasse_realizado = url_params.tipo_de_carga === "REPASSE_REALIZADO";
   const dadosDeOrigem = useMemo(() => {
@@ -84,14 +85,11 @@ const ArquivosDeCarga = () => {
       };
     } else if (url_params.tipo_de_carga === "CARGA_CONTAS_ASSOCIACOES") {
       obj = {
-        titulo: "Contas de Associações",
+        titulo: "Contas das Associações",
         titulo_modal: "conta de associação",
         acesso_permitido: true,
+        url_go_back: "/parametro-contas-associacoes",
         UrlsMenuInterno: [
-          {
-            label: "Contas de Associações",
-            url: "parametro-contas-associacoes",
-          },
           {
             label: "Cargas de arquivo",
             url: "parametro-arquivos-de-carga",
@@ -713,14 +711,16 @@ const ArquivosDeCarga = () => {
             <h1 className="titulo-itens-painel mt-5">{dadosDeOrigem.titulo}</h1>
             <div className="page-content-inner">
               {
-                is_acoes_associacoes || is_repasse_previsto || is_repasse_realizado ? (
+
+                is_acoes_associacoes || is_contas_associacoes || is_repasse_previsto || is_repasse_realizado ? (
                   <AbasPorRecurso
                     extra_abas={dadosDeOrigem.UrlsMenuInterno}
                     tab_initial_active="extra-tab-0"
                     extra_handle_click_tab_recurso={() => {
                       if (dadosDeOrigem.url_go_back) {
                         navigate(dadosDeOrigem.url_go_back);
-                      }
+                      } 
+
                     }}
                   />
                 ) : (
