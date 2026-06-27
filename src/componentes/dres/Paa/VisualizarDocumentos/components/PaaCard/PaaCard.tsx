@@ -88,14 +88,11 @@ export const PaaCard: React.FC<PaaCardProps> = ({ dados }) => {
         if (id) await getDownloadAtaPaa(id);
     }, []);
 
-    const { retificacao, esta_em_retificacao } = dados;
-    const mostrarRetificacao = Boolean(
-        esta_em_retificacao && retificacao?.documento && retificacao?.ata,
-    );
+    const { retificacao, exibe_dados_retificacao } = dados;
 
     return (
         <div className='paa-card border border-top-0 p-3'>
-            {mostrarRetificacao ? (
+            {exibe_dados_retificacao ? (
                 <>
                     <PaaSecaoPlanoEAta
                         tituloSecao={`PAA Retificado #${retificacao.documento.status.versao_documento}`}

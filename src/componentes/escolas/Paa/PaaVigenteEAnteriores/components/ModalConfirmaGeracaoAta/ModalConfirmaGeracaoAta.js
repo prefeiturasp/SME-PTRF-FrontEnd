@@ -3,7 +3,7 @@ import { Modal } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 
-export const ModalConfirmaGeracaoAta = memo(({ open, onClose, onConfirm }) => {
+export const ModalConfirmaGeracaoAta = memo(({ open, onClose, onConfirm, emRetificacao }) => {
     return (
         <Modal
             centered
@@ -23,7 +23,7 @@ export const ModalConfirmaGeracaoAta = memo(({ open, onClose, onConfirm }) => {
             </Modal.Header>
             <Modal.Body>
                 <p>
-                    Ao gerar a Ata de Apresentação, não será mais possível editá-la. Deseja continuar?
+                    Ao gerar a Ata de {emRetificacao ? 'Retificação' : 'Apresentação'}, não será mais possível editá-la. Deseja continuar?
                 </p>
             </Modal.Body>
             <Modal.Footer>

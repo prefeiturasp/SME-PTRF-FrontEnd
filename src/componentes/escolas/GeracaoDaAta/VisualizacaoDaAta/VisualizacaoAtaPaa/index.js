@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import "../../geracao-da-ata.scss";
+import { Spin } from "antd";
 import { TopoComBotoes } from "./TopoComBotoes";
 import WatermarkPrevia from "../../../../Globais/WatermarkPrevia/WatermarkPrevia";
 import { useVisualizacaoAtaPaa } from "./hooks/useVisualizacaoAtaPaa";
@@ -70,35 +71,43 @@ export const VisualizacaoAtaPaa = () => {
             />
           )}
         </div>
-        
+
         { !paaRetificacao && !isLoading ? (
-          <AtaElaboracao 
-            getAnoPorExtenso={getAnoPorExtenso}
-            getDiaPorExtenso={getDiaPorExtenso}
-            getMesPorExtenso={getMesPorExtenso}
-            getLocalReuniao={getLocalReuniao}
-            getNomeUnidade={getNomeUnidade}
-            getHoraInicio={getHoraInicio}
-            getTipoReuniao={getTipoReuniao}
-            getTipoUnidadeComNome={getTipoUnidadeComNome}
-            getNomeUnidadeEducacional={getNomeUnidadeEducacional}
-          />     
+          <span>
+            <Spin spinning={isLoading} size="large">
+              <AtaElaboracao
+                getAnoPorExtenso={getAnoPorExtenso}
+                getDiaPorExtenso={getDiaPorExtenso}
+                getMesPorExtenso={getMesPorExtenso}
+                getLocalReuniao={getLocalReuniao}
+                getNomeUnidade={getNomeUnidade}
+                getHoraInicio={getHoraInicio}
+                getTipoReuniao={getTipoReuniao}
+                getTipoUnidadeComNome={getTipoUnidadeComNome}
+                getNomeUnidadeEducacional={getNomeUnidadeEducacional}
+              />
+            </Spin>
+          </span>
         ) : (
-          <AtaRetificacao 
-            getNomeUnidadeEducacional={getNomeUnidadeEducacional}
-            getAnoPorExtenso={getAnoPorExtenso}
-            getDiaPorExtenso={getDiaPorExtenso}
-            getMesPorExtenso={getMesPorExtenso}
-            getLocalReuniao={getLocalReuniao}
-            getNomeUnidade={getNomeUnidade}
-            getHoraInicio={getHoraInicio}
-            getPeriodoPaaFormatado={getPeriodoPaaFormatado}
-            getDataFormatada={getDataFormatada}
-            getTipoReuniao={getTipoReuniao}
-            dataReuniaoElaboracao={dataReuniaoElaboracao}
-            getNomePresidente={getNomePresidente}
-            getTipoUnidadeComNome={getTipoUnidadeComNome}
-          />
+          <span>
+            <Spin spinning={isLoading} size="large">
+              <AtaRetificacao
+                getNomeUnidadeEducacional={getNomeUnidadeEducacional}
+                getAnoPorExtenso={getAnoPorExtenso}
+                getDiaPorExtenso={getDiaPorExtenso}
+                getMesPorExtenso={getMesPorExtenso}
+                getLocalReuniao={getLocalReuniao}
+                getNomeUnidade={getNomeUnidade}
+                getHoraInicio={getHoraInicio}
+                getPeriodoPaaFormatado={getPeriodoPaaFormatado}
+                getDataFormatada={getDataFormatada}
+                getTipoReuniao={getTipoReuniao}
+                dataReuniaoElaboracao={dataReuniaoElaboracao}
+                getNomePresidente={getNomePresidente}
+                getTipoUnidadeComNome={getTipoUnidadeComNome}
+              />
+            </Spin>
+          </span>
         )}
         
         {!isLoadingPrioridades && prioridadesAgrupadas && !paaRetificacao && !isLoading ? (
@@ -110,18 +119,18 @@ export const VisualizacaoAtaPaa = () => {
         <div className="col-12 mt-4">
           <p>Foi apresentado o seguinte cronograma para as atividades de {getPeriodoPaaFormatado()}:</p>
         </div>
-        
-       { !isLoadingAtividades && atividades && atividades.length > 0 && (
-        <AtividadesEstatutarias 
-          atividades={atividades}
-          isLoadingAtividades={isLoadingAtividades}
-          paaRetificacao={paaRetificacao}
-          isLoading={isLoading}
-          formatarMesAno={formatarMesAno}
-          formatarData={formatarData}
-        />        
-       )}
-       
+
+        { !isLoadingAtividades && atividades && atividades.length > 0 && (
+          <AtividadesEstatutarias
+            atividades={atividades}
+            isLoadingAtividades={isLoadingAtividades}
+            paaRetificacao={paaRetificacao}
+            isLoading={isLoading}
+            formatarMesAno={formatarMesAno}
+            formatarData={formatarData}
+          />
+        )}
+
         { paaRetificacao && !isLoading && (
           <div className="col-12 mt-4">
             <h4 style={{ fontWeight: "bold", fontSize: "20px", color: "#42474A" }}>Justificativa da Retificação</h4>
@@ -129,7 +138,7 @@ export const VisualizacaoAtaPaa = () => {
           </div>
         )}
 
-        <Manifestacoes 
+        <Manifestacoes
           dadosAta={dadosAta}
           paaRetificacao={paaRetificacao}
           tabelas={tabelas}
@@ -151,7 +160,7 @@ export const VisualizacaoAtaPaa = () => {
               e eu, <strong>{getNomeSecretarioReuniao()}</strong>, lavrei a presente Ata, que foi por mim  assinada e pelos demais
               presentes.
             </p>
-          </div>          
+          </div>
         )}
 
         {listaPresentes && listaPresentes.length > 0 && (
