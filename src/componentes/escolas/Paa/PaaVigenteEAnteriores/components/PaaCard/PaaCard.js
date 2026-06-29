@@ -100,8 +100,8 @@ export const PaaCard = ({ dados, onDadosAtualizados }) => {
 
   const { retificacao, exibe_dados_retificacao } = dados;
 
-  const resumoAssembleiaOriginal = original.ata?.resumo_assembleia;
-  const resumoAssembleiaRetificacao = retificacao.ata?.resumo_assembleia;
+  const resumoAssembleiaOriginal = original?.ata?.resumo_assembleia;
+  const resumoAssembleiaRetificacao = retificacao?.ata?.resumo_assembleia;
 
   return (
     <div className="paa-card border border-top-0 p-3">
