@@ -233,7 +233,7 @@ describe('PaaAtaAcoes', () => {
     renderComRouter(
       <PaaAtaAcoes paaUuid="paa-99" ata={ata} documentoPlano={documentoPlano} />
     );
-    fireEvent.click(screen.getByRole('button', { name: /visualizar ata/i }));
+    fireEvent.click(screen.getByRole('button', { name: /visualizar prévia da ata/i }));
     expect(mockNavigate).toHaveBeenCalledWith('/relatorios-paa/visualizacao-da-ata-paa/paa-99', {
       state: { origem: 'paa-vigente-e-anteriores' },
     });
