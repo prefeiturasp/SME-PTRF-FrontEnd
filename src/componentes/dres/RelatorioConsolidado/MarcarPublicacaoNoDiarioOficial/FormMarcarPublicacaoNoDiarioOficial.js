@@ -1,4 +1,4 @@
-import React, {memo, useCallback, useState} from "react";
+import React, {memo, useCallback, useMemo, useState} from "react";
 import {Formik} from "formik";
 import {YupSignupSchemaMarcarPublicacaoNoDiarioOficial} from "../YupSignupSchemaMarcarPublicacaoNoDiarioOficial";
 import {DatePickerField} from "../../../Globais/DatePickerField";
@@ -17,7 +17,7 @@ const FormMarcarPublicacaoNoDiarioOficial = ({consolidadoDre, carregaConsolidado
 
     const habilita_exibicao_de_lauda = recursoSelecionado?.habilita_exibicao_de_lauda;
 
-    const texto_documento_consolidado_pc = new TextoDocumentoConsolidadoPC(habilita_exibicao_de_lauda)
+    const texto_documento_consolidado_pc = useMemo(() => new TextoDocumentoConsolidadoPC(habilita_exibicao_de_lauda), [habilita_exibicao_de_lauda]);
 
     const text_normal_remover = texto_documento_consolidado_pc.texto_remover_publicacao();
     const text_removido = texto_documento_consolidado_pc.texto_removido();
@@ -25,7 +25,7 @@ const FormMarcarPublicacaoNoDiarioOficial = ({consolidadoDre, carregaConsolidado
     const text_aplicada = texto_documento_consolidado_pc.texto_publicacao_aplicada();
     const texto_publicacao = texto_documento_consolidado_pc.texto_input_label();
 
-    const texto_info = `Selecione a data ${texto_publicacao}.`;
+    const texto_info = `Selecione a data ${texto_publicacao}`;
 
     const initialState = {
         habilita_exibicao_de_lauda,

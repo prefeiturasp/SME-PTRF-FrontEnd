@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { useRecursoSelecionadoContext } from "../../../../context/RecursoSelecionado";
@@ -7,7 +7,7 @@ import { TextoDocumentoConsolidadoPC } from "../../../../utils/TextoDocumentoCon
 export const Cabecalho = ({ referenciaPublicacao, onClickVoltar, formataPeriodo }) => {
   const { recursoSelecionado } = useRecursoSelecionadoContext();
 
-  const texto_documento_consolidado_pc = new TextoDocumentoConsolidadoPC(recursoSelecionado?.habilita_exibicao_lauda)
+  const texto_documento_consolidado_pc = useMemo(() => new TextoDocumentoConsolidadoPC(recursoSelecionado?.habilita_exibicao_de_lauda), [recursoSelecionado?.habilita_exibicao_de_lauda]);
   const text_possessive = texto_documento_consolidado_pc.possessivo();
 
   return (

@@ -1,11 +1,11 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { useRecursoSelecionadoContext } from "../../../../../../context/RecursoSelecionado";
 import { TextoDocumentoConsolidadoPC } from "../../../../../../utils/TextoDocumentoConsolidadoPC";
 
 export const TextoDinamicoSuperior = ({retornaDadosAtaFormatado, retornaTituloCorpoAta, ehPrevia, ehRetificacao, motivoRetificacao}) => {
     const { recursoSelecionado } = useRecursoSelecionadoContext();
 
-    const texto_documento_consolidado_pc = new TextoDocumentoConsolidadoPC(recursoSelecionado?.habilita_exibicao_de_lauda);
+    const texto_documento_consolidado_pc = useMemo(() => new TextoDocumentoConsolidadoPC(recursoSelecionado?.habilita_exibicao_de_lauda), [recursoSelecionado?.habilita_exibicao_de_lauda]);
     const texto_publicacao = texto_documento_consolidado_pc.texto_artigo_a();
     const texto_emissao = texto_documento_consolidado_pc.texto_emissao();
 
