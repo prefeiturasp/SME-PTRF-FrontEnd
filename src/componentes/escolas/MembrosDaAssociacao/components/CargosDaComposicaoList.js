@@ -49,21 +49,33 @@ export const CargosDaComposicaoList = ({ escopo }) => {
   };
 
   const montaColunaNomeOcupante = (rowData) => {
+    let badge = null;
+
+    if (rowData.substituto) {
+      badge = (
+        <Badge className="badge-substituto">
+          {rowData.tag_substituto}
+        </Badge>
+      );
+    } else if (rowData.substituido) {
+      badge = (
+        <Badge className="badge-substituido">
+          {rowData.tag_substituido}
+        </Badge>
+      );
+    }
+
     return (
       <div className="d-flex flex-column align-items-start">
         <span>{rowData.ocupante_do_cargo.nome}</span>
-        {rowData.substituto === true ? (
-          <Badge className="badge-substituto">{rowData.tag_substituto}</Badge>
-        ) : rowData.substituido === true ? (
-          <Badge className="badge-substituido">{rowData.tag_substituido}</Badge>
-        ) : null}
+        {badge}
       </div>
     );
   };
 
   return (
     <>
-      {!isLoading && data && data.diretoria_executiva && (
+      {!isLoading && data?.diretoria_executiva && (
         <div className="pt-0 pr-2 pl-2 pb-2">
           <p>
             <strong>Diretoria executiva</strong>
@@ -77,7 +89,7 @@ export const CargosDaComposicaoList = ({ escopo }) => {
         </div>
       )}
 
-      {!isLoading && data && data.conselho_fiscal && (
+      {!isLoading && data?.conselho_fiscal && (
         <div className="p-2 mt-3">
           <p>
             <strong>Conselho Fiscal</strong>

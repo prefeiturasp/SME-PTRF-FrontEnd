@@ -7,7 +7,7 @@ export const ComposicaoInfo = () => {
     const dataTemplate = useDataTemplate()
     return (
         <>
-            {!isLoading && data && data.uuid &&
+            {!isLoading && data?.uuid && 
                 <div className="p-2 pt-3" data-qa='composicao-info'>
                     <p className='mb-0 fonte-16'><strong>Composição a partir de:</strong></p>
                     <p className='mb-0'>
