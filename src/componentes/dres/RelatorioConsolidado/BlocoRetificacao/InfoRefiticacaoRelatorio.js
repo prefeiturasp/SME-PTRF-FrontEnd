@@ -1,4 +1,4 @@
-import React, {memo} from "react";
+import React, {memo, useMemo} from "react";
 import useDataTemplate from "../../../../hooks/Globais/useDataTemplate";
 import IconeEditarRetificacao from "../BlocoRetificacao/IconeEditarRetificacao";
 import { TextoDocumentoConsolidadoPC } from "../../../../utils/TextoDocumentoConsolidadoPC";
@@ -7,7 +7,7 @@ const dataTemplate = useDataTemplate()
 const InfoRetificacaoRelatorio = ({consolidadoDre}) => {
     const { recursoSelecionado } = useRecursoSelecionadoContext();
 
-    const text_possessive = new TextoDocumentoConsolidadoPC(recursoSelecionado?.habilita_exibicao_lauda).possessivo();
+    const text_possessive = useMemo(() => new TextoDocumentoConsolidadoPC(recursoSelecionado?.habilita_exibicao_de_lauda).possessivo(), [recursoSelecionado?.habilita_exibicao_de_lauda]);
 
     return(
         <>
