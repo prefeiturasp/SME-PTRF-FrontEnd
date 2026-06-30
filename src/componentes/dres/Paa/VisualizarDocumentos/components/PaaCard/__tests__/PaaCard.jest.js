@@ -91,6 +91,7 @@ describe('PaaCard', () => {
         uuid: 'paa-123',
 
         esta_em_retificacao: true,
+        exibe_dados_retificacao: true,
 
         retificacao: {
             documento: {
@@ -154,6 +155,7 @@ describe('PaaCard', () => {
                     dados={{
                         ...dadosMock,
                         esta_em_retificacao: false,
+                        exibe_dados_retificacao: false,
                     }}
                 />,
             );
@@ -338,6 +340,7 @@ describe('PaaCard', () => {
                             ata: {},
                         },
                         esta_em_retificacao: false,
+                        exibe_dados_retificacao: false,
                     }}
                 />,
             );
@@ -385,6 +388,7 @@ describe('PaaCard', () => {
                             ata: {},
                         },
                         esta_em_retificacao: false,
+                        exibe_dados_retificacao: false,
                     }}
                 />,
             );

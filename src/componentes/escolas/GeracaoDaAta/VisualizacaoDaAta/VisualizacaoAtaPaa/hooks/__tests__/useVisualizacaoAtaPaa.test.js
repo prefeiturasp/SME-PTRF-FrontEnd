@@ -179,14 +179,13 @@ describe('useVisualizacaoAtaPaa', () => {
 
   it('deve processar rota atual e acionar window.location.assign na edição da ata', () => {
     window.location.pathname = '/teste-path';
-    window.location.search = '?id=9';
     const { result } = renderHook(() => useVisualizacaoAtaPaa());
 
     act(() => {
       result.current.handleClickEditarAta();
     });
 
-    const rotaEsperada = `/relatorios-paa/edicao-ata/123?returnUrl=${encodeURIComponent('/teste-path?id=9')}`;
+    const rotaEsperada = `/relatorios-paa/edicao-ata/123?returnUrl=${encodeURIComponent('/teste-path')}`;
     expect(window.location.assign).toHaveBeenCalledWith(rotaEsperada);
   });
 

@@ -78,11 +78,12 @@ export const PaaCard = ({ dados, onDadosAtualizados }) => {
   }, []);
 
   const statusGeracaoAtaApresentacao = original?.ata?.status?.status_geracao;
+  const statusGeracaoAtaRetificacao = dados?.retificacao?.ata?.status?.status_geracao;
   useEffect(() => {
-    if (statusGeracaoAtaApresentacao !== 'EM_PROCESSAMENTO') {
-      return undefined;
-    }
-    if (!onDadosAtualizados) {
+    const emProcessamento =
+      statusGeracaoAtaApresentacao === 'EM_PROCESSAMENTO' ||
+      statusGeracaoAtaRetificacao === 'EM_PROCESSAMENTO';
+    if (!emProcessamento || !onDadosAtualizados) {
       return undefined;
     }
     const id = setInterval(() => {
@@ -91,22 +92,23 @@ export const PaaCard = ({ dados, onDadosAtualizados }) => {
     return () => {
       clearInterval(id);
     };
-  }, [statusGeracaoAtaApresentacao, onDadosAtualizados]);
+  }, [statusGeracaoAtaApresentacao, statusGeracaoAtaRetificacao, onDadosAtualizados]);
 
   if (!original?.documento || !original?.ata) {
     return null;
   }
 
-  const { retificacao, esta_em_retificacao } = dados;
-  const mostrarRetificacao = Boolean(esta_em_retificacao && retificacao?.documento && retificacao?.ata);
-  const resumoAssembleiaOriginal = original.ata?.resumo_assembleia;
+  const { retificacao, exibe_dados_retificacao } = dados;
+
+  const resumoAssembleiaOriginal = original?.ata?.resumo_assembleia;
+  const resumoAssembleiaRetificacao = retificacao?.ata?.resumo_assembleia;
 
   return (
     <div className="paa-card border border-top-0 p-3">
-      {mostrarRetificacao ? (
+      {exibe_dados_retificacao ? (
         <>
           <PaaSecaoPlanoEAta
-            tituloSecao={`PAA Retificado #${retificacao.documento.status.versao_documento}`}
+            tituloSecao={retificacao.secao_titulo}
             documento={retificacao.documento}
             ata={retificacao.ata}
             tituloAta="Ata de retificação do PAA"
@@ -117,10 +119,13 @@ export const PaaCard = ({ dados, onDadosAtualizados }) => {
             onDownloadDocumento={onDownloadDocumento}
             onVisualizarAta={onVisualizarAta}
             onDownloadAta={onDownloadAta}
+            onDepoisDeGerarAta={onDadosAtualizados}
+            resumoAssembleia={resumoAssembleiaRetificacao}
+            dadosPaa={dados}
           />
           <hr className="my-4 paa-card__separador" />
           <PaaSecaoPlanoEAta
-            tituloSecao="PAA Original"
+            tituloSecao={original.secao_titulo}
             documento={original.documento}
             ata={original.ata}
             tituloAta="Ata de apresentação do PAA"
@@ -133,6 +138,7 @@ export const PaaCard = ({ dados, onDadosAtualizados }) => {
             onDownloadAta={onDownloadAta}
             onDepoisDeGerarAta={onDadosAtualizados}
             resumoAssembleia={resumoAssembleiaOriginal}
+            dadosPaa={dados}
           />
         </>
       ) : (
@@ -150,6 +156,7 @@ export const PaaCard = ({ dados, onDadosAtualizados }) => {
           onDownloadAta={onDownloadAta}
           onDepoisDeGerarAta={onDadosAtualizados}
           resumoAssembleia={resumoAssembleiaOriginal}
+          dadosPaa={dados}
         />
       )}
       <ModalVisualizarPdf

@@ -137,6 +137,7 @@ export interface IVigentePaa {
     unidade: IUnidadeVisualizacaoPaa;
     original: IBlocoDocumentosPaa;
     retificacao: IBlocoDocumentosPaa;
+    exibe_dados_retificacao: boolean;
 }
 export interface IVisualizarDocumentosPaaResponse {
     vigente: IVigentePaa;
