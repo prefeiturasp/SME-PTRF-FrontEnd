@@ -326,6 +326,7 @@ export const ReceitaFormFormik = ({
                                     <select
                                         id="categoria_receita"
                                         name="categoria_receita"
+                                        disabled={readOnlyEstorno || readOnlyCampos || readOnlyClassificacaoReceita || ![['add_receita'], ['change_receita']].some(visoesService.getPermissoes)}
                                         value={props.values.categoria_receita}
                                         onChange={(e) => {
                                             props.handleChange(e);
