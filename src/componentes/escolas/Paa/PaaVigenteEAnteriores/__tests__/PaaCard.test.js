@@ -125,7 +125,9 @@ describe('PaaCard', () => {
     const dados = {
       uuid: 'paa-uuid',
       esta_em_retificacao: true,
+      exibe_dados_retificacao: true,
       retificacao: {
+        secao_titulo: 'PAA Retificado #2',
         documento: {
           ...DOCUMENTO_PADRAO,
           status: {
@@ -150,6 +152,7 @@ describe('PaaCard', () => {
         },
       },
       original: {
+        secao_titulo: 'PAA Original',
         documento: {
           ...DOCUMENTO_PADRAO,
           existe_arquivo: true,

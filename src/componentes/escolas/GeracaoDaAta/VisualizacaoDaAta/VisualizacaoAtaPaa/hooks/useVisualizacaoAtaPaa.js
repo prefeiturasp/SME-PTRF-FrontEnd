@@ -75,7 +75,9 @@ export const useVisualizacaoAtaPaa = () => {
     };
 
     const handleClickFecharAta = () => {
-        if (location.state?.origem === 'paa-vigente-e-anteriores') {
+        const searchParams = new URLSearchParams(location.search);
+        const origem = location.state?.origem || searchParams.get("origem");
+        if (origem === 'paa-vigente-e-anteriores') {
             navigate("/paa-vigente-e-anteriores");
         } else {
             navigate("/elaborar-novo-paa", {
@@ -91,7 +93,10 @@ export const useVisualizacaoAtaPaa = () => {
     };
 
     const handleClickEditarAta = () => {
-        const rotaAtual = `${window.location.pathname}${window.location.search || ""}`;
+        const origem = location.state?.origem;
+        const rotaAtual = origem
+            ? `${window.location.pathname}?origem=${encodeURIComponent(origem)}`
+            : window.location.pathname;
         const path = `/relatorios-paa/edicao-ata/${uuid_paa}?returnUrl=${encodeURIComponent(rotaAtual)}`;
         window.location.assign(path);
     };

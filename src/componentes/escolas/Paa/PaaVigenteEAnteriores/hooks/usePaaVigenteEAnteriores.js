@@ -1,5 +1,7 @@
+import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getPaaVigenteEAnteriores } from "../../../../../services/escolas/Paa.service";
+import { toastCustom } from "../../../../Globais/ToastCustom";
 
 export const usePaaVigenteEAnteriores = (associacaoUuid) => {
   const {
@@ -16,6 +18,14 @@ export const usePaaVigenteEAnteriores = (associacaoUuid) => {
     staleTime: 0,
     gcTime: 0,
   });
+  useEffect(() => {
+    if (isError) {
+      toastCustom.ToastCustomError(
+        "Não foi possível carregar o PAA",
+        error?.response?.data?.mensagem || "Falha ao carregar o PAA.",
+      );
+    }
+  }, [isError, error]);
 
   return {
     data,
