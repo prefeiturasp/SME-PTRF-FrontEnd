@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useMemo } from "react";
 import {
     ModalBootstrap,
     ModalBootstrapReverConciliacao,
@@ -610,7 +610,7 @@ export const ModalConfirmarExportacao = (propriedades) => {
 export const ModalAtaNaoPreenchida = (propriedades) => {
     const { recursoSelecionado } = useRecursoSelecionadoContext();
 
-    const texto_documento_consolidado_pc = new TextoDocumentoConsolidadoPC(recursoSelecionado?.habilita_exibicao_lauda)
+    const texto_documento_consolidado_pc = useMemo(() => new TextoDocumentoConsolidadoPC(recursoSelecionado?.habilita_exibicao_de_lauda), [recursoSelecionado?.habilita_exibicao_de_lauda]);
     
     const text_fazer = texto_documento_consolidado_pc.texto_acao_concreta();
 

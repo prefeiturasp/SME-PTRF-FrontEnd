@@ -1,4 +1,4 @@
-import React, {memo, useCallback, useEffect, useState, useRef} from "react";
+import React, {memo, useCallback, useEffect, useState, useRef, useMemo} from "react";
 import { PaginasContainer } from "../../../../paginas/PaginasContainer";
 import '../relatorio-consolidado.scss'
 import { Cabecalho } from "./Cabecalho";
@@ -25,7 +25,7 @@ import { TextoDocumentoConsolidadoPC } from "../../../../utils/TextoDocumentoCon
 const RetificacaoRelatorioConsolidado = () => {
     const { recursoSelecionado } = useRecursoSelecionadoContext();
 
-    const texto_documento_consolidado_pc = new TextoDocumentoConsolidadoPC(recursoSelecionado?.habilita_exibicao_lauda)
+    const texto_documento_consolidado_pc = useMemo(() => new TextoDocumentoConsolidadoPC(recursoSelecionado?.habilita_exibicao_de_lauda), [recursoSelecionado?.habilita_exibicao_de_lauda]);
 
     const text_possessive = texto_documento_consolidado_pc.possessivo();
     const text_info_lauda_future = texto_documento_consolidado_pc.texto_lauda_a_ser_publicada();

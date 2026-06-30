@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { memo, useMemo } from "react";
 import useDataTemplate from "../../../../hooks/Globais/useDataTemplate";
 import { useNavigate } from "react-router-dom";
 import IconeMarcarPublicacaoNoDiarioOficial from "./IconeMarcarPublicacaoNoDiarioOficial";
@@ -12,7 +12,7 @@ const InfoPublicacaoNoDiarioOficial = ({ consolidadoDre, carregaConsolidadosDreJ
   const navigate = useNavigate();
   const { recursoSelecionado } = useRecursoSelecionadoContext();
 
-  const texto_documento_consolidado_pc = new TextoDocumentoConsolidadoPC(recursoSelecionado?.habilita_exibicao_lauda)
+  const texto_documento_consolidado_pc = useMemo(() => new TextoDocumentoConsolidadoPC(recursoSelecionado?.habilita_exibicao_de_lauda), [recursoSelecionado?.habilita_exibicao_de_lauda]);
 
   const text_possessive = texto_documento_consolidado_pc.texto_acao_objeto();
 

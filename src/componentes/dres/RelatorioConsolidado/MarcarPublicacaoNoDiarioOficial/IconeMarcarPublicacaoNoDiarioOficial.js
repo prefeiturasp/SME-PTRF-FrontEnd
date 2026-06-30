@@ -1,4 +1,4 @@
-import React, {memo, useState} from "react";
+import React, {memo, useMemo, useState} from "react";
 import {ModalMarcarPublicacaoNoDiarioOficial} from "../ModalMarcarPublicacaoNoDiarioOficial";
 import moment from "moment";
 import {visoesService} from "../../../../services/visoes.service";
@@ -9,13 +9,13 @@ import { TextoDocumentoConsolidadoPC } from "../../../../utils/TextoDocumentoCon
 const IconeMarcarPublicacaoNoDiarioOficial = ({consolidadoDre, carregaConsolidadosDreJaPublicadosProximaPublicacao}) => {
     const { recursoSelecionado } = useRecursoSelecionadoContext();
 
-    const habilita_exibicao_lauda = recursoSelecionado?.habilita_exibicao_lauda;
+    const habilita_exibicao_lauda = recursoSelecionado?.habilita_exibicao_de_lauda;
 
-    const texto_documento_consolidado_pc = new TextoDocumentoConsolidadoPC(habilita_exibicao_lauda);
+    const texto_documento_consolidado_pc = useMemo(() => new TextoDocumentoConsolidadoPC(habilita_exibicao_lauda), [habilita_exibicao_lauda]);
 
     const text_possessive = texto_documento_consolidado_pc.possessivo_acao();
     const texto_publicacao_modal = texto_documento_consolidado_pc.texto_titulo_publicacao_modal();
-    const texto_info_modal = `Informar ${texto_publicacao_modal}.`;
+    const texto_info_modal = `Informar ${texto_publicacao_modal}`;
 
     const [showModalMarcarPublicacaoNoDiarioOficial, setShowModalMarcarPublicacaoNoDiarioOficial] = useState(false)
 
