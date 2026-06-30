@@ -1,7 +1,13 @@
 import React from "react";
 
-export const TextoDinamicoInferiorPorAcao = ({dadosAta, retornaDadosAtaFormatado, infoAta, valorTemplate})=>{
+import { useRecursoSelecionadoContext } from "../../../../../context/RecursoSelecionado";
 
+export const TextoDinamicoInferiorPorAcao = ({dadosAta, retornaDadosAtaFormatado, infoAta, valorTemplate})=>{
+    const { getTextValoresReprogramadosATA } = useRecursoSelecionadoContext();
+
+    const text_valores_reprogramados_ata = getTextValoresReprogramadosATA();
+
+    
     const retornaSomaTotaisDeDespesas = () => {
         let soma;
         let despesasNaoConciliadas = infoAta.totais.despesas_nao_conciliadas ? infoAta.totais.despesas_nao_conciliadas : 0
@@ -40,7 +46,7 @@ export const TextoDinamicoInferiorPorAcao = ({dadosAta, retornaDadosAtaFormatado
                             R${infoAta.totais && infoAta.totais.saldo_atual_capital ? valorTemplate(infoAta.totais.saldo_atual_capital) : " 0,00"} para
                             saldo de capital e
                             R${infoAta.totais && infoAta.totais.saldo_atual_livre ? valorTemplate(infoAta.totais.saldo_atual_livre) : " 0,00"} para
-                            saldo de livre aplicação, valores estes que foram reprogramados, além de
+                            saldo de livre aplicação, {text_valores_reprogramados_ata}, além de
                             R${retornaSomaTotaisDeDespesas()} relativo a despesas pendentes de compensação bancária,
                             totalizando
                             R${infoAta.totais && infoAta.totais.saldo_bancario_total ? valorTemplate(infoAta.totais.saldo_bancario_total) : "0,00"}.</p>
@@ -65,7 +71,7 @@ export const TextoDinamicoInferiorPorAcao = ({dadosAta, retornaDadosAtaFormatado
                             R${infoAta.totais && infoAta.totais.saldo_atual_livre ? valorTemplate(infoAta.totais.saldo_atual_livre) : " 0,00"} para
                             saldo de livre aplicação, totalizando
                             R${infoAta.totais && infoAta.totais.saldo_bancario_total ? valorTemplate(infoAta.totais.saldo_bancario_total) : "0,00"},
-                            valores estes que foram reprogramados.
+                            {text_valores_reprogramados_ata}.
                         </p>
                     }
                 </div>
