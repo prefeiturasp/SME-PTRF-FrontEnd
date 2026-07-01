@@ -757,13 +757,8 @@ export const CadastroForm = ({verbo_http, veioDeSituacaoPatrimonial}) => {
         let mensagemErro = 'Verifique se os dados foram preenchidos corretamente.'
 
         if (response && response.data){
-            if (response.data.hasOwnProperty("rateios")) {
-                const rateios = response.data.rateios[0];
-                mensagemErro += " Rateios: " + rateios.mensagem.map((msg) => msg).join(", ")
-            } else {
-                const error = {response};
-                mensagemErro = getErrorMessage(error, "Ocorreu um erro criar/editar despesa.");
-            }
+            const error = {response};
+            mensagemErro = getErrorMessage(error, "Ocorreu um erro criar/editar despesa.");
         }
         
         toastCustom.ToastCustomError('Erro ao tentar salvar despesa.', mensagemErro)
