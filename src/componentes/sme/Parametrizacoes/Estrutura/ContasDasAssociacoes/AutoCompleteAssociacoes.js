@@ -13,7 +13,8 @@ const AutoCompleteAssociacoes = ({todasAsAssociacoesAutoComplete, recebeAutoComp
                 filteredAssociacoes = [...todasAsAssociacoesAutoComplete];
             } else {
                 filteredAssociacoes = todasAsAssociacoesAutoComplete.filter((associacaoAtiva) => {
-                    return associacaoAtiva.nome.toLowerCase().includes(event.query.toLowerCase())
+                    return associacaoAtiva.unidade?.nome_com_tipo?.toLowerCase().includes(event.query.toLowerCase()) ||
+                        associacaoAtiva.unidade?.codigo_eol?.includes(event.query.toLowerCase())
                 })
             }
             setFilteredAssociacoes(filteredAssociacoes);
@@ -24,12 +25,12 @@ const AutoCompleteAssociacoes = ({todasAsAssociacoesAutoComplete, recebeAutoComp
         if(item.encerrada) {
             return (
                 <div className='d-flex' style={{opacity: 0.6}}>
-                    <span className='mr-3'>{item.nome}</span>
+                    <span className='mr-3'>{item.unidade?.nome_com_tipo}</span>
                     <Tag label='Associação encerrada'/>
                 </div>
             )
         } else {
-            return item.nome;
+            return item.unidade?.nome_com_tipo;
         }
     };
     
@@ -56,14 +57,15 @@ const AutoCompleteAssociacoes = ({todasAsAssociacoesAutoComplete, recebeAutoComp
             inputId='associacao_nome'
             suggestions={filteredAssociacoes}
             completeMethod={searchAssociacao}
-            field="nome"
+            field="unidade.nome_com_tipo"
             onChange={handleChange}
             onSelect={handleSelect}
             itemTemplate={itemTemplate}
             disabled={disabled}
             loading={loadingAssociacoes}
             placeholder=""
-            loadingText="Carregando associações"
+            loadingText="Carregando unidades"
+            style={{width: "auto", borderLeft:'none'}}
         />
     )
 };

@@ -20,7 +20,10 @@ export function podeExibirBotaoRetificar(vigente) {
   const regras_podem_continuar_retificacao = [
     visoesService.featureFlagAtiva('paa-retificacao'),
     vigente.esta_em_retificacao,
-    vigente?.retificacao?.documento?.status?.versao !== 'FINAL',
+    // ciclo_retificacao_sem_documento=True indica que o ciclo corrente ainda não gerou
+    // seu próprio documento — o doc exibido pode ser fallback do ciclo anterior (FINAL),
+    // por isso não inferimos o estado via versao do documento.
+    vigente.ciclo_retificacao_sem_documento === true,
   ]
 
   return regras_podem_retificar.every((regra) => regra === true) ||

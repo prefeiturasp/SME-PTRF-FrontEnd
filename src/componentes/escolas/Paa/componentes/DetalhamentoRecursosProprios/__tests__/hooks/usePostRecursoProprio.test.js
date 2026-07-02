@@ -220,7 +220,7 @@ describe("usePostRecursoProprio", () => {
 
       await waitFor(() =>
         expect(toastCustom.ToastCustomError).toHaveBeenCalledWith(
-          "Houve um erro ao criar recurso."
+          "Ocorreu um erro inesperado."
         )
       );
     });

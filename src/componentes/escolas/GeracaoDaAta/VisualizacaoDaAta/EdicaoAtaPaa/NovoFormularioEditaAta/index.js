@@ -4,6 +4,7 @@ import { DatePickerField } from "../../../../../Globais/DatePickerField";
 import { toastCustom } from "../../../../../Globais/ToastCustom";
 import { visoesService } from "../../../../../../services/visoes.service";
 import { FieldArray, Formik } from "formik";
+import { Spin } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faTimesCircle,
@@ -73,6 +74,7 @@ export const NovoFormularioEditaAta = ({
   const [disableBtnApagarPresente, setDisableBtnApagarPresente] =
     useState(false);
   const [disableBtnConfirmarEdicao] = useState(false);
+  const [isLoadingParticipantes, setIsLoadingParticipantes] = useState(false);
   const [disableBtnCancelarEdicao] = useState(false);
   const [formErrors, setFormErrors] = useState({});
   const [ehAdicaoPresente, setEhAdicaoPresente] = useState(false);
@@ -950,6 +952,7 @@ export const NovoFormularioEditaAta = ({
 
       const data_formatada = formatDate(value);
       try {
+        setIsLoadingParticipantes(true);
         const listaComProfessor = await montarListaPorData(data_formatada);
 
         sincronizaListaParticipantes(listaComProfessor, {
@@ -959,6 +962,8 @@ export const NovoFormularioEditaAta = ({
       } catch (error) {
         sincronizaListaParticipantes([], { reinicializar: true });
         notificarErroComposicaoPorData(error);
+      } finally {
+        setIsLoadingParticipantes(false);
       }
       return;
     }
@@ -1232,6 +1237,7 @@ export const NovoFormularioEditaAta = ({
                     <strong>Participantes</strong>
                   </p>
 
+                  <Spin size="large" spinning={isLoadingParticipantes}>
                   {values.listaParticipantes &&
                   values.listaParticipantes.length > 0 &&
                   values.stateFormEditarAta &&
@@ -1819,6 +1825,7 @@ export const NovoFormularioEditaAta = ({
                   ) : (
                     <BarraAvisoPreencerData />
                   )}
+                  </Spin>
 
                   {/*So exibe o campo retificações em atas de retificação*/}
                   {stateFormEditarAta &&

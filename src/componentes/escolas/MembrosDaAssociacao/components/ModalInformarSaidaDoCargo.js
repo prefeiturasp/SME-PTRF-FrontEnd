@@ -27,13 +27,14 @@ export const ModalInformarSaidaDoCargo = ({
             <Modal.Body>
                 <div className="form-inline mt-3">
                     <div className="form-group mb-2">
-                        <label className="mr-3">Data da saída *</label>
+                        <label htmlFor="data_saida" className="mr-3">Data da saída *</label>
                         <DatePickerField
+                            id="data_saida"
                             name="data_saida"
                             value={dataSaida}
                             onChange={handleChange}
                             placeholderText={"DD/MM/AAAA"}
-                            minDate={composicaoAtual && composicaoAtual.info_composicao_anterior ? moment(composicaoAtual.info_composicao_anterior.data_final).toDate() : ""}
+                            minDate={composicaoAtual?.info_composicao_anterior ? moment(composicaoAtual.info_composicao_anterior.data_final).toDate() : ""}
                             maxDate={new Date() < moment(composicaoAtual.data_final).toDate() ? new Date() : moment(composicaoAtual.data_final).toDate()}
                         />
                     </div>

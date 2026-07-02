@@ -1,4 +1,4 @@
-import React, {memo, useCallback, useState} from "react";
+import React, {memo, useCallback, useMemo, useState} from "react";
 import {Formik} from "formik";
 import {YupSignupSchemaMarcarPublicacaoNoDiarioOficial} from "../YupSignupSchemaMarcarPublicacaoNoDiarioOficial";
 import {DatePickerField} from "../../../Globais/DatePickerField";
@@ -9,10 +9,26 @@ import {
 } from "../../../../services/dres/RelatorioConsolidado.service";
 import {toastCustom} from "../../../Globais/ToastCustom";
 import ModalConfirmDesmarcarPublicacaoNoDiarioOficial from "../ModalConfirmDesmarcarPublicacaoNoDiarioOficial";
+import { useRecursoSelecionadoContext } from "../../../../context/RecursoSelecionado";
+import { TextoDocumentoConsolidadoPC } from "../../../../utils/TextoDocumentoConsolidadoPC";
 
 const FormMarcarPublicacaoNoDiarioOficial = ({consolidadoDre, carregaConsolidadosDreJaPublicadosProximaPublicacao, handleClose, textoMsg, textoBotaoSalvar}) => {
+    const { recursoSelecionado } = useRecursoSelecionadoContext();
+
+    const habilita_exibicao_de_lauda = recursoSelecionado?.habilita_exibicao_de_lauda;
+
+    const texto_documento_consolidado_pc = useMemo(() => new TextoDocumentoConsolidadoPC(habilita_exibicao_de_lauda), [habilita_exibicao_de_lauda]);
+
+    const text_normal_remover = texto_documento_consolidado_pc.texto_remover_publicacao();
+    const text_removido = texto_documento_consolidado_pc.texto_removido();
+    const text_possessive = texto_documento_consolidado_pc.possessivo();
+    const text_aplicada = texto_documento_consolidado_pc.texto_publicacao_aplicada();
+    const texto_publicacao = texto_documento_consolidado_pc.texto_input_label();
+
+    const texto_info = `Selecione a data ${texto_publicacao}`;
 
     const initialState = {
+        habilita_exibicao_de_lauda,
         data_publicacao: consolidadoDre.data_publicacao,
         pagina_publicacao: consolidadoDre.pagina_publicacao,
     }
@@ -26,13 +42,11 @@ const FormMarcarPublicacaoNoDiarioOficial = ({consolidadoDre, carregaConsolidado
             pagina_publicacao: values.pagina_publicacao,
         }
         try {
-            let marcado = await postMarcarComoPublicadoNoDiarioOficial(payload)
+            await postMarcarComoPublicadoNoDiarioOficial(payload)
             handleClose()
-            toastCustom.ToastCustomSuccess('Data e página da publicação aplicadas com sucesso.', `${textoMsg}`)
-            console.log("Relatório marcado como publicado no Diário Oficial com sucesso! ", marcado)
+            toastCustom.ToastCustomSuccess(`Data ${text_aplicada} com sucesso.`, `${textoMsg}`)
             await carregaConsolidadosDreJaPublicadosProximaPublicacao()
-        }catch (e) {
-            console.log("Erro ao marcar como publicado no Diário Oficial!")
+        } catch {
             handleClose()
         }
     }, [carregaConsolidadosDreJaPublicadosProximaPublicacao, consolidadoDre.uuid, handleClose, textoMsg])
@@ -41,26 +55,30 @@ const FormMarcarPublicacaoNoDiarioOficial = ({consolidadoDre, carregaConsolidado
         const payload ={
             consolidado_dre: consolidadoDre.uuid,
         }
+
         try {
-            let desmarcado = await postDesmarcarComoPublicadoNoDiarioOficial(payload)
+            await postDesmarcarComoPublicadoNoDiarioOficial(payload)
             handleClose()
             setShowModalConfirmDesmarcarPublicacaoNoDiarioOficial(false)
-            toastCustom.ToastCustomSuccess('Informação da publicação removida com sucesso.', `Data e página da publicação removidas com sucesso.`)
-            console.log("Relatório desmarcado como publicado no Diário Oficial com sucesso! ", desmarcado)
+            toastCustom.ToastCustomSuccess(`Informação ${text_possessive} removida com sucesso.`, `Data ${text_removido}`)
             await carregaConsolidadosDreJaPublicadosProximaPublicacao()
-        }catch (e) {
-            console.log("Erro ao desmarcar como publicado no Diário Oficial!")
+        } catch {
             handleClose()
             setShowModalConfirmDesmarcarPublicacaoNoDiarioOficial(false)
         }
     }
 
     const verificaSeHabilitaBotaoExclusao = () =>{
-        return consolidadoDre
-            && consolidadoDre.data_publicacao
-            && consolidadoDre.pagina_publicacao
-            && consolidadoDre.status_sme !== 'EM_ANALISE'
-            && consolidadoDre.permite_excluir_data_e_pagina_publicacao
+        let hasPublicationPage = true;
+
+        if (habilita_exibicao_de_lauda) {
+            hasPublicationPage = consolidadoDre?.pagina_publicacao
+        }
+
+        return hasPublicationPage
+            && consolidadoDre?.data_publicacao
+            && consolidadoDre?.status_sme !== 'EM_ANALISE'
+            && consolidadoDre?.permite_excluir_data_e_pagina_publicacao
     }
 
   return(
@@ -79,7 +97,7 @@ const FormMarcarPublicacaoNoDiarioOficial = ({consolidadoDre, carregaConsolidado
                   } = props;
                   return (
                       <form onSubmit={props.handleSubmit}>
-                          <p>Selecione a data e a página da publicação no Diário Oficial da Cidade.</p>
+                          <p>{texto_info}</p>
                           <div className="mt-2">
                               <label htmlFor="data">Data</label>
                               <DatePickerField
@@ -90,18 +108,22 @@ const FormMarcarPublicacaoNoDiarioOficial = ({consolidadoDre, carregaConsolidado
                               />
                               {props.errors.data_publicacao && <span className="span_erro text-danger mt-1"> {props.errors.data_publicacao}</span>}
                           </div>
-                          <div className='mt-2'>
-                              <label htmlFor="pagina_publicacao">Informar página da lauda no Diário Oficial</label>
-                              <input
-                                  type="text"
-                                  value={props.values.pagina_publicacao}
-                                  name="pagina_publicacao"
-                                  id="pagina_publicacao"
-                                  className="form-control"
-                                  onChange={props.handleChange}
-                              />
-                              {props.errors.pagina_publicacao && <span className="span_erro text-danger mt-1"> {props.errors.pagina_publicacao} </span>}
-                          </div>
+                          
+                          {
+                            habilita_exibicao_de_lauda &&
+                            <div className='mt-2'>
+                                <label htmlFor="pagina_publicacao">Informar página da lauda no Diário Oficial</label>
+                                <input
+                                    type="text"
+                                    value={props.values.pagina_publicacao}
+                                    name="pagina_publicacao"
+                                    id="pagina_publicacao"
+                                    className="form-control"
+                                    onChange={props.handleChange}
+                                />
+                                {props.errors.pagina_publicacao && <span className="span_erro text-danger mt-1"> {props.errors.pagina_publicacao} </span>}
+                            </div>
+                          }
 
                           <div className="d-flex bd-highlight align-items-center">
                               <div className="py-2 flex-grow-1 bd-highlight">
@@ -129,8 +151,8 @@ const FormMarcarPublicacaoNoDiarioOficial = ({consolidadoDre, carregaConsolidado
                   show={showModalConfirmDesmarcarPublicacaoNoDiarioOficial}
                   onHide={()=>setShowModalConfirmDesmarcarPublicacaoNoDiarioOficial(false)}
                   handleClose={()=>setShowModalConfirmDesmarcarPublicacaoNoDiarioOficial(false)}
-                  titulo='Remover publicação'
-                  texto='<p>Deseja remover a data e a página da publicação no Diário Oficial da Cidade?</p>'
+                  titulo={text_normal_remover}
+                  texto={`<p>Deseja remover a data ${texto_publicacao}?</p>`}
                   segundoBotaoOnclick={desmarcarComoPublicado}
               />
           </section>

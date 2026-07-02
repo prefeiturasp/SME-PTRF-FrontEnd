@@ -7,7 +7,8 @@ import PreviaDocumentos from "./PreviaDocumento";
 import {AtaParecerTecnico} from "./AtaParecerTecnico";
 import Lauda from "./Lauda";
 
-const BlocoPublicacaoParcial = ({ 
+const BlocoPublicacaoParcial = ({
+    isShowLauda, 
     consolidadoDre,
     publicarConsolidadoDre,
     podeGerarPrevia,
@@ -42,7 +43,6 @@ const BlocoPublicacaoParcial = ({
     }, [consolidadoDre])
 
     return (
-        <>
             <div className='mt-3'>
                 <PublicarDocumentos
                     publicarConsolidadoDre={publicarConsolidadoDre}
@@ -73,11 +73,13 @@ const BlocoPublicacaoParcial = ({
                     podeGerarPreviaRetificacao={podeGerarPreviaRetificacao(consolidadoDre)}
                     podeAcessarInfoConsolidado={podeAcessarInfoConsolidado}
                 />
-                <Lauda
-                    consolidadoDre={consolidadoDre}
-                />
+                {
+                    isShowLauda &&
+                    <Lauda
+                        consolidadoDre={consolidadoDre}
+                    />
+                }
             </div>
-        </>
     )
 }
 

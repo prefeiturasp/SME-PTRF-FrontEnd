@@ -7,7 +7,7 @@ import { toastCustom } from "../../../../../Globais/ToastCustom";
 import { ModalConfirmaGeracaoAta } from "../ModalConfirmaGeracaoAta/ModalConfirmaGeracaoAta";
 import "./PaaAtaAcoes.scss";
 
-export const PaaAtaAcoes = ({ paaUuid, ata, documentoPlano, onDepoisDeGerar }) => {
+export const PaaAtaAcoes = ({ paaUuid, ata, documentoPlano, onDepoisDeGerar, dadosPaa }) => {
   const navigate = useNavigate();
   const podeEditar = visoesService.getPermissoes(["custom_change_paa"]);
   const [modalGerarAberto, setModalGerarAberto] = useState(false);
@@ -60,9 +60,21 @@ export const PaaAtaAcoes = ({ paaUuid, ata, documentoPlano, onDepoisDeGerar }) =
 
   return (
     <div className="d-flex mt-3 mt-md-0 align-items-start flex-wrap gap-2">
+
+      {documentoFinalGerado ? (
+        <button
+          type="button"
+          className="btn btn-outline-success paa-ata-acoes__btn"
+          disabled={!paaUuid}
+          onClick={handleVisualizarAtaEditor}
+        >
+          Visualizar prévia da ata
+        </button>
+      ) : null}
+
       <button
         type="button"
-        className="btn btn-success paa-ata-acoes__btn"
+        className="btn btn-success ml-3 paa-ata-acoes__btn"
         disabled={gerarDesabilitado}
         onClick={abrirModalGerar}
         {...(gerarDesabilitado && mensagemTooltipGerar
@@ -74,21 +86,13 @@ export const PaaAtaAcoes = ({ paaUuid, ata, documentoPlano, onDepoisDeGerar }) =
       >
         Gerar ata
       </button>
+
       {gerarDesabilitado && mensagemTooltipGerar ? (
         <ReactTooltip id={tooltipGerarId} place="top" />
       ) : null}
-      {documentoFinalGerado ? (
-        <button
-          type="button"
-          className="btn btn-outline-success ml-3 paa-ata-acoes__btn"
-          disabled={!paaUuid}
-          onClick={handleVisualizarAtaEditor}
-        >
-          Visualizar ata
-        </button>
-      ) : null}
 
       <ModalConfirmaGeracaoAta
+        emRetificacao={dadosPaa?.esta_em_retificacao ?? false}
         open={modalGerarAberto}
         onClose={() => setModalGerarAberto(false)}
         onConfirm={handleConfirmarGeracaoAta}

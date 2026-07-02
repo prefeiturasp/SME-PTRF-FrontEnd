@@ -96,7 +96,7 @@ export const RelSecaoObjetivos = ({ paaVigente, onSalvarObjetivos, isSaving, pod
         dataSource={items.filter((i) => !i._destroy)}
         renderItem={(item) => (
           <List.Item>
-            <div className="d-flex w-100">
+            <div className="d-flex w-100 mr-2">
               <Checkbox
                 onChange={onChangeObjetivos}
                 value={item.uuid || item.key}

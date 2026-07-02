@@ -7,7 +7,7 @@ export const MandatoInfo = () => {
     const dataTemplate = useDataTemplate()
     return (
         <>
-            {!isLoading && data && data.uuid &&
+            {!isLoading && data?.uuid &&
                 <div className="p-2 pt-3 flex-grow-1 bd-highlight" data-qa='mandato-info'>
                     <p className='mb-0'>
                         <span><strong>Mandato atual: </strong></span>{dataTemplate('', '', data.data_inicial)} até {dataTemplate('', '', data.data_final)}

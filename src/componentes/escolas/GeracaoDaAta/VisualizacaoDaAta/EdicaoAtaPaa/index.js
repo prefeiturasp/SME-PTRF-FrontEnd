@@ -1,5 +1,6 @@
 import React from "react";
 import "../../geracao-da-ata.scss"
+import { Spin } from "antd";
 import {TopoComBotoes} from "./TopoComBotoes";
 import {FormularioEditaAta} from "./FormularioEditaAta";
 import {NovoFormularioEditaAta} from "./NovoFormularioEditaAta";
@@ -17,6 +18,7 @@ import {ASSOCIACAO_UUID} from "../../../../../services/auth.service";
 import moment from "moment";
 import {toastCustom} from "../../../../Globais/ToastCustom"
 import {useGetAtaPaaVigente} from "../../../Paa/ElaboracaoPaa/ElaborarNovoPlano/Relatorios/hooks/useGetAtaPaaVigente";
+import { getErrorMessage } from "../../../../../utils/obtemMsgErroAxios";
 
 // Hooks Personalizados
 import {useCarregaRepassesPendentesPorPeriodoAteAgora} from "../../../../../hooks/Globais/useCarregaRepassesPendentesPorPeriodoAteAgora";
@@ -62,6 +64,7 @@ export const EdicaoAtaPaa = () => {
     });
     const [tabelas, setTabelas] = useState({});
     const [membrosCargos, setMembrosCargos] = useState([])
+    const [isLoadingPresentes, setIsLoadingPresentes] = useState(false)
     const [disableBtnSalvar, setDisableBtnSalvar] = useState(false)
     const [dadosAta, setDadosAta] = useState({});
     const [erros, setErros] = useState({});
@@ -73,24 +76,31 @@ export const EdicaoAtaPaa = () => {
             return;
         }
         const fetchData = async () => {
-            let listaPresentesAta = await getListaPresentesAta(ataUuid);
-            let listaPresentesPadraoAta = await getListaPresentesPadraoAta(ataUuid);
+            setIsLoadingPresentes(true)
+            try{
+                let listaPresentesAta = await getListaPresentesAta(ataUuid);
+                let listaPresentesPadraoAta = await getListaPresentesPadraoAta(ataUuid);
 
-            for (let i = 0; i < listaPresentesAta.length; i++) {
-                const presenteAta = listaPresentesAta[i];
+                for (let i = 0; i < listaPresentesAta.length; i++) {
+                    const presenteAta = listaPresentesAta[i];
 
-                for (let j = 0; j < listaPresentesPadraoAta.length; j++) {
-                    const presentePadraoAta = listaPresentesPadraoAta[j];
+                    for (let j = 0; j < listaPresentesPadraoAta.length; j++) {
+                        const presentePadraoAta = listaPresentesPadraoAta[j];
 
-                    if (presenteAta.identificacao === presentePadraoAta.identificacao) {
-                        listaPresentesPadraoAta[j].presente = listaPresentesAta[i].presente;
+                        if (presenteAta.identificacao === presentePadraoAta.identificacao) {
+                            listaPresentesPadraoAta[j].presente = listaPresentesAta[i].presente;
+                        }
                     }
                 }
+
+                let participantesNaoMembros = listaPresentesAta.filter(participante => participante.membro === false);
+
+                setListaPresentesPadrao(listaPresentesPadraoAta.concat(participantesNaoMembros))
+            } catch (e) {
+                console.error('Erro ao obter lista de presentes', e)
+            } finally {
+                setIsLoadingPresentes(false)
             }
-
-            let participantesNaoMembros = listaPresentesAta.filter(participante => participante.membro === false);
-
-            setListaPresentesPadrao(listaPresentesPadraoAta.concat(participantesNaoMembros))
         };
         fetchData();
     }, [ataUuid]);
@@ -317,10 +327,12 @@ export const EdicaoAtaPaa = () => {
             toastCustom.ToastCustomSuccess('Ata salva com sucesso', `As edições da ata de ${tipo_ata} foram salvas com sucesso.`)
         } catch (e) {
             console.log("Erro ao fazer edição da Ata ", e.response)
+            const mensagemErro = getErrorMessage(e);
+            toastCustom.ToastCustomError(mensagemErro);
+            
         }
     }
     return (
-        <>
             <div className="col-12 container-visualizacao-da-ata mb-5">
                 <div className="col-12 mt-4">
                     <TopoComBotoes
@@ -333,6 +345,7 @@ export const EdicaoAtaPaa = () => {
 
 
                 <div className="col-12">
+                    <Spin spinning={isLoadingPresentes}>
                     {visoesService.featureFlagAtiva('historico-de-membros') ?  <NovoFormularioEditaAta
                         stateFormEditarAta={stateFormEditarAta}
                         tabelas={tabelas}
@@ -360,9 +373,9 @@ export const EdicaoAtaPaa = () => {
                         editaStatusDePresencaMembro={editaStatusDePresencaMembro}
                     >
                     </FormularioEditaAta>}
+                    </Spin>
                 </div>
 
             </div>
-        </>
     )
 };

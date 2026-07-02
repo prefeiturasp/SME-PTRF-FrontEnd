@@ -1,12 +1,19 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import { useRecursoSelecionadoContext } from "../../../../context/RecursoSelecionado";
+import { TextoDocumentoConsolidadoPC } from "../../../../utils/TextoDocumentoConsolidadoPC";
 
 export const Cabecalho = ({ referenciaPublicacao, onClickVoltar, formataPeriodo }) => {
+  const { recursoSelecionado } = useRecursoSelecionadoContext();
+
+  const texto_documento_consolidado_pc = useMemo(() => new TextoDocumentoConsolidadoPC(recursoSelecionado?.habilita_exibicao_de_lauda), [recursoSelecionado?.habilita_exibicao_de_lauda]);
+  const text_possessive = texto_documento_consolidado_pc.possessivo();
+
   return (
     <div className="row pt-2">
       <div className="col-5">
-        <span className="referencia-e-periodo-relatorio">Referência da publicação:</span>
+        <span className="referencia-e-periodo-relatorio">Referência {text_possessive}:</span>
         <br />
         <span className="texto.referencia-e-periodo-relatorio">{referenciaPublicacao}</span>
       </div>

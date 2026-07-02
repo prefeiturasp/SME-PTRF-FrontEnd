@@ -241,7 +241,7 @@ describe("usePatchRecursoProprio", () => {
 
       await waitFor(() =>
         expect(toastCustom.ToastCustomError).toHaveBeenCalledWith(
-          "Houve um erro ao editar recurso."
+          "Ocorreu um erro inesperado."
         )
       );
     });
