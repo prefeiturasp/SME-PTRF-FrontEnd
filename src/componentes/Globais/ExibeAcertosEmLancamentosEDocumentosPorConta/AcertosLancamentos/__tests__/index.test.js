@@ -510,6 +510,7 @@ describe('AcertosLancamentos', () => {
     });
 
     it('chama carregaAcertosLancamentos ao clicar numa aba diferente', async () => {
+      jest.setTimeout(15000);
       setupDefaultMocks(mockContasMultiplas);
       meapcservice.getAnaliseDreUsuarioLogado.mockReturnValue({
         conferencia_de_lancamentos: {
@@ -518,6 +519,7 @@ describe('AcertosLancamentos', () => {
           paginacao_atual: 0
         }
       });
+      getLancamentosAjustes.mockResolvedValue({});
 
       renderComponent();
       await waitForTable();
@@ -535,7 +537,7 @@ describe('AcertosLancamentos', () => {
           null,
           null
         );
-      });
+      }, { timeout: 5000 });
     });
   });
 

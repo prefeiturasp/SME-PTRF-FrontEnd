@@ -16,6 +16,7 @@ export const PaaSecaoPlanoEAta = ({
   onDownloadAta,
   onDepoisDeGerarAta,
   resumoAssembleia,
+  dadosPaa
 }) => {
   const chaveDoc = chaveVisualizacaoDocumento(paaUuid, documento.status.retificacao);
   const chaveAta = ata?.uuid ? `ata:${ata.uuid}` : null;
@@ -53,6 +54,7 @@ export const PaaSecaoPlanoEAta = ({
               ata={ata}
               documentoPlano={documento}
               onDepoisDeGerar={onDepoisDeGerarAta}
+              dadosPaa={dadosPaa}
             />
           ) : null}
         </div>

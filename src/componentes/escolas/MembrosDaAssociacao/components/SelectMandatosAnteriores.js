@@ -16,7 +16,7 @@ export const SelectMandatosAnteriores = () => {
         <>
             {data_mandatos_anteriores && !isError &&
                 <div className="p-2 pt-3 mr-auto">
-                    <label data-qa='lbs-selecionar-periodo'>Selecionar período</label>
+                    <label htmlFor="status" data-qa='lbs-selecionar-periodo'>Selecionar período</label>
                     <select
                         value={mandatoUuid}
                         onChange={onChangeMandato}

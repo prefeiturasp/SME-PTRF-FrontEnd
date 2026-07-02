@@ -34,6 +34,14 @@ const useRecursoSelecionado = ({ visoesService }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  const getTextValoresReprogramadosATA = () => {
+    if (recursoSelecionado.nome === "Prêmio Excelência Educacional") {
+      return "valores estes que serão tratados conforme a legislação vigente"
+    }
+
+    return "valores estes que foram reprogramados"
+  }
+
   useEffect(() => {
     if (!recursos?.length) return;
 
@@ -152,6 +160,7 @@ const useRecursoSelecionado = ({ visoesService }) => {
     mostrarOverlaySelecionarRecursos,
     setRecursoSelecionadoNaSessao,
     clearRecursoNaSessao,
+    getTextValoresReprogramadosATA,
   };
 };
 

@@ -13,6 +13,7 @@ export const useGetRepasses = () => {
         keepPreviousData: true,
         staleTime: 5000, // 5 segundos
         refetchOnWindowFocus: true, // Caso saia da aba e voltar ele refaz a requisição
+        enabled: filter.recurso_uuid !== '', // Evita requisição quando recurso_uuid está vazio
     });
 
     const totalRepasses = useMemo(() => data.length, [data]);

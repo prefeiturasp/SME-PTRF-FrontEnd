@@ -14,9 +14,9 @@ export const TopoComBotoesFormCadastroHistoricoDeMembros = ({composicaoUuid, car
     return(
         <div className="d-flex align-items-end mt-0">
             <div className="p-2 pt-3 mr-auto">
-                <h5 className="titulo-explicativo mb-0">{cargo && cargo.uuid ? "Editar membro" : "Adicionar membro"}</h5>
+                <h5 className="titulo-explicativo mb-0">{cargo?.uuid ? "Editar membro" : "Adicionar membro"}</h5>
                 <p className='mb-0 fonte-16'>
-                    <strong><span>Mandato: </span>{data && data.mandato ? dataTemplate('', '', data.mandato.data_inicial) : ""} até {data && data.mandato ? dataTemplate('', '', data.mandato.data_final) : ""}</strong>
+                    <strong><span>Mandato: </span>{data?.mandato ? dataTemplate('', '', data.mandato.data_inicial) : ""} até {data?.mandato ? dataTemplate('', '', data.mandato.data_final) : ""}</strong>
                 </p>
             </div>
             <div className="p-2 pt-3" data-qa='composicao-info'>

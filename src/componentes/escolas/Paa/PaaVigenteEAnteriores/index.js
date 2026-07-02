@@ -66,7 +66,7 @@ export const PaaVigenteEAnteriores = () => {
                 Não foi possível carregar os dados do PAA.
                 {error?.message ? ` (${error.message})` : ''}
               </div>
-              <button type="button" className="btn btn-outline-primary btn-sm" onClick={() => refetch()}>
+              <button type="button" className="btn btn-success btn-sm" onClick={() => refetch()}>
                 Tentar novamente
               </button>
             </div>

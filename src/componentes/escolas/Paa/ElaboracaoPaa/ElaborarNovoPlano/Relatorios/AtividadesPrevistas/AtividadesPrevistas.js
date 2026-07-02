@@ -645,9 +645,7 @@ export const AtividadesPrevistas = () => {
                     <>
                       <EditIconButton
                         className="p-0"
-                        onClick={() =>
-                          record.isNovo ? handleEditar(record): null
-                        }
+                        onClick={() => handleEditar(record)}
                       />
                       <IconButton
                         className="p-0"

@@ -20,7 +20,7 @@ export const Paginacao = () => {
             {!isLoading && data.results && data.results.length > 0 ? (
                     <Paginator
                         first={firstPage}
-                        rows={20}
+                        rows={10}
                         totalRecords={count}
                         template="PrevPageLink PageLinks NextPageLink"
                         onPageChange={onPageChange}

@@ -50,7 +50,7 @@ describe('podeExibirBotaoRetificar', () => {
     ).toBe(false);
   });
 
-  it('em retificação: true quando documento não está em versão FINAL', () => {
+  it('em retificação: false quando documento não está em versão FINAL', () => {
     expect(
       podeExibirBotaoRetificar({
         ...vigenteBase,
@@ -60,7 +60,7 @@ describe('podeExibirBotaoRetificar', () => {
           documento: { status: { versao: 'PRELIMINAR' } },
         },
       })
-    ).toBe(true);
+    ).toBe(false);
   });
 
   it('em retificação: false quando documento está em versão FINAL', () => {

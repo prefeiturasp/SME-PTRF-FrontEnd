@@ -221,22 +221,22 @@ const UrlsMenuDres = {
       icone: IconeDadosDaDiretoria,
       permissoes: ["access_dados_diretoria"],
     },
-    {
-      label: "Apoio à Diretoria",
-      url: "apoio-a-diretoria",
-      dataFor: "apoio_a_diretoria",
-      icone: IconeApoioDiretoria,
-      permissoes: ["access_dados_diretoria"],
-      subItens: [
-        {
-          label: "Perguntas Frequentes",
-          url: "dre-faq",
-          dataFor: "dre_faq",
-          icone: IconeDadosDaDiretoria,
-          permissoes: ["access_faq_dre"],
-        },
-      ],
-    },
+    // {
+    //   label: "Apoio à Diretoria",
+    //   url: "apoio-a-diretoria",
+    //   dataFor: "apoio_a_diretoria",
+    //   icone: IconeApoioDiretoria,
+    //   permissoes: ["access_dados_diretoria"],
+    //   subItens: [
+    //     {
+    //       label: "Perguntas Frequentes",
+    //       url: "dre-faq",
+    //       dataFor: "dre_faq",
+    //       icone: IconeDadosDaDiretoria,
+    //       permissoes: ["access_faq_dre"],
+    //     },
+    //   ],
+    // },
     {
       label: "Fornecedores",
       url: "parametro-fornecedores",
