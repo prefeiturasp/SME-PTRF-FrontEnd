@@ -816,7 +816,6 @@ export const CadastroForm = ({verbo_http, veioDeSituacaoPatrimonial}) => {
             }
             else{
                 setShowRetencaoImposto(false);
-                values.retem_imposto = false;
             }
         }
 
