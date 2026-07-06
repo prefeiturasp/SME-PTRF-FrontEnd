@@ -259,7 +259,20 @@ export const CadastroFormFormik = ({
                                                     props.values.tipo_documento === "object" ? props.values.tipo_documento.id : props.values.tipo_documento.id
                                                 ) : ""
                                             }
-                                            onChange={props.handleChange}
+                                            onChange={(e) => {                                              
+                                                props.handleChange(e);
+
+                                                if(despesasTabelas && despesasTabelas.tipos_documento) {
+                                                    const documento = despesasTabelas.tipos_documento.find(
+                                                        item => item.id === Number(e.target.value)
+                                                    );
+
+                                                    if (!documento?.pode_reter_imposto) {
+                                                        props.setFieldValue("retem_imposto", false);
+                                                    }
+                                                }
+
+                                            }}
                                             onBlur={props.handleBlur}
                                             name='tipo_documento'
                                             id='tipo_documento'
