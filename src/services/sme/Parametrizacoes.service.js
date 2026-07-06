@@ -1074,14 +1074,22 @@ export const getRepasses = async (filter, currentPage) => {
   ).data;
 };
 
-export const getTabelasRepasse = async (recurso_uuid) => {
-  console.log('recurso_uuid', recurso_uuid)
-  let url = `/api/repasses/tabelas/`;
-  if (recurso_uuid) {
-    url += `?recurso_uuid=${recurso_uuid}`;
+export const getTabelasRepasse = async (parameters = {}) => {
+  const params = new URLSearchParams();
+
+  if (parameters.recurso_uuid) {
+    params.append('recurso_uuid', parameters.recurso_uuid);
   }
+
+  if (parameters.solicitacao_sme) {
+    params.append('solicitacao_sme', parameters.solicitacao_sme);
+  }
+
+  const paramsToString = params.toString();
+  const url = `/api/repasses/tabelas/${paramsToString ? `?${paramsToString}` : ''}`;
+
   return (await api.get(url, authHeader())).data;
-};
+}
 
 export const getTabelasRepassePorAssociacao = async (associacao_uuid, recurso_uuid) => {
   let url = `/api/repasses/tabelas-por-associacao/?associacao_uuid=${associacao_uuid}`;
