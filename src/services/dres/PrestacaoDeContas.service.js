@@ -292,8 +292,8 @@ export const getTiposDeAcertosDocumentos = async (documento_uuid) => {
     return (await api.get(`/api/tipos-acerto-documento/?tipos_documento_prestacao__uuid=${documento_uuid}`, authHeader())).data
 };
 
-export const getTabelas = async (documento_uuid=null) => {
-    return (await api.get(`/api/tipos-acerto-documento/tabelas/?tipos_documento_prestacao__uuid=${documento_uuid}`, authHeader())).data
+export const getTabelas = async (documento_uuid=null, recurso_uuid='') => {
+    return (await api.get(`/api/tipos-acerto-documento/tabelas/?tipos_documento_prestacao__uuid=${documento_uuid}&recurso_uuid=${recurso_uuid}`, authHeader())).data
 };
 
 export const getSolicitacaoDeAcertosDocumentos = async (prestacao_de_contas_uuid, analise_documento_uuid) => {
