@@ -21,14 +21,12 @@ export const Lista = () => {
         showModalForm,
         showModalConfirmacaoExclusao,
         setShowModalConfirmacaoExclusao,
-        setShowModalInfoNaoPodeGravar,
-        setShowModalInfoNaoPodeExcluir,
         tabelas
     } = useContext(AcertosDocumentosContext);
 
     const { selectedRecurso } = useAbasPorRecursoContext();
 
-    const { isLoading, data = [], totalAcertos } = useGetAcertosDocumentos();
+    const { isLoading, data = [] } = useGetAcertosDocumentos();
     const { mutationPost } = usePostAcertosDocumentos();
     const { mutationPatch } = usePatchAcertosDocumentos();
     const { mutationDelete } = useDeleteAcertosDocumentos();
@@ -131,14 +129,6 @@ export const Lista = () => {
 
     const handleCloseModalExcluir = () => {
         setShowModalConfirmacaoExclusao(false);
-    };
-
-    const handleCloseInfoNaoPodeGravar = () => {
-        setShowModalInfoNaoPodeGravar(false);
-    };
-
-    const handleCloseInfoNaoPodeExcluir = () => {
-        setShowModalInfoNaoPodeExcluir(false);
     };
 
     return (

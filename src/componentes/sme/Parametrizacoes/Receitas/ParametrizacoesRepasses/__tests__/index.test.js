@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { ParametrizacoesRepasses } from '../index';
 import { RepassesProvider } from '../context/Repasse';
 import { MemoryRouter, Route, Routes } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '@testing-library/jest-dom';
 
 jest.mock("../../../../../../paginas/PaginasContainer", () => ({
@@ -30,12 +31,15 @@ jest.mock("../../../componentes/AbasPorRecurso", () => ({
 
 describe("Carrega página de Repasses", () => {
     const renderComponent = (()=>{
+        const queryClient = new QueryClient();
         return render(
-            <MemoryRouter initialEntries={["/parametro-repasse"]}>
-                <Routes>
-                    <Route path="/parametro-repasse" element={<RepassesProvider><ParametrizacoesRepasses /></RepassesProvider>} />
-                </Routes>
-            </MemoryRouter>
+            <QueryClientProvider client={queryClient}>
+                <MemoryRouter initialEntries={["/parametro-repasse"]}>
+                    <Routes>
+                        <Route path="/parametro-repasse" element={<RepassesProvider><ParametrizacoesRepasses /></RepassesProvider>} />
+                    </Routes>
+                </MemoryRouter>
+            </QueryClientProvider>
         );
     })
 
