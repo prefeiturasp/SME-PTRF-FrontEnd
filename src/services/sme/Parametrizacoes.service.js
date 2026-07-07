@@ -628,8 +628,8 @@ export const getListaDeAcertosLancamentos = async () => {
   return (await api.get(`/api/tipos-acerto-lancamento/`, authHeader())).data;
 };
 
-export const getListaDeAcertosDocumentos = async () => {
-  return (await api.get(`/api/tipos-acerto-documento/`, authHeader())).data;
+export const getListaDeAcertosDocumentos = async (recurso_uuid = null) => {
+  return (await api.get(`/api/tipos-acerto-documento/`, { ...authHeader(), params: { recurso_uuid } })).data;
 };
 
 export const getTabelaCategoria = async () => {
@@ -782,7 +782,8 @@ export const getAcertosDocumentosFiltrados = async (
   nome = "",
   categoria = "",
   ativo = "",
-  documento_relacionado = ""
+  documento_relacionado = "",
+  recurso_uuid = ""
 ) => {
   return (
     await api.get(
@@ -792,7 +793,7 @@ export const getAcertosDocumentosFiltrados = async (
         documento_relacionado
           ? "&documento_relacionado=" + documento_relacionado
           : ""
-      }`,
+      }${recurso_uuid ? "&recurso_uuid=" + recurso_uuid : ""}`,
       authHeader()
     )
   ).data;
