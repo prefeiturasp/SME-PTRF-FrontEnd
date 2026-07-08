@@ -1,43 +1,29 @@
 import React, { createContext, useMemo, useState, useEffect } from 'react';
+import { useGetTabelasAcertosDocumentos } from '../hooks/useGetTabelasAcertosDocumentos';
 import { useAbasPorRecursoContext } from '../../../componentes/AbasPorRecurso/hooks/useAbasPorRecursoContext';
-import useUnidadeSelecionada from '../../../../../../hooks/Globais/useUnidadeSelecionada';
-import { visoesService } from '../../../../../../services/visoes.service';
-import { useGetTabelasRepasse } from '../hooks/useGetTabelasRepasse';
 
 const initialFilter = {
     page: 1,
-    is_required_recurso_uuid: true,
-    recurso_uuid: '',
-    search: '',
-    periodo: '',
-    conta: '',
-    acao: '',
-    status: ''
+    filtrar_por_nome: "",
+    filtrar_por_categoria: [],
+    filtrar_por_ativo: "",
+    filtrar_por_documento_relacionado: [],
+    recurso_uuid: ''
 };
 
 const initialStateFormModal = {
     uuid: '',
-    associacao: '',
-    valor_capital: 0,
-    valor_custeio: 0,
-    valor_livre: 0,
-    conta_associacao: '',
-    acao_associacao: '',
-    periodo: '',
-    status: 'PENDENTE',
-    realizado_capital: '',
-    realizado_custeio: '',
-    realizado_livre: '',
-    nome_unidade: '',
-    carga_origem: '',
-    id_linha_carga: '',
     id: '',
-    campos_editaveis: {
-        campos_de_realizacao: false
-    },
+    recurso: '',
+    nome: "",
+    categoria: "",
+    tipos_documento_prestacao: [],
+    ativo: false,
+    pode_alterar_saldo_conciliacao: false,
+    operacao: 'create',
 };
 
-export const RepassesContext = createContext({
+export const AcertosDocumentosContext = createContext({
     initialFilter: initialFilter,
     filter: initialFilter,
     setFilter: () => {},
@@ -55,34 +41,26 @@ export const RepassesContext = createContext({
     showModalConfirmacaoExclusao: false,
     setShowModalConfirmacaoExclusao: () => {},
 
-    bloquearBtnSalvarForm: '',
+    bloquearBtnSalvarForm: false,
     setBloquearBtnSalvarForm: () => {},
 
     tabelas: null,
     isLoading: false,
+    initialStateFormModal: initialStateFormModal,
 })
 
-export const RepassesProvider = ({children}) => {
-    const { selectedRecurso } = useAbasPorRecursoContext();
-
+export const AcertosDocumentosProvider = ({children}) => {
     const [filter, setFilter] = useState(initialFilter);
-
     const [currentPage, setCurrentPage] = useState(1);
     const [firstPage, setFirstPage] = useState(1);
-
     const [showModalForm, setShowModalForm] = useState(false);
     const [stateFormModal, setStateFormModal] = useState(initialStateFormModal);
-
     const [showModalConfirmacaoExclusao, setShowModalConfirmacaoExclusao] = useState(false);
-
     const [bloquearBtnSalvarForm, setBloquearBtnSalvarForm] = useState(false);
 
-    const { isSME } = useUnidadeSelecionada(visoesService);
+    const { selectedRecurso } = useAbasPorRecursoContext();
 
-    const { data: tabelas, isLoading } = useGetTabelasRepasse({ 
-        filters: filter, 
-        solicitacao_sme: isSME() 
-    });
+    const { data: tabelas, isLoading } = useGetTabelasAcertosDocumentos();
 
     useEffect(() => {
         const initialFilterWithRecursoUuid = {
@@ -119,9 +97,8 @@ export const RepassesProvider = ({children}) => {
     }, [filter, currentPage, firstPage, showModalForm, stateFormModal, showModalConfirmacaoExclusao, bloquearBtnSalvarForm, tabelas, isLoading]);
 
     return (
-        <RepassesContext.Provider value={contextValue}>
+        <AcertosDocumentosContext.Provider value={contextValue}>
             {children}
-        </RepassesContext.Provider>
+        </AcertosDocumentosContext.Provider>
     )
-
 }

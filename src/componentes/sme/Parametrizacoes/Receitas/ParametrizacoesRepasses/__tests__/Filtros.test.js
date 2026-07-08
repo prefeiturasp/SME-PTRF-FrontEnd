@@ -9,6 +9,12 @@ jest.mock("../hooks/useGetTabelasRepasse", () => ({
     useGetTabelasRepasse: jest.fn()
 }));
 
+jest.mock("../../../componentes/AbasPorRecurso/hooks/useAbasPorRecursoContext", () => ({
+    useAbasPorRecursoContext: () => ({
+        selectedRecurso: null
+    })
+}));
+
 describe("Filtros Componentes", () => {
     const mockSetFilter = jest.fn();
     const mockSetCurrentPage = jest.fn();
@@ -27,7 +33,9 @@ describe("Filtros Componentes", () => {
                 setFilter: mockSetFilter,
                 setCurrentPage: mockSetCurrentPage,
                 setFirstPage: mockSetFirstPage,
-                initialFilter: mockInitialFilter
+                initialFilter: mockInitialFilter,
+                tabelas: mockTabela,
+                isLoading: false
             }}>
                 <Filtros />
             </RepassesContext.Provider>
@@ -69,17 +77,18 @@ describe("Filtros Componentes", () => {
 
     it("testa OnChange dos campos", () => {
         renderComponent();
-        const descricaoInput = screen.getByLabelText(/Filtrar por período/i);
-        fireEvent.change(descricaoInput, { target: { value: "d9bc43e3-cfd5-4969-bada-af78d96e8faf" } });
-        expect(descricaoInput.value).toBe("d9bc43e3-cfd5-4969-bada-af78d96e8faf");
+        
+        const periodoInput = screen.getByLabelText(/Filtrar por período/i);
+        fireEvent.change(periodoInput, { target: { value: "d9bc43e3-cfd5-4969-bada-af78d96e8faf" } });
+        expect(periodoInput.value).toBe("d9bc43e3-cfd5-4969-bada-af78d96e8faf");
 
-        const tiposCusteioInput = screen.getByLabelText(/Filtrar por conta/i);
-        fireEvent.change(tiposCusteioInput, { target: { value: "581af94a-d8dd-466d-9738-2be24655c221" } });
-        expect(tiposCusteioInput.value).toBe("581af94a-d8dd-466d-9738-2be24655c221");
+        const contaInput = screen.getByLabelText(/Filtrar por conta/i);
+        fireEvent.change(contaInput, { target: { value: "581af94a-d8dd-466d-9738-2be24655c221" } });
+        expect(contaInput.value).toBe("581af94a-d8dd-466d-9738-2be24655c221");
 
-        const aplicacaoRecursosInput = screen.getByLabelText(/Filtrar por ação/i);
-        fireEvent.change(aplicacaoRecursosInput, { target: { value: "bdcbc8ce-7bab-48b3-959a-f866c6644579" } });
-        expect(aplicacaoRecursosInput.value).toBe("bdcbc8ce-7bab-48b3-959a-f866c6644579");
+        const acaoInput = screen.getByLabelText(/Filtrar por ação/i);
+        fireEvent.change(acaoInput, { target: { value: "bdcbc8ce-7bab-48b3-959a-f866c6644579" } });
+        expect(acaoInput.value).toBe("bdcbc8ce-7bab-48b3-959a-f866c6644579");
 
     });
 
