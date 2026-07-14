@@ -210,8 +210,9 @@ export const FormCadastro = ({
                                 </div>
                                 <div className="col-6">
                                     <div className="form-group">
-                                        <label><span className='asterisco-vermelho'>* </span>Representação na associação</label>
+                                        <label htmlFor="representacao-associacao"><span className='asterisco-vermelho'>* </span>Representação na associação</label>
                                         <select
+                                            id="representacao-associacao"
                                             value={props.values.representacao ? props.values.representacao : ""}
                                             onChange={props.handleChange}
                                             onBlur={()=>limparCampos(props.values, setFieldValue)}
@@ -233,9 +234,10 @@ export const FormCadastro = ({
                                 {(props.values.representacao === "SERVIDOR" || props.values.representacao === "ESTUDANTE") &&
                                     <div className="col-6 mt-3">
                                         <div className="form-group">
-                                            <label><span className='asterisco-vermelho'>* </span>{props.values.representacao === 'SERVIDOR' ? "Registro Funcional" : "Código EOL"}
+                                            <label htmlFor="codigo-identificacao"><span className='asterisco-vermelho'>* </span>{props.values.representacao === 'SERVIDOR' ? "Registro Funcional" : "Código EOL"}
                                             </label>
                                             <input
+                                                id="codigo-identificacao"
                                                 type="text"
                                                 value={props.values.codigo_identificacao ? props.values.codigo_identificacao : ""}
                                                 onChange={props.handleChange}
@@ -251,8 +253,9 @@ export const FormCadastro = ({
                                 {props.values.representacao === "SERVIDOR" &&
                                     <div className="col-6 mt-3">
                                         <div className="form-group">
-                                            <label htmlFor="cargo_educacao">Cargo na educação</label>
+                                            <label htmlFor="cargo-educacao">Cargo na educação</label>
                                             <input
+                                                id="cargo-educacao"
                                                 type="text"
                                                 value={props.values.cargo_educacao ? props.values.cargo_educacao : ""}
                                                 onChange={props.handleChange}
@@ -269,8 +272,9 @@ export const FormCadastro = ({
                             <div className='row mt-3'>
                                 <div className="col-12">
                                     <div className="form-group">
-                                        <label><span className='asterisco-vermelho'>* </span>Nome Completo</label>
+                                        <label htmlFor="nome-completo"><span className='asterisco-vermelho'>* </span>Nome Completo</label>
                                         <input
+                                            id='nome-completo'
                                             type="text"
                                             value={props.values.nome ? props.values.nome : ""}
                                             onChange={props.handleChange}
@@ -287,8 +291,9 @@ export const FormCadastro = ({
                                 {(props.values.representacao === 'PAI_RESPONSAVEL' || props.values.representacao === 'ESTUDANTE') &&
                                     <div className="col-6">
                                         <div className="form-group">
-                                            <label><span className='asterisco-vermelho'>* </span>{props.values.representacao === 'PAI_RESPONSAVEL' ? "CPF do pai ou responsável" : "CPF"}</label>
+                                            <label htmlFor="cpf-responsavel"><span className='asterisco-vermelho'>* </span>{props.values.representacao === 'PAI_RESPONSAVEL' ? "CPF do pai ou responsável" : "CPF"}</label>
                                             <MaskedInput
+                                                id="cpf-responsavel"
                                                 mask={[/\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '-', /\d/, /\d/]}
                                                 type="text"
                                                 value={props.values.cpf_responsavel ? props.values.cpf_responsavel : ""}
@@ -308,8 +313,9 @@ export const FormCadastro = ({
                                     <div className='row mt-3'>
                                         <div className="col-6">
                                             <div className="form-group">
-                                                <label>Telefone</label>
+                                                <label htmlFor="telefone-membro">Telefone</label>
                                                 <MaskedInput
+                                                    id="telefone-membro"
                                                     mask={(valor) => telefoneMaskContitional(valor)}
                                                     value={props.values.telefone ? props.values.telefone : ""}
                                                     onChange={props.handleChange}
@@ -324,8 +330,9 @@ export const FormCadastro = ({
 
                                         <div className="col-6">
                                             <div className="form-group">
-                                                <label>CEP</label>
+                                                <label htmlFor="cep-membro">CEP</label>
                                                 <MaskedInput
+                                                    id="cep-membro"
                                                     mask={[/\d/, /\d/, /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/]}
                                                     value={props.values.cep ? props.values.cep : ""}
                                                     onChange={props.handleChange}
@@ -342,8 +349,9 @@ export const FormCadastro = ({
                                     <div className='row mt-3'>
                                         <div className="col-6">
                                             <div className="form-group">
-                                                <label>Bairro</label>
+                                                <label htmlFor="bairro-membro">Bairro</label>
                                                 <input
+                                                    id="bairro-membro"
                                                     type="text"
                                                     value={props.values.bairro ? props.values.bairro : ""}
                                                     onChange={props.handleChange}
@@ -358,8 +366,9 @@ export const FormCadastro = ({
 
                                         <div className="col-6">
                                             <div className="form-group">
-                                                <label>Endereço</label>
+                                                <label htmlFor="endereco-membro">Endereço</label>
                                                 <input
+                                                    id="endereco-membro"
                                                     type="text"
                                                     value={props.values.endereco ? props.values.endereco : ""}
                                                     onChange={props.handleChange}
@@ -378,13 +387,14 @@ export const FormCadastro = ({
                             <div className='row mt-3'>
                                 <div className="col-6">
                                     <div className="form-group">
-                                        <label>E-mail</label>
+                                        <label htmlFor="email-membro">E-mail</label>
                                         <input
                                             type="text"
                                             value={props.values.email ? props.values.email : ""}
                                             onChange={props.handleChange}
                                             name="email"
                                             className="form-control"
+                                            id="email-membro"
                                             disabled={!retornaSeEhComposicaoVigente() || (!cargo.uuid ? retornaSeCampoEhDisabled(props.values) : false) || !TEM_PERMISSAO_EDICAO_HISTORICO_DE_MEMBROS}
                                         />
                                         {props.errors.email &&
@@ -396,8 +406,9 @@ export const FormCadastro = ({
                             <div className='row'>
                                 <div className="col-6">
                                     <div className="form-group">
-                                        <label><span className='asterisco-vermelho'>* </span>Período inicial de ocupação</label>
+                                        <label htmlFor="data-inicio-no-cargo"><span className='asterisco-vermelho'>* </span>Período inicial de ocupação</label>
                                         <DatePickerField
+                                            id="data-inicio-no-cargo"
                                             name="data_inicio_no_cargo"
                                             value={props.values.data_inicio_no_cargo ? props.values.data_inicio_no_cargo : ""}
                                             onChange={setFieldValue}
@@ -413,8 +424,9 @@ export const FormCadastro = ({
                                     props.values.data_fim_no_cargo_composicao_mais_recente ? (
                                         <div className="col-6">
                                             <div className="form-group">
-                                                <label><span className='asterisco-vermelho'>* </span>Período final de ocupação</label>
+                                                <label htmlFor="data-fim-no-cargo"><span className='asterisco-vermelho'>* </span>Período final de ocupação</label>
                                                 <DatePickerField
+                                                    id="data-fim-no-cargo"
                                                     name="data_fim_no_cargo"
                                                     value={props.values.data_fim_no_cargo_composicao_mais_recente ? props.values.data_fim_no_cargo_composicao_mais_recente : ""}
                                                     onChange={setFieldValue}
@@ -425,8 +437,9 @@ export const FormCadastro = ({
                                     ) : (
                                         <div className="col-6">
                                             <div className="form-group">
-                                                <label><span className='asterisco-vermelho'>* </span>Período final de ocupação</label>
+                                                <label htmlFor="data-fim-no-cargo"><span className='asterisco-vermelho'>* </span>Período final de ocupação</label>
                                                 <DatePickerField
+                                                    id="data-fim-no-cargo"
                                                     name="data_fim_no_cargo"
                                                     value={props.values.data_fim_no_cargo ? props.values.data_fim_no_cargo : ""}
                                                     onChange={setFieldValue}
@@ -468,6 +481,7 @@ export const FormCadastro = ({
                                                     </div>
                                                     <div className='col-auto'>
                                                         <select
+                                                            id="responsavel_pelas_atribuicoes"
                                                             value={props.values.responsavel_pelas_atribuicoes}
                                                             onChange={props.handleChange}
                                                             name="responsavel_pelas_atribuicoes"
