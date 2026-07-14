@@ -14,6 +14,9 @@ import {ProviderValidaParcial} from "../../../../../../context/DetalharAcertos";
 import {useCarregaPrestacaoDeContasPorUuid} from "../../../../../../hooks/dres/PrestacaoDeContas/useCarregaPrestacaoDeContasPorUuid";
 import { ModalAntDesignConfirmacao } from "../../../../../Globais/ModalAntDesign";
 
+import useRecursoSelecionado from "../../../../../../hooks/Globais/useRecursoSelecionado";
+import { visoesService } from "../../../../../../services/visoes.service";
+
 export const DetalharAcertos = () => {
 
     const {prestacao_conta_uuid} = useParams();
@@ -37,6 +40,8 @@ export const DetalharAcertos = () => {
     const [bloqueiaSelectTipoDeAcerto, setBloqueiaSelectTipoDeAcerto] = useState([])
     const [loading, setLoading] = useState(true)
     const [showModalContaEncerrada, setShowModalContaEncerrada] = useState(false)
+
+    const { recursoSelecionado } = useRecursoSelecionado({ visoesService });
 
     const totalDelancamentosParaConferencia = useMemo(() => lancamentos_para_acertos.length, [lancamentos_para_acertos]);
 
@@ -97,7 +102,11 @@ export const DetalharAcertos = () => {
             setLoading(true)
 
             let is_repasse = verificaSeEhRepasse()
-            let tipos_de_acerto_lancamentos_agrupado = await getTiposDeAcertoLancamentosAgrupadoCategoria(aplicavelDespesasPeriodosAnteriores, is_repasse);
+            let tipos_de_acerto_lancamentos_agrupado = await getTiposDeAcertoLancamentosAgrupadoCategoria(
+                aplicavelDespesasPeriodosAnteriores, 
+                is_repasse,
+                recursoSelecionado?.uuid
+            );
             tipos_de_acerto_lancamentos_agrupado = tipos_de_acerto_lancamentos_agrupado.agrupado_por_categorias
 
             let [tem_gasto, tem_gasto_conferido, tem_gasto_nao_conferido] = verificaSeTemLancamentosDoTipoGasto()
