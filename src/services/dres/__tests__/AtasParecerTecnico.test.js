@@ -60,8 +60,9 @@ describe('Testes para funções de análise', () => {
         api.get.mockResolvedValue({ data: mockData })
         const dre_uuid = '1234'
         const ata_uuid = uuid_ata
-        const result = await getListaPresentesPadrao(dre_uuid, ata_uuid);
-        const url = `api/ata-parecer-tecnico/membros-comissao-exame-contas/?dre=${dre_uuid}&ata=${ata_uuid}`
+        const recurso_uuid = 'recurso-uuid'
+        const result = await getListaPresentesPadrao(dre_uuid, ata_uuid, recurso_uuid);
+        const url = `api/ata-parecer-tecnico/membros-comissao-exame-contas/?dre=${dre_uuid}&ata=${ata_uuid}&recurso_uuid=${recurso_uuid}`
         expect(api.get).toHaveBeenCalledWith( url, authHeader() )
         expect(result).toEqual(mockData);
     });
