@@ -1,9 +1,14 @@
 import React, { useMemo } from "react";
 import { useRecursoSelecionadoContext } from "../../../../../../context/RecursoSelecionado";
 import { TextoDocumentoConsolidadoPC } from "../../../../../../utils/TextoDocumentoConsolidadoPC";
+import { useGetComissaoResponsavelPC } from "../../../hooks/useGetComissaoResponsavelPC";
 
 export const TextoDinamicoSuperior = ({retornaDadosAtaFormatado, retornaTituloCorpoAta, ehPrevia, ehRetificacao, motivoRetificacao}) => {
     const { recursoSelecionado } = useRecursoSelecionadoContext();
+
+    const { data: comissaoResponsavelPC } = useGetComissaoResponsavelPC({ recurso_uuid: recursoSelecionado?.uuid });
+
+    const comissaoResponsavelPCNome = useMemo(() => comissaoResponsavelPC?.nome || "(Nenhuma comissão responsável pela pc encontrada)", [comissaoResponsavelPC?.nome]);
 
     const texto_documento_consolidado_pc = useMemo(() => new TextoDocumentoConsolidadoPC(recursoSelecionado?.habilita_exibicao_de_lauda), [recursoSelecionado?.habilita_exibicao_de_lauda]);
     const texto_publicacao = texto_documento_consolidado_pc.texto_artigo_a();
@@ -13,7 +18,7 @@ export const TextoDinamicoSuperior = ({retornaDadosAtaFormatado, retornaTituloCo
         const baseLegal = "conforme incisos III e IV do art. 34 da Portaria SME nº 6.634/2021"
 
         const textoBase = `${retornaDadosAtaFormatado("data_reuniao")}, às ${retornaDadosAtaFormatado("hora_reuniao")},
-         reuniu-se a Comissão de Prestação de Contas do PTRF da Diretoria Regional de Educação 
+         reuniu-se a ${comissaoResponsavelPCNome} da Diretoria Regional de Educação 
          ${retornaDadosAtaFormatado("nome_dre")}, instituída pela Portaria DRE-${retornaDadosAtaFormatado("nome_dre")} 
          nº ${retornaDadosAtaFormatado("numero_portaria")} de ${retornaDadosAtaFormatado("data_portaria")},`
 

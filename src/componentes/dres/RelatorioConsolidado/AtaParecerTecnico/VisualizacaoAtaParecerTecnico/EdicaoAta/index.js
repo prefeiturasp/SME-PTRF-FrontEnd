@@ -6,6 +6,7 @@ import {useParams} from "react-router-dom";
 import { getListaPresentesPadrao, getAtaParecerTecnico, postEdicaoAtaParecerTecnico } from "../../../../../../services/dres/AtasParecerTecnico.service";
 import moment from "moment";
 import {toastCustom} from "../../../../../Globais/ToastCustom"
+import { useRecursoSelecionadoContext } from "../../../../../../context/RecursoSelecionado";
 
 moment.updateLocale('pt', {
     months: [
@@ -17,6 +18,7 @@ moment.updateLocale('pt', {
 export const EdicaoAtaParecerTecnico = () => {
     const formRef = useRef();
     let {uuid_ata} = useParams();
+    const { recursoSelecionado } = useRecursoSelecionadoContext();
 
     const [listaPresentesPadrao, setListaPresentesPadrao] = useState([]);
     const [listaPresentes, setListaPresentes] = useState([]);
@@ -61,9 +63,14 @@ export const EdicaoAtaParecerTecnico = () => {
     };
 
     const consultaListaPresentesPadraoAta = async () => {
-        if(dadosAta && dadosAta.dre){
-            let lista_presentes_padrao = await getListaPresentesPadrao(dadosAta.dre.uuid, uuid_ata);
-            setListaPresentesPadrao(lista_presentes_padrao);
+        if(dadosAta && dadosAta.dre && recursoSelecionado?.uuid){
+            try {
+                let lista_presentes_padrao = await getListaPresentesPadrao(dadosAta.dre.uuid, uuid_ata, recursoSelecionado?.uuid);
+                setListaPresentesPadrao(lista_presentes_padrao);
+            } catch (e) {
+                const message = e?.response?.data?.mensagem || "Erro ao consultar lista de presentes padrão da ata";
+                toastCustom.ToastCustomError('Erro ao consultar lista de membros', message)                
+            }
         }
         
     }

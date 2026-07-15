@@ -5,9 +5,26 @@ import BotaoMarcarPublicacaoNoDiarioOficial from "./MarcarPublicacaoNoDiarioOfic
 import {Retificar} from "./Retificar";
 import PreviaDocumentoRetificado from "./PreviaDocumentoRetificado";
 import { Tooltip as ReactTooltip } from "react-tooltip";
+import { Tooltip } from "antd";
 import {visoesService} from "../../../services/visoes.service";
 
-const PublicarDocumentos = ({publicarConsolidadoDre, podeGerarPrevia, children, consolidadoDre, carregaConsolidadosDreJaPublicadosProximaPublicacao, execucaoFinanceira, disableGerar, todasAsPcsDaRetificacaoConcluidas, publicarRetificacao, showPublicarRetificacao, setShowPublicarRetificacao, gerarPreviaRetificacao, removerBtnGerar=false, execucaoFinanceiraCarregando}) => {
+const PublicarDocumentos = ({
+    publicarConsolidadoDre,
+    podeGerarPrevia,
+    children,
+    consolidadoDre,
+    carregaConsolidadosDreJaPublicadosProximaPublicacao,
+    execucaoFinanceira,
+    disableGerar,
+    todasAsPcsDaRetificacaoConcluidas,
+    publicarRetificacao,
+    showPublicarRetificacao,
+    setShowPublicarRetificacao,
+    gerarPreviaRetificacao,
+    removerBtnGerar=false,
+    execucaoFinanceiraCarregando,
+    existeComissaoResponsavelPC,
+}) => {
     const [showPublicarRelatorioConsolidadoPendente, setShowPublicarRelatorioConsolidadoPendente] = useState(false)
     const [alertaJustificativa, setAlertaJustificativa] = useState(true)
     const [showPublicarRelatorioConsolidado, setShowPublicarRelatorioConsolidado] = useState(false)
@@ -37,6 +54,8 @@ const PublicarDocumentos = ({publicarConsolidadoDre, podeGerarPrevia, children, 
         }
     }
 
+    const textoNecessarioComissao = existeComissaoResponsavelPC ? "" : "Não há comissão indicada como responsável pela análise de prestação de contas. Favor entrar em contato com a SME.";
+
     return(
         <>
             <div className="d-flex bd-highlight align-items-center container-publicar-cabecalho text-dark rounded-top border font-weight-bold">
@@ -59,13 +78,15 @@ const PublicarDocumentos = ({publicarConsolidadoDre, podeGerarPrevia, children, 
                         {
                             consolidadoDre.habilita_botao_gerar ? (
                                 <div className="p-2 bd-highlight">
-                                    <button
-                                        onClick={() => handleClick()}
-                                        className="btn btn btn btn-success"
-                                        disabled={disableGerar || !visoesService.getPermissoes(['gerar_relatorio_consolidado_dre'])}
-                                    >
-                                        Gerar
-                                    </button>
+                                    <Tooltip title={textoNecessarioComissao}>
+                                        <button
+                                            onClick={() => handleClick()}
+                                            className="btn btn btn btn-success"
+                                            disabled={!existeComissaoResponsavelPC || disableGerar || !visoesService.getPermissoes(['gerar_relatorio_consolidado_dre'])}
+                                        >
+                                            Gerar
+                                        </button>
+                                    </Tooltip>
                                 </div>
                             ):
 

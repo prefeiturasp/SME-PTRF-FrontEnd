@@ -246,6 +246,15 @@ export const FormularioEditaAta = ({
                   <p className="titulo-edicao-ata-presentes mt-4">
                     <strong>Presentes</strong>
                   </p>
+                  
+                  {
+                    values.listaPresentes.length <= 0 && (
+                      <p>
+                        Não há técnicos indicados para a comissão responsável pela análise de prestação de contas.
+                      </p>
+                    )
+                  }
+
                   <FieldArray
                     name="listaPresentes"
                     render={({ remove, push }) => (
