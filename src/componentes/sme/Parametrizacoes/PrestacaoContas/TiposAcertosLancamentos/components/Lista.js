@@ -78,7 +78,8 @@ export const Lista = () => {
             nome: formData.nome,
             categoria: formData.categoria,
             ativo: formData.ativo,
-            pode_alterar_saldo_conciliacao: formData.pode_alterar_saldo_conciliacao
+            pode_alterar_saldo_conciliacao: formData.pode_alterar_saldo_conciliacao,
+            recurso: formData.recurso,
         };
 
         if (formData.operacao === "create") {
