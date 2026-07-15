@@ -7,7 +7,7 @@ import { Tooltip as ReactTooltip } from "react-tooltip";
 import {getDownloadAtaParecerTecnico} from "../../../../services/dres/AtasParecerTecnico.service";
 import {postCriarAtaAtrelarAoConsolidadoDre} from "../../../../services/dres/RelatorioConsolidado.service";
 
-export const AtaParecerTecnico = ({consolidadoDre, podeAcessarInfoConsolidado}) => {
+export const AtaParecerTecnico = ({consolidadoDre, podeAcessarInfoConsolidado, existeComissaoResponsavelPC, }) => {
 
     const onClickVerAta = (uuid_ata) =>{
         window.location.assign(`/visualizacao-da-ata-parecer-tecnico/${uuid_ata}/${consolidadoDre.ja_publicado}`)
@@ -53,8 +53,21 @@ export const AtaParecerTecnico = ({consolidadoDre, podeAcessarInfoConsolidado}) 
         }
     }
 
+    const textoNecessarioComissao = existeComissaoResponsavelPC ? "" : "Não há comissão indicada como responsável pela análise de prestação de contas. Favor entrar em contato com a SME.";
+
+    const getMessageTooltip = () => {
+        if(!existeComissaoResponsavelPC){
+            return textoNecessarioComissao;
+        }
+
+        if (!podeAcessarInfoConsolidado(consolidadoDre)) {
+            return "Não é possível preencher a ata. A análise da(s) prestação(ões) de contas em retificação ainda não foi concluída."
+        }
+
+        return ""
+    }
+
     return (
-        <>
             <div className="rounded-bottom border">
                 <div className='row px-2'>
                     <div className="col-12 col-md-8">
@@ -75,24 +88,30 @@ export const AtaParecerTecnico = ({consolidadoDre, podeAcessarInfoConsolidado}) 
                         </div>
                     </div>
                     <div className="col-12 col-md-4 align-self-center text-right">
-                        {consolidadoDre.ata_de_parecer_tecnico && consolidadoDre.ata_de_parecer_tecnico.uuid ? (
-                            <button
-                                onClick={() => onClickVerAta(consolidadoDre.ata_de_parecer_tecnico.uuid)}
-                                type="button"
-                                className="btn btn-outline-success btn-sm"
-                            >
-                                {consolidadoDre.ja_publicado ? "Consultar" : "Preencher"} ata
-                            </button>
+                        {consolidadoDre.ata_de_parecer_tecnico?.uuid ? (
+                            <>
+                                <button
+                                    onClick={() => onClickVerAta(consolidadoDre.ata_de_parecer_tecnico.uuid)}
+                                    type="button"
+                                    className="btn btn-outline-success btn-sm"
+                                    disabled={!existeComissaoResponsavelPC}
+                                    data-tooltip-id={`tooltip-btn-ata-id-${consolidadoDre.uuid}`}
+                                    data-tooltip-html={textoNecessarioComissao}
+                                >
+                                    {consolidadoDre.ja_publicado ? "Consultar" : "Preencher"} ata
+                                </button>
+                                <ReactTooltip id={`tooltip-btn-ata-id-${consolidadoDre.uuid}`}/>
+                            </>
                             ):
                             <>
                                 <span
                                     data-tooltip-id={`tooltip-id-${consolidadoDre.uuid}`}
-                                    data-tooltip-html={!podeAcessarInfoConsolidado(consolidadoDre) ? "Não é possível preencher a ata. A análise da(s) prestação(ões) de contas em retificação ainda não foi concluída." : ""}>
+                                    data-tooltip-html={getMessageTooltip()}>
                                 <button
                                     onClick={() => criarAtaAtrelarAoConsolidado(consolidadoDre.dre_uuid, consolidadoDre.periodo_uuid, consolidadoDre.uuid ? consolidadoDre.uuid : null)}
                                     type="button"
                                     className="btn btn-outline-success btn-sm"
-                                    disabled={!podeAcessarInfoConsolidado(consolidadoDre)}
+                                    disabled={!podeAcessarInfoConsolidado(consolidadoDre) || !existeComissaoResponsavelPC}
                                 >
                                     Preencher ata
                                 </button>
@@ -103,6 +122,5 @@ export const AtaParecerTecnico = ({consolidadoDre, podeAcessarInfoConsolidado}) 
                     </div>
                 </div>
             </div>
-        </>
     )
 }
