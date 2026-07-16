@@ -121,6 +121,7 @@ const PublicarDocumentos = ({
                     gerarPreviaRetificacao={gerarPreviaRetificacao}
                     execucaoFinanceira={execucaoFinanceira}
                     execucaoFinanceiraCarregando={execucaoFinanceiraCarregando}
+                    existeComissaoResponsavelPC={existeComissaoResponsavelPC}
                 />
                 <Retificar
                     consolidadoDre={consolidadoDre}
