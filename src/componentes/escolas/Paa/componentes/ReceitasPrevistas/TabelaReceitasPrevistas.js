@@ -3,11 +3,23 @@ import { DataTable } from "primereact/datatable";
 import { useCallback } from "react";
 import { formatMoneyBRL } from "../../../../../utils/money";
 import { EditIconButton } from "../../../../Globais/UI/Button";
+import { usePaaContext } from "../PaaContext";
 
-const TabelaReceitasPrevistas = ({ data, handleOpenEditar, totalRecursosProprios }) => {
+const TabelaReceitasPrevistas = ({
+  data,
+  handleOpenEditar,
+  totalRecursosProprios,
+}) => {
+  const { paa } = usePaaContext();
+
+  const ehSaldoCongelado = Boolean(paa?.saldo_congelado_em);
+
   const nomeTemplate = useCallback((rowData) => {
     return (
-      <span style={{ color: "var(--color-primary)" }} className="font-weight-bold">
+      <span
+        style={{ color: "var(--color-primary)" }}
+        className="font-weight-bold"
+      >
         {rowData.acao.nome}
       </span>
     );
@@ -15,24 +27,31 @@ const TabelaReceitasPrevistas = ({ data, handleOpenEditar, totalRecursosProprios
 
   const getCongeladoOuCapital = (row) => {
     const saldo_congelado_receita_prevista = parseFloat(
-      row?.receitas_previstas_paa?.[0]?.saldo_congelado_capital
-    )
-    return saldo_congelado_receita_prevista || row?.saldos?.saldo_atual_capital
-  }
+      row?.receitas_previstas_paa?.[0]?.saldo_congelado_capital,
+    );
+    return ehSaldoCongelado
+      ? saldo_congelado_receita_prevista
+      : row?.saldos?.saldo_atual_capital;
+  };
+
   const getCongeladoOuCusteio = (row) => {
     const saldo_congelado_receita_prevista = parseFloat(
-      row?.receitas_previstas_paa?.[0]?.saldo_congelado_custeio
-    )
-    return saldo_congelado_receita_prevista ||
-            row?.saldos?.saldo_atual_custeio
-  }
+      row?.receitas_previstas_paa?.[0]?.saldo_congelado_custeio,
+    );
+    return ehSaldoCongelado
+      ? saldo_congelado_receita_prevista
+      : row?.saldos?.saldo_atual_custeio;
+  };
+
   const getCongeladoOuLivre = (row) => {
     const saldo_congelado_receita_prevista = parseFloat(
-      row?.receitas_previstas_paa?.[0]?.saldo_congelado_livre
-    )
-    const valor_livre = saldo_congelado_receita_prevista || row?.saldos?.saldo_atual_livre
-    return valor_livre < 0 ? 0 : valor_livre
-  }
+      row?.receitas_previstas_paa?.[0]?.saldo_congelado_livre,
+    );
+    const valor_livre = ehSaldoCongelado
+      ? saldo_congelado_receita_prevista
+      : row?.saldos?.saldo_atual_livre;
+    return valor_livre < 0 ? 0 : valor_livre;
+  };
 
   const dataTemplate = useCallback(
     (rowData, column) => {
@@ -41,8 +60,9 @@ const TabelaReceitasPrevistas = ({ data, handleOpenEditar, totalRecursosProprios
           return (
             acc +
             (parseFloat(
-              row?.receitas_previstas_paa?.[0]?.previsao_valor_capital
-            ) || 0) + getCongeladoOuCapital(row)
+              row?.receitas_previstas_paa?.[0]?.previsao_valor_capital,
+            ) || 0) +
+            getCongeladoOuCapital(row)
           );
         }, 0);
 
@@ -50,8 +70,9 @@ const TabelaReceitasPrevistas = ({ data, handleOpenEditar, totalRecursosProprios
           return (
             acc +
             (parseFloat(
-              row?.receitas_previstas_paa?.[0]?.previsao_valor_custeio
-            ) || 0) + getCongeladoOuCusteio(row)
+              row?.receitas_previstas_paa?.[0]?.previsao_valor_custeio,
+            ) || 0) +
+            getCongeladoOuCusteio(row)
           );
         }, 0);
 
@@ -59,8 +80,9 @@ const TabelaReceitasPrevistas = ({ data, handleOpenEditar, totalRecursosProprios
           return (
             acc +
             (parseFloat(
-              row?.receitas_previstas_paa?.[0]?.previsao_valor_livre
-            ) || 0) + getCongeladoOuLivre(row)
+              row?.receitas_previstas_paa?.[0]?.previsao_valor_livre,
+            ) || 0) +
+            getCongeladoOuLivre(row)
           );
         }, 0);
 
@@ -113,9 +135,9 @@ const TabelaReceitasPrevistas = ({ data, handleOpenEditar, totalRecursosProprios
           parseFloat(valor_livre),
       };
       const aceitaValorMapping = {
-        valor_capital: 'aceita_capital',
-        valor_custeio: 'aceita_custeio',
-        valor_livre: 'aceita_livre',
+        valor_capital: "aceita_capital",
+        valor_custeio: "aceita_custeio",
+        valor_livre: "aceita_livre",
       };
 
       return (
@@ -124,29 +146,26 @@ const TabelaReceitasPrevistas = ({ data, handleOpenEditar, totalRecursosProprios
             formatMoneyBRL(fieldMapping[column.field])
           ) : (
             <>
-              {rowData?.acao?.[aceitaValorMapping?.[column.field]] ?
+              {rowData?.acao?.[aceitaValorMapping?.[column.field]] ? (
                 formatMoneyBRL(fieldMapping[column.field])
-              :
+              ) : (
                 <div className="text-right">-</div>
-              }
+              )}
             </>
           )}
         </div>
       );
     },
-    [data, totalRecursosProprios]
+    [data, totalRecursosProprios],
   );
 
   const acoesTemplate = (rowData) => {
     return !rowData["fixed"] ? (
-      <EditIconButton
-        onClick={() => handleOpenEditar(rowData)}
-      />
+      <EditIconButton onClick={() => handleOpenEditar(rowData)} />
     ) : null;
   };
   const ehColunaDesabilitada = useCallback((rowData, rowIndex, colunaNome) => {
     if (rowData.fixed) return false;
-
 
     return !rowData?.acao[colunaNome];
   }, []);
@@ -156,31 +175,57 @@ const TabelaReceitasPrevistas = ({ data, handleOpenEditar, totalRecursosProprios
       className="tabela-receitas-previstas no-hover"
       value={[...data, { acao: { nome: "Total do PTRF" }, fixed: true }]}
     >
-      <Column field="nome" header="Recursos" body={nomeTemplate} style={{width: '15%'}} />
-      <Column field="valor_custeio" header="Custeio (R$)" body={dataTemplate} style={{width: '15%'}}
-        bodyClassName={(rowData, { rowIndex }) => {
-            return ehColunaDesabilitada(rowData, rowIndex, "aceita_custeio")
-              ? "cell-desativada": "";
-          }}
+      <Column
+        field="nome"
+        header="Recursos"
+        body={nomeTemplate}
+        style={{ width: "15%" }}
       />
-      <Column field="valor_capital" header="Capital (R$)" body={dataTemplate} style={{width: '15%'}}
+      <Column
+        field="valor_custeio"
+        header="Custeio (R$)"
+        body={dataTemplate}
+        style={{ width: "15%" }}
         bodyClassName={(rowData, { rowIndex }) => {
-            return ehColunaDesabilitada(rowData, rowIndex, "aceita_capital")
-              ? "cell-desativada": "";
-          }}
+          return ehColunaDesabilitada(rowData, rowIndex, "aceita_custeio")
+            ? "cell-desativada"
+            : "";
+        }}
+      />
+      <Column
+        field="valor_capital"
+        header="Capital (R$)"
+        body={dataTemplate}
+        style={{ width: "15%" }}
+        bodyClassName={(rowData, { rowIndex }) => {
+          return ehColunaDesabilitada(rowData, rowIndex, "aceita_capital")
+            ? "cell-desativada"
+            : "";
+        }}
       />
       <Column
         field="valor_livre"
         header="Livre Aplicação (R$)"
         body={dataTemplate}
-        style={{width: '20%'}}
+        style={{ width: "20%" }}
         bodyClassName={(rowData, { rowIndex }) => {
           return ehColunaDesabilitada(rowData, rowIndex, "aceita_livre")
-            ? "cell-desativada": "";
+            ? "cell-desativada"
+            : "";
         }}
       />
-      <Column field="total" header="Total (R$)" body={dataTemplate} style={{width: '15%', fontWeight: 'bold'}} />
-      <Column field="acoes" header="Ações" body={acoesTemplate} style={{width: '10%'}} />
+      <Column
+        field="total"
+        header="Total (R$)"
+        body={dataTemplate}
+        style={{ width: "15%", fontWeight: "bold" }}
+      />
+      <Column
+        field="acoes"
+        header="Ações"
+        body={acoesTemplate}
+        style={{ width: "10%" }}
+      />
     </DataTable>
   );
 };
