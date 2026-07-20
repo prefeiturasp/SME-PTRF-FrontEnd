@@ -386,8 +386,9 @@ describe('Testes para funções de análise', () => {
     test('getTabelas deve chamar a API corretamente', async () => {
         api.get.mockResolvedValue({ data: mockData })
         const documento_uuid = '1234'
-        const result = await getTabelas(documento_uuid);
-        const url = `/api/tipos-acerto-documento/tabelas/?tipos_documento_prestacao__uuid=${documento_uuid}`
+        const recurso_uuid = '1234'
+        const result = await getTabelas(documento_uuid, recurso_uuid);
+        const url = `/api/tipos-acerto-documento/tabelas/?tipos_documento_prestacao__uuid=${documento_uuid}&recurso_uuid=${recurso_uuid}`
         expect(api.get).toHaveBeenCalledWith(url, authHeader())
         expect(result).toEqual(mockData);
     });

@@ -11,11 +11,16 @@ import { ModalAntDesignConfirmacao } from "../../../../../Globais/ModalAntDesign
 // Hooks Personalizados
 import {useCarregaPrestacaoDeContasPorUuid} from "../../../../../../hooks/dres/PrestacaoDeContas/useCarregaPrestacaoDeContasPorUuid";
 
+import useRecursoSelecionado from "../../../../../../hooks/Globais/useRecursoSelecionado";
+import { visoesService } from "../../../../../../services/visoes.service";
+
 const DetalharAcertosDocumentos = () =>{
 
     const {prestacao_conta_uuid} = useParams();
     const formRef = useRef();
     const navigate = useNavigate();
+
+    const { recursoSelecionado } = useRecursoSelecionado({ visoesService });
 
     // Redux
     const {documentos} = useSelector(state => state.DetalharAcertosDocumentos)
@@ -31,7 +36,10 @@ const DetalharAcertosDocumentos = () =>{
 
     const carregaTiposDeAcertoDocumentos = useCallback(async () =>{
         if (documentos && documentos[0]){
-            let tabelas = await getTabelas(documentos[0].tipo_documento_prestacao_conta.uuid);
+            let tabelas = await getTabelas(
+                documentos[0].tipo_documento_prestacao_conta.uuid, 
+                recursoSelecionado && recursoSelecionado.uuid ? recursoSelecionado.uuid : ''
+            );
             let tipos_agrupados = tabelas.agrupado_por_categorias;
             setTiposDeAcertoDocumentosAgrupados(tipos_agrupados);
         }
@@ -62,7 +70,10 @@ const DetalharAcertosDocumentos = () =>{
     const carregaSolicitacoesAcertosDocumentos = useCallback(async () => {
         if (documentos && documentos[0] && documentos[0].analise_documento && documentos[0].analise_documento.uuid){
             let acertos = await getSolicitacaoDeAcertosDocumentos(prestacao_conta_uuid, documentos[0].analise_documento && documentos[0].analise_documento.uuid)
-            let tipos_de_acerto_documentos_agrupado = await getTabelas(documentos[0].tipo_documento_prestacao_conta.uuid);
+            let tipos_de_acerto_documentos_agrupado = await getTabelas(
+                documentos[0].tipo_documento_prestacao_conta.uuid, 
+                recursoSelecionado && recursoSelecionado.uuid ? recursoSelecionado.uuid : ''
+            );
             
             let _acertos = []
             if (acertos && acertos.solicitacoes_de_ajuste_da_analise && acertos.solicitacoes_de_ajuste_da_analise.length > 0) {

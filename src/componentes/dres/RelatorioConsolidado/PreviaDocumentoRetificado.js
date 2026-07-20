@@ -3,17 +3,27 @@ import { Tooltip as ReactTooltip } from "react-tooltip";
 import { ModalPublicarRetificacao } from "../../../utils/Modais";
 import { ModalPublicarRetificacaoPendente } from "../../../utils/Modais";
 import {postCriarAtaAtrelarAoConsolidadoDre} from "../../../services/dres/RelatorioConsolidado.service";
-import { Button } from 'antd';
+import { Button, Tooltip } from 'antd';
 import {visoesService} from "../../../services/visoes.service";
 
 
-const PreviaDocumentoRetificado = ({consolidadoDre, todasAsPcsDaRetificacaoConcluidas, publicarRetificacao, gerarPreviaRetificacao, execucaoFinanceira, execucaoFinanceiraCarregando}) => {
+const PreviaDocumentoRetificado = ({
+    consolidadoDre,
+    todasAsPcsDaRetificacaoConcluidas,
+    publicarRetificacao,
+    gerarPreviaRetificacao,
+    execucaoFinanceira,
+    execucaoFinanceiraCarregando,
+    existeComissaoResponsavelPC,
+}) => {
     const [showPublicarRetificacaoPendente, setShowPublicarRetificacaoPendente] = useState(false)
     const [showPublicarRetificacao, setShowPublicarRetificacao] = useState(false)
     const [alertaJustificativaRetificacao, setAlertaJustificativaRetificacao] = useState(true)
 
     const [adicionarSecaoJustificativaNoModal, setAdicionaSecaoJustificativaNoModal] = useState(false);
     const [adicionarSecaoMotivoRetificacaoNoModal, setAdicionaSecaoMotivoRetificacaoNoModal] = useState(false);
+
+    const textoNecessarioComissao = existeComissaoResponsavelPC ? "" : "Não há comissão indicada como responsável pela análise de prestação de contas. Favor entrar em contato com a SME.";
 
     const comparaValores = (execucaoFinanceiraConta) => {
         if (execucaoFinanceiraConta) {
@@ -75,6 +85,18 @@ const PreviaDocumentoRetificado = ({consolidadoDre, todasAsPcsDaRetificacaoConcl
         }
     }
 
+    const mensagemTooltip = () => {
+        if (!existeComissaoResponsavelPC) {
+            return "Não há comissão indicada como responsável pela análise de prestação de contas. Favor entrar em contato com a SME.";
+        }
+
+        if (!todasAsPcsDaRetificacaoConcluidas(consolidadoDre)) {
+            return "Os documentos ainda não podem ser gerados, pois se encontra em análise prestação(ões) de contas a ser(em) retificada(s).";
+        }
+
+        return ""
+    }
+
     return(
         <>
             {consolidadoDre && consolidadoDre.eh_retificacao &&
@@ -99,21 +121,18 @@ const PreviaDocumentoRetificado = ({consolidadoDre, todasAsPcsDaRetificacaoConcl
                     {consolidadoDre.habilita_botao_gerar &&
 
                         <div className="p-2 bd-highlight font-weight-normal">
-                            <span
-                                data-tooltip-id={`tooltip-gerar-${consolidadoDre.uuid}`}
-                                data-tooltip-html={!todasAsPcsDaRetificacaoConcluidas(consolidadoDre) ? "Os documentos ainda não podem ser gerados, pois se encontra em análise prestação(ões) de contas a ser(em) retificada(s)." : ""}>
+                            <Tooltip title={mensagemTooltip()}>
                                 <Button
                                     className="btn btn btn btn-success botao-carregar"
                                     type="primary"
                                     size="large"
                                     loading={execucaoFinanceiraCarregando}
-                                    disabled={!todasAsPcsDaRetificacaoConcluidas(consolidadoDre) || !visoesService.getPermissoes(['gerar_relatorio_consolidado_dre'])}
+                                    disabled={!existeComissaoResponsavelPC || !todasAsPcsDaRetificacaoConcluidas(consolidadoDre) || !visoesService.getPermissoes(['gerar_relatorio_consolidado_dre'])}
                                     onClick={() => handleClick()}
                                 >
                                     Gerar
                                 </Button>
-                                <ReactTooltip id={`tooltip-gerar-${consolidadoDre.uuid}`}/>
-                            </span>
+                            </Tooltip>
                         </div>
                     }
 

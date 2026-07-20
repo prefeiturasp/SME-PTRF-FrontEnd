@@ -368,9 +368,10 @@ describe('Testes para funções de análise', () => {
 
     test('getListaDeAcertosDocumentos  deve chamar a API corretamente', async () => {
         api.get.mockResolvedValue({ data: mockData })
-        const result = await getListaDeAcertosDocumentos();
+        const recurso_uuid = 'recurso-uuid';
+        const result = await getListaDeAcertosDocumentos(recurso_uuid);
         const url = `/api/tipos-acerto-documento/`
-        expect(api.get).toHaveBeenCalledWith(url, authHeader())
+        expect(api.get).toHaveBeenCalledWith(url, { ...authHeader(), params: { recurso_uuid } })
         expect(result).toEqual(mockData);
     });
 

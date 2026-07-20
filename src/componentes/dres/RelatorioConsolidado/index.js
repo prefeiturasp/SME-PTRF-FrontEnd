@@ -29,6 +29,8 @@ import {PERIODO_RELATORIO_CONSOLIDADO_DRE} from "../../../services/auth.service"
 import BlocoPublicacaoParcial from "./BlocoPublicacaoParcial"
 import useUnidadeSelecionada from "../../../hooks/Globais/useUnidadeSelecionada";
 import { useRecursoSelecionadoContext } from "../../../context/RecursoSelecionado";
+import { useGetComissaoResponsavelPC } from "./hooks/useGetComissaoResponsavelPC";
+import { toastCustom } from "../../Globais/ToastCustom";
 
 const RelatorioConsolidado = () => {
     const { getUUIDUnidadeSelecionadaTipoDRE } = useUnidadeSelecionada(visoesService)
@@ -57,6 +59,8 @@ const RelatorioConsolidado = () => {
     const [loading, setLoading] = useState(false);
     const [loadingRelatorioConsolidado, setLoadingRelatorioConsolidado] = useState(false);
     const [disableGerar, setDisableGerar] = useState(true);
+
+    const { data: comissaoResponsavelPC } = useGetComissaoResponsavelPC({ recurso_uuid: recursoSelecionado?.uuid });
 
     const carregaPeriodos = useCallback(async () => {
         try {
@@ -306,7 +310,9 @@ const RelatorioConsolidado = () => {
                 await carregaConsolidadosDreJaPublicadosProximaPublicacao()
             }
         } catch (e) {
-            console.log("Erro ao publicar Consolidado Dre ", e)
+            const errorMessage = e?.response?.data?.mensagem || "Erro ao publicar Consolidado Dre.";
+
+            toastCustom.ToastCustomError("Erro ao publicar Consolidado Dre.", errorMessage);
         }
     }
 
@@ -376,6 +382,7 @@ const RelatorioConsolidado = () => {
     };
 
     const isShowLaudaPróximaPublicacao = !consolidadoDreProximaPublicacao?.eh_consolidado_de_publicacoes_parciais && recursoSelecionado?.habilita_exibicao_de_lauda;
+    const existeComissaoResponsavelPC = !!comissaoResponsavelPC?.uuid;
 
     return (
         <PaginasContainer>
@@ -434,6 +441,7 @@ const RelatorioConsolidado = () => {
                                                         setShowPublicarRetificacao={setShowPublicarRetificacao}
                                                         gerarPreviaRetificacao={gerarPreviaRetificacao}
                                                         removerBtnGerar={consolidadoDreProximaPublicacao.eh_consolidado_de_publicacoes_parciais}
+                                                        existeComissaoResponsavelPC={existeComissaoResponsavelPC}
                                                     >
                                                         <PreviaDocumentos
                                                             gerarPreviaConsolidadoDre={gerarPreviaConsolidadoDre}
@@ -449,6 +457,7 @@ const RelatorioConsolidado = () => {
                                                         <AtaParecerTecnico
                                                             consolidadoDre={consolidadoDreProximaPublicacao}
                                                             podeAcessarInfoConsolidado={podeAcessarInfoConsolidado}
+                                                            existeComissaoResponsavelPC={existeComissaoResponsavelPC}
                                                         />
                                                     }
                                                     {isShowLaudaPróximaPublicacao &&
@@ -476,6 +485,7 @@ const RelatorioConsolidado = () => {
                                                 podeAcessarInfoConsolidado={podeAcessarInfoConsolidado}
                                                 podeGerarPreviaRetificacao={podeGerarPreviaRetificacao}
                                                 isShowLauda={recursoSelecionado?.habilita_exibicao_de_lauda}
+                                                existeComissaoResponsavelPC={existeComissaoResponsavelPC}
                                             />
                                         )}
                                     </>
