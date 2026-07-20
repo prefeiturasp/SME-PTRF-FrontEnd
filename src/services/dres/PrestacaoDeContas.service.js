@@ -255,13 +255,20 @@ export const getTiposDeAcertoLancamentos = async () => {
     return (await api.get(`/api/tipos-acerto-lancamento/`, authHeader())).data
 };
 
-export const getTiposDeAcertoLancamentosAgrupadoCategoria = async (aplicavel_despesas_periodos_anteriores=null, is_repasse=null) => {
+export const getTiposDeAcertoLancamentosAgrupadoCategoria = async (
+    aplicavel_despesas_periodos_anteriores=null, 
+    is_repasse=null,
+    recurso_uuid=''
+) => {
     const params = new URLSearchParams();
     if (aplicavel_despesas_periodos_anteriores) {
         params.set('aplicavel_despesas_periodos_anteriores', String(aplicavel_despesas_periodos_anteriores));
     }
     if (is_repasse) {
         params.set('is_repasse', String(is_repasse));
+    }
+    if (recurso_uuid) {
+        params.set('recurso_uuid', recurso_uuid);
     }
     const query = params.toString();
     const url = `/api/tipos-acerto-lancamento/tabelas/${query ? `?${query}` : ''}`;
@@ -292,8 +299,8 @@ export const getTiposDeAcertosDocumentos = async (documento_uuid) => {
     return (await api.get(`/api/tipos-acerto-documento/?tipos_documento_prestacao__uuid=${documento_uuid}`, authHeader())).data
 };
 
-export const getTabelas = async (documento_uuid=null) => {
-    return (await api.get(`/api/tipos-acerto-documento/tabelas/?tipos_documento_prestacao__uuid=${documento_uuid}`, authHeader())).data
+export const getTabelas = async (documento_uuid=null, recurso_uuid='') => {
+    return (await api.get(`/api/tipos-acerto-documento/tabelas/?tipos_documento_prestacao__uuid=${documento_uuid}&recurso_uuid=${recurso_uuid}`, authHeader())).data
 };
 
 export const getSolicitacaoDeAcertosDocumentos = async (prestacao_de_contas_uuid, analise_documento_uuid) => {

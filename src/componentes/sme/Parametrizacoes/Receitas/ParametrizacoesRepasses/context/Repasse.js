@@ -1,5 +1,8 @@
 import React, { createContext, useMemo, useState, useEffect } from 'react';
 import { useAbasPorRecursoContext } from '../../../componentes/AbasPorRecurso/hooks/useAbasPorRecursoContext';
+import useUnidadeSelecionada from '../../../../../../hooks/Globais/useUnidadeSelecionada';
+import { visoesService } from '../../../../../../services/visoes.service';
+import { useGetTabelasRepasse } from '../hooks/useGetTabelasRepasse';
 
 const initialFilter = {
     page: 1,
@@ -54,6 +57,9 @@ export const RepassesContext = createContext({
 
     bloquearBtnSalvarForm: '',
     setBloquearBtnSalvarForm: () => {},
+
+    tabelas: null,
+    isLoading: false,
 })
 
 export const RepassesProvider = ({children}) => {
@@ -70,6 +76,13 @@ export const RepassesProvider = ({children}) => {
     const [showModalConfirmacaoExclusao, setShowModalConfirmacaoExclusao] = useState(false);
 
     const [bloquearBtnSalvarForm, setBloquearBtnSalvarForm] = useState(false);
+
+    const { isSME } = useUnidadeSelecionada(visoesService);
+
+    const { data: tabelas, isLoading } = useGetTabelasRepasse({ 
+        filters: filter, 
+        solicitacao_sme: isSME() 
+    });
 
     useEffect(() => {
         const initialFilterWithRecursoUuid = {
@@ -100,8 +113,10 @@ export const RepassesProvider = ({children}) => {
             setShowModalConfirmacaoExclusao,
             bloquearBtnSalvarForm,
             setBloquearBtnSalvarForm,
+            tabelas,
+            isLoading,
         };
-    }, [filter, currentPage, firstPage, showModalForm, stateFormModal, showModalConfirmacaoExclusao, bloquearBtnSalvarForm]);
+    }, [filter, currentPage, firstPage, showModalForm, stateFormModal, showModalConfirmacaoExclusao, bloquearBtnSalvarForm, tabelas, isLoading]);
 
     return (
         <RepassesContext.Provider value={contextValue}>

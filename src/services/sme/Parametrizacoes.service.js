@@ -624,17 +624,18 @@ export const getListaDeAcoes = async (recurso_uuid = null) => {
   return (await api.get(`/api/acoes/`, { ...authHeader(), params: { recurso_uuid } })).data;
 };
 
-export const getListaDeAcertosLancamentos = async () => {
-  return (await api.get(`/api/tipos-acerto-lancamento/`, authHeader())).data;
+export const getListaDeAcertosLancamentos = async (recurso_uuid = null) => {
+  const config = recurso_uuid ? { ...authHeader(), params: { recurso_uuid } } : authHeader();
+  return (await api.get(`/api/tipos-acerto-lancamento/`, config)).data;
 };
 
-export const getListaDeAcertosDocumentos = async () => {
-  return (await api.get(`/api/tipos-acerto-documento/`, authHeader())).data;
+export const getListaDeAcertosDocumentos = async (recurso_uuid = null) => {
+  return (await api.get(`/api/tipos-acerto-documento/`, { ...authHeader(), params: { recurso_uuid } })).data;
 };
 
-export const getTabelaCategoria = async () => {
-  return (await api.get(`api/tipos-acerto-lancamento/tabelas/`, authHeader()))
-    .data;
+export const getTabelaCategoria = async (recurso_uuid = '') => {
+  const config = recurso_uuid ? { ...authHeader(), params: { recurso_uuid } } : authHeader();
+  return (await api.get(`api/tipos-acerto-lancamento/tabelas/`, config)).data;
 };
 
 export const getTabelaDocumento = async () => {
@@ -766,13 +767,14 @@ export const getAcoesFiltradas = async (nome = "") => {
 export const getAcertosLancamentosFiltrados = async (
   nome = "",
   categoria = "",
-  ativo = ""
+  ativo = "",
+  recurso_uuid = ""
 ) => {
   return (
     await api.get(
       `/api/tipos-acerto-lancamento/?nome=${nome}${
         categoria ? "&categoria=" + categoria : ""
-      }${ativo ? "&ativo=" + ativo : ""}`,
+      }${ativo ? "&ativo=" + ativo : ""}${recurso_uuid ? "&recurso_uuid=" + recurso_uuid : ""}`,
       authHeader()
     )
   ).data;
@@ -782,7 +784,8 @@ export const getAcertosDocumentosFiltrados = async (
   nome = "",
   categoria = "",
   ativo = "",
-  documento_relacionado = ""
+  documento_relacionado = "",
+  recurso_uuid = ""
 ) => {
   return (
     await api.get(
@@ -792,7 +795,7 @@ export const getAcertosDocumentosFiltrados = async (
         documento_relacionado
           ? "&documento_relacionado=" + documento_relacionado
           : ""
-      }`,
+      }${recurso_uuid ? "&recurso_uuid=" + recurso_uuid : ""}`,
       authHeader()
     )
   ).data;
@@ -1074,14 +1077,22 @@ export const getRepasses = async (filter, currentPage) => {
   ).data;
 };
 
-export const getTabelasRepasse = async (recurso_uuid) => {
-  console.log('recurso_uuid', recurso_uuid)
-  let url = `/api/repasses/tabelas/`;
-  if (recurso_uuid) {
-    url += `?recurso_uuid=${recurso_uuid}`;
+export const getTabelasRepasse = async (parameters = {}) => {
+  const params = new URLSearchParams();
+
+  if (parameters.recurso_uuid) {
+    params.append('recurso_uuid', parameters.recurso_uuid);
   }
+
+  if (parameters.solicitacao_sme) {
+    params.append('solicitacao_sme', parameters.solicitacao_sme);
+  }
+
+  const paramsToString = params.toString();
+  const url = `/api/repasses/tabelas/${paramsToString ? `?${paramsToString}` : ''}`;
+
   return (await api.get(url, authHeader())).data;
-};
+}
 
 export const getTabelasRepassePorAssociacao = async (associacao_uuid, recurso_uuid) => {
   let url = `/api/repasses/tabelas-por-associacao/?associacao_uuid=${associacao_uuid}`;

@@ -16,6 +16,13 @@ export const getComissoes = async () => {
     return (await api.get(`api/comissoes/`, authHeader())).data
 };
 
+export const getComissaoResponsavelPC = async (recurso_uuid = null) => {
+    return (await api.get('api/comissoes/comissao-responsavel-analise-pc-por-recurso/', {
+        ...authHeader(),
+        params: { recurso_uuid }
+    })).data
+};
+
 export const getMembrosComissaoFiltro = async (dreUuid, comissaoUuid, nomeOuRf) => {
     if(comissaoUuid){
         return (await api.get(`api/membros-comissoes/?dre__uuid=${dreUuid}&comissao_uuid=${comissaoUuid}&nome_ou_rf=${nomeOuRf}`, authHeader())).data

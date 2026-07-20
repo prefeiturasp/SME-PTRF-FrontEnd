@@ -21,7 +21,9 @@ const BlocoPublicacaoParcial = ({
     gerarPreviaRetificacao,
     gerarPreviaConsolidadoDre,
     podeAcessarInfoConsolidado,
-    podeGerarPreviaRetificacao }) => {
+    podeGerarPreviaRetificacao,
+    existeComissaoResponsavelPC,
+}) => {
 
     const [execucaoFinanceiraCarregando, setExecucaoFinanceiraCarregando] = useState(true);
     const [execucaoFinanceira, setExecucaoFinanceira] = useState(false);
@@ -56,6 +58,7 @@ const BlocoPublicacaoParcial = ({
                     gerarPreviaRetificacao={gerarPreviaRetificacao}
                     execucaoFinanceiraCarregando={execucaoFinanceiraCarregando}
                     execucaoFinanceira={execucaoFinanceira}
+                    existeComissaoResponsavelPC={existeComissaoResponsavelPC}
                 >
                     <PreviaDocumentos
                         gerarPreviaConsolidadoDre={gerarPreviaConsolidadoDre}
@@ -72,6 +75,7 @@ const BlocoPublicacaoParcial = ({
                     consolidadoDre={consolidadoDre}
                     podeGerarPreviaRetificacao={podeGerarPreviaRetificacao(consolidadoDre)}
                     podeAcessarInfoConsolidado={podeAcessarInfoConsolidado}
+                    existeComissaoResponsavelPC={existeComissaoResponsavelPC}
                 />
                 {
                     isShowLauda &&

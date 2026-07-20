@@ -20,9 +20,17 @@ import { faXmark } from "@fortawesome/free-solid-svg-icons";
 
 export const ModalForm = ({handleSubmitFormModal, todasAsAssociacoesAutoComplete, loadingAssociacoes}) => {
     const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES = RetornaSeTemPermissaoEdicaoPainelParametrizacoes()
-    const { filter, showModalForm, setShowModalForm, stateFormModal, bloquearBtnSalvarForm, setShowModalConfirmacaoExclusao, setStateFormModal} = useContext(RepassesContext)
-    
-    const { data: tabelas } = useGetTabelasRepasse({filters: filter});
+    const { 
+        filter, 
+        showModalForm, 
+        setShowModalForm, 
+        stateFormModal, 
+        bloquearBtnSalvarForm, 
+        setShowModalConfirmacaoExclusao, 
+        setStateFormModal,
+        tabelas,
+    } = useContext(RepassesContext)
+   
     const { data: tabelas_por_associacao, isFetching: isFetchingTabelaPorAssociacao } = useGetTabelasPorAssociacao({ filters: filter });
     const { recursos } = useRecursoSelecionadoContext();
 

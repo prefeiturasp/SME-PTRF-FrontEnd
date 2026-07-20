@@ -16,8 +16,8 @@ export const getInfoContas = async (dre_uuid, periodo_uuid, uuid_ata) => {
     return (await api.get(`api/ata-parecer-tecnico/info-ata/?dre=${dre_uuid}&periodo=${periodo_uuid}&ata=${uuid_ata}`, authHeader())).data
 }
 
-export const getListaPresentesPadrao = async (dre_uuid, ata_uuid) => {
-    return (await api.get(`api/ata-parecer-tecnico/membros-comissao-exame-contas/?dre=${dre_uuid}&ata=${ata_uuid}`, authHeader())).data
+export const getListaPresentesPadrao = async (dre_uuid, ata_uuid, recurso_uuid) => {
+    return (await api.get(`api/ata-parecer-tecnico/membros-comissao-exame-contas/?dre=${dre_uuid}&ata=${ata_uuid}&recurso_uuid=${recurso_uuid}`, authHeader())).data
 }
 
 export const postEdicaoAtaParecerTecnico = async (ata_uuid, payload) => {

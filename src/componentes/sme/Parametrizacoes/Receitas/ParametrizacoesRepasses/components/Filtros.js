@@ -1,15 +1,19 @@
 import React, {useContext, useState, useEffect} from "react";
 import { RepassesContext } from "../context/Repasse";
-import { useGetTabelasRepasse } from "../hooks/useGetTabelasRepasse";
 import { useAbasPorRecursoContext } from "../../../componentes/AbasPorRecurso/hooks/useAbasPorRecursoContext";
 import Loading from "../../../../../../utils/Loading";
 
 export const Filtros = () => {
-    const {filter, setFilter, initialFilter, setCurrentPage, setFirstPage} = useContext(RepassesContext);
+    const { 
+        setFilter, 
+        initialFilter, 
+        setCurrentPage, 
+        setFirstPage, 
+        tabelas, 
+        isLoading
+    } = useContext(RepassesContext);
     const [formFilter, setFormFilter] = useState(initialFilter);
     const { selectedRecurso } = useAbasPorRecursoContext();
-
-    const { data: tabelas, isLoading } = useGetTabelasRepasse({ filters: filter });
 
     const handleChangeFormFilter = (name, value) => {
         setFormFilter({
