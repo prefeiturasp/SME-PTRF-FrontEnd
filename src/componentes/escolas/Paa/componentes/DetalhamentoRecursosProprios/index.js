@@ -28,7 +28,7 @@ import { visoesService } from "../../../../../services/visoes.service";
 const DatePickerCustom = DatePicker.generatePicker(momentGenerateConfig);
 const { TextArea } = Input;
 
-const DetalhamentoRecursosProprios = () => {
+const DetalhamentoRecursosProprios = ({tituloMenu="Recursos Próprios"}) => {
   const dispatch = useDispatch();
   const podeEditar = visoesService.getPermissoes(["custom_change_paa"]);
   const associacaoUUID = localStorage.getItem(ASSOCIACAO_UUID);
@@ -322,7 +322,7 @@ const DetalhamentoRecursosProprios = () => {
     <div>
       <Spin spinning={isLoading || isLoadingFontesRecursos}>
         <Flex gutter={8} justify="space-between" className="mb-4">
-          <h5 className="mb-0">Detalhamento de Recursos Próprios</h5>
+          <h4 className="mb-0">{tituloMenu}</h4>
 
           {podeEditar && (
             currentRowData ? (

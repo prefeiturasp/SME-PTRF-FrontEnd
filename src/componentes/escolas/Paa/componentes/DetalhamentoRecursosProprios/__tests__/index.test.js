@@ -68,6 +68,52 @@ describe("DetalhamentoRecursosProprios Component", () => {
     });
   });
 
+  it("deve renderizar o título padrão 'Recursos Próprios' quando a prop não for informada", () => {
+    useGetRecursosProprios.mockReturnValue({
+      data: { results: [] },
+      count: 0,
+      isLoading: false,
+    });
+
+    render(
+      <Provider store={mockStore}>
+        <QueryClientProvider client={queryClient}>
+          <DetalhamentoRecursosProprios />
+        </QueryClientProvider>
+      </Provider>
+    );
+
+    const titulo = screen.getByRole("heading", {
+      level: 4,
+      name: "Recursos Próprios",
+    });
+    expect(titulo).toBeInTheDocument();
+  });
+
+  it("deve renderizar o título personalizado informado através da prop tituloMenu", () => {
+    useGetRecursosProprios.mockReturnValue({
+      data: { results: [] },
+      count: 0,
+      isLoading: false,
+    });
+
+    const tituloPersonalizado = "Título Customizado de Teste";
+
+    render(
+      <Provider store={mockStore}>
+        <QueryClientProvider client={queryClient}>
+          <DetalhamentoRecursosProprios tituloMenu={tituloPersonalizado} />
+        </QueryClientProvider>
+      </Provider>
+    );
+
+    const titulo = screen.getByRole("heading", {
+      level: 4,
+      name: tituloPersonalizado,
+    });
+    expect(titulo).toBeInTheDocument();
+  });
+
   it("adicionar nova linha na tabela com inputs ao clicar no botão 'Adicionar fonte de recurso'", async () => {
     useGetRecursosProprios.mockReturnValue({
       data: { results: [] },
