@@ -1,15 +1,23 @@
 import { useState, useCallback } from "react";
 import "./style.css";
 import OutrosRecursosModalForm from "./OutrosRecursosModalForm";
-import TabelaOutrosRecursos from "./TabelaOutrosRecursos";
-const TAB_OUTROS_RECURSOS = "outros-recursos";
+import TabelaRecursosProprios from "./TabelaRecursosPropriosLegado";
+import { useGetTotalizadorRecursoProprio } from "../DetalhamentoRecursosProprios/hooks/useGetTotalizarRecursoProprio";
+import { usePaaContext } from "../PaaContext";
+const TAB_DETALHAMENTO_RECURSOS_PROPRIOS = "detalhamento-de-recursos-proprios";
 
 const ReceitasPrevistasOutrosRecursos = ({ setActiveTab }) => {
+  const { paa } = usePaaContext();
 
   const [modalFormOutrosRecursos, setModalFormOutrosRecursos] = useState({
     open: false,
     data: null,
   });
+
+  const { data: totalRecursosProprios } = useGetTotalizadorRecursoProprio(
+    paa.associacao,
+    paa.uuid,
+  );
 
   const handleOpenEditarOutrosRecursos = useCallback((rowData) => {
     setModalFormOutrosRecursos({ open: true, data: rowData });
@@ -21,7 +29,6 @@ const ReceitasPrevistasOutrosRecursos = ({ setActiveTab }) => {
 
   return (
     <div>
-      <h4>Outros Recursos</h4>
       {modalFormOutrosRecursos.open && (
         <OutrosRecursosModalForm
           open={modalFormOutrosRecursos.open}
@@ -30,8 +37,9 @@ const ReceitasPrevistasOutrosRecursos = ({ setActiveTab }) => {
         />
       )}
 
-      <TabelaOutrosRecursos
-        setActiveTab={() => setActiveTab?.(TAB_OUTROS_RECURSOS)}
+      <TabelaRecursosProprios
+        setActiveTab={() => setActiveTab?.(TAB_DETALHAMENTO_RECURSOS_PROPRIOS)}
+        totalRecursosProprios={totalRecursosProprios}
         handleOpenEditar={handleOpenEditarOutrosRecursos}
       />
     </div>

@@ -2,7 +2,7 @@ import React from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import TabelaRecursosProprios from "../TabelaRecursosProprios";
+import TabelaRecursosProprios from "../TabelaRecursosPropriosLegado";
 
 jest.mock("../hooks/useGetReceitasPrevistasOutrosRecursosPeriodo", () => ({
   useGetTodos: () => ({

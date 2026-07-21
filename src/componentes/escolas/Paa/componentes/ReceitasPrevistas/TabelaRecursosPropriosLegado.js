@@ -14,7 +14,7 @@ const TabelaRecursosProprios = ({
   const { data: recursos, isLoading: loadingRecursos } = useGetTodos();
 
   const dataTodosRecursos = useMemo(() => {
-    const valorRecursosProprios = parseFloat(totalRecursosProprios?.total || 0);
+    const valorRecursosProprios = Number.parseFloat(totalRecursosProprios?.total || 0);
     const recursoProprio = {
       nome: "Recursos Próprios",
       previsao_valor_custeio: null,
@@ -46,18 +46,18 @@ const TabelaRecursosProprios = ({
         ? receitas_previstas[0]
         : {};
 
-      const previsao_valor_capital = parseFloat(
+      const previsao_valor_capital = Number.parseFloat(
         receitaPrevista?.previsao_valor_capital || 0,
       );
-      const previsao_valor_custeio = parseFloat(
+      const previsao_valor_custeio = Number.parseFloat(
         receitaPrevista?.previsao_valor_custeio || 0,
       );
-      const previsao_valor_livre = parseFloat(
+      const previsao_valor_livre = Number.parseFloat(
         receitaPrevista?.previsao_valor_livre || 0,
       );
-      const saldo_capital = parseFloat(receitaPrevista?.saldo_capital || 0);
-      const saldo_custeio = parseFloat(receitaPrevista?.saldo_custeio || 0);
-      const saldo_livre = parseFloat(receitaPrevista?.saldo_livre || 0);
+      const saldo_capital = Number.parseFloat(receitaPrevista?.saldo_capital || 0);
+      const saldo_custeio = Number.parseFloat(receitaPrevista?.saldo_custeio || 0);
+      const saldo_livre = Number.parseFloat(receitaPrevista?.saldo_livre || 0);
 
       return {
         ..._r,
