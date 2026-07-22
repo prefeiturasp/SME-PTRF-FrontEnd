@@ -6,6 +6,18 @@ import { useGetResumoPrioridades } from '../hooks/useGetResumoPrioridades';
 // Mock do hook
 jest.mock('../hooks/useGetResumoPrioridades');
 
+jest.mock('../../../../../../../services/escolas/Paa.service', () => ({
+    getTextosPaaUe: jest.fn().mockResolvedValue({
+        informe_bloqueio_prioridades: '',
+    }),
+}));
+
+jest.mock('../../../../../../../services/visoes.service', () => ({
+    visoesService: {
+        featureFlagAtiva: jest.fn(() => false),
+    },
+}));
+
 // Mock simples dos componentes Ant Design
 jest.mock('antd', () => ({
     Table: jest.fn(({ children, ...props }) => {
@@ -23,6 +35,8 @@ jest.mock('@ant-design/icons', () => ({
     UpOutlined: jest.fn(() => <span>▼</span>),
     DownOutlined: jest.fn(() => <span>▶</span>)
 }));
+
+jest.mock('../resumo.scss', () => ({}));
 
 describe('Resumo Component', () => {
     const mockResumoPrioridades = [
