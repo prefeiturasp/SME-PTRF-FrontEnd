@@ -111,11 +111,6 @@ export const Lista = () => {
                 </div>
             ) : data.length > 0 ? (
                 <>
-                    <p>
-                        Exibindo{" "}
-                        <span className="total">{data.length}</span>{" "}
-                        tipos de acertos em lançamentos
-                    </p>
                     <DataTable
                         value={data}
                         paginator={data.length > rowsPerPage}
