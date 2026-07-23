@@ -4,6 +4,7 @@ import { useRecursoSelecionadoContext } from "../../../../../../context/RecursoS
 
 export const TabelaAprovadas = ({infoContas, status, exibirUltimoItem}) => {
     const { recursoSelecionado } = useRecursoSelecionadoContext();
+    const habilitaAprovacaoComRessalvas = recursoSelecionado?.habilita_aprovacao_com_ressalvas || false;    
 
     const listaVaziaAprovadas = (status_pc) => {
         if(status_pc === "aprovadas"){
@@ -15,7 +16,7 @@ export const TabelaAprovadas = ({infoContas, status, exibirUltimoItem}) => {
     }
 
     const listaVaziaAprovadasRessalva = (status_pc) => {
-        if(status_pc === "aprovadas_ressalva"){
+        if(status_pc === "aprovadas_ressalva" && habilitaAprovacaoComRessalvas){
             return (
                 <p className="lista-vazia">Nenhuma prestação de contas aprovada com ressalva.</p>
             )
@@ -59,7 +60,7 @@ export const TabelaAprovadas = ({infoContas, status, exibirUltimoItem}) => {
                 <div className="titulo-tabelas" dangerouslySetInnerHTML={{__html: recursoSelecionado?.textos_ata?.letra_a }} />
             }
 
-            {status === "aprovadas_ressalva" &&
+            {status === "aprovadas_ressalva" && habilitaAprovacaoComRessalvas &&
                 <div className="titulo-tabelas" dangerouslySetInnerHTML={{__html: recursoSelecionado?.textos_ata?.letra_b }} />
             }
 
@@ -104,7 +105,7 @@ export const TabelaAprovadas = ({infoContas, status, exibirUltimoItem}) => {
             
             }
 
-            {infoContas && infoContas.contas && infoContas.contas.length > 0 && status === "aprovadas_ressalva"
+            {infoContas && infoContas.contas && infoContas.contas.length > 0 && status === "aprovadas_ressalva" && habilitaAprovacaoComRessalvas
                 ?
 
                     infoContas.contas.map((conta, index) => 
