@@ -19,7 +19,7 @@ jest.mock("../../../../../Globais/ToastCustom", () => ({
 }));
 
 describe("useDeleteMotivoEstorno", () => {
-    const setShowModalForm = jest.fn();
+    const handleCloseModalForm = jest.fn();
     const queryClient = new QueryClient({
         defaultOptions: {
             queries: { retry: false } // Desativa retry apenas para esse teste
@@ -28,7 +28,7 @@ describe("useDeleteMotivoEstorno", () => {
 
     const wrapper = ({ children }) => (
         <QueryClientProvider client={queryClient}>
-            <MotivosEstornoContext.Provider value={{ setShowModalForm }}>
+            <MotivosEstornoContext.Provider value={{ handleCloseModalForm }}>
                 {children}
             </MotivosEstornoContext.Provider>
         </QueryClientProvider>
@@ -48,7 +48,7 @@ describe("useDeleteMotivoEstorno", () => {
         });
 
         expect(deleteMotivoEstorno).toHaveBeenCalledWith("uuid-fake");
-        expect(setShowModalForm).toHaveBeenCalledWith(false);
+        expect(handleCloseModalForm).toHaveBeenCalledWith();
         expect(toastCustom.ToastCustomSuccess).toHaveBeenCalledWith(
             "Remoção do motivo de estorno efetuado com sucesso.",
             "O motivo de estorno foi removido do sistema com sucesso."
@@ -60,11 +60,11 @@ describe("useDeleteMotivoEstorno", () => {
             response: { data: { mensagem: "Erro ao deletar" } },
         });
         const { result } = renderHook(() => useDeleteMotivoEstorno(), { wrapper });
-    
+
         await act(async () => {
             result.current.mutationDelete.mutate("uuid-fake");
         });
-    
+
         expect(deleteMotivoEstorno).toHaveBeenCalledWith("uuid-fake");
         expect(toastCustom.ToastCustomError).toHaveBeenCalledWith("Erro ao deletar");
     });

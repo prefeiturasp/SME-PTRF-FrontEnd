@@ -19,7 +19,7 @@ jest.mock("../../../../../Globais/ToastCustom", () => ({
 }));
 
 describe("usePostMotivoEstorno", () => {
-    const setShowModalForm = jest.fn();
+    const handleCloseModalForm = jest.fn();
     const queryClient = new QueryClient({
         defaultOptions: {
             queries: { retry: false } // Desativa retry apenas para esse teste
@@ -28,7 +28,7 @@ describe("usePostMotivoEstorno", () => {
 
     const wrapper = ({ children }) => (
         <QueryClientProvider client={queryClient}>
-            <MotivosEstornoContext.Provider value={{ setShowModalForm }}>
+            <MotivosEstornoContext.Provider value={{ handleCloseModalForm }}>
                 {children}
             </MotivosEstornoContext.Provider>
         </QueryClientProvider>
@@ -50,7 +50,7 @@ describe("usePostMotivoEstorno", () => {
         });
 
         expect(postCreateMotivoEstorno).toHaveBeenCalledWith({ nome: "Novo Motivo" });
-        expect(setShowModalForm).toHaveBeenCalledWith(false);
+        expect(handleCloseModalForm).toHaveBeenCalledWith();
         expect(toastCustom.ToastCustomSuccess).toHaveBeenCalledWith(
             "Inclusão de motivo de estorno realizado com sucesso.",
             "O motivo do estorno foi adicionado ao sistema com sucesso."
@@ -78,17 +78,17 @@ describe("usePostMotivoEstorno", () => {
         postCreateMotivoEstorno.mockRejectedValueOnce({
             response: { data: {} },
         });
-    
+
         const { result } = renderHook(() => usePostMotivoEstorno(), { wrapper });
-    
+
         await act(async () => {
             result.current.mutationPost.mutate({
                 payload: { nome: "Novo Motivo" },
             });
         });
-    
+
         expect(postCreateMotivoEstorno).toHaveBeenCalledWith({ nome: "Novo Motivo" });
-        
+
         expect(toastCustom.ToastCustomError).toHaveBeenCalledWith("Houve um erro ao tentar fazer essa atualização.");
     });
 });

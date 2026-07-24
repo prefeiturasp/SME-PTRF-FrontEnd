@@ -18,7 +18,11 @@ jest.mock("../../../../../Globais/ToastCustom", () => ({
 }));
 
 describe("usePatchMotivoEstorno", () => {
-    const setShowModalForm = jest.fn();
+    const handleCloseModalForm = jest.fn();
+    const payload = {
+        motivo: "Novo Motivo",
+        recurso: "recurso-fake",
+    };
     const queryClient =  new QueryClient({
         defaultOptions: {
             queries: { retry: false } // Desativa retry apenas para esse teste
@@ -27,7 +31,7 @@ describe("usePatchMotivoEstorno", () => {
 
     const wrapper = ({ children }) => (
         <QueryClientProvider client={queryClient}>
-            <MotivosEstornoContext.Provider value={{ setShowModalForm }}>
+            <MotivosEstornoContext.Provider value={{ handleCloseModalForm }}>
                 {children}
             </MotivosEstornoContext.Provider>
         </QueryClientProvider>
@@ -43,14 +47,14 @@ describe("usePatchMotivoEstorno", () => {
         const { result } = renderHook(() => usePatchMotivoEstorno(), { wrapper });
 
         await act(async () => {
-            result.current.mutationPatch.mutate({
-                UUID: "uuid-fake",
-                payload: { nome: "Novo Motivo" },
+            await result.current.mutationPatch.mutateAsync({
+                uuidMotivoEstorno: "uuid-fake",
+                payload,
             });
         });
 
-        expect(patchAlterarMotivoEstorno).toHaveBeenCalledWith("uuid-fake", { nome: "Novo Motivo" });
-        expect(setShowModalForm).toHaveBeenCalledWith(false);
+        expect(patchAlterarMotivoEstorno).toHaveBeenCalledWith("uuid-fake", payload);
+        expect(handleCloseModalForm).toHaveBeenCalledWith(); // No arguments expected
         expect(toastCustom.ToastCustomSuccess).toHaveBeenCalledWith(
             "Edição do motivo de estorno realizado com sucesso.",
             "O motivo de estorno foi editado no sistema com sucesso."
@@ -65,13 +69,19 @@ describe("usePatchMotivoEstorno", () => {
         const { result } = renderHook(() => usePatchMotivoEstorno(), { wrapper });
 
         await act(async () => {
-            result.current.mutationPatch.mutate({
-                UUID: "uuid-fake",
-                payload: { nome: "Motivo Existente" },
-            });
+            await result.current.mutationPatch.mutateAsync({
+                uuidMotivoEstorno: "uuid-fake",
+                payload: {
+                    ...payload,
+                    motivo: "Motivo Existente",
+                },
+            }).catch(() => {});
         });
 
-        expect(patchAlterarMotivoEstorno).toHaveBeenCalledWith("uuid-fake", { nome: "Motivo Existente" });
+        expect(patchAlterarMotivoEstorno).toHaveBeenCalledWith("uuid-fake", {
+            ...payload,
+            motivo: "Motivo Existente",
+        });
         expect(toastCustom.ToastCustomError).toHaveBeenCalledWith("Já existe um motivo de estorno com esse nome");
     });
 
@@ -83,13 +93,13 @@ describe("usePatchMotivoEstorno", () => {
         const { result } = renderHook(() => usePatchMotivoEstorno(), { wrapper });
 
         await act(async () => {
-            result.current.mutationPatch.mutate({
-                UUID: "uuid-fake",
-                payload: { nome: "Novo Motivo" },
-            });
+            await result.current.mutationPatch.mutateAsync({
+                uuidMotivoEstorno: "uuid-fake",
+                payload,
+            }).catch(() => {});
         });
 
-        expect(patchAlterarMotivoEstorno).toHaveBeenCalledWith("uuid-fake", { nome: "Novo Motivo" });
+        expect(patchAlterarMotivoEstorno).toHaveBeenCalledWith("uuid-fake", payload);
         expect(toastCustom.ToastCustomError).toHaveBeenCalledWith("Houve um erro ao tentar fazer essa atualização.");
     });
 });

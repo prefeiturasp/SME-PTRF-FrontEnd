@@ -1,185 +1,159 @@
 import React from "react";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import ModalForm from "../ModalForm";
-import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
-import { MotivosEstornoContext } from "../context/MotivosEstorno";
-import { useGetMotivosEstorno } from "../hooks/useGetMotivosEstorno";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import ModalForm from "../components/ModalForm";
+import { useMotivosEstornoContext } from "../hooks/useMotivosEstornoContext";
+import { useRecursoSelecionadoContext } from "../../../../../../context/RecursoSelecionado";
+import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../../RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
 
-jest.mock("../hooks/useGetMotivosEstorno");
-
-jest.mock("../../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes", () => ({
-  RetornaSeTemPermissaoEdicaoPainelParametrizacoes: jest.fn(),
+jest.mock("../hooks/useMotivosEstornoContext");
+jest.mock("../../../../../../context/RecursoSelecionado", () => ({
+    useRecursoSelecionadoContext: jest.fn(),
+}));
+jest.mock("../../../RetornaSeTemPermissaoEdicaoPainelParametrizacoes", () => ({
+    RetornaSeTemPermissaoEdicaoPainelParametrizacoes: jest.fn(),
+}));
+jest.mock("@fortawesome/react-fontawesome", () => ({
+    FontAwesomeIcon: () => <span data-testid="font-awesome-icon" />,
+}));
+jest.mock("../../../../../Globais/ModalBootstrap", () => ({
+    ModalFormBodyText: ({ show, titulo, bodyText, onHide }) =>
+        show ? (
+            <div role="dialog">
+                <h2>{titulo}</h2>
+                <button type="button" onClick={onHide}>fechar modal</button>
+                {bodyText}
+            </div>
+        ) : null,
 }));
 
-const handleSubmitFormModalMock = jest.fn(); 
-const setShowModalFormMock = jest.fn();
-const setShowModalConfirmacaoExclusaoMock = jest.fn();
-
-const mockEdit = {
-  motivo: "Nome do motivo",
-  id: 1,
-  uuid: "12345",
-  operacao: "edit"
+const baseStateFormModal = {
+    id: "",
+    uuid: "",
+    motivo: "",
+    recurso: "recurso-1",
+    recurso_uuid: "recurso-1",
+    isOpen: true,
 };
 
-const mockCreate = { 
-  motivo: "",
-  id: null,
-  uuid: null,
-  operacao: "create",
+const editStateFormModal = {
+    ...baseStateFormModal,
+    id: 10,
+    uuid: "motivo-1",
+    motivo: "Motivo existente",
 };
 
-describe("Componente ModalForm", () => {
-  beforeEach(() => {
-    RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
-    useGetMotivosEstorno.mockReturnValue({ isLoading: false, data: [], count: 0 });
-  });
+describe("ModalForm", () => {
+    const handleCloseModalForm = jest.fn();
+    const handleOpenModalConfirmacaoExclusao = jest.fn();
 
-  it("Renderiza a Modal quando a operação é Cadastro e Permissão True", () => {
-    RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
+    beforeEach(() => {
+        jest.clearAllMocks();
 
-    render(
-      <MotivosEstornoContext.Provider value={{
-        showModalForm: true,
-        stateFormModal: mockCreate
-      }}>
-        <ModalForm />
-      </MotivosEstornoContext.Provider>
-    )
-
-    expect(screen.getByText("Adicionar motivo")).toBeInTheDocument();
-    expect(screen.getByText("* Preenchimento obrigatório")).toBeInTheDocument();
-    expect(screen.getByLabelText("Nome *")).toHaveValue("");
-    expect(screen.queryByRole("button", { name: "Apagar" })).not.toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Cancelar" })).toBeInTheDocument();
-
-    expect(screen.getByRole("button", { name: "Adicionar" })).toBeEnabled();
-    const campos = screen.getAllByRole("textbox");
-    campos.forEach((campo) => {
-      expect(campo).toBeEnabled();
+        RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
+        useRecursoSelecionadoContext.mockReturnValue({
+            recursos: [
+                { uuid: "recurso-1", nome: "PTRF" },
+                { uuid: "recurso-2", nome: "PDAF" },
+            ],
+        });
+        useMotivosEstornoContext.mockReturnValue({
+            stateFormModal: baseStateFormModal,
+            handleCloseModalForm,
+            handleOpenModalConfirmacaoExclusao,
+        });
     });
-  });
 
-  it("Renderiza a Modal quando a operação é Cadastro e Permissão False", () => {
-    RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(false);
+    it("deve renderizar formulario de criacao com recurso desabilitado", () => {
+        const { container } = render(<ModalForm handleSubmitFormModal={jest.fn()} />);
+        const selectRecurso = container.querySelector('[data-qa="input-recurso"]');
 
-    render(
-      <MotivosEstornoContext.Provider value={{
-        showModalForm: true,
-        stateFormModal: mockCreate
-      }}>
-        <ModalForm />
-      </MotivosEstornoContext.Provider>
-    )
-
-    expect(screen.getByText("Adicionar motivo")).toBeInTheDocument();
-    expect(screen.getByText("* Preenchimento obrigatório")).toBeInTheDocument();
-    expect(screen.getByLabelText("Nome *")).toHaveValue("");
-    expect(screen.queryByRole("button", { name: "Apagar" })).not.toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Cancelar" })).toBeInTheDocument();
-
-    expect(screen.getByRole("button", { name: "Adicionar" })).toBeDisabled();
-    const campos = screen.getAllByRole("textbox");
-    campos.forEach((campo) => {
-      expect(campo).toBeDisabled();
+        expect(screen.getByRole("dialog")).toBeInTheDocument();
+        expect(screen.getByText("Adicionar motivo")).toBeInTheDocument();
+        expect(screen.getByText("* Preenchimento obrigatório")).toBeInTheDocument();
+        expect(selectRecurso).toHaveValue("recurso-1");
+        expect(selectRecurso).toBeDisabled();
+        expect(screen.getByLabelText("Nome *")).toHaveValue("");
+        expect(screen.getByRole("button", { name: "Adicionar" })).toBeEnabled();
+        expect(screen.queryByRole("button", { name: "Excluir" })).not.toBeInTheDocument();
     });
-  });
 
-  it("Renderiza a Modal quando a operação é Edição e permissão é True", () => {
-    RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
-    render(
-      <MotivosEstornoContext.Provider value={{
-        showModalForm: true,
-        stateFormModal: mockEdit
-      }}>
-        <ModalForm />
-      </MotivosEstornoContext.Provider>
-    )
+    it("deve renderizar formulario de edicao e abrir confirmacao de exclusao", () => {
+        useMotivosEstornoContext.mockReturnValue({
+            stateFormModal: editStateFormModal,
+            handleCloseModalForm,
+            handleOpenModalConfirmacaoExclusao,
+        });
 
-    expect(screen.getByText("Editar motivo")).toBeInTheDocument();
-    expect(screen.getByLabelText("Nome *")).toHaveValue("Nome do motivo");
-    expect(screen.queryByRole("button", { name: "Apagar" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Cancelar" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Salvar" })).toBeEnabled();
-    const campos = screen.getAllByRole("textbox");
-    campos.forEach((campo) => {
-        expect(campo).toBeEnabled();
+        render(<ModalForm handleSubmitFormModal={jest.fn()} />);
+
+        expect(screen.getByText("Editar motivo")).toBeInTheDocument();
+        expect(screen.getByLabelText("Nome *")).toHaveValue("Motivo existente");
+        expect(screen.getByText("ID 10")).toBeInTheDocument();
+
+        fireEvent.click(screen.getByRole("button", { name: "Excluir" }));
+
+        expect(handleOpenModalConfirmacaoExclusao).toHaveBeenCalledWith("motivo-1");
     });
-  });
 
-  it("Renderiza a Modal quando a operação é Edição e permissão é False", () => {
-    RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(false);
-    render(
-      <MotivosEstornoContext.Provider value={{
-        showModalForm: true,
-        stateFormModal: mockEdit
-      }}>
-        <ModalForm />
-      </MotivosEstornoContext.Provider>
-    )
+    it("deve chamar handleCloseModalForm ao cancelar e ao esconder o modal", () => {
+        render(<ModalForm handleSubmitFormModal={jest.fn()} />);
 
-    expect(screen.getByText("Editar motivo")).toBeInTheDocument();
-    expect(screen.getByLabelText("Nome *")).toHaveValue("Nome do motivo");
-    expect(screen.queryByRole("button", { name: "Apagar" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Cancelar" })).toBeInTheDocument();
+        fireEvent.click(screen.getByRole("button", { name: "Cancelar" }));
+        fireEvent.click(screen.getByRole("button", { name: "fechar modal" }));
 
-    expect(screen.getByRole("button", { name: "Salvar" })).toBeDisabled();
-    const campos = screen.getAllByRole("textbox");
-    campos.forEach((campo) => {
-      expect(campo).toBeDisabled();
+        expect(handleCloseModalForm).toHaveBeenCalledTimes(2);
     });
-  });
 
-  it("deve chamar handleSubmitModalForm quando o formulario for submetido", async () => {
-    render(
-      <MotivosEstornoContext.Provider value={{
-        showModalForm: true,
-        stateFormModal: mockEdit,
-      }}>
-        <ModalForm handleSubmitFormModal={handleSubmitFormModalMock}/>
-      </MotivosEstornoContext.Provider>
-    )
-    const saveButton = screen.getByRole("button", { name: "Salvar" });
-    fireEvent.submit(saveButton);
+    it("deve submeter formulario valido", async () => {
+        const handleSubmitFormModal = jest.fn();
 
-    await waitFor(() => {
-      expect(handleSubmitFormModalMock).toHaveBeenCalledTimes(1);
-  });
-  
-  });
+        render(<ModalForm handleSubmitFormModal={handleSubmitFormModal} />);
 
-  it("deve chamar a ação de fechar modal quando o botão Cancelar for clicado", () => {
-    render(
-      <MotivosEstornoContext.Provider value={{
-        showModalForm: true,
-        stateFormModal: mockEdit,
-        setShowModalForm: setShowModalFormMock
-      }}>
-        <ModalForm />
-      </MotivosEstornoContext.Provider>
-    )
+        fireEvent.change(screen.getByLabelText("Nome *"), {
+            target: { name: "motivo", value: "Novo motivo" },
+        });
+        fireEvent.click(screen.getByRole("button", { name: "Adicionar" }));
 
-    const cancelButton = screen.getByRole("button", { name: "Cancelar" });
-    fireEvent.click(cancelButton);
+        await waitFor(() =>
+            expect(handleSubmitFormModal).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    motivo: "Novo motivo",
+                    recurso: "recurso-1",
+                    recurso_uuid: "recurso-1",
+                }),
+                expect.any(Object),
+            ),
+        );
+    });
 
-    expect(setShowModalFormMock).toHaveBeenCalledWith(false);
-  });
+    it("deve desabilitar acoes de edicao quando usuario nao tem permissao", () => {
+        RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(false);
+        useMotivosEstornoContext.mockReturnValue({
+            stateFormModal: editStateFormModal,
+            handleCloseModalForm,
+            handleOpenModalConfirmacaoExclusao,
+        });
 
-  test('deve chamar setShowModalConfirmDelete quando o botão for clicado', () => {
-    render(
-      <MotivosEstornoContext.Provider value={{
-        showModalForm: true,
-        stateFormModal: mockEdit,
-        setShowModalConfirmacaoExclusao: setShowModalConfirmacaoExclusaoMock
-      }}>
-        <ModalForm />
-      </MotivosEstornoContext.Provider>
-    )
+        render(<ModalForm handleSubmitFormModal={jest.fn()} />);
 
-    const button = screen.getByRole('button', { name: /Apagar/i });
-    fireEvent.click(button);
+        expect(screen.getByLabelText("Nome *")).toBeDisabled();
+        expect(screen.getByRole("button", { name: "Excluir" })).toBeDisabled();
+        expect(screen.getByRole("button", { name: "Salvar" })).toBeDisabled();
+        expect(screen.getByRole("button", { name: "Cancelar" })).toBeEnabled();
+    });
 
-    expect(setShowModalConfirmacaoExclusaoMock).toHaveBeenCalledWith(true);
-  });
+    it("nao deve renderizar o conteudo quando modal estiver fechado", () => {
+        useMotivosEstornoContext.mockReturnValue({
+            stateFormModal: {
+                ...baseStateFormModal,
+                isOpen: false,
+            },
+            handleCloseModalForm,
+            handleOpenModalConfirmacaoExclusao,
+        });
 
+        render(<ModalForm handleSubmitFormModal={jest.fn()} />);
+
+        expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    });
 });
