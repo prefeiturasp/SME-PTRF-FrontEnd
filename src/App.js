@@ -11,6 +11,7 @@ import { ToastContainer } from "react-toastify";
 import Modal from "./componentes/Globais/Modal/Modal";
 import { useTheme } from "./context/Tema";
 import { useRecursoSelecionadoContext } from "./context/RecursoSelecionado";
+import { authService } from "./services/auth.service";
 
 export const App = () => {
   const pathName = useLocation().pathname;
@@ -24,6 +25,19 @@ export const App = () => {
       setTheme(recursoSelecionado.cor);
     }
   }, [recursoSelecionado, theme]);
+
+  const PUBLIC_PATHS = ["/login", "/login-suporte", "/esqueci-minha-senha/"];
+  const isPublicPath = PUBLIC_PATHS.includes(pathName) || pathName.match(/\/redefinir-senha\//);
+
+  // Atualiza permissões e grupos do usuário a cada reload da página.
+  // Dependência vazia ([]) garante execução apenas no mount — não a cada navegação,
+  // evitando chamadas repetidas ao backend durante a sessão.
+  useEffect(() => {
+    if (!isPublicPath && authService.isLoggedIn()) {
+      authService.refreshUserData();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <>
