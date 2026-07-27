@@ -41,7 +41,7 @@ describe("Filtro", () => {
     it("deve renderizar campo e botoes do filtro", () => {
         render(<Filtro />);
 
-        expect(screen.getByLabelText("Filtrar por nome")).toBeInTheDocument();
+        expect(screen.getByLabelText("Filtrar por motivo")).toBeInTheDocument();
         expect(screen.getByPlaceholderText("Busque por motivo")).toBeInTheDocument();
         expect(screen.getByRole("button", { name: "Limpar" })).toBeInTheDocument();
         expect(screen.getByRole("button", { name: "Filtrar" })).toBeInTheDocument();
@@ -50,7 +50,7 @@ describe("Filtro", () => {
     it("deve atualizar o valor do campo de motivo", () => {
         render(<Filtro />);
 
-        const inputMotivo = screen.getByLabelText("Filtrar por nome");
+        const inputMotivo = screen.getByLabelText("Filtrar por motivo");
 
         fireEvent.change(inputMotivo, {
             target: { name: "motivo", value: "Estorno indevido" },
@@ -62,7 +62,7 @@ describe("Filtro", () => {
     it("deve chamar setFilter com o motivo informado ao filtrar preservando o recurso atual", () => {
         render(<Filtro />);
 
-        fireEvent.change(screen.getByLabelText("Filtrar por nome"), {
+        fireEvent.change(screen.getByLabelText("Filtrar por motivo"), {
             target: { name: "motivo", value: "Estorno indevido" },
         });
         fireEvent.click(screen.getByRole("button", { name: "Filtrar" }));
@@ -80,7 +80,7 @@ describe("Filtro", () => {
     it("deve limpar o campo e resetar o filtro preservando o recurso atual", () => {
         render(<Filtro />);
 
-        const inputMotivo = screen.getByLabelText("Filtrar por nome");
+        const inputMotivo = screen.getByLabelText("Filtrar por motivo");
 
         fireEvent.change(inputMotivo, {
             target: { name: "motivo", value: "Estorno indevido" },

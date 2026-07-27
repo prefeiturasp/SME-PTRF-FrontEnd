@@ -88,7 +88,7 @@ describe("ModalForm", () => {
 
         expect(screen.getByText("Editar motivo")).toBeInTheDocument();
         expect(screen.getByLabelText("Nome *")).toHaveValue("Motivo existente");
-        expect(screen.getByText("ID 10")).toBeInTheDocument();
+        expect(screen.getByText("ID: 10")).toBeInTheDocument();
 
         fireEvent.click(screen.getByRole("button", { name: "Excluir" }));
 
