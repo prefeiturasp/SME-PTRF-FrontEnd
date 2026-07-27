@@ -103,11 +103,14 @@ const ModalForm = ({ handleSubmitFormModal }) => {
                                     </div>
                                 </div>
                             </div>
-                            <div className="row mt-3">
-                                <div className="col">
-                                    <p className="mb-2">ID {values.id}</p>
+                            {values.id && (
+                                <div className="row mt-3">
+                                    <div className="col">
+                                        <p className="mb-2">ID: {values.id}</p>
+                                    </div>
                                 </div>
-                            </div>
+                            )}
+
                             <div className="d-flex bd-highlight mt-2">
                                 <div className="p-Y flex-grow-1 bd-highlight">
                                     {values.uuid && (

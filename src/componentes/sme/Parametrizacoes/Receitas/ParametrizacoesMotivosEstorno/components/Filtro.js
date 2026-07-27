@@ -47,7 +47,7 @@ export const Filtro = () => {
                     id="form-filtros-motivos-estorno"
                     data-qa="form-filtros-motivos-estorno"
                 >
-                    <label htmlFor="motivo">Filtrar por nome</label>
+                    <label htmlFor="motivo">Filtrar por motivo</label>
                     <input
                         value={formFilter.motivo}
                         onChange={(e) => {
