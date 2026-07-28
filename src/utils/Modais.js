@@ -54,7 +54,7 @@ export const DeletarModal = (propriedades) => {
             dataQa="modal-despesa-excluir-despesa"
             show={propriedades.show}
             onHide={propriedades.handleClose}
-            titulo="Deseja excluir esta Despesa?"
+            titulo={propriedades.titulo ?? "Deseja excluir esta Despesa?"}
             bodyText={propriedades.texto}
             primeiroBotaoOnclick={propriedades.onDeletarTrue}
             primeiroBotaoTexto="OK"

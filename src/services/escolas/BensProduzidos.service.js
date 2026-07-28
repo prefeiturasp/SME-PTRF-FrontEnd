@@ -105,3 +105,13 @@ export const getExportarBensProduzidos = async () => {
     await api.get(`api/bens-produzidos-e-adquiridos/exportar/${queryString}`, authHeader())
   ).data;
 };
+
+export const getStatusDelecaoBemProduzido = async (uuid) => {
+  return (await api.get(`api/bens-produzidos/${uuid}/status-delecao-bem-produzido/`,
+    authHeader())).data;
+};
+
+export const deleteBemProduzido = async (uuid) => {
+  return (await api.delete(`api/bens-produzidos/${uuid}/`,
+    authHeader())).data;
+};
