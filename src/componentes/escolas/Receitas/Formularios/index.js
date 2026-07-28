@@ -16,7 +16,7 @@ import {deleteDespesa, getDespesa} from "../../../../services/escolas/Despesas.s
 import {getPeriodoFechado} from "../../../../services/escolas/Associacao.service";
 import {round, trataNumericos, periodoFechado} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import moment from "moment";
-import {useLocation, useParams} from 'react-router-dom';
+import {useLocation, useParams, useNavigate} from 'react-router-dom';
 import {ASSOCIACAO_UUID} from '../../../../services/auth.service';
 import {PeriodoFechado, ErroGeral, AvisoTipoReceita, AvisoTipoReceitaEstorno} from "../../../../utils/Modais";
 import {ModalDeletarReceita} from "../ModalDeletarReceita";
@@ -28,8 +28,9 @@ import {PaginasContainer} from "../../../../paginas/PaginasContainer";
 import {toastCustom} from "../../../Globais/ToastCustom";
 import { visoesService } from "../../../../services/visoes.service";
 import { getPeriodoPorUuid } from "../../../../services/sme/Parametrizacoes.service";
-import { STATUS_CONTA_ASSOCIACAO, STATUS_SOLICITACAO_ENCERRAMENTO_CONTA_ASSOCIACAO } from "../../../../constantes/contaAssociacao";
-import { useNavigate } from 'react-router-dom';
+import { STATUS_CONTA_ASSOCIACAO } from "../../../../constantes/contaAssociacao";
+import { useRecursoSelecionadoContext } from "../../../../context/RecursoSelecionado";
+
 
 
 export const ReceitaForm = () => {
@@ -39,6 +40,8 @@ export const ReceitaForm = () => {
     const parametros = useLocation();
 
     const visao_selecionada = visoesService.getItemUsuarioLogado('visao_selecionada.nome')
+
+    const { recursoSelecionado } = useRecursoSelecionadoContext();
 
     const [loading, setLoading] = useState(true);
     const [redirectTo, setRedirectTo] = useState('');
@@ -257,9 +260,9 @@ export const ReceitaForm = () => {
     }, [initialValue.outros_motivos_estorno])
 
     const carregaListaMotivosEstorno = useCallback(async ()=>{
-        let motivos = await getListaMotivosEstorno()
+        let motivos = await getListaMotivosEstorno(recursoSelecionado?.uuid)
         setListaMotivosEstorno(motivos)
-    }, [])
+    }, [recursoSelecionado])
 
     useEffect(()=>{
         carregaListaMotivosEstorno()
@@ -508,7 +511,7 @@ export const ReceitaForm = () => {
                 }
             }catch (e) {
                 console.log("Erro ao criar receita em criarReceita ", e.response.data)
-                let mensagemErro = e.response && e.response.data && e.response.data.mensagem && Array.isArray(e.response.data.mensagem) ? 
+                let mensagemErro = e.response && e.response.data && e.response.data.mensagem && Array.isArray(e.response.data.mensagem) ?
                                    e.response.data.mensagem.map((msg) => msg).join(", ") : 'Verifique se os dados foram preenchidos corretamente.'
                 toastCustom.ToastCustomError('Erro ao tentar criar receita.', mensagemErro)
             }
@@ -941,23 +944,23 @@ export const ReceitaForm = () => {
         const filtraContasPelaDataInicial = ({contasNaoFiltradas = [], dataDigitadaFormulario = initialValue.data}) => {
             let contasFiltradasPelaDataInicial = []
             if(contasNaoFiltradas && dataDigitadaFormulario) {
-                contasFiltradasPelaDataInicial = contasNaoFiltradas.filter((acc) => { 
+                contasFiltradasPelaDataInicial = contasNaoFiltradas.filter((acc) => {
                     if (acc.data_inicio && moment(acc.data_inicio, 'YYYY-MM-DD').isValid()) {
                         return moment(acc.data_inicio, 'YYYY-MM-DD').toDate() <= moment(dataDigitadaFormulario, 'YYYY-MM-DD').toDate();
                     }
                     return false;
                 });
             }
-    
+
             return contasFiltradasPelaDataInicial;
         }
-    
+
         const retornaSeDataDoCreditoEhPosteriorDataEncerramento = (dataDoCredito, dataEncerramento) => {
             let momentDataDoCredito = moment(dataDoCredito,"DD/MM/YYYY");
             let momentDataEncerramento = moment(dataEncerramento,"DD/MM/YYYY");
             return momentDataDoCredito > momentDataEncerramento
         }
-    
+
         const getOptionPorStatus = (item, data_credito) => {
             const defaultProps = {
                 key: item.uuid,
@@ -965,13 +968,13 @@ export const ReceitaForm = () => {
             }
             if(item.status === STATUS_CONTA_ASSOCIACAO.ATIVA){
                 return  <option {...defaultProps}>{item.nome}</option>
-    
+
             } else if(item.solicitacao_encerramento) {
-    
+
                 let dataDoCredito = moment(data_credito).format('DD/MM/YYYY')
                 let dataEncerramento = moment(item.solicitacao_encerramento.data_de_encerramento_na_agencia).format('DD/MM/YYYY')
                 let informacaoExtra = item.solicitacao_encerramento ? `- Conta encerrada em ${moment(item.solicitacao_encerramento.data_de_encerramento_na_agencia).format('DD/MM/YYYY')}` : ''
-    
+
                 // Verifica se a origem é Analise de Lancamento
                 if (origemAnaliseLancamento()){
                     // Se a data do Crédito for posterior a data de encerramento da conta, atribui disabled ao <option>
@@ -980,11 +983,11 @@ export const ReceitaForm = () => {
                     }else {
                         return <option {...defaultProps}>{item.nome} {informacaoExtra}</option>
                     }
-    
+
                 // Verifica se é estorno
                 } else if(parametros && parametros.state && parametros.state.uuid_rateio) {
                     return <option {...defaultProps} disabled>{item.nome} {informacaoExtra}</option>
-    
+
                 }else {
                     // Se não for Analise de Lancamento continua setando disabled ao <option> no caso de uma edição
                     // Caso não seja uma edição nem mostra a conta encerrada
@@ -1000,16 +1003,16 @@ export const ReceitaForm = () => {
                     return tabelas.contas_associacao;
                 }
             // Não é estorno
-            } else { 
+            } else {
                 if (tabelas.contas_associacao !== undefined && tabelas.contas_associacao.length > 0  && values.tipo_receita) {
                     const tipoReceita = tabelas.tipos_receita.find(element => element.id === Number(values.tipo_receita));
-        
+
                     // Lista dos nomes dos tipos de conta que são aceitos pelo tipo de receita selecionado.
                     const tipos_conta = tipoReceita.tipos_conta.map(item => item.nome);
-        
+
                     const contasFiltradasPelaDataInicialEPeloTipo = filtraContasPelaDataInicial({contasNaoFiltradas: tabelas.contas_associacao.filter(conta => (tipos_conta.includes(conta.nome))), dataDigitadaFormulario: values.data})
-        
-        
+
+
                     let dataDoCredito = moment(values.data).format('DD/MM/YYYY')
                     const contasFiltradasExcluindoContasComEncerramentoAprovado = contasFiltradasPelaDataInicialEPeloTipo.filter((elemento) => {
                         return !(!origemAnaliseLancamento() && elemento.status === STATUS_CONTA_ASSOCIACAO.INATIVA && retornaSeDataDoCreditoEhPosteriorDataEncerramento(dataDoCredito, moment(elemento.solicitacao_encerramento.data_de_encerramento_na_agencia).format('DD/MM/YYYY')) )
@@ -1019,18 +1022,18 @@ export const ReceitaForm = () => {
                 }
             }
             return []
-        }        
+        }
         const contas = filterContas();
 
         if(!contas.length && moment(values.data, 'YYYY-MM-DD').isValid()) {
             setMensagemDataInicialConta("Não existem contas disponíveis para a data do crédito.")
         } else {
             setMensagemDataInicialConta("")
-        }        
+        }
         return contas.map((item, key) => getOptionPorStatus(item, values.data));
 
     }, [tabelas]);
-    
+
     const validateFormReceitas = async (values) => {
         const errors = {};
 
