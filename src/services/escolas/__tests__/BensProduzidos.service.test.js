@@ -8,6 +8,7 @@ import {
 jest.mock('../../api', () => ({
     get: jest.fn(),
     delete: jest.fn(),
+    registerUnauthorizedHandler: jest.fn(),
 }));
 
 const mockToken = 'fake-token';
