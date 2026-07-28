@@ -77,7 +77,7 @@ describe("ButtonExcluirBemProduzido", () => {
 
     it("deve desabilitar o botão quando houver erro na confirmação de status de deleção", () => {
         useGetStatusDelecaoBemProduzido.mockReturnValue({
-            error: { response: { data: { title: "Item vinculado a outro registro" } } },
+            error: { response: { data: { titulo: "Item vinculado a outro registro" } } },
             isLoading: false,
             isError: true,
         });

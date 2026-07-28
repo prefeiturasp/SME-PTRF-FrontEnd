@@ -5,13 +5,13 @@ import { useGetStatusDelecaoBemProduzido } from "../../hooks/useGetStatusDelecao
 export const ButtonExcluirBemProduzido = ({ handleDelete }) => {
     const { uuid } = useParams()
 
-    const { 
+    const {
         error,
-        isLoading: estaCarregandoConfirmacaoStatusDelecao, 
-        isError: erroConfirmacaoStatusDelecao 
+        isLoading: estaCarregandoConfirmacaoStatusDelecao,
+        isError: erroConfirmacaoStatusDelecao
     } = useGetStatusDelecaoBemProduzido(uuid);
 
-    let mensagemTipoBloqueioDelecao = error?.response?.data?.title
+    let mensagemTipoBloqueioDelecao = error?.response?.data?.titulo
 
 
     return (

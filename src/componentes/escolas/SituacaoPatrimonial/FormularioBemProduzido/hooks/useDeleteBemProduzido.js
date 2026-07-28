@@ -12,9 +12,9 @@ export const useDeleteBemProduzido = () => {
       );
     },
 
-    onError: () => {
+    onError: (error) => {
       toastCustom.ToastCustomError(
-        "Houve um erro ao excluir o bem produzido."
+        error?.response?.data?.mensagem || "Houve um erro ao excluir o bem produzido."
       );
     },
   });
