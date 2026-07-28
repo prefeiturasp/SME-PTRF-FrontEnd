@@ -14,6 +14,8 @@ import { useGetPeriodos } from "../../../../../hooks/Globais/useGetPeriodo";
 import moment from "moment";
 import { useNavigate } from 'react-router-dom';
 import './index.scss';
+import { ButtonExcluirBemProduzido } from "../components/ButtonExcluirBemProduzido";
+import { DeletarBemProduzidoModal } from "../Modais/DeletarBemProduzidoModal";
 
 const filtroInicial = {
   fornecedor: "",
@@ -44,6 +46,7 @@ export const VincularDespesas = ({
   const [currentPage, setCurrentPage] = useState(1);
   const [firstPage, setFirstPage] = useState(0);
   const [filtros, setFiltros] = useState(filtroInicial);
+  const [showModalDelete, setShowModalDelete] = useState(false);
 
   const { data, refetch, isLoading, error, isError } = useGetDespesas(
     {
@@ -273,6 +276,9 @@ export const VincularDespesas = ({
             >
               Cancelar
             </button>
+
+            <ButtonExcluirBemProduzido handleDelete={() => setShowModalDelete(true)}/>          
+
             <button
               className="btn btn-outline-success float-right"
               disabled={!despesasSelecionadas.length && !uuid}
@@ -283,6 +289,11 @@ export const VincularDespesas = ({
           </Flex>
         </Spin>
       </div>
+
+      <DeletarBemProduzidoModal 
+        showModal={ showModalDelete }
+        setShowModal={ setShowModalDelete } 
+      />
     </div>
   );
 };

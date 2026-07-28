@@ -109,12 +109,20 @@ test("deve renderizar o CancelarModal corretamente", () => {
     expect(getByText("Cancelar cadastro")).toBeInTheDocument();
 });
 
-test("deve renderizar o DeletarModal corretamente", () => {
+test("deve renderizar o DeletarModal corretamente com o título padrão", () => {
     const { getByText } = render(
       <DeletarModal show={true} />
     );
   
     expect(getByText("Deseja excluir esta Despesa?")).toBeInTheDocument();
+});
+
+test("deve renderizar o DeletarModal corretamente com o título customizado", () => {
+    const { getByText } = render(
+      <DeletarModal show={true} titulo="Deseja excluir este bem produzido?"/>
+    );
+  
+    expect(getByText("Deseja excluir este bem produzido?")).toBeInTheDocument();
 });
 
 test("deve renderizar o AvisoTipoReceita corretamente", () => {
