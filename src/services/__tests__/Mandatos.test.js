@@ -26,6 +26,7 @@ jest.mock('../api', () => ({
     patch: jest.fn(),
     post: jest.fn(),
     delete: jest.fn(),
+    registerUnauthorizedHandler: jest.fn(),
 }));
 
 const mockToken = 'fake-token';
