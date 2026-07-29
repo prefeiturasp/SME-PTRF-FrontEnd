@@ -6,7 +6,7 @@ import {SelectPeriodo} from "./SelectPeriodo";
 import {exibeDataPT_BR} from "../../../utils/ValidacoesAdicionaisFormularios";
 import {SelectConta} from "./SelectConta";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faArrowLeft, faSearch, faDownload} from "@fortawesome/free-solid-svg-icons";
+import {faSearch, faDownload} from "@fortawesome/free-solid-svg-icons";
 import {getTabelaAssociacoes} from "../../../services/sme/Parametrizacoes.service";
 import {Filtros} from "./Filtros";
 import {TabelaSaldosDetalhesAssociacoes} from "./TabelaSaldosDetalhesAssociacoes";
@@ -21,6 +21,10 @@ import {ModalConfirmarExportacao} from "../../../utils/Modais"
 import { consultarCodEol } from "../../../services/escolas/Associacao.service";
 import { Icon } from "../../Globais/UI/Icon";
 
+import { useRecursoSelecionadoContext } from "../../../context/RecursoSelecionado";
+import useUnidadeSelecionada from "../../../hooks/Globais/useUnidadeSelecionada";
+import { visoesService } from "../../../services/visoes.service";
+
 export const ConsultaDeSaldosBancariosDetalhesAssociacoes = () =>{
 
     let {periodo_uuid, conta_uuid, dre_uuid} = useParams();
@@ -32,15 +36,20 @@ export const ConsultaDeSaldosBancariosDetalhesAssociacoes = () =>{
     const [dres, setDres] = useState([])
     const [showModalConfirmarExportacao, setShowModalConfirmarExportacao] = useState(false);
 
+    const { recursoSelecionado } = useRecursoSelecionadoContext();
+    const { isSME } = useUnidadeSelecionada(visoesService);
+
     const carregaPeriodos = useCallback(async () => {
-        let periodos = await getPeriodos()
-        setPeriodos(periodos)
-    }, [])
+        let periodos = await getPeriodos({
+            solicitacao_sme: isSME()
+        });
+        setPeriodos(periodos);
+    }, [isSME]);
 
     const carregaTiposDeConta = useCallback(async () => {
-        let tipos_de_conta = await getTiposDeConta()
-        setTiposDeConta(tipos_de_conta)
-    }, [])
+        let tipos_de_conta = await getTiposDeConta(recursoSelecionado?.uuid);
+        setTiposDeConta(tipos_de_conta);
+    }, [recursoSelecionado?.uuid])
 
     useEffect(() => {
         carregaPeriodos()
@@ -153,7 +162,7 @@ export const ConsultaDeSaldosBancariosDetalhesAssociacoes = () =>{
 
     // Filtros
     const initialStateFiltros = {
-        filtrar_por_unidade: "",
+        filtrar_por_associacao: "",
         filtrar_por_tipo_ue: "",
     };
 
@@ -184,12 +193,16 @@ export const ConsultaDeSaldosBancariosDetalhesAssociacoes = () =>{
     }, [selectPeriodo, selectTipoDeConta, dre_uuid, stateFiltros])
 
     const handleSubmitFiltros = async () => {
-        await carregaSaldosDetalhesAssociacoesFiltros()
+        if (stateFiltros.filtrar_por_associacao || stateFiltros.filtrar_por_tipo_ue) {
+            await carregaSaldosDetalhesAssociacoesFiltros()
+        }
     };
 
     const limpaFiltros = async () => {
-        setStateFiltros(initialStateFiltros);
-        await carregaSaldosDetalhesAssociacoes()
+        if (stateFiltros.filtrar_por_associacao || stateFiltros.filtrar_por_tipo_ue) {
+            setStateFiltros(initialStateFiltros);
+            await carregaSaldosDetalhesAssociacoes()
+        }
     };
 
     const handleOnClickExportar = async() => {
@@ -236,8 +249,8 @@ export const ConsultaDeSaldosBancariosDetalhesAssociacoes = () =>{
                                 className='btn btn-outline-success ml-2'
                             >
                                 <Icon
-                                    icon={faArrowLeft}
-                                    iconProps={{style: {fontSize: '15px', marginRight: "3px"}}}
+                                    icon="faArrowLeft"
+                                    iconProps={{className: "icon-voltar", style: {fontSize: '15px', marginRight: "3px"}}}
                                 />
                                 Voltar
                             </Link>

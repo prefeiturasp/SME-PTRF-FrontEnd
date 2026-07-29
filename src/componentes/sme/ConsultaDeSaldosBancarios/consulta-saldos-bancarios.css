@@ -28,12 +28,8 @@
   font-weight: bold;
   color: var(--color-primary-lighten);
 }
-.link-voltar {
-  color: var(--color-primary);
-  font-weight: 900;
-  font-size: 16px;
-  line-height: 18px;
-  letter-spacing: 0.01em;
+.btn-outline-success:hover .icon-voltar {
+  color: #fff;
 }
 
 .close {
