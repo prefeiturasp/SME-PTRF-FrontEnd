@@ -1,40 +1,52 @@
 import React from "react";
-import { DatePickerField } from "../../../Globais/DatePickerField";
-import { ReactNumberFormatInput as CurrencyInput } from "../../../Globais/ReactNumberFormatInput";
-import { visoesService } from "../../../../services/visoes.service";
-import { trataNumericos } from "../../../../utils/ValidacoesAdicionaisFormulariosDespesasPipeline";
+import { DatePickerField } from "../../../../Globais/DatePickerField";
+import { ReactNumberFormatInput as CurrencyInput } from "../../../../Globais/ReactNumberFormatInput";
+import { visoesService } from "../../../../../services/visoes.service";
+import { trataNumericos } from "../utils";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {useFormikContext} from "formik";
+import {
+    useDespesaTabelasCtx,
+    useDespesaUiCtx,
+    useDespesaFluxoCtx,
+} from "../context/DespesaFormPipelineContext";
 import {faTimesCircle} from "@fortawesome/free-solid-svg-icons";
 
-export const CadastroFormDespesaImposto = ({
-	formikProps, 
-	eh_despesa_com_retencao_imposto,
-	disabled, 
-	tipos_documento_com_recolhimento_imposto, 
-	numeroDocumentoImpostoReadOnly, 
-	aux, 
-	preenche_tipo_despesa_custeio,
-	especificacoes_custeio,
-	despesasTabelas,
-	cssEscondeDocumentoTransacaoImposto,
-	labelDocumentoTransacaoImposto,
-	setCssEscondeDocumentoTransacaoImposto,
-	setLabelDocumentoTransacaoImposto,
-	despesaContext,
-	acoes_custeio,
-	setValorRateioRealizadoImposto,
-	readOnlyCamposImposto,
+export const DespesaImposto = ({
+	disabled,
 	index,
 	despesa_imposto,
 	remove,
-	formErrorsImposto,
-	onCalendarCloseDataPagamentoImposto,
-	renderContaAssociacaoOptions,
-	filterContas,
-	limparSelecaoContasDesabilitadas
-}) => {										
+}) => {
+	const formikProps = useFormikContext();
+	const {
+		tipos_documento_com_recolhimento_imposto,
+		numeroDocumentoImpostoReadOnly,
+		aux,
+		preenche_tipo_despesa_custeio,
+		especificacoes_custeio,
+		despesasTabelas,
+		despesaContext,
+		acoes_custeio,
+		renderContaAssociacaoOptions,
+		filterContas,
+		limparSelecaoContasDesabilitadas,
+	} = useDespesaTabelasCtx();
+	const {
+		eh_despesa_com_retencao_imposto,
+		cssEscondeDocumentoTransacaoImposto,
+		labelDocumentoTransacaoImposto,
+		setCssEscondeDocumentoTransacaoImposto,
+		setLabelDocumentoTransacaoImposto,
+		readOnlyCamposImposto,
+		formErrorsImposto,
+	} = useDespesaUiCtx();
+	const {
+		setValorRateioRealizadoImposto,
+		onCalendarCloseDataPagamentoImposto,
+	} = useDespesaFluxoCtx();
 
-	return(
+return(
 		<>
 		<div key={index}>
 			{eh_despesa_com_retencao_imposto(formikProps.values) &&

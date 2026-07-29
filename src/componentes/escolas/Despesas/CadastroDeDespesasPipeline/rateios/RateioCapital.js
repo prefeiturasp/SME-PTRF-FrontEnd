@@ -4,29 +4,34 @@ import {
     calculaValorRateio,
     trataNumericos,
     processoIncorporacaoMask
-} from "../../../../utils/ValidacoesAdicionaisFormulariosDespesasPipeline";
-import { ReactNumberFormatInput as CurrencyInput } from "../../../Globais/ReactNumberFormatInput";
+} from "../utils";
+import { ReactNumberFormatInput as CurrencyInput } from "../../../../Globais/ReactNumberFormatInput";
 import MaskedInput from "react-text-mask";
-import {visoesService} from "../../../../services/visoes.service";
+import {visoesService} from "../../../../../services/visoes.service";
+import {useFormikContext} from "formik";
+import {
+    useDespesaTabelasCtx,
+    useDespesaUiCtx,
+} from "../context/DespesaFormPipelineContext";
 
-export const CadastroFormCapital = (propriedades) => {
+export const RateioCapital = ({rateio, index, disabled}) => {
+    const formikProps = useFormikContext();
+    const {errors} = formikProps;
     const {
-        formikProps,
-        rateio,
-        index,
         despesasTabelas,
         especificaoes_capital,
-        verboHttp,
-        disabled,
-        errors,
+        despesaContext,
+        renderContaAssociacaoOptions,
+        filterContas,
+    } = useDespesaTabelasCtx();
+    const {
         exibeMsgErroValorRecursos,
         exibeMsgErroValorOriginal,
         eh_despesa_com_comprovacao_fiscal,
         eh_despesa_com_retencao_imposto,
         bloqueiaRateioEstornado,
-        renderContaAssociacaoOptions,
-        filterContas
-    } = propriedades;
+    } = useDespesaUiCtx();
+    const verboHttp = despesaContext.verboHttp;
 
     const handleChangeData = (quantidade, valor, setFieldValue) => {
         let val = calculaValorRateio(quantidade, trataNumericos(valor));

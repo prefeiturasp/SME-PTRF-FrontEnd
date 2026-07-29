@@ -1,5 +1,5 @@
 import React from "react";
-import {ModalBootstrap} from "../../../Globais/ModalBootstrap";
+import {ModalBootstrap} from "../../../../Globais/ModalBootstrap";
 
 export const ModalErroDeletarCadastroDespesa = (props) =>{
     return (

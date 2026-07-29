@@ -1,27 +1,32 @@
 import React from "react";
-import { ReactNumberFormatInput as CurrencyInput } from "../../../Globais/ReactNumberFormatInput";
-import {trataNumericos} from "../../../../utils/ValidacoesAdicionaisFormulariosDespesasPipeline";
-import {visoesService} from "../../../../services/visoes.service";
+import { ReactNumberFormatInput as CurrencyInput } from "../../../../Globais/ReactNumberFormatInput";
+import {trataNumericos} from "../utils";
+import {visoesService} from "../../../../../services/visoes.service";
+import {useFormikContext} from "formik";
+import {
+    useDespesaTabelasCtx,
+    useDespesaUiCtx,
+} from "../context/DespesaFormPipelineContext";
 
 
-export const CadastroFormCusteio = (propriedades) => {
-
-    const { formikProps, 
-            rateio, 
-            index, 
-            despesasTabelas,  
-            especificacoes_custeio, 
-            verboHttp, 
-            disabled, 
-            errors, 
-            exibeMsgErroValorRecursos, 
-            exibeMsgErroValorOriginal, 
-            eh_despesa_com_comprovacao_fiscal, 
-            eh_despesa_com_retencao_imposto, 
-            bloqueiaRateioEstornado, 
-            renderContaAssociacaoOptions,
-            filterContas
-            } = propriedades
+export const RateioCusteio = ({rateio, index, disabled}) => {
+    const formikProps = useFormikContext();
+    const {errors} = formikProps;
+    const {
+        despesasTabelas,
+        especificacoes_custeio,
+        despesaContext,
+        renderContaAssociacaoOptions,
+        filterContas,
+    } = useDespesaTabelasCtx();
+    const {
+        exibeMsgErroValorRecursos,
+        exibeMsgErroValorOriginal,
+        eh_despesa_com_comprovacao_fiscal,
+        eh_despesa_com_retencao_imposto,
+        bloqueiaRateioEstornado,
+    } = useDespesaUiCtx();
+    const verboHttp = despesaContext.verboHttp
 
     const setValorRateioRealizado=(setFieldValue, index, valor)=>{
         setFieldValue(`rateios[${index}].valor_rateio`, trataNumericos(valor))

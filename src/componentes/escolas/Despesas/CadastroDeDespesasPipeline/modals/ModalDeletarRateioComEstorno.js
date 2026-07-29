@@ -1,18 +1,17 @@
 import React from "react";
-import {ModalBootstrap} from "../../../Globais/ModalBootstrap";
+import {ModalBootstrap} from "../../../../Globais/ModalBootstrap";
 
-export const ModalDespesaIncompleta = (props) =>{
+export const ModalDeletarRateioComEstorno = (props) =>{
     return (
         <ModalBootstrap
-            dataQa="modal-despesa-incompleta"
             show={props.show}
             onHide={props.handleClose}
             titulo={props.titulo}
             bodyText={props.texto}
-            primeiroBotaoOnclick={props.handleClose}
+            primeiroBotaoOnclick={props.onDeletarRateio}
             primeiroBotaoTexto="Sim"
             primeiroBotaoCss="success"
-            segundoBotaoOnclick={props.onSalvarDespesaIncompleta}
+            segundoBotaoOnclick={props.handleClose}
             segundoBotaoCss="outline-success"
             segundoBotaoTexto="Não"
         />

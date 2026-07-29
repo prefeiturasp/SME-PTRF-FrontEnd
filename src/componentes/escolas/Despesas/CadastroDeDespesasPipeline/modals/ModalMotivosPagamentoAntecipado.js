@@ -1,19 +1,19 @@
 import React, {memo} from "react";
-import {ModalFormBodyText} from "../../../Globais/ModalBootstrap";
+import {ModalFormBodyText} from "../../../../Globais/ModalBootstrap";
 import {MultiSelect} from "primereact/multiselect";
 
 const ModalMotivosPagamentoAntecipado = ({
-                                                    show,
-                                                    handleClose,
-                                                    listaDemotivosPagamentoAntecipado,
-                                                    selectMotivosPagamentoAntecipado,
-                                                    setSelectMotivosPagamentoAntecipado,
-                                                    checkBoxOutrosMotivosPagamentoAntecipado,
-                                                    txtOutrosMotivosPagamentoAntecipado,
-                                                    handleChangeCheckBoxOutrosMotivosPagamentoAntecipado,
-                                                    handleChangeTxtOutrosMotivosPagamentoAntecipado,
-                                                    onSalvarMotivosAntecipadosTrue,
-                                                }) => {
+                                        show,
+                                        handleClose,
+                                        listaDemotivosPagamentoAntecipado,
+                                        selectMotivosPagamentoAntecipado,
+                                        setSelectMotivosPagamentoAntecipado,
+                                        checkBoxOutrosMotivosPagamentoAntecipado,
+                                        txtOutrosMotivosPagamentoAntecipado,
+                                        handleChangeCheckBoxOutrosMotivosPagamentoAntecipado,
+                                        handleChangeTxtOutrosMotivosPagamentoAntecipado,
+                                        onSalvarMotivosAntecipadosTrue,
+                                    }) => {
 
     const selectedItemsLabel = (motivos) => {
         if (motivos && motivos.length > 0){

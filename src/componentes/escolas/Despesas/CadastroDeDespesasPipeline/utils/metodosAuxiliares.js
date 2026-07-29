@@ -1,10 +1,11 @@
 import {
     calculaValorOriginal,
-    calculaValorRecursoAcoes, round,
-    trataNumericos
-} from "../../../utils/ValidacoesAdicionaisFormulariosDespesasPipeline";
-import {deleteDespesa, getNomeRazaoSocial} from "../../../services/escolas/Despesas.service";
-import {getVerificarSaldo} from "../../../services/escolas/RateiosDespesas.service";
+    calculaValorRecursoAcoes,
+    round,
+    trataNumericos,
+} from "./numericos";
+import {deleteDespesa, getNomeRazaoSocial} from "../../../../../services/escolas/Despesas.service";
+import {getVerificarSaldo} from "../../../../../services/escolas/RateiosDespesas.service";
 
 const onShowModal = (setShow) => {
     setShow(true);

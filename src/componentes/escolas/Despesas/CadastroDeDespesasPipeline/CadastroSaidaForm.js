@@ -6,7 +6,10 @@ import {
     validaPayloadDespesas,
     cpfMaskContitional,
     valida_cpf_cnpj,
-} from "../../../../utils/ValidacoesAdicionaisFormulariosDespesasPipeline";
+    metodosAuxiliares,
+    trataNumericos,
+    apenasNumero,
+} from "./utils";
 import MaskedInput from 'react-text-mask';
 import {
     getDespesasTabelas,
@@ -19,16 +22,13 @@ import {DatePickerField} from "../../../Globais/DatePickerField";
 import {useParams} from 'react-router-dom';
 import {DespesaContext} from "../../../../context/Despesa";
 import "./cadastro-de-despesas.scss";
-import {metodosAuxiliares} from "../metodosAuxiliaresPipeline";
-import {trataNumericos} from "../../../../utils/ValidacoesAdicionaisFormulariosDespesasPipeline";
 import Loading from "../../../../utils/Loading";
 import { ReactNumberFormatInput as CurrencyInput } from "../../../Globais/ReactNumberFormatInput";
 import HTTP_STATUS from "http-status-codes";
 import {getReceita} from '../../../../services/escolas/Receitas.service';
 import {ASSOCIACAO_UUID} from "../../../../services/auth.service";
-import {ModalDeletarDespesa} from "./ModalDeletarDespesa";
+import {ModalDeletarDespesa} from "./modals/ModalDeletarDespesa";
 import {visoesService} from "../../../../services/visoes.service";
-import { apenasNumero } from "../../../../utils/ValidacoesAdicionaisFormulariosDespesasPipeline";
 import { ModalConfirm } from "../../../Globais/Modal/ModalConfirm";
 
 
