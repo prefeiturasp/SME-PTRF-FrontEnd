@@ -27,8 +27,6 @@ import { useRecursoSelecionadoContext } from "../../../../context/RecursoSelecio
 export const ListaDeReceitas = () => {
 
     let navigate = useNavigate();
-    const rowsPerPage = 7;
-
     const initialState = {
         filtrar_por_termo: "",
         tipo_receita: "",
@@ -39,6 +37,9 @@ export const ListaDeReceitas = () => {
     };
 
     const [receitas, setReceitas] = useState([]);
+    const [totalRegistros, setTotalRegistros] = useState(0);
+    const [paginacaoAtual, setPaginacaoAtual] = useState(1);
+    const rowsPerPage = 7;
     const [totais, setTotais] = useState([]);
     const [inputPesquisa, setInputPesquisa] = useState("");
     const [buscaUtilizandoFiltro, setBuscaUtilizandoFiltro] = useState(false);
@@ -73,18 +74,71 @@ export const ListaDeReceitas = () => {
         }
     }, [previousPath]);
 
-    const buscaListaUtilizandoFiltro = async (filtrar_por_termo = "", tipo_receita = "", acao_associacao = "", conta_associacao = "", data_inicio = "", data_fim = "") => {
+   /*  const buscaListaUtilizandoFiltro = async (filtrar_por_termo = "", tipo_receita = "", acao_associacao = "", conta_associacao = "", data_inicio = "", data_fim = "") => {
         const lista_retorno_api = await filtrosAvancadosReceitas(filtrar_por_termo, tipo_receita, acao_associacao, conta_associacao, data_inicio, data_fim);
         setReceitas(lista_retorno_api);
         setBuscaUtilizandoFiltro(true);
         setLoading(false);
-    };
+    }; */
 
-    const buscaListaReceitas = async () => {
-        const listaReceitas = await getListaReceitas();
-        setReceitas(listaReceitas);
+    const buscaListaUtilizandoFiltro = async (
+        filtrar_por_termo = "",
+        tipo_receita = "",
+        acao_associacao = "",
+        conta_associacao = "",
+        data_inicio = "",
+        data_fim = "",
+        page = 1
+    ) => {
+        setLoading(true);
+
+        const lista = await filtrosAvancadosReceitas(
+            filtrar_por_termo,
+            tipo_receita,
+            acao_associacao,
+            conta_associacao,
+            data_inicio,
+            data_fim,
+            page,
+            rowsPerPage,
+        );
+
+        setReceitas(lista.results || []);
+        setTotalRegistros(lista.count || 0);
+        setPaginacaoAtual(lista.page || page);
+        setBuscaUtilizandoFiltro(true);
 
         setLoading(false);
+    };
+
+    const buscaListaReceitas = async (page = 1) => {
+        setLoading(true);
+
+        const listaReceitas = await getListaReceitas(page, rowsPerPage);
+        setReceitas(listaReceitas.results || []);
+        setTotalRegistros(listaReceitas.count || 0);
+        setPaginacaoAtual(listaReceitas.page || page);
+
+        setLoading(false);
+    };
+
+    const onPage = (event) => {
+        const page = event.page + 1;
+
+        if (buscaUtilizandoFiltro) {
+            buscaListaUtilizandoFiltro(
+                state.filtrar_por_termo || "",
+                state.tipo_receita || "",
+                state.acao_associacao || "",
+                state.conta_associacao || "",
+                state.data_inicio || "",
+                state.data_fim || "",
+                page,
+                rowsPerPage
+            );
+        } else {
+            buscaListaReceitas(page);
+        }
     };
 
     const buscaTotaisReceitas = async (tipo_receita = "", acao_associacao__uuid = "", conta_associacao__uuid = "", data_inicio = "", data_fim = "") => {
@@ -215,9 +269,14 @@ export const ListaDeReceitas = () => {
                             
                                 <DataTable
                                     value={receitas}
-                                    className="mt-3 datatable-footer-coad"
-                                    paginator={receitas.length > rowsPerPage}
+                                    lazy
+                                    paginator
                                     rows={rowsPerPage}
+                                    totalRecords={totalRegistros}
+                                    first={(paginacaoAtual - 1) * rowsPerPage}
+                                    onPage={onPage}
+                                    loading={loading}
+                                    className="mt-3 datatable-footer-coad"
                                     paginatorTemplate="PrevPageLink PageLinks NextPageLink"
                                     autoLayout={true}
                                     selectionMode="single"
