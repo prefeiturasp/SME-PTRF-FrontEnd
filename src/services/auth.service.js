@@ -1,4 +1,4 @@
-import api from './api';
+import api, { registerUnauthorizedHandler } from './api';
 import HTTP_STATUS from "http-status-codes";
 import {DATA_HORA_USUARIO_LOGADO, visoesService} from "./visoes.service";
 import {mantemEstadoAcompanhamentoDePc as meapcservice} from "./mantemEstadoAcompanhamentoDePc.service";
@@ -26,6 +26,8 @@ export const PERIODO_RELATORIO_CONSOLIDADO_DRE = "PERIODO_RELATORIO_CONSOLIDADO_
 export const PERIODO_SELECIONADO_DRE_ACOMPANHAMENTO = "PERIODO_SELECIONADO_DRE_ACOMPANHAMENTO"
 export const ACESSO_MODO_SUPORTE = "ACESSO_MODO_SUPORTE";
 export const RECURSO_SELECIONADO = "RECURSO_SELECIONADO";
+// Token de longa duração (X(h), definido em backend) usado para renovar o access token sem novo login.
+export const REFRESH_TOKEN_ALIAS = "REFRESH_TOKEN";
 
 const authHeader = {
     'Content-Type': 'application/json'
@@ -47,6 +49,9 @@ const setDataLogin = async ()=>{
         const duration = moment.duration(now.diff(past)); // Calcula diferença entre datas
         const days = duration.asDays(); // Mostra a diferença em dias
         if (days >= 1){
+            // Limpa caches de estado que podem carregar dados de um dia anterior.
+            // Não chama logout() aqui: o usuário acaba de autenticar com sucesso,
+            // redirecionar seria descartar o token recém-obtido do servidor.
             localStorage.removeItem('DADOS_USUARIO_LOGADO');
             localStorage.removeItem(ACOMPANHAMENTO_DE_PC);
             localStorage.removeItem(ACOMPANHAMENTO_PC_UNIDADE);
@@ -55,7 +60,6 @@ const setDataLogin = async ()=>{
             localStorage.removeItem(PERIODO_SELECIONADO_DRE_ACOMPANHAMENTO);
             localStorage.setItem(DATA_LOGIN, moment(new Date(), "YYYY-MM-DD").format("YYYY-MM-DD"));
             localStorage.setItem(DATA_HORA_USUARIO_LOGADO, data_hora_atual);
-            await logout();
         }
     }else {
         localStorage.setItem(DATA_LOGIN, moment(new Date(), "YYYY-MM-DD").format("YYYY-MM-DD"))
@@ -83,6 +87,9 @@ const login = async (login, senha, suporte=false) => {
             localStorage.setItem(ACESSO_MODO_SUPORTE, suporte ? true : false);
 
             localStorage.setItem(TOKEN_ALIAS, resp.token);
+            if (resp.refresh) {
+                localStorage.setItem(REFRESH_TOKEN_ALIAS, resp.refresh);
+            }
             localStorage.setItem(
                 USUARIO_NOME,
                 resp.nome
@@ -130,7 +137,21 @@ const login = async (login, senha, suporte=false) => {
 const isLoggedIn = () => {
     const token = localStorage.getItem(TOKEN_ALIAS);
     return !!token;
-  };
+};
+
+// Busca permissões, visões e feature flags atualizados do backend e sobrescreve
+// o cache do localStorage. Chamado no mount do App para evitar que um reload
+// sirva dados desatualizados (ex.: permissões revogadas desde o último login).
+// Falhas são silenciosas para não bloquear a navegação do usuário.
+const refreshUserData = async () => {
+    const suporte = localStorage.getItem(ACESSO_MODO_SUPORTE) === 'true';
+    try {
+        const response = await api.get(`api/me?suporte=${suporte}`, authHeaderAuthorization());
+        await visoesService.setDadosUsuariosLogados(response.data, suporte);
+    } catch (error) {
+        console.warn('Erro ao atualizar dados do usuário', error?.response?.data);
+    }
+};
 
 const getToken = () => {
     let token = localStorage.getItem(TOKEN_ALIAS);
@@ -154,55 +175,48 @@ const limparStorageAoTrocarRecurso = () => {
     localStorage.removeItem(PERIODO_SELECIONADO_DRE_ACOMPANHAMENTO);
 };
 
-const logout = () => {
-    localStorage.removeItem(TOKEN_ALIAS);
-    localStorage.removeItem(USUARIO_NOME);
-    localStorage.removeItem(ASSOCIACAO_UUID);
-    localStorage.removeItem(ASSOCIACAO_NOME);
-    localStorage.removeItem(ASSOCIACAO_NOME_ESCOLA);
-    localStorage.removeItem(ASSOCIACAO_TIPO_ESCOLA);
-    localStorage.removeItem('periodoConta');
-    localStorage.removeItem('uuidPrestacaoConta');
-    localStorage.removeItem('periodoPrestacaoDeConta');
-    localStorage.removeItem('statusPrestacaoDeConta');
-    localStorage.removeItem('contaPrestacaoDeConta');
-    localStorage.removeItem('acaoLancamento');
-    localStorage.removeItem('uuidAta');
-    localStorage.removeItem('prestacao_de_contas_nao_apresentada');
-    localStorage.removeItem(STORAGE_KEY_PERIODO_CONTA_GERACAO_DOCUMENTOS);
-    localStorage.removeItem(USUARIO_EMAIL);
-    localStorage.removeItem(USUARIO_LOGIN);
-    localStorage.removeItem(USUARIO_CPF);
-    localStorage.removeItem(DADOS_DA_ASSOCIACAO);
-    localStorage.removeItem(PERIODO_RELATORIO_CONSOLIDADO_DRE);
-    localStorage.removeItem(PERIODO_SELECIONADO_DRE_ACOMPANHAMENTO);
-    window.location.assign("/login")
+const STORAGE_KEYS_SESSAO = [
+    TOKEN_ALIAS,
+    REFRESH_TOKEN_ALIAS,
+    USUARIO_NOME,
+    USUARIO_EMAIL,
+    USUARIO_LOGIN,
+    USUARIO_CPF,
+    ASSOCIACAO_UUID,
+    ASSOCIACAO_NOME,
+    ASSOCIACAO_NOME_ESCOLA,
+    ASSOCIACAO_TIPO_ESCOLA,
+    DADOS_DA_ASSOCIACAO,
+    PERIODO_RELATORIO_CONSOLIDADO_DRE,
+    PERIODO_SELECIONADO_DRE_ACOMPANHAMENTO,
+    STORAGE_KEY_PERIODO_CONTA_GERACAO_DOCUMENTOS,
+    'periodoConta',
+    'uuidPrestacaoConta',
+    'periodoPrestacaoDeConta',
+    'statusPrestacaoDeConta',
+    'contaPrestacaoDeConta',
+    'acaoLancamento',
+    'uuidAta',
+    'prestacao_de_contas_nao_apresentada',
+];
+
+const limparStorageSessao = () => {
+    STORAGE_KEYS_SESSAO.forEach(key => localStorage.removeItem(key));
 };
 
+const logout = () => {
+    limparStorageSessao();
+    window.location.assign("/login");
+};
+
+registerUnauthorizedHandler(logout);
+
 const logoutToSuporte = () => {
+    // Remove também DADOS_USUARIO_LOGADO, mantido pelo logout normal
+    // para permitir restaurar a sessão do usuário original ao retornar do suporte.
     localStorage.removeItem('DADOS_USUARIO_LOGADO');
-    localStorage.removeItem(TOKEN_ALIAS);
-    localStorage.removeItem(USUARIO_NOME);
-    localStorage.removeItem(ASSOCIACAO_UUID);
-    localStorage.removeItem(ASSOCIACAO_NOME);
-    localStorage.removeItem(ASSOCIACAO_NOME_ESCOLA);
-    localStorage.removeItem(ASSOCIACAO_TIPO_ESCOLA);
-    localStorage.removeItem('periodoConta');
-    localStorage.removeItem('uuidPrestacaoConta');
-    localStorage.removeItem('periodoPrestacaoDeConta');
-    localStorage.removeItem('statusPrestacaoDeConta');
-    localStorage.removeItem('contaPrestacaoDeConta');
-    localStorage.removeItem('acaoLancamento');
-    localStorage.removeItem('uuidAta');
-    localStorage.removeItem('prestacao_de_contas_nao_apresentada');
-    localStorage.removeItem(STORAGE_KEY_PERIODO_CONTA_GERACAO_DOCUMENTOS);
-    localStorage.removeItem(USUARIO_EMAIL);
-    localStorage.removeItem(USUARIO_LOGIN);
-    localStorage.removeItem(USUARIO_CPF);
-    localStorage.removeItem(DADOS_DA_ASSOCIACAO);
-    localStorage.removeItem(PERIODO_RELATORIO_CONSOLIDADO_DRE);
-    localStorage.removeItem(PERIODO_SELECIONADO_DRE_ACOMPANHAMENTO);
-    window.location.assign("/login-suporte")
+    limparStorageSessao();
+    window.location.assign("/login-suporte");
 };
 
 
@@ -229,6 +243,7 @@ export const authService = {
     logoutToSuporte,
     getToken,
     isLoggedIn,
+    refreshUserData,
     esqueciMinhaSenha,
     limparStorageAoTrocarRecurso
 };
