@@ -4,6 +4,7 @@ import api from '../../../services/api';
 
 jest.mock('../../../services/api', () => ({
     get: jest.fn(),
+    registerUnauthorizedHandler: jest.fn(),
 }));
 
 jest.mock('../../../services/auth.service', () => ({

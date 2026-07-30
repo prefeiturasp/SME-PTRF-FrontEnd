@@ -24,6 +24,7 @@ jest.mock('../api', () => ({
     patch: jest.fn(),
     post: jest.fn(),
     delete: jest.fn(),
+    registerUnauthorizedHandler: jest.fn(),
 }));
 
 const URL_GRUPOS = '/api/grupos/';

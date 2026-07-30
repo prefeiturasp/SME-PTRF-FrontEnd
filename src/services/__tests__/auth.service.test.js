@@ -54,6 +54,7 @@ jest.mock('../api', () => ({
     get: jest.fn(),
     put: jest.fn(),
     patch: jest.fn(),
+    registerUnauthorizedHandler: jest.fn(),
 }));
 
 jest.mock('../mantemEstadoAcompanhamentoDePc.service', () => ({
