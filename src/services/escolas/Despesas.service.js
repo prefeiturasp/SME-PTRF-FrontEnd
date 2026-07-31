@@ -46,6 +46,13 @@ export const getEspecificacoesCusteio = async (id_tipo_custeio) => {
   ).data;
 };
 
+/** Especificações CUSTEIO (agrupadas por tipo) + CAPITAL. Uso: flag despesas-pipeline. */
+export const getEspecificacoesPorAplicacao = async () => {
+  return (
+    await api.get(`api/especificacoes/por-aplicacao/`, authHeader())
+  ).data;
+};
+
 export const getDespesa = async (idDespesa) => {
   return (await api.get(`api/despesas/${idDespesa}`, authHeader())).data;
 };
