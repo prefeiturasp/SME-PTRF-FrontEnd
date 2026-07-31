@@ -171,7 +171,7 @@ describe('Testes para funções de análise', () => {
         api.get.mockResolvedValue({ data: mockData })
         const result = await getListaReceitas();
         expect(api.get).toHaveBeenCalledWith(
-            `api/receitas/?associacao_uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`,
+            `api/receitas/?associacao_uuid=${localStorage.getItem(ASSOCIACAO_UUID)}&page=1&page_size=10`,
             getAuthHeader()
         )
         expect(result).toEqual(mockData);
@@ -233,7 +233,7 @@ describe('Testes para funções de análise', () => {
         const data_fim = '2025-04-07'
         const result = await filtrosAvancadosReceitas(palavra, tipo_receita, acao_associacao__uuid, conta_associacao__uuid, data_inicio, data_fim);
         expect(api.get).toHaveBeenCalledWith(
-            `api/receitas/?search=${palavra}&associacao__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}&tipo_receita=${tipo_receita}&acao_associacao__uuid=${acao_associacao__uuid}&conta_associacao__uuid=${conta_associacao__uuid}${data_inicio ? '&data_inicio='+data_inicio : ""}${data_fim ? '&data_fim='+data_fim : ""}`,
+            `api/receitas/?page=1&page_size=10&search=${palavra}&associacao__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}&tipo_receita=${tipo_receita}&acao_associacao__uuid=${acao_associacao__uuid}&conta_associacao__uuid=${conta_associacao__uuid}${data_inicio ? '&data_inicio='+data_inicio : ""}${data_fim ? '&data_fim='+data_fim : ""}`,
             getAuthHeader()
         )
         expect(result).toEqual(mockData);

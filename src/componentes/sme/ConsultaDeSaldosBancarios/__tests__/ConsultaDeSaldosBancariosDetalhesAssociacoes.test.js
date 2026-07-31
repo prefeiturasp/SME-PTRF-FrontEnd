@@ -137,14 +137,22 @@ describe('Componente Consulta de Saldos Bancarios Detalhes Associacoes', () => {
       getDownloadExtratoBancario.mockReturnValue({data: "extrato123"});
 
       render(<MemoryRouter><ConsultaDeSaldosBancariosDetalhesAssociacoes/></MemoryRouter>);
+      
+      // Wait for initial render and first call
       await waitFor(() => {
-        const filtroTipoUE = screen.getByLabelText("Filtrar pelo tipo de UE");
-        fireEvent.change(filtroTipoUE, { target: { value: "IFSP" } });
-        fireEvent.click(screen.getByRole("button", { name: "Filtrar" }));
+        expect(getSaldosDetalhesAssociacoes).toHaveBeenCalledTimes(1);
       });
 
-      expect(getSaldosDetalhesAssociacoes).toHaveBeenCalledTimes(2);
-  });
+      // Now trigger the filter
+      const filtroTipoUE = screen.getByLabelText("Filtrar pelo tipo de UE");
+      fireEvent.change(filtroTipoUE, { target: { value: "IFSP" } });
+      fireEvent.click(screen.getByRole("button", { name: "Filtrar" }));
+
+      // Wait for the second call to complete
+      await waitFor(() => {
+        expect(getSaldosDetalhesAssociacoes).toHaveBeenCalledTimes(2);
+      });
+    });
 
   it('Exportar planilha', async() => {
       useParams.mockReturnValue({
