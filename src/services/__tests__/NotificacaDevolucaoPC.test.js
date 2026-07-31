@@ -23,7 +23,7 @@ const localStorageMock = (() => {
     };
   })();
 
-  
+
 jest.mock('../visoes.service', () => ({
   visoesService: {
     getDadosDoUsuarioLogado: jest.fn(),
@@ -57,7 +57,7 @@ describe('NotificaDevolucaoPC Service', () => {
       notificacao_uuid: mockNotificacaoUuid,
     }
   };
-  
+
   const mockUserData = {
     unidade_selecionada: {
       uuid: mockUnitUuid,
@@ -107,6 +107,13 @@ describe('NotificaDevolucaoPC Service', () => {
         uuid: mockNotificacaoUuid,
         lido: true,
       });
+    });
+
+    it('should call getPeriodoPorReferencia and response without period data', async () => {
+        getPeriodoPorReferencia.mockResolvedValue([]);
+
+        notificaDevolucaoPCService.marcaNotificacaoComoLidaERedirecianaParaVerAcertos(mockNavigate);
+        expect(getPeriodoPorReferencia).toHaveBeenCalledWith(mockPeriodoRef);
     });
   });
 });
