@@ -27,7 +27,7 @@ export const App = () => {
     }
   }, [recursoSelecionado, theme]);
 
-  const PUBLIC_PATHS = ["/login", "/login-suporte", "/esqueci-minha-senha/"];
+  const PUBLIC_PATHS = ["/login", "/login-suporte", "/esqueci-minha-senha/", "/sobre"];
   const isPublicPath = PUBLIC_PATHS.includes(pathName) || pathName.match(/\/redefinir-senha\//);
 
   // Enquanto true, a tela fica em loading para evitar renderizar com permissões
@@ -65,6 +65,7 @@ export const App = () => {
         ) : pathName === "/login" ||
         pathName === "/login-suporte" ||
         pathName === "/esqueci-minha-senha/" ||
+        pathName === "/sobre" ||
         pathName.match(/\/redefinir-senha\/[a-zA-Z0-9]/) ? (
           <Rotas />
         ) : pathName.match(/\/visualizacao-da-ata\/[a-zA-Z0-9]/) ||
