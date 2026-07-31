@@ -29,8 +29,9 @@ return (
                                         <div className="form-row mt-4">
                                             <div className="col-12">
                                                 <RetemImposto
+                                                    formikProps={props}
                                                     eh_despesa_com_retencao_imposto={eh_despesa_com_retencao_imposto}
-                                                    disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes) || !props.values.despesa_anterior_ao_uso_do_sistema_editavel}
+                                                    disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes) || !values.despesa_anterior_ao_uso_do_sistema_editavel}
                                                     mostraModalExcluirImposto={mostraModalExcluirImposto}
                                                 />
                                                 

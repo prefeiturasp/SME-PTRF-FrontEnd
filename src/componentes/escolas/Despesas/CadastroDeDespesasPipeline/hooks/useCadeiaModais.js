@@ -144,6 +144,11 @@ export const useCadeiaModais = (deps) => {
     };
 
     const verificaSeDespesaIncompleta = async (values, errors, setFieldValue) => {
+        // Acerto: não oferece "salvar incompleta" — REG-024 bloqueia na API.
+        if (aux.origemAnaliseLancamento(parametroLocation)) {
+            await serviceSubmitModais(values, setFieldValue, errors, "despesa_incompleta_validado");
+            return;
+        }
         values.despesa_incompleta = document.getElementsByClassName("despesa_incompleta").length;
         validaPayloadDespesas(values);
         if (values.despesa_incompleta > 0) {

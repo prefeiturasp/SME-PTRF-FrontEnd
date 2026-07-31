@@ -1,8 +1,6 @@
 import { useDispatch } from "react-redux";
 import { criarDespesa, alterarDespesa } from "../../../../../services/escolas/Despesas.service";
 import { useMutationConfirmavel } from "../../../../../hooks/Globais/useMutationConfirmavel";
-import { toastCustom } from "../../../../Globais/ToastCustom";
-import { getErrorMessage } from "../../../../../utils/obtemMsgErroAxios";
 import HTTP_STATUS from "http-status-codes";
 
 export const useMutationDespesaConfirmavel = (onSuccess, onError, setLoading, setBtnSubmitDisable) => {
@@ -44,13 +42,7 @@ export const useMutationDespesaConfirmavel = (onSuccess, onError, setLoading, se
       },
       onError: (error, variables) => {
         if (!error?.response?.data?.confirmar) {
-          const mensagemErro = getErrorMessage(error, "Ocorreu um erro ao criar despesa");
-          toastCustom.ToastCustomError(mensagemErro);
-          onError && onError(error.response || error);     
-        } else {
-          // Se for erro de confirmação, não ativa loading ainda
-          // O loading será ativado apenas quando o usuário confirmar
-          // Não precisa desativar porque nunca foi ativado na primeira chamada
+          onError && onError(error.response || error);
         }
       },
     },
@@ -92,13 +84,7 @@ export const useMutationDespesaConfirmavel = (onSuccess, onError, setLoading, se
       },
       onError: (error) => {
         if (!error?.response?.data?.confirmar) {
-          const mensagemErro = getErrorMessage(error, "Ocorreu um erro ao editar despesa");
-          toastCustom.ToastCustomError(mensagemErro);
-          onError && onError(error.response || error);          
-        } else {
-          // Se for erro de confirmação, não ativa loading ainda
-          // O loading será ativado apenas quando o usuário confirmar
-          // Não precisa desativar porque nunca foi ativado na primeira chamada
+          onError && onError(error.response || error);
         }
       },
     },

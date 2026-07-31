@@ -5,6 +5,7 @@ import {
     getDespesasTabelas,
     getEspecificacoesCapital,
     getEspecificacoesCusteio,
+    getEspecificacoesPorAplicacao,
     getDespesa,
     getListaDespesas,
     getListaDespesasPaginacao,
@@ -116,6 +117,20 @@ describe('Testes para funções de análise', () => {
             getAuthHeader()
         );
         expect(result).toEqual(mockData);
+    });
+
+    test('getEspecificacoesPorAplicacao deve chamar o endpoint agrupado', async () => {
+        const mockPorAplicacao = {
+            custeio_por_tipo: { '7': mockData },
+            capital: mockData,
+        };
+        api.get.mockResolvedValue({ data: mockPorAplicacao });
+        const result = await getEspecificacoesPorAplicacao();
+        expect(api.get).toHaveBeenCalledWith(
+            `api/especificacoes/por-aplicacao/`,
+            getAuthHeader()
+        );
+        expect(result).toEqual(mockPorAplicacao);
     });
 
     test('getDespesa deve chamar a API corretamente', async () => {

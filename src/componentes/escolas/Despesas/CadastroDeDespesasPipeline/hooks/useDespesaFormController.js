@@ -11,7 +11,6 @@ import {
 } from "../../../../../utils/obtemMsgErroAxios";
 import {
     deleteDespesa,
-    marcarLancamentoExcluido,
     getValidarDataDaDespesa
 } from "../../../../../services/escolas/Despesas.service";
 import {useParams, useLocation} from 'react-router-dom';
@@ -72,7 +71,6 @@ export const useDespesaFormController = ({verbo_http, veioDeSituacaoPatrimonial}
     const [formErrorsImposto, setFormErrorsImposto] = useState([])
     const [disableBtnAdicionarImposto, setDisableBtnAdicionarImposto] = useState(false);
     const [objetoParaComparacao, setObjetoParaComparacao] = useState({});
-    const [showDespesaIncompletaNaoPermitida, setShowDespesaIncompletaNaoPermitida] = useState(false);
 
 
     const visao_selecionada = visoesService.getItemUsuarioLogado('visao_selecionada.nome')
@@ -91,7 +89,7 @@ export const useDespesaFormController = ({verbo_http, veioDeSituacaoPatrimonial}
 
     const handleSuccessDespesa = async (response) => {
         console.log("Operação realizada com sucesso!");
-        aux.getPath(origem);
+        aux.getPath(origem, parametroLocation);
     };
 
     const handleErroCriarDespesa = (response) => {
@@ -287,32 +285,51 @@ export const useDespesaFormController = ({verbo_http, veioDeSituacaoPatrimonial}
             aux.exibeDocumentoTransacao(tipoTransacaoId, setCssEscondeDocumentoTransacao, setLabelDocumentoTransacao, despesasTabelas);
             aux.exibeDocumentoTransacaoImpostoUseEffect(despesaContext.initialValues.despesas_impostos || [], setLabelDocumentoTransacaoImposto, labelDocumentoTransacaoImposto, setCssEscondeDocumentoTransacaoImposto, cssEscondeDocumentoTransacaoImposto, despesasTabelas);
         }
-        if (despesaContext.initialValues.data_transacao && verbo_http === "PUT") {
-            if(aux.origemAnaliseLancamento(parametroLocation)){
-                validateFormDespesas(despesaContext.initialValues);
-                aux.bloqueiaCamposDespesaPrincipal(parametroLocation, setReadOnlyCampos, setReadOnlyBtnAcao)
-            }
-            else{
-                periodoFechado(despesaContext.initialValues.data_transacao, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral);
-            }
-
-            if (despesaContext && despesaContext.initialValues && despesaContext.initialValues.despesas_impostos){
-                if(aux.origemAnaliseLancamento(parametroLocation)){                  
-                    validateFormDespesas(despesaContext.initialValues);
-                    aux.bloqueiaCamposDespesaImposto(
-                        parametroLocation, setReadOnlyCamposImposto,
-                        setDisableBtnAdicionarImposto, despesaContext
-                    )
-                }
-                else{
-                    periodoFechadoImposto(despesaContext.initialValues.despesas_impostos, setReadOnlyBtnAcao, setShowPeriodoFechadoImposto, setReadOnlyCamposImposto, setDisableBtnAdicionarImposto, onShowErroGeral);
-                }
-            }
-        }
         if (verbo_http === "PUT") {
             setObjetoParaComparacao(despesaContext.initialValues)
         }
     }, [despesaContext.initialValues, despesasTabelas]);
+
+    // Período fechado — não depende de despesasTabelas (evita 2º status-periodo no load).
+    // getPeriodoFechadoCached deduplica por data se imposto/principal compartilharem a mesma.
+    useEffect(() => {
+        if (verbo_http !== "PUT" || !despesaContext.initialValues?.data_transacao) {
+            return;
+        }
+
+        if (aux.origemAnaliseLancamento(parametroLocation)) {
+            validateFormDespesas(despesaContext.initialValues);
+            aux.bloqueiaCamposDespesaPrincipal(parametroLocation, setReadOnlyCampos, setReadOnlyBtnAcao);
+            if (despesaContext.initialValues.despesas_impostos) {
+                validateFormDespesas(despesaContext.initialValues);
+                aux.bloqueiaCamposDespesaImposto(
+                    parametroLocation, setReadOnlyCamposImposto,
+                    setDisableBtnAdicionarImposto, despesaContext
+                );
+            }
+            return;
+        }
+
+        periodoFechado(
+            despesaContext.initialValues.data_transacao,
+            setReadOnlyBtnAcao,
+            setShowPeriodoFechado,
+            setReadOnlyCampos,
+            onShowErroGeral
+        );
+
+        if (despesaContext.initialValues.despesas_impostos) {
+            periodoFechadoImposto(
+                despesaContext.initialValues.despesas_impostos,
+                setReadOnlyBtnAcao,
+                setShowPeriodoFechadoImposto,
+                setReadOnlyCamposImposto,
+                setDisableBtnAdicionarImposto,
+                onShowErroGeral
+            );
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [despesaContext.initialValues, verbo_http]);
 
     const initialValues = () => {
         return despesaContext.initialValues;
@@ -429,21 +446,11 @@ export const useDespesaFormController = ({verbo_http, veioDeSituacaoPatrimonial}
         setLoading(true);
 
         try {
+            // Com flag: destroy no back já marca lançamento excluído (acerto).
             await deleteDespesa(despesaContext.idDespesa)
-            console.log("Despesa deletada com sucesso.");
-
-            if(aux.origemAnaliseLancamento(parametroLocation)){
-                let uuid_analise_lancamento = parametroLocation.state.uuid_analise_lancamento;
-                let response_exclui_lancamento = await marcarLancamentoExcluido(uuid_analise_lancamento);
-                
-                if (response_exclui_lancamento.status === 200) {
-                    console.log("Exclusão de lancamento realizada com sucesso!");
-                }
-            }
-
             aux.getPath(origem, parametroLocation);
         }catch (error){
-            console.log(error.response);
+            console.log("Erro ao deletar despesa ", error)
             let texto_erro = ''
             if (error && error.response && error.response.data && error.response.data.error && error.response.data.error.itens_erro && error.response.data.error.itens_erro.length > 0){
                 texto_erro += '<p class="mb-2">Despesa não pode ser apagada porque os seguintes itens fazem referência a ela:</p>'
@@ -666,8 +673,6 @@ export const useDespesaFormController = ({verbo_http, veioDeSituacaoPatrimonial}
         setFormErrors,
         setLoading,
         habilitaBtnSalvar,
-        setShowDespesaIncompletaNaoPermitida,
-        retornaPeriodo,
         mutationCreate,
         mutationUpdate,
         origem,
@@ -725,13 +730,18 @@ export const useDespesaFormController = ({verbo_http, veioDeSituacaoPatrimonial}
         for(let despesa_imposto = 0; despesa_imposto <= values.despesas_impostos.length -1; despesa_imposto ++){
 
             let erro = await validacoesPersonalizadas(values, setFieldValue, "despesa_imposto", despesa_imposto)
-            
+            if (erro == null) {
+                continue;
+            }
             setFormErrorsImposto(prevState => ({...prevState, [despesa_imposto] : erro}))
         }
     }
 
     const onCalendarCloseDataPagamentoImposto = async(values, setFieldValue, index) => {
         let erro = await validacoesPersonalizadas(values, setFieldValue, "despesa_imposto", index)
+        if (erro == null) {
+            return;
+        }
         setFormErrorsImposto({
             ...formErrorsImposto,
             [index]: erro
@@ -901,8 +911,6 @@ export const useDespesaFormController = ({verbo_http, veioDeSituacaoPatrimonial}
             showModalErroDeletarDespesa,
             setShowModalErroDeletarDespesa,
             textoModalErroDeletarDespesa,
-            showDespesaIncompletaNaoPermitida,
-            setShowDespesaIncompletaNaoPermitida,
         },
     };
 };

@@ -1,12 +1,5 @@
 import {useRef} from "react";
-import HTTP_STATUS from "http-status-codes";
 import {getErrorMessage} from "../../../../../utils/obtemMsgErroAxios";
-import {
-    criarDespesa,
-    alterarDespesa,
-    marcarLancamentoAtualizado,
-    marcarGastoIncluido,
-} from "../../../../../services/escolas/Despesas.service";
 import {toastCustom} from "../../../../Globais/ToastCustom";
 import {
     validaPayloadDespesas,
@@ -14,7 +7,10 @@ import {
 } from "../utils";
 
 /**
- * Persistência da despesa (API create/update + fluxo acerto).
+ * Persistência da despesa (API create/update).
+ *
+ * Fluxo normal e acerto usam o mesmo caminho (mutationCreate / mutationUpdate).
+ * Acerto create envia uuid_solicitacao_acerto no payload; REG-029/031 rodam no back.
  */
 export const useDespesaSubmit = (deps) => {
     const {
@@ -23,13 +19,9 @@ export const useDespesaSubmit = (deps) => {
         despesasTabelas,
         enviarFormulario,
         setFormErrors,
-        setLoading,
         habilitaBtnSalvar,
-        setShowDespesaIncompletaNaoPermitida,
-        retornaPeriodo,
         mutationCreate,
         mutationUpdate,
-        origem,
         montaPayloadMotivosPagamentoAntecipado,
         txtOutrosMotivosPagamentoAntecipado,
         checkBoxOutrosMotivosPagamentoAntecipado,
@@ -53,6 +45,11 @@ export const useDespesaSubmit = (deps) => {
 
     const onSubmit = async (values, setFieldValue) => {
         const erros_personalizados = await validacoesPersonalizadas(values, setFieldValue, "despesa_principal");
+        // null = resposta stale de validação concorrente; não segue o save.
+        if (erros_personalizados == null) {
+            habilitaBtnSalvar();
+            return;
+        }
         setFormErrors(erros_personalizados);
 
         if (enviarFormulario && !existeErrosPersonalizadosComMensagem(erros_personalizados)) {
@@ -65,77 +62,18 @@ export const useDespesaSubmit = (deps) => {
                     : "";
 
             if (aux.origemAnaliseLancamento(parametroLocation)) {
-                if (document.getElementsByClassName("despesa_incompleta").length > 0) {
-                    setLoading(false);
-                    habilitaBtnSalvar();
-                    setShowDespesaIncompletaNaoPermitida(true);
-                } else if (despesaContext.verboHttp === "POST") {
-                    try {
-                        let periodo_da_analise = await retornaPeriodo(parametroLocation.state.periodo_uuid);
-                        aux.conciliaRateios(values, periodo_da_analise);
-
-                        const response = await criarDespesa(values);
-                        if (response.status === HTTP_STATUS.CREATED) {
-                            console.log("Operação realizada com sucesso!");
-                            let uuid_despesa = response.data.uuid;
-                            let uuid_acerto_documento = parametroLocation.state.uuid_acerto_documento;
-                            let payload = {
-                                uuid_gasto_incluido: uuid_despesa,
-                                uuid_solicitacao_acerto: uuid_acerto_documento,
-                            };
-                            let response_gasto_incluido = await marcarGastoIncluido(payload);
-                            if (response_gasto_incluido.status === 200) {
-                                console.log("Gasto incluido com sucesso!");
-                            } else {
-                                setLoading(false);
-                            }
-                            aux.getPath(origem, parametroLocation);
-                        } else {
-                            setLoading(false);
-                            habilitaBtnSalvar();
-                            handleErroCriarDespesa(response);
-                        }
-                    } catch (error) {
-                        console.log(error);
-                        setLoading(false);
-                        habilitaBtnSalvar();
-                    }
-                } else if (despesaContext.verboHttp === "PUT") {
-                    try {
-                        let periodo_da_analise = await retornaPeriodo(parametroLocation.state.periodo_uuid);
-                        aux.validaConciliacao(values, periodo_da_analise);
-
-                        const response = await alterarDespesa(values, despesaContext.idDespesa);
-                        if (response.status === 200) {
-                            console.log("Operação realizada com sucesso!");
-                            if (aux.ehOperacaoAtualizacao(parametroLocation)) {
-                                let uuid_analise_lancamento = parametroLocation.state.uuid_analise_lancamento;
-                                let response_atualiza_lancamento = await marcarLancamentoAtualizado(uuid_analise_lancamento);
-                                if (response_atualiza_lancamento.status === 200) {
-                                    console.log("Atualizacao de lancamento realizada com sucesso!");
-                                } else {
-                                    setLoading(false);
-                                    habilitaBtnSalvar();
-                                }
-                            }
-                            aux.getPath(origem, parametroLocation);
-                        } else {
-                            handleErroCriarDespesa(response);
-                            setLoading(false);
-                            habilitaBtnSalvar();
-                        }
-                    } catch (error) {
-                        console.log(error);
-                        setLoading(false);
-                        habilitaBtnSalvar();
-                    }
+                const uuidAcerto =
+                    parametroLocation.state?.uuid_acerto_documento
+                    || parametroLocation.state?.uuid_solicitacao_acerto;
+                if (uuidAcerto) {
+                    values.uuid_solicitacao_acerto = uuidAcerto;
                 }
-            } else {
-                if (despesaContext.verboHttp === "POST") {
-                    mutationCreate.mutate({payload: values});
-                } else if (despesaContext.verboHttp === "PUT") {
-                    mutationUpdate.mutate({payload: values, idDespesa: despesaContext.idDespesa});
-                }
+            }
+
+            if (despesaContext.verboHttp === "POST") {
+                mutationCreate.mutate({payload: values});
+            } else if (despesaContext.verboHttp === "PUT") {
+                mutationUpdate.mutate({payload: values, idDespesa: despesaContext.idDespesa});
             }
         } else {
             habilitaBtnSalvar();

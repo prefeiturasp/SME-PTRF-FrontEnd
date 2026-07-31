@@ -1,6 +1,6 @@
-import {useCallback} from "react";
+import {useCallback, useRef} from "react";
 import moment from "moment";
-import {getPeriodoFechado} from "../../../../../services/escolas/Associacao.service";
+import {getPeriodoFechadoCached} from "../utils/getPeriodoFechadoCached";
 import {
     valida_cpf_cnpj,
     metodosAuxiliares,
@@ -30,11 +30,23 @@ export const useValidacoesFormDespesa = (deps) => {
     } = deps;
 
     const aux = metodosAuxiliares;
+    const geracaoPrincipalRef = useRef(0);
+    const geracaoImpostoRef = useRef(0);
 
     const validacoesPersonalizadas = useCallback(async (values, setFieldValue, origem=null, index=null) => {
 
         let erros = {};
         let cpf_cnpj_valido;
+
+        const ehPrincipal = origem === "despesa_principal";
+        const ehImposto = origem === "despesa_imposto";
+        const geracaoPrincipal = ehPrincipal ? ++geracaoPrincipalRef.current : null;
+        const geracaoImposto = ehImposto ? ++geracaoImpostoRef.current : null;
+
+        const principalStale = () =>
+            geracaoPrincipal != null && geracaoPrincipal !== geracaoPrincipalRef.current;
+        const impostoStale = () =>
+            geracaoImposto != null && geracaoImposto !== geracaoImpostoRef.current;
 
         if(values.cpf_cnpj_fornecedor){
             cpf_cnpj_valido = !(!values.cpf_cnpj_fornecedor || values.cpf_cnpj_fornecedor.trim() === "" || !valida_cpf_cnpj(values.cpf_cnpj_fornecedor));
@@ -72,12 +84,16 @@ export const useValidacoesFormDespesa = (deps) => {
         }
 
         if(aux.origemAnaliseLancamento(parametroLocation)){
-            if (values.data_transacao && origem==="despesa_principal"){
+            if (values.data_transacao && ehPrincipal){
                 let data = moment(values.data_transacao, "YYYY-MM-DD").format("YYYY-MM-DD");
 
                 try {
-                    let periodo_da_data = await getPeriodoFechado(data);
+                    let periodo_da_data = await getPeriodoFechadoCached(data);
                     let periodo_da_analise = await retornaPeriodo(parametroLocation.state.periodo_uuid);
+
+                    if (principalStale()) {
+                        return null;
+                    }
 
                     if(periodo_da_data && periodo_da_analise && periodo_da_data.periodo_referencia === periodo_da_analise.referencia){
                         setReadOnlyBtnAcao(false);
@@ -93,6 +109,9 @@ export const useValidacoesFormDespesa = (deps) => {
                     }
                 }
                 catch (e) {
+                    if (principalStale()) {
+                        return null;
+                    }
                     console.log("Erro ao buscar perído ", e)
                 }
             }
@@ -101,10 +120,14 @@ export const useValidacoesFormDespesa = (deps) => {
         // Verifica se deve utilizar logica de periodo fechado
         if(!aux.origemAnaliseLancamento(parametroLocation)){
             // Verifica período fechado para a receita
-            if (values.data_transacao && origem==="despesa_principal") {
+            if (values.data_transacao && ehPrincipal) {
                 let data = moment(values.data_transacao, "YYYY-MM-DD").format("YYYY-MM-DD");
                 try {
-                    let periodo_fechado = await getPeriodoFechado(data);
+                    let periodo_fechado = await getPeriodoFechadoCached(data);
+
+                    if (principalStale()) {
+                        return null;
+                    }
 
                     if (!periodo_fechado.aceita_alteracoes) {
                         erros = {
@@ -128,6 +151,9 @@ export const useValidacoesFormDespesa = (deps) => {
                         setReadOnlyCampos(false);
                     }
                 } catch (e) {
+                    if (principalStale()) {
+                        return null;
+                    }
                     setReadOnlyBtnAcao(true);
                     setShowPeriodoFechado(true);
                     setReadOnlyCampos(true);
@@ -138,7 +164,7 @@ export const useValidacoesFormDespesa = (deps) => {
         }
 
         /* validacoes imposto */
-        if(origem === "despesa_imposto" && values.despesas_impostos && values.despesas_impostos[index].data_transacao){
+        if(ehImposto && values.despesas_impostos && values.despesas_impostos[index].data_transacao){
             if(values.data_transacao){
                 let data_despesa_principal = moment(values.data_transacao, "YYYY-MM-DD HH:mm:ss").format("YYYY-MM-DD HH:mm:ss");
                 let data_despesa_imposto = moment(values.despesas_impostos[index].data_transacao, "YYYY-MM-DD HH:mm:ss").format("YYYY-MM-DD HH:mm:ss");
@@ -163,7 +189,12 @@ export const useValidacoesFormDespesa = (deps) => {
                     if(!aux.origemAnaliseLancamento(parametroLocation)){
                         try{
                             let data = moment(values.despesas_impostos[index].data_transacao, "YYYY-MM-DD").format("YYYY-MM-DD");
-                            let periodo_fechado = await getPeriodoFechado(data);
+                            let periodo_fechado = await getPeriodoFechadoCached(data);
+
+                            if (impostoStale()) {
+                                return null;
+                            }
+
                             if (!periodo_fechado.aceita_alteracoes) {
                                 erros = {
                                     despesa_imposto_data_transacao: null
@@ -174,14 +205,17 @@ export const useValidacoesFormDespesa = (deps) => {
                                 setDisableBtnAdicionarImposto(true);
                                 setReadOnlyCamposImposto(prevState => ({...prevState, [index]: true}));
                             } else {
-                                setEnviarFormulario(true)
-                                setReadOnlyBtnAcao(false);
+                                // Não desbloqueia a despesa principal aqui — evita corrida:
+                                // principal em período fechado + imposto ok sobrescrevendo o lock.
                                 setShowPeriodoFechadoImposto(false);
                                 setDisableBtnAdicionarImposto(false);
                                 setReadOnlyCamposImposto(prevState => ({...prevState, [index]: false}));
                             }
                         }
                         catch (e) {
+                            if (impostoStale()) {
+                                return null;
+                            }
                             setReadOnlyBtnAcao(true);
                             setShowPeriodoFechadoImposto(true);
                             setDisableBtnAdicionarImposto(true);

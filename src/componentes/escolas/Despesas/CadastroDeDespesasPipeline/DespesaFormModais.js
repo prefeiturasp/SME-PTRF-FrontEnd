@@ -6,7 +6,6 @@ import {
     ErroGeral,
     PeriodoFechado,
     PeriodoFechadoImposto,
-    DespesaIncompletaNaoPermitida
 } from "../../../../utils/Modais";
 import {ModalErroDeletarCadastroDespesa} from "./modals/ModalErroDeletarCadastroDespesa";
 import {metodosAuxiliares} from "./utils";
@@ -37,8 +36,6 @@ export const DespesaFormModais = ({
     showModalErroDeletarDespesa,
     setShowModalErroDeletarDespesa,
     textoModalErroDeletarDespesa,
-    showDespesaIncompletaNaoPermitida,
-    setShowDespesaIncompletaNaoPermitida,
 }) => {
     const aux = metodosAuxiliares;
     const visao_selecionada = visoesService.getItemUsuarioLogado("visao_selecionada.nome");
@@ -92,12 +89,6 @@ export const DespesaFormModais = ({
                     handleClose={() => setShowModalErroDeletarDespesa(false)}
                     titulo="Exclusão de Despesa"
                     texto={textoModalErroDeletarDespesa}
-                />
-            </section>
-            <section>
-                <DespesaIncompletaNaoPermitida
-                    show={showDespesaIncompletaNaoPermitida}
-                    handleClose={() => setShowDespesaIncompletaNaoPermitida(false)}
                 />
             </section>
         </>

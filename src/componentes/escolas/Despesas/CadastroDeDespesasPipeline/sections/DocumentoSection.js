@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useRef} from "react";
 import {Field, useFormikContext} from "formik";
 import MaskedInput from "react-text-mask";
 import {visoesService} from "../../../../../services/visoes.service";
@@ -20,6 +20,11 @@ import {
 export const DocumentoSection = () => {
     const props = useFormikContext();
     const {values, setFieldValue, errors} = props;
+    const dataTransacaoRef = useRef(values.data_transacao);
+
+    useEffect(() => {
+        dataTransacaoRef.current = values.data_transacao;
+    }, [values.data_transacao]);
 
     const {
         despesaContext,
@@ -80,7 +85,8 @@ return (
                                                 props.handleChange(e);
                                             }}
                                             onBlur={async () => {
-                                                setFormErrors(await validacoesPersonalizadas(values, setFieldValue));
+                                                const _erros = await validacoesPersonalizadas(values, setFieldValue);
+                                                if (_erros != null) setFormErrors(_erros);
                                             }}
                                             onClick={() => {
                                                 setFormErrors({cpf_cnpj_fornecedor: ""})
@@ -242,12 +248,25 @@ return (
                                             id="data_transacao"
                                             value={values.data_transacao != null ? values.data_transacao : ""}
                                             onChange={(name, value) => {
+                                                dataTransacaoRef.current = value;
                                                 setFieldValue(name, value, true);
                                             }}
                                             onCalendarClose={async () => {
-                                                limparSelecaoContasDesabilitadas(setFieldValue, values)
-                                                setFormErrors(await validacoesPersonalizadas(values, setFieldValue, "despesa_principal"));
-                                                onCalendarCloseDataPagamento(values, setFieldValue);
+                                                // Formik ainda pode ter values stale aqui — usa a data do onChange.
+                                                const valuesAtualizados = {
+                                                    ...values,
+                                                    data_transacao: dataTransacaoRef.current,
+                                                };
+                                                limparSelecaoContasDesabilitadas(setFieldValue, valuesAtualizados);
+                                                const erros = await validacoesPersonalizadas(
+                                                    valuesAtualizados,
+                                                    setFieldValue,
+                                                    "despesa_principal"
+                                                );
+                                                if (erros != null) {
+                                                    setFormErrors(erros);
+                                                }
+                                                onCalendarCloseDataPagamento(valuesAtualizados, setFieldValue);
                                             }}
                                             about={despesaContext.verboHttp}
                                             className={`${!values.data_transacao && verbo_http === "PUT" ? 'is_invalid' : ""} ${!values.data_transacao && "despesa_incompleta"} form-control`}
@@ -409,7 +428,8 @@ return (
                                                     aux.onHandleChangeApenasNumero(e, setFieldValue, "numero_boletim_de_ocorrencia");
                                                 }}
                                                 onBlur={async () => {
-                                                    setFormErrors(await validacoesPersonalizadas(values, setFieldValue));
+                                                    const _erros = await validacoesPersonalizadas(values, setFieldValue);
+                                                if (_erros != null) setFormErrors(_erros);
                                                 }}
                                                 onClick={() => {
                                                     setFormErrors({numero_boletim_de_ocorrencia: ""})

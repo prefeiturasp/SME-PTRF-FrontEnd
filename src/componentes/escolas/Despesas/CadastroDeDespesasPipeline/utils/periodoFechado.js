@@ -1,11 +1,11 @@
 /* Checagem de período fechado (documento e impostos). */
 import moment from "moment";
-import {getPeriodoFechado} from "../../../../../services/escolas/Associacao.service";
+import {getPeriodoFechadoCached} from "./getPeriodoFechadoCached";
 
 export const periodoFechado = async (data, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral) =>{
   data = moment(data, "YYYY-MM-DD").format("YYYY-MM-DD");
   try {
-    let periodo_fechado = await getPeriodoFechado(data);
+    let periodo_fechado = await getPeriodoFechadoCached(data);
 
     if (!periodo_fechado.aceita_alteracoes){
       setReadOnlyBtnAcao(true);
@@ -32,7 +32,7 @@ export const periodoFechadoImposto = async (despesas_impostos, setReadOnlyBtnAca
       let data = moment(despesas_impostos[despesa_imposto].data_transacao, "YYYY-MM-DD").format("YYYY-MM-DD");
 
       try{
-        let periodo_fechado = await getPeriodoFechado(data);
+        let periodo_fechado = await getPeriodoFechadoCached(data);
         if (!periodo_fechado.aceita_alteracoes){
           setReadOnlyBtnAcao(true);
           setShowPeriodoFechadoImposto(true);
@@ -57,4 +57,3 @@ export const periodoFechadoImposto = async (despesas_impostos, setReadOnlyBtnAca
     }
   }
 }
-

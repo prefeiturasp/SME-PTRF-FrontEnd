@@ -32,6 +32,11 @@ export {
     periodoFechadoImposto,
 } from "./periodoFechado";
 
+export {
+    getPeriodoFechadoCached,
+    limparCachePeriodoFechado,
+} from "./getPeriodoFechadoCached";
+
 export {validaPayloadDespesas} from "./payloadDespesas";
 
 export {
