@@ -1,0 +1,72 @@
+@import "../../assets/css/variaveis.scss";
+
+.sobre-bg {
+  min-height: 100vh;
+  width: 100%;
+  padding: 24px;
+  background-color: #f5f6f8;
+}
+
+.sobre-card {
+  @include roboto-sans;
+  width: 100%;
+  max-width: 380px;
+  padding: 40px 32px;
+  border: 2px solid var(--color-primary) !important;
+  border-radius: 16px;
+  background-color: $corBranco;
+  box-shadow: 0 12px 32px color-mix(in srgb, var(--color-primary) 14%, transparent) !important;
+}
+
+.sobre-logo {
+  max-width: 160px;
+  margin: 0 auto 24px;
+}
+
+.sobre-nome-sistema {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--color-primary);
+  margin-bottom: 20px;
+}
+
+.sobre-versao-label {
+  display: block;
+  font-size: 13px;
+  color: $corCinza;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.sobre-versao-valor {
+  display: block;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-top: 2px;
+}
+
+.sobre-btn-inicio {
+  display: block;
+  width: 100%;
+  margin-top: 28px;
+  padding: 10px 0;
+  font-weight: 700;
+  border-radius: 8px;
+}
+
+.sobre-divisor {
+  border: none;
+  border-top: 1px solid color-mix(in srgb, var(--color-primary) 20%, white);
+  margin: 24px 0 20px;
+}
+
+.sobre-rodape {
+  display: flex;
+  justify-content: center;
+
+  img {
+    max-width: 150px;
+  }
+}
