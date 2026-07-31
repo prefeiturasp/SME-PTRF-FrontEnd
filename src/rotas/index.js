@@ -2,6 +2,7 @@ import React from "react";
 import { Route, Routes, Navigate, useLocation } from "react-router-dom";
 import { Login } from "../paginas/Login";
 import { LoginSuporte } from "../paginas/LoginSuporte";
+import { Sobre } from "../paginas/Sobre";
 import { Pagina404 } from "../paginas/escolas/404";
 import { DashboardPage } from "../paginas/Dashboard";
 import { CadastroDeDespesa } from "../paginas/escolas/Despesas/CadastroDeDespesas";
@@ -993,6 +994,7 @@ export const Rotas = () => {
       <Route path="/login-suporte" element={<LoginSuporte />} />
       <Route path="/esqueci-minha-senha/" element={<EsqueciMinhaSenhaPage />} />
       <Route path="/redefinir-senha/:uuid/" element={<RedefinirSenhaPage />} />
+      <Route path="/sobre" element={<Sobre />} />
       {routesConfig.map((value, key) => {
         return (
           <Route
