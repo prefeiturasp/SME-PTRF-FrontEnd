@@ -18,6 +18,7 @@ jest.mock("../../api", () => ({
   get: jest.fn(),
   post: jest.fn(),
   patch: jest.fn(),
+  registerUnauthorizedHandler: jest.fn(),
 }));
 
 jest.mock("../../../utils/AssociacaoUtils", () => ({
